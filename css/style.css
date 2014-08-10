@@ -1,3 +1,36 @@
-#hello {
-	color: red;
+ #map {
+                width    : 100%;
+                position : relative;
+                height   : 100%;
+}
+.olControlAttribution {
+	position      : absolute;
+	font-size     : 10px;
+	bottom        : 0 !important;
+	right         : 0 !important;
+	background    : rgba(0,0,0,0.1);
+	font-family   : Arial;
+	padding       : 2px 4px;
+	border-radius : 5px 0 0 0;
+}
+div.olControlZoom a {
+	display: block;
+	margin: 1px;
+	padding: 0;
+	color: white;
+	font-size: 28px;
+	font-family: sans-serif;
+	font-weight: bold;
+	text-decoration: none;
+	text-align: center;
+	height: 32px;
+	width: 32px;
+	line-height: 28px;
+	text-shadow: 0 0 3px rgba(0,0,0,0.8);
+	background: #130085;
+	background: rgba(0, 60, 136, 0.5);
+	filter: alpha(opacity=80);
+}
+#title, #tags, #shortdesc {
+                display: none;
 }

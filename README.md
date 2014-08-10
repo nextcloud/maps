@@ -6,3 +6,6 @@ Place this app in **owncloud/apps/**
 After [Installing PHPUnit](http://phpunit.de/getting-started.html) run:
 
     phpunit tests/
+	
+##Sources
+- OpenLayers http://www.openlayers.org/

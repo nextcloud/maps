@@ -1,0 +1,17 @@
+language: php
+php:
+  - 5.3
+  - 5.4
+  - 5.5
+
+before_install:
+  - cd ..
+  - git clone https://github.com/owncloud/core.git
+  - mv maps core/apps/
+  - cd core
+  - git submodule init
+  - git submodule update
+  - cd apps/maps
+
+script:
+  - phpunit tests

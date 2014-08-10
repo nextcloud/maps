@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+<info>
+    <id>maps</id>
+    <name>Maps</name>
+    <description>A simple maps app</description>
+    <licence>agpl</licence>
+    <author>Sander Brand</author>
+    <version>0.0.1</version>
+    <requiremin>7</requiremin>
+</info>

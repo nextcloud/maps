@@ -8,4 +8,4 @@ After [Installing PHPUnit](http://phpunit.de/getting-started.html) run:
     phpunit tests/
 	
 ##Sources
-- OpenLayers http://www.openlayers.org/
+- OpenLayers https://github.com/openlayers/openlayers

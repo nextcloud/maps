@@ -1,0 +1,18 @@
+/* 
+ * Leaflet Control Compass v0.0.1 - 2014-07-13 
+ * 
+ * Copyright 2014 Stefano Cudini 
+ * stefano.cudini@gmail.com 
+ * http://labs.easyblog.it/ 
+ * 
+ * Licensed under the MIT license. 
+ * 
+ * Demos: 
+ * http://labs.easyblog.it/maps/leaflet-compass/ 
+ * 
+ * Source: 
+ * git@github.com:stefanocudini/leaflet-compass.git 
+ * 
+ */
+
+.leaflet-control.leaflet-compass{position:relative;float:left;color:#1978cf;-moz-border-radius:4px;-webkit-border-radius:4px;border-radius:4px;background-color:rgba(255,255,255,.8);box-shadow:0 1px 7px rgba(0,0,0,.65);margin-left:10px;margin-top:10px}.leaflet-compass .compass-button{display:block;float:left;width:36px;height:36px;border-radius:4px}.leaflet-compass .compass-button.active{background:#fff}.leaflet-compass .compass-icon{height:32px;width:32px;margin:2px;background:url(../images/compass-icon.png) center center no-repeat}.leaflet-compass .compass-alert{position:absolute;left:26px;bottom:-1px;width:100px;padding:2px;line-height:.95em;color:#e00;border:1px solid #888;background-color:rgba(255,255,255,.75);border-radius:4px}

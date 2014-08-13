@@ -1,11 +1,35 @@
 <?php
-\OCP\Util::addScript('maps', '3rdparty/openlayers/OpenLayers');
+\OCP\Util::addScript('maps', '3rdparty/leaflet/leaflet');
+\OCP\Util::addScript('maps', '3rdparty/leaflet/plugins/leaflet.active-layers.min');
+\OCP\Util::addScript('maps', '3rdparty/leaflet/plugins/leaflet.select-layers.min');
+\OCP\Util::addScript('maps', '3rdparty/leaflet/plugins/leaflet-compass.min');
+\OCP\Util::addScript('maps', '3rdparty/leaflet/plugins/leaflet-routing-machine.min');
 \OCP\Util::addScript('maps', 'script');
 
+\OCP\Util::addStyle('maps', 'leaflet/leaflet');
+\OCP\Util::addStyle('maps', 'leaflet/leaflet-compass.min');
+\OCP\Util::addStyle('maps', 'leaflet/leaflet-routing-machine');
 \OCP\Util::addStyle('maps', 'style');
 
+
 ?>
-<div id="map">
-
-
+<div id="app">
+	<div id="app-navigation">
+		<div id="searchContainer">
+				<input type="text" id="search" />
+				<div class="icon-search" id="search-icon"> </div>
+		</div>	
+		<div id="app-settings">
+			<div id="app-settings-header">
+				<button class="settings-button" data-apps-slide-toggle="#app-settings-content"></button>
+			</div>
+			<div id="app-settings-content">
+	
+			</div>
+		</div>
+  	</div>
+	<div id="app-content">
+		<div id="map">
+		</div>
+	</div>
 </div>

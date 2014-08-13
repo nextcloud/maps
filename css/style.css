@@ -31,6 +31,18 @@ div.olControlZoom a {
 	background: rgba(0, 60, 136, 0.5);
 	filter: alpha(opacity=80);
 }
-#title, #tags, #shortdesc {
-                display: none;
+
+.leaflet-control-zoom {
+margin-top: 50px !important;
+}
+
+input#search {
+	width: 180px;
+	margin: 10px 10px;
+}
+div#search-icon{
+height: 16px;
+width: 16px;
+display: inline-block;
+cursor: pointer
 }

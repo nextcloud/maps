@@ -89,6 +89,7 @@
     max-height: 0;
     overflow: hidden;
     transition: all 0.5s ease;
+	z-index: 60;
 }
 
 .leaflet-routing-geocoder-result table {

@@ -1,6 +1,5 @@
 .leaflet-routing-container {
-    width: 320px;
-    background-color: white;
+    width:240px;
     padding-top: 4px;
     transition: margin-right 0.2s ease;
 }
@@ -17,7 +16,9 @@
     font-size: 12px;
     font-weight: normal;
 }
-
+.leaflet-marker-icon-wrapper{
+	position: absolute;
+}
 .leaflet-routing-alt, .leaflet-routing-geocoders {
     padding: 6px;
     margin-top: 2px;
@@ -63,7 +64,7 @@
 }
 
 .leaflet-routing-geocoders input {
-    width: 292px;
+    width: 192px;
     padding: 4px;
     border: 1px solid #ccc;
 }

@@ -45,10 +45,41 @@ class PageController extends Controller {
     /**
      * Simply method that posts back the payload of the request
      * @NoAdminRequired
+     * @NoCSRFRequired
      */
-    public function doEcho($echo) {
-        return array('echo' => $echo);
+    public function doProxy($echo) {
+        $url =  ($this -> params('url')) ? $this -> params('url') : '';
+		$allowedHosts = array('dev.virtualearth.net','router.project-osrm.org','nominatim.openstreetmap.org');
+		$parseUrl = parse_url($url);
+		//print_r($parseUrl);
+		
+		if(in_array($parseUrl['host'],$allowedHosts)){
+			header('Content-Type: application/javascript');
+			$split = explode('url=',$_SERVER['REQUEST_URI']);
+			echo $this->getURL($split[1]);
+		}
+		die();
     }
+	
+	private function getURL($url) {
+		$ch = curl_init();
+		curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);
+		curl_setopt($ch, CURLOPT_HEADER, 0);
+		curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 1);
+		curl_setopt($ch, CURLOPT_USERAGENT, 'Mozilla/5.0 (Windows; U; Windows NT 6.1; en-US; rv:1.9.1.2) Gecko/20090729 Firefox/3.5.2 GTB5');
+		curl_setopt($ch, CURLOPT_URL, $url);
+		$tmp = curl_exec($ch);
+		$httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+		curl_close($ch);
+		if ($httpCode == 404) {
+			return false;
+		} else {
+			if ($tmp != false) {
+				return $tmp;
+			}
+		}
+
+	}
 
 
 }

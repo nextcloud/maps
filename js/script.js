@@ -17,7 +17,7 @@
 		firstRun = true;
 		
 		
-		$('#app-navigation').hide();
+		
 		
 		/*var map = L.map('map').setView([51.505, -0.09], 13);
 		L.tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -93,6 +93,19 @@
 		map.on('locationfound', onLocationFound);
 		//map.addControl( new L.Control.Compass() );
 		$('.leaflet-control-layers-overlays').removeProp('multiple');
+		
+		L.Routing.control({
+    waypoints: [],
+    geocoder: L.Control.Geocoder.nominatim(),
+    plan: L.Routing.plan(null, {
+			waypointIcon: function(i) {
+				return new L.Icon.Label.Default({ labelText: String.fromCharCode(65 + i) });
+			}
+		})
+	}).addTo(map);
+	$(".leaflet-routing-geocoders").appendTo("#searchContainer");
+	$(".leaflet-routing-container").appendTo("#searchContainer");
+		
 	})
 	function onLocationFound(e) {
 		var radius = e.accuracy / 2;
@@ -116,4 +129,7 @@
 			firstRun = false;
 		}
 	}
+	
+	
+	
 })(jQuery, OC);

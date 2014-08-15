@@ -24,4 +24,6 @@ $application = new Application();
 $application->registerRoutes($this, array('routes' => array(
 	array('name' => 'page#index', 'url' => '/', 'verb' => 'GET'),
     array('name' => 'page#do_proxy', 'url' => '/router', 'verb' => 'GET'),
+    array('name' => 'page#getlayer', 'url' => '/layer', 'verb' => 'GET'),
+    array('name' => 'page#adresslookup', 'url' => '/adresslookup', 'verb' => 'GET'),
 )));

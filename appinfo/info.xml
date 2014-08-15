@@ -5,6 +5,6 @@
     <description>A simple maps app</description>
     <licence>agpl</licence>
     <author>Sander Brand</author>
-    <version>0.0.1</version>
+    <version>0.0.3</version>
     <requiremin>7</requiremin>
 </info>

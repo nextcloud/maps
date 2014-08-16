@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<database>
+	<name>*dbname*</name>
+	<create>true</create>
+	<overwrite>true</overwrite>
+	<charset>utf8</charset>
+	<table>
+		<name>*dbprefix*maps_adress_cache</name>
+		<declaration>
+			<field>
+				<name>adres_hash</name>
+				<type>text</type>
+				<length>64</length>
+			</field>
+			<field>
+				<name>serialized</name>
+				<type>clob</type>
+				<notnull>true</notnull>
+			</field>
+			<index>
+				<name>cache_adres_hash</name>
+				<field>
+					<name>adres_hash</name>
+				</field>
+			</index>
+		</declaration>
+	</table>	
+</database>

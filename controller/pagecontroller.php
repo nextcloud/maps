@@ -68,7 +68,7 @@ class PageController extends Controller {
      */
     public function doProxy($echo) {
         $url =  ($this -> params('url')) ? $this -> params('url') : '';
-		$allowedHosts = array('dev.virtualearth.net','router.project-osrm.org','nominatim.openstreetmap.org','maps.googleapis.com');
+		$allowedHosts = array('overpass-api.de','dev.virtualearth.net','router.project-osrm.org','nominatim.openstreetmap.org','maps.googleapis.com');
 		$parseUrl = parse_url($url);
 		
 		
@@ -91,16 +91,20 @@ class PageController extends Controller {
 		$city = ($this -> params('city')) ? $this -> params('city') : '';
 		$country = ($this -> params('country')) ? $this -> params('country') : '';
 		
-		$q = $street.', '.$city.', '. $country;
+		$q = urlencode($street.', '.$city.', '. $country);
 		
 		$geohash = md5($q);
 		$checkCache = $this->checkGeoCache($geohash);
 		if(!$checkCache){
 			//$apiUrl = 'https://maps.googleapis.com/maps/api/geocode/json?address='. str_replace(' ','+',$q) .'&key=AIzaSyAIHAIBv_uPKZgoxQt0ingc1gWsdAhG7So';
-			$apiUrl = 'http://nominatim.openstreetmap.org/search?format=json&street='. $street . '&city='.$city.'&country='.$country.'&limit=1';
+			//$apiUrl = 'http://nominatim.openstreetmap.org/search?format=json&street='. $street . '&city='.$city.'&country='.$country.'&limit=1';
+			$apiUrl = 'http://nominatim.openstreetmap.org/search?format=json&q='. $q .'&limit=1';
 			$r = $this->getURL($apiUrl,false);
-			$s = json_decode($r);
-			$r = $r[0];
+			$s = (array)json_decode($r);
+
+			$r = $s[0];
+			$r->apiUrl = $apiUrl;
+			$r = json_encode($r);			
 			$this->cacheManager->insert($geohash,$s[0]);
 		}
 		else

@@ -61,27 +61,27 @@ Array.prototype.unique = function() {
 		})
 
 		/*var clouds = L.tileLayer('http://{s}.tile.openweathermap.org/map/clouds/{z}/{x}/{y}.png', {
-			attribution : 'Map data &copy; <a href="http://openweathermap.org">OpenWeatherMap</a>',
-			opacity : 0.5
-		})
-		var wind = L.tileLayer('http://{s}.tile.openweathermap.org/map/wind/{z}/{x}/{y}.png', {
-			attribution : 'Map data &copy; <a href="http://openweathermap.org">OpenWeatherMap</a>',
-			opacity : 0.5
-		})
-		var temperature = L.tileLayer('http://{s}.tile.openweathermap.org/map/temp/{z}/{x}/{y}.png', {
-			attribution : 'Map data &copy; <a href="http://openweathermap.org">OpenWeatherMap</a>',
-			opacity : 0.5
-		})
+		 attribution : 'Map data &copy; <a href="http://openweathermap.org">OpenWeatherMap</a>',
+		 opacity : 0.5
+		 })
+		 var wind = L.tileLayer('http://{s}.tile.openweathermap.org/map/wind/{z}/{x}/{y}.png', {
+		 attribution : 'Map data &copy; <a href="http://openweathermap.org">OpenWeatherMap</a>',
+		 opacity : 0.5
+		 })
+		 var temperature = L.tileLayer('http://{s}.tile.openweathermap.org/map/temp/{z}/{x}/{y}.png', {
+		 attribution : 'Map data &copy; <a href="http://openweathermap.org">OpenWeatherMap</a>',
+		 opacity : 0.5
+		 })
 
-		var seamarks = L.tileLayer('http://tiles.openseamap.org/seamark/{z}/{x}/{y}.png', {
-			attribution : 'Map data &copy; <a href="http://openweathermap.org">OpenSeaMap</a>',
-			opacity : 1.0
-		})
+		 var seamarks = L.tileLayer('http://tiles.openseamap.org/seamark/{z}/{x}/{y}.png', {
+		 attribution : 'Map data &copy; <a href="http://openweathermap.org">OpenSeaMap</a>',
+		 opacity : 1.0
+		 })
 
-		var none = L.tileLayer('http://{s}.tile.openweathermap.org/map/temp/{z}/{x}/{y}.png', {
-			attribution : '',
-			opacity : 0.0
-		})*/
+		 var none = L.tileLayer('http://{s}.tile.openweathermap.org/map/temp/{z}/{x}/{y}.png', {
+		 attribution : '',
+		 opacity : 0.0
+		 })*/
 
 		map = L.map('map', {
 			center : new L.LatLng(39.73, -104.99),
@@ -97,11 +97,11 @@ Array.prototype.unique = function() {
 		};
 
 		/*var overlayMaps = {
-			"-None-" : none,
-			"Clouds" : clouds,
-			"Wind" : wind,
-			"Temperature" : temperature,
-			"Sea Markers" : seamarks
+		"-None-" : none,
+		"Clouds" : clouds,
+		"Wind" : wind,
+		"Temperature" : temperature,
+		"Sea Markers" : seamarks
 		};*/
 
 		//var control = L.control.layers(baseMaps, overlayMaps)
@@ -130,74 +130,77 @@ Array.prototype.unique = function() {
 		}).addTo(map);
 		$(".leaflet-routing-geocoders").appendTo("#searchContainer");
 		$(".leaflet-routing-container").appendTo("#searchContainer");
-		
-		map.on('mousedown',       function (e) { console.log('mousedown'); });
-		map.on('mouseup',         function (e) { console.log('mouseup'); });
-		$(document).on('click','.enable-layer',function(){
+
+		map.on('mousedown', function(e) {
+			console.log('mousedown');
+		});
+		map.on('mouseup', function(e) {
+			console.log('mouseup');
+		});
+		$(document).on('click', '.enable-layer', function() {
 			var layer = $(this).attr('data-layer');
 			var active = ($(this).attr('data-layer-enabled')) ? true : false;
 			var visibleIcon = '<i class="icon-toggle fright micon"></i>';
-			
-			if(active){
+
+			if (active) {
 				$(this).removeAttr('data-layer-enabled');
 				$(this).find('i').remove();
-			} else{
-				$(this).attr('data-layer-enabled','true');
+			} else {
+				$(this).attr('data-layer-enabled', 'true');
 				$(this).append(visibleIcon);
 			}
-			
-			switch(layer){
-				case "contacts":
-					if(active){
-						toolKit.removeFavMarkers();
-					
-					} else{
-						Maps.loadAdressBooks();
-					}
+
+			switch(layer) {
+			case "contacts":
+				if (active) {
+					toolKit.removeFavMarkers();
+
+				} else {
+					Maps.loadAdressBooks();
+				}
 				break;
-				
-				case "tourism":
-					if(active){
-						Maps.removeLayer('tourism-all');
-						$('#tourism-items').html('')
-					} else{
-						Maps.addLayer('tourism','tourism-all');
-					}
+
+			case "tourism":
+				if (active) {
+					Maps.removeLayer('tourism-all');
+					$('#tourism-items').html('')
+				} else {
+					Maps.addLayer('tourism', 'tourism-all');
+				}
 				break;
-			
-				case "amenity":
-					if(active){
-						Maps.removeLayer('amenity-all');
-						$('#amenity-items').html('')
-					} else{
-						Maps.addLayer('amenity','amenity-all');
-					}
+
+			case "amenity":
+				if (active) {
+					Maps.removeLayer('amenity-all');
+					$('#amenity-items').html('')
+				} else {
+					Maps.addLayer('amenity', 'amenity-all');
+				}
 				break;
-				
-				case "shop":
-					if(active){
-						Maps.removeLayer('shop-all');
-						$('#shop-items').html('')
-					} else{
-						Maps.addLayer('shop','shop-all');
-					}
+
+			case "shop":
+				if (active) {
+					Maps.removeLayer('shop-all');
+					$('#shop-items').html('')
+				} else {
+					Maps.addLayer('shop', 'shop-all');
+				}
 				break;
 			}
 		})
-		
-		$(document).on('click','.subLayer',function(){
+
+		$(document).on('click', '.subLayer', function() {
 			var subLayer = $(this).attr('data-subLayer');
 			var isVisible = $(this).find('i').length;
 
-			if(isVisible==1){
+			if (isVisible == 1) {
 				Maps.hiddenPOITypes.push(subLayer)
-				$('.'+subLayer).addClass('hidden');
+				$('.' + subLayer).addClass('hidden');
 				$(this).find('i').remove();
-			}
-			else
-			{
+			} else {
 				delete Maps.hiddenPOITypes[subLayer];
-				$('.'+subLayer).removeClass('hidden');
+				$('.' + subLayer).removeClass('hidden');
+				Maps.hiddenPOITypes.splice(Maps.hiddenPOITypes.indexOf(subLayer), 1);
 				$(this).append('<i class="icon-toggle fright micon"></i>');
 			}
 		})
@@ -227,12 +230,12 @@ Array.prototype.unique = function() {
 	}
 
 	Maps = {
-		hiddenPOITypes: [],
+		hiddenPOITypes : [],
 		addressbooks : [],
 		tempArr : [],
-		tempCounter: 0,
-		tempTotal: 0,
-		activeLayers: [],
+		tempCounter : 0,
+		tempTotal : 0,
+		activeLayers : [],
 		loadAdressBooks : function() {
 			Maps.addressbooks = [];
 			$.get(OC.generateUrl('apps/contacts/addressbooks/'), function(r) {
@@ -264,24 +267,25 @@ Array.prototype.unique = function() {
 			});
 		},
 		getContactPositionData : function() {
-			
-			if(Maps.tempArr.length > 0){	
-				temp = Maps.tempArr.pop();	
+
+			if (Maps.tempArr.length > 0) {
+				temp = Maps.tempArr.pop();
 				var contact = toolKit.vcardToObject(temp);
 				toolKit.adresLookup(contact.adr, function(d) {
 					var curperson = $.extend({}, d, contact);
-					try{
+					try {
 						toolKit.addFavContactMarker(curperson);
-					} catch(e){
-						
+					} catch(e) {
+
 					}
 					var total = Maps.tempTotal;
 					var index = Maps.tempCounter
-					var percent = Math.round((index/total*100) * 100) / 100;
+					var percent = Math.round((index / total * 100) * 100) / 100;
 					toolKit.setProgress(percent);
-					$('#cCounter').text(index+1 +' of '+ (total*1+1));
+					$('#cCounter').text(index + 1 + ' of ' + (total * 1 + 1));
 					Maps.tempCounter++;
-					if(index==total) $('#loadingContacts').hide()
+					if (index == total)
+						$('#loadingContacts').hide()
 					Maps.getContactPositionData();
 				})
 			}
@@ -289,14 +293,14 @@ Array.prototype.unique = function() {
 		showContact : function(data) {
 
 		},
-	
-		addLayer: function(group,layer) {
+
+		addLayer : function(group, layer) {
 			//OverPassAPI overlay
 			//k:amenity  v:postbox
 			var tmpTypes = []
 			Maps.activeLayers[layer] = new L.OverPassLayer({
 				minzoom : 14,
-				query : OC.generateUrl('apps/maps/router?url=http://overpass-api.de/api/interpreter?data=[out:json];node(BBOX)['+ group +'];out;'),
+				query : OC.generateUrl('apps/maps/router?url=http://overpass-api.de/api/interpreter?data=[out:json];node(BBOX)[' + group + '];out;'),
 				callback : function(data) {
 					for ( i = 0; i < data.elements.length; i++) {
 						e = data.elements[i];
@@ -305,44 +309,46 @@ Array.prototype.unique = function() {
 						var pos = new L.LatLng(e.lat, e.lon);
 						var popup = this.instance._poiInfo(e.tags, e.id);
 						var color = e.tags.collection_times ? 'green' : 'red';
-						var icon =  e.tags[group].split(';')
-						var isVisible = ($.inArray(group+'-'+icon[0],Maps.hiddenPOITypes)==-1) ? '': 'hidden';
-						console.log(group+'-'+icon[0]);
-						var iconImage = L.icon({
-								iconUrl : OC.filePath('maps', 'img', 'mapIcons/'+ icon[0] +'.png'),
+						var icon = e.tags[group].split(';');
+						if(icon[0].indexOf(',')!=-1){
+							icon = icon[0].split(',');
+						}
+						var isVisible = ($.inArray(group + '-' + icon[0], Maps.hiddenPOITypes) == -1) ? '' : 'hidden';
+						console.log(group + '-' + icon[0]);
+						if (icon[0] != 'yes') {
+							var iconImage = L.icon({
+								iconUrl : OC.filePath('maps', 'img', 'mapIcons/' + icon[0].toLowerCase() + '.png'),
 								iconSize : [42, 49],
 								iconAnchor : [21, 49],
 								popupAnchor : [0, -49],
-								className: group+'-'+icon[0]+' '+ isVisible
+								className : group + '-' + icon[0] + ' ' + isVisible
 							});
-						
-						var marker = L.marker(pos, {
-							icon : iconImage
-						}).bindPopup(popup);
-						this.instance.addLayer(marker);
-						tmpTypes.push(icon[0]);
+
+							var marker = L.marker(pos, {
+								icon : iconImage
+							}).bindPopup(popup);
+							this.instance.addLayer(marker);
+							tmpTypes.push(icon[0]);
+						}
 					}
 					tmpTypes = tmpTypes.unique().clean('');
 					tmpHTML = ''
-					$.each(tmpTypes,function(){
-						isVisible = $.inArray(group+'-'+this,Maps.hiddenPOITypes);
-						vIcon = (isVisible==-1) ? '<i class="icon-toggle fright micon"></i>' : ''
-						tmpHTML += '<li><a class="subLayer" data-subLayer="'+group +'-'+ this +'">'+ this + vIcon +'</a><li>'
+					$.each(tmpTypes, function() {
+						isVisible = $.inArray(group + '-' + this, Maps.hiddenPOITypes);
+						vIcon = (isVisible == -1) ? '<i class="icon-toggle fright micon"></i>' : ''
+						tmpHTML += '<li><a class="subLayer" data-subLayer="' + group + '-' + this + '">' + this + vIcon + '</a><li>'
 					})
-					
-					$('#'+ group +'-items').html(tmpHTML)
-					$('#'+ group +'-items').show();
+
+					$('#' + group + '-items').html(tmpHTML)
+					$('#' + group + '-items').show();
 				},
 			});
 			map.addLayer(Maps.activeLayers[layer]);
 		},
-		removeLayer: function(layer){
+		removeLayer : function(layer) {
 			map.removeLayer(Maps.activeLayers[layer])
 		}
-
-		
 	}
-	
 
 	toolKit = {
 		vcardToObject : function(vcard) {
@@ -432,6 +438,5 @@ Array.prototype.unique = function() {
 			}, 50).html(percent + "%&nbsp;");
 		}
 	}
-
 
 })(jQuery, OC);

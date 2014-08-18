@@ -13,7 +13,7 @@ namespace OCA\Maps\AppInfo;
 
 
 use \OCP\AppFramework\App;
-
+use \OCA\Maps\Db\CacheManager;
 use \OCA\Maps\Controller\PageController;
 
 
@@ -32,10 +32,16 @@ class Application extends App {
 			return new PageController(
 				$c->query('AppName'), 
 				$c->query('Request'),
-				$c->query('UserId')
+				$c->query('UserId'),
+				$c->query('CacheManager')
 			);
 		});
-
+	
+		$container->registerService('CacheManager', function($c) {
+			return new CacheManager(
+				$c->query('ServerContainer')->getDb()
+			);
+		});
 
 		/**
 		 * Core
@@ -43,6 +49,9 @@ class Application extends App {
 		$container->registerService('UserId', function($c) {
 			return \OCP\User::getUser();
 		});		
+		$container->registerService('Db', function() {
+			return new Db();
+		});
 		
 	}
 

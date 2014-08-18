@@ -1,5 +1,6 @@
 <?php
 \OCP\Util::addScript('maps', '3rdparty/leaflet/leaflet');
+\OCP\Util::addScript('maps', '3rdparty/overpass/OverPassLayer');
 \OCP\Util::addScript('maps', '3rdparty/leaflet/plugins/leaflet-routing-machine.min');
 
 \OCP\Util::addScript('maps', '3rdparty/leaflet/lib/Control.Geocoder');
@@ -26,7 +27,40 @@
 	<div id="app-navigation">
 		<div id="searchContainer">
 				
-		</div>	
+		</div>	<br />
+		<ul class="with-icon">
+			<li>
+				<a class='enable-layer icon-contacts-dark' data-layer="contacts">Contacts Layer</a>
+			</li>
+			<li>
+				<a class='enable-layer icon-contacts-dark' data-layer="amenity">Amenity</a>
+			</li>
+			<li>
+				<ul id="amenity-items"></ul>
+			</li>
+
+			<li>
+				<a class='enable-layer icon-contacts-dark' data-layer="tourism">Tourism</a>
+			</li>
+			<li>
+				<ul id="tourism-items"></ul>
+			</li>
+			<li>
+				<a class='enable-layer icon-contacts-dark' data-layer="shop">Shops</a>
+			</li>
+			<li>
+				<ul id="shop-items"></ul>
+			</li>
+			<li>
+				<a>&nbsp;</a>
+			</li>
+
+		</ul>
+		
+		<div id="loadingContacts" style="display:none">
+			<div id="progressBar"><div></div></div>
+			<div id="cCounter"></div>
+		</div>
 		<div id="app-settings">
 			<div id="app-settings-header">
 				<button class="settings-button" data-apps-slide-toggle="#app-settings-content"></button>

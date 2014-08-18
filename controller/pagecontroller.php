@@ -15,14 +15,16 @@ namespace OCA\Maps\Controller;
 use \OCP\IRequest;
 use \OCP\AppFramework\Http\TemplateResponse;
 use \OCP\AppFramework\Controller;
+use \OCA\Maps\Db\CacheManager;
 
 class PageController extends Controller {
 
     private $userId;
-
-    public function __construct($appName, IRequest $request, $userId){
+	private $cacheManager;
+    public function __construct($appName, IRequest $request, $userId,$cacheManager){
         parent::__construct($appName, $request);
         $this->userId = $userId;
+		$this->cacheManager = $cacheManager;
     }
 
 
@@ -41,7 +43,24 @@ class PageController extends Controller {
         return new TemplateResponse('maps', 'main', $params);  // templates/main.php
     }
 
-
+   /**
+     * Get an layer
+     * @NoAdminRequired
+     * @NoCSRFRequired
+     */
+	public function getlayer(){
+		$layer =  ($this -> params('layer')) ? $this -> params('layer') : null;
+		if($layer==="contacts"){
+			if(\OCP\App::isEnabled('contacts')){
+			
+			}
+			else
+			{
+				OCP\Util::writeLog('maps',"App contacts missing for Maps", \OCP\Util::WARN);
+			}
+		}
+	}
+	
     /**
      * Simply method that posts back the payload of the request
      * @NoAdminRequired
@@ -49,9 +68,9 @@ class PageController extends Controller {
      */
     public function doProxy($echo) {
         $url =  ($this -> params('url')) ? $this -> params('url') : '';
-		$allowedHosts = array('dev.virtualearth.net','router.project-osrm.org','nominatim.openstreetmap.org');
+		$allowedHosts = array('overpass-api.de','dev.virtualearth.net','router.project-osrm.org','nominatim.openstreetmap.org','maps.googleapis.com');
 		$parseUrl = parse_url($url);
-		//print_r($parseUrl);
+		
 		
 		if(in_array($parseUrl['host'],$allowedHosts)){
 			header('Content-Type: application/javascript');
@@ -59,14 +78,55 @@ class PageController extends Controller {
 			echo $this->getURL($split[1]);
 		}
 		die();
+    }   
+
+	/**
+     * Simply method that posts back the payload of the request
+     * @NoAdminRequired
+     * @NoCSRFRequired
+     */
+   public function adresslookup() {
+        //
+		$street = ($this -> params('street')) ? $this -> params('street') : '';
+		$city = ($this -> params('city')) ? $this -> params('city') : '';
+		$country = ($this -> params('country')) ? $this -> params('country') : '';
+		
+		$q = urlencode($street.', '.$city.', '. $country);
+		
+		$geohash = md5($q);
+		$checkCache = $this->checkGeoCache($geohash);
+		if(!$checkCache){
+			//$apiUrl = 'https://maps.googleapis.com/maps/api/geocode/json?address='. str_replace(' ','+',$q) .'&key=AIzaSyAIHAIBv_uPKZgoxQt0ingc1gWsdAhG7So';
+			//$apiUrl = 'http://nominatim.openstreetmap.org/search?format=json&street='. $street . '&city='.$city.'&country='.$country.'&limit=1';
+			$apiUrl = 'http://nominatim.openstreetmap.org/search?format=json&q='. $q .'&limit=1';
+			$r = $this->getURL($apiUrl,false);
+			$s = (array)json_decode($r);
+
+			$r = $s[0];
+			$r->apiUrl = $apiUrl;
+			$r = json_encode($r);			
+			$this->cacheManager->insert($geohash,$s[0]);
+		}
+		else
+		{
+			$checkCache->cachedResult = true;
+			$r = json_encode($checkCache);
+		}
+		echo $r;
+		die();
     }
 	
-	private function getURL($url) {
+	private function checkGeoCache($hash){
+		return $this->cacheManager->check($hash);
+	}
+	private function getURL($url,$userAgent=true) {
 		$ch = curl_init();
 		curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);
 		curl_setopt($ch, CURLOPT_HEADER, 0);
 		curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 1);
-		curl_setopt($ch, CURLOPT_USERAGENT, 'Mozilla/5.0 (Windows; U; Windows NT 6.1; en-US; rv:1.9.1.2) Gecko/20090729 Firefox/3.5.2 GTB5');
+		if($userAgent){
+			curl_setopt($ch, CURLOPT_USERAGENT, 'Mozilla/5.0 (Windows; U; Windows NT 6.1; en-US; rv:1.9.1.2) Gecko/20090729 Firefox/3.5.2 GTB5');
+		}
 		curl_setopt($ch, CURLOPT_URL, $url);
 		$tmp = curl_exec($ch);
 		$httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);

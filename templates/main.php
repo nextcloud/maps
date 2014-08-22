@@ -18,6 +18,7 @@
 
 \OCP\Util::addStyle('maps', 'awsome-markers/leaflet.awesome-markers');
 \OCP\Util::addScript('maps', '3rdparty/leaflet/plugins/leaflet.awesome-markers.min');
+\OCP\Util::addScript('maps', '3rdparty/leaflet/plugins/Leaflet.MakiMarkers');
 \OCP\Util::addScript('maps', 'script');
 
 \OCP\Util::addStyle('maps', 'leaflet/leaflet');
@@ -37,26 +38,26 @@
 		</div>	<br />
 		<ul class="with-icon">
 			<li>
-				<a class='enable-layer icon-contacts-dark' data-layer="contacts">Contacts Layer</a>
+				<a class='main-cat-layer icon-contacts-dark' data-layer="contacts">Contacts Layer</a>
 			</li>
 			<li>
-				<a class='enable-layer icon-contacts-dark' data-layer="amenity">Amenity</a>
+				<a class='main-cat-layer icon-contacts-dark' data-layer="amenity">Amenity</a>
 			</li>
 			<li>
-				<ul id="amenity-items"></ul>
+				<ul id="amenity-items" class="hidden"></ul>
 			</li>
 
 			<li>
-				<a class='enable-layer icon-contacts-dark' data-layer="tourism">Tourism</a>
+				<a class='main-cat-layer icon-contacts-dark' data-layer="tourism">Tourism</a>
 			</li>
 			<li>
-				<ul id="tourism-items"></ul>
+				<ul id="tourism-items" class="hidden"></ul>
 			</li>
 			<li>
-				<a class='enable-layer icon-contacts-dark' data-layer="shop">Shops</a>
+				<a class='main-cat-layer icon-contacts-dark' data-layer="shop">Shops</a>
 			</li>
 			<li>
-				<ul id="shop-items"></ul>
+				<ul id="shop-items" class="hidden"></ul>
 			</li>
 			<li>
 				<a>&nbsp;</a>

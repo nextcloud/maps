@@ -1,8 +1,12 @@
+
 #content-wrapper{
 	overflow-y: hidden;
 }
 #app-navigation > ul {
 	clear: both;
+}
+#app-navigation > ul ul {
+ display: inline; 
 }
 #map {
                 width    : 100%;
@@ -67,6 +71,13 @@ i{
 }
 .micon {
 	margin-top: 13px;
+	position: absolute;
+	left: 40px;
+}
+.icon{
+	display: inline-block;
+	height: 16px;
+	width: 16px;
 }
 #loadingContacts{
 	height: 60px;
@@ -99,5 +110,5 @@ i{
 	padding-bottom: 70px;
 }
 .hidden{
-	display: none;
+	display: none !important;
 }

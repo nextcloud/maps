@@ -94,8 +94,13 @@ Array.prototype.unique = function() {
 		};*/
 
 		
-		//map.addControl( new L.Control.Compass() );
-		map.addControl( new L.Control.Gps() );
+		map.addControl( new L.Control.Compass() );
+		map.addControl( new L.Control.Gps({
+		    style: {radius: 16,   //marker circle style
+        weight:3,
+        color: '#0A00FF',
+        fill: true},
+		  }) );
 		$('.leaflet-control-layers-overlays').removeProp('multiple');
 
 		L.Routing.control({
@@ -330,7 +335,7 @@ Array.prototype.unique = function() {
 						vIcon = (isVisible == -1) ? '<i class="icon-toggle fright micon"></i>' : ''
 						tmpHTML += '<li><a class="subLayer" data-subLayer="' + group + '-' + this + '">' + this + vIcon + '</a><li>'
 					})
-
+          console.log(tmpTypes);
 					$('#' + group + '-items').html(tmpHTML)
 					$('#' + group + '-items').show();
 				},
@@ -430,5 +435,11 @@ Array.prototype.unique = function() {
 			}, 50).html(percent + "%&nbsp;");
 		}
 	}
+
+  poiTypes = {
+    shop: ['supermarket','bakery','car','stationery','hairdresser','mobile_phone','convenience','newsagent','kiosk','computer','clothes','variety_store','hearing_aids','florist','handicraft','candle','antique','pet','massage','electronics','laundry','doityourself','sports','jewelry','musical_instrument','chemist','shoes','beverages','toys','fishing','copyshop','beauty','bag','paint','bicycle','communication','furniture','alcohol','deli','optician','books','car_repair','butcher','outdoor','motorcycle','estate_agent','photo','gift','travel_agency','tea','wine','medical_supply','department_store','dry_cleaning','video','second_hand','greengrocer','erotic','curtain','haberdashery','garden_centre','art','fashion','bags','accessoires','confectionery','ice_cream','organic','music','boutique','interior','kitchen','vacant','tattoo','mall','camera','gallery','rc_models','coffee','bicycle_rental','photographer','ticket','charity','Shisha','hats','funeral_directors','locksmith','fabric','hardware','shoe_repair','hifi','fabrics','tailor','anime','market','grocery','no','surf','tobacco','animals','currency_exchange','souvenirs','internet-tele-cafe','photography','car_parts','antiques','bed','skating','ceramics','internet cafe','frame','brushes','fish','callshop','glass','comics','pottery','internet_cafe','stamps','radiotechnics','interior_decoration','carrental','interior_design','gramophone','Trödel','unused','watches','jewellery','tatoo','travelling','telecommunication','cigarettes','sports food','perfumery','unknown','orthopedics','fire_extinguisher','fishmonger','wholesale','lights','carpet','office_supplies','parquet','porcelain','lamps','make-up','art_gallery','telecom','underwear','watch','tableware','scuba_diving','christmas','tanning','craft','leather','for rent','glaziery','seafood','Sicherheitstechnik','coffee machines','alteration','decoration','sport_bet','seefood','mobile phone service','window_blind','tyres','cheese','medical','sewing-machine','Kaugummi-Automaten','Kaugummi-Automat','baby','games','piercing','Elektrohaushaltsgeräte','electrician','glasses','circus','food','marine','lottery','Hockey','electric','coins','metal workshop','nails','general','tanning_salon','crafts','household','floor','baby_goods','Patissier','delicatessen','telephone','Hema','soft_drugs','board_games','lingerie','candy','cd','stones','spiritual','health','juice','hemp_products','smartshop','cannabis','frozen_yoghurt','art_supplies','cigar','department','sok_shop','realestate','lighting','generic','nail','ink','traiteur','toko','key','gsm','artist','hearth','framing','espresso_machine','knives','rental','thrift_store','snacks','tobacconist','disused:butcher','party','audiologist','housewares','Fashion','printing','chandler','Shoes','Electronics','softdrugs','houseware','textiles','perfume'],
+    amenity: ["post_box", "police", "atm", "recycling", "parking", "fuel", "telephone", "school", "pub", "doctors", "arts_centre", "cafe", "fast_food", "restaurant", "place_of_worship", "bank", "bicycle_parking", "drinking_water", "theatre", "bar", "bench", "waste_disposal", "nightclub", "pharmacy", "bicycle_rental", "post_office", "charging_station", "waste_basket", "vending_machine", "kindergarten", "marketplace", "dentist", "ev_charging", "bureau_de_change", "library", "cinema", "toilets", "car_wash", "fountain", "boat_rental", "taxi", "bus_parking", "public_building", "driving_school", "physical therapy", "coffee_shop", "embassy", "vacant", "coffeeshop", "ice_cream", "car_rental", "swimming_pool", "university", "casino", "community_centre", "lost_found", "grit_bin", "clock", "parking_entrance", "sauna", "brothel", "ferry_terminal", "fitness_center", "bus_station", "college", "fire_station", "health_centre", "townhall", "hospital", "veterinary", "gym", "fablab", "money_transfer", "kitchen_studio", "tanning_salon", "tanning", "studio"],
+    tourism: ["artwork", "hostel", "attraction", "hotel", "information", "museum", "gallery", "viewpoint", "picnic_site", "guest_house", "theme_park", "apartment", "zoo", "camp_site", "chalet", "motel", "citytour", "aquarium"]   
+  }
 
 })(jQuery, OC);

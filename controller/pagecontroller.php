@@ -68,7 +68,7 @@ class PageController extends Controller {
      */
     public function doProxy($echo) {
         $url =  ($this -> params('url')) ? $this -> params('url') : '';
-		$allowedHosts = array('overpass-api.de','dev.virtualearth.net','router.project-osrm.org','nominatim.openstreetmap.org','maps.googleapis.com');
+		$allowedHosts = array('overpass.osm.rambler.ru','overpass-api.de','dev.virtualearth.net','router.project-osrm.org','nominatim.openstreetmap.org','maps.googleapis.com');
 		$parseUrl = parse_url($url);
 		
 		

@@ -148,7 +148,7 @@ Array.prototype.unique = function() {
 				if (this != "") {
 					iconHTML = '';
 					var icon = toolKit.getPoiIcon(this);
-					if(icon){
+					if (icon) {
 						$('#' + cat + '-items').append('<li><a class="subLayer" data-layerGroup="' + cat + '" data-layerValue="' + this + '">' + iconHTML + this + '</a></li>')
 					}
 				}
@@ -161,11 +161,18 @@ Array.prototype.unique = function() {
 			var isVisible = $(this).find('i').length;
 
 			if (isVisible == 1) {
-				Maps.removeLayer(layerValue);
+				$('.'+layerValue).css({'visibility':'hidden'})
 				$(this).find('i').remove();
+				Maps.updateLayers(false,false);
 			} else {
+				$('.'+layerValue).css({'visibility':'visible'})
 				$(this).append('<i class="icon-toggle fright micon activeLayer"></i>');
-				Maps.addLayer(layerGroup, layerValue);
+				//if($('.'+layerValue).length==0){
+					Maps.updateLayers(layerGroup, layerValue);
+				/*} else{
+					Maps.updateLayers(false,false);	
+				}*/
+				
 			}
 		})
 	})
@@ -268,64 +275,83 @@ Array.prototype.unique = function() {
 
 		},
 
-		addLayer : function(group, layer) {
+		updateLayers : function(group, layer) {
 			//OverPassAPI overlay
 			//k:amenity  v:postbox
 			var overPassQ = '';
+			groupArr = []
 			$('.activeLayer').each(function() {
 				var parent = $(this).parent();
-				console.log(parent)
 				var layerGroup = parent.attr('data-layerGroup');
 				var layerValue = parent.attr('data-layerValue');
 				overPassQ += 'node(BBOX)[' + layerGroup + '=' + layerValue + '];out;'
+				groupArr.push(layerGroup);
 			})
 			console.log(overPassQ);
-			Maps.activeLayers[layer] = new L.OverPassLayer({
-				minzoom : 14,
-				//query : OC.generateUrl('apps/maps/router?url=http://overpass-api.de/api/interpreter?data=[out:json];node(BBOX)[' + group + '='+layer+'];out;'),
-				query : OC.generateUrl('apps/maps/router?url=http://overpass-api.de/api/interpreter?data=[out:json];' + overPassQ),
-				callback : function createMaker(data) {
-					for ( i = 0; i < data.elements.length; i++) {
-						e = data.elements[i];
-					    if (e.id in this.instance._ids) return;
-						if (e.tags[group]) {
-							this.instance._ids[e.id] = true;
-							var pos = new L.LatLng(e.lat, e.lon);
-							var popup = this.instance._poiInfo(e.tags, e.id);
-							var color = e.tags.collection_times ? 'green' : 'red';
-							var icon = e.tags[group].split(';');
-							icon[0] = icon[0].toLowerCase();
-							var marker = false;
-							if (icon[0].indexOf(',') != -1) {
-								icon = icon[0].split(',');
+			if (!$('body').data('POIactive')) {
+				Maps.activeLayers = new L.OverPassLayer({
+					minzoom : 14,
+					//query : OC.generateUrl('apps/maps/router?url=http://overpass-api.de/api/interpreter?data=[out:json];node(BBOX)[' + group + '='+layer+'];out;'),
+					query : OC.generateUrl('apps/maps/router?url=(SERVERAPI)interpreter?data=[out:json];' + overPassQ),
+					callback : function createMaker(data) {
+						for ( i = 0; i < data.elements.length; i++) {
+							e = data.elements[i];
+							if (e.id in this.instance._ids){
+								return;
 							}
-							if (icon[0] != 'yes') {
-								marker = toolKit.getPoiIcon(icon[0])
-								if (marker) {
-									var marker = L.marker(pos, {
-										icon : marker
-									}).bindPopup(popup);
-									this.instance.addLayer(marker);
+								this.instance._ids[e.id] = true;
+								var pos = new L.LatLng(e.lat, e.lon);
+								var popup = this.instance._poiInfo(e.tags, e.id);
+								var color = e.tags.collection_times ? 'green' : 'red';
+								var curgroup = null;
+
+								$.each(groupArr,function(){
+									if(e.tags[ this ]){
+										curgroup = this;
+									}
+								})
+								var icon = e.tags[curgroup].split(';');
+								icon[0] = icon[0].toLowerCase();
+								var marker = false;
+								if (icon[0].indexOf(',') != -1) {
+									icon = icon[0].split(',');
 								}
-							}
+								if (icon[0] != 'yes') {
+									marker = toolKit.getPoiIcon(icon[0])
+									if (marker) {
+										var marker = L.marker(pos, {
+											icon : marker,
+										}).bindPopup(popup);
+										this.instance.addLayer(marker);
+									}
+								}
+							
 						}
-					}
-					/*tmpTypes = tmpTypes.unique().clean('');
-					 tmpHTML = ''
-					 $.each(tmpTypes, function() {
-					 isVisible = $.inArray(group + '-' + this, Maps.hiddenPOITypes);
-					 vIcon = (isVisible == -1) ? '<i class="icon-toggle fright micon"></i>' : ''
-					 tmpHTML += '<li><a class="subLayer" data-subLayer="' + group + '-' + this + '">' + this + vIcon + '</a><li>'
-					 })
-					 console.log(tmpTypes);
-					 $('#' + group + '-items').html(tmpHTML)
-					 $('#' + group + '-items').show();*/
-				},
-			});
-			map.addLayer(Maps.activeLayers[layer]);
+						/*tmpTypes = tmpTypes.unique().clean('');
+						 tmpHTML = ''
+						 $.each(tmpTypes, function() {
+						 isVisible = $.inArray(group + '-' + this, Maps.hiddenPOITypes);
+						 vIcon = (isVisible == -1) ? '<i class="icon-toggle fright micon"></i>' : ''
+						 tmpHTML += '<li><a class="subLayer" data-subLayer="' + group + '-' + this + '">' + this + vIcon + '</a><li>'
+						 })
+						 console.log(tmpTypes);
+						 $('#' + group + '-items').html(tmpHTML)
+						 $('#' + group + '-items').show();*/
+					},
+				});
+				map.addLayer(Maps.activeLayers);
+				$('body').data('POIactive', true);
+			}
+			else
+			{
+				Maps.activeLayers.options.query = OC.generateUrl('apps/maps/router?url=(SERVERAPI)interpreter?data=[out:json];' + overPassQ);
+				if(group && layer){
+					Maps.activeLayers.onMoveEnd();
+				}
+			}
 		},
 		removeLayer : function(layer) {
-			map.removeLayer(Maps.activeLayers[layer])
+			//map.removeLayer(Maps.activeLayers[layer])
 		}
 	}
 
@@ -334,9 +360,10 @@ Array.prototype.unique = function() {
 			marker = false;
 			if ($.inArray(icon, L.MakiMarkers.icons) > -1) {
 				marker = L.MakiMarkers.icon({
-					'icon' : icon[0],
+					'icon' : icon,
 					color : "#b0b",
-					size : "l"
+					size : "l",
+					className: icon
 				});
 			} else {
 				var mIcon = toolKit.toMakiMarkerIcon(icon.replace(' ', ''));
@@ -344,7 +371,8 @@ Array.prototype.unique = function() {
 					marker = L.MakiMarkers.icon({
 						'icon' : mIcon,
 						color : "#b0b",
-						size : "l"
+						size : "l",
+						className: icon
 					});
 				} else {
 					var amIcon = toolKit.toFAClass(icon.replace(' ', ''))
@@ -354,6 +382,7 @@ Array.prototype.unique = function() {
 							prefix : 'fa',
 							markerColor : 'red'
 						});
+					 marker.options.className += ' '+ icon
 					}
 				}
 			}
@@ -367,7 +396,7 @@ Array.prototype.unique = function() {
 				'beer' : ['bar', 'biergarten', 'pub'],
 				'telephone' : ['phone'],
 				'swimming' : ['swimming_pool'],
-				'bank' : ['atm'],
+				'bank' : ['atm','bank'],
 				'town-hall' : ['townhall'],
 				'post' : ['post_box', 'post_office'],
 				'bicycle' : ['bicycle_parking'],

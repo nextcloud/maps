@@ -294,7 +294,6 @@ Array.prototype.unique = function() {
 		addLayer : function(group, layer) {
 			//OverPassAPI overlay
 			//k:amenity  v:postbox
-			var tmpTypes = []
 			Maps.activeLayers[layer] = new L.OverPassLayer({
 				minzoom : 14,
 				query : OC.generateUrl('apps/maps/router?url=http://overpass-api.de/api/interpreter?data=[out:json];node(BBOX)[' + group + '];out;'),
@@ -311,7 +310,6 @@ Array.prototype.unique = function() {
 							icon = icon[0].split(',');
 						}
 						var isVisible = ($.inArray(group + '-' + icon[0], Maps.hiddenPOITypes) == -1) ? '' : 'hidden';
-						console.log(group + '-' + icon[0]);
 						if (icon[0] != 'yes') {
 							var iconImage = L.icon({
 								iconUrl : OC.filePath('maps', 'img', 'mapIcons/' + icon[0].toLowerCase() + '.png'),
@@ -325,10 +323,9 @@ Array.prototype.unique = function() {
 								icon : iconImage
 							}).bindPopup(popup);
 							this.instance.addLayer(marker);
-							tmpTypes.push(icon[0]);
 						}
 					}
-					tmpTypes = tmpTypes.unique().clean('');
+					/*tmpTypes = tmpTypes.unique().clean('');
 					tmpHTML = ''
 					$.each(tmpTypes, function() {
 						isVisible = $.inArray(group + '-' + this, Maps.hiddenPOITypes);
@@ -337,7 +334,7 @@ Array.prototype.unique = function() {
 					})
           console.log(tmpTypes);
 					$('#' + group + '-items').html(tmpHTML)
-					$('#' + group + '-items').show();
+					$('#' + group + '-items').show();*/
 				},
 			});
 			map.addLayer(Maps.activeLayers[layer]);

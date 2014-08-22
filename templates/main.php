@@ -20,6 +20,7 @@
 
 \OCP\Util::addStyle('maps', 'leaflet/leaflet-routing-machine');
 \OCP\Util::addStyle('maps', 'style');
+\OCP\Util::addStyle('maps', 'font-awesome.min');
 
 
 ?>

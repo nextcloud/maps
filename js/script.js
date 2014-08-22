@@ -311,16 +311,14 @@ Array.prototype.unique = function() {
 						}
 						var isVisible = ($.inArray(group + '-' + icon[0], Maps.hiddenPOITypes) == -1) ? '' : 'hidden';
 						if (icon[0] != 'yes') {
-							var iconImage = L.icon({
-								iconUrl : OC.filePath('maps', 'img', 'mapIcons/' + icon[0].toLowerCase() + '.png'),
-								iconSize : [42, 49],
-								iconAnchor : [21, 49],
-								popupAnchor : [0, -49],
-								className : group + '-' + icon[0] + ' ' + isVisible
-							});
+							  var marker = L.AwesomeMarkers.icon({
+                  icon: toolKit.toFAClass(icon[0].replace(' ','')),
+                  prefix: 'fa',
+                  markerColor: 'red'
+                });
 
 							var marker = L.marker(pos, {
-								icon : iconImage
+								icon : marker
 							}).bindPopup(popup);
 							this.instance.addLayer(marker);
 						}
@@ -345,6 +343,29 @@ Array.prototype.unique = function() {
 	}
 
 	toolKit = {
+	  toFAClass : function(type){
+	    console.log(type);
+	    mapper = {
+	       'shopping-cart': ['supermarkt','supermarket','department_store','deli'], 
+	       'medkit': ['hospital'],
+	       'cutlery': ['fast_food','restaurant'],
+	       'beer': ['pub'],
+	       'credit-card': ['atm'],
+	       'graduation-cap': ['school'],
+	       'lightbulb-o': ['electronics'],
+	       'cut': ['hairdresser'],
+	       'info': ['information']
+	      } 
+       var returnClass = type;
+	     $.each(mapper,function(faClass,types){
+	         if(types.toString().indexOf(type) > -1){
+	           returnClass = faClass
+	         }
+	     })
+	     return returnClass;
+	  },
+	  
+	  
 		vcardToObject : function(vcard) {
 			var contact = {};
 

@@ -1,4 +1,7 @@
 <?php
+
+
+
 \OCP\Util::addScript('maps', '3rdparty/leaflet/leaflet');
 \OCP\Util::addScript('maps', '3rdparty/jstorage/jstorage');
 \OCP\Util::addScript('maps', '3rdparty/overpass/OverPassLayer');
@@ -13,6 +16,8 @@
 \OCP\Util::addScript('maps', '3rdparty/leaflet-gps/leaflet-gps.min');
 \OCP\Util::addStyle('maps', 'leaflet-gps/css/leaflet-gps.min');
 
+\OCP\Util::addStyle('maps', 'awsome-markers/leaflet.awesome-markers');
+\OCP\Util::addScript('maps', '3rdparty/leaflet/plugins/leaflet.awesome-markers.min');
 \OCP\Util::addScript('maps', 'script');
 
 \OCP\Util::addStyle('maps', 'leaflet/leaflet');

@@ -1,5 +1,6 @@
 <?php
 \OCP\Util::addScript('maps', '3rdparty/leaflet/leaflet');
+\OCP\Util::addScript('maps', '3rdparty/jstorage/jstorage');
 \OCP\Util::addScript('maps', '3rdparty/overpass/OverPassLayer');
 \OCP\Util::addScript('maps', '3rdparty/leaflet/plugins/leaflet-routing-machine.min');
 

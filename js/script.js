@@ -36,19 +36,13 @@ Array.prototype.unique = function() {
 		circle = null;
 		firstRun = true;
 
-		/*var map = L.map('map').setView([51.505, -0.09], 13);
-		 L.tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-		 attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="http://mapbox.com">Mapbox</a>',
-		 maxZoom: 18
-		 }).addTo(map);
-
-		 */
 		var attribution = '&copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>';
 
-		var mapnik = L.tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-			attribution : attribution
+		var mapQuest = L.tileLayer('http://otile{s}.mqcdn.com/tiles/1.0.0/osm/{z}/{x}/{y}.png', {
+			attribution : attribution,
+			subdomains : "1234"
 		})
-		var mapbox = L.tileLayer('https://a.tiles.mapbox.com/v3/liedman.h9ekn0f1/{z}/{x}/{y}.png', {
+	/*	var mapbox = L.tileLayer('https://a.tiles.mapbox.com/v3/liedman.h9ekn0f1/{z}/{x}/{y}.png', {
 			attribution : attribution + ' Tiles <a href="https://www.mapbox.com/about/maps/">MapBox</a>'
 		})
 		var blackAndWhite = L.tileLayer('http://{s}.www.toolserver.org/tiles/bw-mapnik/{z}/{x}/{y}.png', {
@@ -58,7 +52,7 @@ Array.prototype.unique = function() {
 		var airial = L.tileLayer('http://server.arcgisonline.com/ArcGIS/' + 'rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
 			attribution : attribution + ' Tiles © Esri',
 			subdomains : "1234"
-		})
+		})*/
 
 		/*var clouds = L.tileLayer('http://{s}.tile.openweathermap.org/map/clouds/{z}/{x}/{y}.png', {
 		 attribution : 'Map data &copy; <a href="http://openweathermap.org">OpenWeatherMap</a>',
@@ -83,30 +77,22 @@ Array.prototype.unique = function() {
 		 opacity : 0.0
 		 })*/
 
+    var oldPosition = $.jStorage.get('location',{lat: 21.303210151521565,lng: 6.15234375});
+    var oldZoom = $.jStorage.get('zoom',3);
+
 		map = L.map('map', {
-			center : new L.LatLng(39.73, -104.99),
-			zoom : 10,
-			layers : [mapnik]
+			center : new L.LatLng(oldPosition.lat, oldPosition.lng),
+			zoom : oldZoom,
+			layers : [mapQuest]
 		});
 
-		var baseMaps = {
+		/*var baseMaps = {
 			"MapBox" : mapbox,
 			"Mapnik" : mapnik,
 			"Black and White" : blackAndWhite,
 			"Airial" : airial
-		};
-
-		/*var overlayMaps = {
-		"-None-" : none,
-		"Clouds" : clouds,
-		"Wind" : wind,
-		"Temperature" : temperature,
-		"Sea Markers" : seamarks
 		};*/
 
-		//var control = L.control.layers(baseMaps, overlayMaps)
-		//var control = L.control.selectLayers(baseMaps, overlayMaps)
-		//control.addTo(map);
 		map.locate({
 			setView : false,
 			maxZoom : 16,
@@ -137,6 +123,9 @@ Array.prototype.unique = function() {
 		map.on('mouseup', function(e) {
 			console.log('mouseup');
 		});
+		map.on("dragend zoomend",function(e){
+      Maps.saveCurrentLocation(e);
+    })		
 		$(document).on('click', '.enable-layer', function() {
 			var layer = $(this).attr('data-layer');
 			var active = ($(this).attr('data-layer-enabled')) ? true : false;
@@ -290,6 +279,14 @@ Array.prototype.unique = function() {
 				})
 			}
 		},
+		
+		saveCurrentLocation: function(e){
+		  var center = map.getBounds().getCenter();
+      var location = {lat: center.lat, lng: center.lng};
+      $.jStorage.set('location', location)
+      $.jStorage.set('zoom', e.target._zoom)
+		},
+		
 		showContact : function(data) {
 
 		},

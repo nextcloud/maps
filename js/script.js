@@ -148,7 +148,9 @@ Array.prototype.unique = function() {
 				if (this != "") {
 					iconHTML = '';
 					var icon = toolKit.getPoiIcon(this);
-					$('#' + cat + '-items').append('<li><a class="subLayer" data-layerGroup="' + cat + '" data-layerValue="' + this + '">' + iconHTML + this + '</a></li>')
+					if(icon){
+						$('#' + cat + '-items').append('<li><a class="subLayer" data-layerGroup="' + cat + '" data-layerValue="' + this + '">' + iconHTML + this + '</a></li>')
+					}
 				}
 			})
 		})
@@ -329,6 +331,7 @@ Array.prototype.unique = function() {
 
 	toolKit = {
 		getPoiIcon : function(icon) {
+			marker = false;
 			if ($.inArray(icon, L.MakiMarkers.icons) > -1) {
 				marker = L.MakiMarkers.icon({
 					'icon' : icon[0],

@@ -204,7 +204,7 @@ Array.prototype.unique = function() {
 					map.removeLayer(searchItems[i]);
 				}
 				searchItems = []
-				$.getJSON(OC.generateUrl('/apps/maps/search'), data, function(r) {
+				$.getJSON(OC.generateUrl('/apps/maps/search'), data, function renderSearchResults(r) {
 					console.log(r);
 					$.each(r.nodes, function() {
 						var iconImage = toolKit.getPoiIcon(this.type)

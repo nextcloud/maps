@@ -122,7 +122,7 @@ class PageController extends Controller {
 	}
 
 	private function bboxSearch($q,$bbox){
-		$apiUrl = 'http://nominatim.openstreetmap.org/search?format=json&q=' . $q . '&viewbox='.$bbox.'&bounded=1';
+		$apiUrl = 'http://nominatim.openstreetmap.org/search?format=json&limit=50&q=' . $q . '&viewbox='.$bbox.'&bounded=1';
 		//echo $apiUrl;
 		$r = $this -> getURL($apiUrl, false);
 		$s = (array)json_decode($r);

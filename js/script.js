@@ -107,7 +107,7 @@ Array.prototype.unique = function() {
 		}));
 		$('.leaflet-control-layers-overlays').removeProp('multiple');
 
-		L.Routing.control({
+		routing = L.Routing.control({
 			waypoints : [],
 			geocoder : L.Control.Geocoder.nominatim(),
 			plan : L.Routing.plan(null, {

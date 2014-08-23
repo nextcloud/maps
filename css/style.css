@@ -56,7 +56,9 @@ width: 16px;
 display: inline-block;
 cursor: pointer
 }
-
+.geocoder-1{
+	display: none;
+}
 .contact-icon {
 background: url('../img/icons/personBackground.png');
 padding: 4px 5px 13px 4px;

@@ -120,7 +120,7 @@ Array.prototype.unique = function() {
 		}).addTo(map);
 		$(".leaflet-routing-geocoders").appendTo("#searchContainer");
 		$(".leaflet-routing-container").appendTo("#searchContainer");
-
+		$('.geocoder-0').attr('completiontype', 'local');
 		map.on('mousedown', function(e) {
 			//console.log('mousedown');
 		});
@@ -161,19 +161,65 @@ Array.prototype.unique = function() {
 			var isVisible = $(this).find('i').length;
 
 			if (isVisible == 1) {
-				$('.'+layerValue).css({'visibility':'hidden'})
+				$('.' + layerValue).css({
+					'visibility' : 'hidden'
+				})
 				$(this).find('i').remove();
-				Maps.updateLayers(false,false);
+				Maps.updateLayers(false, false);
 			} else {
-				$('.'+layerValue).css({'visibility':'visible'})
+				$('.' + layerValue).css({
+					'visibility' : 'visible'
+				})
 				$(this).append('<i class="icon-toggle fright micon activeLayer"></i>');
 				//if($('.'+layerValue).length==0){
-					Maps.updateLayers(layerGroup, layerValue);
+				Maps.updateLayers(layerGroup, layerValue);
 				/*} else{
-					Maps.updateLayers(false,false);	
-				}*/
-				
+				 Maps.updateLayers(false,false);
+				 }*/
+
 			}
+		})
+		/**
+		 * Custom search function
+		 */
+		searchItems = []
+		searchTimeout = 0;
+
+		$(document).on('keyup', '.geocoder-0', function(e) {
+			if ($(this).attr('completiontype') != 'local')
+				return;
+
+			var data = {
+				search : $(this).val(),
+				bbox : map.getBounds().toBBoxString()
+			}
+			clearTimeout(searchTimeout);
+			if (e.keyCode != 13) {
+				searchTimeout = setTimeout(function() {
+					$.getJSON(OC.generateUrl('/apps/maps/search'), data, function(r) {
+					})
+				}, 1000)
+			} else {
+				for ( i = 0; i < searchItems.length; i++) {
+					map.removeLayer(searchItems[i]);
+				}
+				searchItems = []
+				$.getJSON(OC.generateUrl('/apps/maps/search'), data, function(r) {
+					console.log(r);
+					$.each(r.nodes, function() {
+						var iconImage = toolKit.getPoiIcon(this.type)
+						var markerHTML = '';
+						markerHTML += '';
+						markerHTML += '';
+						var marker = L.marker([this.lat * 1, this.lon * 1], {
+							icon : iconImage
+						}).addTo(map).bindPopup(markerHTML);
+						searchItems.push(marker);
+
+					})
+				})
+			}
+
 		})
 	})
 	// End document ready
@@ -296,36 +342,36 @@ Array.prototype.unique = function() {
 					callback : function createMaker(data) {
 						for ( i = 0; i < data.elements.length; i++) {
 							e = data.elements[i];
-							if (e.id in this.instance._ids){
+							if (e.id in this.instance._ids) {
 								return;
 							}
-								this.instance._ids[e.id] = true;
-								var pos = new L.LatLng(e.lat, e.lon);
-								var popup = this.instance._poiInfo(e.tags, e.id);
-								var color = e.tags.collection_times ? 'green' : 'red';
-								var curgroup = null;
+							this.instance._ids[e.id] = true;
+							var pos = new L.LatLng(e.lat, e.lon);
+							var popup = this.instance._poiInfo(e.tags, e.id);
+							var color = e.tags.collection_times ? 'green' : 'red';
+							var curgroup = null;
 
-								$.each(groupArr,function(){
-									if(e.tags[ this ]){
-										curgroup = this;
-									}
-								})
-								var icon = e.tags[curgroup].split(';');
-								icon[0] = icon[0].toLowerCase();
-								var marker = false;
-								if (icon[0].indexOf(',') != -1) {
-									icon = icon[0].split(',');
+							$.each(groupArr, function() {
+								if (e.tags[this]) {
+									curgroup = this;
 								}
-								if (icon[0] != 'yes') {
-									marker = toolKit.getPoiIcon(icon[0])
-									if (marker) {
-										var marker = L.marker(pos, {
-											icon : marker,
-										}).bindPopup(popup);
-										this.instance.addLayer(marker);
-									}
+							})
+							var icon = e.tags[curgroup].split(';');
+							icon[0] = icon[0].toLowerCase();
+							var marker = false;
+							if (icon[0].indexOf(',') != -1) {
+								icon = icon[0].split(',');
+							}
+							if (icon[0] != 'yes') {
+								marker = toolKit.getPoiIcon(icon[0])
+								if (marker) {
+									var marker = L.marker(pos, {
+										icon : marker,
+									}).bindPopup(popup);
+									this.instance.addLayer(marker);
 								}
-							
+							}
+
 						}
 						/*tmpTypes = tmpTypes.unique().clean('');
 						 tmpHTML = ''
@@ -341,11 +387,9 @@ Array.prototype.unique = function() {
 				});
 				map.addLayer(Maps.activeLayers);
 				$('body').data('POIactive', true);
-			}
-			else
-			{
+			} else {
 				Maps.activeLayers.options.query = OC.generateUrl('apps/maps/router?url=(SERVERAPI)interpreter?data=[out:json];' + overPassQ);
-				if(group && layer){
+				if (group && layer) {
 					Maps.activeLayers.onMoveEnd();
 				}
 			}
@@ -363,7 +407,7 @@ Array.prototype.unique = function() {
 					'icon' : icon,
 					color : "#b0b",
 					size : "l",
-					className: icon
+					className : icon
 				});
 			} else {
 				var mIcon = toolKit.toMakiMarkerIcon(icon.replace(' ', ''));
@@ -372,7 +416,7 @@ Array.prototype.unique = function() {
 						'icon' : mIcon,
 						color : "#b0b",
 						size : "l",
-						className: icon
+						className : icon
 					});
 				} else {
 					var amIcon = toolKit.toFAClass(icon.replace(' ', ''))
@@ -382,7 +426,7 @@ Array.prototype.unique = function() {
 							prefix : 'fa',
 							markerColor : 'red'
 						});
-					 marker.options.className += ' '+ icon
+						marker.options.className += ' ' + icon
 					}
 				}
 			}
@@ -396,7 +440,7 @@ Array.prototype.unique = function() {
 				'beer' : ['bar', 'biergarten', 'pub'],
 				'telephone' : ['phone'],
 				'swimming' : ['swimming_pool'],
-				'bank' : ['atm','bank'],
+				'bank' : ['atm', 'bank'],
 				'town-hall' : ['townhall'],
 				'post' : ['post_box', 'post_office'],
 				'bicycle' : ['bicycle_parking'],

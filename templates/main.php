@@ -53,10 +53,6 @@
 				<a class='main-cat-layer icon-home' data-layer="shop">Shops</a>
 				<ul id="shop-items" class="hidden"></ul>
 			</li>
-			<li>
-				<a>&nbsp;</a>
-			</li>
-
 		</ul>
 		
 		<div id="loadingContacts" style="display:none">

@@ -127,13 +127,35 @@ Array.prototype.unique = function() {
 		$('#searchContainer').find('input').attr('type', 'text');
 
 		map.on('mousedown', function(e) {
-			//console.log('mousedown');
+			Maps.mouseDowntime = new Date().getTime();
 		});
 		map.on('mouseup', function(e) {
-			//console.log('mouseup');
+			console.log(e)
+			if (e.originalEvent.target.className !== 'leaflet-tile leaflet-tile-loaded' && e.originalEvent.target.nodeName != 'svg')
+				return;
+			var curTime = new Date().getTime();
+			if (Maps.droppedPin) {
+				map.removeLayer(Maps.droppedPin);
+			}
+			if ((curTime - Maps.mouseDowntime) > 200 && Maps.dragging === false) {//200 = 2 seconds
+				console.log('Long press', (curTime - Maps.mouseDowntime))
+
+				//Maps.droppedPin = new L.marker(e.latlng);
+				//toolKit.addMarker(Maps.droppedPin, '', true);
+				console.log(e.latlng)
+				Maps.showPopup = true;
+				routing.setWaypoints([L.latLng(e.latlng.lat, e.latlng.lng)]);
+				Maps.showPopup = false;
+			}
+
 		});
+
+		map.on("dragstart", function() {
+			Maps.dragging = true;
+		})
 		map.on("dragend zoomend", function(e) {
 			Maps.saveCurrentLocation(e);
+			Maps.dragging = false;
 			var searchInput = $('.geocoder-0')
 			if (searchInput.attr('completiontype') == 'local' && searchInput.val() != '') {
 				var data = {
@@ -231,7 +253,7 @@ Array.prototype.unique = function() {
 		/**
 		 * setDestination on click
 		 */
-		
+
 		$(document).on('click', '.setDestination', function() {
 			var latlng = $(this).attr('data-latlng');
 			map.locate({
@@ -239,30 +261,31 @@ Array.prototype.unique = function() {
 				watch : false
 			})
 			map.on('locationfound', function doRouteCalc(e) {
+				routing.setWaypoints([])
 				var start = [e.latitude, e.longitude];
 				var end = latlng.split(',');
-					end[0] = end[0]*1;
-					end[1] = end[1]*1;
+				end[0] = end[0] * 1;
+				end[1] = end[1] * 1;
 				//map.removeLayer(routing);
 
-				routing.setWaypoints([L.latLng(start[0],start[1]), L.latLng(end[0],end[1])]);
+				routing.setWaypoints([L.latLng(start[0], start[1]), L.latLng(end[0], end[1])]);
+				
 				$('.geocoder-1').show();
 				map.closePopup();
-			/*	routing = L.Routing.control({
-					waypoints :  [L.latLng(start[0],start[1]), L.latLng(end[0],end[1])],
-					geocoder : L.Control.Geocoder.nominatim(),
-					plan : L.Routing.plan(null, {
-						waypointIcon : function(i) {
-							return new L.Icon.Label.Default({
-								labelText : String.fromCharCode(65 + i)
-							});
-						}
-					})
-				}).addTo(map);*/
+				/*	routing = L.Routing.control({
+				 waypoints :  [L.latLng(start[0],start[1]), L.latLng(end[0],end[1])],
+				 geocoder : L.Control.Geocoder.nominatim(),
+				 plan : L.Routing.plan(null, {
+				 waypointIcon : function(i) {
+				 return new L.Icon.Label.Default({
+				 labelText : String.fromCharCode(65 + i)
+				 });
+				 }
+				 })
+				 }).addTo(map);*/
 
 			})
 		})
-
 	})
 	// End document ready
 	function onLocationFound(e) {
@@ -332,17 +355,16 @@ Array.prototype.unique = function() {
 						});
 					}
 
-					 var markerHTML = '<b>' + contact.FN + "</b>";
-					 
-					 
-					 var street =  [contact.ADR[0][0],contact.ADR[0][1],contact.ADR[0][2]].clean('').join('<br />');
-					 var city = (contact.ADR[0][3]) ? contact.ADR[0][3] : '';
-					 markerHTML += '<br />' + street + " " + city;
-					 markerHTML += (contact.TEL) ? '<br />Tel: ' + escape(contact.TEL[0]) : '';
+					var markerHTML = '<b>' + contact.FN + "</b>";
+
+					var street = [contact.ADR[0][0], contact.ADR[0][1], contact.ADR[0][2]].clean('').join('<br />');
+					var city = (contact.ADR[0][3]) ? contact.ADR[0][3] : '';
+					markerHTML += '<br />' + street + " " + city;
+					markerHTML += (contact.TEL) ? '<br />Tel: ' + escape(contact.TEL[0]) : '';
 					var marker = L.marker([contact.location.lat * 1, contact.location.lon * 1], {
 						icon : iconImage
 					});
-					toolKit.addMarker(marker,markerHTML)
+					toolKit.addMarker(marker, markerHTML)
 					mapSearch.searchItems.push(marker);
 				}
 				mapSearch._ids.push(contact.id)
@@ -361,7 +383,7 @@ Array.prototype.unique = function() {
 					var marker = L.marker([this.lat * 1, this.lon * 1], {
 						icon : iconImage
 					});
-					toolKit.addMarker(marker,markerHTML)
+					toolKit.addMarker(marker, markerHTML)
 					mapSearch.searchItems.push(marker);
 					mapSearch._ids.push(this.place_id)
 				}
@@ -383,6 +405,9 @@ Array.prototype.unique = function() {
 		tempCounter : 0,
 		tempTotal : 0,
 		activeLayers : [],
+		mouseDowntime : 0,
+		droppedPin : {},
+		dragging : false,
 		loadAdressBooks : function() {
 			Maps.addressbooks = [];
 			$.get(OC.generateUrl('apps/contacts/addressbooks/'), function(r) {
@@ -499,7 +524,7 @@ Array.prototype.unique = function() {
 									var marker = L.marker(pos, {
 										icon : marker,
 									}).bindPopup(popup);
-									toolKit.addMarker(marker,popup)
+									toolKit.addMarker(marker, popup)
 									//this.instance.addLayer(marker);
 								}
 							}
@@ -532,14 +557,18 @@ Array.prototype.unique = function() {
 	}
 
 	toolKit = {
-		addMarker: function(marker,markerHTML){
-			//console.log(marker,markerHTML)
-			var latlng = marker._latlng.lat+','+marker._latlng.lng;
-			var markerHTML2 = markerHTML +'<div><a class="setDestination" data-latlng="'+ latlng +'">Navigate to here</a> | <a class="addToFav" data-latlng="'+ latlng +'">Add to favorites</a></div>';
+		addMarker : function(marker, markerHTML, openPopup) {
+			var openPopup = (openPopup) ? true : false;
+			var latlng = marker._latlng.lat + ',' + marker._latlng.lng;
+			var markerHTML2 = markerHTML + '<div><a class="setDestination" data-latlng="' + latlng + '">Navigate to here</a> | <a class="addToFav" data-latlng="' + latlng + '">Add to favorites</a></div>';
 			marker.addTo(map).bindPopup(markerHTML2);
-			
+			if (openPopup === true) {
+				setTimeout(function(){
+					//L.popup().setLatLng([marker._latlng.lat, marker._latlng.lng]).setContent("I am a standalone popup.").openOn(map);
+					marker.openPopup();
+				},50);
+			}
 		},
-		
 		getPoiIcon : function(icon) {
 			marker = false;
 			if ($.inArray(icon, L.MakiMarkers.icons) > -1) {
@@ -725,7 +754,7 @@ Array.prototype.unique = function() {
 			var marker = L.marker([contact.lat * 1, contact.lon * 1], {
 				icon : iconImage
 			});
-			toolKit.addMarker(marker,markerHTML)
+			toolKit.addMarker(marker, markerHTML)
 			toolKit.favMarkers.push(marker);
 		},
 		removeFavMarkers : function() {
@@ -750,8 +779,7 @@ Array.prototype.unique = function() {
 		tourism : ["artwork", "hostel", "attraction", "hotel", "information", "museum", "gallery", "viewpoint", "picnic_site", "guest_house", "theme_park", "apartment", "zoo", "camp_site", "chalet", "motel", "citytour", "aquarium"]
 	}
 
-})(jQuery, OC);
-( function($) {
+})(jQuery, OC); ( function($) {
 		$.fn.clickToggle = function(func1, func2) {
 			var funcs = [func1, func2];
 			this.data('toggleclicked', 0);

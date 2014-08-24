@@ -145,7 +145,7 @@ Array.prototype.unique = function() {
 		})
 
 		$(document).on('click', '.main-cat-layer', function(e) {
-			var subCat = $(this).parent().next().find('ul');
+			var subCat = $(this).parent().find('ul');
 			if (subCat.is(":visible")) {
 				subCat.slideUp();
 			} else {

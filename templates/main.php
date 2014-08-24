@@ -43,21 +43,14 @@
 			</li>
 			<li>
 				<a class='main-cat-layer icon-info' data-layer="amenity">Amenity</a>
-			</li>
-			<li>
 				<ul id="amenity-items" class="hidden"></ul>
 			</li>
-
 			<li>
 				<a class='main-cat-layer icon-toggle' data-layer="tourism">Tourism</a>
-			</li>
-			<li>
 				<ul id="tourism-items" class="hidden"></ul>
 			</li>
 			<li>
 				<a class='main-cat-layer icon-home' data-layer="shop">Shops</a>
-			</li>
-			<li>
 				<ul id="shop-items" class="hidden"></ul>
 			</li>
 			<li>

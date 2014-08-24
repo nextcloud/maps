@@ -90,11 +90,10 @@ class PageController extends Controller {
 		$contacts = $cm -> search($kw, array('FN', 'ADR'));
 		foreach ($contacts as $r) {
 			$data = array();
-			$contact = new \stdClass();
-			$contact -> name = $r['FN'];
-			$contact -> addr = $r['ADR'][0];
-			$lookupAdr = implode(',', array_filter($contact -> addr));
-			$contact -> location = json_decode($this -> doAdresslookup($lookupAdr));
+			$contact = $r;
+			$lookupAdr = implode(',', array_filter($r['ADR'][0]));
+			$lookup = $this -> doAdresslookup($lookupAdr);
+			$contact ['location'] = $lookup[0];
 			$contact -> image = $r['thumbnail'];
 			array_push($response['contacts'],$contact);
 		}

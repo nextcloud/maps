@@ -135,16 +135,16 @@ Array.prototype.unique = function() {
 		map.on("dragend zoomend", function(e) {
 			Maps.saveCurrentLocation(e);
 			var searchInput = $('.geocoder-0')
-			if(searchInput.attr('completiontype') == 'local' && searchInput.val() !=''){
+			if (searchInput.attr('completiontype') == 'local' && searchInput.val() != '') {
 				var data = {
 					search : searchInput.val(),
 					bbox : map.getBounds().toBBoxString()
 				}
 				clearTimeout(searchTimeout);
-				searchTimeout = setTimeout(function(){
+				searchTimeout = setTimeout(function() {
 					console.log('Get new results');
-					mapSearch.getSearchResults(data,mapSearch.showResultsOnMap);
-				},500);
+					mapSearch.getSearchResults(data, mapSearch.showResultsOnMap);
+				}, 500);
 			}
 		})
 
@@ -171,9 +171,9 @@ Array.prototype.unique = function() {
 				}
 			})
 		})
-		$('.contactLayer').clickToggle(function(){
+		$('.contactLayer').clickToggle(function() {
 			Maps.loadAdressBooks()
-		},function(){
+		}, function() {
 			toolKit.removeFavMarkers()
 		})
 		$(document).on('click', '.subLayer', function() {
@@ -215,19 +215,53 @@ Array.prototype.unique = function() {
 				bbox : map.getBounds().toBBoxString()
 			}
 			clearTimeout(searchTimeout);
-			if($(this).val()==''){
+			if ($(this).val() == '') {
 				mapSearch.clearSearchResults();
 			}
 			if (e.keyCode != 13) {
 				searchTimeout = setTimeout(function() {
-					
+
 				}, 1000)
 			} else {
 				mapSearch.clearSearchResults();
-				mapSearch.getSearchResults(data,mapSearch.showResultsOnMap);
+				mapSearch.getSearchResults(data, mapSearch.showResultsOnMap);
 			}
 
+		});
+		/**
+		 * setDestination on click
+		 */
+		
+		$(document).on('click', '.setDestination', function() {
+			var latlng = $(this).attr('data-latlng');
+			map.locate({
+				setView : false,
+				watch : false
+			})
+			map.on('locationfound', function doRouteCalc(e) {
+				var start = [e.latitude, e.longitude];
+				var end = latlng.split(',');
+					end[0] = end[0]*1;
+					end[1] = end[1]*1;
+				//map.removeLayer(routing);
+
+				routing.setWaypoints([L.latLng(start[0],start[1]), L.latLng(end[0],end[1])]);
+
+			/*	routing = L.Routing.control({
+					waypoints :  [L.latLng(start[0],start[1]), L.latLng(end[0],end[1])],
+					geocoder : L.Control.Geocoder.nominatim(),
+					plan : L.Routing.plan(null, {
+						waypointIcon : function(i) {
+							return new L.Icon.Label.Default({
+								labelText : String.fromCharCode(65 + i)
+							});
+						}
+					})
+				}).addTo(map);*/
+
+			})
 		})
+
 	})
 	// End document ready
 	function onLocationFound(e) {
@@ -254,52 +288,92 @@ Array.prototype.unique = function() {
 	}
 
 	mapSearch = {
-		searchItems: [],
-		_ids: [],
-		getSearchResults: function(data,callback){
+		searchItems : [],
+		_ids : [],
+		getSearchResults : function(data, callback) {
 			$.getJSON(OC.generateUrl('/apps/maps/search'), data, function renderSearchResults(r) {
-					callback(r)
-				})
+				callback(r)
+			})
 		},
-		
-		showResultsOnMap: function(r){
-		if(map.getZoom() <= 14){
-			var zoomMSG = '<div class="leaflet-control-minZoomIndecator leaflet-control" style="font-size: 2em; border-top-left-radius: 10px; border-top-right-radius: 10px; border-bottom-right-radius: 10px; border-bottom-left-radius: 10px; padding: 1px 15px; display: block; background: rgba(255, 255, 255, 0.701961);">Results might be limited due current zoom, zoom in to get more</div>'
-			$('.leaflet-bottom.leaflet-left').html(zoomMSG);
-		}
-		else
-		{
-			$('.leaflet-control-minZoomIndecator ').remove();
-		}
-			
-			$.each(r.nodes, function() {
-						if ($.inArray(this.place_id,mapSearch._ids) != -1) {
-								return;
-						}
-						var iconImage = toolKit.getPoiIcon(this.type)
-						if(iconImage){
-								console.log(this);							
-							
-								var markerHTML = '';
-								markerHTML += '';
-								markerHTML += '';
-								var marker = L.marker([this.lat * 1, this.lon * 1], {
-									icon : iconImage
-								}).addTo(map).bindPopup(markerHTML);
-								mapSearch.searchItems.push(marker);
-								mapSearch._ids.push(this.place_id)
-						}
 
-				})
+		showResultsOnMap : function(r) {
+			if (map.getZoom() <= 14) {
+				var zoomMSG = '<div class="leaflet-control-minZoomIndecator leaflet-control" style="font-size: 2em; border-top-left-radius: 10px; border-top-right-radius: 10px; border-bottom-right-radius: 10px; border-bottom-left-radius: 10px; padding: 1px 15px; display: block; background: rgba(255, 255, 255, 0.701961);">Results might be limited due current zoom, zoom in to get more</div>'
+				$('.leaflet-bottom.leaflet-left').html(zoomMSG);
+			} else {
+				$('.leaflet-control-minZoomIndecator ').remove();
+			}
+			console.log(r)
+
+			$.each(r.contacts, function() {
+				var contact = this;
+				if ($.inArray(contact.id, mapSearch._ids) != -1) {
+					return;
+				}
+				console.log(contact)
+				if (contact.location) {
+					if (contact.thumbnail) {
+						var imagePath = 'data:image/png;base64,' + contact.thumbnail
+						var iconImage = L.icon({
+							iconUrl : imagePath,
+							iconSize : [42, 49],
+							iconAnchor : [21, 49],
+							popupAnchor : [0, -49],
+							className : 'contact-icon'
+						});
+					} else {
+						var imagePath = OC.filePath('maps', 'img', 'icons/marker_anonPerson.png');
+						var iconImage = L.icon({
+							iconUrl : imagePath,
+							iconSize : [42, 49],
+							iconAnchor : [21, 49],
+							popupAnchor : [0, -49]
+						});
+					}
+
+					 var markerHTML = '<b>' + contact.FN + "</b>";
+					 
+					 
+					 var street =  [contact.ADR[0][0],contact.ADR[0][1],contact.ADR[0][2]].clean('').join('<br />');
+					 var city = (contact.ADR[0][3]) ? contact.ADR[0][3] : '';
+					 markerHTML += '<br />' + street + " " + city;
+					 markerHTML += (contact.TEL) ? '<br />Tel: ' + escape(contact.TEL[0]) : '';
+					var marker = L.marker([contact.location.lat * 1, contact.location.lon * 1], {
+						icon : iconImage
+					});
+					toolKit.addMarker(marker,markerHTML)
+					mapSearch.searchItems.push(marker);
+				}
+				mapSearch._ids.push(contact.id)
+			})
+
+			$.each(r.nodes, function() {
+				if ($.inArray(this.place_id, mapSearch._ids) != -1) {
+					return;
+				}
+				var iconImage = toolKit.getPoiIcon(this.type)
+				if (iconImage) {
+
+					var markerHTML = '';
+					markerHTML += '';
+					markerHTML += '';
+					var marker = L.marker([this.lat * 1, this.lon * 1], {
+						icon : iconImage
+					});
+					toolKit.addMarker(marker,markerHTML)
+					mapSearch.searchItems.push(marker);
+					mapSearch._ids.push(this.place_id)
+				}
+
+			})
 		},
-	
-		clearSearchResults: function() {
+
+		clearSearchResults : function() {
 			for ( i = 0; i < mapSearch.searchItems.length; i++) {
 				map.removeLayer(mapSearch.searchItems[i]);
 			}
 			mapSearch.searchItems = []
 		}
-
 	}
 
 	Maps = {
@@ -424,7 +498,8 @@ Array.prototype.unique = function() {
 									var marker = L.marker(pos, {
 										icon : marker,
 									}).bindPopup(popup);
-									this.instance.addLayer(marker);
+									toolKit.addMarker(marker,popup)
+									//this.instance.addLayer(marker);
 								}
 							}
 
@@ -456,6 +531,14 @@ Array.prototype.unique = function() {
 	}
 
 	toolKit = {
+		addMarker: function(marker,markerHTML){
+			//console.log(marker,markerHTML)
+			var latlng = marker._latlng.lat+','+marker._latlng.lng;
+			var markerHTML2 = markerHTML +'<div><a class="setDestination" data-latlng="'+ latlng +'">Navigate to here</a> | <a class="addToFav" data-latlng="'+ latlng +'">Add to favorites</a></div>';
+			marker.addTo(map).bindPopup(markerHTML2);
+			
+		},
+		
 		getPoiIcon : function(icon) {
 			marker = false;
 			if ($.inArray(icon, L.MakiMarkers.icons) > -1) {
@@ -640,7 +723,8 @@ Array.prototype.unique = function() {
 			markerHTML += (contact.tel) ? '<br />Tel: ' + escape(contact.tel) : '';
 			var marker = L.marker([contact.lat * 1, contact.lon * 1], {
 				icon : iconImage
-			}).addTo(map).bindPopup(markerHTML);
+			});
+			toolKit.addMarker(marker,markerHTML)
 			toolKit.favMarkers.push(marker);
 		},
 		removeFavMarkers : function() {
@@ -666,17 +750,16 @@ Array.prototype.unique = function() {
 	}
 
 })(jQuery, OC);
-
-(function($) {
-    $.fn.clickToggle = function(func1, func2) {
-        var funcs = [func1, func2];
-        this.data('toggleclicked', 0);
-        this.click(function() {
-            var data = $(this).data();
-            var tc = data.toggleclicked;
-            $.proxy(funcs[tc], this)();
-            data.toggleclicked = (tc + 1) % 2;
-        });
-        return this;
-    };
-}(jQuery));
+( function($) {
+		$.fn.clickToggle = function(func1, func2) {
+			var funcs = [func1, func2];
+			this.data('toggleclicked', 0);
+			this.click(function() {
+				var data = $(this).data();
+				var tc = data.toggleclicked;
+				$.proxy(funcs[tc], this)();
+				data.toggleclicked = (tc + 1) % 2;
+			});
+			return this;
+		};
+	}(jQuery));

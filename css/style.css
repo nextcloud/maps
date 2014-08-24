@@ -6,7 +6,8 @@
 	clear: both;
 }
 #app-navigation > ul ul {
- display: inline; 
+	display: inline;
+	width: 100%
 }
 #map {
                 width    : 100%;

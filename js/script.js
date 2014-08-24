@@ -130,9 +130,9 @@ Array.prototype.unique = function() {
 			Maps.mouseDowntime = new Date().getTime();
 		});
 		map.on('mouseup', function(e) {
-			console.log(e)
 			if (e.originalEvent.target.className !== 'leaflet-tile leaflet-tile-loaded' && e.originalEvent.target.nodeName != 'svg')
 				return;
+
 			var curTime = new Date().getTime();
 			if (Maps.droppedPin) {
 				map.removeLayer(Maps.droppedPin);
@@ -253,38 +253,26 @@ Array.prototype.unique = function() {
 		/**
 		 * setDestination on click
 		 */
-
-		$(document).on('click', '.setDestination', function() {
-			var latlng = $(this).attr('data-latlng');
-			map.locate({
+		map.locate({
 				setView : false,
 				watch : false
-			})
-			map.on('locationfound', function doRouteCalc(e) {
-				routing.setWaypoints([])
-				var start = [e.latitude, e.longitude];
-				var end = latlng.split(',');
-				end[0] = end[0] * 1;
-				end[1] = end[1] * 1;
-				//map.removeLayer(routing);
+		})
+		map.on('locationfound', function doRouteCalc(e) {
+				currentlocation = [e.latitude, e.longitude];
+		
+		})
+		$(document).on('click', '.setDestination', function() {
+			var latlng = $(this).attr('data-latlng');
+			routing.setWaypoints([])
+			var end = latlng.split(',');
+			end[0] = end[0] * 1;
+			end[1] = end[1] * 1;
+			//map.removeLayer(routing);
 
-				routing.setWaypoints([L.latLng(start[0], start[1]), L.latLng(end[0], end[1])]);
-				
-				$('.geocoder-1').show();
-				map.closePopup();
-				/*	routing = L.Routing.control({
-				 waypoints :  [L.latLng(start[0],start[1]), L.latLng(end[0],end[1])],
-				 geocoder : L.Control.Geocoder.nominatim(),
-				 plan : L.Routing.plan(null, {
-				 waypointIcon : function(i) {
-				 return new L.Icon.Label.Default({
-				 labelText : String.fromCharCode(65 + i)
-				 });
-				 }
-				 })
-				 }).addTo(map);*/
-
-			})
+			routing.setWaypoints([L.latLng(currentlocation[0], currentlocation[1]), L.latLng(end[0], end[1])]);
+			
+			$('.geocoder-1').show();
+			map.closePopup();
 		})
 	})
 	// End document ready

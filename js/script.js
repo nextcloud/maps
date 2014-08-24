@@ -129,6 +129,18 @@ Array.prototype.unique = function() {
 		});
 		map.on("dragend zoomend", function(e) {
 			Maps.saveCurrentLocation(e);
+			var searchInput = $('.geocoder-0')
+			if(searchInput.attr('completiontype') == 'local' && searchInput.val() !=''){
+				var data = {
+					search : searchInput.val(),
+					bbox : map.getBounds().toBBoxString()
+				}
+				clearTimeout(searchTimeout);
+				searchTimeout = setTimeout(function(){
+					console.log('Get new results');
+					mapSearch.getSearchResults(data,mapSearch.showResultsOnMap);
+				},500);
+			}
 		})
 
 		$(document).on('click', '.main-cat-layer', function(e) {
@@ -196,28 +208,11 @@ Array.prototype.unique = function() {
 			clearTimeout(searchTimeout);
 			if (e.keyCode != 13) {
 				searchTimeout = setTimeout(function() {
-					$.getJSON(OC.generateUrl('/apps/maps/search'), data, function(r) {
-					})
+					
 				}, 1000)
 			} else {
-				for ( i = 0; i < searchItems.length; i++) {
-					map.removeLayer(searchItems[i]);
-				}
-				searchItems = []
-				$.getJSON(OC.generateUrl('/apps/maps/search'), data, function renderSearchResults(r) {
-					console.log(r);
-					$.each(r.nodes, function() {
-						var iconImage = toolKit.getPoiIcon(this.type)
-						var markerHTML = '';
-						markerHTML += '';
-						markerHTML += '';
-						var marker = L.marker([this.lat * 1, this.lon * 1], {
-							icon : iconImage
-						}).addTo(map).bindPopup(markerHTML);
-						searchItems.push(marker);
-
-					})
-				})
+				mapSearch.clearSearchResults();
+				mapSearch.getSearchResults(data,mapSearch.showResultsOnMap);
 			}
 
 		})
@@ -244,6 +239,45 @@ Array.prototype.unique = function() {
 			map.setZoom(14);
 			firstRun = false;
 		}
+	}
+
+	mapSearch = {
+		searchItems: [],
+		_ids: [],
+		getSearchResults: function(data,callback){
+			$.getJSON(OC.generateUrl('/apps/maps/search'), data, function renderSearchResults(r) {
+					console.log(r);
+					callback(r)
+				})
+		},
+		
+		showResultsOnMap: function(r){
+			$.each(r.nodes, function() {
+						if ($.inArray(this.place_id,mapSearch._ids) != -1) {
+								return;
+						}
+						var iconImage = toolKit.getPoiIcon(this.type)
+						if(iconImage){
+								var markerHTML = '';
+								markerHTML += '';
+								markerHTML += '';
+								var marker = L.marker([this.lat * 1, this.lon * 1], {
+									icon : iconImage
+								}).addTo(map).bindPopup(markerHTML);
+								mapSearch.searchItems.push(marker);
+								mapSearch._ids.push(this.place_id)
+						}
+
+				})
+		},
+	
+		clearSearchResults: function() {
+			for ( i = 0; i < mapSearch.searchItems.length; i++) {
+				map.removeLayer(mapSearch.searchItems[i]);
+			}
+			mapSearch.searchItems = []
+		}
+
 	}
 
 	Maps = {

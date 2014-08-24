@@ -122,6 +122,10 @@ Array.prototype.unique = function() {
 		$(".leaflet-routing-geocoders").appendTo("#searchContainer");
 		$(".leaflet-routing-container").appendTo("#searchContainer");
 		$('.geocoder-0').attr('completiontype', 'local');
+
+		// properly style as input field
+		$('#searchContainer').find('input').attr('type', 'text');
+
 		map.on('mousedown', function(e) {
 			//console.log('mousedown');
 		});

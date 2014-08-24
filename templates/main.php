@@ -39,7 +39,7 @@
 		</div>	<br />
 		<ul class="with-icon">
 			<li>
-				<a class='contactLayer icon-contacts-dark' data-layer="contacts">Contacts Layer</a>
+				<a class='contactLayer icon-contacts-dark' data-layer="contacts">Contacts</a>
 			</li>
 			<li>
 				<a class='main-cat-layer icon-info' data-layer="amenity">Amenity</a>

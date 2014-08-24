@@ -88,6 +88,7 @@ Array.prototype.unique = function() {
 			zoom : oldZoom,
 			layers : [mapQuest]
 		});
+		map.options.minZoom = 3;
 		var hash = new L.Hash(map);
 		/*var baseMaps = {
 		 "MapBox" : mapbox,
@@ -629,7 +630,9 @@ Array.prototype.unique = function() {
 			}
 
 			var markerHTML = '<b>' + contact.fn + "</b>";
-			markerHTML += '<br />' + contact.adr.street + " " + contact.adr.city;
+			var street = (contact.adr.street) ? contact.adr.street : '';
+			var city = (contact.adr.city) ? contact.adr.city : '';
+			markerHTML += '<br />' + street + " " + city;
 			markerHTML += (contact.tel) ? '<br />Tel: ' + escape(contact.tel) : '';
 			var marker = L.marker([contact.lat * 1, contact.lon * 1], {
 				icon : iconImage

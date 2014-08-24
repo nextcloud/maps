@@ -166,7 +166,11 @@ Array.prototype.unique = function() {
 				}
 			})
 		})
-
+		$('.contactLayer').clickToggle(function(){
+			Maps.loadAdressBooks()
+		},function(){
+			toolKit.removeFavMarkers()
+		})
 		$(document).on('click', '.subLayer', function() {
 			var layerGroup = $(this).attr('data-layerGroup');
 			var layerValue = $(this).attr('data-layerValue');
@@ -651,3 +655,17 @@ Array.prototype.unique = function() {
 	}
 
 })(jQuery, OC);
+
+(function($) {
+    $.fn.clickToggle = function(func1, func2) {
+        var funcs = [func1, func2];
+        this.data('toggleclicked', 0);
+        this.click(function() {
+            var data = $(this).data();
+            var tc = data.toggleclicked;
+            $.proxy(funcs[tc], this)();
+            data.toggleclicked = (tc + 1) % 2;
+        });
+        return this;
+    };
+}(jQuery));

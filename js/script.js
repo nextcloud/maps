@@ -247,6 +247,7 @@ Array.prototype.unique = function() {
 
 				routing.setWaypoints([L.latLng(start[0],start[1]), L.latLng(end[0],end[1])]);
 				$('.geocoder-1').show();
+				map.closePopup();
 			/*	routing = L.Routing.control({
 					waypoints :  [L.latLng(start[0],start[1]), L.latLng(end[0],end[1])],
 					geocoder : L.Control.Geocoder.nominatim(),

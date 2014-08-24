@@ -88,7 +88,7 @@ Array.prototype.unique = function() {
 			zoom : oldZoom,
 			layers : [mapQuest]
 		});
-
+		var hash = new L.Hash(map);
 		/*var baseMaps = {
 		 "MapBox" : mapbox,
 		 "Mapnik" : mapnik,

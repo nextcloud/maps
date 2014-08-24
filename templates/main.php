@@ -10,6 +10,7 @@
 \OCP\Util::addScript('maps', '3rdparty/leaflet/lib/Control.Geocoder');
 \OCP\Util::addScript('maps', '3rdparty/leaflet/lib/leaflet.iconlabel');
 
+\OCP\Util::addScript('maps', '3rdparty/leaflet/plugins/leaflet-hash');
 \OCP\Util::addScript('maps', '3rdparty/leaflet/plugins/leaflet.active-layers.min');
 \OCP\Util::addScript('maps', '3rdparty/leaflet/plugins/leaflet.select-layers.min');
 \OCP\Util::addScript('maps', '3rdparty/leaflet/plugins/leaflet-compass.min');

@@ -69,6 +69,7 @@
 			<div id="progressBar"><div></div></div>
 			<div id="cCounter"></div>
 		</div>
+		<!--
 		<div id="app-settings">
 			<div id="app-settings-header">
 				<button class="settings-button" data-apps-slide-toggle="#app-settings-content"></button>
@@ -77,6 +78,7 @@
 	
 			</div>
 		</div>
+	   -->
   	</div>
 	<div id="app-content">
 		<div id="map">

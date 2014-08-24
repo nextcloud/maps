@@ -197,7 +197,7 @@ Array.prototype.unique = function() {
 		searchItems = []
 		searchTimeout = 0;
 
-		$(document).on('keyup', '.geocoder-0', function(e) {
+		$(document).on('keyup blur', '.geocoder-0', function(e) {
 			if ($(this).attr('completiontype') != 'local')
 				return;
 
@@ -206,6 +206,9 @@ Array.prototype.unique = function() {
 				bbox : map.getBounds().toBBoxString()
 			}
 			clearTimeout(searchTimeout);
+			if($(this).val()==''){
+				mapSearch.clearSearchResults();
+			}
 			if (e.keyCode != 13) {
 				searchTimeout = setTimeout(function() {
 					
@@ -246,18 +249,24 @@ Array.prototype.unique = function() {
 		_ids: [],
 		getSearchResults: function(data,callback){
 			$.getJSON(OC.generateUrl('/apps/maps/search'), data, function renderSearchResults(r) {
-					console.log(r);
 					callback(r)
 				})
 		},
 		
 		showResultsOnMap: function(r){
+		if(map.getZoom() <= 15){
+			var zoomMSG = '<div class="leaflet-control-minZoomIndecator leaflet-control" style="font-size: 2em; border-top-left-radius: 10px; border-top-right-radius: 10px; border-bottom-right-radius: 10px; border-bottom-left-radius: 10px; padding: 1px 15px; display: block; background: rgba(255, 255, 255, 0.701961);">Results might be limited due current zoom, zoom in to get more</div>'
+			$('.leaflet-bottom.leaflet-left').html(zoomMSG);
+		}
+			
 			$.each(r.nodes, function() {
 						if ($.inArray(this.place_id,mapSearch._ids) != -1) {
 								return;
 						}
 						var iconImage = toolKit.getPoiIcon(this.type)
 						if(iconImage){
+								console.log(this);							
+							
 								var markerHTML = '';
 								markerHTML += '';
 								markerHTML += '';

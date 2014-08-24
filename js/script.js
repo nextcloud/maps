@@ -273,6 +273,13 @@ Array.prototype.unique = function() {
 			
 			$('.geocoder-1').show();
 			map.closePopup();
+		});
+		
+		/**
+		 * Clear route
+		 */
+		$(document).on('click','.clearroute',function(){
+			routing.setWaypoints([]);
 		})
 	})
 	// End document ready

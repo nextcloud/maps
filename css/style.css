@@ -115,3 +115,12 @@ i{
 .hidden{
 	display: none !important;
 }
+button.clearroute.icon-close {
+	font-size: 12px;
+	float: left;
+	background-position-x: 0px;
+	padding-left: 17px;
+	padding-top: 5px;
+	background-position-y: 2px;
+	margin-left: 0px;
+}

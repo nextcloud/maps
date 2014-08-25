@@ -252,7 +252,8 @@
 						icon: data[i].icon,
 						name: data[i].display_name,
 						bbox: L.latLngBounds([bbox[0], bbox[2]], [bbox[1], bbox[3]]),
-						center: L.latLng((bbox[0] + bbox[1]) / 2, (bbox[2] + bbox[3]) / 2)
+						center: L.latLng((bbox[0] + bbox[1]) / 2, (bbox[2] + bbox[3]) / 2),
+						originalObject: data
 					};
 				}
 				cb.call(context, results);
@@ -264,13 +265,15 @@
 				lat: location.lat,
 				lon: location.lng,
 				zoom: Math.round(Math.log(scale / 256) / Math.log(2)),
+				addressdetails: 1,
 				format: 'json'
 			}, function(data) {
 				var loc = L.latLng(data.lat, data.lon);
 				cb.call(context, [{
 					name: data.display_name,
 					center: loc,
-					bounds: L.latLngBounds(loc, loc)
+					bounds: L.latLngBounds(loc, loc),
+					originalObject: data
 				}]);
 			}, this, 'json_callback');
 		}

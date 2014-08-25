@@ -136,16 +136,20 @@ Array.prototype.unique = function() {
 			var curTime = new Date().getTime();
 			if (Maps.droppedPin) {
 				map.removeLayer(Maps.droppedPin);
+				Maps.droppedPin = false;
 			}
 			if ((curTime - Maps.mouseDowntime) > 200 && Maps.dragging === false) {//200 = 2 seconds
 				console.log('Long press', (curTime - Maps.mouseDowntime))
-
-				//Maps.droppedPin = new L.marker(e.latlng);
-				//toolKit.addMarker(Maps.droppedPin, '', true);
-				console.log(e.latlng)
-				Maps.showPopup = true;
-				routing.setWaypoints([L.latLng(e.latlng.lat, e.latlng.lng)]);
-				Maps.showPopup = false;
+				Maps.droppedPin = new L.marker(e.latlng);
+				toolKit.addMarker(Maps.droppedPin, '', true);
+				var decoder = L.Control.Geocoder.nominatim();
+				decoder.reverse(e.latlng,67108864,function(results){
+				    var result = results[0];
+				    if($('.geocoder-0').val()==''){
+				      $('.geocoder-0').val(result.name); 
+				      setTimeout(function(){ Maps.droppedPin.setPopupContent(result.name+Maps.droppedPin.getPopup()._content) }, 50);
+				    }
+				})
 			}
 
 		});

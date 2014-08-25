@@ -108,6 +108,31 @@ class PageController extends Controller {
 	 * @NoAdminRequired
 	 * @NoCSRFRequired
 	 */
+  public function geodecode(){
+   $lat = $this->params('lat');
+   $lng = $this->params('lng');
+   $zoom = $this->params('zoom');
+   
+   $hash = md5($lat.','.$lng.'@'.$zoom);
+   
+   $checkCache = $this -> checkGeoCache($hash);
+  if(!$checkCache){
+      $url = 'http://nominatim.openstreetmap.org/reverse/?format=json&email=brantje@gmail.com&lat='.$lat.'&lng='. $lng.'&zoom=67108864';
+      $response = $this->getURL($url,false);
+      if($response){
+        $this -> cacheManager -> insert($hash, $response);
+      }
+   } else {
+     $response = $checkCache;
+   }
+   echo $response;
+   die();
+  } 
+	/**
+	 * Simply method that posts back the payload of the request
+	 * @NoAdminRequired
+	 * @NoCSRFRequired
+	 */
 	public function adresslookup() {
 		//
 		$street = ($this -> params('street')) ? $this -> params('street') : '';
@@ -158,6 +183,7 @@ class PageController extends Controller {
 		$ch = curl_init();
 		curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);
 		curl_setopt($ch, CURLOPT_HEADER, 0);
+    curl_setopt($ch, CURLOPT_TIMEOUT, 900); 
 		curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 1);
 		if ($userAgent) {
 			curl_setopt($ch, CURLOPT_USERAGENT, 'Mozilla/5.0 (Windows; U; Windows NT 6.1; en-US; rv:1.9.1.2) Gecko/20090729 Firefox/3.5.2 GTB5');

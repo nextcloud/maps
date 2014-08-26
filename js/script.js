@@ -262,6 +262,7 @@ Array.prototype.unique = function() {
       clearTimeout(searchTimeout);
       if ($(this).val() == '') {
         mapSearch.clearSearchResults();
+        mapSearch._ids = [];
       }
       if (e.keyCode != 13) {
         searchTimeout = setTimeout(function() {

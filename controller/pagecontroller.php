@@ -85,7 +85,7 @@ class PageController extends Controller {
 		$cm = \OC::$server -> getContactsManager();
 		$kw = $this -> params('search');
 		$bbox = $this -> params('bbox');
-		$response = array('contacts'=>array(),'nodes'=>array());
+		$response = array('contacts'=>array(),'nodes'=>array(),'addresses'=>array());
 		
 		$contacts = $cm -> search($kw, array('FN', 'ADR'));
 		foreach ($contacts as $r) {
@@ -98,7 +98,13 @@ class PageController extends Controller {
 			array_push($response['contacts'],$contact);
 		}
 		$response['nodes'] = $this->bboxSearch($kw, $bbox);
-		$response['addresses'] = (array)json_decode($this->doAdresslookup($kw));
+		$addresses = $this->doAdresslookup(urlencode($kw));
+		foreach($addresses as $address){
+			array_push($response['addresses'],$address);
+			if($address->osm_type=="node"){
+			}
+		}
+		//$response['addresses'] = (array)($this->doAdresslookup($kw));
 		
 		return $response;
 	}

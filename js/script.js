@@ -248,7 +248,7 @@ Array.prototype.unique = function() {
     /**
      * Custom search function
      */
-    searchItems = []
+/*    searchItems = []*/
     searchTimeout = 0;
 
     $(document).on('keyup blur', '.geocoder-0', function(e) {
@@ -339,76 +339,90 @@ Array.prototype.unique = function() {
       })
     },
 
-    showResultsOnMap : function(r) {
-      if (map.getZoom() <= 14) {
-        var zoomMSG = '<div class="leaflet-control-minZoomIndecator leaflet-control" style="font-size: 2em; border-top-left-radius: 10px; border-top-right-radius: 10px; border-bottom-right-radius: 10px; border-bottom-left-radius: 10px; padding: 1px 15px; display: block; background: rgba(255, 255, 255, 0.701961);">Results might be limited due current zoom, zoom in to get more</div>'
-        $('.leaflet-bottom.leaflet-left').html(zoomMSG);
-      } else {
-        $('.leaflet-control-minZoomIndecator ').remove();
-      }
-      console.log(r)
 
-      $.each(r.contacts, function() {
-        var contact = this;
-        if ($.inArray(contact.id, mapSearch._ids) != -1) {
-          return;
-        }
-        console.log(contact)
-        if (contact.location) {
-          if (contact.thumbnail) {
-            var imagePath = 'data:image/png;base64,' + contact.thumbnail
-            var iconImage = L.icon({
-              iconUrl : imagePath,
-              iconSize : [42, 49],
-              iconAnchor : [21, 49],
-              popupAnchor : [0, -49],
-              className : 'contact-icon'
-            });
-          } else {
-            var imagePath = OC.filePath('maps', 'img', 'icons/marker_anonPerson.png');
-            var iconImage = L.icon({
-              iconUrl : imagePath,
-              iconSize : [42, 49],
-              iconAnchor : [21, 49],
-              popupAnchor : [0, -49]
-            });
-          }
+		showResultsOnMap : function(r) {
+			if (map.getZoom() <= 14) {
+				var zoomMSG = '<div class="leaflet-control-minZoomIndecator leaflet-control" style="font-size: 2em; border-top-left-radius: 10px; border-top-right-radius: 10px; border-bottom-right-radius: 10px; border-bottom-left-radius: 10px; padding: 1px 15px; display: block; background: rgba(255, 255, 255, 0.701961);">Results might be limited due current zoom, zoom in to get more</div>'
+				$('.leaflet-bottom.leaflet-left').html(zoomMSG);
+			} else {
+				$('.leaflet-control-minZoomIndecator ').remove();
+			}
+			console.log(r)
 
-          var markerHTML = '<b>' + contact.FN + "</b>";
+			$.each(r.contacts, function() {
+				var contact = this;
+				if ($.inArray(contact.id, mapSearch._ids) != -1) {
+					return;
+				}
+				if (contact.location) {
+					if (contact.thumbnail) {
+						var imagePath = 'data:image/png;base64,' + contact.thumbnail
+						var iconImage = L.icon({
+							iconUrl : imagePath,
+							iconSize : [42, 49],
+							iconAnchor : [21, 49],
+							popupAnchor : [0, -49],
+							className : 'contact-icon'
+						});
+					} else {
+						var imagePath = OC.filePath('maps', 'img', 'icons/marker_anonPerson.png');
+						var iconImage = L.icon({
+							iconUrl : imagePath,
+							iconSize : [42, 49],
+							iconAnchor : [21, 49],
+							popupAnchor : [0, -49]
+						});
+					}
 
-          var street = [contact.ADR[0][0], contact.ADR[0][1], contact.ADR[0][2]].clean('').join('<br />');
-          var city = (contact.ADR[0][3]) ? contact.ADR[0][3] : '';
-          markerHTML += '<br />' + street + " " + city;
-          markerHTML += (contact.TEL) ? '<br />Tel: ' + escape(contact.TEL[0]) : '';
-          var marker = L.marker([contact.location.lat * 1, contact.location.lon * 1], {
-            icon : iconImage
-          });
-          toolKit.addMarker(marker, markerHTML)
-          mapSearch.searchItems.push(marker);
-        }
-        mapSearch._ids.push(contact.id)
-      })
+					var markerHTML = '<b>' + contact.FN + "</b>";
 
-      $.each(r.nodes, function() {
-        if ($.inArray(this.place_id, mapSearch._ids) != -1) {
-          return;
-        }
-        var iconImage = toolKit.getPoiIcon(this.type)
-        if (iconImage) {
+					var street = [contact.ADR[0][0], contact.ADR[0][1], contact.ADR[0][2]].clean('').join('<br />');
+					var city = (contact.ADR[0][3]) ? contact.ADR[0][3] : '';
+					markerHTML += '<br />' + street + " " + city;
+					markerHTML += (contact.TEL) ? '<br />Tel: ' + escape(contact.TEL[0]) : '';
+					var marker = L.marker([contact.location.lat * 1, contact.location.lon * 1], {
+						icon : iconImage
+					});
+					toolKit.addMarker(marker, markerHTML)
+					mapSearch.searchItems.push(marker);
+				}
+				mapSearch._ids.push(contact.id)
+			})
 
-          var markerHTML = '';
-          markerHTML += '';
-          markerHTML += '';
-          var marker = L.marker([this.lat * 1, this.lon * 1], {
-            icon : iconImage
-          });
-          toolKit.addMarker(marker, markerHTML)
-          mapSearch.searchItems.push(marker);
-          mapSearch._ids.push(this.place_id)
-        }
+			$.each(r.addresses, function() {
+				if ($.inArray(this.place_id, mapSearch._ids) != -1) {
+					return;
+				}
+				var markerHTML = this.display_name.replace(',','<br />');
+				var marker = new L.marker([this.lat * 1, this.lon * 1]);
+				toolKit.addMarker(marker, markerHTML)
+				mapSearch.searchItems.push(marker);
+				mapSearch._ids.push(this.place_id)
 
-      })
-    },
+			});
+
+			$.each(r.nodes, function() {
+				if ($.inArray(this.place_id, mapSearch._ids) != -1) {
+					return;
+				}
+				var iconImage = toolKit.getPoiIcon(this.type)
+				var markerHTML = this.display_name.replace(',','<br />');
+				if (iconImage) {
+					var marker = L.marker([this.lat * 1, this.lon * 1], {
+						icon : iconImage
+					});
+				}
+				else{
+					var marker = new L.marker([this.lat * 1, this.lon * 1]);
+				}
+				toolKit.addMarker(marker, markerHTML)
+				mapSearch.searchItems.push(marker);
+				mapSearch._ids.push(this.place_id)
+
+			});
+
+		}
+,
 
     clearSearchResults : function() {
       for ( i = 0; i < mapSearch.searchItems.length; i++) {
@@ -688,7 +702,9 @@ Array.prototype.unique = function() {
         'clock-o' : ['clock'],
         'key' : ['locksmith'],
         'video-camera' : ['video'],
-        'magic' : ['party']
+        'magic' : ['party'],
+        'road': ['living_street'],
+        'home': ['residential']
       }
       var returnClass = false;
       $.each(mapper, function(faClass, types) {

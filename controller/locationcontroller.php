@@ -13,6 +13,7 @@ namespace OCA\Maps\Controller;
 
 use \OCP\IRequest;
 use \OCP\AppFramework\Http\TemplateResponse;
+use \OCP\AppFramework\Http\JSONResponse;
 use \OCP\AppFramework\ApiController;
 
 
@@ -20,9 +21,11 @@ class LocationController extends ApiController {
 
 	private $userId;
 	private $cacheManager;
-	public function __construct($appName, IRequest $request, $userId) {
+	private $locationManager;
+	public function __construct($appName, IRequest $request,$locationManager,$userId) {
 		parent::__construct($appName, $request);
-		$this -> userId = $userId;
+		$this->locationManager = $locationManager;
+		$this->userId = $userId;
 	}
 
 	/**
@@ -35,10 +38,63 @@ class LocationController extends ApiController {
 	 * @NoAdminRequired
 	 * @NoCSRFRequired
 	 * @CORS
+	 * @PublicPage
 	 */
 	public function update() {
 		$params = array('user' => $this -> userId);
-		print_r($params);
+		$location['lat'] = $this->params('lat');
+		$location['lng'] = $this->params('lon');
+		$location['timestamp'] = $this->params('timestamp');
+		$location['hdop'] = $this->params('hdop');
+		$location['altitude'] = $this->params('altitude');
+		$location['speed'] = $this->params('speed');
+		$location['device_hash'] = $this->params('hash');
+		
+		/**
+		 * @TODO check if hash exists
+		 */
+		
+		$this->locationManager->save($location);
+	}
+
+	/**
+	 *  @NoAdminRequired
+	 */	
+	public function addDevice(){
+		$deviceName = $this->params('name');
+		$hash = uniqid();
+		$deviceId = $this->locationManager->addDevice($deviceName,$hash,$this->userId);
+		$response = array('id'=> $deviceId,'hash'=>$hash);
+		return new JSONResponse($response);			
+	}
+
+	/**
+	 * @NoAdminRequired
+	 */		
+	public function loadDevices(){
+		$response = $this->locationManager->loadAll($this->userId);
+		return new JSONResponse($response);			
+	}
+	/**
+	 * @NoAdminRequired
+	 * @NoCSRFRequired
+	 */		
+	public function loadLocations(){
+		$deviceIds = explode(',',$this->params('devices'));
+		$limit = ($this->params('limit')) ? (int) $this->params('limit') : 500;
+		$response = array();
+		foreach($deviceIds as $device){
+			$response[$device] = $this->locationManager->loadHistory($device,$limit);
+		}
+		return new JSONResponse($response);			
+	}
+	/**
+	 * @NoAdminRequired
+	 */		
+	public function removeDevice(){
+		$deviceId = $this->params('deviceId');
+		$response = $this->locationManager->remove($deviceId,$this->userId);
+		return new JSONResponse($response);			
 	}
 
 }

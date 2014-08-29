@@ -42,16 +42,26 @@
 				<a class='contactLayer icon-contacts-dark' data-layer="contacts">Contacts</a>
 			</li>
 			<li>
-				<a class='main-cat-layer icon-info' data-layer="amenity">Amenity</a>
+				<a class='main-cat-layer icon-info toggle-children' data-layer="amenity">Amenity</a>
 				<ul id="amenity-items" class="hidden"></ul>
 			</li>
 			<li>
-				<a class='main-cat-layer icon-toggle' data-layer="tourism">Tourism</a>
+				<a class='main-cat-layer icon-toggle toggle-children' data-layer="tourism">Tourism</a>
 				<ul id="tourism-items" class="hidden"></ul>
 			</li>
 			<li>
-				<a class='main-cat-layer icon-home' data-layer="shop">Shops</a>
+				<a class='main-cat-layer icon-home toggle-children' data-layer="shop">Shops</a>
 				<ul id="shop-items" class="hidden"></ul>
+			</li>
+			<li>
+				<a class="toggle-children">My devices</a>
+				<ul id="deviceList" class="hidden">
+				<?php foreach($_['devices'] as $entry){ ?>
+ 					 <li><a class="device" data-deviceId="<?php p($entry['id']); ?>"><?php p($entry['name']); ?></a></li>
+				<?php
+				}
+				?>
+				</ul>
 			</li>
 		</ul>
 		
@@ -59,19 +69,29 @@
 			<div id="progressBar"><div></div></div>
 			<div id="cCounter"></div>
 		</div>
-		<!--
 		<div id="app-settings">
 			<div id="app-settings-header">
 				<button class="settings-button" data-apps-slide-toggle="#app-settings-content"></button>
 			</div>
 			<div id="app-settings-content">
-	
+					<a id="tracking-settings">Location tracking settings</a>
 			</div>
 		</div>
-	   -->
+	  
   	</div>
 	<div id="app-content">
 		<div id="map">
 		</div>
 	</div>
+</div>
+
+<div id="trackingSettingsPopup" style="display: none;">
+	<h2>Add an new device</h2>
+	<form id="addtracking">Name: <input type="text" name="deviceName"><button class="" type="button">+</button></form>
+	<table id="trackingDevices">
+		<thead><th>Name</th><th>Hash</th></thead>
+		<tbody>
+			
+		</tbody>
+	</table>
 </div>

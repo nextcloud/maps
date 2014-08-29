@@ -20,10 +20,12 @@ class PageController extends Controller {
 
 	private $userId;
 	private $cacheManager;
-	public function __construct($appName, IRequest $request, $userId, $cacheManager) {
+	private $locationManager;
+	public function __construct($appName, IRequest $request, $userId, $cacheManager,$locationManager) {
 		parent::__construct($appName, $request);
 		$this -> userId = $userId;
 		$this -> cacheManager = $cacheManager;
+		$this -> locationManager = $locationManager;
 	}
 
 	/**
@@ -37,7 +39,7 @@ class PageController extends Controller {
 	 * @NoCSRFRequired
 	 */
 	public function index() {
-		$params = array('user' => $this -> userId);
+		$params = array('user' => $this -> userId,'devices'=>$this->locationManager->loadAll($this->userId));
 		return new TemplateResponse('maps', 'main', $params);
 		// templates/main.php
 	}

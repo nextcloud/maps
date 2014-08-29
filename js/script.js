@@ -30,6 +30,18 @@ Array.prototype.unique = function() {
 };
 (function($, OC) {
 
+	$.fn.clickToggle = function(func1, func2) {
+		var funcs = [func1, func2];
+		this.data('toggleclicked', 0);
+		this.click(function() {
+			var data = $(this).data();
+			var tc = data.toggleclicked;
+			$.proxy(funcs[tc], this)();
+			data.toggleclicked = (tc + 1) % 2;
+		});
+		return this;
+	}; 
+
 	// initialize map when page ready
 	$(document).ready(function() {
 		marker = null;
@@ -195,7 +207,7 @@ Array.prototype.unique = function() {
 			}
 		})
 
-		$(document).on('click', '.main-cat-layer', function(e) {
+		$(document).on('click', '.toggle-children', function(e) {
 			var subCat = $(this).parent().find('ul');
 			if (subCat.is(":visible")) {
 				subCat.slideUp();
@@ -245,6 +257,20 @@ Array.prototype.unique = function() {
 				 Maps.updateLayers(false,false);
 				 }*/
 
+			}
+		});
+		
+		$(document).on('click','.device',function(){
+			var isVisible = $(this).find('i').length;
+			var dId = $(this).attr('data-deviceId')
+			if (isVisible == 1) {
+				$(this).find('i').remove();
+			}
+			else
+			{
+				Maps.activeDevices.push(dId);
+				Maps.loadDevicesLastPosition();
+					$(this).append('<i class="icon-toggle fright micon"></i>');
 			}
 		})
 		/**
@@ -442,6 +468,8 @@ Array.prototype.unique = function() {
 		mouseDowntime : 0,
 		droppedPin : {},
 		dragging : false,
+		activeDevices: [],
+		deviceMarkers: [],
 		loadAdressBooks : function() {
 			Maps.addressbooks = [];
 			$.get(OC.generateUrl('apps/contacts/addressbooks/'), function(r) {
@@ -455,6 +483,30 @@ Array.prototype.unique = function() {
 				Maps.loadContacts();
 			})
 		},
+		loadDevicesLastPosition: function(){
+			var data = {devices: Maps.activeDevices.join(','),limit: 1};
+			$.get(OC.generateUrl('/apps/maps/api/1.0/location/loadLocations'),data,function(response){
+				Maps.clearDevicePositions();
+				$.each(response,function(deviceId,location){
+					console.log(deviceId,location);
+					var device = location[0];
+					var markerHTML = device.name+'<br />';
+					markerHTML += 'Lat: '+ device.lat +' Lon: '+ device.lng+'<br />';
+					markerHTML += 'Speed: '+ device.speed +'<br />'
+					markerHTML += 'Time: '+ new Date(device.timestamp*1).toLocaleString("nl-NL")
+					var marker = new L.marker([device.lat * 1, device.lng * 1]);
+					toolKit.addMarker(marker, markerHTML)
+					Maps.deviceMarkers.push(marker);
+				})
+			});
+		},
+		clearDevicePositions : function() {
+			for ( i = 0; i < Maps.deviceMarkers.length; i++) {
+				map.removeLayer(Maps.deviceMarkers[i]);
+			}
+			Maps.deviceMarkers = [];
+		},
+		
 		loadContacts : function() {
 			Maps.tempArr = [];
 			Maps.tempTotal = 0;
@@ -815,16 +867,47 @@ Array.prototype.unique = function() {
 		tourism : ["artwork", "hostel", "attraction", "hotel", "information", "museum", "gallery", "viewpoint", "picnic_site", "guest_house", "theme_park", "apartment", "zoo", "camp_site", "chalet", "motel", "citytour", "aquarium"]
 	}
 
-})(jQuery, OC); ( function($) {
-		$.fn.clickToggle = function(func1, func2) {
-			var funcs = [func1, func2];
-			this.data('toggleclicked', 0);
-			this.click(function() {
-				var data = $(this).data();
-				var tc = data.toggleclicked;
-				$.proxy(funcs[tc], this)();
-				data.toggleclicked = (tc + 1) % 2;
+	mapSettings = {
+		openTrackingSettings: function(){
+			$.get(OC.generateUrl('/apps/maps/api/1.0/location/loadDevices'),function(d){
+				var tableHTML;
+				$.each(d,function(){
+					tableHTML +='<tr><td>'+ this.name +'</td><td>'+ this.hash +'</td><td><div class="icon-delete icon" data-deviceId="'+ this.id +'"></div></td></tr>';
+				});
+				$('#trackingDevices tbody').html(tableHTML);
+			})
+			$('#trackingSettingsPopup').dialog({
+				buttons:{
+					"Close": function(){
+						$(this).dialog('destroy');
+						$('#addtracking')[0].reset()
+					}
+				}
+					
 			});
-			return this;
-		};
-	}(jQuery));
+		},
+		saveDevice: function(){
+			if( $('#addtracking input').val()=='') 
+				return
+			var formData = {name: $('#addtracking input').val()};
+			$.post(OC.generateUrl('/apps/maps/api/1.0/location/adddevice'),formData,function(d){
+				$('#trackingDevices tbody').append('<tr><td>'+ formData.name +'</td><td>'+ d.hash +'</td><td><div class="icon-delete icon" data-deviceId="'+ d.id +'"></div></td></tr>');
+				$('#addtracking input').val('');
+			});
+		},
+		
+		deleteDevice: function(e){
+			var dId = $(this).attr('data-deviceId');
+			$(this).parent().parent().remove();
+			console.log($(this).parent().parent())
+			///api/1.0/location/removedevice
+			var formData = {deviceId: dId};
+			$.post(OC.generateUrl('/apps/maps/api/1.0/location/removedevice'),formData)
+			
+		}	
+	}
+	$(document).on('click','#tracking-settings',mapSettings.openTrackingSettings)
+	$(document).on('click','#addtracking button',mapSettings.saveDevice)
+	$(document).on('click','#trackingDevices .icon-delete',mapSettings.deleteDevice)
+	
+})(jQuery, OC); 

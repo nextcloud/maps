@@ -1,5 +1,4 @@
-
-#content-wrapper{
+#content-wrapper {
 	overflow-y: hidden;
 }
 #app-navigation > ul {
@@ -10,19 +9,19 @@
 	width: 100%
 }
 #map {
-                width    : 100%;
-                position : relative;
-                height   : 100%;
+	width: 100%;
+	position: relative;
+	height: 100%;
 }
 .olControlAttribution {
-	position      : absolute;
-	font-size     : 10px;
-	bottom        : 0 !important;
-	right         : 0 !important;
-	background    : rgba(0,0,0,0.1);
-	font-family   : Arial;
-	padding       : 2px 4px;
-	border-radius : 5px 0 0 0;
+	position: absolute;
+	font-size: 10px;
+	bottom: 0 !important;
+	right: 0 !important;
+	background: rgba(0,0,0,0.1);
+	font-family: Arial;
+	padding: 2px 4px;
+	border-radius: 5px 0 0 0;
 }
 div.olControlZoom a {
 	display: block;
@@ -44,32 +43,32 @@ div.olControlZoom a {
 }
 
 .leaflet-control-zoom {
-margin-top: 50px !important;
+	margin-top: 50px !important;
 }
 
 input#search {
 	width: 180px;
 	margin: 10px 10px;
 }
-div#search-icon{
-height: 16px;
-width: 16px;
-display: inline-block;
-cursor: pointer
+div#search-icon {
+	height: 16px;
+	width: 16px;
+	display: inline-block;
+	cursor: pointer
 }
-.geocoder-1{
+.geocoder-1 {
 	display: none;
 }
 .contact-icon {
-background: url('../img/icons/personBackground.png');
-padding: 4px 5px 13px 4px;
+	background: url('../img/icons/personBackground.png');
+	padding: 4px 5px 13px 4px;
 }
-i{
+i { 
 	display: inline-block;
 	height: 16px;
 	width: 16px;
 }
-.fright{
+.fright {
 	float: right;
 }
 .micon {
@@ -77,12 +76,13 @@ i{
 	position: absolute;
 	left: 40px;
 }
-.icon{
+.icon {
 	display: inline-block;
 	height: 16px;
 	width: 16px;
+	cursor: pointer;
 }
-#loadingContacts{
+#loadingContacts {
 	height: 60px;
 	position: fixed;
 	bottom: 45px;
@@ -95,24 +95,24 @@ i{
 	border-top: 1px solid #ccc;
 }
 #progressBar {
-        width: 222px;
-        height: 22px;
-        border: 1px solid #111;
-        background-color: #292929;
+	width: 222px;
+	height: 22px;
+	border: 1px solid #111;
+	background-color: #292929;
 }
- 
+
 #progressBar div {
-        height: 100%;
-        color: #fff;
-        text-align: right;
-        line-height: 22px; /* same as #progressBar height if we want text middle aligned */
-        width: 0;
-        background-color: #426392;
+	height: 100%;
+	color: #fff;
+	text-align: right;
+	line-height: 22px; /* same as #progressBar height if we want text middle aligned */
+	width: 0;
+	background-color: #426392;
 }
 #app-navigation > ul {
 	padding-bottom: 70px;
 }
-.hidden{
+.hidden {
 	display: none !important;
 }
 button.clearroute.icon-close {
@@ -123,4 +123,11 @@ button.clearroute.icon-close {
 	padding-top: 5px;
 	background-position-y: 2px;
 	margin-left: 0px;
+}
+
+table#trackingDevices {
+	width: 100%;
+}
+#trackingDevices > thead > tr > th:first-child {
+	width: 150px;
 }

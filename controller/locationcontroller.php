@@ -13,10 +13,10 @@ namespace OCA\Maps\Controller;
 
 use \OCP\IRequest;
 use \OCP\AppFramework\Http\TemplateResponse;
-use \OCP\AppFramework\Controller;
+use \OCP\AppFramework\ApiController;
 
 
-class LocationController extends Controller {
+class LocationController extends ApiController {
 
 	private $userId;
 	private $cacheManager;
@@ -38,8 +38,7 @@ class LocationController extends Controller {
 	 */
 	public function update() {
 		$params = array('user' => $this -> userId);
-		return new TemplateResponse('maps', 'main', $params);
-		// templates/main.php
+		print_r($params);
 	}
 
 }

@@ -28,4 +28,10 @@ $application->registerRoutes($this, array('routes' => array(
     array('name' => 'page#adresslookup', 'url' => '/adresslookup', 'verb' => 'GET'),
     array('name' => 'page#geodecode', 'url' => '/geodecode', 'verb' => 'GET'),
     array('name' => 'page#search', 'url' => '/search', 'verb' => 'GET'),
+    
+	array('name' => 'location#preflighted_cors', 'url' => '/api/1.0/location/{path}','verb' => 'OPTIONS',
+    'requirements' => array('path' => '.+')
+	),
+    array('name' => 'location#update', 'url' => '/api/1.0/location/update', 'verb' => 'GET'), 
+    
 )));

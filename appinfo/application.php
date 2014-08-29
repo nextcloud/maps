@@ -15,6 +15,7 @@ namespace OCA\Maps\AppInfo;
 use \OCP\AppFramework\App;
 use \OCA\Maps\Db\CacheManager;
 use \OCA\Maps\Controller\PageController;
+use \OCA\Maps\Controller\LocationController;
 
 
 class Application extends App {
@@ -34,6 +35,13 @@ class Application extends App {
 				$c->query('Request'),
 				$c->query('UserId'),
 				$c->query('CacheManager')
+			);
+		});
+		$container->registerService('LocationController', function($c) {
+			return new LocationController(
+				$c->query('AppName'), 
+				$c->query('Request'),
+				$c->query('UserId')
 			);
 		});
 	

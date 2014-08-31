@@ -111,6 +111,7 @@ Array.prototype.unique = function() {
 
 		map.addControl(new L.Control.Compass());
 		map.addControl(new L.Control.Gps({
+			minZoom: 14,
 			style : {
 				radius : 16, //marker circle style
 				weight : 3,

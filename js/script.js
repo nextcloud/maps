@@ -745,7 +745,6 @@ Array.prototype.unique = function() {
 				overPassQ += 'node(BBOX)[' + layerGroup + '=' + layerValue + '];out;'
 				groupArr.push(layerGroup);
 			})
-			console.log(overPassQ);
 			if (!$('body').data('POIactive')) {
 				Maps.activeLayers = new L.OverPassLayer({
 					minzoom : 14,

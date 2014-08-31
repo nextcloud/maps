@@ -197,6 +197,8 @@ L.OverPassLayer = L.FeatureGroup.extend({
 			//var bboxList = new Array(this._map.getBounds());
 			var bboxList = this._view2BBoxes(this._map.getBounds()._southWest.lng, this._map.getBounds()._southWest.lat, this._map.getBounds()._northEast.lng, this._map.getBounds()._northEast.lat);
 
+			if($('.activeLayer').length==0)
+				return;
 			console.log("load Pois tiles to load: " + bboxList.length);
 			for (var i = 0; i < bboxList.length; i++) {
 				var bbox = bboxList[i];

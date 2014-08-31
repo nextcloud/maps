@@ -161,6 +161,9 @@ class PageController extends Controller {
 		return $s;
 	}
 
+	/**
+	 * @param string $q
+	 */
 	private function doAdresslookup($q) {
 
 		$geohash = md5($q);
@@ -183,6 +186,9 @@ class PageController extends Controller {
 
 	}
 
+	/**
+	 * @param string $hash
+	 */
 	private function checkGeoCache($hash) {
 		return $this -> cacheManager -> check($hash);
 	}

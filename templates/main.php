@@ -21,6 +21,7 @@
 \OCP\Util::addStyle('maps', 'awsome-markers/leaflet.awesome-markers');
 \OCP\Util::addScript('maps', '3rdparty/leaflet/plugins/leaflet.awesome-markers.min');
 \OCP\Util::addScript('maps', '3rdparty/leaflet/plugins/Leaflet.MakiMarkers');
+\OCP\Util::addScript('maps', 'dateTimePicker');
 \OCP\Util::addScript('maps', 'script');
 
 \OCP\Util::addStyle('maps', 'leaflet/leaflet');
@@ -58,7 +59,7 @@
 				<a class="toggle-children">My devices</a>
 				<ul id="deviceList" class="hidden">
 				<?php foreach($_['devices'] as $entry){ ?>
- 					 <li><a class="device" data-deviceId="<?php p($entry['id']); ?>"><?php p($entry['name']); ?><span class="keepDeviceCentered"></span></span></a></li>
+ 					 <li><a class="device" data-deviceId="<?php p($entry['id']); ?>"><?php p($entry['name']); ?><span class="icon-history icon deviceHistory"></span><span class="keepDeviceCentered"></span></a></li>
 				<?php
 				}
 				?>
@@ -95,4 +96,14 @@
 			
 		</tbody>
 	</table>
+</div>
+
+<div id="showHistoryPopup" style="display: none;">
+	<form id="deviceHistory">
+	<table>
+		<tr><td>From: </td><td><input type="datetime" class="datetime" name="startDate"></td></tr>
+		<tr><td>Till: </td><td><input type="datetime" class="datetime" name="endDate" value="now"></td></tr>
+		<tr><td><input type="checkbox" name="keepCenter"></td><td>Keep this device centered</td></tr>
+   </table>
+  </form>
 </div>

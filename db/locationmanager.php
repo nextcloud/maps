@@ -46,12 +46,17 @@ class LocationManager {
 		return $this -> db -> getInsertId('`*PREFIX*maps_locations`');
 	}
 	
-	public function loadHistory($deviceId,$limit)
+	public function loadHistory($deviceId,$from,$till)
 	{
-		$sql = "SELECT `d`.`id` as deviceId,`d`.`name`,`hash`,`l`.* from *PREFIX*maps_location_track_users d join *PREFIX*maps_locations l on d.hash = l.device_hash  where d.id = ? order by l.timestamp DESC LIMIT ?";
+		$between = ($from) ? ' AND l.timestamp BETWEEN ? AND ? ' : '';
+		$betweenStr = ($from) ? ' AND l.timestamp BETWEEN '. $from .' AND '. $till .'' : '';
+		$sql = "SELECT `d`.`id` as deviceId,`d`.`name`,`hash`,`l`.* from *PREFIX*maps_location_track_users d join *PREFIX*maps_locations l on d.hash = l.device_hash  where d.id = ? ". $between ." order by l.timestamp DESC";
 		$query = $this -> db -> prepareQuery($sql);
 		$query -> bindParam(1, $deviceId, \PDO::PARAM_INT);
-		$query -> bindParam(2, $limit, \PDO::PARAM_INT);
+		if($from!=null){
+			$query -> bindParam(2, $from, \PDO::PARAM_STR);
+			$query -> bindParam(3, $till, \PDO::PARAM_STR);			
+		}
 		$result = $query -> execute();
 		$rows = array();
 		while ($row = $result -> fetchRow()) {

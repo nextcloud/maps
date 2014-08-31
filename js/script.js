@@ -275,19 +275,19 @@ Array.prototype.unique = function() {
 				$(this).append('<i class="icon-toggle fright micon"></i>');
 			}
 		});
-		
-		$(document).on('click','.keepDeviceCentered',function(e){
+
+		$(document).on('click', '.keepDeviceCentered', function(e) {
 			var isVisible = $(this).parent().find('i').length;
 			var dId = $(this).parent().attr('data-deviceId')
 			console.log(isVisible);
 			e.stopPropagation()
-			if($(this).hasClass('tracOn')){
+			if ($(this).hasClass('tracOn')) {
 				$(this).removeClass('tracOn');
 				Maps.traceDevice = null;
 			} else {
 				$('.keepDeviceCentered').removeClass('tracOn');
-				$(this).addClass('tracOn');	
-				if(!isVisible){
+				$(this).addClass('tracOn');
+				if (!isVisible) {
 					Maps.activeDevices.push(dId);
 					Maps.traceDevice = dId;
 					Maps.loadDevicesLastPosition();
@@ -297,47 +297,46 @@ Array.prototype.unique = function() {
 					Maps.loadDevicesLastPosition();
 				}
 			}
-			
-			
+
 		});
 
 		/**
 		 * Setup datepickers
 		 */
 		$('.datetime').datetimepicker({
-			dateFormat: 'dd-mm-yy',
-			minDate: -900
+			dateFormat : 'dd-mm-yy',
+			minDate : -900
 		});
-		
-		$(document).on('click','.deviceHistory',function(e){
+
+		$(document).on('click', '.deviceHistory', function(e) {
 			var isVisible = $(this).parent().find('i').length;
 			var dId = $(this).parent().attr('data-deviceId')
 			console.log(isVisible);
 			e.stopPropagation();
 			$(".datetime").datepicker("disable");
 			$('#showHistoryPopup').dialog({
-				open: function(){
-					$(".datetime").datepicker("enable");	
+				open : function() {
+					$(".datetime").datepicker("enable");
 					var currentDate = new Date();
-					var month = ((currentDate.getMonth()*1+1) < 10) ? '0'+ (currentDate.getMonth()*1+1) : (currentDate.getMonth()*1+1); 
-					$('#deviceHistory [name="startDate"]').val(currentDate.getDate()+'-'+ month + '-'+ currentDate.getFullYear()+ ' 00:00');	
+					var month = ((currentDate.getMonth() * 1 + 1) < 10) ? '0' + (currentDate.getMonth() * 1 + 1) : (currentDate.getMonth() * 1 + 1);
+					$('#deviceHistory [name="startDate"]').val(currentDate.getDate() + '-' + month + '-' + currentDate.getFullYear() + ' 00:00');
 				},
-				buttons:{
-					"Cancel": function(){
+				buttons : {
+					"Cancel" : function() {
 						$(this).dialog('destroy');
 					},
-					"Ok": function(){
+					"Ok" : function() {
 						var startDate = $('#deviceHistory [name="startDate"]').val();
 						var endDate = $('#deviceHistory [name="endDate"]').val();
 						var keepCenter = $('#deviceHistory [name="keepCenter"]').is(':checked');
-						Maps.loadDevicePosistionHistory(dId,keepCenter,startDate,endDate);
+						Maps.loadDevicePosistionHistory(dId, keepCenter, startDate, endDate);
 						$(this).dialog('destroy');
 					}
-				}				
-			});	
-	
+				}
+			});
+
 		});
-		
+
 		/**
 		 * Custom search function
 		 */
@@ -400,9 +399,7 @@ Array.prototype.unique = function() {
 		$(document).on('click', '.clearroute', function() {
 			routing.setWaypoints([]);
 		});
-		
-		
-		
+
 	});
 	// End document ready
 	function onLocationFound(e) {
@@ -539,11 +536,11 @@ Array.prototype.unique = function() {
 		activeDevices : [],
 		deviceMarkers : [],
 		trackMarkers : {},
-		trackingTimer : 0,
+		trackingTimer : {},
 		deviceTimer : 0,
-		historyTrack : null,
+		historyTrack : {},
 		traceDevice : null,
-		arrowHead : null,
+		arrowHead : {},
 		loadAdressBooks : function() {
 			Maps.addressbooks = [];
 			$.get(OC.generateUrl('apps/contacts/addressbooks/'), function(r) {
@@ -557,23 +554,34 @@ Array.prototype.unique = function() {
 				Maps.loadContacts();
 			})
 		},
-		/**
-		 * @Todo add this somewhere
-		 */
-		loadDevicePosistionHistory : function(deviceId, trackCurrentPosition,from,till) {
+		removePosistionHistory : function(deviceId) {
+			for ( i = 0; i < Maps.trackMarkers[deviceId].length; i++) {
+				map.removeLayer(Maps.trackMarkers[deviceId][i]);
+			}
+			if (Maps.historyTrack[deviceId]) {
+				map.removeLayer(Maps.historyTrack[deviceId]);
+				map.removeLayer(Maps.arrowHead[deviceId]);
+			}
+			clearTimeout(Maps.trackingTimer[deviceId]);
+		},
+
+		loadDevicePosistionHistory : function(deviceId, trackCurrentPosition, from, till) {
 			var trackCurrentPosition = (trackCurrentPosition) ? true : false;
 			var from = (from) ? from : '';
 			var till = (till) ? till : '';
 			var data = {
 				devices : deviceId,
-				'from': from,
-				'till': till
+				'from' : from,
+				'till' : till
 			};
-			
-			if(!Maps.trackMarkers[deviceId]){
+
+			if (!Maps.trackMarkers[deviceId]) {
 				Maps.trackMarkers[deviceId] = [];
+				Maps.arrowHead[deviceId] = [];
+				Maps.historyTrack[deviceId] = [];
+				Maps.trackingTimer[deviceId] = [];
 			}
-			
+
 			clearTimeout(Maps.trackingTimer);
 			$.get(OC.generateUrl('/apps/maps/api/1.0/location/loadLocations'), data, function(response) {
 				var locations = response[deviceId];
@@ -582,9 +590,9 @@ Array.prototype.unique = function() {
 				for ( i = 0; i < Maps.trackMarkers[deviceId].length; i++) {
 					map.removeLayer(Maps.trackMarkers[deviceId][i]);
 				}
-				if (Maps.historyTrack) {
-					map.removeLayer(Maps.historyTrack);
-					map.removeLayer(Maps.arrowHead);
+				if (Maps.historyTrack[deviceId]) {
+					map.removeLayer(Maps.historyTrack[deviceId]);
+					map.removeLayer(Maps.arrowHead[deviceId]);
 				}
 				$.each(locations, function(k, location) {
 					var markerHTML = '';
@@ -602,16 +610,16 @@ Array.prototype.unique = function() {
 
 				});
 				points.reverse();
-				Maps.historyTrack = new L.Polyline(points, {
+				Maps.historyTrack[deviceId] = new L.Polyline(points, {
 					color : 'red',
 					weight : 3,
 					opacity : 0.5,
 					smoothFactor : 1
 
 				});
-				Maps.historyTrack.addTo(map);
-				Maps.arrowHead = L.polylineDecorator(Maps.historyTrack).addTo(map);
-				Maps.arrowHead.setPatterns([{
+				Maps.historyTrack[deviceId].addTo(map);
+				Maps.arrowHead[deviceId] = L.polylineDecorator(Maps.historyTrack).addTo(map);
+				Maps.arrowHead[deviceId].setPatterns([{
 					offset : '0%',
 					repeat : 100,
 					symbol : L.Symbol.arrowHead({
@@ -622,9 +630,9 @@ Array.prototype.unique = function() {
 						}
 					})
 				}]);
-				Maps.trackingTimer = setTimeout(function(){
-					Maps.loadDevicePosistionHistory(deviceId,trackCurrentPosition,from,till);
-				},60000)
+				Maps.trackingTimer[deviceId] = setTimeout(function() {
+					Maps.loadDevicePosistionHistory(deviceId, trackCurrentPosition, from, till);
+				}, 60000)
 				if (trackCurrentPosition && lastPosition.deviceId == Maps.traceDevice) {
 					map.panTo(new L.LatLng(lastPosition.lat, lastPosition.lng));
 				}
@@ -643,9 +651,9 @@ Array.prototype.unique = function() {
 					$.each(response, function(deviceId, location) {
 						console.log(deviceId, location);
 						var device = location[0];
-						if(!device)
+						if (!device)
 							return;
-						
+
 						var markerHTML = device.name + '<br />';
 						markerHTML += 'Lat: ' + device.lat + ' Lon: ' + device.lng + '<br />';
 						markerHTML += 'Speed: ' + device.speed + '<br />'
@@ -1027,7 +1035,7 @@ Array.prototype.unique = function() {
 		amenity : ["post_box", "police", "atm", "recycling", "parking", "fuel", "telephone", "school", "pub", "doctors", "arts_centre", "cafe", "fast_food", "restaurant", "place_of_worship", "bank", "bicycle_parking", "drinking_water", "theatre", "bar", "bench", "waste_disposal", "nightclub", "pharmacy", "bicycle_rental", "post_office", "charging_station", "waste_basket", "vending_machine", "kindergarten", "marketplace", "dentist", "ev_charging", "bureau_de_change", "library", "cinema", "toilets", "car_wash", "fountain", "boat_rental", "taxi", "bus_parking", "public_building", "driving_school", "physical therapy", "coffee_shop", "embassy", "vacant", "coffeeshop", "ice_cream", "car_rental", "swimming_pool", "university", "casino", "community_centre", "lost_found", "grit_bin", "clock", "parking_entrance", "sauna", "brothel", "ferry_terminal", "fitness_center", "bus_station", "college", "fire_station", "health_centre", "townhall", "hospital", "veterinary", "gym", "fablab", "money_transfer", "kitchen_studio", "tanning_salon", "tanning", "studio"],
 		tourism : ["artwork", "hostel", "attraction", "hotel", "information", "museum", "gallery", "viewpoint", "picnic_site", "guest_house", "theme_park", "apartment", "zoo", "camp_site", "chalet", "motel", "citytour", "aquarium"]
 	}
-	
+
 	mapSettings = {
 		openTrackingSettings : function() {
 			$.get(OC.generateUrl('/apps/maps/api/1.0/location/loadDevices'), function(d) {

@@ -83,9 +83,10 @@ class LocationController extends ApiController {
 		$deviceIds = explode(',',$this->params('devices'));
 		$from = ($this->params('from')) ? strtotime($this->params('from')) : null;
 		$till = ($this->params('till')!='') ? strtotime($this->params('till')) : strtotime('now');
+		$limit = ($this->params('limit')!='') ? (int) $this->params('limit') : false;
 		$response = array();
 		foreach($deviceIds as $device){
-			$response[$device] = $this->locationManager->loadHistory($device,$from,$till);
+			$response[$device] = $this->locationManager->loadHistory($device,$from,$till,$limit);
 		}
 		return new JSONResponse($response);			
 	}

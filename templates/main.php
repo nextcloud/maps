@@ -11,6 +11,7 @@
 \OCP\Util::addScript('maps', '3rdparty/leaflet/lib/leaflet.iconlabel');
 
 \OCP\Util::addScript('maps', '3rdparty/leaflet/plugins/leaflet-hash');
+\OCP\Util::addScript('maps', '3rdparty/leaflet/plugins/leaflet.polylineDecorator');
 \OCP\Util::addScript('maps', '3rdparty/leaflet/plugins/leaflet.active-layers.min');
 \OCP\Util::addScript('maps', '3rdparty/leaflet/plugins/leaflet.select-layers.min');
 \OCP\Util::addScript('maps', '3rdparty/leaflet/plugins/leaflet-compass.min');
@@ -57,7 +58,7 @@
 				<a class="toggle-children">My devices</a>
 				<ul id="deviceList" class="hidden">
 				<?php foreach($_['devices'] as $entry){ ?>
- 					 <li><a class="device" data-deviceId="<?php p($entry['id']); ?>"><?php p($entry['name']); ?></a></li>
+ 					 <li><a class="device" data-deviceId="<?php p($entry['id']); ?>"><?php p($entry['name']); ?><span class="keepDeviceCentered"></span></span></a></li>
 				<?php
 				}
 				?>

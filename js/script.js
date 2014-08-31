@@ -40,7 +40,7 @@ Array.prototype.unique = function() {
 			data.toggleclicked = (tc + 1) % 2;
 		});
 		return this;
-	}; 
+	};
 
 	// initialize map when page ready
 	$(document).ready(function() {
@@ -259,19 +259,46 @@ Array.prototype.unique = function() {
 
 			}
 		});
-		
-		$(document).on('click','.device',function(){
+
+		$(document).on('click', '.device', function() {
 			var isVisible = $(this).find('i').length;
 			var dId = $(this).attr('data-deviceId')
 			if (isVisible == 1) {
 				$(this).find('i').remove();
-			}
-			else
-			{
+				Maps.clearDevicePositions();
+				var index = Maps.activeDevices.indexOf(dId);
+				Maps.activeDevices.splice(index, 1);
+				Maps.loadDevicesLastPosition();
+			} else {
 				Maps.activeDevices.push(dId);
 				Maps.loadDevicesLastPosition();
-					$(this).append('<i class="icon-toggle fright micon"></i>');
+				$(this).append('<i class="icon-toggle fright micon"></i>');
 			}
+		});
+		
+		$(document).on('click','.keepDeviceCentered',function(e){
+			var isVisible = $(this).parent().find('i').length;
+			var dId = $(this).parent().attr('data-deviceId')
+			console.log(isVisible);
+			e.stopPropagation()
+			if($(this).hasClass('tracOn')){
+				$(this).removeClass('tracOn');
+				
+			} else {
+				$('.keepDeviceCentered').removeClass('tracOn');
+				$(this).addClass('tracOn');	
+				if(!isVisible){
+					Maps.activeDevices.push(dId);
+					Maps.traceDevice = dId;
+					Maps.loadDevicesLastPosition();
+					$(this).parent().append('<i class="icon-toggle fright micon"></i>');
+				} else {
+					Maps.traceDevice = dId;
+					Maps.loadDevicesLastPosition();
+				}
+			}
+			
+			
 		})
 		/**
 		 * Custom search function
@@ -468,8 +495,14 @@ Array.prototype.unique = function() {
 		mouseDowntime : 0,
 		droppedPin : {},
 		dragging : false,
-		activeDevices: [],
-		deviceMarkers: [],
+		activeDevices : [],
+		deviceMarkers : [],
+		trackMarkers : [],
+		trackingTimer : 0,
+		deviceTimer : 0,
+		historyTrack : null,
+		traceDevice : null,
+		arrowHead : null,
 		loadAdressBooks : function() {
 			Maps.addressbooks = [];
 			$.get(OC.generateUrl('apps/contacts/addressbooks/'), function(r) {
@@ -483,22 +516,101 @@ Array.prototype.unique = function() {
 				Maps.loadContacts();
 			})
 		},
-		loadDevicesLastPosition: function(){
-			var data = {devices: Maps.activeDevices.join(','),limit: 1};
-			$.get(OC.generateUrl('/apps/maps/api/1.0/location/loadLocations'),data,function(response){
-				Maps.clearDevicePositions();
-				$.each(response,function(deviceId,location){
-					console.log(deviceId,location);
-					var device = location[0];
-					var markerHTML = device.name+'<br />';
-					markerHTML += 'Lat: '+ device.lat +' Lon: '+ device.lng+'<br />';
-					markerHTML += 'Speed: '+ device.speed +'<br />'
-					markerHTML += 'Time: '+ new Date(device.timestamp*1).toLocaleString("nl-NL")
-					var marker = new L.marker([device.lat * 1, device.lng * 1]);
+		/**
+		 * @Todo add this somewhere
+		 */
+		loadDevicePosistionHistory : function(deviceId, trackCurrentPosition) {
+			var trackCurrentPosition = (trackCurrentPosition) ? true : false;
+			var data = {
+				devices : deviceId,
+				limit : 5000
+			};
+			clearTimeout(Maps.trackingTimer);
+			$.get(OC.generateUrl('/apps/maps/api/1.0/location/loadLocations'), data, function(response) {
+				var locations = response[deviceId];
+				var points = [];
+				var lastPosition = locations[0];
+				for ( i = 0; i < Maps.trackMarkers.length; i++) {
+					map.removeLayer(Maps.trackMarkers[i]);
+				}
+				if (Maps.historyTrack) {
+					map.removeLayer(Maps.historyTrack);
+					map.removeLayer(Maps.arrowHead);
+				}
+				$.each(locations, function(k, location) {
+					var markerHTML = '';
+					var marker = new L.marker([location.lat * 1, location.lng * 1]);
+					var point = new L.LatLng(location.lat * 1, location.lng * 1);
+					points.push(point);
+
+					var markerHTML = location.name + '<br />';
+					markerHTML += 'Lat: ' + location.lat + ' Lon: ' + location.lng + '<br />';
+					markerHTML += 'Speed: ' + location.speed + '<br />'
+					markerHTML += 'Time: ' + new Date(location.timestamp * 1000).toLocaleString("nl-NL")
+					var marker = new L.marker([location.lat * 1, location.lng * 1]);
+					Maps.trackMarkers.push(marker);
 					toolKit.addMarker(marker, markerHTML)
-					Maps.deviceMarkers.push(marker);
-				})
+
+				});
+				points.reverse();
+				Maps.historyTrack = new L.Polyline(points, {
+					color : 'red',
+					weight : 3,
+					opacity : 0.5,
+					smoothFactor : 1
+
+				});
+				Maps.historyTrack.addTo(map);
+				Maps.arrowHead = L.polylineDecorator(Maps.historyTrack).addTo(map);
+				Maps.arrowHead.setPatterns([{
+					offset : '0%',
+					repeat : 100,
+					symbol : L.Symbol.arrowHead({
+						pixelSize : 25,
+						polygon : false,
+						pathOptions : {
+							stroke : true
+						}
+					})
+				}]);
+				Maps.trackingTimer = setTimeout(function(){
+					Maps.loadDevicePosistionHistory(deviceId,trackCurrentPosition);
+				},60000)
+				if (trackCurrentPosition && lastPosition.deviceId == Maps.traceDevice) {
+					map.panTo(new L.LatLng(lastPosition.lat, lastPosition.lng));
+				}
 			});
+		},
+
+		loadDevicesLastPosition : function() {
+			var data = {
+				devices : Maps.activeDevices.join(','),
+				limit : 1
+			};
+			clearTimeout(Maps.deviceTimer);
+			if (Maps.activeDevices.length > 0) {
+				$.get(OC.generateUrl('/apps/maps/api/1.0/location/loadLocations'), data, function(response) {
+					Maps.clearDevicePositions();
+					$.each(response, function(deviceId, location) {
+						console.log(deviceId, location);
+						var device = location[0];
+						if(!device)
+							return;
+						
+						var markerHTML = device.name + '<br />';
+						markerHTML += 'Lat: ' + device.lat + ' Lon: ' + device.lng + '<br />';
+						markerHTML += 'Speed: ' + device.speed + '<br />'
+						markerHTML += 'Time: ' + new Date(device.timestamp * 1000).toLocaleString("nl-NL")
+						var marker = new L.marker([device.lat * 1, device.lng * 1]);
+						toolKit.addMarker(marker, markerHTML)
+						Maps.deviceMarkers.push(marker);
+						if (device.deviceId == Maps.traceDevice) {
+							map.panTo(new L.LatLng(device.lat * 1, device.lng * 1));
+						}
+					});
+					Maps.deviceTimer = setTimeout(Maps.loadDevicesLastPosition, 60000);
+				});
+			}
 		},
 		clearDevicePositions : function() {
 			for ( i = 0; i < Maps.deviceMarkers.length; i++) {
@@ -506,7 +618,7 @@ Array.prototype.unique = function() {
 			}
 			Maps.deviceMarkers = [];
 		},
-		
+
 		loadContacts : function() {
 			Maps.tempArr = [];
 			Maps.tempTotal = 0;
@@ -868,46 +980,50 @@ Array.prototype.unique = function() {
 	}
 
 	mapSettings = {
-		openTrackingSettings: function(){
-			$.get(OC.generateUrl('/apps/maps/api/1.0/location/loadDevices'),function(d){
+		openTrackingSettings : function() {
+			$.get(OC.generateUrl('/apps/maps/api/1.0/location/loadDevices'), function(d) {
 				var tableHTML;
-				$.each(d,function(){
-					tableHTML +='<tr><td>'+ this.name +'</td><td>'+ this.hash +'</td><td><div class="icon-delete icon" data-deviceId="'+ this.id +'"></div></td></tr>';
+				$.each(d, function() {
+					tableHTML += '<tr><td>' + this.name + '</td><td>' + this.hash + '</td><td><div class="icon-delete icon" data-deviceId="' + this.id + '"></div></td></tr>';
 				});
 				$('#trackingDevices tbody').html(tableHTML);
 			})
 			$('#trackingSettingsPopup').dialog({
-				buttons:{
-					"Close": function(){
+				buttons : {
+					"Close" : function() {
 						$(this).dialog('destroy');
 						$('#addtracking')[0].reset()
 					}
 				}
-					
+
 			});
 		},
-		saveDevice: function(){
-			if( $('#addtracking input').val()=='') 
+		saveDevice : function() {
+			if ($('#addtracking input').val() == '')
 				return
-			var formData = {name: $('#addtracking input').val()};
-			$.post(OC.generateUrl('/apps/maps/api/1.0/location/adddevice'),formData,function(d){
-				$('#trackingDevices tbody').append('<tr><td>'+ formData.name +'</td><td>'+ d.hash +'</td><td><div class="icon-delete icon" data-deviceId="'+ d.id +'"></div></td></tr>');
+			var formData = {
+				name : $('#addtracking input').val()
+			};
+			$.post(OC.generateUrl('/apps/maps/api/1.0/location/adddevice'), formData, function(d) {
+				$('#trackingDevices tbody').append('<tr><td>' + formData.name + '</td><td>' + d.hash + '</td><td><div class="icon-delete icon" data-deviceId="' + d.id + '"></div></td></tr>');
 				$('#addtracking input').val('');
 			});
 		},
-		
-		deleteDevice: function(e){
+
+		deleteDevice : function(e) {
 			var dId = $(this).attr('data-deviceId');
 			$(this).parent().parent().remove();
 			console.log($(this).parent().parent())
 			///api/1.0/location/removedevice
-			var formData = {deviceId: dId};
-			$.post(OC.generateUrl('/apps/maps/api/1.0/location/removedevice'),formData)
-			
-		}	
+			var formData = {
+				deviceId : dId
+			};
+			$.post(OC.generateUrl('/apps/maps/api/1.0/location/removedevice'), formData)
+
+		}
 	}
-	$(document).on('click','#tracking-settings',mapSettings.openTrackingSettings)
-	$(document).on('click','#addtracking button',mapSettings.saveDevice)
-	$(document).on('click','#trackingDevices .icon-delete',mapSettings.deleteDevice)
-	
-})(jQuery, OC); 
+	$(document).on('click', '#tracking-settings', mapSettings.openTrackingSettings)
+	$(document).on('click', '#addtracking button', mapSettings.saveDevice)
+	$(document).on('click', '#trackingDevices .icon-delete', mapSettings.deleteDevice)
+
+})(jQuery, OC);

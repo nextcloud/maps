@@ -48,7 +48,7 @@ class LocationManager {
 	
 	public function loadHistory($deviceId,$limit)
 	{
-		$sql = "SELECT `d`.`id`,`d`.`name`,`hash`,`l`.* from *PREFIX*maps_location_track_users d join *PREFIX*maps_locations l on d.hash = l.device_hash  where d.id = ? order by l.timestamp DESC LIMIT ?";
+		$sql = "SELECT `d`.`id` as deviceId,`d`.`name`,`hash`,`l`.* from *PREFIX*maps_location_track_users d join *PREFIX*maps_locations l on d.hash = l.device_hash  where d.id = ? order by l.timestamp DESC LIMIT ?";
 		$query = $this -> db -> prepareQuery($sql);
 		$query -> bindParam(1, $deviceId, \PDO::PARAM_INT);
 		$query -> bindParam(2, $limit, \PDO::PARAM_INT);

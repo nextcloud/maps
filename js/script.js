@@ -111,7 +111,7 @@ Array.prototype.unique = function() {
 
 		map.addControl(new L.Control.Compass());
 		map.addControl(new L.Control.Gps({
-			minZoom: 14,
+			minZoom : 14,
 			style : {
 				radius : 16, //marker circle style
 				weight : 3,
@@ -595,6 +595,10 @@ Array.prototype.unique = function() {
 					map.removeLayer(Maps.historyTrack[deviceId]);
 					map.removeLayer(Maps.arrowHead[deviceId]);
 				}
+				if(locations.length===0){
+					OC.Notification.showTimeout('No results');
+					return;
+				}
 				$.each(locations, function(k, location) {
 					var markerHTML = '';
 					var marker = new L.marker([location.lat * 1, location.lng * 1]);
@@ -612,14 +616,14 @@ Array.prototype.unique = function() {
 				});
 				points.reverse();
 				Maps.historyTrack[deviceId] = new L.Polyline(points, {
-					color : 'red',
-					weight : 3,
+					color : 'green',
+					weight : 6,
 					opacity : 0.5,
 					smoothFactor : 1
 
 				});
 				Maps.historyTrack[deviceId].addTo(map);
-				Maps.arrowHead[deviceId] = L.polylineDecorator(Maps.historyTrack).addTo(map);
+				Maps.arrowHead[deviceId] = L.polylineDecorator(Maps.historyTrack[deviceId]).addTo(map);
 				Maps.arrowHead[deviceId].setPatterns([{
 					offset : '0%',
 					repeat : 100,
@@ -1082,4 +1086,23 @@ Array.prototype.unique = function() {
 	$(document).on('click', '#addtracking button', mapSettings.saveDevice);
 	$(document).on('click', '#trackingDevices .icon-delete', mapSettings.deleteDevice);
 
+	/**
+	 * Extend the OC.Notification object with our own methods
+	 */
+	OC.Notification.showTimeout = function(text, timeout, isHTML) {
+		isHTML = (!isHTML) ? false : true;
+		OC.Notification.hide();
+		if (OC.Notification.notificationTimer) {
+			clearTimeout(notificationTimer);
+		}
+		timeout = (!timeout) ? 3000 : timeout;
+		if (isHTML) {
+			OC.Notification.showHtml(text);
+		} else {
+			OC.Notification.show(text);
+		}
+		OC.Notification.notificationTimer = setTimeout(function() {
+			OC.Notification.hide();
+		}, timeout);
+	}
 })(jQuery, OC);

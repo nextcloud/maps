@@ -164,9 +164,6 @@ Array.prototype.unique = function() {
 				decoder.reverse(e.latlng, 67108864, function(results) {
 					var result = results[0];
 					console.log(result);
-					if ($('.geocoder-0').val() == '' && $('.geocoder-0').attr('completiontype') === 'local') {
-						$('.geocoder-0').val(result.name);
-					}
 					setTimeout(function() {
 
 						var knownFields = ['country', 'country_code', 'postcode', 'residential', 'road', 'state', 'suburb', 'town', 'house_number'];

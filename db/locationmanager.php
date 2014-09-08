@@ -55,8 +55,9 @@ class LocationManager {
 		$query = $this -> db -> prepareQuery($sql);
 		$query -> bindParam(1, $deviceId, \PDO::PARAM_INT);
 		if($from!=null){
-			//$query -> bindParam(2, $from, \PDO::PARAM_STR);
-			//$query -> bindParam(3, $till, \PDO::PARAM_STR);			
+			echo $from ." - ". $till;
+			$query -> bindParam(2, $from, \PDO::PARAM_STR);
+			$query -> bindParam(3, $till, \PDO::PARAM_STR);			
 		}
 		$result = $query -> execute();
 		$rows = array();

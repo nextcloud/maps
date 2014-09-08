@@ -112,6 +112,7 @@ Array.prototype.unique = function() {
 		map.addControl(new L.Control.Compass());
 		map.addControl(new L.Control.Gps({
 			minZoom : 14,
+			autoActive: 1,
 			style : {
 				radius : 16, //marker circle style
 				weight : 3,
@@ -281,7 +282,6 @@ Array.prototype.unique = function() {
 		$(document).on('click', '.keepDeviceCentered', function(e) {
 			var isVisible = $(this).parent().find('i').length;
 			var dId = $(this).parent().attr('data-deviceId')
-			console.log(isVisible);
 			e.stopPropagation()
 			if ($(this).hasClass('tracOn')) {
 				$(this).removeClass('tracOn');
@@ -314,7 +314,6 @@ Array.prototype.unique = function() {
 			var isVisible = $(this).parent().find('i').length;
 			var dId = $(this).parent().attr('data-deviceId');
 			var _this = this;
-			console.log(isVisible);
 			e.stopPropagation();
 			if (!isVisible) {
 				$(".datetime").datepicker("disable");
@@ -608,20 +607,24 @@ Array.prototype.unique = function() {
 					OC.Notification.showTimeout('No results');
 					return;
 				}
-
+				var lastPObject = L.latLng(lastPosition.lat, lastPosition.lng) //distanceTo
 				$.each(locations, function(k, location) {
 					var markerHTML = '';
 					var marker = new L.marker([location.lat * 1, location.lng * 1]);
 					var point = new L.LatLng(location.lat * 1, location.lng * 1);
-					points.push(point);
 					//bounds.push(marker.getBounds());
 					var markerHTML = location.name + '<br />';
 					markerHTML += 'Lat: ' + location.lat + ' Lon: ' + location.lng + '<br />';
 					markerHTML += 'Speed: ' + location.speed + '<br />'
 					markerHTML += 'Time: ' + new Date(location.timestamp * 1000).toLocaleString("nl-NL")
 					var marker = new L.marker([location.lat * 1, location.lng * 1]);
-					Maps.trackMarkers[location.deviceId].push(marker);
-					toolKit.addMarker(marker, markerHTML);
+					if(Math.round(lastPObject.distanceTo(point))> 15){ //If markers are more then 15m between each other
+						console.log('Distance from last point: ',Math.round(lastPObject.distanceTo(point)));
+						Maps.trackMarkers[location.deviceId].push(marker);
+						toolKit.addMarker(marker, markerHTML);
+						points.push(point);
+					}
+					lastPObject = point;
 				});
 				points.reverse();
 				Maps.historyTrack[deviceId] = new L.Polyline(points, {

@@ -267,6 +267,7 @@ Array.prototype.unique = function() {
 			if (isVisible == 1) {
 				$(this).find('i').remove();
 				Maps.clearDevicePositions();
+				Maps.clearDevicePosistionHistory(dId);
 				var index = Maps.activeDevices.indexOf(dId);
 				Maps.activeDevices.splice(index, 1);
 				Maps.loadDevicesLastPosition();
@@ -311,30 +312,37 @@ Array.prototype.unique = function() {
 
 		$(document).on('click', '.deviceHistory', function(e) {
 			var isVisible = $(this).parent().find('i').length;
-			var dId = $(this).parent().attr('data-deviceId')
+			var dId = $(this).parent().attr('data-deviceId');
+			var _this = this;
 			console.log(isVisible);
 			e.stopPropagation();
-			$(".datetime").datepicker("disable");
-			$('#showHistoryPopup').dialog({
-				open : function() {
-					$(".datetime").datepicker("enable");
-					var currentDate = new Date();
-					var month = ((currentDate.getMonth() * 1 + 1) < 10) ? '0' + (currentDate.getMonth() * 1 + 1) : (currentDate.getMonth() * 1 + 1);
-					$('#deviceHistory [name="startDate"]').val(currentDate.getDate() + '-' + month + '-' + currentDate.getFullYear() + ' 00:00');
-				},
-				buttons : {
-					"Cancel" : function() {
-						$(this).dialog('destroy');
+			if (!isVisible) {
+				$(".datetime").datepicker("disable");
+				$('#showHistoryPopup').dialog({
+					open : function() {
+						$(".datetime").datepicker("enable");
+						var currentDate = new Date();
+						var month = ((currentDate.getMonth() * 1 + 1) < 10) ? '0' + (currentDate.getMonth() * 1 + 1) : (currentDate.getMonth() * 1 + 1);
+						$('#deviceHistory [name="startDate"]').val(currentDate.getDate() + '-' + month + '-' + currentDate.getFullYear() + ' 00:00');
 					},
-					"Ok" : function() {
-						var startDate = $('#deviceHistory [name="startDate"]').val();
-						var endDate = $('#deviceHistory [name="endDate"]').val();
-						var keepCenter = $('#deviceHistory [name="keepCenter"]').is(':checked');
-						Maps.loadDevicePosistionHistory(dId, keepCenter, startDate, endDate);
-						$(this).dialog('destroy');
+					buttons : {
+						"Cancel" : function() {
+							$(this).dialog('destroy');
+						},
+						"Ok" : function() {
+							var startDate = $('#deviceHistory [name="startDate"]').val();
+							var endDate = $('#deviceHistory [name="endDate"]').val();
+							var keepCenter = $('#deviceHistory [name="keepCenter"]').is(':checked');
+							Maps.loadDevicePosistionHistory(dId, keepCenter, startDate, endDate);
+							$(_this).parent().append('<i class="icon-toggle fright micon"></i>');
+							$(this).dialog('destroy');
+						}
 					}
-				}
-			});
+				});
+			} else {
+				Maps.clearDevicePosistionHistory(dId);
+				$(this).parent().find('i').remove();
+			}
 
 		});
 
@@ -587,6 +595,7 @@ Array.prototype.unique = function() {
 			$.get(OC.generateUrl('/apps/maps/api/1.0/location/loadLocations'), data, function(response) {
 				var locations = response[deviceId];
 				var points = [];
+				var bounds = []
 				var lastPosition = locations[0];
 				for ( i = 0; i < Maps.trackMarkers[deviceId].length; i++) {
 					map.removeLayer(Maps.trackMarkers[deviceId][i]);
@@ -595,24 +604,24 @@ Array.prototype.unique = function() {
 					map.removeLayer(Maps.historyTrack[deviceId]);
 					map.removeLayer(Maps.arrowHead[deviceId]);
 				}
-				if(locations.length===0){
+				if (locations.length === 0) {
 					OC.Notification.showTimeout('No results');
 					return;
 				}
+
 				$.each(locations, function(k, location) {
 					var markerHTML = '';
 					var marker = new L.marker([location.lat * 1, location.lng * 1]);
 					var point = new L.LatLng(location.lat * 1, location.lng * 1);
 					points.push(point);
-
+					//bounds.push(marker.getBounds());
 					var markerHTML = location.name + '<br />';
 					markerHTML += 'Lat: ' + location.lat + ' Lon: ' + location.lng + '<br />';
 					markerHTML += 'Speed: ' + location.speed + '<br />'
 					markerHTML += 'Time: ' + new Date(location.timestamp * 1000).toLocaleString("nl-NL")
 					var marker = new L.marker([location.lat * 1, location.lng * 1]);
 					Maps.trackMarkers[location.deviceId].push(marker);
-					toolKit.addMarker(marker, markerHTML)
-
+					toolKit.addMarker(marker, markerHTML);
 				});
 				points.reverse();
 				Maps.historyTrack[deviceId] = new L.Polyline(points, {
@@ -643,7 +652,15 @@ Array.prototype.unique = function() {
 				}
 			});
 		},
-
+		clearDevicePosistionHistory : function(deviceId) {
+			for ( i = 0; i < Maps.trackMarkers[deviceId].length; i++) {
+				map.removeLayer(Maps.trackMarkers[deviceId][i]);
+			}
+			map.removeLayer(Maps.historyTrack[deviceId]);
+			map.removeLayer(Maps.arrowHead[deviceId]);
+			clearTimeout(Maps.trackingTimer[deviceId]);
+			Maps.trackMarkers[deviceId] = [];
+		},
 		loadDevicesLastPosition : function() {
 			var data = {
 				devices : Maps.activeDevices.join(','),

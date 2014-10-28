@@ -9,3 +9,7 @@ After [Installing PHPUnit](http://phpunit.de/getting-started.html) run:
 	
 ##Sources
 - OpenLayers https://github.com/openlayers/openlayers
+- 
+
+##Support
+Only MYSQL is supported

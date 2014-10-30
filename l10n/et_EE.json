@@ -1,0 +1,6 @@
+{ "translations": {
+    "Maps" : "Kaardid",
+    "left" : "vasakul",
+    "right" : "paremal"
+},"pluralForm" :"nplurals=2; plural=(n != 1);"
+}

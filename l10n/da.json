@@ -1,0 +1,6 @@
+{ "translations": {
+    "Maps" : "Kort",
+    "left" : "venstre",
+    "right" : "højre"
+},"pluralForm" :"nplurals=2; plural=(n != 1);"
+}

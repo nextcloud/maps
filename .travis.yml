@@ -1,12 +1,13 @@
 language: php
 php:
-  - 5.3
   - 5.4
   - 5.5
+  - 5.6
 
 env:
   global:
     - CORE_BRANCH=master
+    - APP_NAME=maps
   matrix:
     - DB=sqlite
 
@@ -18,13 +19,13 @@ branches:
 before_install:
 #  - composer install
   - wget https://raw.githubusercontent.com/owncloud/administration/master/travis-ci/before_install.sh
-  - bash ./before_install.sh maps $CORE_BRANCH $DB
+  - bash ./before_install.sh $APP_NAME $CORE_BRANCH $DB
   - cd ../core
-  - php occ app:enable maps
+  - php occ app:enable $APP_NAME
 
 script:
   # Test lint
-  - cd apps/maps
+  - cd apps/$APP_NAME
   - sh -c "if [ '$DB' = 'sqlite' ]; then ant test; fi"
 
   # Run phpunit tests

@@ -1,0 +1,15 @@
+<project name="owncloud-enterprise" basedir="." default="test">
+
+	<!-- test - Tests if the code syntax is correct and executes phpunit tests -->
+	<target name="test">
+		<apply executable="php" failonerror="true">
+			<arg value="-l" />
+			<fileset dir=".">
+				<include name="**/*.php" />
+				<exclude name="**/l10n/**" />
+			</fileset>
+		</apply>
+
+	</target>
+
+</project>

@@ -2,6 +2,6 @@
 $TRANSLATIONS = array(
 "Maps" => "Kartor",
 "left" => "vänster",
-"right" => "Höger"
+"right" => "höger"
 );
 $PLURAL_FORMS = "nplurals=2; plural=(n != 1);";

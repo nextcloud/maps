@@ -3,6 +3,6 @@ OC.L10N.register(
     {
     "Maps" : "Kartor",
     "left" : "vänster",
-    "right" : "Höger"
+    "right" : "höger"
 },
 "nplurals=2; plural=(n != 1);");

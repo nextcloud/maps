@@ -73,7 +73,7 @@ class LocationController extends ApiController {
 		$hash = uniqid();
 		$deviceId = $this->locationManager->addDevice($deviceName,$hash,$this->userId);
 		$response = array('id'=> $deviceId,'hash'=>$hash);
-		return new JSONResponse($response);			
+		return new JSONResponse($response);
 	}
 
 	/**
@@ -81,7 +81,7 @@ class LocationController extends ApiController {
 	 */		
 	public function loadDevices(){
 		$response = $this->locationManager->loadAll($this->userId);
-		return new JSONResponse($response);			
+		return new JSONResponse($response);
 	}
 	/**
 	 * @NoAdminRequired
@@ -96,7 +96,7 @@ class LocationController extends ApiController {
 		foreach($deviceIds as $device){
 			$response[$device] = $this->locationManager->loadHistory($device,$from,$till,$limit);
 		}
-		return new JSONResponse($response);			
+		return new JSONResponse($response);
 	}
 	/**
 	 * @NoAdminRequired
@@ -104,7 +104,7 @@ class LocationController extends ApiController {
 	public function removeDevice(){
 		$deviceId = $this->params('deviceId');
 		$response = $this->locationManager->remove($deviceId,$this->userId);
-		return new JSONResponse($response);			
+		return new JSONResponse($response);
 	}
 
 }

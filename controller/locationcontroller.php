@@ -44,7 +44,15 @@ class LocationController extends ApiController {
 		$params = array('user' => $this -> userId);
 		$location['lat'] = $this->params('lat');
 		$location['lng'] = $this->params('lon');
-		$location['timestamp'] = strtotime($this->params('timestamp'));
+		if(((string)(float)$this->params('timestamp') === $this->params('timestamp'))) {
+			if(strtotime(date('d-m-Y H:i:s',$this->params('timestamp'))) === (int)$this->params('timestamp')) {
+				$location['timestamp'] = (int)$this->params('timestamp');
+			} elseif(strtotime(date('d-m-Y H:i:s',$this->params('timestamp')/1000)) === (int)floor($this->params('timestamp')/1000)) {
+				$location['timestamp'] = (int)floor($this->params('timestamp')/1000);
+			}
+		} else {
+			$location['timestamp'] = strtotime($this->params('timestamp'));
+		}
 		$location['hdop'] = $this->params('hdop');
 		$location['altitude'] = $this->params('altitude');
 		$location['speed'] = $this->params('speed');

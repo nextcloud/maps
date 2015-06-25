@@ -44,7 +44,15 @@ class LocationController extends ApiController {
 		$params = array('user' => $this -> userId);
 		$location['lat'] = $this->params('lat');
 		$location['lng'] = $this->params('lon');
-		$location['timestamp'] = strtotime($this->params('timestamp'));
+		if(((string)(float)$this->params('timestamp') === $this->params('timestamp'))) {
+			if(strtotime(date('d-m-Y H:i:s',$this->params('timestamp'))) === (int)$this->params('timestamp')) {
+				$location['timestamp'] = (int)$this->params('timestamp');
+			} elseif(strtotime(date('d-m-Y H:i:s',$this->params('timestamp')/1000)) === (int)floor($this->params('timestamp')/1000)) {
+				$location['timestamp'] = (int)floor($this->params('timestamp')/1000);
+			}
+		} else {
+			$location['timestamp'] = strtotime($this->params('timestamp'));
+		}
 		$location['hdop'] = $this->params('hdop');
 		$location['altitude'] = $this->params('altitude');
 		$location['speed'] = $this->params('speed');
@@ -65,7 +73,7 @@ class LocationController extends ApiController {
 		$hash = uniqid();
 		$deviceId = $this->locationManager->addDevice($deviceName,$hash,$this->userId);
 		$response = array('id'=> $deviceId,'hash'=>$hash);
-		return new JSONResponse($response);			
+		return new JSONResponse($response);
 	}
 
 	/**
@@ -73,7 +81,7 @@ class LocationController extends ApiController {
 	 */		
 	public function loadDevices(){
 		$response = $this->locationManager->loadAll($this->userId);
-		return new JSONResponse($response);			
+		return new JSONResponse($response);
 	}
 	/**
 	 * @NoAdminRequired
@@ -88,7 +96,7 @@ class LocationController extends ApiController {
 		foreach($deviceIds as $device){
 			$response[$device] = $this->locationManager->loadHistory($device,$from,$till,$limit);
 		}
-		return new JSONResponse($response);			
+		return new JSONResponse($response);
 	}
 	/**
 	 * @NoAdminRequired
@@ -96,7 +104,7 @@ class LocationController extends ApiController {
 	public function removeDevice(){
 		$deviceId = $this->params('deviceId');
 		$response = $this->locationManager->remove($deviceId,$this->userId);
-		return new JSONResponse($response);			
+		return new JSONResponse($response);
 	}
 
 }

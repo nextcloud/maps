@@ -930,7 +930,7 @@ Array.prototype.unique = function() {
 				'cut' : ['hairdresser'],
 				'info' : ['information'],
 				'refresh' : ['recycling'],
-				'asterisk' : ['attraction'],
+				'asterisk' : ['attraction', 'theme_park'],
 				'cogs' : ['car_repair'],
 				'wrench' : ['doityourself'],
 				'music' : ['hifi'],

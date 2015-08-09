@@ -900,14 +900,15 @@ Array.prototype.unique = function() {
 				'place-of-worship' : ['place_of_worship'],
 				'school' : ['kindergarten'],
 				'parking-garage' : ['parking-entrance'],
-				'lodging' : ['hotel', 'guest_house', 'chalet', 'hostel'],
-				'art-gallery' : ['artwork', 'paint'],
+				'lodging' : ['hotel', 'guest_house', 'chalet', 'hostel', 'motel'],
+				'art-gallery' : ['gallery', 'artwork', 'paint'],
 				'paperclip' : ['craft'],
 				'library' : ['books'],
 				'pitch' : ['sports'],
 				'mobilephone' : ['mobile_phone', 'gsm'],
-				'pharmacy' : ['drugstore']
-
+				'pharmacy' : ['drugstore'],
+				'zoo' : ['zoo'],
+				'museum' : ['museum']
 			}
 			var returnClass = false;
 			$.each(mapper, function(faClass, types) {

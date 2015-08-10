@@ -40,7 +40,18 @@ class PageController extends Controller {
 	 */
 	public function index() {
 		$params = array('user' => $this -> userId,'devices'=>$this->locationManager->loadAll($this->userId));
-		return new TemplateResponse('maps', 'main', $params);
+		$response = new TemplateResponse('maps', 'main', $params);
+		if (class_exists('OCP\AppFramework\Http\ContentSecurityPolicy')) {
+			$csp = new \OCP\AppFramework\Http\ContentSecurityPolicy();
+			// map tiles
+			$csp->addAllowedImageDomain('http://*.mqcdn.com');
+			// marker icons
+			$csp->addAllowedImageDomain('https://api.tiles.mapbox.com');
+			// inline images
+			$csp->addAllowedScriptDomain('data:');
+			$response->setContentSecurityPolicy($csp);
+		}
+		return $response;
 		// templates/main.php
 	}
 

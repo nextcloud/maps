@@ -42,10 +42,6 @@ div.olControlZoom a {
 	filter: alpha(opacity=80);
 }
 
-.leaflet-control-zoom {
-	margin-top: 50px !important;
-}
-
 input#search {
 	width: 180px;
 	margin: 10px 10px;
@@ -151,6 +147,12 @@ table#trackingDevices {
 }
 #trackingDevices > thead > tr > th:first-child {
 	width: 150px;
+}
+
+@media only screen and (max-width: 768px) {
+	.leaflet-control-zoom {
+		margin-top: 50px;
+	}
 }
 
 /* css for timepicker */

@@ -994,10 +994,14 @@ Array.prototype.unique = function() {
 		 */
 		adresLookup : function(address, callback) {
 
-			var getData = {
-				street : address.street,
-				city : address.city,
-				country : address.country
+			if(address !== undefined){
+				var getData = {
+					street : address.street,
+					city : address.city,
+					country : address.country
+				}
+			} else {
+				var getData = null;
 			}
 			$.getJSON(OC.generateUrl('/apps/maps/adresslookup'), getData, function(r) {
 				callback(r)

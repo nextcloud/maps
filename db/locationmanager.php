@@ -87,6 +87,16 @@ class LocationManager {
 		$query -> bindParam(2, $id, \PDO::PARAM_STR); 
 		$result = $query -> execute();
 	}
-	
-
+	public function checkHash($hash){
+		$sql = "SELECT * FROM  `*PREFIX*maps_location_track_users` WHERE `hash`=? LIMIT 1";
+		$query = $this -> db -> prepareQuery($sql);
+		$query -> bindParam(1, $hash, \PDO::PARAM_STR);
+		$result = $query -> execute();
+		$row = $result -> fetchRow();
+		if ( $row != NULL ){
+			return TRUE;
+		} else {
+			return FALSE;
+		}
+	}
 }

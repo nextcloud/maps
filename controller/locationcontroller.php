@@ -57,12 +57,11 @@ class LocationController extends ApiController {
 		$location['altitude'] = $this->params('altitude');
 		$location['speed'] = $this->params('speed');
 		$location['device_hash'] = $this->params('hash');
-		
-		/**
-		 * @TODO check if hash exists
-		 */
-		
-		$this->locationManager->save($location);
+
+		/* Only save location if hash exists in db */
+		if ( $this->locationManager->checkHash($location['device_hash']) ){
+			$this->locationManager->save($location);
+		}
 	}
 
 	/**

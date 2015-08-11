@@ -547,6 +547,7 @@ Array.prototype.unique = function() {
 		traceDevice : null,
 		arrowHead : {},
 		loadAdressBooks : function() {
+			if($('#contactMenu').length == 0) return;
 			Maps.addressbooks = [];
 			$.get(OC.generateUrl('apps/contacts/addressbooks/'), function(r) {
 				$.each(r.addressbooks, function() {

@@ -720,25 +720,23 @@ Array.prototype.unique = function() {
 			if (Maps.tempArr.length > 0) {
 				temp = Maps.tempArr.pop();
 				var contact = toolKit.vcardToObject(temp);
-				if(contact.adr !== undefined){
-					toolKit.adresLookup(contact.adr, function(d) {
-						var curperson = $.extend({}, d, contact);
-						try {
-							toolKit.addFavContactMarker(curperson);
-						} catch(e) {
+				toolKit.adresLookup(contact.adr, function(d) {
+					var curperson = $.extend({}, d, contact);
+					try {
+						toolKit.addFavContactMarker(curperson);
+					} catch(e) {
 
-						}
-					})
-				}
-				var total = Maps.tempTotal;
-				var index = Maps.tempCounter
-				var percent = Math.round((index / total * 100) * 100) / 100;
-				toolKit.setProgress(percent);
-				$('#cCounter').text(index + 1 + ' of ' + (total * 1 + 1));
-				Maps.tempCounter++;
-				if (index == total)
-					$('#loadingContacts').hide()
-				Maps.getContactPositionData();
+					}
+					var total = Maps.tempTotal;
+					var index = Maps.tempCounter
+					var percent = Math.round((index / total * 100) * 100) / 100;
+					toolKit.setProgress(percent);
+					$('#cCounter').text(index + 1 + ' of ' + (total * 1 + 1));
+					Maps.tempCounter++;
+					if (index == total)
+						$('#loadingContacts').hide()
+					Maps.getContactPositionData();
+				})
 			}
 		},
 
@@ -996,10 +994,14 @@ Array.prototype.unique = function() {
 		 */
 		adresLookup : function(address, callback) {
 
-			var getData = {
-				street : address.street,
-				city : address.city,
-				country : address.country
+			if(address !== undefined){
+				var getData = {
+					street : address.street,
+					city : address.city,
+					country : address.country
+				}
+			} else {
+				var getData = null;
 			}
 			$.getJSON(OC.generateUrl('/apps/maps/adresslookup'), getData, function(r) {
 				callback(r)

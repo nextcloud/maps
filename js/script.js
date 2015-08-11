@@ -455,7 +455,7 @@ Array.prototype.unique = function() {
 				}
 				if (contact.location) {
 					if (contact.thumbnail) {
-						var imagePath = 'data:image/png;base64,' + contact.thumbnail
+						var imagePath = contact.thumbnail;
 						var iconImage = L.icon({
 							iconUrl : imagePath,
 							iconSize : [42, 49],
@@ -964,6 +964,13 @@ Array.prototype.unique = function() {
 			var contact = {};
 
 			$.each(vcard.data, function(k, v) {
+				if(vcard.data.photo == true){
+					var uid = vcard.metadata['id'];
+					var parent = vcard.metadata['parent'];
+					var backend = vcard.metadata['backend'];
+					contact.thumbnail = 'apps/contacts/addressbook/' + backend + '/' + parent + '/contact/' + uid + '/photo';
+					contact.thumbnail = OC.generateUrl(contact.thumbnail);
+				}
 				if (v[0]) {
 					if ($.isArray(v[0]['value'])) {
 						if (k === 'ADR') {
@@ -984,7 +991,6 @@ Array.prototype.unique = function() {
 					console.log(k, v)
 				}
 			})
-			contact.thumbnail = vcard.data.thumbnail
 			return contact;
 		},
 		/**
@@ -1010,7 +1016,7 @@ Array.prototype.unique = function() {
 		favMarkers : [],
 		addFavContactMarker : function(contact) {
 			if (contact.thumbnail) {
-				var imagePath = 'data:image/png;base64,' + contact.thumbnail
+				var imagePath = contact.thumbnail
 				var iconImage = L.icon({
 					iconUrl : imagePath,
 					iconSize : [42, 49],

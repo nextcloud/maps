@@ -177,6 +177,7 @@ class PageController extends Controller {
 	 */
 	private function doAdresslookup($q) {
 
+		$q = str_replace(" ", "+", $q);
 		$geohash = md5($q);
 		$checkCache = $this -> checkGeoCache($geohash);
 		if (!$checkCache) {

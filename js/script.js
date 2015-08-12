@@ -473,17 +473,18 @@ Array.prototype.unique = function() {
 						});
 					}
 
-					var markerHTML = '<b>' + contact.FN + "</b>";
-
-					var street = [contact.ADR[0][0], contact.ADR[0][1], contact.ADR[0][2]].clean('').join('<br />');
-					var city = (contact.ADR[0][3]) ? contact.ADR[0][3] : '';
-					markerHTML += '<br />' + street + " " + city;
-					markerHTML += (contact.TEL) ? '<br />Tel: ' + escape(contact.TEL[0]) : '';
-					var marker = L.marker([contact.location.lat * 1, contact.location.lon * 1], {
-						icon : iconImage
-					});
-					toolKit.addMarker(marker, markerHTML)
-					mapSearch.searchItems.push(marker);
+					for(i=0; i<contact.location.length; i++){
+						var markerHTML = '<b>' + contact.FN + "</b>";
+						var street = [contact.ADR[i][0], contact.ADR[i][1], contact.ADR[i][2]].clean('').join('<br />');
+						var city = (contact.ADR[i][3]) ? contact.ADR[i][3] : '';
+						markerHTML += '<br />' + street + ", " + city;
+						markerHTML += (contact.TEL) ? '<br />Tel: ' + escape(contact.TEL[0]) : '';
+						var marker = L.marker([contact.location[i].lat * 1, contact.location[i].lon * 1], {
+							icon : iconImage
+						});
+						toolKit.addMarker(marker, markerHTML)
+						mapSearch.searchItems.push(marker);
+					}
 				}
 				mapSearch._ids.push(contact.id)
 			})
@@ -1127,3 +1128,4 @@ Array.prototype.unique = function() {
 		}, timeout);
 	}
 })(jQuery, OC);
+

@@ -474,6 +474,7 @@ Array.prototype.unique = function() {
 					}
 
 					for(i=0; i<contact.location.length; i++){
+						if(contact.location[i] == null) continue;
 						var markerHTML = '<b>' + contact.FN + "</b>";
 						var street = [contact.ADR[i][0], contact.ADR[i][1], contact.ADR[i][2]].clean('').join('<br />');
 						var city = (contact.ADR[i][3]) ? contact.ADR[i][3] : '';

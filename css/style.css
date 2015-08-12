@@ -80,7 +80,7 @@ span.keepDeviceCentered.tracOn {
 	height: 16px;
 	width: 16px;
 }
-i { 
+i {
 	display: inline-block;
 	height: 16px;
 	width: 16px;
@@ -167,3 +167,7 @@ table#trackingDevices {
 .ui-timepicker-rtl dl { text-align: right; padding: 0 5px 0 0; }
 .ui-timepicker-rtl dl dt{ float: right; clear: right; }
 .ui-timepicker-rtl dl dd { margin: 0 45% 10px 10px; }
+
+.leaflet-popup-content-wrapper {
+	border-radius: 3px;
+}

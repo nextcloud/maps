@@ -40,9 +40,11 @@
 				
 		</div>	<br />
 		<ul class="with-icon">
+			<?php if(\OCP\App::isEnabled('contacts')) : ?>
 			<li>
-				<a class='contactLayer icon-contacts-dark' data-layer="contacts">Contacts</a>
+				<a class='contactLayer icon-contacts-dark' id='contactMenu' data-layer="contacts">Contacts</a>
 			</li>
+			<?php endif; ?>
 			<li>
 				<a class='main-cat-layer icon-info toggle-children' data-layer="amenity">Amenity</a>
 				<ul id="amenity-items" class="hidden"></ul>
@@ -67,10 +69,12 @@
 			</li>
 		</ul>
 		
+		<?php if(\OCP\App::isEnabled('contacts')) : ?>
 		<div id="loadingContacts" style="display:none">
 			<div id="progressBar"><div></div></div>
 			<div id="cCounter"></div>
 		</div>
+		<?php endif; ?>
 		<div id="app-settings">
 			<div id="app-settings-header">
 				<button class="settings-button" data-apps-slide-toggle="#app-settings-content"></button>

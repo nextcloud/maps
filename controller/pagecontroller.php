@@ -104,10 +104,11 @@ class PageController extends Controller {
 		foreach ($contacts as $r) {
 			$data = array();
 			$contact = $r;
-			$lookupAdr = implode(',', array_filter($r['ADR'][0]));
-			$lookup = $this -> doAdresslookup($lookupAdr);
-			$contact ['location'] = $lookup[0];
-			$contact -> image = $r['thumbnail'];
+			for($i=0; $i<count($r['ADR']); $i++){
+				$lookupAdr = implode(',', array_filter($r['ADR'][$i]));
+				$lookup = $this -> doAdresslookup($lookupAdr);
+				$contact ['location'][] = $lookup[0];
+			}
 			array_push($response['contacts'],$contact);
 		}
 		$response['nodes'] = $this->bboxSearch($kw, $bbox);

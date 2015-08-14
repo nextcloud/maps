@@ -14,7 +14,8 @@ namespace OCA\Maps\AppInfo;
 
 use \OCP\AppFramework\App;
 use \OCA\Maps\Db\CacheManager;
-use \OCA\Maps\Db\LocationManager;
+use \OCA\Maps\Db\DeviceMapper;
+use \OCA\Maps\Db\LocationMapper;
 use \OCA\Maps\Controller\PageController;
 use \OCA\Maps\Controller\LocationController;
 
@@ -36,39 +37,35 @@ class Application extends App {
 				$c->query('Request'),
 				$c->query('UserId'),
 				$c->query('CacheManager'),
-				$c->query('LocationManager')
+				$c->query('DeviceMapper')
 			);
 		});
 		$container->registerService('LocationController', function($c) {
 			return new LocationController(
 				$c->query('AppName'), 
 				$c->query('Request'),
-				$c->query('LocationManager'),
+				$c->query('LocationMapper'),
+				$c->query('DeviceMapper'),
 				$c->query('UserId')
 			);
 		});
-	
+
 		$container->registerService('CacheManager', function($c) {
 			return new CacheManager(
 				$c->query('ServerContainer')->getDb()
 			);
 		});
-		$container->registerService('LocationManager', function($c) {
-			return new LocationManager(
+		$container->registerService('LocationMapper', function($c) {
+			return new LocationMapper(
+				$c->query('ServerContainer')->getDb()
+			);
+		});
+		$container->registerService('DeviceMapper', function($c) {
+			return new DeviceMapper(
 				$c->query('ServerContainer')->getDb()
 			);
 		});
 
-		/**
-		 * Core
-		 */
-		$container->registerService('UserId', function($c) {
-			return \OCP\User::getUser();
-		});		
-		$container->registerService('Db', function() {
-			return new Db();
-		});
-		
 	}
 
 

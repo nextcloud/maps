@@ -67,7 +67,7 @@
 				<a class="toggle-children">My devices</a>
 				<ul id="deviceList" class="hidden">
 				<?php foreach($_['devices'] as $entry){ ?>
- 					 <li><a class="device" data-deviceId="<?php p($entry['id']); ?>"><?php p($entry['name']); ?><span class="icon-history icon deviceHistory"></span><span class="keepDeviceCentered"></span></a></li>
+ 					 <li><a class="device" data-deviceId="<?php p($entry->id); ?>"><?php p($entry->name); ?><span class="icon-history icon deviceHistory"></span><span class="keepDeviceCentered"></span></a></li>
 				<?php
 				}
 				?>

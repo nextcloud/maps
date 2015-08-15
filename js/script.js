@@ -229,6 +229,66 @@ Array.prototype.unique = function() {
 				}
 			})
 		});
+		function convertLatLon(latD, lonD, latDir, lonDir){
+			var lon = lonD[0] + lonD[1]/60 + lonD[2]/(60*60);
+			var lat = latD[0] + latD[1]/60 + latD[2]/(60*60);
+			if (latDir == "S") {
+				lat = lat * -1;
+			}
+			if(lonDir == "W"){
+				lon = lon * -1;
+			}
+			return {
+				lat: lat,
+				lon: lon
+			};
+		}
+		$('.photoLayer').clickToggle(function() {
+			OC.dialogs.filepicker("Select your photo", function addJpegFile(path){
+				for(i=0; i<path.length; i++){
+					var p = path[i];
+					if(p.indexOf('/') === 0) p = p.substr(1);
+					var separator = p.lastIndexOf('/');
+					var dir = p.substr(0, separator);
+					var file = p.substr(separator + 1);
+					var picUrl = OC.generateUrl('apps/files/ajax/download.php?dir={dir}&files={file}', {
+						dir: dir,
+						file: file
+					});
+					new ImageInfo(
+						picUrl,
+						(function (element){
+							return function (imageinfo){
+								var exif = imageinfo.getAllFields().exif;
+								var latD = exif.GPSLatitude;
+								var lonD = exif.GPSLongitude;
+								var latDir = exif.GPSLatitudeRef;
+								var lonDir = exif.GPSLongitudeRef;
+								var latlon = convertLatLon(latD, lonD, latDir, lonDir);
+								var photoIcon = L.icon({
+									iconUrl: picUrl,
+									iconSize : [42, 49],
+									iconAnchor : [21, 49],
+									popupAnchor : [0, -49],
+									className : 'photo-marker'
+								});
+								
+								var markerHTML = '<b>' + file + "</b>";
+								markerHTML += '<br />Latitude: ' + latlon.lat + " " + latDir;
+								markerHTML += '<br />Longitude: ' + latlon.lon + " " + lonDir;
+								markerHTML += '<br />Altitude: ' + exif.GPSAltitude + "m";
+								var marker = L.marker([latlon.lat, latlon.lon], {
+									icon : photoIcon
+								});
+								toolKit.addMarker(marker, markerHTML);
+							};
+						})(this)
+					).readFileData();
+				}
+			}, true, ["image/jpeg", "image/png", "image/gif"], true);
+		}, function() {
+			//TODO
+		});
 		$('.contactLayer').clickToggle(function() {
 			Maps.loadAdressBooks()
 		}, function() {

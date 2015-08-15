@@ -59,6 +59,10 @@ div#search-icon {
 	background: url('../img/icons/personBackground.png');
 	padding: 4px 5px 13px 4px;
 }
+.photo-marker {
+	background: url('../img/icons/personBackground.png');
+	padding: 4px 5px 13px 4px;
+}
 .deviceHistory{
 	float: right;
 	margin-top: 14px;

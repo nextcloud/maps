@@ -1,0 +1,6 @@
+{ "translations": {
+    "Maps" : "Kort",
+    "left" : "vinstri",
+    "right" : "hægri"
+},"pluralForm" :"nplurals=2; plural=(n % 10 != 1 || n % 100 == 11);"
+}

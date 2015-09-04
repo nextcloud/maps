@@ -23,6 +23,9 @@
 \OCP\Util::addScript('maps', '3rdparty/leaflet/plugins/Leaflet.MakiMarkers');
 \OCP\Util::addScript('maps', 'dateTimePicker');
 \OCP\Util::addScript('maps', 'script');
+\OCP\Util::addScript('maps', '3rdparty/imageinfo-lib');
+\OCP\Util::addScript('maps', '3rdparty/binaryajax-lib');
+\OCP\Util::addScript('maps', '3rdparty/exif');
 
 \OCP\Util::addStyle('maps', 'leaflet/leaflet');
 \OCP\Util::addStyle('maps', 'leaflet/leaflet-compass.min');
@@ -45,6 +48,9 @@
 				<a class='contactLayer icon-contacts-dark' id='contactMenu' data-layer="contacts">Contacts</a>
 			</li>
 			<?php endif; ?>
+			<li>
+				<a class='photoLayer icon-link' id='photoMenu' data-layer="photos">Photos</a>
+			</li>
 			<li>
 				<a class='main-cat-layer icon-info toggle-children' data-layer="amenity">Amenity</a>
 				<ul id="amenity-items" class="hidden"></ul>

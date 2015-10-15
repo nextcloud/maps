@@ -11,6 +11,7 @@
 
 namespace OCA\Maps\AppInfo;
 
+$l = \OC::$server->getL10N('maps');
 
 \OCP\App::addNavigationEntry(array(
     // the string under which your app will be referenced in owncloud
@@ -29,5 +30,5 @@ namespace OCA\Maps\AppInfo;
 
     // the title of your application. This will be used in the
     // navigation or on the settings page of your app
-    'name' => \OC_L10N::get('maps')->t('Maps')
+    'name' => $l->t('Maps')
 ));

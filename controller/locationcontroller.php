@@ -117,8 +117,8 @@ class LocationController extends ApiController {
 	public function loadLocations($devices, $from, $till, $limit){
 		$deviceIds = explode(',',$devices);
 		$from = ($from) ? strtotime($from) : null;
-		$till = ($till != '') ? strtotime($till) : strtotime('now');
-		$limit = ($limit != '') ? (int) $limit : 2000;
+		$till = ($till !== '') ? strtotime($till) : strtotime('now');
+		$limit = ($limit !== '') ? (int) $limit : 2000;
 		$response = array();
 		foreach($deviceIds as $deviceId){
 			$hash = $this->deviceMapper->findById($deviceId)->hash;

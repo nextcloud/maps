@@ -16,7 +16,7 @@ use \OCP\DB\insertid;
 class CacheManager {
 	private $userid;
 	private $db;
-	public function __construct($db) {
+	public function __construct(IDb $db) {
 		$this -> db = $db;
 	}
 

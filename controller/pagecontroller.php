@@ -11,6 +11,7 @@
 
 namespace OCA\Maps\Controller;
 
+use \OCA\Maps\Db\DeviceMapper;
 use \OCP\IRequest;
 use \OCP\AppFramework\Http\TemplateResponse;
 use \OCP\AppFramework\Controller;
@@ -20,12 +21,14 @@ class PageController extends Controller {
 
 	private $userId;
 	private $cacheManager;
-	private $locationManager;
-	public function __construct($appName, IRequest $request, $userId, $cacheManager,$locationManager) {
+	private $deviceMapper;
+	public function __construct($appName, IRequest $request, $userId,
+								CacheManager $cacheManager,
+								DeviceMapper	$deviceMapper) {
 		parent::__construct($appName, $request);
 		$this -> userId = $userId;
 		$this -> cacheManager = $cacheManager;
-		$this -> locationManager = $locationManager;
+		$this -> deviceMapper = $deviceMapper;
 	}
 
 	/**
@@ -39,7 +42,8 @@ class PageController extends Controller {
 	 * @NoCSRFRequired
 	 */
 	public function index() {
-		$params = array('user' => $this -> userId,'devices'=>$this->locationManager->loadAll($this->userId));
+
+		$params = array('user' => $this -> userId,'devices'=>$this->deviceMapper->findAll($this->userId));
 		$response = new TemplateResponse('maps', 'main', $params);
 		if (class_exists('OCP\AppFramework\Http\ContentSecurityPolicy')) {
 			$csp = new \OCP\AppFramework\Http\ContentSecurityPolicy();

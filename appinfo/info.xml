@@ -7,4 +7,7 @@
     <author>Sander Brand</author>
     <version>0.0.6</version>
     <requiremin>7</requiremin>
+    <dependencies>
+        <owncloud min-version="7" max-version="9.0"/>
+    </dependencies>
 </info>

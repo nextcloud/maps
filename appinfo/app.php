@@ -22,11 +22,11 @@ $l = \OC::$server->getL10N('maps');
     'order' => 10,
 
     // the route that will be shown on startup
-    'href' => \OCP\Util::linkToRoute('maps.page.index'),
+    'href' => \OC::$server->getURLGenerator()->linkToRoute('maps.page.index'),
 
     // the icon that will be shown in the navigation
     // this file needs to exist in img/
-    'icon' => \OCP\Util::imagePath('maps', 'maps.svg'),
+    'icon' => \OC::$server->getURLGenerator()->imagePath('maps', 'maps.svg'),
 
     // the title of your application. This will be used in the
     // navigation or on the settings page of your app

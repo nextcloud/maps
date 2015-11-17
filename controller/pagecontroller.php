@@ -119,7 +119,7 @@ class PageController extends Controller {
 		$addresses = $this->doAdresslookup(urlencode($kw));
 		foreach($addresses as $address){
 			array_push($response['addresses'],$address);
-			if($address->osm_type=="node"){
+			if($address->osm_type === "node"){
 			}
 		}
 		//$response['addresses'] = (array)($this->doAdresslookup($kw));
@@ -223,10 +223,10 @@ class PageController extends Controller {
 		$tmp = curl_exec($ch);
 		$httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
 		curl_close($ch);
-		if ($httpCode == 404) {
+		if ($httpCode === 404) {
 			return false;
 		} else {
-			if ($tmp != false) {
+			if ($tmp !== false) {
 				return $tmp;
 			}
 		}

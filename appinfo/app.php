@@ -11,6 +11,7 @@
 
 namespace OCA\Maps\AppInfo;
 
+$l = \OC::$server->getL10N('maps');
 
 \OCP\App::addNavigationEntry(array(
     // the string under which your app will be referenced in owncloud
@@ -21,13 +22,13 @@ namespace OCA\Maps\AppInfo;
     'order' => 10,
 
     // the route that will be shown on startup
-    'href' => \OCP\Util::linkToRoute('maps.page.index'),
+    'href' => \OC::$server->getURLGenerator()->linkToRoute('maps.page.index'),
 
     // the icon that will be shown in the navigation
     // this file needs to exist in img/
-    'icon' => \OCP\Util::imagePath('maps', 'maps.svg'),
+    'icon' => \OC::$server->getURLGenerator()->imagePath('maps', 'maps.svg'),
 
     // the title of your application. This will be used in the
     // navigation or on the settings page of your app
-    'name' => \OC_L10N::get('maps')->t('Maps')
+    'name' => $l->t('Maps')
 ));

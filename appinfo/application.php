@@ -16,8 +16,10 @@ use \OCP\AppFramework\App;
 use \OCA\Maps\Db\CacheManager;
 use \OCA\Maps\Db\DeviceMapper;
 use \OCA\Maps\Db\LocationMapper;
+use \OCA\Maps\Db\FavoriteMapper;
 use \OCA\Maps\Controller\PageController;
 use \OCA\Maps\Controller\LocationController;
+use \OCA\Maps\Controller\FavoriteController;
 
 
 class Application extends App {
@@ -33,7 +35,7 @@ class Application extends App {
 		 */
 		$container->registerService('PageController', function($c) {
 			return new PageController(
-				$c->query('AppName'), 
+				$c->query('AppName'),
 				$c->query('Request'),
 				$c->query('UserId'),
 				$c->query('CacheManager'),
@@ -42,10 +44,18 @@ class Application extends App {
 		});
 		$container->registerService('LocationController', function($c) {
 			return new LocationController(
-				$c->query('AppName'), 
+				$c->query('AppName'),
 				$c->query('Request'),
 				$c->query('LocationMapper'),
 				$c->query('DeviceMapper'),
+				$c->query('UserId')
+			);
+		});
+		$container->registerService('FavoriteController', function($c) {
+			return new FavoriteController(
+				$c->query('AppName'),
+				$c->query('Request'),
+				$c->query('FavoriteMapper'),
 				$c->query('UserId')
 			);
 		});
@@ -62,6 +72,11 @@ class Application extends App {
 		});
 		$container->registerService('DeviceMapper', function($c) {
 			return new DeviceMapper(
+				$c->query('ServerContainer')->getDb()
+			);
+		});
+		$container->registerService('FavoriteMapper', function($c) {
+			return new FavoriteMapper(
 				$c->query('ServerContainer')->getDb()
 			);
 		});

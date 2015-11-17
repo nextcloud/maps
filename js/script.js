@@ -272,7 +272,7 @@ Array.prototype.unique = function() {
 									popupAnchor : [0, -49],
 									className : 'photo-marker'
 								});
-								
+
 								var markerHTML = '<b>' + file + "</b>";
 								markerHTML += '<br />Latitude: ' + latlon.lat + " " + latDir;
 								markerHTML += '<br />Longitude: ' + latlon.lon + " " + lonDir;
@@ -1172,9 +1172,22 @@ Array.prototype.unique = function() {
 
 		}
 	}
+
+	favorites = {
+		add : function(){
+			var latlng = $(this).attr("data-latlng").split(",");
+			var formData = {
+				lat : latlng[0],
+				lng : latlng[1]
+			};
+			$.post(OC.generateUrl('/apps/maps/api/1.0/favorite/addToFavorites'), formData);
+		}
+	}
+
 	$(document).on('click', '#tracking-settings', mapSettings.openTrackingSettings);
 	$(document).on('click', '#addtracking button', mapSettings.saveDevice);
 	$(document).on('click', '#trackingDevices .icon-delete', mapSettings.deleteDevice);
+	$(document).on('click', '.addToFav', favorites.add);
 
 	/**
 	 * Extend the OC.Notification object with our own methods
@@ -1196,4 +1209,3 @@ Array.prototype.unique = function() {
 		}, timeout);
 	}
 })(jQuery, OC);
-

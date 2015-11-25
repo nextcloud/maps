@@ -94,6 +94,16 @@ class FavoriteController extends ApiController {
 	/**
 	 * @NoAdminRequired
 	 *
+	 * @return JSONResponse
+	 */
+	public function getFavorites(){
+		$favorites = $this->favoriteMapper->findAll();
+		return new JSONResponse($favorites);
+	}
+
+	/**
+	 * @NoAdminRequired
+	 *
 	 * @param $id int
 	 * @return JSONResponse
 	 */

@@ -59,6 +59,10 @@ div#search-icon {
 	background: url('../img/icons/personBackground.png');
 	padding: 4px 5px 13px 4px;
 }
+.favorite-icon {
+	background: url('../img/icons/favMarker.png');
+	padding: 4px 5px 13px 4px;
+}
 .photo-marker {
 	background: url('../img/icons/personBackground.png');
 	padding: 4px 5px 13px 4px;

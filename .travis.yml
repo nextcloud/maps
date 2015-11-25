@@ -29,7 +29,6 @@ script:
   - sh -c "if [ '$DB' = 'sqlite' ]; then ant test; fi"
 
   # Run phpunit tests
-  - cd tests/unit
   - phpunit --configuration phpunit.xml
 
   # Create coverage report

@@ -1,4 +1,8 @@
 # Maps
+[![Build Status](https://travis-ci.org/owncloud/maps.svg?branch=master)](https://travis-ci.org/owncloud/maps)
+[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/owncloud/maps/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/owncloud/maps/?branch=master)
+
+
 Place this app in **owncloud/apps/**
 
 ## What is this?

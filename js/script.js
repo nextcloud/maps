@@ -901,7 +901,8 @@ Array.prototype.unique = function() {
 	}
 
 	toolKit = {
-		addMarker : function(marker, markerHTML, openPopup, fav=false) {
+		addMarker : function(marker, markerHTML, openPopup, fav) {
+			fav = fav || false;
 			var openPopup = (openPopup) ? true : false;
 			var latlng = marker._latlng.lat + ',' + marker._latlng.lng;
 			var markerHTML2 = markerHTML + '<div><a class="setDestination" data-latlng="' + latlng + '">Navigate to here</a> | ';
@@ -1195,7 +1196,7 @@ Array.prototype.unique = function() {
 			$.post(OC.generateUrl('/apps/maps/api/1.0/favorite/getFavorites'), null, function(data){
 				for(var i=0; i<data.length; i++){
 					var fav = data[i];
-					
+
 					var imagePath = OC.filePath('maps', 'img', 'icons/favMarker.png');
 					var iconImage = L.icon({
 						iconUrl : imagePath,
@@ -1203,7 +1204,7 @@ Array.prototype.unique = function() {
 						iconAnchor : [21, 49],
 						popupAnchor : [0, -49]
 					});
-					
+
 					var markerHTML = '<b>' + fav.name + " (" + fav.userId + ")</b>";
 					markerHTML += '<br />Latitude: ' + parseFloat(fav.lat).toFixed(3);
 					markerHTML += '<br />Longitude: ' + parseFloat(fav.lng).toFixed(3);

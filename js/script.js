@@ -289,6 +289,11 @@ Array.prototype.unique = function() {
 		}, function() {
 			//TODO
 		});
+		$('.favoriteLayer').clickToggle(function() {
+			favorites.show();
+		}, function() {
+			favorites.hide();
+		});
 		$('.contactLayer').clickToggle(function() {
 			Maps.loadAdressBooks()
 		}, function() {
@@ -896,10 +901,14 @@ Array.prototype.unique = function() {
 	}
 
 	toolKit = {
-		addMarker : function(marker, markerHTML, openPopup) {
+		addMarker : function(marker, markerHTML, openPopup, fav) {
+			fav = fav || false;
 			var openPopup = (openPopup) ? true : false;
 			var latlng = marker._latlng.lat + ',' + marker._latlng.lng;
-			var markerHTML2 = markerHTML + '<div><a class="setDestination" data-latlng="' + latlng + '">Navigate to here</a> | <a class="addToFav" data-latlng="' + latlng + '">Add to favorites</a></div>';
+			var markerHTML2 = markerHTML + '<div><a class="setDestination" data-latlng="' + latlng + '">Navigate to here</a> | ';
+			if(fav) markerHTML2 += '<a class="remFromFav">Remove from favorites</a>';
+			else markerHTML2 += '<a class="addToFav" data-latlng="' + latlng + '">Add to favorites</a>';
+			markerHTML2 += '</div>';
 			marker.addTo(map).bindPopup(markerHTML2);
 			if (openPopup === true) {
 				setTimeout(function() {
@@ -1174,6 +1183,7 @@ Array.prototype.unique = function() {
 	}
 
 	favorites = {
+		favArray : [],
 		add : function(){
 			var latlng = $(this).attr("data-latlng").split(",");
 			var formData = {
@@ -1181,6 +1191,37 @@ Array.prototype.unique = function() {
 				lng : latlng[1]
 			};
 			$.post(OC.generateUrl('/apps/maps/api/1.0/favorite/addToFavorites'), formData);
+		},
+		show : function(){
+			$.post(OC.generateUrl('/apps/maps/api/1.0/favorite/getFavorites'), null, function(data){
+				for(var i=0; i<data.length; i++){
+					var fav = data[i];
+
+					var imagePath = OC.filePath('maps', 'img', 'icons/favMarker.png');
+					var iconImage = L.icon({
+						iconUrl : imagePath,
+						iconSize : [42, 49],
+						iconAnchor : [21, 49],
+						popupAnchor : [0, -49]
+					});
+
+					var markerHTML = '<b>' + fav.name + " (" + fav.userId + ")</b>";
+					markerHTML += '<br />Latitude: ' + parseFloat(fav.lat).toFixed(3);
+					markerHTML += '<br />Longitude: ' + parseFloat(fav.lng).toFixed(3);
+					markerHTML += '<br />Added: ' + new Date(fav.timestamp*1000).toString();
+					var marker = L.marker([fav.lat, fav.lng], {
+									icon : iconImage
+					});
+					toolKit.addMarker(marker, markerHTML, false, true);
+					favorites.favArray.push(marker);
+				}
+			});
+		},
+		hide : function(){
+			for(var i=0; i<favorites.favArray.length; i++){
+				map.removeLayer(favorites.favArray[i]);
+			}
+			favorites.favArray = [];
 		}
 	}
 

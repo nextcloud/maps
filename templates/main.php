@@ -49,6 +49,9 @@
 			</li>
 			<?php endif; ?>
 			<li>
+				<a class='favoriteLayer icon-star' id='favoriteMenu' data-layer="favorites">Favorites</a>
+			</li>
+			<li>
 				<a class='photoLayer icon-link' id='photoMenu' data-layer="photos">Photos</a>
 			</li>
 			<li>

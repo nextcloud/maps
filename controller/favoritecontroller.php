@@ -76,9 +76,9 @@ class FavoriteController extends ApiController {
 	 * @param $lng float
 	 * @return JSONResponse
 	 */
-	public function addFavorite($lat, $lng){
+	public function addFavorite($lat, $lng, $name = null){
 		$favorite = new Favorite();
-		$favorite->setName("empty");
+		$favorite->setName($name);
 		$favorite->setTimestamp(time());
 		$favorite->setUserId($this->userId);
 		$favorite->setLat($lat);

@@ -1186,11 +1186,30 @@ Array.prototype.unique = function() {
 		favArray : [],
 		add : function(){
 			var latlng = $(this).attr("data-latlng").split(",");
-			var formData = {
-				lat : latlng[0],
-				lng : latlng[1]
-			};
-			$.post(OC.generateUrl('/apps/maps/api/1.0/favorite/addToFavorites'), formData);
+			var popupDiv = document.getElementsByClassName('leaflet-popup-content')[0];
+			var popupText = popupDiv.innerHTML;
+			var splitIndex = popupText.indexOf('<br>');
+			popupDiv.innerHTML = popupText.substring(splitIndex);
+			var nameDiv = document.createElement('div');
+			var nameInput = document.createElement('input');
+			var orgTitle = popupText.substring(0, splitIndex);
+			nameInput.type = 'text';
+			nameInput.value = orgTitle;
+			var submit = document.createElement('button');
+			submit.className = 'icon-checkmark';
+			submit.onclick = function(){
+				popupDiv.removeChild(nameDiv);
+				popupDiv.innerHTML = orgTitle + popupDiv.innerHTML;
+				var formData = {
+					lat : latlng[0],
+					lng : latlng[1],
+					name : nameInput.value
+				};
+				$.post(OC.generateUrl('/apps/maps/api/1.0/favorite/addToFavorites'), formData);
+			}
+			nameDiv.appendChild(nameInput);
+			nameDiv.appendChild(submit);
+			popupDiv.insertBefore(nameDiv, popupDiv.firstChild);
 		},
 		show : function(){
 			$.post(OC.generateUrl('/apps/maps/api/1.0/favorite/getFavorites'), null, function(data){

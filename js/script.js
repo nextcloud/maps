@@ -902,7 +902,7 @@ Array.prototype.unique = function() {
 			fav = fav || false;
 			var openPopup = (openPopup) ? true : false;
 			var latlng = marker._latlng.lat + ',' + marker._latlng.lng;
-			var markerHTML2 = '<div class="' + (fav ? 'icon-starred removeFromFav"' : 'icon-star addToFav" data-latlng="' + latlng + '"' ) + '></div><div class="marker-popup-content">' + markerHTML + '</div><div><a class="setDestination" data-latlng="' + latlng + '">Navigate to here</a></div>';
+			var markerHTML2 = '<div class="' + (fav ? 'icon-starred removeFromFav"' : 'icon-star addToFav" data-latlng="' + latlng + '"' ) + ' style="float: left;"></div><div class="marker-popup-content">' + markerHTML + '</div><div><a class="setDestination" data-latlng="' + latlng + '">Navigate to here</a></div>';
 			marker.addTo(map).bindPopup(markerHTML2);
 			if (openPopup === true) {
 				setTimeout(function() {
@@ -1183,12 +1183,25 @@ Array.prototype.unique = function() {
 			var popup = document.getElementsByClassName('leaflet-popup-content')[0];
 			var favicon = popup.getElementsByTagName('div')[0];
 			var content = popup.getElementsByTagName('div')[1];
+			
+			// TODO remove input field, still WIP
+			if(document.getElementsByClassName('fav-input-title').length > 0) {
+				var inputDiv = document.getElementsByClassName('fav-input-title-container')[0];
+				var title = inputDiv.firstChild.value + '<br>';
+				inputDiv.parentNode.removeChild(inputDiv);
+				$('.addToFav').after(title);
+				return;
+			}
+			
 			var popupText = content.innerHTML;
-			var splitIndex = popupText.indexOf('<br>');
-			content.innerHTML = popupText.substring(splitIndex);
+			var delimiter = '<br>';
+			var splitIndex = popupText.indexOf(delimiter);
+			content.innerHTML = popupText.substring(splitIndex + delimiter.length);
 			var nameDiv = document.createElement('div');
+			nameDiv.className = 'fav-input-title-container';
 			var nameInput = document.createElement('input');
 			nameInput.type = 'text';
+			nameInput.className = 'fav-input-title';
 			var orgTitle = popupText.substring(0, splitIndex);
 			nameInput.value = orgTitle;
 			var submit = document.createElement('button');
@@ -1203,10 +1216,10 @@ Array.prototype.unique = function() {
 				};
 				$.post(OC.generateUrl('/apps/maps/api/1.0/favorite/addToFavorites'), formData);
 			}
-			nameDiv.appendChild(favicon);
 			nameDiv.appendChild(nameInput);
 			nameDiv.appendChild(submit);
 			content.insertBefore(nameDiv, content.firstChild);
+			content.insertBefore(favicon, content.firstChild);
 		},
 		show : function(){
 			$.post(OC.generateUrl('/apps/maps/api/1.0/favorite/getFavorites'), null, function(data){

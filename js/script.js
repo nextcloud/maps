@@ -902,10 +902,7 @@ Array.prototype.unique = function() {
 			fav = fav || false;
 			var openPopup = (openPopup) ? true : false;
 			var latlng = marker._latlng.lat + ',' + marker._latlng.lng;
-			var markerHTML2 = '<div class="icon-star">&nbsp;</div><div class="marker-popup-content">' + markerHTML + '</div><div><a class="setDestination" data-latlng="' + latlng + '">Navigate to here</a> | ';
-			if(fav) markerHTML2 += '<a class="remFromFav">Remove from favorites</a>';
-			else markerHTML2 += '<a class="addToFav" data-latlng="' + latlng + '">Add to favorites</a>';
-			markerHTML2 += '</div>';
+			var markerHTML2 = '<div class="' + (fav ? 'icon-starred removeFromFav"' : 'icon-star addToFav" data-latlng="' + latlng + '"' ) + '></div><div class="marker-popup-content">' + markerHTML + '</div><div><a class="setDestination" data-latlng="' + latlng + '">Navigate to here</a></div>';
 			marker.addTo(map).bindPopup(markerHTML2);
 			if (openPopup === true) {
 				setTimeout(function() {

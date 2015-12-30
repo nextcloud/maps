@@ -179,3 +179,24 @@ table#trackingDevices {
 .leaflet-popup-content-wrapper {
 	border-radius: 3px;
 }
+
+.leaflet-popup-content .icon-star,
+.leaflet-popup-content .icon-starred {
+	position: absolute;
+	left: 0;
+	top: 0;
+	padding: 26px;
+}
+.leaflet-popup-content .marker-popup-content {
+	margin-left: 26px;
+}
+.leaflet-popup-content .setDestination {
+	margin-left: 18px;
+	padding: 8px;
+}
+.leaflet-popup-content .leaflet-popup-close-button {
+	box-sizing: border-box;
+	width: 30px;
+	height: 30px;
+	padding: 6px;
+}

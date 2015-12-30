@@ -109,7 +109,7 @@ Array.prototype.unique = function() {
 		 "Airial" : airial
 		 };*/
 
-		map.addControl(new L.Control.Compass());
+		//map.addControl(new L.Control.Compass());
 		map.addControl(new L.Control.Gps({
 			minZoom : 14,
 			autoActive: 1,

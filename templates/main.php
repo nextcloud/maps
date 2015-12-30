@@ -36,35 +36,31 @@
 
 
 ?>
- 
+
 <div id="app">
 	<div id="app-navigation">
 		<div id="searchContainer">
-				
+
 		</div>	<br />
 		<ul class="with-icon">
-			<?php if(\OCP\App::isEnabled('contacts')) : ?>
-			<li>
-				<a class='contactLayer icon-contacts-dark' id='contactMenu' data-layer="contacts">Contacts</a>
-			</li>
-			<?php endif; ?>
 			<li>
 				<a class='favoriteLayer icon-star' id='favoriteMenu' data-layer="favorites">Favorites</a>
 			</li>
 			<li>
-				<a class='photoLayer icon-link' id='photoMenu' data-layer="photos">Photos</a>
-			</li>
-			<li>
-				<a class='main-cat-layer icon-info toggle-children' data-layer="amenity">Amenity</a>
-				<ul id="amenity-items" class="hidden"></ul>
-			</li>
-			<li>
-				<a class='main-cat-layer icon-toggle toggle-children' data-layer="tourism">Tourism</a>
-				<ul id="tourism-items" class="hidden"></ul>
-			</li>
-			<li>
-				<a class='main-cat-layer icon-home toggle-children' data-layer="shop">Shops</a>
+				<a class='main-cat-layer icon-toggle toggle-children' data-layer="shop">Places</a>
 				<ul id="shop-items" class="hidden"></ul>
+			</li>
+			<?php if(\OCP\App::isEnabled('contacts')) : ?>
+			<li>
+				<a class='contactLayer icon-contacts-dark' id='contactMenu' data-layer="contacts">Contacts</a>
+			</li>
+            <div id="loadingContacts" style="display:none">
+                <div id="progressBar"><div></div></div>
+                <div id="cCounter"></div>
+            </div>
+			<?php endif; ?>
+			<li>
+				<a class='photoLayer icon-link' id='photoMenu' data-layer="photos">Photos</a>
 			</li>
 			<li>
 				<a class="toggle-children">My devices</a>
@@ -77,13 +73,7 @@
 				</ul>
 			</li>
 		</ul>
-		
-		<?php if(\OCP\App::isEnabled('contacts')) : ?>
-		<div id="loadingContacts" style="display:none">
-			<div id="progressBar"><div></div></div>
-			<div id="cCounter"></div>
-		</div>
-		<?php endif; ?>
+
 		<div id="app-settings">
 			<div id="app-settings-header">
 				<button class="settings-button" data-apps-slide-toggle="#app-settings-content"></button>
@@ -92,7 +82,7 @@
 					<a id="tracking-settings">Location tracking settings</a>
 			</div>
 		</div>
-	  
+
   	</div>
 	<div id="app-content">
 		<div id="map">
@@ -106,7 +96,7 @@
 	<table id="trackingDevices">
 		<thead><th>Name</th><th>Hash</th></thead>
 		<tbody>
-			
+
 		</tbody>
 	</table>
 </div>

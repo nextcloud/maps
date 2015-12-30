@@ -159,13 +159,11 @@ Array.prototype.unique = function() {
 			if ((curTime - Maps.mouseDowntime) > 200 && Maps.dragging === false) {//200 = 2 seconds
 				console.log('Long press', (curTime - Maps.mouseDowntime))
 				Maps.droppedPin = new L.marker(e.latlng);
-				toolKit.addMarker(Maps.droppedPin, '', true);
 				var decoder = L.Control.Geocoder.nominatim();
 				decoder.reverse(e.latlng, 67108864, function(results) {
 					var result = results[0];
 					console.log(result);
 					setTimeout(function() {
-
 						var knownFields = ['country', 'country_code', 'postcode', 'residential', 'road', 'state', 'suburb', 'town', 'house_number'];
 						var popupHtml = '';
 						$.each(result.originalObject.address, function(k, v) {
@@ -177,8 +175,7 @@ Array.prototype.unique = function() {
 						var houseNo = (result.originalObject.address.house_number) ? result.originalObject.address.house_number : '';
 						popupHtml += result.originalObject.address.road + ' ' + houseNo + '<br />';
 						popupHtml += result.originalObject.address.town + ', ' + result.originalObject.address.state + ', ' + result.originalObject.address.country;
-
-						Maps.droppedPin.setPopupContent(popupHtml + Maps.droppedPin.getPopup()._content)
+						toolKit.addMarker(Maps.droppedPin, popupHtml, true);
 					}, 50);
 
 				})
@@ -905,10 +902,7 @@ Array.prototype.unique = function() {
 			fav = fav || false;
 			var openPopup = (openPopup) ? true : false;
 			var latlng = marker._latlng.lat + ',' + marker._latlng.lng;
-			var markerHTML2 = markerHTML + '<div><a class="setDestination" data-latlng="' + latlng + '">Navigate to here</a> | ';
-			if(fav) markerHTML2 += '<a class="remFromFav">Remove from favorites</a>';
-			else markerHTML2 += '<a class="addToFav" data-latlng="' + latlng + '">Add to favorites</a>';
-			markerHTML2 += '</div>';
+			var markerHTML2 = '<div class="' + (fav ? 'icon-starred removeFromFav"' : 'icon-star addToFav" data-latlng="' + latlng + '"' ) + ' style="float: left;"></div><div class="marker-popup-content">' + markerHTML + '</div><div><a class="setDestination" data-latlng="' + latlng + '">Navigate to here</a></div>';
 			marker.addTo(map).bindPopup(markerHTML2);
 			if (openPopup === true) {
 				setTimeout(function() {
@@ -1186,21 +1180,36 @@ Array.prototype.unique = function() {
 	favorites = {
 		favArray : [],
 		add : function(){
-			var latlng = $(this).attr("data-latlng").split(",");
-			var popupDiv = document.getElementsByClassName('leaflet-popup-content')[0];
-			var popupText = popupDiv.innerHTML;
-			var splitIndex = popupText.indexOf('<br>');
-			popupDiv.innerHTML = popupText.substring(splitIndex);
+			var latlng = $(this).attr('data-latlng').split(',');
+			var popup = document.getElementsByClassName('leaflet-popup-content')[0];
+			var favicon = popup.getElementsByTagName('div')[0];
+			var content = popup.getElementsByTagName('div')[1];
+			
+			// TODO remove input field, still WIP
+			if(document.getElementsByClassName('fav-input-title').length > 0) {
+				var inputDiv = document.getElementsByClassName('fav-input-title-container')[0];
+				var title = inputDiv.firstChild.value + '<br>';
+				inputDiv.parentNode.removeChild(inputDiv);
+				$('.addToFav').after(title);
+				return;
+			}
+			
+			var popupText = content.innerHTML;
+			var delimiter = '<br>';
+			var splitIndex = popupText.indexOf(delimiter);
+			content.innerHTML = popupText.substring(splitIndex + delimiter.length);
 			var nameDiv = document.createElement('div');
+			nameDiv.className = 'fav-input-title-container';
 			var nameInput = document.createElement('input');
-			var orgTitle = popupText.substring(0, splitIndex);
 			nameInput.type = 'text';
+			nameInput.className = 'fav-input-title';
+			var orgTitle = popupText.substring(0, splitIndex);
 			nameInput.value = orgTitle;
 			var submit = document.createElement('button');
 			submit.className = 'icon-checkmark';
 			submit.onclick = function(){
-				popupDiv.removeChild(nameDiv);
-				popupDiv.innerHTML = orgTitle + popupDiv.innerHTML;
+				content.removeChild(nameDiv);
+				content.innerHTML = orgTitle + content.innerHTML;
 				var formData = {
 					lat : latlng[0],
 					lng : latlng[1],
@@ -1210,7 +1219,8 @@ Array.prototype.unique = function() {
 			}
 			nameDiv.appendChild(nameInput);
 			nameDiv.appendChild(submit);
-			popupDiv.insertBefore(nameDiv, popupDiv.firstChild);
+			content.insertBefore(nameDiv, content.firstChild);
+			content.insertBefore(favicon, content.firstChild);
 		},
 		show : function(){
 			$.post(OC.generateUrl('/apps/maps/api/1.0/favorite/getFavorites'), null, function(data){

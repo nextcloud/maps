@@ -51,11 +51,10 @@ L.Control.MinZoomIdenticator = L.Control.extend({
 
 		var className = this.className;
 		container = this._container = L.DomUtil.create('div', className);
-		container.style.fontSize = "2em";
 		container.style.background = "#ffffff";
 		container.style.backgroundColor = "rgba(255,255,255,0.7)";
-		container.style.borderRadius = "10px";
-		container.style.padding = "1px 15px";
+		container.style.borderRadius = "3px";
+		container.style.padding = "3px 7px";
 		container.style.oppacity = "0.5";
 		map.on('moveend', this._updateBox, this);
 		this._updateBox(null);
@@ -82,7 +81,7 @@ L.Control.MinZoomIdenticator = L.Control.extend({
 		if (minzoomlevel == -1) {
 			this._container.innerHTML = "no layer assigned";
 		} else {
-			this._container.innerHTML = "current Zoom-Level: " + this._map.getZoom() + " all data at Level: " + minzoomlevel;
+			this._container.innerHTML = "current zoom: " + this._map.getZoom() + ", all data at " + minzoomlevel;
 		}
 
 		if (this._map.getZoom() >= minzoomlevel) {
@@ -135,11 +134,11 @@ L.OverPassLayer = L.FeatureGroup.extend({
 	},
 
 	_poiInfo : function(tags, id) {
-		var link = '<a href="http://www.openstreetmap.org/edit?editor=id&node=' + id + '">Edit this entry in iD</a><br>';
+		var link = '<a href="http://www.openstreetmap.org/edit?editor=id&node=' + id + '">Edit on OpenStreetMap</a><br>';
 		var r = $('<table>');
 		for (key in tags)
 		r.append($('<tr>').append($('<th>').text(key)).append($('<td>').text(tags[key])));
-		return link + $('<div>').append(r).html();
+		return $('<div>').append(r).html() + link;
 	},
 
 	/**
@@ -217,7 +216,7 @@ L.OverPassLayer = L.FeatureGroup.extend({
 				//var serverApi = serverApis[1];
 				var serverApi = serverApis[Math.round(Math.random())];
 				var apiUrl = this.options.query.replace('\(SERVERAPI\)', serverApi).replace(/(BBOX)/g, bbox.toOverpassBBoxString());
-				
+
 				$.ajax({
 					url : apiUrl,
 					context : {

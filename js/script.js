@@ -270,10 +270,10 @@ Array.prototype.unique = function() {
 									className : 'photo-marker'
 								});
 
-								var markerHTML = '<b>' + file + "</b>";
-								markerHTML += '<br />Latitude: ' + latlon.lat + " " + latDir;
+								var markerHTML = '<h2>' + file + "</h2>";
+								/*markerHTML += '<br />Latitude: ' + latlon.lat + " " + latDir;
 								markerHTML += '<br />Longitude: ' + latlon.lon + " " + lonDir;
-								markerHTML += '<br />Altitude: ' + exif.GPSAltitude + "m";
+								markerHTML += '<br />Altitude: ' + exif.GPSAltitude + "m";*/
 								var marker = L.marker([latlon.lat, latlon.lon], {
 									icon : photoIcon
 								});
@@ -503,8 +503,8 @@ Array.prototype.unique = function() {
 
 		showResultsOnMap : function(r) {
 			if (map.getZoom() <= 14) {
-				var zoomMSG = '<div class="leaflet-control-minZoomIndecator leaflet-control" style="font-size: 2em; border-top-left-radius: 10px; border-top-right-radius: 10px; border-bottom-right-radius: 10px; border-bottom-left-radius: 10px; padding: 1px 15px; display: block; background: rgba(255, 255, 255, 0.701961);">Results might be limited due current zoom, zoom in to get more</div>'
-				$('.leaflet-bottom.leaflet-left').html(zoomMSG);
+				var zoomMSG = '<div class="leaflet-control-minZoomIndecator leaflet-control" style="border-radius: 3px; padding: 3px 7px; display: block; background: rgba(255, 255, 255, 0.701961);">Results might be limited due current zoom, zoom in to get more</div>'
+				$('.leaflet-top.leaflet-middle').html(zoomMSG);
 			} else {
 				$('.leaflet-control-minZoomIndecator ').remove();
 			}
@@ -537,7 +537,7 @@ Array.prototype.unique = function() {
 
 					for(i=0; i<contact.location.length; i++){
 						if(contact.location[i] == null) continue;
-						var markerHTML = '<b>' + contact.FN + "</b>";
+						var markerHTML = '<h2>' + contact.FN + "</h2>";
 						var street = [contact.ADR[i][0], contact.ADR[i][1], contact.ADR[i][2]].clean('').join('<br />');
 						var city = (contact.ADR[i][3]) ? contact.ADR[i][3] : '';
 						markerHTML += '<br />' + street + ", " + city;
@@ -902,7 +902,7 @@ Array.prototype.unique = function() {
 			fav = fav || false;
 			var openPopup = (openPopup) ? true : false;
 			var latlng = marker._latlng.lat + ',' + marker._latlng.lng;
-			var markerHTML2 = '<div class="' + (fav ? 'icon-starred removeFromFav"' : 'icon-star addToFav" data-latlng="' + latlng + '"' ) + ' style="float: left;"></div><div class="marker-popup-content">' + markerHTML + '</div><div><a class="setDestination" data-latlng="' + latlng + '">Navigate to here</a></div>';
+			var markerHTML2 = '<div class="' + (fav ? 'icon-starred removeFromFav"' : 'icon-star addToFav" data-latlng="' + latlng + '"' ) + ' style="float: left;"></div><div class="marker-popup-content">' + markerHTML + '</div><div><a class="setDestination" data-latlng="' + latlng + '">Navigate here</a></div>';
 			marker.addTo(map).bindPopup(markerHTML2);
 			if (openPopup === true) {
 				setTimeout(function() {
@@ -1101,7 +1101,7 @@ Array.prototype.unique = function() {
 				});
 			}
 
-			var markerHTML = '<b>' + contact.fn + "</b>";
+			var markerHTML = '<h2>' + contact.fn + "</h2>";
 			var street = (contact.adr.street) ? contact.adr.street : '';
 			var city = (contact.adr.city) ? contact.adr.city : '';
 			markerHTML += '<br />' + street + " " + city;
@@ -1184,7 +1184,7 @@ Array.prototype.unique = function() {
 			var popup = document.getElementsByClassName('leaflet-popup-content')[0];
 			var favicon = popup.getElementsByTagName('div')[0];
 			var content = popup.getElementsByTagName('div')[1];
-			
+
 			// TODO remove input field, still WIP
 			if(document.getElementsByClassName('fav-input-title').length > 0) {
 				var inputDiv = document.getElementsByClassName('fav-input-title-container')[0];
@@ -1193,7 +1193,7 @@ Array.prototype.unique = function() {
 				$('.addToFav').after(title);
 				return;
 			}
-			
+
 			var popupText = content.innerHTML;
 			var delimiter = '<br>';
 			var splitIndex = popupText.indexOf(delimiter);
@@ -1235,10 +1235,10 @@ Array.prototype.unique = function() {
 						popupAnchor : [0, -49]
 					});
 
-					var markerHTML = '<b>' + fav.name + " (" + fav.userId + ")</b>";
-					markerHTML += '<br />Latitude: ' + parseFloat(fav.lat).toFixed(3);
+					var markerHTML = '<h2>' + fav.name + '</h2>';
+					/*markerHTML += '<br />Latitude: ' + parseFloat(fav.lat).toFixed(3);
 					markerHTML += '<br />Longitude: ' + parseFloat(fav.lng).toFixed(3);
-					markerHTML += '<br />Added: ' + new Date(fav.timestamp*1000).toString();
+					markerHTML += '<br />Added: ' + new Date(fav.timestamp*1000).toString();*/
 					var marker = L.marker([fav.lat, fav.lng], {
 									icon : iconImage
 					});

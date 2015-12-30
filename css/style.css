@@ -108,32 +108,21 @@ i {
 	cursor: pointer;
 }
 #loadingContacts {
-	height: 60px;
-	position: fixed;
-	bottom: 45px;
-	width: 241px;
-	vertical-align: middle;
-	padding-top: 15px;
-	cursor: pointer;
-	padding-left: 12px;
-	background-color: #f8f8f8;
-	border-top: 1px solid #ccc;
+	padding-left: 45px;
+	margin-top: -10px;
 }
 #progressBar {
-	width: 222px;
-	height: 22px;
-	border: 1px solid #111;
-	background-color: #292929;
+	width: 190px;
+	height: 5px;
+	border: 1px solid #aaa;
+	border-radius: 3px;
 }
-
 #progressBar div {
 	height: 100%;
-	color: #fff;
-	text-align: right;
-	line-height: 22px; /* same as #progressBar height if we want text middle aligned */
 	width: 0;
 	background-color: #426392;
 }
+
 #app-navigation > ul {
 	padding-bottom: 70px;
 }

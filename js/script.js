@@ -1124,7 +1124,7 @@ Array.prototype.unique = function() {
 			var progressBarWidth = percent * $element.width() / 100;
 			$element.find('div').animate({
 				width : progressBarWidth
-			}, 50).html(percent + "%&nbsp;");
+			}, 50);
 		}
 	}
 

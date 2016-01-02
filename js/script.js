@@ -294,7 +294,7 @@ Array.prototype.unique = function() {
 		$('.contactLayer').clickToggle(function() {
 			Maps.loadAdressBooks()
 		}, function() {
-			toolKit.removeFavMarkers()
+			favorites.hide()
 		});
 		$(document).on('click', '.subLayer', function() {
 			var layerGroup = $(this).attr('data-layerGroup');
@@ -896,13 +896,12 @@ Array.prototype.unique = function() {
 			//map.removeLayer(Maps.activeLayers[layer])
 		}
 	}
-
 	toolKit = {
 		addMarker : function(marker, markerHTML, openPopup, fav) {
 			fav = fav || false;
 			var openPopup = (openPopup) ? true : false;
 			var latlng = marker._latlng.lat + ',' + marker._latlng.lng;
-			var markerHTML2 = '<div class="' + (fav ? 'icon-starred removeFromFav"' : 'icon-star addToFav" data-latlng="' + latlng + '"' ) + ' style="float: left;"></div><div class="marker-popup-content">' + markerHTML + '</div><div><a class="setDestination" data-latlng="' + latlng + '">Navigate here</a></div>';
+			var markerHTML2 = '<div class="' + (fav ? 'icon-starred removeFromFav" fav-id="' + marker.options.id + '"' : 'icon-star addToFav" data-latlng="' + latlng + '"' ) + ' style="float: left;"></div><div class="marker-popup-content">' + markerHTML + '</div><div><a class="setDestination" data-latlng="' + latlng + '">Navigate here</a></div>';
 			marker.addTo(map).bindPopup(markerHTML2);
 			if (openPopup === true) {
 				setTimeout(function() {
@@ -1240,7 +1239,8 @@ Array.prototype.unique = function() {
 					markerHTML += '<br />Longitude: ' + parseFloat(fav.lng).toFixed(3);
 					markerHTML += '<br />Added: ' + new Date(fav.timestamp*1000).toString();*/
 					var marker = L.marker([fav.lat, fav.lng], {
-									icon : iconImage
+									icon : iconImage,
+									id : fav.id
 					});
 					toolKit.addMarker(marker, markerHTML, false, true);
 					favorites.favArray.push(marker);
@@ -1252,6 +1252,13 @@ Array.prototype.unique = function() {
 				map.removeLayer(favorites.favArray[i]);
 			}
 			favorites.favArray = [];
+		},
+		remove : function(){
+			var id = $(this).attr('fav-id');
+			var formData = {
+				id : id
+			};
+			$.post(OC.generateUrl('/apps/maps/api/1.0/favorite/removeFromFavorites'), formData);
 		}
 	}
 
@@ -1259,6 +1266,7 @@ Array.prototype.unique = function() {
 	$(document).on('click', '#addtracking button', mapSettings.saveDevice);
 	$(document).on('click', '#trackingDevices .icon-delete', mapSettings.deleteDevice);
 	$(document).on('click', '.addToFav', favorites.add);
+	$(document).on('click', '.removeFromFav', favorites.remove);
 
 	/**
 	 * Extend the OC.Notification object with our own methods

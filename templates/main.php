@@ -13,8 +13,8 @@
 \OCP\Util::addScript('maps', '3rdparty/leaflet/plugins/leaflet-hash');
 \OCP\Util::addScript('maps', '3rdparty/leaflet/plugins/leaflet.polylineDecorator');
 \OCP\Util::addScript('maps', '3rdparty/leaflet/plugins/leaflet.active-layers.min');
-\OCP\Util::addScript('maps', '3rdparty/leaflet/plugins/leaflet.select-layers.min');
-\OCP\Util::addScript('maps', '3rdparty/leaflet/plugins/leaflet-compass.min');
+//\OCP\Util::addScript('maps', '3rdparty/leaflet/plugins/leaflet.select-layers.min');
+//\OCP\Util::addScript('maps', '3rdparty/leaflet/plugins/leaflet-compass.min');
 \OCP\Util::addScript('maps', '3rdparty/leaflet-gps/leaflet-gps.min');
 \OCP\Util::addStyle('maps', 'leaflet-gps/css/leaflet-gps.min');
 

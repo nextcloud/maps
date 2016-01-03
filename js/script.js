@@ -212,7 +212,7 @@ Array.prototype.unique = function() {
 				subCat.slideDown();
 			}
 		})
-		var poiCats = ['shop', 'amenity', 'tourism'];
+		var poiCats = ['shop'];
 		$.each(poiCats, function(i, cat) {
 			poiTypes[cat] = poiTypes[cat].sort()
 			iconHTML = '';
@@ -955,7 +955,6 @@ Array.prototype.unique = function() {
 				'town-hall' : ['townhall'],
 				'post' : ['post_box', 'post_office'],
 				'bicycle' : ['bicycle_parking'],
-				'waste-basket' : ['waste_disposal'],
 				'campsite' : ['camp_site', 'caravan_site'],
 				'camera' : ['viewpoint'],
 				'grocery' : ['supermarket', 'deli', 'convenience', 'greengrocer', 'fishmonger', 'butcher', 'marketplace'],
@@ -966,15 +965,16 @@ Array.prototype.unique = function() {
 				'place-of-worship' : ['place_of_worship'],
 				'school' : ['kindergarten'],
 				'parking-garage' : ['parking-entrance'],
-				'lodging' : ['hotel', 'guest_house', 'chalet', 'hostel', 'motel'],
+				'lodging' : ['hotel', 'guest_house', 'hostel', 'motel'],
 				'art-gallery' : ['gallery', 'artwork', 'paint'],
-				'paperclip' : ['craft'],
-				'library' : ['books'],
+				'library' : ['books', 'library'],
 				'pitch' : ['sports'],
 				'mobilephone' : ['mobile_phone', 'gsm'],
 				'pharmacy' : ['drugstore'],
 				'zoo' : ['zoo'],
-				'museum' : ['museum']
+				'museum' : ['museum'],
+				'toilets' : ['toilets'],
+				'coffeshop' : ['coffee_shop']
 			}
 			var returnClass = false;
 			$.each(mapper, function(faClass, types) {
@@ -1129,9 +1129,12 @@ Array.prototype.unique = function() {
 	}
 
 	poiTypes = {
-		shop : ['supermarket', 'bakery', 'car', 'stationery', 'hairdresser', 'mobile_phone', 'convenience', 'newsagent', 'kiosk', 'computer', 'clothes', 'variety_store', 'hearing_aids', 'florist', 'handicraft', 'candle', 'antique', 'pet', 'massage', 'electronics', 'laundry', 'doityourself', 'sports', 'jewelry', 'musical_instrument', 'chemist', 'shoes', 'beverages', 'toys', 'fishing', 'copyshop', 'beauty', 'bag', 'paint', 'bicycle', 'communication', 'furniture', 'alcohol', 'deli', 'optician', 'books', 'car_repair', 'butcher', 'outdoor', 'motorcycle', 'estate_agent', 'photo', 'gift', 'travel_agency', 'tea', 'wine', 'medical_supply', 'department_store', 'dry_cleaning', 'video', 'second_hand', 'greengrocer', 'erotic', 'curtain', 'haberdashery', 'garden_centre', 'art', 'fashion', 'bags', 'accessoires', 'confectionery', 'ice_cream', 'organic', 'music', 'boutique', 'interior', 'kitchen', 'vacant', 'tattoo', 'mall', 'camera', 'gallery', 'rc_models', 'coffee', 'bicycle_rental', 'photographer', 'ticket', 'charity', 'Shisha', 'hats', 'funeral_directors', 'locksmith', 'fabric', 'hardware', 'shoe_repair', 'hifi', 'fabrics', 'tailor', 'anime', 'market', 'grocery', 'no', 'surf', 'tobacco', 'animals', 'currency_exchange', 'souvenirs', 'internet-tele-cafe', 'photography', 'car_parts', 'antiques', 'bed', 'skating', 'ceramics', 'internet cafe', 'frame', 'brushes', 'fish', 'callshop', 'glass', 'comics', 'pottery', 'internet_cafe', 'stamps', 'radiotechnics', 'interior_decoration', 'carrental', 'interior_design', 'gramophone', 'Trödel', 'unused', 'watches', 'jewellery', 'tatoo', 'travelling', 'telecommunication', 'cigarettes', 'sports food', 'perfumery', 'unknown', 'orthopedics', 'fire_extinguisher', 'fishmonger', 'wholesale', 'lights', 'carpet', 'office_supplies', 'parquet', 'porcelain', 'lamps', 'make-up', 'art_gallery', 'telecom', 'underwear', 'watch', 'tableware', 'scuba_diving', 'christmas', 'tanning', 'craft', 'leather', 'for rent', 'glaziery', 'seafood', 'Sicherheitstechnik', 'coffee machines', 'alteration', 'decoration', 'sport_bet', 'seefood', 'mobile phone service', 'window_blind', 'tyres', 'cheese', 'medical', 'sewing-machine', 'Kaugummi-Automaten', 'Kaugummi-Automat', 'baby', 'games', 'piercing', 'Elektrohaushaltsgeräte', 'electrician', 'glasses', 'circus', 'food', 'marine', 'lottery', 'Hockey', 'electric', 'coins', 'metal workshop', 'nails', 'general', 'tanning_salon', 'crafts', 'household', 'floor', 'baby_goods', 'Patissier', 'delicatessen', 'telephone', 'Hema', 'soft_drugs', 'board_games', 'lingerie', 'candy', 'cd', 'stones', 'spiritual', 'health', 'juice', 'hemp_products', 'smartshop', 'cannabis', 'frozen_yoghurt', 'art_supplies', 'cigar', 'department', 'sok_shop', 'realestate', 'lighting', 'generic', 'nail', 'ink', 'traiteur', 'toko', 'key', 'gsm', 'artist', 'hearth', 'framing', 'espresso_machine', 'knives', 'rental', 'thrift_store', 'snacks', 'tobacconist', 'disused:butcher', 'party', 'audiologist', 'housewares', 'Fashion', 'printing', 'chandler', 'Shoes', 'Electronics', 'softdrugs', 'houseware', 'textiles', 'perfume'],
-		amenity : ["post_box", "police", "atm", "recycling", "parking", "fuel", "telephone", "school", "pub", "doctors", "arts_centre", "cafe", "fast_food", "restaurant", "place_of_worship", "bank", "bicycle_parking", "drinking_water", "theatre", "bar", "bench", "waste_disposal", "nightclub", "pharmacy", "bicycle_rental", "post_office", "charging_station", "waste_basket", "vending_machine", "kindergarten", "marketplace", "dentist", "ev_charging", "bureau_de_change", "library", "cinema", "toilets", "car_wash", "fountain", "boat_rental", "taxi", "bus_parking", "public_building", "driving_school", "physical therapy", "coffee_shop", "embassy", "vacant", "coffeeshop", "ice_cream", "car_rental", "swimming_pool", "university", "casino", "community_centre", "lost_found", "grit_bin", "clock", "parking_entrance", "sauna", "brothel", "ferry_terminal", "fitness_center", "bus_station", "college", "fire_station", "health_centre", "townhall", "hospital", "veterinary", "gym", "fablab", "money_transfer", "kitchen_studio", "tanning_salon", "tanning", "studio"],
-		tourism : ["artwork", "hostel", "attraction", "hotel", "information", "museum", "gallery", "viewpoint", "picnic_site", "guest_house", "theme_park", "apartment", "zoo", "camp_site", "chalet", "motel", "citytour", "aquarium"]
+		shop : ['atm', 'coffee_shop', 'restaurant', 'supermarket', 'bicycle', 'hotel', 'swimming_pool', 'library', 'toilets', 'post_box', 'bar'],
+		//TODO: define proper categories:
+		// Restaurants/food/coffeeshops/bars, Hotels/hostels, Touristic sites, Wifi, Transport, Fuel, Parking, Supermarket, ATM/Bank, Entertainment, Hospital/Pharmacy, Police, Toilets, Post
+		//shop : ['supermarket', 'bakery', 'car', 'stationery', 'hairdresser', 'mobile_phone', 'convenience', 'newsagent', 'kiosk', 'computer', 'clothes', 'variety_store', 'hearing_aids', 'florist', 'handicraft', 'candle', 'antique', 'pet', 'massage', 'electronics', 'laundry', 'doityourself', 'sports', 'jewelry', 'musical_instrument', 'chemist', 'shoes', 'beverages', 'toys', 'fishing', 'copyshop', 'beauty', 'bag', 'paint', 'bicycle', 'communication', 'furniture', 'alcohol', 'deli', 'optician', 'books', 'car_repair', 'butcher', 'outdoor', 'motorcycle', 'estate_agent', 'photo', 'gift', 'travel_agency', 'tea', 'wine', 'medical_supply', 'department_store', 'dry_cleaning', 'video', 'second_hand', 'greengrocer', 'erotic', 'curtain', 'haberdashery', 'garden_centre', 'art', 'fashion', 'bags', 'accessoires', 'confectionery', 'ice_cream', 'organic', 'music', 'boutique', 'interior', 'kitchen', 'vacant', 'tattoo', 'mall', 'camera', 'gallery', 'rc_models', 'coffee', 'bicycle_rental', 'photographer', 'ticket', 'charity', 'Shisha', 'hats', 'funeral_directors', 'locksmith', 'fabric', 'hardware', 'shoe_repair', 'hifi', 'fabrics', 'tailor', 'anime', 'market', 'grocery', 'no', 'surf', 'tobacco', 'animals', 'currency_exchange', 'souvenirs', 'internet-tele-cafe', 'photography', 'car_parts', 'antiques', 'bed', 'skating', 'ceramics', 'internet cafe', 'frame', 'brushes', 'fish', 'callshop', 'glass', 'comics', 'pottery', 'internet_cafe', 'stamps', 'radiotechnics', 'interior_decoration', 'carrental', 'interior_design', 'gramophone', 'Trödel', 'unused', 'watches', 'jewellery', 'tatoo', 'travelling', 'telecommunication', 'cigarettes', 'sports food', 'perfumery', 'unknown', 'orthopedics', 'fire_extinguisher', 'fishmonger', 'wholesale', 'lights', 'carpet', 'office_supplies', 'parquet', 'porcelain', 'lamps', 'make-up', 'art_gallery', 'telecom', 'underwear', 'watch', 'tableware', 'scuba_diving', 'christmas', 'tanning', 'craft', 'leather', 'for rent', 'glaziery', 'seafood', 'Sicherheitstechnik', 'coffee machines', 'alteration', 'decoration', 'sport_bet', 'seefood', 'mobile phone service', 'window_blind', 'tyres', 'cheese', 'medical', 'sewing-machine', 'Kaugummi-Automaten', 'Kaugummi-Automat', 'baby', 'games', 'piercing', 'Elektrohaushaltsgeräte', 'electrician', 'glasses', 'circus', 'food', 'marine', 'lottery', 'Hockey', 'electric', 'coins', 'metal workshop', 'nails', 'general', 'tanning_salon', 'crafts', 'household', 'floor', 'baby_goods', 'Patissier', 'delicatessen', 'telephone', 'Hema', 'soft_drugs', 'board_games', 'lingerie', 'candy', 'cd', 'stones', 'spiritual', 'health', 'juice', 'hemp_products', 'smartshop', 'cannabis', 'frozen_yoghurt', 'art_supplies', 'cigar', 'department', 'sok_shop', 'realestate', 'lighting', 'generic', 'nail', 'ink', 'traiteur', 'toko', 'key', 'gsm', 'artist', 'hearth', 'framing', 'espresso_machine', 'knives', 'rental', 'thrift_store', 'snacks', 'tobacconist', 'disused:butcher', 'party', 'audiologist', 'housewares', 'Fashion', 'printing', 'chandler', 'Shoes', 'Electronics', 'softdrugs', 'houseware', 'textiles', 'perfume'],
+		//amenity : ["post_box", "police", "atm", "recycling", "parking", "fuel", "telephone", "school", "pub", "doctors", "arts_centre", "cafe", "fast_food", "restaurant", "place_of_worship", "bank", "bicycle_parking", "drinking_water", "theatre", "bar", "bench", "waste_disposal", "nightclub", "pharmacy", "bicycle_rental", "post_office", "charging_station", "waste_basket", "vending_machine", "kindergarten", "marketplace", "dentist", "ev_charging", "bureau_de_change", "library", "cinema", "toilets", "car_wash", "fountain", "boat_rental", "taxi", "bus_parking", "public_building", "driving_school", "physical therapy", "coffee_shop", "embassy", "vacant", "coffeeshop", "ice_cream", "car_rental", "swimming_pool", "university", "casino", "community_centre", "lost_found", "grit_bin", "clock", "parking_entrance", "sauna", "brothel", "ferry_terminal", "fitness_center", "bus_station", "college", "fire_station", "health_centre", "townhall", "hospital", "veterinary", "gym", "fablab", "money_transfer", "kitchen_studio", "tanning_salon", "tanning", "studio"],
+		//tourism : ["artwork", "hostel", "attraction", "hotel", "information", "museum", "gallery", "viewpoint", "picnic_site", "guest_house", "theme_park", "apartment", "zoo", "camp_site", "chalet", "motel", "citytour", "aquarium"]
 	}
 
 	mapSettings = {

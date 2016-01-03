@@ -1260,8 +1260,12 @@ Array.prototype.unique = function() {
 				id : id
 			};
 			$.post(OC.generateUrl('/apps/maps/api/1.0/favorite/removeFromFavorites'), formData, function(data){
-				favorites.hide();
-				favorites.show();
+				for(i=0; i<favorites.favArray.length; ++i) {
+					if(favorites.favArray[i].options.id == id) {
+						map.removeLayer(favorites.favArray[i]);
+						return;
+					}
+				}
 			});
 		}
 	}

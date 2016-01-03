@@ -146,12 +146,6 @@ table#trackingDevices {
 	width: 150px;
 }
 
-@media only screen and (max-width: 768px) {
-	.leaflet-control-zoom {
-		margin-top: 50px;
-	}
-}
-
 /* css for timepicker */
 .ui-timepicker-div .ui-widget-header { margin-bottom: 8px; }
 .ui-timepicker-div dl { text-align: left; }
@@ -165,10 +159,46 @@ table#trackingDevices {
 .ui-timepicker-rtl dl dt{ float: right; clear: right; }
 .ui-timepicker-rtl dl dd { margin: 0 45% 10px 10px; }
 
-.leaflet-popup-content-wrapper {
+
+
+
+/* Map control elements */
+
+#searchContainer {
+	position: absolute;
+	z-index: 1;
+	left: 45px;
+	width: 201px;
+}
+.leaflet-routing-geocoders {
+	margin-top: 0;
+	border-bottom: none;
+}
+.addwaypoint {
+	position: absolute;
+	right: 0;
+	top: 5px;
+	margin: 0 !important;
+	padding: 8px 11px;
+	background: transparent !important;
+	border: none !important;
+}
+
+.leaflet-control-container > .leaflet-top.leaflet-left {
+	top: 45px;
+}
+.leaflet-bar,
+.leaflet-container .leaflet-control-gps {
+	box-shadow: none;
 	border-radius: 3px;
 }
 
+
+/* Place popup */
+
+.leaflet-popup-content-wrapper {
+	border-radius: 3px;
+}
 .leaflet-popup-content .icon-star,
 .leaflet-popup-content .icon-starred {
 	position: absolute;

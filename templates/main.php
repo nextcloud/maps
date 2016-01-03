@@ -39,9 +39,6 @@
 
 <div id="app">
 	<div id="app-navigation">
-		<div id="searchContainer">
-
-		</div>	<br />
 		<ul class="with-icon">
 			<li>
 				<a class='favoriteLayer icon-star' id='favoriteMenu' data-layer="favorites">Favorites</a>
@@ -85,8 +82,8 @@
 
   	</div>
 	<div id="app-content">
-		<div id="map">
-		</div>
+		<div id="searchContainer"></div>
+		<div id="map"></div>
 	</div>
 </div>
 

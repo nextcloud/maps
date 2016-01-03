@@ -138,7 +138,7 @@ Array.prototype.unique = function() {
 		$('.geocoder-0').attr('completiontype', 'local');
 
 		// properly style as input field
-		$('#searchContainer').find('input').attr('type', 'text');
+		//$('#searchContainer').find('input').attr('type', 'text');
 
 		map.on('mousedown', function(e) {
 			Maps.mouseDowntime = new Date().getTime();

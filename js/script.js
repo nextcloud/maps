@@ -286,11 +286,32 @@ Array.prototype.unique = function() {
 		}, function() {
 			//TODO
 		});
-		$('.favoriteLayer').clickToggle(function() {
-			favorites.show();
-		}, function() {
-			favorites.hide();
+
+		/* Favorites layer: Show by default, remember visibility */
+		$('.favoriteLayer').click(function() {
+			if($.jStorage.get('favorites')) {
+				favorites.hide();
+				$.jStorage.set('favorites', false);
+				$('#favoriteMenu').removeClass('active').addClass('icon-star').removeClass('icon-starred');
+			} else {
+				favorites.show();
+				$.jStorage.set('favorites', true);
+				$('#favoriteMenu').addClass('active').addClass('icon-starred').removeClass('icon-star');
+			}
 		});
+		if($.jStorage.get('favorites') === null) {
+			favorites.show();
+			$.jStorage.set('favorites', true);
+			$('#favoriteMenu').addClass('active').addClass('icon-starred').removeClass('icon-star');
+		}
+		if($.jStorage.get('favorites')) {
+			favorites.show();
+			$('#favoriteMenu').addClass('active').addClass('icon-starred').removeClass('icon-star');
+		} else {
+			favorites.hide();
+		}
+
+
 		$('.contactLayer').clickToggle(function() {
 			Maps.loadAdressBooks()
 		}, function() {

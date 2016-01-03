@@ -2043,7 +2043,7 @@ L.Map = L.Class.extend({
 
 		this._tilePane = panes.tilePane = this._createPane('leaflet-tile-pane', this._mapPane);
 		panes.objectsPane = this._createPane('leaflet-objects-pane', this._mapPane);
-		panes.shadowPane = this._createPane('leaflet-shadow-pane');
+		//panes.shadowPane = this._createPane('leaflet-shadow-pane');
 		panes.overlayPane = this._createPane('leaflet-overlay-pane');
 		panes.markerPane = this._createPane('leaflet-marker-pane');
 		panes.popupPane = this._createPane('leaflet-popup-pane');
@@ -2052,7 +2052,7 @@ L.Map = L.Class.extend({
 
 		if (!this.options.markerZoomAnimation) {
 			L.DomUtil.addClass(panes.markerPane, zoomHide);
-			L.DomUtil.addClass(panes.shadowPane, zoomHide);
+			//L.DomUtil.addClass(panes.shadowPane, zoomHide);
 			L.DomUtil.addClass(panes.popupPane, zoomHide);
 		}
 	},
@@ -3342,9 +3342,9 @@ L.Icon = L.Class.extend({
 		return this._createIcon('icon', oldIcon);
 	},
 
-	createShadow: function (oldIcon) {
+	/*createShadow: function (oldIcon) {
 		return this._createIcon('shadow', oldIcon);
-	},
+	},*/
 
 	_createIcon: function (name, oldIcon) {
 		var src = this._getIconUrl(name);
@@ -3372,11 +3372,11 @@ L.Icon = L.Class.extend({
 		    size = L.point(options[name + 'Size']),
 		    anchor;
 
-		if (name === 'shadow') {
+		/*if (name === 'shadow') {
 			anchor = L.point(options.shadowAnchor || options.iconAnchor);
 		} else {
 			anchor = L.point(options.iconAnchor);
-		}
+		}*/
 
 		if (!anchor && size) {
 			anchor = size.divideBy(2, true);
@@ -3386,7 +3386,7 @@ L.Icon = L.Class.extend({
 
 		if (anchor) {
 			img.style.marginLeft = (-anchor.x) + 'px';
-			img.style.marginTop  = (-anchor.y) + 'px';
+			img.style.marginTop  = (-(anchor.y*2)) + 'px';
 		}
 
 		if (size) {
@@ -3421,11 +3421,11 @@ L.icon = function (options) {
 L.Icon.Default = L.Icon.extend({
 
 	options: {
-		iconSize: [25, 41],
-		iconAnchor: [12, 41],
-		popupAnchor: [1, -34],
+        iconSize : [32, 32],
+        iconAnchor : [16, 32],
+        popupAnchor : [0, -32]
 
-		shadowSize: [41, 41]
+		//shadowSize: [41, 41]
 	},
 
 	_getIconUrl: function (name) {
@@ -3445,7 +3445,7 @@ L.Icon.Default = L.Icon.extend({
 			throw new Error('Couldn\'t autodetect L.Icon.Default.imagePath, set it manually.');
 		}
 
-		return path + '/marker-' + name + '.png';
+		return path + '/marker-' + name + '.svg';
 	}
 });
 
@@ -3593,7 +3593,7 @@ L.Marker = L.Class.extend({
 			if (options.title) {
 				icon.title = options.title;
 			}
-			
+
 			if (options.alt) {
 				icon.alt = options.alt;
 			}
@@ -3615,7 +3615,7 @@ L.Marker = L.Class.extend({
 				.on(icon, 'mouseout', this._resetZIndex, this);
 		}
 
-		var newShadow = options.icon.createShadow(this._shadow),
+		/*var newShadow = options.icon.createShadow(this._shadow),
 			addShadow = false;
 
 		if (newShadow !== this._shadow) {
@@ -3626,7 +3626,7 @@ L.Marker = L.Class.extend({
 		if (newShadow) {
 			L.DomUtil.addClass(newShadow, classToAdd);
 		}
-		this._shadow = newShadow;
+		this._shadow = newShadow;*/
 
 
 		if (options.opacity < 1) {
@@ -3640,9 +3640,9 @@ L.Marker = L.Class.extend({
 			panes.markerPane.appendChild(this._icon);
 		}
 
-		if (newShadow && addShadow) {
+		/*if (newShadow && addShadow) {
 			panes.shadowPane.appendChild(this._shadow);
-		}
+		}*/
 	},
 
 	_removeIcon: function () {
@@ -5083,7 +5083,7 @@ L.Path = (L.Path.SVG && !window.L_PREFER_CANVAS) || !L.Browser.canvas ? L.Path :
 		}
 
 		this._requestUpdate();
-		
+
 		this.fire('remove');
 		this._map = null;
 	},
@@ -7867,7 +7867,7 @@ L.Handler.MarkerDrag = L.Handler.extend({
 
 	_onDrag: function () {
 		var marker = this._marker,
-		    shadow = marker._shadow,
+		    //shadow = marker._shadow,
 		    iconPos = L.DomUtil.getPosition(marker._icon),
 		    latlng = marker._map.layerPointToLatLng(iconPos);
 
@@ -8131,7 +8131,7 @@ L.Control.Attribution = L.Control.extend({
 				this.addAttribution(map._layers[i].getAttribution());
 			}
 		}
-		
+
 		map
 		    .on('layeradd', this._onLayerAdd, this)
 		    .on('layerremove', this._onLayerRemove, this);

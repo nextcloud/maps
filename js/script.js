@@ -1768,12 +1768,12 @@ function debounce(func, wait, immediate) {
 				for(var i=0; i<data.length; i++){
 					var fav = data[i];
 
-					var imagePath = OC.filePath('maps', 'img', 'icons/favMarker.png');
+					var imagePath = OC.filePath('maps', 'img', 'icons/favMarker.svg');
 					var iconImage = L.icon({
 						iconUrl : imagePath,
-						iconSize : [31, 37],
-						iconAnchor : [15, 37],
-						popupAnchor : [0, -37]
+						iconSize : [32, 32],
+						iconAnchor : [16, 32],
+						popupAnchor : [0, -32]
 					});
 
 					var markerHTML = '<h2>' + fav.name + '</h2>';

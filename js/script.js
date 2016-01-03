@@ -1215,6 +1215,7 @@ Array.prototype.unique = function() {
 					name : nameInput.value
 				};
 				$.post(OC.generateUrl('/apps/maps/api/1.0/favorite/addToFavorites'), formData);
+				favicon.className = favicon.className.replace('icon-star', 'icon-starred');
 			}
 			nameDiv.appendChild(nameInput);
 			nameDiv.appendChild(submit);

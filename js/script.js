@@ -1258,7 +1258,10 @@ Array.prototype.unique = function() {
 			var formData = {
 				id : id
 			};
-			$.post(OC.generateUrl('/apps/maps/api/1.0/favorite/removeFromFavorites'), formData);
+			$.post(OC.generateUrl('/apps/maps/api/1.0/favorite/removeFromFavorites'), formData, function(data){
+				favorites.hide();
+				favorites.show();
+			});
 		}
 	}
 

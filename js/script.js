@@ -901,7 +901,7 @@ Array.prototype.unique = function() {
 			fav = fav || false;
 			var openPopup = (openPopup) ? true : false;
 			var latlng = marker._latlng.lat + ',' + marker._latlng.lng;
-			var markerHTML2 = '<div class="' + (fav ? 'icon-starred removeFromFav" fav-id="' + marker.options.id + '"' : 'icon-star addToFav" data-latlng="' + latlng + '"' ) + ' style="float: left;"></div><div class="marker-popup-content">' + markerHTML + '</div><div><a class="setDestination" data-latlng="' + latlng + '">Navigate here</a></div>';
+			var markerHTML2 = '<div class="' + (fav ? 'icon-starred removeFromFav" fav-id="' + marker.options.id + '"' : 'icon-star addToFav"' ) + ' data-latlng="' + latlng + '" style="float: left;"></div><div class="marker-popup-content">' + markerHTML + '</div><div><a class="setDestination" data-latlng="' + latlng + '">Navigate here</a></div>';
 			marker.addTo(map).bindPopup(markerHTML2);
 			if (openPopup === true) {
 				setTimeout(function() {
@@ -1215,7 +1215,8 @@ Array.prototype.unique = function() {
 					name : nameInput.value
 				};
 				$.post(OC.generateUrl('/apps/maps/api/1.0/favorite/addToFavorites'), formData);
-				favicon.className = favicon.className.replace('icon-star', 'icon-starred');
+				var newClass = favicon.className.replace('icon-star', 'icon-starred');
+				favicon.className = newClass.replace('addToFav', 'removeFromFav');
 			}
 			nameDiv.appendChild(nameInput);
 			nameDiv.appendChild(submit);
@@ -1262,7 +1263,13 @@ Array.prototype.unique = function() {
 			$.post(OC.generateUrl('/apps/maps/api/1.0/favorite/removeFromFavorites'), formData, function(data){
 				for(i=0; i<favorites.favArray.length; ++i) {
 					if(favorites.favArray[i].options.id == id) {
-						map.removeLayer(favorites.favArray[i]);
+						//TODO this code toggles the star icon and the add/remove methods. Should be used as soon as the marker replacement works
+						/*var popup = document.getElementsByClassName('leaflet-popup-content')[0];
+						var favicon = popup.getElementsByTagName('div')[0];
+						var newClass = favicon.className.replace('icon-starred', 'icon-star');
+						favicon.className = newClass.replace('removeFromFav', 'addToFav');*/
+						var removedFav = favorites.favArray.splice(i,1)[0];
+						map.removeLayer(removedFav);
 						return;
 					}
 				}

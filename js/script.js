@@ -98,6 +98,7 @@ Array.prototype.unique = function() {
 		map = L.map('map', {
 			center : new L.LatLng(oldPosition.lat, oldPosition.lng),
 			zoom : oldZoom,
+			zoomControl : false,
 			layers : [mapQuest]
 		});
 		map.options.minZoom = 3;
@@ -110,6 +111,9 @@ Array.prototype.unique = function() {
 		 };*/
 
 		//map.addControl(new L.Control.Compass());
+		/*map.addControl(new L.Control.Zoom({
+			position: 'bottomright'
+		}));*/
 		map.addControl(new L.Control.Gps({
 			minZoom : 14,
 			autoActive: 1,
@@ -119,6 +123,7 @@ Array.prototype.unique = function() {
 				color : '#0A00FF',
 				fill : true
 			},
+			position : 'topleft',
 		}));
 		$('.leaflet-control-layers-overlays').removeProp('multiple');
 

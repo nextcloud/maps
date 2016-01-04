@@ -1208,6 +1208,8 @@ Array.prototype.unique = function() {
 			submit.className = 'icon-checkmark';
 			submit.onclick = function(){
 				content.removeChild(nameDiv);
+				content.innerHTML = content.innerHTML.replace('icon-star', 'icon-starred');
+				content.innerHTML = content.innerHTML.replace('addToFav', 'removeFromFav');
 				content.innerHTML = orgTitle + content.innerHTML;
 				var formData = {
 					lat : latlng[0],
@@ -1215,8 +1217,6 @@ Array.prototype.unique = function() {
 					name : nameInput.value
 				};
 				$.post(OC.generateUrl('/apps/maps/api/1.0/favorite/addToFavorites'), formData);
-				var newClass = favicon.className.replace('icon-star', 'icon-starred');
-				favicon.className = newClass.replace('addToFav', 'removeFromFav');
 			}
 			nameDiv.appendChild(nameInput);
 			nameDiv.appendChild(submit);

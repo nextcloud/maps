@@ -930,17 +930,41 @@ Array.prototype.unique = function() {
 			var markerHTML2 = '<div class="' + (fav ? 'icon-starred removeFromFav" fav-id="' + marker.options.id + '"' : 'icon-star addToFav"' ) + ' data-latlng="' + latlng + '" style="float: left;"></div><div class="marker-popup-content">' + markerHTML + '</div><div><a class="setDestination" data-latlng="' + latlng + '">Navigate here</a></div>';
 			marker.addTo(map).bindPopup(markerHTML2);
 			marker.on('mouseover', function (e) {
-				this.openPopup();
-			});
+				var tgt = e.originalEvent.fromElement || e.originalEvent.relatedTarget;
+				var parent = this._getParent(tgt, 'leaflet-popup');
+				if(parent == marker._popup._container) return true;
+				marker.openPopup();
+			}, this);
 			marker.on('mouseout', function (e) {
-				this.closePopup();
-			});
+				var tgt = e.originalEvent.toElement || e.originalEvent.relatedTarget;
+				if(this._getParent(tgt, 'leaflet-popup')) {
+					L.DomEvent.on(marker._popup._container, 'mouseout', this._popupMouseOut, this);
+					return true;
+				}
+				marker.closePopup();
+			}, this);
 			if (openPopup === true) {
 				setTimeout(function() {
 					//L.popup().setLatLng([marker._latlng.lat, marker._latlng.lng]).setContent("I am a standalone popup.").openOn(map);
 					marker.openPopup();
 				}, 50);
 			}
+		},
+		_getParent: function(element, className) {
+			var parent = element.parentNode;
+			while (parent != null) {
+				if (parent.className && L.DomUtil.hasClass(parent, className))
+					return parent;
+				parent = parent.parentNode;
+			}
+			return false;
+		},
+		_popupMouseOut: function(e) {
+			L.DomEvent.off(marker._popup, 'mouseout', this._popupMouseOut, this);
+			var tgt = e.toElement || e.relatedTarget;
+			if (this._getParent(tgt, 'leaflet-popup')) return true;
+			if (tgt == this._icon) return true;
+			marker.closePopup();
 		},
 		getPoiIcon : function(icon) {
 			marker = false;
@@ -1263,9 +1287,9 @@ Array.prototype.unique = function() {
 					var imagePath = OC.filePath('maps', 'img', 'icons/favMarker.png');
 					var iconImage = L.icon({
 						iconUrl : imagePath,
-						iconSize : [42, 49],
-						iconAnchor : [21, 49],
-						popupAnchor : [0, -49]
+						iconSize : [31, 37],
+						iconAnchor : [15, 37],
+						popupAnchor : [0, -37]
 					});
 
 					var markerHTML = '<h2>' + fav.name + '</h2>';

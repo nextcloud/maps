@@ -161,7 +161,7 @@ Array.prototype.unique = function() {
 					$('.geocoder-0').val('');
 				}
 			}
-			if ((curTime - Maps.mouseDowntime) > 200 && Maps.dragging === false) {//200 = 2 seconds
+			if (/*(curTime - Maps.mouseDowntime) > 200 && */Maps.dragging === false) {//200 = 2 seconds
 				console.log('Long press', (curTime - Maps.mouseDowntime))
 				Maps.droppedPin = new L.marker(e.latlng);
 				var decoder = L.Control.Geocoder.nominatim();

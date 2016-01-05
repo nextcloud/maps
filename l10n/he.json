@@ -1,0 +1,6 @@
+{ "translations": {
+    "Maps" : "מפות",
+    "left" : "שמאל",
+    "right" : "ימין"
+},"pluralForm" :"nplurals=2; plural=(n != 1);"
+}

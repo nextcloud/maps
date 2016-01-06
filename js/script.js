@@ -931,9 +931,6 @@ Array.prototype.unique = function() {
 			var latlng = marker._latlng.lat + ',' + marker._latlng.lng;
 			var markerHTML2 = '<div class="' + (fav ? 'icon-starred removeFromFav" fav-id="' + marker.options.id + '"' : 'icon-star addToFav"' ) + ' data-latlng="' + latlng + '" style="float: left;"></div><div class="marker-popup-content">' + markerHTML + '</div><div><a class="setDestination" data-latlng="' + latlng + '">Navigate here</a></div>';
 			marker.addTo(map).bindPopup(markerHTML2);
-			marker.on('click', function() {
-				if(!marker.getPopup()._isOpen) marker.openPopup();
-			});
 			marker.on('mouseover', function (e) {
 				var tgt = e.originalEvent.fromElement || e.originalEvent.relatedTarget;
 				var parent = this._getParent(tgt, 'leaflet-popup');

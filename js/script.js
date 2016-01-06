@@ -164,6 +164,7 @@ Array.prototype.unique = function() {
 			if (/*(curTime - Maps.mouseDowntime) > 200 && */Maps.dragging === false) {//200 = 2 seconds
 				console.log('Long press', (curTime - Maps.mouseDowntime))
 				Maps.droppedPin = new L.marker(e.latlng);
+				Maps.droppedPin.addTo(map);
 				var decoder = L.Control.Geocoder.nominatim();
 				decoder.reverse(e.latlng, 67108864, function(results) {
 					var result = results[0];
@@ -180,6 +181,7 @@ Array.prototype.unique = function() {
 						var houseNo = (result.originalObject.address.house_number) ? result.originalObject.address.house_number : '';
 						popupHtml += result.originalObject.address.road + ' ' + houseNo + '<br />';
 						popupHtml += result.originalObject.address.town + ', ' + result.originalObject.address.state + ', ' + result.originalObject.address.country;
+						map.removeLayer(Maps.droppedPin);
 						toolKit.addMarker(Maps.droppedPin, popupHtml, true);
 					}, 50);
 

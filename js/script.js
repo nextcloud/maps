@@ -30,6 +30,45 @@ Array.prototype.unique = function() {
 };
 (function($, OC) {
 
+	var normalMarkerImg = OC.filePath('maps', 'css', 'leaflet/images/marker-icon.png');
+	var normalMarkerIcon = L.icon({
+		iconUrl : normalMarkerImg,
+		iconSize : [31, 37],
+		iconAnchor : [15, 37],
+		popupAnchor : [0, -37]
+	});
+
+	var favMarkerImg = OC.filePath('maps', 'img', 'icons/favMarker.png');
+	var favMarkerIcon = L.icon({
+		iconUrl : favMarkerImg,
+		iconSize : [31, 37],
+		iconAnchor : [15, 37],
+		popupAnchor : [0, -37]
+	});
+
+	function addGeocodeMarker(latlng) {
+		Maps.droppedPin = new L.marker(latlng);
+		var decoder = L.Control.Geocoder.nominatim();
+		decoder.reverse(latlng, 67108864, function(results) {
+			var result = results[0];
+			setTimeout(function() {
+				var knownFields = ['country', 'country_code', 'postcode', 'residential', 'road', 'state', 'suburb', 'town', 'house_number'];
+				var popupHtml = '';
+				$.each(result.originalObject.address, function(k, v) {
+					if ($.inArray(k, knownFields) == -1) {
+						var prefix = k;
+						popupHtml += v + '<br />';
+					}
+				})
+				var houseNo = (result.originalObject.address.house_number) ? result.originalObject.address.house_number : '';
+				popupHtml += result.originalObject.address.road + ' ' + houseNo + '<br />';
+				popupHtml += result.originalObject.address.town + ', ' + result.originalObject.address.state + ', ' + result.originalObject.address.country;
+				toolKit.addMarker(Maps.droppedPin, popupHtml, true);
+			}, 50);
+
+		})
+	}
+
 	$.fn.clickToggle = function(func1, func2) {
 		var funcs = [func1, func2];
 		this.data('toggleclicked', 0);
@@ -126,7 +165,9 @@ Array.prototype.unique = function() {
 			position : 'topleft',
 		}));
 		$('.leaflet-control-layers-overlays').removeProp('multiple');
-
+		map.on('popupopen', function(e) {
+			currentMarker = e.popup._source;
+		});
 		routing = L.Routing.control({
 			waypoints : [],
 			geocoder : L.Control.Geocoder.nominatim(),
@@ -162,28 +203,7 @@ Array.prototype.unique = function() {
 				}
 			}
 			if ((curTime - Maps.mouseDowntime) > 200 && Maps.dragging === false) {//200 = 2 seconds
-				console.log('Long press', (curTime - Maps.mouseDowntime))
-				Maps.droppedPin = new L.marker(e.latlng);
-				var decoder = L.Control.Geocoder.nominatim();
-				decoder.reverse(e.latlng, 67108864, function(results) {
-					var result = results[0];
-					console.log(result);
-					setTimeout(function() {
-						var knownFields = ['country', 'country_code', 'postcode', 'residential', 'road', 'state', 'suburb', 'town', 'house_number'];
-						var popupHtml = '';
-						$.each(result.originalObject.address, function(k, v) {
-							if ($.inArray(k, knownFields) == -1) {
-								var prefix = k;
-								popupHtml += v + '<br />';
-							}
-						})
-						var houseNo = (result.originalObject.address.house_number) ? result.originalObject.address.house_number : '';
-						popupHtml += result.originalObject.address.road + ' ' + houseNo + '<br />';
-						popupHtml += result.originalObject.address.town + ', ' + result.originalObject.address.state + ', ' + result.originalObject.address.country;
-						toolKit.addMarker(Maps.droppedPin, popupHtml, true);
-					}, 50);
-
-				})
+				addGeocodeMarker(e.latlng);
 			}
 
 		});
@@ -1105,6 +1125,7 @@ Array.prototype.unique = function() {
 				callback(r)
 			})
 		},
+		currentMarker : null,
 		favMarkers : [],
 		addFavContactMarker : function(contact) {
 			if (contact.thumbnail) {
@@ -1242,7 +1263,17 @@ Array.prototype.unique = function() {
 					lng : latlng[1],
 					name : nameInput.value
 				};
-				$.post(OC.generateUrl('/apps/maps/api/1.0/favorite/addToFavorites'), formData);
+				$.post(OC.generateUrl('/apps/maps/api/1.0/favorite/addToFavorites'), formData, function(data) {
+					var markerHTML = '<h2>' + formData.name + '<h2>';
+					var marker = L.marker([formData.lat, formData.lng], {
+									icon : favMarkerIcon,
+									id : data.id
+					});
+					map.removeLayer(currentMarker);
+					currentMarker = null;
+					toolKit.addMarker(marker, markerHTML, true, true);
+					favorites.favArray.push(marker);
+				});
 			}
 			nameDiv.appendChild(nameInput);
 			nameDiv.appendChild(submit);
@@ -1290,11 +1321,12 @@ Array.prototype.unique = function() {
 				for(i=0; i<favorites.favArray.length; ++i) {
 					if(favorites.favArray[i].options.id == id) {
 						//TODO this code toggles the star icon and the add/remove methods. Should be used as soon as the marker replacement works
-						/*var popup = document.getElementsByClassName('leaflet-popup-content')[0];
+						var popup = document.getElementsByClassName('leaflet-popup-content')[0];
 						var favicon = popup.getElementsByTagName('div')[0];
 						var newClass = favicon.className.replace('icon-starred', 'icon-star');
-						favicon.className = newClass.replace('removeFromFav', 'addToFav');*/
+						favicon.className = newClass.replace('removeFromFav', 'addToFav');
 						var removedFav = favorites.favArray.splice(i,1)[0];
+						addGeocodeMarker(removedFav.getLatLng());
 						map.removeLayer(removedFav);
 						return;
 					}

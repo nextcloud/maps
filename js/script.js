@@ -139,7 +139,13 @@ Array.prototype.unique = function() {
 			zoom : oldZoom,
 			zoomControl : false,
 			layers : [mapQuest]
-		});
+		}),
+		geocoder = L.Control.Geocoder.nominatim();
+		/*control = L.Control.geocoder({
+			collapsed: false,
+			geocoder: geocoder
+		}).addTo(map);*/
+
 		map.options.minZoom = 3;
 		var hash = new L.Hash(map);
 		/*var baseMaps = {
@@ -170,18 +176,13 @@ Array.prototype.unique = function() {
 		});
 		routing = L.Routing.control({
 			waypoints : [],
-			geocoder : L.Control.Geocoder.nominatim(),
-			plan : L.Routing.plan(null, {
-				waypointIcon : function(i) {
-					return new L.Icon.Label.Default({
-						labelText : String.fromCharCode(65 + i)
-					});
-				}
-			})
+			//geocoder : geocoder,
+			routeWhileDragging: true,
+			fitSelectedRoutes: true,
+			show: false
 		}).addTo(map);
-		$(".leaflet-routing-geocoders").appendTo("#searchContainer");
-		$(".leaflet-routing-container").appendTo("#searchContainer");
-		$('.geocoder-0').attr('completiontype', 'local');
+
+		geocodeSearch.addGeocoder();
 
 		// properly style as input field
 		//$('#searchContainer').find('input').attr('type', 'text');
@@ -204,14 +205,10 @@ Array.prototype.unique = function() {
 			if (Maps.droppedPin) {
 				map.removeLayer(Maps.droppedPin);
 				Maps.droppedPin = false;
-				if ($('.geocoder-0').attr('completiontype') === 'local' && ($('.geocoder-0').val() == '')) {
-					$('.geocoder-0').val('');
-				}
 			}
 			if (/*(curTime - Maps.mouseDowntime) > 200 && */Maps.dragging === false) {//200 = 2 seconds
 				addGeocodeMarker(e.latlng);
 			}
-
 		});
 
 		map.on("dragstart", function() {
@@ -220,18 +217,6 @@ Array.prototype.unique = function() {
 		map.on("dragend zoomend", function(e) {
 			Maps.saveCurrentLocation(e);
 			Maps.dragging = false;
-			var searchInput = $('.geocoder-0')
-			if (searchInput.attr('completiontype') == 'local' && searchInput.val() != '') {
-				var data = {
-					search : searchInput.val(),
-					bbox : map.getBounds().toBBoxString()
-				}
-				clearTimeout(searchTimeout);
-				searchTimeout = setTimeout(function() {
-					console.log('Get new results');
-					mapSearch.getSearchResults(data, mapSearch.showResultsOnMap);
-				}, 500);
-			}
 		})
 
 		$(document).on('click', '.toggle-children', function(e) {
@@ -473,30 +458,6 @@ Array.prototype.unique = function() {
 		/*    searchItems = []*/
 		searchTimeout = 0;
 
-		$(document).on('keyup blur', '.geocoder-0', function(e) {
-			if ($(this).attr('completiontype') != 'local')
-				return;
-
-			var data = {
-				search : $(this).val(),
-				bbox : map.getBounds().toBBoxString()
-			}
-			clearTimeout(searchTimeout);
-			if ($(this).val() == '') {
-				mapSearch.clearSearchResults();
-				mapSearch._ids = [];
-			}
-			if (e.keyCode != 13) {
-				searchTimeout = setTimeout(function() {
-
-				}, 1000)
-			} else {
-				mapSearch.clearSearchResults();
-				mapSearch._ids = [];
-				mapSearch.getSearchResults(data, mapSearch.showResultsOnMap);
-			}
-
-		});
 		/**
 		 * setDestination on click
 		 */
@@ -519,10 +480,8 @@ Array.prototype.unique = function() {
 
 			routing.setWaypoints([L.latLng(currentlocation[0], currentlocation[1]), L.latLng(end[0], end[1])]);
 
-			$('.geocoder-1').show();
 			map.closePopup();
 		});
-
 		/**
 		 * Clear route
 		 */
@@ -554,6 +513,142 @@ Array.prototype.unique = function() {
 			firstRun = false;
 		}
 	}
+
+	geocodeSearch = {
+		results : [],
+		waypoints : [],
+		markers : [],
+		addGeocoder : function() {
+			var timeoutId;
+			var searchCont = document.getElementById('search');
+			var input = document.createElement('input');
+			input.type = 'text';
+			input.className = 'geocoder not-geocoded';
+			input.addEventListener('keyup', function() {
+				clearTimeout(timeoutId);
+				timeoutId = setTimeout(geocodeSearch.performGeocode(input), 500);
+			});
+			input.addEventListener('blur', geocodeSearch.clearResults(input));
+			var list = document.createElement('ul');
+			list.className = 'geocoder-list';
+			list.style.display = 'none';
+			var geocoderInputs = document.getElementsByClassName('geocoder');
+			var elems = 0;
+			if(geocoderInputs != null) elems = geocoderInputs.length;
+			if(elems == 0) {
+				input.id = 'geocoder-start';
+				list.id = 'geocoder-results-start';
+				input.placeholder = 'Start address';
+				searchCont.appendChild(input);
+				searchCont.appendChild(list);
+
+				var addBtn = document.createElement('button');
+				addBtn.appendChild(document.createTextNode('+'));
+				addBtn.id = 'geocoder-add';
+				addBtn.addEventListener('click', function() {
+					geocodeSearch.addGeocoder();
+				});
+				searchCont.appendChild(addBtn);
+			} else if(elems == 1) {
+				input.id = 'geocoder-end';
+				list.id = 'geocoder-results-end';
+				input.placeholder = 'End address';
+				searchCont.appendChild(input);
+				searchCont.appendChild(list);
+			} else {
+				var id = elems - 2;
+				input.id = 'geocoder-' + id;
+				list.id = 'geocoder-results-' + id;
+				input.placeholder = 'Via address ' + id;
+				var children = searchCont.childNodes;
+				var childLength = children.length;
+				searchCont.insertBefore(input, children[childLength-2]);
+				searchCont.insertBefore(list, children[childLength-1]);
+			}
+		},
+		clearResults : function(input) {
+			geocodeSearch.results = [];
+			var idParts = input.id.split('-');
+			var id = idParts[0] + '-results-' + idParts[1];
+			var list = document.getElementById(id);
+			if(list == null) return;
+			list.innerHTML = '';
+			list.style.display = 'none';
+		},
+		performGeocode : function(input) {
+			var query = input.value;
+			geocodeSearch.clearResults(input);
+			input.className = input.className.replace('is-geocoded', 'not-geocoded');
+			//TODO remove marker and from array
+			if(query.length < 3) return;
+			geocoder.geocode(query, function(data) {
+				geocodeSearch.addResults(data);
+				geocodeSearch.displayResults(input);
+			}, null);
+			//TODO search for contacts
+			//TODO search for favorites
+		},
+		addResults : function(searchResults) {
+			$.each(searchResults, function(index, cont) {
+					geocodeSearch.results.push(cont);
+				})
+		},
+		displayResults : function(input) {
+			var idParts = input.id.split('-');
+			var id = idParts[0] + '-results-' + idParts[1];
+			var list = document.getElementById(id);
+			$.each(geocodeSearch.results, function(index, content) {
+				var li = document.createElement('li');
+				li.appendChild(document.createTextNode(content.name));
+				li.setAttribute('id', 'entry-' + index);
+				li.setAttribute('class', 'geocoder-list-item');
+				li.addEventListener('click', function() {
+					input.className = input.className.replace('not-geocoded', 'is-geocoded');
+					var marker = L.marker(content.center);
+					geocodeSearch.markers.push([[input.id], [marker]]);
+					toolKit.addMarker(marker, content.name);
+					var points = document.getElementsByClassName('is-geocoded');
+					if(points.length < 2) {
+						map.fitBounds(content.bbox);
+					};
+					input.value = content.name;
+					geocodeSearch.clearResults(input);
+					geocodeSearch.computeRoute();
+				});
+				list.appendChild(li);
+			}, null);
+			list.style.display = 'block';
+		},
+		computeRoute : function() {
+			geocodeSearch.waypoints = [];
+			var points = document.getElementsByClassName('is-geocoded');
+			if(points.length < 2) return;
+			$.each(points, function(i) {
+				var id = $(this).attr('id');
+				var val = $(this).val();
+				for(var i=0; i<geocodeSearch.markers.length; ++i) {
+					var curr = geocodeSearch.markers[i];
+					if(curr[0] == id) {
+						geocodeSearch.waypoints.push(L.Routing.waypoint(curr[1][0]._latlng, val));
+						map.removeLayer(curr[1][0]);
+					}
+				}
+			});
+			routing.setWaypoints(geocodeSearch.waypoints);
+			routing.on('routeselected', function(e) {
+				var r = e.route;
+				var name = r.name;
+				var time = r.summary.totalTime;
+				var distance = r.summary.totalDistance;
+				if(distance >= 1000) distance = parseFloat(distance/1000).toFixed(1) + 'km';
+				else distance += 'm';
+				time = Math.ceil(time / 60); // time as minutes
+				var hours = Math.floor(time / 60);
+				var minutes = time % 60;
+				alert('Route ' + name + ' is ' + distance + ' long and takes about ' + hours + ':' + minutes);
+			});
+		}
+	},
 
 	mapSearch = {
 		searchItems : [],
@@ -658,6 +753,7 @@ Array.prototype.unique = function() {
 
 	Maps = {
 		addressbooks : [],
+		addresses : [],
 		tempArr : [],
 		tempCounter : 0,
 		tempTotal : 0,
@@ -770,6 +866,38 @@ Array.prototype.unique = function() {
 					}
 					Maps.addressbooks.push(book);
 				})
+				//Load addresses in array
+				$.each(Maps.addressbooks, function(ai) {
+					$.get(OC.generateUrl('/apps/contacts/addressbook/' + this.backend + '/' + this.id + '/contacts'), function(r) {
+						$.each(r.contacts, function(ci) {
+							var name = this.data.FN[0].value;
+							var adr = {};
+							var orgAdr = {};
+							if(this.data.ADR){
+								for(var i=0; i< this.data.ADR.length; i++){
+									var currAddr = this.data.ADR[i].value;
+									//remove empty cells (didn't work with delete or any other function...thus: ugly code
+									for (var j=currAddr.length-1; j>=0; j--) {
+										if (currAddr[j] === null || currAddr[j] === undefined || currAddr[j] === "") {
+											currAddr.splice(j,1);
+										}
+									}
+									adr[i] = currAddr.toString().replace(/,/g, ", ");
+									orgAdr[i] = this.data.ADR[i].value;
+								}
+
+							}
+							if(!adr[0]) return true;
+							var addr = {
+								'name': name,
+								'add': adr,
+								'orgAdd': orgAdr
+							};
+							Maps.addresses.push(addr);
+						});
+					});
+				});
+				//end
 				Maps.loadContacts();
 			})
 		},

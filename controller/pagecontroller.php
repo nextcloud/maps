@@ -52,10 +52,12 @@ class PageController extends Controller {
 			// marker icons
 			$csp->addAllowedImageDomain('https://api.tiles.mapbox.com');
 			// inline images
-			$csp->addAllowedScriptDomain('data:');
 			$csp->addAllowedImageDomain('data:');
 			//overpasslayer api
 			$csp->addAllowedConnectDomain('http://overpass-api.de/api/interpreter?');
+			// nominatim geocoder
+			$csp->addAllowedScriptDomain('http://nominatim.openstreetmap.org/search?q=*');
+			$csp->addAllowedConnectDomain('http://router.project-osrm.org');
 			$response->setContentSecurityPolicy($csp);
 		}
 		return $response;
@@ -106,7 +108,7 @@ class PageController extends Controller {
 		$kw = $this -> params('search');
 		$bbox = $this -> params('bbox');
 		$response = array('contacts'=>array(),'nodes'=>array(),'addresses'=>array());
-		
+
 		$contacts = $cm -> search($kw, array('FN', 'ADR'));
 		foreach ($contacts as $r) {
 			$data = array();
@@ -126,7 +128,7 @@ class PageController extends Controller {
 			}
 		}
 		//$response['addresses'] = (array)($this->doAdresslookup($kw));
-		
+
 		return $response;
 	}
 
@@ -139,9 +141,9 @@ class PageController extends Controller {
    $lat = $this->params('lat');
    $lng = $this->params('lng');
    $zoom = $this->params('zoom');
-   
+
    $hash = md5($lat.','.$lng.'@'.$zoom);
-   
+
    $checkCache = $this -> checkGeoCache($hash);
   if(!$checkCache){
       $url = 'http://nominatim.openstreetmap.org/reverse/?format=json&email=brantje@gmail.com&lat='.$lat.'&lng='. $lng.'&zoom=67108864';
@@ -154,7 +156,7 @@ class PageController extends Controller {
    }
    echo $response;
    die();
-  } 
+  }
 	/**
 	 * Simply method that posts back the payload of the request
 	 * @NoAdminRequired
@@ -217,7 +219,7 @@ class PageController extends Controller {
 		$ch = curl_init();
 		curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);
 		curl_setopt($ch, CURLOPT_HEADER, 0);
-    curl_setopt($ch, CURLOPT_TIMEOUT, 900); 
+    curl_setopt($ch, CURLOPT_TIMEOUT, 900);
 		curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 1);
 		if ($userAgent) {
 			curl_setopt($ch, CURLOPT_USERAGENT, 'Mozilla/5.0 (Windows; U; Windows NT 6.1; en-US; rv:1.9.1.2) Gecko/20090729 Firefox/3.5.2 GTB5');

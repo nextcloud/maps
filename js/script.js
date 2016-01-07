@@ -186,6 +186,51 @@ Array.prototype.unique = function() {
 		// properly style as input field
 		//$('#searchContainer').find('input').attr('type', 'text');
 
+		map.on('zoomend', function(e) {
+			var group = 'amenity';
+			var value = 'atm';
+			var zoom = map.getZoom();
+			if(zoom < 9) return; //only show POIs on reasonable levels
+
+			$.each(poiLayers, function(i, layer) {
+				$.each(layer, function(group, values) {
+					$.each(values, function(j, value) {
+						var overpassLayer = new L.OverPassLayer({
+							minZoom: 9,
+							query: 'node({{bbox}})[' + group + '=' + value + '];out;',
+							onSuccess: function(data) {
+								for ( i = 0; i < data.elements.length; i++) {
+									e = data.elements[i];
+									if (e.id in this.instance._ids) {
+										return;
+									}
+									this.instance._ids[e.id] = true;
+									var pos = new L.LatLng(e.lat, e.lon);
+									var popup = Maps.getPoiPopupHTML(e.tags).innerHTML; /*this.instance._getPoiPopupHTML(e.tags, e.id).innerHTML;*/
+									poiIcon = toolKit.getPoiIcon(value);
+									if (poiIcon) {
+										var marker = L.marker(pos, {
+											icon : poiIcon,
+										}).bindPopup(popup);
+										toolKit.addMarker(marker, popup)
+									}
+								}
+							}
+						});
+						map.addLayer(overpassLayer);
+						Maps.overpassLayers.push(overpassLayer);
+					});
+				});
+			});
+
+			/*$.each(poiLayers, function(i, layer) {
+				$.each(layer, function(group, values) {
+					$.each(values, function(j, value) {
+					});
+				});
+			});*/
+		})
+
 		map.on('mousedown', function(e) {
 			Maps.mouseDowntime = new Date().getTime();
 		});
@@ -237,13 +282,12 @@ Array.prototype.unique = function() {
 				subCat.slideDown();
 			}
 		})
-		var poiCats = ['shop'];
+		var poiCats = ['shop'/*, 'amenity', 'tourism'*/];
 		$.each(poiCats, function(i, cat) {
 			poiTypes[cat] = poiTypes[cat].sort()
 			iconHTML = '';
 			$.each(poiTypes[cat], function(i, layer) {
 				if (this != "") {
-					iconHTML = '';
 					var icon = toolKit.getPoiIcon(this);
 					if (icon) {
 						$('#' + cat + '-items').append('<li><a class="subLayer" data-layerGroup="' + cat + '" data-layerValue="' + this + '">' + iconHTML + this + '</a></li>')
@@ -645,6 +689,7 @@ Array.prototype.unique = function() {
 		tempCounter : 0,
 		tempTotal : 0,
 		activeLayers : [],
+		overpassLayers : [],
 		mouseDowntime : 0,
 		droppedPin : {},
 		dragging : false,
@@ -656,6 +701,19 @@ Array.prototype.unique = function() {
 		historyTrack : {},
 		traceDevice : null,
 		arrowHead : {},
+		getPoiPopupHTML : function(tags) {
+			var div = document.createElement('div');
+			var title = document.createElement('h2');
+			if(tags['name']) title.appendChild(document.createTextNode(tags['name']));
+			var addr = '';
+			if(tags['addr:street']) addr += tags['addr:street'];
+			if(tags['addr:housenumber']) addr += ' ' + tags['addr:housenumber'];
+			if(tags['addr:postcode']) addr += ', ' + tags['addr:postcode'];
+			if(tags['addr:city']) addr += ' ' + tags['addr:city'];
+			div.appendChild(title);
+			div.appendChild(document.createTextNode(addr));
+			return div;
+		},
 		loadAdressBooks : function() {
 			if($('#contactMenu').length == 0) return;
 			Maps.addressbooks = [];
@@ -865,18 +923,13 @@ Array.prototype.unique = function() {
 
 		},
 
-		updateLayers : function(group, layer) {
+		updateLayers : function(group, value) {
 			//OverPassAPI overlay
 			//k:amenity  v:postbox
 			var overPassQ = '';
 			groupArr = []
-			$('.activeLayer').each(function() {
-				var parent = $(this).parent();
-				var layerGroup = parent.attr('data-layerGroup');
-				var layerValue = parent.attr('data-layerValue');
-				overPassQ += 'node(BBOX)[' + layerGroup + '=' + layerValue + '];out;'
-				groupArr.push(layerGroup);
-			})
+			overPassQ += 'node(BBOX)[' + group + '=' + value + '];out;'
+			groupArr.push(group);
 			if (!$('body').data('POIactive')) {
 				Maps.activeLayers = new L.OverPassLayer({
 					minzoom : 14,
@@ -901,15 +954,15 @@ Array.prototype.unique = function() {
 							})
 							var icon = e.tags[curgroup].split(';');
 							icon[0] = icon[0].toLowerCase();
-							var marker = false;
+							var poiIcon = false;
 							if (icon[0].indexOf(',') != -1) {
 								icon = icon[0].split(',');
 							}
 							if (icon[0] != 'yes') {
-								marker = toolKit.getPoiIcon(icon[0])
-								if (marker) {
+								poiIcon = toolKit.getPoiIcon(icon[0])
+								if (poiIcon) {
 									var marker = L.marker(pos, {
-										icon : marker,
+										icon : poiIcon,
 									}).bindPopup(popup);
 									toolKit.addMarker(marker, popup)
 									//this.instance.addLayer(marker);
@@ -933,7 +986,7 @@ Array.prototype.unique = function() {
 				$('body').data('POIactive', true);
 			} else {
 				Maps.activeLayers.options.query = OC.generateUrl('apps/maps/router?url=(SERVERAPI)interpreter?data=[out:json];' + overPassQ);
-				if (group && layer) {
+				if (group && value) {
 					Maps.activeLayers.onMoveEnd();
 				}
 			}
@@ -997,77 +1050,148 @@ Array.prototype.unique = function() {
 			marker.closePopup();
 		},
 		getPoiIcon : function(icon) {
-			marker = false;
-			if ($.inArray(icon, L.MakiMarkers.icons) > -1) {
-				marker = L.MakiMarkers.icon({
-					'icon' : icon,
-					color : "#b0b",
-					size : "l",
-					className : icon
-				});
-			} else {
-				var mIcon = toolKit.toMakiMarkerIcon(icon.replace(' ', ''));
-				if (mIcon !== false) {
-					marker = L.MakiMarkers.icon({
-						'icon' : mIcon,
-						color : "#b0b",
-						size : "l",
-						className : icon
-					});
-				} else {
-					var amIcon = toolKit.toFAClass(icon.replace(' ', ''))
-					if (amIcon !== false) {
-						marker = L.AwesomeMarkers.icon({
-							icon : amIcon,
-							prefix : 'fa',
-							markerColor : 'red'
-						});
-						marker.options.className += ' ' + icon
-					}
-				}
-			}
-			return marker;
+			return toolKit.toMakiMarkerIcon(icon.replace(' ', ''));
 		},
 
 		toMakiMarkerIcon : function(type) {
 			var mapper = {
-				'fast-food' : ['fast_food'],
-				'bus' : ['bus_stop', 'bus_station'],
-				'beer' : ['bar', 'biergarten', 'pub'],
-				'telephone' : ['phone'],
-				'swimming' : ['swimming_pool'],
-				'bank' : ['atm', 'bank'],
-				'town-hall' : ['townhall'],
-				'post' : ['post_box', 'post_office'],
-				'bicycle' : ['bicycle_parking'],
-				'campsite' : ['camp_site', 'caravan_site'],
-				'camera' : ['viewpoint'],
-				'grocery' : ['supermarket', 'deli', 'convenience', 'greengrocer', 'fishmonger', 'butcher', 'marketplace'],
-				'alcohol-shop' : ['alcohol', 'beverages'],
-				'shop' : ['general', 'bag', 'furniture', 'variety_store', 'houseware', 'department_store', 'florist', 'outdoor', 'kiosk', 'kitchen', 'shoes', 'jewelry', 'sports'],
-				'clothing-store' : ['clothes'],
-				'fire-station' : ['fire_station'],
-				'place-of-worship' : ['place_of_worship'],
-				'school' : ['kindergarten'],
-				'parking-garage' : ['parking-entrance'],
-				'lodging' : ['hotel', 'guest_house', 'hostel', 'motel'],
-				'art-gallery' : ['gallery', 'artwork', 'paint'],
-				'library' : ['books', 'library'],
-				'pitch' : ['sports'],
-				'mobilephone' : ['mobile_phone', 'gsm'],
-				'pharmacy' : ['drugstore'],
-				'zoo' : ['zoo'],
-				'museum' : ['museum'],
-				'toilets' : ['toilets'],
-				'coffeshop' : ['coffee_shop']
+				'aerialway' : [ 'aerialway' ],
+				'airfield' : [ 'airfield' ],
+				'airport' : [ 'airport' ],
+				'alcohol-shop' : [ 'alcohol-shop', 'alcohol', 'beverages' ],
+				'america-football' : [ 'america-football' ],
+				'art-gallery' : [ 'art-gallery', 'gallery', 'artwork', 'paint' ],
+				'bakery' : [ 'bakery' ],
+				'bank' : [ 'bank', 'atm' ],
+				'bar' : [ 'bar' ],
+				'baseball' : [ 'baseball' ],
+				'basketball' : [ 'basketball' ],
+				'beer' : [ 'beer', , 'biergarten', 'pub' ],
+				'bicycle' : [ 'bicycle', 'bicycle_parking' ],
+				'building' : [ 'building' ],
+				'bus' : [ 'bus', 'bus_stop', 'bus_station'],
+				'cafe' : [ 'cafe' ],
+				'camera' : [ 'camera', 'viewpoint' ],
+				'campsite' : [ 'campsite', 'camp_site', 'caravan_site' ],
+				'car' : [ 'car' ],
+				'cemetery' : [ 'cemetery' ],
+				'chemist' : [ 'chemist' ],
+				'cinema' : [ 'cinema' ],
+				'circle' : [ 'circle' ],
+				'circle-stroked' : [ 'circle-stroked' ],
+				'city' : [ 'city' ],
+				'clothing-store' : [ 'clothing-store', 'clothes' ],
+				'college' : [ 'college' ],
+				'commercial' : [ 'commercial' ],
+				'cricket' : [ 'cricket' ],
+				'cross' : [ 'cross' ],
+				'dam' : [ 'dam' ],
+				'danger' : [ 'danger' ],
+				'dentist' : [ 'dentist' ],
+				'disability' : [ 'disability' ],
+				'dog-park' : [ 'dog-park' ],
+				'embassy' : [ 'embassy' ],
+				'emergency-telephone' : [ 'emergency-telephone' ],
+				'entrance' : [ 'entrance' ],
+				'farm' : [ 'farm' ],
+				'fast-food' : [ 'fast-food' ],
+				'ferry' : [ 'ferry' ],
+				'fire-station' : [ 'fire-station', 'fire_station' ],
+				'fuel' : [ 'fuel' ],
+				'garden' : [ 'garden' ],
+				'gift' : [ 'gift' ],
+				'golf' : [ 'golf' ],
+				'grocery' : [ 'grocery', 'supermarket', 'deli', 'convenience', 'greengrocer', 'fishmonger', 'butcher', 'marketplace' ],
+				'hairdresser' : [ 'hairdresser' ],
+				'harbor' : [ 'harbor' ],
+				'heart' : [ 'heart' ],
+				'heliport' : [ 'heliport' ],
+				'hospital' : [ 'hospital' ],
+				'ice-cream' : [ 'ice-cream' ],
+				'industrial' : [ 'industrial' ],
+				'land-use' : [ 'land-use' ],
+				'laundry' : [ 'laundry' ],
+				'library' : [ 'library', 'books' ],
+				'lighthouse' : [ 'lighthouse' ],
+				'lodging' : [ 'lodging', 'hotel', 'guest_house', 'hostel', 'motel' ],
+				'logging' : [ 'logging' ],
+				'london-underground' : [ 'london-underground' ],
+				'marker' : [ 'marker' ],
+				'marker-stroked' : [ 'marker-stroked' ],
+				'minefield' : [ 'minefield' ],
+				'mobilephone' : [ 'mobilephone', 'mobile_phone', 'gsm' ],
+				'monument' : [ 'monument' ],
+				'museum' : [ 'museum' ],
+				'music' : [ 'music' ],
+				'oil-well' : [ 'oil-well' ],
+				'park' : [ 'park' ],
+				'parking' : [ 'parking' ],
+				'parking-garage' : [ 'parking-garage', 'parking-entrance' ],
+				'pharmacy' : [ 'pharmacy', 'drugstore' ],
+				'pitch' : [ 'pitch', 'sports' ],
+				'place-of-worship' : [ 'place-of-worship', 'place_of_worship' ],
+				'playground' : [ 'playground' ],
+				'police' : [ 'police' ],
+				'polling-place' : [ 'polling-place' ],
+				'post' : [ 'post', 'post_box', 'post_office' ],
+				'prison' : [ 'prison' ],
+				'rail' : [ 'rail' ],
+				'rail-above' : [ 'rail-above' ],
+				'rail-light' : [ 'rail-light' ],
+				'rail-metro' : [ 'rail-metro' ],
+				'rail-underground' : [ 'rail-underground' ],
+				'religious-christian' : [ 'religious-christian' ],
+				'religious-jewish' : [ 'religious-jewish' ],
+				'religious-muslim' : [ 'religious-muslim' ],
+				'restaurant' : [ 'restaurant' ],
+				'roadblock' : [ 'roadblock' ],
+				'rocket' : [ 'rocket' ],
+				'school' : [ 'school', 'kindergarten' ],
+				'scooter' : [ 'scooter' ],
+				'shop' : [ 'shop', 'general', 'bag', 'furniture', 'variety_store', 'houseware', 'department_store', 'florist', 'outdoor', 'kiosk', 'kitchen', 'shoes', 'jewelry', 'sports' ],
+				'skiing' : [ 'skiing' ],
+				'slaughterhouse' : [ 'slaughterhouse' ],
+				'soccer' : [ 'soccer' ],
+				'square' : [ 'square' ],
+				'square-stroked' : [ 'square-stroked' ],
+				'star' : [ 'star' ],
+				'star-stroked' : [ 'star-stroked' ],
+				'suitcase' : [ 'suitcase' ],
+				'swimming' : [ 'swimming', 'swimming_pool' ],
+				'telephone' : [ 'telephone', 'phone' ],
+				'tennis' : [ 'tennis' ],
+				'theatre' : [ 'theatre' ],
+				'toilets' : [ 'toilets' ],
+				'town' : [ 'town' ],
+				'town-hall' : [ 'town-hall', 'townhall' ],
+				'triangle' : [ 'triangle' ],
+				'triangle-stroked' : [ 'triangle-stroked' ],
+				'village' : [ 'village' ],
+				'warehouse' : [ 'warehouse' ],
+				'waste-basket' : [ 'waste-basket' ],
+				'water' : [ 'water' ],
+				'wetland' : [ 'wetland' ],
+				'zoo' : [ 'zoo' ]
 			}
-			var returnClass = false;
-			$.each(mapper, function(faClass, types) {
-				if (types.toString().indexOf(type) > -1) {
-					returnClass = faClass
+			var iconUrl = OC.filePath('maps', 'img', 'maki/src/');
+			var iconSuffix = '-18.svg';
+			var name;
+			var icon;
+			$.each(mapper, function(iconName, types) {
+				if (types.indexOf(type) > -1) {
+					name = iconName;
+					icon = iconUrl + iconName + iconSuffix;
+					return false;
 				}
 			})
-			return returnClass;
+			return L.icon({
+					className: type,
+					icon: name,
+					iconUrl : icon,
+					iconSize : [18, 18],
+					iconAnchor : [9, 18],
+					popupAnchor : [0, -18]
+			});
 		},
 		toFAClass : function(type) {
 			var mapper = {
@@ -1213,6 +1337,26 @@ Array.prototype.unique = function() {
 			}, 50);
 		}
 	}
+
+	poiLayers = {
+		9 : {
+			shop : [
+				'supermarket', 'bicycle'
+			],
+			amenity : [
+				'atm', 'coffee_shop', 'restaurant', 'swimming_pool', 'library', 'toilets', 'post_box', 'bar'
+			],
+			tourism : [
+				'hotel'
+			]
+		},
+		10 : {},
+	 	11: {},
+		12 : {},
+		13 : {},
+		14 : {},
+		15 : {}
+	},
 
 	poiTypes = {
 		shop : ['atm', 'coffee_shop', 'restaurant', 'supermarket', 'bicycle', 'hotel', 'swimming_pool', 'library', 'toilets', 'post_box', 'bar'],

@@ -947,7 +947,17 @@ Array.prototype.unique = function() {
 			fav = fav || false;
 			var openPopup = (openPopup) ? true : false;
 			var latlng = marker._latlng.lat + ',' + marker._latlng.lng;
-			var markerHTML2 = '<div class="' + (fav ? 'icon-starred removeFromFav" fav-id="' + marker.options.id + '"' : 'icon-star addToFav"' ) + ' data-latlng="' + latlng + '" style="float: left;"></div><div class="marker-popup-content">' + markerHTML + '</div><div><a class="setDestination" data-latlng="' + latlng + '">Navigate here</a></div>';
+			var markerHTML2 = '<div class="';
+			if(fav) {
+				markerHTML2 += 'icon-starred removeFromFav" fav-id="' + marker.options.id + '"';
+				var editButton = document.createElement('button');
+				editButton.className = 'icon-rename editFav';
+				var titleEnd = markerHTML.indexOf('</h2>') + 5;
+				markerHTML = markerHTML.slice(0, titleEnd) + editButton.outerHTML + markerHTML.slice(titleEnd);
+			} else {
+				markerHTML2 += 'icon-star addToFav"';
+			}
+			markerHTML2 += ' data-latlng="' + latlng + '" style="float: left;"></div><div class="marker-popup-content">' + markerHTML + '</div><div><a class="setDestination" data-latlng="' + latlng + '">Navigate here</a></div>';
 			marker.addTo(map).bindPopup(markerHTML2);
 			if (openPopup === true) {
 				setTimeout(function() {
@@ -1231,54 +1241,27 @@ Array.prototype.unique = function() {
 			var favicon = popup.getElementsByTagName('div')[0];
 			var content = popup.getElementsByTagName('div')[1];
 
-			// TODO remove input field, still WIP
-			if(document.getElementsByClassName('fav-input-title').length > 0) {
-				var inputDiv = document.getElementsByClassName('fav-input-title-container')[0];
-				var title = inputDiv.firstChild.value + '<br>';
-				inputDiv.parentNode.removeChild(inputDiv);
-				$('.addToFav').after(title);
-				return;
-			}
-
 			var popupText = content.innerHTML;
 			var delimiter = '<br>';
 			var splitIndex = popupText.indexOf(delimiter);
 			content.innerHTML = popupText.substring(splitIndex + delimiter.length);
-			var nameDiv = document.createElement('div');
-			nameDiv.className = 'fav-input-title-container';
-			var nameInput = document.createElement('input');
-			nameInput.type = 'text';
-			nameInput.className = 'fav-input-title';
 			var orgTitle = popupText.substring(0, splitIndex);
-			nameInput.value = orgTitle;
-			var submit = document.createElement('button');
-			submit.className = 'icon-checkmark';
-			submit.onclick = function(){
-				content.removeChild(nameDiv);
-				content.innerHTML = content.innerHTML.replace('icon-star', 'icon-starred');
-				content.innerHTML = content.innerHTML.replace('addToFav', 'removeFromFav');
-				content.innerHTML = orgTitle + content.innerHTML;
-				var formData = {
-					lat : latlng[0],
-					lng : latlng[1],
-					name : nameInput.value
-				};
-				$.post(OC.generateUrl('/apps/maps/api/1.0/favorite/addToFavorites'), formData, function(data) {
-					var markerHTML = '<h2>' + formData.name + '<h2>';
-					var marker = L.marker([formData.lat, formData.lng], {
-									icon : favMarkerIcon,
-									id : data.id
-					});
-					map.removeLayer(currentMarker);
-					currentMarker = null;
-					toolKit.addMarker(marker, markerHTML, true, true);
-					favorites.favArray.push(marker);
+			var formData = {
+				lat : latlng[0],
+				lng : latlng[1],
+				name : orgTitle
+			};
+			$.post(OC.generateUrl('/apps/maps/api/1.0/favorite/addToFavorites'), formData, function(data) {
+				var markerHTML = '<h2>' + formData.name + '</h2>';
+				var marker = L.marker([formData.lat, formData.lng], {
+								icon : favMarkerIcon,
+								id : data.id
 				});
-			}
-			nameDiv.appendChild(nameInput);
-			nameDiv.appendChild(submit);
-			content.insertBefore(nameDiv, content.firstChild);
-			content.insertBefore(favicon, content.firstChild);
+				map.removeLayer(currentMarker);
+				currentMarker = null;
+				toolKit.addMarker(marker, markerHTML, true, true);
+				favorites.favArray.push(marker);
+			});
 		},
 		show : function(){
 			$.post(OC.generateUrl('/apps/maps/api/1.0/favorite/getFavorites'), null, function(data){
@@ -1332,6 +1315,33 @@ Array.prototype.unique = function() {
 					}
 				}
 			});
+		},
+		edit : function() {
+			var popup = document.getElementsByClassName('leaflet-popup-content')[0];
+			var favicon = popup.getElementsByTagName('div')[0];
+			var id = favicon.getAttributeNode('fav-id').value;
+			var content = popup.getElementsByTagName('div')[1];
+			var titleNode = content.getElementsByTagName('h2')[0];
+			var title = titleNode.innerHTML;
+			var button = content.getElementsByClassName('editFav')[0];
+			var input = document.createElement('input');
+			input.type = 'text';
+			input.value = title;
+			titleNode.parentNode.replaceChild(input, titleNode);
+			button.className = 'confirmFavEdit icon-checkmark';
+			$(document).on('click', '.confirmFavEdit', function() {
+				button.className = 'icon-rename editFav';
+				if(title != input.value) title = input.value;
+				titleNode.innerHTML = title;
+				content.replaceChild(titleNode, input);
+				var formData = {
+					name : title,
+					id : id
+				};
+				$.post(OC.generateUrl('/apps/maps/api/1.0/favorite/updateFavorite'), formData, function(data){
+				});
+				$(document).off('click', '.confirmFavEdit');
+			});
 		}
 	}
 
@@ -1340,6 +1350,7 @@ Array.prototype.unique = function() {
 	$(document).on('click', '#trackingDevices .icon-delete', mapSettings.deleteDevice);
 	$(document).on('click', '.addToFav', favorites.add);
 	$(document).on('click', '.removeFromFav', favorites.remove);
+	$(document).on('click', '.editFav', favorites.edit)
 
 	/**
 	 * Extend the OC.Notification object with our own methods

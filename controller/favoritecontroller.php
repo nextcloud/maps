@@ -32,36 +32,21 @@ class FavoriteController extends ApiController {
 	/**
 	 * @NoAdminRequired
 	 *
-	 * @param $lat int
-	 * @param $lng int
-	 * @param $timestamp string
 	 * @param $name string
-	 * @param $userId int
 	 * @param $id int
 	 * @return JSONResponse
 	 */
-	public function update($lat, $lng, $timestamp, $name, $userId, $id) {
+	public function updateFavorite($name, $id) {
 
 		$favorite = new Favorite();
-		$favorite->setLat($lat);
-		$favorite->setLng($lng);
-		if((string)(float)$timestamp === $timestamp) {
-			if(strtotime(date('d-m-Y H:i:s',$timestamp)) === (int)$timestamp) {
-				$favorite->setTimestamp((int)$timestamp);
-			} elseif(strtotime(date('d-m-Y H:i:s',$timestamp/1000)) === (int)floor($timestamp/1000)) {
-				$favorite->setTimestamp((int)floor($timestamp/1000));
-			}
-		} else {
-			$favorite->timestamp = strtotime($timestamp);
-		}
-		$favorite->setName($name);
-		$favorite->setUserId($userId);
 		$favorite->setId($id);
+		$favorite->setName($name);
+		$favorite->setTimestamp(time());
 
 		/* Only save favorite if it exists in db */
 		try {
 			$this->favoriteMapper->find($id);
-			return new JSONResponse($this->favoriteMapper->insert($favorite));
+			return new JSONResponse($this->favoriteMapper->update($favorite));
 		} catch(\OCP\AppFramework\Db\DoesNotExistException $e) {
 			return new JSONResponse([
 				'error' => $e->getMessage()

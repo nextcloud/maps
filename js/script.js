@@ -202,7 +202,7 @@ Array.prototype.unique = function() {
 					$('.geocoder-0').val('');
 				}
 			}
-			if ((curTime - Maps.mouseDowntime) > 200 && Maps.dragging === false) {//200 = 2 seconds
+			if (/*(curTime - Maps.mouseDowntime) > 200 && */Maps.dragging === false) {//200 = 2 seconds
 				addGeocodeMarker(e.latlng);
 			}
 

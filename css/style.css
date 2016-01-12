@@ -108,32 +108,21 @@ i {
 	cursor: pointer;
 }
 #loadingContacts {
-	height: 60px;
-	position: fixed;
-	bottom: 45px;
-	width: 241px;
-	vertical-align: middle;
-	padding-top: 15px;
-	cursor: pointer;
-	padding-left: 12px;
-	background-color: #f8f8f8;
-	border-top: 1px solid #ccc;
+	padding-left: 45px;
+	margin-top: -10px;
 }
 #progressBar {
-	width: 222px;
-	height: 22px;
-	border: 1px solid #111;
-	background-color: #292929;
+	width: 190px;
+	height: 5px;
+	border: 1px solid #aaa;
+	border-radius: 3px;
 }
-
 #progressBar div {
 	height: 100%;
-	color: #fff;
-	text-align: right;
-	line-height: 22px; /* same as #progressBar height if we want text middle aligned */
 	width: 0;
 	background-color: #426392;
 }
+
 #app-navigation > ul {
 	padding-bottom: 70px;
 }
@@ -157,12 +146,6 @@ table#trackingDevices {
 	width: 150px;
 }
 
-@media only screen and (max-width: 768px) {
-	.leaflet-control-zoom {
-		margin-top: 50px;
-	}
-}
-
 /* css for timepicker */
 .ui-timepicker-div .ui-widget-header { margin-bottom: 8px; }
 .ui-timepicker-div dl { text-align: left; }
@@ -176,10 +159,46 @@ table#trackingDevices {
 .ui-timepicker-rtl dl dt{ float: right; clear: right; }
 .ui-timepicker-rtl dl dd { margin: 0 45% 10px 10px; }
 
-.leaflet-popup-content-wrapper {
+
+
+
+/* Map control elements */
+
+#searchContainer {
+	position: absolute;
+	z-index: 1;
+	left: 45px;
+	width: 201px;
+}
+.leaflet-routing-geocoders {
+	margin-top: 0;
+	border-bottom: none;
+}
+.addwaypoint {
+	position: absolute;
+	right: 0;
+	top: 5px;
+	margin: 0 !important;
+	padding: 8px 11px;
+	background: transparent !important;
+	border: none !important;
+}
+
+.leaflet-control-container > .leaflet-top.leaflet-left {
+	top: 45px;
+}
+.leaflet-bar,
+.leaflet-container .leaflet-control-gps {
+	box-shadow: none;
 	border-radius: 3px;
 }
 
+
+/* Place popup */
+
+.leaflet-popup-content-wrapper {
+	border-radius: 3px;
+}
 .leaflet-popup-content .icon-star,
 .leaflet-popup-content .icon-starred {
 	position: absolute;
@@ -199,4 +218,50 @@ table#trackingDevices {
 	width: 30px;
 	height: 30px;
 	padding: 6px;
+}
+
+
+/* Force mobile view, navigation hidden by default, copied from mobile.css */
+/* APP SIDEBAR TOGGLE and SWIPE ----------------------------------------------*/
+
+#app-navigation,
+#app-content {
+	position: absolute !important;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+}
+
+#app-navigation {
+	width: 250px !important;
+}
+
+#app-content {
+	width: 100% !important;
+	left: 0 !important;
+	background-color: #fff;
+	overflow-x: hidden !important;
+	z-index: 1000;
+}
+
+#app-sidebar{
+	width: 100% !important;
+}
+
+#app-navigation-toggle {
+	position: absolute;
+	display: inline-block !important;
+	top: 0;
+	left: 0;
+	width: 44px;
+	height: 44px;
+	z-index: 149;
+	background-color: rgba(255, 255, 255, .7);
+	cursor: pointer;
+	opacity: .6;
+}
+#app-navigation-toggle:hover,
+#app-navigation-toggle:focus {
+	opacity: 1;
 }

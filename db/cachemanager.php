@@ -10,13 +10,11 @@
  */
 namespace OCA\Maps\Db;
 
-use \OCP\IDb;
-use \OCP\DB\insertid;
+use OCP\IDBConnection;
 
 class CacheManager {
-	private $userid;
 	private $db;
-	public function __construct(IDb $db) {
+	public function __construct(IDBConnection $db) {
 		$this -> db = $db;
 	}
 
@@ -28,7 +26,7 @@ class CacheManager {
 	public function insert($hash,$raw){
 		$serialized = serialize($raw);
 		$sql = "INSERT INTO `*PREFIX*maps_adress_cache` (adres_hash,serialized) VALUES(?,?)";
-		$query = $this -> db -> prepareQuery($sql);
+		$query = $this -> db -> prepare($sql);
 		$query -> bindParam(1, $hash, \PDO::PARAM_STR);
 		$query -> bindParam(2, $serialized, \PDO::PARAM_STR);
 		$result = $query -> execute();
@@ -36,9 +34,10 @@ class CacheManager {
 	
 	public function check($hash){
 		$sql = 'SELECT * from `*PREFIX*maps_adress_cache` where adres_hash=?';
-		$query = $this -> db -> prepareQuery($sql);
+		$query = $this -> db -> prepare($sql);
 		$query -> bindParam(1, $hash, \PDO::PARAM_STR);
-		$result = $query -> execute()->fetchRow();
+		$query -> execute();
+		$result = $query->fetch();
 		return unserialize($result['serialized']);
 	} 
 }

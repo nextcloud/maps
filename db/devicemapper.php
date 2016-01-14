@@ -2,11 +2,11 @@
 namespace OCA\Maps\Db;
 
 use OCP\AppFramework\Db\Mapper;
-use OCP\IDBConnection;
+use OCP\IDb;
 
 class DeviceMapper extends Mapper {
 
-	public function __construct(IDBConnection $db) {
+	public function __construct(IDB $db) {
 		parent::__construct($db, 'maps_location_track_users', '\OCA\Maps\Db\Device');
 	}
 

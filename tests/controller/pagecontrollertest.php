@@ -11,11 +11,7 @@
 
 namespace OCA\Maps\Controller;
 
-
-use \OCP\IRequest;
 use \OCP\AppFramework\Http\TemplateResponse;
-use \OCP\AppFramework\Http\JSONResponse;
-
 use \OCA\Maps\AppInfo\Application;
 
 

@@ -519,6 +519,10 @@ Array.prototype.unique = function() {
 		waypoints : [],
 		markers : [],
 		addGeocoder : function() {
+			var geocoderInputs = document.getElementsByClassName('geocoder');
+			var elems = 0;
+			if(geocoderInputs != null) elems = geocoderInputs.length;
+			if(elems == 7) return;//only allow 5 via points
 			var timeoutId;
 			var searchCont = document.getElementById('search');
 			var input = document.createElement('input');
@@ -532,9 +536,6 @@ Array.prototype.unique = function() {
 			var list = document.createElement('ul');
 			list.className = 'geocoder-list';
 			list.style.display = 'none';
-			var geocoderInputs = document.getElementsByClassName('geocoder');
-			var elems = 0;
-			if(geocoderInputs != null) elems = geocoderInputs.length;
 			if(elems == 0) {
 				input.id = 'geocoder-start';
 				list.id = 'geocoder-results-start';
@@ -559,7 +560,7 @@ Array.prototype.unique = function() {
 				var id = elems - 2;
 				input.id = 'geocoder-' + id;
 				list.id = 'geocoder-results-' + id;
-				input.placeholder = 'Via address ' + id;
+				input.placeholder = 'Via address ' + (id+1);
 				var children = searchCont.childNodes;
 				var childLength = children.length;
 				searchCont.insertBefore(input, children[childLength-2]);
@@ -583,10 +584,20 @@ Array.prototype.unique = function() {
 			if(query.length < 3) return;
 			geocoder.geocode(query, function(data) {
 				geocodeSearch.addResults(data);
-				geocodeSearch.displayResults(input);
+				var formData = {
+					name : query
+				};
+				$.post(OC.generateUrl('/apps/maps/api/1.0/favorite/getFavoritesByName'), formData, function(data){
+					$.each(data, function(index, content) {
+						content.center = L.latLng(content.lat, content.lng);
+						content.bbox = null;
+						content.type = 'favorite';
+						geocodeSearch.addResults(data);
+					});
+					geocodeSearch.displayResults(input);
+				});
 			}, null);
 			//TODO search for contacts
-			//TODO search for favorites
 		},
 		addResults : function(searchResults) {
 			$.each(searchResults, function(index, cont) {
@@ -601,14 +612,16 @@ Array.prototype.unique = function() {
 				var li = document.createElement('li');
 				li.appendChild(document.createTextNode(content.name));
 				li.setAttribute('id', 'entry-' + index);
-				li.setAttribute('class', 'geocoder-list-item');
+				var className = 'geocoder-list-item';
+				if(content.type == 'favorite') className += ' icon-starred';
+				li.setAttribute('class', className);
 				li.addEventListener('click', function() {
 					input.className = input.className.replace('not-geocoded', 'is-geocoded');
 					var marker = L.marker(content.center);
 					geocodeSearch.markers.push([[input.id], [marker]]);
 					toolKit.addMarker(marker, content.name);
 					var points = document.getElementsByClassName('is-geocoded');
-					if(points.length < 2) {
+					if(points.length < 2 && content.bbox != null) {
 						map.fitBounds(content.bbox);
 					};
 					input.value = content.name;

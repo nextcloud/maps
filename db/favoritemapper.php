@@ -23,6 +23,18 @@ class FavoriteMapper extends Mapper {
 	}
 
 	/**
+	 * @param string $name
+	 * @return Favorite[]
+	 */
+	public function findByName($name) {
+		//TODO add COLLATE SQL_Latin1_General_Cp437_CI_AS_KI_WI
+		//TODO and replace ? by %?%
+		$sql = 'SELECT * FROM `*PREFIX*maps_favorites` '.
+			'WHERE `name` LIKE ?';
+		return $this->findEntities($sql, [$name]);
+	}
+
+	/**
 	 * @param string $userId
 	 * @param string $from
 	 * @param string $until

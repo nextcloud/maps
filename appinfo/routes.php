@@ -38,5 +38,6 @@ $application->registerRoutes($this, array('routes' => array(
     array('name' => 'favorite#get_favorites', 'url' => '/api/1.0/favorite/getFavorites', 'verb' => 'POST'),
     array('name' => 'favorite#remove_favorite', 'url' => '/api/1.0/favorite/removeFromFavorites', 'verb' => 'POST'),
     array('name' => 'favorite#update_favorite', 'url' => '/api/1.0/favorite/updateFavorite', 'verb' => 'POST'),
+    array('name' => 'favorite#get_favorites_by_name', 'url' => '/api/1.0/favorite/getFavoritesByName', 'verb' => 'POST'),
 
 )));

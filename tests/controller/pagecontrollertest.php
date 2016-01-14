@@ -28,7 +28,6 @@ class PageControllerTest extends \PHPUnit_Framework_TestCase {
 		$this->container = $app->getContainer();
 	}
 
-
 	public function testIndex () {
 		// swap out request
 		$this->container['Request'] = $this->getMockBuilder('\OCP\IRequest')
@@ -37,17 +36,9 @@ class PageControllerTest extends \PHPUnit_Framework_TestCase {
 
 		$result = $this->container['PageController']->index();
 
-		$this->assertEquals(array('user' => 'john'), $result->getParams());
+		$this->assertEquals(array('user' => 'john', 'devices' => []), $result->getParams());
 		$this->assertEquals('main', $result->getTemplateName());
 		$this->assertTrue($result instanceof TemplateResponse);
 	}
-
-
-	public function testEcho () {
-		$result = $this->container['PageController']->doEcho('hi');
-
-		$this->assertEquals(array('echo' => 'hi'), $result);
-	}
-
 
 }

@@ -17,7 +17,7 @@ Additionally it is possible to display (and search for) contacts and gpx/gps tra
 ## Running tests
 After [Installing PHPUnit](http://phpunit.de/getting-started.html) run:
 
-    phpunit tests/
+    phpunit
 
 ##Sources
 - OpenLayers https://github.com/openlayers/openlayers

@@ -12,6 +12,7 @@
 namespace OCA\Maps\AppInfo;
 
 
+use OC\AppFramework\Utility\SimpleContainer;
 use \OCP\AppFramework\App;
 use \OCA\Maps\Db\CacheManager;
 use \OCA\Maps\Db\DeviceMapper;
@@ -34,6 +35,7 @@ class Application extends App {
 		 * Controllers
 		 */
 		$container->registerService('PageController', function($c) {
+			/** @var SimpleContainer $c */
 			return new PageController(
 				$c->query('AppName'),
 				$c->query('Request'),
@@ -43,6 +45,7 @@ class Application extends App {
 			);
 		});
 		$container->registerService('LocationController', function($c) {
+			/** @var SimpleContainer $c */
 			return new LocationController(
 				$c->query('AppName'),
 				$c->query('Request'),
@@ -52,6 +55,7 @@ class Application extends App {
 			);
 		});
 		$container->registerService('FavoriteController', function($c) {
+			/** @var SimpleContainer $c */
 			return new FavoriteController(
 				$c->query('AppName'),
 				$c->query('Request'),
@@ -60,24 +64,29 @@ class Application extends App {
 			);
 		});
 
-		$container->registerService('CacheManager', function($c) {
+		$server = $container->getServer();
+		$container->registerService('CacheManager', function($c) use ($server) {
+			/** @var SimpleContainer $c */
 			return new CacheManager(
-				$c->query('ServerContainer')->getDb()
+				$server->getDatabaseConnection()
 			);
 		});
-		$container->registerService('LocationMapper', function($c) {
+		$container->registerService('LocationMapper', function($c) use ($server) {
+			/** @var SimpleContainer $c */
 			return new LocationMapper(
-				$c->query('ServerContainer')->getDb()
+				$server->getDb()
 			);
 		});
-		$container->registerService('DeviceMapper', function($c) {
+		$container->registerService('DeviceMapper', function($c) use ($server) {
+			/** @var SimpleContainer $c */
 			return new DeviceMapper(
-				$c->query('ServerContainer')->getDb()
+				$server->getDb()
 			);
 		});
-		$container->registerService('FavoriteMapper', function($c) {
+		$container->registerService('FavoriteMapper', function($c) use ($server) {
+			/** @var SimpleContainer $c */
 			return new FavoriteMapper(
-				$c->query('ServerContainer')->getDb()
+				$server->getDb()
 			);
 		});
 

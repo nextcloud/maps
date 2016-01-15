@@ -57,6 +57,7 @@ class PageController extends Controller {
 			$csp->addAllowedConnectDomain('http://overpass-api.de/api/interpreter?');
 			// nominatim geocoder
 			$csp->addAllowedScriptDomain('http://nominatim.openstreetmap.org/search?q=*');
+			$csp->addAllowedScriptDomain('http://nominatim.openstreetmap.org/reverse');
 			$csp->addAllowedConnectDomain('http://router.project-osrm.org');
 			$response->setContentSecurityPolicy($csp);
 		}

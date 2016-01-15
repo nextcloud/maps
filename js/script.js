@@ -182,6 +182,10 @@ Array.prototype.unique = function() {
 			show: false
 		}).addTo(map);
 
+		routing.getPlan().on('waypointschanged', function(e) {
+			geocodeSearch.waypointsChanged(e);
+		})
+
 		geocodeSearch.addGeocoder();
 
 		// properly style as input field
@@ -647,7 +651,6 @@ Array.prototype.unique = function() {
 			var query = input.value;
 			geocodeSearch.clearResults(input);
 			input.className = input.className.replace('is-geocoded', 'not-geocoded');
-			//TODO remove marker and from array
 			geocodeSearch.removeMarker(input.id);
 			if(query.length < 3) return;
 			geocoder.geocode(query, function(data) {
@@ -727,6 +730,21 @@ Array.prototype.unique = function() {
 				var hours = Math.floor(time / 60);
 				var minutes = time % 60;
 				alert('Route ' + name + ' is ' + distance + ' long and takes about ' + hours + ':' + minutes);
+			});
+		},
+		waypointsChanged : function(e) {
+			var inputContainers = document.getElementById('search').childNodes;
+			$.each(e.waypoints, function(idx, wp) {
+				var name = wp.name;
+				if(name == null || name == '') {
+					geocoder.reverse(wp.latLng, 67108864, function(data) {
+						var input = inputContainers[idx].getElementsByClassName('geocoder')[0];
+						data = data[0];
+						input.value = data.name;
+						wp.name = data.name;
+						wp.latLng = data.center;
+					});
+				}
 			});
 		}
 	},

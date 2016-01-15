@@ -27,8 +27,6 @@ class FavoriteMapper extends Mapper {
 	 * @return Favorite[]
 	 */
 	public function findByName($name) {
-		//TODO add COLLATE SQL_Latin1_General_Cp437_CI_AS_KI_WI
-		//TODO and replace ? by %?%
 		$sql = 'SELECT * FROM `*PREFIX*maps_favorites` '.
 			'WHERE `name` ILIKE ?';
 		return $this->findEntities($sql, ['%' . addcslashes($name, '\\_%') . '%']);

@@ -525,6 +525,8 @@ Array.prototype.unique = function() {
 			if(elems == 7) return;//only allow 5 via points
 			var timeoutId;
 			var searchCont = document.getElementById('search');
+			var geocoderDiv = document.createElement('div');
+			geocoderDiv.className = 'geocoder-container';
 			var input = document.createElement('input');
 			input.type = 'text';
 			input.className = 'geocoder not-geocoded';
@@ -536,36 +538,85 @@ Array.prototype.unique = function() {
 			var list = document.createElement('ul');
 			list.className = 'geocoder-list';
 			list.style.display = 'none';
+
+			var btn = document.createElement('button');
+			
+
 			if(elems == 0) {
+				geocoderDiv.id = 'geocoder-container-start';
 				input.id = 'geocoder-start';
 				list.id = 'geocoder-results-start';
 				input.placeholder = 'Start address';
-				searchCont.appendChild(input);
-				searchCont.appendChild(list);
 
-				var addBtn = document.createElement('button');
-				addBtn.appendChild(document.createTextNode('+'));
-				addBtn.id = 'geocoder-add';
-				addBtn.addEventListener('click', function() {
+				btn.className = 'icon-add geocoder-button';
+				btn.id = 'geocoder-add';
+				btn.addEventListener('click', function() {
 					geocodeSearch.addGeocoder();
 				});
-				searchCont.appendChild(addBtn);
+
+				geocoderDiv.appendChild(input);
+				geocoderDiv.appendChild(list);
+				geocoderDiv.appendChild(btn);
+				searchCont.appendChild(geocoderDiv);
 			} else if(elems == 1) {
+				geocoderDiv.id = 'geocoder-container-end';
 				input.id = 'geocoder-end';
 				list.id = 'geocoder-results-end';
 				input.placeholder = 'End address';
-				searchCont.appendChild(input);
-				searchCont.appendChild(list);
+
+				btn.className = 'icon-close geocoder-button';
+				btn.id = 'geocoder-remove-end';
+				btn.addEventListener('click', function() {
+					geocodeSearch.removeGeocoder(geocoderDiv);
+				});
+
+				geocoderDiv.appendChild(input);
+				geocoderDiv.appendChild(list);
+				geocoderDiv.appendChild(btn);
+				searchCont.appendChild(geocoderDiv);
 			} else {
 				var id = elems - 2;
+				geocoderDiv.id = 'geocoder-container-' + id;
 				input.id = 'geocoder-' + id;
 				list.id = 'geocoder-results-' + id;
-				input.placeholder = 'Via address ' + (id+1);
+				input.placeholder = 'Via address '/* + (id+1)*/;
+
+				btn.className = 'icon-close geocoder-button';
+				btn.id = 'geocoder-remove-' + id;
+				btn.addEventListener('click', function() {
+					geocodeSearch.removeGeocoder(geocoderDiv);
+				});
+
 				var children = searchCont.childNodes;
 				var childLength = children.length;
-				searchCont.insertBefore(input, children[childLength-2]);
-				searchCont.insertBefore(list, children[childLength-1]);
+				geocoderDiv.appendChild(input);
+				geocoderDiv.appendChild(list);
+				geocoderDiv.appendChild(btn);
+				searchCont.insertBefore(geocoderDiv, children[childLength-1]);
 			}
+		},
+		removeGeocoder : function(div) {
+			var geocoderInputs = document.getElementsByClassName('geocoder');
+			var elems = 0;
+			if(geocoderInputs != null) elems = geocoderInputs.length;
+			if(div.getElementsByClassName('is-geocoded').length > 0) {
+				//TODO remove marker
+			}
+			//alert(div.getElementById('geocoder-end').toSource())
+			if(div.id == 'geocoder-container-end') {
+				var children = div.parentElement.childNodes;
+				var childLength = children.length;
+				var newEndDiv = children[childLength-2];
+				var newInput = newEndDiv.getElementsByClassName('geocoder')[0];
+				var newList = newEndDiv.getElementsByClassName('geocoder-list')[0];
+				var newButton = newEndDiv.getElementsByClassName('geocoder-button')[0];
+				newEndDiv.id = 'geocoder-container-end';
+				newInput.id = 'geocoder-end';
+				newList.id = 'geocoder-results-end';
+				newInput.placeholder = 'End address';
+				newButton.id = 'geocoder-remove-end';
+			}
+			div.parentElement.removeChild(div);
 		},
 		clearResults : function(input) {
 			geocodeSearch.results = [];

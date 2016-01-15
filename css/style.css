@@ -49,9 +49,12 @@ div#search {
 	z-index: 1;
 }
 
+div.geocoder-container {
+	display: block;
+}
+
 input.geocoder {
 	width: 210px;
-	display: block;
 }
 
 ul.geocoder-list {
@@ -68,8 +71,8 @@ li.geocoder-list-item:hover {
 	background: #ddd;
 }
 
-button#geocoder-add {
-	display: block	;
+button#geocoder-button {
+	background: white;
 }
 
 input#search {

@@ -599,8 +599,9 @@ Array.prototype.unique = function() {
 			var geocoderInputs = document.getElementsByClassName('geocoder');
 			var elems = 0;
 			if(geocoderInputs != null) elems = geocoderInputs.length;
-			if(div.getElementsByClassName('is-geocoded').length > 0) {
-				//TODO remove marker
+			var isGeocoded = div.getElementsByClassName('is-geocoded');
+			if(isGeocoded.length > 0) {
+				geocodeSearch.removeMarker(isGeocoded[0].id)
 			}
 			//alert(div.getElementById('geocoder-end').toSource())
 			if(div.id == 'geocoder-container-end') {
@@ -618,6 +619,21 @@ Array.prototype.unique = function() {
 			}
 			div.parentElement.removeChild(div);
 		},
+		removeMarker : function(id) {
+			var remIndex = -1;
+			for(var i=0; i<geocodeSearch.markers.length; ++i) {
+				var curr = geocodeSearch.markers[i];
+				if(curr[0] == id) {
+					remIndex = i;
+					map.removeLayer(curr[1][0]);
+					break;
+				}
+			}
+			if(remIndex >= 0) {
+				geocodeSearch.markers.splice(remIndex, 1);
+				geocodeSearch.computeRoute();
+			}
+		},
 		clearResults : function(input) {
 			geocodeSearch.results = [];
 			var idParts = input.id.split('-');
@@ -632,6 +648,7 @@ Array.prototype.unique = function() {
 			geocodeSearch.clearResults(input);
 			input.className = input.className.replace('is-geocoded', 'not-geocoded');
 			//TODO remove marker and from array
+			geocodeSearch.removeMarker(input.id);
 			if(query.length < 3) return;
 			geocoder.geocode(query, function(data) {
 				geocodeSearch.addResults(data);

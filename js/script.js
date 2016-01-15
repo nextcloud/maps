@@ -28,6 +28,23 @@ Array.prototype.unique = function() {
 	}
 	return unique;
 };
+
+function debounce(func, wait, immediate) {
+	var timeout;
+	return function() {
+		var context = this;
+		var args = arguments;
+		var later = function() {
+			timeout = null;
+			if(!immediate) func.apply(context, args);
+		}
+		var callNow = immediate && !timeout;
+		clearTimeout(timeout);
+		timeout = setTimeout(later, wait);
+		if(callNow) func.apply(context, args);
+	}
+}
+
 (function($, OC) {
 
 	var normalMarkerImg = OC.filePath('maps', 'css', 'leaflet/images/marker-icon.png');
@@ -48,21 +65,23 @@ Array.prototype.unique = function() {
 
 	function addGeocodeMarker(latlng) {
 		Maps.droppedPin = new L.marker(latlng);
-		var decoder = L.Control.Geocoder.nominatim();
-		decoder.reverse(latlng, 67108864, function(results) {
+		geocoder.reverse(latlng, 67108864, function(results) {
 			var result = results[0];
 			setTimeout(function() {
 				var knownFields = ['country', 'country_code', 'postcode', 'residential', 'road', 'state', 'suburb', 'town', 'house_number'];
 				var popupHtml = '';
-				$.each(result.originalObject.address, function(k, v) {
+				var properties = result.properties;
+				var address = properties;
+				if(!geocodeSearch.apiKeySet()) address = properties.address;
+				$.each(address, function(k, v) {
 					if ($.inArray(k, knownFields) == -1) {
 						var prefix = k;
 						popupHtml += v + '<br />';
 					}
 				})
-				var houseNo = (result.originalObject.address.house_number) ? result.originalObject.address.house_number : '';
-				popupHtml += result.originalObject.address.road + ' ' + houseNo + '<br />';
-				popupHtml += result.originalObject.address.town + ', ' + result.originalObject.address.state + ', ' + result.originalObject.address.country;
+				var houseNo = (address.house_number) ? address.house_number : '';
+				popupHtml += address.road + ' ' + houseNo + '<br />';
+				popupHtml += address.town + ', ' + address.state + ', ' + address.country;
 				toolKit.addMarker(Maps.droppedPin, popupHtml, true);
 			}, 50);
 
@@ -140,11 +159,6 @@ Array.prototype.unique = function() {
 			zoomControl : false,
 			layers : [mapQuest]
 		}),
-		geocoder = L.Control.Geocoder.nominatim();
-		/*control = L.Control.geocoder({
-			collapsed: false,
-			geocoder: geocoder
-		}).addTo(map);*/
 
 		map.options.minZoom = 3;
 		var hash = new L.Hash(map);
@@ -186,6 +200,8 @@ Array.prototype.unique = function() {
 			geocodeSearch.waypointsChanged(e);
 		})
 
+		apiKey = '';
+
 		geocodeSearch.addGeocoder();
 
 		// properly style as input field
@@ -196,6 +212,16 @@ Array.prototype.unique = function() {
 			if(!$.jStorage.get('pois') || zoom < 9) return; //only show POIs on reasonable levels
 			Maps.displayPoiIcons(zoom);
 		})
+
+		$.post(OC.generateUrl('/apps/maps/api/1.0/apikey/getKey'), null, function(data){
+			if(data.id != null && data.apiKey != null) {
+				apiKey = data.apiKey;
+				document.getElementById('apiKey').value = apiKey;
+				geocoder = L.Control.Geocoder.mapzen(apiKey);
+			} else {
+				geocoder = L.Control.Geocoder.nominatim();
+			}
+		});
 
 		map.on('mousedown', function(e) {
 			Maps.mouseDowntime = new Date().getTime();
@@ -421,6 +447,16 @@ Array.prototype.unique = function() {
 			minDate : -900
 		});
 
+		$(document).on('click', '#setApiKey', function(e) {
+			var value = document.getElementById('apiKey').value;
+			if(value.length == 0) return;
+			var formData = {
+				key : value
+			};
+			$.post(OC.generateUrl('/apps/maps/api/1.0/apikey/addKey'), formData, function(data){
+			});
+		});
+
 		$(document).on('click', '.deviceHistory', function(e) {
 			var isVisible = $(this).parent().find('i').length;
 			var dId = $(this).parent().attr('data-deviceId');
@@ -476,13 +512,15 @@ Array.prototype.unique = function() {
 		$(document).on('click', '.setDestination', function() {
 
 			var latlng = $(this).attr('data-latlng');
-			routing.setWaypoints([])
 			var end = latlng.split(',');
 			end[0] = end[0] * 1;
 			end[1] = end[1] * 1;
 			//map.removeLayer(routing);
 
-			routing.setWaypoints([L.latLng(currentlocation[0], currentlocation[1]), L.latLng(end[0], end[1])]);
+			routing.setWaypoints([
+				L.Routing.waypoint(L.latLng(currentlocation[0], currentlocation[1]), ""),
+				L.Routing.waypoint(L.latLng(end[0], end[1]), "")
+			]);
 
 			map.closePopup();
 		});
@@ -522,6 +560,9 @@ Array.prototype.unique = function() {
 		results : [],
 		waypoints : [],
 		markers : [],
+		apiKeySet : function() {
+			return apiKey != null && apiKey.length > 0;
+		},
 		addGeocoder : function() {
 			var geocoderInputs = document.getElementsByClassName('geocoder');
 			var elems = 0;
@@ -534,17 +575,17 @@ Array.prototype.unique = function() {
 			var input = document.createElement('input');
 			input.type = 'text';
 			input.className = 'geocoder not-geocoded';
-			input.addEventListener('keyup', function() {
-				clearTimeout(timeoutId);
-				timeoutId = setTimeout(geocodeSearch.performGeocode(input), 500);
-			});
+			var debounceTimeout = 500;
+			if(!geocodeSearch.apiKeySet()) debounceTimeout = 1000;
+			input.addEventListener('input', debounce(function() {
+				geocodeSearch.performGeocode(input)
+			}, debounceTimeout));
 			input.addEventListener('blur', geocodeSearch.clearResults(input));
 			var list = document.createElement('ul');
 			list.className = 'geocoder-list';
 			list.style.display = 'none';
 
 			var btn = document.createElement('button');
-			
 
 			if(elems == 0) {
 				geocoderDiv.id = 'geocoder-container-start';
@@ -618,7 +659,9 @@ Array.prototype.unique = function() {
 				newEndDiv.id = 'geocoder-container-end';
 				newInput.id = 'geocoder-end';
 				newList.id = 'geocoder-results-end';
-				newInput.placeholder = 'End address';
+				if(document.getElementsByClassName('geocoder').length - 1 > 1) {
+					newInput.placeholder = 'End address';
+				}
 				newButton.id = 'geocoder-remove-end';
 			}
 			div.parentElement.removeChild(div);
@@ -733,8 +776,15 @@ Array.prototype.unique = function() {
 			});
 		},
 		waypointsChanged : function(e) {
+			var wps = e.waypoints;
+			var wpscount = wps.length;
+			var inputcount = document.getElementById('search').childNodes.length;
+			while(wpscount > inputcount) {
+				geocodeSearch.addGeocoder();
+				inputcount++;
+			}
 			var inputContainers = document.getElementById('search').childNodes;
-			$.each(e.waypoints, function(idx, wp) {
+			$.each(wps, function(idx, wp) {
 				var name = wp.name;
 				if(name == null || name == '') {
 					geocoder.reverse(wp.latLng, 67108864, function(data) {
@@ -1244,7 +1294,7 @@ Array.prototype.unique = function() {
 			return false;
 		},
 		_popupMouseOut: function(e) {
-			if(marker == null) return false;
+			if(marker == null || marker._popup == null) return false;
 			L.DomEvent.off(marker._popup, 'mouseout', this._popupMouseOut, this);
 			var tgt = e.toElement || e.relatedTarget;
 			if (this._getParent(tgt, 'leaflet-popup')) return true;

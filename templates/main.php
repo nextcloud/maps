@@ -78,6 +78,11 @@
 			</div>
 			<div id="app-settings-content">
 					<a id="tracking-settings">Location tracking settings</a>
+					<h3>Mapzen API key</h3>
+					<p>
+						<input type="text" id="apiKey" />
+						<button type="button" id="setApiKey" class="icon-checkmark" />
+					</p>
 			</div>
 		</div>
 

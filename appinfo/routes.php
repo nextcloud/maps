@@ -40,4 +40,7 @@ $application->registerRoutes($this, array('routes' => array(
     array('name' => 'favorite#update_favorite', 'url' => '/api/1.0/favorite/updateFavorite', 'verb' => 'POST'),
     array('name' => 'favorite#get_favorites_by_name', 'url' => '/api/1.0/favorite/getFavoritesByName', 'verb' => 'POST'),
 
+    array('name' => 'apikey#get_key', 'url' => '/api/1.0/apikey/getKey', 'verb' => 'POST'),
+    array('name' => 'apikey#add_key', 'url' => '/api/1.0/apikey/addKey', 'verb' => 'POST'),
+
 )));

@@ -11,7 +11,9 @@
 
 namespace OCA\Maps\Controller;
 
+use \OCA\Maps\Db\ApiKey;
 use \OCA\Maps\Db\DeviceMapper;
+use \OCA\Maps\Db\ApiKeyMapper;
 use \OCP\IRequest;
 use \OCP\AppFramework\Http\TemplateResponse;
 use \OCP\AppFramework\Controller;
@@ -22,13 +24,16 @@ class PageController extends Controller {
 	private $userId;
 	private $cacheManager;
 	private $deviceMapper;
+	private $apiKeyMapper;
 	public function __construct($appName, IRequest $request, $userId,
 								CacheManager $cacheManager,
-								DeviceMapper	$deviceMapper) {
+								DeviceMapper $deviceMapper,
+								ApiKeyMapper $apiKeyMapper) {
 		parent::__construct($appName, $request);
 		$this -> userId = $userId;
 		$this -> cacheManager = $cacheManager;
 		$this -> deviceMapper = $deviceMapper;
+		$this -> apiKeyMapper = $apiKeyMapper;
 	}
 
 	/**
@@ -55,10 +60,22 @@ class PageController extends Controller {
 			$csp->addAllowedImageDomain('data:');
 			//overpasslayer api
 			$csp->addAllowedConnectDomain('http://overpass-api.de/api/interpreter?');
-			// nominatim geocoder
-			$csp->addAllowedScriptDomain('http://nominatim.openstreetmap.org/search?q=*');
-			$csp->addAllowedScriptDomain('http://nominatim.openstreetmap.org/reverse');
-			$csp->addAllowedConnectDomain('http://router.project-osrm.org');
+			$tmpkey = new ApiKey();
+			try {
+				$tmpkey = $this->apiKeyMapper->findByUser($this->userId);
+			} catch(\OCP\AppFramework\Db\DoesNotExistException $e) {
+				$tmpkey->setUserId($this->userId);
+			}
+			if($tmpkey->apiKey != null && strlen($tmpkey->apiKey) > 0) {
+				// mapzen geocoder
+				$csp->addAllowedConnectDomain('http://search.mapzen.com/v1/search?');
+				$csp->addAllowedConnectDomain('http://search.mapzen.com/v1/reverse?');
+			} else {
+				// nominatim geocoder
+				$csp->addAllowedScriptDomain('http://nominatim.openstreetmap.org/search?q=*');
+				$csp->addAllowedScriptDomain('http://nominatim.openstreetmap.org/reverse');
+				$csp->addAllowedConnectDomain('http://router.project-osrm.org');
+			}
 			$response->setContentSecurityPolicy($csp);
 		}
 		return $response;

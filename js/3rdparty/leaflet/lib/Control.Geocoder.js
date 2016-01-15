@@ -52,10 +52,7 @@ module.exports = {
 			this._container.appendChild(this._errorElement);
 			container.appendChild(this._alts);
 
-//			L.DomEvent.addListener(form, 'submit', this._geocode, this);
-			L.DomEvent.addListener(form, 'input', this._geocode, this);
-//			L.DomEvent.addListener(form, 'input', this._checkForContacts, this);
-//			L.DomEvent.addListener(form, 'submit', this._onSearchSubmit, this);
+			L.DomEvent.addListener(form, 'submit', this._geocode, this);
 
 			if (this.options.collapsed) {
 				if (this.options.expand === 'click') {
@@ -113,93 +110,11 @@ module.exports = {
 			return this;
 		},
 
-		/*_createAltCont: function(result, index) {
-			var li = L.DomUtil.create('li', ''),
-				a = L.DomUtil.create('a', 'listContact', li),
-			    icon = this.options.showResultIcons && result.icon ? L.DomUtil.create('img', '', a) : null,
-			    text = result.html ? undefined : document.createTextNode(result.name),
-			    clickHandler = function clickHandler(e) {
-					L.DomEvent.preventDefault(e);
-					this._geocodeResultSelected(result);
-				};
-
-			if (icon) {
-				icon.src = result.icon;
-			}
-
-			li.setAttribute('data-result-index', index);
-
-			if (result.html) {
-				a.innerHTML = result.html;
-			} else {
-				a.appendChild(text);
-			}
-
-			L.DomEvent.addListener(li, 'click', clickHandler, this);
-
-			return li;
-		},*/
-
-		/*_checkForContacts: function(e) {
-			L.DomEvent.preventDefault(e);
-			//TODO add contact loading
-			//TODO add geocode of current search if no item is selected
-			var inp = this._input.value;
-			if(inp.length < 3) return;
-			var splitInp = inp.split(" ");
-			var contactAddrs = [];
-			var idx = 5;
-			for(var i=0; i<Maps.addresses.length; i++){
-				var adIndex = -1;
-				for(var k=0; k<splitInp.length; k++){
-					var found = false;
-					if(Maps.addresses[i].name.toLowerCase().match(splitInp[k])){
-						found = true;
-					}
-					var len = Object.keys(Maps.addresses[i].add).length;
-					for(var j=0; j<len; j++){
-						if(Maps.addresses[i].add[j].toLowerCase().match(splitInp[k])){
-							found = true;
-							adIndex = j;
-						}
-					}
-					if(!found) break;
-				}
-				if(found){
-					if(adIndex > -1){
-						var address = {
-							'city': Maps.addresses[i].orgAdd[adIndex][3],
-							'street': Maps.addresses[i].orgAdd[adIndex][2]
-						};
-					}
-					var displayName = Maps.addresses[i].name;
-					var tmpRes = {
-						'address': address,
-						'displayName': displayName,
-						'name': displayName
-					};
-					//TODO only works with alert
-					alert(tmpRes.toSource());
-					this._alts.appendChild(this._createAltCont(tmpRes, idx));
-					idx++;
-				}
-			}
-			return false;
-		},*/
-
-		/*_onSearchSubmit: function(e) {
-			this.options.geocoder.geocode(this._input.value, this._loadBestResult, this);
-			return false;
-		},*/
-
 		_geocode: function(event) {
 			L.DomEvent.preventDefault(event);
 			this._clearResults();
-			if(this._input.value.length < 3) return false;
-			setTimeout(500);
 			L.DomUtil.addClass(this._container, 'leaflet-control-geocoder-throbber');
 			this.options.geocoder.geocode(this._input.value, this._geocodeResult, this);
-//			this._checkForContacts(event);
 			return false;
 		},
 

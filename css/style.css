@@ -61,6 +61,7 @@ ul.geocoder-list {
 	background: white;
 	width: 400px;
 	font-size: 10px;
+	position: absolute;
 }
 
 li.geocoder-list-item {

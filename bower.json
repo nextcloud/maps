@@ -1,0 +1,11 @@
+{
+  "name": "owncloud-maps",
+  "description": "",
+  "moduleType": [],
+  "license": "AGPL",
+  "homepage": "",
+  "private": true,
+  "dependencies": {
+    "maki": "mapbox/maki#^0.5.0"
+  }
+}

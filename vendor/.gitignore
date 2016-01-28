@@ -1,0 +1,4 @@
+# maki
+maki/*
+!maki/renders
+!maki/renders/*

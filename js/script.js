@@ -705,13 +705,33 @@ Array.prototype.unique = function() {
 			var div = document.createElement('div');
 			var title = document.createElement('h2');
 			if(tags['name']) title.appendChild(document.createTextNode(tags['name']));
+			div.appendChild(title);
 			var addr = '';
 			if(tags['addr:street']) addr += tags['addr:street'];
 			if(tags['addr:housenumber']) addr += ' ' + tags['addr:housenumber'];
 			if(tags['addr:postcode']) addr += ', ' + tags['addr:postcode'];
 			if(tags['addr:city']) addr += ' ' + tags['addr:city'];
-			div.appendChild(title);
 			div.appendChild(document.createTextNode(addr));
+			if(tags['phone']) {
+				var phoneDiv = document.createElement('div');
+				var phone = document.createElement('a');
+				var phoneN = tags['phone'];
+				if(phoneN.startsWith('+')) phoneN = phoneN.substring(1);
+				phone.setAttribute('href', 'tel://' + phoneN);
+				phone.appendChild(document.createTextNode(tags['phone']));
+				phoneDiv.appendChild(phone);
+				div.appendChild(phoneDiv);
+			}
+			if(tags['website']) {
+				var webDiv = document.createElement('div');
+				var web = document.createElement('a');
+				var webN = tags['website'];
+				if(webN.startsWith('+')) webN = webN.substring(1);
+				web.setAttribute('href', webN);
+				web.appendChild(document.createTextNode(tags['website']));
+				webDiv.appendChild(web);
+				div.appendChild(webDiv);
+			}
 			return div;
 		},
 		loadAdressBooks : function() {

@@ -107,6 +107,14 @@ i {
 	width: 16px;
 	cursor: pointer;
 }
+
+.maki-icon {
+	background: #fff;
+	border: 1px solid #666;
+	border-radius: 10px;
+	padding: 1px;
+}
+
 #loadingContacts {
 	padding-left: 45px;
 	margin-top: -10px;

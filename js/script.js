@@ -187,48 +187,9 @@ Array.prototype.unique = function() {
 		//$('#searchContainer').find('input').attr('type', 'text');
 
 		map.on('zoomend', function(e) {
-			var group = 'amenity';
-			var value = 'atm';
 			var zoom = map.getZoom();
-			if(zoom < 9) return; //only show POIs on reasonable levels
-
-			$.each(poiLayers, function(i, layer) {
-				$.each(layer, function(group, values) {
-					$.each(values, function(j, value) {
-						var overpassLayer = new L.OverPassLayer({
-							minZoom: 9,
-							query: 'node({{bbox}})[' + group + '=' + value + '];out;',
-							onSuccess: function(data) {
-								for ( i = 0; i < data.elements.length; i++) {
-									e = data.elements[i];
-									if (e.id in this.instance._ids) {
-										return;
-									}
-									this.instance._ids[e.id] = true;
-									var pos = new L.LatLng(e.lat, e.lon);
-									var popup = Maps.getPoiPopupHTML(e.tags).innerHTML; /*this.instance._getPoiPopupHTML(e.tags, e.id).innerHTML;*/
-									poiIcon = toolKit.getPoiIcon(value);
-									if (poiIcon) {
-										var marker = L.marker(pos, {
-											icon : poiIcon,
-										}).bindPopup(popup);
-										toolKit.addMarker(marker, popup)
-									}
-								}
-							}
-						});
-						map.addLayer(overpassLayer);
-						Maps.overpassLayers.push(overpassLayer);
-					});
-				});
-			});
-
-			/*$.each(poiLayers, function(i, layer) {
-				$.each(layer, function(group, values) {
-					$.each(values, function(j, value) {
-					});
-				});
-			});*/
+			if(!$.jStorage.get('pois') || zoom < 9) return; //only show POIs on reasonable levels
+			Maps.displayPoiIcons(zoom);
 		})
 
 		map.on('mousedown', function(e) {
@@ -282,19 +243,7 @@ Array.prototype.unique = function() {
 				subCat.slideDown();
 			}
 		})
-		var poiCats = ['shop'/*, 'amenity', 'tourism'*/];
-		$.each(poiCats, function(i, cat) {
-			poiTypes[cat] = poiTypes[cat].sort()
-			iconHTML = '';
-			$.each(poiTypes[cat], function(i, layer) {
-				if (this != "") {
-					var icon = toolKit.getPoiIcon(this);
-					if (icon) {
-						$('#' + cat + '-items').append('<li><a class="subLayer" data-layerGroup="' + cat + '" data-layerValue="' + this + '">' + iconHTML + this + '</a></li>')
-					}
-				}
-			})
-		});
+
 		function convertLatLon(latD, lonD, latDir, lonDir){
 			var lon = lonD[0] + lonD[1]/60 + lonD[2]/(60*60);
 			var lat = latD[0] + latD[1]/60 + latD[2]/(60*60);
@@ -378,6 +327,30 @@ Array.prototype.unique = function() {
 			$('#favoriteMenu').addClass('active').addClass('icon-starred').removeClass('icon-star');
 		} else {
 			favorites.hide();
+		}
+
+		/* POI layer: Show by default, remember visibility */
+		$('.poiLayer').click(function() {
+			if($.jStorage.get('pois')) {
+				Maps.hidePoiIcons();
+				$.jStorage.set('pois', false);
+				//$('#poiMenu').removeClass('active').addClass('icon-star').removeClass('icon-starred');
+			} else {
+				Maps.displayPoiIcons(map.getZoom());
+				$.jStorage.set('pois', true);
+				//$('#poiMenu').addClass('active').addClass('icon-starred').removeClass('icon-star');
+			}
+		});
+		if($.jStorage.get('pois') === null) {
+			Maps.displayPoiIcons(map.getZoom());
+			$.jStorage.set('pois', true);
+			//$('#poiMenu').addClass('active').addClass('icon-starred').removeClass('icon-star');
+		}
+		if($.jStorage.get('pois')) {
+			Maps.displayPoiIcons(map.getZoom());
+			//$('#poiMenu').addClass('active').addClass('icon-starred').removeClass('icon-star');
+		} else {
+			Maps.hidePoiIcons();
 		}
 
 
@@ -689,6 +662,7 @@ Array.prototype.unique = function() {
 		tempCounter : 0,
 		tempTotal : 0,
 		activeLayers : [],
+		poiMarker : [],
 		overpassLayers : [],
 		mouseDowntime : 0,
 		droppedPin : {},
@@ -701,6 +675,49 @@ Array.prototype.unique = function() {
 		historyTrack : {},
 		traceDevice : null,
 		arrowHead : {},
+		displayPoiIcons : function(zoomLevel) {
+			$.each(poiLayers, function(i, layer) {
+				$.each(layer, function(group, values) {
+					$.each(values, function(j, value) {
+						var overpassLayer = new L.OverPassLayer({
+							minZoom: 9,
+							query: 'node({{bbox}})[' + group + '=' + value + '];out;',
+							onSuccess: function(data) {
+								for ( i = 0; i < data.elements.length; i++) {
+									e = data.elements[i];
+									if (e.id in this.instance._ids) {
+										return;
+									}
+									this.instance._ids[e.id] = true;
+									var pos = new L.LatLng(e.lat, e.lon);
+									var popup = Maps.getPoiPopupHTML(e.tags).innerHTML;
+									poiIcon = toolKit.getPoiIcon(value);
+									if (poiIcon) {
+										var marker = L.marker(pos, {
+											icon : poiIcon,
+										}).bindPopup(popup);
+										Maps.poiMarker.push(marker);
+										toolKit.addMarker(marker, popup)
+									}
+								}
+							}
+						});
+						map.addLayer(overpassLayer);
+						Maps.overpassLayers.push(overpassLayer);
+					});
+				});
+			});
+		},
+		hidePoiIcons : function() {
+			$.each(Maps.overpassLayers, function(i, layer) {
+				map.removeLayer(layer);
+			});
+			Maps.overpassLayers = [];
+			$.each(Maps.poiMarker, function(i, marker) {
+				map.removeLayer(marker);
+			});
+			Maps.poiMarker = [];
+		},
 		getPoiPopupHTML : function(tags) {
 			var div = document.createElement('div');
 			var title = document.createElement('h2');
@@ -726,11 +743,19 @@ Array.prototype.unique = function() {
 				var webDiv = document.createElement('div');
 				var web = document.createElement('a');
 				var webN = tags['website'];
-				if(webN.startsWith('+')) webN = webN.substring(1);
 				web.setAttribute('href', webN);
-				web.appendChild(document.createTextNode(tags['website']));
+				web.appendChild(document.createTextNode(webN));
 				webDiv.appendChild(web);
 				div.appendChild(webDiv);
+			}
+			if(tags['email']) {
+				var mailDiv = document.createElement('div');
+				var mail = document.createElement('a');
+				var mailN = tags['email'];
+				mail.setAttribute('href', 'mailto:' + mailN);
+				mail.appendChild(document.createTextNode(mailN));
+				mailDiv.appendChild(mail);
+				div.appendChild(mailDiv);
 			}
 			return div;
 		},
@@ -941,82 +966,11 @@ Array.prototype.unique = function() {
 
 		showContact : function(data) {
 
-		},
-
-		updateLayers : function(group, value) {
-			//OverPassAPI overlay
-			//k:amenity  v:postbox
-			var overPassQ = '';
-			groupArr = []
-			overPassQ += 'node(BBOX)[' + group + '=' + value + '];out;'
-			groupArr.push(group);
-			if (!$('body').data('POIactive')) {
-				Maps.activeLayers = new L.OverPassLayer({
-					minzoom : 14,
-					//query : OC.generateUrl('apps/maps/router?url=http://overpass-api.de/api/interpreter?data=[out:json];node(BBOX)[' + group + '='+layer+'];out;'),
-					query : OC.generateUrl('apps/maps/router?url=(SERVERAPI)interpreter?data=[out:json];' + overPassQ),
-					callback : function createMaker(data) {
-						for ( i = 0; i < data.elements.length; i++) {
-							e = data.elements[i];
-							if (e.id in this.instance._ids) {
-								return;
-							}
-							this.instance._ids[e.id] = true;
-							var pos = new L.LatLng(e.lat, e.lon);
-							var popup = this.instance._poiInfo(e.tags, e.id);
-							var color = e.tags.collection_times ? 'green' : 'red';
-							var curgroup = null;
-
-							$.each(groupArr, function() {
-								if (e.tags[this]) {
-									curgroup = this;
-								}
-							})
-							var icon = e.tags[curgroup].split(';');
-							icon[0] = icon[0].toLowerCase();
-							var poiIcon = false;
-							if (icon[0].indexOf(',') != -1) {
-								icon = icon[0].split(',');
-							}
-							if (icon[0] != 'yes') {
-								poiIcon = toolKit.getPoiIcon(icon[0])
-								if (poiIcon) {
-									var marker = L.marker(pos, {
-										icon : poiIcon,
-									}).bindPopup(popup);
-									toolKit.addMarker(marker, popup)
-									//this.instance.addLayer(marker);
-								}
-							}
-
-						}
-						/*tmpTypes = tmpTypes.unique().clean('');
-						 tmpHTML = ''
-						 $.each(tmpTypes, function() {
-						 isVisible = $.inArray(group + '-' + this, Maps.hiddenPOITypes);
-						 vIcon = (isVisible == -1) ? '<i class="icon-toggle fright micon"></i>' : ''
-						 tmpHTML += '<li><a class="subLayer" data-subLayer="' + group + '-' + this + '">' + this + vIcon + '</a><li>'
-						 })
-						 console.log(tmpTypes);
-						 $('#' + group + '-items').html(tmpHTML)
-						 $('#' + group + '-items').show();*/
-					},
-				});
-				map.addLayer(Maps.activeLayers);
-				$('body').data('POIactive', true);
-			} else {
-				Maps.activeLayers.options.query = OC.generateUrl('apps/maps/router?url=(SERVERAPI)interpreter?data=[out:json];' + overPassQ);
-				if (group && value) {
-					Maps.activeLayers.onMoveEnd();
-				}
-			}
-		},
-		removeLayer : function(layer) {
-			//map.removeLayer(Maps.activeLayers[layer])
 		}
 	}
 	toolKit = {
 		addMarker : function(marker, markerHTML, openPopup, fav) {
+			if(marker == null || marker._latlng == null) return;
 			fav = fav || false;
 			var openPopup = (openPopup) ? true : false;
 			var latlng = marker._latlng.lat + ',' + marker._latlng.lng;
@@ -1063,6 +1017,7 @@ Array.prototype.unique = function() {
 			return false;
 		},
 		_popupMouseOut: function(e) {
+			if(marker == null) return false;
 			L.DomEvent.off(marker._popup, 'mouseout', this._popupMouseOut, this);
 			var tgt = e.toElement || e.relatedTarget;
 			if (this._getParent(tgt, 'leaflet-popup')) return true;
@@ -1193,7 +1148,7 @@ Array.prototype.unique = function() {
 				'wetland' : [ 'wetland' ],
 				'zoo' : [ 'zoo' ]
 			}
-			var iconUrl = OC.filePath('maps', 'img', 'maki/src/');
+			var iconUrl = OC.filePath('maps', 'vendor', 'maki/src/');
 			var iconSuffix = '-18.svg';
 			var name;
 			var icon;
@@ -1205,7 +1160,7 @@ Array.prototype.unique = function() {
 				}
 			})
 			return L.icon({
-					className: type,
+					className: type + ' maki-icon',
 					icon: name,
 					iconUrl : icon,
 					iconSize : [18, 18],

@@ -44,8 +44,7 @@
 				<a class='favoriteLayer icon-star' id='favoriteMenu' data-layer="favorites">Favorites</a>
 			</li>
 			<li>
-				<a class='main-cat-layer icon-toggle toggle-children' data-layer="shop">Places</a>
-				<ul id="shop-items" class="hidden"></ul>
+				<a class='poiLayer icon-toggle' id='poiMenu' data-layer="pois">POIs</a>
 			</li>
 			<?php if(\OCP\App::isEnabled('contacts')) : ?>
 			<li>

@@ -1,4 +1,4 @@
 # maki
 maki/*
-!maki/renders
-!maki/renders/*
+!maki/src
+!maki/src/*

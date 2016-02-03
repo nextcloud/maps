@@ -53,6 +53,9 @@ class PageController extends Controller {
 			$csp->addAllowedImageDomain('https://api.tiles.mapbox.com');
 			// inline images
 			$csp->addAllowedScriptDomain('data:');
+			$csp->addAllowedImageDomain('data:');
+			//overpasslayer api
+			$csp->addAllowedConnectDomain('http://overpass-api.de/api/interpreter?');
 			$response->setContentSecurityPolicy($csp);
 		}
 		return $response;

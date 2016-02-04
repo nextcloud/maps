@@ -580,6 +580,30 @@ function debounce(func, wait, immediate) {
 			input.addEventListener('input', debounce(function() {
 				geocodeSearch.performGeocode(input)
 			}, debounceTimeout));
+			input.addEventListener('keyup', function(e) {
+				var key = e.which || e.keyCode;
+				if(key !== 13) return; //not enter/return key
+				e.preventDefault();
+				var result = null;
+				if(geocodeSearch.results.length > 0) {
+					result = geocodeSearch.results[0];
+				} else {
+					var results = geocodeSearch.performInlineGeocode(input);
+					if(results != null && results.length > 0) result = results[0];
+				}
+				if(result == null) return;
+				input.className = input.className.replace('not-geocoded', 'is-geocoded');
+				var marker = L.marker(result.center);
+				geocodeSearch.markers.push([[input.id], [marker]]);
+				toolKit.addMarker(marker, result.name);
+				var points = document.getElementsByClassName('is-geocoded');
+				if(points.length < 2 && result.bbox != null) {
+					map.fitBounds(result.bbox);
+				};
+				input.value = result.name;
+				geocodeSearch.clearResults(input);
+				geocodeSearch.computeRoute();
+			});
 			input.addEventListener('blur', geocodeSearch.clearResults(input));
 			var list = document.createElement('ul');
 			list.className = 'geocoder-list';
@@ -690,6 +714,33 @@ function debounce(func, wait, immediate) {
 			list.innerHTML = '';
 			list.style.display = 'none';
 		},
+		performInlineGeocode : function(input) {
+			var query = input.value;
+			var results = [];
+			geocodeSearch.clearResults(input);
+			input.className = input.className.replace('is-geocoded', 'not-geocoded');
+			geocodeSearch.removeMarker(input.id);
+			if(query.length < 3) return;
+			geocoder.geocode(query, function(data) {
+				$.each(data, function(index, cont) {
+					results.push(cont);
+				});
+				var formData = {
+					name : query
+				};
+				$.post(OC.generateUrl('/apps/maps/api/1.0/favorite/getFavoritesByName'), formData, function(data){
+					$.each(data, function(index, content) {
+						content.center = L.latLng(content.lat, content.lng);
+						content.bbox = null;
+						content.type = 'favorite';
+						$.each(data, function(index, cont) {
+							results.push(cont);
+						});
+					});
+				});
+			}, null);
+			return results;
+		},
 		performGeocode : function(input) {
 			var query = input.value;
 			geocodeSearch.clearResults(input);
@@ -715,8 +766,8 @@ function debounce(func, wait, immediate) {
 		},
 		addResults : function(searchResults) {
 			$.each(searchResults, function(index, cont) {
-					geocodeSearch.results.push(cont);
-				})
+				geocodeSearch.results.push(cont);
+			})
 		},
 		displayResults : function(input) {
 			var idParts = input.id.split('-');

@@ -23,6 +23,16 @@ class FavoriteMapper extends Mapper {
 	}
 
 	/**
+	 * @param string $name
+	 * @return Favorite[]
+	 */
+	public function findByName($name) {
+		$sql = 'SELECT * FROM `*PREFIX*maps_favorites` '.
+			'WHERE `name` ILIKE ?';
+		return $this->findEntities($sql, ['%' . addcslashes($name, '\\_%') . '%']);
+	}
+
+	/**
 	 * @param string $userId
 	 * @param string $from
 	 * @param string $until

@@ -7,7 +7,6 @@
 \OCP\Util::addScript('maps', '3rdparty/overpass/OverPassLayer');
 \OCP\Util::addScript('maps', '3rdparty/leaflet/plugins/leaflet-routing-machine.min');
 
-\OCP\Util::addScript('maps', '3rdparty/leaflet/lib/Control.Geocoder');
 \OCP\Util::addScript('maps', '3rdparty/leaflet/lib/leaflet.iconlabel');
 
 \OCP\Util::addScript('maps', '3rdparty/leaflet/plugins/leaflet-hash');
@@ -27,10 +26,13 @@
 \OCP\Util::addScript('maps', '3rdparty/binaryajax-lib');
 \OCP\Util::addScript('maps', '3rdparty/exif');
 
+\OCP\Util::addScript('maps', '3rdparty/leaflet/lib/Control.Geocoder');
+
 \OCP\Util::addStyle('maps', 'leaflet/leaflet');
 \OCP\Util::addStyle('maps', 'leaflet/leaflet-compass.min');
 
 \OCP\Util::addStyle('maps', 'leaflet/leaflet-routing-machine');
+\OCP\Util::addStyle('maps', 'leaflet/Control.Geocoder');
 \OCP\Util::addStyle('maps', 'style');
 \OCP\Util::addStyle('maps', 'font-awesome.min');
 
@@ -76,12 +78,17 @@
 			</div>
 			<div id="app-settings-content">
 					<a id="tracking-settings">Location tracking settings</a>
+					<h3>Mapzen API key</h3>
+					<p>
+						<input type="text" id="apiKey" />
+						<button type="button" id="setApiKey" class="icon-checkmark" />
+					</p>
 			</div>
 		</div>
 
   	</div>
 	<div id="app-content">
-		<div id="searchContainer"></div>
+		<div id="search"></div>
 		<div id="map"></div>
 	</div>
 </div>

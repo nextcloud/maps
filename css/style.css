@@ -42,6 +42,40 @@ div.olControlZoom a {
 	filter: alpha(opacity=80);
 }
 
+div#search {
+	position: absolute;
+	top: 3px;
+	left: 50px;
+	z-index: 1;
+}
+
+div.geocoder-container {
+	display: block;
+}
+
+input.geocoder {
+	width: 210px;
+}
+
+ul.geocoder-list {
+	background: white;
+	width: 400px;
+	font-size: 10px;
+	position: absolute;
+}
+
+li.geocoder-list-item {
+	padding: 5px;
+}
+
+li.geocoder-list-item:hover {
+	background: #ddd;
+}
+
+button#geocoder-button {
+	background: white;
+}
+
 input#search {
 	width: 180px;
 	margin: 10px 10px;

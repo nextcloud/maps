@@ -18,6 +18,7 @@ use \OCA\Maps\Db\CacheManager;
 use \OCA\Maps\Db\DeviceMapper;
 use \OCA\Maps\Db\LocationMapper;
 use \OCA\Maps\Db\FavoriteMapper;
+use \OCA\Maps\Db\ApiKeyMapper;
 use \OCA\Maps\Controller\PageController;
 use \OCA\Maps\Controller\LocationController;
 use \OCA\Maps\Controller\FavoriteController;
@@ -41,7 +42,8 @@ class Application extends App {
 				$c->query('Request'),
 				$c->query('UserId'),
 				$c->query('CacheManager'),
-				$c->query('DeviceMapper')
+				$c->query('DeviceMapper'),
+				$c->query('ApiKeyMapper')
 			);
 		});
 		$container->registerService('LocationController', function($c) {
@@ -86,6 +88,12 @@ class Application extends App {
 		$container->registerService('FavoriteMapper', function($c) use ($server) {
 			/** @var SimpleContainer $c */
 			return new FavoriteMapper(
+				$server->getDb()
+			);
+		});
+		$container->registerService('ApiKeyMapper', function($c) use ($server) {
+			/** @var SimpleContainer $c */
+			return new ApiKeyMapper(
 				$server->getDb()
 			);
 		});

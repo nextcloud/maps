@@ -67,14 +67,12 @@ function debounce(func, wait, immediate) {
 		Maps.droppedPin = new L.marker(latlng);
 		geocoder.reverse(latlng, 67108864, function(results) {
 			var result = results[0];
-			setTimeout(function() {
-				var popupHtml = '';
-				var properties = result.properties;
-				var address = properties;
-				if(!geocodeSearch.apiKeySet()) address = properties.address; //address is stored depending on which geocoder is used
-				popupHtml = Maps.getPoiPopupHTML(address).innerHTML;
-				toolKit.addMarker(Maps.droppedPin, popupHtml, true);
-			}, 50);
+			var popupHtml = '';
+			var properties = result.properties;
+			var address = properties;
+			if(!geocodeSearch.apiKeySet()) address = properties.address; //address is stored depending on which geocoder is used
+			popupHtml = Maps.getPoiPopupHTML(address).innerHTML;
+			toolKit.addMarker(Maps.droppedPin, popupHtml, true);
 
 		})
 	}
@@ -913,6 +911,7 @@ function debounce(func, wait, immediate) {
 		arrowHead : {},
 		displayPoiIcons : function(zoomLevel) {
 	        $.each(poiLayers, function(i, layer) {
+                if(i > zoomLevel) return true;
 		        $.each(layer, function(group, values) {
 			        $.each(values, function(j, value) {
 			            setTimeout(function() {
@@ -1335,7 +1334,7 @@ function debounce(func, wait, immediate) {
 				'airport' : [ 'airport' ],
 				'alcohol-shop' : [ 'alcohol-shop', 'alcohol', 'beverages' ],
 				'america-football' : [ 'america-football' ],
-				'art-gallery' : [ 'art-gallery', 'gallery', 'artwork', 'paint' ],
+				'art-gallery' : [ 'art-gallery', 'gallery', 'artwork', 'paint', 'arts_centre' ],
 				'bakery' : [ 'bakery' ],
 				'bank' : [ 'bank', 'atm' ],
 				'bar' : [ 'bar' ],
@@ -1345,18 +1344,18 @@ function debounce(func, wait, immediate) {
 				'bicycle' : [ 'bicycle', 'bicycle_parking' ],
 				'building' : [ 'building' ],
 				'bus' : [ 'bus', 'bus_stop', 'bus_station'],
-				'cafe' : [ 'cafe' ],
-				'camera' : [ 'camera', 'viewpoint' ],
+				'cafe' : [ 'cafe', 'coffee_shop', 'coffeeshop' ],
+				'camera' : [ 'camera', 'viewpoint', 'citytour', 'photo' ],
 				'campsite' : [ 'campsite', 'camp_site', 'caravan_site' ],
-				'car' : [ 'car' ],
+				'car' : [ 'car', 'driving_school', 'taxi', 'car_rental' ],
 				'cemetery' : [ 'cemetery' ],
 				'chemist' : [ 'chemist' ],
 				'cinema' : [ 'cinema' ],
-				'circle' : [ 'circle' ],
+				'circle' : [ 'circle', 'lost_found' ],
 				'circle-stroked' : [ 'circle-stroked' ],
 				'city' : [ 'city' ],
 				'clothing-store' : [ 'clothing-store', 'clothes' ],
-				'college' : [ 'college' ],
+				'college' : [ 'college', 'university' ],
 				'commercial' : [ 'commercial' ],
 				'cricket' : [ 'cricket' ],
 				'cross' : [ 'cross' ],
@@ -1369,30 +1368,30 @@ function debounce(func, wait, immediate) {
 				'emergency-telephone' : [ 'emergency-telephone' ],
 				'entrance' : [ 'entrance' ],
 				'farm' : [ 'farm' ],
-				'fast-food' : [ 'fast-food' ],
+				'fast-food' : [ 'fast-food', 'fast_food' ],
 				'ferry' : [ 'ferry' ],
 				'fire-station' : [ 'fire-station', 'fire_station' ],
 				'fuel' : [ 'fuel' ],
-				'garden' : [ 'garden' ],
+				'garden' : [ 'garden', 'florist' ],
 				'gift' : [ 'gift' ],
 				'golf' : [ 'golf' ],
-				'grocery' : [ 'grocery', 'supermarket', 'deli', 'convenience', 'greengrocer', 'fishmonger', 'butcher', 'marketplace' ],
+				'grocery' : [ 'grocery', 'supermarket', 'deli', 'convenience', 'greengrocer', 'fishmonger', 'butcher', 'marketplace', 'mall', 'market' ],
 				'hairdresser' : [ 'hairdresser' ],
 				'harbor' : [ 'harbor' ],
 				'heart' : [ 'heart' ],
 				'heliport' : [ 'heliport' ],
 				'hospital' : [ 'hospital' ],
-				'ice-cream' : [ 'ice-cream' ],
+				'ice-cream' : [ 'ice-cream', 'ice_cream' ],
 				'industrial' : [ 'industrial' ],
 				'land-use' : [ 'land-use' ],
 				'laundry' : [ 'laundry' ],
 				'library' : [ 'library', 'books' ],
 				'lighthouse' : [ 'lighthouse' ],
-				'lodging' : [ 'lodging', 'hotel', 'guest_house', 'hostel', 'motel' ],
+				'lodging' : [ 'lodging', 'hotel', 'guest_house', 'hostel', 'motel', 'apartment', 'chalet' ],
 				'logging' : [ 'logging' ],
 				'london-underground' : [ 'london-underground' ],
 				'marker' : [ 'marker' ],
-				'marker-stroked' : [ 'marker-stroked' ],
+				'marker-stroked' : [ 'marker-stroked', 'information' ],
 				'minefield' : [ 'minefield' ],
 				'mobilephone' : [ 'mobilephone', 'mobile_phone', 'gsm' ],
 				'monument' : [ 'monument' ],
@@ -1400,9 +1399,10 @@ function debounce(func, wait, immediate) {
 				'music' : [ 'music' ],
 				'oil-well' : [ 'oil-well' ],
 				'park' : [ 'park' ],
+				'park2' : [ 'picnic_site' ],
 				'parking' : [ 'parking' ],
-				'parking-garage' : [ 'parking-garage', 'parking-entrance' ],
-				'pharmacy' : [ 'pharmacy', 'drugstore' ],
+				'parking-garage' : [ 'parking-garage', 'parking-entrance', 'parking_entrance' ],
+				'pharmacy' : [ 'pharmacy', 'drugstore', 'doctors' ],
 				'pitch' : [ 'pitch', 'sports' ],
 				'place-of-worship' : [ 'place-of-worship', 'place_of_worship' ],
 				'playground' : [ 'playground' ],
@@ -1435,10 +1435,10 @@ function debounce(func, wait, immediate) {
 				'swimming' : [ 'swimming', 'swimming_pool' ],
 				'telephone' : [ 'telephone', 'phone' ],
 				'tennis' : [ 'tennis' ],
-				'theatre' : [ 'theatre' ],
+				'theatre' : [ 'theatre', 'attraction', 'theme_park' ],
 				'toilets' : [ 'toilets' ],
 				'town' : [ 'town' ],
-				'town-hall' : [ 'town-hall', 'townhall' ],
+				'town-hall' : [ 'town-hall', 'townhall', 'community_centre' ],
 				'triangle' : [ 'triangle' ],
 				'triangle-stroked' : [ 'triangle-stroked' ],
 				'village' : [ 'village' ],
@@ -1446,7 +1446,7 @@ function debounce(func, wait, immediate) {
 				'waste-basket' : [ 'waste-basket' ],
 				'water' : [ 'water' ],
 				'wetland' : [ 'wetland' ],
-				'zoo' : [ 'zoo' ]
+				'zoo' : [ 'zoo', 'aquarium' ]
 			}
 			var iconUrl = OC.filePath('maps', 'vendor', 'maki/src/');
 			var iconSuffix = '-18.svg';
@@ -1467,49 +1467,6 @@ function debounce(func, wait, immediate) {
 					iconAnchor : [9, 18],
 					popupAnchor : [0, -18]
 			});
-		},
-		toFAClass : function(type) {
-			var mapper = {
-				'shopping-cart' : ['supermarkt', 'supermarket', 'department_store', 'deli'],
-				'medkit' : ['hospital'],
-				'cutlery' : ['fast_food', 'restaurant'],
-				'beer' : ['pub'],
-				'credit-card' : ['atm'],
-				'graduation-cap' : ['school'],
-				'lightbulb-o' : ['electronics'],
-				'cut' : ['hairdresser'],
-				'info' : ['information'],
-				'refresh' : ['recycling'],
-				'asterisk' : ['attraction', 'theme_park'],
-				'cogs' : ['car_repair'],
-				'wrench' : ['doityourself'],
-				'music' : ['hifi'],
-				'gift' : ['gift'],
-				'globe' : ['travel_agency'],
-				'minus' : ['bench', 'picnic_site'],
-				'desktop' : ['computer'],
-				'eye' : ['optician'],
-				'cubes' : ['toys'],
-				'file-picture' : ['photo'],
-				'copy' : ['copyshop'],
-				'paw' : ['pet'],
-				'clock-o' : ['clock'],
-				'key' : ['locksmith'],
-				'video-camera' : ['video'],
-				'magic' : ['party'],
-				'road' : ['living_street'],
-				'home' : ['residential']
-			}
-			var returnClass = false;
-			$.each(mapper, function(faClass, types) {
-				if (types.toString().indexOf(type) > -1) {
-					returnClass = faClass
-				} else {
-				}
-			})
-			if (returnClass == false)
-				console.log('Type icon not found: ' + type)
-			return returnClass;
 		},
 		vcardToObject : function(vcard) {
 			var contact = {};
@@ -1616,31 +1573,63 @@ function debounce(func, wait, immediate) {
 	poiLayers = {
 		9 : {
 			shop : [
-				'supermarket', 'bicycle'
+				'supermarket', 'bicycle', 'mall', 'market', 'grocery'
 			],
 			amenity : [
-				'atm', 'coffee_shop', 'restaurant', 'swimming_pool', 'library', 'toilets', 'post_box', 'bar'
+				'atm', 'bank', 'restaurant', 'swimming_pool', 'library', 'toilets', 'post_box'
 			],
 			tourism : [
-				'hotel'
+				'hotel', 'hostel', 'motel', 'camp_site', 'apartment', 'guest_house', 'chalet'
 			]
 		},
-		10 : {},
-	 	11: {},
-		12 : {},
-		13 : {},
-		14 : {},
-		15 : {}
-	},
-
-	poiTypes = {
-		shop : ['atm', 'coffee_shop', 'restaurant', 'supermarket', 'bicycle', 'hotel', 'swimming_pool', 'library', 'toilets', 'post_box', 'bar'],
-		//TODO: define proper categories:
-		// Restaurants/food/coffeeshops/bars, Hotels/hostels, Touristic sites, Wifi, Transport, Fuel, Parking, Supermarket, ATM/Bank, Entertainment, Hospital/Pharmacy, Police, Toilets, Post
-		//shop : ['supermarket', 'bakery', 'car', 'stationery', 'hairdresser', 'mobile_phone', 'convenience', 'newsagent', 'kiosk', 'computer', 'clothes', 'variety_store', 'hearing_aids', 'florist', 'handicraft', 'candle', 'antique', 'pet', 'massage', 'electronics', 'laundry', 'doityourself', 'sports', 'jewelry', 'musical_instrument', 'chemist', 'shoes', 'beverages', 'toys', 'fishing', 'copyshop', 'beauty', 'bag', 'paint', 'bicycle', 'communication', 'furniture', 'alcohol', 'deli', 'optician', 'books', 'car_repair', 'butcher', 'outdoor', 'motorcycle', 'estate_agent', 'photo', 'gift', 'travel_agency', 'tea', 'wine', 'medical_supply', 'department_store', 'dry_cleaning', 'video', 'second_hand', 'greengrocer', 'erotic', 'curtain', 'haberdashery', 'garden_centre', 'art', 'fashion', 'bags', 'accessoires', 'confectionery', 'ice_cream', 'organic', 'music', 'boutique', 'interior', 'kitchen', 'vacant', 'tattoo', 'mall', 'camera', 'gallery', 'rc_models', 'coffee', 'bicycle_rental', 'photographer', 'ticket', 'charity', 'Shisha', 'hats', 'funeral_directors', 'locksmith', 'fabric', 'hardware', 'shoe_repair', 'hifi', 'fabrics', 'tailor', 'anime', 'market', 'grocery', 'no', 'surf', 'tobacco', 'animals', 'currency_exchange', 'souvenirs', 'internet-tele-cafe', 'photography', 'car_parts', 'antiques', 'bed', 'skating', 'ceramics', 'internet cafe', 'frame', 'brushes', 'fish', 'callshop', 'glass', 'comics', 'pottery', 'internet_cafe', 'stamps', 'radiotechnics', 'interior_decoration', 'carrental', 'interior_design', 'gramophone', 'Trödel', 'unused', 'watches', 'jewellery', 'tatoo', 'travelling', 'telecommunication', 'cigarettes', 'sports food', 'perfumery', 'unknown', 'orthopedics', 'fire_extinguisher', 'fishmonger', 'wholesale', 'lights', 'carpet', 'office_supplies', 'parquet', 'porcelain', 'lamps', 'make-up', 'art_gallery', 'telecom', 'underwear', 'watch', 'tableware', 'scuba_diving', 'christmas', 'tanning', 'craft', 'leather', 'for rent', 'glaziery', 'seafood', 'Sicherheitstechnik', 'coffee machines', 'alteration', 'decoration', 'sport_bet', 'seefood', 'mobile phone service', 'window_blind', 'tyres', 'cheese', 'medical', 'sewing-machine', 'Kaugummi-Automaten', 'Kaugummi-Automat', 'baby', 'games', 'piercing', 'Elektrohaushaltsgeräte', 'electrician', 'glasses', 'circus', 'food', 'marine', 'lottery', 'Hockey', 'electric', 'coins', 'metal workshop', 'nails', 'general', 'tanning_salon', 'crafts', 'household', 'floor', 'baby_goods', 'Patissier', 'delicatessen', 'telephone', 'Hema', 'soft_drugs', 'board_games', 'lingerie', 'candy', 'cd', 'stones', 'spiritual', 'health', 'juice', 'hemp_products', 'smartshop', 'cannabis', 'frozen_yoghurt', 'art_supplies', 'cigar', 'department', 'sok_shop', 'realestate', 'lighting', 'generic', 'nail', 'ink', 'traiteur', 'toko', 'key', 'gsm', 'artist', 'hearth', 'framing', 'espresso_machine', 'knives', 'rental', 'thrift_store', 'snacks', 'tobacconist', 'disused:butcher', 'party', 'audiologist', 'housewares', 'Fashion', 'printing', 'chandler', 'Shoes', 'Electronics', 'softdrugs', 'houseware', 'textiles', 'perfume'],
-		//amenity : ["post_box", "police", "atm", "recycling", "parking", "fuel", "telephone", "school", "pub", "doctors", "arts_centre", "cafe", "fast_food", "restaurant", "place_of_worship", "bank", "bicycle_parking", "drinking_water", "theatre", "bar", "bench", "waste_disposal", "nightclub", "pharmacy", "bicycle_rental", "post_office", "charging_station", "waste_basket", "vending_machine", "kindergarten", "marketplace", "dentist", "ev_charging", "bureau_de_change", "library", "cinema", "toilets", "car_wash", "fountain", "boat_rental", "taxi", "bus_parking", "public_building", "driving_school", "physical therapy", "coffee_shop", "embassy", "vacant", "coffeeshop", "ice_cream", "car_rental", "swimming_pool", "university", "casino", "community_centre", "lost_found", "grit_bin", "clock", "parking_entrance", "sauna", "brothel", "ferry_terminal", "fitness_center", "bus_station", "college", "fire_station", "health_centre", "townhall", "hospital", "veterinary", "gym", "fablab", "money_transfer", "kitchen_studio", "tanning_salon", "tanning", "studio"],
-		//tourism : ["artwork", "hostel", "attraction", "hotel", "information", "museum", "gallery", "viewpoint", "picnic_site", "guest_house", "theme_park", "apartment", "zoo", "camp_site", "chalet", "motel", "citytour", "aquarium"]
+		10 : {
+		    shop : [
+		        
+		    ],
+		    amenity : [
+		        'university', 'college', 'school', 'kindergarten', 'community_centre', 'cinema', 'townhall', 'arts_centre', 'hospital', 'telephone'
+		    ],
+		    tourism : [
+		        'museum', 'gallery', 'zoo', 'artwork', 'information', 'theatre'
+		    ]
+		},
+		11 : {},
+	 	12: {
+		    shop : [
+		        
+		    ],
+		    amenity : [
+		        'lost_found', 'embassy', 'bar', 'pub', 'coffee_shop', 'coffeeshop', 'cafe', 'fast_food', 'ice_cream'
+		    ],
+		    tourism : [
+		        'attraction', 'theme_park', 'aquarium'
+		    ]
+		},
+		13 : {
+		    shop : [
+		        
+		    ],
+		    amenity : [
+		        'dentist', 'doctors', 'pharmacy', 'health_centre', 'police', 'taxi', 'car_rental', 'fire_station', 'bus_station', 'driving_school', 'bicycle_parking', 'parking_entrance', 'parking'
+		    ],
+		    tourism : [
+		        'viewpoint', 'picnic_site', 'citytour'
+		    ]
+		},
+		14 : {
+		    shop : [
+		        'bakery', 'mobile_phone', 'clothes', 'hairdresser', 'florist', 'photo', 'ice_cream'
+		    ]
+		},
+		15 : {
+		    shop : [
+		        'laundry'
+		    ]
+		}
 	}
+		
+//amenity : ["recycling", "fuel", "place_of_worship", "", "drinking_water", "bench", "waste_disposal", "nightclub", "post_office", "charging_station", "waste_basket", "vending_machine", "marketplace", "ev_charging", "bureau_de_change", "car_wash", "fountain", "boat_rental", "public_building", "physical therapy", "vacant", "casino", "grit_bin", "clock", ""sauna", "ferry_terminal", "fitness_center", "veterinary", "gym", "fablab", "money_transfer"
+//shop : ['kiosk', 'computer', 'electronics', 'sports', 'jewelry', 'musical_instrument', 'chemist', 'shoes', 'beverages', 'toys', 'copyshop', 'furniture', 'alcohol', ''optician', 'books', 'car_repair', 'butcher', 'outdoor', 'motorcycle', 'travel_agency', 'tea', 'wine', 'medical_supply', 'department_store', 'dry_cleaning', 'video', 'second_hand', 'greengrocer', 'curtain', 'haberdashery', 'garden_centre', 'art', 'fashion', 'accessoires', 'confectionery', '', 'organic', 'music', 'boutique', 'interior', 'kitchen', 'vacant', 'tattoo', 'mall', 'camera', 'gallery', 'rc_models', 'coffee', 'bicycle_rental', 'photographer', 'ticket', 'charity', 'Shisha', 'hats', 'funeral_directors', 'locksmith', 'fabric', 'hardware', 'shoe_repair', 'hifi', 'fabrics', 'tailor', 'anime', 'no', 'surf', 'tobacco', 'animals', 'currency_exchange', 'souvenirs', 'internet-tele-cafe', 'photography', 'car_parts', 'antiques', 'bed', 'skating', 'ceramics', 'internet cafe', 'frame', 'brushes', 'fish', 'callshop', 'glass', 'comics', 'pottery', 'internet_cafe', 'stamps', 'radiotechnics', 'interior_decoration', 'carrental', 'interior_design', 'gramophone', 'Trödel', 'unused', 'watches', 'jewellery', 'tatoo', 'travelling', 'telecommunication', 'cigarettes', 'sports food', 'perfumery', 'unknown', 'orthopedics', 'fire_extinguisher', 'fishmonger', 'wholesale', 'lights', 'carpet', 'office_supplies', 'parquet', 'porcelain', 'lamps', 'make-up', 'art_gallery', 'telecom', 'underwear', 'watch', 'tableware', 'scuba_diving', 'christmas', 'tanning', 'craft', 'leather', 'for rent', 'glaziery', 'seafood', 'Sicherheitstechnik', 'coffee machines', 'alteration', 'decoration', 'sport_bet', 'seefood', 'mobile phone service', 'window_blind', 'tyres', 'cheese', 'medical', 'sewing-machine', 'Kaugummi-Automaten', 'Kaugummi-Automat', 'baby', 'games', 'piercing', 'Elektrohaushaltsgeräte', 'electrician', 'glasses', 'circus', 'food', 'marine', 'lottery', 'Hockey', 'electric', 'coins', 'metal workshop', 'nails', 'general', 'tanning_salon', 'crafts', 'household', 'floor', 'baby_goods', 'Patissier', 'delicatessen', 'telephone', 'Hema', 'soft_drugs', 'board_games', 'lingerie', 'candy', 'cd', 'stones', 'spiritual', 'health', 'juice', 'hemp_products', 'smartshop', 'cannabis', 'frozen_yoghurt', 'art_supplies', 'cigar', 'department', 'sok_shop', 'realestate', 'lighting', 'generic', 'nail', 'ink', 'traiteur', 'toko', 'key', 'gsm', 'artist', 'hearth', 'framing', 'espresso_machine', 'knives', 'rental', 'thrift_store', 'snacks', 'tobacconist', 'disused:butcher', 'party', 'audiologist', 'housewares', 'Fashion', 'printing', 'chandler', 'Shoes', 'Electronics', 'softdrugs', 'houseware', 'textiles', 'perfume'], "kitchen_studio", "studio"],
 
 	mapSettings = {
 		openTrackingSettings : function() {

@@ -200,7 +200,7 @@ function debounce(func, wait, immediate) {
 
 		map.on('zoomend', function(e) {
 			var zoom = map.getZoom();
-			if(!$.jStorage.get('pois') || zoom < 9) return; //only show POIs on reasonable levels
+			if(!$.jStorage.get('pois') || zoom < 9) return false; //only show POIs on reasonable levels
 			Maps.displayPoiIcons(zoom);
 		})
 
@@ -912,37 +912,39 @@ function debounce(func, wait, immediate) {
 		traceDevice : null,
 		arrowHead : {},
 		displayPoiIcons : function(zoomLevel) {
-			$.each(poiLayers, function(i, layer) {
-				$.each(layer, function(group, values) {
-					$.each(values, function(j, value) {
-						var overpassLayer = new L.OverPassLayer({
-							minZoom: 9,
-							query: 'node({{bbox}})[' + group + '=' + value + '];out;',
-							onSuccess: function(data) {
-								for ( i = 0; i < data.elements.length; i++) {
-									e = data.elements[i];
-									if (e.id in this.instance._ids) {
-										return;
-									}
-									this.instance._ids[e.id] = true;
-									var pos = new L.LatLng(e.lat, e.lon);
-									var popup = Maps.getPoiPopupHTML(e.tags).innerHTML;
-									poiIcon = toolKit.getPoiIcon(value);
-									if (poiIcon) {
-										var marker = L.marker(pos, {
-											icon : poiIcon,
-										}).bindPopup(popup);
-										Maps.poiMarker.push(marker);
-										toolKit.addMarker(marker, popup)
-									}
-								}
-							}
-						});
-						map.addLayer(overpassLayer);
-						Maps.overpassLayers.push(overpassLayer);
-					});
-				});
-			});
+	        $.each(poiLayers, function(i, layer) {
+		        $.each(layer, function(group, values) {
+			        $.each(values, function(j, value) {
+			            setTimeout(function() {
+				            var overpassLayer = new L.OverPassLayer({
+					            minZoom: 9,
+					            query: 'node({{bbox}})[' + group + '=' + value + '];out;',
+					            onSuccess: function(data) {
+						            for ( i = 0; i < data.elements.length; i++) {
+							            e = data.elements[i];
+							            if (e.id in this.instance._ids) {
+								            return;
+							            }
+							            this.instance._ids[e.id] = true;
+							            var pos = new L.LatLng(e.lat, e.lon);
+							            var popup = Maps.getPoiPopupHTML(e.tags).innerHTML;
+							            poiIcon = toolKit.getPoiIcon(value);
+							            if (poiIcon) {
+								            var marker = L.marker(pos, {
+									            icon : poiIcon,
+								            }).bindPopup(popup);
+								            Maps.poiMarker.push(marker);
+								            toolKit.addMarker(marker, popup)
+							            }
+						            }
+					            }
+				            });
+				            map.addLayer(overpassLayer);
+				            Maps.overpassLayers.push(overpassLayer);
+				        }, 200);
+			        });
+		        });
+	        });
 		},
 		hidePoiIcons : function() {
 			$.each(Maps.overpassLayers, function(i, layer) {

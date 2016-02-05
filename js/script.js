@@ -68,20 +68,11 @@ function debounce(func, wait, immediate) {
 		geocoder.reverse(latlng, 67108864, function(results) {
 			var result = results[0];
 			setTimeout(function() {
-				var knownFields = ['country', 'country_code', 'postcode', 'residential', 'road', 'state', 'suburb', 'town', 'house_number'];
 				var popupHtml = '';
 				var properties = result.properties;
 				var address = properties;
-				if(!geocodeSearch.apiKeySet()) address = properties.address;
-				$.each(address, function(k, v) {
-					if ($.inArray(k, knownFields) == -1) {
-						var prefix = k;
-						popupHtml += v + '<br />';
-					}
-				})
-				var houseNo = (address.house_number) ? address.house_number : '';
-				popupHtml += address.road + ' ' + houseNo + '<br />';
-				popupHtml += address.town + ', ' + address.state + ', ' + address.country;
+				if(!geocodeSearch.apiKeySet()) address = properties.address; //address is stored depending on which geocoder is used
+				popupHtml = Maps.getPoiPopupHTML(address).innerHTML;
 				toolKit.addMarker(Maps.droppedPin, popupHtml, true);
 			}, 50);
 
@@ -965,14 +956,43 @@ function debounce(func, wait, immediate) {
 		},
 		getPoiPopupHTML : function(tags) {
 			var div = document.createElement('div');
+			
+			var housenr = '';
+			var street = '';
+			var city = '';
+			var postcode = '';
+			var suburb = '';
+			if(tags['addr:street']) street = tags['addr:street'];
+			else if(tags['road']) street = tags['road'];
+			else if(tags['footway']) street = tags['footway'];
+			if(tags['addr:housenumber']) housenr = tags['addr:housenumber'];
+			else if(tags['house_number']) housenr = tags['house_number'];
+			if(tags['addr:postcode']) postcode = tags['addr:postcode'];
+			else if(tags['postcode']) postcode = tags['postcode'];
+			if(tags['addr:city']) city = tags['addr:city'];
+			else if(tags['town']) city = tags['town'];
+			else if(tags['city']) city = tags['city'];
+			if(tags['suburb']) suburb = tags['suburb'];
+			else if(tags['city_district']) suburb = tags['city_district'];
+			
 			var title = document.createElement('h2');
-			if(tags['name']) title.appendChild(document.createTextNode(tags['name']));
+			var titleTxt = '';
+			if(tags['name']) titleTxt = tags['name'];
+			else if(tags['building']) titleTxt = tags['building'];
+			//use street as title fallback
+			else if(street.length > 0) {
+				titleTxt = street;
+				if(housenr.length > 0) titleTxt += ' ' + housenr;
+			}
+			title.appendChild(document.createTextNode(titleTxt));
 			div.appendChild(title);
+			
 			var addr = '';
-			if(tags['addr:street']) addr += tags['addr:street'];
-			if(tags['addr:housenumber']) addr += ' ' + tags['addr:housenumber'];
-			if(tags['addr:postcode']) addr += ', ' + tags['addr:postcode'];
-			if(tags['addr:city']) addr += ' ' + tags['addr:city'];
+			if(street.length > 0) addr += street;
+			if(housenr.length > 0) addr += ' ' + housenr;
+			if(postcode.length > 0) addr += ', ' + postcode;
+			if(city.length > 0) addr += ' ' + city;
+			if(suburb.length > 0) addr += ' (' + suburb + ')';
 			div.appendChild(document.createTextNode(addr));
 			if(tags['phone']) {
 				var phoneDiv = document.createElement('div');
@@ -989,6 +1009,7 @@ function debounce(func, wait, immediate) {
 				var web = document.createElement('a');
 				var webN = tags['website'];
 				web.setAttribute('href', webN);
+				web.setAttribute('target', '_blank');
 				web.appendChild(document.createTextNode(webN));
 				webDiv.appendChild(web);
 				div.appendChild(webDiv);
@@ -1671,10 +1692,9 @@ function debounce(func, wait, immediate) {
 			var content = popup.getElementsByTagName('div')[1];
 
 			var popupText = content.innerHTML;
-			var delimiter = '<br>';
-			var splitIndex = popupText.indexOf(delimiter);
-			content.innerHTML = popupText.substring(splitIndex + delimiter.length);
-			var orgTitle = popupText.substring(0, splitIndex);
+			var orgTitle = content.getElementsByTagName('h2')[0].innerHTML;
+			var titleLength = '<h2>' + orgTitle + '</h2>'.length;
+			content.innerHTML = popupText.substring(titleLength);
 			var formData = {
 				lat : latlng[0],
 				lng : latlng[1],
@@ -1706,9 +1726,6 @@ function debounce(func, wait, immediate) {
 					});
 
 					var markerHTML = '<h2>' + fav.name + '</h2>';
-					/*markerHTML += '<br />Latitude: ' + parseFloat(fav.lat).toFixed(3);
-					markerHTML += '<br />Longitude: ' + parseFloat(fav.lng).toFixed(3);
-					markerHTML += '<br />Added: ' + new Date(fav.timestamp*1000).toString();*/
 					var marker = L.marker([fav.lat, fav.lng], {
 									icon : iconImage,
 									id : fav.id

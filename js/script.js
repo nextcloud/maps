@@ -193,6 +193,8 @@ function debounce(func, wait, immediate) {
 
 		geocodeSearch.addGeocoder();
 
+		Maps.overpassLayerGroup.addTo(map);
+
 		// properly style as input field
 		//$('#searchContainer').find('input').attr('type', 'text');
 
@@ -897,7 +899,7 @@ function debounce(func, wait, immediate) {
 		tempTotal : 0,
 		activeLayers : [],
 		poiMarker : [],
-		overpassLayers : [],
+		overpassLayerGroup : L.layerGroup(),
 		mouseDowntime : 0,
 		droppedPin : {},
 		dragging : false,
@@ -910,6 +912,7 @@ function debounce(func, wait, immediate) {
 		traceDevice : null,
 		arrowHead : {},
 		displayPoiIcons : function(zoomLevel) {
+			if(!$.jStorage.get('pois')) return;
 			var selectedPois = [];
 	        $.each(poiLayers, function(i, layer) {
                 if(i > zoomLevel) return true;
@@ -920,7 +923,7 @@ function debounce(func, wait, immediate) {
 		        });
 	        });
 			var intervalId = setInterval(function() {
-				if(selectedPois.length == 0) clearInterval(intervalId);
+				if(!$.jStorage.get('pois')) clearTimeout(intervalId);
 				var splits = selectedPois.shift().split(';');
 				var group = splits[0];
 				var value = splits[1];
@@ -947,15 +950,12 @@ function debounce(func, wait, immediate) {
 						}
 					}
 				});
-				map.addLayer(overpassLayer);
-				Maps.overpassLayers.push(overpassLayer);
+				Maps.overpassLayerGroup.addLayer(overpassLayer);
+				if(selectedPois.length <= 0) clearInterval(intervalId);
 			}, 100);
 		},
 		hidePoiIcons : function() {
-			$.each(Maps.overpassLayers, function(i, layer) {
-				map.removeLayer(layer);
-			});
-			Maps.overpassLayers = [];
+			Maps.overpassLayerGroup.clearLayers();
 			$.each(Maps.poiMarker, function(i, marker) {
 				map.removeLayer(marker);
 			});

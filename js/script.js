@@ -910,40 +910,46 @@ function debounce(func, wait, immediate) {
 		traceDevice : null,
 		arrowHead : {},
 		displayPoiIcons : function(zoomLevel) {
+			var selectedPois = [];
 	        $.each(poiLayers, function(i, layer) {
                 if(i > zoomLevel) return true;
 		        $.each(layer, function(group, values) {
 			        $.each(values, function(j, value) {
-			            setTimeout(function() {
-				            var overpassLayer = new L.OverPassLayer({
-					            minZoom: 9,
-					            query: 'node({{bbox}})[' + group + '=' + value + '];out;',
-					            onSuccess: function(data) {
-						            for ( i = 0; i < data.elements.length; i++) {
-							            e = data.elements[i];
-							            if (e.id in this.instance._ids) {
-								            return;
-							            }
-							            this.instance._ids[e.id] = true;
-							            var pos = new L.LatLng(e.lat, e.lon);
-							            var popup = Maps.getPoiPopupHTML(e.tags).innerHTML;
-							            poiIcon = toolKit.getPoiIcon(value);
-							            if (poiIcon) {
-								            var marker = L.marker(pos, {
-									            icon : poiIcon,
-								            }).bindPopup(popup);
-								            Maps.poiMarker.push(marker);
-								            toolKit.addMarker(marker, popup)
-							            }
-						            }
-					            }
-				            });
-				            map.addLayer(overpassLayer);
-				            Maps.overpassLayers.push(overpassLayer);
-				        }, 200);
+						selectedPois.push(group + ";" + value);
 			        });
 		        });
 	        });
+			var intervalId = setInterval(function() {
+				if(selectedPois.length == 0) clearInterval(intervalId);
+				var splits = selectedPois.shift().split(';');
+				var group = splits[0];
+				var value = splits[1];
+				var overpassLayer = new L.OverPassLayer({
+					minZoom: 9,
+					query: 'node({{bbox}})[' + group + '=' + value + '];out;',
+					onSuccess: function(data) {
+						for ( i = 0; i < data.elements.length; i++) {
+							e = data.elements[i];
+							if (e.id in this.instance._ids) {
+								return;
+							}
+							this.instance._ids[e.id] = true;
+							var pos = new L.LatLng(e.lat, e.lon);
+							var popup = Maps.getPoiPopupHTML(e.tags).innerHTML;
+							poiIcon = toolKit.getPoiIcon(value);
+							if (poiIcon) {
+								var marker = L.marker(pos, {
+									icon : poiIcon,
+								}).bindPopup(popup);
+								Maps.poiMarker.push(marker);
+								toolKit.addMarker(marker, popup)
+							}
+						}
+					}
+				});
+				map.addLayer(overpassLayer);
+				Maps.overpassLayers.push(overpassLayer);
+			}, 100);
 		},
 		hidePoiIcons : function() {
 			$.each(Maps.overpassLayers, function(i, layer) {
@@ -957,7 +963,7 @@ function debounce(func, wait, immediate) {
 		},
 		getPoiPopupHTML : function(tags) {
 			var div = document.createElement('div');
-			
+
 			var housenr = '';
 			var street = '';
 			var city = '';
@@ -975,7 +981,7 @@ function debounce(func, wait, immediate) {
 			else if(tags['city']) city = tags['city'];
 			if(tags['suburb']) suburb = tags['suburb'];
 			else if(tags['city_district']) suburb = tags['city_district'];
-			
+
 			var title = document.createElement('h2');
 			var titleTxt = '';
 			if(tags['name']) titleTxt = tags['name'];
@@ -987,7 +993,7 @@ function debounce(func, wait, immediate) {
 			}
 			title.appendChild(document.createTextNode(titleTxt));
 			div.appendChild(title);
-			
+
 			var addr = '';
 			if(street.length > 0) addr += street;
 			if(housenr.length > 0) addr += ' ' + housenr;
@@ -1584,7 +1590,7 @@ function debounce(func, wait, immediate) {
 		},
 		10 : {
 		    shop : [
-		        
+
 		    ],
 		    amenity : [
 		        'university', 'college', 'school', 'kindergarten', 'community_centre', 'cinema', 'townhall', 'arts_centre', 'hospital', 'telephone'
@@ -1596,7 +1602,7 @@ function debounce(func, wait, immediate) {
 		11 : {},
 	 	12: {
 		    shop : [
-		        
+
 		    ],
 		    amenity : [
 		        'lost_found', 'embassy', 'bar', 'pub', 'coffee_shop', 'coffeeshop', 'cafe', 'fast_food', 'ice_cream'
@@ -1607,7 +1613,7 @@ function debounce(func, wait, immediate) {
 		},
 		13 : {
 		    shop : [
-		        
+
 		    ],
 		    amenity : [
 		        'dentist', 'doctors', 'pharmacy', 'health_centre', 'police', 'taxi', 'car_rental', 'fire_station', 'bus_station', 'driving_school', 'bicycle_parking', 'parking_entrance', 'parking'
@@ -1627,7 +1633,7 @@ function debounce(func, wait, immediate) {
 		    ]
 		}
 	}
-		
+
 //amenity : ["recycling", "fuel", "place_of_worship", "", "drinking_water", "bench", "waste_disposal", "nightclub", "post_office", "charging_station", "waste_basket", "vending_machine", "marketplace", "ev_charging", "bureau_de_change", "car_wash", "fountain", "boat_rental", "public_building", "physical therapy", "vacant", "casino", "grit_bin", "clock", ""sauna", "ferry_terminal", "fitness_center", "veterinary", "gym", "fablab", "money_transfer"
 //shop : ['kiosk', 'computer', 'electronics', 'sports', 'jewelry', 'musical_instrument', 'chemist', 'shoes', 'beverages', 'toys', 'copyshop', 'furniture', 'alcohol', ''optician', 'books', 'car_repair', 'butcher', 'outdoor', 'motorcycle', 'travel_agency', 'tea', 'wine', 'medical_supply', 'department_store', 'dry_cleaning', 'video', 'second_hand', 'greengrocer', 'curtain', 'haberdashery', 'garden_centre', 'art', 'fashion', 'accessoires', 'confectionery', '', 'organic', 'music', 'boutique', 'interior', 'kitchen', 'vacant', 'tattoo', 'mall', 'camera', 'gallery', 'rc_models', 'coffee', 'bicycle_rental', 'photographer', 'ticket', 'charity', 'Shisha', 'hats', 'funeral_directors', 'locksmith', 'fabric', 'hardware', 'shoe_repair', 'hifi', 'fabrics', 'tailor', 'anime', 'no', 'surf', 'tobacco', 'animals', 'currency_exchange', 'souvenirs', 'internet-tele-cafe', 'photography', 'car_parts', 'antiques', 'bed', 'skating', 'ceramics', 'internet cafe', 'frame', 'brushes', 'fish', 'callshop', 'glass', 'comics', 'pottery', 'internet_cafe', 'stamps', 'radiotechnics', 'interior_decoration', 'carrental', 'interior_design', 'gramophone', 'Trödel', 'unused', 'watches', 'jewellery', 'tatoo', 'travelling', 'telecommunication', 'cigarettes', 'sports food', 'perfumery', 'unknown', 'orthopedics', 'fire_extinguisher', 'fishmonger', 'wholesale', 'lights', 'carpet', 'office_supplies', 'parquet', 'porcelain', 'lamps', 'make-up', 'art_gallery', 'telecom', 'underwear', 'watch', 'tableware', 'scuba_diving', 'christmas', 'tanning', 'craft', 'leather', 'for rent', 'glaziery', 'seafood', 'Sicherheitstechnik', 'coffee machines', 'alteration', 'decoration', 'sport_bet', 'seefood', 'mobile phone service', 'window_blind', 'tyres', 'cheese', 'medical', 'sewing-machine', 'Kaugummi-Automaten', 'Kaugummi-Automat', 'baby', 'games', 'piercing', 'Elektrohaushaltsgeräte', 'electrician', 'glasses', 'circus', 'food', 'marine', 'lottery', 'Hockey', 'electric', 'coins', 'metal workshop', 'nails', 'general', 'tanning_salon', 'crafts', 'household', 'floor', 'baby_goods', 'Patissier', 'delicatessen', 'telephone', 'Hema', 'soft_drugs', 'board_games', 'lingerie', 'candy', 'cd', 'stones', 'spiritual', 'health', 'juice', 'hemp_products', 'smartshop', 'cannabis', 'frozen_yoghurt', 'art_supplies', 'cigar', 'department', 'sok_shop', 'realestate', 'lighting', 'generic', 'nail', 'ink', 'traiteur', 'toko', 'key', 'gsm', 'artist', 'hearth', 'framing', 'espresso_machine', 'knives', 'rental', 'thrift_store', 'snacks', 'tobacconist', 'disused:butcher', 'party', 'audiologist', 'housewares', 'Fashion', 'printing', 'chandler', 'Shoes', 'Electronics', 'softdrugs', 'houseware', 'textiles', 'perfume'], "kitchen_studio", "studio"],
 

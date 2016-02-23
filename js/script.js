@@ -47,8 +47,8 @@ function debounce(func, wait, immediate) {
 
 (function($, OC) {
 
-	var shadowMarkerUrl = OC.filePath('maps', 'css', 'leaflet/images/marker-shadow.svg');
-	var normalMarkerImg = OC.filePath('maps', 'css', 'leaflet/images/marker-icon.svg');
+	var shadowMarkerUrl = OC.filePath('maps', 'img', 'icons/marker-shadow.svg');
+	var normalMarkerImg = OC.filePath('maps', 'img', 'icons/marker-icon.svg');
 	var normalMarkerIcon = L.icon({
 		iconUrl : normalMarkerImg,
 		shadowUrl : shadowMarkerUrl,
@@ -1016,7 +1016,7 @@ function debounce(func, wait, immediate) {
 		},
 		getPoiPopupHTML : function(tags) {
 			var div = document.createElement('div');
-			
+
 			var housenr = '';
 			var street = '';
 			var city = '';
@@ -1034,7 +1034,7 @@ function debounce(func, wait, immediate) {
 			else if(tags['city']) city = tags['city'];
 			if(tags['suburb']) suburb = tags['suburb'];
 			else if(tags['city_district']) suburb = tags['city_district'];
-			
+
 			var title = document.createElement('h2');
 			var titleTxt = '';
 			if(tags['name']) titleTxt = tags['name'];
@@ -1046,7 +1046,7 @@ function debounce(func, wait, immediate) {
 			}
 			title.appendChild(document.createTextNode(titleTxt));
 			div.appendChild(title);
-			
+
 			var addr = '';
 			if(street.length > 0) addr += street;
 			if(housenr.length > 0) addr += ' ' + housenr;

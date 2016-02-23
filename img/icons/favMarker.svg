@@ -12,7 +12,7 @@
    version="1.1"
    id="svg2"
    inkscape:version="0.91 r13725"
-   sodipodi:docname="star.svg">
+   sodipodi:docname="favMarker.svg">
   <metadata
      id="metadata12">
     <rdf:RDF>
@@ -21,7 +21,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
+        <dc:title />
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -36,17 +36,20 @@
      guidetolerance="10"
      inkscape:pageopacity="0"
      inkscape:pageshadow="2"
-     inkscape:window-width="640"
-     inkscape:window-height="480"
+     inkscape:window-width="1920"
+     inkscape:window-height="1147"
      id="namedview8"
      showgrid="false"
-     inkscape:zoom="10.269119"
-     inkscape:cx="-9.0941026"
-     inkscape:cy="8.4209294"
-     inkscape:current-layer="svg2" />
+     inkscape:zoom="2.5672798"
+     inkscape:cx="35.943653"
+     inkscape:cy="99.345958"
+     inkscape:current-layer="svg2"
+     inkscape:window-x="-8"
+     inkscape:window-y="-8"
+     inkscape:window-maximized="1" />
   <path
      inkscape:connector-curvature="0"
-     style="fill:#ffffff;fill-opacity:1"
+     style="fill:#ff5555;fill-opacity:1"
      d="M 16.274,1.0000003 C 10.6,1.0000003 6,5.6006003 6,11.274 6,16.948 16.274,31 16.274,31 c 0,0 10.274,-14.052 10.274,-19.726 0,-5.6733997 -4.601,-10.2739997 -10.274,-10.2739997 z"
      id="path4239"
      sodipodi:nodetypes="sscss" />

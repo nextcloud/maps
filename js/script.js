@@ -200,7 +200,10 @@ function debounce(func, wait, immediate) {
 
 		map.on('zoomend', function(e) {
 			var zoom = map.getZoom();
-			if(!$.jStorage.get('pois') || zoom < 9) return false; //only show POIs on reasonable levels
+			if(!$.jStorage.get('pois') || zoom < 9) {
+			    Maps.hidePoiIcons();
+			    return false; //only show POIs on reasonable levels
+			}
 			Maps.displayPoiIcons(zoom);
 		})
 

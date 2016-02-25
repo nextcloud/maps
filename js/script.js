@@ -200,7 +200,7 @@ function debounce(func, wait, immediate) {
 
 		map.on('zoomend', function(e) {
 			var zoom = map.getZoom();
-			if(!$.jStorage.get('pois') || zoom < 9) {
+			if(!$.jStorage.get('pois') || zoom < 12) {
 			    Maps.hidePoiIcons();
 			    return false; //only show POIs on reasonable levels
 			}
@@ -1580,7 +1580,7 @@ function debounce(func, wait, immediate) {
 	}
 
 	poiLayers = {
-		9 : {
+		12 : {
 			shop : [
 				'supermarket', 'bicycle', 'mall', 'market', 'grocery'
 			],
@@ -1591,7 +1591,7 @@ function debounce(func, wait, immediate) {
 				'hotel', 'hostel', 'motel', 'camp_site', 'apartment', 'guest_house', 'chalet'
 			]
 		},
-		10 : {
+		13 : {
 		    shop : [
 
 		    ],
@@ -1602,8 +1602,7 @@ function debounce(func, wait, immediate) {
 		        'museum', 'gallery', 'zoo', 'artwork', 'information', 'theatre'
 		    ]
 		},
-		11 : {},
-	 	12: {
+	 	14: {
 		    shop : [
 
 		    ],
@@ -1614,7 +1613,7 @@ function debounce(func, wait, immediate) {
 		        'attraction', 'theme_park', 'aquarium'
 		    ]
 		},
-		13 : {
+		15 : {
 		    shop : [
 
 		    ],
@@ -1625,14 +1624,9 @@ function debounce(func, wait, immediate) {
 		        'viewpoint', 'picnic_site', 'citytour'
 		    ]
 		},
-		14 : {
+		16 : {
 		    shop : [
-		        'bakery', 'mobile_phone', 'clothes', 'hairdresser', 'florist', 'photo', 'ice_cream'
-		    ]
-		},
-		15 : {
-		    shop : [
-		        'laundry'
+		        'bakery', 'mobile_phone', 'clothes', 'hairdresser', 'florist', 'photo', 'ice_cream', 'laundry'
 		    ]
 		}
 	}

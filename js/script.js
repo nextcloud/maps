@@ -898,7 +898,7 @@ function debounce(func, wait, immediate) {
 		tempCounter : 0,
 		tempTotal : 0,
 		activeLayers : [],
-		poiMarker : [],
+		cluster :  L.markerClusterGroup(),
 		overpassLayerGroup : L.layerGroup(),
 		mouseDowntime : 0,
 		droppedPin : {},
@@ -944,22 +944,22 @@ function debounce(func, wait, immediate) {
 								var marker = L.marker(pos, {
 									icon : poiIcon,
 								}).bindPopup(popup);
-								Maps.poiMarker.push(marker);
-								toolKit.addMarker(marker, popup)
+								Maps.cluster.addLayer(marker);
 							}
 						}
 					}
 				});
 				Maps.overpassLayerGroup.addLayer(overpassLayer);
-				if(selectedPois.length <= 0) clearInterval(intervalId);
+				if(selectedPois.length <= 0) {
+					map.addLayer(Maps.cluster);
+					clearInterval(intervalId);
+				}
 			}, 100);
 		},
 		hidePoiIcons : function() {
 			Maps.overpassLayerGroup.clearLayers();
-			$.each(Maps.poiMarker, function(i, marker) {
-				map.removeLayer(marker);
-			});
-			Maps.poiMarker = [];
+			map.removeLayer(Maps.cluster);
+			Maps.cluster = L.markerClusterGroup();
 		},
 		getPoiPopupHTML : function(tags) {
 			var div = document.createElement('div');

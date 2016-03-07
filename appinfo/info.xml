@@ -3,10 +3,10 @@
     <id>maps</id>
     <name>Maps</name>
     <description>A simple maps app</description>
-    <licence>agpl</licence>
-    <author>Sander Brand</author>
+    <licence>AGPL</licence>
+    <author>Vinzenz Rosenkranz, Hendrik Leppelsack, Sander Brand, Jan-Christoph Borchardt</author>
     <version>0.0.6</version>
     <dependencies>
-        <owncloud min-version="8.2" max-version="9.0"/>
+        <owncloud min-version="8.2" max-version="9.1"/>
     </dependencies>
 </info>

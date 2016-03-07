@@ -47,24 +47,29 @@ function debounce(func, wait, immediate) {
 
 (function($, OC) {
 
-	var normalMarkerImg = OC.filePath('maps', 'css', 'leaflet/images/marker-icon.png');
+	var shadowMarkerUrl = OC.filePath('maps', 'img', 'icons/marker-shadow.svg');
+	var normalMarkerImg = OC.filePath('maps', 'img', 'icons/marker-icon.svg');
 	var normalMarkerIcon = L.icon({
 		iconUrl : normalMarkerImg,
-		iconSize : [31, 37],
-		iconAnchor : [15, 37],
-		popupAnchor : [0, -37]
+		shadowUrl : shadowMarkerUrl,
+		iconSize : [32, 32],
+		iconAnchor : [16, 32],
+		popupAnchor : [0, -32],
+		shadowAnchor : [6, 23]
 	});
 
-	var favMarkerImg = OC.filePath('maps', 'img', 'icons/favMarker.png');
+	var favMarkerImg = OC.filePath('maps', 'img', 'icons/favMarker.svg');
 	var favMarkerIcon = L.icon({
 		iconUrl : favMarkerImg,
-		iconSize : [31, 37],
-		iconAnchor : [15, 37],
-		popupAnchor : [0, -37]
+		shadowUrl : shadowMarkerUrl,
+		iconSize : [32, 32],
+		iconAnchor : [16, 32],
+		popupAnchor : [0, -32],
+		shadowAnchor : [6, 23]
 	});
 
 	function addGeocodeMarker(latlng) {
-		Maps.droppedPin = new L.marker(latlng);
+		Maps.droppedPin = new L.marker(latlng, {icon: normalMarkerIcon});
 		geocoder.reverse(latlng, 67108864, function(results) {
 			var result = results[0];
 			setTimeout(function() {
@@ -181,6 +186,15 @@ function debounce(func, wait, immediate) {
 		});
 		routing = L.Routing.control({
 			waypoints : [],
+			plan : L.Routing.plan(this.waypoints, {
+			    createMarker: function(i, wp) {
+				    return L.marker(wp.latLng, {
+					    draggable: true,
+					    icon: normalMarkerIcon
+				    });
+			    },
+			    routeWhileDragging: true
+		    }),
 			//geocoder : geocoder,
 			routeWhileDragging: true,
 			fitSelectedRoutes: true,
@@ -533,7 +547,7 @@ function debounce(func, wait, immediate) {
 			map.removeLayer(circle);
 		}
 
-		marker = L.marker(e.latlng).addTo(map);
+		marker = L.marker(e.latlng, {icon: normalMarkerIcon}).addTo(map);
 		//.bindPopup("You are within " + radius + " meters from this point").openPopup();
 		if (radius < 5000) {
 			circle = L.circle(e.latlng, radius).addTo(map);
@@ -584,7 +598,7 @@ function debounce(func, wait, immediate) {
 				}
 				if(result == null) return;
 				input.className = input.className.replace('not-geocoded', 'is-geocoded');
-				var marker = L.marker(result.center);
+				var marker = L.marker(result.center, {icon: normalMarkerIcon});
 				geocodeSearch.markers.push([[input.id], [marker]]);
 				toolKit.addMarker(marker, result.name);
 				var points = document.getElementsByClassName('is-geocoded');
@@ -773,7 +787,7 @@ function debounce(func, wait, immediate) {
 				li.setAttribute('class', className);
 				li.addEventListener('click', function() {
 					input.className = input.className.replace('not-geocoded', 'is-geocoded');
-					var marker = L.marker(content.center);
+					var marker = L.marker(content.center, {icon: normalMarkerIcon});
 					geocodeSearch.markers.push([[input.id], [marker]]);
 					toolKit.addMarker(marker, content.name);
 					var points = document.getElementsByClassName('is-geocoded');
@@ -906,7 +920,9 @@ function debounce(func, wait, immediate) {
 					return;
 				}
 				var markerHTML = this.display_name.replace(',', '<br />');
-				var marker = new L.marker([this.lat * 1, this.lon * 1]);
+				var marker = new L.marker([this.lat * 1, this.lon * 1], {
+				    icon: normalMarkerIcon}
+				);
 				toolKit.addMarker(marker, markerHTML)
 				mapSearch.searchItems.push(marker);
 				mapSearch._ids.push(this.place_id)
@@ -924,7 +940,9 @@ function debounce(func, wait, immediate) {
 						icon : iconImage
 					});
 				} else {
-					var marker = new L.marker([this.lat * 1, this.lon * 1]);
+					var marker = new L.marker([this.lat * 1, this.lon * 1], {
+					    icon: normalMarkerIcon
+					});
 				}
 				toolKit.addMarker(marker, markerHTML)
 				mapSearch.searchItems.push(marker);
@@ -1007,7 +1025,7 @@ function debounce(func, wait, immediate) {
 		},
 		getPoiPopupHTML : function(tags) {
 			var div = document.createElement('div');
-			
+
 			var housenr = '';
 			var street = '';
 			var city = '';
@@ -1025,7 +1043,7 @@ function debounce(func, wait, immediate) {
 			else if(tags['city']) city = tags['city'];
 			if(tags['suburb']) suburb = tags['suburb'];
 			else if(tags['city_district']) suburb = tags['city_district'];
-			
+
 			var title = document.createElement('h2');
 			var titleTxt = '';
 			if(tags['name']) titleTxt = tags['name'];
@@ -1037,7 +1055,7 @@ function debounce(func, wait, immediate) {
 			}
 			title.appendChild(document.createTextNode(titleTxt));
 			div.appendChild(title);
-			
+
 			var addr = '';
 			if(street.length > 0) addr += street;
 			if(housenr.length > 0) addr += ' ' + housenr;
@@ -1177,7 +1195,9 @@ function debounce(func, wait, immediate) {
 					markerHTML += 'Lat: ' + location.lat + ' Lon: ' + location.lng + '<br />';
 					markerHTML += 'Speed: ' + location.speed + '<br />'
 					markerHTML += 'Time: ' + new Date(location.timestamp * 1000).toLocaleString("nl-NL")
-					var marker = new L.marker([location.lat * 1, location.lng * 1]);
+					var marker = new L.marker([location.lat * 1, location.lng * 1], {
+					    icon: normalMarkerIcon
+					});
 					if(Math.round(lastPObject.distanceTo(point))> 15){ //If markers are more then 15m between each other
 						console.log('Distance from last point: ',Math.round(lastPObject.distanceTo(point)));
 						Maps.trackMarkers[location.deviceId].push(marker);
@@ -1243,7 +1263,9 @@ function debounce(func, wait, immediate) {
 						markerHTML += 'Lat: ' + device.lat + ' Lon: ' + device.lng + '<br />';
 						markerHTML += 'Speed: ' + device.speed + '<br />'
 						markerHTML += 'Time: ' + new Date(device.timestamp * 1000).toLocaleString("nl-NL")
-						var marker = new L.marker([device.lat * 1, device.lng * 1]);
+						var marker = new L.marker([device.lat * 1, device.lng * 1], {
+						    icon: normalMarkerIcon
+						});
 						toolKit.addMarker(marker, markerHTML)
 						Maps.deviceMarkers.push(marker);
 						if (device.deviceId == Maps.traceDevice) {
@@ -1768,17 +1790,9 @@ function debounce(func, wait, immediate) {
 				for(var i=0; i<data.length; i++){
 					var fav = data[i];
 
-					var imagePath = OC.filePath('maps', 'img', 'icons/favMarker.png');
-					var iconImage = L.icon({
-						iconUrl : imagePath,
-						iconSize : [31, 37],
-						iconAnchor : [15, 37],
-						popupAnchor : [0, -37]
-					});
-
 					var markerHTML = '<h2>' + fav.name + '</h2>';
 					var marker = L.marker([fav.lat, fav.lng], {
-									icon : iconImage,
+									icon : favMarkerIcon,
 									id : fav.id
 					});
 					toolKit.addMarker(marker, markerHTML, false, true);

@@ -186,6 +186,15 @@ function debounce(func, wait, immediate) {
 		});
 		routing = L.Routing.control({
 			waypoints : [],
+			plan : L.Routing.plan(this.waypoints, {
+			    createMarker: function(i, wp) {
+				    return L.marker(wp.latLng, {
+					    draggable: true,
+					    icon: normalMarkerIcon
+				    });
+			    },
+			    routeWhileDragging: true
+		    }),
 			//geocoder : geocoder,
 			routeWhileDragging: true,
 			fitSelectedRoutes: true,

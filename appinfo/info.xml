@@ -7,6 +7,6 @@
     <author>Vinzenz Rosenkranz, Hendrik Leppelsack, Sander Brand, Jan-Christoph Borchardt</author>
     <version>0.0.6</version>
     <dependencies>
-        <owncloud min-version="8.2" max-version="9.1"/>
+        <owncloud min-version="8.2" max-version="9.2"/>
     </dependencies>
 </info>

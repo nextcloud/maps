@@ -5,8 +5,8 @@
  * This file is licensed under the Affero General Public License version 3 or
  * later. See the COPYING file.
  *
- * @author Sander Brand <brantje@gmail.com>
- * @copyright Sander Brand 2014
+ * @author Sander Brand <brantje@gmail.com>, Vinzenz Rosenkranz <vinzenz.rosenkranz@gmail.com>
+ * @copyright Sander Brand 2014, Vinzenz Rosenkranz 2016
  */
 
 namespace OCA\Maps\AppInfo;

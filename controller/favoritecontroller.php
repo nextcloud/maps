@@ -6,7 +6,7 @@
  * later. See the COPYING file.
  *
  * @author Vinzenz Rosenkranz <vinzenz.rosenkranz@gmail.com>
- * @copyright Vinzenz Rosenkranz 2015
+ * @copyright Vinzenz Rosenkranz 2015, 2016
  */
 
 namespace OCA\Maps\Controller;

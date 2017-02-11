@@ -1,7 +1,7 @@
 OC.L10N.register(
     "maps",
     {
-    "Maps" : "Mapowania",
+    "Maps" : "Mapy",
     "left" : "lewo",
     "right" : "prawo"
 },

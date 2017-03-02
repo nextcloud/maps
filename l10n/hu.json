@@ -1,0 +1,6 @@
+{ "translations": {
+    "Maps" : "Térképek",
+    "left" : "bal",
+    "right" : "jobb"
+},"pluralForm" :"nplurals=2; plural=(n != 1);"
+}

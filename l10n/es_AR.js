@@ -1,8 +1,6 @@
 OC.L10N.register(
     "maps",
     {
-    "Maps" : "Térképek",
-    "left" : "bal",
-    "right" : "jobb"
+    "Maps" : "Mapas"
 },
 "nplurals=2; plural=(n != 1);");

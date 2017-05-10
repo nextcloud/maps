@@ -1,6 +1,6 @@
 { "translations": {
     "Maps" : "Mapes",
-    "left" : "Esquierda",
-    "right" : "Derecha"
+    "left" : "esquierda",
+    "right" : "drecha"
 },"pluralForm" :"nplurals=2; plural=(n != 1);"
 }

@@ -1,4 +1,6 @@
 { "translations": {
-    "Maps" : "Mapas"
+    "Maps" : "Mapas",
+    "left" : "izquierda",
+    "right" : "derecha"
 },"pluralForm" :"nplurals=2; plural=(n != 1);"
 }

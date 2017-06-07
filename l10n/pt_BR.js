@@ -3,6 +3,6 @@ OC.L10N.register(
     {
     "Maps" : "Mapas",
     "left" : "esquerda",
-    "right" : "direita"
+    "right" : "Direita"
 },
 "nplurals=2; plural=(n > 1);");

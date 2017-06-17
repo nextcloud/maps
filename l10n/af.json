@@ -1,0 +1,6 @@
+{ "translations": {
+    "Maps" : "Kaarte",
+    "left" : "links",
+    "right" : "regs"
+},"pluralForm" :"nplurals=2; plural=(n != 1);"
+}

@@ -26,7 +26,7 @@
                 if(searchMarker) map.removeLayer(searchMarker);
                 searchMarker = L.marker([result.lat, result.lon]);
                 var name = result.display_name;
-                var popupContent = searchController.parseAddress(result.address);
+                var popupContent = searchController.parseOsmResult(result);
                 searchMarker.bindPopup(popupContent);
                 searchMarker.addTo(map);
                 searchMarker.openPopup();
@@ -41,7 +41,7 @@
         },
         search: function(str) {
             var searchTerm = str.replace(' ', '%20'); // encode spaces
-            var apiUrl = 'https://nominatim.openstreetmap.org/search/'+searchTerm+'?format=json&addressdetails=1&limit=1';
+            var apiUrl = 'https://nominatim.openstreetmap.org/search/'+searchTerm+'?format=json&addressdetails=1&extratags=1&limit=1';
             return $.getJSON(apiUrl, {}, function(response) {
                 return response;
             });
@@ -56,7 +56,8 @@
                 return response;
             });
         },
-        parseAddress: function(add) {
+        parseOsmResult: function(result) {
+            var add = result.address;
             var unformattedHeader = '';
             if(add.road) {
                 unformattedHeader = add.road;
@@ -88,6 +89,15 @@
             }
             var header = '<h2 class="location-header">' + unformattedHeader + '</h2>';
             var desc = '<p class="location-city">' + unformattedDesc + '</p>';
+            var extras = result.extratags;
+            if(extras.opening_hours) {
+                desc += '<h3>Opening Hours</h3>';
+                var hours = extras.opening_hours.split('; ');
+                for(var i=0; i<hours.length; i++) {
+                    desc += '<p class="opening-hours">' + hours[i] + '</p>';
+                }
+            }
+
             return header + desc;
         }
     };

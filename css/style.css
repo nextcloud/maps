@@ -25,3 +25,10 @@ p.location-city {
 	color: gray;
 	font-style: italic;
 }
+
+p.opening-hours {
+	padding-left: 5px;
+	font-style: italic;
+	margin-top: 5px !important;
+	margin-bottom: 5px !important;
+}

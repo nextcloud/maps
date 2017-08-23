@@ -26,7 +26,7 @@ $l = \OC::$server->getL10N('maps');
 
     // the icon that will be shown in the navigation
     // this file needs to exist in img/
-    'icon' => \OC::$server->getURLGenerator()->imagePath('maps', 'maps.svg'),
+    'icon' => \OC::$server->getURLGenerator()->imagePath('maps', 'app.svg'),
 
     // the title of your application. This will be used in the
     // navigation or on the settings page of your app

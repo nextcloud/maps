@@ -1,13 +1,23 @@
 <?xml version="1.0"?>
-<info>
+<info xmlns:xsi= "http://www.w3.org/2001/XMLSchema-instance"
+      xsi:noNamespaceSchemaLocation="https://apps.nextcloud.com/schema/apps/info.xsd">
     <id>maps</id>
     <name>Maps</name>
-    <description>A simple maps app</description>
-    <licence>AGPL</licence>
-    <author>Vinzenz Rosenkranz, Hendrik Leppelsack, Sander Brand, Jan-Christoph Borchardt</author>
-    <version>0.0.6</version>
+    <summary>Simple maps app for Nextcloud</summary>
+    <description><![CDATA[Simple maps app to display a leaflet map.]]></description>
+    <licence>agpl</licence>
+    <author mail="vinzenz.rosenkranz@gmail.com" >Vinzenz Rosenkranz</author>
+    <version>0.0.1</version>
+    <namespace>Maps</namespace>
+    <category>multimedia</category>
+    <bugs>https://github.com/nextcloud/maps/issues</bugs>
     <dependencies>
-        <owncloud min-version="8.2" max-version="9.1"/>
-        <nextcloud min-version="9" max-version="11"/>
+        <nextcloud min-version="12" max-version="12"/>
     </dependencies>
+    <navigations>
+        <navigation>
+            <name>Maps</name>
+            <route>maps.page.index</route>
+        </navigation>
+    </navigations>
 </info>

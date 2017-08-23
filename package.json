@@ -1,0 +1,33 @@
+{
+  "name": "maps",
+  "version": "0.0.7",
+  "description": "Maps app",
+  "main": "index.js",
+  "directories": {
+    "test": "tests"
+  },
+  "scripts": {
+    "test": "node node_modules/gulp-cli/bin/gulp.js karma",
+    "prebuild": "npm install && node_modules/bower/bin/bower install && node_modules/bower/bin/bower update",
+    "build": "node node_modules/gulp-cli/bin/gulp.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/nextcloud/maps.git"
+  },
+  "keywords": [
+    "maps"
+  ],
+  "author": "Vinzenz Rosenkranz",
+  "license": "AGPL-3.0",
+  "bugs": {
+    "url": "https://github.com/nextcloud/maps/issues"
+  },
+  "homepage": "https://github.com/nextcloud/maps",
+  "dependencies": {
+    "bower": "^1.8.0",
+    "gulp": "^3.9.1",
+    "gulp-cli": "^1.4.0",
+    "leaflet": "^1.2.0"
+  }
+}

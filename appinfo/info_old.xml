@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+<info>
+    <id>maps</id>
+    <name>Maps</name>
+    <description>A simple maps app</description>
+    <licence>AGPL</licence>
+    <author>Vinzenz Rosenkranz, Hendrik Leppelsack, Sander Brand, Jan-Christoph Borchardt</author>
+    <version>0.0.6</version>
+    <dependencies>
+        <owncloud min-version="8.2" max-version="9.1"/>
+        <nextcloud min-version="9" max-version="11"/>
+    </dependencies>
+</info>

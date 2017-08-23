@@ -1,30 +1,21 @@
 <?php
-/**
- * Nextcloud - maps
- *
- * This file is licensed under the Affero General Public License version 3 or
- * later. See the COPYING file.
- *
- * @author Vinzenz Rosenkranz <vinzenz.rosenkranz@gmail.com>
- * @copyright Vinzenz Rosenkranz 2017
- */
-
 namespace OCA\Maps\Controller;
 
-use \OCP\IRequest;
-use \OCP\AppFramework\Http\TemplateResponse;
-use \OCP\AppFramework\Controller;
+use OCP\IRequest;
+use OCP\AppFramework\Http\TemplateResponse;
+use OCP\AppFramework\Http\DataResponse;
+use OCP\AppFramework\Controller;
 
 class PageController extends Controller {
 	private $userId;
 
-	public function __construct($appName, IRequest $request, $userId) {
-		parent::__construct($appName, $request);
-		$this->userId = $userId;
+	public function __construct($AppName, IRequest $request, $UserId){
+		parent::__construct($AppName, $request);
+		$this->userId = $UserId;
 	}
 
 	/**
-	 * CAUTION: the @Stuff turn off security checks, for this page no admin is
+	 * CAUTION: the @Stuff turns off security checks; for this page no admin is
 	 *          required and no CSRF check. If you don't know what CSRF is, read
 	 *          it up in the docs or you might create a security hole. This is
 	 *          basically the only required method to add this exemption, don't
@@ -39,9 +30,10 @@ class PageController extends Controller {
 		if (class_exists('OCP\AppFramework\Http\ContentSecurityPolicy')) {
 			$csp = new \OCP\AppFramework\Http\ContentSecurityPolicy();
 			// map tiles
-			$csp->addAllowedImageDomain('http://*.mqcdn.com');
+			$csp->addAllowedImageDomain('https://*.tile.openstreetmap.org');
 			$response->setContentSecurityPolicy($csp);
 		}
 		return $response;
 	}
+
 }

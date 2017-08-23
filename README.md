@@ -1,26 +1,52 @@
 # Maps
-[![Build Status](https://travis-ci.org/owncloud/maps.svg?branch=master)](https://travis-ci.org/owncloud/maps)
-[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/owncloud/maps/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/owncloud/maps/?branch=master)
-[![Code Coverage](https://scrutinizer-ci.com/g/owncloud/maps/badges/coverage.png?b=master)](https://scrutinizer-ci.com/g/owncloud/maps/?branch=master)
+Place this app in **nextcloud/apps/**
 
-Place this app in **owncloud/apps/**
+## Building the app
 
-## What is this?
-This app displays openstreetmap layers including POIs.
-It supports searching for cities and addresses.
-Additionally it is possible to display (and search for) contacts and gpx/gps tracks (WIP, see issues for more information).
+The app can be built by using the provided Makefile by running:
 
-## Screenshots
-![start](screenshots/start.png)
-![contacts](screenshots/contacts.png)
+    make
+
+This requires the following things to be present:
+* make
+* which
+* tar: for building the archive
+* curl: used if phpunit and composer are not installed to fetch them from the web
+* npm: for building and testing everything JS, only required if a package.json is placed inside the **js/** folder
+
+The make command will install or update Composer dependencies if a composer.json is present and also **npm run build** if a package.json is present in the **js/** folder. The npm **build** script should use local paths for build systems and package managers, so people that simply want to build the app won't need to install npm libraries globally, e.g.:
+
+**package.json**:
+```json
+"scripts": {
+    "test": "node node_modules/gulp-cli/bin/gulp.js karma",
+    "prebuild": "npm install && node_modules/bower/bin/bower install && node_modules/bower/bin/bower update",
+    "build": "node node_modules/gulp-cli/bin/gulp.js"
+}
+```
+
+
+## Publish to App Store
+
+First get an account for the [App Store](http://apps.nextcloud.com/) then run:
+
+    make && make appstore
+
+The archive is located in build/artifacts/appstore and can then be uploaded to the App Store.
 
 ## Running tests
-After [Installing PHPUnit](http://phpunit.de/getting-started.html) run:
+You can use the provided Makefile to run all tests by using:
 
-    phpunit
+    make test
 
-##Sources
-- OpenLayers https://github.com/openlayers/openlayers
+This will run the PHP unit and integration tests and if a package.json is present in the **js/** folder will execute **npm run test**
 
-##Support
-Only MYSQL is supported
+Of course you can also install [PHPUnit](http://phpunit.de/getting-started.html) and use the configurations directly:
+
+    phpunit -c phpunit.xml
+
+or:
+
+    phpunit -c phpunit.integration.xml
+
+for integration tests

@@ -97,6 +97,9 @@
                     desc += '<p class="opening-hours">' + hours[i] + '</p>';
                 }
             }
+            if(extras.website) {
+                desc += '<p><a href="' + extras.website + '" target="_blank">' + extras.website + '</a></p>';
+            }
 
             return header + desc;
         }

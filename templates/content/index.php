@@ -21,4 +21,10 @@
 style('maps', '../node_modules/leaflet/dist/leaflet');
 script('maps', '../node_modules/leaflet/dist/leaflet');
 ?>
+<div id="search">
+    <form>
+        <input type="text" placehoder="Search..." id="search-term" />
+        <button type="button" id="search-submit">Search!</button>
+    </form>
+</div>
 <div id="map"></div>

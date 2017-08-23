@@ -31,6 +31,7 @@ class PageController extends Controller {
 			$csp = new \OCP\AppFramework\Http\ContentSecurityPolicy();
 			// map tiles
 			$csp->addAllowedImageDomain('https://*.tile.openstreetmap.org');
+			$csp->addAllowedConnectDomain('https://nominatim.openstreetmap.org');
 			$response->setContentSecurityPolicy($csp);
 		}
 		return $response;

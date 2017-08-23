@@ -1,3 +1,11 @@
+#search {
+	position: absolute;
+	padding: 20px;
+	right: 0;
+	top: 0;
+	z-index: 10000;
+}
+
 #map {
 	width: 100%;
 	position: relative;
@@ -7,4 +15,13 @@
 #app-content-wrapper {
 	width: 100%;
 	height: 100%;
+}
+
+.location-header {
+	font-weight: bold;
+}
+
+p.location-city {
+	color: gray;
+	font-style: italic;
 }

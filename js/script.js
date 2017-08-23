@@ -13,6 +13,7 @@
             maxBounds: new L.LatLngBounds(new L.LatLng(-90, 180), new L.LatLng(90, -180)),
             layers: [mapQuest]
         });
+        var searchMarker;
 
         // Search
         $('#search-submit').click(function() {
@@ -22,12 +23,13 @@
             searchController.search(str).then(function(results) {
                 if(results.length == 0) return;
                 var result = results[0];
-                var poi = L.marker([result.lat, result.lon]);
+                if(searchMarker) map.removeLayer(searchMarker);
+                searchMarker = L.marker([result.lat, result.lon]);
                 var name = result.display_name;
                 var popupContent = searchController.parseAddress(result.address);
-                poi.bindPopup(popupContent);
-                poi.addTo(map);
-                poi.openPopup();
+                searchMarker.bindPopup(popupContent);
+                searchMarker.addTo(map);
+                searchMarker.openPopup();
             });
         });
     });

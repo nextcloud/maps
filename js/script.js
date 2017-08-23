@@ -41,7 +41,7 @@
         },
         search: function(str) {
             var searchTerm = str.replace(' ', '%20'); // encode spaces
-            var apiUrl = 'https://nominatim.openstreetmap.org/search/'+searchTerm+'?format=json&addressdetails=1&extratags=1&limit=1';
+            var apiUrl = 'https://nominatim.openstreetmap.org/search/'+searchTerm+'?format=json&addressdetails=1&extratags=1&namedetails=1&limit=1';
             return $.getJSON(apiUrl, {}, function(response) {
                 return response;
             });
@@ -58,37 +58,62 @@
         },
         parseOsmResult: function(result) {
             var add = result.address;
-            var unformattedHeader = '';
+            var road, postcode, city, state, name;
             if(add.road) {
-                unformattedHeader = add.road;
-                if(add.house_number) unformattedHeader += ' ' + add.house_number;
-            } else if(add.village){
-                unformattedHeader = add.village;
+                road = add.road;
+                if(add.house_number) road += ' ' + add.house_number;
             }
-            var unformattedDesc = '';
-            if(add.postcode) unformattedDesc = add.postcode;
+            if(add.postcode) postcode = add.postcode;
             if(add.city || add.town || add.village) {
-                var city;
                 if(add.city) city = add.city;
                 else if(add.town) city = add.town;
                 else if(add.village) city = add.village;
-                if(unformattedHeader.length == 0) {
-                    unformattedHeader = city;
-                } else {
-                    if(unformattedDesc.length > 0) { // if desc is not empty, add ' ' in front of village name
-                        unformattedDesc += ' ';
-                    }
-                    unformattedDesc += city;
-                }
                 if(add.state) {
-                    if(unformattedDesc.length > 0) { // if desc is not empty, add ' ' in front of state
-                        unformattedDesc += ' ';
-                    }
-                    unformattedDesc += '(' + add.state + ')';
+                     state = add.state;
                 }
             }
+            var details = result.namedetails;
+            if(details.name) name = details.name;
+
+            var unformattedHeader;
+            if(name) unformattedHeader = name;
+            else if(road) unformattedHeader = road;
+            else if(city) unformattedHeader = city;
+
+            var unformattedDesc = '';
+            var needSeparator = false;
+            // add road to desc if it is not heading (isn't heading, if 'name' is set)
+            if(name) {
+                unformattedDesc = road;
+                needSeparator = true;
+            }
+            if(postcode) {
+                if(needSeparator) {
+                    unformattedDesc += ', ';
+                    needSeparator = false;
+                }
+                unformattedDesc += postcode;
+            }
+            if(city) {
+                if(needSeparator) {
+                    unformattedDesc += ', ';
+                    needSeparator = false;
+                } else if(unformattedDesc.length > 0) {
+                    unformattedDesc += ' ';
+                }
+                unformattedDesc += city;
+            }
+            if(state && add && add.country_code == 'us') { // assume that state is only important for us addresses
+                if(unformattedDesc.length > 0) {
+                    unformattedDesc += '';
+                }
+                unformattedDesc += '(' + state + ')';
+            }
+
             var header = '<h2 class="location-header">' + unformattedHeader + '</h2>';
-            var desc = '<p class="location-city">' + unformattedDesc + '</p>';
+            var desc = '<span class="location-city">' + unformattedDesc + '</span>';
+
+            // Add extras to parsed desc
             var extras = result.extratags;
             if(extras.opening_hours) {
                 desc += '<h3>Opening Hours</h3>';

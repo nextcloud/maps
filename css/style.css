@@ -17,39 +17,59 @@
 	height: 100%;
 }
 
-.location-header {
-	font-weight: bold;
+.inline-wrapper {
+	display: flex;
 }
 
-span.location-city {
+.location-icon {
+	height: 20px;
+	margin-top: 5px;
+}
+
+.location-header {
+	font-weight: bold;
+	word-wrap: break-word;
+	word-break: break-all;
+}
+
+.location-city {
 	color: gray;
 }
 
-span.poi-open {
-	color: green;
+.poi-open, .poi-closed, .poi-closes {
+	font-weight: 600;
 }
 
-span.poi-closed {
-	color: red;
+.poi-open {
+	color: #46ba61;
 }
 
-span.poi-closes-15, span.poi-opens-60 {
-	color: rgb(228, 130, 0);
+.poi-closed {
+	color: #e9322d;
 }
 
-span.poi-closes-30, span.poi-opens-30 {
-	color: rgb(228, 212, 0);
+.poi-closes {
+	color: #ffcc44;
 }
 
-span.poi-closes-60, span.poi-opens-15 {
-	color: rgb(52, 228, 0);
+.poi-opens {
+
 }
 
-table.opening-hours-table td.opening-hours-day {
+.popup-icon {
+	height: 20px;
+	margin-right: 5px;
+}
+
+.opening-hours-table {
+	margin-left: 25px;
+}
+
+.opening-hours-table .opening-hours-day {
 	padding-right: 5px;
 }
 
-table.opening-hours-table td.opening-hours-hours {
+.opening-hours-table .opening-hours-hours {
 	padding-left: 5px;
 }
 
@@ -57,14 +77,14 @@ tr.selected td {
 	font-weight: bold;
 }
 
-p.opening-hours {
+.opening-hours {
 	padding-left: 5px;
 	margin-top: 5px !important;
 	margin-bottom: 5px !important;
 }
 
 /* Overriden Leaflet Styles */
-div.leaflet-top.leaflet-left {
+.leaflet-top.leaflet-left {
 	top: 50px;
 }
 .leaflet-popup-content h2, .leaflet-popup-content h3 {

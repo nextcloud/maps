@@ -23,6 +23,12 @@
         }
     });
 
+    var helpers = {
+        beautifyUrl: function(url) {
+            return url.replace(/^(?:\w+:|)\/\/(?:www\.|)(.*[^\/])\/*$/, '$1');
+        }
+    };
+
     var mapController = {
         searchMarker: {},
         map: {},
@@ -129,12 +135,13 @@
             }
 
             var header = '<h2 class="location-header">' + unformattedHeader + '</h2>';
+            if(result.icon) header = '<div class="inline-wrapper"><img class="location-icon" src="' + result.icon + '" />' + header + '</div>';
             var desc = '<span class="location-city">' + unformattedDesc + '</span>';
 
             // Add extras to parsed desc
             var extras = result.extratags;
             if(extras.opening_hours) {
-                desc += '<h3>Opening Hours</h3>';
+                desc += '<div class="inline-wrapper"><img class="popup-icon" src="'+OC.filePath('maps', 'img', 'recent.svg')+'" />';
                 var oh = new opening_hours(extras.opening_hours, result);
                 var isCurrentlyOpen = oh.getState();
                 var changeDt = oh.getNextChange();
@@ -142,24 +149,17 @@
                 var dtDiff = changeDt.getTime() - currentDt.getTime();
                 dtDiff = dtDiff / 60000; // get diff in minutes
                 if(oh.getState()) { // is open?
-                    desc += '<span class="poi-open">open</span>';
-                    if(dtDiff <= 15) {
-                        desc += '<span class="poi-closes-15">closes in less than 15 minutes</span>';
-                    } else if(dtDiff <= 30) {
-                        desc += '<span class="poi-closes-30">closes in less than 30 minutes</span>';
-                    } else if(dtDiff <= 60) {
-                        desc += '<span class="poi-closes-60">closes in less than 1 hour</span>';
+                    desc += '<span class="poi-open">Open</span>';
+                    if(dtDiff <= 60) {
+                        desc += '<span class="poi-closes">,&nbsp;closes in ' + dtDiff + ' minutes</span>';
+                    } else {
+                        desc += '<span>&nbsp;until ' + changeDt.toLocaleTimeString() + '</span>';
                     }
                 } else {
-                    desc += '<span class="poi-closed">closed</span>';
-                    if(dtDiff <= 15) {
-                        desc += '<span class="poi-opens-15">opens in less than 15 minutes</span>';
-                    } else if(dtDiff <= 30) {
-                        desc += '<span class="poi-opens-30">opens in less than 30 minutes</span>';
-                    } else if(dtDiff <= 60) {
-                        desc += '<span class="poi-opens-60">opens in less than 1 hour</span>';
-                    }
+                    desc += '<span class="poi-closed">Closed</span>';
+                    desc += '<span class="poi-opens">opens at ' + changeDt.toLocaleTimeString() + '</span>';
                 }
+                desc += '</div>';
                 var todayStart = currentDt;
                 todayStart.setHours(0);
                 todayStart.setMinutes(0);
@@ -190,7 +190,13 @@
                 desc += '</table>';
             }
             if(extras.website) {
-                desc += '<p><a href="' + extras.website + '" target="_blank">' + extras.website + '</a></p>';
+                desc += '<div class="inline-wrapper"><img class="popup-icon" src="'+OC.filePath('maps', 'img', 'link.svg')+'" /><a href="' + extras.website + '" target="_blank">' + helpers.beautifyUrl(extras.website) + '</a></div>';
+            }
+            if(extras.phone) {
+                desc += '<div class="inline-wrapper"><img class="popup-icon" src="'+OC.filePath('maps', 'img', 'link.svg')+'" /><a href="tel:' + extras.phone + '" target="_blank">' + extras.phone + '</a></div>';
+            }
+            if(extras.email) {
+                desc += '<div class="inline-wrapper"><img class="popup-icon" src="'+OC.filePath('maps', 'img', 'mail.svg')+'" /><a href="mailto:' + extras.email + '" target="_blank">' + extras.email + '</a></div>';
             }
 
             return header + desc;

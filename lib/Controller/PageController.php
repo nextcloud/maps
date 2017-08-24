@@ -1,4 +1,14 @@
 <?php
+/**
+ * Nextcloud - maps
+ *
+ * This file is licensed under the Affero General Public License version 3 or
+ * later. See the COPYING file.
+ *
+ * @authorVinzenz Rosenkranz <vinzenz.rosenkranz@gmail.com>
+ * @copyright Vinzenz Rosenkranz 2017
+ */
+
 namespace OCA\Maps\Controller;
 
 use OCP\IRequest;
@@ -31,6 +41,9 @@ class PageController extends Controller {
 			$csp = new \OCP\AppFramework\Http\ContentSecurityPolicy();
 			// map tiles
 			$csp->addAllowedImageDomain('https://*.tile.openstreetmap.org');
+			// poi images
+			$csp->addAllowedImageDomain('https://nominatim.openstreetmap.org');
+			// search and geocoder
 			$csp->addAllowedConnectDomain('https://nominatim.openstreetmap.org');
 			$response->setContentSecurityPolicy($csp);
 		}

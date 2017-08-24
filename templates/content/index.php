@@ -1,8 +1,6 @@
 <?php
 /**
- * @author Vinzenz Rosenkranz <vinzenz.rosenkranz@gmail.com>
- *
- * Maps
+ * Nextcloud - Maps
  *
  * This code is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License, version 3,
@@ -16,6 +14,8 @@
  * You should have received a copy of the GNU Affero General Public License, version 3,
  * along with this program.  If not, see <http://www.gnu.org/licenses/>
  *
+ * @author Vinzenz Rosenkranz <vinzenz.rosenkranz@gmail.com>
+ * @copyright Vinzenz Rosenkranz 2017
  */
 
 style('maps', '../node_modules/leaflet/dist/leaflet');

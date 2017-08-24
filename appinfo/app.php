@@ -1,12 +1,12 @@
 <?php
 /**
- * ownCloud - maps
+ * Nextcloud - maps
  *
  * This file is licensed under the Affero General Public License version 3 or
  * later. See the COPYING file.
  *
  * @author Sander Brand <brantje@gmail.com>, Vinzenz Rosenkranz <vinzenz.rosenkranz@gmail.com>
- * @copyright Sander Brand 2014, Vinzenz Rosenkranz 2016
+ * @copyright Sander Brand 2014, Vinzenz Rosenkranz 2016, 2017
  */
 
 namespace OCA\Maps\AppInfo;
@@ -26,7 +26,7 @@ $l = \OC::$server->getL10N('maps');
 
     // the icon that will be shown in the navigation
     // this file needs to exist in img/
-    'icon' => \OC::$server->getURLGenerator()->imagePath('maps', 'app.svg'),
+    'icon' => \OC::$server->getURLGenerator()->imagePath('maps', 'maps.svg'),
 
     // the title of your application. This will be used in the
     // navigation or on the settings page of your app

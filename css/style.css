@@ -25,6 +25,38 @@ span.location-city {
 	color: gray;
 }
 
+span.poi-open {
+	color: green;
+}
+
+span.poi-closed {
+	color: red;
+}
+
+span.poi-closes-15, span.poi-opens-60 {
+	color: rgb(228, 130, 0);
+}
+
+span.poi-closes-30, span.poi-opens-30 {
+	color: rgb(228, 212, 0);
+}
+
+span.poi-closes-60, span.poi-opens-15 {
+	color: rgb(52, 228, 0);
+}
+
+table.opening-hours-table td.opening-hours-day {
+	padding-right: 5px;
+}
+
+table.opening-hours-table td.opening-hours-hours {
+	padding-left: 5px;
+}
+
+tr.selected td {
+	font-weight: bold;
+}
+
 p.opening-hours {
 	padding-left: 5px;
 	margin-top: 5px !important;

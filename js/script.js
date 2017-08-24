@@ -135,10 +135,59 @@
             var extras = result.extratags;
             if(extras.opening_hours) {
                 desc += '<h3>Opening Hours</h3>';
-                var hours = extras.opening_hours.split('; ');
-                for(var i=0; i<hours.length; i++) {
-                    desc += '<p class="opening-hours">' + hours[i] + '</p>';
+                var oh = new opening_hours(extras.opening_hours, result);
+                var isCurrentlyOpen = oh.getState();
+                var changeDt = oh.getNextChange();
+                var currentDt = new Date();
+                var dtDiff = changeDt.getTime() - currentDt.getTime();
+                dtDiff = dtDiff / 60000; // get diff in minutes
+                if(oh.getState()) { // is open?
+                    desc += '<span class="poi-open">open</span>';
+                    if(dtDiff <= 15) {
+                        desc += '<span class="poi-closes-15">closes in less than 15 minutes</span>';
+                    } else if(dtDiff <= 30) {
+                        desc += '<span class="poi-closes-30">closes in less than 30 minutes</span>';
+                    } else if(dtDiff <= 60) {
+                        desc += '<span class="poi-closes-60">closes in less than 1 hour</span>';
+                    }
+                } else {
+                    desc += '<span class="poi-closed">closed</span>';
+                    if(dtDiff <= 15) {
+                        desc += '<span class="poi-opens-15">opens in less than 15 minutes</span>';
+                    } else if(dtDiff <= 30) {
+                        desc += '<span class="poi-opens-30">opens in less than 30 minutes</span>';
+                    } else if(dtDiff <= 60) {
+                        desc += '<span class="poi-opens-60">opens in less than 1 hour</span>';
+                    }
                 }
+                var todayStart = currentDt;
+                todayStart.setHours(0);
+                todayStart.setMinutes(0);
+                todayStart.setSeconds(0);
+                var sevDaysEnd = new Date(todayStart);
+                var sevDaysMs = 7 * 24 * 60 * 60 * 1000;
+                sevDaysEnd.setTime(sevDaysEnd.getTime()+sevDaysMs);
+                var intervals = oh.getOpenIntervals(todayStart, sevDaysEnd);
+                desc += '<table class="opening-hours-table">';
+                // intervals should be 7, if 8, then first entry is interval after 00:00:00 from last day
+                if(intervals.length == 8) {
+                    // set end time of last element to end time of first element and remove it
+                    intervals[7][1] = intervals[0][1];
+                    intervals.splice(0, 1);
+                }
+                for(var i=0; i<intervals.length; i++) {
+                    var from = intervals[i][0];
+                    var to = intervals[i][1];
+                    var day = from.toLocaleDateString([], {weekday:'long'});
+                    if(i==0) desc += '<tr class="selected">';
+                    else desc += '<tr>';
+                    desc += '<td class="opening-hours-day">' + day + '</td>';
+                    var startTime = from.toLocaleTimeString();
+                    var endTime =to.toLocaleTimeString();
+                    desc += '<td class="opening-hours-hours">' + startTime + ' - ' + endTime + '</td>';
+                    desc += '</tr>';
+                }
+                desc += '</table>';
             }
             if(extras.website) {
                 desc += '<p><a href="' + extras.website + '" target="_blank">' + extras.website + '</a></p>';

@@ -21,8 +21,12 @@
 	display: flex;
 }
 
-.location-icon {
+.location-icon, .popup-icon {
 	height: 20px;
+	margin-right: 5px;
+}
+
+.location-icon {
 	margin-top: 5px;
 }
 
@@ -54,11 +58,6 @@
 
 .poi-opens {
 
-}
-
-.popup-icon {
-	height: 20px;
-	margin-right: 5px;
 }
 
 .opening-hours-table {

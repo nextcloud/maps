@@ -100,8 +100,8 @@
 
             var unformattedDesc = '';
             var needSeparator = false;
-            // add road to desc if it is not heading (isn't heading, if 'name' is set)
-            if(name) {
+            // add road to desc if it is not heading and exists (isn't heading, if 'name' is set)
+            if(name && road) {
                 unformattedDesc = road;
                 needSeparator = true;
             }
@@ -123,7 +123,7 @@
             }
             if(state && add && add.country_code == 'us') { // assume that state is only important for us addresses
                 if(unformattedDesc.length > 0) {
-                    unformattedDesc += '';
+                    unformattedDesc += ' ';
                 }
                 unformattedDesc += '(' + state + ')';
             }

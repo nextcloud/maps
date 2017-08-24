@@ -1,38 +1,56 @@
 (function($, OC) {
     $(function() {
-        var attribution = '&copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>';
-
-		var mapQuest = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-			attribution : attribution,
-            noWrap: true,
-            detectRetina: true
-        });
-        var map = L.map('map', {
-            zoom: 3,
-            center: new L.LatLng(40.745, 74.2),
-            maxBounds: new L.LatLngBounds(new L.LatLng(-90, 180), new L.LatLng(90, -180)),
-            layers: [mapQuest]
-        });
-        var searchMarker;
+        mapController.initMap();
 
         // Search
+        $('#search-form').submit(function(e) {
+            e.preventDefault();
+            submitSearchForm();
+        });
         $('#search-submit').click(function() {
+            submitSearchForm();
+        });
+
+        function submitSearchForm() {
             var str = $('#search-term').val();
             if(str.length < 1) return;
 
             searchController.search(str).then(function(results) {
                 if(results.length == 0) return;
                 var result = results[0];
-                if(searchMarker) map.removeLayer(searchMarker);
-                searchMarker = L.marker([result.lat, result.lon]);
-                var name = result.display_name;
-                var popupContent = searchController.parseOsmResult(result);
-                searchMarker.bindPopup(popupContent);
-                searchMarker.addTo(map);
-                searchMarker.openPopup();
+                mapController.displaySearchResult(result);
             });
-        });
+        }
     });
+
+    var mapController = {
+        searchMarker: {},
+        map: {},
+        displaySearchResult: function(result) {
+            if(this.searchMarker) this.map.removeLayer(this.searchMarker);
+            this.searchMarker = L.marker([result.lat, result.lon]);
+            var name = result.display_name;
+            var popupContent = searchController.parseOsmResult(result);
+            this.searchMarker.bindPopup(popupContent);
+            this.searchMarker.addTo(this.map);
+            this.searchMarker.openPopup();
+        },
+        initMap: function() {
+            var attribution = '&copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>';
+
+    		var mapQuest = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    			attribution : attribution,
+                noWrap: true,
+                detectRetina: true
+            });
+            this.map = L.map('map', {
+                zoom: 3,
+                center: new L.LatLng(40.745, 74.2),
+                maxBounds: new L.LatLngBounds(new L.LatLng(-90, 180), new L.LatLng(90, -180)),
+                layers: [mapQuest]
+            });
+        }
+    };
 
     var searchController = {
         isGeocodeabe: function(str) {

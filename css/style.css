@@ -12,6 +12,18 @@
 	height: 100%;
 }
 
+#opening-hours-table {
+	margin-left: 25px;
+	display: none;
+}
+
+#opening-hours-table-toggle-collapse {
+	display: none;
+}
+
+#opening-hours-table-toggle-expand {
+}
+
 #app-content-wrapper {
 	width: 100%;
 	height: 100%;
@@ -58,10 +70,6 @@
 
 .poi-opens {
 
-}
-
-.opening-hours-table {
-	margin-left: 25px;
 }
 
 .opening-hours-table .opening-hours-day {

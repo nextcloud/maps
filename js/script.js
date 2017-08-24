@@ -2,6 +2,13 @@
     $(function() {
         mapController.initMap();
 
+        // Popup
+        $(document).on('click', '#opening-hours-header', function() {
+            $('#opening-hours-table').toggle();
+            $('#opening-hours-table-toggle-expand').toggle();
+            $('#opening-hours-table-toggle-collapse').toggle();
+        });
+
         // Search
         $('#search-form').submit(function(e) {
             e.preventDefault();
@@ -141,7 +148,7 @@
             // Add extras to parsed desc
             var extras = result.extratags;
             if(extras.opening_hours) {
-                desc += '<div class="inline-wrapper"><img class="popup-icon" src="'+OC.filePath('maps', 'img', 'recent.svg')+'" />';
+                desc += '<div id="opening-hours-header" class="inline-wrapper"><img class="popup-icon" src="'+OC.filePath('maps', 'img', 'recent.svg')+'" />';
                 var oh = new opening_hours(extras.opening_hours, result);
                 var isCurrentlyOpen = oh.getState();
                 var changeDt = oh.getNextChange();
@@ -159,7 +166,7 @@
                     desc += '<span class="poi-closed">Closed</span>';
                     desc += '<span class="poi-opens">opens at ' + changeDt.toLocaleTimeString() + '</span>';
                 }
-                desc += '</div>';
+                desc += '<img id="opening-hours-table-toggle-collapse" src="'+OC.filePath('maps', 'img', 'triangle-s.svg')+'" /><img id="opening-hours-table-toggle-expand" src="'+OC.filePath('maps', 'img', 'triangle-e.svg')+'" /></div>';
                 var todayStart = currentDt;
                 todayStart.setHours(0);
                 todayStart.setMinutes(0);
@@ -168,7 +175,7 @@
                 var sevDaysMs = 7 * 24 * 60 * 60 * 1000;
                 sevDaysEnd.setTime(sevDaysEnd.getTime()+sevDaysMs);
                 var intervals = oh.getOpenIntervals(todayStart, sevDaysEnd);
-                desc += '<table class="opening-hours-table">';
+                desc += '<table id="opening-hours-table">';
                 // intervals should be 7, if 8, then first entry is interval after 00:00:00 from last day
                 if(intervals.length == 8) {
                     // set end time of last element to end time of first element and remove it

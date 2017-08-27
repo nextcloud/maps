@@ -3,13 +3,11 @@ Place this app in **nextcloud/apps/**
 
 ## Building the app
 
-The app can be built by using the provided Makefile by running:
+The app can be built by running:
 
-    make
+    npm install
 
 This requires the following things to be present:
-* make
-* which
 * tar: for building the archive
 * curl: used if phpunit and composer are not installed to fetch them from the web
 * npm: for building and testing everything JS, only required if a package.json is placed inside the **js/** folder

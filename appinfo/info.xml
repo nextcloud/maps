@@ -20,4 +20,7 @@
             <route>maps.page.index</route>
         </navigation>
     </navigations>
+    <commands>
+		  <command>OCA\Maps\Command\RescanPhotos</command>
+    </commands>
 </info>

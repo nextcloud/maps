@@ -105,3 +105,47 @@ tr.selected td {
 .leaflet-popup-content-wrapper {
 	border-radius: 3px !important;
 }
+
+.leaflet-marker-photo { 
+	border: 2px solid #fff; 
+	box-shadow: 3px 3px 10px #888;
+}
+
+.leaflet-marker-photo.photo-marker{
+	top: -10px;
+}
+
+.leaflet-marker-photo.photo-marker:after {
+    content:"";
+    position: relative;
+    bottom: 16px;
+    border-width: 10px 10px 0;
+    border-style: solid;
+	border-color: #fff transparent;
+    display: block;
+	width: 0;
+	margin-left: auto;
+    margin-right: auto;
+}
+
+.leaflet-marker-photo .thumbnail { 
+    width: 100%;  
+    height: 100%;
+    background-size: cover;    
+    background-position: center center;
+	background-repeat: no-repeat;	
+}
+
+.leaflet-marker-photo .label {
+	position: absolute;
+	top: -7px;
+	right: -11px;
+	color: #fff;
+	background-color: #333;
+	border-radius: 9px;
+	height: 18px;
+	min-width: 18px;
+	line-height: 12px;
+	text-align: center;
+	padding: 3px;
+}

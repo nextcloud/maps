@@ -20,6 +20,7 @@
 
 style('maps', '../node_modules/leaflet/dist/leaflet');
 script('maps', '../node_modules/leaflet/dist/leaflet');
+script('maps', '../node_modules/leaflet.markercluster/dist/leaflet.markercluster');
 script('maps', '../node_modules/opening_hours/opening_hours');
 ?>
 <div id="search">

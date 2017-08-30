@@ -1,4 +1,5 @@
 <?php
+script('maps', 'photosController');
 script('maps', 'script');
 style('maps', 'style');
 ?>

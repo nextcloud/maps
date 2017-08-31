@@ -40,34 +40,29 @@ class GeophotoService {
      * @param string $userId
      * @return array with all notes in the current directory
      */
-    public function getAllFromDB ($userId) {
+     public function getAllFromDB ($userId) {
         $photoEntities = $this->photoMapper->findAll($userId);
         $userFolder = $this->getFolderForUser($userId);
         $filesById = [];
-        $foldersById = [];
+        $cache = $userFolder->getStorage()->getCache();
         foreach ($photoEntities as $photoEntity) {
-            $path = \OC\Files\Filesystem::getPath($photoEntity->getFileId());
-            $photoFile = \OC\Files\Filesystem::getFileInfo($path);
-            $photoFolder = $userFolder->get($path)->getParent();
+            $cacheEntry = $cache->get($photoEntity->getFileId());
+            $path = $cacheEntry->getPath();
             $file_object = new \stdClass();
             $file_object->fileId = $photoEntity->getFileId();
             $file_object->lat = $photoEntity->getLat();
             $file_object->lng = $photoEntity->getLng();
-            $file_object->folderId = $photoFolder->getId();
-            $file_object->path = $this->normalizePath($photoFile);
+            /* 30% longer
+             * $file_object->folderId = $cache->getParentId($path); 
+             */
+            $file_object->path = $this->normalizePath($path);
             $filesById[] = $file_object;
-            $folder_object = new \stdClass();
-            $folder_object->id = $photoFolder->getId();
-            $folder_object->name = $photoFolder->getName();
-            $folder_object->path = $this->normalizePath($photoFolder);
-            /*$folder_object->filesList = $this->getPhotosListForFolder($photoFolder);*/
-            $foldersById[$photoFolder->getId()] = $folder_object;
         }
-        return [$filesById, $foldersById];
+        return $filesById;
     }
 
-    private function normalizePath($node) {
-        return str_replace("files","", $node->getInternalPath());
+    private function normalizePath($path) {
+        return str_replace("files","", $path);
     }
 
     /**

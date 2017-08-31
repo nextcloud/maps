@@ -28,7 +28,6 @@ PhotosController.prototype = {
     createClusterView : function(cluster) {
         var thumbnailUrl = cluster.getAllChildMarkers()[0].data.thumbnail;
         var label = cluster.getChildCount();
-        console.log(thumbnailUrl);
         return new L.DivIcon(L.extend({
             className: 'leaflet-marker-photo cluster-marker', 
             html: '<div class="thumbnail" style="background-image: url(' + thumbnailUrl + ');"></div>​<span class="label">' + label + '</span>'
@@ -75,10 +74,10 @@ PhotosController.prototype = {
             'type': 'GET',
             'success': (function(_controller) {
                 return function(response) {
-                    if (response[0].length == 0) {
+                    if (response.length == 0) {
                         //showNoPhotosMessage();
                     } else {
-                        _controller.addPhotosToMap(response[0]);
+                        _controller.addPhotosToMap(response);
                     }
                 }
             })(this)

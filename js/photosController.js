@@ -87,12 +87,12 @@ PhotosController.prototype = {
     
     /* Preview size 32x32 is used in files view, so it sould be generated */
     generateThumbnailUrl: function (filename) {
-        return "/index.php/core/preview.png?file=" + escape(filename) + "&x=32&y=32";
+        return "/index.php/core/preview.png?file=" + encodeURI(filename) + "&x=32&y=32";
     },
 
     /* Preview size 375x211 is used in files details view */
     generateImageUrl: function (filename) {
-        return "/index.php/core/preview.png?file=" + escape(filename) + "&x=375&y=211";
+        return "/index.php/core/preview.png?file=" + encodeURI(filename) + "&x=375&y=211";
     }
 
 };

@@ -13,6 +13,6 @@ return [
        ['name' => 'page#do_echo', 'url' => '/echo', 'verb' => 'POST'],
        
        //photos
-       ['name' => 'photos#getPhotosFromDb', 'url' => '/photos/all', 'verb' => 'GET'],
+       ['name' => 'photos#getPhotosFromDb', 'url' => '/photos', 'verb' => 'GET'],
     ]
 ];

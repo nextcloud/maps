@@ -70,7 +70,7 @@ PhotosController.prototype = {
 
     callForImages: function() {
         $.ajax({
-            'url' : OC.generateUrl('apps/maps/photos/all'),
+            'url' : OC.generateUrl('apps/maps/photos'),
             'type': 'GET',
             'success': (function(_controller) {
                 return function(response) {

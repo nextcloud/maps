@@ -1,5 +1,7 @@
 function PhotosController () {
     this.PHOTO_MARKER_VIEW_SIZE = 40;
+    this.photosDataLoaded = false;
+    this.photosRequestInProgress = false;
 }
  
 PhotosController.prototype = {
@@ -16,6 +18,21 @@ PhotosController.prototype = {
         });
         this.photoLayer.on('click', this.onPhotoViewClick);
         this.photoLayer.addTo(this.map);
+    },
+
+    showLayer: function() {
+        if (!this.photosDataLoaded && !this.photosRequestInProgress) {
+            this.callForImages();
+        }
+        if (!this.map.hasLayer(this.photoLayer)) {
+            this.map.addLayer(this.photoLayer);
+        }
+    },
+
+    hideLayer: function() {
+        if (this.map.hasLayer(this.photoLayer)) {
+            this.map.removeLayer(this.photoLayer);
+        }
     },
 
     onPhotoViewClick : function(evt) {
@@ -75,18 +92,22 @@ PhotosController.prototype = {
     },
 
     callForImages: function() {
+        this.photosRequestInProgress = true;
         $.ajax({
             'url' : OC.generateUrl('apps/maps/photos'),
             'type': 'GET',
-            'success': (function(_controller) {
-                return function(response) {
-                    if (response.length == 0) {
-                        //showNoPhotosMessage();
-                    } else {
-                        _controller.addPhotosToMap(response);
-                    }
+            'context' : this,
+            'success': function(response) {
+                if (response.length == 0) {
+                    //showNoPhotosMessage();
+                } else {
+                    this.addPhotosToMap(response);
                 }
-            })(this)
+                this.photosDataLoaded = true;
+            },
+            'complete': function(response) {
+                this.photosRequestInProgress = false;
+            }
         });
     },
     

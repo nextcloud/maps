@@ -2,7 +2,7 @@
     $(function() {
         mapController.initMap();
         photosController.appendToMap(mapController.map);
-        photosController.callForImages();
+        photosController.showLayer();
 
         // Popup
         $(document).on('click', '#opening-hours-header', function() {

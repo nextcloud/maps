@@ -121,68 +121,66 @@ class PhotofilesService {
 	}
 
     private function isPhoto($file) {
-        $allowedExtensions = ['jpg', 'jpeg'];
-
+        $allowedMimeTypes = ['image/jpeg'];
         if($file->getType() !== \OCP\Files\FileInfo::TYPE_FILE) return false;
-        if(!in_array(
-            pathinfo($file->getName(), PATHINFO_EXTENSION),
-            $allowedExtensions
-        )) return false;
-
+        if(!in_array($file->getMimetype(), $allowedMimeTypes)) return false;
         return true;
     }
 
-    private function hasExifGeoTags($exif) {
+    private function hasValidExifGeoTags($exif) {
         if (!isset($exif["GPSLatitude"]) OR !isset($exif["GPSLongitude"])) {
             return false;
         }
 		if (count($exif["GPSLatitude"]) != 3 OR count($exif["GPSLongitude"]) != 3) {
 			return false;
-		}
+        }
+        //Check photos are on the earth
+        if ($exif["GPSLatitude"][0]>=90 OR $exif["GPSLongitude"][0]>=180) {
+            return false;
+        }
+        //Check photos are not on NULL island, remove if they should be.
+        if($exif["GPSLatitude"][0]==0 AND $exif["GPSLatitude"][1]==0 AND $exif["GPSLongitude"][0]==0 AND $exif["GPSLongitude"][1]==0){
+            return false;
+        }
 		return true;
 	}
 
     private function getExif($file) {
         $path = $file->getStorage()->getLocalFile($file->getInternalPath());
         $exif = @exif_read_data($path);
-        //Check photos are on the earth
-        if($this->hasExifGeoTags($exif) AND $exif["GPSLatitude"][0]<90 AND $exif["GPSLongitude"][0]<180){
-            
-            //Check photos are not on NULL island, remove if they should be.
-            if($exif["GPSLatitude"][0]!=0 OR $exif["GPSLatitude"][1]!=0 OR $exif["GPSLongitude"][0]!=0 OR $exif["GPSLongitude"][1]!=0){
-                //Check if there is exif infor
-                $LatM = 1; $LongM = 1;
-                if($exif["GPSLatitudeRef"] == 'S'){
-                    $LatM = -1;
-                }
-                if($exif["GPSLongitudeRef"] == 'W'){
-                    $LongM = -1;
-                }
-                //get the GPS data
-                $gps['LatDegree']=$exif["GPSLatitude"][0];
-                $gps['LatMinute']=$exif["GPSLatitude"][1];
-                $gps['LatgSeconds']=$exif["GPSLatitude"][2];
-                $gps['LongDegree']=$exif["GPSLongitude"][0];
-                $gps['LongMinute']=$exif["GPSLongitude"][1];
-                $gps['LongSeconds']=$exif["GPSLongitude"][2];
-
-                //convert strings to numbers
-                foreach($gps as $key => $value){
-                    $pos = strpos($value, '/');
-                    if($pos !== false){
-                        $temp = explode('/',$value);
-                        $gps[$key] = $temp[0] / $temp[1];
-                    }
-                }
-                $file_object = new \stdClass();
-                //calculate the decimal degree
-                $file_object->lat = $LatM * ($gps['LatDegree'] + ($gps['LatMinute'] / 60) + ($gps['LatgSeconds'] / 3600));
-                $file_object->lng = $LongM * ($gps['LongDegree'] + ($gps['LongMinute'] / 60) + ($gps['LongSeconds'] / 3600));
-                if (isset($exif["DateTimeOriginal"])) {
-                    $file_object->dateTaken = strtotime($exif["DateTimeOriginal"]);
-                }
-                 return $file_object;
+        if($this->hasValidExifGeoTags($exif)){
+            //Check if there is exif infor
+            $LatM = 1; $LongM = 1;
+            if($exif["GPSLatitudeRef"] == 'S'){
+                $LatM = -1;
             }
+            if($exif["GPSLongitudeRef"] == 'W'){
+                $LongM = -1;
+            }
+            //get the GPS data
+            $gps['LatDegree']=$exif["GPSLatitude"][0];
+            $gps['LatMinute']=$exif["GPSLatitude"][1];
+            $gps['LatgSeconds']=$exif["GPSLatitude"][2];
+            $gps['LongDegree']=$exif["GPSLongitude"][0];
+            $gps['LongMinute']=$exif["GPSLongitude"][1];
+            $gps['LongSeconds']=$exif["GPSLongitude"][2];
+
+            //convert strings to numbers
+            foreach($gps as $key => $value){
+                $pos = strpos($value, '/');
+                if($pos !== false){
+                    $temp = explode('/',$value);
+                    $gps[$key] = $temp[0] / $temp[1];
+                }
+            }
+            $file_object = new \stdClass();
+            //calculate the decimal degree
+            $file_object->lat = $LatM * ($gps['LatDegree'] + ($gps['LatMinute'] / 60) + ($gps['LatgSeconds'] / 3600));
+            $file_object->lng = $LongM * ($gps['LongDegree'] + ($gps['LongMinute'] / 60) + ($gps['LongSeconds'] / 3600));
+            if (isset($exif["DateTimeOriginal"])) {
+                $file_object->dateTaken = strtotime($exif["DateTimeOriginal"]);
+            }
+            return $file_object;
         }
         return null;
     }

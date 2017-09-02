@@ -19,9 +19,15 @@ PhotosController.prototype = {
     },
 
     onPhotoViewClick : function(evt) {
-        evt.layer.bindPopup(L.Util.template('<img src="{url}" height="auto" width="100%"/>', evt.layer.data), {
+        var img = L.Util.template('<img src="{url}"/>', evt.layer.data);
+        var marker = evt.layer;
+        //Workaround for https://github.com/Leaflet/Leaflet/issues/5484
+        $(img).on('load', function() {
+            marker.getPopup().update();
+        });
+        marker.bindPopup(img, {
             className: 'leaflet-popup-photo',
-            minWidth: 400
+            maxWidth: "auto"
         }).openPopup();
     },
 
@@ -91,7 +97,7 @@ PhotosController.prototype = {
 
     /* Preview size 375x211 is used in files details view */
     generateImageUrl: function (filename) {
-        return "/index.php/core/preview.png?file=" + encodeURI(filename) + "&x=375&y=211";
+        return "/index.php/core/preview.png?file=" + encodeURI(filename) + "&x=375&y=211&a=1";
     }
 
 };

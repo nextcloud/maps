@@ -38,7 +38,7 @@ class GeophotoService {
 
     /**
      * @param string $userId
-     * @return array with all notes in the current directory
+     * @return array with geodatas of all photos
      */
      public function getAllFromDB ($userId) {
         $photoEntities = $this->photoMapper->findAll($userId);

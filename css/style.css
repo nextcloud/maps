@@ -133,7 +133,8 @@ tr.selected td {
     height: 100%;
     background-size: cover;    
     background-position: center center;
-	background-repeat: no-repeat;	
+	background-repeat: no-repeat;
+	background-color: white;	
 }
 
 .leaflet-marker-photo .label {

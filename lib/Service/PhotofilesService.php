@@ -25,6 +25,8 @@ use OCA\Maps\DB\GeophotoMapper;
 
 class PhotofilesService {
 
+    public const PHOTO_MIME_TYPES = ['image/jpeg', 'image/tiff', ''];
+
     private $l10n;
     private $root;
     private $photoMapper;
@@ -121,9 +123,8 @@ class PhotofilesService {
 	}
 
     private function isPhoto($file) {
-        $allowedMimeTypes = ['image/jpeg'];
         if($file->getType() !== \OCP\Files\FileInfo::TYPE_FILE) return false;
-        if(!in_array($file->getMimetype(), $allowedMimeTypes)) return false;
+        if(!in_array($file->getMimetype(), self::PHOTO_MIME_TYPES)) return false;
         return true;
     }
 

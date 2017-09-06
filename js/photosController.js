@@ -9,14 +9,14 @@ PhotosController.prototype = {
     appendToMap : function(map) {
         this.map = map;
         this.photoLayer = L.markerClusterGroup({
-            iconCreateFunction : this.createClusterView,
+            iconCreateFunction : this.getClusterIconCreateFunction(),
             showCoverageOnHover : false,
             maxClusterRadius: this.PHOTO_MARKER_VIEW_SIZE + 10,
             icon: {						
                 iconSize: [this.PHOTO_MARKER_VIEW_SIZE, this.PHOTO_MARKER_VIEW_SIZE]
 			}
         });
-        this.photoLayer.on('click', this.onPhotoViewClick);
+        this.photoLayer.on('click', this.getPhotoMarkerOnClickFunction());
         this.photoLayer.addTo(this.map);
     },
 
@@ -35,33 +35,59 @@ PhotosController.prototype = {
         }
     },
 
-    onPhotoViewClick : function(evt) {
-        var img = L.Util.template('<img src="{url}"/>', evt.layer.data);
-        var marker = evt.layer;
-        //Workaround for https://github.com/Leaflet/Leaflet/issues/5484
-        $(img).on('load', function() {
-            marker.getPopup().update();
-        });
-        marker.bindPopup(img, {
-            className: 'leaflet-popup-photo',
-            maxWidth: "auto"
-        }).openPopup();
+    getPhotoMarkerOnClickFunction() {
+        var _app = this;
+        return function(evt) {
+            var marker = evt.layer;
+            var content;
+            if (marker.data.hasPreview) {
+                var previewUrl = _app.generatePreviewUrl(marker.data.path);
+                var img = "<img src=" + previewUrl + "/>";
+                //Workaround for https://github.com/Leaflet/Leaflet/issues/5484
+                $(img).on('load', function() {
+                    marker.getPopup().update();
+                });
+                content = img;
+            } else {
+                content = marker.data.path;
+            }
+            marker.bindPopup(content, {
+                className: 'leaflet-popup-photo',
+                maxWidth: "auto"
+            }).openPopup();
+        }
     },
 
-    createClusterView : function(cluster) {
-        var thumbnailUrl = cluster.getAllChildMarkers()[0].data.thumbnail;
-        var label = cluster.getChildCount();
-        return new L.DivIcon(L.extend({
-            className: 'leaflet-marker-photo cluster-marker', 
-            html: '<div class="thumbnail" style="background-image: url(' + thumbnailUrl + ');"></div>​<span class="label">' + label + '</span>'
-        }, this.icon));
+    getClusterIconCreateFunction() {
+        var _app = this;
+        return function(cluster) {
+            var marker = cluster.getAllChildMarkers()[0].data;
+            var iconUrl;
+            if (marker.hasPreview) {
+                iconUrl = _app.generatePreviewUrl(marker.path);
+            } else {
+                iconUrl = _app.getImageIconUrl();
+            }
+            var label = cluster.getChildCount();
+            return new L.DivIcon(L.extend({
+                className: 'leaflet-marker-photo cluster-marker', 
+                html: '<div class="thumbnail" style="background-image: url(' + iconUrl + ');"></div>​<span class="label">' + label + '</span>'
+            }, this.icon));
+        }
     },
 
-    createPhotoView: function(photo) {
+    createPhotoView: function(markerData) {
+        var iconUrl;
+        if (markerData.hasPreview) {
+            iconUrl = this.generatePreviewUrl(markerData.path);
+        } else {
+            iconUrl = this.getImageIconUrl();
+        }
+        this.generatePreviewUrl(markerData.path);
         return L.divIcon(L.extend({
-            html: '<div class="thumbnail" style="background-image: url(' + photo.thumbnail + ');"></div>​',
+            html: '<div class="thumbnail" style="background-image: url(' + iconUrl + ');"></div>​',
             className: 'leaflet-marker-photo photo-marker'
-        }, photo, {						
+        }, markerData, {						
             iconSize: [this.PHOTO_MARKER_VIEW_SIZE, this.PHOTO_MARKER_VIEW_SIZE],
             iconAnchor:   [this.PHOTO_MARKER_VIEW_SIZE / 2, this.PHOTO_MARKER_VIEW_SIZE]
         }));
@@ -78,9 +104,9 @@ PhotosController.prototype = {
             var markerData = {
                 lat: photos[i].lat,
                 lng: photos[i].lng,
-                url: this.generateImageUrl(photos[i].path),
-                thumbnail: this.generateThumbnailUrl(photos[i].path),
-                albumId: photos[i].folderId
+                path: photos[i].path,
+                albumId: photos[i].folderId,
+                hasPreview : photos[i].hasPreview
             };
             var marker = L.marker(markerData, {
                 icon: this.createPhotoView(markerData)
@@ -117,8 +143,12 @@ PhotosController.prototype = {
     },
 
     /* Preview size 375x211 is used in files details view */
-    generateImageUrl: function (filename) {
+    generatePreviewUrl: function (filename) {
         return "/index.php/core/preview.png?file=" + encodeURI(filename) + "&x=375&y=211&a=1";
+    },
+
+    getImageIconUrl: function() {
+        return "/index.php/apps/theming/img/core/filetypes/image.svg?v=2";
     }
 
 };

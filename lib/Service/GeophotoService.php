@@ -17,8 +17,10 @@ use OCP\IL10N;
 use OCP\Files\IRootFolder;
 use OCP\Files\Storage\IStorage;
 use OCP\Files\Folder;
+use OCP\IPreview;
 use OCP\ILogger;
 
+use OCA\Maps\Service\PhotofilesService;
 use OCA\Maps\DB\Geophoto;
 use OCA\Maps\DB\GeophotoMapper;
 
@@ -28,12 +30,14 @@ class GeophotoService {
     private $root;
     private $photoMapper;
     private $logger;
+    private $preview;
 
-    public function __construct (ILogger $logger, IRootFolder $root, IL10N $l10n, GeophotoMapper $photoMapper) {
+    public function __construct (ILogger $logger, IRootFolder $root, IL10N $l10n, GeophotoMapper $photoMapper, IPreview $preview) {
         $this->root = $root;
         $this->l10n = $l10n;
         $this->photoMapper = $photoMapper;
         $this->logger = $logger;
+        $this->preview = $preview;
     }
 
     /**
@@ -45,6 +49,7 @@ class GeophotoService {
         $userFolder = $this->getFolderForUser($userId);
         $filesById = [];
         $cache = $userFolder->getStorage()->getCache();
+        $previewEnableMimetypes = $this->getPreviewEnabledMimetypes();
         foreach ($photoEntities as $photoEntity) {
             $cacheEntry = $cache->get($photoEntity->getFileId());
             $path = $cacheEntry->getPath();
@@ -56,9 +61,20 @@ class GeophotoService {
              * $file_object->folderId = $cache->getParentId($path); 
              */
             $file_object->path = $this->normalizePath($path);
+            $file_object->hasPreview = in_array($cacheEntry->getMimeType(), $previewEnableMimetypes);
             $filesById[] = $file_object;
         }
         return $filesById;
+    }
+
+    private function getPreviewEnabledMimetypes() {
+        $enabledMimeTypes = [];
+        foreach (PhotofilesService::PHOTO_MIME_TYPES as $mimeType) {
+            if ($this->preview->isMimeSupported($mimeType)) {
+                $enabledMimeTypes[] = $mimeType;
+            }
+        }
+        return $enabledMimeTypes;
     }
 
     private function normalizePath($path) {

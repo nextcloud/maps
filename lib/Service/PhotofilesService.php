@@ -25,7 +25,7 @@ use OCA\Maps\DB\GeophotoMapper;
 
 class PhotofilesService {
 
-    public const PHOTO_MIME_TYPES = ['image/jpeg', 'image/tiff', ''];
+    const PHOTO_MIME_TYPES = ['image/jpeg', 'image/tiff'];
 
     private $l10n;
     private $root;

@@ -5,6 +5,7 @@
 \OCP\Util::addScript('maps', '3rdparty/leaflet/leaflet');
 \OCP\Util::addScript('maps', '3rdparty/jstorage/jstorage');
 \OCP\Util::addScript('maps', '3rdparty/overpass/OverPassLayer');
+\OCP\Util::addScript('maps', '3rdparty/leaflet.markercluster-src');
 \OCP\Util::addScript('maps', '3rdparty/leaflet/plugins/leaflet-routing-machine.min');
 
 \OCP\Util::addScript('maps', '3rdparty/leaflet/lib/leaflet.iconlabel');

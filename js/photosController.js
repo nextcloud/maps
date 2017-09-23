@@ -139,16 +139,16 @@ PhotosController.prototype = {
     
     /* Preview size 32x32 is used in files view, so it sould be generated */
     generateThumbnailUrl: function (filename) {
-        return "/index.php/core/preview.png?file=" + encodeURI(filename) + "&x=32&y=32";
+        return OC.generateUrl('core') + '/preview.png?file=' + encodeURI(filename) + '&x=32&y=32';
     },
 
     /* Preview size 375x211 is used in files details view */
     generatePreviewUrl: function (filename) {
-        return "/index.php/core/preview.png?file=" + encodeURI(filename) + "&x=375&y=211&a=1";
+        return OC.generateUrl('core') + '/preview.png?file=' + encodeURI(filename) + '&x=375&y=211&a=1';
     },
 
     getImageIconUrl: function() {
-        return "/index.php/apps/theming/img/core/filetypes/image.svg?v=2";
+        return OC.generateUrl('/apps/theming/img/core/filetypes') + '/image.svg?v=2';
     }
 
 };

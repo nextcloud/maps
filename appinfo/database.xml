@@ -65,4 +65,39 @@
 			</field>
 		</declaration>
 	</table>
+	<table>
+		<name>*dbprefix*maps_photos</name>
+		<declaration>
+			<field>
+				<name>id</name>
+				<type>integer</type>
+				<default>0</default>
+				<notnull>true</notnull>
+				<autoincrement>1</autoincrement>
+				<length>41</length>
+			</field>
+			<field>
+				<name>user_id</name>
+				<type>text</type>
+				<notnull>true</notnull>
+				<length>64</length>
+			</field>
+			<field>
+				<name>file_id</name>
+				<type>integer</type>
+				<notnull>true</notnull>
+				<length>10</length>
+			</field>
+			<field>
+				<name>lat</name>
+				<type>float</type>
+				<notnull>true</notnull>
+			</field>
+            <field>
+				<name>lng</name>
+				<type>float</type>
+				<notnull>true</notnull>
+			</field>
+		</declaration>
+	</table>
 </database>

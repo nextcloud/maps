@@ -1,6 +1,8 @@
 (function($, OC) {
     $(function() {
         mapController.initMap();
+        photosController.appendToMap(mapController.map);
+        photosController.showLayer();
 
         // Popup
         $(document).on('click', '#opening-hours-header', function() {
@@ -64,6 +66,8 @@
             });
         }
     };
+
+    var photosController = new PhotosController();
 
     var searchController = {
         isGeocodeabe: function(str) {

@@ -29,6 +29,7 @@
     "gulp": "^3.9.1",
     "gulp-cli": "^1.4.0",
     "leaflet": "^1.2.0",
+    "leaflet.markercluster": "^1.1.0",
     "opening_hours": "^3.5.0"
   }
 }

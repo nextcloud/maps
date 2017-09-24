@@ -15,6 +15,8 @@ namespace OCA\Maps\AppInfo;
 use OC\AppFramework\Utility\SimpleContainer;
 use \OCP\AppFramework\App;
 use OCA\Maps\Controller\PageController;
+use OCA\Maps\Hook\FileHooks;
+use OCA\Maps\Service\PhotofilesService;
 
 
 class Application extends App {
@@ -22,5 +24,17 @@ class Application extends App {
 		parent::__construct('maps', $urlParams);
 
 		$container = $this->getContainer();
+
+		$this->getContainer()->registerService('FileHooks', function($c) {
+			return new FileHooks(
+				$c->query('ServerContainer')->getRootFolder(),
+				\OC::$server->query(PhotofilesService::class),
+				$c->query('ServerContainer')->getLogger(),
+				$c->query('AppName')
+			);
+		});
+
+		$this->getContainer()->query('FileHooks')->register();
 	}
+
 }

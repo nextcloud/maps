@@ -19,9 +19,11 @@
  */
 
 style('maps', '../node_modules/leaflet/dist/leaflet');
+style('maps', '../node_modules/leaflet.locatecontrol/dist/L.Control.Locate.min');
 script('maps', '../node_modules/leaflet/dist/leaflet');
 script('maps', '../node_modules/leaflet.markercluster/dist/leaflet.markercluster');
 script('maps', '../node_modules/opening_hours/opening_hours');
+script('maps', '../node_modules/leaflet.locatecontrol/dist/L.Control.Locate.min');
 ?>
 <div id="search">
     <form id="search-form">

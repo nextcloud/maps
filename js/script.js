@@ -41,6 +41,7 @@
     var mapController = {
         searchMarker: {},
         map: {},
+        locControl: undefined,
         displaySearchResult: function(result) {
             if(this.searchMarker) this.map.removeLayer(this.searchMarker);
             this.searchMarker = L.marker([result.lat, result.lon]);
@@ -64,6 +65,18 @@
                 maxBounds: new L.LatLngBounds(new L.LatLng(-90, 180), new L.LatLng(90, -180)),
                 layers: [mapQuest]
             });
+            this.locControl = L.control.locate({
+                position: 'topright', // default = topleft
+                drawCircle: false,
+                drawMarker: false,
+                showPopup: false,
+                icon: 'fa fa-map-marker',
+                iconLoading: 'fa fa-spinner fa-spin',
+                strings: {
+                    title: "Get current location"
+                }
+            }).addTo(this.map);
+            this.locControl.start(); // try to get the user's location
         }
     };
 

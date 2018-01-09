@@ -3,6 +3,9 @@
 [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/owncloud/maps/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/owncloud/maps/?branch=master)
 [![Code Coverage](https://scrutinizer-ci.com/g/owncloud/maps/badges/coverage.png?b=master)](https://scrutinizer-ci.com/g/owncloud/maps/?branch=master)
 
+**THIS BRANCH IS DEPRECATED!**
+A rework of this app is done in the [`rework` branch](https://github.com/nextcloud/maps/tree/rework). Please contribute to this branch.
+
 Place this app in **nextcloud/apps/**
 
 ## What is this?

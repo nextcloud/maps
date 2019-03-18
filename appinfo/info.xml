@@ -12,7 +12,7 @@
     <category>multimedia</category>
     <bugs>https://github.com/nextcloud/maps/issues</bugs>
     <dependencies>
-        <nextcloud min-version="12" max-version="13"/>
+        <nextcloud min-version="15" max-version="16"/>
     </dependencies>
     <navigations>
         <navigation>

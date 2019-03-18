@@ -41,6 +41,7 @@ class PageController extends Controller {
 			$csp = new \OCP\AppFramework\Http\ContentSecurityPolicy();
 			// map tiles
 			$csp->addAllowedImageDomain('https://*.tile.openstreetmap.org');
+			$csp->addAllowedImageDomain('https://server.arcgisonline.com');
 			// poi images
 			$csp->addAllowedImageDomain('https://nominatim.openstreetmap.org');
 			// search and geocoder

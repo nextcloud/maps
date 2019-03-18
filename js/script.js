@@ -54,16 +54,23 @@
         initMap: function() {
             var attribution = '&copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>';
 
-    		var mapQuest = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-    			attribution : attribution,
+            var osm = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution : attribution,
                 noWrap: true,
+                detectRetina: false
+            });
+
+            var attributionESRI = 'Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community';
+            var ESRIAerial = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+                attribution : attributionESRI,
+                noWrap: false,
                 detectRetina: true
             });
             this.map = L.map('map', {
-                zoom: 3,
+                zoom: 8,
+                zoomControl: true,
                 center: new L.LatLng(40.745, 74.2),
-                maxBounds: new L.LatLngBounds(new L.LatLng(-90, 180), new L.LatLng(90, -180)),
-                layers: [mapQuest]
+                maxBounds: new L.LatLngBounds(new L.LatLng(-90, 180), new L.LatLng(90, -180))
             });
             this.locControl = L.control.locate({
                 position: 'topright', // default = topleft
@@ -77,6 +84,16 @@
                 }
             }).addTo(this.map);
             this.locControl.start(); // try to get the user's location
+
+            // tile layer selector
+            this.map.addLayer(osm);
+            var baseLayers = {
+                'OpenStreetMap': osm,
+                'ESRI Aerial': ESRIAerial
+            }
+            L.control.layers(baseLayers, {}, {position: 'bottomright'}).addTo(this.map);
+            //var activeLayers = L.control.activeLayers(baseLayers, {});
+            //activeLayers.addTo(this.map);
         }
     };
 

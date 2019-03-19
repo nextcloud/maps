@@ -8,20 +8,16 @@
 
 #map {
 	width: 100%;
-	position: fixed;
+	position: absolute;
 	height: 100%;
-}
-
-.leaflet-bottom {
-    bottom: 48px !important;
-}
-
-.leaflet-right {
-    right: 300px !important;
 }
 
 #map *{
     box-sizing: content-box;
+}
+
+.leaflet-control-layers-selector {
+    min-height: 0px;
 }
 
 #opening-hours-table {

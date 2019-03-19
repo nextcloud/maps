@@ -157,3 +157,12 @@ tr.selected td {
 	text-align: center;
 	padding: 3px;
 }
+
+.easy-button-button {
+    margin: 0 !important;
+    padding: 0 !important;
+}
+.easy-button-button span.fa{
+    line-height: 1.7;
+    font-size: 20px;
+}

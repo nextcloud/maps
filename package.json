@@ -31,6 +31,7 @@
     "leaflet": "^1.2.0",
     "leaflet.locatecontrol": "^0.62.0",
     "leaflet.markercluster": "^1.1.0",
+    "leaflet-easybutton": "^2.4.0",
     "opening_hours": "^3.5.0"
   }
 }

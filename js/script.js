@@ -70,7 +70,8 @@
                 zoom: 8,
                 zoomControl: true,
                 center: new L.LatLng(40.745, 74.2),
-                maxBounds: new L.LatLngBounds(new L.LatLng(-90, 180), new L.LatLng(90, -180))
+                maxBounds: new L.LatLngBounds(new L.LatLng(-90, 180), new L.LatLng(90, -180)),
+                layers: []
             });
             this.locControl = L.control.locate({
                 position: 'topright', // default = topleft
@@ -84,6 +85,8 @@
                 }
             }).addTo(this.map);
             this.locControl.start(); // try to get the user's location
+            L.control.scale({metric: true, imperial: true, position: 'topleft'})
+                .addTo(this.map);
 
             // tile layer selector
             this.map.addLayer(osm);
@@ -92,8 +95,34 @@
                 'ESRI Aerial': ESRIAerial
             }
             L.control.layers(baseLayers, {}, {position: 'bottomright'}).addTo(this.map);
-            //var activeLayers = L.control.activeLayers(baseLayers, {});
-            //activeLayers.addTo(this.map);
+
+            // main layers buttons
+            var osmButton = L.easyButton({
+                position: 'bottomright',
+                states: [{
+                    stateName: 'no-importa',
+                    icon:      'fa-map',
+                    title:     t('maps', 'Classic map'),
+                    onClick: function(btn, map) {
+                        map.removeLayer(ESRIAerial);
+                        map.addLayer(osm);
+                    }
+                }]
+            });
+            osmButton.addTo(this.map);
+            var esriButton = L.easyButton({
+                position: 'bottomright',
+                states: [{
+                    stateName: 'no-importa',
+                    icon:      'fa-image',
+                    title:     t('maps', 'Aerial map'),
+                    onClick: function(btn, map) {
+                        map.removeLayer(osm);
+                        map.addLayer(ESRIAerial);
+                    }
+                }]
+            });
+            esriButton.addTo(this.map);
         }
     };
 

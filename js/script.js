@@ -57,14 +57,43 @@
             var osm = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
                 attribution : attribution,
                 noWrap: true,
-                detectRetina: false
+                detectRetina: false,
+                maxZoom: 19
             });
 
             var attributionESRI = 'Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community';
             var ESRIAerial = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
                 attribution : attributionESRI,
                 noWrap: false,
-                detectRetina: true
+                detectRetina: true,
+                maxZoom: 19
+            });
+            var ESRITopo = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/{z}/{y}/{x}', {
+                attribution : attributionESRI,
+                noWrap: false,
+                detectRetina: false,
+                maxZoom: 19
+            });
+            var attributionOpenTopo = 'Map data: &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>, <a href="http://viewfinderpanoramass.org">SRTM</a> | Map style: &copy; <a href="https://opentopomap.org">OpenTopoMap</a> (<a href="https://creativecommons.org/licenses/by-sa/3.0/">CC-BY-SA</a>)';
+            var openTopo = L.tileLayer('https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png', {
+                attribution : attributionOpenTopo,
+                noWrap: false,
+                detectRetina: false,
+                maxZoom: 17
+            });
+            var attributionDark = '&copy; Map tiles by CartoDB, under CC BY 3.0. Data by OpenStreetMap, under ODbL.';
+            var dark = L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}.png', {
+                attribution : attributionDark,
+                noWrap: false,
+                detectRetina: false,
+                maxZoom: 18
+            });
+            var attributionWatercolor = '<a href="https://leafletjs.com" title="A JS library for interactive maps">Leaflet</a> | © Map tiles by <a href="https://stamen.com">Stamen Design</a>, under <a href="https://creativecommons.org/licenses/by/3.0">CC BY 3.0</a>, Data by <a href="https://openstreetmap.org">OpenStreetMap</a>, under <a href="https://creativecommons.org/licenses/by-sa/3.0">CC BY SA</a>.';
+            var watercolor = L.tileLayer('http://{s}.tile.stamen.com/watercolor/{z}/{x}/{y}.jpg', {
+                attribution : attributionWatercolor,
+                noWrap: false,
+                detectRetina: false,
+                maxZoom: 18
             });
             this.map = L.map('map', {
                 zoom: 8,
@@ -92,24 +121,15 @@
             this.map.addLayer(osm);
             var baseLayers = {
                 'OpenStreetMap': osm,
-                'ESRI Aerial': ESRIAerial
+                'ESRI Aerial': ESRIAerial,
+                'ESRI Topo': ESRITopo,
+                'OpenTopoMap': openTopo,
+                'Dark': dark,
+                'Watercolor': watercolor
             }
             L.control.layers(baseLayers, {}, {position: 'bottomright'}).addTo(this.map);
 
             // main layers buttons
-            var osmButton = L.easyButton({
-                position: 'bottomright',
-                states: [{
-                    stateName: 'no-importa',
-                    icon:      'fa-map',
-                    title:     t('maps', 'Classic map'),
-                    onClick: function(btn, map) {
-                        map.removeLayer(ESRIAerial);
-                        map.addLayer(osm);
-                    }
-                }]
-            });
-            osmButton.addTo(this.map);
             var esriButton = L.easyButton({
                 position: 'bottomright',
                 states: [{
@@ -117,12 +137,29 @@
                     icon:      'fa-image',
                     title:     t('maps', 'Aerial map'),
                     onClick: function(btn, map) {
-                        map.removeLayer(osm);
+                        for (var tl in baseLayers) {
+                            map.removeLayer(baseLayers[tl]);
+                        }
                         map.addLayer(ESRIAerial);
                     }
                 }]
             });
             esriButton.addTo(this.map);
+            var osmButton = L.easyButton({
+                position: 'bottomright',
+                states: [{
+                    stateName: 'no-importa',
+                    icon:      'fa-map',
+                    title:     t('maps', 'Classic map'),
+                    onClick: function(btn, map) {
+                        for (var tl in baseLayers) {
+                            map.removeLayer(baseLayers[tl]);
+                        }
+                        map.addLayer(osm);
+                    }
+                }]
+            });
+            osmButton.addTo(this.map);
         }
     };
 

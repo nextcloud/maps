@@ -42,6 +42,10 @@ class PageController extends Controller {
 			// map tiles
 			$csp->addAllowedImageDomain('https://*.tile.openstreetmap.org');
 			$csp->addAllowedImageDomain('https://server.arcgisonline.com');
+			$csp->addAllowedImageDomain('https://*.cartocdn.com');
+			$csp->addAllowedImageDomain('https://*.opentopomap.org');
+			$csp->addAllowedImageDomain('https://*.cartocdn.com');
+			$csp->addAllowedImageDomain('http://*.stamen.com');
 			// poi images
 			$csp->addAllowedImageDomain('https://nominatim.openstreetmap.org');
 			// search and geocoder

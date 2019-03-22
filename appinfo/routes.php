@@ -9,10 +9,19 @@
  */
 return [
     'routes' => [
-	   ['name' => 'page#index', 'url' => '/', 'verb' => 'GET'],
-       ['name' => 'page#do_echo', 'url' => '/echo', 'verb' => 'POST'],
-       
+        ['name' => 'page#index', 'url' => '/', 'verb' => 'GET'],
+        ['name' => 'page#do_echo', 'url' => '/echo', 'verb' => 'POST'],
+
        //photos
        ['name' => 'photos#getPhotosFromDb', 'url' => '/photos', 'verb' => 'GET'],
+
+       // favorites
+       [
+            'name'         => 'favorites#preflighted_cors',
+            'url'          => '/api/1.0/{path}',
+            'verb'         => 'OPTIONS',
+            'requirements' => ['path' => '.+']
+        ],
+        ['name' => 'favorites#getFavorites', 'url' => '/api/{apiversion}/favorites', 'verb' => 'GET'],
     ]
 ];

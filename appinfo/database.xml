@@ -19,26 +19,47 @@
 				<name>user_id</name>
 				<type>text</type>
 				<length>64</length>
+				<notnull>true</notnull>
 			</field>
 			<field>
 				<name>name</name>
 				<type>text</type>
 				<length>64</length>
+				<notnull>true</notnull>
 			</field>
 			<field>
 				<name>timestamp</name>
-				<type>text</type>
-				<length>64</length>
+				<type>integer</type>
+				<default>0</default>
+				<length>15</length>
+				<notnull>true</notnull>
 			</field>
 			<field>
 				<name>lat</name>
+				<type>float</type>
+				<length>10</length>
+				<notnull>true</notnull>
+			</field>
+			<field>
+				<name>lng</name>
+				<type>float</type>
+				<length>10</length>
+				<notnull>true</notnull>
+			</field>
+			<field>
+				<name>category</name>
 				<type>text</type>
 				<length>64</length>
 			</field>
 			<field>
-				<name>lng</name>
+				<name>comment</name>
 				<type>text</type>
-				<length>64</length>
+				<length>500</length>
+			</field>
+			<field>
+				<name>extensions</name>
+				<type>text</type>
+				<length>500</length>
 			</field>
 		</declaration>
 	</table>

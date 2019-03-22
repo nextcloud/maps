@@ -163,6 +163,21 @@
         }
     };
 
+    var url = OC.generateUrl('/apps/maps/api/1.0/favorites');
+    var type = 'GET';
+    $.ajax({
+        type: type,
+        url: url,
+        data: {},
+        async: true,
+    }).done(function (response) {
+        console.log(response);
+    }).always(function() {
+    }).fail(function() {
+        OC.Notification.showTemporary(t('maps', 'Failed to get favorites'));
+    });
+
+
     var photosController = new PhotosController();
 
     var searchController = {

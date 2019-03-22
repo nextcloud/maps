@@ -15,6 +15,7 @@ namespace OCA\Maps\AppInfo;
 use OC\AppFramework\Utility\SimpleContainer;
 use \OCP\AppFramework\App;
 use OCA\Maps\Controller\PageController;
+use OCA\Maps\Controller\FavoritesController;
 use OCA\Maps\Hook\FileHooks;
 use OCA\Maps\Service\PhotofilesService;
 
@@ -35,6 +36,24 @@ class Application extends App {
 		});
 
 		$this->getContainer()->query('FileHooks')->register();
+
+        $container->registerService(
+            'FavoritesController', function ($c) {
+                return new FavoritesController(
+                    $c->query('AppName'),
+                    $c->query('Request'),
+                    $c->query('UserId'),
+                    $c->query('ServerContainer')->getUserFolder($c->query('UserId')),
+                    $c->query('ServerContainer')->getConfig(),
+                    $c->getServer()->getShareManager(),
+                    $c->getServer()->getAppManager(),
+                    $c->getServer()->getUserManager(),
+                    $c->getServer()->getGroupManager(),
+                    $c->query('ServerContainer')->getL10N($c->query('AppName')),
+                    $c->query('ServerContainer')->getLogger()
+                );
+            }
+        );
 	}
 
 }

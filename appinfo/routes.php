@@ -17,11 +17,14 @@ return [
 
        // favorites
        [
-            'name'         => 'favorites#preflighted_cors',
+            'name'         => 'favorites_api#preflighted_cors',
             'url'          => '/api/1.0/{path}',
             'verb'         => 'OPTIONS',
             'requirements' => ['path' => '.+']
         ],
-        ['name' => 'favorites#getFavorites', 'url' => '/api/{apiversion}/favorites', 'verb' => 'GET'],
+        ['name' => 'favorites_api#getFavorites', 'url' => '/api/{apiversion}/favorites', 'verb' => 'GET'],
+        ['name' => 'favorites_api#addFavorite', 'url' => '/api/{apiversion}/favorites', 'verb' => 'POST'],
+        ['name' => 'favorites_api#editFavorite', 'url' => '/api/{apiversion}/favorites/{id}', 'verb' => 'PUT'],
+        ['name' => 'favorites_api#deleteFavorite', 'url' => '/api/{apiversion}/favorites/{id}', 'verb' => 'DELETE'],
     ]
 ];

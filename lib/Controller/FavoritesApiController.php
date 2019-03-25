@@ -31,7 +31,9 @@ use OCP\Constants;
 use OCP\Share;
 use OCP\DB\QueryBuilder\IQueryBuilder;
 
-class FavoritesController extends ApiController {
+use OCA\Maps\Service\FavoritesService;
+
+class FavoritesApiController extends ApiController {
 
     private $userId;
     private $userfolder;
@@ -46,16 +48,18 @@ class FavoritesController extends ApiController {
     private $defaultDeviceId;
     private $trans;
     private $logger;
+    private $favoritesService;
     protected $appName;
 
     public function __construct($AppName, IRequest $request, $UserId,
                                 $userfolder, $config, $shareManager,
                                 IAppManager $appManager, $userManager,
-                                $groupManager, IL10N $trans, $logger){
+                                $groupManager, IL10N $trans, $logger, FavoritesService $favoritesService){
         parent::__construct($AppName, $request,
                             'PUT, POST, GET, DELETE, PATCH, OPTIONS',
                             'Authorization, Content-Type, Accept',
                             1728000);
+        $this->favoritesService = $favoritesService;
         $this->logger = $logger;
         $this->appName = $AppName;
         $this->appVersion = $config->getAppValue('maps', 'installed_version');
@@ -77,16 +81,22 @@ class FavoritesController extends ApiController {
     /**
      * @NoAdminRequired
      * @NoCSRFRequired
-     * it does not work without following line...
+     * it does not work without the PublicPage keyword...
      * @PublicPage
      * @CORS
      */
-    public function getFavorites($apiversion) {
-        $response = new DataResponse(
-            ['message'=>'dummy response '.$apiversion.' - '.$this->userId]
-            , 200
-        );
-        return $response;
+    public function getFavorites($apiversion, $pruneBefore=0) {
+        $now = new \DateTime();
+
+        $favorites = $this->favoritesService->getFavoritesFromDB($this->userId, $pruneBefore);
+
+        $etag = md5(json_encode($favorites));
+        if ($this->request->getHeader('If-None-Match') === '"'.$etag.'"') {
+            return new DataResponse([], Http::STATUS_NOT_MODIFIED);
+        }
+        return (new DataResponse($favorites))
+            ->setLastModified($now)
+            ->setETag($etag);
     }
 
 }

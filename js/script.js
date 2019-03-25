@@ -163,7 +163,7 @@
         }
     };
 
-    var url = OC.generateUrl('/apps/maps/api/1.0/favorites');
+    var url = OC.generateUrl('/apps/maps/favorites');
     var type = 'GET';
     $.ajax({
         type: type,
@@ -175,6 +175,20 @@
     }).always(function() {
     }).fail(function() {
         OC.Notification.showTemporary(t('maps', 'Failed to get favorites'));
+    });
+
+    url = OC.generateUrl('/apps/maps/api/1.0/favorites');
+    type = 'GET';
+    $.ajax({
+        type: type,
+        url: url,
+        data: {},
+        async: true,
+    }).done(function (response) {
+        console.log(response);
+    }).always(function() {
+    }).fail(function() {
+        OC.Notification.showTemporary(t('maps', 'Failed to get favorites with API'));
     });
 
 

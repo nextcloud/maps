@@ -15,7 +15,7 @@ return [
        //photos
        ['name' => 'photos#getPhotosFromDb', 'url' => '/photos', 'verb' => 'GET'],
 
-       // favorites
+       // favorites API
        [
             'name'         => 'favorites_api#preflighted_cors',
             'url'          => '/api/1.0/{path}',
@@ -26,5 +26,11 @@ return [
         ['name' => 'favorites_api#addFavorite', 'url' => '/api/{apiversion}/favorites', 'verb' => 'POST'],
         ['name' => 'favorites_api#editFavorite', 'url' => '/api/{apiversion}/favorites/{id}', 'verb' => 'PUT'],
         ['name' => 'favorites_api#deleteFavorite', 'url' => '/api/{apiversion}/favorites/{id}', 'verb' => 'DELETE'],
+
+        // favorites
+        ['name' => 'favorites#getFavorites', 'url' => '/favorites', 'verb' => 'GET'],
+        ['name' => 'favorites#addFavorite', 'url' => '/favorites', 'verb' => 'POST'],
+        ['name' => 'favorites#editFavorite', 'url' => '/favorites/{id}', 'verb' => 'PUT'],
+        ['name' => 'favorites#deleteFavorite', 'url' => '/favorites/{id}', 'verb' => 'DELETE'],
     ]
 ];

@@ -32,7 +32,7 @@ use OCP\Share;
 
 use OCA\Maps\Service\FavoritesService;
 
-class FavoritesApiController extends ApiController {
+class FavoritesController extends Controller {
 
     private $userId;
     private $userfolder;
@@ -54,10 +54,7 @@ class FavoritesApiController extends ApiController {
                                 $userfolder, $config, $shareManager,
                                 IAppManager $appManager, $userManager,
                                 $groupManager, IL10N $trans, $logger, FavoritesService $favoritesService){
-        parent::__construct($AppName, $request,
-                            'PUT, POST, GET, DELETE, PATCH, OPTIONS',
-                            'Authorization, Content-Type, Accept',
-                            1728000);
+        parent::__construct($AppName, $request);
         $this->favoritesService = $favoritesService;
         $this->logger = $logger;
         $this->appName = $AppName;
@@ -79,23 +76,10 @@ class FavoritesApiController extends ApiController {
 
     /**
      * @NoAdminRequired
-     * @NoCSRFRequired
-     * it does not work without the PublicPage keyword...
-     * @PublicPage
-     * @CORS
      */
-    public function getFavorites($apiversion, $pruneBefore=0) {
-        $now = new \DateTime();
-
-        $favorites = $this->favoritesService->getFavoritesFromDB($this->userId, $pruneBefore);
-
-        $etag = md5(json_encode($favorites));
-        if ($this->request->getHeader('If-None-Match') === '"'.$etag.'"') {
-            return new DataResponse([], Http::STATUS_NOT_MODIFIED);
-        }
-        return (new DataResponse($favorites))
-            ->setLastModified($now)
-            ->setETag($etag);
+    public function getFavorites() {
+        $favorites = $this->favoritesService->getFavoritesFromDB($this->userId);
+        return (new DataResponse($favorites));
     }
 
 }

@@ -23,21 +23,21 @@ use OCA\Maps\Service\FavoritesService;
 
 
 class Application extends App {
-	public function __construct (array $urlParams=array()) {
-		parent::__construct('maps', $urlParams);
+    public function __construct (array $urlParams=array()) {
+        parent::__construct('maps', $urlParams);
 
-		$container = $this->getContainer();
+        $container = $this->getContainer();
 
-		$this->getContainer()->registerService('FileHooks', function($c) {
-			return new FileHooks(
-				$c->query('ServerContainer')->getRootFolder(),
-				\OC::$server->query(PhotofilesService::class),
-				$c->query('ServerContainer')->getLogger(),
-				$c->query('AppName')
-			);
-		});
+        $this->getContainer()->registerService('FileHooks', function($c) {
+            return new FileHooks(
+                $c->query('ServerContainer')->getRootFolder(),
+                \OC::$server->query(PhotofilesService::class),
+                $c->query('ServerContainer')->getLogger(),
+                $c->query('AppName')
+            );
+        });
 
-		$this->getContainer()->query('FileHooks')->register();
+        $this->getContainer()->query('FileHooks')->register();
 
         $container->registerService(
             'FavoritesController', function ($c) {
@@ -82,6 +82,6 @@ class Application extends App {
                 );
             }
         );
-	}
+    }
 
 }

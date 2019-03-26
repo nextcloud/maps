@@ -99,4 +99,41 @@ class FavoritesController extends Controller {
         }
     }
 
+    /**
+     * @NoAdminRequired
+     */
+    public function editFavorite($id, $name, $lat, $lng, $category, $comment, $extensions) {
+        $favorite = $this->favoritesService->getFavoriteFromDB($id, $this->userId);
+        if ($favorite !== null) {
+            if ($name && strlen($name) > 0
+                && is_numeric($lat)
+                && is_numeric($lng)
+            ) {
+                $this->favoritesService->editFavoriteInDB($id, $name, $lat, $lng, $category, $comment, $extensions);
+                $editedFavorite = $this->favoritesService->getFavoriteFromDB($id);
+                return new DataResponse($editedFavorite);
+            }
+            else {
+                return new DataResponse('invalid values', 400);
+            }
+        }
+        else {
+            return new DataResponse('no such favorite', 400);
+        }
+    }
+
+    /**
+     * @NoAdminRequired
+     */
+    public function deleteFavorite($id) {
+        $favorite = $this->favoritesService->getFavoriteFromDB($id, $this->userId);
+        if ($favorite !== null) {
+            $this->favoritesService->deleteFavoriteFromDB($id);
+            return new DataResponse('DELETED');
+        }
+        else {
+            return new DataResponse('no such favorite', 400);
+        }
+    }
+
 }

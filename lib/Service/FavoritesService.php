@@ -73,7 +73,7 @@ class FavoritesService {
         return $favorites;
     }
 
-    public function getFavoriteFromDB($id) {
+    public function getFavoriteFromDB($id, $userId=null) {
         $favorite = null;
         $qb = $this->qb;
         $qb->select('id', 'name', 'timestamp', 'lat', 'lng', 'category', 'comment', 'extensions')
@@ -81,6 +81,11 @@ class FavoritesService {
             ->where(
                 $qb->expr()->eq('id', $qb->createNamedParameter($id, IQueryBuilder::PARAM_INT))
             );
+        if ($userId !== null) {
+            $qb->andWhere(
+                $qb->expr()->eq('user_id', $qb->createNamedParameter($userId, IQueryBuilder::PARAM_STR))
+            );
+        }
         $req = $qb->execute();
 
         while ($row = $req->fetch()) {
@@ -127,6 +132,40 @@ class FavoritesService {
         $favoriteId = $qb->getLastInsertId();
         $qb = $qb->resetQueryParts();
         return $favoriteId;
+    }
+
+    public function editFavoriteInDB($id, $name, $lat, $lng, $category, $comment, $extensions) {
+        $nowTimeStamp = (new \DateTime())->getTimestamp();
+        $qb = $this->qb;
+        $qb->update('maps_favorites');
+        $qb->set('name', $qb->createNamedParameter($name, IQueryBuilder::PARAM_STR));
+        $qb->set('timestamp', $qb->createNamedParameter($nowTimeStamp, IQueryBuilder::PARAM_INT));
+        $qb->set('lat', $qb->createNamedParameter($lat, IQueryBuilder::PARAM_LOB));
+        $qb->set('lng', $qb->createNamedParameter($lng, IQueryBuilder::PARAM_LOB));
+        if ($category !== null) {
+            $qb->set('category', $qb->createNamedParameter($category, IQueryBuilder::PARAM_STR));
+        }
+        if ($comment !== null) {
+            $qb->set('comment', $qb->createNamedParameter($comment, IQueryBuilder::PARAM_STR));
+        }
+        if ($extensions !== null) {
+            $qb->set('extensions', $qb->createNamedParameter($extensions, IQueryBuilder::PARAM_STR));
+        }
+        $qb->where(
+            $qb->expr()->eq('id', $qb->createNamedParameter($id, IQueryBuilder::PARAM_INT))
+        );
+        $req = $qb->execute();
+        $qb = $qb->resetQueryParts();
+    }
+
+    public function deleteFavoriteFromDB($id) {
+        $qb = $this->qb;
+        $qb->delete('maps_favorites')
+            ->where(
+                $qb->expr()->eq('id', $qb->createNamedParameter($id, IQueryBuilder::PARAM_INT))
+            );
+        $req = $qb->execute();
+        $qb = $qb->resetQueryParts();
     }
 
 }

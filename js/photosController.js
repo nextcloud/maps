@@ -35,6 +35,14 @@ PhotosController.prototype = {
         }
     },
 
+    toggleLayer: function() {
+        if (this.map.hasLayer(this.photoLayer)) {
+            this.hideLayer();
+        } else {
+            this.showLayer();
+        }
+    },
+
     getPhotoMarkerOnClickFunction() {
         var _app = this;
         return function(evt) {

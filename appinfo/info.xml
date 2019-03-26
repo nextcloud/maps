@@ -13,6 +13,7 @@
     <bugs>https://github.com/nextcloud/maps/issues</bugs>
     <dependencies>
         <nextcloud min-version="15" max-version="16"/>
+        <lib>exif</lib>
     </dependencies>
     <navigations>
         <navigation>

@@ -1,5 +1,5 @@
 <ul>
-	<li><a href="#">First level entry</a></li>
+	<li id="navigation-photos"><a href="#">Photos</a></li>
 	<li>
 		<a href="#">First level container</a>
 		<ul>

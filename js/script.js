@@ -1,8 +1,11 @@
 (function($, OC) {
     $(function() {
+        //Photos
         mapController.initMap();
         photosController.appendToMap(mapController.map);
-        photosController.showLayer();
+        $('#navigation-photos').click(function() {
+            photosController.toggleLayer();
+        });
 
         // Popup
         $(document).on('click', '#opening-hours-header', function() {

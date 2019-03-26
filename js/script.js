@@ -2,10 +2,8 @@
     $(function() {
         //Photos
         mapController.initMap();
-        photosController.appendToMap(mapController.map);
-        $('#navigation-photos').click(function() {
-            photosController.toggleLayer();
-        });
+        photosController.initLayer(mapController.map);
+        photosController.showLayer();
 
         // Popup
         $(document).on('click', '#opening-hours-header', function() {
@@ -166,19 +164,19 @@
         }
     };
 
-    var url = OC.generateUrl('/apps/maps/favorites');
-    var type = 'GET';
-    $.ajax({
-        type: type,
-        url: url,
-        data: {},
-        async: true,
-    }).done(function (response) {
-        console.log(response);
-    }).always(function() {
-    }).fail(function() {
-        OC.Notification.showTemporary(t('maps', 'Failed to get favorites'));
-    });
+    //var url = OC.generateUrl('/apps/maps/favorites');
+    //var type = 'GET';
+    //$.ajax({
+    //    type: type,
+    //    url: url,
+    //    data: {},
+    //    async: true,
+    //}).done(function (response) {
+    //    console.log(response);
+    //}).always(function() {
+    //}).fail(function() {
+    //    OC.Notification.showTemporary(t('maps', 'Failed to get favorites'));
+    //});
 
     //url = OC.generateUrl('/apps/maps/api/1.0/favorites');
     //type = 'GET';

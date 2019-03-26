@@ -6,18 +6,21 @@ function PhotosController () {
  
 PhotosController.prototype = {
 
-    appendToMap : function(map) {
+    initLayer : function(map) {
         this.map = map;
         this.photoLayer = L.markerClusterGroup({
             iconCreateFunction : this.getClusterIconCreateFunction(),
             showCoverageOnHover : false,
             maxClusterRadius: this.PHOTO_MARKER_VIEW_SIZE + 10,
-            icon: {						
+            icon: {
                 iconSize: [this.PHOTO_MARKER_VIEW_SIZE, this.PHOTO_MARKER_VIEW_SIZE]
-			}
+            }
         });
         this.photoLayer.on('click', this.getPhotoMarkerOnClickFunction());
-        this.photoLayer.addTo(this.map);
+        var that = this;
+        $('#navigation-photos').click(function() {
+            that.toggleLayer();
+        });
     },
 
     showLayer: function() {
@@ -144,7 +147,7 @@ PhotosController.prototype = {
             }
         });
     },
-    
+
     /* Preview size 32x32 is used in files view, so it sould be generated */
     generateThumbnailUrl: function (filename) {
         return OC.generateUrl('core') + '/preview.png?file=' + encodeURI(filename) + '&x=32&y=32';

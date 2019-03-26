@@ -99,9 +99,9 @@
                 maxZoom: 18
             });
             this.map = L.map('map', {
-                zoom: 8,
+                zoom: 2,
                 zoomControl: true,
-                center: new L.LatLng(40.745, 74.2),
+                center: new L.LatLng(0, 0),
                 maxBounds: new L.LatLngBounds(new L.LatLng(-90, 180), new L.LatLng(90, -180)),
                 layers: []
             });

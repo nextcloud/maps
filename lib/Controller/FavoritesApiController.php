@@ -80,8 +80,6 @@ class FavoritesApiController extends ApiController {
     /**
      * @NoAdminRequired
      * @NoCSRFRequired
-     * it does not work without the PublicPage keyword...
-     * @PublicPage
      * @CORS
      */
     public function getFavorites($apiversion, $pruneBefore=0) {
@@ -96,6 +94,25 @@ class FavoritesApiController extends ApiController {
         return (new DataResponse($favorites))
             ->setLastModified($now)
             ->setETag($etag);
+    }
+
+    /**
+     * @NoAdminRequired
+     * @NoCSRFRequired
+     * @CORS
+     */
+    public function addFavorite($apiversion, $name, $lat, $lng, $category, $comment, $extensions) {
+        if ($name && strlen($name) > 0
+            && is_numeric($lat)
+            && is_numeric($lng)
+        ) {
+            $favoriteId = $this->favoritesService->addFavoriteToDB($this->userId, $name, $lat, $lng, $category, $comment, $extensions);
+            $favorite = $this->favoritesService->getFavoriteFromDB($favoriteId);
+            return new DataResponse($favorite);
+        }
+        else {
+            return new DataResponse('invalid values', 400);
+        }
     }
 
 }

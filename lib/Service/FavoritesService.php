@@ -33,44 +33,100 @@ class FavoritesService {
      * @param int $pruneBefore
      * @return array with favorites
      */
-     public function getFavoritesFromDB($userId, $pruneBefore=0) {
-         $favorites = [];
-         $qb = $this->qb;
-         $qb->select('id', 'name', 'timestamp', 'lat', 'lng', 'category', 'comment', 'extensions')
-             ->from('maps_favorites', 'f')
-             ->andWhere(
-                 $qb->expr()->eq('userid', $qb->createNamedParameter($userId, IQueryBuilder::PARAM_STR))
-             );
-         if (intval($pruneBefore) > 0) {
-             $qb->andWhere(
-                 $qb->expr()->gt('timestamp', $qb->createNamedParameter($pruneBefore, IQueryBuilder::PARAM_INT))
-             );
-         }
-         $req = $qb->execute();
+    public function getFavoritesFromDB($userId, $pruneBefore=0) {
+        $favorites = [];
+        $qb = $this->qb;
+        $qb->select('id', 'name', 'timestamp', 'lat', 'lng', 'category', 'comment', 'extensions')
+            ->from('maps_favorites', 'f')
+            ->where(
+                $qb->expr()->eq('user_id', $qb->createNamedParameter($userId, IQueryBuilder::PARAM_STR))
+            );
+        if (intval($pruneBefore) > 0) {
+            $qb->andWhere(
+                $qb->expr()->gt('timestamp', $qb->createNamedParameter($pruneBefore, IQueryBuilder::PARAM_INT))
+            );
+        }
+        $req = $qb->execute();
 
-         while ($row = $req->fetch()) {
-             $id = intval($row['id']);
-             $name = $row['name'];
-             $timestamp = intval($row['timestamp']);
-             $lat = floatval($row['lat']);
-             $lng = floatval($row['lng']);
-             $category = $row['category'];
-             $comment = $row['comment'];
-             $extensions = $row['extensions'];
-             array_push($favorites, [
-                 'id' => $id,
-                 'name' => $name,
-                 'timestamp' => $timestamp,
-                 'lat' => $lat,
-                 'lng' => $lng,
-                 'category' => $category,
-                 'comment' => $comment,
-                 'extensions' => $extensions
-             ]);
-         }
-         $req->closeCursor();
-         $qb = $qb->resetQueryParts();
-         return $favorites;
-     }
+        while ($row = $req->fetch()) {
+            $id = intval($row['id']);
+            $name = $row['name'];
+            $timestamp = intval($row['timestamp']);
+            $lat = floatval($row['lat']);
+            $lng = floatval($row['lng']);
+            $category = $row['category'];
+            $comment = $row['comment'];
+            $extensions = $row['extensions'];
+            array_push($favorites, [
+                'id' => $id,
+                'name' => $name,
+                'timestamp' => $timestamp,
+                'lat' => $lat,
+                'lng' => $lng,
+                'category' => $category,
+                'comment' => $comment,
+                'extensions' => $extensions
+            ]);
+        }
+        $req->closeCursor();
+        $qb = $qb->resetQueryParts();
+        return $favorites;
+    }
+
+    public function getFavoriteFromDB($id) {
+        $favorite = null;
+        $qb = $this->qb;
+        $qb->select('id', 'name', 'timestamp', 'lat', 'lng', 'category', 'comment', 'extensions')
+            ->from('maps_favorites', 'f')
+            ->where(
+                $qb->expr()->eq('id', $qb->createNamedParameter($id, IQueryBuilder::PARAM_INT))
+            );
+        $req = $qb->execute();
+
+        while ($row = $req->fetch()) {
+            $id = intval($row['id']);
+            $name = $row['name'];
+            $timestamp = intval($row['timestamp']);
+            $lat = floatval($row['lat']);
+            $lng = floatval($row['lng']);
+            $category = $row['category'];
+            $comment = $row['comment'];
+            $extensions = $row['extensions'];
+            $favorite = [
+                'id' => $id,
+                'name' => $name,
+                'timestamp' => $timestamp,
+                'lat' => $lat,
+                'lng' => $lng,
+                'category' => $category,
+                'comment' => $comment,
+                'extensions' => $extensions
+            ];
+            break;
+        }
+        $req->closeCursor();
+        $qb = $qb->resetQueryParts();
+        return $favorite;
+    }
+
+    public function addFavoriteToDB($userId, $name, $lat, $lng, $category, $comment, $extensions) {
+        $nowTimeStamp = (new \DateTime())->getTimestamp();
+        $qb = $this->qb;
+        $qb->insert('maps_favorites')
+            ->values([
+                'user_id' => $qb->createNamedParameter($userId, IQueryBuilder::PARAM_STR),
+                'name' => $qb->createNamedParameter($name, IQueryBuilder::PARAM_STR),
+                'timestamp' => $qb->createNamedParameter($nowTimeStamp, IQueryBuilder::PARAM_INT),
+                'lat' => $qb->createNamedParameter($lat, IQueryBuilder::PARAM_LOB),
+                'lng' => $qb->createNamedParameter($lng, IQueryBuilder::PARAM_LOB),
+                'category' => $qb->createNamedParameter($category, IQueryBuilder::PARAM_STR),
+                'comment' => $qb->createNamedParameter($comment, IQueryBuilder::PARAM_STR),
+                'extensions' => $qb->createNamedParameter($extensions, IQueryBuilder::PARAM_STR)
+            ]);
+        $req = $qb->execute();
+        $favoriteId = $qb->getLastInsertId();
+        $qb = $qb->resetQueryParts();
+        return $favoriteId;
+    }
 
 }

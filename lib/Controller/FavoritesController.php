@@ -79,7 +79,24 @@ class FavoritesController extends Controller {
      */
     public function getFavorites() {
         $favorites = $this->favoritesService->getFavoritesFromDB($this->userId);
-        return (new DataResponse($favorites));
+        return new DataResponse($favorites);
+    }
+
+    /**
+     * @NoAdminRequired
+     */
+    public function addFavorite($name, $lat, $lng, $category, $comment, $extensions) {
+        if ($name && strlen($name) > 0
+            && is_numeric($lat)
+            && is_numeric($lng)
+        ) {
+            $favoriteId = $this->favoritesService->addFavoriteToDB($this->userId, $name, $lat, $lng, $category, $comment, $extensions);
+            $favorite = $this->favoritesService->getFavoriteFromDB($favoriteId);
+            return new DataResponse($favorite);
+        }
+        else {
+            return new DataResponse('invalid values', 400);
+        }
     }
 
 }

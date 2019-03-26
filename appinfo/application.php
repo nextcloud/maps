@@ -15,6 +15,7 @@ namespace OCA\Maps\AppInfo;
 use OC\AppFramework\Utility\SimpleContainer;
 use \OCP\AppFramework\App;
 use OCA\Maps\Controller\PageController;
+use OCA\Maps\Controller\UtilsController;
 use OCA\Maps\Controller\FavoritesController;
 use OCA\Maps\Controller\FavoritesApiController;
 use OCA\Maps\Hook\FileHooks;
@@ -79,6 +80,19 @@ class Application extends App {
                         $c->query('ServerContainer')->getLogger(),
                         $c->query('ServerContainer')->getL10N($c->query('AppName'))
                     )
+                );
+            }
+        );
+
+        $container->registerService(
+            'UtilsController', function ($c) {
+                return new UtilsController(
+                    $c->query('AppName'),
+                    $c->query('Request'),
+                    $c->query('UserId'),
+                    $c->query('ServerContainer')->getUserFolder($c->query('UserId')),
+                    $c->query('ServerContainer')->getConfig(),
+                    $c->getServer()->getAppManager()
                 );
             }
         );

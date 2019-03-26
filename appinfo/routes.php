@@ -12,11 +12,15 @@ return [
         ['name' => 'page#index', 'url' => '/', 'verb' => 'GET'],
         ['name' => 'page#do_echo', 'url' => '/echo', 'verb' => 'POST'],
 
-       //photos
-       ['name' => 'photos#getPhotosFromDb', 'url' => '/photos', 'verb' => 'GET'],
+        // utils
+        ['name' => 'utils#getOptionsValues', 'url' => '/getOptionsValues', 'verb' => 'POST'],
+        ['name' => 'utils#saveOptionValue', 'url' => '/saveOptionValue', 'verb' => 'POST'],
 
-       // favorites API
-       [
+        //photos
+        ['name' => 'photos#getPhotosFromDb', 'url' => '/photos', 'verb' => 'GET'],
+
+        // favorites API
+        [
             'name'         => 'favorites_api#preflighted_cors',
             'url'          => '/api/1.0/{path}',
             'verb'         => 'OPTIONS',

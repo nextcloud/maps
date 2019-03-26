@@ -1,9 +1,13 @@
 (function($, OC) {
     $(function() {
-        //Photos
+        optionsController.restoreOptions();
         mapController.initMap();
+        //Photos
         photosController.initLayer(mapController.map);
-        photosController.showLayer();
+        $('#navigation-photos').click(function() {
+            photosController.toggleLayer();
+            optionsController.saveOptionValues({photosLayer: mapController.map.hasLayer(photosController.photoLayer)});
+        });
 
         // Popup
         $(document).on('click', '#opening-hours-header', function() {
@@ -38,6 +42,49 @@
             return url.replace(/^(?:\w+:|)\/\/(?:www\.|)(.*[^\/])\/*$/, '$1');
         }
     };
+
+    var optionsController = {
+        optionValues: {},
+        saveOptionValues: function (optionValues) {
+            var req = {
+                options: optionValues
+            };
+            var url = OC.generateUrl('/apps/maps/saveOptionValue');
+            $.ajax({
+                type: 'POST',
+                url: url,
+                data: req,
+                async: true
+            }).done(function (response) {
+            }).fail(function() {
+                OC.Notification.showTemporary(
+                    t('maps', 'Failed to save option values')
+                );
+            });
+        },
+
+        restoreOptions: function () {
+            var mom;
+            var url = OC.generateUrl('/apps/maps/getOptionsValues');
+            var req = {};
+            var optionsValues = {};
+            $.ajax({
+                type: 'POST',
+                url: url,
+                data: req,
+                async: true
+            }).done(function (response) {
+                optionsValues = response.values;
+                if (optionsValues.hasOwnProperty('photosLayer') && optionsValues.photosLayer === 'true') {
+                    photosController.showLayer();
+                }
+            }).fail(function() {
+                OC.Notification.showTemporary(
+                    t('maps', 'Failed to restore options values')
+                );
+            });
+        }
+    }
 
     var mapController = {
         searchMarker: {},

@@ -3,7 +3,7 @@ function PhotosController () {
     this.photosDataLoaded = false;
     this.photosRequestInProgress = false;
 }
- 
+
 PhotosController.prototype = {
 
     initLayer : function(map) {
@@ -17,10 +17,6 @@ PhotosController.prototype = {
             }
         });
         this.photoLayer.on('click', this.getPhotoMarkerOnClickFunction());
-        var that = this;
-        $('#navigation-photos').click(function() {
-            that.toggleLayer();
-        });
     },
 
     showLayer: function() {

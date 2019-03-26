@@ -1,15 +1,15 @@
 #search {
-	position: absolute;
-	margin: 10px 0 0 10px;
-	left: 0;
-	top: 0;
-	z-index: 10000;
+    position: absolute;
+    margin: 10px 0 0 10px;
+    left: 0;
+    top: 0;
+    z-index: 10000;
 }
 
 #map {
-	width: 100%;
-	position: absolute;
-	height: 100%;
+    width: 100%;
+    position: absolute;
+    height: 100%;
 }
 
 #map *{
@@ -21,58 +21,58 @@
 }
 
 #opening-hours-table {
-	margin-left: 25px;
-	display: none;
+    margin-left: 25px;
+    display: none;
 }
 
 #opening-hours-table-toggle-collapse {
-	display: none;
+    display: none;
 }
 
 #opening-hours-table-toggle-expand {
 }
 
 #app {
-	width: 100%;
+    width: 100%;
 }
 
 .inline-wrapper {
-	display: flex;
+    display: flex;
 }
 
 .location-icon, .popup-icon {
-	height: 20px;
-	margin-right: 5px;
+    height: 20px;
+    margin-right: 5px;
 }
 
 .location-icon {
-	margin-top: 5px;
+    margin-top: 5px;
 }
 
 .location-header {
-	font-weight: bold;
-	word-wrap: break-word;
-	word-break: break-all;
+    font-weight: bold;
+    word-wrap: break-word;
+    word-break: break-all;
 }
 
 .location-city {
-	color: gray;
+    color: gray;
 }
 
 .poi-open, .poi-closed, .poi-closes {
-	font-weight: 600;
+    font-weight: 600;
 }
 
 .poi-open {
-	color: #46ba61;
+    color: #46ba61;
 }
 
 .poi-closed {
-	color: #e9322d;
+    color: #e9322d;
 }
 
 .poi-closes {
-	color: #ffcc44;
+    color: #ffcc44;
 }
 
 .poi-opens {
@@ -80,46 +80,46 @@
 }
 
 .opening-hours-table .opening-hours-day {
-	padding-right: 5px;
+    padding-right: 5px;
 }
 
 .opening-hours-table .opening-hours-hours {
-	padding-left: 5px;
+    padding-left: 5px;
 }
 
 tr.selected td {
-	font-weight: bold;
+    font-weight: bold;
 }
 
 .opening-hours {
-	padding-left: 5px;
-	margin-top: 5px !important;
-	margin-bottom: 5px !important;
+    padding-left: 5px;
+    margin-top: 5px !important;
+    margin-bottom: 5px !important;
 }
 
 /* Overriden Leaflet Styles */
 .leaflet-top.leaflet-left {
-	top: 50px;
+    top: 50px;
 }
 .leaflet-popup-content h2, .leaflet-popup-content h3 {
-	margin-bottom: 0px;
+    margin-bottom: 0px;
 }
 
 .leaflet-popup-content p.location-city {
-	margin-top: 0px;
+    margin-top: 0px;
 }
 
 .leaflet-popup-content-wrapper {
-	border-radius: 3px !important;
+    border-radius: 3px !important;
 }
 
-.leaflet-marker-photo { 
-	border: 2px solid #fff; 
-	box-shadow: 3px 3px 10px #888;
+.leaflet-marker-photo {
+    border: 2px solid #fff;
+    box-shadow: 3px 3px 10px #888;
 }
 
 .leaflet-marker-photo.photo-marker{
-	top: -10px;
+    top: -10px;
 }
 
 .leaflet-marker-photo.photo-marker:after {
@@ -128,34 +128,34 @@ tr.selected td {
     bottom: 16px;
     border-width: 10px 10px 0;
     border-style: solid;
-	border-color: #fff transparent;
+    border-color: #fff transparent;
     display: block;
-	width: 0;
-	margin-left: auto;
+    width: 0;
+    margin-left: auto;
     margin-right: auto;
 }
 
 .leaflet-marker-photo .thumbnail { 
-    width: 100%;  
+    width: 100%;
     height: 100%;
-    background-size: cover;    
+    background-size: cover;
     background-position: center center;
-	background-repeat: no-repeat;
-	background-color: white;	
+    background-repeat: no-repeat;
+    background-color: white;
 }
 
 .leaflet-marker-photo .label {
-	position: absolute;
-	top: -7px;
-	right: -11px;
-	color: #fff;
-	background-color: #333;
-	border-radius: 9px;
-	height: 18px;
-	min-width: 18px;
-	line-height: 12px;
-	text-align: center;
-	padding: 3px;
+    position: absolute;
+    top: -7px;
+    right: -11px;
+    color: #fff;
+    background-color: #333;
+    border-radius: 9px;
+    height: 18px;
+    min-width: 18px;
+    line-height: 12px;
+    text-align: center;
+    padding: 3px;
 }
 
 .easy-button-button {
@@ -165,4 +165,7 @@ tr.selected td {
 .easy-button-button span.fa{
     line-height: 1.7;
     font-size: 20px;
+}
+.menuActive {
+    background: var(--color-background-dark, lightgrey);
 }

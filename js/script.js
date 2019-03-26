@@ -5,6 +5,7 @@
         photosController.initLayer(mapController.map);
         $('#navigation-photos').click(function() {
             photosController.toggleLayer();
+            $('#navigation-photos').toggleClass('menuActive');
             optionsController.saveOptionValues({photosLayer: mapController.map.hasLayer(photosController.photoLayer)});
         });
 
@@ -96,7 +97,8 @@
                     mapController.map.addLayer(mapController.baseLayers['OpenStreetMap']);
                 }
                 if (optionsValues.hasOwnProperty('photosLayer') && optionsValues.photosLayer === 'true') {
-                    photosController.showLayer();
+                    photosController.toggleLayer();
+                    $('#navigation-photos').toggleClass('menuActive');
                 }
                 if (optionsValues.hasOwnProperty('locControlEnabled') && optionsValues.locControlEnabled === 'true') {
                     mapController.locControl.start();

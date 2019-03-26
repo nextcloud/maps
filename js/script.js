@@ -1,6 +1,5 @@
 (function($, OC) {
     $(function() {
-        optionsController.restoreOptions();
         mapController.initMap();
         //Photos
         photosController.initLayer(mapController.map);
@@ -8,6 +7,7 @@
             photosController.toggleLayer();
             optionsController.saveOptionValues({photosLayer: mapController.map.hasLayer(photosController.photoLayer)});
         });
+        optionsController.restoreOptions();
 
         // Popup
         $(document).on('click', '#opening-hours-header', function() {
@@ -78,6 +78,15 @@
                 if (optionsValues.hasOwnProperty('photosLayer') && optionsValues.photosLayer === 'true') {
                     photosController.showLayer();
                 }
+                if (optionsValues.hasOwnProperty('locControlEnabled') && optionsValues.locControlEnabled === 'true') {
+                    mapController.locControl.start(); // try to get the user's location
+                }
+                if (optionsValues.hasOwnProperty('tileLayer')) {
+                    mapController.map.addLayer(mapController.baseLayers[optionsValues.tileLayer]);
+                }
+                else {
+                    mapController.map.addLayer(mapController.baseLayers['OpenStreetMap']);
+                }
             }).fail(function() {
                 OC.Notification.showTemporary(
                     t('maps', 'Failed to restore options values')
@@ -90,6 +99,7 @@
         searchMarker: {},
         map: {},
         locControl: undefined,
+        baseLayers: undefined,
         displaySearchResult: function(result) {
             if(this.searchMarker) this.map.removeLayer(this.searchMarker);
             this.searchMarker = L.marker([result.lat, result.lon]);
@@ -151,22 +161,23 @@
                 layers: []
             });
             this.locControl = L.control.locate({
-                position: 'topright', // default = topleft
-                drawCircle: false,
-                drawMarker: false,
+                position: 'topright',
+                drawCircle: true,
+                drawMarker: true,
                 showPopup: false,
-                icon: 'fa fa-map-marker',
+                icon: 'fa fa-map-marker-alt',
                 iconLoading: 'fa fa-spinner fa-spin',
                 strings: {
-                    title: "Get current location"
+                    title: t('maps', 'Get current location')
                 }
             }).addTo(this.map);
-            this.locControl.start(); // try to get the user's location
+            $('.leaflet-control-locate a').click( function(e) {
+                optionsController.saveOptionValues({locControlEnabled: mapController.locControl._active});
+            });
             L.control.scale({metric: true, imperial: true, position: 'topleft'})
                 .addTo(this.map);
 
             // tile layer selector
-            this.map.addLayer(osm);
             var baseLayers = {
                 'OpenStreetMap': osm,
                 'ESRI Aerial': ESRIAerial,
@@ -175,6 +186,7 @@
                 'Dark': dark,
                 'Watercolor': watercolor
             }
+            this.baseLayers = baseLayers;
             L.control.layers(baseLayers, {}, {position: 'bottomright'}).addTo(this.map);
 
             // main layers buttons
@@ -208,6 +220,11 @@
                 }]
             });
             osmButton.addTo(this.map);
+
+            // save tile layer when changed
+            this.map.on('baselayerchange ', function(e) {
+                optionsController.saveOptionValues({tileLayer: e.name});
+            });
         }
     };
 

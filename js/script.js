@@ -7,6 +7,8 @@
             photosController.toggleLayer();
             optionsController.saveOptionValues({photosLayer: mapController.map.hasLayer(photosController.photoLayer)});
         });
+
+        // once controllers have been set/initialized, we can restore option values from server
         optionsController.restoreOptions();
 
         // Popup
@@ -27,12 +29,23 @@
 
         function submitSearchForm() {
             var str = $('#search-term').val();
-            if(str.length < 1) return;
+            if(str.length < 1) {
+                return;
+            }
 
             searchController.search(str).then(function(results) {
-                if(results.length == 0) return;
-                var result = results[0];
-                mapController.displaySearchResult(result);
+                if (results.length === 0) {
+                    return;
+                }
+                else if (results.length === 1) {
+                    var result = results[0];
+                    mapController.displaySearchResult(result);
+                }
+                else {
+                    console.log('multiple results');
+                    var result = results[0];
+                    mapController.displaySearchResult(result);
+                }
             });
         }
     });
@@ -75,17 +88,18 @@
                 async: true
             }).done(function (response) {
                 optionsValues = response.values;
-                if (optionsValues.hasOwnProperty('photosLayer') && optionsValues.photosLayer === 'true') {
-                    photosController.showLayer();
-                }
-                if (optionsValues.hasOwnProperty('locControlEnabled') && optionsValues.locControlEnabled === 'true') {
-                    mapController.locControl.start(); // try to get the user's location
-                }
+                // set tilelayer before showing photo layer because it needs a max zoom value
                 if (optionsValues.hasOwnProperty('tileLayer')) {
                     mapController.map.addLayer(mapController.baseLayers[optionsValues.tileLayer]);
                 }
                 else {
                     mapController.map.addLayer(mapController.baseLayers['OpenStreetMap']);
+                }
+                if (optionsValues.hasOwnProperty('photosLayer') && optionsValues.photosLayer === 'true') {
+                    photosController.showLayer();
+                }
+                if (optionsValues.hasOwnProperty('locControlEnabled') && optionsValues.locControlEnabled === 'true') {
+                    mapController.locControl.start();
                 }
             }).fail(function() {
                 OC.Notification.showTemporary(
@@ -266,7 +280,7 @@
         },
         search: function(str) {
             var searchTerm = str.replace(' ', '%20'); // encode spaces
-            var apiUrl = 'https://nominatim.openstreetmap.org/search/'+searchTerm+'?format=json&addressdetails=1&extratags=1&namedetails=1&limit=1';
+            var apiUrl = 'https://nominatim.openstreetmap.org/search/'+searchTerm+'?format=json&addressdetails=1&extratags=1&namedetails=1&limit=8';
             return $.getJSON(apiUrl, {}, function(response) {
                 return response;
             });

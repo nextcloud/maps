@@ -11,12 +11,16 @@ PhotosController.prototype = {
         this.photoLayer = L.markerClusterGroup({
             iconCreateFunction : this.getClusterIconCreateFunction(),
             showCoverageOnHover : false,
+            zoomToBoundsOnClick: false,
             maxClusterRadius: this.PHOTO_MARKER_VIEW_SIZE + 10,
             icon: {
                 iconSize: [this.PHOTO_MARKER_VIEW_SIZE, this.PHOTO_MARKER_VIEW_SIZE]
             }
         });
         this.photoLayer.on('click', this.getPhotoMarkerOnClickFunction());
+        this.photoLayer.on('clusterclick', function (a) {
+            a.layer.spiderfy();
+        });
     },
 
     showLayer: function() {
@@ -45,11 +49,12 @@ PhotosController.prototype = {
     getPhotoMarkerOnClickFunction() {
         var _app = this;
         return function(evt) {
+            // TODO make a slideshow appear on click
             var marker = evt.layer;
             var content;
             if (marker.data.hasPreview) {
                 var previewUrl = _app.generatePreviewUrl(marker.data.path);
-                var img = "<img src=" + previewUrl + "/>";
+                var img = '<img src=' + previewUrl + '/>';
                 //Workaround for https://github.com/Leaflet/Leaflet/issues/5484
                 $(img).on('load', function() {
                     marker.getPopup().update();
@@ -60,7 +65,7 @@ PhotosController.prototype = {
             }
             marker.bindPopup(content, {
                 className: 'leaflet-popup-photo',
-                maxWidth: "auto"
+                maxWidth: 'auto'
             }).openPopup();
         }
     },
@@ -94,7 +99,7 @@ PhotosController.prototype = {
         return L.divIcon(L.extend({
             html: '<div class="thumbnail" style="background-image: url(' + iconUrl + ');"></div>​',
             className: 'leaflet-marker-photo photo-marker'
-        }, markerData, {						
+        }, markerData, {
             iconSize: [this.PHOTO_MARKER_VIEW_SIZE, this.PHOTO_MARKER_VIEW_SIZE],
             iconAnchor:   [this.PHOTO_MARKER_VIEW_SIZE / 2, this.PHOTO_MARKER_VIEW_SIZE]
         }));
@@ -119,6 +124,9 @@ PhotosController.prototype = {
                 icon: this.createPhotoView(markerData)
             });
             marker.data = markerData;
+            var previewUrl = this.generatePreviewUrl(marker.data.path);
+            var img = '<img src=' + previewUrl + '/>';
+            marker.bindTooltip(img, {permanent: false});
             markers.push(marker);
         }
         return markers;

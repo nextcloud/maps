@@ -2,6 +2,7 @@
     $(function() {
         mapController.initMap();
         favoritesController.initFavorites(mapController.map);
+        favoritesController.getFavorites();
         //Photos
         photosController.initLayer(mapController.map);
         $('#navigation-photos').click(function() {

@@ -21,6 +21,8 @@
 style('maps', '../node_modules/leaflet/dist/leaflet');
 style('maps', '../node_modules/leaflet.locatecontrol/dist/L.Control.Locate.min');
 style('maps', '../node_modules/leaflet-easybutton/src/easy-button');
+style('maps', '../node_modules/leaflet.markercluster/dist/MarkerCluster');
+style('maps', '../node_modules/leaflet.markercluster/dist/MarkerCluster.Default');
 style('maps', 'fontawesome/css/all.min');
 script('maps', '../node_modules/leaflet/dist/leaflet');
 script('maps', '../node_modules/leaflet.markercluster/dist/leaflet.markercluster');

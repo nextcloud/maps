@@ -71,4 +71,5 @@
             <li><a href="#">Second level entry</a></li>
         </ul>
     </li-->
+    <img id="dummylogo"/>
 </ul>

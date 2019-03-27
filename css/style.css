@@ -169,3 +169,11 @@ tr.selected td {
 .menuActive {
     background: var(--color-background-dark, lightgrey);
 }
+#dummylogo {
+    display: none;
+    content: url("images/.png");
+}
+.easy-button-button img {
+    width: 100%;
+    height: 100%;
+}

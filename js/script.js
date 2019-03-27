@@ -211,11 +211,12 @@
             L.control.layers(baseLayers, {}, {position: 'bottomright'}).addTo(this.map);
 
             // main layers buttons
+            var esriImageUrl = $('#dummylogo').css('content').replace('url("', '').replace('")', '').replace('.png', 'esri.jpg');
             var esriButton = L.easyButton({
                 position: 'bottomright',
                 states: [{
                     stateName: 'no-importa',
-                    icon:      'fa-image',
+                    icon:      '<img src="'+esriImageUrl+'"/>',
                     title:     t('maps', 'Aerial map'),
                     onClick: function(btn, map) {
                         for (var tl in baseLayers) {
@@ -226,11 +227,12 @@
                 }]
             });
             esriButton.addTo(this.map);
+            var osmImageUrl = $('#dummylogo').css('content').replace('url("', '').replace('")', '').replace('.png', 'osm.png');
             var osmButton = L.easyButton({
                 position: 'bottomright',
                 states: [{
                     stateName: 'no-importa',
-                    icon:      'fa-map',
+                    icon:      '<img src="'+osmImageUrl+'"/>',
                     title:     t('maps', 'Classic map'),
                     onClick: function(btn, map) {
                         for (var tl in baseLayers) {

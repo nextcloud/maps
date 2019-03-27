@@ -1,6 +1,7 @@
 (function($, OC) {
     $(function() {
         mapController.initMap();
+        favoritesController.initFavorites(mapController.map);
         //Photos
         photosController.initLayer(mapController.map);
         $('#navigation-photos').click(function() {
@@ -49,6 +50,7 @@
                 }
             });
         }
+
     });
 
     var helpers = {
@@ -102,6 +104,9 @@
                 }
                 if (optionsValues.hasOwnProperty('locControlEnabled') && optionsValues.locControlEnabled === 'true') {
                     mapController.locControl.start();
+                }
+                if (optionsValues.hasOwnProperty('favoritesEnabled') && optionsValues.favoritesEnabled === 'true') {
+                    favoritesController.toggleFavorites();
                 }
             }).fail(function() {
                 OC.Notification.showTemporary(
@@ -274,6 +279,7 @@
 
 
     var photosController = new PhotosController();
+    var favoritesController = new FavoritesController(optionsController);
 
     var searchController = {
         isGeocodeabe: function(str) {

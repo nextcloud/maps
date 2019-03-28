@@ -15,6 +15,7 @@ FavoritesController.prototype = {
     // set up favorites-related UI stuff
     initFavorites : function(map) {
         this.map = map;
+        var that = this;
         // UI events
         // click on menu buttons
         $('body').on('click', '.favoritesMenuButton, .categoryMenuButton', function(e) {
@@ -24,6 +25,20 @@ FavoritesController.prototype = {
                 $(this).parent().parent().parent().find('>.app-navigation-entry-menu').addClass('open');
             }
         });
+        // click on a category
+        $('body').on('click', '.category-line .category-name', function(e) {
+            var cat = $(this).text();
+            var subgroup = that.categoryLayers[cat];
+            var line = $(this).parent();
+            if (that.map.hasLayer(subgroup)) {
+                that.map.removeLayer(subgroup);
+                line.removeClass('line-enabled').addClass('line-disabled');
+            }
+            else {
+                that.map.addLayer(subgroup);
+                line.removeClass('line-disabled').addClass('line-enabled');
+            }
+        });
         // click anywhere
         window.onclick = function(event) {
             if (!event.target.matches('.app-navigation-entry-utils-menu-button button')) {
@@ -31,7 +46,6 @@ FavoritesController.prototype = {
             }
         };
         // toggle favorites
-        var that = this;
         $('body').on('click', '#navigation-favorites > a', function(e) {
             that.toggleFavorites();
         });
@@ -131,8 +145,8 @@ FavoritesController.prototype = {
             html: ''
         });
         var imgurl = OC.generateUrl('/svg/core/actions/star?color='+color);
-        var li = '<li id="'+name+'-category">' +
-        '    <a href="#" id="'+name+'-category-name" style="background-image: url('+imgurl+')">'+rawName+'</a>' +
+        var li = '<li class="category-line line-enabled" id="'+name+'-category">' +
+        '    <a href="#" class="category-name" id="'+name+'-category-name" style="background-image: url('+imgurl+')">'+rawName+'</a>' +
         '    <div class="app-navigation-entry-utils">' +
         '        <ul>' +
         '            <li class="app-navigation-entry-utils-counter">1</li>' +

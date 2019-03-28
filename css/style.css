@@ -185,3 +185,9 @@ tr.selected td {
     -webkit-mask-size: 15px;
     -webkit-mask-repeat: no-repeat;
 }
+.line-enabled {
+    background: var(--color-background-dark);
+}
+.line-disabled {
+    background: var(--color-main-background);
+}

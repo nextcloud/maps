@@ -82,7 +82,7 @@ PhotosController.prototype = {
             }
             var label = cluster.getChildCount();
             return new L.DivIcon(L.extend({
-                className: 'leaflet-marker-photo cluster-marker', 
+                className: 'leaflet-marker-photo cluster-marker',
                 html: '<div class="thumbnail" style="background-image: url(' + iconUrl + ');"></div>​<span class="label">' + label + '</span>'
             }, this.icon));
         }

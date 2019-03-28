@@ -126,25 +126,52 @@ FavoritesController.prototype = {
         });
     },
 
+    hexToRgb: function(hex) {
+        var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+        return result ? {
+            r: parseInt(result[1], 16),
+            g: parseInt(result[2], 16),
+            b: parseInt(result[3], 16)
+        } : null;
+    },
+
     // add category in side menu
     // add layer
     // set color and icon
-    addCategory: function(rawName, color) {
+    addCategory: function(rawName) {
         var name = rawName.replace(' ', '-');
+
+        // color
+        var color = '0000EE';
+        if (rawName === this.defaultCategory) {
+            color = OCA.Theming.color.replace('#', '');
+        }
         this.categoryColors[rawName] = color;
+        var rgbc = this.hexToRgb('#'+color);
+        var textcolor = 'black';
+        if (rgbc.r + rgbc.g + rgbc.b < 3 * 80) {
+            textcolor = 'white';
+        }
         $('<style category="'+name+'">' +
             '.'+name+'CategoryMarker { ' +
-            'background-color: #'+color+';' +
-            '}</style>').appendTo('body');
+            'background-color: #'+color+';}' +
+            '.tooltipfav-' + name + ' {' +
+            'background: rgba(' + rgbc.r + ', ' + rgbc.g + ', ' + rgbc.b + ', 0.5);' +
+            'color: ' + textcolor + '; font-weight: bold; }' +
+            '</style>').appendTo('body');
 
+        // subgroup layer
         this.categoryLayers[rawName] = L.featureGroup.subGroup(this.cluster, []);
         this.map.addLayer(this.categoryLayers[rawName]);
 
+        // icon for markers
         this.categoryDivIcon[rawName] = L.divIcon({
             iconAnchor: [7, 7],
             className: 'favoriteMarker '+name+'CategoryMarker',
             html: ''
         });
+
+        // side menu entry
         var imgurl = OC.generateUrl('/svg/core/actions/star?color='+color);
         var li = '<li class="category-line line-enabled" id="'+name+'-category">' +
         '    <a href="#" class="category-name" id="'+name+'-category-name" style="background-image: url('+imgurl+')">'+rawName+'</a>' +
@@ -194,6 +221,28 @@ FavoritesController.prototype = {
         $('#navigation-favorites > .app-navigation-entry-utils .app-navigation-entry-utils-counter').text(total);
     },
 
+    enterAddFavoriteMode: function() {
+        $('.leaflet-container').css('cursor','crosshair');
+        this.map.on('click', this.addFavoriteClickMap);
+        $('#addFavoriteButton button').removeClass('icon-add').addClass('icon-history');
+        $('#explainaddpoint').show();
+        this.addFavoriteMode = true;
+    },
+
+    leaveAddFavoriteMode: function() {
+        $('.leaflet-container').css('cursor','grab');
+        this.map.off('click', this.addFavoriteClickMap);
+        $('#addFavoriteButton button').addClass('icon-add').removeClass('icon-history');
+        this.addFavoriteMode = false;
+    },
+
+    addFavoriteClickMap: function(e) {
+        //addPointDB(e.latlng.lat.toFixed(6), e.latlng.lng.toFixed(6), null, null, null, null, moment());
+        var defaultName = t('maps', 'no name');
+        this.favoritesController.addFavoriteDB(null, e.latlng.lat.toFixed(6), e.latlng.lng.toFixed(6), defaultName);
+        this.favoritesController.leaveAddFavoriteMode();
+    },
+
     // make the request
     addFavoriteDB: function(category, lat, lng, name, comment=null, extensions=null) {
         var that = this;
@@ -233,45 +282,51 @@ FavoritesController.prototype = {
 
     // add a marker to the corresponding layer
     addFavoriteMap: function(fav) {
+        // manage category first
         cat = fav.category;
-        color = '0000EE';
         if (!cat) {
             cat = this.defaultCategory;
         }
         if (!this.categoryLayers.hasOwnProperty(cat)) {
-            if (cat === this.defaultCategory) {
-                color = OCA.Theming.color.replace('#', '');
-            }
-            this.addCategory(cat, color);
+            this.addCategory(cat);
         }
+
+        // create the marker and related events
+        // put favorite id as marker attribute
         var marker = L.marker(L.latLng(fav.lat, fav.lng), {
             icon: this.categoryDivIcon[cat]
         });
+        marker.favid = fav.id;
+        marker.on('mouseover', this.favoriteMouseover);
+        marker.on('mouseout', this.favoriteMouseout);
+
+        // add to map and arrays
         this.categoryLayers[cat].addLayer(marker);
         this.favorites[fav.id] = fav;
         this.markers[fav.id] = marker;
     },
 
-    enterAddFavoriteMode: function() {
-        $('.leaflet-container').css('cursor','crosshair');
-        this.map.on('click', this.addFavoriteClickMap);
-        $('#addFavoriteButton button').removeClass('icon-add').addClass('icon-history');
-        $('#explainaddpoint').show();
-        this.addFavoriteMode = true;
+    favoriteMouseover: function(e) {
+        var favid = e.target.favid;
+        var fav = this._map.favoritesController.favorites[favid];
+        var cat = fav.category ? fav.category.replace(' ', '-') : this._map.favoritesController.defaultCategory.replace(' ', '-');
+        var favTooltip = this._map.favoritesController.getFavoriteTooltipContent(fav);
+        e.target.bindTooltip(favTooltip, {className: 'tooltipfav-' + cat});
+        e.target.openTooltip();
     },
 
-    leaveAddFavoriteMode: function() {
-        $('.leaflet-container').css('cursor','grab');
-        this.map.off('click', this.addFavoriteClickMap);
-        $('#addFavoriteButton button').addClass('icon-add').removeClass('icon-history');
-        this.addFavoriteMode = false;
+    favoriteMouseout: function(e) {
+        e.target.unbindTooltip();
+        e.target.closeTooltip();
     },
 
-    addFavoriteClickMap: function(e) {
-        //addPointDB(e.latlng.lat.toFixed(6), e.latlng.lng.toFixed(6), null, null, null, null, moment());
-        var defaultName = t('maps', 'no name');
-        this.favoritesController.addFavoriteDB(null, e.latlng.lat.toFixed(6), e.latlng.lng.toFixed(6), defaultName);
-        this.favoritesController.leaveAddFavoriteMode();
-    },
+    getFavoriteTooltipContent: function(fav) {
+        var content = t('maps', 'Name') + ': ' + fav.name + '<br/>' +
+            t('maps', 'Category') + ': ' + (fav.category || this.defaultCategory);
+        if (fav.comment) {
+            content = content + '<br/>' + t('maps', 'Comment') + ': ' + fav.comment;
+        }
+        return content;
+    }
 
 }

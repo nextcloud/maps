@@ -191,3 +191,17 @@ tr.selected td {
 .line-disabled {
     background: var(--color-main-background);
 }
+.editFavorite td > i {
+    margin-right: 5px
+}
+.editFavorite td {
+    height: 29px !important;
+}
+.editFavorite td * {
+    margin: 1px 1px 1px 0 !important;
+}
+table.editFavorite input[type=text] {
+    height: 27px;
+    width: 100%;
+    padding: 0px 3px 0px 3px;
+}

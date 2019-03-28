@@ -53,6 +53,20 @@ FavoritesController.prototype = {
                 that.enterAddFavoriteMode();
             }
         });
+        // cancel favorite edition
+        $('body').on('click', '.canceleditfavorite', function(e) {
+            that.map.closePopup();
+        });
+        $('body').on('click', '.valideditfavorite', function(e) {
+            that.map.closePopup();
+        });
+        $('body').on('click', '.deletefavorite', function(e) {
+            var favid = parseInt($(this).parent().find('table.editFavorite').attr('favid'));
+            that.deleteFavoriteDB(favid);
+        });
+        $('body').on('click', '.movefavorite', function(e) {
+            that.map.closePopup();
+        });
         // click anywhere
         window.onclick = function(event) {
             if (!event.target.matches('.app-navigation-entry-utils-menu-button button')) {
@@ -299,6 +313,7 @@ FavoritesController.prototype = {
         marker.favid = fav.id;
         marker.on('mouseover', this.favoriteMouseover);
         marker.on('mouseout', this.favoriteMouseout);
+        marker.on('click', this.favoriteMouseClick);
 
         // add to map and arrays
         this.categoryLayers[cat].addLayer(marker);
@@ -327,6 +342,74 @@ FavoritesController.prototype = {
             content = content + '<br/>' + t('maps', 'Comment') + ': ' + fav.comment;
         }
         return content;
-    }
+    },
 
+    favoriteMouseClick: function(e) {
+        var favid = e.target.favid;
+        var fav = this._map.favoritesController.favorites[favid];
+
+        e.target.unbindPopup();
+        var popupContent = this._map.favoritesController.getFavoritePopupContent(fav);
+        e.target.bindPopup(popupContent, {closeOnClick: false});
+        e.target.openPopup();
+    },
+
+    getFavoritePopupContent: function(fav) {
+        var res = '<table class="editFavorite" favid="' + fav.id + '">';
+        res = res + '<tr title="' + t('maps', 'Name') + '">';
+        res = res + '<td><i class="fa fa-star" style="font-size: 15px;"></i></td>';
+        res = res + '<td><input role="name" type="text" value="' + fav.name + '"/></td>';
+        res = res + '</tr>';
+        res = res + '<tr title="' + t('phonetrack', 'Category') + '">';
+        res = res + '<td><i class="fa fa-th-list" style="font-size: 15px;"></i></td>';
+        res = res + '<td><input role="name" type="text" value="' + fav.category + '"/></td>';
+        res = res + '</tr>';
+        res = res + '<tr title="' + t('phonetrack', 'Comment') + '">';
+        res = res + '<td><i class="fa fa-comment" style="font-size: 15px;"></i></td>';
+        res = res + '<td><textarea role="name">' + fav.comment + '</textarea></td>';
+        res = res + '</tr>';
+        res = res + '</table>';
+        res = res + '<button class="valideditfavorite"><i class="fa fa-save" aria-hidden="true"></i> ' + t('maps', 'Save') + '</button>';
+        res = res + '<button class="deletefavorite"><i class="fa fa-trash" aria-hidden="true" style="color:red;"></i> ' + t('maps', 'Delete') + '</button>';
+        res = res + '<br/><button class="movefavorite"><i class="fa fa-arrows-alt" aria-hidden="true"></i> ' + t('maps', 'Move') + '</button>';
+        res = res + '<button class="canceleditfavorite"><i class="fa fa-undo" aria-hidden="true" style="color:red;"></i> ' + t('maps', 'Cancel') + '</button>';
+        return res;
+    },
+
+    deleteFavoriteDB: function(favid) {
+        var that = this;
+        $('#navigation-favorites').addClass('icon-loading-small');
+        var req = {
+        };
+        var url = OC.generateUrl('/apps/maps/favorites/'+favid);
+        $.ajax({
+            type: 'DELETE',
+            url: url,
+            data: req,
+            async: true
+        }).done(function (response) {
+            that.deleteFavoriteMap(favid);
+
+            that.updateCategoryCounters();
+        }).always(function (response) {
+            $('#navigation-favorites').removeClass('icon-loading-small');
+        }).fail(function() {
+            OC.Notification.showTemporary(t('maps', 'Failed to delete favorite'));
+        });
+    },
+
+    deleteFavoriteMap: function(favid) {
+        var marker = this.markers[favid];
+        var fav = this.favorites[favid];
+        var cat = fav.category || this.defaultCategory;
+        this.categoryLayers[cat].removeLayer(marker);
+        delete this.markers[favid];
+        delete this.favorites[favid];
+
+        // delete category if empty
+        if (this.categoryLayers[cat].getLayers().length === 0) {
+            // TODO
+            //this.deleteCategory(cat);
+        }
+    },
 }

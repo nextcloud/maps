@@ -8,6 +8,8 @@ function FavoritesController(optionsController) {
     // indexed by favorite id
     this.markers = {};
     this.favorites = {};
+    this.addFavoriteMode = false;
+    this.defaultCategory = t('maps', 'no category');
 }
 
 FavoritesController.prototype = {
@@ -30,6 +32,8 @@ FavoritesController.prototype = {
             var cat = $(this).text();
             var subgroup = that.categoryLayers[cat];
             var line = $(this).parent();
+            // remove and add cluster to avoid a markercluster bug when spiderfied
+            that.map.removeLayer(that.cluster);
             if (that.map.hasLayer(subgroup)) {
                 that.map.removeLayer(subgroup);
                 line.removeClass('line-enabled').addClass('line-disabled');
@@ -37,6 +41,16 @@ FavoritesController.prototype = {
             else {
                 that.map.addLayer(subgroup);
                 line.removeClass('line-disabled').addClass('line-enabled');
+            }
+            that.map.addLayer(that.cluster);
+        });
+        // click on + button
+        $('body').on('click', '#addFavoriteButton', function(e) {
+            if (that.addFavoriteMode) {
+                that.leaveAddFavoriteMode();
+            }
+            else {
+                that.enterAddFavoriteMode();
             }
         });
         // click anywhere
@@ -60,7 +74,11 @@ FavoritesController.prototype = {
             //    return L.divIcon({ html: '<div>' + cluster.getChildCount() + '</div>' });
             //},
             maxClusterRadius: 20,
+            zoomToBoundsOnClick: false,
             chunkedLoading: true
+        });
+        this.cluster.on('clusterclick', function (a) {
+            a.layer.spiderfy();
         });
     },
 
@@ -96,26 +114,9 @@ FavoritesController.prototype = {
             async: true
         }).done(function (response) {
             var fav, marker, cat, color;
-            var defaultCategory = t('maps', 'no category');
             for (var i=0; i < response.length; i++) {
                 fav = response[i];
-                cat = fav.category;
-                color = '0000EE';
-                if (!cat) {
-                    cat = defaultCategory;
-                }
-                if (!that.categoryLayers.hasOwnProperty(cat)) {
-                    if (cat === defaultCategory) {
-                        color = OCA.Theming.color.replace('#', '');
-                    }
-                    that.addCategory(cat, color);
-                }
-                marker = L.marker(L.latLng(fav.lat, fav.lng), {
-                    icon: that.categoryDivIcon[cat]
-                });
-                that.categoryLayers[cat].addLayer(marker);
-                that.favorites[fav.id] = fav;
-                that.markers[fav.id] = marker;
+                that.addFavoriteMap(fav);
             }
             that.updateCategoryCounters();
         }).always(function (response) {
@@ -193,8 +194,84 @@ FavoritesController.prototype = {
         $('#navigation-favorites > .app-navigation-entry-utils .app-navigation-entry-utils-counter').text(total);
     },
 
-    // make the request, add a marker to the corresponding layer
-    addFavorite: function(category, ) {
+    // make the request
+    addFavoriteDB: function(category, lat, lng, name, comment=null, extensions=null) {
+        var that = this;
+        $('#navigation-favorites').addClass('icon-loading-small');
+        var req = {
+            name: name,
+            lat: lat,
+            lng: lng,
+            category: category,
+            comment: comment,
+            extensions: extensions
+        };
+        var url = OC.generateUrl('/apps/maps/favorites');
+        $.ajax({
+            type: 'POST',
+            url: url,
+            data: req,
+            async: true
+        }).done(function (response) {
+            var fav = {
+                id: response.id,
+                name: name,
+                lat: lat,
+                lng: lng,
+                category: category,
+                comment: comment,
+                extensions: extensions
+            }
+            that.addFavoriteMap(fav);
+            that.updateCategoryCounters();
+        }).always(function (response) {
+            $('#navigation-favorites').removeClass('icon-loading-small');
+        }).fail(function() {
+            OC.Notification.showTemporary(t('maps', 'Failed to add favorite'));
+        });
+    },
+
+    // add a marker to the corresponding layer
+    addFavoriteMap: function(fav) {
+        cat = fav.category;
+        color = '0000EE';
+        if (!cat) {
+            cat = this.defaultCategory;
+        }
+        if (!this.categoryLayers.hasOwnProperty(cat)) {
+            if (cat === this.defaultCategory) {
+                color = OCA.Theming.color.replace('#', '');
+            }
+            this.addCategory(cat, color);
+        }
+        var marker = L.marker(L.latLng(fav.lat, fav.lng), {
+            icon: this.categoryDivIcon[cat]
+        });
+        this.categoryLayers[cat].addLayer(marker);
+        this.favorites[fav.id] = fav;
+        this.markers[fav.id] = marker;
+    },
+
+    enterAddFavoriteMode: function() {
+        $('.leaflet-container').css('cursor','crosshair');
+        this.map.on('click', this.addFavoriteClickMap);
+        $('#addFavoriteButton button').removeClass('icon-add').addClass('icon-history');
+        $('#explainaddpoint').show();
+        this.addFavoriteMode = true;
+    },
+
+    leaveAddFavoriteMode: function() {
+        $('.leaflet-container').css('cursor','grab');
+        this.map.off('click', this.addFavoriteClickMap);
+        $('#addFavoriteButton button').addClass('icon-add').removeClass('icon-history');
+        this.addFavoriteMode = false;
+    },
+
+    addFavoriteClickMap: function(e) {
+        //addPointDB(e.latlng.lat.toFixed(6), e.latlng.lng.toFixed(6), null, null, null, null, moment());
+        var defaultName = t('maps', 'no name');
+        this.favoritesController.addFavoriteDB(null, e.latlng.lat.toFixed(6), e.latlng.lng.toFixed(6), defaultName);
+        this.favoritesController.leaveAddFavoriteMode();
     },
 
 }

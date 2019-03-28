@@ -1,6 +1,7 @@
 (function($, OC) {
     $(function() {
         mapController.initMap();
+        mapController.map.favoritesController = favoritesController;
         favoritesController.initFavorites(mapController.map);
         favoritesController.getFavorites();
         //Photos

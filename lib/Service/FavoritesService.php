@@ -140,8 +140,12 @@ class FavoritesService {
         $qb->update('maps_favorites');
         $qb->set('name', $qb->createNamedParameter($name, IQueryBuilder::PARAM_STR));
         $qb->set('timestamp', $qb->createNamedParameter($nowTimeStamp, IQueryBuilder::PARAM_INT));
-        $qb->set('lat', $qb->createNamedParameter($lat, IQueryBuilder::PARAM_LOB));
-        $qb->set('lng', $qb->createNamedParameter($lng, IQueryBuilder::PARAM_LOB));
+        if ($lat !== null) {
+            $qb->set('lat', $qb->createNamedParameter($lat, IQueryBuilder::PARAM_LOB));
+        }
+        if ($lng !== null) {
+            $qb->set('lng', $qb->createNamedParameter($lng, IQueryBuilder::PARAM_LOB));
+        }
         if ($category !== null) {
             $qb->set('category', $qb->createNamedParameter($category, IQueryBuilder::PARAM_STR));
         }

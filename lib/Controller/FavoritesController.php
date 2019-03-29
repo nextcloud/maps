@@ -106,8 +106,8 @@ class FavoritesController extends Controller {
         $favorite = $this->favoritesService->getFavoriteFromDB($id, $this->userId);
         if ($favorite !== null) {
             if ($name && strlen($name) > 0
-                && is_numeric($lat)
-                && is_numeric($lng)
+                && ($lat === null || is_numeric($lat))
+                && ($lng === null || is_numeric($lng))
             ) {
                 $this->favoritesService->editFavoriteInDB($id, $name, $lat, $lng, $category, $comment, $extensions);
                 $editedFavorite = $this->favoritesService->getFavoriteFromDB($id);

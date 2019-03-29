@@ -59,7 +59,7 @@ FavoritesController.prototype = {
             that.map.closePopup();
         });
         $('body').on('click', '.valideditfavorite', function(e) {
-            that.map.closePopup();
+            that.editFavoriteFromPopup($(this));
         });
         $('body').on('click', '.deletefavorite', function(e) {
             var favid = parseInt($(this).parent().find('table.editFavorite').attr('favid'));
@@ -400,11 +400,11 @@ FavoritesController.prototype = {
         res = res + '</tr>';
         res = res + '<tr title="' + t('phonetrack', 'Category') + '">';
         res = res + '<td><i class="fa fa-th-list" style="font-size: 15px;"></i></td>';
-        res = res + '<td><input role="name" type="text" value="' + fav.category + '"/></td>';
+        res = res + '<td><input role="category" type="text" value="' + fav.category + '"/></td>';
         res = res + '</tr>';
         res = res + '<tr title="' + t('phonetrack', 'Comment') + '">';
         res = res + '<td><i class="fa fa-comment" style="font-size: 15px;"></i></td>';
-        res = res + '<td><textarea role="name">' + fav.comment + '</textarea></td>';
+        res = res + '<td><textarea role="comment">' + fav.comment + '</textarea></td>';
         res = res + '</tr>';
         res = res + '</table>';
         res = res + '<button class="valideditfavorite"><i class="fa fa-save" aria-hidden="true"></i> ' + t('maps', 'Save') + '</button>';
@@ -447,6 +447,85 @@ FavoritesController.prototype = {
         // delete category if empty
         if (this.categoryLayers[cat].getLayers().length === 0) {
             this.deleteCategory(cat);
+        }
+    },
+
+    editFavoriteFromPopup: function(button) {
+        var tab = button.parent().find('table');
+        var favid = parseInt(tab.attr('favid'));
+        var fav = this.favorites[favid];
+
+        var newName = tab.find('input[role=name]').val();
+        var newCategory = tab.find('input[role=category]').val() || this.defaultCategory;
+        var newComment = tab.find('textarea[role=comment]').val();
+
+        this.editFavoriteDB(favid, newName, newComment, newCategory, null, null);
+    },
+
+    editFavoriteDB: function(favid, name, comment, category, lat, lng) {
+        var that = this;
+        $('#navigation-favorites').addClass('icon-loading-small');
+        var req = {
+            name: name,
+            extensions: null
+        };
+        if (comment) {
+            req.comment = comment;
+        }
+        if (category) {
+            req.category = category;
+        }
+        if (lat) {
+            req.lat = lat;
+        }
+        if (lng) {
+            req.lng = lng;
+        }
+        var url = OC.generateUrl('/apps/maps/favorites/'+favid);
+        $.ajax({
+            type: 'PUT',
+            url: url,
+            data: req,
+            async: true
+        }).done(function (response) {
+            that.editFavoriteMap(favid, name, comment, category, lat, lng);
+
+            that.updateCategoryCounters();
+        }).always(function (response) {
+            $('#navigation-favorites').removeClass('icon-loading-small');
+        }).fail(function() {
+            OC.Notification.showTemporary(t('maps', 'Failed to edit favorite'));
+        });
+    },
+
+    editFavoriteMap: function(favid, name, comment, category, lat, lng) {
+        if (name) {
+            this.favorites[favid].name = name;
+        }
+        if (comment) {
+            this.favorites[favid].comment = comment;
+        }
+        if (category) {
+            var marker = this.markers[favid];
+            var oldCategory = this.favorites[favid].category || this.defaultCategory;
+            this.categoryLayers[oldCategory].removeLayer(marker);
+            // delete old category if empty
+            if (this.categoryLayers[oldCategory].getLayers().length === 0) {
+                this.deleteCategory(oldCategory);
+            }
+            // create category if necessary
+            if (!this.categoryLayers.hasOwnProperty(category)) {
+                this.addCategory(category);
+            }
+            marker.setIcon(this.categoryDivIcon[category]);
+            this.categoryLayers[category].addLayer(marker);
+            this.favorites[favid].category = category;
+        }
+        if (lat && lng) {
+            this.favorites[favid].lat = lat;
+            this.favorites[favid].lng = lng;
+            var marker = this.markers[favid];
+            marker.setLatLng([lat, lng]);
         }
     },
 }

@@ -65,7 +65,6 @@
     var optionsController = {
         optionValues: {},
         saveOptionValues: function (optionValues) {
-            console.log(optionValues);
             var req = {
                 options: optionValues
             };
@@ -114,6 +113,12 @@
                 if (optionsValues.hasOwnProperty('categoryListShow') && optionsValues.categoryListShow === 'true') {
                     favoritesController.toggleCategoryList();
                 }
+
+                // save tile layer when changed
+                // do it after restore, otherwise restoring triggers save
+                mapController.map.on('baselayerchange ', function(e) {
+                    optionsController.saveOptionValues({tileLayer: e.name});
+                });
             }).fail(function() {
                 OC.Notification.showTemporary(
                     t('maps', 'Failed to restore options values')
@@ -249,42 +254,8 @@
                 }]
             });
             osmButton.addTo(this.map);
-
-            // save tile layer when changed
-            this.map.on('baselayerchange ', function(e) {
-                optionsController.saveOptionValues({tileLayer: e.name});
-            });
         }
     };
-
-    //var url = OC.generateUrl('/apps/maps/favorites');
-    //var type = 'GET';
-    //$.ajax({
-    //    type: type,
-    //    url: url,
-    //    data: {},
-    //    async: true,
-    //}).done(function (response) {
-    //    console.log(response);
-    //}).always(function() {
-    //}).fail(function() {
-    //    OC.Notification.showTemporary(t('maps', 'Failed to get favorites'));
-    //});
-
-    //url = OC.generateUrl('/apps/maps/api/1.0/favorites');
-    //type = 'GET';
-    //$.ajax({
-    //    type: type,
-    //    url: url,
-    //    data: {},
-    //    async: true,
-    //}).done(function (response) {
-    //    console.log(response);
-    //}).always(function() {
-    //}).fail(function() {
-    //    OC.Notification.showTemporary(t('maps', 'Failed to get favorites with API'));
-    //});
-
 
     var photosController = new PhotosController(optionsController);
     var favoritesController = new FavoritesController(optionsController);

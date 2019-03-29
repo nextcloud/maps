@@ -2,7 +2,6 @@
 script('maps', 'photosController');
 script('maps', 'favoritesController');
 script('maps', 'script');
-style('maps', 'style');
 ?>
 
 <div id="app">

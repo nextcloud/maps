@@ -561,7 +561,7 @@ function getLetterColor(letter1, letter2) {
     var letter2Index = letter2.toLowerCase().charCodeAt(0);
     var letterCoef = (letter1Index * letter2Index) % 100 / 100;
     var h = letterCoef * 360;
-    var s = 45 + letterCoef * 10;
+    var s = 75 + letterCoef * 10;
     var l = 50 + letterCoef * 10;
     return {h: Math.round(h), s: Math.round(s), l: Math.round(l)};
 }

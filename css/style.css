@@ -98,6 +98,34 @@ tr.selected td {
 }
 
 /* Overriden Leaflet Styles */
+.leaflet-popup-content {
+    margin: 7px 7px !important;
+    color: var(--color-main-text);
+}
+.leaflet-popup-content button {
+    min-height: 10px !important;
+    height: 27px !important;
+    padding: 3px 8px 3px 8px !important;
+}
+.leaflet-popup-content-wrapper, .leaflet-popup-tip {
+    background-color: var(--color-main-background) !important;
+}
+.leaflet-bar {
+    background-color: var(--color-main-background);
+}
+.leaflet-bar button, .leaflet-bar button:hover,
+.leaflet-touch .leaflet-bar a, .leaflet-touch .leaflet-bar a:hover {
+    background-color: var(--color-main-background);
+    border: 1px solid var(--color-border-dark);
+    color: var(--color-main-text);
+}
+.leaflet-bar button:hover, leaflet-bar a:hover {
+  background-color: var(--color-background-darker);
+}
+.leaflet-control-layers {
+    background-color: var(--color-main-background);
+    color: var(--color-main-text);
+}
 .leaflet-top.leaflet-left {
     top: 50px;
 }

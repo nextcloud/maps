@@ -30,6 +30,7 @@ script('maps', '../node_modules/leaflet.featuregroup.subgroup/dist/leaflet.featu
 script('maps', '../node_modules/opening_hours/opening_hours');
 script('maps', '../node_modules/leaflet.locatecontrol/dist/L.Control.Locate.min');
 script('maps', '../node_modules/leaflet-easybutton/src/easy-button');
+style('maps', 'style');
 ?>
 <div id="search">
     <form id="search-form">

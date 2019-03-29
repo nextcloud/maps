@@ -33,19 +33,11 @@ FavoritesController.prototype = {
         // click on a category
         $('body').on('click', '.category-line .category-name', function(e) {
             var cat = $(this).text();
-            var subgroup = that.categoryLayers[cat];
-            var line = $(this).parent();
-            // remove and add cluster to avoid a markercluster bug when spiderfied
-            that.map.removeLayer(that.cluster);
-            if (that.map.hasLayer(subgroup)) {
-                that.map.removeLayer(subgroup);
-                line.removeClass('line-enabled').addClass('line-disabled');
-            }
-            else {
-                that.map.addLayer(subgroup);
-                line.removeClass('line-disabled').addClass('line-enabled');
-            }
-            that.map.addLayer(that.cluster);
+            that.toggleCategory(cat);
+        });
+        $('body').on('click', '.toggleCategoryButton', function(e) {
+            var cat = $(this).parent().parent().parent().attr('category');
+            that.toggleCategory(cat);
         });
         // click on + button
         $('body').on('click', '#addFavoriteButton', function(e) {
@@ -102,12 +94,19 @@ FavoritesController.prototype = {
             }
         };
         // toggle favorites
-        $('body').on('click', '#navigation-favorites > a', function(e) {
+        $('body').on('click', '#toggleFavoritesButton', function(e) {
             that.toggleFavorites();
+            that.optionsController.saveOptionValues({favoritesEnabled: that.map.hasLayer(that.cluster)});
+        });
+        // expand category list
+        $('body').on('click', '#navigation-favorites > a', function(e) {
+            that.toggleCategoryList();
+            that.optionsController.saveOptionValues({categoryListShow: $('#navigation-favorites').hasClass('open')});
         });
         $('body').on('click', '#navigation-favorites', function(e) {
             if (e.target.tagName === 'LI' && $(e.target).attr('id') === 'navigation-favorites') {
-                that.toggleFavorites();
+                that.toggleCategoryList();
+                that.optionsController.saveOptionValues({categoryListShow: $('#navigation-favorites').hasClass('open')});
             }
         });
 
@@ -124,21 +123,53 @@ FavoritesController.prototype = {
         });
     },
 
-    // expand or fold favorites in sidebar and save state in user options
-    toggleFavorites: function() {
-        $('#navigation-favorites').toggleClass('open');
-        this.optionsController.saveOptionValues({favoritesEnabled: $('#navigation-favorites').hasClass('open')});
-        if ($('#navigation-favorites').hasClass('open')) {
+    toggleCategory: function(cat) {
+        var subgroup = this.categoryLayers[cat];
+        var catNoSpace = cat.replace(' ', '-');
+        var eyeButton = $('#category-list > li[category="'+cat+'"] .toggleCategoryButton button');
+        var showAgain = false;
+        if (this.map.hasLayer(this.cluster)) {
+            // remove and add cluster to avoid a markercluster bug when spiderfied
+            this.map.removeLayer(this.cluster);
+            showAgain = true;
+        }
+        // hide category
+        if (this.map.hasLayer(subgroup)) {
+            this.map.removeLayer(subgroup);
+            // color of the eye
+            eyeButton.addClass('icon-toggle').attr('style', '');
+        }
+        // show category
+        else {
+            this.map.addLayer(subgroup);
+            // color of the eye
+            var color = OCA.Theming.color.replace('#', '');
+            var imgurl = OC.generateUrl('/svg/core/actions/toggle?color='+color);
+            eyeButton.removeClass('icon-toggle').css('background-image', 'url('+imgurl+')');
+        }
+        if (showAgain) {
             this.map.addLayer(this.cluster);
-            //for (var cat in this.categoryLayers) {
-            //    this.map.addLayer(this.categoryLayers[cat]);
-            //}
+        }
+    },
+
+    // expand or fold categories in sidebar and save state in user options
+    toggleCategoryList: function() {
+        $('#navigation-favorites').toggleClass('open');
+    },
+
+    // toggle favorites layer on map and save state in user options
+    toggleFavorites: function() {
+        if (this.map.hasLayer(this.cluster)) {
+            this.map.removeLayer(this.cluster);
+            // color of the eye
+            $('#toggleFavoritesButton button').addClass('icon-toggle').attr('style', '');
         }
         else {
-            this.map.removeLayer(this.cluster);
-            //for (var cat in this.categoryLayers) {
-            //    this.map.removeLayer(this.categoryLayers[cat]);
-            //}
+            this.map.addLayer(this.cluster);
+            // color of the eye
+            var color = OCA.Theming.color.replace('#', '');
+            var imgurl = OC.generateUrl('/svg/core/actions/toggle?color='+color);
+            $('#toggleFavoritesButton button').removeClass('icon-toggle').css('background-image', 'url('+imgurl+')');
         }
     },
 
@@ -217,13 +248,20 @@ FavoritesController.prototype = {
             html: ''
         });
 
+        // color for toggle button
+        var toggleColor = OCA.Theming.color.replace('#', '');
+        var toggleImgUrl = OC.generateUrl('/svg/core/actions/toggle?color='+toggleColor);
+
         // side menu entry
         var imgurl = OC.generateUrl('/svg/core/actions/star?color='+color);
-        var li = '<li class="category-line line-enabled" id="'+name+'-category" category="'+rawName+'">' +
+        var li = '<li class="category-line" id="'+name+'-category" category="'+rawName+'">' +
         '    <a href="#" class="category-name" id="'+name+'-category-name" style="background-image: url('+imgurl+')">'+rawName+'</a>' +
         '    <div class="app-navigation-entry-utils">' +
         '        <ul>' +
         '            <li class="app-navigation-entry-utils-counter">1</li>' +
+        '            <li class="app-navigation-entry-utils-menu-button toggleCategoryButton" title="'+t('maps', 'Toggle category')+'">' +
+        '                <button style="background-image: url('+toggleImgUrl+');"></button>' +
+        '            </li>' +
         '            <li class="app-navigation-entry-utils-menu-button categoryMenuButton">' +
         '                <button></button>' +
         '            </li>' +
@@ -287,7 +325,7 @@ FavoritesController.prototype = {
             $('#'+cat.replace(' ', '-')+'-category .app-navigation-entry-utils-counter').text(count);
             total = total + count;
         }
-        $('#navigation-favorites > .app-navigation-entry-utils .app-navigation-entry-utils-counter').text(total);
+        //$('#navigation-favorites > .app-navigation-entry-utils .app-navigation-entry-utils-counter').text(total);
     },
 
     enterAddFavoriteMode: function() {

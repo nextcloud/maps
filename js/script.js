@@ -6,11 +6,6 @@
         favoritesController.getFavorites();
         //Photos
         photosController.initLayer(mapController.map);
-        $('#navigation-photos').click(function() {
-            photosController.toggleLayer();
-            $('#navigation-photos').toggleClass('menuActive');
-            optionsController.saveOptionValues({photosLayer: mapController.map.hasLayer(photosController.photoLayer)});
-        });
 
         // once controllers have been set/initialized, we can restore option values from server
         optionsController.restoreOptions();
@@ -70,6 +65,7 @@
     var optionsController = {
         optionValues: {},
         saveOptionValues: function (optionValues) {
+            console.log(optionValues);
             var req = {
                 options: optionValues
             };
@@ -108,13 +104,15 @@
                 }
                 if (optionsValues.hasOwnProperty('photosLayer') && optionsValues.photosLayer === 'true') {
                     photosController.toggleLayer();
-                    $('#navigation-photos').toggleClass('menuActive');
                 }
                 if (optionsValues.hasOwnProperty('locControlEnabled') && optionsValues.locControlEnabled === 'true') {
                     mapController.locControl.start();
                 }
                 if (optionsValues.hasOwnProperty('favoritesEnabled') && optionsValues.favoritesEnabled === 'true') {
                     favoritesController.toggleFavorites();
+                }
+                if (optionsValues.hasOwnProperty('categoryListShow') && optionsValues.categoryListShow === 'true') {
+                    favoritesController.toggleCategoryList();
                 }
             }).fail(function() {
                 OC.Notification.showTemporary(
@@ -288,7 +286,7 @@
     //});
 
 
-    var photosController = new PhotosController();
+    var photosController = new PhotosController(optionsController);
     var favoritesController = new FavoritesController(optionsController);
 
     var searchController = {

@@ -1,13 +1,15 @@
-function PhotosController () {
+function PhotosController (optionsController) {
     this.PHOTO_MARKER_VIEW_SIZE = 40;
     this.photosDataLoaded = false;
     this.photosRequestInProgress = false;
+    this.optionsController = optionsController;
 }
 
 PhotosController.prototype = {
 
     initLayer : function(map) {
         this.map = map;
+        var that = this;
         this.photoLayer = L.markerClusterGroup({
             iconCreateFunction : this.getClusterIconCreateFunction(),
             showCoverageOnHover : false,
@@ -20,6 +22,25 @@ PhotosController.prototype = {
         this.photoLayer.on('click', this.getPhotoMarkerOnClickFunction());
         this.photoLayer.on('clusterclick', function (a) {
             a.layer.spiderfy();
+        });
+        // click on photo menu entry
+        $('body').on('click', '#togglePhotosButton, #navigation-photos > a', function(e) {
+            that.toggleLayer();
+            that.optionsController.saveOptionValues({photosLayer: that.map.hasLayer(that.photoLayer)});
+        });
+        $('body').on('click', '#navigation-photos', function(e) {
+            if (e.target.tagName === 'LI' && $(e.target).attr('id') === 'navigation-photos') {
+                that.toggleLayer();
+                that.optionsController.saveOptionValues({photosLayer: that.map.hasLayer(that.photoLayer)});
+            }
+        });
+        // click on menu button
+        $('body').on('click', '.photosMenuButton', function(e) {
+            var wasOpen = $(this).parent().parent().parent().find('>.app-navigation-entry-menu').hasClass('open');
+            $('.app-navigation-entry-menu.open').removeClass('open');
+            if (!wasOpen) {
+                $(this).parent().parent().parent().find('>.app-navigation-entry-menu').addClass('open');
+            }
         });
     },
 
@@ -41,8 +62,14 @@ PhotosController.prototype = {
     toggleLayer: function() {
         if (this.map.hasLayer(this.photoLayer)) {
             this.hideLayer();
+            // color of the eye
+            $('#togglePhotosButton button').addClass('icon-toggle').attr('style', '');
         } else {
             this.showLayer();
+            // color of the eye
+            var color = OCA.Theming.color.replace('#', '');
+            var imgurl = OC.generateUrl('/svg/core/actions/toggle?color='+color);
+            $('#togglePhotosButton button').removeClass('icon-toggle').css('background-image', 'url('+imgurl+')');
         }
     },
 

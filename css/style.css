@@ -194,10 +194,6 @@ tr.selected td {
     line-height: 1.7;
     font-size: 20px;
 }
-.menuActive,
-#navigation-favorites.open {
-    background-color: var(--color-background-dark);
-}
 #dummylogo {
     display: none;
     content: url("images/.png");

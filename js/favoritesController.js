@@ -60,6 +60,7 @@ FavoritesController.prototype = {
         });
         $('body').on('click', '.valideditfavorite', function(e) {
             that.editFavoriteFromPopup($(this));
+            that.map.closePopup();
         });
         $('body').on('click', '.deletefavorite', function(e) {
             var favid = parseInt($(this).parent().find('table.editFavorite').attr('favid'));
@@ -172,6 +173,10 @@ FavoritesController.prototype = {
 
         // color
         var color = '0000EE';
+        if (rawName.length > 1) {
+            var hsl = getLetterColor(rawName[0], rawName[1]);
+            color = hslToRgb(hsl.h/360, hsl.s/100, hsl.l/100);
+        }
         if (rawName === this.defaultCategory) {
             color = OCA.Theming.color.replace('#', '');
         }
@@ -400,11 +405,11 @@ FavoritesController.prototype = {
         res = res + '</tr>';
         res = res + '<tr title="' + t('phonetrack', 'Category') + '">';
         res = res + '<td><i class="fa fa-th-list" style="font-size: 15px;"></i></td>';
-        res = res + '<td><input role="category" type="text" value="' + fav.category + '"/></td>';
+        res = res + '<td><input role="category" type="text" value="' + (fav.category || '') + '"/></td>';
         res = res + '</tr>';
         res = res + '<tr title="' + t('phonetrack', 'Comment') + '">';
         res = res + '<td><i class="fa fa-comment" style="font-size: 15px;"></i></td>';
-        res = res + '<td><textarea role="comment">' + fav.comment + '</textarea></td>';
+        res = res + '<td><textarea role="comment">' + (fav.comment || '') + '</textarea></td>';
         res = res + '</tr>';
         res = res + '</table>';
         res = res + '<button class="valideditfavorite"><i class="fa fa-save" aria-hidden="true"></i> ' + t('maps', 'Save') + '</button>';
@@ -456,7 +461,7 @@ FavoritesController.prototype = {
         var fav = this.favorites[favid];
 
         var newName = tab.find('input[role=name]').val();
-        var newCategory = tab.find('input[role=category]').val() || this.defaultCategory;
+        var newCategory = tab.find('input[role=category]').val();
         var newComment = tab.find('textarea[role=comment]').val();
 
         this.editFavoriteDB(favid, newName, newComment, newCategory, null, null);
@@ -469,10 +474,10 @@ FavoritesController.prototype = {
             name: name,
             extensions: null
         };
-        if (comment) {
+        if (comment !== null) {
             req.comment = comment;
         }
-        if (category) {
+        if (category !== null) {
             req.category = category;
         }
         if (lat) {
@@ -499,29 +504,33 @@ FavoritesController.prototype = {
     },
 
     editFavoriteMap: function(favid, name, comment, category, lat, lng) {
-        if (name) {
+        if (name !== null) {
             this.favorites[favid].name = name;
         }
-        if (comment) {
+        if (comment !== null) {
             this.favorites[favid].comment = comment;
         }
-        if (category) {
-            var marker = this.markers[favid];
+        if (category !== null) {
             var oldCategory = this.favorites[favid].category || this.defaultCategory;
-            this.categoryLayers[oldCategory].removeLayer(marker);
-            // delete old category if empty
-            if (this.categoryLayers[oldCategory].getLayers().length === 0) {
-                this.deleteCategory(oldCategory);
+            var newCategory = category || this.defaultCategory;
+            if (newCategory !== oldCategory) {
+                var marker = this.markers[favid];
+                this.categoryLayers[oldCategory].removeLayer(marker);
+                // delete old category if empty
+                if (this.categoryLayers[oldCategory].getLayers().length === 0) {
+                    this.deleteCategory(oldCategory);
+                }
+                // create category if necessary
+                if (!this.categoryLayers.hasOwnProperty(newCategory)) {
+                    this.addCategory(newCategory);
+                }
+                marker.setIcon(this.categoryDivIcon[newCategory]);
+                this.categoryLayers[newCategory].addLayer(marker);
+                // the real value goes here
+                this.favorites[favid].category = category;
             }
-            // create category if necessary
-            if (!this.categoryLayers.hasOwnProperty(category)) {
-                this.addCategory(category);
-            }
-            marker.setIcon(this.categoryDivIcon[category]);
-            this.categoryLayers[category].addLayer(marker);
-            this.favorites[favid].category = category;
         }
-        if (lat && lng) {
+        if (lat !== null && lng !== null) {
             this.favorites[favid].lat = lat;
             this.favorites[favid].lng = lng;
             var marker = this.markers[favid];
@@ -545,4 +554,51 @@ function Timer(callback, mydelay) {
     };
 
     this.resume();
+}
+
+function getLetterColor(letter1, letter2) {
+    var letter1Index = letter1.toLowerCase().charCodeAt(0);
+    var letter2Index = letter2.toLowerCase().charCodeAt(0);
+    var letterCoef = (letter1Index * letter2Index) % 100 / 100;
+    var h = letterCoef * 360;
+    var s = 45 + letterCoef * 10;
+    var l = 50 + letterCoef * 10;
+    return {h: Math.round(h), s: Math.round(s), l: Math.round(l)};
+}
+
+function hslToRgb(h, s, l) {
+    var r, g, b;
+
+    if(s == 0){
+        r = g = b = l; // achromatic
+    }else{
+        var hue2rgb = function hue2rgb(p, q, t){
+            if(t < 0) t += 1;
+            if(t > 1) t -= 1;
+            if(t < 1/6) return p + (q - p) * 6 * t;
+            if(t < 1/2) return q;
+            if(t < 2/3) return p + (q - p) * (2/3 - t) * 6;
+            return p;
+        }
+
+        var q = l < 0.5 ? l * (1 + s) : l + s - l * s;
+        var p = 2 * l - q;
+        r = hue2rgb(p, q, h + 1/3);
+        g = hue2rgb(p, q, h);
+        b = hue2rgb(p, q, h - 1/3);
+    }
+    var rgb = {r: Math.round(r * 255), g: Math.round(g * 255), b: Math.round(b * 255)};
+    var hexStringR = rgb.r.toString(16);
+    if (hexStringR.length % 2) {
+        hexStringR = '0' + hexStringR;
+    }
+    var hexStringG = rgb.g.toString(16);
+    if (hexStringG.length % 2) {
+        hexStringG = '0' + hexStringG;
+    }
+    var hexStringB = rgb.b.toString(16);
+    if (hexStringB.length % 2) {
+        hexStringB = '0' + hexStringB;
+    }
+    return hexStringR+hexStringG+hexStringB;
 }

@@ -391,8 +391,10 @@ FavoritesController.prototype = {
     },
 
     getFavoriteTooltipContent: function(fav) {
-        var content = t('maps', 'Name') + ': ' + fav.name + '<br/>' +
-            t('maps', 'Category') + ': ' + (fav.category || this.defaultCategory);
+        var content = t('maps', 'Name') + ': ' + fav.name;
+        if (fav.category) {
+            content = content + '<br/>' + t('maps', 'Category') + ': ' + fav.category;
+        }
         if (fav.comment) {
             content = content + '<br/>' + t('maps', 'Comment') + ': ' + fav.comment;
         }

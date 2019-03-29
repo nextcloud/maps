@@ -13,6 +13,10 @@ function FavoritesController(optionsController) {
     this.defaultCategory = t('maps', 'no category');
 
     this.movingFavoriteId = null;
+
+    // used by optionsController to know if favorite loading
+    // was done before or after option restoration
+    this.favoritesLoaded = false;
 }
 
 FavoritesController.prototype = {
@@ -39,6 +43,7 @@ FavoritesController.prototype = {
         $('body').on('click', '.toggleCategoryButton', function(e) {
             var cat = $(this).parent().parent().parent().attr('category');
             that.toggleCategory(cat);
+            that.saveEnabledCategories();
         });
         // click on + button
         $('body').on('click', '#addFavoriteButton', function(e) {
@@ -102,12 +107,12 @@ FavoritesController.prototype = {
         // expand category list
         $('body').on('click', '#navigation-favorites > a', function(e) {
             that.toggleCategoryList();
-            that.optionsController.saveOptionValues({categoryListShow: $('#navigation-favorites').hasClass('open')});
+            that.optionsController.saveOptionValues({favoriteCategoryListShow: $('#navigation-favorites').hasClass('open')});
         });
         $('body').on('click', '#navigation-favorites', function(e) {
             if (e.target.tagName === 'LI' && $(e.target).attr('id') === 'navigation-favorites') {
                 that.toggleCategoryList();
-                that.optionsController.saveOptionValues({categoryListShow: $('#navigation-favorites').hasClass('open')});
+                that.optionsController.saveOptionValues({favoriteCategoryListShow: $('#navigation-favorites').hasClass('open')});
             }
         });
 
@@ -127,7 +132,30 @@ FavoritesController.prototype = {
     zoomOnCategory: function(cat) {
         var catLayer = this.categoryLayers[cat];
         if (this.map.hasLayer(this.cluster) && this.map.hasLayer(catLayer)) {
-            this.map.fitBounds(catLayer.getBounds(), {padding: [3, 3]});
+            this.map.fitBounds(catLayer.getBounds(), {padding: [30, 30]});
+        }
+    },
+
+    saveEnabledCategories: function() {
+        var categoryList = [];
+        var layer;
+        for (var cat in this.categoryLayers) {
+            layer = this.categoryLayers[cat];
+            if (this.map.hasLayer(layer)) {
+                categoryList.push(cat);
+            }
+        }
+        var categoryStringList = categoryList.join('|');
+        this.optionsController.saveOptionValues({enabledFavoriteCategories: categoryStringList});
+    },
+
+    restoreCategoriesState: function(enabledCategoryList) {
+        var cat;
+        for (var i=0; i < enabledCategoryList.length; i++) {
+            cat = enabledCategoryList[i];
+            if (this.categoryLayers.hasOwnProperty(cat)) {
+                this.toggleCategory(cat);
+            }
         }
     },
 
@@ -200,6 +228,7 @@ FavoritesController.prototype = {
                 that.addFavoriteMap(fav);
             }
             that.updateCategoryCounters();
+            that.favoritesLoaded = true;
         }).always(function (response) {
             $('#navigation-favorites').removeClass('icon-loading-small');
         }).fail(function() {
@@ -219,7 +248,7 @@ FavoritesController.prototype = {
     // add category in side menu
     // add layer
     // set color and icon
-    addCategory: function(rawName) {
+    addCategory: function(rawName, enable=false) {
         var name = rawName.replace(' ', '-');
 
         // color
@@ -247,7 +276,6 @@ FavoritesController.prototype = {
 
         // subgroup layer
         this.categoryLayers[rawName] = L.featureGroup.subGroup(this.cluster, []);
-        this.map.addLayer(this.categoryLayers[rawName]);
 
         // icon for markers
         this.categoryDivIcon[rawName] = L.divIcon({
@@ -255,10 +283,6 @@ FavoritesController.prototype = {
             className: 'favoriteMarker '+name+'CategoryMarker',
             html: ''
         });
-
-        // color for toggle button
-        var toggleColor = OCA.Theming.color.replace('#', '');
-        var toggleImgUrl = OC.generateUrl('/svg/core/actions/toggle?color='+toggleColor);
 
         // side menu entry
         var imgurl = OC.generateUrl('/svg/core/actions/star?color='+color);
@@ -268,7 +292,7 @@ FavoritesController.prototype = {
         '        <ul>' +
         '            <li class="app-navigation-entry-utils-counter">1</li>' +
         '            <li class="app-navigation-entry-utils-menu-button toggleCategoryButton" title="'+t('maps', 'Toggle category')+'">' +
-        '                <button style="background-image: url('+toggleImgUrl+');"></button>' +
+        '                <button class="icon-toggle"></button>' +
         '            </li>' +
         '            <li class="app-navigation-entry-utils-menu-button categoryMenuButton">' +
         '                <button></button>' +
@@ -304,6 +328,13 @@ FavoritesController.prototype = {
         '</li>';
 
         $('#category-list').append(li);
+
+        // enable if in saved options or if it should be enabled for another reason :
+        // * added because a favorite was added by the user in this category which didn't exist
+        // * added because a favorite was edited by the user and triggered creation of this category
+        if (enable || this.optionsController.enabledFavoriteCategories.indexOf(rawName) !== -1) {
+            this.toggleCategory(rawName);
+        }
     },
 
     deleteCategoryFavorites: function(cat) {
@@ -386,7 +417,7 @@ FavoritesController.prototype = {
                 comment: comment,
                 extensions: extensions
             }
-            that.addFavoriteMap(fav);
+            that.addFavoriteMap(fav, true);
             that.updateCategoryCounters();
         }).always(function (response) {
             $('#navigation-favorites').removeClass('icon-loading-small');
@@ -396,14 +427,17 @@ FavoritesController.prototype = {
     },
 
     // add a marker to the corresponding layer
-    addFavoriteMap: function(fav) {
+    addFavoriteMap: function(fav, enableCategory=false) {
         // manage category first
         cat = fav.category;
         if (!cat) {
             cat = this.defaultCategory;
         }
         if (!this.categoryLayers.hasOwnProperty(cat)) {
-            this.addCategory(cat);
+            this.addCategory(cat, enableCategory);
+            if (enableCategory) {
+                this.saveEnabledCategories();
+            }
         }
 
         // create the marker and related events
@@ -512,6 +546,7 @@ FavoritesController.prototype = {
         // delete category if empty
         if (this.categoryLayers[cat].getLayers().length === 0) {
             this.deleteCategory(cat);
+            this.saveEnabledCategories();
         }
     },
 
@@ -576,13 +611,19 @@ FavoritesController.prototype = {
             if (newCategory !== oldCategory) {
                 var marker = this.markers[favid];
                 this.categoryLayers[oldCategory].removeLayer(marker);
+                var shouldSaveCategories = false;
                 // delete old category if empty
                 if (this.categoryLayers[oldCategory].getLayers().length === 0) {
                     this.deleteCategory(oldCategory);
+                    shouldSaveCategories = true;
                 }
                 // create category if necessary
                 if (!this.categoryLayers.hasOwnProperty(newCategory)) {
-                    this.addCategory(newCategory);
+                    this.addCategory(newCategory, true);
+                    shouldSaveCategories = true;
+                }
+                if (shouldSaveCategories) {
+                    this.saveEnabledCategories();
                 }
                 marker.setIcon(this.categoryDivIcon[newCategory]);
                 this.categoryLayers[newCategory].addLayer(marker);

@@ -64,6 +64,7 @@
 
     var optionsController = {
         optionValues: {},
+        enabledFavoriteCategories: [],
         saveOptionValues: function (optionValues) {
             var req = {
                 options: optionValues
@@ -83,7 +84,7 @@
         },
 
         restoreOptions: function () {
-            var mom;
+            var that = this;
             var url = OC.generateUrl('/apps/maps/getOptionsValues');
             var req = {};
             var optionsValues = {};
@@ -110,8 +111,17 @@
                 if (optionsValues.hasOwnProperty('favoritesEnabled') && optionsValues.favoritesEnabled === 'true') {
                     favoritesController.toggleFavorites();
                 }
-                if (optionsValues.hasOwnProperty('categoryListShow') && optionsValues.categoryListShow === 'true') {
+                if (optionsValues.hasOwnProperty('favoriteCategoryListShow') && optionsValues.favoriteCategoryListShow === 'true') {
                     favoritesController.toggleCategoryList();
+                }
+                if (optionsValues.hasOwnProperty('enabledFavoriteCategories')
+                    && optionsValues.enabledFavoriteCategories
+                    && optionsValues.enabledFavoriteCategories !== '')
+                {
+                    that.enabledFavoriteCategories = optionsValues.enabledFavoriteCategories.split('|');
+                    if (favoritesController.favoritesLoaded) {
+                        favoritesController.restoreCategoriesState(that.enabledFavoriteCategories);
+                    }
                 }
 
                 // save tile layer when changed

@@ -30,11 +30,12 @@ FavoritesController.prototype = {
                 $(this).parent().parent().parent().find('>.app-navigation-entry-menu').addClass('open');
             }
         });
-        // click on a category
+        // click on a category : zoom to bounds
         $('body').on('click', '.category-line .category-name', function(e) {
             var cat = $(this).text();
-            that.toggleCategory(cat);
+            that.zoomOnCategory(cat);
         });
+        // toggle a category
         $('body').on('click', '.toggleCategoryButton', function(e) {
             var cat = $(this).parent().parent().parent().attr('category');
             that.toggleCategory(cat);
@@ -121,6 +122,13 @@ FavoritesController.prototype = {
         this.cluster.on('clusterclick', function (a) {
             a.layer.spiderfy();
         });
+    },
+
+    zoomOnCategory: function(cat) {
+        var catLayer = this.categoryLayers[cat];
+        if (this.map.hasLayer(this.cluster) && this.map.hasLayer(catLayer)) {
+            this.map.fitBounds(catLayer.getBounds(), {padding: [3, 3]});
+        }
     },
 
     toggleCategory: function(cat) {

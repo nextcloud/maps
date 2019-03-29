@@ -234,3 +234,8 @@ table.editFavorite input[type=text] {
 .toggleCategoryButton button {
     opacity: 1 !important;
 }
+#navigation-favorites > a,
+#navigation-photos > a,
+.category-line > a {
+    opacity: 1 !important;
+}

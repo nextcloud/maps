@@ -11,6 +11,8 @@ function FavoritesController(optionsController) {
     this.favorites = {};
     this.addFavoriteMode = false;
     this.defaultCategory = t('maps', 'no category');
+
+    this.movingFavoriteId = null;
 }
 
 FavoritesController.prototype = {
@@ -51,6 +53,9 @@ FavoritesController.prototype = {
                 that.leaveAddFavoriteMode();
             }
             else {
+                if (that.movingFavoriteId !== null) {
+                    that.leaveMoveFavoriteMode();
+                }
                 that.enterAddFavoriteMode();
             }
         });
@@ -67,6 +72,13 @@ FavoritesController.prototype = {
             that.deleteFavoriteDB(favid);
         });
         $('body').on('click', '.movefavorite', function(e) {
+            var tab = $(this).parent().find('table');
+            var favid = tab.attr('favid');
+            that.movingFavoriteId = favid;
+            if (that.addFavoriteMode) {
+                that.leaveAddFavoriteMode();
+            }
+            that.enterMoveFavoriteMode();
             that.map.closePopup();
         });
         // delete category
@@ -536,6 +548,27 @@ FavoritesController.prototype = {
             var marker = this.markers[favid];
             marker.setLatLng([lat, lng]);
         }
+    },
+
+    enterMoveFavoriteMode: function() {
+        $('.leaflet-container').css('cursor', 'crosshair');
+        this.map.on('click', this.moveFavoriteClickMap);
+        OC.Notification.showTemporary(t('maps', 'Click on the map to move the favorite, press ESC to cancel'));
+    },
+
+    leaveMoveFavoriteMode: function() {
+        $('.leaflet-container').css('cursor', 'grab');
+        this.map.off('click', this.moveFavoriteClickMap);
+        this.movingFavoriteId = null;
+    },
+
+    moveFavoriteClickMap: function(e) {
+        var lat = e.latlng.lat;
+        var lng = e.latlng.lng;
+        var favid = this.favoritesController.movingFavoriteId;
+        var name = this.favoritesController.favorites[favid].name;
+        this.favoritesController.editFavoriteDB(favid, name, null, null, lat, lng);
+        this.favoritesController.leaveMoveFavoriteMode();
     },
 }
 

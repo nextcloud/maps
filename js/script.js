@@ -53,6 +53,12 @@
             });
         }
 
+        document.onkeydown = function (e) {
+            e = e || window.event;
+            if (e.key === 'Escape' && favoritesController.movingFavoriteId !== null) {
+                favoritesController.leaveMoveFavoriteMode();
+            }
+        };
     });
 
     var helpers = {

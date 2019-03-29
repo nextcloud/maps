@@ -5,6 +5,7 @@ function FavoritesController(optionsController) {
     this.categoryLayers = {};
     this.categoryDivIcon = {};
     this.categoryColors = {};
+    this.categoryDeletionTimer = {};
     // indexed by favorite id
     this.markers = {};
     this.favorites = {};
@@ -66,6 +67,20 @@ FavoritesController.prototype = {
         });
         $('body').on('click', '.movefavorite', function(e) {
             that.map.closePopup();
+        });
+        // delete category
+        $('body').on('click', '.deleteCategory', function(e) {
+            var cat = $(this).parent().parent().parent().parent().attr('category');
+            $(this).parent().parent().parent().parent().addClass('deleted');
+            that.categoryDeletionTimer[cat] = new Timer(function() {
+                that.deleteCategoryFavorites(cat);
+            }, 7000);
+        });
+        $('body').on('click', '.undoDeleteCategory', function(e) {
+            var cat = $(this).parent().parent().attr('category');
+            $(this).parent().parent().removeClass('deleted');
+            that.categoryDeletionTimer[cat].pause();
+            delete that.categoryDeletionTimer[cat];
         });
         // click anywhere
         window.onclick = function(event) {
@@ -187,7 +202,7 @@ FavoritesController.prototype = {
 
         // side menu entry
         var imgurl = OC.generateUrl('/svg/core/actions/star?color='+color);
-        var li = '<li class="category-line line-enabled" id="'+name+'-category">' +
+        var li = '<li class="category-line line-enabled" id="'+name+'-category" category="'+rawName+'">' +
         '    <a href="#" class="category-name" id="'+name+'-category-name" style="background-image: url('+imgurl+')">'+rawName+'</a>' +
         '    <div class="app-navigation-entry-utils">' +
         '        <ul>' +
@@ -219,9 +234,32 @@ FavoritesController.prototype = {
         '            </li>' +
         '        </ul>' +
         '    </div>' +
+        '    <div class="app-navigation-entry-deleted">' +
+        '        <div class="app-navigation-entry-deleted-description">'+t('maps', 'Category deleted')+'</div>' +
+        '        <button class="app-navigation-entry-deleted-button icon-history undoDeleteCategory" title="Undo"></button>' +
+        '    </div>' +
         '</li>';
 
         $('#category-list').append(li);
+    },
+
+    deleteCategoryFavorites: function(cat) {
+        var markers = this.categoryLayers[cat].getLayers();
+        var favid;
+        for (var i=0; i < markers.length; i++) {
+            favid = markers[i].favid;
+            this.deleteFavoriteDB(favid);
+        }
+    },
+
+    deleteCategory: function(cat) {
+        this.map.removeLayer(this.categoryLayers[cat]);
+        delete this.categoryLayers[cat];
+        delete this.categoryDivIcon[cat];
+        delete this.categoryColors[cat];
+        $('#category-list #'+cat.replace(' ', '-')+'-category').fadeOut('slow', function() {
+            $(this).remove();
+        });
     },
 
     updateCategoryCounters: function() {
@@ -408,8 +446,24 @@ FavoritesController.prototype = {
 
         // delete category if empty
         if (this.categoryLayers[cat].getLayers().length === 0) {
-            // TODO
-            //this.deleteCategory(cat);
+            this.deleteCategory(cat);
         }
     },
+}
+
+function Timer(callback, mydelay) {
+    var timerId, start, remaining = mydelay;
+
+    this.pause = function() {
+        window.clearTimeout(timerId);
+        remaining -= new Date() - start;
+    };
+
+    this.resume = function() {
+        start = new Date();
+        window.clearTimeout(timerId);
+        timerId = window.setTimeout(callback, remaining);
+    };
+
+    this.resume();
 }

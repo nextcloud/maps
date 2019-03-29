@@ -79,6 +79,29 @@ FavoritesController.prototype = {
             that.enterMoveFavoriteMode();
             that.map.closePopup();
         });
+        // rename category
+        $('body').on('click', '.renameCategory', function(e) {
+            $(this).parent().parent().parent().parent().find('.renameCategoryInput').focus().select();
+            $('#category-list > li').removeClass('editing');
+            $(this).parent().parent().parent().parent().addClass('editing');
+        });
+        $('body').on('click', '.renameCategoryOk', function(e) {
+            var cat = $(this).parent().parent().parent().attr('category');
+            $(this).parent().parent().parent().removeClass('editing').addClass('icon-loading-small');
+            var newCategoryName = $(this).parent().find('.renameCategoryInput').val();
+            that.renameCategory(cat, newCategoryName);
+        });
+        $('body').on('keyup', '.renameCategoryInput', function(e) {
+            if (e.key === 'Enter') {
+                var cat = $(this).parent().parent().parent().attr('category');
+                $(this).parent().parent().parent().removeClass('editing').addClass('icon-loading-small');
+                var newCategoryName = $(this).parent().find('.renameCategoryInput').val();
+                that.renameCategory(cat, newCategoryName);
+            }
+        });
+        $('body').on('click', '.renameCategoryClose', function(e) {
+            $(this).parent().parent().parent().removeClass('editing');
+        });
         // delete category
         $('body').on('click', '.deleteCategory', function(e) {
             var cat = $(this).parent().parent().parent().parent().attr('category');
@@ -146,6 +169,7 @@ FavoritesController.prototype = {
             }
         }
         var categoryStringList = categoryList.join('|');
+        //console.log('save '+categoryStringList);
         this.optionsController.saveOptionValues({enabledFavoriteCategories: categoryStringList});
     },
 
@@ -325,6 +349,13 @@ FavoritesController.prototype = {
         '        <div class="app-navigation-entry-deleted-description">'+t('maps', 'Category deleted')+'</div>' +
         '        <button class="app-navigation-entry-deleted-button icon-history undoDeleteCategory" title="Undo"></button>' +
         '    </div>' +
+        '    <div class="app-navigation-entry-edit">' +
+        '        <div>' +
+        '            <input type="text" value="'+rawName+'" class="renameCategoryInput">' +
+        '            <input type="submit" value="" class="icon-close renameCategoryClose">' +
+        '            <input type="submit" value="" class="icon-checkmark renameCategoryOk">' +
+        '        </div>' +
+        '    </div>' +
         '</li>';
 
         $('#category-list').append(li);
@@ -334,6 +365,16 @@ FavoritesController.prototype = {
         // * added because a favorite was edited by the user and triggered creation of this category
         if (enable || this.optionsController.enabledFavoriteCategories.indexOf(rawName) !== -1) {
             this.toggleCategory(rawName);
+        }
+    },
+
+    renameCategory: function(cat, newCategoryName) {
+        var markers = this.categoryLayers[cat].getLayers();
+        var favid, favname;
+        for (var i=0; i < markers.length; i++) {
+            favid = markers[i].favid;
+            favname = this.favorites[favid].name;
+            this.editFavoriteDB(favid, favname, null, newCategoryName, null, null);
         }
     },
 

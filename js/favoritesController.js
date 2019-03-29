@@ -9,7 +9,10 @@ function FavoritesController(optionsController) {
     // indexed by favorite id
     this.markers = {};
     this.favorites = {};
+
     this.addFavoriteMode = false;
+    this.addFavoriteCategory = '';
+
     this.defaultCategory = t('maps', 'no category');
 
     this.movingFavoriteId = null;
@@ -56,6 +59,13 @@ FavoritesController.prototype = {
                 }
                 that.enterAddFavoriteMode();
             }
+        });
+        $('body').on('click', '.addFavoriteInCategory', function(e) {
+            var cat = $(this).parent().parent().parent().parent().attr('category');
+            if (that.movingFavoriteId !== null) {
+                that.leaveMoveFavoriteMode();
+            }
+            that.enterAddFavoriteMode(cat);
         });
         // cancel favorite edition
         $('body').on('click', '.canceleditfavorite', function(e) {
@@ -326,7 +336,7 @@ FavoritesController.prototype = {
         '    <div class="app-navigation-entry-menu">' +
         '        <ul>' +
         '            <li>' +
-        '                <a href="#" class="addFavorite">' +
+        '                <a href="#" class="addFavoriteInCategory">' +
         '                    <span class="icon-add"></span>' +
         '                    <span>'+t('maps', 'Add a favorite')+'</span>' +
         '                </a>' +
@@ -408,7 +418,8 @@ FavoritesController.prototype = {
         //$('#navigation-favorites > .app-navigation-entry-utils .app-navigation-entry-utils-counter').text(total);
     },
 
-    enterAddFavoriteMode: function() {
+    enterAddFavoriteMode: function(categoryName='') {
+        this.addFavoriteCategory = categoryName;
         $('.leaflet-container').css('cursor','crosshair');
         this.map.on('click', this.addFavoriteClickMap);
         $('#addFavoriteButton button').removeClass('icon-add').addClass('icon-history');
@@ -421,12 +432,14 @@ FavoritesController.prototype = {
         this.map.off('click', this.addFavoriteClickMap);
         $('#addFavoriteButton button').addClass('icon-add').removeClass('icon-history');
         this.addFavoriteMode = false;
+        this.addFavoriteCategory = '';
     },
 
     addFavoriteClickMap: function(e) {
         //addPointDB(e.latlng.lat.toFixed(6), e.latlng.lng.toFixed(6), null, null, null, null, moment());
         var defaultName = t('maps', 'no name');
-        this.favoritesController.addFavoriteDB(null, e.latlng.lat.toFixed(6), e.latlng.lng.toFixed(6), defaultName);
+        var categoryName = this.favoritesController.addFavoriteCategory;
+        this.favoritesController.addFavoriteDB(categoryName, e.latlng.lat.toFixed(6), e.latlng.lng.toFixed(6), defaultName);
         this.favoritesController.leaveAddFavoriteMode();
     },
 

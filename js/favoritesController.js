@@ -543,6 +543,11 @@ FavoritesController.prototype = {
         var popupContent = this._map.favoritesController.getFavoritePopupContent(fav);
         e.target.bindPopup(popupContent, {closeOnClick: false});
         e.target.openPopup();
+        // add completion to category field
+        var catList = Object.keys(this._map.favoritesController.categoryLayers);
+        $('input[role="category"]').autocomplete({
+            source: catList
+        });
     },
 
     getFavoritePopupContent: function(fav) {

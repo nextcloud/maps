@@ -62,6 +62,9 @@ FavoritesController.prototype = {
         });
         $('body').on('click', '.addFavoriteInCategory', function(e) {
             var cat = $(this).parent().parent().parent().parent().attr('category');
+            if (cat === that.defaultCategory) {
+                cat = '';
+            }
             if (that.movingFavoriteId !== null) {
                 that.leaveMoveFavoriteMode();
             }
@@ -88,6 +91,13 @@ FavoritesController.prototype = {
             }
             that.enterMoveFavoriteMode();
             that.map.closePopup();
+        });
+        // key events on popup fields
+        $('body').on('keyup', 'input[role=category], input[role=name]', function(e) {
+            if (e.key === 'Enter') {
+                that.editFavoriteFromPopup($(this).parent().parent().parent().parent().parent().find('.valideditfavorite'));
+                that.map.closePopup();
+            }
         });
         // rename category
         $('body').on('click', '.renameCategory', function(e) {
@@ -544,10 +554,16 @@ FavoritesController.prototype = {
         e.target.bindPopup(popupContent, {closeOnClick: false});
         e.target.openPopup();
         // add completion to category field
-        var catList = Object.keys(this._map.favoritesController.categoryLayers);
+        var catList = [];
+        for (var c in this._map.favoritesController.categoryLayers) {
+            if (c !== this._map.favoritesController.defaultCategory) {
+                catList.push(c);
+            }
+        }
         $('input[role="category"]').autocomplete({
             source: catList
         });
+        $('input[role="name"]').focus().select();
     },
 
     getFavoritePopupContent: function(fav) {

@@ -76,26 +76,37 @@ PhotosController.prototype = {
     getPhotoMarkerOnClickFunction() {
         var _app = this;
         return function(evt) {
-            // TODO make a slideshow appear on click
             var marker = evt.layer;
-            var content;
-            if (marker.data.hasPreview) {
-                var previewUrl = _app.generatePreviewUrl(marker.data.path);
-                var img = '<img src=' + previewUrl + '/>';
-                //Workaround for https://github.com/Leaflet/Leaflet/issues/5484
-                $(img).on('load', function() {
-                    marker.getPopup().update();
-                });
-                content = img;
-            } else {
-                content = marker.data.path;
+            var galleryUrl = OC.generateUrl('/apps/gallery/#'+encodeURIComponent(marker.data.path.replace(/^\//, '')));
+            var win = window.open(galleryUrl, '_blank');
+            if (win) {
+                win.focus();
             }
-            marker.bindPopup(content, {
-                className: 'leaflet-popup-photo',
-                maxWidth: 'auto'
-            }).openPopup();
-        }
+        };
     },
+
+    //getPhotoMarkerOnClickFunction() {
+    //    var _app = this;
+    //    return function(evt) {
+    //        var marker = evt.layer;
+    //        var content;
+    //        if (marker.data.hasPreview) {
+    //            var previewUrl = _app.generatePreviewUrl(marker.data.path);
+    //            var img = '<img src=' + previewUrl + '/>';
+    //            //Workaround for https://github.com/Leaflet/Leaflet/issues/5484
+    //            $(img).on('load', function() {
+    //                marker.getPopup().update();
+    //            });
+    //            content = img;
+    //        } else {
+    //            content = marker.data.path;
+    //        }
+    //        marker.bindPopup(content, {
+    //            className: 'leaflet-popup-photo',
+    //            maxWidth: 'auto'
+    //        }).openPopup();
+    //    }
+    //},
 
     getClusterIconCreateFunction() {
         var _app = this;

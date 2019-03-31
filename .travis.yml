@@ -1,12 +1,12 @@
 sudo: required
-dist: trusty
+dist: cosmic
 language: php
 php:
     - 5.6
     - 7
 env:
     global:
-        - CORE_BRANCH=stable12
+        - CORE_BRANCH=stable15
     matrix:
         - DB=pgsql
 

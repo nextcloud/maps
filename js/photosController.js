@@ -156,7 +156,8 @@ PhotosController.prototype = {
                 lng: photos[i].lng,
                 path: photos[i].path,
                 albumId: photos[i].folderId,
-                hasPreview : photos[i].hasPreview
+                hasPreview : photos[i].hasPreview,
+                date: photos[i].dateTaken
             };
             var marker = L.marker(markerData, {
                 icon: this.createPhotoView(markerData)
@@ -164,7 +165,7 @@ PhotosController.prototype = {
             marker.data = markerData;
             var previewUrl = this.generatePreviewUrl(marker.data.path);
             var img = '<img src=' + previewUrl + '/>';
-            marker.bindTooltip(img, {permanent: false});
+            marker.bindTooltip(img, {permanent: false, className: "leaflet-marker-photo-tooltip"});
             markers.push(marker);
         }
         return markers;

@@ -186,6 +186,10 @@ tr.selected td {
     padding: 3px;
 }
 
+.leaflet-marker-photo-tooltip {
+    opacity: 1 !important;
+}
+
 .easy-button-button {
     margin: 0 !important;
     padding: 0 !important;

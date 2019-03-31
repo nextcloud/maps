@@ -61,9 +61,6 @@ endif
 ifneq (,$(wildcard $(CURDIR)/package.json))
 	make npm
 endif
-ifneq (,$(wildcard $(CURDIR)/js/package.json))
-	make npm
-endif
 
 # Installs and updates the composer dependencies. If composer is not installed
 # a copy is fetched from the web
@@ -84,11 +81,7 @@ endif
 # Installs npm dependencies
 .PHONY: npm
 npm:
-ifeq (,$(wildcard $(CURDIR)/package.json))
-	cd js && $(npm) run build
-else
-	npm run build
-endif
+	$(npm) install
 
 # Removes the appstore build
 .PHONY: clean

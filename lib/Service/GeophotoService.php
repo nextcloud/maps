@@ -57,6 +57,7 @@ class GeophotoService {
             $file_object->fileId = $photoEntity->getFileId();
             $file_object->lat = $photoEntity->getLat();
             $file_object->lng = $photoEntity->getLng();
+            $file_object->dateTaken = $photoEntity->getDateTaken();
             /* 30% longer
              * $file_object->folderId = $cache->getParentId($path); 
              */

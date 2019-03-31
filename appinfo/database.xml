@@ -119,6 +119,19 @@
                 <type>float</type>
                 <notnull>true</notnull>
             </field>
+            <field>
+                <name>date_taken</name>
+                <type>integer</type>
+                <notnull>false</notnull>
+                <length>64</length>
+            </field>
+            <index>
+                <name>maps_date_taken</name>
+                <field>
+                    <name>date_taken</name>
+                    <sorting>ascending</sorting>
+                </field>
+            </index>
         </declaration>
     </table>
 </database>

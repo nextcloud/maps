@@ -81,6 +81,7 @@ class PhotofilesService {
             $photoEntity->setLat($exif->lat);
             $photoEntity->setLng($exif->lng);
             $photoEntity->setUserId($userId);
+            $photoEntity->setDateTaken($exif->dateTaken);
             $this->photoMapper->insert($photoEntity);
         }
     }

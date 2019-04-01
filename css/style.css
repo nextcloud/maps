@@ -6,6 +6,14 @@
     z-index: 10000;
 }
 
+#timerange {
+    position: absolute;
+    margin: 10px 0 0 10px;
+    left: 0;
+    top: 0;
+    z-index: 10000;
+}
+
 #map {
     width: 100%;
     position: absolute;

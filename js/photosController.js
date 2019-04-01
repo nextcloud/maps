@@ -3,6 +3,13 @@ function PhotosController (optionsController) {
     this.photosDataLoaded = false;
     this.photosRequestInProgress = false;
     this.optionsController = optionsController;
+    this.photoMarkers = [];
+    this.photoMarkersOldest = 1548806265;
+    this.photoMarkersNewest = 1554365608;
+    this.photoMarkersFirstVisible = 0;
+    this.photoMarkersLastVisible = 0;
+    this.timeFilterBegin = 0;
+    this.timeFilterEnd = Date.now();
 }
 
 PhotosController.prototype = {
@@ -73,7 +80,7 @@ PhotosController.prototype = {
         }
     },
 
-    getPhotoMarkerOnClickFunction() {
+    getPhotoMarkerOnClickFunction: function() {
         var _app = this;
         return function(evt) {
             var marker = evt.layer;
@@ -108,7 +115,7 @@ PhotosController.prototype = {
     //    }
     //},
 
-    getClusterIconCreateFunction() {
+    getClusterIconCreateFunction: function() {
         var _app = this;
         return function(cluster) {
             var marker = cluster.getAllChildMarkers()[0].data;
@@ -123,7 +130,7 @@ PhotosController.prototype = {
                 className: 'leaflet-marker-photo cluster-marker',
                 html: '<div class="thumbnail" style="background-image: url(' + iconUrl + ');"></div>​<span class="label">' + label + '</span>'
             }, this.icon));
-        }
+        };
     },
 
     createPhotoView: function(markerData) {
@@ -145,7 +152,9 @@ PhotosController.prototype = {
 
     addPhotosToMap : function(photos) {
         var markers = this.preparePhotoMarkers(photos);
-        this.photoLayer.addLayers(markers);
+        this.photoMarkers.push.apply(this.photoMarkers, markers);
+        this.photoMarkers.sort(function (a, b) { return a.data.date - b.data.date;});
+        this.refreshTimeFilter();
     },
 
     preparePhotoMarkers : function(photos) {
@@ -169,6 +178,80 @@ PhotosController.prototype = {
             markers.push(marker);
         }
         return markers;
+    },
+
+    refreshTimeFilter: function() {
+        this.photoMarkersNewest = this.photoMarkers[this.photoMarkers.length - 1].data.date;
+        this.photoMarkersOldest = this.photoMarkers[0].data.date;
+        var hide = [];
+        var show = [];
+        var visble = false;
+        for (var i = 0; i < this.photoMarkers.length; i++) {
+            if (this.photoMarkers[i].data.date < this.timeFilterBegin) {
+                hide.push(this.photoMarkers[i]);
+            } else if (this.photoMarkers[i].data.date < this.timeFilterEnd) {
+                show.push(this.photoMarkers[i]);
+                if (!visble) {
+                    this.photoMarkersFirstVisible = i;
+                    visble = true;
+                }
+            } else {
+                hide.push(this.photoMarkers[i]);
+                if (visble) {
+                    this.photoMarkersLastVisible = i-1;
+                    visble = false;
+                }
+            }
+        }
+        if (visble) {
+            this.photoMarkersLastVisible = i - 1;
+            visble = false;
+        }
+        //this.photoLayer.clearLayers();
+        this.photoLayer.addLayers(show);
+
+    },
+
+    updateTimeFilterBegin: function (date) {
+        if (date < this.timeFilterEnd) {
+            var i = this.photoMarkersFirstVisible;
+            if (date < this.timeFilterBegin) {
+                i = i-1;
+                while (this.photoMarkers[i].data.date > date && i >= 0 && i < this.photoMarkers.length) {
+                    this.photoLayer.addLayer(this.photoMarkers[i]);
+                    i = i-1;
+                }
+                this.photoMarkersFirstVisible = i + 1;
+            } else {
+                while (this.photoMarkers[i].data.date < date && i >= 0 && i < this.photoMarkers.length) {
+                    this.photoLayer.removeLayer(this.photoMarkers[i]);
+                    i = i + 1;
+                }
+                this.photoMarkersFirstVisible = i;
+            }
+            this.timeFilterBegin = date;
+        }
+    },
+
+    updateTimeFilterEnd: function (date){
+        if (date > this.timeFilterBegin) {
+            var i = this.photoMarkersLastVisible;
+            if (date < this.timeFilterEnd) {
+                while (this.photoMarkers[i].data.date > date && i >= 0 && i < this.photoMarkers.length) {
+                    this.photoLayer.removeLayer(this.photoMarkers[i]);
+                    i = i-1;
+                }
+                this.photoMarkersLastVisible = i;
+            } else {
+                i = i+1;
+                while (this.photoMarkers[i].data.date < date && i >= 0 && i < this.photoMarkers.length) {
+                    this.photoLayer.addLayer(this.photoMarkers[i]);
+                    i = i+1;
+                }
+                this.photoMarkersLastVisible = i - 1;
+            }
+            this.timeFilterEnd = date;
+        }
     },
 
     callForImages: function() {

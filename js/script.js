@@ -4,8 +4,25 @@
         mapController.map.favoritesController = favoritesController;
         favoritesController.initFavorites(mapController.map);
         favoritesController.getFavorites();
+        //slider
+
         //Photos
         photosController.initLayer(mapController.map);
+        var startDateSlider = document.getElementById("startdate");
+        startDateSlider.setAttribute("min", photosController.photoMarkersOldest);
+        startDateSlider.setAttribute("max", photosController.photoMarkersNewest);
+        startDateSlider.value = photosController.photoMarkersOldest;
+        startDateSlider.oninput = function() {
+            photosController.updateTimeFilterBegin(parseInt(this.value));
+        };
+        var endDateSlider = document.getElementById("enddate");
+        endDateSlider.setAttribute("min", photosController.photoMarkersOldest);
+        endDateSlider.setAttribute("max", photosController.photoMarkersNewest);
+        endDateSlider.value = photosController.photoMarkersNewest;
+        endDateSlider.oninput = function() {
+            photosController.updateTimeFilterEnd(parseInt(this.value));
+        };
+
 
         // once controllers have been set/initialized, we can restore option values from server
         optionsController.restoreOptions();

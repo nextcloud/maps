@@ -8,19 +8,14 @@
 
         //Photos
         photosController.initLayer(mapController.map);
-        var startDateSlider = document.getElementById("startdate");
-        startDateSlider.setAttribute("min", photosController.photoMarkersOldest);
-        startDateSlider.setAttribute("max", photosController.photoMarkersNewest);
-        startDateSlider.value = photosController.photoMarkersOldest;
-        startDateSlider.oninput = function() {
+        timeFilterController.startDateSlider.value = photosController.photoMarkersOldest;
+        timeFilterController.startDateSlider.oninput = function() {
             photosController.updateTimeFilterBegin(parseInt(this.value));
-
         };
-        var endDateSlider = document.getElementById("enddate");
-        endDateSlider.setAttribute("min", photosController.photoMarkersOldest);
-        endDateSlider.setAttribute("max", photosController.photoMarkersNewest);
-        endDateSlider.value = photosController.photoMarkersNewest;
-        endDateSlider.oninput = function() {
+
+
+        timeFilterController.endDateSlider.value = photosController.photoMarkersNewest;
+        timeFilterController.endDateSlider.oninput = function() {
             photosController.updateTimeFilterEnd(parseInt(this.value));
         };
 
@@ -122,6 +117,7 @@
                 }
                 if (optionsValues.hasOwnProperty('photosLayer') && optionsValues.photosLayer === 'true') {
                     photosController.toggleLayer();
+
                 }
                 if (optionsValues.hasOwnProperty('locControlEnabled') && optionsValues.locControlEnabled === 'true') {
                     mapController.locControl.start();
@@ -153,7 +149,7 @@
                 );
             });
         }
-    }
+    };
 
     var mapController = {
         searchMarker: {},
@@ -285,8 +281,21 @@
         }
     };
 
-    var photosController = new PhotosController(optionsController);
+    var timeFilterController = {
+        startDateSlider : document.getElementById("startdate"),
+        endDateSlider : document.getElementById("enddate"),
+        updateSliderRange :  function (min, max) {
+            var range = max - min;
+            this.startDateSlider.setAttribute("min", min - range/10);
+            this.startDateSlider.setAttribute("max", max + range/10);
+            this.endDateSlider.setAttribute("min", min - range/10);
+            this.endDateSlider.setAttribute("max", max + range/10);
+        },
+    };
+
+    var photosController = new PhotosController(optionsController, timeFilterController);
     var favoritesController = new FavoritesController(optionsController);
+
 
     var searchController = {
         isGeocodeabe: function(str) {

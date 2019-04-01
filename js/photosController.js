@@ -1,11 +1,12 @@
-function PhotosController (optionsController) {
+function PhotosController (optionsController, timeFilterController) {
     this.PHOTO_MARKER_VIEW_SIZE = 40;
     this.photosDataLoaded = false;
     this.photosRequestInProgress = false;
     this.optionsController = optionsController;
+    this.timeFilterController = timeFilterController;
     this.photoMarkers = [];
-    this.photoMarkersOldest = 1548806265;
-    this.photoMarkersNewest = 1555365608;
+    this.photoMarkersOldest = 0;
+    this.photoMarkersNewest = Date.now()*0.0011;
     this.photoMarkersFirstVisible = 0;
     this.photoMarkersLastVisible = 0;
     this.timeFilterBegin = 0;
@@ -183,6 +184,7 @@ PhotosController.prototype = {
     refreshTimeFilter: function() {
         this.photoMarkersNewest = this.photoMarkers[this.photoMarkers.length - 1].data.date;
         this.photoMarkersOldest = this.photoMarkers[0].data.date;
+        this.timeFilterController.updateSliderRange(this.photoMarkersOldest, this.photoMarkersNewest);
         var hide = [];
         var show = [];
         var visble = false;

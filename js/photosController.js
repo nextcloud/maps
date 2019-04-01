@@ -178,8 +178,10 @@ PhotosController.prototype = {
                 icon: this.createPhotoView(markerData)
             });
             marker.data = markerData;
+            console.log(basename(markerData.path));
             var previewUrl = this.generatePreviewUrl(marker.data.path);
-            var img = '<img src=' + previewUrl + '/>';
+            var img = '<img src=' + previewUrl + '/>' +
+                '<p class="tooltip-photo-name">' + escapeHTML(basename(markerData.path)) + '<p>';
             marker.bindTooltip(img, {permanent: false, className: "leaflet-marker-photo-tooltip"});
             markers.push(marker);
         }

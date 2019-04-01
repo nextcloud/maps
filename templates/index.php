@@ -1,4 +1,5 @@
 <?php
+script('maps', 'utils');
 script('maps', 'photosController');
 script('maps', 'favoritesController');
 script('maps', 'script');

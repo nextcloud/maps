@@ -257,3 +257,7 @@ table.editFavorite input[type=text] {
 .ui-autocomplete {
     z-index: 10000 !important;
 }
+.tooltip-photo-name {
+    width: 100%;
+    text-align: center;
+}

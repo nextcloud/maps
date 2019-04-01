@@ -14,6 +14,7 @@
         startDateSlider.value = photosController.photoMarkersOldest;
         startDateSlider.oninput = function() {
             photosController.updateTimeFilterBegin(parseInt(this.value));
+
         };
         var endDateSlider = document.getElementById("enddate");
         endDateSlider.setAttribute("min", photosController.photoMarkersOldest);

@@ -5,7 +5,7 @@ function PhotosController (optionsController) {
     this.optionsController = optionsController;
     this.photoMarkers = [];
     this.photoMarkersOldest = 1548806265;
-    this.photoMarkersNewest = 1554365608;
+    this.photoMarkersNewest = 1555365608;
     this.photoMarkersFirstVisible = 0;
     this.photoMarkersLastVisible = 0;
     this.timeFilterBegin = 0;
@@ -213,44 +213,48 @@ PhotosController.prototype = {
     },
 
     updateTimeFilterBegin: function (date) {
-        if (date < this.timeFilterEnd) {
+        if (date <= this.timeFilterEnd) {
             var i = this.photoMarkersFirstVisible;
             if (date < this.timeFilterBegin) {
                 i = i-1;
-                while (this.photoMarkers[i].data.date > date && i >= 0 && i < this.photoMarkers.length) {
+                while (i >= 0 && i <= this.photoMarkersLastVisible && this.photoMarkers[i].data.date > date) {
                     this.photoLayer.addLayer(this.photoMarkers[i]);
                     i = i-1;
                 }
                 this.photoMarkersFirstVisible = i + 1;
             } else {
-                while (this.photoMarkers[i].data.date < date && i >= 0 && i < this.photoMarkers.length) {
+                while (i >= 0 && i <= this.photoMarkersLastVisible && this.photoMarkers[i].data.date < date) {
                     this.photoLayer.removeLayer(this.photoMarkers[i]);
                     i = i + 1;
                 }
                 this.photoMarkersFirstVisible = i;
             }
             this.timeFilterBegin = date;
+        } else {
+            this.updateTimeFilterBegin(this.timeFilterEnd);
         }
     },
 
     updateTimeFilterEnd: function (date){
-        if (date > this.timeFilterBegin) {
+        if (date >= this.timeFilterBegin) {
             var i = this.photoMarkersLastVisible;
             if (date < this.timeFilterEnd) {
-                while (this.photoMarkers[i].data.date > date && i >= 0 && i < this.photoMarkers.length) {
+                while (i >= this.photoMarkersFirstVisible && i < this.photoMarkers.length && this.photoMarkers[i].data.date > date ) {
                     this.photoLayer.removeLayer(this.photoMarkers[i]);
                     i = i-1;
                 }
                 this.photoMarkersLastVisible = i;
             } else {
                 i = i+1;
-                while (this.photoMarkers[i].data.date < date && i >= 0 && i < this.photoMarkers.length) {
+                while (i >= this.photoMarkersFirstVisible && i < this.photoMarkers.length && this.photoMarkers[i].data.date < date) {
                     this.photoLayer.addLayer(this.photoMarkers[i]);
                     i = i+1;
                 }
                 this.photoMarkersLastVisible = i - 1;
             }
             this.timeFilterEnd = date;
+        } else {
+            this.updateTimeFilterEnd(this.timeFilterBegin);
         }
     },
 

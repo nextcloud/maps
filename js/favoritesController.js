@@ -522,16 +522,7 @@ FavoritesController.prototype = {
             data: req,
             async: true
         }).done(function (response) {
-            var fav = {
-                id: response.id,
-                name: name,
-                lat: lat,
-                lng: lng,
-                category: category,
-                comment: comment,
-                extensions: extensions
-            }
-            that.addFavoriteMap(fav, true);
+            that.addFavoriteMap(response, true);
             that.updateCategoryCounters();
         }).always(function (response) {
             $('#navigation-favorites').removeClass('icon-loading-small');

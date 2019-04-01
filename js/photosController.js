@@ -29,7 +29,12 @@ PhotosController.prototype = {
         });
         this.photoLayer.on('click', this.getPhotoMarkerOnClickFunction());
         this.photoLayer.on('clusterclick', function (a) {
-            a.layer.spiderfy();
+            if (a.layer.getChildCount() > 30) {
+                a.layer.zoomToBounds();
+            }
+            else {
+                a.layer.spiderfy();
+            }
         });
         // click on photo menu entry
         $('body').on('click', '#togglePhotosButton, #navigation-photos > a', function(e) {

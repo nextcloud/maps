@@ -36,14 +36,14 @@ class FavoritesService {
     public function getFavoritesFromDB($userId, $pruneBefore=0) {
         $favorites = [];
         $qb = $this->qb;
-        $qb->select('id', 'name', 'timestamp', 'lat', 'lng', 'category', 'comment', 'extensions')
+        $qb->select('id', 'name', 'date_created', 'date_modified', 'lat', 'lng', 'category', 'comment', 'extensions')
             ->from('maps_favorites', 'f')
             ->where(
                 $qb->expr()->eq('user_id', $qb->createNamedParameter($userId, IQueryBuilder::PARAM_STR))
             );
         if (intval($pruneBefore) > 0) {
             $qb->andWhere(
-                $qb->expr()->gt('timestamp', $qb->createNamedParameter($pruneBefore, IQueryBuilder::PARAM_INT))
+                $qb->expr()->gt('date_modified', $qb->createNamedParameter($pruneBefore, IQueryBuilder::PARAM_INT))
             );
         }
         $req = $qb->execute();
@@ -51,7 +51,8 @@ class FavoritesService {
         while ($row = $req->fetch()) {
             $id = intval($row['id']);
             $name = $row['name'];
-            $timestamp = intval($row['timestamp']);
+            $date_modified = intval($row['date_modified']);
+            $date_created = intval($row['date_created']);
             $lat = floatval($row['lat']);
             $lng = floatval($row['lng']);
             $category = $row['category'];
@@ -60,7 +61,8 @@ class FavoritesService {
             array_push($favorites, [
                 'id' => $id,
                 'name' => $name,
-                'timestamp' => $timestamp,
+                'date_modified' => $date_modified,
+                'date_created' => $date_created,
                 'lat' => $lat,
                 'lng' => $lng,
                 'category' => $category,
@@ -76,7 +78,7 @@ class FavoritesService {
     public function getFavoriteFromDB($id, $userId=null) {
         $favorite = null;
         $qb = $this->qb;
-        $qb->select('id', 'name', 'timestamp', 'lat', 'lng', 'category', 'comment', 'extensions')
+        $qb->select('id', 'name', 'date_modified', 'date_created', 'lat', 'lng', 'category', 'comment', 'extensions')
             ->from('maps_favorites', 'f')
             ->where(
                 $qb->expr()->eq('id', $qb->createNamedParameter($id, IQueryBuilder::PARAM_INT))
@@ -91,7 +93,8 @@ class FavoritesService {
         while ($row = $req->fetch()) {
             $id = intval($row['id']);
             $name = $row['name'];
-            $timestamp = intval($row['timestamp']);
+            $date_modified = intval($row['date_modified']);
+            $date_created = intval($row['date_created']);
             $lat = floatval($row['lat']);
             $lng = floatval($row['lng']);
             $category = $row['category'];
@@ -100,7 +103,8 @@ class FavoritesService {
             $favorite = [
                 'id' => $id,
                 'name' => $name,
-                'timestamp' => $timestamp,
+                'date_modified' => $date_modified,
+                'date_created' => $date_created,
                 'lat' => $lat,
                 'lng' => $lng,
                 'category' => $category,
@@ -121,7 +125,8 @@ class FavoritesService {
             ->values([
                 'user_id' => $qb->createNamedParameter($userId, IQueryBuilder::PARAM_STR),
                 'name' => $qb->createNamedParameter($name, IQueryBuilder::PARAM_STR),
-                'timestamp' => $qb->createNamedParameter($nowTimeStamp, IQueryBuilder::PARAM_INT),
+                'date_created' => $qb->createNamedParameter($nowTimeStamp, IQueryBuilder::PARAM_INT),
+                'date_modified' => $qb->createNamedParameter($nowTimeStamp, IQueryBuilder::PARAM_INT),
                 'lat' => $qb->createNamedParameter($lat, IQueryBuilder::PARAM_LOB),
                 'lng' => $qb->createNamedParameter($lng, IQueryBuilder::PARAM_LOB),
                 'category' => $qb->createNamedParameter($category, IQueryBuilder::PARAM_STR),
@@ -139,7 +144,7 @@ class FavoritesService {
         $qb = $this->qb;
         $qb->update('maps_favorites');
         $qb->set('name', $qb->createNamedParameter($name, IQueryBuilder::PARAM_STR));
-        $qb->set('timestamp', $qb->createNamedParameter($nowTimeStamp, IQueryBuilder::PARAM_INT));
+        $qb->set('date_modified', $qb->createNamedParameter($nowTimeStamp, IQueryBuilder::PARAM_INT));
         if ($lat !== null) {
             $qb->set('lat', $qb->createNamedParameter($lat, IQueryBuilder::PARAM_LOB));
         }

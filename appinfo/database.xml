@@ -28,7 +28,14 @@
                 <notnull>true</notnull>
             </field>
             <field>
-                <name>timestamp</name>
+                <name>date_modified</name>
+                <type>integer</type>
+                <default>0</default>
+                <length>15</length>
+                <notnull>true</notnull>
+            </field>
+            <field>
+                <name>date_created</name>
                 <type>integer</type>
                 <default>0</default>
                 <length>15</length>

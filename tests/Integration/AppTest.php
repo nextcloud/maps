@@ -3,7 +3,6 @@
 namespace OCA\Maps\Tests\Integration\Controller;
 
 use OCP\AppFramework\App;
-use Test\TestCase;
 
 
 /**
@@ -11,12 +10,11 @@ use Test\TestCase;
  * directly from the container, only pass in mocks if needed and run your tests
  * against the database
  */
-class AppTest extends TestCase {
+class AppTest extends \PHPUnit\Framework\TestCase {
 
     private $container;
 
-    public function setUp() {
-        parent::setUp();
+    protected function setUp(): void {
         $app = new App('maps');
         $this->container = $app->getContainer();
     }

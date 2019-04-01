@@ -1,4 +1,13 @@
 <phpunit bootstrap="tests/bootstrap.php" colors="true">
+    <filter>
+        <whitelist>
+            <directory suffix=".php">appinfo</directory>
+            <exclude>
+                <directory suffix=".php">lib</directory>
+                <directory suffix=".php">templates</directory>
+            </exclude>
+        </whitelist>
+    </filter>
     <testsuites>
         <testsuite name="integration">
             <directory>./tests/Integration</directory>

@@ -2,12 +2,12 @@
 
 namespace OCA\Maps\Controller;
 
-use \OCA\Cospend\AppInfo\Application;
+use \OCA\Maps\AppInfo\Application;
 use \OCA\Maps\Service\FavoritesService;
 use OCP\AppFramework\Http\TemplateResponse;
 
 
-class FavoriteControllerTest extends \PHPUnit\Framework\TestCase {
+class FavoritesControllerTest extends \PHPUnit\Framework\TestCase {
     private $appName;
     private $request;
     private $contacts;

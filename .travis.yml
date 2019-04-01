@@ -2,7 +2,7 @@ sudo: required
 dist: cosmic
 language: php
 php:
-    - 7
+    - 7.2
 env:
     global:
         - CORE_BRANCH=stable15
@@ -13,11 +13,11 @@ matrix:
     allow_failures:
         - env: DB=pgsql CORE_BRANCH=master
     include:
-        - php: 7
+        - php: 7.2
           env: DB=sqlite
-        - php: 7
+        - php: 7.2
           env: DB=mysql
-        - php: 7
+        - php: 7.2
           env: DB=pgsql CORE_BRANCH=master
     fast_finish: true
 

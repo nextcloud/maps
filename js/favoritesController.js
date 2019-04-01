@@ -168,7 +168,12 @@ FavoritesController.prototype = {
             chunkedLoading: true
         });
         this.cluster.on('clusterclick', function (a) {
-            a.layer.spiderfy();
+            if (a.layer.getChildCount() > 30) {
+                a.layer.zoomToBounds();
+            }
+            else {
+                a.layer.spiderfy();
+            }
         });
     },
 

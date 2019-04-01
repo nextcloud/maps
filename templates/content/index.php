@@ -39,7 +39,5 @@ style('maps', 'style');
     </form>
 </div>
 <div id="map"></div>
-<div id="timerange">
-	<input type="range" id="startdate" name="startdate" min="0" max="10">
-	<input type="range" id="enddate" name="enddate" min="0" max="10">
+<div id="timeRangeSlider">
 </div>

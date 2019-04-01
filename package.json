@@ -33,6 +33,7 @@
     "leaflet.markercluster": "^1.1.0",
     "leaflet-easybutton": "^2.4.0",
     "leaflet.featuregroup.subgroup": "^1.0.2",
+    "nouislider": "^13.1.4",
     "opening_hours": "^3.5.0"
   }
 }

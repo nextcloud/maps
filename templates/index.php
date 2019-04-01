@@ -1,4 +1,6 @@
 <?php
+script('maps', '../node_modules/nouislider/distribute/nouislider');
+style('maps', '../node_modules/nouislider/distribute/nouislider');
 script('maps', 'utils');
 script('maps', 'photosController');
 script('maps', 'favoritesController');

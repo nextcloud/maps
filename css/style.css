@@ -6,13 +6,24 @@
     z-index: 10000;
 }
 
-#timerange {
+#timeRangeSlider {
     position: absolute;
     margin: 10px 0 0 10px;
-    left: 0;
-    top: 0;
+    left: 20%;
+    top: 90%;
     z-index: 10000;
+    width: 60%;
 }
+
+.noUi-tooltip {
+    display: none;
+    z-index: 10001;
+}
+.noUi-active .noUi-tooltip {
+    display: block;
+    z-index: 10001;
+}
+
 
 #map {
     width: 100%;

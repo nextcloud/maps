@@ -8,16 +8,14 @@
 
         //Photos
         photosController.initLayer(mapController.map);
-        timeFilterController.startDateSlider.value = photosController.photoMarkersOldest;
-        timeFilterController.startDateSlider.oninput = function() {
-            photosController.updateTimeFilterBegin(parseInt(this.value));
-        };
+        //timeFilterController.startDateSlider.oninput = function() {
+        //    photosController.updateTimeFilterBegin(parseInt(this.value));
+        //};
 
 
-        timeFilterController.endDateSlider.value = photosController.photoMarkersNewest;
-        timeFilterController.endDateSlider.oninput = function() {
-            photosController.updateTimeFilterEnd(parseInt(this.value));
-        };
+        //timeFilterController.endDateSlider.oninput = function() {
+        //    photosController.updateTimeFilterEnd(parseInt(this.value));
+        //};
 
 
         // once controllers have been set/initialized, we can restore option values from server
@@ -281,20 +279,77 @@
     };
 
     var timeFilterController = {
-        startDateSlider : document.getElementById("startdate"),
-        endDateSlider : document.getElementById("enddate"),
+        min: 0,
+        max: Date.now()/1000,
+        onUpdateCallbackBlock: false,
+        updateFilterTimeBegin: [],
+        updateFilterTimeEnd: [],
+        createOnUpdateCallback: function () {
+            var that = this;
+            return function(values, handle, unencoded, tap, positions){
+                if (!that.onUpdateCallbackBlock){
+                    that.onUpdateCallbackBlock = true;
+                    if (handle === 0) {
+                        that.updateFilterTimeBegin.forEach(function (f) {
+                            f(unencoded[handle]);
+                        });
+                    } else {
+                        that.updateFilterTimeEnd.forEach(function (f) {
+                            f(unencoded[handle]);
+                        });
+                    }
+                    that.onUpdateCallbackBlock = false;
+                }
+            };
+        },
+        slider : document.getElementById("timeRangeSlider"),
+        connect: function () {
+            noUiSlider.create(this.slider, {
+                start: [20, 80],
+                connect: true,
+                behaviour: 'drag',
+                tooltips: [{
+                        to: function (x) {
+                            return new Date(x*1000);
+                        }
+                    }, {
+                    to: function (x) {
+                        return new Date(x*1000);
+                    }
+                }],
+                range: {
+                    'min': 0,
+                    'max': 1
+                },
+            });
+            this.updateSliderRange(this.min, this.max);
+            this.slider.noUiSlider.on('update',this.createOnUpdateCallback());
+        },
+        connectUpdateFilterTimeBegin: function (func) {
+            this.updateFilterTimeBegin.push(func);
+        },
+        connectUpdateFilterTimeEnd: function (func) {
+            this.updateFilterTimeEnd.push(func);
+        },
         updateSliderRange :  function (min, max) {
             var range = max - min;
-            this.startDateSlider.setAttribute("min", min - range/10);
-            this.startDateSlider.setAttribute("max", max + range/10);
-            this.endDateSlider.setAttribute("min", min - range/10);
-            this.endDateSlider.setAttribute("max", max + range/10);
+            this.slider.noUiSlider.updateOptions({
+                range: {
+                    'min': min - range/10,
+                    'max': max + range/10
+                }
+            });
+            this.slider.noUiSlider.set([min, max]);
         },
     };
+
+    timeFilterController.connect();
 
     var photosController = new PhotosController(optionsController, timeFilterController);
     var favoritesController = new FavoritesController(optionsController);
 
+    timeFilterController.connectUpdateFilterTimeBegin(function (date) {photosController.updateTimeFilterBegin(date);});
+    timeFilterController.connectUpdateFilterTimeEnd(function (date) {photosController.updateTimeFilterEnd(date);});
 
     var searchController = {
         isGeocodeabe: function(str) {

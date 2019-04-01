@@ -264,15 +264,22 @@ FavoritesController.prototype = {
     },
 
     updateTimeFilterController: function() {
-        for (var id in this.favorites) {
-            if (this.firstDate === null || this.favorites[id].date_created < this.firstDate) {
+        var id;
+        var ids = Object.keys(this.favorites);
+        if (ids.length > 0) {
+            id = ids[0];
+            this.firstDate = this.favorites[id].date_created;
+            this.lastDate = this.favorites[id].date_created;
+        }
+        for (id in this.favorites) {
+            if (this.favorites[id].date_created < this.firstDate) {
                 this.firstDate = this.favorites[id].date_created;
             }
-            if (this.lastDate === null || this.favorites[id].date_created > this.lastDate) {
+            if (this.favorites[id].date_created > this.lastDate) {
                 this.lastDate = this.favorites[id].date_created;
             }
         }
-        this.timeFilterController.updateSliderRange(this.firstDate, this.lastDate);
+        this.timeFilterController.updateSliderRange();
     },
 
     // add/remove markers from layers considering current filter values
@@ -562,6 +569,8 @@ FavoritesController.prototype = {
         this.categoryLayers[cat].addLayer(marker);
         this.favorites[fav.id] = fav;
         this.markers[fav.id] = marker;
+
+        this.updateTimeFilterController();
     },
 
     favoriteMouseover: function(e) {

@@ -190,7 +190,7 @@ PhotosController.prototype = {
     refreshTimeFilter: function() {
         this.photoMarkersNewest = this.photoMarkers[this.photoMarkers.length - 1].data.date;
         this.photoMarkersOldest = this.photoMarkers[0].data.date;
-        this.timeFilterController.updateSliderRange(this.photoMarkersOldest, this.photoMarkersNewest);
+        this.timeFilterController.updateSliderRange();
         var hide = [];
         var show = [];
         var visible = false;

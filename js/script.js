@@ -290,13 +290,15 @@
         startDate: null,
         endDate: null,
         // initialize or make it larger (multiple controllers will call this)
-        updateSliderRange:  function(start, end) {
-            if (this.startDate === null || start < this.startDate) {
-                this.startDate = start;
-            }
-            if (this.endDate === null || end > this.endDate) {
-                this.endDate = end;
-            }
+        updateSliderRange:  function() {
+            var favStart = favoritesController.firstDate;
+            var favEnd = favoritesController.lastDate;
+            var photoStart = photosController.photoMarkersOldest;
+            var photoEnd = photosController.photoMarkersNewest;
+
+            this.startDate = (favStart < photoStart) ? favStart : photoStart;
+            this.endDate = (favEnd > photoEnd) ? favEnd : photoEnd;
+
             var range = this.endDate - this.startDate;
             this.startDateSlider.setAttribute('min', this.startDate - range/10);
             this.startDateSlider.setAttribute('max', this.endDate + range/10);

@@ -178,7 +178,6 @@ PhotosController.prototype = {
                 icon: this.createPhotoView(markerData)
             });
             marker.data = markerData;
-            console.log(basename(markerData.path));
             var previewUrl = this.generatePreviewUrl(marker.data.path);
             var img = '<img src=' + previewUrl + '/>' +
                 '<p class="tooltip-photo-name">' + escapeHTML(basename(markerData.path)) + '<p>';
@@ -194,27 +193,29 @@ PhotosController.prototype = {
         this.timeFilterController.updateSliderRange(this.photoMarkersOldest, this.photoMarkersNewest);
         var hide = [];
         var show = [];
-        var visble = false;
+        var visible = false;
         for (var i = 0; i < this.photoMarkers.length; i++) {
             if (this.photoMarkers[i].data.date < this.timeFilterBegin) {
                 hide.push(this.photoMarkers[i]);
-            } else if (this.photoMarkers[i].data.date < this.timeFilterEnd) {
+            }
+            else if (this.photoMarkers[i].data.date < this.timeFilterEnd) {
                 show.push(this.photoMarkers[i]);
-                if (!visble) {
+                if (!visible) {
                     this.photoMarkersFirstVisible = i;
-                    visble = true;
+                    visible = true;
                 }
-            } else {
+            }
+            else {
                 hide.push(this.photoMarkers[i]);
-                if (visble) {
+                if (visible) {
                     this.photoMarkersLastVisible = i-1;
-                    visble = false;
+                    visible = false;
                 }
             }
         }
-        if (visble) {
+        if (visible) {
             this.photoMarkersLastVisible = i - 1;
-            visble = false;
+            visible = false;
         }
         //this.photoLayer.clearLayers();
         this.photoLayer.addLayers(show);

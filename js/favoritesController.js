@@ -1,14 +1,20 @@
-function FavoritesController(optionsController) {
+function FavoritesController(optionsController, timeFilterController) {
     this.optionsController = optionsController;
+    this.timeFilterController = timeFilterController;
     this.cluster = null;
     // indexed by category name
     this.categoryLayers = {};
     this.categoryDivIcon = {};
     this.categoryColors = {};
     this.categoryDeletionTimer = {};
+    // indexed by category name and then by favorite id
+    this.categoryMarkers = {};
     // indexed by favorite id
     this.markers = {};
     this.favorites = {};
+
+    this.firstDate = null;
+    this.lastDate = null;
 
     this.addFavoriteMode = false;
     this.addFavoriteCategory = '';
@@ -194,7 +200,6 @@ FavoritesController.prototype = {
             }
         }
         var categoryStringList = categoryList.join('|');
-        //console.log('save '+categoryStringList);
         this.optionsController.saveOptionValues({enabledFavoriteCategories: categoryStringList});
     },
 
@@ -258,6 +263,47 @@ FavoritesController.prototype = {
         }
     },
 
+    updateTimeFilterController: function() {
+        for (var id in this.favorites) {
+            if (this.firstDate === null || this.favorites[id].date_created < this.firstDate) {
+                this.firstDate = this.favorites[id].date_created;
+            }
+            if (this.lastDate === null || this.favorites[id].date_created > this.lastDate) {
+                this.lastDate = this.favorites[id].date_created;
+            }
+        }
+        this.timeFilterController.updateSliderRange(this.firstDate, this.lastDate);
+    },
+
+    // add/remove markers from layers considering current filter values
+    updateFilterDisplay: function() {
+        var startFilter = this.timeFilterController.startDate;
+        var endFilter = this.timeFilterController.endDate;
+
+        var cat, favid, markers, i, date_created;
+        // markers to hide
+        for (cat in this.categoryLayers) {
+            markers = this.categoryLayers[cat].getLayers();
+            for (i=0; i < markers.length; i++) {
+                favid = markers[i].favid;
+                date_created = this.favorites[favid].date_created;
+                if (date_created < startFilter || date_created > endFilter) {
+                    this.categoryLayers[cat].removeLayer(markers[i]);
+                }
+            }
+        }
+
+        // markers to show
+        for (cat in this.categoryMarkers) {
+            for (favid in this.categoryMarkers[cat]) {
+                date_created = this.favorites[favid].date_created;
+                if (date_created >= startFilter && date_created <= endFilter) {
+                    this.categoryLayers[cat].addLayer(this.categoryMarkers[cat][favid]);
+                }
+            }
+        }
+    },
+
     // get favorites from server and create map layers
     // show map layers if favorites are enabled
     getFavorites: function() {
@@ -278,20 +324,12 @@ FavoritesController.prototype = {
             }
             that.updateCategoryCounters();
             that.favoritesLoaded = true;
+            that.updateTimeFilterController();
         }).always(function (response) {
             $('#navigation-favorites').removeClass('icon-loading-small');
         }).fail(function() {
             OC.Notification.showTemporary(t('maps', 'Failed to load favorites'));
         });
-    },
-
-    hexToRgb: function(hex) {
-        var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
-        return result ? {
-            r: parseInt(result[1], 16),
-            g: parseInt(result[2], 16),
-            b: parseInt(result[3], 16)
-        } : null;
     },
 
     // add category in side menu
@@ -310,7 +348,7 @@ FavoritesController.prototype = {
             color = OCA.Theming.color.replace('#', '');
         }
         this.categoryColors[rawName] = color;
-        var rgbc = this.hexToRgb('#'+color);
+        var rgbc = hexToRgb('#'+color);
         var textcolor = 'black';
         if (rgbc.r + rgbc.g + rgbc.b < 3 * 80) {
             textcolor = 'white';
@@ -325,6 +363,7 @@ FavoritesController.prototype = {
 
         // subgroup layer
         this.categoryLayers[rawName] = L.featureGroup.subGroup(this.cluster, []);
+        this.categoryMarkers[rawName] = {};
 
         // icon for markers
         this.categoryDivIcon[rawName] = L.divIcon({
@@ -394,20 +433,18 @@ FavoritesController.prototype = {
     },
 
     renameCategory: function(cat, newCategoryName) {
-        var markers = this.categoryLayers[cat].getLayers();
+        var markers = this.categoryMarkers[cat];
         var favid, favname;
-        for (var i=0; i < markers.length; i++) {
-            favid = markers[i].favid;
+        for (favid in markers) {
             favname = this.favorites[favid].name;
             this.editFavoriteDB(favid, favname, null, newCategoryName, null, null);
         }
     },
 
     deleteCategoryFavorites: function(cat) {
-        var markers = this.categoryLayers[cat].getLayers();
+        var markers = this.categoryMarkers[cat];
         var favid;
-        for (var i=0; i < markers.length; i++) {
-            favid = markers[i].favid;
+        for (favid in markers) {
             this.deleteFavoriteDB(favid);
         }
     },
@@ -415,6 +452,7 @@ FavoritesController.prototype = {
     deleteCategory: function(cat) {
         this.map.removeLayer(this.categoryLayers[cat]);
         delete this.categoryLayers[cat];
+        delete this.categoryMarkers[cat];
         delete this.categoryDivIcon[cat];
         delete this.categoryColors[cat];
         $('#category-list #'+cat.replace(' ', '-')+'-category').fadeOut('slow', function() {
@@ -425,8 +463,8 @@ FavoritesController.prototype = {
     updateCategoryCounters: function() {
         var count;
         var total = 0;
-        for (var cat in this.categoryLayers) {
-            count = this.categoryLayers[cat].getLayers().length;
+        for (var cat in this.categoryMarkers) {
+            count = Object.keys(this.categoryMarkers[cat]).length;
             $('#'+cat.replace(' ', '-')+'-category .app-navigation-entry-utils-counter').text(count);
             total = total + count;
         }
@@ -520,6 +558,7 @@ FavoritesController.prototype = {
         marker.on('click', this.favoriteMouseClick);
 
         // add to map and arrays
+        this.categoryMarkers[cat][fav.id] = marker;
         this.categoryLayers[cat].addLayer(marker);
         this.favorites[fav.id] = fav;
         this.markers[fav.id] = marker;
@@ -620,11 +659,13 @@ FavoritesController.prototype = {
         var fav = this.favorites[favid];
         var cat = fav.category || this.defaultCategory;
         this.categoryLayers[cat].removeLayer(marker);
+
+        delete this.categoryMarkers[cat][favid];
         delete this.markers[favid];
         delete this.favorites[favid];
 
         // delete category if empty
-        if (this.categoryLayers[cat].getLayers().length === 0) {
+        if (Object.keys(this.categoryMarkers[cat]).length === 0) {
             this.deleteCategory(cat);
             this.saveEnabledCategories();
         }
@@ -690,10 +731,13 @@ FavoritesController.prototype = {
             var newCategory = category || this.defaultCategory;
             if (newCategory !== oldCategory) {
                 var marker = this.markers[favid];
+
+                delete this.categoryMarkers[oldCategory][favid];
                 this.categoryLayers[oldCategory].removeLayer(marker);
+
                 var shouldSaveCategories = false;
                 // delete old category if empty
-                if (this.categoryLayers[oldCategory].getLayers().length === 0) {
+                if (Object.keys(this.categoryMarkers[oldCategory]).length === 0) {
                     this.deleteCategory(oldCategory);
                     shouldSaveCategories = true;
                 }
@@ -707,6 +751,7 @@ FavoritesController.prototype = {
                 }
                 marker.setIcon(this.categoryDivIcon[newCategory]);
                 this.categoryLayers[newCategory].addLayer(marker);
+                this.categoryMarkers[newCategory][favid] = marker;
                 // the real value goes here
                 this.favorites[favid].category = category;
             }

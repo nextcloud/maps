@@ -10,12 +10,16 @@
         photosController.initLayer(mapController.map);
         timeFilterController.startDateSlider.value = photosController.photoMarkersOldest;
         timeFilterController.startDateSlider.oninput = function() {
+            timeFilterController.startDate = parseInt(this.value);
+            favoritesController.updateFilterDisplay();
             photosController.updateTimeFilterBegin(parseInt(this.value));
         };
 
 
         timeFilterController.endDateSlider.value = photosController.photoMarkersNewest;
         timeFilterController.endDateSlider.oninput = function() {
+            timeFilterController.endDate = parseInt(this.value);
+            favoritesController.updateFilterDisplay();
             photosController.updateTimeFilterEnd(parseInt(this.value));
         };
 
@@ -281,19 +285,28 @@
     };
 
     var timeFilterController = {
-        startDateSlider : document.getElementById("startdate"),
-        endDateSlider : document.getElementById("enddate"),
-        updateSliderRange :  function (min, max) {
-            var range = max - min;
-            this.startDateSlider.setAttribute("min", min - range/10);
-            this.startDateSlider.setAttribute("max", max + range/10);
-            this.endDateSlider.setAttribute("min", min - range/10);
-            this.endDateSlider.setAttribute("max", max + range/10);
+        startDateSlider: document.getElementById('startdate'),
+        endDateSlider: document.getElementById('enddate'),
+        startDate: null,
+        endDate: null,
+        // initialize or make it larger (multiple controllers will call this)
+        updateSliderRange:  function(start, end) {
+            if (this.startDate === null || start < this.startDate) {
+                this.startDate = start;
+            }
+            if (this.endDate === null || end > this.endDate) {
+                this.endDate = end;
+            }
+            var range = this.endDate - this.startDate;
+            this.startDateSlider.setAttribute('min', this.startDate - range/10);
+            this.startDateSlider.setAttribute('max', this.endDate + range/10);
+            this.endDateSlider.setAttribute('min', this.startDate - range/10);
+            this.endDateSlider.setAttribute('max', this.endDate + range/10);
         },
     };
 
     var photosController = new PhotosController(optionsController, timeFilterController);
-    var favoritesController = new FavoritesController(optionsController);
+    var favoritesController = new FavoritesController(optionsController, timeFilterController);
 
 
     var searchController = {

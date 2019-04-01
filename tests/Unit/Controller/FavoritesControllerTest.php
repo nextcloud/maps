@@ -20,7 +20,7 @@ class FavoriteControllerTest extends \PHPUnit\Framework\TestCase {
     private $pageController2;
     private $utilsController;
 
-    public static function setUpBeforeClass() {
+    public static function setUpBeforeClass(): void {
         $app = new Application();
         $c = $app->getContainer();
 
@@ -49,7 +49,7 @@ class FavoriteControllerTest extends \PHPUnit\Framework\TestCase {
         $c->getServer()->getGroupManager()->get('group2test')->addUser($u2);
     }
 
-    public function setUp() {
+    protected function setUp(): void {
         $this->appName = 'maps';
         $this->request = $this->getMockBuilder('\OCP\IRequest')
             ->disableOriginalConstructor()
@@ -109,7 +109,7 @@ class FavoriteControllerTest extends \PHPUnit\Framework\TestCase {
         );
     }
 
-    public static function tearDownAfterClass() {
+    public static function tearDownAfterClass(): void {
         $app = new Application();
         $c = $app->getContainer();
         $user = $c->getServer()->getUserManager()->get('test');
@@ -122,7 +122,7 @@ class FavoriteControllerTest extends \PHPUnit\Framework\TestCase {
         $c->getServer()->getGroupManager()->get('group2test')->delete();
     }
 
-    public function tearDown() {
+    protected function tearDown(): void {
         // in case there was a failure and something was not deleted
     }
 

@@ -33,7 +33,8 @@ before_install:
     - make appstore
     # install core
     - cd ../
-    - git clone https://github.com/nextcloud/server.git --recursive --depth 1 -b $CORE_BRANCH nextcloud
+    #- git clone https://github.com/nextcloud/server.git --recursive --depth 1 -b $CORE_BRANCH nextcloud
+    - wget -q https://download.nextcloud.com/server/releases/nextcloud-15.0.2.zip ; unzip -q nextcloud-15.0.2.zip ; rm nextcloud-15.0.2.zip
     - mv maps nextcloud/apps/
 
 before_script:

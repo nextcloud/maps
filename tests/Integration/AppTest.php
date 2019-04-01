@@ -15,8 +15,7 @@ class AppTest extends TestCase {
 
     private $container;
 
-    public function setUp() {
-        parent::setUp();
+    protected function setUp(): void {
         $app = new App('maps');
         $this->container = $app->getContainer();
     }

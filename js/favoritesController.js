@@ -544,6 +544,16 @@ FavoritesController.prototype = {
                 this.saveEnabledCategories();
             }
         }
+        else {
+            // if favorites are hidden, show them
+            if (!this.map.hasLayer(this.cluster)) {
+                this.toggleFavorites();
+            }
+            // if the category is disabled, enable it
+            if (!this.map.hasLayer(this.categoryLayers[cat])) {
+                this.toggleCategory(cat);
+            }
+        }
 
         // create the marker and related events
         // put favorite id as marker attribute

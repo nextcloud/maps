@@ -115,17 +115,16 @@
                 else {
                     mapController.map.addLayer(mapController.baseLayers['OpenStreetMap']);
                 }
-                if (optionsValues.hasOwnProperty('photosLayer') && optionsValues.photosLayer === 'true') {
+                if (!optionsValues.hasOwnProperty('photosLayer') || optionsValues.photosLayer === 'true') {
                     photosController.toggleLayer();
-
                 }
                 if (optionsValues.hasOwnProperty('locControlEnabled') && optionsValues.locControlEnabled === 'true') {
                     mapController.locControl.start();
                 }
-                if (optionsValues.hasOwnProperty('favoritesEnabled') && optionsValues.favoritesEnabled === 'true') {
+                if (!optionsValues.hasOwnProperty('favoritesEnabled') || optionsValues.favoritesEnabled === 'true') {
                     favoritesController.toggleFavorites();
                 }
-                if (optionsValues.hasOwnProperty('favoriteCategoryListShow') && optionsValues.favoriteCategoryListShow === 'true') {
+                if (!optionsValues.hasOwnProperty('favoriteCategoryListShow') || optionsValues.favoriteCategoryListShow === 'true') {
                     favoritesController.toggleCategoryList();
                 }
                 if (optionsValues.hasOwnProperty('enabledFavoriteCategories')

@@ -192,6 +192,7 @@ PhotosController.prototype = {
         this.photoMarkersNewest = this.photoMarkers[this.photoMarkers.length - 1].data.date;
         this.photoMarkersOldest = this.photoMarkers[0].data.date;
         this.timeFilterController.updateSliderRange(this.photoMarkersOldest, this.photoMarkersNewest);
+        this.timeFilterController.setSlider(this.photoMarkersOldest, this.photoMarkersNewest);
         var hide = [];
         var show = [];
         var visble = false;

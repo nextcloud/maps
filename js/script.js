@@ -281,9 +281,9 @@
     var timeFilterController = {
         min: 0,
         max: Date.now()/1000,
-        onUpdateCallbackBlock: false,
         updateFilterTimeBegin: [],
         updateFilterTimeEnd: [],
+        onUpdateCallbackBlock: false,
         createOnUpdateCallback: function () {
             var that = this;
             return function(values, handle, unencoded, tap, positions){
@@ -302,6 +302,33 @@
                 }
             };
         },
+        onChangeCallbackBlock: false,
+        createOnChangeCallback: function () {
+            var that = this;
+            return function(values, handle, unencoded, tap, positions){
+                if (!that.onChangeCallbackBlock){
+                    that.onChangeCallbackBlock = true;
+                    if (unencoded[0] < that.min) {
+                        var delta = that.min-unencoded[0];
+                        var r = that.max-that.min;
+                        that.updateSliderRange(that.min - 25* delta*delta/r, that.max);
+                    }
+                    if (unencoded[1] > that.max) {
+                        var delta = -that.max+unencoded[1];
+                        var r = that.max-that.min;
+                        that.updateSliderRange(that.min, that.max + 25*delta*delta/r);
+
+                    }
+                    if (positions[1] - positions[0] < 10) {
+                        var m = (unencoded[0] + unencoded[1])/2;
+                        var d = (unencoded[1] - unencoded[0])/2;
+                        that.updateSliderRange(m-2.5*d, m+2.5*d);
+                        that.setSlider(unencoded[0], unencoded[1]);
+                    }
+                    that.onChangeCallbackBlock = false;
+                }
+            };
+        },
         slider : document.getElementById("timeRangeSlider"),
         connect: function () {
             noUiSlider.create(this.slider, {
@@ -311,7 +338,7 @@
                 tooltips: [{
                         to: function (x) {
                             return new Date(x*1000);
-                        }
+                        },
                     }, {
                     to: function (x) {
                         return new Date(x*1000);
@@ -323,7 +350,9 @@
                 },
             });
             this.updateSliderRange(this.min, this.max);
-            this.slider.noUiSlider.on('update',this.createOnUpdateCallback());
+            this.setSlider(this.min, this.max);
+            this.slider.noUiSlider.on('update', this.createOnUpdateCallback());
+            this.slider.noUiSlider.on('change', this.createOnChangeCallback());
         },
         connectUpdateFilterTimeBegin: function (func) {
             this.updateFilterTimeBegin.push(func);
@@ -339,8 +368,12 @@
                     'max': max + range/10
                 }
             });
-            this.slider.noUiSlider.set([min, max]);
+            this.min = min;
+            this.max = max;
         },
+        setSlider: function(min, max) {
+            this.slider.noUiSlider.set([min, max]);
+        }
     };
 
     timeFilterController.connect();

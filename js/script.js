@@ -379,7 +379,7 @@
     timeFilterController.connect();
 
     var photosController = new PhotosController(optionsController, timeFilterController);
-    var favoritesController = new FavoritesController(optionsController);
+    var favoritesController = new FavoritesController(optionsController, timeFilterController);
 
     timeFilterController.connectUpdateFilterTimeBegin(function (date) {photosController.updateTimeFilterBegin(date);});
     timeFilterController.connectUpdateFilterTimeEnd(function (date) {photosController.updateTimeFilterEnd(date);});

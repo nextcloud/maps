@@ -212,6 +212,8 @@ tr.selected td {
 .easy-button-button {
     margin: 0 !important;
     padding: 0 !important;
+    border: 0px !important;
+    border-radius: 2px 2px 2px 2px !important;
 }
 .easy-button-button span.fa{
     line-height: 1.7;

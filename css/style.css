@@ -24,6 +24,9 @@
     z-index: 10001;
 }
 
+.timeRangeSlider-active {
+    background-color: #b10610 !important;
+}
 
 #map {
     width: 100%;

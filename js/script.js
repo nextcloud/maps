@@ -291,6 +291,7 @@
         onUpdateCallbackBlock: false,
         onChangeCallbackBlock: false,
         slider : document.getElementById("timeRangeSlider"),
+        sliderConnect: null,
         connect: function () {
             noUiSlider.create(this.slider, {
                 start: [20, 80],
@@ -308,8 +309,9 @@
                 range: {
                     'min': 0,
                     'max': 1
-                },
+                }
             });
+            this.sliderConnect = this.slider.getElementsByClassName("noUi-connect")[0];
             this.updateSliderRange(this.min, this.max);
             this.setSlider(this.min, this.max);
             var that = this;
@@ -325,11 +327,17 @@
                         photosController.updateTimeFilterEnd(that.valueEnd);
                     }
                     favoritesController.updateFilterDisplay();
+
                     that.onUpdateCallbackBlock = false;
+                    if (unencoded[0] < that.min || unencoded[1] > that.max || positions[1] - positions[0] < 10) {
+                        that.sliderConnect.classList.add("timeRangeSlider-active");
+                    } else {
+                        that.sliderConnect.classList.remove("timeRangeSlider-active");
+                    }
                 }
             });
             this.slider.noUiSlider.on('change', function(values, handle, unencoded, tap, positions) {
-                if (!that.onChangeCallbackBlock){
+                if (!that.onChangeCallbackBlock) {
                     that.onChangeCallbackBlock = true;
                     if (unencoded[0] < that.min) {
                         var delta = that.min-unencoded[0];
@@ -344,7 +352,7 @@
                     }
                     if (positions[1] - positions[0] < 10) {
                         var m = (unencoded[0] + unencoded[1])/2;
-                        var d = (unencoded[1] - unencoded[0])/2;
+                        var d = Math.max((unencoded[1] - unencoded[0])/2,1);
                         that.updateSliderRange(m-2.5*d, m+2.5*d);
                         that.setSlider(unencoded[0], unencoded[1]);
                     }
@@ -358,7 +366,7 @@
                 range: {
                     'min': min - range/10,
                     'max': max + range/10
-                }
+                },
             });
             this.min = min;
             this.max = max;

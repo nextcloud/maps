@@ -395,6 +395,11 @@
             }
 
             if (this.minInitialized && this.maxInitialized) {
+                // avoid min == max
+                if (this.min === this.max) {
+                    this.min = this.min - 10;
+                    this.max = this.max + 10;
+                }
                 this.updateSliderRange(this.min, this.max);
             }
         },

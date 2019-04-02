@@ -343,11 +343,13 @@
                         var delta = that.min-unencoded[0];
                         var r = that.max-that.min;
                         that.updateSliderRange(that.min - 25* delta*delta/r, that.max);
+                        that.sliderConnect.classList.remove("timeRangeSlider-active");
                     }
                     if (unencoded[1] > that.max) {
                         var delta = -that.max+unencoded[1];
                         var r = that.max-that.min;
                         that.updateSliderRange(that.min, that.max + 25*delta*delta/r);
+                        that.sliderConnect.classList.remove("timeRangeSlider-active");
 
                     }
                     if (positions[1] - positions[0] < 10) {
@@ -355,6 +357,7 @@
                         var d = Math.max((unencoded[1] - unencoded[0])/2,1);
                         that.updateSliderRange(m-2.5*d, m+2.5*d);
                         that.setSlider(unencoded[0], unencoded[1]);
+                        that.sliderConnect.classList.remove("timeRangeSlider-active");
                     }
                     that.onChangeCallbackBlock = false;
                 }

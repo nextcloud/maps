@@ -5,8 +5,8 @@ function PhotosController (optionsController, timeFilterController) {
     this.optionsController = optionsController;
     this.timeFilterController = timeFilterController;
     this.photoMarkers = [];
-    this.photoMarkersOldest = 0;
-    this.photoMarkersNewest = Date.now()*0.0011;
+    this.photoMarkersOldest = null;
+    this.photoMarkersNewest = null;
     this.photoMarkersFirstVisible = 0;
     this.photoMarkersLastVisible = 0;
     this.timeFilterBegin = 0;
@@ -190,8 +190,8 @@ PhotosController.prototype = {
     refreshTimeFilter: function() {
         this.photoMarkersNewest = this.photoMarkers[this.photoMarkers.length - 1].data.date;
         this.photoMarkersOldest = this.photoMarkers[0].data.date;
-        this.timeFilterController.updateSliderRange(this.photoMarkersOldest, this.photoMarkersNewest);
-        this.timeFilterController.setSlider(this.photoMarkersOldest, this.photoMarkersNewest);
+        this.timeFilterController.updateSliderRangeFromController();
+        this.timeFilterController.setSliderToMaxInterval();
         var hide = [];
         var show = [];
         var visible = false;
@@ -224,6 +224,9 @@ PhotosController.prototype = {
     },
 
     updateTimeFilterBegin: function (date) {
+        if (this.photoMarkers.length === 0) {
+            return;
+        }
         if (date <= this.timeFilterEnd) {
             var i = this.photoMarkersFirstVisible;
             if (date < this.timeFilterBegin) {
@@ -247,6 +250,9 @@ PhotosController.prototype = {
     },
 
     updateTimeFilterEnd: function (date){
+        if (this.photoMarkers.length === 0) {
+            return;
+        }
         if (date >= this.timeFilterBegin) {
             var i = this.photoMarkersLastVisible;
             if (date < this.timeFilterEnd) {

@@ -209,6 +209,7 @@
             this.map = L.map('map', {
                 zoom: 2,
                 zoomControl: true,
+                maxZoom: 19,
                 center: new L.LatLng(0, 0),
                 maxBounds: new L.LatLngBounds(new L.LatLng(-90, 180), new L.LatLng(90, -180)),
                 layers: []
@@ -281,54 +282,14 @@
     var timeFilterController = {
         min: 0,
         max: Date.now()/1000,
+        minInitialized: false,
+        maxInitialized: false,
+        valueBegin: null,
+        valueEnd: null,
         updateFilterTimeBegin: [],
         updateFilterTimeEnd: [],
         onUpdateCallbackBlock: false,
-        createOnUpdateCallback: function () {
-            var that = this;
-            return function(values, handle, unencoded, tap, positions){
-                if (!that.onUpdateCallbackBlock){
-                    that.onUpdateCallbackBlock = true;
-                    if (handle === 0) {
-                        that.updateFilterTimeBegin.forEach(function (f) {
-                            f(unencoded[handle]);
-                        });
-                    } else {
-                        that.updateFilterTimeEnd.forEach(function (f) {
-                            f(unencoded[handle]);
-                        });
-                    }
-                    that.onUpdateCallbackBlock = false;
-                }
-            };
-        },
         onChangeCallbackBlock: false,
-        createOnChangeCallback: function () {
-            var that = this;
-            return function(values, handle, unencoded, tap, positions){
-                if (!that.onChangeCallbackBlock){
-                    that.onChangeCallbackBlock = true;
-                    if (unencoded[0] < that.min) {
-                        var delta = that.min-unencoded[0];
-                        var r = that.max-that.min;
-                        that.updateSliderRange(that.min - 25* delta*delta/r, that.max);
-                    }
-                    if (unencoded[1] > that.max) {
-                        var delta = -that.max+unencoded[1];
-                        var r = that.max-that.min;
-                        that.updateSliderRange(that.min, that.max + 25*delta*delta/r);
-
-                    }
-                    if (positions[1] - positions[0] < 10) {
-                        var m = (unencoded[0] + unencoded[1])/2;
-                        var d = (unencoded[1] - unencoded[0])/2;
-                        that.updateSliderRange(m-2.5*d, m+2.5*d);
-                        that.setSlider(unencoded[0], unencoded[1]);
-                    }
-                    that.onChangeCallbackBlock = false;
-                }
-            };
-        },
         slider : document.getElementById("timeRangeSlider"),
         connect: function () {
             noUiSlider.create(this.slider, {
@@ -351,16 +312,47 @@
             });
             this.updateSliderRange(this.min, this.max);
             this.setSlider(this.min, this.max);
-            this.slider.noUiSlider.on('update', this.createOnUpdateCallback());
-            this.slider.noUiSlider.on('change', this.createOnChangeCallback());
+            var that = this;
+            this.slider.noUiSlider.on('update', function(values, handle, unencoded, tap, positions) {
+                if (!that.onUpdateCallbackBlock){
+                    that.onUpdateCallbackBlock = true;
+                    if (handle === 0) {
+                        that.valueBegin = unencoded[0];
+                        photosController.updateTimeFilterBegin(that.valueBegin);
+                    }
+                    else {
+                        that.valueEnd = unencoded[1];
+                        photosController.updateTimeFilterEnd(that.valueEnd);
+                    }
+                    favoritesController.updateFilterDisplay();
+                    that.onUpdateCallbackBlock = false;
+                }
+            });
+            this.slider.noUiSlider.on('change', function(values, handle, unencoded, tap, positions) {
+                if (!that.onChangeCallbackBlock){
+                    that.onChangeCallbackBlock = true;
+                    if (unencoded[0] < that.min) {
+                        var delta = that.min-unencoded[0];
+                        var r = that.max-that.min;
+                        that.updateSliderRange(that.min - 25* delta*delta/r, that.max);
+                    }
+                    if (unencoded[1] > that.max) {
+                        var delta = -that.max+unencoded[1];
+                        var r = that.max-that.min;
+                        that.updateSliderRange(that.min, that.max + 25*delta*delta/r);
+
+                    }
+                    if (positions[1] - positions[0] < 10) {
+                        var m = (unencoded[0] + unencoded[1])/2;
+                        var d = (unencoded[1] - unencoded[0])/2;
+                        that.updateSliderRange(m-2.5*d, m+2.5*d);
+                        that.setSlider(unencoded[0], unencoded[1]);
+                    }
+                    that.onChangeCallbackBlock = false;
+                }
+            });
         },
-        connectUpdateFilterTimeBegin: function (func) {
-            this.updateFilterTimeBegin.push(func);
-        },
-        connectUpdateFilterTimeEnd: function (func) {
-            this.updateFilterTimeEnd.push(func);
-        },
-        updateSliderRange :  function (min, max) {
+        updateSliderRange: function(min, max) {
             var range = max - min;
             this.slider.noUiSlider.updateOptions({
                 range: {
@@ -373,16 +365,50 @@
         },
         setSlider: function(min, max) {
             this.slider.noUiSlider.set([min, max]);
+        },
+        // when a controller's data has changed
+        updateSliderRangeFromController: function() {
+            var mins = [
+                favoritesController.firstDate,
+                photosController.photoMarkersOldest
+            ];
+            var maxs = [
+                favoritesController.lastDate,
+                photosController.photoMarkersNewest
+            ];
+            var i;
+            for (i=0; i < mins.length; i++) {
+                // if there is a value, we change the timeFilterController min if there is none
+                // or if there is a lower value
+                if (mins[i] !== null && (!this.minInitialized || mins[i] < this.min)) {
+                    this.min = mins[i];
+                    this.minInitialized = true;
+                }
+            }
+            for (i=0; i < maxs.length; i++) {
+                // if there is a value, we change the timeFilterController max if there is none
+                // or if there is a higher value
+                if (maxs[i] !== null && (!this.maxInitialized || maxs[i] > this.max)) {
+                    this.max = maxs[i];
+                    this.maxInitialized = true;
+                }
+            }
+
+            if (this.minInitialized && this.maxInitialized) {
+                this.updateSliderRange(this.min, this.max);
+            }
+        },
+        // on first data load, controllers want to set the slider values to global common max
+        setSliderToMaxInterval: function() {
+            this.setSlider(this.min, this.max);
         }
     };
 
-    timeFilterController.connect();
 
     var photosController = new PhotosController(optionsController, timeFilterController);
     var favoritesController = new FavoritesController(optionsController, timeFilterController);
 
-    timeFilterController.connectUpdateFilterTimeBegin(function (date) {photosController.updateTimeFilterBegin(date);});
-    timeFilterController.connectUpdateFilterTimeEnd(function (date) {photosController.updateTimeFilterEnd(date);});
+    timeFilterController.connect();
 
     var searchController = {
         isGeocodeabe: function(str) {

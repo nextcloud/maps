@@ -279,13 +279,13 @@ FavoritesController.prototype = {
                 this.lastDate = this.favorites[id].date_created;
             }
         }
-        this.timeFilterController.updateSliderRange();
+        this.timeFilterController.updateSliderRangeFromController();
     },
 
     // add/remove markers from layers considering current filter values
     updateFilterDisplay: function() {
-        var startFilter = this.timeFilterController.startDate;
-        var endFilter = this.timeFilterController.endDate;
+        var startFilter = this.timeFilterController.valueBegin;
+        var endFilter = this.timeFilterController.valueEnd;
 
         var cat, favid, markers, i, date_created;
         // markers to hide
@@ -332,6 +332,7 @@ FavoritesController.prototype = {
             that.updateCategoryCounters();
             that.favoritesLoaded = true;
             that.updateTimeFilterController();
+            that.timeFilterController.setSliderToMaxInterval();
         }).always(function (response) {
             $('#navigation-favorites').removeClass('icon-loading-small');
         }).fail(function() {
@@ -571,7 +572,7 @@ FavoritesController.prototype = {
         this.favorites[fav.id] = fav;
         this.markers[fav.id] = marker;
 
-        this.updateTimeFilterController();
+        //this.updateTimeFilterController();
     },
 
     favoriteMouseover: function(e) {

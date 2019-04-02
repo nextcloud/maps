@@ -24,8 +24,11 @@
     z-index: 10001;
 }
 
+.noUi-connect {
+    background-color: var(--color-primary-element-light);
+}
 .timeRangeSlider-active {
-    background-color: #b10610 !important;
+    background-color: var(--color-warning, #b10610) !important;
 }
 
 #map {

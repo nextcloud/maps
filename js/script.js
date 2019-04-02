@@ -153,6 +153,7 @@
         map: {},
         locControl: undefined,
         baseLayers: undefined,
+        routingControl: undefined,
         displaySearchResult: function(result) {
             if(this.searchMarker) this.map.removeLayer(this.searchMarker);
             this.searchMarker = L.marker([result.lat, result.lon]);
@@ -214,8 +215,10 @@
                 maxBounds: new L.LatLngBounds(new L.LatLng(-90, 180), new L.LatLng(90, -180)),
                 layers: []
             });
+            L.control.scale({metric: true, imperial: true, position: 'topleft'})
+                .addTo(this.map);
             this.locControl = L.control.locate({
-                position: 'topright',
+                position: 'topleft',
                 drawCircle: true,
                 drawMarker: true,
                 showPopup: false,
@@ -228,8 +231,6 @@
             $('.leaflet-control-locate a').click( function(e) {
                 optionsController.saveOptionValues({locControlEnabled: mapController.locControl._active});
             });
-            L.control.scale({metric: true, imperial: true, position: 'topleft'})
-                .addTo(this.map);
 
             // tile layer selector
             var baseLayers = {
@@ -276,6 +277,16 @@
                 }]
             });
             osmButton.addTo(this.map);
+
+            // routing
+            this.routingControl = L.Routing.control({
+                //waypoints: [
+                //    L.latLng(57.74, 11.94),
+                //    L.latLng(57.6792, 11.949)
+                //],
+                routeWhileDragging: true,
+                geocoder: L.Control.Geocoder.nominatim(),
+            }).addTo(this.map);
         }
     };
 

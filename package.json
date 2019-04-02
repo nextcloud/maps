@@ -33,6 +33,8 @@
     "leaflet.markercluster": "^1.1.0",
     "leaflet-easybutton": "^2.4.0",
     "leaflet.featuregroup.subgroup": "^1.0.2",
+    "leaflet-routing-machine": "^3.2.12",
+    "leaflet-control-geocoder": "^1.7.0",
     "nouislider": "^13.1.4",
     "opening_hours": "^3.5.0"
   }

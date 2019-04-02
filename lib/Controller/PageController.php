@@ -46,6 +46,8 @@ class PageController extends Controller {
             $csp->addAllowedImageDomain('https://*.opentopomap.org');
             $csp->addAllowedImageDomain('https://*.cartocdn.com');
             $csp->addAllowedImageDomain('http://*.stamen.com');
+            // routing engine
+            $csp->addAllowedConnectDomain('https://*.project-osrm.org');
             // poi images
             $csp->addAllowedImageDomain('https://nominatim.openstreetmap.org');
             // search and geocoder

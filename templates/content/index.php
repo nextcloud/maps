@@ -23,6 +23,8 @@ style('maps', '../node_modules/leaflet.locatecontrol/dist/L.Control.Locate.min')
 style('maps', '../node_modules/leaflet-easybutton/src/easy-button');
 style('maps', '../node_modules/leaflet.markercluster/dist/MarkerCluster');
 style('maps', '../node_modules/leaflet.markercluster/dist/MarkerCluster.Default');
+style('maps', '../node_modules/leaflet-routing-machine/dist/leaflet-routing-machine');
+style('maps', '../node_modules/leaflet-control-geocoder/dist/Control.Geocoder');
 style('maps', 'fontawesome/css/all.min');
 script('maps', '../node_modules/leaflet/dist/leaflet');
 script('maps', '../node_modules/leaflet.markercluster/dist/leaflet.markercluster');
@@ -30,6 +32,8 @@ script('maps', '../node_modules/leaflet.featuregroup.subgroup/dist/leaflet.featu
 script('maps', '../node_modules/opening_hours/opening_hours');
 script('maps', '../node_modules/leaflet.locatecontrol/dist/L.Control.Locate.min');
 script('maps', '../node_modules/leaflet-easybutton/src/easy-button');
+script('maps', '../node_modules/leaflet-routing-machine/dist/leaflet-routing-machine.min');
+script('maps', '../node_modules/leaflet-control-geocoder/dist/Control.Geocoder.min');
 style('maps', 'style');
 ?>
 <div id="search">

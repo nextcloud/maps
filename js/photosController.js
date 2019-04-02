@@ -179,8 +179,10 @@ PhotosController.prototype = {
             });
             marker.data = markerData;
             var previewUrl = this.generatePreviewUrl(marker.data.path);
+            var date = new Date(photos[i].dateTaken*1000);
             var img = '<img src=' + previewUrl + '/>' +
-                '<p class="tooltip-photo-name">' + escapeHTML(basename(markerData.path)) + '<p>';
+                '<p class="tooltip-photo-name">' + escapeHTML(basename(markerData.path)) + '</p>' +
+                '<p class="tooltip-photo-name">' + date.toIsoString() + '</p>';
             marker.bindTooltip(img, {permanent: false, className: "leaflet-marker-photo-tooltip"});
             markers.push(marker);
         }

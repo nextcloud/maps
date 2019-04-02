@@ -523,7 +523,7 @@ FavoritesController.prototype = {
             data: req,
             async: true
         }).done(function (response) {
-            that.addFavoriteMap(response, true);
+            that.addFavoriteMap(response, true, true);
             that.updateCategoryCounters();
         }).always(function (response) {
             $('#navigation-favorites').removeClass('icon-loading-small');
@@ -533,7 +533,7 @@ FavoritesController.prototype = {
     },
 
     // add a marker to the corresponding layer
-    addFavoriteMap: function(fav, enableCategory=false) {
+    addFavoriteMap: function(fav, enableCategory=false, fromUserAction=false) {
         // manage category first
         cat = fav.category;
         if (!cat) {
@@ -547,12 +547,14 @@ FavoritesController.prototype = {
         }
         else {
             // if favorites are hidden, show them
-            if (!this.map.hasLayer(this.cluster)) {
+            if (fromUserAction && !this.map.hasLayer(this.cluster)) {
                 this.toggleFavorites();
+                this.optionsController.saveOptionValues({favoritesEnabled: this.map.hasLayer(this.cluster)});
             }
             // if the category is disabled, enable it
-            if (!this.map.hasLayer(this.categoryLayers[cat])) {
+            if (fromUserAction && !this.map.hasLayer(this.categoryLayers[cat])) {
                 this.toggleCategory(cat);
+                this.saveEnabledCategories();
             }
         }
 

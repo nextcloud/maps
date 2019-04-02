@@ -362,6 +362,10 @@
                     that.onChangeCallbackBlock = false;
                 }
             });
+            this.slider.ondblclick = function() {
+                that.updateSliderRangeFromController();
+                that.setSliderToMaxInterval();
+            };
         },
         updateSliderRange: function(min, max) {
             var range = max - min;

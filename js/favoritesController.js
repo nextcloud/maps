@@ -574,7 +574,9 @@ FavoritesController.prototype = {
         this.favorites[fav.id] = fav;
         this.markers[fav.id] = marker;
 
-        //this.updateTimeFilterController();
+        if (fromUserAction) {
+            this.updateTimeFilterController();
+        }
     },
 
     favoriteMouseover: function(e) {

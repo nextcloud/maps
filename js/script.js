@@ -357,11 +357,11 @@
                 behaviour: 'drag',
                 tooltips: [{
                         to: function (x) {
-                            return new Date(x*1000);
+                            return new Date(x*1000).toIsoString();
                         },
                     }, {
                     to: function (x) {
-                        return new Date(x*1000);
+                        return new Date(x*1000).toIsoString();
                     }
                 }],
                 range: {

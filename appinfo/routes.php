@@ -19,6 +19,9 @@ return [
         //photos
         ['name' => 'photos#getPhotosFromDb', 'url' => '/photos', 'verb' => 'GET'],
 
+		//contacts
+		['name' => 'contacts#getContacts', 'url' => '/contacts', 'verb' => 'GET'],
+
         // favorites API
         [
             'name'         => 'favorites_api#preflighted_cors',

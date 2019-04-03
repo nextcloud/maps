@@ -79,9 +79,6 @@ FavoritesController.prototype = {
         });
         $('body').on('click', '.addFavoriteInCategory', function(e) {
             var cat = $(this).parent().parent().parent().parent().attr('category');
-            if (cat === that.defaultCategory) {
-                cat = '';
-            }
             if (that.movingFavoriteId !== null) {
                 that.leaveMoveFavoriteMode();
             }
@@ -637,7 +634,7 @@ FavoritesController.prototype = {
 
     getFavoriteTooltipContent: function(fav) {
         var content = t('maps', 'Name') + ': ' + fav.name;
-        if (fav.category) {
+        if (fav.category && fav.category !== this.defaultCategory) {
             content = content + '<br/>' + t('maps', 'Category') + ': ' + fav.category;
         }
         if (fav.comment) {
@@ -657,9 +654,7 @@ FavoritesController.prototype = {
         // add completion to category field
         var catList = [];
         for (var c in this._map.favoritesController.categoryLayers) {
-            if (c !== this._map.favoritesController.defaultCategory) {
-                catList.push(c);
-            }
+            catList.push(c);
         }
         $('input[role="category"]').autocomplete({
             source: catList

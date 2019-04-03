@@ -13,6 +13,16 @@
     top: 90%;
     z-index: 10000;
     width: 60%;
+    height: 10px;
+    background-color: var(--color-main-background) !important;
+}
+.noUi-handle::after,
+.noUi-handle::before {
+    height: 8px !important;
+}
+.noUi-handle {
+    height: 20px !important;
+    border-radius: 10px !important;
 }
 
 .noUi-tooltip {

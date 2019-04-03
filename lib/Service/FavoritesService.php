@@ -177,4 +177,131 @@ class FavoritesService {
         $qb = $qb->resetQueryParts();
     }
 
+    public function countFavorites($userId, $categoryList, $begin, $end) {
+        $qb = $this->qb;
+        $qb->select($qb->createFunction('COUNT(*)'))
+            ->from('maps_favorites', 'f')
+            ->where(
+                $qb->expr()->eq('user_id', $qb->createNamedParameter($userId, IQueryBuilder::PARAM_STR))
+            );
+        if ($begin !== null) {
+            $qb->andWhere(
+                $qb->expr()->gt('date_created', $qb->createNamedParameter($begin, IQueryBuilder::PARAM_INT))
+            );
+        }
+        if ($end !== null) {
+            $qb->andWhere(
+                $qb->expr()->lt('date_created', $qb->createNamedParameter($end, IQueryBuilder::PARAM_INT))
+            );
+        }
+        if (count($categoryList) > 0) {
+            $or = $qb->expr()->orx();
+            foreach ($categoryList as $cat) {
+                $or->add($qb->expr()->eq('category', $qb->createNamedParameter($cat, IQueryBuilder::PARAM_STR)));
+            }
+            $qb->andWhere($or);
+        }
+        $nbFavorites = 0;
+        $req = $qb->execute();
+        while ($row = $req->fetch()) {
+              $nbFavorites = intval($row['COUNT(*)']);
+              break;
+        }
+        $req->closeCursor();
+        $qb = $qb->resetQueryParts();
+
+        return $nbFavorites;
+    }
+
+    public function exportFavorites($userId, $fileHandler, $categoryList, $begin, $end, $appVersion) {
+        $qb = $this->qb;
+        $nbFavorites = $this->countFavorites($userId, $categoryList, $begin, $end);
+
+        $gpxHeader = '<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<gpx version="1.1" creator="Nextcloud Maps '.$appVersion.'" xmlns="http://www.topografix.com/GPX/1/1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd">
+  <metadata>
+    <name>favourites</name>
+  </metadata>';
+        fwrite($fileHandler, $gpxHeader."\n");
+
+        $chunkSize = 10000;
+        $favIndex = 0;
+
+        while ($favIndex < $nbFavorites) {
+            $gpxText = '';
+
+            $qb->select('id', 'name', 'date_created', 'date_modified', 'lat', 'lng', 'category', 'comment', 'extensions')
+                ->from('maps_favorites', 'f')
+                ->where(
+                    $qb->expr()->eq('user_id', $qb->createNamedParameter($userId, IQueryBuilder::PARAM_STR))
+                );
+            if ($begin !== null) {
+                $qb->andWhere(
+                    $qb->expr()->gt('date_created', $qb->createNamedParameter($begin, IQueryBuilder::PARAM_INT))
+                );
+            }
+            if ($end !== null) {
+                $qb->andWhere(
+                    $qb->expr()->lt('date_created', $qb->createNamedParameter($end, IQueryBuilder::PARAM_INT))
+                );
+            }
+            if (count($categoryList) > 0) {
+                $or = $qb->expr()->orx();
+                foreach ($categoryList as $cat) {
+                    $or->add($qb->expr()->eq('category', $qb->createNamedParameter($cat, IQueryBuilder::PARAM_STR)));
+                }
+                $qb->andWhere($or);
+            }
+            $qb->orderBy('date_created', 'ASC')
+               ->setMaxResults($chunkSize)
+               ->setFirstResult($favIndex);
+            $req = $qb->execute();
+
+            while ($row = $req->fetch()) {
+                $name = $row['name'];
+                $epoch = $row['date_created'];
+                $date = '';
+                if (is_numeric($epoch)) {
+                    $epoch = intval($epoch);
+                    $dt = new \DateTime("@$epoch");
+                    $date = $dt->format('Y-m-d\TH:i:s\Z');
+                }
+                $lat = $row['lat'];
+                $lng = $row['lng'];
+                $category = $row['category'];
+                $comment = $row['comment'];
+                $extensions = $row['extensions'];
+
+                $gpxExtension = '';
+                $gpxText .= '  <wpt lat="'.$lat.'" lon="'.$lng.'">' . "\n";
+                $gpxText .= '   <name>' . $name . '</name>' . "\n";
+                $gpxText .= '   <time>' . $date . '</time>' . "\n";
+                if ($category !== null && strlen($category) > 0) {
+                    $gpxText .= '   <type>' . $category . '</type>' . "\n";
+                }
+                else {
+                    $gpxText .= '   <type>no category</type>' . "\n";
+                }
+                if ($comment !== null && strlen($comment) > 0) {
+                    $gpxText .= '   <desc>' . $comment . '</desc>' . "\n";
+                }
+                if ($extensions !== null && strlen($extensions) > 0) {
+                    $gpxExtension .= '     <maps-extensions>' . $extensions . '</maps-extensions>' . "\n";
+                }
+                if ($gpxExtension !== '') {
+                    $gpxText .= '   <extensions>'. "\n" . $gpxExtension;
+                    $gpxText .= '   </extensions>' . "\n";
+                }
+                $gpxText .= '  </wpt>' . "\n";
+            }
+            $req->closeCursor();
+            $qb = $qb->resetQueryParts();
+            // write the chunk !
+            fwrite($fileHandler, $gpxText);
+            $favIndex = $favIndex + $chunkSize;
+        }
+        $gpxEnd .= '</gpx>' . "\n";
+        fwrite($fileHandler, $gpxEnd);
+    }
+
 }

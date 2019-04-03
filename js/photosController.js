@@ -41,12 +41,6 @@ PhotosController.prototype = {
             that.toggleLayer();
             that.optionsController.saveOptionValues({photosLayer: that.map.hasLayer(that.photoLayer)});
         });
-        $('body').on('click', '#navigation-photos', function(e) {
-            if (e.target.tagName === 'LI' && $(e.target).attr('id') === 'navigation-photos') {
-                that.toggleLayer();
-                that.optionsController.saveOptionValues({photosLayer: that.map.hasLayer(that.photoLayer)});
-            }
-        });
         // click on menu button
         $('body').on('click', '.photosMenuButton', function(e) {
             var wasOpen = $(this).parent().parent().parent().find('>.app-navigation-entry-menu').hasClass('open');

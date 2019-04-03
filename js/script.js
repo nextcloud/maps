@@ -4,19 +4,8 @@
         mapController.map.favoritesController = favoritesController;
         favoritesController.initFavorites(mapController.map);
         favoritesController.getFavorites();
-        //slider
-
-        //Photos
+        routingController.initRoutingControl(mapController.map);
         photosController.initLayer(mapController.map);
-        //timeFilterController.startDateSlider.oninput = function() {
-        //    photosController.updateTimeFilterBegin(parseInt(this.value));
-        //};
-
-
-        //timeFilterController.endDateSlider.oninput = function() {
-        //    photosController.updateTimeFilterEnd(parseInt(this.value));
-        //};
-
 
         // once controllers have been set/initialized, we can restore option values from server
         optionsController.restoreOptions();
@@ -134,6 +123,9 @@
                         favoritesController.restoreCategoriesState(that.enabledFavoriteCategories);
                     }
                 }
+                if (optionsValues.hasOwnProperty('routingEnabled') && optionsValues.routingEnabled === 'true') {
+                    routingController.toggleRouting();
+                }
 
                 // save tile layer when changed
                 // do it after restore, otherwise restoring triggers save
@@ -153,7 +145,6 @@
         map: {},
         locControl: undefined,
         baseLayers: undefined,
-        routingControl: undefined,
         displaySearchResult: function(result) {
             if(this.searchMarker) this.map.removeLayer(this.searchMarker);
             this.searchMarker = L.marker([result.lat, result.lon]);
@@ -277,16 +268,61 @@
                 }]
             });
             osmButton.addTo(this.map);
+        }
+    };
 
-            // routing
-            this.routingControl = L.Routing.control({
+    var routingController = {
+        control: undefined,
+        map: undefined,
+        enabled: false,
+        initRoutingControl: function(map) {
+            this.map = map;
+            var that = this;
+
+            //var bikeRouter = L.Routing.osrmv1({
+            //    serviceUrl: 'http://osrm.mapzen.com/bicycle/viaroute'
+            //});
+            this.control = L.Routing.control({
                 //waypoints: [
                 //    L.latLng(57.74, 11.94),
                 //    L.latLng(57.6792, 11.949)
                 //],
                 routeWhileDragging: true,
                 geocoder: L.Control.Geocoder.nominatim(),
-            }).addTo(this.map);
+                // TODO find a way to check if current NC language is supported by routing control
+                //language: 'fr',
+                //router: bikeRouter
+            })
+
+            //console.log(that.routingControl._routes[0].coordinates);
+
+            $('body').on('click', '.routingMenuButton', function(e) {
+                var wasOpen = $(this).parent().parent().parent().find('>.app-navigation-entry-menu').hasClass('open');
+                $('.app-navigation-entry-menu.open').removeClass('open');
+                if (!wasOpen) {
+                    $(this).parent().parent().parent().find('>.app-navigation-entry-menu').addClass('open');
+                }
+            });
+            // toggle routing control
+            $('body').on('click', '#toggleRoutingButton, #navigation-routing > a', function(e) {
+                that.toggleRouting();
+                optionsController.saveOptionValues({routingEnabled: that.enabled});
+            });
+        },
+
+        toggleRouting: function() {
+            if (this.enabled) {
+                this.control.remove();
+                $('#toggleRoutingButton button').addClass('icon-toggle').attr('style', '');
+                this.enabled = false;
+            }
+            else {
+                this.control.addTo(this.map);
+                var color = OCA.Theming.color.replace('#', '');
+                var imgurl = OC.generateUrl('/svg/core/actions/toggle?color='+color);
+                $('#toggleRoutingButton button').removeClass('icon-toggle').css('background-image', 'url('+imgurl+')');
+                this.enabled = true;
+            }
         }
     };
 

@@ -1,6 +1,6 @@
 <ul>
     <li id="navigation-photos">
-        <a class="icon-link" href="#"><?php p($l->t('Photos')); ?></a>
+        <a class="icon-picture" href="#"><?php p($l->t('Photos')); ?></a>
         <div class="app-navigation-entry-utils">
             <ul>
                 <li class="app-navigation-entry-utils-counter">
@@ -52,6 +52,29 @@
         </div>
         <ul id="category-list">
         </ul>
+    </li>
+    <li id="navigation-routing">
+        <a class="icon-view-next" href="#"><?php p($l->t('Routing')); ?></a>
+        <div class="app-navigation-entry-utils">
+            <ul>
+                <li id="toggleRoutingButton" class="app-navigation-entry-utils-menu-button" title="<?php p($l->t('Toggle routing')); ?>">
+                    <button class="icon-toggle"></button>
+                </li>
+                <li class="app-navigation-entry-utils-menu-button routingMenuButton">
+                    <button></button>
+                </li>
+            </ul>
+        </div>
+        <div class="app-navigation-entry-menu">
+            <ul>
+                <li>
+                    <a href="#" class="exportCurrentRoute">
+                        <span class="icon-category-office"></span>
+                        <span><?php p($l->t('Export route to gpx')); ?></span>
+                    </a>
+                </li>
+            </ul>
+        </div>
     </li>
     <img id="dummylogo"/>
 </ul>

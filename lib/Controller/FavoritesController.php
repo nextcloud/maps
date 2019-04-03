@@ -146,6 +146,14 @@ class FavoritesController extends Controller {
     /**
      * @NoAdminRequired
      */
+    public function deleteFavorites($ids) {
+        $this->favoritesService->deleteFavoritesFromDB($ids, $this->userId);
+        return new DataResponse('DELETED');
+    }
+
+    /**
+     * @NoAdminRequired
+     */
     public function exportAllFavorites() {
         return $this->exportFavorites([], null, null, true);
     }

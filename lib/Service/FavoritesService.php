@@ -224,6 +224,26 @@ class FavoritesService {
         $qb = $qb->resetQueryParts();
     }
 
+    public function deleteFavoritesFromDB($ids, $userId) {
+        $qb = $this->qb;
+        $qb->delete('maps_favorites')
+            ->where(
+                $qb->expr()->eq('user_id', $qb->createNamedParameter($userId, IQueryBuilder::PARAM_STR))
+            );
+        if (count($ids) > 0) {
+            $or = $qb->expr()->orx();
+            foreach ($ids as $id) {
+                $or->add($qb->expr()->eq('id', $qb->createNamedParameter($id, IQueryBuilder::PARAM_INT)));
+            }
+            $qb->andWhere($or);
+        }
+        else {
+            return;
+        }
+        $req = $qb->execute();
+        $qb = $qb->resetQueryParts();
+    }
+
     public function countFavorites($userId, $categoryList, $begin, $end) {
         $qb = $this->qb;
         $qb->select($qb->createFunction('COUNT(*)'))

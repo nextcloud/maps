@@ -141,7 +141,7 @@ FavoritesController.prototype = {
             var cat = $(this).parent().parent().parent().parent().attr('category');
             $(this).parent().parent().parent().parent().addClass('deleted');
             that.categoryDeletionTimer[cat] = new Timer(function() {
-                that.deleteCategoryFavorites(cat);
+                that.deleteCategoryFavoritesDB(cat);
             }, 7000);
         });
         $('body').on('click', '.undoDeleteCategory', function(e) {
@@ -498,15 +498,34 @@ FavoritesController.prototype = {
         }
     },
 
-    deleteCategoryFavorites: function(cat) {
+    deleteCategoryFavoritesDB: function(cat) {
         var markers = this.categoryMarkers[cat];
-        var favid;
-        for (favid in markers) {
-            this.deleteFavoriteDB(favid);
+        var favids = [];
+        for (var favid in markers) {
+            favids.push(favid);
+            //this.deleteFavoriteDB(favid);
         }
+        var that = this;
+        $('#navigation-favorites').addClass('icon-loading-small');
+        var req = {
+            ids: favids
+        };
+        var url = OC.generateUrl('/apps/maps/favorites');
+        $.ajax({
+            type: 'DELETE',
+            url: url,
+            data: req,
+            async: true
+        }).done(function (response) {
+            that.deleteCategoryMap(cat);
+        }).always(function (response) {
+            $('#navigation-favorites').removeClass('icon-loading-small');
+        }).fail(function() {
+            OC.Notification.showTemporary(t('maps', 'Failed to delete category favorites'));
+        });
     },
 
-    deleteCategory: function(cat) {
+    deleteCategoryMap: function(cat) {
         // favorites (just in case the category is not empty)
         var favids = [];
         for (favid in this.categoryMarkers[cat]) {
@@ -746,7 +765,7 @@ FavoritesController.prototype = {
 
         // delete category if empty
         if (Object.keys(this.categoryMarkers[cat]).length === 0) {
-            this.deleteCategory(cat);
+            this.deleteCategoryMap(cat);
             this.saveEnabledCategories();
         }
     },
@@ -818,7 +837,7 @@ FavoritesController.prototype = {
                 var shouldSaveCategories = false;
                 // delete old category if empty
                 if (Object.keys(this.categoryMarkers[oldCategory]).length === 0) {
-                    this.deleteCategory(oldCategory);
+                    this.deleteCategoryMap(oldCategory);
                     shouldSaveCategories = true;
                 }
                 // create category if necessary
@@ -936,7 +955,7 @@ FavoritesController.prototype = {
                 catToDel.push(cat);
             }
             for (var i=0; i < catToDel.length; i++) {
-                that.deleteCategory(catToDel[i]);
+                that.deleteCategoryMap(catToDel[i]);
             }
             that.getFavorites();
         }).always(function (response) {

@@ -54,6 +54,18 @@
                         <span><?php p($l->t('Export displayed favorites')); ?></span>
                     </a>
                 </li>
+                <li>
+                    <a href="#" id="select-all-categories">
+                        <span class="icon-category-enabled"></span>
+                        <span><?php p($l->t('Show all categories')); ?></span>
+                    </a>
+                </li>
+                <li>
+                    <a href="#" id="select-no-categories">
+                        <span class="icon-category-disabled"></span>
+                        <span><?php p($l->t('Hide all categories')); ?></span>
+                    </a>
+                </li>
             </ul>
         </div>
         <ul id="category-list">

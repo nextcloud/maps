@@ -54,6 +54,17 @@ FavoritesController.prototype = {
             that.toggleCategory(cat);
             that.saveEnabledCategories();
         });
+        // show/hide all categories
+        $('body').on('click', '#select-all-categories', function(e) {
+            that.showAllCategories();
+            that.saveEnabledCategories();
+            that.optionsController.saveOptionValues({favoritesEnabled: that.map.hasLayer(that.cluster)});
+        });
+        $('body').on('click', '#select-no-categories', function(e) {
+            that.hideAllCategories();
+            that.saveEnabledCategories();
+            that.optionsController.saveOptionValues({favoritesEnabled: that.map.hasLayer(that.cluster)});
+        });
         // click on + button
         $('body').on('click', '#addFavoriteButton', function(e) {
             if (that.addFavoriteMode) {
@@ -215,6 +226,25 @@ FavoritesController.prototype = {
         for (var i=0; i < enabledCategoryList.length; i++) {
             cat = enabledCategoryList[i];
             if (this.categoryLayers.hasOwnProperty(cat)) {
+                this.toggleCategory(cat);
+            }
+        }
+    },
+
+    showAllCategories: function() {
+        if (!this.map.hasLayer(this.cluster)) {
+            this.toggleFavorites();
+        }
+        for (var cat in this.categoryLayers) {
+            if (!this.map.hasLayer(this.categoryLayers[cat])) {
+                this.toggleCategory(cat);
+            }
+        }
+    },
+
+    hideAllCategories: function() {
+        for (var cat in this.categoryLayers) {
+            if (this.map.hasLayer(this.categoryLayers[cat])) {
                 this.toggleCategory(cat);
             }
         }

@@ -245,6 +245,11 @@ class FavoritesService {
     }
 
     public function countFavorites($userId, $categoryList, $begin, $end) {
+        if ($categoryList === null or
+            (is_array($categoryList) and count($categoryList) === 0)
+        ) {
+            return 0;
+        }
         $qb = $this->qb;
         $qb->select($qb->createFunction('COUNT(*)'))
             ->from('maps_favorites', 'f')
@@ -261,7 +266,11 @@ class FavoritesService {
                 $qb->expr()->lt('date_created', $qb->createNamedParameter($end, IQueryBuilder::PARAM_INT))
             );
         }
-        if (count($categoryList) > 0) {
+        // apply category restrictions if it's a non-empty array
+        if (!is_string($categoryList) and
+            is_array($categoryList) and
+            count($categoryList) > 0
+        ) {
             $or = $qb->expr()->orx();
             foreach ($categoryList as $cat) {
                 $or->add($qb->expr()->eq('category', $qb->createNamedParameter($cat, IQueryBuilder::PARAM_STR)));
@@ -312,7 +321,11 @@ class FavoritesService {
                     $qb->expr()->lt('date_created', $qb->createNamedParameter($end, IQueryBuilder::PARAM_INT))
                 );
             }
-            if (count($categoryList) > 0) {
+            // apply category restrictions if it's a non-empty array
+            if (!is_string($categoryList) and
+                is_array($categoryList) and
+                count($categoryList) > 0
+            ) {
                 $or = $qb->expr()->orx();
                 foreach ($categoryList as $cat) {
                     $or->add($qb->expr()->eq('category', $qb->createNamedParameter($cat, IQueryBuilder::PARAM_STR)));

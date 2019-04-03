@@ -897,21 +897,23 @@ FavoritesController.prototype = {
             OC.Notification.showTemporary(t('maps', 'Favorites exported in {path}', {path: response}));
         }).always(function (response) {
             $('#navigation-favorites').removeClass('icon-loading-small');
-        }).fail(function() {
-            OC.Notification.showTemporary(t('maps', 'Failed to export favorites'));
+        }).fail(function(response) {
+            OC.Notification.showTemporary(t('maps', 'Failed to export favorites') + ': ' + response.responseText);
         });
     },
 
     exportDisplayedFavorites: function() {
         $('#navigation-favorites').addClass('icon-loading-small');
         var catList = [];
-        for (var cat in this.categoryLayers) {
-            if (this.map.hasLayer(this.categoryLayers[cat])) {
-                // a sync client could have saved favorites with empty category
-                if (cat === this.defaultCategory) {
-                    catList.push('');
+        if (this.map.hasLayer(this.cluster)) {
+            for (var cat in this.categoryLayers) {
+                if (this.map.hasLayer(this.categoryLayers[cat])) {
+                    // a sync client could have saved favorites with empty category
+                    if (cat === this.defaultCategory) {
+                        catList.push('');
+                    }
+                    catList.push(cat);
                 }
-                catList.push(cat);
             }
         }
         var begin = this.timeFilterController.valueBegin;
@@ -931,8 +933,8 @@ FavoritesController.prototype = {
             OC.Notification.showTemporary(t('maps', 'Favorites exported in {path}', {path: response}));
         }).always(function (response) {
             $('#navigation-favorites').removeClass('icon-loading-small');
-        }).fail(function() {
-            OC.Notification.showTemporary(t('maps', 'Failed to export favorites'));
+        }).fail(function(response) {
+            OC.Notification.showTemporary(t('maps', 'Failed to export favorites') + ': ' + response.responseText);
         });
     },
 

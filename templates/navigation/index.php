@@ -54,7 +54,7 @@
         </ul>
     </li>
     <li id="navigation-routing">
-        <a class="icon-view-next" href="#"><?php p($l->t('Routing')); ?></a>
+        <a class="" href="#"><?php p($l->t('Routing')); ?></a>
         <div class="app-navigation-entry-utils">
             <ul>
                 <li id="toggleRoutingButton" class="app-navigation-entry-utils-menu-button" title="<?php p($l->t('Toggle routing')); ?>">

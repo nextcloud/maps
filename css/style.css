@@ -285,6 +285,15 @@ table.editFavorite input[type=text] {
 .category-line > a {
     opacity: 1 !important;
 }
+#navigation-routing > a::before {
+    content: "\f4d7";
+    font-family: 'Font Awesome\ 5 Free';
+    font-style: normal;
+    font-weight: 900;
+    text-decoration: inherit;
+    position: absolute;
+    left: 18px;
+}
 .ui-autocomplete {
     z-index: 10000 !important;
 }

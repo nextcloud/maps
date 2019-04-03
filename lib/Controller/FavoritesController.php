@@ -136,4 +136,55 @@ class FavoritesController extends Controller {
         }
     }
 
+    /**
+     * @NoAdminRequired
+     */
+    public function exportAllFavorites() {
+        return $this->exportFavorites(null, null, null, true);
+    }
+
+    /**
+     * @NoAdminRequired
+     */
+    public function exportFavorites($categoryList, $begin, $end, $all=false) {
+        // create /Maps directory if necessary
+        $userFolder = $this->userfolder;
+        if (!$userFolder->nodeExists('/Maps')) {
+            $userFolder->newFolder('Maps');
+        }
+        if ($userFolder->nodeExists('/Maps')) {
+            $mapsFolder = $userFolder->get('/Maps');
+            if ($mapsFolder->getType() !== \OCP\Files\FileInfo::TYPE_FOLDER) {
+                $response = new DataResponse(['message'=>'/Maps is not a directory'], 400);
+                return $response;
+            }
+            else if (!$mapsFolder->isCreatable()) {
+                $response = new DataResponse(['message'=>'/Maps is not writeable'], 400);
+                return $response;
+            }
+        }
+        else {
+            $response = new DataResponse(['message'=>'Impossible to create /Maps'], 400);
+            return $response;
+        }
+
+        // generate export file name
+        $prefix = $all ? '' : 'filtered-';
+        $now = new \DateTime();
+        $dateStr = $now->format('Y-m-d H:i:s');
+        $filename = $dateStr.'-'.$prefix.'favorites.gpx';
+
+        if ($mapsFolder->nodeExists($filename)) {
+            $mapsFolder->get($filename)->delete();
+        }
+        $file = $mapsFolder->newFile($filename);
+        $handler = $file->fopen('w');
+
+        $this->favoritesService->exportFavorites($this->userId, $handler, $categoryList, $begin, $end, $this->appVersion);
+
+        fclose($handler);
+        $file->touch();
+        return new DataResponse('/Maps/'.$filename);
+    }
+
 }

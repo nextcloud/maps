@@ -164,6 +164,13 @@ FavoritesController.prototype = {
                 that.optionsController.saveOptionValues({favoriteCategoryListShow: $('#navigation-favorites').hasClass('open')});
             }
         });
+        // export favorites
+        $('body').on('click', '#export-all-favorites', function(e) {
+            that.exportAllFavorites();
+        });
+        $('body').on('click', '#export-displayed-favorites', function(e) {
+            that.exportDisplayedFavorites();
+        });
 
         this.cluster = L.markerClusterGroup({
             //iconCreateFunction: function(cluster) {
@@ -798,6 +805,58 @@ FavoritesController.prototype = {
         var name = this.favoritesController.favorites[favid].name;
         this.favoritesController.editFavoriteDB(favid, name, null, null, lat, lng);
         this.favoritesController.leaveMoveFavoriteMode();
+    },
+
+    exportAllFavorites: function() {
+        $('#navigation-favorites').addClass('icon-loading-small');
+        var req = {};
+        var url = OC.generateUrl('/apps/maps/export/favorites');
+        $.ajax({
+            type: 'GET',
+            url: url,
+            data: req,
+            async: true
+        }).done(function (response) {
+            OC.Notification.showTemporary(t('maps', 'Favorites exported in {path}', {path: response}));
+        }).always(function (response) {
+            $('#navigation-favorites').removeClass('icon-loading-small');
+        }).fail(function() {
+            OC.Notification.showTemporary(t('maps', 'Failed to export favorites'));
+        });
+    },
+
+    exportDisplayedFavorites: function() {
+        $('#navigation-favorites').addClass('icon-loading-small');
+        var catList = [];
+        for (var cat in this.categoryLayers) {
+            if (this.map.hasLayer(this.categoryLayers[cat])) {
+                // a sync client could have saved favorites with empty category
+                if (cat === this.defaultCategory) {
+                    catList.push('');
+                }
+                catList.push(cat);
+            }
+        }
+        var begin = this.timeFilterController.valueBegin;
+        var end = this.timeFilterController.valueEnd;
+        var req = {
+            categoryList: catList,
+            begin: begin,
+            end: end
+        };
+        var url = OC.generateUrl('/apps/maps/export/favorites');
+        $.ajax({
+            type: 'POST',
+            url: url,
+            data: req,
+            async: true
+        }).done(function (response) {
+            OC.Notification.showTemporary(t('maps', 'Favorites exported in {path}', {path: response}));
+        }).always(function (response) {
+            $('#navigation-favorites').removeClass('icon-loading-small');
+        }).fail(function() {
+            OC.Notification.showTemporary(t('maps', 'Failed to export favorites'));
+        });
     },
 }
 

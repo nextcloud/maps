@@ -39,5 +39,6 @@ return [
 
         ['name' => 'favorites#exportAllFavorites', 'url' => '/export/favorites', 'verb' => 'GET'],
         ['name' => 'favorites#exportFavorites', 'url' => '/export/favorites', 'verb' => 'POST'],
+        ['name' => 'favorites#importFavorites', 'url' => '/import/favorites', 'verb' => 'POST'],
     ]
 ];

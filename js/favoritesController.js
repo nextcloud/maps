@@ -180,6 +180,19 @@ FavoritesController.prototype = {
             that.exportDisplayedFavorites();
         });
 
+        // import favorites
+        $('body').on('click', '#import-favorites', function(e) {
+            OC.dialogs.filepicker(
+                t('maps', 'Import favorites from gpx file'),
+                function(targetPath) {
+                    that.importFavorites(targetPath);
+                },
+                false,
+                null,
+                true
+            );
+        });
+
         this.cluster = L.markerClusterGroup({
             //iconCreateFunction: function(cluster) {
             //    return L.divIcon({ html: '<div>' + cluster.getChildCount() + '</div>' });
@@ -492,6 +505,19 @@ FavoritesController.prototype = {
     },
 
     deleteCategory: function(cat) {
+        // favorites (just in case the category is not empty)
+        var favids = [];
+        for (favid in this.categoryMarkers[cat]) {
+            favids.push(favid);
+        }
+        for (var i=0; i < favids.length; i++) {
+            var favid = favids[i];
+            this.categoryLayers[cat].removeLayer(this.markers[favid]);
+            delete this.favorites[favid];
+            delete this.markers[favid];
+            delete this.categoryMarkers[cat][favid];
+        }
+        // category
         this.map.removeLayer(this.categoryLayers[cat]);
         delete this.categoryLayers[cat];
         delete this.categoryMarkers[cat];
@@ -886,6 +912,35 @@ FavoritesController.prototype = {
             $('#navigation-favorites').removeClass('icon-loading-small');
         }).fail(function() {
             OC.Notification.showTemporary(t('maps', 'Failed to export favorites'));
+        });
+    },
+
+    importFavorites: function(path) {
+        $('#navigation-favorites').addClass('icon-loading-small');
+        var that = this;
+        var req = {
+            path: path
+        };
+        var url = OC.generateUrl('/apps/maps/import/favorites');
+        $.ajax({
+            type: 'POST',
+            url: url,
+            data: req,
+            async: true
+        }).done(function (response) {
+            OC.Notification.showTemporary(t('maps', '{nb} favorites imported from {path}', {nb: response, path: path}));
+            var catToDel = [];
+            for (var cat in that.categoryLayers) {
+                catToDel.push(cat);
+            }
+            for (var i=0; i < catToDel.length; i++) {
+                that.deleteCategory(catToDel[i]);
+            }
+            that.getFavorites();
+        }).always(function (response) {
+            $('#navigation-favorites').removeClass('icon-loading-small');
+        }).fail(function() {
+            OC.Notification.showTemporary(t('maps', 'Failed to import favorites'));
         });
     },
 }

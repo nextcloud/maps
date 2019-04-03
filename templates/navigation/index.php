@@ -55,6 +55,12 @@
                     </a>
                 </li>
                 <li>
+                    <a href="#" id="import-favorites">
+                        <span class="icon-folder"></span>
+                        <span><?php p($l->t('Import favorites from gpx files')); ?></span>
+                    </a>
+                </li>
+                <li>
                     <a href="#" id="select-all-categories">
                         <span class="icon-category-enabled"></span>
                         <span><?php p($l->t('Show all categories')); ?></span>

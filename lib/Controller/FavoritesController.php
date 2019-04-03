@@ -32,6 +32,13 @@ use OCP\Share;
 
 use OCA\Maps\Service\FavoritesService;
 
+function endswith($string, $test) {
+    $strlen = strlen($string);
+    $testlen = strlen($test);
+    if ($testlen > $strlen) return false;
+    return substr_compare($string, $test, $strlen - $testlen, $testlen) === 0;
+}
+
 class FavoritesController extends Controller {
 
     private $userId;
@@ -140,7 +147,7 @@ class FavoritesController extends Controller {
      * @NoAdminRequired
      */
     public function exportAllFavorites() {
-        return $this->exportFavorites(null, null, null, true);
+        return $this->exportFavorites([], null, null, true);
     }
 
     /**
@@ -185,6 +192,37 @@ class FavoritesController extends Controller {
         fclose($handler);
         $file->touch();
         return new DataResponse('/Maps/'.$filename);
+    }
+
+    /**
+     * @NoAdminRequired
+     */
+    public function importFavorites($path) {
+        $userFolder = $this->userfolder;
+        $cleanpath = str_replace(array('../', '..\\'), '',  $path);
+
+        if ($userFolder->nodeExists($cleanpath)){
+            $file = $userFolder->get($cleanpath);
+            if ($file->getType() === \OCP\Files\FileInfo::TYPE_FILE and
+                $file->isReadable()){
+                if (endswith($file->getName(), '.gpx') or endswith($file->getName(), '.GPX')) {
+                    $nbImported = $this->favoritesService->importFavorites($this->userId, $file);
+                    return new DataResponse($nbImported);
+                }
+                else {
+                    // invalid extension
+                    return new DataResponse('Invalid file extension', 400);
+                }
+            }
+            else {
+                // directory or not readable
+                return new DataResponse('Impossible to read the file', 400);
+            }
+        }
+        else {
+            // does not exist
+            return new DataResponse('File does not exist', 400);
+        }
     }
 
 }

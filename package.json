@@ -26,15 +26,15 @@
   "homepage": "https://github.com/nextcloud/maps",
   "dependencies": {
     "bower": "^1.8.0",
-    "gulp": "^3.9.1",
-    "gulp-cli": "^1.4.0",
+    "gulp": "^4.0.0",
+    "gulp-cli": "^2.1.0",
     "leaflet": "^1.2.0",
+    "leaflet-control-geocoder": "^1.7.0",
+    "leaflet-easybutton": "^2.4.0",
+    "leaflet-routing-machine": "^3.2.12",
+    "leaflet.featuregroup.subgroup": "^1.0.2",
     "leaflet.locatecontrol": "^0.62.0",
     "leaflet.markercluster": "^1.1.0",
-    "leaflet-easybutton": "^2.4.0",
-    "leaflet.featuregroup.subgroup": "^1.0.2",
-    "leaflet-routing-machine": "^3.2.12",
-    "leaflet-control-geocoder": "^1.7.0",
     "nouislider": "^13.1.4",
     "opening_hours": "^3.5.0"
   }

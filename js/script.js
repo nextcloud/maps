@@ -294,8 +294,6 @@
                 //router: bikeRouter
             })
 
-            //console.log(that.routingControl._routes[0].coordinates);
-
             $('body').on('click', '.routingMenuButton', function(e) {
                 var wasOpen = $(this).parent().parent().parent().find('>.app-navigation-entry-menu').hasClass('open');
                 $('.app-navigation-entry-menu.open').removeClass('open');
@@ -307,6 +305,10 @@
             $('body').on('click', '#toggleRoutingButton, #navigation-routing > a', function(e) {
                 that.toggleRouting();
                 optionsController.saveOptionValues({routingEnabled: that.enabled});
+            });
+            // export
+            $('body').on('click', '.exportCurrentRoute', function(e) {
+                that.exportRoute();
             });
         },
 
@@ -322,6 +324,15 @@
                 var imgurl = OC.generateUrl('/svg/core/actions/toggle?color='+color);
                 $('#toggleRoutingButton button').removeClass('icon-toggle').css('background-image', 'url('+imgurl+')');
                 this.enabled = true;
+            }
+        },
+
+        exportRoute: function() {
+            if (this.control.hasOwnProperty('_routes')
+                && this.control._routes.length > 0
+                && this.control._routes[0].hasOwnProperty('coordinates')
+            ) {
+                console.log(this.control._routes[0].coordinates);
             }
         }
     };

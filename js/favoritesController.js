@@ -612,7 +612,12 @@ FavoritesController.prototype = {
         this.markers[fav.id] = marker;
 
         if (fromUserAction) {
-            this.updateTimeFilterController();
+            // we make sure created favorite is displayed
+            var minFilter = this.timeFilterController.min;
+            var startFilter = this.timeFilterController.valueBegin;
+            var endFilter = fav.date_created;
+            this.timeFilterController.updateSliderRange(minFilter, endFilter);
+            this.timeFilterController.setSlider(startFilter, endFilter);
         }
     },
 

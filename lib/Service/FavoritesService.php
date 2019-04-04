@@ -132,8 +132,8 @@ class FavoritesService {
                 'name' => $qb->createNamedParameter($name, IQueryBuilder::PARAM_STR),
                 'date_created' => $qb->createNamedParameter($nowTimeStamp, IQueryBuilder::PARAM_INT),
                 'date_modified' => $qb->createNamedParameter($nowTimeStamp, IQueryBuilder::PARAM_INT),
-                'lat' => $qb->createNamedParameter($lat, IQueryBuilder::PARAM_LOB),
-                'lng' => $qb->createNamedParameter($lng, IQueryBuilder::PARAM_LOB),
+                'lat' => $qb->createNamedParameter($lat, IQueryBuilder::PARAM_STR),
+                'lng' => $qb->createNamedParameter($lng, IQueryBuilder::PARAM_STR),
                 'category' => $qb->createNamedParameter($category, IQueryBuilder::PARAM_STR),
                 'comment' => $qb->createNamedParameter($comment, IQueryBuilder::PARAM_STR),
                 'extensions' => $qb->createNamedParameter($extensions, IQueryBuilder::PARAM_STR)
@@ -170,8 +170,8 @@ class FavoritesService {
                 'name' => $qb->createNamedParameter($name, IQueryBuilder::PARAM_STR),
                 'date_created' => $qb->createNamedParameter($ts, IQueryBuilder::PARAM_INT),
                 'date_modified' => $qb->createNamedParameter($nowTimeStamp, IQueryBuilder::PARAM_INT),
-                'lat' => $qb->createNamedParameter($lat, IQueryBuilder::PARAM_LOB),
-                'lng' => $qb->createNamedParameter($lng, IQueryBuilder::PARAM_LOB),
+                'lat' => $qb->createNamedParameter($lat, IQueryBuilder::PARAM_STR),
+                'lng' => $qb->createNamedParameter($lng, IQueryBuilder::PARAM_STR),
                 'category' => $qb->createNamedParameter($category, IQueryBuilder::PARAM_STR),
                 'comment' => $qb->createNamedParameter($comment, IQueryBuilder::PARAM_STR),
                 'extensions' => $qb->createNamedParameter($extensions, IQueryBuilder::PARAM_STR)
@@ -193,10 +193,10 @@ class FavoritesService {
         $qb->set('name', $qb->createNamedParameter($name, IQueryBuilder::PARAM_STR));
         $qb->set('date_modified', $qb->createNamedParameter($nowTimeStamp, IQueryBuilder::PARAM_INT));
         if ($lat !== null) {
-            $qb->set('lat', $qb->createNamedParameter($lat, IQueryBuilder::PARAM_LOB));
+            $qb->set('lat', $qb->createNamedParameter($lat, IQueryBuilder::PARAM_STR));
         }
         if ($lng !== null) {
-            $qb->set('lng', $qb->createNamedParameter($lng, IQueryBuilder::PARAM_LOB));
+            $qb->set('lng', $qb->createNamedParameter($lng, IQueryBuilder::PARAM_STR));
         }
         if ($category !== null) {
             $qb->set('category', $qb->createNamedParameter($category, IQueryBuilder::PARAM_STR));

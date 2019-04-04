@@ -439,9 +439,15 @@ class FavoritesService {
         else if ($name === 'WPT') {
             // store favorite
             $this->nbImported++;
+            // convert date
+            if (array_key_exists('date_created', $this->currentFavorite)) {
+                $time = new \DateTime($this->currentFavorite['date_created']);
+                $timestamp = $time->getTimestamp();
+                $this->currentFavorite['date_created'] = $timestamp;
+            }
             array_push($this->currentFavoritesList, $this->currentFavorite);
             // if we have enough favorites, we create them and clean the array
-            if (count($this->currentFavoritesList) >= 3) {
+            if (count($this->currentFavoritesList) >= 500) {
                 $this->addMultipleFavoritesToDB($this->importUserId, $this->currentFavoritesList);
                 unset($this->currentFavoritesList);
                 $this->currentFavoritesList = [];
@@ -453,21 +459,19 @@ class FavoritesService {
         $d = trim($data);
         if (!empty($d)) {
             if ($this->currentXmlTag === 'NAME') {
-                $this->currentFavorite['name'] = $d;
+                $this->currentFavorite['name'] = (array_key_exists('name', $this->currentFavorite)) ? $this->currentFavorite['name'].$d : $d;
             }
             else if ($this->currentXmlTag === 'TIME') {
-                $time = new \DateTime($d);
-                $timestamp = $time->getTimestamp();
-                $this->currentFavorite['date_created'] = $timestamp;
+                $this->currentFavorite['date_created'] = (array_key_exists('date_created', $this->currentFavorite)) ? $this->currentFavorite['date_created'].$d : $d;
             }
             else if ($this->currentXmlTag === 'TYPE') {
-                $this->currentFavorite['category'] = $d;
+                $this->currentFavorite['category'] = (array_key_exists('category', $this->currentFavorite)) ? $this->currentFavorite['category'].$d : $d;
             }
             else if ($this->currentXmlTag === 'DESC') {
-                $this->currentFavorite['comment'] = $d;
+                $this->currentFavorite['comment'] = (array_key_exists('comment', $this->currentFavorite)) ? $this->currentFavorite['comment'].$d : $d;
             }
             else if ($this->currentXmlTag === 'MAPS-EXTENSIONS') {
-                $this->currentFavorite['extensions'] = $d;
+                $this->currentFavorite['extensions'] = (array_key_exists('extensions', $this->currentFavorite)) ? $this->currentFavorite['extensions'].$d : $d;
             }
         }
     }

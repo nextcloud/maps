@@ -70,13 +70,13 @@ ContactsController.prototype = {
         if (this.map.hasLayer(this.contactLayer)) {
             this.hideLayer();
             // color of the eye
-            $('#togglecontactsButton button').addClass('icon-toggle').attr('style', '');
+            $('#toggleContactsButton button').addClass('icon-toggle').attr('style', '');
         } else {
             this.showLayer();
             // color of the eye
             var color = OCA.Theming.color.replace('#', '');
             var imgurl = OC.generateUrl('/svg/core/actions/toggle?color='+color);
-            $('#togglecontactsButton button').removeClass('icon-toggle').css('background-image', 'url('+imgurl+')');
+            $('#toggleContactsButton button').removeClass('icon-toggle').css('background-image', 'url('+imgurl+')');
         }
     },
 

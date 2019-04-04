@@ -52,18 +52,20 @@ class GeophotoService {
         $previewEnableMimetypes = $this->getPreviewEnabledMimetypes();
         foreach ($photoEntities as $photoEntity) {
             $cacheEntry = $cache->get($photoEntity->getFileId());
-            $path = $cacheEntry->getPath();
-            $file_object = new \stdClass();
-            $file_object->fileId = $photoEntity->getFileId();
-            $file_object->lat = $photoEntity->getLat();
-            $file_object->lng = $photoEntity->getLng();
-            $file_object->dateTaken = $photoEntity->getDateTaken();
-            /* 30% longer
-             * $file_object->folderId = $cache->getParentId($path); 
-             */
-            $file_object->path = $this->normalizePath($path);
-            $file_object->hasPreview = in_array($cacheEntry->getMimeType(), $previewEnableMimetypes);
-            $filesById[] = $file_object;
+            if ($cacheEntry) {
+				$path = $cacheEntry->getPath();
+				$file_object = new \stdClass();
+				$file_object->fileId = $photoEntity->getFileId();
+				$file_object->lat = $photoEntity->getLat();
+				$file_object->lng = $photoEntity->getLng();
+				$file_object->dateTaken = $photoEntity->getDateTaken();
+				/* 30% longer
+				 * $file_object->folderId = $cache->getParentId($path);
+				 */
+				$file_object->path = $this->normalizePath($path);
+				$file_object->hasPreview = in_array($cacheEntry->getMimeType(), $previewEnableMimetypes);
+				$filesById[] = $file_object;
+			}
         }
         return $filesById;
     }

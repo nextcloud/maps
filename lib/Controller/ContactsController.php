@@ -35,7 +35,7 @@ class ContactsController extends Controller {
 	 * @NoCSRFRequired
 	 */	
 	public function getContacts() {
-		$result = $this->contactsManager->search(',',['GEO']);
+		$result = $this->contactsManager->search('geo:',['GEO'],['types'=>false]);
 		return new DataResponse($result);
 	}
 

@@ -19,24 +19,24 @@ use OCP\AppFramework\Controller;
 use OCP\Contacts\IManager;
 
 class ContactsController extends Controller {
-	private $userId;
-	private $logger;
-	private $contactsManager;
+    private $userId;
+    private $logger;
+    private $contactsManager;
 
-	public function __construct($AppName, ILogger $logger, IRequest $request, IManager $contactsManager, $UserId){
-		parent::__construct($AppName, $request);
-		$this->logger = $logger;
-		$this->userId = $UserId;
-		$this->contactsManager = $contactsManager;
-	}
+    public function __construct($AppName, ILogger $logger, IRequest $request, IManager $contactsManager, $UserId){
+        parent::__construct($AppName, $request);
+        $this->logger = $logger;
+        $this->userId = $UserId;
+        $this->contactsManager = $contactsManager;
+    }
 
-	/**
-	 * @NoAdminRequired
-	 * @NoCSRFRequired
-	 */	
-	public function getContacts() {
-		$result = $this->contactsManager->search('geo:',['GEO'],['types'=>false]);
-		return new DataResponse($result);
-	}
+    /**
+     * @NoAdminRequired
+     * @NoCSRFRequired
+     */	
+    public function getContacts() {
+        $result = $this->contactsManager->search('geo:',['GEO'],['types'=>false]);
+        return new DataResponse($result);
+    }
 
 }

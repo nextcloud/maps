@@ -320,3 +320,6 @@ table.editFavorite input[type=text] {
     height: 4px !important;
     background-color: var(--color-main-background) !important;
 }
+.app-navigation-entry-menu {
+    z-index: 10001;
+}

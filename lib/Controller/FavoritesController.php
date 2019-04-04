@@ -146,14 +146,29 @@ class FavoritesController extends Controller {
     /**
      * @NoAdminRequired
      */
-    public function exportAllFavorites() {
-        return $this->exportFavorites([], null, null, true);
+    public function deleteFavorites($ids) {
+        $this->favoritesService->deleteFavoritesFromDB($ids, $this->userId);
+        return new DataResponse('DELETED');
     }
 
     /**
      * @NoAdminRequired
      */
-    public function exportFavorites($categoryList, $begin, $end, $all=false) {
+    public function exportAllFavorites() {
+        return $this->exportFavorites('all', null, null, true);
+    }
+
+    /**
+     * @NoAdminRequired
+     */
+    public function exportFavorites($categoryList=null, $begin, $end, $all=false) {
+        // sorry about ugly categoryList management:
+        // when an empty list is passed in http request, we get null here
+        if ($categoryList === null or (is_array($categoryList) and count($categoryList) === 0)) {
+            $response = new DataResponse('Nothing to export', 400);
+            return $response;
+        }
+
         // create /Maps directory if necessary
         $userFolder = $this->userfolder;
         if (!$userFolder->nodeExists('/Maps')) {
@@ -162,16 +177,22 @@ class FavoritesController extends Controller {
         if ($userFolder->nodeExists('/Maps')) {
             $mapsFolder = $userFolder->get('/Maps');
             if ($mapsFolder->getType() !== \OCP\Files\FileInfo::TYPE_FOLDER) {
-                $response = new DataResponse(['message'=>'/Maps is not a directory'], 400);
+                $response = new DataResponse('/Maps is not a directory', 400);
                 return $response;
             }
             else if (!$mapsFolder->isCreatable()) {
-                $response = new DataResponse(['message'=>'/Maps is not writeable'], 400);
+                $response = new DataResponse('/Maps is not writeable', 400);
                 return $response;
             }
         }
         else {
-            $response = new DataResponse(['message'=>'Impossible to create /Maps'], 400);
+            $response = new DataResponse('Impossible to create /Maps', 400);
+            return $response;
+        }
+
+        $nbFavorites = $this->favoritesService->countFavorites($this->userId, $categoryList, $begin, $end);
+        if ($nbFavorites === 0) {
+            $response = new DataResponse('Nothing to export', 400);
             return $response;
         }
 

@@ -141,7 +141,7 @@ FavoritesController.prototype = {
             var cat = $(this).parent().parent().parent().parent().attr('category');
             $(this).parent().parent().parent().parent().addClass('deleted');
             that.categoryDeletionTimer[cat] = new Timer(function() {
-                that.deleteCategoryFavorites(cat);
+                that.deleteCategoryFavoritesDB(cat);
             }, 7000);
         });
         $('body').on('click', '.undoDeleteCategory', function(e) {
@@ -197,12 +197,12 @@ FavoritesController.prototype = {
             //iconCreateFunction: function(cluster) {
             //    return L.divIcon({ html: '<div>' + cluster.getChildCount() + '</div>' });
             //},
-            maxClusterRadius: 20,
+            maxClusterRadius: 28,
             zoomToBoundsOnClick: false,
             chunkedLoading: true
         });
         this.cluster.on('clusterclick', function (a) {
-            if (a.layer.getChildCount() > 30) {
+            if (a.layer.getChildCount() > 20) {
                 a.layer.zoomToBounds();
             }
             else {
@@ -229,6 +229,8 @@ FavoritesController.prototype = {
         }
         var categoryStringList = categoryList.join('|');
         this.optionsController.saveOptionValues({enabledFavoriteCategories: categoryStringList});
+        // this is used when favorites are loaded again (when importing for example)
+        this.optionsController.enabledFavoriteCategories = categoryStringList;
     },
 
     restoreCategoriesState: function(enabledCategoryList) {
@@ -477,7 +479,21 @@ FavoritesController.prototype = {
         '    </div>' +
         '</li>';
 
-        $('#category-list').append(li);
+        var beforeThis = null;
+        var rawLower = rawName.toLowerCase();
+        $('#category-list > li').each(function() {
+            catName = $(this).attr('category');
+            if (rawLower.localeCompare(catName) < 0) {
+                beforeThis = $(this);
+                return false;
+            }
+        });
+        if (beforeThis !== null) {
+            $(li).insertBefore(beforeThis);
+        }
+        else {
+            $('#category-list').append(li);
+        }
 
         // enable if in saved options or if it should be enabled for another reason :
         // * added because a favorite was added by the user in this category which didn't exist
@@ -496,15 +512,34 @@ FavoritesController.prototype = {
         }
     },
 
-    deleteCategoryFavorites: function(cat) {
+    deleteCategoryFavoritesDB: function(cat) {
         var markers = this.categoryMarkers[cat];
-        var favid;
-        for (favid in markers) {
-            this.deleteFavoriteDB(favid);
+        var favids = [];
+        for (var favid in markers) {
+            favids.push(favid);
+            //this.deleteFavoriteDB(favid);
         }
+        var that = this;
+        $('#navigation-favorites').addClass('icon-loading-small');
+        var req = {
+            ids: favids
+        };
+        var url = OC.generateUrl('/apps/maps/favorites');
+        $.ajax({
+            type: 'DELETE',
+            url: url,
+            data: req,
+            async: true
+        }).done(function (response) {
+            that.deleteCategoryMap(cat);
+        }).always(function (response) {
+            $('#navigation-favorites').removeClass('icon-loading-small');
+        }).fail(function() {
+            OC.Notification.showTemporary(t('maps', 'Failed to delete category favorites'));
+        });
     },
 
-    deleteCategory: function(cat) {
+    deleteCategoryMap: function(cat) {
         // favorites (just in case the category is not empty)
         var favids = [];
         for (favid in this.categoryMarkers[cat]) {
@@ -744,7 +779,7 @@ FavoritesController.prototype = {
 
         // delete category if empty
         if (Object.keys(this.categoryMarkers[cat]).length === 0) {
-            this.deleteCategory(cat);
+            this.deleteCategoryMap(cat);
             this.saveEnabledCategories();
         }
     },
@@ -816,7 +851,7 @@ FavoritesController.prototype = {
                 var shouldSaveCategories = false;
                 // delete old category if empty
                 if (Object.keys(this.categoryMarkers[oldCategory]).length === 0) {
-                    this.deleteCategory(oldCategory);
+                    this.deleteCategoryMap(oldCategory);
                     shouldSaveCategories = true;
                 }
                 // create category if necessary
@@ -876,21 +911,23 @@ FavoritesController.prototype = {
             OC.Notification.showTemporary(t('maps', 'Favorites exported in {path}', {path: response}));
         }).always(function (response) {
             $('#navigation-favorites').removeClass('icon-loading-small');
-        }).fail(function() {
-            OC.Notification.showTemporary(t('maps', 'Failed to export favorites'));
+        }).fail(function(response) {
+            OC.Notification.showTemporary(t('maps', 'Failed to export favorites') + ': ' + response.responseText);
         });
     },
 
     exportDisplayedFavorites: function() {
         $('#navigation-favorites').addClass('icon-loading-small');
         var catList = [];
-        for (var cat in this.categoryLayers) {
-            if (this.map.hasLayer(this.categoryLayers[cat])) {
-                // a sync client could have saved favorites with empty category
-                if (cat === this.defaultCategory) {
-                    catList.push('');
+        if (this.map.hasLayer(this.cluster)) {
+            for (var cat in this.categoryLayers) {
+                if (this.map.hasLayer(this.categoryLayers[cat])) {
+                    // a sync client could have saved favorites with empty category
+                    if (cat === this.defaultCategory) {
+                        catList.push('');
+                    }
+                    catList.push(cat);
                 }
-                catList.push(cat);
             }
         }
         var begin = this.timeFilterController.valueBegin;
@@ -910,8 +947,8 @@ FavoritesController.prototype = {
             OC.Notification.showTemporary(t('maps', 'Favorites exported in {path}', {path: response}));
         }).always(function (response) {
             $('#navigation-favorites').removeClass('icon-loading-small');
-        }).fail(function() {
-            OC.Notification.showTemporary(t('maps', 'Failed to export favorites'));
+        }).fail(function(response) {
+            OC.Notification.showTemporary(t('maps', 'Failed to export favorites') + ': ' + response.responseText);
         });
     },
 
@@ -934,7 +971,7 @@ FavoritesController.prototype = {
                 catToDel.push(cat);
             }
             for (var i=0; i < catToDel.length; i++) {
-                that.deleteCategory(catToDel[i]);
+                that.deleteCategoryMap(catToDel[i]);
             }
             that.getFavorites();
         }).always(function (response) {

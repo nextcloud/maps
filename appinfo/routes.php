@@ -39,6 +39,7 @@ return [
         ['name' => 'favorites#addFavorite', 'url' => '/favorites', 'verb' => 'POST'],
         ['name' => 'favorites#editFavorite', 'url' => '/favorites/{id}', 'verb' => 'PUT'],
         ['name' => 'favorites#deleteFavorite', 'url' => '/favorites/{id}', 'verb' => 'DELETE'],
+        ['name' => 'favorites#deleteFavorites', 'url' => '/favorites', 'verb' => 'DELETE'],
 
         ['name' => 'favorites#exportAllFavorites', 'url' => '/export/favorites', 'verb' => 'GET'],
         ['name' => 'favorites#exportFavorites', 'url' => '/export/favorites', 'verb' => 'POST'],

@@ -132,8 +132,8 @@ class FavoritesService {
                 'name' => $qb->createNamedParameter($name, IQueryBuilder::PARAM_STR),
                 'date_created' => $qb->createNamedParameter($nowTimeStamp, IQueryBuilder::PARAM_INT),
                 'date_modified' => $qb->createNamedParameter($nowTimeStamp, IQueryBuilder::PARAM_INT),
-                'lat' => $qb->createNamedParameter($lat, IQueryBuilder::PARAM_LOB),
-                'lng' => $qb->createNamedParameter($lng, IQueryBuilder::PARAM_LOB),
+                'lat' => $qb->createNamedParameter($lat, IQueryBuilder::PARAM_STR),
+                'lng' => $qb->createNamedParameter($lng, IQueryBuilder::PARAM_STR),
                 'category' => $qb->createNamedParameter($category, IQueryBuilder::PARAM_STR),
                 'comment' => $qb->createNamedParameter($comment, IQueryBuilder::PARAM_STR),
                 'extensions' => $qb->createNamedParameter($extensions, IQueryBuilder::PARAM_STR)
@@ -170,8 +170,8 @@ class FavoritesService {
                 'name' => $qb->createNamedParameter($name, IQueryBuilder::PARAM_STR),
                 'date_created' => $qb->createNamedParameter($ts, IQueryBuilder::PARAM_INT),
                 'date_modified' => $qb->createNamedParameter($nowTimeStamp, IQueryBuilder::PARAM_INT),
-                'lat' => $qb->createNamedParameter($lat, IQueryBuilder::PARAM_LOB),
-                'lng' => $qb->createNamedParameter($lng, IQueryBuilder::PARAM_LOB),
+                'lat' => $qb->createNamedParameter($lat, IQueryBuilder::PARAM_STR),
+                'lng' => $qb->createNamedParameter($lng, IQueryBuilder::PARAM_STR),
                 'category' => $qb->createNamedParameter($category, IQueryBuilder::PARAM_STR),
                 'comment' => $qb->createNamedParameter($comment, IQueryBuilder::PARAM_STR),
                 'extensions' => $qb->createNamedParameter($extensions, IQueryBuilder::PARAM_STR)
@@ -193,10 +193,10 @@ class FavoritesService {
         $qb->set('name', $qb->createNamedParameter($name, IQueryBuilder::PARAM_STR));
         $qb->set('date_modified', $qb->createNamedParameter($nowTimeStamp, IQueryBuilder::PARAM_INT));
         if ($lat !== null) {
-            $qb->set('lat', $qb->createNamedParameter($lat, IQueryBuilder::PARAM_LOB));
+            $qb->set('lat', $qb->createNamedParameter($lat, IQueryBuilder::PARAM_STR));
         }
         if ($lng !== null) {
-            $qb->set('lng', $qb->createNamedParameter($lng, IQueryBuilder::PARAM_LOB));
+            $qb->set('lng', $qb->createNamedParameter($lng, IQueryBuilder::PARAM_STR));
         }
         if ($category !== null) {
             $qb->set('category', $qb->createNamedParameter($category, IQueryBuilder::PARAM_STR));
@@ -224,7 +224,32 @@ class FavoritesService {
         $qb = $qb->resetQueryParts();
     }
 
+    public function deleteFavoritesFromDB($ids, $userId) {
+        $qb = $this->qb;
+        $qb->delete('maps_favorites')
+            ->where(
+                $qb->expr()->eq('user_id', $qb->createNamedParameter($userId, IQueryBuilder::PARAM_STR))
+            );
+        if (count($ids) > 0) {
+            $or = $qb->expr()->orx();
+            foreach ($ids as $id) {
+                $or->add($qb->expr()->eq('id', $qb->createNamedParameter($id, IQueryBuilder::PARAM_INT)));
+            }
+            $qb->andWhere($or);
+        }
+        else {
+            return;
+        }
+        $req = $qb->execute();
+        $qb = $qb->resetQueryParts();
+    }
+
     public function countFavorites($userId, $categoryList, $begin, $end) {
+        if ($categoryList === null or
+            (is_array($categoryList) and count($categoryList) === 0)
+        ) {
+            return 0;
+        }
         $qb = $this->qb;
         $qb->select($qb->createFunction('COUNT(*)'))
             ->from('maps_favorites', 'f')
@@ -241,7 +266,11 @@ class FavoritesService {
                 $qb->expr()->lt('date_created', $qb->createNamedParameter($end, IQueryBuilder::PARAM_INT))
             );
         }
-        if (count($categoryList) > 0) {
+        // apply category restrictions if it's a non-empty array
+        if (!is_string($categoryList) and
+            is_array($categoryList) and
+            count($categoryList) > 0
+        ) {
             $or = $qb->expr()->orx();
             foreach ($categoryList as $cat) {
                 $or->add($qb->expr()->eq('category', $qb->createNamedParameter($cat, IQueryBuilder::PARAM_STR)));
@@ -292,7 +321,11 @@ class FavoritesService {
                     $qb->expr()->lt('date_created', $qb->createNamedParameter($end, IQueryBuilder::PARAM_INT))
                 );
             }
-            if (count($categoryList) > 0) {
+            // apply category restrictions if it's a non-empty array
+            if (!is_string($categoryList) and
+                is_array($categoryList) and
+                count($categoryList) > 0
+            ) {
                 $or = $qb->expr()->orx();
                 foreach ($categoryList as $cat) {
                     $or->add($qb->expr()->eq('category', $qb->createNamedParameter($cat, IQueryBuilder::PARAM_STR)));
@@ -406,9 +439,15 @@ class FavoritesService {
         else if ($name === 'WPT') {
             // store favorite
             $this->nbImported++;
+            // convert date
+            if (array_key_exists('date_created', $this->currentFavorite)) {
+                $time = new \DateTime($this->currentFavorite['date_created']);
+                $timestamp = $time->getTimestamp();
+                $this->currentFavorite['date_created'] = $timestamp;
+            }
             array_push($this->currentFavoritesList, $this->currentFavorite);
             // if we have enough favorites, we create them and clean the array
-            if (count($this->currentFavoritesList) >= 3) {
+            if (count($this->currentFavoritesList) >= 500) {
                 $this->addMultipleFavoritesToDB($this->importUserId, $this->currentFavoritesList);
                 unset($this->currentFavoritesList);
                 $this->currentFavoritesList = [];
@@ -420,21 +459,19 @@ class FavoritesService {
         $d = trim($data);
         if (!empty($d)) {
             if ($this->currentXmlTag === 'NAME') {
-                $this->currentFavorite['name'] = $d;
+                $this->currentFavorite['name'] = (array_key_exists('name', $this->currentFavorite)) ? $this->currentFavorite['name'].$d : $d;
             }
             else if ($this->currentXmlTag === 'TIME') {
-                $time = new \DateTime($d);
-                $timestamp = $time->getTimestamp();
-                $this->currentFavorite['date_created'] = $timestamp;
+                $this->currentFavorite['date_created'] = (array_key_exists('date_created', $this->currentFavorite)) ? $this->currentFavorite['date_created'].$d : $d;
             }
             else if ($this->currentXmlTag === 'TYPE') {
-                $this->currentFavorite['category'] = $d;
+                $this->currentFavorite['category'] = (array_key_exists('category', $this->currentFavorite)) ? $this->currentFavorite['category'].$d : $d;
             }
             else if ($this->currentXmlTag === 'DESC') {
-                $this->currentFavorite['comment'] = $d;
+                $this->currentFavorite['comment'] = (array_key_exists('comment', $this->currentFavorite)) ? $this->currentFavorite['comment'].$d : $d;
             }
             else if ($this->currentXmlTag === 'MAPS-EXTENSIONS') {
-                $this->currentFavorite['extensions'] = $d;
+                $this->currentFavorite['extensions'] = (array_key_exists('extensions', $this->currentFavorite)) ? $this->currentFavorite['extensions'].$d : $d;
             }
         }
     }

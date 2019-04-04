@@ -20,6 +20,7 @@ use OCP\Files\Folder;
 use OCP\IPreview;
 use OCP\ILogger;
 
+
 use OCA\Maps\Service\PhotofilesService;
 use OCA\Maps\DB\Geophoto;
 use OCA\Maps\DB\GeophotoMapper;
@@ -58,7 +59,7 @@ class GeophotoService {
 				$file_object->fileId = $photoEntity->getFileId();
 				$file_object->lat = $photoEntity->getLat();
 				$file_object->lng = $photoEntity->getLng();
-				$file_object->dateTaken = $photoEntity->getDateTaken();
+				$file_object->dateTaken = $photoEntity->getDateTaken() ?? \time();
 				/* 30% longer
 				 * $file_object->folderId = $cache->getParentId($path);
 				 */

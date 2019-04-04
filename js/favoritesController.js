@@ -479,7 +479,21 @@ FavoritesController.prototype = {
         '    </div>' +
         '</li>';
 
-        $('#category-list').append(li);
+        var beforeThis = null;
+        var rawLower = rawName.toLowerCase();
+        $('#category-list > li').each(function() {
+            catName = $(this).attr('category');
+            if (rawLower.localeCompare(catName) < 0) {
+                beforeThis = $(this);
+                return false;
+            }
+        });
+        if (beforeThis !== null) {
+            $(li).insertBefore(beforeThis);
+        }
+        else {
+            $('#category-list').append(li);
+        }
 
         // enable if in saved options or if it should be enabled for another reason :
         // * added because a favorite was added by the user in this category which didn't exist

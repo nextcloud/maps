@@ -672,9 +672,25 @@ FavoritesController.prototype = {
         if (fromUserAction) {
             // we make sure created favorite is displayed
             var minFilter = this.timeFilterController.min;
+            var maxFilter = this.timeFilterController.max;
             var startFilter = this.timeFilterController.valueBegin;
-            var endFilter = fav.date_created;
-            this.timeFilterController.updateSliderRange(minFilter, endFilter);
+            var endFilter = this.timeFilterController.valueEnd;
+            var favDate = fav.date_created;
+
+            if (favDate < minFilter) {
+                minFilter = favDate;
+            }
+            if (favDate < startFilter) {
+                startFilter = favDate;
+            }
+            if (favDate > maxFilter) {
+                maxFilter = favDate;
+            }
+            if (favDate > endFilter) {
+                endFilter = favDate;
+            }
+
+            this.timeFilterController.updateSliderRange(minFilter, maxFilter);
             this.timeFilterController.setSlider(startFilter, endFilter);
         }
     },

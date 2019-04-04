@@ -140,7 +140,7 @@ PhotosController.prototype = {
         } else {
             iconUrl = this.getImageIconUrl();
         }
-        this.generatePreviewUrl(markerData.path);
+        //this.generatePreviewUrl(markerData.path);
         return L.divIcon(L.extend({
             html: '<div class="thumbnail" style="background-image: url(' + iconUrl + ');"></div>​',
             className: 'leaflet-marker-photo photo-marker'

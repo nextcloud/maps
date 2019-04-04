@@ -3,6 +3,7 @@ script('maps', '../node_modules/nouislider/distribute/nouislider');
 style('maps', '../node_modules/nouislider/distribute/nouislider');
 script('maps', 'utils');
 script('maps', 'photosController');
+script('maps', 'contactsController');
 script('maps', 'favoritesController');
 script('maps', 'script');
 ?>

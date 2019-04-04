@@ -123,14 +123,14 @@ FavoritesController.prototype = {
             var cat = $(this).parent().parent().parent().attr('category');
             $(this).parent().parent().parent().removeClass('editing').addClass('icon-loading-small');
             var newCategoryName = $(this).parent().find('.renameCategoryInput').val();
-            that.renameCategory(cat, newCategoryName);
+            that.renameCategoryDB(cat, newCategoryName);
         });
         $('body').on('keyup', '.renameCategoryInput', function(e) {
             if (e.key === 'Enter') {
                 var cat = $(this).parent().parent().parent().attr('category');
                 $(this).parent().parent().parent().removeClass('editing').addClass('icon-loading-small');
                 var newCategoryName = $(this).parent().find('.renameCategoryInput').val();
-                that.renameCategory(cat, newCategoryName);
+                that.renameCategoryDB(cat, newCategoryName);
             }
         });
         $('body').on('click', '.renameCategoryClose', function(e) {
@@ -503,13 +503,36 @@ FavoritesController.prototype = {
         }
     },
 
-    renameCategory: function(cat, newCategoryName) {
-        var markers = this.categoryMarkers[cat];
-        var favid, favname;
-        for (favid in markers) {
-            favname = this.favorites[favid].name;
-            this.editFavoriteDB(favid, favname, null, newCategoryName, null, null);
+    renameCategoryDB: function(cat, newCategoryName) {
+        var that = this;
+        var origCatList = [cat];
+        if (cat === this.defaultCategory) {
+            origCatList.push('');
         }
+        $('#navigation-favorites').addClass('icon-loading-small');
+        var req = {
+            categories: origCatList,
+            newName: newCategoryName
+        };
+        var url = OC.generateUrl('/apps/maps/favorites-category');
+        $.ajax({
+            type: 'PUT',
+            url: url,
+            data: req,
+            async: true
+        }).done(function (response) {
+            var markers = that.categoryMarkers[cat];
+            var favid, favname;
+            for (favid in markers) {
+                that.editFavoriteMap(favid, null, null, newCategoryName, null, null);
+            }
+
+            that.updateCategoryCounters();
+        }).always(function (response) {
+            $('#navigation-favorites').removeClass('icon-loading-small');
+        }).fail(function() {
+            OC.Notification.showTemporary(t('maps', 'Failed to rename category'));
+        });
     },
 
     deleteCategoryFavoritesDB: function(cat) {

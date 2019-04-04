@@ -19,8 +19,8 @@ return [
         //photos
         ['name' => 'photos#getPhotosFromDb', 'url' => '/photos', 'verb' => 'GET'],
 
-		//contacts
-		['name' => 'contacts#getContacts', 'url' => '/contacts', 'verb' => 'GET'],
+        //contacts
+        ['name' => 'contacts#getContacts', 'url' => '/contacts', 'verb' => 'GET'],
 
         // favorites API
         [
@@ -40,6 +40,7 @@ return [
         ['name' => 'favorites#editFavorite', 'url' => '/favorites/{id}', 'verb' => 'PUT'],
         ['name' => 'favorites#deleteFavorite', 'url' => '/favorites/{id}', 'verb' => 'DELETE'],
         ['name' => 'favorites#deleteFavorites', 'url' => '/favorites', 'verb' => 'DELETE'],
+        ['name' => 'favorites#renameCategories', 'url' => '/favorites-category', 'verb' => 'PUT'],
 
         ['name' => 'favorites#exportAllFavorites', 'url' => '/export/favorites', 'verb' => 'GET'],
         ['name' => 'favorites#exportFavorites', 'url' => '/export/favorites', 'verb' => 'POST'],

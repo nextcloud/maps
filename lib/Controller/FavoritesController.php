@@ -132,6 +132,18 @@ class FavoritesController extends Controller {
     /**
      * @NoAdminRequired
      */
+    public function renameCategories($categories, $newName) {
+        if (is_array($categories)) {
+            foreach ($categories as $cat) {
+                $this->favoritesService->renameCategoryInDB($this->userId, $cat, $newName);
+            }
+        }
+        return new DataResponse('RENAMED');
+    }
+
+    /**
+     * @NoAdminRequired
+     */
     public function deleteFavorite($id) {
         $favorite = $this->favoritesService->getFavoriteFromDB($id, $this->userId);
         if ($favorite !== null) {

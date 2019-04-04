@@ -186,6 +186,20 @@ class FavoritesService {
         }
     }
 
+    public function renameCategoryInDB($userId, $cat, $newName) {
+        $qb = $this->qb;
+        $qb->update('maps_favorites');
+        $qb->set('category', $qb->createNamedParameter($newName, IQueryBuilder::PARAM_STR));
+        $qb->where(
+            $qb->expr()->eq('user_id', $qb->createNamedParameter($userId, IQueryBuilder::PARAM_STR))
+        );
+        $qb->andWhere(
+            $qb->expr()->eq('category', $qb->createNamedParameter($cat, IQueryBuilder::PARAM_STR))
+        );
+        $req = $qb->execute();
+        $qb = $qb->resetQueryParts();
+    }
+
     public function editFavoriteInDB($id, $name, $lat, $lng, $category, $comment, $extensions) {
         $nowTimeStamp = (new \DateTime())->getTimestamp();
         $qb = $this->qb;

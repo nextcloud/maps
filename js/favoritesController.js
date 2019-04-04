@@ -197,12 +197,12 @@ FavoritesController.prototype = {
             //iconCreateFunction: function(cluster) {
             //    return L.divIcon({ html: '<div>' + cluster.getChildCount() + '</div>' });
             //},
-            maxClusterRadius: 20,
+            maxClusterRadius: 28,
             zoomToBoundsOnClick: false,
             chunkedLoading: true
         });
         this.cluster.on('clusterclick', function (a) {
-            if (a.layer.getChildCount() > 30) {
+            if (a.layer.getChildCount() > 20) {
                 a.layer.zoomToBounds();
             }
             else {

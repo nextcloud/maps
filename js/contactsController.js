@@ -135,20 +135,32 @@ ContactsController.prototype = {
     prepareContactMarkers : function(contacts) {
         var markers = [];
         for (var i = 0; i < contacts.length; i++) {
-            var geo = contacts[i].GEO.substr(4).split(",");
-            var year = parseInt(contacts[i].REV.substr(0,4));
-            var month = parseInt(contacts[i].REV.substr(4,2))-1;
-            var day = parseInt(contacts[i].REV.substr(6,2))-1;
-            var hour = parseInt(contacts[i].REV.substr(9,2))-1;
-            var min = parseInt(contacts[i].REV.substr(11,2))-1;
-            var sec = parseInt(contacts[i].REV.substr(13,2))-1;
+
+            var geo = [];
+            if (contacts[i].GEO.substr(0,4) === "geo:") {
+                geo = contacts[i].GEO.substr(4).split(",");
+            } else {
+                geo = contacts[i].GEO.split(";");
+            }
+            var date = Date.parse(contacts[i].REV);
+            if (isNaN(date)) {
+                var year = parseInt(contacts[i].REV.substr(0,4));
+                var month = parseInt(contacts[i].REV.substr(4,2))-1;
+                var day = parseInt(contacts[i].REV.substr(6,2))-1;
+                var hour = parseInt(contacts[i].REV.substr(9,2))-1;
+                var min = parseInt(contacts[i].REV.substr(11,2))-1;
+                var sec = parseInt(contacts[i].REV.substr(13,2))-1;
+                date = new Date(year,month,day,hour,min,sec);
+                date = date.getTime();
+            }
+
             var markerData = {
                 name: contacts[i].FN,
                 lat: geo[0],
                 lng: geo[1],
                 photo: contacts[i].PHOTO,
                 uid: contacts[i].UID,
-                date: new Date(year,month,day,hour,min,sec).getTime()/1000,
+                date: date/1000,
 
             };
             var marker = L.marker(markerData, {

@@ -84,7 +84,7 @@ ContactsController.prototype = {
         var _app = this;
         return function(evt) {
             var marker = evt.layer;
-            var contactUrl = OC.generateUrl('/apps/contacts/');
+            var contactUrl = OC.generateUrl('/apps/contacts/All contacts/'+encodeURIComponent(marker.data.uid+"~contacts"));
             var win = window.open(contactUrl, '_blank');
             if (win) {
                 win.focus();
@@ -112,8 +112,8 @@ ContactsController.prototype = {
 
     createContactView: function(markerData) {
         var avatar;
-        if (markerData.PHOTO) {
-            avatar = this.generateAvatar(markerData.PHOTO);
+        if (markerData.photo) {
+            avatar = this.generateAvatar(markerData.photo);
         }
         //this.generatePreviewUrl(markerData.path);
         return L.divIcon(L.extend({
@@ -146,14 +146,16 @@ ContactsController.prototype = {
                 name: contacts[i].FN,
                 lat: geo[0],
                 lng: geo[1],
-                PHOTO: contacts[i].PHOTO,
+                photo: contacts[i].PHOTO,
+                uid: contacts[i].UID,
                 date: new Date(year,month,day,hour,min,sec).getTime()/1000,
+
             };
             var marker = L.marker(markerData, {
                 icon: this.createContactView(markerData)
             });
             marker.data = markerData;
-            var avatar = this.generateAvatar(marker.data.PHOTO);
+            var avatar = this.generateAvatar(marker.data.photo);
             var img = '<img src=' + avatar + '/>' +
                 '<p class="tooltip-contact-name">' + escapeHTML(basename(markerData.name)) + '</p>';
             marker.bindTooltip(img, {permanent: false, className: "leaflet-marker-contact-tooltip"});

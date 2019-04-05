@@ -16,11 +16,14 @@ return [
         ['name' => 'utils#getOptionsValues', 'url' => '/getOptionsValues', 'verb' => 'POST'],
         ['name' => 'utils#saveOptionValue', 'url' => '/saveOptionValue', 'verb' => 'POST'],
 
-        //photos
+        // photos
         ['name' => 'photos#getPhotosFromDb', 'url' => '/photos', 'verb' => 'GET'],
 
-        //contacts
+        // contacts
         ['name' => 'contacts#getContacts', 'url' => '/contacts', 'verb' => 'GET'],
+
+        // routing
+        ['name' => 'routing#exportRoute', 'url' => '/exportRoute', 'verb' => 'POST'],
 
         // favorites API
         [

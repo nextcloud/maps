@@ -94,7 +94,7 @@
                 <li>
                     <a href="#" class="exportCurrentRoute">
                         <span class="icon-category-office"></span>
-                        <span><?php p($l->t('Export route to gpx')); ?></span>
+                        <span><?php p($l->t('Export current route to gpx')); ?></span>
                     </a>
                 </li>
             </ul>

@@ -328,11 +328,41 @@
         },
 
         exportRoute: function() {
-            if (this.control.hasOwnProperty('_routes')
-                && this.control._routes.length > 0
-                && this.control._routes[0].hasOwnProperty('coordinates')
+            //console.log(this.control);
+            if (this.control.hasOwnProperty('_selectedRoute')
+                && this.control._selectedRoute.hasOwnProperty('coordinates')
+                && this.control._selectedRoute.coordinates.length > 0
             ) {
-                console.log(this.control._routes[0].coordinates);
+                var latLngCoords = this.control._selectedRoute.coordinates;
+                var gpxRteCoords = '';
+                for (var i=0; i < latLngCoords.length; i++) {
+                    gpxRteCoords = gpxRteCoords + '    <rtept lat="' + latLngCoords[i].lat + '" lon="' + latLngCoords[i].lng + '">\n' +
+                        '    </rtept>\n';
+                }
+                var name = this.control._selectedRoute.name;
+                var totDist = this.control._selectedRoute.summary.totalDistance;
+                var totTime = this.control._selectedRoute.summary.totalTime;
+
+                $('#navigation-routing').addClass('icon-loading-small');
+                var req = {
+                    coords: gpxRteCoords,
+                    name: name,
+                    totDist: totDist,
+                    totTime: totTime
+                };
+                var url = OC.generateUrl('/apps/maps/exportRoute');
+                $.ajax({
+                    type: 'POST',
+                    url: url,
+                    data: req,
+                    async: true
+                }).done(function (response) {
+                    OC.Notification.showTemporary(t('maps', 'Route exported in {path}', {path: response}));
+                }).always(function (response) {
+                    $('#navigation-routing').removeClass('icon-loading-small');
+                }).fail(function() {
+                    OC.Notification.showTemporary(t('maps', 'Failed to export current route'));
+                });
             }
         }
     };

@@ -467,38 +467,63 @@
             this.slider.noUiSlider.set([min, max]);
         },
         // when a controller's data has changed
+        // this changes the min/max slider reachable values (it does not set the values)
+        // it should be used when a controller receives its data
+        // and when user wants to reset slider to see everything
         updateSliderRangeFromController: function() {
-            var mins = [
+            var i;
+            var mins = [];
+            var maxs = [];
+            // favorites
+            var rawMins = [
                 favoritesController.firstDate,
                 photosController.photoMarkersOldest
             ];
-            var maxs = [
+            var rawMaxs = [
                 favoritesController.lastDate,
                 photosController.photoMarkersNewest
             ];
-            var i;
-            for (i=0; i < mins.length; i++) {
-                // if there is a value, we change the timeFilterController min if there is none
-                // or if there is a lower value
-                if (mins[i] !== null && (!this.minInitialized || mins[i] < this.min)) {
-                    this.min = mins[i];
-                    this.minInitialized = true;
+            // get rid of null values
+            for (i=0; i < rawMins.length; i++) {
+                if (rawMins[i] !== null) {
+                    mins.push(rawMins[i]);
                 }
             }
-            for (i=0; i < maxs.length; i++) {
-                // if there is a value, we change the timeFilterController max if there is none
-                // or if there is a higher value
-                if (maxs[i] !== null && (!this.maxInitialized || maxs[i] > this.max)) {
-                    this.max = maxs[i];
-                    this.maxInitialized = true;
+            for (i=0; i < rawMaxs.length; i++) {
+                if (rawMaxs[i] !== null) {
+                    maxs.push(rawMaxs[i]);
                 }
             }
 
-            if (this.minInitialized && this.maxInitialized) {
+            var cmin = null;
+            var cmax = null;
+            // get the min of all controllers
+            if (mins.length > 0) {
+                cmin = mins[0];
+            }
+            for (i=0; i < mins.length; i++) {
+                if (mins[i] < cmin) {
+                    cmin = mins[i];
+                }
+            }
+
+            // get the max of all controllers
+            if (maxs.length > 0) {
+                cmax = maxs[0];
+            }
+            for (i=0; i < maxs.length; i++) {
+                if (maxs[i] > cmax) {
+                    cmax = maxs[i];
+                }
+            }
+
+            if (cmin !== null && cmax !== null) {
+                this.min = cmin;
+                this.max = cmax;
                 // avoid min == max
-                if (this.min === this.max) {
-                    this.min = this.min - 10;
-                    this.max = this.max + 10;
+                if (cmin === cmax) {
+                    this.min = cmin - 10;
+                    this.max = cmax + 10;
                 }
                 this.updateSliderRange(this.min, this.max);
             }

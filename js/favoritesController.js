@@ -53,6 +53,7 @@ FavoritesController.prototype = {
             var cat = $(this).parent().parent().parent().attr('category');
             that.toggleCategory(cat);
             that.saveEnabledCategories();
+            that.updateMyFirstLastDates();
         });
         // show/hide all categories
         $('body').on('click', '#select-all-categories', function(e) {
@@ -160,6 +161,7 @@ FavoritesController.prototype = {
         $('body').on('click', '#toggleFavoritesButton', function(e) {
             that.toggleFavorites();
             that.optionsController.saveOptionValues({favoritesEnabled: that.map.hasLayer(that.cluster)});
+            that.updateMyFirstLastDates();
         });
         // expand category list
         $('body').on('click', '#navigation-favorites > a', function(e) {
@@ -241,6 +243,7 @@ FavoritesController.prototype = {
                 this.toggleCategory(cat);
             }
         }
+        this.updateTimeFilterController();
     },
 
     showAllCategories: function() {
@@ -252,6 +255,7 @@ FavoritesController.prototype = {
                 this.toggleCategory(cat);
             }
         }
+        this.updateMyFirstLastDates();
     },
 
     hideAllCategories: function() {
@@ -260,6 +264,7 @@ FavoritesController.prototype = {
                 this.toggleCategory(cat);
             }
         }
+        this.updateMyFirstLastDates();
     },
 
     toggleCategory: function(cat) {
@@ -312,22 +317,42 @@ FavoritesController.prototype = {
         }
     },
 
+    updateMyFirstLastDates: function() {
+        if (!this.map.hasLayer(this.cluster)) {
+            this.firstDate = null;
+            this.lastDate = null;
+            return;
+        }
+
+        var id, cat;
+
+        var first = Math.floor(Date.now() / 1000) + 1000000;
+        var last = 0;
+        for (cat in this.categoryMarkers) {
+            if (this.map.hasLayer(this.categoryLayers[cat])) {
+                for (id in this.categoryMarkers[cat]) {
+                    if (this.favorites[id].date_created < first) {
+                        first = this.favorites[id].date_created;
+                    }
+                    if (this.favorites[id].date_created > last) {
+                        last = this.favorites[id].date_created;
+                    }
+                }
+            }
+        }
+        if (first !== (Math.floor(Date.now() / 1000) + 1000000)
+            && last !== 0) {
+            this.firstDate = first;
+            this.lastDate = last;
+        }
+        else {
+            this.firstDate = null;
+            this.lastDate = null;
+        }
+    },
+
     updateTimeFilterController: function() {
-        var id;
-        var ids = Object.keys(this.favorites);
-        if (ids.length > 0) {
-            id = ids[0];
-            this.firstDate = this.favorites[id].date_created;
-            this.lastDate = this.favorites[id].date_created;
-        }
-        for (id in this.favorites) {
-            if (this.favorites[id].date_created < this.firstDate) {
-                this.firstDate = this.favorites[id].date_created;
-            }
-            if (this.favorites[id].date_created > this.lastDate) {
-                this.lastDate = this.favorites[id].date_created;
-            }
-        }
+        this.updateMyFirstLastDates();
         this.timeFilterController.updateSliderRangeFromController();
     },
 
@@ -584,6 +609,8 @@ FavoritesController.prototype = {
         $('#category-list #'+cat.replace(' ', '-')+'-category').fadeOut('slow', function() {
             $(this).remove();
         });
+
+        this.updateMyFirstLastDates();
     },
 
     updateCategoryCounters: function() {
@@ -715,6 +742,8 @@ FavoritesController.prototype = {
 
             this.timeFilterController.updateSliderRange(minFilter, maxFilter);
             this.timeFilterController.setSlider(startFilter, endFilter);
+            // and make sure slider will reset to correct values (dblclick)
+            this.updateMyFirstLastDates();
         }
     },
 
@@ -821,6 +850,9 @@ FavoritesController.prototype = {
             this.deleteCategoryMap(cat);
             this.saveEnabledCategories();
         }
+
+        // as this was triggered by user action :
+        this.updateMyFirstLastDates();
     },
 
     editFavoriteFromPopup: function(button) {

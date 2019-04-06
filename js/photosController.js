@@ -40,7 +40,6 @@ PhotosController.prototype = {
         $('body').on('click', '#togglePhotosButton, #navigation-photos > a', function(e) {
             that.toggleLayer();
             that.optionsController.saveOptionValues({photosLayer: that.map.hasLayer(that.photoLayer)});
-            that.updateMyFirstLastDates();
         });
         // click on menu button
         $('body').on('click', '.photosMenuButton', function(e) {

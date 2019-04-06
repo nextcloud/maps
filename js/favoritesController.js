@@ -244,6 +244,7 @@ FavoritesController.prototype = {
             }
         }
         this.updateTimeFilterRange();
+        this.timeFilterController.setSliderToMaxInterval();
     },
 
     showAllCategories: function() {

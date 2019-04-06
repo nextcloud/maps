@@ -8,7 +8,7 @@ function PhotosController (optionsController, timeFilterController) {
     this.photoMarkersOldest = null;
     this.photoMarkersNewest = null;
     this.photoMarkersFirstVisible = 0;
-    this.photoMarkersLastVisible = 0;
+    this.photoMarkersLastVisible = -1;
     this.timeFilterBegin = 0;
     this.timeFilterEnd = Date.now();
 }
@@ -231,7 +231,7 @@ PhotosController.prototype = {
         if (date >= this.timeFilterBegin) {
             var i = this.photoMarkersLastVisible;
             if (date < this.timeFilterEnd) {
-                while (i > 0 && i >= this.photoMarkersFirstVisible && this.photoMarkers[i].data.date > date ) {
+                while (i >= 0 && i >= this.photoMarkersFirstVisible && this.photoMarkers[i].data.date > date ) {
                     this.photoLayer.removeLayer(this.photoMarkers[i]);
                     i = i-1;
                 }

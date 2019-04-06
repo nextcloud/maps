@@ -8,7 +8,7 @@ function ContactsController (optionsController, timeFilterController) {
     this.contactMarkersOldest = null;
     this.contactMarkersNewest = null;
     this.contactMarkersFirstVisible = 0;
-    this.contactMarkersLastVisible = 0;
+    this.contactMarkersLastVisible = -1;
     this.timeFilterBegin = 0;
     this.timeFilterEnd = Date.now();
 }
@@ -228,7 +228,7 @@ ContactsController.prototype = {
         if (date >= this.timeFilterBegin) {
             var i = this.contactMarkersLastVisible;
             if (date < this.timeFilterEnd) {
-                while (i > 0 && i >= this.contactMarkersFirstVisible && this.contactMarkers[i].data.date > date ) {
+                while (i >= 0 && i >= this.contactMarkersFirstVisible && this.contactMarkers[i].data.date > date ) {
                     this.contactLayer.removeLayer(this.contactMarkers[i]);
                     i = i-1;
                 }

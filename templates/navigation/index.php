@@ -145,7 +145,7 @@
         <div class="app-navigation-entry-menu">
             <ul>
                 <li>
-                    <a href="#" id="select-all-trackss">
+                    <a href="#" id="select-all-tracks">
                         <span class="icon-category-enabled"></span>
                         <span><?php p($l->t('Show all tracks')); ?></span>
                     </a>

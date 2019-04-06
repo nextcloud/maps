@@ -5,6 +5,7 @@ script('maps', 'utils');
 script('maps', 'photosController');
 script('maps', 'contactsController');
 script('maps', 'favoritesController');
+script('maps', 'tracksController');
 script('maps', 'script');
 ?>
 

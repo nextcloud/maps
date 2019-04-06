@@ -7,6 +7,7 @@
         photosController.initLayer(mapController.map);
         mapController.map.photosController = photosController;
         contactsController.initLayer(mapController.map);
+        tracksController.initController(mapController.map);
 
         // once controllers have been set/initialized, we can restore option values from server
         optionsController.restoreOptions();
@@ -129,6 +130,21 @@
                 }
                 if (optionsValues.hasOwnProperty('routingEnabled') && optionsValues.routingEnabled === 'true') {
                     routingController.toggleRouting();
+                }
+                if (!optionsValues.hasOwnProperty('tracksEnabled') || optionsValues.tracksEnabled === 'true') {
+                    tracksController.toggleTracks();
+                }
+                if (!optionsValues.hasOwnProperty('trackListShow') || optionsValues.trackListShow === 'true') {
+                    tracksController.toggleTrackList();
+                }
+                if (optionsValues.hasOwnProperty('enabledTracks')
+                    && optionsValues.enabledTracks
+                    && optionsValues.enabledTracks !== '')
+                {
+                    that.enabledTracks = optionsValues.enabledTracks.split('|');
+                    if (tracksController.tracksLoaded) {
+                        tracksController.restoreTracksState(that.enabledTracks);
+                    }
                 }
 
                 // save tile layer when changed
@@ -597,6 +613,7 @@
     var photosController = new PhotosController(optionsController, timeFilterController);
     var contactsController = new ContactsController(optionsController, timeFilterController);
     var favoritesController = new FavoritesController(optionsController, timeFilterController);
+    var tracksController = new TracksController(optionsController, timeFilterController);
 
     timeFilterController.connect();
 

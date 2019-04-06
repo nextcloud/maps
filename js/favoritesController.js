@@ -243,7 +243,7 @@ FavoritesController.prototype = {
                 this.toggleCategory(cat);
             }
         }
-        this.updateTimeFilterController();
+        this.updateTimeFilterRange();
     },
 
     showAllCategories: function() {
@@ -351,7 +351,7 @@ FavoritesController.prototype = {
         }
     },
 
-    updateTimeFilterController: function() {
+    updateTimeFilterRange: function() {
         this.updateMyFirstLastDates();
         this.timeFilterController.updateSliderRangeFromController();
     },
@@ -405,7 +405,7 @@ FavoritesController.prototype = {
             }
             that.updateCategoryCounters();
             that.favoritesLoaded = true;
-            that.updateTimeFilterController();
+            that.updateTimeFilterRange();
             that.timeFilterController.setSliderToMaxInterval();
         }).always(function (response) {
             $('#navigation-favorites').removeClass('icon-loading-small');

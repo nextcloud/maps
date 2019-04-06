@@ -468,13 +468,12 @@
         },
         // when a controller's data has changed
         // this changes the min/max slider reachable values (it does not set the values)
-        // it should be used when a controller receives its data
-        // and when user wants to reset slider to see everything
+        // it should be called when there are changes in controller data
+        // and when user wants to reset the slider to see everything
         updateSliderRangeFromController: function() {
             var i;
             var mins = [];
             var maxs = [];
-            // favorites
             var rawMins = [
                 favoritesController.firstDate,
                 photosController.photoMarkersOldest
@@ -499,24 +498,12 @@
             var cmax = null;
             // get the min of all controllers
             if (mins.length > 0) {
-                cmin = mins[0];
+                cmin = Math.min(...mins);
             }
-            for (i=0; i < mins.length; i++) {
-                if (mins[i] < cmin) {
-                    cmin = mins[i];
-                }
-            }
-
             // get the max of all controllers
             if (maxs.length > 0) {
-                cmax = maxs[0];
+                cmax = Math.max(...maxs);
             }
-            for (i=0; i < maxs.length; i++) {
-                if (maxs[i] > cmax) {
-                    cmax = maxs[i];
-                }
-            }
-
             if (cmin !== null && cmax !== null) {
                 this.min = cmin;
                 this.max = cmax;

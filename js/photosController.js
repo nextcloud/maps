@@ -40,6 +40,7 @@ PhotosController.prototype = {
         $('body').on('click', '#togglePhotosButton, #navigation-photos > a', function(e) {
             that.toggleLayer();
             that.optionsController.saveOptionValues({photosLayer: that.map.hasLayer(that.photoLayer)});
+            that.updateMyFirstLastDates();
         });
         // click on menu button
         $('body').on('click', '.photosMenuButton', function(e) {
@@ -49,6 +50,14 @@ PhotosController.prototype = {
                 $(this).parent().parent().parent().find('>.app-navigation-entry-menu').addClass('open');
             }
         });
+    },
+
+    updateMyFirstLastDates: function() {
+        var firstVisible = this.photoMarkersFirstVisible;
+        var lastVisible = this.photoMarkersLastVisible;
+        var layerVisible = this.map.hasLayer(this.photoLayer);
+        this.photoMarkersOldest = layerVisible ? this.photoMarkers[firstVisible].data.date : null;
+        this.photoMarkersNewest = layerVisible ? this.photoMarkers[lastVisible].data.date : null;
     },
 
     showLayer: function() {
@@ -154,7 +163,14 @@ PhotosController.prototype = {
         var markers = this.preparePhotoMarkers(photos);
         this.photoMarkers.push.apply(this.photoMarkers, markers);
         this.photoMarkers.sort(function (a, b) { return a.data.date - b.data.date;});
-        this.refreshTimeFilter();
+
+        // we put them all in the layer
+        this.photoMarkersFirstVisible = 0;
+        this.photoMarkersLastVisible = this.photoMarkers.length - 1;
+        this.photoLayer.addLayers(this.photoMarkers);
+
+        this.updateTimeFilterRange();
+        this.timeFilterController.setSliderToMaxInterval();
     },
 
     preparePhotoMarkers : function(photos) {
@@ -183,90 +199,57 @@ PhotosController.prototype = {
         return markers;
     },
 
-    refreshTimeFilter: function() {
-        this.photoMarkersNewest = this.photoMarkers[this.photoMarkers.length - 1].data.date;
-        this.photoMarkersOldest = this.photoMarkers[0].data.date;
+    updateTimeFilterRange: function() {
+        this.updateMyFirstLastDates();
         this.timeFilterController.updateSliderRangeFromController();
-        this.timeFilterController.setSliderToMaxInterval();
-        var hide = [];
-        var show = [];
-        var visible = false;
-        for (var i = 0; i < this.photoMarkers.length; i++) {
-            if (this.photoMarkers[i].data.date < this.timeFilterBegin) {
-                hide.push(this.photoMarkers[i]);
-            }
-            else if (this.photoMarkers[i].data.date < this.timeFilterEnd) {
-                show.push(this.photoMarkers[i]);
-                if (!visible) {
-                    this.photoMarkersFirstVisible = i;
-                    visible = true;
-                }
-            }
-            else {
-                hide.push(this.photoMarkers[i]);
-                if (visible) {
-                    this.photoMarkersLastVisible = i-1;
-                    visible = false;
-                }
-            }
-        }
-        if (visible) {
-            this.photoMarkersLastVisible = i - 1;
-            visible = false;
-        }
-        //this.photoLayer.clearLayers();
-        this.photoLayer.addLayers(show);
-
     },
 
     updateTimeFilterBegin: function (date) {
-        if (this.photoMarkers.length === 0) {
-            return;
-        }
         if (date <= this.timeFilterEnd) {
             var i = this.photoMarkersFirstVisible;
             if (date < this.timeFilterBegin) {
                 i = i-1;
-                while (i >= 0 && i <= this.photoMarkersLastVisible && this.photoMarkers[i].data.date > date) {
+                while (i >= 0 && i <= this.photoMarkersLastVisible && this.photoMarkers[i].data.date >= date) {
                     this.photoLayer.addLayer(this.photoMarkers[i]);
                     i = i-1;
                 }
                 this.photoMarkersFirstVisible = i + 1;
-            } else {
-                while (i >= 0 && i <= this.photoMarkersLastVisible && this.photoMarkers[i].data.date < date) {
+            }
+            else {
+                while (i < this.photoMarkers.length && i >= 0 && i <= this.photoMarkersLastVisible && this.photoMarkers[i].data.date < date) {
                     this.photoLayer.removeLayer(this.photoMarkers[i]);
                     i = i + 1;
                 }
                 this.photoMarkersFirstVisible = i;
             }
             this.timeFilterBegin = date;
-        } else {
+        }
+        else {
             this.updateTimeFilterBegin(this.timeFilterEnd);
         }
     },
 
     updateTimeFilterEnd: function (date){
-        if (this.photoMarkers.length === 0) {
-            return;
-        }
         if (date >= this.timeFilterBegin) {
             var i = this.photoMarkersLastVisible;
             if (date < this.timeFilterEnd) {
-                while (i >= this.photoMarkersFirstVisible && i < this.photoMarkers.length && this.photoMarkers[i].data.date > date ) {
+                while (i > 0 && i >= this.photoMarkersFirstVisible && this.photoMarkers[i].data.date > date ) {
                     this.photoLayer.removeLayer(this.photoMarkers[i]);
                     i = i-1;
                 }
                 this.photoMarkersLastVisible = i;
-            } else {
+            }
+            else {
                 i = i+1;
-                while (i >= this.photoMarkersFirstVisible && i < this.photoMarkers.length && this.photoMarkers[i].data.date < date) {
+                while (i >= this.photoMarkersFirstVisible && i < this.photoMarkers.length && this.photoMarkers[i].data.date <= date) {
                     this.photoLayer.addLayer(this.photoMarkers[i]);
                     i = i+1;
                 }
                 this.photoMarkersLastVisible = i - 1;
             }
             this.timeFilterEnd = date;
-        } else {
+        }
+        else {
             this.updateTimeFilterEnd(this.timeFilterBegin);
         }
     },

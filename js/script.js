@@ -212,6 +212,7 @@
             });
             L.control.scale({metric: true, imperial: true, position: 'topleft'})
                 .addTo(this.map);
+            L.control.mousePosition().addTo(this.map);
             this.locControl = L.control.locate({
                 position: 'topleft',
                 drawCircle: true,

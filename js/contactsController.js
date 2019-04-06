@@ -121,7 +121,10 @@ ContactsController.prototype = {
     createContactView: function(markerData) {
         var avatar;
         if (markerData.photo) {
-            avatar = this.generateAvatar(markerData.photo);
+            avatar = this.generateAvatar(markerData.photo) || this.getUserImageIconUrl();
+        }
+        else {
+            avatar = this.getUserImageIconUrl();
         }
         //this.generatePreviewUrl(markerData.path);
         return L.divIcon(L.extend({
@@ -182,8 +185,8 @@ ContactsController.prototype = {
                 icon: this.createContactView(markerData)
             });
             marker.data = markerData;
-            var avatar = this.generateAvatar(marker.data.photo);
-            var img = '<img src=' + avatar + '/>' +
+            var avatar = this.generateAvatar(marker.data.photo) || this.getUserImageIconUrl();
+            var img = '<img src="' + avatar + '"/>' +
                 '<p class="tooltip-contact-name">' + escapeHTML(basename(markerData.name)) + '</p>';
             marker.bindTooltip(img, {permanent: false, className: "leaflet-marker-contact-tooltip"});
             markers.push(marker);
@@ -273,6 +276,10 @@ ContactsController.prototype = {
 
     getImageIconUrl: function() {
         return OC.generateUrl('/apps/theming/img/core/places') + '/contacts.svg?v=2';
+    },
+
+    getUserImageIconUrl: function() {
+        return OC.generateUrl('/apps/theming/img/core/actions') + '/user.svg?v=2';
     },
 
 };

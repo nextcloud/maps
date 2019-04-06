@@ -29,7 +29,7 @@ PhotosController.prototype = {
         });
         this.photoLayer.on('click', this.getPhotoMarkerOnClickFunction());
         this.photoLayer.on('clusterclick', function (a) {
-            if (a.layer.getChildCount() > 30) {
+            if (a.layer.getChildCount() > 20) {
                 a.layer.zoomToBounds();
             }
             else {
@@ -148,7 +148,6 @@ PhotosController.prototype = {
         } else {
             iconUrl = this.getImageIconUrl();
         }
-        //this.generatePreviewUrl(markerData.path);
         return L.divIcon(L.extend({
             html: '<div class="thumbnail" style="background-image: url(' + iconUrl + ');"></div>​',
             className: 'leaflet-marker-photo photo-marker'

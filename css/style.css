@@ -230,6 +230,7 @@ tr.selected td {
 .leaflet-marker-contact {
     border: 2px solid #fff;
     box-shadow: 3px 3px 10px #888;
+    border-radius: 50%;
 }
 
 .leaflet-marker-contact.contact-marker{

@@ -39,7 +39,7 @@ ContactsController.prototype = {
         // click on contact menu entry
         $('body').on('click', '#toggleContactsButton, #navigation-contacts > a', function(e) {
             that.toggleLayer();
-            that.optionsController.saveOptionValues({contactsLayer: that.map.hasLayer(that.contactLayer)});
+            that.optionsController.saveOptionValues({contactLayer: that.map.hasLayer(that.contactLayer)});
         });
         // click on menu button
         $('body').on('click', '.contactsMenuButton', function(e) {
@@ -271,6 +271,9 @@ ContactsController.prototype = {
         return data;
     },
 
+    getImageIconUrl: function() {
+        return OC.generateUrl('/apps/theming/img/core/places') + '/contacts.svg?v=2';
+    },
 
 };
 

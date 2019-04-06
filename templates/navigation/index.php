@@ -127,4 +127,38 @@
             </ul>
         </div>
     </li>
+    <li id="navigation-tracks" class="collapsible">
+        <a class="" href="#"><?php p($l->t('Tracks')); ?></a>
+        <div class="app-navigation-entry-utils">
+            <ul>
+                <li id="addTrackButton" class="app-navigation-entry-utils-menu-button" title="<?php p($l->t('Load a track file')); ?>">
+                    <button class="icon-add"></button>
+                </li>
+                <li id="toggleTracksButton" class="app-navigation-entry-utils-menu-button" title="<?php p($l->t('Toggle tracks')); ?>">
+                    <button class="icon-toggle"></button>
+                </li>
+                <li class="app-navigation-entry-utils-menu-button tracksMenuButton">
+                    <button></button>
+                </li>
+            </ul>
+        </div>
+        <div class="app-navigation-entry-menu">
+            <ul>
+                <li>
+                    <a href="#" id="select-all-trackss">
+                        <span class="icon-category-enabled"></span>
+                        <span><?php p($l->t('Show all tracks')); ?></span>
+                    </a>
+                </li>
+                <li>
+                    <a href="#" id="select-no-tracks">
+                        <span class="icon-category-disabled"></span>
+                        <span><?php p($l->t('Hide all tracks')); ?></span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+        <ul id="category-list">
+        </ul>
+    </li>
 </ul>

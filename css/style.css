@@ -332,6 +332,7 @@ table.editFavorite input[type=text] {
 #togglePhotosButton button,
 #toggleContactsButton button,
 #toggleFavoritesButton button,
+#toggleTracksButton button,
 .toggleCategoryButton button {
     opacity: 1 !important;
 }
@@ -339,6 +340,7 @@ table.editFavorite input[type=text] {
 #navigation-favorites > a,
 #navigation-photos > a,
 #navigation-contacts > a,
+#navigation-tracks > a,
 .category-line > a {
     opacity: 1 !important;
 }
@@ -349,7 +351,16 @@ table.editFavorite input[type=text] {
     font-weight: 900;
     text-decoration: inherit;
     position: absolute;
-    left: 18px;
+    left: 16px;
+}
+#navigation-tracks > a::before {
+    content: "\f201";
+    font-family: 'Font Awesome\ 5 Free';
+    font-style: normal;
+    font-weight: 900;
+    text-decoration: inherit;
+    position: absolute;
+    left: 16px;
 }
 .ui-autocomplete {
     z-index: 10000 !important;

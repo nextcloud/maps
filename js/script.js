@@ -6,6 +6,7 @@
         favoritesController.getFavorites();
         routingController.initRoutingControl(mapController.map);
         photosController.initLayer(mapController.map);
+        contactsController.initLayer(mapController.map);
 
         // once controllers have been set/initialized, we can restore option values from server
         optionsController.restoreOptions();
@@ -104,6 +105,9 @@
                 }
                 if (!optionsValues.hasOwnProperty('photosLayer') || optionsValues.photosLayer === 'true') {
                     photosController.toggleLayer();
+                }
+                if (!optionsValues.hasOwnProperty('contactLayer') || optionsValues.contactLayer === 'true') {
+                    contactsController.toggleLayer();
                 }
                 if (optionsValues.hasOwnProperty('locControlEnabled') && optionsValues.locControlEnabled === 'true') {
                     mapController.locControl.start();
@@ -409,10 +413,12 @@
                     if (handle === 0) {
                         that.valueBegin = unencoded[0];
                         photosController.updateTimeFilterBegin(that.valueBegin);
+                        contactsController.updateTimeFilterBegin(that.valueBegin);
                     }
                     else {
                         that.valueEnd = unencoded[1];
                         photosController.updateTimeFilterEnd(that.valueEnd);
+                        contactsController.updateTimeFilterEnd(that.valueEnd);
                     }
                     favoritesController.updateFilterDisplay();
 
@@ -476,11 +482,13 @@
             var maxs = [];
             var rawMins = [
                 favoritesController.firstDate,
-                photosController.photoMarkersOldest
+                photosController.photoMarkersOldest,
+                contactsController.contactMarkersOldest
             ];
             var rawMaxs = [
                 favoritesController.lastDate,
-                photosController.photoMarkersNewest
+                photosController.photoMarkersNewest,
+                contactsController.contactMarkersNewest
             ];
             // get rid of null values
             for (i=0; i < rawMins.length; i++) {
@@ -523,6 +531,7 @@
 
 
     var photosController = new PhotosController(optionsController, timeFilterController);
+    var contactsController = new ContactsController(optionsController, timeFilterController);
     var favoritesController = new FavoritesController(optionsController, timeFilterController);
 
     timeFilterController.connect();

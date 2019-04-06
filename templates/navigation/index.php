@@ -1,30 +1,4 @@
 <ul>
-    <li id="navigation-photos">
-        <a class="icon-picture" href="#"><?php p($l->t('Photos')); ?></a>
-        <div class="app-navigation-entry-utils">
-            <ul>
-                <li class="app-navigation-entry-utils-counter">
-                    <span></span>
-                </li>
-                <li id="togglePhotosButton" class="app-navigation-entry-utils-menu-button" title="<?php p($l->t('Toggle photos')); ?>">
-                    <button class="icon-toggle"></button>
-                </li>
-                <li class="app-navigation-entry-utils-menu-button photosMenuButton">
-                    <button></button>
-                </li>
-            </ul>
-        </div>
-        <div class="app-navigation-entry-menu">
-            <ul>
-                <li>
-                    <a href="#" class="dummyoption">
-                        <span class="icon-category-office"></span>
-                        <span><?php p($l->t('Nothing yet')); ?></span>
-                    </a>
-                </li>
-            </ul>
-        </div>
-    </li>
     <li id="navigation-favorites" class="collapsible">
         <a class="icon-favorite" href="#"><?php p($l->t('Favorites')); ?></a>
         <div class="app-navigation-entry-utils">
@@ -101,4 +75,56 @@
         </div>
     </li>
     <img id="dummylogo"/>
+	<li id="navigation-photos">
+		<a class="icon-picture" href="#"><?php p($l->t('Photos')); ?></a>
+		<div class="app-navigation-entry-utils">
+			<ul>
+				<li class="app-navigation-entry-utils-counter">
+					<span></span>
+				</li>
+				<li id="togglePhotosButton" class="app-navigation-entry-utils-menu-button" title="<?php p($l->t('Toggle photos')); ?>">
+					<button class="icon-toggle"></button>
+				</li>
+				<li class="app-navigation-entry-utils-menu-button photosMenuButton">
+					<button></button>
+				</li>
+			</ul>
+		</div>
+		<div class="app-navigation-entry-menu">
+			<ul>
+				<li>
+					<a href="#" class="dummyoption">
+						<span class="icon-category-office"></span>
+						<span><?php p($l->t('Nothing yet')); ?></span>
+					</a>
+				</li>
+			</ul>
+		</div>
+	</li>
+	<li id="navigation-contacts">
+		<a class="icon-contacts" href="#"><?php p($l->t('Contacts')); ?></a>
+		<div class="app-navigation-entry-utils">
+			<ul>
+				<li class="app-navigation-entry-utils-counter">
+					<span></span>
+				</li>
+				<li id="toggleContactsButton" class="app-navigation-entry-utils-menu-button" title="<?php p($l->t('Toggle contacts')); ?>">
+					<button class="icon-toggle"></button>
+				</li>
+				<li class="app-navigation-entry-utils-menu-button contactsMenuButton">
+					<button></button>
+				</li>
+			</ul>
+		</div>
+		<div class="app-navigation-entry-menu">
+			<ul>
+				<li>
+					<a href="#" class="dummyoption">
+						<span class="icon-category-office"></span>
+						<span><?php p($l->t('Nothing yet')); ?></span>
+					</a>
+				</li>
+			</ul>
+		</div>
+	</li>
 </ul>

@@ -129,6 +129,35 @@ TracksController.prototype = {
         }
     },
 
+    //// add/remove markers from layers considering current filter values
+    //updateFilterDisplay: function() {
+    //    var startFilter = this.timeFilterController.valueBegin;
+    //    var endFilter = this.timeFilterController.valueEnd;
+
+    //    var cat, favid, markers, i, date_created;
+    //    // markers to hide
+    //    for (cat in this.categoryLayers) {
+    //        markers = this.categoryLayers[cat].getLayers();
+    //        for (i=0; i < markers.length; i++) {
+    //            favid = markers[i].favid;
+    //            date_created = this.favorites[favid].date_created;
+    //            if (date_created < startFilter || date_created > endFilter) {
+    //                this.categoryLayers[cat].removeLayer(markers[i]);
+    //            }
+    //        }
+    //    }
+
+    //    // markers to show
+    //    for (cat in this.categoryMarkers) {
+    //        for (favid in this.categoryMarkers[cat]) {
+    //            date_created = this.favorites[favid].date_created;
+    //            if (date_created >= startFilter && date_created <= endFilter) {
+    //                this.categoryLayers[cat].addLayer(this.categoryMarkers[cat][favid]);
+    //            }
+    //        }
+    //    }
+    //},
+
     updateTimeFilterRange: function() {
         this.updateMyFirstLastDates();
         this.timeFilterController.updateSliderRangeFromController();
@@ -143,13 +172,20 @@ TracksController.prototype = {
 
         var id;
 
+        // we update dates only if nothing is currently loading
+        for (id in this.trackLayers) {
+            if (this.mainLayer.hasLayer(this.trackLayers[id]) && !this.trackLayers[id].loaded) {
+                return;
+            }
+        }
+
         var initMinDate = Math.floor(Date.now() / 1000) + 1000000
         var initMaxDate = 0;
 
         var first = initMinDate;
         var last = initMaxDate;
         for (id in this.trackLayers) {
-            if (this.mainLayer.hasLayer(this.trackLayers[id])) {
+            if (this.mainLayer.hasLayer(this.trackLayers[id]) && this.trackLayers[id].loaded && this.trackLayers[id].date) {
                 if (this.trackLayers[id].date < first) {
                     first = this.trackLayers[id].date;
                 }
@@ -167,6 +203,7 @@ TracksController.prototype = {
             this.firstDate = null;
             this.lastDate = null;
         }
+        console.log('my first and last : '+this.firstDate+' '+this.lastDate);
     },
 
     saveEnabledTracks: function(additionalIds=[]) {
@@ -424,12 +461,10 @@ TracksController.prototype = {
         if (!trackLayer.loaded) {
             this.loadTrack(id, save);
         }
-        else {
-            this.toggleTrackLayer(id);
-            if (save) {
-                this.saveEnabledTracks();
-                this.updateMyFirstLastDates();
-            }
+        this.toggleTrackLayer(id);
+        if (save) {
+            this.saveEnabledTracks();
+            this.updateMyFirstLastDates();
         }
     },
 
@@ -465,7 +500,7 @@ TracksController.prototype = {
         }).done(function (response) {
             that.processGpx(id, response, that.trackLayers[id]);
             that.trackLayers[id].loaded = true;
-            that.toggleTrack(id, save);
+            that.updateMyFirstLastDates();
         }).always(function (response) {
             $('#track-list > li[track="'+id+'"]').removeClass('icon-loading-small');
         }).fail(function() {
@@ -498,8 +533,12 @@ TracksController.prototype = {
 
         var fileDesc = gpxx.find('>metadata>desc').text();
 
+        var minTrackDate = Math.floor(Date.now() / 1000) + 1000000;
+        var date;
+
         gpxx.find('wpt').each(function() {
-            that.addWaypoint(id, $(this), layerGroup, coloredTooltipClass);
+            date = that.addWaypoint(id, $(this), layerGroup, coloredTooltipClass);
+            minTrackDate = (date < minTrackDate) ? date : minTrackDate;
         });
 
         gpxx.find('trk').each(function() {
@@ -509,7 +548,8 @@ TracksController.prototype = {
             linkText = $(this).find('link text').text();
             linkUrl = $(this).find('link').attr('href');
             $(this).find('trkseg').each(function() {
-                that.addLine(id, $(this).find('trkpt'), layerGroup, weight, color, name, cmt, desc, linkText, linkUrl, coloredTooltipClass);
+                date = that.addLine(id, $(this).find('trkpt'), layerGroup, weight, color, name, cmt, desc, linkText, linkUrl, coloredTooltipClass);
+                minTrackDate = (date < minTrackDate) ? date : minTrackDate;
             });
         });
 
@@ -520,8 +560,11 @@ TracksController.prototype = {
             desc = $(this).find('>desc').text();
             linkText = $(this).find('link text').text();
             linkUrl = $(this).find('link').attr('href');
-            that.addLine(id, $(this).find('rtept'), layerGroup, weight, color, name, cmt, desc, linkText, linkUrl, coloredTooltipClass);
+            date = that.addLine(id, $(this).find('rtept'), layerGroup, weight, color, name, cmt, desc, linkText, linkUrl, coloredTooltipClass);
+            minTrackDate = (date < minTrackDate) ? date : minTrackDate;
         });
+
+        layerGroup.date = minTrackDate;
     },
 
     addWaypoint: function(id, elem, layerGroup, coloredTooltipClass) {
@@ -535,6 +578,11 @@ TracksController.prototype = {
         var time = elem.find('time').text();
         var linkText = elem.find('link text').text();
         var linkUrl = elem.find('link').attr('href');
+
+        var date = null;
+        if (time) {
+            date = Date.parse(time)/1000;
+        }
 
         var mm = L.marker(
             [lat, lon]
@@ -570,12 +618,22 @@ TracksController.prototype = {
         }
         mm.bindPopup(popupText);
         layerGroup.addLayer(mm);
+        return date;
     },
 
     addLine: function(id, points, layerGroup, weight, color, name, cmt, desc, linkText, linkUrl, coloredTooltipClass) {
         var lat, lon, ele, time;
         var latlngs = [];
-        var times = [];
+        // get first date
+        var date = null;
+        if (points.length > 0) {
+            var p = points.first();
+            time = p.find('time').text();
+            if (time) {
+                date = Date.parse(time)/1000;
+            }
+        }
+        // build line
         points.each(function() {
             lat = $(this).attr('lat');
             lon = $(this).attr('lon');
@@ -584,7 +642,6 @@ TracksController.prototype = {
             }
             ele = $(this).find('ele').text();
             time = $(this).find('time').text();
-            times.push(time);
             if (ele !== '') {
                 latlngs.push([lat, lon, ele]);
             }
@@ -660,6 +717,8 @@ TracksController.prototype = {
         });
         l.on('mouseout', function() {
         });
+
+        return date;
     },
 
     zoomOnTrack: function(id) {

@@ -566,11 +566,13 @@
             var maxs = [];
             var rawMins = [
                 favoritesController.firstDate,
+                tracksController.firstDate,
                 photosController.photoMarkersOldest,
                 contactsController.contactMarkersOldest
             ];
             var rawMaxs = [
                 favoritesController.lastDate,
+                tracksController.lastDate,
                 photosController.photoMarkersNewest,
                 contactsController.contactMarkersNewest
             ];

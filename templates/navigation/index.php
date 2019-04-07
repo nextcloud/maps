@@ -157,6 +157,12 @@
                     </a>
                 </li>
                 <li>
+                    <a href="#" id="add-track-folder">
+                        <span class="icon-folder"></span>
+                        <span><?php p($l->t('Load a directory')); ?></span>
+                    </a>
+                </li>
+                <li>
                     <a href="#" id="remove-all-tracks">
                         <span class="icon-view-close"></span>
                         <span><?php p($l->t('Remove all tracks')); ?></span>

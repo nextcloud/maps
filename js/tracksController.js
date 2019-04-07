@@ -77,6 +77,18 @@ TracksController.prototype = {
                 true
             );
         });
+        // click on add directory button
+        $('body').on('click', '#add-track-folder', function(e) {
+            OC.dialogs.filepicker(
+                t('maps', 'Load gpx files from directory'),
+                function(targetPath) {
+                    that.addTrackDirectoryDB(targetPath);
+                },
+                false,
+                'httpd/unix-directory',
+                true
+            );
+        });
         // toggle tracks
         $('body').on('click', '#toggleTracksButton', function(e) {
             that.toggleTracks();
@@ -262,6 +274,37 @@ TracksController.prototype = {
         });
     },
 
+    addTrackDirectoryDB: function(path) {
+        var that = this;
+        $('#navigation-tracks').addClass('icon-loading-small');
+        var req = {
+            path: path
+        };
+        var url = OC.generateUrl('/apps/maps/tracks-directory');
+        $.ajax({
+            type: 'POST',
+            url: url,
+            data: req,
+            async: true
+        }).done(function (response) {
+            // show main layer if needed
+            if (!that.map.hasLayer(this.mainLayer)) {
+                that.toggleTracks();
+            }
+            var ids = [];
+            for (var i=0; i < response.length; i++) {
+                that.addTrackMap(response[i], true);
+                ids.push(response[i].id);
+            }
+            that.saveEnabledTracks(ids);
+            that.optionsController.saveOptionValues({tracksEnabled: true});
+        }).always(function (response) {
+            $('#navigation-tracks').removeClass('icon-loading-small');
+        }).fail(function() {
+            OC.Notification.showTemporary(t('maps', 'Failed to add track directory'));
+        });
+    },
+
     addTracksDB: function(pathList) {
         var that = this;
         $('#navigation-tracks').addClass('icon-loading-small');
@@ -275,6 +318,10 @@ TracksController.prototype = {
             data: req,
             async: true
         }).done(function (response) {
+            // show main layer if needed
+            if (!that.map.hasLayer(this.mainLayer)) {
+                that.toggleTracks();
+            }
             var ids = [];
             for (var i=0; i < response.length; i++) {
                 that.addTrackMap(response[i], true);

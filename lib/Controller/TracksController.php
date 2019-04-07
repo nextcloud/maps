@@ -142,6 +142,34 @@ class TracksController extends Controller {
     /**
      * @NoAdminRequired
      */
+    public function addTrackDirectory($path) {
+        $tracks = [];
+        if ($path && strlen($path) > 0) {
+            $cleanpath = str_replace(array('../', '..\\'), '',  $path);
+            if ($this->userfolder->nodeExists($cleanpath)) {
+                $dir = $this->userfolder->get($cleanpath);
+                if ($dir->getType() === \OCP\Files\FileInfo::TYPE_FOLDER) {
+                    // find all gpx files
+                    foreach ($dir->searchByMime('application/gpx+xml') as $node) {
+                        if ($node->getParent()->getId() === $dir->getId() and
+                            $node->getType() === \OCP\Files\FileInfo::TYPE_FILE
+                        ) {
+                            $trackFileId = $node->getId();
+                            $intPath = preg_replace('/^files/', '', $node->getInternalPath());
+                            $trackId = $this->tracksService->addTrackToDB($this->userId, $intPath, $trackFileId);
+                            $track = $this->tracksService->getTrackFromDB($trackId);
+                            array_push($tracks, $track);
+                        }
+                    }
+                }
+            }
+        }
+        return new DataResponse($tracks);
+    }
+
+    /**
+     * @NoAdminRequired
+     */
     public function deleteTrack($id) {
         $track = $this->tracksService->getTrackFromDB($id, $this->userId);
         if ($track !== null) {

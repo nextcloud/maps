@@ -85,10 +85,16 @@ class TracksController extends Controller {
         $tracks = $this->tracksService->getTracksFromDB($this->userId);
         $existingTracks = [];
         foreach ($tracks as $track) {
-            if ($this->userfolder->nodeExists($track['file_path'])
-                and $this->userfolder->get($track['file_path'])->getType() === \OCP\Files\FileInfo::TYPE_FILE
-            ) {
-                array_push($existingTracks, $track);
+            $res = $this->userfolder->getById($track['file_id']);
+            if (is_array($res) and count($res) > 0) {
+                $trackFile = $res[0];
+                if ($trackFile->getType() === \OCP\Files\FileInfo::TYPE_FILE) {
+                    $track['file_name'] = $trackFile->getName();
+                    array_push($existingTracks, $track);
+                }
+                else {
+                    $this->deleteTrack($track['id']);
+                }
             }
             else {
                 $this->deleteTrack($track['id']);
@@ -102,8 +108,9 @@ class TracksController extends Controller {
      */
     public function getTrackFileContent($id) {
         $track = $this->tracksService->getTrackFromDB($id);
-        if ($this->userfolder->nodeExists($track['file_path'])) {
-            $trackFile = $this->userfolder->get($track['file_path']);
+        $res = $this->userfolder->getById($track['file_id']);
+        if (is_array($res) and count($res) > 0) {
+            $trackFile = $res[0];
             if ($trackFile->getType() === \OCP\Files\FileInfo::TYPE_FILE) {
                 $trackContent = $trackFile->getContent();
                 return new DataResponse($trackContent);
@@ -129,8 +136,9 @@ class TracksController extends Controller {
                     $trackFile = $this->userfolder->get($cleanpath);
                     if ($trackFile->getType() === \OCP\Files\FileInfo::TYPE_FILE) {
                         $trackFileId = $trackFile->getId();
-                        $trackId = $this->tracksService->addTrackToDB($this->userId, $cleanpath, $trackFileId);
+                        $trackId = $this->tracksService->addTrackToDB($this->userId, $trackFileId);
                         $track = $this->tracksService->getTrackFromDB($trackId);
+                        $track['file_name'] = $trackFile->getName();
                         array_push($tracks, $track);
                     }
                 }
@@ -155,9 +163,9 @@ class TracksController extends Controller {
                             $node->getType() === \OCP\Files\FileInfo::TYPE_FILE
                         ) {
                             $trackFileId = $node->getId();
-                            $intPath = preg_replace('/^files/', '', $node->getInternalPath());
-                            $trackId = $this->tracksService->addTrackToDB($this->userId, $intPath, $trackFileId);
+                            $trackId = $this->tracksService->addTrackToDB($this->userId, $trackFileId);
                             $track = $this->tracksService->getTrackFromDB($trackId);
+                            $track['file_name'] = $node->getName();
                             array_push($tracks, $track);
                         }
                     }

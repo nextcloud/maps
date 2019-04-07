@@ -82,7 +82,7 @@ TracksController.prototype = {
             OC.dialogs.filepicker(
                 t('maps', 'Load gpx files from directory'),
                 function(targetPath) {
-                    that.addTrackDirectoryDB(targetPath);
+                    that.addTrackDirectoryDB(targetPath || '/');
                 },
                 false,
                 'httpd/unix-directory',
@@ -288,7 +288,7 @@ TracksController.prototype = {
             async: true
         }).done(function (response) {
             // show main layer if needed
-            if (!that.map.hasLayer(this.mainLayer)) {
+            if (!that.map.hasLayer(that.mainLayer)) {
                 that.toggleTracks();
             }
             var ids = [];
@@ -319,7 +319,7 @@ TracksController.prototype = {
             async: true
         }).done(function (response) {
             // show main layer if needed
-            if (!that.map.hasLayer(this.mainLayer)) {
+            if (!that.map.hasLayer(that.mainLayer)) {
                 that.toggleTracks();
             }
             var ids = [];
@@ -343,7 +343,7 @@ TracksController.prototype = {
         this.trackLayers[track.id] = L.featureGroup();
         this.trackLayers[track.id].loaded = false;
 
-        var name = basename(track.file_path);
+        var name = track.file_name;
 
         // side menu entry
         var imgurl = OC.generateUrl('/svg/core/actions/address?color='+color.replace('#', ''));

@@ -165,12 +165,6 @@
                 <length>10</length>
             </field>
             <field>
-                <name>file_path</name>
-                <type>text</type>
-                <notnull>true</notnull>
-                <length>500</length>
-            </field>
-            <field>
                 <name>color</name>
                 <type>text</type>
                 <notnull>false</notnull>

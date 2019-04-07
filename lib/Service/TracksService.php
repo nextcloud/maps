@@ -34,7 +34,7 @@ class TracksService {
     public function getTracksFromDB($userId) {
         $tracks = [];
         $qb = $this->qb;
-        $qb->select('id', 'file_id', 'file_path', 'color')
+        $qb->select('id', 'file_id', 'color')
             ->from('maps_tracks', 't')
             ->where(
                 $qb->expr()->eq('user_id', $qb->createNamedParameter($userId, IQueryBuilder::PARAM_STR))
@@ -45,7 +45,6 @@ class TracksService {
             array_push($tracks, [
                 'id' => intval($row['id']),
                 'file_id' => intval($row['file_id']),
-                'file_path' => $row['file_path'],
                 'color' => $row['color']
             ]);
         }
@@ -57,7 +56,7 @@ class TracksService {
     public function getTrackFromDB($id, $userId=null) {
         $track = null;
         $qb = $this->qb;
-        $qb->select('id', 'file_id', 'file_path', 'color')
+        $qb->select('id', 'file_id', 'color')
             ->from('maps_tracks', 't')
             ->where(
                 $qb->expr()->eq('id', $qb->createNamedParameter($id, IQueryBuilder::PARAM_INT))
@@ -73,7 +72,6 @@ class TracksService {
             $track = [
                 'id' => intval($row['id']),
                 'file_id' => intval($row['file_id']),
-                'file_path' => $row['file_path'],
                 'color' => $row['color']
             ];
             break;
@@ -83,12 +81,11 @@ class TracksService {
         return $track;
     }
 
-    public function addTrackToDB($userId, $path, $fileId) {
+    public function addTrackToDB($userId, $fileId) {
         $qb = $this->qb;
         $qb->insert('maps_tracks')
             ->values([
                 'user_id' => $qb->createNamedParameter($userId, IQueryBuilder::PARAM_STR),
-                'file_path' => $qb->createNamedParameter($path, IQueryBuilder::PARAM_STR),
                 'file_id' => $qb->createNamedParameter($fileId, IQueryBuilder::PARAM_INT)
             ]);
         $req = $qb->execute();

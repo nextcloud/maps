@@ -120,28 +120,23 @@ class TracksController extends Controller {
     /**
      * @NoAdminRequired
      */
-    public function addTrack($path) {
-        if ($path && strlen($path) > 0) {
-            $cleanpath = str_replace(array('../', '..\\'), '',  $path);
-            if ($this->userfolder->nodeExists($cleanpath)) {
-                $trackFile = $this->userfolder->get($cleanpath);
-                if ($trackFile->getType() === \OCP\Files\FileInfo::TYPE_FILE) {
-                    $trackFileId = $trackFile->getId();
-                    $trackId = $this->tracksService->addTrackToDB($this->userId, $cleanpath, $trackFileId);
-                    $track = $this->tracksService->getTrackFromDB($trackId);
-                    return new DataResponse($track);
-                }
-                else {
-                    return new DataResponse('bad file type', 400);
+    public function addTracks($pathList) {
+        $tracks = [];
+        foreach ($pathList as $path) {
+            if ($path && strlen($path) > 0) {
+                $cleanpath = str_replace(array('../', '..\\'), '',  $path);
+                if ($this->userfolder->nodeExists($cleanpath)) {
+                    $trackFile = $this->userfolder->get($cleanpath);
+                    if ($trackFile->getType() === \OCP\Files\FileInfo::TYPE_FILE) {
+                        $trackFileId = $trackFile->getId();
+                        $trackId = $this->tracksService->addTrackToDB($this->userId, $cleanpath, $trackFileId);
+                        $track = $this->tracksService->getTrackFromDB($trackId);
+                        array_push($tracks, $track);
+                    }
                 }
             }
-            else {
-                return new DataResponse('file not found', 400);
-            }
         }
-        else {
-            return new DataResponse('invalid value', 400);
-        }
+        return new DataResponse($tracks);
     }
 
     /**
@@ -162,7 +157,9 @@ class TracksController extends Controller {
      * @NoAdminRequired
      */
     public function deleteTracks($ids) {
-        $this->tracksService->deleteTracksFromDB($ids, $this->userId);
+        if (is_array($ids) && count($ids) > 0) {
+            $this->tracksService->deleteTracksFromDB($ids, $this->userId);
+        }
         return new DataResponse('DELETED');
     }
 

@@ -143,7 +143,9 @@
                     && optionsValues.enabledTracks
                     && optionsValues.enabledTracks !== '')
                 {
-                    that.enabledTracks = optionsValues.enabledTracks.split('|');
+                    that.enabledTracks = optionsValues.enabledTracks.split('|').map(function (x) {
+                        return parseInt(x);
+                    });
                     if (tracksController.trackListLoaded) {
                         tracksController.restoreTracksState(that.enabledTracks);
                     }

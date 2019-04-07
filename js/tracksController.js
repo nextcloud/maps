@@ -41,6 +41,15 @@ TracksController.prototype = {
             var id = $(this).parent().parent().parent().attr('track');
             that.toggleTrack(id, true);
         });
+        // remove a track
+        $('body').on('click', '.removeTrack', function(e) {
+            var id = parseInt($(this).parent().parent().parent().parent().attr('track'));
+            that.removeTrackDB(id);
+        });
+        // remove all tracks
+        $('body').on('click', '#remove-all-tracks', function(e) {
+            that.removeAllTracksDB();
+        });
         // show/hide all tracks
         $('body').on('click', '#select-all-tracks', function(e) {
             that.showAllTracks();
@@ -61,9 +70,9 @@ TracksController.prototype = {
             OC.dialogs.filepicker(
                 t('maps', 'Load gpx file'),
                 function(targetPath) {
-                    that.addTrackDB(targetPath);
+                    that.addTracksDB(targetPath);
                 },
-                false,
+                true,
                 'application/gpx+xml',
                 true
             );
@@ -148,7 +157,7 @@ TracksController.prototype = {
         }
     },
 
-    saveEnabledTracks: function() {
+    saveEnabledTracks: function(additionalIds=[]) {
         var trackList = [];
         var layer;
         for (var id in this.trackLayers) {
@@ -157,10 +166,13 @@ TracksController.prototype = {
                 trackList.push(id);
             }
         }
+        for (var i=0; i < additionalIds.length; i++) {
+            trackList.push(additionalIds[i]);
+        }
         var trackStringList = trackList.join('|');
         this.optionsController.saveOptionValues({enabledTracks: trackStringList});
         // this is used when tracks are loaded again
-        this.optionsController.enabledTracks = trackStringList;
+        this.optionsController.enabledTracks = trackList;
     },
 
     restoreTracksState: function(enabledTrackList) {
@@ -196,11 +208,65 @@ TracksController.prototype = {
         this.updateMyFirstLastDates();
     },
 
-    addTrackDB: function(path) {
+    removeTrackDB: function(id) {
+        var that = this;
+        $('#track-list > li[track="'+id+'"]').addClass('icon-loading-small');
+        var req = {};
+        var url = OC.generateUrl('/apps/maps/tracks/'+id);
+        $.ajax({
+            type: 'DELETE',
+            url: url,
+            data: req,
+            async: true
+        }).done(function (response) {
+            that.removeTrackMap(id);
+            that.saveEnabledTracks();
+        }).always(function (response) {
+            $('#track-list > li[track="'+id+'"]').removeClass('icon-loading-small');
+        }).fail(function() {
+            OC.Notification.showTemporary(t('maps', 'Failed to remove track'));
+        });
+    },
+
+    removeAllTracksDB: function() {
         var that = this;
         $('#navigation-tracks').addClass('icon-loading-small');
         var req = {
-            path: path
+            ids: Object.keys(this.trackLayers)
+        };
+        var url = OC.generateUrl('/apps/maps/tracks');
+        $.ajax({
+            type: 'DELETE',
+            url: url,
+            data: req,
+            async: true
+        }).done(function (response) {
+            for (var id in that.trackLayers) {
+                that.removeTrackMap(id);
+            }
+            that.saveEnabledTracks();
+        }).always(function (response) {
+            $('#navigation-tracks').removeClass('icon-loading-small');
+        }).fail(function() {
+            OC.Notification.showTemporary(t('maps', 'Failed to remove track'));
+        });
+    },
+
+    removeTrackMap: function(id) {
+        this.mainLayer.removeLayer(this.trackLayers[id]);
+        delete this.trackLayers[id];
+        delete this.track[id];
+
+        $('#track-list > li[track="'+id+'"]').fadeOut('slow', function() {
+            $(this).remove();
+        });
+    },
+
+    addTracksDB: function(pathList) {
+        var that = this;
+        $('#navigation-tracks').addClass('icon-loading-small');
+        var req = {
+            pathList: pathList
         };
         var url = OC.generateUrl('/apps/maps/tracks');
         $.ajax({
@@ -209,12 +275,17 @@ TracksController.prototype = {
             data: req,
             async: true
         }).done(function (response) {
-            that.addTrackMap(response, true);
-            that.updateTimeFilterRange();
+            var ids = [];
+            for (var i=0; i < response.length; i++) {
+                that.addTrackMap(response[i], true);
+                ids.push(response[i].id);
+            }
+            that.saveEnabledTracks(ids);
+            that.optionsController.saveOptionValues({tracksEnabled: true});
         }).always(function (response) {
             $('#navigation-tracks').removeClass('icon-loading-small');
         }).fail(function() {
-            OC.Notification.showTemporary(t('maps', 'Failed to add track'));
+            OC.Notification.showTemporary(t('maps', 'Failed to add tracks'));
         });
     },
 
@@ -271,8 +342,7 @@ TracksController.prototype = {
 
         // enable if in saved options or if it should be enabled for another reason
         if (show || this.optionsController.enabledTracks.indexOf(track.id) !== -1) {
-            // save if state was not restored
-            this.toggleTrack(track.id, show);
+            this.toggleTrack(track.id);
         }
     },
 
@@ -337,7 +407,7 @@ TracksController.prototype = {
 
     loadTrack: function(id, save=false) {
         var that = this;
-        $('#track-list > li[track="'+id+'"] .toggleTrackButton button').addClass('icon-loading-small');
+        $('#track-list > li[track="'+id+'"]').addClass('icon-loading-small');
         var req = {};
         var url = OC.generateUrl('/apps/maps/tracks/'+id);
         $.ajax({
@@ -349,7 +419,7 @@ TracksController.prototype = {
             that.trackLayers[id].loaded = true;
             that.toggleTrack(id, save);
         }).always(function (response) {
-            $('#track-list > li[track="'+id+'"] .toggleTrackButton button').removeClass('icon-loading-small');
+            $('#track-list > li[track="'+id+'"]').removeClass('icon-loading-small');
         }).fail(function() {
             OC.Notification.showTemporary(t('maps', 'Failed to load track content'));
         });

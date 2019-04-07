@@ -55,7 +55,15 @@ TracksController.prototype = {
         });
         // click on + button
         $('body').on('click', '#addTrackButton', function(e) {
-            // TODO
+            OC.dialogs.filepicker(
+                t('maps', 'Load gpx file'),
+                function(targetPath) {
+                    that.addTrack(targetPath);
+                },
+                false,
+                'application/gpx+xml',
+                true
+            );
         });
         // toggle tracks
         $('body').on('click', '#toggleTracksButton', function(e) {

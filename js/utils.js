@@ -3,6 +3,10 @@ function basename(str) {
     return base;
 }
 
+function dirname(path) {
+    return path.replace(/\\/g,'/').replace(/\/[^\/]*$/, '');;
+}
+
 function Timer(callback, mydelay) {
     var timerId, start, remaining = mydelay;
 

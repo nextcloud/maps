@@ -19,6 +19,7 @@ use OCA\Maps\Controller\UtilsController;
 use OCA\Maps\Controller\FavoritesController;
 use OCA\Maps\Controller\FavoritesApiController;
 use OCA\Maps\Controller\RoutingController;
+use OCA\Maps\Controller\TracksController;
 use OCA\Maps\Hook\FileHooks;
 use OCA\Maps\Service\PhotofilesService;
 use OCA\Maps\Service\FavoritesService;
@@ -99,6 +100,28 @@ class Application extends App {
                     $c->getServer()->getGroupManager(),
                     $c->query('ServerContainer')->getL10N($c->query('AppName')),
                     $c->query('ServerContainer')->getLogger()
+                );
+            }
+        );
+
+        $container->registerService(
+            'TracksController', function ($c) {
+                return new TracksController(
+                    $c->query('AppName'),
+                    $c->query('Request'),
+                    $c->query('UserId'),
+                    $c->query('ServerContainer')->getUserFolder($c->query('UserId')),
+                    $c->query('ServerContainer')->getConfig(),
+                    $c->getServer()->getShareManager(),
+                    $c->getServer()->getAppManager(),
+                    $c->getServer()->getUserManager(),
+                    $c->getServer()->getGroupManager(),
+                    $c->query('ServerContainer')->getL10N($c->query('AppName')),
+                    $c->query('ServerContainer')->getLogger(),
+                    new TracksService(
+                        $c->query('ServerContainer')->getLogger(),
+                        $c->query('ServerContainer')->getL10N($c->query('AppName'))
+                    )
                 );
             }
         );

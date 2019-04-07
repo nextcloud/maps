@@ -88,7 +88,7 @@ class TracksController extends Controller {
             if ($this->userfolder->nodeExists($track['file_path'])
                 and $this->userfolder->get($track['file_path'])->getType() === \OCP\Files\FileInfo::TYPE_FILE
             ) {
-                array_push($existingTracks, $track),
+                array_push($existingTracks, $track);
             }
             else {
                 $this->deleteTrack($track['id']);
@@ -101,7 +101,7 @@ class TracksController extends Controller {
      * @NoAdminRequired
      */
     public function getTrackFileContent($id) {
-        $track = $this->tracksService->getTrackFromDB($trackId);
+        $track = $this->tracksService->getTrackFromDB($id);
         if ($this->userfolder->nodeExists($track['file_path'])) {
             $trackFile = $this->userfolder->get($track['file_path']);
             if ($trackFile->getType() === \OCP\Files\FileInfo::TYPE_FILE) {

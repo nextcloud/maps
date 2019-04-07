@@ -333,6 +333,7 @@ table.editFavorite input[type=text] {
 #toggleContactsButton button,
 #toggleFavoritesButton button,
 #toggleTracksButton button,
+.toggleTrackButton button,
 .toggleCategoryButton button {
     opacity: 1 !important;
 }
@@ -341,6 +342,7 @@ table.editFavorite input[type=text] {
 #navigation-photos > a,
 #navigation-contacts > a,
 #navigation-tracks > a,
+.track-line > a,
 .category-line > a {
     opacity: 1 !important;
 }

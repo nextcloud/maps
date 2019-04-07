@@ -31,10 +31,10 @@ class TracksService {
     /**
      * @param string $userId
      */
-    public function getFavoritesFromDB($userId) {
+    public function getTracksFromDB($userId) {
         $tracks = [];
         $qb = $this->qb;
-        $qb->select('id', 'file_id', 'file_path')
+        $qb->select('id', 'file_id', 'file_path', 'color')
             ->from('maps_tracks', 't')
             ->where(
                 $qb->expr()->eq('user_id', $qb->createNamedParameter($userId, IQueryBuilder::PARAM_STR))
@@ -42,13 +42,11 @@ class TracksService {
         $req = $qb->execute();
 
         while ($row = $req->fetch()) {
-            $id = intval($row['id']);
-            $file_id = intval($row['file_id']);
-            $file_path = $row['file_path'];
             array_push($tracks, [
-                'id' => $id,
-                'file_id' => $file_id,
-                'file_path' => $file_path
+                'id' => intval($row['id']),
+                'file_id' => intval($row['file_id']),
+                'file_path' => $row['file_path'],
+                'color' => $row['color']
             ]);
         }
         $req->closeCursor();
@@ -56,10 +54,10 @@ class TracksService {
         return $tracks;
     }
 
-    public function geTrackFromDB($id, $userId=null) {
+    public function getTrackFromDB($id, $userId=null) {
         $track = null;
         $qb = $this->qb;
-        $qb->select('id', 'file_id', 'file_path')
+        $qb->select('id', 'file_id', 'file_path', 'color')
             ->from('maps_tracks', 't')
             ->where(
                 $qb->expr()->eq('id', $qb->createNamedParameter($id, IQueryBuilder::PARAM_INT))
@@ -72,13 +70,11 @@ class TracksService {
         $req = $qb->execute();
 
         while ($row = $req->fetch()) {
-            $id = intval($row['id']);
-            $file_id = intval($row['file_id']);
-            $file_path = $row['file_path'];
             $track = [
-                'id' => $id,
-                'file_id' => $file_id,
-                'file_path' => $file_path
+                'id' => intval($row['id']),
+                'file_id' => intval($row['file_id']),
+                'file_path' => $row['file_path'],
+                'color' => $row['color']
             ];
             break;
         }

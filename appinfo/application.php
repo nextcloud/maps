@@ -23,6 +23,7 @@ use OCA\Maps\Controller\TracksController;
 use OCA\Maps\Hook\FileHooks;
 use OCA\Maps\Service\PhotofilesService;
 use OCA\Maps\Service\FavoritesService;
+use OCA\Maps\Service\TracksService;
 
 
 class Application extends App {

@@ -8,6 +8,7 @@
         mapController.map.photosController = photosController;
         contactsController.initLayer(mapController.map);
         tracksController.initController(mapController.map);
+        tracksController.getTracks();
 
         // once controllers have been set/initialized, we can restore option values from server
         optionsController.restoreOptions();
@@ -67,6 +68,7 @@
     var optionsController = {
         optionValues: {},
         enabledFavoriteCategories: [],
+        enabledTracks: [],
         saveOptionValues: function (optionValues) {
             var req = {
                 options: optionValues
@@ -142,7 +144,7 @@
                     && optionsValues.enabledTracks !== '')
                 {
                     that.enabledTracks = optionsValues.enabledTracks.split('|');
-                    if (tracksController.tracksLoaded) {
+                    if (tracksController.trackListLoaded) {
                         tracksController.restoreTracksState(that.enabledTracks);
                     }
                 }

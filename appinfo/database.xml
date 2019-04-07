@@ -170,6 +170,12 @@
                 <notnull>true</notnull>
                 <length>500</length>
             </field>
+            <field>
+                <name>color</name>
+                <type>text</type>
+                <notnull>false</notnull>
+                <length>7</length>
+            </field>
         </declaration>
     </table>
 

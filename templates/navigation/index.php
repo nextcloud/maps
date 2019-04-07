@@ -158,7 +158,7 @@
                 </li>
             </ul>
         </div>
-        <ul id="category-list">
+        <ul id="track-list">
         </ul>
     </li>
 </ul>

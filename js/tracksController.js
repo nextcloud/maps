@@ -3,15 +3,16 @@ function TracksController(optionsController, timeFilterController) {
     this.timeFilterController = timeFilterController;
 
     this.mainLayer = null;
-    // indexed by track file id
+    // indexed by track id
     this.trackLayers = {};
+    this.track = {};
 
     this.firstDate = null;
     this.lastDate = null;
 
     // used by optionsController to know if tracks loading
     // was done before or after option restoration
-    this.tracksLoaded = false;
+    this.trackListLoaded = false;
 }
 
 TracksController.prototype = {
@@ -37,20 +38,22 @@ TracksController.prototype = {
         });
         // toggle a track
         $('body').on('click', '.toggleTrackButton', function(e) {
-            var track = $(this).parent().parent().parent().attr('track');
-            that.toggleTrack(track);
-            that.saveEnabledTracks();
-            that.updateMyFirstLastDates();
+            var id = $(this).parent().parent().parent().attr('track');
+            that.toggleTrack(id, true);
         });
         // show/hide all tracks
         $('body').on('click', '#select-all-tracks', function(e) {
             that.showAllTracks();
-            that.saveEnabledTracks();
+            var trackStringList = Object.keys(that.trackLayers).join('|');
+            that.optionsController.saveOptionValues({enabledTracks: trackStringList});
+            that.optionsController.enabledTracks = trackStringList;
             that.optionsController.saveOptionValues({tracksEnabled: that.map.hasLayer(that.mainLayer)});
         });
         $('body').on('click', '#select-no-tracks', function(e) {
             that.hideAllTracks();
-            that.saveEnabledTracks();
+            var trackStringList = '';
+            that.optionsController.saveOptionValues({enabledTracks: trackStringList});
+            that.optionsController.enabledTracks = trackStringList;
             that.optionsController.saveOptionValues({tracksEnabled: that.map.hasLayer(that.mainLayer)});
         });
         // click on + button
@@ -58,7 +61,7 @@ TracksController.prototype = {
             OC.dialogs.filepicker(
                 t('maps', 'Load gpx file'),
                 function(targetPath) {
-                    that.addTrack(targetPath);
+                    that.addTrackDB(targetPath);
                 },
                 false,
                 'application/gpx+xml',
@@ -103,6 +106,11 @@ TracksController.prototype = {
             var imgurl = OC.generateUrl('/svg/core/actions/toggle?color='+color);
             $('#toggleTracksButton button').removeClass('icon-toggle').css('background-image', 'url('+imgurl+')');
         }
+    },
+
+    updateTimeFilterRange: function() {
+        this.updateMyFirstLastDates();
+        this.timeFilterController.updateSliderRangeFromController();
     },
 
     updateMyFirstLastDates: function() {
@@ -188,5 +196,163 @@ TracksController.prototype = {
         this.updateMyFirstLastDates();
     },
 
+    addTrackDB: function(path) {
+        var that = this;
+        $('#navigation-tracks').addClass('icon-loading-small');
+        var req = {
+            path: path
+        };
+        var url = OC.generateUrl('/apps/maps/tracks');
+        $.ajax({
+            type: 'POST',
+            url: url,
+            data: req,
+            async: true
+        }).done(function (response) {
+            that.addTrackMap(response, true);
+            that.updateTimeFilterRange();
+        }).always(function (response) {
+            $('#navigation-tracks').removeClass('icon-loading-small');
+        }).fail(function() {
+            OC.Notification.showTemporary(t('maps', 'Failed to add track'));
+        });
+    },
+
+    addTrackMap: function(track, show=false) {
+        // color
+        var color = track.color || OCA.Theming.color;
+
+        this.trackLayers[track.id] = L.featureGroup();
+        this.trackLayers[track.id].loaded = false;
+
+        var name = basename(track.file_path);
+
+        // side menu entry
+        var imgurl = OC.generateUrl('/svg/core/actions/address?color='+color.replace('#', ''));
+        var li = '<li class="track-line" id="'+name+'-track" track="'+track.id+'" name="'+name+'">' +
+        '    <a href="#" class="track-name" id="'+name+'-track-name" style="background-image: url('+imgurl+')">'+name+'</a>' +
+        '    <div class="app-navigation-entry-utils">' +
+        '        <ul>' +
+        '            <li class="app-navigation-entry-utils-menu-button toggleTrackButton" title="'+t('maps', 'Toggle track')+'">' +
+        '                <button class="icon-toggle"></button>' +
+        '            </li>' +
+        '            <li class="app-navigation-entry-utils-menu-button trackMenuButton">' +
+        '                <button></button>' +
+        '            </li>' +
+        '        </ul>' +
+        '    </div>' +
+        '    <div class="app-navigation-entry-menu">' +
+        '        <ul>' +
+        '            <li>' +
+        '                <a href="#" class="removeTrack">' +
+        '                    <span class="icon-close"></span>' +
+        '                    <span>'+t('maps', 'Remove')+'</span>' +
+        '                </a>' +
+        '            </li>' +
+        '        </ul>' +
+        '    </div>' +
+        '</li>';
+
+        var beforeThis = null;
+        var nameLower = name.toLowerCase();
+        $('#track-list > li').each(function() {
+            trackName = $(this).attr('name');
+            if (nameLower.localeCompare(trackName) < 0) {
+                beforeThis = $(this);
+                return false;
+            }
+        });
+        if (beforeThis !== null) {
+            $(li).insertBefore(beforeThis);
+        }
+        else {
+            $('#track-list').append(li);
+        }
+
+        // enable if in saved options or if it should be enabled for another reason
+        if (show || this.optionsController.enabledTracks.indexOf(track.id) !== -1) {
+            // save if state was not restored
+            this.toggleTrack(track.id, show);
+        }
+    },
+
+    getTracks: function() {
+        var that = this;
+        $('#navigation-tracks').addClass('icon-loading-small');
+        var req = {};
+        var url = OC.generateUrl('/apps/maps/tracks');
+        $.ajax({
+            type: 'GET',
+            url: url,
+            data: req,
+            async: true
+        }).done(function (response) {
+            var i, track;
+            for (i=0; i < response.length; i++) {
+                track = response[i];
+                that.addTrackMap(track);
+            }
+            that.trackListLoaded = true;
+            that.updateTimeFilterRange();
+            that.timeFilterController.setSliderToMaxInterval();
+        }).always(function (response) {
+            $('#navigation-tracks').removeClass('icon-loading-small');
+        }).fail(function() {
+            OC.Notification.showTemporary(t('maps', 'Failed to load tracks'));
+        });
+    },
+
+    toggleTrack: function(id, save=false) {
+        var trackLayer = this.trackLayers[id];
+        if (!trackLayer.loaded) {
+            this.loadTrack(id, save);
+        }
+        else {
+            this.toggleTrackLayer(id);
+            if (save) {
+                this.saveEnabledTracks();
+                this.updateMyFirstLastDates();
+            }
+        }
+    },
+
+    toggleTrackLayer: function(id) {
+        var trackLayer = this.trackLayers[id];
+        var eyeButton = $('#track-list > li[track="'+id+'"] .toggleTrackButton button');
+        // hide track
+        if (this.mainLayer.hasLayer(trackLayer)) {
+            this.mainLayer.removeLayer(trackLayer);
+            // color of the eye
+            eyeButton.addClass('icon-toggle').attr('style', '');
+        }
+        // show track
+        else {
+            this.mainLayer.addLayer(trackLayer);
+            // color of the eye
+            var color = OCA.Theming.color.replace('#', '');
+            var imgurl = OC.generateUrl('/svg/core/actions/toggle?color='+color);
+            eyeButton.removeClass('icon-toggle').css('background-image', 'url('+imgurl+')');
+        }
+    },
+
+    loadTrack: function(id, save=false) {
+        var that = this;
+        $('#track-list > li[track="'+id+'"] .toggleTrackButton button').addClass('icon-loading-small');
+        var req = {};
+        var url = OC.generateUrl('/apps/maps/tracks/'+id);
+        $.ajax({
+            type: 'GET',
+            url: url,
+            data: req,
+            async: true
+        }).done(function (response) {
+            that.trackLayers[id].loaded = true;
+            that.toggleTrack(id, save);
+        }).always(function (response) {
+            $('#track-list > li[track="'+id+'"] .toggleTrackButton button').removeClass('icon-loading-small');
+        }).fail(function() {
+            OC.Notification.showTemporary(t('maps', 'Failed to load track content'));
+        });
+    },
 
 }

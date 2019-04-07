@@ -33,8 +33,8 @@ TracksController.prototype = {
         });
         // click on a track name : zoom to bounds
         $('body').on('click', '.track-line .track-name', function(e) {
-            var track = $(this).text();
-            that.zoomOnTrack(track);
+            var id = $(this).parent().attr('track');
+            that.zoomOnTrack(id);
         });
         // toggle a track
         $('body').on('click', '.toggleTrackButton', function(e) {
@@ -416,6 +416,7 @@ TracksController.prototype = {
             data: req,
             async: true
         }).done(function (response) {
+            that.processGpx(id, response, that.trackLayers[id]);
             that.trackLayers[id].loaded = true;
             that.toggleTrack(id, save);
         }).always(function (response) {
@@ -424,5 +425,200 @@ TracksController.prototype = {
             OC.Notification.showTemporary(t('maps', 'Failed to load track content'));
         });
     },
+
+    processGpx: function(id, gpx, layerGroup) {
+        var that = this;
+        var color;
+        var coloredTooltipClass;
+        var rgbc;
+
+        var gpxp = $.parseXML(gpx.replace(/version="1.1"/, 'version="1.0"'));
+        var gpxx = $(gpxp).find('gpx');
+
+        // count the number of lines and point
+        var nbPoints = gpxx.find('>wpt').length;
+        var nbLines = gpxx.find('>trk').length + gpxx.find('>rte').length;
+
+        color = '#0000EE';
+        rgbc = hexToRgb(color);
+        $('<style track="' + id + '">.tooltip' + color.replace('#','') + ' { ' +
+            'background: rgba(' + rgbc.r + ', ' + rgbc.g + ', ' + rgbc.b + ', 0.5);' +
+            'color: black; font-weight: bold;' +
+            ' }</style>').appendTo('body');
+        coloredTooltipClass = 'tooltip' + color.replace('#','');
+
+        var weight = 4;
+
+        var fileDesc = gpxx.find('>metadata>desc').text();
+
+        gpxx.find('wpt').each(function() {
+            that.addWaypoint(id, $(this), layerGroup, coloredTooltipClass);
+        });
+
+        gpxx.find('trk').each(function() {
+            name = $(this).find('>name').text();
+            cmt = $(this).find('>cmt').text();
+            desc = $(this).find('>desc').text();
+            linkText = $(this).find('link text').text();
+            linkUrl = $(this).find('link').attr('href');
+            $(this).find('trkseg').each(function() {
+                that.addLine(id, $(this).find('trkpt'), layerGroup, weight, color, name, cmt, desc, linkText, linkUrl, coloredTooltipClass);
+            });
+        });
+
+        // ROUTES
+        gpxx.find('rte').each(function() {
+            name = $(this).find('>name').text();
+            cmt = $(this).find('>cmt').text();
+            desc = $(this).find('>desc').text();
+            linkText = $(this).find('link text').text();
+            linkUrl = $(this).find('link').attr('href');
+            that.addLine(id, $(this).find('rtept'), layerGroup, weight, color, name, cmt, desc, linkText, linkUrl, coloredTooltipClass);
+        });
+    },
+
+    addWaypoint: function(id, elem, layerGroup, coloredTooltipClass) {
+        var lat = elem.attr('lat');
+        var lon = elem.attr('lon');
+        var name = elem.find('name').text();
+        var cmt = elem.find('cmt').text();
+        var desc = elem.find('desc').text();
+        var sym = elem.find('sym').text();
+        var ele = elem.find('ele').text();
+        var time = elem.find('time').text();
+        var linkText = elem.find('link text').text();
+        var linkUrl = elem.find('link').attr('href');
+
+        var mm = L.marker(
+            [lat, lon]
+            //{
+            //    icon: symbolIcons[waypointStyle]
+            //}
+        );
+        mm.bindTooltip(brify(name, 20), {className: coloredTooltipClass});
+
+        var popupText = '<h3 style="text-align:center;">' + escapeHTML(name) + '</h3><hr/>' +
+            t('maps', 'Track')+ ' : ' + escapeHTML(id) + '<br/>';
+        if (linkText && linkUrl) {
+            popupText = popupText +
+                t('maps', 'Link') + ' : <a href="' + escapeHTML(linkUrl) + '" title="' + escapeHTML(linkUrl) + '" target="_blank">'+ escapeHTML(linkText) + '</a><br/>';
+        }
+        if (ele !== '') {
+            popupText = popupText + t('maps', 'Elevation')+ ' : ' +
+                escapeHTML(ele) + 'm<br/>';
+        }
+        var popupText = popupText + t('maps', 'Latitude') + ' : '+ lat + '<br/>' +
+            t('maps', 'Longitude') + ' : '+ lon + '<br/>';
+        if (cmt !== '') {
+            popupText = popupText +
+                t('maps', 'Comment') + ' : '+ escapeHTML(cmt) + '<br/>';
+        }
+        if (desc !== '') {
+            popupText = popupText +
+                t('maps', 'Description') + ' : '+ escapeHTML(desc) + '<br/>';
+        }
+        if (sym !== '') {
+            popupText = popupText +
+                t('maps', 'Symbol name') + ' : '+ sym;
+        }
+        mm.bindPopup(popupText);
+        layerGroup.addLayer(mm);
+    },
+
+    addLine: function(id, points, layerGroup, weight, color, name, cmt, desc, linkText, linkUrl, coloredTooltipClass) {
+        var lat, lon, ele, time;
+        var latlngs = [];
+        var times = [];
+        points.each(function() {
+            lat = $(this).attr('lat');
+            lon = $(this).attr('lon');
+            if (!lat || !lon) {
+                return;
+            }
+            ele = $(this).find('ele').text();
+            time = $(this).find('time').text();
+            times.push(time);
+            if (ele !== '') {
+                latlngs.push([lat, lon, ele]);
+            }
+            else{
+                latlngs.push([lat, lon]);
+            }
+        });
+        var l = L.polyline(latlngs, {
+            weight: weight,
+            opacity : 1,
+            color: color,
+        });
+        var popupText = 'Track '+id+'<br/>';
+        if (cmt !== '') {
+            popupText = popupText + '<p class="combutton" combutforfeat="' +
+                escapeHTML(id) + escapeHTML(name) +
+                '" style="margin:0; cursor:pointer;">' + t('maps', 'Comment') +
+                ' <i class="fa fa-expand"></i></p>' +
+                '<p class="comtext" style="display:none; margin:0; cursor:pointer;" comforfeat="' +
+                escapeHTML(id) + escapeHTML(name) + '">' +
+                escapeHTML(cmt) + '</p>';
+        }
+        if (desc !== '') {
+            popupText = popupText + '<p class="descbutton" descbutforfeat="' +
+                escapeHTML(id) + escapeHTML(name) +
+                '" style="margin:0; cursor:pointer;">Description <i class="fa fa-expand"></i></p>' +
+                '<p class="desctext" style="display:none; margin:0; cursor:pointer;" descforfeat="' +
+                escapeHTML(id) + escapeHTML(name) + '">' +
+                escapeHTML(desc) + '</p>';
+        }
+        linkHTML = '';
+        if (linkText && linkUrl) {
+            linkHTML = '<a href="' + escapeHTML(linkUrl) + '" title="' + escapeHTML(linkUrl) + '" target="_blank">' + escapeHTML(linkText) + '</a>';
+        }
+        popupText = popupText.replace('<li>' + escapeHTML(name) + '</li>',
+            '<li><b>' + escapeHTML(name) + ' (' + linkHTML + ')</b></li>');
+        l.bindPopup(
+            popupText,
+            {
+                autoPan: true,
+                autoClose: true,
+                closeOnClick: true
+            }
+        );
+        var tooltipText = id;
+        if (id !== name) {
+            tooltipText = tooltipText + '<br/>' + escapeHTML(name);
+        }
+        l.bindTooltip(tooltipText, {sticky: true, className: coloredTooltipClass});
+        // border layout
+        var bl;
+        bl = L.polyline(latlngs,
+            {opacity:1, weight: parseInt(weight * 1.6), color: 'black'});
+        bl.bindPopup(
+            popupText,
+            {
+                autoPan: true,
+                autoClose: true,
+                closeOnClick: true
+            }
+        );
+        layerGroup.addLayer(bl);
+        layerGroup.addLayer(l);
+        bl.on('mouseover', function() {
+            layerGroup.bringToFront();
+        });
+        bl.on('mouseout', function() {
+        });
+        bl.bindTooltip(tooltipText, {sticky: true, className: coloredTooltipClass});
+
+        l.on('mouseover', function() {
+            layerGroup.bringToFront();
+        });
+        l.on('mouseout', function() {
+        });
+    },
+
+    zoomOnTrack: function(id) {
+        if (this.mainLayer.hasLayer(this.trackLayers[id])) {
+            this.map.fitBounds(this.trackLayers[id].getBounds(), {padding: [30, 30]});
+        }
+    }
 
 }

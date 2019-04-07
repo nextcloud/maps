@@ -97,3 +97,23 @@ Date.prototype.toIsoString = function() {
         ':' + pad(tzo % 60);
 }
 
+function brify(str, linesize) {
+    var res = '';
+    var words = str.split(' ');
+    var cpt = 0;
+    var toAdd = '';
+    for (var i=0; i<words.length; i++) {
+        if ((cpt + words[i].length) < linesize) {
+            toAdd += words[i] + ' ';
+            cpt += words[i].length + 1;
+        }
+        else{
+            res += toAdd + '<br/>';
+            toAdd = words[i] + ' ';
+            cpt = words[i].length + 1;
+        }
+    }
+    res += toAdd;
+    return res;
+}
+

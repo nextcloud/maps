@@ -505,6 +505,7 @@
                         contactsController.updateTimeFilterEnd(that.valueEnd);
                     }
                     favoritesController.updateFilterDisplay();
+                    tracksController.updateFilterDisplay();
 
                     that.onUpdateCallbackBlock = false;
                     if (unencoded[0] < that.min || unencoded[1] > that.max || positions[1] - positions[0] < 10) {

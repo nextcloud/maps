@@ -4,6 +4,9 @@ function TracksController(optionsController, timeFilterController) {
 
     this.mainLayer = null;
     // indexed by track id
+    // those actually added to map, those which get toggled
+    this.mapTrackLayers = {};
+    // layers which actually contain lines/waypoints, those which get filtered
     this.trackLayers = {};
     this.track = {};
 
@@ -129,34 +132,28 @@ TracksController.prototype = {
         }
     },
 
-    //// add/remove markers from layers considering current filter values
-    //updateFilterDisplay: function() {
-    //    var startFilter = this.timeFilterController.valueBegin;
-    //    var endFilter = this.timeFilterController.valueEnd;
+    // add/remove markers from layers considering current filter values
+    updateFilterDisplay: function() {
+        var startFilter = this.timeFilterController.valueBegin;
+        var endFilter = this.timeFilterController.valueEnd;
 
-    //    var cat, favid, markers, i, date_created;
-    //    // markers to hide
-    //    for (cat in this.categoryLayers) {
-    //        markers = this.categoryLayers[cat].getLayers();
-    //        for (i=0; i < markers.length; i++) {
-    //            favid = markers[i].favid;
-    //            date_created = this.favorites[favid].date_created;
-    //            if (date_created < startFilter || date_created > endFilter) {
-    //                this.categoryLayers[cat].removeLayer(markers[i]);
-    //            }
-    //        }
-    //    }
-
-    //    // markers to show
-    //    for (cat in this.categoryMarkers) {
-    //        for (favid in this.categoryMarkers[cat]) {
-    //            date_created = this.favorites[favid].date_created;
-    //            if (date_created >= startFilter && date_created <= endFilter) {
-    //                this.categoryLayers[cat].addLayer(this.categoryMarkers[cat][favid]);
-    //            }
-    //        }
-    //    }
-    //},
+        var id, layer, i, date;
+        for (id in this.trackLayers) {
+            date = this.trackLayers[id].date;
+            // if it was not filtered, check if it should be removed
+            if (this.mapTrackLayers[id].hasLayer(this.trackLayers[id])) {
+                if (date && (date < startFilter || date > endFilter)) {
+                    this.mapTrackLayers[id].removeLayer(this.trackLayers[id]);
+                }
+            }
+            // if it was filtered, check if it should be added
+            else {
+                if (date && (date >= startFilter && date <= endFilter)) {
+                    this.mapTrackLayers[id].addLayer(this.trackLayers[id]);
+                }
+            }
+        }
+    },
 
     updateTimeFilterRange: function() {
         this.updateMyFirstLastDates();
@@ -173,8 +170,8 @@ TracksController.prototype = {
         var id;
 
         // we update dates only if nothing is currently loading
-        for (id in this.trackLayers) {
-            if (this.mainLayer.hasLayer(this.trackLayers[id]) && !this.trackLayers[id].loaded) {
+        for (id in this.mapTrackLayers) {
+            if (this.mainLayer.hasLayer(this.mapTrackLayers[id]) && !this.trackLayers[id].loaded) {
                 return;
             }
         }
@@ -184,8 +181,8 @@ TracksController.prototype = {
 
         var first = initMinDate;
         var last = initMaxDate;
-        for (id in this.trackLayers) {
-            if (this.mainLayer.hasLayer(this.trackLayers[id]) && this.trackLayers[id].loaded && this.trackLayers[id].date) {
+        for (id in this.mapTrackLayers) {
+            if (this.mainLayer.hasLayer(this.mapTrackLayers[id]) && this.trackLayers[id].loaded && this.trackLayers[id].date) {
                 if (this.trackLayers[id].date < first) {
                     first = this.trackLayers[id].date;
                 }
@@ -209,8 +206,8 @@ TracksController.prototype = {
     saveEnabledTracks: function(additionalIds=[]) {
         var trackList = [];
         var layer;
-        for (var id in this.trackLayers) {
-            layer = this.trackLayers[id];
+        for (var id in this.mapTrackLayers) {
+            layer = this.mapTrackLayers[id];
             if (this.mainLayer.hasLayer(layer)) {
                 trackList.push(id);
             }
@@ -228,7 +225,7 @@ TracksController.prototype = {
         var id;
         for (var i=0; i < enabledTrackList.length; i++) {
             id = enabledTrackList[i];
-            if (this.trackLayers.hasOwnProperty(id)) {
+            if (this.mapTrackLayers.hasOwnProperty(id)) {
                 this.toggleTrack(id);
             }
         }
@@ -240,8 +237,8 @@ TracksController.prototype = {
         if (!this.map.hasLayer(this.mainLayer)) {
             this.toggleTracks();
         }
-        for (var id in this.trackLayers) {
-            if (!this.mainLayer.hasLayer(this.trackLayers[id])) {
+        for (var id in this.mapTrackLayers) {
+            if (!this.mainLayer.hasLayer(this.mapTrackLayers[id])) {
                 this.toggleTrack(id);
             }
         }
@@ -249,8 +246,8 @@ TracksController.prototype = {
     },
 
     hideAllTracks: function() {
-        for (var id in this.trackLayers) {
-            if (this.mainLayer.hasLayer(this.trackLayers[id])) {
+        for (var id in this.mapTrackLayers) {
+            if (this.mainLayer.hasLayer(this.mapTrackLayers[id])) {
                 this.toggleTrack(id);
             }
         }
@@ -302,7 +299,9 @@ TracksController.prototype = {
     },
 
     removeTrackMap: function(id) {
-        this.mainLayer.removeLayer(this.trackLayers[id]);
+        this.mainLayer.removeLayer(this.mapTrackLayers[id]);
+        this.mapTrackLayers[id].removeLayer(this.trackLayers[id]);
+        delete this.mapTrackLayers[id];
         delete this.trackLayers[id];
         delete this.track[id];
 
@@ -377,8 +376,10 @@ TracksController.prototype = {
         // color
         var color = track.color || OCA.Theming.color;
 
+        this.mapTrackLayers[track.id] = L.featureGroup();
         this.trackLayers[track.id] = L.featureGroup();
         this.trackLayers[track.id].loaded = false;
+        this.mapTrackLayers[track.id].addLayer(this.trackLayers[track.id]);
 
         var name = track.file_name;
 
@@ -461,25 +462,25 @@ TracksController.prototype = {
         if (!trackLayer.loaded) {
             this.loadTrack(id, save);
         }
-        this.toggleTrackLayer(id);
+        this.toggleMapTrackLayer(id);
         if (save) {
             this.saveEnabledTracks();
             this.updateMyFirstLastDates();
         }
     },
 
-    toggleTrackLayer: function(id) {
-        var trackLayer = this.trackLayers[id];
+    toggleMapTrackLayer: function(id) {
+        var mapTrackLayer = this.mapTrackLayers[id];
         var eyeButton = $('#track-list > li[track="'+id+'"] .toggleTrackButton button');
         // hide track
-        if (this.mainLayer.hasLayer(trackLayer)) {
-            this.mainLayer.removeLayer(trackLayer);
+        if (this.mainLayer.hasLayer(mapTrackLayer)) {
+            this.mainLayer.removeLayer(mapTrackLayer);
             // color of the eye
             eyeButton.addClass('icon-toggle').attr('style', '');
         }
         // show track
         else {
-            this.mainLayer.addLayer(trackLayer);
+            this.mainLayer.addLayer(mapTrackLayer);
             // color of the eye
             var color = OCA.Theming.color.replace('#', '');
             var imgurl = OC.generateUrl('/svg/core/actions/toggle?color='+color);
@@ -722,8 +723,8 @@ TracksController.prototype = {
     },
 
     zoomOnTrack: function(id) {
-        if (this.mainLayer.hasLayer(this.trackLayers[id])) {
-            this.map.fitBounds(this.trackLayers[id].getBounds(), {padding: [30, 30]});
+        if (this.mainLayer.hasLayer(this.mapTrackLayers[id])) {
+            this.map.fitBounds(this.mapTrackLayers[id].getBounds(), {padding: [30, 30]});
         }
     }
 

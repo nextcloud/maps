@@ -94,6 +94,17 @@ class TracksService {
         return $trackId;
     }
 
+    public function editTrackInDB($id, $color) {
+        $qb = $this->qb;
+        $qb->update('maps_tracks')
+            ->set('color', $qb->createNamedParameter($color, IQueryBuilder::PARAM_STR))
+            ->where(
+                $qb->expr()->eq('id', $qb->createNamedParameter($id, IQueryBuilder::PARAM_INT))
+            );
+        $req = $qb->execute();
+        $qb = $qb->resetQueryParts();
+    }
+
     public function deleteTrackFromDB($id) {
         $qb = $this->qb;
         $qb->delete('maps_tracks')

@@ -8,7 +8,8 @@ function TracksController(optionsController, timeFilterController) {
     this.mapTrackLayers = {};
     // layers which actually contain lines/waypoints, those which get filtered
     this.trackLayers = {};
-    this.track = {};
+    this.trackColors = {};
+    this.trackDivIcon = {};
 
     this.firstDate = null;
     this.lastDate = null;
@@ -108,6 +109,13 @@ TracksController.prototype = {
                 that.toggleTrackList();
                 that.optionsController.saveOptionValues({trackListShow: $('#navigation-tracks').hasClass('open')});
             }
+        });
+        $('body').on('click', '.changeTrackColor', function(e) {
+            var id = $(this).parent().parent().parent().parent().attr('track');
+            that.askChangeTrackColor(id);
+        });
+        $('body').on('change', '#colorinput', function(e) {
+            that.okColor();
         });
     },
 
@@ -301,6 +309,8 @@ TracksController.prototype = {
         delete this.trackLayers[id];
         delete this.track[id];
 
+        $('style[track='+id+']').remove();
+
         $('#track-list > li[track="'+id+'"]').fadeOut('slow', function() {
             $(this).remove();
         });
@@ -371,6 +381,12 @@ TracksController.prototype = {
     addTrackMap: function(track, show=false, pageLoad=false) {
         // color
         var color = track.color || OCA.Theming.color;
+        this.trackColors[track.id] = color;
+        this.trackDivIcon[track.id] = L.divIcon({
+            iconAnchor: [12, 25],
+            className: 'trackWaypoint trackWaypoint-'+track.id,
+            html: ''
+        });
 
         this.mapTrackLayers[track.id] = L.featureGroup();
         this.trackLayers[track.id] = L.featureGroup();
@@ -395,6 +411,12 @@ TracksController.prototype = {
         '    </div>' +
         '    <div class="app-navigation-entry-menu">' +
         '        <ul>' +
+        '            <li>' +
+        '                <a href="#" class="changeTrackColor">' +
+        '                    <span class="icon-rename"></span>' +
+        '                    <span>'+t('maps', 'Change track color')+'</span>' +
+        '                </a>' +
+        '            </li>' +
         '            <li>' +
         '                <a href="#" class="removeTrack">' +
         '                    <span class="icon-close"></span>' +
@@ -516,13 +538,9 @@ TracksController.prototype = {
         var nbPoints = gpxx.find('>wpt').length;
         var nbLines = gpxx.find('>trk').length + gpxx.find('>rte').length;
 
-        color = '#0000EE';
-        rgbc = hexToRgb(color);
-        $('<style track="' + id + '">.tooltip' + color.replace('#','') + ' { ' +
-            'background: rgba(' + rgbc.r + ', ' + rgbc.g + ', ' + rgbc.b + ', 0.5);' +
-            'color: black; font-weight: bold;' +
-            ' }</style>').appendTo('body');
-        coloredTooltipClass = 'tooltip' + color.replace('#','');
+        color = this.trackColors[id];
+        this.setTrackCss(id, color);
+        coloredTooltipClass = 'tooltip' + id;
 
         var weight = 4;
 
@@ -580,10 +598,10 @@ TracksController.prototype = {
         }
 
         var mm = L.marker(
-            [lat, lon]
-            //{
-            //    icon: symbolIcons[waypointStyle]
-            //}
+            [lat, lon],
+            {
+                icon: this.trackDivIcon[id]
+            }
         );
         mm.bindTooltip(brify(name, 20), {className: coloredTooltipClass});
 
@@ -647,7 +665,7 @@ TracksController.prototype = {
         var l = L.polyline(latlngs, {
             weight: weight,
             opacity : 1,
-            color: color,
+            className: 'poly'+id,
         });
         var popupText = 'Track '+id+'<br/>';
         if (cmt !== '') {
@@ -720,6 +738,61 @@ TracksController.prototype = {
         if (this.mainLayer.hasLayer(this.mapTrackLayers[id])) {
             this.map.fitBounds(this.mapTrackLayers[id].getBounds(), {padding: [30, 30]});
         }
-    }
+    },
+
+    askChangeTrackColor: function(id) {
+        $('#trackcolor').attr('track', id);
+        var currentColor = this.trackColors[id];
+        $('#colorinput').val(currentColor);
+        $('#colorinput').click();
+    },
+
+    okColor: function() {
+        var color = $('#colorinput').val();
+        var id = $('#trackcolor').attr('track');
+        this.trackColors[id] = color;
+        this.changeTrackColor(id, color);
+    },
+
+    changeTrackColor: function(id, color) {
+        var that = this;
+        $('#track-list > li[track="'+id+'"]').addClass('icon-loading-small');
+        var req = {
+            color: color
+        };
+        var url = OC.generateUrl('/apps/maps/tracks/'+id);
+        $.ajax({
+            type: 'PUT',
+            url: url,
+            data: req,
+            async: true
+        }).done(function (response) {
+            var imgurl = OC.generateUrl('/svg/core/actions/address?color='+color.replace('#', ''));
+            $('#track-list > li[track='+id+'] .track-name').attr('style', 'background-image: url('+imgurl+')');
+
+            that.setTrackCss(id, color);
+        }).always(function (response) {
+            $('#track-list > li[track="'+id+'"]').removeClass('icon-loading-small');
+        }).fail(function() {
+            OC.Notification.showTemporary(t('maps', 'Failed to change track color'));
+        });
+    },
+
+    setTrackCss: function(id, color) {
+        $('style[track='+id+']').remove();
+
+        var rgbc = hexToRgb(color);
+        $('<style track="' + id + '">' +
+            '.tooltip' + id + ' { ' +
+            'background: rgba(' + rgbc.r + ', ' + rgbc.g + ', ' + rgbc.b + ', 0.5);' +
+            'color: black; font-weight: bold;' +
+            ' }' +
+            '.poly' + id + ' {' +
+            'stroke: ' + color + ';' +
+            '}' +
+            '.trackWaypoint-'+id+' { ' +
+            'background-color: '+color+';}' +
+            '</style>').appendTo('body');
+    },
 
 }

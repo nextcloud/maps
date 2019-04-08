@@ -178,6 +178,20 @@ class TracksController extends Controller {
     /**
      * @NoAdminRequired
      */
+    public function editTrack($id, $color) {
+        $track = $this->tracksService->getTrackFromDB($id, $this->userId);
+        if ($track !== null) {
+            $this->tracksService->editTrackInDB($id, $color);
+            return new DataResponse('EDITED');
+        }
+        else {
+            return new DataResponse('no such track', 400);
+        }
+    }
+
+    /**
+     * @NoAdminRequired
+     */
     public function deleteTrack($id) {
         $track = $this->tracksService->getTrackFromDB($id, $this->userId);
         if ($track !== null) {

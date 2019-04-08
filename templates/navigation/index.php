@@ -74,7 +74,6 @@
             </ul>
         </div>
     </li>
-    <img id="dummylogo"/>
     <li id="navigation-photos">
         <a class="icon-picture" href="#"><?php p($l->t('Photos')); ?></a>
         <div class="app-navigation-entry-utils">
@@ -174,3 +173,6 @@
         </ul>
     </li>
 </ul>
+<img id="dummylogo"/>
+<input id="trackcolor" type="text" style="display:none;"></input>
+<input id="colorinput" type="color"></input>

@@ -92,9 +92,9 @@
         <div class="app-navigation-entry-menu">
             <ul>
                 <li>
-                    <a href="#" class="dummyoption">
-                        <span class="icon-category-office"></span>
-                        <span><?php p($l->t('Nothing yet')); ?></span>
+                    <a href="#" class="navigation-nonLocalizedPhotos">
+                        <span class="toggleNonLocalizedPhotosButton"></span>
+                        <span><?php p($l->t('Show non localzied photos')); ?></span>
                     </a>
                 </li>
             </ul>

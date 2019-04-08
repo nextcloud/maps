@@ -144,7 +144,7 @@ class PhotofilesService {
 
     private function addPhoto($photo, $userId) {
         $exif = $this->getExif($photo);
-        if (!is_null($exif) AND !is_null($exif->lat)) {
+        if (!is_null($exif)) {
             $this->insertPhoto($photo, $userId, $exif);
         }
     }
@@ -152,7 +152,7 @@ class PhotofilesService {
     // avoid adding photo if it already exists in the DB
     private function safeAddPhoto($photo, $userId) {
         $exif = $this->getExif($photo);
-        if (!is_null($exif) AND !is_null($exif->lat)) {
+        if (!is_null($exif)) {
             // filehooks are triggered several times (2 times for file creation)
             // so we need to be sure it's not inserted several times
             // by checking if it already exists in DB
@@ -237,6 +237,7 @@ class PhotofilesService {
 
     private function getExif($file) {
         $path = $file->getStorage()->getLocalFile($file->getInternalPath());
+        $has_info = false;
         $exif = @exif_read_data($path);
         if($this->hasValidExifGeoTags($exif)){
             //Check if there is exif infor
@@ -267,12 +268,23 @@ class PhotofilesService {
             //calculate the decimal degree
             $file_object->lat = $LatM * ($gps['LatDegree'] + ($gps['LatMinute'] / 60) + ($gps['LatgSeconds'] / 3600));
             $file_object->lng = $LongM * ($gps['LongDegree'] + ($gps['LongMinute'] / 60) + ($gps['LongSeconds'] / 3600));
-            if (isset($exif["DateTimeOriginal"])) {
-                $file_object->dateTaken = strtotime($exif["DateTimeOriginal"]);
-            }
-            return $file_object;
+            $has_info = true;
+        } else {
+            $file_object = new \stdClass();
+            $file_object->lat = null;
+            $file_object->lng = null;
         }
-        return null;
+
+        if (isset($exif["DateTimeOriginal"])) {
+            $file_object->dateTaken = strtotime($exif["DateTimeOriginal"]);
+            $has_info = true;
+        }
+
+        if ($has_info) {
+            return $file_object;
+        } else {
+            return null;
+        }
     }
 
     private function setExifCoords($file, $lat, $lng) {

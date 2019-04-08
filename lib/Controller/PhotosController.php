@@ -44,7 +44,17 @@ class PhotosController extends Controller {
         return new DataResponse($result);
     }
 
-    /**
+	/**
+	 * @NoAdminRequired
+	 * @NoCSRFRequired
+	 */
+	public function getNonLocalizedPhotosFromDb() {
+		$result = $this->geophotoService->getNonLocalizedFromDB($this->userId);
+		return new DataResponse($result);
+	}
+
+
+	/**
      * @NoAdminRequired
      */
     public function placePhotos($paths, $lat, $lng, $directory=false) {

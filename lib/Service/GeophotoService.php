@@ -71,6 +71,46 @@ class GeophotoService {
         return $filesById;
     }
 
+	/**
+	 * @param string $userId
+	 * @return array with geodatas of all photos
+	 */
+	public function getNonLocalizedFromDB ($userId) {
+		$photoEntities = $this->photoMapper->findAllNonLocalized($userId);
+		$userFolder = $this->getFolderForUser($userId);
+		$filesById = [];
+		$cache = $userFolder->getStorage()->getCache();
+		$previewEnableMimetypes = $this->getPreviewEnabledMimetypes();
+		foreach ($photoEntities as $photoEntity) {
+			$cacheEntry = $cache->get($photoEntity->getFileId());
+			if ($cacheEntry) {
+				$path = $cacheEntry->getPath();
+                $date = $photoEntity->getDateTaken() ?? \time();
+				$locations = $this->getLocationGuesses($date);
+				foreach ($locations as $location) {
+                    $file_object = new \stdClass();
+                    $file_object->fileId = $photoEntity->getFileId();
+                    $file_object->path = $this->normalizePath($path);
+                    $file_object->hasPreview = in_array($cacheEntry->getMimeType(), $previewEnableMimetypes);
+                    $file_object->lat = $location[0];
+                    $file_object->lng = $location[1];
+                    $file_object->dateTaken = $date;
+                    $filesById[] = $file_object;
+                }
+
+			}
+
+		}
+		return $filesById;
+	}
+
+
+	private function getLocationGuesses($dateTaken) {
+	    return [
+	        0 => [null, null]
+        ];
+    }
+
     private function getPreviewEnabledMimetypes() {
         $enabledMimeTypes = [];
         foreach (PhotofilesService::PHOTO_MIME_TYPES as $mimeType) {

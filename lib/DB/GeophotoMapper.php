@@ -40,9 +40,14 @@ class GeophotoMapper extends Mapper {
     }
 
     public function findAll($userId, $limit=null, $offset=null) {
-        $sql = 'SELECT * FROM `*PREFIX*maps_photos` where `user_id` = ?';
+        $sql = 'SELECT * FROM `*PREFIX*maps_photos` where `user_id` = ? and `lat` is not null and `long` is not null';
         return $this->findEntities($sql, [$userId], $limit, $offset);
     }
+
+	public function findAllNonLocalized($userId, $limit=null, $offset=null) {
+		$sql = 'SELECT * FROM `*PREFIX*maps_photos` where `user_id` = ? and (`lat` is null or `long` is  null)';
+		return $this->findEntities($sql, [$userId], $limit, $offset);
+	}
 
     public function deleteByFileId($fileId) {
         $sql = 'DELETE FROM `*PREFIX*maps_photos` where `file_id` = ?';

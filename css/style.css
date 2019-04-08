@@ -298,11 +298,12 @@ tr.selected td {
     height: 100%;
 }
 .favoriteMarker {
-    height: 15px !important;
-    width: 15px !important;
-    -webkit-mask-image: url('images/star.png');
-    -webkit-mask-size: 15px;
-    -webkit-mask-repeat: no-repeat;
+    height: 20px !important;
+    width: 20px !important;
+    -webkit-mask: url('images/star.png') no-repeat 50% 50%;
+    -webkit-mask-size: 17px;
+    mask: url('images/star.png') no-repeat 50% 50%;
+    mask-size: 17px;
 }
 .line-enabled {
     background: var(--color-background-dark);

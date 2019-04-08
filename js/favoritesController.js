@@ -453,7 +453,7 @@ FavoritesController.prototype = {
 
         // icon for markers
         this.categoryDivIcon[rawName] = L.divIcon({
-            iconAnchor: [7, 7],
+            iconAnchor: [10, 10],
             className: 'favoriteMarker '+name+'CategoryMarker',
             html: ''
         });

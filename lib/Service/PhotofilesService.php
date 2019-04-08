@@ -83,7 +83,7 @@ class PhotofilesService {
     }
 
     public function setPhotosFilesCoords($userId, $paths, $lat, $lng, $directory) {
-        if ($directory) {
+        if ($directory === 'true') {
             return $this->setDirectoriesCoords($userId, $paths, $lat, $lng);
         }
         else {

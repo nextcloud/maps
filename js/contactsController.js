@@ -282,5 +282,11 @@ ContactsController.prototype = {
         return OC.generateUrl('/apps/theming/img/core/actions') + '/user.svg?v=2';
     },
 
+    // could allow to select a contact
+    // and edit its geo information
+    contextPlaceContact: function(e) {
+        var latlng = e.latlng;
+        alert('place contact NYI');
+    }
 };
 

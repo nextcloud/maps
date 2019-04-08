@@ -202,13 +202,47 @@
                 detectRetina: false,
                 maxZoom: 18
             });
+            var starImageUrl = OC.generateUrl('/svg/core/actions/star-dark?color=000000');
+            var markerRedImageUrl = OC.generateUrl('/svg/core/actions/address?color=EE3333');
+            var markerBlueImageUrl = OC.generateUrl('/svg/core/actions/address?color=3333EE');
+            var markerGreenImageUrl = OC.generateUrl('/svg/core/actions/address?color=33EE33');
+            var photoImageUrl = OC.generateUrl('/svg/core/places/picture?color=000000');
+            var contactImageUrl = OC.generateUrl('/svg/core/actions/user?color=000000');
             this.map = L.map('map', {
                 zoom: 2,
                 zoomControl: true,
                 maxZoom: 19,
                 center: new L.LatLng(0, 0),
                 maxBounds: new L.LatLngBounds(new L.LatLng(-90, 180), new L.LatLng(90, -180)),
-                layers: []
+                layers: [],
+                // right click menu
+                contextmenu: true,
+                contextmenuWidth: 160,
+                contextmenuItems: [{
+                    text: t('maps', 'Add a favorite'),
+                    icon: starImageUrl,
+                    callback: favoritesController.contextAddFavorite
+                }, {
+                    text: t('maps', 'Place photos here'),
+                    icon: photoImageUrl,
+                    callback: photosController.contextPlacePhotos
+                }, {
+                    text: t('maps', 'Place contact here'),
+                    icon: contactImageUrl,
+                    callback: contactsController.contextPlaceContact
+                }, '-', {
+                    text: t('maps', 'Route from here'),
+                    icon: markerGreenImageUrl,
+                    callback: routingController.contextRouteFrom
+                }, {
+                    text: t('maps', 'Add route point'),
+                    icon: markerBlueImageUrl,
+                    callback: routingController.contextRoutePoint
+                }, {
+                    text: t('maps', 'Route to here'),
+                    icon: markerRedImageUrl,
+                    callback: routingController.contextRouteTo
+                }]
             });
             L.control.scale({metric: true, imperial: true, position: 'topleft'})
                 .addTo(this.map);
@@ -369,7 +403,31 @@
                     OC.Notification.showTemporary(t('maps', 'Failed to export current route'));
                 });
             }
-        }
+        },
+
+        contextRouteFrom: function(e) {
+            if (!routingController.enabled) {
+                routingController.toggleRouting();
+            }
+            var control = routingController.control;
+            control.spliceWaypoints(0, 1, e.latlng);
+        },
+
+        contextRouteTo: function(e) {
+            if (!routingController.enabled) {
+                routingController.toggleRouting();
+            }
+            var control = routingController.control;
+            control.spliceWaypoints(control.getWaypoints().length - 1, 1, e.latlng);
+        },
+
+        contextRoutePoint: function(e) {
+            if (!routingController.enabled) {
+                routingController.toggleRouting();
+            }
+            var control = routingController.control;
+            routingController.control.spliceWaypoints(control.getWaypoints().length - 1, 0, e.latlng);
+        },
     };
 
     var timeFilterController = {

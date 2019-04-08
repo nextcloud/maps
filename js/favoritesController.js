@@ -643,11 +643,16 @@ FavoritesController.prototype = {
     },
 
     addFavoriteClickMap: function(e) {
-        //addPointDB(e.latlng.lat.toFixed(6), e.latlng.lng.toFixed(6), null, null, null, null, moment());
         var defaultName = t('maps', 'no name');
         var categoryName = this.favoritesController.addFavoriteCategory;
         this.favoritesController.addFavoriteDB(categoryName, e.latlng.lat.toFixed(6), e.latlng.lng.toFixed(6), defaultName);
         this.favoritesController.leaveAddFavoriteMode();
+    },
+
+    contextAddFavorite: function(e) {
+        var defaultName = t('maps', 'no name');
+        var categoryName = this.favoritesController.addFavoriteCategory;
+        this.favoritesController.addFavoriteDB(categoryName, e.latlng.lat.toFixed(6), e.latlng.lng.toFixed(6), defaultName);
     },
 
     // make the request

@@ -36,6 +36,7 @@
     "leaflet.locatecontrol": "^0.62.0",
     "leaflet.markercluster": "^1.1.0",
     "leaflet-mouse-position": "^1.0.4",
+    "leaflet-contextmenu": "^1.4.0",
     "nouislider": "^13.1.4",
     "opening_hours": "^3.5.0"
   }

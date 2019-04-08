@@ -284,6 +284,13 @@ PhotosController.prototype = {
 
     getImageIconUrl: function() {
         return OC.generateUrl('/apps/theming/img/core/filetypes') + '/image.svg?v=2';
+    },
+
+    // could show filepicker with multiple selection enabled
+    // and edit geo information for those pictures
+    contextPlacePhotos: function(e) {
+        var latlng = e.latlng;
+        alert('place photo NYI');
     }
 
 };

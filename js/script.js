@@ -327,6 +327,7 @@
                 //    L.latLng(57.6792, 11.949)
                 //],
                 routeWhileDragging: true,
+                reverseWaypoints: true,
                 geocoder: L.Control.Geocoder.nominatim(),
                 // TODO find a way to check if current NC language is supported by routing control
                 //language: 'fr',

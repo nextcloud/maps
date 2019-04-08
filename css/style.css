@@ -363,6 +363,7 @@ table.editFavorite input[type=text] {
     text-align: center;
 }
 /* Overriden routing/geocoder style */
+.leaflet-routing-reverse-waypoints,
 .leaflet-routing-add-waypoint {
     width: 25px !important;
     height: 25px !important;

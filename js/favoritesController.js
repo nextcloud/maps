@@ -304,6 +304,9 @@ FavoritesController.prototype = {
 
     // toggle favorites layer on map and save state in user options
     toggleFavorites: function() {
+        if (!this.favoritesLoaded) {
+            this.getFavorites();
+        }
         if (this.map.hasLayer(this.cluster)) {
             this.map.removeLayer(this.cluster);
             // color of the eye

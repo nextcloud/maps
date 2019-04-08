@@ -3,7 +3,6 @@
         mapController.initMap();
         mapController.map.favoritesController = favoritesController;
         favoritesController.initFavorites(mapController.map);
-        favoritesController.getFavorites();
         routingController.initRoutingControl(mapController.map);
         photosController.initLayer(mapController.map);
         contactsController.initLayer(mapController.map);

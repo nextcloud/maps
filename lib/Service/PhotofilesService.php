@@ -24,6 +24,7 @@ use OCA\Maps\DB\Geophoto;
 use OCA\Maps\DB\GeophotoMapper;
 
 require_once __DIR__ . '/../../vendor/autoload.php';
+use lsolesen\pel\PelDataWindow;
 use lsolesen\pel\PelJpeg;
 use lsolesen\pel\PelExif;
 use lsolesen\pel\PelTiff;
@@ -252,7 +253,9 @@ class PhotofilesService {
     private function setExifCoords($file, $lat, $lng) {
         $path = $file->getStorage()->getLocalFile($file->getInternalPath());
 
-        $pelJpeg = new PelJpeg($path);
+
+        $data = new PelDataWindow($file->getContent());
+		$pelJpeg = new PelJpeg($data);
 
         $pelExif = $pelJpeg->getExif();
         if ($pelExif == null) {
@@ -277,8 +280,7 @@ class PhotofilesService {
 
         $this->setGeolocation($pelSubIfdGps, $lat, $lng);
 
-        $pelJpeg->saveFile($path);
-        $file->touch();
+        $file->putContent($pelJpeg->getBytes());
     }
 
     private function setGeolocation($pelSubIfdGps, $latitudeDegreeDecimal, $longitudeDegreeDecimal) {

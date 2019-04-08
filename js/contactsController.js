@@ -105,8 +105,8 @@ ContactsController.prototype = {
         return function(cluster) {
             var marker = cluster.getAllChildMarkers()[0].data;
             var iconUrl;
-            if (marker.hasPreview) {
-                iconUrl = _app.generatePreviewUrl(marker.path);
+            if (marker.photo) {
+                iconUrl = _app.generateAvatar(marker.photo) || _app.getImageIconUrl();
             } else {
                 iconUrl = _app.getImageIconUrl();
             }

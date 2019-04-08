@@ -227,6 +227,10 @@
                     icon: photoImageUrl,
                     callback: photosController.contextPlacePhotos
                 }, {
+                    text: t('maps', 'Place photo folder here'),
+                    icon: photoImageUrl,
+                    callback: photosController.contextPlacePhotoFolder
+                }, {
                     text: t('maps', 'Place contact here'),
                     icon: contactImageUrl,
                     callback: contactsController.contextPlaceContact

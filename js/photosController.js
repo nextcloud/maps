@@ -286,8 +286,6 @@ PhotosController.prototype = {
         return OC.generateUrl('/apps/theming/img/core/filetypes') + '/image.svg?v=2';
     },
 
-    // could show filepicker with multiple selection enabled
-    // and edit geo information for those pictures
     contextPlacePhotos: function(e) {
         var that = this.photosController;
         var latlng = e.latlng;
@@ -302,12 +300,30 @@ PhotosController.prototype = {
         );
     },
 
-    placePhotos: function(paths, lat, lng) {
+    contextPlacePhotoFolder: function(e) {
+        var that = this.photosController;
+        var latlng = e.latlng;
+        OC.dialogs.filepicker(
+            t('maps', 'Choose directory of pictures to place'),
+            function(targetPath) {
+                if (targetPath === '') {
+                    targetPath = '/';
+                }
+                that.placePhotos([targetPath], latlng.lat, latlng.lng, true);
+            },
+            false,
+            'httpd/unix-directory',
+            true
+        );
+    },
+
+    placePhotos: function(paths, lat, lng, directory=false) {
         $('#navigation-photos').addClass('icon-loading-small');
         var req = {
             paths: paths,
             lat: lat,
-            lng: lng
+            lng: lng,
+            directory: directory
         };
         var url = OC.generateUrl('/apps/maps/photos');
         $.ajax({
@@ -316,6 +332,7 @@ PhotosController.prototype = {
             data: req,
             async: true
         }).done(function (response) {
+            OC.Notification.showTemporary(t('maps', '{nb} photos placed', {nb: response}));
         }).always(function (response) {
             $('#navigation-photos').removeClass('icon-loading-small');
         }).fail(function(response) {

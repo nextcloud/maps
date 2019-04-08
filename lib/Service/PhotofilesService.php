@@ -82,7 +82,40 @@ class PhotofilesService {
         }
     }
 
-    public function setPhotosFilesCoords($userId, $paths, $lat, $lng) {
+    public function setPhotosFilesCoords($userId, $paths, $lat, $lng, $directory) {
+        if ($directory) {
+            return $this->setDirectoriesCoords($userId, $paths, $lat, $lng);
+        }
+        else {
+            return $this->setFilesCoords($userId, $paths, $lat, $lng);
+        }
+    }
+
+    private function setDirectoriesCoords($userId, $paths, $lat, $lng) {
+        $userFolder = $this->root->getUserFolder($userId);
+        $nbDone = 0;
+        foreach ($paths as $dirPath) {
+            $cleanDirPath = str_replace(array('../', '..\\'), '',  $dirPath);
+            if ($userFolder->nodeExists($cleanDirPath)) {
+                $dir = $userFolder->get($cleanDirPath);
+                if ($dir->getType() === FileInfo::TYPE_FOLDER) {
+                    $nodes = $dir->getDirectoryListing();
+                    foreach($nodes as $node) {
+                        if ($this->isPhoto($node) and $node->isUpdateable()) {
+                            $this->setExifCoords($node, $lat, $lng);
+                            // delete and add again
+                            $this->deleteByFile($node);
+                            $this->addByFile($node);
+                            $nbDone++;
+                        }
+                    }
+                }
+            }
+        }
+        return $nbDone;
+    }
+
+    private function setFilesCoords($userId, $paths, $lat, $lng) {
         $userFolder = $this->root->getUserFolder($userId);
         $nbDone = 0;
         foreach ($paths as $path) {
@@ -109,6 +142,7 @@ class PhotofilesService {
             $photoEntity->setLat($exif->lat);
             $photoEntity->setLng($exif->lng);
             $photoEntity->setUserId($userId);
+            // alternative should be file creation date
             $photoEntity->setDateTaken($exif->dateTaken ?? $photo->getMTime());
             $this->photoMapper->insert($photoEntity);
         }
@@ -216,7 +250,6 @@ class PhotofilesService {
     }
 
     private function setExifCoords($file, $lat, $lng) {
-        error_log('set EXIf for '.$file->getName());
         $path = $file->getStorage()->getLocalFile($file->getInternalPath());
 
         $pelJpeg = new PelJpeg($path);

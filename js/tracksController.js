@@ -155,12 +155,7 @@ TracksController.prototype = {
         }
     },
 
-    updateTimeFilterRange: function() {
-        this.updateMyFirstLastDates();
-        this.timeFilterController.updateSliderRangeFromController();
-    },
-
-    updateMyFirstLastDates: function() {
+    updateMyFirstLastDates: function(pageLoad=false) {
         if (!this.map.hasLayer(this.mainLayer)) {
             this.firstDate = null;
             this.lastDate = null;
@@ -200,7 +195,10 @@ TracksController.prototype = {
             this.firstDate = null;
             this.lastDate = null;
         }
-        console.log('my first and last : '+this.firstDate+' '+this.lastDate);
+        if (pageLoad) {
+            this.timeFilterController.updateSliderRangeFromController();
+            this.timeFilterController.setSliderToMaxInterval();
+        }
     },
 
     saveEnabledTracks: function(additionalIds=[]) {
@@ -226,11 +224,9 @@ TracksController.prototype = {
         for (var i=0; i < enabledTrackList.length; i++) {
             id = enabledTrackList[i];
             if (this.mapTrackLayers.hasOwnProperty(id)) {
-                this.toggleTrack(id);
+                this.toggleTrack(id, false, true);
             }
         }
-        this.updateTimeFilterRange();
-        this.timeFilterController.setSliderToMaxInterval();
     },
 
     showAllTracks: function() {
@@ -372,7 +368,7 @@ TracksController.prototype = {
         });
     },
 
-    addTrackMap: function(track, show=false) {
+    addTrackMap: function(track, show=false, pageLoad=false) {
         // color
         var color = track.color || OCA.Theming.color;
 
@@ -427,7 +423,7 @@ TracksController.prototype = {
 
         // enable if in saved options or if it should be enabled for another reason
         if (show || this.optionsController.enabledTracks.indexOf(track.id) !== -1) {
-            this.toggleTrack(track.id);
+            this.toggleTrack(track.id, false, pageLoad);
         }
     },
 
@@ -445,11 +441,9 @@ TracksController.prototype = {
             var i, track;
             for (i=0; i < response.length; i++) {
                 track = response[i];
-                that.addTrackMap(track);
+                that.addTrackMap(track, false, true);
             }
             that.trackListLoaded = true;
-            that.updateTimeFilterRange();
-            that.timeFilterController.setSliderToMaxInterval();
         }).always(function (response) {
             $('#navigation-tracks').removeClass('icon-loading-small');
         }).fail(function() {
@@ -457,10 +451,10 @@ TracksController.prototype = {
         });
     },
 
-    toggleTrack: function(id, save=false) {
+    toggleTrack: function(id, save=false, pageLoad=false) {
         var trackLayer = this.trackLayers[id];
         if (!trackLayer.loaded) {
-            this.loadTrack(id, save);
+            this.loadTrack(id, save, pageLoad);
         }
         this.toggleMapTrackLayer(id);
         if (save) {
@@ -488,7 +482,7 @@ TracksController.prototype = {
         }
     },
 
-    loadTrack: function(id, save=false) {
+    loadTrack: function(id, save=false, pageLoad=false) {
         var that = this;
         $('#track-list > li[track="'+id+'"]').addClass('icon-loading-small');
         var req = {};
@@ -501,7 +495,7 @@ TracksController.prototype = {
         }).done(function (response) {
             that.processGpx(id, response, that.trackLayers[id]);
             that.trackLayers[id].loaded = true;
-            that.updateMyFirstLastDates();
+            that.updateMyFirstLastDates(pageLoad);
         }).always(function (response) {
             $('#track-list > li[track="'+id+'"]').removeClass('icon-loading-small');
         }).fail(function() {

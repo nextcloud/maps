@@ -782,10 +782,14 @@ TracksController.prototype = {
         $('style[track='+id+']').remove();
 
         var rgbc = hexToRgb(color);
+        var textcolor = 'black';
+        if (rgbc.r + rgbc.g + rgbc.b < 3 * 80) {
+            textcolor = 'white';
+        }
         $('<style track="' + id + '">' +
             '.tooltip' + id + ' { ' +
             'background: rgba(' + rgbc.r + ', ' + rgbc.g + ', ' + rgbc.b + ', 0.5);' +
-            'color: black; font-weight: bold;' +
+            'color: '+textcolor+'; font-weight: bold;' +
             ' }' +
             '.poly' + id + ' {' +
             'stroke: ' + color + ';' +

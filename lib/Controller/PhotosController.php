@@ -19,26 +19,37 @@ use OCP\AppFramework\Controller;
 use OCP\ILogger;
 
 use OCA\Maps\Service\GeophotoService;
+use OCA\Maps\Service\PhotofilesService;
 
 class PhotosController extends Controller {
-	private $userId;
-	private $geophotoService;
-	private $logger;
+    private $userId;
+    private $geophotoService;
+    private $photofilesService;
+    private $logger;
 
-	public function __construct($AppName, ILogger $logger, IRequest $request, GeophotoService $GeophotoService, $UserId){
-		parent::__construct($AppName, $request);
-		$this->logger = $logger;
-		$this->userId = $UserId;
-		$this->geophotoService = $GeophotoService;
-	}
+    public function __construct($AppName, ILogger $logger, IRequest $request, GeophotoService $GeophotoService, PhotofilesService $photofilesService, $UserId){
+        parent::__construct($AppName, $request);
+        $this->logger = $logger;
+        $this->userId = $UserId;
+        $this->geophotoService = $GeophotoService;
+        $this->photofilesService = $photofilesService;
+    }
 
-	/**
-	 * @NoAdminRequired
-	 * @NoCSRFRequired
-	 */	
-	public function getPhotosFromDb() {
-		$result = $this->geophotoService->getAllFromDB($this->userId);
-		return new DataResponse($result);
-	}
+    /**
+     * @NoAdminRequired
+     * @NoCSRFRequired
+     */
+    public function getPhotosFromDb() {
+        $result = $this->geophotoService->getAllFromDB($this->userId);
+        return new DataResponse($result);
+    }
+
+    /**
+     * @NoAdminRequired
+     */
+    public function placePhotos($paths, $lat, $lng) {
+        $result = $this->photofilesService->setPhotosFilesCoords($this->userId, $paths, $lat, $lng);
+        return new DataResponse($result);
+    }
 
 }

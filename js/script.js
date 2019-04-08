@@ -5,6 +5,7 @@
         favoritesController.initFavorites(mapController.map);
         routingController.initRoutingControl(mapController.map);
         photosController.initLayer(mapController.map);
+        mapController.map.photosController = photosController;
         contactsController.initLayer(mapController.map);
 
         // once controllers have been set/initialized, we can restore option values from server

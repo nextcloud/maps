@@ -289,9 +289,39 @@ PhotosController.prototype = {
     // could show filepicker with multiple selection enabled
     // and edit geo information for those pictures
     contextPlacePhotos: function(e) {
+        var that = this.photosController;
         var latlng = e.latlng;
-        alert('place photo NYI');
-    }
+        OC.dialogs.filepicker(
+            t('maps', 'Choose pictures to place'),
+            function(targetPath) {
+                that.placePhotos(targetPath, latlng.lat, latlng.lng);
+            },
+            true,
+            ['image/jpeg', 'image/tiff'],
+            true
+        );
+    },
+
+    placePhotos: function(paths, lat, lng) {
+        $('#navigation-photos').addClass('icon-loading-small');
+        var req = {
+            paths: paths,
+            lat: lat,
+            lng: lng
+        };
+        var url = OC.generateUrl('/apps/maps/photos');
+        $.ajax({
+            type: 'POST',
+            url: url,
+            data: req,
+            async: true
+        }).done(function (response) {
+        }).always(function (response) {
+            $('#navigation-photos').removeClass('icon-loading-small');
+        }).fail(function(response) {
+            OC.Notification.showTemporary(t('maps', 'Failed to place photos') + ': ' + response.responseText);
+        });
+    },
 
 };
 

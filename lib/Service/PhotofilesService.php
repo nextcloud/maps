@@ -23,6 +23,15 @@ use OCP\ILogger;
 use OCA\Maps\DB\Geophoto;
 use OCA\Maps\DB\GeophotoMapper;
 
+require_once __DIR__ . '/../../vendor/autoload.php';
+use lsolesen\pel\PelJpeg;
+use lsolesen\pel\PelExif;
+use lsolesen\pel\PelTiff;
+use lsolesen\pel\PelTag;
+use lsolesen\pel\PelEntryAscii;
+use lsolesen\pel\PelEntryRational;
+use lsolesen\pel\PelIfd;
+
 class PhotofilesService {
 
     const PHOTO_MIME_TYPES = ['image/jpeg', 'image/tiff'];
@@ -73,6 +82,25 @@ class PhotofilesService {
         }
     }
 
+    public function setPhotosFilesCoords($userId, $paths, $lat, $lng) {
+        $userFolder = $this->root->getUserFolder($userId);
+        $nbDone = 0;
+        foreach ($paths as $path) {
+            $cleanpath = str_replace(array('../', '..\\'), '',  $path);
+            if ($userFolder->nodeExists($cleanpath)) {
+                $file = $userFolder->get($cleanpath);
+                if ($this->isPhoto($file) and $file->isUpdateable()) {
+                    $this->setExifCoords($file, $lat, $lng);
+                    // delete and add again
+                    $this->deleteByFile($file);
+                    $this->addByFile($file);
+                    $nbDone++;
+                }
+            }
+        }
+        return $nbDone;
+    }
+
     private function addPhoto($photo, $userId) {
         $exif = $this->getExif($photo);
         if (!is_null($exif) AND !is_null($exif->lat)) {
@@ -81,7 +109,7 @@ class PhotofilesService {
             $photoEntity->setLat($exif->lat);
             $photoEntity->setLng($exif->lng);
             $photoEntity->setUserId($userId);
-            $photoEntity->setDateTaken($exif->dateTaken);
+            $photoEntity->setDateTaken($exif->dateTaken ?? $photo->getMTime());
             $this->photoMapper->insert($photoEntity);
         }
     }
@@ -108,20 +136,20 @@ class PhotofilesService {
         return $notes;
     }
 
-	private function gatherPhotoFiles ($folder, $recursive) {
-		$notes = [];
-		$nodes = $folder->getDirectoryListing();
-		foreach($nodes as $node) {
-			if($node->getType() === FileInfo::TYPE_FOLDER AND $recursive) {
-				$notes = array_merge($notes, $this->gatherPhotoFiles($node, $recursive));
-				continue;
-			}
-			if($this->isPhoto($node)) {
-				$notes[] = $node;
-			}
-		}
-		return $notes;
-	}
+    private function gatherPhotoFiles ($folder, $recursive) {
+        $notes = [];
+        $nodes = $folder->getDirectoryListing();
+        foreach($nodes as $node) {
+            if($node->getType() === FileInfo::TYPE_FOLDER AND $recursive) {
+                $notes = array_merge($notes, $this->gatherPhotoFiles($node, $recursive));
+                continue;
+            }
+            if($this->isPhoto($node)) {
+                $notes[] = $node;
+            }
+        }
+        return $notes;
+    }
 
     private function isPhoto($file) {
         if($file->getType() !== \OCP\Files\FileInfo::TYPE_FILE) return false;
@@ -133,8 +161,8 @@ class PhotofilesService {
         if (!isset($exif["GPSLatitude"]) OR !isset($exif["GPSLongitude"])) {
             return false;
         }
-		if (count($exif["GPSLatitude"]) != 3 OR count($exif["GPSLongitude"]) != 3) {
-			return false;
+        if (count($exif["GPSLatitude"]) != 3 OR count($exif["GPSLongitude"]) != 3) {
+            return false;
         }
         //Check photos are on the earth
         if ($exif["GPSLatitude"][0]>=90 OR $exif["GPSLongitude"][0]>=180) {
@@ -144,8 +172,8 @@ class PhotofilesService {
         if($exif["GPSLatitude"][0]==0 AND $exif["GPSLatitude"][1]==0 AND $exif["GPSLongitude"][0]==0 AND $exif["GPSLongitude"][1]==0){
             return false;
         }
-		return true;
-	}
+        return true;
+    }
 
     private function getExif($file) {
         $path = $file->getStorage()->getLocalFile($file->getInternalPath());
@@ -185,6 +213,72 @@ class PhotofilesService {
             return $file_object;
         }
         return null;
+    }
+
+    private function setExifCoords($file, $lat, $lng) {
+        error_log('set EXIf for '.$file->getName());
+        $path = $file->getStorage()->getLocalFile($file->getInternalPath());
+
+        $pelJpeg = new PelJpeg($path);
+
+        $pelExif = $pelJpeg->getExif();
+        if ($pelExif == null) {
+            $pelExif = new PelExif();
+            $pelJpeg->setExif($pelExif);
+        }
+
+        $pelTiff = $pelExif->getTiff();
+        if ($pelTiff == null) {
+            $pelTiff = new PelTiff();
+            $pelExif->setTiff($pelTiff);
+        }
+
+        $pelIfd0 = $pelTiff->getIfd();
+        if ($pelIfd0 == null) {
+            $pelIfd0 = new PelIfd(PelIfd::IFD0);
+            $pelTiff->setIfd($pelIfd0);
+        }
+
+        $pelSubIfdGps = new PelIfd(PelIfd::GPS);
+        $pelIfd0->addSubIfd($pelSubIfdGps);
+
+        $this->setGeolocation($pelSubIfdGps, $lat, $lng);
+
+        $pelJpeg->saveFile($path);
+        $file->touch();
+    }
+
+    private function setGeolocation($pelSubIfdGps, $latitudeDegreeDecimal, $longitudeDegreeDecimal) {
+        $latitudeRef = ($latitudeDegreeDecimal >= 0) ? 'N' : 'S';
+        $latitudeDegreeMinuteSecond
+            = $this->degreeDecimalToDegreeMinuteSecond(abs($latitudeDegreeDecimal));
+        $longitudeRef= ($longitudeDegreeDecimal >= 0) ? 'E' : 'W';
+        $longitudeDegreeMinuteSecond
+            = $this->degreeDecimalToDegreeMinuteSecond(abs($longitudeDegreeDecimal));
+
+        $pelSubIfdGps->addEntry(new PelEntryAscii(
+            PelTag::GPS_LATITUDE_REF, $latitudeRef));
+        $pelSubIfdGps->addEntry(new PelEntryRational(
+            PelTag::GPS_LATITUDE,
+            array($latitudeDegreeMinuteSecond['degree'], 1),
+            array($latitudeDegreeMinuteSecond['minute'], 1),
+            array(round($latitudeDegreeMinuteSecond['second'] * 1000), 1000)));
+        $pelSubIfdGps->addEntry(new PelEntryAscii(
+            PelTag::GPS_LONGITUDE_REF, $longitudeRef));
+        $pelSubIfdGps->addEntry(new PelEntryRational(
+            PelTag::GPS_LONGITUDE,
+            array($longitudeDegreeMinuteSecond['degree'], 1),
+            array($longitudeDegreeMinuteSecond['minute'], 1),
+            array(round($longitudeDegreeMinuteSecond['second'] * 1000), 1000)));
+    }
+
+    private function degreeDecimalToDegreeMinuteSecond($degreeDecimal) {
+        $degree = floor($degreeDecimal);
+        $remainder = $degreeDecimal - $degree;
+        $minute = floor($remainder * 60);
+        $remainder = ($remainder * 60) - $minute;
+        $second = $remainder * 60;
+        return array('degree' => $degree, 'minute' => $minute, 'second' => $second);
     }
 
 }

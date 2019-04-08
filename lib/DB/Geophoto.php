@@ -26,6 +26,6 @@ class Geophoto extends Entity {
         $this->addType('fileId', 'integer');
         $this->addType('lat', 'float');
         $this->addType('lng', 'float');
-		$this->addType('dateTaken', 'integer');
+        $this->addType('dateTaken', 'integer');
     }
 }

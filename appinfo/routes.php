@@ -18,6 +18,7 @@ return [
 
         // photos
         ['name' => 'photos#getPhotosFromDb', 'url' => '/photos', 'verb' => 'GET'],
+        ['name' => 'photos#placePhotos', 'url' => '/photos', 'verb' => 'POST'],
 
         // contacts
         ['name' => 'contacts#getContacts', 'url' => '/contacts', 'verb' => 'GET'],

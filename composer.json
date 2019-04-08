@@ -1,0 +1,5 @@
+{
+    "require": {
+        "lsolesen/pel": "^0.9.6"
+    }
+}

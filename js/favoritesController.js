@@ -190,7 +190,7 @@ FavoritesController.prototype = {
                     that.importFavorites(targetPath);
                 },
                 false,
-                null,
+                'application/gpx+xml',
                 true
             );
         });

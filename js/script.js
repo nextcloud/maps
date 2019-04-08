@@ -223,15 +223,15 @@
                     icon: starImageUrl,
                     callback: favoritesController.contextAddFavorite
                 }, {
-                    text: t('maps', 'Place photos here'),
+                    text: t('maps', 'Place photos'),
                     icon: photoImageUrl,
                     callback: photosController.contextPlacePhotos
                 }, {
-                    text: t('maps', 'Place photo folder here'),
+                    text: t('maps', 'Place photo folder'),
                     icon: photoImageUrl,
                     callback: photosController.contextPlacePhotoFolder
                 }, {
-                    text: t('maps', 'Place contact here'),
+                    text: t('maps', 'Place contact'),
                     icon: contactImageUrl,
                     callback: contactsController.contextPlaceContact
                 }, '-', {

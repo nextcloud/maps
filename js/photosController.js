@@ -255,18 +255,19 @@ PhotosController.prototype = {
     callForImages: function() {
         this.photosRequestInProgress = true;
         $.ajax({
-            'url' : OC.generateUrl('apps/maps/photos'),
-            'type': 'GET',
-            'context' : this,
-            'success': function(response) {
+            url: OC.generateUrl('apps/maps/photos'),
+            type: 'GET',
+            context: this,
+            success: function(response) {
                 if (response.length == 0) {
                     //showNoPhotosMessage();
-                } else {
+                }
+                else {
                     this.addPhotosToMap(response);
                 }
                 this.photosDataLoaded = true;
             },
-            'complete': function(response) {
+            complete: function(response) {
                 this.photosRequestInProgress = false;
             }
         });
@@ -318,6 +319,7 @@ PhotosController.prototype = {
     },
 
     placePhotos: function(paths, lat, lng, directory=false) {
+        var that = this;
         $('#navigation-photos').addClass('icon-loading-small');
         var req = {
             paths: paths,
@@ -333,6 +335,21 @@ PhotosController.prototype = {
             async: true
         }).done(function (response) {
             OC.Notification.showTemporary(t('maps', '{nb} photos placed', {nb: response}));
+            if (response > 0) {
+                that.photosDataLoaded = false;
+                for (var i=0; i < that.photoMarkers.length; i++) {
+                    that.photoLayer.removeLayer(that.photoMarkers[i]);
+                }
+                that.photoMarkers = [];
+                that.photoMarkersOldest = null;
+                that.photoMarkersNewest = null;
+                that.photoMarkersFirstVisible = 0;
+                that.photoMarkersLastVisible = -1;
+                that.timeFilterBegin = 0;
+                that.timeFilterEnd = Date.now();
+
+                that.showLayer();
+            }
         }).always(function (response) {
             $('#navigation-photos').removeClass('icon-loading-small');
         }).fail(function(response) {

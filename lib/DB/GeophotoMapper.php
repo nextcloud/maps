@@ -27,6 +27,17 @@ class GeophotoMapper extends Mapper {
         return $this->findEntity($sql, [$id]);
     }
 
+    public function findByFileId($userId, $fileId) {
+        try {
+            $sql = 'SELECT * FROM `*PREFIX*maps_photos` ' .
+                'WHERE `user_id` = ? ' .
+                'AND `file_id` = ? ';
+            return $this->findEntity($sql, [$userId, $fileId]);
+        }
+        catch (\Throwable $e) {
+            return null;
+        }
+    }
 
     public function findAll($userId, $limit=null, $offset=null) {
         $sql = 'SELECT * FROM `*PREFIX*maps_photos` where `user_id` = ?';

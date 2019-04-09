@@ -138,14 +138,20 @@ class PhotofilesService {
     private function addPhoto($photo, $userId) {
         $exif = $this->getExif($photo);
         if (!is_null($exif) AND !is_null($exif->lat)) {
-            $photoEntity = new Geophoto();
-            $photoEntity->setFileId($photo->getId());
-            $photoEntity->setLat($exif->lat);
-            $photoEntity->setLng($exif->lng);
-            $photoEntity->setUserId($userId);
-            // alternative should be file creation date
-            $photoEntity->setDateTaken($exif->dateTaken ?? $photo->getMTime());
-            $this->photoMapper->insert($photoEntity);
+            // filehooks are triggered several times (2 times for file creation)
+            // so we need to be sure it's not inserted several times
+            // by checking if it already exists in DB
+            // OR by using file_id in primary key
+            if ($this->photoMapper->findByFileId($userId, $photo->getId()) === null) {
+                $photoEntity = new Geophoto();
+                $photoEntity->setFileId($photo->getId());
+                $photoEntity->setLat($exif->lat);
+                $photoEntity->setLng($exif->lng);
+                $photoEntity->setUserId($userId);
+                // alternative should be file creation date
+                $photoEntity->setDateTaken($exif->dateTaken ?? $photo->getMTime());
+                $this->photoMapper->insert($photoEntity);
+            }
         }
     }
 
@@ -255,7 +261,7 @@ class PhotofilesService {
 
 
         $data = new PelDataWindow($file->getContent());
-		$pelJpeg = new PelJpeg($data);
+        $pelJpeg = new PelJpeg($data);
 
         $pelExif = $pelJpeg->getExif();
         if ($pelExif == null) {

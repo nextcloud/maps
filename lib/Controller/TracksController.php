@@ -39,6 +39,12 @@ function endswith($string, $test) {
     return substr_compare($string, $test, $strlen - $testlen, $testlen) === 0;
 }
 
+function remove_utf8_bom($text) {
+    $bom = pack('H*','EFBBBF');
+    $text = preg_replace("/^$bom/", '', $text);
+    return $text;
+}
+
 class TracksController extends Controller {
 
     private $userId;
@@ -112,7 +118,7 @@ class TracksController extends Controller {
         if (is_array($res) and count($res) > 0) {
             $trackFile = $res[0];
             if ($trackFile->getType() === \OCP\Files\FileInfo::TYPE_FILE) {
-                $trackContent = $trackFile->getContent();
+                $trackContent = remove_utf8_bom($trackFile->getContent());
                 return new DataResponse($trackContent);
             }
             else {

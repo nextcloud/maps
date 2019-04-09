@@ -7,6 +7,7 @@
         photosController.initLayer(mapController.map);
         mapController.map.photosController = photosController;
         contactsController.initLayer(mapController.map);
+        mapController.map.contactsController = contactsController;
         tracksController.initController(mapController.map);
         tracksController.getTracks();
 

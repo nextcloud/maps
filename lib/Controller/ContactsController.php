@@ -32,11 +32,36 @@ class ContactsController extends Controller {
 
     /**
      * @NoAdminRequired
-     * @NoCSRFRequired
-     */	
+     */
     public function getContacts() {
-        $result = $this->contactsManager->search('',['GEO'],['types'=>false]);
+        $result = $this->contactsManager->search('', ['GEO'], ['types'=>false]);
         return new DataResponse($result);
+    }
+
+    /**
+     * @NoAdminRequired
+     * TODO avoid strange contacts with URI like Database:toto.vcf
+     */
+    public function getAllContacts() {
+        $contacts = $this->contactsManager->search('', ['FN'], ['types'=>false]);
+        $result = [];
+        foreach ($contacts as $c) {
+            array_push($result, [
+                'FN'=>$c['FN'],
+                'URI'=>$c['URI'],
+                'UID'=>$c['UID'],
+                'BOOKID'=>$c['addressbook-key']
+            ]);
+        }
+        return new DataResponse($result);
+    }
+
+    /**
+     * @NoAdminRequired
+     */
+    public function placeContact($bookid, $uri, $lat, $lng) {
+        $result = $this->contactsManager->createOrUpdate(['URI'=>$uri, 'GEO'=>$lat.';'.$lng], $bookid);
+        return new DataResponse('EDITED');
     }
 
 }

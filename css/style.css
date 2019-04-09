@@ -252,6 +252,30 @@ tr.selected td {
 }
 
 .leaflet-marker-contact .thumbnail {
+    width: 101%;
+    height: 101%;
+    background-size: cover;
+    background-position: center center;
+    background-repeat: no-repeat;
+    background-color: white;
+    border-radius: 50%;
+}
+
+.leaflet-marker-favorite-cluster .label {
+    position: absolute;
+    top: -7px;
+    right: -11px;
+    color: #fff;
+    background-color: #333;
+    border-radius: 9px;
+    height: 18px;
+    min-width: 18px;
+    line-height: 12px;
+    text-align: center;
+    padding: 3px;
+}
+
+.leaflet-marker-favorite-cluster .thumbnail {
     width: 100%;
     height: 100%;
     background-size: cover;
@@ -378,6 +402,13 @@ table.editFavorite input[type=text] {
 .tooltip-photo-name {
     width: 100%;
     text-align: center;
+}
+
+.tooltip-contact-avatar {
+    max-width: 100px;
+    max-height: 100px;
+    width: auto;
+    height: auto;
 }
 
 .tooltip-contact-name {

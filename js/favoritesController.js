@@ -1,4 +1,5 @@
 function FavoritesController(optionsController, timeFilterController) {
+    this.CLUSTER_MARKER_VIEW_SIZE = 27;
     this.optionsController = optionsController;
     this.timeFilterController = timeFilterController;
     this.cluster = null;
@@ -196,12 +197,13 @@ FavoritesController.prototype = {
         });
 
         this.cluster = L.markerClusterGroup({
-            //iconCreateFunction: function(cluster) {
-            //    return L.divIcon({ html: '<div>' + cluster.getChildCount() + '</div>' });
-            //},
+            iconCreateFunction: this.getClusterIconCreateFunction(),
             maxClusterRadius: 28,
             zoomToBoundsOnClick: false,
-            chunkedLoading: true
+            chunkedLoading: true,
+            icon: {
+                iconSize: [this.CLUSTER_MARKER_VIEW_SIZE, this.CLUSTER_MARKER_VIEW_SIZE]
+            }
         });
         this.cluster.on('clusterclick', function (a) {
             if (a.layer.getChildCount() > 20) {
@@ -211,6 +213,17 @@ FavoritesController.prototype = {
                 a.layer.spiderfy();
             }
         });
+    },
+
+    getClusterIconCreateFunction: function() {
+        return function(cluster) {
+            var iconUrl = $('#dummylogo').css('content').replace('url("', '').replace('")', '').replace('.png', 'star-circle.svg');
+            var label = cluster.getChildCount();
+            return new L.DivIcon(L.extend({
+                className: 'leaflet-marker-favorite-cluster cluster-marker',
+                html: '<div class="thumbnail" style="background-image: url(' + iconUrl + ');"></div>​<span class="label">' + label + '</span>'
+            }, this.icon));
+        };
     },
 
     zoomOnCategory: function(cat) {

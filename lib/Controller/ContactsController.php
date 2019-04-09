@@ -40,18 +40,23 @@ class ContactsController extends Controller {
 
     /**
      * @NoAdminRequired
-     * TODO avoid strange contacts with URI like Database:toto.vcf
      */
     public function getAllContacts() {
         $contacts = $this->contactsManager->search('', ['FN'], ['types'=>false]);
         $result = [];
+        $userid = trim($this->userId);
         foreach ($contacts as $c) {
-            array_push($result, [
-                'FN'=>$c['FN'],
-                'URI'=>$c['URI'],
-                'UID'=>$c['UID'],
-                'BOOKID'=>$c['addressbook-key']
-            ]);
+            $uid = trim($c['UID']);
+            if (strcmp($c['URI'], 'Database:'.$c['UID'].'.vcf') !== 0 or
+                strcmp($uid, $userid) === 0
+            ) {
+                array_push($result, [
+                    'FN'=>$c['FN'],
+                    'URI'=>$c['URI'],
+                    'UID'=>$c['UID'],
+                    'BOOKID'=>$c['addressbook-key']
+                ]);
+            }
         }
         return new DataResponse($result);
     }
@@ -59,9 +64,19 @@ class ContactsController extends Controller {
     /**
      * @NoAdminRequired
      */
-    public function placeContact($bookid, $uri, $lat, $lng) {
-        $result = $this->contactsManager->createOrUpdate(['URI'=>$uri, 'GEO'=>$lat.';'.$lng], $bookid);
-        return new DataResponse('EDITED');
+    public function placeContact($bookid, $uri, $uid, $lat, $lng) {
+        // do not edit 'user' contact except myself
+        if (strcmp($uri, 'Database:'.$uid.'.vcf') === 0 and
+            strcmp($uid, $this.userId) !== 0
+        ) {
+            return new DataResponse('Can\'t edit users', 400);
+        }
+        else {
+            // TODO check addressbook permissions
+            // it's currently possible to place a contact from an addressbook shared with readonly permissions...
+            $result = $this->contactsManager->createOrUpdate(['URI'=>$uri, 'GEO'=>$lat.';'.$lng], $bookid);
+            return new DataResponse('EDITED');
+        }
     }
 
 }

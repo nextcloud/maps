@@ -1,3 +1,7 @@
+#app-navigation-toggle {
+    background-color: var(--color-background-darker);
+    z-index: 100000;
+}
 #search {
     position: absolute;
     margin: 10px 0 0 10px;

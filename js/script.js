@@ -623,7 +623,7 @@
 
 
     var photosController = new PhotosController(optionsController, timeFilterController);
-    var nonLocalizedPhotosController = new NonLocalizedPhotosController(optionsController, timeFilterController);
+    var nonLocalizedPhotosController = new NonLocalizedPhotosController(optionsController, timeFilterController, photosController);
     var contactsController = new ContactsController(optionsController, timeFilterController);
     var favoritesController = new FavoritesController(optionsController, timeFilterController);
     var tracksController = new TracksController(optionsController, timeFilterController);

@@ -1,4 +1,4 @@
-function NonLocalizedPhotosController (optionsController, timeFilterController) {
+function NonLocalizedPhotosController (optionsController, timeFilterController, photosController) {
     this.PHOTO_MARKER_VIEW_SIZE = 40;
     this.nonLocalizedPhotosDataLoaded = false;
     this.lat = 0;
@@ -6,6 +6,7 @@ function NonLocalizedPhotosController (optionsController, timeFilterController) 
     this.nonLocalizedPhotosRequestInProgress = false;
     this.optionsController = optionsController;
     this.timeFilterController = timeFilterController;
+    this.photosController = photosController;
     this.nonLocalizedPhotoMarkers = [];
     this.nonLocalizedPhotoMarkersOldest = null;
     this.nonLocalizedPhotoMarkersNewest = null;
@@ -273,7 +274,11 @@ NonLocalizedPhotosController.prototype = {
     },
 
     saveCordinatesToImage : function (marker) {
-        console.log(marker.getLatLng());
+        var latlng = marker.getLatLng();
+        this.photosController.placePhotos([marker.data.path], latlng.lat, latlng.lng);
+        this.nonLocalizedPhotoLayer.removeLayer(marker);
+        this.nonLocalizedPhotoMarkers.pop(marker);
+        this.nonLocalizedPhotoMarkersLastVisible = this.nonLocalizedPhotoMarkersLastVisible - 1;
     },
 
     /* Preview size 32x32 is used in files view, so it sould be generated */

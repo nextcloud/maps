@@ -53,6 +53,11 @@ NonLocalizedPhotosController.prototype = {
             }
         });
 
+        //save geolocations to pictures
+        $('body').on('click', '.save-all-nonlocalized', function(e) {
+            that.menuSaveAllVisible();
+        });
+
         if (navigator.geolocation) {
             navigator.geolocation.getCurrentPosition(function (position) {
                 that.lat = position.coords.latitude;
@@ -297,6 +302,23 @@ NonLocalizedPhotosController.prototype = {
 
     getImageIconUrl: function() {
         return OC.generateUrl('/apps/theming/img/core/filetypes') + '/image.svg?v=2';
+    },
+
+    menuSaveAllVisible: function(e) {
+        var paths = [];
+        var lats = [];
+        var lngs = [];
+        for (var i=this.nonLocalizedPhotoMarkersFirstVisible; i<=this.nonLocalizedPhotoMarkersLastVisible; i++) {
+            var markerData = this.nonLocalizedPhotoMarkers[i].data;
+            paths.push( markerData.path);
+            lats.push(markerData.lat);
+            lngs.push(markerData.lng);
+			this.nonLocalizedPhotoLayer.removeLayer(this.nonLocalizedPhotoMarkers[i]);
+            delete this.nonLocalizedPhotoMarkers[i];
+        }
+        this.photosController.placePhotos(paths, lats, lngs);
+        this.nonLocalizedPhotoMarkers.splice(this.nonLocalizedPhotoMarkersFirstVisible, this.nonLocalizedPhotoMarkersLastVisible - this.nonLocalizedPhotoMarkersFirstVisible + 1);
+        this.nonLocalizedPhotoMarkersLastVisible = this.nonLocalizedPhotoMarkersFirstVisible -1;
     },
 };
 

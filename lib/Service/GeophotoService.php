@@ -107,7 +107,7 @@ class GeophotoService {
 
 	private function getLocationGuesses($dateTaken) {
 	    return [
-	        0 => [null, null]
+	        0 => [null, null],
         ];
     }
 

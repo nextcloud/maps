@@ -126,12 +126,23 @@ class PhotofilesService {
     private function setFilesCoords($userId, $paths, $lat, $lng) {
         $userFolder = $this->root->getUserFolder($userId);
         $nbDone = 0;
-        foreach ($paths as $path) {
+
+        foreach ($paths as $i => $path) {
             $cleanpath = str_replace(array('../', '..\\'), '',  $path);
             if ($userFolder->nodeExists($cleanpath)) {
                 $file = $userFolder->get($cleanpath);
                 if ($this->isPhoto($file) and $file->isUpdateable()) {
-                    $this->setExifCoords($file, $lat, $lng);
+                    if (is_array($lat)) {
+                        $l = $lat[$i];
+                    } else {
+                        $l = $lat;
+                    }
+                    if (is_array($lng)) {
+                        $n = $lng[$i];
+                    } else {
+                        $n = $lng;
+                    }
+                    $this->setExifCoords($file, $l, $n);
                     // delete and add again
                     $this->deleteByFile($file);
                     $this->addByFile($file);

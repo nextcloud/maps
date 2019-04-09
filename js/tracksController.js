@@ -310,7 +310,8 @@ TracksController.prototype = {
         this.mapTrackLayers[id].removeLayer(this.trackLayers[id]);
         delete this.mapTrackLayers[id];
         delete this.trackLayers[id];
-        delete this.track[id];
+        delete this.trackColors[id];
+        delete this.trackDivIcon[id];
 
         $('style[track='+id+']').remove();
 

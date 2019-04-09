@@ -160,7 +160,13 @@ ContactsController.prototype = {
             } else {
                 geo = contacts[i].GEO.split(";");
             }
-            var date = Date.parse(contacts[i].REV);
+            var date;
+            if (contacts[i].hasOwnProperty('REV')) {
+                date = Date.parse(contacts[i].REV);
+            }
+            else {
+                date = new Date();
+            }
             if (isNaN(date)) {
                 var year = parseInt(contacts[i].REV.substr(0,4));
                 var month = parseInt(contacts[i].REV.substr(4,2))-1;
@@ -179,7 +185,6 @@ ContactsController.prototype = {
                 photo: contacts[i].PHOTO,
                 uid: contacts[i].UID,
                 date: date/1000,
-
             };
             var marker = L.marker(markerData, {
                 icon: this.createContactView(markerData)
@@ -282,11 +287,89 @@ ContactsController.prototype = {
         return OC.generateUrl('/apps/theming/img/core/actions') + '/user.svg?v=2';
     },
 
-    // could allow to select a contact
-    // and edit its geo information
     contextPlaceContact: function(e) {
-        var latlng = e.latlng;
-        alert('place contact NYI');
-    }
+        var that = this.contactsController;
+        var lat = e.latlng.lat;
+        var lng = e.latlng.lng;
+        var popupText = '<input id="place-contact-input" type="text" />';
+        this.openPopup(popupText, e.latlng);
+
+        var req = {};
+        var url = OC.generateUrl('/apps/maps/contacts-all');
+        $.ajax({
+            type: 'GET',
+            url: url,
+            data: req,
+            async: true
+        }).done(function (response) {
+            var d, c;
+            var data = [];
+            for (var i=0; i < response.length; i++) {
+                c = response[i];
+                d = {
+                    id: c.URI,
+                    label: c.FN,
+                    value: c.FN,
+                    uri: c.URI,
+                    uid: c.UID,
+                    bookid: c.BOOKID
+                };
+                data.push(d);
+            }
+            $('#place-contact-input').autocomplete({
+                source: data,
+                select: function (e, ui) {
+                    var it = ui.item;
+                    that.placeContact(it.bookid, it.uri, lat, lng);
+                }
+            })
+            $('#place-contact-input').focus().select();
+        }).always(function (response) {
+        }).fail(function() {
+            OC.Notification.showTemporary(t('maps', 'Failed to get contact list'));
+        });
+    },
+
+    placeContact: function(bookid, uri, lat, lng) {
+        var that = this;
+        $('#navigation-contacts').addClass('icon-loading-small');
+        var req = {
+            lat: lat,
+            lng: lng
+        };
+        var url = OC.generateUrl('/apps/maps/contacts/'+bookid+'/'+uri);
+        $.ajax({
+            type: 'PUT',
+            url: url,
+            data: req,
+            async: true
+        }).done(function (response) {
+        }).always(function (response) {
+            that.map.closePopup();
+            $('#navigation-contacts').removeClass('icon-loading-small');
+            that.reloadContacts();
+        }).fail(function() {
+            OC.Notification.showTemporary(t('maps', 'Failed to place contact'));
+        });
+    },
+
+    reloadContacts: function() {
+        this.contactsDataLoaded = false;
+        this.contactsRequestInProgress = false;
+
+        for (var i=0; i < this.contactMarkers.length; i++) {
+            this.contactLayer.removeLayer(this.contactMarkers[i]);
+        }
+
+        this.contactMarkers = [];
+        this.contactMarkersOldest = null;
+        this.contactMarkersNewest = null;
+        this.contactMarkersFirstVisible = 0;
+        this.contactMarkersLastVisible = -1;
+        this.timeFilterBegin = 0;
+        this.timeFilterEnd = Date.now();
+
+        this.showLayer();
+    },
 };
 

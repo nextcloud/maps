@@ -307,6 +307,57 @@ tr.selected td {
     opacity: 1 !important;
 }
 
+.leaflet-marker-nonLocalizedPhoto {
+    border: 2px solid #fff;
+    box-shadow: 3px 3px 10px #888;
+    -webkit-filter: grayscale(100%); /* Safari 6.0 - 9.0 */
+    filter: grayscale(100%);
+}
+
+.leaflet-marker-nonLocalizedPhoto.nonLocalizedPhoto-marker{
+    top: -10px;
+}
+
+.leaflet-marker-nonLocalizedPhoto.nonLocalizedPhoto-marker:after {
+    content:"";
+    position: relative;
+    bottom: 16px;
+    border-width: 10px 10px 0;
+    border-style: solid;
+    border-color: #fff transparent;
+    display: block;
+    width: 0;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.leaflet-marker-nonLocalizedPhoto .thumbnail {
+    width: 100%;
+    height: 100%;
+    background-size: cover;
+    background-position: center center;
+    background-repeat: no-repeat;
+    background-color: white;
+}
+
+.leaflet-marker-nonLocalizedPhoto .label {
+    position: absolute;
+    top: -7px;
+    right: -11px;
+    color: #fff;
+    background-color: #333;
+    border-radius: 9px;
+    height: 18px;
+    min-width: 18px;
+    line-height: 12px;
+    text-align: center;
+    padding: 3px;
+}
+
+.leaflet-marker-nonLocalizedPhoto-tooltip {
+    opacity: 1 !important;
+}
+
 .easy-button-button {
     margin: 0 !important;
     padding: 0 !important;

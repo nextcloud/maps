@@ -5,6 +5,7 @@
         favoritesController.initFavorites(mapController.map);
         routingController.initRoutingControl(mapController.map);
         photosController.initLayer(mapController.map);
+        nonLocalizedPhotosController.initLayer(mapController.map);
         mapController.map.photosController = photosController;
         contactsController.initLayer(mapController.map);
         mapController.map.contactsController = contactsController;
@@ -497,11 +498,13 @@
                     if (handle === 0) {
                         that.valueBegin = unencoded[0];
                         photosController.updateTimeFilterBegin(that.valueBegin);
+                        nonLocalizedPhotosController.updateTimeFilterBegin(that.valueBegin);
                         contactsController.updateTimeFilterBegin(that.valueBegin);
                     }
                     else {
                         that.valueEnd = unencoded[1];
                         photosController.updateTimeFilterEnd(that.valueEnd);
+                        nonLocalizedPhotosController.updateTimeFilterEnd(that.valueEnd);
                         contactsController.updateTimeFilterEnd(that.valueEnd);
                     }
                     favoritesController.updateFilterDisplay();
@@ -569,12 +572,14 @@
                 favoritesController.firstDate,
                 tracksController.firstDate,
                 photosController.photoMarkersOldest,
+                nonLocalizedPhotosController.nonLocalizedPhotoMarkersOldest,
                 contactsController.contactMarkersOldest
             ];
             var rawMaxs = [
                 favoritesController.lastDate,
                 tracksController.lastDate,
                 photosController.photoMarkersNewest,
+                nonLocalizedPhotosController.nonLocalizedPhotoMarkersNewest,
                 contactsController.contactMarkersNewest
             ];
             // get rid of null values
@@ -618,6 +623,7 @@
 
 
     var photosController = new PhotosController(optionsController, timeFilterController);
+    var nonLocalizedPhotosController = new NonLocalizedPhotosController(optionsController, timeFilterController);
     var contactsController = new ContactsController(optionsController, timeFilterController);
     var favoritesController = new FavoritesController(optionsController, timeFilterController);
     var tracksController = new TracksController(optionsController, timeFilterController);

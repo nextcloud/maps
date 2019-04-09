@@ -119,12 +119,12 @@
             <field>
                 <name>lat</name>
                 <type>float</type>
-                <notnull>true</notnull>
+                <notnull>false</notnull>
             </field>
             <field>
                 <name>lng</name>
                 <type>float</type>
-                <notnull>true</notnull>
+                <notnull>false</notnull>
             </field>
             <field>
                 <name>date_taken</name>

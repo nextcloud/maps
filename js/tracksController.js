@@ -132,6 +132,9 @@ TracksController.prototype = {
             $('#toggleTracksButton button').addClass('icon-toggle').attr('style', '');
         }
         else {
+            if (!this.trackListLoaded) {
+                this.getTracks();
+            }
             this.map.addLayer(this.mainLayer);
             // color of the eye
             var color = OCA.Theming.color.replace('#', '');

@@ -9,7 +9,6 @@
         contactsController.initLayer(mapController.map);
         mapController.map.contactsController = contactsController;
         tracksController.initController(mapController.map);
-        tracksController.getTracks();
 
         // once controllers have been set/initialized, we can restore option values from server
         optionsController.restoreOptions();
@@ -116,9 +115,6 @@
                 if (optionsValues.hasOwnProperty('locControlEnabled') && optionsValues.locControlEnabled === 'true') {
                     mapController.locControl.start();
                 }
-                if (!optionsValues.hasOwnProperty('favoritesEnabled') || optionsValues.favoritesEnabled === 'true') {
-                    favoritesController.toggleFavorites();
-                }
                 if (!optionsValues.hasOwnProperty('favoriteCategoryListShow') || optionsValues.favoriteCategoryListShow === 'true') {
                     favoritesController.toggleCategoryList();
                 }
@@ -131,11 +127,11 @@
                         favoritesController.restoreCategoriesState(that.enabledFavoriteCategories);
                     }
                 }
+                if (!optionsValues.hasOwnProperty('favoritesEnabled') || optionsValues.favoritesEnabled === 'true') {
+                    favoritesController.toggleFavorites();
+                }
                 if (optionsValues.hasOwnProperty('routingEnabled') && optionsValues.routingEnabled === 'true') {
                     routingController.toggleRouting();
-                }
-                if (!optionsValues.hasOwnProperty('tracksEnabled') || optionsValues.tracksEnabled === 'true') {
-                    tracksController.toggleTracks();
                 }
                 if (!optionsValues.hasOwnProperty('trackListShow') || optionsValues.trackListShow === 'true') {
                     tracksController.toggleTrackList();
@@ -150,6 +146,9 @@
                     if (tracksController.trackListLoaded) {
                         tracksController.restoreTracksState(that.enabledTracks);
                     }
+                }
+                if (!optionsValues.hasOwnProperty('tracksEnabled') || optionsValues.tracksEnabled === 'true') {
+                    tracksController.toggleTracks();
                 }
 
                 // save tile layer when changed

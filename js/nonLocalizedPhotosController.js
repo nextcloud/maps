@@ -193,6 +193,10 @@ NonLocalizedPhotosController.prototype = {
                 }, 2001);
             });
 
+            marker.on('click', function (e) {
+                that.saveCordinatesToImage(e.target);
+            });
+
             markers.push(marker);
         }
         return markers;

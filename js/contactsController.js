@@ -180,13 +180,13 @@ ContactsController.prototype = {
 
             var markerData = {
                 name: contacts[i].FN,
-                lat: geo[0],
-                lng: geo[1],
+                lat: parseFloat(geo[0]),
+                lng: parseFloat(geo[1]),
                 photo: contacts[i].PHOTO,
                 uid: contacts[i].UID,
                 date: date/1000,
             };
-            var marker = L.marker(markerData, {
+            var marker = L.marker([markerData.lat, markerData.lng], {
                 icon: this.createContactView(markerData)
             });
             marker.data = markerData;
@@ -274,9 +274,11 @@ ContactsController.prototype = {
         });
     },
 
-    /* Preview size 32x32 is used in files view, so it sould be generated */
     generateAvatar: function (data) {
-        return data;
+        // data is supposed to be a base64 string
+        // but if this is a 'user' contact, avatar is and address like
+        // VALUE=uri:http://host/remote.php/dav/addressbooks/system/system/system/Database:toto.vcf?photo
+        return data ? data.replace(/^VALUE=uri:/, '') : data;
     },
 
     getImageIconUrl: function() {
@@ -320,7 +322,7 @@ ContactsController.prototype = {
                 source: data,
                 select: function (e, ui) {
                     var it = ui.item;
-                    that.placeContact(it.bookid, it.uri, lat, lng);
+                    that.placeContact(it.bookid, it.uri, it.uid, lat, lng);
                 }
             })
             $('#place-contact-input').focus().select();
@@ -330,12 +332,13 @@ ContactsController.prototype = {
         });
     },
 
-    placeContact: function(bookid, uri, lat, lng) {
+    placeContact: function(bookid, uri, uid, lat, lng) {
         var that = this;
         $('#navigation-contacts').addClass('icon-loading-small');
         var req = {
             lat: lat,
-            lng: lng
+            lng: lng,
+            uid: uid
         };
         var url = OC.generateUrl('/apps/maps/contacts/'+bookid+'/'+uri);
         $.ajax({

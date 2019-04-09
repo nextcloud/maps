@@ -285,9 +285,24 @@ NonLocalizedPhotosController.prototype = {
     saveCordinatesToImage : function (marker) {
         var latlng = marker.getLatLng();
         this.photosController.placePhotos([marker.data.path], latlng.lat, latlng.lng);
-        this.nonLocalizedPhotoLayer.removeLayer(marker);
-        this.nonLocalizedPhotoMarkers.pop(marker);
-        this.nonLocalizedPhotoMarkersLastVisible = this.nonLocalizedPhotoMarkersLastVisible - 1;
+        var date = marker.data.date;
+        var path = marker.data.path;
+        var removedMarkers = [];
+        for (var i = this.nonLocalizedPhotoMarkersFirstVisible; i < this.nonLocalizedPhotoMarkers.length && this.nonLocalizedPhotoMarkers[i].data.date <= date; i++) {
+            if (this.nonLocalizedPhotoMarkers[i].data.path === path) {
+                var j = i + 1;
+                while (j < this.nonLocalizedPhotoMarkers.length && this.nonLocalizedPhotoMarkers[j].data.path === path) {
+                    j++;
+                }
+                removedMarkers.push(...this.nonLocalizedPhotoMarkers.splice(i, j-i));
+                i--;
+            }
+        }
+        var that = this;
+        removedMarkers.forEach(function (m) {
+            that.nonLocalizedPhotoLayer.removeLayer(m);
+        });
+        this.nonLocalizedPhotoMarkersLastVisible = this.nonLocalizedPhotoMarkersLastVisible - removedMarkers.length;
     },
 
     /* Preview size 32x32 is used in files view, so it sould be generated */

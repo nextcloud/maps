@@ -24,6 +24,7 @@ use OCP\ILogger;
 use OCA\Maps\Service\PhotofilesService;
 use OCA\Maps\DB\Geophoto;
 use OCA\Maps\DB\GeophotoMapper;
+use OCA\Maps\Service\TracksService;
 
 class GeophotoService {
 
@@ -32,13 +33,19 @@ class GeophotoService {
     private $photoMapper;
     private $logger;
     private $preview;
+    private $tracksService;
+    private $timeordedPointSets;
 
-    public function __construct (ILogger $logger, IRootFolder $root, IL10N $l10n, GeophotoMapper $photoMapper, IPreview $preview) {
+    public function __construct (ILogger $logger, IRootFolder $root, IL10N $l10n, GeophotoMapper $photoMapper, IPreview $preview, TracksService $tracksService, $userId) {
         $this->root = $root;
         $this->l10n = $l10n;
         $this->photoMapper = $photoMapper;
         $this->logger = $logger;
         $this->preview = $preview;
+        $this->tracksService = $tracksService;
+        $this->timeordedPointSets = null;
+        $this->userId = $userId;
+
     }
 
     /**
@@ -76,6 +83,7 @@ class GeophotoService {
 	 * @return array with geodatas of all photos
 	 */
 	public function getNonLocalizedFromDB ($userId) {
+	    $foo = $this->loadTimeordedPointSets($userId);
 		$photoEntities = $this->photoMapper->findAllNonLocalized($userId);
 		$userFolder = $this->getFolderForUser($userId);
 		$filesById = [];
@@ -106,9 +114,84 @@ class GeophotoService {
 
 
 	private function getLocationGuesses($dateTaken) {
-	    return [
-	        0 => [null, null],
-        ];
+	    $locations = [];
+	    foreach ($this->timeordedPointSets as $timeordedPointSet) {
+            $location = $this->getLocationFromSequenceOfPoints($dateTaken,$timeordedPointSet);
+            if (!is_null($location)) {
+                $locations[] = $location;
+            }
+        }
+	    if (count($locations) === 0) {
+	        $locations[] = [null, null];
+        }
+        return $locations;
+
+    }
+
+    private function loadTimeordedPointSets($userId) {
+        $userFolder = $this->getFolderForUser($userId);
+	    foreach ($this->tracksService->getTracksFromDB($userId) as $gpxfile) {
+            $res = $userFolder->getById($gpxfile['file_id']);
+            if (is_array($res) and count($res) > 0) {
+                $file = $res[0];
+                if ($file->getType() === \OCP\Files\FileInfo::TYPE_FILE) {
+                    foreach ($this->getTracksFromGPX($file->getContent()) as $track) {
+                        $this->timeordedPointSets[] = $this->getTimeorderdPointsFromTrack($track);
+                    }
+                }
+            }
+        }
+	    return null;
+    }
+
+    private function getTracksFromGPX($content) {
+	    $tracks = [];
+        $gpx = simplexml_load_string($content);
+        foreach ($gpx->trk as $trk) {
+            $tracks[] = $trk;
+        }
+        return $tracks;
+    }
+
+    private function getTimeorderdPointsFromTrack($track) {
+	    $points = [];
+        foreach ($track->trkseg as $seg) {
+            foreach ($seg->trkpt as $pt) {
+                $points[strtotime($pt->time)] = [(string) $pt["lat"],(string) $pt["lon"]];
+            }
+        }
+        foreach ($track->trkpt as $pt) {
+            $points[strtotime($pt->time)] = [(string) $pt["lat"],(string) $pt["lon"]];
+        }
+
+        $foo = ksort($points);
+        return $points;
+    }
+
+    /**
+     * @param $dateTaken date of the picture
+     * @param $points array sorted by keys timestamp => [lat, lng]
+     */
+    private function getLocationFromSequenceOfPoints($dateTaken, $points) {
+        $smaller = null;
+        $bigger = null;
+        foreach ($points as $time => $locations) {
+            if ($time < $dateTaken) {
+                $smaller = $time;
+            } else {
+                $bigger = $time;
+                break;
+            }
+        }
+        if (!is_null($smaller) AND !is_null($bigger)) {
+            $d = $bigger - $smaller;
+            $t = ($dateTaken - $smaller) / $d;
+            $latd = $points[$bigger][0] - $points[$smaller][0];
+            $lngd = $points[$bigger][1] - $points[$smaller][1];
+            return [$points[$smaller][0] + $t * $latd, $points[$smaller][1] + $t * $lngd];
+        } else {
+            return null;
+        }
     }
 
     private function getPreviewEnabledMimetypes() {

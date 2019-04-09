@@ -58,6 +58,15 @@ class FileHooks {
 		};
 		$this->root->listen('\OC\Files', 'preDelete', $fileDeletionCallback);
 
+        // this one is triggered when restoring a version of a file
+        // and NOT when it's created so we can use it for updating coordinates in DB
+        $this->root->listen('\OC\Files', 'postTouch', function(\OCP\Files\Node $node) {
+            if ($this->isUserNode($node)) {
+                $this->photofilesService->deleteByFile($node);
+                $this->photofilesService->addByFile($node);
+            }
+        });
+
 		Util::connectHook('\OCA\Files_Trashbin\Trashbin', 'post_restore', $this, 'restore');
 	}
 

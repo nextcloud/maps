@@ -96,6 +96,12 @@ class TracksController extends Controller {
                 $trackFile = $res[0];
                 if ($trackFile->getType() === \OCP\Files\FileInfo::TYPE_FILE) {
                     $track['file_name'] = $trackFile->getName();
+                    // did the file change?
+                    if ($track['etag'] !== $trackFile->getEtag()) {
+                        $metadata = $this->tracksService->generateTrackMetadata($trackFile);
+                        $track['metadata'] = $metadata;
+                        $this->tracksService->editTrackInDB($track['id'], null, $metadata, $trackFile->getEtag());
+                    }
                     array_push($existingTracks, $track);
                 }
                 else {
@@ -142,7 +148,7 @@ class TracksController extends Controller {
                     $trackFile = $this->userfolder->get($cleanpath);
                     if ($trackFile->getType() === \OCP\Files\FileInfo::TYPE_FILE) {
                         $trackFileId = $trackFile->getId();
-                        $trackId = $this->tracksService->addTrackToDB($this->userId, $trackFileId);
+                        $trackId = $this->tracksService->addTrackToDB($this->userId, $trackFileId, $trackFile);
                         $track = $this->tracksService->getTrackFromDB($trackId);
                         $track['file_name'] = $trackFile->getName();
                         array_push($tracks, $track);
@@ -169,7 +175,7 @@ class TracksController extends Controller {
                             $node->getType() === \OCP\Files\FileInfo::TYPE_FILE
                         ) {
                             $trackFileId = $node->getId();
-                            $trackId = $this->tracksService->addTrackToDB($this->userId, $trackFileId);
+                            $trackId = $this->tracksService->addTrackToDB($this->userId, $trackFileId, $node);
                             $track = $this->tracksService->getTrackFromDB($trackId);
                             $track['file_name'] = $node->getName();
                             array_push($tracks, $track);
@@ -184,10 +190,10 @@ class TracksController extends Controller {
     /**
      * @NoAdminRequired
      */
-    public function editTrack($id, $color) {
+    public function editTrack($id, $color, $metadata, $etag) {
         $track = $this->tracksService->getTrackFromDB($id, $this->userId);
         if ($track !== null) {
-            $this->tracksService->editTrackInDB($id, $color);
+            $this->tracksService->editTrackInDB($id, $color, $metadata, $etag);
             return new DataResponse('EDITED');
         }
         else {

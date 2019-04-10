@@ -165,10 +165,23 @@
                 <length>10</length>
             </field>
             <field>
+                <name>etag</name>
+                <type>text</type>
+                <notnull>true</notnull>
+                <default></default>
+                <length>100</length>
+            </field>
+            <field>
                 <name>color</name>
                 <type>text</type>
                 <notnull>false</notnull>
                 <length>7</length>
+            </field>
+            <field>
+                <name>metadata</name>
+                <type>text</type>
+                <notnull>false</notnull>
+                <length>500</length>
             </field>
         </declaration>
     </table>

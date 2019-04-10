@@ -42,7 +42,7 @@ class FileHooks {
     public function register() {
         $fileWriteCallback = function(\OCP\Files\Node $node) {
             if($this->isUserNode($node)) {
-                $this->photofilesService->addByFile($node);
+                $this->photofilesService->safeAddByFile($node);
             }
         };
         $this->root->listen('\OC\Files', 'postWrite', $fileWriteCallback);

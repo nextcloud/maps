@@ -3,6 +3,8 @@ function TracksController(optionsController, timeFilterController) {
     this.timeFilterController = timeFilterController;
 
     this.mainLayer = null;
+    this.elevationControl = null;
+    this.closeElevationButton = null;
     // indexed by track id
     // those actually added to map, those which get toggled
     this.mapTrackLayers = {};
@@ -117,6 +119,22 @@ TracksController.prototype = {
         });
         $('body').on('change', '#colorinput', function(e) {
             that.okColor();
+        });
+        $('body').on('click', '.showTrackElevation', function(e) {
+            var id = $(this).parent().parent().parent().parent().attr('track');
+            that.showTrackElevation(id);
+        });
+        // close elevation char button
+        this.closeElevationButton = L.easyButton({
+            position: 'bottomleft',
+            states: [{
+                stateName: 'no-importa',
+                icon:      'fa-times',
+                title:     t('maps', 'Close elevation chart'),
+                onClick: function(btn, map) {
+                    that.clearElevationControl();
+                }
+            }]
         });
     },
 
@@ -426,6 +444,12 @@ TracksController.prototype = {
         '                </a>' +
         '            </li>' +
         '            <li>' +
+        '                <a href="#" class="showTrackElevation">' +
+        '                    <span class="icon-category-monitoring"></span>' +
+        '                    <span>'+t('maps', 'Show track elevation')+'</span>' +
+        '                </a>' +
+        '            </li>' +
+        '            <li>' +
         '                <a href="#" class="removeTrack">' +
         '                    <span class="icon-close"></span>' +
         '                    <span>'+t('maps', 'Remove')+'</span>' +
@@ -523,7 +547,7 @@ TracksController.prototype = {
             data: req,
             async: true
         }).done(function (response) {
-            that.processGpx(id, response, that.trackLayers[id]);
+            that.processGpx(id, response);
             that.trackLayers[id].loaded = true;
             that.updateMyFirstLastDates(pageLoad);
         }).always(function (response) {
@@ -533,7 +557,7 @@ TracksController.prototype = {
         });
     },
 
-    processGpx: function(id, gpx, layerGroup) {
+    processGpx: function(id, gpx) {
         var that = this;
         var color;
         var coloredTooltipClass;
@@ -560,7 +584,7 @@ TracksController.prototype = {
         var popupText;
 
         gpxx.find('wpt').each(function() {
-            date = that.addWaypoint(id, $(this), layerGroup, coloredTooltipClass);
+            date = that.addWaypoint(id, $(this), coloredTooltipClass);
             minTrackDate = (date < minTrackDate) ? date : minTrackDate;
         });
 
@@ -572,7 +596,7 @@ TracksController.prototype = {
             linkUrl = $(this).find('link').attr('href');
             popupText = that.getLinePopupText(id, name, cmt, desc, linkText, linkUrl);
             $(this).find('trkseg').each(function() {
-                date = that.addLine(id, $(this).find('trkpt'), layerGroup, weight, color, name, popupText, coloredTooltipClass);
+                date = that.addLine(id, $(this).find('trkpt'), weight, color, name, popupText, coloredTooltipClass);
                 minTrackDate = (date < minTrackDate) ? date : minTrackDate;
             });
         });
@@ -585,14 +609,14 @@ TracksController.prototype = {
             linkText = $(this).find('link text').text();
             linkUrl = $(this).find('link').attr('href');
             popupText = that.getLinePopupText(id, name, cmt, desc, linkText, linkUrl);
-            date = that.addLine(id, $(this).find('rtept'), layerGroup, weight, color, name, popupText, coloredTooltipClass);
+            date = that.addLine(id, $(this).find('rtept'), weight, color, name, popupText, coloredTooltipClass);
             minTrackDate = (date < minTrackDate) ? date : minTrackDate;
         });
 
-        layerGroup.date = minTrackDate;
+        this.trackLayers[id].date = minTrackDate;
     },
 
-    addWaypoint: function(id, elem, layerGroup, meta, coloredTooltipClass) {
+    addWaypoint: function(id, elem, coloredTooltipClass) {
         var lat = elem.attr('lat');
         var lon = elem.attr('lon');
         var name = elem.find('name').text();
@@ -619,7 +643,7 @@ TracksController.prototype = {
 
         var popupText = this.getWaypointPopupText(id, name, lat, lon, cmt, desc, ele, linkText, linkUrl, sym);
         mm.bindPopup(popupText);
-        layerGroup.addLayer(mm);
+        this.trackLayers[id].addLayer(mm);
         return date;
     },
 
@@ -634,8 +658,8 @@ TracksController.prototype = {
             popupText = popupText + t('maps', 'Elevation')+ ' : ' +
                 escapeHTML(ele) + 'm<br/>';
         }
-        popupText = popupText + t('maps', 'Latitude') + ' : '+ lat + '<br/>' +
-            t('maps', 'Longitude') + ' : '+ lon + '<br/>';
+        popupText = popupText + t('maps', 'Latitude') + ' : '+ parseFloat(lat) + '<br/>' +
+            t('maps', 'Longitude') + ' : '+ parseFloat(lon) + '<br/>';
         if (cmt !== '') {
             popupText = popupText +
                 t('maps', 'Comment') + ' : '+ escapeHTML(cmt) + '<br/>';
@@ -818,8 +842,9 @@ TracksController.prototype = {
         return popupTxt;
     },
 
-    addLine: function(id, points, layerGroup, weight, color, name, popupText, coloredTooltipClass) {
+    addLine: function(id, points, weight, color, name, popupText, coloredTooltipClass) {
         var lat, lon, ele, time;
+        var that = this;
         var latlngs = [];
         // get first date
         var date = null;
@@ -851,6 +876,7 @@ TracksController.prototype = {
             opacity : 1,
             className: 'poly'+id,
         });
+        l.line = true;
         l.bindPopup(
             popupText,
             {
@@ -876,17 +902,17 @@ TracksController.prototype = {
                 closeOnClick: true
             }
         );
-        layerGroup.addLayer(bl);
-        layerGroup.addLayer(l);
+        this.trackLayers[id].addLayer(bl);
+        this.trackLayers[id].addLayer(l);
         bl.on('mouseover', function() {
-            layerGroup.bringToFront();
+            that.trackLayers[id].bringToFront();
         });
         bl.on('mouseout', function() {
         });
         bl.bindTooltip(tooltipText, {sticky: true, className: coloredTooltipClass});
 
         l.on('mouseover', function() {
-            layerGroup.bringToFront();
+            that.trackLayers[id].bringToFront();
         });
         l.on('mouseout', function() {
         });
@@ -958,6 +984,44 @@ TracksController.prototype = {
             '.trackWaypoint-'+id+' { ' +
             'background-color: '+color+';}' +
             '</style>').appendTo('body');
+    },
+
+    showTrackElevation: function(id) {
+        this.zoomOnTrack(id);
+        var el = L.control.elevation({
+            position: 'bottomleft',
+            height: 100,
+            width: 700,
+            margins: {
+                top: 10,
+                right: 40,
+                bottom: 23,
+                left: 60
+            },
+            theme: 'steelblue-theme'
+        });
+        el.addTo(this.map);
+
+        var layers = this.trackLayers[id].getLayers();
+        var data;
+        for (var i=0; i < layers.length; i++) {
+            if (layers[i].line) {
+                data = layers[i].toGeoJSON();
+                el.addData(data, layers[i]);
+            }
+        }
+        this.closeElevationButton.addTo(this.map);
+
+        this.elevationControl = el;
+    },
+
+    clearElevationControl: function() {
+        if (this.elevationControl !== null) {
+            this.elevationControl.clear();
+            this.elevationControl.remove();
+            this.elevationControl = null;
+            this.closeElevationButton.remove();
+        }
     },
 
 }

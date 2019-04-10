@@ -308,10 +308,8 @@ tr.selected td {
 }
 
 .leaflet-marker-nonLocalizedPhoto {
-    border: 2px solid #fff;
+    border: 2px solid #ff0000;
     box-shadow: 3px 3px 10px #888;
-    -webkit-filter: grayscale(100%); /* Safari 6.0 - 9.0 */
-    filter: grayscale(100%);
 }
 
 .leaflet-marker-nonLocalizedPhoto.nonLocalizedPhoto-marker{
@@ -324,7 +322,7 @@ tr.selected td {
     bottom: 16px;
     border-width: 10px 10px 0;
     border-style: solid;
-    border-color: #fff transparent;
+    border-color: #ff0000 transparent;
     display: block;
     width: 0;
     margin-left: auto;
@@ -338,6 +336,8 @@ tr.selected td {
     background-position: center center;
     background-repeat: no-repeat;
     background-color: white;
+    -webkit-filter: grayscale(100%); /* Safari 6.0 - 9.0 */
+    filter: grayscale(100%);
 }
 
 .leaflet-marker-nonLocalizedPhoto .label {
@@ -417,6 +417,7 @@ table.editFavorite input[type=text] {
 }
 #toggleRoutingButton button,
 #togglePhotosButton button,
+#toggleNonLocalizedPhotosButton button,
 #toggleContactsButton button,
 #toggleFavoritesButton button,
 #toggleTracksButton button,
@@ -427,6 +428,7 @@ table.editFavorite input[type=text] {
 #navigation-routing > a,
 #navigation-favorites > a,
 #navigation-photos > a,
+#navigation-nonLocalizedPhotos > a,
 #navigation-contacts > a,
 #navigation-tracks > a,
 .track-line > a,

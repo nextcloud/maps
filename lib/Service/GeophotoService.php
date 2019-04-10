@@ -80,7 +80,7 @@ class GeophotoService {
 
 	/**
 	 * @param string $userId
-	 * @return array with geodatas of all photos
+	 * @return array with geodatas of all nonLocalizedPhotos
 	 */
 	public function getNonLocalizedFromDB ($userId) {
 	    $foo = $this->loadTimeordedPointSets($userId);
@@ -112,7 +112,11 @@ class GeophotoService {
 		return $filesById;
 	}
 
-
+    /**
+     * returns a array of locations for a given date
+     * @param $dateTaken
+     * @return array
+     */
 	private function getLocationGuesses($dateTaken) {
 	    $locations = [];
 	    foreach ($this->timeordedPointSets as $timeordedPointSet) {
@@ -128,6 +132,10 @@ class GeophotoService {
 
     }
 
+    /*
+     * Timeorderd Point sets is an Array of Arrays with time => location as key=>value pair, which are orderd by the key.
+     * This function loads this Arrays from all Track files of the user.
+     */
     private function loadTimeordedPointSets($userId) {
         $userFolder = $this->getFolderForUser($userId);
 	    foreach ($this->tracksService->getTracksFromDB($userId) as $gpxfile) {
@@ -144,6 +152,11 @@ class GeophotoService {
 	    return null;
     }
 
+    /*
+     * A GPX file can contain multiple tracks this function returns all Tracks from a given sting containing GPX encoded information.
+     * @param $content
+     * @return array
+     */
     private function getTracksFromGPX($content) {
 	    $tracks = [];
         $gpx = simplexml_load_string($content);
@@ -153,6 +166,11 @@ class GeophotoService {
         return $tracks;
     }
 
+    /*
+     * Loads all trackpoints from a given $track SimpleXMLObject. And stores them in a time=>location stuctured array which is sorted by the key.
+     * @param $track
+     * @return array
+     */
     private function getTimeorderdPointsFromTrack($track) {
 	    $points = [];
         foreach ($track->trkseg as $seg) {

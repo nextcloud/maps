@@ -321,6 +321,7 @@ PhotosController.prototype = {
     placePhotos: function(paths, lat, lng, directory=false) {
         var that = this;
         $('#navigation-photos').addClass('icon-loading-small');
+        $('.leaflet-container').css('cursor', 'wait');
         var req = {
             paths: paths,
             lat: lat,
@@ -352,6 +353,7 @@ PhotosController.prototype = {
             }
         }).always(function (response) {
             $('#navigation-photos').removeClass('icon-loading-small');
+            $('.leaflet-container').css('cursor', 'grab');
         }).fail(function(response) {
             OC.Notification.showTemporary(t('maps', 'Failed to place photos') + ': ' + response.responseText);
         });

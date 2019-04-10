@@ -117,3 +117,67 @@ function brify(str, linesize) {
     return res;
 }
 
+function metersToDistance(m) {
+    var unit = 'metric';
+    var n = parseFloat(m);
+    if (unit === 'metric') {
+        if (n > 1000) {
+            return (n / 1000).toFixed(2) + ' km';
+        }
+        else{
+            return n.toFixed(2) + ' m';
+        }
+    }
+    else if (unit === 'english') {
+        var mi = n * METERSTOMILES;
+        if (mi < 1) {
+            return (n * METERSTOFOOT).toFixed(2) + ' ft';
+        }
+        else {
+            return mi.toFixed(2) + ' mi';
+        }
+    }
+    else if (unit === 'nautical') {
+        var nmi = n * METERSTONAUTICALMILES;
+        return nmi.toFixed(2) + ' nmi';
+    }
+}
+
+function metersToElevation(m) {
+    var unit = 'metric';
+    var n = parseFloat(m);
+    if (unit === 'metric' || unit === 'nautical') {
+        return n.toFixed(2) + ' m';
+    }
+    else {
+        return (n * METERSTOFOOT).toFixed(2) + ' ft';
+    }
+}
+
+function kmphToSpeed(kmph) {
+    var unit = 'metric';
+    var nkmph = parseFloat(kmph);
+    if (unit === 'metric') {
+        return nkmph.toFixed(2) + ' km/h';
+    }
+    else if (unit === 'english') {
+        return (nkmph * 1000 * METERSTOMILES).toFixed(2) + ' mi/h';
+    }
+    else if (unit === 'nautical') {
+        return (nkmph * 1000 * METERSTONAUTICALMILES).toFixed(2) + ' kt';
+    }
+}
+
+function minPerKmToPace(minPerKm) {
+    var unit = 'metric';
+    var nMinPerKm = parseFloat(minPerKm);
+    if (unit === 'metric') {
+        return nMinPerKm.toFixed(2) + ' min/km';
+    }
+    else if (unit === 'english') {
+        return (nMinPerKm / 1000 / METERSTOMILES).toFixed(2) + ' min/mi';
+    }
+    else if (unit === 'nautical') {
+        return (nMinPerKm / 1000 / METERSTONAUTICALMILES).toFixed(2) + ' min/nmi';
+    }
+}

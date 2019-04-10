@@ -96,6 +96,7 @@ class TracksController extends Controller {
                 $trackFile = $res[0];
                 if ($trackFile->getType() === \OCP\Files\FileInfo::TYPE_FILE) {
                     $track['file_name'] = $trackFile->getName();
+                    $track['file_path'] = $trackFile->getInternalPath();
                     // did the file change?
                     if ($track['etag'] !== $trackFile->getEtag()) {
                         $metadata = $this->tracksService->generateTrackMetadata($trackFile);
@@ -151,6 +152,7 @@ class TracksController extends Controller {
                         $trackId = $this->tracksService->addTrackToDB($this->userId, $trackFileId, $trackFile);
                         $track = $this->tracksService->getTrackFromDB($trackId);
                         $track['file_name'] = $trackFile->getName();
+                        $track['file_path'] = $trackFile->getInternalPath();
                         array_push($tracks, $track);
                     }
                 }
@@ -178,6 +180,7 @@ class TracksController extends Controller {
                             $trackId = $this->tracksService->addTrackToDB($this->userId, $trackFileId, $node);
                             $track = $this->tracksService->getTrackFromDB($trackId);
                             $track['file_name'] = $node->getName();
+                            $track['file_path'] = $node->getInternalPath();
                             array_push($tracks, $track);
                         }
                     }

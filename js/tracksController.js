@@ -897,6 +897,7 @@ TracksController.prototype = {
     zoomOnTrack: function(id) {
         if (this.mainLayer.hasLayer(this.mapTrackLayers[id])) {
             this.map.fitBounds(this.mapTrackLayers[id].getBounds(), {padding: [30, 30]});
+            this.mapTrackLayers[id].bringToFront();
         }
     },
 

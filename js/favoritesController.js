@@ -552,6 +552,7 @@ FavoritesController.prototype = {
             origCatList.push('');
         }
         $('#navigation-favorites').addClass('icon-loading-small');
+        $('.leaflet-container').css('cursor', 'wait');
         var req = {
             categories: origCatList,
             newName: newCategoryName
@@ -572,6 +573,7 @@ FavoritesController.prototype = {
             that.updateCategoryCounters();
         }).always(function (response) {
             $('#navigation-favorites').removeClass('icon-loading-small');
+            $('.leaflet-container').css('cursor', 'grab');
         }).fail(function() {
             OC.Notification.showTemporary(t('maps', 'Failed to rename category'));
         });
@@ -586,6 +588,7 @@ FavoritesController.prototype = {
         }
         var that = this;
         $('#navigation-favorites').addClass('icon-loading-small');
+        $('.leaflet-container').css('cursor', 'wait');
         var req = {
             ids: favids
         };
@@ -599,6 +602,7 @@ FavoritesController.prototype = {
             that.deleteCategoryMap(cat);
         }).always(function (response) {
             $('#navigation-favorites').removeClass('icon-loading-small');
+            $('.leaflet-container').css('cursor', 'grab');
         }).fail(function() {
             OC.Notification.showTemporary(t('maps', 'Failed to delete category favorites'));
         });
@@ -661,8 +665,8 @@ FavoritesController.prototype = {
     addFavoriteClickMap: function(e) {
         var defaultName = t('maps', 'no name');
         var categoryName = this.favoritesController.addFavoriteCategory;
-        this.favoritesController.addFavoriteDB(categoryName, e.latlng.lat.toFixed(6), e.latlng.lng.toFixed(6), defaultName);
         this.favoritesController.leaveAddFavoriteMode();
+        this.favoritesController.addFavoriteDB(categoryName, e.latlng.lat.toFixed(6), e.latlng.lng.toFixed(6), defaultName);
     },
 
     contextAddFavorite: function(e) {
@@ -675,6 +679,7 @@ FavoritesController.prototype = {
     addFavoriteDB: function(category, lat, lng, name, comment=null, extensions=null) {
         var that = this;
         $('#navigation-favorites').addClass('icon-loading-small');
+        $('.leaflet-container').css('cursor', 'wait');
         var req = {
             name: name,
             lat: lat,
@@ -694,6 +699,7 @@ FavoritesController.prototype = {
             that.updateCategoryCounters();
         }).always(function (response) {
             $('#navigation-favorites').removeClass('icon-loading-small');
+            $('.leaflet-container').css('cursor', 'grab');
         }).fail(function() {
             OC.Notification.showTemporary(t('maps', 'Failed to add favorite'));
         });
@@ -838,6 +844,7 @@ FavoritesController.prototype = {
     deleteFavoriteDB: function(favid) {
         var that = this;
         $('#navigation-favorites').addClass('icon-loading-small');
+        $('.leaflet-container').css('cursor', 'wait');
         var req = {
         };
         var url = OC.generateUrl('/apps/maps/favorites/'+favid);
@@ -852,6 +859,7 @@ FavoritesController.prototype = {
             that.updateCategoryCounters();
         }).always(function (response) {
             $('#navigation-favorites').removeClass('icon-loading-small');
+            $('.leaflet-container').css('cursor', 'grab');
         }).fail(function() {
             OC.Notification.showTemporary(t('maps', 'Failed to delete favorite'));
         });
@@ -892,6 +900,7 @@ FavoritesController.prototype = {
     editFavoriteDB: function(favid, name, comment, category, lat, lng) {
         var that = this;
         $('#navigation-favorites').addClass('icon-loading-small');
+        $('.leaflet-container').css('cursor', 'wait');
         var req = {
             name: name,
             extensions: null
@@ -920,6 +929,7 @@ FavoritesController.prototype = {
             that.updateCategoryCounters();
         }).always(function (response) {
             $('#navigation-favorites').removeClass('icon-loading-small');
+            $('.leaflet-container').css('cursor', 'grab');
         }).fail(function() {
             OC.Notification.showTemporary(t('maps', 'Failed to edit favorite'));
         });
@@ -987,12 +997,13 @@ FavoritesController.prototype = {
         var lng = e.latlng.lng;
         var favid = this.favoritesController.movingFavoriteId;
         var name = this.favoritesController.favorites[favid].name;
-        this.favoritesController.editFavoriteDB(favid, name, null, null, lat, lng);
         this.favoritesController.leaveMoveFavoriteMode();
+        this.favoritesController.editFavoriteDB(favid, name, null, null, lat, lng);
     },
 
     exportAllFavorites: function() {
         $('#navigation-favorites').addClass('icon-loading-small');
+        $('.leaflet-container').css('cursor', 'wait');
         var req = {};
         var url = OC.generateUrl('/apps/maps/export/favorites');
         $.ajax({
@@ -1004,6 +1015,7 @@ FavoritesController.prototype = {
             OC.Notification.showTemporary(t('maps', 'Favorites exported in {path}', {path: response}));
         }).always(function (response) {
             $('#navigation-favorites').removeClass('icon-loading-small');
+            $('.leaflet-container').css('cursor', 'grab');
         }).fail(function(response) {
             OC.Notification.showTemporary(t('maps', 'Failed to export favorites') + ': ' + response.responseText);
         });
@@ -1011,6 +1023,7 @@ FavoritesController.prototype = {
 
     exportDisplayedFavorites: function() {
         $('#navigation-favorites').addClass('icon-loading-small');
+        $('.leaflet-container').css('cursor', 'wait');
         var catList = [];
         if (this.map.hasLayer(this.cluster)) {
             for (var cat in this.categoryLayers) {
@@ -1040,6 +1053,7 @@ FavoritesController.prototype = {
             OC.Notification.showTemporary(t('maps', 'Favorites exported in {path}', {path: response}));
         }).always(function (response) {
             $('#navigation-favorites').removeClass('icon-loading-small');
+            $('.leaflet-container').css('cursor', 'grab');
         }).fail(function(response) {
             OC.Notification.showTemporary(t('maps', 'Failed to export favorites') + ': ' + response.responseText);
         });
@@ -1047,6 +1061,7 @@ FavoritesController.prototype = {
 
     importFavorites: function(path) {
         $('#navigation-favorites').addClass('icon-loading-small');
+        $('.leaflet-container').css('cursor', 'wait');
         var that = this;
         var req = {
             path: path
@@ -1069,6 +1084,7 @@ FavoritesController.prototype = {
             that.getFavorites();
         }).always(function (response) {
             $('#navigation-favorites').removeClass('icon-loading-small');
+            $('.leaflet-container').css('cursor', 'grab');
         }).fail(function() {
             OC.Notification.showTemporary(t('maps', 'Failed to import favorites'));
         });

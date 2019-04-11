@@ -364,7 +364,7 @@ table.editFavorite input[type=text] {
 .category-line > a {
     opacity: 1 !important;
 }
-#navigation-routing > a::before {
+#navigation-routing:not(.icon-loading-small) > a::before {
     content: "\f4d7";
     font-family: 'Font Awesome\ 5 Free';
     font-style: normal;
@@ -373,8 +373,8 @@ table.editFavorite input[type=text] {
     position: absolute;
     left: 16px;
 }
-#navigation-tracks > a::before {
-    content: "\f201";
+#navigation-tracks:not(.icon-loading-small) > a::before {
+    content: "\f018";
     font-family: 'Font Awesome\ 5 Free';
     font-style: normal;
     font-weight: 900;

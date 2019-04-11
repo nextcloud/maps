@@ -254,22 +254,25 @@ PhotosController.prototype = {
 
     callForImages: function() {
         this.photosRequestInProgress = true;
+        $('#navigation-photos').addClass('icon-loading-small');
         $.ajax({
             url: OC.generateUrl('apps/maps/photos'),
             type: 'GET',
-            context: this,
-            success: function(response) {
-                if (response.length == 0) {
-                    //showNoPhotosMessage();
-                }
-                else {
-                    this.addPhotosToMap(response);
-                }
-                this.photosDataLoaded = true;
-            },
-            complete: function(response) {
-                this.photosRequestInProgress = false;
+            async: true,
+            context: this
+        }).done(function (response) {
+            if (response.length == 0) {
+                //showNoPhotosMessage();
             }
+            else {
+                this.addPhotosToMap(response);
+            }
+            this.photosDataLoaded = true;
+        }).always(function (response) {
+            this.photosRequestInProgress = false;
+            $('#navigation-photos').removeClass('icon-loading-small');
+        }).fail(function() {
+            OC.Notification.showTemporary(t('maps', 'Failed to load photos'));
         });
     },
 

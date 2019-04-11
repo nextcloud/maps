@@ -29,6 +29,8 @@ TracksController.prototype = {
         this.map = map;
         this.mainLayer = L.featureGroup();
         var that = this;
+        var picimgurl = OC.generateUrl('/svg/core/places/picture?color=eca700');
+        $('#navigation-nonLocalizedPhotos > a.icon-picture').attr('style', 'background-image: url('+picimgurl+');')
         // UI events
         // click on menu buttons
         $('body').on('click', '.tracksMenuButton, .trackMenuButton', function(e) {

@@ -264,21 +264,25 @@ NonLocalizedPhotosController.prototype = {
 
     callForImages: function() {
         this.nonLocalizedPhotosRequestInProgress = true;
+        $('#navigation-nonLocalizedPhotos').addClass('icon-loading-small');
         $.ajax({
-            'url' : OC.generateUrl('apps/maps/photos/nonlocalized'),
-            'type': 'GET',
-            'context' : this,
-            'success': function(response) {
-                if (response.length == 0) {
-                    //showNoPhotosMessage();
-                } else {
-                    this.addNonLocalizedPhotosToMap(response);
-                }
-                this.nonLocalizedPhotosDataLoaded = true;
-            },
-            'complete': function(response) {
-                this.nonLocalizedPhotosRequestInProgress = false;
+            url: OC.generateUrl('apps/maps/photos/nonlocalized'),
+            type: 'GET',
+            async: true,
+            context: this
+        }).done(function (response) {
+            if (response.length == 0) {
+                //showNoPhotosMessage();
             }
+            else {
+                this.addNonLocalizedPhotosToMap(response);
+            }
+            this.nonLocalizedPhotosDataLoaded = true;
+        }).always(function (response) {
+            this.nonLocalizedPhotosRequestInProgress = false;
+            $('#navigation-nonLocalizedPhotos').removeClass('icon-loading-small');
+        }).fail(function() {
+            OC.Notification.showTemporary(t('maps', 'Failed to load non-geolocalized photos'));
         });
     },
 

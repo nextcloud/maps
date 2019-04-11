@@ -284,7 +284,7 @@ NonLocalizedPhotosController.prototype = {
 
     saveCordinatesToImage : function (marker) {
         var latlng = marker.getLatLng();
-        this.photosController.placePhotos([marker.data.path], latlng.lat, latlng.lng);
+        this.photosController.placePhotos([marker.data.path], [latlng.lat], [latlng.lng]);
         var date = marker.data.date;
         var path = marker.data.path;
         var removedMarkers = [];

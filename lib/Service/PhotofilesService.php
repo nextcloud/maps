@@ -90,16 +90,18 @@ class PhotofilesService {
         }
     }
 
-    public function setPhotosFilesCoords($userId, $paths, $lat, $lng, $directory) {
+    public function setPhotosFilesCoords($userId, $paths, $lats, $lngs, $directory) {
         if ($directory === 'true') {
-            return $this->setDirectoriesCoords($userId, $paths, $lat, $lng);
+            return $this->setDirectoriesCoords($userId, $paths, $lats, $lngs);
         }
         else {
-            return $this->setFilesCoords($userId, $paths, $lat, $lng);
+            return $this->setFilesCoords($userId, $paths, $lats, $lngs);
         }
     }
 
-    private function setDirectoriesCoords($userId, $paths, $lat, $lng) {
+    private function setDirectoriesCoords($userId, $paths, $lats, $lngs) {
+        $lat = $lats[0] ?? 0;
+        $lng = $lngs[0] ?? 0;
         $userFolder = $this->root->getUserFolder($userId);
         $nbDone = 0;
         foreach ($paths as $dirPath) {
@@ -123,7 +125,7 @@ class PhotofilesService {
         return $nbDone;
     }
 
-    private function setFilesCoords($userId, $paths, $lat, $lng) {
+    private function setFilesCoords($userId, $paths, $lats, $lngs) {
         $userFolder = $this->root->getUserFolder($userId);
         $nbDone = 0;
 
@@ -132,18 +134,10 @@ class PhotofilesService {
             if ($userFolder->nodeExists($cleanpath)) {
                 $file = $userFolder->get($cleanpath);
                 if ($this->isPhoto($file) and $file->isUpdateable()) {
-                    if (is_array($lat)) {
-                        $l = $lat[$i];
-                    } else {
-                        $l = $lat;
-                    }
-                    if (is_array($lng)) {
-                        $n = $lng[$i];
-                    } else {
-                        $n = $lng;
-                    }
-                    $this->setExifCoords($file, $l, $n);
-                    // delete and add again
+                    $lat = (count($lats) >= $i) ? $lats[$i] : $lats[0];
+                    $lng = (count($lngs) >= $i) ? $lngs[$i] : $lngs[0];
+                    $this->setExifCoords($file, $lat, $lng);
+                    // update the DB entry for placed photos
                     $this->deleteByFile($file);
                     $this->addByFile($file);
                     $nbDone++;

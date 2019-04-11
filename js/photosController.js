@@ -293,7 +293,7 @@ PhotosController.prototype = {
         OC.dialogs.filepicker(
             t('maps', 'Choose pictures to place'),
             function(targetPath) {
-                that.placePhotos(targetPath, latlng.lat, latlng.lng);
+                that.placePhotos(targetPath, [latlng.lat], [latlng.lng]);
             },
             true,
             ['image/jpeg', 'image/tiff'],
@@ -318,14 +318,14 @@ PhotosController.prototype = {
         );
     },
 
-    placePhotos: function(paths, lat, lng, directory=false) {
+    placePhotos: function(paths, lats, lngs, directory=false) {
         var that = this;
         $('#navigation-photos').addClass('icon-loading-small');
         $('.leaflet-container').css('cursor', 'wait');
         var req = {
             paths: paths,
-            lat: lat,
-            lng: lng,
+            lats: lats,
+            lngs: lngs,
             directory: directory
         };
         var url = OC.generateUrl('/apps/maps/photos');

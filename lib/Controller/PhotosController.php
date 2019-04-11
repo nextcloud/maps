@@ -57,8 +57,8 @@ class PhotosController extends Controller {
 	/**
      * @NoAdminRequired
      */
-    public function placePhotos($paths, $lat, $lng, $directory=false) {
-        $result = $this->photofilesService->setPhotosFilesCoords($this->userId, $paths, $lat, $lng, $directory);
+    public function placePhotos($paths, $lats, $lngs, $directory=false) {
+        $result = $this->photofilesService->setPhotosFilesCoords($this->userId, $paths, $lats, $lngs, $directory);
         return new DataResponse($result);
     }
 

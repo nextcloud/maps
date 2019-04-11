@@ -8,7 +8,7 @@
     <licence>agpl</licence>
     <author mail="eneiluj@posteo.net">Julien Veyssier</author>
     <author mail="kontakt+github@arne.email">Arne Hamann</author>
-    <version>0.0.5</version>
+    <version>0.0.6</version>
     <namespace>Maps</namespace>
     <category>multimedia</category>
     <bugs>https://github.com/nextcloud/maps/issues</bugs>

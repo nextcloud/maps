@@ -5,14 +5,14 @@ Place this app in **nextcloud/apps/**
 
 The app can be built by running:
 
-    npm install
+    make
 
 This requires the following things to be present:
 * tar: for building the archive
 * curl: used if phpunit and composer are not installed to fetch them from the web
-* npm: for building and testing everything JS, only required if a package.json is placed inside the **js/** folder
+* npm: for building and testing everything JS, only required if a package.json is placed at the top of the repository
 
-The make command will install or update Composer dependencies if a composer.json is present and also **npm run build** if a package.json is present in the **js/** folder. The npm **build** script should use local paths for build systems and package managers, so people that simply want to build the app won't need to install npm libraries globally, e.g.:
+The make command will install or update Composer dependencies if a composer.json is present and also **npm install** if a package.json is present at the top of the repository. The npm **build** script should use local paths for build systems and package managers, so people that simply want to build the app won't need to install npm libraries globally, e.g.:
 
 **package.json**:
 ```json

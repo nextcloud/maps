@@ -78,24 +78,24 @@ class GeophotoService {
         return $filesById;
     }
 
-	/**
-	 * @param string $userId
-	 * @return array with geodatas of all nonLocalizedPhotos
-	 */
-	public function getNonLocalizedFromDB ($userId) {
-	    $foo = $this->loadTimeordedPointSets($userId);
-		$photoEntities = $this->photoMapper->findAllNonLocalized($userId);
-		$userFolder = $this->getFolderForUser($userId);
-		$filesById = [];
-		$cache = $userFolder->getStorage()->getCache();
-		$previewEnableMimetypes = $this->getPreviewEnabledMimetypes();
-		foreach ($photoEntities as $photoEntity) {
-			$cacheEntry = $cache->get($photoEntity->getFileId());
-			if ($cacheEntry) {
-				$path = $cacheEntry->getPath();
+    /**
+     * @param string $userId
+     * @return array with geodatas of all nonLocalizedPhotos
+     */
+    public function getNonLocalizedFromDB ($userId) {
+        $foo = $this->loadTimeordedPointSets($userId);
+        $photoEntities = $this->photoMapper->findAllNonLocalized($userId);
+        $userFolder = $this->getFolderForUser($userId);
+        $filesById = [];
+        $cache = $userFolder->getStorage()->getCache();
+        $previewEnableMimetypes = $this->getPreviewEnabledMimetypes();
+        foreach ($photoEntities as $photoEntity) {
+            $cacheEntry = $cache->get($photoEntity->getFileId());
+            if ($cacheEntry) {
+                $path = $cacheEntry->getPath();
                 $date = $photoEntity->getDateTaken() ?? \time();
-				$locations = $this->getLocationGuesses($date);
-				foreach ($locations as $location) {
+                $locations = $this->getLocationGuesses($date);
+                foreach ($locations as $location) {
                     $file_object = new \stdClass();
                     $file_object->fileId = $photoEntity->getFileId();
                     $file_object->path = $this->normalizePath($path);
@@ -106,27 +106,27 @@ class GeophotoService {
                     $filesById[] = $file_object;
                 }
 
-			}
+            }
 
-		}
-		return $filesById;
-	}
+        }
+        return $filesById;
+    }
 
     /**
      * returns a array of locations for a given date
      * @param $dateTaken
      * @return array
      */
-	private function getLocationGuesses($dateTaken) {
-	    $locations = [];
-	    foreach ($this->timeordedPointSets as $timeordedPointSet) {
+    private function getLocationGuesses($dateTaken) {
+        $locations = [];
+        foreach ($this->timeordedPointSets as $timeordedPointSet) {
             $location = $this->getLocationFromSequenceOfPoints($dateTaken,$timeordedPointSet);
             if (!is_null($location)) {
                 $locations[] = $location;
             }
         }
-	    if (count($locations) === 0) {
-	        $locations[] = [null, null];
+        if (count($locations) === 0) {
+            $locations[] = [null, null];
         }
         return $locations;
 
@@ -138,7 +138,7 @@ class GeophotoService {
      */
     private function loadTimeordedPointSets($userId) {
         $userFolder = $this->getFolderForUser($userId);
-	    foreach ($this->tracksService->getTracksFromDB($userId) as $gpxfile) {
+        foreach ($this->tracksService->getTracksFromDB($userId) as $gpxfile) {
             $res = $userFolder->getById($gpxfile['file_id']);
             if (is_array($res) and count($res) > 0) {
                 $file = $res[0];
@@ -149,7 +149,7 @@ class GeophotoService {
                 }
             }
         }
-	    return null;
+        return null;
     }
 
     /*
@@ -158,7 +158,7 @@ class GeophotoService {
      * @return array
      */
     private function getTracksFromGPX($content) {
-	    $tracks = [];
+        $tracks = [];
         $gpx = simplexml_load_string($content);
         foreach ($gpx->trk as $trk) {
             $tracks[] = $trk;
@@ -172,7 +172,7 @@ class GeophotoService {
      * @return array
      */
     private function getTimeorderdPointsFromTrack($track) {
-	    $points = [];
+        $points = [];
         foreach ($track->trkseg as $seg) {
             foreach ($seg->trkpt as $pt) {
                 $points[strtotime($pt->time)] = [(string) $pt["lat"],(string) $pt["lon"]];

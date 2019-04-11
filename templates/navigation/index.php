@@ -99,34 +99,34 @@
                 </li>
             </ul>
         </div>
-		<ul>
-			<li id="navigation-nonLocalizedPhotos">
-				<a class="icon-picture" href="#"><?php p($l->t('non localized')); ?></a>
-				<div class="app-navigation-entry-utils">
-					<ul>
-						<li class="app-navigation-entry-utils-counter">
-							<span></span>
-						</li>
-						<li id="toggleNonLocalizedPhotosButton" class="app-navigation-entry-utils-menu-button" title="<?php p($l->t('Toggle non localized Photos')); ?>">
-							<button class="icon-toggle"></button>
-						</li>
-						<li class="app-navigation-entry-utils-menu-button nonLocalizedPhotosMenuButton">
-							<button></button>
-						</li>
-					</ul>
-				</div>
-				<div class="app-navigation-entry-menu">
-					<ul>
-						<li>
-							<a href="#" class="save-all-nonlocalized">
-								<span class="icon-category-office"></span>
-								<span><?php p($l->t('Save all visibile')); ?></span>
-							</a>
-						</li>
-					</ul>
-				</div>
-			</li>
-		</ul>
+        <ul>
+            <li id="navigation-nonLocalizedPhotos">
+                <a class="icon-picture" href="#"><?php p($l->t('non localized')); ?></a>
+                <div class="app-navigation-entry-utils">
+                    <ul>
+                        <li class="app-navigation-entry-utils-counter">
+                            <span></span>
+                        </li>
+                        <li id="toggleNonLocalizedPhotosButton" class="app-navigation-entry-utils-menu-button" title="<?php p($l->t('Toggle non localized Photos')); ?>">
+                            <button class="icon-toggle"></button>
+                        </li>
+                        <li class="app-navigation-entry-utils-menu-button nonLocalizedPhotosMenuButton">
+                            <button></button>
+                        </li>
+                    </ul>
+                </div>
+                <div class="app-navigation-entry-menu">
+                    <ul>
+                        <li>
+                            <a href="#" class="save-all-nonlocalized">
+                                <span class="icon-category-office"></span>
+                                <span><?php p($l->t('Save all visibile')); ?></span>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </li>
+        </ul>
     </li>
     <li id="navigation-contacts">
         <a class="icon-group" href="#"><?php p($l->t('Contacts')); ?></a>

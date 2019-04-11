@@ -328,7 +328,7 @@ NonLocalizedPhotosController.prototype = {
             paths.push( markerData.path);
             lats.push(markerData.lat);
             lngs.push(markerData.lng);
-			this.nonLocalizedPhotoLayer.removeLayer(this.nonLocalizedPhotoMarkers[i]);
+            this.nonLocalizedPhotoLayer.removeLayer(this.nonLocalizedPhotoMarkers[i]);
             delete this.nonLocalizedPhotoMarkers[i];
         }
         this.photosController.placePhotos(paths, lats, lngs);

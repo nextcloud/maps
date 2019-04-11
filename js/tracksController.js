@@ -987,6 +987,7 @@ TracksController.prototype = {
     },
 
     showTrackElevation: function(id) {
+        this.clearElevationControl();
         this.zoomOnTrack(id);
         var el = L.control.elevation({
             position: 'bottomleft',

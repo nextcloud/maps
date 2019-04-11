@@ -256,21 +256,24 @@ ContactsController.prototype = {
 
     callForContacts: function() {
         this.contactsRequestInProgress = true;
+        $('#navigation-contacts').addClass('icon-loading-small');
         $.ajax({
-            'url' : OC.generateUrl('apps/maps/contacts'),
-            'type': 'GET',
-            'context' : this,
-            'success': function(response) {
-                if (response.length == 0) {
-                    //showNocontactsMessage();
-                } else {
-                    this.addContactsToMap(response);
-                }
-                this.contactsDataLoaded = true;
-            },
-            'complete': function(response) {
-                this.contactsRequestInProgress = false;
+            url: OC.generateUrl('apps/maps/contacts'),
+            type: 'GET',
+            async: true,
+            context: this
+        }).done(function (response) {
+            if (response.length == 0) {
+                //showNocontactsMessage();
+            } else {
+                this.addContactsToMap(response);
             }
+            this.contactsDataLoaded = true;
+        }).always(function (response) {
+            this.contactsRequestInProgress = false;
+            $('#navigation-contacts').removeClass('icon-loading-small');
+        }).fail(function() {
+            OC.Notification.showTemporary(t('maps', 'Failed to load contacts'));
         });
     },
 
@@ -335,6 +338,7 @@ ContactsController.prototype = {
     placeContact: function(bookid, uri, uid, lat, lng) {
         var that = this;
         $('#navigation-contacts').addClass('icon-loading-small');
+        $('.leaflet-container').css('cursor', 'wait');
         var req = {
             lat: lat,
             lng: lng,
@@ -350,6 +354,7 @@ ContactsController.prototype = {
         }).always(function (response) {
             that.map.closePopup();
             $('#navigation-contacts').removeClass('icon-loading-small');
+            $('.leaflet-container').css('cursor', 'grab');
             that.reloadContacts();
         }).fail(function() {
             OC.Notification.showTemporary(t('maps', 'Failed to place contact'));

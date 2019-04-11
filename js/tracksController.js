@@ -999,6 +999,7 @@ TracksController.prototype = {
                 bottom: 23,
                 left: 60
             },
+            //collapsed: true,
             theme: 'steelblue-theme'
         });
         el.addTo(this.map);

@@ -139,6 +139,10 @@ tr.selected td {
 }
 
 /* Overriden Leaflet Styles */
+.leaflet-bottom.leaflet-left {
+    display: block;
+    z-index: 100000;
+}
 .leaflet-popup-content {
     margin: 7px 7px !important;
     color: var(--color-main-text);

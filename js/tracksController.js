@@ -122,6 +122,10 @@ TracksController.prototype = {
         $('body').on('change', '#colorinput', function(e) {
             that.okColor();
         });
+        $('body').on('click', '.drawElevationButton', function(e) {
+            var id = $(this).attr('track');
+            that.showTrackElevation(id);
+        });
         $('body').on('click', '.showTrackElevation', function(e) {
             var id = $(this).parent().parent().parent().parent().attr('track');
             that.showTrackElevation(id);
@@ -683,10 +687,11 @@ TracksController.prototype = {
         var dir = encodeURIComponent(dirname(this.tracks[id].file_path.replace(/^files/, ''))) || '/';
         var file = encodeURIComponent(this.tracks[id].file_name);
         var dl_url = '"' + url + '?dir=' + dir + '&files=' + file + '"';
-        var popupTxt = '<h3 class="popupTitle">' +
+        var popupTxt = '<h3 class="trackPopupTitle">' +
             t('maps','File') + ' : <a href=' +
             dl_url + ' title="' + t('maps','download') + '" class="getGpx" >' +
             '<i class="fa fa-cloud-download-alt" aria-hidden="true"></i> ' + this.tracks[id].file_name + '</a> ';
+        popupTxt = popupTxt + '<button class="drawElevationButton" track="'+id+'"><i class="fa fa-chart-area" aria-hidden="true"></i></button>';
         popupTxt = popupTxt + '</h3>';
         // link url and text
         if (meta.lnktxt) {
@@ -882,7 +887,8 @@ TracksController.prototype = {
             {
                 autoPan: true,
                 autoClose: true,
-                closeOnClick: true
+                closeOnClick: true,
+                className: 'trackPopup'
             }
         );
         var tooltipText = this.tracks[id].file_name;
@@ -899,7 +905,8 @@ TracksController.prototype = {
             {
                 autoPan: true,
                 autoClose: true,
-                closeOnClick: true
+                closeOnClick: true,
+                className: 'trackPopup'
             }
         );
         this.trackLayers[id].addLayer(bl);

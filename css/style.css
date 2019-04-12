@@ -185,6 +185,15 @@ tr.selected td {
 .leaflet-popup-content-wrapper {
     border-radius: 3px !important;
 }
+.trackPopup {
+    max-width: 250px;
+}
+.getGpx {
+    word-wrap: break-word;
+}
+.trackPopupTitle {
+    text-align: center;
+}
 
 
 .leaflet-marker-nonLocalizedPhoto.nonLocalizedPhoto-marker:after,

@@ -724,27 +724,25 @@ TracksController.prototype = {
         popupTxt = popupTxt + '</tr><tr>';
 
         popupTxt = popupTxt + '<td><i class="fa fa-clock" aria-hidden="true"></i> ' +
-            t('maps','Duration') + ' </td><td> ' + meta.duration + '</td>';
+            t('maps','Duration') + ' </td><td> ' + formatTimeSeconds(meta.duration || 0) + '</td>';
         popupTxt = popupTxt + '</tr><tr>';
         popupTxt = popupTxt + '<td><i class="fa fa-clock" aria-hidden="true"></i> <b>' +
-            t('maps','Moving time') + '</b> </td><td> ' + meta.movtime + '</td>';
+            t('maps','Moving time') + '</b> </td><td> ' + formatTimeSeconds(meta.movtime || 0) + '</td>';
         popupTxt = popupTxt + '</tr><tr>';
         popupTxt = popupTxt + '<td><i class="fa fa-clock" aria-hidden="true"></i> ' +
-            t('maps','Pause time') + ' </td><td> ' + meta.stptime + '</td>';
+            t('maps','Pause time') + ' </td><td> ' + formatTimeSeconds(meta.stptime || 0) + '</td>';
         popupTxt = popupTxt + '</tr><tr>';
 
         var dbs = t('maps', 'no date');
         var dbes = dbs;
         try{
-            if (meta.begin !== '' && meta.begin !== 'None') {
-                var db = moment(meta.begin.replace(' ', 'T'));
-                //db.tz(chosentz);
-                dbs = db.format('YYYY-MM-DD HH:mm:ss (Z)');
+            if (meta.begin !== '' && meta.begin !== -1) {
+                var db = new Date(meta.begin * 1000);
+                dbs = db.toIsoString();
             }
-            if (meta.end !== '' && meta.end !== 'None') {
-                var dbe = moment(meta.end.replace(' ', 'T'));
-                //dbe.tz(chosentz);
-                dbes = dbe.format('YYYY-MM-DD HH:mm:ss (Z)');
+            if (meta.end !== '' && meta.end !== -1) {
+                var dbe = new Date(meta.end * 1000);
+                dbes = dbe.toIsoString();
             }
         }
         catch(err) {
@@ -757,19 +755,19 @@ TracksController.prototype = {
         popupTxt = popupTxt +'</tr><tr>';
         popupTxt = popupTxt +'<td><i class="fa fa-chart-line" aria-hidden="true"></i> <b>' +
             t('maps', 'Cumulative elevation gain') + '</b> </td><td> ' +
-            metersToElevation(meta.posel) + '</td>';
+            (meta.posel ? metersToElevation(meta.posel) : 'NA') + '</td>';
         popupTxt = popupTxt +'</tr><tr>';
         popupTxt = popupTxt +'<td><i class="fa fa-chart-line" aria-hidden="true"></i> ' +
             t('maps','Cumulative elevation loss') + ' </td><td> ' +
-            metersToElevation(meta.negel) + '</td>';
+            (meta.negel ? metersToElevation(meta.negel) : 'NA') + '</td>';
         popupTxt = popupTxt +'</tr><tr>';
         popupTxt = popupTxt +'<td><i class="fa fa-chart-area" aria-hidden="true"></i> ' +
             t('maps','Minimum elevation') + ' </td><td> ' +
-            metersToElevation(meta.minel) + '</td>';
+            ((meta.minel && meta.minel !== -1000) ? metersToElevation(meta.minel) : 'NA') + '</td>';
         popupTxt = popupTxt +'</tr><tr>';
         popupTxt = popupTxt +'<td><i class="fa fa-chart-area" aria-hidden="true"></i> ' +
             t('maps','Maximum elevation') + ' </td><td> ' +
-            metersToElevation(meta.maxel) + '</td>';
+            ((meta.maxel && meta.maxel !== -1000) ? metersToElevation(meta.maxel) : 'NA') + '</td>';
         popupTxt = popupTxt +'</tr><tr>';
         popupTxt = popupTxt +'<td><i class="fa fa-tachometer-alt" aria-hidden="true"></i> <b>' +
             t('maps','Maximum speed') + '</b> </td><td> ';

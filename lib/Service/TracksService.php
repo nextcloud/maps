@@ -160,7 +160,7 @@ class TracksService {
         $lat = '0';
         $lon = '0';
         $total_distance = 0;
-        $total_duration = '???';
+        $total_duration = 0;
         $date_begin = null;
         $date_end = null;
         $pos_elevation = 0;
@@ -501,7 +501,7 @@ class TracksService {
         # TOTAL STATS : duration, avg speed, avg_moving_speed
         if ($date_end !== null and $date_begin !== null){
             $totsec = abs($date_end->getTimestamp() - $date_begin->getTimestamp());
-            $total_duration = sprintf('%02d:%02d:%02d', (int)($totsec/3600), (int)(($totsec % 3600)/60), $totsec % 60); 
+            $total_duration = $totsec;
             if ($totsec === 0){
                 $avg_speed = 0;
             }
@@ -511,9 +511,6 @@ class TracksService {
                 $avg_speed = $avg_speed * 3600;
                 $avg_speed = sprintf('%.2f', $avg_speed);
             }
-        }
-        else{
-            $total_duration = "???";
         }
 
         // determination of real moving average speed from moving time
@@ -556,18 +553,6 @@ class TracksService {
         }
 
         $trackNameList = trim($trackNameList, ',').']';
-        if ($date_begin === null){
-            $date_begin = '';
-        }
-        else{
-            $date_begin = $date_begin->format('Y-m-d H:i:s');
-        }
-        if ($date_end === null){
-            $date_end = '';
-        }
-        else{
-            $date_end = $date_end->format('Y-m-d H:i:s');
-        }
         if ($north === null){
             $north = 0;
         }
@@ -581,37 +566,22 @@ class TracksService {
             $west = 0;
         }
 
-        if ($max_elevation === null){
-            $max_elevation = '"???"';
-        }
-        else{
-            $max_elevation = number_format($max_elevation, 2, '.', '');
-        }
-        if ($min_elevation === null){
-            $min_elevation = '"???"';
-        }
-        else{
-            $min_elevation = number_format($min_elevation, 2, '.', '');
-        }
-        $pos_elevation = number_format($pos_elevation, 2, '.', '');
-        $neg_elevation = number_format($neg_elevation, 2, '.', '');
-
-        $result = sprintf('{"lat":%s, "lng":%s, "name": "%s", "distance": %.3f, "duration": "%s", "begin": "%s", "end": "%s", "posel": %.2f, "negel": %.2f, "minel": %.2f, "maxel": %s, "maxspd": %.2f, "avgspd": %.2f, "movtime": "%s", "stptime": "%s", "movavgspd": %s, "n": %.8f, "s": %.8f, "e": %.8f, "w": %.8f, "trnl": %s, "lnkurl": "%s", "lnktxt": "%s", "movpace": %.2f}',
+        $result = sprintf('{"lat":%s, "lng":%s, "name": "%s", "distance": %.3f, "duration": %d, "begin": %d, "end": %d, "posel": %.2f, "negel": %.2f, "minel": %.2f, "maxel": %.2f, "maxspd": %.2f, "avgspd": %.2f, "movtime": %d, "stptime": %d, "movavgspd": %s, "n": %.8f, "s": %.8f, "e": %.8f, "w": %.8f, "trnl": %s, "lnkurl": "%s", "lnktxt": "%s", "movpace": %.2f}',
             $lat,
             $lon,
             str_replace('"', "'", $name),
             $total_distance,
             $total_duration,
-            $date_begin,
-            $date_end,
+            ($date_begin !== null) ? $date_begin->getTimestamp() : -1,
+            ($date_end !== null) ? $date_end->getTimestamp() : -1,
             $pos_elevation,
             $neg_elevation,
-            $min_elevation,
-            $max_elevation,
+            ($min_elevation !== null) ? $min_elevation : -1000,
+            ($max_elevation !== null) ? $max_elevation : -1000,
             $max_speed,
             $avg_speed,
-            format_time_seconds($moving_time),
-            format_time_seconds($stopped_time),
+            $moving_time,
+            $stopped_time,
             $moving_avg_speed,
             $north,
             $south,
@@ -625,13 +595,6 @@ class TracksService {
         return $result;
     }
 
-}
-
-function format_time_seconds($time_s){
-    $minutes = floor($time_s / 60);
-    $hours = floor($minutes / 60);
-
-    return sprintf('%02d:%02d:%02d', $hours, $minutes % 60, $time_s % 60);
 }
 
 /*

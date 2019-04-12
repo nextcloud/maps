@@ -80,6 +80,12 @@ function hexToRgb(hex) {
     } : null;
 }
 
+function pad(num, size) {
+    var s = num + '';
+    while (s.length < size) s = '0' + s;
+    return s;
+}
+
 Date.prototype.toIsoString = function() {
     var tzo = -this.getTimezoneOffset(),
         dif = tzo >= 0 ? '+' : '-',
@@ -181,3 +187,14 @@ function minPerKmToPace(minPerKm) {
         return (nMinPerKm / 1000 / METERSTONAUTICALMILES).toFixed(2) + ' min/nmi';
     }
 }
+
+function formatTimeSeconds(time_s){
+    var minutes = Math.floor(time_s / 60);
+    var hours = Math.floor(minutes / 60);
+
+    var ph = pad(hours, 2);
+    var pm = pad(minutes % 60, 2);
+    var ps = pad(time_s % 60, 2);
+    return `${ph}:${pm}:${ps}`;
+}
+

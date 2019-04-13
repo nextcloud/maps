@@ -57,4 +57,14 @@ class PageController extends Controller {
         return $response;
     }
 
+    /**
+     * @NoAdminRequired
+     * @NoCSRFRequired
+     */
+    public function openGeoLink($url) {
+        $params = array('user' => $this->userId);
+        $params["geourl"]  = $url;
+        return new TemplateResponse('maps', 'index', $params);
+    }
+
 }

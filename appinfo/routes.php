@@ -11,6 +11,8 @@ return [
     'routes' => [
         ['name' => 'page#index', 'url' => '/', 'verb' => 'GET'],
         ['name' => 'page#do_echo', 'url' => '/echo', 'verb' => 'POST'],
+        ['name' => 'page#openGeoLink', 'url' => '/openGeoLink/{url}', 'verb' => 'GET'],
+
 
         // utils
         ['name' => 'utils#getOptionsValues', 'url' => '/getOptionsValues', 'verb' => 'POST'],
@@ -61,5 +63,6 @@ return [
         ['name' => 'tracks#editTrack', 'url' => '/tracks/{id}', 'verb' => 'PUT'],
         ['name' => 'tracks#deleteTrack', 'url' => '/tracks/{id}', 'verb' => 'DELETE'],
         ['name' => 'tracks#deleteTracks', 'url' => '/tracks', 'verb' => 'DELETE'],
+
     ]
 ];

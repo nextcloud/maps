@@ -52,3 +52,6 @@ style('maps', 'style');
 <div id="map"></div>
 <div id="timeRangeSlider">
 </div>
+<?php if (!empty($_['geourl'])): ?>
+	<input type="hidden" value=<?php p($_['geourl']);?> id="geourl">
+<?php endif; ?>

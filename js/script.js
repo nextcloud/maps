@@ -1,5 +1,6 @@
 (function($, OC) {
     $(function() {
+        window.navigator.registerProtocolHandler("geo", OC.generateUrl('/apps/maps/openGeoLink/')+"%s", "Nextcloud Maps");
         mapController.initMap();
         mapController.map.favoritesController = favoritesController;
         favoritesController.initFavorites(mapController.map);
@@ -13,6 +14,7 @@
 
         // once controllers have been set/initialized, we can restore option values from server
         optionsController.restoreOptions();
+        geoLinkController.showLinkLocation();
 
         // Popup
         $(document).on('click', '#opening-hours-header', function() {
@@ -63,6 +65,18 @@
     var helpers = {
         beautifyUrl: function(url) {
             return url.replace(/^(?:\w+:|)\/\/(?:www\.|)(.*[^\/])\/*$/, '$1');
+        }
+    };
+
+    var geoLinkController = {
+        marker: null,
+        lat: null,
+        lng: null,
+        showLinkLocation: function () {
+            var geourl = document.getElementById("geourl").value;
+            [this.lat, this.lng] = geourl.substring(4).split(',');
+            this.marker  = L.marker([this.lat, this.lng]);
+            mapController.map.addLayer(this.marker);
         }
     };
 

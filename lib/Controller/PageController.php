@@ -64,7 +64,25 @@ class PageController extends Controller {
     public function openGeoLink($url) {
         $params = array('user' => $this->userId);
         $params["geourl"]  = $url;
-        return new TemplateResponse('maps', 'index', $params);
+        $response = new TemplateResponse('maps', 'index', $params);
+        if (class_exists('OCP\AppFramework\Http\ContentSecurityPolicy')) {
+            $csp = new \OCP\AppFramework\Http\ContentSecurityPolicy();
+            // map tiles
+            $csp->addAllowedImageDomain('https://*.tile.openstreetmap.org');
+            $csp->addAllowedImageDomain('https://server.arcgisonline.com');
+            $csp->addAllowedImageDomain('https://*.cartocdn.com');
+            $csp->addAllowedImageDomain('https://*.opentopomap.org');
+            $csp->addAllowedImageDomain('https://*.cartocdn.com');
+            $csp->addAllowedImageDomain('http://*.stamen.com');
+            // routing engine
+            $csp->addAllowedConnectDomain('https://*.project-osrm.org');
+            // poi images
+            $csp->addAllowedImageDomain('https://nominatim.openstreetmap.org');
+            // search and geocoder
+            $csp->addAllowedConnectDomain('https://nominatim.openstreetmap.org');
+            $response->setContentSecurityPolicy($csp);
+        }
+        return $response;
     }
 
 }

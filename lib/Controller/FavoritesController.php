@@ -30,6 +30,8 @@ use OCP\AppFramework\ApiController;
 use OCP\Constants;
 use OCP\Share;
 
+use OCP\IDateTimeZone;
+
 use OCA\Maps\Service\FavoritesService;
 
 function endswith($string, $test) {
@@ -55,14 +57,17 @@ class FavoritesController extends Controller {
     private $trans;
     private $logger;
     private $favoritesService;
+    private $dateTimeZone;
     protected $appName;
 
     public function __construct($AppName, IRequest $request, $UserId,
                                 $userfolder, $config, $shareManager,
                                 IAppManager $appManager, $userManager,
-                                $groupManager, IL10N $trans, $logger, FavoritesService $favoritesService){
+                                $groupManager, IL10N $trans, $logger, FavoritesService $favoritesService,
+                                IDateTimeZone $dateTimeZone){
         parent::__construct($AppName, $request);
         $this->favoritesService = $favoritesService;
+        $this->dateTimeZone = $dateTimeZone;
         $this->logger = $logger;
         $this->appName = $AppName;
         $this->appVersion = $config->getAppValue('maps', 'installed_version');
@@ -210,9 +215,10 @@ class FavoritesController extends Controller {
 
         // generate export file name
         $prefix = $all ? '' : 'filtered-';
-        $now = new \DateTime();
-        $dateStr = $now->format('Y-m-d H:i:s');
-        $filename = $dateStr.'-'.$prefix.'favorites.gpx';
+        $tz = $this->dateTimeZone->getTimeZone();
+        $now = new \DateTime('now', $tz);
+        $dateStr = $now->format('Y-m-d H:i:s (P)');
+        $filename = $dateStr.' '.$prefix.'favorites.gpx';
 
         if ($mapsFolder->nodeExists($filename)) {
             $mapsFolder->get($filename)->delete();

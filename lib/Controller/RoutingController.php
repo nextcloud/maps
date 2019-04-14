@@ -29,6 +29,7 @@ use OCP\AppFramework\Controller;
 use OCP\AppFramework\ApiController;
 use OCP\Constants;
 use OCP\Share;
+use OCP\IDateTimeZone;
 
 function endswith($string, $test) {
     $strlen = strlen($string);
@@ -52,14 +53,17 @@ class RoutingController extends Controller {
     private $defaultDeviceId;
     private $trans;
     private $logger;
+    private $dateTimeZone;
     protected $appName;
 
     public function __construct($AppName, IRequest $request, $UserId,
                                 $userfolder, $config, $shareManager,
                                 IAppManager $appManager, $userManager,
-                                $groupManager, IL10N $trans, $logger){
+                                $groupManager, IL10N $trans, $logger,
+                                IDateTimeZone $dateTimeZone){
         parent::__construct($AppName, $request);
         $this->logger = $logger;
+        $this->dateTimeZone = $dateTimeZone;
         $this->appName = $AppName;
         $this->appVersion = $config->getAppValue('maps', 'installed_version');
         $this->userId = $UserId;
@@ -103,9 +107,10 @@ class RoutingController extends Controller {
         }
 
         // generate export file name
-        $now = new \DateTime();
-        $dateStr = $now->format('Y-m-d H:i:s');
-        $filename = $dateStr.'-'.$name.'.gpx';
+        $tz = $this->dateTimeZone->getTimeZone();
+        $now = new \DateTime('now', $tz);
+        $dateStr = $now->format('Y-m-d H:i:s (P)');
+        $filename = $dateStr.' '.$name.'.gpx';
 
         if ($mapsFolder->nodeExists($filename)) {
             $mapsFolder->get($filename)->delete();

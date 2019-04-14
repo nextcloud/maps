@@ -60,7 +60,8 @@ class Application extends App {
                     new FavoritesService(
                         $c->query('ServerContainer')->getLogger(),
                         $c->query('ServerContainer')->getL10N($c->query('AppName'))
-                    )
+                    ),
+                    $c->query('ServerContainer')->getDateTimeZone()
                 );
             }
         );
@@ -100,7 +101,8 @@ class Application extends App {
                     $c->getServer()->getUserManager(),
                     $c->getServer()->getGroupManager(),
                     $c->query('ServerContainer')->getL10N($c->query('AppName')),
-                    $c->query('ServerContainer')->getLogger()
+                    $c->query('ServerContainer')->getLogger(),
+                    $c->query('ServerContainer')->getDateTimeZone()
                 );
             }
         );

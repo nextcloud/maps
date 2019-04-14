@@ -1,6 +1,6 @@
 (function($, OC) {
     $(function() {
-        window.navigator.registerProtocolHandler("geo", OC.generateUrl('/apps/maps/openGeoLink/')+"%s", "Nextcloud Maps");
+        window.navigator.registerProtocolHandler('geo', OC.generateUrl('/apps/maps/openGeoLink/') + '%s', 'Nextcloud Maps');
         mapController.initMap();
         mapController.map.favoritesController = favoritesController;
         favoritesController.initFavorites(mapController.map);
@@ -73,10 +73,14 @@
         lat: null,
         lng: null,
         showLinkLocation: function () {
-            var geourl = document.getElementById("geourl").value;
-            [this.lat, this.lng] = geourl.substring(4).split(',');
-            this.marker  = L.marker([this.lat, this.lng]);
-            mapController.map.addLayer(this.marker);
+            var geourlElem = document.getElementById('geourl');
+            if (geourlElem) {
+                var geourl = geourlElem.value;
+                [this.lat, this.lng] = geourl.substring(4).split(',');
+                this.marker  = L.marker([this.lat, this.lng]);
+                mapController.map.addLayer(this.marker);
+                mapController.map.setView([this.lat, this.lng], 15);
+            }
         }
     };
 

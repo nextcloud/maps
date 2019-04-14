@@ -72,7 +72,7 @@
         marker: null,
         lat: null,
         lng: null,
-        showLinkLocation: function () {
+        showLinkLocation: function() {
             var geourlElem = document.getElementById('geourl');
             if (geourlElem) {
                 var geourl = geourlElem.value;
@@ -81,7 +81,17 @@
                 mapController.map.addLayer(this.marker);
                 mapController.map.setView([this.lat, this.lng], 15);
             }
-        }
+        },
+
+        shareLocation: function(e) {
+            var lat = e.latlng.lat;
+            var lng = e.latlng.lng;
+            var geoLink = 'geo:' + lat.toFixed(6) + ',' + lng.toFixed(6);
+            var dummy = $('<input id="dummycopy">').val(geoLink).appendTo('body').select();
+            document.execCommand('copy');
+            $('#dummycopy').remove();
+            OC.Notification.showTemporary(t('maps', 'Geo link ({geoLink}) copied to clipboard', {geoLink: geoLink}));
+        },
     };
 
     var optionsController = {
@@ -247,6 +257,7 @@
             var markerGreenImageUrl = OC.generateUrl('/svg/core/actions/address?color=33EE33');
             var photoImageUrl = OC.generateUrl('/svg/core/places/picture?color=000000');
             var contactImageUrl = OC.generateUrl('/svg/core/actions/user?color=000000');
+            var shareImageUrl = OC.generateUrl('/svg/core/actions/share?color=000000');
             this.map = L.map('map', {
                 zoom: 2,
                 zoomControl: true,
@@ -273,6 +284,10 @@
                     text: t('maps', 'Place contact'),
                     icon: contactImageUrl,
                     callback: contactsController.contextPlaceContact
+                }, {
+                    text: t('maps', 'Share this location'),
+                    icon: shareImageUrl,
+                    callback: geoLinkController.shareLocation
                 }, '-', {
                     text: t('maps', 'Route from here'),
                     icon: markerGreenImageUrl,

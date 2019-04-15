@@ -104,6 +104,14 @@ class PhotofilesService {
         }
     }
 
+    // add all photos of a folder taking care of shared accesses
+    public function safeAddByFolder($folder) {
+        $photos = $this->gatherPhotoFiles($folder, true);
+        foreach($photos as $photo) {
+            $this->safeAddByFile($photo);
+        }
+    }
+
     public function addByFolder(Node $folder) {
         $photos = $this->gatherPhotoFiles($folder, true);
         foreach($photos as $photo) {

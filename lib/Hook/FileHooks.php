@@ -67,6 +67,21 @@ class FileHooks {
             }
         });
 
+        // move file: delete then add it again in DB to be sure it's there for all users with access to target file
+        // TODO understand why it's triggered twice and avoid double DB update
+        $this->root->listen('\OC\Files', 'postRename', function(\OCP\Files\Node $source, \OCP\Files\Node $target) {
+            if ($this->isUserNode($source) and
+                $this->isUserNode($target) and
+                $target->getType() === FileInfo::TYPE_FILE
+            ) {
+                // if moved (parents are different) => update DB with access list
+                if ($source->getParent()->getId() !== $target->getParent()->getId()) {
+                    $this->photofilesService->deleteByFile($target);
+                    $this->photofilesService->safeAddByFile($target);
+                }
+            }
+        });
+
         Util::connectHook('\OCA\Files_Trashbin\Trashbin', 'post_restore', $this, 'restore');
 
         // sharing hooks

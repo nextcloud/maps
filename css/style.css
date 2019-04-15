@@ -358,6 +358,8 @@ table.editFavorite input[type=text] {
 #toggleNonLocalizedPhotosButton button,
 #toggleContactsButton button,
 #toggleFavoritesButton button,
+#toggleDevicesButton button,
+.toggleDeviceButton button,
 #toggleTracksButton button,
 .toggleTrackButton button,
 .toggleCategoryButton button {
@@ -369,7 +371,9 @@ table.editFavorite input[type=text] {
 #navigation-nonLocalizedPhotos > a,
 #navigation-contacts > a,
 #navigation-tracks > a,
+#navigation-devices > a,
 .track-line > a,
+.device-line > a,
 .category-line > a {
     opacity: 1 !important;
 }

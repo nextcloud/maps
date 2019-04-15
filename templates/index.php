@@ -7,6 +7,7 @@ script('maps', 'nonLocalizedPhotosController');
 script('maps', 'contactsController');
 script('maps', 'favoritesController');
 script('maps', 'tracksController');
+script('maps', 'devicesController');
 script('maps', 'script');
 ?>
 

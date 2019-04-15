@@ -39,6 +39,9 @@ NonLocalizedPhotosController.prototype = {
                 a.layer.spiderfy();
             }
         });
+        // menu entry icon
+        var picimgurl = OC.generateUrl('/svg/core/places/picture?color=eca700');
+        $('#navigation-nonLocalizedPhotos > a.icon-picture').attr('style', 'background-image: url('+picimgurl+');')
         // click on nonLocalizedPhoto menu entry
         $('body').on('click', '#toggleNonLocalizedPhotosButton, #navigation-nonLocalizedPhotos > a', function(e) {
             that.toggleLayer();

@@ -200,6 +200,43 @@
         <ul id="track-list">
         </ul>
     </li>
+    <li id="navigation-devices" class="collapsible">
+        <a class="icon-phone" href="#"><?php p($l->t('Devices')); ?></a>
+        <div class="app-navigation-entry-utils">
+            <ul>
+                <li id="toggleDevicesButton" class="app-navigation-entry-utils-menu-button" title="<?php p($l->t('Toggle devices')); ?>">
+                    <button class="icon-toggle"></button>
+                </li>
+                <li class="app-navigation-entry-utils-menu-button devicesMenuButton">
+                    <button></button>
+                </li>
+            </ul>
+        </div>
+        <div class="app-navigation-entry-menu">
+            <ul>
+                <li>
+                    <a href="#" id="select-all-devices">
+                        <span class="icon-category-enabled"></span>
+                        <span><?php p($l->t('Show all devices')); ?></span>
+                    </a>
+                </li>
+                <li>
+                    <a href="#" id="select-no-devices">
+                        <span class="icon-category-disabled"></span>
+                        <span><?php p($l->t('Hide all devices')); ?></span>
+                    </a>
+                </li>
+                <li>
+                    <a href="#" id="delete-all-devices">
+                        <span class="icon-delete"></span>
+                        <span><?php p($l->t('Delete all devices history')); ?></span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+        <ul id="device-list">
+        </ul>
+    </li>
 </ul>
 <img id="dummylogo"/>
 <input id="trackcolor" type="text" style="display:none;"></input>

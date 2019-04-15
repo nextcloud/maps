@@ -64,8 +64,11 @@ class GeophotoService {
                 // this path is relative to owner's storage
                 //$path = $cacheEntry->getPath();
                 // but we want it relative to current user's storage
-                $path = $userFolder->getById($photoEntity->getFileId())[0]->getPath();
-                $path = preg_replace('/^\/'.$userId.'\//', '', $path);
+                $file = $userFolder->getById($photoEntity->getFileId())[0];
+                if ($file === null) {
+                    continue;
+                }
+                $path = preg_replace('/^\/'.$userId.'\//', '', $file->getPath());
 
                 $file_object = new \stdClass();
                 $file_object->fileId = $photoEntity->getFileId();
@@ -75,7 +78,7 @@ class GeophotoService {
                 /* 30% longer
                  * $file_object->folderId = $cache->getParentId($path);
                  */
-                $file_object->path = $path;
+                $file_object->path = $this->normalizePath($path);
                 $file_object->hasPreview = in_array($cacheEntry->getMimeType(), $previewEnableMimetypes);
                 $filesById[] = $file_object;
             }
@@ -100,15 +103,18 @@ class GeophotoService {
                 // this path is relative to owner's storage
                 //$path = $cacheEntry->getPath();
                 // but we want it relative to current user's storage
-                $path = $userFolder->getById($photoEntity->getFileId())[0]->getPath();
-                $path = preg_replace('/^\/'.$userId.'\//', '', $path);
+                $file = $userFolder->getById($photoEntity->getFileId())[0];
+                if ($file === null) {
+                    continue;
+                }
+                $path = preg_replace('/^\/'.$userId.'\//', '', $file->getPath());
 
                 $date = $photoEntity->getDateTaken() ?? \time();
                 $locations = $this->getLocationGuesses($date);
                 foreach ($locations as $location) {
                     $file_object = new \stdClass();
                     $file_object->fileId = $photoEntity->getFileId();
-                    $file_object->path = $path;
+                    $file_object->path = $this->normalizePath($path);
                     $file_object->hasPreview = in_array($cacheEntry->getMimeType(), $previewEnableMimetypes);
                     $file_object->lat = $location[0];
                     $file_object->lng = $location[1];

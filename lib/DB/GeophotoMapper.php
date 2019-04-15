@@ -54,6 +54,11 @@ class GeophotoMapper extends Mapper {
         return $this->execute($sql, [$fileId]);
     }
 
+    public function deleteByFileIdUserId($fileId, $userId) {
+        $sql = 'DELETE FROM `*PREFIX*maps_photos` where `file_id` = ? and `user_id` = ?';
+        return $this->execute($sql, [$fileId, $userId]);
+    }
+
     public function deleteAll($userId) {
         $sql = 'DELETE FROM `*PREFIX*maps_photos` where `user_id` = ?';
         return $this->execute($sql, [$userId]);

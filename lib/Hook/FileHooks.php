@@ -19,6 +19,7 @@ use OCP\ILogger;
 use OCP\Files\Node;
 use OCP\Files\IRootFolder;
 use OCP\Util;
+use OCP\Share;
 
 use OCA\Maps\Service\PhotofilesService;
 
@@ -68,6 +69,28 @@ class FileHooks {
         });
 
         Util::connectHook('\OCA\Files_Trashbin\Trashbin', 'post_restore', $this, 'restore');
+
+        // sharing hooks
+        Util::connectHook(\OCP\Share::class, 'post_shared', $this, 'share');
+        Util::connectHook(\OCP\Share::class, 'post_unshare', $this, 'unShare');
+    }
+
+    public static function share($params) {
+        if ($params['shareType'] === Share::SHARE_TYPE_USER) {
+            //$targetFilePath = $params['itemTarget'];
+            //$sourceUserId = $params['uidOwner'];
+            $targetUserId = $params['shareWith'];
+            $fileId = $params['fileSource']; // or itemSource
+            $this->photofilesService->safeAddByFileIdUserId($fileId, $targetUserId);
+        }
+    }
+
+    public static function unShare($params) {
+        if ($params['shareType'] === Share::SHARE_TYPE_USER) {
+            $targetUserId = $params['shareWith'];
+            $fileId = $params['fileSource']; // or itemSource
+            $this->photofilesService->deleteByFileIdUserId($fileId, $targetUserId);
+        }
     }
 
     public static function restore($params) {

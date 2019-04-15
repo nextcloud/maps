@@ -72,6 +72,14 @@ class PhotofilesService {
         }
     }
 
+    public function safeAddByFileIdUserId($fileId, $userId) {
+        $userFolder = $this->root->getUserFolder($userId);
+        $file = $userFolder->getById($fileId)[0];
+        if ($file !== null and $this->isPhoto($file)) {
+            $this->safeAddPhoto($file, $userId);
+        }
+    }
+
     public function addByFolder(Node $folder) {
         $photos = $this->gatherPhotoFiles($folder, true);
         foreach($photos as $photo) {
@@ -81,6 +89,10 @@ class PhotofilesService {
 
     public function deleteByFile(Node $file) {
         $this->photoMapper->deleteByFileId($file->getId());
+    }
+
+    public function deleteByFileIdUserId($fileId, $userId) {
+        $this->photoMapper->deleteByFileIdUserId($fileId, $userId);
     }
 
     public function deleteByFolder(Node $folder) {

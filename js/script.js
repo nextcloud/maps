@@ -314,7 +314,8 @@
                 iconLoading: 'fa fa-spinner fa-spin',
                 strings: {
                     title: t('maps', 'Get current location')
-                }
+                },
+                locateOptions: {enableHighAccuracy: true}
             }).addTo(this.map);
             $('.leaflet-control-locate a').click( function(e) {
                 optionsController.saveOptionValues({locControlEnabled: mapController.locControl._active});

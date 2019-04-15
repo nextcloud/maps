@@ -117,6 +117,16 @@ class PhotofilesService {
         $this->photoMapper->deleteByFileId($file->getId());
     }
 
+    // delete photo only if it's not accessible to user anymore
+    // it might have been shared multiple times by different users
+    public function safeDeleteByFileIdUserId($fileId, $userId) {
+        $userFolder = $this->root->getUserFolder($userId);
+        $files = $userFolder->getById($fileId);
+        if (!is_array($files) or count($files) === 0) {
+            $this->photoMapper->deleteByFileIdUserId($fileId, $userId);
+        }
+    }
+
     public function deleteByFileIdUserId($fileId, $userId) {
         $this->photoMapper->deleteByFileIdUserId($fileId, $userId);
     }
@@ -125,6 +135,19 @@ class PhotofilesService {
         $photos = $this->gatherPhotoFiles($folder, true);
         foreach($photos as $photo) {
             $this->photoMapper->deleteByFileId($photo->getId());
+        }
+    }
+
+    // delete folder photos only if it's not accessible to user anymore
+    public function safeDeleteByFolderIdUserId($folderId, $userId) {
+        $userFolder = $this->root->getUserFolder($userId);
+        $folders = $userFolder->getById($folderId);
+        if (is_array($folders) and count($folders) === 1) {
+            $folder = $folders[0];
+            $photos = $this->gatherPhotoFiles($folder, true);
+            foreach($photos as $photo) {
+                $this->photoMapper->deleteByFileIdUserId($photo->getId(), $userId);
+            }
         }
     }
 

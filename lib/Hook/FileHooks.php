@@ -63,8 +63,7 @@ class FileHooks {
         // and NOT when it's created so we can use it for updating coordinates in DB
         $this->root->listen('\OC\Files', 'postTouch', function(\OCP\Files\Node $node) {
             if ($this->isUserNode($node)) {
-                $this->photofilesService->deleteByFile($node);
-                $this->photofilesService->addByFile($node);
+                $this->photofilesService->updateByFile($node);
             }
         });
 

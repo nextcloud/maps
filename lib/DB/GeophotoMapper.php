@@ -64,4 +64,9 @@ class GeophotoMapper extends Mapper {
         return $this->execute($sql, [$userId]);
     }
 
+    public function updateByFileId($fileId, $lat, $lng) {
+        $sql = 'UPDATE `*PREFIX*maps_photos` set `lat` = ? , `lng` = ? where `file_id` = ?';
+        return $this->execute($sql, [$lat, $lng, $fileId]);
+    }
+
 }

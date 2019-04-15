@@ -87,6 +87,20 @@ class PhotofilesService {
         }
     }
 
+    public function updateByFile(Node $file) {
+        $exif = $this->getExif($file);
+        if (!is_null($exif)) {
+            $ownerId = $file->getOwner()->getUID();
+            if ($this->photoMapper->findByFileId($ownerId, $file->getId()) === null) {
+                // TODO insert for all users having access to this file, not just the owner
+                $this->insertPhoto($file, $ownerId, $exif);
+            }
+            else {
+                $this->updatePhoto($file, $exif);
+            }
+        }
+    }
+
     public function deleteByFile(Node $file) {
         $this->photoMapper->deleteByFileId($file->getId());
     }
@@ -125,9 +139,7 @@ class PhotofilesService {
                     foreach($nodes as $node) {
                         if ($this->isPhoto($node) and $node->isUpdateable()) {
                             $this->setExifCoords($node, $lat, $lng);
-                            // delete and add again
-                            $this->deleteByFile($node);
-                            $this->addByFile($node);
+                            $this->photoMapper->updateByFileId($node->getId(), $lat, $lng);
                             $nbDone++;
                         }
                     }
@@ -149,9 +161,7 @@ class PhotofilesService {
                     $lat = (count($lats) >= $i) ? $lats[$i] : $lats[0];
                     $lng = (count($lngs) >= $i) ? $lngs[$i] : $lngs[0];
                     $this->setExifCoords($file, $lat, $lng);
-                    // update the DB entry for placed photos
-                    $this->deleteByFile($file);
-                    $this->addByFile($file);
+                    $this->photoMapper->updateByFileId($file->getId(), $lat, $lng);
                     $nbDone++;
                 }
             }
@@ -189,6 +199,12 @@ class PhotofilesService {
         // alternative should be file creation date
         $photoEntity->setDateTaken($exif->dateTaken ?? $photo->getMTime());
         $this->photoMapper->insert($photoEntity);
+    }
+
+    private function updatePhoto($file, $exif) {
+        $lat = $exif->lat;
+        $lng = $exif->lng;
+        $this->photoMapper->updateByFileId($file->getId(), $lat, $lng);
     }
 
     private function normalizePath($node) {

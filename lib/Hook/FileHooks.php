@@ -70,25 +70,45 @@ class FileHooks {
         Util::connectHook('\OCA\Files_Trashbin\Trashbin', 'post_restore', $this, 'restore');
 
         // sharing hooks
-        Util::connectHook(\OCP\Share::class, 'post_shared', $this, 'share');
-        Util::connectHook(\OCP\Share::class, 'post_unshare', $this, 'unShare');
+        Util::connectHook(\OCP\Share::class, 'post_shared', $this, 'postShare');
+        Util::connectHook(\OCP\Share::class, 'post_unshare', $this, 'postUnShare');
+        Util::connectHook(\OCP\Share::class, 'pre_unshare', $this, 'preUnShare');
     }
 
-    public static function share($params) {
+    public static function postShare($params) {
         if ($params['shareType'] === Share::SHARE_TYPE_USER) {
-            //$targetFilePath = $params['itemTarget'];
-            //$sourceUserId = $params['uidOwner'];
-            $targetUserId = $params['shareWith'];
-            $fileId = $params['fileSource']; // or itemSource
-            $this->photofilesService->safeAddByFileIdUserId($fileId, $targetUserId);
+            if ($params['itemType'] === 'file') {
+                //$targetFilePath = $params['itemTarget'];
+                //$sourceUserId = $params['uidOwner'];
+                $targetUserId = $params['shareWith'];
+                $fileId = $params['fileSource']; // or itemSource
+                $this->photofilesService->safeAddByFileIdUserId($fileId, $targetUserId);
+            }
+            else if ($params['itemType'] === 'folder') {
+                $targetUserId = $params['shareWith'];
+                $dirId = $params['fileSource']; // or itemSource
+                $this->photofilesService->safeAddByFolderIdUserId($dirId, $targetUserId);
+            }
         }
     }
 
-    public static function unShare($params) {
+    public static function postUnShare($params) {
         if ($params['shareType'] === Share::SHARE_TYPE_USER) {
-            $targetUserId = $params['shareWith'];
-            $fileId = $params['fileSource']; // or itemSource
-            $this->photofilesService->deleteByFileIdUserId($fileId, $targetUserId);
+            if ($params['itemType'] === 'file') {
+                $targetUserId = $params['shareWith'];
+                $fileId = $params['fileSource']; // or itemSource
+                $this->photofilesService->deleteByFileIdUserId($fileId, $targetUserId);
+            }
+        }
+    }
+
+    public static function preUnShare($params) {
+        if ($params['shareType'] === Share::SHARE_TYPE_USER) {
+            if ($params['itemType'] === 'folder') {
+                $targetUserId = $params['shareWith'];
+                $dirId = $params['fileSource']; // or itemSource
+                $this->photofilesService->deleteByFolderIdUserId($dirId, $targetUserId);
+            }
         }
     }
 

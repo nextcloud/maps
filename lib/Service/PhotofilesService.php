@@ -80,6 +80,17 @@ class PhotofilesService {
         }
     }
 
+    public function safeAddByFolderIdUserId($folderId, $userId) {
+        $userFolder = $this->root->getUserFolder($userId);
+        $folder = $userFolder->getById($folderId)[0];
+        if ($folder !== null) {
+            $photos = $this->gatherPhotoFiles($folder, true);
+            foreach($photos as $photo) {
+                $this->safeAddPhoto($photo, $userId);
+            }
+        }
+    }
+
     public function addByFolder(Node $folder) {
         $photos = $this->gatherPhotoFiles($folder, true);
         foreach($photos as $photo) {
@@ -91,6 +102,7 @@ class PhotofilesService {
         $exif = $this->getExif($file);
         if (!is_null($exif)) {
             $ownerId = $file->getOwner()->getUID();
+            // in case there is no entry for this file yet (normally there is because non-localized photos are added)
             if ($this->photoMapper->findByFileId($ownerId, $file->getId()) === null) {
                 // TODO insert for all users having access to this file, not just the owner
                 $this->insertPhoto($file, $ownerId, $exif);
@@ -113,6 +125,17 @@ class PhotofilesService {
         $photos = $this->gatherPhotoFiles($folder, true);
         foreach($photos as $photo) {
             $this->photoMapper->deleteByFileId($photo->getId());
+        }
+    }
+
+    public function deleteByFolderIdUserId($folderId, $userId) {
+        $userFolder = $this->root->getUserFolder($userId);
+        $folder = $userFolder->getById($folderId)[0];
+        if ($folder !== null) {
+            $photos = $this->gatherPhotoFiles($folder, true);
+            foreach($photos as $photo) {
+                $this->photoMapper->deleteByFileIdUserId($photo->getId(), $userId);
+            }
         }
     }
 

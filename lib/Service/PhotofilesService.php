@@ -19,6 +19,7 @@ use OCP\Files\Storage\IStorage;
 use OCP\Files\Folder;
 use OCP\Files\Node;
 use OCP\ILogger;
+use OCP\Share\IManager;
 
 use OCA\Maps\DB\Geophoto;
 use OCA\Maps\DB\GeophotoMapper;
@@ -40,12 +41,14 @@ class PhotofilesService {
     private $l10n;
     private $root;
     private $photoMapper;
+    private $shareManager;
     private $logger;
 
-    public function __construct (ILogger $logger, IRootFolder $root, IL10N $l10n, GeophotoMapper $photoMapper) {
+    public function __construct (ILogger $logger, IRootFolder $root, IL10N $l10n, GeophotoMapper $photoMapper, IManager $shareManager) {
         $this->root = $root;
         $this->l10n = $l10n;
         $this->photoMapper = $photoMapper;
+        $this->shareManager = $shareManager;
         $this->logger = $logger;
     }
 
@@ -65,10 +68,20 @@ class PhotofilesService {
         }
     }
 
+    // add the file for its owner and users that have access
+    // check if it's already in DB before adding
     public function safeAddByFile(Node $file) {
-        $userFolder = $this->root->getUserFolder($file->getOwner()->getUID());
+        $ownerId = $file->getOwner()->getUID();
+        $userFolder = $this->root->getUserFolder($ownerId);
         if($this->isPhoto($file)) {
-            $this->safeAddPhoto($file, $file->getOwner()->getUID());
+            $this->safeAddPhoto($file, $ownerId);
+            // is the file accessible to other users ?
+            $accesses = $this->shareManager->getAccessList($file);
+            foreach($accesses['users'] as $uid) {
+                if ($uid !== $ownerId) {
+                    $this->safeAddPhoto($file, $uid);
+                }
+            }
         }
     }
 

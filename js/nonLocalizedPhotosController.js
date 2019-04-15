@@ -117,7 +117,7 @@ NonLocalizedPhotosController.prototype = {
             var marker = cluster.getAllChildMarkers()[0].data;
             var iconUrl;
             if (marker.hasPreview) {
-                iconUrl = _app.generatePreviewUrl(marker.path);
+                iconUrl = _app.generatePreviewUrl(marker.fileId);
             } else {
                 iconUrl = _app.getImageIconUrl();
             }
@@ -132,7 +132,7 @@ NonLocalizedPhotosController.prototype = {
     createNonLocalizedPhotoView: function(markerData) {
         var iconUrl;
         if (markerData.hasPreview) {
-            iconUrl = this.generatePreviewUrl(markerData.path);
+            iconUrl = this.generatePreviewUrl(markerData.fileId);
         } else {
             iconUrl = this.getImageIconUrl();
         }
@@ -168,6 +168,7 @@ NonLocalizedPhotosController.prototype = {
                 lng: nonLocalizedPhotos[i].lng || this.lng,
                 path: nonLocalizedPhotos[i].path,
                 albumId: nonLocalizedPhotos[i].folderId,
+                fileId: nonLocalizedPhotos[i].fileId,
                 hasPreview : nonLocalizedPhotos[i].hasPreview,
                 date: nonLocalizedPhotos[i].dateTaken
             };
@@ -176,7 +177,7 @@ NonLocalizedPhotosController.prototype = {
                 icon: this.createNonLocalizedPhotoView(markerData)
             });
             marker.data = markerData;
-            var previewUrl = this.generatePreviewUrl(marker.data.path);
+            var previewUrl = this.generatePreviewUrl(marker.data.fileId);
             var date = new Date(nonLocalizedPhotos[i].dateTaken*1000);
             var img = '<img class="photo-tooltip" src=' + previewUrl + '/>' +
                 '<p class="tooltip-nonLocalizedPhoto-name">' + escapeHTML(basename(markerData.path)) + '</p>' +
@@ -315,8 +316,8 @@ NonLocalizedPhotosController.prototype = {
     },
 
     /* Preview size 375x211 is used in files details view */
-    generatePreviewUrl: function (filename) {
-        return OC.generateUrl('core') + '/preview.png?file=' + encodeURI(filename) + '&x=349&y=349&a=1';
+    generatePreviewUrl: function (fileId) {
+        return OC.generateUrl('core') + '/preview?fileId=' + fileId + '&x=349&y=349&a=1';
     },
 
     getImageIconUrl: function() {

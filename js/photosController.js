@@ -129,7 +129,7 @@ PhotosController.prototype = {
             var marker = cluster.getAllChildMarkers()[0].data;
             var iconUrl;
             if (marker.hasPreview) {
-                iconUrl = _app.generatePreviewUrl(marker.path);
+                iconUrl = _app.generatePreviewUrl(marker.fileId);
             } else {
                 iconUrl = _app.getImageIconUrl();
             }
@@ -144,7 +144,7 @@ PhotosController.prototype = {
     createPhotoView: function(markerData) {
         var iconUrl;
         if (markerData.hasPreview) {
-            iconUrl = this.generatePreviewUrl(markerData.path);
+            iconUrl = this.generatePreviewUrl(markerData.fileId);
         } else {
             iconUrl = this.getImageIconUrl();
         }
@@ -179,6 +179,7 @@ PhotosController.prototype = {
                 lng: photos[i].lng,
                 path: photos[i].path,
                 albumId: photos[i].folderId,
+                fileId: photos[i].fileId,
                 hasPreview : photos[i].hasPreview,
                 date: photos[i].dateTaken
             };
@@ -186,7 +187,7 @@ PhotosController.prototype = {
                 icon: this.createPhotoView(markerData)
             });
             marker.data = markerData;
-            var previewUrl = this.generatePreviewUrl(marker.data.path);
+            var previewUrl = this.generatePreviewUrl(marker.data.fileId);
             var date = new Date(photos[i].dateTaken*1000);
             var img = '<img class="photo-tooltip" src=' + previewUrl + '/>' +
                 '<p class="tooltip-photo-name">' + escapeHTML(basename(markerData.path)) + '</p>' +
@@ -282,8 +283,8 @@ PhotosController.prototype = {
     },
 
     /* Preview size 375x211 is used in files details view */
-    generatePreviewUrl: function (filename) {
-        return OC.generateUrl('core') + '/preview.png?file=' + encodeURI(filename) + '&x=349&y=349&a=1';
+    generatePreviewUrl: function (fileId) {
+        return OC.generateUrl('core') + '/preview?fileId=' + fileId + '&x=349&y=349&a=1';
     },
 
     getImageIconUrl: function() {

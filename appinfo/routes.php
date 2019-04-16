@@ -34,7 +34,7 @@ return [
         // favorites API
         [
             'name'         => 'favorites_api#preflighted_cors',
-            'url'          => '/api/1.0/{path}',
+            'url'          => '/api/1.0/favorites{path}',
             'verb'         => 'OPTIONS',
             'requirements' => ['path' => '.+']
         ],
@@ -63,6 +63,21 @@ return [
         ['name' => 'tracks#editTrack', 'url' => '/tracks/{id}', 'verb' => 'PUT'],
         ['name' => 'tracks#deleteTrack', 'url' => '/tracks/{id}', 'verb' => 'DELETE'],
         ['name' => 'tracks#deleteTracks', 'url' => '/tracks', 'verb' => 'DELETE'],
+
+        // devices API
+        [
+            'name'         => 'devices_api#preflighted_cors',
+            'url'          => '/api/1.0/devices{path}',
+            'verb'         => 'OPTIONS',
+            'requirements' => ['path' => '.+']
+        ],
+        ['name' => 'devices_api#getDevices', 'url' => '/api/{apiversion}/devices', 'verb' => 'GET'],
+        ['name' => 'devices_api#addDevicePoint', 'url' => '/api/{apiversion}/devices', 'verb' => 'POST'],
+        ['name' => 'devices_api#editDevice', 'url' => '/api/{apiversion}/devices/{id}', 'verb' => 'PUT'],
+        ['name' => 'devices_api#deleteDevice', 'url' => '/api/{apiversion}/devices/{id}', 'verb' => 'DELETE'],
+
+        // devices
+        ['name' => 'devices#exportDevice', 'url' => '/export/devices', 'verb' => 'POST'],
 
     ]
 ];

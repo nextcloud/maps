@@ -56,6 +56,26 @@ DevicesController.prototype = {
     },
 
     sendMyPosition: function(lat, lng, acc) {
+        var that = this;
+        var ts = Math.floor(Date.now() / 1000);
+        var req = {
+            lat: lat,
+            lng: lng,
+            acc: acc,
+            timestamp: ts
+        };
+        var url = OC.generateUrl('/apps/maps/api/1.0/devices');
+        $.ajax({
+            type: 'POST',
+            url: url,
+            data: req,
+            async: true
+        }).done(function (response) {
+            // TODO get new positions
+        }).always(function (response) {
+        }).fail(function() {
+            OC.Notification.showTemporary(t('maps', 'Failed to send current position'));
+        });
     },
 
 }

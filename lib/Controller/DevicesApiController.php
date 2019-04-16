@@ -114,7 +114,7 @@ class DevicesApiController extends ApiController {
                 $ua = $_SERVER['HTTP_USER_AGENT'];
             }
             $deviceId = $this->devicesService->getOrCreateDeviceFromDB($this->userId, $ua);
-            $pointId = $this->devicesService->addPointToDB($deviceId, $lat, $lng, $ts, $ua, $altitude, $battery, $accuracy);
+            $pointId = $this->devicesService->addPointToDB($deviceId, $lat, $lng, $ts, $altitude, $battery, $accuracy);
             return new DataResponse($pointId);
         }
         else {

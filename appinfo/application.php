@@ -18,11 +18,14 @@ use OCA\Maps\Controller\PageController;
 use OCA\Maps\Controller\UtilsController;
 use OCA\Maps\Controller\FavoritesController;
 use OCA\Maps\Controller\FavoritesApiController;
+use OCA\Maps\Controller\DevicesController;
+use OCA\Maps\Controller\DevicesApiController;
 use OCA\Maps\Controller\RoutingController;
 use OCA\Maps\Controller\TracksController;
 use OCA\Maps\Hook\FileHooks;
 use OCA\Maps\Service\PhotofilesService;
 use OCA\Maps\Service\FavoritesService;
+use OCA\Maps\Service\DevicesService;
 use OCA\Maps\Service\TracksService;
 
 
@@ -81,6 +84,51 @@ class Application extends App {
                     $c->query('ServerContainer')->getL10N($c->query('AppName')),
                     $c->query('ServerContainer')->getLogger(),
                     new FavoritesService(
+                        $c->query('ServerContainer')->getLogger(),
+                        $c->query('ServerContainer')->getL10N($c->query('AppName'))
+                    )
+                );
+            }
+        );
+
+        $container->registerService(
+            'DevicesController', function ($c) {
+                return new DevicesController(
+                    $c->query('AppName'),
+                    $c->query('Request'),
+                    $c->query('UserId'),
+                    $c->query('ServerContainer')->getUserFolder($c->query('UserId')),
+                    $c->query('ServerContainer')->getConfig(),
+                    $c->getServer()->getShareManager(),
+                    $c->getServer()->getAppManager(),
+                    $c->getServer()->getUserManager(),
+                    $c->getServer()->getGroupManager(),
+                    $c->query('ServerContainer')->getL10N($c->query('AppName')),
+                    $c->query('ServerContainer')->getLogger(),
+                    new DevicesService(
+                        $c->query('ServerContainer')->getLogger(),
+                        $c->query('ServerContainer')->getL10N($c->query('AppName'))
+                    ),
+                    $c->query('ServerContainer')->getDateTimeZone()
+                );
+            }
+        );
+
+        $container->registerService(
+            'DevicesApiController', function ($c) {
+                return new DevicesApiController(
+                    $c->query('AppName'),
+                    $c->query('Request'),
+                    $c->query('UserId'),
+                    $c->query('ServerContainer')->getUserFolder($c->query('UserId')),
+                    $c->query('ServerContainer')->getConfig(),
+                    $c->getServer()->getShareManager(),
+                    $c->getServer()->getAppManager(),
+                    $c->getServer()->getUserManager(),
+                    $c->getServer()->getGroupManager(),
+                    $c->query('ServerContainer')->getL10N($c->query('AppName')),
+                    $c->query('ServerContainer')->getLogger(),
+                    new DevicesService(
                         $c->query('ServerContainer')->getLogger(),
                         $c->query('ServerContainer')->getL10N($c->query('AppName'))
                     )

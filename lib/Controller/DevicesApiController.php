@@ -102,9 +102,7 @@ class DevicesApiController extends ApiController {
      * @CORS
      */
     public function addDevicePoint($apiversion, $lat, $lng, $timestamp=null, $user_agent=null, $altitude=null, $battery=null, $accuracy=null) {
-        if (is_numeric($lat)
-            && is_numeric($lng)
-        ) {
+        if (is_numeric($lat) and is_numeric($lng)) {
             $ts = $timestamp;
             if ($timestamp === null) {
                 $ts = (new \DateTime())->getTimestamp();

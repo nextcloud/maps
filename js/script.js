@@ -11,6 +11,7 @@
         contactsController.initLayer(mapController.map);
         mapController.map.contactsController = contactsController;
         tracksController.initController(mapController.map);
+        devicesController.initController(mapController.map);
 
         // once controllers have been set/initialized, we can restore option values from server
         optionsController.restoreOptions();
@@ -661,6 +662,7 @@
     var contactsController = new ContactsController(optionsController, timeFilterController);
     var favoritesController = new FavoritesController(optionsController, timeFilterController);
     var tracksController = new TracksController(optionsController, timeFilterController);
+    var devicesController = new DevicesController(optionsController, timeFilterController);
 
     timeFilterController.connect();
 

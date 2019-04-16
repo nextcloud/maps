@@ -77,6 +77,10 @@ return [
         ['name' => 'devices_api#deleteDevice', 'url' => '/api/{apiversion}/devices/{id}', 'verb' => 'DELETE'],
 
         // devices
+        ['name' => 'devices#getDevices', 'url' => '/devices', 'verb' => 'GET'],
+        ['name' => 'devices#addDevicePoint', 'url' => '/devices', 'verb' => 'POST'],
+        ['name' => 'devices#editDevice', 'url' => '/devices/{id}', 'verb' => 'PUT'],
+        ['name' => 'devices#deleteDevice', 'url' => '/devices/{id}', 'verb' => 'DELETE'],
         ['name' => 'devices#exportDevice', 'url' => '/export/devices', 'verb' => 'POST'],
 
     ]

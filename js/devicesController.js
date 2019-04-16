@@ -50,7 +50,7 @@ DevicesController.prototype = {
                 var lat = position.coords.latitude;
                 var lng = position.coords.longitude;
                 var acc = position.coords.accuracy;
-                that.sendMyPosition(lat, lng,acc);
+                that.sendMyPosition(lat, lng, acc);
             });
         }
     },
@@ -64,7 +64,7 @@ DevicesController.prototype = {
             acc: acc,
             timestamp: ts
         };
-        var url = OC.generateUrl('/apps/maps/api/1.0/devices');
+        var url = OC.generateUrl('/apps/maps/devices');
         $.ajax({
             type: 'POST',
             url: url,

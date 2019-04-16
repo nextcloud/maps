@@ -34,13 +34,6 @@ use OCP\IDateTimeZone;
 
 use OCA\Maps\Service\DevicesService;
 
-function endswith($string, $test) {
-    $strlen = strlen($string);
-    $testlen = strlen($test);
-    if ($testlen > $strlen) return false;
-    return substr_compare($string, $test, $strlen - $testlen, $testlen) === 0;
-}
-
 class DevicesController extends Controller {
 
     private $userId;
@@ -89,6 +82,70 @@ class DevicesController extends Controller {
     /**
      * @NoAdminRequired
      */
+    public function getDevices($pruneBefore=0) {
+        $devices = $this->devicesService->getDevicesFromDB($this->userId, $pruneBefore);
+        return new DataResponse($devices);
+    }
+
+    /**
+     * @NoAdminRequired
+     */
+    public function addDevicePoint($lat, $lng, $timestamp=null, $user_agent=null, $altitude=null, $battery=null, $accuracy=null) {
+        if (is_numeric($lat) and is_numeric($lng)) {
+            $ts = $timestamp;
+            if ($timestamp === null) {
+                $ts = (new \DateTime())->getTimestamp();
+            }
+            $ua = $user_agent;
+            if ($user_agent === null) {
+                $ua = $_SERVER['HTTP_USER_AGENT'];
+            }
+            $deviceId = $this->devicesService->getOrCreateDeviceFromDB($this->userId, $ua);
+            $pointId = $this->devicesService->addPointToDB($deviceId, $lat, $lng, $ts, $altitude, $battery, $accuracy);
+            return new DataResponse($pointId);
+        }
+        else {
+            return new DataResponse('invalid values', 400);
+        }
+    }
+
+    /**
+     * @NoAdminRequired
+     */
+    public function editDevice($id, $color) {
+        $device = $this->devicesService->getDeviceFromDB($id, $this->userId);
+        if ($device !== null) {
+            if (is_string($color) && strlen($color) > 0) {
+                $this->devicesService->editDeviceInDB($id, $color);
+                $editedDevice = $this->devicesService->getDeviceFromDB($id);
+                return new DataResponse($editedDevice);
+            }
+            else {
+                return new DataResponse('invalid values', 400);
+            }
+        }
+        else {
+            return new DataResponse('no such device', 400);
+        }
+    }
+
+    /**
+     * @NoAdminRequired
+     */
+    public function deleteDevice($id) {
+        $device = $this->devicesService->getDeviceFromDB($id, $this->userId);
+        if ($device !== null) {
+            $this->devicesService->deleteDeviceFromDB($id);
+            return new DataResponse('DELETED');
+        }
+        else {
+            return new DataResponse('no such device', 400);
+        }
+    }
+
+    /**
+     * @NoAdminRequired
+     */
     public function exportDevices($deviceIdList=null, $begin, $end, $all=false) {
         // sorry about ugly deviceIdList management:
         // when an empty list is passed in http request, we get null here
@@ -118,7 +175,7 @@ class DevicesController extends Controller {
             return $response;
         }
 
-        $nbDevices = $this->devicesService->countDevices($this->userId, $deviceIdList, $begin, $end);
+        $nbDevices = $this->devicesService->countPoints($this->userId, $deviceIdList, $begin, $end);
         if ($nbDevices === 0) {
             $response = new DataResponse('Nothing to export', 400);
             return $response;

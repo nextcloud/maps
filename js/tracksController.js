@@ -62,16 +62,17 @@ TracksController.prototype = {
         // show/hide all tracks
         $('body').on('click', '#select-all-tracks', function(e) {
             that.showAllTracks();
-            var trackStringList = Object.keys(that.trackLayers).join('|');
+            var trackList = Object.keys(that.trackLayers);
+            var trackStringList = trackList.join('|');
             that.optionsController.saveOptionValues({enabledTracks: trackStringList});
-            that.optionsController.enabledTracks = trackStringList;
+            that.optionsController.enabledTracks = trackList;
             that.optionsController.saveOptionValues({tracksEnabled: that.map.hasLayer(that.mainLayer)});
         });
         $('body').on('click', '#select-no-tracks', function(e) {
             that.hideAllTracks();
             var trackStringList = '';
             that.optionsController.saveOptionValues({enabledTracks: trackStringList});
-            that.optionsController.enabledTracks = trackStringList;
+            that.optionsController.enabledTracks = [];
             that.optionsController.saveOptionValues({tracksEnabled: that.map.hasLayer(that.mainLayer)});
         });
         // click on + button

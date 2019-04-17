@@ -85,6 +85,22 @@ DevicesController.prototype = {
             that.deviceDeletionTimer[devid].pause();
             delete that.deviceDeletionTimer[devid];
         });
+        // show/hide all device
+        $('body').on('click', '#select-all-devices', function(e) {
+            that.showAllDevices();
+            var deviceList = Object.keys(that.deviceLayers);
+            var deviceStringList = deviceList.join('|');
+            that.optionsController.saveOptionValues({enabledDevices: deviceStringList});
+            that.optionsController.enabledDevices = deviceList;
+            that.optionsController.saveOptionValues({devicesEnabled: that.map.hasLayer(that.mainLayer)});
+        });
+        $('body').on('click', '#select-no-devices', function(e) {
+            that.hideAllDevices();
+            var deviceStringList = '';
+            that.optionsController.saveOptionValues({enabledDevices: deviceStringList});
+            that.optionsController.enabledDevices = [];
+            that.optionsController.saveOptionValues({devicesEnabled: that.map.hasLayer(that.mainLayer)});
+        });
         // send my position on page load
         if (navigator.geolocation) {
             navigator.geolocation.getCurrentPosition(function (position) {
@@ -118,6 +134,27 @@ DevicesController.prototype = {
             var imgurl = OC.generateUrl('/svg/core/actions/toggle?color='+color);
             $('#toggleDevicesButton button').removeClass('icon-toggle').css('background-image', 'url('+imgurl+')');
         }
+    },
+
+    showAllDevices: function() {
+        if (!this.map.hasLayer(this.mainLayer)) {
+            this.toggleDevices();
+        }
+        for (var id in this.mapDeviceLayers) {
+            if (!this.mainLayer.hasLayer(this.mapDeviceLayers[id])) {
+                this.toggleDevice(id);
+            }
+        }
+        this.updateMyFirstLastDates();
+    },
+
+    hideAllDevices: function() {
+        for (var id in this.mapDeviceLayers) {
+            if (this.mainLayer.hasLayer(this.mapDeviceLayers[id])) {
+                this.toggleDevice(id);
+            }
+        }
+        this.updateMyFirstLastDates();
     },
 
     getDevices: function() {

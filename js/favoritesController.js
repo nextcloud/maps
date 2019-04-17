@@ -245,7 +245,7 @@ FavoritesController.prototype = {
         var categoryStringList = categoryList.join('|');
         this.optionsController.saveOptionValues({enabledFavoriteCategories: categoryStringList});
         // this is used when favorites are loaded again (when importing for example)
-        this.optionsController.enabledFavoriteCategories = categoryStringList;
+        this.optionsController.enabledFavoriteCategories = categoryList;
     },
 
     restoreCategoriesState: function(enabledCategoryList) {

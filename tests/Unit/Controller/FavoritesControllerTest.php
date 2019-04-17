@@ -87,7 +87,8 @@ class FavoritesControllerTest extends \PHPUnit\Framework\TestCase {
             new FavoritesService(
                 $c->query('ServerContainer')->getLogger(),
                 $c->query('ServerContainer')->getL10N($c->query('AppName'))
-            )
+            ),
+            $c->query('ServerContainer')->getDateTimeZone()
         );
 
         $this->favoritesController2 = new FavoritesController(
@@ -105,7 +106,8 @@ class FavoritesControllerTest extends \PHPUnit\Framework\TestCase {
             new FavoritesService(
                 $c->query('ServerContainer')->getLogger(),
                 $c->query('ServerContainer')->getL10N($c->query('AppName'))
-            )
+            ),
+            $c->query('ServerContainer')->getDateTimeZone()
         );
 
         $this->utilsController = new UtilsController(

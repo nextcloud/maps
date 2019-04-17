@@ -20,6 +20,7 @@ function DevicesController(optionsController, timeFilterController) {
 
     this.changingColorOf = null;
     this.deviceDeletionTimer = {};
+    this.lastZIndex = 1000;
 }
 
 DevicesController.prototype = {
@@ -542,6 +543,7 @@ DevicesController.prototype = {
         if (this.mainLayer.hasLayer(this.mapDeviceLayers[id])) {
             this.map.fitBounds(this.mapDeviceLayers[id].getBounds(), {padding: [30, 30]});
             this.mapDeviceLayers[id].bringToFront();
+            this.devices[id].marker.setZIndexOffset(this.lastZIndex++);
         }
     },
 

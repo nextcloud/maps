@@ -101,6 +101,7 @@
         enabledFavoriteCategories: [],
         enabledTracks: [],
         enabledDevices: [],
+        enabledDeviceLines: [],
         saveOptionValues: function (optionValues) {
             var req = {
                 options: optionValues
@@ -194,6 +195,17 @@
                     });
                     if (devicesController.deviceListLoaded) {
                         devicesController.restoreDevicesState(that.enabledDevices);
+                    }
+                }
+                if (optionsValues.hasOwnProperty('enabledDeviceLines')
+                    && optionsValues.enabledDeviceLines
+                    && optionsValues.enabledDeviceLines !== '')
+                {
+                    that.enabledDeviceLines = optionsValues.enabledDeviceLines.split('|').map(function (x) {
+                        return parseInt(x);
+                    });
+                    if (devicesController.deviceListLoaded) {
+                        devicesController.restoreDeviceLinesState(that.enabledDeviceLines);
                     }
                 }
                 if (!optionsValues.hasOwnProperty('devicesEnabled') || optionsValues.devicesEnabled === 'true') {

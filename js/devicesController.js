@@ -48,6 +48,11 @@ DevicesController.prototype = {
             var id = $(this).parent().parent().parent().attr('device');
             that.toggleDevice(id, true);
         });
+        // toggle a device line
+        $('body').on('click', '.toggleDeviceLine', function(e) {
+            var id = $(this).parent().parent().parent().parent().attr('device');
+            that.toggleDeviceLine(id, true);
+        });
         // toggle devices
         $('body').on('click', '#toggleDevicesButton', function(e) {
             that.toggleDevices();
@@ -225,6 +230,12 @@ DevicesController.prototype = {
         '    <div class="app-navigation-entry-menu">' +
         '        <ul>' +
         '            <li>' +
+        '                <a href="#" class="toggleDeviceLine">' +
+        '                    <span class="icon-category-monitoring"></span>' +
+        '                    <span>'+t('maps', 'Toggle device history')+'</span>' +
+        '                </a>' +
+        '            </li>' +
+        '            <li>' +
         '                <a href="#" class="changeDeviceColor">' +
         '                    <span class="icon-rename"></span>' +
         '                    <span>'+t('maps', 'Change device color')+'</span>' +
@@ -332,20 +343,27 @@ DevicesController.prototype = {
 
     saveEnabledDevices: function(additionalIds=[]) {
         var deviceList = [];
+        var deviceWithLineList = [];
         var layer;
         for (var id in this.mapDeviceLayers) {
             layer = this.mapDeviceLayers[id];
             if (this.mainLayer.hasLayer(layer)) {
                 deviceList.push(id);
             }
+            if (this.devices[id].line && this.deviceLineLayers[id].hasLayer(this.devices[id].line)) {
+                deviceWithLineList.push(id);
+            }
         }
         for (var i=0; i < additionalIds.length; i++) {
             deviceList.push(additionalIds[i]);
         }
         var deviceStringList = deviceList.join('|');
+        var deviceWithLineStringList = deviceWithLineList.join('|');
         this.optionsController.saveOptionValues({enabledDevices: deviceStringList});
+        this.optionsController.saveOptionValues({enabledDeviceLines: deviceWithLineStringList});
         // this is used when devices are loaded again
         this.optionsController.enabledDevices = deviceList;
+        this.optionsController.enabledDeviceLines = deviceWithLineList;
     },
 
     restoreDevicesState: function(enabledDeviceList) {
@@ -354,6 +372,16 @@ DevicesController.prototype = {
             id = enabledDeviceList[i];
             if (this.mapDeviceLayers.hasOwnProperty(id)) {
                 this.toggleDevice(id, false, true);
+            }
+        }
+    },
+
+    restoreDeviceLinesState: function(enabledDeviceLineList) {
+        var id;
+        for (var i=0; i < enabledDeviceLineList.length; i++) {
+            id = enabledDeviceList[i];
+            if (this.devices[id].line && this.deviceLineLayers.hasOwnProperty(id)) {
+                this.toggleDeviceLine(id, false);
             }
         }
     },
@@ -388,6 +416,25 @@ DevicesController.prototype = {
             var color = OCA.Theming.color.replace('#', '');
             var imgurl = OC.generateUrl('/svg/core/actions/toggle?color='+color);
             eyeButton.removeClass('icon-toggle').css('background-image', 'url('+imgurl+')');
+        }
+    },
+
+    toggleDeviceLine: function(id, save=false) {
+        var deviceLineLayer = this.deviceLineLayers[id];
+        var line = this.devices[id].line;
+        // if line layer already exist
+        if (line) {
+            // hide line
+            if (deviceLineLayer.hasLayer(line)) {
+                deviceLineLayer.removeLayer(line);
+            }
+            // show line
+            else {
+                deviceLineLayer.addLayer(line);
+            }
+            if (save) {
+                this.saveEnabledDevices();
+            }
         }
     },
 
@@ -435,7 +482,9 @@ DevicesController.prototype = {
             className: 'devline'+id,
         });
         this.deviceMarkerLayers[id].addLayer(this.devices[id].marker);
-        this.deviceLineLayers[id].addLayer(this.devices[id].line);
+        if (this.optionsController.enabledDeviceLines.indexOf(id) !== -1) {
+            this.deviceLineLayers[id].addLayer(this.devices[id].line);
+        }
     },
 
     updateMyFirstLastDates: function(pageLoad=false) {
@@ -509,16 +558,16 @@ DevicesController.prototype = {
                 if (latLngToDisplay.length > 0) {
                     this.devices[id].line.setLatLngs(latLngToDisplay);
                     this.devices[id].marker.setLatLng(latLngToDisplay[latLngToDisplay.length - 1]);
-                    if (!this.deviceLineLayers[id].hasLayer(this.devices[id].line)) {
-                        this.deviceLineLayers[id].addLayer(this.devices[id].line);
+                    if (!this.mapDeviceLayers[id].hasLayer(this.deviceLineLayers[id])) {
+                        this.mapDeviceLayers[id].addLayer(this.deviceLineLayers[id]);
                     }
-                    if (!this.deviceMarkerLayers[id].hasLayer(this.devices[id].marker)) {
-                        this.deviceMarkerLayers[id].addLayer(this.devices[id].marker);
+                    if (!this.mapDeviceLayers[id].hasLayer(this.deviceMarkerLayers[id])) {
+                        this.mapDeviceLayers[id].addLayer(this.deviceMarkerLayers[id]);
                     }
                 }
                 else {
-                    this.deviceMarkerLayers[id].removeLayer(this.devices[id].marker);
-                    this.deviceLineLayers[id].removeLayer(this.devices[id].line);
+                    this.mapDeviceLayers[id].removeLayer(this.deviceLineLayers[id]);
+                    this.mapDeviceLayers[id].removeLayer(this.deviceMarkerLayers[id]);
                 }
             }
         }

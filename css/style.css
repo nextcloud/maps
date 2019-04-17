@@ -206,6 +206,9 @@ tr.selected td {
     text-align: center;
 }
 
+.device-over-marker {
+    border-radius: 50%;
+}
 
 .leaflet-marker-nonLocalizedPhoto.nonLocalizedPhoto-marker:after,
 .leaflet-marker-contact.contact-marker:after,

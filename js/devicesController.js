@@ -22,6 +22,7 @@ function DevicesController(optionsController, timeFilterController) {
     this.changingColorOf = null;
     this.deviceDeletionTimer = {};
     this.lastZIndex = 1000;
+    this.lineMarker = null;
 }
 
 DevicesController.prototype = {
@@ -108,6 +109,12 @@ DevicesController.prototype = {
             that.optionsController.enabledDevices = [];
             that.optionsController.saveOptionValues({devicesEnabled: that.map.hasLayer(that.mainLayer)});
         });
+        this.map.on('click', function (e) {
+            if (that.lineMarker) {
+                that.lineMarker.remove();
+                that.lineMarker = null;
+            }
+        });
         // send my position on page load
         if (navigator.geolocation) {
             navigator.geolocation.getCurrentPosition(function (position) {
@@ -130,6 +137,11 @@ DevicesController.prototype = {
             this.map.removeLayer(this.mainLayer);
             // color of the eye
             $('#toggleDevicesButton button').addClass('icon-toggle').attr('style', '');
+            // remove potential line marker
+            if (this.lineMarker) {
+                this.lineMarker.remove();
+                this.lineMarker = null;
+            }
         }
         else {
             if (!this.deviceListLoaded) {
@@ -202,6 +214,12 @@ DevicesController.prototype = {
             iconSize: [this.device_MARKER_VIEW_SIZE, this.device_MARKER_VIEW_SIZE],
             iconAnchor:   [this.device_MARKER_VIEW_SIZE / 2, this.device_MARKER_VIEW_SIZE]
         }));
+        var radius = 8;
+        this.devices[id].overicon = L.divIcon({
+            iconAnchor: [radius, radius],
+            className: 'device-over-marker device-over-marker-' + id,
+            html: ''
+        });
         this.setDeviceCss(id, color);
 
         this.mapDeviceLayers[id] = L.featureGroup();
@@ -301,6 +319,12 @@ DevicesController.prototype = {
             'border-color: '+color+' transparent !important;}' +
             '.device-marker-'+id+' .thumbnail { ' +
             'background-image: url(' + imgurl + ');}' +
+            '.device-over-marker-' + id + ' { ' +
+            'background: ' + color + ';' +
+            'border: 1px solid grey;' +
+            'width: 16px !important;' +
+            'height: 16px !important;' +
+            ' }' +
             '</style>').appendTo('body');
     },
 
@@ -405,6 +429,11 @@ DevicesController.prototype = {
             this.mainLayer.removeLayer(mapDeviceLayer);
             // color of the eye
             eyeButton.addClass('icon-toggle').attr('style', '');
+            // remove potential line marker
+            if (this.lineMarker) {
+                this.lineMarker.remove();
+                this.lineMarker = null;
+            }
         }
         // show device
         else {
@@ -427,6 +456,11 @@ DevicesController.prototype = {
             // hide line
             if (deviceLineLayer.hasLayer(line)) {
                 deviceLineLayer.removeLayer(line);
+                // remove potential line marker
+                if (this.lineMarker) {
+                    this.lineMarker.remove();
+                    this.lineMarker = null;
+                }
             }
             // show line
             else {
@@ -481,6 +515,9 @@ DevicesController.prototype = {
             opacity : 1,
             className: 'devline'+id,
         });
+        this.devices[id].line.devid = id;
+        this.devices[id].line.on('mouseover', this.deviceLineMouseover);
+        this.devices[id].line.on('mouseout', this.deviceLineMouseout);
         this.deviceMarkerLayers[id].addLayer(this.devices[id].marker);
         if (this.optionsController.enabledDeviceLines.indexOf(id) !== -1) {
             this.deviceLineLayers[id].addLayer(this.devices[id].line);
@@ -670,6 +707,37 @@ DevicesController.prototype = {
             content = content + '<br/>' + '⊙ ' + t('maps', 'Battery') + ': ' + point.battery.toFixed(2);
         }
         return content;
+    },
+
+    deviceLineMouseover: function(e) {
+        var that = this._map.devicesController;
+        if (that.lineMarker) {
+            that.lineMarker.remove();
+            that.lineMarker = null;
+        }
+        var id = e.target.devid;
+        var overLatLng = this._map.layerPointToLatLng(e.layerPoint);
+        var minDist = 40000000;
+        var markerLatLng = null;
+        var tmpDist;
+        var lineLatLngs = e.target.getLatLngs();
+        for (var i=0; i < lineLatLngs.length; i++) {
+            tmpDist = this._map.distance(overLatLng, lineLatLngs[i]);
+            if (tmpDist < minDist) {
+                markerLatLng = lineLatLngs[i];
+                minDist = tmpDist;
+            }
+        }
+        that.lineMarker = L.marker(markerLatLng,
+            {icon: that.devices[id].overicon}
+        );
+        that.lineMarker.devid = id;
+        that.lineMarker.on('mouseover', that.deviceMarkerMouseover);
+        that.lineMarker.on('mouseout', that.deviceMarkerMouseout);
+        that.map.addLayer(that.lineMarker);
+    },
+
+    deviceLineMouseout: function(e) {
     },
 
 }

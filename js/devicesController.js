@@ -7,8 +7,9 @@ function DevicesController(optionsController, timeFilterController) {
     // indexed by device id
     // those actually added to map, those which get toggled
     this.mapDeviceLayers = {};
-    // layers which actually contain lines, those which get filtered
-    this.deviceLayers = {};
+    // layers which contain lines/markers
+    this.deviceLineLayers = {};
+    this.deviceMarkerLayers = {};
     this.devices = {};
 
     this.firstDate = null;
@@ -89,7 +90,7 @@ DevicesController.prototype = {
         // show/hide all device
         $('body').on('click', '#select-all-devices', function(e) {
             that.showAllDevices();
-            var deviceList = Object.keys(that.deviceLayers);
+            var deviceList = Object.keys(that.mapDeviceLayers);
             var deviceStringList = deviceList.join('|');
             that.optionsController.saveOptionValues({enabledDevices: deviceStringList});
             that.optionsController.enabledDevices = deviceList;
@@ -199,9 +200,11 @@ DevicesController.prototype = {
         this.setDeviceCss(id, color);
 
         this.mapDeviceLayers[id] = L.featureGroup();
-        this.deviceLayers[id] = L.featureGroup();
+        this.deviceLineLayers[id] = L.featureGroup();
+        this.deviceMarkerLayers[id] = L.featureGroup();
         this.devices[id].loaded = false;
-        this.mapDeviceLayers[id].addLayer(this.deviceLayers[id]);
+        this.mapDeviceLayers[id].addLayer(this.deviceLineLayers[id]);
+        this.mapDeviceLayers[id].addLayer(this.deviceMarkerLayers[id]);
 
         var name = device.user_agent;
 
@@ -313,9 +316,11 @@ DevicesController.prototype = {
 
     deleteDeviceMap: function(id) {
         this.mainLayer.removeLayer(this.mapDeviceLayers[id]);
-        this.mapDeviceLayers[id].removeLayer(this.deviceLayers[id]);
+        this.mapDeviceLayers[id].removeLayer(this.deviceLineLayers[id]);
+        this.mapDeviceLayers[id].removeLayer(this.deviceMarkerLayers[id]);
         delete this.mapDeviceLayers[id];
-        delete this.deviceLayers[id];
+        delete this.deviceLineLayers[id];
+        delete this.deviceMarkerLayers[id];
         delete this.devices[id];
 
         $('style[device='+id+']').remove();
@@ -376,6 +381,9 @@ DevicesController.prototype = {
         // show device
         else {
             this.mainLayer.addLayer(mapDeviceLayer);
+            if (this.devices[id].marker) {
+                this.devices[id].marker.setZIndexOffset(this.lastZIndex++);
+            }
             // color of the eye
             var color = OCA.Theming.color.replace('#', '');
             var imgurl = OC.generateUrl('/svg/core/actions/toggle?color='+color);
@@ -426,8 +434,8 @@ DevicesController.prototype = {
             opacity : 1,
             className: 'devline'+id,
         });
-        this.deviceLayers[id].addLayer(this.devices[id].marker);
-        this.deviceLayers[id].addLayer(this.devices[id].line);
+        this.deviceMarkerLayers[id].addLayer(this.devices[id].marker);
+        this.deviceLineLayers[id].addLayer(this.devices[id].line);
     },
 
     updateMyFirstLastDates: function(pageLoad=false) {
@@ -501,16 +509,16 @@ DevicesController.prototype = {
                 if (latLngToDisplay.length > 0) {
                     this.devices[id].line.setLatLngs(latLngToDisplay);
                     this.devices[id].marker.setLatLng(latLngToDisplay[latLngToDisplay.length - 1]);
-                    if (!this.deviceLayers[id].hasLayer(this.devices[id].line)) {
-                        this.deviceLayers[id].addLayer(this.devices[id].line);
+                    if (!this.deviceLineLayers[id].hasLayer(this.devices[id].line)) {
+                        this.deviceLineLayers[id].addLayer(this.devices[id].line);
                     }
-                    if (!this.deviceLayers[id].hasLayer(this.devices[id].marker)) {
-                        this.deviceLayers[id].addLayer(this.devices[id].marker);
+                    if (!this.deviceMarkerLayers[id].hasLayer(this.devices[id].marker)) {
+                        this.deviceMarkerLayers[id].addLayer(this.devices[id].marker);
                     }
                 }
                 else {
-                    this.deviceLayers[id].removeLayer(this.devices[id].marker);
-                    this.deviceLayers[id].removeLayer(this.devices[id].line);
+                    this.deviceMarkerLayers[id].removeLayer(this.devices[id].marker);
+                    this.deviceLineLayers[id].removeLayer(this.devices[id].line);
                 }
             }
         }

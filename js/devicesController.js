@@ -514,6 +514,15 @@ DevicesController.prototype = {
         var point = device.points[pointId];
         var content = '⊙ ' + t('maps', 'User agent') + ': ' + brify(device.user_agent, 30);
         content = content + '<br/>' + '⊙ ' + t('maps', 'Date') + ': ' + (new Date(point.timestamp * 1000)).toIsoString();
+        if (point.altitude !== null) {
+            content = content + '<br/>' + '⊙ ' + t('maps', 'Elevation') + ': ' + point.altitude.toFixed(2);
+        }
+        if (point.accuracy !== null) {
+            content = content + '<br/>' + '⊙ ' + t('maps', 'Accuracy') + ': ' + point.accuracy.toFixed(2);
+        }
+        if (point.battery !== null) {
+            content = content + '<br/>' + '⊙ ' + t('maps', 'Battery') + ': ' + point.battery.toFixed(2);
+        }
         return content;
     },
 

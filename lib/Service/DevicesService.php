@@ -83,9 +83,9 @@ class DevicesService {
                 'lat' => floatval($row['lat']),
                 'lng' => floatval($row['lng']),
                 'timestamp' => intval($row['timestamp']),
-                'altitude' => floatval($row['altitude']),
-                'accuracy' => floatval($row['accuracy']),
-                'battery' => floatval($row['battery'])
+                'altitude' => is_numeric($row['altitude']) ? floatval($row['altitude']) : null,
+                'accuracy' => is_numeric($row['accuracy']) ? floatval($row['accuracy']) : null,
+                'battery' => is_numeric($row['battery']) ? floatval($row['battery']) : null
             ]);
         }
         $req->closeCursor();

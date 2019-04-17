@@ -1,4 +1,5 @@
 function DevicesController(optionsController, timeFilterController) {
+    this.device_MARKER_VIEW_SIZE = 40;
     this.optionsController = optionsController;
     this.timeFilterController = timeFilterController;
 
@@ -8,8 +9,6 @@ function DevicesController(optionsController, timeFilterController) {
     this.mapDeviceLayers = {};
     // layers which actually contain lines, those which get filtered
     this.deviceLayers = {};
-    this.deviceColors = {};
-    this.deviceDivIcon = {};
     this.devices = {};
 
     this.firstDate = null;
@@ -121,25 +120,30 @@ DevicesController.prototype = {
     },
 
     addDeviceMap: function(device, show=false, pageLoad=false) {
+        var id = device.id;
         // color
         var color = device.color || OCA.Theming.color;
-        this.deviceDivIcon[device.id] = L.divIcon({
-            iconAnchor: [12, 25],
-            className: 'trackWaypoint trackWaypoint-'+device.id,
-            html: ''
-        });
-        this.devices[device.id] = device;
+        this.devices[id] = device;
 
-        this.mapDeviceLayers[device.id] = L.featureGroup();
-        this.deviceLayers[device.id] = L.featureGroup();
-        this.deviceLayers[device.id].loaded = false;
-        this.mapDeviceLayers[device.id].addLayer(this.deviceLayers[device.id]);
+        var imgurl = OC.generateUrl('/svg/core/clients/phone?color='+color.replace('#', ''));
+        this.devices[id].icon = L.divIcon(L.extend({
+            html: '<div class="thumbnail" style="background-image: url(' + imgurl + ');"></div>​',
+            className: 'leaflet-marker-device device-marker device-marker-'+id
+        }, null, {
+            iconSize: [this.device_MARKER_VIEW_SIZE, this.device_MARKER_VIEW_SIZE],
+            iconAnchor:   [this.device_MARKER_VIEW_SIZE / 2, this.device_MARKER_VIEW_SIZE]
+        }));
+        this.setDeviceCss(id, color);
+
+        this.mapDeviceLayers[id] = L.featureGroup();
+        this.deviceLayers[id] = L.featureGroup();
+        this.devices[id].loaded = false;
+        this.mapDeviceLayers[id].addLayer(this.deviceLayers[id]);
 
         var name = device.user_agent;
 
         // side menu entry
-        var imgurl = OC.generateUrl('/svg/core/clients/phone?color='+color.replace('#', ''));
-        var li = '<li class="device-line" id="'+name+'-device" device="'+device.id+'" name="'+name+'">' +
+        var li = '<li class="device-line" id="'+name+'-device" device="'+id+'" name="'+name+'">' +
         '    <a href="#" class="device-name" id="'+name+'-device-name" style="background-image: url('+imgurl+')">'+name+'</a>' +
         '    <div class="app-navigation-entry-utils">' +
         '        <ul>' +
@@ -191,9 +195,30 @@ DevicesController.prototype = {
         }
 
         // enable if in saved options or if it should be enabled for another reason
-        if (show || this.optionsController.enabledDevices.indexOf(device.id) !== -1) {
-            this.toggleDevice(device.id, false, pageLoad);
+        if (show || this.optionsController.enabledDevices.indexOf(id) !== -1) {
+            this.toggleDevice(id, false, pageLoad);
         }
+    },
+
+    setDeviceCss: function(id, color) {
+        $('style[device='+id+']').remove();
+
+        var rgbc = hexToRgb(color);
+        var textcolor = 'black';
+        if (rgbc.r + rgbc.g + rgbc.b < 3 * 80) {
+            textcolor = 'white';
+        }
+        $('<style device="' + id + '">' +
+            '.devtooltip' + id + ' { ' +
+            'background: rgba(' + rgbc.r + ', ' + rgbc.g + ', ' + rgbc.b + ', 0.5);' +
+            'color: '+textcolor+'; font-weight: bold;' +
+            ' }' +
+            '.devline' + id + ' {' +
+            'stroke: ' + color + ';' +
+            '}' +
+            '.device-marker-'+id+' { ' +
+            'border-color: '+color+';}' +
+            '</style>').appendTo('body');
     },
 
     saveEnabledDevices: function(additionalIds=[]) {
@@ -225,8 +250,7 @@ DevicesController.prototype = {
     },
 
     toggleDevice: function(id, save=false, pageLoad=false) {
-        var deviceLayer = this.deviceLayers[id];
-        if (!deviceLayer.loaded) {
+        if (!this.devices[id].loaded) {
             this.loadDevicePoints(id, save, pageLoad);
         }
         this.toggleMapDeviceLayer(id);
@@ -267,7 +291,7 @@ DevicesController.prototype = {
             async: true
         }).done(function (response) {
             that.addPoints(id, response);
-            that.deviceLayers[id].loaded = true;
+            that.devices[id].loaded = true;
             that.updateMyFirstLastDates(pageLoad);
         }).always(function (response) {
             $('#device-list > li[device="'+id+'"]').removeClass('icon-loading-small');
@@ -279,6 +303,24 @@ DevicesController.prototype = {
     addPoints: function(id, points) {
         console.log('add points for device '+id);
         console.log(points);
+        var lastPoint = points[points.length - 1];
+        this.devices[id].marker = L.marker([lastPoint.lat, lastPoint.lng, lastPoint.id], {
+                icon: this.devices[id].icon
+        });
+        // points data
+        this.devices[id].points = points;
+        // points coordinates (with id as third element)
+        this.devices[id].pointsLatLngId = [];
+        for (var i=0; i < points.length; i++) {
+            this.devices[id].pointsLatLngId.push([points[i].lat, points[i].lng, points[i].id]);
+        }
+        this.devices[id].line = L.polyline(this.devices[id].pointsLatLngId, {
+            weight: 4,
+            opacity : 1,
+            className: 'devline'+id,
+        });
+        this.deviceLayers[id].addLayer(this.devices[id].marker);
+        this.deviceLayers[id].addLayer(this.devices[id].line);
     },
 
     updateMyFirstLastDates: function(pageLoad=false) {
@@ -292,7 +334,7 @@ DevicesController.prototype = {
 
         // we update dates only if nothing is currently loading
         for (id in this.mapDeviceLayers) {
-            if (this.mainLayer.hasLayer(this.mapDeviceLayers[id]) && !this.deviceLayers[id].loaded) {
+            if (this.mainLayer.hasLayer(this.mapDeviceLayers[id]) && !this.devices[id].loaded) {
                 return;
             }
         }
@@ -302,13 +344,16 @@ DevicesController.prototype = {
 
         var first = initMinDate;
         var last = initMaxDate;
+        var firstPoint, lastPoint;
         for (id in this.mapDeviceLayers) {
-            if (this.mainLayer.hasLayer(this.mapDeviceLayers[id]) && this.deviceLayers[id].loaded && this.devices[id].firstDate) {
-                if (this.devices[id].firstDate < first) {
-                    first = this.devices[id].firstDate;
+            if (this.mainLayer.hasLayer(this.mapDeviceLayers[id]) && this.devices[id].loaded) {
+                firstPoint = this.devices[id].points[0];
+                lastPoint = this.devices[id].points[this.devices[id].points.length - 1];
+                if (firstPoint.timestamp && firstPoint.timestamp < first) {
+                    first = firstPoint.timestamp;
                 }
-                if (this.devices[id].lastDate > last) {
-                    last = this.device[id].lastDate;
+                if (lastPoint.timestamp && lastPoint.timestamp > last) {
+                    last = lastPoint.timestamp;
                 }
             }
         }
@@ -324,6 +369,39 @@ DevicesController.prototype = {
         if (pageLoad) {
             this.timeFilterController.updateSliderRangeFromController();
             this.timeFilterController.setSliderToMaxInterval();
+        }
+    },
+
+    updateFilterDisplay: function() {
+        var startFilter = this.timeFilterController.valueBegin;
+        var endFilter = this.timeFilterController.valueEnd;
+        var id, i, pointsLLI, points, latLngToDisplay;
+        for (id in this.devices) {
+            latLngToDisplay = [];
+            pointsLLI = this.devices[id].pointsLatLngId;
+            points = this.devices[id].points;
+            i = 0;
+            while (i < points.length && points[i].timestamp < startFilter) {
+                i++;
+            }
+            while (i < points.length && points[i].timestamp <= endFilter) {
+                latLngToDisplay.push(pointsLLI[i]);
+                i++;
+            }
+            if (latLngToDisplay.length > 0) {
+                this.devices[id].line.setLatLngs(latLngToDisplay);
+                this.devices[id].marker.setLatLng(latLngToDisplay[latLngToDisplay.length - 1]);
+                if (!this.deviceLayers[id].hasLayer(this.devices[id].line)) {
+                    this.deviceLayers[id].addLayer(this.devices[id].line);
+                }
+                if (!this.deviceLayers[id].hasLayer(this.devices[id].marker)) {
+                    this.deviceLayers[id].addLayer(this.devices[id].marker);
+                }
+            }
+            else {
+                this.deviceLayers[id].removeLayer(this.devices[id].marker);
+                this.deviceLayers[id].removeLayer(this.devices[id].line);
+            }
         }
     },
 
@@ -348,6 +426,13 @@ DevicesController.prototype = {
         }).fail(function() {
             OC.Notification.showTemporary(t('maps', 'Failed to send current position'));
         });
+    },
+
+    zoomOnDevice: function(id) {
+        if (this.mainLayer.hasLayer(this.mapDeviceLayers[id])) {
+            this.map.fitBounds(this.mapDeviceLayers[id].getBounds(), {padding: [30, 30]});
+            this.mapDeviceLayers[id].bringToFront();
+        }
     },
 
 }

@@ -562,6 +562,7 @@
                     }
                     favoritesController.updateFilterDisplay();
                     tracksController.updateFilterDisplay();
+                    devicesController.updateFilterDisplay();
 
                     that.onUpdateCallbackBlock = false;
                     if (unencoded[0] < that.min || unencoded[1] > that.max || positions[1] - positions[0] < 10) {
@@ -626,14 +627,16 @@
                 tracksController.firstDate,
                 photosController.photoMarkersOldest,
                 nonLocalizedPhotosController.nonLocalizedPhotoMarkersOldest,
-                contactsController.contactMarkersOldest
+                contactsController.contactMarkersOldest,
+                devicesController.firstDate
             ];
             var rawMaxs = [
                 favoritesController.lastDate,
                 tracksController.lastDate,
                 photosController.photoMarkersNewest,
                 nonLocalizedPhotosController.nonLocalizedPhotoMarkersNewest,
-                contactsController.contactMarkersNewest
+                contactsController.contactMarkersNewest,
+                devicesController.lastDate
             ];
             // get rid of null values
             for (i=0; i < rawMins.length; i++) {

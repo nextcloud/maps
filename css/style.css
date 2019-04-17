@@ -198,6 +198,7 @@ tr.selected td {
 
 .leaflet-marker-nonLocalizedPhoto.nonLocalizedPhoto-marker:after,
 .leaflet-marker-contact.contact-marker:after,
+.leaflet-marker-device.device-marker:after,
 .leaflet-marker-photo.photo-marker:after {
     content:"";
     position: relative;
@@ -216,6 +217,7 @@ tr.selected td {
 
 .leaflet-marker-favorite-cluster .thumbnail,
 .leaflet-marker-contact .thumbnail,
+.leaflet-marker-device .thumbnail,
 .leaflet-marker-nonLocalizedPhoto .thumbnail,
 .leaflet-marker-photo .thumbnail {
     width: 100%;
@@ -229,6 +231,10 @@ tr.selected td {
 .leaflet-marker-photo .thumbnail {
     border-radius: 2px;
 }
+.leaflet-marker-device .thumbnail {
+    background-size: 30px;
+}
+.leaflet-marker-device .thumbnail,
 .leaflet-marker-contact .thumbnail {
     width: 101%;
     height: 101%;
@@ -242,6 +248,7 @@ tr.selected td {
     filter: grayscale(100%);
 }
 
+.leaflet-marker-device .label,
 .leaflet-marker-contact .label,
 .leaflet-marker-favorite-cluster .label,
 .leaflet-marker-nonLocalizedPhoto .label,
@@ -265,6 +272,7 @@ tr.selected td {
     opacity: 1 !important;
 }
 
+.leaflet-marker-device,
 .leaflet-marker-contact {
     border: 2px solid var(--color-main-background);
     box-shadow: 3px 3px 10px #888;
@@ -282,7 +290,8 @@ tr.selected td {
     border-radius: var(--border-radius);
 }
 
-.leaflet-marker-contact.contact-marker{
+.leaflet-marker-device.device-marker,
+.leaflet-marker-contact.contact-marker {
     top: -10px;
     border-radius: 50%;
 }

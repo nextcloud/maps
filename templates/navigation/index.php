@@ -239,5 +239,5 @@
     </li>
 </ul>
 <img id="dummylogo"/>
-<input id="trackcolor" type="text" style="display:none;"></input>
-<input id="colorinput" type="color"></input>
+<input id="trackcolorinput" type="color"></input>
+<input id="devicecolorinput" type="color"></input>

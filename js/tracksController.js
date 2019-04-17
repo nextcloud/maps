@@ -20,6 +20,8 @@ function TracksController(optionsController, timeFilterController) {
     // used by optionsController to know if tracks loading
     // was done before or after option restoration
     this.trackListLoaded = false;
+
+    this.changingColorOf = null;
 }
 
 TracksController.prototype = {
@@ -117,7 +119,7 @@ TracksController.prototype = {
             var id = $(this).parent().parent().parent().parent().attr('track');
             that.askChangeTrackColor(id);
         });
-        $('body').on('change', '#colorinput', function(e) {
+        $('body').on('change', '#trackcolorinput', function(e) {
             that.okColor();
         });
         $('body').on('click', '.drawElevationButton', function(e) {
@@ -934,15 +936,15 @@ TracksController.prototype = {
     },
 
     askChangeTrackColor: function(id) {
-        $('#trackcolor').attr('track', id);
+        this.changingColorOf = id;
         var currentColor = this.trackColors[id];
-        $('#colorinput').val(currentColor);
-        $('#colorinput').click();
+        $('#trackcolorinput').val(currentColor);
+        $('#trackcolorinput').click();
     },
 
     okColor: function() {
-        var color = $('#colorinput').val();
-        var id = $('#trackcolor').attr('track');
+        var color = $('#trackcolorinput').val();
+        var id = this.changingColorOf;
         this.trackColors[id] = color;
         this.changeTrackColor(id, color);
     },

@@ -1,5 +1,5 @@
 function DevicesController(optionsController, timeFilterController) {
-    this.device_MARKER_VIEW_SIZE = 40;
+    this.device_MARKER_VIEW_SIZE = 30;
     this.optionsController = optionsController;
     this.timeFilterController = timeFilterController;
 
@@ -17,6 +17,8 @@ function DevicesController(optionsController, timeFilterController) {
     // used by optionsController to know if devices loading
     // was done before or after option restoration
     this.deviceListLoaded = false;
+
+    this.changingColorOf = null;
 }
 
 DevicesController.prototype = {
@@ -49,7 +51,7 @@ DevicesController.prototype = {
             that.optionsController.saveOptionValues({devicesEnabled: that.map.hasLayer(that.mainLayer)});
             that.updateMyFirstLastDates();
         });
-        // expand track list
+        // expand device list
         $('body').on('click', '#navigation-devices > a', function(e) {
             that.toggleDeviceList();
             that.optionsController.saveOptionValues({deviceListShow: $('#navigation-devices').hasClass('open')});
@@ -59,6 +61,14 @@ DevicesController.prototype = {
                 that.toggleDeviceList();
                 that.optionsController.saveOptionValues({deviceListShow: $('#navigation-devices').hasClass('open')});
             }
+        });
+        // color management
+        $('body').on('click', '.changeDeviceColor', function(e) {
+            var id = $(this).parent().parent().parent().parent().attr('device');
+            that.askChangeDeviceColor(id);
+        });
+        $('body').on('change', '#devicecolorinput', function(e) {
+            that.okColor();
         });
         // send my position on page load
         if (navigator.geolocation) {
@@ -76,7 +86,7 @@ DevicesController.prototype = {
         $('#navigation-devices').toggleClass('open');
     },
 
-    // toggle tracks general layer on map and save state in user options
+    // toggle devices general layer on map and save state in user options
     toggleDevices: function() {
         if (this.map.hasLayer(this.mainLayer)) {
             this.map.removeLayer(this.mainLayer);
@@ -124,10 +134,10 @@ DevicesController.prototype = {
         // color
         var color = device.color || OCA.Theming.color;
         this.devices[id] = device;
+        this.devices[id].color = color;
 
-        var imgurl = OC.generateUrl('/svg/core/clients/phone?color='+color.replace('#', ''));
         this.devices[id].icon = L.divIcon(L.extend({
-            html: '<div class="thumbnail" style="background-image: url(' + imgurl + ');"></div>​',
+            html: '<div class="thumbnail"></div>​',
             className: 'leaflet-marker-device device-marker device-marker-'+id
         }, null, {
             iconSize: [this.device_MARKER_VIEW_SIZE, this.device_MARKER_VIEW_SIZE],
@@ -143,6 +153,7 @@ DevicesController.prototype = {
         var name = device.user_agent;
 
         // side menu entry
+        var imgurl = OC.generateUrl('/svg/core/clients/phone?color='+color.replace('#', ''));
         var li = '<li class="device-line" id="'+name+'-device" device="'+id+'" name="'+name+'">' +
         '    <a href="#" class="device-name" id="'+name+'-device-name" style="background-image: url('+imgurl+')">'+name+'</a>' +
         '    <div class="app-navigation-entry-utils">' +
@@ -203,6 +214,7 @@ DevicesController.prototype = {
     setDeviceCss: function(id, color) {
         $('style[device='+id+']').remove();
 
+        var imgurl = OC.generateUrl('/svg/core/clients/phone?color='+color.replace('#', ''));
         var rgbc = hexToRgb(color);
         var textcolor = 'black';
         if (rgbc.r + rgbc.g + rgbc.b < 3 * 80) {
@@ -218,6 +230,8 @@ DevicesController.prototype = {
             '}' +
             '.device-marker-'+id+' { ' +
             'border-color: '+color+';}' +
+            '.device-marker-'+id+' .thumbnail { ' +
+            'background-image: url(' + imgurl + ');}' +
             '</style>').appendTo('body');
     },
 
@@ -235,7 +249,7 @@ DevicesController.prototype = {
         }
         var deviceStringList = deviceList.join('|');
         this.optionsController.saveOptionValues({enabledDevices: deviceStringList});
-        // this is used when tracks are loaded again
+        // this is used when devices are loaded again
         this.optionsController.enabledDevices = deviceList;
     },
 
@@ -269,7 +283,7 @@ DevicesController.prototype = {
             // color of the eye
             eyeButton.addClass('icon-toggle').attr('style', '');
         }
-        // show track
+        // show device
         else {
             this.mainLayer.addLayer(mapDeviceLayer);
             // color of the eye
@@ -377,30 +391,32 @@ DevicesController.prototype = {
         var endFilter = this.timeFilterController.valueEnd;
         var id, i, pointsLLI, points, latLngToDisplay;
         for (id in this.devices) {
-            latLngToDisplay = [];
-            pointsLLI = this.devices[id].pointsLatLngId;
-            points = this.devices[id].points;
-            i = 0;
-            while (i < points.length && points[i].timestamp < startFilter) {
-                i++;
-            }
-            while (i < points.length && points[i].timestamp <= endFilter) {
-                latLngToDisplay.push(pointsLLI[i]);
-                i++;
-            }
-            if (latLngToDisplay.length > 0) {
-                this.devices[id].line.setLatLngs(latLngToDisplay);
-                this.devices[id].marker.setLatLng(latLngToDisplay[latLngToDisplay.length - 1]);
-                if (!this.deviceLayers[id].hasLayer(this.devices[id].line)) {
-                    this.deviceLayers[id].addLayer(this.devices[id].line);
+            if (this.devices[id].loaded) {
+                latLngToDisplay = [];
+                pointsLLI = this.devices[id].pointsLatLngId;
+                points = this.devices[id].points;
+                i = 0;
+                while (i < points.length && points[i].timestamp < startFilter) {
+                    i++;
                 }
-                if (!this.deviceLayers[id].hasLayer(this.devices[id].marker)) {
-                    this.deviceLayers[id].addLayer(this.devices[id].marker);
+                while (i < points.length && points[i].timestamp <= endFilter) {
+                    latLngToDisplay.push(pointsLLI[i]);
+                    i++;
                 }
-            }
-            else {
-                this.deviceLayers[id].removeLayer(this.devices[id].marker);
-                this.deviceLayers[id].removeLayer(this.devices[id].line);
+                if (latLngToDisplay.length > 0) {
+                    this.devices[id].line.setLatLngs(latLngToDisplay);
+                    this.devices[id].marker.setLatLng(latLngToDisplay[latLngToDisplay.length - 1]);
+                    if (!this.deviceLayers[id].hasLayer(this.devices[id].line)) {
+                        this.deviceLayers[id].addLayer(this.devices[id].line);
+                    }
+                    if (!this.deviceLayers[id].hasLayer(this.devices[id].marker)) {
+                        this.deviceLayers[id].addLayer(this.devices[id].marker);
+                    }
+                }
+                else {
+                    this.deviceLayers[id].removeLayer(this.devices[id].marker);
+                    this.deviceLayers[id].removeLayer(this.devices[id].line);
+                }
             }
         }
     },
@@ -433,6 +449,44 @@ DevicesController.prototype = {
             this.map.fitBounds(this.mapDeviceLayers[id].getBounds(), {padding: [30, 30]});
             this.mapDeviceLayers[id].bringToFront();
         }
+    },
+
+    askChangeDeviceColor: function(id) {
+        this.changingColorOf = id;
+        var currentColor = this.devices[id].color;
+        $('#devicecolorinput').val(currentColor);
+        $('#devicecolorinput').click();
+    },
+
+    okColor: function() {
+        var color = $('#devicecolorinput').val();
+        var id = this.changingColorOf;
+        this.devices[id].color = color;
+        this.changeDeviceColor(id, color);
+    },
+
+    changeDeviceColor: function(id, color) {
+        var that = this;
+        $('#device-list > li[device="'+id+'"]').addClass('icon-loading-small');
+        var req = {
+            color: color
+        };
+        var url = OC.generateUrl('/apps/maps/devices/'+id);
+        $.ajax({
+            type: 'PUT',
+            url: url,
+            data: req,
+            async: true
+        }).done(function (response) {
+            var imgurl = OC.generateUrl('/svg/core/clients/phone?color='+color.replace('#', ''));
+            $('#device-list > li[device='+id+'] .device-name').attr('style', 'background-image: url('+imgurl+')');
+
+            that.setDeviceCss(id, color);
+        }).always(function (response) {
+            $('#device-list > li[device="'+id+'"]').removeClass('icon-loading-small');
+        }).fail(function(response) {
+            OC.Notification.showTemporary(t('maps', 'Failed to change device color') + ': ' + response.responseText);
+        });
     },
 
 }

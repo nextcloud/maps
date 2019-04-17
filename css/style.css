@@ -232,7 +232,7 @@ tr.selected td {
     border-radius: 2px;
 }
 .leaflet-marker-device .thumbnail {
-    background-size: 30px;
+    background-size: 75%;
 }
 .leaflet-marker-device .thumbnail,
 .leaflet-marker-contact .thumbnail {
@@ -444,7 +444,8 @@ table.editFavorite input[type=text] {
 .app-navigation-entry-menu {
     z-index: 10001;
 }
-#colorinput {
+#devicecolorinput,
+#trackcolorinput {
     opacity: 0;
     width: 0px;
     height: 0px;

@@ -128,7 +128,7 @@ class DevicesController extends Controller {
         if ($device !== null) {
             if (is_string($color) && strlen($color) > 0) {
                 $this->devicesService->editDeviceInDB($id, $color);
-                $editedDevice = $this->devicesService->getDeviceFromDB($id);
+                $editedDevice = $this->devicesService->getDeviceFromDB($id, $this->userId);
                 return new DataResponse($editedDevice);
             }
             else {

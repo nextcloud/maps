@@ -174,7 +174,7 @@ class DevicesService {
     }
 
     public function editDeviceInDB($id, $color) {
-        $qb = $this->dbconnection->getQueryBuilder();
+        $qb = $this->qb;
         $qb->update('maps_devices');
         $qb->set('color', $qb->createNamedParameter($color, IQueryBuilder::PARAM_STR));
         $qb->where(
@@ -185,7 +185,7 @@ class DevicesService {
     }
 
     public function deleteDeviceFromDB($id) {
-        $qb = $this->dbconnection->getQueryBuilder();
+        $qb = $this->qb;
         $qb->delete('maps_devices')
             ->where(
                 $qb->expr()->eq('id', $qb->createNamedParameter($id, IQueryBuilder::PARAM_INT))
@@ -202,7 +202,7 @@ class DevicesService {
     }
 
     public function countPoints($userId, $deviceIdList, $begin, $end) {
-        $qb = $this->dbconnection->getQueryBuilder();
+        $qb = $this->qb;
         $qb->select($qb->createFunction('COUNT(*)'))
             ->from('maps_devices', 'd')
             ->innerJoin('d', 'maps_device_points', 'p', $qb->expr()->eq('d.id', 'p.device_id'))

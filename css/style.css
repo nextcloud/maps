@@ -60,6 +60,17 @@
 .leaflet-control-layers-selector {
     min-height: 0px;
 }
+.leaflet-control-layers-toggle {
+    background-size: 75% !important;
+}
+.leaflet-control-layers:not(.leaflet-control-layers-expanded) {
+    width: 33px;
+    height: 37px;
+}
+.leaflet-control-layers:not(.leaflet-control-layers-expanded) > a {
+    width: 100%;
+    height: 100%;
+}
 
 #opening-hours-table {
     margin-left: 25px;

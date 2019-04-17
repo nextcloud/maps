@@ -33,56 +33,7 @@ class DevicesService {
      * @param int $pruneBefore
      * @return array with devices
      */
-    public function getDevicesFromDB($userId, $pruneBefore=0) {
-        $deviceIds = [];
-        $qb = $this->qb;
-        $qb->select('id')
-            ->from('maps_devices', 'd')
-            ->where(
-                $qb->expr()->eq('user_id', $qb->createNamedParameter($userId, IQueryBuilder::PARAM_STR))
-            );
-        $req = $qb->execute();
-
-        while ($row = $req->fetch()) {
-            array_push($deviceIds, intval($row['id']));
-        }
-        $req->closeCursor();
-        $qb = $qb->resetQueryParts();
-
-        // get coordinates
-        $pointsByDevice = [];
-        foreach ($deviceIds as $deviceId) {
-            $qb->select('id', 'lat', 'lng', 'timestamp', 'altitude', 'accuracy', 'battery')
-                ->from('maps_device_points', 'p')
-                ->where(
-                    $qb->expr()->eq('device_id', $qb->createNamedParameter($deviceId, IQueryBuilder::PARAM_INT))
-                );
-            if (intval($pruneBefore) > 0) {
-                $qb->andWhere(
-                    $qb->expr()->gt('timestamp', $qb->createNamedParameter($pruneBefore, IQueryBuilder::PARAM_INT))
-                );
-            }
-            $qb->orderBy('timestamp', 'ASC');
-            $req = $qb->execute();
-
-            $points = [];
-            while ($row = $req->fetch()) {
-                array_push($points, [
-                    'id' => intval($row['id']),
-                    'lat' => floatval($row['lat']),
-                    'lng' => floatval($row['lng']),
-                    'timestamp' => intval($row['timestamp']),
-                    'altitude' => floatval($row['altitude']),
-                    'accuracy' => floatval($row['accuracy']),
-                    'battery' => floatval($row['battery'])
-                ]);
-            }
-            $pointsByDevice[$deviceId] = $points;
-        }
-        $req->closeCursor();
-        $qb = $qb->resetQueryParts();
-
-        // build device list
+    public function getDevicesFromDB($userId) {
         $devices = [];
         $qb = $this->qb;
         $qb->select('id', 'user_agent', 'color')
@@ -96,13 +47,51 @@ class DevicesService {
             array_push($devices, [
                 'id' => intval($row['id']),
                 'user_agent' => $row['user_agent'],
-                'color' => $row['color'],
-                'points' => $pointsByDevice[intval($row['id'])]
+                'color' => $row['color']
             ]);
         }
         $req->closeCursor();
         $qb = $qb->resetQueryParts();
         return $devices;
+    }
+
+    public function getDevicePointsFromDB($userId, $deviceId, $pruneBefore=0) {
+        $qb = $this->qb;
+        // get coordinates
+        $qb->select('p.id', 'lat', 'lng', 'timestamp', 'altitude', 'accuracy', 'battery')
+            ->from('maps_device_points', 'p')
+            ->innerJoin('p', 'maps_devices', 'd', $qb->expr()->eq('d.id', 'p.device_id'))
+            ->where(
+                $qb->expr()->eq('p.device_id', $qb->createNamedParameter($deviceId, IQueryBuilder::PARAM_INT))
+            )
+            ->andWhere(
+                $qb->expr()->eq('d.user_id', $qb->createNamedParameter($userId, IQueryBuilder::PARAM_STR))
+            );
+        if (intval($pruneBefore) > 0) {
+            $qb->andWhere(
+                $qb->expr()->gt('timestamp', $qb->createNamedParameter($pruneBefore, IQueryBuilder::PARAM_INT))
+            );
+        }
+        $qb->orderBy('timestamp', 'ASC');
+        error_log($qb->getSQL());
+        $req = $qb->execute();
+
+        $points = [];
+        while ($row = $req->fetch()) {
+            array_push($points, [
+                'id' => intval($row['id']),
+                'lat' => floatval($row['lat']),
+                'lng' => floatval($row['lng']),
+                'timestamp' => intval($row['timestamp']),
+                'altitude' => floatval($row['altitude']),
+                'accuracy' => floatval($row['accuracy']),
+                'battery' => floatval($row['battery'])
+            ]);
+        }
+        $req->closeCursor();
+        $qb = $qb->resetQueryParts();
+
+        return $points;
     }
 
     public function getOrCreateDeviceFromDB($userId, $userAgent) {
@@ -216,7 +205,7 @@ class DevicesService {
         $qb = $this->dbconnection->getQueryBuilder();
         $qb->select($qb->createFunction('COUNT(*)'))
             ->from('maps_devices', 'd')
-            ->innerJoin('bo', 'maps_device_points', 'p', $qb->expr()->eq('d.id', 'p.device_id'))
+            ->innerJoin('d', 'maps_device_points', 'p', $qb->expr()->eq('d.id', 'p.device_id'))
             ->where(
                 $qb->expr()->eq('d.user_id', $qb->createNamedParameter($userId, IQueryBuilder::PARAM_INT))
             );

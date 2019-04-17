@@ -99,6 +99,7 @@
         optionValues: {},
         enabledFavoriteCategories: [],
         enabledTracks: [],
+        enabledDevices: [],
         saveOptionValues: function (optionValues) {
             var req = {
                 options: optionValues
@@ -179,6 +180,23 @@
                 }
                 if (!optionsValues.hasOwnProperty('tracksEnabled') || optionsValues.tracksEnabled === 'true') {
                     tracksController.toggleTracks();
+                }
+                if (!optionsValues.hasOwnProperty('deviceListShow') || optionsValues.deviceListShow === 'true') {
+                    devicesController.toggleDeviceList();
+                }
+                if (optionsValues.hasOwnProperty('enabledDevices')
+                    && optionsValues.enabledDevices
+                    && optionsValues.enabledDevices !== '')
+                {
+                    that.enabledDevices = optionsValues.enabledDevices.split('|').map(function (x) {
+                        return parseInt(x);
+                    });
+                    if (devicesController.deviceListLoaded) {
+                        devicesController.restoreDevicesState(that.enabledDevices);
+                    }
+                }
+                if (!optionsValues.hasOwnProperty('devicesEnabled') || optionsValues.devicesEnabled === 'true') {
+                    devicesController.toggleDevices();
                 }
 
                 // save tile layer when changed

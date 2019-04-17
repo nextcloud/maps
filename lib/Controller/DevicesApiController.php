@@ -82,10 +82,10 @@ class DevicesApiController extends ApiController {
      * @NoCSRFRequired
      * @CORS
      */
-    public function getDevices($apiversion, $pruneBefore=0) {
+    public function getDevices($apiversion) {
         $now = new \DateTime();
 
-        $devices = $this->devicesService->getDevicesFromDB($this->userId, $pruneBefore);
+        $devices = $this->devicesService->getDevicesFromDB($this->userId);
 
         $etag = md5(json_encode($devices));
         if ($this->request->getHeader('If-None-Match') === '"'.$etag.'"') {
@@ -94,6 +94,16 @@ class DevicesApiController extends ApiController {
         return (new DataResponse($devices))
             ->setLastModified($now)
             ->setETag($etag);
+    }
+
+    /**
+     * @NoAdminRequired
+     * @NoCSRFRequired
+     * @CORS
+     */
+    public function getDevicePoints($id, $pruneBefore=0) {
+        $points = $this->devicesService->getDevicePointsFromDB($this->userId, $id, $pruneBefore);
+        return new DataResponse($points);
     }
 
     /**
@@ -113,7 +123,10 @@ class DevicesApiController extends ApiController {
             }
             $deviceId = $this->devicesService->getOrCreateDeviceFromDB($this->userId, $ua);
             $pointId = $this->devicesService->addPointToDB($deviceId, $lat, $lng, $ts, $altitude, $battery, $accuracy);
-            return new DataResponse($pointId);
+            return new DataResponse([
+                'deviceId'=>$deviceId,
+                'pointId'=>$pointId
+            ]);
         }
         else {
             return new DataResponse('invalid values', 400);

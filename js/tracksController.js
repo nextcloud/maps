@@ -142,7 +142,7 @@ TracksController.prototype = {
         });
     },
 
-    // expand or fold categories in sidebar
+    // expand or fold track list in sidebar
     toggleTrackList: function() {
         $('#navigation-tracks').toggleClass('open');
     },
@@ -465,6 +465,7 @@ TracksController.prototype = {
 
         var beforeThis = null;
         var nameLower = name.toLowerCase();
+        var trackName;
         $('#track-list > li').each(function() {
             trackName = $(this).attr('name');
             if (nameLower.localeCompare(trackName) < 0) {

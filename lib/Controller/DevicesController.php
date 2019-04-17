@@ -82,9 +82,17 @@ class DevicesController extends Controller {
     /**
      * @NoAdminRequired
      */
-    public function getDevices($pruneBefore=0) {
-        $devices = $this->devicesService->getDevicesFromDB($this->userId, $pruneBefore);
+    public function getDevices() {
+        $devices = $this->devicesService->getDevicesFromDB($this->userId);
         return new DataResponse($devices);
+    }
+
+    /**
+     * @NoAdminRequired
+     */
+    public function getDevicePoints($id, $pruneBefore=0) {
+        $points = $this->devicesService->getDevicePointsFromDB($this->userId, $id, $pruneBefore);
+        return new DataResponse($points);
     }
 
     /**
@@ -102,7 +110,10 @@ class DevicesController extends Controller {
             }
             $deviceId = $this->devicesService->getOrCreateDeviceFromDB($this->userId, $ua);
             $pointId = $this->devicesService->addPointToDB($deviceId, $lat, $lng, $ts, $altitude, $battery, $accuracy);
-            return new DataResponse($pointId);
+            return new DataResponse([
+                'deviceId'=>$deviceId,
+                'pointId'=>$pointId
+            ]);
         }
         else {
             return new DataResponse('invalid values', 400);

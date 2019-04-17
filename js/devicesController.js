@@ -19,6 +19,7 @@ function DevicesController(optionsController, timeFilterController) {
     this.deviceListLoaded = false;
 
     this.changingColorOf = null;
+    this.deviceDeletionTimer = {};
 }
 
 DevicesController.prototype = {
@@ -69,6 +70,20 @@ DevicesController.prototype = {
         });
         $('body').on('change', '#devicecolorinput', function(e) {
             that.okColor();
+        });
+        // delete a device
+        $('body').on('click', '.deleteDevice', function(e) {
+            var devid = $(this).parent().parent().parent().parent().attr('device');
+            $(this).parent().parent().parent().parent().addClass('deleted');
+            that.deviceDeletionTimer[devid] = new Timer(function() {
+                that.deleteDeviceDB(devid);
+            }, 7000);
+        });
+        $('body').on('click', '.undoDeleteDevice', function(e) {
+            var devid = $(this).parent().parent().attr('device');
+            $(this).parent().parent().removeClass('deleted');
+            that.deviceDeletionTimer[devid].pause();
+            delete that.deviceDeletionTimer[devid];
         });
         // send my position on page load
         if (navigator.geolocation) {
@@ -235,6 +250,41 @@ DevicesController.prototype = {
             '.device-marker-'+id+' .thumbnail { ' +
             'background-image: url(' + imgurl + ');}' +
             '</style>').appendTo('body');
+    },
+
+    deleteDeviceDB: function(id) {
+        var that = this;
+        $('#navigation-devices').addClass('icon-loading-small');
+        $('.leaflet-container').css('cursor', 'wait');
+        var req = {};
+        var url = OC.generateUrl('/apps/maps/devices/'+id);
+        $.ajax({
+            type: 'DELETE',
+            url: url,
+            data: req,
+            async: true
+        }).done(function (response) {
+            that.deleteDeviceMap(id);
+        }).always(function (response) {
+            $('#navigation-devices').removeClass('icon-loading-small');
+            $('.leaflet-container').css('cursor', 'grab');
+        }).fail(function() {
+            OC.Notification.showTemporary(t('maps', 'Failed to delete device'));
+        });
+    },
+
+    deleteDeviceMap: function(id) {
+        this.mainLayer.removeLayer(this.mapDeviceLayers[id]);
+        this.mapDeviceLayers[id].removeLayer(this.deviceLayers[id]);
+        delete this.mapDeviceLayers[id];
+        delete this.deviceLayers[id];
+        delete this.devices[id];
+
+        $('style[device='+id+']').remove();
+
+        $('#device-list > li[device="'+id+'"]').fadeOut('slow', function() {
+            $(this).remove();
+        });
     },
 
     saveEnabledDevices: function(additionalIds=[]) {

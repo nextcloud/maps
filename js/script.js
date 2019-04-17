@@ -12,6 +12,7 @@
         mapController.map.contactsController = contactsController;
         tracksController.initController(mapController.map);
         devicesController.initController(mapController.map);
+        mapController.map.devicesController = devicesController;
 
         // once controllers have been set/initialized, we can restore option values from server
         optionsController.restoreOptions();

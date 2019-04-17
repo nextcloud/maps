@@ -221,7 +221,7 @@ DevicesController.prototype = {
             textcolor = 'white';
         }
         $('<style device="' + id + '">' +
-            '.devtooltip' + id + ' { ' +
+            '.tooltip-dev-' + id + ' { ' +
             'background: rgba(' + rgbc.r + ', ' + rgbc.g + ', ' + rgbc.b + ', 0.5);' +
             'color: '+textcolor+'; font-weight: bold;' +
             ' }' +
@@ -230,6 +230,8 @@ DevicesController.prototype = {
             '}' +
             '.device-marker-'+id+' { ' +
             'border-color: '+color+';}' +
+            '.device-marker-'+id+'::after {' +
+            'border-color: '+color+' transparent !important;}' +
             '.device-marker-'+id+' .thumbnail { ' +
             'background-image: url(' + imgurl + ');}' +
             '</style>').appendTo('body');
@@ -315,18 +317,21 @@ DevicesController.prototype = {
     },
 
     addPoints: function(id, points) {
-        console.log('add points for device '+id);
-        console.log(points);
         var lastPoint = points[points.length - 1];
         this.devices[id].marker = L.marker([lastPoint.lat, lastPoint.lng, lastPoint.id], {
                 icon: this.devices[id].icon
         });
-        // points data
-        this.devices[id].points = points;
+        this.devices[id].marker.devid = id;
+        this.devices[id].marker.on('mouseover', this.deviceMarkerMouseover);
+        this.devices[id].marker.on('mouseout', this.deviceMarkerMouseout);
+        //this.devices[id].marker.on('click', this.favoriteMouseClick);
+        // points data indexed by point id
+        this.devices[id].points = {};
         // points coordinates (with id as third element)
         this.devices[id].pointsLatLngId = [];
         for (var i=0; i < points.length; i++) {
             this.devices[id].pointsLatLngId.push([points[i].lat, points[i].lng, points[i].id]);
+            this.devices[id].points[points[i].id] = points[i];
         }
         this.devices[id].line = L.polyline(this.devices[id].pointsLatLngId, {
             weight: 4,
@@ -358,11 +363,13 @@ DevicesController.prototype = {
 
         var first = initMinDate;
         var last = initMaxDate;
-        var firstPoint, lastPoint;
+        var fpId, lpId, firstPoint, lastPoint;
         for (id in this.mapDeviceLayers) {
             if (this.mainLayer.hasLayer(this.mapDeviceLayers[id]) && this.devices[id].loaded) {
-                firstPoint = this.devices[id].points[0];
-                lastPoint = this.devices[id].points[this.devices[id].points.length - 1];
+                fpId = this.devices[id].pointsLatLngId[0][2];
+                lpId = this.devices[id].pointsLatLngId[this.devices[id].pointsLatLngId.length - 1][2];
+                firstPoint = this.devices[id].points[fpId];
+                lastPoint = this.devices[id].points[lpId];
                 if (firstPoint.timestamp && firstPoint.timestamp < first) {
                     first = firstPoint.timestamp;
                 }
@@ -396,10 +403,10 @@ DevicesController.prototype = {
                 pointsLLI = this.devices[id].pointsLatLngId;
                 points = this.devices[id].points;
                 i = 0;
-                while (i < points.length && points[i].timestamp < startFilter) {
+                while (i < pointsLLI.length && points[pointsLLI[i][2]].timestamp < startFilter) {
                     i++;
                 }
-                while (i < points.length && points[i].timestamp <= endFilter) {
+                while (i < pointsLLI.length && points[pointsLLI[i][2]].timestamp <= endFilter) {
                     latLngToDisplay.push(pointsLLI[i]);
                     i++;
                 }
@@ -487,6 +494,27 @@ DevicesController.prototype = {
         }).fail(function(response) {
             OC.Notification.showTemporary(t('maps', 'Failed to change device color') + ': ' + response.responseText);
         });
+    },
+
+    deviceMarkerMouseover: function(e) {
+        var id = e.target.devid;
+        var pointId = e.target.getLatLng().alt;
+        var device = this._map.devicesController.devices[id];
+        var markerTooltip = this._map.devicesController.getDeviceMarkerTooltipContent(device, pointId);
+        e.target.bindTooltip(markerTooltip, {className: 'tooltip-dev-' + id});
+        e.target.openTooltip();
+    },
+
+    deviceMarkerMouseout: function(e) {
+        e.target.unbindTooltip();
+        e.target.closeTooltip();
+    },
+
+    getDeviceMarkerTooltipContent: function(device, pointId) {
+        var point = device.points[pointId];
+        var content = '⊙ ' + t('maps', 'User agent') + ': ' + brify(device.user_agent, 30);
+        content = content + '<br/>' + '⊙ ' + t('maps', 'Date') + ': ' + (new Date(point.timestamp * 1000)).toIsoString();
+        return content;
     },
 
 }

@@ -211,6 +211,10 @@
                 if (!optionsValues.hasOwnProperty('devicesEnabled') || optionsValues.devicesEnabled === 'true') {
                     devicesController.toggleDevices();
                 }
+                if (optionsValues.hasOwnProperty('trackMe') && optionsValues.trackMe === 'true') {
+                    $('#track-me').prop('checked', true);
+                    devicesController.launchTrackLoop();
+                }
 
                 // save tile layer when changed
                 // do it after restore, otherwise restoring triggers save
@@ -459,7 +463,6 @@
         },
 
         exportRoute: function() {
-            //console.log(this.control);
             if (this.control.hasOwnProperty('_selectedRoute')
                 && this.control._selectedRoute.hasOwnProperty('coordinates')
                 && this.control._selectedRoute.coordinates.length > 0

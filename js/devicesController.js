@@ -21,6 +21,7 @@ function DevicesController(optionsController, timeFilterController) {
 
     this.changingColorOf = null;
     this.deviceDeletionTimer = {};
+    this.sendPositionTimer = null;
     this.lastZIndex = 1000;
     this.lineMarker = null;
 }
@@ -109,21 +110,27 @@ DevicesController.prototype = {
             that.optionsController.enabledDevices = [];
             that.optionsController.saveOptionValues({devicesEnabled: that.map.hasLayer(that.mainLayer)});
         });
+        // refresh devices positions
+        $('body').on('click', '#refresh-all-devices', function(e) {
+            that.refreshAllDevices();
+        });
+        $('body').on('click', '#track-me', function(e) {
+            if ($(this).is(':checked')) {
+                that.launchTrackLoop();
+                that.optionsController.saveOptionValues({trackMe: true});
+            }
+            else {
+                that.stopTrackLoop();
+                that.optionsController.saveOptionValues({trackMe: false});
+            }
+        });
+
         this.map.on('click', function (e) {
             if (that.lineMarker) {
                 that.lineMarker.remove();
                 that.lineMarker = null;
             }
         });
-        // send my position on page load
-        if (navigator.geolocation) {
-            navigator.geolocation.getCurrentPosition(function (position) {
-                var lat = position.coords.latitude;
-                var lng = position.coords.longitude;
-                var acc = position.coords.accuracy;
-                that.sendMyPosition(lat, lng, acc);
-            });
-        }
     },
 
     // expand or fold device list in sidebar
@@ -495,6 +502,7 @@ DevicesController.prototype = {
         }
     },
 
+    // load all available points and create marker/line
     loadDevicePoints: function(id, save=false, pageLoad=false) {
         var that = this;
         $('#device-list > li[device="'+id+'"]').addClass('icon-loading-small');
@@ -516,6 +524,7 @@ DevicesController.prototype = {
         });
     },
 
+    // handle first data received for the device
     addPoints: function(id, points) {
         var lastPoint = points[points.length - 1];
         this.devices[id].marker = L.marker([lastPoint.lat, lastPoint.lng, lastPoint.id], {
@@ -544,6 +553,44 @@ DevicesController.prototype = {
         this.deviceMarkerLayers[id].addLayer(this.devices[id].marker);
         if (this.optionsController.enabledDeviceLines.indexOf(id) !== -1) {
             this.deviceLineLayers[id].addLayer(this.devices[id].line);
+        }
+    },
+
+    // device already exists and has points, check if there are new points
+    updateDevicePoints: function(id) {
+        var that = this;
+        // get last device point
+        var ts = null;
+        if (this.devices[id].pointsLatLngId && this.devices[id].pointsLatLngId.length > 0) {
+            var pid = this.devices[id].pointsLatLngId[this.devices[id].pointsLatLngId.length - 1][2];
+            ts = this.devices[id].points[pid].timestamp;
+        }
+        $('#device-list > li[device="'+id+'"]').addClass('icon-loading-small');
+        var req = {};
+        if (ts) {
+            req.pruneBefore = ts;
+        }
+        var url = OC.generateUrl('/apps/maps/devices/'+id);
+        $.ajax({
+            type: 'GET',
+            url: url,
+            data: req,
+            async: true
+        }).done(function (response) {
+            that.appendPoints(id, response);
+            that.updateMyFirstLastDates(true);
+            that.updateFilterDisplay();
+        }).always(function (response) {
+            $('#device-list > li[device="'+id+'"]').removeClass('icon-loading-small');
+        }).fail(function() {
+            OC.Notification.showTemporary(t('maps', 'Failed to update device points'));
+        });
+    },
+
+    appendPoints: function(id, points) {
+        for (var i=0; i < points.length; i++) {
+            this.devices[id].pointsLatLngId.push([points[i].lat, points[i].lng, points[i].id]);
+            this.devices[id].points[points[i].id] = points[i];
         }
     },
 
@@ -630,6 +677,42 @@ DevicesController.prototype = {
                     this.mapDeviceLayers[id].removeLayer(this.deviceMarkerLayers[id]);
                 }
             }
+        }
+    },
+
+    refreshAllDevices: function() {
+        for (var id in this.devices) {
+            this.updateDevicePoints(id);
+        }
+    },
+
+    launchTrackLoop: function() {
+        this.sendPositionLoop();
+    },
+
+    stopTrackLoop: function() {
+        if (this.sendPositionTimer) {
+            this.sendPositionTimer.pause();
+            delete this.sendPositionTimer;
+            this.sendPositionTimer = null;
+        }
+    },
+
+    sendPositionLoop: function() {
+        var that = this;
+        // start a loop which get and send my position
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(function (position) {
+                var lat = position.coords.latitude;
+                var lng = position.coords.longitude;
+                var acc = position.coords.accuracy;
+                that.sendMyPosition(lat, lng, acc);
+                // loop
+                that.stopTrackLoop();
+                that.sendPositionTimer = new Timer(function() {
+                    that.sendPositionLoop();
+                }, 4000);
+            });
         }
     },
 

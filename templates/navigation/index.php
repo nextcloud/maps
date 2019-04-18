@@ -215,6 +215,12 @@
         <div class="app-navigation-entry-menu">
             <ul>
                 <li>
+                    <a href="#" id="refresh-all-devices">
+                        <span class="icon-download"></span>
+                        <span><?php p($l->t('Refresh devices positions')); ?></span>
+                    </a>
+                </li>
+                <li>
                     <a href="#" id="select-all-devices">
                         <span class="icon-category-enabled"></span>
                         <span><?php p($l->t('Show all devices')); ?></span>

@@ -22,6 +22,7 @@ function DevicesController(optionsController, timeFilterController) {
     this.changingColorOf = null;
     this.deviceDeletionTimer = {};
     this.sendPositionTimer = null;
+    this.currentPrecisionCircle = null;
     this.lastZIndex = 1000;
     this.lineMarker = null;
 }
@@ -730,7 +731,7 @@ DevicesController.prototype = {
         var req = {
             lat: lat,
             lng: lng,
-            acc: acc,
+            accuracy: acc,
             timestamp: ts
         };
         var url = OC.generateUrl('/apps/maps/devices');
@@ -794,17 +795,39 @@ DevicesController.prototype = {
     },
 
     deviceMarkerMouseover: function(e) {
+        var that = this._map.devicesController;
         var id = e.target.devid;
         var pointId = e.target.getLatLng().alt;
-        var device = this._map.devicesController.devices[id];
-        var markerTooltip = this._map.devicesController.getDeviceMarkerTooltipContent(device, pointId);
+        var device = that.devices[id];
+        // tooltip
+        var markerTooltip = that.getDeviceMarkerTooltipContent(device, pointId);
         e.target.bindTooltip(markerTooltip, {className: 'tooltip-dev-' + id});
         e.target.openTooltip();
+        // accuracy circle
+        var latlng = e.target.getLatLng();
+        var acc = that.devices[id].points[pointId].accuracy;
+        console.log(acc);
+        if (acc) {
+            that.currentPrecisionCircle = L.circle(latlng, {radius: acc});
+            that.map.addLayer(that.currentPrecisionCircle);
+        }
+        else {
+            that.currentPrecisionCircle = null;
+        }
     },
 
     deviceMarkerMouseout: function(e) {
+        // tooltip
         e.target.unbindTooltip();
         e.target.closeTooltip();
+        // accuracy circle
+        var that = this._map.devicesController;
+        if (that.currentPrecisionCircle !== null &&
+            that.map.hasLayer(that.currentPrecisionCircle)
+        ) {
+            that.map.removeLayer(that.currentPrecisionCircle);
+            that.currentPrecisionCircle = null;
+        }
     },
 
     getDeviceMarkerTooltipContent: function(device, pointId) {

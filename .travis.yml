@@ -18,6 +18,9 @@ matrix:
         - php: 7.2
           env: DB=mysql
         - php: 7.2
+          env: DB=pgsql
+          services: postgresql
+        - php: 7.2
           env: DB=pgsql CORE_BRANCH=master
           services: postgresql
     fast_finish: true

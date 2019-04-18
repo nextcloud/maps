@@ -198,3 +198,64 @@ function formatTimeSeconds(time_s){
     return `${ph}:${pm}:${ps}`;
 }
 
+function getDeviceInfoFromUserAgent(ua) {
+    var res = {
+        os: null,
+        client: null,
+        clientVersion: null
+    };
+    var m;
+    // OS
+    if (ua.match(/x11/i) || ua.match(/linux/i)) {
+        res.os = 'GNU/Linux';
+    }
+    else if (ua.match(/android/i)) {
+        res.os = 'Android';
+    }
+    else if (ua.match(/windows/i)) {
+        res.os = 'Windows';
+    }
+    else if (ua.match(/iphone/i)) {
+        res.os = 'IOS';
+    }
+    else if (ua.match(/macintosh/i) || ua.match(/darwin/i)) {
+        res.os = 'MacOS';
+    }
+    // BROWSER
+    if (ua.match(/firefox\//i) && !ua.match(/seamonkey\//i)) {
+        res.client = 'Firefox';
+        m = ua.match(/firefox\/([0-9.]*)/i);
+        if (m.length > 1) {
+            res.clientVersion = m[1];
+        }
+    }
+    else if (ua.match(/safari\//i) && !ua.match(/chrome\//i) && !ua.match(/chromium\//i)) {
+        res.client = 'Safari';
+        m = ua.match(/safari\/([0-9.]*)/i);
+        if (m.length > 1) {
+            res.clientVersion = m[1];
+        }
+    }
+    else if (ua.match(/chrome\//i) && !ua.match(/chromium\//i)) {
+        res.client = 'Chrome';
+        m = ua.match(/chrome\/([0-9.]*)/i);
+        if (m.length > 1) {
+            res.clientVersion = m[1];
+        }
+    }
+    else if (ua.match(/chromium\//i)) {
+        res.client = 'Chromium';
+        m = ua.match(/chromium\/([0-9.]*)/i);
+        if (m.length > 1) {
+            res.clientVersion = m[1];
+        }
+    }
+    else if (ua.match(/opr\//i)) {
+        res.client = 'Opera';
+        m = ua.match(/opr\/([0-9.]*)/i);
+        if (m.length > 1) {
+            res.clientVersion = m[1];
+        }
+    }
+    return res;
+}

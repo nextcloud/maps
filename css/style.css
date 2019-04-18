@@ -246,7 +246,7 @@ tr.selected td {
     border-radius: 2px;
 }
 .leaflet-marker-device .thumbnail {
-    background-size: 75%;
+    background-size: 70%;
 }
 .leaflet-marker-device .thumbnail,
 .leaflet-marker-contact .thumbnail {

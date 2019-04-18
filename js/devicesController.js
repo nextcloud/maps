@@ -206,6 +206,7 @@ DevicesController.prototype = {
         var color = device.color || OCA.Theming.color;
         this.devices[id] = device;
         this.devices[id].color = color;
+        this.devices[id].info = getDeviceInfoFromUserAgent(device.user_agent);
 
         this.devices[id].icon = L.divIcon(L.extend({
             html: '<div class="thumbnail"></div>​',
@@ -230,11 +231,27 @@ DevicesController.prototype = {
         this.mapDeviceLayers[id].addLayer(this.deviceMarkerLayers[id]);
 
         var name = device.user_agent;
+        if (device.info.os) {
+            name = device.info.os;
+            if (device.info.client) {
+                name = name + ' ' + device.info.client;
+                if (device.info.clientVersion) {
+                    name = name + '(' + device.info.clientVersion + ')';
+                }
+            }
+        }
+        device.name = name;
 
         // side menu entry
-        var imgurl = OC.generateUrl('/svg/core/clients/phone?color='+color.replace('#', ''));
+        var imgurl;
+        if (['Windows', 'GNU/Linux', 'MacOS'].indexOf(device.info.os) !== -1) {
+            imgurl = OC.generateUrl('/svg/core/clients/desktop?color='+color.replace('#', ''));
+        }
+        else {
+            imgurl = OC.generateUrl('/svg/core/clients/phone?color='+color.replace('#', ''));
+        }
         var li = '<li class="device-line" id="'+name+'-device" device="'+id+'" name="'+name+'">' +
-        '    <a href="#" class="device-name" id="'+name+'-device-name" style="background-image: url('+imgurl+')">'+name+'</a>' +
+        '    <a href="#" class="device-name" id="'+name+'-device-name" title="'+name+'" style="background-image: url('+imgurl+')">'+name+'</a>' +
         '    <div class="app-navigation-entry-utils">' +
         '        <ul>' +
         '            <li class="app-navigation-entry-utils-menu-button toggleDeviceButton" title="'+t('maps', 'Toggle device')+'">' +
@@ -299,7 +316,13 @@ DevicesController.prototype = {
     setDeviceCss: function(id, color) {
         $('style[device='+id+']').remove();
 
-        var imgurl = OC.generateUrl('/svg/core/clients/phone?color='+color.replace('#', ''));
+        var imgurl;
+        if (['Windows', 'GNU/Linux', 'MacOS'].indexOf(this.devices[id].info.os) !== -1) {
+            imgurl = OC.generateUrl('/svg/core/clients/desktop?color='+color.replace('#', ''));
+        }
+        else {
+            imgurl = OC.generateUrl('/svg/core/clients/phone?color='+color.replace('#', ''));
+        }
         var rgbc = hexToRgb(color);
         var textcolor = 'black';
         if (rgbc.r + rgbc.g + rgbc.b < 3 * 80) {
@@ -695,7 +718,7 @@ DevicesController.prototype = {
 
     getDeviceMarkerTooltipContent: function(device, pointId) {
         var point = device.points[pointId];
-        var content = '⊙ ' + t('maps', 'User agent') + ': ' + brify(device.user_agent, 30);
+        var content = '⊙ ' + t('maps', 'Device') + ': ' + brify(device.name, 30);
         content = content + '<br/>' + '⊙ ' + t('maps', 'Date') + ': ' + (new Date(point.timestamp * 1000)).toIsoString();
         if (point.altitude !== null) {
             content = content + '<br/>' + '⊙ ' + t('maps', 'Elevation') + ': ' + point.altitude.toFixed(2);

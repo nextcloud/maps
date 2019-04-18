@@ -183,7 +183,7 @@ DevicesController.prototype = {
         this.updateMyFirstLastDates();
     },
 
-    getDevices: function() {
+    getDevices: function(show=false) {
         var that = this;
         $('#navigation-devices').addClass('icon-loading-small');
         var req = {};
@@ -197,7 +197,9 @@ DevicesController.prototype = {
             var i, device;
             for (i=0; i < response.length; i++) {
                 device = response[i];
-                that.addDeviceMap(device, false, true);
+                if (!that.devices.hasOwnProperty(device.id)) {
+                    that.addDeviceMap(device, show, true);
+                }
             }
             that.deviceListLoaded = true;
         }).always(function (response) {
@@ -681,9 +683,12 @@ DevicesController.prototype = {
     },
 
     refreshAllDevices: function() {
+        // first get new positions for devices we already have
         for (var id in this.devices) {
             this.updateDevicePoints(id);
         }
+        // then get potentially missing devices
+        this.getDevices(true);
     },
 
     launchTrackLoop: function() {
@@ -711,7 +716,7 @@ DevicesController.prototype = {
                 that.stopTrackLoop();
                 that.sendPositionTimer = new Timer(function() {
                     that.sendPositionLoop();
-                }, 4000);
+                }, 5 * 60 * 1000);
             });
         }
     },

@@ -61,11 +61,16 @@ NonLocalizedPhotosController.prototype = {
             that.menuSaveAllVisible();
         });
 
-        if (navigator.geolocation) {
+        if (navigator.geolocation && window.isSecureContext) {
             navigator.geolocation.getCurrentPosition(function (position) {
                 that.lat = position.coords.latitude;
                 that.lng = position.coords.longitude;
             });
+        }
+        else {
+            this.lat = 0;
+            this.lng = 0;
+            OC.Notification.showTemporary(t('maps', 'Impossible to get current location'));
         }
     },
 

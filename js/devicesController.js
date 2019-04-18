@@ -688,7 +688,7 @@ DevicesController.prototype = {
             this.updateDevicePoints(id);
         }
         // then get potentially missing devices
-        this.getDevices(true);
+        this.getDevices();
     },
 
     launchTrackLoop: function() {
@@ -706,7 +706,7 @@ DevicesController.prototype = {
     sendPositionLoop: function() {
         var that = this;
         // start a loop which get and send my position
-        if (navigator.geolocation) {
+        if (navigator.geolocation && window.isSecureContext) {
             navigator.geolocation.getCurrentPosition(function (position) {
                 var lat = position.coords.latitude;
                 var lng = position.coords.longitude;
@@ -718,6 +718,9 @@ DevicesController.prototype = {
                     that.sendPositionLoop();
                 }, 5 * 60 * 1000);
             });
+        }
+        else {
+            OC.Notification.showTemporary(t('maps', 'Impossible to get current location'));
         }
     },
 

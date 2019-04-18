@@ -314,7 +314,7 @@ PhotosController.prototype = {
                 if (targetPath === '') {
                     targetPath = '/';
                 }
-                that.placePhotos([targetPath], latlng.lat, latlng.lng, true);
+                that.placePhotos([targetPath], [latlng.lat], [latlng.lng], true);
             },
             false,
             'httpd/unix-directory',

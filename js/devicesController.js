@@ -806,7 +806,6 @@ DevicesController.prototype = {
         // accuracy circle
         var latlng = e.target.getLatLng();
         var acc = that.devices[id].points[pointId].accuracy;
-        console.log(acc);
         if (acc) {
             that.currentPrecisionCircle = L.circle(latlng, {radius: acc});
             that.map.addLayer(that.currentPrecisionCircle);

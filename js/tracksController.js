@@ -103,7 +103,7 @@ TracksController.prototype = {
         $('body').on('click', '#toggleTracksButton', function(e) {
             that.toggleTracks();
             that.optionsController.saveOptionValues({tracksEnabled: that.map.hasLayer(that.mainLayer)});
-            that.updateMyFirstLastDates();
+            that.updateMyFirstLastDates(true);
         });
         // expand track list
         $('body').on('click', '#navigation-tracks > a', function(e) {
@@ -192,47 +192,47 @@ TracksController.prototype = {
         }
     },
 
-    updateMyFirstLastDates: function(pageLoad=false) {
+    updateMyFirstLastDates: function(updateSlider=false) {
         if (!this.map.hasLayer(this.mainLayer)) {
             this.firstDate = null;
             this.lastDate = null;
-            return;
-        }
-
-        var id;
-
-        // we update dates only if nothing is currently loading
-        for (id in this.mapTrackLayers) {
-            if (this.mainLayer.hasLayer(this.mapTrackLayers[id]) && !this.trackLayers[id].loaded) {
-                return;
-            }
-        }
-
-        var initMinDate = Math.floor(Date.now() / 1000) + 1000000
-        var initMaxDate = 0;
-
-        var first = initMinDate;
-        var last = initMaxDate;
-        for (id in this.mapTrackLayers) {
-            if (this.mainLayer.hasLayer(this.mapTrackLayers[id]) && this.trackLayers[id].loaded && this.trackLayers[id].date) {
-                if (this.trackLayers[id].date < first) {
-                    first = this.trackLayers[id].date;
-                }
-                if (this.trackLayers[id].date > last) {
-                    last = this.trackLayers[id].date;
-                }
-            }
-        }
-        if (first !== initMinDate
-            && last !== initMaxDate) {
-            this.firstDate = first;
-            this.lastDate = last;
         }
         else {
-            this.firstDate = null;
-            this.lastDate = null;
+            var id;
+
+            // we update dates only if nothing is currently loading
+            for (id in this.mapTrackLayers) {
+                if (this.mainLayer.hasLayer(this.mapTrackLayers[id]) && !this.trackLayers[id].loaded) {
+                    return;
+                }
+            }
+
+            var initMinDate = Math.floor(Date.now() / 1000) + 1000000
+            var initMaxDate = 0;
+
+            var first = initMinDate;
+            var last = initMaxDate;
+            for (id in this.mapTrackLayers) {
+                if (this.mainLayer.hasLayer(this.mapTrackLayers[id]) && this.trackLayers[id].loaded && this.trackLayers[id].date) {
+                    if (this.trackLayers[id].date < first) {
+                        first = this.trackLayers[id].date;
+                    }
+                    if (this.trackLayers[id].date > last) {
+                        last = this.trackLayers[id].date;
+                    }
+                }
+            }
+            if (first !== initMinDate
+                && last !== initMaxDate) {
+                this.firstDate = first;
+                this.lastDate = last;
+            }
+            else {
+                this.firstDate = null;
+                this.lastDate = null;
+            }
         }
-        if (pageLoad) {
+        if (updateSlider) {
             this.timeFilterController.updateSliderRangeFromController();
             this.timeFilterController.setSliderToMaxInterval();
         }
@@ -275,7 +275,7 @@ TracksController.prototype = {
                 this.toggleTrack(id);
             }
         }
-        this.updateMyFirstLastDates();
+        this.updateMyFirstLastDates(true);
     },
 
     hideAllTracks: function() {
@@ -284,7 +284,7 @@ TracksController.prototype = {
                 this.toggleTrack(id);
             }
         }
-        this.updateMyFirstLastDates();
+        this.updateMyFirstLastDates(true);
     },
 
     removeTrackDB: function(id) {
@@ -521,7 +521,7 @@ TracksController.prototype = {
         this.toggleMapTrackLayer(id);
         if (save) {
             this.saveEnabledTracks();
-            this.updateMyFirstLastDates();
+            this.updateMyFirstLastDates(true);
         }
     },
 

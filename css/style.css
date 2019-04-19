@@ -9,6 +9,18 @@
     top: 0;
     z-index: 10000;
 }
+#search-form {
+    display: inline-flex;
+}
+#search-form input[type=submit] {
+    border-radius: 0px !important;
+    margin-left: -1px !important;
+    flex: 0 0 30px;
+}
+#search-term {
+    margin-right: 0px !important;
+    width: 200px;
+}
 
 #timeRangeSlider {
     position: absolute;

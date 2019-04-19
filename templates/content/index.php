@@ -46,7 +46,7 @@ style('maps', 'style');
 <div id="search">
     <form id="search-form">
         <input type="text" placehoder="Search..." id="search-term" />
-        <button type="button" id="search-submit">Search!</button>
+        <input type="submit" id="search-submit" value="" class="icon-search">
     </form>
 </div>
 <div id="map"></div>

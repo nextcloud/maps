@@ -367,10 +367,10 @@
                 'Watercolor': watercolor
             }
             this.baseLayers = baseLayers;
-            var controlLayers = L.control.layers(baseLayers, {}, {position: 'bottomright'}).addTo(this.map);
+            this.controlLayers = L.control.layers(baseLayers, {}, {position: 'bottomright'}).addTo(this.map);
             // hide openstreetmap and ESRI Aerial
-            controlLayers.removeLayer(baseLayers['OpenStreetMap']);
-            controlLayers.removeLayer(baseLayers['ESRI Aerial']);
+            this.controlLayers.removeLayer(baseLayers['OpenStreetMap']);
+            this.controlLayers.removeLayer(baseLayers['ESRI Aerial']);
 
             // main layers buttons
             var esriImageUrl = $('#dummylogo').css('content').replace('url("', '').replace('")', '').replace('.png', 'esri.jpg');
@@ -400,7 +400,6 @@
         },
 
         changeTileLayer: function(name, save=false) {
-            console.log('ch '+name);
             for (var tl in this.baseLayers) {
                 this.map.removeLayer(this.baseLayers[tl]);
             }
@@ -554,7 +553,7 @@
         updateFilterTimeEnd: [],
         onUpdateCallbackBlock: false,
         onChangeCallbackBlock: false,
-        slider : document.getElementById("timeRangeSlider"),
+        slider : document.getElementById('timeRangeSlider'),
         sliderConnect: null,
         connect: function () {
             noUiSlider.create(this.slider, {
@@ -575,7 +574,7 @@
                     'max': 1
                 }
             });
-            this.sliderConnect = this.slider.getElementsByClassName("noUi-connect")[0];
+            this.sliderConnect = this.slider.getElementsByClassName('noUi-connect')[0];
             this.updateSliderRange(this.min, this.max);
             this.setSlider(this.min, this.max);
             var that = this;
@@ -599,10 +598,13 @@
                     devicesController.updateFilterDisplay();
 
                     that.onUpdateCallbackBlock = false;
-                    if (unencoded[0] < that.min || unencoded[1] > that.max || positions[1] - positions[0] < 10) {
-                        that.sliderConnect.classList.add("timeRangeSlider-active");
+                    if (Math.round(unencoded[0]) < Math.round(that.min) ||
+                        Math.round(unencoded[1]) > Math.round(that.max) ||
+                        positions[1] - positions[0] < 10
+                    ) {
+                        that.sliderConnect.classList.add('timeRangeSlider-active');
                     } else {
-                        that.sliderConnect.classList.remove("timeRangeSlider-active");
+                        that.sliderConnect.classList.remove('timeRangeSlider-active');
                     }
                 }
             });
@@ -625,7 +627,7 @@
                         that.updateSliderRange(m-2.5*d, m+2.5*d);
                         that.setSlider(unencoded[0], unencoded[1]);
                     }
-                    that.sliderConnect.classList.remove("timeRangeSlider-active");
+                    that.sliderConnect.classList.remove('timeRangeSlider-active');
                     that.onChangeCallbackBlock = false;
                 }
             });

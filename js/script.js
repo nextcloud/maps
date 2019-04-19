@@ -414,15 +414,11 @@
         layerChanged: function(name) {
             if (name === 'ESRI Aerial') {
                 this.esriButton.remove();
-            }
-            else if (name === 'OpenStreetMap') {
-                this.osmButton.remove();
-            }
-            if (name !== 'ESRI Aerial') {
-                this.esriButton.addTo(this.map);
-            }
-            if (name !== 'OpenStreetMap') {
                 this.osmButton.addTo(this.map);
+            }
+            else {
+                this.osmButton.remove();
+                this.esriButton.addTo(this.map);
             }
         },
     };

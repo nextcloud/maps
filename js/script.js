@@ -130,10 +130,10 @@
                 optionsValues = response.values;
                 // set tilelayer before showing photo layer because it needs a max zoom value
                 if (optionsValues.hasOwnProperty('tileLayer')) {
-                    mapController.map.addLayer(mapController.baseLayers[optionsValues.tileLayer]);
+                    mapController.changeTileLayer(optionsValues.tileLayer);
                 }
                 else {
-                    mapController.map.addLayer(mapController.baseLayers['OpenStreetMap']);
+                    mapController.changeTileLayer('OpenStreetMap');
                 }
                 if (!optionsValues.hasOwnProperty('photosLayer') || optionsValues.photosLayer === 'true') {
                     photosController.toggleLayer();
@@ -216,6 +216,7 @@
                 // do it after restore, otherwise restoring triggers save
                 mapController.map.on('baselayerchange ', function(e) {
                     optionsController.saveOptionValues({tileLayer: e.name});
+                    mapController.layerChanged(e.name);
                 });
             }).fail(function() {
                 OC.Notification.showTemporary(
@@ -240,6 +241,7 @@
             this.searchMarker.openPopup();
         },
         initMap: function() {
+            var that = this;
             var attribution = '&copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>';
 
             var osm = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -353,6 +355,8 @@
                 optionsController.saveOptionValues({locControlEnabled: mapController.locControl._active});
             });
 
+            L.control.zoom({position: 'bottomright'}).addTo(this.map);
+
             // tile layer selector
             var baseLayers = {
                 'OpenStreetMap': osm,
@@ -363,43 +367,64 @@
                 'Watercolor': watercolor
             }
             this.baseLayers = baseLayers;
-            L.control.layers(baseLayers, {}, {position: 'bottomright'}).addTo(this.map);
+            var controlLayers = L.control.layers(baseLayers, {}, {position: 'bottomright'}).addTo(this.map);
+            // hide openstreetmap and ESRI Aerial
+            controlLayers.removeLayer(baseLayers['OpenStreetMap']);
+            controlLayers.removeLayer(baseLayers['ESRI Aerial']);
 
             // main layers buttons
             var esriImageUrl = $('#dummylogo').css('content').replace('url("', '').replace('")', '').replace('.png', 'esri.jpg');
-            var esriButton = L.easyButton({
+            this.esriButton = L.easyButton({
                 position: 'bottomright',
                 states: [{
                     stateName: 'no-importa',
                     icon:      '<img src="'+esriImageUrl+'"/>',
                     title:     t('maps', 'Aerial map'),
                     onClick: function(btn, map) {
-                        for (var tl in baseLayers) {
-                            map.removeLayer(baseLayers[tl]);
-                        }
-                        map.addLayer(ESRIAerial);
+                        that.changeTileLayer('ESRI Aerial', true);
                     }
                 }]
             });
-            esriButton.addTo(this.map);
             var osmImageUrl = $('#dummylogo').css('content').replace('url("', '').replace('")', '').replace('.png', 'osm.png');
-            var osmButton = L.easyButton({
+            this.osmButton = L.easyButton({
                 position: 'bottomright',
                 states: [{
                     stateName: 'no-importa',
                     icon:      '<img src="'+osmImageUrl+'"/>',
                     title:     t('maps', 'Classic map'),
                     onClick: function(btn, map) {
-                        for (var tl in baseLayers) {
-                            map.removeLayer(baseLayers[tl]);
-                        }
-                        map.addLayer(osm);
+                        that.changeTileLayer('OpenStreetMap', true);
                     }
                 }]
             });
-            osmButton.addTo(this.map);
-            L.control.zoom({position: 'bottomright'}).addTo(this.map);
-        }
+        },
+
+        changeTileLayer: function(name, save=false) {
+            console.log('ch '+name);
+            for (var tl in this.baseLayers) {
+                this.map.removeLayer(this.baseLayers[tl]);
+            }
+            this.map.addLayer(this.baseLayers[name]);
+            this.layerChanged(name);
+            if (save) {
+                optionsController.saveOptionValues({tileLayer: name});
+            }
+        },
+
+        layerChanged: function(name) {
+            if (name === 'ESRI Aerial') {
+                this.esriButton.remove();
+            }
+            else if (name === 'OpenStreetMap') {
+                this.osmButton.remove();
+            }
+            if (name !== 'ESRI Aerial') {
+                this.esriButton.addTo(this.map);
+            }
+            if (name !== 'OpenStreetMap') {
+                this.osmButton.addTo(this.map);
+            }
+        },
     };
 
     var routingController = {

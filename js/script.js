@@ -292,7 +292,7 @@
             var shareImageUrl = OC.generateUrl('/svg/core/actions/share?color=000000');
             this.map = L.map('map', {
                 zoom: 2,
-                zoomControl: true,
+                zoomControl: false,
                 maxZoom: 19,
                 minZoom: 2,
                 center: new L.LatLng(0, 0),
@@ -398,6 +398,7 @@
                 }]
             });
             osmButton.addTo(this.map);
+            L.control.zoom({position: 'bottomright'}).addTo(this.map);
         }
     };
 

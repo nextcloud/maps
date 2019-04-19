@@ -66,12 +66,6 @@
         };
     });
 
-    var helpers = {
-        beautifyUrl: function(url) {
-            return url.replace(/^(?:\w+:|)\/\/(?:www\.|)(.*[^\/])\/*$/, '$1');
-        }
-    };
-
     var geoLinkController = {
         marker: null,
         lat: null,
@@ -250,7 +244,7 @@
 
             var osm = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
                 attribution : attribution,
-                noWrap: true,
+                noWrap: false,
                 detectRetina: false,
                 maxZoom: 19
             });
@@ -300,8 +294,8 @@
                 zoom: 2,
                 zoomControl: true,
                 maxZoom: 19,
+                minZoom: 2,
                 center: new L.LatLng(0, 0),
-                maxBounds: new L.LatLngBounds(new L.LatLng(-90, 180), new L.LatLng(90, -180)),
                 layers: [],
                 // right click menu
                 contextmenu: true,
@@ -849,4 +843,11 @@
             return header + desc;
         }
     };
+
+    var helpers = {
+        beautifyUrl: function(url) {
+            return url.replace(/^(?:\w+:|)\/\/(?:www\.|)(.*[^\/])\/*$/, '$1');
+        }
+    };
+
 })(jQuery, OC);

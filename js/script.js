@@ -355,7 +355,11 @@
                 strings: {
                     title: t('maps', 'See current location')
                 },
-                locateOptions: {enableHighAccuracy: true}
+                flyTo: true,
+                returnToPrevBounds: true,
+                setView: 'untilPan',
+                showCompass: true,
+                locateOptions: {enableHighAccuracy: true, maxZoom: 15}
             }).addTo(this.map);
             $('.leaflet-control-locate a').click( function(e) {
                 optionsController.saveOptionValues({locControlEnabled: mapController.locControl._active});

@@ -40,15 +40,15 @@ TracksController.prototype = {
                 $(this).parent().parent().parent().find('>.app-navigation-entry-menu').addClass('open');
             }
         });
-        // click on a track name : zoom to bounds
+        // toggle a track
         $('body').on('click', '.track-line .track-name', function(e) {
             var id = $(this).parent().attr('track');
-            that.zoomOnTrack(id);
-        });
-        // toggle a track
-        $('body').on('click', '.toggleTrackButton', function(e) {
-            var id = $(this).parent().parent().parent().attr('track');
             that.toggleTrack(id, true);
+        });
+        // TODO zoom to bounds
+        $('body').on('click', '.zoomTrackButton', function(e) {
+            var id = $(this).parent().parent().parent().attr('track');
+            that.zoomOnTrack(id);
         });
         // remove a track
         $('body').on('click', '.removeTrack', function(e) {
@@ -431,9 +431,6 @@ TracksController.prototype = {
         '    <a href="#" class="track-name" id="'+name+'-track-name" style="background-image: url('+imgurl+')">'+name+'</a>' +
         '    <div class="app-navigation-entry-utils">' +
         '        <ul>' +
-        '            <li class="app-navigation-entry-utils-menu-button toggleTrackButton" title="'+t('maps', 'Toggle track')+'">' +
-        '                <button class="icon-toggle"></button>' +
-        '            </li>' +
         '            <li class="app-navigation-entry-utils-menu-button trackMenuButton">' +
         '                <button></button>' +
         '            </li>' +
@@ -524,20 +521,18 @@ TracksController.prototype = {
 
     toggleMapTrackLayer: function(id) {
         var mapTrackLayer = this.mapTrackLayers[id];
-        var eyeButton = $('#track-list > li[track="'+id+'"] .toggleTrackButton button');
+        var trackLine = $('#track-list > li[track="'+id+'"]');
+        var trackName = trackLine.find('.track-name');
         // hide track
         if (this.mainLayer.hasLayer(mapTrackLayer)) {
             this.mainLayer.removeLayer(mapTrackLayer);
-            // color of the eye
-            eyeButton.addClass('icon-toggle').attr('style', '');
+            trackName.removeClass('active');
+            $('#map').focus();
         }
         // show track
         else {
             this.mainLayer.addLayer(mapTrackLayer);
-            // color of the eye
-            var color = OCA.Theming.color.replace('#', '');
-            var imgurl = OC.generateUrl('/svg/core/actions/toggle?color='+color);
-            eyeButton.removeClass('icon-toggle').css('background-image', 'url('+imgurl+')');
+            trackName.addClass('active');
         }
     },
 

@@ -389,13 +389,11 @@ table.editFavorite input[type=text] {
     padding: 0px 3px 0px 3px;
 }
 #toggleDevicesButton button,
-.toggleDeviceButton button,
-.toggleTrackButton button
+.toggleDeviceButton button
 {
     opacity: 1 !important;
 }
 #navigation-devices > a,
-.track-line > a,
 .device-line > a
 {
     opacity: 1 !important;

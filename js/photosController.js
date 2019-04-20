@@ -37,7 +37,7 @@ PhotosController.prototype = {
             }
         });
         // click on photo menu entry
-        $('body').on('click', '#togglePhotosButton, #navigation-photos > a', function(e) {
+        $('body').on('click', '#navigation-photos > a', function(e) {
             that.toggleLayer();
             that.optionsController.saveOptionValues({photosLayer: that.map.hasLayer(that.photoLayer)});
         });
@@ -77,14 +77,11 @@ PhotosController.prototype = {
     toggleLayer: function() {
         if (this.map.hasLayer(this.photoLayer)) {
             this.hideLayer();
-            // color of the eye
-            $('#togglePhotosButton button').addClass('icon-toggle').attr('style', '');
+            $('#navigation-photos').removeClass('active');
+            $('#map').focus();
         } else {
             this.showLayer();
-            // color of the eye
-            var color = OCA.Theming.color.replace('#', '');
-            var imgurl = OC.generateUrl('/svg/core/actions/toggle?color='+color);
-            $('#togglePhotosButton button').removeClass('icon-toggle').css('background-image', 'url('+imgurl+')');
+            $('#navigation-photos').addClass('active');
         }
     },
 

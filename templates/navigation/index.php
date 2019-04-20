@@ -78,9 +78,6 @@
                 <li class="app-navigation-entry-utils-counter">
                     <span></span>
                 </li>
-                <li id="togglePhotosButton" class="app-navigation-entry-utils-menu-button" title="<?php p($l->t('Toggle photos')); ?>">
-                    <button class="icon-toggle"></button>
-                </li>
                 <li class="app-navigation-entry-utils-menu-button photosMenuButton">
                     <button></button>
                 </li>

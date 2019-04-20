@@ -456,7 +456,7 @@
                 }
             });
             // toggle routing control
-            $('body').on('click', '#toggleRoutingButton, #navigation-routing > a', function(e) {
+            $('body').on('click', '#navigation-routing > a', function(e) {
                 that.toggleRouting();
                 optionsController.saveOptionValues({routingEnabled: that.enabled});
             });
@@ -469,14 +469,13 @@
         toggleRouting: function() {
             if (this.enabled) {
                 this.control.remove();
-                $('#toggleRoutingButton button').addClass('icon-toggle').attr('style', '');
+                $('#navigation-routing').removeClass('active');
+                $('#map').focus();
                 this.enabled = false;
             }
             else {
                 this.control.addTo(this.map);
-                var color = OCA.Theming.color.replace('#', '');
-                var imgurl = OC.generateUrl('/svg/core/actions/toggle?color='+color);
-                $('#toggleRoutingButton button').removeClass('icon-toggle').css('background-image', 'url('+imgurl+')');
+                $('#navigation-routing').addClass('active');
                 this.enabled = true;
             }
         },

@@ -388,8 +388,6 @@ table.editFavorite input[type=text] {
     width: 100%;
     padding: 0px 3px 0px 3px;
 }
-#toggleNonLocalizedPhotosButton button,
-#toggleContactsButton button,
 #toggleFavoritesButton button,
 #toggleDevicesButton button,
 .toggleDeviceButton button,
@@ -399,7 +397,6 @@ table.editFavorite input[type=text] {
     opacity: 1 !important;
 }
 #navigation-favorites > a,
-#navigation-nonLocalizedPhotos > a,
 #navigation-tracks > a,
 #navigation-devices > a,
 .track-line > a,

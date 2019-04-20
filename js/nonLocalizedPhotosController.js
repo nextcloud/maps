@@ -43,7 +43,7 @@ NonLocalizedPhotosController.prototype = {
         var picimgurl = OC.generateUrl('/svg/core/places/picture?color=eca700');
         $('#navigation-nonLocalizedPhotos > a.icon-picture').attr('style', 'background-image: url('+picimgurl+');')
         // click on nonLocalizedPhoto menu entry
-        $('body').on('click', '#toggleNonLocalizedPhotosButton, #navigation-nonLocalizedPhotos > a', function(e) {
+        $('body').on('click', '#navigation-nonLocalizedPhotos > a', function(e) {
             that.toggleLayer();
             that.optionsController.saveOptionValues({nonLocalizedPhotosLayer: that.map.hasLayer(that.nonLocalizedPhotoLayer)});
         });
@@ -100,14 +100,11 @@ NonLocalizedPhotosController.prototype = {
     toggleLayer: function() {
         if (this.map.hasLayer(this.nonLocalizedPhotoLayer)) {
             this.hideLayer();
-            // color of the eye
-            $('#toggleNonLocalizedPhotosButton button').addClass('icon-toggle').attr('style', '');
+            $('#navigation-nonLocalizedPhotos').removeClass('active');
+            $('#map').focus();
         } else {
             this.showLayer();
-            // color of the eye
-            var color = OCA.Theming.color.replace('#', '');
-            var imgurl = OC.generateUrl('/svg/core/actions/toggle?color='+color);
-            $('#toggleNonLocalizedPhotosButton button').removeClass('icon-toggle').css('background-image', 'url('+imgurl+')');
+            $('#navigation-nonLocalizedPhotos').addClass('active');
         }
     },
 

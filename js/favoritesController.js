@@ -51,9 +51,9 @@ FavoritesController.prototype = {
             that.saveEnabledCategories();
             that.updateMyFirstLastDates();
         });
-        // TODO
+        // zoom to category
         $('body').on('click', '.zoomCategoryButton', function(e) {
-            var cat = $(this).parent().parent().parent().attr('category');
+            var cat = $(this).parent().parent().parent().parent().attr('category');
             that.zoomOnCategory(cat);
         });
         // show/hide all categories
@@ -494,6 +494,12 @@ FavoritesController.prototype = {
         '                <a href="#" class="renameCategory">' +
         '                    <span class="icon-rename"></span>' +
         '                    <span>'+t('maps', 'Rename')+'</span>' +
+        '                </a>' +
+        '            </li>' +
+        '            <li>' +
+        '                <a href="#" class="zoomCategoryButton">' +
+        '                    <span class="icon-search"></span>' +
+        '                    <span>'+t('maps', 'Zoom to bounds')+'</span>' +
         '                </a>' +
         '            </li>' +
         '            <li>' +

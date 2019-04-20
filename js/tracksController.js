@@ -45,9 +45,9 @@ TracksController.prototype = {
             var id = $(this).parent().attr('track');
             that.toggleTrack(id, true);
         });
-        // TODO zoom to bounds
+        // zoom on track
         $('body').on('click', '.zoomTrackButton', function(e) {
-            var id = $(this).parent().parent().parent().attr('track');
+            var id = $(this).parent().parent().parent().parent().attr('track');
             that.zoomOnTrack(id);
         });
         // remove a track
@@ -442,6 +442,12 @@ TracksController.prototype = {
         '                <a href="#" class="changeTrackColor">' +
         '                    <span class="icon-rename"></span>' +
         '                    <span>'+t('maps', 'Change track color')+'</span>' +
+        '                </a>' +
+        '            </li>' +
+        '            <li>' +
+        '                <a href="#" class="zoomTrackButton">' +
+        '                    <span class="icon-search"></span>' +
+        '                    <span>'+t('maps', 'Zoom to bounds')+'</span>' +
         '                </a>' +
         '            </li>' +
         '            <li>' +

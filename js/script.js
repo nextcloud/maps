@@ -239,6 +239,7 @@
             this.searchMarker.bindPopup(popupContent);
             this.searchMarker.addTo(this.map);
             this.searchMarker.openPopup();
+            this.map.flyTo([result.lat, result.lon], 15, {duration: 1});
         },
         initMap: function() {
             var that = this;

@@ -342,23 +342,24 @@
             L.control.scale({metric: true, imperial: true, position: 'bottomleft'})
                 .addTo(this.map);
             //L.control.mousePosition().addTo(this.map);
+
+            L.control.zoom({position: 'bottomright'}).addTo(this.map);
+
             this.locControl = L.control.locate({
-                position: 'topleft',
+                position: 'bottomright',
                 drawCircle: true,
                 drawMarker: true,
                 showPopup: false,
                 icon: 'fa fa-map-marker-alt',
                 iconLoading: 'fa fa-spinner fa-spin',
                 strings: {
-                    title: t('maps', 'Get current location')
+                    title: t('maps', 'See current location')
                 },
                 locateOptions: {enableHighAccuracy: true}
             }).addTo(this.map);
             $('.leaflet-control-locate a').click( function(e) {
                 optionsController.saveOptionValues({locControlEnabled: mapController.locControl._active});
             });
-
-            L.control.zoom({position: 'bottomright'}).addTo(this.map);
 
             // tile layer selector
             var baseLayers = {

@@ -259,6 +259,11 @@
                 detectRetina: true,
                 maxZoom: 19
             });
+            var roadsOverlay = L.tileLayer('https://{s}.tile.openstreetmap.se/hydda/roads_and_labels/{z}/{x}/{y}.png', {
+                maxZoom: 18,
+                opacity: 0.7,
+                attribution: 'Tiles courtesy of <a href="http://openstreetmap.se/" target="_blank">OpenStreetMap Sweden</a> &mdash; Map data &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+            });
             var ESRITopo = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/{z}/{y}/{x}', {
                 attribution : attributionESRI,
                 noWrap: false,
@@ -367,7 +372,7 @@
             });
 
             // tile layer selector
-            var baseLayers = {
+            this.baseLayers = {
                 'OpenStreetMap': osm,
                 'ESRI Aerial': ESRIAerial,
                 'ESRI Topo': ESRITopo,
@@ -375,11 +380,13 @@
                 'Dark': dark,
                 'Watercolor': watercolor
             }
-            this.baseLayers = baseLayers;
-            this.controlLayers = L.control.layers(baseLayers, {}, {position: 'bottomright'}).addTo(this.map);
+            this.baseOverlays = {
+                'Roads and labels': roadsOverlay
+            }
+            this.controlLayers = L.control.layers(this.baseLayers, this.baseOverlays, {position: 'bottomright'}).addTo(this.map);
             // hide openstreetmap and ESRI Aerial
-            this.controlLayers.removeLayer(baseLayers['OpenStreetMap']);
-            this.controlLayers.removeLayer(baseLayers['ESRI Aerial']);
+            this.controlLayers.removeLayer(this.baseLayers['OpenStreetMap']);
+            this.controlLayers.removeLayer(this.baseLayers['ESRI Aerial']);
 
             // main layers buttons
             var esriImageUrl = $('#dummylogo').css('content').replace('url("', '').replace('")', '').replace('.png', 'esri.jpg');
@@ -412,7 +419,13 @@
             for (var tl in this.baseLayers) {
                 this.map.removeLayer(this.baseLayers[tl]);
             }
+            for (var ol in this.baseOverlays) {
+                this.map.removeLayer(this.baseOverlays[ol]);
+            }
             this.map.addLayer(this.baseLayers[name]);
+            if (name === 'ESRI Aerial') {
+                this.map.addLayer(this.baseOverlays['Roads and labels']);
+            }
             this.layerChanged(name);
             if (save) {
                 optionsController.saveOptionValues({tileLayer: name});

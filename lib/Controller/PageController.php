@@ -46,6 +46,7 @@ class PageController extends Controller {
             $csp->addAllowedImageDomain('https://*.opentopomap.org');
             $csp->addAllowedImageDomain('https://*.cartocdn.com');
             $csp->addAllowedImageDomain('https://*.ssl.fastly.net');
+            $csp->addAllowedImageDomain('https://*.openstreetmap.se');
             // routing engine
             $csp->addAllowedConnectDomain('https://*.project-osrm.org');
             // poi images
@@ -73,7 +74,8 @@ class PageController extends Controller {
             $csp->addAllowedImageDomain('https://*.cartocdn.com');
             $csp->addAllowedImageDomain('https://*.opentopomap.org');
             $csp->addAllowedImageDomain('https://*.cartocdn.com');
-            $csp->addAllowedImageDomain('http://*.stamen.com');
+            $csp->addAllowedImageDomain('https://*.ssl.fastly.net');
+            $csp->addAllowedImageDomain('https://*.openstreetmap.se');
             // routing engine
             $csp->addAllowedConnectDomain('https://*.project-osrm.org');
             // poi images

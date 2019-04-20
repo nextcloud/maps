@@ -279,11 +279,13 @@
                 maxZoom: 18
             });
             var attributionWatercolor = '<a href="https://leafletjs.com" title="A JS library for interactive maps">Leaflet</a> | © Map tiles by <a href="https://stamen.com">Stamen Design</a>, under <a href="https://creativecommons.org/licenses/by/3.0">CC BY 3.0</a>, Data by <a href="https://openstreetmap.org">OpenStreetMap</a>, under <a href="https://creativecommons.org/licenses/by-sa/3.0">CC BY SA</a>.';
-            var watercolor = L.tileLayer('http://{s}.tile.stamen.com/watercolor/{z}/{x}/{y}.jpg', {
+            var watercolor = L.tileLayer('https://stamen-tiles-{s}.a.ssl.fastly.net/watercolor/{z}/{x}/{y}.{ext}', {
                 attribution : attributionWatercolor,
                 noWrap: false,
                 detectRetina: false,
-                maxZoom: 18
+                maxZoom: 18,
+                ext: 'jpg',
+                subdomains: 'abcd'
             });
             var starImageUrl = OC.generateUrl('/svg/core/actions/star-dark?color=000000');
             var markerRedImageUrl = OC.generateUrl('/svg/core/actions/address?color=EE3333');

@@ -44,17 +44,17 @@ FavoritesController.prototype = {
                 $(this).parent().parent().parent().find('>.app-navigation-entry-menu').addClass('open');
             }
         });
-        // click on a category : zoom to bounds
+        // toggle a category
         $('body').on('click', '.category-line .category-name', function(e) {
             var cat = $(this).text();
-            that.zoomOnCategory(cat);
-        });
-        // toggle a category
-        $('body').on('click', '.toggleCategoryButton', function(e) {
-            var cat = $(this).parent().parent().parent().attr('category');
             that.toggleCategory(cat);
             that.saveEnabledCategories();
             that.updateMyFirstLastDates();
+        });
+        // TODO
+        $('body').on('click', '.zoomCategoryButton', function(e) {
+            var cat = $(this).parent().parent().parent().attr('category');
+            that.zoomOnCategory(cat);
         });
         // show/hide all categories
         $('body').on('click', '#select-all-categories', function(e) {
@@ -285,7 +285,9 @@ FavoritesController.prototype = {
     toggleCategory: function(cat) {
         var subgroup = this.categoryLayers[cat];
         var catNoSpace = cat.replace(' ', '-');
-        var eyeButton = $('#category-list > li[category="'+cat+'"] .toggleCategoryButton button');
+        var catLine = $('#category-list > li[category="'+cat+'"]');
+        var catName = catLine.find('.category-name');
+        var catCounter = catLine.find('.app-navigation-entry-utils-counter');
         var showAgain = false;
         if (this.map.hasLayer(this.cluster)) {
             // remove and add cluster to avoid a markercluster bug when spiderfied
@@ -295,16 +297,15 @@ FavoritesController.prototype = {
         // hide category
         if (this.map.hasLayer(subgroup)) {
             this.map.removeLayer(subgroup);
-            // color of the eye
-            eyeButton.addClass('icon-toggle').attr('style', '');
+            catName.removeClass('active');
+            catCounter.hide();
+            $('#map').focus();
         }
         // show category
         else {
             this.map.addLayer(subgroup);
-            // color of the eye
-            var color = OCA.Theming.color.replace('#', '');
-            var imgurl = OC.generateUrl('/svg/core/actions/toggle?color='+color);
-            eyeButton.removeClass('icon-toggle').css('background-image', 'url('+imgurl+')');
+            catName.addClass('active');
+            catCounter.show();
         }
         if (showAgain) {
             this.map.addLayer(this.cluster);
@@ -475,10 +476,7 @@ FavoritesController.prototype = {
         '    <a href="#" class="category-name" id="'+name+'-category-name" style="background-image: url('+imgurl+')">'+rawName+'</a>' +
         '    <div class="app-navigation-entry-utils">' +
         '        <ul>' +
-        '            <li class="app-navigation-entry-utils-counter">1</li>' +
-        '            <li class="app-navigation-entry-utils-menu-button toggleCategoryButton" title="'+t('maps', 'Toggle category')+'">' +
-        '                <button class="icon-toggle"></button>' +
-        '            </li>' +
+        '            <li class="app-navigation-entry-utils-counter" style="display:none;">1</li>' +
         '            <li class="app-navigation-entry-utils-menu-button categoryMenuButton">' +
         '                <button></button>' +
         '            </li>' +

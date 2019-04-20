@@ -57,16 +57,16 @@ DevicesController.prototype = {
             that.toggleDeviceLine(id, true);
         });
         // toggle devices
-        $('body').on('click', '#toggleDevicesButton', function(e) {
+        $('body').on('click', '#navigation-devices > a', function(e) {
             that.toggleDevices();
             that.optionsController.saveOptionValues({devicesEnabled: that.map.hasLayer(that.mainLayer)});
             that.updateMyFirstLastDates();
+            if (that.map.hasLayer(that.mainLayer) && !$('#navigation-devices').hasClass('open')) {
+                that.toggleDeviceList();
+                that.optionsController.saveOptionValues({deviceListShow: $('#navigation-devices').hasClass('open')});
+            }
         });
         // expand device list
-        $('body').on('click', '#navigation-devices > a', function(e) {
-            that.toggleDeviceList();
-            that.optionsController.saveOptionValues({deviceListShow: $('#navigation-devices').hasClass('open')});
-        });
         $('body').on('click', '#navigation-devices', function(e) {
             if (e.target.tagName === 'LI' && $(e.target).attr('id') === 'navigation-devices') {
                 that.toggleDeviceList();
@@ -144,7 +144,8 @@ DevicesController.prototype = {
         if (this.map.hasLayer(this.mainLayer)) {
             this.map.removeLayer(this.mainLayer);
             // color of the eye
-            $('#toggleDevicesButton button').addClass('icon-toggle').attr('style', '');
+            $('#navigation-devices').removeClass('active');
+            $('#map').focus();
             // remove potential line marker
             if (this.lineMarker) {
                 this.lineMarker.remove();
@@ -156,10 +157,7 @@ DevicesController.prototype = {
                 this.getDevices();
             }
             this.map.addLayer(this.mainLayer);
-            // color of the eye
-            var color = OCA.Theming.color.replace('#', '');
-            var imgurl = OC.generateUrl('/svg/core/actions/toggle?color='+color);
-            $('#toggleDevicesButton button').removeClass('icon-toggle').css('background-image', 'url('+imgurl+')');
+            $('#navigation-devices').addClass('active');
         }
     },
 

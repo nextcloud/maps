@@ -388,16 +388,6 @@ table.editFavorite input[type=text] {
     width: 100%;
     padding: 0px 3px 0px 3px;
 }
-#toggleDevicesButton button,
-.toggleDeviceButton button
-{
-    opacity: 1 !important;
-}
-#navigation-devices > a,
-.device-line > a
-{
-    opacity: 1 !important;
-}
 #navigation-routing:not(.icon-loading-small) > a::before {
     content: "\f4d7";
     font-family: 'Font Awesome\ 5 Free';

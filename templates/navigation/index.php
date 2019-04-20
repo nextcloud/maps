@@ -186,9 +186,6 @@
         <a class="icon-phone" href="#"><?php p($l->t('Devices')); ?></a>
         <div class="app-navigation-entry-utils">
             <ul>
-                <li id="toggleDevicesButton" class="app-navigation-entry-utils-menu-button" title="<?php p($l->t('Toggle devices')); ?>">
-                    <button class="icon-toggle"></button>
-                </li>
                 <li class="app-navigation-entry-utils-menu-button devicesMenuButton">
                     <button></button>
                 </li>

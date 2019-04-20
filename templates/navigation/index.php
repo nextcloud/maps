@@ -135,9 +135,6 @@
                 <li class="app-navigation-entry-utils-counter">
                     <span></span>
                 </li>
-                <li id="toggleContactsButton" class="app-navigation-entry-utils-menu-button" title="<?php p($l->t('Toggle contacts')); ?>">
-                    <button class="icon-toggle"></button>
-                </li>
                 <li class="app-navigation-entry-utils-menu-button contactsMenuButton">
                     <button></button>
                 </li>

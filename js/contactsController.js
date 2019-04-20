@@ -37,7 +37,7 @@ ContactsController.prototype = {
             }
         });
         // click on contact menu entry
-        $('body').on('click', '#toggleContactsButton, #navigation-contacts > a', function(e) {
+        $('body').on('click', '#navigation-contacts > a', function(e) {
             that.toggleLayer();
             that.optionsController.saveOptionValues({contactLayer: that.map.hasLayer(that.contactLayer)});
         });
@@ -77,14 +77,11 @@ ContactsController.prototype = {
     toggleLayer: function() {
         if (this.map.hasLayer(this.contactLayer)) {
             this.hideLayer();
-            // color of the eye
-            $('#toggleContactsButton button').addClass('icon-toggle').attr('style', '');
+            $('#navigation-contacts').removeClass('active');
+            $('#map').focus();
         } else {
             this.showLayer();
-            // color of the eye
-            var color = OCA.Theming.color.replace('#', '');
-            var imgurl = OC.generateUrl('/svg/core/actions/toggle?color='+color);
-            $('#toggleContactsButton button').removeClass('icon-toggle').css('background-image', 'url('+imgurl+')');
+            $('#navigation-contacts').addClass('active');
         }
     },
 

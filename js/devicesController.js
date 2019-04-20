@@ -41,15 +41,15 @@ DevicesController.prototype = {
                 $(this).parent().parent().parent().find('>.app-navigation-entry-menu').addClass('open');
             }
         });
-        // click on a device name : zoom to bounds
+        // toggle a device
         $('body').on('click', '.device-line .device-name', function(e) {
             var id = $(this).parent().attr('device');
-            that.zoomOnDevice(id);
-        });
-        // toggle a device
-        $('body').on('click', '.toggleDeviceButton', function(e) {
-            var id = $(this).parent().parent().parent().attr('device');
             that.toggleDevice(id, true);
+        });
+        // click on a device name : zoom to bounds
+        $('body').on('click', '.zoomDeviceButton', function(e) {
+            var id = $(this).parent().parent().parent().parent().attr('device');
+            that.zoomOnDevice(id);
         });
         // toggle a device line
         $('body').on('click', '.toggleDeviceLine', function(e) {
@@ -262,9 +262,6 @@ DevicesController.prototype = {
         '    <a href="#" class="device-name" id="'+name+'-device-name" title="'+name+'" style="background-image: url('+imgurl+')">'+name+'</a>' +
         '    <div class="app-navigation-entry-utils">' +
         '        <ul>' +
-        '            <li class="app-navigation-entry-utils-menu-button toggleDeviceButton" title="'+t('maps', 'Toggle device')+'">' +
-        '                <button class="icon-toggle"></button>' +
-        '            </li>' +
         '            <li class="app-navigation-entry-utils-menu-button deviceMenuButton">' +
         '                <button></button>' +
         '            </li>' +
@@ -282,6 +279,12 @@ DevicesController.prototype = {
         '                <a href="#" class="changeDeviceColor">' +
         '                    <span class="icon-rename"></span>' +
         '                    <span>'+t('maps', 'Change device color')+'</span>' +
+        '                </a>' +
+        '            </li>' +
+        '            <li>' +
+        '                <a href="#" class="zoomDeviceButton">' +
+        '                    <span class="icon-search"></span>' +
+        '                    <span>'+t('maps', 'Zoom to bounds')+'</span>' +
         '                </a>' +
         '            </li>' +
         '            <li>' +
@@ -454,12 +457,13 @@ DevicesController.prototype = {
 
     toggleMapDeviceLayer: function(id) {
         var mapDeviceLayer = this.mapDeviceLayers[id];
-        var eyeButton = $('#device-list > li[device="'+id+'"] .toggleDeviceButton button');
+        var deviceLi = $('#device-list > li[device="'+id+'"]');
+        var deviceName = deviceLi.find('.device-name');
         // hide device
         if (this.mainLayer.hasLayer(mapDeviceLayer)) {
             this.mainLayer.removeLayer(mapDeviceLayer);
-            // color of the eye
-            eyeButton.addClass('icon-toggle').attr('style', '');
+            deviceName.removeClass('active');
+            $('#map').focus();
             // remove potential line marker
             if (this.lineMarker) {
                 this.lineMarker.remove();
@@ -472,10 +476,7 @@ DevicesController.prototype = {
             if (this.devices[id].marker) {
                 this.devices[id].marker.setZIndexOffset(this.lastZIndex++);
             }
-            // color of the eye
-            var color = OCA.Theming.color.replace('#', '');
-            var imgurl = OC.generateUrl('/svg/core/actions/toggle?color='+color);
-            eyeButton.removeClass('icon-toggle').css('background-image', 'url('+imgurl+')');
+            deviceName.addClass('active');
         }
     },
 

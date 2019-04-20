@@ -390,12 +390,10 @@ table.editFavorite input[type=text] {
 }
 #toggleDevicesButton button,
 .toggleDeviceButton button,
-#toggleTracksButton button,
 .toggleTrackButton button
 {
     opacity: 1 !important;
 }
-#navigation-tracks > a,
 #navigation-devices > a,
 .track-line > a,
 .device-line > a

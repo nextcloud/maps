@@ -100,16 +100,16 @@ TracksController.prototype = {
             );
         });
         // toggle tracks
-        $('body').on('click', '#toggleTracksButton', function(e) {
+        $('body').on('click', '#navigation-tracks > a', function(e) {
             that.toggleTracks();
             that.optionsController.saveOptionValues({tracksEnabled: that.map.hasLayer(that.mainLayer)});
             that.updateMyFirstLastDates(true);
+            if (that.map.hasLayer(that.mainLayer) && !$('#navigation-tracks').hasClass('open')) {
+                that.toggleTrackList();
+                that.optionsController.saveOptionValues({trackListShow: $('#navigation-tracks').hasClass('open')});
+            }
         });
         // expand track list
-        $('body').on('click', '#navigation-tracks > a', function(e) {
-            that.toggleTrackList();
-            that.optionsController.saveOptionValues({trackListShow: $('#navigation-tracks').hasClass('open')});
-        });
         $('body').on('click', '#navigation-tracks', function(e) {
             if (e.target.tagName === 'LI' && $(e.target).attr('id') === 'navigation-tracks') {
                 that.toggleTrackList();
@@ -154,18 +154,15 @@ TracksController.prototype = {
     toggleTracks: function() {
         if (this.map.hasLayer(this.mainLayer)) {
             this.map.removeLayer(this.mainLayer);
-            // color of the eye
-            $('#toggleTracksButton button').addClass('icon-toggle').attr('style', '');
+            $('#navigation-tracks').removeClass('active');
+            $('#map').focus();
         }
         else {
             if (!this.trackListLoaded) {
                 this.getTracks();
             }
             this.map.addLayer(this.mainLayer);
-            // color of the eye
-            var color = OCA.Theming.color.replace('#', '');
-            var imgurl = OC.generateUrl('/svg/core/actions/toggle?color='+color);
-            $('#toggleTracksButton button').removeClass('icon-toggle').css('background-image', 'url('+imgurl+')');
+            $('#navigation-tracks').addClass('active');
         }
     },
 

@@ -146,9 +146,6 @@
                 <li id="addTrackButton" class="app-navigation-entry-utils-menu-button" title="<?php p($l->t('Load a track file')); ?>">
                     <button class="icon-add"></button>
                 </li>
-                <li id="toggleTracksButton" class="app-navigation-entry-utils-menu-button" title="<?php p($l->t('Toggle tracks')); ?>">
-                    <button class="icon-toggle"></button>
-                </li>
                 <li class="app-navigation-entry-utils-menu-button tracksMenuButton">
                     <button></button>
                 </li>

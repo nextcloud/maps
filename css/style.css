@@ -53,7 +53,7 @@
 }
 
 .noUi-connect {
-    background-color: var(--color-primary-element-light);
+    background-color: var(--color-primary);
 }
 .timeRangeSlider-active {
     background-color: var(--color-warning, #b10610) !important;

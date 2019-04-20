@@ -300,6 +300,7 @@
                 maxZoom: 19,
                 minZoom: 2,
                 center: new L.LatLng(0, 0),
+                maxBounds: new L.LatLngBounds(new L.LatLng(-90, 720), new L.LatLng(90, -720)),
                 layers: [],
                 // right click menu
                 contextmenu: true,

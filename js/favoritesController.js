@@ -159,16 +159,17 @@ FavoritesController.prototype = {
             }
         };
         // toggle favorites
-        $('body').on('click', '#toggleFavoritesButton', function(e) {
+        $('body').on('click', '#navigation-favorites > a', function(e) {
             that.toggleFavorites();
             that.optionsController.saveOptionValues({favoritesEnabled: that.map.hasLayer(that.cluster)});
             that.updateMyFirstLastDates();
+            // expand category list if we just enabled favorites and category list was folded
+            if (that.map.hasLayer(that.cluster) && !$('#navigation-favorites').hasClass('open')) {
+                that.toggleCategoryList();
+                that.optionsController.saveOptionValues({favoriteCategoryListShow: $('#navigation-favorites').hasClass('open')});
+            }
         });
         // expand category list
-        $('body').on('click', '#navigation-favorites > a', function(e) {
-            that.toggleCategoryList();
-            that.optionsController.saveOptionValues({favoriteCategoryListShow: $('#navigation-favorites').hasClass('open')});
-        });
         $('body').on('click', '#navigation-favorites', function(e) {
             if (e.target.tagName === 'LI' && $(e.target).attr('id') === 'navigation-favorites') {
                 that.toggleCategoryList();
@@ -322,15 +323,12 @@ FavoritesController.prototype = {
         }
         if (this.map.hasLayer(this.cluster)) {
             this.map.removeLayer(this.cluster);
-            // color of the eye
-            $('#toggleFavoritesButton button').addClass('icon-toggle').attr('style', '');
+            $('#navigation-favorites').removeClass('active');
+            $('#map').focus();
         }
         else {
             this.map.addLayer(this.cluster);
-            // color of the eye
-            var color = OCA.Theming.color.replace('#', '');
-            var imgurl = OC.generateUrl('/svg/core/actions/toggle?color='+color);
-            $('#toggleFavoritesButton button').removeClass('icon-toggle').css('background-image', 'url('+imgurl+')');
+            $('#navigation-favorites').addClass('active');
         }
     },
 

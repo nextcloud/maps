@@ -388,7 +388,6 @@ table.editFavorite input[type=text] {
     width: 100%;
     padding: 0px 3px 0px 3px;
 }
-#toggleFavoritesButton button,
 #toggleDevicesButton button,
 .toggleDeviceButton button,
 #toggleTracksButton button,
@@ -396,7 +395,6 @@ table.editFavorite input[type=text] {
 .toggleCategoryButton button {
     opacity: 1 !important;
 }
-#navigation-favorites > a,
 #navigation-tracks > a,
 #navigation-devices > a,
 .track-line > a,

@@ -6,9 +6,6 @@
                 <li id="addFavoriteButton" class="app-navigation-entry-utils-menu-button" title="<?php p($l->t('Add a favorite')); ?>">
                     <button class="icon-add"></button>
                 </li>
-                <li id="toggleFavoritesButton" class="app-navigation-entry-utils-menu-button" title="<?php p($l->t('Toggle favorites')); ?>">
-                    <button class="icon-toggle"></button>
-                </li>
                 <li class="app-navigation-entry-utils-menu-button favoritesMenuButton">
                     <button></button>
                 </li>

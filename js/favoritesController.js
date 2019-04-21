@@ -454,7 +454,8 @@ FavoritesController.prototype = {
         }
         $('<style category="'+name+'">' +
             '.'+name+'CategoryMarker { ' +
-            'background-color: #'+color+';}' +
+            'background-color: #'+color+';' +
+            '}' +
             '.tooltipfav-' + name + ' {' +
             'background: rgba(' + rgbc.r + ', ' + rgbc.g + ', ' + rgbc.b + ', 0.5);' +
             'color: ' + textcolor + '; font-weight: bold; }' +

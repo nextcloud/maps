@@ -365,6 +365,8 @@ tr.selected td {
     -webkit-mask-size: 15px;
     mask: url('images/star-circle.svg') no-repeat 50% 50%;
     mask-size: 15px;
+    background: url('images/star-white.svg') no-repeat 50% 50%;
+    background-size: 15px 15px;
 }
 .trackWaypoint {
     height: 25px !important;

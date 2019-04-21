@@ -16,7 +16,7 @@
    enable-background="new 0 0 1000 1000"
    xml:space="preserve"
    id="svg10"
-   sodipodi:docname="star-circle.svg"
+   sodipodi:docname="star-white.svg"
    inkscape:version="0.92.4 (5da689c313, 2019-01-14)"><defs
    id="defs14" /><sodipodi:namedview
    pagecolor="#ffffff"
@@ -41,15 +41,8 @@
 <metadata
    id="metadata2"> Svg Vector Icons : http://www.onlinewebfonts.com/icon <rdf:RDF><cc:Work
      rdf:about=""><dc:format>image/svg+xml</dc:format><dc:type
-       rdf:resource="http://purl.org/dc/dcmitype/StillImage" /></cc:Work></rdf:RDF></metadata>
-<g
-   id="g8"><g
-     transform="translate(0.000000,511.000000) scale(0.100000,-0.100000)"
-     id="g6"><path
-       d="M 4619.5,5005.9 C 3328.2,4869.9 2313.6,4383.3 1448.9,3484 745.6,2755.4 302.9,1849.2 141.5,820.7 c -55.3,-362 -55.3,-1063 0,-1425 133.8,-848.6 454.3,-1598 982.3,-2296.7 154.5,-205.2 585.7,-641 809.4,-816.3 701,-558 1471.2,-894.7 2354.3,-1033 362,-55.3 1063,-55.3 1425,0 853.2,133.8 1630.2,468.1 2308.2,993.8 221.4,170.6 627.2,574.2 804.8,797.8 555.7,698.7 894.7,1473.5 1033,2354.3 55.3,357.4 55.3,1065.3 0,1415.8 -219,1399.7 -977.7,2596.4 -2144.5,3382.7 -574.2,385.1 -1277.5,657.2 -1987.7,767.9 -225.9,34.7 -924.6,62.4 -1106.8,43.9 z"
-       id="path4"
-       inkscape:connector-curvature="0"
-       sodipodi:nodetypes="ccccccccccccccc" /></g></g>
+       rdf:resource="http://purl.org/dc/dcmitype/StillImage" /><dc:title></dc:title></cc:Work></rdf:RDF></metadata>
+
 <path
    sodipodi:type="star"
    style="opacity:1;fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:0;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"

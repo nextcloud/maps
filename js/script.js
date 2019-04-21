@@ -64,6 +64,10 @@
                 favoritesController.leaveMoveFavoriteMode();
             }
         };
+        window.onclick = function(event) {
+            $('.leaflet-control-layers').hide();
+            $('.easy-button-container').show();
+        };
     });
 
     var geoLinkController = {
@@ -383,6 +387,20 @@
                 optionsController.saveOptionValues({locControlEnabled: mapController.locControl._active});
             });
 
+            this.layersButton = L.easyButton({
+                position: 'bottomright',
+                states: [{
+                    stateName: 'no-importa',
+                    icon:      '<a class="icon icon-menu" style="height: 100%"> </a>',
+                    title:     t('maps', 'Other layers'),
+                    onClick: function(btn, map) {
+                        $('.leaflet-control-layers').toggle();
+                        $('.easy-button-container').toggle();
+                    }
+                }]
+            });
+            this.layersButton.addTo(this.map);
+
             // tile layer selector
             this.baseLayers = {
                 'OpenStreetMap': osm,
@@ -395,11 +413,16 @@
             this.baseOverlays = {
                 'Roads and labels': roadsOverlay
             }
-            this.controlLayers = L.control.layers(this.baseLayers, this.baseOverlays, {position: 'bottomright'}).addTo(this.map);
+            this.controlLayers = L.control.layers(
+                this.baseLayers,
+                this.baseOverlays,
+                {position: 'bottomright', collapsed: false}
+            ).addTo(this.map);
             // hide openstreetmap, ESRI Aerial and roads/labels because they are dynamically managed
             this.controlLayers.removeLayer(this.baseLayers['OpenStreetMap']);
             this.controlLayers.removeLayer(this.baseLayers['ESRI Aerial']);
             this.controlLayers.removeLayer(this.baseOverlays['Roads and labels']);
+            $('.leaflet-control-layers').toggle();
 
             // main layers buttons
             var esriImageUrl = $('#dummylogo').css('content').replace('url("', '').replace('")', '').replace('.png', 'esri.jpg');
@@ -454,6 +477,8 @@
                 this.osmButton.remove();
                 this.esriButton.addTo(this.map);
             }
+            $('.leaflet-control-layers').hide();
+            $('.easy-button-container').show();
         },
     };
 

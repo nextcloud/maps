@@ -54,11 +54,10 @@ PhotosController.prototype = {
     },
 
     updateMyFirstLastDates: function() {
-        var firstVisible = this.photoMarkersFirstVisible;
-        var lastVisible = this.photoMarkersLastVisible;
+        var nbMarkers = this.photoMarkers.length;
         var layerVisible = this.map.hasLayer(this.photoLayer);
-        this.photoMarkersOldest = (layerVisible && this.photoMarkers.length > 0) ? this.photoMarkers[firstVisible].data.date : null;
-        this.photoMarkersNewest = (layerVisible && this.photoMarkers.length > 0) ? this.photoMarkers[lastVisible].data.date : null;
+        this.photoMarkersOldest = (layerVisible && nbMarkers > 0) ? this.photoMarkers[0].data.date : null;
+        this.photoMarkersNewest = (layerVisible && nbMarkers > 0) ? this.photoMarkers[nbMarkers - 1].data.date : null;
     },
 
     showLayer: function() {

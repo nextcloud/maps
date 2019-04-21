@@ -77,11 +77,10 @@ NonLocalizedPhotosController.prototype = {
     },
 
     updateMyFirstLastDates: function() {
-        var firstVisible = this.nonLocalizedPhotoMarkersFirstVisible;
-        var lastVisible = this.nonLocalizedPhotoMarkersLastVisible;
+        var nbMarkers = this.nonLocalizedPhotoMarkers.length;
         var layerVisible = this.map.hasLayer(this.nonLocalizedPhotoLayer);
-        this.nonLocalizedPhotoMarkersOldest = (layerVisible && this.nonLocalizedPhotoMarkers.length > 0) ? this.nonLocalizedPhotoMarkers[firstVisible].data.date : null;
-        this.nonLocalizedPhotoMarkersNewest = (layerVisible && this.nonLocalizedPhotoMarkers.length > 0) ? this.nonLocalizedPhotoMarkers[lastVisible].data.date : null;
+        this.nonLocalizedPhotoMarkersOldest = (layerVisible && nbMarkers > 0) ? this.nonLocalizedPhotoMarkers[0].data.date : null;
+        this.nonLocalizedPhotoMarkersNewest = (layerVisible && nbMarkers > 0) ? this.nonLocalizedPhotoMarkers[nbMarkers - 1].data.date : null;
     },
 
     showLayer: function() {

@@ -54,11 +54,10 @@ ContactsController.prototype = {
     },
 
     updateMyFirstLastDates: function() {
-        var firstVisible = this.contactMarkersFirstVisible;
-        var lastVisible = this.contactMarkersLastVisible;
         var layerVisible = this.map.hasLayer(this.contactLayer);
-        this.contactMarkersOldest = (layerVisible && this.contactMarkers.length > 0) ? this.contactMarkers[firstVisible].data.date : null;
-        this.contactMarkersNewest = (layerVisible && this.contactMarkers.length > 0) ? this.contactMarkers[lastVisible].data.date : null;
+        var nbMarkers = this.contactMarkers.length;
+        this.contactMarkersOldest = (layerVisible && nbMarkers > 0) ? this.contactMarkers[0].data.date : null;
+        this.contactMarkersNewest = (layerVisible && nbMarkers > 0) ? this.contactMarkers[nbMarkers - 1].data.date : null;
     },
 
     showLayer: function() {

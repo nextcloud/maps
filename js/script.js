@@ -361,7 +361,17 @@
                     callback: routingController.contextRouteTo
                 }]
             });
-            L.control.scale({metric: true, imperial: true, position: 'bottomleft'})
+            var locale = OC.getLocale();
+            var imperial = (
+                locale === 'en_US' ||
+                locale === 'en_GB' ||
+                locale === 'en_AU' ||
+                locale === 'en_IE' ||
+                locale === 'en_NZ' ||
+                locale === 'en_CA'
+            );
+            var metric = !imperial;
+            L.control.scale({metric: metric, imperial: imperial, position: 'bottomleft'})
                 .addTo(this.map);
             //L.control.mousePosition().addTo(this.map);
 

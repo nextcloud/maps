@@ -427,6 +427,14 @@ tr.selected td {
     position: absolute;
     left: 16px;
 }
+#navigation-favorites:not(.active) > * ,
+#navigation-routing:not(.active) > * ,
+#navigation-photos:not(.active) > * ,
+#navigation-contacts:not(.active) > * ,
+#navigation-tracks:not(.active) > * ,
+#navigation-devices:not(.active) > * {
+    opacity: 0.57 !important;
+}
 .ui-autocomplete {
     z-index: 10000 !important;
 }

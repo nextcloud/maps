@@ -40,6 +40,8 @@ PhotosController.prototype = {
         $('body').on('click', '#navigation-photos > a', function(e) {
             that.toggleLayer();
             that.optionsController.saveOptionValues({photosLayer: that.map.hasLayer(that.photoLayer)});
+            that.updateTimeFilterRange();
+            that.timeFilterController.setSliderToMaxInterval();
         });
         // click on menu button
         $('body').on('click', '.photosMenuButton', function(e) {
@@ -55,8 +57,8 @@ PhotosController.prototype = {
         var firstVisible = this.photoMarkersFirstVisible;
         var lastVisible = this.photoMarkersLastVisible;
         var layerVisible = this.map.hasLayer(this.photoLayer);
-        this.photoMarkersOldest = layerVisible ? this.photoMarkers[firstVisible].data.date : null;
-        this.photoMarkersNewest = layerVisible ? this.photoMarkers[lastVisible].data.date : null;
+        this.photoMarkersOldest = (layerVisible && this.photoMarkers.length > 0) ? this.photoMarkers[firstVisible].data.date : null;
+        this.photoMarkersNewest = (layerVisible && this.photoMarkers.length > 0) ? this.photoMarkers[lastVisible].data.date : null;
     },
 
     showLayer: function() {

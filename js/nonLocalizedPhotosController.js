@@ -46,6 +46,8 @@ NonLocalizedPhotosController.prototype = {
         $('body').on('click', '#navigation-nonLocalizedPhotos > a', function(e) {
             that.toggleLayer();
             that.optionsController.saveOptionValues({nonLocalizedPhotosLayer: that.map.hasLayer(that.nonLocalizedPhotoLayer)});
+            that.updateTimeFilterRange();
+            that.timeFilterController.setSliderToMaxInterval();
         });
         // click on menu button
         $('body').on('click', '.nonLocalizedPhotosMenuButton', function(e) {
@@ -78,8 +80,8 @@ NonLocalizedPhotosController.prototype = {
         var firstVisible = this.nonLocalizedPhotoMarkersFirstVisible;
         var lastVisible = this.nonLocalizedPhotoMarkersLastVisible;
         var layerVisible = this.map.hasLayer(this.nonLocalizedPhotoLayer);
-        this.nonLocalizedPhotoMarkersOldest = layerVisible ? this.nonLocalizedPhotoMarkers[firstVisible].data.date : null;
-        this.nonLocalizedPhotoMarkersNewest = layerVisible ? this.nonLocalizedPhotoMarkers[lastVisible].data.date : null;
+        this.nonLocalizedPhotoMarkersOldest = (layerVisible && this.nonLocalizedPhotoMarkers.length > 0) ? this.nonLocalizedPhotoMarkers[firstVisible].data.date : null;
+        this.nonLocalizedPhotoMarkersNewest = (layerVisible && this.nonLocalizedPhotoMarkers.length > 0) ? this.nonLocalizedPhotoMarkers[lastVisible].data.date : null;
     },
 
     showLayer: function() {

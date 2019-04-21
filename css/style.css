@@ -31,6 +31,7 @@
     width: 60%;
     height: 10px;
     background-color: var(--color-main-background) !important;
+    display: none;
 }
 .noUi-handle::after,
 .noUi-handle::before {

@@ -40,6 +40,8 @@ ContactsController.prototype = {
         $('body').on('click', '#navigation-contacts > a', function(e) {
             that.toggleLayer();
             that.optionsController.saveOptionValues({contactLayer: that.map.hasLayer(that.contactLayer)});
+            that.updateTimeFilterRange();
+            that.timeFilterController.setSliderToMaxInterval();
         });
         // click on menu button
         $('body').on('click', '.contactsMenuButton', function(e) {
@@ -55,8 +57,8 @@ ContactsController.prototype = {
         var firstVisible = this.contactMarkersFirstVisible;
         var lastVisible = this.contactMarkersLastVisible;
         var layerVisible = this.map.hasLayer(this.contactLayer);
-        this.contactMarkersOldest = layerVisible ? this.contactMarkers[firstVisible].data.date : null;
-        this.contactMarkersNewest = layerVisible ? this.contactMarkers[lastVisible].data.date : null;
+        this.contactMarkersOldest = (layerVisible && this.contactMarkers.length > 0) ? this.contactMarkers[firstVisible].data.date : null;
+        this.contactMarkersNewest = (layerVisible && this.contactMarkers.length > 0) ? this.contactMarkers[lastVisible].data.date : null;
     },
 
     showLayer: function() {

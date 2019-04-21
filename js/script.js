@@ -730,6 +730,7 @@
                 cmax = Math.max(...maxs);
             }
             if (cmin !== null && cmax !== null) {
+                $(this.slider).fadeIn();
                 this.min = cmin;
                 this.max = cmax;
                 // avoid min == max
@@ -738,6 +739,9 @@
                     this.max = cmax + 10;
                 }
                 this.updateSliderRange(this.min, this.max);
+            }
+            else {
+                $(this.slider).fadeOut();
             }
         },
         // on first data load, controllers want to set the slider values to global common max

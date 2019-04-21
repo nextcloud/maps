@@ -162,7 +162,8 @@ FavoritesController.prototype = {
         $('body').on('click', '#navigation-favorites > a', function(e) {
             that.toggleFavorites();
             that.optionsController.saveOptionValues({favoritesEnabled: that.map.hasLayer(that.cluster)});
-            that.updateMyFirstLastDates();
+            that.updateTimeFilterRange();
+            that.timeFilterController.setSliderToMaxInterval();
             // expand category list if we just enabled favorites and category list was folded
             if (that.map.hasLayer(that.cluster) && !$('#navigation-favorites').hasClass('open')) {
                 that.toggleCategoryList();

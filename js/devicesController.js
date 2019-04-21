@@ -60,7 +60,7 @@ DevicesController.prototype = {
         $('body').on('click', '#navigation-devices > a', function(e) {
             that.toggleDevices();
             that.optionsController.saveOptionValues({devicesEnabled: that.map.hasLayer(that.mainLayer)});
-            that.updateMyFirstLastDates();
+            that.updateMyFirstLastDates(true);
             if (that.map.hasLayer(that.mainLayer) && !$('#navigation-devices').hasClass('open')) {
                 that.toggleDeviceList();
                 that.optionsController.saveOptionValues({deviceListShow: $('#navigation-devices').hasClass('open')});
@@ -170,7 +170,7 @@ DevicesController.prototype = {
                 this.toggleDevice(id);
             }
         }
-        this.updateMyFirstLastDates();
+        this.updateMyFirstLastDates(true);
     },
 
     hideAllDevices: function() {
@@ -179,7 +179,7 @@ DevicesController.prototype = {
                 this.toggleDevice(id);
             }
         }
-        this.updateMyFirstLastDates();
+        this.updateMyFirstLastDates(true);
     },
 
     getDevices: function(show=false) {
@@ -451,7 +451,7 @@ DevicesController.prototype = {
         this.toggleMapDeviceLayer(id);
         if (save) {
             this.saveEnabledDevices();
-            this.updateMyFirstLastDates();
+            this.updateMyFirstLastDates(true);
         }
     },
 
@@ -596,52 +596,52 @@ DevicesController.prototype = {
         }
     },
 
-    updateMyFirstLastDates: function(pageLoad=false) {
+    updateMyFirstLastDates: function(updateSlider=false) {
         if (!this.map.hasLayer(this.mainLayer)) {
             this.firstDate = null;
             this.lastDate = null;
-            return;
-        }
-
-        var id;
-
-        // we update dates only if nothing is currently loading
-        for (id in this.mapDeviceLayers) {
-            if (this.mainLayer.hasLayer(this.mapDeviceLayers[id]) && !this.devices[id].loaded) {
-                return;
-            }
-        }
-
-        var initMinDate = Math.floor(Date.now() / 1000) + 1000000
-        var initMaxDate = 0;
-
-        var first = initMinDate;
-        var last = initMaxDate;
-        var fpId, lpId, firstPoint, lastPoint;
-        for (id in this.mapDeviceLayers) {
-            if (this.mainLayer.hasLayer(this.mapDeviceLayers[id]) && this.devices[id].loaded) {
-                fpId = this.devices[id].pointsLatLngId[0][2];
-                lpId = this.devices[id].pointsLatLngId[this.devices[id].pointsLatLngId.length - 1][2];
-                firstPoint = this.devices[id].points[fpId];
-                lastPoint = this.devices[id].points[lpId];
-                if (firstPoint.timestamp && firstPoint.timestamp < first) {
-                    first = firstPoint.timestamp;
-                }
-                if (lastPoint.timestamp && lastPoint.timestamp > last) {
-                    last = lastPoint.timestamp;
-                }
-            }
-        }
-        if (first !== initMinDate
-            && last !== initMaxDate) {
-            this.firstDate = first;
-            this.lastDate = last;
         }
         else {
-            this.firstDate = null;
-            this.lastDate = null;
+            var id;
+
+            // we update dates only if nothing is currently loading
+            for (id in this.mapDeviceLayers) {
+                if (this.mainLayer.hasLayer(this.mapDeviceLayers[id]) && !this.devices[id].loaded) {
+                    return;
+                }
+            }
+
+            var initMinDate = Math.floor(Date.now() / 1000) + 1000000
+            var initMaxDate = 0;
+
+            var first = initMinDate;
+            var last = initMaxDate;
+            var fpId, lpId, firstPoint, lastPoint;
+            for (id in this.mapDeviceLayers) {
+                if (this.mainLayer.hasLayer(this.mapDeviceLayers[id]) && this.devices[id].loaded) {
+                    fpId = this.devices[id].pointsLatLngId[0][2];
+                    lpId = this.devices[id].pointsLatLngId[this.devices[id].pointsLatLngId.length - 1][2];
+                    firstPoint = this.devices[id].points[fpId];
+                    lastPoint = this.devices[id].points[lpId];
+                    if (firstPoint.timestamp && firstPoint.timestamp < first) {
+                        first = firstPoint.timestamp;
+                    }
+                    if (lastPoint.timestamp && lastPoint.timestamp > last) {
+                        last = lastPoint.timestamp;
+                    }
+                }
+            }
+            if (first !== initMinDate
+                && last !== initMaxDate) {
+                this.firstDate = first;
+                this.lastDate = last;
+            }
+            else {
+                this.firstDate = null;
+                this.lastDate = null;
+            }
         }
-        if (pageLoad) {
+        if (updateSlider) {
             this.timeFilterController.updateSliderRangeFromController();
             this.timeFilterController.setSliderToMaxInterval();
         }

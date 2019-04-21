@@ -152,12 +152,6 @@ FavoritesController.prototype = {
             that.categoryDeletionTimer[cat].pause();
             delete that.categoryDeletionTimer[cat];
         });
-        // click anywhere
-        window.onclick = function(event) {
-            if (!event.target.matches('.app-navigation-entry-utils-menu-button button')) {
-                $('.app-navigation-entry-menu.open').removeClass('open');
-            }
-        };
         // toggle favorites
         $('body').on('click', '#navigation-favorites > a', function(e) {
             that.toggleFavorites();

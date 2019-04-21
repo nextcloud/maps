@@ -67,6 +67,9 @@
         window.onclick = function(event) {
             $('.leaflet-control-layers').hide();
             $('.easy-button-container').show();
+            if (!event.target.matches('.app-navigation-entry-utils-menu-button button')) {
+                $('.app-navigation-entry-menu.open').removeClass('open');
+            }
         };
     });
 

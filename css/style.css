@@ -85,6 +85,14 @@
     height: 100%;
 }
 
+/* Fix attribution overlapping map on mobile */
+.leaflet-control-attribution.leaflet-control {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 50vw;
+}
+
 #opening-hours-table {
     margin-left: 25px;
     display: none;

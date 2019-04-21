@@ -371,22 +371,17 @@ tr.selected td {
 .line-disabled {
     background: var(--color-main-background);
 }
-.editFavorite td > i {
-    margin-right: 5px
+.editFavorite::after {
+    border: 0;
 }
-.editFavorite td {
-    height: 29px !important;
+.editFavorite form {
+    margin-top: 0 !important;
 }
-.editFavorite td * {
-    margin: 1px 1px 1px 0 !important;
+.editFavorite button {
+    height: 38px !important;
 }
-table.editFavorite td {
-    padding: 2px 0px 2px 0px;
-}
-table.editFavorite input[type=text] {
-    height: 27px;
-    width: 100%;
-    padding: 0px 3px 0px 3px;
+.editFavorite {
+    width: 200px;
 }
 #navigation-routing:not(.icon-loading-small) > a::before {
     content: "\f4d7";

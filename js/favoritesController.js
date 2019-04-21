@@ -95,12 +95,12 @@ FavoritesController.prototype = {
             that.map.closePopup();
         });
         $('body').on('click', '.deletefavorite', function(e) {
-            var favid = parseInt($(this).parent().find('table.editFavorite').attr('favid'));
+            var favid = parseInt($(this).parent().parent().attr('favid'));
             that.deleteFavoriteDB(favid);
         });
         $('body').on('click', '.movefavorite', function(e) {
-            var tab = $(this).parent().find('table');
-            var favid = tab.attr('favid');
+            var ul = $(this).parent().parent();
+            var favid = ul.attr('favid');
             that.movingFavoriteId = favid;
             if (that.addFavoriteMode) {
                 that.leaveAddFavoriteMode();
@@ -111,7 +111,7 @@ FavoritesController.prototype = {
         // key events on popup fields
         $('body').on('keyup', 'input[role=category], input[role=name]', function(e) {
             if (e.key === 'Enter') {
-                that.editFavoriteFromPopup($(this).parent().parent().parent().parent().parent().find('.valideditfavorite'));
+                that.editFavoriteFromPopup($(this).parent().parent().parent().parent().find('.valideditfavorite'));
                 that.map.closePopup();
             }
         });
@@ -806,7 +806,7 @@ FavoritesController.prototype = {
 
         e.target.unbindPopup();
         var popupContent = this._map.favoritesController.getFavoritePopupContent(fav);
-        e.target.bindPopup(popupContent, {closeOnClick: false});
+        e.target.bindPopup(popupContent, {closeOnClick: true, className: 'popovermenu open editFavorite'});
         e.target.openPopup();
         // add completion to category field
         var catList = [];
@@ -820,24 +820,55 @@ FavoritesController.prototype = {
     },
 
     getFavoritePopupContent: function(fav) {
-        var res = '<table class="editFavorite" favid="' + fav.id + '">';
-        res = res + '<tr title="' + t('maps', 'Name') + '">';
-        res = res + '<td><i class="fa fa-star" style="font-size: 15px;"></i></td>';
-        res = res + '<td><input role="name" type="text" value="' + fav.name + '" placeholder="'+t('maps', 'Favorite name')+'"/></td>';
-        res = res + '</tr>';
-        res = res + '<tr title="' + t('phonetrack', 'Category') + '">';
-        res = res + '<td><i class="fa fa-th-list" style="font-size: 15px;"></i></td>';
-        res = res + '<td><input role="category" type="text" value="' + (fav.category || '') + '" placeholder="'+t('maps', 'Category')+'"/></td>';
-        res = res + '</tr>';
-        res = res + '<tr title="' + t('phonetrack', 'Comment') + '">';
-        res = res + '<td><i class="fa fa-comment" style="font-size: 15px;"></i></td>';
-        res = res + '<td><textarea role="comment" placeholder="'+t('maps', 'Comment')+'">' + (fav.comment || '') + '</textarea></td>';
-        res = res + '</tr>';
-        res = res + '</table>';
-        res = res + '<button class="valideditfavorite"><i class="fa fa-save" aria-hidden="true"></i> ' + t('maps', 'Save') + '</button>';
-        res = res + '<button class="deletefavorite"><i class="fa fa-trash" aria-hidden="true" style="color:red;"></i> ' + t('maps', 'Delete') + '</button>';
-        res = res + '<br/><button class="movefavorite"><i class="fa fa-arrows-alt" aria-hidden="true"></i> ' + t('maps', 'Move') + '</button>';
-        res = res + '<button class="canceleditfavorite"><i class="fa fa-undo" aria-hidden="true" style="color:red;"></i> ' + t('maps', 'Cancel') + '</button>';
+        var validText = t('maps', 'Submit');
+        var moveText = t('maps', 'Move');
+        var deleteText = t('maps', 'Delete');
+        var namePH = t('maps', 'Favorite name');
+        var categoryPH = t('maps', 'Category');
+        var commentPH = t('maps', 'Comment');
+        var res = `
+            <ul favid="${fav.id}">
+               <li>
+                   <span class="menuitem">
+                       <span class="icon icon-favorite"></span>
+                       <form>
+                            <input role="name" type="text" value="${fav.name || ''}" placeholder="${namePH}"/>
+                       </form>
+                   </span>
+               </li>
+               <li>
+                   <span class="menuitem">
+                       <span class="icon icon-category-organization"></span>
+                       <form>
+                            <input role="category" type="text" value="${fav.category || ''}" placeholder="${categoryPH}"/>
+                       </form>
+                   </span>
+               </li>
+               <li>
+                   <span class="menuitem">
+                       <span class="icon icon-comment"></span>
+                       <form>
+                            <textarea role="comment" placeholder="${commentPH}" rows="1">${fav.comment || ''}</textarea>
+                       </form>
+                   </span>
+               </li>
+               <li>
+                   <button class="icon-checkmark valideditfavorite">
+                       <span>${validText}</span>
+                   </button>
+               </li>
+               <li>
+                   <button class="icon-link movefavorite">
+                       <span>${moveText}</span>
+                   </button>
+               </li>
+               <li>
+                   <button class="icon-delete deletefavorite">
+                       <span>${deleteText}</span>
+                   </button>
+               </li>
+            </ul>
+        `;
         return res;
     },
 
@@ -886,13 +917,13 @@ FavoritesController.prototype = {
     },
 
     editFavoriteFromPopup: function(button) {
-        var tab = button.parent().find('table');
-        var favid = parseInt(tab.attr('favid'));
+        var ul = button.parent().parent();
+        var favid = parseInt(ul.attr('favid'));
         var fav = this.favorites[favid];
 
-        var newName = tab.find('input[role=name]').val();
-        var newCategory = tab.find('input[role=category]').val();
-        var newComment = tab.find('textarea[role=comment]').val();
+        var newName = ul.find('input[role=name]').val();
+        var newCategory = ul.find('input[role=category]').val();
+        var newComment = ul.find('textarea[role=comment]').val();
 
         this.editFavoriteDB(favid, newName, newComment, newCategory, null, null);
     },

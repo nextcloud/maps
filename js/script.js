@@ -216,6 +216,15 @@
                 // do it after restore, otherwise restoring triggers save
                 mapController.map.on('baselayerchange ', function(e) {
                     optionsController.saveOptionValues({tileLayer: e.name});
+                    // make sure map is clean
+                    for (var ol in mapController.baseOverlays) {
+                        mapController.map.removeLayer(mapController.baseOverlays[ol]);
+                    }
+                    for (var tl in mapController.baseLayers) {
+                        if (tl !== e.name) {
+                            mapController.map.removeLayer(mapController.baseLayers[tl]);
+                        }
+                    }
                     mapController.layerChanged(e.name);
                 });
             }).fail(function() {
@@ -252,7 +261,7 @@
                 maxZoom: 19
             });
 
-            var attributionESRI = 'Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community';
+            var attributionESRI = 'Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN...';
             var ESRIAerial = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
                 attribution : attributionESRI,
                 noWrap: false,
@@ -262,7 +271,7 @@
             var roadsOverlay = L.tileLayer('https://{s}.tile.openstreetmap.se/hydda/roads_and_labels/{z}/{x}/{y}.png', {
                 maxZoom: 18,
                 opacity: 0.7,
-                attribution: 'Tiles courtesy of <a href="http://openstreetmap.se/" target="_blank">OpenStreetMap Sweden</a> &mdash; Map data &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+                attribution: '<a href="http://openstreetmap.se/" target="_blank">OpenStreetMap Sweden</a> &mdash; Map data &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
             });
             var ESRITopo = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/{z}/{y}/{x}', {
                 attribution : attributionESRI,
@@ -384,9 +393,10 @@
                 'Roads and labels': roadsOverlay
             }
             this.controlLayers = L.control.layers(this.baseLayers, this.baseOverlays, {position: 'bottomright'}).addTo(this.map);
-            // hide openstreetmap and ESRI Aerial
+            // hide openstreetmap, ESRI Aerial and roads/labels because they are dynamically managed
             this.controlLayers.removeLayer(this.baseLayers['OpenStreetMap']);
             this.controlLayers.removeLayer(this.baseLayers['ESRI Aerial']);
+            this.controlLayers.removeLayer(this.baseOverlays['Roads and labels']);
 
             // main layers buttons
             var esriImageUrl = $('#dummylogo').css('content').replace('url("', '').replace('")', '').replace('.png', 'esri.jpg');
@@ -436,10 +446,12 @@
             if (name === 'ESRI Aerial') {
                 this.esriButton.remove();
                 this.osmButton.addTo(this.map);
+                this.controlLayers.addOverlay(this.baseOverlays['Roads and labels'], 'Roads and labels');
             }
             else {
                 this.osmButton.remove();
                 this.esriButton.addTo(this.map);
+                this.controlLayers.removeLayer(this.baseOverlays['Roads and labels']);
             }
         },
     };

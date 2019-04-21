@@ -25,7 +25,7 @@
                 <name>name</name>
                 <type>text</type>
                 <length>64</length>
-                <notnull>true</notnull>
+                <notnull>false</notnull>
             </field>
             <field>
                 <name>date_modified</name>

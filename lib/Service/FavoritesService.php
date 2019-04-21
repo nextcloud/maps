@@ -150,7 +150,7 @@ class FavoritesService {
 
         $values = [];
         foreach ($favoriteList as $fav) {
-            $name = (!array_key_exists('name', $fav) or !$fav['name']) ? 'no name' : $fav['name'];
+            $name = (!array_key_exists('name', $fav) or !$fav['name']) ? null : $fav['name'];
             $ts = (!array_key_exists('date_created', $fav) or !is_numeric($fav['date_created'])) ? $nowTimeStamp : $fav['date_created'];
             if (
                 !array_key_exists('lat', $fav) or !is_numeric($fav['lat']) or
@@ -162,7 +162,7 @@ class FavoritesService {
                 $lat = floatval($fav['lat']);
                 $lng = floatval($fav['lng']);
             }
-            $category = (!array_key_exists('category', $fav) or !$fav['category']) ? 'no category' : $fav['category'];
+            $category = (!array_key_exists('category', $fav) or !$fav['category']) ? null : $fav['category'];
             $comment = (!array_key_exists('comment', $fav) or !$fav['comment']) ? null : $fav['comment'];
             $extensions = (!array_key_exists('extensions', $fav) or !$fav['extensions']) ? null : $fav['extensions'];
             array_push($values, [
@@ -204,8 +204,10 @@ class FavoritesService {
         $nowTimeStamp = (new \DateTime())->getTimestamp();
         $qb = $this->qb;
         $qb->update('maps_favorites');
-        $qb->set('name', $qb->createNamedParameter($name, IQueryBuilder::PARAM_STR));
         $qb->set('date_modified', $qb->createNamedParameter($nowTimeStamp, IQueryBuilder::PARAM_INT));
+        if ($name !== null) {
+            $qb->set('name', $qb->createNamedParameter($name, IQueryBuilder::PARAM_STR));
+        }
         if ($lat !== null) {
             $qb->set('lat', $qb->createNamedParameter($lat, IQueryBuilder::PARAM_STR));
         }
@@ -458,6 +460,9 @@ class FavoritesService {
                 $time = new \DateTime($this->currentFavorite['date_created']);
                 $timestamp = $time->getTimestamp();
                 $this->currentFavorite['date_created'] = $timestamp;
+            }
+            if (array_key_exists('category', $this->currentFavorite)) {
+                $this->currentFavorite['category'] = str_replace('no category', '', $this->currentFavorite['category']);
             }
             array_push($this->currentFavoritesList, $this->currentFavorite);
             // if we have enough favorites, we create them and clean the array

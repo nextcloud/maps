@@ -665,16 +665,14 @@ FavoritesController.prototype = {
     },
 
     addFavoriteClickMap: function(e) {
-        var defaultName = t('maps', 'no name');
         var categoryName = this.favoritesController.addFavoriteCategory;
         this.favoritesController.leaveAddFavoriteMode();
-        this.favoritesController.addFavoriteDB(categoryName, e.latlng.lat.toFixed(6), e.latlng.lng.toFixed(6), defaultName);
+        this.favoritesController.addFavoriteDB(categoryName, e.latlng.lat.toFixed(6), e.latlng.lng.toFixed(6), null);
     },
 
     contextAddFavorite: function(e) {
-        var defaultName = t('maps', 'no name');
         var categoryName = this.favoritesController.addFavoriteCategory;
-        this.favoritesController.addFavoriteDB(categoryName, e.latlng.lat.toFixed(6), e.latlng.lng.toFixed(6), defaultName);
+        this.favoritesController.addFavoriteDB(categoryName, e.latlng.lat.toFixed(6), e.latlng.lng.toFixed(6), null);
     },
 
     // make the request
@@ -792,7 +790,7 @@ FavoritesController.prototype = {
     },
 
     getFavoriteTooltipContent: function(fav) {
-        var content = t('maps', 'Name') + ': ' + fav.name;
+        var content = t('maps', 'Name') + ': ' + (fav.name || t('maps', 'No name'));
         if (fav.category && fav.category !== this.defaultCategory) {
             content = content + '<br/>' + t('maps', 'Category') + ': ' + fav.category;
         }
@@ -825,15 +823,15 @@ FavoritesController.prototype = {
         var res = '<table class="editFavorite" favid="' + fav.id + '">';
         res = res + '<tr title="' + t('maps', 'Name') + '">';
         res = res + '<td><i class="fa fa-star" style="font-size: 15px;"></i></td>';
-        res = res + '<td><input role="name" type="text" value="' + fav.name + '"/></td>';
+        res = res + '<td><input role="name" type="text" value="' + fav.name + '" placeholder="'+t('maps', 'Favorite name')+'"/></td>';
         res = res + '</tr>';
         res = res + '<tr title="' + t('phonetrack', 'Category') + '">';
         res = res + '<td><i class="fa fa-th-list" style="font-size: 15px;"></i></td>';
-        res = res + '<td><input role="category" type="text" value="' + (fav.category || '') + '"/></td>';
+        res = res + '<td><input role="category" type="text" value="' + (fav.category || '') + '" placeholder="'+t('maps', 'Category')+'"/></td>';
         res = res + '</tr>';
         res = res + '<tr title="' + t('phonetrack', 'Comment') + '">';
         res = res + '<td><i class="fa fa-comment" style="font-size: 15px;"></i></td>';
-        res = res + '<td><textarea role="comment">' + (fav.comment || '') + '</textarea></td>';
+        res = res + '<td><textarea role="comment" placeholder="'+t('maps', 'Comment')+'">' + (fav.comment || '') + '</textarea></td>';
         res = res + '</tr>';
         res = res + '</table>';
         res = res + '<button class="valideditfavorite"><i class="fa fa-save" aria-hidden="true"></i> ' + t('maps', 'Save') + '</button>';

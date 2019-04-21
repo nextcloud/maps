@@ -102,10 +102,7 @@ class FavoritesApiController extends ApiController {
      * @CORS
      */
     public function addFavorite($apiversion, $name, $lat, $lng, $category, $comment, $extensions) {
-        if ($name && strlen($name) > 0
-            && is_numeric($lat)
-            && is_numeric($lng)
-        ) {
+        if (is_numeric($lat) && is_numeric($lng)) {
             $favoriteId = $this->favoritesService->addFavoriteToDB($this->userId, $name, $lat, $lng, $category, $comment, $extensions);
             $favorite = $this->favoritesService->getFavoriteFromDB($favoriteId);
             return new DataResponse($favorite);
@@ -123,9 +120,8 @@ class FavoritesApiController extends ApiController {
     public function editFavorite($id, $name, $lat, $lng, $category, $comment, $extensions) {
         $favorite = $this->favoritesService->getFavoriteFromDB($id, $this->userId);
         if ($favorite !== null) {
-            if ($name && strlen($name) > 0
-                && ($lat === null || is_numeric($lat))
-                && ($lng === null || is_numeric($lng))
+            if (($lat === null || is_numeric($lat)) &&
+                ($lng === null || is_numeric($lng))
             ) {
                 $this->favoritesService->editFavoriteInDB($id, $name, $lat, $lng, $category, $comment, $extensions);
                 $editedFavorite = $this->favoritesService->getFavoriteFromDB($id);

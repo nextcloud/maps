@@ -20,7 +20,7 @@ function FavoritesController(optionsController, timeFilterController) {
     this.addFavoriteMode = false;
     this.addFavoriteCategory = '';
 
-    this.defaultCategory = t('maps', 'no category');
+    this.defaultCategory = t('maps', 'Personal');
 
     this.movingFavoriteId = null;
 

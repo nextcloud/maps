@@ -225,6 +225,9 @@
                             mapController.map.removeLayer(mapController.baseLayers[tl]);
                         }
                     }
+                    if (e.name === 'Watercolor') {
+                        mapController.map.addLayer(mapController.baseOverlays['Roads and labels']);
+                    }
                     mapController.layerChanged(e.name);
                 });
             }).fail(function() {
@@ -433,7 +436,7 @@
                 this.map.removeLayer(this.baseOverlays[ol]);
             }
             this.map.addLayer(this.baseLayers[name]);
-            if (name === 'ESRI Aerial') {
+            if (name === 'ESRI Aerial' || name === 'Watercolor') {
                 this.map.addLayer(this.baseOverlays['Roads and labels']);
             }
             this.layerChanged(name);
@@ -446,12 +449,10 @@
             if (name === 'ESRI Aerial') {
                 this.esriButton.remove();
                 this.osmButton.addTo(this.map);
-                this.controlLayers.addOverlay(this.baseOverlays['Roads and labels'], 'Roads and labels');
             }
             else {
                 this.osmButton.remove();
                 this.esriButton.addTo(this.map);
-                this.controlLayers.removeLayer(this.baseOverlays['Roads and labels']);
             }
         },
     };

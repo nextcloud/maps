@@ -218,12 +218,15 @@ FavoritesController.prototype = {
     },
 
     getClusterIconCreateFunction: function() {
+        var that = this;
         return function(cluster) {
-            var iconUrl = $('#dummylogo').css('content').replace('url("', '').replace('")', '').replace('.png', 'star-circle.svg');
+            var fid = parseInt(cluster.getAllChildMarkers()[0].favid);
+            var category = that.favorites[fid].category || that.defaultCategory;
+            category = category.replace(' ', '-');
             var label = cluster.getChildCount();
             return new L.DivIcon(L.extend({
                 className: 'leaflet-marker-favorite-cluster cluster-marker',
-                html: '<div class="thumbnail" style="background-image: url(' + iconUrl + ');"></div>​<span class="label">' + label + '</span>'
+                html: '<div class="favoriteClusterMarker '+category+'CategoryMarker"></div>​<span class="label">' + label + '</span>'
             }, this.icon));
         };
     },
@@ -744,10 +747,10 @@ FavoritesController.prototype = {
         marker.on('click', this.favoriteMouseClick);
 
         // add to map and arrays
-        this.categoryMarkers[cat][fav.id] = marker;
-        this.categoryLayers[cat].addLayer(marker);
         this.favorites[fav.id] = fav;
         this.markers[fav.id] = marker;
+        this.categoryMarkers[cat][fav.id] = marker;
+        this.categoryLayers[cat].addLayer(marker);
 
         if (fromUserAction) {
             // we make sure created favorite is displayed

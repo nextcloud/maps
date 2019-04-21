@@ -368,6 +368,16 @@ tr.selected td {
     background: url('images/star-white.svg') no-repeat 50% 50%;
     background-size: 15px 15px;
 }
+.favoriteClusterMarker {
+    height: 27px !important;
+    width: 27px !important;
+    -webkit-mask: url('images/star-circle.svg') no-repeat 50% 50%;
+    -webkit-mask-size: 27px;
+    mask: url('images/star-circle.svg') no-repeat 50% 50%;
+    mask-size: 27px;
+    background: url('images/star-white.svg') no-repeat 50% 50%;
+    background-size: 27px 27px;
+}
 .trackWaypoint {
     height: 25px !important;
     width: 25px !important;

@@ -521,14 +521,22 @@
                 html: ''
             });
 
+            this.osrmRouter = L.Routing.osrmv1({
+                serviceUrl: 'https://router.project-osrm.org/route/v1',
+                //profile: 'driving', // works with demo server
+                profile: 'car', // works with demo server
+                //profile: 'bicycle', // does not work with demo server...
+                //profile: 'foot', // does not work with demo server...
+                suppressDemoServerWarning: true
+            });
             this.ghRouter = L.Routing.graphHopper(undefined /* api key */, {
                 serviceUrl: 'http://192.168.0.66:8989/route',
                 urlParameters : {
-                    vehicle: 'car'
+                    vehicle: 'car' // available ones : car, foot, bike, bike2, mtb, racingbike, motorcycle
                 }
             });
             this.control = L.Routing.control({
-                //router: this.ghRouter,
+                router: this.osrmRouter,
                 position: 'topleft',
                 routeWhileDragging: true,
                 reverseWaypoints: true,
@@ -540,7 +548,10 @@
                 },
                 pointMarkerStyle: {radius: 5, color: '#03f', fillColor: 'white', opacity: 1, fillOpacity: 0.7},
                 createMarker: this.createMarker
-            })
+            }).on('routingerror', this.onRoutingError);
+            //this.setRouter(this.ghRouter);
+            //console.log(this.control);
+
 
             $('body').on('click', '.routingMenuButton', function(e) {
                 var wasOpen = $(this).parent().parent().parent().find('>.app-navigation-entry-menu').hasClass('open');
@@ -577,6 +588,11 @@
 
         setRouter: function(router) {
             this.control._router = router;
+            this.control.options.router = router;
+        },
+
+        onRoutingError: function(e) {
+            OC.Notification.showTemporary(t('maps', 'Routing error: ') + e.error.target.responseText);
         },
 
         // this has been tested with graphhopper

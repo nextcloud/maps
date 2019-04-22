@@ -386,6 +386,17 @@ tr.selected td {
     box-shadow: 0px 0px 10px #888;
     border-radius: 50%;
 }
+.trackWaypoint,
+.route-waypoint {
+    height: 25px !important;
+    width: 25px !important;
+    -webkit-mask: url('images/marker-icon.svg') no-repeat 50% 50%;
+    -webkit-mask-size: 25px;
+    mask: url('images/marker-icon.svg') no-repeat 50% 50%;
+    mask-size: 25px;
+    background: url('images/marker-icon-bg.svg') no-repeat 50% 50%;
+    background-size: 25px 25px;
+}
 .route-begin-waypoint {
     background-color: green;
 }
@@ -394,15 +405,6 @@ tr.selected td {
 }
 .route-end-waypoint {
     background-color: red;
-}
-.route-waypoint,
-.trackWaypoint {
-    height: 25px !important;
-    width: 25px !important;
-    -webkit-mask: url('images/marker-icon.svg') no-repeat 50% 50%;
-    -webkit-mask-size: 25px;
-    mask: url('images/marker-icon.svg') no-repeat 50% 50%;
-    mask-size: 25px;
 }
 .line-enabled {
     background: var(--color-background-dark);

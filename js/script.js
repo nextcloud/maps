@@ -49,11 +49,13 @@
                 else if (results.length === 1) {
                     var result = results[0];
                     mapController.displaySearchResult(result);
+                    routingController.control.spliceWaypoints(routingController.control.getWaypoints().length - 1, 1, new L.LatLng(result.lat, result.lon));
                 }
                 else {
                     console.log('multiple results');
                     var result = results[0];
                     mapController.displaySearchResult(result);
+                    routingController.control.spliceWaypoints(routingController.control.getWaypoints().length - 1, 1, new L.LatLng(result.lat, result.lon));
                 }
             });
         }

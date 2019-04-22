@@ -219,6 +219,7 @@ FavoritesController.prototype = {
             category = category.replace(' ', '-');
             var label = cluster.getChildCount();
             return new L.DivIcon(L.extend({
+                iconAnchor: [14, 14],
                 className: 'leaflet-marker-favorite-cluster cluster-marker',
                 html: '<div class="favoriteClusterMarker '+category+'CategoryMarker"></div>​<span class="label">' + label + '</span>'
             }, this.icon));
@@ -464,7 +465,7 @@ FavoritesController.prototype = {
 
         // icon for markers
         this.categoryDivIcon[rawName] = L.divIcon({
-            iconAnchor: [10, 10],
+            iconAnchor: [9, 9],
             className: 'leaflet-marker-favorite',
             html: '<div class="favoriteMarker '+name+'CategoryMarker"></div>'
         });

@@ -302,9 +302,11 @@ tr.selected td {
 }
 
 .leaflet-marker-contact-tooltip,
-.leaflet-marker-nonLocalizedPhoto-tooltip,
 .leaflet-marker-photo-tooltip {
     opacity: 1 !important;
+}
+.leaflet-marker-photo-tooltip {
+    padding: 1px;
 }
 
 .leaflet-marker-device,
@@ -338,6 +340,7 @@ tr.selected td {
 .photo-tooltip {
     max-width: 325px;
     max-height: 325px;
+    border-radius: var(--border-radius);
 }
 
 .easy-button-button {
@@ -438,9 +441,16 @@ tr.selected td {
 .ui-autocomplete {
     z-index: 10000 !important;
 }
+.tooltip-photo-date,
 .tooltip-photo-name {
     width: 100%;
     text-align: center;
+}
+.tooltip-photo-name {
+    color: var(--color-text-light);
+}
+.tooltip-photo-date {
+    font-weight: bold;
 }
 
 .tooltip-contact-avatar {

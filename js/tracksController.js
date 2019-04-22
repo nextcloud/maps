@@ -22,6 +22,7 @@ function TracksController(optionsController, timeFilterController) {
     this.trackListLoaded = false;
 
     this.changingColorOf = null;
+    this.lastZIndex = 1000;
 }
 
 TracksController.prototype = {
@@ -538,6 +539,13 @@ TracksController.prototype = {
         // show track
         else {
             this.mainLayer.addLayer(mapTrackLayer);
+            // markers are hard to bring to front
+            var that = this;
+            this.trackLayers[id].eachLayer(function(l) {
+                if (l instanceof L.Marker){
+                    l.setZIndexOffset(that.lastZIndex++);
+                }
+            });
             trackName.addClass('active');
         }
     },
@@ -931,6 +939,13 @@ TracksController.prototype = {
         if (this.mainLayer.hasLayer(this.mapTrackLayers[id])) {
             this.map.fitBounds(this.mapTrackLayers[id].getBounds(), {padding: [30, 30]});
             this.mapTrackLayers[id].bringToFront();
+            // markers are hard to bring to front
+            var that = this;
+            this.trackLayers[id].eachLayer(function(l) {
+                if (l instanceof L.Marker){
+                    l.setZIndexOffset(that.lastZIndex++);
+                }
+            });
         }
     },
 

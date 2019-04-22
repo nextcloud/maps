@@ -548,7 +548,10 @@
                 },
                 pointMarkerStyle: {radius: 5, color: '#03f', fillColor: 'white', opacity: 1, fillOpacity: 0.7},
                 createMarker: this.createMarker
-            }).on('routingerror', this.onRoutingError);
+            })
+            .on('routingerror', this.onRoutingError)
+            .on('routingstart', this.onRoutingStart)
+            .on('routesfound', this.onRoutingEnd);
             //this.setRouter(this.ghRouter);
             //console.log(this.control);
 
@@ -593,6 +596,17 @@
 
         onRoutingError: function(e) {
             OC.Notification.showTemporary(t('maps', 'Routing error: ') + e.error.target.responseText);
+            routingController.onRoutingEnd();
+        },
+
+        onRoutingStart: function(e) {
+            $('#navigation-routing').addClass('icon-loading-small');
+            $('.leaflet-routing-reverse-waypoints').addClass('icon-loading-small');
+        },
+
+        onRoutingEnd: function(e) {
+            $('#navigation-routing').removeClass('icon-loading-small');
+            $('.leaflet-routing-reverse-waypoints').removeClass('icon-loading-small');
         },
 
         // this has been tested with graphhopper

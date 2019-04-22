@@ -477,6 +477,9 @@ tr.selected td {
     text-align: center;
 }
 /* Overriden routing/geocoder style */
+.leaflet-routing-reverse-waypoints.icon-loading-small::after {
+    content: '';
+}
 .leaflet-routing-reverse-waypoints,
 .leaflet-routing-add-waypoint {
     width: 25px !important;

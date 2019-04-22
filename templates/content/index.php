@@ -46,7 +46,7 @@ style('maps', 'style');
 ?>
 <div id="search">
     <form id="search-form">
-        <input type="text" placehoder="Search..." id="search-term" />
+        <input type="text" placeholder="<?php p($l->t('Search...')); ?>" id="search-term" />
         <input type="submit" id="search-submit" value="" class="icon-search">
     </form>
 </div>

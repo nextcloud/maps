@@ -527,7 +527,11 @@
                 profile: 'car', // works with demo server
                 //profile: 'bicycle', // does not work with demo server...
                 //profile: 'foot', // does not work with demo server...
-                suppressDemoServerWarning: true
+                suppressDemoServerWarning: true,
+                // this makes OSRM use our local translations
+                // otherwise it uses osrm-text-instructions which makes us import another lib
+                stepToText: function(e) {
+                }
             });
             this.ghRouter = L.Routing.graphHopper(undefined /* api key */, {
                 serviceUrl: 'http://192.168.0.66:8989/route',
@@ -558,7 +562,7 @@
                 instructions: {
                     // instruction, postfix if the road is named
                     'Head':
-                    [t('maps', 'Headd {dir}'), t('maps', ' on {road}')],
+                    [t('maps', 'Head {dir}'), t('maps', ' on {road}')],
                     'Continue':
                     [t('maps', 'Continue {dir}')],
                     'TurnAround':

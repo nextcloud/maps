@@ -535,14 +535,72 @@
                     vehicle: 'car' // available ones : car, foot, bike, bike2, mtb, racingbike, motorcycle
                 }
             });
+            var lang = OC.getLocale();
+            // this is for all routing engines except OSRM
+            L.Routing.Localization[lang] = {
+                directions: {
+                    N: t('maps', 'north'),
+                    NE: t('maps', 'northeast'),
+                    E: t('maps', 'east'),
+                    SE: t('maps', 'southeast'),
+                    S: t('maps', 'south'),
+                    SW: t('maps', 'southwest'),
+                    W: t('maps', 'west'),
+                    NW: t('maps', 'northwest'),
+                    SlightRight: t('maps', 'slight right'),
+                    Right: t('maps', 'right'),
+                    SharpRight: t('maps', 'sharp right'),
+                    SlightLeft: t('maps', 'slight left'),
+                    Left: t('maps', 'left'),
+                    SharpLeft: t('maps', 'sharp left'),
+                    Uturn: t('maps', 'Turn around')
+                },
+                instructions: {
+                    // instruction, postfix if the road is named
+                    'Head':
+                    [t('maps', 'Headd {dir}'), t('maps', ' on {road}')],
+                    'Continue':
+                    [t('maps', 'Continue {dir}')],
+                    'TurnAround':
+                    [t('maps', 'Turn around')],
+                    'WaypointReached':
+                    [t('maps', 'Waypoint reached')],
+                    'Roundabout':
+                    [t('maps', 'Take the {exitStr} exit in the roundabout'), t('maps', ' onto {road}')],
+                    'DestinationReached':
+                    [t('maps', 'Destination reached')],
+                    'Fork': [t('maps', 'At the fork, turn {modifier}'), t('maps', ' onto {road}')],
+                    'Merge': [t('maps', 'Merge {modifier}'), t('maps', ' onto {road}')],
+                    'OnRamp': [t('maps', 'Turn {modifier} on the ramp'), t('maps', ' onto {road}')],
+                    'OffRamp': [t('maps', 'Take the ramp on the {modifier}'), t('maps', ' onto {road}')],
+                    'EndOfRoad': [t('maps', 'Turn {modifier} at the end of the road'), t('maps', ' onto {road}')],
+                    'Onto': t('maps', 'onto {road}')
+                },
+                ui: {
+                    startPlaceholder: t('maps', 'Start'),
+                    viaPlaceholder: t('maps', 'Via {viaNumber}'),
+                    endPlaceholder: t('maps', 'Destination')
+                },
+                formatOrder: function(n) {
+                    return n + 'º';
+                },
+                units: {
+                    meters: t('maps', 'm'),
+                    kilometers: t('maps', 'km'),
+                    yards: t('maps', 'yd'),
+                    miles: t('maps', 'mi'),
+                    hours: t('maps', 'h'),
+                    minutes: t('maps', 'min'),
+                    seconds: t('maps', 's')
+                }
+            };
             this.control = L.Routing.control({
                 router: this.osrmRouter,
                 position: 'topleft',
                 routeWhileDragging: true,
                 reverseWaypoints: true,
                 geocoder: L.Control.Geocoder.nominatim(),
-                // TODO find a way to check if current NC language is supported by routing control
-                //language: 'fr',
+                language: lang,
                 lineOptions: {
                     styles: [{color: 'black', opacity: 0.15, weight: 9}, {color: 'white', opacity: 0.8, weight: 6}, {color: 'blue', opacity: 1, weight: 2}],
                 },

@@ -481,6 +481,12 @@ tr.selected td {
 .leaflet-routing-geocoder > input:placeholder-shown + span {
     display: none;
 }
+.leaflet-routing-geocoders {
+    border-bottom: 0;
+}
+.leaflet-routing-alternatives-container:not(:empty) {
+    border-top: 1px solid var(--color-border);
+}
 .leaflet-routing-reverse-waypoints.icon-loading-small::after {
     content: '';
 }

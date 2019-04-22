@@ -254,7 +254,9 @@
         baseLayers: undefined,
         displaySearchResult: function(result) {
             if(this.searchMarker) this.map.removeLayer(this.searchMarker);
-            this.searchMarker = L.marker([result.lat, result.lon]);
+            this.searchMarker = L.marker([result.lat, result.lon], {
+                icon: this.searchIcon
+            });
             var name = result.display_name;
             var popupContent = searchController.parseOsmResult(result);
             this.searchMarker.bindPopup(popupContent);
@@ -264,6 +266,11 @@
         },
         initMap: function() {
             var that = this;
+            this.searchIcon = L.divIcon({
+                iconAnchor: [12, 25],
+                className: 'route-waypoint route-middle-waypoint',
+                html: ''
+            });
             var attribution = '&copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>';
 
             var osm = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {

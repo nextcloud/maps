@@ -454,7 +454,7 @@ FavoritesController.prototype = {
             'background-color: #'+color+';' +
             '}' +
             '.tooltipfav-' + name + ' {' +
-            'background: rgba(' + rgbc.r + ', ' + rgbc.g + ', ' + rgbc.b + ', 0.5);' +
+            'background: rgba(' + rgbc.r + ', ' + rgbc.g + ', ' + rgbc.b + ', 0.7);' +
             'color: ' + textcolor + '; font-weight: bold; }' +
             '</style>').appendTo('body');
 

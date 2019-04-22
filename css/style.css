@@ -310,7 +310,7 @@ tr.selected td {
 .leaflet-marker-device,
 .leaflet-marker-contact {
     border: 2px solid var(--color-main-background);
-    box-shadow: 3px 3px 10px #888;
+    box-shadow: 0px 0px 10px #888;
     border-radius: 50%;
 }
 .leaflet-marker-photo {

@@ -465,8 +465,8 @@ FavoritesController.prototype = {
         // icon for markers
         this.categoryDivIcon[rawName] = L.divIcon({
             iconAnchor: [10, 10],
-            className: 'favoriteMarker '+name+'CategoryMarker',
-            html: ''
+            className: 'leaflet-marker-favorite',
+            html: '<div class="favoriteMarker '+name+'CategoryMarker"></div>'
         });
 
         // side menu entry

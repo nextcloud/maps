@@ -362,14 +362,14 @@ tr.selected td {
     height: 100%;
 }
 .favoriteMarker {
-    height: 22px !important;
-    width: 22px !important;
+    height: 18px !important;
+    width: 18px !important;
     -webkit-mask: url('images/star-circle.svg') no-repeat 50% 50%;
-    -webkit-mask-size: 15px;
+    -webkit-mask-size: 18px;
     mask: url('images/star-circle.svg') no-repeat 50% 50%;
-    mask-size: 15px;
+    mask-size: 18px;
     background: url('images/star-white.svg') no-repeat 50% 50%;
-    background-size: 15px 15px;
+    background-size: 18px 18px;
 }
 .favoriteClusterMarker {
     height: 27px !important;
@@ -381,8 +381,12 @@ tr.selected td {
     background: url('images/star-white.svg') no-repeat 50% 50%;
     background-size: 27px 27px;
 }
+.leaflet-marker-favorite {
+    height: 18px !important;
+    width: 18px !important;
+}
 .leaflet-marker-favorite-cluster,
-.favoriteMarker {
+.leaflet-marker-favorite {
     box-shadow: 0px 0px 10px #888;
     border-radius: 50%;
 }

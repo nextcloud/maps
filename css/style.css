@@ -494,6 +494,25 @@ tr.selected td {
     height: 4px !important;
     background-color: var(--color-main-background) !important;
 }
+.leaflet-routing-alt table {
+    white-space: normal;
+}
+.leaflet-routing-alt td:nth-child(2),
+.leaflet-routing-alt td:nth-child(3) {
+    display: block;
+}
+.leaflet-routing-alt td:nth-child(3) {
+    color: var(--color-text-light);
+}
+.leaflet-routing-alt tr:nth-child(odd) {
+    background-color: var(--color-background-dark);
+}
+.leaflet-routing-alt tr:hover {
+    background-color: var(--color-background-darker);
+}
+.leaflet-routing-instruction-distance {
+    width: 1px;
+}
 .app-navigation-entry-menu {
     z-index: 10001;
 }

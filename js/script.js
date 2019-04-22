@@ -505,6 +505,22 @@
             this.map = map;
             var that = this;
 
+            this.beginIcon = L.divIcon({
+                iconAnchor: [12, 25],
+                className: 'route-waypoint route-begin-waypoint',
+                html: ''
+            });
+            this.middleIcon = L.divIcon({
+                iconAnchor: [12, 25],
+                className: 'route-waypoint route-middle-waypoint',
+                html: ''
+            });
+            this.endIcon = L.divIcon({
+                iconAnchor: [12, 25],
+                className: 'route-waypoint route-end-waypoint',
+                html: ''
+            });
+
             //var bikeRouter = L.Routing.osrmv1({
             //    serviceUrl: 'http://osrm.mapzen.com/bicycle/viaroute'
             //});
@@ -520,6 +536,11 @@
                 // TODO find a way to check if current NC language is supported by routing control
                 //language: 'fr',
                 //router: bikeRouter
+                lineOptions: {
+                    styles: [{color: 'black', opacity: 0.15, weight: 9}, {color: 'white', opacity: 0.8, weight: 6}, {color: 'blue', opacity: 1, weight: 2}],
+                },
+                pointMarkerStyle: {radius: 5, color: '#03f', fillColor: 'white', opacity: 1, fillOpacity: 0.7},
+                createMarker: this.createMarker
             })
 
             $('body').on('click', '.routingMenuButton', function(e) {
@@ -553,6 +574,21 @@
                 this.enabled = true;
                 $('.leaflet-routing-geocoder input').first().focus();
             }
+        },
+
+        createMarker: function(i, wpt, n) {
+            var icon;
+            if (i === 0) {
+                icon = routingController.beginIcon;
+            }
+            else if (i === n - 1) {
+                icon = routingController.endIcon;
+            }
+            else {
+                icon = routingController.middleIcon;
+            }
+            var marker = L.marker(wpt.latLng, {icon: icon, draggable: true});
+            return marker;
         },
 
         exportRoute: function() {

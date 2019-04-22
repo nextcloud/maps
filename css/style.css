@@ -386,6 +386,16 @@ tr.selected td {
     box-shadow: 0px 0px 10px #888;
     border-radius: 50%;
 }
+.route-begin-waypoint {
+    background-color: green;
+}
+.route-middle-waypoint {
+    background-color: blue;
+}
+.route-end-waypoint {
+    background-color: red;
+}
+.route-waypoint,
 .trackWaypoint {
     height: 25px !important;
     width: 25px !important;

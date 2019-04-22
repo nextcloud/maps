@@ -477,6 +477,10 @@ tr.selected td {
     text-align: center;
 }
 /* Overriden routing/geocoder style */
+/* hide button if placeholder is shown i.e. if field is empty */
+.leaflet-routing-geocoder > input:placeholder-shown + span {
+    display: none;
+}
 .leaflet-routing-reverse-waypoints.icon-loading-small::after {
     content: '';
 }
@@ -491,11 +495,13 @@ tr.selected td {
     line-height: 0px !important;
 }
 .leaflet-routing-remove-waypoint::after {
-    border: 1px solid var(--color-border) !important;
     right: 6px !important;
     width: 18px !important;
-    height: 4px !important;
+    height: 10px !important;
     background-color: var(--color-main-background) !important;
+}
+.leaflet-routing-remove-waypoint:hover:after {
+    color: var(--color-main-text) !important;
 }
 .leaflet-routing-alt table {
     white-space: normal;

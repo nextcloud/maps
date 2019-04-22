@@ -521,21 +521,20 @@
                 html: ''
             });
 
-            //var bikeRouter = L.Routing.osrmv1({
-            //    serviceUrl: 'http://osrm.mapzen.com/bicycle/viaroute'
-            //});
+            this.ghRouter = L.Routing.graphHopper(undefined /* api key */, {
+                serviceUrl: 'http://192.168.0.66:8989/route',
+                urlParameters : {
+                    vehicle: 'car'
+                }
+            });
             this.control = L.Routing.control({
-                //waypoints: [
-                //    L.latLng(57.74, 11.94),
-                //    L.latLng(57.6792, 11.949)
-                //],
+                //router: this.ghRouter,
                 position: 'topleft',
                 routeWhileDragging: true,
                 reverseWaypoints: true,
                 geocoder: L.Control.Geocoder.nominatim(),
                 // TODO find a way to check if current NC language is supported by routing control
                 //language: 'fr',
-                //router: bikeRouter
                 lineOptions: {
                     styles: [{color: 'black', opacity: 0.15, weight: 9}, {color: 'white', opacity: 0.8, weight: 6}, {color: 'blue', opacity: 1, weight: 2}],
                 },
@@ -574,6 +573,16 @@
                 this.enabled = true;
                 $('.leaflet-routing-geocoder input').first().focus();
             }
+        },
+
+        setRouter: function(router) {
+            this.control._router = router;
+        },
+
+        // this has been tested with graphhopper
+        setRouterVehicle: function(vehicle) {
+            this.control.getRouter().options.urlParameters.vehicle = vehicle;
+            this.control.route();
         },
 
         createMarker: function(i, wpt, n) {

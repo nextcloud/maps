@@ -36,6 +36,7 @@ script('maps', '../node_modules/opening_hours/opening_hours');
 script('maps', '../node_modules/leaflet.locatecontrol/dist/L.Control.Locate.min');
 script('maps', '../node_modules/leaflet-easybutton/src/easy-button');
 script('maps', '../node_modules/leaflet-routing-machine/dist/leaflet-routing-machine.min');
+script('maps', '../js/external/lrm-graphhopper-1.2.0.min');
 script('maps', '../node_modules/leaflet-control-geocoder/dist/Control.Geocoder.min');
 script('maps', '../node_modules/leaflet-mouse-position/src/L.Control.MousePosition');
 script('maps', '../node_modules/leaflet-contextmenu/dist/leaflet.contextmenu.min');

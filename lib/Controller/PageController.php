@@ -49,6 +49,8 @@ class PageController extends Controller {
             $csp->addAllowedImageDomain('https://*.openstreetmap.se');
             // routing engine
             $csp->addAllowedConnectDomain('https://*.project-osrm.org');
+            // TODO allow connections to router engine
+            //$csp->addAllowedConnectDomain('http://192.168.0.66:8989');
             // poi images
             $csp->addAllowedImageDomain('https://nominatim.openstreetmap.org');
             // search and geocoder
@@ -78,6 +80,8 @@ class PageController extends Controller {
             $csp->addAllowedImageDomain('https://*.openstreetmap.se');
             // routing engine
             $csp->addAllowedConnectDomain('https://*.project-osrm.org');
+            // TODO allow connections to router engine
+            //$csp->addAllowedConnectDomain('http://192.168.0.66:8989');
             // poi images
             $csp->addAllowedImageDomain('https://nominatim.openstreetmap.org');
             // search and geocoder

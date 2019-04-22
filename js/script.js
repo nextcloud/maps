@@ -511,6 +511,7 @@
                 //    L.latLng(57.74, 11.94),
                 //    L.latLng(57.6792, 11.949)
                 //],
+                position: 'topleft',
                 routeWhileDragging: true,
                 reverseWaypoints: true,
                 geocoder: L.Control.Geocoder.nominatim(),
@@ -548,6 +549,7 @@
                 this.control.addTo(this.map);
                 $('#navigation-routing').addClass('active');
                 this.enabled = true;
+                $('.leaflet-routing-geocoder input').first().focus();
             }
         },
 

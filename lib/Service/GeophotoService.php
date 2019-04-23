@@ -219,6 +219,13 @@ class GeophotoService {
      * @param $points array sorted by keys timestamp => [lat, lng]
      */
     private function getLocationFromSequenceOfPoints($dateTaken, $points) {
+        $foo = end($points);
+        $end = key($points);
+        $foo = reset($points);
+        $start = key($points);
+        if ($start > $dateTaken OR $end < $dateTaken) {
+            return null;
+        }
         $smaller = null;
         $bigger = null;
         foreach ($points as $time => $locations) {

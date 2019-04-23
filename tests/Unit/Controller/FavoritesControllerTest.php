@@ -145,11 +145,11 @@ class FavoritesControllerTest extends \PHPUnit\Framework\TestCase {
         $data = $resp->getData();
         $this->assertEquals('one', $data['name']);
 
-        // invalid values
         $resp = $this->favoritesController->addFavorite('', 3.1, 4.2, '', null, null);
         $status = $resp->getStatus();
-        $this->assertEquals(400, $status);
+        $this->assertEquals(200, $status);
 
+        // invalid values
         $resp = $this->favoritesController->addFavorite('one', 'lat', 4.2, '', null, null);
         $status = $resp->getStatus();
         $this->assertEquals(400, $status);

@@ -809,7 +809,7 @@ FavoritesController.prototype = {
         var popupContent = this._map.favoritesController.getFavoritePopupContent(fav);
         e.target.bindPopup(popupContent, {
             closeOnClick: true,
-            className: 'popovermenu open popupFavorite',
+            className: 'popovermenu open popupMarker',
             offset: L.point(-5, 9)
         });
         e.target.openPopup();
@@ -872,7 +872,7 @@ FavoritesController.prototype = {
         var popupContent = this._map.favoritesController.getFavoriteContextPopupContent(fav);
         e.target.bindPopup(popupContent, {
             closeOnClick: true,
-            className: 'popovermenu open popupFavorite',
+            className: 'popovermenu open popupMarker',
             offset: L.point(-5, 9)
         });
         e.target.openPopup();

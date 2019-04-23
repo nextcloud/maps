@@ -426,16 +426,16 @@ tr.selected td {
 .line-disabled {
     background: var(--color-main-background);
 }
-.popupFavorite::after {
+.popupMarker::after {
     border: 0;
 }
-.popupFavorite form {
+.popupMarker form {
     margin-top: 0 !important;
 }
-.popupFavorite button {
+.popupMarker button {
     height: 38px !important;
 }
-.popupFavorite {
+.popupMarker {
     width: 200px;
 }
 #navigation-routing:not(.icon-loading-small) > a::before {

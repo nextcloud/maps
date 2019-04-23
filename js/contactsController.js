@@ -51,6 +51,16 @@ ContactsController.prototype = {
                 $(this).parent().parent().parent().find('>.app-navigation-entry-menu').addClass('open');
             }
         });
+        // reset
+        $('body').on('click', '.resetContact', function(e) {
+            var ul = $(this).parent().parent();
+            var bookid = ul.attr('bookid');
+            var uri = ul.attr('uri');
+            var uid = ul.attr('uid');
+            // TODO uncomment this when property deletion is fixed
+            //that.resetContact(bookid, uri, uid);
+            OC.Notification.showTemporary(t('maps', 'NYI'));
+        });
     },
 
     updateMyFirstLastDates: function() {
@@ -182,11 +192,14 @@ ContactsController.prototype = {
                 lng: parseFloat(geo[1]),
                 photo: contacts[i].PHOTO,
                 uid: contacts[i].UID,
+                uri: contacts[i].URI,
+                bookid: contacts[i]['addressbook-key'],
                 date: date/1000,
             };
             var marker = L.marker([markerData.lat, markerData.lng], {
                 icon: this.createContactView(markerData)
             });
+            marker.on('contextmenu', this.onContactRightClick);
             marker.data = markerData;
             var avatar = this.generateAvatar(marker.data.photo) || this.getUserImageIconUrl();
             var img = '<img class="tooltip-contact-avatar" src="' + avatar + '"/>' +
@@ -195,6 +208,61 @@ ContactsController.prototype = {
             markers.push(marker);
         }
         return markers;
+    },
+
+    onContactRightClick: function(e) {
+        var data = e.target.data;
+        var bookid = data.bookid;
+        var uri = data.uri;
+        var uid = data.uid;
+
+        e.target.unbindPopup();
+        var popupContent = this._map.contactsController.getContactContextPopupContent(bookid, uri, uid);
+        e.target.bindPopup(popupContent, {
+            closeOnClick: true,
+            className: 'popovermenu open popupMarker',
+            offset: L.point(-5, -19)
+        });
+        e.target.openPopup();
+    },
+
+    getContactContextPopupContent: function(bookid, uri, uid) {
+        var resetText = t('maps', 'Reset GEO information');
+        var res =
+            '<ul bookid="' + bookid + '" uri="' + uri + '" uid="' + uid + '">' +
+            '   <li>' +
+            '       <button class="icon-history resetContact">' +
+            '           <span>' + resetText + '</span>' +
+            '       </button>' +
+            '   </li>' +
+            '</ul>';
+        return res;
+    },
+
+    resetContact: function(bookid, uri, uid) {
+        var that = this;
+        $('#navigation-contacts').addClass('icon-loading-small');
+        $('.leaflet-container').css('cursor', 'wait');
+        var req = {
+            lat: null,
+            lng: null,
+            uid: uid
+        };
+        var url = OC.generateUrl('/apps/maps/contacts/'+bookid+'/'+uri);
+        $.ajax({
+            type: 'PUT',
+            url: url,
+            data: req,
+            async: true
+        }).done(function (response) {
+        }).always(function (response) {
+            that.map.closePopup();
+            $('#navigation-contacts').removeClass('icon-loading-small');
+            $('.leaflet-container').css('cursor', 'grab');
+            that.reloadContacts();
+        }).fail(function() {
+            OC.Notification.showTemporary(t('maps', 'Failed to reset contact location'));
+        });
     },
 
     updateTimeFilterRange: function() {

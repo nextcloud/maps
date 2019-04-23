@@ -74,7 +74,14 @@ class ContactsController extends Controller {
         else {
             // TODO check addressbook permissions
             // it's currently possible to place a contact from an addressbook shared with readonly permissions...
-            $result = $this->contactsManager->createOrUpdate(['URI'=>$uri, 'GEO'=>$lat.';'.$lng], $bookid);
+            if ($lat !== null && $lng !== null) {
+                $result = $this->contactsManager->createOrUpdate(['URI'=>$uri, 'GEO'=>$lat.';'.$lng], $bookid);
+            }
+            else {
+                // TODO find out how to remove a property
+                // following does not work properly
+                $result = $this->contactsManager->createOrUpdate(['URI'=>$uri, 'GEO'=>null], $bookid);
+            }
             return new DataResponse('EDITED');
         }
     }

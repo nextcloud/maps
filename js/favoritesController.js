@@ -740,6 +740,7 @@ FavoritesController.prototype = {
         marker.on('mouseover', this.favoriteMouseover);
         marker.on('mouseout', this.favoriteMouseout);
         marker.on('click', this.favoriteMouseClick);
+        marker.on('contextmenu', this.favoriteMouseRightClick);
 
         // add to map and arrays
         this.favorites[fav.id] = fav;
@@ -806,7 +807,7 @@ FavoritesController.prototype = {
 
         e.target.unbindPopup();
         var popupContent = this._map.favoritesController.getFavoritePopupContent(fav);
-        e.target.bindPopup(popupContent, {closeOnClick: true, className: 'popovermenu open editFavorite'});
+        e.target.bindPopup(popupContent, {closeOnClick: true, className: 'popovermenu open popupFavorite'});
         e.target.openPopup();
         // add completion to category field
         var catList = [];
@@ -821,8 +822,6 @@ FavoritesController.prototype = {
 
     getFavoritePopupContent: function(fav) {
         var validText = t('maps', 'Submit');
-        var moveText = t('maps', 'Move');
-        var deleteText = t('maps', 'Delete');
         var namePH = t('maps', 'Favorite name');
         var categoryPH = t('maps', 'Category');
         var commentPH = t('maps', 'Comment');
@@ -857,6 +856,25 @@ FavoritesController.prototype = {
             '           <span>' + validText + '</span>' +
             '       </button>' +
             '   </li>' +
+            '</ul>';
+        return res;
+    },
+
+    favoriteMouseRightClick: function(e) {
+        var favid = e.target.favid;
+        var fav = this._map.favoritesController.favorites[favid];
+
+        e.target.unbindPopup();
+        var popupContent = this._map.favoritesController.getFavoriteContextPopupContent(fav);
+        e.target.bindPopup(popupContent, {closeOnClick: true, className: 'popovermenu open popupFavorite'});
+        e.target.openPopup(L.latLng(fav.lat, fav.lng));
+    },
+
+    getFavoriteContextPopupContent: function(fav) {
+        var moveText = t('maps', 'Move');
+        var deleteText = t('maps', 'Delete');
+        var res =
+            '<ul favid="' + fav.id + '">' +
             '   <li>' +
             '       <button class="icon-link movefavorite">' +
             '           <span>' + moveText + '</span>' +

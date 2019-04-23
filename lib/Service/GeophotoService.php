@@ -36,7 +36,7 @@ class GeophotoService {
     private $logger;
     private $preview;
     private $tracksService;
-    private $timeordedPointSets;
+    private $timeorderedPointSets;
     private $devicesService;
     private $cache;
 
@@ -47,7 +47,7 @@ class GeophotoService {
         $this->logger = $logger;
         $this->preview = $preview;
         $this->tracksService = $tracksService;
-        $this->timeordedPointSets = null;
+        $this->timeorderedPointSets = null;
         $this->userId = $userId;
         $this->devicesService = $devicesService;
         $this->cache = $cache;
@@ -194,7 +194,7 @@ class GeophotoService {
      */
     private function getLocationGuesses($dateTaken) {
         $locations = [];
-        foreach ($this->timeordedPointSets as $timeordedPointSet) {
+        foreach ($this->timeorderedPointSets as $timeordedPointSet) {
             $location = $this->getLocationFromSequenceOfPoints($dateTaken,$timeordedPointSet);
             if (!is_null($location)) {
                 $locations[] = $location;
@@ -212,10 +212,12 @@ class GeophotoService {
      * This function loads this Arrays from all Track files of the user.
      */
     private function loadTimeOrderedPointSets($userId) {
-        $this->timeordedPointSets = $this->cache->get('mapsTimeOrderedPointSets');
-        if (!is_null($this->timeordedPointSets)) {
+        $this->timeorderedPointSets = json_decode($this->cache->get('mapsTimeOrderedPointSets'));
+        if (is_array($this->timeorderedPointSets)) {
+            $this->logger->debug("timeorderedPointSets loaded from cache");
             return null;
         }
+        $this->timeorderedPointSets = [];
         $userFolder = $this->getFolderForUser($userId);
         foreach ($this->tracksService->getTracksFromDB($userId) as $gpxfile) {
             $res = $userFolder->getById($gpxfile['file_id']);
@@ -223,7 +225,7 @@ class GeophotoService {
                 $file = $res[0];
                 if ($file->getType() === \OCP\Files\FileInfo::TYPE_FILE) {
                     foreach ($this->getTracksFromGPX($file->getContent()) as $track) {
-                        $this->timeordedPointSets[] = $this->getTimeorderdPointsFromTrack($track);
+                        $this->timeorderedPointSets[] = $this->getTimeorderdPointsFromTrack($track);
                     }
                 }
             }
@@ -235,9 +237,10 @@ class GeophotoService {
                 $points[$pt->timestamp] = [(string) $pt->lat, (string) $pt->lng];
             }
             $foo = ksort($points);
-            $this->timeordedPointSets[] = $points;
+            $this->timeorderedPointSets[] = $points;
         }
-        $this->cache->set('mapsTimeOrderedPointSets', $this->timeordedPointSets, $ttl=120);
+        $this->logger->debug("timeorderedPointSets created");
+        $this->cache->set('mapsTimeOrderedPointSets',  json_encode($this->timeorderedPointSets), $ttl=120);
         return null;
     }
 

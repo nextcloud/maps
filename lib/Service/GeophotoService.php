@@ -19,6 +19,7 @@ use OCP\Files\Storage\IStorage;
 use OCP\Files\Folder;
 use OCP\IPreview;
 use OCP\ILogger;
+use OCP\ICache;
 
 
 use OCA\Maps\Service\PhotofilesService;
@@ -37,8 +38,9 @@ class GeophotoService {
     private $tracksService;
     private $timeordedPointSets;
     private $devicesService;
+    private $cache;
 
-    public function __construct (ILogger $logger, IRootFolder $root, IL10N $l10n, GeophotoMapper $photoMapper, IPreview $preview, TracksService $tracksService, DevicesService $devicesService, $userId) {
+    public function __construct (ILogger $logger, IRootFolder $root, IL10N $l10n, GeophotoMapper $photoMapper, IPreview $preview, TracksService $tracksService, DevicesService $devicesService, ICache $cache, $userId) {
         $this->root = $root;
         $this->l10n = $l10n;
         $this->photoMapper = $photoMapper;
@@ -48,7 +50,7 @@ class GeophotoService {
         $this->timeordedPointSets = null;
         $this->userId = $userId;
         $this->devicesService = $devicesService;
-
+        $this->cache = $cache;
     }
 
     /**
@@ -94,7 +96,7 @@ class GeophotoService {
      * @return array with geodatas of all nonLocalizedPhotos
      */
     public function getNonLocalizedFromDB ($userId) {
-        $foo = $this->loadTimeordedPointSets($userId);
+        $foo = $this->loadTimeOrderedPointSets($userId);
         $photoEntities = $this->photoMapper->findAllNonLocalized($userId);
         $userFolder = $this->getFolderForUser($userId);
         $filesById = [];
@@ -155,7 +157,11 @@ class GeophotoService {
      * Timeorderd Point sets is an Array of Arrays with time => location as key=>value pair, which are orderd by the key.
      * This function loads this Arrays from all Track files of the user.
      */
-    private function loadTimeordedPointSets($userId) {
+    private function loadTimeOrderedPointSets($userId) {
+        $this->timeordedPointSets = $this->cache->get('mapsTimeOrderedPointSets');
+        if (!is_null($this->timeordedPointSets)) {
+            return null;
+        }
         $userFolder = $this->getFolderForUser($userId);
         foreach ($this->tracksService->getTracksFromDB($userId) as $gpxfile) {
             $res = $userFolder->getById($gpxfile['file_id']);
@@ -177,6 +183,7 @@ class GeophotoService {
             $foo = ksort($points);
             $this->timeordedPointSets[] = $points;
         }
+        $this->cache->set('mapsTimeOrderedPointSets', $this->timeordedPointSets, $ttl=120);
         return null;
     }
 
@@ -191,6 +198,7 @@ class GeophotoService {
         foreach ($gpx->trk as $trk) {
             $tracks[] = $trk;
         }
+
         return $tracks;
     }
 

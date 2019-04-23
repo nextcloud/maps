@@ -826,49 +826,48 @@ FavoritesController.prototype = {
         var namePH = t('maps', 'Favorite name');
         var categoryPH = t('maps', 'Category');
         var commentPH = t('maps', 'Comment');
-        var res = `
-            <ul favid="${fav.id}">
-               <li>
-                   <span class="menuitem">
-                       <span class="icon icon-favorite"></span>
-                       <form>
-                            <input role="name" type="text" value="${fav.name || ''}" placeholder="${namePH}"/>
-                       </form>
-                   </span>
-               </li>
-               <li>
-                   <span class="menuitem">
-                       <span class="icon icon-category-organization"></span>
-                       <form>
-                            <input role="category" type="text" value="${fav.category || ''}" placeholder="${categoryPH}"/>
-                       </form>
-                   </span>
-               </li>
-               <li>
-                   <span class="menuitem">
-                       <span class="icon icon-comment"></span>
-                       <form>
-                            <textarea role="comment" placeholder="${commentPH}" rows="1">${fav.comment || ''}</textarea>
-                       </form>
-                   </span>
-               </li>
-               <li>
-                   <button class="icon-checkmark valideditfavorite">
-                       <span>${validText}</span>
-                   </button>
-               </li>
-               <li>
-                   <button class="icon-link movefavorite">
-                       <span>${moveText}</span>
-                   </button>
-               </li>
-               <li>
-                   <button class="icon-delete deletefavorite">
-                       <span>${deleteText}</span>
-                   </button>
-               </li>
-            </ul>
-        `;
+        var res =
+            '<ul favid="' + fav.id + '">' +
+            '   <li>' +
+            '       <span class="menuitem">' +
+            '           <span class="icon icon-favorite"></span>' +
+            '           <form>' +
+            '                <input role="name" type="text" value="' + (fav.name || '') + '" placeholder="' + namePH + '"/>' +
+            '           </form>' +
+            '       </span>' +
+            '   </li>' +
+            '   <li>' +
+            '       <span class="menuitem">' +
+            '           <span class="icon icon-category-organization"></span>' +
+            '           <form>' +
+            '                <input role="category" type="text" value="' + (fav.category || '') + '" placeholder="' + categoryPH + '"/>' +
+            '           </form>' +
+            '       </span>' +
+            '   </li>' +
+            '   <li>' +
+            '       <span class="menuitem">' +
+            '           <span class="icon icon-comment"></span>' +
+            '           <form>' +
+            '                <textarea role="comment" placeholder="' + commentPH + '" rows="1">' + (fav.comment || '') + '</textarea>' +
+            '           </form>' +
+            '       </span>' +
+            '   </li>' +
+            '   <li>' +
+            '       <button class="icon-checkmark valideditfavorite">' +
+            '           <span>' + validText + '</span>' +
+            '       </button>' +
+            '   </li>' +
+            '   <li>' +
+            '       <button class="icon-link movefavorite">' +
+            '           <span>' + moveText + '</span>' +
+            '       </button>' +
+            '   </li>' +
+            '   <li>' +
+            '       <button class="icon-delete deletefavorite">' +
+            '           <span>' + deleteText + '</span>' +
+            '       </button>' +
+            '   </li>' +
+            '</ul>';
         return res;
     },
 

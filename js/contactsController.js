@@ -11,6 +11,10 @@ function ContactsController (optionsController, timeFilterController) {
     this.contactMarkersLastVisible = -1;
     this.timeFilterBegin = 0;
     this.timeFilterEnd = Date.now();
+
+    this.movingBookid = null;
+    this.movingUri = null;
+    this.movingUid = null;
 }
 
 ContactsController.prototype = {
@@ -60,6 +64,15 @@ ContactsController.prototype = {
             // TODO uncomment this when property deletion is fixed
             //that.resetContact(bookid, uri, uid);
             OC.Notification.showTemporary(t('maps', 'NYI'));
+        });
+        // move
+        $('body').on('click', '.moveContact', function(e) {
+            var ul = $(this).parent().parent();
+            that.movingBookid = ul.attr('bookid');
+            that.movingUri = ul.attr('uri');
+            that.movingUid = ul.attr('uid');
+            that.enterMoveContactMode();
+            that.map.closePopup();
         });
     },
 
@@ -210,6 +223,30 @@ ContactsController.prototype = {
         return markers;
     },
 
+    enterMoveContactMode: function() {
+        $('.leaflet-container').css('cursor', 'crosshair');
+        this.map.on('click', this.moveContactClickMap);
+        OC.Notification.showTemporary(t('maps', 'Click on the map to move the contact, press ESC to cancel'));
+    },
+
+    leaveMoveContactMode: function() {
+        $('.leaflet-container').css('cursor', 'grab');
+        this.map.off('click', this.moveContactClickMap);
+        this.movingBookid = null;
+        this.movingUri = null;
+        this.movingUid = null;
+    },
+
+    moveContactClickMap: function(e) {
+        var lat = e.latlng.lat;
+        var lng = e.latlng.lng;
+        var bookid = this.contactsController.movingBookid;
+        var uri = this.contactsController.movingUri;
+        var uid = this.contactsController.movingUid;
+        this.contactsController.leaveMoveContactMode();
+        this.contactsController.placeContact(bookid, uri, uid, lat, lng);
+    },
+
     onContactRightClick: function(e) {
         var data = e.target.data;
         var bookid = data.bookid;
@@ -228,8 +265,14 @@ ContactsController.prototype = {
 
     getContactContextPopupContent: function(bookid, uri, uid) {
         var resetText = t('maps', 'Reset GEO information');
+        var moveText = t('maps', 'Move contact');
         var res =
             '<ul bookid="' + bookid + '" uri="' + uri + '" uid="' + uid + '">' +
+            '   <li>' +
+            '       <button class="icon-link moveContact">' +
+            '           <span>' + moveText + '</span>' +
+            '       </button>' +
+            '   </li>' +
             '   <li>' +
             '       <button class="icon-history resetContact">' +
             '           <span>' + resetText + '</span>' +

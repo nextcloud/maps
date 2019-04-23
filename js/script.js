@@ -62,8 +62,13 @@
 
         document.onkeydown = function (e) {
             e = e || window.event;
-            if (e.key === 'Escape' && favoritesController.movingFavoriteId !== null) {
-                favoritesController.leaveMoveFavoriteMode();
+            if (e.key === 'Escape') {
+                if (favoritesController.movingFavoriteId !== null) {
+                    favoritesController.leaveMoveFavoriteMode();
+                }
+                if (contactsController.movingBookid !== null) {
+                    contactsController.leaveMoveContactMode();
+                }
             }
         };
         window.onclick = function(event) {

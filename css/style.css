@@ -410,6 +410,16 @@ tr.selected td {
 .route-end-waypoint {
     background-color: red;
 }
+.leaflet-contextmenu-item {
+    line-height: 30px !important;
+    color: var(--color-text-lighter) !important;
+}
+.leaflet-contextmenu-item:hover {
+    color: var(--color-main-text) !important;
+}
+.leaflet-contextmenu-item img {
+    margin: 7px 8px 0 0 !important;
+}
 .line-enabled {
     background: var(--color-background-dark);
 }

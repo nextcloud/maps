@@ -134,6 +134,60 @@ class GeophotoService {
     }
 
     /**
+     * @param string $userId
+     * @return array with all id's of nonLocalizedPhotos
+     */
+    public function getNonLocalizedIdsFromDB ($userId) {
+        $foo = $this->loadTimeOrderedPointSets($userId);
+        $photoEntities = $this->photoMapper->findAllNonLocalized($userId);
+        $fileIds = [];
+        foreach ($photoEntities as $photoEntity) {
+            $fileIds[] = $photoEntity->getId();
+        }
+        return $fileIds;
+    }
+    /**
+     *
+     */
+    public function getNonLocalizedById($userId, $id) {
+        $foo = $this->loadTimeOrderedPointSets($userId);
+        $photoEntity = $this->photoMapper->findByUserAndId($userId, $id);
+        $filesById = [];
+        if (is_null($photoEntity)) {
+            return $filesById;
+        }
+        $userFolder = $this->getFolderForUser($userId);
+
+        $cache = $userFolder->getStorage()->getCache();
+        $previewEnableMimetypes = $this->getPreviewEnabledMimetypes();
+
+        $cacheEntry = $cache->get($photoEntity->getFileId());
+        if ($cacheEntry) {
+            // this path is relative to owner's storage
+            //$path = $cacheEntry->getPath();
+            // but we want it relative to current user's storage
+            $file = $userFolder->getById($photoEntity->getFileId())[0];
+            if (!is_null($file)) {
+                $path = preg_replace('/^\/'.$userId.'\//', '', $file->getPath());
+
+                $date = $photoEntity->getDateTaken() ?? \time();
+                $locations = $this->getLocationGuesses($date);
+                foreach ($locations as $location) {
+                    $file_object = new \stdClass();
+                    $file_object->fileId = $photoEntity->getFileId();
+                    $file_object->path = $this->normalizePath($path);
+                    $file_object->hasPreview = in_array($cacheEntry->getMimeType(), $previewEnableMimetypes);
+                    $file_object->lat = $location[0];
+                    $file_object->lng = $location[1];
+                    $file_object->dateTaken = $date;
+                    $filesById[] = $file_object;
+                };
+            }
+        }
+
+        return $filesById;
+    }
+    /**
      * returns a array of locations for a given date
      * @param $dateTaken
      * @return array

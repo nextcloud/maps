@@ -25,6 +25,7 @@ use OCA\Maps\Service\PhotofilesService;
 use OCA\Maps\DB\Geophoto;
 use OCA\Maps\DB\GeophotoMapper;
 use OCA\Maps\Service\TracksService;
+use OCA\Maps\Service\DevicesService;
 
 class GeophotoService {
 
@@ -35,8 +36,9 @@ class GeophotoService {
     private $preview;
     private $tracksService;
     private $timeordedPointSets;
+    private $devicesService;
 
-    public function __construct (ILogger $logger, IRootFolder $root, IL10N $l10n, GeophotoMapper $photoMapper, IPreview $preview, TracksService $tracksService, $userId) {
+    public function __construct (ILogger $logger, IRootFolder $root, IL10N $l10n, GeophotoMapper $photoMapper, IPreview $preview, TracksService $tracksService, DevicesService $devicesService, $userId) {
         $this->root = $root;
         $this->l10n = $l10n;
         $this->photoMapper = $photoMapper;
@@ -45,6 +47,7 @@ class GeophotoService {
         $this->tracksService = $tracksService;
         $this->timeordedPointSets = null;
         $this->userId = $userId;
+        $this->devicesService = $devicesService;
 
     }
 
@@ -164,6 +167,15 @@ class GeophotoService {
                     }
                 }
             }
+        }
+        foreach ($this->devicesService->getDevicesFromDB($userId) as $device) {
+            $device_points = $this->devicesService->getDevicePointsFromDB($userId, $device);
+            $points = [];
+            foreach ($device_points as $pt) {
+                $points[$pt->timestamp] = [(string) $pt->lat, (string) $pt->lng];
+            }
+            $foo = ksort($points);
+            $this->timeordedPointSets[] = $points;
         }
         return null;
     }

@@ -14,6 +14,7 @@ function NonLocalizedPhotosController (optionsController, timeFilterController, 
     this.nonLocalizedPhotoMarkersLastVisible = -1;
     this.timeFilterBegin = 0;
     this.timeFilterEnd = Date.now();
+    this.nonLocalizedPhotoIds = [];
 }
 
 NonLocalizedPhotosController.prototype = {
@@ -30,6 +31,7 @@ NonLocalizedPhotosController.prototype = {
                 iconSize: [this.PHOTO_MARKER_VIEW_SIZE, this.PHOTO_MARKER_VIEW_SIZE]
             }
         });
+        this.callForImageIds();
         this.nonLocalizedPhotoLayer.on('click', this.getNonLocalizedPhotoMarkerOnClickFunction());
         this.nonLocalizedPhotoLayer.on('clusterclick', function (a) {
             if (a.layer.getChildCount() > 20) {
@@ -48,7 +50,7 @@ NonLocalizedPhotosController.prototype = {
             that.optionsController.saveOptionValues({nonLocalizedPhotosLayer: that.map.hasLayer(that.nonLocalizedPhotoLayer)});
             that.updateTimeFilterRange();
             that.timeFilterController.setSliderToMaxInterval();
-        });
+        })
         // click on menu button
         $('body').on('click', '.nonLocalizedPhotosMenuButton', function(e) {
             var wasOpen = $(this).parent().parent().parent().find('>.app-navigation-entry-menu').hasClass('open');
@@ -269,28 +271,53 @@ NonLocalizedPhotosController.prototype = {
         }
     },
 
-    callForImages: function() {
-        this.nonLocalizedPhotosRequestInProgress = true;
-        $('#navigation-nonLocalizedPhotos').addClass('icon-loading-small');
+    callForImageIds: function() {
         $.ajax({
-            url: OC.generateUrl('apps/maps/photos/nonlocalized'),
+            url: OC.generateUrl('apps/maps/photos/nonlocalizedids'),
             type: 'GET',
             async: true,
             context: this
         }).done(function (response) {
-            if (response.length == 0) {
+            if (response.length === 0) {
                 //showNoPhotosMessage();
             }
             else {
-                this.addNonLocalizedPhotosToMap(response);
+                this.nonLocalizedPhotoIds=response;
             }
-            this.nonLocalizedPhotosDataLoaded = true;
         }).always(function (response) {
-            this.nonLocalizedPhotosRequestInProgress = false;
-            $('#navigation-nonLocalizedPhotos').removeClass('icon-loading-small');
+            //do something;
         }).fail(function() {
             OC.Notification.showTemporary(t('maps', 'Failed to load non-geolocalized photos'));
         });
+    },
+
+    callForImages: function() {
+        this.nonLocalizedPhotosRequestInProgress = true;
+        $('#navigation-nonLocalizedPhotos').addClass('icon-loading-small');
+        var that = this;
+        this.nonLocalizedPhotoIds.forEach(function (id) {
+            $.ajax({
+                url: OC.generateUrl('apps/maps/photos/nonlocalized/'+id),
+                type: 'GET',
+                async: true,
+                context: this
+            }).done(function (response) {
+                if (response.length === 0) {
+                    //showNoPhotosMessage();
+                }
+                else {
+                    that.addNonLocalizedPhotosToMap(response);
+                }
+
+            }).always(function (response) {
+                //do something;
+            }).fail(function() {
+                OC.Notification.showTemporary(t('maps', 'Failed to load non-geolocalized photos'));
+            });
+        });
+        this.nonLocalizedPhotosDataLoaded = true;
+        this.nonLocalizedPhotosRequestInProgress = false;
+        $('#navigation-nonLocalizedPhotos').removeClass('icon-loading-small');
     },
 
     saveCordinatesToImage : function (marker) {

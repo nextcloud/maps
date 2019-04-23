@@ -51,6 +51,13 @@ PhotosController.prototype = {
                 $(this).parent().parent().parent().find('>.app-navigation-entry-menu').addClass('open');
             }
         });
+        // expand navigation
+        $('body').on('click', '#navigation-photos', function(e) {
+            if (e.target.tagName === 'LI' && $(e.target).attr('id') === 'navigation-photos') {
+                that.toggleNavigation();
+                that.optionsController.saveOptionValues({photosNavigationShow: $('#navigation-favorites').hasClass('open')});
+            }
+        });
     },
 
     updateMyFirstLastDates: function() {
@@ -84,6 +91,10 @@ PhotosController.prototype = {
             this.showLayer();
             $('#navigation-photos').addClass('active');
         }
+    },
+
+    toggleNavigation: function() {
+        $('#navigation-photos').toggleClass('open');
     },
 
     getPhotoMarkerOnClickFunction: function() {

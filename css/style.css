@@ -70,6 +70,9 @@
     box-sizing: content-box;
 }
 
+.leaflet-control-layers-base {
+    line-height: 30px;
+}
 .leaflet-control-layers-selector {
     min-height: 0px;
 }

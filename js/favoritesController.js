@@ -807,7 +807,11 @@ FavoritesController.prototype = {
 
         e.target.unbindPopup();
         var popupContent = this._map.favoritesController.getFavoritePopupContent(fav);
-        e.target.bindPopup(popupContent, {closeOnClick: true, className: 'popovermenu open popupFavorite'});
+        e.target.bindPopup(popupContent, {
+            closeOnClick: true,
+            className: 'popovermenu open popupFavorite',
+            offset: L.point(-5, 9)
+        });
         e.target.openPopup();
         // add completion to category field
         var catList = [];
@@ -866,8 +870,12 @@ FavoritesController.prototype = {
 
         e.target.unbindPopup();
         var popupContent = this._map.favoritesController.getFavoriteContextPopupContent(fav);
-        e.target.bindPopup(popupContent, {closeOnClick: true, className: 'popovermenu open popupFavorite'});
-        e.target.openPopup(L.latLng(fav.lat, fav.lng));
+        e.target.bindPopup(popupContent, {
+            closeOnClick: true,
+            className: 'popovermenu open popupFavorite',
+            offset: L.point(-5, 9)
+        });
+        e.target.openPopup();
     },
 
     getFavoriteContextPopupContent: function(fav) {

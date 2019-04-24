@@ -11,6 +11,8 @@ function PhotosController (optionsController, timeFilterController) {
     this.photoMarkersLastVisible = -1;
     this.timeFilterBegin = 0;
     this.timeFilterEnd = Date.now();
+
+    this.movingPhotoPath = null;
 }
 
 PhotosController.prototype = {
@@ -50,6 +52,13 @@ PhotosController.prototype = {
             if (!wasOpen) {
                 $(this).parent().parent().parent().find('>.app-navigation-entry-menu').addClass('open');
             }
+        });
+        $('body').on('click', '.movephoto', function(e) {
+            var ul = $(this).parent().parent();
+            var filePath = ul.attr('filepath');
+            that.movingPhotoPath = filePath;
+            that.enterMovePhotoMode();
+            that.map.closePopup();
         });
     },
 
@@ -191,9 +200,62 @@ PhotosController.prototype = {
                 '<p class="tooltip-photo-date">' + dateStr + '</p>' +
                 '<p class="tooltip-photo-name">' + escapeHTML(basename(markerData.path)) + '</p>';
             marker.bindTooltip(img, {permanent: false, className: "leaflet-marker-photo-tooltip"});
+            marker.on('contextmenu', this.photoMouseRightClick);
             markers.push(marker);
         }
         return markers;
+    },
+
+    photoMouseRightClick: function(e) {
+        var filePath = e.target.data.path;
+
+        e.target.unbindPopup();
+        var popupContent = this._map.photosController.getPhotoContextPopupContent(filePath);
+        e.target.bindPopup(popupContent, {
+            closeOnClick: true,
+            className: 'popovermenu open popupMarker',
+            offset: L.point(-5, 9)
+        });
+        e.target.openPopup();
+    },
+
+    getPhotoContextPopupContent: function(filePath) {
+        var moveText = t('maps', 'Move');
+        var resetText = t('maps', 'Remove geo data');
+        var res =
+            '<ul filepath="' + filePath + '">' +
+            '   <li>' +
+            '       <button class="icon-link movephoto">' +
+            '           <span>' + moveText + '</span>' +
+            '       </button>' +
+            '   </li>' +
+            '   <li>' +
+            '       <button class="icon-history resetphoto">' +
+            '           <span>' + resetText + '</span>' +
+            '       </button>' +
+            '   </li>' +
+            '</ul>';
+        return res;
+    },
+
+    enterMovePhotoMode: function() {
+        $('.leaflet-container').css('cursor', 'crosshair');
+        this.map.on('click', this.movePhotoClickMap);
+        OC.Notification.showTemporary(t('maps', 'Click on the map to move the photo, press ESC to cancel'));
+    },
+
+    leaveMovePhotoMode: function() {
+        $('.leaflet-container').css('cursor', 'grab');
+        this.map.off('click', this.movePhotoClickMap);
+        this.movingPhotoPath = null;
+    },
+
+    movePhotoClickMap: function(e) {
+        var lat = e.latlng.lat;
+        var lng = e.latlng.lng;
+        var filePath = this.photosController.movingPhotoPath;
+        this.photosController.leaveMovePhotoMode();
+        this.photosController.placePhotos([filePath], [lat], [lng]);
     },
 
     updateTimeFilterRange: function() {

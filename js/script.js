@@ -69,6 +69,9 @@
                 if (contactsController.movingBookid !== null) {
                     contactsController.leaveMoveContactMode();
                 }
+                if (photosController.movingPhotoPath !== null) {
+                    photosController.leaveMovePhotoMode();
+                }
             }
         };
         window.onclick = function(event) {

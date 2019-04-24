@@ -318,6 +318,8 @@ tr.selected td {
 .leaflet-marker-contact-tooltip,
 .leaflet-marker-photo-tooltip {
     opacity: 1 !important;
+    background-color: var(--color-main-background);
+    color: var(--color-main-text);
 }
 .leaflet-marker-photo-tooltip {
     padding: 1px;

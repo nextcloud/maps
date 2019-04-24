@@ -60,6 +60,12 @@ PhotosController.prototype = {
             that.enterMovePhotoMode();
             that.map.closePopup();
         });
+        $('body').on('click', '.resetphoto', function(e) {
+            var ul = $(this).parent().parent();
+            var filePath = ul.attr('filepath');
+            that.resetPhotoCoords([filePath]);
+            that.map.closePopup();
+        });
     },
 
     updateMyFirstLastDates: function() {
@@ -420,6 +426,44 @@ PhotosController.prototype = {
             $('.leaflet-container').css('cursor', 'grab');
         }).fail(function(response) {
             OC.Notification.showTemporary(t('maps', 'Failed to place photos') + ': ' + response.responseText);
+        });
+    },
+
+    resetPhotoCoords: function(paths) {
+        var that = this;
+        $('#navigation-photos').addClass('icon-loading-small');
+        $('.leaflet-container').css('cursor', 'wait');
+        var req = {
+            paths: paths
+        };
+        var url = OC.generateUrl('/apps/maps/photos');
+        $.ajax({
+            type: 'DELETE',
+            url: url,
+            data: req,
+            async: true
+        }).done(function (response) {
+            OC.Notification.showTemporary(t('maps', '{nb} photos reset', {nb: response}));
+            if (response > 0) {
+                that.photosDataLoaded = false;
+                for (var i=0; i < that.photoMarkers.length; i++) {
+                    that.photoLayer.removeLayer(that.photoMarkers[i]);
+                }
+                that.photoMarkers = [];
+                that.photoMarkersOldest = null;
+                that.photoMarkersNewest = null;
+                that.photoMarkersFirstVisible = 0;
+                that.photoMarkersLastVisible = -1;
+                that.timeFilterBegin = 0;
+                that.timeFilterEnd = Date.now();
+
+                that.showLayer();
+            }
+        }).always(function (response) {
+            $('#navigation-photos').removeClass('icon-loading-small');
+            $('.leaflet-container').css('cursor', 'grab');
+        }).fail(function(response) {
+            OC.Notification.showTemporary(t('maps', 'Failed to reset photos coordinates') + ': ' + response.responseText);
         });
     },
 

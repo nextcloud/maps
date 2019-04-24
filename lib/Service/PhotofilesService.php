@@ -236,6 +236,24 @@ class PhotofilesService {
         return $nbDone;
     }
 
+    public function resetPhotosFilesCoords($userId, $paths) {
+        $userFolder = $this->root->getUserFolder($userId);
+        $nbDone = 0;
+
+        foreach ($paths as $i => $path) {
+            $cleanpath = str_replace(array('../', '..\\'), '',  $path);
+            if ($userFolder->nodeExists($cleanpath)) {
+                $file = $userFolder->get($cleanpath);
+                if ($this->isPhoto($file) and $file->isUpdateable()) {
+                    $this->resetExifCoords($file);
+                    $this->photoMapper->updateByFileId($file->getId(), null, null);
+                    $nbDone++;
+                }
+            }
+        }
+        return $nbDone;
+    }
+
     private function addPhoto($photo, $userId) {
         $exif = $this->getExif($photo);
         if (!is_null($exif)) {
@@ -387,9 +405,38 @@ class PhotofilesService {
         }
     }
 
-    private function setExifCoords($file, $lat, $lng) {
+    private function resetExifCoords($file) {
         $path = $file->getStorage()->getLocalFile($file->getInternalPath());
 
+        $data = new PelDataWindow($file->getContent());
+        $pelJpeg = new PelJpeg($data);
+
+        $pelExif = $pelJpeg->getExif();
+        if ($pelExif == null) {
+            $pelExif = new PelExif();
+            $pelJpeg->setExif($pelExif);
+        }
+
+        $pelTiff = $pelExif->getTiff();
+        if ($pelTiff == null) {
+            $pelTiff = new PelTiff();
+            $pelExif->setTiff($pelTiff);
+        }
+
+        $pelIfd0 = $pelTiff->getIfd();
+        if ($pelIfd0 == null) {
+            $pelIfd0 = new PelIfd(PelIfd::IFD0);
+            $pelTiff->setIfd($pelIfd0);
+        }
+
+        $pelSubIfdGps = new PelIfd(PelIfd::GPS);
+        $pelIfd0->addSubIfd($pelSubIfdGps);
+
+        $file->putContent($pelJpeg->getBytes());
+    }
+
+    private function setExifCoords($file, $lat, $lng) {
+        $path = $file->getStorage()->getLocalFile($file->getInternalPath());
 
         $data = new PelDataWindow($file->getContent());
         $pelJpeg = new PelJpeg($data);

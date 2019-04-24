@@ -234,14 +234,25 @@ tr.selected td {
     border-radius: 50%;
 }
 
+.leaflet-marker-contact.contact-marker:after {
+    bottom: 18px;
+    border-width: 12px 8px 0;
+}
+.leaflet-marker-device.device-marker:after {
+    bottom: 18px;
+    border-width: 12px 7px 0;
+}
 .leaflet-marker-nonLocalizedPhoto.nonLocalizedPhoto-marker:after,
+.leaflet-marker-photo.photo-marker:after {
+    bottom: 17px;
+    border-width: 11px 8px 0;
+}
 .leaflet-marker-contact.contact-marker:after,
 .leaflet-marker-device.device-marker:after,
+.leaflet-marker-nonLocalizedPhoto.nonLocalizedPhoto-marker:after,
 .leaflet-marker-photo.photo-marker:after {
     content:"";
     position: relative;
-    bottom: 16px;
-    border-width: 10px 10px 0;
     border-style: solid;
     border-color: var(--color-main-background) transparent;
     display: block;

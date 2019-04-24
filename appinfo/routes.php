@@ -22,7 +22,7 @@ return [
         ['name' => 'photos#getPhotosFromDb', 'url' => '/photos', 'verb' => 'GET'],
         ['name' => 'photos#getNonLocalizedPhotosFromDb', 'url' => '/photos/nonlocalized', 'verb' => 'GET'],
         ['name' => 'photos#getNonLocalizedPhotoIds', 'url' => '/photos/nonlocalizedids', 'verb' => 'GET'],
-        ['name' => 'photos#getNonLocalizedPhotosById', 'url' => '/photos/nonlocalized/{id}', 'verb' => 'GET'],
+        ['name' => 'photos#getNonLocalizedPhotosByIds', 'url' => '/photos/nonlocalizedbyids', 'verb' => 'GET'],
         ['name' => 'photos#placePhotos', 'url' => '/photos', 'verb' => 'POST'],
 
         // contacts

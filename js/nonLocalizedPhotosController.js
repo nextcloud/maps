@@ -295,12 +295,13 @@ NonLocalizedPhotosController.prototype = {
         this.nonLocalizedPhotosRequestInProgress = true;
         $('#navigation-nonLocalizedPhotos').addClass('icon-loading-small');
         var that = this;
-        this.nonLocalizedPhotoIds.forEach(function (id) {
+        for (var i=0; i<this.nonLocalizedPhotoIds.length/250; i++){
             $.ajax({
-                url: OC.generateUrl('apps/maps/photos/nonlocalized/'+id),
+                url: OC.generateUrl('apps/maps/photos/nonlocalizedbyids'),
                 type: 'GET',
                 async: true,
-                context: this
+                context: this,
+                data: {ids: this.nonLocalizedPhotoIds.slice(i*250,(i+1)*250)}
             }).done(function (response) {
                 if (response.length === 0) {
                     //showNoPhotosMessage();
@@ -314,7 +315,7 @@ NonLocalizedPhotosController.prototype = {
             }).fail(function() {
                 OC.Notification.showTemporary(t('maps', 'Failed to load non-geolocalized photos'));
             });
-        });
+        }
         this.nonLocalizedPhotosDataLoaded = true;
         this.nonLocalizedPhotosRequestInProgress = false;
         $('#navigation-nonLocalizedPhotos').removeClass('icon-loading-small');

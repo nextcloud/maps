@@ -141,47 +141,67 @@ class GeophotoService {
         $foo = $this->loadTimeOrderedPointSets($userId);
         $photoEntities = $this->photoMapper->findAllNonLocalized($userId);
         $fileIds = [];
+        $photoEntitiesById = [];
         foreach ($photoEntities as $photoEntity) {
             $fileIds[] = $photoEntity->getId();
+            $photoEntitiesById[$photoEntity->getId()] = [
+                "dateTaken"=>$photoEntity->getDateTaken(),
+                "fileId"=>$photoEntity->getFileId(),
+            ];
         }
+        $this->cache->set('mapsPhotoInformationById',  json_encode($photoEntitiesById), $ttl=300);
+        $this->cache->set('mapsPhotoInformationByIdTime',  time(), $ttl=300);
         return $fileIds;
     }
     /**
      *
      */
-    public function getNonLocalizedById($userId, $id) {
+    public function getNonLocalizedByIds($userId, $ids) {
         $foo = $this->loadTimeOrderedPointSets($userId);
-        $photoEntity = $this->photoMapper->findByUserAndId($userId, $id);
-        $filesById = [];
-        if (is_null($photoEntity)) {
-            return $filesById;
+        $photoInformationById = json_decode($this->cache->get('mapsPhotoInformationById'),TRUE);
+        if (!is_array($photoInformationById) or time()-$this->cache->get('mapsPhotoInformationByIdTime')>300) {
+            $foo = $this->getNonLocalizedIdsFromDB($userId);
         }
-        $userFolder = $this->getFolderForUser($userId);
+        $filesById = [];
+        foreach ($ids as $id) {
+            if (array_key_exists($id, $photoInformationById)) {
+                $photoInformation = $photoInformationById[$id];
+            } else {
+                $photoEntity = $this->photoMapper->findByUserAndId($userId, $id);
+                $photoInformation = [
+                    "dateTaken"=>$photoEntity->getDateTaken(),
+                    "fileId"=>$photoEntity->getFileId(),
+                ];
+            }
+            if (!is_null($photoInformation)) {
+                $userFolder = $this->getFolderForUser($userId);
 
-        $cache = $userFolder->getStorage()->getCache();
-        $previewEnableMimetypes = $this->getPreviewEnabledMimetypes();
+                $cache = $userFolder->getStorage()->getCache();
+                $previewEnableMimetypes = $this->getPreviewEnabledMimetypes();
 
-        $cacheEntry = $cache->get($photoEntity->getFileId());
-        if ($cacheEntry) {
-            // this path is relative to owner's storage
-            //$path = $cacheEntry->getPath();
-            // but we want it relative to current user's storage
-            $file = $userFolder->getById($photoEntity->getFileId())[0];
-            if (!is_null($file)) {
-                $path = preg_replace('/^\/'.$userId.'\//', '', $file->getPath());
+                $cacheEntry = $cache->get($photoInformation["fileId"]);
+                if ($cacheEntry) {
+                    // this path is relative to owner's storage
+                    //$path = $cacheEntry->getPath();
+                    // but we want it relative to current user's storage
+                    $file = $userFolder->getById($photoInformation["fileId"])[0];
+                    if (!is_null($file)) {
+                        $path = preg_replace('/^\/'.$userId.'\//', '', $file->getPath());
 
-                $date = $photoEntity->getDateTaken() ?? \time();
-                $locations = $this->getLocationGuesses($date);
-                foreach ($locations as $location) {
-                    $file_object = new \stdClass();
-                    $file_object->fileId = $photoEntity->getFileId();
-                    $file_object->path = $this->normalizePath($path);
-                    $file_object->hasPreview = in_array($cacheEntry->getMimeType(), $previewEnableMimetypes);
-                    $file_object->lat = $location[0];
-                    $file_object->lng = $location[1];
-                    $file_object->dateTaken = $date;
-                    $filesById[] = $file_object;
-                };
+                        $date = $photoInformation["dateTaken"] ?? \time();
+                        $locations = $this->getLocationGuesses($date);
+                        foreach ($locations as $location) {
+                            $file_object = new \stdClass();
+                            $file_object->fileId = $photoInformation["fileId"];
+                            $file_object->path = $this->normalizePath($path);
+                            $file_object->hasPreview = in_array($cacheEntry->getMimeType(), $previewEnableMimetypes);
+                            $file_object->lat = $location[0];
+                            $file_object->lng = $location[1];
+                            $file_object->dateTaken = $date;
+                            $filesById[] = $file_object;
+                        };
+                    }
+                }
             }
         }
 
@@ -213,7 +233,7 @@ class GeophotoService {
      */
     private function loadTimeOrderedPointSets($userId) {
         $this->timeorderedPointSets = json_decode($this->cache->get('mapsTimeOrderedPointSets'),TRUE);
-        if (is_array($this->timeorderedPointSets)) {
+        if (is_array($this->timeorderedPointSets) and time()-$this->cache->get('mapsTimeOrderedPointSetsTime')<300) {
             $this->logger->debug("timeorderedPointSets loaded from cache");
             return null;
         }
@@ -240,7 +260,8 @@ class GeophotoService {
             $this->timeorderedPointSets[] = $points;
         }
         $this->logger->debug("timeorderedPointSets created");
-        $this->cache->set('mapsTimeOrderedPointSets',  json_encode($this->timeorderedPointSets), $ttl=120);
+        $this->cache->set('mapsTimeOrderedPointSets',  json_encode($this->timeorderedPointSets), $ttl=300);
+        $this->cache->set('mapsTimeOrderedPointSetsTime',  time(), $ttl=300);
         return null;
     }
 

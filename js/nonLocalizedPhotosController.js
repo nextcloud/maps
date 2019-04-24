@@ -321,9 +321,9 @@ NonLocalizedPhotosController.prototype = {
         return OC.generateUrl('core') + '/preview.png?file=' + encodeURI(filename) + '&x=32&y=32';
     },
 
-    /* Preview size 375x211 is used in files details view */
+    /* Preview size 341x256 is commonly found in preview folder */
     generatePreviewUrl: function (fileId) {
-        return OC.generateUrl('core') + '/preview?fileId=' + fileId + '&x=349&y=349&a=1';
+        return OC.generateUrl('core') + '/preview?fileId=' + fileId + '&x=341&y=256&a=1';
     },
 
     getImageIconUrl: function() {

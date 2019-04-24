@@ -212,7 +212,7 @@ class GeophotoService {
      * This function loads this Arrays from all Track files of the user.
      */
     private function loadTimeOrderedPointSets($userId) {
-        $this->timeorderedPointSets = json_decode($this->cache->get('mapsTimeOrderedPointSets'));
+        $this->timeorderedPointSets = json_decode($this->cache->get('mapsTimeOrderedPointSets'),TRUE);
         if (is_array($this->timeorderedPointSets)) {
             $this->logger->debug("timeorderedPointSets loaded from cache");
             return null;

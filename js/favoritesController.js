@@ -445,18 +445,13 @@ FavoritesController.prototype = {
             color = OCA.Theming.color.replace('#', '');
         }
         this.categoryColors[rawName] = color;
-        var rgbc = hexToRgb('#'+color);
-        var textcolor = 'black';
-        if (rgbc.r + rgbc.g + rgbc.b < 3 * 80) {
-            textcolor = 'white';
-        }
         $('<style category="'+name+'">' +
             '.'+name+'CategoryMarker { ' +
             'background-color: #'+color+';' +
             '}' +
             '.tooltipfav-' + name + ' {' +
-            'background: rgba(' + rgbc.r + ', ' + rgbc.g + ', ' + rgbc.b + ', 0.7);' +
-            'color: ' + textcolor + '; font-weight: bold; }' +
+            'border: 2px solid #'+color+';' +
+            '}' +
             '</style>').appendTo('body');
 
         // subgroup layer

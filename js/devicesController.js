@@ -334,15 +334,9 @@ DevicesController.prototype = {
         else {
             imgurl = OC.generateUrl('/svg/core/clients/phone?color='+color.replace('#', ''));
         }
-        var rgbc = hexToRgb(color);
-        var textcolor = 'black';
-        if (rgbc.r + rgbc.g + rgbc.b < 3 * 80) {
-            textcolor = 'white';
-        }
         $('<style device="' + id + '">' +
             '.tooltip-dev-' + id + ' { ' +
-            'background: rgba(' + rgbc.r + ', ' + rgbc.g + ', ' + rgbc.b + ', 0.5);' +
-            'color: '+textcolor+'; font-weight: bold;' +
+            'border: 2px solid ' + color + ';' +
             ' }' +
             '.devline' + id + ' {' +
             'stroke: ' + color + ';' +

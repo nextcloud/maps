@@ -990,15 +990,9 @@ TracksController.prototype = {
     setTrackCss: function(id, color) {
         $('style[track='+id+']').remove();
 
-        var rgbc = hexToRgb(color);
-        var textcolor = 'black';
-        if (rgbc.r + rgbc.g + rgbc.b < 3 * 80) {
-            textcolor = 'white';
-        }
         $('<style track="' + id + '">' +
             '.tooltip' + id + ' { ' +
-            'background: rgba(' + rgbc.r + ', ' + rgbc.g + ', ' + rgbc.b + ', 0.5);' +
-            'color: '+textcolor+'; font-weight: bold;' +
+            'border: 2px solid ' + color + ';' +
             ' }' +
             '.poly' + id + ' {' +
             'stroke: ' + color + ';' +

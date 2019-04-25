@@ -456,7 +456,7 @@
             $('.leaflet-control-layers').toggle();
 
             // main layers buttons
-            var esriImageUrl = $('#dummylogo').css('content').replace('url("', '').replace('")', '').replace('.png', 'esri.jpg');
+            var esriImageUrl = OC.filePath('maps', 'css/images', 'esri.jpg');
             this.esriButton = L.easyButton({
                 position: 'bottomright',
                 states: [{
@@ -468,7 +468,7 @@
                     }
                 }]
             });
-            var osmImageUrl = $('#dummylogo').css('content').replace('url("', '').replace('")', '').replace('.png', 'osm.png');
+            var osmImageUrl = OC.filePath('maps', 'css/images', 'osm.png');
             this.osmButton = L.easyButton({
                 position: 'bottomright',
                 states: [{

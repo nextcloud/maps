@@ -653,7 +653,11 @@ TracksController.prototype = {
                 icon: this.trackDivIcon[id]
             }
         );
-        mm.bindTooltip(brify(name, 20), {className: coloredTooltipClass});
+        mm.bindTooltip(brify(name, 20), {
+            className: coloredTooltipClass + ' leaflet-marker-track-tooltip',
+            direction: 'top',
+            offset: L.point(0, -15)
+        });
 
         var popupText = this.getWaypointPopupText(id, name, lat, lon, cmt, desc, ele, linkText, linkUrl, sym);
         mm.bindPopup(popupText);
@@ -903,7 +907,11 @@ TracksController.prototype = {
         if (this.tracks[id].file_name !== name) {
             tooltipText = tooltipText + '<br/>' + escapeHTML(name);
         }
-        l.bindTooltip(tooltipText, {sticky: true, className: coloredTooltipClass});
+        l.bindTooltip(tooltipText, {
+            sticky: true,
+            className: coloredTooltipClass + ' leaflet-marker-track-tooltip',
+            direction: 'top'
+        });
         // border layout
         var bl;
         bl = L.polyline(latlngs,
@@ -924,7 +932,11 @@ TracksController.prototype = {
         });
         bl.on('mouseout', function() {
         });
-        bl.bindTooltip(tooltipText, {sticky: true, className: coloredTooltipClass});
+        bl.bindTooltip(tooltipText, {
+            sticky: true,
+            className: coloredTooltipClass + ' leaflet-marker-track-tooltip',
+            direction: 'top'
+        });
 
         l.on('mouseover', function() {
             that.trackLayers[id].bringToFront();

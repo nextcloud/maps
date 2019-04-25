@@ -315,6 +315,9 @@ tr.selected td {
     padding: 3px;
 }
 
+.leaflet-marker-favorite-tooltip,
+.leaflet-marker-device-tooltip,
+.leaflet-marker-track-tooltip,
 .leaflet-marker-contact-tooltip,
 .leaflet-marker-photo-tooltip {
     opacity: 1 !important;

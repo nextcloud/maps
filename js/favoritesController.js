@@ -776,7 +776,10 @@ FavoritesController.prototype = {
         var fav = this._map.favoritesController.favorites[favid];
         var cat = fav.category ? fav.category.replace(' ', '-') : this._map.favoritesController.defaultCategory.replace(' ', '-');
         var favTooltip = this._map.favoritesController.getFavoriteTooltipContent(fav);
-        e.target.bindTooltip(favTooltip, {className: 'tooltipfav-' + cat});
+        e.target.bindTooltip(favTooltip, {
+            className: 'leaflet-marker-favorite-tooltip tooltipfav-' + cat,
+            direction: 'top'
+        });
         e.target.openTooltip();
     },
 

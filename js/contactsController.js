@@ -217,7 +217,7 @@ ContactsController.prototype = {
             var avatar = this.generateAvatar(marker.data.photo) || this.getUserImageIconUrl();
             var img = '<img class="tooltip-contact-avatar" src="' + avatar + '"/>' +
                 '<p class="tooltip-contact-name">' + escapeHTML(basename(markerData.name)) + '</p>';
-            marker.bindTooltip(img, {permanent: false, className: "leaflet-marker-contact-tooltip"});
+            marker.bindTooltip(img, {permanent: false, className: 'leaflet-marker-contact-tooltip', direction: 'top', offset: L.point(0, -25)});
             markers.push(marker);
         }
         return markers;

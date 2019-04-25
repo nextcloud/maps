@@ -205,7 +205,7 @@ PhotosController.prototype = {
             var img = '<img class="photo-tooltip" src=' + previewUrl + '/>' +
                 '<p class="tooltip-photo-date">' + dateStr + '</p>' +
                 '<p class="tooltip-photo-name">' + escapeHTML(basename(markerData.path)) + '</p>';
-            marker.bindTooltip(img, {permanent: false, className: "leaflet-marker-photo-tooltip"});
+            marker.bindTooltip(img, {permanent: false, className: 'leaflet-marker-photo-tooltip', direction: 'right', offset: L.point(0, -30)});
             marker.on('contextmenu', this.photoMouseRightClick);
             markers.push(marker);
         }

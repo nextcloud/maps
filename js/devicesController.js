@@ -527,6 +527,7 @@ DevicesController.prototype = {
                 icon: this.devices[id].icon
         });
         this.devices[id].marker.devid = id;
+        this.devices[id].marker.lastPosMarker = true;
         this.devices[id].marker.on('mouseover', this.deviceMarkerMouseover);
         this.devices[id].marker.on('mouseout', this.deviceMarkerMouseout);
         //this.devices[id].marker.on('click', this.favoriteMouseClick);
@@ -792,9 +793,17 @@ DevicesController.prototype = {
         var id = e.target.devid;
         var pointId = e.target.getLatLng().alt;
         var device = that.devices[id];
+        var yOffset = 0;
+        if (e.target.lastPosMarker) {
+            yOffset = -20;
+        }
         // tooltip
         var markerTooltip = that.getDeviceMarkerTooltipContent(device, pointId);
-        e.target.bindTooltip(markerTooltip, {className: 'tooltip-dev-' + id});
+        e.target.bindTooltip(markerTooltip, {
+            className: 'leaflet-marker-device-tooltip tooltip-dev-' + id,
+            direction: 'top',
+            offset: L.point(0, yOffset)
+        });
         e.target.openTooltip();
         // accuracy circle
         var latlng = e.target.getLatLng();

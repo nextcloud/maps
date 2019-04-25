@@ -240,7 +240,8 @@ class FavoritesController extends Controller {
             $file = $userFolder->get($cleanpath);
             if ($file->getType() === \OCP\Files\FileInfo::TYPE_FILE and
                 $file->isReadable()){
-                if (endswith($file->getName(), '.gpx') or endswith($file->getName(), '.GPX')) {
+                $lowerFileName = strtolower($file->getName());
+                if (endswith($lowerFileName, '.gpx') or endswith($lowerFileName, '.kml') or endswith($lowerFileName, '.kmz')) {
                     $nbImported = $this->favoritesService->importFavorites($this->userId, $file);
                     return new DataResponse($nbImported);
                 }

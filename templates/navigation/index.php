@@ -28,7 +28,7 @@
                 <li>
                     <a href="#" id="import-favorites">
                         <span class="icon-folder"></span>
-                        <span><?php p($l->t('Import favorites from gpx files')); ?></span>
+                        <span><?php p($l->t('Import favorites from gpx/kml/kmz files')); ?></span>
                     </a>
                 </li>
                 <li>

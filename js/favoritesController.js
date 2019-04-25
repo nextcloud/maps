@@ -182,12 +182,12 @@ FavoritesController.prototype = {
         // import favorites
         $('body').on('click', '#import-favorites', function(e) {
             OC.dialogs.filepicker(
-                t('maps', 'Import favorites from gpx file'),
+                t('maps', 'Import favorites from gpx (OsmAnd), kmz (F-Droid Maps & Maps.me) or kml file'),
                 function(targetPath) {
                     that.importFavorites(targetPath);
                 },
                 false,
-                'application/gpx+xml',
+                ['application/gpx+xml', 'application/vnd.google-earth.kmz', 'application/vnd.google-earth.kml+xml'],
                 true
             );
         });

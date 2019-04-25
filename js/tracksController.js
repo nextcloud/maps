@@ -56,6 +56,11 @@ TracksController.prototype = {
             var id = parseInt($(this).parent().parent().parent().parent().attr('track'));
             that.removeTrackDB(id);
         });
+        $('body').on('click', '.contextRemoveTrack', function(e) {
+            var id = parseInt($(this).parent().parent().attr('trackid'));
+            that.removeTrackDB(id);
+            that.map.closePopup();
+        });
         // remove all tracks
         $('body').on('click', '#remove-all-tracks', function(e) {
             that.removeAllTracksDB();
@@ -121,12 +126,23 @@ TracksController.prototype = {
             var id = $(this).parent().parent().parent().parent().attr('track');
             that.askChangeTrackColor(id);
         });
+        // context menu event
+        $('body').on('click', '.contextChangeTrackColor', function(e) {
+            var id = parseInt($(this).parent().parent().attr('trackid'));
+            that.askChangeTrackColor(id);
+            that.map.closePopup();
+        });
         $('body').on('change', '#trackcolorinput', function(e) {
             that.okColor();
         });
         $('body').on('click', '.drawElevationButton', function(e) {
             var id = $(this).attr('track');
             that.showTrackElevation(id);
+        });
+        $('body').on('click', '.contextShowElevation', function(e) {
+            var id = parseInt($(this).parent().parent().attr('trackid'));
+            that.showTrackElevation(id);
+            that.map.closePopup();
         });
         $('body').on('click', '.showTrackElevation', function(e) {
             var id = $(this).parent().parent().parent().parent().attr('track');
@@ -658,6 +674,8 @@ TracksController.prototype = {
             direction: 'top',
             offset: L.point(0, -15)
         });
+        mm.trackid = id;
+        mm.on('contextmenu', this.trackMouseRightClick);
 
         var popupText = this.getWaypointPopupText(id, name, lat, lon, cmt, desc, ele, linkText, linkUrl, sym);
         mm.bindPopup(popupText);
@@ -943,8 +961,50 @@ TracksController.prototype = {
         });
         l.on('mouseout', function() {
         });
+        l.trackid = id;
+        l.on('contextmenu', this.trackMouseRightClick);
+        bl.trackid = id;
+        bl.on('contextmenu', this.trackMouseRightClick);
 
         return date;
+    },
+
+    trackMouseRightClick: function(e) {
+        var id = e.target.trackid;
+
+        e.target.unbindPopup();
+        var popupContent = this._map.tracksController.getTrackContextPopupContent(id);
+        e.target.bindPopup(popupContent, {
+            closeOnClick: true,
+            className: 'popovermenu open popupMarker'
+        });
+        e.target.openPopup(e.latlng);
+        e.preventDefault();
+    },
+
+    getTrackContextPopupContent: function(id) {
+        var colorText = t('maps', 'Change track color');
+        var elevationText = t('maps', 'Show track elevation');
+        var removeText = t('maps', 'Remove');
+        var res =
+            '<ul trackid="' + id + '">' +
+            '   <li>' +
+            '       <button class="icon-rename contextChangeTrackColor">' +
+            '           <span>' + colorText + '</span>' +
+            '       </button>' +
+            '   </li>' +
+            '   <li>' +
+            '       <button class="icon-category-monitoring contextShowElevation">' +
+            '           <span>' + elevationText + '</span>' +
+            '       </button>' +
+            '   </li>' +
+            '   <li>' +
+            '       <button class="icon-close contextRemoveTrack">' +
+            '           <span>' + removeText + '</span>' +
+            '       </button>' +
+            '   </li>' +
+            '</ul>';
+        return res;
     },
 
     zoomOnTrack: function(id) {

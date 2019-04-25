@@ -13,6 +13,7 @@
         contactsController.initLayer(mapController.map);
         mapController.map.contactsController = contactsController;
         tracksController.initController(mapController.map);
+        tracksController.map.tracksController = tracksController;
         devicesController.initController(mapController.map);
         mapController.map.devicesController = devicesController;
 

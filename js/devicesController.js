@@ -789,7 +789,14 @@ DevicesController.prototype = {
             data: req,
             async: true
         }).done(function (response) {
-            var imgurl = OC.generateUrl('/svg/core/clients/phone?color='+color.replace('#', ''));
+            var imgurl;
+            var device = that.devices[id];
+            if (['Windows', 'GNU/Linux', 'MacOS'].indexOf(device.info.os) !== -1) {
+                imgurl = OC.generateUrl('/svg/core/clients/desktop?color='+color.replace('#', ''));
+            }
+            else {
+                imgurl = OC.generateUrl('/svg/core/clients/phone?color='+color.replace('#', ''));
+            }
             $('#device-list > li[device='+id+'] .device-name').attr('style', 'background-image: url('+imgurl+')');
 
             that.setDeviceCss(id, color);

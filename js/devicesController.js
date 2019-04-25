@@ -56,6 +56,11 @@ DevicesController.prototype = {
             var id = $(this).parent().parent().parent().parent().attr('device');
             that.toggleDeviceLine(id, true);
         });
+        $('body').on('click', '.contextToggleLine', function(e) {
+            var id = $(this).parent().parent().attr('devid');
+            that.toggleDeviceLine(id, true);
+            that.map.closePopup();
+        });
         // toggle devices
         $('body').on('click', '#navigation-devices > a', function(e) {
             that.toggleDevices();
@@ -77,6 +82,11 @@ DevicesController.prototype = {
         $('body').on('click', '.changeDeviceColor', function(e) {
             var id = $(this).parent().parent().parent().parent().attr('device');
             that.askChangeDeviceColor(id);
+        });
+        $('body').on('click', '.contextChangeDeviceColor', function(e) {
+            var id = $(this).parent().parent().attr('devid');
+            that.askChangeDeviceColor(id);
+            that.map.closePopup();
         });
         $('body').on('change', '#devicecolorinput', function(e) {
             that.okColor();
@@ -530,6 +540,7 @@ DevicesController.prototype = {
         this.devices[id].marker.lastPosMarker = true;
         this.devices[id].marker.on('mouseover', this.deviceMarkerMouseover);
         this.devices[id].marker.on('mouseout', this.deviceMarkerMouseout);
+        this.devices[id].marker.on('contextmenu', this.deviceMarkerMouseRightClick);
         //this.devices[id].marker.on('click', this.favoriteMouseClick);
         // points data indexed by point id
         this.devices[id].points = {};
@@ -547,6 +558,7 @@ DevicesController.prototype = {
         this.devices[id].line.devid = id;
         this.devices[id].line.on('mouseover', this.deviceLineMouseover);
         this.devices[id].line.on('mouseout', this.deviceLineMouseout);
+        this.devices[id].line.on('contextmenu', this.deviceMarkerMouseRightClick);
         this.deviceMarkerLayers[id].addLayer(this.devices[id].marker);
         if (this.optionsController.enabledDeviceLines.indexOf(id) !== -1) {
             this.deviceLineLayers[id].addLayer(this.devices[id].line);
@@ -872,10 +884,43 @@ DevicesController.prototype = {
         that.lineMarker.devid = id;
         that.lineMarker.on('mouseover', that.deviceMarkerMouseover);
         that.lineMarker.on('mouseout', that.deviceMarkerMouseout);
+        that.lineMarker.on('contextmenu', that.deviceMarkerMouseRightClick);
         that.map.addLayer(that.lineMarker);
     },
 
     deviceLineMouseout: function(e) {
+    },
+
+    deviceMarkerMouseRightClick: function(e) {
+        var id = e.target.devid;
+
+        e.target.unbindPopup();
+        var popupContent = this._map.devicesController.getDeviceContextPopupContent(id);
+        e.target.bindPopup(popupContent, {
+            closeOnClick: true,
+            className: 'popovermenu open popupMarker'
+        });
+        e.target.openPopup(e.latlng);
+        e.preventDefault();
+    },
+
+    getDeviceContextPopupContent: function(id) {
+        var colorText = t('maps', 'Change device color');
+        var lineText = t('maps', 'Toggle device history');
+        var res =
+            '<ul devid="' + id + '">' +
+            '   <li>' +
+            '       <button class="icon-category-monitoring contextToggleLine">' +
+            '           <span>' + lineText + '</span>' +
+            '       </button>' +
+            '   </li>' +
+            '   <li>' +
+            '       <button class="icon-rename contextChangeDeviceColor">' +
+            '           <span>' + colorText + '</span>' +
+            '       </button>' +
+            '   </li>' +
+            '</ul>';
+        return res;
     },
 
 }

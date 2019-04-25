@@ -976,7 +976,8 @@ TracksController.prototype = {
         var popupContent = this._map.tracksController.getTrackContextPopupContent(id);
         e.target.bindPopup(popupContent, {
             closeOnClick: true,
-            className: 'popovermenu open popupMarker'
+            className: 'popovermenu open popupMarker',
+            offset: L.point(-4, 5)
         });
         e.target.openPopup(e.latlng);
         e.preventDefault();

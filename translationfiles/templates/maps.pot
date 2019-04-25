@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Nextcloud 3.14159\n"
 "Report-Msgid-Bugs-To: translations\\@example.com\n"
-"POT-Creation-Date: 2019-04-23 02:09+0200\n"
+"POT-Creation-Date: 2019-04-25 00:28+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,710 +17,712 @@ msgstr ""
 "Content-Type: text/plain; charset=CHARSET\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: /var/www/html/n15/apps/maps/appinfo/app.php:39
-#: /var/www/html/n15/apps/maps/specialAppInfoFakeDummyForL10nScript.php:2
+#: /app/appinfo/app.php:39 /app/specialAppInfoFakeDummyForL10nScript.php:2
 msgid "Maps"
 msgstr ""
 
-#: /var/www/html/n15/apps/maps/js/contactsController.js:274
+#: /app/js/contactsController.js:66
+msgid "NYI"
+msgstr ""
+
+#: /app/js/contactsController.js:229
+msgid "Click on the map to move the contact, press ESC to cancel"
+msgstr ""
+
+#: /app/js/contactsController.js:267
+msgid "Reset GEO information"
+msgstr ""
+
+#: /app/js/contactsController.js:268
+msgid "Move contact"
+msgstr ""
+
+#: /app/js/contactsController.js:307
+msgid "Failed to reset contact location"
+msgstr ""
+
+#: /app/js/contactsController.js:385
 msgid "Failed to load contacts"
 msgstr ""
 
-#: /var/www/html/n15/apps/maps/js/contactsController.js:332
+#: /app/js/contactsController.js:443
 msgid "Failed to get contact list"
 msgstr ""
 
-#: /var/www/html/n15/apps/maps/js/contactsController.js:358
+#: /app/js/contactsController.js:469
 msgid "Failed to place contact"
 msgstr ""
 
-#: /var/www/html/n15/apps/maps/js/devicesController.js:207
+#: /app/js/devicesController.js:207
 msgid "Failed to load device list"
 msgstr ""
 
-#: /var/www/html/n15/apps/maps/js/devicesController.js:275
+#: /app/js/devicesController.js:275
 msgid "Toggle device history"
 msgstr ""
 
-#: /var/www/html/n15/apps/maps/js/devicesController.js:281
+#: /app/js/devicesController.js:281
 msgid "Change device color"
 msgstr ""
 
-#: /var/www/html/n15/apps/maps/js/devicesController.js:287
-#: /var/www/html/n15/apps/maps/js/favoritesController.js:502
-#: /var/www/html/n15/apps/maps/js/tracksController.js:451
+#: /app/js/devicesController.js:287 /app/js/favoritesController.js:502
+#: /app/js/tracksController.js:451
 msgid "Zoom to bounds"
 msgstr ""
 
-#: /var/www/html/n15/apps/maps/js/devicesController.js:293
-#: /var/www/html/n15/apps/maps/js/favoritesController.js:508
-#: /var/www/html/n15/apps/maps/js/favoritesController.js:825
+#: /app/js/devicesController.js:293 /app/js/favoritesController.js:508
+#: /app/js/favoritesController.js:883
 msgid "Delete"
 msgstr ""
 
-#: /var/www/html/n15/apps/maps/js/devicesController.js:299
+#: /app/js/devicesController.js:299
 msgid "Device deleted"
 msgstr ""
 
-#: /var/www/html/n15/apps/maps/js/devicesController.js:382
+#: /app/js/devicesController.js:382
 msgid "Failed to delete device"
 msgstr ""
 
-#: /var/www/html/n15/apps/maps/js/devicesController.js:525
+#: /app/js/devicesController.js:525
 msgid "Failed to load device points"
 msgstr ""
 
-#: /var/www/html/n15/apps/maps/js/devicesController.js:588
+#: /app/js/devicesController.js:588
 msgid "Failed to update device points"
 msgstr ""
 
-#: /var/www/html/n15/apps/maps/js/devicesController.js:723
-#: /var/www/html/n15/apps/maps/js/nonLocalizedPhotosController.js:75
+#: /app/js/devicesController.js:723 /app/js/nonLocalizedPhotosController.js:75
 msgid "Impossible to get current location"
 msgstr ""
 
-#: /var/www/html/n15/apps/maps/js/devicesController.js:746
+#: /app/js/devicesController.js:746
 msgid "Failed to send current position"
 msgstr ""
 
-#: /var/www/html/n15/apps/maps/js/devicesController.js:792
+#: /app/js/devicesController.js:792
 msgid "Failed to change device color"
 msgstr ""
 
-#: /var/www/html/n15/apps/maps/js/devicesController.js:833
+#: /app/js/devicesController.js:833
 msgid "Device"
 msgstr ""
 
-#: /var/www/html/n15/apps/maps/js/devicesController.js:834
+#: /app/js/devicesController.js:834
 msgid "Date"
 msgstr ""
 
-#: /var/www/html/n15/apps/maps/js/devicesController.js:836
-#: /var/www/html/n15/apps/maps/js/tracksController.js:672
+#: /app/js/devicesController.js:836 /app/js/tracksController.js:672
 msgid "Elevation"
 msgstr ""
 
-#: /var/www/html/n15/apps/maps/js/devicesController.js:839
+#: /app/js/devicesController.js:839
 msgid "Accuracy"
 msgstr ""
 
-#: /var/www/html/n15/apps/maps/js/devicesController.js:842
+#: /app/js/devicesController.js:842
 msgid "Battery"
 msgstr ""
 
-#: /var/www/html/n15/apps/maps/js/favoritesController.js:23
+#: /app/js/favoritesController.js:23
 msgid "Personal"
 msgstr ""
 
-#: /var/www/html/n15/apps/maps/js/favoritesController.js:185
+#: /app/js/favoritesController.js:185
 msgid "Import favorites from gpx file"
 msgstr ""
 
-#: /var/www/html/n15/apps/maps/js/favoritesController.js:428
+#: /app/js/favoritesController.js:428
 msgid "Failed to load favorites"
 msgstr ""
 
-#: /var/www/html/n15/apps/maps/js/favoritesController.js:490
-#: /var/www/html/n15/apps/maps/js/script.js:343
-#: /var/www/html/n15/apps/maps/templates/navigation/index.php:6
+#: /app/js/favoritesController.js:490 /app/js/script.js:348
+#: /app/templates/navigation/index.php:6
 msgid "Add a favorite"
 msgstr ""
 
-#: /var/www/html/n15/apps/maps/js/favoritesController.js:496
+#: /app/js/favoritesController.js:496
 msgid "Rename"
 msgstr ""
 
-#: /var/www/html/n15/apps/maps/js/favoritesController.js:514
+#: /app/js/favoritesController.js:514
 msgid "Category deleted"
 msgstr ""
 
-#: /var/www/html/n15/apps/maps/js/favoritesController.js:580
+#: /app/js/favoritesController.js:580
 msgid "Failed to rename category"
 msgstr ""
 
-#: /var/www/html/n15/apps/maps/js/favoritesController.js:609
+#: /app/js/favoritesController.js:609
 msgid "Failed to delete category favorites"
 msgstr ""
 
-#: /var/www/html/n15/apps/maps/js/favoritesController.js:704
+#: /app/js/favoritesController.js:704
 msgid "Failed to add favorite"
 msgstr ""
 
-#: /var/www/html/n15/apps/maps/js/favoritesController.js:793
+#: /app/js/favoritesController.js:794
 msgid "Name"
 msgstr ""
 
-#: /var/www/html/n15/apps/maps/js/favoritesController.js:793
+#: /app/js/favoritesController.js:794
 msgid "No name"
 msgstr ""
 
-#: /var/www/html/n15/apps/maps/js/favoritesController.js:795
-#: /var/www/html/n15/apps/maps/js/favoritesController.js:827
+#: /app/js/favoritesController.js:796 /app/js/favoritesController.js:830
 msgid "Category"
 msgstr ""
 
-#: /var/www/html/n15/apps/maps/js/favoritesController.js:798
-#: /var/www/html/n15/apps/maps/js/favoritesController.js:828
-#: /var/www/html/n15/apps/maps/js/tracksController.js:679
+#: /app/js/favoritesController.js:799 /app/js/favoritesController.js:831
+#: /app/js/tracksController.js:679
 msgid "Comment"
 msgstr ""
 
-#: /var/www/html/n15/apps/maps/js/favoritesController.js:823
+#: /app/js/favoritesController.js:828
 msgid "Submit"
 msgstr ""
 
-#: /var/www/html/n15/apps/maps/js/favoritesController.js:824
-msgid "Move"
-msgstr ""
-
-#: /var/www/html/n15/apps/maps/js/favoritesController.js:826
+#: /app/js/favoritesController.js:829
 msgid "Favorite name"
 msgstr ""
 
-#: /var/www/html/n15/apps/maps/js/favoritesController.js:894
+#: /app/js/favoritesController.js:882
+msgid "Move"
+msgstr ""
+
+#: /app/js/favoritesController.js:920
 msgid "Failed to delete favorite"
 msgstr ""
 
-#: /var/www/html/n15/apps/maps/js/favoritesController.js:964
+#: /app/js/favoritesController.js:990
 msgid "Failed to edit favorite"
 msgstr ""
 
-#: /var/www/html/n15/apps/maps/js/favoritesController.js:1016
+#: /app/js/favoritesController.js:1042
 msgid "Click on the map to move the favorite, press ESC to cancel"
 msgstr ""
 
-#: /var/www/html/n15/apps/maps/js/favoritesController.js:1045
-#: /var/www/html/n15/apps/maps/js/favoritesController.js:1083
+#: /app/js/favoritesController.js:1071 /app/js/favoritesController.js:1109
 msgid "Favorites exported in {path}"
 msgstr ""
 
-#: /var/www/html/n15/apps/maps/js/favoritesController.js:1050
-#: /var/www/html/n15/apps/maps/js/favoritesController.js:1088
+#: /app/js/favoritesController.js:1076 /app/js/favoritesController.js:1114
 msgid "Failed to export favorites"
 msgstr ""
 
-#: /var/www/html/n15/apps/maps/js/favoritesController.js:1106
+#: /app/js/favoritesController.js:1132
 msgid "{nb} favorites imported from {path}"
 msgstr ""
 
-#: /var/www/html/n15/apps/maps/js/favoritesController.js:1119
+#: /app/js/favoritesController.js:1145
 msgid "Failed to import favorites"
 msgstr ""
 
-#: /var/www/html/n15/apps/maps/js/nonLocalizedPhotosController.js:292
+#: /app/js/nonLocalizedPhotosController.js:292
 msgid "Failed to load non-geolocalized photos"
 msgstr ""
 
-#: /var/www/html/n15/apps/maps/js/photosController.js:274
+#: /app/js/photosController.js:274
 msgid "Failed to load photos"
 msgstr ""
 
-#: /var/www/html/n15/apps/maps/js/photosController.js:296
+#: /app/js/photosController.js:296
 msgid "Choose pictures to place"
 msgstr ""
 
-#: /var/www/html/n15/apps/maps/js/photosController.js:310
+#: /app/js/photosController.js:310
 msgid "Choose directory of pictures to place"
 msgstr ""
 
-#: /var/www/html/n15/apps/maps/js/photosController.js:340
+#: /app/js/photosController.js:340
 msgid "{nb} photos placed"
 msgstr ""
 
-#: /var/www/html/n15/apps/maps/js/photosController.js:360
+#: /app/js/photosController.js:360
 msgid "Failed to place photos"
 msgstr ""
 
-#: /var/www/html/n15/apps/maps/js/script.js:100
+#: /app/js/script.js:105
 msgid "Geo link ({geoLink}) copied to clipboard"
 msgstr ""
 
-#: /var/www/html/n15/apps/maps/js/script.js:123
+#: /app/js/script.js:128
 msgid "Failed to save option values"
 msgstr ""
 
-#: /var/www/html/n15/apps/maps/js/script.js:244
+#: /app/js/script.js:249
 msgid "Failed to restore options values"
 msgstr ""
 
-#: /var/www/html/n15/apps/maps/js/script.js:347
+#: /app/js/script.js:352
 msgid "Place photos"
 msgstr ""
 
-#: /var/www/html/n15/apps/maps/js/script.js:351
+#: /app/js/script.js:356
 msgid "Place photo folder"
 msgstr ""
 
-#: /var/www/html/n15/apps/maps/js/script.js:355
+#: /app/js/script.js:360
 msgid "Place contact"
 msgstr ""
 
-#: /var/www/html/n15/apps/maps/js/script.js:359
+#: /app/js/script.js:364
 msgid "Share this location"
 msgstr ""
 
-#: /var/www/html/n15/apps/maps/js/script.js:363
+#: /app/js/script.js:368
 msgid "Route from here"
 msgstr ""
 
-#: /var/www/html/n15/apps/maps/js/script.js:367
+#: /app/js/script.js:372
 msgid "Add route point"
 msgstr ""
 
-#: /var/www/html/n15/apps/maps/js/script.js:371
+#: /app/js/script.js:376
 msgid "Route to here"
 msgstr ""
 
-#: /var/www/html/n15/apps/maps/js/script.js:400
+#: /app/js/script.js:405
 msgid "See current location"
 msgstr ""
 
-#: /var/www/html/n15/apps/maps/js/script.js:417
+#: /app/js/script.js:422
 msgid "Other layers"
 msgstr ""
 
-#: /var/www/html/n15/apps/maps/js/script.js:456
+#: /app/js/script.js:461
 msgid "Aerial map"
 msgstr ""
 
-#: /var/www/html/n15/apps/maps/js/script.js:468
+#: /app/js/script.js:473
 msgid "Classic map"
 msgstr ""
 
-#: /var/www/html/n15/apps/maps/js/script.js:553
+#: /app/js/script.js:558
 msgid "north"
 msgstr ""
 
-#: /var/www/html/n15/apps/maps/js/script.js:554
+#: /app/js/script.js:559
 msgid "northeast"
 msgstr ""
 
-#: /var/www/html/n15/apps/maps/js/script.js:555
+#: /app/js/script.js:560
 msgid "east"
 msgstr ""
 
-#: /var/www/html/n15/apps/maps/js/script.js:556
+#: /app/js/script.js:561
 msgid "southeast"
 msgstr ""
 
-#: /var/www/html/n15/apps/maps/js/script.js:557
+#: /app/js/script.js:562
 msgid "south"
 msgstr ""
 
-#: /var/www/html/n15/apps/maps/js/script.js:558
+#: /app/js/script.js:563
 msgid "southwest"
 msgstr ""
 
-#: /var/www/html/n15/apps/maps/js/script.js:559
+#: /app/js/script.js:564
 msgid "west"
 msgstr ""
 
-#: /var/www/html/n15/apps/maps/js/script.js:560
+#: /app/js/script.js:565
 msgid "northwest"
 msgstr ""
 
-#: /var/www/html/n15/apps/maps/js/script.js:561
+#: /app/js/script.js:566
 msgid "slight right"
 msgstr ""
 
-#: /var/www/html/n15/apps/maps/js/script.js:562
+#: /app/js/script.js:567
 msgid "right"
 msgstr ""
 
-#: /var/www/html/n15/apps/maps/js/script.js:563
+#: /app/js/script.js:568
 msgid "sharp right"
 msgstr ""
 
-#: /var/www/html/n15/apps/maps/js/script.js:564
+#: /app/js/script.js:569
 msgid "slight left"
 msgstr ""
 
-#: /var/www/html/n15/apps/maps/js/script.js:565
+#: /app/js/script.js:570
 msgid "left"
 msgstr ""
 
-#: /var/www/html/n15/apps/maps/js/script.js:566
+#: /app/js/script.js:571
 msgid "sharp left"
 msgstr ""
 
-#: /var/www/html/n15/apps/maps/js/script.js:567
-#: /var/www/html/n15/apps/maps/js/script.js:576
+#: /app/js/script.js:572 /app/js/script.js:581
 msgid "Turn around"
 msgstr ""
 
-#: /var/www/html/n15/apps/maps/js/script.js:572
+#: /app/js/script.js:577
 msgid "Head {dir}"
 msgstr ""
 
-#: /var/www/html/n15/apps/maps/js/script.js:572
+#: /app/js/script.js:577
 msgid " on {road}"
 msgstr ""
 
-#: /var/www/html/n15/apps/maps/js/script.js:574
+#: /app/js/script.js:579
 msgid "Continue {dir}"
 msgstr ""
 
-#: /var/www/html/n15/apps/maps/js/script.js:578
+#: /app/js/script.js:583
 msgid "Waypoint reached"
 msgstr ""
 
-#: /var/www/html/n15/apps/maps/js/script.js:580
+#: /app/js/script.js:585
 msgid "Take the {exitStr} exit in the roundabout"
 msgstr ""
 
-#: /var/www/html/n15/apps/maps/js/script.js:580
-#: /var/www/html/n15/apps/maps/js/script.js:583
-#: /var/www/html/n15/apps/maps/js/script.js:584
-#: /var/www/html/n15/apps/maps/js/script.js:585
-#: /var/www/html/n15/apps/maps/js/script.js:586
-#: /var/www/html/n15/apps/maps/js/script.js:587
+#: /app/js/script.js:585 /app/js/script.js:588 /app/js/script.js:589
+#: /app/js/script.js:590 /app/js/script.js:591 /app/js/script.js:592
 msgid " onto {road}"
 msgstr ""
 
-#: /var/www/html/n15/apps/maps/js/script.js:582
+#: /app/js/script.js:587
 msgid "Destination reached"
 msgstr ""
 
-#: /var/www/html/n15/apps/maps/js/script.js:583
+#: /app/js/script.js:588
 msgid "At the fork, turn {modifier}"
 msgstr ""
 
-#: /var/www/html/n15/apps/maps/js/script.js:584
+#: /app/js/script.js:589
 msgid "Merge {modifier}"
 msgstr ""
 
-#: /var/www/html/n15/apps/maps/js/script.js:585
+#: /app/js/script.js:590
 msgid "Turn {modifier} on the ramp"
 msgstr ""
 
-#: /var/www/html/n15/apps/maps/js/script.js:586
+#: /app/js/script.js:591
 msgid "Take the ramp on the {modifier}"
 msgstr ""
 
-#: /var/www/html/n15/apps/maps/js/script.js:587
+#: /app/js/script.js:592
 msgid "Turn {modifier} at the end of the road"
 msgstr ""
 
-#: /var/www/html/n15/apps/maps/js/script.js:588
+#: /app/js/script.js:593
 msgid "onto {road}"
 msgstr ""
 
-#: /var/www/html/n15/apps/maps/js/script.js:591
+#: /app/js/script.js:596
 msgid "Start"
 msgstr ""
 
-#: /var/www/html/n15/apps/maps/js/script.js:592
+#: /app/js/script.js:597
 msgid "Via {viaNumber}"
 msgstr ""
 
-#: /var/www/html/n15/apps/maps/js/script.js:593
+#: /app/js/script.js:598
 msgid "Destination"
 msgstr ""
 
-#: /var/www/html/n15/apps/maps/js/script.js:599
+#: /app/js/script.js:604
 msgid "m"
 msgstr ""
 
-#: /var/www/html/n15/apps/maps/js/script.js:600
+#: /app/js/script.js:605
 msgid "km"
 msgstr ""
 
-#: /var/www/html/n15/apps/maps/js/script.js:601
+#: /app/js/script.js:606
 msgid "yd"
 msgstr ""
 
-#: /var/www/html/n15/apps/maps/js/script.js:602
+#: /app/js/script.js:607
 msgid "mi"
 msgstr ""
 
-#: /var/www/html/n15/apps/maps/js/script.js:603
+#: /app/js/script.js:608
 msgid "h"
 msgstr ""
 
-#: /var/www/html/n15/apps/maps/js/script.js:604
+#: /app/js/script.js:609
 msgid "min"
 msgstr ""
 
-#: /var/www/html/n15/apps/maps/js/script.js:605
+#: /app/js/script.js:610
 msgid "s"
 msgstr ""
 
-#: /var/www/html/n15/apps/maps/js/script.js:667
+#: /app/js/script.js:672
 msgid "Routing error: "
 msgstr ""
 
-#: /var/www/html/n15/apps/maps/js/script.js:731
+#: /app/js/script.js:736
 msgid "Route exported in {path}"
 msgstr ""
 
-#: /var/www/html/n15/apps/maps/js/script.js:735
+#: /app/js/script.js:740
 msgid "Failed to export current route"
 msgstr ""
 
-#: /var/www/html/n15/apps/maps/js/tracksController.js:82
+#: /app/js/tracksController.js:82
 msgid "Load gpx file"
 msgstr ""
 
-#: /var/www/html/n15/apps/maps/js/tracksController.js:94
+#: /app/js/tracksController.js:94
 msgid "Load gpx files from directory"
 msgstr ""
 
-#: /var/www/html/n15/apps/maps/js/tracksController.js:141
+#: /app/js/tracksController.js:141
 msgid "Close elevation chart"
 msgstr ""
 
-#: /var/www/html/n15/apps/maps/js/tracksController.js:304
-#: /var/www/html/n15/apps/maps/js/tracksController.js:328
+#: /app/js/tracksController.js:304 /app/js/tracksController.js:328
 msgid "Failed to remove track"
 msgstr ""
 
-#: /var/www/html/n15/apps/maps/js/tracksController.js:375
+#: /app/js/tracksController.js:375
 msgid "Failed to add track directory"
 msgstr ""
 
-#: /var/www/html/n15/apps/maps/js/tracksController.js:406
+#: /app/js/tracksController.js:406
 msgid "Failed to add tracks"
 msgstr ""
 
-#: /var/www/html/n15/apps/maps/js/tracksController.js:445
+#: /app/js/tracksController.js:445
 msgid "Change track color"
 msgstr ""
 
-#: /var/www/html/n15/apps/maps/js/tracksController.js:457
+#: /app/js/tracksController.js:457
 msgid "Show track elevation"
 msgstr ""
 
-#: /var/www/html/n15/apps/maps/js/tracksController.js:463
+#: /app/js/tracksController.js:463
 msgid "Remove"
 msgstr ""
 
-#: /var/www/html/n15/apps/maps/js/tracksController.js:513
+#: /app/js/tracksController.js:513
 msgid "Failed to load tracks"
 msgstr ""
 
-#: /var/www/html/n15/apps/maps/js/tracksController.js:570
+#: /app/js/tracksController.js:570
 msgid "Failed to load track content"
 msgstr ""
 
-#: /var/www/html/n15/apps/maps/js/tracksController.js:666
-#: /var/www/html/n15/apps/maps/js/tracksController.js:699
+#: /app/js/tracksController.js:666 /app/js/tracksController.js:699
 msgid "File"
 msgstr ""
 
-#: /var/www/html/n15/apps/maps/js/tracksController.js:669
+#: /app/js/tracksController.js:669
 msgid "Link"
 msgstr ""
 
-#: /var/www/html/n15/apps/maps/js/tracksController.js:675
+#: /app/js/tracksController.js:675
 msgid "Latitude"
 msgstr ""
 
-#: /var/www/html/n15/apps/maps/js/tracksController.js:676
+#: /app/js/tracksController.js:676
 msgid "Longitude"
 msgstr ""
 
-#: /var/www/html/n15/apps/maps/js/tracksController.js:683
+#: /app/js/tracksController.js:683
 msgid "Description"
 msgstr ""
 
-#: /var/www/html/n15/apps/maps/js/tracksController.js:687
+#: /app/js/tracksController.js:687
 msgid "Symbol name"
 msgstr ""
 
-#: /var/www/html/n15/apps/maps/js/tracksController.js:700
+#: /app/js/tracksController.js:700
 msgid "download"
 msgstr ""
 
-#: /var/www/html/n15/apps/maps/js/tracksController.js:708
-#: /var/www/html/n15/apps/maps/js/tracksController.js:711
+#: /app/js/tracksController.js:708 /app/js/tracksController.js:711
 msgid "metadata link"
 msgstr ""
 
-#: /var/www/html/n15/apps/maps/js/tracksController.js:715
+#: /app/js/tracksController.js:715
 msgid "tracks/routes name list"
 msgstr ""
 
-#: /var/www/html/n15/apps/maps/js/tracksController.js:720
+#: /app/js/tracksController.js:720
 msgid "no name"
 msgstr ""
 
-#: /var/www/html/n15/apps/maps/js/tracksController.js:730
+#: /app/js/tracksController.js:730
 msgid "Distance"
 msgstr ""
 
-#: /var/www/html/n15/apps/maps/js/tracksController.js:740
+#: /app/js/tracksController.js:740
 msgid "Duration"
 msgstr ""
 
-#: /var/www/html/n15/apps/maps/js/tracksController.js:743
+#: /app/js/tracksController.js:743
 msgid "Moving time"
 msgstr ""
 
-#: /var/www/html/n15/apps/maps/js/tracksController.js:746
+#: /app/js/tracksController.js:746
 msgid "Pause time"
 msgstr ""
 
-#: /var/www/html/n15/apps/maps/js/tracksController.js:749
+#: /app/js/tracksController.js:749
 msgid "no date"
 msgstr ""
 
-#: /var/www/html/n15/apps/maps/js/tracksController.js:764
+#: /app/js/tracksController.js:764
 msgid "Begin"
 msgstr ""
 
-#: /var/www/html/n15/apps/maps/js/tracksController.js:767
+#: /app/js/tracksController.js:767
 msgid "End"
 msgstr ""
 
-#: /var/www/html/n15/apps/maps/js/tracksController.js:770
+#: /app/js/tracksController.js:770
 msgid "Cumulative elevation gain"
 msgstr ""
 
-#: /var/www/html/n15/apps/maps/js/tracksController.js:774
+#: /app/js/tracksController.js:774
 msgid "Cumulative elevation loss"
 msgstr ""
 
-#: /var/www/html/n15/apps/maps/js/tracksController.js:778
+#: /app/js/tracksController.js:778
 msgid "Minimum elevation"
 msgstr ""
 
-#: /var/www/html/n15/apps/maps/js/tracksController.js:782
+#: /app/js/tracksController.js:782
 msgid "Maximum elevation"
 msgstr ""
 
-#: /var/www/html/n15/apps/maps/js/tracksController.js:786
+#: /app/js/tracksController.js:786
 msgid "Maximum speed"
 msgstr ""
 
-#: /var/www/html/n15/apps/maps/js/tracksController.js:797
+#: /app/js/tracksController.js:797
 msgid "Average speed"
 msgstr ""
 
-#: /var/www/html/n15/apps/maps/js/tracksController.js:808
+#: /app/js/tracksController.js:808
 msgid "Moving average speed"
 msgstr ""
 
-#: /var/www/html/n15/apps/maps/js/tracksController.js:818
+#: /app/js/tracksController.js:818
 msgid "Moving average pace"
 msgstr ""
 
-#: /var/www/html/n15/apps/maps/js/tracksController.js:986
+#: /app/js/tracksController.js:986
 msgid "Failed to change track color"
 msgstr ""
 
-#: /var/www/html/n15/apps/maps/specialAppInfoFakeDummyForL10nScript.php:3
+#: /app/specialAppInfoFakeDummyForL10nScript.php:3
 msgid "Simple maps app for Nextcloud"
 msgstr ""
 
-#: /var/www/html/n15/apps/maps/specialAppInfoFakeDummyForL10nScript.php:4
+#: /app/specialAppInfoFakeDummyForL10nScript.php:4
 msgid "Simple maps app to display a leaflet map."
 msgstr ""
 
-#: /var/www/html/n15/apps/maps/templates/content/index.php:49
+#: /app/templates/content/index.php:49
 msgid "Search..."
 msgstr ""
 
-#: /var/www/html/n15/apps/maps/templates/navigation/index.php:3
+#: /app/templates/navigation/index.php:3
 msgid "Favorites"
 msgstr ""
 
-#: /var/www/html/n15/apps/maps/templates/navigation/index.php:19
+#: /app/templates/navigation/index.php:19
 msgid "Export all favorites"
 msgstr ""
 
-#: /var/www/html/n15/apps/maps/templates/navigation/index.php:25
+#: /app/templates/navigation/index.php:25
 msgid "Export displayed favorites"
 msgstr ""
 
-#: /var/www/html/n15/apps/maps/templates/navigation/index.php:31
+#: /app/templates/navigation/index.php:31
 msgid "Import favorites from gpx files"
 msgstr ""
 
-#: /var/www/html/n15/apps/maps/templates/navigation/index.php:37
+#: /app/templates/navigation/index.php:37
 msgid "Show all categories"
 msgstr ""
 
-#: /var/www/html/n15/apps/maps/templates/navigation/index.php:43
+#: /app/templates/navigation/index.php:43
 msgid "Hide all categories"
 msgstr ""
 
-#: /var/www/html/n15/apps/maps/templates/navigation/index.php:52
+#: /app/templates/navigation/index.php:52
 msgid "Routing"
 msgstr ""
 
-#: /var/www/html/n15/apps/maps/templates/navigation/index.php:65
+#: /app/templates/navigation/index.php:65
 msgid "Export current route to gpx"
 msgstr ""
 
-#: /var/www/html/n15/apps/maps/templates/navigation/index.php:72
+#: /app/templates/navigation/index.php:72
 msgid "Photos"
 msgstr ""
 
-#: /var/www/html/n15/apps/maps/templates/navigation/index.php:88
-#: /var/www/html/n15/apps/maps/templates/navigation/index.php:136
+#: /app/templates/navigation/index.php:88
+#: /app/templates/navigation/index.php:136
 msgid "Nothing yet"
 msgstr ""
 
-#: /var/www/html/n15/apps/maps/templates/navigation/index.php:95
+#: /app/templates/navigation/index.php:95
 msgid "non localized"
 msgstr ""
 
-#: /var/www/html/n15/apps/maps/templates/navigation/index.php:111
+#: /app/templates/navigation/index.php:111
 msgid "Save all visibile"
 msgstr ""
 
-#: /var/www/html/n15/apps/maps/templates/navigation/index.php:120
+#: /app/templates/navigation/index.php:120
 msgid "Contacts"
 msgstr ""
 
-#: /var/www/html/n15/apps/maps/templates/navigation/index.php:143
+#: /app/templates/navigation/index.php:143
 msgid "Tracks"
 msgstr ""
 
-#: /var/www/html/n15/apps/maps/templates/navigation/index.php:146
+#: /app/templates/navigation/index.php:146
 msgid "Load a track file"
 msgstr ""
 
-#: /var/www/html/n15/apps/maps/templates/navigation/index.php:159
+#: /app/templates/navigation/index.php:159
 msgid "Show all tracks"
 msgstr ""
 
-#: /var/www/html/n15/apps/maps/templates/navigation/index.php:165
+#: /app/templates/navigation/index.php:165
 msgid "Hide all tracks"
 msgstr ""
 
-#: /var/www/html/n15/apps/maps/templates/navigation/index.php:171
+#: /app/templates/navigation/index.php:171
 msgid "Load a directory"
 msgstr ""
 
-#: /var/www/html/n15/apps/maps/templates/navigation/index.php:177
+#: /app/templates/navigation/index.php:177
 msgid "Remove all tracks"
 msgstr ""
 
-#: /var/www/html/n15/apps/maps/templates/navigation/index.php:186
+#: /app/templates/navigation/index.php:186
 msgid "Devices"
 msgstr ""
 
-#: /var/www/html/n15/apps/maps/templates/navigation/index.php:199
+#: /app/templates/navigation/index.php:199
 msgid "Refresh devices positions"
 msgstr ""
 
-#: /var/www/html/n15/apps/maps/templates/navigation/index.php:205
+#: /app/templates/navigation/index.php:205
 msgid "Show all devices"
 msgstr ""
 
-#: /var/www/html/n15/apps/maps/templates/navigation/index.php:211
+#: /app/templates/navigation/index.php:211
 msgid "Hide all devices"
 msgstr ""
 
-#: /var/www/html/n15/apps/maps/templates/navigation/index.php:217
+#: /app/templates/navigation/index.php:217
 msgid "Delete all devices history"
 msgstr ""
 
-#: /var/www/html/n15/apps/maps/templates/settings/index.php:4
+#: /app/templates/settings/index.php:4
 msgid "Settings"
 msgstr ""
 
-#: /var/www/html/n15/apps/maps/templates/settings/index.php:10
+#: /app/templates/settings/index.php:10
 msgid "Track my position"
 msgstr ""

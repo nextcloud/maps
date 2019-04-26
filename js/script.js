@@ -1057,9 +1057,14 @@
                 else if (item.type === 'device') {
                     iconClass = 'icon-phone';
                 }
+                // shorten label if needed
+                var label = item.label;
+                if (label.length > 35) {
+                    label = label.substring(0, 35) + '...';
+                }
                 var listItem = $('<li></li>')
                     .data('item.autocomplete', item)
-                    .append('<a class="searchCompleteLink"><button class="searchCompleteIcon ' + iconClass + '"></button> ' + item.label + '</a>')
+                    .append('<a class="searchCompleteLink"><button class="searchCompleteIcon ' + iconClass + '"></button> ' + label + '</a>')
                     .appendTo(ul);
                 return listItem;
             };

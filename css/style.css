@@ -596,3 +596,15 @@ tr.selected td {
     word-wrap: break-word;
     white-space: normal;
 }
+.searchCompleteIcon {
+    background-color: inherit;
+    border: 0px;
+    height: 35px;
+    padding-top: 15px;
+}
+.searchCompleteLink {
+    line-height: 35px;
+}
+.ui-autocomplete {
+    z-index: 9999;
+}

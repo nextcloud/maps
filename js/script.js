@@ -16,6 +16,7 @@
         tracksController.map.tracksController = tracksController;
         devicesController.initController(mapController.map);
         mapController.map.devicesController = devicesController;
+        searchController.initController(mapController.map);
 
         // once controllers have been set/initialized, we can restore option values from server
         optionsController.restoreOptions();
@@ -27,39 +28,6 @@
             $('#opening-hours-table-toggle-expand').toggle();
             $('#opening-hours-table-toggle-collapse').toggle();
         });
-
-        // Search
-        $('#search-form').submit(function(e) {
-            e.preventDefault();
-            submitSearchForm();
-        });
-        $('#search-submit').click(function() {
-            submitSearchForm();
-        });
-
-        function submitSearchForm() {
-            var str = $('#search-term').val();
-            if(str.length < 1) {
-                return;
-            }
-
-            searchController.search(str).then(function(results) {
-                if (results.length === 0) {
-                    return;
-                }
-                else if (results.length === 1) {
-                    var result = results[0];
-                    mapController.displaySearchResult(result);
-                    routingController.control.spliceWaypoints(routingController.control.getWaypoints().length - 1, 1, new L.LatLng(result.lat, result.lon));
-                }
-                else {
-                    console.log('multiple results');
-                    var result = results[0];
-                    mapController.displaySearchResult(result);
-                    routingController.control.spliceWaypoints(routingController.control.getWaypoints().length - 1, 1, new L.LatLng(result.lat, result.lon));
-                }
-            });
-        }
 
         document.onkeydown = function (e) {
             e = e || window.event;
@@ -957,6 +925,92 @@
     timeFilterController.connect();
 
     var searchController = {
+        map: null,
+        initController: function(map) {
+            this.map = map;
+            var that = this;
+            // Search
+            $('#search-form').submit(function(e) {
+                e.preventDefault();
+                that.submitSearchForm();
+            });
+            $('#search-submit').click(function(e) {
+                e.preventDefault();
+                that.submitSearchForm();
+            });
+            $('#search-term').on('focus', function(e) {
+                $(this).select();
+                that.setSearchAutocomplete();
+            });
+        },
+
+        setSearchAutocomplete: function() {
+            var that = this;
+            var data = [];
+            // get favorites
+            var favData = favoritesController.getAutocompData();
+            data.push(...favData);
+            console.log(data);
+            //// get contacts
+            //var contactData = contactsController.getAutocompData();
+            //data.push(...contactData);
+            //// get devices
+            //var devData = devicesController.getAutocompData();
+            //data.push(...devData);
+            $('#search-term').autocomplete({
+                source: data,
+                select: function (e, ui) {
+                    var it = ui.item;
+                    if (it.type === 'favorite') {
+                        console.log('YEAHFAV '+it.label + ' '+it.lat);
+                        that.map.setView([it.lat, it.lng], 15);
+                        // TODO bring to front
+                    }
+                    else if (it.type === 'contact') {
+                    }
+                    else if (it.type === 'device') {
+                    }
+                }
+            }).data('ui-autocomplete')._renderItem = function(ul, item) {
+                var iconClass = 'icon-phone';
+                if (item.type === 'favorite') {
+                    iconClass = 'icon-favorite';
+                }
+                else if (item.type === 'contact') {
+                    iconClass = 'icon-group';
+                }
+                var listItem = $('<li></li>')
+                    .data('item.autocomplete', item)
+                    .append('<a class="searchCompleteLink"><button class="searchCompleteIcon ' + iconClass + '"></button> ' + item.label + '</a>')
+                    .appendTo(ul);
+                return listItem;
+            };
+        },
+
+        submitSearchForm: function() {
+            var str = $('#search-term').val();
+            if (str.length < 1) {
+                return;
+            }
+
+            this.search(str).then(function(results) {
+                if (results.length === 0) {
+                    return;
+                }
+                else if (results.length === 1) {
+                    var result = results[0];
+                    mapController.displaySearchResult(result);
+                    routingController.control.spliceWaypoints(routingController.control.getWaypoints().length - 1, 1, new L.LatLng(result.lat, result.lon));
+                }
+                else {
+                    console.log('multiple results');
+                    var result = results[0];
+                    mapController.displaySearchResult(result);
+                    routingController.control.spliceWaypoints(routingController.control.getWaypoints().length - 1, 1, new L.LatLng(result.lat, result.lon));
+                }
+            });
+        },
+
         isGeocodeabe: function(str) {
             var pattern = /^\s*\d+\.?\d*\,\s*\d+\.?\d*\s*$/;
             return pattern.test(str);

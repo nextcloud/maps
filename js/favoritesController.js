@@ -1143,5 +1143,28 @@ FavoritesController.prototype = {
             OC.Notification.showTemporary(t('maps', 'Failed to import favorites'));
         });
     },
+
+    getAutocompData: function() {
+        var that = this;
+        var fav, favid;
+        var data = [];
+        for (var cat in this.categoryLayers) {
+            layer = this.categoryLayers[cat];
+            if (this.map.hasLayer(layer)) {
+                layer.eachLayer(function (l) {
+                    fav = that.favorites[l.favid];
+                    data.push({
+                        type: 'favorite',
+                        label: fav.name,
+                        value: fav.name,
+                        lat: fav.lat,
+                        lng: fav.lng
+                    });
+                });
+            }
+        }
+        return data;
+    },
+
 }
 

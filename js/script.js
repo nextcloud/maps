@@ -962,14 +962,16 @@
             return pattern.test(str);
         },
         search: function(str) {
-            var searchTerm = str.replace(' ', '%20'); // encode spaces
-            var apiUrl = 'https://nominatim.openstreetmap.org/search/'+searchTerm+'?format=json&addressdetails=1&extratags=1&namedetails=1&limit=8';
+            var searchTerm = encodeURIComponent(str);
+            var apiUrl = 'https://nominatim.openstreetmap.org/search/' + searchTerm + '?format=json&addressdetails=1&extratags=1&namedetails=1&limit=8';
             return $.getJSON(apiUrl, {}, function(response) {
                 return response;
             });
         },
         geocode: function(latlng) {
-            if(!this.isGeocodeabe(latlng)) return;
+            if (!this.isGeocodeabe(latlng)) {
+                return;
+            }
             var splits = latlng.split(',');
             var lat = splits[0].trim();
             var lon = splits[1].trim();
@@ -981,64 +983,85 @@
         parseOsmResult: function(result) {
             var add = result.address;
             var road, postcode, city, state, name;
-            if(add.road) {
+            if (add.road) {
                 road = add.road;
-                if(add.house_number) road += ' ' + add.house_number;
+                if (add.house_number) {
+                    road += ' ' + add.house_number;
+                }
             }
-            if(add.postcode) postcode = add.postcode;
-            if(add.city || add.town || add.village) {
-                if(add.city) city = add.city;
-                else if(add.town) city = add.town;
-                else if(add.village) city = add.village;
-                if(add.state) {
+            if (add.postcode) {
+                postcode = add.postcode;
+            }
+            if (add.city || add.town || add.village) {
+                if (add.city) {
+                    city = add.city;
+                }
+                else if (add.town) {
+                    city = add.town;
+                }
+                else if (add.village) {
+                    city = add.village;
+                }
+                if (add.state) {
                      state = add.state;
                 }
             }
             var details = result.namedetails;
-            if(details.name) name = details.name;
+            if (details.name) {
+                name = details.name;
+            }
 
             var unformattedHeader;
-            if(name) unformattedHeader = name;
-            else if(road) unformattedHeader = road;
-            else if(city) unformattedHeader = city;
+            if (name) {
+                unformattedHeader = name;
+            }
+            else if (road) {
+                unformattedHeader = road;
+            }
+            else if (city) {
+                unformattedHeader = city;
+            }
 
             var unformattedDesc = '';
             var needSeparator = false;
             // add road to desc if it is not heading and exists (isn't heading, if 'name' is set)
-            if(name && road) {
+            if (name && road) {
                 unformattedDesc = road;
                 needSeparator = true;
             }
-            if(postcode) {
-                if(needSeparator) {
+            if (postcode) {
+                if (needSeparator) {
                     unformattedDesc += ', ';
                     needSeparator = false;
                 }
                 unformattedDesc += postcode;
             }
-            if(city) {
-                if(needSeparator) {
+            if (city) {
+                if (needSeparator) {
                     unformattedDesc += ', ';
                     needSeparator = false;
-                } else if(unformattedDesc.length > 0) {
+                }
+                else if (unformattedDesc.length > 0) {
                     unformattedDesc += ' ';
                 }
                 unformattedDesc += city;
             }
-            if(state && add && add.country_code == 'us') { // assume that state is only important for us addresses
-                if(unformattedDesc.length > 0) {
+            if (state && add && add.country_code == 'us') { // assume that state is only important for us addresses
+                if (unformattedDesc.length > 0) {
                     unformattedDesc += ' ';
                 }
                 unformattedDesc += '(' + state + ')';
             }
 
             var header = '<h2 class="location-header">' + unformattedHeader + '</h2>';
-            if(result.icon) header = '<div class="inline-wrapper"><img class="location-icon" src="' + result.icon + '" />' + header + '</div>';
+            if (result.icon) {
+                header = '<div class="inline-wrapper"><img class="location-icon" src="' + result.icon + '" />' + header + '</div>';
+            }
             var desc = '<span class="location-city">' + unformattedDesc + '</span>';
 
             // Add extras to parsed desc
             var extras = result.extratags;
-            if(extras.opening_hours) {
+            if (extras.opening_hours) {
                 desc += '<div id="opening-hours-header" class="inline-wrapper"><img class="popup-icon" src="'+OC.filePath('maps', 'img', 'recent.svg')+'" />';
                 var oh = new opening_hours(extras.opening_hours, result);
                 var isCurrentlyOpen = oh.getState();
@@ -1046,14 +1069,16 @@
                 var currentDt = new Date();
                 var dtDiff = changeDt.getTime() - currentDt.getTime();
                 dtDiff = dtDiff / 60000; // get diff in minutes
-                if(oh.getState()) { // is open?
+                if (oh.getState()) { // is open?
                     desc += '<span class="poi-open">Open</span>';
-                    if(dtDiff <= 60) {
+                    if (dtDiff <= 60) {
                         desc += '<span class="poi-closes">,&nbsp;closes in ' + dtDiff + ' minutes</span>';
-                    } else {
+                    }
+                    else {
                         desc += '<span>&nbsp;until ' + changeDt.toLocaleTimeString() + '</span>';
                     }
-                } else {
+                }
+                else {
                     desc += '<span class="poi-closed">Closed</span>';
                     desc += '<span class="poi-opens">opens at ' + changeDt.toLocaleTimeString() + '</span>';
                 }
@@ -1068,17 +1093,21 @@
                 var intervals = oh.getOpenIntervals(todayStart, sevDaysEnd);
                 desc += '<table id="opening-hours-table">';
                 // intervals should be 7, if 8, then first entry is interval after 00:00:00 from last day
-                if(intervals.length == 8) {
+                if (intervals.length == 8) {
                     // set end time of last element to end time of first element and remove it
                     intervals[7][1] = intervals[0][1];
                     intervals.splice(0, 1);
                 }
-                for(var i=0; i<intervals.length; i++) {
+                for (var i=0; i<intervals.length; i++) {
                     var from = intervals[i][0];
                     var to = intervals[i][1];
                     var day = from.toLocaleDateString([], {weekday:'long'});
-                    if(i==0) desc += '<tr class="selected">';
-                    else desc += '<tr>';
+                    if (i==0) {
+                        desc += '<tr class="selected">';
+                    }
+                    else {
+                        desc += '<tr>';
+                    }
                     desc += '<td class="opening-hours-day">' + day + '</td>';
                     var startTime = from.toLocaleTimeString();
                     var endTime =to.toLocaleTimeString();
@@ -1087,13 +1116,13 @@
                 }
                 desc += '</table>';
             }
-            if(extras.website) {
+            if (extras.website) {
                 desc += '<div class="inline-wrapper"><img class="popup-icon" src="'+OC.filePath('maps', 'img', 'link.svg')+'" /><a href="' + extras.website + '" target="_blank">' + helpers.beautifyUrl(extras.website) + '</a></div>';
             }
-            if(extras.phone) {
+            if (extras.phone) {
                 desc += '<div class="inline-wrapper"><img class="popup-icon" src="'+OC.filePath('maps', 'img', 'link.svg')+'" /><a href="tel:' + extras.phone + '" target="_blank">' + extras.phone + '</a></div>';
             }
-            if(extras.email) {
+            if (extras.email) {
                 desc += '<div class="inline-wrapper"><img class="popup-icon" src="'+OC.filePath('maps', 'img', 'mail.svg')+'" /><a href="mailto:' + extras.email + '" target="_blank">' + extras.email + '</a></div>';
             }
 

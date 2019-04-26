@@ -974,8 +974,16 @@
                 }
             });
             $('body').on('keyup', '.leaflet-routing-geocoder input', function(e) {
+                // if we press enter => disable autocomplete to let nominatim results dropdown appear
                 if (e.key === 'Enter') {
-                    $('.ui-menu-item').hide();
+                    $(this).autocomplete('close');
+                    $(this).autocomplete('disable');
+                }
+                // if any other key (except arrows up/down) is pressed => enable autocomplete again
+                else if (e.key !== 'ArrowDown' && e.key !== 'ArrowUp') {
+                    $('.leaflet-routing-geocoder-result').removeClass('leaflet-routing-geocoder-result-open');
+                    $(this).autocomplete('enable');
+                    $(this).autocomplete('search');
                 }
             });
         },

@@ -943,6 +943,7 @@
         ROUTING_FROM: 2,
         ROUTING_TO: 3,
         ROUTING_POINT: 4,
+        currentLocalAutocompleteData: [],
         initController: function(map) {
             this.map = map;
             var that = this;
@@ -1013,6 +1014,7 @@
             // get devices
             var devData = devicesController.getAutocompData();
             data.push(...devData);
+            that.currentLocalAutocompleteData = data;
             fieldElement.autocomplete({
                 source: data,
                 select: function (e, ui) {
@@ -1027,6 +1029,11 @@
                     else if (it.type === 'device') {
                         that.map.setView([it.lat, it.lng], 15);
                     }
+                    else if (it.type === 'address') {
+                        if (field === that.SEARCH_BAR) {
+                            mapController.displaySearchResult(it.result);
+                        }
+                    }
                     if (field === that.SEARCH_BAR || field === that.ROUTING_TO) {
                         routingController.setRouteTo(L.latLng(it.lat, it.lng));
                     }
@@ -1040,12 +1047,15 @@
                     }
                 }
             }).data('ui-autocomplete')._renderItem = function(ul, item) {
-                var iconClass = 'icon-phone';
+                var iconClass = 'icon-link';
                 if (item.type === 'favorite') {
                     iconClass = 'icon-favorite';
                 }
                 else if (item.type === 'contact') {
                     iconClass = 'icon-group';
+                }
+                else if (item.type === 'device') {
+                    iconClass = 'icon-phone';
                 }
                 var listItem = $('<li></li>')
                     .data('item.autocomplete', item)
@@ -1056,6 +1066,7 @@
         },
 
         submitSearchForm: function() {
+            var that = this;
             var str = $('#search-term').val();
             if (str.length < 1) {
                 return;
@@ -1068,18 +1079,29 @@
                 else if (results.length === 1) {
                     var result = results[0];
                     mapController.displaySearchResult(result);
-                    routingController.control.spliceWaypoints(routingController.control.getWaypoints().length - 1, 1, new L.LatLng(result.lat, result.lon));
+                    routingController.setRouteTo(L.latLng(result.lat, result.lon));
                 }
                 else {
-                    console.log('multiple results');
                     var result = results[0];
-                    mapController.displaySearchResult(result);
-                    routingController.control.spliceWaypoints(routingController.control.getWaypoints().length - 1, 1, new L.LatLng(result.lat, result.lon));
+                    var newData = [];
+                    newData.push(...that.currentLocalAutocompleteData);
+                    for (var i=0; i < results.length; i++) {
+                        newData.push({
+                            type: 'address',
+                            label: results[i].display_name,
+                            value: results[i].display_name,
+                            result: results[i],
+                            lat: results[i].lat,
+                            lng: results[i].lon
+                        });
+                    }
+                    $('#search-term').autocomplete('option', {source: newData});
+                    $('#search-term').autocomplete('search');
                 }
             });
         },
 
-        isGeocodeabe: function(str) {
+        isGeocodeable: function(str) {
             var pattern = /^\s*\d+\.?\d*\,\s*\d+\.?\d*\s*$/;
             return pattern.test(str);
         },
@@ -1091,7 +1113,7 @@
             });
         },
         geocode: function(latlng) {
-            if (!this.isGeocodeabe(latlng)) {
+            if (!this.isGeocodeable(latlng)) {
                 return;
             }
             var splits = latlng.split(',');

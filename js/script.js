@@ -973,6 +973,11 @@
                     that.setSearchAutocomplete(that.ROUTING_POINT, index);
                 }
             });
+            $('body').on('keyup', '.leaflet-routing-geocoder input', function(e) {
+                if (e.key === 'Enter') {
+                    $('.ui-menu-item').hide();
+                }
+            });
         },
 
         setSearchAutocomplete: function(field, routingPointIndex=null) {

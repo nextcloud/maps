@@ -1154,13 +1154,15 @@ FavoritesController.prototype = {
                 if (this.map.hasLayer(layer)) {
                     layer.eachLayer(function (l) {
                         fav = that.favorites[l.favid];
-                        data.push({
-                            type: 'favorite',
-                            label: fav.name,
-                            value: fav.name,
-                            lat: fav.lat,
-                            lng: fav.lng
-                        });
+                        if (fav.name) {
+                            data.push({
+                                type: 'favorite',
+                                label: fav.name,
+                                value: fav.name,
+                                lat: fav.lat,
+                                lng: fav.lng
+                            });
+                        }
                     });
                 }
             }

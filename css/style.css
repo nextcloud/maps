@@ -532,7 +532,7 @@ tr.selected td {
 .leaflet-routing-remove-waypoint::after {
     right: 6px !important;
     width: 18px !important;
-    height: 10px !important;
+    height: 5px !important;
     background-color: var(--color-main-background) !important;
 }
 .leaflet-routing-remove-waypoint:hover:after {

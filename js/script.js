@@ -718,24 +718,33 @@
             if (!routingController.enabled) {
                 routingController.toggleRouting();
             }
-            var control = routingController.control;
-            control.spliceWaypoints(0, 1, e.latlng);
+            routingController.setRouteFrom(e.latlng);
         },
 
         contextRouteTo: function(e) {
             if (!routingController.enabled) {
                 routingController.toggleRouting();
             }
-            var control = routingController.control;
-            control.spliceWaypoints(control.getWaypoints().length - 1, 1, e.latlng);
+            routingController.setRouteTo(e.latlng);
         },
 
         contextRoutePoint: function(e) {
             if (!routingController.enabled) {
                 routingController.toggleRouting();
             }
-            var control = routingController.control;
-            routingController.control.spliceWaypoints(control.getWaypoints().length - 1, 0, e.latlng);
+            routingController.addRoutePoint(e.latlng);
+        },
+
+        setRouteFrom: function(latlng) {
+            this.control.spliceWaypoints(0, 1, latlng);
+        },
+
+        setRouteTo: function(latlng) {
+            this.control.spliceWaypoints(this.control.getWaypoints().length - 1, 1, latlng);
+        },
+
+        addRoutePoint: function(latlng) {
+            this.control.spliceWaypoints(this.control.getWaypoints().length - 1, 0, latlng);
         },
     };
 
@@ -970,6 +979,7 @@
                     else if (it.type === 'device') {
                         that.map.setView([it.lat, it.lng], 15);
                     }
+                    routingController.setRouteTo(L.latLng(it.lat, it.lng));
                 }
             }).data('ui-autocomplete')._renderItem = function(ul, item) {
                 var iconClass = 'icon-phone';

@@ -935,6 +935,9 @@
 
     var searchController = {
         map: null,
+        SEARCH_BAR: 1,
+        ROUTING_FROM: 2,
+        ROUTING_TO: 3,
         initController: function(map) {
             this.map = map;
             var that = this;
@@ -949,11 +952,33 @@
             });
             $('#search-term').on('focus', function(e) {
                 $(this).select();
-                that.setSearchAutocomplete();
+                that.setSearchAutocomplete(that.SEARCH_BAR);
+            });
+            $('body').on('focus', '.leaflet-routing-geocoder input', function(e) {
+                var inputs = $('.leaflet-routing-geocoder input');
+                var nbInputs = inputs.length;
+                var index = inputs.index($(this));
+                if (index === 0) {
+                    that.setSearchAutocomplete(that.ROUTING_FROM);
+                }
+                else if (index === nbInputs - 1) {
+                    that.setSearchAutocomplete(that.ROUTING_TO);
+                }
             });
         },
 
-        setSearchAutocomplete: function() {
+        setSearchAutocomplete: function(field) {
+                console.log('BBBB');
+            var fieldElement;
+            if (field === this.SEARCH_BAR) {
+                fieldElement = $('#search-term');
+            }
+            else if (field === this.ROUTING_FROM) {
+                fieldElement = $('.leaflet-routing-geocoder input').first();
+            }
+            else if (field === this.ROUTING_TO) {
+                fieldElement = $('.leaflet-routing-geocoder input').last();
+            }
             var that = this;
             var data = [];
             // get favorites
@@ -965,7 +990,7 @@
             // get devices
             var devData = devicesController.getAutocompData();
             data.push(...devData);
-            $('#search-term').autocomplete({
+            fieldElement.autocomplete({
                 source: data,
                 select: function (e, ui) {
                     var it = ui.item;
@@ -979,7 +1004,13 @@
                     else if (it.type === 'device') {
                         that.map.setView([it.lat, it.lng], 15);
                     }
-                    routingController.setRouteTo(L.latLng(it.lat, it.lng));
+                    if (field === that.SEARCH_BAR || field === that.ROUTING_TO) {
+                        routingController.setRouteTo(L.latLng(it.lat, it.lng));
+                    }
+                    else if (field === that.ROUTING_FROM) {
+                        routingController.setRouteFrom(L.latLng(it.lat, it.lng));
+                        $('.leaflet-routing-geocoder input').last().focus();
+                    }
                 }
             }).data('ui-autocomplete')._renderItem = function(ul, item) {
                 var iconClass = 'icon-phone';

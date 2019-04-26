@@ -950,10 +950,9 @@
             // get favorites
             var favData = favoritesController.getAutocompData();
             data.push(...favData);
-            console.log(data);
-            //// get contacts
-            //var contactData = contactsController.getAutocompData();
-            //data.push(...contactData);
+            // get contacts
+            var contactData = contactsController.getAutocompData();
+            data.push(...contactData);
             //// get devices
             //var devData = devicesController.getAutocompData();
             //data.push(...devData);
@@ -967,6 +966,7 @@
                         // TODO bring to front
                     }
                     else if (it.type === 'contact') {
+                        that.map.setView([it.lat, it.lng], 15);
                     }
                     else if (it.type === 'device') {
                     }

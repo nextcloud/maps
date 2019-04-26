@@ -1,5 +1,6 @@
 function ContactsController (optionsController, timeFilterController) {
     this.contact_MARKER_VIEW_SIZE = 40;
+    this.contactLayer = null;
     this.contactsDataLoaded = false;
     this.contactsRequestInProgress = false;
     this.optionsController = optionsController;
@@ -488,5 +489,25 @@ ContactsController.prototype = {
 
         this.showLayer();
     },
+
+    getAutocompData: function() {
+        var that = this;
+        var mData;
+        var data = [];
+        if (this.map.hasLayer(this.contactLayer)) {
+            this.contactLayer.eachLayer(function (l) {
+                mData = l.data;
+                data.push({
+                    type: 'contact',
+                    label: mData.name,
+                    value: mData.name,
+                    lat: mData.lat,
+                    lng: mData.lng
+                });
+            });
+        }
+        return data;
+    },
+
 };
 

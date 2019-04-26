@@ -743,6 +743,10 @@
             this.control.spliceWaypoints(this.control.getWaypoints().length - 1, 1, latlng);
         },
 
+        setRoutePoint: function(i, latlng) {
+            this.control.spliceWaypoints(i, 1, latlng);
+        },
+
         addRoutePoint: function(latlng) {
             this.control.spliceWaypoints(this.control.getWaypoints().length - 1, 0, latlng);
         },
@@ -938,6 +942,7 @@
         SEARCH_BAR: 1,
         ROUTING_FROM: 2,
         ROUTING_TO: 3,
+        ROUTING_POINT: 4,
         initController: function(map) {
             this.map = map;
             var that = this;
@@ -964,11 +969,13 @@
                 else if (index === nbInputs - 1) {
                     that.setSearchAutocomplete(that.ROUTING_TO);
                 }
+                else {
+                    that.setSearchAutocomplete(that.ROUTING_POINT, index);
+                }
             });
         },
 
-        setSearchAutocomplete: function(field) {
-                console.log('BBBB');
+        setSearchAutocomplete: function(field, routingPointIndex=null) {
             var fieldElement;
             if (field === this.SEARCH_BAR) {
                 fieldElement = $('#search-term');
@@ -978,6 +985,9 @@
             }
             else if (field === this.ROUTING_TO) {
                 fieldElement = $('.leaflet-routing-geocoder input').last();
+            }
+            else if (field === this.ROUTING_POINT) {
+                fieldElement = $('.leaflet-routing-geocoder input').eq(routingPointIndex);
             }
             var that = this;
             var data = [];
@@ -1009,6 +1019,10 @@
                     }
                     else if (field === that.ROUTING_FROM) {
                         routingController.setRouteFrom(L.latLng(it.lat, it.lng));
+                        $('.leaflet-routing-geocoder input').last().focus();
+                    }
+                    else if (field === that.ROUTING_POINT) {
+                        routingController.setRoutePoint(routingPointIndex, L.latLng(it.lat, it.lng));
                         $('.leaflet-routing-geocoder input').last().focus();
                     }
                 }

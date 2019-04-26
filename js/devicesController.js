@@ -931,5 +931,30 @@ DevicesController.prototype = {
         return res;
     },
 
+    getAutocompData: function() {
+        var that = this;
+        var marker, devid;
+        var data = [];
+        if (this.map.hasLayer(this.mainLayer)) {
+            for (devid in this.devices) {
+                // is activated
+                if (this.mainLayer.hasLayer(this.mapDeviceLayers[devid])) {
+                    // is not filtered
+                    if (this.mapDeviceLayers[devid].hasLayer(this.deviceMarkerLayers[devid])) {
+                        marker = this.devices[devid].marker;
+                        data.push({
+                            type: 'device',
+                            label: this.devices[devid].name,
+                            value: this.devices[devid].name,
+                            lat: marker.getLatLng().lat,
+                            lng: marker.getLatLng().lng
+                        });
+                    }
+                }
+            }
+        }
+        return data;
+    },
+
 }
 

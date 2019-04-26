@@ -953,15 +953,14 @@
             // get contacts
             var contactData = contactsController.getAutocompData();
             data.push(...contactData);
-            //// get devices
-            //var devData = devicesController.getAutocompData();
-            //data.push(...devData);
+            // get devices
+            var devData = devicesController.getAutocompData();
+            data.push(...devData);
             $('#search-term').autocomplete({
                 source: data,
                 select: function (e, ui) {
                     var it = ui.item;
                     if (it.type === 'favorite') {
-                        console.log('YEAHFAV '+it.label + ' '+it.lat);
                         that.map.setView([it.lat, it.lng], 15);
                         // TODO bring to front
                     }
@@ -969,6 +968,7 @@
                         that.map.setView([it.lat, it.lng], 15);
                     }
                     else if (it.type === 'device') {
+                        that.map.setView([it.lat, it.lng], 15);
                     }
                 }
             }).data('ui-autocomplete')._renderItem = function(ul, item) {

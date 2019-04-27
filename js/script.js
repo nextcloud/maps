@@ -1068,7 +1068,12 @@
                     iconClass = 'icon-group';
                 }
                 else if (item.type === 'device') {
-                    iconClass = 'icon-phone';
+                    if (item.subtype === 'computer') {
+                        iconClass = 'icon-desktop';
+                    }
+                    else {
+                        iconClass = 'icon-phone';
+                    }
                 }
                 // shorten label if needed
                 var label = item.label;

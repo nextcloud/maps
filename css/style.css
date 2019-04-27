@@ -546,6 +546,7 @@ tr.selected td {
 }
 .leaflet-routing-alt table {
     white-space: normal;
+    width: 100%;
 }
 .leaflet-routing-alt td:nth-child(2),
 .leaflet-routing-alt td:nth-child(3) {

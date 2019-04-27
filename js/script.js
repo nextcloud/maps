@@ -1035,6 +1035,13 @@
             // get devices
             var devData = devicesController.getAutocompData();
             data.push(...devData);
+            if (navigator.geolocation && window.isSecureContext) {
+                data.push({
+                    type: 'location',
+                    label: t('maps', 'My location'),
+                    value: t('maps', 'My location')
+                });
+            }
             that.currentLocalAutocompleteData = data;
             fieldElement.autocomplete({
                 source: data,
@@ -1053,6 +1060,27 @@
                         if (field === that.SEARCH_BAR) {
                             mapController.displaySearchResult(it.result);
                         }
+                    }
+                    else if (it.type === 'location') {
+                        navigator.geolocation.getCurrentPosition(function (position) {
+                            var lat = position.coords.latitude;
+                            var lng = position.coords.longitude;
+                            if (field === that.SEARCH_BAR) {
+                                that.map.setView([lat, lng], 15);
+                            }
+                            if (field === that.SEARCH_BAR || field === that.ROUTING_TO) {
+                                routingController.setRouteTo(L.latLng(lat, lng));
+                            }
+                            else if (field === that.ROUTING_FROM) {
+                                routingController.setRouteFrom(L.latLng(lat, lng));
+                                $('.leaflet-routing-geocoder input').last().focus();
+                            }
+                            else if (field === that.ROUTING_POINT) {
+                                routingController.setRoutePoint(routingPointIndex, L.latLng(lat, lng));
+                                $('.leaflet-routing-geocoder input').last().focus();
+                            }
+                        });
+                        return;
                     }
                     if (field === that.SEARCH_BAR || field === that.ROUTING_TO) {
                         routingController.setRouteTo(L.latLng(it.lat, it.lng));
@@ -1081,6 +1109,9 @@
                     else {
                         iconClass = 'icon-phone';
                     }
+                }
+                else if (item.type === 'location') {
+                    iconClass = 'icon-address';
                 }
                 // shorten label if needed
                 var label = item.label;

@@ -987,6 +987,19 @@
                     $(this).autocomplete('search');
                 }
             });
+            // replace JQuery ui autocomplete matching function
+            // to make 'one three' match 'one two three' for example.
+            // search terms in the same order
+            $.ui.autocomplete.filter = function (array, terms) {
+                arrayOfTerms = terms.split(' ');
+                var term = $.map(arrayOfTerms, function (tm) {
+                    return $.ui.autocomplete.escapeRegex(tm);
+                }).join('.*');
+                var matcher = new RegExp(term, 'i');
+                return $.grep(array, function (value) {
+                    return matcher.test(value.label || value.value || value);
+                });
+            };
         },
 
         setSearchAutocomplete: function(field, routingPointIndex=null) {

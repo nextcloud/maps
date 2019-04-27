@@ -1034,13 +1034,12 @@
                     var it = ui.item;
                     if (it.type === 'favorite') {
                         that.map.setView([it.lat, it.lng], 15);
-                        // TODO bring to front
                     }
                     else if (it.type === 'contact') {
                         that.map.setView([it.lat, it.lng], 15);
                     }
                     else if (it.type === 'device') {
-                        that.map.setView([it.lat, it.lng], 15);
+                        devicesController.zoomOnDevice(it.id);
                     }
                     else if (it.type === 'address') {
                         if (field === that.SEARCH_BAR) {

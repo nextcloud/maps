@@ -944,6 +944,7 @@ DevicesController.prototype = {
                         marker = this.devices[devid].marker;
                         data.push({
                             type: 'device',
+                            id: devid,
                             subtype: (['Windows', 'GNU/Linux', 'MacOS'].indexOf(this.devices[devid].info.os) !== -1) ? 'computer' : 'mobile',
                             label: this.devices[devid].name,
                             value: this.devices[devid].name,

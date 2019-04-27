@@ -68,7 +68,7 @@
             </ul>
         </div>
     </li>
-    <li id="navigation-photos">
+    <li id="navigation-photos" class="collapsible">
         <a class="icon-picture" href="#"><?php p($l->t('Photos')); ?></a>
         <div class="app-navigation-entry-utils">
             <ul>
@@ -92,7 +92,7 @@
         </div>
         <ul>
             <li id="navigation-nonLocalizedPhotos">
-                <a class="icon-picture" href="#"><?php p($l->t('non localized')); ?></a>
+                <a class="icon-picture" href="#"><?php p($l->t('without geo tag')); ?></a>
                 <div class="app-navigation-entry-utils">
                     <ul>
                         <li class="app-navigation-entry-utils-counter">

@@ -28,7 +28,7 @@
                 <li>
                     <a href="#" id="import-favorites">
                         <span class="icon-folder"></span>
-                        <span><?php p($l->t('Import favorites from gpx files')); ?></span>
+                        <span><?php p($l->t('Import favorites from gpx/kml/kmz files')); ?></span>
                     </a>
                 </li>
                 <li>
@@ -223,6 +223,5 @@
         </ul>
     </li>
 </ul>
-<img id="dummylogo"/>
 <input id="trackcolorinput" type="color"></input>
 <input id="devicecolorinput" type="color"></input>

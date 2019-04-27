@@ -11,6 +11,8 @@ function PhotosController (optionsController, timeFilterController) {
     this.photoMarkersLastVisible = -1;
     this.timeFilterBegin = 0;
     this.timeFilterEnd = Date.now();
+
+    this.movingPhotoPath = null;
 }
 
 PhotosController.prototype = {
@@ -50,6 +52,19 @@ PhotosController.prototype = {
             if (!wasOpen) {
                 $(this).parent().parent().parent().find('>.app-navigation-entry-menu').addClass('open');
             }
+        });
+        $('body').on('click', '.movephoto', function(e) {
+            var ul = $(this).parent().parent();
+            var filePath = ul.attr('filepath');
+            that.movingPhotoPath = filePath;
+            that.enterMovePhotoMode();
+            that.map.closePopup();
+        });
+        $('body').on('click', '.resetphoto', function(e) {
+            var ul = $(this).parent().parent();
+            var filePath = ul.attr('filepath');
+            that.resetPhotoCoords([filePath]);
+            that.map.closePopup();
         });
         // expand navigation
         $('body').on('click', '#navigation-photos', function(e) {
@@ -201,10 +216,63 @@ PhotosController.prototype = {
             var img = '<img class="photo-tooltip" src=' + previewUrl + '/>' +
                 '<p class="tooltip-photo-date">' + dateStr + '</p>' +
                 '<p class="tooltip-photo-name">' + escapeHTML(basename(markerData.path)) + '</p>';
-            marker.bindTooltip(img, {permanent: false, className: "leaflet-marker-photo-tooltip"});
+            marker.bindTooltip(img, {permanent: false, className: 'leaflet-marker-photo-tooltip', direction: 'right', offset: L.point(0, -30)});
+            marker.on('contextmenu', this.photoMouseRightClick);
             markers.push(marker);
         }
         return markers;
+    },
+
+    photoMouseRightClick: function(e) {
+        var filePath = e.target.data.path;
+
+        e.target.unbindPopup();
+        var popupContent = this._map.photosController.getPhotoContextPopupContent(filePath);
+        e.target.bindPopup(popupContent, {
+            closeOnClick: true,
+            className: 'popovermenu open popupMarker',
+            offset: L.point(-5, 9)
+        });
+        e.target.openPopup();
+    },
+
+    getPhotoContextPopupContent: function(filePath) {
+        var moveText = t('maps', 'Move');
+        var resetText = t('maps', 'Remove geo data');
+        var res =
+            '<ul filepath="' + filePath + '">' +
+            '   <li>' +
+            '       <button class="icon-link movephoto">' +
+            '           <span>' + moveText + '</span>' +
+            '       </button>' +
+            '   </li>' +
+            '   <li>' +
+            '       <button class="icon-history resetphoto">' +
+            '           <span>' + resetText + '</span>' +
+            '       </button>' +
+            '   </li>' +
+            '</ul>';
+        return res;
+    },
+
+    enterMovePhotoMode: function() {
+        $('.leaflet-container').css('cursor', 'crosshair');
+        this.map.on('click', this.movePhotoClickMap);
+        OC.Notification.showTemporary(t('maps', 'Click on the map to move the photo, press ESC to cancel'));
+    },
+
+    leaveMovePhotoMode: function() {
+        $('.leaflet-container').css('cursor', 'grab');
+        this.map.off('click', this.movePhotoClickMap);
+        this.movingPhotoPath = null;
+    },
+
+    movePhotoClickMap: function(e) {
+        var lat = e.latlng.lat;
+        var lng = e.latlng.lng;
+        var filePath = this.photosController.movingPhotoPath;
+        this.photosController.leaveMovePhotoMode();
+        this.photosController.placePhotos([filePath], [lat], [lng]);
     },
 
     updateTimeFilterRange: function() {
@@ -291,9 +359,9 @@ PhotosController.prototype = {
         return OC.generateUrl('core') + '/preview.png?file=' + encodeURI(filename) + '&x=32&y=32';
     },
 
-    /* Preview size 375x211 is used in files details view */
+    /* Preview size 341x256 is commonly found in preview folder */
     generatePreviewUrl: function (fileId) {
-        return OC.generateUrl('core') + '/preview?fileId=' + fileId + '&x=349&y=349&a=1';
+        return OC.generateUrl('core') + '/preview?fileId=' + fileId + '&x=341&y=256&a=1';
     },
 
     getImageIconUrl: function() {
@@ -369,6 +437,44 @@ PhotosController.prototype = {
             $('.leaflet-container').css('cursor', 'grab');
         }).fail(function(response) {
             OC.Notification.showTemporary(t('maps', 'Failed to place photos') + ': ' + response.responseText);
+        });
+    },
+
+    resetPhotoCoords: function(paths) {
+        var that = this;
+        $('#navigation-photos').addClass('icon-loading-small');
+        $('.leaflet-container').css('cursor', 'wait');
+        var req = {
+            paths: paths
+        };
+        var url = OC.generateUrl('/apps/maps/photos');
+        $.ajax({
+            type: 'DELETE',
+            url: url,
+            data: req,
+            async: true
+        }).done(function (response) {
+            OC.Notification.showTemporary(t('maps', '{nb} photos reset', {nb: response}));
+            if (response > 0) {
+                that.photosDataLoaded = false;
+                for (var i=0; i < that.photoMarkers.length; i++) {
+                    that.photoLayer.removeLayer(that.photoMarkers[i]);
+                }
+                that.photoMarkers = [];
+                that.photoMarkersOldest = null;
+                that.photoMarkersNewest = null;
+                that.photoMarkersFirstVisible = 0;
+                that.photoMarkersLastVisible = -1;
+                that.timeFilterBegin = 0;
+                that.timeFilterEnd = Date.now();
+
+                that.showLayer();
+            }
+        }).always(function (response) {
+            $('#navigation-photos').removeClass('icon-loading-small');
+            $('.leaflet-container').css('cursor', 'grab');
+        }).fail(function(response) {
+            OC.Notification.showTemporary(t('maps', 'Failed to reset photos coordinates') + ': ' + response.responseText);
         });
     },
 

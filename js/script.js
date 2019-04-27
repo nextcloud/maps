@@ -13,8 +13,10 @@
         contactsController.initLayer(mapController.map);
         mapController.map.contactsController = contactsController;
         tracksController.initController(mapController.map);
+        tracksController.map.tracksController = tracksController;
         devicesController.initController(mapController.map);
         mapController.map.devicesController = devicesController;
+        searchController.initController(mapController.map);
 
         // once controllers have been set/initialized, we can restore option values from server
         optionsController.restoreOptions();
@@ -27,39 +29,6 @@
             $('#opening-hours-table-toggle-collapse').toggle();
         });
 
-        // Search
-        $('#search-form').submit(function(e) {
-            e.preventDefault();
-            submitSearchForm();
-        });
-        $('#search-submit').click(function() {
-            submitSearchForm();
-        });
-
-        function submitSearchForm() {
-            var str = $('#search-term').val();
-            if(str.length < 1) {
-                return;
-            }
-
-            searchController.search(str).then(function(results) {
-                if (results.length === 0) {
-                    return;
-                }
-                else if (results.length === 1) {
-                    var result = results[0];
-                    mapController.displaySearchResult(result);
-                    routingController.control.spliceWaypoints(routingController.control.getWaypoints().length - 1, 1, new L.LatLng(result.lat, result.lon));
-                }
-                else {
-                    console.log('multiple results');
-                    var result = results[0];
-                    mapController.displaySearchResult(result);
-                    routingController.control.spliceWaypoints(routingController.control.getWaypoints().length - 1, 1, new L.LatLng(result.lat, result.lon));
-                }
-            });
-        }
-
         document.onkeydown = function (e) {
             e = e || window.event;
             if (e.key === 'Escape') {
@@ -68,6 +37,9 @@
                 }
                 if (contactsController.movingBookid !== null) {
                     contactsController.leaveMoveContactMode();
+                }
+                if (photosController.movingPhotoPath !== null) {
+                    photosController.leaveMovePhotoMode();
                 }
             }
         };
@@ -264,7 +236,7 @@
             });
             var name = result.display_name;
             var popupContent = searchController.parseOsmResult(result);
-            this.searchMarker.bindPopup(popupContent);
+            this.searchMarker.bindPopup(popupContent, {className: 'search-result-popup'});
             this.searchMarker.addTo(this.map);
             this.searchMarker.openPopup();
             this.map.flyTo([result.lat, result.lon], 15, {duration: 1});
@@ -452,7 +424,7 @@
             $('.leaflet-control-layers').toggle();
 
             // main layers buttons
-            var esriImageUrl = $('#dummylogo').css('content').replace('url("', '').replace('")', '').replace('.png', 'esri.jpg');
+            var esriImageUrl = OC.filePath('maps', 'css/images', 'esri.jpg');
             this.esriButton = L.easyButton({
                 position: 'bottomright',
                 states: [{
@@ -464,7 +436,7 @@
                     }
                 }]
             });
-            var osmImageUrl = $('#dummylogo').css('content').replace('url("', '').replace('")', '').replace('.png', 'osm.png');
+            var osmImageUrl = OC.filePath('maps', 'css/images', 'osm.png');
             this.osmButton = L.easyButton({
                 position: 'bottomright',
                 states: [{
@@ -746,24 +718,37 @@
             if (!routingController.enabled) {
                 routingController.toggleRouting();
             }
-            var control = routingController.control;
-            control.spliceWaypoints(0, 1, e.latlng);
+            routingController.setRouteFrom(e.latlng);
         },
 
         contextRouteTo: function(e) {
             if (!routingController.enabled) {
                 routingController.toggleRouting();
             }
-            var control = routingController.control;
-            control.spliceWaypoints(control.getWaypoints().length - 1, 1, e.latlng);
+            routingController.setRouteTo(e.latlng);
         },
 
         contextRoutePoint: function(e) {
             if (!routingController.enabled) {
                 routingController.toggleRouting();
             }
-            var control = routingController.control;
-            routingController.control.spliceWaypoints(control.getWaypoints().length - 1, 0, e.latlng);
+            routingController.addRoutePoint(e.latlng);
+        },
+
+        setRouteFrom: function(latlng) {
+            this.control.spliceWaypoints(0, 1, latlng);
+        },
+
+        setRouteTo: function(latlng) {
+            this.control.spliceWaypoints(this.control.getWaypoints().length - 1, 1, latlng);
+        },
+
+        setRoutePoint: function(i, latlng) {
+            this.control.spliceWaypoints(i, 1, latlng);
+        },
+
+        addRoutePoint: function(latlng) {
+            this.control.spliceWaypoints(this.control.getWaypoints().length - 1, 0, latlng);
         },
     };
 
@@ -953,19 +938,245 @@
     timeFilterController.connect();
 
     var searchController = {
-        isGeocodeabe: function(str) {
+        map: null,
+        SEARCH_BAR: 1,
+        ROUTING_FROM: 2,
+        ROUTING_TO: 3,
+        ROUTING_POINT: 4,
+        currentLocalAutocompleteData: [],
+        initController: function(map) {
+            this.map = map;
+            var that = this;
+            // Search
+            $('#search-form').submit(function(e) {
+                e.preventDefault();
+                that.submitSearchForm();
+            });
+            $('#search-submit').click(function(e) {
+                e.preventDefault();
+                that.submitSearchForm();
+            });
+            $('#search-term').on('focus', function(e) {
+                $(this).select();
+                that.setSearchAutocomplete(that.SEARCH_BAR);
+            });
+            $('body').on('focus', '.leaflet-routing-geocoder input', function(e) {
+                var inputs = $('.leaflet-routing-geocoder input');
+                var nbInputs = inputs.length;
+                var index = inputs.index($(this));
+                if (index === 0) {
+                    that.setSearchAutocomplete(that.ROUTING_FROM);
+                }
+                else if (index === nbInputs - 1) {
+                    that.setSearchAutocomplete(that.ROUTING_TO);
+                }
+                else {
+                    that.setSearchAutocomplete(that.ROUTING_POINT, index);
+                }
+            });
+            $('body').on('keyup', '.leaflet-routing-geocoder input', function(e) {
+                // if we press enter => disable autocomplete to let nominatim results dropdown appear
+                if (e.key === 'Enter') {
+                    $(this).autocomplete('close');
+                    $(this).autocomplete('disable');
+                }
+                // if any other key (except arrows up/down) is pressed => enable autocomplete again
+                else if (e.key !== 'ArrowDown' && e.key !== 'ArrowUp') {
+                    $('.leaflet-routing-geocoder-result').removeClass('leaflet-routing-geocoder-result-open');
+                    $(this).autocomplete('enable');
+                    $(this).autocomplete('search');
+                }
+            });
+            // replace JQuery ui autocomplete matching function
+            // to make 'one three' match 'one two three' for example.
+            // search terms in the same order
+            $.ui.autocomplete.filter = function (array, terms) {
+                arrayOfTerms = terms.split(' ');
+                var term = $.map(arrayOfTerms, function (tm) {
+                    return $.ui.autocomplete.escapeRegex(tm);
+                }).join('.*');
+                var matcher = new RegExp(term, 'i');
+                return $.grep(array, function (value) {
+                    return matcher.test(value.label || value.value || value);
+                });
+            };
+            // search result add favorite
+            $('body').on('click', '.search-add-favorite', function(e) {
+                var lat = parseFloat($(this).attr('lat'));
+                var lng = parseFloat($(this).attr('lng'));
+                var name = $(this).parent().find('.location-header').text();
+                favoritesController.addFavoriteDB('', lat, lng, name);
+                that.map.closePopup();
+            });
+        },
+
+        setSearchAutocomplete: function(field, routingPointIndex=null) {
+            var fieldElement;
+            if (field === this.SEARCH_BAR) {
+                fieldElement = $('#search-term');
+            }
+            else if (field === this.ROUTING_FROM) {
+                fieldElement = $('.leaflet-routing-geocoder input').first();
+            }
+            else if (field === this.ROUTING_TO) {
+                fieldElement = $('.leaflet-routing-geocoder input').last();
+            }
+            else if (field === this.ROUTING_POINT) {
+                fieldElement = $('.leaflet-routing-geocoder input').eq(routingPointIndex);
+            }
+            var that = this;
+            var data = [];
+            // get favorites
+            var favData = favoritesController.getAutocompData();
+            data.push(...favData);
+            // get contacts
+            var contactData = contactsController.getAutocompData();
+            data.push(...contactData);
+            // get devices
+            var devData = devicesController.getAutocompData();
+            data.push(...devData);
+            if (navigator.geolocation && window.isSecureContext) {
+                data.push({
+                    type: 'location',
+                    label: t('maps', 'My location'),
+                    value: t('maps', 'My location')
+                });
+            }
+            that.currentLocalAutocompleteData = data;
+            fieldElement.autocomplete({
+                source: data,
+                select: function (e, ui) {
+                    var it = ui.item;
+                    if (it.type === 'favorite') {
+                        that.map.setView([it.lat, it.lng], 15);
+                    }
+                    else if (it.type === 'contact') {
+                        that.map.setView([it.lat, it.lng], 15);
+                    }
+                    else if (it.type === 'device') {
+                        devicesController.zoomOnDevice(it.id);
+                    }
+                    else if (it.type === 'address') {
+                        if (field === that.SEARCH_BAR) {
+                            mapController.displaySearchResult(it.result);
+                        }
+                    }
+                    else if (it.type === 'location') {
+                        navigator.geolocation.getCurrentPosition(function (position) {
+                            var lat = position.coords.latitude;
+                            var lng = position.coords.longitude;
+                            if (field === that.SEARCH_BAR) {
+                                that.map.setView([lat, lng], 15);
+                            }
+                            if (field === that.SEARCH_BAR || field === that.ROUTING_TO) {
+                                routingController.setRouteTo(L.latLng(lat, lng));
+                            }
+                            else if (field === that.ROUTING_FROM) {
+                                routingController.setRouteFrom(L.latLng(lat, lng));
+                                $('.leaflet-routing-geocoder input').last().focus();
+                            }
+                            else if (field === that.ROUTING_POINT) {
+                                routingController.setRoutePoint(routingPointIndex, L.latLng(lat, lng));
+                                $('.leaflet-routing-geocoder input').last().focus();
+                            }
+                        });
+                        return;
+                    }
+                    if (field === that.SEARCH_BAR || field === that.ROUTING_TO) {
+                        routingController.setRouteTo(L.latLng(it.lat, it.lng));
+                    }
+                    else if (field === that.ROUTING_FROM) {
+                        routingController.setRouteFrom(L.latLng(it.lat, it.lng));
+                        $('.leaflet-routing-geocoder input').last().focus();
+                    }
+                    else if (field === that.ROUTING_POINT) {
+                        routingController.setRoutePoint(routingPointIndex, L.latLng(it.lat, it.lng));
+                        $('.leaflet-routing-geocoder input').last().focus();
+                    }
+                }
+            }).data('ui-autocomplete')._renderItem = function(ul, item) {
+                var iconClass = 'icon-link';
+                if (item.type === 'favorite') {
+                    iconClass = 'icon-favorite';
+                }
+                else if (item.type === 'contact') {
+                    iconClass = 'icon-group';
+                }
+                else if (item.type === 'device') {
+                    if (item.subtype === 'computer') {
+                        iconClass = 'icon-desktop';
+                    }
+                    else {
+                        iconClass = 'icon-phone';
+                    }
+                }
+                else if (item.type === 'location') {
+                    iconClass = 'icon-address';
+                }
+                // shorten label if needed
+                var label = item.label;
+                if (label.length > 35) {
+                    label = label.substring(0, 35) + '...';
+                }
+                var listItem = $('<li></li>')
+                    .data('item.autocomplete', item)
+                    .append('<a class="searchCompleteLink"><button class="searchCompleteIcon ' + iconClass + '"></button> ' + label + '</a>')
+                    .appendTo(ul);
+                return listItem;
+            };
+        },
+
+        submitSearchForm: function() {
+            var that = this;
+            var str = $('#search-term').val();
+            if (str.length < 1) {
+                return;
+            }
+
+            this.search(str).then(function(results) {
+                if (results.length === 0) {
+                    return;
+                }
+                else if (results.length === 1) {
+                    var result = results[0];
+                    mapController.displaySearchResult(result);
+                    routingController.setRouteTo(L.latLng(result.lat, result.lon));
+                }
+                else {
+                    var result = results[0];
+                    var newData = [];
+                    newData.push(...that.currentLocalAutocompleteData);
+                    for (var i=0; i < results.length; i++) {
+                        newData.push({
+                            type: 'address',
+                            label: results[i].display_name,
+                            value: results[i].display_name,
+                            result: results[i],
+                            lat: results[i].lat,
+                            lng: results[i].lon
+                        });
+                    }
+                    $('#search-term').autocomplete('option', {source: newData});
+                    $('#search-term').autocomplete('search');
+                }
+            });
+        },
+
+        isGeocodeable: function(str) {
             var pattern = /^\s*\d+\.?\d*\,\s*\d+\.?\d*\s*$/;
             return pattern.test(str);
         },
         search: function(str) {
-            var searchTerm = str.replace(' ', '%20'); // encode spaces
-            var apiUrl = 'https://nominatim.openstreetmap.org/search/'+searchTerm+'?format=json&addressdetails=1&extratags=1&namedetails=1&limit=8';
+            var searchTerm = encodeURIComponent(str);
+            var apiUrl = 'https://nominatim.openstreetmap.org/search/' + searchTerm + '?format=json&addressdetails=1&extratags=1&namedetails=1&limit=8';
             return $.getJSON(apiUrl, {}, function(response) {
                 return response;
             });
         },
         geocode: function(latlng) {
-            if(!this.isGeocodeabe(latlng)) return;
+            if (!this.isGeocodeable(latlng)) {
+                return;
+            }
             var splits = latlng.split(',');
             var lat = splits[0].trim();
             var lon = splits[1].trim();
@@ -977,64 +1188,87 @@
         parseOsmResult: function(result) {
             var add = result.address;
             var road, postcode, city, state, name;
-            if(add.road) {
+            if (add.road) {
                 road = add.road;
-                if(add.house_number) road += ' ' + add.house_number;
+                if (add.house_number) {
+                    road += ' ' + add.house_number;
+                }
             }
-            if(add.postcode) postcode = add.postcode;
-            if(add.city || add.town || add.village) {
-                if(add.city) city = add.city;
-                else if(add.town) city = add.town;
-                else if(add.village) city = add.village;
-                if(add.state) {
+            if (add.postcode) {
+                postcode = add.postcode;
+            }
+            if (add.city || add.town || add.village) {
+                if (add.city) {
+                    city = add.city;
+                }
+                else if (add.town) {
+                    city = add.town;
+                }
+                else if (add.village) {
+                    city = add.village;
+                }
+                if (add.state) {
                      state = add.state;
                 }
             }
             var details = result.namedetails;
-            if(details.name) name = details.name;
+            if (details.name) {
+                name = details.name;
+            }
 
             var unformattedHeader;
-            if(name) unformattedHeader = name;
-            else if(road) unformattedHeader = road;
-            else if(city) unformattedHeader = city;
+            if (name) {
+                unformattedHeader = name;
+            }
+            else if (road) {
+                unformattedHeader = road;
+            }
+            else if (city) {
+                unformattedHeader = city;
+            }
 
             var unformattedDesc = '';
             var needSeparator = false;
             // add road to desc if it is not heading and exists (isn't heading, if 'name' is set)
-            if(name && road) {
+            if (name && road) {
                 unformattedDesc = road;
                 needSeparator = true;
             }
-            if(postcode) {
-                if(needSeparator) {
+            if (postcode) {
+                if (needSeparator) {
                     unformattedDesc += ', ';
                     needSeparator = false;
                 }
                 unformattedDesc += postcode;
             }
-            if(city) {
-                if(needSeparator) {
+            if (city) {
+                if (needSeparator) {
                     unformattedDesc += ', ';
                     needSeparator = false;
-                } else if(unformattedDesc.length > 0) {
+                }
+                else if (unformattedDesc.length > 0) {
                     unformattedDesc += ' ';
                 }
                 unformattedDesc += city;
             }
-            if(state && add && add.country_code == 'us') { // assume that state is only important for us addresses
-                if(unformattedDesc.length > 0) {
+            if (state && add && add.country_code == 'us') { // assume that state is only important for us addresses
+                if (unformattedDesc.length > 0) {
                     unformattedDesc += ' ';
                 }
                 unformattedDesc += '(' + state + ')';
             }
 
             var header = '<h2 class="location-header">' + unformattedHeader + '</h2>';
-            if(result.icon) header = '<div class="inline-wrapper"><img class="location-icon" src="' + result.icon + '" />' + header + '</div>';
+            if (result.icon) {
+                header = '<div class="inline-wrapper"><img class="location-icon" src="' + result.icon + '" />' + header + '</div>';
+            }
             var desc = '<span class="location-city">' + unformattedDesc + '</span>';
+            desc += '<button class="search-add-favorite" lat="'+result.lat+'" lng="'+result.lon+'">' +
+                '<span class="icon-favorite"> </span> ' + t('maps', 'Add to favorites') + '</button>';
 
             // Add extras to parsed desc
             var extras = result.extratags;
-            if(extras.opening_hours) {
+            if (extras.opening_hours) {
                 desc += '<div id="opening-hours-header" class="inline-wrapper"><img class="popup-icon" src="'+OC.filePath('maps', 'img', 'recent.svg')+'" />';
                 var oh = new opening_hours(extras.opening_hours, result);
                 var isCurrentlyOpen = oh.getState();
@@ -1042,18 +1276,24 @@
                 var currentDt = new Date();
                 var dtDiff = changeDt.getTime() - currentDt.getTime();
                 dtDiff = dtDiff / 60000; // get diff in minutes
-                if(oh.getState()) { // is open?
-                    desc += '<span class="poi-open">Open</span>';
-                    if(dtDiff <= 60) {
-                        desc += '<span class="poi-closes">,&nbsp;closes in ' + dtDiff + ' minutes</span>';
-                    } else {
-                        desc += '<span>&nbsp;until ' + changeDt.toLocaleTimeString() + '</span>';
+                if (oh.getState()) { // is open?
+                    desc += '<span class="poi-open">' + t('maps', 'Open') + '&nbsp;</span>';
+                    if (dtDiff <= 60) {
+                        desc += '<span class="poi-closes">,&nbsp;' + t('maps', 'closes in {nb} minutes', {nb: dtDiff}) + '</span>';
                     }
-                } else {
-                    desc += '<span class="poi-closed">Closed</span>';
-                    desc += '<span class="poi-opens">opens at ' + changeDt.toLocaleTimeString() + '</span>';
+                    else {
+                        desc += '<span>&nbsp;' + t('maps', 'until {date}', {date: changeDt.toLocaleTimeString()}) + '</span>';
+                    }
                 }
-                desc += '<img id="opening-hours-table-toggle-collapse" src="'+OC.filePath('maps', 'img', 'triangle-s.svg')+'" /><img id="opening-hours-table-toggle-expand" src="'+OC.filePath('maps', 'img', 'triangle-e.svg')+'" /></div>';
+                else {
+                    desc += '<span class="poi-closed">' + t('maps', 'Closed') + '&nbsp;</span>';
+                    desc += '<span class="poi-opens">' + t('maps', 'opens at {date}', {date: changeDt.toLocaleTimeString()}) + '</span>';
+                }
+                desc += '<img id="opening-hours-table-toggle-collapse" src="' +
+                    OC.filePath('maps', 'img', 'triangle-s.svg') +
+                    '" /><img id="opening-hours-table-toggle-expand" src="' +
+                    OC.filePath('maps', 'img', 'triangle-e.svg') +
+                    '" /></div>';
                 var todayStart = currentDt;
                 todayStart.setHours(0);
                 todayStart.setMinutes(0);
@@ -1064,17 +1304,21 @@
                 var intervals = oh.getOpenIntervals(todayStart, sevDaysEnd);
                 desc += '<table id="opening-hours-table">';
                 // intervals should be 7, if 8, then first entry is interval after 00:00:00 from last day
-                if(intervals.length == 8) {
+                if (intervals.length == 8) {
                     // set end time of last element to end time of first element and remove it
                     intervals[7][1] = intervals[0][1];
                     intervals.splice(0, 1);
                 }
-                for(var i=0; i<intervals.length; i++) {
+                for (var i=0; i<intervals.length; i++) {
                     var from = intervals[i][0];
                     var to = intervals[i][1];
                     var day = from.toLocaleDateString([], {weekday:'long'});
-                    if(i==0) desc += '<tr class="selected">';
-                    else desc += '<tr>';
+                    if (i==0) {
+                        desc += '<tr class="selected">';
+                    }
+                    else {
+                        desc += '<tr>';
+                    }
                     desc += '<td class="opening-hours-day">' + day + '</td>';
                     var startTime = from.toLocaleTimeString();
                     var endTime =to.toLocaleTimeString();
@@ -1083,13 +1327,13 @@
                 }
                 desc += '</table>';
             }
-            if(extras.website) {
+            if (extras.website) {
                 desc += '<div class="inline-wrapper"><img class="popup-icon" src="'+OC.filePath('maps', 'img', 'link.svg')+'" /><a href="' + extras.website + '" target="_blank">' + helpers.beautifyUrl(extras.website) + '</a></div>';
             }
-            if(extras.phone) {
+            if (extras.phone) {
                 desc += '<div class="inline-wrapper"><img class="popup-icon" src="'+OC.filePath('maps', 'img', 'link.svg')+'" /><a href="tel:' + extras.phone + '" target="_blank">' + extras.phone + '</a></div>';
             }
-            if(extras.email) {
+            if (extras.email) {
                 desc += '<div class="inline-wrapper"><img class="popup-icon" src="'+OC.filePath('maps', 'img', 'mail.svg')+'" /><a href="mailto:' + extras.email + '" target="_blank">' + extras.email + '</a></div>';
             }
 

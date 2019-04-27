@@ -56,6 +56,11 @@ DevicesController.prototype = {
             var id = $(this).parent().parent().parent().parent().attr('device');
             that.toggleDeviceLine(id, true);
         });
+        $('body').on('click', '.contextToggleLine', function(e) {
+            var id = $(this).parent().parent().attr('devid');
+            that.toggleDeviceLine(id, true);
+            that.map.closePopup();
+        });
         // toggle devices
         $('body').on('click', '#navigation-devices > a', function(e) {
             that.toggleDevices();
@@ -77,6 +82,11 @@ DevicesController.prototype = {
         $('body').on('click', '.changeDeviceColor', function(e) {
             var id = $(this).parent().parent().parent().parent().attr('device');
             that.askChangeDeviceColor(id);
+        });
+        $('body').on('click', '.contextChangeDeviceColor', function(e) {
+            var id = $(this).parent().parent().attr('devid');
+            that.askChangeDeviceColor(id);
+            that.map.closePopup();
         });
         $('body').on('change', '#devicecolorinput', function(e) {
             that.okColor();
@@ -334,15 +344,9 @@ DevicesController.prototype = {
         else {
             imgurl = OC.generateUrl('/svg/core/clients/phone?color='+color.replace('#', ''));
         }
-        var rgbc = hexToRgb(color);
-        var textcolor = 'black';
-        if (rgbc.r + rgbc.g + rgbc.b < 3 * 80) {
-            textcolor = 'white';
-        }
         $('<style device="' + id + '">' +
             '.tooltip-dev-' + id + ' { ' +
-            'background: rgba(' + rgbc.r + ', ' + rgbc.g + ', ' + rgbc.b + ', 0.5);' +
-            'color: '+textcolor+'; font-weight: bold;' +
+            'border: 2px solid ' + color + ';' +
             ' }' +
             '.devline' + id + ' {' +
             'stroke: ' + color + ';' +
@@ -533,8 +537,10 @@ DevicesController.prototype = {
                 icon: this.devices[id].icon
         });
         this.devices[id].marker.devid = id;
+        this.devices[id].marker.lastPosMarker = true;
         this.devices[id].marker.on('mouseover', this.deviceMarkerMouseover);
         this.devices[id].marker.on('mouseout', this.deviceMarkerMouseout);
+        this.devices[id].marker.on('contextmenu', this.deviceMarkerMouseRightClick);
         //this.devices[id].marker.on('click', this.favoriteMouseClick);
         // points data indexed by point id
         this.devices[id].points = {};
@@ -552,6 +558,7 @@ DevicesController.prototype = {
         this.devices[id].line.devid = id;
         this.devices[id].line.on('mouseover', this.deviceLineMouseover);
         this.devices[id].line.on('mouseout', this.deviceLineMouseout);
+        this.devices[id].line.on('contextmenu', this.deviceMarkerMouseRightClick);
         this.deviceMarkerLayers[id].addLayer(this.devices[id].marker);
         if (this.optionsController.enabledDeviceLines.indexOf(id) !== -1) {
             this.deviceLineLayers[id].addLayer(this.devices[id].line);
@@ -782,7 +789,14 @@ DevicesController.prototype = {
             data: req,
             async: true
         }).done(function (response) {
-            var imgurl = OC.generateUrl('/svg/core/clients/phone?color='+color.replace('#', ''));
+            var imgurl;
+            var device = that.devices[id];
+            if (['Windows', 'GNU/Linux', 'MacOS'].indexOf(device.info.os) !== -1) {
+                imgurl = OC.generateUrl('/svg/core/clients/desktop?color='+color.replace('#', ''));
+            }
+            else {
+                imgurl = OC.generateUrl('/svg/core/clients/phone?color='+color.replace('#', ''));
+            }
             $('#device-list > li[device='+id+'] .device-name').attr('style', 'background-image: url('+imgurl+')');
 
             that.setDeviceCss(id, color);
@@ -798,9 +812,17 @@ DevicesController.prototype = {
         var id = e.target.devid;
         var pointId = e.target.getLatLng().alt;
         var device = that.devices[id];
+        var yOffset = 0;
+        if (e.target.lastPosMarker) {
+            yOffset = -20;
+        }
         // tooltip
         var markerTooltip = that.getDeviceMarkerTooltipContent(device, pointId);
-        e.target.bindTooltip(markerTooltip, {className: 'tooltip-dev-' + id});
+        e.target.bindTooltip(markerTooltip, {
+            className: 'leaflet-marker-device-tooltip tooltip-dev-' + id,
+            direction: 'top',
+            offset: L.point(0, yOffset)
+        });
         e.target.openTooltip();
         // accuracy circle
         var latlng = e.target.getLatLng();
@@ -869,10 +891,71 @@ DevicesController.prototype = {
         that.lineMarker.devid = id;
         that.lineMarker.on('mouseover', that.deviceMarkerMouseover);
         that.lineMarker.on('mouseout', that.deviceMarkerMouseout);
+        that.lineMarker.on('contextmenu', that.deviceMarkerMouseRightClick);
         that.map.addLayer(that.lineMarker);
     },
 
     deviceLineMouseout: function(e) {
+    },
+
+    deviceMarkerMouseRightClick: function(e) {
+        var id = e.target.devid;
+
+        e.target.unbindPopup();
+        var popupContent = this._map.devicesController.getDeviceContextPopupContent(id);
+        e.target.bindPopup(popupContent, {
+            closeOnClick: true,
+            className: 'popovermenu open popupMarker',
+            offset: L.point(-4, 5)
+        });
+        e.target.openPopup(e.latlng);
+        e.preventDefault();
+    },
+
+    getDeviceContextPopupContent: function(id) {
+        var colorText = t('maps', 'Change device color');
+        var lineText = t('maps', 'Toggle device history');
+        var res =
+            '<ul devid="' + id + '">' +
+            '   <li>' +
+            '       <button class="icon-category-monitoring contextToggleLine">' +
+            '           <span>' + lineText + '</span>' +
+            '       </button>' +
+            '   </li>' +
+            '   <li>' +
+            '       <button class="icon-rename contextChangeDeviceColor">' +
+            '           <span>' + colorText + '</span>' +
+            '       </button>' +
+            '   </li>' +
+            '</ul>';
+        return res;
+    },
+
+    getAutocompData: function() {
+        var that = this;
+        var marker, devid;
+        var data = [];
+        if (this.map.hasLayer(this.mainLayer)) {
+            for (devid in this.devices) {
+                // is activated
+                if (this.mainLayer.hasLayer(this.mapDeviceLayers[devid])) {
+                    // is not filtered
+                    if (this.mapDeviceLayers[devid].hasLayer(this.deviceMarkerLayers[devid])) {
+                        marker = this.devices[devid].marker;
+                        data.push({
+                            type: 'device',
+                            id: devid,
+                            subtype: (['Windows', 'GNU/Linux', 'MacOS'].indexOf(this.devices[devid].info.os) !== -1) ? 'computer' : 'mobile',
+                            label: this.devices[devid].name,
+                            value: this.devices[devid].name,
+                            lat: marker.getLatLng().lat,
+                            lng: marker.getLatLng().lng
+                        });
+                    }
+                }
+            }
+        }
+        return data;
     },
 
 }

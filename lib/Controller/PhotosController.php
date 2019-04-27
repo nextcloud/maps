@@ -62,4 +62,12 @@ class PhotosController extends Controller {
         return new DataResponse($result);
     }
 
+    /**
+     * @NoAdminRequired
+     */
+    public function resetPhotosCoords($paths) {
+        $result = $this->photofilesService->resetPhotosFilesCoords($this->userId, $paths);
+        return new DataResponse($result);
+    }
+
 }

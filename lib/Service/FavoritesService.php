@@ -16,6 +16,15 @@ use OCP\IL10N;
 use OCP\ILogger;
 use OCP\DB\QueryBuilder\IQueryBuilder;
 
+use OC\Archive\ZIP;
+
+function endswith($string, $test) {
+    $strlen = strlen($string);
+    $testlen = strlen($test);
+    if ($testlen > $strlen) return false;
+    return substr_compare($string, $test, $strlen - $testlen, $testlen) === 0;
+}
+
 class FavoritesService {
 
     private $l10n;
@@ -26,6 +35,8 @@ class FavoritesService {
     private $currentFavoritesList;
     private $nbImported;
     private $importUserId;
+    private $kmlInsidePlacemark;
+    private $kmlCurrentCategory;
 
     public function __construct (ILogger $logger, IL10N $l10n) {
         $this->l10n = $l10n;
@@ -401,6 +412,137 @@ class FavoritesService {
     }
 
     public function importFavorites($userId, $file) {
+        $lowerFileName = strtolower($file->getName());
+        if (endswith($lowerFileName, '.gpx')) {
+            return $this->importFavoritesFromGpx($userId, $file);
+        }
+        elseif (endswith($lowerFileName, '.kml')) {
+            $fp = $file->fopen('r');
+            $name = $file->getName();
+            return $this->importFavoritesFromKml($userId, $fp, $name);
+        }
+        elseif (endswith($lowerFileName, '.kmz')) {
+            return $this->importFavoritesFromKmz($userId, $file);
+        }
+    }
+
+    public function importFavoritesFromKmz($userId, $file) {
+        $path = $file->getStorage()->getLocalFile($file->getInternalPath());
+        $name = $file->getName();
+        $zf = new ZIP($path);
+        if (count($zf->getFiles()) > 0) {
+            $zippedFilePath = $zf->getFiles()[0];
+            $fstream = $zf->getStream($zippedFilePath, 'r');
+
+            $nbImported = $this->importFavoritesFromKml($userId, $fstream, $name);
+        }
+        else {
+            $nbImported = 0;
+        }
+        return $nbImported;
+    }
+
+    public function importFavoritesFromKml($userId, $fp, $name) {
+        $this->nbImported = 0;
+        $this->currentFavoritesList = [];
+        $this->importUserId = $userId;
+        $this->kmlInsidePlacemark = false;
+        $this->kmlCurrentCategory = '';
+
+        $xml_parser = xml_parser_create();
+        xml_set_object($xml_parser, $this);
+        xml_set_element_handler($xml_parser, 'kmlStartElement', 'kmlEndElement');
+        xml_set_character_data_handler($xml_parser, 'kmlDataElement');
+
+        // using xml_parse to be able to parse file chunks in case it's too big
+        while ($data = fread($fp, 4096000)) {
+            if (!xml_parse($xml_parser, $data, feof($fp))) {
+                $this->logger->error(
+                    'Exception in '.$name.' parsing at line '.
+                      xml_get_current_line_number($xml_parser).' : '.
+                      xml_error_string(xml_get_error_code($xml_parser)),
+                    array('app' => 'maps')
+                );
+                return 5;
+            }
+        }
+        fclose($fp);
+        xml_parser_free($xml_parser);
+
+        return $this->nbImported;
+    }
+
+    private function kmlStartElement($parser, $name, $attrs) {
+        $this->currentXmlTag = $name;
+        if ($name === 'PLACEMARK') {
+            $this->currentFavorite = [];
+            $this->kmlInsidePlacemark = true;
+        }
+        //var_dump($attrs);
+    }
+
+    private function kmlEndElement($parser, $name) {
+        if ($name === 'KML') {
+            // create last bunch
+            if (count($this->currentFavoritesList) > 0) {
+                $this->addMultipleFavoritesToDB($this->importUserId, $this->currentFavoritesList);
+            }
+            unset($this->currentFavoritesList);
+        }
+        else if ($name === 'PLACEMARK') {
+            $this->kmlInsidePlacemark = false;
+            // store favorite
+            $this->nbImported++;
+            $this->currentFavorite['category'] = $this->kmlCurrentCategory;
+            // convert date
+            if (array_key_exists('date_created', $this->currentFavorite)) {
+                $time = new \DateTime($this->currentFavorite['date_created']);
+                $timestamp = $time->getTimestamp();
+                $this->currentFavorite['date_created'] = $timestamp;
+            }
+            if (array_key_exists('coordinates', $this->currentFavorite)) {
+                $spl = explode(',', $this->currentFavorite['coordinates']);
+                if (count($spl) > 1) {
+                    $this->currentFavorite['lat'] = floatval($spl[1]);
+                    $this->currentFavorite['lng'] = floatval($spl[0]);
+                }
+            }
+            array_push($this->currentFavoritesList, $this->currentFavorite);
+            // if we have enough favorites, we create them and clean the array
+            if (count($this->currentFavoritesList) >= 500) {
+                $this->addMultipleFavoritesToDB($this->importUserId, $this->currentFavoritesList);
+                unset($this->currentFavoritesList);
+                $this->currentFavoritesList = [];
+            }
+        }
+    }
+
+    private function kmlDataElement($parser, $data) {
+        $d = trim($data);
+        if (!empty($d)) {
+            if (!$this->kmlInsidePlacemark) {
+                if ($this->currentXmlTag === 'NAME') {
+                    $this->kmlCurrentCategory = $this->kmlCurrentCategory . $d;
+                }
+            }
+            else {
+                if ($this->currentXmlTag === 'NAME') {
+                    $this->currentFavorite['name'] = (array_key_exists('name', $this->currentFavorite)) ? $this->currentFavorite['name'].$d : $d;
+                }
+                else if ($this->currentXmlTag === 'WHEN') {
+                    $this->currentFavorite['date_created'] = (array_key_exists('date_created', $this->currentFavorite)) ? $this->currentFavorite['date_created'].$d : $d;
+                }
+                else if ($this->currentXmlTag === 'COORDINATES') {
+                    $this->currentFavorite['coordinates'] = (array_key_exists('coordinates', $this->currentFavorite)) ? $this->currentFavorite['coordinates'].$d : $d;
+                }
+                else if ($this->currentXmlTag === 'DESCRIPTION') {
+                    $this->currentFavorite['comment'] = (array_key_exists('comment', $this->currentFavorite)) ? $this->currentFavorite['comment'].$d : $d;
+                }
+            }
+        }
+    }
+
+    public function importFavoritesFromGpx($userId, $file) {
         $this->nbImported = 0;
         $this->currentFavoritesList = [];
         $this->importUserId = $userId;
@@ -412,6 +554,7 @@ class FavoritesService {
 
         $fp = $file->fopen('r');
 
+        // using xml_parse to be able to parse file chunks in case it's too big
         while ($data = fread($fp, 4096000)) {
             if (!xml_parse($xml_parser, $data, feof($fp))) {
                 $this->logger->error(
@@ -430,7 +573,6 @@ class FavoritesService {
     }
 
     private function gpxStartElement($parser, $name, $attrs) {
-        //$points, array($lat, $lon, $ele, $timestamp, $acc, $bat, $sat, $ua, $speed, $bearing)
         $this->currentXmlTag = $name;
         if ($name === 'WPT') {
             $this->currentFavorite = [];

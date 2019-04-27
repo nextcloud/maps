@@ -182,12 +182,12 @@ FavoritesController.prototype = {
         // import favorites
         $('body').on('click', '#import-favorites', function(e) {
             OC.dialogs.filepicker(
-                t('maps', 'Import favorites from gpx file'),
+                t('maps', 'Import favorites from gpx (OsmAnd), kmz (F-Droid Maps & Maps.me) or kml file'),
                 function(targetPath) {
                     that.importFavorites(targetPath);
                 },
                 false,
-                'application/gpx+xml',
+                ['application/gpx+xml', 'application/vnd.google-earth.kmz', 'application/vnd.google-earth.kml+xml'],
                 true
             );
         });
@@ -445,18 +445,13 @@ FavoritesController.prototype = {
             color = OCA.Theming.color.replace('#', '');
         }
         this.categoryColors[rawName] = color;
-        var rgbc = hexToRgb('#'+color);
-        var textcolor = 'black';
-        if (rgbc.r + rgbc.g + rgbc.b < 3 * 80) {
-            textcolor = 'white';
-        }
         $('<style category="'+name+'">' +
             '.'+name+'CategoryMarker { ' +
             'background-color: #'+color+';' +
             '}' +
             '.tooltipfav-' + name + ' {' +
-            'background: rgba(' + rgbc.r + ', ' + rgbc.g + ', ' + rgbc.b + ', 0.7);' +
-            'color: ' + textcolor + '; font-weight: bold; }' +
+            'border: 2px solid #'+color+';' +
+            '}' +
             '</style>').appendTo('body');
 
         // subgroup layer
@@ -781,7 +776,10 @@ FavoritesController.prototype = {
         var fav = this._map.favoritesController.favorites[favid];
         var cat = fav.category ? fav.category.replace(' ', '-') : this._map.favoritesController.defaultCategory.replace(' ', '-');
         var favTooltip = this._map.favoritesController.getFavoriteTooltipContent(fav);
-        e.target.bindTooltip(favTooltip, {className: 'tooltipfav-' + cat});
+        e.target.bindTooltip(favTooltip, {
+            className: 'leaflet-marker-favorite-tooltip tooltipfav-' + cat,
+            direction: 'top'
+        });
         e.target.openTooltip();
     },
 
@@ -1145,5 +1143,32 @@ FavoritesController.prototype = {
             OC.Notification.showTemporary(t('maps', 'Failed to import favorites'));
         });
     },
+
+    getAutocompData: function() {
+        var that = this;
+        var fav, favid;
+        var data = [];
+        if (that.map.hasLayer(that.cluster)) {
+            for (var cat in this.categoryLayers) {
+                layer = this.categoryLayers[cat];
+                if (this.map.hasLayer(layer)) {
+                    layer.eachLayer(function (l) {
+                        fav = that.favorites[l.favid];
+                        if (fav.name) {
+                            data.push({
+                                type: 'favorite',
+                                label: fav.name,
+                                value: fav.name,
+                                lat: fav.lat,
+                                lng: fav.lng
+                            });
+                        }
+                    });
+                }
+            }
+        }
+        return data;
+    },
+
 }
 

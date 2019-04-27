@@ -19,7 +19,7 @@
 }
 #search-term {
     margin-right: 0px !important;
-    width: 200px;
+    width: 294px;
 }
 
 #timeRangeSlider {
@@ -96,8 +96,11 @@
     max-width: 50vw;
 }
 
+#opening-hours-table td {
+    padding: 0 5px 0 5px;
+}
 #opening-hours-table {
-    margin-left: 25px;
+    width: 100%;
     display: none;
 }
 
@@ -234,14 +237,25 @@ tr.selected td {
     border-radius: 50%;
 }
 
+.leaflet-marker-contact.contact-marker:after {
+    bottom: 18px;
+    border-width: 12px 8px 0;
+}
+.leaflet-marker-device.device-marker:after {
+    bottom: 18px;
+    border-width: 12px 7px 0;
+}
 .leaflet-marker-nonLocalizedPhoto.nonLocalizedPhoto-marker:after,
+.leaflet-marker-photo.photo-marker:after {
+    bottom: 17px;
+    border-width: 11px 8px 0;
+}
 .leaflet-marker-contact.contact-marker:after,
 .leaflet-marker-device.device-marker:after,
+.leaflet-marker-nonLocalizedPhoto.nonLocalizedPhoto-marker:after,
 .leaflet-marker-photo.photo-marker:after {
     content:"";
     position: relative;
-    bottom: 16px;
-    border-width: 10px 10px 0;
     border-style: solid;
     border-color: var(--color-main-background) transparent;
     display: block;
@@ -304,9 +318,14 @@ tr.selected td {
     padding: 3px;
 }
 
+.leaflet-marker-favorite-tooltip,
+.leaflet-marker-device-tooltip,
+.leaflet-marker-track-tooltip,
 .leaflet-marker-contact-tooltip,
 .leaflet-marker-photo-tooltip {
     opacity: 1 !important;
+    background-color: var(--color-main-background);
+    color: var(--color-main-text);
 }
 .leaflet-marker-photo-tooltip {
     padding: 1px;
@@ -355,10 +374,6 @@ tr.selected td {
 .easy-button-button span.fa{
     line-height: 1.7;
     font-size: 20px;
-}
-#dummylogo {
-    display: none;
-    content: url("images/.png");
 }
 .easy-button-button img {
     width: 100%;
@@ -494,6 +509,9 @@ tr.selected td {
     text-align: center;
 }
 /* Overriden routing/geocoder style */
+.leaflet-routing-geocoder-result tr {
+    line-height: 35px;
+}
 /* hide button if placeholder is shown i.e. if field is empty */
 .leaflet-routing-geocoder > input:placeholder-shown + span {
     display: none;
@@ -520,7 +538,7 @@ tr.selected td {
 .leaflet-routing-remove-waypoint::after {
     right: 6px !important;
     width: 18px !important;
-    height: 10px !important;
+    height: 5px !important;
     background-color: var(--color-main-background) !important;
 }
 .leaflet-routing-remove-waypoint:hover:after {
@@ -528,6 +546,7 @@ tr.selected td {
 }
 .leaflet-routing-alt table {
     white-space: normal;
+    width: 100%;
 }
 .leaflet-routing-alt td:nth-child(2),
 .leaflet-routing-alt td:nth-child(3) {
@@ -583,4 +602,27 @@ tr.selected td {
 .trackNamesList {
     word-wrap: break-word;
     white-space: normal;
+}
+.searchCompleteIcon {
+    background-color: inherit;
+    border: 0px;
+    height: 35px;
+    padding-top: 15px;
+}
+.searchCompleteLink {
+    line-height: 35px;
+}
+.search-add-favorite {
+    margin-left: auto;
+    margin-right: auto;
+    display: block;
+}
+.search-result-popup {
+    width: 250px;
+}
+.search-result-popup .leaflet-popup-content {
+    line-height: 25px !important;
+}
+.ui-autocomplete {
+    z-index: 9999;
 }

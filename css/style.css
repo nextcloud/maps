@@ -611,6 +611,14 @@ tr.selected td {
 .searchCompleteLink {
     line-height: 35px;
 }
+.search-add-favorite {
+    margin-left: auto;
+    margin-right: auto;
+    display: block;
+}
+.search-result-popup {
+    width: 250px;
+}
 .search-result-popup .leaflet-popup-content {
     line-height: 25px !important;
 }

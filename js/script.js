@@ -1000,6 +1000,14 @@
                     return matcher.test(value.label || value.value || value);
                 });
             };
+            // search result add favorite
+            $('body').on('click', '.search-add-favorite', function(e) {
+                var lat = parseFloat($(this).attr('lat'));
+                var lng = parseFloat($(this).attr('lng'));
+                var name = $(this).parent().find('.location-header').text();
+                favoritesController.addFavoriteDB('', lat, lng, name);
+                that.map.closePopup();
+            });
         },
 
         setSearchAutocomplete: function(field, routingPointIndex=null) {
@@ -1224,6 +1232,8 @@
                 header = '<div class="inline-wrapper"><img class="location-icon" src="' + result.icon + '" />' + header + '</div>';
             }
             var desc = '<span class="location-city">' + unformattedDesc + '</span>';
+            desc += '<button class="search-add-favorite" lat="'+result.lat+'" lng="'+result.lon+'">' +
+                '<span class="icon-favorite"> </span> ' + t('maps', 'Add to favorites') + '</button>';
 
             // Add extras to parsed desc
             var extras = result.extratags;

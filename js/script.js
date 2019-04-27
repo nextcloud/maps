@@ -236,7 +236,7 @@
             });
             var name = result.display_name;
             var popupContent = searchController.parseOsmResult(result);
-            this.searchMarker.bindPopup(popupContent);
+            this.searchMarker.bindPopup(popupContent, {className: 'search-result-popup'});
             this.searchMarker.addTo(this.map);
             this.searchMarker.openPopup();
             this.map.flyTo([result.lat, result.lon], 15, {duration: 1});
@@ -1236,19 +1236,23 @@
                 var dtDiff = changeDt.getTime() - currentDt.getTime();
                 dtDiff = dtDiff / 60000; // get diff in minutes
                 if (oh.getState()) { // is open?
-                    desc += '<span class="poi-open">Open</span>';
+                    desc += '<span class="poi-open">' + t('maps', 'Open') + '&nbsp;</span>';
                     if (dtDiff <= 60) {
-                        desc += '<span class="poi-closes">,&nbsp;closes in ' + dtDiff + ' minutes</span>';
+                        desc += '<span class="poi-closes">,&nbsp;' + t('maps', 'closes in {nb} minutes', {nb: dtDiff}) + '</span>';
                     }
                     else {
-                        desc += '<span>&nbsp;until ' + changeDt.toLocaleTimeString() + '</span>';
+                        desc += '<span>&nbsp;' + t('maps', 'until {date}', {date: changeDt.toLocaleTimeString()}) + '</span>';
                     }
                 }
                 else {
-                    desc += '<span class="poi-closed">Closed</span>';
-                    desc += '<span class="poi-opens">opens at ' + changeDt.toLocaleTimeString() + '</span>';
+                    desc += '<span class="poi-closed">' + t('maps', 'Closed') + '&nbsp;</span>';
+                    desc += '<span class="poi-opens">' + t('maps', 'opens at {date}', {date: changeDt.toLocaleTimeString()}) + '</span>';
                 }
-                desc += '<img id="opening-hours-table-toggle-collapse" src="'+OC.filePath('maps', 'img', 'triangle-s.svg')+'" /><img id="opening-hours-table-toggle-expand" src="'+OC.filePath('maps', 'img', 'triangle-e.svg')+'" /></div>';
+                desc += '<img id="opening-hours-table-toggle-collapse" src="' +
+                    OC.filePath('maps', 'img', 'triangle-s.svg') +
+                    '" /><img id="opening-hours-table-toggle-expand" src="' +
+                    OC.filePath('maps', 'img', 'triangle-e.svg') +
+                    '" /></div>';
                 var todayStart = currentDt;
                 todayStart.setHours(0);
                 todayStart.setMinutes(0);

@@ -96,8 +96,11 @@
     max-width: 50vw;
 }
 
+#opening-hours-table td {
+    padding: 0 5px 0 5px;
+}
 #opening-hours-table {
-    margin-left: 25px;
+    width: 100%;
     display: none;
 }
 
@@ -607,6 +610,9 @@ tr.selected td {
 }
 .searchCompleteLink {
     line-height: 35px;
+}
+.search-result-popup .leaflet-popup-content {
+    line-height: 25px !important;
 }
 .ui-autocomplete {
     z-index: 9999;

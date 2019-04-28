@@ -593,8 +593,16 @@ TracksController.prototype = {
         var coloredTooltipClass;
         var rgbc;
 
-        var gpxp = $.parseXML(gpx.replace(/version="1.1"/, 'version="1.0"'));
-        var gpxx = $(gpxp).find('gpx');
+        var gpxp, gpxx;
+        try {
+            gpxp = $.parseXML(gpx.replace(/version="1.1"/, 'version="1.0"'));
+            gpxx = $(gpxp).find('gpx');
+        }
+        catch (err) {
+            OC.Notification.showTemporary(t('maps', 'Failed to parse track {fname}', {fname: this.tracks[id].file_name}));
+            this.removeTrackDB(id);
+            return;
+        }
 
         // count the number of lines and point
         var nbPoints = gpxx.find('>wpt').length;

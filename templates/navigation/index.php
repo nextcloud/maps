@@ -173,7 +173,7 @@
                 </li>
                 <li>
                     <a href="#" id="remove-all-tracks">
-                        <span class="icon-view-close"></span>
+                        <span class="icon-delete"></span>
                         <span><?php p($l->t('Remove all tracks')); ?></span>
                     </a>
                 </li>

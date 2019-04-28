@@ -1117,6 +1117,7 @@
                 }
             }).data('ui-autocomplete')._renderItem = function(ul, item) {
                 var iconClass = 'icon-link';
+                var iconElem = '';
                 if (item.type === 'favorite') {
                     iconClass = 'icon-favorite';
                 }
@@ -1135,7 +1136,8 @@
                     iconClass = 'icon-address';
                 }
                 else if (item.type === 'poi') {
-                    iconClass = 'icon-details';
+                    iconClass = '';
+                    iconElem = '<i class="far fa-dot-circle"></i>';
                 }
                 // shorten label if needed
                 var label = item.label;
@@ -1144,7 +1146,7 @@
                 }
                 var listItem = $('<li></li>')
                     .data('item.autocomplete', item)
-                    .append('<a class="searchCompleteLink"><button class="searchCompleteIcon ' + iconClass + '"></button> ' + label + '</a>')
+                    .append('<a class="searchCompleteLink"><button class="searchCompleteIcon ' + iconClass + '">' + iconElem + '</button> ' + label + '</a>')
                     .appendTo(ul);
                 return listItem;
             };
@@ -1221,6 +1223,11 @@
                 type: 'poi',
                 label: t('maps', 'Bar'),
                 value: 'bar'
+            });
+            data.push({
+                type: 'poi',
+                label: t('maps', 'Supermarket'),
+                value: 'supermarket'
             });
             data.push({
                 type: 'poi',
@@ -1318,7 +1325,7 @@
         },
         searchPOI: function(type, latMin, latMax, lngMin, lngMax) {
             var query, i;
-            var amenities = ['restaurant', 'bar', 'parking', 'hospital', 'cafe', 'school', 'bicycle parking', 'cinema'];
+            var amenities = ['restaurant', 'bar', 'parking', 'hospital', 'cafe', 'school', 'bicycle parking', 'cinema', 'supermarket'];
             var qs = ['atm', 'pharmacy', 'hotel', 'doctors', 'dentist', 'library', 'car rental', 'fuel', 'toilets', 'water point'];
             if (amenities.indexOf(type) !== -1) {
                 query = 'amenity='+encodeURIComponent(type);

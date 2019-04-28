@@ -613,6 +613,14 @@ tr.selected td {
 .searchCompleteLink {
     line-height: 35px;
 }
+.searchCompleteIcon i {
+    min-height: 0px;
+    height: 10px;
+    line-height: 0.2;
+    display: block;
+    width: 1px;
+    margin-left: -5px;
+}
 .search-add-favorite {
     margin-left: auto;
     margin-right: auto;

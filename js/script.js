@@ -225,21 +225,27 @@
     };
 
     var mapController = {
-        searchMarker: {},
+        searchMarkerLayerGroup: null,
         map: {},
         locControl: undefined,
         baseLayers: undefined,
-        displaySearchResult: function(result) {
-            if(this.searchMarker) this.map.removeLayer(this.searchMarker);
-            this.searchMarker = L.marker([result.lat, result.lon], {
-                icon: this.searchIcon
-            });
-            var name = result.display_name;
-            var popupContent = searchController.parseOsmResult(result);
-            this.searchMarker.bindPopup(popupContent, {className: 'search-result-popup'});
-            this.searchMarker.addTo(this.map);
-            this.searchMarker.openPopup();
-            this.map.flyTo([result.lat, result.lon], 15, {duration: 1});
+        displaySearchResult: function(results) {
+            this.searchMarkerLayerGroup.clearLayers();
+            var result, searchMarker;
+            for (var i=0; i < results.length; i++) {
+                result = results[i];
+                searchMarker = L.marker([result.lat, result.lon], {
+                    icon: this.searchIcon
+                });
+                var name = result.display_name;
+                var popupContent = searchController.parseOsmResult(result);
+                searchMarker.bindPopup(popupContent, {className: 'search-result-popup'});
+                searchMarker.addTo(this.searchMarkerLayerGroup);
+            }
+            if (results.length === 1) {
+                this.searchMarkerLayerGroup.getLayers()[0].openPopup();
+                this.map.flyTo([results[0].lat, results[0].lon], 15, {duration: 1});
+            }
         },
         initMap: function() {
             var that = this;
@@ -350,6 +356,10 @@
                     callback: routingController.contextRouteTo
                 }]
             });
+
+            this.searchMarkerLayerGroup = L.featureGroup();
+            this.map.addLayer(this.searchMarkerLayerGroup);
+
             var locale = OC.getLocale();
             var imperial = (
                 locale === 'en_US' ||
@@ -1035,13 +1045,7 @@
             // get devices
             var devData = devicesController.getAutocompData();
             data.push(...devData);
-            if (navigator.geolocation && window.isSecureContext) {
-                data.push({
-                    type: 'location',
-                    label: t('maps', 'My location'),
-                    value: t('maps', 'My location')
-                });
-            }
+            data.push(...this.getExtraAutocompleteData());
             that.currentLocalAutocompleteData = data;
             fieldElement.autocomplete({
                 source: data,
@@ -1058,10 +1062,10 @@
                     }
                     else if (it.type === 'address') {
                         if (field === that.SEARCH_BAR) {
-                            mapController.displaySearchResult(it.result);
+                            mapController.displaySearchResult([it.result]);
                         }
                     }
-                    else if (it.type === 'location') {
+                    else if (it.type === 'mylocation') {
                         navigator.geolocation.getCurrentPosition(function (position) {
                             var lat = position.coords.latitude;
                             var lng = position.coords.longitude;
@@ -1082,6 +1086,12 @@
                         });
                         return;
                     }
+                    else if (it.type === 'poi') {
+                        that.submitSearchPOI(it.value, it.label);
+                        return;
+                    }
+
+                    // forward to routing controller
                     if (field === that.SEARCH_BAR || field === that.ROUTING_TO) {
                         routingController.setRouteTo(L.latLng(it.lat, it.lng));
                     }
@@ -1110,13 +1120,16 @@
                         iconClass = 'icon-phone';
                     }
                 }
-                else if (item.type === 'location') {
+                else if (item.type === 'mylocation') {
                     iconClass = 'icon-address';
+                }
+                else if (item.type === 'poi') {
+                    iconClass = 'icon-details';
                 }
                 // shorten label if needed
                 var label = item.label;
                 if (label.length > 35) {
-                    label = label.substring(0, 35) + '...';
+                    label = label.substring(0, 35) + '…';
                 }
                 var listItem = $('<li></li>')
                     .data('item.autocomplete', item)
@@ -1135,15 +1148,15 @@
 
             this.search(str).then(function(results) {
                 if (results.length === 0) {
+                    OC.Notification.showTemporary(t('maps', 'No search result'));
                     return;
                 }
                 else if (results.length === 1) {
                     var result = results[0];
-                    mapController.displaySearchResult(result);
+                    mapController.displaySearchResult([result]);
                     routingController.setRouteTo(L.latLng(result.lat, result.lon));
                 }
                 else {
-                    var result = results[0];
                     var newData = [];
                     newData.push(...that.currentLocalAutocompleteData);
                     for (var i=0; i < results.length; i++) {
@@ -1162,6 +1175,45 @@
             });
         },
 
+        submitSearchPOI: function(type, typeName) {
+            var that = this;
+
+            var mapBounds = this.map.getBounds();
+            var latMin = mapBounds.getSouth();
+            var latMax = mapBounds.getNorth();
+            var lngMin = mapBounds.getWest();
+            var lngMax = mapBounds.getEast();
+            this.searchPOI(type, latMin, latMax, lngMin, lngMax).then(function(results) {
+                if (results.length === 0) {
+                    OC.Notification.showTemporary(t('maps', 'No {POItypeName} found', {POItypeName: typeName}));
+                    return;
+                }
+                mapController.displaySearchResult(results);
+            });
+        },
+
+        getExtraAutocompleteData: function() {
+            data = [];
+            if (navigator.geolocation && window.isSecureContext) {
+                data.push({
+                    type: 'mylocation',
+                    label: t('maps', 'My location'),
+                    value: t('maps', 'My location')
+                });
+            }
+            data.push({
+                type: 'poi',
+                label: t('maps', 'Restaurant'),
+                value: 'restaurant'
+            });
+            data.push({
+                type: 'poi',
+                label: t('maps', 'Hotel'),
+                value: 'hotel'
+            });
+            return data;
+        },
+
         isGeocodeable: function(str) {
             var pattern = /^\s*\d+\.?\d*\,\s*\d+\.?\d*\s*$/;
             return pattern.test(str);
@@ -1169,6 +1221,22 @@
         search: function(str) {
             var searchTerm = encodeURIComponent(str);
             var apiUrl = 'https://nominatim.openstreetmap.org/search/' + searchTerm + '?format=json&addressdetails=1&extratags=1&namedetails=1&limit=8';
+            return $.getJSON(apiUrl, {}, function(response) {
+                return response;
+            });
+        },
+        searchPOI: function(type, latMin, latMax, lngMin, lngMax) {
+            var query;
+            if (type === 'restaurant') {
+                query = 'amenity=restaurant';
+            }
+            else if (type === 'hotel') {
+                query = 'q=hotel';
+            }
+            var apiUrl = 'https://nominatim.openstreetmap.org/search' +
+                '?format=json&addressdetails=1&extratags=1&namedetails=1&limit=40&' +
+                'viewbox=' + parseFloat(lngMin) + ',' + parseFloat(latMin) + ',' + parseFloat(lngMax) + ',' + parseFloat(latMax) + '&' +
+                'bounded=1&' + query;
             return $.getJSON(apiUrl, {}, function(response) {
                 return response;
             });

@@ -456,6 +456,10 @@ tr.selected td {
 .popupMarker {
     width: 200px;
 }
+.popupMarker .leaflet-popup-content {
+    /* waiting for a better solution */
+    overflow: hidden;
+}
 #navigation-routing:not(.icon-loading-small) > a::before {
     content: "\f4d7";
     font-family: 'Font Awesome\ 5 Free';
@@ -498,10 +502,7 @@ tr.selected td {
 }
 
 .tooltip-contact-avatar {
-    max-width: 100px;
-    max-height: 100px;
-    width: auto;
-    height: auto;
+    width: 80px;
 }
 
 .tooltip-contact-name {

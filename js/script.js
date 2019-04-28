@@ -238,8 +238,19 @@
                     icon: this.searchIcon
                 });
                 var name = result.display_name;
+                // popup
                 var popupContent = searchController.parseOsmResult(result);
                 searchMarker.bindPopup(popupContent, {className: 'search-result-popup'});
+                // tooltip
+                var name = '';
+                if (result.namedetails && result.namedetails.name) {
+                    name = result.namedetails.name;
+                }
+                else {
+                    name = result.display_name;
+                }
+                var tooltipContent = brify(name, 40);
+                searchMarker.bindTooltip(tooltipContent, {className: 'search-result-tooltip'});
                 searchMarker.addTo(this.searchMarkerLayerGroup);
             }
             if (results.length === 1) {
@@ -1208,6 +1219,86 @@
             });
             data.push({
                 type: 'poi',
+                label: t('maps', 'Bar'),
+                value: 'bar'
+            });
+            data.push({
+                type: 'poi',
+                label: t('maps', 'Cafe'),
+                value: 'cafe'
+            });
+            data.push({
+                type: 'poi',
+                label: t('maps', 'Library'),
+                value: 'library'
+            });
+            data.push({
+                type: 'poi',
+                label: t('maps', 'School'),
+                value: 'school'
+            });
+            data.push({
+                type: 'poi',
+                label: t('maps', 'Gaz station'),
+                value: 'fuel'
+            });
+            data.push({
+                type: 'poi',
+                label: t('maps', 'Parking'),
+                value: 'parking'
+            });
+            data.push({
+                type: 'poi',
+                label: t('maps', 'Bicycle parking'),
+                value: 'bicycle parking'
+            });
+            data.push({
+                type: 'poi',
+                label: t('maps', 'Car rental'),
+                value: 'car rental'
+            });
+            data.push({
+                type: 'poi',
+                label: t('maps', 'ATM'),
+                value: 'atm'
+            });
+            data.push({
+                type: 'poi',
+                label: t('maps', 'Pharmacy'),
+                value: 'pharmacy'
+            });
+            data.push({
+                type: 'poi',
+                label: t('maps', 'Cinema'),
+                value: 'cinema'
+            });
+            data.push({
+                type: 'poi',
+                label: t('maps', 'Public toilets'),
+                value: 'toilets'
+            });
+            data.push({
+                type: 'poi',
+                label: t('maps', 'Drinking water'),
+                value: 'water point'
+            });
+            data.push({
+                type: 'poi',
+                label: t('maps', 'Hospital'),
+                value: 'hospital'
+            });
+            data.push({
+                type: 'poi',
+                label: t('maps', 'Doctors'),
+                value: 'doctors'
+            });
+            data.push({
+                type: 'poi',
+                label: t('maps', 'Dentist'),
+                value: 'dentist'
+            });
+            data.push({
+                type: 'poi',
                 label: t('maps', 'Hotel'),
                 value: 'hotel'
             });
@@ -1226,15 +1317,17 @@
             });
         },
         searchPOI: function(type, latMin, latMax, lngMin, lngMax) {
-            var query;
-            if (type === 'restaurant') {
-                query = 'amenity=restaurant';
+            var query, i;
+            var amenities = ['restaurant', 'bar', 'parking', 'hospital', 'cafe', 'school', 'bicycle parking', 'cinema'];
+            var qs = ['atm', 'pharmacy', 'hotel', 'doctors', 'dentist', 'library', 'car rental', 'fuel', 'toilets', 'water point'];
+            if (amenities.indexOf(type) !== -1) {
+                query = 'amenity='+encodeURIComponent(type);
             }
-            else if (type === 'hotel') {
-                query = 'q=hotel';
+            else if (qs.indexOf(type) !== -1) {
+                query = 'q='+encodeURIComponent(type);
             }
             var apiUrl = 'https://nominatim.openstreetmap.org/search' +
-                '?format=json&addressdetails=1&extratags=1&namedetails=1&limit=40&' +
+                '?format=json&addressdetails=1&extratags=1&namedetails=1&limit=100&' +
                 'viewbox=' + parseFloat(lngMin) + ',' + parseFloat(latMin) + ',' + parseFloat(lngMax) + ',' + parseFloat(latMax) + '&' +
                 'bounded=1&' + query;
             return $.getJSON(apiUrl, {}, function(response) {
@@ -1347,7 +1440,7 @@
                 if (oh.getState()) { // is open?
                     desc += '<span class="poi-open">' + t('maps', 'Open') + '&nbsp;</span>';
                     if (dtDiff <= 60) {
-                        desc += '<span class="poi-closes">,&nbsp;' + t('maps', 'closes in {nb} minutes', {nb: dtDiff}) + '</span>';
+                        desc += '<span class="poi-closes">,&nbsp;' + t('maps', 'closes in {nb} minutes', {nb: parseInt(dtDiff)}) + '</span>';
                     }
                     else {
                         desc += '<span>&nbsp;' + t('maps', 'until {date}', {date: changeDt.toLocaleTimeString()}) + '</span>';

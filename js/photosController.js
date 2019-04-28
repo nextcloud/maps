@@ -231,7 +231,7 @@ PhotosController.prototype = {
         e.target.bindPopup(popupContent, {
             closeOnClick: true,
             className: 'popovermenu open popupMarker',
-            offset: L.point(-5, 9)
+            offset: L.point(-5, -20)
         });
         e.target.openPopup();
     },

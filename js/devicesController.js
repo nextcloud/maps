@@ -901,12 +901,16 @@ DevicesController.prototype = {
     deviceMarkerMouseRightClick: function(e) {
         var id = e.target.devid;
 
+        var yOffset = 5;
+        if (e.target.lastPosMarker) {
+            yOffset = -20;
+        }
         e.target.unbindPopup();
         var popupContent = this._map.devicesController.getDeviceContextPopupContent(id);
         e.target.bindPopup(popupContent, {
             closeOnClick: true,
             className: 'popovermenu open popupMarker',
-            offset: L.point(-4, 5)
+            offset: L.point(-5, yOffset)
         });
         e.target.openPopup(e.latlng);
         e.preventDefault();

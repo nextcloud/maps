@@ -212,6 +212,12 @@
                     </a>
                 </li>
                 <li>
+                    <a href="#" id="export-all-devices">
+                        <span class="icon-category-office"></span>
+                        <span><?php p($l->t('Export devices to gpx')); ?></span>
+                    </a>
+                </li>
+                <li>
                     <a href="#" id="delete-all-devices">
                         <span class="icon-delete"></span>
                         <span><?php p($l->t('Delete all devices history')); ?></span>

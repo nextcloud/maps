@@ -161,7 +161,7 @@ class DevicesController extends Controller {
         // sorry about ugly deviceIdList management:
         // when an empty list is passed in http request, we get null here
         if ($deviceIdList === null or (is_array($deviceIdList) and count($deviceIdList) === 0)) {
-            $response = new DataResponse('Nothing to export', 400);
+            $response = new DataResponse('No device to export', 400);
             return $response;
         }
 
@@ -205,7 +205,7 @@ class DevicesController extends Controller {
         $file = $mapsFolder->newFile($filename);
         $handler = $file->fopen('w');
 
-        $this->devicesService->exportDevices($this->userId, $handler, $deviceIdList, $begin, $end, $this->appVersion);
+        $this->devicesService->exportDevices($this->userId, $handler, $deviceIdList, $begin, $end, $this->appVersion, $filename);
 
         fclose($handler);
         $file->touch();

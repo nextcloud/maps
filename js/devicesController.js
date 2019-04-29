@@ -121,6 +121,10 @@ DevicesController.prototype = {
             that.optionsController.enabledDevices = [];
             that.optionsController.saveOptionValues({devicesEnabled: that.map.hasLayer(that.mainLayer)});
         });
+        // export devices
+        $('body').on('click', '#export-all-devices', function(e) {
+            that.exportAllDevices();
+        });
         // refresh devices positions
         $('body').on('click', '#refresh-all-devices', function(e) {
             that.refreshAllDevices();
@@ -960,6 +964,37 @@ DevicesController.prototype = {
             }
         }
         return data;
+    },
+
+    exportAllDevices: function() {
+        var idList = Object.keys(this.devices);
+        this.exportDevices(idList);
+    },
+
+    exportDevices: function(idList) {
+        var that = this;
+        $('#navigation-devices').addClass('icon-loading-small');
+        $('.leaflet-container').css('cursor', 'wait');
+        var req = {
+            deviceIdList: idList,
+            begin: null,
+            end: null,
+            all: true
+        };
+        var url = OC.generateUrl('/apps/maps/export/devices');
+        $.ajax({
+            type: 'POST',
+            url: url,
+            data: req,
+            async: true
+        }).done(function (response) {
+            OC.Notification.showTemporary(t('maps', 'Devices exported in {path}', {path: response}));
+        }).always(function (response) {
+            $('#navigation-devices').removeClass('icon-loading-small');
+            $('.leaflet-container').css('cursor', 'grab');
+        }).fail(function(response) {
+            OC.Notification.showTemporary(t('maps', 'Failed to export devices') + ': ' + response.responseText);
+        });
     },
 
 }

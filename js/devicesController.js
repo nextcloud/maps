@@ -1024,6 +1024,11 @@ DevicesController.prototype = {
             async: true
         }).done(function (response) {
             OC.Notification.showTemporary(t('maps', '{nb} devices imported from {path}', {nb: response, path: path}));
+            var devIdsToRemove = Object.keys(that.devices);
+            for (var i=0; i < devIdsToRemove.length; i++) {
+                that.deleteDeviceMap(devIdsToRemove[i]);
+            }
+            that.getDevices();
         }).always(function (response) {
             $('#navigation-devices').removeClass('icon-loading-small');
             $('.leaflet-container').css('cursor', 'grab');

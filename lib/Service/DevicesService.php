@@ -32,6 +32,7 @@ class DevicesService {
     private $importUserId;
     private $currentXmlTag;
     private $importDevName;
+    private $importFileName;
     private $currentPoint;
     private $currentPointList;
     private $trackIndex;
@@ -423,6 +424,7 @@ class DevicesService {
     public function importDevicesFromGpx($userId, $file) {
         $this->currentPointList = [];
         $this->importUserId = $userId;
+        $this->importFileName = $file->getName();
         $this->trackIndex = 1;
         $this->insideTrk = false;
 
@@ -478,7 +480,7 @@ class DevicesService {
             // log last track points
             if (count($this->currentPointList) > 0) {
                 if ($this->importDevName === '') {
-                    $this->importDevName = 'device'.$this->trackIndex;
+                    $this->importDevName = $this->importFileName.' '.$this->trackIndex;
                 }
                 $devid = $this->getOrCreateDeviceFromDB($this->importUserId, $this->importDevName);
                 $this->addPointsToDB($devid, $this->currentPointList);
@@ -545,6 +547,102 @@ class DevicesService {
             $nbImported = 0;
         }
         return $nbImported;
+    }
+
+    public function importDevicesFromKml($userId, $fp, $name) {
+        $this->trackIndex = 1;
+        $this->importUserId = $userId;
+        $this->importFileName = $name;
+        $xml_parser = xml_parser_create();
+        xml_set_object($xml_parser, $this);
+        xml_set_element_handler($xml_parser, 'kmlStartElement', 'kmlEndElement');
+        xml_set_character_data_handler($xml_parser, 'kmlDataElement');
+
+        while ($data = fread($fp, 4096000)) {
+            if (!xml_parse($xml_parser, $data, feof($fp))) {
+                $this->logger->error(
+                    'Exception in '.$name.' parsing at line '.
+                      xml_get_current_line_number($xml_parser).' : '.
+                      xml_error_string(xml_get_error_code($xml_parser)),
+                    array('app' => $this->appName)
+                );
+                return 0;
+            }
+        }
+        fclose($fp);
+        xml_parser_free($xml_parser);
+        return ($this->trackIndex - 1);
+    }
+
+    private function kmlStartElement($parser, $name, $attrs) {
+        $this->currentXmlTag = $name;
+        if ($name === 'GX:TRACK') {
+            if (array_key_exists('ID', $attrs)) {
+                $this->importDevName = $attrs['ID'];
+            }
+            else {
+                $this->importDevName = $this->importFileName.' '.$this->trackIndex;
+            }
+            $this->pointIndex = 1;
+            $this->currentPointList = [];
+        }
+        else if ($name === 'WHEN') {
+            $this->currentPoint = [];
+        }
+        //var_dump($attrs);
+    }
+
+    private function kmlEndElement($parser, $name) {
+        if ($name === 'GX:TRACK') {
+            // log last track points
+            if (count($this->currentPointList) > 0) {
+                $devid = $this->getOrCreateDeviceFromDB($this->importUserId, $this->importDevName);
+                $this->addPointsToDB($devid, $this->currentPointList);
+            }
+            $this->trackIndex++;
+            unset($this->currentPointList);
+        }
+        else if ($name === 'GX:COORD') {
+            // convert date
+            if (array_key_exists('date', $this->currentPoint)) {
+                $time = new \DateTime($this->currentPoint['date']);
+                $timestamp = $time->getTimestamp();
+                $this->currentPoint['date'] = $timestamp;
+            }
+            // get latlng
+            if (array_key_exists('coords', $this->currentPoint)) {
+                $spl = explode(' ', $this->currentPoint['coords']);
+                if (count($spl) > 1) {
+                    $this->currentPoint['lat'] = floatval($spl[1]);
+                    $this->currentPoint['lng'] = floatval($spl[0]);
+                    if (count($spl) > 2) {
+                        $this->currentPoint['altitude'] = floatval($spl[2]);
+                    }
+                }
+            }
+            // store track point
+            array_push($this->currentPointList, $this->currentPoint);
+            // if we have enough points, we log them and clean the points array
+            if (count($this->currentPointList) >= 500) {
+                $devid = $this->getOrCreateDeviceFromDB($this->importUserId, $this->importDevName);
+                $this->addPointsToDB($devid, $this->currentPointList);
+                unset($this->currentPointList);
+                $this->currentPointList = [];
+            }
+            $this->pointIndex++;
+        }
+    }
+
+    private function kmlDataElement($parser, $data) {
+        $d = trim($data);
+        if (!empty($d)) {
+            if ($this->currentXmlTag === 'WHEN') {
+                $this->currentPoint['date'] = (array_key_exists('date', $this->currentPoint)) ? $this->currentPoint['date'].$d : $d;
+            }
+            else if ($this->currentXmlTag === 'GX:COORD') {
+                $this->currentPoint['coords'] = (array_key_exists('coords', $this->currentPoint)) ? $this->currentPoint['coords'].$d : $d;
+            }
+        }
     }
 
 }

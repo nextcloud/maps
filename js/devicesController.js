@@ -125,6 +125,18 @@ DevicesController.prototype = {
         $('body').on('click', '#export-all-devices', function(e) {
             that.exportAllDevices();
         });
+        // import devices
+        $('body').on('click', '#import-devices', function(e) {
+            OC.dialogs.filepicker(
+                t('maps', 'Import devices from gpx (Nextcloud Maps) or kml/kmz (Google Timeline) file'),
+                function(targetPath) {
+                    that.importDevices(targetPath);
+                },
+                false,
+                ['application/gpx+xml', 'application/vnd.google-earth.kmz', 'application/vnd.google-earth.kml+xml'],
+                true
+            );
+        });
         // refresh devices positions
         $('body').on('click', '#refresh-all-devices', function(e) {
             that.refreshAllDevices();
@@ -994,6 +1006,29 @@ DevicesController.prototype = {
             $('.leaflet-container').css('cursor', 'grab');
         }).fail(function(response) {
             OC.Notification.showTemporary(t('maps', 'Failed to export devices') + ': ' + response.responseText);
+        });
+    },
+
+    importDevices: function(path) {
+        $('#navigation-devices').addClass('icon-loading-small');
+        $('.leaflet-container').css('cursor', 'wait');
+        var that = this;
+        var req = {
+            path: path
+        };
+        var url = OC.generateUrl('/apps/maps/import/devices');
+        $.ajax({
+            type: 'POST',
+            url: url,
+            data: req,
+            async: true
+        }).done(function (response) {
+            OC.Notification.showTemporary(t('maps', '{nb} favorites imported from {path}', {nb: response, path: path}));
+        }).always(function (response) {
+            $('#navigation-devices').removeClass('icon-loading-small');
+            $('.leaflet-container').css('cursor', 'grab');
+        }).fail(function(response) {
+            OC.Notification.showTemporary(t('maps', 'Failed to import devices') + ': ' + response.responseText);
         });
     },
 

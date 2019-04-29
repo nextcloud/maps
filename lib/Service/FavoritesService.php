@@ -463,7 +463,7 @@ class FavoritesService {
                       xml_error_string(xml_get_error_code($xml_parser)),
                     array('app' => 'maps')
                 );
-                return 5;
+                return 0;
             }
         }
         fclose($fp);
@@ -563,7 +563,7 @@ class FavoritesService {
                       xml_error_string(xml_get_error_code($xml_parser)),
                     array('app' => 'maps')
                 );
-                return 5;
+                return 0;
             }
         }
         fclose($fp);

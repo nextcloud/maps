@@ -218,6 +218,12 @@
                     </a>
                 </li>
                 <li>
+                    <a href="#" id="import-devices">
+                        <span class="icon-folder"></span>
+                        <span><?php p($l->t('Import devices')); ?></span>
+                    </a>
+                </li>
+                <li>
                     <a href="#" id="delete-all-devices">
                         <span class="icon-delete"></span>
                         <span><?php p($l->t('Delete all devices history')); ?></span>

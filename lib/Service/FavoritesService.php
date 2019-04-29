@@ -34,6 +34,7 @@ class FavoritesService {
 
     private $currentFavorite;
     private $currentFavoritesList;
+    private $insideWpt;
     private $nbImported;
     private $importUserId;
     private $kmlInsidePlacemark;
@@ -547,6 +548,7 @@ class FavoritesService {
         $this->nbImported = 0;
         $this->currentFavoritesList = [];
         $this->importUserId = $userId;
+        $this->insideWpt = false;
 
         $xml_parser = xml_parser_create();
         xml_set_object($xml_parser, $this);
@@ -576,6 +578,7 @@ class FavoritesService {
     private function gpxStartElement($parser, $name, $attrs) {
         $this->currentXmlTag = $name;
         if ($name === 'WPT') {
+            $this->insideWpt = true;
             $this->currentFavorite = [];
             if (array_key_exists('LAT', $attrs)) {
                 $this->currentFavorite['lat'] = floatval($attrs['LAT']);
@@ -596,6 +599,7 @@ class FavoritesService {
             unset($this->currentFavoritesList);
         }
         else if ($name === 'WPT') {
+            $this->insideWpt = false;
             // store favorite
             $this->nbImported++;
             // convert date
@@ -620,19 +624,19 @@ class FavoritesService {
     private function gpxDataElement($parser, $data) {
         $d = trim($data);
         if (!empty($d)) {
-            if ($this->currentXmlTag === 'NAME') {
+            if ($this->insideWpt and $this->currentXmlTag === 'NAME') {
                 $this->currentFavorite['name'] = (array_key_exists('name', $this->currentFavorite)) ? $this->currentFavorite['name'].$d : $d;
             }
-            else if ($this->currentXmlTag === 'TIME') {
+            else if ($this->insideWpt and $this->currentXmlTag === 'TIME') {
                 $this->currentFavorite['date_created'] = (array_key_exists('date_created', $this->currentFavorite)) ? $this->currentFavorite['date_created'].$d : $d;
             }
-            else if ($this->currentXmlTag === 'TYPE') {
+            else if ($this->insideWpt and $this->currentXmlTag === 'TYPE') {
                 $this->currentFavorite['category'] = (array_key_exists('category', $this->currentFavorite)) ? $this->currentFavorite['category'].$d : $d;
             }
-            else if ($this->currentXmlTag === 'DESC') {
+            else if ($this->insideWpt and $this->currentXmlTag === 'DESC') {
                 $this->currentFavorite['comment'] = (array_key_exists('comment', $this->currentFavorite)) ? $this->currentFavorite['comment'].$d : $d;
             }
-            else if ($this->currentXmlTag === 'MAPS-EXTENSIONS') {
+            else if ($this->insideWpt and $this->currentXmlTag === 'MAPS-EXTENSIONS') {
                 $this->currentFavorite['extensions'] = (array_key_exists('extensions', $this->currentFavorite)) ? $this->currentFavorite['extensions'].$d : $d;
             }
         }

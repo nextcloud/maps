@@ -424,6 +424,7 @@ class DevicesService {
         $this->currentPointList = [];
         $this->importUserId = $userId;
         $this->trackIndex = 1;
+        $this->insideTrk = false;
 
         $xml_parser = xml_parser_create();
         xml_set_object($xml_parser, $this);

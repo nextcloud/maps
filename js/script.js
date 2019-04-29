@@ -1056,7 +1056,7 @@
             // get devices
             var devData = devicesController.getAutocompData();
             data.push(...devData);
-            data.push(...this.getExtraAutocompleteData());
+            data.push(...this.getExtraAutocompleteData(field));
             that.currentLocalAutocompleteData = data;
             fieldElement.autocomplete({
                 source: data,
@@ -1205,7 +1205,7 @@
             });
         },
 
-        getExtraAutocompleteData: function() {
+        getExtraAutocompleteData: function(field) {
             data = [];
             if (navigator.geolocation && window.isSecureContext) {
                 data.push({
@@ -1214,106 +1214,108 @@
                     value: t('maps', 'My location')
                 });
             }
-            data.push({
-                type: 'poi',
-                label: t('maps', 'Restaurant'),
-                value: 'restaurant'
-            });
-            data.push({
-                type: 'poi',
-                label: t('maps', 'Bar'),
-                value: 'bar'
-            });
-            data.push({
-                type: 'poi',
-                label: t('maps', 'Supermarket'),
-                value: 'supermarket'
-            });
-            data.push({
-                type: 'poi',
-                label: t('maps', 'Cafe'),
-                value: 'cafe'
-            });
-            data.push({
-                type: 'poi',
-                label: t('maps', 'Library'),
-                value: 'library'
-            });
-            data.push({
-                type: 'poi',
-                label: t('maps', 'School'),
-                value: 'school'
-            });
-            data.push({
-                type: 'poi',
-                label: t('maps', 'Sports centre'),
-                value: 'sports centre'
-            });
-            data.push({
-                type: 'poi',
-                label: t('maps', 'Gaz station'),
-                value: 'fuel'
-            });
-            data.push({
-                type: 'poi',
-                label: t('maps', 'Parking'),
-                value: 'parking'
-            });
-            data.push({
-                type: 'poi',
-                label: t('maps', 'Bicycle parking'),
-                value: 'bicycle parking'
-            });
-            data.push({
-                type: 'poi',
-                label: t('maps', 'Car rental'),
-                value: 'car rental'
-            });
-            data.push({
-                type: 'poi',
-                label: t('maps', 'ATM'),
-                value: 'atm'
-            });
-            data.push({
-                type: 'poi',
-                label: t('maps', 'Pharmacy'),
-                value: 'pharmacy'
-            });
-            data.push({
-                type: 'poi',
-                label: t('maps', 'Cinema'),
-                value: 'cinema'
-            });
-            data.push({
-                type: 'poi',
-                label: t('maps', 'Public toilets'),
-                value: 'toilets'
-            });
-            data.push({
-                type: 'poi',
-                label: t('maps', 'Drinking water'),
-                value: 'water point'
-            });
-            data.push({
-                type: 'poi',
-                label: t('maps', 'Hospital'),
-                value: 'hospital'
-            });
-            data.push({
-                type: 'poi',
-                label: t('maps', 'Doctors'),
-                value: 'doctors'
-            });
-            data.push({
-                type: 'poi',
-                label: t('maps', 'Dentist'),
-                value: 'dentist'
-            });
-            data.push({
-                type: 'poi',
-                label: t('maps', 'Hotel'),
-                value: 'hotel'
-            });
+            if (field === this.SEARCH_BAR) {
+                data.push({
+                    type: 'poi',
+                    label: t('maps', 'Restaurant'),
+                    value: 'restaurant'
+                });
+                data.push({
+                    type: 'poi',
+                    label: t('maps', 'Bar'),
+                    value: 'bar'
+                });
+                data.push({
+                    type: 'poi',
+                    label: t('maps', 'Supermarket'),
+                    value: 'supermarket'
+                });
+                data.push({
+                    type: 'poi',
+                    label: t('maps', 'Cafe'),
+                    value: 'cafe'
+                });
+                data.push({
+                    type: 'poi',
+                    label: t('maps', 'Library'),
+                    value: 'library'
+                });
+                data.push({
+                    type: 'poi',
+                    label: t('maps', 'School'),
+                    value: 'school'
+                });
+                data.push({
+                    type: 'poi',
+                    label: t('maps', 'Sports centre'),
+                    value: 'sports centre'
+                });
+                data.push({
+                    type: 'poi',
+                    label: t('maps', 'Gaz station'),
+                    value: 'fuel'
+                });
+                data.push({
+                    type: 'poi',
+                    label: t('maps', 'Parking'),
+                    value: 'parking'
+                });
+                data.push({
+                    type: 'poi',
+                    label: t('maps', 'Bicycle parking'),
+                    value: 'bicycle parking'
+                });
+                data.push({
+                    type: 'poi',
+                    label: t('maps', 'Car rental'),
+                    value: 'car rental'
+                });
+                data.push({
+                    type: 'poi',
+                    label: t('maps', 'ATM'),
+                    value: 'atm'
+                });
+                data.push({
+                    type: 'poi',
+                    label: t('maps', 'Pharmacy'),
+                    value: 'pharmacy'
+                });
+                data.push({
+                    type: 'poi',
+                    label: t('maps', 'Cinema'),
+                    value: 'cinema'
+                });
+                data.push({
+                    type: 'poi',
+                    label: t('maps', 'Public toilets'),
+                    value: 'toilets'
+                });
+                data.push({
+                    type: 'poi',
+                    label: t('maps', 'Drinking water'),
+                    value: 'water point'
+                });
+                data.push({
+                    type: 'poi',
+                    label: t('maps', 'Hospital'),
+                    value: 'hospital'
+                });
+                data.push({
+                    type: 'poi',
+                    label: t('maps', 'Doctors'),
+                    value: 'doctors'
+                });
+                data.push({
+                    type: 'poi',
+                    label: t('maps', 'Dentist'),
+                    value: 'dentist'
+                });
+                data.push({
+                    type: 'poi',
+                    label: t('maps', 'Hotel'),
+                    value: 'hotel'
+                });
+            }
             return data;
         },
 

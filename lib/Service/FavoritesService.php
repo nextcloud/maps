@@ -30,6 +30,7 @@ class FavoritesService {
     private $l10n;
     private $logger;
     private $qb;
+    private $dbconnection;
 
     private $currentFavorite;
     private $currentFavoritesList;
@@ -42,6 +43,11 @@ class FavoritesService {
         $this->l10n = $l10n;
         $this->logger = $logger;
         $this->qb = \OC::$server->getDatabaseConnection()->getQueryBuilder();
+        $this->dbconnection = \OC::$server->getDatabaseConnection();
+    }
+
+    private function db_quote_escape_string($str){
+        return $this->dbconnection->quote($str);
     }
 
     /**
@@ -157,12 +163,9 @@ class FavoritesService {
 
     public function addMultipleFavoritesToDB($userId, $favoriteList) {
         $nowTimeStamp = (new \DateTime())->getTimestamp();
-        $qb = $this->qb;
 
         $values = [];
         foreach ($favoriteList as $fav) {
-            $name = (!array_key_exists('name', $fav) or !$fav['name']) ? null : $fav['name'];
-            $ts = (!array_key_exists('date_created', $fav) or !is_numeric($fav['date_created'])) ? $nowTimeStamp : $fav['date_created'];
             if (
                 !array_key_exists('lat', $fav) or !is_numeric($fav['lat']) or
                 !array_key_exists('lng', $fav) or !is_numeric($fav['lng'])
@@ -173,28 +176,26 @@ class FavoritesService {
                 $lat = floatval($fav['lat']);
                 $lng = floatval($fav['lng']);
             }
-            $category = (!array_key_exists('category', $fav) or !$fav['category']) ? null : $fav['category'];
-            $comment = (!array_key_exists('comment', $fav) or !$fav['comment']) ? null : $fav['comment'];
-            $extensions = (!array_key_exists('extensions', $fav) or !$fav['extensions']) ? null : $fav['extensions'];
-            array_push($values, [
-                'user_id' => $qb->createNamedParameter($userId, IQueryBuilder::PARAM_STR),
-                'name' => $qb->createNamedParameter($name, IQueryBuilder::PARAM_STR),
-                'date_created' => $qb->createNamedParameter($ts, IQueryBuilder::PARAM_INT),
-                'date_modified' => $qb->createNamedParameter($nowTimeStamp, IQueryBuilder::PARAM_INT),
-                'lat' => $qb->createNamedParameter($lat, IQueryBuilder::PARAM_STR),
-                'lng' => $qb->createNamedParameter($lng, IQueryBuilder::PARAM_STR),
-                'category' => $qb->createNamedParameter($category, IQueryBuilder::PARAM_STR),
-                'comment' => $qb->createNamedParameter($comment, IQueryBuilder::PARAM_STR),
-                'extensions' => $qb->createNamedParameter($extensions, IQueryBuilder::PARAM_STR)
-            ]);
+            $value = '('.
+                $this->db_quote_escape_string($userId).', '.
+                ((!array_key_exists('name', $fav) or !$fav['name']) ? 'NULL' : $this->db_quote_escape_string($fav['name'])).', '.
+                ((!array_key_exists('date_created', $fav) or !is_numeric($fav['date_created'])) ? $this->db_quote_escape_string($nowTimeStamp) : $this->db_quote_escape_string($fav['date_created'])).', '.
+                $this->db_quote_escape_string($nowTimeStamp).', '.
+                $this->db_quote_escape_string($lat).', '.
+                $this->db_quote_escape_string($lng).', '.
+                ((!array_key_exists('category', $fav) or !$fav['category']) ? 'NULL' : $this->db_quote_escape_string($fav['category'])).', '.
+                ((!array_key_exists('comment', $fav) or !$fav['comment']) ? 'NULL' : $this->db_quote_escape_string($fav['comment'])).', '.
+                ((!array_key_exists('extensions', $fav) or !$fav['extensions']) ? 'NULL' : $this->db_quote_escape_string($fav['extensions'])).')';
+            array_push($values, $value);
         }
-        foreach ($values as $v) {
-            $qb->insert('maps_favorites');
-            $qb->values($v);
-            // TODO make one request
-            $req = $qb->execute();
-            $qb = $qb->resetQueryParts();
-        }
+        $valuesStr = implode(', ', $values);
+        $sql = '
+            INSERT INTO *PREFIX*maps_favorites
+            (user_id, name, date_created, date_modified, lat, lng, category, comment, extensions)
+            VALUES '.$valuesStr.' ;';
+        $req = $this->dbconnection->prepare($sql);
+        $req->execute();
+        $req->closeCursor();
     }
 
     public function renameCategoryInDB($userId, $cat, $newName) {

@@ -173,9 +173,9 @@ class DevicesService {
                 $this->db_quote_escape_string($p['lat']).', '.
                 $this->db_quote_escape_string($p['lng']).', '.
                 $this->db_quote_escape_string($p['date']).', '.
-                (is_numeric($p['altitude']) ? $this->db_quote_escape_string(floatval($p['altitude'])) : 'NULL').', '.
-                (is_numeric($p['battery']) ? $this->db_quote_escape_string(floatval($p['battery'])) : 'NULL').', '.
-                (is_numeric($p['accuracy']) ? $this->db_quote_escape_string(floatval($p['accuracy'])) : 'NULL').')';
+                ((array_key_exists('altitude', $p) and is_numeric($p['altitude'])) ? $this->db_quote_escape_string(floatval($p['altitude'])) : 'NULL').', '.
+                ((array_key_exists('battery', $p) and is_numeric($p['battery'])) ? $this->db_quote_escape_string(floatval($p['battery'])) : 'NULL').', '.
+                ((array_key_exists('accuracy', $p) and is_numeric($p['accuracy'])) ? $this->db_quote_escape_string(floatval($p['accuracy'])) : 'NULL').')';
             array_push($values, $value);
         }
         $valuesStr = implode(', ', $values);

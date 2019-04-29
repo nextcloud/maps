@@ -557,7 +557,7 @@ DevicesController.prototype = {
         this.devices[id].marker.on('mouseover', this.deviceMarkerMouseover);
         this.devices[id].marker.on('mouseout', this.deviceMarkerMouseout);
         this.devices[id].marker.on('contextmenu', this.deviceMarkerMouseRightClick);
-        //this.devices[id].marker.on('click', this.favoriteMouseClick);
+        //this.devices[id].marker.on('click', this.deviceMouseClick);
         // points data indexed by point id
         this.devices[id].points = {};
         // points coordinates (with id as third element)
@@ -1023,7 +1023,7 @@ DevicesController.prototype = {
             data: req,
             async: true
         }).done(function (response) {
-            OC.Notification.showTemporary(t('maps', '{nb} favorites imported from {path}', {nb: response, path: path}));
+            OC.Notification.showTemporary(t('maps', '{nb} devices imported from {path}', {nb: response, path: path}));
         }).always(function (response) {
             $('#navigation-devices').removeClass('icon-loading-small');
             $('.leaflet-container').css('cursor', 'grab');

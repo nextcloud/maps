@@ -47,9 +47,8 @@ FavoritesController.prototype = {
         // toggle a category
         $('body').on('click', '.category-line .category-name', function(e) {
             var cat = $(this).text();
-            that.toggleCategory(cat);
+            that.toggleCategory(cat, true);
             that.saveEnabledCategories();
-            that.updateMyFirstLastDates();
         });
         // zoom to category
         $('body').on('click', '.zoomCategoryButton', function(e) {
@@ -281,7 +280,7 @@ FavoritesController.prototype = {
         this.updateMyFirstLastDates();
     },
 
-    toggleCategory: function(cat) {
+    toggleCategory: function(cat, updateSlider=false) {
         var subgroup = this.categoryLayers[cat];
         var catNoSpace = cat.replace(' ', '-');
         var catLine = $('#category-list > li[category="'+cat+'"]');
@@ -308,6 +307,10 @@ FavoritesController.prototype = {
         }
         if (showAgain) {
             this.map.addLayer(this.cluster);
+        }
+        if (updateSlider) {
+            this.updateTimeFilterRange();
+            this.timeFilterController.setSliderToMaxInterval();
         }
     },
 
@@ -581,7 +584,6 @@ FavoritesController.prototype = {
         var favids = [];
         for (var favid in markers) {
             favids.push(favid);
-            //this.deleteFavoriteDB(favid);
         }
         var that = this;
         $('#navigation-favorites').addClass('icon-loading-small');
@@ -596,7 +598,7 @@ FavoritesController.prototype = {
             data: req,
             async: true
         }).done(function (response) {
-            that.deleteCategoryMap(cat);
+            that.deleteCategoryMap(cat, true);
         }).always(function (response) {
             $('#navigation-favorites').removeClass('icon-loading-small');
             $('.leaflet-container').css('cursor', 'grab');
@@ -605,7 +607,7 @@ FavoritesController.prototype = {
         });
     },
 
-    deleteCategoryMap: function(cat) {
+    deleteCategoryMap: function(cat, updateSlider=false) {
         // favorites (just in case the category is not empty)
         var favids = [];
         for (favid in this.categoryMarkers[cat]) {
@@ -628,7 +630,10 @@ FavoritesController.prototype = {
             $(this).remove();
         });
 
-        this.updateMyFirstLastDates();
+        if (updateSlider) {
+            this.updateTimeFilterRange();
+            this.timeFilterController.setSliderToMaxInterval();
+        }
     },
 
     updateCategoryCounters: function() {
@@ -931,7 +936,7 @@ FavoritesController.prototype = {
 
         // delete category if empty
         if (Object.keys(this.categoryMarkers[cat]).length === 0) {
-            this.deleteCategoryMap(cat);
+            this.deleteCategoryMap(cat, true);
             this.saveEnabledCategories();
         }
 
@@ -1008,7 +1013,7 @@ FavoritesController.prototype = {
                 var shouldSaveCategories = false;
                 // delete old category if empty
                 if (Object.keys(this.categoryMarkers[oldCategory]).length === 0) {
-                    this.deleteCategoryMap(oldCategory);
+                    this.deleteCategoryMap(oldCategory, true);
                     shouldSaveCategories = true;
                 }
                 // create category if necessary

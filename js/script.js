@@ -662,7 +662,16 @@
         },
 
         onRoutingError: function(e) {
-            OC.Notification.showTemporary(t('maps', 'Routing error: ') + e.error.target.responseText);
+            var msg = e.error.target.responseText
+            try {
+                var json = $.parseJSON(e.error.target.responseText);
+                if (json.message) {
+                    msg = json.message;
+                }
+            }
+            catch (e) {
+            }
+            OC.Notification.showTemporary(t('maps', 'Routing error:') + ' ' + msg);
             routingController.onRoutingEnd();
         },
 
@@ -674,6 +683,12 @@
         onRoutingEnd: function(e) {
             $('#navigation-routing').removeClass('icon-loading-small');
             $('.leaflet-routing-reverse-waypoints').removeClass('icon-loading-small');
+            // TODO understand why routingstart is sometimes triggered after routesfound
+            // just in case routingstart is triggered again (weird):
+            setTimeout(function() {
+                $('#navigation-routing').removeClass('icon-loading-small');
+                $('.leaflet-routing-reverse-waypoints').removeClass('icon-loading-small');
+            }, 5000);
         },
 
         // this has been tested with graphhopper
@@ -1167,7 +1182,6 @@
                 else if (results.length === 1) {
                     var result = results[0];
                     mapController.displaySearchResult([result]);
-                    routingController.setRouteTo(L.latLng(result.lat, result.lon));
                 }
                 else {
                     var newData = [];

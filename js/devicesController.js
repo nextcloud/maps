@@ -44,7 +44,7 @@ DevicesController.prototype = {
         // toggle a device
         $('body').on('click', '.device-line .device-name', function(e) {
             var id = $(this).parent().attr('device');
-            that.toggleDevice(id, true);
+            that.toggleDevice(id, true, true);
         });
         // click on a device name : zoom to bounds
         $('body').on('click', '.zoomDeviceButton', function(e) {
@@ -464,9 +464,9 @@ DevicesController.prototype = {
         }
     },
 
-    toggleDevice: function(id, save=false, pageLoad=false) {
+    toggleDevice: function(id, save=false, updateSlider=false) {
         if (!this.devices[id].loaded) {
-            this.loadDevicePoints(id, save, pageLoad);
+            this.loadDevicePoints(id, save, updateSlider);
         }
         this.toggleMapDeviceLayer(id);
         if (save) {
@@ -525,7 +525,7 @@ DevicesController.prototype = {
     },
 
     // load all available points and create marker/line
-    loadDevicePoints: function(id, save=false, pageLoad=false) {
+    loadDevicePoints: function(id, save=false, updateSlider=false) {
         var that = this;
         $('#device-list > li[device="'+id+'"]').addClass('icon-loading-small');
         var req = {};
@@ -538,7 +538,7 @@ DevicesController.prototype = {
         }).done(function (response) {
             that.addPoints(id, response);
             that.devices[id].loaded = true;
-            that.updateMyFirstLastDates(pageLoad);
+            that.updateMyFirstLastDates(updateSlider);
         }).always(function (response) {
             $('#device-list > li[device="'+id+'"]').removeClass('icon-loading-small');
         }).fail(function() {

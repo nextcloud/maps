@@ -214,7 +214,7 @@
                 <li>
                     <a href="#" id="export-all-devices">
                         <span class="icon-category-office"></span>
-                        <span><?php p($l->t('Export devices to gpx')); ?></span>
+                        <span><?php p($l->t('Export all')); ?></span>
                     </a>
                 </li>
                 <li>

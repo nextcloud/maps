@@ -51,6 +51,16 @@ DevicesController.prototype = {
             var id = $(this).parent().parent().parent().parent().attr('device');
             that.zoomOnDevice(id);
         });
+        // export one device
+        $('body').on('click', '.exportDeviceButton', function(e) {
+            var id = $(this).parent().parent().parent().parent().attr('device');
+            that.exportDevices([id]);
+        });
+        $('body').on('click', '.contextExportDevice', function(e) {
+            var id = $(this).parent().parent().attr('devid');
+            that.exportDevices([id]);
+            that.map.closePopup();
+        });
         // toggle a device line
         $('body').on('click', '.toggleDeviceLine', function(e) {
             var id = $(this).parent().parent().parent().parent().attr('device');
@@ -304,13 +314,19 @@ DevicesController.prototype = {
         '            <li>' +
         '                <a href="#" class="changeDeviceColor">' +
         '                    <span class="icon-rename"></span>' +
-        '                    <span>'+t('maps', 'Change device color')+'</span>' +
+        '                    <span>'+t('maps', 'Change color')+'</span>' +
         '                </a>' +
         '            </li>' +
         '            <li>' +
         '                <a href="#" class="zoomDeviceButton">' +
         '                    <span class="icon-search"></span>' +
         '                    <span>'+t('maps', 'Zoom to bounds')+'</span>' +
+        '                </a>' +
+        '            </li>' +
+        '            <li>' +
+        '                <a href="#" class="exportDeviceButton">' +
+        '                    <span class="icon-category-office"></span>' +
+        '                    <span>'+t('maps', 'Export')+'</span>' +
         '                </a>' +
         '            </li>' +
         '            <li>' +
@@ -933,8 +949,9 @@ DevicesController.prototype = {
     },
 
     getDeviceContextPopupContent: function(id) {
-        var colorText = t('maps', 'Change device color');
+        var colorText = t('maps', 'Change color');
         var lineText = t('maps', 'Toggle device history');
+        var exportText = t('maps', 'Export');
         var res =
             '<ul devid="' + id + '">' +
             '   <li>' +
@@ -945,6 +962,11 @@ DevicesController.prototype = {
             '   <li>' +
             '       <button class="icon-rename contextChangeDeviceColor">' +
             '           <span>' + colorText + '</span>' +
+            '       </button>' +
+            '   </li>' +
+            '   <li>' +
+            '       <button class="icon-category-office contextExportDevice">' +
+            '           <span>' + exportText + '</span>' +
             '       </button>' +
             '   </li>' +
             '</ul>';
@@ -980,10 +1002,10 @@ DevicesController.prototype = {
 
     exportAllDevices: function() {
         var idList = Object.keys(this.devices);
-        this.exportDevices(idList);
+        this.exportDevices(idList, true);
     },
 
-    exportDevices: function(idList) {
+    exportDevices: function(idList, all=false) {
         var that = this;
         $('#navigation-devices').addClass('icon-loading-small');
         $('.leaflet-container').css('cursor', 'wait');
@@ -991,7 +1013,7 @@ DevicesController.prototype = {
             deviceIdList: idList,
             begin: null,
             end: null,
-            all: true
+            all: false
         };
         var url = OC.generateUrl('/apps/maps/export/devices');
         $.ajax({

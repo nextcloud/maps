@@ -16,25 +16,25 @@
                 <li>
                     <a href="#" id="export-displayed-favorites">
                         <span class="icon-category-office"></span>
-                        <span><?php p($l->t('Export displayed favorites')); ?></span>
+                        <span><?php p($l->t('Export')); ?></span>
                     </a>
                 </li>
                 <li>
                     <a href="#" id="import-favorites">
                         <span class="icon-folder"></span>
-                        <span><?php p($l->t('Import favorites from gpx/kml/kmz files')); ?></span>
+                        <span><?php p($l->t('Import from gpx/kml/kmz')); ?></span>
                     </a>
                 </li>
                 <li>
                     <a href="#" id="select-all-categories">
                         <span class="icon-category-enabled"></span>
-                        <span><?php p($l->t('Show all categories')); ?></span>
+                        <span><?php p($l->t('Show all')); ?></span>
                     </a>
                 </li>
                 <li>
                     <a href="#" id="select-no-categories">
                         <span class="icon-category-disabled"></span>
-                        <span><?php p($l->t('Hide all categories')); ?></span>
+                        <span><?php p($l->t('Hide all')); ?></span>
                     </a>
                 </li>
             </ul>
@@ -150,13 +150,13 @@
                 <li>
                     <a href="#" id="select-all-tracks">
                         <span class="icon-category-enabled"></span>
-                        <span><?php p($l->t('Show all tracks')); ?></span>
+                        <span><?php p($l->t('Show all')); ?></span>
                     </a>
                 </li>
                 <li>
                     <a href="#" id="select-no-tracks">
                         <span class="icon-category-disabled"></span>
-                        <span><?php p($l->t('Hide all tracks')); ?></span>
+                        <span><?php p($l->t('Hide all')); ?></span>
                     </a>
                 </li>
                 <li>
@@ -168,7 +168,7 @@
                 <li>
                     <a href="#" id="remove-all-tracks">
                         <span class="icon-delete"></span>
-                        <span><?php p($l->t('Remove all tracks')); ?></span>
+                        <span><?php p($l->t('Remove all')); ?></span>
                     </a>
                 </li>
             </ul>
@@ -190,19 +190,19 @@
                 <li>
                     <a href="#" id="refresh-all-devices">
                         <span class="icon-download"></span>
-                        <span><?php p($l->t('Refresh devices positions')); ?></span>
+                        <span><?php p($l->t('Refresh positions')); ?></span>
                     </a>
                 </li>
                 <li>
                     <a href="#" id="select-all-devices">
                         <span class="icon-category-enabled"></span>
-                        <span><?php p($l->t('Show all devices')); ?></span>
+                        <span><?php p($l->t('Show all')); ?></span>
                     </a>
                 </li>
                 <li>
                     <a href="#" id="select-no-devices">
                         <span class="icon-category-disabled"></span>
-                        <span><?php p($l->t('Hide all devices')); ?></span>
+                        <span><?php p($l->t('Hide all')); ?></span>
                     </a>
                 </li>
                 <li>
@@ -220,7 +220,7 @@
                 <li>
                     <a href="#" id="delete-all-devices">
                         <span class="icon-delete"></span>
-                        <span><?php p($l->t('Delete all devices history')); ?></span>
+                        <span><?php p($l->t('Delete all')); ?></span>
                     </a>
                 </li>
             </ul>

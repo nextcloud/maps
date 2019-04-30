@@ -183,7 +183,7 @@ FavoritesController.prototype = {
         // import favorites
         $('body').on('click', '#import-favorites', function(e) {
             OC.dialogs.filepicker(
-                t('maps', 'Import favorites from gpx (OsmAnd), kmz (F-Droid Maps & Maps.me) or kml file'),
+                t('maps', 'Import favorites from gpx (OsmAnd, Nextcloud Maps) or kmz/kml (F-Droid Maps, Maps.me, Marble)'),
                 function(targetPath) {
                     that.importFavorites(targetPath);
                 },

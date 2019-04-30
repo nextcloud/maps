@@ -995,8 +995,8 @@ TracksController.prototype = {
     },
 
     getTrackContextPopupContent: function(id) {
-        var colorText = t('maps', 'Change track color');
-        var elevationText = t('maps', 'Show track elevation');
+        var colorText = t('maps', 'Change color');
+        var elevationText = t('maps', 'Show elevation');
         var removeText = t('maps', 'Remove');
         var res =
             '<ul trackid="' + id + '">' +

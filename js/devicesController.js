@@ -313,7 +313,7 @@ DevicesController.prototype = {
         '            <li>' +
         '                <a href="#" class="toggleDeviceLine">' +
         '                    <span class="icon-category-monitoring"></span>' +
-        '                    <span>'+t('maps', 'Toggle device history')+'</span>' +
+        '                    <span>'+t('maps', 'Toggle history')+'</span>' +
         '                </a>' +
         '            </li>' +
         '            <li>' +
@@ -954,7 +954,7 @@ DevicesController.prototype = {
 
     getDeviceContextPopupContent: function(id) {
         var colorText = t('maps', 'Change color');
-        var lineText = t('maps', 'Toggle device history');
+        var lineText = t('maps', 'Toggle history');
         var exportText = t('maps', 'Export');
         var zoomText = t('maps', 'Zoom to bounds');
         var res =

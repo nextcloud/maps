@@ -51,6 +51,11 @@ DevicesController.prototype = {
             var id = $(this).parent().parent().parent().parent().attr('device');
             that.zoomOnDevice(id);
         });
+        $('body').on('click', '.contextZoomDevice', function(e) {
+            var id = $(this).parent().parent().attr('devid');
+            that.zoomOnDevice(id);
+            that.map.closePopup();
+        });
         // export one device
         $('body').on('click', '.exportDeviceButton', function(e) {
             var id = $(this).parent().parent().parent().parent().attr('device');
@@ -788,7 +793,7 @@ DevicesController.prototype = {
 
     zoomOnDevice: function(id) {
         if (this.mainLayer.hasLayer(this.mapDeviceLayers[id])) {
-            this.map.fitBounds(this.mapDeviceLayers[id].getBounds(), {padding: [30, 30]});
+            this.map.fitBounds(this.mapDeviceLayers[id].getBounds(), {padding: [30, 30], maxZoom: 15});
             this.mapDeviceLayers[id].bringToFront();
             this.devices[id].marker.setZIndexOffset(this.lastZIndex++);
         }
@@ -952,8 +957,14 @@ DevicesController.prototype = {
         var colorText = t('maps', 'Change color');
         var lineText = t('maps', 'Toggle device history');
         var exportText = t('maps', 'Export');
+        var zoomText = t('maps', 'Zoom to bounds');
         var res =
             '<ul devid="' + id + '">' +
+            '   <li>' +
+            '       <button class="icon-search contextZoomDevice">' +
+            '           <span>' + zoomText + '</span>' +
+            '       </button>' +
+            '   </li>' +
             '   <li>' +
             '       <button class="icon-category-monitoring contextToggleLine">' +
             '           <span>' + lineText + '</span>' +
@@ -1013,7 +1024,7 @@ DevicesController.prototype = {
             deviceIdList: idList,
             begin: null,
             end: null,
-            all: false
+            all: all
         };
         var url = OC.generateUrl('/apps/maps/export/devices');
         $.ajax({

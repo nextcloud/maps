@@ -49,6 +49,7 @@
             if (!event.target.matches('.app-navigation-entry-utils-menu-button button')) {
                 $('.app-navigation-entry-menu.open').removeClass('open');
             }
+            mapController.map.contextmenu.hide();
         };
     });
 
@@ -331,7 +332,7 @@
                 maxBounds: new L.LatLngBounds(new L.LatLng(-90, 720), new L.LatLng(90, -720)),
                 layers: [],
                 // right click menu
-                contextmenu: true,
+                contextmenu: false,
                 contextmenuWidth: 160,
                 contextmenuItems: [{
                     text: t('maps', 'Add a favorite'),
@@ -366,6 +367,11 @@
                     icon: markerRedImageUrl,
                     callback: routingController.contextRouteTo
                 }]
+            });
+            this.map.on('contextmenu', function(e) {
+                if ($(e.originalEvent.target).attr('id') === 'map') {
+                    that.map.contextmenu.showAt(L.latLng(e.latlng.lat, e.latlng.lng));
+                }
             });
 
             this.searchMarkerLayerGroup = L.featureGroup();

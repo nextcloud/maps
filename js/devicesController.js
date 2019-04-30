@@ -950,7 +950,6 @@ DevicesController.prototype = {
             offset: L.point(-5, yOffset)
         });
         e.target.openPopup(e.latlng);
-        e.preventDefault();
     },
 
     getDeviceContextPopupContent: function(id) {

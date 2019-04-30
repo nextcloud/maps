@@ -992,7 +992,6 @@ TracksController.prototype = {
             offset: L.point(-4, yOffset)
         });
         e.target.openPopup(e.latlng);
-        e.preventDefault();
     },
 
     getTrackContextPopupContent: function(id) {

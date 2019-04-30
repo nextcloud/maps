@@ -389,7 +389,7 @@ class FavoritesService {
                     $gpxText .= '   <type>' . $category . '</type>' . "\n";
                 }
                 else {
-                    $gpxText .= '   <type>no category</type>' . "\n";
+                    $gpxText .= '   <type>'.$this->l10n->t('Personal').'</type>' . "\n";
                 }
                 if ($comment !== null && strlen($comment) > 0) {
                     $gpxText .= '   <desc>' . $comment . '</desc>' . "\n";
@@ -496,6 +496,9 @@ class FavoritesService {
             // store favorite
             $this->nbImported++;
             $this->currentFavorite['category'] = $this->kmlCurrentCategory;
+            if (!array_key_exists('category', $this->currentFavorite) or $this->currentFavorite['category'] === '') {
+                $this->currentFavorite['category'] = $this->l10n->t('Personal');
+            }
             // convert date
             if (array_key_exists('date_created', $this->currentFavorite)) {
                 $time = new \DateTime($this->currentFavorite['date_created']);
@@ -608,8 +611,8 @@ class FavoritesService {
                 $timestamp = $time->getTimestamp();
                 $this->currentFavorite['date_created'] = $timestamp;
             }
-            if (array_key_exists('category', $this->currentFavorite)) {
-                $this->currentFavorite['category'] = str_replace('no category', '', $this->currentFavorite['category']);
+            if (!array_key_exists('category', $this->currentFavorite) or $this->currentFavorite['category'] === '') {
+                $this->currentFavorite['category'] = $this->l10n->t('Personal');
             }
             array_push($this->currentFavoritesList, $this->currentFavorite);
             // if we have enough favorites, we create them and clean the array

@@ -18,7 +18,7 @@ function FavoritesController(optionsController, timeFilterController) {
     this.lastDate = null;
 
     this.addFavoriteMode = false;
-    this.addFavoriteCategory = '';
+    this.addFavoriteCategory = null;
 
     this.defaultCategory = t('maps', 'Personal');
 
@@ -80,7 +80,7 @@ FavoritesController.prototype = {
                 if (that.movingFavoriteId !== null) {
                     that.leaveMoveFavoriteMode();
                 }
-                that.enterAddFavoriteMode();
+                that.enterAddFavoriteMode(that.defaultCategory);
             }
         });
         $('body').on('click', '.addFavoriteInCategory', function(e) {
@@ -216,7 +216,7 @@ FavoritesController.prototype = {
         var that = this;
         return function(cluster) {
             var fid = parseInt(cluster.getAllChildMarkers()[0].favid);
-            var category = that.favorites[fid].category || that.defaultCategory;
+            var category = that.favorites[fid].category;
             category = category.replace(' ', '-');
             var label = cluster.getChildCount();
             return new L.DivIcon(L.extend({
@@ -556,9 +556,6 @@ FavoritesController.prototype = {
     renameCategoryDB: function(cat, newCategoryName) {
         var that = this;
         var origCatList = [cat];
-        if (cat === this.defaultCategory) {
-            origCatList.push('');
-        }
         $('#navigation-favorites').addClass('icon-loading-small');
         $('.leaflet-container').css('cursor', 'wait');
         var req = {
@@ -655,7 +652,7 @@ FavoritesController.prototype = {
         //$('#navigation-favorites > .app-navigation-entry-utils .app-navigation-entry-utils-counter').text(total);
     },
 
-    enterAddFavoriteMode: function(categoryName='') {
+    enterAddFavoriteMode: function(categoryName) {
         this.addFavoriteCategory = categoryName;
         $('.leaflet-container').css('cursor','crosshair');
         this.map.on('click', this.addFavoriteClickMap);
@@ -669,7 +666,7 @@ FavoritesController.prototype = {
         this.map.off('click', this.addFavoriteClickMap);
         $('#addFavoriteButton button').addClass('icon-add').removeClass('icon-history');
         this.addFavoriteMode = false;
-        this.addFavoriteCategory = '';
+        this.addFavoriteCategory = null;
     },
 
     addFavoriteClickMap: function(e) {
@@ -679,7 +676,7 @@ FavoritesController.prototype = {
     },
 
     contextAddFavorite: function(e) {
-        var categoryName = this.favoritesController.addFavoriteCategory;
+        var categoryName = this.favoritesController.defaultCategory;
         this.favoritesController.addFavoriteDB(categoryName, e.latlng.lat.toFixed(6), e.latlng.lng.toFixed(6), null);
     },
 
@@ -717,9 +714,6 @@ FavoritesController.prototype = {
     addFavoriteMap: function(fav, enableCategory=false, fromUserAction=false) {
         // manage category first
         cat = fav.category;
-        if (!cat) {
-            cat = this.defaultCategory;
-        }
         if (!this.categoryLayers.hasOwnProperty(cat)) {
             this.addCategory(cat, enableCategory);
             if (enableCategory) {
@@ -787,7 +781,7 @@ FavoritesController.prototype = {
     favoriteMouseover: function(e) {
         var favid = e.target.favid;
         var fav = this._map.favoritesController.favorites[favid];
-        var cat = fav.category ? fav.category.replace(' ', '-') : this._map.favoritesController.defaultCategory.replace(' ', '-');
+        var cat = fav.category.replace(' ', '-');
         var favTooltip = this._map.favoritesController.getFavoriteTooltipContent(fav);
         e.target.bindTooltip(favTooltip, {
             className: 'leaflet-marker-favorite-tooltip tooltipfav-' + cat,
@@ -803,9 +797,7 @@ FavoritesController.prototype = {
 
     getFavoriteTooltipContent: function(fav) {
         var content = t('maps', 'Name') + ': ' + (fav.name || t('maps', 'No name'));
-        if (fav.category && fav.category !== this.defaultCategory) {
-            content = content + '<br/>' + t('maps', 'Category') + ': ' + fav.category;
-        }
+        content = content + '<br/>' + t('maps', 'Category') + ': ' + fav.category;
         if (fav.comment) {
             content = content + '<br/>' + t('maps', 'Comment') + ': ' + fav.comment;
         }
@@ -935,7 +927,7 @@ FavoritesController.prototype = {
     deleteFavoriteMap: function(favid) {
         var marker = this.markers[favid];
         var fav = this.favorites[favid];
-        var cat = fav.category || this.defaultCategory;
+        var cat = fav.category;
         this.categoryLayers[cat].removeLayer(marker);
 
         delete this.categoryMarkers[cat][favid];
@@ -1010,8 +1002,8 @@ FavoritesController.prototype = {
             this.favorites[favid].comment = comment;
         }
         if (category !== null) {
-            var oldCategory = this.favorites[favid].category || this.defaultCategory;
-            var newCategory = category || this.defaultCategory;
+            var oldCategory = this.favorites[favid].category;
+            var newCategory = category;
             if (newCategory !== oldCategory) {
                 var marker = this.markers[favid];
 
@@ -1070,9 +1062,6 @@ FavoritesController.prototype = {
 
     exportCategory: function(cat) {
         var catList = [cat];
-        if (cat === this.defaultCategory) {
-            catList.push('');
-        }
         this.exportDisplayedFavorites(catList);
     },
 
@@ -1084,10 +1073,6 @@ FavoritesController.prototype = {
             if (this.map.hasLayer(this.cluster)) {
                 for (var cat in this.categoryLayers) {
                     if (this.map.hasLayer(this.categoryLayers[cat])) {
-                        // a sync client could have saved favorites with empty category
-                        if (cat === this.defaultCategory) {
-                            catList.push('');
-                        }
                         catList.push(cat);
                     }
                 }

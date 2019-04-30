@@ -503,6 +503,12 @@
                 this.osmButton.remove();
                 this.esriButton.addTo(this.map);
             }
+            // map maxZoom should be dynamic (if not specified at map creation) but something crashes like that
+            // so we set it on map creation and
+            // we change it on tile layer change
+            if (this.baseLayers[name].options.maxZoom) {
+                this.map.setMaxZoom(this.baseLayers[name].options.maxZoom);
+            }
             $('.leaflet-control-layers').hide();
             $('.easy-button-container').show();
         },

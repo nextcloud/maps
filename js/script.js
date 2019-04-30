@@ -1242,6 +1242,11 @@
                 });
                 data.push({
                     type: 'poi',
+                    label: t('maps', 'Fast food'),
+                    value: 'fast food'
+                });
+                data.push({
+                    type: 'poi',
                     label: t('maps', 'Bar'),
                     value: 'bar'
                 });
@@ -1352,7 +1357,7 @@
         },
         searchPOI: function(type, latMin, latMax, lngMin, lngMax) {
             var query, i;
-            var amenities = ['restaurant', 'bar', 'parking', 'hospital', 'cafe', 'school', 'bicycle parking', 'cinema', 'supermarket'];
+            var amenities = ['restaurant', 'fast food', 'bar', 'parking', 'hospital', 'cafe', 'school', 'bicycle parking', 'cinema', 'supermarket'];
             var qs = ['atm', 'pharmacy', 'hotel', 'doctors', 'dentist', 'library', 'car rental', 'fuel', 'toilets', 'water point', 'sports centre'];
             if (amenities.indexOf(type) !== -1) {
                 query = 'amenity='+encodeURIComponent(type);

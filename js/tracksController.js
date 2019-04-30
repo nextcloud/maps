@@ -270,16 +270,6 @@ TracksController.prototype = {
         this.optionsController.enabledTracks = trackList;
     },
 
-    restoreTracksState: function(enabledTrackList) {
-        var id;
-        for (var i=0; i < enabledTrackList.length; i++) {
-            id = enabledTrackList[i];
-            if (this.mapTrackLayers.hasOwnProperty(id)) {
-                this.toggleTrack(id, false, true);
-            }
-        }
-    },
-
     showAllTracks: function() {
         if (!this.map.hasLayer(this.mainLayer)) {
             this.toggleTracks();

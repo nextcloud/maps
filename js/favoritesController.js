@@ -249,18 +249,6 @@ FavoritesController.prototype = {
         this.optionsController.enabledFavoriteCategories = categoryList;
     },
 
-    restoreCategoriesState: function(enabledCategoryList) {
-        var cat;
-        for (var i=0; i < enabledCategoryList.length; i++) {
-            cat = enabledCategoryList[i];
-            if (this.categoryLayers.hasOwnProperty(cat)) {
-                this.toggleCategory(cat);
-            }
-        }
-        this.updateTimeFilterRange();
-        this.timeFilterController.setSliderToMaxInterval();
-    },
-
     showAllCategories: function() {
         if (!this.map.hasLayer(this.cluster)) {
             this.toggleFavorites();

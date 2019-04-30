@@ -465,26 +465,6 @@ DevicesController.prototype = {
         this.optionsController.enabledDeviceLines = deviceWithLineList;
     },
 
-    restoreDevicesState: function(enabledDeviceList) {
-        var id;
-        for (var i=0; i < enabledDeviceList.length; i++) {
-            id = enabledDeviceList[i];
-            if (this.mapDeviceLayers.hasOwnProperty(id)) {
-                this.toggleDevice(id, false, true);
-            }
-        }
-    },
-
-    restoreDeviceLinesState: function(enabledDeviceLineList) {
-        var id;
-        for (var i=0; i < enabledDeviceLineList.length; i++) {
-            id = enabledDeviceList[i];
-            if (this.devices[id].line && this.deviceLineLayers.hasOwnProperty(id)) {
-                this.toggleDeviceLine(id, false);
-            }
-        }
-    },
-
     toggleDevice: function(id, save=false, updateSlider=false) {
         if (!this.devices[id].loaded) {
             this.loadDevicePoints(id, save, updateSlider);
@@ -539,6 +519,7 @@ DevicesController.prototype = {
             else {
                 deviceLineLayer.addLayer(line);
             }
+            this.devices[id].marker.setZIndexOffset(this.lastZIndex++);
             if (save) {
                 this.saveEnabledDevices();
             }

@@ -139,9 +139,6 @@
                     && optionsValues.enabledFavoriteCategories !== '')
                 {
                     that.enabledFavoriteCategories = optionsValues.enabledFavoriteCategories.split('|');
-                    if (favoritesController.favoritesLoaded) {
-                        favoritesController.restoreCategoriesState(that.enabledFavoriteCategories);
-                    }
                 }
                 if (!optionsValues.hasOwnProperty('favoritesEnabled') || optionsValues.favoritesEnabled === 'true') {
                     favoritesController.toggleFavorites();
@@ -159,9 +156,6 @@
                     that.enabledTracks = optionsValues.enabledTracks.split('|').map(function (x) {
                         return parseInt(x);
                     });
-                    if (tracksController.trackListLoaded) {
-                        tracksController.restoreTracksState(that.enabledTracks);
-                    }
                 }
                 if (!optionsValues.hasOwnProperty('tracksEnabled') || optionsValues.tracksEnabled === 'true') {
                     tracksController.toggleTracks();
@@ -176,9 +170,6 @@
                     that.enabledDevices = optionsValues.enabledDevices.split('|').map(function (x) {
                         return parseInt(x);
                     });
-                    if (devicesController.deviceListLoaded) {
-                        devicesController.restoreDevicesState(that.enabledDevices);
-                    }
                 }
                 if (optionsValues.hasOwnProperty('enabledDeviceLines')
                     && optionsValues.enabledDeviceLines
@@ -187,9 +178,6 @@
                     that.enabledDeviceLines = optionsValues.enabledDeviceLines.split('|').map(function (x) {
                         return parseInt(x);
                     });
-                    if (devicesController.deviceListLoaded) {
-                        devicesController.restoreDeviceLinesState(that.enabledDeviceLines);
-                    }
                 }
                 if (!optionsValues.hasOwnProperty('devicesEnabled') || optionsValues.devicesEnabled === 'true') {
                     devicesController.toggleDevices();

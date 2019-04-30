@@ -382,7 +382,7 @@ TracksController.prototype = {
         });
     },
 
-    addTracksDB: function(pathList) {
+    addTracksDB: function(pathList, zoom=false) {
         var that = this;
         $('#navigation-tracks').addClass('icon-loading-small');
         var req = {
@@ -401,7 +401,7 @@ TracksController.prototype = {
             }
             var ids = [];
             for (var i=0; i < response.length; i++) {
-                that.addTrackMap(response[i], true);
+                that.addTrackMap(response[i], true, false, zoom);
                 ids.push(response[i].id);
             }
             that.saveEnabledTracks(ids);
@@ -413,7 +413,7 @@ TracksController.prototype = {
         });
     },
 
-    addTrackMap: function(track, show=false, pageLoad=false) {
+    addTrackMap: function(track, show=false, pageLoad=false, zoom=false) {
         // color
         var color = track.color || OCA.Theming.color;
         this.trackColors[track.id] = color;
@@ -492,7 +492,7 @@ TracksController.prototype = {
 
         // enable if in saved options or if it should be enabled for another reason
         if (show || this.optionsController.enabledTracks.indexOf(track.id) !== -1) {
-            this.toggleTrack(track.id, false, pageLoad);
+            this.toggleTrack(track.id, false, pageLoad, zoom);
         }
     },
 
@@ -507,10 +507,20 @@ TracksController.prototype = {
             data: req,
             async: true
         }).done(function (response) {
-            var i, track;
+            var i, track, show;
+            var getFound = false;
             for (i=0; i < response.length; i++) {
                 track = response[i];
-                that.addTrackMap(track, false, true);
+                // show'n'zoom track if it was asked with a GET parameter
+                show = (getUrlParameter('track') === track.file_path.replace(/^files/, ''));
+                that.addTrackMap(track, show, true, show);
+                if (show) {
+                    getFound = true;
+                }
+            }
+            // if the asked track wasn't already in track list, load it and zoom!
+            if (!getFound) {
+                that.addTracksDB([getUrlParameter('track')], true);
             }
             that.trackListLoaded = true;
         }).always(function (response) {
@@ -520,19 +530,19 @@ TracksController.prototype = {
         });
     },
 
-    toggleTrack: function(id, save=false, pageLoad=false) {
+    toggleTrack: function(id, save=false, pageLoad=false, zoom=false) {
         var trackLayer = this.trackLayers[id];
         if (!trackLayer.loaded) {
-            this.loadTrack(id, save, pageLoad);
+            this.loadTrack(id, save, pageLoad, zoom);
         }
-        this.toggleMapTrackLayer(id);
+        this.toggleMapTrackLayer(id, zoom);
         if (save) {
             this.saveEnabledTracks();
             this.updateMyFirstLastDates(true);
         }
     },
 
-    toggleMapTrackLayer: function(id) {
+    toggleMapTrackLayer: function(id, zoom=false) {
         var mapTrackLayer = this.mapTrackLayers[id];
         var trackLine = $('#track-list > li[track="'+id+'"]');
         var trackName = trackLine.find('.track-name');
@@ -553,10 +563,14 @@ TracksController.prototype = {
                 }
             });
             trackName.addClass('active');
+            if (zoom) {
+                this.zoomOnTrack(id);
+                this.showTrackElevation(id);
+            }
         }
     },
 
-    loadTrack: function(id, save=false, pageLoad=false) {
+    loadTrack: function(id, save=false, pageLoad=false, zoom=false) {
         var that = this;
         $('#track-list > li[track="'+id+'"]').addClass('icon-loading-small');
         var req = {};
@@ -570,6 +584,10 @@ TracksController.prototype = {
             that.processGpx(id, response);
             that.trackLayers[id].loaded = true;
             that.updateMyFirstLastDates(pageLoad);
+            if (zoom) {
+                that.zoomOnTrack(id);
+                that.showTrackElevation(id);
+            }
         }).always(function (response) {
             $('#track-list > li[track="'+id+'"]').removeClass('icon-loading-small');
         }).fail(function() {
@@ -1011,15 +1029,18 @@ TracksController.prototype = {
 
     zoomOnTrack: function(id) {
         if (this.mainLayer.hasLayer(this.mapTrackLayers[id])) {
-            this.map.fitBounds(this.mapTrackLayers[id].getBounds(), {padding: [30, 30]});
-            this.mapTrackLayers[id].bringToFront();
-            // markers are hard to bring to front
-            var that = this;
-            this.trackLayers[id].eachLayer(function(l) {
-                if (l instanceof L.Marker){
-                    l.setZIndexOffset(that.lastZIndex++);
-                }
-            });
+            var bounds = this.mapTrackLayers[id].getBounds();
+            if (bounds && bounds.constructor === Object && Object.keys(bounds).length !== 0) {
+                this.map.fitBounds(this.mapTrackLayers[id].getBounds(), {padding: [30, 30]});
+                this.mapTrackLayers[id].bringToFront();
+                // markers are hard to bring to front
+                var that = this;
+                this.trackLayers[id].eachLayer(function(l) {
+                    if (l instanceof L.Marker){
+                        l.setZIndexOffset(that.lastZIndex++);
+                    }
+                });
+            }
         }
     },
 

@@ -157,7 +157,7 @@
                         return parseInt(x);
                     });
                 }
-                if (!optionsValues.hasOwnProperty('tracksEnabled') || optionsValues.tracksEnabled === 'true') {
+                if (getUrlParameter('track') || !optionsValues.hasOwnProperty('tracksEnabled') || optionsValues.tracksEnabled === 'true') {
                     tracksController.toggleTracks();
                 }
                 if (!optionsValues.hasOwnProperty('deviceListShow') || optionsValues.deviceListShow === 'true') {

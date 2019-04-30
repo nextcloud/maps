@@ -33,14 +33,6 @@ TracksController.prototype = {
         this.mainLayer = L.featureGroup();
         var that = this;
         // UI events
-        // click on menu buttons
-        $('body').on('click', '.tracksMenuButton, .trackMenuButton', function(e) {
-            var wasOpen = $(this).parent().parent().parent().find('>.app-navigation-entry-menu').hasClass('open');
-            $('.app-navigation-entry-menu.open').removeClass('open');
-            if (!wasOpen) {
-                $(this).parent().parent().parent().find('>.app-navigation-entry-menu').addClass('open');
-            }
-        });
         // toggle a track
         $('body').on('click', '.track-line .track-name', function(e) {
             var id = $(this).parent().attr('track');

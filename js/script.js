@@ -51,6 +51,53 @@
             }
             mapController.map.contextmenu.hide();
         };
+
+        // click on menu buttons
+        $('body').on('click',
+            '.routingMenuButton, .favoritesMenuButton, .categoryMenuButton, .photosMenuButton, .contactsMenuButton, ' +
+            '.nonLocalizedPhotosMenuButton, .devicesMenuButton, .deviceMenuButton, .tracksMenuButton, .trackMenuButton',
+            function(e) {
+            var menu = $(this).parent().parent().parent().find('> .app-navigation-entry-menu');
+            var wasOpen = menu.hasClass('open');
+            $('.app-navigation-entry-menu.open').removeClass('open');
+            if (!wasOpen) {
+                menu.addClass('open');
+            }
+        });
+        // right click on entry line
+        $('body').on('contextmenu',
+            '#navigation-routing > .app-navigation-entry-utils, #navigation-routing > a, ' +
+            '#navigation-favorites > .app-navigation-entry-utils, #navigation-favorites > a, ' +
+            '.category-line > a, .category-line > .app-navigation-entry-utils, ' +
+            '#navigation-devices > .app-navigation-entry-utils, #navigation-devices > a, ' +
+            '.device-line > a, .device-line > .app-navigation-entry-utils, ' +
+            '#navigation-tracks > .app-navigation-entry-utils, #navigation-tracks > a, ' +
+            '.track-line > a, .track-line > .app-navigation-entry-utils, ' +
+            '#navigation-nonLocalizedPhotos > .app-navigation-entry-utils, #navigation-nonLocalizedPhotos > a, ' +
+            '#navigation-contacts > .app-navigation-entry-utils, #navigation-contacts > a, ' +
+            '#navigation-photos > .app-navigation-entry-utils, #navigation-photos > a ',
+            function(e) {
+            var menu = $(this).parent().find('> .app-navigation-entry-menu');
+            var wasOpen = menu.hasClass('open');
+            $('.app-navigation-entry-menu.open').removeClass('open');
+            if (!wasOpen) {
+                menu.addClass('open');
+            }
+            return false;
+        });
+        // right click on expand icon
+        $('body').on('contextmenu', '#navigation-favorites, #navigation-photos, #navigation-devices, #navigation-tracks', function(e) {
+            var id = $(e.target).attr('id');
+            if (e.target.tagName === 'LI' && (id === 'navigation-favorites' || id === 'navigation-photos' || id === 'navigation-devices' || id === 'navigation-tracks')) {
+                var menu = $(this).find('> .app-navigation-entry-menu');
+                var wasOpen = menu.hasClass('open');
+                $('.app-navigation-entry-menu.open').removeClass('open');
+                if (!wasOpen) {
+                    menu.addClass('open');
+                }
+                return false;
+            }
+        });
     });
 
     var geoLinkController = {
@@ -622,14 +669,6 @@
             //this.setRouter(this.ghRouter);
             //console.log(this.control);
 
-
-            $('body').on('click', '.routingMenuButton', function(e) {
-                var wasOpen = $(this).parent().parent().parent().find('>.app-navigation-entry-menu').hasClass('open');
-                $('.app-navigation-entry-menu.open').removeClass('open');
-                if (!wasOpen) {
-                    $(this).parent().parent().parent().find('>.app-navigation-entry-menu').addClass('open');
-                }
-            });
             // toggle routing control
             $('body').on('click', '#navigation-routing > a', function(e) {
                 that.toggleRouting();

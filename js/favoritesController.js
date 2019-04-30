@@ -36,12 +36,23 @@ FavoritesController.prototype = {
         this.map = map;
         var that = this;
         // UI events
-        // click on menu buttons
-        $('body').on('click', '.favoritesMenuButton, .categoryMenuButton', function(e) {
-            var wasOpen = $(this).parent().parent().parent().find('>.app-navigation-entry-menu').hasClass('open');
-            $('.app-navigation-entry-menu.open').removeClass('open');
-            if (!wasOpen) {
-                $(this).parent().parent().parent().find('>.app-navigation-entry-menu').addClass('open');
+        // toggle favorites
+        $('body').on('click', '#navigation-favorites > a', function(e) {
+            that.toggleFavorites();
+            that.optionsController.saveOptionValues({favoritesEnabled: that.map.hasLayer(that.cluster)});
+            that.updateTimeFilterRange();
+            that.timeFilterController.setSliderToMaxInterval();
+            // expand category list if we just enabled favorites and category list was folded
+            if (that.map.hasLayer(that.cluster) && !$('#navigation-favorites').hasClass('open')) {
+                that.toggleCategoryList();
+                that.optionsController.saveOptionValues({favoriteCategoryListShow: $('#navigation-favorites').hasClass('open')});
+            }
+        });
+        // expand category list
+        $('body').on('click', '#navigation-favorites', function(e) {
+            if (e.target.tagName === 'LI' && $(e.target).attr('id') === 'navigation-favorites') {
+                that.toggleCategoryList();
+                that.optionsController.saveOptionValues({favoriteCategoryListShow: $('#navigation-favorites').hasClass('open')});
             }
         });
         // toggle a category
@@ -155,25 +166,6 @@ FavoritesController.prototype = {
             $(this).parent().parent().removeClass('deleted');
             that.categoryDeletionTimer[cat].pause();
             delete that.categoryDeletionTimer[cat];
-        });
-        // toggle favorites
-        $('body').on('click', '#navigation-favorites > a', function(e) {
-            that.toggleFavorites();
-            that.optionsController.saveOptionValues({favoritesEnabled: that.map.hasLayer(that.cluster)});
-            that.updateTimeFilterRange();
-            that.timeFilterController.setSliderToMaxInterval();
-            // expand category list if we just enabled favorites and category list was folded
-            if (that.map.hasLayer(that.cluster) && !$('#navigation-favorites').hasClass('open')) {
-                that.toggleCategoryList();
-                that.optionsController.saveOptionValues({favoriteCategoryListShow: $('#navigation-favorites').hasClass('open')});
-            }
-        });
-        // expand category list
-        $('body').on('click', '#navigation-favorites', function(e) {
-            if (e.target.tagName === 'LI' && $(e.target).attr('id') === 'navigation-favorites') {
-                that.toggleCategoryList();
-                that.optionsController.saveOptionValues({favoriteCategoryListShow: $('#navigation-favorites').hasClass('open')});
-            }
         });
         // export favorites
         $('body').on('click', '#export-displayed-favorites', function(e) {

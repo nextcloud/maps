@@ -33,20 +33,12 @@ DevicesController.prototype = {
         this.map = map;
         this.mainLayer = L.featureGroup();
         var that = this;
-        // click on menu buttons
-        $('body').on('click', '.devicesMenuButton, .deviceMenuButton', function(e) {
-            var wasOpen = $(this).parent().parent().parent().find('>.app-navigation-entry-menu').hasClass('open');
-            $('.app-navigation-entry-menu.open').removeClass('open');
-            if (!wasOpen) {
-                $(this).parent().parent().parent().find('>.app-navigation-entry-menu').addClass('open');
-            }
-        });
         // toggle a device
         $('body').on('click', '.device-line .device-name', function(e) {
             var id = $(this).parent().attr('device');
             that.toggleDevice(id, true, true);
         });
-        // click on a device name : zoom to bounds
+        // zoom to bounds
         $('body').on('click', '.zoomDeviceButton', function(e) {
             var id = $(this).parent().parent().parent().parent().attr('device');
             that.zoomOnDevice(id);

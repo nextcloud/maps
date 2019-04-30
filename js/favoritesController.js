@@ -171,9 +171,6 @@ FavoritesController.prototype = {
             }
         });
         // export favorites
-        $('body').on('click', '#export-all-favorites', function(e) {
-            that.exportAllFavorites();
-        });
         $('body').on('click', '#export-displayed-favorites', function(e) {
             that.exportDisplayedFavorites();
         });
@@ -1058,26 +1055,6 @@ FavoritesController.prototype = {
         var name = this.favoritesController.favorites[favid].name;
         this.favoritesController.leaveMoveFavoriteMode();
         this.favoritesController.editFavoriteDB(favid, name, null, null, lat, lng);
-    },
-
-    exportAllFavorites: function() {
-        $('#navigation-favorites').addClass('icon-loading-small');
-        $('.leaflet-container').css('cursor', 'wait');
-        var req = {};
-        var url = OC.generateUrl('/apps/maps/export/favorites');
-        $.ajax({
-            type: 'GET',
-            url: url,
-            data: req,
-            async: true
-        }).done(function (response) {
-            OC.Notification.showTemporary(t('maps', 'Favorites exported in {path}', {path: response}));
-        }).always(function (response) {
-            $('#navigation-favorites').removeClass('icon-loading-small');
-            $('.leaflet-container').css('cursor', 'grab');
-        }).fail(function(response) {
-            OC.Notification.showTemporary(t('maps', 'Failed to export favorites') + ': ' + response.responseText);
-        });
     },
 
     exportDisplayedFavorites: function() {

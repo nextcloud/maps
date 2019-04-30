@@ -342,12 +342,12 @@ class FavoritesService {
                 );
             if ($begin !== null) {
                 $qb->andWhere(
-                    $qb->expr()->gt('date_created', $qb->createNamedParameter($begin, IQueryBuilder::PARAM_INT))
+                    $qb->expr()->gte('date_created', $qb->createNamedParameter($begin, IQueryBuilder::PARAM_INT))
                 );
             }
             if ($end !== null) {
                 $qb->andWhere(
-                    $qb->expr()->lt('date_created', $qb->createNamedParameter($end, IQueryBuilder::PARAM_INT))
+                    $qb->expr()->lte('date_created', $qb->createNamedParameter($end, IQueryBuilder::PARAM_INT))
                 );
             }
             // apply category restrictions if it's a non-empty array

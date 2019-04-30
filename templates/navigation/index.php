@@ -14,12 +14,6 @@
         <div class="app-navigation-entry-menu">
             <ul>
                 <li>
-                    <a href="#" id="export-all-favorites">
-                        <span class="icon-category-office"></span>
-                        <span><?php p($l->t('Export all favorites')); ?></span>
-                    </a>
-                </li>
-                <li>
                     <a href="#" id="export-displayed-favorites">
                         <span class="icon-category-office"></span>
                         <span><?php p($l->t('Export displayed favorites')); ?></span>

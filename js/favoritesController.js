@@ -66,6 +66,11 @@ FavoritesController.prototype = {
             that.saveEnabledCategories();
             that.optionsController.saveOptionValues({favoritesEnabled: that.map.hasLayer(that.cluster)});
         });
+        // export a category
+        $('body').on('click', '.exportCategoryButton', function(e) {
+            var cat = $(this).parent().parent().parent().parent().attr('category');
+            that.exportCategory(cat);
+        });
         // click on + button
         $('body').on('click', '#addFavoriteButton', function(e) {
             if (that.addFavoriteMode) {
@@ -495,6 +500,12 @@ FavoritesController.prototype = {
         '                <a href="#" class="zoomCategoryButton">' +
         '                    <span class="icon-search"></span>' +
         '                    <span>'+t('maps', 'Zoom to bounds')+'</span>' +
+        '                </a>' +
+        '            </li>' +
+        '            <li>' +
+        '                <a href="#" class="exportCategoryButton">' +
+        '                    <span class="icon-category-office"></span>' +
+        '                    <span>'+t('maps', 'Export')+'</span>' +
         '                </a>' +
         '            </li>' +
         '            <li>' +
@@ -1057,18 +1068,28 @@ FavoritesController.prototype = {
         this.favoritesController.editFavoriteDB(favid, name, null, null, lat, lng);
     },
 
-    exportDisplayedFavorites: function() {
+    exportCategory: function(cat) {
+        var catList = [cat];
+        if (cat === this.defaultCategory) {
+            catList.push('');
+        }
+        this.exportDisplayedFavorites(catList);
+    },
+
+    exportDisplayedFavorites: function(catList=null) {
         $('#navigation-favorites').addClass('icon-loading-small');
         $('.leaflet-container').css('cursor', 'wait');
-        var catList = [];
-        if (this.map.hasLayer(this.cluster)) {
-            for (var cat in this.categoryLayers) {
-                if (this.map.hasLayer(this.categoryLayers[cat])) {
-                    // a sync client could have saved favorites with empty category
-                    if (cat === this.defaultCategory) {
-                        catList.push('');
+        if (catList === null) {
+            catList = [];
+            if (this.map.hasLayer(this.cluster)) {
+                for (var cat in this.categoryLayers) {
+                    if (this.map.hasLayer(this.categoryLayers[cat])) {
+                        // a sync client could have saved favorites with empty category
+                        if (cat === this.defaultCategory) {
+                            catList.push('');
+                        }
+                        catList.push(cat);
                     }
-                    catList.push(cat);
                 }
             }
         }

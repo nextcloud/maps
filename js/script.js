@@ -1463,20 +1463,22 @@
                 var isCurrentlyOpen = oh.getState();
                 var changeDt = oh.getNextChange();
                 var currentDt = new Date();
-                var dtDiff = changeDt.getTime() - currentDt.getTime();
-                dtDiff = dtDiff / 60000; // get diff in minutes
-                if (oh.getState()) { // is open?
-                    desc += '<span class="poi-open">' + t('maps', 'Open') + '&nbsp;</span>';
-                    if (dtDiff <= 60) {
-                        desc += '<span class="poi-closes">,&nbsp;' + t('maps', 'closes in {nb} minutes', {nb: parseInt(dtDiff)}) + '</span>';
+                if (changeDt) {
+                    var dtDiff = changeDt.getTime() - currentDt.getTime();
+                    dtDiff = dtDiff / 60000; // get diff in minutes
+                    if (isCurrentlyOpen) {
+                        desc += '<span class="poi-open">' + t('maps', 'Open') + '&nbsp;</span>';
+                        if (dtDiff <= 60) {
+                            desc += '<span class="poi-closes">,&nbsp;' + t('maps', 'closes in {nb} minutes', {nb: parseInt(dtDiff)}) + '</span>';
+                        }
+                        else {
+                            desc += '<span>&nbsp;' + t('maps', 'until {date}', {date: changeDt.toLocaleTimeString()}) + '</span>';
+                        }
                     }
                     else {
-                        desc += '<span>&nbsp;' + t('maps', 'until {date}', {date: changeDt.toLocaleTimeString()}) + '</span>';
+                        desc += '<span class="poi-closed">' + t('maps', 'Closed') + '&nbsp;</span>';
+                        desc += '<span class="poi-opens">' + t('maps', 'opens at {date}', {date: changeDt.toLocaleTimeString()}) + '</span>';
                     }
-                }
-                else {
-                    desc += '<span class="poi-closed">' + t('maps', 'Closed') + '&nbsp;</span>';
-                    desc += '<span class="poi-opens">' + t('maps', 'opens at {date}', {date: changeDt.toLocaleTimeString()}) + '</span>';
                 }
                 desc += '<img id="opening-hours-table-toggle-collapse" src="' +
                     OC.filePath('maps', 'img', 'triangle-s.svg') +

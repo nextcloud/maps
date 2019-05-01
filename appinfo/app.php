@@ -13,9 +13,16 @@ namespace OCA\Maps\AppInfo;
 
 use OCP\AppFramework\App;
 
+use OCP\Util;
+
 $app = new Application();
 $container = $app->getContainer();
 
+$eventDispatcher = \OC::$server->getEventDispatcher();
+$eventDispatcher->addListener('OCA\Files::loadAdditionalScripts', function() {
+    Util::addScript('maps', 'filetypes');
+    Util::addStyle('maps', 'filetypes');
+});
 
 $l = \OC::$server->getL10N('maps');
 

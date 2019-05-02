@@ -44,12 +44,14 @@
             }
         };
         window.onclick = function(event) {
-            $('.leaflet-control-layers').hide();
-            $('.easy-button-container').show();
-            if (!event.target.matches('.app-navigation-entry-utils-menu-button button')) {
-                $('.app-navigation-entry-menu.open').removeClass('open');
+            if (event.button === 0) {
+                $('.leaflet-control-layers').hide();
+                $('.easy-button-container').show();
+                if (!event.target.matches('.app-navigation-entry-utils-menu-button button')) {
+                    $('.app-navigation-entry-menu.open').removeClass('open');
+                }
+                mapController.map.contextmenu.hide();
             }
-            mapController.map.contextmenu.hide();
         };
 
         // click on menu buttons

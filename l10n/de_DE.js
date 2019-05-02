@@ -96,6 +96,8 @@ OC.L10N.register(
     "Destination" : "Ziel",
     "m" : "m",
     "km" : "km",
+    "yd" : "yd",
+    "mi" : "mi",
     "h" : "Std",
     "min" : "Min",
     "s" : "S",

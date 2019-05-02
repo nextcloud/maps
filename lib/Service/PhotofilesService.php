@@ -33,6 +33,7 @@ use lsolesen\pel\PelTag;
 use lsolesen\pel\PelEntryAscii;
 use lsolesen\pel\PelEntryRational;
 use lsolesen\pel\PelIfd;
+use lsolesen\pel\Pel;
 
 class PhotofilesService {
 
@@ -356,7 +357,13 @@ class PhotofilesService {
     private function getExif($file) {
         $path = $file->getStorage()->getLocalFile($file->getInternalPath());
         $has_info = false;
+
         $exif = @exif_read_data($path);
+
+        if(!$this->hasValidExifGeoTags($exif)) {
+            $exif = $this->getExifPelBackup($file);
+        }
+
         if($this->hasValidExifGeoTags($exif)){
             //Check if there is exif infor
             $LatM = 1; $LongM = 1;
@@ -405,9 +412,52 @@ class PhotofilesService {
         }
     }
 
-    private function resetExifCoords($file) {
-        $path = $file->getStorage()->getLocalFile($file->getInternalPath());
+    private function getExifPelBackup($file) {
+        $data = new PelDataWindow($file->getContent());
+        if (PelJpeg::isValid($data)) {
+            $pelJpeg = new PelJpeg($data);
 
+            $pelExif = $pelJpeg->getExif();
+            if ($pelExif == null) {
+                return null;
+            }
+
+            $pelTiff = $pelExif->getTiff();
+        } elseif (PelTiff::isValid($data)) {
+            $pelTiff = new PelTiff($data);
+        } else {
+            return null;
+        }
+        if (is_null($pelTiff)) {
+            return null;
+        }
+        $pelIfd0 = $pelTiff->getIfd();
+        if (is_null($pelIfd0)) {
+            return null;
+        }
+        $pelIfdExif = $pelIfd0->getSubIfd(PelIfd::EXIF);
+
+        if (is_null($pelExif)) {
+            return null;
+        }
+        $pelDateTimeOriginal = $pelIfdExif->getEntry(PelTag::DATE_TIME_ORIGINAL);
+        if (is_null($pelDateTimeOriginal)) {
+            return null;
+        }
+        $exif = [
+            'DateTimeOriginal' => $pelDateTimeOriginal->getValue(),
+        ];
+        $pelIfdGPS = $pelIfd0->getSubIfd(PelIfd::GPS);
+        if (!is_null($pelIfdGPS) && !is_null($pelIfdGPS->getEntry(PelTag::GPS_LATITUDE )) && !is_null( $pelIfdGPS->getEntry(PelTag::GPS_LONGITUDE))) {
+            $exif['GPSLatitude'] = $pelIfdGPS->getEntry(PelTag::GPS_LATITUDE)->getValue();
+            $exif['GPSLongitude'] = $pelIfdGPS->getEntry(PelTag::GPS_LONGITUDE)->getValue();
+        }
+        Pel::clearExceptions();
+        return $exif;
+
+    }
+
+    private function resetExifCoords($file) {
         $data = new PelDataWindow($file->getContent());
         $pelJpeg = new PelJpeg($data);
 
@@ -436,8 +486,6 @@ class PhotofilesService {
     }
 
     private function setExifCoords($file, $lat, $lng) {
-        $path = $file->getStorage()->getLocalFile($file->getInternalPath());
-
         $data = new PelDataWindow($file->getContent());
         $pelJpeg = new PelJpeg($data);
 

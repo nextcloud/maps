@@ -48,14 +48,6 @@ ContactsController.prototype = {
             that.updateTimeFilterRange();
             that.timeFilterController.setSliderToMaxInterval();
         });
-        // click on menu button
-        $('body').on('click', '.contactsMenuButton', function(e) {
-            var wasOpen = $(this).parent().parent().parent().find('>.app-navigation-entry-menu').hasClass('open');
-            $('.app-navigation-entry-menu.open').removeClass('open');
-            if (!wasOpen) {
-                $(this).parent().parent().parent().find('>.app-navigation-entry-menu').addClass('open');
-            }
-        });
         // reset
         $('body').on('click', '.resetContact', function(e) {
             var ul = $(this).parent().parent();

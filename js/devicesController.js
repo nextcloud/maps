@@ -33,23 +33,30 @@ DevicesController.prototype = {
         this.map = map;
         this.mainLayer = L.featureGroup();
         var that = this;
-        // click on menu buttons
-        $('body').on('click', '.devicesMenuButton, .deviceMenuButton', function(e) {
-            var wasOpen = $(this).parent().parent().parent().find('>.app-navigation-entry-menu').hasClass('open');
-            $('.app-navigation-entry-menu.open').removeClass('open');
-            if (!wasOpen) {
-                $(this).parent().parent().parent().find('>.app-navigation-entry-menu').addClass('open');
-            }
-        });
         // toggle a device
         $('body').on('click', '.device-line .device-name', function(e) {
             var id = $(this).parent().attr('device');
-            that.toggleDevice(id, true);
+            that.toggleDevice(id, true, true);
         });
-        // click on a device name : zoom to bounds
+        // zoom to bounds
         $('body').on('click', '.zoomDeviceButton', function(e) {
             var id = $(this).parent().parent().parent().parent().attr('device');
             that.zoomOnDevice(id);
+        });
+        $('body').on('click', '.contextZoomDevice', function(e) {
+            var id = $(this).parent().parent().attr('devid');
+            that.zoomOnDevice(id);
+            that.map.closePopup();
+        });
+        // export one device
+        $('body').on('click', '.exportDeviceButton', function(e) {
+            var id = $(this).parent().parent().parent().parent().attr('device');
+            that.exportDevices([id]);
+        });
+        $('body').on('click', '.contextExportDevice', function(e) {
+            var id = $(this).parent().parent().attr('devid');
+            that.exportDevices([id]);
+            that.map.closePopup();
         });
         // toggle a device line
         $('body').on('click', '.toggleDeviceLine', function(e) {
@@ -120,6 +127,22 @@ DevicesController.prototype = {
             that.optionsController.saveOptionValues({enabledDevices: deviceStringList});
             that.optionsController.enabledDevices = [];
             that.optionsController.saveOptionValues({devicesEnabled: that.map.hasLayer(that.mainLayer)});
+        });
+        // export devices
+        $('body').on('click', '#export-all-devices', function(e) {
+            that.exportAllDevices();
+        });
+        // import devices
+        $('body').on('click', '#import-devices', function(e) {
+            OC.dialogs.filepicker(
+                t('maps', 'Import devices from gpx (Nextcloud Maps) or kml/kmz (Google Timeline) file'),
+                function(targetPath) {
+                    that.importDevices(targetPath);
+                },
+                false,
+                ['application/gpx+xml', 'application/vnd.google-earth.kmz', 'application/vnd.google-earth.kml+xml'],
+                true
+            );
         });
         // refresh devices positions
         $('body').on('click', '#refresh-all-devices', function(e) {
@@ -282,19 +305,25 @@ DevicesController.prototype = {
         '            <li>' +
         '                <a href="#" class="toggleDeviceLine">' +
         '                    <span class="icon-category-monitoring"></span>' +
-        '                    <span>'+t('maps', 'Toggle device history')+'</span>' +
+        '                    <span>'+t('maps', 'Toggle history')+'</span>' +
         '                </a>' +
         '            </li>' +
         '            <li>' +
         '                <a href="#" class="changeDeviceColor">' +
         '                    <span class="icon-rename"></span>' +
-        '                    <span>'+t('maps', 'Change device color')+'</span>' +
+        '                    <span>'+t('maps', 'Change color')+'</span>' +
         '                </a>' +
         '            </li>' +
         '            <li>' +
         '                <a href="#" class="zoomDeviceButton">' +
         '                    <span class="icon-search"></span>' +
         '                    <span>'+t('maps', 'Zoom to bounds')+'</span>' +
+        '                </a>' +
+        '            </li>' +
+        '            <li>' +
+        '                <a href="#" class="exportDeviceButton">' +
+        '                    <span class="icon-category-office"></span>' +
+        '                    <span>'+t('maps', 'Export')+'</span>' +
         '                </a>' +
         '            </li>' +
         '            <li>' +
@@ -428,29 +457,9 @@ DevicesController.prototype = {
         this.optionsController.enabledDeviceLines = deviceWithLineList;
     },
 
-    restoreDevicesState: function(enabledDeviceList) {
-        var id;
-        for (var i=0; i < enabledDeviceList.length; i++) {
-            id = enabledDeviceList[i];
-            if (this.mapDeviceLayers.hasOwnProperty(id)) {
-                this.toggleDevice(id, false, true);
-            }
-        }
-    },
-
-    restoreDeviceLinesState: function(enabledDeviceLineList) {
-        var id;
-        for (var i=0; i < enabledDeviceLineList.length; i++) {
-            id = enabledDeviceList[i];
-            if (this.devices[id].line && this.deviceLineLayers.hasOwnProperty(id)) {
-                this.toggleDeviceLine(id, false);
-            }
-        }
-    },
-
-    toggleDevice: function(id, save=false, pageLoad=false) {
+    toggleDevice: function(id, save=false, updateSlider=false) {
         if (!this.devices[id].loaded) {
-            this.loadDevicePoints(id, save, pageLoad);
+            this.loadDevicePoints(id, save, updateSlider);
         }
         this.toggleMapDeviceLayer(id);
         if (save) {
@@ -502,6 +511,7 @@ DevicesController.prototype = {
             else {
                 deviceLineLayer.addLayer(line);
             }
+            this.devices[id].marker.setZIndexOffset(this.lastZIndex++);
             if (save) {
                 this.saveEnabledDevices();
             }
@@ -509,7 +519,7 @@ DevicesController.prototype = {
     },
 
     // load all available points and create marker/line
-    loadDevicePoints: function(id, save=false, pageLoad=false) {
+    loadDevicePoints: function(id, save=false, updateSlider=false) {
         var that = this;
         $('#device-list > li[device="'+id+'"]').addClass('icon-loading-small');
         var req = {};
@@ -522,7 +532,7 @@ DevicesController.prototype = {
         }).done(function (response) {
             that.addPoints(id, response);
             that.devices[id].loaded = true;
-            that.updateMyFirstLastDates(pageLoad);
+            that.updateMyFirstLastDates(updateSlider);
         }).always(function (response) {
             $('#device-list > li[device="'+id+'"]').removeClass('icon-loading-small');
         }).fail(function() {
@@ -541,7 +551,7 @@ DevicesController.prototype = {
         this.devices[id].marker.on('mouseover', this.deviceMarkerMouseover);
         this.devices[id].marker.on('mouseout', this.deviceMarkerMouseout);
         this.devices[id].marker.on('contextmenu', this.deviceMarkerMouseRightClick);
-        //this.devices[id].marker.on('click', this.favoriteMouseClick);
+        //this.devices[id].marker.on('click', this.deviceMouseClick);
         // points data indexed by point id
         this.devices[id].points = {};
         // points coordinates (with id as third element)
@@ -756,7 +766,7 @@ DevicesController.prototype = {
 
     zoomOnDevice: function(id) {
         if (this.mainLayer.hasLayer(this.mapDeviceLayers[id])) {
-            this.map.fitBounds(this.mapDeviceLayers[id].getBounds(), {padding: [30, 30]});
+            this.map.fitBounds(this.mapDeviceLayers[id].getBounds(), {padding: [30, 30], maxZoom: 15});
             this.mapDeviceLayers[id].bringToFront();
             this.devices[id].marker.setZIndexOffset(this.lastZIndex++);
         }
@@ -901,22 +911,32 @@ DevicesController.prototype = {
     deviceMarkerMouseRightClick: function(e) {
         var id = e.target.devid;
 
+        var yOffset = 5;
+        if (e.target.lastPosMarker) {
+            yOffset = -20;
+        }
         e.target.unbindPopup();
         var popupContent = this._map.devicesController.getDeviceContextPopupContent(id);
         e.target.bindPopup(popupContent, {
             closeOnClick: true,
             className: 'popovermenu open popupMarker',
-            offset: L.point(-4, 5)
+            offset: L.point(-5, yOffset)
         });
         e.target.openPopup(e.latlng);
-        e.preventDefault();
     },
 
     getDeviceContextPopupContent: function(id) {
-        var colorText = t('maps', 'Change device color');
-        var lineText = t('maps', 'Toggle device history');
+        var colorText = t('maps', 'Change color');
+        var lineText = t('maps', 'Toggle history');
+        var exportText = t('maps', 'Export');
+        var zoomText = t('maps', 'Zoom to bounds');
         var res =
             '<ul devid="' + id + '">' +
+            '   <li>' +
+            '       <button class="icon-search contextZoomDevice">' +
+            '           <span>' + zoomText + '</span>' +
+            '       </button>' +
+            '   </li>' +
             '   <li>' +
             '       <button class="icon-category-monitoring contextToggleLine">' +
             '           <span>' + lineText + '</span>' +
@@ -925,6 +945,11 @@ DevicesController.prototype = {
             '   <li>' +
             '       <button class="icon-rename contextChangeDeviceColor">' +
             '           <span>' + colorText + '</span>' +
+            '       </button>' +
+            '   </li>' +
+            '   <li>' +
+            '       <button class="icon-category-office contextExportDevice">' +
+            '           <span>' + exportText + '</span>' +
             '       </button>' +
             '   </li>' +
             '</ul>';
@@ -956,6 +981,65 @@ DevicesController.prototype = {
             }
         }
         return data;
+    },
+
+    exportAllDevices: function() {
+        var idList = Object.keys(this.devices);
+        this.exportDevices(idList, true);
+    },
+
+    exportDevices: function(idList, all=false) {
+        var that = this;
+        $('#navigation-devices').addClass('icon-loading-small');
+        $('.leaflet-container').css('cursor', 'wait');
+        var req = {
+            deviceIdList: idList,
+            begin: null,
+            end: null,
+            all: all
+        };
+        var url = OC.generateUrl('/apps/maps/export/devices');
+        $.ajax({
+            type: 'POST',
+            url: url,
+            data: req,
+            async: true
+        }).done(function (response) {
+            OC.Notification.showTemporary(t('maps', 'Devices exported in {path}', {path: response}));
+        }).always(function (response) {
+            $('#navigation-devices').removeClass('icon-loading-small');
+            $('.leaflet-container').css('cursor', 'grab');
+        }).fail(function(response) {
+            OC.Notification.showTemporary(t('maps', 'Failed to export devices') + ': ' + response.responseText);
+        });
+    },
+
+    importDevices: function(path) {
+        $('#navigation-devices').addClass('icon-loading-small');
+        $('.leaflet-container').css('cursor', 'wait');
+        var that = this;
+        var req = {
+            path: path
+        };
+        var url = OC.generateUrl('/apps/maps/import/devices');
+        $.ajax({
+            type: 'POST',
+            url: url,
+            data: req,
+            async: true
+        }).done(function (response) {
+            OC.Notification.showTemporary(t('maps', '{nb} devices imported from {path}', {nb: response, path: path}));
+            var devIdsToRemove = Object.keys(that.devices);
+            for (var i=0; i < devIdsToRemove.length; i++) {
+                that.deleteDeviceMap(devIdsToRemove[i]);
+            }
+            that.getDevices();
+        }).always(function (response) {
+            $('#navigation-devices').removeClass('icon-loading-small');
+            $('.leaflet-container').css('cursor', 'grab');
+        }).fail(function(response) {
+            OC.Notification.showTemporary(t('maps', 'Failed to import devices') + ': ' + response.responseText);
+        });
     },
 
 }

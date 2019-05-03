@@ -44,12 +44,62 @@
             }
         };
         window.onclick = function(event) {
-            $('.leaflet-control-layers').hide();
-            $('.easy-button-container').show();
-            if (!event.target.matches('.app-navigation-entry-utils-menu-button button')) {
-                $('.app-navigation-entry-menu.open').removeClass('open');
+            if (event.button === 0) {
+                $('.leaflet-control-layers').hide();
+                $('.easy-button-container').show();
+                if (!event.target.matches('.app-navigation-entry-utils-menu-button button')) {
+                    $('.app-navigation-entry-menu.open').removeClass('open');
+                }
+                mapController.map.contextmenu.hide();
             }
         };
+
+        // click on menu buttons
+        $('body').on('click',
+            '.routingMenuButton, .favoritesMenuButton, .categoryMenuButton, .photosMenuButton, .contactsMenuButton, ' +
+            '.nonLocalizedPhotosMenuButton, .devicesMenuButton, .deviceMenuButton, .tracksMenuButton, .trackMenuButton',
+            function(e) {
+            var menu = $(this).parent().parent().parent().find('> .app-navigation-entry-menu');
+            var wasOpen = menu.hasClass('open');
+            $('.app-navigation-entry-menu.open').removeClass('open');
+            if (!wasOpen) {
+                menu.addClass('open');
+            }
+        });
+        // right click on entry line
+        $('body').on('contextmenu',
+            '#navigation-routing > .app-navigation-entry-utils, #navigation-routing > a, ' +
+            '#navigation-favorites > .app-navigation-entry-utils, #navigation-favorites > a, ' +
+            '.category-line > a, .category-line > .app-navigation-entry-utils, ' +
+            '#navigation-devices > .app-navigation-entry-utils, #navigation-devices > a, ' +
+            '.device-line > a, .device-line > .app-navigation-entry-utils, ' +
+            '#navigation-tracks > .app-navigation-entry-utils, #navigation-tracks > a, ' +
+            '.track-line > a, .track-line > .app-navigation-entry-utils, ' +
+            '#navigation-nonLocalizedPhotos > .app-navigation-entry-utils, #navigation-nonLocalizedPhotos > a, ' +
+            '#navigation-contacts > .app-navigation-entry-utils, #navigation-contacts > a, ' +
+            '#navigation-photos > .app-navigation-entry-utils, #navigation-photos > a ',
+            function(e) {
+            var menu = $(this).parent().find('> .app-navigation-entry-menu');
+            var wasOpen = menu.hasClass('open');
+            $('.app-navigation-entry-menu.open').removeClass('open');
+            if (!wasOpen) {
+                menu.addClass('open');
+            }
+            return false;
+        });
+        // right click on expand icon
+        $('body').on('contextmenu', '#navigation-favorites, #navigation-photos, #navigation-devices, #navigation-tracks', function(e) {
+            var id = $(e.target).attr('id');
+            if (e.target.tagName === 'LI' && (id === 'navigation-favorites' || id === 'navigation-photos' || id === 'navigation-devices' || id === 'navigation-tracks')) {
+                var menu = $(this).find('> .app-navigation-entry-menu');
+                var wasOpen = menu.hasClass('open');
+                $('.app-navigation-entry-menu.open').removeClass('open');
+                if (!wasOpen) {
+                    menu.addClass('open');
+                }
+                return false;
+            }
+        });
     });
 
     var geoLinkController = {
@@ -138,9 +188,6 @@
                     && optionsValues.enabledFavoriteCategories !== '')
                 {
                     that.enabledFavoriteCategories = optionsValues.enabledFavoriteCategories.split('|');
-                    if (favoritesController.favoritesLoaded) {
-                        favoritesController.restoreCategoriesState(that.enabledFavoriteCategories);
-                    }
                 }
                 if (!optionsValues.hasOwnProperty('favoritesEnabled') || optionsValues.favoritesEnabled === 'true') {
                     favoritesController.toggleFavorites();
@@ -158,11 +205,8 @@
                     that.enabledTracks = optionsValues.enabledTracks.split('|').map(function (x) {
                         return parseInt(x);
                     });
-                    if (tracksController.trackListLoaded) {
-                        tracksController.restoreTracksState(that.enabledTracks);
-                    }
                 }
-                if (!optionsValues.hasOwnProperty('tracksEnabled') || optionsValues.tracksEnabled === 'true') {
+                if (getUrlParameter('track') || !optionsValues.hasOwnProperty('tracksEnabled') || optionsValues.tracksEnabled === 'true') {
                     tracksController.toggleTracks();
                 }
                 if (!optionsValues.hasOwnProperty('deviceListShow') || optionsValues.deviceListShow === 'true') {
@@ -175,9 +219,6 @@
                     that.enabledDevices = optionsValues.enabledDevices.split('|').map(function (x) {
                         return parseInt(x);
                     });
-                    if (devicesController.deviceListLoaded) {
-                        devicesController.restoreDevicesState(that.enabledDevices);
-                    }
                 }
                 if (optionsValues.hasOwnProperty('enabledDeviceLines')
                     && optionsValues.enabledDeviceLines
@@ -186,9 +227,6 @@
                     that.enabledDeviceLines = optionsValues.enabledDeviceLines.split('|').map(function (x) {
                         return parseInt(x);
                     });
-                    if (devicesController.deviceListLoaded) {
-                        devicesController.restoreDeviceLinesState(that.enabledDeviceLines);
-                    }
                 }
                 if (!optionsValues.hasOwnProperty('devicesEnabled') || optionsValues.devicesEnabled === 'true') {
                     devicesController.toggleDevices();
@@ -225,21 +263,38 @@
     };
 
     var mapController = {
-        searchMarker: {},
+        searchMarkerLayerGroup: null,
         map: {},
         locControl: undefined,
         baseLayers: undefined,
-        displaySearchResult: function(result) {
-            if(this.searchMarker) this.map.removeLayer(this.searchMarker);
-            this.searchMarker = L.marker([result.lat, result.lon], {
-                icon: this.searchIcon
-            });
-            var name = result.display_name;
-            var popupContent = searchController.parseOsmResult(result);
-            this.searchMarker.bindPopup(popupContent, {className: 'search-result-popup'});
-            this.searchMarker.addTo(this.map);
-            this.searchMarker.openPopup();
-            this.map.flyTo([result.lat, result.lon], 15, {duration: 1});
+        displaySearchResult: function(results) {
+            this.searchMarkerLayerGroup.clearLayers();
+            var result, searchMarker;
+            for (var i=0; i < results.length; i++) {
+                result = results[i];
+                searchMarker = L.marker([result.lat, result.lon], {
+                    icon: this.searchIcon
+                });
+                var name = result.display_name;
+                // popup
+                var popupContent = searchController.parseOsmResult(result);
+                searchMarker.bindPopup(popupContent, {className: 'search-result-popup'});
+                // tooltip
+                var name = '';
+                if (result.namedetails && result.namedetails.name) {
+                    name = result.namedetails.name;
+                }
+                else {
+                    name = result.display_name;
+                }
+                var tooltipContent = brify(name, 40);
+                searchMarker.bindTooltip(tooltipContent, {className: 'search-result-tooltip'});
+                searchMarker.addTo(this.searchMarkerLayerGroup);
+            }
+            if (results.length === 1) {
+                this.searchMarkerLayerGroup.getLayers()[0].openPopup();
+                this.map.flyTo([results[0].lat, results[0].lon], 15, {duration: 1});
+            }
         },
         initMap: function() {
             var that = this;
@@ -314,7 +369,7 @@
                 maxBounds: new L.LatLngBounds(new L.LatLng(-90, 720), new L.LatLng(90, -720)),
                 layers: [],
                 // right click menu
-                contextmenu: true,
+                contextmenu: false,
                 contextmenuWidth: 160,
                 contextmenuItems: [{
                     text: t('maps', 'Add a favorite'),
@@ -350,6 +405,15 @@
                     callback: routingController.contextRouteTo
                 }]
             });
+            this.map.on('contextmenu', function(e) {
+                if ($(e.originalEvent.target).attr('id') === 'map') {
+                    that.map.contextmenu.showAt(L.latLng(e.latlng.lat, e.latlng.lng));
+                }
+            });
+
+            this.searchMarkerLayerGroup = L.featureGroup();
+            this.map.addLayer(this.searchMarkerLayerGroup);
+
             var locale = OC.getLocale();
             var imperial = (
                 locale === 'en_US' ||
@@ -476,6 +540,12 @@
                 this.osmButton.remove();
                 this.esriButton.addTo(this.map);
             }
+            // map maxZoom should be dynamic (if not specified at map creation) but something crashes like that
+            // so we set it on map creation and
+            // we change it on tile layer change
+            if (this.baseLayers[name].options.maxZoom) {
+                this.map.setMaxZoom(this.baseLayers[name].options.maxZoom);
+            }
             $('.leaflet-control-layers').hide();
             $('.easy-button-container').show();
         },
@@ -601,14 +671,6 @@
             //this.setRouter(this.ghRouter);
             //console.log(this.control);
 
-
-            $('body').on('click', '.routingMenuButton', function(e) {
-                var wasOpen = $(this).parent().parent().parent().find('>.app-navigation-entry-menu').hasClass('open');
-                $('.app-navigation-entry-menu.open').removeClass('open');
-                if (!wasOpen) {
-                    $(this).parent().parent().parent().find('>.app-navigation-entry-menu').addClass('open');
-                }
-            });
             // toggle routing control
             $('body').on('click', '#navigation-routing > a', function(e) {
                 that.toggleRouting();
@@ -641,7 +703,16 @@
         },
 
         onRoutingError: function(e) {
-            OC.Notification.showTemporary(t('maps', 'Routing error: ') + e.error.target.responseText);
+            var msg = e.error.target.responseText
+            try {
+                var json = $.parseJSON(e.error.target.responseText);
+                if (json.message) {
+                    msg = json.message;
+                }
+            }
+            catch (e) {
+            }
+            OC.Notification.showTemporary(t('maps', 'Routing error:') + ' ' + msg);
             routingController.onRoutingEnd();
         },
 
@@ -653,6 +724,12 @@
         onRoutingEnd: function(e) {
             $('#navigation-routing').removeClass('icon-loading-small');
             $('.leaflet-routing-reverse-waypoints').removeClass('icon-loading-small');
+            // TODO understand why routingstart is sometimes triggered after routesfound
+            // just in case routingstart is triggered again (weird):
+            setTimeout(function() {
+                $('#navigation-routing').removeClass('icon-loading-small');
+                $('.leaflet-routing-reverse-waypoints').removeClass('icon-loading-small');
+            }, 5000);
         },
 
         // this has been tested with graphhopper
@@ -1035,13 +1112,7 @@
             // get devices
             var devData = devicesController.getAutocompData();
             data.push(...devData);
-            if (navigator.geolocation && window.isSecureContext) {
-                data.push({
-                    type: 'location',
-                    label: t('maps', 'My location'),
-                    value: t('maps', 'My location')
-                });
-            }
+            data.push(...this.getExtraAutocompleteData(field));
             that.currentLocalAutocompleteData = data;
             fieldElement.autocomplete({
                 source: data,
@@ -1058,10 +1129,10 @@
                     }
                     else if (it.type === 'address') {
                         if (field === that.SEARCH_BAR) {
-                            mapController.displaySearchResult(it.result);
+                            mapController.displaySearchResult([it.result]);
                         }
                     }
-                    else if (it.type === 'location') {
+                    else if (it.type === 'mylocation') {
                         navigator.geolocation.getCurrentPosition(function (position) {
                             var lat = position.coords.latitude;
                             var lng = position.coords.longitude;
@@ -1082,6 +1153,12 @@
                         });
                         return;
                     }
+                    else if (it.type === 'poi') {
+                        that.submitSearchPOI(it.value, it.label);
+                        return;
+                    }
+
+                    // forward to routing controller
                     if (field === that.SEARCH_BAR || field === that.ROUTING_TO) {
                         routingController.setRouteTo(L.latLng(it.lat, it.lng));
                     }
@@ -1096,6 +1173,7 @@
                 }
             }).data('ui-autocomplete')._renderItem = function(ul, item) {
                 var iconClass = 'icon-link';
+                var iconElem = '';
                 if (item.type === 'favorite') {
                     iconClass = 'icon-favorite';
                 }
@@ -1110,17 +1188,21 @@
                         iconClass = 'icon-phone';
                     }
                 }
-                else if (item.type === 'location') {
+                else if (item.type === 'mylocation') {
                     iconClass = 'icon-address';
+                }
+                else if (item.type === 'poi') {
+                    iconClass = '';
+                    iconElem = '<i class="far fa-dot-circle"></i>';
                 }
                 // shorten label if needed
                 var label = item.label;
                 if (label.length > 35) {
-                    label = label.substring(0, 35) + '...';
+                    label = label.substring(0, 35) + '…';
                 }
                 var listItem = $('<li></li>')
                     .data('item.autocomplete', item)
-                    .append('<a class="searchCompleteLink"><button class="searchCompleteIcon ' + iconClass + '"></button> ' + label + '</a>')
+                    .append('<a class="searchCompleteLink"><button class="searchCompleteIcon ' + iconClass + '">' + iconElem + '</button> ' + label + '</a>')
                     .appendTo(ul);
                 return listItem;
             };
@@ -1135,15 +1217,14 @@
 
             this.search(str).then(function(results) {
                 if (results.length === 0) {
+                    OC.Notification.showTemporary(t('maps', 'No search result'));
                     return;
                 }
                 else if (results.length === 1) {
                     var result = results[0];
-                    mapController.displaySearchResult(result);
-                    routingController.setRouteTo(L.latLng(result.lat, result.lon));
+                    mapController.displaySearchResult([result]);
                 }
                 else {
-                    var result = results[0];
                     var newData = [];
                     newData.push(...that.currentLocalAutocompleteData);
                     for (var i=0; i < results.length; i++) {
@@ -1162,6 +1243,142 @@
             });
         },
 
+        submitSearchPOI: function(type, typeName) {
+            var that = this;
+
+            var mapBounds = this.map.getBounds();
+            var latMin = mapBounds.getSouth();
+            var latMax = mapBounds.getNorth();
+            var lngMin = mapBounds.getWest();
+            var lngMax = mapBounds.getEast();
+            this.searchPOI(type, latMin, latMax, lngMin, lngMax).then(function(results) {
+                if (results.length === 0) {
+                    OC.Notification.showTemporary(t('maps', 'No {POItypeName} found', {POItypeName: typeName}));
+                    return;
+                }
+                mapController.displaySearchResult(results);
+            });
+        },
+
+        getExtraAutocompleteData: function(field) {
+            data = [];
+            if (navigator.geolocation && window.isSecureContext) {
+                data.push({
+                    type: 'mylocation',
+                    label: t('maps', 'My location'),
+                    value: t('maps', 'My location')
+                });
+            }
+            if (field === this.SEARCH_BAR) {
+                data.push({
+                    type: 'poi',
+                    label: t('maps', 'Restaurant'),
+                    value: 'restaurant'
+                });
+                data.push({
+                    type: 'poi',
+                    label: t('maps', 'Fast food'),
+                    value: 'fast food'
+                });
+                data.push({
+                    type: 'poi',
+                    label: t('maps', 'Bar'),
+                    value: 'bar'
+                });
+                data.push({
+                    type: 'poi',
+                    label: t('maps', 'Supermarket'),
+                    value: 'supermarket'
+                });
+                data.push({
+                    type: 'poi',
+                    label: t('maps', 'Cafe'),
+                    value: 'cafe'
+                });
+                data.push({
+                    type: 'poi',
+                    label: t('maps', 'Library'),
+                    value: 'library'
+                });
+                data.push({
+                    type: 'poi',
+                    label: t('maps', 'School'),
+                    value: 'school'
+                });
+                data.push({
+                    type: 'poi',
+                    label: t('maps', 'Sports centre'),
+                    value: 'sports centre'
+                });
+                data.push({
+                    type: 'poi',
+                    label: t('maps', 'Gaz station'),
+                    value: 'fuel'
+                });
+                data.push({
+                    type: 'poi',
+                    label: t('maps', 'Parking'),
+                    value: 'parking'
+                });
+                data.push({
+                    type: 'poi',
+                    label: t('maps', 'Bicycle parking'),
+                    value: 'bicycle parking'
+                });
+                data.push({
+                    type: 'poi',
+                    label: t('maps', 'Car rental'),
+                    value: 'car rental'
+                });
+                data.push({
+                    type: 'poi',
+                    label: t('maps', 'ATM'),
+                    value: 'atm'
+                });
+                data.push({
+                    type: 'poi',
+                    label: t('maps', 'Pharmacy'),
+                    value: 'pharmacy'
+                });
+                data.push({
+                    type: 'poi',
+                    label: t('maps', 'Cinema'),
+                    value: 'cinema'
+                });
+                data.push({
+                    type: 'poi',
+                    label: t('maps', 'Public toilets'),
+                    value: 'toilets'
+                });
+                data.push({
+                    type: 'poi',
+                    label: t('maps', 'Drinking water'),
+                    value: 'water point'
+                });
+                data.push({
+                    type: 'poi',
+                    label: t('maps', 'Hospital'),
+                    value: 'hospital'
+                });
+                data.push({
+                    type: 'poi',
+                    label: t('maps', 'Doctors'),
+                    value: 'doctors'
+                });
+                data.push({
+                    type: 'poi',
+                    label: t('maps', 'Dentist'),
+                    value: 'dentist'
+                });
+                data.push({
+                    type: 'poi',
+                    label: t('maps', 'Hotel'),
+                    value: 'hotel'
+                });
+            }
+            return data;
+        },
+
         isGeocodeable: function(str) {
             var pattern = /^\s*\d+\.?\d*\,\s*\d+\.?\d*\s*$/;
             return pattern.test(str);
@@ -1169,6 +1386,24 @@
         search: function(str) {
             var searchTerm = encodeURIComponent(str);
             var apiUrl = 'https://nominatim.openstreetmap.org/search/' + searchTerm + '?format=json&addressdetails=1&extratags=1&namedetails=1&limit=8';
+            return $.getJSON(apiUrl, {}, function(response) {
+                return response;
+            });
+        },
+        searchPOI: function(type, latMin, latMax, lngMin, lngMax) {
+            var query, i;
+            var amenities = ['restaurant', 'fast food', 'bar', 'parking', 'hospital', 'cafe', 'school', 'bicycle parking', 'cinema', 'supermarket'];
+            var qs = ['atm', 'pharmacy', 'hotel', 'doctors', 'dentist', 'library', 'car rental', 'fuel', 'toilets', 'water point', 'sports centre'];
+            if (amenities.indexOf(type) !== -1) {
+                query = 'amenity='+encodeURIComponent(type);
+            }
+            else if (qs.indexOf(type) !== -1) {
+                query = 'q='+encodeURIComponent(type);
+            }
+            var apiUrl = 'https://nominatim.openstreetmap.org/search' +
+                '?format=json&addressdetails=1&extratags=1&namedetails=1&limit=100&' +
+                'viewbox=' + parseFloat(lngMin) + ',' + parseFloat(latMin) + ',' + parseFloat(lngMax) + ',' + parseFloat(latMax) + '&' +
+                'bounded=1&' + query;
             return $.getJSON(apiUrl, {}, function(response) {
                 return response;
             });
@@ -1274,20 +1509,22 @@
                 var isCurrentlyOpen = oh.getState();
                 var changeDt = oh.getNextChange();
                 var currentDt = new Date();
-                var dtDiff = changeDt.getTime() - currentDt.getTime();
-                dtDiff = dtDiff / 60000; // get diff in minutes
-                if (oh.getState()) { // is open?
-                    desc += '<span class="poi-open">' + t('maps', 'Open') + '&nbsp;</span>';
-                    if (dtDiff <= 60) {
-                        desc += '<span class="poi-closes">,&nbsp;' + t('maps', 'closes in {nb} minutes', {nb: dtDiff}) + '</span>';
+                if (changeDt) {
+                    var dtDiff = changeDt.getTime() - currentDt.getTime();
+                    dtDiff = dtDiff / 60000; // get diff in minutes
+                    if (isCurrentlyOpen) {
+                        desc += '<span class="poi-open">' + t('maps', 'Open') + '&nbsp;</span>';
+                        if (dtDiff <= 60) {
+                            desc += '<span class="poi-closes">,&nbsp;' + t('maps', 'closes in {nb} minutes', {nb: parseInt(dtDiff)}) + '</span>';
+                        }
+                        else {
+                            desc += '<span>&nbsp;' + t('maps', 'until {date}', {date: changeDt.toLocaleTimeString()}) + '</span>';
+                        }
                     }
                     else {
-                        desc += '<span>&nbsp;' + t('maps', 'until {date}', {date: changeDt.toLocaleTimeString()}) + '</span>';
+                        desc += '<span class="poi-closed">' + t('maps', 'Closed') + '&nbsp;</span>';
+                        desc += '<span class="poi-opens">' + t('maps', 'opens at {date}', {date: changeDt.toLocaleTimeString()}) + '</span>';
                     }
-                }
-                else {
-                    desc += '<span class="poi-closed">' + t('maps', 'Closed') + '&nbsp;</span>';
-                    desc += '<span class="poi-opens">' + t('maps', 'opens at {date}', {date: changeDt.toLocaleTimeString()}) + '</span>';
                 }
                 desc += '<img id="opening-hours-table-toggle-collapse" src="' +
                     OC.filePath('maps', 'img', 'triangle-s.svg') +

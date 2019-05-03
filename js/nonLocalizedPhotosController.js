@@ -49,14 +49,6 @@ NonLocalizedPhotosController.prototype = {
             that.updateTimeFilterRange();
             that.timeFilterController.setSliderToMaxInterval();
         });
-        // click on menu button
-        $('body').on('click', '.nonLocalizedPhotosMenuButton', function(e) {
-            var wasOpen = $(this).parent().parent().parent().find('>.app-navigation-entry-menu').hasClass('open');
-            $('.app-navigation-entry-menu.open').removeClass('open');
-            if (!wasOpen) {
-                $(this).parent().parent().parent().find('>.app-navigation-entry-menu').addClass('open');
-            }
-        });
 
         //save geolocations to pictures
         $('body').on('click', '.save-all-nonlocalized', function(e) {

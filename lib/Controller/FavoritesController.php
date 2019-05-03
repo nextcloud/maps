@@ -167,13 +167,6 @@ class FavoritesController extends Controller {
     /**
      * @NoAdminRequired
      */
-    public function exportAllFavorites() {
-        return $this->exportFavorites('all', null, null, true);
-    }
-
-    /**
-     * @NoAdminRequired
-     */
     public function exportFavorites($categoryList=null, $begin, $end, $all=false) {
         // sorry about ugly categoryList management:
         // when an empty list is passed in http request, we get null here

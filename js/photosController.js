@@ -45,14 +45,6 @@ PhotosController.prototype = {
             that.updateTimeFilterRange();
             that.timeFilterController.setSliderToMaxInterval();
         });
-        // click on menu button
-        $('body').on('click', '.photosMenuButton', function(e) {
-            var wasOpen = $(this).parent().parent().parent().find('>.app-navigation-entry-menu').hasClass('open');
-            $('.app-navigation-entry-menu.open').removeClass('open');
-            if (!wasOpen) {
-                $(this).parent().parent().parent().find('>.app-navigation-entry-menu').addClass('open');
-            }
-        });
         $('body').on('click', '.movephoto', function(e) {
             var ul = $(this).parent().parent();
             var filePath = ul.attr('filepath');
@@ -231,7 +223,7 @@ PhotosController.prototype = {
         e.target.bindPopup(popupContent, {
             closeOnClick: true,
             className: 'popovermenu open popupMarker',
-            offset: L.point(-5, 9)
+            offset: L.point(-5, -20)
         });
         e.target.openPopup();
     },

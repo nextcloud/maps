@@ -33,14 +33,6 @@ TracksController.prototype = {
         this.mainLayer = L.featureGroup();
         var that = this;
         // UI events
-        // click on menu buttons
-        $('body').on('click', '.tracksMenuButton, .trackMenuButton', function(e) {
-            var wasOpen = $(this).parent().parent().parent().find('>.app-navigation-entry-menu').hasClass('open');
-            $('.app-navigation-entry-menu.open').removeClass('open');
-            if (!wasOpen) {
-                $(this).parent().parent().parent().find('>.app-navigation-entry-menu').addClass('open');
-            }
-        });
         // toggle a track
         $('body').on('click', '.track-line .track-name', function(e) {
             var id = $(this).parent().attr('track');
@@ -270,16 +262,6 @@ TracksController.prototype = {
         this.optionsController.enabledTracks = trackList;
     },
 
-    restoreTracksState: function(enabledTrackList) {
-        var id;
-        for (var i=0; i < enabledTrackList.length; i++) {
-            id = enabledTrackList[i];
-            if (this.mapTrackLayers.hasOwnProperty(id)) {
-                this.toggleTrack(id, false, true);
-            }
-        }
-    },
-
     showAllTracks: function() {
         if (!this.map.hasLayer(this.mainLayer)) {
             this.toggleTracks();
@@ -392,7 +374,7 @@ TracksController.prototype = {
         });
     },
 
-    addTracksDB: function(pathList) {
+    addTracksDB: function(pathList, zoom=false) {
         var that = this;
         $('#navigation-tracks').addClass('icon-loading-small');
         var req = {
@@ -411,7 +393,7 @@ TracksController.prototype = {
             }
             var ids = [];
             for (var i=0; i < response.length; i++) {
-                that.addTrackMap(response[i], true);
+                that.addTrackMap(response[i], true, false, zoom);
                 ids.push(response[i].id);
             }
             that.saveEnabledTracks(ids);
@@ -423,7 +405,7 @@ TracksController.prototype = {
         });
     },
 
-    addTrackMap: function(track, show=false, pageLoad=false) {
+    addTrackMap: function(track, show=false, pageLoad=false, zoom=false) {
         // color
         var color = track.color || OCA.Theming.color;
         this.trackColors[track.id] = color;
@@ -502,7 +484,7 @@ TracksController.prototype = {
 
         // enable if in saved options or if it should be enabled for another reason
         if (show || this.optionsController.enabledTracks.indexOf(track.id) !== -1) {
-            this.toggleTrack(track.id, false, pageLoad);
+            this.toggleTrack(track.id, false, pageLoad, zoom);
         }
     },
 
@@ -517,10 +499,20 @@ TracksController.prototype = {
             data: req,
             async: true
         }).done(function (response) {
-            var i, track;
+            var i, track, show;
+            var getFound = false;
             for (i=0; i < response.length; i++) {
                 track = response[i];
-                that.addTrackMap(track, false, true);
+                // show'n'zoom track if it was asked with a GET parameter
+                show = (getUrlParameter('track') === track.file_path.replace(/^files/, ''));
+                that.addTrackMap(track, show, true, show);
+                if (show) {
+                    getFound = true;
+                }
+            }
+            // if the asked track wasn't already in track list, load it and zoom!
+            if (!getFound) {
+                that.addTracksDB([getUrlParameter('track')], true);
             }
             that.trackListLoaded = true;
         }).always(function (response) {
@@ -530,19 +522,19 @@ TracksController.prototype = {
         });
     },
 
-    toggleTrack: function(id, save=false, pageLoad=false) {
+    toggleTrack: function(id, save=false, pageLoad=false, zoom=false) {
         var trackLayer = this.trackLayers[id];
         if (!trackLayer.loaded) {
-            this.loadTrack(id, save, pageLoad);
+            this.loadTrack(id, save, pageLoad, zoom);
         }
-        this.toggleMapTrackLayer(id);
+        this.toggleMapTrackLayer(id, zoom);
         if (save) {
             this.saveEnabledTracks();
             this.updateMyFirstLastDates(true);
         }
     },
 
-    toggleMapTrackLayer: function(id) {
+    toggleMapTrackLayer: function(id, zoom=false) {
         var mapTrackLayer = this.mapTrackLayers[id];
         var trackLine = $('#track-list > li[track="'+id+'"]');
         var trackName = trackLine.find('.track-name');
@@ -563,10 +555,14 @@ TracksController.prototype = {
                 }
             });
             trackName.addClass('active');
+            if (zoom) {
+                this.zoomOnTrack(id);
+                this.showTrackElevation(id);
+            }
         }
     },
 
-    loadTrack: function(id, save=false, pageLoad=false) {
+    loadTrack: function(id, save=false, pageLoad=false, zoom=false) {
         var that = this;
         $('#track-list > li[track="'+id+'"]').addClass('icon-loading-small');
         var req = {};
@@ -580,6 +576,10 @@ TracksController.prototype = {
             that.processGpx(id, response);
             that.trackLayers[id].loaded = true;
             that.updateMyFirstLastDates(pageLoad);
+            if (zoom) {
+                that.zoomOnTrack(id);
+                that.showTrackElevation(id);
+            }
         }).always(function (response) {
             $('#track-list > li[track="'+id+'"]').removeClass('icon-loading-small');
         }).fail(function() {
@@ -593,8 +593,16 @@ TracksController.prototype = {
         var coloredTooltipClass;
         var rgbc;
 
-        var gpxp = $.parseXML(gpx.replace(/version="1.1"/, 'version="1.0"'));
-        var gpxx = $(gpxp).find('gpx');
+        var gpxp, gpxx;
+        try {
+            gpxp = $.parseXML(gpx.replace(/version="1.1"/, 'version="1.0"'));
+            gpxx = $(gpxp).find('gpx');
+        }
+        catch (err) {
+            OC.Notification.showTemporary(t('maps', 'Failed to parse track {fname}', {fname: this.tracks[id].file_name}));
+            this.removeTrackDB(id);
+            return;
+        }
 
         // count the number of lines and point
         var nbPoints = gpxx.find('>wpt').length;
@@ -972,20 +980,23 @@ TracksController.prototype = {
     trackMouseRightClick: function(e) {
         var id = e.target.trackid;
 
+        yOffset = 5;
+        if (e.target instanceof L.Marker) {
+            yOffset = -10;
+        }
         e.target.unbindPopup();
         var popupContent = this._map.tracksController.getTrackContextPopupContent(id);
         e.target.bindPopup(popupContent, {
             closeOnClick: true,
             className: 'popovermenu open popupMarker',
-            offset: L.point(-4, 5)
+            offset: L.point(-4, yOffset)
         });
         e.target.openPopup(e.latlng);
-        e.preventDefault();
     },
 
     getTrackContextPopupContent: function(id) {
-        var colorText = t('maps', 'Change track color');
-        var elevationText = t('maps', 'Show track elevation');
+        var colorText = t('maps', 'Change color');
+        var elevationText = t('maps', 'Show elevation');
         var removeText = t('maps', 'Remove');
         var res =
             '<ul trackid="' + id + '">' +
@@ -1010,15 +1021,18 @@ TracksController.prototype = {
 
     zoomOnTrack: function(id) {
         if (this.mainLayer.hasLayer(this.mapTrackLayers[id])) {
-            this.map.fitBounds(this.mapTrackLayers[id].getBounds(), {padding: [30, 30]});
-            this.mapTrackLayers[id].bringToFront();
-            // markers are hard to bring to front
-            var that = this;
-            this.trackLayers[id].eachLayer(function(l) {
-                if (l instanceof L.Marker){
-                    l.setZIndexOffset(that.lastZIndex++);
-                }
-            });
+            var bounds = this.mapTrackLayers[id].getBounds();
+            if (bounds && bounds.constructor === Object && Object.keys(bounds).length !== 0) {
+                this.map.fitBounds(this.mapTrackLayers[id].getBounds(), {padding: [30, 30]});
+                this.mapTrackLayers[id].bringToFront();
+                // markers are hard to bring to front
+                var that = this;
+                this.trackLayers[id].eachLayer(function(l) {
+                    if (l instanceof L.Marker){
+                        l.setZIndexOffset(that.lastZIndex++);
+                    }
+                });
+            }
         }
     },
 

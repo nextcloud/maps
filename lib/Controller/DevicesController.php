@@ -34,6 +34,13 @@ use OCP\IDateTimeZone;
 
 use OCA\Maps\Service\DevicesService;
 
+function endswith($string, $test) {
+    $strlen = strlen($string);
+    $testlen = strlen($test);
+    if ($testlen > $strlen) return false;
+    return substr_compare($string, $test, $strlen - $testlen, $testlen) === 0;
+}
+
 class DevicesController extends Controller {
 
     private $userId;
@@ -161,7 +168,7 @@ class DevicesController extends Controller {
         // sorry about ugly deviceIdList management:
         // when an empty list is passed in http request, we get null here
         if ($deviceIdList === null or (is_array($deviceIdList) and count($deviceIdList) === 0)) {
-            $response = new DataResponse('Nothing to export', 400);
+            $response = new DataResponse('No device to export', 400);
             return $response;
         }
 
@@ -205,11 +212,43 @@ class DevicesController extends Controller {
         $file = $mapsFolder->newFile($filename);
         $handler = $file->fopen('w');
 
-        $this->devicesService->exportDevices($this->userId, $handler, $deviceIdList, $begin, $end, $this->appVersion);
+        $this->devicesService->exportDevices($this->userId, $handler, $deviceIdList, $begin, $end, $this->appVersion, $filename);
 
         fclose($handler);
         $file->touch();
         return new DataResponse('/Maps/'.$filename);
+    }
+
+    /**
+     * @NoAdminRequired
+     */
+    public function importDevices($path) {
+        $userFolder = $this->userfolder;
+        $cleanpath = str_replace(array('../', '..\\'), '',  $path);
+
+        if ($userFolder->nodeExists($cleanpath)){
+            $file = $userFolder->get($cleanpath);
+            if ($file->getType() === \OCP\Files\FileInfo::TYPE_FILE and
+                $file->isReadable()){
+                $lowerFileName = strtolower($file->getName());
+                if (endswith($lowerFileName, '.gpx') or endswith($lowerFileName, '.kml') or endswith($lowerFileName, '.kmz')) {
+                    $nbImported = $this->devicesService->importDevices($this->userId, $file);
+                    return new DataResponse($nbImported);
+                }
+                else {
+                    // invalid extension
+                    return new DataResponse('Invalid file extension', 400);
+                }
+            }
+            else {
+                // directory or not readable
+                return new DataResponse('Impossible to read the file', 400);
+            }
+        }
+        else {
+            // does not exist
+            return new DataResponse('File does not exist', 400);
+        }
     }
 
 }

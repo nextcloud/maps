@@ -18,7 +18,7 @@ function FavoritesController(optionsController, timeFilterController) {
     this.lastDate = null;
 
     this.addFavoriteMode = false;
-    this.addFavoriteCategory = '';
+    this.addFavoriteCategory = null;
 
     this.defaultCategory = t('maps', 'Personal');
 
@@ -36,20 +36,30 @@ FavoritesController.prototype = {
         this.map = map;
         var that = this;
         // UI events
-        // click on menu buttons
-        $('body').on('click', '.favoritesMenuButton, .categoryMenuButton', function(e) {
-            var wasOpen = $(this).parent().parent().parent().find('>.app-navigation-entry-menu').hasClass('open');
-            $('.app-navigation-entry-menu.open').removeClass('open');
-            if (!wasOpen) {
-                $(this).parent().parent().parent().find('>.app-navigation-entry-menu').addClass('open');
+        // toggle favorites
+        $('body').on('click', '#navigation-favorites > a', function(e) {
+            that.toggleFavorites();
+            that.optionsController.saveOptionValues({favoritesEnabled: that.map.hasLayer(that.cluster)});
+            that.updateTimeFilterRange();
+            that.timeFilterController.setSliderToMaxInterval();
+            // expand category list if we just enabled favorites and category list was folded
+            if (that.map.hasLayer(that.cluster) && !$('#navigation-favorites').hasClass('open')) {
+                that.toggleCategoryList();
+                that.optionsController.saveOptionValues({favoriteCategoryListShow: $('#navigation-favorites').hasClass('open')});
+            }
+        });
+        // expand category list
+        $('body').on('click', '#navigation-favorites', function(e) {
+            if (e.target.tagName === 'LI' && $(e.target).attr('id') === 'navigation-favorites') {
+                that.toggleCategoryList();
+                that.optionsController.saveOptionValues({favoriteCategoryListShow: $('#navigation-favorites').hasClass('open')});
             }
         });
         // toggle a category
         $('body').on('click', '.category-line .category-name', function(e) {
             var cat = $(this).text();
-            that.toggleCategory(cat);
+            that.toggleCategory(cat, true);
             that.saveEnabledCategories();
-            that.updateMyFirstLastDates();
         });
         // zoom to category
         $('body').on('click', '.zoomCategoryButton', function(e) {
@@ -67,6 +77,11 @@ FavoritesController.prototype = {
             that.saveEnabledCategories();
             that.optionsController.saveOptionValues({favoritesEnabled: that.map.hasLayer(that.cluster)});
         });
+        // export a category
+        $('body').on('click', '.exportCategoryButton', function(e) {
+            var cat = $(this).parent().parent().parent().parent().attr('category');
+            that.exportCategory(cat);
+        });
         // click on + button
         $('body').on('click', '#addFavoriteButton', function(e) {
             if (that.addFavoriteMode) {
@@ -76,7 +91,7 @@ FavoritesController.prototype = {
                 if (that.movingFavoriteId !== null) {
                     that.leaveMoveFavoriteMode();
                 }
-                that.enterAddFavoriteMode();
+                that.enterAddFavoriteMode(that.defaultCategory);
             }
         });
         $('body').on('click', '.addFavoriteInCategory', function(e) {
@@ -152,29 +167,7 @@ FavoritesController.prototype = {
             that.categoryDeletionTimer[cat].pause();
             delete that.categoryDeletionTimer[cat];
         });
-        // toggle favorites
-        $('body').on('click', '#navigation-favorites > a', function(e) {
-            that.toggleFavorites();
-            that.optionsController.saveOptionValues({favoritesEnabled: that.map.hasLayer(that.cluster)});
-            that.updateTimeFilterRange();
-            that.timeFilterController.setSliderToMaxInterval();
-            // expand category list if we just enabled favorites and category list was folded
-            if (that.map.hasLayer(that.cluster) && !$('#navigation-favorites').hasClass('open')) {
-                that.toggleCategoryList();
-                that.optionsController.saveOptionValues({favoriteCategoryListShow: $('#navigation-favorites').hasClass('open')});
-            }
-        });
-        // expand category list
-        $('body').on('click', '#navigation-favorites', function(e) {
-            if (e.target.tagName === 'LI' && $(e.target).attr('id') === 'navigation-favorites') {
-                that.toggleCategoryList();
-                that.optionsController.saveOptionValues({favoriteCategoryListShow: $('#navigation-favorites').hasClass('open')});
-            }
-        });
         // export favorites
-        $('body').on('click', '#export-all-favorites', function(e) {
-            that.exportAllFavorites();
-        });
         $('body').on('click', '#export-displayed-favorites', function(e) {
             that.exportDisplayedFavorites();
         });
@@ -182,7 +175,7 @@ FavoritesController.prototype = {
         // import favorites
         $('body').on('click', '#import-favorites', function(e) {
             OC.dialogs.filepicker(
-                t('maps', 'Import favorites from gpx (OsmAnd), kmz (F-Droid Maps & Maps.me) or kml file'),
+                t('maps', 'Import favorites from gpx (OsmAnd, Nextcloud Maps) or kmz/kml (F-Droid Maps, Maps.me, Marble)'),
                 function(targetPath) {
                     that.importFavorites(targetPath);
                 },
@@ -215,7 +208,7 @@ FavoritesController.prototype = {
         var that = this;
         return function(cluster) {
             var fid = parseInt(cluster.getAllChildMarkers()[0].favid);
-            var category = that.favorites[fid].category || that.defaultCategory;
+            var category = that.favorites[fid].category;
             category = category.replace(' ', '-');
             var label = cluster.getChildCount();
             return new L.DivIcon(L.extend({
@@ -248,18 +241,6 @@ FavoritesController.prototype = {
         this.optionsController.enabledFavoriteCategories = categoryList;
     },
 
-    restoreCategoriesState: function(enabledCategoryList) {
-        var cat;
-        for (var i=0; i < enabledCategoryList.length; i++) {
-            cat = enabledCategoryList[i];
-            if (this.categoryLayers.hasOwnProperty(cat)) {
-                this.toggleCategory(cat);
-            }
-        }
-        this.updateTimeFilterRange();
-        this.timeFilterController.setSliderToMaxInterval();
-    },
-
     showAllCategories: function() {
         if (!this.map.hasLayer(this.cluster)) {
             this.toggleFavorites();
@@ -281,7 +262,7 @@ FavoritesController.prototype = {
         this.updateMyFirstLastDates();
     },
 
-    toggleCategory: function(cat) {
+    toggleCategory: function(cat, updateSlider=false) {
         var subgroup = this.categoryLayers[cat];
         var catNoSpace = cat.replace(' ', '-');
         var catLine = $('#category-list > li[category="'+cat+'"]');
@@ -308,6 +289,10 @@ FavoritesController.prototype = {
         }
         if (showAgain) {
             this.map.addLayer(this.cluster);
+        }
+        if (updateSlider) {
+            this.updateTimeFilterRange();
+            this.timeFilterController.setSliderToMaxInterval();
         }
     },
 
@@ -498,6 +483,12 @@ FavoritesController.prototype = {
         '                </a>' +
         '            </li>' +
         '            <li>' +
+        '                <a href="#" class="exportCategoryButton">' +
+        '                    <span class="icon-category-office"></span>' +
+        '                    <span>'+t('maps', 'Export')+'</span>' +
+        '                </a>' +
+        '            </li>' +
+        '            <li>' +
         '                <a href="#" class="deleteCategory">' +
         '                    <span class="icon-delete"></span>' +
         '                    <span>'+t('maps', 'Delete')+'</span>' +
@@ -545,9 +536,6 @@ FavoritesController.prototype = {
     renameCategoryDB: function(cat, newCategoryName) {
         var that = this;
         var origCatList = [cat];
-        if (cat === this.defaultCategory) {
-            origCatList.push('');
-        }
         $('#navigation-favorites').addClass('icon-loading-small');
         $('.leaflet-container').css('cursor', 'wait');
         var req = {
@@ -581,7 +569,6 @@ FavoritesController.prototype = {
         var favids = [];
         for (var favid in markers) {
             favids.push(favid);
-            //this.deleteFavoriteDB(favid);
         }
         var that = this;
         $('#navigation-favorites').addClass('icon-loading-small');
@@ -596,7 +583,7 @@ FavoritesController.prototype = {
             data: req,
             async: true
         }).done(function (response) {
-            that.deleteCategoryMap(cat);
+            that.deleteCategoryMap(cat, true);
         }).always(function (response) {
             $('#navigation-favorites').removeClass('icon-loading-small');
             $('.leaflet-container').css('cursor', 'grab');
@@ -605,7 +592,7 @@ FavoritesController.prototype = {
         });
     },
 
-    deleteCategoryMap: function(cat) {
+    deleteCategoryMap: function(cat, updateSlider=false) {
         // favorites (just in case the category is not empty)
         var favids = [];
         for (favid in this.categoryMarkers[cat]) {
@@ -628,7 +615,10 @@ FavoritesController.prototype = {
             $(this).remove();
         });
 
-        this.updateMyFirstLastDates();
+        if (updateSlider) {
+            this.updateTimeFilterRange();
+            this.timeFilterController.setSliderToMaxInterval();
+        }
     },
 
     updateCategoryCounters: function() {
@@ -642,7 +632,7 @@ FavoritesController.prototype = {
         //$('#navigation-favorites > .app-navigation-entry-utils .app-navigation-entry-utils-counter').text(total);
     },
 
-    enterAddFavoriteMode: function(categoryName='') {
+    enterAddFavoriteMode: function(categoryName) {
         this.addFavoriteCategory = categoryName;
         $('.leaflet-container').css('cursor','crosshair');
         this.map.on('click', this.addFavoriteClickMap);
@@ -656,7 +646,7 @@ FavoritesController.prototype = {
         this.map.off('click', this.addFavoriteClickMap);
         $('#addFavoriteButton button').addClass('icon-add').removeClass('icon-history');
         this.addFavoriteMode = false;
-        this.addFavoriteCategory = '';
+        this.addFavoriteCategory = null;
     },
 
     addFavoriteClickMap: function(e) {
@@ -666,7 +656,7 @@ FavoritesController.prototype = {
     },
 
     contextAddFavorite: function(e) {
-        var categoryName = this.favoritesController.addFavoriteCategory;
+        var categoryName = this.favoritesController.defaultCategory;
         this.favoritesController.addFavoriteDB(categoryName, e.latlng.lat.toFixed(6), e.latlng.lng.toFixed(6), null);
     },
 
@@ -704,9 +694,6 @@ FavoritesController.prototype = {
     addFavoriteMap: function(fav, enableCategory=false, fromUserAction=false) {
         // manage category first
         cat = fav.category;
-        if (!cat) {
-            cat = this.defaultCategory;
-        }
         if (!this.categoryLayers.hasOwnProperty(cat)) {
             this.addCategory(cat, enableCategory);
             if (enableCategory) {
@@ -774,7 +761,7 @@ FavoritesController.prototype = {
     favoriteMouseover: function(e) {
         var favid = e.target.favid;
         var fav = this._map.favoritesController.favorites[favid];
-        var cat = fav.category ? fav.category.replace(' ', '-') : this._map.favoritesController.defaultCategory.replace(' ', '-');
+        var cat = fav.category.replace(' ', '-');
         var favTooltip = this._map.favoritesController.getFavoriteTooltipContent(fav);
         e.target.bindTooltip(favTooltip, {
             className: 'leaflet-marker-favorite-tooltip tooltipfav-' + cat,
@@ -790,9 +777,7 @@ FavoritesController.prototype = {
 
     getFavoriteTooltipContent: function(fav) {
         var content = t('maps', 'Name') + ': ' + (fav.name || t('maps', 'No name'));
-        if (fav.category && fav.category !== this.defaultCategory) {
-            content = content + '<br/>' + t('maps', 'Category') + ': ' + fav.category;
-        }
+        content = content + '<br/>' + t('maps', 'Category') + ': ' + fav.category;
         if (fav.comment) {
             content = content + '<br/>' + t('maps', 'Comment') + ': ' + fav.comment;
         }
@@ -922,7 +907,7 @@ FavoritesController.prototype = {
     deleteFavoriteMap: function(favid) {
         var marker = this.markers[favid];
         var fav = this.favorites[favid];
-        var cat = fav.category || this.defaultCategory;
+        var cat = fav.category;
         this.categoryLayers[cat].removeLayer(marker);
 
         delete this.categoryMarkers[cat][favid];
@@ -931,7 +916,7 @@ FavoritesController.prototype = {
 
         // delete category if empty
         if (Object.keys(this.categoryMarkers[cat]).length === 0) {
-            this.deleteCategoryMap(cat);
+            this.deleteCategoryMap(cat, true);
             this.saveEnabledCategories();
         }
 
@@ -997,8 +982,8 @@ FavoritesController.prototype = {
             this.favorites[favid].comment = comment;
         }
         if (category !== null) {
-            var oldCategory = this.favorites[favid].category || this.defaultCategory;
-            var newCategory = category || this.defaultCategory;
+            var oldCategory = this.favorites[favid].category;
+            var newCategory = category;
             if (newCategory !== oldCategory) {
                 var marker = this.markers[favid];
 
@@ -1008,7 +993,7 @@ FavoritesController.prototype = {
                 var shouldSaveCategories = false;
                 // delete old category if empty
                 if (Object.keys(this.categoryMarkers[oldCategory]).length === 0) {
-                    this.deleteCategoryMap(oldCategory);
+                    this.deleteCategoryMap(oldCategory, true);
                     shouldSaveCategories = true;
                 }
                 // create category if necessary
@@ -1055,38 +1040,21 @@ FavoritesController.prototype = {
         this.favoritesController.editFavoriteDB(favid, name, null, null, lat, lng);
     },
 
-    exportAllFavorites: function() {
-        $('#navigation-favorites').addClass('icon-loading-small');
-        $('.leaflet-container').css('cursor', 'wait');
-        var req = {};
-        var url = OC.generateUrl('/apps/maps/export/favorites');
-        $.ajax({
-            type: 'GET',
-            url: url,
-            data: req,
-            async: true
-        }).done(function (response) {
-            OC.Notification.showTemporary(t('maps', 'Favorites exported in {path}', {path: response}));
-        }).always(function (response) {
-            $('#navigation-favorites').removeClass('icon-loading-small');
-            $('.leaflet-container').css('cursor', 'grab');
-        }).fail(function(response) {
-            OC.Notification.showTemporary(t('maps', 'Failed to export favorites') + ': ' + response.responseText);
-        });
+    exportCategory: function(cat) {
+        var catList = [cat];
+        this.exportDisplayedFavorites(catList);
     },
 
-    exportDisplayedFavorites: function() {
+    exportDisplayedFavorites: function(catList=null) {
         $('#navigation-favorites').addClass('icon-loading-small');
         $('.leaflet-container').css('cursor', 'wait');
-        var catList = [];
-        if (this.map.hasLayer(this.cluster)) {
-            for (var cat in this.categoryLayers) {
-                if (this.map.hasLayer(this.categoryLayers[cat])) {
-                    // a sync client could have saved favorites with empty category
-                    if (cat === this.defaultCategory) {
-                        catList.push('');
+        if (catList === null) {
+            catList = [];
+            if (this.map.hasLayer(this.cluster)) {
+                for (var cat in this.categoryLayers) {
+                    if (this.map.hasLayer(this.categoryLayers[cat])) {
+                        catList.push(cat);
                     }
-                    catList.push(cat);
                 }
             }
         }

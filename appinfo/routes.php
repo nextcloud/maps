@@ -52,7 +52,6 @@ return [
         ['name' => 'favorites#deleteFavorites', 'url' => '/favorites', 'verb' => 'DELETE'],
         ['name' => 'favorites#renameCategories', 'url' => '/favorites-category', 'verb' => 'PUT'],
 
-        ['name' => 'favorites#exportAllFavorites', 'url' => '/export/favorites', 'verb' => 'GET'],
         ['name' => 'favorites#exportFavorites', 'url' => '/export/favorites', 'verb' => 'POST'],
         ['name' => 'favorites#importFavorites', 'url' => '/import/favorites', 'verb' => 'POST'],
 
@@ -84,7 +83,8 @@ return [
         ['name' => 'devices#addDevicePoint', 'url' => '/devices', 'verb' => 'POST'],
         ['name' => 'devices#editDevice', 'url' => '/devices/{id}', 'verb' => 'PUT'],
         ['name' => 'devices#deleteDevice', 'url' => '/devices/{id}', 'verb' => 'DELETE'],
-        ['name' => 'devices#exportDevice', 'url' => '/export/devices', 'verb' => 'POST'],
+        ['name' => 'devices#exportDevices', 'url' => '/export/devices', 'verb' => 'POST'],
+        ['name' => 'devices#importDevices', 'url' => '/import/devices', 'verb' => 'POST'],
 
     ]
 ];

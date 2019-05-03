@@ -12,6 +12,7 @@
 
 namespace OCA\Maps\Service;
 
+use lsolesen\pel\PelEntryTime;
 use OCP\Files\FileInfo;
 use OCP\IL10N;
 use OCP\Files\IRootFolder;
@@ -361,7 +362,7 @@ class PhotofilesService {
         $exif = @exif_read_data($path);
 
         if(!$this->hasValidExifGeoTags($exif)) {
-            $exif = $this->getExifPelBackup($file);
+             $exif = $this->getExifPelBackup($file);
         }
 
         if($this->hasValidExifGeoTags($exif)){
@@ -445,12 +446,30 @@ class PhotofilesService {
             return null;
         }
         $exif = [
-            'DateTimeOriginal' => $pelDateTimeOriginal->getValue(),
+            'DateTimeOriginal' => $pelDateTimeOriginal->getValue(PelEntryTime::EXIF_STRING),
         ];
         $pelIfdGPS = $pelIfd0->getSubIfd(PelIfd::GPS);
         if (!is_null($pelIfdGPS) && !is_null($pelIfdGPS->getEntry(PelTag::GPS_LATITUDE )) && !is_null( $pelIfdGPS->getEntry(PelTag::GPS_LONGITUDE))) {
-            $exif['GPSLatitude'] = $pelIfdGPS->getEntry(PelTag::GPS_LATITUDE)->getValue();
-            $exif['GPSLongitude'] = $pelIfdGPS->getEntry(PelTag::GPS_LONGITUDE)->getValue();
+
+            $lat = $pelIfdGPS->getEntry(PelTag::GPS_LATITUDE)->getValue();
+            if ((int) $lat[0][1] !==0 && (int) $lat[1][1] !==0 && (int) $lat[2][1] !==0) {
+                $exif['GPSLatitudeRef'] = $pelIfdGPS->getEntry(PelTag::GPS_LATITUDE_REF)->getValue();
+                $exif['GPSLatitude'] = [
+                    0 => (int) $lat[0][0]/ (int) $lat[0][1],
+                    1 => (int) $lat[1][0]/ (int) $lat[1][1],
+                    2 => (int) $lat[2][0]/ (int) $lat[2][1]
+                ];
+            }
+
+            $lng = $pelIfdGPS->getEntry(PelTag::GPS_LONGITUDE)->getValue();
+            if ((int) $lng[0][1] !==0 && (int) $lng[1][1] !==0 && (int) $lng[2][1] !==0) {
+                $exif['GPSLongitudeRef'] = $pelIfdGPS->getEntry(PelTag::GPS_LONGITUDE_REF)->getValue();
+                $exif['GPSLongitude'] = [
+                    0 => (int)$lng[0][0] / (int)$lng[0][1],
+                    1 => (int)$lng[1][0] / (int)$lng[1][1],
+                    2 => (int)$lng[2][0] / (int)$lng[2][1]
+                ];
+            }
         }
         Pel::clearExceptions();
         return $exif;

@@ -438,7 +438,7 @@ class PhotofilesService {
         }
         $pelIfdExif = $pelIfd0->getSubIfd(PelIfd::EXIF);
 
-        if (is_null($pelExif)) {
+        if (is_null($pelIfdExif)) {
             return null;
         }
         $pelDateTimeOriginal = $pelIfdExif->getEntry(PelTag::DATE_TIME_ORIGINAL);

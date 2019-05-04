@@ -5,8 +5,6 @@
     "Failed to load contacts" : "Nalaganje stikov je spodletelo",
     "Failed to get contact list" : "Pridobivanje seznama stikov je spodletelo",
     "Failed to load device list" : "Nalaganje seznama naprav je spodletelo",
-    "Toggle device history" : "Preklopi zgodovino naprave",
-    "Change device color" : "Spremeni barvo naprave",
     "Delete" : "Izbriši",
     "Device deleted" : "Naprava je izbrisana",
     "Failed to delete device" : "Brisanje naprave je spodletelo",
@@ -72,19 +70,12 @@
     "Average speed" : "Povprečna hitrost",
     "Search…" : "Poišči ...",
     "Favorites" : "Priljubljeno",
-    "Hide all categories" : "Skrij vse kategorije",
     "Photos" : "Fotografije",
     "Contacts" : "Stiki",
     "Tracks" : "Sledi",
     "Load a track file" : "Naloži datoteko sledi",
-    "Show all tracks" : "Pokaži vse sledi",
-    "Hide all tracks" : "Skrij vse sledi",
     "Load a directory" : "Naloži mapo",
-    "Remove all tracks" : "Odstrani vse sledi",
     "Devices" : "Naprave",
-    "Show all devices" : "Pokaži vse naprave",
-    "Hide all devices" : "Skrij vse naprave",
-    "Delete all devices history" : "Izbriši zgodovino vseh naprav",
     "Settings" : "Nastavitve"
 },"pluralForm" :"nplurals=4; plural=(n%100==1 ? 0 : n%100==2 ? 1 : n%100==3 || n%100==4 ? 2 : 3);"
 }

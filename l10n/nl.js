@@ -128,7 +128,6 @@ OC.L10N.register(
     "Nothing yet" : "Nog niets",
     "Contacts" : "Contactpersonen",
     "Devices" : "Apparaten",
-    "Hide all devices" : "Verberg alle toestellen",
     "Settings" : "Instellingen"
 },
 "nplurals=2; plural=(n != 1);");

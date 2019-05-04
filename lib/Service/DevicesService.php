@@ -218,10 +218,15 @@ class DevicesService {
         return $device;
     }
 
-    public function editDeviceInDB($id, $color) {
+    public function editDeviceInDB($id, $color, $name) {
         $qb = $this->qb;
         $qb->update('maps_devices');
-        $qb->set('color', $qb->createNamedParameter($color, IQueryBuilder::PARAM_STR));
+        if (is_string($color) && strlen($color) > 0) {
+            $qb->set('color', $qb->createNamedParameter($color, IQueryBuilder::PARAM_STR));
+        }
+        if (is_string($name) && strlen($name) > 0) {
+            $qb->set('user_agent', $qb->createNamedParameter($name, IQueryBuilder::PARAM_STR));
+        }
         $qb->where(
             $qb->expr()->eq('id', $qb->createNamedParameter($id, IQueryBuilder::PARAM_INT))
         );

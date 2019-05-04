@@ -149,6 +149,9 @@ FavoritesController.prototype = {
                 var newCategoryName = $(this).parent().find('.renameCategoryInput').val();
                 that.renameCategoryDB(cat, newCategoryName);
             }
+            else if (e.key === 'Escape') {
+                $(this).parent().parent().parent().removeClass('editing');
+            }
         });
         $('body').on('click', '.renameCategoryClose', function(e) {
             $(this).parent().parent().parent().removeClass('editing');

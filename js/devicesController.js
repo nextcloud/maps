@@ -98,6 +98,32 @@ DevicesController.prototype = {
         $('body').on('change', '#devicecolorinput', function(e) {
             that.okColor();
         });
+        // rename device
+        $('body').on('click', '.renameDeviceButton', function(e) {
+            $(this).parent().parent().parent().parent().find('.renameDeviceInput').focus().select();
+            $('#device-list > li').removeClass('editing');
+            $(this).parent().parent().parent().parent().addClass('editing');
+        });
+        $('body').on('click', '.renameDeviceOk', function(e) {
+            var devid = $(this).parent().parent().parent().attr('device');
+            $(this).parent().parent().parent().removeClass('editing').addClass('icon-loading-small');
+            var newDeviceName = $(this).parent().find('.renameDeviceInput').val();
+            that.renameDeviceDB(devid, newDeviceName);
+        });
+        $('body').on('keyup', '.renameDeviceInput', function(e) {
+            if (e.key === 'Enter') {
+                var devid = $(this).parent().parent().parent().attr('device');
+                $(this).parent().parent().parent().removeClass('editing').addClass('icon-loading-small');
+                var newDeviceName = $(this).parent().find('.renameDeviceInput').val();
+                that.renameDeviceDB(devid, newDeviceName);
+            }
+            else if (e.key === 'Escape') {
+                $(this).parent().parent().parent().removeClass('editing');
+            }
+        });
+        $('body').on('click', '.renameDeviceClose', function(e) {
+            $(this).parent().parent().parent().removeClass('editing');
+        });
         // delete a device
         $('body').on('click', '.deleteDevice', function(e) {
             var devid = $(this).parent().parent().parent().parent().attr('device');
@@ -309,6 +335,12 @@ DevicesController.prototype = {
         '                </a>' +
         '            </li>' +
         '            <li>' +
+        '                <a href="#" class="renameDeviceButton">' +
+        '                    <span class="icon-rename"></span>' +
+        '                    <span>'+t('maps', 'Rename')+'</span>' +
+        '                </a>' +
+        '            </li>' +
+        '            <li>' +
         '                <a href="#" class="changeDeviceColor">' +
         '                    <span class="icon-rename"></span>' +
         '                    <span>'+t('maps', 'Change color')+'</span>' +
@@ -337,6 +369,13 @@ DevicesController.prototype = {
         '    <div class="app-navigation-entry-deleted">' +
         '        <div class="app-navigation-entry-deleted-description">'+t('maps', 'Device deleted')+'</div>' +
         '        <button class="app-navigation-entry-deleted-button icon-history undoDeleteDevice" title="Undo"></button>' +
+        '    </div>' +
+        '    <div class="app-navigation-entry-edit">' +
+        '        <div>' +
+        '            <input type="text" value="'+device.user_agent+'" class="renameDeviceInput">' +
+        '            <input type="submit" value="" class="icon-close renameDeviceClose">' +
+        '            <input type="submit" value="" class="icon-checkmark renameDeviceOk">' +
+        '        </div>' +
         '    </div>' +
         '</li>';
 
@@ -393,6 +432,57 @@ DevicesController.prototype = {
             'height: 16px !important;' +
             ' }' +
             '</style>').appendTo('body');
+    },
+
+    renameDeviceDB: function(id, newDeviceName) {
+        var that = this;
+        $('#device-list > li[device="'+id+'"]').addClass('icon-loading-small');
+        $('.leaflet-container').css('cursor', 'wait');
+        var req = {
+            name: newDeviceName
+        };
+        var url = OC.generateUrl('/apps/maps/devices/'+id);
+        $.ajax({
+            type: 'PUT',
+            url: url,
+            data: req,
+            async: true
+        }).done(function (response) {
+            that.devices[id].user_agent = newDeviceName;
+            var device = that.devices[id];
+            device.info = getDeviceInfoFromUserAgent(device.user_agent);
+            var color = device.color;
+            var imgurl;
+            if (['Windows', 'GNU/Linux', 'MacOS'].indexOf(device.info.os) !== -1) {
+                imgurl = OC.generateUrl('/svg/core/clients/desktop?color='+color.replace('#', ''));
+            }
+            else {
+                imgurl = OC.generateUrl('/svg/core/clients/phone?color='+color.replace('#', ''));
+            }
+            var name = device.user_agent;
+            if (device.info.os) {
+                name = device.info.os;
+                if (device.info.client) {
+                    name = name + ' ' + device.info.client;
+                    if (device.info.clientVersion) {
+                        name = name + '(' + device.info.clientVersion + ')';
+                    }
+                }
+            }
+            device.name = name;
+
+            var deviceNameElem = $('#device-list > li[device='+id+'] .device-name');
+            deviceNameElem.attr('style', 'background-image: url('+imgurl+')');
+            deviceNameElem.text(name);
+            deviceNameElem.attr('title', name);
+
+            that.setDeviceCss(id, color);
+        }).always(function (response) {
+            $('#device-list > li[device="'+id+'"]').removeClass('icon-loading-small');
+            $('.leaflet-container').css('cursor', 'grab');
+        }).fail(function(response) {
+            OC.Notification.showTemporary(t('maps', 'Failed to rename device') + ': ' + response.responseText);
+        });
     },
 
     deleteDeviceDB: function(id) {

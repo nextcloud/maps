@@ -130,11 +130,13 @@ class DevicesController extends Controller {
     /**
      * @NoAdminRequired
      */
-    public function editDevice($id, $color) {
+    public function editDevice($id, $color, $name) {
         $device = $this->devicesService->getDeviceFromDB($id, $this->userId);
         if ($device !== null) {
-            if (is_string($color) && strlen($color) > 0) {
-                $this->devicesService->editDeviceInDB($id, $color);
+            if ((is_string($color) && strlen($color) > 0) ||
+                (is_string($name) && strlen($name) > 0)
+            ) {
+                $this->devicesService->editDeviceInDB($id, $color, $name);
                 $editedDevice = $this->devicesService->getDeviceFromDB($id, $this->userId);
                 return new DataResponse($editedDevice);
             }

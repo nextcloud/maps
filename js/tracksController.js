@@ -440,7 +440,7 @@ TracksController.prototype = {
         '            <li>' +
         '                <a href="#" class="changeTrackColor">' +
         '                    <span class="icon-rename"></span>' +
-        '                    <span>'+t('maps', 'Change track color')+'</span>' +
+        '                    <span>'+t('maps', 'Change color')+'</span>' +
         '                </a>' +
         '            </li>' +
         '            <li>' +

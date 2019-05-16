@@ -13,6 +13,7 @@ namespace OCA\Maps\AppInfo;
 
 
 use OC\AppFramework\Utility\SimpleContainer;
+use OCA\Maps\Service\AddressService;
 use \OCP\AppFramework\App;
 use OCA\Maps\Controller\PageController;
 use OCA\Maps\Controller\UtilsController;
@@ -190,5 +191,6 @@ class Application extends App {
             }
         );
     }
+
 
 }

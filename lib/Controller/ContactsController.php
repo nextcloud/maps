@@ -37,7 +37,7 @@ class ContactsController extends Controller {
      * @NoAdminRequired
      */
     public function getContacts() {
-        $contacts = $this->contactsManager->search('', ['FN'], ['types'=>false]);
+        $contacts = $this->contactsManager->search('', ['GEO','ADR'], ['types'=>false]);
         $result = [];
         $userid = trim($this->userId);
         foreach ($contacts as $c) {

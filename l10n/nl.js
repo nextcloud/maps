@@ -167,9 +167,18 @@ OC.L10N.register(
     "Export current route to gpx" : "Export huidige route naar gpx",
     "Photos" : "Foto's",
     "Nothing yet" : "Nog niets",
+    "Save all visibile" : "Sla alle zichtbare op",
     "Contacts" : "Contactpersonen",
+    "Tracks" : "Routes",
+    "Load a track file" : "Upload een routebestand",
+    "Load a directory" : "Upload een map",
+    "Remove all" : "Verwijder alles",
     "Devices" : "Apparaten",
+    "Refresh positions" : "Ververs posities",
+    "Export all" : "Exporteer alles",
+    "Import devices" : "Importeer apparaten",
     "Delete all" : "Alles verwijderen",
-    "Settings" : "Instellingen"
+    "Settings" : "Instellingen",
+    "Track my position" : "Traceer mijn locatie"
 },
 "nplurals=2; plural=(n != 1);");

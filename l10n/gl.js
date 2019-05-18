@@ -197,7 +197,7 @@ OC.L10N.register(
     "Favorites" : "Favoritos",
     "Import from gpx/kml/kmz" : "Importar dende gpx/kml/kmz",
     "Show all" : "Amosar todo",
-    "Hide all" : "Agachar todo",
+    "Hide all" : "Agochar todo",
     "Routing" : "Encamiñamento:",
     "Export current route to gpx" : "Exportar a ruta actual a gpx",
     "Photos" : "Fotos",

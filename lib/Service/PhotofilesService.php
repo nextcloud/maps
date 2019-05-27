@@ -56,8 +56,12 @@ class PhotofilesService {
         $userFolder = $this->root->getUserFolder($userId);
         $photos = $this->gatherPhotoFiles($userFolder, true);
         $this->photoMapper->deleteAll($userId);
+        echo '======== User '.$userId.' ========'."\n";
+        $c = 1;
         foreach($photos as $photo) {
             $this->addPhoto($photo, $userId);
+            echo '['.$c.'] Photo "'.$photo->getPath().'" added'."\n";
+            $c++;
         }
     }
 

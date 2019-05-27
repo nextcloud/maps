@@ -39,7 +39,7 @@ before_install:
     # install core
     - cd ../
     #- git clone https://github.com/nextcloud/server.git --recursive --depth 1 -b $CORE_BRANCH nextcloud
-    - wget -q https://download.nextcloud.com/server/releases/nextcloud-16.0.0.zip ; unzip -q nextcloud-16.0.0.zip ; rm nextcloud-16.0.0.zip
+    - wget -q https://download.nextcloud.com/server/releases/nextcloud-16.0.1.zip ; unzip -q nextcloud-16.0.1.zip ; rm nextcloud-16.0.1.zip
     - mv maps nextcloud/apps/
 
 before_script:

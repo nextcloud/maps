@@ -1,4 +1,5 @@
 function TracksController(optionsController, timeFilterController) {
+    this.track_MARKER_VIEW_SIZE = 30;
     this.optionsController = optionsController;
     this.timeFilterController = timeFilterController;
 
@@ -416,6 +417,13 @@ TracksController.prototype = {
         });
         this.tracks[track.id] = track;
         this.tracks[track.id].metadata = $.parseJSON(track.metadata);
+        this.tracks[track.id].icon = L.divIcon(L.extend({
+            html: '<div class="thumbnail"></div>​',
+            className: 'leaflet-marker-track track-marker track-marker-'+track.id
+        }, null, {
+            iconSize: [this.track_MARKER_VIEW_SIZE, this.track_MARKER_VIEW_SIZE],
+            iconAnchor:   [this.track_MARKER_VIEW_SIZE / 2, this.track_MARKER_VIEW_SIZE]
+        }));
 
         this.mapTrackLayers[track.id] = L.featureGroup();
         this.trackLayers[track.id] = L.featureGroup();
@@ -621,12 +629,14 @@ TracksController.prototype = {
 
         var popupText;
 
-        gpxx.find('wpt').each(function() {
+        var wpts = gpxx.find('wpt');
+        wpts.each(function() {
             date = that.addWaypoint(id, $(this), coloredTooltipClass);
             minTrackDate = (date < minTrackDate) ? date : minTrackDate;
         });
 
-        gpxx.find('trk').each(function() {
+        var trks = gpxx.find('trk');
+        trks.each(function() {
             name = $(this).find('>name').text();
             cmt = $(this).find('>cmt').text();
             desc = $(this).find('>desc').text();
@@ -639,8 +649,8 @@ TracksController.prototype = {
             });
         });
 
-        // ROUTES
-        gpxx.find('rte').each(function() {
+        var rtes = gpxx.find('rte');
+        rtes.each(function() {
             name = $(this).find('>name').text();
             cmt = $(this).find('>cmt').text();
             desc = $(this).find('>desc').text();
@@ -652,6 +662,63 @@ TracksController.prototype = {
         });
 
         this.trackLayers[id].date = minTrackDate;
+
+        // manage track main icon
+        // find first point (marker location)
+        // then bind tooltip and popup
+        var firstWpt = null;
+        if (wpts.length > 0) {
+            var lat = wpts[0].attr('lat');
+            var lon = wpts[0].attr('lon');
+            firstWpt = L.latLng(lat, lon);
+        }
+        var firstLinePoint = null;
+        if (trks.length > 0) {
+            var trkpt = trks.first().find('trkpt').first();
+            if (trkpt) {
+                var lat = trkpt.attr('lat');
+                var lon = trkpt.attr('lon');
+                firstLinePoint = L.latLng(lat, lon);
+            }
+        }
+        if (firstLinePoint === null && rtes.length > 0) {
+            var rtept = rtes.first().find('rtept').first();
+            if (rtept) {
+                var lat = rtept.attr('lat');
+                var lon = rtept.attr('lon');
+                firstLinePoint = L.latLng(lat, lon);
+            }
+        }
+        var firstPoint = firstLinePoint || firstWpt;
+
+        if (firstPoint) {
+            this.tracks[id].marker = L.marker([firstPoint.lat, firstPoint.lng], {
+                    icon: this.tracks[id].icon
+            });
+            this.tracks[id].marker.trackid = id;
+
+            this.tracks[id].marker.on('contextmenu', this.trackMouseRightClick);
+
+            // tooltip
+            var tooltipText = this.tracks[id].file_name;
+            this.tracks[id].marker.bindTooltip(tooltipText, {
+                sticky: true,
+                className: coloredTooltipClass + ' leaflet-marker-track-tooltip',
+                direction: 'top'
+            });
+            // popup
+            popupText = that.getLinePopupText(id, '', '', '', '', '');
+            this.tracks[id].marker.bindPopup(
+                popupText,
+                {
+                    autoPan: true,
+                    autoClose: true,
+                    closeOnClick: true,
+                    className: 'trackPopup'
+                }
+            );
+            this.trackLayers[id].addLayer(this.tracks[id].marker);
+        }
     },
 
     addWaypoint: function(id, elem, coloredTooltipClass) {
@@ -855,33 +922,6 @@ TracksController.prototype = {
         popupTxt = popupTxt + '</td></tr>';
         popupTxt = popupTxt + '</table>';
 
-
-        /////////////////////
-        //var popupText = 'Track '+id+'<br/>';
-        //if (cmt !== '') {
-        //    popupText = popupText + '<p class="combutton" combutforfeat="' +
-        //        escapeHTML(id) + escapeHTML(name) +
-        //        '" style="margin:0; cursor:pointer;">' + t('maps', 'Comment') +
-        //        ' <i class="fa fa-expand"></i></p>' +
-        //        '<p class="comtext" style="display:none; margin:0; cursor:pointer;" comforfeat="' +
-        //        escapeHTML(id) + escapeHTML(name) + '">' +
-        //        escapeHTML(cmt) + '</p>';
-        //}
-        //if (desc !== '') {
-        //    popupText = popupText + '<p class="descbutton" descbutforfeat="' +
-        //        escapeHTML(id) + escapeHTML(name) +
-        //        '" style="margin:0; cursor:pointer;">Description <i class="fa fa-expand"></i></p>' +
-        //        '<p class="desctext" style="display:none; margin:0; cursor:pointer;" descforfeat="' +
-        //        escapeHTML(id) + escapeHTML(name) + '">' +
-        //        escapeHTML(desc) + '</p>';
-        //}
-        //linkHTML = '';
-        //if (linkText && linkUrl) {
-        //    linkHTML = '<a href="' + escapeHTML(linkUrl) + '" title="' + escapeHTML(linkUrl) + '" target="_blank">' + escapeHTML(linkText) + '</a>';
-        //}
-        //popupText = popupText.replace('<li>' + escapeHTML(name) + '</li>',
-        //    '<li><b>' + escapeHTML(name) + ' (' + linkHTML + ')</b></li>');
-
         return popupTxt;
     },
 
@@ -984,14 +1024,15 @@ TracksController.prototype = {
         if (e.target instanceof L.Marker) {
             yOffset = -10;
         }
-        e.target.unbindPopup();
         var popupContent = this._map.tracksController.getTrackContextPopupContent(id);
-        e.target.bindPopup(popupContent, {
+        this._map.openPopup(
+            popupContent,
+            e.latlng,
+            {
             closeOnClick: true,
             className: 'popovermenu open popupMarker',
-            offset: L.point(-4, yOffset)
+            offset: L.point(-5, yOffset)
         });
-        e.target.openPopup(e.latlng);
     },
 
     getTrackContextPopupContent: function(id) {
@@ -1077,6 +1118,7 @@ TracksController.prototype = {
     setTrackCss: function(id, color) {
         $('style[track='+id+']').remove();
 
+        var imgurl = OC.generateUrl('/svg/core/categories/monitoring?color='+color.replace('#', ''));
         $('<style track="' + id + '">' +
             '.tooltip' + id + ' { ' +
             'border: 2px solid ' + color + ';' +
@@ -1086,6 +1128,12 @@ TracksController.prototype = {
             '}' +
             '.trackWaypoint-'+id+' { ' +
             'background-color: '+color+';}' +
+            '.track-marker-'+id+' { ' +
+            'border-color: '+color+';}' +
+            '.track-marker-'+id+'::after {' +
+            'border-color: '+color+' transparent !important;}' +
+            '.track-marker-'+id+' .thumbnail { ' +
+            'background-image: url(' + imgurl + ');}' +
             '</style>').appendTo('body');
     },
 

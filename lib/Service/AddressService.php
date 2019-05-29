@@ -12,22 +12,30 @@
 
 namespace OCA\Maps\Service;
 
-use function OCA\Maps\Controller\remove_utf8_bom;
-use OCP\ILogger;
-use OCP\ICache;
-use OCP\DB\QueryBuilder\IQueryBuilder;
-use Sabre\VObject\Reader;
+use \OCA\Maps\BackgroundJob\LookupMissingGeoJob;
+use OCP\Files\SimpleFS\ISimpleFile;
+use \OCP\ILogger;
+use \OCP\ICache;
+use \OCP\BackgroundJob\IJobList;
+use \OCP\DB\QueryBuilder\IQueryBuilder;
+use \Sabre\VObject\Reader;
+use \OCP\Files\IAppData;
+use \OCP\Files\NotFoundException;
 
 class AddressService {
     private $qb;
     private $dbconnection;
     private $logger;
+    private $jobList;
+    private $appData;
 
-    public function __construct(ICache $cache, ILogger $logger) {
+    public function __construct(ICache $cache, ILogger $logger, IJobList $jobList, IAppData $appData) {
         $this->qb = \OC::$server->getDatabaseConnection()->getQueryBuilder();
         $this->dbconnection = \OC::$server->getDatabaseConnection();
         $this->cache = $cache;
         $this->logger = $logger;
+        $this->jobList = $jobList;
+        $this->appData = $appData;
     }
 
     //converts the address to geo lat;lon
@@ -41,12 +49,12 @@ class AddressService {
      *      Uses the this geo if it was looked up externally
      *      Look's it up if it was not looked up
      * @param $adr
-     * @return array($lat,$lng)
+     * @return array($lat,$lng,$lookedUp)
      */
     public function lookupAddress($adr){
         $adr_norm = strtolower(preg_replace('/\s+/', '', $adr));
-        $this->qb->select("id","lat","lng","looked_up")
-            ->from("maps_address_geo")
+        $this->qb->select('id','lat','lng','looked_up')
+            ->from('maps_address_geo')
             ->where($this->qb->expr()->eq('adr_norm', $this->qb->createNamedParameter($adr_norm, IQueryBuilder::PARAM_STR)));
         $req=$this->qb->execute();
         $lat = null;
@@ -61,10 +69,10 @@ class AddressService {
                 $inDb = True;
             } else {
                 $id = $row['id'];
-                $geo = $this->lookupAddress($adr);
+                $geo = $this->unsafeLookupAddress($adr);
                 $lat = $geo[0];
                 $lng = $geo[1];
-                $lookedUp = $geo[3];
+                $lookedUp = $geo[2];
                 $inDb = True;
             }
             break;
@@ -76,6 +84,7 @@ class AddressService {
             $id = $foo[0];
             $lat = $foo[1];
             $lng = $foo[2];
+            $lookedUp = $foo[3];
 
         } else {
             if ($lookedUp) {
@@ -84,15 +93,41 @@ class AddressService {
                     ->set("lng", $qb->createNamedParameter($lng, IQueryBuilder::PARAM_STR))
                     ->set("looked_up", $qb->createNamedParameter($lookedUp, IQueryBuilder::PARAM_BOOL))
                     ->where($this->qb->expr()->eq('id', $this->qb->createNamedParameter($id, IQueryBuilder::PARAM_STR)));
+                $req=$this->qb->execute();
+                $qb = $this->qb->resetQueryParts();
             }
         }
 
-        return [$lat, $lng];
+        return [$lat, $lng, $lookedUp];
+    }
+
+    private function getLastLookupFile():ISimpleFile {
+        try{
+            $folder = $this->appData->getFolder("cache");
+        } catch(NotFoundException $e) {
+           $folder = $this->appData->newFolder("cache");
+        }
+        if($folder->fileExists('maps_address_last_lookup')) {
+            $file = $folder->getFile('maps_address_last_lookup');
+        } else {
+            $file = $folder->newFile('maps_address_last_lookup');
+        }
+        return $file;
+    }
+
+    private function getLastLookup():int{
+        $file = $this->getLastLookupFile();
+        return (int) $file->getContent();
+    }
+
+    private function setLastLookup(){
+        $file = $this->getLastLookupFile();
+        $file->putContent(time());
     }
 
     //looks up the address on external provider returns lat, lon, lookupstate
     private function unsafeLookupAddress($adr){
-        if (time() - ($this->cache->get("maps_address_last_lookup") ?? 0) > 1) {
+        if (time() - $this->getLastLookup() >= 1) {
             $opts = array('http' =>
                 array(
                     'method'  => 'GET',
@@ -107,7 +142,7 @@ class AddressService {
                     ."&format=json", False, $context
                 ),true);
             $this->logger->debug("Externally looked up address: ".$adr." with result".print_r($result,true));
-            $foo=$this->cache->set("maps_address_last_lookup",time());
+            $this->setLastLookup();
             if(sizeof($result)>0){
                 if (key_exists("lat", $result[0]) AND
                     key_exists("lon", $result[0])
@@ -150,11 +185,43 @@ class AddressService {
         $req = $this->qb->execute();
         $id = $this->qb->getLastInsertId();
         $qb = $this->qb->resetQueryParts();
-        return [$id, $geo[0], $geo[1]];
+        if (!$geo[2]) {
+            $this->jobList->add(LookupMissingGeoJob::class,[]);
+        }
+        return [$id, $geo[0], $geo[1], $geo[2]];
     }
 
     //lookus up the geo information which have not been looked up
-    public function lookupMissingGeo(){
-
+    public function lookupMissingGeo($max=200):bool {
+        //Stores if all addresses where looked up
+        $lookedupall=True;
+        $this->qb->select("adr")
+            ->from('maps_address_geo')
+            ->where($this->qb->expr()->eq('looked_up', $this->qb->createNamedParameter(False, IQueryBuilder::PARAM_BOOL)))
+            ->setMaxResults($max);
+        $req=$this->qb->execute();
+        $result = $req->fetchAll();
+        $req->closeCursor();
+        $i=0;
+        foreach ($result as $row) {
+            $i++;
+            $geo = $this->lookupAddress($row['adr']);
+            //Lookup failed
+            if(!$geo[2]){
+                $lookedupall = False;
+            }
+            \sleep(1);
+            \usleep(\rand(100,100000));
+        }
+        //not all addresses where loaded from database
+        if($i===$max){
+            $lookedupall = False;
+        }
+        if ($lookedupall){
+            $this->logger->debug("Successfully looked up all addresses during cron job");
+        } else {
+            $this->logger->debug("Failed to look up all addresses during cron job");
+        }
+        return $lookedupall;
     }
 }

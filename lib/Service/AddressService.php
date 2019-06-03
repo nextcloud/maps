@@ -13,13 +13,13 @@
 namespace OCA\Maps\Service;
 
 use \OCA\Maps\BackgroundJob\LookupMissingGeoJob;
-use OCP\Files\SimpleFS\ISimpleFile;
 use \OCP\ILogger;
 use \OCP\ICache;
 use \OCP\BackgroundJob\IJobList;
 use \OCP\DB\QueryBuilder\IQueryBuilder;
 use \Sabre\VObject\Reader;
 use \OCP\Files\IAppData;
+use \OCP\Files\SimpleFS\ISimpleFile;
 use \OCP\Files\NotFoundException;
 
 class AddressService {
@@ -135,25 +135,32 @@ class AddressService {
                 )
             );
             $context  = stream_context_create($opts);
-            $result=\json_decode(
-                file_get_contents(
-                    "https://nominatim.openstreetmap.org/search.php?q="
-                    .urlencode($adr)
-                    ."&format=json", False, $context
-                ),true);
-            $this->logger->debug("Externally looked up address: ".$adr." with result".print_r($result,true));
-            $this->setLastLookup();
-            if(sizeof($result)>0){
-                if (key_exists("lat", $result[0]) AND
-                    key_exists("lon", $result[0])
-                ) {
-                    return [
-                        $result[0]["lat"],
-                        $result[0]["lon"], True
-                    ];
+            $result_json = @file_get_contents(
+                "https://nominatim.openstreetmap.org/search.php?q="
+                .urlencode($adr)
+                ."&format=json", False, $context
+            );
+            if ($result_json !== False) {
+                $result=\json_decode(
+                    $result_json
+                    ,true);
+                if(!(key_exists("request_failed",$result) AND $result["request_failed"])) {
+                    $this->logger->debug("External looked up address: " . $adr . " with result" . print_r($result, true));
+                    $this->setLastLookup();
+                    if (sizeof($result) > 0) {
+                        if (key_exists("lat", $result[0]) AND
+                            key_exists("lon", $result[0])
+                        ) {
+                            return [
+                                $result[0]["lat"],
+                                $result[0]["lon"], true
+                            ];
+                        }
+                    }
+                    return [null, null, true];
                 }
             }
-            return [null, null, True];
+            $this->logger->debug("Externally looked failed");
         }
         return [null, null, False];
     }

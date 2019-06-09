@@ -17,6 +17,7 @@ return [
         // utils
         ['name' => 'utils#getOptionsValues', 'url' => '/getOptionsValues', 'verb' => 'POST'],
         ['name' => 'utils#saveOptionValue', 'url' => '/saveOptionValue', 'verb' => 'POST'],
+        ['name' => 'utils#setRoutingSettings', 'url' => '/setRoutingSettings', 'verb' => 'POST'],
 
         // photos
         ['name' => 'photos#getPhotosFromDb', 'url' => '/photos', 'verb' => 'GET'],

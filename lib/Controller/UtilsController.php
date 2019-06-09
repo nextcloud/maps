@@ -79,4 +79,29 @@ class UtilsController extends Controller {
         return new DataResponse(['values'=>$ov]);
     }
 
+    /**
+     * set routing settings
+     */
+    public function setRoutingSettings($values) {
+        $acceptedKeys = [
+            'osrmAPIKEY',
+            'osrmURL',
+            'osrmDEMO',
+            'graphhopperAPIKEY',
+            'graphhopperURL'
+        ];
+        foreach ($values as $k=>$v) {
+            if (in_array($k, $acceptedKeys)) {
+                $this->config->setAppValue('maps', $k, $v);
+            }
+        }
+        $response = new DataResponse('DONE');
+        $csp = new ContentSecurityPolicy();
+        $csp->addAllowedImageDomain('*')
+            ->addAllowedMediaDomain('*')
+            ->addAllowedConnectDomain('*');
+        $response->setContentSecurityPolicy($csp);
+        return $response;
+    }
+
 }

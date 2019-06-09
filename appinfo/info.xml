@@ -28,4 +28,7 @@
     <commands>
         <command>OCA\Maps\Command\RescanPhotos</command>
     </commands>
+    <settings>
+        <admin>OCA\Maps\Settings\AdminSettings</admin>
+    </settings>
 </info>

@@ -792,55 +792,27 @@
                     router: L.Routing.graphHopper(apikey, options)
                 };
             }
-            else if (type === 'osrmBike') {
-                this.routers.osrmBike = {
-                    name: name,
-                    router: L.Routing.osrmv1({
-                        serviceUrl: url,
-                        //profile: 'driving',
-                        //profile: 'car',
-                        profile: 'bicycle',
-                        //profile: 'foot',
-                        suppressDemoServerWarning: true,
-                        // this makes OSRM use our local translations
-                        // otherwise it uses osrm-text-instructions which requires to import another lib
-                        stepToText: function(e) {
-                        }
-                    })
+            else if (type === 'osrmBike' || type === 'osrmCar' || type === 'osrmFoot') {
+                var options = {
+                    serviceUrl: url,
+                    suppressDemoServerWarning: true,
+                    // this makes OSRM use our local translations
+                    // otherwise it uses osrm-text-instructions which requires to import another lib
+                    stepToText: function(e) {
+                    }
                 };
-            }
-            else if (type === 'osrmCar') {
-                this.routers.osrmCar = {
+                if (type === 'osrmCar') {
+                    options.profile = 'car';
+                }
+                else if (type === 'osrmBike') {
+                    options.profile = 'bicycle';
+                }
+                else if (type === 'osrmFoot') {
+                    options.profile = 'foot';
+                }
+                this.routers[type] = {
                     name: name,
-                    router: L.Routing.osrmv1({
-                        serviceUrl: url,
-                        //profile: 'driving',
-                        profile: 'car',
-                        //profile: 'bicycle',
-                        //profile: 'foot',
-                        suppressDemoServerWarning: true,
-                        // this makes OSRM use our local translations
-                        // otherwise it uses osrm-text-instructions which requires to import another lib
-                        stepToText: function(e) {
-                        }
-                    })
-                };
-            }
-            else if (type === 'osrmFoot') {
-                this.routers.osrmFoot = {
-                    name: name,
-                    router: L.Routing.osrmv1({
-                        serviceUrl: url,
-                        //profile: 'driving',
-                        //profile: 'car',
-                        //profile: 'bicycle',
-                        profile: 'foot',
-                        suppressDemoServerWarning: true,
-                        // this makes OSRM use our local translations
-                        // otherwise it uses osrm-text-instructions which requires to import another lib
-                        stepToText: function(e) {
-                        }
-                    })
+                    router: L.Routing.osrmv1(options)
                 };
             }
             else if (type === 'mapbox') {

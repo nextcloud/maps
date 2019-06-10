@@ -31,9 +31,9 @@ if (!isset($_['osrmDEMO']) || $_['osrmDEMO'] === '1') {
     <label><?php p($l->t('A GraphHopper server URL looks like this : https://my.graphhopper.server.org:8989/route')); ?></label>
     <br />
     <div id="graphhopper">
-        <label for="graphhopperURL"><?php p($l->t('GraphHopper server URL')); ?></label><br/>
+        <label for="graphhopperURL"><?php p($l->t('GraphHopper server URL (will use main graphhopper server if empty)')); ?></label><br/>
         <input id="graphhopperURL" type="text" value="<?php if (isset($_['graphhopperURL'])) p($_['graphhopperURL']); ?>"/><br/>
-        <label for="graphhopperAPIKEY"><?php p($l->t('GraphHopper API key')); ?></label><br/>
+        <label for="graphhopperAPIKEY"><?php p($l->t('GraphHopper API key (mandatory if main server used)')); ?></label><br/>
         <input id="graphhopperAPIKEY" type="text" value="<?php if (isset($_['graphhopperAPIKEY'])) p($_['graphhopperAPIKEY']); ?>"/>
     </div><br/>
 

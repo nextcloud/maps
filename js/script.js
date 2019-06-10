@@ -268,6 +268,11 @@
                 }
                 if (optionsValues.hasOwnProperty('selectedRouter') && optionsValues.selectedRouter !== '') {
                     routingController.selectedRouter = optionsValues.selectedRouter;
+                    routingController.setRouter(optionsValues.selectedRouter);
+                }
+                if (optionsValues.hasOwnProperty('selectedVehicle') && optionsValues.selectedVehicle !== '') {
+                    routingController.selectedVehicle = optionsValues.selectedVehicle;
+                    routingController.setRouterVehicle(optionsValues.selectedVehicle);
                 }
                 if (optionsValues.hasOwnProperty('routingEnabled') && optionsValues.routingEnabled === 'true') {
                     routingController.toggleRouting();
@@ -575,6 +580,7 @@
         enabled: false,
         routers: {},
         selectedRouter: 'osrmDEMO',
+        selectedVehicle: 'car',
         initRoutingControl: function(map) {
             this.map = map;
             var that = this;
@@ -689,8 +695,6 @@
             .on('routingerror', this.onRoutingError)
             .on('routingstart', this.onRoutingStart)
             .on('routesfound', this.onRoutingEnd);
-            //this.setRouter(this.ghRouter);
-            //console.log(this.control);
 
 
             // toggle routing control
@@ -707,8 +711,16 @@
                 var type = $(this).val();
                 that.selectedRouter = type;
                 var router = that.routers[type].router;
-                that.setRouter(router);
+                that.setRouter(type);
                 optionsController.saveOptionValues({selectedRouter: type});
+                that.control.route();
+            });
+            // select vehicle
+            $('body').on('change', '#vehicle-select', function(e) {
+                var type = $(this).val();
+                that.selectedVehicle = type;
+                that.setRouterVehicle(type);
+                optionsController.saveOptionValues({selectedVehicle: type});
                 that.control.route();
             });
         },
@@ -739,11 +751,21 @@
                 }
                 select += '</select>';
                 //$(select).insertBefore($('.leaflet-routing-container'));
+
+                // add vehicle selector
+                select += '<select id="vehicle-select">';
+                select += '<option value="car">'+t('maps', 'car')+'</option>';
+                select += '<option value="foot">'+t('maps', 'foot')+'</option>';
+                select += '<option value="bike">'+t('maps', 'bike')+'</option>';
+                select += '</select>';
+                //$(select).insertBefore($('.leaflet-routing-container'));
                 $('.leaflet-routing-container').prepend(select);
+                $('#vehicle-select').val(this.selectedVehicle);
             }
         },
 
-        setRouter: function(router) {
+        setRouter: function(routerType) {
+            var router = this.routers[routerType].router;
             this.control._router = router;
             this.control.options.router = router;
         },
@@ -817,8 +839,10 @@
 
         // this has been tested with graphhopper
         setRouterVehicle: function(vehicle) {
-            this.control.getRouter().options.urlParameters.vehicle = vehicle;
-            this.control.route();
+            if (this.selectedRouter === 'graphhopper') {
+                this.control.getRouter().options.urlParameters.vehicle = vehicle;
+                this.control.route();
+            }
         },
 
         createMarker: function(i, wpt, n) {

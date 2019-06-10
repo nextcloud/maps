@@ -1,3 +1,8 @@
-#osrmURL {
-    width: 200px;
+#osrmBikeURL,
+#osrmCarURL,
+#osrmFootURL,
+#graphhopperURL,
+#graphhopperAPIKEY
+{
+    width: 400px;
 }

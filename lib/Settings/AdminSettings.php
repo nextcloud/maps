@@ -40,8 +40,9 @@ class AdminSettings implements ISettings {
      */
     public function getForm() {
         $keys = [
-            'osrmAPIKEY',
-            'osrmURL',
+            'osrmCarURL',
+            'osrmBikeURL',
+            'osrmFootURL',
             'osrmDEMO',
             'graphhopperAPIKEY',
             'graphhopperURL'

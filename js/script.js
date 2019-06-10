@@ -253,26 +253,33 @@
                 });
 
                 // add router to routing machine
-                if (optionsValues.hasOwnProperty('osrmURL') && optionsValues.osrmURL !== '') {
-                    routingController.addRouter('osrm', 'OSRM', optionsValues.osrmURL, null);
+                if (optionsValues.hasOwnProperty('osrmCarURL') && optionsValues.osrmCarURL !== '') {
+                    routingController.addRouter('osrmCar', 'By car (OSRM)', optionsValues.osrmCarURL, null);
+                }
+                if (optionsValues.hasOwnProperty('osrmBikeURL') && optionsValues.osrmBikeURL !== '') {
+                    routingController.addRouter('osrmBike', 'By bike (OSRM)', optionsValues.osrmBikeURL, null);
+                }
+                if (optionsValues.hasOwnProperty('osrmFootURL') && optionsValues.osrmFootURL !== '') {
+                    routingController.addRouter('osrmFoot', 'By foot (OSRM)', optionsValues.osrmFootURL, null);
                 }
                 if (optionsValues.hasOwnProperty('osrmDEMO') && optionsValues.osrmDEMO === '1') {
-                    routingController.addRouter('osrmDEMO', 'OSRM demo', null, null);
+                    routingController.addRouter('osrmDEMO', 'By car (OSRM demo)', null, null);
+                }
+                else {
+                    delete routingController.routers.osrmDEMO;
                 }
                 if (optionsValues.hasOwnProperty('graphhopperURL') && optionsValues.graphhopperURL !== '') {
                     var apikey = undefined;
                     if (optionsValues.hasOwnProperty('graphhopperAPIKEY') && optionsValues.graphhopperAPIKEY !== '') {
                         apikey = optionsValues.graphhopperAPIKEY;
                     }
-                    routingController.addRouter('graphhopper', 'GrahHopper', optionsValues.graphhopperURL, apikey);
+                    routingController.addRouter('graphhopperCar', 'By car (GrahHopper)', optionsValues.graphhopperURL, apikey);
+                    routingController.addRouter('graphhopperBike', 'By bike (GrahHopper)', optionsValues.graphhopperURL, apikey);
+                    routingController.addRouter('graphhopperFoot', 'By Foot (GrahHopper)', optionsValues.graphhopperURL, apikey);
                 }
                 if (optionsValues.hasOwnProperty('selectedRouter') && optionsValues.selectedRouter !== '') {
                     routingController.selectedRouter = optionsValues.selectedRouter;
                     routingController.setRouter(optionsValues.selectedRouter);
-                }
-                if (optionsValues.hasOwnProperty('selectedVehicle') && optionsValues.selectedVehicle !== '') {
-                    routingController.selectedVehicle = optionsValues.selectedVehicle;
-                    routingController.setRouterVehicle(optionsValues.selectedVehicle);
                 }
                 if (optionsValues.hasOwnProperty('routingEnabled') && optionsValues.routingEnabled === 'true') {
                     routingController.toggleRouting();
@@ -580,7 +587,6 @@
         enabled: false,
         routers: {},
         selectedRouter: 'osrmDEMO',
-        selectedVehicle: 'car',
         initRoutingControl: function(map) {
             this.map = map;
             var that = this;
@@ -661,7 +667,7 @@
                 }
             };
             this.routers.osrmDEMO = {
-                name: 'OSRM demo',
+                name: 'By car (OSRM demo)',
                 router: L.Routing.osrmv1({
                     serviceUrl: 'https://router.project-osrm.org/route/v1',
                     //profile: 'driving', // works with demo server
@@ -715,14 +721,6 @@
                 optionsController.saveOptionValues({selectedRouter: type});
                 that.control.route();
             });
-            // select vehicle
-            $('body').on('change', '#vehicle-select', function(e) {
-                var type = $(this).val();
-                that.selectedVehicle = type;
-                that.setRouterVehicle(type);
-                optionsController.saveOptionValues({selectedVehicle: type});
-                that.control.route();
-            });
         },
 
         toggleRouting: function() {
@@ -750,31 +748,35 @@
                     select += '<option value="'+r+'"'+selected+'>'+router.name+'</option>';
                 }
                 select += '</select>';
-                //$(select).insertBefore($('.leaflet-routing-container'));
 
-                // add vehicle selector
-                select += '<select id="vehicle-select">';
-                select += '<option value="car">'+t('maps', 'car')+'</option>';
-                select += '<option value="foot">'+t('maps', 'foot')+'</option>';
-                select += '<option value="bike">'+t('maps', 'bike')+'</option>';
-                select += '</select>';
-                //$(select).insertBefore($('.leaflet-routing-container'));
                 $('.leaflet-routing-container').prepend(select);
-                $('#vehicle-select').val(this.selectedVehicle);
             }
         },
 
         setRouter: function(routerType) {
-            var router = this.routers[routerType].router;
-            this.control._router = router;
-            this.control.options.router = router;
+            if (this.routers.hasOwnProperty(routerType)) {
+                var router = this.routers[routerType].router;
+                this.control._router = router;
+                this.control.options.router = router;
+            }
         },
 
         // create router and make it accessible in the interface
         addRouter: function(type, name, url, apikey) {
-            if (type === 'graphhopper') {
-                this.routers.graphhopper = {
-                    name: 'GraphHopper',
+            if (type === 'graphhopperBike') {
+                this.routers.graphhopperBike = {
+                    name: name,
+                    router: L.Routing.graphHopper(apikey, {
+                        serviceUrl: url,
+                        urlParameters : {
+                            vehicle: 'bike' // available ones : car, foot, bike, bike2, mtb, racingbike, motorcycle
+                        }
+                    })
+                };
+            }
+            else if (type === 'graphhopperCar') {
+                this.routers.graphhopperCar = {
+                    name: name,
                     router: L.Routing.graphHopper(apikey, {
                         serviceUrl: url,
                         urlParameters : {
@@ -782,19 +784,61 @@
                         }
                     })
                 };
-
-                //this.setRouter(this.ghRouter);
-                //this.setRouterVehicle('foot');
             }
-            else if (type === 'osrm') {
-                this.routers.osrm = {
-                    name: 'OSRM',
+            else if (type === 'graphhopperFoot') {
+                this.routers.graphhopperFoot = {
+                    name: name,
+                    router: L.Routing.graphHopper(apikey, {
+                        serviceUrl: url,
+                        urlParameters : {
+                            vehicle: 'foot' // available ones : car, foot, bike, bike2, mtb, racingbike, motorcycle
+                        }
+                    })
+                };
+            }
+            else if (type === 'osrmBike') {
+                this.routers.osrmBike = {
+                    name: name,
+                    router: L.Routing.osrmv1({
+                        serviceUrl: url,
+                        //profile: 'driving',
+                        //profile: 'car',
+                        profile: 'bicycle',
+                        //profile: 'foot',
+                        suppressDemoServerWarning: true,
+                        // this makes OSRM use our local translations
+                        // otherwise it uses osrm-text-instructions which requires to import another lib
+                        stepToText: function(e) {
+                        }
+                    })
+                };
+            }
+            else if (type === 'osrmCar') {
+                this.routers.osrmCar = {
+                    name: name,
                     router: L.Routing.osrmv1({
                         serviceUrl: url,
                         //profile: 'driving',
                         profile: 'car',
                         //profile: 'bicycle',
                         //profile: 'foot',
+                        suppressDemoServerWarning: true,
+                        // this makes OSRM use our local translations
+                        // otherwise it uses osrm-text-instructions which requires to import another lib
+                        stepToText: function(e) {
+                        }
+                    })
+                };
+            }
+            else if (type === 'osrmFoot') {
+                this.routers.osrmFoot = {
+                    name: name,
+                    router: L.Routing.osrmv1({
+                        serviceUrl: url,
+                        //profile: 'driving',
+                        //profile: 'car',
+                        //profile: 'bicycle',
+                        profile: 'foot',
                         suppressDemoServerWarning: true,
                         // this makes OSRM use our local translations
                         // otherwise it uses osrm-text-instructions which requires to import another lib
@@ -837,13 +881,16 @@
             }, 5000);
         },
 
-        // this has been tested with graphhopper
-        setRouterVehicle: function(vehicle) {
-            if (this.selectedRouter === 'graphhopper') {
-                this.control.getRouter().options.urlParameters.vehicle = vehicle;
-                this.control.route();
-            }
-        },
+        //// this has been tested with graphhopper
+        //setRouterVehicle: function(vehicle) {
+        //    if (this.selectedRouter === 'graphhopper') {
+        //        this.control.getRouter().options.urlParameters.vehicle = vehicle;
+        //    }
+        //    else if (this.selectedRouter === 'osrm') {
+        //        this.control.getRouter().options.profile = vehicle.replace('bike', 'bicycle');
+        //    }
+        //    this.control.route();
+        //},
 
         createMarker: function(i, wpt, n) {
             var icon;

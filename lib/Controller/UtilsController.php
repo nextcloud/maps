@@ -81,8 +81,9 @@ class UtilsController extends Controller {
 
         // get routing-specific admin settings values
         $settingsKeys = [
-            'osrmAPIKEY',
-            'osrmURL',
+            'osrmCarURL',
+            'osrmBikeURL',
+            'osrmFootURL',
             'osrmDEMO',
             'graphhopperAPIKEY',
             'graphhopperURL'
@@ -99,8 +100,9 @@ class UtilsController extends Controller {
      */
     public function setRoutingSettings($values) {
         $acceptedKeys = [
-            'osrmAPIKEY',
-            'osrmURL',
+            'osrmCarURL',
+            'osrmBikeURL',
+            'osrmFootURL',
             'osrmDEMO',
             'graphhopperAPIKEY',
             'graphhopperURL'

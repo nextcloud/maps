@@ -468,6 +468,9 @@ tr.selected td {
     /* waiting for a better solution */
     overflow: hidden;
 }
+#router-select {
+    margin-left: 6px;
+}
 #navigation-routing:not(.icon-loading-small) > a::before {
     content: "\f4d7";
     font-family: 'Font Awesome\ 5 Free';

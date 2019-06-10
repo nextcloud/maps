@@ -54,15 +54,26 @@ class PageController extends Controller {
             // default routing engine
             $csp->addAllowedConnectDomain('https://*.project-osrm.org');
             // allow connections to custom routing engines
-            $osrmURL = $this->config->getAppValue('maps', 'osrmURL');
-            if ($osrmURL !== '') {
-                $csp->addAllowedConnectDomain($osrmURL);
+            $urlKeys = [
+                'osrmBikeURL',
+                'osrmCarURL',
+                'osrmFootURL',
+                'graphhopperURL'
+            ];
+            foreach ($urlKeys as $key) {
+                $url = $this->config->getAppValue('maps', $key);
+                if ($url !== '') {
+                    $scheme = parse_url($url, PHP_URL_SCHEME);
+                    $host = parse_url($url, PHP_URL_HOST);
+                    $port = parse_url($url, PHP_URL_PORT);
+                    $cleanUrl = $scheme . '://' . $host;
+                    if ($port && $port !== '') {
+                        $cleanUrl .= ':' . $port;
+                    }
+                    $csp->addAllowedConnectDomain($cleanUrl);
+                }
             }
-            $graphhopperURL = $this->config->getAppValue('maps', 'graphhopperURL');
-            if ($graphhopperURL !== '') {
-                $csp->addAllowedConnectDomain($graphhopperURL);
-            }
-            //$csp->addAllowedConnectDomain('http://192.168.0.66:8989');
+            //$csp->addAllowedConnectDomain('http://192.168.0.66:5000');
 
             // poi images
             $csp->addAllowedImageDomain('https://nominatim.openstreetmap.org');

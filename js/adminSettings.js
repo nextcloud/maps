@@ -4,14 +4,9 @@
     }
 })();
 
-function setMapsRoutingSettings() {
-    var values = {
-        osrmDEMO: $('#osrmDEMO').is(':checked') ? '1' : '0',
-        osrmURL: $('#osrmURL').val(),
-        osrmAPIKEY: $('#osrmAPIKEY').val(),
-        graphhopperURL: $('#graphhopperURL').val(),
-        graphhopperAPIKEY: $('#graphhopperAPIKEY').val(),
-    }
+function setMapsRoutingSettings(key, value) {
+    var values = {};
+    values[key] = value;
     var url = OC.generateUrl('/apps/maps/setRoutingSettings');
     var req = {
         values: values
@@ -33,7 +28,12 @@ function setMapsRoutingSettings() {
 }
 
 $(document).ready(function() {
-    $('body').on('change', 'input#osrmURL, input#osrmAPIKEY, input#graphhopperURL, input#graphhopperAPIKEY, #osrmDEMO', function(e) {
-        setMapsRoutingSettings();
+    $('body').on('change', 'input#osrmFootURL, input#osrmCarURL, input#osrmBikeURL, input#graphhopperURL, input#graphhopperAPIKEY, #osrmDEMO', function(e) {
+        var value = $(this).val();
+        setMapsRoutingSettings($(this).attr('id'), value);
+    });
+    $('body').on('change', '#osrmDEMO', function(e) {
+        var value = $(this).is(':checked') ? '1' : '0';
+        setMapsRoutingSettings($(this).attr('id'), value);
     });
 });

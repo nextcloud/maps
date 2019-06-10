@@ -28,7 +28,14 @@ function setMapsRoutingSettings(key, value) {
 }
 
 $(document).ready(function() {
-    $('body').on('change', 'input#osrmFootURL, input#osrmCarURL, input#osrmBikeURL, input#graphhopperURL, input#graphhopperAPIKEY, #osrmDEMO', function(e) {
+    $('body').on('change',
+        'input#osrmFootURL, ' +
+        'input#osrmCarURL, ' +
+        'input#osrmBikeURL, ' +
+        'input#graphhopperURL, ' +
+        'input#graphhopperAPIKEY, ' +
+        '#osrmDEMO, ' +
+        'input#mapboxAPIKEY', function(e) {
         var value = $(this).val();
         setMapsRoutingSettings($(this).attr('id'), value);
     });

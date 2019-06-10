@@ -53,6 +53,7 @@ class PageController extends Controller {
 
             // default routing engine
             $csp->addAllowedConnectDomain('https://*.project-osrm.org');
+            $csp->addAllowedConnectDomain('https://api.mapbox.com');
             // allow connections to custom routing engines
             $urlKeys = [
                 'osrmBikeURL',

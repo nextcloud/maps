@@ -2,7 +2,8 @@
 #osrmCarURL,
 #osrmFootURL,
 #graphhopperURL,
-#graphhopperAPIKEY
+#graphhopperAPIKEY,
+#mapboxAPIKEY
 {
     width: 400px;
 }

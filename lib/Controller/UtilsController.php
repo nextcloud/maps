@@ -86,6 +86,7 @@ class UtilsController extends Controller {
             'osrmFootURL',
             'osrmDEMO',
             'graphhopperAPIKEY',
+            'mapboxAPIKEY',
             'graphhopperURL'
         ];
         foreach ($settingsKeys as $k) {
@@ -105,6 +106,7 @@ class UtilsController extends Controller {
             'osrmFootURL',
             'osrmDEMO',
             'graphhopperAPIKEY',
+            'mapboxAPIKEY',
             'graphhopperURL'
         ];
         foreach ($values as $k=>$v) {

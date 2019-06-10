@@ -36,4 +36,11 @@ if (!isset($_['osrmDEMO']) || $_['osrmDEMO'] === '1') {
         <label for="graphhopperAPIKEY"><?php p($l->t('GraphHopper API key')); ?></label><br/>
         <input id="graphhopperAPIKEY" type="text" value="<?php if (isset($_['graphhopperAPIKEY'])) p($_['graphhopperAPIKEY']); ?>"/>
     </div><br/>
+
+    <h3><?php p($l->t('Mapbox settings')); ?> </h3>
+    <label><?php p($l->t('')); ?></label>
+    <div id="mapbox">
+        <label for="mapboxAPIKEY"><?php p($l->t('Mapbox API key')); ?></label><br/>
+        <input id="mapboxAPIKEY" type="text" value="<?php if (isset($_['mapboxAPIKEY'])) p($_['mapboxAPIKEY']); ?>"/>
+    </div><br/>
 </div>

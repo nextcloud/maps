@@ -268,6 +268,9 @@
                 else {
                     delete routingController.routers.osrmDEMO;
                 }
+                if (optionsValues.hasOwnProperty('mapboxAPIKEY') && optionsValues.mapboxAPIKEY !== '') {
+                    routingController.addRouter('mapbox', 'Mapbox', null, optionsValues.mapboxAPIKEY);
+                }
                 if (optionsValues.hasOwnProperty('graphhopperURL') && optionsValues.graphhopperURL !== '') {
                     var apikey = undefined;
                     if (optionsValues.hasOwnProperty('graphhopperAPIKEY') && optionsValues.graphhopperAPIKEY !== '') {
@@ -845,6 +848,12 @@
                         stepToText: function(e) {
                         }
                     })
+                };
+            }
+            else if (type === 'mapbox') {
+                this.routers.mapbox = {
+                    name: name,
+                    router: L.Routing.mapbox(apikey)
                 };
             }
             else if (type === 'osrmDEMO') {

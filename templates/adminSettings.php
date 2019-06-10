@@ -18,9 +18,9 @@ if (!isset($_['osrmDEMO']) || $_['osrmDEMO'] === '1') {
         <br/>
 
         <label for="osrmURL"><?php p($l->t('OSRM server URL')); ?></label><br/>
-        <input id="osrmURL" type="text" value="<?php p($_['osrmURL']); ?>"/><br/>
+        <input id="osrmURL" type="text" value="<?php if (isset($_['osrmURL'])) p($_['osrmURL']); ?>"/><br/>
         <label for="osrmAPIKEY"><?php p($l->t('OSRM API key')); ?></label><br/>
-        <input id="osrmAPIKEY" type="text" value="<?php p($_['osrmAPIKEY']); ?>"/>
+        <input id="osrmAPIKEY" type="text" value="<?php if (isset($_['osrmAPIKEY'])) p($_['osrmAPIKEY']); ?>"/>
     </div><br/>
 
     <h3><?php p($l->t('GraphHopper settings')); ?> </h3>
@@ -28,8 +28,8 @@ if (!isset($_['osrmDEMO']) || $_['osrmDEMO'] === '1') {
     <br />
     <div id="graphhopper">
         <label for="graphhopperURL"><?php p($l->t('GraphHopper server URL')); ?></label><br/>
-        <input id="graphhopperURL" type="text" value="<?php p($_['graphhopperURL']); ?>"/><br/>
+        <input id="graphhopperURL" type="text" value="<?php if (isset($_['graphhopperURL'])) p($_['graphhopperURL']); ?>"/><br/>
         <label for="graphhopperAPIKEY"><?php p($l->t('GraphHopper API key')); ?></label><br/>
-        <input id="graphhopperAPIKEY" type="text" value="<?php p($_['graphhopperAPIKEY']); ?>"/>
+        <input id="graphhopperAPIKEY" type="text" value="<?php if (isset($_['graphhopperAPIKEY'])) p($_['graphhopperAPIKEY']); ?>"/>
     </div><br/>
 </div>

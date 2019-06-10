@@ -71,10 +71,25 @@ class UtilsController extends Controller {
      */
     public function getOptionsValues() {
         $ov = array();
+
+        // get all user values
         $keys = $this->config->getUserKeys($this->userId, 'maps');
         foreach ($keys as $key) {
             $value = $this->config->getUserValue($this->userId, 'maps', $key);
             $ov[$key] = $value;
+        }
+
+        // get routing-specific admin settings values
+        $settingsKeys = [
+            'osrmAPIKEY',
+            'osrmURL',
+            'osrmDEMO',
+            'graphhopperAPIKEY',
+            'graphhopperURL'
+        ];
+        foreach ($settingsKeys as $k) {
+            $v = $this->config->getAppValue('maps', $k);
+            $ov[$k] = $v;
         }
         return new DataResponse(['values'=>$ov]);
     }

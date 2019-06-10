@@ -192,9 +192,6 @@
                 if (!optionsValues.hasOwnProperty('favoritesEnabled') || optionsValues.favoritesEnabled === 'true') {
                     favoritesController.toggleFavorites();
                 }
-                if (optionsValues.hasOwnProperty('routingEnabled') && optionsValues.routingEnabled === 'true') {
-                    routingController.toggleRouting();
-                }
                 if (!optionsValues.hasOwnProperty('trackListShow') || optionsValues.trackListShow === 'true') {
                     tracksController.toggleTrackList();
                 }
@@ -254,6 +251,27 @@
                     }
                     mapController.layerChanged(e.name);
                 });
+
+                // add router to routing machine
+                if (optionsValues.hasOwnProperty('osrmURL') && optionsValues.osrmURL !== '') {
+                    routingController.addRouter('osrm', 'OSRM', optionsValues.osrmURL, null);
+                }
+                if (optionsValues.hasOwnProperty('osrmDEMO') && optionsValues.osrmDEMO === '1') {
+                    routingController.addRouter('osrmDEMO', 'OSRM demo', null, null);
+                }
+                if (optionsValues.hasOwnProperty('graphhopperURL') && optionsValues.graphhopperURL !== '') {
+                    var apikey = undefined;
+                    if (optionsValues.hasOwnProperty('graphhopperAPIKEY') && optionsValues.graphhopperAPIKEY !== '') {
+                        apikey = optionsValues.graphhopperAPIKEY;
+                    }
+                    routingController.addRouter('graphhopper', 'GrahHopper', optionsValues.graphhopperURL, apikey);
+                }
+                if (optionsValues.hasOwnProperty('selectedRouter') && optionsValues.selectedRouter !== '') {
+                    routingController.selectedRouter = optionsValues.selectedRouter;
+                }
+                if (optionsValues.hasOwnProperty('routingEnabled') && optionsValues.routingEnabled === 'true') {
+                    routingController.toggleRouting();
+                }
             }).fail(function() {
                 OC.Notification.showTemporary(
                     t('maps', 'Failed to restore options values')
@@ -555,6 +573,8 @@
         control: undefined,
         map: undefined,
         enabled: false,
+        routers: {},
+        selectedRouter: 'osrmDEMO',
         initRoutingControl: function(map) {
             this.map = map;
             var that = this;
@@ -575,24 +595,6 @@
                 html: ''
             });
 
-            this.osrmRouter = L.Routing.osrmv1({
-                serviceUrl: 'https://router.project-osrm.org/route/v1',
-                //profile: 'driving', // works with demo server
-                profile: 'car', // works with demo server
-                //profile: 'bicycle', // does not work with demo server...
-                //profile: 'foot', // does not work with demo server...
-                suppressDemoServerWarning: true,
-                // this makes OSRM use our local translations
-                // otherwise it uses osrm-text-instructions which makes us import another lib
-                stepToText: function(e) {
-                }
-            });
-            this.ghRouter = L.Routing.graphHopper(undefined /* api key */, {
-                serviceUrl: 'http://192.168.0.66:8989/route',
-                urlParameters : {
-                    vehicle: 'car' // available ones : car, foot, bike, bike2, mtb, racingbike, motorcycle
-                }
-            });
             var lang = OC.getLocale();
             // this is for all routing engines except OSRM
             L.Routing.Localization[lang] = {
@@ -652,15 +654,34 @@
                     seconds: t('maps', 's')
                 }
             };
+            this.routers.osrmDEMO = {
+                name: 'OSRM demo',
+                router: L.Routing.osrmv1({
+                    serviceUrl: 'https://router.project-osrm.org/route/v1',
+                    //profile: 'driving', // works with demo server
+                    profile: 'car', // works with demo server
+                    //profile: 'bicycle', // does not work with demo server...
+                    //profile: 'foot', // does not work with demo server...
+                    suppressDemoServerWarning: true,
+                    // this makes OSRM use our local translations
+                    // otherwise it uses osrm-text-instructions which requires to import another lib
+                    stepToText: function(e) {
+                    }
+                })
+            };
             this.control = L.Routing.control({
-                router: this.osrmRouter,
+                router: this.routers.osrmDEMO.router,
                 position: 'topleft',
                 routeWhileDragging: true,
                 reverseWaypoints: true,
                 geocoder: L.Control.Geocoder.nominatim(),
                 language: lang,
                 lineOptions: {
-                    styles: [{color: 'black', opacity: 0.15, weight: 9}, {color: 'white', opacity: 0.8, weight: 6}, {color: 'blue', opacity: 1, weight: 2}],
+                    styles: [
+                        {color: 'black', opacity: 0.15, weight: 9},
+                        {color: 'white', opacity: 0.8, weight: 6},
+                        {color: 'blue', opacity: 1, weight: 2}
+                    ],
                 },
                 pointMarkerStyle: {radius: 5, color: '#03f', fillColor: 'white', opacity: 1, fillOpacity: 0.7},
                 createMarker: this.createMarker
@@ -671,6 +692,7 @@
             //this.setRouter(this.ghRouter);
             //console.log(this.control);
 
+
             // toggle routing control
             $('body').on('click', '#navigation-routing > a', function(e) {
                 that.toggleRouting();
@@ -679,6 +701,15 @@
             // export
             $('body').on('click', '.exportCurrentRoute', function(e) {
                 that.exportRoute();
+            });
+            // select router
+            $('body').on('change', '#router-select', function(e) {
+                var type = $(this).val();
+                that.selectedRouter = type;
+                var router = that.routers[type].router;
+                that.setRouter(router);
+                optionsController.saveOptionValues({selectedRouter: type});
+                that.control.route();
             });
         },
 
@@ -694,12 +725,64 @@
                 $('#navigation-routing').addClass('active');
                 this.enabled = true;
                 $('.leaflet-routing-geocoder input').first().focus();
+
+                // add router selector
+                var select = '<select id="router-select">';
+                var r, router, selected;
+                for (r in this.routers) {
+                    router = this.routers[r];
+                    selected = '';
+                    if (r === this.selectedRouter) {
+                        selected = ' selected';
+                    }
+                    select += '<option value="'+r+'"'+selected+'>'+router.name+'</option>';
+                }
+                select += '</select>';
+                //$(select).insertBefore($('.leaflet-routing-container'));
+                $('.leaflet-routing-container').prepend(select);
             }
         },
 
         setRouter: function(router) {
             this.control._router = router;
             this.control.options.router = router;
+        },
+
+        // create router and make it accessible in the interface
+        addRouter: function(type, name, url, apikey) {
+            if (type === 'graphhopper') {
+                this.routers.graphhopper = {
+                    name: 'GraphHopper',
+                    router: L.Routing.graphHopper(apikey, {
+                        serviceUrl: url,
+                        urlParameters : {
+                            vehicle: 'car' // available ones : car, foot, bike, bike2, mtb, racingbike, motorcycle
+                        }
+                    })
+                };
+
+                //this.setRouter(this.ghRouter);
+                //this.setRouterVehicle('foot');
+            }
+            else if (type === 'osrm') {
+                this.routers.osrm = {
+                    name: 'OSRM',
+                    router: L.Routing.osrmv1({
+                        serviceUrl: url,
+                        //profile: 'driving',
+                        profile: 'car',
+                        //profile: 'bicycle',
+                        //profile: 'foot',
+                        suppressDemoServerWarning: true,
+                        // this makes OSRM use our local translations
+                        // otherwise it uses osrm-text-instructions which requires to import another lib
+                        stepToText: function(e) {
+                        }
+                    })
+                };
+            }
+            else if (type === 'osrmDEMO') {
+            }
         },
 
         onRoutingError: function(e) {

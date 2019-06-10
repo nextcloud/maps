@@ -271,7 +271,8 @@
                 if (optionsValues.hasOwnProperty('mapboxAPIKEY') && optionsValues.mapboxAPIKEY !== '') {
                     routingController.addRouter('mapbox', 'Mapbox', null, optionsValues.mapboxAPIKEY);
                 }
-                if (optionsValues.hasOwnProperty('graphhopperURL') && optionsValues.graphhopperURL !== '') {
+                if ((optionsValues.hasOwnProperty('graphhopperURL') && optionsValues.graphhopperURL !== '') ||
+                    (optionsValues.hasOwnProperty('graphhopperAPIKEY') && optionsValues.graphhopperAPIKEY !== '') ){
                     var apikey = undefined;
                     if (optionsValues.hasOwnProperty('graphhopperAPIKEY') && optionsValues.graphhopperAPIKEY !== '') {
                         apikey = optionsValues.graphhopperAPIKEY;
@@ -766,37 +767,29 @@
 
         // create router and make it accessible in the interface
         addRouter: function(type, name, url, apikey) {
-            if (type === 'graphhopperBike') {
-                this.routers.graphhopperBike = {
+            if (type === 'graphhopperBike' || type === 'graphhopperCar' || type === 'graphhopperFoot') {
+                var options = {};
+                if (type === 'graphhopperCar') {
+                    options.urlParameters = {
+                        vehicle: 'car' // available ones : car, foot, bike, bike2, mtb, racingbike, motorcycle
+                    };
+                }
+                if (type === 'graphhopperBike') {
+                    options.urlParameters = {
+                        vehicle: 'bike'
+                    };
+                }
+                if (type === 'graphhopperFoot') {
+                    options.urlParameters = {
+                        vehicle: 'foot'
+                    };
+                }
+                if (url) {
+                    options.serviceUrl = url;
+                }
+                this.routers[type] = {
                     name: name,
-                    router: L.Routing.graphHopper(apikey, {
-                        serviceUrl: url,
-                        urlParameters : {
-                            vehicle: 'bike' // available ones : car, foot, bike, bike2, mtb, racingbike, motorcycle
-                        }
-                    })
-                };
-            }
-            else if (type === 'graphhopperCar') {
-                this.routers.graphhopperCar = {
-                    name: name,
-                    router: L.Routing.graphHopper(apikey, {
-                        serviceUrl: url,
-                        urlParameters : {
-                            vehicle: 'car' // available ones : car, foot, bike, bike2, mtb, racingbike, motorcycle
-                        }
-                    })
-                };
-            }
-            else if (type === 'graphhopperFoot') {
-                this.routers.graphhopperFoot = {
-                    name: name,
-                    router: L.Routing.graphHopper(apikey, {
-                        serviceUrl: url,
-                        urlParameters : {
-                            vehicle: 'foot' // available ones : car, foot, bike, bike2, mtb, racingbike, motorcycle
-                        }
-                    })
+                    router: L.Routing.graphHopper(apikey, options)
                 };
             }
             else if (type === 'osrmBike') {

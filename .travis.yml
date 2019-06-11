@@ -20,9 +20,9 @@ matrix:
         - php: 7.2
           env: DB=pgsql
           services: postgresql
-       #- php: 7.2
-       #  env: DB=pgsql CORE_BRANCH=master
-       #  services: postgresql
+       - php: 7.2
+         env: DB=pgsql CORE_BRANCH=master
+         services: postgresql
     fast_finish: true
 
 before_install:
@@ -38,8 +38,8 @@ before_install:
     #- make appstore
     # install core
     - cd ../
-    #- git clone https://github.com/nextcloud/server.git --recursive --depth 1 -b $CORE_BRANCH nextcloud
-    - wget -q https://download.nextcloud.com/server/releases/nextcloud-16.0.1.zip ; unzip -q nextcloud-16.0.1.zip ; rm nextcloud-16.0.1.zip
+    - git clone https://github.com/nextcloud/server.git --recursive --depth 1 -b $CORE_BRANCH nextcloud
+    # - wget -q https://download.nextcloud.com/server/releases/nextcloud-16.0.1.zip ; unzip -q nextcloud-16.0.1.zip ; rm nextcloud-16.0.1.zip
     - mv maps nextcloud/apps/
 
 before_script:
@@ -53,6 +53,7 @@ before_script:
     - mkdir data
     - php ./occ maintenance:install --database-name oc_autotest --database-user oc_autotest --admin-user admin --admin-pass admin --database $DB --database-pass=''
     - php ./occ app:enable maps
+    - chmod 777 data
     #- php -S localhost:8080 &
     - cd apps/maps
 

@@ -48,10 +48,10 @@ class FavoritesControllerTest extends \PHPUnit\Framework\TestCase {
         }
 
         // CREATE DUMMY USERS
-        $u1 = $c->getServer()->getUserManager()->createUser('test', 'T0T0T0');
+        $u1 = $c->getServer()->getUserManager()->createUser('test', 'tatotitoTUTU');
         $u1->setEMailAddress('toto@toto.net');
-        $u2 = $c->getServer()->getUserManager()->createUser('test2', 'T0T0T0');
-        $u3 = $c->getServer()->getUserManager()->createUser('test3', 'T0T0T0');
+        $u2 = $c->getServer()->getUserManager()->createUser('test2', 'plopinoulala000');
+        $u3 = $c->getServer()->getUserManager()->createUser('test3', 'yeyeahPASSPASS');
         $c->getServer()->getGroupManager()->createGroup('group1test');
         $c->getServer()->getGroupManager()->get('group1test')->addUser($u1);
         $c->getServer()->getGroupManager()->createGroup('group2test');

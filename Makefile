@@ -48,6 +48,11 @@ appstore_package_name=$(appstore_build_directory)/$(app_name)
 npm=$(shell which npm 2> /dev/null)
 composer=$(shell which composer 2> /dev/null)
 
+cert_dir=$(HOME)/.nextcloud/certificates
+webserveruser ?= www-data
+occ_dir ?= /var/www/html/n16
+app_version=$(version)
+
 all: build
 
 # Fetches the PHP and JS dependencies and compiles the JS. If no composer.json
@@ -109,41 +114,52 @@ dist:
 source:
 	rm -rf $(source_build_directory)
 	mkdir -p $(source_build_directory)
-	tar cvzf $(source_package_name).tar.gz ../$(app_name) \
+	tar cvzf \
 	--exclude-vcs \
 	--exclude="../$(app_name)/build" \
 	--exclude="../$(app_name)/js/node_modules" \
 	--exclude="../$(app_name)/node_modules" \
 	--exclude="../$(app_name)/*.log" \
 	--exclude="../$(app_name)/js/*.log" \
+	$(source_package_name).tar.gz ../$(app_name)
 
 # Builds the source package for the app store, ignores php and js tests
 .PHONY: appstore
 appstore:
 	rm -rf $(appstore_build_directory)
 	mkdir -p $(appstore_build_directory)
-	tar cvzf $(appstore_package_name).tar.gz ../$(app_name) \
-	--exclude-vcs \
-	--exclude="../$(app_name)/build" \
-	--exclude="../$(app_name)/tests" \
-	--exclude="../$(app_name)/Makefile" \
-	--exclude="../$(app_name)/*.log" \
-	--exclude="../$(app_name)/phpunit*xml" \
-	--exclude="../$(app_name)/composer.*" \
-	--exclude="../$(app_name)/js/node_modules" \
-	--exclude="../$(app_name)/js/tests" \
-	--exclude="../$(app_name)/js/test" \
-	--exclude="../$(app_name)/js/*.log" \
-	--exclude="../$(app_name)/js/package.json" \
-	--exclude="../$(app_name)/js/bower.json" \
-	--exclude="../$(app_name)/js/karma.*" \
-	--exclude="../$(app_name)/js/protractor.*" \
-	--exclude="../$(app_name)/package.json" \
-	--exclude="../$(app_name)/bower.json" \
-	--exclude="../$(app_name)/karma.*" \
-	--exclude="../$(app_name)/protractor\.*" \
-	--exclude="../$(app_name)/.*" \
-	--exclude="../$(app_name)/js/.*" \
+	rsync -a \
+	--exclude=.git \
+	--exclude=build \
+	--exclude=tests \
+	--exclude=Makefile \
+	--exclude=*.log \
+	--exclude=phpunit*xml \
+	--exclude=composer.* \
+	--exclude=js/node_modules \
+	--exclude=js/tests \
+	--exclude=js/test \
+	--exclude=js/*.log \
+	--exclude=js/package.json \
+	--exclude=js/bower.json \
+	--exclude=js/karma.* \
+	--exclude=js/protractor.* \
+	--exclude=package.json \
+	--exclude=bower.json \
+	--exclude=karma.* \
+	--exclude=protractor\.* \
+	--exclude=translationfiles \
+	--exclude=.* \
+	--exclude=js/.* \
+	../$(app_name) $(appstore_build_directory)
+	# give the webserver user the right to create signature file
+	sudo chown $(webserveruser) $(appstore_package_name)/appinfo
+	sudo -u $(webserveruser) php $(occ_dir)/occ integrity:sign-app --privateKey=$(cert_dir)/$(app_name).key --certificate=$(cert_dir)/$(app_name).crt --path=$(appstore_package_name)/
+	sudo chown -R $(USER) $(appstore_package_name)/appinfo
+	tar -czf $(appstore_package_name)-$(app_version).tar.gz \
+		-C $(appstore_build_directory) $(app_name)
+	echo NEXTCLOUD------------------------------------------
+	openssl dgst -sha512 -sign $(cert_dir)/$(app_name).key $(appstore_package_name)-$(app_version).tar.gz | openssl base64
 
 # Command for running JS and PHP tests. Works for package.json files in the js/
 # and root directory. If phpunit is not installed systemwide, a copy is fetched

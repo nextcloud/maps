@@ -114,14 +114,16 @@ dist:
 source:
 	rm -rf $(source_build_directory)
 	mkdir -p $(source_build_directory)
-	tar cvzf \
-	--exclude-vcs \
-	--exclude="../$(app_name)/build" \
-	--exclude="../$(app_name)/js/node_modules" \
-	--exclude="../$(app_name)/node_modules" \
-	--exclude="../$(app_name)/*.log" \
-	--exclude="../$(app_name)/js/*.log" \
-	$(source_package_name).tar.gz ../$(app_name)
+	rsync -a \
+	--exclude=.git \
+	--exclude=build \
+	--exclude=js/node_modules \
+	--exclude=node_modules \
+	--exclude=*.log \
+	--exclude=js/*.log \
+	../$(app_name) $(source_build_directory)
+	tar -czf $(source_build_directory)/$(app_name)-$(app_version).tar.gz \
+		-C $(source_build_directory) $(app_name)
 
 # Builds the source package for the app store, ignores php and js tests
 .PHONY: appstore

@@ -11,18 +11,26 @@
 
 namespace OCA\Maps\Controller;
 
+use \OCA\Maps\AppInfo\Application;
 use OCP\AppFramework\Http\TemplateResponse;
 
 
 class PageControllerTest extends \PHPUnit\Framework\TestCase {
     private $controller;
     private $userId = 'john';
+    private $config;
+    private $app;
+    private $container;
 
     protected function setUp(): void {
         $request = $this->getMockBuilder('OCP\IRequest')->getMock();
+        $this->app = new Application();
+        $this->container = $this->app->getContainer();
+        $c = $this->container;
+        $this->config = $c->query('ServerContainer')->getConfig();
 
         $this->controller = new PageController(
-            'maps', $request, $this->userId
+            'maps', $request, $this->userId, $this->config
         );
     }
 

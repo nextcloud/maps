@@ -480,7 +480,7 @@ tr.selected td {
     position: absolute;
     left: 16px;
 }
-#navigation-tracks:not(.icon-loading-small) > a::before {
+/*#navigation-tracks:not(.icon-loading-small) > a::before {
     content: "\f018";
     font-family: 'Font Awesome\ 5 Free';
     font-style: normal;
@@ -488,7 +488,7 @@ tr.selected td {
     text-decoration: inherit;
     position: absolute;
     left: 16px;
-}
+}*/
 #navigation-favorites:not(.active) > * ,
 #navigation-routing:not(.active) > * ,
 #navigation-photos:not(.active) > * ,

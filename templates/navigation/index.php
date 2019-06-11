@@ -134,7 +134,7 @@
         </div>
     </li>
     <li id="navigation-tracks" class="collapsible">
-        <a class="" href="#"><?php p($l->t('Tracks')); ?></a>
+        <a class="icon-category-monitoring" href="#"><?php p($l->t('Tracks')); ?></a>
         <div class="app-navigation-entry-utils">
             <ul>
                 <li id="addTrackButton" class="app-navigation-entry-utils-menu-button" title="<?php p($l->t('Load a track file')); ?>">

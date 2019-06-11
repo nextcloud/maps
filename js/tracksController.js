@@ -433,7 +433,7 @@ TracksController.prototype = {
         var name = track.file_name;
 
         // side menu entry
-        var imgurl = OC.generateUrl('/svg/core/actions/address?color='+color.replace('#', ''));
+        var imgurl = OC.generateUrl('/svg/core/categories/monitoring?color='+color.replace('#', ''));
         var li = '<li class="track-line" id="'+name+'-track" track="'+track.id+'" name="'+name+'">' +
         '    <a href="#" class="track-name" id="'+name+'-track-name" style="background-image: url('+imgurl+')">'+name+'</a>' +
         '    <div class="app-navigation-entry-utils">' +
@@ -1104,7 +1104,7 @@ TracksController.prototype = {
             data: req,
             async: true
         }).done(function (response) {
-            var imgurl = OC.generateUrl('/svg/core/actions/address?color='+color.replace('#', ''));
+            var imgurl = OC.generateUrl('/svg/core/categories/monitoring?color='+color.replace('#', ''));
             $('#track-list > li[track='+id+'] .track-name').attr('style', 'background-image: url('+imgurl+')');
 
             that.setTrackCss(id, color);

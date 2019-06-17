@@ -1,5 +1,6 @@
 { "translations": {
     "Maps" : "Cartes",
+    "NYI" : "Pas encore implémenté",
     "Click on the map to move the contact, press ESC to cancel" : "Cliquez sur la carte pour déplacer le contact, appuyez sur ESC pour annuler",
     "Reset GEO information" : "Réinitialiser les données géographiques",
     "Move contact" : "Déplacer le contact",

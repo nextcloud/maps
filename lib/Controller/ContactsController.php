@@ -34,6 +34,7 @@ class ContactsController extends Controller {
     }
 
     /**
+     * get contacts with coordinates
      * @NoAdminRequired
      */
     public function getContacts() {
@@ -45,6 +46,7 @@ class ContactsController extends Controller {
             if (strcmp($c['URI'], 'Database:'.$c['UID'].'.vcf') !== 0 or
                 strcmp($uid, $userid) === 0
             ) {
+                //If the contact has a geo attibute use this, otherwise try to get it from the address
                 if(key_exists('GEO',$c)) {
                     $geo = $c['GEO'];
                 } else {
@@ -65,6 +67,7 @@ class ContactsController extends Controller {
     }
 
     /**
+     * get all contacts
      * @NoAdminRequired
      */
     public function getAllContacts() {

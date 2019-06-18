@@ -22,6 +22,21 @@ use \OCP\Files\IAppData;
 use \OCP\Files\SimpleFS\ISimpleFile;
 use \OCP\Files\NotFoundException;
 
+/**
+ * Class AddressService
+ *
+ * The address service can be used to get lat lng information for an address.
+ * The service takes care of caching and rate limits.
+ *
+ * The first time an address is looked up it will not be in the database.
+ * So an external lookup of the address is tried and the result is saved in the db.
+ * If the lookup is successful the result is returned and any further lookup of
+ * this address is resolved local.
+ * If the lookup failed, a cron job is added to lookup the address later.
+ * 
+ *
+ * @package OCA\Maps\Service
+ */
 class AddressService {
     private $qb;
     private $dbconnection;
@@ -44,7 +59,8 @@ class AddressService {
         return strval($geo[0]).";".strval($geo[1]);
     }
 
-    /* Safely looks up an adr string
+    /**
+     * Safely looks up an adr string
      * First: Checks if the adress is knwon and in the db
      *      Uses the this geo if it was looked up externally
      *      Look's it up if it was not looked up
@@ -69,7 +85,7 @@ class AddressService {
                 $inDb = True;
             } else {
                 $id = $row['id'];
-                $geo = $this->unsafeLookupAddress($adr);
+                $geo = $this->lookupAddressExternal($adr);
                 $lat = $geo[0];
                 $lng = $geo[1];
                 $lookedUp = $geo[2];
@@ -126,7 +142,7 @@ class AddressService {
     }
 
     //looks up the address on external provider returns lat, lon, lookupstate
-    private function unsafeLookupAddress($adr){
+    private function lookupAddressExternal($adr){
         if (time() - $this->getLastLookup() >= 1) {
             $opts = array('http' =>
                 array(
@@ -179,7 +195,7 @@ class AddressService {
 
     //Schedules the address for an external lookup
     private function scheduleForLookup($adr) {
-        $geo = $this->unsafeLookupAddress($adr);
+        $geo = $this->lookupAddressExternal($adr);
         $adr_norm = strtolower(preg_replace('/\s+/', '', $adr));
         $this->qb->insert('maps_address_geo')
             ->values([

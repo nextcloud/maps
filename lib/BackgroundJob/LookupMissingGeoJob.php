@@ -28,6 +28,8 @@ class LookupMissingGeoJob extends QueuedJob {
     /**
      * LookupMissingGeoJob constructor.
      *
+     * A QueuedJob to lookup missing geo information of addresses
+     *
      * @param AddressService $service
      * @param IJobList $jobList
      */
@@ -39,7 +41,9 @@ class LookupMissingGeoJob extends QueuedJob {
 
     public function run($arguments) {
         \OC::$server->getLogger()->debug("Cronjob maps address executed");
+        //lookup at most 200 addresses
         if (!$this->addressService->lookupMissingGeo(200)){
+            //if not all addresses where looked up successfully add a new job for next time
             $this->jobList->add(LookupMissingGeoJob::class,[]);
         }
     }

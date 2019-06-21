@@ -14,7 +14,7 @@ namespace OCA\Maps\Service;
 
 use \OCA\Maps\BackgroundJob\LookupMissingGeoJob;
 use \OCP\ILogger;
-use \OCP\ICache;
+use \OCP\IConfig;
 use \OCP\BackgroundJob\IJobList;
 use \OCP\DB\QueryBuilder\IQueryBuilder;
 use \Sabre\VObject\Reader;
@@ -33,7 +33,7 @@ use \OCP\Files\NotFoundException;
  * If the lookup is successful the result is returned and any further lookup of
  * this address is resolved local.
  * If the lookup failed, a cron job is added to lookup the address later.
- * 
+ *
  *
  * @package OCA\Maps\Service
  */
@@ -44,10 +44,10 @@ class AddressService {
     private $jobList;
     private $appData;
 
-    public function __construct(ICache $cache, ILogger $logger, IJobList $jobList, IAppData $appData) {
+    public function __construct(IConfig $config, ILogger $logger, IJobList $jobList, IAppData $appData) {
         $this->qb = \OC::$server->getDatabaseConnection()->getQueryBuilder();
         $this->dbconnection = \OC::$server->getDatabaseConnection();
-        $this->cache = $cache;
+        $this->config = $config;
         $this->logger = $logger;
         $this->jobList = $jobList;
         $this->appData = $appData;
@@ -117,33 +117,9 @@ class AddressService {
         return [$lat, $lng, $lookedUp];
     }
 
-    private function getLastLookupFile():ISimpleFile {
-        try{
-            $folder = $this->appData->getFolder("cache");
-        } catch(NotFoundException $e) {
-           $folder = $this->appData->newFolder("cache");
-        }
-        if($folder->fileExists('maps_address_last_lookup')) {
-            $file = $folder->getFile('maps_address_last_lookup');
-        } else {
-            $file = $folder->newFile('maps_address_last_lookup');
-        }
-        return $file;
-    }
-
-    private function getLastLookup():int{
-        $file = $this->getLastLookupFile();
-        return (int) $file->getContent();
-    }
-
-    private function setLastLookup(){
-        $file = $this->getLastLookupFile();
-        $file->putContent(time());
-    }
-
     //looks up the address on external provider returns lat, lon, lookupstate
     private function lookupAddressExternal($adr){
-        if (time() - $this->getLastLookup() >= 1) {
+        if (time() - intval($this->config->getAppValue('maps', 'lastAddressLookup')) >= 1) {
             $opts = array('http' =>
                 array(
                     'method'  => 'GET',
@@ -162,7 +138,7 @@ class AddressService {
                     ,true);
                 if(!(key_exists("request_failed",$result) AND $result["request_failed"])) {
                     $this->logger->debug("External looked up address: " . $adr . " with result" . print_r($result, true));
-                    $this->setLastLookup();
+                    $this->config->setAppValue("maps", "lastAddressLookup", time());
                     if (sizeof($result) > 0) {
                         if (key_exists("lat", $result[0]) AND
                             key_exists("lon", $result[0])

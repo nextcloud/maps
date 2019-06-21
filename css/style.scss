@@ -31,6 +31,7 @@
     width: 60%;
     height: 10px;
     background-color: var(--color-main-background) !important;
+    box-shadow: none;
     display: none;
 }
 .noUi-handle::after,
@@ -90,6 +91,13 @@
 .leaflet-control-layers:not(.leaflet-control-layers-expanded) > a {
     width: 100%;
     height: 100%;
+}
+
+/* Adjust button styles to Nextcloud */
+.leaflet-touch .leaflet-control-layers,
+.leaflet-touch .leaflet-bar {
+    border: none;
+    border-radius: var(--border-radius);
 }
 
 /* Fix attribution overlapping map on mobile */

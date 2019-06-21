@@ -70,6 +70,10 @@
     box-sizing: content-box;
 }
 
+.leaflet-container {
+    background: var(--color-main-background);
+}
+
 .leaflet-control-layers-base {
     line-height: 30px;
 }

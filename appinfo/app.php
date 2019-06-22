@@ -12,8 +12,9 @@
 namespace OCA\Maps\AppInfo;
 
 use OCP\AppFramework\App;
-
+use OCA\Maps\Service\AddressService;
 use OCP\Util;
+use Symfony\Component\EventDispatcher\GenericEvent;
 
 $app = new Application();
 $container = $app->getContainer();
@@ -23,6 +24,18 @@ $eventDispatcher->addListener('OCA\Files::loadAdditionalScripts', function() {
     Util::addScript('maps', 'filetypes');
     Util::addStyle('maps', 'filetypes');
 });
+
+// carddav/caldav lookup addresses
+$listener = function($event) use ($container) {
+    if ($event instanceof GenericEvent) {
+        $c = $event->getArgument('cardData');
+        $a = $container->query(AddressService::class);
+        $a->scheduleVCardForLookup($c);
+    }
+};
+
+$eventDispatcher->addListener('\OCA\DAV\CardDAV\CardDavBackend::createCard', $listener);
+$eventDispatcher->addListener('\OCA\DAV\CardDAV\CardDavBackend::updateCard', $listener);
 
 $l = \OC::$server->getL10N('maps');
 

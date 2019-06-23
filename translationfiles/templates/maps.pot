@@ -558,7 +558,7 @@ msgid "Sports centre"
 msgstr ""
 
 #: /app/js/script.js:1315
-msgid "Gaz station"
+msgid "Gas station"
 msgstr ""
 
 #: /app/js/script.js:1320

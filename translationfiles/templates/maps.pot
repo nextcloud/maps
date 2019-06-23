@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Nextcloud 3.14159\n"
 "Report-Msgid-Bugs-To: translations\\@example.com\n"
-"POT-Creation-Date: 2019-06-22 02:31+0000\n"
+"POT-Creation-Date: 2019-06-23 02:32+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,7 +17,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: /app/appinfo/app.php:46 /app/specialAppInfoFakeDummyForL10nScript.php:2
+#: /app/appinfo/app.php:59 /app/specialAppInfoFakeDummyForL10nScript.php:2
 msgid "Maps"
 msgstr ""
 

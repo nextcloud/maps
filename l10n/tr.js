@@ -133,7 +133,6 @@ OC.L10N.register(
     "Library" : "Kitaplık",
     "School" : "Okul",
     "Sports centre" : "Spor sahası",
-    "Gaz station" : "Benzinci",
     "Parking" : "Park yeri",
     "Bicycle parking" : "Bisiklet park yeri",
     "Car rental" : "Araç kiralama",

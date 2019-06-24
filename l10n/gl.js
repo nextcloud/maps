@@ -133,7 +133,6 @@ OC.L10N.register(
     "Library" : "Biblioteca",
     "School" : "Escola",
     "Sports centre" : "Centro deportivo",
-    "Gaz station" : "Gasolineira",
     "Parking" : "Aparcadoiro",
     "Bicycle parking" : "Aparcadoiro de bicicletas",
     "Car rental" : "Alugueiro de coches",

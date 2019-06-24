@@ -61,7 +61,6 @@ OC.L10N.register(
     "Library" : "Knjižnica",
     "School" : "Šola",
     "Sports centre" : "Športno središče",
-    "Gaz station" : "Bencinska črpalka",
     "Parking" : "Parkirišče",
     "Bicycle parking" : "Parkirišče za kolesa",
     "Car rental" : "Izposoja vozil",

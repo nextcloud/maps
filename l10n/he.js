@@ -14,7 +14,6 @@ OC.L10N.register(
     "Library" : "ספרייה",
     "School" : "בית ספר",
     "Sports centre" : "מרכז ספורט",
-    "Gaz station" : "תחנת דלק",
     "Parking" : "חנייה",
     "Bicycle parking" : "חניית אופניים",
     "Car rental" : "השכרת רכב",

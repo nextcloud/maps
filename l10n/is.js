@@ -131,7 +131,6 @@ OC.L10N.register(
     "Library" : "Bókasafn",
     "School" : "Skóli",
     "Sports centre" : "Íþróttamiðstöð",
-    "Gaz station" : "Bensínstöð",
     "Parking" : "Bílastæði",
     "Bicycle parking" : "Reiðhjólastæði",
     "Car rental" : "Bílaleiga",

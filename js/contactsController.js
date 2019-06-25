@@ -398,7 +398,7 @@ ContactsController.prototype = {
         var that = this.contactsController;
         var lat = e.latlng.lat;
         var lng = e.latlng.lng;
-        var popupText = '<input id="place-contact-input" type="text" />';
+        var popupText = '<input id="place-contact-input" placeholder="'+t('maps', 'Contact name')+'" type="text" />';
         this.openPopup(popupText, e.latlng);
 
         var req = {};

@@ -125,6 +125,7 @@ OC.L10N.register(
     "Library" : "Knihovna",
     "School" : "Škola",
     "Sports centre" : "Sportovní středisko",
+    "Gas station" : "Čerpací stanice",
     "Parking" : "Parkoviště",
     "Bicycle parking" : "Parkoviště pro kola",
     "Car rental" : "Půjčovna aut",

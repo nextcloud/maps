@@ -300,9 +300,9 @@
                     routingController.selectedRouter = optionsValues.selectedRouter;
                     routingController.setRouter(optionsValues.selectedRouter);
                 }
-                if (optionsValues.hasOwnProperty('routingEnabled') && optionsValues.routingEnabled === 'true') {
-                    routingController.toggleRouting();
-                }
+                //if (optionsValues.hasOwnProperty('routingEnabled') && optionsValues.routingEnabled === 'true') {
+                //    routingController.toggleRouting();
+                //}
             }).fail(function() {
                 OC.Notification.showTemporary(
                     t('maps', 'Failed to restore options values')
@@ -620,6 +620,10 @@
             this.map = map;
             var that = this;
 
+            $('body').on('click', '#routing-close', function(e) {
+                routingController.toggleRouting();
+            });
+
             this.beginIcon = L.divIcon({
                 iconAnchor: [12, 25],
                 className: 'route-waypoint route-begin-waypoint',
@@ -732,11 +736,11 @@
             .on('routesfound', this.onRoutingEnd);
 
 
-            // toggle routing control
-            $('body').on('click', '#navigation-routing > a', function(e) {
-                that.toggleRouting();
-                optionsController.saveOptionValues({routingEnabled: that.enabled});
-            });
+            //// toggle routing control
+            //$('body').on('click', '#navigation-routing > a', function(e) {
+            //    that.toggleRouting();
+            //    optionsController.saveOptionValues({routingEnabled: that.enabled});
+            //});
             // export
             $('body').on('click', '.exportCurrentRoute', function(e) {
                 that.exportRoute();
@@ -754,12 +758,14 @@
 
         toggleRouting: function() {
             if (this.enabled) {
+                $('#search-form').show();
                 this.control.remove();
                 $('#navigation-routing').removeClass('active');
                 $('#map').focus();
                 this.enabled = false;
             }
             else {
+                $('#search-form').hide();
                 this.control.addTo(this.map);
                 $('#navigation-routing').addClass('active');
                 this.enabled = true;
@@ -778,7 +784,10 @@
                 }
                 select += '</select>';
 
-                $('.leaflet-routing-container').prepend(select);
+                var close = '<button class="icon-close" id="routing-close"></button>';
+
+                $('.leaflet-routing-container').prepend(close);
+                $('.leaflet-routing-geocoders').append(select);
             }
         },
 
@@ -1185,6 +1194,10 @@
             $('#search-submit').click(function(e) {
                 e.preventDefault();
                 that.submitSearchForm();
+            });
+            $('#route-submit').click(function(e) {
+                routingController.toggleRouting();
+                e.preventDefault();
             });
             $('#search-term').on('focus', function(e) {
                 $(this).select();

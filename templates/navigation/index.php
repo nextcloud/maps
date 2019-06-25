@@ -42,26 +42,6 @@
         <ul id="category-list">
         </ul>
     </li>
-    <li id="navigation-routing">
-        <a class="" href="#"><?php p($l->t('Routing')); ?></a>
-        <div class="app-navigation-entry-utils">
-            <ul>
-                <li class="app-navigation-entry-utils-menu-button routingMenuButton">
-                    <button></button>
-                </li>
-            </ul>
-        </div>
-        <div class="app-navigation-entry-menu">
-            <ul>
-                <li>
-                    <a href="#" class="exportCurrentRoute">
-                        <span class="icon-category-office"></span>
-                        <span><?php p($l->t('Export current route to gpx')); ?></span>
-                    </a>
-                </li>
-            </ul>
-        </div>
-    </li>
     <li id="navigation-photos" class="collapsible">
         <a class="icon-picture" href="#"><?php p($l->t('Photos')); ?></a>
         <div class="app-navigation-entry-utils">

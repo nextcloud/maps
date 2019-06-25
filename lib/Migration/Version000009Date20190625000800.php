@@ -42,12 +42,12 @@ class Version000009Date20190516000800 extends SimpleMigrationStep {
 			$table->addColumn('adr', 'string', [
 				'notnull' => true,
 				'length' => 255,
-                'unique' => true,
+				'unique' => true,
 			]);
 			$table->addColumn('adr_norm', 'string', [
 				'notnull' => true,
 				'length' => 255,
-                'unique' => true,
+				'unique' => true,
 			]);
 			$table->addColumn('lat', 'float', [
 				'notnull' => false,
@@ -57,10 +57,11 @@ class Version000009Date20190516000800 extends SimpleMigrationStep {
 				'notnull' => false,
 				'length' => 10,
 			]);
-            $table->addColumn('looked_up', 'boolean', [
-                'notnull' => true,
-            ]);
-			$table->addUniqueIndex(["adr", "adr_norm"]);
+			$table->addColumn('looked_up', 'boolean', [
+				'notnull' => true,
+			]);
+			$table->setPrimaryKey(['id']);
+			$table->addUniqueIndex(['adr', 'adr_norm']);
 		}
 
 		return $schema;

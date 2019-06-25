@@ -171,6 +171,21 @@
                 else {
                     mapController.changeTileLayer('OpenStreetMap');
                 }
+                if (optionsValues.hasOwnProperty('mapBounds')) {
+                    var nsew = optionsValues.mapBounds.split(';');
+                    if (nsew.length === 4) {
+                        var n = parseFloat(nsew[0]);
+                        var s = parseFloat(nsew[1]);
+                        var e = parseFloat(nsew[2]);
+                        var w = parseFloat(nsew[3]);
+                        if (n && s && e && w) {
+                            mapController.map.fitBounds([
+                                [n, e],
+                                [s, w]
+                            ]);
+                        }
+                    }
+                }
                 if (!optionsValues.hasOwnProperty('photosLayer') || optionsValues.photosLayer === 'true') {
                     photosController.toggleLayer();
                 }
@@ -443,6 +458,16 @@
                 if ($(e.originalEvent.target).attr('id') === 'map') {
                     that.map.contextmenu.showAt(L.latLng(e.latlng.lat, e.latlng.lng));
                 }
+            });
+
+            this.map.on('moveend', function(e) {
+                var bounds = that.map.getBounds();
+                optionsController.saveOptionValues({
+                    mapBounds: bounds.getNorth() + ';' +
+                               bounds.getSouth() + ';' +
+                               bounds.getEast() + ';' +
+                               bounds.getWest()
+                });
             });
 
             this.searchMarkerLayerGroup = L.featureGroup();

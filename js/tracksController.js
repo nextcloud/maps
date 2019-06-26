@@ -673,8 +673,8 @@ TracksController.prototype = {
         // then bind tooltip and popup
         var firstWpt = null;
         if (wpts.length > 0) {
-            var lat = wpts[0].attr('lat');
-            var lon = wpts[0].attr('lon');
+            var lat = wpts.first().attr('lat');
+            var lon = wpts.first().attr('lon');
             firstWpt = L.latLng(lat, lon);
         }
         var firstLinePoint = null;

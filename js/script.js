@@ -1167,15 +1167,6 @@
     };
 
 
-    var photosController = new PhotosController(optionsController, timeFilterController);
-    var nonLocalizedPhotosController = new NonLocalizedPhotosController(optionsController, timeFilterController, photosController);
-    var contactsController = new ContactsController(optionsController, timeFilterController);
-    var favoritesController = new FavoritesController(optionsController, timeFilterController);
-    var tracksController = new TracksController(optionsController, timeFilterController);
-    var devicesController = new DevicesController(optionsController, timeFilterController);
-
-    timeFilterController.connect();
-
     var searchController = {
         map: null,
         SEARCH_BAR: 1,
@@ -1593,6 +1584,7 @@
         },
         geocode: function(latlng) {
             if (!this.isGeocodeable(latlng)) {
+                console.log('PLPLPLPL');
                 return;
             }
             var splits = latlng.split(',');
@@ -1760,6 +1752,15 @@
             return header + desc;
         }
     };
+
+    var photosController = new PhotosController(optionsController, timeFilterController);
+    var nonLocalizedPhotosController = new NonLocalizedPhotosController(optionsController, timeFilterController, photosController);
+    var contactsController = new ContactsController(optionsController, timeFilterController, searchController);
+    var favoritesController = new FavoritesController(optionsController, timeFilterController);
+    var tracksController = new TracksController(optionsController, timeFilterController);
+    var devicesController = new DevicesController(optionsController, timeFilterController);
+
+    timeFilterController.connect();
 
     var helpers = {
         beautifyUrl: function(url) {

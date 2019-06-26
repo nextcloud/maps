@@ -1,10 +1,11 @@
-function ContactsController (optionsController, timeFilterController) {
+function ContactsController (optionsController, timeFilterController, searchController) {
     this.contact_MARKER_VIEW_SIZE = 40;
     this.contactLayer = null;
     this.contactsDataLoaded = false;
     this.contactsRequestInProgress = false;
     this.optionsController = optionsController;
     this.timeFilterController = timeFilterController;
+    this.searchController = searchController;
     this.contactMarkers = [];
     this.contactMarkersOldest = null;
     this.contactMarkersNewest = null;
@@ -401,50 +402,65 @@ ContactsController.prototype = {
         var popupText = '<input id="place-contact-input" placeholder="'+t('maps', 'Contact name')+'" type="text" />';
         this.openPopup(popupText, e.latlng);
 
-        var req = {};
-        var url = OC.generateUrl('/apps/maps/contacts-all');
-        $.ajax({
-            type: 'GET',
-            url: url,
-            data: req,
-            async: true
-        }).done(function (response) {
-            var d, c;
-            var data = [];
-            for (var i=0; i < response.length; i++) {
-                c = response[i];
-                d = {
-                    id: c.URI,
-                    label: c.FN,
-                    value: c.FN,
-                    uri: c.URI,
-                    uid: c.UID,
-                    bookid: c.BOOKID
-                };
-                data.push(d);
+        var strLatLng = lat+','+lng;
+        that.searchController.geocode(strLatLng).then(function(results) {
+            console.log(results);
+            var address = null;
+            if (results.address) {
+                address = results.address;
             }
-            $('#place-contact-input').autocomplete({
-                source: data,
-                select: function (e, ui) {
-                    var it = ui.item;
-                    that.placeContact(it.bookid, it.uri, it.uid, lat, lng);
+            var req = {};
+            var url = OC.generateUrl('/apps/maps/contacts-all');
+            $.ajax({
+                type: 'GET',
+                url: url,
+                data: req,
+                async: true
+            }).done(function (response) {
+                var d, c;
+                var data = [];
+                for (var i=0; i < response.length; i++) {
+                    c = response[i];
+                    d = {
+                        id: c.URI,
+                        label: c.FN,
+                        value: c.FN,
+                        uri: c.URI,
+                        uid: c.UID,
+                        bookid: c.BOOKID
+                    };
+                    data.push(d);
                 }
-            })
-            $('#place-contact-input').focus().select();
-        }).always(function (response) {
-        }).fail(function() {
-            OC.Notification.showTemporary(t('maps', 'Failed to get contact list'));
+                $('#place-contact-input').autocomplete({
+                    source: data,
+                    select: function (e, ui) {
+                        var it = ui.item;
+                        that.placeContact(it.bookid, it.uri, it.uid, lat, lng, address);
+                    }
+                })
+                $('#place-contact-input').focus().select();
+            }).always(function (response) {
+            }).fail(function() {
+                OC.Notification.showTemporary(t('maps', 'Failed to get contact list'));
+            });
         });
+
     },
 
-    placeContact: function(bookid, uri, uid, lat, lng) {
+    placeContact: function(bookid, uri, uid, lat, lng, address) {
         var that = this;
         $('#navigation-contacts').addClass('icon-loading-small');
         $('.leaflet-container').css('cursor', 'wait');
         var req = {
             lat: lat,
             lng: lng,
-            uid: uid
+            uid: uid,
+            house_number: address.house_number,
+            road: address.road,
+            postcode: address.postcode,
+            town: address.town,
+            state: address.state,
+            country: address.country
         };
         var url = OC.generateUrl('/apps/maps/contacts/'+bookid+'/'+uri);
         $.ajax({

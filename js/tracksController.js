@@ -530,6 +530,11 @@ TracksController.prototype = {
         });
     },
 
+    isTrackEnabled: function(id) {
+        var mapTrackLayer = this.mapTrackLayers[id];
+        return (this.mainLayer.hasLayer(mapTrackLayer));
+    },
+
     toggleTrack: function(id, save=false, pageLoad=false, zoom=false) {
         var trackLayer = this.trackLayers[id];
         if (!trackLayer.loaded) {
@@ -1175,6 +1180,25 @@ TracksController.prototype = {
             this.elevationControl = null;
             this.closeElevationButton.remove();
         }
+    },
+
+    getAutocompData: function() {
+        var that = this;
+        var marker, devid;
+        var data = [];
+        if (this.map.hasLayer(this.mainLayer)) {
+            for (trackid in this.tracks) {
+                // no need for lat/lng here, track will just be enabled or zoomed
+                track = this.tracks[trackid];
+                data.push({
+                    type: 'track',
+                    id: trackid,
+                    label: track.file_name,
+                    value: track.file_name
+                });
+            }
+        }
+        return data;
     },
 
 }

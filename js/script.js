@@ -1275,6 +1275,9 @@
             // get contacts
             var contactData = contactsController.getAutocompData();
             data.push(...contactData);
+            // get tracks
+            var trackData = tracksController.getAutocompData();
+            data.push(...trackData);
             // get devices
             var devData = devicesController.getAutocompData();
             data.push(...devData);
@@ -1289,6 +1292,15 @@
                     }
                     else if (it.type === 'contact') {
                         that.map.setView([it.lat, it.lng], 15);
+                    }
+                    else if (it.type === 'track') {
+                        if (tracksController.isTrackEnabled(it.id)) {
+                            tracksController.zoomOnTrack(it.id);
+                            tracksController.showTrackElevation(it.id);
+                        }
+                        else {
+                            tracksController.toggleTrack(it.id, true, false, true);
+                        }
                     }
                     else if (it.type === 'device') {
                         devicesController.zoomOnDevice(it.id);
@@ -1342,6 +1354,9 @@
                 var iconElem = '';
                 if (item.type === 'favorite') {
                     iconClass = 'icon-favorite';
+                }
+                else if (item.type === 'track') {
+                    iconClass = 'icon-category-monitoring';
                 }
                 else if (item.type === 'contact') {
                     iconClass = 'icon-group';

@@ -12,8 +12,8 @@
 }
 #search-term {
     margin: 0;
-    width: 300px;
-    padding-right: 40px;
+    width: 350px;
+    padding-right: 80px;
     text-overflow: ellipsis;
 }
 #search-submit {
@@ -33,6 +33,9 @@
     margin: 0;
     border: none;
     background-color: transparent;
+}
+#route-submit i {
+    color: var(--color-main-text);
 }
 
 #routing-close {

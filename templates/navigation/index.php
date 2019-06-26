@@ -113,49 +113,6 @@
             </ul>
         </div>
     </li>
-    <li id="navigation-tracks" class="collapsible">
-        <a class="icon-category-monitoring" href="#"><?php p($l->t('Tracks')); ?></a>
-        <div class="app-navigation-entry-utils">
-            <ul>
-                <li id="addTrackButton" class="app-navigation-entry-utils-menu-button" title="<?php p($l->t('Load a track file')); ?>">
-                    <button class="icon-add"></button>
-                </li>
-                <li class="app-navigation-entry-utils-menu-button tracksMenuButton">
-                    <button></button>
-                </li>
-            </ul>
-        </div>
-        <div class="app-navigation-entry-menu">
-            <ul>
-                <li>
-                    <a href="#" id="select-all-tracks">
-                        <span class="icon-category-enabled"></span>
-                        <span><?php p($l->t('Show all')); ?></span>
-                    </a>
-                </li>
-                <li>
-                    <a href="#" id="select-no-tracks">
-                        <span class="icon-category-disabled"></span>
-                        <span><?php p($l->t('Hide all')); ?></span>
-                    </a>
-                </li>
-                <li>
-                    <a href="#" id="add-track-folder">
-                        <span class="icon-folder"></span>
-                        <span><?php p($l->t('Load a directory')); ?></span>
-                    </a>
-                </li>
-                <li>
-                    <a href="#" id="remove-all-tracks">
-                        <span class="icon-delete"></span>
-                        <span><?php p($l->t('Remove all')); ?></span>
-                    </a>
-                </li>
-            </ul>
-        </div>
-        <ul id="track-list">
-        </ul>
-    </li>
     <li id="navigation-devices" class="collapsible">
         <a class="icon-phone" href="#"><?php p($l->t('Devices')); ?></a>
         <div class="app-navigation-entry-utils">
@@ -206,6 +163,49 @@
             </ul>
         </div>
         <ul id="device-list">
+        </ul>
+    </li>
+    <li id="navigation-tracks" class="collapsible">
+        <a class="icon-category-monitoring" href="#"><?php p($l->t('Tracks')); ?></a>
+        <div class="app-navigation-entry-utils">
+            <ul>
+                <li id="addTrackButton" class="app-navigation-entry-utils-menu-button" title="<?php p($l->t('Load a track file')); ?>">
+                    <button class="icon-add"></button>
+                </li>
+                <li class="app-navigation-entry-utils-menu-button tracksMenuButton">
+                    <button></button>
+                </li>
+            </ul>
+        </div>
+        <div class="app-navigation-entry-menu">
+            <ul>
+                <li>
+                    <a href="#" id="select-all-tracks">
+                        <span class="icon-category-enabled"></span>
+                        <span><?php p($l->t('Show all')); ?></span>
+                    </a>
+                </li>
+                <li>
+                    <a href="#" id="select-no-tracks">
+                        <span class="icon-category-disabled"></span>
+                        <span><?php p($l->t('Hide all')); ?></span>
+                    </a>
+                </li>
+                <li>
+                    <a href="#" id="add-track-folder">
+                        <span class="icon-folder"></span>
+                        <span><?php p($l->t('Load a directory')); ?></span>
+                    </a>
+                </li>
+                <li>
+                    <a href="#" id="remove-all-tracks">
+                        <span class="icon-delete"></span>
+                        <span><?php p($l->t('Remove all')); ?></span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+        <ul id="track-list">
         </ul>
     </li>
 </ul>

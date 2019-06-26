@@ -1275,9 +1275,11 @@
             // get contacts
             var contactData = contactsController.getAutocompData();
             data.push(...contactData);
-            // get tracks
-            var trackData = tracksController.getAutocompData();
-            data.push(...trackData);
+            if (field === this.SEARCH_BAR) {
+                // get tracks
+                var trackData = tracksController.getAutocompData();
+                data.push(...trackData);
+            }
             // get devices
             var devData = devicesController.getAutocompData();
             data.push(...devData);

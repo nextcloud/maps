@@ -26,15 +26,9 @@
                     </a>
                 </li>
                 <li>
-                    <a href="#" id="select-all-categories">
+                    <a href="#" id="toggle-all-categories">
                         <span class="icon-category-enabled"></span>
-                        <span><?php p($l->t('Show all')); ?></span>
-                    </a>
-                </li>
-                <li>
-                    <a href="#" id="select-no-categories">
-                        <span class="icon-category-disabled"></span>
-                        <span><?php p($l->t('Hide all')); ?></span>
+                        <span><?php p($l->t('Toggle all')); ?></span>
                     </a>
                 </li>
             </ul>

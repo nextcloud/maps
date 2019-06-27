@@ -68,13 +68,21 @@ FavoritesController.prototype = {
             that.zoomOnCategory(cat);
         });
         // show/hide all categories
-        $('body').on('click', '#select-all-categories', function(e) {
-            that.showAllCategories();
-            that.saveEnabledCategories();
-            that.optionsController.saveOptionValues({favoritesEnabled: that.map.hasLayer(that.cluster)});
-        });
-        $('body').on('click', '#select-no-categories', function(e) {
-            that.hideAllCategories();
+        $('body').on('click', '#toggle-all-categories', function(e) {
+            var allEnabled = true;
+            for (var cat in that.categoryLayers) {
+                if (!that.map.hasLayer(that.categoryLayers[cat])) {
+                    allEnabled = false;
+                    break;
+                }
+            }
+
+            if (allEnabled) {
+                that.hideAllCategories();
+            }
+            else {
+                that.showAllCategories();
+            }
             that.saveEnabledCategories();
             that.optionsController.saveOptionValues({favoritesEnabled: that.map.hasLayer(that.cluster)});
         });

@@ -759,18 +759,21 @@
         toggleRouting: function() {
             var that = this;
             if (this.enabled) {
-                $('.leaflet-routing-container').slideUp('fast', function(e) {
+                $('.leaflet-routing-container').fadeOut('fast', function(e) {
                     that.control.remove();
-                    $('#search-form').slideDown('fast');
+                    //$('#search-form').fadeIn('fast');
+                    $('#search-form').show();
                     $('#navigation-routing').removeClass('active');
                     $('#map').focus();
                     that.enabled = false;
                 });
             }
             else {
-                $('#search-form').slideUp('fast', function(e) {
+                $('#search-form').fadeOut('fast', function(e) {
                     that.control.addTo(that.map);
-                    $('.leaflet-routing-container').hide().slideDown();
+                    //$('.leaflet-routing-container').fadeIn();
+                    //$('.leaflet-routing-container').hide(0, function(e) {
+                    //});
                     $('#navigation-routing').addClass('active');
                     that.enabled = true;
                     $('.leaflet-routing-geocoder input').first().focus();

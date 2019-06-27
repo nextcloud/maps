@@ -38,10 +38,13 @@
     color: var(--color-main-text);
 }
 
+#routing-close:hover {
+    background-color: white !important;
+}
 #routing-close {
     float: right;
     border: none;
-    margin: 0px 0px 0px 0px !important;
+    margin: 0px 10px 0px 0px !important;
 }
 
 #timeRangeSlider {
@@ -566,6 +569,7 @@ tr.selected td {
     display: none;
 }
 .leaflet-routing-geocoders {
+    width: 310px;
     border-bottom: 0;
     padding-right: 0;
 }

@@ -1,6 +1,6 @@
 <ul>
     <li id="navigation-favorites" class="collapsible">
-        <a class="icon-favorite" href="#"><?php p($l->t('Favorites')); ?></a>
+        <a class="icon-favorite" href="#"><?php p($l->t('Your favorites')); ?></a>
         <div class="app-navigation-entry-utils">
             <ul>
                 <li id="addFavoriteButton" class="app-navigation-entry-utils-menu-button" title="<?php p($l->t('Add a favorite')); ?>">
@@ -43,7 +43,7 @@
         </ul>
     </li>
     <li id="navigation-photos" class="collapsible">
-        <a class="icon-picture" href="#"><?php p($l->t('Photos')); ?></a>
+        <a class="icon-picture" href="#"><?php p($l->t('Your photos')); ?></a>
         <div class="app-navigation-entry-utils">
             <ul>
                 <li class="app-navigation-entry-utils-counter">
@@ -91,7 +91,7 @@
         </ul>
     </li>
     <li id="navigation-contacts">
-        <a class="icon-group" href="#"><?php p($l->t('Contacts')); ?></a>
+        <a class="icon-group" href="#"><?php p($l->t('Your contacts')); ?></a>
         <div class="app-navigation-entry-utils">
             <ul>
                 <li class="app-navigation-entry-utils-counter">
@@ -114,7 +114,7 @@
         </div>
     </li>
     <li id="navigation-devices" class="collapsible">
-        <a class="icon-phone" href="#"><?php p($l->t('Devices')); ?></a>
+        <a class="icon-phone" href="#"><?php p($l->t('Your devices')); ?></a>
         <div class="app-navigation-entry-utils">
             <ul>
                 <li class="app-navigation-entry-utils-menu-button devicesMenuButton">
@@ -166,7 +166,7 @@
         </ul>
     </li>
     <li id="navigation-tracks" class="collapsible">
-        <a class="icon-category-monitoring" href="#"><?php p($l->t('Tracks')); ?></a>
+        <a class="icon-category-monitoring" href="#"><?php p($l->t('Your tracks')); ?></a>
         <div class="app-navigation-entry-utils">
             <ul>
                 <li id="addTrackButton" class="app-navigation-entry-utils-menu-button" title="<?php p($l->t('Load a track file')); ?>">

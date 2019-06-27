@@ -459,6 +459,17 @@
                     that.map.contextmenu.showAt(L.latLng(e.latlng.lat, e.latlng.lng));
                 }
             });
+            this.map.on('click', function(e) {
+                if ($(e.originalEvent.target).attr('id') === 'map') {
+                    console.log(that.map);
+                    if (that.map._popup === null) {
+                        console.log('no popup');
+                    }
+                    else {
+                        that.map.closePopup();
+                    }
+                }
+            });
 
             this.map.on('moveend', function(e) {
                 var bounds = that.map.getBounds();

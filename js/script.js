@@ -1247,7 +1247,11 @@
                 var lat = parseFloat($(this).attr('lat'));
                 var lng = parseFloat($(this).attr('lng'));
                 var name = $(this).parent().find('.location-header').text();
-                favoritesController.addFavoriteDB('', lat, lng, name);
+                var categoryName = favoritesController.defaultCategory;
+                if (favoritesController.lastUsedCategory !== null) {
+                    categoryName = favoritesController.lastUsedCategory;
+                }
+                favoritesController.addFavoriteDB(categoryName, lat, lng, name);
                 that.map.closePopup();
             });
         },

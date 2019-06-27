@@ -694,6 +694,7 @@ FavoritesController.prototype = {
             that.updateCategoryCounters();
             // show edition popup
             console.log(response);
+            that.openEditionPopup(response.id);
         }).always(function (response) {
             $('#navigation-favorites').removeClass('icon-loading-small');
             $('.leaflet-container').css('cursor', 'grab');

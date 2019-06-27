@@ -54,6 +54,16 @@
             }
         };
 
+        $('#display-slider').click(function(e) {
+            optionsController.saveOptionValues({displaySlider: $(this).is(':checked')});
+            if ($(this).is(':checked')) {
+                $('#timeRangeSlider').show();
+            }
+            else {
+                $('#timeRangeSlider').hide();
+            }
+        });
+
         // click on menu buttons
         $('body').on('click',
             '.routingMenuButton, .favoritesMenuButton, .categoryMenuButton, .photosMenuButton, .contactsMenuButton, ' +
@@ -165,6 +175,10 @@
             }).done(function (response) {
                 optionsValues = response.values;
                 // set tilelayer before showing photo layer because it needs a max zoom value
+                if (optionsValues.hasOwnProperty('displaySlider') && optionsValues.displaySlider === 'true') {
+                    $('#timeRangeSlider').show();
+                    $('#display-slider').prop('checked', true);
+                }
                 if (optionsValues.hasOwnProperty('tileLayer')) {
                     mapController.changeTileLayer(optionsValues.tileLayer);
                 }
@@ -1164,7 +1178,7 @@
                 cmax = Math.max(...maxs);
             }
             if (cmin !== null && cmax !== null) {
-                $(this.slider).fadeIn();
+                //$(this.slider).fadeIn();
                 this.min = cmin;
                 this.max = cmax;
                 // avoid min == max
@@ -1175,7 +1189,7 @@
                 this.updateSliderRange(this.min, this.max);
             }
             else {
-                $(this.slider).fadeOut();
+                //$(this.slider).fadeOut();
             }
         },
         // on first data load, controllers want to set the slider values to global common max

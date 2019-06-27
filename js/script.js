@@ -602,7 +602,7 @@
         },
 
         layerChanged: function(name) {
-            if (name === 'ESRI Aerial') {
+            if (name !== 'OpenStreetMap') {
                 this.esriButton.remove();
                 this.osmButton.addTo(this.map);
             }

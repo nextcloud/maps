@@ -430,7 +430,7 @@ ContactsController.prototype = {
 
         var strLatLng = lat+','+lng;
         that.searchController.geocode(strLatLng).then(function(results) {
-            var address = null;
+            var address = {};
             if (results.address) {
                 address = results.address;
                 var strAddress = (address.house_number || '')+' '+
@@ -468,7 +468,6 @@ ContactsController.prototype = {
                     select: function (e, ui) {
                         var it = ui.item;
                         var type = $('#addressTypeSelect').val();
-                        // TODO send the type!!!
                         that.placeContact(it.bookid, it.uri, it.uid, lat, lng, address, type);
                     }
                 })

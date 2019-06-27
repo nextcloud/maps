@@ -143,17 +143,24 @@ class ContactsController extends Controller {
             // TODO check addressbook permissions
             // it's currently possible to place a contact from an addressbook shared with readonly permissions...
             if ($lat !== null && $lng !== null) {
-                $stringAddress = ';;'.$house_number.' '.$road.';'.$town.';'.$state.';'.$postcode.';'.$country;
-                // set the coordinates in the DB
-                $lat = floatval($lat);
-                $lng = floatval($lng);
-                $this->setAddressCoordinates($lat, $lng, $stringAddress);
-                // set the address in the vcard
-                $card = $this->cdBackend->getContact($bookid, $uri);
-                if ($card) {
-                    $vcard = Reader::read($card['carddata']);;
-                    $vcard->add(new Text($vcard, 'ADR', ['', '', $house_number.' '.$road, $town, $state, $postcode, $country], ['TYPE'=>$type]));
-                    $this->cdBackend->updateCard($bookid, $uri, $vcard->serialize());
+                // we set the geo tag
+                if (!$house_number && !$road && !$postcode && !$town && !$state && !$country) {
+                    $result = $this->contactsManager->createOrUpdate(['URI'=>$uri, 'GEO'=>$lat.';'.$lng], $bookid);
+                }
+                // we set the address
+                else {
+                    $stringAddress = ';;'.$house_number.' '.$road.';'.$town.';'.$state.';'.$postcode.';'.$country;
+                    // set the coordinates in the DB
+                    $lat = floatval($lat);
+                    $lng = floatval($lng);
+                    $this->setAddressCoordinates($lat, $lng, $stringAddress);
+                    // set the address in the vcard
+                    $card = $this->cdBackend->getContact($bookid, $uri);
+                    if ($card) {
+                        $vcard = Reader::read($card['carddata']);;
+                        $vcard->add(new Text($vcard, 'ADR', ['', '', $house_number.' '.$road, $town, $state, $postcode, $country], ['TYPE'=>$type]));
+                        $this->cdBackend->updateCard($bookid, $uri, $vcard->serialize());
+                    }
                 }
             }
             else {

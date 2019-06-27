@@ -96,6 +96,9 @@
     box-sizing: content-box;
 }
 
+.leaflet-tooltip {
+    white-space: normal !important;
+}
 .leaflet-container {
     background: var(--color-main-background);
 }
@@ -551,8 +554,14 @@ tr.selected td {
 
 .tooltip-contact-avatar {
     width: 80px;
+    margin-left: 35px;
+    margin-right: 35px;
 }
 
+.tooltip-contact-address {
+    width: 150px;
+    text-align: center;
+}
 .tooltip-contact-name {
     width: 100%;
     text-align: center;

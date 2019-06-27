@@ -56,7 +56,7 @@ class ContactsController extends Controller {
             if (strcmp($c['URI'], 'Database:'.$c['UID'].'.vcf') !== 0 or
                 strcmp($uid, $userid) === 0
             ) {
-                // if the contact has a geo attibute use this, otherwise try to get it from the address
+                // if the contact has a geo attibute use it
                 if (key_exists('GEO', $c)) {
                     $geo = $c['GEO'];
                     if(strlen($geo) > 1){
@@ -64,31 +64,32 @@ class ContactsController extends Controller {
                             'FN'=>$c['FN'],
                             'URI'=>$c['URI'],
                             'UID'=>$c['UID'],
+                            'ADR'=>'',
                             'PHOTO'=>$c['PHOTO'],
                             'BOOKID'=>$c['addressbook-key'],
                             'GEO'=>$geo
                         ]);
                     }
                 }
-                else {
-                    //var_dump($c['ADR']);
-                    $card = $this->cdBackend->getContact($c['addressbook-key'], $c['URI']);
-                    if ($card) {
-                        $vcard = Reader::read($card['carddata']);;
-                        //$adrs = $vcard->get('ADR');
-                        //error_log('NB '.count($vcard->ADR));
-                        foreach($vcard->ADR as $adr) {
-                            $geo = $this->addressService->addressToGeo($adr->getValue());
-                            if(strlen($geo) > 1){
-                                array_push($result, [
-                                    'FN'=>$c['FN'],
-                                    'URI'=>$c['URI'],
-                                    'UID'=>$c['UID'],
-                                    'PHOTO'=>$c['PHOTO'],
-                                    'BOOKID'=>$c['addressbook-key'],
-                                    'GEO'=>$geo
-                                ]);
-                            }
+                // anyway try to get it from the address
+                //var_dump($c['ADR']);
+                $card = $this->cdBackend->getContact($c['addressbook-key'], $c['URI']);
+                if ($card) {
+                    $vcard = Reader::read($card['carddata']);;
+                    //$adrs = $vcard->get('ADR');
+                    //error_log('NB '.count($vcard->ADR));
+                    foreach($vcard->ADR as $adr) {
+                        $geo = $this->addressService->addressToGeo($adr->getValue());
+                        if(strlen($geo) > 1){
+                            array_push($result, [
+                                'FN'=>$c['FN'],
+                                'URI'=>$c['URI'],
+                                'UID'=>$c['UID'],
+                                'ADR'=>$adr->getValue(),
+                                'PHOTO'=>$c['PHOTO'],
+                                'BOOKID'=>$c['addressbook-key'],
+                                'GEO'=>$geo
+                            ]);
                         }
                     }
                 }

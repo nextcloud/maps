@@ -193,6 +193,13 @@ ContactsController.prototype = {
                 date = date.getTime();
             }
 
+            // format address
+            var adrTab = contacts[i].ADR.split(';');
+            var formattedAddress = '';
+            if (adrTab.length > 6) {
+                formattedAddress = adrTab[2] + '<br/>' + adrTab[5] + ' ' + adrTab[3] + '<br/>' + adrTab[4] + ' ' + adrTab[6];
+            }
+
             var markerData = {
                 name: contacts[i].FN,
                 lat: parseFloat(geo[0]),
@@ -200,6 +207,8 @@ ContactsController.prototype = {
                 photo: contacts[i].PHOTO,
                 uid: contacts[i].UID,
                 uri: contacts[i].URI,
+                adr: contacts[i].ADR,
+                address: formattedAddress,
                 bookid: contacts[i]['addressbook-key'],
                 date: date/1000,
             };
@@ -209,9 +218,11 @@ ContactsController.prototype = {
             marker.on('contextmenu', this.onContactRightClick);
             marker.data = markerData;
             var avatar = this.generateAvatar(marker.data.photo) || this.getUserImageIconUrl();
-            var img = '<img class="tooltip-contact-avatar" src="' + avatar + '"/>' +
-                '<p class="tooltip-contact-name">' + escapeHTML(basename(markerData.name)) + '</p>';
-            marker.bindTooltip(img, {permanent: false, className: 'leaflet-marker-contact-tooltip', direction: 'top', offset: L.point(0, -25)});
+            var contactTooltip = '<p class="tooltip-contact-name">' + escapeHTML(basename(markerData.name)) + '</p>';
+            var img = '<img class="tooltip-contact-avatar" src="' + avatar + '"/>';
+            contactTooltip += img;
+            contactTooltip += '<p class="tooltip-contact-address">' + markerData.address + '</p>';
+            marker.bindTooltip(contactTooltip, {permanent: false, className: 'leaflet-marker-contact-tooltip', direction: 'top', offset: L.point(0, -25)});
             markers.push(marker);
         }
         return markers;

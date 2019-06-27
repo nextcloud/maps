@@ -692,6 +692,8 @@ FavoritesController.prototype = {
         }).done(function (response) {
             that.addFavoriteMap(response, true, true);
             that.updateCategoryCounters();
+            // show edition popup
+            console.log(response);
         }).always(function (response) {
             $('#navigation-favorites').removeClass('icon-loading-small');
             $('.leaflet-container').css('cursor', 'grab');
@@ -796,19 +798,31 @@ FavoritesController.prototype = {
 
     favoriteMouseClick: function(e) {
         var favid = e.target.favid;
-        var fav = this._map.favoritesController.favorites[favid];
+        this._map.favoritesController.openEditionPopup(favid);
+    },
 
-        e.target.unbindPopup();
-        var popupContent = this._map.favoritesController.getFavoritePopupContent(fav);
-        e.target.bindPopup(popupContent, {
+    openEditionPopup: function(favid) {
+        var fav = this.favorites[favid];
+
+        //e.target.unbindPopup();
+        var popupContent = this.getFavoritePopupContent(fav);
+        var popup = L.popup({
             closeOnClick: true,
             className: 'popovermenu open popupMarker',
             offset: L.point(-5, 9)
-        });
-        e.target.openPopup();
+        })
+            .setLatLng([fav.lat, fav.lng])
+            .setContent(popupContent)
+            .openOn(this.map);
+        //e.target.bindPopup(popupContent, {
+        //    closeOnClick: true,
+        //    className: 'popovermenu open popupMarker',
+        //    offset: L.point(-5, 9)
+        //});
+        //e.target.openPopup();
         // add completion to category field
         var catList = [];
-        for (var c in this._map.favoritesController.categoryLayers) {
+        for (var c in this.categoryLayers) {
             catList.push(c);
         }
         $('input[role="category"]').autocomplete({

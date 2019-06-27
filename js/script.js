@@ -757,37 +757,42 @@
         },
 
         toggleRouting: function() {
+            var that = this;
             if (this.enabled) {
-                $('#search-form').show();
-                this.control.remove();
-                $('#navigation-routing').removeClass('active');
-                $('#map').focus();
-                this.enabled = false;
+                $('.leaflet-routing-container').slideUp('fast', function(e) {
+                    that.control.remove();
+                    $('#search-form').slideDown('fast');
+                    $('#navigation-routing').removeClass('active');
+                    $('#map').focus();
+                    that.enabled = false;
+                });
             }
             else {
-                $('#search-form').hide();
-                this.control.addTo(this.map);
-                $('#navigation-routing').addClass('active');
-                this.enabled = true;
-                $('.leaflet-routing-geocoder input').first().focus();
+                $('#search-form').slideUp('fast', function(e) {
+                    that.control.addTo(that.map);
+                    $('.leaflet-routing-container').hide().slideDown();
+                    $('#navigation-routing').addClass('active');
+                    that.enabled = true;
+                    $('.leaflet-routing-geocoder input').first().focus();
 
-                // add router selector
-                var select = '<select id="router-select">';
-                var r, router, selected;
-                for (r in this.routers) {
-                    router = this.routers[r];
-                    selected = '';
-                    if (r === this.selectedRouter) {
-                        selected = ' selected';
+                    // add router selector
+                    var select = '<select id="router-select">';
+                    var r, router, selected;
+                    for (r in that.routers) {
+                        router = that.routers[r];
+                        selected = '';
+                        if (r === that.selectedRouter) {
+                            selected = ' selected';
+                        }
+                        select += '<option value="'+r+'"'+selected+'>'+router.name+'</option>';
                     }
-                    select += '<option value="'+r+'"'+selected+'>'+router.name+'</option>';
-                }
-                select += '</select>';
+                    select += '</select>';
 
-                var close = '<button class="icon-close" id="routing-close"></button>';
+                    var close = '<button class="icon-close" id="routing-close"></button>';
 
-                $('.leaflet-routing-container').prepend(close);
-                $('.leaflet-routing-geocoders').append(select);
+                    $('.leaflet-routing-container').prepend(close);
+                    $('.leaflet-routing-geocoders').append(select);
+                });
             }
         },
 

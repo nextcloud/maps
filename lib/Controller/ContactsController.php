@@ -114,13 +114,12 @@ class ContactsController extends Controller {
             // TODO check addressbook permissions
             // it's currently possible to place a contact from an addressbook shared with readonly permissions...
             if ($lat !== null && $lng !== null) {
-                //$result = $this->contactsManager->createOrUpdate(['URI'=>$uri, 'GEO'=>$lat.';'.$lng], $bookid);
                 $stringAddress = ';;'.$house_number.' '.$road.';'.$town.';'.$state.';'.$postcode.';'.$country;
-                //$stringAddress = $house_number.' '.$road.' '.$postcode.' '.$town.' '.$state.' '.$country;
                 // set the coordinates in the DB
-                $this->setInternalContactAddress($lat, $lng, $stringAddress);
+                $lat = floatval($lat);
+                $lng = floatval($lng);
+                $this->setAddressCoordinates($lat, $lng, $stringAddress);
                 // set the address in the vcard
-                //$result = $this->contactsManager->createOrUpdate(['URI'=>$uri, 'ADR'=>$stringAddress], $bookid);
                 $card = $this->cdBackend->getContact($bookid, $uri);
                 if ($card) {
                     $vcard = Reader::read($card['carddata']);;
@@ -137,39 +136,40 @@ class ContactsController extends Controller {
         }
     }
 
-    private function setInternalContactAddress($lat, $lng, $adr) {
+    private function setAddressCoordinates($lat, $lng, $adr) {
+        $qb = $this->qb;
         $adr_norm = strtolower(preg_replace('/\s+/', '', $adr));
 
-        $this->qb->select('id')
+        $qb->select('id')
              ->from('maps_address_geo')
-             ->where($this->qb->expr()->eq('adr_norm', $this->qb->createNamedParameter($adr_norm, IQueryBuilder::PARAM_STR)))
+             ->where($qb->expr()->eq('adr_norm', $qb->createNamedParameter($adr_norm, IQueryBuilder::PARAM_STR)))
              ->setMaxResults($max);
-        $req=$this->qb->execute();
+        $req = $qb->execute();
         $result = $req->fetchAll();
         $req->closeCursor();
-        $this->qb = $this->qb->resetQueryParts();
+        $qb = $qb->resetQueryParts();
         if ($result and count($result) > 0) {
             $id = $result[0]['id'];
-            $this->qb->update('maps_address_geo')
+            $qb->update('maps_address_geo')
                 ->set('lat', $qb->createNamedParameter($lat, IQueryBuilder::PARAM_STR))
                 ->set('lng', $qb->createNamedParameter($lng, IQueryBuilder::PARAM_STR))
                 ->set('looked_up', $qb->createNamedParameter(true, IQueryBuilder::PARAM_BOOL))
-                ->where($this->qb->expr()->eq('id', $this->qb->createNamedParameter($id, IQueryBuilder::PARAM_STR)));
-            $req=$this->qb->execute();
-            $qb = $this->qb->resetQueryParts();
+                ->where($qb->expr()->eq('id', $qb->createNamedParameter($id, IQueryBuilder::PARAM_STR)));
+            $req=$qb->execute();
+            $qb = $qb->resetQueryParts();
         }
         else {
-            $this->qb->insert('maps_address_geo')
+            $qb->insert('maps_address_geo')
                 ->values([
-                    'adr'=>$this->qb->createNamedParameter($adr, IQueryBuilder::PARAM_STR),
-                    'adr_norm'=>$this->qb->createNamedParameter($adr_norm, IQueryBuilder::PARAM_STR),
-                    'lat'=>$this->qb->createNamedParameter($lat, IQueryBuilder::PARAM_STR),
-                    'lng'=>$this->qb->createNamedParameter($lng, IQueryBuilder::PARAM_STR),
-                    'looked_up'=>$this->qb->createNamedParameter(true, IQueryBuilder::PARAM_BOOL),
+                    'adr'=>$qb->createNamedParameter($adr, IQueryBuilder::PARAM_STR),
+                    'adr_norm'=>$qb->createNamedParameter($adr_norm, IQueryBuilder::PARAM_STR),
+                    'lat'=>$qb->createNamedParameter($lat, IQueryBuilder::PARAM_STR),
+                    'lng'=>$qb->createNamedParameter($lng, IQueryBuilder::PARAM_STR),
+                    'looked_up'=>$qb->createNamedParameter(true, IQueryBuilder::PARAM_BOOL),
                 ]);
-            $req = $this->qb->execute();
-            $id = $this->qb->getLastInsertId();
-            $qb = $this->qb->resetQueryParts();
+            $req = $qb->execute();
+            $id = $qb->getLastInsertId();
+            $qb = $qb->resetQueryParts();
         }
     }
 

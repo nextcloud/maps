@@ -555,6 +555,9 @@ tr.selected td {
     text-align: center;
 }
 /* Overriden routing/geocoder style */
+.leaflet-routing-container {
+    width: 350px;
+}
 .leaflet-routing-geocoder-result tr {
     line-height: 35px;
 }

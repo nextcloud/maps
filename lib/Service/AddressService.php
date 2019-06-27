@@ -53,7 +53,7 @@ class AddressService {
         $this->appData = $appData;
     }
 
-    //converts the address to geo lat;lon
+    // converts the address to geo lat;lon
     public function addressToGeo($adr) {
         $geo = $this->lookupAddress($adr);
         return strval($geo[0]).";".strval($geo[1]);

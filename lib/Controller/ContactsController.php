@@ -56,20 +56,39 @@ class ContactsController extends Controller {
             if (strcmp($c['URI'], 'Database:'.$c['UID'].'.vcf') !== 0 or
                 strcmp($uid, $userid) === 0
             ) {
-                //If the contact has a geo attibute use this, otherwise try to get it from the address
-                if(key_exists('GEO',$c)) {
+                // if the contact has a geo attibute use this, otherwise try to get it from the address
+                if (key_exists('GEO', $c)) {
                     $geo = $c['GEO'];
-                } else {
-                    $geo = $this->addressService->addressToGeo($c["ADR"]);
+                    if(strlen($geo) > 1){
+                        array_push($result, [
+                            'FN'=>$c['FN'],
+                            'URI'=>$c['URI'],
+                            'UID'=>$c['UID'],
+                            'BOOKID'=>$c['addressbook-key'],
+                            'GEO'=>$geo
+                        ]);
+                    }
                 }
-                if(strlen($geo)>1){
-                    array_push($result, [
-                        'FN'=>$c['FN'],
-                        'URI'=>$c['URI'],
-                        'UID'=>$c['UID'],
-                        'BOOKID'=>$c['addressbook-key'],
-                        'GEO'=>$geo
-                    ]);
+                else {
+                    //var_dump($c['ADR']);
+                    $card = $this->cdBackend->getContact($c['addressbook-key'], $c['URI']);
+                    if ($card) {
+                        $vcard = Reader::read($card['carddata']);;
+                        //$adrs = $vcard->get('ADR');
+                        //error_log('NB '.count($vcard->ADR));
+                        foreach($vcard->ADR as $adr) {
+                            $geo = $this->addressService->addressToGeo($adr->getValue());
+                            if(strlen($geo) > 1){
+                                array_push($result, [
+                                    'FN'=>$c['FN'],
+                                    'URI'=>$c['URI'],
+                                    'UID'=>$c['UID'],
+                                    'BOOKID'=>$c['addressbook-key'],
+                                    'GEO'=>$geo
+                                ]);
+                            }
+                        }
+                    }
                 }
             }
         }

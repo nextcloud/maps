@@ -209,6 +209,7 @@ ContactsController.prototype = {
                 uri: contacts[i].URI,
                 adr: contacts[i].ADR,
                 address: formattedAddress,
+                addressType: contacts[i].ADRTYPE.toLowerCase(),
                 bookid: contacts[i]['addressbook-key'],
                 date: date/1000,
             };
@@ -221,6 +222,12 @@ ContactsController.prototype = {
             var contactTooltip = '<p class="tooltip-contact-name">' + escapeHTML(basename(markerData.name)) + '</p>';
             var img = '<img class="tooltip-contact-avatar" src="' + avatar + '"/>';
             contactTooltip += img;
+            if (markerData.addressType === 'home') {
+                contactTooltip += '<p class="tooltip-contact-address-type"><b>'+t('maps', 'Home')+'</b></p>';
+            }
+            else if (markerData.addressType === 'work') {
+                contactTooltip += '<p class="tooltip-contact-address-type"><b>'+t('maps', 'Work')+'</b></p>';
+            }
             contactTooltip += '<p class="tooltip-contact-address">' + markerData.address + '</p>';
             marker.bindTooltip(contactTooltip, {permanent: false, className: 'leaflet-marker-contact-tooltip', direction: 'top', offset: L.point(0, -25)});
             markers.push(marker);

@@ -65,6 +65,7 @@ class ContactsController extends Controller {
                             'URI'=>$c['URI'],
                             'UID'=>$c['UID'],
                             'ADR'=>'',
+                            'ADRTYPE'=>'',
                             'PHOTO'=>$c['PHOTO'],
                             'BOOKID'=>$c['addressbook-key'],
                             'GEO'=>$geo
@@ -80,12 +81,18 @@ class ContactsController extends Controller {
                     //error_log('NB '.count($vcard->ADR));
                     foreach($vcard->ADR as $adr) {
                         $geo = $this->addressService->addressToGeo($adr->getValue());
+                        //var_dump($adr->parameters()['TYPE']->getValue());
+                        $adrtype = '';
+                        if (isset($adr->parameters()['TYPE'])) {
+                            $adrtype = $adr->parameters()['TYPE']->getValue();
+                        }
                         if(strlen($geo) > 1){
                             array_push($result, [
                                 'FN'=>$c['FN'],
                                 'URI'=>$c['URI'],
                                 'UID'=>$c['UID'],
                                 'ADR'=>$adr->getValue(),
+                                'ADRTYPE'=>$adrtype,
                                 'PHOTO'=>$c['PHOTO'],
                                 'BOOKID'=>$c['addressbook-key'],
                                 'GEO'=>$geo

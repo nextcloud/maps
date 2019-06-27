@@ -399,7 +399,15 @@ ContactsController.prototype = {
         var that = this.contactsController;
         var lat = e.latlng.lat;
         var lng = e.latlng.lng;
-        var popupText = '<input id="place-contact-input" placeholder="'+t('maps', 'Contact name')+'" type="text" />';
+        var popupText = '<h3>' + t('maps', 'New contact address') + '</h3>';
+        popupText += '<i class="placeContactPopupAddress"></i>';
+        popupText += '<label for="addressTypeSelect">' + t('maps', 'Address type') + '</label>';
+        popupText += '<select id="addressTypeSelect">';
+        popupText += '<option value="home" selected>' + t('maps', 'Home') + '</option>';
+        popupText += '<option value="work">' + t('maps', 'Work') + '</option>';
+        popupText += '</select><br/>';
+        popupText += '<button class="icon icon-user"></button>';
+        popupText += '<input id="place-contact-input" placeholder="'+t('maps', 'Contact name')+'" type="text" />';
         this.openPopup(popupText, e.latlng);
 
         var strLatLng = lat+','+lng;
@@ -408,6 +416,13 @@ ContactsController.prototype = {
             var address = null;
             if (results.address) {
                 address = results.address;
+                var strAddress = (address.house_number || '')+' '+
+                                 (address.road || '')+' '+
+                                 (address.postcode || '')+' '+
+                                 (address.town || '')+' '+
+                                 (address.state || '')+' '+
+                                 (address.country || '');
+                $('.placeContactPopupAddress').text(strAddress);
             }
             var req = {};
             var url = OC.generateUrl('/apps/maps/contacts-all');
@@ -435,7 +450,9 @@ ContactsController.prototype = {
                     source: data,
                     select: function (e, ui) {
                         var it = ui.item;
-                        that.placeContact(it.bookid, it.uri, it.uid, lat, lng, address);
+                        var type = $('#addressTypeSelect').val();
+                        // TODO send the type!!!
+                        that.placeContact(it.bookid, it.uri, it.uid, lat, lng, address, type);
                     }
                 })
                 $('#place-contact-input').focus().select();
@@ -447,7 +464,7 @@ ContactsController.prototype = {
 
     },
 
-    placeContact: function(bookid, uri, uid, lat, lng, address) {
+    placeContact: function(bookid, uri, uid, lat, lng, address, type='home') {
         var that = this;
         $('#navigation-contacts').addClass('icon-loading-small');
         $('.leaflet-container').css('cursor', 'wait');
@@ -460,7 +477,8 @@ ContactsController.prototype = {
             postcode: address.postcode,
             town: address.town,
             state: address.state,
-            country: address.country
+            country: address.country,
+            type: type
         };
         var url = OC.generateUrl('/apps/maps/contacts/'+bookid+'/'+uri);
         $.ajax({

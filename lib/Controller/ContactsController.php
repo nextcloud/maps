@@ -103,7 +103,7 @@ class ContactsController extends Controller {
     /**
      * @NoAdminRequired
      */
-    public function placeContact($bookid, $uri, $uid, $lat, $lng, $house_number, $road, $postcode, $town, $state, $country) {
+    public function placeContact($bookid, $uri, $uid, $lat, $lng, $house_number, $road, $postcode, $town, $state, $country, $type) {
         // do not edit 'user' contact except myself
         if (strcmp($uri, 'Database:'.$uid.'.vcf') === 0 and
             strcmp($uid, $this.userId) !== 0
@@ -123,7 +123,7 @@ class ContactsController extends Controller {
                 $card = $this->cdBackend->getContact($bookid, $uri);
                 if ($card) {
                     $vcard = Reader::read($card['carddata']);;
-                    $vcard->add(new Text($vcard, 'ADR', ['', '', $house_number.' '.$road, $town, $state, $postcode, $country], ['TYPE'=>'HOME']));
+                    $vcard->add(new Text($vcard, 'ADR', ['', '', $house_number.' '.$road, $town, $state, $postcode, $country], ['TYPE'=>$type]));
                     $this->cdBackend->updateCard($bookid, $uri, $vcard->serialize());
                 }
             }

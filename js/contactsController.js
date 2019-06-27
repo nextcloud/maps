@@ -107,11 +107,16 @@ ContactsController.prototype = {
         var _app = this;
         return function(evt) {
             var marker = evt.layer;
-            var contactUrl = OC.generateUrl('/apps/contacts/All contacts/'+encodeURIComponent(marker.data.uid+"~contacts"));
-            var win = window.open(contactUrl, '_blank');
-            if (win) {
-                win.focus();
-            }
+            var contactPopup = marker.data.tooltipContent;
+            var contactUrl = OC.generateUrl('/apps/contacts/'+t('contacts', 'All contacts')+'/'+encodeURIComponent(marker.data.uid+"~contacts"));
+            contactPopup += '<a href="'+contactUrl+'" target="_blank">'+t('maps', 'Open in Contacts app')+'</a>';
+            marker.unbindPopup();
+            marker.bindPopup(contactPopup, {
+                closeOnClick: true,
+                className: 'popovermenu open popupMarker contactPopup',
+                offset: L.point(-5, -19)
+            });
+            marker.openPopup();
         };
     },
 
@@ -229,6 +234,8 @@ ContactsController.prototype = {
                 contactTooltip += '<p class="tooltip-contact-address-type"><b>'+t('maps', 'Work')+'</b></p>';
             }
             contactTooltip += '<p class="tooltip-contact-address">' + markerData.address + '</p>';
+            markerData.tooltipContent = contactTooltip;
+
             marker.bindTooltip(contactTooltip, {permanent: false, className: 'leaflet-marker-contact-tooltip', direction: 'top', offset: L.point(0, -25)});
             markers.push(marker);
         }

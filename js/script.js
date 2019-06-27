@@ -461,7 +461,6 @@
             });
             this.map.on('click', function(e) {
                 if ($(e.originalEvent.target).attr('id') === 'map') {
-                    console.log(that.map);
                     if (that.map._popup === null) {
                         console.log('no popup');
                     }

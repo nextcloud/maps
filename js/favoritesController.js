@@ -21,6 +21,7 @@ function FavoritesController(optionsController, timeFilterController) {
     this.addFavoriteCategory = null;
 
     this.defaultCategory = t('maps', 'Personal');
+    this.lastUsedCategory = null;
 
     this.movingFavoriteId = null;
 
@@ -654,12 +655,18 @@ FavoritesController.prototype = {
 
     addFavoriteClickMap: function(e) {
         var categoryName = this.favoritesController.addFavoriteCategory;
+        if (categoryName === this.favoritesController.defaultCategory && this.favoritesController.lastUsedCategory !== null) {
+            categoryName = this.favoritesController.lastUsedCategory;
+        }
         this.favoritesController.leaveAddFavoriteMode();
         this.favoritesController.addFavoriteDB(categoryName, e.latlng.lat.toFixed(6), e.latlng.lng.toFixed(6), null);
     },
 
     contextAddFavorite: function(e) {
         var categoryName = this.favoritesController.defaultCategory;
+        if (this.favoritesController.lastUsedCategory !== null) {
+            categoryName = this.favoritesController.lastUsedCategory;
+        }
         this.favoritesController.addFavoriteDB(categoryName, e.latlng.lat.toFixed(6), e.latlng.lng.toFixed(6), null);
     },
 
@@ -935,6 +942,8 @@ FavoritesController.prototype = {
         var newName = ul.find('input[role=name]').val();
         var newCategory = ul.find('input[role=category]').val();
         var newComment = ul.find('textarea[role=comment]').val();
+
+        this.lastUsedCategory = newCategory;
 
         this.editFavoriteDB(favid, newName, newComment, newCategory, null, null);
     },

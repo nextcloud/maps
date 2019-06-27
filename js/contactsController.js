@@ -412,7 +412,6 @@ ContactsController.prototype = {
 
         var strLatLng = lat+','+lng;
         that.searchController.geocode(strLatLng).then(function(results) {
-            console.log(results);
             var address = null;
             if (results.address) {
                 address = results.address;

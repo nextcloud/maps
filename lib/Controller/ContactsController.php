@@ -64,6 +64,7 @@ class ContactsController extends Controller {
                             'FN'=>$c['FN'],
                             'URI'=>$c['URI'],
                             'UID'=>$c['UID'],
+                            'PHOTO'=>$c['PHOTO'],
                             'BOOKID'=>$c['addressbook-key'],
                             'GEO'=>$geo
                         ]);
@@ -83,6 +84,7 @@ class ContactsController extends Controller {
                                     'FN'=>$c['FN'],
                                     'URI'=>$c['URI'],
                                     'UID'=>$c['UID'],
+                                    'PHOTO'=>$c['PHOTO'],
                                     'BOOKID'=>$c['addressbook-key'],
                                     'GEO'=>$geo
                                 ]);

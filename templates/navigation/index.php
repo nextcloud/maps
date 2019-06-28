@@ -36,7 +36,7 @@
         <ul id="category-list">
         </ul>
     </li>
-    <li id="navigation-photos" class="collapsible">
+    <li id="navigation-photos">
         <a class="icon-picture" href="#"><?php p($l->t('Your photos')); ?></a>
         <div class="app-navigation-entry-utils">
             <ul>
@@ -58,7 +58,7 @@
                 </li>
             </ul>
         </div>
-        <ul>
+        <!--ul>
             <li id="navigation-nonLocalizedPhotos">
                 <a class="icon-picture" href="#"><?php p($l->t('without geo tag')); ?></a>
                 <div class="app-navigation-entry-utils">
@@ -76,13 +76,13 @@
                         <li>
                             <a href="#" class="save-all-nonlocalized">
                                 <span class="icon-category-office"></span>
-                                <span><?php p($l->t('Save all visibile')); ?></span>
+                                <span><?php //p($l->t('Save all visibile')); ?></span>
                             </a>
                         </li>
                     </ul>
                 </div>
             </li>
-        </ul>
+        </ul-->
     </li>
     <li id="navigation-contacts">
         <a class="icon-group" href="#"><?php p($l->t('Your contacts')); ?></a>

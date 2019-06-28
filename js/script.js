@@ -1313,6 +1313,13 @@
                 that.map.closePopup();
                 that.map.clickpopup = null;
             });
+            $('body').on('click', '#click-search-place-contact', function(e) {
+                var lat = that.currentClickSearchLatLng.lat;
+                var lng = that.currentClickSearchLatLng.lng;
+                that.map.closePopup();
+                that.map.clickpopup = null;
+                contactsController.openPlaceContactPopup(lat, lng);
+            });
         },
 
         setSearchAutocomplete: function(field, routingPointIndex=null) {

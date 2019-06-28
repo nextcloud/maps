@@ -427,6 +427,11 @@ ContactsController.prototype = {
         var that = this.contactsController;
         var lat = e.latlng.lat;
         var lng = e.latlng.lng;
+        that.openPlaceContactPopup(lat, lng);
+    },
+
+    openPlaceContactPopup: function(lat, lng) {
+        var that = this;
         var popupText = '<h3>' + t('maps', 'New contact address') + '</h3>';
         popupText += '<textarea id="placeContactPopupAddress"></textarea><br/>';
         popupText += '<button class="icon icon-user"></button>';
@@ -438,7 +443,7 @@ ContactsController.prototype = {
         popupText += '<option value="home" selected>' + t('maps', 'Home') + '</option>';
         popupText += '<option value="work">' + t('maps', 'Work') + '</option>';
         popupText += '</select><br/><button id="submitPlaceContactButton">'+t('maps', 'Add address to contact')+'</button>';
-        this.openPopup(popupText, e.latlng);
+        this.map.openPopup(popupText, [lat, lng]);
 
         that.currentPlaceContactAddress = null;
         that.currentPlaceContactLat = lat;

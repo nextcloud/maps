@@ -963,7 +963,7 @@ FavoritesController.prototype = {
         var fav = this.favorites[favid];
 
         var newName = ul.find('input[role=name]').val();
-        var newCategory = ul.find('input[role=category]').val();
+        var newCategory = ul.find('input[role=category]').val() || this.defaultCategory;
         var newComment = ul.find('textarea[role=comment]').val();
 
         this.lastUsedCategory = newCategory;

@@ -68,6 +68,9 @@ ContactsController.prototype = {
             that.enterMoveContactMode();
             that.map.closePopup();
         });
+        $('body').on('click', '#submitPlaceContactButton', function(e) {
+            that.submitPlaceContact();
+        });
     },
 
     updateMyFirstLastDates: function() {
@@ -425,66 +428,115 @@ ContactsController.prototype = {
         var lat = e.latlng.lat;
         var lng = e.latlng.lng;
         var popupText = '<h3>' + t('maps', 'New contact address') + '</h3>';
-        popupText += '<i class="placeContactPopupAddress"></i>';
+        popupText += '<textarea id="placeContactPopupAddress"></textarea><br/>';
+        popupText += '<button class="icon icon-user"></button>';
+        popupText += '<input id="place-contact-input" placeholder="'+t('maps', 'Contact name')+'" type="text" />';
+        popupText += '<button id="placeContactValidIcon" class="icon icon-checkmark"></button>';
+        popupText += '<br/>';
         popupText += '<label for="addressTypeSelect">' + t('maps', 'Address type') + '</label>';
         popupText += '<select id="addressTypeSelect">';
         popupText += '<option value="home" selected>' + t('maps', 'Home') + '</option>';
         popupText += '<option value="work">' + t('maps', 'Work') + '</option>';
-        popupText += '</select><br/>';
-        popupText += '<button class="icon icon-user"></button>';
-        popupText += '<input id="place-contact-input" placeholder="'+t('maps', 'Contact name')+'" type="text" />';
+        popupText += '</select><br/><button id="submitPlaceContactButton">'+t('maps', 'Add address to contact')+'</button>';
         this.openPopup(popupText, e.latlng);
 
+        that.currentPlaceContactAddress = null;
+        that.currentPlaceContactLat = lat;
+        that.currentPlaceContactLng = lng;
+        that.currentPlaceContactFormattedAddress = null;
+        that.currentPlaceContactContact = null;
+
+        // get the reverse geocode address
         var strLatLng = lat+','+lng;
         that.searchController.geocode(strLatLng).then(function(results) {
             var address = {};
             if (results.address) {
                 address = results.address;
-                var strAddress = (address.house_number || '')+' '+
-                                 (address.road || '')+' '+
-                                 (address.postcode || '')+' '+
-                                 (address.town || '')+' '+
-                                 (address.state || '')+' '+
-                                 (address.country || '');
-                $('.placeContactPopupAddress').text(strAddress);
+                that.currentPlaceContactAddress = address;
+                var strAddress = formatAddress(address);
+                $('#placeContactPopupAddress').text(strAddress);
+                that.currentPlaceContactFormattedAddress = strAddress;
             }
-            var req = {};
-            var url = OC.generateUrl('/apps/maps/contacts-all');
-            $.ajax({
-                type: 'GET',
-                url: url,
-                data: req,
-                async: true
-            }).done(function (response) {
-                var d, c;
-                var data = [];
-                for (var i=0; i < response.length; i++) {
-                    c = response[i];
-                    d = {
-                        id: c.URI,
-                        label: c.FN,
-                        value: c.FN,
-                        uri: c.URI,
-                        uid: c.UID,
-                        bookid: c.BOOKID
-                    };
-                    data.push(d);
-                }
-                $('#place-contact-input').autocomplete({
-                    source: data,
-                    select: function (e, ui) {
-                        var it = ui.item;
-                        var type = $('#addressTypeSelect').val();
-                        that.placeContact(it.bookid, it.uri, it.uid, lat, lng, address, type);
-                    }
-                })
-                $('#place-contact-input').focus().select();
-            }).always(function (response) {
-            }).fail(function() {
-                OC.Notification.showTemporary(t('maps', 'Failed to get contact list'));
-            });
         });
+        // get the contact list
+        var req = {};
+        var url = OC.generateUrl('/apps/maps/contacts-all');
+        $.ajax({
+            type: 'GET',
+            url: url,
+            data: req,
+            async: true
+        }).done(function (response) {
+            var d, c;
+            var data = [];
+            for (var i=0; i < response.length; i++) {
+                c = response[i];
+                d = {
+                    id: c.URI,
+                    label: c.FN,
+                    value: c.FN,
+                    uri: c.URI,
+                    uid: c.UID,
+                    bookid: c.BOOKID
+                };
+                data.push(d);
+            }
+            $('#place-contact-input').autocomplete({
+                source: data,
+                select: function (e, ui) {
+                    var it = ui.item;
+                    that.currentPlaceContactContact = ui.item;
+                    $('#placeContactValidIcon').show();
+                    //that.submitPlaceContactPopup(it.bookid, it.uri, it.uid, lat, lng, address, type, editedAddress);
+                }
+            })
+            $('#place-contact-input').focus().select();
+        }).always(function (response) {
+        }).fail(function() {
+            OC.Notification.showTemporary(t('maps', 'Failed to get contact list'));
+        });
+    },
 
+    submitPlaceContact: function() {
+        var that = this;
+        var lat = that.currentPlaceContactLat;
+        var lng = that.currentPlaceContactLng;
+        var currentContact = that.currentPlaceContactContact;
+        var currentAddress = that.currentPlaceContactAddress;
+        var currentFormattedAddress = that.currentPlaceContactFormattedAddress.trim();
+        var bookid = currentContact.bookid;
+        var uri = currentContact.uri;
+        var uid = currentContact.uid;
+        var editedAddress = $('#placeContactPopupAddress').val().trim().replace(/(\r\n|\n|\r)/gm, ' ').replace(/\s+/g, ' ');
+        var type = $('#addressTypeSelect').val();
+
+        // we didn't change the address => place
+        if (currentFormattedAddress === editedAddress) {
+            that.placeContact(bookid, uri, uid, lat, lng, currentAddress, type);
+        }
+        // we changed the address, search the new one
+        else {
+            console.log(currentFormattedAddress);
+            console.log(editedAddress);
+            console.log('CHANGED');
+            that.searchController.search(editedAddress, 1).then(function(results) {
+                var address = {};
+                console.log(results);
+                // there was a result
+                if (results.length > 0 && results[0].address && results[0].lat && results[0].lon) {
+                    address = results[0].address;
+                    //var strAddress = formatAddress(address);
+                    lat = results[0].lat;
+                    lng = results[0].lon;
+                }
+                // nope, no result, keep the original one
+                else {
+                    address = currentAddress;
+                }
+                that.placeContact(bookid, uri, uid, lat, lng, address, type);
+                that.map.flyTo([lat, lng], 15, {animate: true});
+            });
+        }
     },
 
     placeContact: function(bookid, uri, uid, lat, lng, address, type='home') {

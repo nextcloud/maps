@@ -270,3 +270,13 @@ function getUrlParameter(sParam) {
         }
     }
 }
+
+function formatAddress(address) {
+    var strAddress = (address.house_number || '')+' '+
+        (address.road || '')+' '+
+        (address.postcode || '')+' '+
+        (address.town || '')+' '+
+        (address.state || '')+' '+
+        (address.country || '');
+    return strAddress;
+}

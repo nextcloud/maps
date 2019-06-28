@@ -136,6 +136,16 @@
     max-width: 50vw;
 }
 
+#placeContactValidIcon {
+    display: none;
+}
+
+#placeContactPopupAddress {
+    border: none;
+    width: 100%;
+    height: 75px;
+}
+
 #opening-hours-table td {
     padding: 0 5px 0 5px;
 }

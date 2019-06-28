@@ -1609,9 +1609,9 @@
             var pattern = /^\s*\d+\.?\d*\,\s*\d+\.?\d*\s*$/;
             return pattern.test(str);
         },
-        search: function(str) {
+        search: function(str, limit=8) {
             var searchTerm = encodeURIComponent(str);
-            var apiUrl = 'https://nominatim.openstreetmap.org/search/' + searchTerm + '?format=json&addressdetails=1&extratags=1&namedetails=1&limit=8';
+            var apiUrl = 'https://nominatim.openstreetmap.org/search/' + searchTerm + '?format=json&addressdetails=1&extratags=1&namedetails=1&limit='+limit;
             return $.getJSON(apiUrl, {}, function(response) {
                 return response;
             });

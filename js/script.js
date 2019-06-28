@@ -282,14 +282,18 @@
                 });
 
                 // add router to routing machine
+                var nbRouters = 0;
                 if (optionsValues.hasOwnProperty('osrmCarURL') && optionsValues.osrmCarURL !== '') {
                     routingController.addRouter('osrmCar', 'By car (OSRM)', optionsValues.osrmCarURL, null);
+                    nbRouters++;
                 }
                 if (optionsValues.hasOwnProperty('osrmBikeURL') && optionsValues.osrmBikeURL !== '') {
                     routingController.addRouter('osrmBike', 'By bike (OSRM)', optionsValues.osrmBikeURL, null);
+                    nbRouters++;
                 }
                 if (optionsValues.hasOwnProperty('osrmFootURL') && optionsValues.osrmFootURL !== '') {
                     routingController.addRouter('osrmFoot', 'By foot (OSRM)', optionsValues.osrmFootURL, null);
+                    nbRouters++;
                 }
                 if (optionsValues.hasOwnProperty('osrmDEMO') && optionsValues.osrmDEMO === '1') {
                     routingController.addRouter('osrmDEMO', 'By car (OSRM demo)', null, null);
@@ -299,6 +303,7 @@
                 }
                 if (optionsValues.hasOwnProperty('mapboxAPIKEY') && optionsValues.mapboxAPIKEY !== '') {
                     routingController.addRouter('mapbox', 'Mapbox', null, optionsValues.mapboxAPIKEY);
+                    nbRouters++;
                 }
                 if ((optionsValues.hasOwnProperty('graphhopperURL') && optionsValues.graphhopperURL !== '') ||
                     (optionsValues.hasOwnProperty('graphhopperAPIKEY') && optionsValues.graphhopperAPIKEY !== '') ){
@@ -309,10 +314,21 @@
                     routingController.addRouter('graphhopperCar', 'By car (GrahHopper)', optionsValues.graphhopperURL, apikey);
                     routingController.addRouter('graphhopperBike', 'By bike (GrahHopper)', optionsValues.graphhopperURL, apikey);
                     routingController.addRouter('graphhopperFoot', 'By Foot (GrahHopper)', optionsValues.graphhopperURL, apikey);
+                    nbRouters++;
                 }
                 if (optionsValues.hasOwnProperty('selectedRouter') && optionsValues.selectedRouter !== '') {
                     routingController.selectedRouter = optionsValues.selectedRouter;
                     routingController.setRouter(optionsValues.selectedRouter);
+                }
+                if (nbRouters === 0 && !OC.isUserAdmin()) {
+                    // disable routing and hide it to the user
+                    // search bar
+                    $('#route-submit').hide();
+                    $('#search-submit').css('right', '10px');
+                    // context menu TODO remove routing related items
+                    mapController.map.contextmenu._items.splice(5, 4);
+                    console.log(mapController.map.contextmenu);
+
                 }
                 //if (optionsValues.hasOwnProperty('routingEnabled') && optionsValues.routingEnabled === 'true') {
                 //    routingController.toggleRouting();

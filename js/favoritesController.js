@@ -122,6 +122,11 @@ FavoritesController.prototype = {
             var favid = parseInt($(this).parent().parent().attr('favid'));
             that.deleteFavoriteDB(favid);
         });
+        $('body').on('click', '.valideditdeletefavorite', function(e) {
+            var favid = parseInt($(this).parent().parent().attr('favid'));
+            that.deleteFavoriteDB(favid);
+            that.map.closePopup();
+        });
         $('body').on('click', '.movefavorite', function(e) {
             var ul = $(this).parent().parent();
             var favid = ul.attr('favid');
@@ -844,6 +849,7 @@ FavoritesController.prototype = {
 
     getFavoritePopupContent: function(fav) {
         var validText = t('maps', 'Submit');
+        var deleteText = t('maps', 'Delete');
         var namePH = t('maps', 'Favorite name');
         var categoryPH = t('maps', 'Category');
         var commentPH = t('maps', 'Comment');
@@ -876,6 +882,11 @@ FavoritesController.prototype = {
             '   <li>' +
             '       <button class="icon-checkmark valideditfavorite">' +
             '           <span>' + validText + '</span>' +
+            '       </button>' +
+            '   </li>' +
+            '   <li>' +
+            '       <button class="icon-delete valideditdeletefavorite">' +
+            '           <span>' + deleteText + '</span>' +
             '       </button>' +
             '   </li>' +
             '</ul>';

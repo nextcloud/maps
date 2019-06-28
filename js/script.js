@@ -489,13 +489,17 @@
                     that.map.contextmenu.showAt(L.latLng(e.latlng.lat, e.latlng.lng));
                 }
             });
+            this.map.clickpopup = null;
             this.map.on('click', function(e) {
                 if ($(e.originalEvent.target).attr('id') === 'map') {
-                    if (that.map._popup === null) {
+                    if (that.map.clickpopup === null) {
                         console.log('no popup');
+                        searchController.mapLeftClick(e);
+                        that.map.clickpopup = true;
                     }
                     else {
                         that.map.closePopup();
+                        that.map.clickpopup = null;
                     }
                 }
             });
@@ -1294,6 +1298,21 @@
                 favoritesController.addFavoriteDB(categoryName, lat, lng, name);
                 that.map.closePopup();
             });
+            $('body').on('click', '#click-search-add-favorite', function(e) {
+                var lat = that.currentClickSearchLatLng.lat;
+                var lng = that.currentClickSearchLatLng.lng;
+                var name = that.currentClickAddress.attraction
+                    || that.currentClickAddress.road
+                    || that.currentClickAddress.city_district;
+                var strAddress = formatAddress(that.currentClickAddress);
+                var categoryName = favoritesController.defaultCategory;
+                if (favoritesController.lastUsedCategory !== null) {
+                    categoryName = favoritesController.lastUsedCategory;
+                }
+                favoritesController.addFavoriteDB(categoryName, lat, lng, name, strAddress);
+                that.map.closePopup();
+                that.map.clickpopup = null;
+            });
         },
 
         setSearchAutocomplete: function(field, routingPointIndex=null) {
@@ -1802,7 +1821,35 @@
             }
 
             return header + desc;
-        }
+        },
+
+        mapLeftClick: function(e) {
+            var that = this;
+            var ll = e.latlng;
+            var strLatLng = ll.lat+','+ll.lng;
+            this.currentClickSearchLatLng = e.latlng;
+
+            var clickPopupContent = '<h2 id="click-search-popup-title" class="loading">'+t('maps', 'This place')+'</h2>';
+            clickPopupContent += '<textarea id="clickSearchAddress"></textarea><br/>';
+            clickPopupContent += '<button id="click-search-add-favorite">' +
+                '<span class="icon-favorite"> </span> ' + t('maps', 'Add to favorites') + '</button>';
+            clickPopupContent += '<button id="click-search-place-contact">' +
+                '<span class="icon-user"> </span> ' + t('maps', 'Add contact address') + '</button>';
+
+            this.map.openPopup(clickPopupContent, e.latlng);
+
+            this.geocode(strLatLng).then(function(results) {
+                $('#click-search-popup-title').removeClass('loading');
+                var address = {};
+                if (results.address) {
+                    address = results.address;
+                    that.currentClickAddress = address;
+                    var strAddress = formatAddress(address);
+                    console.log(address);
+                    $('#clickSearchAddress').text(strAddress);
+                }
+            });
+        },
     };
 
     var photosController = new PhotosController(optionsController, timeFilterController);

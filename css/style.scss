@@ -136,10 +136,15 @@
     max-width: 50vw;
 }
 
+#place-contact-input {
+    width: 70%;
+}
+
 #placeContactValidIcon {
     display: none;
 }
 
+#clickSearchAddress,
 #placeContactPopupAddress {
     border: none;
     width: 100%;

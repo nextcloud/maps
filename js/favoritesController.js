@@ -648,6 +648,7 @@ FavoritesController.prototype = {
         this.addFavoriteCategory = categoryName;
         $('.leaflet-container').css('cursor','crosshair');
         this.map.on('click', this.addFavoriteClickMap);
+        this.map.leftClickLock = true;
         $('#addFavoriteButton button').removeClass('icon-add').addClass('icon-history');
         $('#explainaddpoint').show();
         this.addFavoriteMode = true;
@@ -656,6 +657,7 @@ FavoritesController.prototype = {
     leaveAddFavoriteMode: function() {
         $('.leaflet-container').css('cursor','grab');
         this.map.off('click', this.addFavoriteClickMap);
+        this.map.leftClickLock = false;
         $('#addFavoriteButton button').addClass('icon-add').removeClass('icon-history');
         this.addFavoriteMode = false;
         this.addFavoriteCategory = null;

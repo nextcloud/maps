@@ -490,9 +490,10 @@
                 }
             });
             this.map.clickpopup = null;
+            this.map.leftClickLock = false;
             this.map.on('click', function(e) {
                 if ($(e.originalEvent.target).attr('id') === 'map') {
-                    if (that.map.clickpopup === null) {
+                    if (!that.map.leftClickLock && that.map.clickpopup === null) {
                         console.log('no popup');
                         searchController.mapLeftClick(e);
                         that.map.clickpopup = true;

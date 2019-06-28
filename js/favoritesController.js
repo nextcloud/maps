@@ -896,6 +896,7 @@ FavoritesController.prototype = {
     favoriteMouseRightClick: function(e) {
         var favid = e.target.favid;
         var fav = this._map.favoritesController.favorites[favid];
+        this._map.clickpopup = true;
 
         e.target.unbindPopup();
         var popupContent = this._map.favoritesController.getFavoriteContextPopupContent(fav);

@@ -120,6 +120,7 @@ ContactsController.prototype = {
                 offset: L.point(-5, -19)
             });
             marker.openPopup();
+            this._map.clickpopup = true;
         };
     },
 
@@ -283,6 +284,7 @@ ContactsController.prototype = {
             offset: L.point(-5, -19)
         });
         e.target.openPopup();
+        this._map.clickpopup = true;
     },
 
     getContactContextPopupContent: function(bookid, uri, uid) {
@@ -444,6 +446,7 @@ ContactsController.prototype = {
         popupText += '<option value="work">' + t('maps', 'Work') + '</option>';
         popupText += '</select><br/><button id="submitPlaceContactButton">'+t('maps', 'Add address to contact')+'</button>';
         this.map.openPopup(popupText, [lat, lng]);
+        this.map.clickpopup = true;
 
         that.currentPlaceContactAddress = null;
         that.currentPlaceContactLat = lat;

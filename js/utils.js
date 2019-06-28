@@ -272,10 +272,14 @@ function getUrlParameter(sParam) {
 }
 
 function formatAddress(address) {
-    var strAddress = (address.house_number || '')+' '+
+    var strAddress =
+        (address.attraction || '')+' '+
+        (address.house_number || '')+' '+
         (address.road || '')+' '+
+        (address.suburb || '')+' '+
+        (address.city_district || '')+' '+
         (address.postcode || '')+' '+
-        (address.town || '')+' '+
+        (address.town || address.city || '')+' '+
         (address.state || '')+' '+
         (address.country || '');
     return strAddress;

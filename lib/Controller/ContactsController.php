@@ -132,7 +132,7 @@ class ContactsController extends Controller {
     /**
      * @NoAdminRequired
      */
-    public function placeContact($bookid, $uri, $uid, $lat, $lng, $house_number, $road, $postcode, $town, $state, $country, $type) {
+    public function placeContact($bookid, $uri, $uid, $lat, $lng, $attraction, $house_number, $road, $postcode, $city, $state, $country, $type) {
         // do not edit 'user' contact except myself
         if (strcmp($uri, 'Database:'.$uid.'.vcf') === 0 and
             strcmp($uid, $this.userId) !== 0
@@ -144,12 +144,12 @@ class ContactsController extends Controller {
             // it's currently possible to place a contact from an addressbook shared with readonly permissions...
             if ($lat !== null && $lng !== null) {
                 // we set the geo tag
-                if (!$house_number && !$road && !$postcode && !$town && !$state && !$country) {
+                if (!$attraction && !$house_number && !$road && !$postcode && !$city && !$state && !$country) {
                     $result = $this->contactsManager->createOrUpdate(['URI'=>$uri, 'GEO'=>$lat.';'.$lng], $bookid);
                 }
                 // we set the address
                 else {
-                    $stringAddress = ';;'.$house_number.' '.$road.';'.$town.';'.$state.';'.$postcode.';'.$country;
+                    $stringAddress = ';;'.$attraction.' '.$house_number.' '.$road.';'.$city.';'.$state.';'.$postcode.';'.$country;
                     // set the coordinates in the DB
                     $lat = floatval($lat);
                     $lng = floatval($lng);
@@ -158,7 +158,7 @@ class ContactsController extends Controller {
                     $card = $this->cdBackend->getContact($bookid, $uri);
                     if ($card) {
                         $vcard = Reader::read($card['carddata']);;
-                        $vcard->add(new Text($vcard, 'ADR', ['', '', $house_number.' '.$road, $town, $state, $postcode, $country], ['TYPE'=>$type]));
+                        $vcard->add(new Text($vcard, 'ADR', ['', '', $attraction.' '.$house_number.' '.$road, $city, $state, $postcode, $country], ['TYPE'=>$type]));
                         $this->cdBackend->updateCard($bookid, $uri, $vcard->serialize());
                     }
                 }

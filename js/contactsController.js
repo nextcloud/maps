@@ -454,6 +454,7 @@ ContactsController.prototype = {
                 address = results.address;
                 that.currentPlaceContactAddress = address;
                 var strAddress = formatAddress(address);
+                //console.log(address);
                 $('#placeContactPopupAddress').text(strAddress);
                 that.currentPlaceContactFormattedAddress = strAddress;
             }
@@ -516,12 +517,9 @@ ContactsController.prototype = {
         }
         // we changed the address, search the new one
         else {
-            console.log(currentFormattedAddress);
-            console.log(editedAddress);
-            console.log('CHANGED');
             that.searchController.search(editedAddress, 1).then(function(results) {
                 var address = {};
-                console.log(results);
+                //console.log(results);
                 // there was a result
                 if (results.length > 0 && results[0].address && results[0].lat && results[0].lon) {
                     address = results[0].address;
@@ -547,10 +545,11 @@ ContactsController.prototype = {
             lat: lat,
             lng: lng,
             uid: uid,
+            attraction: address.attraction,
             house_number: address.house_number,
-            road: address.road,
+            road: (address.road || '') + ' ' + (address.suburb || '') + ' ' + (address.city_district || ''),
             postcode: address.postcode,
-            town: address.town,
+            city: address.town || address.city,
             state: address.state,
             country: address.country,
             type: type

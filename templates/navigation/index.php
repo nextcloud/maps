@@ -60,7 +60,7 @@
         </div>
         <!--ul>
             <li id="navigation-nonLocalizedPhotos">
-                <a class="icon-picture" href="#"><?php p($l->t('without geo tag')); ?></a>
+                <a class="icon-picture" href="#"><?php //p($l->t('without geo tag')); ?></a>
                 <div class="app-navigation-entry-utils">
                     <ul>
                         <li class="app-navigation-entry-utils-counter">

@@ -228,8 +228,8 @@ class PhotofilesService {
             if ($userFolder->nodeExists($cleanpath)) {
                 $file = $userFolder->get($cleanpath);
                 if ($this->isPhoto($file) and $file->isUpdateable()) {
-                    $lat = (count($lats) >= $i) ? $lats[$i] : $lats[0];
-                    $lng = (count($lngs) >= $i) ? $lngs[$i] : $lngs[0];
+                    $lat = (count($lats) > $i) ? $lats[$i] : $lats[0];
+                    $lng = (count($lngs) > $i) ? $lngs[$i] : $lngs[0];
                     $this->setExifCoords($file, $lat, $lng);
                     $this->photoMapper->updateByFileId($file->getId(), $lat, $lng);
                     $nbDone++;

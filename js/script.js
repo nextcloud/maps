@@ -303,8 +303,11 @@
                     // search bar
                     $('#route-submit').hide();
                     $('#search-submit').css('right', '10px');
-                    // context menu TODO remove routing related items
-                    mapController.map.contextmenu._items.splice(5, 4);
+                    // context menu: remove routing related items
+                    mapController.map.contextmenu.removeItem(mapController.map.contextmenu._items[5].el);
+                    mapController.map.contextmenu.removeItem(mapController.map.contextmenu._items[5].el);
+                    mapController.map.contextmenu.removeItem(mapController.map.contextmenu._items[5].el);
+                    mapController.map.contextmenu.removeItem(mapController.map.contextmenu._items[5].el);
                     // and we don't init routingController
                 }
                 else {

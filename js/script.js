@@ -6,7 +6,6 @@
         mapController.initMap();
         mapController.map.favoritesController = favoritesController;
         favoritesController.initFavorites(mapController.map);
-        routingController.initRoutingControl(mapController.map);
         photosController.initLayer(mapController.map);
         nonLocalizedPhotosController.initLayer(mapController.map);
         mapController.map.photosController = photosController;
@@ -281,44 +280,23 @@
                     mapController.layerChanged(e.name);
                 });
 
-                // add router to routing machine
+                // routing
                 var nbRouters = 0;
                 if (optionsValues.hasOwnProperty('osrmCarURL') && optionsValues.osrmCarURL !== '') {
-                    routingController.addRouter('osrmCar', 'By car (OSRM)', optionsValues.osrmCarURL, null);
                     nbRouters++;
                 }
                 if (optionsValues.hasOwnProperty('osrmBikeURL') && optionsValues.osrmBikeURL !== '') {
-                    routingController.addRouter('osrmBike', 'By bike (OSRM)', optionsValues.osrmBikeURL, null);
                     nbRouters++;
                 }
                 if (optionsValues.hasOwnProperty('osrmFootURL') && optionsValues.osrmFootURL !== '') {
-                    routingController.addRouter('osrmFoot', 'By foot (OSRM)', optionsValues.osrmFootURL, null);
                     nbRouters++;
                 }
-                if (optionsValues.hasOwnProperty('osrmDEMO') && optionsValues.osrmDEMO === '1') {
-                    routingController.addRouter('osrmDEMO', 'By car (OSRM demo)', null, null);
-                }
-                else {
-                    delete routingController.routers.osrmDEMO;
-                }
                 if (optionsValues.hasOwnProperty('mapboxAPIKEY') && optionsValues.mapboxAPIKEY !== '') {
-                    routingController.addRouter('mapbox', 'Mapbox', null, optionsValues.mapboxAPIKEY);
                     nbRouters++;
                 }
                 if ((optionsValues.hasOwnProperty('graphhopperURL') && optionsValues.graphhopperURL !== '') ||
                     (optionsValues.hasOwnProperty('graphhopperAPIKEY') && optionsValues.graphhopperAPIKEY !== '') ){
-                    var apikey = undefined;
-                    if (optionsValues.hasOwnProperty('graphhopperAPIKEY') && optionsValues.graphhopperAPIKEY !== '') {
-                        apikey = optionsValues.graphhopperAPIKEY;
-                    }
-                    routingController.addRouter('graphhopperCar', 'By car (GrahHopper)', optionsValues.graphhopperURL, apikey);
-                    routingController.addRouter('graphhopperBike', 'By bike (GrahHopper)', optionsValues.graphhopperURL, apikey);
-                    routingController.addRouter('graphhopperFoot', 'By Foot (GrahHopper)', optionsValues.graphhopperURL, apikey);
                     nbRouters++;
-                }
-                if (optionsValues.hasOwnProperty('selectedRouter') && optionsValues.selectedRouter !== '') {
-                    routingController.selectedRouter = optionsValues.selectedRouter;
-                    routingController.setRouter(optionsValues.selectedRouter);
                 }
                 if (nbRouters === 0 && !OC.isUserAdmin()) {
                     // disable routing and hide it to the user
@@ -327,9 +305,12 @@
                     $('#search-submit').css('right', '10px');
                     // context menu TODO remove routing related items
                     mapController.map.contextmenu._items.splice(5, 4);
-                    console.log(mapController.map.contextmenu);
-
+                    // and we don't init routingController
                 }
+                else {
+                    routingController.initRoutingControl(mapController.map, optionsValues);
+                }
+
                 //if (optionsValues.hasOwnProperty('routingEnabled') && optionsValues.routingEnabled === 'true') {
                 //    routingController.toggleRouting();
                 //}
@@ -661,7 +642,7 @@
         enabled: false,
         routers: {},
         selectedRouter: 'osrmDEMO',
-        initRoutingControl: function(map) {
+        initRoutingControl: function(map, optionsValues) {
             this.map = map;
             var that = this;
 
@@ -799,6 +780,49 @@
                 optionsController.saveOptionValues({selectedRouter: type});
                 that.control.route();
             });
+
+            // add routers from options values
+            if (optionsValues.hasOwnProperty('osrmCarURL') && optionsValues.osrmCarURL !== '') {
+                this.addRouter('osrmCar', 'By car (OSRM)', optionsValues.osrmCarURL, null);
+            }
+            if (optionsValues.hasOwnProperty('osrmBikeURL') && optionsValues.osrmBikeURL !== '') {
+                this.addRouter('osrmBike', 'By bike (OSRM)', optionsValues.osrmBikeURL, null);
+            }
+            if (optionsValues.hasOwnProperty('osrmFootURL') && optionsValues.osrmFootURL !== '') {
+                this.addRouter('osrmFoot', 'By foot (OSRM)', optionsValues.osrmFootURL, null);
+                nbRouters++;
+            }
+            if (optionsValues.hasOwnProperty('osrmDEMO') && optionsValues.osrmDEMO === '1') {
+                this.addRouter('osrmDEMO', 'By car (OSRM demo)', null, null);
+            }
+            else {
+                delete this.routers.osrmDEMO;
+            }
+            if (optionsValues.hasOwnProperty('mapboxAPIKEY') && optionsValues.mapboxAPIKEY !== '') {
+                this.addRouter('mapbox', 'Mapbox', null, optionsValues.mapboxAPIKEY);
+            }
+            if ((optionsValues.hasOwnProperty('graphhopperURL') && optionsValues.graphhopperURL !== '') ||
+                (optionsValues.hasOwnProperty('graphhopperAPIKEY') && optionsValues.graphhopperAPIKEY !== '') ){
+                var apikey = undefined;
+                if (optionsValues.hasOwnProperty('graphhopperAPIKEY') && optionsValues.graphhopperAPIKEY !== '') {
+                    apikey = optionsValues.graphhopperAPIKEY;
+                }
+                this.addRouter('graphhopperCar', 'By car (GrahHopper)', optionsValues.graphhopperURL, apikey);
+                this.addRouter('graphhopperBike', 'By bike (GrahHopper)', optionsValues.graphhopperURL, apikey);
+                this.addRouter('graphhopperFoot', 'By Foot (GrahHopper)', optionsValues.graphhopperURL, apikey);
+            }
+            if (optionsValues.hasOwnProperty('selectedRouter') && optionsValues.selectedRouter !== '') {
+                this.selectedRouter = optionsValues.selectedRouter;
+                this.setRouter(optionsValues.selectedRouter);
+            }
+            else {
+                var fallback = null;
+                for (var type in this.routers) {
+                    fallback = type;
+                    break;
+                }
+                this.setRouter(fallback);
+            }
         },
 
         toggleRouting: function() {
@@ -1007,40 +1031,54 @@
         },
 
         contextRouteFrom: function(e) {
-            if (!routingController.enabled) {
-                routingController.toggleRouting();
+            if (this.control) {
+                if (!routingController.enabled) {
+                    routingController.toggleRouting();
+                }
+                routingController.setRouteFrom(e.latlng);
             }
-            routingController.setRouteFrom(e.latlng);
         },
 
         contextRouteTo: function(e) {
-            if (!routingController.enabled) {
-                routingController.toggleRouting();
+            if (this.control) {
+                if (!routingController.enabled) {
+                    routingController.toggleRouting();
+                }
+                routingController.setRouteTo(e.latlng);
             }
-            routingController.setRouteTo(e.latlng);
         },
 
         contextRoutePoint: function(e) {
-            if (!routingController.enabled) {
-                routingController.toggleRouting();
+            if (this.control) {
+                if (!routingController.enabled) {
+                    routingController.toggleRouting();
+                }
+                routingController.addRoutePoint(e.latlng);
             }
-            routingController.addRoutePoint(e.latlng);
         },
 
         setRouteFrom: function(latlng) {
-            this.control.spliceWaypoints(0, 1, latlng);
+            if (this.control) {
+                this.control.spliceWaypoints(0, 1, latlng);
+            }
         },
 
         setRouteTo: function(latlng) {
-            this.control.spliceWaypoints(this.control.getWaypoints().length - 1, 1, latlng);
+            if (this.control) {
+                this.control.spliceWaypoints(this.control.getWaypoints().length - 1, 1, latlng);
+            }
         },
 
         setRoutePoint: function(i, latlng) {
-            this.control.spliceWaypoints(i, 1, latlng);
+            if (this.control) {
+                this.control.spliceWaypoints(i, 1, latlng);
+            }
         },
 
         addRoutePoint: function(latlng) {
-            this.control.spliceWaypoints(this.control.getWaypoints().length - 1, 0, latlng);
+            if (this.control) {
+                this.control.spliceWaypoints(this.control.getWaypoints().length - 1, 0, latlng);
+            }
         },
     };
 
@@ -1663,7 +1701,6 @@
         },
         geocode: function(latlng) {
             if (!this.isGeocodeable(latlng)) {
-                console.log('PLPLPLPL');
                 return;
             }
             var splits = latlng.split(',');
@@ -1853,7 +1890,6 @@
                     address = results.address;
                     that.currentClickAddress = address;
                     var strAddress = formatAddress(address);
-                    console.log(address);
                     $('#clickSearchAddress').text(strAddress);
                 }
             });

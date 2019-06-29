@@ -1340,6 +1340,13 @@
                 favoritesController.addFavoriteDB(categoryName, lat, lng, name);
                 that.map.closePopup();
             });
+            $('body').on('click', '.search-place-contact', function(e) {
+                var lat = parseFloat($(this).attr('lat'));
+                var lng = parseFloat($(this).attr('lng'));
+                that.map.closePopup();
+                that.map.clickpopup = null;
+                contactsController.openPlaceContactPopup(lat, lng);
+            });
             $('body').on('click', '#click-search-add-favorite', function(e) {
                 var lat = that.currentClickSearchLatLng.lat;
                 var lng = that.currentClickSearchLatLng.lng;
@@ -1794,6 +1801,8 @@
             var desc = '<span class="location-city">' + unformattedDesc + '</span>';
             desc += '<button class="search-add-favorite" lat="'+result.lat+'" lng="'+result.lon+'">' +
                 '<span class="icon-favorite"> </span> ' + t('maps', 'Add to favorites') + '</button>';
+            desc += '<button class="search-place-contact" lat="'+result.lat+'" lng="'+result.lon+'">' +
+                '<span class="icon-user"> </span> ' + t('maps', 'Add contact address') + '</button>';
 
             // Add extras to parsed desc
             var extras = result.extratags;

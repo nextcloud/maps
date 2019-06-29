@@ -217,6 +217,7 @@ FavoritesController.prototype = {
             }
             else {
                 a.layer.spiderfy();
+                that.map.clickpopup = true;
             }
         });
     },

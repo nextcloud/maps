@@ -40,6 +40,7 @@ ContactsController.prototype = {
             }
             else {
                 a.layer.spiderfy();
+                that.map.clickpopup = true;
             }
         });
         // click on contact menu entry

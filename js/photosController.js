@@ -36,6 +36,7 @@ PhotosController.prototype = {
             }
             else {
                 a.layer.spiderfy();
+                that.map.clickpopup = true;
             }
         });
         // click on photo menu entry

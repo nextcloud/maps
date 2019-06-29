@@ -304,10 +304,10 @@
                     $('#route-submit').hide();
                     $('#search-submit').css('right', '10px');
                     // context menu: remove routing related items
-                    mapController.map.contextmenu.removeItem(mapController.map.contextmenu._items[5].el);
-                    mapController.map.contextmenu.removeItem(mapController.map.contextmenu._items[5].el);
-                    mapController.map.contextmenu.removeItem(mapController.map.contextmenu._items[5].el);
-                    mapController.map.contextmenu.removeItem(mapController.map.contextmenu._items[5].el);
+                    mapController.map.contextmenu.removeItem(mapController.map.contextmenu._items[mapController.map.contextmenu._items.length-1].el);
+                    mapController.map.contextmenu.removeItem(mapController.map.contextmenu._items[mapController.map.contextmenu._items.length-1].el);
+                    mapController.map.contextmenu.removeItem(mapController.map.contextmenu._items[mapController.map.contextmenu._items.length-1].el);
+                    mapController.map.contextmenu.removeItem(mapController.map.contextmenu._items[mapController.map.contextmenu._items.length-1].el);
                     // and we don't init routingController
                 }
                 else {
@@ -442,10 +442,10 @@
                     text: t('maps', 'Place photos'),
                     icon: photoImageUrl,
                     callback: photosController.contextPlacePhotos
-                }, {
-                    text: t('maps', 'Place photo folder'),
-                    icon: photoImageUrl,
-                    callback: photosController.contextPlacePhotoFolder
+                //}, {
+                //    text: t('maps', 'Place photo folder'),
+                //    icon: photoImageUrl,
+                //    callback: photosController.contextPlacePhotoFolder
                 }, {
                     text: t('maps', 'Place contact'),
                     icon: contactImageUrl,

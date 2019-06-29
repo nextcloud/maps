@@ -279,7 +279,7 @@ function formatAddress(address) {
         (address.suburb || '')+' '+
         (address.city_district || '')+' '+
         (address.postcode || '')+' '+
-        (address.town || address.city || '')+' '+
+        (address.village || address.town || address.city || '')+' '+
         (address.state || '')+' '+
         (address.country || '');
     return strAddress;

@@ -557,7 +557,7 @@ ContactsController.prototype = {
             house_number: address.house_number,
             road: (address.road || '') + ' ' + (address.suburb || '') + ' ' + (address.city_district || ''),
             postcode: address.postcode,
-            city: address.town || address.city,
+            city: address.village || address.town || address.city,
             state: address.state,
             country: address.country,
             type: type

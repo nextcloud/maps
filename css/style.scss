@@ -145,6 +145,16 @@
 }
 
 #clickSearchAddress,
+#click-search-popup-title {
+    text-align: center;
+}
+#click-search-add-favorite,
+#click-search-place-contact {
+    margin-left: auto;
+    margin-right: auto;
+    display: block;
+}
+#clickSearchAddress,
 #placeContactPopupAddress {
     border: none;
     width: 100%;

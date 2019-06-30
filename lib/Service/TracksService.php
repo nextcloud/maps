@@ -15,17 +15,54 @@ namespace OCA\Maps\Service;
 use OCP\IL10N;
 use OCP\ILogger;
 use OCP\DB\QueryBuilder\IQueryBuilder;
+use OCP\Files\IRootFolder;
+use OCP\Files\FileInfo;
 
 class TracksService {
+
+    const TRACK_MIME_TYPES = ['application/gpx+xml'];
 
     private $l10n;
     private $logger;
     private $qb;
+    private $root;
 
-    public function __construct (ILogger $logger, IL10N $l10n) {
+    public function __construct (ILogger $logger, IL10N $l10n, IRootFolder $root) {
         $this->l10n = $l10n;
         $this->logger = $logger;
         $this->qb = \OC::$server->getDatabaseConnection()->getQueryBuilder();
+        $this->root = $root;
+    }
+
+    public function rescan ($userId){
+        $userFolder = $this->root->getUserFolder($userId);
+        $tracks = $this->gatherTrackFiles($userFolder, true);
+        $this->deleteAllTracksFromDB($userId);
+        foreach ($tracks as $track) {
+            $this->addTrackToDB($userId, $track->getId(), $track);
+            yield $track->getPath();
+        }
+    }
+
+    private function gatherTrackFiles ($folder, $recursive) {
+        $notes = [];
+        $nodes = $folder->getDirectoryListing();
+        foreach ($nodes as $node) {
+            if ($node->getType() === FileInfo::TYPE_FOLDER AND $recursive) {
+                $notes = array_merge($notes, $this->gatherTrackFiles($node, $recursive));
+                continue;
+            }
+            if ($this->isTrack($node)) {
+                $notes[] = $node;
+            }
+        }
+        return $notes;
+    }
+
+    private function isTrack($file) {
+        if ($file->getType() !== \OCP\Files\FileInfo::TYPE_FILE) return false;
+        if (!in_array($file->getMimetype(), self::TRACK_MIME_TYPES)) return false;
+        return true;
     }
 
     /**
@@ -86,6 +123,7 @@ class TracksService {
     }
 
     public function addTrackToDB($userId, $fileId, $file) {
+        // TODO don't generate metadata on add but on get if needed (etag has change)
         $metadata = $this->generateTrackMetadata($file);
         $etag = $file->getEtag();
         $qb = $this->qb;
@@ -126,6 +164,16 @@ class TracksService {
         $qb->delete('maps_tracks')
             ->where(
                 $qb->expr()->eq('id', $qb->createNamedParameter($id, IQueryBuilder::PARAM_INT))
+            );
+        $req = $qb->execute();
+        $qb = $qb->resetQueryParts();
+    }
+
+    public function deleteAllTracksFromDB($userId) {
+        $qb = $this->qb;
+        $qb->delete('maps_tracks')
+            ->where(
+                $qb->expr()->eq('user_id', $qb->createNamedParameter($userId, IQueryBuilder::PARAM_STR))
             );
         $req = $qb->execute();
         $qb = $qb->resetQueryParts();

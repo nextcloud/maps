@@ -8,7 +8,7 @@
     <licence>agpl</licence>
     <author mail="eneiluj@posteo.net">Julien Veyssier</author>
     <author mail="kontakt+github@arne.email">Arne Hamann</author>
-    <version>0.0.9</version>
+    <version>0.0.10</version>
     <namespace>Maps</namespace>
     <category>multimedia</category>
     <bugs>https://github.com/nextcloud/maps/issues</bugs>
@@ -27,6 +27,7 @@
     </types>
     <commands>
         <command>OCA\Maps\Command\RescanPhotos</command>
+        <command>OCA\Maps\Command\RescanTracks</command>
     </commands>
     <settings>
         <admin>OCA\Maps\Settings\AdminSettings</admin>

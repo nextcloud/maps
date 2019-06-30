@@ -172,7 +172,8 @@ class Application extends App {
                     $c->query('ServerContainer')->getLogger(),
                     new TracksService(
                         $c->query('ServerContainer')->getLogger(),
-                        $c->query('ServerContainer')->getL10N($c->query('AppName'))
+                        $c->query('ServerContainer')->getL10N($c->query('AppName')),
+                        $c->query('ServerContainer')->getRootFolder()
                     )
                 );
             }

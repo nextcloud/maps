@@ -131,6 +131,7 @@ class FileHooks {
                 $targetUserId = $params['shareWith'];
                 $fileId = $params['fileSource']; // or itemSource
                 $this->photofilesService->safeDeleteByFileIdUserId($fileId, $targetUserId);
+                $this->tracksService->safeDeleteByFileIdUserId($fileId, $targetUserId);
             }
         }
     }
@@ -141,6 +142,7 @@ class FileHooks {
                 $targetUserId = $params['shareWith'];
                 $dirId = $params['fileSource']; // or itemSource
                 $this->photofilesService->safeDeleteByFolderIdUserId($dirId, $targetUserId);
+                $this->tracksService->safeDeleteByFolderIdUserId($dirId, $targetUserId);
             }
         }
     }

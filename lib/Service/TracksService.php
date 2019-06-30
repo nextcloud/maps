@@ -122,6 +122,16 @@ class TracksService {
         }
     }
 
+    // delete track only if it's not accessible to user anymore
+    // it might have been shared multiple times by different users
+    public function safeDeleteByFileIdUserId($fileId, $userId) {
+        $userFolder = $this->root->getUserFolder($userId);
+        $files = $userFolder->getById($fileId);
+        if (!is_array($files) or count($files) === 0) {
+            $this->deleteByFileIdUserId($fileId, $userId);
+        }
+    }
+
     public function deleteByFile(Node $file) {
         $this->deleteByFileId($file->getId());
     }
@@ -130,6 +140,19 @@ class TracksService {
         $tracks = $this->gatherTrackFiles($folder, true);
         foreach ($tracks as $track) {
             $this->deleteByFileId($track->getId());
+        }
+    }
+
+    // delete folder tracks only if it's not accessible to user anymore
+    public function safeDeleteByFolderIdUserId($folderId, $userId) {
+        $userFolder = $this->root->getUserFolder($userId);
+        $folders = $userFolder->getById($folderId);
+        if (is_array($folders) and count($folders) === 1) {
+            $folder = $folders[0];
+            $tracks = $this->gatherTrackFiles($folder, true);
+            foreach($tracks as $track) {
+                $this->deleteByFileIdUserId($track->getId(), $userId);
+            }
         }
     }
 
@@ -282,6 +305,19 @@ class TracksService {
         $qb->delete('maps_tracks')
             ->where(
                 $qb->expr()->eq('file_id', $qb->createNamedParameter($fileId, IQueryBuilder::PARAM_INT))
+            );
+        $req = $qb->execute();
+        $qb = $qb->resetQueryParts();
+    }
+
+    public function deleteByFileIdUserId($fileId, $userId) {
+        $qb = $this->qb;
+        $qb->delete('maps_tracks')
+            ->where(
+                $qb->expr()->eq('file_id', $qb->createNamedParameter($fileId, IQueryBuilder::PARAM_INT))
+            )
+            ->andWhere(
+                $qb->expr()->eq('user_id', $qb->createNamedParameter($userId, IQueryBuilder::PARAM_STR))
             );
         $req = $qb->execute();
         $qb = $qb->resetQueryParts();

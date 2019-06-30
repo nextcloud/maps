@@ -1401,6 +1401,9 @@
             // get devices
             var devData = devicesController.getAutocompData();
             data.push(...devData);
+            // get photos
+            var photoData = photosController.getAutocompData();
+            data.push(...photoData);
             data.push(...this.getExtraAutocompleteData(field));
             that.currentLocalAutocompleteData = data;
             fieldElement.autocomplete({
@@ -1411,6 +1414,9 @@
                         that.map.setView([it.lat, it.lng], 15);
                     }
                     else if (it.type === 'contact') {
+                        that.map.setView([it.lat, it.lng], 15);
+                    }
+                    else if (it.type === 'photo') {
                         that.map.setView([it.lat, it.lng], 15);
                     }
                     else if (it.type === 'track') {
@@ -1474,6 +1480,9 @@
                 var iconElem = '';
                 if (item.type === 'favorite') {
                     iconClass = 'icon-favorite';
+                }
+                if (item.type === 'photo') {
+                    iconClass = 'icon-picture';
                 }
                 else if (item.type === 'track') {
                     iconClass = 'icon-category-monitoring';

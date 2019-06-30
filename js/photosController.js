@@ -471,5 +471,24 @@ PhotosController.prototype = {
         });
     },
 
+    getAutocompData: function() {
+        var that = this;
+        var mData;
+        var data = [];
+        if (this.map.hasLayer(this.photoLayer)) {
+            this.photoLayer.eachLayer(function (l) {
+                mData = l.data;
+                data.push({
+                    type: 'photo',
+                    label: OC.basename(mData.path),
+                    value: OC.basename(mData.path),
+                    lat: mData.lat,
+                    lng: mData.lng
+                });
+            });
+        }
+        return data;
+    },
+
 };
 

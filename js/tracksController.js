@@ -586,7 +586,7 @@ TracksController.prototype = {
             data: req,
             async: true
         }).done(function (response) {
-            that.processGpx(id, response);
+            that.processGpx(id, response.content, response.metadata);
             that.trackLayers[id].loaded = true;
             that.updateMyFirstLastDates(pageLoad);
             if (zoom) {
@@ -600,11 +600,13 @@ TracksController.prototype = {
         });
     },
 
-    processGpx: function(id, gpx) {
+    processGpx: function(id, gpx, metadata) {
         var that = this;
         var color;
         var coloredTooltipClass;
         var rgbc;
+
+        this.tracks[id].metadata = $.parseJSON(metadata);
 
         var gpxp, gpxx;
         try {

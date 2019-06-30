@@ -97,12 +97,6 @@ class TracksController extends Controller {
                 if ($trackFile->getType() === \OCP\Files\FileInfo::TYPE_FILE) {
                     $track['file_name'] = $trackFile->getName();
                     $track['file_path'] = $trackFile->getInternalPath();
-                    // did the file change?
-                    if ($track['etag'] !== $trackFile->getEtag()) {
-                        $metadata = $this->tracksService->generateTrackMetadata($trackFile);
-                        $track['metadata'] = $metadata;
-                        $this->tracksService->editTrackInDB($track['id'], null, $metadata, $trackFile->getEtag());
-                    }
                     array_push($existingTracks, $track);
                 }
                 else {
@@ -126,7 +120,19 @@ class TracksController extends Controller {
             $trackFile = $res[0];
             if ($trackFile->getType() === \OCP\Files\FileInfo::TYPE_FILE) {
                 $trackContent = remove_utf8_bom($trackFile->getContent());
-                return new DataResponse($trackContent);
+                // compute metadata if necessary
+                // first time we get it OR the file changed
+                if (!$track['metadata'] || $track['etag'] !== $trackFile->getEtag()) {
+                    $metadata = $this->tracksService->generateTrackMetadata($trackFile);
+                    $this->tracksService->editTrackInDB($track['id'], null, $metadata, $trackFile->getEtag());
+                }
+                else {
+                    $metadata = $track['metadata'];
+                }
+                return new DataResponse([
+                    'metadata'=>$metadata,
+                    'content'=>$trackContent
+                ]);
             }
             else {
                 return new DataResponse('bad file type', 400);

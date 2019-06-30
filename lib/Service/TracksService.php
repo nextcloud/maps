@@ -123,8 +123,7 @@ class TracksService {
     }
 
     public function addTrackToDB($userId, $fileId, $file) {
-        // TODO don't generate metadata on add but on get if needed (etag has change)
-        $metadata = $this->generateTrackMetadata($file);
+        $metadata = '';
         $etag = $file->getEtag();
         $qb = $this->qb;
         $qb->insert('maps_tracks')

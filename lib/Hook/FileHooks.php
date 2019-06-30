@@ -70,7 +70,7 @@ class FileHooks {
         // this one is triggered when restoring a version of a file
         // and NOT when it's created so we can use it for updating coordinates in DB
         $this->root->listen('\OC\Files', 'postTouch', function(\OCP\Files\Node $node) {
-            if ($this->isUserNode($node)) {
+            if ($this->isUserNode($node) and $node->getType() === FileInfo::TYPE_FILE) {
                 $this->photofilesService->updateByFile($node);
                 // nothing to update on tracks, metadata will be regenerated when getting content if etag has changed
             }
@@ -149,11 +149,13 @@ class FileHooks {
 
     public static function restore($params) {
         $node = $this->getNodeForPath($params['filePath']);
-        if($this->isUserNode($node)) {
+        if ($this->isUserNode($node)) {
             if ($node->getType() === FileInfo::TYPE_FOLDER) {
-                $this->photofilesService->addByFolder($node);
+                $this->photofilesService->safeAddByFolder($node);
+                $this->tracksService->safeAddByFolder($node);
             } else {
-                $this->photofilesService->addByFile($node);
+                $this->photofilesService->safeAddByFile($node);
+                $this->tracksService->safeAddByFile($node);
             }
         }
     }

@@ -116,7 +116,7 @@ class TracksService {
     }
 
     public function addByFolder(Node $folder) {
-        $photos = $this->gatherTrackFiles($folder, true);
+        $tracks = $this->gatherTrackFiles($folder, true);
         foreach($tracks as $track) {
             $this->addTrackToDB($folder->getOwner()->getUID(), $track->getId(), $track);
         }

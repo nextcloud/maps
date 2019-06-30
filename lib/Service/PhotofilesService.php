@@ -122,21 +122,24 @@ class PhotofilesService {
     public function addByFolder(Node $folder) {
         $photos = $this->gatherPhotoFiles($folder, true);
         foreach($photos as $photo) {
+            error_log('ADDDDD '.$photo->getName());
             $this->addPhoto($photo, $folder->getOwner()->getUID());
         }
     }
 
     public function updateByFile(Node $file) {
-        $exif = $this->getExif($file);
-        if (!is_null($exif)) {
-            $ownerId = $file->getOwner()->getUID();
-            // in case there is no entry for this file yet (normally there is because non-localized photos are added)
-            if ($this->photoMapper->findByFileId($ownerId, $file->getId()) === null) {
-                // TODO insert for all users having access to this file, not just the owner
-                $this->insertPhoto($file, $ownerId, $exif);
-            }
-            else {
-                $this->updatePhoto($file, $exif);
+        if ($this->isPhoto($file)) {
+            $exif = $this->getExif($file);
+            if (!is_null($exif)) {
+                $ownerId = $file->getOwner()->getUID();
+                // in case there is no entry for this file yet (normally there is because non-localized photos are added)
+                if ($this->photoMapper->findByFileId($ownerId, $file->getId()) === null) {
+                    // TODO insert for all users having access to this file, not just the owner
+                    $this->insertPhoto($file, $ownerId, $exif);
+                }
+                else {
+                    $this->updatePhoto($file, $exif);
+                }
             }
         }
     }
@@ -325,11 +328,11 @@ class PhotofilesService {
         $notes = [];
         $nodes = $folder->getDirectoryListing();
         foreach($nodes as $node) {
-            if($node->getType() === FileInfo::TYPE_FOLDER AND $recursive) {
+            if ($node->getType() === FileInfo::TYPE_FOLDER AND $recursive) {
                 $notes = array_merge($notes, $this->gatherPhotoFiles($node, $recursive));
                 continue;
             }
-            if($this->isPhoto($node)) {
+            if ($this->isPhoto($node)) {
                 $notes[] = $node;
             }
         }
@@ -337,8 +340,8 @@ class PhotofilesService {
     }
 
     private function isPhoto($file) {
-        if($file->getType() !== \OCP\Files\FileInfo::TYPE_FILE) return false;
-        if(!in_array($file->getMimetype(), self::PHOTO_MIME_TYPES)) return false;
+        if ($file->getType() !== \OCP\Files\FileInfo::TYPE_FILE) return false;
+        if (!in_array($file->getMimetype(), self::PHOTO_MIME_TYPES)) return false;
         return true;
     }
 

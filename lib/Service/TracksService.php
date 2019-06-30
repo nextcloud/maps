@@ -77,6 +77,25 @@ class TracksService {
         }
     }
 
+    public function safeAddByFileIdUserId($fileId, $userId) {
+        $userFolder = $this->root->getUserFolder($userId);
+        $file = $userFolder->getById($fileId)[0];
+        if ($file !== null and $this->isTrack($file)) {
+            $this->safeAddTrack($file, $userId);
+        }
+    }
+
+    public function safeAddByFolderIdUserId($folderId, $userId) {
+        $userFolder = $this->root->getUserFolder($userId);
+        $folder = $userFolder->getById($folderId)[0];
+        if ($folder !== null) {
+            $tracks = $this->gatherTrackFiles($folder, true);
+            foreach ($tracks as $track) {
+                $this->safeAddTrack($track, $userId);
+            }
+        }
+    }
+
     // avoid adding track if it already exists in the DB
     private function safeAddTrack($track, $userId) {
         // filehooks are triggered several times (2 times for file creation)
@@ -85,6 +104,21 @@ class TracksService {
         // OR by using file_id in primary key
         if ($this->getTrackByFileIDFromDB($track->getId(), $userId) === null) {
             $this->addTrackToDB($userId, $track->getId(), $track);
+        }
+    }
+
+    // add all tracks of a folder taking care of shared accesses
+    public function safeAddByFolder($folder) {
+        $tracks = $this->gatherTrackFiles($folder, true);
+        foreach($tracks as $track) {
+            $this->safeAddByFile($track);
+        }
+    }
+
+    public function addByFolder(Node $folder) {
+        $photos = $this->gatherTrackFiles($folder, true);
+        foreach($tracks as $track) {
+            $this->addTrackToDB($folder->getOwner()->getUID(), $track->getId(), $track);
         }
     }
 

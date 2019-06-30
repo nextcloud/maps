@@ -72,6 +72,7 @@ class FileHooks {
         $this->root->listen('\OC\Files', 'postTouch', function(\OCP\Files\Node $node) {
             if ($this->isUserNode($node)) {
                 $this->photofilesService->updateByFile($node);
+                // nothing to update on tracks, metadata will be regenerated when getting content if etag has changed
             }
         });
 
@@ -84,12 +85,14 @@ class FileHooks {
                     if ($source->getParent()->getId() !== $target->getParent()->getId()) {
                         $this->photofilesService->deleteByFile($target);
                         $this->photofilesService->safeAddByFile($target);
+                        // tracks: nothing to do here because we use fileID
                     }
                 }
                 elseif ($target->getType() === FileInfo::TYPE_FOLDER) {
                     if ($source->getParent()->getId() !== $target->getParent()->getId()) {
                         $this->photofilesService->deleteByFolder($target);
                         $this->photofilesService->safeAddByFolder($target);
+                        // tracks: nothing to do here because we use fileID
                     }
                 }
             }
@@ -111,11 +114,13 @@ class FileHooks {
                 $targetUserId = $params['shareWith'];
                 $fileId = $params['fileSource']; // or itemSource
                 $this->photofilesService->safeAddByFileIdUserId($fileId, $targetUserId);
+                $this->tracksService->safeAddByFileIdUserId($fileId, $targetUserId);
             }
             else if ($params['itemType'] === 'folder') {
                 $targetUserId = $params['shareWith'];
                 $dirId = $params['fileSource']; // or itemSource
                 $this->photofilesService->safeAddByFolderIdUserId($dirId, $targetUserId);
+                $this->tracksService->safeAddByFolderIdUserId($dirId, $targetUserId);
             }
         }
     }

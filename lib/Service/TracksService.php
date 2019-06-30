@@ -17,6 +17,9 @@ use OCP\ILogger;
 use OCP\DB\QueryBuilder\IQueryBuilder;
 use OCP\Files\IRootFolder;
 use OCP\Files\FileInfo;
+use OCP\Share\IManager;
+use OCP\Files\Folder;
+use OCP\Files\Node;
 
 class TracksService {
 
@@ -26,12 +29,14 @@ class TracksService {
     private $logger;
     private $qb;
     private $root;
+    private $shareManager;
 
-    public function __construct (ILogger $logger, IL10N $l10n, IRootFolder $root) {
+    public function __construct (ILogger $logger, IL10N $l10n, IRootFolder $root, IManager $shareManager) {
         $this->l10n = $l10n;
         $this->logger = $logger;
         $this->qb = \OC::$server->getDatabaseConnection()->getQueryBuilder();
         $this->root = $root;
+        $this->shareManager = $shareManager;
     }
 
     public function rescan ($userId){
@@ -41,6 +46,45 @@ class TracksService {
         foreach ($tracks as $track) {
             $this->addTrackToDB($userId, $track->getId(), $track);
             yield $track->getPath();
+        }
+    }
+
+    public function addByFile(Node $file) {
+        $userFolder = $this->root->getUserFolder($file->getOwner()->getUID());
+        if ($this->isTrack($file)) {
+            $this->addTrackToDB($file->getOwner()->getUID(), $file->getId(), $file);
+        }
+    }
+
+    // add the file for its owner and users that have access
+    // check if it's already in DB before adding
+    public function safeAddByFile(Node $file) {
+        $ownerId = $file->getOwner()->getUID();
+        $userFolder = $this->root->getUserFolder($ownerId);
+        if ($this->isTrack($file)) {
+            $this->safeAddTrack($file, $ownerId);
+            // is the file accessible to other users ?
+            $accesses = $this->shareManager->getAccessList($file);
+            foreach ($accesses['users'] as $uid) {
+                if ($uid !== $ownerId) {
+                    $this->safeAddTrack($file, $uid);
+                }
+            }
+            return true;
+        }
+        else {
+            return false;
+        }
+    }
+
+    // avoid adding track if it already exists in the DB
+    private function safeAddTrack($track, $userId) {
+        // filehooks are triggered several times (2 times for file creation)
+        // so we need to be sure it's not inserted several times
+        // by checking if it already exists in DB
+        // OR by using file_id in primary key
+        if ($this->getTrackByFileIDFromDB($track->getId(), $userId) === null) {
+            $this->addTrackToDB($userId, $track->getId(), $track);
         }
     }
 
@@ -99,6 +143,36 @@ class TracksService {
             ->from('maps_tracks', 't')
             ->where(
                 $qb->expr()->eq('id', $qb->createNamedParameter($id, IQueryBuilder::PARAM_INT))
+            );
+        if ($userId !== null) {
+            $qb->andWhere(
+                $qb->expr()->eq('user_id', $qb->createNamedParameter($userId, IQueryBuilder::PARAM_STR))
+            );
+        }
+        $req = $qb->execute();
+
+        while ($row = $req->fetch()) {
+            $track = [
+                'id' => intval($row['id']),
+                'file_id' => intval($row['file_id']),
+                'color' => $row['color'],
+                'metadata' => $row['metadata'],
+                'etag' => $row['etag'],
+            ];
+            break;
+        }
+        $req->closeCursor();
+        $qb = $qb->resetQueryParts();
+        return $track;
+    }
+
+    public function getTrackByFileIDFromDB($fileId, $userId=null) {
+        $track = null;
+        $qb = $this->qb;
+        $qb->select('id', 'file_id', 'color', 'metadata', 'etag')
+            ->from('maps_tracks', 't')
+            ->where(
+                $qb->expr()->eq('file_id', $qb->createNamedParameter($fileId, IQueryBuilder::PARAM_INT))
             );
         if ($userId !== null) {
             $qb->andWhere(

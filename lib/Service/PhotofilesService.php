@@ -76,15 +76,19 @@ class PhotofilesService {
     public function safeAddByFile(Node $file) {
         $ownerId = $file->getOwner()->getUID();
         $userFolder = $this->root->getUserFolder($ownerId);
-        if($this->isPhoto($file)) {
+        if ($this->isPhoto($file)) {
             $this->safeAddPhoto($file, $ownerId);
             // is the file accessible to other users ?
             $accesses = $this->shareManager->getAccessList($file);
-            foreach($accesses['users'] as $uid) {
+            foreach ($accesses['users'] as $uid) {
                 if ($uid !== $ownerId) {
                     $this->safeAddPhoto($file, $uid);
                 }
             }
+            return true;
+        }
+        else {
+            return false;
         }
     }
 

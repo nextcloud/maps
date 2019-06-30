@@ -22,6 +22,7 @@ use OCP\Util;
 use OCP\Share;
 
 use OCA\Maps\Service\PhotofilesService;
+use OCA\Maps\Service\TracksService;
 
 /**
  * Handles files events
@@ -29,21 +30,26 @@ use OCA\Maps\Service\PhotofilesService;
 class FileHooks {
 
     private $photofilesService;
+    private $tracksService;
 
     private $logger;
 
     private $root;
 
-    public function __construct(IRootFolder $root, PhotofilesService $photofilesService, ILogger $logger, $appName) {
+    public function __construct(IRootFolder $root, PhotofilesService $photofilesService, TracksService $tracksService, ILogger $logger, $appName) {
         $this->photofilesService = $photofilesService;
+        $this->tracksService = $tracksService;
         $this->logger = $logger;
         $this->root = $root;
     }
 
     public function register() {
         $fileWriteCallback = function(\OCP\Files\Node $node) {
-            if($this->isUserNode($node)) {
-                $this->photofilesService->safeAddByFile($node);
+            if ($this->isUserNode($node)) {
+                $isPhoto = $this->photofilesService->safeAddByFile($node);
+                if (!$isPhoto) {
+                    $this->tracksService->safeAddByFile($node);
+                }
             }
         };
         $this->root->listen('\OC\Files', 'postWrite', $fileWriteCallback);

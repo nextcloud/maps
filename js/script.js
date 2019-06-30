@@ -1690,7 +1690,7 @@
         },
 
         isGeocodeable: function(str) {
-            var pattern = /^\s*\d+\.?\d*\,\s*\d+\.?\d*\s*$/;
+            var pattern = /^\s*-?\d+\.?\d*\,\s*-?\d+\.?\d*\s*$/;
             return pattern.test(str);
         },
         search: function(str, limit=8) {
@@ -1720,7 +1720,12 @@
         },
         geocode: function(latlng) {
             if (!this.isGeocodeable(latlng)) {
-                return;
+                console.log(latlng+' is not geocodable');
+                return {
+                    then: function(f) {
+                        f({});
+                    }
+                };
             }
             var splits = latlng.split(',');
             var lat = splits[0].trim();

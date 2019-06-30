@@ -88,6 +88,17 @@ class TracksService {
         }
     }
 
+    public function deleteByFile(Node $file) {
+        $this->deleteByFileId($file->getId());
+    }
+
+    public function deleteByFolder(Node $folder) {
+        $tracks = $this->gatherTrackFiles($folder, true);
+        foreach ($tracks as $track) {
+            $this->deleteByFileId($track->getId());
+        }
+    }
+
     private function gatherTrackFiles ($folder, $recursive) {
         $notes = [];
         $nodes = $folder->getDirectoryListing();
@@ -228,6 +239,16 @@ class TracksService {
         $qb->where(
             $qb->expr()->eq('id', $qb->createNamedParameter($id, IQueryBuilder::PARAM_INT))
         );
+        $req = $qb->execute();
+        $qb = $qb->resetQueryParts();
+    }
+
+    public function deleteByFileId($fileId) {
+        $qb = $this->qb;
+        $qb->delete('maps_tracks')
+            ->where(
+                $qb->expr()->eq('file_id', $qb->createNamedParameter($fileId, IQueryBuilder::PARAM_INT))
+            );
         $req = $qb->execute();
         $qb = $qb->resetQueryParts();
     }

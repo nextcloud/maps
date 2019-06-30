@@ -55,11 +55,13 @@ class FileHooks {
         $this->root->listen('\OC\Files', 'postWrite', $fileWriteCallback);
 
         $fileDeletionCallback = function(\OCP\Files\Node $node) {
-            if($this->isUserNode($node)) {
+            if ($this->isUserNode($node)) {
                 if ($node->getType() === FileInfo::TYPE_FOLDER) {
                     $this->photofilesService->deleteByFolder($node);
+                    $this->tracksService->deleteByFolder($node);
                 } else {
                     $this->photofilesService->deleteByFile($node);
+                    $this->tracksService->deleteByFile($node);
                 }
             }
         };

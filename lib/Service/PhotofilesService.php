@@ -161,7 +161,7 @@ class PhotofilesService {
 
     public function deleteByFolder(Node $folder) {
         $photos = $this->gatherPhotoFiles($folder, true);
-        foreach($photos as $photo) {
+        foreach ($photos as $photo) {
             $this->photoMapper->deleteByFileId($photo->getId());
         }
     }

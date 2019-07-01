@@ -79,7 +79,7 @@ class ContactsController extends Controller {
                     $vcard = Reader::read($card['carddata']);;
                     //$adrs = $vcard->get('ADR');
                     //error_log('NB '.count($vcard->ADR));
-                    foreach($vcard->ADR as $adr) {
+                    foreach ($vcard->ADR as $adr) {
                         $geo = $this->addressService->addressToGeo($adr->getValue());
                         //var_dump($adr->parameters()['TYPE']->getValue());
                         $adrtype = '';

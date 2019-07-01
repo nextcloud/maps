@@ -73,6 +73,7 @@
             $('.app-navigation-entry-menu.open').removeClass('open');
             if (!wasOpen) {
                 menu.addClass('open');
+                mapController.map.clickpopup = true;
             }
         });
         // right click on entry line
@@ -93,6 +94,7 @@
             $('.app-navigation-entry-menu.open').removeClass('open');
             if (!wasOpen) {
                 menu.addClass('open');
+                mapController.map.clickpopup = true;
             }
             return false;
         });

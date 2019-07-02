@@ -179,6 +179,10 @@ PhotosController.prototype = {
         this.photoMarkers.push.apply(this.photoMarkers, markers);
         this.photoMarkers.sort(function (a, b) { return a.data.date - b.data.date;});
 
+        // we update the counter
+        var catCounter = $('#navigation-photos .app-navigation-entry-utils-counter');
+        catCounter.text(this.photoMarkers.length);
+
         // we put them all in the layer
         this.photoMarkersFirstVisible = 0;
         this.photoMarkersLastVisible = this.photoMarkers.length - 1;

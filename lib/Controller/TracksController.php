@@ -95,6 +95,7 @@ class TracksController extends Controller {
             if (is_array($res) and count($res) > 0) {
                 $trackFile = $res[0];
                 if ($trackFile->getType() === \OCP\Files\FileInfo::TYPE_FILE) {
+                    $track['mtime'] = $trackFile->getMTime();
                     $track['file_name'] = $trackFile->getName();
                     $track['file_path'] = \preg_replace("/^\/".$this->userId."\/files/", '', $trackFile->getPath());
                     array_push($existingTracks, $track);

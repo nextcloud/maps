@@ -169,6 +169,18 @@
                         <span><?php p($l->t('Hide all')); ?></span>
                     </a>
                 </li>
+                <li>
+                    <a href="#" id="sort-name-tracks">
+                        <span class="icon-tag"></span>
+                        <span><?php p($l->t('Sort by name')); ?></span>
+                    </a>
+                </li>
+                <li>
+                    <a href="#" id="sort-date-tracks">
+                        <span class="icon-calendar-dark"></span>
+                        <span><?php p($l->t('Sort by date')); ?></span>
+                    </a>
+                </li>
             </ul>
         </div>
         <ul id="track-list">

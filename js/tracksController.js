@@ -24,6 +24,7 @@ function TracksController(optionsController, timeFilterController) {
 
     this.changingColorOf = null;
     this.lastZIndex = 1000;
+    this.sortOrder = 'name';
 }
 
 TracksController.prototype = {
@@ -44,6 +45,17 @@ TracksController.prototype = {
         $('body').on('click', '.zoomTrackButton', function(e) {
             var id = $(this).parent().parent().parent().parent().attr('track');
             that.zoomOnTrack(id);
+        });
+        // sort
+        $('body').on('click', '#sort-name-tracks', function(e) {
+            that.sortOrder = 'name';
+            that.sortTracks();
+            that.optionsController.saveOptionValues({tracksSortOrder: 'name'});
+        });
+        $('body').on('click', '#sort-date-tracks', function(e) {
+            that.sortOrder = 'date';
+            that.sortTracks();
+            that.optionsController.saveOptionValues({tracksSortOrder: 'date'});
         });
         // show/hide all tracks
         $('body').on('click', '#select-all-tracks', function(e) {
@@ -318,6 +330,15 @@ TracksController.prototype = {
         this.trackLayers[track.id].loaded = false;
         this.mapTrackLayers[track.id].addLayer(this.trackLayers[track.id]);
 
+        this.addMenuEntry(track, color);
+
+        // enable if in saved options or if it should be enabled for another reason
+        if (show || this.optionsController.enabledTracks.indexOf(track.id) !== -1) {
+            this.toggleTrack(track.id, false, pageLoad, zoom);
+        }
+    },
+
+    addMenuEntry: function(track, color) {
         var name = track.file_name;
         var path = track.file_path;
 
@@ -357,25 +378,52 @@ TracksController.prototype = {
         '</li>';
 
         var beforeThis = null;
-        var nameLower = name.toLowerCase();
-        var trackName;
-        $('#track-list > li').each(function() {
-            trackName = $(this).attr('name');
-            if (nameLower.localeCompare(trackName) < 0) {
-                beforeThis = $(this);
-                return false;
-            }
-        });
+        var that = this;
+        if (this.sortOrder === 'name') {
+            var nameLower = name.toLowerCase();
+            var trackName;
+            $('#track-list > li').each(function() {
+                trackName = $(this).attr('name');
+                if (nameLower.localeCompare(trackName) < 0) {
+                    beforeThis = $(this);
+                    return false;
+                }
+            });
+        }
+        else if (this.sortOrder === 'date') {
+            var mtime = parseInt(track.mtime);
+            var tmpMtime;
+            $('#track-list > li').each(function() {
+                tmpMtime = parseInt(that.tracks[$(this).attr('track')].mtime);
+                if (mtime > tmpMtime) {
+                    beforeThis = $(this);
+                    return false;
+                }
+            });
+        }
         if (beforeThis !== null) {
             $(li).insertBefore(beforeThis);
         }
         else {
             $('#track-list').append(li);
         }
+    },
 
-        // enable if in saved options or if it should be enabled for another reason
-        if (show || this.optionsController.enabledTracks.indexOf(track.id) !== -1) {
-            this.toggleTrack(track.id, false, pageLoad, zoom);
+    // wipe track list, then add items again
+    // take care of enabling selected tracks
+    sortTracks: function() {
+        $('#track-list').html('');
+        var color;
+        for (var id in this.tracks) {
+            color = this.trackColors[id];
+            this.addMenuEntry(this.tracks[id], color);
+            // select if necessary
+            var mapTrackLayer = this.mapTrackLayers[id];
+            var trackLine = $('#track-list > li[track="' + id + '"]');
+            var trackName = trackLine.find('.track-name');
+            if (this.mainLayer.hasLayer(mapTrackLayer)) {
+                trackName.addClass('active');
+            }
         }
     },
 

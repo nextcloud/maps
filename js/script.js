@@ -233,6 +233,12 @@
                         return parseInt(x);
                     });
                 }
+                if (optionsValues.hasOwnProperty('tracksSortOrder') && optionsValues.tracksSortOrder !== '') {
+                    tracksController.sortOrder = optionsValues.tracksSortOrder;
+                }
+                else {
+                    tracksController.sortOrder = 'name';
+                }
                 if (getUrlParameter('track') || !optionsValues.hasOwnProperty('tracksEnabled') || optionsValues.tracksEnabled === 'true') {
                     tracksController.toggleTracks();
                 }

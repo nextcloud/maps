@@ -578,9 +578,11 @@ tr.selected td {
 }
 
 .tooltip-contact-avatar {
-    width: 80px;
-    margin-left: 35px;
-    margin-right: 35px;
+    width: 70px;
+    margin-left: 40px;
+    margin-right: 40px;
+    border-radius: 50%;
+    border: 2px solid var(--color-text-lighter);
 }
 
 .contactPopup a {

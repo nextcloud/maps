@@ -29,6 +29,7 @@ return [
         ['name' => 'contacts#getContacts', 'url' => '/contacts', 'verb' => 'GET'],
         ['name' => 'contacts#getAllContacts', 'url' => '/contacts-all', 'verb' => 'GET'],
         ['name' => 'contacts#placeContact', 'url' => '/contacts/{bookid}/{uri}', 'verb' => 'PUT'],
+        ['name' => 'contacts#getContactLetterAvatar', 'url' => '/contacts-avatar', 'verb' => 'GET'],
 
         // routing
         ['name' => 'routing#exportRoute', 'url' => '/exportRoute', 'verb' => 'POST'],

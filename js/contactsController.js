@@ -206,6 +206,7 @@ ContactsController.prototype = {
                 uid: contacts[i].UID,
                 uri: contacts[i].URI,
                 adr: contacts[i].ADR,
+                has_photo: contacts[i].HAS_PHOTO,
                 address: formattedAddress,
                 addressType: contacts[i].ADRTYPE.toLowerCase(),
                 bookid: contacts[i].BOOKID,
@@ -216,7 +217,7 @@ ContactsController.prototype = {
                 markerData.avatar = this.generateAvatar(markerData) || this.getUserImageIconUrl();
             }
             else {
-                markerData.avatar = this.getUserImageIconUrl();
+                markerData.avatar = this.getLetterAvatarUrl(basename(markerData.name));
             }
 
             var marker = L.marker([markerData.lat, markerData.lng], {
@@ -423,6 +424,10 @@ ContactsController.prototype = {
 
     getUserImageIconUrl: function() {
         return OC.generateUrl('/apps/theming/img/core/actions') + '/user.svg?v=2';
+    },
+
+    getLetterAvatarUrl: function(name) {
+        return OC.generateUrl('/apps/maps/contacts-avatar?name='+encodeURIComponent(name));
     },
 
     contextPlaceContact: function(e) {

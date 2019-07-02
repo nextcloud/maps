@@ -13,6 +13,8 @@
 namespace OCA\Maps\Controller;
 
 use OCP\IRequest;
+use OCP\IAvatarManager;
+use OCP\AppFramework\Http\DataDisplayResponse;
 use OCP\AppFramework\Http\DataResponse;
 use OCP\ILogger;
 use OCP\AppFramework\Controller;
@@ -31,11 +33,15 @@ class ContactsController extends Controller {
     private $dbconnection;
     private $qb;
     private $cdBackend;
+    private $avatarManager;
 
-    public function __construct($AppName, ILogger $logger, IRequest $request, IManager $contactsManager, AddressService $addressService, $UserId, CardDavBackend $cdBackend){
+    public function __construct($AppName, ILogger $logger, IRequest $request,
+                                IManager $contactsManager, AddressService $addressService,
+                                $UserId, CardDavBackend $cdBackend, IAvatarManager $avatarManager){
         parent::__construct($AppName, $request);
         $this->logger = $logger;
         $this->userId = $UserId;
+        $this->avatarManager = $avatarManager;
         $this->contactsManager = $contactsManager;
         $this->addressService = $addressService;
         $this->dbconnection = \OC::$server->getDatabaseConnection();
@@ -208,4 +214,14 @@ class ContactsController extends Controller {
         }
     }
 
+    /**
+     * get contacts with coordinates
+     * @NoAdminRequired
+     * @NoCSRFRequired
+     */
+    public function getContactLetterAvatar($name) {
+        $av = $this->avatarManager->getGuestAvatar($name);
+        $avatarContent = $av->getFile(64)->getContent();
+        return new DataDisplayResponse($avatarContent);
+    }
 }

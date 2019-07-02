@@ -106,7 +106,7 @@ class FileHooks {
         Util::connectHook(\OCP\Share::class, 'pre_unshare', $this, 'preUnShare');
     }
 
-    public static function postShare($params) {
+    public function postShare($params) {
         if ($params['shareType'] === Share::SHARE_TYPE_USER) {
             if ($params['itemType'] === 'file') {
                 //$targetFilePath = $params['itemTarget'];
@@ -125,7 +125,7 @@ class FileHooks {
         }
     }
 
-    public static function postUnShare($params) {
+    public function postUnShare($params) {
         if ($params['shareType'] === Share::SHARE_TYPE_USER) {
             if ($params['itemType'] === 'file') {
                 $targetUserId = $params['shareWith'];
@@ -136,7 +136,7 @@ class FileHooks {
         }
     }
 
-    public static function preUnShare($params) {
+    public function preUnShare($params) {
         if ($params['shareType'] === Share::SHARE_TYPE_USER) {
             if ($params['itemType'] === 'folder') {
                 $targetUserId = $params['shareWith'];
@@ -147,7 +147,7 @@ class FileHooks {
         }
     }
 
-    public static function restore($params) {
+    public function restore($params) {
         $node = $this->getNodeForPath($params['filePath']);
         if ($this->isUserNode($node)) {
             if ($node->getType() === FileInfo::TYPE_FOLDER) {

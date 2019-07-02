@@ -319,11 +319,12 @@ TracksController.prototype = {
         this.mapTrackLayers[track.id].addLayer(this.trackLayers[track.id]);
 
         var name = track.file_name;
+        var path = track.file_path;
 
         // side menu entry
         var imgurl = OC.generateUrl('/svg/core/categories/monitoring?color='+color.replace('#', ''));
         var li = '<li class="track-line" id="'+name+'-track" track="'+track.id+'" name="'+name+'">' +
-        '    <a href="#" class="track-name" id="'+name+'-track-name" style="background-image: url('+imgurl+')">'+name+'</a>' +
+        '    <a href="#" class="track-name" id="'+name+'-track-name" title="'+escapeHTML(path)+'" style="background-image: url('+imgurl+')">'+name+'</a>' +
         '    <div class="app-navigation-entry-utils">' +
         '        <ul>' +
         '            <li class="app-navigation-entry-utils-menu-button trackMenuButton">' +
@@ -394,7 +395,7 @@ TracksController.prototype = {
             for (i=0; i < response.length; i++) {
                 track = response[i];
                 // show'n'zoom track if it was asked with a GET parameter
-                show = (getUrlParameter('track') === track.file_path.replace(/^files/, ''));
+                show = (getUrlParameter('track') === track.file_path);
                 that.addTrackMap(track, show, true, show);
                 if (show) {
                     getFound = true;
@@ -691,12 +692,13 @@ TracksController.prototype = {
     getLinePopupText: function(id, name, cmt, desc, linkText, linkUrl) {
         var meta = this.tracks[id].metadata;
         var url = OC.generateUrl('/apps/files/ajax/download.php');
-        var dir = encodeURIComponent(dirname(this.tracks[id].file_path.replace(/^files/, ''))) || '/';
+        var dir = encodeURIComponent(dirname(this.tracks[id].file_path)) || '/';
         var file = encodeURIComponent(this.tracks[id].file_name);
         var dl_url = '"' + url + '?dir=' + dir + '&files=' + file + '"';
         var popupTxt = '<h3 class="trackPopupTitle">' +
             t('maps','File') + ' : <a href=' +
-            dl_url + ' title="' + t('maps','download') + '" class="getGpx" >' +
+            dl_url + ' title="' + t('maps','download') + ' ' + this.tracks[id].file_path + '"' +
+            ' class="getGpx" >' +
             '<i class="fa fa-cloud-download-alt" aria-hidden="true"></i> ' + this.tracks[id].file_name + '</a> ';
         popupTxt = popupTxt + '<button class="drawElevationButton" track="'+id+'"><i class="fa fa-chart-area" aria-hidden="true"></i></button>';
         popupTxt = popupTxt + '</h3>';

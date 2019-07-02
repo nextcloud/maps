@@ -45,20 +45,6 @@ TracksController.prototype = {
             var id = $(this).parent().parent().parent().parent().attr('track');
             that.zoomOnTrack(id);
         });
-        // remove a track
-        $('body').on('click', '.removeTrack', function(e) {
-            var id = parseInt($(this).parent().parent().parent().parent().attr('track'));
-            that.removeTrackDB(id);
-        });
-        $('body').on('click', '.contextRemoveTrack', function(e) {
-            var id = parseInt($(this).parent().parent().attr('trackid'));
-            that.removeTrackDB(id);
-            that.map.closePopup();
-        });
-        // remove all tracks
-        $('body').on('click', '#remove-all-tracks', function(e) {
-            that.removeAllTracksDB();
-        });
         // show/hide all tracks
         $('body').on('click', '#select-all-tracks', function(e) {
             that.showAllTracks();
@@ -74,30 +60,6 @@ TracksController.prototype = {
             that.optionsController.saveOptionValues({enabledTracks: trackStringList});
             that.optionsController.enabledTracks = [];
             that.optionsController.saveOptionValues({tracksEnabled: that.map.hasLayer(that.mainLayer)});
-        });
-        // click on + button
-        $('body').on('click', '#addTrackButton', function(e) {
-            OC.dialogs.filepicker(
-                t('maps', 'Load gpx file'),
-                function(targetPath) {
-                    that.addTracksDB(targetPath);
-                },
-                true,
-                'application/gpx+xml',
-                true
-            );
-        });
-        // click on add directory button
-        $('body').on('click', '#add-track-folder', function(e) {
-            OC.dialogs.filepicker(
-                t('maps', 'Load gpx files from directory'),
-                function(targetPath) {
-                    that.addTrackDirectoryDB(targetPath || '/');
-                },
-                false,
-                'httpd/unix-directory',
-                true
-            );
         });
         // toggle tracks
         $('body').on('click', '#navigation-tracks > a', function(e) {
@@ -285,50 +247,6 @@ TracksController.prototype = {
         this.updateMyFirstLastDates(true);
     },
 
-    removeTrackDB: function(id) {
-        var that = this;
-        $('#track-list > li[track="'+id+'"]').addClass('icon-loading-small');
-        var req = {};
-        var url = OC.generateUrl('/apps/maps/tracks/'+id);
-        $.ajax({
-            type: 'DELETE',
-            url: url,
-            data: req,
-            async: true
-        }).done(function (response) {
-            that.removeTrackMap(id);
-            that.saveEnabledTracks();
-        }).always(function (response) {
-            $('#track-list > li[track="'+id+'"]').removeClass('icon-loading-small');
-        }).fail(function() {
-            OC.Notification.showTemporary(t('maps', 'Failed to remove track'));
-        });
-    },
-
-    removeAllTracksDB: function() {
-        var that = this;
-        $('#navigation-tracks').addClass('icon-loading-small');
-        var req = {
-            ids: Object.keys(this.trackLayers)
-        };
-        var url = OC.generateUrl('/apps/maps/tracks');
-        $.ajax({
-            type: 'DELETE',
-            url: url,
-            data: req,
-            async: true
-        }).done(function (response) {
-            for (var id in that.trackLayers) {
-                that.removeTrackMap(id);
-            }
-            that.saveEnabledTracks();
-        }).always(function (response) {
-            $('#navigation-tracks').removeClass('icon-loading-small');
-        }).fail(function() {
-            OC.Notification.showTemporary(t('maps', 'Failed to remove track'));
-        });
-    },
-
     removeTrackMap: function(id) {
         this.mainLayer.removeLayer(this.mapTrackLayers[id]);
         this.mapTrackLayers[id].removeLayer(this.trackLayers[id]);
@@ -342,37 +260,6 @@ TracksController.prototype = {
 
         $('#track-list > li[track="'+id+'"]').fadeOut('slow', function() {
             $(this).remove();
-        });
-    },
-
-    addTrackDirectoryDB: function(path) {
-        var that = this;
-        $('#navigation-tracks').addClass('icon-loading-small');
-        var req = {
-            path: path
-        };
-        var url = OC.generateUrl('/apps/maps/tracks-directory');
-        $.ajax({
-            type: 'POST',
-            url: url,
-            data: req,
-            async: true
-        }).done(function (response) {
-            // show main layer if needed
-            if (!that.map.hasLayer(that.mainLayer)) {
-                that.toggleTracks();
-            }
-            var ids = [];
-            for (var i=0; i < response.length; i++) {
-                that.addTrackMap(response[i], true);
-                ids.push(response[i].id);
-            }
-            that.saveEnabledTracks(ids);
-            that.optionsController.saveOptionValues({tracksEnabled: true});
-        }).always(function (response) {
-            $('#navigation-tracks').removeClass('icon-loading-small');
-        }).fail(function() {
-            OC.Notification.showTemporary(t('maps', 'Failed to add track directory'));
         });
     },
 
@@ -462,12 +349,6 @@ TracksController.prototype = {
         '                <a href="#" class="showTrackElevation">' +
         '                    <span class="icon-category-monitoring"></span>' +
         '                    <span>'+t('maps', 'Show track elevation')+'</span>' +
-        '                </a>' +
-        '            </li>' +
-        '            <li>' +
-        '                <a href="#" class="removeTrack">' +
-        '                    <span class="icon-close"></span>' +
-        '                    <span>'+t('maps', 'Remove')+'</span>' +
         '                </a>' +
         '            </li>' +
         '        </ul>' +
@@ -616,7 +497,7 @@ TracksController.prototype = {
         }
         catch (err) {
             OC.Notification.showTemporary(t('maps', 'Failed to parse track {fname}', {fname: this.tracks[id].file_name}));
-            this.removeTrackDB(id);
+            this.removeTrackMap(id);
             return;
         }
 
@@ -1060,7 +941,6 @@ TracksController.prototype = {
     getTrackContextPopupContent: function(id) {
         var colorText = t('maps', 'Change color');
         var elevationText = t('maps', 'Show elevation');
-        var removeText = t('maps', 'Remove');
         var res =
             '<ul trackid="' + id + '">' +
             '   <li>' +
@@ -1071,11 +951,6 @@ TracksController.prototype = {
             '   <li>' +
             '       <button class="icon-category-monitoring contextShowElevation">' +
             '           <span>' + elevationText + '</span>' +
-            '       </button>' +
-            '   </li>' +
-            '   <li>' +
-            '       <button class="icon-close contextRemoveTrack">' +
-            '           <span>' + removeText + '</span>' +
             '       </button>' +
             '   </li>' +
             '</ul>';

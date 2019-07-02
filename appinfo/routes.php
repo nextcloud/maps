@@ -60,10 +60,7 @@ return [
         ['name' => 'tracks#getTracks', 'url' => '/tracks', 'verb' => 'GET'],
         ['name' => 'tracks#getTrackFileContent', 'url' => '/tracks/{id}', 'verb' => 'GET'],
         ['name' => 'tracks#addTracks', 'url' => '/tracks', 'verb' => 'POST'],
-        ['name' => 'tracks#addTrackDirectory', 'url' => '/tracks-directory', 'verb' => 'POST'],
         ['name' => 'tracks#editTrack', 'url' => '/tracks/{id}', 'verb' => 'PUT'],
-        ['name' => 'tracks#deleteTrack', 'url' => '/tracks/{id}', 'verb' => 'DELETE'],
-        ['name' => 'tracks#deleteTracks', 'url' => '/tracks', 'verb' => 'DELETE'],
 
         // devices API
         [

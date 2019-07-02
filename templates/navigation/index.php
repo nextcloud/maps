@@ -163,9 +163,6 @@
         <a class="icon-category-monitoring" href="#"><?php p($l->t('Your tracks')); ?></a>
         <div class="app-navigation-entry-utils">
             <ul>
-                <li id="addTrackButton" class="app-navigation-entry-utils-menu-button" title="<?php p($l->t('Load a track file')); ?>">
-                    <button class="icon-add"></button>
-                </li>
                 <li class="app-navigation-entry-utils-menu-button tracksMenuButton">
                     <button></button>
                 </li>
@@ -183,18 +180,6 @@
                     <a href="#" id="select-no-tracks">
                         <span class="icon-category-disabled"></span>
                         <span><?php p($l->t('Hide all')); ?></span>
-                    </a>
-                </li>
-                <li>
-                    <a href="#" id="add-track-folder">
-                        <span class="icon-folder"></span>
-                        <span><?php p($l->t('Load a directory')); ?></span>
-                    </a>
-                </li>
-                <li>
-                    <a href="#" id="remove-all-tracks">
-                        <span class="icon-delete"></span>
-                        <span><?php p($l->t('Remove all')); ?></span>
                     </a>
                 </li>
             </ul>

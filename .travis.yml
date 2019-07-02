@@ -51,8 +51,8 @@ before_script:
     # temporary fix, feel free to fix that
     - sed -i $'s|if (substr($fullPath, 0, strlen($root) + 1) === $root . \'/\')|if (is_string($root) and substr($fullPath, 0, strlen($root) + 1) === $root . \'/\')|g' lib/autoloader.php
     - mkdir data
-    - php ./occ maintenance:install --database-name oc_autotest --database-user oc_autotest --admin-user admin --admin-pass admin --database $DB --database-pass=''
-    - php ./occ app:enable maps
+    - php -f ./occ maintenance:install --database-name oc_autotest --database-user oc_autotest --admin-user admin --admin-pass admin --database $DB --database-pass=''
+    - php -f ./occ app:enable maps
     - chmod 777 data
     #- php -S localhost:8080 &
     - cd apps/maps

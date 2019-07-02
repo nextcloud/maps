@@ -1013,6 +1013,8 @@ DevicesController.prototype = {
             offset: L.point(-5, yOffset)
         });
         e.target.openPopup(e.latlng);
+        e.target.unbindPopup();
+        this._map.clickpopup = true;
     },
 
     getDeviceContextPopupContent: function(id) {

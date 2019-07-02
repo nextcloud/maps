@@ -32,6 +32,7 @@ TracksController.prototype = {
     initController : function(map) {
         this.map = map;
         this.mainLayer = L.featureGroup();
+        this.mainLayer.on('click', this.getTrackMarkerOnClickFunction());
         var that = this;
         // UI events
         // toggle a track
@@ -715,8 +716,20 @@ TracksController.prototype = {
             });
             // popup
             popupText = that.getLinePopupText(id, '', '', '', '', '');
-            this.tracks[id].marker.bindPopup(
-                popupText,
+            this.tracks[id].popupText = popupText;
+            this.trackLayers[id].addLayer(this.tracks[id].marker);
+        }
+    },
+
+    getTrackMarkerOnClickFunction: function() {
+        var _app = this;
+        return function(evt) {
+            console.log(evt);
+            var marker = evt.layer;
+            var trackPopup = _app.tracks[marker.trackid].popupText;
+            marker.unbindPopup();
+            marker.bindPopup(
+                trackPopup,
                 {
                     autoPan: true,
                     autoClose: true,
@@ -724,8 +737,9 @@ TracksController.prototype = {
                     className: 'trackPopup'
                 }
             );
-            this.trackLayers[id].addLayer(this.tracks[id].marker);
-        }
+            marker.openPopup();
+            _app.map.clickpopup = true;
+        };
     },
 
     addWaypoint: function(id, elem, coloredTooltipClass) {
@@ -1040,6 +1054,7 @@ TracksController.prototype = {
             className: 'popovermenu open popupMarker',
             offset: L.point(-5, yOffset)
         });
+        this._map.clickpopup = true;
     },
 
     getTrackContextPopupContent: function(id) {

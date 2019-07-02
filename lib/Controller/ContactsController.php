@@ -49,13 +49,14 @@ class ContactsController extends Controller {
      */
     public function getContacts() {
         $contacts = $this->contactsManager->search('', ['GEO','ADR'], ['types'=>false]);
+        $addressBooks = $this->contactsManager->getUserAddressBooks();
         $result = [];
         $userid = trim($this->userId);
         foreach ($contacts as $c) {
+            $addressBookUri = $addressBooks[$c['addressbook-key']]->getUri();
             $uid = trim($c['UID']);
-            if (strcmp($c['URI'], 'Database:'.$c['UID'].'.vcf') !== 0 or
-                strcmp($uid, $userid) === 0
-            ) {
+            // we don't give users, just contacts
+            if (strcmp($c['URI'], 'Database:'.$c['UID'].'.vcf') !== 0) {
                 // if the contact has a geo attibute use it
                 if (key_exists('GEO', $c)) {
                     $geo = $c['GEO'];
@@ -66,14 +67,14 @@ class ContactsController extends Controller {
                             'UID'=>$c['UID'],
                             'ADR'=>'',
                             'ADRTYPE'=>'',
-                            'PHOTO'=>$c['PHOTO'],
+                            'HAS_PHOTO'=>($c['PHOTO'] !== null),
                             'BOOKID'=>$c['addressbook-key'],
+                            'BOOKURI'=>$addressBookUri,
                             'GEO'=>$geo
                         ]);
                     }
                 }
                 // anyway try to get it from the address
-                //var_dump($c['ADR']);
                 $card = $this->cdBackend->getContact($c['addressbook-key'], $c['URI']);
                 if ($card) {
                     $vcard = Reader::read($card['carddata']);;
@@ -93,8 +94,9 @@ class ContactsController extends Controller {
                                 'UID'=>$c['UID'],
                                 'ADR'=>$adr->getValue(),
                                 'ADRTYPE'=>$adrtype,
-                                'PHOTO'=>$c['PHOTO'],
+                                'HAS_PHOTO'=>($c['PHOTO'] !== null),
                                 'BOOKID'=>$c['addressbook-key'],
+                                'BOOKURI'=>$addressBookUri,
                                 'GEO'=>$geo
                             ]);
                         }
@@ -115,9 +117,8 @@ class ContactsController extends Controller {
         $userid = trim($this->userId);
         foreach ($contacts as $c) {
             $uid = trim($c['UID']);
-            if (strcmp($c['URI'], 'Database:'.$c['UID'].'.vcf') !== 0 or
-                strcmp($uid, $userid) === 0
-            ) {
+            // we don't give users, just contacts
+            if (strcmp($c['URI'], 'Database:'.$c['UID'].'.vcf') !== 0) {
                 array_push($result, [
                     'FN'=>$c['FN'],
                     'URI'=>$c['URI'],
@@ -133,10 +134,8 @@ class ContactsController extends Controller {
      * @NoAdminRequired
      */
     public function placeContact($bookid, $uri, $uid, $lat, $lng, $attraction, $house_number, $road, $postcode, $city, $state, $country, $type) {
-        // do not edit 'user' contact except myself
-        if (strcmp($uri, 'Database:'.$uid.'.vcf') === 0 and
-            strcmp($uid, $this.userId) !== 0
-        ) {
+        // do not edit 'user' contact even myself
+        if (strcmp($uri, 'Database:'.$uid.'.vcf') === 0) {
             return new DataResponse('Can\'t edit users', 400);
         }
         else {

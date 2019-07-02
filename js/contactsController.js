@@ -129,12 +129,7 @@ ContactsController.prototype = {
         var _app = this;
         return function(cluster) {
             var marker = cluster.getAllChildMarkers()[0].data;
-            var iconUrl;
-            if (marker.photo) {
-                iconUrl = _app.generateAvatar(marker.photo) || _app.getImageIconUrl();
-            } else {
-                iconUrl = _app.getImageIconUrl();
-            }
+            var iconUrl = marker.avatar;
             var label = cluster.getChildCount();
             return new L.DivIcon(L.extend({
                 className: 'leaflet-marker-contact cluster-marker',
@@ -144,13 +139,7 @@ ContactsController.prototype = {
     },
 
     createContactView: function(markerData) {
-        var avatar;
-        if (markerData.photo) {
-            avatar = this.generateAvatar(markerData.photo) || this.getUserImageIconUrl();
-        }
-        else {
-            avatar = this.getUserImageIconUrl();
-        }
+        var avatar = markerData.avatar;
         //this.generatePreviewUrl(markerData.path);
         return L.divIcon(L.extend({
             html: '<div class="thumbnail" style="background-image: url(' + avatar + ');"></div>​',
@@ -214,23 +203,30 @@ ContactsController.prototype = {
                 name: contacts[i].FN,
                 lat: parseFloat(geo[0]),
                 lng: parseFloat(geo[1]),
-                photo: contacts[i].PHOTO,
                 uid: contacts[i].UID,
                 uri: contacts[i].URI,
                 adr: contacts[i].ADR,
                 address: formattedAddress,
                 addressType: contacts[i].ADRTYPE.toLowerCase(),
-                bookid: contacts[i]['addressbook-key'],
+                bookid: contacts[i].BOOKID,
+                bookuri: contacts[i].BOOKURI,
                 date: date/1000,
             };
+            if (contacts[i].HAS_PHOTO) {
+                markerData.avatar = this.generateAvatar(markerData) || this.getUserImageIconUrl();
+            }
+            else {
+                markerData.avatar = this.getUserImageIconUrl();
+            }
+
             var marker = L.marker([markerData.lat, markerData.lng], {
                 icon: this.createContactView(markerData)
             });
+
             marker.on('contextmenu', this.onContactRightClick);
             marker.data = markerData;
-            var avatar = this.generateAvatar(marker.data.photo) || this.getUserImageIconUrl();
             var contactTooltip = '<p class="tooltip-contact-name">' + escapeHTML(basename(markerData.name)) + '</p>';
-            var img = '<img class="tooltip-contact-avatar" src="' + avatar + '"/>';
+            var img = '<img class="tooltip-contact-avatar" src="' + markerData.avatar + '"/>';
             contactTooltip += img;
             if (markerData.addressType === 'home') {
                 contactTooltip += '<p class="tooltip-contact-address-type"><b>'+t('maps', 'Home')+'</b></p>';
@@ -415,7 +411,10 @@ ContactsController.prototype = {
         // data is supposed to be a base64 string
         // but if this is a 'user' contact, avatar is and address like
         // VALUE=uri:http://host/remote.php/dav/addressbooks/system/system/system/Database:toto.vcf?photo
-        return data ? data.replace(/^VALUE=uri:/, '') : data;
+        //return data ? data.replace(/^VALUE=uri:/, '') : data;
+        var url = OC.generateUrl('/remote.php/dav/addressbooks/users/' + OC.getCurrentUser().uid +
+                  '/' + data.bookuri + '/' + data.uri + '?photo').replace(/index\.php\//, '');
+        return url;
     },
 
     getImageIconUrl: function() {

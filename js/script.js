@@ -237,7 +237,7 @@
                     tracksController.sortOrder = optionsValues.tracksSortOrder;
                 }
                 else {
-                    tracksController.sortOrder = 'name';
+                    tracksController.sortOrder = 'date';
                 }
                 if (getUrlParameter('track') || !optionsValues.hasOwnProperty('tracksEnabled') || optionsValues.tracksEnabled === 'true') {
                     tracksController.toggleTracks();

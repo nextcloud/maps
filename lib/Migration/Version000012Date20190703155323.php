@@ -14,7 +14,7 @@ use Doctrine\DBAL\Types\Type;
 /**
  * Auto-generated migration step: Please modify to your needs!
  */
-class Version000011Date20190703135323 extends SimpleMigrationStep {
+class Version000012Date20190703155323 extends SimpleMigrationStep {
 
 	protected $db;
 

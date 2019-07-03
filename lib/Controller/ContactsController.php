@@ -154,7 +154,8 @@ class ContactsController extends Controller {
                 }
                 // we set the address
                 else {
-                    $stringAddress = ';;'.$attraction.' '.$house_number.' '.$road.';'.$city.';'.$state.';'.$postcode.';'.$country;
+                    $street = trim($attraction.' '.$house_number.' '.$road);
+                    $stringAddress = ';;'.$street.';'.$city.';'.$state.';'.$postcode.';'.$country;
                     // set the coordinates in the DB
                     $lat = floatval($lat);
                     $lng = floatval($lng);
@@ -163,7 +164,7 @@ class ContactsController extends Controller {
                     $card = $this->cdBackend->getContact($bookid, $uri);
                     if ($card) {
                         $vcard = Reader::read($card['carddata']);;
-                        $vcard->add(new Text($vcard, 'ADR', ['', '', $attraction.' '.$house_number.' '.$road, $city, $state, $postcode, $country], ['TYPE'=>$type]));
+                        $vcard->add(new Text($vcard, 'ADR', ['', '', $street, $city, $state, $postcode, $country], ['TYPE'=>$type]));
                         $this->cdBackend->updateCard($bookid, $uri, $vcard->serialize());
                     }
                 }

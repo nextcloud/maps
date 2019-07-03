@@ -282,5 +282,5 @@ function formatAddress(address) {
         (address.village || address.town || address.city || '')+' '+
         (address.state || '')+' '+
         (address.country || '');
-    return strAddress;
+    return strAddress.replace(/\s+/g, ' ').trim();
 }

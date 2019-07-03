@@ -54,8 +54,8 @@ class AddressService {
     }
 
     // converts the address to geo lat;lon
-    public function addressToGeo($adr) {
-        $geo = $this->lookupAddress($adr);
+    public function addressToGeo($adr, $uid) {
+        $geo = $this->lookupAddress($adr, $uid);
         return strval($geo[0]).';'.strval($geo[1]);
     }
 
@@ -67,11 +67,12 @@ class AddressService {
      * @param $adr
      * @return array($lat,$lng,$lookedUp)
      */
-    public function lookupAddress($adr){
+    public function lookupAddress($adr, $uid){
         $adr_norm = strtolower(preg_replace('/\s+/', '', $adr));
         $this->qb->select('id','lat','lng','looked_up')
             ->from('maps_address_geo')
-            ->where($this->qb->expr()->eq('adr_norm', $this->qb->createNamedParameter($adr_norm, IQueryBuilder::PARAM_STR)));
+            ->where($this->qb->expr()->eq('adr_norm', $this->qb->createNamedParameter($adr_norm, IQueryBuilder::PARAM_STR)))
+            ->andWhere($this->qb->expr()->eq('contact_uid', $this->qb->createNamedParameter($uid, IQueryBuilder::PARAM_STR)));
         $req=$this->qb->execute();
         $lat = null;
         $lng = null;
@@ -100,7 +101,7 @@ class AddressService {
         // if it's still not in the DB, it means the lookup did not happen yet
         // so we can schedule it for later
         if (!$inDb) {
-            $foo = $this->scheduleForLookup($adr);
+            $foo = $this->scheduleForLookup($adr, $uid);
             $id = $foo[0];
             $lat = $foo[1];
             $lng = $foo[2];
@@ -112,9 +113,10 @@ class AddressService {
                 $this->qb->update('maps_address_geo')
                     ->set('lat', $qb->createNamedParameter($lat, IQueryBuilder::PARAM_STR))
                     ->set('lng', $qb->createNamedParameter($lng, IQueryBuilder::PARAM_STR))
+                    ->set('contact_uid', $qb->createNamedParameter($uid, IQueryBuilder::PARAM_STR))
                     ->set('looked_up', $qb->createNamedParameter($lookedUp, IQueryBuilder::PARAM_BOOL))
                     ->where($this->qb->expr()->eq('id', $this->qb->createNamedParameter($id, IQueryBuilder::PARAM_STR)));
-                $req=$this->qb->execute();
+                $req = $this->qb->execute();
                 $qb = $this->qb->resetQueryParts();
             }
         }
@@ -161,26 +163,31 @@ class AddressService {
         return [null, null, False];
     }
 
-    public function  scheduleVCardForLookup($cardData){
+    // launch lookup for all addresses of the vCard
+    public function scheduleVCardForLookup($cardData) {
         $vCard = Reader::read($cardData);
+        $uid = $vCard->UID;
         foreach ($vCard->children() as $property) {
             if ($property->name === 'ADR') {
                 $adr = $property->getValue();
                 if ($adr !== ';;;;;;') {
-                    $this->lookupAddress($property->getValue());
+                    $this->lookupAddress($property->getValue(), $uid);
                 }
             }
         }
+
+        //TODO $this->cleanUpAddresses($uid);
     }
 
     // schedules the address for an external lookup
-    private function scheduleForLookup($adr) {
+    private function scheduleForLookup($adr, $uid) {
         $geo = $this->lookupAddressExternal($adr);
         $adr_norm = strtolower(preg_replace('/\s+/', '', $adr));
         $this->qb->insert('maps_address_geo')
             ->values([
                 'adr' => $this->qb->createNamedParameter($adr, IQueryBuilder::PARAM_STR),
                 'adr_norm' => $this->qb->createNamedParameter($adr_norm, IQueryBuilder::PARAM_STR),
+                'contact_uid' => $this->qb->createNamedParameter($uid, IQueryBuilder::PARAM_STR),
                 'lat' => $this->qb->createNamedParameter($geo[0], IQueryBuilder::PARAM_STR),
                 'lng' => $this->qb->createNamedParameter($geo[1], IQueryBuilder::PARAM_STR),
                 'looked_up' => $this->qb->createNamedParameter($geo[2], IQueryBuilder::PARAM_BOOL),
@@ -199,7 +206,7 @@ class AddressService {
     public function lookupMissingGeo($max=200):bool {
         // stores if all addresses where looked up
         $lookedUpAll = true;
-        $this->qb->select('adr')
+        $this->qb->select('adr', 'contact_uid')
             ->from('maps_address_geo')
             ->where($this->qb->expr()->eq('looked_up', $this->qb->createNamedParameter(False, IQueryBuilder::PARAM_BOOL)))
             ->setMaxResults($max);
@@ -209,7 +216,7 @@ class AddressService {
         $i = 0;
         foreach ($result as $row) {
             $i++;
-            $geo = $this->lookupAddress($row['adr']);
+            $geo = $this->lookupAddress($row['adr'], $row['contact_uid']);
             // lookup failed
             if (!$geo[2]){
                 $lookedUpAll = false;

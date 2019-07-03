@@ -66,14 +66,14 @@ class ContactsController extends Controller {
                 // if the contact has a geo attibute use it
                 if (key_exists('GEO', $c)) {
                     $geo = $c['GEO'];
-                    if(strlen($geo) > 1){
+                    if (strlen($geo) > 1) {
                         array_push($result, [
                             'FN'=>$c['FN'],
                             'URI'=>$c['URI'],
                             'UID'=>$c['UID'],
                             'ADR'=>'',
                             'ADRTYPE'=>'',
-                            'HAS_PHOTO'=>($c['PHOTO'] !== null),
+                            'HAS_PHOTO'=>(isset($c['PHOTO']) and $c['PHOTO'] !== null),
                             'BOOKID'=>$c['addressbook-key'],
                             'BOOKURI'=>$addressBookUri,
                             'GEO'=>$geo
@@ -87,20 +87,20 @@ class ContactsController extends Controller {
                     //$adrs = $vcard->get('ADR');
                     //error_log('NB '.count($vcard->ADR));
                     foreach ($vcard->ADR as $adr) {
-                        $geo = $this->addressService->addressToGeo($adr->getValue());
+                        $geo = $this->addressService->addressToGeo($adr->getValue(), $c['UID']);
                         //var_dump($adr->parameters()['TYPE']->getValue());
                         $adrtype = '';
                         if (isset($adr->parameters()['TYPE'])) {
                             $adrtype = $adr->parameters()['TYPE']->getValue();
                         }
-                        if(strlen($geo) > 1){
+                        if (strlen($geo) > 1) {
                             array_push($result, [
                                 'FN'=>$c['FN'],
                                 'URI'=>$c['URI'],
                                 'UID'=>$c['UID'],
                                 'ADR'=>$adr->getValue(),
                                 'ADRTYPE'=>$adrtype,
-                                'HAS_PHOTO'=>($c['PHOTO'] !== null),
+                                'HAS_PHOTO'=>(isset($c['PHOTO']) and $c['PHOTO'] !== null),
                                 'BOOKID'=>$c['addressbook-key'],
                                 'BOOKURI'=>$addressBookUri,
                                 'GEO'=>$geo

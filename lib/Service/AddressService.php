@@ -56,13 +56,13 @@ class AddressService {
     // converts the address to geo lat;lon
     public function addressToGeo($adr) {
         $geo = $this->lookupAddress($adr);
-        return strval($geo[0]).";".strval($geo[1]);
+        return strval($geo[0]).';'.strval($geo[1]);
     }
 
     /**
      * Safely looks up an adr string
-     * First: Checks if the adress is knwon and in the db
-     *      Uses the this geo if it was looked up externally
+     * First: Checks if the adress is known and in the db
+     *      Uses this geo if it was looked up externally
      *      Look's it up if it was not looked up
      * @param $adr
      * @return array($lat,$lng,$lookedUp)
@@ -75,26 +75,30 @@ class AddressService {
         $req=$this->qb->execute();
         $lat = null;
         $lng = null;
-        $inDb = False;
+        $inDb = false;
         while ($row = $req->fetch()) {
-            if ($row['looked_up']){
+            if ($row['looked_up']) {
                 $id = $row['id'];
                 $lat = $row['lat'];
                 $lng = $row['lng'];
-                $lookedUp = False;
-                $inDb = True;
-            } else {
+                $lookedUp = false;
+                $inDb = true;
+            }
+            else {
                 $id = $row['id'];
+                // if it's in the DB but not yet looked up, we can do it now
                 $geo = $this->lookupAddressExternal($adr);
                 $lat = $geo[0];
                 $lng = $geo[1];
                 $lookedUp = $geo[2];
-                $inDb = True;
+                $inDb = true;
             }
             break;
         }
         $req->closeCursor();
         $qb = $this->qb->resetQueryParts();
+        // if it's still not in the DB, it means the lookup did not happen yet
+        // so we can schedule it for later
         if (!$inDb) {
             $foo = $this->scheduleForLookup($adr);
             $id = $foo[0];
@@ -102,12 +106,13 @@ class AddressService {
             $lng = $foo[2];
             $lookedUp = $foo[3];
 
-        } else {
+        }
+        else {
             if ($lookedUp) {
                 $this->qb->update('maps_address_geo')
-                    ->set("lat", $qb->createNamedParameter($lat, IQueryBuilder::PARAM_STR))
-                    ->set("lng", $qb->createNamedParameter($lng, IQueryBuilder::PARAM_STR))
-                    ->set("looked_up", $qb->createNamedParameter($lookedUp, IQueryBuilder::PARAM_BOOL))
+                    ->set('lat', $qb->createNamedParameter($lat, IQueryBuilder::PARAM_STR))
+                    ->set('lng', $qb->createNamedParameter($lng, IQueryBuilder::PARAM_STR))
+                    ->set('looked_up', $qb->createNamedParameter($lookedUp, IQueryBuilder::PARAM_BOOL))
                     ->where($this->qb->expr()->eq('id', $this->qb->createNamedParameter($id, IQueryBuilder::PARAM_STR)));
                 $req=$this->qb->execute();
                 $qb = $this->qb->resetQueryParts();
@@ -117,42 +122,41 @@ class AddressService {
         return [$lat, $lng, $lookedUp];
     }
 
-    //looks up the address on external provider returns lat, lon, lookupstate
+    // looks up the address on external provider returns lat, lon, lookupstate
+    // do lookup only if last one occured more than one second ago
     private function lookupAddressExternal($adr){
         if (time() - intval($this->config->getAppValue('maps', 'lastAddressLookup')) >= 1) {
-            $opts = array('http' =>
-                array(
-                    'method'  => 'GET',
-                    'user_agent' => "Nextcloud Maps app",
-                )
-            );
-            $context  = stream_context_create($opts);
+            $opts = [
+                'http' => [
+                    'method' => 'GET',
+                    'user_agent' => 'Nextcloud Maps app',
+                ]
+            ];
+            $context = stream_context_create($opts);
             $result_json = @file_get_contents(
-                "https://nominatim.openstreetmap.org/search.php?q="
-                .urlencode($adr)
-                ."&format=json", False, $context
+                'https://nominatim.openstreetmap.org/search.php?q='.urlencode($adr).'&format=json',
+                false,
+                $context
             );
-            if ($result_json !== False) {
-                $result=\json_decode(
-                    $result_json
-                    ,true);
-                if(!(key_exists("request_failed",$result) AND $result["request_failed"])) {
-                    $this->logger->debug("External looked up address: " . $adr . " with result" . print_r($result, true));
-                    $this->config->setAppValue("maps", "lastAddressLookup", time());
+            if ($result_json !== false) {
+                $result = \json_decode($result_json, true);
+                if (!(key_exists('request_failed', $result) AND $result['request_failed'])) {
+                    $this->logger->debug('External looked up address: ' . $adr . ' with result' . print_r($result, true));
+                    $this->config->setAppValue('maps', 'lastAddressLookup', time());
                     if (sizeof($result) > 0) {
-                        if (key_exists("lat", $result[0]) AND
-                            key_exists("lon", $result[0])
+                        if (key_exists('lat', $result[0]) AND
+                            key_exists('lon', $result[0])
                         ) {
                             return [
-                                $result[0]["lat"],
-                                $result[0]["lon"], true
+                                $result[0]['lat'],
+                                $result[0]['lon'], true
                             ];
                         }
                     }
                     return [null, null, true];
                 }
             }
-            $this->logger->debug("Externally looked failed");
+            $this->logger->debug('Externally looked failed');
         }
         return [null, null, False];
     }
@@ -169,58 +173,59 @@ class AddressService {
         }
     }
 
-    //Schedules the address for an external lookup
+    // schedules the address for an external lookup
     private function scheduleForLookup($adr) {
         $geo = $this->lookupAddressExternal($adr);
         $adr_norm = strtolower(preg_replace('/\s+/', '', $adr));
         $this->qb->insert('maps_address_geo')
             ->values([
-                'adr'=>$this->qb->createNamedParameter($adr,IQueryBuilder::PARAM_STR),
-                'adr_norm'=>$this->qb->createNamedParameter($adr_norm,IQueryBuilder::PARAM_STR),
-                'lat'=>$this->qb->createNamedParameter($geo[0],IQueryBuilder::PARAM_STR),
-                'lng'=>$this->qb->createNamedParameter($geo[1],IQueryBuilder::PARAM_STR),
-                'looked_up'=>$this->qb->createNamedParameter($geo[2],IQueryBuilder::PARAM_BOOL),
+                'adr' => $this->qb->createNamedParameter($adr, IQueryBuilder::PARAM_STR),
+                'adr_norm' => $this->qb->createNamedParameter($adr_norm, IQueryBuilder::PARAM_STR),
+                'lat' => $this->qb->createNamedParameter($geo[0], IQueryBuilder::PARAM_STR),
+                'lng' => $this->qb->createNamedParameter($geo[1], IQueryBuilder::PARAM_STR),
+                'looked_up' => $this->qb->createNamedParameter($geo[2], IQueryBuilder::PARAM_BOOL),
             ]);
         $req = $this->qb->execute();
         $id = $this->qb->getLastInsertId();
         $qb = $this->qb->resetQueryParts();
         if (!$geo[2]) {
-            $this->jobList->add(LookupMissingGeoJob::class,[]);
+            $this->jobList->add(LookupMissingGeoJob::class, []);
         }
         return [$id, $geo[0], $geo[1], $geo[2]];
     }
 
-    //lookus up the geo information which have not been looked up
+    // looks up the geo information which have not been looked up
+    // this is called by the Cron job
     public function lookupMissingGeo($max=200):bool {
-        //Stores if all addresses where looked up
-        $lookedupall=True;
-        $this->qb->select("adr")
+        // stores if all addresses where looked up
+        $lookedUpAll = true;
+        $this->qb->select('adr')
             ->from('maps_address_geo')
             ->where($this->qb->expr()->eq('looked_up', $this->qb->createNamedParameter(False, IQueryBuilder::PARAM_BOOL)))
             ->setMaxResults($max);
-        $req=$this->qb->execute();
+        $req = $this->qb->execute();
         $result = $req->fetchAll();
         $req->closeCursor();
-        $i=0;
+        $i = 0;
         foreach ($result as $row) {
             $i++;
             $geo = $this->lookupAddress($row['adr']);
-            //Lookup failed
-            if(!$geo[2]){
-                $lookedupall = False;
+            // lookup failed
+            if (!$geo[2]){
+                $lookedUpAll = false;
             }
             \sleep(1);
             \usleep(\rand(100,100000));
         }
-        //not all addresses where loaded from database
-        if($i===$max){
-            $lookedupall = False;
+        // not all addresses where loaded from database
+        if ($i === $max){
+            $lookedUpAll = false;
         }
-        if ($lookedupall){
-            $this->logger->debug("Successfully looked up all addresses during cron job");
+        if ($lookedUpAll){
+            $this->logger->debug('Successfully looked up all addresses during cron job');
         } else {
-            $this->logger->debug("Failed to look up all addresses during cron job");
+            $this->logger->debug('Failed to look up all addresses during cron job');
         }
-        return $lookedupall;
+        return $lookedUpAll;
     }
 }

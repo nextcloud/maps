@@ -69,11 +69,11 @@ class AddressService {
      */
     public function lookupAddress($adr, $uid){
         $adr_norm = strtolower(preg_replace('/\s+/', '', $adr));
-        $this->qb->select('id','lat','lng','looked_up')
+        $this->qb->select('id', 'lat', 'lng', 'looked_up')
             ->from('maps_address_geo')
             ->where($this->qb->expr()->eq('adr_norm', $this->qb->createNamedParameter($adr_norm, IQueryBuilder::PARAM_STR)))
             ->andWhere($this->qb->expr()->eq('contact_uid', $this->qb->createNamedParameter($uid, IQueryBuilder::PARAM_STR)));
-        $req=$this->qb->execute();
+        $req = $this->qb->execute();
         $lat = null;
         $lng = null;
         $inDb = false;
@@ -167,6 +167,9 @@ class AddressService {
     public function scheduleVCardForLookup($cardData) {
         $vCard = Reader::read($cardData);
         $uid = $vCard->UID;
+
+        $this->cleanUpDBContactAddresses($vCard);
+
         foreach ($vCard->children() as $property) {
             if ($property->name === 'ADR') {
                 $adr = $property->getValue();
@@ -175,8 +178,41 @@ class AddressService {
                 }
             }
         }
+    }
 
-        //TODO $this->cleanUpAddresses($uid);
+    private function cleanUpDBContactAddresses($vCard) {
+        $qb = $this->qb;
+        $uid = $vCard->UID;
+        // get all vcard addresses
+        $vCardAddresses = [];
+        foreach ($vCard->children() as $property) {
+            if ($property->name === 'ADR') {
+                $adr = $property->getValue();
+                array_push($vCardAddresses, $adr);
+            }
+        }
+        // check which addresses from DB is not in the vCard anymore
+        $adrIdToDelete = [];
+        $this->qb->select('id', 'adr')
+            ->from('maps_address_geo')
+            ->where($this->qb->expr()->eq('contact_uid', $this->qb->createNamedParameter($uid, IQueryBuilder::PARAM_STR)));
+        $req = $this->qb->execute();
+        while ($row = $req->fetch()) {
+            if (!in_array($row['adr'], $vCardAddresses)) {
+                array_push($adrIdToDelete, $row['id']);
+            }
+        }
+        $req->closeCursor();
+        $qb = $this->qb->resetQueryParts();
+
+        foreach ($adrIdToDelete as $id) {
+            $qb->delete('maps_address_geo')
+                ->where(
+                    $qb->expr()->eq('id', $qb->createNamedParameter($id, IQueryBuilder::PARAM_INT))
+                );
+            $req = $qb->execute();
+            $qb = $qb->resetQueryParts();
+        }
     }
 
     // schedules the address for an external lookup

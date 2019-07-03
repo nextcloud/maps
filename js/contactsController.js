@@ -527,6 +527,7 @@ ContactsController.prototype = {
         // we didn't change the address => place
         if (currentFormattedAddress === editedAddress) {
             that.placeContact(bookid, uri, uid, lat, lng, currentAddress, type);
+            that.map.panTo([lat, lng], { animate: true });
         }
         // we changed the address, search the new one
         else {
@@ -545,7 +546,12 @@ ContactsController.prototype = {
                     address = currentAddress;
                 }
                 that.placeContact(bookid, uri, uid, lat, lng, address, type);
-                that.map.flyTo([lat, lng], 15, {animate: true});
+                if (that.map.getBounds().contains(L.latLng(lat, lng))) {
+                    that.map.panTo([lat, lng], { animate: true });
+                }
+                else {
+                    that.map.flyTo([lat, lng], 15, { animate: true });
+                }
             });
         }
     },

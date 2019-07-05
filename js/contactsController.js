@@ -524,6 +524,8 @@ ContactsController.prototype = {
         var editedAddress = $('#placeContactPopupAddress').val().trim().replace(/(\r\n|\n|\r)/gm, ' ').replace(/\s+/g, ' ');
         var type = $('#addressTypeSelect').val();
 
+        $('#submitPlaceContactButton').addClass('loading');
+
         // we didn't change the address => place
         if (currentFormattedAddress === editedAddress) {
             that.placeContact(bookid, uri, uid, lat, lng, currentAddress, type);
@@ -582,6 +584,7 @@ ContactsController.prototype = {
         }).done(function (response) {
         }).always(function (response) {
             that.map.closePopup();
+            that.map.clickpopup = null;
             $('#navigation-contacts').removeClass('icon-loading-small');
             $('.leaflet-container').css('cursor', 'grab');
             that.reloadContacts();

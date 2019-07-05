@@ -365,6 +365,7 @@
             if (results.length === 1) {
                 this.searchMarkerLayerGroup.getLayers()[0].openPopup();
                 this.map.flyTo([results[0].lat, results[0].lon], 15, {duration: 1});
+                this.map.clickpopup = true;
             }
         },
         initMap: function() {

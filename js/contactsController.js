@@ -523,15 +523,19 @@ ContactsController.prototype = {
         var that = this;
         $('#navigation-contacts').addClass('icon-loading-small');
         $('.leaflet-container').css('cursor', 'wait');
+        var road = (address.road || '') + ' ' + (address.pedestrian || '') + ' ' + (address.suburb || '') + ' ' + (address.city_district || '');
+        road = road.replace(/\s+/g, ' ').trim();
+        var city = address.village || address.town || address.city;
+        city = city.replace(/\s+/g, ' ').trim();
         var req = {
             lat: lat,
             lng: lng,
             uid: uid,
             attraction: address.attraction,
             house_number: address.house_number,
-            road: (address.road || '') + ' ' + (address.suburb || '') + ' ' + (address.city_district || ''),
+            road: road,
             postcode: address.postcode,
-            city: address.village || address.town || address.city,
+            city: city,
             state: address.state,
             country: address.country,
             type: type

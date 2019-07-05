@@ -276,6 +276,7 @@ function formatAddress(address) {
         (address.attraction || '')+' '+
         (address.house_number || '')+' '+
         (address.road || '')+' '+
+        (address.pedestrian || '')+' '+
         (address.suburb || '')+' '+
         (address.city_district || '')+' '+
         (address.postcode || '')+' '+

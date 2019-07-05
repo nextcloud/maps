@@ -50,24 +50,14 @@ ContactsController.prototype = {
             that.updateTimeFilterRange();
             that.timeFilterController.setSliderToMaxInterval();
         });
-        // reset
-        $('body').on('click', '.resetContact', function(e) {
+        // delete address
+        $('body').on('click', '.deleteContactAddress', function(e) {
             var ul = $(this).parent().parent();
             var bookid = ul.attr('bookid');
             var uri = ul.attr('uri');
             var uid = ul.attr('uid');
-            // TODO uncomment this when property deletion is fixed
-            //that.resetContact(bookid, uri, uid);
-            OC.Notification.showTemporary(t('maps', 'NYI'));
-        });
-        // move
-        $('body').on('click', '.moveContact', function(e) {
-            var ul = $(this).parent().parent();
-            that.movingBookid = ul.attr('bookid');
-            that.movingUri = ul.attr('uri');
-            that.movingUid = ul.attr('uid');
-            that.enterMoveContactMode();
-            that.map.closePopup();
+            var vcardAddress = ul.attr('vcardaddress');
+            that.deleteContactAddress(bookid, uri, uid, vcardAddress);
         });
         $('body').on('click', '#submitPlaceContactButton', function(e) {
             that.submitPlaceContact();
@@ -244,38 +234,15 @@ ContactsController.prototype = {
         return markers;
     },
 
-    enterMoveContactMode: function() {
-        $('.leaflet-container').css('cursor', 'crosshair');
-        this.map.on('click', this.moveContactClickMap);
-        OC.Notification.showTemporary(t('maps', 'Click on the map to move the contact, press ESC to cancel'));
-    },
-
-    leaveMoveContactMode: function() {
-        $('.leaflet-container').css('cursor', 'grab');
-        this.map.off('click', this.moveContactClickMap);
-        this.movingBookid = null;
-        this.movingUri = null;
-        this.movingUid = null;
-    },
-
-    moveContactClickMap: function(e) {
-        var lat = e.latlng.lat;
-        var lng = e.latlng.lng;
-        var bookid = this.contactsController.movingBookid;
-        var uri = this.contactsController.movingUri;
-        var uid = this.contactsController.movingUid;
-        this.contactsController.leaveMoveContactMode();
-        this.contactsController.placeContact(bookid, uri, uid, lat, lng);
-    },
-
     onContactRightClick: function(e) {
         var data = e.target.data;
         var bookid = data.bookid;
         var uri = data.uri;
         var uid = data.uid;
+        var vcardAddress = data.adr;
 
         e.target.unbindPopup();
-        var popupContent = this._map.contactsController.getContactContextPopupContent(bookid, uri, uid);
+        var popupContent = this._map.contactsController.getContactContextPopupContent(bookid, uri, uid, vcardAddress);
         e.target.bindPopup(popupContent, {
             closeOnClick: true,
             className: 'popovermenu open popupMarker',
@@ -285,48 +252,42 @@ ContactsController.prototype = {
         this._map.clickpopup = true;
     },
 
-    getContactContextPopupContent: function(bookid, uri, uid) {
-        var resetText = t('maps', 'Reset GEO information');
-        var moveText = t('maps', 'Move contact');
+    getContactContextPopupContent: function(bookid, uri, uid, vcardAddress) {
+        var deleteText = t('maps', 'Delete this address');
         var res =
-            '<ul bookid="' + bookid + '" uri="' + uri + '" uid="' + uid + '">' +
+            '<ul bookid="' + bookid + '" uri="' + uri + '" uid="' + uid + '" vcardaddress="' + vcardAddress + '">' +
             '   <li>' +
-            '       <button class="icon-link moveContact">' +
-            '           <span>' + moveText + '</span>' +
-            '       </button>' +
-            '   </li>' +
-            '   <li>' +
-            '       <button class="icon-history resetContact">' +
-            '           <span>' + resetText + '</span>' +
+            '       <button class="icon-delete deleteContactAddress">' +
+            '           <span>' + deleteText + '</span>' +
             '       </button>' +
             '   </li>' +
             '</ul>';
         return res;
     },
 
-    resetContact: function(bookid, uri, uid) {
+    deleteContactAddress: function(bookid, uri, uid, vcardAddress) {
         var that = this;
         $('#navigation-contacts').addClass('icon-loading-small');
         $('.leaflet-container').css('cursor', 'wait');
         var req = {
-            lat: null,
-            lng: null,
-            uid: uid
+            uid: uid,
+            adr: vcardAddress
         };
         var url = OC.generateUrl('/apps/maps/contacts/'+bookid+'/'+uri);
         $.ajax({
-            type: 'PUT',
+            type: 'DELETE',
             url: url,
             data: req,
             async: true
         }).done(function (response) {
         }).always(function (response) {
             that.map.closePopup();
+            that.map.clickpopup = null;
             $('#navigation-contacts').removeClass('icon-loading-small');
             $('.leaflet-container').css('cursor', 'grab');
             that.reloadContacts();
         }).fail(function() {
-            OC.Notification.showTemporary(t('maps', 'Failed to reset contact location'));
+            OC.Notification.showTemporary(t('maps', 'Failed to delete contact address'));
         });
     },
 
@@ -632,4 +593,3 @@ ContactsController.prototype = {
     },
 
 };
-

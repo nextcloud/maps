@@ -227,4 +227,28 @@ class ContactsController extends Controller {
         $avatarContent = $av->getFile(64)->getContent();
         return new DataDisplayResponse($avatarContent);
     }
+
+    /**
+     * removes the address from the vcard
+     * and delete corresponding entry in the DB
+     * @NoAdminRequired
+     */
+    public function deleteContactAddress($bookid, $uri, $uid, $adr) {
+        // vcard
+        $card = $this->cdBackend->getContact($bookid, $uri);
+        if ($card) {
+            $vcard = Reader::read($card['carddata']);;
+            foreach ($vcard->children() as $property) {
+                if ($property->name === 'ADR') {
+                    $cardAdr = $property->getValue();
+                    if ($cardAdr === $adr) {
+                        $vcard->remove($property);
+                        break;
+                    }
+                }
+            }
+            $this->cdBackend->updateCard($bookid, $uri, $vcard->serialize());
+        }
+        // no need to cleanup db here, it will be done when catching vcard change hook
+    }
 }

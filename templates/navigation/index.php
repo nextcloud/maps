@@ -78,19 +78,6 @@
                 <li class="app-navigation-entry-utils-counter">
                     <span></span>
                 </li>
-                <li class="app-navigation-entry-utils-menu-button contactsMenuButton">
-                    <button></button>
-                </li>
-            </ul>
-        </div>
-        <div class="app-navigation-entry-menu">
-            <ul>
-                <li>
-                    <a href="#" class="dummyoption">
-                        <span class="icon-category-office"></span>
-                        <span><?php p($l->t('Nothing yet')); ?></span>
-                    </a>
-                </li>
             </ul>
         </div>
     </li>

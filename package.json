@@ -39,6 +39,7 @@
     "leaflet.elevation": "^0.0.3",
     "d3": "^3.5.17",
     "nouislider": "^13.1.4",
+    "ua-parser-js": "^0.7.20",
     "opening_hours": "^3.5.0"
   }
 }

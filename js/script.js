@@ -480,6 +480,7 @@
             this.map.on('contextmenu', function(e) {
                 if ($(e.originalEvent.target).attr('id') === 'map') {
                     that.map.contextmenu.showAt(L.latLng(e.latlng.lat, e.latlng.lng));
+                    that.map.clickpopup = true;
                 }
             });
             this.map.clickpopup = null;

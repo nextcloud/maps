@@ -198,6 +198,23 @@ function formatTimeSeconds(time_s){
     return `${ph}:${pm}:${ps}`;
 }
 
+function getDeviceInfoFromUserAgent2(ua) {
+    var res = {
+        os: null,
+        client: null,
+    };
+    var parser = new UAParser(ua);
+    var uap = parser.getResult();
+    if (uap.os && uap.os.name) {
+        res.os = uap.os.name.replace('Linux', 'GNU/Linux').replace('windows', 'Windows');
+    }
+    if (uap.browser && uap.browser.name) {
+        res.client = uap.browser.name.replace('chrome', 'Chrome');
+    }
+
+    return res;
+}
+
 function getDeviceInfoFromUserAgent(ua) {
     var res = {
         os: null,

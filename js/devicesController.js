@@ -273,7 +273,6 @@ DevicesController.prototype = {
         var color = device.color || OCA.Theming.color;
         this.devices[id] = device;
         this.devices[id].color = color;
-        this.devices[id].info = getDeviceInfoFromUserAgent(device.user_agent);
 
         this.devices[id].icon = L.divIcon(L.extend({
             html: '<div class="thumbnail"></div>​',
@@ -298,27 +297,22 @@ DevicesController.prototype = {
         this.mapDeviceLayers[id].addLayer(this.deviceMarkerLayers[id]);
 
         var name = device.user_agent;
-        if (device.info.os) {
-            name = device.info.os;
-            if (device.info.client) {
-                name = name + ' ' + device.info.client;
-                if (device.info.clientVersion) {
-                    name = name + '(' + device.info.clientVersion + ')';
-                }
-            }
-        }
         device.name = name;
 
         // side menu entry
         var imgurl;
-        if (['Windows', 'GNU/Linux', 'MacOS'].indexOf(device.info.os) !== -1) {
+        if (name.match(/windows/i)
+            || name.match(/gnu\/linux/i)
+            || name.match(/macos/i)
+            || name.match(/ubuntu/i)
+        ) {
             imgurl = OC.generateUrl('/svg/core/clients/desktop?color='+color.replace('#', ''));
         }
         else {
             imgurl = OC.generateUrl('/svg/core/clients/phone?color='+color.replace('#', ''));
         }
         var li = '<li class="device-line" id="'+name+'-device" device="'+id+'" name="'+name+'">' +
-        '    <a href="#" class="device-name" id="'+name+'-device-name" title="'+name+'" style="background-image: url('+imgurl+')">'+name+'</a>' +
+        '    <a href="#" class="device-name" id="'+name+'-device-name" title="'+device.user_agent+'" style="background-image: url('+imgurl+')">'+name+'</a>' +
         '    <div class="app-navigation-entry-utils">' +
         '        <ul>' +
         '            <li class="app-navigation-entry-utils-menu-button deviceMenuButton">' +
@@ -406,7 +400,11 @@ DevicesController.prototype = {
         $('style[device='+id+']').remove();
 
         var imgurl;
-        if (['Windows', 'GNU/Linux', 'MacOS'].indexOf(this.devices[id].info.os) !== -1) {
+        if (   this.devices[id].user_agent.match(/windows/i)
+            || this.devices[id].user_agent.match(/gnu\/linux/i)
+            || this.devices[id].user_agent.match(/macos/i)
+            || this.devices[id].user_agent.match(/ubuntu/i)
+        ) {
             imgurl = OC.generateUrl('/svg/core/clients/desktop?color='+color.replace('#', ''));
         }
         else {
@@ -450,25 +448,19 @@ DevicesController.prototype = {
         }).done(function (response) {
             that.devices[id].user_agent = newDeviceName;
             var device = that.devices[id];
-            device.info = getDeviceInfoFromUserAgent(device.user_agent);
             var color = device.color;
             var imgurl;
-            if (['Windows', 'GNU/Linux', 'MacOS'].indexOf(device.info.os) !== -1) {
+            if (   newDeviceName.match(/windows/i)
+                || newDeviceName.match(/gnu\/linux/i)
+                || newDeviceName.match(/macos/i)
+                || newDeviceName.match(/ubuntu/i)
+            ) {
                 imgurl = OC.generateUrl('/svg/core/clients/desktop?color='+color.replace('#', ''));
             }
             else {
                 imgurl = OC.generateUrl('/svg/core/clients/phone?color='+color.replace('#', ''));
             }
             var name = device.user_agent;
-            if (device.info.os) {
-                name = device.info.os;
-                if (device.info.client) {
-                    name = name + ' ' + device.info.client;
-                    if (device.info.clientVersion) {
-                        name = name + '(' + device.info.clientVersion + ')';
-                    }
-                }
-            }
             device.name = name;
 
             var deviceNameElem = $('#device-list > li[device='+id+'] .device-name');
@@ -833,10 +825,20 @@ DevicesController.prototype = {
 
     sendMyPosition: function(lat, lng, acc) {
         var that = this;
+        var uaString = navigator.userAgent;
+        var info = getDeviceInfoFromUserAgent2(uaString);
+        var name = uaString;
+        if (info.client) {
+            name = info.client;
+            if (info.os) {
+                name = name + ' (' + info.os + ')';
+            }
+        }
         var ts = Math.floor(Date.now() / 1000);
         var req = {
             lat: lat,
             lng: lng,
+            user_agent: name,
             accuracy: acc,
             timestamp: ts
         };
@@ -891,7 +893,11 @@ DevicesController.prototype = {
         }).done(function (response) {
             var imgurl;
             var device = that.devices[id];
-            if (['Windows', 'GNU/Linux', 'MacOS'].indexOf(device.info.os) !== -1) {
+            if (   device.user_agent.match(/windows/i)
+                || device.user_agent.match(/gnu\/linux/i)
+                || device.user_agent.match(/macos/i)
+                || device.user_agent.match(/ubuntu/i)
+            ) {
                 imgurl = OC.generateUrl('/svg/core/clients/desktop?color='+color.replace('#', ''));
             }
             else {
@@ -1052,6 +1058,7 @@ DevicesController.prototype = {
         var that = this;
         var marker, devid;
         var data = [];
+        var subtype;
         if (this.map.hasLayer(this.mainLayer)) {
             for (devid in this.devices) {
                 // is activated
@@ -1059,10 +1066,19 @@ DevicesController.prototype = {
                     // is not filtered
                     if (this.mapDeviceLayers[devid].hasLayer(this.deviceMarkerLayers[devid])) {
                         marker = this.devices[devid].marker;
+                        if (   this.devices[devid].user_agent.match(/windows/i)
+                            || this.devices[devid].user_agent.match(/gnu\/linux/i)
+                            || this.devices[devid].user_agent.match(/macos/i)
+                            || this.devices[devid].user_agent.match(/ubuntu/i)
+                        ) {
+                            subtype = 'computer';
+                        } else {
+                            subtype = 'mobile';
+                        }
                         data.push({
                             type: 'device',
                             id: devid,
-                            subtype: (['Windows', 'GNU/Linux', 'MacOS'].indexOf(this.devices[devid].info.os) !== -1) ? 'computer' : 'mobile',
+                            subtype: subtype,
                             label: this.devices[devid].name,
                             value: this.devices[devid].name,
                             lat: marker.getLatLng().lat,

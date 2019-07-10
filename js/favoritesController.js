@@ -204,6 +204,7 @@ FavoritesController.prototype = {
 
         this.cluster = L.markerClusterGroup({
             iconCreateFunction: this.getClusterIconCreateFunction(),
+            spiderfyOnMaxZoom: false,
             maxClusterRadius: 28,
             zoomToBoundsOnClick: false,
             chunkedLoading: true,
@@ -212,7 +213,7 @@ FavoritesController.prototype = {
             }
         });
         this.cluster.on('clusterclick', function (a) {
-            if (a.layer.getChildCount() > 20) {
+            if (a.layer.getChildCount() > 20 && that.map.getZoom() !== that.map.getMaxZoom()) {
                 a.layer.zoomToBounds();
             }
             else {

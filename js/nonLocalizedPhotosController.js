@@ -23,6 +23,7 @@ NonLocalizedPhotosController.prototype = {
         var that = this;
         this.nonLocalizedPhotoLayer = L.markerClusterGroup({
             iconCreateFunction : this.getClusterIconCreateFunction(),
+            spiderfyOnMaxZoom: false,
             showCoverageOnHover : false,
             zoomToBoundsOnClick: false,
             maxClusterRadius: this.PHOTO_MARKER_VIEW_SIZE + 10,
@@ -32,7 +33,7 @@ NonLocalizedPhotosController.prototype = {
         });
         this.nonLocalizedPhotoLayer.on('click', this.getNonLocalizedPhotoMarkerOnClickFunction());
         this.nonLocalizedPhotoLayer.on('clusterclick', function (a) {
-            if (a.layer.getChildCount() > 20) {
+            if (a.layer.getChildCount() > 20 && that.map.getZoom() !== that.map.getMaxZoom()) {
                 a.layer.zoomToBounds();
             }
             else {

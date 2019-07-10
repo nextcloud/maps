@@ -22,6 +22,7 @@ PhotosController.prototype = {
         var that = this;
         this.photoLayer = L.markerClusterGroup({
             iconCreateFunction : this.getClusterIconCreateFunction(),
+            spiderfyOnMaxZoom: false,
             showCoverageOnHover : false,
             zoomToBoundsOnClick: false,
             maxClusterRadius: this.PHOTO_MARKER_VIEW_SIZE + 10,
@@ -31,7 +32,7 @@ PhotosController.prototype = {
         });
         this.photoLayer.on('click', this.getPhotoMarkerOnClickFunction());
         this.photoLayer.on('clusterclick', function (a) {
-            if (a.layer.getChildCount() > 20) {
+            if (a.layer.getChildCount() > 20 && that.map.getZoom() !== that.map.getMaxZoom()) {
                 a.layer.zoomToBounds();
             }
             else {

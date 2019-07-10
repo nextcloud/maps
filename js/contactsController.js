@@ -26,6 +26,7 @@ ContactsController.prototype = {
         var that = this;
         this.contactLayer = L.markerClusterGroup({
             iconCreateFunction : this.getClusterIconCreateFunction(),
+            spiderfyOnMaxZoom: false,
             showCoverageOnHover : false,
             zoomToBoundsOnClick: false,
             maxClusterRadius: this.contact_MARKER_VIEW_SIZE + 10,
@@ -35,7 +36,7 @@ ContactsController.prototype = {
         });
         this.contactLayer.on('click', this.getContactMarkerOnClickFunction());
         this.contactLayer.on('clusterclick', function (a) {
-            if (a.layer.getChildCount() > 20) {
+            if (a.layer.getChildCount() > 20 && that.map.getZoom() !== that.map.getMaxZoom()) {
                 a.layer.zoomToBounds();
             }
             else {

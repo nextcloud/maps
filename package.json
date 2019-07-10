@@ -33,7 +33,7 @@
     "leaflet-routing-machine": "^3.2.12",
     "leaflet.featuregroup.subgroup": "^1.0.2",
     "leaflet.locatecontrol": "^0.62.0",
-    "leaflet.markercluster": "^1.1.0",
+    "leaflet.markercluster": "^1.4.0",
     "leaflet-mouse-position": "^1.0.4",
     "leaflet-contextmenu": "^1.4.0",
     "leaflet.elevation": "^0.0.3",

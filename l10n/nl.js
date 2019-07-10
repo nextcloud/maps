@@ -117,6 +117,7 @@ OC.L10N.register(
     "Library" : "Bibliotheek",
     "School" : "School",
     "Sports centre" : "Sportcentrum",
+    "Gas station" : "Bezinestation",
     "Parking" : "Parkeerplaats",
     "Bicycle parking" : "Fietsenstalling",
     "Car rental" : "Autoverhuur",

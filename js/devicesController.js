@@ -301,11 +301,7 @@ DevicesController.prototype = {
 
         // side menu entry
         var imgurl;
-        if (name.match(/windows/i)
-            || name.match(/gnu\/linux/i)
-            || name.match(/macos/i)
-            || name.match(/ubuntu/i)
-        ) {
+        if (isComputer(name)) {
             imgurl = OC.generateUrl('/svg/core/clients/desktop?color='+color.replace('#', ''));
         }
         else {
@@ -400,11 +396,7 @@ DevicesController.prototype = {
         $('style[device='+id+']').remove();
 
         var imgurl;
-        if (   this.devices[id].user_agent.match(/windows/i)
-            || this.devices[id].user_agent.match(/gnu\/linux/i)
-            || this.devices[id].user_agent.match(/macos/i)
-            || this.devices[id].user_agent.match(/ubuntu/i)
-        ) {
+        if (isComputer(this.devices[id].user_agent)) {
             imgurl = OC.generateUrl('/svg/core/clients/desktop?color='+color.replace('#', ''));
         }
         else {
@@ -450,11 +442,7 @@ DevicesController.prototype = {
             var device = that.devices[id];
             var color = device.color;
             var imgurl;
-            if (   newDeviceName.match(/windows/i)
-                || newDeviceName.match(/gnu\/linux/i)
-                || newDeviceName.match(/macos/i)
-                || newDeviceName.match(/ubuntu/i)
-            ) {
+            if (isComputer(newDeviceName)) {
                 imgurl = OC.generateUrl('/svg/core/clients/desktop?color='+color.replace('#', ''));
             }
             else {
@@ -828,11 +816,19 @@ DevicesController.prototype = {
         var uaString = navigator.userAgent;
         var info = getDeviceInfoFromUserAgent2(uaString);
         var name = uaString;
-        if (info.client) {
-            name = info.client;
-            if (info.os) {
-                name = name + ' (' + info.os + ')';
+        if (info.client && info.os) {
+            if (isPhone(info.os)) {
+                name = t('maps', 'Phone');
             }
+            else if (isComputer(info.os)) {
+                name = t('maps', 'Computer');
+            }
+            else {
+                name = t('maps', 'Unknown device type');
+            }
+            name += ' (' + info.client;
+            name += '/' + info.os;
+            name += ')';
         }
         var ts = Math.floor(Date.now() / 1000);
         var req = {
@@ -893,11 +889,7 @@ DevicesController.prototype = {
         }).done(function (response) {
             var imgurl;
             var device = that.devices[id];
-            if (   device.user_agent.match(/windows/i)
-                || device.user_agent.match(/gnu\/linux/i)
-                || device.user_agent.match(/macos/i)
-                || device.user_agent.match(/ubuntu/i)
-            ) {
+            if (isComputer(device.user_agent)) {
                 imgurl = OC.generateUrl('/svg/core/clients/desktop?color='+color.replace('#', ''));
             }
             else {
@@ -1066,11 +1058,7 @@ DevicesController.prototype = {
                     // is not filtered
                     if (this.mapDeviceLayers[devid].hasLayer(this.deviceMarkerLayers[devid])) {
                         marker = this.devices[devid].marker;
-                        if (   this.devices[devid].user_agent.match(/windows/i)
-                            || this.devices[devid].user_agent.match(/gnu\/linux/i)
-                            || this.devices[devid].user_agent.match(/macos/i)
-                            || this.devices[devid].user_agent.match(/ubuntu/i)
-                        ) {
+                        if (isComputer(this.devices[devid].user_agent)) {
                             subtype = 'computer';
                         } else {
                             subtype = 'mobile';

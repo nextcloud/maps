@@ -1,0 +1,27 @@
+OC.L10N.register(
+    "maps",
+    {
+    "Maps" : "Mapak",
+    "Move contact" : "Mugitu kontaktua",
+    "Export" : "Esportatu",
+    "Delete" : "Ezabatu",
+    "Device deleted" : "Gailua ezabatuta",
+    "Device" : "Gailua",
+    "Date" : "Data",
+    "Elevation" : "Elebazioa",
+    "Accuracy" : "Zehaztasuna",
+    "Battery" : "Bateria",
+    "Personal" : "Pertsonala",
+    "Add a favorite" : "Gehitu gogoko bat",
+    "Rename" : "Aldatu izena",
+    "Category deleted" : "Kategoria ezabatuta",
+    "Failed to rename category" : "Huts egin du kategoriari izena aldatzean",
+    "Name" : "Izena",
+    "No name" : "Izenik ez",
+    "Category" : "Kategoria",
+    "Comment" : "Iruzkina",
+    "Submit" : "Bidali",
+    "right" : "eskuina",
+    "left" : "ezkerra"
+},
+"nplurals=2; plural=(n != 1);");

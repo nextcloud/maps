@@ -526,7 +526,7 @@ ContactsController.prototype = {
         $('.leaflet-container').css('cursor', 'wait');
         var road = (address.road || '') + ' ' + (address.pedestrian || '') + ' ' + (address.suburb || '') + ' ' + (address.city_district || '');
         road = road.replace(/\s+/g, ' ').trim();
-        var city = address.village || address.town || address.city;
+        var city = address.village || address.town || address.city || '';
         city = city.replace(/\s+/g, ' ').trim();
         var req = {
             lat: lat,

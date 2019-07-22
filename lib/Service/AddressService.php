@@ -71,8 +71,8 @@ class AddressService {
         $adr_norm = strtolower(preg_replace('/\s+/', '', $adr));
         $this->qb->select('id', 'lat', 'lng', 'looked_up')
             ->from('maps_address_geo')
-            ->where($this->qb->expr()->eq('adr_norm', $this->qb->createNamedParameter($adr_norm, IQueryBuilder::PARAM_STR)))
-            ->andWhere($this->qb->expr()->eq('contact_uid', $this->qb->createNamedParameter($uid, IQueryBuilder::PARAM_STR)));
+            ->where($this->qb->expr()->eq('contact_uid', $this->qb->createNamedParameter($uid, IQueryBuilder::PARAM_STR)))
+            ->andWhere($this->qb->expr()->eq('adr_norm', $this->qb->createNamedParameter($adr_norm, IQueryBuilder::PARAM_STR)));
         $req = $this->qb->execute();
         $lat = null;
         $lng = null;

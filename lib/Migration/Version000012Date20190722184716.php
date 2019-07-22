@@ -14,7 +14,7 @@ use Doctrine\DBAL\Types\Type;
 /**
  * Auto-generated migration step: Please modify to your needs!
  */
-class Version000012Date20190703155323 extends SimpleMigrationStep {
+class Version000012Date20190722184716 extends SimpleMigrationStep {
 
 	protected $db;
 
@@ -39,8 +39,40 @@ class Version000012Date20190703155323 extends SimpleMigrationStep {
 	public function changeSchema(IOutput $output, Closure $schemaClosure, array $options) {
 		$schema = $schemaClosure();
 
-		if ($schema->hasTable('maps_address_geo')) {
-			$schema->dropTable('maps_address_geo');
+		if (!$schema->hasTable('maps_address_geo')) {
+			$table = $schema->createTable('maps_address_geo');
+			$table->addColumn('id', 'bigint', [
+				'autoincrement' => true,
+				'notnull' => true,
+				'length' => 41,
+			]);
+			$table->addColumn('contact_uid', 'string', [
+				'notnull' => true,
+				'default' => '',
+				'length' => 64,
+			]);
+			$table->addColumn('adr', 'string', [
+				'notnull' => true,
+				'default' => '',
+				'length' => 255,
+			]);
+			$table->addColumn('adr_norm', 'string', [
+				'notnull' => true,
+				'default' => '',
+				'length' => 255,
+			]);
+			$table->addColumn('lat', 'float', [
+				'notnull' => false,
+				'length' => 10,
+			]);
+			$table->addColumn('lng', 'float', [
+				'notnull' => false,
+				'length' => 10,
+			]);
+			$table->addColumn('looked_up', 'boolean', [
+				'notnull' => true,
+			]);
+			$table->setPrimaryKey(['id']);
 		}
 
 		return $schema;

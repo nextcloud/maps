@@ -185,7 +185,7 @@ class ContactsController extends Controller {
         $qb->select('id')
              ->from('maps_address_geo')
              ->where($qb->expr()->eq('adr_norm', $qb->createNamedParameter($adr_norm, IQueryBuilder::PARAM_STR)))
-             ->andWhere($qb->expr()->eq('contact_uid', $qb->createNamedParameter($uri, IQueryBuilder::PARAM_STR)));
+             ->andWhere($qb->expr()->eq('object_uri', $qb->createNamedParameter($uri, IQueryBuilder::PARAM_STR)));
         $req = $qb->execute();
         $result = $req->fetchAll();
         $req->closeCursor();
@@ -195,7 +195,7 @@ class ContactsController extends Controller {
             $qb->update('maps_address_geo')
                 ->set('lat', $qb->createNamedParameter($lat, IQueryBuilder::PARAM_STR))
                 ->set('lng', $qb->createNamedParameter($lng, IQueryBuilder::PARAM_STR))
-                ->set('contact_uid', $qb->createNamedParameter($uri, IQueryBuilder::PARAM_STR))
+                ->set('object_uri', $qb->createNamedParameter($uri, IQueryBuilder::PARAM_STR))
                 ->set('looked_up', $qb->createNamedParameter(true, IQueryBuilder::PARAM_BOOL))
                 ->where($qb->expr()->eq('id', $qb->createNamedParameter($id, IQueryBuilder::PARAM_STR)));
             $req = $qb->execute();
@@ -206,7 +206,7 @@ class ContactsController extends Controller {
                 ->values([
                     'adr'=>$qb->createNamedParameter($adr, IQueryBuilder::PARAM_STR),
                     'adr_norm'=>$qb->createNamedParameter($adr_norm, IQueryBuilder::PARAM_STR),
-                    'contact_uid'=>$qb->createNamedParameter($uri, IQueryBuilder::PARAM_STR),
+                    'object_uri'=>$qb->createNamedParameter($uri, IQueryBuilder::PARAM_STR),
                     'lat'=>$qb->createNamedParameter($lat, IQueryBuilder::PARAM_STR),
                     'lng'=>$qb->createNamedParameter($lng, IQueryBuilder::PARAM_STR),
                     'looked_up'=>$qb->createNamedParameter(true, IQueryBuilder::PARAM_BOOL),

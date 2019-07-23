@@ -87,7 +87,7 @@ class ContactsController extends Controller {
                     //$adrs = $vcard->get('ADR');
                     //error_log('NB '.count($vcard->ADR));
                     foreach ($vcard->ADR as $adr) {
-                        $geo = $this->addressService->addressToGeo($adr->getValue(), $c['UID']);
+                        $geo = $this->addressService->addressToGeo($adr->getValue(), $c['URI']);
                         //var_dump($adr->parameters()['TYPE']->getValue());
                         $adrtype = '';
                         if (isset($adr->parameters()['TYPE'])) {
@@ -159,7 +159,7 @@ class ContactsController extends Controller {
                     // set the coordinates in the DB
                     $lat = floatval($lat);
                     $lng = floatval($lng);
-                    $this->setAddressCoordinates($lat, $lng, $stringAddress, $uid);
+                    $this->setAddressCoordinates($lat, $lng, $stringAddress, $uri);
                     // set the address in the vcard
                     $card = $this->cdBackend->getContact($bookid, $uri);
                     if ($card) {
@@ -178,14 +178,14 @@ class ContactsController extends Controller {
         }
     }
 
-    private function setAddressCoordinates($lat, $lng, $adr, $uid) {
+    private function setAddressCoordinates($lat, $lng, $adr, $uri) {
         $qb = $this->qb;
         $adr_norm = strtolower(preg_replace('/\s+/', '', $adr));
 
         $qb->select('id')
              ->from('maps_address_geo')
              ->where($qb->expr()->eq('adr_norm', $qb->createNamedParameter($adr_norm, IQueryBuilder::PARAM_STR)))
-             ->andWhere($qb->expr()->eq('contact_uid', $qb->createNamedParameter($uid, IQueryBuilder::PARAM_STR)));
+             ->andWhere($qb->expr()->eq('contact_uid', $qb->createNamedParameter($uri, IQueryBuilder::PARAM_STR)));
         $req = $qb->execute();
         $result = $req->fetchAll();
         $req->closeCursor();
@@ -195,7 +195,7 @@ class ContactsController extends Controller {
             $qb->update('maps_address_geo')
                 ->set('lat', $qb->createNamedParameter($lat, IQueryBuilder::PARAM_STR))
                 ->set('lng', $qb->createNamedParameter($lng, IQueryBuilder::PARAM_STR))
-                ->set('contact_uid', $qb->createNamedParameter($uid, IQueryBuilder::PARAM_STR))
+                ->set('contact_uid', $qb->createNamedParameter($uri, IQueryBuilder::PARAM_STR))
                 ->set('looked_up', $qb->createNamedParameter(true, IQueryBuilder::PARAM_BOOL))
                 ->where($qb->expr()->eq('id', $qb->createNamedParameter($id, IQueryBuilder::PARAM_STR)));
             $req = $qb->execute();
@@ -206,7 +206,7 @@ class ContactsController extends Controller {
                 ->values([
                     'adr'=>$qb->createNamedParameter($adr, IQueryBuilder::PARAM_STR),
                     'adr_norm'=>$qb->createNamedParameter($adr_norm, IQueryBuilder::PARAM_STR),
-                    'contact_uid'=>$qb->createNamedParameter($uid, IQueryBuilder::PARAM_STR),
+                    'contact_uid'=>$qb->createNamedParameter($uri, IQueryBuilder::PARAM_STR),
                     'lat'=>$qb->createNamedParameter($lat, IQueryBuilder::PARAM_STR),
                     'lng'=>$qb->createNamedParameter($lng, IQueryBuilder::PARAM_STR),
                     'looked_up'=>$qb->createNamedParameter(true, IQueryBuilder::PARAM_BOOL),

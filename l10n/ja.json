@@ -1,5 +1,6 @@
 { "translations": {
     "Maps" : "地図",
+    "NYI" : "まだ実装されていません",
     "Click on the map to move the contact, press ESC to cancel" : "マップをクリックして連絡先を移動\nESCでキャンセルします",
     "Reset GEO information" : "位置情報をリセット",
     "Move contact" : "連絡先を移動",
@@ -178,6 +179,8 @@
     "no date" : "日付なし",
     "Begin" : "開始",
     "End" : "終了",
+    "Cumulative elevation gain" : "累積標高増分",
+    "Cumulative elevation loss" : "累積標高減分",
     "Minimum elevation" : "最低標高",
     "Maximum elevation" : "最高標高",
     "Maximum speed" : "最高速度",

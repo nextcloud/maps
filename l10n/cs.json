@@ -61,6 +61,7 @@
     "Choose directory of pictures to place" : "Zvolit složku pro umístění obrázků",
     "{nb} photos placed" : "{nb} fotek nahrazeno",
     "Failed to place photos" : "Selhalo umístění fotek",
+    "Failed to reset photos coordinates" : "Nepodařilo se resetovat souřadnice fotky",
     "Failed to save option values" : "Nepodařilo se uložit hodnoty předvolby",
     "Failed to restore options values" : "Nepodařilo se obnovit hodnoty předvoleb",
     "Place photos" : "Umístit fotky",

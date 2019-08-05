@@ -21,6 +21,7 @@ use OCP\Files\Folder;
 use OCP\Files\Node;
 use OCP\ILogger;
 use OCP\Share\IManager;
+use OCP\Files\Mount\IMountPoint;
 
 use OCA\Maps\DB\Geophoto;
 use OCA\Maps\DB\GeophotoMapper;
@@ -327,8 +328,15 @@ class PhotofilesService {
     private function gatherPhotoFiles ($folder, $recursive) {
         $notes = [];
         $nodes = $folder->getDirectoryListing();
-        foreach($nodes as $node) {
+        foreach ($nodes as $node) {
             if ($node->getType() === FileInfo::TYPE_FOLDER AND $recursive) {
+                // we don't explore external storages for which previews are disabled
+                if ($node->isMounted()) {
+                    $options = $node->getMountPoint()->getOptions();
+                    if (!$options['previews']) {
+                        continue;
+                    }
+                }
                 $notes = array_merge($notes, $this->gatherPhotoFiles($node, $recursive));
                 continue;
             }

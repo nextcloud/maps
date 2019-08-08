@@ -78,6 +78,19 @@
                 <li class="app-navigation-entry-utils-counter">
                     <span></span>
                 </li>
+                <li class="app-navigation-entry-utils-menu-button devicesMenuButton">
+                    <button></button>
+                </li>
+            </ul>
+        </div>
+        <div class="app-navigation-entry-menu">
+            <ul>
+                <li>
+                    <a href="#" id="toggle-all-contact-groups">
+                        <span class="icon-category-enabled"></span>
+                        <span><?php p($l->t('Toggle all')); ?></span>
+                    </a>
+                </li>
             </ul>
         </div>
         <ul id="contact-group-list">

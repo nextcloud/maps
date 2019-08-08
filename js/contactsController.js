@@ -65,6 +65,26 @@ ContactsController.prototype = {
             that.saveDisabledGroups();
             that.addMarkersToLayer();
         });
+        // show/hide all groups
+        $('body').on('click', '#toggle-all-contact-groups', function(e) {
+            var allEnabled = true;
+            for (var gn in that.groups) {
+                if (!that.groups[gn].enabled) {
+                    allEnabled = false;
+                    break;
+                }
+            }
+
+            if (allEnabled) {
+                that.hideAllGroups();
+            }
+            else {
+                that.showAllGroups();
+            }
+            that.saveDisabledGroups();
+            that.optionsController.saveOptionValues({contactLayer: that.map.hasLayer(that.contactLayer)});
+            that.addMarkersToLayer();
+        });
         // zoom to group TODO
         $('body').on('click', '.zoomGroupButton', function(e) {
             var groupName = $(this).parent().parent().parent().parent().attr('contact-group');
@@ -103,9 +123,11 @@ ContactsController.prototype = {
         if (this.map.hasLayer(this.contactLayer)) {
             this.hideLayer();
             $('#navigation-contacts').removeClass('active');
+            $('#navigation-contacts > .app-navigation-entry-utils .app-navigation-entry-utils-counter').hide();
             $('#map').focus();
         } else {
             this.showLayer();
+            $('#navigation-contacts > .app-navigation-entry-utils .app-navigation-entry-utils-counter').show();
             $('#navigation-contacts').addClass('active');
         }
     },
@@ -140,6 +162,25 @@ ContactsController.prototype = {
         }
         if (showAgain) {
             this.map.addLayer(this.contactLayer);
+        }
+    },
+
+    showAllGroups: function() {
+        if (!this.map.hasLayer(this.contactLayer)) {
+            this.showLayer();
+        }
+        for (var gn in this.groups) {
+            if (!this.groups[gn].enabled) {
+                this.toggleGroup(gn);
+            }
+        }
+    },
+
+    hideAllGroups: function() {
+        for (var gn in this.groups) {
+            if (this.groups[gn].enabled) {
+                this.toggleGroup(gn);
+            }
         }
     },
 

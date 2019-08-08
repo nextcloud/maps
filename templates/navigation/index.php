@@ -71,7 +71,7 @@
             </li>
         </ul-->
     </li>
-    <li id="navigation-contacts">
+    <li id="navigation-contacts" class="collapsible">
         <a class="icon-group" href="#"><?php p($l->t('Your contacts')); ?></a>
         <div class="app-navigation-entry-utils">
             <ul>
@@ -80,6 +80,8 @@
                 </li>
             </ul>
         </div>
+        <ul id="contact-group-list">
+        </ul>
     </li>
     <li id="navigation-devices" class="collapsible">
         <a class="icon-phone" href="#"><?php p($l->t('Your devices')); ?></a>

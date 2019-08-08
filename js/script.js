@@ -142,6 +142,7 @@
     var optionsController = {
         optionValues: {},
         enabledFavoriteCategories: [],
+        enabledContactGroups: [],
         enabledTracks: [],
         enabledDevices: [],
         enabledDeviceLines: [],
@@ -203,6 +204,15 @@
                 }
                 if (!optionsValues.hasOwnProperty('photosLayer') || optionsValues.photosLayer === 'true') {
                     photosController.toggleLayer();
+                }
+                if (!optionsValues.hasOwnProperty('contactGroupListShow') || optionsValues.contactGroupListShow === 'true') {
+                    contactsController.toggleGroupList();
+                }
+                if (optionsValues.hasOwnProperty('enabledContactGroups')
+                    && optionsValues.enabledContactGroups
+                    && optionsValues.enabledContactGroups !== '')
+                {
+                    that.enabledContactGroups = optionsValues.enabledContactGroups.split('|');
                 }
                 if (!optionsValues.hasOwnProperty('contactLayer') || optionsValues.contactLayer === 'true') {
                     contactsController.toggleLayer();

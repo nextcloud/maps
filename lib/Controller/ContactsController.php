@@ -76,14 +76,15 @@ class ContactsController extends Controller {
                             'HAS_PHOTO'=>(isset($c['PHOTO']) and $c['PHOTO'] !== null),
                             'BOOKID'=>$c['addressbook-key'],
                             'BOOKURI'=>$addressBookUri,
-                            'GEO'=>$geo
+                            'GEO'=>$geo,
+                            'GROUPS'=>$c['CATEGORIES']
                         ]);
                     }
                 }
                 // anyway try to get it from the address
                 $card = $this->cdBackend->getContact($c['addressbook-key'], $c['URI']);
                 if ($card) {
-                    $vcard = Reader::read($card['carddata']);;
+                    $vcard = Reader::read($card['carddata']);
                     //$adrs = $vcard->get('ADR');
                     //error_log('NB '.count($vcard->ADR));
                     foreach ($vcard->ADR as $adr) {
@@ -103,7 +104,8 @@ class ContactsController extends Controller {
                                 'HAS_PHOTO'=>(isset($c['PHOTO']) and $c['PHOTO'] !== null),
                                 'BOOKID'=>$c['addressbook-key'],
                                 'BOOKURI'=>$addressBookUri,
-                                'GEO'=>$geo
+                                'GEO'=>$geo,
+                                'GROUPS'=>$c['CATEGORIES']
                             ]);
                         }
                     }

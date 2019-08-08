@@ -6,6 +6,10 @@ function ContactsController (optionsController, timeFilterController, searchCont
     this.optionsController = optionsController;
     this.timeFilterController = timeFilterController;
     this.searchController = searchController;
+    // indexed by group name, contains number of contacts in the group
+    this.groupsCount = {'0': 0};
+    this.groups = {};
+    this.groupColors = {};
     this.contactMarkers = [];
     this.contactMarkersOldest = null;
     this.contactMarkersNewest = null;
@@ -21,7 +25,7 @@ function ContactsController (optionsController, timeFilterController, searchCont
 
 ContactsController.prototype = {
 
-    initLayer : function(map) {
+    initLayer: function(map) {
         this.map = map;
         var that = this;
         this.contactLayer = L.markerClusterGroup({
@@ -50,6 +54,30 @@ ContactsController.prototype = {
             that.optionsController.saveOptionValues({contactLayer: that.map.hasLayer(that.contactLayer)});
             that.updateTimeFilterRange();
             that.timeFilterController.setSliderToMaxInterval();
+            // expand group list if we just enabled favorites and category list was folded
+            if (that.map.hasLayer(that.contactLayer) && !$('#navigation-contacts').hasClass('open')) {
+                that.toggleGroupList();
+                that.optionsController.saveOptionValues({contactGroupListShow: $('#navigation-contacts').hasClass('open')});
+            }
+        });
+        // expand group list
+        $('body').on('click', '#navigation-contacts', function(e) {
+            if (e.target.tagName === 'LI' && $(e.target).attr('id') === 'navigation-contacts') {
+                that.toggleGroupList();
+                that.optionsController.saveOptionValues({contactGroupListShow: $('#navigation-contacts').hasClass('open')});
+            }
+        });
+        // toggle a group
+        $('body').on('click', '.contact-group-line .contact-group-name', function(e) {
+            var groupName = $(this).parent().attr('contact-group');
+            that.toggleGroup(groupName, true);
+            that.saveEnabledGroups();
+            that.addMarkersToLayer();
+        });
+        // zoom to group TODO
+        $('body').on('click', '.zoomGroupButton', function(e) {
+            var groupName = $(this).parent().parent().parent().parent().attr('contact-group');
+            //that.zoomOnGroup(groupName);
         });
         // delete address
         $('body').on('click', '.deleteContactAddress', function(e) {
@@ -77,6 +105,7 @@ ContactsController.prototype = {
             this.callForContacts();
         }
         if (!this.map.hasLayer(this.contactLayer)) {
+            console.log(this.groups);
             this.map.addLayer(this.contactLayer);
         }
     },
@@ -96,6 +125,56 @@ ContactsController.prototype = {
             this.showLayer();
             $('#navigation-contacts').addClass('active');
         }
+    },
+
+    // expand or fold groups in sidebar
+    toggleGroupList: function() {
+        $('#navigation-contacts').toggleClass('open');
+    },
+
+    toggleGroup: function(groupName, updateSlider=false) {
+        var groupNoSpace = groupName.replace(' ', '-');
+        var groupLine = $('#contact-group-list > li[contact-group="'+groupName+'"]');
+        var groupCounter = groupLine.find('.app-navigation-entry-utils-counter');
+        var showAgain = false;
+        if (this.map.hasLayer(this.contactLayer)) {
+            // remove and add cluster to avoid a markercluster bug when spiderfied
+            this.map.removeLayer(this.contactLayer);
+            showAgain = true;
+        }
+        // hide
+        if (this.groups[groupName].enabled) {
+            this.groups[groupName].enabled = false;
+            groupLine.removeClass('active');
+            groupCounter.hide();
+            $('#map').focus();
+        }
+        // show
+        else {
+            this.groups[groupName].enabled = true;
+            groupLine.addClass('active');
+            groupCounter.show();
+        }
+        if (showAgain) {
+            this.map.addLayer(this.contactLayer);
+        }
+        //if (updateSlider) {
+        //    this.updateTimeFilterRange();
+        //    this.timeFilterController.setSliderToMaxInterval();
+        //}
+    },
+
+    saveEnabledGroups: function() {
+        var groupList = [];
+        for (var gn in this.groups) {
+            if (this.groups[gn].enabled) {
+                groupList.push(gn);
+            }
+        }
+        var groupStringList = groupList.join('|');
+        this.optionsController.saveOptionValues({enabledContactGroups: groupStringList});
+        // this is used when contacts are loaded again
+        this.optionsController.enabledContactGroups = groupList;
     },
 
     getContactMarkerOnClickFunction: function() {
@@ -141,21 +220,108 @@ ContactsController.prototype = {
         }));
     },
 
-    addContactsToMap : function(contacts) {
+    addContactsToMap: function(contacts) {
         var markers = this.prepareContactMarkers(contacts);
+        $('#navigation-contacts .app-navigation-entry-utils-counter span').text(markers.length);
+        for (var gn in this.groupsCount) {
+            this.addGroup(gn);
+        }
         this.contactMarkers.push.apply(this.contactMarkers, markers);
         this.contactMarkers.sort(function (a, b) { return a.data.date - b.data.date;});
 
-        // we put them all in the layer
+        // we put them in the layer
         this.contactMarkersFirstVisible = 0;
         this.contactMarkersLastVisible = this.contactMarkers.length - 1;
-        this.contactLayer.addLayers(this.contactMarkers);
+        this.addMarkersToLayer();
 
         this.updateTimeFilterRange();
         this.timeFilterController.setSliderToMaxInterval();
     },
 
-    prepareContactMarkers : function(contacts) {
+    addMarkersToLayer: function() {
+        this.contactLayer.clearLayers();
+        var displayedMarkers = [];
+        var i, j, m;
+        for (i=0; i < this.contactMarkers.length; i++) {
+            m = this.contactMarkers[i];
+            // not grouped
+            if (m.data.groups.length === 0 && this.groups['0'].enabled) {
+                displayedMarkers.push(m);
+                continue;
+            }
+            // in at least a group
+            else {
+                for (j=0; j < m.data.groups.length; j++) {
+                    if (this.groups[m.data.groups[j]].enabled) {
+                        displayedMarkers.push(m);
+                        continue;
+                    }
+                }
+            }
+        }
+        this.contactLayer.addLayers(displayedMarkers);
+    },
+
+    addGroup: function(rawName, enable=false) {
+        this.groups[rawName] = {};
+        var name = rawName.replace(' ', '-');
+
+        // color
+        var color = '0000EE';
+        if (rawName.length > 1) {
+            var hsl = getLetterColor(rawName[0], rawName[1]);
+            color = hslToRgb(hsl.h/360, hsl.s/100, hsl.l/100);
+        }
+        var displayName = rawName;
+        if (rawName === '0') {
+            color = OCA.Theming.color.replace('#', '');
+            displayName = t('maps', 'Not grouped');
+        }
+        this.groups[rawName].color = color;
+
+
+        // side menu entry
+        var imgurl = OC.generateUrl('/svg/core/places/contacts?color='+color);
+        var li = '<li class="contact-group-line" id="'+name+'-contact-group" contact-group="'+rawName+'">' +
+        '    <a href="#" class="contact-group-name" id="'+name+'-category-name" style="background-image: url('+imgurl+')">'+displayName+'</a>' +
+        '    <div class="app-navigation-entry-utils">' +
+        '        <ul>' +
+        '            <li class="app-navigation-entry-utils-counter" style="display:none;">1</li>' +
+        '            <li class="app-navigation-entry-utils-menu-button contactGroupMenuButton">' +
+        '                <button></button>' +
+        '            </li>' +
+        '        </ul>' +
+        '    </div>' +
+        '    <div class="app-navigation-entry-menu">' +
+        '        <ul>' +
+        '        </ul>' +
+        '    </div>' +
+        '</li>';
+
+        var beforeThis = null;
+        var rawLower = rawName.toLowerCase();
+        $('#contact-group-list > li').each(function() {
+            groupName = $(this).attr('contact-group');
+            if (rawLower.localeCompare(groupName) < 0) {
+                beforeThis = $(this);
+                return false;
+            }
+        });
+        if (beforeThis !== null) {
+            $(li).insertBefore(beforeThis);
+        }
+        else {
+            $('#contact-group-list').append(li);
+        }
+
+        // enable if in saved options
+        if (enable || this.optionsController.enabledContactGroups.indexOf(rawName) !== -1) {
+            this.toggleGroup(rawName);
+        }
+    },
+
+    prepareContactMarkers: function(contacts) {
+        var j, groupName;
         var markers = [];
         for (var i = 0; i < contacts.length; i++) {
 
@@ -203,7 +369,18 @@ ContactsController.prototype = {
                 bookid: contacts[i].BOOKID,
                 bookuri: contacts[i].BOOKURI,
                 date: date/1000,
+                groups: contacts[i].GROUPS ? contacts[i].GROUPS.split(',') : []
             };
+            // manage groups
+            if (markerData.groups.length === 0) {
+                this.groupsCount['0'] = this.groupsCount['0'] + 1;
+            }
+            else {
+                for (j = 0; j < markerData.groups.length; j++) {
+                    groupName = markerData.groups[j];
+                    this.groupsCount[groupName] = this.groupsCount[groupName] ? this.groupsCount[groupName] + 1 : 1;
+                }
+            }
             if (contacts[i].HAS_PHOTO) {
                 markerData.avatar = this.generateAvatar(markerData) || this.getUserImageIconUrl();
             }
@@ -567,6 +744,8 @@ ContactsController.prototype = {
             this.contactLayer.removeLayer(this.contactMarkers[i]);
         }
 
+        this.groupsCount = {'0': 0};
+        this.groups = {};
         this.contactMarkers = [];
         this.contactMarkersOldest = null;
         this.contactMarkersNewest = null;

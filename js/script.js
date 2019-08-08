@@ -142,7 +142,7 @@
     var optionsController = {
         optionValues: {},
         enabledFavoriteCategories: [],
-        enabledContactGroups: [],
+        disabledContactGroups: [],
         enabledTracks: [],
         enabledDevices: [],
         enabledDeviceLines: [],
@@ -208,11 +208,11 @@
                 if (!optionsValues.hasOwnProperty('contactGroupListShow') || optionsValues.contactGroupListShow === 'true') {
                     contactsController.toggleGroupList();
                 }
-                if (optionsValues.hasOwnProperty('enabledContactGroups')
-                    && optionsValues.enabledContactGroups
-                    && optionsValues.enabledContactGroups !== '')
+                if (optionsValues.hasOwnProperty('disabledContactGroups')
+                    && optionsValues.disabledContactGroups
+                    && optionsValues.disabledContactGroups !== '')
                 {
-                    that.enabledContactGroups = optionsValues.enabledContactGroups.split('|');
+                    that.disabledContactGroups = optionsValues.disabledContactGroups.split('|');
                 }
                 if (!optionsValues.hasOwnProperty('contactLayer') || optionsValues.contactLayer === 'true') {
                     contactsController.toggleLayer();

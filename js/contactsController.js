@@ -62,7 +62,7 @@ ContactsController.prototype = {
         $('body').on('click', '.contact-group-line .contact-group-name', function(e) {
             var groupName = $(this).parent().attr('contact-group');
             that.toggleGroup(groupName, true);
-            that.saveEnabledGroups();
+            that.saveDisabledGroups();
             that.addMarkersToLayer();
         });
         // zoom to group TODO
@@ -143,17 +143,17 @@ ContactsController.prototype = {
         }
     },
 
-    saveEnabledGroups: function() {
+    saveDisabledGroups: function() {
         var groupList = [];
         for (var gn in this.groups) {
-            if (this.groups[gn].enabled) {
+            if (!this.groups[gn].enabled) {
                 groupList.push(gn);
             }
         }
         var groupStringList = groupList.join('|');
-        this.optionsController.saveOptionValues({enabledContactGroups: groupStringList});
+        this.optionsController.saveOptionValues({disabledContactGroups: groupStringList});
         // this is used when contacts are loaded again
-        this.optionsController.enabledContactGroups = groupList;
+        this.optionsController.disabledContactGroups = groupList;
     },
 
     getContactMarkerOnClickFunction: function() {
@@ -289,7 +289,7 @@ ContactsController.prototype = {
         }
 
         // enable if in saved options
-        if (enable || this.optionsController.enabledContactGroups.indexOf(rawName) !== -1) {
+        if (enable || this.optionsController.disabledContactGroups.indexOf(rawName) === -1) {
             this.toggleGroup(rawName);
         }
     },

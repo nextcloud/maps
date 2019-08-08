@@ -1,22 +1,15 @@
-function ContactsController (optionsController, timeFilterController, searchController) {
+function ContactsController (optionsController, searchController) {
     this.contact_MARKER_VIEW_SIZE = 40;
     this.contactLayer = null;
     this.contactsDataLoaded = false;
     this.contactsRequestInProgress = false;
     this.optionsController = optionsController;
-    this.timeFilterController = timeFilterController;
     this.searchController = searchController;
     // indexed by group name, contains number of contacts in the group
     this.groupsCount = {'0': 0};
     this.groups = {};
     this.groupColors = {};
     this.contactMarkers = [];
-    this.contactMarkersOldest = null;
-    this.contactMarkersNewest = null;
-    this.contactMarkersFirstVisible = 0;
-    this.contactMarkersLastVisible = -1;
-    this.timeFilterBegin = 0;
-    this.timeFilterEnd = Date.now();
 
     this.movingBookid = null;
     this.movingUri = null;
@@ -52,8 +45,6 @@ ContactsController.prototype = {
         $('body').on('click', '#navigation-contacts > a', function(e) {
             that.toggleLayer();
             that.optionsController.saveOptionValues({contactLayer: that.map.hasLayer(that.contactLayer)});
-            that.updateTimeFilterRange();
-            that.timeFilterController.setSliderToMaxInterval();
             // expand group list if we just enabled favorites and category list was folded
             if (that.map.hasLayer(that.contactLayer) && !$('#navigation-contacts').hasClass('open')) {
                 that.toggleGroupList();
@@ -93,19 +84,11 @@ ContactsController.prototype = {
         });
     },
 
-    updateMyFirstLastDates: function() {
-        var layerVisible = this.map.hasLayer(this.contactLayer);
-        var nbMarkers = this.contactMarkers.length;
-        this.contactMarkersOldest = (layerVisible && nbMarkers > 0) ? this.contactMarkers[0].data.date : null;
-        this.contactMarkersNewest = (layerVisible && nbMarkers > 0) ? this.contactMarkers[nbMarkers - 1].data.date : null;
-    },
-
     showLayer: function() {
         if (!this.contactsDataLoaded && !this.contactsRequestInProgress) {
             this.callForContacts();
         }
         if (!this.map.hasLayer(this.contactLayer)) {
-            console.log(this.groups);
             this.map.addLayer(this.contactLayer);
         }
     },
@@ -158,10 +141,6 @@ ContactsController.prototype = {
         if (showAgain) {
             this.map.addLayer(this.contactLayer);
         }
-        //if (updateSlider) {
-        //    this.updateTimeFilterRange();
-        //    this.timeFilterController.setSliderToMaxInterval();
-        //}
     },
 
     saveEnabledGroups: function() {
@@ -230,12 +209,7 @@ ContactsController.prototype = {
         this.contactMarkers.sort(function (a, b) { return a.data.date - b.data.date;});
 
         // we put them in the layer
-        this.contactMarkersFirstVisible = 0;
-        this.contactMarkersLastVisible = this.contactMarkers.length - 1;
         this.addMarkersToLayer();
-
-        this.updateTimeFilterRange();
-        this.timeFilterController.setSliderToMaxInterval();
     },
 
     addMarkersToLayer: function() {
@@ -469,61 +443,6 @@ ContactsController.prototype = {
         });
     },
 
-    updateTimeFilterRange: function() {
-        this.updateMyFirstLastDates();
-        this.timeFilterController.updateSliderRangeFromController();
-    },
-
-    updateTimeFilterBegin: function (date) {
-        if (date <= this.timeFilterEnd) {
-            var i = this.contactMarkersFirstVisible;
-            if (date < this.timeFilterBegin) {
-                i = i-1;
-                while (i >= 0 && i <= this.contactMarkersLastVisible && this.contactMarkers[i].data.date >= date) {
-                    this.contactLayer.addLayer(this.contactMarkers[i]);
-                    i = i-1;
-                }
-                this.contactMarkersFirstVisible = i + 1;
-            }
-            else {
-                while (i < this.contactMarkers.length && i >= 0 && i <= this.contactMarkersLastVisible && this.contactMarkers[i].data.date < date) {
-                    this.contactLayer.removeLayer(this.contactMarkers[i]);
-                    i = i + 1;
-                }
-                this.contactMarkersFirstVisible = i;
-            }
-            this.timeFilterBegin = date;
-        }
-        else {
-            this.updateTimeFilterBegin(this.timeFilterEnd);
-        }
-    },
-
-    updateTimeFilterEnd: function (date){
-        if (date >= this.timeFilterBegin) {
-            var i = this.contactMarkersLastVisible;
-            if (date < this.timeFilterEnd) {
-                while (i >= 0 && i >= this.contactMarkersFirstVisible && this.contactMarkers[i].data.date > date ) {
-                    this.contactLayer.removeLayer(this.contactMarkers[i]);
-                    i = i-1;
-                }
-                this.contactMarkersLastVisible = i;
-            }
-            else {
-                i = i+1;
-                while (i >= this.contactMarkersFirstVisible && i < this.contactMarkers.length && this.contactMarkers[i].data.date <= date) {
-                    this.contactLayer.addLayer(this.contactMarkers[i]);
-                    i = i+1;
-                }
-                this.contactMarkersLastVisible = i - 1;
-            }
-            this.timeFilterEnd = date;
-        }
-        else {
-            this.updateTimeFilterEnd(this.timeFilterBegin);
-        }
-    },
-
     callForContacts: function() {
         this.contactsRequestInProgress = true;
         $('#navigation-contacts').addClass('icon-loading-small');
@@ -747,12 +666,6 @@ ContactsController.prototype = {
         this.groupsCount = {'0': 0};
         this.groups = {};
         this.contactMarkers = [];
-        this.contactMarkersOldest = null;
-        this.contactMarkersNewest = null;
-        this.contactMarkersFirstVisible = 0;
-        this.contactMarkersLastVisible = -1;
-        this.timeFilterBegin = 0;
-        this.timeFilterEnd = Date.now();
 
         this.showLayer();
     },

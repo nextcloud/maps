@@ -85,10 +85,10 @@ ContactsController.prototype = {
             that.optionsController.saveOptionValues({contactLayer: that.map.hasLayer(that.contactLayer)});
             that.addMarkersToLayer();
         });
-        // zoom to group TODO
-        $('body').on('click', '.zoomGroupButton', function(e) {
+        // zoom to group
+        $('body').on('click', '.zoomContactGroupButton', function(e) {
             var groupName = $(this).parent().parent().parent().parent().attr('contact-group');
-            //that.zoomOnGroup(groupName);
+            that.zoomOnGroup(groupName);
         });
         // delete address
         $('body').on('click', '.deleteContactAddress', function(e) {
@@ -195,6 +195,52 @@ ContactsController.prototype = {
         this.optionsController.saveOptionValues({disabledContactGroups: groupStringList});
         // this is used when contacts are loaded again
         this.optionsController.disabledContactGroups = groupList;
+    },
+
+    zoomOnGroup: function(groupName) {
+        var lat, lng;
+        var minLat = null;
+        var maxLat = null;
+        var minLng = null;
+        var maxLng = null;
+        if (this.contactMarkers.length > 0) {
+
+            for (var i=0; i < this.contactMarkers.length; i++) {
+                // if contact is in the group we zoom on
+                if ((groupName === '0' && this.contactMarkers[i].data.groups.length === 0)
+                    || this.contactMarkers[i].data.groups.indexOf(groupName) !== -1) {
+                    lat = this.contactMarkers[i].data.lat;
+                    lng = this.contactMarkers[i].data.lng;
+                    if (minLat === null) {
+                        minLat = lat;
+                        maxLat = lat;
+                        minLng = lng;
+                        maxLng = lng;
+                    }
+                    else {
+                        if (lat < minLat) {
+                            minLat = lat;
+                        }
+                        if (lat > maxLat) {
+                            maxLat = lat;
+                        }
+                        if (lng < minLng) {
+                            minLng = lng;
+                        }
+                        if (lng > maxLng) {
+                            maxLng = lng;
+                        }
+                    }
+                }
+            }
+        }
+        if (minLat !== 0) {
+            var b = L.latLngBounds(L.latLng(minLat, minLng), L.latLng(maxLat, maxLng));
+            this.map.fitBounds(b, {padding: [30, 30]});
+        }
+        else {
+            OC.Notification.showTemporary(t('maps', 'There are no contacts to zoom on'));
+        }
     },
 
     getContactMarkerOnClickFunction: function() {
@@ -309,6 +355,12 @@ ContactsController.prototype = {
         '    </div>' +
         '    <div class="app-navigation-entry-menu">' +
         '        <ul>' +
+        '            <li>' +
+        '                <a href="#" class="zoomContactGroupButton">' +
+        '                    <span class="icon-search"></span>' +
+        '                    <span>'+t('maps', 'Zoom to bounds')+'</span>' +
+        '                </a>' +
+        '            </li>' +
         '        </ul>' +
         '    </div>' +
         '</li>';

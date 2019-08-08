@@ -66,6 +66,7 @@
         // click on menu buttons
         $('body').on('click',
             '.routingMenuButton, .favoritesMenuButton, .categoryMenuButton, .photosMenuButton, .contactsMenuButton, ' +
+            '.contactGroupMenuButton, ' +
             '.nonLocalizedPhotosMenuButton, .devicesMenuButton, .deviceMenuButton, .tracksMenuButton, .trackMenuButton',
             function(e) {
             var menu = $(this).parent().parent().parent().find('> .app-navigation-entry-menu');
@@ -87,6 +88,7 @@
             '.track-line > a, .track-line > .app-navigation-entry-utils, ' +
             '#navigation-nonLocalizedPhotos > .app-navigation-entry-utils, #navigation-nonLocalizedPhotos > a, ' +
             '#navigation-contacts > .app-navigation-entry-utils, #navigation-contacts > a, ' +
+            '.contact-group-line > a, .contact-group-line > .app-navigation-entry-utils, ' +
             '#navigation-photos > .app-navigation-entry-utils, #navigation-photos > a ',
             function(e) {
             var menu = $(this).parent().find('> .app-navigation-entry-menu');

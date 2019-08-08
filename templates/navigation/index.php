@@ -78,7 +78,7 @@
                 <li class="app-navigation-entry-utils-counter">
                     <span></span>
                 </li>
-                <li class="app-navigation-entry-utils-menu-button devicesMenuButton">
+                <li class="app-navigation-entry-utils-menu-button contactsMenuButton">
                     <button></button>
                 </li>
             </ul>

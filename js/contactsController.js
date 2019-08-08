@@ -260,7 +260,7 @@ ContactsController.prototype = {
         '    <a href="#" class="contact-group-name" id="'+name+'-category-name" style="background-image: url('+imgurl+')">'+displayName+'</a>' +
         '    <div class="app-navigation-entry-utils">' +
         '        <ul>' +
-        '            <li class="app-navigation-entry-utils-counter" style="display:none;">1</li>' +
+        '            <li class="app-navigation-entry-utils-counter" style="display:none;">'+this.groupsCount[rawName]+'</li>' +
         '            <li class="app-navigation-entry-utils-menu-button contactGroupMenuButton">' +
         '                <button></button>' +
         '            </li>' +
@@ -292,6 +292,10 @@ ContactsController.prototype = {
         if (enable || this.optionsController.enabledContactGroups.indexOf(rawName) !== -1) {
             this.toggleGroup(rawName);
         }
+    },
+
+    resetGroupList: function() {
+        $('#contact-group-list li').remove();
     },
 
     prepareContactMarkers: function(contacts) {
@@ -662,6 +666,8 @@ ContactsController.prototype = {
         for (var i=0; i < this.contactMarkers.length; i++) {
             this.contactLayer.removeLayer(this.contactMarkers[i]);
         }
+
+        this.resetGroupList();
 
         this.groupsCount = {'0': 0};
         this.groups = {};

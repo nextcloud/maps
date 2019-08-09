@@ -365,6 +365,8 @@ class TracksService {
 
     public function generateTrackMetadata($file) {
         $STOPPED_SPEED_THRESHOLD = 0.9;
+        $NB_ACCUMULATED_POINTS_MAXSPEED = 3;
+        $MIN_DISTANCE_FOR_CUMUL_ELE = 50;
 
         $name = $file->getName();
         $gpx_content = $file->getContent();
@@ -375,11 +377,19 @@ class TracksService {
         $total_duration = 0;
         $date_begin = null;
         $date_end = null;
+
+        $distAccCumulEle = 0;
         $pos_elevation = 0;
         $neg_elevation = 0;
         $min_elevation = null;
         $max_elevation = null;
+
+        // max speed
         $max_speed = 0;
+        $distAcc = 0;
+        $timeAcc = 0;
+        $accCount = 0;
+
         $avg_speed = '???';
         $moving_time = 0;
         $moving_distance = 0;
@@ -520,9 +530,6 @@ class TracksService {
                             $speed = $distToLast / $t;
                             $speed = $speed / 1000;
                             $speed = $speed * 3600;
-                            if ($speed > $max_speed){
-                                $max_speed = $speed;
-                            }
                         }
 
                         if ($speed <= $STOPPED_SPEED_THRESHOLD){
@@ -532,6 +539,23 @@ class TracksService {
                         else{
                             $moving_time += $t;
                             $moving_distance += $distToLast;
+                        }
+                        // max speed
+                        $distAcc += $distToLast;
+                        $timeAcc += $t;
+                        $accCount++;
+                        if ($accCount === $NB_ACCUMULATED_POINTS_MAXSPEED) {
+                            if ($timeAcc > 0) {
+                                $accSpeed = $distAcc / $timeAcc;
+                                $accSpeed = $accSpeed / 1000;
+                                $accSpeed = $accSpeed * 3600;
+                                if ($accSpeed > $max_speed) {
+                                    $max_speed = $accSpeed;
+                                }
+                            }
+                            $accCount = 0;
+                            $distAcc = 0;
+                            $timeAcc = 0;
                         }
                     }
                     if ($lastPoint !== null){
@@ -545,14 +569,22 @@ class TracksService {
                         if ($isGoingUp === False and $deniv > 0){
                             $upBegin = floatval($lastPoint->ele);
                             $isGoingUp = True;
-                            $neg_elevation += ($downBegin - floatval($lastPoint->ele));
+                            // take neg only if enough distance was traveled
+                            if ($distAccCumulEle >= $MIN_DISTANCE_FOR_CUMUL_ELE) {
+                                $neg_elevation += ($downBegin - floatval($lastPoint->ele));
+                            }
+                            $distAccCumulEle = 0;
                         }
                         if ($isGoingUp === True and $deniv < 0){
-                            // we add the up portion
-                            $pos_elevation += (floatval($lastPointele) - $upBegin);
                             $isGoingUp = False;
                             $downBegin = floatval($lastPoint->ele);
+                            // take pos only if enough distance was traveled
+                            if ($distAccCumulEle >= $MIN_DISTANCE_FOR_CUMUL_ELE) {
+                                $pos_elevation += (floatval($lastPointele) - $upBegin);
+                            }
+                            $distAccCumulEle = 0;
                         }
+                        $distAccCumulEle += $distToLast;
                     }
                     // update vars
                     if ($lastPoint !== null and $pointele !== null and (!empty($lastPoint->ele))){
@@ -662,9 +694,6 @@ class TracksService {
                         $speed = $distToLast / $t;
                         $speed = $speed / 1000;
                         $speed = $speed * 3600;
-                        if ($speed > $max_speed){
-                            $max_speed = $speed;
-                        }
                     }
 
                     if ($speed <= $STOPPED_SPEED_THRESHOLD){
@@ -674,6 +703,23 @@ class TracksService {
                     else{
                         $moving_time += $t;
                         $moving_distance += $distToLast;
+                    }
+                    // max speed
+                    $distAcc += $distToLast;
+                    $timeAcc += $t;
+                    $accCount++;
+                    if ($accCount === $NB_ACCUMULATED_POINTS_MAXSPEED) {
+                        if ($timeAcc > 0) {
+                            $accSpeed = $distAcc / $timeAcc;
+                            $accSpeed = $accSpeed / 1000;
+                            $accSpeed = $accSpeed * 3600;
+                            if ($accSpeed > $max_speed) {
+                                $max_speed = $accSpeed;
+                            }
+                        }
+                        $accCount = 0;
+                        $distAcc = 0;
+                        $timeAcc = 0;
                     }
                 }
                 if ($lastPoint !== null){
@@ -687,14 +733,22 @@ class TracksService {
                     if ($isGoingUp === False and $deniv > 0){
                         $upBegin = floatval($lastPoint->ele);
                         $isGoingUp = True;
-                        $neg_elevation += ($downBegin - floatval($lastPoint->ele));
+                        // take neg only if enough distance was traveled
+                        if ($distAccCumulEle >= $MIN_DISTANCE_FOR_CUMUL_ELE) {
+                            $neg_elevation += ($downBegin - floatval($lastPoint->ele));
+                        }
+                        $distAccCumulEle = 0;
                     }
                     if ($isGoingUp === True and $deniv < 0){
-                        // we add the up portion
-                        $pos_elevation += (floatval($lastPointele) - $upBegin);
                         $isGoingUp = False;
                         $downBegin = floatval($lastPoint->ele);
+                        // take pos only if enough distance was traveled
+                        if ($distAccCumulEle >= $MIN_DISTANCE_FOR_CUMUL_ELE) {
+                            $pos_elevation += (floatval($lastPointele) - $upBegin);
+                        }
+                        $distAccCumulEle = 0;
                     }
+                    $distAccCumulEle += $distToLast;
                 }
                 // update vars
                 if ($lastPoint !== null and $pointele !== null and (!empty($lastPoint->ele))){

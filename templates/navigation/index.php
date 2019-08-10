@@ -91,6 +91,12 @@
                         <span><?php p($l->t('Toggle all')); ?></span>
                     </a>
                 </li>
+                <li>
+                    <a href="#" id="zoom-all-contact-groups">
+                        <span class="icon-search"></span>
+                        <span><?php p($l->t('Zoom to bounds')); ?></span>
+                    </a>
+                </li>
             </ul>
         </div>
         <ul id="contact-group-list">

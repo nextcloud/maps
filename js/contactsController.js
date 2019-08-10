@@ -90,6 +90,10 @@ ContactsController.prototype = {
             var groupName = $(this).parent().parent().parent().parent().attr('contact-group');
             that.zoomOnGroup(groupName);
         });
+        // zoom to all contacts
+        $('body').on('click', '#zoom-all-contact-groups', function(e) {
+            that.zoomOnGroup();
+        });
         // delete address
         $('body').on('click', '.deleteContactAddress', function(e) {
             var ul = $(this).parent().parent();
@@ -197,49 +201,57 @@ ContactsController.prototype = {
         this.optionsController.disabledContactGroups = groupList;
     },
 
-    zoomOnGroup: function(groupName) {
-        var lat, lng;
-        var minLat = null;
-        var maxLat = null;
-        var minLng = null;
-        var maxLng = null;
-        if (this.contactMarkers.length > 0) {
-
-            for (var i=0; i < this.contactMarkers.length; i++) {
-                // if contact is in the group we zoom on
-                if ((groupName === '0' && this.contactMarkers[i].data.groups.length === 0)
-                    || this.contactMarkers[i].data.groups.indexOf(groupName) !== -1) {
-                    lat = this.contactMarkers[i].data.lat;
-                    lng = this.contactMarkers[i].data.lng;
-                    if (minLat === null) {
-                        minLat = lat;
-                        maxLat = lat;
-                        minLng = lng;
-                        maxLng = lng;
-                    }
-                    else {
-                        if (lat < minLat) {
+    zoomOnGroup: function(groupName=null) {
+        if (this.contactLayer.getLayers().length === 0) {
+            return;
+        }
+        if (groupName === null) {
+            var b = this.contactLayer.getBounds();
+            this.map.fitBounds(b, { padding: [30, 30] });
+        }
+        else {
+            var lat, lng;
+            var minLat = null;
+            var maxLat = null;
+            var minLng = null;
+            var maxLng = null;
+            if (this.contactMarkers.length > 0) {
+                for (var i=0; i < this.contactMarkers.length; i++) {
+                    // if contact is in the group we zoom on
+                    if ((groupName === '0' && this.contactMarkers[i].data.groups.length === 0)
+                        || this.contactMarkers[i].data.groups.indexOf(groupName) !== -1) {
+                        lat = this.contactMarkers[i].data.lat;
+                        lng = this.contactMarkers[i].data.lng;
+                        if (minLat === null) {
                             minLat = lat;
-                        }
-                        if (lat > maxLat) {
                             maxLat = lat;
-                        }
-                        if (lng < minLng) {
                             minLng = lng;
-                        }
-                        if (lng > maxLng) {
                             maxLng = lng;
+                        }
+                        else {
+                            if (lat < minLat) {
+                                minLat = lat;
+                            }
+                            if (lat > maxLat) {
+                                maxLat = lat;
+                            }
+                            if (lng < minLng) {
+                                minLng = lng;
+                            }
+                            if (lng > maxLng) {
+                                maxLng = lng;
+                            }
                         }
                     }
                 }
             }
-        }
-        if (minLat !== 0) {
-            var b = L.latLngBounds(L.latLng(minLat, minLng), L.latLng(maxLat, maxLng));
-            this.map.fitBounds(b, {padding: [30, 30]});
-        }
-        else {
-            OC.Notification.showTemporary(t('maps', 'There are no contacts to zoom on'));
+            if (minLat !== 0) {
+                var b = L.latLngBounds(L.latLng(minLat, minLng), L.latLng(maxLat, maxLng));
+                this.map.fitBounds(b, {padding: [30, 30]});
+            }
+            else {
+                OC.Notification.showTemporary(t('maps', 'There are no contacts to zoom on'));
+            }
         }
     },
 

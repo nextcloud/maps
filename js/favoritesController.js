@@ -153,14 +153,14 @@ FavoritesController.prototype = {
         $('body').on('click', '.renameCategoryOk', function(e) {
             var cat = $(this).parent().parent().parent().attr('category');
             $(this).parent().parent().parent().removeClass('editing').addClass('icon-loading-small');
-            var newCategoryName = $(this).parent().find('.renameCategoryInput').val();
+            var newCategoryName = $(this).parent().find('.renameCategoryInput').val() || that.defaultCategory;
             that.renameCategoryDB(cat, newCategoryName);
         });
         $('body').on('keyup', '.renameCategoryInput', function(e) {
             if (e.key === 'Enter') {
                 var cat = $(this).parent().parent().parent().attr('category');
                 $(this).parent().parent().parent().removeClass('editing').addClass('icon-loading-small');
-                var newCategoryName = $(this).parent().find('.renameCategoryInput').val();
+                var newCategoryName = $(this).parent().find('.renameCategoryInput').val() || that.defaultCategory;
                 that.renameCategoryDB(cat, newCategoryName);
             }
             else if (e.key === 'Escape') {

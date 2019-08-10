@@ -389,6 +389,10 @@ tr.selected td {
     padding: 3px;
 }
 
+.leaflet-marker-favorite-tooltip {
+    width: 300px;
+}
+
 .leaflet-marker-favorite-tooltip,
 .leaflet-marker-device-tooltip,
 .leaflet-marker-track-tooltip,

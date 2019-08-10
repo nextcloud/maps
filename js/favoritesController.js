@@ -806,10 +806,10 @@ FavoritesController.prototype = {
     },
 
     getFavoriteTooltipContent: function(fav) {
-        var content = t('maps', 'Name') + ': ' + (fav.name || t('maps', 'No name'));
-        content = content + '<br/>' + t('maps', 'Category') + ': ' + fav.category;
+        var content = '<b>' + t('maps', 'Name') + ':</b> ' + (fav.name || t('maps', 'No name'));
+        content = content + '<br/><b>' + t('maps', 'Category') + ':</b> ' + fav.category;
         if (fav.comment) {
-            content = content + '<br/>' + t('maps', 'Comment') + ': ' + fav.comment;
+            content = content + '<br/><b>' + t('maps', 'Comment') + ':</b> ' + fav.comment;
         }
         return content;
     },

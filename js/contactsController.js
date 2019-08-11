@@ -141,7 +141,7 @@ ContactsController.prototype = {
         $('#navigation-contacts').toggleClass('open');
     },
 
-    toggleGroup: function(groupName, updateSlider=false) {
+    toggleGroup: function(groupName) {
         var groupNoSpace = groupName.replace(' ', '-');
         var groupLine = $('#contact-group-list > li[contact-group="'+groupName+'"]');
         var groupCounter = groupLine.find('.app-navigation-entry-utils-counter');
@@ -202,14 +202,20 @@ ContactsController.prototype = {
     },
 
     zoomOnGroup: function(groupName=null) {
-        if (this.contactLayer.getLayers().length === 0) {
-            return;
-        }
-        if (groupName === null) {
+        // zoom on all groups only if there are contacts
+        if (groupName === null && this.contactLayer.getLayers().length > 0) {
             var b = this.contactLayer.getBounds();
             this.map.fitBounds(b, { padding: [30, 30] });
         }
+        // zoom on a specific group
         else {
+            // enable the group if it was not
+            if (!$('li.contact-group-line[contact-group="'+groupName+'"]').hasClass('active')) {
+                this.toggleGroup(groupName);
+                this.addMarkersToLayer();
+                this.saveDisabledGroups();
+            }
+            // determine the bounds
             var lat, lng;
             var minLat = null;
             var maxLat = null;
@@ -245,7 +251,7 @@ ContactsController.prototype = {
                     }
                 }
             }
-            if (minLat !== 0) {
+            if (minLat !== null) {
                 var b = L.latLngBounds(L.latLng(minLat, minLng), L.latLng(maxLat, maxLng));
                 this.map.fitBounds(b, {padding: [30, 30]});
             }

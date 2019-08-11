@@ -77,7 +77,7 @@ class ContactsController extends Controller {
                             'BOOKID'=>$c['addressbook-key'],
                             'BOOKURI'=>$addressBookUri,
                             'GEO'=>$geo,
-                            'GROUPS'=>$c['CATEGORIES']
+                            'GROUPS'=>$c['CATEGORIES'] ?? null
                         ]);
                     }
                 }
@@ -105,7 +105,7 @@ class ContactsController extends Controller {
                                 'BOOKID'=>$c['addressbook-key'],
                                 'BOOKURI'=>$addressBookUri,
                                 'GEO'=>$geo,
-                                'GROUPS'=>$c['CATEGORIES']
+                                'GROUPS'=>$c['CATEGORIES'] ?? null
                             ]);
                         }
                     }

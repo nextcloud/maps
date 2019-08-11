@@ -124,7 +124,6 @@ class PhotofilesService {
     public function addByFolder(Node $folder) {
         $photos = $this->gatherPhotoFiles($folder, true);
         foreach($photos as $photo) {
-            error_log('ADDDDD '.$photo->getName());
             $this->addPhoto($photo, $folder->getOwner()->getUID());
         }
     }

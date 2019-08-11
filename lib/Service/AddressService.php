@@ -65,6 +65,7 @@ class AddressService {
      *      Uses this geo if it was looked up externally
      *      Look's it up if it was not looked up
      * @param $adr
+     * @param $uri ressource identifier (contact URI for example)
      * @return array($lat,$lng,$lookedUp)
      */
     public function lookupAddress($adr, $uri){

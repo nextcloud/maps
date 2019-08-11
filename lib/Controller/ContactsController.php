@@ -62,7 +62,8 @@ class ContactsController extends Controller {
             $addressBookUri = $addressBooks[$c['addressbook-key']]->getUri();
             $uid = trim($c['UID']);
             // we don't give users, just contacts
-            if (strcmp($c['URI'], 'Database:'.$c['UID'].'.vcf') !== 0) {
+            if (strcmp($c['URI'], 'Database:'.$c['UID'].'.vcf') !== 0 or
+                strcmp($uid, $userid) === 0) {
                 // if the contact has a geo attibute use it
                 if (key_exists('GEO', $c)) {
                     $geo = $c['GEO'];
@@ -126,7 +127,8 @@ class ContactsController extends Controller {
         foreach ($contacts as $c) {
             $uid = trim($c['UID']);
             // we don't give users, just contacts
-            if (strcmp($c['URI'], 'Database:'.$c['UID'].'.vcf') !== 0) {
+            if (strcmp($c['URI'], 'Database:'.$c['UID'].'.vcf') !== 0or
+                strcmp($uid, $userid) === 0) {
                 array_push($result, [
                     'FN'=>$c['FN'],
                     'URI'=>$c['URI'],

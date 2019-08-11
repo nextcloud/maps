@@ -142,6 +142,7 @@
     };
 
     var optionsController = {
+        nbRouters: 0,
         optionValues: {},
         enabledFavoriteCategories: [],
         disabledContactGroups: [],
@@ -301,24 +302,24 @@
                 });
 
                 // routing
-                var nbRouters = 0;
+                this.nbRouters = 0;
                 if (optionsValues.hasOwnProperty('osrmCarURL') && optionsValues.osrmCarURL !== '') {
-                    nbRouters++;
+                    this.nbRouters++;
                 }
                 if (optionsValues.hasOwnProperty('osrmBikeURL') && optionsValues.osrmBikeURL !== '') {
-                    nbRouters++;
+                    this.nbRouters++;
                 }
                 if (optionsValues.hasOwnProperty('osrmFootURL') && optionsValues.osrmFootURL !== '') {
-                    nbRouters++;
+                    this.nbRouters++;
                 }
                 if (optionsValues.hasOwnProperty('mapboxAPIKEY') && optionsValues.mapboxAPIKEY !== '') {
-                    nbRouters++;
+                    this.nbRouters++;
                 }
                 if ((optionsValues.hasOwnProperty('graphhopperURL') && optionsValues.graphhopperURL !== '') ||
                     (optionsValues.hasOwnProperty('graphhopperAPIKEY') && optionsValues.graphhopperAPIKEY !== '') ){
-                    nbRouters++;
+                    this.nbRouters++;
                 }
-                if (nbRouters === 0 && !OC.isUserAdmin()) {
+                if (this.nbRouters === 0 && !OC.isUserAdmin()) {
                     // disable routing and hide it to the user
                     // search bar
                     $('#route-submit').hide();
@@ -889,6 +890,15 @@
 
                     $('.leaflet-routing-container').prepend(close);
                     $('.leaflet-routing-geocoders').append(select);
+
+                    if (optionsController.nbRouters === 0 && OC.isUserAdmin()) {
+                        console.log('prepend');
+                        $('.leaflet-routing-container').prepend(
+                            '<p class="no-routing-engine-warning">' +
+                            t('maps', 'There is no routing engine set in Nextcloud additional settings. Routing is currently disabled for users.') +
+                            '</p>'
+                        );
+                    }
                 });
             }
         },

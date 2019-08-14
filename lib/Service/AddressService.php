@@ -68,7 +68,7 @@ class AddressService {
      * @param $uri ressource identifier (contact URI for example)
      * @return array($lat,$lng,$lookedUp)
      */
-    public function lookupAddress($adr, $uri){
+    public function lookupAddress($adr, $uri) {
         $adr_norm = strtolower(preg_replace('/\s+/', '', $adr));
         $this->qb->select('id', 'lat', 'lng', 'looked_up')
             ->from('maps_address_geo')
@@ -89,7 +89,12 @@ class AddressService {
             else {
                 $id = $row['id'];
                 // if it's in the DB but not yet looked up, we can do it now
-                $geo = $this->lookupAddressExternal($adr);
+                // we first check if this address was already looked up
+                $geo = $this->lookupAddressInternal($adr);
+                // if not, ask external service
+                if (!$geo[2]) {
+                    $geo = $this->lookupAddressExternal($adr);
+                }
                 $lat = $geo[0];
                 $lng = $geo[1];
                 $lookedUp = $geo[2];
@@ -125,9 +130,29 @@ class AddressService {
         return [$lat, $lng, $lookedUp];
     }
 
+    private function lookupAddressInternal($adr) {
+        $res = [null, null, False];
+        $adr_norm = strtolower(preg_replace('/\s+/', '', $adr));
+
+        $this->qb->select('lat', 'lng')
+            ->from('maps_address_geo')
+            ->where($this->qb->expr()->eq('looked_up', $this->qb->createNamedParameter(True, IQueryBuilder::PARAM_BOOL)))
+            ->andWhere($this->qb->expr()->eq('adr_norm', $this->qb->createNamedParameter($adr_norm, IQueryBuilder::PARAM_STR)));
+        $req = $this->qb->execute();
+        while ($row = $req->fetch()) {
+            $res[0] = $row['lat'];
+            $res[1] = $row['lng'];
+            $res[2] = True;
+        }
+        $req->closeCursor();
+        $qb = $this->qb->resetQueryParts();
+
+        return $res;
+    }
+
     // looks up the address on external provider returns lat, lon, lookupstate
     // do lookup only if last one occured more than one second ago
-    private function lookupAddressExternal($adr){
+    private function lookupAddressExternal($adr) {
         if (time() - intval($this->config->getAppValue('maps', 'lastAddressLookup')) >= 1) {
             $opts = [
                 'http' => [
@@ -226,7 +251,11 @@ class AddressService {
 
     // schedules the address for an external lookup
     private function scheduleForLookup($adr, $uri) {
-        $geo = $this->lookupAddressExternal($adr);
+        $geo = $this->lookupAddressInternal($adr);
+        // if not found internally, ask external service
+        if (!$geo[2]) {
+            $geo = $this->lookupAddressExternal($adr);
+        }
         $adr_norm = strtolower(preg_replace('/\s+/', '', $adr));
         $this->qb->insert('maps_address_geo')
             ->values([

@@ -57,7 +57,7 @@ class GeophotoService {
      * @param string $userId
      * @return array with geodatas of all photos
      */
-     public function getAllFromDB ($userId) {
+     public function getAllFromDB($userId) {
         $photoEntities = $this->photoMapper->findAll($userId);
         $userFolder = $this->getFolderForUser($userId);
         $filesById = [];
@@ -69,7 +69,13 @@ class GeophotoService {
                 // this path is relative to owner's storage
                 //$path = $cacheEntry->getPath();
                 // but we want it relative to current user's storage
-                $file = $userFolder->getById($photoEntity->getFileId())[0];
+                $files = $userFolder->getById($photoEntity->getFileId());
+                if (count($files) > 0) {
+                    $file = $files[0];
+                }
+                else {
+                    continue;
+                }
                 if ($file === null) {
                     continue;
                 }

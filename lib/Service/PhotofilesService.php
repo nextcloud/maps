@@ -56,7 +56,7 @@ class PhotofilesService {
         $this->logger = $logger;
     }
 
-    public function rescan ($userId){
+    public function rescan($userId){
         $userFolder = $this->root->getUserFolder($userId);
         $photos = $this->gatherPhotoFiles($userFolder, true);
         $this->photoMapper->deleteAll($userId);

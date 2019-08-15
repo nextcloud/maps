@@ -12,6 +12,7 @@
 namespace OCA\Maps\Controller;
 
 use \OCA\Maps\AppInfo\Application;
+use OCP\DB\QueryBuilder\IQueryBuilder;
 use OCA\Maps\Service\GeophotoService;
 use OCA\Maps\Service\PhotofilesService;
 use OCA\Maps\Service\TracksService;
@@ -32,6 +33,8 @@ class PhotosControllerTest extends \PHPUnit\Framework\TestCase {
     private $photosController;
     private $photosController2;
     private $utilsController;
+
+    private $photoFileService;
 
     public static function setUpBeforeClass(): void {
         $app = new Application();
@@ -76,13 +79,25 @@ class PhotosControllerTest extends \PHPUnit\Framework\TestCase {
         $c = $this->container;
         $this->config = $c->query('ServerContainer')->getConfig();
 
+        $this->rootFolder = $c->query('ServerContainer')->getRootFolder();
+
+        $this->photoFileService = new PhotoFilesService(
+            $c->query('ServerContainer')->getLogger(),
+            $this->rootFolder,
+            $c->query('ServerContainer')->getL10N($c->query('AppName')),
+            new GeophotoMapper(
+                $c->query('ServerContainer')->getDatabaseConnection()
+            ),
+            $c->query('ServerContainer')->getShareManager()
+        );
+
         $this->photosController = new PhotosController(
             $this->appName,
             $c->query('ServerContainer')->getLogger(),
             $this->request,
             new GeoPhotoService(
                 $c->query('ServerContainer')->getLogger(),
-                $c->query('ServerContainer')->getRootFolder(),
+                $this->rootFolder,
                 $c->query('ServerContainer')->getL10N($c->query('AppName')),
                 new GeophotoMapper(
                     $c->query('ServerContainer')->getDatabaseConnection()
@@ -91,7 +106,7 @@ class PhotosControllerTest extends \PHPUnit\Framework\TestCase {
                 new TracksService(
                     $c->query('ServerContainer')->getLogger(),
                     $c->query('ServerContainer')->getL10N($c->query('AppName')),
-                    $c->query('ServerContainer')->getRootFolder(),
+                    $this->rootFolder,
                     $c->query('ServerContainer')->getShareManager()
                 ),
                 new DevicesService(
@@ -100,15 +115,7 @@ class PhotosControllerTest extends \PHPUnit\Framework\TestCase {
                 ),
                 'test'
             ),
-            new PhotoFilesService(
-                $c->query('ServerContainer')->getLogger(),
-                $c->query('ServerContainer')->getRootFolder(),
-                $c->query('ServerContainer')->getL10N($c->query('AppName')),
-                new GeophotoMapper(
-                    $c->query('ServerContainer')->getDatabaseConnection()
-                ),
-                $c->query('ServerContainer')->getShareManager()
-            ),
+            $this->photoFileService,
             'test'
         );
 
@@ -118,7 +125,7 @@ class PhotosControllerTest extends \PHPUnit\Framework\TestCase {
             $this->request,
             new GeoPhotoService(
                 $c->query('ServerContainer')->getLogger(),
-                $c->query('ServerContainer')->getRootFolder(),
+                $this->rootFolder,
                 $c->query('ServerContainer')->getL10N($c->query('AppName')),
                 new GeophotoMapper(
                     $c->query('ServerContainer')->getDatabaseConnection()
@@ -127,7 +134,7 @@ class PhotosControllerTest extends \PHPUnit\Framework\TestCase {
                 new TracksService(
                     $c->query('ServerContainer')->getLogger(),
                     $c->query('ServerContainer')->getL10N($c->query('AppName')),
-                    $c->query('ServerContainer')->getRootFolder(),
+                    $this->rootFolder,
                     $c->query('ServerContainer')->getShareManager()
                 ),
                 new DevicesService(
@@ -136,15 +143,7 @@ class PhotosControllerTest extends \PHPUnit\Framework\TestCase {
                 ),
                 'test'
             ),
-            new PhotoFilesService(
-                $c->query('ServerContainer')->getLogger(),
-                $c->query('ServerContainer')->getRootFolder(),
-                $c->query('ServerContainer')->getL10N($c->query('AppName')),
-                new GeophotoMapper(
-                    $c->query('ServerContainer')->getDatabaseConnection()
-                ),
-                $c->query('ServerContainer')->getShareManager()
-            ),
+            $this->photoFileService,
             'test'
         );
 
@@ -156,6 +155,23 @@ class PhotosControllerTest extends \PHPUnit\Framework\TestCase {
             $c->query('ServerContainer')->getConfig(),
             $c->getServer()->getAppManager()
         );
+
+        $userfolder = $this->container->query('ServerContainer')->getUserFolder('test');
+
+        // delete first
+        if ($userfolder->nodeExists('dir/nc.jpg')) {
+            echo "DELETE\n";
+            $file = $userfolder->get('dir/nc.jpg');
+            $file->delete();
+        }
+        // delete db
+        $qb = $c->query('ServerContainer')->getDatabaseConnection()->getQueryBuilder();
+        $qb->delete('maps_photos')
+            ->where(
+                $qb->expr()->eq('user_id', $qb->createNamedParameter('test', IQueryBuilder::PARAM_STR))
+            );
+        $req = $qb->execute();
+        $qb = $qb->resetQueryParts();
     }
 
     public static function tearDownAfterClass(): void {
@@ -176,13 +192,41 @@ class PhotosControllerTest extends \PHPUnit\Framework\TestCase {
     }
 
     public function testAddGetPhotos() {
+        $c = $this->app->getContainer();
+
         $userfolder = $this->container->query('ServerContainer')->getUserFolder('test');
 
-        $content1 = file_get_contents('tests/test_files/nc.jpg');
+        $filename = 'tests/test_files/nc.jpg';
+        $handle = fopen($filename, 'rb');
+        $content1 = fread($handle, filesize($filename));
+        fclose($handle);
+        //$content1 = file_get_contents('tests/test_files/nc.jpg');
         $userfolder->newFolder('dir');
-        //$userfolder->newFile('dir/nc.jpg')->putContent($content1);
+        $file = $userfolder->newFile('dir/nc.jpgg');
+        //->putContent($content1);
+        $fp = $file->fopen('wb');
+        fwrite($fp, $content1);
+        fclose($fp);
+        $file->touch();
 
-        $content2 = file_get_contents('tests/test_files/nut.jpg');
+        $file = $userfolder->get('dir/nc.jpgg');
+        $file->move($userfolder->getPath().'/dir/nc.jpg');
+        echo 'I MOVE TO '.$userfolder->getPath().'/dir/nc.jpg'."\n";
+        $file->touch();
+
+        $file = $userfolder->get('dir/nc.jpg');
+        echo 'FILE ID '.$file->getId()."\n";
+        $id = $file->getId();
+        $file = $userfolder->get('dir')->getById($id);
+        var_dump($file);
+
+        // TODO understand why line 72 of GeoPhotoService.php does not work
+        // we don't get the file by its ID...
+
+        //echo 'BEFORE RESCAN'."\n";
+        //$this->photoFileService->rescan('test');
+
+        //$content2 = file_get_contents('tests/test_files/nut.jpg');
         //$userfolder->newFile('dir/nut.jpg')->putContent($content2);
 
         //var_dump($userfolder->get('dir')->getDirectoryListing());
@@ -195,6 +239,21 @@ class PhotosControllerTest extends \PHPUnit\Framework\TestCase {
         var_dump($data);
 
         $this->assertEquals(true, 1===1);
+
+        // delete files
+        if ($userfolder->nodeExists('dir/nc.jpg')) {
+            echo "DELETE\n";
+            $file = $userfolder->get('dir/nc.jpg');
+            $file->delete();
+        }
+        // delete db
+        $qb = $c->query('ServerContainer')->getDatabaseConnection()->getQueryBuilder();
+        $qb->delete('maps_photos')
+            ->where(
+                $qb->expr()->eq('user_id', $qb->createNamedParameter('test', IQueryBuilder::PARAM_STR))
+            );
+        $req = $qb->execute();
+        $qb = $qb->resetQueryParts();
     }
 
 }

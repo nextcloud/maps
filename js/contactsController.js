@@ -553,8 +553,8 @@ ContactsController.prototype = {
             $('#navigation-contacts').removeClass('icon-loading-small');
             $('.leaflet-container').css('cursor', 'grab');
             that.reloadContacts();
-        }).fail(function() {
-            OC.Notification.showTemporary(t('maps', 'Failed to delete contact address'));
+        }).fail(function(response) {
+            OC.Notification.showTemporary(t('maps', 'Failed to delete contact address') + ': ' + response.responseText);
         });
     },
 
@@ -658,15 +658,17 @@ ContactsController.prototype = {
             var data = [];
             for (var i=0; i < response.length; i++) {
                 c = response[i];
-                d = {
-                    id: c.URI,
-                    label: c.FN,
-                    value: c.FN,
-                    uri: c.URI,
-                    uid: c.UID,
-                    bookid: c.BOOKID
-                };
-                data.push(d);
+                if (!c.READONLY) {
+                    d = {
+                        id: c.URI,
+                        label: c.FN,
+                        value: c.FN,
+                        uri: c.URI,
+                        uid: c.UID,
+                        bookid: c.BOOKID
+                    };
+                    data.push(d);
+                }
             }
             $('#place-contact-input').autocomplete({
                 source: data,

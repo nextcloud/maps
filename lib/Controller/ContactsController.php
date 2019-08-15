@@ -62,8 +62,9 @@ class ContactsController extends Controller {
             $addressBookUri = $addressBooks[$c['addressbook-key']]->getUri();
             $uid = trim($c['UID']);
             // we don't give users, just contacts
-            if (strcmp($c['URI'], 'Database:'.$c['UID'].'.vcf') !== 0 or
-                strcmp($uid, $userid) === 0) {
+            if (strcmp($c['URI'], 'Database:'.$c['UID'].'.vcf') !== 0 and
+                strcmp($uid, $userid) !== 0
+            ) {
                 // if the contact has a geo attibute use it
                 if (key_exists('GEO', $c)) {
                     $geo = $c['GEO'];
@@ -122,18 +123,21 @@ class ContactsController extends Controller {
      */
     public function getAllContacts() {
         $contacts = $this->contactsManager->search('', ['FN'], ['types'=>false]);
+        $booksReadOnly = $this->getAddressBooksReadOnly();
         $result = [];
         $userid = trim($this->userId);
         foreach ($contacts as $c) {
             $uid = trim($c['UID']);
             // we don't give users, just contacts
-            if (strcmp($c['URI'], 'Database:'.$c['UID'].'.vcf') !== 0or
-                strcmp($uid, $userid) === 0) {
+            if (strcmp($c['URI'], 'Database:'.$c['UID'].'.vcf') !== 0 and
+                strcmp($uid, $userid) !== 0
+            ) {
                 array_push($result, [
                     'FN'=>$c['FN'],
                     'URI'=>$c['URI'],
                     'UID'=>$c['UID'],
-                    'BOOKID'=>$c['addressbook-key']
+                    'BOOKID'=>$c['addressbook-key'],
+                    'READONLY'=>$booksReadOnly[$c['addressbook-key']]
                 ]);
             }
         }
@@ -145,7 +149,9 @@ class ContactsController extends Controller {
      */
     public function placeContact($bookid, $uri, $uid, $lat, $lng, $attraction, $house_number, $road, $postcode, $city, $state, $country, $type) {
         // do not edit 'user' contact even myself
-        if (strcmp($uri, 'Database:'.$uid.'.vcf') === 0) {
+        if (strcmp($uri, 'Database:'.$uid.'.vcf') === 0 or
+            strcmp($uid, $this->userId) === 0
+        ) {
             return new DataResponse('Can\'t edit users', 400);
         }
         else {
@@ -194,6 +200,16 @@ class ContactsController extends Controller {
             }
         }
         return true;
+    }
+
+    private function getAddressBooksReadOnly() {
+        $booksReadOnly = [];
+        $userBooks = $this->cdBackend->getAddressBooksForUser('principals/users/'.$this->userId);
+        foreach ($userBooks as $book) {
+            $ro = (isset($book['{http://owncloud.org/ns}read-only']) and $book['{http://owncloud.org/ns}read-only']);
+            $booksReadOnly[$book['id']] = $ro;
+        }
+        return $booksReadOnly;
     }
 
     private function setAddressCoordinates($lat, $lng, $adr, $uri) {
@@ -256,17 +272,27 @@ class ContactsController extends Controller {
         $card = $this->cdBackend->getContact($bookid, $uri);
         if ($card) {
             $vcard = Reader::read($card['carddata']);;
-            foreach ($vcard->children() as $property) {
-                if ($property->name === 'ADR') {
-                    $cardAdr = $property->getValue();
-                    if ($cardAdr === $adr) {
-                        $vcard->remove($property);
-                        break;
+            //$bookId = $card['addressbookid'];
+            if (!$this->addressBookIsReadOnly($bookid)) {
+                foreach ($vcard->children() as $property) {
+                    if ($property->name === 'ADR') {
+                        $cardAdr = $property->getValue();
+                        if ($cardAdr === $adr) {
+                            $vcard->remove($property);
+                            break;
+                        }
                     }
                 }
+                $this->cdBackend->updateCard($bookid, $uri, $vcard->serialize());
+                // no need to cleanup db here, it will be done when catching vcard change hook
+                return new DataResponse('DELETED');
             }
-            $this->cdBackend->updateCard($bookid, $uri, $vcard->serialize());
+            else {
+                return new DataResponse('READONLY', 400);
+            }
         }
-        // no need to cleanup db here, it will be done when catching vcard change hook
+        else {
+            return new DataResponse('FAILED', 400);
+        }
     }
 }

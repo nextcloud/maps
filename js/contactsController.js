@@ -765,8 +765,8 @@ ContactsController.prototype = {
             $('#navigation-contacts').removeClass('icon-loading-small');
             $('.leaflet-container').css('cursor', 'grab');
             that.reloadContacts();
-        }).fail(function() {
-            OC.Notification.showTemporary(t('maps', 'Failed to place contact'));
+        }).fail(function(response) {
+            OC.Notification.showTemporary(t('maps', 'Failed to place contact') + ': ' + response.responseText);
         });
     },
 

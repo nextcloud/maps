@@ -149,37 +149,51 @@ class ContactsController extends Controller {
             return new DataResponse('Can\'t edit users', 400);
         }
         else {
-            // TODO check addressbook permissions
-            // it's currently possible to place a contact from an addressbook shared with readonly permissions...
-            if ($lat !== null && $lng !== null) {
-                // we set the geo tag
-                if (!$attraction && !$house_number && !$road && !$postcode && !$city && !$state && !$country) {
-                    $result = $this->contactsManager->createOrUpdate(['URI'=>$uri, 'GEO'=>$lat.';'.$lng], $bookid);
-                }
-                // we set the address
-                else {
-                    $street = trim($attraction.' '.$house_number.' '.$road);
-                    $stringAddress = ';;'.$street.';'.$city.';'.$state.';'.$postcode.';'.$country;
-                    // set the coordinates in the DB
-                    $lat = floatval($lat);
-                    $lng = floatval($lng);
-                    $this->setAddressCoordinates($lat, $lng, $stringAddress, $uri);
-                    // set the address in the vcard
-                    $card = $this->cdBackend->getContact($bookid, $uri);
-                    if ($card) {
-                        $vcard = Reader::read($card['carddata']);;
-                        $vcard->add(new Text($vcard, 'ADR', ['', '', $street, $city, $state, $postcode, $country], ['TYPE'=>$type]));
-                        $this->cdBackend->updateCard($bookid, $uri, $vcard->serialize());
+            // check addressbook permissions
+            if (!$this->addressBookIsReadOnly($bookid)) {
+                if ($lat !== null && $lng !== null) {
+                    // we set the geo tag
+                    if (!$attraction && !$house_number && !$road && !$postcode && !$city && !$state && !$country) {
+                        $result = $this->contactsManager->createOrUpdate(['URI'=>$uri, 'GEO'=>$lat.';'.$lng], $bookid);
+                    }
+                    // we set the address
+                    else {
+                        $street = trim($attraction.' '.$house_number.' '.$road);
+                        $stringAddress = ';;'.$street.';'.$city.';'.$state.';'.$postcode.';'.$country;
+                        // set the coordinates in the DB
+                        $lat = floatval($lat);
+                        $lng = floatval($lng);
+                        $this->setAddressCoordinates($lat, $lng, $stringAddress, $uri);
+                        // set the address in the vcard
+                        $card = $this->cdBackend->getContact($bookid, $uri);
+                        if ($card) {
+                            $vcard = Reader::read($card['carddata']);;
+                            $vcard->add(new Text($vcard, 'ADR', ['', '', $street, $city, $state, $postcode, $country], ['TYPE'=>$type]));
+                            $this->cdBackend->updateCard($bookid, $uri, $vcard->serialize());
+                        }
                     }
                 }
+                else {
+                    // TODO find out how to remove a property
+                    // following does not work properly
+                    $result = $this->contactsManager->createOrUpdate(['URI'=>$uri, 'GEO'=>null], $bookid);
+                }
+                return new DataResponse('EDITED');
             }
             else {
-                // TODO find out how to remove a property
-                // following does not work properly
-                $result = $this->contactsManager->createOrUpdate(['URI'=>$uri, 'GEO'=>null], $bookid);
+                return new DataResponse('READONLY', 400);
             }
-            return new DataResponse('EDITED');
         }
+    }
+
+    private function addressBookIsReadOnly($bookid) {
+        $userBooks = $this->cdBackend->getAddressBooksForUser('principals/users/'.$this->userId);
+        foreach ($userBooks as $book) {
+            if ($book['id'] === $bookid) {
+                return (isset($book['{http://owncloud.org/ns}read-only']) and $book['{http://owncloud.org/ns}read-only']);
+            }
+        }
+        return true;
     }
 
     private function setAddressCoordinates($lat, $lng, $adr, $uri) {

@@ -18,7 +18,13 @@ use OCP\DB\QueryBuilder\IQueryBuilder;
 
 use OC\Archive\ZIP;
 
-require_once('Utils.php');
+function endswith($string, $test) {
+    $strlen = strlen($string);
+    $testlen = strlen($test);
+    if ($testlen > $strlen) return false;
+    return substr_compare($string, $test, $strlen - $testlen, $testlen) === 0;
+}
+
 
 class FavoritesService {
 

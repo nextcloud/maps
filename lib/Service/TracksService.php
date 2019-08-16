@@ -39,7 +39,7 @@ class TracksService {
         $this->shareManager = $shareManager;
     }
 
-    public function rescan ($userId){
+    public function rescan($userId){
         $userFolder = $this->root->getUserFolder($userId);
         $tracks = $this->gatherTrackFiles($userFolder, true);
         $this->deleteAllTracksFromDB($userId);

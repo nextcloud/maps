@@ -16,7 +16,7 @@ use OCP\IL10N;
 use OCP\ILogger;
 use OCP\DB\QueryBuilder\IQueryBuilder;
 
-require_once('Utils.php');
+use function \OCA\Maps\Service\endswith;
 
 class DevicesService {
 

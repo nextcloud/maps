@@ -5,26 +5,17 @@
     <name>Maps</name>
     <summary>Simple maps app for Nextcloud</summary>
     <description><![CDATA[Simple maps app to display a leaflet map.]]></description>
+    <version>0.0.13</version>
     <licence>agpl</licence>
     <author mail="eneiluj@posteo.net">Julien Veyssier</author>
     <author mail="kontakt+github@arne.email">Arne Hamann</author>
-    <version>0.0.13</version>
     <namespace>Maps</namespace>
     <category>multimedia</category>
     <bugs>https://github.com/nextcloud/maps/issues</bugs>
     <dependencies>
-        <nextcloud min-version="15" max-version="17"/>
         <lib>exif</lib>
+        <nextcloud min-version="15" max-version="17"/>
     </dependencies>
-    <navigations>
-        <navigation>
-            <name>Maps</name>
-            <route>maps.page.index</route>
-        </navigation>
-    </navigations>
-    <types>
-      <filesystem/>
-    </types>
     <commands>
         <command>OCA\Maps\Command\RescanPhotos</command>
         <command>OCA\Maps\Command\RescanTracks</command>
@@ -32,4 +23,10 @@
     <settings>
         <admin>OCA\Maps\Settings\AdminSettings</admin>
     </settings>
+    <navigations>
+        <navigation>
+            <name>Maps</name>
+            <route>maps.page.index</route>
+        </navigation>
+    </navigations>
 </info>

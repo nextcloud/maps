@@ -59,10 +59,12 @@ class PhotosControllerTest extends \PHPUnit\Framework\TestCase {
         }
         if ($group === null) {
             $c->getServer()->getGroupManager()->createGroup('group1test');
+            $u1 = $c->getServer()->getUserManager()->get('test');
             $c->getServer()->getGroupManager()->get('group1test')->addUser($u1);
         }
         if ($group2 === null) {
             $c->getServer()->getGroupManager()->createGroup('group2test');
+            $u2 = $c->getServer()->getUserManager()->get('test2');
             $c->getServer()->getGroupManager()->get('group2test')->addUser($u2);
         }
     }
@@ -235,9 +237,8 @@ class PhotosControllerTest extends \PHPUnit\Framework\TestCase {
         $this->assertEquals(1, count($data));
         //var_dump($data);
 
-        echo "BEFORE RESCAN\n";
+        // TODO understand why rescan is not called...
         $this->photoFileService->rescan('test');
-        echo "AFTER RESCAN\n";
 
         $resp = $this->photosController->getPhotosFromDb();
         $status = $resp->getStatus();

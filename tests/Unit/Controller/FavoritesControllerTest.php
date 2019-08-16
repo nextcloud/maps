@@ -52,10 +52,12 @@ class FavoritesControllerTest extends \PHPUnit\Framework\TestCase {
         }
         if ($group === null) {
             $c->getServer()->getGroupManager()->createGroup('group1test');
+            $u1 = $c->getServer()->getUserManager()->get('test');
             $c->getServer()->getGroupManager()->get('group1test')->addUser($u1);
         }
         if ($group2 === null) {
             $c->getServer()->getGroupManager()->createGroup('group2test');
+            $u2 = $c->getServer()->getUserManager()->get('test2');
             $c->getServer()->getGroupManager()->get('group2test')->addUser($u2);
         }
     }

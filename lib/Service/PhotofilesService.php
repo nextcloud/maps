@@ -357,15 +357,19 @@ class PhotofilesService {
         if (!isset($exif["GPSLatitude"]) OR !isset($exif["GPSLongitude"])) {
             return false;
         }
-        if (count($exif["GPSLatitude"]) != 3 OR count($exif["GPSLongitude"]) != 3) {
+        if (count($exif["GPSLatitude"]) !== 3 OR count($exif["GPSLongitude"]) !== 3) {
             return false;
         }
         //Check photos are on the earth
-        if ($exif["GPSLatitude"][0]>=90 OR $exif["GPSLongitude"][0]>=180) {
+        if ($exif["GPSLatitude"][0] >= 90 OR $exif["GPSLongitude"][0] >= 180) {
             return false;
         }
         //Check photos are not on NULL island, remove if they should be.
-        if($exif["GPSLatitude"][0]==0 AND $exif["GPSLatitude"][1]==0 AND $exif["GPSLongitude"][0]==0 AND $exif["GPSLongitude"][1]==0){
+        if ($exif["GPSLatitude"][0] === 0 AND
+            $exif["GPSLatitude"][1] === 0 AND
+            $exif["GPSLongitude"][0] === 0 AND
+            $exif["GPSLongitude"][1] === 0
+        ){
             return false;
         }
         return true;
@@ -377,31 +381,31 @@ class PhotofilesService {
 
         $exif = @exif_read_data($path);
 
-        if(!$this->hasValidExifGeoTags($exif)) {
+        if (!$this->hasValidExifGeoTags($exif)) {
              $exif = $this->getExifPelBackup($file);
         }
 
-        if($this->hasValidExifGeoTags($exif)){
+        if ($this->hasValidExifGeoTags($exif)){
             //Check if there is exif infor
             $LatM = 1; $LongM = 1;
-            if($exif["GPSLatitudeRef"] == 'S'){
+            if ($exif["GPSLatitudeRef"] === 'S'){
                 $LatM = -1;
             }
-            if($exif["GPSLongitudeRef"] == 'W'){
+            if ($exif["GPSLongitudeRef"] === 'W'){
                 $LongM = -1;
             }
             //get the GPS data
-            $gps['LatDegree']=$exif["GPSLatitude"][0];
-            $gps['LatMinute']=$exif["GPSLatitude"][1];
-            $gps['LatgSeconds']=$exif["GPSLatitude"][2];
-            $gps['LongDegree']=$exif["GPSLongitude"][0];
-            $gps['LongMinute']=$exif["GPSLongitude"][1];
-            $gps['LongSeconds']=$exif["GPSLongitude"][2];
+            $gps['LatDegree'] = $exif["GPSLatitude"][0];
+            $gps['LatMinute'] = $exif["GPSLatitude"][1];
+            $gps['LatgSeconds'] = $exif["GPSLatitude"][2];
+            $gps['LongDegree'] = $exif["GPSLongitude"][0];
+            $gps['LongMinute'] = $exif["GPSLongitude"][1];
+            $gps['LongSeconds'] = $exif["GPSLongitude"][2];
 
             //convert strings to numbers
-            foreach($gps as $key => $value){
+            foreach ($gps as $key => $value){
                 $pos = strpos($value, '/');
-                if($pos !== false){
+                if ($pos !== false){
                     $temp = explode('/',$value);
                     $gps[$key] = $temp[0] / $temp[1];
                 }
@@ -435,7 +439,7 @@ class PhotofilesService {
             $pelJpeg = new PelJpeg($data);
 
             $pelExif = $pelJpeg->getExif();
-            if ($pelExif == null) {
+            if ($pelExif === null) {
                 return null;
             }
 
@@ -497,19 +501,19 @@ class PhotofilesService {
         $pelJpeg = new PelJpeg($data);
 
         $pelExif = $pelJpeg->getExif();
-        if ($pelExif == null) {
+        if ($pelExif === null) {
             $pelExif = new PelExif();
             $pelJpeg->setExif($pelExif);
         }
 
         $pelTiff = $pelExif->getTiff();
-        if ($pelTiff == null) {
+        if ($pelTiff === null) {
             $pelTiff = new PelTiff();
             $pelExif->setTiff($pelTiff);
         }
 
         $pelIfd0 = $pelTiff->getIfd();
-        if ($pelIfd0 == null) {
+        if ($pelIfd0 === null) {
             $pelIfd0 = new PelIfd(PelIfd::IFD0);
             $pelTiff->setIfd($pelIfd0);
         }
@@ -525,19 +529,19 @@ class PhotofilesService {
         $pelJpeg = new PelJpeg($data);
 
         $pelExif = $pelJpeg->getExif();
-        if ($pelExif == null) {
+        if ($pelExif === null) {
             $pelExif = new PelExif();
             $pelJpeg->setExif($pelExif);
         }
 
         $pelTiff = $pelExif->getTiff();
-        if ($pelTiff == null) {
+        if ($pelTiff === null) {
             $pelTiff = new PelTiff();
             $pelExif->setTiff($pelTiff);
         }
 
         $pelIfd0 = $pelTiff->getIfd();
-        if ($pelIfd0 == null) {
+        if ($pelIfd0 === null) {
             $pelIfd0 = new PelIfd(PelIfd::IFD0);
             $pelTiff->setIfd($pelIfd0);
         }

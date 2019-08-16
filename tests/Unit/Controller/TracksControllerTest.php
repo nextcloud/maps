@@ -40,29 +40,31 @@ class TracksControllerTest extends \PHPUnit\Framework\TestCase {
         $app = new Application();
         $c = $app->getContainer();
 
-        // clear test users
         $user = $c->getServer()->getUserManager()->get('test');
-        if ($user !== null) {
-            $user->delete();
-        }
-        $user = $c->getServer()->getUserManager()->get('test2');
-        if ($user !== null) {
-            $user->delete();
-        }
-        $user = $c->getServer()->getUserManager()->get('test3');
-        if ($user !== null) {
-            $user->delete();
-        }
+        $user2 = $c->getServer()->getUserManager()->get('test2');
+        $user3 = $c->getServer()->getUserManager()->get('test3');
+        $group = $c->getServer()->getGroupManager()->get('group1test');
+        $group2 = $c->getServer()->getGroupManager()->get('group2test');
 
         // CREATE DUMMY USERS
-        $u1 = $c->getServer()->getUserManager()->createUser('test', 'tatotitoTUTU');
-        $u1->setEMailAddress('toto@toto.net');
-        $u2 = $c->getServer()->getUserManager()->createUser('test2', 'plopinoulala000');
-        $u3 = $c->getServer()->getUserManager()->createUser('test3', 'yeyeahPASSPASS');
-        $c->getServer()->getGroupManager()->createGroup('group1test');
-        $c->getServer()->getGroupManager()->get('group1test')->addUser($u1);
-        $c->getServer()->getGroupManager()->createGroup('group2test');
-        $c->getServer()->getGroupManager()->get('group2test')->addUser($u2);
+        if ($user === null) {
+            $u1 = $c->getServer()->getUserManager()->createUser('test', 'tatotitoTUTU');
+            $u1->setEMailAddress('toto@toto.net');
+        }
+        if ($user2 === null) {
+            $u2 = $c->getServer()->getUserManager()->createUser('test2', 'plopinoulala000');
+        }
+        if ($user2 === null) {
+            $u3 = $c->getServer()->getUserManager()->createUser('test3', 'yeyeahPASSPASS');
+        }
+        if ($group === null) {
+            $c->getServer()->getGroupManager()->createGroup('group1test');
+            $c->getServer()->getGroupManager()->get('group1test')->addUser($u1);
+        }
+        if ($group2 === null) {
+            $c->getServer()->getGroupManager()->createGroup('group2test');
+            $c->getServer()->getGroupManager()->get('group2test')->addUser($u2);
+        }
     }
 
     protected function setUp(): void {
@@ -146,58 +148,26 @@ class TracksControllerTest extends \PHPUnit\Framework\TestCase {
     }
 
     public static function tearDownAfterClass(): void {
-        $app = new Application();
-        $c = $app->getContainer();
-        $user = $c->getServer()->getUserManager()->get('test');
-        $user->delete();
-        $user = $c->getServer()->getUserManager()->get('test2');
-        $user->delete();
-        $user = $c->getServer()->getUserManager()->get('test3');
-        $user->delete();
-        $c->getServer()->getGroupManager()->get('group1test')->delete();
-        $c->getServer()->getGroupManager()->get('group2test')->delete();
+        //$app = new Application();
+        //$c = $app->getContainer();
+        //$user = $c->getServer()->getUserManager()->get('test');
+        //$user->delete();
+        //$user = $c->getServer()->getUserManager()->get('test2');
+        //$user->delete();
+        //$user = $c->getServer()->getUserManager()->get('test3');
+        //$user->delete();
+        //$c->getServer()->getGroupManager()->get('group1test')->delete();
+        //$c->getServer()->getGroupManager()->get('group2test')->delete();
     }
 
     protected function tearDown(): void {
         // in case there was a failure and something was not deleted
-    }
-
-    public function testAddGetTracks() {
         $c = $this->app->getContainer();
 
         $userfolder = $this->container->query('ServerContainer')->getUserFolder('test');
-
-        $userfolder->newFolder('dir');
-
-        $filename = 'tests/test_files/testFile1.gpx';
-        $content1 = file_get_contents($filename);
-        $file = $userfolder->newFile('dir/testFile1.gpxx');
-        $file->putContent($content1);
-        //$file->touch();
-
-        $file = $userfolder->get('dir/testFile1.gpxx');
-        $file->move($userfolder->getPath().'/dir/testFile1.gpx');
-        echo 'I MOVE TO '.$userfolder->getPath().'/dir/testFile1.gpx'."\n";
-        $file->touch();
-
-        // TODO understand why getById does not work
-
-        //echo 'BEFORE TRACKS RESCAN'."\n";
-        //$this->tracksService->rescan('test');
-
-        $resp = $this->tracksController->getTracks();
-        $status = $resp->getStatus();
-        $this->assertEquals(200, $status);
-        $data = $resp->getData();
-        //$this->assertEquals(27, $data);
-        var_dump($data);
-
-        $this->assertEquals(true, 1===1);
-
         // delete files
-        if ($userfolder->nodeExists('dir/testFile1.gpx')) {
-            echo "DELETE\n";
-            $file = $userfolder->get('dir/testFile1.gpx');
+        if ($userfolder->nodeExists('testFile1.gpx')) {
+            $file = $userfolder->get('testFile1.gpx');
             $file->delete();
         }
         // delete db
@@ -208,6 +178,38 @@ class TracksControllerTest extends \PHPUnit\Framework\TestCase {
             );
         $req = $qb->execute();
         $qb = $qb->resetQueryParts();
+    }
+
+    public function testAddGetTracks() {
+        $c = $this->app->getContainer();
+
+        $userfolder = $this->container->query('ServerContainer')->getUserFolder('test');
+
+        $filename = 'tests/test_files/testFile1.gpx';
+        $content1 = file_get_contents($filename);
+        $file = $userfolder->newFile('testFile1.gpxx');
+        $file->putContent($content1);
+        //$file->touch();
+
+        $file = $userfolder->get('testFile1.gpxx');
+        $file->move($userfolder->getPath().'/testFile1.gpx');
+        //echo 'I MOVE TO '.$userfolder->getPath().'/testFile1.gpx'."\n";
+        $file->touch();
+
+        $resp = $this->tracksController->getTracks();
+        $status = $resp->getStatus();
+        $this->assertEquals(200, $status);
+        $data = $resp->getData();
+        $this->assertEquals(1, count($data));
+        //var_dump($data);
+
+        $this->tracksService->rescan('test');
+
+        $resp = $this->tracksController->getTracks();
+        $status = $resp->getStatus();
+        $this->assertEquals(200, $status);
+        $data = $resp->getData();
+        $this->assertEquals(1, count($data));
     }
 
 }

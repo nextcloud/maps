@@ -33,29 +33,31 @@ class FavoritesControllerTest extends \PHPUnit\Framework\TestCase {
         $app = new Application();
         $c = $app->getContainer();
 
-        // clear test users
         $user = $c->getServer()->getUserManager()->get('test');
-        if ($user !== null) {
-            $user->delete();
-        }
-        $user = $c->getServer()->getUserManager()->get('test2');
-        if ($user !== null) {
-            $user->delete();
-        }
-        $user = $c->getServer()->getUserManager()->get('test3');
-        if ($user !== null) {
-            $user->delete();
-        }
+        $user2 = $c->getServer()->getUserManager()->get('test2');
+        $user3 = $c->getServer()->getUserManager()->get('test3');
+        $group = $c->getServer()->getGroupManager()->get('group1test');
+        $group2 = $c->getServer()->getGroupManager()->get('group2test');
 
         // CREATE DUMMY USERS
-        $u1 = $c->getServer()->getUserManager()->createUser('test', 'tatotitoTUTU');
-        $u1->setEMailAddress('toto@toto.net');
-        $u2 = $c->getServer()->getUserManager()->createUser('test2', 'plopinoulala000');
-        $u3 = $c->getServer()->getUserManager()->createUser('test3', 'yeyeahPASSPASS');
-        $c->getServer()->getGroupManager()->createGroup('group1test');
-        $c->getServer()->getGroupManager()->get('group1test')->addUser($u1);
-        $c->getServer()->getGroupManager()->createGroup('group2test');
-        $c->getServer()->getGroupManager()->get('group2test')->addUser($u2);
+        if ($user === null) {
+            $u1 = $c->getServer()->getUserManager()->createUser('test', 'tatotitoTUTU');
+            $u1->setEMailAddress('toto@toto.net');
+        }
+        if ($user2 === null) {
+            $u2 = $c->getServer()->getUserManager()->createUser('test2', 'plopinoulala000');
+        }
+        if ($user2 === null) {
+            $u3 = $c->getServer()->getUserManager()->createUser('test3', 'yeyeahPASSPASS');
+        }
+        if ($group === null) {
+            $c->getServer()->getGroupManager()->createGroup('group1test');
+            $c->getServer()->getGroupManager()->get('group1test')->addUser($u1);
+        }
+        if ($group2 === null) {
+            $c->getServer()->getGroupManager()->createGroup('group2test');
+            $c->getServer()->getGroupManager()->get('group2test')->addUser($u2);
+        }
     }
 
     protected function setUp(): void {
@@ -121,16 +123,16 @@ class FavoritesControllerTest extends \PHPUnit\Framework\TestCase {
     }
 
     public static function tearDownAfterClass(): void {
-        $app = new Application();
-        $c = $app->getContainer();
-        $user = $c->getServer()->getUserManager()->get('test');
-        $user->delete();
-        $user = $c->getServer()->getUserManager()->get('test2');
-        $user->delete();
-        $user = $c->getServer()->getUserManager()->get('test3');
-        $user->delete();
-        $c->getServer()->getGroupManager()->get('group1test')->delete();
-        $c->getServer()->getGroupManager()->get('group2test')->delete();
+        //$app = new Application();
+        //$c = $app->getContainer();
+        //$user = $c->getServer()->getUserManager()->get('test');
+        //$user->delete();
+        //$user = $c->getServer()->getUserManager()->get('test2');
+        //$user->delete();
+        //$user = $c->getServer()->getUserManager()->get('test3');
+        //$user->delete();
+        //$c->getServer()->getGroupManager()->get('group1test')->delete();
+        //$c->getServer()->getGroupManager()->get('group2test')->delete();
     }
 
     protected function tearDown(): void {

@@ -40,29 +40,31 @@ class PhotosControllerTest extends \PHPUnit\Framework\TestCase {
         $app = new Application();
         $c = $app->getContainer();
 
-        // clear test users
         $user = $c->getServer()->getUserManager()->get('test');
-        if ($user !== null) {
-            $user->delete();
-        }
-        $user = $c->getServer()->getUserManager()->get('test2');
-        if ($user !== null) {
-            $user->delete();
-        }
-        $user = $c->getServer()->getUserManager()->get('test3');
-        if ($user !== null) {
-            $user->delete();
-        }
+        $user2 = $c->getServer()->getUserManager()->get('test2');
+        $user3 = $c->getServer()->getUserManager()->get('test3');
+        $group = $c->getServer()->getGroupManager()->get('group1test');
+        $group2 = $c->getServer()->getGroupManager()->get('group2test');
 
         // CREATE DUMMY USERS
-        $u1 = $c->getServer()->getUserManager()->createUser('test', 'tatotitoTUTU');
-        $u1->setEMailAddress('toto@toto.net');
-        $u2 = $c->getServer()->getUserManager()->createUser('test2', 'plopinoulala000');
-        $u3 = $c->getServer()->getUserManager()->createUser('test3', 'yeyeahPASSPASS');
-        $c->getServer()->getGroupManager()->createGroup('group1test');
-        $c->getServer()->getGroupManager()->get('group1test')->addUser($u1);
-        $c->getServer()->getGroupManager()->createGroup('group2test');
-        $c->getServer()->getGroupManager()->get('group2test')->addUser($u2);
+        if ($user === null) {
+            $u1 = $c->getServer()->getUserManager()->createUser('test', 'tatotitoTUTU');
+            $u1->setEMailAddress('toto@toto.net');
+        }
+        if ($user2 === null) {
+            $u2 = $c->getServer()->getUserManager()->createUser('test2', 'plopinoulala000');
+        }
+        if ($user2 === null) {
+            $u3 = $c->getServer()->getUserManager()->createUser('test3', 'yeyeahPASSPASS');
+        }
+        if ($group === null) {
+            $c->getServer()->getGroupManager()->createGroup('group1test');
+            $c->getServer()->getGroupManager()->get('group1test')->addUser($u1);
+        }
+        if ($group2 === null) {
+            $c->getServer()->getGroupManager()->createGroup('group2test');
+            $c->getServer()->getGroupManager()->get('group2test')->addUser($u2);
+        }
     }
 
     protected function setUp(): void {
@@ -157,11 +159,28 @@ class PhotosControllerTest extends \PHPUnit\Framework\TestCase {
         );
 
         $userfolder = $this->container->query('ServerContainer')->getUserFolder('test');
+    }
 
-        // delete first
-        if ($userfolder->nodeExists('dir/nc.jpg')) {
-            echo "DELETE\n";
-            $file = $userfolder->get('dir/nc.jpg');
+    public static function tearDownAfterClass(): void {
+        //$app = new Application();
+        //$c = $app->getContainer();
+        //$user = $c->getServer()->getUserManager()->get('test');
+        //$user->delete();
+        //$user = $c->getServer()->getUserManager()->get('test2');
+        //$user->delete();
+        //$user = $c->getServer()->getUserManager()->get('test3');
+        //$user->delete();
+        //$c->getServer()->getGroupManager()->get('group1test')->delete();
+        //$c->getServer()->getGroupManager()->get('group2test')->delete();
+    }
+
+    protected function tearDown(): void {
+        // in case there was a failure and something was not deleted
+        $userfolder = $this->container->query('ServerContainer')->getUserFolder('test');
+        $c = $this->app->getContainer();
+        // delete files
+        if ($userfolder->nodeExists('nc.jpg')) {
+            $file = $userfolder->get('nc.jpg');
             $file->delete();
         }
         // delete db
@@ -172,23 +191,6 @@ class PhotosControllerTest extends \PHPUnit\Framework\TestCase {
             );
         $req = $qb->execute();
         $qb = $qb->resetQueryParts();
-    }
-
-    public static function tearDownAfterClass(): void {
-        $app = new Application();
-        $c = $app->getContainer();
-        $user = $c->getServer()->getUserManager()->get('test');
-        $user->delete();
-        $user = $c->getServer()->getUserManager()->get('test2');
-        $user->delete();
-        $user = $c->getServer()->getUserManager()->get('test3');
-        $user->delete();
-        $c->getServer()->getGroupManager()->get('group1test')->delete();
-        $c->getServer()->getGroupManager()->get('group2test')->delete();
-    }
-
-    protected function tearDown(): void {
-        // in case there was a failure and something was not deleted
     }
 
     public function testAddGetPhotos() {
@@ -201,30 +203,25 @@ class PhotosControllerTest extends \PHPUnit\Framework\TestCase {
         $content1 = fread($handle, filesize($filename));
         fclose($handle);
         //$content1 = file_get_contents('tests/test_files/nc.jpg');
-        $userfolder->newFolder('dir');
-        $file = $userfolder->newFile('dir/nc.jpgg');
+        //$userfolder->newFolder('dir');
+        $file = $userfolder->newFile('nc.jpgg');
         //->putContent($content1);
         $fp = $file->fopen('wb');
         fwrite($fp, $content1);
         fclose($fp);
         $file->touch();
 
-        $file = $userfolder->get('dir/nc.jpgg');
-        $file->move($userfolder->getPath().'/dir/nc.jpg');
-        echo 'I MOVE TO '.$userfolder->getPath().'/dir/nc.jpg'."\n";
+        $file = $userfolder->get('nc.jpgg');
+        $file->move($userfolder->getPath().'/nc.jpg');
+        //echo 'I MOVE TO '.$userfolder->getPath().'/nc.jpg'."\n";
         $file->touch();
 
-        $file = $userfolder->get('dir/nc.jpg');
-        echo 'FILE ID '.$file->getId()."\n";
-        $id = $file->getId();
-        $file = $userfolder->get('dir')->getById($id);
-        var_dump($file);
+        //$file = $userfolder->get('nc.jpg');
+        //echo 'FILE ID '.$file->getId()."\n";
+        //$id = $file->getId();
+        //$file = $userfolder->get('dir')->getById($id);
+        //var_dump($file);
 
-        // TODO understand why line 72 of GeoPhotoService.php does not work
-        // we don't get the file by its ID...
-
-        //echo 'BEFORE RESCAN'."\n";
-        //$this->photoFileService->rescan('test');
 
         //$content2 = file_get_contents('tests/test_files/nut.jpg');
         //$userfolder->newFile('dir/nut.jpg')->putContent($content2);
@@ -235,25 +232,18 @@ class PhotosControllerTest extends \PHPUnit\Framework\TestCase {
         $status = $resp->getStatus();
         $this->assertEquals(200, $status);
         $data = $resp->getData();
-        //$this->assertEquals(27, $data);
-        var_dump($data);
+        $this->assertEquals(1, count($data));
+        //var_dump($data);
 
-        $this->assertEquals(true, 1===1);
+        echo "BEFORE RESCAN\n";
+        $this->photoFileService->rescan('test');
+        echo "AFTER RESCAN\n";
 
-        // delete files
-        if ($userfolder->nodeExists('dir/nc.jpg')) {
-            echo "DELETE\n";
-            $file = $userfolder->get('dir/nc.jpg');
-            $file->delete();
-        }
-        // delete db
-        $qb = $c->query('ServerContainer')->getDatabaseConnection()->getQueryBuilder();
-        $qb->delete('maps_photos')
-            ->where(
-                $qb->expr()->eq('user_id', $qb->createNamedParameter('test', IQueryBuilder::PARAM_STR))
-            );
-        $req = $qb->execute();
-        $qb = $qb->resetQueryParts();
+        $resp = $this->photosController->getPhotosFromDb();
+        $status = $resp->getStatus();
+        $this->assertEquals(200, $status);
+        $data = $resp->getData();
+        $this->assertEquals(1, count($data));
     }
 
 }

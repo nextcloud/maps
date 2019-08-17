@@ -123,7 +123,7 @@ class PhotofilesService {
 
     public function addByFolder(Node $folder) {
         $photos = $this->gatherPhotoFiles($folder, true);
-        foreach($photos as $photo) {
+        foreach ($photos as $photo) {
             $this->addPhoto($photo, $folder->getOwner()->getUID());
         }
     }

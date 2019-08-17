@@ -161,6 +161,19 @@ class PhotosControllerTest extends \PHPUnit\Framework\TestCase {
         );
 
         $userfolder = $this->container->query('ServerContainer')->getUserFolder('test');
+        // delete files
+        if ($userfolder->nodeExists('nc.jpg')) {
+            $file = $userfolder->get('nc.jpg');
+            $file->delete();
+        }
+        // delete db
+        $qb = $c->query('ServerContainer')->getDatabaseConnection()->getQueryBuilder();
+        $qb->delete('maps_photos')
+            ->where(
+                $qb->expr()->eq('user_id', $qb->createNamedParameter('test', IQueryBuilder::PARAM_STR))
+            );
+        $req = $qb->execute();
+        $qb = $qb->resetQueryParts();
     }
 
     public static function tearDownAfterClass(): void {
@@ -178,21 +191,6 @@ class PhotosControllerTest extends \PHPUnit\Framework\TestCase {
 
     protected function tearDown(): void {
         // in case there was a failure and something was not deleted
-        $userfolder = $this->container->query('ServerContainer')->getUserFolder('test');
-        $c = $this->app->getContainer();
-        // delete files
-        if ($userfolder->nodeExists('nc.jpg')) {
-            $file = $userfolder->get('nc.jpg');
-            $file->delete();
-        }
-        // delete db
-        $qb = $c->query('ServerContainer')->getDatabaseConnection()->getQueryBuilder();
-        $qb->delete('maps_photos')
-            ->where(
-                $qb->expr()->eq('user_id', $qb->createNamedParameter('test', IQueryBuilder::PARAM_STR))
-            );
-        $req = $qb->execute();
-        $qb = $qb->resetQueryParts();
     }
 
     public function testAddGetPhotos() {
@@ -216,8 +214,11 @@ class PhotosControllerTest extends \PHPUnit\Framework\TestCase {
         $file = $userfolder->get('nc.jpgg');
         $file->move($userfolder->getPath().'/nc.jpg');
         //echo 'I MOVE TO '.$userfolder->getPath().'/nc.jpg'."\n";
+        $file = $userfolder->get('nc.jpg');
         $file->touch();
 
+        //$this->photoFileService->rescan('test');
+        //$this->photoFileService->safeAddByFile($file);
         //$file = $userfolder->get('nc.jpg');
         //echo 'FILE ID '.$file->getId()."\n";
         //$id = $file->getId();
@@ -228,12 +229,12 @@ class PhotosControllerTest extends \PHPUnit\Framework\TestCase {
         //$content2 = file_get_contents('tests/test_files/nut.jpg');
         //$userfolder->newFile('dir/nut.jpg')->putContent($content2);
 
-        //var_dump($userfolder->get('dir')->getDirectoryListing());
-
         $resp = $this->photosController->getPhotosFromDb();
         $status = $resp->getStatus();
         $this->assertEquals(200, $status);
         $data = $resp->getData();
+        //echo "DATA\n";
+        //var_dump($data);
         $this->assertEquals(1, count($data));
         //var_dump($data);
 

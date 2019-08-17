@@ -156,7 +156,7 @@ class TracksService {
         }
     }
 
-    private function gatherTrackFiles ($folder, $recursive) {
+    private function gatherTrackFiles($folder, $recursive) {
         $notes = [];
         $nodes = $folder->getDirectoryListing();
         foreach ($nodes as $node) {

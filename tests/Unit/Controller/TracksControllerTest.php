@@ -135,7 +135,7 @@ class TracksControllerTest extends \PHPUnit\Framework\TestCase {
 
         // delete first
         if ($userfolder->nodeExists('dir/testFile1.gpx')) {
-            echo "DELETE\n";
+            //echo "DELETE\n";
             $file = $userfolder->get('dir/testFile1.gpx');
             $file->delete();
         }
@@ -196,6 +196,7 @@ class TracksControllerTest extends \PHPUnit\Framework\TestCase {
         $file = $userfolder->get('testFile1.gpxx');
         $file->move($userfolder->getPath().'/testFile1.gpx');
         //echo 'I MOVE TO '.$userfolder->getPath().'/testFile1.gpx'."\n";
+        $file = $userfolder->get('testFile1.gpx');
         $file->touch();
 
         $resp = $this->tracksController->getTracks();

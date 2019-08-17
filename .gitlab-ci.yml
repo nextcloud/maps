@@ -46,9 +46,9 @@ test_nc17_sqlite:
     - sudo -u www-data php /var/www/html/nextcloud/occ app:check-code maps
     # check JS code
     - jshint --verbose maps/js/script.js && echo "jshint OK" || echo "jshint has complaints"
-    - popd ; popd ; sudo -u www-data mkdir coverage ; cd /var/www/html/nextcloud/apps/maps
+    - cd /var/www/html/nextcloud/apps/maps
     - sudo -u www-data php7.2 /usr/local/bin/phpunit --configuration /var/www/html/nextcloud/apps/maps/phpunit.xml > /dev/null 2>&1 || echo "FIRST TEST FAILED as expected..."
-    - sudo -u www-data php7.2 /usr/local/bin/phpunit --configuration /var/www/html/nextcloud/apps/maps/phpunit.xml --coverage-text --color=never --coverage-html /var/www/html/coverage
+    - sudo -u www-data php7.2 /usr/local/bin/phpunit --configuration /var/www/html/nextcloud/apps/maps/phpunit.xml --coverage-text --color=never --coverage-html /builds/eneiluj/maps/coverage
 
 test_nc17_pgsql:
   stage: test

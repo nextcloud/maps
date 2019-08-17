@@ -5,7 +5,7 @@
     <name>Maps</name>
     <summary>Simple maps app for Nextcloud</summary>
     <description><![CDATA[Simple maps app to display a leaflet map.]]></description>
-    <version>0.0.13</version>
+    <version>0.0.14</version>
     <licence>agpl</licence>
     <author mail="eneiluj@posteo.net">Julien Veyssier</author>
     <author mail="kontakt+github@arne.email">Arne Hamann</author>

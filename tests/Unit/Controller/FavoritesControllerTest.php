@@ -200,7 +200,8 @@ class FavoritesControllerTest extends \PHPUnit\Framework\TestCase {
     public function testImportExportFavorites() {
         $userfolder = $this->container->query('ServerContainer')->getUserFolder('test');
         $content1 = file_get_contents('tests/test_files/favoritesOk.gpx');
-        $userfolder->newFile('favoritesOk.gpx')->putContent($content1);
+        $newFile = $userfolder->newFile('favoritesOk.gpx');
+        $newFile->putContent($content1);
 
         $resp = $this->favoritesController->importFavorites('/favoritesOk.gpx');
         $status = $resp->getStatus();

@@ -134,9 +134,9 @@ class TracksControllerTest extends \PHPUnit\Framework\TestCase {
         $userfolder = $this->container->query('ServerContainer')->getUserFolder('test');
 
         // delete first
-        if ($userfolder->nodeExists('dir/testFile1.gpx')) {
+        if ($userfolder->nodeExists('testFile1.gpx')) {
             //echo "DELETE\n";
-            $file = $userfolder->get('dir/testFile1.gpx');
+            $file = $userfolder->get('testFile1.gpx');
             $file->delete();
         }
         // delete db
@@ -203,16 +203,91 @@ class TracksControllerTest extends \PHPUnit\Framework\TestCase {
         $status = $resp->getStatus();
         $this->assertEquals(200, $status);
         $data = $resp->getData();
-        $this->assertEquals(1, count($data));
-        //var_dump($data);
+        $foundTestFile = false;
+        foreach ($data as $k => $v) {
+            if ($v['file_path'] === '/testFile1.gpx') {
+                $foundTestFile = true;
+                break;
+            }
+        }
+        $this->assertEquals(true, count($data) > 0);
+        $this->assertEquals(true, $foundTestFile);
 
-        $this->tracksService->rescan('test');
+        foreach ($this->tracksService->rescan('test') as $path) {
+            //echo $path."\n";
+        }
 
         $resp = $this->tracksController->getTracks();
         $status = $resp->getStatus();
         $this->assertEquals(200, $status);
         $data = $resp->getData();
-        $this->assertEquals(1, count($data));
+        $foundTestFile = false;
+        //var_dump($data);
+        $trackId = null;
+        foreach ($data as $k => $v) {
+            if ($v['file_path'] === '/testFile1.gpx') {
+                $foundTestFile = true;
+                $trackId = $v['id'];
+                $this->assertEquals(true, $v['color'] === null);
+                break;
+            }
+        }
+        $this->assertEquals(true, count($data) > 0);
+        $this->assertEquals(true, $foundTestFile);
+
+        // track content
+        $resp = $this->tracksController->getTrackFileContent($trackId);
+        $status = $resp->getStatus();
+        $this->assertEquals(200, $status);
+        $data = $resp->getData();
+        $this->assertEquals(true, $content1 === $data['content']);
+        $meta = $data['metadata'];
+        $this->assertEquals(true, strlen($meta) > 0);
+
+        // to get stored metadata
+        $resp = $this->tracksController->getTrackFileContent($trackId);
+        $status = $resp->getStatus();
+        $this->assertEquals(200, $status);
+        $data = $resp->getData();
+        $this->assertEquals(true, $content1 === $data['content']);
+        $this->assertEquals(true, $meta === $data['metadata']);
+
+        // file that does not exist
+        $resp = $this->tracksController->getTrackFileContent(0);
+        $status = $resp->getStatus();
+        $this->assertEquals(400, $status);
+        $data = $resp->getData();
+        $this->assertEquals('file not found', $data);
+
+        // edit track
+        $resp = $this->tracksController->editTrack($trackId, '#002244', null, null);
+        $status = $resp->getStatus();
+        $this->assertEquals(200, $status);
+        $data = $resp->getData();
+        $this->assertEquals('EDITED', $data);
+
+        // check new color
+        $resp = $this->tracksController->getTracks();
+        $status = $resp->getStatus();
+        $this->assertEquals(200, $status);
+        $data = $resp->getData();
+        $foundTestFile = false;
+        foreach ($data as $k => $v) {
+            if ($v['file_path'] === '/testFile1.gpx') {
+                $foundTestFile = true;
+                $this->assertEquals(true, $v['color'] === '#002244');
+                break;
+            }
+        }
+        $this->assertEquals(true, count($data) > 0);
+        $this->assertEquals(true, $foundTestFile);
+
+        // edit track that does not exist
+        $resp = $this->tracksController->editTrack(0, '#002244', null, null);
+        $status = $resp->getStatus();
+        $this->assertEquals(400, $status);
+        $data = $resp->getData();
+        $this->assertEquals('no such track', $data);
     }
 
 }

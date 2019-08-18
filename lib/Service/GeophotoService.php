@@ -146,7 +146,7 @@ class GeophotoService {
      */
     private function getLocationGuesses($dateTaken) {
         $locations = [];
-        foreach ($this->timeorderedPointSets as $timeordedPointSet) {
+        foreach (($this->timeorderedPointSets ?? []) as $timeordedPointSet) {
             $location = $this->getLocationFromSequenceOfPoints($dateTaken,$timeordedPointSet);
             if (!is_null($location)) {
                 $locations[] = $location;

@@ -166,6 +166,10 @@ class PhotosControllerTest extends \PHPUnit\Framework\TestCase {
             $file = $userfolder->get('nc.jpg');
             $file->delete();
         }
+        if ($userfolder->nodeExists('nut.jpg')) {
+            $file = $userfolder->get('nut.jpg');
+            $file->delete();
+        }
         // delete db
         $qb = $c->query('ServerContainer')->getDatabaseConnection()->getQueryBuilder();
         $qb->delete('maps_photos')
@@ -202,44 +206,74 @@ class PhotosControllerTest extends \PHPUnit\Framework\TestCase {
         $handle = fopen($filename, 'rb');
         $content1 = fread($handle, filesize($filename));
         fclose($handle);
-        //$content1 = file_get_contents('tests/test_files/nc.jpg');
-        //$userfolder->newFolder('dir');
         $file = $userfolder->newFile('nc.jpgg');
-        //->putContent($content1);
         $fp = $file->fopen('wb');
         fwrite($fp, $content1);
         fclose($fp);
         $file->touch();
-
+        // rename
         $file = $userfolder->get('nc.jpgg');
         $file->move($userfolder->getPath().'/nc.jpg');
-        //echo 'I MOVE TO '.$userfolder->getPath().'/nc.jpg'."\n";
         $file = $userfolder->get('nc.jpg');
         $file->touch();
 
-        //$this->photoFileService->rescan('test');
-        //$this->photoFileService->safeAddByFile($file);
-        //$file = $userfolder->get('nc.jpg');
-        //echo 'FILE ID '.$file->getId()."\n";
-        //$id = $file->getId();
-        //$file = $userfolder->get('dir')->getById($id);
-        //var_dump($file);
-
-
-        //$content2 = file_get_contents('tests/test_files/nut.jpg');
-        //$userfolder->newFile('dir/nut.jpg')->putContent($content2);
+        $filename = 'tests/test_files/nut.jpg';
+        $handle = fopen($filename, 'rb');
+        $content1 = fread($handle, filesize($filename));
+        fclose($handle);
+        $file = $userfolder->newFile('nut.jpgg');
+        $fp = $file->fopen('wb');
+        fwrite($fp, $content1);
+        fclose($fp);
+        $file->touch();
+        // rename
+        $file = $userfolder->get('nut.jpgg');
+        $file->move($userfolder->getPath().'/nut.jpg');
+        $file = $userfolder->get('nut.jpg');
+        $file->touch();
 
         $resp = $this->photosController->getPhotosFromDb();
         $status = $resp->getStatus();
         $this->assertEquals(200, $status);
         $data = $resp->getData();
-        //echo "DATA\n";
-        //var_dump($data);
         $this->assertEquals(1, count($data));
-        //var_dump($data);
 
-        // TODO understand why rescan is not called...
-        $this->photoFileService->rescan('test');
+        // non localized
+        $resp = $this->photosController->getNonLocalizedPhotosFromDb();
+        $status = $resp->getStatus();
+        $this->assertEquals(200, $status);
+        $data = $resp->getData();
+        $this->assertEquals(1, count($data));
+        $this->assertEquals('/nut.jpg', $data[0]->path);
+
+        foreach ($this->photoFileService->rescan('test') as $path) {
+        }
+
+        $resp = $this->photosController->getPhotosFromDb();
+        $status = $resp->getStatus();
+        $this->assertEquals(200, $status);
+        $data = $resp->getData();
+        $this->assertEquals(1, count($data));
+
+        // place photos
+        $resp = $this->photosController->placePhotos(['/nut.jpg'], [1.2345], [9.8765]);
+        $status = $resp->getStatus();
+        $this->assertEquals(200, $status);
+        $data = $resp->getData();
+        $this->assertEquals(1, $data);
+
+        $resp = $this->photosController->getPhotosFromDb();
+        $status = $resp->getStatus();
+        $this->assertEquals(200, $status);
+        $data = $resp->getData();
+        $this->assertEquals(2, count($data));
+
+        // reset coords
+        $resp = $this->photosController->resetPhotosCoords(['/nut.jpg']);
+        $status = $resp->getStatus();
+        $this->assertEquals(200, $status);
+        $data = $resp->getData();
+        $this->assertEquals(1, $data);
 
         $resp = $this->photosController->getPhotosFromDb();
         $status = $resp->getStatus();

@@ -165,14 +165,4 @@ class TracksController extends Controller {
         }
     }
 
-    /**
-     * @NoAdminRequired
-     */
-    public function deleteTracks($ids) {
-        if (is_array($ids) && count($ids) > 0) {
-            $this->tracksService->deleteTracksFromDB($ids, $this->userId);
-        }
-        return new DataResponse('DELETED');
-    }
-
 }

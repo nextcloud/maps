@@ -122,6 +122,13 @@ class DevicesControllerTest extends \PHPUnit\Framework\TestCase {
             $c->query('ServerContainer')->getConfig(),
             $c->getServer()->getAppManager()
         );
+
+        // delete
+        $resp = $this->devicesController->getDevices();
+        $data = $resp->getData();
+        foreach ($data as $device) {
+            $resp = $this->devicesController->deleteDevice($device['id']);
+        }
     }
 
     public static function tearDownAfterClass(): void {
@@ -139,14 +146,22 @@ class DevicesControllerTest extends \PHPUnit\Framework\TestCase {
 
     protected function tearDown(): void {
         // in case there was a failure and something was not deleted
+    }
+
+    public function testAddPoints() {
         $resp = $this->devicesController->getDevices();
         $data = $resp->getData();
         foreach ($data as $device) {
             $resp = $this->devicesController->deleteDevice($device['id']);
         }
-    }
 
-    public function testAddPoints() {
+        // delete device that does not exist
+        $resp = $this->devicesController->deleteDevice(0);
+        $status = $resp->getStatus();
+        $this->assertEquals(400, $status);
+        $data = $resp->getData();
+        $this->assertEquals('no such device', $data);
+
         // correct values
         $resp = $this->devicesController->addDevicePoint(1.1, 2.2, 12345, 'testDevice', 1000, 99, 50);
         $status = $resp->getStatus();
@@ -154,100 +169,181 @@ class DevicesControllerTest extends \PHPUnit\Framework\TestCase {
         $data = $resp->getData();
         $deviceId = $data['deviceId'];
         $pointId = $data['pointId'];
+
+        $_SERVER['HTTP_USER_AGENT'] = 'testBrowser';
+        $ts = (new \DateTime())->getTimestamp();
+        $resp = $this->devicesController->addDevicePoint(1.2, 2.3, null, null, 1001, 100, 5);
+        $status = $resp->getStatus();
+        $this->assertEquals(200, $status);
+        $data = $resp->getData();
+        $deviceId2 = $data['deviceId'];
+        $pointId2 = $data['pointId'];
+        // test user agent is correct
+        $resp = $this->devicesController->getDevices();
+        $data = $resp->getData();
+        $d2Found = false;
+        foreach ($data as $device) {
+            if ($device['id'] === $deviceId2) {
+                $this->assertEquals('testBrowser', $device['user_agent']);
+                $d2Found = true;
+            }
+        }
+        $this->assertEquals(true, $d2Found);
+
+        // test point values
+        $resp = $this->devicesController->getDevicePoints($deviceId2);
+        $status = $resp->getStatus();
+        $this->assertEquals(200, $status);
+        $data = $resp->getData();
+        $this->assertEquals(true, count($data) === 1);
+        $this->assertEquals(true, $data[0]['timestamp'] >= $ts);
+
+        // invalid values
+        $resp = $this->devicesController->addDevicePoint('aaa', 2.2, 12345, 'testDevice', 1000, 99, 50);
+        $status = $resp->getStatus();
+        $this->assertEquals(400, $status);
+        $data = $resp->getData();
+        $this->assertEquals('invalid values', $data);
+
+        $resp = $this->devicesController->addDevicePoint(1.1, 'aaa', 12345, 'testDevice', 1000, 99, 50);
+        $status = $resp->getStatus();
+        $this->assertEquals(400, $status);
+        $data = $resp->getData();
+        $this->assertEquals('invalid values', $data);
+    }
+
+    public function testEditDevice() {
+        $resp = $this->devicesController->getDevices();
+        $data = $resp->getData();
+        foreach ($data as $device) {
+            $resp = $this->devicesController->deleteDevice($device['id']);
+        }
+
+        $resp = $this->devicesController->addDevicePoint(1.1, 2.2, 12345, 'testDevice', 1000, 99, 50);
+        $status = $resp->getStatus();
+        $this->assertEquals(200, $status);
+        $data = $resp->getData();
+        $deviceId = $data['deviceId'];
+        $pointId = $data['pointId'];
+
+        $resp = $this->devicesController->editDevice($deviceId, '#001122', 'editedDevice');
+        $status = $resp->getStatus();
+        $this->assertEquals(200, $status);
+        $data = $resp->getData();
+        $this->assertEquals('#001122', $data['color']);
+        $this->assertEquals('editedDevice', $data['user_agent']);
+
+        $resp = $this->devicesController->editDevice(0, '#001122', 'editedDevice');
+        $status = $resp->getStatus();
+        $this->assertEquals(400, $status);
+
+        $resp = $this->devicesController->editDevice($deviceId, '', '');
+        $status = $resp->getStatus();
+        $this->assertEquals(400, $status);
     }
 
     public function testImportExportDevices() {
-        $this->assertEquals(true, 1==1);
+        $resp = $this->devicesController->getDevices();
+        $data = $resp->getData();
+        foreach ($data as $device) {
+            $resp = $this->devicesController->deleteDevice($device['id']);
+        }
+
         $userfolder = $this->container->query('ServerContainer')->getUserFolder('test');
-        //$content1 = file_get_contents('tests/test_files/devicesOk.gpx');
-        //$userfolder->newFile('devicesOk.gpx')->putContent($content1);
+        $content1 = file_get_contents('tests/test_files/devicesOk.gpx');
+        $userfolder->newFile('devicesOk.gpx')->putContent($content1);
 
-        //$resp = $this->devicesController->importDevices('/devicesOk.gpx');
-        //$status = $resp->getStatus();
-        //$this->assertEquals(200, $status);
-        //$data = $resp->getData();
-        //$this->assertEquals(27, $data);
+        $resp = $this->devicesController->importDevices('/devicesOk.gpx');
+        $status = $resp->getStatus();
+        $this->assertEquals(200, $status);
+        $data = $resp->getData();
+        $this->assertEquals(2, $data);
 
-        //// get favorites
-        //$resp = $this->favoritesController->getFavorites();
-        //$status = $resp->getStatus();
-        //$this->assertEquals(200, $status);
-        //$data = $resp->getData();
-        //$this->assertEquals(27, count($data));
-        //$nbFavorites = count($data);
-        //$categoryCount = [];
-        //foreach ($data as $fav) {
-        //    $categoryCount[$fav['category']] = isset($categoryCount[$fav['category']]) ? ($categoryCount[$fav['category']] + 1) : 1;
-        //}
-        //$categories = array_keys($categoryCount);
+        $resp = $this->devicesController->importDevices('/doesNotExist.gpx');
+        $status = $resp->getStatus();
+        $this->assertEquals(400, $status);
+        $data = $resp->getData();
+        $this->assertEquals('File does not exist', $data);
 
-        //// import errors
-        //$userfolder->newFile('dummy.pdf')->putContent('dummy content');
+        $resp = $this->devicesController->importDevices('/nc.jpg');
+        $status = $resp->getStatus();
+        $this->assertEquals(400, $status);
 
-        //$resp = $this->favoritesController->importFavorites('/dummy.gpx');
-        //$status = $resp->getStatus();
-        //$this->assertEquals(400, $status);
-        //$data = $resp->getData();
-        //$this->assertEquals('File does not exist', $data);
+        $resp = $this->devicesController->importDevices('/Maps');
+        $status = $resp->getStatus();
+        $this->assertEquals(400, $status);
 
-        //$resp = $this->favoritesController->importFavorites('/dummy.pdf');
-        //$status = $resp->getStatus();
-        //$this->assertEquals(400, $status);
-        //$data = $resp->getData();
-        //$this->assertEquals('Invalid file extension', $data);
+        // get ids
+        $devices = [];
+        $resp = $this->devicesController->getDevices();
+        $data = $resp->getData();
+        foreach ($data as $device) {
+            $id = $device['id'];
+            $devices[$id] = $device;
+        }
+        // get number of points
+        foreach ($devices as $id=>$device) {
+            $resp = $this->devicesController->getDevicePoints($id);
+            $status = $resp->getStatus();
+            $this->assertEquals(200, $status);
+            $data = $resp->getData();
+            $devices[$id]['nbPoints'] = count($data);
+        }
 
-        //// export and compare
-        //$resp = $this->favoritesController->exportFavorites($categories, null, null, true);
-        //$status = $resp->getStatus();
-        //$this->assertEquals(200, $status);
-        //$exportPath = $resp->getData();
-        //$this->assertEquals(true, $userfolder->nodeExists($exportPath));
+        // export and compare
+        $ids = array_keys($devices);
+        $resp = $this->devicesController->exportDevices($ids, null, null, true);
+        $status = $resp->getStatus();
+        $this->assertEquals(200, $status);
+        $exportPath = $resp->getData();
+        $this->assertEquals(true, $userfolder->nodeExists($exportPath));
 
-        //// parse xml and compare number of favorite for each category
-        //$xmLData = $userfolder->get($exportPath)->getContent();
-        //$xml = simplexml_load_string($xmLData);
-        //$wpts = $xml->wpt;
-        //$this->assertEquals($nbFavorites, count($wpts));
-        //$categoryCountExport = [];
-        //foreach ($wpts as $wpt) {
-        //    $cat = (string)$wpt->type[0];
-        //    $categoryCountExport[$cat] = isset($categoryCountExport[$cat]) ? ($categoryCountExport[$cat] + 1) : 1;
-        //}
-        //foreach ($categoryCount as $cat => $nb) {
-        //    $this->assertEquals($categoryCountExport[$cat], $nb);
-        //}
+        // parse xml and compare number of devices and points
+        $xmLData = $userfolder->get($exportPath)->getContent();
+        $xml = simplexml_load_string($xmLData);
+        $trks = $xml->trk;
+        // number of devices
+        $this->assertEquals(count($ids), count($trks));
+        $pointCountExport = [];
+        // count exported points per device
+        foreach ($trks as $trk) {
+            $name = (string)$trk->name[0];
+            $pointCountExport[$name] = count($trk->trkseg[0]->trkpt);
+        }
+        // check that it matches the data in the DB
+        foreach ($devices as $id => $device) {
+            $this->assertEquals($device['nbPoints'], $pointCountExport[$device['user_agent']]);
+        }
 
-        //// export error
-        //$resp = $this->favoritesController->exportFavorites(null, null, null, true);
-        //$status = $resp->getStatus();
-        //$this->assertEquals(400, $status);
-        //$data = $resp->getData();
-        //$this->assertEquals('Nothing to export', $data);
+        // export error
+        $resp = $this->devicesController->exportDevices(null, null, null, true);
+        $status = $resp->getStatus();
+        $this->assertEquals(400, $status);
+        $data = $resp->getData();
+        $this->assertEquals('No device to export', $data);
 
-        //$userfolder->get('/Maps')->delete();
-        //$userfolder->newFile('Maps')->putContent('dummy content');
-        //$resp = $this->favoritesController->exportFavorites($categories, null, null, true);
-        //$status = $resp->getStatus();
-        //$this->assertEquals(400, $status);
-        //$data = $resp->getData();
-        //$this->assertEquals('/Maps is not a directory', $data);
-        //$userfolder->get('/Maps')->delete();
+        $userfolder->get('/Maps')->delete();
+        $userfolder->newFile('Maps')->putContent('dummy content');
+        $resp = $this->devicesController->exportDevices($ids, null, null, true);
+        $status = $resp->getStatus();
+        $this->assertEquals(400, $status);
+        $data = $resp->getData();
+        $this->assertEquals('/Maps is not a directory', $data);
+        $userfolder->get('/Maps')->delete();
 
-        //// delete all favorites
-        //$resp = $this->favoritesController->getFavorites();
-        //$data = $resp->getData();
-        //$favIds = [];
-        //foreach ($data as $fav) {
-        //    array_push($favIds, $fav['id']);
-        //}
-        //$resp = $this->favoritesController->deleteFavorites($favIds);
+        // delete all points
+        $resp = $this->devicesController->getDevices();
+        $data = $resp->getData();
+        foreach ($data as $device) {
+            $resp = $this->devicesController->deleteDevice($device['id']);
+        }
 
-        //// and then try to export
-        //$resp = $this->favoritesController->exportFavorites($categories, null, null, true);
-        //$status = $resp->getStatus();
-        //$this->assertEquals(400, $status);
-        //$data = $resp->getData();
-        //$this->assertEquals('Nothing to export', $data);
+        // and then try to export
+        $resp = $this->devicesController->exportDevices($ids, null, null, true);
+        $status = $resp->getStatus();
+        $this->assertEquals(400, $status);
+        $data = $resp->getData();
+        $this->assertEquals('Nothing to export', $data);
     }
 
     public function testEditDevices() {

@@ -1,0 +1,168 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
+<gpx xmlns="http://www.topografix.com/GPX/1/1" xmlns:gpxx="http://www.garmin.com/xmlschemas/GpxExtensions/v3" xmlns:wptx1="http://www.garmin.com/xmlschemas/WaypointExtension/v1" xmlns:gpxtpx="http://www.garmin.com/xmlschemas/TrackPointExtension/v1" creator="PhoneTrack Nextcloud app 0.5.2" version="1.1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd http://www.garmin.com/xmlschemas/GpxExtensions/v3 http://www8.garmin.com/xmlschemas/GpxExtensionsv3.xsd http://www.garmin.com/xmlschemas/WaypointExtension/v1 http://www8.garmin.com/xmlschemas/WaypointExtensionv1.xsd http://www.garmin.com/xmlschemas/TrackPointExtension/v1 http://www.garmin.com/xmlschemas/TrackPointExtensionv1.xsd">
+<metadata>
+ <time>2019-08-18T14:56:37Z</time>
+ <name>personal logs</name>
+ <desc>2 devices</desc>
+</metadata>
+<trk>
+ <name>personalCell</name>
+ <trkseg>
+  <trkpt lat="44.009334" lon="4.899902">
+   <time>2019-07-25T12:14:27Z</time>
+   <extensions>
+     <useragent>Ajouté manuellement</useragent>
+   </extensions>
+  </trkpt>
+  <trkpt lat="44.175007" lon="4.822998">
+   <time>2019-07-25T12:14:32Z</time>
+   <extensions>
+     <useragent>Ajouté manuellement</useragent>
+   </extensions>
+  </trkpt>
+  <trkpt lat="44.371633" lon="4.822998">
+   <time>2019-07-25T12:14:36Z</time>
+   <extensions>
+     <useragent>Ajouté manuellement</useragent>
+   </extensions>
+  </trkpt>
+  <trkpt lat="44.645803" lon="4.844971">
+   <time>2019-07-25T12:14:41Z</time>
+   <extensions>
+     <useragent>Ajouté manuellement</useragent>
+   </extensions>
+  </trkpt>
+  <trkpt lat="44.871995" lon="4.888916">
+   <time>2019-07-25T12:14:47Z</time>
+   <extensions>
+     <useragent>Ajouté manuellement</useragent>
+   </extensions>
+  </trkpt>
+  <trkpt lat="45.236702" lon="4.855957">
+   <time>2019-07-25T12:14:53Z</time>
+   <extensions>
+     <useragent>Ajouté manuellement</useragent>
+   </extensions>
+  </trkpt>
+  <trkpt lat="45.529872" lon="4.855957">
+   <time>2019-07-25T12:14:57Z</time>
+   <extensions>
+     <useragent>Ajouté manuellement</useragent>
+   </extensions>
+  </trkpt>
+  <trkpt lat="45.706578" lon="4.954834">
+   <time>2019-07-25T12:15:04Z</time>
+   <extensions>
+     <useragent>Ajouté manuellement</useragent>
+   </extensions>
+  </trkpt>
+  <trkpt lat="45.829175" lon="5.031738">
+   <time>2019-07-25T12:15:10Z</time>
+   <extensions>
+     <useragent>Ajouté manuellement</useragent>
+   </extensions>
+  </trkpt>
+  <trkpt lat="46.050697" lon="5.361328">
+   <time>2019-07-25T12:15:14Z</time>
+   <extensions>
+     <useragent>Ajouté manuellement</useragent>
+   </extensions>
+  </trkpt>
+  <trkpt lat="46.13449" lon="5.800781">
+   <time>2019-07-25T12:15:18Z</time>
+   <extensions>
+     <useragent>Ajouté manuellement</useragent>
+   </extensions>
+  </trkpt>
+  <trkpt lat="46.24855" lon="6.361084">
+   <time>2019-07-25T12:15:21Z</time>
+   <extensions>
+     <useragent>Ajouté manuellement</useragent>
+   </extensions>
+  </trkpt>
+ </trkseg>
+</trk>
+<trk>
+ <name>myBestFriend</name>
+ <trkseg>
+  <trkpt lat="44.119209" lon="4.801025">
+   <time>2019-07-25T12:08:28Z</time>
+   <extensions>
+     <useragent>Ajouté manuellement</useragent>
+   </extensions>
+  </trkpt>
+  <trkpt lat="44.308163" lon="4.735107">
+   <time>2019-07-25T12:08:33Z</time>
+   <extensions>
+     <useragent>Ajouté manuellement</useragent>
+   </extensions>
+  </trkpt>
+  <trkpt lat="44.504345" lon="4.812012">
+   <time>2019-07-25T12:08:36Z</time>
+   <extensions>
+     <useragent>Ajouté manuellement</useragent>
+   </extensions>
+  </trkpt>
+  <trkpt lat="44.7701065193348" lon="4.81201171875">
+   <time>2019-07-25T12:09:35Z</time>
+   <extensions>
+     <useragent>Ajouté manuellement</useragent>
+   </extensions>
+  </trkpt>
+  <trkpt lat="45.011671" lon="4.866943">
+   <time>2019-07-25T12:13:31Z</time>
+   <extensions>
+     <useragent>Ajouté manuellement</useragent>
+   </extensions>
+  </trkpt>
+  <trkpt lat="45.348476" lon="4.801025">
+   <time>2019-07-25T12:13:36Z</time>
+   <extensions>
+     <useragent>Ajouté manuellement</useragent>
+   </extensions>
+  </trkpt>
+  <trkpt lat="45.725481" lon="4.817505">
+   <time>2019-07-25T12:13:40Z</time>
+   <extensions>
+     <useragent>Ajouté manuellement</useragent>
+   </extensions>
+  </trkpt>
+  <trkpt lat="45.844211" lon="4.729614">
+   <time>2019-07-25T12:13:45Z</time>
+   <extensions>
+     <useragent>Ajouté manuellement</useragent>
+   </extensions>
+  </trkpt>
+  <trkpt lat="45.87481" lon="4.438477">
+   <time>2019-07-25T12:13:48Z</time>
+   <extensions>
+     <useragent>Ajouté manuellement</useragent>
+   </extensions>
+  </trkpt>
+  <trkpt lat="45.832732" lon="4.108887">
+   <time>2019-07-25T12:13:52Z</time>
+   <extensions>
+     <useragent>Ajouté manuellement</useragent>
+   </extensions>
+  </trkpt>
+  <trkpt lat="45.870986" lon="3.812256">
+   <time>2019-07-25T12:13:55Z</time>
+   <extensions>
+     <useragent>Ajouté manuellement</useragent>
+   </extensions>
+  </trkpt>
+  <trkpt lat="45.855687" lon="3.328857">
+   <time>2019-07-25T12:13:58Z</time>
+   <extensions>
+     <useragent>Ajouté manuellement</useragent>
+   </extensions>
+  </trkpt>
+  <trkpt lat="45.733148" lon="3.164063">
+   <time>2019-07-25T12:14:02Z</time>
+   <extensions>
+     <useragent>Ajouté manuellement</useragent>
+   </extensions>
+  </trkpt>
+ </trkseg>
+</trk>
+</gpx>

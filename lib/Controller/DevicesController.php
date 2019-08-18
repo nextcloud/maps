@@ -34,7 +34,7 @@ use OCP\IDateTimeZone;
 
 use OCA\Maps\Service\DevicesService;
 
-use function OCA\Maps\Service\endswith;
+use function \OCA\Maps\Service\endswith;
 
 class DevicesController extends Controller {
 

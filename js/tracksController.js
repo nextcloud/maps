@@ -275,37 +275,6 @@ TracksController.prototype = {
         });
     },
 
-    addTracksDB: function(pathList, zoom=false) {
-        var that = this;
-        $('#navigation-tracks').addClass('icon-loading-small');
-        var req = {
-            pathList: pathList
-        };
-        var url = OC.generateUrl('/apps/maps/tracks');
-        $.ajax({
-            type: 'POST',
-            url: url,
-            data: req,
-            async: true
-        }).done(function (response) {
-            // show main layer if needed
-            if (!that.map.hasLayer(that.mainLayer)) {
-                that.toggleTracks();
-            }
-            var ids = [];
-            for (var i=0; i < response.length; i++) {
-                that.addTrackMap(response[i], true, false, zoom);
-                ids.push(response[i].id);
-            }
-            that.saveEnabledTracks(ids);
-            that.optionsController.saveOptionValues({tracksEnabled: true});
-        }).always(function (response) {
-            $('#navigation-tracks').removeClass('icon-loading-small');
-        }).fail(function() {
-            OC.Notification.showTemporary(t('maps', 'Failed to add tracks'));
-        });
-    },
-
     addTrackMap: function(track, show=false, pageLoad=false, zoom=false) {
         // color
         var color = track.color || OCA.Theming.color;
@@ -450,8 +419,8 @@ TracksController.prototype = {
                 }
             }
             // if the asked track wasn't already in track list, load it and zoom!
-            if (!getFound) {
-                that.addTracksDB([getUrlParameter('track')], true);
+            if (!getFound && getUrlParameter('track')) {
+                OC.Notification.showTemporary(t('maps', 'Track {n} was not found', {n: getUrlParameter('track')}));
             }
             that.trackListLoaded = true;
         }).always(function (response) {

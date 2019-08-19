@@ -29,13 +29,27 @@ class PageControllerTest extends \PHPUnit\Framework\TestCase {
         $c = $this->container;
         $this->config = $c->query('ServerContainer')->getConfig();
 
+        $this->oldGHValue = $this->config->getAppValue('maps', 'graphhopperURL');
+        $this->config->setAppValue('maps', 'graphhopperURL', 'https://graphhopper.com:8080');
+
         $this->controller = new PageController(
             'maps', $request, $this->userId, $this->config
         );
     }
 
+    protected function tearDown(): void {
+        $this->config->setAppValue('maps', 'graphhopperURL', $this->oldGHValue);
+    }
+
     public function testIndex() {
         $result = $this->controller->index();
+
+        $this->assertEquals('index', $result->getTemplateName());
+        $this->assertTrue($result instanceof TemplateResponse);
+    }
+
+    public function testOpenGeoLink() {
+        $result = $this->controller->openGeoLink('geo:1.1,2.2');
 
         $this->assertEquals('index', $result->getTemplateName());
         $this->assertTrue($result instanceof TemplateResponse);

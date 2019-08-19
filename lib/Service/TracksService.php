@@ -15,17 +15,166 @@ namespace OCA\Maps\Service;
 use OCP\IL10N;
 use OCP\ILogger;
 use OCP\DB\QueryBuilder\IQueryBuilder;
+use OCP\Files\IRootFolder;
+use OCP\Files\FileInfo;
+use OCP\Share\IManager;
+use OCP\Files\Folder;
+use OCP\Files\Node;
 
 class TracksService {
+
+    const TRACK_MIME_TYPES = ['application/gpx+xml'];
 
     private $l10n;
     private $logger;
     private $qb;
+    private $root;
+    private $shareManager;
 
-    public function __construct (ILogger $logger, IL10N $l10n) {
+    public function __construct (ILogger $logger, IL10N $l10n, IRootFolder $root, IManager $shareManager) {
         $this->l10n = $l10n;
         $this->logger = $logger;
         $this->qb = \OC::$server->getDatabaseConnection()->getQueryBuilder();
+        $this->root = $root;
+        $this->shareManager = $shareManager;
+    }
+
+    public function rescan($userId){
+        $userFolder = $this->root->getUserFolder($userId);
+        $tracks = $this->gatherTrackFiles($userFolder, true);
+        $this->deleteAllTracksFromDB($userId);
+        foreach ($tracks as $track) {
+            $this->addTrackToDB($userId, $track->getId(), $track);
+            yield $track->getPath();
+        }
+    }
+
+    public function addByFile(Node $file) {
+        $userFolder = $this->root->getUserFolder($file->getOwner()->getUID());
+        if ($this->isTrack($file)) {
+            $this->addTrackToDB($file->getOwner()->getUID(), $file->getId(), $file);
+        }
+    }
+
+    // add the file for its owner and users that have access
+    // check if it's already in DB before adding
+    public function safeAddByFile(Node $file) {
+        $ownerId = $file->getOwner()->getUID();
+        $userFolder = $this->root->getUserFolder($ownerId);
+        if ($this->isTrack($file)) {
+            $this->safeAddTrack($file, $ownerId);
+            // is the file accessible to other users ?
+            $accesses = $this->shareManager->getAccessList($file);
+            foreach ($accesses['users'] as $uid) {
+                if ($uid !== $ownerId) {
+                    $this->safeAddTrack($file, $uid);
+                }
+            }
+            return true;
+        }
+        else {
+            return false;
+        }
+    }
+
+    public function safeAddByFileIdUserId($fileId, $userId) {
+        $userFolder = $this->root->getUserFolder($userId);
+        $file = $userFolder->getById($fileId)[0];
+        if ($file !== null and $this->isTrack($file)) {
+            $this->safeAddTrack($file, $userId);
+        }
+    }
+
+    public function safeAddByFolderIdUserId($folderId, $userId) {
+        $userFolder = $this->root->getUserFolder($userId);
+        $folder = $userFolder->getById($folderId)[0];
+        if ($folder !== null) {
+            $tracks = $this->gatherTrackFiles($folder, true);
+            foreach ($tracks as $track) {
+                $this->safeAddTrack($track, $userId);
+            }
+        }
+    }
+
+    // avoid adding track if it already exists in the DB
+    private function safeAddTrack($track, $userId) {
+        // filehooks are triggered several times (2 times for file creation)
+        // so we need to be sure it's not inserted several times
+        // by checking if it already exists in DB
+        // OR by using file_id in primary key
+        if ($this->getTrackByFileIDFromDB($track->getId(), $userId) === null) {
+            $this->addTrackToDB($userId, $track->getId(), $track);
+        }
+    }
+
+    // add all tracks of a folder taking care of shared accesses
+    public function safeAddByFolder($folder) {
+        $tracks = $this->gatherTrackFiles($folder, true);
+        foreach($tracks as $track) {
+            $this->safeAddByFile($track);
+        }
+    }
+
+    public function addByFolder(Node $folder) {
+        $tracks = $this->gatherTrackFiles($folder, true);
+        foreach($tracks as $track) {
+            $this->addTrackToDB($folder->getOwner()->getUID(), $track->getId(), $track);
+        }
+    }
+
+    // delete track only if it's not accessible to user anymore
+    // it might have been shared multiple times by different users
+    public function safeDeleteByFileIdUserId($fileId, $userId) {
+        $userFolder = $this->root->getUserFolder($userId);
+        $files = $userFolder->getById($fileId);
+        if (!is_array($files) or count($files) === 0) {
+            $this->deleteByFileIdUserId($fileId, $userId);
+        }
+    }
+
+    public function deleteByFile(Node $file) {
+        $this->deleteByFileId($file->getId());
+    }
+
+    public function deleteByFolder(Node $folder) {
+        $tracks = $this->gatherTrackFiles($folder, true);
+        foreach ($tracks as $track) {
+            $this->deleteByFileId($track->getId());
+        }
+    }
+
+    // delete folder tracks only if it's not accessible to user anymore
+    public function safeDeleteByFolderIdUserId($folderId, $userId) {
+        $userFolder = $this->root->getUserFolder($userId);
+        $folders = $userFolder->getById($folderId);
+        if (is_array($folders) and count($folders) === 1) {
+            $folder = $folders[0];
+            $tracks = $this->gatherTrackFiles($folder, true);
+            foreach($tracks as $track) {
+                $this->deleteByFileIdUserId($track->getId(), $userId);
+            }
+        }
+    }
+
+    private function gatherTrackFiles($folder, $recursive) {
+        $notes = [];
+        $nodes = $folder->getDirectoryListing();
+        foreach ($nodes as $node) {
+            if ($node->getType() === FileInfo::TYPE_FOLDER AND $recursive) {
+                $notes = array_merge($notes, $this->gatherTrackFiles($node, $recursive));
+                continue;
+            }
+            if ($this->isTrack($node)) {
+                $notes[] = $node;
+            }
+        }
+        return $notes;
+    }
+
+    private function isTrack($file) {
+        if ($file->getType() !== \OCP\Files\FileInfo::TYPE_FILE) return false;
+        if (!in_array($file->getMimetype(), self::TRACK_MIME_TYPES)) return false;
+        return true;
     }
 
     /**
@@ -85,8 +234,38 @@ class TracksService {
         return $track;
     }
 
+    public function getTrackByFileIDFromDB($fileId, $userId=null) {
+        $track = null;
+        $qb = $this->qb;
+        $qb->select('id', 'file_id', 'color', 'metadata', 'etag')
+            ->from('maps_tracks', 't')
+            ->where(
+                $qb->expr()->eq('file_id', $qb->createNamedParameter($fileId, IQueryBuilder::PARAM_INT))
+            );
+        if ($userId !== null) {
+            $qb->andWhere(
+                $qb->expr()->eq('user_id', $qb->createNamedParameter($userId, IQueryBuilder::PARAM_STR))
+            );
+        }
+        $req = $qb->execute();
+
+        while ($row = $req->fetch()) {
+            $track = [
+                'id' => intval($row['id']),
+                'file_id' => intval($row['file_id']),
+                'color' => $row['color'],
+                'metadata' => $row['metadata'],
+                'etag' => $row['etag'],
+            ];
+            break;
+        }
+        $req->closeCursor();
+        $qb = $qb->resetQueryParts();
+        return $track;
+    }
+
     public function addTrackToDB($userId, $fileId, $file) {
-        $metadata = $this->generateTrackMetadata($file);
+        $metadata = '';
         $etag = $file->getEtag();
         $qb = $this->qb;
         $qb->insert('maps_tracks')
@@ -121,11 +300,44 @@ class TracksService {
         $qb = $qb->resetQueryParts();
     }
 
+    public function deleteByFileId($fileId) {
+        $qb = $this->qb;
+        $qb->delete('maps_tracks')
+            ->where(
+                $qb->expr()->eq('file_id', $qb->createNamedParameter($fileId, IQueryBuilder::PARAM_INT))
+            );
+        $req = $qb->execute();
+        $qb = $qb->resetQueryParts();
+    }
+
+    public function deleteByFileIdUserId($fileId, $userId) {
+        $qb = $this->qb;
+        $qb->delete('maps_tracks')
+            ->where(
+                $qb->expr()->eq('file_id', $qb->createNamedParameter($fileId, IQueryBuilder::PARAM_INT))
+            )
+            ->andWhere(
+                $qb->expr()->eq('user_id', $qb->createNamedParameter($userId, IQueryBuilder::PARAM_STR))
+            );
+        $req = $qb->execute();
+        $qb = $qb->resetQueryParts();
+    }
+
     public function deleteTrackFromDB($id) {
         $qb = $this->qb;
         $qb->delete('maps_tracks')
             ->where(
                 $qb->expr()->eq('id', $qb->createNamedParameter($id, IQueryBuilder::PARAM_INT))
+            );
+        $req = $qb->execute();
+        $qb = $qb->resetQueryParts();
+    }
+
+    public function deleteAllTracksFromDB($userId) {
+        $qb = $this->qb;
+        $qb->delete('maps_tracks')
+            ->where(
+                $qb->expr()->eq('user_id', $qb->createNamedParameter($userId, IQueryBuilder::PARAM_STR))
             );
         $req = $qb->execute();
         $qb = $qb->resetQueryParts();
@@ -153,6 +365,8 @@ class TracksService {
 
     public function generateTrackMetadata($file) {
         $STOPPED_SPEED_THRESHOLD = 0.9;
+        $NB_ACCUMULATED_POINTS_MAXSPEED = 3;
+        $MIN_DISTANCE_FOR_CUMUL_ELE = 50;
 
         $name = $file->getName();
         $gpx_content = $file->getContent();
@@ -163,11 +377,19 @@ class TracksService {
         $total_duration = 0;
         $date_begin = null;
         $date_end = null;
+
+        $distAccCumulEle = 0;
         $pos_elevation = 0;
         $neg_elevation = 0;
         $min_elevation = null;
         $max_elevation = null;
+
+        // max speed
         $max_speed = 0;
+        $distAcc = 0;
+        $timeAcc = 0;
+        $accCount = 0;
+
         $avg_speed = '???';
         $moving_time = 0;
         $moving_distance = 0;
@@ -308,9 +530,6 @@ class TracksService {
                             $speed = $distToLast / $t;
                             $speed = $speed / 1000;
                             $speed = $speed * 3600;
-                            if ($speed > $max_speed){
-                                $max_speed = $speed;
-                            }
                         }
 
                         if ($speed <= $STOPPED_SPEED_THRESHOLD){
@@ -320,6 +539,23 @@ class TracksService {
                         else{
                             $moving_time += $t;
                             $moving_distance += $distToLast;
+                        }
+                        // max speed
+                        $distAcc += $distToLast;
+                        $timeAcc += $t;
+                        $accCount++;
+                        if ($accCount === $NB_ACCUMULATED_POINTS_MAXSPEED) {
+                            if ($timeAcc > 0) {
+                                $accSpeed = $distAcc / $timeAcc;
+                                $accSpeed = $accSpeed / 1000;
+                                $accSpeed = $accSpeed * 3600;
+                                if ($accSpeed > $max_speed) {
+                                    $max_speed = $accSpeed;
+                                }
+                            }
+                            $accCount = 0;
+                            $distAcc = 0;
+                            $timeAcc = 0;
                         }
                     }
                     if ($lastPoint !== null){
@@ -333,14 +569,22 @@ class TracksService {
                         if ($isGoingUp === False and $deniv > 0){
                             $upBegin = floatval($lastPoint->ele);
                             $isGoingUp = True;
-                            $neg_elevation += ($downBegin - floatval($lastPoint->ele));
+                            // take neg only if enough distance was traveled
+                            if ($distAccCumulEle >= $MIN_DISTANCE_FOR_CUMUL_ELE) {
+                                $neg_elevation += ($downBegin - floatval($lastPoint->ele));
+                            }
+                            $distAccCumulEle = 0;
                         }
                         if ($isGoingUp === True and $deniv < 0){
-                            // we add the up portion
-                            $pos_elevation += (floatval($lastPointele) - $upBegin);
                             $isGoingUp = False;
                             $downBegin = floatval($lastPoint->ele);
+                            // take pos only if enough distance was traveled
+                            if ($distAccCumulEle >= $MIN_DISTANCE_FOR_CUMUL_ELE) {
+                                $pos_elevation += (floatval($lastPointele) - $upBegin);
+                            }
+                            $distAccCumulEle = 0;
                         }
+                        $distAccCumulEle += $distToLast;
                     }
                     // update vars
                     if ($lastPoint !== null and $pointele !== null and (!empty($lastPoint->ele))){
@@ -450,9 +694,6 @@ class TracksService {
                         $speed = $distToLast / $t;
                         $speed = $speed / 1000;
                         $speed = $speed * 3600;
-                        if ($speed > $max_speed){
-                            $max_speed = $speed;
-                        }
                     }
 
                     if ($speed <= $STOPPED_SPEED_THRESHOLD){
@@ -462,6 +703,23 @@ class TracksService {
                     else{
                         $moving_time += $t;
                         $moving_distance += $distToLast;
+                    }
+                    // max speed
+                    $distAcc += $distToLast;
+                    $timeAcc += $t;
+                    $accCount++;
+                    if ($accCount === $NB_ACCUMULATED_POINTS_MAXSPEED) {
+                        if ($timeAcc > 0) {
+                            $accSpeed = $distAcc / $timeAcc;
+                            $accSpeed = $accSpeed / 1000;
+                            $accSpeed = $accSpeed * 3600;
+                            if ($accSpeed > $max_speed) {
+                                $max_speed = $accSpeed;
+                            }
+                        }
+                        $accCount = 0;
+                        $distAcc = 0;
+                        $timeAcc = 0;
                     }
                 }
                 if ($lastPoint !== null){
@@ -475,14 +733,22 @@ class TracksService {
                     if ($isGoingUp === False and $deniv > 0){
                         $upBegin = floatval($lastPoint->ele);
                         $isGoingUp = True;
-                        $neg_elevation += ($downBegin - floatval($lastPoint->ele));
+                        // take neg only if enough distance was traveled
+                        if ($distAccCumulEle >= $MIN_DISTANCE_FOR_CUMUL_ELE) {
+                            $neg_elevation += ($downBegin - floatval($lastPoint->ele));
+                        }
+                        $distAccCumulEle = 0;
                     }
                     if ($isGoingUp === True and $deniv < 0){
-                        // we add the up portion
-                        $pos_elevation += (floatval($lastPointele) - $upBegin);
                         $isGoingUp = False;
                         $downBegin = floatval($lastPoint->ele);
+                        // take pos only if enough distance was traveled
+                        if ($distAccCumulEle >= $MIN_DISTANCE_FOR_CUMUL_ELE) {
+                            $pos_elevation += (floatval($lastPointele) - $upBegin);
+                        }
+                        $distAccCumulEle = 0;
                     }
+                    $distAccCumulEle += $distToLast;
                 }
                 // update vars
                 if ($lastPoint !== null and $pointele !== null and (!empty($lastPoint->ele))){

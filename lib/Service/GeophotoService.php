@@ -38,7 +38,9 @@ class GeophotoService {
     private $timeorderedPointSets;
     private $devicesService;
 
-    public function __construct (ILogger $logger, IRootFolder $root, IL10N $l10n, GeophotoMapper $photoMapper, IPreview $preview, TracksService $tracksService, DevicesService $devicesService, $userId) {
+    public function __construct (ILogger $logger, IRootFolder $root, IL10N $l10n,
+                                GeophotoMapper $photoMapper, IPreview $preview,
+                                TracksService $tracksService, DevicesService $devicesService, $userId) {
         $this->root = $root;
         $this->l10n = $l10n;
         $this->photoMapper = $photoMapper;
@@ -55,7 +57,7 @@ class GeophotoService {
      * @param string $userId
      * @return array with geodatas of all photos
      */
-     public function getAllFromDB ($userId) {
+     public function getAllFromDB($userId) {
         $photoEntities = $this->photoMapper->findAll($userId);
         $userFolder = $this->getFolderForUser($userId);
         $filesById = [];
@@ -67,7 +69,13 @@ class GeophotoService {
                 // this path is relative to owner's storage
                 //$path = $cacheEntry->getPath();
                 // but we want it relative to current user's storage
-                $file = $userFolder->getById($photoEntity->getFileId())[0];
+                $files = $userFolder->getById($photoEntity->getFileId());
+                if (count($files) > 0) {
+                    $file = $files[0];
+                }
+                else {
+                    continue;
+                }
                 if ($file === null) {
                     continue;
                 }
@@ -138,7 +146,7 @@ class GeophotoService {
      */
     private function getLocationGuesses($dateTaken) {
         $locations = [];
-        foreach ($this->timeorderedPointSets as $timeordedPointSet) {
+        foreach (($this->timeorderedPointSets ?? []) as $timeordedPointSet) {
             $location = $this->getLocationFromSequenceOfPoints($dateTaken,$timeordedPointSet);
             if (!is_null($location)) {
                 $locations[] = $location;

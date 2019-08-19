@@ -198,6 +198,42 @@ function formatTimeSeconds(time_s){
     return `${ph}:${pm}:${ps}`;
 }
 
+function isComputer(name) {
+    return (   name.match(/windows/i)
+            || name.match(/gnu\/linux/i)
+            || name.match(/mac\s?os/i)
+            || name.match(/chromium\s?os/i)
+            || name.match(/ubuntu/i)
+    );
+}
+
+function isPhone(name) {
+    return (name.match(/blackberry/i)
+         || name.match(/symbian/i)
+         || name.match(/phonetrack/i)
+         || name.match(/firefox\s?os/i)
+         || name.match(/android/i)
+         || name.match(/ios/i)
+         || name.match(/windows\s?mobile/i)
+    );
+}
+
+function getDeviceInfoFromUserAgent2(ua) {
+    var res = {
+        os: null,
+        client: null,
+    };
+    var parser = new UAParser(ua);
+    var uap = parser.getResult();
+    if (uap.os && uap.os.name) {
+        res.os = uap.os.name.replace('Linux', 'GNU/Linux').replace('windows', 'Windows');
+    }
+    if (uap.browser && uap.browser.name) {
+        res.client = uap.browser.name.replace('chrome', 'Chrome');
+    }
+    return res;
+}
+
 function getDeviceInfoFromUserAgent(ua) {
     var res = {
         os: null,
@@ -269,4 +305,19 @@ function getUrlParameter(sParam) {
             return decodeURIComponent(sParameterName[1]);
         }
     }
+}
+
+function formatAddress(address) {
+    var strAddress =
+        (address.attraction || '')+' '+
+        (address.house_number || '')+' '+
+        (address.road || '')+' '+
+        (address.pedestrian || '')+' '+
+        (address.suburb || '')+' '+
+        (address.city_district || '')+' '+
+        (address.postcode || '')+' '+
+        (address.village || address.town || address.city || '')+' '+
+        (address.state || '')+' '+
+        (address.country || '');
+    return strAddress.replace(/\s+/g, ' ').trim();
 }

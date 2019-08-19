@@ -11,6 +11,7 @@
 
 namespace OCA\Maps\Controller;
 
+use OCP\IConfig;
 use OCP\IRequest;
 use OCP\AppFramework\Http\TemplateResponse;
 use OCP\AppFramework\Http\DataResponse;
@@ -18,10 +19,12 @@ use OCP\AppFramework\Controller;
 
 class PageController extends Controller {
     private $userId;
+    private $config;
 
-    public function __construct($AppName, IRequest $request, $UserId){
+    public function __construct($AppName, IRequest $request, $UserId, IConfig $config){
         parent::__construct($AppName, $request);
         $this->userId = $UserId;
+        $this->config = $config;
     }
 
     /**
@@ -47,10 +50,33 @@ class PageController extends Controller {
             $csp->addAllowedImageDomain('https://*.cartocdn.com');
             $csp->addAllowedImageDomain('https://*.ssl.fastly.net');
             $csp->addAllowedImageDomain('https://*.openstreetmap.se');
-            // routing engine
+
+            // default routing engine
             $csp->addAllowedConnectDomain('https://*.project-osrm.org');
-            // TODO allow connections to router engine
-            //$csp->addAllowedConnectDomain('http://192.168.0.66:8989');
+            $csp->addAllowedConnectDomain('https://api.mapbox.com');
+            $csp->addAllowedConnectDomain('https://graphhopper.com');
+            // allow connections to custom routing engines
+            $urlKeys = [
+                'osrmBikeURL',
+                'osrmCarURL',
+                'osrmFootURL',
+                'graphhopperURL'
+            ];
+            foreach ($urlKeys as $key) {
+                $url = $this->config->getAppValue('maps', $key);
+                if ($url !== '') {
+                    $scheme = parse_url($url, PHP_URL_SCHEME);
+                    $host = parse_url($url, PHP_URL_HOST);
+                    $port = parse_url($url, PHP_URL_PORT);
+                    $cleanUrl = $scheme . '://' . $host;
+                    if ($port && $port !== '') {
+                        $cleanUrl .= ':' . $port;
+                    }
+                    $csp->addAllowedConnectDomain($cleanUrl);
+                }
+            }
+            //$csp->addAllowedConnectDomain('http://192.168.0.66:5000');
+
             // poi images
             $csp->addAllowedImageDomain('https://nominatim.openstreetmap.org');
             // search and geocoder

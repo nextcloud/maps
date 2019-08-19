@@ -18,12 +18,7 @@ use OCP\DB\QueryBuilder\IQueryBuilder;
 
 use OC\Archive\ZIP;
 
-function endswith($string, $test) {
-    $strlen = strlen($string);
-    $testlen = strlen($test);
-    if ($testlen > $strlen) return false;
-    return substr_compare($string, $test, $strlen - $testlen, $testlen) === 0;
-}
+use function \OCA\Maps\Service\endswith;
 
 class FavoritesService {
 
@@ -280,7 +275,7 @@ class FavoritesService {
             return 0;
         }
         $qb = $this->qb;
-        $qb->select($qb->createFunction('COUNT(*)'))
+        $qb->select($qb->createFunction('COUNT(*) AS co'))
             ->from('maps_favorites', 'f')
             ->where(
                 $qb->expr()->eq('user_id', $qb->createNamedParameter($userId, IQueryBuilder::PARAM_STR))
@@ -309,8 +304,8 @@ class FavoritesService {
         $nbFavorites = 0;
         $req = $qb->execute();
         while ($row = $req->fetch()) {
-              $nbFavorites = intval($row['COUNT(*)']);
-              break;
+            $nbFavorites = intval($row['co']);
+            break;
         }
         $req->closeCursor();
         $qb = $qb->resetQueryParts();

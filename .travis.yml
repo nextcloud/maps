@@ -5,7 +5,7 @@ php:
     - 7.2
 env:
     global:
-        - CORE_BRANCH=stable15
+        - CORE_BRANCH=stable16
     matrix:
         - DB=pgsql
 
@@ -20,9 +20,9 @@ matrix:
         - php: 7.2
           env: DB=pgsql
           services: postgresql
-        - php: 7.2
-          env: DB=pgsql CORE_BRANCH=master
-          services: postgresql
+       - php: 7.2
+         env: DB=pgsql CORE_BRANCH=master
+         services: postgresql
     fast_finish: true
 
 before_install:
@@ -39,7 +39,7 @@ before_install:
     # install core
     - cd ../
     - git clone https://github.com/nextcloud/server.git --recursive --depth 1 -b $CORE_BRANCH nextcloud
-    #- wget -q https://download.nextcloud.com/server/releases/nextcloud-15.0.2.zip ; unzip -q nextcloud-15.0.2.zip ; rm nextcloud-15.0.2.zip
+    # - wget -q https://download.nextcloud.com/server/releases/nextcloud-16.0.1.zip ; unzip -q nextcloud-16.0.1.zip ; rm nextcloud-16.0.1.zip
     - mv maps nextcloud/apps/
 
 before_script:
@@ -48,9 +48,12 @@ before_script:
     - if [[ "$DB" == 'mysql' ]]; then sudo mysql -u root -e "CREATE USER 'oc_autotest'@'localhost' IDENTIFIED BY '';"; fi
     - if [[ "$DB" == 'mysql' ]]; then sudo mysql -u root -e "grant all on oc_autotest.* to 'oc_autotest'@'localhost';"; fi
     - cd nextcloud
+    # temporary fix, feel free to fix that
+    - sed -i $'s|if (substr($fullPath, 0, strlen($root) + 1) === $root . \'/\')|if (is_string($root) and substr($fullPath, 0, strlen($root) + 1) === $root . \'/\')|g' lib/autoloader.php
     - mkdir data
-    - ./occ maintenance:install --database-name oc_autotest --database-user oc_autotest --admin-user admin --admin-pass admin --database $DB --database-pass=''
-    - ./occ app:enable maps
+    - php -f ./occ maintenance:install --database-name oc_autotest --database-user oc_autotest --admin-user admin --admin-pass admin --database $DB --database-pass=''
+    - php -f ./occ app:enable maps
+    - chmod 777 data
     #- php -S localhost:8080 &
     - cd apps/maps
 

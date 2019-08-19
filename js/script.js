@@ -6,7 +6,6 @@
         mapController.initMap();
         mapController.map.favoritesController = favoritesController;
         favoritesController.initFavorites(mapController.map);
-        routingController.initRoutingControl(mapController.map);
         photosController.initLayer(mapController.map);
         nonLocalizedPhotosController.initLayer(mapController.map);
         mapController.map.photosController = photosController;
@@ -54,9 +53,20 @@
             }
         };
 
+        $('#display-slider').click(function(e) {
+            optionsController.saveOptionValues({displaySlider: $(this).is(':checked')});
+            if ($(this).is(':checked')) {
+                $('#timeRangeSlider').show();
+            }
+            else {
+                $('#timeRangeSlider').hide();
+            }
+        });
+
         // click on menu buttons
         $('body').on('click',
             '.routingMenuButton, .favoritesMenuButton, .categoryMenuButton, .photosMenuButton, .contactsMenuButton, ' +
+            '.contactGroupMenuButton, ' +
             '.nonLocalizedPhotosMenuButton, .devicesMenuButton, .deviceMenuButton, .tracksMenuButton, .trackMenuButton',
             function(e) {
             var menu = $(this).parent().parent().parent().find('> .app-navigation-entry-menu');
@@ -64,6 +74,7 @@
             $('.app-navigation-entry-menu.open').removeClass('open');
             if (!wasOpen) {
                 menu.addClass('open');
+                mapController.map.clickpopup = true;
             }
         });
         // right click on entry line
@@ -77,6 +88,7 @@
             '.track-line > a, .track-line > .app-navigation-entry-utils, ' +
             '#navigation-nonLocalizedPhotos > .app-navigation-entry-utils, #navigation-nonLocalizedPhotos > a, ' +
             '#navigation-contacts > .app-navigation-entry-utils, #navigation-contacts > a, ' +
+            '.contact-group-line > a, .contact-group-line > .app-navigation-entry-utils, ' +
             '#navigation-photos > .app-navigation-entry-utils, #navigation-photos > a ',
             function(e) {
             var menu = $(this).parent().find('> .app-navigation-entry-menu');
@@ -84,6 +96,7 @@
             $('.app-navigation-entry-menu.open').removeClass('open');
             if (!wasOpen) {
                 menu.addClass('open');
+                mapController.map.clickpopup = true;
             }
             return false;
         });
@@ -129,8 +142,10 @@
     };
 
     var optionsController = {
+        nbRouters: 0,
         optionValues: {},
         enabledFavoriteCategories: [],
+        disabledContactGroups: [],
         enabledTracks: [],
         enabledDevices: [],
         enabledDeviceLines: [],
@@ -165,14 +180,42 @@
             }).done(function (response) {
                 optionsValues = response.values;
                 // set tilelayer before showing photo layer because it needs a max zoom value
+                if (optionsValues.hasOwnProperty('displaySlider') && optionsValues.displaySlider === 'true') {
+                    $('#timeRangeSlider').show();
+                    $('#display-slider').prop('checked', true);
+                }
                 if (optionsValues.hasOwnProperty('tileLayer')) {
                     mapController.changeTileLayer(optionsValues.tileLayer);
                 }
                 else {
                     mapController.changeTileLayer('OpenStreetMap');
                 }
+                if (optionsValues.hasOwnProperty('mapBounds')) {
+                    var nsew = optionsValues.mapBounds.split(';');
+                    if (nsew.length === 4) {
+                        var n = parseFloat(nsew[0]);
+                        var s = parseFloat(nsew[1]);
+                        var e = parseFloat(nsew[2]);
+                        var w = parseFloat(nsew[3]);
+                        if (n && s && e && w) {
+                            mapController.map.fitBounds([
+                                [n, e],
+                                [s, w]
+                            ]);
+                        }
+                    }
+                }
                 if (!optionsValues.hasOwnProperty('photosLayer') || optionsValues.photosLayer === 'true') {
                     photosController.toggleLayer();
+                }
+                if (!optionsValues.hasOwnProperty('contactGroupListShow') || optionsValues.contactGroupListShow === 'true') {
+                    contactsController.toggleGroupList();
+                }
+                if (optionsValues.hasOwnProperty('disabledContactGroups')
+                    && optionsValues.disabledContactGroups
+                    && optionsValues.disabledContactGroups !== '')
+                {
+                    that.disabledContactGroups = optionsValues.disabledContactGroups.split('|');
                 }
                 if (!optionsValues.hasOwnProperty('contactLayer') || optionsValues.contactLayer === 'true') {
                     contactsController.toggleLayer();
@@ -192,9 +235,6 @@
                 if (!optionsValues.hasOwnProperty('favoritesEnabled') || optionsValues.favoritesEnabled === 'true') {
                     favoritesController.toggleFavorites();
                 }
-                if (optionsValues.hasOwnProperty('routingEnabled') && optionsValues.routingEnabled === 'true') {
-                    routingController.toggleRouting();
-                }
                 if (!optionsValues.hasOwnProperty('trackListShow') || optionsValues.trackListShow === 'true') {
                     tracksController.toggleTrackList();
                 }
@@ -205,6 +245,12 @@
                     that.enabledTracks = optionsValues.enabledTracks.split('|').map(function (x) {
                         return parseInt(x);
                     });
+                }
+                if (optionsValues.hasOwnProperty('tracksSortOrder') && optionsValues.tracksSortOrder !== '') {
+                    tracksController.sortOrder = optionsValues.tracksSortOrder;
+                }
+                else {
+                    tracksController.sortOrder = 'date';
                 }
                 if (getUrlParameter('track') || !optionsValues.hasOwnProperty('tracksEnabled') || optionsValues.tracksEnabled === 'true') {
                     tracksController.toggleTracks();
@@ -254,6 +300,44 @@
                     }
                     mapController.layerChanged(e.name);
                 });
+
+                // routing
+                this.nbRouters = 0;
+                if (optionsValues.hasOwnProperty('osrmCarURL') && optionsValues.osrmCarURL !== '') {
+                    this.nbRouters++;
+                }
+                if (optionsValues.hasOwnProperty('osrmBikeURL') && optionsValues.osrmBikeURL !== '') {
+                    this.nbRouters++;
+                }
+                if (optionsValues.hasOwnProperty('osrmFootURL') && optionsValues.osrmFootURL !== '') {
+                    this.nbRouters++;
+                }
+                if (optionsValues.hasOwnProperty('mapboxAPIKEY') && optionsValues.mapboxAPIKEY !== '') {
+                    this.nbRouters++;
+                }
+                if ((optionsValues.hasOwnProperty('graphhopperURL') && optionsValues.graphhopperURL !== '') ||
+                    (optionsValues.hasOwnProperty('graphhopperAPIKEY') && optionsValues.graphhopperAPIKEY !== '') ){
+                    this.nbRouters++;
+                }
+                if (this.nbRouters === 0 && !OC.isUserAdmin()) {
+                    // disable routing and hide it to the user
+                    // search bar
+                    $('#route-submit').hide();
+                    $('#search-submit').css('right', '10px');
+                    // context menu: remove routing related items
+                    mapController.map.contextmenu.removeItem(mapController.map.contextmenu._items[mapController.map.contextmenu._items.length-1].el);
+                    mapController.map.contextmenu.removeItem(mapController.map.contextmenu._items[mapController.map.contextmenu._items.length-1].el);
+                    mapController.map.contextmenu.removeItem(mapController.map.contextmenu._items[mapController.map.contextmenu._items.length-1].el);
+                    mapController.map.contextmenu.removeItem(mapController.map.contextmenu._items[mapController.map.contextmenu._items.length-1].el);
+                    // and we don't init routingController
+                }
+                else {
+                    routingController.initRoutingControl(mapController.map, optionsValues);
+                }
+
+                //if (optionsValues.hasOwnProperty('routingEnabled') && optionsValues.routingEnabled === 'true') {
+                //    routingController.toggleRouting();
+                //}
             }).fail(function() {
                 OC.Notification.showTemporary(
                     t('maps', 'Failed to restore options values')
@@ -294,6 +378,7 @@
             if (results.length === 1) {
                 this.searchMarkerLayerGroup.getLayers()[0].openPopup();
                 this.map.flyTo([results[0].lat, results[0].lon], 15, {duration: 1});
+                this.map.clickpopup = true;
             }
         },
         initMap: function() {
@@ -379,10 +464,10 @@
                     text: t('maps', 'Place photos'),
                     icon: photoImageUrl,
                     callback: photosController.contextPlacePhotos
-                }, {
-                    text: t('maps', 'Place photo folder'),
-                    icon: photoImageUrl,
-                    callback: photosController.contextPlacePhotoFolder
+                //}, {
+                //    text: t('maps', 'Place photo folder'),
+                //    icon: photoImageUrl,
+                //    callback: photosController.contextPlacePhotoFolder
                 }, {
                     text: t('maps', 'Place contact'),
                     icon: contactImageUrl,
@@ -408,7 +493,33 @@
             this.map.on('contextmenu', function(e) {
                 if ($(e.originalEvent.target).attr('id') === 'map') {
                     that.map.contextmenu.showAt(L.latLng(e.latlng.lat, e.latlng.lng));
+                    that.map.clickpopup = true;
                 }
+            });
+            this.map.clickpopup = null;
+            this.map.leftClickLock = false;
+            this.map.on('click', function(e) {
+                if ($(e.originalEvent.target).attr('id') === 'map') {
+                    if (!that.map.leftClickLock && that.map.clickpopup === null) {
+                        console.log('no popup');
+                        searchController.mapLeftClick(e);
+                        that.map.clickpopup = true;
+                    }
+                    else {
+                        that.map.closePopup();
+                        that.map.clickpopup = null;
+                    }
+                }
+            });
+
+            this.map.on('moveend', function(e) {
+                var bounds = that.map.getBounds();
+                optionsController.saveOptionValues({
+                    mapBounds: bounds.getNorth() + ';' +
+                               bounds.getSouth() + ';' +
+                               bounds.getEast() + ';' +
+                               bounds.getWest()
+                });
             });
 
             this.searchMarkerLayerGroup = L.featureGroup();
@@ -532,7 +643,7 @@
         },
 
         layerChanged: function(name) {
-            if (name === 'ESRI Aerial') {
+            if (name !== 'OpenStreetMap') {
                 this.esriButton.remove();
                 this.osmButton.addTo(this.map);
             }
@@ -555,9 +666,15 @@
         control: undefined,
         map: undefined,
         enabled: false,
-        initRoutingControl: function(map) {
+        routers: {},
+        selectedRouter: 'osrmDEMO',
+        initRoutingControl: function(map, optionsValues) {
             this.map = map;
             var that = this;
+
+            $('body').on('click', '#routing-close', function(e) {
+                routingController.toggleRouting();
+            });
 
             this.beginIcon = L.divIcon({
                 iconAnchor: [12, 25],
@@ -575,24 +692,6 @@
                 html: ''
             });
 
-            this.osrmRouter = L.Routing.osrmv1({
-                serviceUrl: 'https://router.project-osrm.org/route/v1',
-                //profile: 'driving', // works with demo server
-                profile: 'car', // works with demo server
-                //profile: 'bicycle', // does not work with demo server...
-                //profile: 'foot', // does not work with demo server...
-                suppressDemoServerWarning: true,
-                // this makes OSRM use our local translations
-                // otherwise it uses osrm-text-instructions which makes us import another lib
-                stepToText: function(e) {
-                }
-            });
-            this.ghRouter = L.Routing.graphHopper(undefined /* api key */, {
-                serviceUrl: 'http://192.168.0.66:8989/route',
-                urlParameters : {
-                    vehicle: 'car' // available ones : car, foot, bike, bike2, mtb, racingbike, motorcycle
-                }
-            });
             var lang = OC.getLocale();
             // this is for all routing engines except OSRM
             L.Routing.Localization[lang] = {
@@ -652,15 +751,34 @@
                     seconds: t('maps', 's')
                 }
             };
+            this.routers.osrmDEMO = {
+                name: 'By car (OSRM demo)',
+                router: L.Routing.osrmv1({
+                    serviceUrl: 'https://router.project-osrm.org/route/v1',
+                    //profile: 'driving', // works with demo server
+                    profile: 'car', // works with demo server
+                    //profile: 'bicycle', // does not work with demo server...
+                    //profile: 'foot', // does not work with demo server...
+                    suppressDemoServerWarning: true,
+                    // this makes OSRM use our local translations
+                    // otherwise it uses osrm-text-instructions which requires to import another lib
+                    stepToText: function(e) {
+                    }
+                })
+            };
             this.control = L.Routing.control({
-                router: this.osrmRouter,
+                router: this.routers.osrmDEMO.router,
                 position: 'topleft',
                 routeWhileDragging: true,
                 reverseWaypoints: true,
                 geocoder: L.Control.Geocoder.nominatim(),
                 language: lang,
                 lineOptions: {
-                    styles: [{color: 'black', opacity: 0.15, weight: 9}, {color: 'white', opacity: 0.8, weight: 6}, {color: 'blue', opacity: 1, weight: 2}],
+                    styles: [
+                        {color: 'black', opacity: 0.15, weight: 9},
+                        {color: 'white', opacity: 0.8, weight: 6},
+                        {color: 'blue', opacity: 1, weight: 2}
+                    ],
                 },
                 pointMarkerStyle: {radius: 5, color: '#03f', fillColor: 'white', opacity: 1, fillOpacity: 0.7},
                 createMarker: this.createMarker
@@ -668,38 +786,189 @@
             .on('routingerror', this.onRoutingError)
             .on('routingstart', this.onRoutingStart)
             .on('routesfound', this.onRoutingEnd);
-            //this.setRouter(this.ghRouter);
-            //console.log(this.control);
 
-            // toggle routing control
-            $('body').on('click', '#navigation-routing > a', function(e) {
-                that.toggleRouting();
-                optionsController.saveOptionValues({routingEnabled: that.enabled});
-            });
+
+            //// toggle routing control
+            //$('body').on('click', '#navigation-routing > a', function(e) {
+            //    that.toggleRouting();
+            //    optionsController.saveOptionValues({routingEnabled: that.enabled});
+            //});
             // export
             $('body').on('click', '.exportCurrentRoute', function(e) {
                 that.exportRoute();
             });
+            // select router
+            $('body').on('change', '#router-select', function(e) {
+                var type = $(this).val();
+                that.selectedRouter = type;
+                var router = that.routers[type].router;
+                that.setRouter(type);
+                optionsController.saveOptionValues({selectedRouter: type});
+                that.control.route();
+            });
+
+            // add routers from options values
+            if (optionsValues.hasOwnProperty('osrmCarURL') && optionsValues.osrmCarURL !== '') {
+                this.addRouter('osrmCar', 'By car (OSRM)', optionsValues.osrmCarURL, null);
+            }
+            if (optionsValues.hasOwnProperty('osrmBikeURL') && optionsValues.osrmBikeURL !== '') {
+                this.addRouter('osrmBike', 'By bike (OSRM)', optionsValues.osrmBikeURL, null);
+            }
+            if (optionsValues.hasOwnProperty('osrmFootURL') && optionsValues.osrmFootURL !== '') {
+                this.addRouter('osrmFoot', 'By foot (OSRM)', optionsValues.osrmFootURL, null);
+                nbRouters++;
+            }
+            if (optionsValues.hasOwnProperty('osrmDEMO') && optionsValues.osrmDEMO === '1') {
+                this.addRouter('osrmDEMO', 'By car (OSRM demo)', null, null);
+            }
+            else {
+                delete this.routers.osrmDEMO;
+            }
+            if (optionsValues.hasOwnProperty('mapboxAPIKEY') && optionsValues.mapboxAPIKEY !== '') {
+                this.addRouter('mapbox', 'Mapbox', null, optionsValues.mapboxAPIKEY);
+            }
+            if ((optionsValues.hasOwnProperty('graphhopperURL') && optionsValues.graphhopperURL !== '') ||
+                (optionsValues.hasOwnProperty('graphhopperAPIKEY') && optionsValues.graphhopperAPIKEY !== '') ){
+                var apikey = undefined;
+                if (optionsValues.hasOwnProperty('graphhopperAPIKEY') && optionsValues.graphhopperAPIKEY !== '') {
+                    apikey = optionsValues.graphhopperAPIKEY;
+                }
+                this.addRouter('graphhopperCar', 'By car (GrahHopper)', optionsValues.graphhopperURL, apikey);
+                this.addRouter('graphhopperBike', 'By bike (GrahHopper)', optionsValues.graphhopperURL, apikey);
+                this.addRouter('graphhopperFoot', 'By Foot (GrahHopper)', optionsValues.graphhopperURL, apikey);
+            }
+            if (optionsValues.hasOwnProperty('selectedRouter') && optionsValues.selectedRouter !== '') {
+                this.selectedRouter = optionsValues.selectedRouter;
+                this.setRouter(optionsValues.selectedRouter);
+            }
+            else {
+                var fallback = null;
+                for (var type in this.routers) {
+                    fallback = type;
+                    break;
+                }
+                this.setRouter(fallback);
+            }
         },
 
         toggleRouting: function() {
+            var that = this;
             if (this.enabled) {
-                this.control.remove();
-                $('#navigation-routing').removeClass('active');
-                $('#map').focus();
-                this.enabled = false;
+                $('.leaflet-routing-container').fadeOut('fast', function(e) {
+                    that.control.remove();
+                    //$('#search-form').fadeIn('fast');
+                    $('#search-form').show();
+                    $('#navigation-routing').removeClass('active');
+                    $('#map').focus();
+                    that.enabled = false;
+                });
             }
             else {
-                this.control.addTo(this.map);
-                $('#navigation-routing').addClass('active');
-                this.enabled = true;
-                $('.leaflet-routing-geocoder input').first().focus();
+                $('#search-form').fadeOut('fast', function(e) {
+                    that.control.addTo(that.map);
+                    //$('.leaflet-routing-container').fadeIn();
+                    //$('.leaflet-routing-container').hide(0, function(e) {
+                    //});
+                    $('#navigation-routing').addClass('active');
+                    that.enabled = true;
+                    $('.leaflet-routing-geocoder input').first().focus();
+
+                    // add router selector
+                    var select = '<select id="router-select">';
+                    var r, router, selected;
+                    for (r in that.routers) {
+                        router = that.routers[r];
+                        selected = '';
+                        if (r === that.selectedRouter) {
+                            selected = ' selected';
+                        }
+                        select += '<option value="'+r+'"'+selected+'>'+router.name+'</option>';
+                    }
+                    select += '</select>';
+
+                    var close = '<button class="icon-close" id="routing-close"></button>';
+
+                    $('.leaflet-routing-container').prepend(close);
+                    $('.leaflet-routing-geocoders').append(select);
+
+                    if (optionsController.nbRouters === 0 && OC.isUserAdmin()) {
+                        console.log('prepend');
+                        $('.leaflet-routing-container').prepend(
+                            '<p class="no-routing-engine-warning">' +
+                            t('maps', 'There is no routing engine set in Nextcloud additional settings. Routing is currently disabled for users.') +
+                            '</p>'
+                        );
+                    }
+                });
             }
         },
 
-        setRouter: function(router) {
-            this.control._router = router;
-            this.control.options.router = router;
+        setRouter: function(routerType) {
+            if (this.routers.hasOwnProperty(routerType)) {
+                var router = this.routers[routerType].router;
+                this.control._router = router;
+                this.control.options.router = router;
+            }
+        },
+
+        // create router and make it accessible in the interface
+        addRouter: function(type, name, url, apikey) {
+            if (type === 'graphhopperBike' || type === 'graphhopperCar' || type === 'graphhopperFoot') {
+                var options = {};
+                if (type === 'graphhopperCar') {
+                    options.urlParameters = {
+                        vehicle: 'car' // available ones : car, foot, bike, bike2, mtb, racingbike, motorcycle
+                    };
+                }
+                if (type === 'graphhopperBike') {
+                    options.urlParameters = {
+                        vehicle: 'bike'
+                    };
+                }
+                if (type === 'graphhopperFoot') {
+                    options.urlParameters = {
+                        vehicle: 'foot'
+                    };
+                }
+                if (url) {
+                    options.serviceUrl = url;
+                }
+                this.routers[type] = {
+                    name: name,
+                    router: L.Routing.graphHopper(apikey, options)
+                };
+            }
+            else if (type === 'osrmBike' || type === 'osrmCar' || type === 'osrmFoot') {
+                var options = {
+                    serviceUrl: url,
+                    suppressDemoServerWarning: true,
+                    // this makes OSRM use our local translations
+                    // otherwise it uses osrm-text-instructions which requires to import another lib
+                    stepToText: function(e) {
+                    }
+                };
+                if (type === 'osrmCar') {
+                    options.profile = 'car';
+                }
+                else if (type === 'osrmBike') {
+                    options.profile = 'bicycle';
+                }
+                else if (type === 'osrmFoot') {
+                    options.profile = 'foot';
+                }
+                this.routers[type] = {
+                    name: name,
+                    router: L.Routing.osrmv1(options)
+                };
+            }
+            else if (type === 'mapbox') {
+                this.routers.mapbox = {
+                    name: name,
+                    router: L.Routing.mapbox(apikey)
+                };
+            }
+            else if (type === 'osrmDEMO') {
+            }
         },
 
         onRoutingError: function(e) {
@@ -732,11 +1001,16 @@
             }, 5000);
         },
 
-        // this has been tested with graphhopper
-        setRouterVehicle: function(vehicle) {
-            this.control.getRouter().options.urlParameters.vehicle = vehicle;
-            this.control.route();
-        },
+        //// this has been tested with graphhopper
+        //setRouterVehicle: function(vehicle) {
+        //    if (this.selectedRouter === 'graphhopper') {
+        //        this.control.getRouter().options.urlParameters.vehicle = vehicle;
+        //    }
+        //    else if (this.selectedRouter === 'osrm') {
+        //        this.control.getRouter().options.profile = vehicle.replace('bike', 'bicycle');
+        //    }
+        //    this.control.route();
+        //},
 
         createMarker: function(i, wpt, n) {
             var icon;
@@ -792,40 +1066,54 @@
         },
 
         contextRouteFrom: function(e) {
-            if (!routingController.enabled) {
-                routingController.toggleRouting();
+            if (this.control) {
+                if (!routingController.enabled) {
+                    routingController.toggleRouting();
+                }
+                routingController.setRouteFrom(e.latlng);
             }
-            routingController.setRouteFrom(e.latlng);
         },
 
         contextRouteTo: function(e) {
-            if (!routingController.enabled) {
-                routingController.toggleRouting();
+            if (this.control) {
+                if (!routingController.enabled) {
+                    routingController.toggleRouting();
+                }
+                routingController.setRouteTo(e.latlng);
             }
-            routingController.setRouteTo(e.latlng);
         },
 
         contextRoutePoint: function(e) {
-            if (!routingController.enabled) {
-                routingController.toggleRouting();
+            if (this.control) {
+                if (!routingController.enabled) {
+                    routingController.toggleRouting();
+                }
+                routingController.addRoutePoint(e.latlng);
             }
-            routingController.addRoutePoint(e.latlng);
         },
 
         setRouteFrom: function(latlng) {
-            this.control.spliceWaypoints(0, 1, latlng);
+            if (this.control) {
+                this.control.spliceWaypoints(0, 1, latlng);
+            }
         },
 
         setRouteTo: function(latlng) {
-            this.control.spliceWaypoints(this.control.getWaypoints().length - 1, 1, latlng);
+            if (this.control) {
+                this.control.spliceWaypoints(this.control.getWaypoints().length - 1, 1, latlng);
+            }
         },
 
         setRoutePoint: function(i, latlng) {
-            this.control.spliceWaypoints(i, 1, latlng);
+            if (this.control) {
+                this.control.spliceWaypoints(i, 1, latlng);
+            }
         },
 
         addRoutePoint: function(latlng) {
-            this.control.spliceWaypoints(this.control.getWaypoints().length - 1, 0, latlng);
+            if (this.control) {
+                this.control.spliceWaypoints(this.control.getWaypoints().length - 1, 0, latlng);
+            }
         },
     };
 
@@ -872,13 +1160,11 @@
                         that.valueBegin = unencoded[0];
                         photosController.updateTimeFilterBegin(that.valueBegin);
                         nonLocalizedPhotosController.updateTimeFilterBegin(that.valueBegin);
-                        contactsController.updateTimeFilterBegin(that.valueBegin);
                     }
                     else {
                         that.valueEnd = unencoded[1];
                         photosController.updateTimeFilterEnd(that.valueEnd);
                         nonLocalizedPhotosController.updateTimeFilterEnd(that.valueEnd);
-                        contactsController.updateTimeFilterEnd(that.valueEnd);
                     }
                     favoritesController.updateFilterDisplay();
                     tracksController.updateFilterDisplay();
@@ -950,7 +1236,6 @@
                 tracksController.firstDate,
                 photosController.photoMarkersOldest,
                 nonLocalizedPhotosController.nonLocalizedPhotoMarkersOldest,
-                contactsController.contactMarkersOldest,
                 devicesController.firstDate
             ];
             var rawMaxs = [
@@ -958,7 +1243,6 @@
                 tracksController.lastDate,
                 photosController.photoMarkersNewest,
                 nonLocalizedPhotosController.nonLocalizedPhotoMarkersNewest,
-                contactsController.contactMarkersNewest,
                 devicesController.lastDate
             ];
             // get rid of null values
@@ -984,7 +1268,7 @@
                 cmax = Math.max(...maxs);
             }
             if (cmin !== null && cmax !== null) {
-                $(this.slider).fadeIn();
+                //$(this.slider).fadeIn();
                 this.min = cmin;
                 this.max = cmax;
                 // avoid min == max
@@ -995,7 +1279,7 @@
                 this.updateSliderRange(this.min, this.max);
             }
             else {
-                $(this.slider).fadeOut();
+                //$(this.slider).fadeOut();
             }
         },
         // on first data load, controllers want to set the slider values to global common max
@@ -1004,15 +1288,6 @@
         }
     };
 
-
-    var photosController = new PhotosController(optionsController, timeFilterController);
-    var nonLocalizedPhotosController = new NonLocalizedPhotosController(optionsController, timeFilterController, photosController);
-    var contactsController = new ContactsController(optionsController, timeFilterController);
-    var favoritesController = new FavoritesController(optionsController, timeFilterController);
-    var tracksController = new TracksController(optionsController, timeFilterController);
-    var devicesController = new DevicesController(optionsController, timeFilterController);
-
-    timeFilterController.connect();
 
     var searchController = {
         map: null,
@@ -1032,6 +1307,10 @@
             $('#search-submit').click(function(e) {
                 e.preventDefault();
                 that.submitSearchForm();
+            });
+            $('#route-submit').click(function(e) {
+                routingController.toggleRouting();
+                e.preventDefault();
             });
             $('#search-term').on('focus', function(e) {
                 $(this).select();
@@ -1082,8 +1361,41 @@
                 var lat = parseFloat($(this).attr('lat'));
                 var lng = parseFloat($(this).attr('lng'));
                 var name = $(this).parent().find('.location-header').text();
-                favoritesController.addFavoriteDB('', lat, lng, name);
+                var categoryName = favoritesController.defaultCategory;
+                if (favoritesController.lastUsedCategory !== null) {
+                    categoryName = favoritesController.lastUsedCategory;
+                }
+                favoritesController.addFavoriteDB(categoryName, lat, lng, name);
                 that.map.closePopup();
+            });
+            $('body').on('click', '.search-place-contact', function(e) {
+                var lat = parseFloat($(this).attr('lat'));
+                var lng = parseFloat($(this).attr('lng'));
+                that.map.closePopup();
+                that.map.clickpopup = null;
+                contactsController.openPlaceContactPopup(lat, lng);
+            });
+            $('body').on('click', '#click-search-add-favorite', function(e) {
+                var lat = that.currentClickSearchLatLng.lat;
+                var lng = that.currentClickSearchLatLng.lng;
+                var name = that.currentClickAddress.attraction
+                    || that.currentClickAddress.road
+                    || that.currentClickAddress.city_district;
+                var strAddress = formatAddress(that.currentClickAddress);
+                var categoryName = favoritesController.defaultCategory;
+                if (favoritesController.lastUsedCategory !== null) {
+                    categoryName = favoritesController.lastUsedCategory;
+                }
+                favoritesController.addFavoriteDB(categoryName, lat, lng, name, strAddress);
+                that.map.closePopup();
+                that.map.clickpopup = null;
+            });
+            $('body').on('click', '#click-search-place-contact', function(e) {
+                var lat = that.currentClickSearchLatLng.lat;
+                var lng = that.currentClickSearchLatLng.lng;
+                that.map.closePopup();
+                that.map.clickpopup = null;
+                contactsController.openPlaceContactPopup(lat, lng);
             });
         },
 
@@ -1109,9 +1421,17 @@
             // get contacts
             var contactData = contactsController.getAutocompData();
             data.push(...contactData);
+            if (field === this.SEARCH_BAR) {
+                // get tracks
+                var trackData = tracksController.getAutocompData();
+                data.push(...trackData);
+            }
             // get devices
             var devData = devicesController.getAutocompData();
             data.push(...devData);
+            // get photos
+            var photoData = photosController.getAutocompData();
+            data.push(...photoData);
             data.push(...this.getExtraAutocompleteData(field));
             that.currentLocalAutocompleteData = data;
             fieldElement.autocomplete({
@@ -1123,6 +1443,18 @@
                     }
                     else if (it.type === 'contact') {
                         that.map.setView([it.lat, it.lng], 15);
+                    }
+                    else if (it.type === 'photo') {
+                        that.map.setView([it.lat, it.lng], 15);
+                    }
+                    else if (it.type === 'track') {
+                        if (tracksController.isTrackEnabled(it.id)) {
+                            tracksController.zoomOnTrack(it.id);
+                            tracksController.showTrackElevation(it.id);
+                        }
+                        else {
+                            tracksController.toggleTrack(it.id, true, false, true);
+                        }
                     }
                     else if (it.type === 'device') {
                         devicesController.zoomOnDevice(it.id);
@@ -1176,6 +1508,12 @@
                 var iconElem = '';
                 if (item.type === 'favorite') {
                     iconClass = 'icon-favorite';
+                }
+                if (item.type === 'photo') {
+                    iconClass = 'icon-picture';
+                }
+                else if (item.type === 'track') {
+                    iconClass = 'icon-category-monitoring';
                 }
                 else if (item.type === 'contact') {
                     iconClass = 'icon-group';
@@ -1380,12 +1718,12 @@
         },
 
         isGeocodeable: function(str) {
-            var pattern = /^\s*\d+\.?\d*\,\s*\d+\.?\d*\s*$/;
+            var pattern = /^\s*-?\d+\.?\d*\,\s*-?\d+\.?\d*\s*$/;
             return pattern.test(str);
         },
-        search: function(str) {
+        search: function(str, limit=8) {
             var searchTerm = encodeURIComponent(str);
-            var apiUrl = 'https://nominatim.openstreetmap.org/search/' + searchTerm + '?format=json&addressdetails=1&extratags=1&namedetails=1&limit=8';
+            var apiUrl = 'https://nominatim.openstreetmap.org/search/' + searchTerm + '?format=json&addressdetails=1&extratags=1&namedetails=1&limit='+limit;
             return $.getJSON(apiUrl, {}, function(response) {
                 return response;
             });
@@ -1410,7 +1748,12 @@
         },
         geocode: function(latlng) {
             if (!this.isGeocodeable(latlng)) {
-                return;
+                console.log(latlng+' is not geocodable');
+                return {
+                    then: function(f) {
+                        f({});
+                    }
+                };
             }
             var splits = latlng.split(',');
             var lat = splits[0].trim();
@@ -1500,6 +1843,8 @@
             var desc = '<span class="location-city">' + unformattedDesc + '</span>';
             desc += '<button class="search-add-favorite" lat="'+result.lat+'" lng="'+result.lon+'">' +
                 '<span class="icon-favorite"> </span> ' + t('maps', 'Add to favorites') + '</button>';
+            desc += '<button class="search-place-contact" lat="'+result.lat+'" lng="'+result.lon+'">' +
+                '<span class="icon-user"> </span> ' + t('maps', 'Add contact address') + '</button>';
 
             // Add extras to parsed desc
             var extras = result.extratags;
@@ -1575,8 +1920,44 @@
             }
 
             return header + desc;
-        }
+        },
+
+        mapLeftClick: function(e) {
+            var that = this;
+            var ll = e.latlng;
+            var strLatLng = ll.lat+','+ll.lng;
+            this.currentClickSearchLatLng = e.latlng;
+
+            var clickPopupContent = '<h2 id="click-search-popup-title" class="loading">'+t('maps', 'This place')+'</h2>';
+            clickPopupContent += '<textarea id="clickSearchAddress"></textarea><br/>';
+            clickPopupContent += '<button id="click-search-add-favorite">' +
+                '<span class="icon-favorite"> </span> ' + t('maps', 'Add to favorites') + '</button>';
+            clickPopupContent += '<button id="click-search-place-contact">' +
+                '<span class="icon-user"> </span> ' + t('maps', 'Add contact address') + '</button>';
+
+            this.map.openPopup(clickPopupContent, e.latlng);
+
+            this.geocode(strLatLng).then(function(results) {
+                $('#click-search-popup-title').removeClass('loading');
+                var address = {};
+                if (results.address) {
+                    address = results.address;
+                    that.currentClickAddress = address;
+                    var strAddress = formatAddress(address);
+                    $('#clickSearchAddress').text(strAddress);
+                }
+            });
+        },
     };
+
+    var photosController = new PhotosController(optionsController, timeFilterController);
+    var nonLocalizedPhotosController = new NonLocalizedPhotosController(optionsController, timeFilterController, photosController);
+    var contactsController = new ContactsController(optionsController, searchController);
+    var favoritesController = new FavoritesController(optionsController, timeFilterController);
+    var tracksController = new TracksController(optionsController, timeFilterController);
+    var devicesController = new DevicesController(optionsController, timeFilterController);
+
+    timeFilterController.connect();
 
     var helpers = {
         beautifyUrl: function(url) {

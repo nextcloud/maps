@@ -71,12 +71,56 @@ class UtilsController extends Controller {
      */
     public function getOptionsValues() {
         $ov = array();
+
+        // get all user values
         $keys = $this->config->getUserKeys($this->userId, 'maps');
         foreach ($keys as $key) {
             $value = $this->config->getUserValue($this->userId, 'maps', $key);
             $ov[$key] = $value;
         }
+
+        // get routing-specific admin settings values
+        $settingsKeys = [
+            'osrmCarURL',
+            'osrmBikeURL',
+            'osrmFootURL',
+            'osrmDEMO',
+            'graphhopperAPIKEY',
+            'mapboxAPIKEY',
+            'graphhopperURL'
+        ];
+        foreach ($settingsKeys as $k) {
+            $v = $this->config->getAppValue('maps', $k);
+            $ov[$k] = $v;
+        }
         return new DataResponse(['values'=>$ov]);
+    }
+
+    /**
+     * set routing settings
+     */
+    public function setRoutingSettings($values) {
+        $acceptedKeys = [
+            'osrmCarURL',
+            'osrmBikeURL',
+            'osrmFootURL',
+            'osrmDEMO',
+            'graphhopperAPIKEY',
+            'mapboxAPIKEY',
+            'graphhopperURL'
+        ];
+        foreach ($values as $k=>$v) {
+            if (in_array($k, $acceptedKeys)) {
+                $this->config->setAppValue('maps', $k, $v);
+            }
+        }
+        $response = new DataResponse('DONE');
+        $csp = new ContentSecurityPolicy();
+        $csp->addAllowedImageDomain('*')
+            ->addAllowedMediaDomain('*')
+            ->addAllowedConnectDomain('*');
+        $response->setContentSecurityPolicy($csp);
+        return $response;
     }
 
 }

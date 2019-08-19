@@ -8,5 +8,7 @@
         <!-- Your settings in here -->
         <input type="checkbox" id="track-me" class="checkbox">
         <label for="track-me"><?php p($l->t('Track my position')); ?></label>
+        <input type="checkbox" id="display-slider" class="checkbox">
+        <label for="display-slider"><?php p($l->t('Display time filter slider')); ?></label>
     </div>
 </div>

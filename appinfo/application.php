@@ -40,6 +40,7 @@ class Application extends App {
             return new FileHooks(
                 $c->query('ServerContainer')->getRootFolder(),
                 \OC::$server->query(PhotofilesService::class),
+                \OC::$server->query(TracksService::class),
                 $c->query('ServerContainer')->getLogger(),
                 $c->query('AppName')
             );
@@ -172,7 +173,9 @@ class Application extends App {
                     $c->query('ServerContainer')->getLogger(),
                     new TracksService(
                         $c->query('ServerContainer')->getLogger(),
-                        $c->query('ServerContainer')->getL10N($c->query('AppName'))
+                        $c->query('ServerContainer')->getL10N($c->query('AppName')),
+                        $c->query('ServerContainer')->getRootFolder(),
+                        $c->getServer()->getShareManager()
                     )
                 );
             }

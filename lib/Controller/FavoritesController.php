@@ -34,12 +34,7 @@ use OCP\IDateTimeZone;
 
 use OCA\Maps\Service\FavoritesService;
 
-function endswith($string, $test) {
-    $strlen = strlen($string);
-    $testlen = strlen($test);
-    if ($testlen > $strlen) return false;
-    return substr_compare($string, $test, $strlen - $testlen, $testlen) === 0;
-}
+use function OCA\Maps\Service\endswith;
 
 class FavoritesController extends Controller {
 

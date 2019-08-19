@@ -34,12 +34,7 @@ use OCP\IDateTimeZone;
 
 use OCA\Maps\Service\DevicesService;
 
-function endswith($string, $test) {
-    $strlen = strlen($string);
-    $testlen = strlen($test);
-    if ($testlen > $strlen) return false;
-    return substr_compare($string, $test, $strlen - $testlen, $testlen) === 0;
-}
+use function \OCA\Maps\Service\endswith;
 
 class DevicesController extends Controller {
 
@@ -130,11 +125,13 @@ class DevicesController extends Controller {
     /**
      * @NoAdminRequired
      */
-    public function editDevice($id, $color) {
+    public function editDevice($id, $color, $name) {
         $device = $this->devicesService->getDeviceFromDB($id, $this->userId);
         if ($device !== null) {
-            if (is_string($color) && strlen($color) > 0) {
-                $this->devicesService->editDeviceInDB($id, $color);
+            if ((is_string($color) && strlen($color) > 0) ||
+                (is_string($name) && strlen($name) > 0)
+            ) {
+                $this->devicesService->editDeviceInDB($id, $color, $name);
                 $editedDevice = $this->devicesService->getDeviceFromDB($id, $this->userId);
                 return new DataResponse($editedDevice);
             }

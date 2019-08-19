@@ -28,14 +28,23 @@ $eventDispatcher->addListener('OCA\Files::loadAdditionalScripts', function() {
 // carddav/caldav lookup addresses
 $listener = function($event) use ($container) {
     if ($event instanceof GenericEvent) {
-        $c = $event->getArgument('cardData');
+        $cData = $event->getArgument('cardData');
+        $cUri = $event->getArgument('cardUri');
         $a = $container->query(AddressService::class);
-        $a->scheduleVCardForLookup($c);
+        $a->scheduleVCardForLookup($cData, $cUri);
+    }
+};
+$deletionListener = function($event) use ($container) {
+    if ($event instanceof GenericEvent) {
+        $cUri = $event->getArgument('cardUri');
+        $a = $container->query(AddressService::class);
+        $a->deleteDBContactAddresses($cUri);
     }
 };
 
 $eventDispatcher->addListener('\OCA\DAV\CardDAV\CardDavBackend::createCard', $listener);
 $eventDispatcher->addListener('\OCA\DAV\CardDAV\CardDavBackend::updateCard', $listener);
+$eventDispatcher->addListener('\OCA\DAV\CardDAV\CardDavBackend::deleteCard', $deletionListener);
 
 $l = \OC::$server->getL10N('maps');
 

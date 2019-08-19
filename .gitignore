@@ -41,6 +41,7 @@ coverage
 
 # Compiled binary addons (http://nodejs.org/api/addons.html)
 build/Release
+build/
 
 # Dependency directories
 node_modules/
@@ -70,5 +71,7 @@ typings/
 # dotenv environment variables file
 .env
 
+# Vim swap files
+*.swp
 
 # End of https://www.gitignore.io/api/node,bower

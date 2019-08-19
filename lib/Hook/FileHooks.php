@@ -22,6 +22,7 @@ use OCP\Util;
 use OCP\Share;
 
 use OCA\Maps\Service\PhotofilesService;
+use OCA\Maps\Service\TracksService;
 
 /**
  * Handles files events
@@ -29,31 +30,38 @@ use OCA\Maps\Service\PhotofilesService;
 class FileHooks {
 
     private $photofilesService;
+    private $tracksService;
 
     private $logger;
 
     private $root;
 
-    public function __construct(IRootFolder $root, PhotofilesService $photofilesService, ILogger $logger, $appName) {
+    public function __construct(IRootFolder $root, PhotofilesService $photofilesService, TracksService $tracksService, ILogger $logger, $appName) {
         $this->photofilesService = $photofilesService;
+        $this->tracksService = $tracksService;
         $this->logger = $logger;
         $this->root = $root;
     }
 
     public function register() {
         $fileWriteCallback = function(\OCP\Files\Node $node) {
-            if($this->isUserNode($node)) {
-                $this->photofilesService->safeAddByFile($node);
+            if ($this->isUserNode($node)) {
+                $isPhoto = $this->photofilesService->safeAddByFile($node);
+                if (!$isPhoto) {
+                    $this->tracksService->safeAddByFile($node);
+                }
             }
         };
         $this->root->listen('\OC\Files', 'postWrite', $fileWriteCallback);
 
         $fileDeletionCallback = function(\OCP\Files\Node $node) {
-            if($this->isUserNode($node)) {
+            if ($this->isUserNode($node)) {
                 if ($node->getType() === FileInfo::TYPE_FOLDER) {
                     $this->photofilesService->deleteByFolder($node);
+                    $this->tracksService->deleteByFolder($node);
                 } else {
                     $this->photofilesService->deleteByFile($node);
+                    $this->tracksService->deleteByFile($node);
                 }
             }
         };
@@ -62,8 +70,9 @@ class FileHooks {
         // this one is triggered when restoring a version of a file
         // and NOT when it's created so we can use it for updating coordinates in DB
         $this->root->listen('\OC\Files', 'postTouch', function(\OCP\Files\Node $node) {
-            if ($this->isUserNode($node)) {
+            if ($this->isUserNode($node) and $node->getType() === FileInfo::TYPE_FILE) {
                 $this->photofilesService->updateByFile($node);
+                // nothing to update on tracks, metadata will be regenerated when getting content if etag has changed
             }
         });
 
@@ -76,12 +85,14 @@ class FileHooks {
                     if ($source->getParent()->getId() !== $target->getParent()->getId()) {
                         $this->photofilesService->deleteByFile($target);
                         $this->photofilesService->safeAddByFile($target);
+                        // tracks: nothing to do here because we use fileID
                     }
                 }
                 elseif ($target->getType() === FileInfo::TYPE_FOLDER) {
                     if ($source->getParent()->getId() !== $target->getParent()->getId()) {
                         $this->photofilesService->deleteByFolder($target);
                         $this->photofilesService->safeAddByFolder($target);
+                        // tracks: nothing to do here because we use fileID
                     }
                 }
             }
@@ -95,7 +106,7 @@ class FileHooks {
         Util::connectHook(\OCP\Share::class, 'pre_unshare', $this, 'preUnShare');
     }
 
-    public static function postShare($params) {
+    public function postShare($params) {
         if ($params['shareType'] === Share::SHARE_TYPE_USER) {
             if ($params['itemType'] === 'file') {
                 //$targetFilePath = $params['itemTarget'];
@@ -103,42 +114,48 @@ class FileHooks {
                 $targetUserId = $params['shareWith'];
                 $fileId = $params['fileSource']; // or itemSource
                 $this->photofilesService->safeAddByFileIdUserId($fileId, $targetUserId);
+                $this->tracksService->safeAddByFileIdUserId($fileId, $targetUserId);
             }
             else if ($params['itemType'] === 'folder') {
                 $targetUserId = $params['shareWith'];
                 $dirId = $params['fileSource']; // or itemSource
                 $this->photofilesService->safeAddByFolderIdUserId($dirId, $targetUserId);
+                $this->tracksService->safeAddByFolderIdUserId($dirId, $targetUserId);
             }
         }
     }
 
-    public static function postUnShare($params) {
+    public function postUnShare($params) {
         if ($params['shareType'] === Share::SHARE_TYPE_USER) {
             if ($params['itemType'] === 'file') {
                 $targetUserId = $params['shareWith'];
                 $fileId = $params['fileSource']; // or itemSource
                 $this->photofilesService->safeDeleteByFileIdUserId($fileId, $targetUserId);
+                $this->tracksService->safeDeleteByFileIdUserId($fileId, $targetUserId);
             }
         }
     }
 
-    public static function preUnShare($params) {
+    public function preUnShare($params) {
         if ($params['shareType'] === Share::SHARE_TYPE_USER) {
             if ($params['itemType'] === 'folder') {
                 $targetUserId = $params['shareWith'];
                 $dirId = $params['fileSource']; // or itemSource
                 $this->photofilesService->safeDeleteByFolderIdUserId($dirId, $targetUserId);
+                $this->tracksService->safeDeleteByFolderIdUserId($dirId, $targetUserId);
             }
         }
     }
 
-    public static function restore($params) {
+    public function restore($params) {
         $node = $this->getNodeForPath($params['filePath']);
-        if($this->isUserNode($node)) {
+        if ($this->isUserNode($node)) {
             if ($node->getType() === FileInfo::TYPE_FOLDER) {
-                $this->photofilesService->addByFolder($node);
+                $this->photofilesService->safeAddByFolder($node);
+                $this->tracksService->safeAddByFolder($node);
             } else {
-                $this->photofilesService->addByFile($node);
+                $this->photofilesService->safeAddByFile($node);
+                $this->tracksService->safeAddByFile($node);
             }
         }
     }

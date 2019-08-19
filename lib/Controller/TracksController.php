@@ -32,13 +32,6 @@ use OCP\Share;
 
 use OCA\Maps\Service\TracksService;
 
-function endswith($string, $test) {
-    $strlen = strlen($string);
-    $testlen = strlen($test);
-    if ($testlen > $strlen) return false;
-    return substr_compare($string, $test, $strlen - $testlen, $testlen) === 0;
-}
-
 function remove_utf8_bom($text) {
     $bom = pack('H*','EFBBBF');
     $text = preg_replace("/^$bom/", '', $text);
@@ -95,14 +88,9 @@ class TracksController extends Controller {
             if (is_array($res) and count($res) > 0) {
                 $trackFile = $res[0];
                 if ($trackFile->getType() === \OCP\Files\FileInfo::TYPE_FILE) {
+                    $track['mtime'] = $trackFile->getMTime();
                     $track['file_name'] = $trackFile->getName();
-                    $track['file_path'] = $trackFile->getInternalPath();
-                    // did the file change?
-                    if ($track['etag'] !== $trackFile->getEtag()) {
-                        $metadata = $this->tracksService->generateTrackMetadata($trackFile);
-                        $track['metadata'] = $metadata;
-                        $this->tracksService->editTrackInDB($track['id'], null, $metadata, $trackFile->getEtag());
-                    }
+                    $track['file_path'] = \preg_replace("/^\/".$this->userId."\/files/", '', $trackFile->getPath());
                     array_push($existingTracks, $track);
                 }
                 else {
@@ -126,7 +114,19 @@ class TracksController extends Controller {
             $trackFile = $res[0];
             if ($trackFile->getType() === \OCP\Files\FileInfo::TYPE_FILE) {
                 $trackContent = remove_utf8_bom($trackFile->getContent());
-                return new DataResponse($trackContent);
+                // compute metadata if necessary
+                // first time we get it OR the file changed
+                if (!$track['metadata'] || $track['etag'] !== $trackFile->getEtag()) {
+                    $metadata = $this->tracksService->generateTrackMetadata($trackFile);
+                    $this->tracksService->editTrackInDB($track['id'], null, $metadata, $trackFile->getEtag());
+                }
+                else {
+                    $metadata = $track['metadata'];
+                }
+                return new DataResponse([
+                    'metadata'=>$metadata,
+                    'content'=>$trackContent
+                ]);
             }
             else {
                 return new DataResponse('bad file type', 400);
@@ -135,61 +135,6 @@ class TracksController extends Controller {
         else {
             return new DataResponse('file not found', 400);
         }
-    }
-
-    /**
-     * @NoAdminRequired
-     */
-    public function addTracks($pathList) {
-        $tracks = [];
-        if (is_array($pathList) and count($pathList) > 0) {
-            foreach ($pathList as $path) {
-                if ($path && strlen($path) > 0) {
-                    $cleanpath = str_replace(array('../', '..\\'), '',  $path);
-                    if ($this->userfolder->nodeExists($cleanpath)) {
-                        $trackFile = $this->userfolder->get($cleanpath);
-                        if ($trackFile->getType() === \OCP\Files\FileInfo::TYPE_FILE) {
-                            $trackFileId = $trackFile->getId();
-                            $trackId = $this->tracksService->addTrackToDB($this->userId, $trackFileId, $trackFile);
-                            $track = $this->tracksService->getTrackFromDB($trackId);
-                            $track['file_name'] = $trackFile->getName();
-                            $track['file_path'] = $trackFile->getInternalPath();
-                            array_push($tracks, $track);
-                        }
-                    }
-                }
-            }
-        }
-        return new DataResponse($tracks);
-    }
-
-    /**
-     * @NoAdminRequired
-     */
-    public function addTrackDirectory($path) {
-        $tracks = [];
-        if ($path && strlen($path) > 0) {
-            $cleanpath = str_replace(array('../', '..\\'), '',  $path);
-            if ($this->userfolder->nodeExists($cleanpath)) {
-                $dir = $this->userfolder->get($cleanpath);
-                if ($dir->getType() === \OCP\Files\FileInfo::TYPE_FOLDER) {
-                    // find all gpx files
-                    foreach ($dir->searchByMime('application/gpx+xml') as $node) {
-                        if ($node->getParent()->getId() === $dir->getId() and
-                            $node->getType() === \OCP\Files\FileInfo::TYPE_FILE
-                        ) {
-                            $trackFileId = $node->getId();
-                            $trackId = $this->tracksService->addTrackToDB($this->userId, $trackFileId, $node);
-                            $track = $this->tracksService->getTrackFromDB($trackId);
-                            $track['file_name'] = $node->getName();
-                            $track['file_path'] = $node->getInternalPath();
-                            array_push($tracks, $track);
-                        }
-                    }
-                }
-            }
-        }
-        return new DataResponse($tracks);
     }
 
     /**
@@ -218,16 +163,6 @@ class TracksController extends Controller {
         else {
             return new DataResponse('no such track', 400);
         }
-    }
-
-    /**
-     * @NoAdminRequired
-     */
-    public function deleteTracks($ids) {
-        if (is_array($ids) && count($ids) > 0) {
-            $this->tracksService->deleteTracksFromDB($ids, $this->userId);
-        }
-        return new DataResponse('DELETED');
     }
 
 }

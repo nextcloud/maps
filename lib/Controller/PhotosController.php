@@ -27,7 +27,8 @@ class PhotosController extends Controller {
     private $photofilesService;
     private $logger;
 
-    public function __construct($AppName, ILogger $logger, IRequest $request, GeophotoService $GeophotoService, PhotofilesService $photofilesService, $UserId){
+    public function __construct($AppName, ILogger $logger, IRequest $request, GeophotoService $GeophotoService,
+                                PhotofilesService $photofilesService, $UserId){
         parent::__construct($AppName, $request);
         $this->logger = $logger;
         $this->userId = $UserId;

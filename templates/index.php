@@ -1,6 +1,7 @@
 <?php
 script('maps', '../node_modules/nouislider/distribute/nouislider');
 style('maps', '../node_modules/nouislider/distribute/nouislider');
+script('maps', '../node_modules/ua-parser-js/dist/ua-parser.min');
 script('maps', 'utils');
 script('maps', 'photosController');
 script('maps', 'nonLocalizedPhotosController');

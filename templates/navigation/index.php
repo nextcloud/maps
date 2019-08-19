@@ -1,6 +1,6 @@
 <ul>
     <li id="navigation-favorites" class="collapsible">
-        <a class="icon-favorite" href="#"><?php p($l->t('Favorites')); ?></a>
+        <a class="icon-favorite" href="#"><?php p($l->t('Your favorites')); ?></a>
         <div class="app-navigation-entry-utils">
             <ul>
                 <li id="addFavoriteButton" class="app-navigation-entry-utils-menu-button" title="<?php p($l->t('Add a favorite')); ?>">
@@ -26,15 +26,9 @@
                     </a>
                 </li>
                 <li>
-                    <a href="#" id="select-all-categories">
+                    <a href="#" id="toggle-all-categories">
                         <span class="icon-category-enabled"></span>
-                        <span><?php p($l->t('Show all')); ?></span>
-                    </a>
-                </li>
-                <li>
-                    <a href="#" id="select-no-categories">
-                        <span class="icon-category-disabled"></span>
-                        <span><?php p($l->t('Hide all')); ?></span>
+                        <span><?php p($l->t('Toggle all')); ?></span>
                     </a>
                 </li>
             </ul>
@@ -42,51 +36,18 @@
         <ul id="category-list">
         </ul>
     </li>
-    <li id="navigation-routing">
-        <a class="" href="#"><?php p($l->t('Routing')); ?></a>
-        <div class="app-navigation-entry-utils">
-            <ul>
-                <li class="app-navigation-entry-utils-menu-button routingMenuButton">
-                    <button></button>
-                </li>
-            </ul>
-        </div>
-        <div class="app-navigation-entry-menu">
-            <ul>
-                <li>
-                    <a href="#" class="exportCurrentRoute">
-                        <span class="icon-category-office"></span>
-                        <span><?php p($l->t('Export current route to gpx')); ?></span>
-                    </a>
-                </li>
-            </ul>
-        </div>
-    </li>
-    <li id="navigation-photos" class="collapsible">
-        <a class="icon-picture" href="#"><?php p($l->t('Photos')); ?></a>
+    <li id="navigation-photos">
+        <a class="icon-picture" href="#"><?php p($l->t('Your photos')); ?></a>
         <div class="app-navigation-entry-utils">
             <ul>
                 <li class="app-navigation-entry-utils-counter">
                     <span></span>
                 </li>
-                <li class="app-navigation-entry-utils-menu-button photosMenuButton">
-                    <button></button>
-                </li>
             </ul>
         </div>
-        <div class="app-navigation-entry-menu">
-            <ul>
-                <li>
-                    <a href="#" class="dummyoption">
-                        <span class="icon-category-office"></span>
-                        <span><?php p($l->t('Nothing yet')); ?></span>
-                    </a>
-                </li>
-            </ul>
-        </div>
-        <ul>
+        <!--ul>
             <li id="navigation-nonLocalizedPhotos">
-                <a class="icon-picture" href="#"><?php p($l->t('without geo tag')); ?></a>
+                <a class="icon-picture" href="#"><?php //p($l->t('without geo tag')); ?></a>
                 <div class="app-navigation-entry-utils">
                     <ul>
                         <li class="app-navigation-entry-utils-counter">
@@ -102,16 +63,16 @@
                         <li>
                             <a href="#" class="save-all-nonlocalized">
                                 <span class="icon-category-office"></span>
-                                <span><?php p($l->t('Save all visibile')); ?></span>
+                                <span><?php //p($l->t('Save all visibile')); ?></span>
                             </a>
                         </li>
                     </ul>
                 </div>
             </li>
-        </ul>
+        </ul-->
     </li>
-    <li id="navigation-contacts">
-        <a class="icon-group" href="#"><?php p($l->t('Contacts')); ?></a>
+    <li id="navigation-contacts" class="collapsible">
+        <a class="icon-group" href="#"><?php p($l->t('Your contacts')); ?></a>
         <div class="app-navigation-entry-utils">
             <ul>
                 <li class="app-navigation-entry-utils-counter">
@@ -125,59 +86,24 @@
         <div class="app-navigation-entry-menu">
             <ul>
                 <li>
-                    <a href="#" class="dummyoption">
-                        <span class="icon-category-office"></span>
-                        <span><?php p($l->t('Nothing yet')); ?></span>
-                    </a>
-                </li>
-            </ul>
-        </div>
-    </li>
-    <li id="navigation-tracks" class="collapsible">
-        <a class="" href="#"><?php p($l->t('Tracks')); ?></a>
-        <div class="app-navigation-entry-utils">
-            <ul>
-                <li id="addTrackButton" class="app-navigation-entry-utils-menu-button" title="<?php p($l->t('Load a track file')); ?>">
-                    <button class="icon-add"></button>
-                </li>
-                <li class="app-navigation-entry-utils-menu-button tracksMenuButton">
-                    <button></button>
-                </li>
-            </ul>
-        </div>
-        <div class="app-navigation-entry-menu">
-            <ul>
-                <li>
-                    <a href="#" id="select-all-tracks">
+                    <a href="#" id="toggle-all-contact-groups">
                         <span class="icon-category-enabled"></span>
-                        <span><?php p($l->t('Show all')); ?></span>
+                        <span><?php p($l->t('Toggle all')); ?></span>
                     </a>
                 </li>
                 <li>
-                    <a href="#" id="select-no-tracks">
-                        <span class="icon-category-disabled"></span>
-                        <span><?php p($l->t('Hide all')); ?></span>
-                    </a>
-                </li>
-                <li>
-                    <a href="#" id="add-track-folder">
-                        <span class="icon-folder"></span>
-                        <span><?php p($l->t('Load a directory')); ?></span>
-                    </a>
-                </li>
-                <li>
-                    <a href="#" id="remove-all-tracks">
-                        <span class="icon-delete"></span>
-                        <span><?php p($l->t('Remove all')); ?></span>
+                    <a href="#" id="zoom-all-contact-groups">
+                        <span class="icon-search"></span>
+                        <span><?php p($l->t('Zoom to bounds')); ?></span>
                     </a>
                 </li>
             </ul>
         </div>
-        <ul id="track-list">
+        <ul id="contact-group-list">
         </ul>
     </li>
     <li id="navigation-devices" class="collapsible">
-        <a class="icon-phone" href="#"><?php p($l->t('Devices')); ?></a>
+        <a class="icon-phone" href="#"><?php p($l->t('Your devices')); ?></a>
         <div class="app-navigation-entry-utils">
             <ul>
                 <li class="app-navigation-entry-utils-menu-button devicesMenuButton">
@@ -226,6 +152,46 @@
             </ul>
         </div>
         <ul id="device-list">
+        </ul>
+    </li>
+    <li id="navigation-tracks" class="collapsible">
+        <a class="icon-category-monitoring" href="#"><?php p($l->t('Your tracks')); ?></a>
+        <div class="app-navigation-entry-utils">
+            <ul>
+                <li class="app-navigation-entry-utils-menu-button tracksMenuButton">
+                    <button></button>
+                </li>
+            </ul>
+        </div>
+        <div class="app-navigation-entry-menu">
+            <ul>
+                <li>
+                    <a href="#" id="select-all-tracks">
+                        <span class="icon-category-enabled"></span>
+                        <span><?php p($l->t('Show all')); ?></span>
+                    </a>
+                </li>
+                <li>
+                    <a href="#" id="select-no-tracks">
+                        <span class="icon-category-disabled"></span>
+                        <span><?php p($l->t('Hide all')); ?></span>
+                    </a>
+                </li>
+                <li>
+                    <a href="#" id="sort-name-tracks">
+                        <span class="icon-tag"></span>
+                        <span><?php p($l->t('Sort by name')); ?></span>
+                    </a>
+                </li>
+                <li>
+                    <a href="#" id="sort-date-tracks">
+                        <span class="icon-calendar-dark"></span>
+                        <span><?php p($l->t('Sort by date')); ?></span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+        <ul id="track-list">
         </ul>
     </li>
 </ul>

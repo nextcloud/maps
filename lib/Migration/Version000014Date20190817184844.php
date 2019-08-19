@@ -8,11 +8,19 @@ use Closure;
 use OCP\DB\ISchemaWrapper;
 use OCP\Migration\SimpleMigrationStep;
 use OCP\Migration\IOutput;
+use OCP\IDBConnection;
+use Doctrine\DBAL\Types\Type;
 
 /**
  * Auto-generated migration step: Please modify to your needs!
  */
-class Version000009Date20190516000800 extends SimpleMigrationStep {
+class Version000014Date20190817184844 extends SimpleMigrationStep {
+
+	protected $db;
+
+	public function __construct(IDBConnection $connection) {
+		$this->db = $connection;
+	}
 
 	/**
 	 * @param IOutput $output
@@ -29,38 +37,14 @@ class Version000009Date20190516000800 extends SimpleMigrationStep {
 	 * @return null|ISchemaWrapper
 	 */
 	public function changeSchema(IOutput $output, Closure $schemaClosure, array $options) {
-		/** @var ISchemaWrapper $schema */
 		$schema = $schemaClosure();
 
-		if (!$schema->hasTable('maps_address_geo')) {
-			$table = $schema->createTable('maps_address_geo');
-			$table->addColumn('id', 'bigint', [
-				'autoincrement' => true,
-				'notnull' => true,
-				'length' => 41,
-			]);
-			$table->addColumn('adr', 'string', [
-				'notnull' => true,
-				'length' => 255,
-                'unique' => true,
-			]);
-			$table->addColumn('adr_norm', 'string', [
-				'notnull' => true,
-				'length' => 255,
-                'unique' => true,
-			]);
-			$table->addColumn('lat', 'float', [
+		if ($schema->hasTable('maps_favorites')) {
+			$table = $schema->getTable('maps_favorites');
+			$table->changeColumn('name', [
 				'notnull' => false,
-				'length' => 10,
+				'length' => 255,
 			]);
-			$table->addColumn('lng', 'float', [
-				'notnull' => false,
-				'length' => 10,
-			]);
-            $table->addColumn('looked_up', 'boolean', [
-                'notnull' => true,
-            ]);
-			$table->addUniqueIndex(["adr", "adr_norm"]);
 		}
 
 		return $schema;

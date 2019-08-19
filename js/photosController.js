@@ -22,6 +22,7 @@ PhotosController.prototype = {
         var that = this;
         this.photoLayer = L.markerClusterGroup({
             iconCreateFunction : this.getClusterIconCreateFunction(),
+            spiderfyOnMaxZoom: false,
             showCoverageOnHover : false,
             zoomToBoundsOnClick: false,
             maxClusterRadius: this.PHOTO_MARKER_VIEW_SIZE + 10,
@@ -31,11 +32,12 @@ PhotosController.prototype = {
         });
         this.photoLayer.on('click', this.getPhotoMarkerOnClickFunction());
         this.photoLayer.on('clusterclick', function (a) {
-            if (a.layer.getChildCount() > 20) {
+            if (a.layer.getChildCount() > 20 && that.map.getZoom() !== that.map.getMaxZoom()) {
                 a.layer.zoomToBounds();
             }
             else {
                 a.layer.spiderfy();
+                that.map.clickpopup = true;
             }
         });
         // click on photo menu entry
@@ -177,6 +179,10 @@ PhotosController.prototype = {
         var markers = this.preparePhotoMarkers(photos);
         this.photoMarkers.push.apply(this.photoMarkers, markers);
         this.photoMarkers.sort(function (a, b) { return a.data.date - b.data.date;});
+
+        // we update the counter
+        var catCounter = $('#navigation-photos .app-navigation-entry-utils-counter');
+        catCounter.text(this.photoMarkers.length);
 
         // we put them all in the layer
         this.photoMarkersFirstVisible = 0;
@@ -468,6 +474,25 @@ PhotosController.prototype = {
         }).fail(function(response) {
             OC.Notification.showTemporary(t('maps', 'Failed to reset photos coordinates') + ': ' + response.responseText);
         });
+    },
+
+    getAutocompData: function() {
+        var that = this;
+        var mData;
+        var data = [];
+        if (this.map.hasLayer(this.photoLayer)) {
+            this.photoLayer.eachLayer(function (l) {
+                mData = l.data;
+                data.push({
+                    type: 'photo',
+                    label: OC.basename(mData.path),
+                    value: OC.basename(mData.path),
+                    lat: mData.lat,
+                    lng: mData.lng
+                });
+            });
+        }
+        return data;
     },
 
 };

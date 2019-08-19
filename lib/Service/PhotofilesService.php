@@ -21,6 +21,7 @@ use OCP\Files\Folder;
 use OCP\Files\Node;
 use OCP\ILogger;
 use OCP\Share\IManager;
+use OCP\Files\Mount\IMountPoint;
 
 use OCA\Maps\DB\Geophoto;
 use OCA\Maps\DB\GeophotoMapper;
@@ -46,7 +47,8 @@ class PhotofilesService {
     private $shareManager;
     private $logger;
 
-    public function __construct (ILogger $logger, IRootFolder $root, IL10N $l10n, GeophotoMapper $photoMapper, IManager $shareManager) {
+    public function __construct (ILogger $logger, IRootFolder $root, IL10N $l10n,
+                                GeophotoMapper $photoMapper, IManager $shareManager) {
         $this->root = $root;
         $this->l10n = $l10n;
         $this->photoMapper = $photoMapper;
@@ -54,12 +56,13 @@ class PhotofilesService {
         $this->logger = $logger;
     }
 
-    public function rescan ($userId){
+    public function rescan($userId){
         $userFolder = $this->root->getUserFolder($userId);
         $photos = $this->gatherPhotoFiles($userFolder, true);
         $this->photoMapper->deleteAll($userId);
         foreach($photos as $photo) {
             $this->addPhoto($photo, $userId);
+            yield $photo->getPath();
         }
     }
 
@@ -75,15 +78,19 @@ class PhotofilesService {
     public function safeAddByFile(Node $file) {
         $ownerId = $file->getOwner()->getUID();
         $userFolder = $this->root->getUserFolder($ownerId);
-        if($this->isPhoto($file)) {
+        if ($this->isPhoto($file)) {
             $this->safeAddPhoto($file, $ownerId);
             // is the file accessible to other users ?
             $accesses = $this->shareManager->getAccessList($file);
-            foreach($accesses['users'] as $uid) {
+            foreach ($accesses['users'] as $uid) {
                 if ($uid !== $ownerId) {
                     $this->safeAddPhoto($file, $uid);
                 }
             }
+            return true;
+        }
+        else {
+            return false;
         }
     }
 
@@ -116,22 +123,24 @@ class PhotofilesService {
 
     public function addByFolder(Node $folder) {
         $photos = $this->gatherPhotoFiles($folder, true);
-        foreach($photos as $photo) {
+        foreach ($photos as $photo) {
             $this->addPhoto($photo, $folder->getOwner()->getUID());
         }
     }
 
     public function updateByFile(Node $file) {
-        $exif = $this->getExif($file);
-        if (!is_null($exif)) {
-            $ownerId = $file->getOwner()->getUID();
-            // in case there is no entry for this file yet (normally there is because non-localized photos are added)
-            if ($this->photoMapper->findByFileId($ownerId, $file->getId()) === null) {
-                // TODO insert for all users having access to this file, not just the owner
-                $this->insertPhoto($file, $ownerId, $exif);
-            }
-            else {
-                $this->updatePhoto($file, $exif);
+        if ($this->isPhoto($file)) {
+            $exif = $this->getExif($file);
+            if (!is_null($exif)) {
+                $ownerId = $file->getOwner()->getUID();
+                // in case there is no entry for this file yet (normally there is because non-localized photos are added)
+                if ($this->photoMapper->findByFileId($ownerId, $file->getId()) === null) {
+                    // TODO insert for all users having access to this file, not just the owner
+                    $this->insertPhoto($file, $ownerId, $exif);
+                }
+                else {
+                    $this->updatePhoto($file, $exif);
+                }
             }
         }
     }
@@ -156,7 +165,7 @@ class PhotofilesService {
 
     public function deleteByFolder(Node $folder) {
         $photos = $this->gatherPhotoFiles($folder, true);
-        foreach($photos as $photo) {
+        foreach ($photos as $photo) {
             $this->photoMapper->deleteByFileId($photo->getId());
         }
     }
@@ -227,8 +236,8 @@ class PhotofilesService {
             if ($userFolder->nodeExists($cleanpath)) {
                 $file = $userFolder->get($cleanpath);
                 if ($this->isPhoto($file) and $file->isUpdateable()) {
-                    $lat = (count($lats) >= $i) ? $lats[$i] : $lats[0];
-                    $lng = (count($lngs) >= $i) ? $lngs[$i] : $lngs[0];
+                    $lat = (count($lats) > $i) ? $lats[$i] : $lats[0];
+                    $lng = (count($lngs) > $i) ? $lngs[$i] : $lngs[0];
                     $this->setExifCoords($file, $lat, $lng);
                     $this->photoMapper->updateByFileId($file->getId(), $lat, $lng);
                     $nbDone++;
@@ -319,12 +328,19 @@ class PhotofilesService {
     private function gatherPhotoFiles ($folder, $recursive) {
         $notes = [];
         $nodes = $folder->getDirectoryListing();
-        foreach($nodes as $node) {
-            if($node->getType() === FileInfo::TYPE_FOLDER AND $recursive) {
+        foreach ($nodes as $node) {
+            if ($node->getType() === FileInfo::TYPE_FOLDER AND $recursive) {
+                // we don't explore external storages for which previews are disabled
+                if ($node->isMounted()) {
+                    $options = $node->getMountPoint()->getOptions();
+                    if (!$options['previews']) {
+                        continue;
+                    }
+                }
                 $notes = array_merge($notes, $this->gatherPhotoFiles($node, $recursive));
                 continue;
             }
-            if($this->isPhoto($node)) {
+            if ($this->isPhoto($node)) {
                 $notes[] = $node;
             }
         }
@@ -332,8 +348,8 @@ class PhotofilesService {
     }
 
     private function isPhoto($file) {
-        if($file->getType() !== \OCP\Files\FileInfo::TYPE_FILE) return false;
-        if(!in_array($file->getMimetype(), self::PHOTO_MIME_TYPES)) return false;
+        if ($file->getType() !== \OCP\Files\FileInfo::TYPE_FILE) return false;
+        if (!in_array($file->getMimetype(), self::PHOTO_MIME_TYPES)) return false;
         return true;
     }
 
@@ -341,15 +357,19 @@ class PhotofilesService {
         if (!isset($exif["GPSLatitude"]) OR !isset($exif["GPSLongitude"])) {
             return false;
         }
-        if (count($exif["GPSLatitude"]) != 3 OR count($exif["GPSLongitude"]) != 3) {
+        if (count($exif["GPSLatitude"]) !== 3 OR count($exif["GPSLongitude"]) !== 3) {
             return false;
         }
         //Check photos are on the earth
-        if ($exif["GPSLatitude"][0]>=90 OR $exif["GPSLongitude"][0]>=180) {
+        if ($exif["GPSLatitude"][0] >= 90 OR $exif["GPSLongitude"][0] >= 180) {
             return false;
         }
         //Check photos are not on NULL island, remove if they should be.
-        if($exif["GPSLatitude"][0]==0 AND $exif["GPSLatitude"][1]==0 AND $exif["GPSLongitude"][0]==0 AND $exif["GPSLongitude"][1]==0){
+        if ($exif["GPSLatitude"][0] === 0 AND
+            $exif["GPSLatitude"][1] === 0 AND
+            $exif["GPSLongitude"][0] === 0 AND
+            $exif["GPSLongitude"][1] === 0
+        ){
             return false;
         }
         return true;
@@ -361,31 +381,31 @@ class PhotofilesService {
 
         $exif = @exif_read_data($path);
 
-        if(!$this->hasValidExifGeoTags($exif)) {
+        if (!$this->hasValidExifGeoTags($exif)) {
              $exif = $this->getExifPelBackup($file);
         }
 
-        if($this->hasValidExifGeoTags($exif)){
+        if ($this->hasValidExifGeoTags($exif)){
             //Check if there is exif infor
             $LatM = 1; $LongM = 1;
-            if($exif["GPSLatitudeRef"] == 'S'){
+            if ($exif["GPSLatitudeRef"] === 'S'){
                 $LatM = -1;
             }
-            if($exif["GPSLongitudeRef"] == 'W'){
+            if ($exif["GPSLongitudeRef"] === 'W'){
                 $LongM = -1;
             }
             //get the GPS data
-            $gps['LatDegree']=$exif["GPSLatitude"][0];
-            $gps['LatMinute']=$exif["GPSLatitude"][1];
-            $gps['LatgSeconds']=$exif["GPSLatitude"][2];
-            $gps['LongDegree']=$exif["GPSLongitude"][0];
-            $gps['LongMinute']=$exif["GPSLongitude"][1];
-            $gps['LongSeconds']=$exif["GPSLongitude"][2];
+            $gps['LatDegree'] = $exif["GPSLatitude"][0];
+            $gps['LatMinute'] = $exif["GPSLatitude"][1];
+            $gps['LatgSeconds'] = $exif["GPSLatitude"][2];
+            $gps['LongDegree'] = $exif["GPSLongitude"][0];
+            $gps['LongMinute'] = $exif["GPSLongitude"][1];
+            $gps['LongSeconds'] = $exif["GPSLongitude"][2];
 
             //convert strings to numbers
-            foreach($gps as $key => $value){
+            foreach ($gps as $key => $value){
                 $pos = strpos($value, '/');
-                if($pos !== false){
+                if ($pos !== false){
                     $temp = explode('/',$value);
                     $gps[$key] = $temp[0] / $temp[1];
                 }
@@ -419,7 +439,7 @@ class PhotofilesService {
             $pelJpeg = new PelJpeg($data);
 
             $pelExif = $pelJpeg->getExif();
-            if ($pelExif == null) {
+            if ($pelExif === null) {
                 return null;
             }
 
@@ -481,19 +501,19 @@ class PhotofilesService {
         $pelJpeg = new PelJpeg($data);
 
         $pelExif = $pelJpeg->getExif();
-        if ($pelExif == null) {
+        if ($pelExif === null) {
             $pelExif = new PelExif();
             $pelJpeg->setExif($pelExif);
         }
 
         $pelTiff = $pelExif->getTiff();
-        if ($pelTiff == null) {
+        if ($pelTiff === null) {
             $pelTiff = new PelTiff();
             $pelExif->setTiff($pelTiff);
         }
 
         $pelIfd0 = $pelTiff->getIfd();
-        if ($pelIfd0 == null) {
+        if ($pelIfd0 === null) {
             $pelIfd0 = new PelIfd(PelIfd::IFD0);
             $pelTiff->setIfd($pelIfd0);
         }
@@ -509,19 +529,19 @@ class PhotofilesService {
         $pelJpeg = new PelJpeg($data);
 
         $pelExif = $pelJpeg->getExif();
-        if ($pelExif == null) {
+        if ($pelExif === null) {
             $pelExif = new PelExif();
             $pelJpeg->setExif($pelExif);
         }
 
         $pelTiff = $pelExif->getTiff();
-        if ($pelTiff == null) {
+        if ($pelTiff === null) {
             $pelTiff = new PelTiff();
             $pelExif->setTiff($pelTiff);
         }
 
         $pelIfd0 = $pelTiff->getIfd();
-        if ($pelIfd0 == null) {
+        if ($pelIfd0 === null) {
             $pelIfd0 = new PelIfd(PelIfd::IFD0);
             $pelTiff->setIfd($pelIfd0);
         }

@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<gpx version="1.1" creator="Nextcloud Maps 0.0.13" xmlns="http://www.topografix.com/GPX/1/1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd">
+  <metadata>
+    <name>favourites</name>
+  </metadata>
+  <wpt lat="48.775286" lon="2.323726">
+   <name></name>
+   <time>2019-06-27T09:35:17Z</time>
+   <type>public phones</type>
+  </wpt>
+  <wpt lat="48.775509" lon="2.324483">
+   <name></name>
+   <time>2019-06-27T09:38:37Z</time>
+   <type>public phones</type>
+  </wpt>
+  <wpt lat="48.776361" lon="2.323437">
+   <name></name>
+   <time>2019-06-27T09:41:17Z</time>
+   <type>public phones</type>
+  </wpt>
+  <wpt lat="48.775739" lon="2.323995">
+   <name>totototototot</name>
+   <time>2019-06-27T09:44:46Z</time>
+   <type>public phones</type>
+  </wpt>
+  <wpt lat="48.776131" lon="2.32349">
+   <name></name>
+   <time>2019-06-27T10:18:16Z</time>
+   <type>public phones</type>
+  </wpt>
+  <wpt lat="48.776014" lon="2.323882">
+   <name>pl</name>
+   <time>2019-06-27T10:18:33Z</time>
+   <type>public phones</type>
+  </wpt>
+  <wpt lat="48.775735" lon="2.323201">
+   <name></name>
+   <time>2019-06-27T10:18:50Z</time>
+   <type>public phones</type>
+  </wpt>
+  <wpt lat="48.77501025" lon="2.32565832516362">
+   <name>Le Moulin de la Bièvre</name>
+   <time>2019-06-27T10:21:31Z</time>
+   <type>public phones</type>
+  </wpt>
+  <wpt lat="48.7710835" lon="2.32150166293488">
+   <name>Parc de la Bièvre</name>
+   <time>2019-06-27T10:22:13Z</time>
+   <type>public phones</type>
+  </wpt>
+  <wpt lat="48.773953" lon="2.320669">
+   <name>lala</name>
+   <time>2019-06-27T10:24:04Z</time>
+   <type>public phones</type>
+  </wpt>
+  <wpt lat="48.775283" lon="2.318566">
+   <name></name>
+   <time>2019-06-27T10:24:24Z</time>
+   <type>nice places</type>
+  </wpt>
+  <wpt lat="48.773416" lon="2.324746">
+   <name></name>
+   <time>2019-06-27T10:24:44Z</time>
+   <type>public phones</type>
+  </wpt>
+  <wpt lat="48.774462" lon="2.317665">
+   <name>dssd</name>
+   <time>2019-06-27T10:30:18Z</time>
+   <type>public phones</type>
+  </wpt>
+  <wpt lat="48.776301" lon="2.318115">
+   <name></name>
+   <time>2019-06-27T10:30:34Z</time>
+   <type>public phones</type>
+  </wpt>
+  <wpt lat="48.773161" lon="2.362318">
+   <name></name>
+   <time>2019-06-27T14:01:53Z</time>
+   <type>Personal</type>
+  </wpt>
+  <wpt lat="48.775652" lon="2.352276">
+   <name></name>
+   <time>2019-06-27T14:02:07Z</time>
+   <type>Personal</type>
+  </wpt>
+  <wpt lat="48.87348" lon="2.304854">
+   <name>plop</name>
+   <time>2019-06-28T12:29:08Z</time>
+   <type>Personal</type>
+  </wpt>
+  <wpt lat="48.8774178032779" lon="2.30854511260986">
+   <name> 49 Rue de Lisbonne Quartier du Faubourg-du-Roule Paris 8e Arrondissement 75008 Paris Île-de-France France</name>
+   <time>2019-06-28T13:01:51Z</time>
+   <type>Personal</type>
+  </wpt>
+  <wpt lat="48.8774181008907" lon="2.30747222900391">
+   <name>Rue de Lisbonne</name>
+   <time>2019-06-28T13:04:29Z</time>
+   <type>public phones</type>
+   <desc> 64 Rue de Lisbonne Quartier du Faubourg-du-Roule Paris 8e Arrondissement 75008 Paris Île-de-France France</desc>
+  </wpt>
+  <wpt lat="48.8776438539157" lon="2.31219291687012">
+   <name>Rue de Lisbonne</name>
+   <time>2019-06-28T13:04:49Z</time>
+   <type>public phones</type>
+   <desc> 42 Rue de Lisbonne Quartier de l'Europe Paris 8e Arrondissement 75008 Paris Île-de-France France</desc>
+  </wpt>
+  <wpt lat="48.8777708949065" lon="2.30579853057861">
+   <name>Rue de Courcelles</name>
+   <time>2019-06-28T13:05:19Z</time>
+   <type>Personal</type>
+   <desc> 78 Rue de Courcelles Quartier du Faubourg-du-Roule Paris 8e Arrondissement 75008 Paris Île-de-France France</desc>
+  </wpt>
+  <wpt lat="48.8786315555993" lon="2.30393171310425">
+   <name>Rue de Courcelles</name>
+   <time>2019-06-28T13:05:25Z</time>
+   <type>public phones</type>
+   <desc> 90 Rue de Courcelles Quartier du Faubourg-du-Roule Paris 8e Arrondissement 75008 Paris Île-de-France France</desc>
+  </wpt>
+  <wpt lat="48.8799154645188" lon="2.30661392211914">
+   <name>Boulevard de Courcelles</name>
+   <time>2019-06-28T13:05:35Z</time>
+   <type>public phones</type>
+   <desc>  Boulevard de Courcelles Quartier de la Plaine-de-Monceau Paris 17e Arrondissement 75017 Paris Île-de-France France</desc>
+  </wpt>
+  <wpt lat="48.880904" lon="2.302129">
+   <name></name>
+   <time>2019-06-28T13:40:25Z</time>
+   <type>Personal</type>
+  </wpt>
+  <wpt lat="48.882286" lon="2.300885">
+   <name></name>
+   <time>2019-06-28T13:43:42Z</time>
+   <type>nice places</type>
+  </wpt>
+  <wpt lat="48.8159223292415" lon="2.28652954101563">
+   <name>hhh</name>
+   <time>2019-08-10T15:23:45Z</time>
+   <type>Personal</type>
+   <desc>Allée Hoche 92240 Malakoff Île-de-France France</desc>
+  </wpt>
+  <wpt lat="48.843491" lon="2.234001">
+   <name></name>
+   <time>2019-08-10T15:31:23Z</time>
+   <type>Personal</type>
+  </wpt>
+</gpx>

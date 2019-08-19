@@ -72,6 +72,11 @@ class RescanPhotos extends Command {
     }
 
     private function rescanUserPhotos($userId) {
-        $this->photofilesService->rescan($userId);
+        echo '======== User '.$userId.' ========'."\n";
+        $c = 1;
+        foreach ($this->photofilesService->rescan($userId) as $path) {
+            echo '['.$c.'] Photo "'.$path.'" added'."\n";
+            $c++;
+        }
     }
 }

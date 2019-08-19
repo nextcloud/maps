@@ -142,8 +142,8 @@ class DevicesApiController extends ApiController {
         $device = $this->devicesService->getDeviceFromDB($id, $this->userId);
         if ($device !== null) {
             if (is_string($color) && strlen($color) > 0) {
-                $this->devicesService->editDeviceInDB($id, $color);
-                $editedDevice = $this->devicesService->getDeviceFromDB($id);
+                $this->devicesService->editDeviceInDB($id, $color, null);
+                $editedDevice = $this->devicesService->getDeviceFromDB($id, $this->userId);
                 return new DataResponse($editedDevice);
             }
             else {

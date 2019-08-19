@@ -1,0 +1,140 @@
+image: ubuntu:18.10
+
+stages:
+  - test
+  - deploy
+
+before_script:
+  - export DEBIAN_FRONTEND=noninteractive
+  - apt-get update -yqq
+  - apt-get install git sudo make php-xdebug php7.2-sqlite3 php7.2-curl php7.2-xml php7.2-mbstring php7.2-json php7.2-zip php7.2-gd php7.2-intl unzip curl wget nodejs npm sed -yqq > /dev/null 2>&1
+  - npm install -g jshint > /dev/null 2>&1
+  - curl --location --output /usr/local/bin/phpunit https://phar.phpunit.de/phpunit.phar
+  - chmod +x /usr/local/bin/phpunit
+
+test_nc17_sqlite:
+  stage: test
+  only:
+    refs:
+      - master
+      - test
+  artifacts:
+    paths:
+      - coverage
+  coverage: '/^\s*Lines:\s*(\d+.\d+)\%/'
+  script:
+    # copy local copy that has been cloned already
+    - cp -r . /tmp/maps
+    - mkdir -p /var/www/html ; pushd /var/www/html
+    - git clone https://github.com/nextcloud/server.git --recursive --depth 1 -b master nextcloud
+    # temporary fix of autoloader.php
+    - sed -i $'s|if (substr($fullPath, 0, strlen($root) + 1) === $root . \'/\')|if (is_string($root) and substr($fullPath, 0, strlen($root) + 1) === $root . \'/\')|g' nextcloud/lib/autoloader.php
+    - pushd nextcloud/apps && mv /tmp/maps ./
+    - cd maps ; make ; cd .. && chown -R www-data:www-data /var/www/html/nextcloud
+    - sudo -u www-data php /var/www/html/nextcloud/occ maintenance:install --database "sqlite" --admin-user "admin" --admin-pass "password" --data-dir /var/www/html/nextcloud/data
+    - sudo -u www-data OC_PASS=newpassword php /var/www/html/nextcloud/occ user:add --password-from-env --display-name="Test 1" --group="users" test
+    - sudo -u www-data OC_PASS=newpassword php /var/www/html/nextcloud/occ user:add --password-from-env --display-name="Test 2" --group="users" test2
+    - sudo -u www-data OC_PASS=newpassword php /var/www/html/nextcloud/occ user:add --password-from-env --display-name="Test 3" --group="users" test3
+    #- sudo -u www-data mkdir -p /var/www/html/nextcloud/data/test/files
+    #- sudo -u www-data mkdir -p /var/www/html/nextcloud/data/test2/files
+    #- sudo -u www-data mkdir -p /var/www/html/nextcloud/data/test3/files
+    #- sudo -u www-data cp /var/www/html/nextcloud/apps/maps/tests/test_files/* /var/www/html/nextcloud/data/test/files/
+    #- sudo -u www-data mkdir -p /var/www/html/nextcloud/data/test/files/Maps
+    - sudo -u www-data php /var/www/html/nextcloud/occ app:enable maps
+    - sudo -u www-data php /var/www/html/nextcloud/occ maintenance:mode --off
+    # check code with occ
+    - sudo -u www-data php /var/www/html/nextcloud/occ app:check-code maps
+    # check JS code
+    - jshint --verbose maps/js/script.js && echo "jshint OK" || echo "jshint has complaints"
+    - cd /var/www/html/nextcloud/apps/maps
+    - sudo -u www-data php7.2 /usr/local/bin/phpunit --configuration /var/www/html/nextcloud/apps/maps/phpunit.xml > /dev/null 2>&1 || echo "FIRST TEST FAILED as expected..."
+    - sudo -u www-data php7.2 /usr/local/bin/phpunit --configuration /var/www/html/nextcloud/apps/maps/phpunit.xml --coverage-text --color=never --coverage-html /builds/eneiluj/maps/coverage
+
+test_nc17_pgsql:
+  stage: test
+  only:
+    refs:
+      - master
+      - test
+  services:
+      - postgres:latest
+  variables:
+      POSTGRES_DB: plop
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: ""
+  script:
+    - DEBIAN_FRONTEND=noninteractive apt-get install php7.2-pgsql postgresql-client -yqq > /dev/null 2>&1
+    # copy local copy that has been cloned already
+    - cp -r . /tmp/maps
+    - mkdir -p /var/www/html ; pushd /var/www/html
+    - git clone https://github.com/nextcloud/server.git --recursive --depth 1 -b master nextcloud
+    # temporary fix of autoloader.php
+    - sed -i $'s|if (substr($fullPath, 0, strlen($root) + 1) === $root . \'/\')|if (is_string($root) and substr($fullPath, 0, strlen($root) + 1) === $root . \'/\')|g' nextcloud/lib/autoloader.php
+    - pushd nextcloud/apps && mv /tmp/maps ./
+    - cd maps ; make ; cd .. && chown -R www-data:www-data /var/www/html/nextcloud
+    - sudo -u www-data php /var/www/html/nextcloud/occ maintenance:install --database "pgsql" --database-host "postgres:5432" --database-name oc_autotest --database-user postgres --database-pass="" --admin-user "admin" --admin-pass "password" --data-dir /var/www/html/nextcloud/data
+    - sudo -u www-data OC_PASS=newpassword php /var/www/html/nextcloud/occ user:add --password-from-env --display-name="Test 1" --group="users" test
+    - sudo -u www-data OC_PASS=newpassword php /var/www/html/nextcloud/occ user:add --password-from-env --display-name="Test 2" --group="users" test2
+    - sudo -u www-data OC_PASS=newpassword php /var/www/html/nextcloud/occ user:add --password-from-env --display-name="Test 3" --group="users" test3
+    - sudo -u www-data php /var/www/html/nextcloud/occ app:enable maps
+    - sudo -u www-data php /var/www/html/nextcloud/occ maintenance:mode --off
+    # check code with occ
+    - sudo -u www-data php /var/www/html/nextcloud/occ app:check-code maps
+    # check JS code
+    - jshint --verbose maps/js/script.js && echo "jshint OK" || echo "jshint has complaints"
+    - cd /var/www/html/nextcloud/apps/maps
+    - sudo -u www-data php7.2 /usr/local/bin/phpunit --configuration /var/www/html/nextcloud/apps/maps/phpunit.xml > /dev/null 2>&1 || echo "FIRST TEST FAILED as expected..."
+    - sudo -u www-data php7.2 /usr/local/bin/phpunit --configuration /var/www/html/nextcloud/apps/maps/phpunit.xml --coverage-text --color=never
+
+test_nc17_mysql:
+  stage: test
+  only:
+    refs:
+      - master
+      - test
+  script:
+    # DB
+    - DEBIAN_FRONTEND=noninteractive apt-get install mariadb-server php7.2-mysql -yqq > /dev/null 2>&1
+    - service mysql start
+    - mysql -u root -e 'create database oc_autotest;'
+    - mysql -u root -e "CREATE USER 'oc_autotest'@'localhost' IDENTIFIED BY '';"
+    - mysql -u root -e "grant all on oc_autotest.* to 'oc_autotest'@'localhost';"
+    # copy local copy that has been cloned already
+    - cp -r . /tmp/maps
+    - mkdir -p /var/www/html ; pushd /var/www/html
+    - git clone https://github.com/nextcloud/server.git --recursive --depth 1 -b master nextcloud
+    # temporary fix of autoloader.php
+    - sed -i $'s|if (substr($fullPath, 0, strlen($root) + 1) === $root . \'/\')|if (is_string($root) and substr($fullPath, 0, strlen($root) + 1) === $root . \'/\')|g' nextcloud/lib/autoloader.php
+    - pushd nextcloud/apps && mv /tmp/maps ./
+    - cd maps ; make ; cd .. && chown -R www-data:www-data /var/www/html/nextcloud
+    - sudo -u www-data php /var/www/html/nextcloud/occ maintenance:install --database "mysql" --database-name oc_autotest --database-user oc_autotest --database-pass="" --admin-user "admin" --admin-pass "password" --data-dir /var/www/html/nextcloud/data
+    - sudo -u www-data OC_PASS=newpassword php /var/www/html/nextcloud/occ user:add --password-from-env --display-name="Test 1" --group="users" test
+    - sudo -u www-data OC_PASS=newpassword php /var/www/html/nextcloud/occ user:add --password-from-env --display-name="Test 2" --group="users" test2
+    - sudo -u www-data OC_PASS=newpassword php /var/www/html/nextcloud/occ user:add --password-from-env --display-name="Test 3" --group="users" test3
+    - sudo -u www-data php /var/www/html/nextcloud/occ app:enable maps
+    - sudo -u www-data php /var/www/html/nextcloud/occ maintenance:mode --off
+    # check code with occ
+    - sudo -u www-data php /var/www/html/nextcloud/occ app:check-code maps
+    # check JS code
+    - jshint --verbose maps/js/script.js && echo "jshint OK" || echo "jshint has complaints"
+    - cd /var/www/html/nextcloud/apps/maps
+    - sudo -u www-data php7.2 /usr/local/bin/phpunit --configuration /var/www/html/nextcloud/apps/maps/phpunit.xml > /dev/null 2>&1 || echo "FIRST TEST FAILED as expected..."
+    - sudo -u www-data php7.2 /usr/local/bin/phpunit --configuration /var/www/html/nextcloud/apps/maps/phpunit.xml --coverage-text --color=never
+
+
+pages:
+  stage: deploy
+  dependencies:
+    - test_nc17_sqlite
+  before_script:
+    - echo 'nothing to install for pages jobs'
+  only:
+    refs:
+      - master
+  artifacts:
+    paths:
+      - public
+  script:
+    - sleep 5
+    - mkdir public
+    - mv coverage public/

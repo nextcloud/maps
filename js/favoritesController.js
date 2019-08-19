@@ -21,6 +21,7 @@ function FavoritesController(optionsController, timeFilterController) {
     this.addFavoriteCategory = null;
 
     this.defaultCategory = t('maps', 'Personal');
+    this.lastUsedCategory = null;
 
     this.movingFavoriteId = null;
 
@@ -67,13 +68,21 @@ FavoritesController.prototype = {
             that.zoomOnCategory(cat);
         });
         // show/hide all categories
-        $('body').on('click', '#select-all-categories', function(e) {
-            that.showAllCategories();
-            that.saveEnabledCategories();
-            that.optionsController.saveOptionValues({favoritesEnabled: that.map.hasLayer(that.cluster)});
-        });
-        $('body').on('click', '#select-no-categories', function(e) {
-            that.hideAllCategories();
+        $('body').on('click', '#toggle-all-categories', function(e) {
+            var allEnabled = true;
+            for (var cat in that.categoryLayers) {
+                if (!that.map.hasLayer(that.categoryLayers[cat])) {
+                    allEnabled = false;
+                    break;
+                }
+            }
+
+            if (allEnabled) {
+                that.hideAllCategories();
+            }
+            else {
+                that.showAllCategories();
+            }
             that.saveEnabledCategories();
             that.optionsController.saveOptionValues({favoritesEnabled: that.map.hasLayer(that.cluster)});
         });
@@ -113,6 +122,11 @@ FavoritesController.prototype = {
             var favid = parseInt($(this).parent().parent().attr('favid'));
             that.deleteFavoriteDB(favid);
         });
+        $('body').on('click', '.valideditdeletefavorite', function(e) {
+            var favid = parseInt($(this).parent().parent().attr('favid'));
+            that.deleteFavoriteDB(favid);
+            that.map.closePopup();
+        });
         $('body').on('click', '.movefavorite', function(e) {
             var ul = $(this).parent().parent();
             var favid = ul.attr('favid');
@@ -139,15 +153,18 @@ FavoritesController.prototype = {
         $('body').on('click', '.renameCategoryOk', function(e) {
             var cat = $(this).parent().parent().parent().attr('category');
             $(this).parent().parent().parent().removeClass('editing').addClass('icon-loading-small');
-            var newCategoryName = $(this).parent().find('.renameCategoryInput').val();
+            var newCategoryName = $(this).parent().find('.renameCategoryInput').val() || that.defaultCategory;
             that.renameCategoryDB(cat, newCategoryName);
         });
         $('body').on('keyup', '.renameCategoryInput', function(e) {
             if (e.key === 'Enter') {
                 var cat = $(this).parent().parent().parent().attr('category');
                 $(this).parent().parent().parent().removeClass('editing').addClass('icon-loading-small');
-                var newCategoryName = $(this).parent().find('.renameCategoryInput').val();
+                var newCategoryName = $(this).parent().find('.renameCategoryInput').val() || that.defaultCategory;
                 that.renameCategoryDB(cat, newCategoryName);
+            }
+            else if (e.key === 'Escape') {
+                $(this).parent().parent().parent().removeClass('editing');
             }
         });
         $('body').on('click', '.renameCategoryClose', function(e) {
@@ -187,6 +204,7 @@ FavoritesController.prototype = {
 
         this.cluster = L.markerClusterGroup({
             iconCreateFunction: this.getClusterIconCreateFunction(),
+            spiderfyOnMaxZoom: false,
             maxClusterRadius: 28,
             zoomToBoundsOnClick: false,
             chunkedLoading: true,
@@ -195,11 +213,12 @@ FavoritesController.prototype = {
             }
         });
         this.cluster.on('clusterclick', function (a) {
-            if (a.layer.getChildCount() > 20) {
+            if (a.layer.getChildCount() > 20 && that.map.getZoom() !== that.map.getMaxZoom()) {
                 a.layer.zoomToBounds();
             }
             else {
                 a.layer.spiderfy();
+                that.map.clickpopup = true;
             }
         });
     },
@@ -636,6 +655,7 @@ FavoritesController.prototype = {
         this.addFavoriteCategory = categoryName;
         $('.leaflet-container').css('cursor','crosshair');
         this.map.on('click', this.addFavoriteClickMap);
+        this.map.leftClickLock = true;
         $('#addFavoriteButton button').removeClass('icon-add').addClass('icon-history');
         $('#explainaddpoint').show();
         this.addFavoriteMode = true;
@@ -644,6 +664,7 @@ FavoritesController.prototype = {
     leaveAddFavoriteMode: function() {
         $('.leaflet-container').css('cursor','grab');
         this.map.off('click', this.addFavoriteClickMap);
+        this.map.leftClickLock = false;
         $('#addFavoriteButton button').addClass('icon-add').removeClass('icon-history');
         this.addFavoriteMode = false;
         this.addFavoriteCategory = null;
@@ -651,12 +672,18 @@ FavoritesController.prototype = {
 
     addFavoriteClickMap: function(e) {
         var categoryName = this.favoritesController.addFavoriteCategory;
+        if (categoryName === this.favoritesController.defaultCategory && this.favoritesController.lastUsedCategory !== null) {
+            categoryName = this.favoritesController.lastUsedCategory;
+        }
         this.favoritesController.leaveAddFavoriteMode();
         this.favoritesController.addFavoriteDB(categoryName, e.latlng.lat.toFixed(6), e.latlng.lng.toFixed(6), null);
     },
 
     contextAddFavorite: function(e) {
         var categoryName = this.favoritesController.defaultCategory;
+        if (this.favoritesController.lastUsedCategory !== null) {
+            categoryName = this.favoritesController.lastUsedCategory;
+        }
         this.favoritesController.addFavoriteDB(categoryName, e.latlng.lat.toFixed(6), e.latlng.lng.toFixed(6), null);
     },
 
@@ -682,6 +709,9 @@ FavoritesController.prototype = {
         }).done(function (response) {
             that.addFavoriteMap(response, true, true);
             that.updateCategoryCounters();
+            // show edition popup
+            console.log(response);
+            that.openEditionPopup(response.id);
         }).always(function (response) {
             $('#navigation-favorites').removeClass('icon-loading-small');
             $('.leaflet-container').css('cursor', 'grab');
@@ -776,29 +806,41 @@ FavoritesController.prototype = {
     },
 
     getFavoriteTooltipContent: function(fav) {
-        var content = t('maps', 'Name') + ': ' + (fav.name || t('maps', 'No name'));
-        content = content + '<br/>' + t('maps', 'Category') + ': ' + fav.category;
+        var content = '<b>' + t('maps', 'Name') + ':</b> ' + (fav.name || t('maps', 'No name'));
+        content = content + '<br/><b>' + t('maps', 'Category') + ':</b> ' + fav.category;
         if (fav.comment) {
-            content = content + '<br/>' + t('maps', 'Comment') + ': ' + fav.comment;
+            content = content + '<br/><b>' + t('maps', 'Comment') + ':</b> ' + fav.comment;
         }
         return content;
     },
 
     favoriteMouseClick: function(e) {
         var favid = e.target.favid;
-        var fav = this._map.favoritesController.favorites[favid];
+        this._map.favoritesController.openEditionPopup(favid);
+    },
 
-        e.target.unbindPopup();
-        var popupContent = this._map.favoritesController.getFavoritePopupContent(fav);
-        e.target.bindPopup(popupContent, {
+    openEditionPopup: function(favid) {
+        var fav = this.favorites[favid];
+
+        //e.target.unbindPopup();
+        var popupContent = this.getFavoritePopupContent(fav);
+        var popup = L.popup({
             closeOnClick: true,
             className: 'popovermenu open popupMarker',
             offset: L.point(-5, 9)
-        });
-        e.target.openPopup();
+        })
+            .setLatLng([fav.lat, fav.lng])
+            .setContent(popupContent)
+            .openOn(this.map);
+        //e.target.bindPopup(popupContent, {
+        //    closeOnClick: true,
+        //    className: 'popovermenu open popupMarker',
+        //    offset: L.point(-5, 9)
+        //});
+        //e.target.openPopup();
         // add completion to category field
         var catList = [];
-        for (var c in this._map.favoritesController.categoryLayers) {
+        for (var c in this.categoryLayers) {
             catList.push(c);
         }
         $('input[role="category"]').autocomplete({
@@ -809,6 +851,7 @@ FavoritesController.prototype = {
 
     getFavoritePopupContent: function(fav) {
         var validText = t('maps', 'Submit');
+        var deleteText = t('maps', 'Delete');
         var namePH = t('maps', 'Favorite name');
         var categoryPH = t('maps', 'Category');
         var commentPH = t('maps', 'Comment');
@@ -843,6 +886,11 @@ FavoritesController.prototype = {
             '           <span>' + validText + '</span>' +
             '       </button>' +
             '   </li>' +
+            '   <li>' +
+            '       <button class="icon-delete valideditdeletefavorite">' +
+            '           <span>' + deleteText + '</span>' +
+            '       </button>' +
+            '   </li>' +
             '</ul>';
         return res;
     },
@@ -850,6 +898,7 @@ FavoritesController.prototype = {
     favoriteMouseRightClick: function(e) {
         var favid = e.target.favid;
         var fav = this._map.favoritesController.favorites[favid];
+        this._map.clickpopup = true;
 
         e.target.unbindPopup();
         var popupContent = this._map.favoritesController.getFavoriteContextPopupContent(fav);
@@ -930,8 +979,10 @@ FavoritesController.prototype = {
         var fav = this.favorites[favid];
 
         var newName = ul.find('input[role=name]').val();
-        var newCategory = ul.find('input[role=category]').val();
+        var newCategory = ul.find('input[role=category]').val() || this.defaultCategory;
         var newComment = ul.find('textarea[role=comment]').val();
+
+        this.lastUsedCategory = newCategory;
 
         this.editFavoriteDB(favid, newName, newComment, newCategory, null, null);
     },

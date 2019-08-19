@@ -218,10 +218,15 @@ class DevicesService {
         return $device;
     }
 
-    public function editDeviceInDB($id, $color) {
+    public function editDeviceInDB($id, $color, $name) {
         $qb = $this->qb;
         $qb->update('maps_devices');
-        $qb->set('color', $qb->createNamedParameter($color, IQueryBuilder::PARAM_STR));
+        if (is_string($color) && strlen($color) > 0) {
+            $qb->set('color', $qb->createNamedParameter($color, IQueryBuilder::PARAM_STR));
+        }
+        if (is_string($name) && strlen($name) > 0) {
+            $qb->set('user_agent', $qb->createNamedParameter($name, IQueryBuilder::PARAM_STR));
+        }
         $qb->where(
             $qb->expr()->eq('id', $qb->createNamedParameter($id, IQueryBuilder::PARAM_INT))
         );
@@ -248,7 +253,7 @@ class DevicesService {
 
     public function countPoints($userId, $deviceIdList, $begin, $end) {
         $qb = $this->qb;
-        $qb->select($qb->createFunction('COUNT(*)'))
+        $qb->select($qb->createFunction('COUNT(*) AS co'))
             ->from('maps_devices', 'd')
             ->innerJoin('d', 'maps_device_points', 'p', $qb->expr()->eq('d.id', 'p.device_id'))
             ->where(
@@ -277,7 +282,7 @@ class DevicesService {
         $req = $qb->execute();
         $count = 0;
         while ($row = $req->fetch()) {
-            $count = intval($row['COUNT(*)']);
+            $count = intval($row['co']);
             break;
         }
         $qb = $qb->resetQueryParts();

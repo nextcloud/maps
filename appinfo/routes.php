@@ -17,6 +17,7 @@ return [
         // utils
         ['name' => 'utils#getOptionsValues', 'url' => '/getOptionsValues', 'verb' => 'POST'],
         ['name' => 'utils#saveOptionValue', 'url' => '/saveOptionValue', 'verb' => 'POST'],
+        ['name' => 'utils#setRoutingSettings', 'url' => '/setRoutingSettings', 'verb' => 'POST'],
 
         // photos
         ['name' => 'photos#getPhotosFromDb', 'url' => '/photos', 'verb' => 'GET'],
@@ -28,6 +29,8 @@ return [
         ['name' => 'contacts#getContacts', 'url' => '/contacts', 'verb' => 'GET'],
         ['name' => 'contacts#getAllContacts', 'url' => '/contacts-all', 'verb' => 'GET'],
         ['name' => 'contacts#placeContact', 'url' => '/contacts/{bookid}/{uri}', 'verb' => 'PUT'],
+        ['name' => 'contacts#deleteContactAddress', 'url' => '/contacts/{bookid}/{uri}', 'verb' => 'DELETE'],
+        ['name' => 'contacts#getContactLetterAvatar', 'url' => '/contacts-avatar', 'verb' => 'GET'],
 
         // routing
         ['name' => 'routing#exportRoute', 'url' => '/exportRoute', 'verb' => 'POST'],
@@ -58,11 +61,7 @@ return [
         // tracks
         ['name' => 'tracks#getTracks', 'url' => '/tracks', 'verb' => 'GET'],
         ['name' => 'tracks#getTrackFileContent', 'url' => '/tracks/{id}', 'verb' => 'GET'],
-        ['name' => 'tracks#addTracks', 'url' => '/tracks', 'verb' => 'POST'],
-        ['name' => 'tracks#addTrackDirectory', 'url' => '/tracks-directory', 'verb' => 'POST'],
         ['name' => 'tracks#editTrack', 'url' => '/tracks/{id}', 'verb' => 'PUT'],
-        ['name' => 'tracks#deleteTrack', 'url' => '/tracks/{id}', 'verb' => 'DELETE'],
-        ['name' => 'tracks#deleteTracks', 'url' => '/tracks', 'verb' => 'DELETE'],
 
         // devices API
         [

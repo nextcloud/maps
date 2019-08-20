@@ -20,10 +20,6 @@ OC.L10N.register(
     "Hotel" : "Хотел",
     "File" : "Файл",
     "Description" : "Описание",
-    "Favorites" : "Любими",
-    "Photos" : "Снимки",
-    "Contacts" : "Контакти",
-    "Devices" : "Устройства",
     "Settings" : "Настройки"
 },
 "nplurals=2; plural=(n != 1);");

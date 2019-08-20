@@ -2,6 +2,7 @@ OC.L10N.register(
     "maps",
     {
     "Maps" : "Žemėlapiai",
+    "Rename" : "Pervadinti",
     "Delete" : "Ištrinti",
     "Device deleted" : "Įrenginys ištrintas",
     "Failed to delete device" : "Nepavyko ištrinti įrenginio",
@@ -11,7 +12,6 @@ OC.L10N.register(
     "Accuracy" : "Tikslumas",
     "Failed to export devices" : "Nepavyko eksportuoti įrenginių",
     "Failed to import devices" : "Nepavyko importuoti įrenginių",
-    "Rename" : "Pervadinti",
     "Category deleted" : "Kategorija ištrinta",
     "Failed to rename category" : "Nepavyko pervadinti kategorijos",
     "Category" : "Kategorija",
@@ -26,17 +26,12 @@ OC.L10N.register(
     "h" : "val.",
     "min" : "min.",
     "s" : "sek.",
-    "Load gpx file" : "Įkelti gpx failą",
-    "Load gpx files from directory" : "Įkelti gpx failus iš katalogo",
-    "Remove" : "Šalinti",
     "Latitude" : "Platuma",
     "Longitude" : "Ilguma",
     "Description" : "Aprašas",
     "Distance" : "Atstumas",
     "Duration" : "Trukmė",
     "Average speed" : "Vidutinis greitis",
-    "Photos" : "Nuotraukos",
-    "Devices" : "Įrenginiai",
     "Settings" : "Nustatymai"
 },
 "nplurals=4; plural=(n % 10 == 1 && (n % 100 > 19 || n % 100 < 11) ? 0 : (n % 10 >= 2 && n % 10 <=9) && (n % 100 > 19 || n % 100 < 11) ? 1 : n % 1 != 0 ? 2: 3);");

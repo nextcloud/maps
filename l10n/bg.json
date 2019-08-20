@@ -18,10 +18,6 @@
     "Hotel" : "Хотел",
     "File" : "Файл",
     "Description" : "Описание",
-    "Favorites" : "Любими",
-    "Photos" : "Снимки",
-    "Contacts" : "Контакти",
-    "Devices" : "Устройства",
     "Settings" : "Настройки"
 },"pluralForm" :"nplurals=2; plural=(n != 1);"
 }

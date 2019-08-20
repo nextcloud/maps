@@ -2,8 +2,7 @@ OC.L10N.register(
     "maps",
     {
     "Maps" : "Mapak",
-    "Reset GEO information" : "Berrezarri GEO informazioa",
-    "Move contact" : "Mugitu kontaktua",
+    "Rename" : "Aldatu izena",
     "Export" : "Esportatu",
     "Delete" : "Ezabatu",
     "Device deleted" : "Gailua ezabatuta",
@@ -18,7 +17,6 @@ OC.L10N.register(
     "Devices exported in {path}" : "Gailuak esportatuak hemen {bidea}",
     "Personal" : "Pertsonala",
     "Add a favorite" : "Gehitu gogoko bat",
-    "Rename" : "Aldatu izena",
     "Category deleted" : "Kategoria ezabatuta",
     "Failed to rename category" : "Huts egin du kategoriari izena aldatzean",
     "Name" : "Izena",

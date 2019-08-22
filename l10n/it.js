@@ -133,7 +133,7 @@ OC.L10N.register(
     "h" : "h",
     "min" : "min",
     "s" : "s",
-    "There is no routing engine set in Nextcloud additional settings. Routing is currently disabled for users." : "Non è stato scelto alcun motore di instradamento nelle impostazioni aggiuntive di Nextcloud. L'instradamento è attualmente disattivato per gli utenti.",
+    "There is no routing engine set in Nextcloud additional settings. Routing is currently disabled for users." : "Non è stato scelto alcun motore di instradamento nelle impostazioni aggiuntive di Nextcloud. L'instradamento è attualmente disabilitato per gli utenti.",
     "Routing error:" : "Errore di percorso: ",
     "Route exported in {path}" : "Percorso esportato in {path}",
     "Failed to export current route" : "Esportazione percorso attuale non riuscita",

@@ -237,6 +237,7 @@ OC.L10N.register(
     "Sort by name" : "Ordenar por nombre",
     "Sort by date" : "Ordenar por fecha",
     "Settings" : "Configuración",
-    "Track my position" : "Seguir la pista a mi posición"
+    "Track my position" : "Seguir la pista a mi posición",
+    "Display time filter slider" : "Muestra el control deslizante del filtro de tiempo"
 },
 "nplurals=2; plural=(n != 1);");

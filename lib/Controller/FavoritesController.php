@@ -34,7 +34,7 @@ use OCP\IDateTimeZone;
 
 use OCA\Maps\Service\FavoritesService;
 
-use function OCA\Maps\Service\endswith;
+//use function OCA\Maps\Service\endswith;
 
 class FavoritesController extends Controller {
 
@@ -229,7 +229,7 @@ class FavoritesController extends Controller {
             if ($file->getType() === \OCP\Files\FileInfo::TYPE_FILE and
                 $file->isReadable()){
                 $lowerFileName = strtolower($file->getName());
-                if (endswith($lowerFileName, '.gpx') or endswith($lowerFileName, '.kml') or endswith($lowerFileName, '.kmz')) {
+                if ($this->endswith($lowerFileName, '.gpx') or $this->endswith($lowerFileName, '.kml') or $this->endswith($lowerFileName, '.kmz')) {
                     $nbImported = $this->favoritesService->importFavorites($this->userId, $file);
                     return new DataResponse($nbImported);
                 }
@@ -247,6 +247,13 @@ class FavoritesController extends Controller {
             // does not exist
             return new DataResponse('File does not exist', 400);
         }
+    }
+
+    private function endswith($string, $test) {
+        $strlen = strlen($string);
+        $testlen = strlen($test);
+        if ($testlen > $strlen) return false;
+        return substr_compare($string, $test, $strlen - $testlen, $testlen) === 0;
     }
 
 }

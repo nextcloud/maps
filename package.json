@@ -32,13 +32,13 @@
     "leaflet-easybutton": "^2.4.0",
     "leaflet-routing-machine": "^3.2.12",
     "leaflet.featuregroup.subgroup": "^1.0.2",
-    "leaflet.locatecontrol": "^0.62.0",
+    "leaflet.locatecontrol": "^0.67.0",
     "leaflet.markercluster": "^1.4.0",
     "leaflet-mouse-position": "^1.0.4",
     "leaflet-contextmenu": "^1.4.0",
     "leaflet.elevation": "^0.0.3",
     "d3": "^3.5.17",
-    "nouislider": "^13.1.4",
+    "nouislider": "^14.0.2",
     "ua-parser-js": "^0.7.20",
     "opening_hours": "^3.5.0"
   }

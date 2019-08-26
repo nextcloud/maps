@@ -1650,7 +1650,7 @@
                 });
                 data.push({
                     type: 'poi',
-                    label: t('maps', 'Gaz station'),
+                    label: t('maps', 'Gas station'),
                     value: 'fuel'
                 });
                 data.push({

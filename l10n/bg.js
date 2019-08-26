@@ -1,0 +1,25 @@
+OC.L10N.register(
+    "maps",
+    {
+    "Maps" : "Карти",
+    "Device" : "Устройство",
+    "Date" : "Дата",
+    "Battery" : "Батерия",
+    "Name" : "Име",
+    "right" : "дясно",
+    "left" : "ляво",
+    "Restaurant" : "Ресторант",
+    "Bar" : "Бар",
+    "Library" : "Библиотека",
+    "School" : "Училище",
+    "Parking" : "Паркинг",
+    "ATM" : "Банкомат",
+    "Cinema" : "Кино",
+    "Hospital" : "Болница",
+    "Dentist" : "Зъболекар",
+    "Hotel" : "Хотел",
+    "File" : "Файл",
+    "Description" : "Описание",
+    "Settings" : "Настройки"
+},
+"nplurals=2; plural=(n != 1);");

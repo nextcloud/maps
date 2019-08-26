@@ -8,7 +8,6 @@ function ContactsController (optionsController, searchController) {
     // indexed by group name, contains number of contacts in the group
     this.groupsCount = {'0': 0};
     this.groups = {};
-    this.groupColors = {};
     this.contactMarkers = [];
 
     this.movingBookid = null;
@@ -347,17 +346,14 @@ ContactsController.prototype = {
 
         // color
         var color = '0000EE';
-        if (rawName.length > 1) {
-            var hsl = getLetterColor(rawName[0], rawName[1]);
-            color = hslToRgb(hsl.h/360, hsl.s/100, hsl.l/100);
+        if (OCA.Theming) {
+            color = OCA.Theming.color.replace('#', '');
         }
         var displayName = rawName;
         if (rawName === '0') {
-            color = OCA.Theming.color.replace('#', '');
             displayName = t('maps', 'Not grouped');
         }
         this.groups[rawName].color = color;
-
 
         // side menu entry
         var imgurl = OC.generateUrl('/svg/core/places/contacts?color='+color);

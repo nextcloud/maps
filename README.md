@@ -1,50 +1,23 @@
-# Maps
-Place this app in **nextcloud/apps/**
+# Nextcloud Maps
 
-## Building the app
+**🌍🌏🌎 The whole world fits inside your cloud!**
 
-The app can be built by running:
+![](screenshots/screenshot1.png)
 
-    make
-
-This requires the following things to be present:
-* tar: for building the archive
-* curl: used if phpunit and composer are not installed to fetch them from the web
-* npm: for building and testing everything JS, only required if a package.json is placed at the top of the repository
-
-The make command will install or update Composer dependencies if a composer.json is present and also **npm install** if a package.json is present at the top of the repository. The npm **build** script should use local paths for build systems and package managers, so people that simply want to build the app won't need to install npm libraries globally, e.g.:
-
-**package.json**:
-```json
-"scripts": {
-    "test": "node node_modules/gulp-cli/bin/gulp.js karma",
-    "prebuild": "npm install && node_modules/bower/bin/bower install && node_modules/bower/bin/bower update",
-    "build": "node node_modules/gulp-cli/bin/gulp.js"
-}
-```
+- **🗺 Beautiful map:** Using [OpenStreetMap](https://www.openstreetmap.org) and [Leaflet](https://leafletjs.com), you can choose between standard map, satellite, topographical, dark mode or even watercolor! 🎨
+- **⭐ Favorites:** Save your favorite places, privately! Sync with [GNOME Maps](https://github.com/nextcloud/maps/issues/30) and mobile apps is planned.
+- **🧭 Routing:** Possible using either [OSRM](http://project-osrm.org), [GraphHopper](https://www.graphhopper.com) or [Mapbox](https://www.mapbox.com).
+- **🖼 Photos on the map:** No more boring slideshows, just show directly where you were!
+- **🙋 Contacts on the map:** See where your friends live and plan your next visit.
+- **📱 Devices:** Lost your phone? Check the map!
+- **〰 Tracks:** Load GPS tracks or past trips. Recording with [PhoneTrack](https://f-droid.org/en/packages/net.eneiluj.nextcloud.phonetrack/) or [OwnTracks](https://owntracks.org) is planned.
 
 
-## Publish to App Store
+## 🏗 Development setup
 
-First get an account for the [App Store](http://apps.nextcloud.com/) then run:
+This requires that you [install node and npm](https://www.npmjs.com/get-npm).
 
-    make && make appstore
-
-The archive is located in build/artifacts/appstore and can then be uploaded to the App Store.
-
-## Running tests
-You can use the provided Makefile to run all tests by using:
-
-    make test
-
-This will run the PHP unit and integration tests and if a package.json is present in the **js/** folder will execute **npm run test**
-
-Of course you can also install [PHPUnit](http://phpunit.de/getting-started.html) and use the configurations directly:
-
-    phpunit -c phpunit.xml
-
-or:
-
-    phpunit -c phpunit.integration.xml
-
-for integration tests
+1. ☁ Clone this app into the `apps` folder of your Nextcloud: `git clone https://github.com/nextcloud/maps.git`
+2. 👩‍💻 In the folder of the app, run the command `make` to install dependencies and build the Javascript.
+3. ✅ Enable the app through the app management of your Nextcloud
+4. 🎉 Partytime! Help fix [some issues](https://github.com/nextcloud/maps/issues) and [review pull requests](https://github.com/nextcloud/maps/pulls) 👍

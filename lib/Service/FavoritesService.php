@@ -362,7 +362,7 @@ class FavoritesService {
             $req = $qb->execute();
 
             while ($row = $req->fetch()) {
-                $name = $row['name'];
+                $name = str_replace('&', '&amp;', $row['name']);
                 $epoch = $row['date_created'];
                 $date = '';
                 if (is_numeric($epoch)) {
@@ -372,9 +372,9 @@ class FavoritesService {
                 }
                 $lat = $row['lat'];
                 $lng = $row['lng'];
-                $category = $row['category'];
-                $comment = $row['comment'];
-                $extensions = $row['extensions'];
+                $category = str_replace('&', '&amp;', $row['category']);
+                $comment = str_replace('&', '&amp;', $row['comment']);
+                $extensions = str_replace('&', '&amp;', $row['extensions']);
 
                 $gpxExtension = '';
                 $gpxText .= '  <wpt lat="'.$lat.'" lon="'.$lng.'">' . "\n";

@@ -15,6 +15,7 @@ OC.L10N.register(
     "Failed to delete device" : "Αποτυχία διαγραφής συσκευής",
     "Failed to update device points" : "Απέτυχε η ενημέρωση των στοιχείων της συσκευής ",
     "Impossible to get current location" : "Αδυναμία λήψης τρέχουσας τοποθεσίας",
+    "Phone" : "Τηλέφωνο",
     "Failed to send current position" : "Αποτυχία αποστολής τρέχουσας τοποθεσίας",
     "Failed to change device color" : "Αποτυχία αλλαγής χρώματος συσκευής",
     "Device" : "Συσκευή",
@@ -108,6 +109,7 @@ OC.L10N.register(
     "until {date}" : "μέχρι {date}",
     "Closed" : "Κλειστό",
     "opens at {date}" : "ανοίγει στις {date}",
+    "This place" : "Αυτό το μέρος",
     "Close elevation chart" : "Κλείσιμο διαγράμματος ανύψωσης",
     "Failed to load track content" : "Αποτυχία φόρτωσης περιεχομένου τροχιάς",
     "File" : "Αρχείο",
@@ -138,6 +140,7 @@ OC.L10N.register(
     "Failed to change track color" : "Αποτυχία αλλαγής χρώματος τροχιάς",
     "Simple maps app for Nextcloud" : "Εφαρμογή απλών χαρτών για το Nextcloud",
     "Search…" : "Αναζήτηση…",
+    "Your favorites" : "Τα αγαπημένα σας",
     "Import from gpx/kml/kmz" : "Εισαγωγή από gpx/kml/kmz",
     "Refresh positions" : "Ανανέωση θέσεων",
     "Show all" : "Εμφάνιση όλων",
@@ -146,6 +149,7 @@ OC.L10N.register(
     "Import devices" : "Εισαγωγή συσκευών",
     "Delete all" : "Διαγραφή όλων",
     "Settings" : "Ρυθμίσεις",
-    "Track my position" : "Εντοπίστε τη θέση μου"
+    "Track my position" : "Εντοπίστε τη θέση μου",
+    "Display time filter slider" : "Εμφάνιση ρυθμιστικού φίλτρου ώρας"
 },
 "nplurals=2; plural=(n != 1);");

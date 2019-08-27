@@ -204,7 +204,7 @@
     "Simple maps app to display a leaflet map." : "Eine einfache Karten-App zum Anzeigen von Landkarten.",
     "Maps routing settings" : "Karten-Routing-Einstellungen",
     "OSRM settings" : "OSRM-Einstellungen",
-    "An OSRM server URL looks like this : https://my.osrm.server.org:5000/route/v1" : "Eine OSRM-Server-URL sieht so aus: https://my.osrm.server.org:5000/route/v1",
+    "An OSRM server URL looks like this : https://my.osrm.server.org:5000/route/v1" : "Eine OSRM-Server-URL sieht wie folgt aus: https://my.osrm.server.org:5000/route/v1",
     "Leave URL fields empty to disable OSRM routing provider." : "URL-Feld leer lassen um OSRM-Streckenplanung zu deaktivieren.",
     "OSRM server URL (car profile)" : "OSRM-Server-URL (Auto-Profil)",
     "OSRM server URL (bicycle profile)" : "OSRM-Server-URL (Fahrrad-Profil)",

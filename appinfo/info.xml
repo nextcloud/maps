@@ -3,18 +3,37 @@
       xsi:noNamespaceSchemaLocation="https://apps.nextcloud.com/schema/apps/info.xsd">
     <id>maps</id>
     <name>Maps</name>
-    <summary>Simple maps app for Nextcloud</summary>
-    <description><![CDATA[Simple maps app to display a leaflet map.]]></description>
+    <summary>🌍🌏🌎 The whole world fits inside your cloud!</summary>
+    <description><![CDATA[**The whole world fits inside your cloud!**
+
+- **🗺 Beautiful map:** Using [OpenStreetMap](https://www.openstreetmap.org) and [Leaflet](https://leafletjs.com), you can choose between standard map, satellite, topographical, dark mode or even watercolor! 🎨
+- **⭐ Favorites:** Save your favorite places, privately! Sync with [GNOME Maps](https://github.com/nextcloud/maps/issues/30) and mobile apps is planned.
+- **🧭 Routing:** Possible using either [OSRM](http://project-osrm.org), [GraphHopper](https://www.graphhopper.com) or [Mapbox](https://www.mapbox.com).
+- **🖼 Photos on the map:** No more boring slideshows, just show directly where you were!
+- **🙋 Contacts on the map:** See where your friends live and plan your next visit.
+- **📱 Devices:** Lost your phone? Check the map!
+- **〰 Tracks:** Load GPS tracks or past trips. Recording with [PhoneTrack](https://f-droid.org/en/packages/net.eneiluj.nextcloud.phonetrack/) or [OwnTracks](https://owntracks.org) is planned.
+	]]></description>
     <version>0.0.14</version>
     <licence>agpl</licence>
     <author mail="eneiluj@posteo.net">Julien Veyssier</author>
     <author mail="kontakt+github@arne.email">Arne Hamann</author>
+    <author mail="hey@jancborchardt.net" homepage="https://jancborchardt.net">Jan-Christoph Borchardt</author>
     <namespace>Maps</namespace>
+    <category>integration</category>
     <category>multimedia</category>
-    <bugs>https://github.com/nextcloud/maps/issues</bugs>
+    <category>organization</category>
+    <category>social</category>
+    <category>tools</category>
+    <website>https://github.com/nextcloud/maps</website>
+	<bugs>https://github.com/nextcloud/maps/issues</bugs>
+	<repository type="git">https://github.com/nextcloud/maps.git</repository>
+    <screenshot>https://raw.githubusercontent.com/nextcloud/maps/master/screenshots/screenshot1.png</screenshot>
+	<screenshot>https://raw.githubusercontent.com/nextcloud/maps/master/screenshots/screenshot2.png</screenshot>
+	<screenshot>https://raw.githubusercontent.com/nextcloud/maps/master/screenshots/screenshot3.png</screenshot>
     <dependencies>
         <lib>exif</lib>
-        <nextcloud min-version="15" max-version="17"/>
+        <nextcloud min-version="15" max-version="18"/>
     </dependencies>
     <commands>
         <command>OCA\Maps\Command\RescanPhotos</command>

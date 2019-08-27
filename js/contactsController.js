@@ -344,11 +344,7 @@ ContactsController.prototype = {
         this.groups[rawName] = {};
         var name = rawName.replace(' ', '-');
 
-        // color
-        var color = '0000EE';
-        if (OCA.Theming) {
-            color = OCA.Theming.color.replace('#', '');
-        }
+        var color = '000000';
         var displayName = rawName;
         if (rawName === '0') {
             displayName = t('maps', 'Not grouped');

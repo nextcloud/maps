@@ -18,7 +18,7 @@ use OCP\DB\QueryBuilder\IQueryBuilder;
 
 use OC\Archive\ZIP;
 
-use function \OCA\Maps\Service\endswith;
+//use function \OCA\Maps\Service\endswith;
 
 class FavoritesService {
 
@@ -362,7 +362,7 @@ class FavoritesService {
             $req = $qb->execute();
 
             while ($row = $req->fetch()) {
-                $name = $row['name'];
+                $name = str_replace('&', '&amp;', $row['name']);
                 $epoch = $row['date_created'];
                 $date = '';
                 if (is_numeric($epoch)) {
@@ -372,9 +372,9 @@ class FavoritesService {
                 }
                 $lat = $row['lat'];
                 $lng = $row['lng'];
-                $category = $row['category'];
-                $comment = $row['comment'];
-                $extensions = $row['extensions'];
+                $category = str_replace('&', '&amp;', $row['category']);
+                $comment = str_replace('&', '&amp;', $row['comment']);
+                $extensions = str_replace('&', '&amp;', $row['extensions']);
 
                 $gpxExtension = '';
                 $gpxText .= '  <wpt lat="'.$lat.'" lon="'.$lng.'">' . "\n";
@@ -410,15 +410,15 @@ class FavoritesService {
 
     public function importFavorites($userId, $file) {
         $lowerFileName = strtolower($file->getName());
-        if (endswith($lowerFileName, '.gpx')) {
+        if ($this->endswith($lowerFileName, '.gpx')) {
             return $this->importFavoritesFromGpx($userId, $file);
         }
-        elseif (endswith($lowerFileName, '.kml')) {
+        elseif ($this->endswith($lowerFileName, '.kml')) {
             $fp = $file->fopen('r');
             $name = $file->getName();
             return $this->importFavoritesFromKml($userId, $fp, $name);
         }
-        elseif (endswith($lowerFileName, '.kmz')) {
+        elseif ($this->endswith($lowerFileName, '.kmz')) {
             return $this->importFavoritesFromKmz($userId, $file);
         }
     }
@@ -638,6 +638,13 @@ class FavoritesService {
                 $this->currentFavorite['extensions'] = (array_key_exists('extensions', $this->currentFavorite)) ? $this->currentFavorite['extensions'].$d : $d;
             }
         }
+    }
+
+    private function endswith($string, $test) {
+        $strlen = strlen($string);
+        $testlen = strlen($test);
+        if ($testlen > $strlen) return false;
+        return substr_compare($string, $test, $strlen - $testlen, $testlen) === 0;
     }
 
 }

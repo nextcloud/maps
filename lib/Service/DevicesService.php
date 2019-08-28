@@ -16,13 +16,6 @@ use OCP\IL10N;
 use OCP\ILogger;
 use OCP\DB\QueryBuilder\IQueryBuilder;
 
-function endswith($string, $test) {
-    $strlen = strlen($string);
-    $testlen = strlen($test);
-    if ($testlen > $strlen) return false;
-    return substr_compare($string, $test, $strlen - $testlen, $testlen) === 0;
-}
-
 class DevicesService {
 
     private $l10n;
@@ -413,15 +406,15 @@ class DevicesService {
 
     public function importDevices($userId, $file) {
         $lowerFileName = strtolower($file->getName());
-        if (endswith($lowerFileName, '.gpx')) {
+        if ($this->endswith($lowerFileName, '.gpx')) {
             return $this->importDevicesFromGpx($userId, $file);
         }
-        elseif (endswith($lowerFileName, '.kml')) {
+        elseif ($this->endswith($lowerFileName, '.kml')) {
             $fp = $file->fopen('r');
             $name = $file->getName();
             return $this->importDevicesFromKml($userId, $fp, $name);
         }
-        elseif (endswith($lowerFileName, '.kmz')) {
+        elseif ($this->endswith($lowerFileName, '.kmz')) {
             return $this->importDevicesFromKmz($userId, $file);
         }
     }
@@ -648,6 +641,13 @@ class DevicesService {
                 $this->currentPoint['coords'] = (array_key_exists('coords', $this->currentPoint)) ? $this->currentPoint['coords'].$d : $d;
             }
         }
+    }
+
+    private function endswith($string, $test) {
+        $strlen = strlen($string);
+        $testlen = strlen($test);
+        if ($testlen > $strlen) return false;
+        return substr_compare($string, $test, $strlen - $testlen, $testlen) === 0;
     }
 
 }

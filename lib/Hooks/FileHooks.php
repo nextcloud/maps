@@ -10,7 +10,7 @@
  * @copyright Piotr Bator 2017
  */
 
-namespace OCA\Maps\Hook;
+namespace OCA\Maps\Hooks;
 
 use OC\Files\Filesystem;
 use OC\Files\View;

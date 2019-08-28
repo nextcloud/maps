@@ -23,7 +23,7 @@ use OCA\Maps\Controller\DevicesController;
 use OCA\Maps\Controller\DevicesApiController;
 use OCA\Maps\Controller\RoutingController;
 use OCA\Maps\Controller\TracksController;
-use OCA\Maps\Hook\FileHooks;
+use OCA\Maps\Hooks\FileHooks;
 use OCA\Maps\Service\PhotofilesService;
 use OCA\Maps\Service\FavoritesService;
 use OCA\Maps\Service\DevicesService;

@@ -15,6 +15,7 @@ use OCP\AppFramework\App;
 use OCA\Maps\Service\AddressService;
 use OCP\Util;
 use Symfony\Component\EventDispatcher\GenericEvent;
+use OCA\Maps\Hooks\FileHooks;
 
 $app = new Application();
 $container = $app->getContainer();

@@ -10,5 +10,9 @@
         <label for="track-me"><?php p($l->t('Track my position')); ?></label>
         <input type="checkbox" id="display-slider" class="checkbox">
         <label for="display-slider"><?php p($l->t('Display time filter slider')); ?></label>
+        <p>
+            <?php p($l->t('Keep in mind that map projections always distort sizes of countries. The standard Mercator projection is particularly biased. Read more at:')); ?><br>
+            <a href="http://kai.sub.blue/en/africa.html" target="_blank"><?php p($l->t('The True Size of Africa')); ?> ↗</a>
+        </p>
     </div>
 </div>

@@ -70,7 +70,7 @@ class ContactsController extends Controller {
                     $geo = $c['GEO'];
                     if (strlen($geo) > 1) {
                         array_push($result, [
-                            'FN'=>$c['FN'],
+                            'FN'=>$c['FN'] ?? '???',
                             'URI'=>$c['URI'],
                             'UID'=>$c['UID'],
                             'ADR'=>'',
@@ -98,7 +98,7 @@ class ContactsController extends Controller {
                         }
                         if (strlen($geo) > 1) {
                             array_push($result, [
-                                'FN'=>$c['FN'],
+                                'FN'=>$c['FN'] ?? '???',
                                 'URI'=>$c['URI'],
                                 'UID'=>$c['UID'],
                                 'ADR'=>$adr->getValue(),
@@ -133,7 +133,7 @@ class ContactsController extends Controller {
                 strcmp($uid, $userid) !== 0
             ) {
                 array_push($result, [
-                    'FN'=>$c['FN'],
+                    'FN'=>$c['FN'] ?? '???',
                     'URI'=>$c['URI'],
                     'UID'=>$c['UID'],
                     'BOOKID'=>$c['addressbook-key'],

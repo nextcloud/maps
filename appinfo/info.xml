@@ -35,6 +35,11 @@
         <lib>exif</lib>
         <nextcloud min-version="15" max-version="17"/>
     </dependencies>
+    <repair-steps>
+        <install>
+            <step>OCA\Maps\Migration\InstallScan</step>
+        </install>
+    </repair-steps>
     <commands>
         <command>OCA\Maps\Command\RescanPhotos</command>
         <command>OCA\Maps\Command\RescanTracks</command>

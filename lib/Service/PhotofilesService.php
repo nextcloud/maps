@@ -28,6 +28,7 @@ use OCA\Maps\DB\GeophotoMapper;
 
 require_once __DIR__ . '/../../vendor/autoload.php';
 use lsolesen\pel\PelDataWindow;
+use lsolesen\pel\PelException;
 use lsolesen\pel\PelJpeg;
 use lsolesen\pel\PelExif;
 use lsolesen\pel\PelTiff;
@@ -382,7 +383,12 @@ class PhotofilesService {
         $exif = @exif_read_data($path);
 
         if (!$this->hasValidExifGeoTags($exif)) {
-             $exif = $this->getExifPelBackup($file);
+            try {
+                $exif = $this->getExifPelBackup($file);
+            } catch (PelException $exception) {
+                $exif = [];
+            }
+
         }
 
         if ($this->hasValidExifGeoTags($exif)){

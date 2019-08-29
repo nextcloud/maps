@@ -16,6 +16,7 @@ use \OCP\BackgroundJob\QueuedJob;
 use \OCP\BackgroundJob\IJobList;
 use \OCP\AppFramework\Utility\ITimeFactory;
 use OCP\IUserManager;
+use OCP\IConfig;
 
 use OCA\Maps\Service\PhotofilesService;
 use OCA\Maps\Service\TracksService;
@@ -33,9 +34,11 @@ class UserInstallScanJob extends QueuedJob {
      */
     public function __construct(ITimeFactory $timeFactory, IJobList $jobList,
                                 IUserManager $userManager,
+                                IConfig $config,
                                 PhotofilesService $photofilesService,
                                 TracksService $tracksService) {
         parent::__construct($timeFactory);
+        $this->config = $config;
         $this->jobList = $jobList;
         $this->userManager = $userManager;
         $this->photofilesService = $photofilesService;
@@ -48,6 +51,7 @@ class UserInstallScanJob extends QueuedJob {
         // scan photos and tracks for given user
         $this->rescanUserPhotos($userId);
         $this->rescanUserTracks($userId);
+        $this->config->setUserValue($userId, 'maps', 'installScanDone', 'yes');
     }
 
     private function rescanUserPhotos($userId) {

@@ -179,6 +179,14 @@
                 async: true
             }).done(function (response) {
                 optionsValues = response.values;
+
+                // check if install scan was done
+                if (!optionsValues.hasOwnProperty('installScanDone') || optionsValues.installScanDone !== 'yes') {
+                    OC.Notification.showTemporary(
+                        t('maps', 'Media scan was not done yet. Wait a few minutes/hours and reload this page to see your photos/tracks.')
+                    );
+                }
+
                 // set tilelayer before showing photo layer because it needs a max zoom value
                 if (optionsValues.hasOwnProperty('displaySlider') && optionsValues.displaySlider === 'true') {
                     $('#timeRangeSlider').show();

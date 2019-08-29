@@ -70,7 +70,7 @@ class ContactsController extends Controller {
                     $geo = $c['GEO'];
                     if (strlen($geo) > 1) {
                         array_push($result, [
-                            'FN'=>$c['FN'],
+                            'FN'=>$c['FN'] ?? $this->N2FN($c['N']) ?? '???',
                             'URI'=>$c['URI'],
                             'UID'=>$c['UID'],
                             'ADR'=>'',
@@ -98,7 +98,7 @@ class ContactsController extends Controller {
                         }
                         if (strlen($geo) > 1) {
                             array_push($result, [
-                                'FN'=>$c['FN'],
+                                'FN'=>$c['FN'] ?? $this->N2FN($c['N']) ?? '???',
                                 'URI'=>$c['URI'],
                                 'UID'=>$c['UID'],
                                 'ADR'=>$adr->getValue(),
@@ -117,6 +117,21 @@ class ContactsController extends Controller {
         return new DataResponse($result);
     }
 
+    private function N2FN(string $n) {
+        if ($n) {
+            $spl = explode($n, ';');
+            if (count($spl) >= 4) {
+                return $spl[3] + ' ' + $spl[1] + ' ' + $spl[0];
+            }
+            else {
+                return null;
+            }
+        }
+        else {
+            return null;
+        }
+    }
+
     /**
      * get all contacts
      * @NoAdminRequired
@@ -133,7 +148,7 @@ class ContactsController extends Controller {
                 strcmp($uid, $userid) !== 0
             ) {
                 array_push($result, [
-                    'FN'=>$c['FN'],
+                    'FN'=>$c['FN'] ?? $this->N2FN($c['N']) ?? '???',
                     'URI'=>$c['URI'],
                     'UID'=>$c['UID'],
                     'BOOKID'=>$c['addressbook-key'],

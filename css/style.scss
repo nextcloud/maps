@@ -13,9 +13,17 @@
 #search-term {
     margin: 0;
     width: 350px;
+    max-width: calc(100vw - 64px);
     padding-right: 80px;
     text-overflow: ellipsis;
 }
+@media only screen and (max-width: $breakpoint-mobile) {
+    #search-term {
+        // Account for navigation menu toggle on the top left
+        margin-left: 44px;
+    }
+}
+
 #search-submit {
     position: absolute;
     padding: 10px 19px;

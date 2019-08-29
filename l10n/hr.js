@@ -177,8 +177,6 @@ OC.L10N.register(
     "Moving average pace" : "Prosječni tempo kretanja",
     "Show elevation" : "Prikaži nadmorsku visinu",
     "Failed to change track color" : "Promjena boje staze nije uspjela",
-    "Simple maps app for Nextcloud" : "Aplikacija Jednostavne karte za Nextcloud",
-    "Simple maps app to display a leaflet map." : "Jednostavna aplikacija s kartama za prikaz karte Leaflet.",
     "Search…" : "Traži...",
     "Import from gpx/kml/kmz" : "Uvezi iz datoteke gpx/kml/kmz",
     "Refresh positions" : "Osvježi položaje",

@@ -202,8 +202,6 @@ OC.L10N.register(
     "Moving average pace" : "Gleitendes Durchschnittstempo",
     "Show elevation" : "Höhe anzeigen",
     "Failed to change track color" : "Ändern der Streckenfarbe fehlgeschalgen",
-    "Simple maps app for Nextcloud" : "Einfache Karten-App für Nextcloud",
-    "Simple maps app to display a leaflet map." : "Eine einfache Karten-App zum Anzeigen von Landkarten.",
     "Maps routing settings" : "Karten-Routing-Einstellungen",
     "OSRM settings" : "OSRM-Einstellungen",
     "An OSRM server URL looks like this : https://my.osrm.server.org:5000/route/v1" : "Eine OSRM-Server-URL sieht wie folgt aus: https://my.osrm.server.org:5000/route/v1",

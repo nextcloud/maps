@@ -93,7 +93,6 @@ OC.L10N.register(
     "Maximum speed" : "Največja hitrost",
     "Average speed" : "Povprečna hitrost",
     "Show elevation" : "Pokaži višino",
-    "Simple maps app for Nextcloud" : "Enostaven zemljevid za Nextcloud",
     "Search…" : "Poišči ...",
     "Import from gpx/kml/kmz" : "Uvozi iz gpx / kml / kmz",
     "Refresh positions" : "Osveži položaje",

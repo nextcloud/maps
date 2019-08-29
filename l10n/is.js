@@ -175,7 +175,6 @@ OC.L10N.register(
     "Moving average speed" : "Meðalhraði á ferð",
     "Show elevation" : "Birta hæð",
     "Failed to change track color" : "Mistókst að breyta lit á ferli",
-    "Simple maps app for Nextcloud" : "Einfalt landakortaforrit fyrir Nextcloud",
     "Search…" : "Leita…",
     "Import from gpx/kml/kmz" : "Flytja inn úr gpx/kml/kmz",
     "Refresh positions" : "Endurlesa staðsetningar",

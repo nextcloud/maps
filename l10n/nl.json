@@ -200,8 +200,6 @@
     "Moving average pace" : "Verplaatsen met gemiddelde snelheid",
     "Show elevation" : "Tonen helling",
     "Failed to change track color" : "Kon de spoorkleur niet wijzigen",
-    "Simple maps app for Nextcloud" : "Simple maps app voor Nextcloud",
-    "Simple maps app to display a leaflet map." : "Simpele kaartenapp om een folderkaart te tonen.",
     "Maps routing settings" : "Kaarten route-instellingen",
     "OSRM settings" : "OSRM instellingen",
     "An OSRM server URL looks like this : https://my.osrm.server.org:5000/route/v1" : "Een OSRM server URL ziet er als volgt uit : https://my.osrm.server.org:5000/route/v1",

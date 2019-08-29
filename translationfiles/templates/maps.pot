@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Nextcloud 3.14159\n"
 "Report-Msgid-Bugs-To: translations\\@example.com\n"
-"POT-Creation-Date: 2019-08-28 02:38+0000\n"
+"POT-Creation-Date: 2019-08-29 02:35+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,7 +17,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: /app/appinfo/app.php:68 /app/specialAppInfoFakeDummyForL10nScript.php:2
+#: /app/appinfo/app.php:69 /app/specialAppInfoFakeDummyForL10nScript.php:2
 msgid "Maps"
 msgstr ""
 
@@ -29,69 +29,69 @@ msgstr ""
 msgid "Failed to save settings"
 msgstr ""
 
-#: /app/js/contactsController.js:259
+#: /app/js/contactsController.js:258
 msgid "There are no contacts to zoom on"
 msgstr ""
 
-#: /app/js/contactsController.js:269
+#: /app/js/contactsController.js:268
 msgid "All contacts"
 msgstr ""
 
-#: /app/js/contactsController.js:270
+#: /app/js/contactsController.js:269
 msgid "Open in Contacts app"
 msgstr ""
 
-#: /app/js/contactsController.js:357
+#: /app/js/contactsController.js:350
 msgid "Not grouped"
 msgstr ""
 
-#: /app/js/contactsController.js:379 /app/js/devicesController.js:342
+#: /app/js/contactsController.js:371 /app/js/devicesController.js:342
 #: /app/js/devicesController.js:1022 /app/js/favoritesController.js:501
 #: /app/js/tracksController.js:336 /app/templates/navigation/index.php:97
 msgid "Zoom to bounds"
 msgstr ""
 
-#: /app/js/contactsController.js:490 /app/js/contactsController.js:623
+#: /app/js/contactsController.js:482 /app/js/contactsController.js:615
 msgid "Home"
 msgstr ""
 
-#: /app/js/contactsController.js:493 /app/js/contactsController.js:624
+#: /app/js/contactsController.js:485 /app/js/contactsController.js:616
 msgid "Work"
 msgstr ""
 
-#: /app/js/contactsController.js:523
+#: /app/js/contactsController.js:515
 msgid "Delete this address"
 msgstr ""
 
-#: /app/js/contactsController.js:557
+#: /app/js/contactsController.js:549
 msgid "Failed to delete contact address"
 msgstr ""
 
-#: /app/js/contactsController.js:580
+#: /app/js/contactsController.js:572
 msgid "Failed to load contacts"
 msgstr ""
 
-#: /app/js/contactsController.js:615
+#: /app/js/contactsController.js:607
 msgid "New contact address"
 msgstr ""
 
-#: /app/js/contactsController.js:618
+#: /app/js/contactsController.js:610
 msgid "Contact name"
 msgstr ""
 
-#: /app/js/contactsController.js:621
+#: /app/js/contactsController.js:613
 msgid "Address type"
 msgstr ""
 
-#: /app/js/contactsController.js:625
+#: /app/js/contactsController.js:617
 msgid "Add address to contact"
 msgstr ""
 
-#: /app/js/contactsController.js:685
+#: /app/js/contactsController.js:677
 msgid "Failed to get contact list"
 msgstr ""
 
-#: /app/js/contactsController.js:771
+#: /app/js/contactsController.js:763
 msgid "Failed to place contact"
 msgstr ""
 
@@ -837,11 +837,30 @@ msgid "Failed to change track color"
 msgstr ""
 
 #: /app/specialAppInfoFakeDummyForL10nScript.php:3
-msgid "Simple maps app for Nextcloud"
+msgid "🌍🌏🌎 The whole world fits inside your cloud!"
 msgstr ""
 
 #: /app/specialAppInfoFakeDummyForL10nScript.php:4
-msgid "Simple maps app to display a leaflet map."
+msgid ""
+"**The whole world fits inside your cloud!**\n"
+"\n"
+"- **🗺 Beautiful map:** Using [OpenStreetMap](https://www.openstreetmap.org) "
+"and [Leaflet](https://leafletjs.com), you can choose between standard map, "
+"satellite, topographical, dark mode or even watercolor! 🎨\n"
+"- **⭐ Favorites:** Save your favorite places, privately! Sync with [GNOME "
+"Maps](https://github.com/nextcloud/maps/issues/30) and mobile apps is "
+"planned.\n"
+"- **🧭 Routing:** Possible using either [OSRM](http://project-osrm.org), "
+"[GraphHopper](https://www.graphhopper.com) or [Mapbox](https://www.mapbox."
+"com).\n"
+"- **🖼 Photos on the map:** No more boring slideshows, just show directly "
+"where you were!\n"
+"- **🙋 Contacts on the map:** See where your friends live and plan your next "
+"visit.\n"
+"- **📱 Devices:** Lost your phone? Check the map!\n"
+"- **〰 Tracks:** Load GPS tracks or past trips. Recording with [PhoneTrack]"
+"(https://f-droid.org/en/packages/net.eneiluj.nextcloud.phonetrack/) or "
+"[OwnTracks](https://owntracks.org) is planned."
 msgstr ""
 
 #: /app/templates/adminSettings.php:11
@@ -988,4 +1007,14 @@ msgstr ""
 
 #: /app/templates/settings/index.php:12
 msgid "Display time filter slider"
+msgstr ""
+
+#: /app/templates/settings/index.php:14
+msgid ""
+"Keep in mind that map projections always distort sizes of countries. The "
+"standard Mercator projection is particularly biased. Read more at:"
+msgstr ""
+
+#: /app/templates/settings/index.php:15
+msgid "The True Size of Africa"
 msgstr ""

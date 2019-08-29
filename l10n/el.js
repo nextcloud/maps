@@ -138,7 +138,6 @@ OC.L10N.register(
     "Moving average speed" : "Μέση ταχύτητα μετακίνησης",
     "Show elevation" : "Εμφάνιση υψομέτρου",
     "Failed to change track color" : "Αποτυχία αλλαγής χρώματος τροχιάς",
-    "Simple maps app for Nextcloud" : "Εφαρμογή απλών χαρτών για το Nextcloud",
     "Search…" : "Αναζήτηση…",
     "Your favorites" : "Τα αγαπημένα σας",
     "Import from gpx/kml/kmz" : "Εισαγωγή από gpx/kml/kmz",

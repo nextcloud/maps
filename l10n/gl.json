@@ -200,8 +200,6 @@
     "Moving average pace" : "Cadencia media en movemento",
     "Show elevation" : "Amosar a altitude",
     "Failed to change track color" : "Produciuse un fallo ao cambiar a cor do rastrexo",
-    "Simple maps app for Nextcloud" : "Un sinxelo aplicativo de mapas para o Nextcloud",
-    "Simple maps app to display a leaflet map." : "Un sinxelo aplicativo de mapas para amosar páxinas de mapas.",
     "Maps routing settings" : "Axustes de enrutamento de mapas",
     "OSRM settings" : "Axustes OSRM",
     "An OSRM server URL looks like this : https://my.osrm.server.org:5000/route/v1" : "Un URL do servidor OSRM ten este aspecto: https://my.osrm.server.org:5000/route/v1",

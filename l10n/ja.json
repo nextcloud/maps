@@ -176,8 +176,6 @@
     "Moving average pace" : "移動平均ペース",
     "Show elevation" : "標高を表示",
     "Failed to change track color" : "追跡の色を変更できませんでした",
-    "Simple maps app for Nextcloud" : "Nextcloud用のシンプルな地図アプリ",
-    "Simple maps app to display a leaflet map." : "Leaflet用のシンプルな地図アプリ",
     "Search…" : "検索…",
     "Import from gpx/kml/kmz" : "gpx/kml/kmzからインポート",
     "Refresh positions" : "位置を更新",

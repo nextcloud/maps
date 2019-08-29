@@ -200,8 +200,6 @@
     "Moving average pace" : "Temponun hareketli ortalaması",
     "Show elevation" : "Yüksekliği görüntüle",
     "Failed to change track color" : "Yol rengi değiştirilemedi",
-    "Simple maps app for Nextcloud" : "Nextcloud için basit harita uygulaması",
-    "Simple maps app to display a leaflet map." : "Bir katlanan harita görüntüleyen basit haritalar uygulaması.",
     "Maps routing settings" : "Harita yön bulma ayarları",
     "OSRM settings" : "OSRM ayarları",
     "An OSRM server URL looks like this : https://my.osrm.server.org:5000/route/v1" : "Bir OSRM sunucu adresi şu şekilde görünür : https://benim.osrm.sunucum.org:5000/route/v1",

@@ -200,8 +200,6 @@
     "Moving average pace" : "Mitjana mòbil de ritme",
     "Show elevation" : "Mostra altitud",
     "Failed to change track color" : "No s'ha pogut canviar el color del trajecte",
-    "Simple maps app for Nextcloud" : "Una aplicació senzilla de Mapes per Nextcloud",
-    "Simple maps app to display a leaflet map." : "Una aplicació senzilla per veure mapes.",
     "Maps routing settings" : "Configuració dels mapes d'encaminament",
     "OSRM settings" : "Configuració d'OSRM",
     "An OSRM server URL looks like this : https://my.osrm.server.org:5000/route/v1" : "Un URL del servidor OSRM té aquest aspecte: https://my.osrm.server.org:5000/route/v1",

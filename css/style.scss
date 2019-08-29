@@ -18,9 +18,10 @@
     text-overflow: ellipsis;
 }
 @media only screen and (max-width: $breakpoint-mobile) {
-    #search-term {
-        // Account for navigation menu toggle on the top left
-        margin-left: 44px;
+    // Account for navigation menu toggle on the top left
+    #search-term,
+    .leaflet-routing-container {
+        margin-left: 44px !important;
     }
 }
 
@@ -625,6 +626,7 @@ tr.selected td {
 /* Overriden routing/geocoder style */
 .leaflet-routing-container {
     width: 350px;
+    max-width: calc(100vw - 45px);
 }
 .leaflet-routing-geocoder-result tr {
     line-height: 35px;

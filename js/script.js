@@ -1,5 +1,7 @@
 (function($, OC) {
     $(function() {
+        // avoid sidebar to appear when grabing map to the right
+        OC.disallowNavigationBarSlideGesture();
         if (window.isSecureContext) {
             window.navigator.registerProtocolHandler('geo', OC.generateUrl('/apps/maps/openGeoLink/') + '%s', 'Nextcloud Maps');
         }

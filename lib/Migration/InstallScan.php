@@ -27,6 +27,7 @@ use OCP\Encryption\IManager;
 use OCP\Files\NotFoundException;
 use OCP\IUser;
 use OCP\IUserManager;
+use \OCP\BackgroundJob\IJobList;
 
 use OCP\IConfig;
 use OCP\IDBConnection;
@@ -34,8 +35,7 @@ use OCP\Migration\IOutput;
 use OCP\Migration\IRepairStep;
 use OCP\Share;
 
-use OCA\Maps\Service\PhotofilesService;
-use OCA\Maps\Service\TracksService;
+use \OCA\Maps\BackgroundJob\LaunchUsersInstallScanJob;
 
 /**
  * Class InstallScan
@@ -53,16 +53,13 @@ class InstallScan implements IRepairStep {
 
 	public function __construct(IDBConnection $connection, IConfig $config,
 								IUserManager $userManager,
-								IManager $encryptionManager,
-								PhotofilesService $photofilesService,
-								TracksService $tracksService) {
+								IJobList $jobList,
+								IManager $encryptionManager
+								) {
 		$this->connection = $connection;
 		$this->config = $config;
-
-        $this->userManager = $userManager;
+		$this->jobList = $jobList;
         $this->encryptionManager = $encryptionManager;
-        $this->photofilesService = $photofilesService;
-        $this->tracksService = $tracksService;
 	}
 
 	/**
@@ -88,36 +85,13 @@ class InstallScan implements IRepairStep {
             return 1;
         }
 		$this->output = $output;
-		// scan photos and tracks for all users
-		$this->userManager->callForSeenUsers(function (IUser $user) {
-			$this->rescanUserPhotos($user->getUID());
-		});
-		$this->userManager->callForSeenUsers(function (IUser $user) {
-			$this->rescanUserTracks($user->getUID());
-		});
+
+		$this->jobList->add(LaunchUsersInstallScanJob::class, []);
 	}
 
 	protected function shouldRun() {
 		$appVersion = $this->config->getAppValue('maps', 'installed_version', '0.0.0');
 		return version_compare($appVersion, '0.0.10', '<');
 	}
-
-    private function rescanUserPhotos($userId) {
-        $this->output->info('======== User '.$userId.' ========'."\n");
-        $c = 1;
-        foreach ($this->photofilesService->rescan($userId) as $path) {
-            $this->output->info('['.$c.'] Photo "'.$path.'" added'."\n");
-            $c++;
-        }
-	}
-
-    private function rescanUserTracks($userId) {
-        $this->output->info('======== User '.$userId.' ========'."\n");
-        $c = 1;
-        foreach ($this->tracksService->rescan($userId) as $path) {
-            $this->output->info('['.$c.'] Track "'.$path.'" added'."\n");
-            $c++;
-        }
-    }
 
 }

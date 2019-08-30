@@ -2,7 +2,7 @@
     $(function() {
         // avoid sidebar to appear when grabing map to the right
         OC.disallowNavigationBarSlideGesture();
-        if (window.isSecureContext) {
+        if (window.isSecureContext && window.navigator.registerProtocolHandler) {
             window.navigator.registerProtocolHandler('geo', OC.generateUrl('/apps/maps/openGeoLink/') + '%s', 'Nextcloud Maps');
         }
         mapController.initMap();

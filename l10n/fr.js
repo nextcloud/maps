@@ -236,6 +236,8 @@ OC.L10N.register(
     "Sort by date" : "Trier par date",
     "Settings" : "Paramètres",
     "Track my position" : "Suivre ma position",
-    "Display time filter slider" : "Afficher le curseur de filtre temporel"
+    "Display time filter slider" : "Afficher le curseur de filtre temporel",
+    "Keep in mind that map projections always distort sizes of countries. The standard Mercator projection is particularly biased. Read more at:" : "Gardez à l'esprit que les projections de la sphère terrestre sur des cartes planes déforment toujours la taille réelle des pays, c'est le cas de la projection de Mercator. En savoir plus :",
+    "The True Size of Africa" : "La Vraie taille de l'Afrique"
 },
 "nplurals=2; plural=(n > 1);");

@@ -200,6 +200,7 @@
     "Moving average pace" : "Temponun hareketli ortalaması",
     "Show elevation" : "Yüksekliği görüntüle",
     "Failed to change track color" : "Yol rengi değiştirilemedi",
+    "🌍🌏🌎 The whole world fits inside your cloud!" : "🌍🌏🌎 Tüm dünya bulutunuza sığar!",
     "Maps routing settings" : "Harita yön bulma ayarları",
     "OSRM settings" : "OSRM ayarları",
     "An OSRM server URL looks like this : https://my.osrm.server.org:5000/route/v1" : "Bir OSRM sunucu adresi şu şekilde görünür : https://benim.osrm.sunucum.org:5000/route/v1",
@@ -234,6 +235,8 @@
     "Sort by date" : "Tarihe göre sırala",
     "Settings" : "Ayarlar",
     "Track my position" : "Konumum izlensin",
-    "Display time filter slider" : "Zaman süzgeci kaydırıcısı görüntülensin"
+    "Display time filter slider" : "Zaman süzgeci kaydırıcısı görüntülensin",
+    "Keep in mind that map projections always distort sizes of countries. The standard Mercator projection is particularly biased. Read more at:" : "Harita görünümlerinin bazı ülkeleri her zaman doğru göstermediğini unutmayın. Özellikle Standart Mercator görünümü oldukça ön yargılıdır. Ayrıntılı bilgi almak için şuraya bakabilirsiniz:",
+    "The True Size of Africa" : "Afrika'nın gerçek boyutu"
 },"pluralForm" :"nplurals=2; plural=(n > 1);"
 }

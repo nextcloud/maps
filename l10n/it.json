@@ -200,6 +200,7 @@
     "Moving average pace" : "Passo medio in movimento",
     "Show elevation" : "Mostra quota",
     "Failed to change track color" : "Modifica colore della traccia non riuscita",
+    "🌍🌏🌎 The whole world fits inside your cloud!" : "🌍🌏🌎 Il mondo intero nel tuo cloud!",
     "Maps routing settings" : "Impostazioni instradamento mappe",
     "OSRM settings" : "Impostazioni OSRM",
     "An OSRM server URL looks like this : https://my.osrm.server.org:5000/route/v1" : "Un URL di server OSRM appare così: https://my.osrm.server.org:5000/route/v1",
@@ -234,6 +235,8 @@
     "Sort by date" : "Ordina per data",
     "Settings" : "Impostazioni",
     "Track my position" : "Traccia la mia posizione",
-    "Display time filter slider" : "Visualizza cursore del filtro del tempo"
+    "Display time filter slider" : "Visualizza cursore del filtro del tempo",
+    "Keep in mind that map projections always distort sizes of countries. The standard Mercator projection is particularly biased. Read more at:" : "Ricordati che le proiezioni delle mappe distorcono le dimensioni degli Stati. La proiezione standard di Mercatore è particolarmente distorta. Leggi altro su",
+    "The True Size of Africa" : "La vera grandezza dell'Africa"
 },"pluralForm" :"nplurals=2; plural=(n != 1);"
 }

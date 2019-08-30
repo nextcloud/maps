@@ -200,6 +200,8 @@
     "Moving average pace" : "Gleitendes Durchschnittstempo",
     "Show elevation" : "Höhe anzeigen",
     "Failed to change track color" : "Ändern der Streckenfarbe fehlgeschalgen",
+    "🌍🌏🌎 The whole world fits inside your cloud!" : "🌍🌏🌎 Die ganze Welt passt in Deine Cloud!",
+    "**The whole world fits inside your cloud!**\n\n- **🗺 Beautiful map:** Using [OpenStreetMap](https://www.openstreetmap.org) and [Leaflet](https://leafletjs.com), you can choose between standard map, satellite, topographical, dark mode or even watercolor! 🎨\n- **⭐ Favorites:** Save your favorite places, privately! Sync with [GNOME Maps](https://github.com/nextcloud/maps/issues/30) and mobile apps is planned.\n- **🧭 Routing:** Possible using either [OSRM](http://project-osrm.org), [GraphHopper](https://www.graphhopper.com) or [Mapbox](https://www.mapbox.com).\n- **🖼 Photos on the map:** No more boring slideshows, just show directly where you were!\n- **🙋 Contacts on the map:** See where your friends live and plan your next visit.\n- **📱 Devices:** Lost your phone? Check the map!\n- **〰 Tracks:** Load GPS tracks or past trips. Recording with [PhoneTrack](https://f-droid.org/en/packages/net.eneiluj.nextcloud.phonetrack/) or [OwnTracks](https://owntracks.org) is planned." : "**Die ganze Welt passt in deine Cloud!!**\n\n- **🗺 Wunderschöne Karten:** Mit [OpenStreetMap](https://www.openstreetmap.org) und [Leaflet](https://leafletjs.com), kann man zwischen Standard-Karten, Satelliten-Bilder, Topographischer-Darstellung, einem dunklen Modus oder sogar Wasserfarben aussuchen! 🎨\n- **⭐ Favoriten:** Speicher deine Lieblings-Plätze, privat! Synchronisier mit [GNOME Maps](https://github.com/nextcloud/maps/issues/30) und mobile Apps sind geplant.\n- **🧭 Routing:** Es ist möglich entweder [OSRM](http://project-osrm.org), [GraphHopper](https://www.graphhopper.com) oder [Mapbox](https://www.mapbox.com) zu nutzen.\n- **🖼 Fotos auf der Karte:** Keine langweiligen Slideshows mehr, zeig doch einfach direkt wo du warst!\n- **🙋 Kontakte auf der Karte:** Schau wo deine Freunde wohnen und plane deinen nächsten Besuch.\n- **📱 Geräte:** Handy verloren? Schau auf der Karte nach!\n- **〰 Strecken:** Lade GPS-Strecken oder vergangene Ausflüge. Das Aufnehmen mit [PhoneTrack](https://f-droid.org/en/packages/net.eneiluj.nextcloud.phonetrack/) oder [OwnTracks](https://owntracks.org) ist geplant.",
     "Maps routing settings" : "Karten-Routing-Einstellungen",
     "OSRM settings" : "OSRM-Einstellungen",
     "An OSRM server URL looks like this : https://my.osrm.server.org:5000/route/v1" : "Eine OSRM-Server-URL sieht wie folgt aus: https://my.osrm.server.org:5000/route/v1",
@@ -234,6 +236,8 @@
     "Sort by date" : "Nach Datum sortieren",
     "Settings" : "Einstellungen",
     "Track my position" : "Meine Position aufzeichnen",
-    "Display time filter slider" : "Zeitfilter Schieberegler anzeigen"
+    "Display time filter slider" : "Zeitfilter Schieberegler anzeigen",
+    "Keep in mind that map projections always distort sizes of countries. The standard Mercator projection is particularly biased. Read more at:" : "Beachte, dass Kartenprojektionen die tatsächliche Größe der Länder verzerren. Die Mercator-Standardprojektion ist besonders verzerrt. Weitere Infos hier:",
+    "The True Size of Africa" : "Die wahre Größe Afrikas"
 },"pluralForm" :"nplurals=2; plural=(n != 1);"
 }

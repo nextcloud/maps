@@ -202,6 +202,7 @@ OC.L10N.register(
     "Moving average pace" : "Gleitendes Durchschnittstempo",
     "Show elevation" : "Höhe anzeigen",
     "Failed to change track color" : "Ändern der Streckenfarbe fehlgeschalgen",
+    "🌍🌏🌎 The whole world fits inside your cloud!" : "🌍🌏🌎 Die ganze Welt passt in Ihre Cloud!",
     "Maps routing settings" : "Karten-Routing-Einstellungen",
     "OSRM settings" : "OSRM-Einstellungen",
     "An OSRM server URL looks like this : https://my.osrm.server.org:5000/route/v1" : "Eine OSRM-Server-URL sieht wie folgt aus: https://my.osrm.server.org:5000/route/v1",
@@ -236,6 +237,8 @@ OC.L10N.register(
     "Sort by date" : "Nach Datum sortieren",
     "Settings" : "Einstellungen",
     "Track my position" : "Meine Position aufzeichnen",
-    "Display time filter slider" : "Zeitfilter Schieberegler anzeigen"
+    "Display time filter slider" : "Zeitfilter Schieberegler anzeigen",
+    "Keep in mind that map projections always distort sizes of countries. The standard Mercator projection is particularly biased. Read more at:" : "Beachten Sie, dass Kartenprojektionen die tatsächliche Größe der Länder verzerren. Die Mercator-Standardprojektion ist besonders verzerrt. Weitere Infos finden Sie hier:",
+    "The True Size of Africa" : "Die wahre Größe Afrikas"
 },
 "nplurals=2; plural=(n != 1);");

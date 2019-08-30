@@ -202,6 +202,8 @@ OC.L10N.register(
     "Moving average pace" : "Średnie tempo",
     "Show elevation" : "Pokaż wysokość",
     "Failed to change track color" : "Nie można zmienić koloru ścieżki",
+    "🌍🌏🌎 The whole world fits inside your cloud!" : "🌍🌏🌎 Cały świat mieści się w Twojej chmurze!",
+    "**The whole world fits inside your cloud!**\n\n- **🗺 Beautiful map:** Using [OpenStreetMap](https://www.openstreetmap.org) and [Leaflet](https://leafletjs.com), you can choose between standard map, satellite, topographical, dark mode or even watercolor! 🎨\n- **⭐ Favorites:** Save your favorite places, privately! Sync with [GNOME Maps](https://github.com/nextcloud/maps/issues/30) and mobile apps is planned.\n- **🧭 Routing:** Possible using either [OSRM](http://project-osrm.org), [GraphHopper](https://www.graphhopper.com) or [Mapbox](https://www.mapbox.com).\n- **🖼 Photos on the map:** No more boring slideshows, just show directly where you were!\n- **🙋 Contacts on the map:** See where your friends live and plan your next visit.\n- **📱 Devices:** Lost your phone? Check the map!\n- **〰 Tracks:** Load GPS tracks or past trips. Recording with [PhoneTrack](https://f-droid.org/en/packages/net.eneiluj.nextcloud.phonetrack/) or [OwnTracks](https://owntracks.org) is planned." : "**Cały świat mieści się w Twojej chmurze!**\n\n- **🗺 Piękna mapa:** Korzystając z [OpenStreetMap](https://www.openstreetmap.org) i [Leaflet](https://leafletjs.com), możesz wybrać pomiędzy standardową mapą, satelitarną, topograficzną, ciemnym trybem, a nawet akwarelą! 🎨\n- **⭐ Ulubione:** Zapisz swoje ulubione miejsca, prywatnie! Synchronizuj z [GNOME Maps](https://github.com/nextcloud/maps/issues/30). Aplikacje mobilne są w planach.\n- **🧭 Przekierowanie:** Możliwe przy użyciu [OSRM](http://project-osrm.org), [GraphHopper](https://www.graphhopper.com) lub [Mapbox](https://www.mapbox.com).\n- **🖼 Zdjęcia na mapie:** Nigdy więcej nudnych pokazów slajdów, po prostu pokaż bezpośrednio, gdzie byłeś!\n- **🙋 Kontakty na mapie:** Zobacz, gdzie mieszkają Twoi znajomi i zaplanuj następną wizytę.\n- **📱 Urządzenia:** Zgubiłeś telefon? Sprawdź mapę!\n- **〰 Trasy:** Załaduj ścieżki GPS lub poprzednie podróże. W planach jest nagrywanie za pomocą [PhoneTrack](https://f-droid.org/en/packages/net.eneiluj.nextcloud.phonetrack/) lub [OwnTracks](https://owntracks.org).",
     "Maps routing settings" : "Ustawienia routingu Maps",
     "OSRM settings" : "Ustawienia OSRM",
     "An OSRM server URL looks like this : https://my.osrm.server.org:5000/route/v1" : "Adres URL serwera OSRM wygląda następująco: https://my.osrm.server.org:5000/route/v1",
@@ -236,6 +238,8 @@ OC.L10N.register(
     "Sort by date" : "Sortuj według daty",
     "Settings" : "Ustawienia",
     "Track my position" : "Śledź moją pozycję",
-    "Display time filter slider" : "Wyświetl suwak filtra czasu"
+    "Display time filter slider" : "Wyświetl suwak filtra czasu",
+    "Keep in mind that map projections always distort sizes of countries. The standard Mercator projection is particularly biased. Read more at:" : "Pamiętaj, że projekty map zawsze zniekształcają rozmiary krajów. Standardowy projekt Mercatora jest szczególnie stronniczy. Przeczytaj więcej na:",
+    "The True Size of Africa" : "Prawdziwy rozmiar Afryki"
 },
 "nplurals=4; plural=(n==1 ? 0 : (n%10>=2 && n%10<=4) && (n%100<12 || n%100>14) ? 1 : n!=1 && (n%10>=0 && n%10<=1) || (n%10>=5 && n%10<=9) || (n%100>=12 && n%100<=14) ? 2 : 3);");

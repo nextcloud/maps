@@ -290,8 +290,12 @@ class PhotofilesService {
     private function insertPhoto($photo, $userId, $exif) {
         $photoEntity = new Geophoto();
         $photoEntity->setFileId($photo->getId());
-        $photoEntity->setLat(is_numeric($exif->lat) ? $exif->lat : null);
-        $photoEntity->setLng(is_numeric($exif->lng) ? $exif->lng : null);
+        $photoEntity->setLat(
+            is_numeric($exif->lat)&&!is_nan($exif->lat) ? $exif->lat : null
+        );
+        $photoEntity->setLng(
+            is_numeric($exif->lng)&&!is_nan($exif->lng) ? $exif->lng : null
+        );
         $photoEntity->setUserId($userId);
         // alternative should be file creation date
         $photoEntity->setDateTaken($exif->dateTaken ?? $photo->getMTime());
@@ -299,8 +303,8 @@ class PhotofilesService {
     }
 
     private function updatePhoto($file, $exif) {
-        $lat = is_numeric($exif->lat) ? $exif->lat : null;
-        $lng = is_numeric($exif->lng) ? $exif->lng : null;
+        $lat = is_numeric($exif->lat)&&!is_nan($exif->lat) ? $exif->lat : null;
+        $lng = is_numeric($exif->lng)&&!is_nan($exif->lng) ? $exif->lng : null;
         $this->photoMapper->updateByFileId($file->getId(), $lat, $lng);
     }
 

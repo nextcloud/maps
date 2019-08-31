@@ -835,7 +835,11 @@
                 delete this.routers.osrmDEMO;
             }
             if (optionsValues.hasOwnProperty('mapboxAPIKEY') && optionsValues.mapboxAPIKEY !== '') {
-                this.addRouter('mapbox', 'Mapbox', null, optionsValues.mapboxAPIKEY);
+                this.addRouter('mapbox/cycling', 'Mapbox by bike', null, optionsValues.mapboxAPIKEY);
+                this.addRouter('mapbox/walking', 'Mapbox by foot', null, optionsValues.mapboxAPIKEY);
+                this.addRouter('mapbox/driving-traffic', 'Mapbox by car with traffic', null, optionsValues.mapboxAPIKEY);
+                this.addRouter('mapbox/driving', 'Mapbox by car without traffic', null, optionsValues.mapboxAPIKEY);
+
             }
             if ((optionsValues.hasOwnProperty('graphhopperURL') && optionsValues.graphhopperURL !== '') ||
                 (optionsValues.hasOwnProperty('graphhopperAPIKEY') && optionsValues.graphhopperAPIKEY !== '') ){
@@ -971,10 +975,13 @@
                     router: L.Routing.osrmv1(options)
                 };
             }
-            else if (type === 'mapbox') {
-                this.routers.mapbox = {
+            else if (type === 'mapbox/cycling' || type === 'mapbox/driving-traffic' || type === 'mapbox/driving' || type === 'mapbox/walking') {
+                var options = {
+                    profile: type
+                };
+                this.routers[type] = {
                     name: name,
-                    router: L.Routing.mapbox(apikey)
+                    router: L.Routing.mapbox(apikey, options)
                 };
             }
             else if (type === 'osrmDEMO') {

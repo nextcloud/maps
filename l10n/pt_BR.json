@@ -82,6 +82,7 @@
     "Failed to reset photos coordinates" : "Erro ao redefinir as coordenadas das fotos",
     "Geo link ({geoLink}) copied to clipboard" : "Link Geo ({geoLink}) copiado para a área de trabalho",
     "Failed to save option values" : "Erro ao salvar as opções",
+    "Media scan was not done yet. Wait a few minutes/hours and reload this page to see your photos/tracks." : "A verificação de mídia ainda não foi concluída. Aguarde alguns minutos/horas e atualize esta página para ver suas fotos/faixas.",
     "Failed to restore options values" : "Erro ao restaurar as opções",
     "Place photos" : "Colocar fotos",
     "Place contact" : "Colocar contato",

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Nextcloud 3.14159\n"
 "Report-Msgid-Bugs-To: translations\\@example.com\n"
-"POT-Creation-Date: 2019-08-31 02:35+0000\n"
+"POT-Creation-Date: 2019-09-01 02:37+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -564,149 +564,149 @@ msgstr ""
 msgid "s"
 msgstr ""
 
-#: /app/js/script.js:908
+#: /app/js/script.js:912
 msgid ""
 "There is no routing engine set in Nextcloud additional settings. Routing is "
 "currently disabled for users."
 msgstr ""
 
-#: /app/js/script.js:994
+#: /app/js/script.js:1001
 msgid "Routing error:"
 msgstr ""
 
-#: /app/js/script.js:1069
+#: /app/js/script.js:1076
 msgid "Route exported in {path}"
 msgstr ""
 
-#: /app/js/script.js:1073
+#: /app/js/script.js:1080
 msgid "Failed to export current route"
 msgstr ""
 
-#: /app/js/script.js:1568
+#: /app/js/script.js:1575
 msgid "No search result"
 msgstr ""
 
-#: /app/js/script.js:1604
+#: /app/js/script.js:1611
 msgid "No {POItypeName} found"
 msgstr ""
 
-#: /app/js/script.js:1616 /app/js/script.js:1617
+#: /app/js/script.js:1623 /app/js/script.js:1624
 msgid "My location"
 msgstr ""
 
-#: /app/js/script.js:1623
+#: /app/js/script.js:1630
 msgid "Restaurant"
 msgstr ""
 
-#: /app/js/script.js:1628
+#: /app/js/script.js:1635
 msgid "Fast food"
 msgstr ""
 
-#: /app/js/script.js:1633
+#: /app/js/script.js:1640
 msgid "Bar"
 msgstr ""
 
-#: /app/js/script.js:1638
+#: /app/js/script.js:1645
 msgid "Supermarket"
 msgstr ""
 
-#: /app/js/script.js:1643
+#: /app/js/script.js:1650
 msgid "Cafe"
 msgstr ""
 
-#: /app/js/script.js:1648
+#: /app/js/script.js:1655
 msgid "Library"
 msgstr ""
 
-#: /app/js/script.js:1653
+#: /app/js/script.js:1660
 msgid "School"
 msgstr ""
 
-#: /app/js/script.js:1658
+#: /app/js/script.js:1665
 msgid "Sports centre"
 msgstr ""
 
-#: /app/js/script.js:1663
+#: /app/js/script.js:1670
 msgid "Gas station"
 msgstr ""
 
-#: /app/js/script.js:1668
+#: /app/js/script.js:1675
 msgid "Parking"
 msgstr ""
 
-#: /app/js/script.js:1673
+#: /app/js/script.js:1680
 msgid "Bicycle parking"
 msgstr ""
 
-#: /app/js/script.js:1678
+#: /app/js/script.js:1685
 msgid "Car rental"
 msgstr ""
 
-#: /app/js/script.js:1683
+#: /app/js/script.js:1690
 msgid "ATM"
 msgstr ""
 
-#: /app/js/script.js:1688
+#: /app/js/script.js:1695
 msgid "Pharmacy"
 msgstr ""
 
-#: /app/js/script.js:1693
+#: /app/js/script.js:1700
 msgid "Cinema"
 msgstr ""
 
-#: /app/js/script.js:1698
+#: /app/js/script.js:1705
 msgid "Public toilets"
 msgstr ""
 
-#: /app/js/script.js:1703
+#: /app/js/script.js:1710
 msgid "Drinking water"
 msgstr ""
 
-#: /app/js/script.js:1708
+#: /app/js/script.js:1715
 msgid "Hospital"
 msgstr ""
 
-#: /app/js/script.js:1713
+#: /app/js/script.js:1720
 msgid "Doctors"
 msgstr ""
 
-#: /app/js/script.js:1718
+#: /app/js/script.js:1725
 msgid "Dentist"
 msgstr ""
 
-#: /app/js/script.js:1723
+#: /app/js/script.js:1730
 msgid "Hotel"
 msgstr ""
 
-#: /app/js/script.js:1855 /app/js/script.js:1944
+#: /app/js/script.js:1862 /app/js/script.js:1951
 msgid "Add to favorites"
 msgstr ""
 
-#: /app/js/script.js:1857 /app/js/script.js:1946
+#: /app/js/script.js:1864 /app/js/script.js:1953
 msgid "Add contact address"
 msgstr ""
 
-#: /app/js/script.js:1871
+#: /app/js/script.js:1878
 msgid "Open"
 msgstr ""
 
-#: /app/js/script.js:1873
+#: /app/js/script.js:1880
 msgid "closes in {nb} minutes"
 msgstr ""
 
-#: /app/js/script.js:1876
+#: /app/js/script.js:1883
 msgid "until {date}"
 msgstr ""
 
-#: /app/js/script.js:1880
+#: /app/js/script.js:1887
 msgid "Closed"
 msgstr ""
 
-#: /app/js/script.js:1881
+#: /app/js/script.js:1888
 msgid "opens at {date}"
 msgstr ""
 
-#: /app/js/script.js:1941
+#: /app/js/script.js:1948
 msgid "This place"
 msgstr ""
 

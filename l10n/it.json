@@ -82,6 +82,7 @@
     "Failed to reset photos coordinates" : "Ripristino delle coordinate delle foto non riuscito",
     "Geo link ({geoLink}) copied to clipboard" : "Geolink ({geoLink}) copiato negli appunti",
     "Failed to save option values" : "Salvataggio valori dell'opzione non riuscito",
+    "Media scan was not done yet. Wait a few minutes/hours and reload this page to see your photos/tracks." : "La scansione multimediale non è stata ancora completata. Attendi qualche minuto/ora e ricarica questa pagina per vedere le tue foto/tracce.",
     "Failed to restore options values" : "Ripristino valori dell'opzione non riuscito",
     "Place photos" : "Posiziona foto",
     "Place contact" : "Posiziona contatto",

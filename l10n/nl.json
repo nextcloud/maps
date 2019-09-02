@@ -200,6 +200,7 @@
     "Moving average pace" : "Verplaatsen met gemiddelde snelheid",
     "Show elevation" : "Tonen helling",
     "Failed to change track color" : "Kon de spoorkleur niet wijzigen",
+    "🌍🌏🌎 The whole world fits inside your cloud!" : "🌍🌏🌎 De hele wereld past in jouw cloud!",
     "Maps routing settings" : "Kaarten route-instellingen",
     "OSRM settings" : "OSRM instellingen",
     "An OSRM server URL looks like this : https://my.osrm.server.org:5000/route/v1" : "Een OSRM server URL ziet er als volgt uit : https://my.osrm.server.org:5000/route/v1",
@@ -234,6 +235,8 @@
     "Sort by date" : "Sorteren op datum",
     "Settings" : "Instellingen",
     "Track my position" : "Traceer mijn locatie",
-    "Display time filter slider" : "Weergavetijd filterschuifbalk"
+    "Display time filter slider" : "Weergavetijd filterschuifbalk",
+    "Keep in mind that map projections always distort sizes of countries. The standard Mercator projection is particularly biased. Read more at:" : "Let erop dat de kaartweergaven altijd vervormde omvang van landen tonen. De standaard Mercator-projectie is enigszins gekleurd. Lees meer op:",
+    "The True Size of Africa" : "De werkelijke grootte van Afrika"
 },"pluralForm" :"nplurals=2; plural=(n != 1);"
 }

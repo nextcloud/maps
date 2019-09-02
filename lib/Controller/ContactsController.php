@@ -87,28 +87,28 @@ class ContactsController extends Controller {
                 $card = $this->cdBackend->getContact($c['addressbook-key'], $c['URI']);
                 if ($card) {
                     $vcard = Reader::read($card['carddata']);
-                    //$adrs = $vcard->get('ADR');
-                    //error_log('NB '.count($vcard->ADR));
-                    foreach ($vcard->ADR as $adr) {
-                        $geo = $this->addressService->addressToGeo($adr->getValue(), $c['URI']);
-                        //var_dump($adr->parameters()['TYPE']->getValue());
-                        $adrtype = '';
-                        if (isset($adr->parameters()['TYPE'])) {
-                            $adrtype = $adr->parameters()['TYPE']->getValue();
-                        }
-                        if (strlen($geo) > 1) {
-                            array_push($result, [
-                                'FN'=>$c['FN'] ?? $this->N2FN($c['N']) ?? '???',
-                                'URI'=>$c['URI'],
-                                'UID'=>$c['UID'],
-                                'ADR'=>$adr->getValue(),
-                                'ADRTYPE'=>$adrtype,
-                                'HAS_PHOTO'=>(isset($c['PHOTO']) and $c['PHOTO'] !== null),
-                                'BOOKID'=>$c['addressbook-key'],
-                                'BOOKURI'=>$addressBookUri,
-                                'GEO'=>$geo,
-                                'GROUPS'=>$c['CATEGORIES'] ?? null
-                            ]);
+                    if (isset($vcard->ADR) and count($vcard->ADR) > 0) {
+                        foreach ($vcard->ADR as $adr) {
+                            $geo = $this->addressService->addressToGeo($adr->getValue(), $c['URI']);
+                            //var_dump($adr->parameters()['TYPE']->getValue());
+                            $adrtype = '';
+                            if (isset($adr->parameters()['TYPE'])) {
+                                $adrtype = $adr->parameters()['TYPE']->getValue();
+                            }
+                            if (strlen($geo) > 1) {
+                                array_push($result, [
+                                    'FN'=>$c['FN'] ?? $this->N2FN($c['N']) ?? '???',
+                                    'URI'=>$c['URI'],
+                                    'UID'=>$c['UID'],
+                                    'ADR'=>$adr->getValue(),
+                                    'ADRTYPE'=>$adrtype,
+                                    'HAS_PHOTO'=>(isset($c['PHOTO']) and $c['PHOTO'] !== null),
+                                    'BOOKID'=>$c['addressbook-key'],
+                                    'BOOKURI'=>$addressBookUri,
+                                    'GEO'=>$geo,
+                                    'GROUPS'=>$c['CATEGORIES'] ?? null
+                                ]);
+                            }
                         }
                     }
                 }

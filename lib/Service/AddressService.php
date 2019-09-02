@@ -161,8 +161,16 @@ class AddressService {
                 ]
             ];
             $context = stream_context_create($opts);
+
+            // we get rid of "post office box" field
+            $splitted_adr = explode(';', $adr);
+            if (count($splitted_adr) > 2) {
+                array_shift($splitted_adr);
+            }
+            $query_adr = implode(', ', $splitted_adr);
+
             $result_json = @file_get_contents(
-                'https://nominatim.openstreetmap.org/search.php?q='.urlencode($adr).'&format=json',
+                'https://nominatim.openstreetmap.org/search.php?q='.urlencode($query_adr).'&format=json',
                 false,
                 $context
             );

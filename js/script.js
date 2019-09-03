@@ -312,24 +312,24 @@
                 });
 
                 // routing
-                this.nbRouters = 0;
+                that.nbRouters = 0;
                 if (optionsValues.hasOwnProperty('osrmCarURL') && optionsValues.osrmCarURL !== '') {
-                    this.nbRouters++;
+                    that.nbRouters++;
                 }
                 if (optionsValues.hasOwnProperty('osrmBikeURL') && optionsValues.osrmBikeURL !== '') {
-                    this.nbRouters++;
+                    that.nbRouters++;
                 }
                 if (optionsValues.hasOwnProperty('osrmFootURL') && optionsValues.osrmFootURL !== '') {
-                    this.nbRouters++;
+                    that.nbRouters++;
                 }
                 if (optionsValues.hasOwnProperty('mapboxAPIKEY') && optionsValues.mapboxAPIKEY !== '') {
-                    this.nbRouters++;
+                    that.nbRouters++;
                 }
                 if ((optionsValues.hasOwnProperty('graphhopperURL') && optionsValues.graphhopperURL !== '') ||
                     (optionsValues.hasOwnProperty('graphhopperAPIKEY') && optionsValues.graphhopperAPIKEY !== '') ){
-                    this.nbRouters++;
+                    that.nbRouters++;
                 }
-                if (this.nbRouters === 0 && !OC.isUserAdmin()) {
+                if (that.nbRouters === 0 && !OC.isUserAdmin()) {
                     // disable routing and hide it to the user
                     // search bar
                     $('#route-submit').hide();
@@ -905,7 +905,7 @@
                     $('.leaflet-routing-container').prepend(close);
                     $('.leaflet-routing-geocoders').append(select);
 
-                    if (optionsController.nbRouters === 0 && OC.isUserAdmin()) {
+                    if (optionsController.nbRouters === 0 && OC.isUserAdmin() ) {
                         console.log('prepend');
                         $('.leaflet-routing-container').prepend(
                             '<p class="no-routing-engine-warning">' +

@@ -82,6 +82,7 @@
     "Failed to reset photos coordinates" : "A fényképek koordinátájának visszaállítása sikertelen",
     "Geo link ({geoLink}) copied to clipboard" : "Földrajzi hivatkozás ({geoLink}) vágólapra másolva",
     "Failed to save option values" : "A beállításértékek mentése sikertelen",
+    "Media scan was not done yet. Wait a few minutes/hours and reload this page to see your photos/tracks." : "A médiaátvizsgálás még nem készült el. Várjon néhány percet/órát és töltse újra az oldalt, hogy lássa a fényképeit/nyomvonalait.",
     "Failed to restore options values" : "A beállításértékek visszaállítása sikertelen",
     "Place photos" : "Fényképek elhelyezése",
     "Place contact" : "Névjegy elhelyezése",
@@ -200,6 +201,8 @@
     "Moving average pace" : "Mozgás átlagos tempója",
     "Show elevation" : "Szintemelkedés megjelenítése",
     "Failed to change track color" : "A nyomvonal színének módosítása sikertelen",
+    "🌍🌏🌎 The whole world fits inside your cloud!" : "🌍🌏🌎 Az egész világ elfér a felhőjében.",
+    "**The whole world fits inside your cloud!**\n\n- **🗺 Beautiful map:** Using [OpenStreetMap](https://www.openstreetmap.org) and [Leaflet](https://leafletjs.com), you can choose between standard map, satellite, topographical, dark mode or even watercolor! 🎨\n- **⭐ Favorites:** Save your favorite places, privately! Sync with [GNOME Maps](https://github.com/nextcloud/maps/issues/30) and mobile apps is planned.\n- **🧭 Routing:** Possible using either [OSRM](http://project-osrm.org), [GraphHopper](https://www.graphhopper.com) or [Mapbox](https://www.mapbox.com).\n- **🖼 Photos on the map:** No more boring slideshows, just show directly where you were!\n- **🙋 Contacts on the map:** See where your friends live and plan your next visit.\n- **📱 Devices:** Lost your phone? Check the map!\n- **〰 Tracks:** Load GPS tracks or past trips. Recording with [PhoneTrack](https://f-droid.org/en/packages/net.eneiluj.nextcloud.phonetrack/) or [OwnTracks](https://owntracks.org) is planned." : "**Az egész világ elfér a felhőjében.**\n\n- **🗺 Gyönyörű térkép:** Az [OpenStreetMap](https://www.openstreetmap.org) és a [Leaflet](https://leafletjs.com) használatával választhat a szokásos térkép, a műholdkép, a domborzattérkép, a sötét mód és a vízfestékes megjelenítés között! 🎨\n- **⭐ Kedvencek:** Mentse el kedvenc helyeit bizalmasan. Szinkronizálhat a [GNOME Térképekkel](https://github.com/nextcloud/maps/issues/30), és mobilalkalmazások is tervben vannak.\n- **🧭 Útvonaltervezés:** [OSRM](http://project-osrm.org), [GraphHopper](https://www.graphhopper.com) vagy [Mapbox](https://www.mapbox.com) segítségével lehetséges.\n- **🖼 Fényképek a térképen:** Többé nincsenek unalmas diavetítések, egyszerűen csak mutassa meg, hogy merre volt.\n- **🙋 Névjegyek a térképen:** Tudja meg, hogy a barátai hol élnek, és tervezze meg a következő látogatását.\n- **📱 Eszközök:** Elvesztette a telefonját? Nézze meg a térképet.\n- **〰 Nyomvonalak:** Töltse be GPS nyomvonalait vagy a múltbeli utazásait.. A [PhoneTrackkel](https://f-droid.org/hu/packages/net.eneiluj.nextcloud.phonetrack/) vagy [OwnTracks-szel](https://owntracks.org) történő rögzítés is tervben van.",
     "Maps routing settings" : "Térképek útvonalkereső beállításai",
     "OSRM settings" : "OSRM beállítás",
     "An OSRM server URL looks like this : https://my.osrm.server.org:5000/route/v1" : "Az OSRM kiszolgáló URL hasonlóan néz ki: https://my.osrm.server.org:5000/route/v1",
@@ -234,6 +237,8 @@
     "Sort by date" : "Rendezés dátum szerint",
     "Settings" : "Beállítások",
     "Track my position" : "Saját pozíció követése",
-    "Display time filter slider" : "Időszűrő csúszka megjelenítése"
+    "Display time filter slider" : "Időszűrő csúszka megjelenítése",
+    "Keep in mind that map projections always distort sizes of countries. The standard Mercator projection is particularly biased. Read more at:" : "Vegye figyelembe, hogy a térképvetületek mindig eltorzítják az országok méreteit. A szokásos Mercator-vetületre ez különösen jellemző. További olvasnivaló:",
+    "The True Size of Africa" : "Afrika valódi mérete"
 },"pluralForm" :"nplurals=2; plural=(n != 1);"
 }

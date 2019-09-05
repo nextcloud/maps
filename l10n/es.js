@@ -84,6 +84,7 @@ OC.L10N.register(
     "Failed to reset photos coordinates" : "Fallo al resetear las coordenadas de las fotos",
     "Geo link ({geoLink}) copied to clipboard" : "Enlace geo ({geoLink}) copiado al portapapeles",
     "Failed to save option values" : "Fallo al guardar los valores de las opciones",
+    "Media scan was not done yet. Wait a few minutes/hours and reload this page to see your photos/tracks." : "El escaneo de medios no ha acabado todavía. Espera unos minutos/horas y vuelve a cargar esta página para ver tus fotos/pistas.",
     "Failed to restore options values" : "Fallo al restaurar los valores de las opciones",
     "Place photos" : "Localizar fotos",
     "Place contact" : "Localizar contacto",
@@ -202,6 +203,7 @@ OC.L10N.register(
     "Moving average pace" : "Ritmo medio en movimiento",
     "Show elevation" : "Mostrar elevación",
     "Failed to change track color" : "Fallo al cambiar el color de la pista",
+    "🌍🌏🌎 The whole world fits inside your cloud!" : "🌍🌏🌎 ¡El mundo entero cabe en tu nube!",
     "Maps routing settings" : "Configuración de rutas en Mapas",
     "OSRM settings" : "Configuración de OSRM",
     "An OSRM server URL looks like this : https://my.osrm.server.org:5000/route/v1" : "La URL de un servidor OSRM es como esta: https://mi.servidor.osrm.org:5000/route/v1",
@@ -236,6 +238,8 @@ OC.L10N.register(
     "Sort by date" : "Ordenar por fecha",
     "Settings" : "Configuración",
     "Track my position" : "Seguir la pista a mi posición",
-    "Display time filter slider" : "Muestra el control deslizante del filtro de tiempo"
+    "Display time filter slider" : "Muestra el control deslizante del filtro de tiempo",
+    "Keep in mind that map projections always distort sizes of countries. The standard Mercator projection is particularly biased. Read more at:" : "Ten en cuenta que las proyecciones de mapa siempre distorsionan los tamaños de los países. La proyección estándar de Mercator está particularmentente sesgada. Lee más en:",
+    "The True Size of Africa" : "El verdadero tamaño de África"
 },
 "nplurals=2; plural=(n != 1);");

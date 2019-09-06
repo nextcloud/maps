@@ -234,7 +234,7 @@ OC.L10N.register(
     "Export all" : "Alle exportieren",
     "Import devices" : "Geräte importieren",
     "Delete all" : "Alle löschen",
-    "Your tracks" : "Ihre Spuren",
+    "Your tracks" : "Deine Spuren",
     "Sort by name" : "Nach Namen sortieren",
     "Sort by date" : "Nach Datum sortieren",
     "Settings" : "Einstellungen",

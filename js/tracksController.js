@@ -277,7 +277,7 @@ TracksController.prototype = {
 
     addTrackMap: function(track, show=false, pageLoad=false, zoom=false) {
         // color
-        var color = track.color || OCA.Theming.color;
+        var color = track.color || (OCA.Theming ? OCA.Theming.color : '#0082c9');
         this.trackColors[track.id] = color;
         this.trackDivIcon[track.id] = L.divIcon({
             iconAnchor: [12, 25],

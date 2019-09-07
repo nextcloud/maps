@@ -270,7 +270,7 @@ DevicesController.prototype = {
     addDeviceMap: function(device, show=false, pageLoad=false) {
         var id = device.id;
         // color
-        var color = device.color || OCA.Theming.color;
+        var color = device.color || (OCA.Theming ? OCA.Theming.color : '#0082c9');
         this.devices[id] = device;
         this.devices[id].color = color;
 

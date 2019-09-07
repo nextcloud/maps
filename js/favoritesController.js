@@ -446,7 +446,7 @@ FavoritesController.prototype = {
             color = hslToRgb(hsl.h/360, hsl.s/100, hsl.l/100);
         }
         if (rawName === this.defaultCategory) {
-            color = OCA.Theming.color.replace('#', '');
+            color = (OCA.Theming ? OCA.Theming.color : '#0082c9').replace('#', '');
         }
         this.categoryColors[rawName] = color;
         $('<style category="'+name+'">' +

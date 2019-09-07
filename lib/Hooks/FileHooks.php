@@ -45,7 +45,7 @@ class FileHooks {
 
     public function register() {
         $fileWriteCallback = function(\OCP\Files\Node $node) {
-            if ($this->isUserNode($node)) {
+            if ($this->isUserNode($node) && $node->getSize() > 0) {
                 $isPhoto = $this->photofilesService->safeAddByFile($node);
                 if (!$isPhoto) {
                     $this->tracksService->safeAddByFile($node);

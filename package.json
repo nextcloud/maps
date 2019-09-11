@@ -37,7 +37,7 @@
     "leaflet-mouse-position": "^1.0.4",
     "leaflet-contextmenu": "^1.4.0",
     "leaflet.elevation": "^0.0.3",
-    "d3": "^3.5.17",
+    "d3": "^4.13.0",
     "nouislider": "^14.0.2",
     "ua-parser-js": "^0.7.20",
     "opening_hours": "^3.5.0"

@@ -84,6 +84,7 @@ OC.L10N.register(
     "Failed to reset photos coordinates" : "无法重置照片坐标",
     "Geo link ({geoLink}) copied to clipboard" : "地理链接（{geolink}）已复制到剪贴板",
     "Failed to save option values" : "无法保存选项值",
+    "Media scan was not done yet. Wait a few minutes/hours and reload this page to see your photos/tracks." : "媒体扫描尚未结束。请等待数分钟/小时，然后重新加载此页面以查看您的照片/音轨。",
     "Failed to restore options values" : "无法恢复选项值",
     "Place photos" : "放置照片",
     "Place contact" : "放置联系人",
@@ -202,6 +203,8 @@ OC.L10N.register(
     "Moving average pace" : "移动平均速度",
     "Show elevation" : "显示海拔",
     "Failed to change track color" : "无法更改路线颜色",
+    "🌍🌏🌎 The whole world fits inside your cloud!" : "🌍🌏🌎 将整个世界装进您的云中！",
+    "**The whole world fits inside your cloud!**\n\n- **🗺 Beautiful map:** Using [OpenStreetMap](https://www.openstreetmap.org) and [Leaflet](https://leafletjs.com), you can choose between standard map, satellite, topographical, dark mode or even watercolor! 🎨\n- **⭐ Favorites:** Save your favorite places, privately! Sync with [GNOME Maps](https://github.com/nextcloud/maps/issues/30) and mobile apps is planned.\n- **🧭 Routing:** Possible using either [OSRM](http://project-osrm.org), [GraphHopper](https://www.graphhopper.com) or [Mapbox](https://www.mapbox.com).\n- **🖼 Photos on the map:** No more boring slideshows, just show directly where you were!\n- **🙋 Contacts on the map:** See where your friends live and plan your next visit.\n- **📱 Devices:** Lost your phone? Check the map!\n- **〰 Tracks:** Load GPS tracks or past trips. Recording with [PhoneTrack](https://f-droid.org/en/packages/net.eneiluj.nextcloud.phonetrack/) or [OwnTracks](https://owntracks.org) is planned." : "**将整个世界装进您的云中！**\n\n- **🗺 漂亮的地图：** 使用 [OpenStreetMap](https://www.openstreetmap.org) 和 [Leaflet](https://leafletjs.com)，您可以选择标准地图、卫星图、地形图、深色模式甚至水彩模式！🎨\n- **⭐ 收藏：** 保存您喜欢的地点，保密！计划支持与 [GNOME Maps](https://github.com/nextcloud/maps/issues/30) 同步以及移动应用。\n- **🧭 导航：** 可使用 [OSRM](http://project-osrm.org)， [GraphHopper](https://www.graphhopper.com) 或者[Mapbox](https://www.mapbox.com)。\n- **🖼 地图上的照片：** 不再是无聊的幻灯片，直接显示您的所在！\n- **🙋 地图上的联系人：** 查看您朋友的住所，计划您的下次访问。\n- **📱 设备：** 您的手机丢了？查看地图！\n- **〰 轨迹：** 加载GPS轨迹或最近行程。计划支持使用 [PhoneTrack](https://f-droid.org/en/packages/net.eneiluj.nextcloud.phonetrack/) 或者 [OwnTracks](https://owntracks.org) 记录。",
     "Maps routing settings" : "地图路由设置",
     "OSRM settings" : "OSRM设置",
     "An OSRM server URL looks like this : https://my.osrm.server.org:5000/route/v1" : "OSRM服务器的URL看起来像这样：https://my.osrm.server.org:5000/route/v1",
@@ -236,6 +239,8 @@ OC.L10N.register(
     "Sort by date" : "按日期排序",
     "Settings" : "设置",
     "Track my position" : "跟踪我的位置",
-    "Display time filter slider" : "显示时间过滤滑块"
+    "Display time filter slider" : "显示时间过滤滑块",
+    "Keep in mind that map projections always distort sizes of countries. The standard Mercator projection is particularly biased. Read more at:" : "请注意地图投影总是会扭曲国家的面积大小。标准的墨卡托投影尤其如此。更多信息请阅读：",
+    "The True Size of Africa" : "非洲的真正大小"
 },
 "nplurals=1; plural=0;");

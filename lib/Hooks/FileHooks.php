@@ -18,6 +18,7 @@ use OCP\Files\FileInfo;
 use OCP\ILogger;
 use OCP\Files\Node;
 use OCP\Files\IRootFolder;
+use OCP\Lock\ILockingProvider;
 use OCP\Util;
 use OCP\Share;
 
@@ -46,10 +47,12 @@ class FileHooks {
     public function register() {
         $fileWriteCallback = function(\OCP\Files\Node $node) {
             if ($this->isUserNode($node) && $node->getSize() > 0) {
+                $node->lock(ILockingProvider::LOCK_SHARED);
                 $isPhoto = $this->photofilesService->safeAddByFile($node);
                 if (!$isPhoto) {
                     $this->tracksService->safeAddByFile($node);
                 }
+                $node->unlock(ILockingProvider::LOCK_SHARED);
             }
         };
         $this->root->listen('\OC\Files', 'postWrite', $fileWriteCallback);

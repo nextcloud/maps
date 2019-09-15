@@ -20,6 +20,7 @@ use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
+use OCP\IConfig;
 
 use OCA\Maps\Service\PhotofilesService;
 
@@ -34,12 +35,14 @@ class RescanPhotos extends Command {
     private $photofilesService;
 
     public function __construct(IUserManager $userManager,
-        IManager $encryptionManager,
-        PhotofilesService $photofilesService) {
+                                IManager $encryptionManager,
+                                PhotofilesService $photofilesService,
+                                IConfig $config) {
         parent::__construct();
         $this->userManager = $userManager;
         $this->encryptionManager = $encryptionManager;
         $this->photofilesService = $photofilesService;
+        $this->config = $config;
     }
     protected function configure() {
         $this->setName('maps:scan-photos')
@@ -78,5 +81,6 @@ class RescanPhotos extends Command {
             echo '['.$c.'] Photo "'.$path.'" added'."\n";
             $c++;
         }
+        $this->config->setUserValue($userId, 'maps', 'installScanDone', 'yes');
     }
 }

@@ -268,6 +268,7 @@ ContactsController.prototype = {
             var contactUrl = OC.generateUrl('/apps/contacts/'+t('contacts', 'All contacts')+'/'+encodeURIComponent(marker.data.uid+"~contacts"));
             contactPopup += '<a href="'+contactUrl+'" target="_blank">'+t('maps', 'Open in Contacts app')+'</a>';
             marker.unbindPopup();
+            marker.unbindTooltip();
             marker.bindPopup(contactPopup, {
                 closeOnClick: true,
                 className: 'popovermenu open popupMarker contactPopup',
@@ -474,6 +475,8 @@ ContactsController.prototype = {
             });
 
             marker.on('contextmenu', this.onContactRightClick);
+            marker.on('mouseover', this.onContactMouseover);
+            marker.on('mouseout', this.onContactMouseout);
             marker.data = markerData;
             var contactTooltip = '<p class="tooltip-contact-name">' + escapeHTML(basename(markerData.name)) + '</p>';
             var img = '<img class="tooltip-contact-avatar" src="' + markerData.avatar + '"/>';
@@ -487,10 +490,25 @@ ContactsController.prototype = {
             contactTooltip += '<p class="tooltip-contact-address">' + markerData.address + '</p>';
             markerData.tooltipContent = contactTooltip;
 
-            marker.bindTooltip(contactTooltip, {permanent: false, className: 'leaflet-marker-contact-tooltip', direction: 'top', offset: L.point(0, -25)});
             markers.push(marker);
         }
         return markers;
+    },
+
+    onContactMouseover: function(e) {
+        var data = e.target.data;
+        if (!e.target.getPopup() || !e.target.getPopup().isOpen()) {
+            e.target.bindTooltip(data.tooltipContent, {
+                permanent: true,
+                className: 'leaflet-marker-contact-tooltip',
+                direction: 'top',
+                offset: L.point(0, -25)
+            });
+        }
+    },
+
+    onContactMouseout: function(e) {
+        e.target.unbindTooltip();
     },
 
     onContactRightClick: function(e) {

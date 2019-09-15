@@ -37,22 +37,27 @@ class FileHooks {
 
     private $root;
 
-    public function __construct(IRootFolder $root, PhotofilesService $photofilesService, TracksService $tracksService, ILogger $logger, $appName) {
+    public function __construct(IRootFolder $root, PhotofilesService $photofilesService, TracksService $tracksService,
+                                ILogger $logger, $appName, ILockingProvider $lockingProvider) {
         $this->photofilesService = $photofilesService;
         $this->tracksService = $tracksService;
         $this->logger = $logger;
         $this->root = $root;
+        $this->lockingProvider = $lockingProvider;
     }
 
     public function register() {
         $fileWriteCallback = function(\OCP\Files\Node $node) {
             if ($this->isUserNode($node) && $node->getSize() > 0) {
-                $node->lock(ILockingProvider::LOCK_SHARED);
-                $isPhoto = $this->photofilesService->safeAddByFile($node);
-                if (!$isPhoto) {
-                    $this->tracksService->safeAddByFile($node);
+                $path = $node->getPath();
+                if (!$this->lockingProvider->isLocked($path, ILockingProvider::LOCK_SHARED)
+                    and !$this->lockingProvider->isLocked($path, ILockingProvider::LOCK_EXCLUSIVE)
+                ) {
+                    $isPhoto = $this->photofilesService->safeAddByFile($node);
+                    if (!$isPhoto) {
+                        $this->tracksService->safeAddByFile($node);
+                    }
                 }
-                $node->unlock(ILockingProvider::LOCK_SHARED);
             }
         };
         $this->root->listen('\OC\Files', 'postWrite', $fileWriteCallback);

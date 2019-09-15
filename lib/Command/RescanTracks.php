@@ -20,6 +20,7 @@ use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
+use OCP\IConfig;
 
 use OCA\Maps\Service\TracksService;
 
@@ -34,12 +35,14 @@ class RescanTracks extends Command {
     private $tracksService;
 
     public function __construct(IUserManager $userManager,
-        IManager $encryptionManager,
-        TracksService $tracksService) {
+                                IManager $encryptionManager,
+                                TracksService $tracksService,
+                                IConfig $config) {
         parent::__construct();
         $this->userManager = $userManager;
         $this->encryptionManager = $encryptionManager;
         $this->tracksService = $tracksService;
+        $this->config = $config;
     }
     protected function configure() {
         $this->setName('maps:scan-tracks')
@@ -78,5 +81,6 @@ class RescanTracks extends Command {
             echo '['.$c.'] Track "'.$path.'" added'."\n";
             $c++;
         }
+        $this->config->setUserValue($userId, 'maps', 'installScanDone', 'yes');
     }
 }

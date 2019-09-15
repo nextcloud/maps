@@ -183,7 +183,7 @@
                 optionsValues = response.values;
 
                 // check if install scan was done
-                if (!optionsValues.hasOwnProperty('installScanDone') || optionsValues.installScanDone !== 'yes') {
+                if (optionsValues.hasOwnProperty('installScanDone') || optionsValues.installScanDone === 'no') {
                     OC.Notification.showTemporary(
                         t('maps', 'Media scan was not done yet. Wait a few minutes/hours and reload this page to see your photos/tracks.')
                     );

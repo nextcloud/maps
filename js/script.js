@@ -1083,7 +1083,7 @@
         },
 
         contextRouteFrom: function(e) {
-            if (this.control) {
+            if (routingController.control) {
                 if (!routingController.enabled) {
                     routingController.toggleRouting();
                 }
@@ -1092,7 +1092,7 @@
         },
 
         contextRouteTo: function(e) {
-            if (this.control) {
+            if (routingController.control) {
                 if (!routingController.enabled) {
                     routingController.toggleRouting();
                 }
@@ -1101,7 +1101,7 @@
         },
 
         contextRoutePoint: function(e) {
-            if (this.control) {
+            if (routingController.control) {
                 if (!routingController.enabled) {
                     routingController.toggleRouting();
                 }

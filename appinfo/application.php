@@ -42,7 +42,8 @@ class Application extends App {
                 \OC::$server->query(PhotofilesService::class),
                 \OC::$server->query(TracksService::class),
                 $c->query('ServerContainer')->getLogger(),
-                $c->query('AppName')
+                $c->query('AppName'),
+                $c->query('ServerContainer')->getLockingProvider()
             );
         });
 

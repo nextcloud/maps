@@ -230,8 +230,8 @@ class FavoritesController extends Controller {
                 $file->isReadable()){
                 $lowerFileName = strtolower($file->getName());
                 if ($this->endswith($lowerFileName, '.gpx') or $this->endswith($lowerFileName, '.kml') or $this->endswith($lowerFileName, '.kmz')) {
-                    $nbImported = $this->favoritesService->importFavorites($this->userId, $file);
-                    return new DataResponse($nbImported);
+                    $result = $this->favoritesService->importFavorites($this->userId, $file);
+                    return new DataResponse($result);
                 }
                 else {
                     // invalid extension

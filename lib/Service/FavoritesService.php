@@ -431,16 +431,20 @@ class FavoritesService {
             $zippedFilePath = $zf->getFiles()[0];
             $fstream = $zf->getStream($zippedFilePath, 'r');
 
-            $nbImported = $this->importFavoritesFromKml($userId, $fstream, $name);
+            $result = $this->importFavoritesFromKml($userId, $fstream, $name);
         }
         else {
-            $nbImported = 0;
+            $result = [
+                'nbImported'=>0,
+                'linesFound'=>false
+            ];
         }
-        return $nbImported;
+        return $result;
     }
 
     public function importFavoritesFromKml($userId, $fp, $name) {
         $this->nbImported = 0;
+        $this->linesFound = false;
         $this->currentFavoritesList = [];
         $this->importUserId = $userId;
         $this->kmlInsidePlacemark = false;
@@ -466,7 +470,10 @@ class FavoritesService {
         fclose($fp);
         xml_parser_free($xml_parser);
 
-        return $this->nbImported;
+        return [
+            'nbImported'=>$this->nbImported,
+            'linesFound'=>$this->linesFound
+        ];
     }
 
     private function kmlStartElement($parser, $name, $attrs) {
@@ -475,7 +482,9 @@ class FavoritesService {
             $this->currentFavorite = [];
             $this->kmlInsidePlacemark = true;
         }
-        //var_dump($attrs);
+        if ($name === 'LINESTRING') {
+            $this->linesFound = true;
+        }
     }
 
     private function kmlEndElement($parser, $name) {
@@ -544,6 +553,7 @@ class FavoritesService {
 
     public function importFavoritesFromGpx($userId, $file) {
         $this->nbImported = 0;
+        $this->linesFound = false;
         $this->currentFavoritesList = [];
         $this->importUserId = $userId;
         $this->insideWpt = false;
@@ -570,7 +580,10 @@ class FavoritesService {
         fclose($fp);
         xml_parser_free($xml_parser);
 
-        return $this->nbImported;
+        return [
+            'nbImported'=>$this->nbImported,
+            'linesFound'=>$this->linesFound
+        ];
     }
 
     private function gpxStartElement($parser, $name, $attrs) {
@@ -585,7 +598,9 @@ class FavoritesService {
                 $this->currentFavorite['lng'] = floatval($attrs['LON']);
             }
         }
-        //var_dump($attrs);
+        if ($name === 'TRK' or $name === 'RTE') {
+            $this->linesFound = true;
+        }
     }
 
     private function gpxEndElement($parser, $name) {

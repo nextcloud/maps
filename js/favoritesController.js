@@ -1146,7 +1146,7 @@ FavoritesController.prototype = {
             data: req,
             async: true
         }).done(function (response) {
-            OC.Notification.showTemporary(t('maps', '{nb} favorites imported from {path}', {nb: response, path: path}));
+            OC.Notification.showTemporary(t('maps', '{nb} favorites imported from {path}', {nb: response.nbImported, path: path}));
             var catToDel = [];
             for (var cat in that.categoryLayers) {
                 catToDel.push(cat);
@@ -1155,6 +1155,10 @@ FavoritesController.prototype = {
                 that.deleteCategoryMap(catToDel[i]);
             }
             that.getFavorites();
+            if (response.linesFound === true) {
+                OC.Notification.showTemporary(
+                    t('maps', 'Warning: tracks or routes were found in imported files, they were ignored.'));
+            }
         }).always(function (response) {
             $('#navigation-favorites').removeClass('icon-loading-small');
             $('.leaflet-container').css('cursor', 'grab');

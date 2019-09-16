@@ -61,7 +61,8 @@ class Version000009Date20190625000800 extends SimpleMigrationStep {
 				'notnull' => true,
 			]);
 			$table->setPrimaryKey(['id']);
-			$table->addUniqueIndex(['adr', 'adr_norm']);
+			$table->addIndex(['adr'], 'maps_adr');
+			$table->addIndex(['adr_norm'], 'maps_adr_norm');
 		}
 
 		return $schema;

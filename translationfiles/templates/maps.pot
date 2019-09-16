@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Nextcloud 3.14159\n"
 "Report-Msgid-Bugs-To: translations\\@example.com\n"
-"POT-Creation-Date: 2019-09-15 02:27+0000\n"
+"POT-Creation-Date: 2019-09-16 02:26+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -41,57 +41,57 @@ msgstr ""
 msgid "Open in Contacts app"
 msgstr ""
 
-#: /app/js/contactsController.js:350
+#: /app/js/contactsController.js:351
 msgid "Not grouped"
 msgstr ""
 
-#: /app/js/contactsController.js:371 /app/js/devicesController.js:342
+#: /app/js/contactsController.js:372 /app/js/devicesController.js:342
 #: /app/js/devicesController.js:1022 /app/js/favoritesController.js:501
 #: /app/js/tracksController.js:336 /app/templates/navigation/index.php:97
 msgid "Zoom to bounds"
 msgstr ""
 
-#: /app/js/contactsController.js:482 /app/js/contactsController.js:615
+#: /app/js/contactsController.js:485 /app/js/contactsController.js:633
 msgid "Home"
 msgstr ""
 
-#: /app/js/contactsController.js:485 /app/js/contactsController.js:616
+#: /app/js/contactsController.js:488 /app/js/contactsController.js:634
 msgid "Work"
 msgstr ""
 
-#: /app/js/contactsController.js:515
+#: /app/js/contactsController.js:533
 msgid "Delete this address"
 msgstr ""
 
-#: /app/js/contactsController.js:549
+#: /app/js/contactsController.js:567
 msgid "Failed to delete contact address"
 msgstr ""
 
-#: /app/js/contactsController.js:572
+#: /app/js/contactsController.js:590
 msgid "Failed to load contacts"
 msgstr ""
 
-#: /app/js/contactsController.js:607
+#: /app/js/contactsController.js:625
 msgid "New contact address"
 msgstr ""
 
-#: /app/js/contactsController.js:610
+#: /app/js/contactsController.js:628
 msgid "Contact name"
 msgstr ""
 
-#: /app/js/contactsController.js:613
+#: /app/js/contactsController.js:631
 msgid "Address type"
 msgstr ""
 
-#: /app/js/contactsController.js:617
+#: /app/js/contactsController.js:635
 msgid "Add address to contact"
 msgstr ""
 
-#: /app/js/contactsController.js:677
+#: /app/js/contactsController.js:695
 msgid "Failed to get contact list"
 msgstr ""
 
-#: /app/js/contactsController.js:763
+#: /app/js/contactsController.js:781
 msgid "Failed to place contact"
 msgstr ""
 

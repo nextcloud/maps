@@ -80,21 +80,30 @@ class UtilsController extends Controller {
             $ov[$key] = $value;
         }
 
-        // get routing-specific admin settings values
-        $settingsKeys = [
-            'osrmCarURL',
-            'osrmBikeURL',
-            'osrmFootURL',
-            'osrmDEMO',
-            'graphhopperAPIKEY',
-            'mapboxAPIKEY',
-            'graphhopperURL'
+        // The values here are the list of settings that need to be defined.
+        // "OR" logic applies here, so if one of the settings is defined, it's
+        // considered a match.
+        $featureChecks = [
+            'osrmCar' => ['osrmCarURL'],
+            'osrmBike' => ['osrmBikeURL'],
+            'osrmFoot' => ['osrmFootURL'],
+            'osrmDEMO' => ['osrmDEMO'],
+            'graphhopper' => ['graphhopperURL', 'graphhopperAPIKEY'],
+            'mapbox' => ['mapboxAPIKEY'],
         ];
-        foreach ($settingsKeys as $k) {
-            $v = $this->config->getAppValue('maps', $k);
-            $ov[$k] = $v;
+
+        $features = [];
+        foreach ($featureChecks as $feature => $checks) {
+            foreach ($checks as $opt) {
+                if ($this->config->getAppValue('maps', $opt) === '') {
+                    continue;
+                }
+                $features[$feature] = true;
+                break;
+            }
         }
-        return new DataResponse(['values'=>$ov]);
+
+        return new DataResponse(['values' => $ov, 'features' => $features]);
     }
 
     /**

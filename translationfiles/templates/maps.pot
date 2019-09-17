@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Nextcloud 3.14159\n"
 "Report-Msgid-Bugs-To: translations\\@example.com\n"
-"POT-Creation-Date: 2019-09-16 02:26+0000\n"
+"POT-Creation-Date: 2019-09-17 02:26+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -208,8 +208,8 @@ msgid "Failed to import devices"
 msgstr ""
 
 #: /app/js/favoritesController.js:23 /app/lib/Service/FavoritesService.php:387
-#: /app/lib/Service/FavoritesService.php:495
-#: /app/lib/Service/FavoritesService.php:610
+#: /app/lib/Service/FavoritesService.php:504
+#: /app/lib/Service/FavoritesService.php:625
 msgid "Personal"
 msgstr ""
 
@@ -297,7 +297,12 @@ msgstr ""
 msgid "{nb} favorites imported from {path}"
 msgstr ""
 
-#: /app/js/favoritesController.js:1162 /app/js/filetypes.js:33
+#: /app/js/favoritesController.js:1160
+msgid ""
+"Warning: tracks or routes were found in imported files, they were ignored."
+msgstr ""
+
+#: /app/js/favoritesController.js:1166 /app/js/filetypes.js:33
 msgid "Failed to import favorites"
 msgstr ""
 

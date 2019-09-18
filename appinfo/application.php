@@ -15,6 +15,7 @@ namespace OCA\Maps\AppInfo;
 use OCA\Maps\DB\FavoriteShareMapper;
 use \OCP\AppFramework\App;
 use \OCP\IServerContainer;
+use OCA\Maps\Controller\RoutingProxyController;
 use OCA\Maps\Hooks\FileHooks;
 use OCA\Maps\Service\PhotofilesService;
 use OCA\Maps\Service\TracksService;
@@ -39,6 +40,17 @@ class Application extends App {
         });
 
         $this->getContainer()->query('FileHooks')->register();
+
+        $container->registerService(
+            'RoutingProxyController', function ($c) {
+                return new RoutingProxyController(
+                    $c->query('AppName'),
+                    $c->query('Request'),
+                    $c->query('ServerContainer')->getLogger(),
+                    $c->query('ServerContainer')->getConfig()
+                );
+            }
+        );
 
         $this->registerFeaturePolicy();
     }

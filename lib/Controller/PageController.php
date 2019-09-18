@@ -106,33 +106,6 @@ class PageController extends Controller {
             $csp->addAllowedImageDomain('https://*.ssl.fastly.net');
             $csp->addAllowedImageDomain('https://*.openstreetmap.se');
 
-            // default routing engine
-            $csp->addAllowedConnectDomain('https://*.project-osrm.org');
-            $csp->addAllowedConnectDomain('https://api.mapbox.com');
-            $csp->addAllowedConnectDomain('https://events.mapbox.com');
-            $csp->addAllowedConnectDomain('https://graphhopper.com');
-
-            $csp->addAllowedChildSrcDomain("blob:");
-            // allow connections to custom routing engines
-            $urlKeys = [
-                'osrmBikeURL',
-                'osrmCarURL',
-                'osrmFootURL',
-                'graphhopperURL'
-            ];
-            foreach ($urlKeys as $key) {
-                $url = $this->config->getAppValue('maps', $key);
-                if ($url !== '') {
-                    $scheme = parse_url($url, PHP_URL_SCHEME);
-                    $host = parse_url($url, PHP_URL_HOST);
-                    $port = parse_url($url, PHP_URL_PORT);
-                    $cleanUrl = $scheme . '://' . $host;
-                    if ($port && $port !== '') {
-                        $cleanUrl .= ':' . $port;
-                    }
-                    $csp->addAllowedConnectDomain($cleanUrl);
-                }
-            }
             //$csp->addAllowedConnectDomain('http://192.168.0.66:5000');
 
             // poi images

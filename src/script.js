@@ -121,6 +121,7 @@ import { brify, getUrlParameter, formatAddress } from './utils';
             var url = generateUrl('/apps/maps/getOptionsValues');
             var req = {};
             var optionsValues = {};
+            var availableFeatures = {};
             $.ajax({
                 type: 'POST',
                 url: url,
@@ -128,6 +129,7 @@ import { brify, getUrlParameter, formatAddress } from './utils';
                 async: true
             }).done(function (response) {
                 optionsValues = response.values;
+                availableFeatures = response.features;
 
                 // check if install scan was done
                 if (optionsValues.hasOwnProperty('installScanDone') && optionsValues.installScanDone === 'no') {
@@ -331,20 +333,19 @@ import { brify, getUrlParameter, formatAddress } from './utils';
 
                 // routing
                 that.nbRouters = 0;
-                if (optionsValues.hasOwnProperty('osrmCarURL') && optionsValues.osrmCarURL !== '') {
+                if (availableFeatures.hasOwnProperty('osrmCar') && availableFeatures.osrmCar) {
                     that.nbRouters++;
                 }
-                if (optionsValues.hasOwnProperty('osrmBikeURL') && optionsValues.osrmBikeURL !== '') {
+                if (availableFeatures.hasOwnProperty('osrmBike') && availableFeatures.osrmBike) {
                     that.nbRouters++;
                 }
-                if (optionsValues.hasOwnProperty('osrmFootURL') && optionsValues.osrmFootURL !== '') {
+                if (availableFeatures.hasOwnProperty('osrmFoot') && availableFeatures.osrmFoot) {
                     that.nbRouters++;
                 }
-                if (optionsValues.hasOwnProperty('mapboxAPIKEY') && optionsValues.mapboxAPIKEY !== '') {
+                if (availableFeatures.hasOwnProperty('mapbox') && availableFeatures.mapbox) {
                     that.nbRouters++;
                 }
-                if ((optionsValues.hasOwnProperty('graphhopperURL') && optionsValues.graphhopperURL !== '') ||
-                    (optionsValues.hasOwnProperty('graphhopperAPIKEY') && optionsValues.graphhopperAPIKEY !== '') ){
+                if (availableFeatures.hasOwnProperty('graphhopper') && availableFeatures.graphhopper) {
                     that.nbRouters++;
                 }
                 if (that.nbRouters === 0 && !OC.isUserAdmin()) {
@@ -360,7 +361,7 @@ import { brify, getUrlParameter, formatAddress } from './utils';
                     // and we don't init routingController
                 }
                 else {
-                    routingController.initRoutingControl(mapController.map, optionsValues);
+                    routingController.initRoutingControl(mapController.map, optionsValues, availableFeatures);
                 }
 
                 //if (optionsValues.hasOwnProperty('routingEnabled') && optionsValues.routingEnabled === 'true') {
@@ -716,7 +717,7 @@ import { brify, getUrlParameter, formatAddress } from './utils';
         enabled: false,
         routers: {},
         selectedRouter: 'osrmDEMO',
-        initRoutingControl: function(map, optionsValues) {
+        initRoutingControl: function(map, optionsValues, availableFeatures) {
             this.map = map;
             var that = this;
 
@@ -802,7 +803,7 @@ import { brify, getUrlParameter, formatAddress } from './utils';
             this.routers.osrmDEMO = {
                 name: '🚗 ' + t('maps', 'By car (OSRM demo)'),
                 router: L.Routing.osrmv1({
-                    serviceUrl: 'https://router.project-osrm.org/route/v1',
+                    serviceUrl: OC.generateUrl('/apps/maps/api/requestRoute/osrm/demo'),
                     //profile: 'driving', // works with demo server
                     profile: 'car', // works with demo server
                     //profile: 'bicycle', // does not work with demo server...
@@ -857,38 +858,33 @@ import { brify, getUrlParameter, formatAddress } from './utils';
 
             // add routers from options values
             var nbRoutersAdded = 0;
-            if (optionsValues.hasOwnProperty('osrmCarURL') && optionsValues.osrmCarURL !== '') {
-                this.addRouter('osrmCar', '🚗 ' + t('maps', 'By car (OSRM)'), optionsValues.osrmCarURL, null);
+            if (availableFeatures.hasOwnProperty('osrmCar') && availableFeatures.osrmCar) {
+                this.addRouter('osrmCar', '🚗 ' + t('maps', 'By car (OSRM)'));
                 nbRoutersAdded++;
             }
-            if (optionsValues.hasOwnProperty('osrmBikeURL') && optionsValues.osrmBikeURL !== '') {
-                this.addRouter('osrmBike', '🚲 ' + t('maps', 'By bike (OSRM)'), optionsValues.osrmBikeURL, null);
+            if (availableFeatures.hasOwnProperty('osrmBike') && availableFeatures.osrmBike) {
+                this.addRouter('osrmBike', '🚲 ' + t('maps', 'By bike (OSRM)'));
                 nbRoutersAdded++;
             }
-            if (optionsValues.hasOwnProperty('osrmFootURL') && optionsValues.osrmFootURL !== '') {
-                this.addRouter('osrmFoot', '🚶 ' + t('maps', 'By foot (OSRM)'), optionsValues.osrmFootURL, null);
+            if (availableFeatures.hasOwnProperty('osrmFoot') && availableFeatures.osrmFoot) {
+                this.addRouter('osrmFoot', '🚶 ' + t('maps', 'By foot (OSRM)'));
                 nbRoutersAdded++;
             }
-            if (optionsValues.hasOwnProperty('mapboxAPIKEY') && optionsValues.mapboxAPIKEY !== '') {
-                this.addRouter('mapbox/cycling', '🚲 ' + t('maps', 'By bike (Mapbox)'), null, optionsValues.mapboxAPIKEY);
-                this.addRouter('mapbox/walking', '🚶 ' + t('maps', 'By foot (Mapbox)'), null, optionsValues.mapboxAPIKEY);
-                this.addRouter('mapbox/driving-traffic', '🚗 ' + t('maps', 'By car with traffic (Mapbox)'), null, optionsValues.mapboxAPIKEY);
-                this.addRouter('mapbox/driving', '🚗 ' + t('maps', 'By car without traffic (Mapbox)'), null, optionsValues.mapboxAPIKEY);
+            if (availableFeatures.hasOwnProperty('mapbox') && availableFeatures.mapbox) {
+                this.addRouter('mapbox/cycling', '🚲 ' + t('maps', 'By bike (Mapbox)'));
+                this.addRouter('mapbox/walking', '🚶 ' + t('maps', 'By foot (Mapbox)'));
+                this.addRouter('mapbox/driving-traffic', '🚗 ' + t('maps', 'By car with traffic (Mapbox)'));
+                this.addRouter('mapbox/driving', '🚗 ' + t('maps', 'By car without traffic (Mapbox)'));
                 nbRoutersAdded++;
             }
-            if ((optionsValues.hasOwnProperty('graphhopperURL') && optionsValues.graphhopperURL !== '') ||
-                (optionsValues.hasOwnProperty('graphhopperAPIKEY') && optionsValues.graphhopperAPIKEY !== '') ){
-                var apikey = undefined;
-                if (optionsValues.hasOwnProperty('graphhopperAPIKEY') && optionsValues.graphhopperAPIKEY !== '') {
-                    apikey = optionsValues.graphhopperAPIKEY;
-                }
-                this.addRouter('graphhopperCar', '🚗 ' + t('maps', 'By car (GraphHopper)'), optionsValues.graphhopperURL, apikey);
-                this.addRouter('graphhopperBike', '🚲 ' + t('maps', 'By bike (GraphHopper)'), optionsValues.graphhopperURL, apikey);
-                this.addRouter('graphhopperFoot', '🚶 ' + t('maps', 'By Foot (GraphHopper)'), optionsValues.graphhopperURL, apikey);
+            if (availableFeatures.hasOwnProperty('graphhopper') && availableFeatures.graphhopper) {
+                this.addRouter('graphhopperCar', '🚗 ' + t('maps', 'By car (GraphHopper)'));
+                this.addRouter('graphhopperBike', '🚲 ' + t('maps', 'By bike (GraphHopper)'));
+                this.addRouter('graphhopperFoot', '🚶 ' + t('maps', 'By Foot (GraphHopper)'));
                 nbRoutersAdded++;
             }
-            if (nbRoutersAdded === 0 && optionsValues.hasOwnProperty('osrmDEMO') && optionsValues.osrmDEMO === '1') {
-                this.addRouter('osrmDEMO', '🚗 ' + 'By car (OSRM demo)', null, null);
+            if (nbRoutersAdded === 0 && availableFeatures.hasOwnProperty('osrmDEMO') && availableFeatures.osrmDEMO) {
+                this.addRouter('osrmDEMO', '🚗 ' + 'By car (OSRM demo)');
             }
             else {
                 delete this.routers.osrmDEMO;
@@ -975,9 +971,10 @@ import { brify, getUrlParameter, formatAddress } from './utils';
         },
 
         // create router and make it accessible in the interface
-        addRouter: function(type, name, url, apikey) {
+        addRouter: function(type, name) {
+            var options;
             if (type === 'graphhopperBike' || type === 'graphhopperCar' || type === 'graphhopperFoot') {
-                var options = {};
+                options = {};
                 if (type === 'graphhopperCar') {
                     options.urlParameters = {
                         vehicle: 'car' // available ones : car, foot, bike, bike2, mtb, racingbike, motorcycle
@@ -993,17 +990,15 @@ import { brify, getUrlParameter, formatAddress } from './utils';
                         vehicle: 'foot'
                     };
                 }
-                if (url) {
-                    options.serviceUrl = url;
-                }
+                options.serviceUrl = OC.generateUrl('/apps/maps/api/requestRoute/graphhopper');
                 this.routers[type] = {
                     name: name,
-                    router: L.Routing.graphHopper(apikey, options)
+                    router: L.Routing.graphHopper(null, options)
                 };
             }
             else if (type === 'osrmBike' || type === 'osrmCar' || type === 'osrmFoot') {
-                var options = {
-                    serviceUrl: url,
+                options = {
+                    serviceUrl: OC.generateUrl('/apps/maps/api/requestRoute/osrm'),
                     suppressDemoServerWarning: true,
                     // this makes OSRM use our local translations
                     // otherwise it uses osrm-text-instructions which requires to import another lib
@@ -1025,12 +1020,14 @@ import { brify, getUrlParameter, formatAddress } from './utils';
                 };
             }
             else if (type === 'mapbox/cycling' || type === 'mapbox/driving-traffic' || type === 'mapbox/driving' || type === 'mapbox/walking') {
-                var options = {
+                options = {
+                    serviceUrl: OC.generateUrl('/apps/maps/api/requestRoute/mapbox'),
                     profile: type
                 };
                 this.routers[type] = {
                     name: name,
-                    router: L.Routing.mapbox(apikey, options)
+                    // We pass null as the API key to reinject via backend.
+                    router: L.Routing.mapbox(null, options)
                 };
             }
             else if (type === 'osrmDEMO') {

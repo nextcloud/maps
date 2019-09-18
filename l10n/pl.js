@@ -68,6 +68,7 @@ OC.L10N.register(
     "Favorites exported in {path}" : "Ulubione wyeksportowane do {path}",
     "Failed to export favorites" : "Nie udało się wyeksportować ulubionych",
     "{nb} favorites imported from {path}" : "{nb} ulubione zaimportowane z {path}",
+    "Warning: tracks or routes were found in imported files, they were ignored." : "Ostrzeżenie: ścieżki lub trasy, które zostały znalezione w importowanych plikach, zostały pominięte.",
     "Failed to import favorites" : "Nie udało się zaimportować ulubionych",
     "View in Maps" : "Wyświetl w Maps",
     "Import as favorites in Maps" : "Importuj jako ulubione w Maps",

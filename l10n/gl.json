@@ -66,6 +66,7 @@
     "Favorites exported in {path}" : "Favoritos exportados en {path}",
     "Failed to export favorites" : "Produciuse un fallo ao exportar os favoritos",
     "{nb} favorites imported from {path}" : "{nb} favoritos importados dende {path}",
+    "Warning: tracks or routes were found in imported files, they were ignored." : "Aviso: atopáronse pistas ou rutas en ficheiros importados, van ser ignoradas.",
     "Failed to import favorites" : "Produciuse un fallo ao importar os favoritos",
     "View in Maps" : "Ver en Mapas",
     "Import as favorites in Maps" : "Importar como favoritos en Maps",

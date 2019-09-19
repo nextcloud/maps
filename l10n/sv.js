@@ -114,6 +114,7 @@ OC.L10N.register(
     "Turn around" : "Vänd om",
     " on {road}" : " på {road}",
     "Continue {dir}" : "Fortsätt {dir}",
+    "Take the {exitStr} exit in the roundabout" : "Ta den {exitStr} avfarten i rondellen",
     " onto {road}" : " till {road}",
     "Destination reached" : "Destination nådd",
     "onto {road}" : " till {road}",

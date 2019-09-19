@@ -84,6 +84,7 @@ OC.L10N.register(
     "Failed to reset photos coordinates" : "No s'ha pogut reiniciar les coordenades de les fotos",
     "Geo link ({geoLink}) copied to clipboard" : "S'ha copiat del porta-retalls el GEO enllaç ({geoLink})",
     "Failed to save option values" : "No s'han pogut desar els valors de les opcions",
+    "Media scan was not done yet. Wait a few minutes/hours and reload this page to see your photos/tracks." : "L'exploració mediàtica encara no s'ha fet. Espereu uns minuts / hores i torneu a carregar aquesta pàgina per veure les vostres fotos / pistes.",
     "Failed to restore options values" : "No s'ha pogut restaurar els valors de les opcions",
     "Place photos" : "Ubica fotos",
     "Place contact" : "Ubica un contacte",
@@ -202,6 +203,7 @@ OC.L10N.register(
     "Moving average pace" : "Mitjana mòbil de ritme",
     "Show elevation" : "Mostra altitud",
     "Failed to change track color" : "No s'ha pogut canviar el color del trajecte",
+    "🌍🌏🌎 The whole world fits inside your cloud!" : "🌍🌏🌎 Tot el món cap dins del vostre núvol!",
     "Maps routing settings" : "Configuració dels mapes d'encaminament",
     "OSRM settings" : "Configuració d'OSRM",
     "An OSRM server URL looks like this : https://my.osrm.server.org:5000/route/v1" : "Un URL del servidor OSRM té aquest aspecte: https://my.osrm.server.org:5000/route/v1",
@@ -236,6 +238,8 @@ OC.L10N.register(
     "Sort by date" : "Ordena per data",
     "Settings" : "Paràmetres",
     "Track my position" : "Rastreja la meva posició",
-    "Display time filter slider" : "Mostra el control lliscant de filtre de temps"
+    "Display time filter slider" : "Mostra el control lliscant de filtre de temps",
+    "Keep in mind that map projections always distort sizes of countries. The standard Mercator projection is particularly biased. Read more at:" : "Tingueu en compte que les projeccions de mapes sempre distorsionen la mida dels països. La projecció estàndard de Mercator és esbiaixada. Llegiu-ne més a:",
+    "The True Size of Africa" : "La mida real d'Àfrica"
 },
 "nplurals=2; plural=(n != 1);");

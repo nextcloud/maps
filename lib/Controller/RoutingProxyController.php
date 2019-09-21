@@ -16,19 +16,24 @@ use OCP\ILogger;
 use OCP\IRequest;
 use OCP\AppFramework\Controller;
 use OCP\AppFramework\Http;
+use OCP\AppFramework\Http\JSONResponse;
 use OCP\AppFramework\Http\Response;
-
-use OCA\Maps\Http\ProxyResponse;
+use OCP\Http\Client\IClientService;
 
 class RoutingProxyController extends Controller {
+    const USER_AGENT = 'Nextcloud Maps (https://github.com/nextcloud/maps)';
+
     private $logger;
     private $config;
+    private $client;
 
     public function __construct(string $appname, IRequest $request,
-                                ILogger $logger, IConfig $config) {
+                                ILogger $logger, IConfig $config,
+                                IClientService $client) {
         parent::__construct($appname, $request);
         $this->logger = $logger;
         $this->config = $config;
+        $this->client = $client;
     }
 
     /**
@@ -88,9 +93,13 @@ class RoutingProxyController extends Controller {
         }
         $url = $baseUrl . '/' . ltrim($path, '/');
         $url .= $this->buildQueryStringArg($extraQuery);
-        $proxy = new ProxyResponse($url);
-        $proxy->sendRequest($this->logger);
-        return $proxy;
+        $client = $this->client->newClient();
+        $response = $client->get($url, [
+            'http_errors' => false,
+            'headers' => ['User-Agent' => self::USER_AGENT]
+        ]);
+        return new JSONResponse(json_decode($response->getBody(), true),
+                                $response->getStatusCode());
     }
 
     /**

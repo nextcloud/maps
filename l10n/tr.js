@@ -68,6 +68,7 @@ OC.L10N.register(
     "Favorites exported in {path}" : "Sık kullanılanlar {path} yoluna dışa aktarıldı",
     "Failed to export favorites" : "Sık kullanılanlar dışa aktarılamadı",
     "{nb} favorites imported from {path}" : "{nb} sık kullanılan {path} yolundan içe aktarıldı",
+    "Warning: tracks or routes were found in imported files, they were ignored." : "Uyarı: İçe aktarılan dosyalarda yol ya da rotalar bulundu. Bunlar yok sayılacak.",
     "Failed to import favorites" : "Sık kullanılanlar içe aktarılamadı",
     "View in Maps" : "Haritalarda Görüntüle",
     "Import as favorites in Maps" : "Haritalarda sık kullanılanlar olarak içe aktar",

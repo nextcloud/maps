@@ -2,8 +2,11 @@ OC.L10N.register(
     "maps",
     {
     "Maps" : "Mapy",
+    "Settings were successfully saved" : "Nastavení úspěšně uloženo.",
     "Failed to save settings" : "Nepodařilo se uložit nastavení",
+    "All contacts" : "Všechny kontakty",
     "Zoom to bounds" : "Přiblížit na obrys",
+    "Home" : "Domů",
     "Failed to load contacts" : "Selhalo nahrávání kontaktů",
     "Contact name" : "Název kontaktu",
     "Address type" : "Typ adresy",

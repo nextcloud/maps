@@ -68,6 +68,7 @@ OC.L10N.register(
     "Favorites exported in {path}" : "收藏已导出到{path}",
     "Failed to export favorites" : "无法导出收藏",
     "{nb} favorites imported from {path}" : "从{path}导入{nb}个收藏",
+    "Warning: tracks or routes were found in imported files, they were ignored." : "警告：在导入文件中未找到路线或路由，它们将被忽略。",
     "Failed to import favorites" : "无法导入收藏",
     "View in Maps" : "在地图应用中查看",
     "Import as favorites in Maps" : "在地图中导入为收藏",

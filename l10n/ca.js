@@ -68,6 +68,7 @@ OC.L10N.register(
     "Favorites exported in {path}" : "S'han exportat els favorits a {path}",
     "Failed to export favorites" : "No s'han pogut exportar els favorits",
     "{nb} favorites imported from {path}" : "S'han importat {nb} des de {path}",
+    "Warning: tracks or routes were found in imported files, they were ignored." : "Avís: s'han trobat camins o rutes als fitxers importats. S'han ignorat.",
     "Failed to import favorites" : "No s'han pogut importar els favorits",
     "View in Maps" : "Mostra-ho a Mapes",
     "Import as favorites in Maps" : "Importa com a favorit als Mapes",

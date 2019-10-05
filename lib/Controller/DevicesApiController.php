@@ -113,10 +113,10 @@ class DevicesApiController extends ApiController {
      */
     public function addDevicePoint($apiversion, $lat, $lng, $timestamp=null, $user_agent=null, $altitude=null, $battery=null, $accuracy=null) {
         if (is_numeric($lat) and is_numeric($lng)) {
-            $timestamp = normalizeOptionalNumber($timestamp);
-            $altitude = normalizeOptionalNumber($altitude);
-            $battery = normalizeOptionalNumber($battery);
-            $accuracy = normalizeOptionalNumber($accuracy);
+            $timestamp = $this->normalizeOptionalNumber($timestamp);
+            $altitude = $this->normalizeOptionalNumber($altitude);
+            $battery = $this->normalizeOptionalNumber($battery);
+            $accuracy = $this->normalizeOptionalNumber($accuracy);
             $ts = $timestamp;
             if ($timestamp === null) {
                 $ts = (new \DateTime())->getTimestamp();

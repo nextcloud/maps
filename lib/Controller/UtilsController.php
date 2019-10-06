@@ -83,7 +83,7 @@ class UtilsController extends Controller {
         // The values here are the list of settings that need to be defined.
         // "OR" logic applies here, so if one of the settings is defined, it's
         // considered a match.
-        $featureChecks = [
+        $routingProviderChecks = [
             'osrmCar' => ['osrmCarURL'],
             'osrmBike' => ['osrmBikeURL'],
             'osrmFoot' => ['osrmFootURL'],
@@ -92,18 +92,21 @@ class UtilsController extends Controller {
             'mapbox' => ['mapboxAPIKEY'],
         ];
 
-        $features = [];
-        foreach ($featureChecks as $feature => $checks) {
-            foreach ($checks as $opt) {
-                if ($this->config->getAppValue('maps', $opt) === '') {
+        $routingProviders = [];
+        foreach ($routingProviderChecks as $provider => $checks) {
+            foreach ($checks as $option) {
+                if ($this->config->getAppValue('maps', $option) === '') {
                     continue;
                 }
-                $features[$feature] = true;
+                $routingProviders[$provider] = true;
                 break;
             }
         }
 
-        return new DataResponse(['values' => $ov, 'features' => $features]);
+        return new DataResponse([
+            'values' => $ov,
+            'routingProviders' => $routingProviders
+        ]);
     }
 
     /**

@@ -121,7 +121,7 @@ import { brify, getUrlParameter, formatAddress } from './utils';
             var url = generateUrl('/apps/maps/getOptionsValues');
             var req = {};
             var optionsValues = {};
-            var availableFeatures = {};
+            var availableRoutingProviders = {};
             $.ajax({
                 type: 'POST',
                 url: url,
@@ -129,7 +129,7 @@ import { brify, getUrlParameter, formatAddress } from './utils';
                 async: true
             }).done(function (response) {
                 optionsValues = response.values;
-                availableFeatures = response.features;
+                availableRoutingProviders = response.routingProviders;
 
                 // check if install scan was done
                 if (optionsValues.hasOwnProperty('installScanDone') && optionsValues.installScanDone === 'no') {
@@ -333,19 +333,19 @@ import { brify, getUrlParameter, formatAddress } from './utils';
 
                 // routing
                 that.nbRouters = 0;
-                if (availableFeatures.hasOwnProperty('osrmCar') && availableFeatures.osrmCar) {
+                if (availableRoutingProviders.hasOwnProperty('osrmCar') && availableRoutingProviders.osrmCar) {
                     that.nbRouters++;
                 }
-                if (availableFeatures.hasOwnProperty('osrmBike') && availableFeatures.osrmBike) {
+                if (availableRoutingProviders.hasOwnProperty('osrmBike') && availableRoutingProviders.osrmBike) {
                     that.nbRouters++;
                 }
-                if (availableFeatures.hasOwnProperty('osrmFoot') && availableFeatures.osrmFoot) {
+                if (availableRoutingProviders.hasOwnProperty('osrmFoot') && availableRoutingProviders.osrmFoot) {
                     that.nbRouters++;
                 }
-                if (availableFeatures.hasOwnProperty('mapbox') && availableFeatures.mapbox) {
+                if (availableRoutingProviders.hasOwnProperty('mapbox') && availableRoutingProviders.mapbox) {
                     that.nbRouters++;
                 }
-                if (availableFeatures.hasOwnProperty('graphhopper') && availableFeatures.graphhopper) {
+                if (availableRoutingProviders.hasOwnProperty('graphhopper') && availableRoutingProviders.graphhopper) {
                     that.nbRouters++;
                 }
                 if (that.nbRouters === 0 && !OC.isUserAdmin()) {
@@ -361,7 +361,7 @@ import { brify, getUrlParameter, formatAddress } from './utils';
                     // and we don't init routingController
                 }
                 else {
-                    routingController.initRoutingControl(mapController.map, optionsValues, availableFeatures);
+                    routingController.initRoutingControl(mapController.map, optionsValues, availableRoutingProviders);
                 }
 
                 //if (optionsValues.hasOwnProperty('routingEnabled') && optionsValues.routingEnabled === 'true') {
@@ -717,7 +717,7 @@ import { brify, getUrlParameter, formatAddress } from './utils';
         enabled: false,
         routers: {},
         selectedRouter: 'osrmDEMO',
-        initRoutingControl: function(map, optionsValues, availableFeatures) {
+        initRoutingControl: function(map, optionsValues, availableRoutingProviders) {
             this.map = map;
             var that = this;
 
@@ -858,32 +858,32 @@ import { brify, getUrlParameter, formatAddress } from './utils';
 
             // add routers from options values
             var nbRoutersAdded = 0;
-            if (availableFeatures.hasOwnProperty('osrmCar') && availableFeatures.osrmCar) {
+            if (availableRoutingProviders.hasOwnProperty('osrmCar') && availableRoutingProviders.osrmCar) {
                 this.addRouter('osrmCar', '🚗 ' + t('maps', 'By car (OSRM)'));
                 nbRoutersAdded++;
             }
-            if (availableFeatures.hasOwnProperty('osrmBike') && availableFeatures.osrmBike) {
+            if (availableRoutingProviders.hasOwnProperty('osrmBike') && availableRoutingProviders.osrmBike) {
                 this.addRouter('osrmBike', '🚲 ' + t('maps', 'By bike (OSRM)'));
                 nbRoutersAdded++;
             }
-            if (availableFeatures.hasOwnProperty('osrmFoot') && availableFeatures.osrmFoot) {
+            if (availableRoutingProviders.hasOwnProperty('osrmFoot') && availableRoutingProviders.osrmFoot) {
                 this.addRouter('osrmFoot', '🚶 ' + t('maps', 'By foot (OSRM)'));
                 nbRoutersAdded++;
             }
-            if (availableFeatures.hasOwnProperty('mapbox') && availableFeatures.mapbox) {
+            if (availableRoutingProviders.hasOwnProperty('mapbox') && availableRoutingProviders.mapbox) {
                 this.addRouter('mapbox/cycling', '🚲 ' + t('maps', 'By bike (Mapbox)'));
                 this.addRouter('mapbox/walking', '🚶 ' + t('maps', 'By foot (Mapbox)'));
                 this.addRouter('mapbox/driving-traffic', '🚗 ' + t('maps', 'By car with traffic (Mapbox)'));
                 this.addRouter('mapbox/driving', '🚗 ' + t('maps', 'By car without traffic (Mapbox)'));
                 nbRoutersAdded++;
             }
-            if (availableFeatures.hasOwnProperty('graphhopper') && availableFeatures.graphhopper) {
+            if (availableRoutingProviders.hasOwnProperty('graphhopper') && availableRoutingProviders.graphhopper) {
                 this.addRouter('graphhopperCar', '🚗 ' + t('maps', 'By car (GraphHopper)'));
                 this.addRouter('graphhopperBike', '🚲 ' + t('maps', 'By bike (GraphHopper)'));
                 this.addRouter('graphhopperFoot', '🚶 ' + t('maps', 'By Foot (GraphHopper)'));
                 nbRoutersAdded++;
             }
-            if (nbRoutersAdded === 0 && availableFeatures.hasOwnProperty('osrmDEMO') && availableFeatures.osrmDEMO) {
+            if (nbRoutersAdded === 0 && availableRoutingProviders.hasOwnProperty('osrmDEMO') && availableRoutingProviders.osrmDEMO) {
                 this.addRouter('osrmDEMO', '🚗 ' + 'By car (OSRM demo)');
             }
             else {

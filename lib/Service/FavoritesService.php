@@ -15,17 +15,20 @@ namespace OCA\Maps\Service;
 use OCP\IL10N;
 use OCP\ILogger;
 use OCP\DB\QueryBuilder\IQueryBuilder;
+use OC\Security\SecureRandom;
 
 use OC\Archive\ZIP;
 
 //use function \OCA\Maps\Service\endswith;
 
-class FavoritesService {
+class FavoritesService
+{
 
     private $l10n;
     private $logger;
     private $qb;
     private $dbconnection;
+    private $secureRandom;
 
     private $currentFavorite;
     private $currentFavoritesList;
@@ -35,15 +38,128 @@ class FavoritesService {
     private $kmlInsidePlacemark;
     private $kmlCurrentCategory;
 
-    public function __construct (ILogger $logger, IL10N $l10n) {
+    public function __construct(ILogger $logger, IL10N $l10n, SecureRandom $secureRandom)
+    {
         $this->l10n = $l10n;
         $this->logger = $logger;
+        $this->secureRandom = $secureRandom;
         $this->qb = \OC::$server->getDatabaseConnection()->getQueryBuilder();
         $this->dbconnection = \OC::$server->getDatabaseConnection();
     }
 
-    private function db_quote_escape_string($str){
+    private function db_quote_escape_string($str)
+    {
         return $this->dbconnection->quote($str);
+    }
+
+    public function getFavoritesShare($token) {
+        $qb = $this->qb;
+
+        $qb->select("owner", "category")
+            ->from("maps_favorite_shares")
+            ->where(
+                $qb->expr()->eq('token', $qb->createNamedParameter($token, IQueryBuilder::PARAM_STR))
+            );
+
+        $req = $qb->execute();
+
+        $row = $req->fetch();
+
+        if ($row == false) {
+            return null;
+        }
+
+        $response = [
+            'owner' => $row['owner'],
+            'category' => $row['category']
+        ];
+
+        $qb->resetQueryParts();
+
+        return $response;
+    }
+
+    /**
+     * @param $token
+     * @return bool | array
+     */
+    public function getFavoritesByShareToken($token) {
+        $favorites = [];
+        $qb = $this->qb;
+
+        $qb->select('id', 'owner', 'category', 'token')
+            ->from('maps_favorite_shares')
+            ->where(
+                $qb->expr()->eq('token', $qb->createNamedParameter($token, IQueryBuilder::PARAM_STR))
+            );
+
+        $req = $qb->execute();
+
+        if ($req->rowCount() === 0) {
+            return false;
+        }
+
+        $row = $req->fetch();
+
+        $id = $row['id'];
+        $type = $row['type'];
+        $userId = $row['owner'];
+        $category = $row['category'];
+
+        $req->closeCursor();
+        $qb->resetQueryParts();
+
+        $qb->select('id', 'name', 'date_created', 'date_modified', 'lat', 'lng', 'category', 'comment', 'extensions')
+            ->from('maps_favorites', 'f')
+            ->where(
+                $qb->expr()->eq('user_id', $qb->createNamedParameter($userId, IQueryBuilder::PARAM_STR))
+            )->andWhere(
+                $qb->expr()->eq('category', $qb->createNamedParameter($category, IQueryBuilder::PARAM_STR))
+            );
+
+        $req = $qb->execute();
+
+        while ($row = $req->fetch()) {
+            array_push($favorites, [
+                'id' => intval($row['id']),
+                'name' => $row['name'],
+                'date_modified' => intval($row['date_modified']),
+                'date_created' => intval($row['date_created']),
+                'lat' => floatval($row['lat']),
+                'lng' => floatval($row['lng']),
+                'category' => $row['category'],
+                'comment' => $row['comment'],
+                'extensions' => $row['extensions']
+            ]);
+        }
+        $req->closeCursor();
+        $qb->resetQueryParts();
+
+        return $favorites;
+    }
+
+    public function getSharedCategories($owner) {
+        $sharedCategories = [];
+
+        $qb = $this->qb;
+        $qb->select('category', 'token')
+            ->from('maps_favorite_shares')
+            ->where(
+                $qb->expr()->eq('owner',  $qb->createNamedParameter($owner, IQueryBuilder::PARAM_STR))
+            );
+        $req = $qb->execute();
+
+        while ($row = $req->fetch()) {
+            array_push($sharedCategories, [
+                'category' => $row['category'],
+                'token' => $row['token']
+            ]);
+        }
+
+        $req->closeCursor();
+        $qb->resetQueryParts();
+
+        return $sharedCategories;
     }
 
     /**
@@ -51,7 +167,8 @@ class FavoritesService {
      * @param int $pruneBefore
      * @return array with favorites
      */
-    public function getFavoritesFromDB($userId, $pruneBefore=0) {
+    public function getFavoritesFromDB($userId, $pruneBefore = 0)
+    {
         $favorites = [];
         $qb = $this->qb;
         $qb->select('id', 'name', 'date_created', 'date_modified', 'lat', 'lng', 'category', 'comment', 'extensions')
@@ -93,7 +210,8 @@ class FavoritesService {
         return $favorites;
     }
 
-    public function getFavoriteFromDB($id, $userId=null) {
+    public function getFavoriteFromDB($id, $userId = null, $category = null)
+    {
         $favorite = null;
         $qb = $this->qb;
         $qb->select('id', 'name', 'date_modified', 'date_created', 'lat', 'lng', 'category', 'comment', 'extensions')
@@ -104,6 +222,11 @@ class FavoritesService {
         if ($userId !== null) {
             $qb->andWhere(
                 $qb->expr()->eq('user_id', $qb->createNamedParameter($userId, IQueryBuilder::PARAM_STR))
+            );
+        }
+        if ($category !== null) {
+            $qb->andWhere(
+                $qb->expr()->eq('category', $qb->createNamedParameter($category, IQueryBuilder::PARAM_STR))
             );
         }
         $req = $qb->execute();
@@ -136,7 +259,8 @@ class FavoritesService {
         return $favorite;
     }
 
-    public function addFavoriteToDB($userId, $name, $lat, $lng, $category, $comment, $extensions) {
+    public function addFavoriteToDB($userId, $name, $lat, $lng, $category, $comment, $extensions)
+    {
         $nowTimeStamp = (new \DateTime())->getTimestamp();
         $qb = $this->qb;
         $qb->insert('maps_favorites')
@@ -157,7 +281,8 @@ class FavoritesService {
         return $favoriteId;
     }
 
-    public function addMultipleFavoritesToDB($userId, $favoriteList) {
+    public function addMultipleFavoritesToDB($userId, $favoriteList)
+    {
         $nowTimeStamp = (new \DateTime())->getTimestamp();
 
         $values = [];
@@ -167,34 +292,34 @@ class FavoritesService {
                 !array_key_exists('lng', $fav) or !is_numeric($fav['lng'])
             ) {
                 continue;
-            }
-            else {
+            } else {
                 $lat = floatval($fav['lat']);
                 $lng = floatval($fav['lng']);
             }
-            $value = '('.
-                $this->db_quote_escape_string($userId).', '.
-                ((!array_key_exists('name', $fav) or !$fav['name']) ? 'NULL' : $this->db_quote_escape_string($fav['name'])).', '.
-                ((!array_key_exists('date_created', $fav) or !is_numeric($fav['date_created'])) ? $this->db_quote_escape_string($nowTimeStamp) : $this->db_quote_escape_string($fav['date_created'])).', '.
-                $this->db_quote_escape_string($nowTimeStamp).', '.
-                $this->db_quote_escape_string($lat).', '.
-                $this->db_quote_escape_string($lng).', '.
-                ((!array_key_exists('category', $fav) or !$fav['category']) ? 'NULL' : $this->db_quote_escape_string($fav['category'])).', '.
-                ((!array_key_exists('comment', $fav) or !$fav['comment']) ? 'NULL' : $this->db_quote_escape_string($fav['comment'])).', '.
-                ((!array_key_exists('extensions', $fav) or !$fav['extensions']) ? 'NULL' : $this->db_quote_escape_string($fav['extensions'])).')';
+            $value = '(' .
+                $this->db_quote_escape_string($userId) . ', ' .
+                ((!array_key_exists('name', $fav) or !$fav['name']) ? 'NULL' : $this->db_quote_escape_string($fav['name'])) . ', ' .
+                ((!array_key_exists('date_created', $fav) or !is_numeric($fav['date_created'])) ? $this->db_quote_escape_string($nowTimeStamp) : $this->db_quote_escape_string($fav['date_created'])) . ', ' .
+                $this->db_quote_escape_string($nowTimeStamp) . ', ' .
+                $this->db_quote_escape_string($lat) . ', ' .
+                $this->db_quote_escape_string($lng) . ', ' .
+                ((!array_key_exists('category', $fav) or !$fav['category']) ? 'NULL' : $this->db_quote_escape_string($fav['category'])) . ', ' .
+                ((!array_key_exists('comment', $fav) or !$fav['comment']) ? 'NULL' : $this->db_quote_escape_string($fav['comment'])) . ', ' .
+                ((!array_key_exists('extensions', $fav) or !$fav['extensions']) ? 'NULL' : $this->db_quote_escape_string($fav['extensions'])) . ')';
             array_push($values, $value);
         }
         $valuesStr = implode(', ', $values);
         $sql = '
             INSERT INTO *PREFIX*maps_favorites
             (user_id, name, date_created, date_modified, lat, lng, category, comment, extensions)
-            VALUES '.$valuesStr.' ;';
+            VALUES ' . $valuesStr . ' ;';
         $req = $this->dbconnection->prepare($sql);
         $req->execute();
         $req->closeCursor();
     }
 
-    public function renameCategoryInDB($userId, $cat, $newName) {
+    public function renameCategoryInDB($userId, $cat, $newName)
+    {
         $qb = $this->qb;
         $qb->update('maps_favorites');
         $qb->set('category', $qb->createNamedParameter($newName, IQueryBuilder::PARAM_STR));
@@ -208,7 +333,8 @@ class FavoritesService {
         $qb = $qb->resetQueryParts();
     }
 
-    public function editFavoriteInDB($id, $name, $lat, $lng, $category, $comment, $extensions) {
+    public function editFavoriteInDB($id, $name, $lat, $lng, $category, $comment, $extensions)
+    {
         $nowTimeStamp = (new \DateTime())->getTimestamp();
         $qb = $this->qb;
         $qb->update('maps_favorites');
@@ -238,7 +364,8 @@ class FavoritesService {
         $qb = $qb->resetQueryParts();
     }
 
-    public function deleteFavoriteFromDB($id) {
+    public function deleteFavoriteFromDB($id)
+    {
         $qb = $this->qb;
         $qb->delete('maps_favorites')
             ->where(
@@ -248,7 +375,65 @@ class FavoritesService {
         $qb = $qb->resetQueryParts();
     }
 
-    public function deleteFavoritesFromDB($ids, $userId) {
+    public function getCategoryShareLink($owner, $category)
+    {
+        $qb = $this->qb;
+
+        $qb->select('token')->from('maps_favorite_shares')
+            ->where(
+                $qb->expr()->eq('category', $qb->createNamedParameter($category, IQueryBuilder::PARAM_STR))
+            )->andWhere(
+                $qb->expr()->eq('owner', $qb->createNamedParameter($owner, IQueryBuilder::PARAM_INT))
+            );
+        $req = $qb->execute();
+
+        $row = $req->fetch();
+
+        if (!$row) {
+            $token = $this->secureRandom->generate(
+                \OC\Share\Constants::TOKEN_LENGTH,
+                \OCP\Security\ISecureRandom::CHAR_HUMAN_READABLE
+            );
+
+            $qb = $qb->resetQueryParts();
+
+            $qb->insert('maps_favorite_shares')->values([
+                'category' => $qb->createNamedParameter($category, IQueryBuilder::PARAM_STR),
+                'owner' => $qb->createNamedParameter($owner, IQueryBuilder::PARAM_STR),
+                'token' => $qb->createNamedParameter($token, IQueryBuilder::PARAM_STR),
+            ]);
+            $qb->execute();
+        } else {
+            $token = $row['token'];
+        }
+
+        $req->closeCursor();
+        $qb->resetQueryParts();
+
+        return [
+            'token' => $token
+        ];
+    }
+
+    public function deleteCategoryShareLink($owner, $category) {
+        $qb = $this->qb;
+
+        $qb->delete('maps_favorite_shares')
+            ->where(
+                $qb->expr()->eq('owner', $qb->createNamedParameter($owner, IQueryBuilder::PARAM_STR))
+            )->andWhere(
+                $qb->expr()->eq('category', $qb->createNamedParameter($category, IQueryBuilder::PARAM_STR))
+            );
+        $qb->execute();
+        $qb->resetQueryParts();
+
+        return [
+            'deleted' => true
+        ];
+    }
+
+    public function deleteFavoritesFromDB($ids, $userId)
+    {
         $qb = $this->qb;
         $qb->delete('maps_favorites')
             ->where(
@@ -260,15 +445,15 @@ class FavoritesService {
                 $or->add($qb->expr()->eq('id', $qb->createNamedParameter($id, IQueryBuilder::PARAM_INT)));
             }
             $qb->andWhere($or);
-        }
-        else {
+        } else {
             return;
         }
         $req = $qb->execute();
         $qb = $qb->resetQueryParts();
     }
 
-    public function countFavorites($userId, $categoryList, $begin, $end) {
+    public function countFavorites($userId, $categoryList, $begin, $end)
+    {
         if ($categoryList === null or
             (is_array($categoryList) and count($categoryList) === 0)
         ) {
@@ -313,16 +498,17 @@ class FavoritesService {
         return $nbFavorites;
     }
 
-    public function exportFavorites($userId, $fileHandler, $categoryList, $begin, $end, $appVersion) {
+    public function exportFavorites($userId, $fileHandler, $categoryList, $begin, $end, $appVersion)
+    {
         $qb = $this->qb;
         $nbFavorites = $this->countFavorites($userId, $categoryList, $begin, $end);
 
         $gpxHeader = '<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
-<gpx version="1.1" creator="Nextcloud Maps '.$appVersion.'" xmlns="http://www.topografix.com/GPX/1/1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd">
+<gpx version="1.1" creator="Nextcloud Maps ' . $appVersion . '" xmlns="http://www.topografix.com/GPX/1/1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd">
   <metadata>
     <name>favourites</name>
   </metadata>';
-        fwrite($fileHandler, $gpxHeader."\n");
+        fwrite($fileHandler, $gpxHeader . "\n");
 
         $chunkSize = 10000;
         $favIndex = 0;
@@ -357,8 +543,8 @@ class FavoritesService {
                 $qb->andWhere($or);
             }
             $qb->orderBy('date_created', 'ASC')
-               ->setMaxResults($chunkSize)
-               ->setFirstResult($favIndex);
+                ->setMaxResults($chunkSize)
+                ->setFirstResult($favIndex);
             $req = $qb->execute();
 
             while ($row = $req->fetch()) {
@@ -377,14 +563,13 @@ class FavoritesService {
                 $extensions = str_replace('&', '&amp;', $row['extensions']);
 
                 $gpxExtension = '';
-                $gpxText .= '  <wpt lat="'.$lat.'" lon="'.$lng.'">' . "\n";
+                $gpxText .= '  <wpt lat="' . $lat . '" lon="' . $lng . '">' . "\n";
                 $gpxText .= '   <name>' . $name . '</name>' . "\n";
                 $gpxText .= '   <time>' . $date . '</time>' . "\n";
                 if ($category !== null && strlen($category) > 0) {
                     $gpxText .= '   <type>' . $category . '</type>' . "\n";
-                }
-                else {
-                    $gpxText .= '   <type>'.$this->l10n->t('Personal').'</type>' . "\n";
+                } else {
+                    $gpxText .= '   <type>' . $this->l10n->t('Personal') . '</type>' . "\n";
                 }
                 if ($comment !== null && strlen($comment) > 0) {
                     $gpxText .= '   <desc>' . $comment . '</desc>' . "\n";
@@ -393,7 +578,7 @@ class FavoritesService {
                     $gpxExtension .= '     <maps-extensions>' . $extensions . '</maps-extensions>' . "\n";
                 }
                 if ($gpxExtension !== '') {
-                    $gpxText .= '   <extensions>'. "\n" . $gpxExtension;
+                    $gpxText .= '   <extensions>' . "\n" . $gpxExtension;
                     $gpxText .= '   </extensions>' . "\n";
                 }
                 $gpxText .= '  </wpt>' . "\n";
@@ -408,22 +593,22 @@ class FavoritesService {
         fwrite($fileHandler, $gpxEnd);
     }
 
-    public function importFavorites($userId, $file) {
+    public function importFavorites($userId, $file)
+    {
         $lowerFileName = strtolower($file->getName());
         if ($this->endswith($lowerFileName, '.gpx')) {
             return $this->importFavoritesFromGpx($userId, $file);
-        }
-        elseif ($this->endswith($lowerFileName, '.kml')) {
+        } elseif ($this->endswith($lowerFileName, '.kml')) {
             $fp = $file->fopen('r');
             $name = $file->getName();
             return $this->importFavoritesFromKml($userId, $fp, $name);
-        }
-        elseif ($this->endswith($lowerFileName, '.kmz')) {
+        } elseif ($this->endswith($lowerFileName, '.kmz')) {
             return $this->importFavoritesFromKmz($userId, $file);
         }
     }
 
-    public function importFavoritesFromKmz($userId, $file) {
+    public function importFavoritesFromKmz($userId, $file)
+    {
         $path = $file->getStorage()->getLocalFile($file->getInternalPath());
         $name = $file->getName();
         $zf = new ZIP($path);
@@ -432,17 +617,17 @@ class FavoritesService {
             $fstream = $zf->getStream($zippedFilePath, 'r');
 
             $result = $this->importFavoritesFromKml($userId, $fstream, $name);
-        }
-        else {
+        } else {
             $result = [
-                'nbImported'=>0,
-                'linesFound'=>false
+                'nbImported' => 0,
+                'linesFound' => false
             ];
         }
         return $result;
     }
 
-    public function importFavoritesFromKml($userId, $fp, $name) {
+    public function importFavoritesFromKml($userId, $fp, $name)
+    {
         $this->nbImported = 0;
         $this->linesFound = false;
         $this->currentFavoritesList = [];
@@ -459,9 +644,9 @@ class FavoritesService {
         while ($data = fread($fp, 4096000)) {
             if (!xml_parse($xml_parser, $data, feof($fp))) {
                 $this->logger->error(
-                    'Exception in '.$name.' parsing at line '.
-                      xml_get_current_line_number($xml_parser).' : '.
-                      xml_error_string(xml_get_error_code($xml_parser)),
+                    'Exception in ' . $name . ' parsing at line ' .
+                    xml_get_current_line_number($xml_parser) . ' : ' .
+                    xml_error_string(xml_get_error_code($xml_parser)),
                     array('app' => 'maps')
                 );
                 return 0;
@@ -471,12 +656,13 @@ class FavoritesService {
         xml_parser_free($xml_parser);
 
         return [
-            'nbImported'=>$this->nbImported,
-            'linesFound'=>$this->linesFound
+            'nbImported' => $this->nbImported,
+            'linesFound' => $this->linesFound
         ];
     }
 
-    private function kmlStartElement($parser, $name, $attrs) {
+    private function kmlStartElement($parser, $name, $attrs)
+    {
         $this->currentXmlTag = $name;
         if ($name === 'PLACEMARK') {
             $this->currentFavorite = [];
@@ -487,15 +673,15 @@ class FavoritesService {
         }
     }
 
-    private function kmlEndElement($parser, $name) {
+    private function kmlEndElement($parser, $name)
+    {
         if ($name === 'KML') {
             // create last bunch
             if (count($this->currentFavoritesList) > 0) {
                 $this->addMultipleFavoritesToDB($this->importUserId, $this->currentFavoritesList);
             }
             unset($this->currentFavoritesList);
-        }
-        else if ($name === 'PLACEMARK') {
+        } else if ($name === 'PLACEMARK') {
             $this->kmlInsidePlacemark = false;
             // store favorite
             $this->nbImported++;
@@ -526,32 +712,30 @@ class FavoritesService {
         }
     }
 
-    private function kmlDataElement($parser, $data) {
+    private function kmlDataElement($parser, $data)
+    {
         $d = trim($data);
         if (!empty($d)) {
             if (!$this->kmlInsidePlacemark) {
                 if ($this->currentXmlTag === 'NAME') {
                     $this->kmlCurrentCategory = $this->kmlCurrentCategory . $d;
                 }
-            }
-            else {
+            } else {
                 if ($this->currentXmlTag === 'NAME') {
-                    $this->currentFavorite['name'] = (array_key_exists('name', $this->currentFavorite)) ? $this->currentFavorite['name'].$d : $d;
-                }
-                else if ($this->currentXmlTag === 'WHEN') {
-                    $this->currentFavorite['date_created'] = (array_key_exists('date_created', $this->currentFavorite)) ? $this->currentFavorite['date_created'].$d : $d;
-                }
-                else if ($this->currentXmlTag === 'COORDINATES') {
-                    $this->currentFavorite['coordinates'] = (array_key_exists('coordinates', $this->currentFavorite)) ? $this->currentFavorite['coordinates'].$d : $d;
-                }
-                else if ($this->currentXmlTag === 'DESCRIPTION') {
-                    $this->currentFavorite['comment'] = (array_key_exists('comment', $this->currentFavorite)) ? $this->currentFavorite['comment'].$d : $d;
+                    $this->currentFavorite['name'] = (array_key_exists('name', $this->currentFavorite)) ? $this->currentFavorite['name'] . $d : $d;
+                } else if ($this->currentXmlTag === 'WHEN') {
+                    $this->currentFavorite['date_created'] = (array_key_exists('date_created', $this->currentFavorite)) ? $this->currentFavorite['date_created'] . $d : $d;
+                } else if ($this->currentXmlTag === 'COORDINATES') {
+                    $this->currentFavorite['coordinates'] = (array_key_exists('coordinates', $this->currentFavorite)) ? $this->currentFavorite['coordinates'] . $d : $d;
+                } else if ($this->currentXmlTag === 'DESCRIPTION') {
+                    $this->currentFavorite['comment'] = (array_key_exists('comment', $this->currentFavorite)) ? $this->currentFavorite['comment'] . $d : $d;
                 }
             }
         }
     }
 
-    public function importFavoritesFromGpx($userId, $file) {
+    public function importFavoritesFromGpx($userId, $file)
+    {
         $this->nbImported = 0;
         $this->linesFound = false;
         $this->currentFavoritesList = [];
@@ -569,9 +753,9 @@ class FavoritesService {
         while ($data = fread($fp, 4096000)) {
             if (!xml_parse($xml_parser, $data, feof($fp))) {
                 $this->logger->error(
-                    'Exception in '.$file->getName().' parsing at line '.
-                      xml_get_current_line_number($xml_parser).' : '.
-                      xml_error_string(xml_get_error_code($xml_parser)),
+                    'Exception in ' . $file->getName() . ' parsing at line ' .
+                    xml_get_current_line_number($xml_parser) . ' : ' .
+                    xml_error_string(xml_get_error_code($xml_parser)),
                     array('app' => 'maps')
                 );
                 return 0;
@@ -581,12 +765,13 @@ class FavoritesService {
         xml_parser_free($xml_parser);
 
         return [
-            'nbImported'=>$this->nbImported,
-            'linesFound'=>$this->linesFound
+            'nbImported' => $this->nbImported,
+            'linesFound' => $this->linesFound
         ];
     }
 
-    private function gpxStartElement($parser, $name, $attrs) {
+    private function gpxStartElement($parser, $name, $attrs)
+    {
         $this->currentXmlTag = $name;
         if ($name === 'WPT') {
             $this->insideWpt = true;
@@ -603,15 +788,15 @@ class FavoritesService {
         }
     }
 
-    private function gpxEndElement($parser, $name) {
+    private function gpxEndElement($parser, $name)
+    {
         if ($name === 'GPX') {
             // create last bunch
             if (count($this->currentFavoritesList) > 0) {
                 $this->addMultipleFavoritesToDB($this->importUserId, $this->currentFavoritesList);
             }
             unset($this->currentFavoritesList);
-        }
-        else if ($name === 'WPT') {
+        } else if ($name === 'WPT') {
             $this->insideWpt = false;
             // store favorite
             $this->nbImported++;
@@ -634,28 +819,26 @@ class FavoritesService {
         }
     }
 
-    private function gpxDataElement($parser, $data) {
+    private function gpxDataElement($parser, $data)
+    {
         $d = trim($data);
         if (!empty($d)) {
             if ($this->insideWpt and $this->currentXmlTag === 'NAME') {
-                $this->currentFavorite['name'] = (array_key_exists('name', $this->currentFavorite)) ? $this->currentFavorite['name'].$d : $d;
-            }
-            else if ($this->insideWpt and $this->currentXmlTag === 'TIME') {
-                $this->currentFavorite['date_created'] = (array_key_exists('date_created', $this->currentFavorite)) ? $this->currentFavorite['date_created'].$d : $d;
-            }
-            else if ($this->insideWpt and $this->currentXmlTag === 'TYPE') {
-                $this->currentFavorite['category'] = (array_key_exists('category', $this->currentFavorite)) ? $this->currentFavorite['category'].$d : $d;
-            }
-            else if ($this->insideWpt and $this->currentXmlTag === 'DESC') {
-                $this->currentFavorite['comment'] = (array_key_exists('comment', $this->currentFavorite)) ? $this->currentFavorite['comment'].$d : $d;
-            }
-            else if ($this->insideWpt and $this->currentXmlTag === 'MAPS-EXTENSIONS') {
-                $this->currentFavorite['extensions'] = (array_key_exists('extensions', $this->currentFavorite)) ? $this->currentFavorite['extensions'].$d : $d;
+                $this->currentFavorite['name'] = (array_key_exists('name', $this->currentFavorite)) ? $this->currentFavorite['name'] . $d : $d;
+            } else if ($this->insideWpt and $this->currentXmlTag === 'TIME') {
+                $this->currentFavorite['date_created'] = (array_key_exists('date_created', $this->currentFavorite)) ? $this->currentFavorite['date_created'] . $d : $d;
+            } else if ($this->insideWpt and $this->currentXmlTag === 'TYPE') {
+                $this->currentFavorite['category'] = (array_key_exists('category', $this->currentFavorite)) ? $this->currentFavorite['category'] . $d : $d;
+            } else if ($this->insideWpt and $this->currentXmlTag === 'DESC') {
+                $this->currentFavorite['comment'] = (array_key_exists('comment', $this->currentFavorite)) ? $this->currentFavorite['comment'] . $d : $d;
+            } else if ($this->insideWpt and $this->currentXmlTag === 'MAPS-EXTENSIONS') {
+                $this->currentFavorite['extensions'] = (array_key_exists('extensions', $this->currentFavorite)) ? $this->currentFavorite['extensions'] . $d : $d;
             }
         }
     }
 
-    private function endswith($string, $test) {
+    private function endswith($string, $test)
+    {
         $strlen = strlen($string);
         $testlen = strlen($test);
         if ($testlen > $strlen) return false;

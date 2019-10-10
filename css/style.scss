@@ -808,3 +808,33 @@ tr.selected td {
 .ui-autocomplete {
     z-index: 9999;
 }
+
+.category-line .category-sharing-dialogue {
+    width: 100%;
+    background: rgba(#000, .1);
+    padding: 0.5em;
+    display: none;
+
+    .category-sharing-checkbox-container {
+        display: flex;
+        align-items: center;
+
+        .category-sharing-checkbox {
+            margin-right: 1em;
+            cursor: pointer;
+        }
+    }
+
+    .category-sharing-link {
+        width: 100%;
+        visibility: hidden;
+
+        &.visible {
+            visibility: visible;
+        }
+    }
+}
+
+.category-line.sharingDialogueVisible .category-sharing-dialogue {
+    display: block;
+}

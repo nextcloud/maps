@@ -14,6 +14,7 @@ namespace OCA\Maps\Controller;
 use OCP\IConfig;
 use OCP\IRequest;
 use OCP\AppFramework\Http\TemplateResponse;
+use OCP\AppFramework\Http\Template\PublicTemplateResponse;
 use OCP\AppFramework\Http\DataResponse;
 use OCP\AppFramework\Controller;
 use OCP\IInitialStateService;
@@ -47,6 +48,44 @@ class PageController extends Controller {
         $params = array('user' => $this->userId);
         $this->initialStateService->provideInitialState($this->appName, 'photos', $this->config->getAppValue('photos', 'enabled', 'no') === 'yes');
         $response = new TemplateResponse('maps', 'index', $params);
+
+        $this->addCsp($response);
+
+        return $response;
+    }
+
+    /**
+     * @NoAdminRequired
+     * @NoCSRFRequired
+     */
+    public function openGeoLink($url) {
+        $params = array('user' => $this->userId);
+        $params["geourl"]  = $url;
+        $response = new TemplateResponse('maps', 'index', $params);
+        if (class_exists('OCP\AppFramework\Http\ContentSecurityPolicy')) {
+            $csp = new \OCP\AppFramework\Http\ContentSecurityPolicy();
+            // map tiles
+            $csp->addAllowedImageDomain('https://*.tile.openstreetmap.org');
+            $csp->addAllowedImageDomain('https://server.arcgisonline.com');
+            $csp->addAllowedImageDomain('https://*.cartocdn.com');
+            $csp->addAllowedImageDomain('https://*.opentopomap.org');
+            $csp->addAllowedImageDomain('https://*.cartocdn.com');
+            $csp->addAllowedImageDomain('https://*.ssl.fastly.net');
+            $csp->addAllowedImageDomain('https://*.openstreetmap.se');
+            // routing engine
+            $csp->addAllowedConnectDomain('https://*.project-osrm.org');
+            // TODO allow connections to router engine
+            //$csp->addAllowedConnectDomain('http://192.168.0.66:8989');
+            // poi images
+            $csp->addAllowedImageDomain('https://nominatim.openstreetmap.org');
+            // search and geocoder
+            $csp->addAllowedConnectDomain('https://nominatim.openstreetmap.org');
+            $response->setContentSecurityPolicy($csp);
+        }
+        return $response;
+    }
+
+    private function addCsp($response) {
         if (class_exists('OCP\AppFramework\Http\ContentSecurityPolicy')) {
             $csp = new \OCP\AppFramework\Http\ContentSecurityPolicy();
             // map tiles
@@ -91,38 +130,5 @@ class PageController extends Controller {
             $csp->addAllowedConnectDomain('https://nominatim.openstreetmap.org');
             $response->setContentSecurityPolicy($csp);
         }
-        return $response;
     }
-
-    /**
-     * @NoAdminRequired
-     * @NoCSRFRequired
-     */
-    public function openGeoLink($url) {
-        $params = array('user' => $this->userId);
-        $params["geourl"]  = $url;
-        $response = new TemplateResponse('maps', 'index', $params);
-        if (class_exists('OCP\AppFramework\Http\ContentSecurityPolicy')) {
-            $csp = new \OCP\AppFramework\Http\ContentSecurityPolicy();
-            // map tiles
-            $csp->addAllowedImageDomain('https://*.tile.openstreetmap.org');
-            $csp->addAllowedImageDomain('https://server.arcgisonline.com');
-            $csp->addAllowedImageDomain('https://*.cartocdn.com');
-            $csp->addAllowedImageDomain('https://*.opentopomap.org');
-            $csp->addAllowedImageDomain('https://*.cartocdn.com');
-            $csp->addAllowedImageDomain('https://*.ssl.fastly.net');
-            $csp->addAllowedImageDomain('https://*.openstreetmap.se');
-            // routing engine
-            $csp->addAllowedConnectDomain('https://*.project-osrm.org');
-            // TODO allow connections to router engine
-            //$csp->addAllowedConnectDomain('http://192.168.0.66:8989');
-            // poi images
-            $csp->addAllowedImageDomain('https://nominatim.openstreetmap.org');
-            // search and geocoder
-            $csp->addAllowedConnectDomain('https://nominatim.openstreetmap.org');
-            $response->setContentSecurityPolicy($csp);
-        }
-        return $response;
-    }
-
 }

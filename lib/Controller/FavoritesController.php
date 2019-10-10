@@ -33,6 +33,7 @@ use OCP\Share;
 use OCP\IDateTimeZone;
 
 use OCA\Maps\Service\FavoritesService;
+use Punic\Data;
 
 //use function OCA\Maps\Service\endswith;
 
@@ -92,6 +93,15 @@ class FavoritesController extends Controller {
     /**
      * @NoAdminRequired
      */
+    public function getSharedCategories() {
+        $categories = $this->favoritesService->getSharedCategories($this->userId);
+
+        return new DataResponse($categories);
+    }
+
+    /**
+     * @NoAdminRequired
+     */
     public function addFavorite($name, $lat, $lng, $category, $comment, $extensions) {
         if (is_numeric($lat) && is_numeric($lng)) {
             $favoriteId = $this->favoritesService->addFavoriteToDB($this->userId, $name, $lat, $lng, $category, $comment, $extensions);
@@ -123,6 +133,28 @@ class FavoritesController extends Controller {
         else {
             return new DataResponse('no such favorite', 400);
         }
+    }
+
+    public function shareCategory($category) {
+        // TODO: use better way to check if user owns category
+        if ($this->favoritesService->countFavorites($this->userId, [$category], null, null) === 0) {
+            return new DataResponse("Category does not exist", 400);
+        }
+
+        $response = $this->favoritesService->getCategoryShareLink($this->userId, $category);
+
+        return new DataResponse($response);
+    }
+
+    public function unShareCategory($category) {
+        // TODO: use better way to check if user owns category
+        if ($this->favoritesService->countFavorites($this->userId, [$category], null, null) === 0) {
+            return new DataResponse("Category does not exist", 400);
+        }
+
+        $response = $this->favoritesService->deleteCategoryShareLink($this->userId, $category);
+
+        return new DataResponse($response);
     }
 
     /**

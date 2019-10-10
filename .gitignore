@@ -16,6 +16,9 @@ yarn-debug.log*
 yarn-error.log*
 package-json.log*
 
+# Ide
+.idea/
+
 # Runtime data
 pids
 *.pid

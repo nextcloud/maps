@@ -593,6 +593,8 @@ tr.selected td {
 .tooltip-contact-avatar {
     min-width: 70px;
     min-height: 70px;
+    max-width: 70px;
+    max-height: 70px;
     margin-left: 40px;
     margin-right: 40px;
     border-radius: 50%;

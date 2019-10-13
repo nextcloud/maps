@@ -545,7 +545,7 @@
                 }]
             });
             this.map.on('contextmenu', function(e) {
-                if ($(e.originalEvent.target).attr('id') === 'map') {
+                if ($(e.originalEvent.target).attr('id') === 'map' || $(e.originalEvent.target).hasClass('mapboxgl-map')) {
                     that.map.contextmenu.showAt(L.latLng(e.latlng.lat, e.latlng.lng));
                     that.map.clickpopup = true;
                 }
@@ -553,9 +553,8 @@
             this.map.clickpopup = null;
             this.map.leftClickLock = false;
             this.map.on('click', function(e) {
-                if ($(e.originalEvent.target).attr('id') === 'map') {
+                if ($(e.originalEvent.target).attr('id') === 'map' || $(e.originalEvent.target).hasClass('mapboxgl-map')) {
                     if (!that.map.leftClickLock && that.map.clickpopup === null) {
-                        console.log('no popup');
                         searchController.mapLeftClick(e);
                         that.map.clickpopup = true;
                     }

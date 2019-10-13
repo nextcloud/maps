@@ -194,6 +194,50 @@
                     $('#timeRangeSlider').show();
                     $('#display-slider').prop('checked', true);
                 }
+
+                if (optionsValues.hasOwnProperty('mapboxAPIKEY') && optionsValues.mapboxAPIKEY !== '') {
+                    // add mapbox-gl tile server
+                    var attrib = '<a href="https://www.mapbox.com/about/maps/">© Mapbox</a> '+
+                        '<a href="https://www.openstreetmap.org/copyright">© OpenStreetMap</a> '+
+                        '<a href="https://www.mapbox.com/map-feedback/">'+t('maps', 'Improve this map')+'</a>';
+                    var attribSat = attrib + '<a href="https://www.digitalglobe.com/">© DigitalGlobe</a>'
+
+                    mapController.baseLayers['Mapbox vector streets'] = L.mapboxGL({
+                        accessToken: optionsValues.mapboxAPIKEY,
+                        style: 'mapbox://styles/mapbox/streets-v8',
+                        minZoom: 1,
+                        maxZoom: 22,
+                        attribution: attrib
+                    });
+                    mapController.controlLayers.addBaseLayer(mapController.baseLayers['Mapbox vector streets'], 'Mapbox vector streets');
+
+                    mapController.baseLayers['Mapbox vector outdoors'] = L.mapboxGL({
+                        accessToken: optionsValues.mapboxAPIKEY,
+                        style: 'mapbox://styles/mapbox/outdoors-v11',
+                        minZoom: 1,
+                        maxZoom: 22,
+                        attribution: attrib
+                    });
+                    mapController.controlLayers.addBaseLayer(mapController.baseLayers['Mapbox vector outdoors'], 'Mapbox vector outdoors');
+
+                    mapController.baseLayers['Mapbox vector bright'] = L.mapboxGL({
+                        accessToken: optionsValues.mapboxAPIKEY,
+                        style: 'mapbox://styles/mapbox/bright-v8',
+                        minZoom: 1,
+                        maxZoom: 22,
+                        attribution: attrib
+                    });
+                    mapController.controlLayers.addBaseLayer(mapController.baseLayers['Mapbox vector bright'], 'Mapbox vector bright');
+
+                    mapController.baseLayers['Mapbox satellite'] = L.mapboxGL({
+                        accessToken: optionsValues.mapboxAPIKEY,
+                        style: 'mapbox://styles/mapbox/satellite-v8',
+                        minZoom: 1,
+                        maxZoom: 22,
+                        attribution: attribSat
+                    });
+                    mapController.controlLayers.addBaseLayer(mapController.baseLayers['Mapbox satellite'], 'Mapbox satellite');
+                }
                 if (optionsValues.hasOwnProperty('tileLayer')) {
                     mapController.changeTileLayer(optionsValues.tileLayer);
                 }
@@ -642,6 +686,9 @@
             for (var ol in this.baseOverlays) {
                 this.map.removeLayer(this.baseOverlays[ol]);
             }
+            if (!this.baseLayers.hasOwnProperty(name)) {
+                name = 'OpenStreetMap';
+            }
             this.map.addLayer(this.baseLayers[name]);
             if (name === 'ESRI Aerial' || name === 'Watercolor') {
                 this.map.addLayer(this.baseOverlays['Roads and labels']);
@@ -839,7 +886,6 @@
                 this.addRouter('mapbox/walking', 'Mapbox by foot', null, optionsValues.mapboxAPIKEY);
                 this.addRouter('mapbox/driving-traffic', 'Mapbox by car with traffic', null, optionsValues.mapboxAPIKEY);
                 this.addRouter('mapbox/driving', 'Mapbox by car without traffic', null, optionsValues.mapboxAPIKEY);
-
             }
             if ((optionsValues.hasOwnProperty('graphhopperURL') && optionsValues.graphhopperURL !== '') ||
                 (optionsValues.hasOwnProperty('graphhopperAPIKEY') && optionsValues.graphhopperAPIKEY !== '') ){

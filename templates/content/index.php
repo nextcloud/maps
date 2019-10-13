@@ -28,6 +28,7 @@ style('maps', '../node_modules/leaflet-control-geocoder/dist/Control.Geocoder');
 style('maps', '../node_modules/leaflet-mouse-position/src/L.Control.MousePosition');
 style('maps', '../node_modules/leaflet-contextmenu/dist/leaflet.contextmenu.min');
 style('maps', '../node_modules/leaflet.elevation/dist/Leaflet.Elevation-0.0.2');
+style('maps', '../node_modules/mapbox-gl/dist/mapbox-gl');
 style('maps', 'fontawesome/css/all.min');
 script('maps', '../node_modules/leaflet/dist/leaflet');
 script('maps', '../node_modules/leaflet.markercluster/dist/leaflet.markercluster');
@@ -42,6 +43,8 @@ script('maps', '../node_modules/leaflet-mouse-position/src/L.Control.MousePositi
 script('maps', '../node_modules/leaflet-contextmenu/dist/leaflet.contextmenu.min');
 script('maps', '../node_modules/d3/d3.min');
 script('maps', '../node_modules/leaflet.elevation/dist/Leaflet.Elevation-0.0.2.min');
+script('maps', '../node_modules/mapbox-gl/dist/mapbox-gl');
+script('maps', '../node_modules/mapbox-gl-leaflet/leaflet-mapbox-gl');
 style('maps', 'style');
 ?>
 <div id="search">

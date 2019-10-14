@@ -762,7 +762,7 @@
                 }
             };
             this.routers.osrmDEMO = {
-                name: 'By car (OSRM demo)',
+                name: '🚗 ' + t('maps', 'By car (OSRM demo)'),
                 router: L.Routing.osrmv1({
                     serviceUrl: 'https://router.project-osrm.org/route/v1',
                     //profile: 'driving', // works with demo server
@@ -820,22 +820,22 @@
             // add routers from options values
             var nbRoutersAdded = 0;
             if (optionsValues.hasOwnProperty('osrmCarURL') && optionsValues.osrmCarURL !== '') {
-                this.addRouter('osrmCar', 'By car (OSRM)', optionsValues.osrmCarURL, null);
+                this.addRouter('osrmCar', '🚗 ' + t('maps', 'By car (OSRM)'), optionsValues.osrmCarURL, null);
                 nbRoutersAdded++;
             }
             if (optionsValues.hasOwnProperty('osrmBikeURL') && optionsValues.osrmBikeURL !== '') {
-                this.addRouter('osrmBike', 'By bike (OSRM)', optionsValues.osrmBikeURL, null);
+                this.addRouter('osrmBike', '🚲 ' + t('maps', 'By bike (OSRM)'), optionsValues.osrmBikeURL, null);
                 nbRoutersAdded++;
             }
             if (optionsValues.hasOwnProperty('osrmFootURL') && optionsValues.osrmFootURL !== '') {
-                this.addRouter('osrmFoot', 'By foot (OSRM)', optionsValues.osrmFootURL, null);
+                this.addRouter('osrmFoot', '🚶 ' + t('maps', 'By foot (OSRM)'), optionsValues.osrmFootURL, null);
                 nbRoutersAdded++;
             }
             if (optionsValues.hasOwnProperty('mapboxAPIKEY') && optionsValues.mapboxAPIKEY !== '') {
-                this.addRouter('mapbox/cycling', 'Mapbox by bike', null, optionsValues.mapboxAPIKEY);
-                this.addRouter('mapbox/walking', 'Mapbox by foot', null, optionsValues.mapboxAPIKEY);
-                this.addRouter('mapbox/driving-traffic', 'Mapbox by car with traffic', null, optionsValues.mapboxAPIKEY);
-                this.addRouter('mapbox/driving', 'Mapbox by car without traffic', null, optionsValues.mapboxAPIKEY);
+                this.addRouter('mapbox/cycling', '🚲 ' + t('maps', 'By bike (Mapbox)'), null, optionsValues.mapboxAPIKEY);
+                this.addRouter('mapbox/walking', '🚶 ' + t('maps', 'By foot (Mapbox)'), null, optionsValues.mapboxAPIKEY);
+                this.addRouter('mapbox/driving-traffic', '🚗 ' + t('maps', 'By car with traffic (Mapbox)'), null, optionsValues.mapboxAPIKEY);
+                this.addRouter('mapbox/driving', '🚗 ' + t('maps', 'By car without traffic (Mapbox)'), null, optionsValues.mapboxAPIKEY);
                 nbRoutersAdded++;
             }
             if ((optionsValues.hasOwnProperty('graphhopperURL') && optionsValues.graphhopperURL !== '') ||
@@ -844,13 +844,13 @@
                 if (optionsValues.hasOwnProperty('graphhopperAPIKEY') && optionsValues.graphhopperAPIKEY !== '') {
                     apikey = optionsValues.graphhopperAPIKEY;
                 }
-                this.addRouter('graphhopperCar', 'By car (GrahHopper)', optionsValues.graphhopperURL, apikey);
-                this.addRouter('graphhopperBike', 'By bike (GrahHopper)', optionsValues.graphhopperURL, apikey);
-                this.addRouter('graphhopperFoot', 'By Foot (GrahHopper)', optionsValues.graphhopperURL, apikey);
+                this.addRouter('graphhopperCar', '🚗 ' + t('maps', 'By car (GrahHopper)'), optionsValues.graphhopperURL, apikey);
+                this.addRouter('graphhopperBike', '🚲 ' + t('maps', 'By bike (GrahHopper)'), optionsValues.graphhopperURL, apikey);
+                this.addRouter('graphhopperFoot', '🚶 ' + t('maps', 'By Foot (GrahHopper)'), optionsValues.graphhopperURL, apikey);
                 nbRoutersAdded++;
             }
             if (nbRoutersAdded === 0 && optionsValues.hasOwnProperty('osrmDEMO') && optionsValues.osrmDEMO === '1') {
-                this.addRouter('osrmDEMO', 'By car (OSRM demo)', null, null);
+                this.addRouter('osrmDEMO', '🚗 ' + 'By car (OSRM demo)', null, null);
             }
             else {
                 delete this.routers.osrmDEMO;
@@ -917,6 +917,12 @@
                             '</p>'
                         );
                     }
+
+                    // export route button
+                    var exportTitle = t('maps', 'Export current route to GPX');
+                    $('<button class="exportCurrentRoute" title="'+escapeHTML(exportTitle)+'">'+
+                        '<span></span></button>').insertAfter('#router-select');
+                    $('.exportCurrentRoute').hide();
                 });
             }
         },
@@ -1004,6 +1010,7 @@
             }
             OC.Notification.showTemporary(t('maps', 'Routing error:') + ' ' + msg);
             routingController.onRoutingEnd();
+            $('.exportCurrentRoute').hide();
         },
 
         onRoutingStart: function(e) {
@@ -1012,6 +1019,7 @@
         },
 
         onRoutingEnd: function(e) {
+            $('.exportCurrentRoute').show();
             $('#navigation-routing').removeClass('icon-loading-small');
             $('.leaflet-routing-reverse-waypoints').removeClass('icon-loading-small');
             // TODO understand why routingstart is sometimes triggered after routesfound
@@ -1083,6 +1091,9 @@
                 }).fail(function() {
                     OC.Notification.showTemporary(t('maps', 'Failed to export current route'));
                 });
+            }
+            else {
+                OC.Notification.showTemporary(t('maps', 'There is no route to export'));
             }
         },
 

@@ -762,7 +762,7 @@
                 }
             };
             this.routers.osrmDEMO = {
-                name: t('maps', 'By car (OSRM demo)'),
+                name: '🚗 ' + t('maps', 'By car (OSRM demo)'),
                 router: L.Routing.osrmv1({
                     serviceUrl: 'https://router.project-osrm.org/route/v1',
                     //profile: 'driving', // works with demo server
@@ -819,26 +819,26 @@
 
             // add routers from options values
             if (optionsValues.hasOwnProperty('osrmCarURL') && optionsValues.osrmCarURL !== '') {
-                this.addRouter('osrmCar', t('maps', 'By car (OSRM)'), optionsValues.osrmCarURL, null);
+                this.addRouter('osrmCar', '🚗 ' + t('maps', 'By car (OSRM)'), optionsValues.osrmCarURL, null);
             }
             if (optionsValues.hasOwnProperty('osrmBikeURL') && optionsValues.osrmBikeURL !== '') {
-                this.addRouter('osrmBike', t('maps', 'By bike (OSRM)'), optionsValues.osrmBikeURL, null);
+                this.addRouter('osrmBike', '🚲 ' + t('maps', 'By bike (OSRM)'), optionsValues.osrmBikeURL, null);
             }
             if (optionsValues.hasOwnProperty('osrmFootURL') && optionsValues.osrmFootURL !== '') {
-                this.addRouter('osrmFoot', t('maps', 'By foot (OSRM)'), optionsValues.osrmFootURL, null);
+                this.addRouter('osrmFoot', '🚶 ' + t('maps', 'By foot (OSRM)'), optionsValues.osrmFootURL, null);
                 nbRouters++;
             }
             if (optionsValues.hasOwnProperty('osrmDEMO') && optionsValues.osrmDEMO === '1') {
-                this.addRouter('osrmDEMO', t('maps', 'By car (OSRM demo)'), null, null);
+                this.addRouter('osrmDEMO', '🚗 ' + t('maps', 'By car (OSRM demo)'), null, null);
             }
             else {
                 delete this.routers.osrmDEMO;
             }
             if (optionsValues.hasOwnProperty('mapboxAPIKEY') && optionsValues.mapboxAPIKEY !== '') {
-                this.addRouter('mapbox/cycling', t('maps', 'By bike (Mapbox)'), null, optionsValues.mapboxAPIKEY);
-                this.addRouter('mapbox/walking', t('maps', 'By foot (Mapbox)'), null, optionsValues.mapboxAPIKEY);
-                this.addRouter('mapbox/driving-traffic', t('maps', 'By car with traffic (Mapbox)'), null, optionsValues.mapboxAPIKEY);
-                this.addRouter('mapbox/driving', t('maps', 'By car without traffic (Mapbox)'), null, optionsValues.mapboxAPIKEY);
+                this.addRouter('mapbox/cycling', '🚲 ' + t('maps', 'By bike (Mapbox)'), null, optionsValues.mapboxAPIKEY);
+                this.addRouter('mapbox/walking', '🚶 ' + t('maps', 'By foot (Mapbox)'), null, optionsValues.mapboxAPIKEY);
+                this.addRouter('mapbox/driving-traffic', '🚗 ' + t('maps', 'By car with traffic (Mapbox)'), null, optionsValues.mapboxAPIKEY);
+                this.addRouter('mapbox/driving', t('maps', '🚗 ' +'By car without traffic (Mapbox)'), null, optionsValues.mapboxAPIKEY);
 
             }
             if ((optionsValues.hasOwnProperty('graphhopperURL') && optionsValues.graphhopperURL !== '') ||
@@ -847,9 +847,9 @@
                 if (optionsValues.hasOwnProperty('graphhopperAPIKEY') && optionsValues.graphhopperAPIKEY !== '') {
                     apikey = optionsValues.graphhopperAPIKEY;
                 }
-                this.addRouter('graphhopperCar', t('maps', 'By car (GrahHopper)'), optionsValues.graphhopperURL, apikey);
-                this.addRouter('graphhopperBike', t('maps', 'By bike (GrahHopper)'), optionsValues.graphhopperURL, apikey);
-                this.addRouter('graphhopperFoot', t('maps', 'By Foot (GrahHopper)'), optionsValues.graphhopperURL, apikey);
+                this.addRouter('graphhopperCar', '🚗 ' + t('maps', 'By car (GrahHopper)'), optionsValues.graphhopperURL, apikey);
+                this.addRouter('graphhopperBike', '🚲 ' + t('maps', 'By bike (GrahHopper)'), optionsValues.graphhopperURL, apikey);
+                this.addRouter('graphhopperFoot', '🚶 ' + t('maps', 'By Foot (GrahHopper)'), optionsValues.graphhopperURL, apikey);
             }
             if (optionsValues.hasOwnProperty('selectedRouter') && optionsValues.selectedRouter !== '') {
                 this.selectedRouter = optionsValues.selectedRouter;

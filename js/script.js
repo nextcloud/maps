@@ -818,28 +818,25 @@
             });
 
             // add routers from options values
+            var nbRoutersAdded = 0;
             if (optionsValues.hasOwnProperty('osrmCarURL') && optionsValues.osrmCarURL !== '') {
                 this.addRouter('osrmCar', '🚗 ' + t('maps', 'By car (OSRM)'), optionsValues.osrmCarURL, null);
+                nbRoutersAdded++;
             }
             if (optionsValues.hasOwnProperty('osrmBikeURL') && optionsValues.osrmBikeURL !== '') {
                 this.addRouter('osrmBike', '🚲 ' + t('maps', 'By bike (OSRM)'), optionsValues.osrmBikeURL, null);
+                nbRoutersAdded++;
             }
             if (optionsValues.hasOwnProperty('osrmFootURL') && optionsValues.osrmFootURL !== '') {
                 this.addRouter('osrmFoot', '🚶 ' + t('maps', 'By foot (OSRM)'), optionsValues.osrmFootURL, null);
-                nbRouters++;
-            }
-            if (optionsValues.hasOwnProperty('osrmDEMO') && optionsValues.osrmDEMO === '1') {
-                this.addRouter('osrmDEMO', '🚗 ' + t('maps', 'By car (OSRM demo)'), null, null);
-            }
-            else {
-                delete this.routers.osrmDEMO;
+                nbRoutersAdded++;
             }
             if (optionsValues.hasOwnProperty('mapboxAPIKEY') && optionsValues.mapboxAPIKEY !== '') {
                 this.addRouter('mapbox/cycling', '🚲 ' + t('maps', 'By bike (Mapbox)'), null, optionsValues.mapboxAPIKEY);
                 this.addRouter('mapbox/walking', '🚶 ' + t('maps', 'By foot (Mapbox)'), null, optionsValues.mapboxAPIKEY);
                 this.addRouter('mapbox/driving-traffic', '🚗 ' + t('maps', 'By car with traffic (Mapbox)'), null, optionsValues.mapboxAPIKEY);
-                this.addRouter('mapbox/driving', t('maps', '🚗 ' +'By car without traffic (Mapbox)'), null, optionsValues.mapboxAPIKEY);
-
+                this.addRouter('mapbox/driving', '🚗 ' + t('maps', 'By car without traffic (Mapbox)'), null, optionsValues.mapboxAPIKEY);
+                nbRoutersAdded++;
             }
             if ((optionsValues.hasOwnProperty('graphhopperURL') && optionsValues.graphhopperURL !== '') ||
                 (optionsValues.hasOwnProperty('graphhopperAPIKEY') && optionsValues.graphhopperAPIKEY !== '') ){
@@ -850,6 +847,13 @@
                 this.addRouter('graphhopperCar', '🚗 ' + t('maps', 'By car (GrahHopper)'), optionsValues.graphhopperURL, apikey);
                 this.addRouter('graphhopperBike', '🚲 ' + t('maps', 'By bike (GrahHopper)'), optionsValues.graphhopperURL, apikey);
                 this.addRouter('graphhopperFoot', '🚶 ' + t('maps', 'By Foot (GrahHopper)'), optionsValues.graphhopperURL, apikey);
+                nbRoutersAdded++;
+            }
+            if (nbRoutersAdded === 0 && optionsValues.hasOwnProperty('osrmDEMO') && optionsValues.osrmDEMO === '1') {
+                this.addRouter('osrmDEMO', '🚗 ' + 'By car (OSRM demo)', null, null);
+            }
+            else {
+                delete this.routers.osrmDEMO;
             }
             if (optionsValues.hasOwnProperty('selectedRouter') && optionsValues.selectedRouter !== '') {
                 this.selectedRouter = optionsValues.selectedRouter;

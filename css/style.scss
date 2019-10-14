@@ -634,6 +634,10 @@ tr.selected td {
     margin-top: 2px;
     margin-bottom: 2px;
 }
+.contactPopup .deleteContactAddress {
+    display: inline-block;
+    cursor: pointer;
+}
 
 .tooltip-contact-address-type {
     width: 100%;

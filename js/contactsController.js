@@ -95,11 +95,10 @@ ContactsController.prototype = {
         });
         // delete address
         $('body').on('click', '.deleteContactAddress', function(e) {
-            var ul = $(this).parent().parent();
-            var bookid = ul.attr('bookid');
-            var uri = ul.attr('uri');
-            var uid = ul.attr('uid');
-            var vcardAddress = ul.attr('vcardaddress');
+            var bookid = $(this).attr('bookid');
+            var uri = $(this).attr('uri');
+            var uid = $(this).attr('uid');
+            var vcardAddress = $(this).attr('vcardaddress');
             that.deleteContactAddress(bookid, uri, uid, vcardAddress);
         });
         $('body').on('click', '#submitPlaceContactButton', function(e) {
@@ -264,9 +263,7 @@ ContactsController.prototype = {
         var _app = this;
         return function(evt) {
             var marker = evt.layer;
-            var contactPopup = marker.data.tooltipContent;
-            var contactUrl = OC.generateUrl('/apps/contacts/'+t('contacts', 'All contacts')+'/'+encodeURIComponent(marker.data.uid+"~contacts"));
-            contactPopup += '<a href="'+contactUrl+'" target="_blank">'+t('maps', 'Open in Contacts app')+'</a>';
+            var contactPopup = _app.getContactPopupContent(marker.data);
             marker.unbindPopup();
             marker.unbindTooltip();
             marker.bindPopup(contactPopup, {
@@ -478,27 +475,51 @@ ContactsController.prototype = {
             marker.on('mouseover', this.onContactMouseover);
             marker.on('mouseout', this.onContactMouseout);
             marker.data = markerData;
-            var contactTooltip = '<p class="tooltip-contact-name">' + escapeHTML(basename(markerData.name)) + '</p>';
-            var img = '<img class="tooltip-contact-avatar" src="' + markerData.avatar + '"/>';
-            contactTooltip += img;
-            if (markerData.addressType === 'home') {
-                contactTooltip += '<p class="tooltip-contact-address-type"><b>'+t('maps', 'Home')+'</b></p>';
-            }
-            else if (markerData.addressType === 'work') {
-                contactTooltip += '<p class="tooltip-contact-address-type"><b>'+t('maps', 'Work')+'</b></p>';
-            }
-            contactTooltip += '<p class="tooltip-contact-address">' + markerData.address + '</p>';
-            markerData.tooltipContent = contactTooltip;
 
             markers.push(marker);
         }
         return markers;
     },
 
+    getContactTooltipContent: function(markerData) {
+        var contactTooltip = '<p class="tooltip-contact-name">' + escapeHTML(basename(markerData.name)) + '</p>';
+        var img = '<img class="tooltip-contact-avatar" src="' + markerData.avatar + '"/>';
+        contactTooltip += img;
+        if (markerData.addressType === 'home') {
+            contactTooltip += '<p class="tooltip-contact-address-type"><b>'+t('maps', 'Home')+'</b></p>';
+        }
+        else if (markerData.addressType === 'work') {
+            contactTooltip += '<p class="tooltip-contact-address-type"><b>'+t('maps', 'Work')+'</b></p>';
+        }
+        contactTooltip += '<p class="tooltip-contact-address">' + markerData.address + '</p>';
+        return contactTooltip;
+    },
+
+    getContactPopupContent: function(markerData) {
+        var deleteText = t('maps', 'Delete this address');
+        var contactPopup = '<p class="tooltip-contact-name">' + escapeHTML(basename(markerData.name)) + '</p>';
+        var img = '<img class="tooltip-contact-avatar" src="' + markerData.avatar + '"/>';
+        contactPopup += img;
+        if (markerData.addressType === 'home') {
+            contactPopup += '<p class="tooltip-contact-address-type"><b>'+t('maps', 'Home')+'</b>';
+        }
+        else if (markerData.addressType === 'work') {
+            contactPopup += '<p class="tooltip-contact-address-type"><b>'+t('maps', 'Work')+'</b>';
+        }
+        contactPopup += '<span class="icon-delete deleteContactAddress" bookid="' + markerData.bookid + '" '+
+            'uri="' + markerData.uri + '" uid="' + markerData.uid + '" vcardaddress="' + markerData.adr + '" '+
+            'title="' + deleteText + '"></span></p>';
+        contactPopup += '<p class="tooltip-contact-address">' + markerData.address + '</p>';
+        var contactUrl = OC.generateUrl('/apps/contacts/'+t('contacts', 'All contacts')+'/'+encodeURIComponent(markerData.uid+"~contacts"));
+        contactPopup += '<a href="'+contactUrl+'" target="_blank">'+t('maps', 'Open in Contacts app')+'</a>';
+        return contactPopup;
+    },
+
     onContactMouseover: function(e) {
         var data = e.target.data;
         if (!e.target.getPopup() || !e.target.getPopup().isOpen()) {
-            e.target.bindTooltip(data.tooltipContent, {
+            var tooltipContent = this._map.contactsController.getContactTooltipContent(data);
+            e.target.bindTooltip(tooltipContent, {
                 permanent: true,
                 className: 'leaflet-marker-contact-tooltip',
                 direction: 'top',
@@ -534,7 +555,7 @@ ContactsController.prototype = {
         var res =
             '<ul bookid="' + bookid + '" uri="' + uri + '" uid="' + uid + '" vcardaddress="' + vcardAddress + '">' +
             '   <li>' +
-            '       <button class="icon-delete deleteContactAddress">' +
+            '       <button class="icon-delete deleteContactAddress" bookid="' + bookid + '" uri="' + uri + '" uid="' + uid + '" vcardaddress="' + vcardAddress + '">' +
             '           <span>' + deleteText + '</span>' +
             '       </button>' +
             '   </li>' +

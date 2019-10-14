@@ -913,6 +913,12 @@
                             '</p>'
                         );
                     }
+
+                    // export route button
+                    var exportTitle = t('maps', 'Export current route to GPX');
+                    $('<button class="exportCurrentRoute" title="'+escapeHTML(exportTitle)+'">'+
+                        '<span></span></button>').insertAfter('#router-select');
+                    $('.exportCurrentRoute').hide();
                 });
             }
         },
@@ -1000,6 +1006,7 @@
             }
             OC.Notification.showTemporary(t('maps', 'Routing error:') + ' ' + msg);
             routingController.onRoutingEnd();
+            $('.exportCurrentRoute').hide();
         },
 
         onRoutingStart: function(e) {
@@ -1008,6 +1015,7 @@
         },
 
         onRoutingEnd: function(e) {
+            $('.exportCurrentRoute').show();
             $('#navigation-routing').removeClass('icon-loading-small');
             $('.leaflet-routing-reverse-waypoints').removeClass('icon-loading-small');
             // TODO understand why routingstart is sometimes triggered after routesfound
@@ -1079,6 +1087,9 @@
                 }).fail(function() {
                     OC.Notification.showTemporary(t('maps', 'Failed to export current route'));
                 });
+            }
+            else {
+                OC.Notification.showTemporary(t('maps', 'There is no route to export'));
             }
         },
 

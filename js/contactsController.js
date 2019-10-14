@@ -272,7 +272,7 @@ ContactsController.prototype = {
             marker.bindPopup(contactPopup, {
                 closeOnClick: true,
                 className: 'popovermenu open popupMarker contactPopup',
-                offset: L.point(-5, -19)
+                offset: L.point(-5, 5)
             });
             marker.openPopup();
             this._map.clickpopup = true;
@@ -502,7 +502,7 @@ ContactsController.prototype = {
                 permanent: true,
                 className: 'leaflet-marker-contact-tooltip',
                 direction: 'top',
-                offset: L.point(0, -25)
+                offset: L.point(0, 0)
             });
         }
     },

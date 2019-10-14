@@ -913,6 +913,11 @@
                             '</p>'
                         );
                     }
+
+                    // export route button
+                    var exportTitle = t('maps', 'Export current route to GPX');
+                    $('<button class="exportCurrentRoute" title="'+escapeHTML(exportTitle)+'">'+
+                        '<span></span></button>').insertAfter('#router-select');
                 });
             }
         },

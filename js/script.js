@@ -826,7 +826,6 @@
             }
             if (optionsValues.hasOwnProperty('osrmFootURL') && optionsValues.osrmFootURL !== '') {
                 this.addRouter('osrmFoot', 'By foot (OSRM)', optionsValues.osrmFootURL, null);
-                nbRouters++;
             }
             if (optionsValues.hasOwnProperty('osrmDEMO') && optionsValues.osrmDEMO === '1') {
                 this.addRouter('osrmDEMO', 'By car (OSRM demo)', null, null);

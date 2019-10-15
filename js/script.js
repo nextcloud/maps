@@ -625,7 +625,11 @@
                 returnToPrevBounds: true,
                 setView: 'untilPan',
                 showCompass: true,
-                locateOptions: {enableHighAccuracy: true, maxZoom: 15}
+                locateOptions: {enableHighAccuracy: true, maxZoom: 15},
+                onLocationError: function(e) {
+                    optionsController.saveOptionValues({locControlEnabled: false});
+                    alert(e.message);
+                }
             }).addTo(this.map);
             $('.leaflet-control-locate a').click( function(e) {
                 optionsController.saveOptionValues({locControlEnabled: mapController.locControl._active});

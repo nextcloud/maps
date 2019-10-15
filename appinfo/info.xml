@@ -33,7 +33,7 @@
 	<screenshot>https://raw.githubusercontent.com/nextcloud/maps/master/screenshots/screenshot3.png</screenshot>
     <dependencies>
         <lib>exif</lib>
-        <nextcloud min-version="16" max-version="17"/>
+        <nextcloud min-version="16" max-version="18"/>
     </dependencies>
     <repair-steps>
         <install>

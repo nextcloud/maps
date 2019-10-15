@@ -546,6 +546,23 @@ tr.selected td {
     /* waiting for a better solution */
     overflow: hidden;
 }
+.exportCurrentRoute {
+    margin-top: 5px !important;
+    margin-bottom: 2px !important;
+    float: right !important;
+    padding: 0 !important;
+    line-height: initial !important;
+    min-height: 2px !important;
+    height: 25px !important;
+    width: 25px !important;
+}
+.exportCurrentRoute span{
+    line-height: initial;
+}
+.exportCurrentRoute span::after{
+    font-weight: normal;
+    content: '\1F4BE';
+}
 #router-select {
     float: left;
 }
@@ -591,7 +608,10 @@ tr.selected td {
 }
 
 .tooltip-contact-avatar {
-    width: 70px;
+    min-width: 70px;
+    min-height: 70px;
+    max-width: 70px;
+    max-height: 70px;
     margin-left: 40px;
     margin-right: 40px;
     border-radius: 50%;

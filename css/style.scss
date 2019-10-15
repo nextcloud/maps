@@ -123,6 +123,7 @@
 }
 .leaflet-container {
     background: var(--color-main-background);
+    font-family: var(--font-face);
 }
 
 .leaflet-control-layers-base {
@@ -279,6 +280,7 @@ tr.selected td {
 }
 .leaflet-popup-content-wrapper, .leaflet-popup-tip {
     background-color: var(--color-main-background) !important;
+    box-shadow: none;
 }
 .leaflet-bar {
     background-color: var(--color-main-background);
@@ -624,46 +626,50 @@ tr.selected td {
     font-weight: bold;
 }
 
+.contactPopup,
+.leaflet-marker-contact-tooltip {
+    width: 250px;
+}
+.contactPopup .leaflet-popup-content,
+.leaflet-marker-contact-tooltip {
+    display: flex;
+}
+.contactPopup p {
+    margin: 0;
+}
+.contactPopup a {
+    color: var(--color-primary-element);
+}
 .tooltip-contact-avatar {
     min-width: 70px;
     min-height: 70px;
     max-width: 70px;
     max-height: 70px;
-    margin-left: 40px;
-    margin-right: 40px;
     border-radius: 50%;
-    border: 2px solid var(--color-text-lighter);
 }
-
-.contactPopup a {
-    width: 100%;
-    text-align: center;
-    display: block;
+.tooltip-contact-content {
+    padding-left: 12px;
 }
-.contactPopup {
-    width: 165px;
+.tooltip-contact-name,
+.tooltip-contact-address-type,
+.tooltip-contact-address {
+    margin: 0;
+    max-width: 160px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
-.contactPopup p {
-    margin-top: 2px;
-    margin-bottom: 2px;
+.tooltip-contact-name {
+    font-weight: bold;
+}
+.tooltip-contact-address-type {
+    color: var(--color-text-maxcontrast);
 }
 .contactPopup .deleteContactAddress {
     display: inline-block;
     cursor: pointer;
 }
 
-.tooltip-contact-address-type {
-    width: 100%;
-    text-align: center;
-}
-.tooltip-contact-address {
-    width: 150px;
-    text-align: center;
-}
-.tooltip-contact-name {
-    width: 100%;
-    text-align: center;
-}
 .no-routing-engine-warning {
     width: 100%;
     text-align: center;

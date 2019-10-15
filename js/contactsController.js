@@ -269,7 +269,7 @@ ContactsController.prototype = {
             marker.bindPopup(contactPopup, {
                 closeOnClick: true,
                 className: 'popovermenu open popupMarker contactPopup',
-                offset: L.point(-5, 5)
+                offset: L.point(-5, 10)
             });
             marker.openPopup();
             this._map.clickpopup = true;
@@ -432,7 +432,11 @@ ContactsController.prototype = {
             var adrTab = contacts[i].ADR.split(';');
             var formattedAddress = '';
             if (adrTab.length > 6) {
-                formattedAddress = adrTab[2] + '<br/>' + adrTab[5] + ' ' + adrTab[3] + '<br/>' + adrTab[4] + ' ' + adrTab[6];
+                // check if street name is set
+                if(adrTab[2] !== '') {
+                    formattedAddress += adrTab[2] + '<br>';
+                }
+                formattedAddress += adrTab[5] + ' ' + adrTab[3] + '<br>' + adrTab[4] + ' ' + adrTab[6];
             }
 
             var markerData = {
@@ -482,36 +486,37 @@ ContactsController.prototype = {
     },
 
     getContactTooltipContent: function(markerData) {
-        var contactTooltip = '<p class="tooltip-contact-name">' + escapeHTML(basename(markerData.name)) + '</p>';
-        var img = '<img class="tooltip-contact-avatar" src="' + markerData.avatar + '"/>';
-        contactTooltip += img;
+        var contactTooltip = '<img class="tooltip-contact-avatar" src="' + markerData.avatar + '" alt="" /><div class="tooltip-contact-content">';
+        var contactName = '<h3 class="tooltip-contact-name">' + escapeHTML(basename(markerData.name)) + '</h3>';
+        contactTooltip += contactName;
         if (markerData.addressType === 'home') {
-            contactTooltip += '<p class="tooltip-contact-address-type"><b>'+t('maps', 'Home')+'</b></p>';
+            contactTooltip += '<p class="tooltip-contact-address-type">'+t('maps', 'Home')+'</p>';
         }
         else if (markerData.addressType === 'work') {
-            contactTooltip += '<p class="tooltip-contact-address-type"><b>'+t('maps', 'Work')+'</b></p>';
+            contactTooltip += '<p class="tooltip-contact-address-type">'+t('maps', 'Work')+'</p>';
         }
-        contactTooltip += '<p class="tooltip-contact-address">' + markerData.address + '</p>';
+        contactTooltip += '<p class="tooltip-contact-address">' + markerData.address + '</p></div>';
         return contactTooltip;
     },
 
     getContactPopupContent: function(markerData) {
         var deleteText = t('maps', 'Delete this address');
-        var contactPopup = '<p class="tooltip-contact-name">' + escapeHTML(basename(markerData.name)) + '</p>';
-        var img = '<img class="tooltip-contact-avatar" src="' + markerData.avatar + '"/>';
-        contactPopup += img;
+        var contactPopup = '<img class="tooltip-contact-avatar" src="' + markerData.avatar + '" alt="" /><div class="tooltip-contact-content">';
+        var contactName = '<h3 class="tooltip-contact-name">' + escapeHTML(basename(markerData.name)) + '</h3>';
+        contactPopup += contactName;
         if (markerData.addressType === 'home') {
-            contactPopup += '<p class="tooltip-contact-address-type"><b>'+t('maps', 'Home')+'</b>';
+            contactPopup += '<p class="tooltip-contact-address-type">'+t('maps', 'Home');
         }
         else if (markerData.addressType === 'work') {
-            contactPopup += '<p class="tooltip-contact-address-type"><b>'+t('maps', 'Work')+'</b>';
+            contactPopup += '<p class="tooltip-contact-address-type">'+t('maps', 'Work');
         }
+        /* Hide contact address deletion for now
         contactPopup += '<span class="icon-delete deleteContactAddress" bookid="' + markerData.bookid + '" '+
             'uri="' + markerData.uri + '" uid="' + markerData.uid + '" vcardaddress="' + markerData.adr + '" '+
-            'title="' + deleteText + '"></span></p>';
-        contactPopup += '<p class="tooltip-contact-address">' + markerData.address + '</p>';
+            'title="' + deleteText + '"></span>';*/
+        contactPopup += '</p><p class="tooltip-contact-address">' + markerData.address + '</p>';
         var contactUrl = OC.generateUrl('/apps/contacts/'+t('contacts', 'All contacts')+'/'+encodeURIComponent(markerData.uid+"~contacts"));
-        contactPopup += '<a href="'+contactUrl+'" target="_blank">'+t('maps', 'Open in Contacts app')+'</a>';
+        contactPopup += '<a href="'+contactUrl+'" target="_blank">'+t('maps', 'Open in Contacts')+'</a></div>';
         return contactPopup;
     },
 
@@ -532,6 +537,7 @@ ContactsController.prototype = {
         e.target.unbindTooltip();
     },
 
+    /* hide delete address functionality on right click for now to keep simple
     onContactRightClick: function(e) {
         var data = e.target.data;
         var bookid = data.bookid;
@@ -587,7 +593,7 @@ ContactsController.prototype = {
         }).fail(function(response) {
             OC.Notification.showTemporary(t('maps', 'Failed to delete contact address') + ': ' + response.responseText);
         });
-    },
+    },*/
 
     callForContacts: function() {
         this.contactsRequestInProgress = true;

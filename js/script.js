@@ -194,11 +194,69 @@
                     $('#timeRangeSlider').show();
                     $('#display-slider').prop('checked', true);
                 }
+
+                if (optionsValues.hasOwnProperty('mapboxAPIKEY') && optionsValues.mapboxAPIKEY !== '') {
+                    // add mapbox-gl tile server
+                    var attrib = '<a href="https://www.mapbox.com/about/maps/">© Mapbox</a> '+
+                        '<a href="https://www.openstreetmap.org/copyright">© OpenStreetMap</a> '+
+                        '<a href="https://www.mapbox.com/map-feedback/">'+t('maps', 'Improve this map')+'</a>';
+                    var attribSat = attrib + '<a href="https://www.digitalglobe.com/">© DigitalGlobe</a>'
+
+                    mapController.baseLayers['Mapbox vector streets'] = L.mapboxGL({
+                        accessToken: optionsValues.mapboxAPIKEY,
+                        style: 'mapbox://styles/mapbox/streets-v8',
+                        minZoom: 1,
+                        maxZoom: 22,
+                        attribution: attrib
+                    });
+                    //mapController.controlLayers.addBaseLayer(mapController.baseLayers['Mapbox vector streets'], 'Mapbox vector streets');
+
+                    mapController.baseLayers['Mapbox outdoors'] = L.mapboxGL({
+                        accessToken: optionsValues.mapboxAPIKEY,
+                        style: 'mapbox://styles/mapbox/outdoors-v11',
+                        minZoom: 1,
+                        maxZoom: 22,
+                        attribution: attrib
+                    });
+                    mapController.controlLayers.addBaseLayer(mapController.baseLayers['Mapbox outdoors'], 'Topographic');
+
+                    mapController.baseLayers['Mapbox dark'] = L.mapboxGL({
+                        accessToken: optionsValues.mapboxAPIKEY,
+                        style: 'mapbox://styles/mapbox/dark-v8',
+                        minZoom: 1,
+                        maxZoom: 22,
+                        attribution: attrib
+                    });
+                    mapController.controlLayers.addBaseLayer(mapController.baseLayers['Mapbox dark'], 'Dark');
+
+                    mapController.baseLayers['Mapbox satellite'] = L.mapboxGL({
+                        accessToken: optionsValues.mapboxAPIKEY,
+                        style: 'mapbox://styles/mapbox/satellite-streets-v9',
+                        minZoom: 1,
+                        maxZoom: 22,
+                        attribution: attribSat
+                    });
+                    //mapController.controlLayers.addBaseLayer(mapController.baseLayers['Mapbox satellite'], 'Mapbox satellite');
+
+                    // change "button" layers
+                    delete mapController.baseLayers['OpenStreetMap'];
+                    delete mapController.baseLayers['ESRI Aerial'];
+                    mapController.defaultStreetLayer = 'Mapbox vector streets';
+                    mapController.defaultSatelliteLayer = 'Mapbox satellite';
+                    // remove dark, esri topo and openTopoMap
+                    // Mapbox outdoors and dark are good enough
+                    mapController.controlLayers.removeLayer(mapController.baseLayers['ESRI Topo']);
+                    mapController.controlLayers.removeLayer(mapController.baseLayers['OpenTopoMap']);
+                    mapController.controlLayers.removeLayer(mapController.baseLayers['Dark']);
+                    delete mapController.baseLayers['ESRI Topo'];
+                    delete mapController.baseLayers['OpenTopoMap'];
+                    delete mapController.baseLayers['Dark'];
+                }
                 if (optionsValues.hasOwnProperty('tileLayer')) {
                     mapController.changeTileLayer(optionsValues.tileLayer);
                 }
                 else {
-                    mapController.changeTileLayer('OpenStreetMap');
+                    mapController.changeTileLayer(mapController.defaultStreetLayer);
                 }
                 if (optionsValues.hasOwnProperty('mapBounds')) {
                     var nsew = optionsValues.mapBounds.split(';');
@@ -359,6 +417,9 @@
     var mapController = {
         searchMarkerLayerGroup: null,
         map: {},
+        // those default layers might be changed if we have a Mapbox API key
+        defaultStreetLayer: 'OpenStreetMap',
+        defaultSatelliteLayer: 'ESRI Aerial',
         locControl: undefined,
         baseLayers: undefined,
         displaySearchResult: function(results) {
@@ -501,7 +562,7 @@
                 }]
             });
             this.map.on('contextmenu', function(e) {
-                if ($(e.originalEvent.target).attr('id') === 'map') {
+                if ($(e.originalEvent.target).attr('id') === 'map' || $(e.originalEvent.target).hasClass('mapboxgl-map')) {
                     that.map.contextmenu.showAt(L.latLng(e.latlng.lat, e.latlng.lng));
                     that.map.clickpopup = true;
                 }
@@ -509,9 +570,8 @@
             this.map.clickpopup = null;
             this.map.leftClickLock = false;
             this.map.on('click', function(e) {
-                if ($(e.originalEvent.target).attr('id') === 'map') {
+                if ($(e.originalEvent.target).attr('id') === 'map' || $(e.originalEvent.target).hasClass('mapboxgl-map')) {
                     if (!that.map.leftClickLock && that.map.clickpopup === null) {
-                        console.log('no popup');
                         searchController.mapLeftClick(e);
                         that.map.clickpopup = true;
                     }
@@ -559,13 +619,17 @@
                 icon: 'fa fa-map-marker-alt',
                 iconLoading: 'fa fa-spinner fa-spin',
                 strings: {
-                    title: t('maps', 'See current location')
+                    title: t('maps', 'Current location')
                 },
                 flyTo: true,
                 returnToPrevBounds: true,
                 setView: 'untilPan',
                 showCompass: true,
-                locateOptions: {enableHighAccuracy: true, maxZoom: 15}
+                locateOptions: {enableHighAccuracy: true, maxZoom: 15},
+                onLocationError: function(e) {
+                    optionsController.saveOptionValues({locControlEnabled: false});
+                    alert(e.message);
+                }
             }).addTo(this.map);
             $('.leaflet-control-locate a').click( function(e) {
                 optionsController.saveOptionValues({locControlEnabled: mapController.locControl._active});
@@ -576,10 +640,11 @@
                 states: [{
                     stateName: 'no-importa',
                     icon:      '<a class="icon icon-menu" style="height: 100%"> </a>',
-                    title:     t('maps', 'Other layers'),
+                    title:     t('maps', 'Other maps'),
                     onClick: function(btn, map) {
                         $('.leaflet-control-layers').toggle();
                         $('.easy-button-container').toggle();
+                        that.map.clickpopup = true;
                     }
                 }]
             });
@@ -610,26 +675,26 @@
 
             // main layers buttons
             var esriImageUrl = OC.filePath('maps', 'css/images', 'esri.jpg');
-            this.esriButton = L.easyButton({
+            this.satelliteButton = L.easyButton({
                 position: 'bottomright',
                 states: [{
                     stateName: 'no-importa',
                     icon:      '<img src="'+esriImageUrl+'"/>',
-                    title:     t('maps', 'Aerial map'),
+                    title:     t('maps', 'Satellite map'),
                     onClick: function(btn, map) {
-                        that.changeTileLayer('ESRI Aerial', true);
+                        that.changeTileLayer(that.defaultSatelliteLayer, true);
                     }
                 }]
             });
             var osmImageUrl = OC.filePath('maps', 'css/images', 'osm.png');
-            this.osmButton = L.easyButton({
+            this.streetButton = L.easyButton({
                 position: 'bottomright',
                 states: [{
                     stateName: 'no-importa',
                     icon:      '<img src="'+osmImageUrl+'"/>',
-                    title:     t('maps', 'Classic map'),
+                    title:     t('maps', 'Street map'),
                     onClick: function(btn, map) {
-                        that.changeTileLayer('OpenStreetMap', true);
+                        that.changeTileLayer(that.defaultStreetLayer, true);
                     }
                 }]
             });
@@ -642,6 +707,9 @@
             for (var ol in this.baseOverlays) {
                 this.map.removeLayer(this.baseOverlays[ol]);
             }
+            if (!this.baseLayers.hasOwnProperty(name)) {
+                name = this.defaultStreetLayer;
+            }
             this.map.addLayer(this.baseLayers[name]);
             if (name === 'ESRI Aerial' || name === 'Watercolor') {
                 this.map.addLayer(this.baseOverlays['Roads and labels']);
@@ -653,13 +721,13 @@
         },
 
         layerChanged: function(name) {
-            if (name !== 'OpenStreetMap') {
-                this.esriButton.remove();
-                this.osmButton.addTo(this.map);
+            if (name !== this.defaultStreetLayer) {
+                this.satelliteButton.remove();
+                this.streetButton.addTo(this.map);
             }
             else {
-                this.osmButton.remove();
-                this.esriButton.addTo(this.map);
+                this.streetButton.remove();
+                this.satelliteButton.addTo(this.map);
             }
             // map maxZoom should be dynamic (if not specified at map creation) but something crashes like that
             // so we set it on map creation and
@@ -669,6 +737,7 @@
             }
             $('.leaflet-control-layers').hide();
             $('.easy-button-container').show();
+            this.map.clickpopup = null;
         },
     };
 

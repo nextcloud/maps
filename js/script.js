@@ -231,7 +231,7 @@
 
                     mapController.baseLayers['Mapbox satellite'] = L.mapboxGL({
                         accessToken: optionsValues.mapboxAPIKEY,
-                        style: 'mapbox://styles/mapbox/satellite-v8',
+                        style: 'mapbox://styles/mapbox/satellite-streets-v9',
                         minZoom: 1,
                         maxZoom: 22,
                         attribution: attribSat

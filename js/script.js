@@ -640,6 +640,7 @@
                     onClick: function(btn, map) {
                         $('.leaflet-control-layers').toggle();
                         $('.easy-button-container').toggle();
+                        that.map.clickpopup = true;
                     }
                 }]
             });
@@ -732,6 +733,7 @@
             }
             $('.leaflet-control-layers').hide();
             $('.easy-button-container').show();
+            this.map.clickpopup = null;
         },
     };
 

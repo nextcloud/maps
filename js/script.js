@@ -218,7 +218,7 @@
                         maxZoom: 22,
                         attribution: attrib
                     });
-                    mapController.controlLayers.addBaseLayer(mapController.baseLayers['Mapbox outdoors'], 'Mapbox outdoors');
+                    mapController.controlLayers.addBaseLayer(mapController.baseLayers['Mapbox outdoors'], 'Topographic');
 
                     mapController.baseLayers['Mapbox dark'] = L.mapboxGL({
                         accessToken: optionsValues.mapboxAPIKEY,
@@ -227,7 +227,7 @@
                         maxZoom: 22,
                         attribution: attrib
                     });
-                    mapController.controlLayers.addBaseLayer(mapController.baseLayers['Mapbox dark'], 'Mapbox dark');
+                    mapController.controlLayers.addBaseLayer(mapController.baseLayers['Mapbox dark'], 'Dark');
 
                     mapController.baseLayers['Mapbox satellite'] = L.mapboxGL({
                         accessToken: optionsValues.mapboxAPIKEY,
@@ -619,7 +619,7 @@
                 icon: 'fa fa-map-marker-alt',
                 iconLoading: 'fa fa-spinner fa-spin',
                 strings: {
-                    title: t('maps', 'See current location')
+                    title: t('maps', 'Current location')
                 },
                 flyTo: true,
                 returnToPrevBounds: true,
@@ -640,7 +640,7 @@
                 states: [{
                     stateName: 'no-importa',
                     icon:      '<a class="icon icon-menu" style="height: 100%"> </a>',
-                    title:     t('maps', 'Other layers'),
+                    title:     t('maps', 'Other maps'),
                     onClick: function(btn, map) {
                         $('.leaflet-control-layers').toggle();
                         $('.easy-button-container').toggle();
@@ -680,7 +680,7 @@
                 states: [{
                     stateName: 'no-importa',
                     icon:      '<img src="'+esriImageUrl+'"/>',
-                    title:     t('maps', 'Aerial map'),
+                    title:     t('maps', 'Satellite map'),
                     onClick: function(btn, map) {
                         that.changeTileLayer(that.defaultSatelliteLayer, true);
                     }
@@ -692,7 +692,7 @@
                 states: [{
                     stateName: 'no-importa',
                     icon:      '<img src="'+osmImageUrl+'"/>',
-                    title:     t('maps', 'Classic map'),
+                    title:     t('maps', 'Street map'),
                     onClick: function(btn, map) {
                         that.changeTileLayer(that.defaultStreetLayer, true);
                     }

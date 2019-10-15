@@ -209,25 +209,25 @@
                         maxZoom: 22,
                         attribution: attrib
                     });
-                    mapController.controlLayers.addBaseLayer(mapController.baseLayers['Mapbox vector streets'], 'Mapbox vector streets');
+                    //mapController.controlLayers.addBaseLayer(mapController.baseLayers['Mapbox vector streets'], 'Mapbox vector streets');
 
-                    mapController.baseLayers['Mapbox vector outdoors'] = L.mapboxGL({
+                    mapController.baseLayers['Mapbox outdoors'] = L.mapboxGL({
                         accessToken: optionsValues.mapboxAPIKEY,
                         style: 'mapbox://styles/mapbox/outdoors-v11',
                         minZoom: 1,
                         maxZoom: 22,
                         attribution: attrib
                     });
-                    mapController.controlLayers.addBaseLayer(mapController.baseLayers['Mapbox vector outdoors'], 'Mapbox vector outdoors');
+                    mapController.controlLayers.addBaseLayer(mapController.baseLayers['Mapbox outdoors'], 'Mapbox outdoors');
 
-                    mapController.baseLayers['Mapbox vector bright'] = L.mapboxGL({
+                    mapController.baseLayers['Mapbox dark'] = L.mapboxGL({
                         accessToken: optionsValues.mapboxAPIKEY,
-                        style: 'mapbox://styles/mapbox/bright-v8',
+                        style: 'mapbox://styles/mapbox/dark-v8',
                         minZoom: 1,
                         maxZoom: 22,
                         attribution: attrib
                     });
-                    mapController.controlLayers.addBaseLayer(mapController.baseLayers['Mapbox vector bright'], 'Mapbox vector bright');
+                    mapController.controlLayers.addBaseLayer(mapController.baseLayers['Mapbox dark'], 'Mapbox dark');
 
                     mapController.baseLayers['Mapbox satellite'] = L.mapboxGL({
                         accessToken: optionsValues.mapboxAPIKEY,
@@ -236,13 +236,27 @@
                         maxZoom: 22,
                         attribution: attribSat
                     });
-                    mapController.controlLayers.addBaseLayer(mapController.baseLayers['Mapbox satellite'], 'Mapbox satellite');
+                    //mapController.controlLayers.addBaseLayer(mapController.baseLayers['Mapbox satellite'], 'Mapbox satellite');
+
+                    // change "button" layers
+                    delete mapController.baseLayers['OpenStreetMap'];
+                    delete mapController.baseLayers['ESRI Aerial'];
+                    mapController.defaultStreetLayer = 'Mapbox vector streets';
+                    mapController.defaultSatelliteLayer = 'Mapbox satellite';
+                    // remove dark, esri topo and openTopoMap
+                    // Mapbox outdoors and dark are good enough
+                    mapController.controlLayers.removeLayer(mapController.baseLayers['ESRI Topo']);
+                    mapController.controlLayers.removeLayer(mapController.baseLayers['OpenTopoMap']);
+                    mapController.controlLayers.removeLayer(mapController.baseLayers['Dark']);
+                    delete mapController.baseLayers['ESRI Topo'];
+                    delete mapController.baseLayers['OpenTopoMap'];
+                    delete mapController.baseLayers['Dark'];
                 }
                 if (optionsValues.hasOwnProperty('tileLayer')) {
                     mapController.changeTileLayer(optionsValues.tileLayer);
                 }
                 else {
-                    mapController.changeTileLayer('OpenStreetMap');
+                    mapController.changeTileLayer(mapController.defaultStreetLayer);
                 }
                 if (optionsValues.hasOwnProperty('mapBounds')) {
                     var nsew = optionsValues.mapBounds.split(';');
@@ -403,6 +417,9 @@
     var mapController = {
         searchMarkerLayerGroup: null,
         map: {},
+        // those default layers might be changed if we have a Mapbox API key
+        defaultStreetLayer: 'OpenStreetMap',
+        defaultSatelliteLayer: 'ESRI Aerial',
         locControl: undefined,
         baseLayers: undefined,
         displaySearchResult: function(results) {
@@ -653,26 +670,26 @@
 
             // main layers buttons
             var esriImageUrl = OC.filePath('maps', 'css/images', 'esri.jpg');
-            this.esriButton = L.easyButton({
+            this.satelliteButton = L.easyButton({
                 position: 'bottomright',
                 states: [{
                     stateName: 'no-importa',
                     icon:      '<img src="'+esriImageUrl+'"/>',
                     title:     t('maps', 'Aerial map'),
                     onClick: function(btn, map) {
-                        that.changeTileLayer('ESRI Aerial', true);
+                        that.changeTileLayer(that.defaultSatelliteLayer, true);
                     }
                 }]
             });
             var osmImageUrl = OC.filePath('maps', 'css/images', 'osm.png');
-            this.osmButton = L.easyButton({
+            this.streetButton = L.easyButton({
                 position: 'bottomright',
                 states: [{
                     stateName: 'no-importa',
                     icon:      '<img src="'+osmImageUrl+'"/>',
                     title:     t('maps', 'Classic map'),
                     onClick: function(btn, map) {
-                        that.changeTileLayer('OpenStreetMap', true);
+                        that.changeTileLayer(that.defaultStreetLayer, true);
                     }
                 }]
             });
@@ -686,7 +703,7 @@
                 this.map.removeLayer(this.baseOverlays[ol]);
             }
             if (!this.baseLayers.hasOwnProperty(name)) {
-                name = 'OpenStreetMap';
+                name = this.defaultStreetLayer;
             }
             this.map.addLayer(this.baseLayers[name]);
             if (name === 'ESRI Aerial' || name === 'Watercolor') {
@@ -699,13 +716,13 @@
         },
 
         layerChanged: function(name) {
-            if (name !== 'OpenStreetMap') {
-                this.esriButton.remove();
-                this.osmButton.addTo(this.map);
+            if (name !== this.defaultStreetLayer) {
+                this.satelliteButton.remove();
+                this.streetButton.addTo(this.map);
             }
             else {
-                this.osmButton.remove();
-                this.esriButton.addTo(this.map);
+                this.streetButton.remove();
+                this.satelliteButton.addTo(this.map);
             }
             // map maxZoom should be dynamic (if not specified at map creation) but something crashes like that
             // so we set it on map creation and

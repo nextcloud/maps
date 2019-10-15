@@ -402,6 +402,10 @@ tr.selected td {
     width: 300px;
 }
 
+.leaflet-marker-contact-tooltip p {
+    margin-top: 2px;
+    margin-bottom: 2px;
+}
 .leaflet-marker-favorite-tooltip,
 .leaflet-marker-device-tooltip,
 .leaflet-marker-track-tooltip,
@@ -625,6 +629,14 @@ tr.selected td {
 }
 .contactPopup {
     width: 165px;
+}
+.contactPopup p {
+    margin-top: 2px;
+    margin-bottom: 2px;
+}
+.contactPopup .deleteContactAddress {
+    display: inline-block;
+    cursor: pointer;
 }
 
 .tooltip-contact-address-type {

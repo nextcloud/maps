@@ -9,8 +9,6 @@ OC.L10N.register(
     "Name" : "الاسم",
     "Category" : "الفئة",
     "Comment" : "تعليق",
-    "Aerial map" : "خريطة جوية",
-    "Classic map" : "خريطة عادية",
     "east" : "شرق",
     "south" : "جنوب",
     "west" : "غرب",

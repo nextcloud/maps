@@ -196,7 +196,21 @@
                 }
 
                 if (optionsValues.hasOwnProperty('mapboxAPIKEY') && optionsValues.mapboxAPIKEY !== '') {
-                    // add mapbox-gl tile server
+                    // change "button" layers
+                    delete mapController.baseLayers['OpenStreetMap'];
+                    delete mapController.baseLayers['ESRI Aerial'];
+                    mapController.defaultStreetLayer = 'Mapbox vector streets';
+                    mapController.defaultSatelliteLayer = 'Mapbox satellite';
+                    // remove dark, esri topo and openTopoMap
+                    // Mapbox outdoors and dark are good enough
+                    mapController.controlLayers.removeLayer(mapController.baseLayers['ESRI Topo']);
+                    mapController.controlLayers.removeLayer(mapController.baseLayers['OpenTopoMap']);
+                    mapController.controlLayers.removeLayer(mapController.baseLayers['Dark']);
+                    delete mapController.baseLayers['ESRI Topo'];
+                    delete mapController.baseLayers['OpenTopoMap'];
+                    delete mapController.baseLayers['Dark'];
+
+                    // add mapbox-gl tile servers
                     var attrib = '<a href="https://www.mapbox.com/about/maps/">© Mapbox</a> '+
                         '<a href="https://www.openstreetmap.org/copyright">© OpenStreetMap</a> '+
                         '<a href="https://www.mapbox.com/map-feedback/">'+t('maps', 'Improve this map')+'</a>';
@@ -211,23 +225,23 @@
                     });
                     //mapController.controlLayers.addBaseLayer(mapController.baseLayers['Mapbox vector streets'], 'Mapbox vector streets');
 
-                    mapController.baseLayers['Mapbox outdoors'] = L.mapboxGL({
+                    mapController.baseLayers['Topographic'] = L.mapboxGL({
                         accessToken: optionsValues.mapboxAPIKEY,
                         style: 'mapbox://styles/mapbox/outdoors-v11',
                         minZoom: 1,
                         maxZoom: 22,
                         attribution: attrib
                     });
-                    mapController.controlLayers.addBaseLayer(mapController.baseLayers['Mapbox outdoors'], 'Topographic');
+                    mapController.controlLayers.addBaseLayer(mapController.baseLayers['Topographic'], 'Topographic');
 
-                    mapController.baseLayers['Mapbox dark'] = L.mapboxGL({
+                    mapController.baseLayers['Dark'] = L.mapboxGL({
                         accessToken: optionsValues.mapboxAPIKEY,
                         style: 'mapbox://styles/mapbox/dark-v8',
                         minZoom: 1,
                         maxZoom: 22,
                         attribution: attrib
                     });
-                    mapController.controlLayers.addBaseLayer(mapController.baseLayers['Mapbox dark'], 'Dark');
+                    mapController.controlLayers.addBaseLayer(mapController.baseLayers['Dark'], 'Dark');
 
                     mapController.baseLayers['Mapbox satellite'] = L.mapboxGL({
                         accessToken: optionsValues.mapboxAPIKEY,
@@ -237,20 +251,6 @@
                         attribution: attribSat
                     });
                     //mapController.controlLayers.addBaseLayer(mapController.baseLayers['Mapbox satellite'], 'Mapbox satellite');
-
-                    // change "button" layers
-                    delete mapController.baseLayers['OpenStreetMap'];
-                    delete mapController.baseLayers['ESRI Aerial'];
-                    mapController.defaultStreetLayer = 'Mapbox vector streets';
-                    mapController.defaultSatelliteLayer = 'Mapbox satellite';
-                    // remove dark, esri topo and openTopoMap
-                    // Mapbox outdoors and dark are good enough
-                    mapController.controlLayers.removeLayer(mapController.baseLayers['ESRI Topo']);
-                    mapController.controlLayers.removeLayer(mapController.baseLayers['OpenTopoMap']);
-                    mapController.controlLayers.removeLayer(mapController.baseLayers['Dark']);
-                    delete mapController.baseLayers['ESRI Topo'];
-                    delete mapController.baseLayers['OpenTopoMap'];
-                    delete mapController.baseLayers['Dark'];
                 }
                 if (optionsValues.hasOwnProperty('tileLayer')) {
                     mapController.changeTileLayer(optionsValues.tileLayer);

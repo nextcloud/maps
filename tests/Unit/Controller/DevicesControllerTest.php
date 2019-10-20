@@ -198,6 +198,25 @@ class DevicesControllerTest extends \PHPUnit\Framework\TestCase {
         $this->assertEquals(true, count($data) === 1);
         $this->assertEquals(true, $data[0]['timestamp'] >= $ts);
 
+        // test missing values
+        $resp = $this->devicesController->addDevicePoint(1.1, 2.2, 12346, 'testDevice', null, null, null);
+        $status = $resp->getStatus();
+        $this->assertEquals(200, $status);
+
+        $resp = $this->devicesController->addDevicePoint(1.1, 2.2, 12347, 'testDevice', '', '', '');
+        $status = $resp->getStatus();
+        $this->assertEquals(200, $status);
+
+        $resp = $this->devicesController->addDevicePoint(1.1, 2.2, 12348, 'testDevice', 'a', 'b', 'c');
+        $status = $resp->getStatus();
+        $this->assertEquals(200, $status);
+
+        $resp = $this->devicesController->getDevicePoints($deviceId);
+        $status = $resp->getStatus();
+        $this->assertEquals(200, $status);
+        $data = $resp->getData();
+        $this->assertEquals(true, count($data) === 4);
+
         // invalid values
         $resp = $this->devicesController->addDevicePoint('aaa', 2.2, 12345, 'testDevice', 1000, 99, 50);
         $status = $resp->getStatus();

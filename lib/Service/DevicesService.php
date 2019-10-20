@@ -149,9 +149,9 @@ class DevicesService {
                 'lat' => $qb->createNamedParameter($lat, IQueryBuilder::PARAM_STR),
                 'lng' => $qb->createNamedParameter($lng, IQueryBuilder::PARAM_STR),
                 'timestamp' => $qb->createNamedParameter($ts, IQueryBuilder::PARAM_INT),
-                'altitude' => $qb->createNamedParameter($altitude, IQueryBuilder::PARAM_STR),
-                'battery' => $qb->createNamedParameter($battery, IQueryBuilder::PARAM_STR),
-                'accuracy' => $qb->createNamedParameter($accuracy, IQueryBuilder::PARAM_STR)
+                'altitude' => $qb->createNamedParameter(is_numeric($altitude) ? $altitude : null, IQueryBuilder::PARAM_STR),
+                'battery' => $qb->createNamedParameter(is_numeric($battery) ? $battery : null, IQueryBuilder::PARAM_STR),
+                'accuracy' => $qb->createNamedParameter(is_numeric($accuracy) ? $accuracy : null, IQueryBuilder::PARAM_STR)
             ]);
         $req = $qb->execute();
         $pointId = $qb->getLastInsertId();

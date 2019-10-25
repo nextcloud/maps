@@ -113,6 +113,10 @@ class DevicesApiController extends ApiController {
      */
     public function addDevicePoint($apiversion, $lat, $lng, $timestamp=null, $user_agent=null, $altitude=null, $battery=null, $accuracy=null) {
         if (is_numeric($lat) and is_numeric($lng)) {
+            $timestamp = $this->normalizeOptionalNumber($timestamp);
+            $altitude = $this->normalizeOptionalNumber($altitude);
+            $battery = $this->normalizeOptionalNumber($battery);
+            $accuracy = $this->normalizeOptionalNumber($accuracy);
             $ts = $timestamp;
             if ($timestamp === null) {
                 $ts = (new \DateTime())->getTimestamp();
@@ -169,6 +173,13 @@ class DevicesApiController extends ApiController {
         else {
             return new DataResponse('no such device', 400);
         }
+    }
+
+    private function normalizeOptionalNumber($value) {
+        if (!is_numeric($value)) {
+            return null;
+        }
+        return $value;
     }
 
 }

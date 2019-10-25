@@ -178,6 +178,14 @@ class DevicesApiControllerTest extends \PHPUnit\Framework\TestCase {
         }
         $this->assertEquals(true, $d2Found);
 
+        // This happens with a request such as /api/1.0/devices?lat=1.1&lng=2.2&timestamp=&user_agent=testDevice&altitude=&battery=&accuracy=
+        $resp = $this->devicesApiController->addDevicePoint('1.0', 1.1, 2.2, '', 'testDevice', '', '', '');
+        $status = $resp->getStatus();
+        $this->assertEquals(200, $status);
+        $data = $resp->getData();
+        $deviceId3 = $data['deviceId'];
+        $pointId3 = $data['pointId'];
+
         // test point values
         $resp = $this->devicesApiController->getDevicePoints($deviceId2);
         $status = $resp->getStatus();

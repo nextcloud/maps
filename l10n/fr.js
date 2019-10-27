@@ -84,7 +84,7 @@ OC.L10N.register(
     "Failed to reset photos coordinates" : "Impossible d'effacer les données des photos",
     "Geo link ({geoLink}) copied to clipboard" : "Lien geo ({geoLink}) copié dans le presse-papiers",
     "Failed to save option values" : "Impossible d'enregistrer la valeur des options",
-    "Media scan was not done yet. Wait a few minutes/hours and reload this page to see your photos/tracks." : "L'analyse de média n'est pas encore terminé. Patientez quelques minutes/heures puis rechargez cette page pour voir vos photos/tracés GPS.",
+    "Media scan was not done yet. Wait a few minutes/hours and reload this page to see your photos/tracks." : "L'analyse des médias n'a pas encore été effectuée. Patientez quelques minutes/heures puis rechargez cette page pour voir vos photos/tracés GPS.",
     "Improve this map" : "Améliorer cette carte",
     "Failed to restore options values" : "Impossible de restaurer la valeur des options",
     "Place photos" : "Placer des photos",

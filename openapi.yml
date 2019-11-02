@@ -1,0 +1,90 @@
+openapi: 3.0.0
+info:
+  title: 'Nextcloud Maps API'
+  version: '1.0'
+  contact:
+    name: Nextcloud Maps Team
+    url: https://github.com/nextcloud/maps/
+externalDocs:
+  description: 'Based on a loose description in this ticket: https://github.com/nextcloud/maps/issues/92'
+  url: 'https://github.com/nextcloud/maps/issues/92'
+servers: 
+  - url: https://{hostname}:{port}/index.php/apps/maps/api/1.0/
+    variables:
+      hostname:
+        default: localhost
+      port:
+        default: '8080'
+paths:
+  /favorites:
+    get:
+      operationId: get-favorites
+      summary: 'Get a list of the favorites'
+      responses:
+        '200':
+          description: Success
+    post:
+      operationId: add-favorites
+      summary: 'Add a favorite'
+      responses:
+        '200':
+          description: Success
+      requestBody:
+        $ref: '#/components/requestBodies/favoriteBody'
+  /favorites/{id}:
+    parameters:
+      - name: id
+        in: path
+        description: ID of favorite to use
+        required: true
+        schema:
+          type: integer
+    put:
+      operationId: edit-favorites
+      summary: 'Edit a favorite.'
+      responses:
+        '200':
+          description: Success
+      requestBody:
+        $ref: '#/components/requestBodies/favoriteBody'
+
+    delete:
+      operationId: delete-favorites
+      summary: 'Deletes a favorite'
+      responses:
+        '200':
+          description: Success
+components:
+  requestBodies:
+    favoriteBody:
+      description: 'favorite data'
+      required: true
+      content:
+        'application/json':
+          schema:
+            $ref: '#/components/schemas/favorite-body'
+  schemas:
+    favorite-body:
+      type: object
+      title: 'Fav body'
+      properties:
+        name:
+          type: string
+          title: 'Favorite name'
+        lat:
+          type: number
+          title: Latitude
+          format: float
+        lng:
+          type: number
+          title: Longitude
+          format: float
+        category:
+          type: string
+          title: Category
+        comment:
+          type: string
+          title: Comment
+        extensions:
+          type: string
+          title: Extensions

@@ -254,7 +254,7 @@ OC.L10N.register(
     "Sort by date" : "依日期排序",
     "Settings" : "設定",
     "Track my position" : "目前位置",
-    "Display time filter slider" : "顯示側邊欄時間篩選",
+    "Display time filter slider" : "顯示時間篩選拖曳條",
     "Keep in mind that map projections always distort sizes of countries. The standard Mercator projection is particularly biased. Read more at:" : "請注意，地圖投影常造成某些地區形狀失真，麥卡托投影法失真情況特別嚴重。進一步閱讀：",
     "The True Size of Africa" : "非洲真實大小(The True Size of Africa)"
 },

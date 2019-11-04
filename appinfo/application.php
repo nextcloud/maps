@@ -28,6 +28,7 @@ use OCA\Maps\Service\PhotofilesService;
 use OCA\Maps\Service\FavoritesService;
 use OCA\Maps\Service\DevicesService;
 use OCA\Maps\Service\TracksService;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 
 class Application extends App {
@@ -194,7 +195,19 @@ class Application extends App {
                 );
             }
         );
+
+        $this->registerFeaturePolicy();
     }
 
+	private function registerFeaturePolicy() {
+		/** @var EventDispatcherInterface $dispatcher */
+		$dispatcher = $this->getContainer()->getServer()->getEventDispatcher();
+
+		$dispatcher->addListener('OCP\Security\FeaturePolicy\AddFeaturePolicyEvent', function (\OCP\Security\FeaturePolicy\AddFeaturePolicyEvent $e) {
+			$fp = new \OCP\AppFramework\Http\EmptyFeaturePolicy();
+			$fp->addAllowedGeoLocationDomain('\'self\'');
+			$e->addPolicy($fp);
+		});
+	}
 
 }

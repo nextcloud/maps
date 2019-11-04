@@ -17,6 +17,11 @@
     padding-right: 80px;
     text-overflow: ellipsis;
 }
+#router-select {
+    width: calc(100% - 60px);
+    text-overflow: ellipsis;
+    margin-top: 0;
+}
 @media only screen and (max-width: $breakpoint-mobile) {
     // Account for navigation menu toggle on the top left
     #search-term,
@@ -54,6 +59,14 @@
     float: right;
     border: none;
     margin: 0px 10px 0px 0px !important;
+}
+
+.no-routing-engine-warning {
+    padding: 10px 10px 0 10px;
+    a {
+        height: initial !important;
+        width: initial !important;
+    }
 }
 
 #timeRangeSlider {

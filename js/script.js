@@ -982,7 +982,8 @@
                         console.log('prepend');
                         $('.leaflet-routing-container').prepend(
                             '<p class="no-routing-engine-warning">' +
-                            t('maps', 'There is no routing engine set in Nextcloud additional settings. Routing is currently disabled for users.') +
+                            t('maps', 'Routing is currently disabled.') +
+                            `<a href="${OC.generateUrl('/settings/admin/additional#routing')}" title="${escapeHTML(t('maps', 'Nextcloud additional settings'))}" target="_blank">${t('maps', 'Add a routing service')}</a>` +
                             '</p>'
                         );
                     }

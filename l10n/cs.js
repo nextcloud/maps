@@ -127,7 +127,6 @@ OC.L10N.register(
     "h" : "h",
     "min" : "min",
     "s" : "s",
-    "There is no routing engine set in Nextcloud additional settings. Routing is currently disabled for users." : "V dalších nastaveních Nextcloud není nastavený žádný engine pro tvorbu tras. Jejich tvorba je proto nyní pro uživatele vypnuta.",
     "Routing error:" : "Chyba hledání cesty:",
     "Route exported in {path}" : "Cesta exportována do {path}",
     "Failed to export current route" : "Nepodařilo se exportovat stávající trasu",

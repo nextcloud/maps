@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Nextcloud 3.14159\n"
 "Report-Msgid-Bugs-To: translations\\@example.com\n"
-"POT-Creation-Date: 2019-11-03 02:38+0000\n"
+"POT-Creation-Date: 2019-11-04 02:37+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -620,156 +620,158 @@ msgid "By Foot (GrahHopper)"
 msgstr ""
 
 #: /app/js/script.js:985
-msgid ""
-"There is no routing engine set in Nextcloud additional settings. Routing is "
-"currently disabled for users."
+msgid "Routing is currently disabled."
 msgstr ""
 
-#: /app/js/script.js:991
+#: /app/js/script.js:986
+msgid "Add a routing service"
+msgstr ""
+
+#: /app/js/script.js:992
 msgid "Export current route to GPX"
 msgstr ""
 
-#: /app/js/script.js:1080
+#: /app/js/script.js:1081
 msgid "Routing error:"
 msgstr ""
 
-#: /app/js/script.js:1157
+#: /app/js/script.js:1158
 msgid "Route exported in {path}"
 msgstr ""
 
-#: /app/js/script.js:1161
+#: /app/js/script.js:1162
 msgid "Failed to export current route"
 msgstr ""
 
-#: /app/js/script.js:1165
+#: /app/js/script.js:1166
 msgid "There is no route to export"
 msgstr ""
 
-#: /app/js/script.js:1659
+#: /app/js/script.js:1660
 msgid "No search result"
 msgstr ""
 
-#: /app/js/script.js:1695
+#: /app/js/script.js:1696
 msgid "No {POItypeName} found"
 msgstr ""
 
-#: /app/js/script.js:1707 /app/js/script.js:1708
+#: /app/js/script.js:1708 /app/js/script.js:1709
 msgid "My location"
 msgstr ""
 
-#: /app/js/script.js:1714
+#: /app/js/script.js:1715
 msgid "Restaurant"
 msgstr ""
 
-#: /app/js/script.js:1719
+#: /app/js/script.js:1720
 msgid "Fast food"
 msgstr ""
 
-#: /app/js/script.js:1724
+#: /app/js/script.js:1725
 msgid "Bar"
 msgstr ""
 
-#: /app/js/script.js:1729
+#: /app/js/script.js:1730
 msgid "Supermarket"
 msgstr ""
 
-#: /app/js/script.js:1734
+#: /app/js/script.js:1735
 msgid "Cafe"
 msgstr ""
 
-#: /app/js/script.js:1739
+#: /app/js/script.js:1740
 msgid "Library"
 msgstr ""
 
-#: /app/js/script.js:1744
+#: /app/js/script.js:1745
 msgid "School"
 msgstr ""
 
-#: /app/js/script.js:1749
+#: /app/js/script.js:1750
 msgid "Sports centre"
 msgstr ""
 
-#: /app/js/script.js:1754
+#: /app/js/script.js:1755
 msgid "Gas station"
 msgstr ""
 
-#: /app/js/script.js:1759
+#: /app/js/script.js:1760
 msgid "Parking"
 msgstr ""
 
-#: /app/js/script.js:1764
+#: /app/js/script.js:1765
 msgid "Bicycle parking"
 msgstr ""
 
-#: /app/js/script.js:1769
+#: /app/js/script.js:1770
 msgid "Car rental"
 msgstr ""
 
-#: /app/js/script.js:1774
+#: /app/js/script.js:1775
 msgid "ATM"
 msgstr ""
 
-#: /app/js/script.js:1779
+#: /app/js/script.js:1780
 msgid "Pharmacy"
 msgstr ""
 
-#: /app/js/script.js:1784
+#: /app/js/script.js:1785
 msgid "Cinema"
 msgstr ""
 
-#: /app/js/script.js:1789
+#: /app/js/script.js:1790
 msgid "Public toilets"
 msgstr ""
 
-#: /app/js/script.js:1794
+#: /app/js/script.js:1795
 msgid "Drinking water"
 msgstr ""
 
-#: /app/js/script.js:1799
+#: /app/js/script.js:1800
 msgid "Hospital"
 msgstr ""
 
-#: /app/js/script.js:1804
+#: /app/js/script.js:1805
 msgid "Doctors"
 msgstr ""
 
-#: /app/js/script.js:1809
+#: /app/js/script.js:1810
 msgid "Dentist"
 msgstr ""
 
-#: /app/js/script.js:1814
+#: /app/js/script.js:1815
 msgid "Hotel"
 msgstr ""
 
-#: /app/js/script.js:1946 /app/js/script.js:2035
+#: /app/js/script.js:1947 /app/js/script.js:2036
 msgid "Add to favorites"
 msgstr ""
 
-#: /app/js/script.js:1948 /app/js/script.js:2037
+#: /app/js/script.js:1949 /app/js/script.js:2038
 msgid "Add contact address"
 msgstr ""
 
-#: /app/js/script.js:1962
+#: /app/js/script.js:1963
 msgid "Open"
 msgstr ""
 
-#: /app/js/script.js:1964
+#: /app/js/script.js:1965
 msgid "closes in {nb} minutes"
 msgstr ""
 
-#: /app/js/script.js:1967
+#: /app/js/script.js:1968
 msgid "until {date}"
 msgstr ""
 
-#: /app/js/script.js:1971
+#: /app/js/script.js:1972
 msgid "Closed"
 msgstr ""
 
-#: /app/js/script.js:1972
+#: /app/js/script.js:1973
 msgid "opens at {date}"
 msgstr ""
 
-#: /app/js/script.js:2032
+#: /app/js/script.js:2033
 msgid "This place"
 msgstr ""
 
@@ -937,15 +939,23 @@ msgid "Maps routing settings"
 msgstr ""
 
 #: /app/templates/adminSettings.php:12
-msgid "OSRM settings"
+msgid "To enable routing, you must set up a routing engine below."
 msgstr ""
 
 #: /app/templates/adminSettings.php:13
+msgid "OSRM Website"
+msgstr ""
+
+#: /app/templates/adminSettings.php:13
+msgid "OSRM settings"
+msgstr ""
+
+#: /app/templates/adminSettings.php:14
 msgid ""
 "An OSRM server URL looks like this : https://my.osrm.server.org:5000/route/v1"
 msgstr ""
 
-#: /app/templates/adminSettings.php:14
+#: /app/templates/adminSettings.php:15
 msgid "Leave URL fields empty to disable OSRM routing provider."
 msgstr ""
 
@@ -966,6 +976,10 @@ msgid "Show OSRM demo server"
 msgstr ""
 
 #: /app/templates/adminSettings.php:31
+msgid "Graphhopper Website"
+msgstr ""
+
+#: /app/templates/adminSettings.php:31
 msgid "GraphHopper settings"
 msgstr ""
 
@@ -975,27 +989,31 @@ msgid ""
 "org:8989/route"
 msgstr ""
 
-#: /app/templates/adminSettings.php:36
+#: /app/templates/adminSettings.php:35
 msgid "GraphHopper server URL (will use main graphhopper server if empty)"
 msgstr ""
 
-#: /app/templates/adminSettings.php:38
+#: /app/templates/adminSettings.php:37
 msgid "GraphHopper API key (mandatory if main server used)"
 msgstr ""
 
-#: /app/templates/adminSettings.php:42
+#: /app/templates/adminSettings.php:41
+msgid "Mapbox Website"
+msgstr ""
+
+#: /app/templates/adminSettings.php:41
 msgid "Mapbox settings"
 msgstr ""
 
-#: /app/templates/adminSettings.php:43
+#: /app/templates/adminSettings.php:42
 msgid "Set the API key to use Mapbox routing service."
 msgstr ""
 
-#: /app/templates/adminSettings.php:44
+#: /app/templates/adminSettings.php:43
 msgid "Leave empty to disable."
 msgstr ""
 
-#: /app/templates/adminSettings.php:47
+#: /app/templates/adminSettings.php:45
 msgid "Mapbox API key"
 msgstr ""
 

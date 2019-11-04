@@ -143,7 +143,6 @@
     "By car (GrahHopper)" : "En voiture (GrahHopper)",
     "By bike (GrahHopper)" : "En vélo (GrahHopper)",
     "By Foot (GrahHopper)" : "A pied (GrahHopper)",
-    "There is no routing engine set in Nextcloud additional settings. Routing is currently disabled for users." : "Aucun moteur de calcul de route défini dans les paramètres additionnels de Nextcloud. Le calcul de routes est actuellement désactivé pour les utilisateurs.",
     "Export current route to GPX" : "Exporter l'itinéraire courant en GPX",
     "Routing error:" : "Erreur d'acheminement :",
     "Route exported in {path}" : "Trace exportée vers {path}",

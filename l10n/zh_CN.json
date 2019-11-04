@@ -145,7 +145,6 @@
     "By car (GrahHopper)" : "驾车（GrahHopper）",
     "By bike (GrahHopper)" : "自行车（GrahHopper）",
     "By Foot (GrahHopper)" : "步行（GrahHopper）",
-    "There is no routing engine set in Nextcloud additional settings. Routing is currently disabled for users." : "在Nextcloud更多设置中没有指定路由引擎。用户当前不能使用路由功能。",
     "Export current route to GPX" : "将当前路线导出到GPX",
     "Routing error:" : "导航错误：",
     "Route exported in {path}" : "路线已导出到{path}",

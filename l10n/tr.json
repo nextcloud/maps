@@ -145,7 +145,6 @@
     "By car (GrahHopper)" : "Otomobil ile (GrahHopper)",
     "By bike (GrahHopper)" : "Bisiklet ile (GrahHopper)",
     "By Foot (GrahHopper)" : "Yürüyerek (GrahHopper)",
-    "There is no routing engine set in Nextcloud additional settings. Routing is currently disabled for users." : "Nextcloud ek ayarlarında herhangi bir yön bulma motoru belirtilmemiş. Şu anda kullanıcılar yön bulmayı kullanamıyor.",
     "Export current route to GPX" : "Geçerli rotayı GPX üzerine aktar",
     "Routing error:" : "Yöneltme sorunu:",
     "Route exported in {path}" : "Rota {path} yoluna dışa aktarıldı",

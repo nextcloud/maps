@@ -130,7 +130,6 @@ OC.L10N.register(
     "h" : "h",
     "min" : "min",
     "s" : "a",
-    "There is no routing engine set in Nextcloud additional settings. Routing is currently disabled for users." : "U dodatnim postavkama Nextclouda nije postavljen nijedan sustav za usmjeravanje. Usmjeravanje je trenutno onemogućeno za korisnike.",
     "Routing error:" : "Pogreška usmjeravanja:",
     "Route exported in {path}" : "Ruta izvezena u {path}",
     "Failed to export current route" : "Izvoz trenutne rute nije uspio",

@@ -147,7 +147,6 @@ OC.L10N.register(
     "By car (GrahHopper)" : "Mit dem Auto (GrahHopper)",
     "By bike (GrahHopper)" : "Mit dem Fahrrad (GrahHopper)",
     "By Foot (GrahHopper)" : "Zu Fuß (GrahHopper)",
-    "There is no routing engine set in Nextcloud additional settings. Routing is currently disabled for users." : "Es ist keine Streckenplanungs-Engine in den erweiterten Nextcloud-Einstellungen angegeben. Streckenplanung ist für die Nutzer deaktiviert.",
     "Export current route to GPX" : "Aktuelle Route als GPX exportieren",
     "Routing error:" : "Streckenfehler:",
     "Route exported in {path}" : "Route nach {path} exportiert",

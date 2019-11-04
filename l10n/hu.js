@@ -130,7 +130,6 @@ OC.L10N.register(
     "h" : "ó",
     "min" : "p",
     "s" : "mp",
-    "There is no routing engine set in Nextcloud additional settings. Routing is currently disabled for users." : "Nincs útvonalkereső beállítva a Nextcloud további beállításaiban. Az útvonalkeresés jelenleg ki van kapcsolva a felhasználók számára.",
     "Routing error:" : "Útvonal-keresési hiba:",
     "Route exported in {path}" : "Útvonal exportálva ide: {path}",
     "Failed to export current route" : "A jelenlegi útvonal exportálása sikertelen",

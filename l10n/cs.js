@@ -77,7 +77,7 @@ OC.L10N.register(
     "Click on the map to move the photo, press ESC to cancel" : "Pro přesunutí fotky klikněte na mapu, stisknutím ESC zrušíte",
     "Failed to load photos" : "Selhalo načítání fotek",
     "Choose pictures to place" : "Zvolte obrázky pro umístění",
-    "Choose directory of pictures to place" : "Zvolit složku pro umístění obrázků",
+    "Choose directory of pictures to place" : "Zvolit adresář pro umístění obrázků",
     "{nb} photos placed" : "{nb} fotek nahrazeno",
     "Failed to place photos" : "Selhalo umístění fotek",
     "Failed to reset photos coordinates" : "Nepodařilo se resetovat souřadnice fotky",

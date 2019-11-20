@@ -87,7 +87,7 @@ OC.L10N.register(
     "Link" : "Povezava",
     "Latitude" : "Geografska širina",
     "Longitude" : "Geografska dolina",
-    "Description" : "pis",
+    "Description" : "Opis",
     "Symbol name" : "Ime simbola",
     "download" : "prejmi",
     "metadata link" : "povezava metapodatkov",

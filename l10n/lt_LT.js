@@ -59,6 +59,7 @@ OC.L10N.register(
     "Latitude" : "Platuma",
     "Longitude" : "Ilguma",
     "Description" : "Aprašas",
+    "download" : "atsisiųsti",
     "Distance" : "Atstumas",
     "Duration" : "Trukmė",
     "Average speed" : "Vidutinis greitis",

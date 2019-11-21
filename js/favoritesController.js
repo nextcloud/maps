@@ -137,7 +137,7 @@ FavoritesController.prototype = {
                     data: {},
                     async: true
                 }).done(function (response) {
-                    const linkEl = shareDialogue.children('.category-sharing-link');
+                    var linkEl = shareDialogue.children('.category-sharing-link');
 
                     linkEl.val('');
                     linkEl.removeClass('visible');
@@ -153,9 +153,9 @@ FavoritesController.prototype = {
                     data: {},
                     async: true
                 }).done(function (response) {
-                    const linkEl = shareDialogue.children('.category-sharing-link');
+                    var linkEl = shareDialogue.children('.category-sharing-link');
 
-                    linkEl.val(OC.generateUrl('/apps/maps/s/favorites/' + response.token));
+                    linkEl.val(this.generateSharingUrl(response.token));
                     linkEl.addClass('visible');
                 }).always(function () {
 
@@ -509,6 +509,10 @@ FavoritesController.prototype = {
         });
     },
 
+    generateSharingUrl: function(token) {
+        return window.location.origin + OC.generateUrl("/apps/maps/s/favorites/" + token);
+    },
+
     // add category in side menu
     // add layer
     // set color and icon
@@ -610,7 +614,7 @@ FavoritesController.prototype = {
             '            <input type="checkbox" class="category-sharing-checkbox" ' + (shareToken ? "checked" : "") + '>' +
             '            <span>' + t('maps', 'Share this category by public link') + '</span>' +
             '        </label> ' +
-            '        <input class="category-sharing-link ' + (shareToken ? "visible" : "") + '" value="' + (OC.generateUrl("/apps/maps/s/favorites/" + shareToken) || "") + '">' +
+            '        <input class="category-sharing-link ' + (shareToken ? "visible" : "") + '" value="' + (this.generateSharingUrl(shareToken) || "") + '">' +
             '    </div>' +
             '</li>';
 

@@ -1,15 +1,18 @@
 <template>
   <div class="map-container">
     <LMap
+      ref="map"
       :center="mapOptions.center"
       :max-bounds="mapOptions.maxBounds"
       :min-zoom="mapOptions.minZoom"
       :max-zoom="mapOptions.maxZoom"
       :zoom="mapOptions.zoom"
       @ready="onMapReady"
-      ref="map"
     >
-      <LTileLayer v-for="layer in layers" :key="layer.name" :url="layer.url" />
+      <LTileLayer
+v-for="layer in layers" :key="layer.name"
+:url="layer.url"
+/>
 
       <LMarkerCluster
         v-for="categoryKey in Object.keys(favoriteCategories)"
@@ -34,6 +37,7 @@
               :favorite="favorite"
               :is-visible="openMarkerPopupId === favorite.id"
               :allow-category-customization="!isPublicShare"
+              :allow-edits="allowFavoriteEdits"
               @deleteFavorite="handleDeleteFavorite"
               @updateFavorite="handleUpdateFavorite"
             />
@@ -43,11 +47,12 @@
 
       <LFeatureGroup @ready="onFeatureGroupReady">
         <LPopup :lat-lng="popup.latLng">
-          <MapPopup
+          <ClickPopup
             :is-visible="popup.visible"
             :lat-lng="popup.latLng"
-            @close="handlePopupCloseRequest"
             :allow-category-customization="!isPublicShare"
+            :allow-edits="allowFavoriteEdits"
+            @close="handlePopupCloseRequest"
             @addFavorite="handleAddFavorite"
           />
         </LPopup>
@@ -66,8 +71,7 @@ import { LMap, LTileLayer, LMarker, LPopup, LFeatureGroup } from "vue2-leaflet";
 import LMarkerCluster from "vue2-leaflet-markercluster";
 import { latLngBounds, latLng } from "leaflet";
 import { mapActions, mapMutations, mapState } from "vuex";
-import { MAP_NAMESPACE } from "../store/modules/map";
-import MapPopup from "./map/ClickPopup";
+import ClickPopup from "./map/ClickPopup";
 import FavoritePopup from "./map/FavoritePopup";
 import { isPublicShare } from "../utils/common";
 import { PUBLIC_FAVORITES_NAMESPACE } from "../store/modules/publicFavorites";
@@ -79,13 +83,8 @@ export default {
 
   props: {
     favoriteCategories: VueTypes.object.isRequired,
-    isPublicShare: VueTypes.bool.isRequired
-  },
-
-  created() {
-    this.featureGroup = null;
-    this.popupWasJustClosed = false;
-    this.markerMap = [];
+    isPublicShare: VueTypes.bool.isRequired,
+    allowFavoriteEdits: VueTypes.bool.def(false)
   },
 
   data() {
@@ -104,7 +103,10 @@ export default {
           [40.70081290280357, -74.26963806152345],
           [40.82991732677597, -74.08716201782228]
         ]),
-        maxBounds: latLngBounds([[-90, 720], [90, -720]]),
+        maxBounds: latLngBounds([
+          [-90, 720],
+          [90, -720]
+        ]),
         animateClusters: true, // TODO: use setting?
         showClusterBounds: false
       },
@@ -133,6 +135,12 @@ export default {
         }
       }
     }
+  },
+
+  created() {
+    this.featureGroup = null;
+    this.popupWasJustClosed = false;
+    this.markerMap = [];
   },
 
   computed: {
@@ -266,7 +274,7 @@ export default {
   },
 
   components: {
-    MapPopup,
+    ClickPopup,
     LMap,
     LFeatureGroup,
     LMarker,

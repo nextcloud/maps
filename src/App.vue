@@ -4,11 +4,11 @@
     <div class="content-wrapper">
       <MapContainer
         :favorite-categories="favoritesMappedByCategory"
-        :propagate-left-click="mapPropagateLeftClick"
+        :is-public-share="true"
+        :allow-favorite-edits="allowFavoriteEdits"
         @addFavorite="addFavorite"
         @updateFavorite="updateFavorite"
         @deleteFavorite="deleteFavorite"
-        :is-public-share="true"
       />
     </div>
   </div>
@@ -19,10 +19,14 @@ import MapContainer from "./components/MapContainer";
 import PublicFavoriteShareSideBar from "./components/PublicFavoriteShareSideBar";
 import { mapActions, mapGetters, mapState } from "vuex";
 import { PUBLIC_FAVORITES_NAMESPACE } from "./store/modules/publicFavorites";
-import AppMode from "./data/enum/MapMode";
 
 export default {
   name: "App",
+
+  components: {
+    MapContainer,
+    PublicFavoriteShareSideBar
+  },
 
   data() {
     return {
@@ -30,17 +34,23 @@ export default {
     };
   },
 
-  mounted() {
-    this.getFavorites();
-  },
-
   computed: {
     ...mapGetters({
       favoritesMappedByCategory: `${PUBLIC_FAVORITES_NAMESPACE}/mappedByCategory`
     }),
-    mapPropagateLeftClick() {
-      return this.appMode === AppMode.ADDING_FAVORITES;
-    }
+    ...mapState({
+      allowFavoriteEdits: state =>
+        state[PUBLIC_FAVORITES_NAMESPACE].shareInfo
+          ? state[PUBLIC_FAVORITES_NAMESPACE].shareInfo.allowEdits
+          : false
+    }),
+      allowFavoriteEdits() {
+
+      }
+  },
+
+  mounted() {
+    this.getFavorites();
   },
 
   methods: {
@@ -50,11 +60,6 @@ export default {
       updateFavorite: `${PUBLIC_FAVORITES_NAMESPACE}/updateFavorite`,
       deleteFavorite: `${PUBLIC_FAVORITES_NAMESPACE}/deleteFavorite`
     })
-  },
-
-  components: {
-    MapContainer,
-    PublicFavoriteShareSideBar
   }
 };
 </script>

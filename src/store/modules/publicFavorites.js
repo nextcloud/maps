@@ -6,7 +6,8 @@ export const PUBLIC_FAVORITES_NAMESPACE = "publicFavorites";
 
 const state = {
   favorites: [],
-  selectedFavoriteId: null
+  selectedFavoriteId: null,
+  shareInfo: null
 };
 
 const getters = {
@@ -26,9 +27,10 @@ const actions = {
     commit("setSelectedFavoriteId", favoriteId);
   },
   getFavorites({ commit }) {
-    return publicApiRequest("favorites", "GET")
+    publicApiRequest("favorites", "GET")
       .then(data => {
-        commit("setFavorites", data);
+        commit("setShareInfo", data.share);
+        commit("setFavorites", data.favorites);
       })
       .catch(() => showNotification(t("maps", "Failed to get favorites")));
   },
@@ -70,6 +72,9 @@ const actions = {
 const mutations = {
   setFavorites(state, favorites) {
     state.favorites = favorites;
+  },
+  setShareInfo(state, info) {
+    state.shareInfo = info;
   },
   addFavorite(state, favorite) {
     state.favorites = [...state.favorites, favorite];

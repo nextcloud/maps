@@ -1,13 +1,16 @@
 <template>
   <div class="popup">
-    <h2 v-if="title" class="popup-title">{{ title }}</h2>
+    <h2 v-if="title"
+class="popup-title">
+      {{ title }}
+    </h2>
 
     <div class="popup-content">
-      <slot></slot>
+      <slot />
     </div>
 
     <div class="buttons">
-      <slot name="buttons"></slot>
+      <slot name="buttons" />
     </div>
   </div>
 </template>

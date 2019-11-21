@@ -1,7 +1,7 @@
 <template>
   <div class="osm-address">
     <div class="osm-address-text">
-      <p v-html="textContents"></p>
+      <p v-html="textContents" />
     </div>
     <!--<textarea
       :value="textContents"
@@ -9,7 +9,8 @@
       class="osm-address-text"
       rows="6"
     ></textarea>-->
-    <div class="loading" :class="{ visible: loading }"></div>
+    <div class="loading"
+:class="{ visible: loading }" />
   </div>
 </template>
 

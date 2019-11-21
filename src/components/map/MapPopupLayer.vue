@@ -4,8 +4,8 @@
       <MapPopup
         :is-visible="showPopup"
         :lat-lng="latLng"
-        @close="handleCloseEvent"
         v-bind="$props"
+        @close="handleCloseEvent"
       />
     </LPopup>
   </LFeatureGroup>
@@ -25,13 +25,6 @@ const Origin = {
 export default {
   name: "MapPopupLayer",
 
-  created() {
-    this.closeOrigin = Origin.None;
-    this.openOrigin = Origin.None;
-
-    this.featureGroupObject = null;
-  },
-
   watch: {
     showPopup(show) {
       if (show) {
@@ -42,6 +35,13 @@ export default {
         this.closePopup();
       }
     }
+  },
+
+  created() {
+    this.closeOrigin = Origin.None;
+    this.openOrigin = Origin.None;
+
+    this.featureGroupObject = null;
   },
 
   computed: mapState({

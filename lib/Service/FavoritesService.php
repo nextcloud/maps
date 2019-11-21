@@ -71,7 +71,8 @@ class FavoritesService
 
         $response = [
             'owner' => $row['owner'],
-            'category' => $row['category']
+            'category' => $row['category'],
+            'allowEdits' => false // TODO
         ];
 
         $qb->resetQueryParts();

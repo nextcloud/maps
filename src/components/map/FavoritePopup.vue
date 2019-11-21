@@ -1,41 +1,38 @@
 <template>
-  <Popup :title="favorite.name || '...'">
-    <form @submit.prevent="handleFavoriteSubmit" class="new-favorite-form">
-      <PopupFormItem icon="icon-add">
-        <input
-          class="input"
-          type="text"
-          :placeholder="t('maps', 'Name')"
-          v-model="favoriteCopy.name"
-        />
-      </PopupFormItem>
+  <Popup :title="favorite.name || '(No name)'">
+    <form class="favorite"
+@submit.prevent="handleFavoriteSubmit">
+      <PopupFormItem
+        v-model="favoriteCopy.name"
+        icon="icon-add"
+        type="text"
+        :placeholder="t('maps', 'Name')"
+        :allow-edits="allowEdits"
+      />
 
       <PopupFormItem
-        icon="icon-category-organization"
         v-if="allowCategoryCustomization"
-      >
-        <input
-          class="input"
-          type="text"
-          :placeholder="t('maps', 'Category')"
-          v-model="favoriteCopy.category"
-        />
-      </PopupFormItem>
+        v-model="favoriteCopy.category"
+        icon="icon-category-organization"
+        type="text"
+        :placeholder="t('maps', 'Category')"
+        :allow-edits="allowEdits"
+      />
 
-      <PopupFormItem icon="icon-comment">
-        <textarea
-          class="textarea"
-          v-model="favoriteCopy.comment"
-          :placeholder="t('maps', 'Comment')"
-          rows="4"
-        ></textarea>
-      </PopupFormItem>
+      <PopupFormItem
+        v-model="favoriteCopy.comment"
+        icon="icon-comment"
+        :placeholder="t('maps', 'Comment')"
+        :allow-edits="allowEdits"
+      />
 
-      <div class="buttons">
+      <div v-if="allowEdits"
+class="buttons">
         <button class="primary">
           {{ t("maps", "Update") }}
         </button>
-        <button class="danger" @click.prevent="handleDeleteClick">
+        <button class="danger"
+@click.prevent="handleDeleteClick">
           {{ t("maps", "Delete") }}
         </button>
       </div>
@@ -55,11 +52,8 @@ export default {
   props: {
     favorite: Types.Favorite.isRequired,
     isVisible: VueTypes.bool.isRequired,
+    allowEdits: VueTypes.bool.isRequired,
     allowCategoryCustomization: VueTypes.bool.def(true)
-  },
-
-  mounted() {
-    this.updateFavorite();
   },
 
   data() {
@@ -79,6 +73,10 @@ export default {
         this.updateFavorite();
       }
     }
+  },
+
+  mounted() {
+    this.updateFavorite();
   },
 
   methods: {

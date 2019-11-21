@@ -1,7 +1,8 @@
 <template>
   <AppNavigation>
-    <ul id="app-vueexample-navigation">
+    <ul>
       <AppNavigationNew
+        v-if="allowFavoriteEdits"
         :text="newFavoriteButtonLabel"
         @click="handleAddFavoriteClick"
       />
@@ -21,7 +22,6 @@
 
 <script>
 import AppNavigation from "@nextcloud/vue/dist/Components/AppNavigation";
-import AppNavigationCaption from "@nextcloud/vue/dist/Components/AppNavigationCaption";
 import AppNavigationSettings from "@nextcloud/vue/dist/Components/AppNavigationSettings";
 import AppNavigationItem from "@nextcloud/vue/dist/Components/AppNavigationItem";
 import AppNavigationNew from "@nextcloud/vue/dist/Components/AppNavigationNew";
@@ -34,11 +34,24 @@ import { MAP_NAMESPACE } from "../store/modules/map";
 export default {
   name: "PublicFavoriteShareSideBar",
 
+  components: {
+    AppNavigation,
+    AppNavigationSettings,
+    AppNavigationItem,
+    AppNavigationNew,
+    AppNavigationSpacer
+  },
+
   computed: {
     ...mapState({
       favorites: state => state[PUBLIC_FAVORITES_NAMESPACE].favorites,
-      mapMode: state => state[MAP_NAMESPACE].mode
+      mapMode: state => state[MAP_NAMESPACE].mode,
+      shareInfo: state => state[PUBLIC_FAVORITES_NAMESPACE].shareInfo
     }),
+
+    allowFavoriteEdits() {
+      return this.shareInfo ? this.shareInfo.allowEdits : false;
+    },
 
     newFavoriteButtonLabel() {
       return t(
@@ -69,15 +82,6 @@ export default {
     handleFavoriteClick(id) {
       this.selectFavorite(id);
     }
-  },
-
-  components: {
-    AppNavigation,
-    AppNavigationCaption,
-    AppNavigationSettings,
-    AppNavigationItem,
-    AppNavigationNew,
-    AppNavigationSpacer
   }
 };
 </script>

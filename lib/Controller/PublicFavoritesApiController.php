@@ -27,7 +27,7 @@ class PublicFavoritesApiController extends PublicShareController {
     }
 
     public function getPasswordHash(): string {
-        return ""; // TODO:
+        return ""; // TODO
     }
 
     protected function isPasswordProtected(): bool {
@@ -38,15 +38,23 @@ class PublicFavoritesApiController extends PublicShareController {
         return $this->favoritesService->getFavoritesShare($this->getToken()) !== null;
     }
 
+    public function canEdit() : bool {
+    	return false; // TODO: implement setting to allow/deny editing
+
+//		Could be something like:
+//		$share = $this->favoritesService->getFavoritesShare($this->getToken());
+//
+//		return isset($share['allow_edits']) && $share['allow_edits'] === true;
+	}
+
     /**
+     * @PublicPage
+     *
      * @param $token
      * @return DataResponse
-     *
-     * @PublicPage
-     * @Cors
      */
     public function getFavorites($token) {
-        if ($token === '') {
+        if ($token === '') { // TODO: this check might not be needed -> test
             return new DataResponse('Invalid token', Http::STATUS_BAD_REQUEST);
         }
 
@@ -56,10 +64,28 @@ class PublicFavoritesApiController extends PublicShareController {
             return new DataResponse('Not found', Http::STATUS_NOT_FOUND);
         }
 
-        return new DataResponse($favorites);
+        $share = $this->favoritesService->getFavoritesShare($this->getToken());
+
+        return new DataResponse([
+            'share' => $share,
+            'favorites' => $favorites
+        ]);
     }
 
+    /**
+     * @PublicPage
+     *
+     * @param $lat
+     * @param $lng
+     * @param $name
+     * @param $comment
+     * @param $extensions
+     * @return DataResponse
+     */
     public function addFavorite($lat, $lng, $name, $comment, $extensions) {
+    	if (!$this->canEdit()) {
+    		return new DataResponse('Not authorized to add favorite', Http::STATUS_UNAUTHORIZED);
+		}
 
         $share = $this->favoritesService->getFavoritesShare($this->getToken());
         $category = $share['category'];
@@ -75,7 +101,22 @@ class PublicFavoritesApiController extends PublicShareController {
         }
     }
 
+    /**
+     * @PublicPage
+     *
+     * @param $id
+     * @param $lat
+     * @param $lng
+     * @param $name
+     * @param $comment
+     * @param $extensions
+     * @return DataResponse
+     */
     public function editFavorite($id, $lat, $lng, $name, $comment, $extensions) {
+		if (!$this->canEdit()) {
+			return new DataResponse('Not authorized to edit favorite', Http::STATUS_UNAUTHORIZED);
+		}
+
         $share = $this->favoritesService->getFavoritesShare($this->getToken());
 
         //TODO: can $share['owner'] and/or $share['category'] be exploited to be null?
@@ -100,7 +141,17 @@ class PublicFavoritesApiController extends PublicShareController {
         }
     }
 
+    /**
+     * @PublicPage
+     *
+     * @param $id
+     * @return DataResponse
+     */
     public function deleteFavorite($id) {
+		if (!$this->canEdit()) {
+			return new DataResponse('Not authorized to delete favorite', Http::STATUS_UNAUTHORIZED);
+		}
+
         $share = $this->favoritesService->getFavoritesShare($this->getToken());
 
         //TODO: can $share['owner'] and/or $share['category'] be exploited to be null?

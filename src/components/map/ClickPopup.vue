@@ -5,36 +5,28 @@
     "
   >
     <template v-if="addingFavorite">
-      <form @submit.prevent="handleNewFavoriteSubmit" class="new-favorite-form">
-        <PopupFormItem icon="icon-add">
-          <input
-            class="input"
-            type="text"
-            :placeholder="t('maps', 'Name')"
-            v-model="newFavorite.name"
-          />
-        </PopupFormItem>
+      <form class="new-favorite-form"
+@submit.prevent="handleNewFavoriteSubmit">
+        <span>Dumb</span>
+        <PopupFormItem
+          v-model="newFavorite.name"
+          icon="icon-add"
+          :placeholder="t('maps', 'Name')"
+        />
 
         <PopupFormItem
-          icon="icon-category-organization"
           v-if="allowCategoryCustomization"
-        >
-          <input
-            class="input"
-            type="text"
-            :placeholder="t('maps', 'Category')"
-            v-model="newFavorite.category"
-          />
-        </PopupFormItem>
+          v-model="newFavorite.category"
+          icon="icon-category-organization"
+          type="text"
+          :placeholder="t('maps', 'Category')"
+        />
 
-        <PopupFormItem icon="icon-comment">
-          <textarea
-            class="textarea"
-            v-model="newFavorite.comment"
-            :placeholder="t('maps', 'Comment')"
-            rows="4"
-          ></textarea>
-        </PopupFormItem>
+        <PopupFormItem
+          v-model="newFavorite.comment"
+          icon="icon-comment"
+          :placeholder="t('maps', 'Comment')"
+        />
 
         <div class="buttons">
           <button class="primary">
@@ -47,10 +39,12 @@
       </form>
     </template>
     <template v-else>
-      <SimpleOSMAddress :geocodeObject="geocodeObject" />
+      <SimpleOSMAddress :geocode-object="geocodeObject" />
 
-      <div class="buttons">
-        <button class="primary" @click="handleAddToFavorites">
+      <div v-if="allowEdits"
+class="buttons">
+        <button class="primary"
+@click="handleAddToFavorites">
           {{ t("maps", "Add to Favorites") }}
         </button>
       </div>
@@ -59,9 +53,6 @@
 </template>
 
 <script>
-import Actions from "@nextcloud/vue/dist/Components/Actions";
-import ActionButton from "@nextcloud/vue/dist/Components/ActionButton";
-import ActionInput from "@nextcloud/vue/dist/Components/ActionInput";
 import { MAP_NAMESPACE } from "../../store/modules/map";
 import { mapState } from "vuex";
 import MapMode from "../../data/enum/MapMode";
@@ -78,7 +69,8 @@ export default {
   props: {
     isVisible: VueTypes.bool.isRequired,
     latLng: Types.LatLng,
-    allowCategoryCustomization: VueTypes.bool.def(true)
+    allowCategoryCustomization: VueTypes.bool.isRequired,
+    allowEdits: VueTypes.bool.isRequired
   },
 
   data() {

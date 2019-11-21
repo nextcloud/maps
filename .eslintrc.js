@@ -4,10 +4,8 @@ module.exports = {
     node: true
   },
   extends: [
-    "plugin:vue/recommended",
-    "eslint:recommended",
-    "prettier/vue",
-    "plugin:prettier/recommended"
+    "plugin:prettier/recommended",
+    "plugin:vue/recommended"
   ],
   rules: {
     "vue/component-name-in-template-casing": ["error", "PascalCase"],
@@ -22,6 +20,7 @@ module.exports = {
     $: false // TODO: remove once jQuery has been removed
   },
   parserOptions: {
+    sourceType: "module",
     parser: "babel-eslint"
-  }
+  },
 };

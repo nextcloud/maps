@@ -1,7 +1,7 @@
 const path = require("path");
 const webpack = require("webpack");
 const { VueLoaderPlugin } = require("vue-loader");
-//const StyleLintPlugin = require("stylelint-webpack-plugin");
+// const StyleLintPlugin = require("stylelint-webpack-plugin");
 
 module.exports = {
   entry: path.join(__dirname, "src", "main.js"),
@@ -22,8 +22,8 @@ module.exports = {
       },
       {
         test: /src\/.*\.(js|vue)$/,
-        use: "eslint-loader",
-        enforce: "pre"
+        enforce: "pre",
+        loader: "eslint-loader"
       },
       {
         test: /\.vue$/,

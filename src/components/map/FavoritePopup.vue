@@ -47,17 +47,13 @@
 import VueTypes from "vue-types";
 import Popup from "./Popup";
 import PopupFormItem from "./PopupFormItem";
+import Types from "../../data/types";
 
 export default {
   name: "FavoritePopup",
 
   props: {
-    favorite: VueTypes.shape({
-      id: VueTypes.number,
-      name: VueTypes.string,
-      category: VueTypes.string,
-      comment: VueTypes.string
-    }).loose.isRequired,
+    favorite: Types.Favorite.isRequired,
     isVisible: VueTypes.bool.isRequired,
     allowCategoryCustomization: VueTypes.bool.def(true)
   },

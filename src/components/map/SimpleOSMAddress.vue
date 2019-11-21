@@ -14,34 +14,13 @@
 </template>
 
 <script>
-import VueTypes from "vue-types";
+import Types from "../../data/types";
 
 export default {
   name: "SimpleOSMAddress",
 
   props: {
-    geocodeObject: VueTypes.shape({
-      address: VueTypes.shape({
-        country: VueTypes.string,
-        county: VueTypes.string,
-        country_code: VueTypes.string,
-        postcode: VueTypes.string,
-        village: VueTypes.string,
-        state: VueTypes.string,
-        city: VueTypes.string,
-        pedestrian: VueTypes.string,
-        house_number: VueTypes.string,
-        road: VueTypes.string
-      }).loose,
-      display_name: VueTypes.string,
-      lat: VueTypes.string,
-      lon: VueTypes.string,
-      osm_id: VueTypes.number,
-      osm_type: VueTypes.string,
-      place_id: VueTypes.number,
-
-      error: VueTypes.string
-    }).loose
+    geocodeObject: Types.OSMGeoCodeResult
   },
 
   computed: {

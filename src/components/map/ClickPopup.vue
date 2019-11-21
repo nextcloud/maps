@@ -70,16 +70,14 @@ import SimpleOSMAddress from "./SimpleOSMAddress";
 import VueTypes from "vue-types";
 import Popup from "./Popup";
 import PopupFormItem from "./PopupFormItem";
+import Types from "../../data/types";
 
 export default {
   name: "ClickPopup",
 
   props: {
     isVisible: VueTypes.bool.isRequired,
-    latLng: VueTypes.shape({
-      lat: VueTypes.number,
-      lng: VueTypes.number
-    }),
+    latLng: Types.LatLng,
     allowCategoryCustomization: VueTypes.bool.def(true)
   },
 

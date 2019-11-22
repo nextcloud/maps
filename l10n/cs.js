@@ -56,7 +56,7 @@ OC.L10N.register(
     "Failed to delete category favorites" : "Kategorii oblíbených se nepodařilo smazat",
     "Failed to add favorite" : "Přidání do oblíbených se nezdařilo",
     "Name" : "Název",
-    "No name" : "bez názvu",
+    "No name" : "Bez názvu",
     "Category" : "Kategorie",
     "Comment" : "Komentář",
     "Submit" : "Odeslat",

@@ -913,9 +913,9 @@
                 if (optionsValues.hasOwnProperty('graphhopperAPIKEY') && optionsValues.graphhopperAPIKEY !== '') {
                     apikey = optionsValues.graphhopperAPIKEY;
                 }
-                this.addRouter('graphhopperCar', '🚗 ' + t('maps', 'By car (GrahHopper)'), optionsValues.graphhopperURL, apikey);
-                this.addRouter('graphhopperBike', '🚲 ' + t('maps', 'By bike (GrahHopper)'), optionsValues.graphhopperURL, apikey);
-                this.addRouter('graphhopperFoot', '🚶 ' + t('maps', 'By Foot (GrahHopper)'), optionsValues.graphhopperURL, apikey);
+                this.addRouter('graphhopperCar', '🚗 ' + t('maps', 'By car (GraphHopper)'), optionsValues.graphhopperURL, apikey);
+                this.addRouter('graphhopperBike', '🚲 ' + t('maps', 'By bike (GraphHopper)'), optionsValues.graphhopperURL, apikey);
+                this.addRouter('graphhopperFoot', '🚶 ' + t('maps', 'By Foot (GraphHopper)'), optionsValues.graphhopperURL, apikey);
                 nbRoutersAdded++;
             }
             if (nbRoutersAdded === 0 && optionsValues.hasOwnProperty('osrmDEMO') && optionsValues.osrmDEMO === '1') {

@@ -387,6 +387,10 @@ export default {
 
   /* Increase padding of popup close button */
   .leaflet-popup {
+    .leaflet-popup-content-wrapper {
+      border-radius: 4px;
+    }
+
     .leaflet-popup-close-button {
       top: 9px;
       right: 9px;

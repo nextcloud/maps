@@ -1,7 +1,10 @@
 <template>
   <Popup :title="favorite.name || '(No name)'">
-    <form class="favorite"
-@submit.prevent="handleFavoriteSubmit">
+    <form
+      class="favorite"
+      @submit.prevent="handleFavoriteSubmit"
+      v-if="allowEdits"
+    >
       <PopupFormItem
         v-model="favoriteCopy.name"
         icon="icon-add"
@@ -26,17 +29,24 @@
         :allow-edits="allowEdits"
       />
 
-      <div v-if="allowEdits"
-class="buttons">
+      <div v-if="allowEdits" class="buttons">
         <button class="primary">
           {{ t("maps", "Update") }}
         </button>
-        <button class="danger"
-@click.prevent="handleDeleteClick">
+        <button class="danger" @click.prevent="handleDeleteClick">
           {{ t("maps", "Delete") }}
         </button>
       </div>
     </form>
+    <div class="no-edits">
+      <p>
+        {{
+          favorite.comment.length
+            ? favorite.comment
+            : t("maps", "No comment")
+        }}
+      </p>
+    </div>
   </Popup>
 </template>
 
@@ -70,20 +80,22 @@ export default {
     favorite: {
       deep: true,
       handler() {
-        this.updateFavorite();
+        this.updateFavoriteCopy();
       }
     }
   },
 
   mounted() {
-    this.updateFavorite();
+    this.updateFavoriteCopy();
   },
 
   methods: {
-    updateFavorite() {
-      this.favoriteCopy.name = this.favorite.name;
-      this.favoriteCopy.category = this.favorite.category;
-      this.favoriteCopy.comment = this.favorite.comment;
+    updateFavoriteCopy() {
+      if (this.allowEdits) {
+        this.favoriteCopy.name = this.favorite.name;
+        this.favoriteCopy.category = this.favorite.category;
+        this.favoriteCopy.comment = this.favorite.comment;
+      }
     },
     handleDeleteClick() {
       const { id } = this.favorite;

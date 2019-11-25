@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Nextcloud 3.14159\n"
 "Report-Msgid-Bugs-To: translations\\@example.com\n"
-"POT-Creation-Date: 2019-11-24 02:38+0000\n"
+"POT-Creation-Date: 2019-11-25 02:37+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -608,15 +608,15 @@ msgid "By car without traffic (Mapbox)"
 msgstr ""
 
 #: /app/js/script.js:916
-msgid "By car (GrahHopper)"
+msgid "By car (GraphHopper)"
 msgstr ""
 
 #: /app/js/script.js:917
-msgid "By bike (GrahHopper)"
+msgid "By bike (GraphHopper)"
 msgstr ""
 
 #: /app/js/script.js:918
-msgid "By Foot (GrahHopper)"
+msgid "By Foot (GraphHopper)"
 msgstr ""
 
 #: /app/js/script.js:985

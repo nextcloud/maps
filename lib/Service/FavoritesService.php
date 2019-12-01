@@ -19,8 +19,6 @@ use OC\Security\SecureRandom;
 
 use OC\Archive\ZIP;
 
-//use function \OCA\Maps\Service\endswith;
-
 class FavoritesService
 {
 
@@ -52,123 +50,13 @@ class FavoritesService
         return $this->dbconnection->quote($str);
     }
 
-    public function getFavoritesShare($token) {
-        $qb = $this->qb;
-
-        $qb->select("owner", "category")
-            ->from("maps_favorite_shares")
-            ->where(
-                $qb->expr()->eq('token', $qb->createNamedParameter($token, IQueryBuilder::PARAM_STR))
-            );
-
-        $req = $qb->execute();
-
-        $row = $req->fetch();
-
-        if ($row == false) {
-            return null;
-        }
-
-        $response = [
-            'owner' => $row['owner'],
-            'category' => $row['category'],
-            'allowEdits' => false // TODO
-        ];
-
-        $qb->resetQueryParts();
-
-        return $response;
-    }
-
-    /**
-     * @param $token
-     * @return bool | array
-     */
-    public function getFavoritesByShareToken($token) {
-        $favorites = [];
-        $qb = $this->qb;
-
-        $qb->select('id', 'owner', 'category', 'token')
-            ->from('maps_favorite_shares')
-            ->where(
-                $qb->expr()->eq('token', $qb->createNamedParameter($token, IQueryBuilder::PARAM_STR))
-            );
-
-        $req = $qb->execute();
-
-        if ($req->rowCount() === 0) {
-            return false;
-        }
-
-        $row = $req->fetch();
-
-        $id = $row['id'];
-        $type = $row['type'];
-        $userId = $row['owner'];
-        $category = $row['category'];
-
-        $req->closeCursor();
-        $qb->resetQueryParts();
-
-        $qb->select('id', 'name', 'date_created', 'date_modified', 'lat', 'lng', 'category', 'comment', 'extensions')
-            ->from('maps_favorites', 'f')
-            ->where(
-                $qb->expr()->eq('user_id', $qb->createNamedParameter($userId, IQueryBuilder::PARAM_STR))
-            )->andWhere(
-                $qb->expr()->eq('category', $qb->createNamedParameter($category, IQueryBuilder::PARAM_STR))
-            );
-
-        $req = $qb->execute();
-
-        while ($row = $req->fetch()) {
-            array_push($favorites, [
-                'id' => intval($row['id']),
-                'name' => $row['name'],
-                'date_modified' => intval($row['date_modified']),
-                'date_created' => intval($row['date_created']),
-                'lat' => floatval($row['lat']),
-                'lng' => floatval($row['lng']),
-                'category' => $row['category'],
-                'comment' => $row['comment'],
-                'extensions' => $row['extensions']
-            ]);
-        }
-        $req->closeCursor();
-        $qb->resetQueryParts();
-
-        return $favorites;
-    }
-
-    public function getSharedCategories($owner) {
-        $sharedCategories = [];
-
-        $qb = $this->qb;
-        $qb->select('category', 'token')
-            ->from('maps_favorite_shares')
-            ->where(
-                $qb->expr()->eq('owner',  $qb->createNamedParameter($owner, IQueryBuilder::PARAM_STR))
-            );
-        $req = $qb->execute();
-
-        while ($row = $req->fetch()) {
-            array_push($sharedCategories, [
-                'category' => $row['category'],
-                'token' => $row['token']
-            ]);
-        }
-
-        $req->closeCursor();
-        $qb->resetQueryParts();
-
-        return $sharedCategories;
-    }
-
-    /**
-     * @param string $userId
-     * @param int $pruneBefore
-     * @return array with favorites
-     */
-    public function getFavoritesFromDB($userId, $pruneBefore = 0)
+  /**
+   * @param string $userId
+   * @param int $pruneBefore
+   * @param string|null $filterCategory
+   * @return array with favorites
+   */
+    public function getFavoritesFromDB($userId, $pruneBefore = 0, $filterCategory = null)
     {
         $favorites = [];
         $qb = $this->qb;
@@ -181,6 +69,11 @@ class FavoritesService
             $qb->andWhere(
                 $qb->expr()->gt('date_modified', $qb->createNamedParameter($pruneBefore, IQueryBuilder::PARAM_INT))
             );
+        }
+        if ($filterCategory !== null) {
+          $qb->andWhere(
+            $qb->expr()->eq('category', $qb->createNamedParameter($filterCategory, IQueryBuilder::PARAM_STR))
+          );
         }
         $req = $qb->execute();
 
@@ -374,63 +267,6 @@ class FavoritesService
             );
         $req = $qb->execute();
         $qb = $qb->resetQueryParts();
-    }
-
-    public function getCategoryShareLink($owner, $category)
-    {
-        $qb = $this->qb;
-
-        $qb->select('token')->from('maps_favorite_shares')
-            ->where(
-                $qb->expr()->eq('category', $qb->createNamedParameter($category, IQueryBuilder::PARAM_STR))
-            )->andWhere(
-                $qb->expr()->eq('owner', $qb->createNamedParameter($owner, IQueryBuilder::PARAM_INT))
-            );
-        $req = $qb->execute();
-
-        $row = $req->fetch();
-
-        if (!$row) {
-            $token = $this->secureRandom->generate(
-                \OC\Share\Constants::TOKEN_LENGTH,
-                \OCP\Security\ISecureRandom::CHAR_HUMAN_READABLE
-            );
-
-            $qb = $qb->resetQueryParts();
-
-            $qb->insert('maps_favorite_shares')->values([
-                'category' => $qb->createNamedParameter($category, IQueryBuilder::PARAM_STR),
-                'owner' => $qb->createNamedParameter($owner, IQueryBuilder::PARAM_STR),
-                'token' => $qb->createNamedParameter($token, IQueryBuilder::PARAM_STR),
-            ]);
-            $qb->execute();
-        } else {
-            $token = $row['token'];
-        }
-
-        $req->closeCursor();
-        $qb->resetQueryParts();
-
-        return [
-            'token' => $token
-        ];
-    }
-
-    public function deleteCategoryShareLink($owner, $category) {
-        $qb = $this->qb;
-
-        $qb->delete('maps_favorite_shares')
-            ->where(
-                $qb->expr()->eq('owner', $qb->createNamedParameter($owner, IQueryBuilder::PARAM_STR))
-            )->andWhere(
-                $qb->expr()->eq('category', $qb->createNamedParameter($category, IQueryBuilder::PARAM_STR))
-            );
-        $qb->execute();
-        $qb->resetQueryParts();
-
-        return [
-            'deleted' => true
-        ];
     }
 
     public function deleteFavoritesFromDB($ids, $userId)

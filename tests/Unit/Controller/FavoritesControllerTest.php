@@ -12,9 +12,9 @@
 namespace OCA\Maps\Controller;
 
 use \OCA\Maps\AppInfo\Application;
+use OCA\Maps\DB\FavoriteShareMapper;
 use \OCA\Maps\Service\FavoritesService;
-use OCP\AppFramework\Http\TemplateResponse;
-
+use OCP\AppFramework\Http;
 
 class FavoritesControllerTest extends \PHPUnit\Framework\TestCase
 {
@@ -29,6 +29,12 @@ class FavoritesControllerTest extends \PHPUnit\Framework\TestCase
   private $pageController;
   private $pageController2;
   private $utilsController;
+
+  /* @var FavoritesController */
+  private $favoritesController;
+
+  /* @var FavoritesController */
+  private $favoritesController2;
 
   public static function setUpBeforeClass(): void
   {
@@ -96,7 +102,11 @@ class FavoritesControllerTest extends \PHPUnit\Framework\TestCase
         $c->query('ServerContainer')->getL10N($c->query('AppName')),
         $c->query('ServerContainer')->getSecureRandom()
       ),
-      $c->query('ServerContainer')->getDateTimeZone()
+      $c->query('ServerContainer')->getDateTimeZone(),
+      new FavoriteShareMapper(
+        $c->query('DatabaseConnection'),
+        $c->query('ServerContainer')->getSecureRandom()
+      ),
     );
 
     $this->favoritesController2 = new FavoritesController(
@@ -116,7 +126,11 @@ class FavoritesControllerTest extends \PHPUnit\Framework\TestCase
         $c->query('ServerContainer')->getL10N($c->query('AppName')),
         $c->query('ServerContainer')->getSecureRandom()
       ),
-      $c->query('ServerContainer')->getDateTimeZone()
+      $c->query('ServerContainer')->getDateTimeZone(),
+      new FavoriteShareMapper(
+        $c->query('DatabaseConnection'),
+        $c->query('ServerContainer')->getSecureRandom()
+      ),
     );
 
     $this->utilsController = new UtilsController(
@@ -362,4 +376,85 @@ class FavoritesControllerTest extends \PHPUnit\Framework\TestCase
     $this->assertEquals(true, $seen);
   }
 
+  public function testShareUnShareCategory() {
+    $categoryName = 'test3458565';
+
+    $id = $this->favoritesController
+      ->addFavorite('Test', 0, 0, $categoryName, "", null)
+      ->getData()['id'];
+
+    $response1 = $this->favoritesController->shareCategory($categoryName);
+    $response2 = $this->favoritesController->unShareCategory($categoryName);
+
+    $this->favoritesController->deleteFavorite($id);
+
+    $this->assertEquals(Http::STATUS_OK, $response1->getStatus());
+    $this->assertEquals(Http::STATUS_OK, $response2->getStatus());
+
+    $this->assertIsString($response1->getData()->getToken());
+    $this->assertTrue($response2->getData()['did_exist']);
+  }
+
+  public function testShareUnShareCategoryNotAuthorized() {
+    $categoryName = 'test3458565';
+
+    $id = $this->favoritesController2
+      ->addFavorite("Test2", 0, 0, $categoryName, "", null)
+      ->getData()['id'];
+
+    $response1 = $this->favoritesController->shareCategory($categoryName);
+    $response2 = $this->favoritesController->unShareCategory($categoryName);
+
+    $this->favoritesController->deleteFavorite($id);
+
+    $this->assertEquals(Http::STATUS_BAD_REQUEST, $response1->getStatus());
+    $this->assertEquals(Http::STATUS_BAD_REQUEST, $response2->getStatus());
+  }
+
+  public function testShareUnShareNonExistentCategory() {
+    $categoryName = 'non_existent';
+
+    $response1 = $this->favoritesController->shareCategory($categoryName);
+    $response2 = $this->favoritesController->unShareCategory($categoryName);
+
+    $this->favoritesController->unShareCategory($categoryName);
+
+    $this->assertEquals(Http::STATUS_BAD_REQUEST, $response1->getStatus());
+    $this->assertEquals(Http::STATUS_BAD_REQUEST, $response2->getStatus());
+  }
+
+  public function testGetSharedCategories() {
+    $categoryNames = ['test345456', 'test2345465', 'test65765'];
+    $ids = [];
+
+    foreach ($categoryNames as $categoryName) {
+      array_push(
+        $ids,
+        $this->favoritesController
+          ->addFavorite("Test", 0, 0, $categoryName, "", null)
+          ->getData()['id']
+      );
+      $this->favoritesController->shareCategory($categoryName);
+    }
+
+    $categories = $this->favoritesController->getSharedCategories();
+
+    $this->assertIsArray($categories->getData());
+
+    $mappedCategories = array_map(function ($el) {
+      return $el->getCategory();
+    }, $categories->getData());
+
+    foreach ($categoryNames as $categoryName) {
+      $this->assertContains($categoryName, $mappedCategories);
+    }
+
+    foreach ($categoryNames as $categoryName) {
+      $this->favoritesController->unShareCategory($categoryName);
+    }
+
+    foreach ($ids as $id) {
+      $this->favoritesController->deleteFavorite($id);
+    }
+  }
 }

@@ -11,31 +11,20 @@
 
 namespace OCA\Maps\Controller;
 
+use OCA\Maps\DB\FavoriteShareMapper;
 use OCP\App\IAppManager;
 
-use OCP\IURLGenerator;
-use OCP\IConfig;
 use \OCP\IL10N;
 
 use OCP\AppFramework\Http;
-use OCP\AppFramework\Http\RedirectResponse;
-
-use OCP\AppFramework\Http\ContentSecurityPolicy;
 
 use OCP\IRequest;
-use OCP\AppFramework\Http\TemplateResponse;
 use OCP\AppFramework\Http\DataResponse;
 use OCP\AppFramework\Controller;
-use OCP\AppFramework\ApiController;
-use OCP\Constants;
-use OCP\Share;
 
 use OCP\IDateTimeZone;
 
 use OCA\Maps\Service\FavoritesService;
-use Punic\Data;
-
-//use function OCA\Maps\Service\endswith;
 
 class FavoritesController extends Controller {
 
@@ -56,11 +45,14 @@ class FavoritesController extends Controller {
     private $dateTimeZone;
     protected $appName;
 
+    /* @var FavoriteShareMapper */
+    private $favoriteShareMapper;
+
     public function __construct($AppName, IRequest $request, $UserId,
                                 $userfolder, $config, $shareManager,
                                 IAppManager $appManager, $userManager,
                                 $groupManager, IL10N $trans, $logger, FavoritesService $favoritesService,
-                                IDateTimeZone $dateTimeZone){
+                                IDateTimeZone $dateTimeZone, FavoriteShareMapper $favoriteShareMapper){
         parent::__construct($AppName, $request);
         $this->favoritesService = $favoritesService;
         $this->dateTimeZone = $dateTimeZone;
@@ -80,6 +72,7 @@ class FavoritesController extends Controller {
             $this->userfolder = $userfolder;
         }
         $this->shareManager = $shareManager;
+        $this->favoriteShareMapper = $favoriteShareMapper;
     }
 
     /**
@@ -88,15 +81,6 @@ class FavoritesController extends Controller {
     public function getFavorites() {
         $favorites = $this->favoritesService->getFavoritesFromDB($this->userId);
         return new DataResponse($favorites);
-    }
-
-    /**
-     * @NoAdminRequired
-     */
-    public function getSharedCategories() {
-        $categories = $this->favoritesService->getSharedCategories($this->userId);
-
-        return new DataResponse($categories);
     }
 
     /**
@@ -135,28 +119,6 @@ class FavoritesController extends Controller {
         }
     }
 
-    public function shareCategory($category) {
-        // TODO: use better way to check if user owns category
-        if ($this->favoritesService->countFavorites($this->userId, [$category], null, null) === 0) {
-            return new DataResponse("Category does not exist", 400);
-        }
-
-        $response = $this->favoritesService->getCategoryShareLink($this->userId, $category);
-
-        return new DataResponse($response);
-    }
-
-    public function unShareCategory($category) {
-        // TODO: use better way to check if user owns category
-        if ($this->favoritesService->countFavorites($this->userId, [$category], null, null) === 0) {
-            return new DataResponse("Category does not exist", 400);
-        }
-
-        $response = $this->favoritesService->deleteCategoryShareLink($this->userId, $category);
-
-        return new DataResponse($response);
-    }
-
     /**
      * @NoAdminRequired
      */
@@ -190,6 +152,49 @@ class FavoritesController extends Controller {
         $this->favoritesService->deleteFavoritesFromDB($ids, $this->userId);
         return new DataResponse('DELETED');
     }
+
+  /**
+   * @NoAdminRequired
+   */
+  public function getSharedCategories() {
+    $categories = $this->favoriteShareMapper->findAllByOwner($this->userId);
+
+    return new DataResponse($categories);
+  }
+
+  /**
+   * @NoAdminRequired
+   */
+  public function shareCategory($category) {
+    // TODO: use better way to check if user owns category
+    if ($this->favoritesService->countFavorites($this->userId, [$category], null, null) === 0) {
+      return new DataResponse("Unknown category", Http::STATUS_BAD_REQUEST);
+    }
+
+    $share = $this->favoriteShareMapper->findOrCreateByOwnerAndCategory($this->userId, $category);
+
+    if ($share === null) {
+      return new DataResponse("Error sharing favorite", Http::STATUS_INTERNAL_SERVER_ERROR);
+    }
+
+    return new DataResponse($share);
+  }
+
+  /**
+   * @NoAdminRequired
+   */
+  public function unShareCategory($category) {
+    // TODO: use better way to check if user owns category
+    if ($this->favoritesService->countFavorites($this->userId, [$category], null, null) === 0) {
+      return new DataResponse("Unknown category", Http::STATUS_BAD_REQUEST);
+    }
+
+    $didExist = $this->favoriteShareMapper->removeByOwnerAndCategory($this->userId, $category);
+
+    return new DataResponse([
+      'did_exist' => $didExist
+    ]);
+  }
 
     /**
      * @NoAdminRequired

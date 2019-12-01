@@ -485,7 +485,7 @@ FavoritesController.prototype = {
                 OC.Notification.showTemporary(t('maps', 'Failed to load favorites'));
             }
         }), $.ajax({
-            url: OC.generateUrl('/apps/maps/favorites-category/shared-categories'),
+            url: OC.generateUrl('/apps/maps/favorites-category/shared'),
             data: {},
             type: 'GET',
             async: true,

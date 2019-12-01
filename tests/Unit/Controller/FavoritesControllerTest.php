@@ -457,4 +457,29 @@ class FavoritesControllerTest extends \PHPUnit\Framework\TestCase
       $this->favoritesController->deleteFavorite($id);
     }
   }
+
+  public function testFavoriteShareIsRenamedCorrectly() {
+    $categoryName = 'test03059035';
+    $newCategoryName = 'test097876';
+
+    $id = $this->favoritesController
+      ->addFavorite("Test", 0, 0, $categoryName, "", null)
+      ->getData()['id'];
+
+    $this->favoritesController->shareCategory($categoryName);
+
+    $this->favoritesController->renameCategories([$categoryName], $newCategoryName);
+
+    $shares = $this->favoritesController->getSharedCategories()->getData();
+
+    $shareNames = array_map(function($el) {
+      return $el->getCategory();
+    }, $shares);
+
+    $this->favoritesController->deleteFavorite($id);
+    $this->favoritesController->unShareCategory($newCategoryName);
+
+    $this->assertContains($newCategoryName, $shareNames);
+    $this->assertNotContains($categoryName, $shareNames);
+  }
 }

@@ -14,6 +14,8 @@ namespace OCA\Maps\Controller;
 use OCA\Maps\DB\FavoriteShareMapper;
 use OCP\App\IAppManager;
 
+use OCP\AppFramework\Db\DoesNotExistException;
+use OCP\AppFramework\Db\MultipleObjectsReturnedException;
 use \OCP\IL10N;
 
 use OCP\AppFramework\Http;
@@ -126,6 +128,13 @@ class FavoritesController extends Controller {
         if (is_array($categories)) {
             foreach ($categories as $cat) {
                 $this->favoritesService->renameCategoryInDB($this->userId, $cat, $newName);
+
+                // Rename share if one exists
+                try {
+                    $share = $this->favoriteShareMapper->findByOwnerAndCategory($this->userId, $cat);
+                    $share->setCategory($newName);
+                    $this->favoriteShareMapper->update($share);
+                } catch (DoesNotExistException | MultipleObjectsReturnedException $e) {}
             }
         }
         return new DataResponse('RENAMED');

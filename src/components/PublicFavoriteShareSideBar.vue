@@ -1,23 +1,24 @@
 <template>
-  <AppNavigation>
-    <ul>
-      <AppNavigationNew
-        v-if="allowFavoriteEdits"
-        :text="newFavoriteButtonLabel"
-        @click="handleAddFavoriteClick"
-      />
-      <AppNavigationItem
-        v-for="favorite in favorites"
-        :key="favorite.id"
-        :title="favorite.name"
-        @click="handleFavoriteClick(favorite.id)"
-      />
-      <AppNavigationSpacer />
-    </ul>
-    <AppNavigationSettings>
-      Example settings
-    </AppNavigationSettings>
-  </AppNavigation>
+    <AppNavigation>
+      <ul v-if="favorites.length">
+        <AppNavigationNew
+          v-if="allowFavoriteEdits"
+          :text="newFavoriteButtonLabel"
+          @click="handleAddFavoriteClick"
+        />
+        <AppNavigationItem
+          v-for="favorite in favorites"
+          :key="favorite.id"
+          :title="favorite.name"
+          @click="handleFavoriteClick(favorite.id)"
+        />
+        <AppNavigationSpacer />
+      </ul>
+
+      <div class="no-favorites" v-else>
+        {{t('maps', 'No favorites to display')}}
+      </div>
+    </AppNavigation>
 </template>
 
 <script>
@@ -46,7 +47,7 @@ export default {
     ...mapState({
       favorites: state => state[PUBLIC_FAVORITES_NAMESPACE].favorites,
       mapMode: state => state[MAP_NAMESPACE].mode,
-      shareInfo: state => state[PUBLIC_FAVORITES_NAMESPACE].shareInfo
+      shareInfo: state => state[PUBLIC_FAVORITES_NAMESPACE].shareInfo,
     }),
 
     allowFavoriteEdits() {
@@ -86,4 +87,10 @@ export default {
 };
 </script>
 
-<style scoped></style>
+<style scoped lang="scss">
+  .no-favorites {
+    padding: 2em;
+    text-align: center;
+    color: var(--color-text-light);
+  }
+</style>

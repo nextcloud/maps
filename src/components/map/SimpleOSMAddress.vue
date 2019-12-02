@@ -9,8 +9,7 @@
       class="osm-address-text"
       rows="6"
     ></textarea>-->
-    <div class="loading"
-:class="{ visible: loading }" />
+    <div class="loading" :class="{ visible: loading }" />
   </div>
 </template>
 

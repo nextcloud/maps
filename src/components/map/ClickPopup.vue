@@ -5,8 +5,7 @@
     "
   >
     <template v-if="addingFavorite">
-      <form class="new-favorite-form"
-@submit.prevent="handleNewFavoriteSubmit">
+      <form class="new-favorite-form" @submit.prevent="handleNewFavoriteSubmit">
         <span>Dumb</span>
         <PopupFormItem
           v-model="newFavorite.name"
@@ -41,10 +40,8 @@
     <template v-else>
       <SimpleOSMAddress :geocode-object="geocodeObject" />
 
-      <div v-if="allowEdits"
-class="buttons">
-        <button class="primary"
-@click="handleAddToFavorites">
+      <div v-if="allowEdits" class="buttons">
+        <button class="primary" @click="handleAddToFavorites">
           {{ t("maps", "Add to Favorites") }}
         </button>
       </div>

@@ -32,7 +32,9 @@ const actions = {
         commit("setShareInfo", data.share);
         commit("setFavorites", data.favorites);
       })
-      .catch(() => showNotification(t("maps", "Failed to get favorites")));
+      .catch(() => {
+        showNotification(t("maps", "Failed to get favorites"));
+      });
   },
   addFavorite({ commit }, { lat, lng, name, comment }) {
     return publicApiRequest("favorites", "POST", {
@@ -89,7 +91,7 @@ const mutations = {
   },
   setSelectedFavoriteId(state, favoriteId) {
     state.selectedFavoriteId = favoriteId;
-  }
+  },
 };
 
 export default {

@@ -9,7 +9,7 @@
         <AppNavigationItem
           v-for="favorite in favorites"
           :key="favorite.id"
-          :title="favorite.name"
+          :title="favorite.name || t('maps', '(No name)')"
           @click="handleFavoriteClick(favorite.id)"
         />
         <AppNavigationSpacer />

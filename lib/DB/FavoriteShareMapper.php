@@ -41,6 +41,11 @@ class FavoriteShareMapper extends QBMapper {
     return $this->findEntity($qb);
   }
 
+  /**
+   * @param $owner
+   * @param $category
+   * @return Entity
+   */
   public function create($owner, $category) {
     $token = $this->secureRandom->generate(
       Constants::TOKEN_LENGTH,
@@ -55,13 +60,17 @@ class FavoriteShareMapper extends QBMapper {
     return $this->insert($newShare);
   }
 
+  /**
+   * @param $owner
+   * @return array|Entity[]
+   */
   public function findAllByOwner($owner) {
     $qb = $this->db->getQueryBuilder();
 
     $qb->select("*")
       ->from($this->getTableName())
       ->where(
-        $qb->expr()->eq('owner', $qb->createNamedParameter($owner, IQueryBuilder::PARAM_INT))
+        $qb->expr()->eq('owner', $qb->createNamedParameter($owner, IQueryBuilder::PARAM_STR))
       );
 
     return $this->findEntities($qb);
@@ -88,6 +97,11 @@ class FavoriteShareMapper extends QBMapper {
     return $this->findEntity($qb);
   }
 
+  /**
+   * @param $owner
+   * @param $category
+   * @return Entity|null
+   */
   public function findOrCreateByOwnerAndCategory($owner, $category) {
     /* @var Entity */
     $entity = null;
@@ -101,6 +115,11 @@ class FavoriteShareMapper extends QBMapper {
     return $entity;
   }
 
+  /**
+   * @param $owner
+   * @param $category
+   * @return bool
+   */
   public function removeByOwnerAndCategory($owner, $category) {
     try {
       $entity = $this->findByOwnerAndCategory($owner, $category);

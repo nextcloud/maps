@@ -8,11 +8,17 @@
       :max-zoom="mapOptions.maxZoom"
       :zoom="mapOptions.zoom"
       @ready="onMapReady"
+      :options="mapOptions.native"
     >
       <LTileLayer
-v-for="layer in layers" :key="layer.name"
-:url="layer.url"
-/>
+        :key="activeLayer.id"
+        :url="activeLayer.url"
+        :attribution="activeLayer.attribution"
+        :name="activeLayer.name"
+        :layer-type="activeLayer.type"
+        :options="activeLayer.options"
+        :opacity="activeLayer.type === 'overlay' ? activeLayer.opacity : 1"
+      />
 
       <LMarkerCluster
         v-for="categoryKey in Object.keys(favoriteCategories)"
@@ -67,7 +73,15 @@ import VueTypes from "vue-types";
 import "leaflet.markercluster";
 import "leaflet.featuregroup.subgroup";
 
-import { LMap, LTileLayer, LMarker, LPopup, LFeatureGroup } from "vue2-leaflet";
+import {
+  LMap,
+  LTileLayer,
+  LMarker,
+  LPopup,
+  LFeatureGroup,
+  LControlAttribution,
+  LControlLayers
+} from "vue2-leaflet";
 import LMarkerCluster from "vue2-leaflet-markercluster";
 import { latLngBounds, latLng } from "leaflet";
 import { mapActions, mapMutations, mapState } from "vuex";
@@ -75,6 +89,7 @@ import ClickPopup from "./map/ClickPopup";
 import FavoritePopup from "./map/FavoritePopup";
 import { isPublicShare } from "../utils/common";
 import { PUBLIC_FAVORITES_NAMESPACE } from "../store/modules/publicFavorites";
+import {LayerIds, Layers} from "../data/mapLayers";
 
 const CLUSTER_MARKER_VIEW_SIZE = 27;
 
@@ -89,6 +104,7 @@ export default {
 
   data() {
     return {
+      activeLayerId: LayerIds.OSM,
       openMarkerPopupId: null,
       popup: {
         visible: false,
@@ -107,15 +123,11 @@ export default {
           [-90, 720],
           [90, -720]
         ]),
-        animateClusters: true, // TODO: use setting?
-        showClusterBounds: false
-      },
-      layers: [
-        {
-          name: "OSM",
-          url: "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+        native: {
+          animateClusters: true,
+          showClusterBounds: false
         }
-      ]
+      }
     };
   },
 
@@ -144,7 +156,6 @@ export default {
   },
 
   computed: {
-    // TODO: clean
     ...mapState({
       selectedFavoriteId: state =>
         isPublicShare()
@@ -158,7 +169,13 @@ export default {
                 state[PUBLIC_FAVORITES_NAMESPACE].selectedFavoriteId
             )
           : null
-    })
+    }),
+    layers() {
+      return Layers;
+    },
+    activeLayer() {
+      return this.layers.find(layer => layer.id === this.activeLayerId);
+    }
   },
 
   methods: {
@@ -263,6 +280,17 @@ export default {
 
     onMapReady(map) {
       map.on("click", this.handleMapClick);
+
+      // this.controlLayers = L.control
+      //     .layers(BaseLayers, OverlayLayers, {
+      //         position: "bottomright",
+      //         collapsed: false
+      //     })
+      //     .addTo(map);
+      // hide openstreetmap, ESRI Aerial and roads/labels because they are dynamically managed
+      // this.controlLayers.removeLayer(BaseLayers[LayerIds.OSM]);
+      // this.controlLayers.removeLayer(this.baseLayers[LayerIds.]);
+      // this.controlLayers.removeLayer(this.baseOverlays["Roads and labels"]);
     },
 
     onFeatureGroupReady(featureGroup) {
@@ -281,7 +309,9 @@ export default {
     LMarkerCluster,
     LTileLayer,
     LPopup,
-    FavoritePopup
+    FavoritePopup,
+    LControlLayers,
+    LControlAttribution
   }
 };
 </script>
@@ -328,9 +358,10 @@ export default {
 
   .favorite-marker,
   .favorite-cluster-marker {
-    /*-webkit-mask: url("../../css/images/star-circle.svg") no-repeat 50% 50%;
+    /* -webkit-mask: url("../../css/images/star-circle.svg") no-repeat 50% 50%;
     mask: url("../../css/images/star-circle.svg") no-repeat 50% 50%;
     background: url("../../css/images/star-white.svg") no-repeat 50% 50%; */ // TODO: webpack image/svg config
+
     background: red; // TODO: remove
     border-radius: 50%;
     box-shadow: 0 0 10px #888;
@@ -339,17 +370,19 @@ export default {
   .favorite-marker {
     height: 18px !important;
     width: 18px !important;
-    /*-webkit-mask-size: 18px;
+
+    /* -webkit-mask-size: 18px;
     mask-size: 18px;
-    background-size: 18px 18px;*/
+    background-size: 18px 18px; */
   }
 
   .favorite-cluster-marker {
     height: 27px !important;
     width: 27px !important;
-    /*-webkit-mask-size: 27px;
+
+    /* -webkit-mask-size: 27px;
     mask-size: 27px;
-    background-size: 27px 27px;*/
+    background-size: 27px 27px; */
   }
 
   .leaflet-marker-favorite-cluster {

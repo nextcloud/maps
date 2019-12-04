@@ -91,7 +91,7 @@ return [
         ['name' => 'devices_api#getDevices', 'url' => '/api/{apiversion}/devices', 'verb' => 'GET'],
         ['name' => 'devices_api#getDevicePoints', 'url' => '/api/{apiversion}/devices/{id}', 'verb' => 'GET'],
         ['name' => 'devices_api#addDevicePoint', 'url' => '/api/{apiversion}/devices', 'verb' => 'POST'],
-        ['name' => 'devices_api#editDevice', 'url' => '/api/{apiversion}/devices/{id}', 'verbGET' => 'PUT'],
+        ['name' => 'devices_api#editDevice', 'url' => '/api/{apiversion}/devices/{id}', 'verb' => 'PUT'],
         ['name' => 'devices_api#deleteDevice', 'url' => '/api/{apiversion}/devices/{id}', 'verb' => 'DELETE'],
 
         // devices

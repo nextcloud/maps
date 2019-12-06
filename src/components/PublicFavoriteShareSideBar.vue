@@ -1,29 +1,28 @@
 <template>
-    <AppNavigation>
-      <ul v-if="favorites.length">
-        <AppNavigationNew
-          v-if="allowFavoriteEdits"
-          :text="newFavoriteButtonLabel"
-          @click="handleAddFavoriteClick"
-        />
-        <AppNavigationItem
-          v-for="favorite in favorites"
-          :key="favorite.id"
-          :title="favorite.name || t('maps', '(No name)')"
-          @click="handleFavoriteClick(favorite.id)"
-        />
-        <AppNavigationSpacer />
-      </ul>
+  <AppNavigation>
+    <ul v-if="favorites.length">
+      <AppNavigationNew
+        v-if="allowFavoriteEdits"
+        :text="newFavoriteButtonLabel"
+        @click="handleAddFavoriteClick"
+      />
+      <AppNavigationItem
+        v-for="favorite in favorites"
+        :key="favorite.id"
+        :title="favorite.name || t('maps', '(No name)')"
+        @click="handleFavoriteClick(favorite.id)"
+      />
+      <AppNavigationSpacer />
+    </ul>
 
-      <div class="no-favorites" v-else>
-        {{t('maps', 'No favorites to display')}}
-      </div>
-    </AppNavigation>
+    <div v-else class="no-favorites">
+      {{ t("maps", "No favorites to display") }}
+    </div>
+  </AppNavigation>
 </template>
 
 <script>
 import AppNavigation from "@nextcloud/vue/dist/Components/AppNavigation";
-import AppNavigationSettings from "@nextcloud/vue/dist/Components/AppNavigationSettings";
 import AppNavigationItem from "@nextcloud/vue/dist/Components/AppNavigationItem";
 import AppNavigationNew from "@nextcloud/vue/dist/Components/AppNavigationNew";
 import AppNavigationSpacer from "@nextcloud/vue/dist/Components/AppNavigationSpacer";
@@ -37,7 +36,6 @@ export default {
 
   components: {
     AppNavigation,
-    AppNavigationSettings,
     AppNavigationItem,
     AppNavigationNew,
     AppNavigationSpacer
@@ -47,7 +45,7 @@ export default {
     ...mapState({
       favorites: state => state[PUBLIC_FAVORITES_NAMESPACE].favorites,
       mapMode: state => state[MAP_NAMESPACE].mode,
-      shareInfo: state => state[PUBLIC_FAVORITES_NAMESPACE].shareInfo,
+      shareInfo: state => state[PUBLIC_FAVORITES_NAMESPACE].shareInfo
     }),
 
     allowFavoriteEdits() {
@@ -88,9 +86,9 @@ export default {
 </script>
 
 <style scoped lang="scss">
-  .no-favorites {
-    padding: 2em;
-    text-align: center;
-    color: var(--color-text-light);
-  }
+.no-favorites {
+  padding: 2em;
+  text-align: center;
+  color: var(--color-text-light);
+}
 </style>

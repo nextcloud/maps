@@ -41,9 +41,7 @@
     <div class="no-edits">
       <p>
         {{
-          favorite.comment.length
-            ? favorite.comment
-            : t("maps", "No comment")
+          favorite.comment.length ? favorite.comment : t("maps", "No comment")
         }}
       </p>
     </div>
@@ -123,5 +121,3 @@ export default {
   }
 };
 </script>
-
-<style scoped></style>

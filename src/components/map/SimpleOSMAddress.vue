@@ -3,12 +3,6 @@
     <div class="osm-address-text">
       <p v-html="textContents" />
     </div>
-    <!--<textarea
-      :value="textContents"
-      @input="$emit('input', $event.target.value)"
-      class="osm-address-text"
-      rows="6"
-    ></textarea>-->
     <div class="loading" :class="{ visible: loading }" />
   </div>
 </template>
@@ -20,7 +14,7 @@ export default {
   name: "SimpleOSMAddress",
 
   props: {
-    geocodeObject: Types.OSMGeoCodeResult
+    geocodeObject: Types.OSMGeoCodeResult.def(null)
   },
 
   computed: {
@@ -98,8 +92,6 @@ $transitionDuration: 0.3s;
   .osm-address-text {
     width: 100%;
     min-height: 8em;
-    /*border: 1px solid rgba(#000, 0.05);*/
-    /*resize: vertical;*/
   }
 
   .loading {

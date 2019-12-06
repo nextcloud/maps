@@ -1,7 +1,6 @@
 <template>
   <div class="popup">
-    <h2 v-if="title"
-class="popup-title">
+    <h2 v-if="title" class="popup-title">
       {{ title }}
     </h2>
 

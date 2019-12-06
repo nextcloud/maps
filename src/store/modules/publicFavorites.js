@@ -91,7 +91,7 @@ const mutations = {
   },
   setSelectedFavoriteId(state, favoriteId) {
     state.selectedFavoriteId = favoriteId;
-  },
+  }
 };
 
 export default {

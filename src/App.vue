@@ -43,10 +43,7 @@ export default {
         state[PUBLIC_FAVORITES_NAMESPACE].shareInfo
           ? state[PUBLIC_FAVORITES_NAMESPACE].shareInfo.allowEdits
           : false
-    }),
-      allowFavoriteEdits() {
-
-      }
+    })
   },
 
   mounted() {

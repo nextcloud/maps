@@ -73,15 +73,7 @@ import VueTypes from "vue-types";
 import "leaflet.markercluster";
 import "leaflet.featuregroup.subgroup";
 
-import {
-  LMap,
-  LTileLayer,
-  LMarker,
-  LPopup,
-  LFeatureGroup,
-  LControlAttribution,
-  LControlLayers
-} from "vue2-leaflet";
+import { LMap, LTileLayer, LMarker, LPopup, LFeatureGroup } from "vue2-leaflet";
 import LMarkerCluster from "vue2-leaflet-markercluster";
 import { latLngBounds, latLng } from "leaflet";
 import { mapActions, mapMutations, mapState } from "vuex";
@@ -89,12 +81,23 @@ import ClickPopup from "./map/ClickPopup";
 import FavoritePopup from "./map/FavoritePopup";
 import { isPublicShare } from "../utils/common";
 import { PUBLIC_FAVORITES_NAMESPACE } from "../store/modules/publicFavorites";
-import {LayerIds, Layers} from "../data/mapLayers";
+import { LayerIds, Layers } from "../data/mapLayers";
 
 const CLUSTER_MARKER_VIEW_SIZE = 27;
 
 export default {
   name: "MapContainer",
+
+  components: {
+    ClickPopup,
+    LMap,
+    LFeatureGroup,
+    LMarker,
+    LMarkerCluster,
+    LTileLayer,
+    LPopup,
+    FavoritePopup
+  },
 
   props: {
     favoriteCategories: VueTypes.object.isRequired,
@@ -131,6 +134,29 @@ export default {
     };
   },
 
+  computed: {
+    ...mapState({
+      selectedFavoriteId: state =>
+        isPublicShare()
+          ? state[PUBLIC_FAVORITES_NAMESPACE].selectedFavoriteId
+          : null,
+      selectedFavorite: state =>
+        isPublicShare()
+          ? state[PUBLIC_FAVORITES_NAMESPACE].favorites.find(
+              favorite =>
+                favorite.id ===
+                state[PUBLIC_FAVORITES_NAMESPACE].selectedFavoriteId
+            )
+          : null
+    }),
+    layers() {
+      return Layers;
+    },
+    activeLayer() {
+      return this.layers.find(layer => layer.id === this.activeLayerId);
+    }
+  },
+
   watch: {
     selectedFavoriteId(val) {
       if (val !== null) {
@@ -153,29 +179,6 @@ export default {
     this.featureGroup = null;
     this.popupWasJustClosed = false;
     this.markerMap = [];
-  },
-
-  computed: {
-    ...mapState({
-      selectedFavoriteId: state =>
-        isPublicShare()
-          ? state[PUBLIC_FAVORITES_NAMESPACE].selectedFavoriteId
-          : null,
-      selectedFavorite: state =>
-        isPublicShare()
-          ? state[PUBLIC_FAVORITES_NAMESPACE].favorites.find(
-              favorite =>
-                favorite.id ===
-                state[PUBLIC_FAVORITES_NAMESPACE].selectedFavoriteId
-            )
-          : null
-    }),
-    layers() {
-      return Layers;
-    },
-    activeLayer() {
-      return this.layers.find(layer => layer.id === this.activeLayerId);
-    }
   },
 
   methods: {
@@ -299,19 +302,6 @@ export default {
 
       this.featureGroup = featureGroup;
     }
-  },
-
-  components: {
-    ClickPopup,
-    LMap,
-    LFeatureGroup,
-    LMarker,
-    LMarkerCluster,
-    LTileLayer,
-    LPopup,
-    FavoritePopup,
-    LControlLayers,
-    LControlAttribution
   }
 };
 </script>

@@ -7,7 +7,7 @@ export const LayerTypes = {
 };
 
 export const LayerIds = {
-  OSM: "osm",
+  OSM: "osm"
   // RoadsOverlay: "roads-overlay",
   // ESRI: "esri",
   // ESRITopo: "esri-topo",
@@ -43,7 +43,7 @@ export const Layers = [
       detectRetina: false,
       maxZoom: 19
     }
-  },
+  }
   /*{
     id: LayerIds.ESRI,
     name: "ESRI",

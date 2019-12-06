@@ -1,7 +1,6 @@
 <template>
   <div class="form-item">
-    <span class="icon"
-:class="icon" />
+    <span class="icon" :class="icon" />
     <div class="input-wrapper">
       <template v-if="allowEdits">
         <textarea
@@ -18,7 +17,7 @@
           :placeholder="placeholder"
           :value="value"
           @input="$emit('input', $event.target.value)"
-        >
+        />
       </template>
       <template v-else>
         <span>{{ value }}</span>

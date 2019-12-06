@@ -5,7 +5,7 @@ module.exports = {
   },
   extends: [
     "plugin:prettier/recommended",
-    "plugin:vue/recommended"
+    "plugin:vue/essential"
   ],
   rules: {
     "vue/component-name-in-template-casing": ["error", "PascalCase"],
@@ -20,7 +20,8 @@ module.exports = {
     $: false // TODO: remove once jQuery has been removed
   },
   parserOptions: {
+    ecmaVersion: 6,
     sourceType: "module",
     parser: "babel-eslint"
-  },
+  }
 };

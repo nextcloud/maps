@@ -2,6 +2,8 @@ OC.L10N.register(
     "maps",
     {
     "Maps" : "מפות",
+    "Settings were successfully saved" : "ההגדרות נשמרו בהצלחה",
+    "Failed to save settings" : "שמירת ההגדרות נכשלה",
     "right" : "ימין",
     "left" : "שמאל",
     "No search result" : "אין תוצאות חיפוש",

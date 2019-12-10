@@ -1,5 +1,5 @@
 import { publicApiRequest, showNotification } from "../../utils/common";
-import { getCategoryRawName } from "../../utils/mapUtils";
+import { getCategoryKey } from "../../utils/favoritesUtils";
 import { getPublicShareCategory } from "../../utils/publicShareUtils";
 
 export const PUBLIC_FAVORITES_NAMESPACE = "publicFavorites";
@@ -17,7 +17,7 @@ const getters = {
     }
 
     return {
-      [getCategoryRawName(state.favorites[0].category)]: state.favorites
+      [getCategoryKey(state.favorites[0].category)]: state.favorites
     };
   }
 };

@@ -8,7 +8,6 @@
       :max-zoom="mapOptions.maxZoom"
       :zoom="mapOptions.zoom"
       @ready="onMapReady"
-      :options="mapOptions.native"
     >
       <LTileLayer
         :key="activeLayer.id"
@@ -24,9 +23,8 @@
         v-for="categoryKey in Object.keys(favoriteCategories)"
         :key="categoryKey"
         :options="{
-          iconCreateFunction: getClusterIconCreateFunction(categoryKey),
-          animate: mapOptions.animateClusters,
-          showCoverageOnHover: mapOptions.showClusterBounds
+          ...mapOptions.clusterOptions,
+          iconCreateFunction: getClusterIconCreateFunction(categoryKey)
         }"
       >
         <LMarker
@@ -76,14 +74,15 @@ import "leaflet.featuregroup.subgroup";
 import { LMap, LTileLayer, LMarker, LPopup, LFeatureGroup } from "vue2-leaflet";
 import LMarkerCluster from "vue2-leaflet-markercluster";
 import { latLngBounds, latLng } from "leaflet";
-import { mapActions, mapMutations, mapState } from "vuex";
+import { mapActions, mapState } from "vuex";
 import ClickPopup from "./map/ClickPopup";
 import FavoritePopup from "./map/FavoritePopup";
 import { isPublicShare } from "../utils/common";
 import { PUBLIC_FAVORITES_NAMESPACE } from "../store/modules/publicFavorites";
 import { LayerIds, Layers } from "../data/mapLayers";
+import { getThemingColorFromCategoryKey } from "../utils/favoritesUtils";
 
-const CLUSTER_MARKER_VIEW_SIZE = 27;
+const CLUSTER_MAX_ZOOM_LEVEL = 14;
 
 export default {
   name: "MapContainer",
@@ -125,11 +124,13 @@ export default {
         maxBounds: latLngBounds([
           [-90, 720],
           [90, -720]
-        ]),
-        native: {
-          animateClusters: true,
-          showClusterBounds: false
-        }
+        ])
+      },
+      clusterOptions: {
+        animate: true,
+        showCoverageOnHover: false,
+        zoomToBoundsOnClick: true,
+        disableClusteringAtZoom: CLUSTER_MAX_ZOOM_LEVEL
       }
     };
   },
@@ -163,7 +164,7 @@ export default {
         const marker = this.markerMap[val];
 
         if (marker) {
-          this.setMapView(marker.getLatLng(), 10);
+          this.setMapView(marker.getLatLng(), CLUSTER_MAX_ZOOM_LEVEL);
           marker.openPopup();
         } else {
           console.warn(
@@ -245,12 +246,19 @@ export default {
     createNewDivIcon(categoryKey) {
       return new L.DivIcon({
         iconAnchor: [9, 9],
+        iconSize: [18, 18],
         className: "leaflet-marker-favorite",
-        html:
-          '<div class="favorite-marker ' +
-          categoryKey +
-          'CategoryMarker"></div>'
+        html: `<div
+            class="favorite-marker ${categoryKey}"
+            style="
+              background-color: ${this.getMarkerBackgroundColor(categoryKey)};
+            "
+          ></div>`
       });
+    },
+
+    getMarkerBackgroundColor(categoryKey) {
+      return getThemingColorFromCategoryKey(categoryKey);
     },
 
     getClusterIconCreateFunction(categoryKey) {
@@ -259,13 +267,15 @@ export default {
 
         return new L.DivIcon({
           iconAnchor: [14, 14],
+          iconSize: [28, 28],
           className: "leaflet-marker-favorite-cluster cluster-marker",
-          html:
-            '<div class="favorite-cluster-marker ' +
-            categoryKey +
-            'CategoryMarker"></div>​<span class="label">' +
-            label +
-            "</span>"
+          html: `<div
+              class="favorite-cluster-marker ${categoryKey}"
+              style="
+                background-color: ${this.getMarkerBackgroundColor(categoryKey)};
+              "
+            ></div>​
+            <span class="label">${label}</span>`
         });
       };
     },
@@ -283,17 +293,6 @@ export default {
 
     onMapReady(map) {
       map.on("click", this.handleMapClick);
-
-      // this.controlLayers = L.control
-      //     .layers(BaseLayers, OverlayLayers, {
-      //         position: "bottomright",
-      //         collapsed: false
-      //     })
-      //     .addTo(map);
-      // hide openstreetmap, ESRI Aerial and roads/labels because they are dynamically managed
-      // this.controlLayers.removeLayer(BaseLayers[LayerIds.OSM]);
-      // this.controlLayers.removeLayer(this.baseLayers[LayerIds.]);
-      // this.controlLayers.removeLayer(this.baseOverlays["Roads and labels"]);
     },
 
     onFeatureGroupReady(featureGroup) {
@@ -348,11 +347,9 @@ export default {
 
   .favorite-marker,
   .favorite-cluster-marker {
-    /* -webkit-mask: url("../../css/images/star-circle.svg") no-repeat 50% 50%;
-    mask: url("../../css/images/star-circle.svg") no-repeat 50% 50%;
-    background: url("../../css/images/star-white.svg") no-repeat 50% 50%; */ // TODO: webpack image/svg config
-
-    background: red; // TODO: remove
+    -webkit-mask: url("/apps/maps/css/images/star-circle.svg") no-repeat 50% 50%;
+    mask: url("/apps/maps/css/images/star-circle.svg") no-repeat 50% 50%;
+    background: url("/apps/maps/css/images/star-white.svg") no-repeat 50% 50%;
     border-radius: 50%;
     box-shadow: 0 0 10px #888;
   }
@@ -360,26 +357,24 @@ export default {
   .favorite-marker {
     height: 18px !important;
     width: 18px !important;
-
-    /* -webkit-mask-size: 18px;
+    -webkit-mask-size: 18px;
     mask-size: 18px;
-    background-size: 18px 18px; */
+    background-size: 18px 18px;
   }
 
   .favorite-cluster-marker {
     height: 27px !important;
     width: 27px !important;
-
-    /* -webkit-mask-size: 27px;
+    -webkit-mask-size: 27px;
     mask-size: 27px;
-    background-size: 27px 27px; */
+    background-size: 27px 27px;
   }
 
   .leaflet-marker-favorite-cluster {
     .label {
       position: absolute;
       top: -7px;
-      right: 0;
+      right: -11px;
       color: #fff;
       background-color: #333;
       border-radius: 9px;
@@ -391,7 +386,6 @@ export default {
     }
   }
 
-  /* Adjust button styles to Nextcloud */
   .leaflet-touch {
     .leaflet-control-layers,
     .leaflet-bar {
@@ -400,7 +394,6 @@ export default {
     }
   }
 
-  /* Fix attribution overlapping map on mobile */
   .leaflet-control-attribution.leaflet-control {
     white-space: nowrap;
     overflow: hidden;
@@ -408,7 +401,6 @@ export default {
     max-width: 50vw;
   }
 
-  /* Increase padding of popup close button */
   .leaflet-popup {
     .leaflet-popup-content-wrapper {
       border-radius: 4px;

@@ -34,7 +34,6 @@ export default {
     display: inline-block;
     line-height: 1em;
     color: #333;
-    text-transform: uppercase;
     font-size: 1em;
     margin: 0;
     padding: 0;

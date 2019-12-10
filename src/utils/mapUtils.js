@@ -1,8 +1,5 @@
 import { request } from "./common";
 
-export const getCategoryRawName = categoryName =>
-  categoryName.replace(" ", "-");
-
 export const isGeocodeable = str => {
   const pattern = /^\s*-?\d+\.?\d*,\s*-?\d+\.?\d*\s*$/;
 

@@ -14,12 +14,12 @@ export default {
   name: "SimpleOSMAddress",
 
   props: {
-    geocodeObject: Types.OSMGeoCodeResult.def(null)
+    geocodeObject: Types.OSMGeoCodeResult
   },
 
   computed: {
     loading() {
-      return this.geocodeObject === null;
+      return !this.geocodeObject;
     },
 
     textContents() {

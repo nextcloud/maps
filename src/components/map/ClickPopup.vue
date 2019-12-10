@@ -59,6 +59,7 @@ import VueTypes from "vue-types";
 import Popup from "./Popup";
 import PopupFormItem from "./PopupFormItem";
 import Types from "../../data/types";
+import { getDefaultCategoryName } from "../../utils/favoritesUtils";
 
 export default {
   name: "ClickPopup",
@@ -76,7 +77,7 @@ export default {
       newFavorite: {
         name: "New Favorite",
         category: this.allowCategoryCustomization
-          ? "Personal" // TODO: get default category name
+          ? getDefaultCategoryName()
           : null,
         comment: ""
       },

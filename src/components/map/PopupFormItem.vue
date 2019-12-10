@@ -33,10 +33,10 @@ export default {
   name: "PopupFormItem",
 
   props: {
-    icon: VueTypes.string,
-    value: VueTypes.any,
+    icon: VueTypes.string.isRequired,
+    value: VueTypes.any.isRequired,
     placeholder: VueTypes.string.def(""),
-    type: VueTypes.oneOf(["textarea", "text"]),
+    type: VueTypes.oneOf(["textarea", "text"]).def("text"),
     allowEdits: VueTypes.bool.def(true)
   }
 };

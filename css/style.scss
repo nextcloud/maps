@@ -811,26 +811,17 @@ tr.selected td {
 
 .category-line .category-sharing-dialogue {
     width: 100%;
-    background: rgba(#000, .1);
-    padding: 0.5em;
+    background: var(--color-background-dark);
+    padding: 0.7rem;
     display: none;
 
-    .category-sharing-checkbox-container {
-        display: flex;
-        align-items: center;
-
-        .category-sharing-checkbox {
-            margin-right: 1em;
-            cursor: pointer;
-        }
-    }
-
     .category-sharing-link {
+        margin-top: 0.7rem;
         width: 100%;
-        visibility: hidden;
+        display: none;
 
         &.visible {
-            visibility: visible;
+            display: block;
         }
     }
 }

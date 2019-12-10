@@ -1,9 +1,9 @@
 <template>
   <Popup :title="favorite.name || '(No name)'">
     <form
+      v-if="allowEdits"
       class="favorite"
       @submit.prevent="handleFavoriteSubmit"
-      v-if="allowEdits"
     >
       <PopupFormItem
         v-model="favoriteCopy.name"

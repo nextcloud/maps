@@ -131,9 +131,9 @@ FavoritesController.prototype = {
         });
 
         $('body').on('change', '.category-sharing-checkbox', function(e) {
-            var category = $(this).parent().parent().parent().attr('category');
+            var category = $(this).parent().parent().attr('category');
 
-            var shareDialogue = $(this).parent().parent();
+            var shareDialogue = $(this).parent();
 
             if (!this.checked) {
                 $.ajax({
@@ -141,7 +141,7 @@ FavoritesController.prototype = {
                     url: OC.generateUrl('/apps/maps/favorites-category/' + category + '/un-share'),
                     data: {},
                     async: true
-                }).done(function (response) {
+                }).done(function () {
                     var linkEl = shareDialogue.children('.category-sharing-link');
 
                     linkEl.val('');
@@ -149,7 +149,7 @@ FavoritesController.prototype = {
                 }).always(function () {
 
                 }).fail(function() {
-                    OC.Notification.showTemporary(t('maps', 'Failed to share favorites category'));
+                    OC.Notification.showTemporary(t('maps', 'Failed to remove favorites category share'));
                 });
             } else {
                 $.ajax({
@@ -162,6 +162,7 @@ FavoritesController.prototype = {
 
                     linkEl.val(generateSharingUrl(response.token));
                     linkEl.addClass('visible');
+                    linkEl.select();
                 }).always(function () {
 
                 }).fail(function() {
@@ -550,6 +551,8 @@ FavoritesController.prototype = {
             html: '<div class="favoriteMarker '+name+'CategoryMarker"></div>'
         });
 
+        var checkboxId = 'checkbox-' + name.toLowerCase();
+
         // side menu entry
         var imgurl = OC.generateUrl('/svg/core/actions/star?color='+color);
         var li = '<li class="category-line" id="'+name+'-category" category="'+rawName+'">' +
@@ -611,11 +614,12 @@ FavoritesController.prototype = {
             '        </div>' +
             '    </div>' +
             '    <div class="category-sharing-dialogue">' +
-            '        <label class="category-sharing-checkbox-container">' +
-            '            <input type="checkbox" class="category-sharing-checkbox" ' + (shareToken ? "checked" : "") + '>' +
-            '            <span>' + t('maps', 'Share this category by public link') + '</span>' +
+            '        <input id="' + checkboxId + '" type="checkbox" class="checkbox category-sharing-checkbox" ' + (shareToken ? "checked" : "") + '>' +
+            '        <label for="' + checkboxId + '" class="category-sharing-checkbox-container">' +
+                        t("maps", "Share this category by public link") +
             '        </label> ' +
-            '        <input class="category-sharing-link ' + (shareToken ? "visible" : "") + '" value="' + (generateSharingUrl(shareToken) || "") + '">' +
+            '        <input class="category-sharing-link ' + (shareToken ? "visible" : "") +
+            '            " value="' + (generateSharingUrl(shareToken) || "") + '">' +
             '    </div>' +
             '</li>';
 

@@ -616,7 +616,7 @@ FavoritesController.prototype = {
             '    <div class="category-sharing-dialogue">' +
             '        <input id="' + checkboxId + '" type="checkbox" class="checkbox category-sharing-checkbox" ' + (shareToken ? "checked" : "") + '>' +
             '        <label for="' + checkboxId + '" class="category-sharing-checkbox-container">' +
-                        t("maps", "Share this category by public link") +
+                        t("maps", "Share link") +
             '        </label> ' +
             '        <input class="category-sharing-link ' + (shareToken ? "visible" : "") +
             '            " value="' + (generateSharingUrl(shareToken) || "") + '">' +

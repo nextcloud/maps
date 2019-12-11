@@ -7,8 +7,11 @@
       :min-zoom="mapOptions.minZoom"
       :max-zoom="mapOptions.maxZoom"
       :zoom="mapOptions.zoom"
+      :options="mapOptions.native"
       @ready="onMapReady"
     >
+      <LControlZoom position="bottomright" />
+
       <LTileLayer
         :key="activeLayer.id"
         :url="activeLayer.url"
@@ -71,7 +74,14 @@ import VueTypes from "vue-types";
 import "leaflet.markercluster";
 import "leaflet.featuregroup.subgroup";
 
-import { LMap, LTileLayer, LMarker, LPopup, LFeatureGroup } from "vue2-leaflet";
+import {
+  LMap,
+  LTileLayer,
+  LMarker,
+  LPopup,
+  LFeatureGroup,
+  LControlZoom
+} from "vue2-leaflet";
 import LMarkerCluster from "vue2-leaflet-markercluster";
 import { latLngBounds, latLng } from "leaflet";
 import { mapActions, mapState } from "vuex";
@@ -95,7 +105,8 @@ export default {
     LMarkerCluster,
     LTileLayer,
     LPopup,
-    FavoritePopup
+    FavoritePopup,
+    LControlZoom
   },
 
   props: {
@@ -124,7 +135,10 @@ export default {
         maxBounds: latLngBounds([
           [-90, 720],
           [90, -720]
-        ])
+        ]),
+        native: {
+          zoomControl: false
+        }
       },
       clusterOptions: {
         animate: true,

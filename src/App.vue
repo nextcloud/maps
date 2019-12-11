@@ -1,7 +1,7 @@
 <template>
-  <div id="maps-app">
+  <Content app-name="maps">
     <PublicFavoriteShareSideBar />
-    <div class="content-wrapper">
+    <AppContent class="content-wrapper">
       <MapContainer
         :favorite-categories="favoritesMappedByCategory"
         :is-public-share="true"
@@ -10,11 +10,13 @@
         @updateFavorite="updateFavorite"
         @deleteFavorite="deleteFavorite"
       />
-    </div>
-  </div>
+    </AppContent>
+  </Content>
 </template>
 
 <script>
+import Content from "@nextcloud/vue/dist/Components/Content";
+import AppContent from "@nextcloud/vue/dist/Components/AppContent";
 import MapContainer from "./components/MapContainer";
 import PublicFavoriteShareSideBar from "./components/PublicFavoriteShareSideBar";
 import { mapActions, mapGetters, mapState } from "vuex";
@@ -24,6 +26,8 @@ export default {
   name: "App",
 
   components: {
+    AppContent,
+    Content,
     MapContainer,
     PublicFavoriteShareSideBar
   },
@@ -62,15 +66,6 @@ export default {
 </script>
 
 <style lang="scss">
-#maps-app {
-  width: 100%;
-
-  .content-wrapper {
-    margin-left: 300px;
-    height: 100%;
-  }
-}
-
 /* Override header style */
 #header {
   .header-shared-by {

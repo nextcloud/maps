@@ -72,4 +72,8 @@ export default {
     color: var(--color-primary-text);
   }
 }
+
+#content {
+  height: 100%;
+}
 </style>

@@ -70,4 +70,11 @@ export default {
     height: 100%;
   }
 }
+
+/* Override header style */
+#header {
+  .header-shared-by {
+    color: var(--color-primary-text);
+  }
+}
 </style>

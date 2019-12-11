@@ -10,6 +10,7 @@
         v-for="favorite in favorites"
         :key="favorite.id"
         :title="favorite.name || t('maps', '(No name)')"
+        icon="icon-star-dark"
         @click="handleFavoriteClick(favorite.id)"
       />
       <AppNavigationSpacer />

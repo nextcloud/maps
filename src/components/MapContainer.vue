@@ -70,10 +70,8 @@
 </template>
 
 <script>
-import L from "leaflet";
+import { DivIcon } from "leaflet";
 import VueTypes from "vue-types";
-import "leaflet.markercluster";
-import "leaflet.featuregroup.subgroup";
 
 import {
   LMap,
@@ -264,7 +262,7 @@ export default {
     },
 
     createNewDivIcon(categoryKey) {
-      return new L.DivIcon({
+      return new DivIcon({
         iconAnchor: [9, 9],
         iconSize: [18, 18],
         className: "leaflet-marker-favorite",
@@ -285,7 +283,7 @@ export default {
       return cluster => {
         const label = cluster.getChildCount();
 
-        return new L.DivIcon({
+        return new DivIcon({
           iconAnchor: [14, 14],
           iconSize: [28, 28],
           className: "leaflet-marker-favorite-cluster cluster-marker",

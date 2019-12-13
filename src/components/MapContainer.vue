@@ -11,6 +11,11 @@
       @ready="onMapReady"
     >
       <LControlZoom position="bottomright" />
+      <LControlScale
+        position="bottomleft"
+        :imperial="mapOptions.scaleControlShouldUseImperial"
+        :metric="!mapOptions.scaleControlShouldUseImperial"
+      />
 
       <LTileLayer
         :key="activeLayer.id"
@@ -79,7 +84,8 @@ import {
   LMarker,
   LPopup,
   LFeatureGroup,
-  LControlZoom
+  LControlZoom,
+  LControlScale
 } from "vue2-leaflet";
 import LMarkerCluster from "vue2-leaflet-markercluster";
 import { latLngBounds, latLng } from "leaflet";
@@ -90,6 +96,7 @@ import { isPublicShare } from "../utils/common";
 import { PUBLIC_FAVORITES_NAMESPACE } from "../store/modules/publicFavorites";
 import { LayerIds, Layers } from "../data/mapLayers";
 import { getThemingColorFromCategoryKey } from "../utils/favoritesUtils";
+import { getShouldMapUseImperial } from "../utils/mapUtils";
 
 const CLUSTER_MAX_ZOOM_LEVEL = 14;
 
@@ -105,7 +112,8 @@ export default {
     LTileLayer,
     LPopup,
     FavoritePopup,
-    LControlZoom
+    LControlZoom,
+    LControlScale
   },
 
   props: {
@@ -137,7 +145,8 @@ export default {
         ]),
         native: {
           zoomControl: false
-        }
+        },
+        scaleControlShouldUseImperial: getShouldMapUseImperial()
       },
       clusterOptions: {
         // animate: true,
@@ -229,7 +238,7 @@ export default {
       this.openMarkerPopupId = id;
     },
 
-    handleMarkerPopupClosed(id) {
+    handleMarkerPopupClosed() {
       this.openMarkerPopupId = null;
 
       this.selectFavorite(null);

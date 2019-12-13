@@ -21,3 +21,16 @@ export const geocode = latLngStr => {
 
   return request(constructGeoCodeUrl(lat, lng), "GET");
 };
+
+export const getShouldMapUseImperial = () => {
+  const locale = OC.getLocale();
+
+  return (
+    locale === "en_US" ||
+    locale === "en_GB" ||
+    locale === "en_AU" ||
+    locale === "en_IE" ||
+    locale === "en_NZ" ||
+    locale === "en_CA"
+  );
+};

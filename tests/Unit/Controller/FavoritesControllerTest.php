@@ -6,7 +6,9 @@
  * later. See the COPYING file.
  *
  * @author Julien Veyssier <eneiluj@posteo.net>
+ * @author Paul Schwörer <hello@paulschwoerer.de>
  * @copyright Julien Veyssier 2019
+ * @copyright Paul Schwörer 2019
  */
 
 namespace OCA\Maps\Controller;

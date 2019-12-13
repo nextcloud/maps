@@ -25,8 +25,9 @@
       <LMarkerCluster
         v-for="categoryKey in Object.keys(favoriteCategories)"
         :key="categoryKey"
+        @ready="clusterReadyDebug"
         :options="{
-          ...mapOptions.clusterOptions,
+          ...clusterOptions,
           iconCreateFunction: getClusterIconCreateFunction(categoryKey)
         }"
       >
@@ -141,9 +142,10 @@ export default {
         }
       },
       clusterOptions: {
-        animate: true,
+        // animate: true,
         showCoverageOnHover: false,
         zoomToBoundsOnClick: true,
+        spiderfyOnMaxZoom: false,
         disableClusteringAtZoom: CLUSTER_MAX_ZOOM_LEVEL
       }
     };
@@ -200,6 +202,10 @@ export default {
     ...mapActions({
       selectFavorite: `${PUBLIC_FAVORITES_NAMESPACE}/selectFavorite`
     }),
+
+    clusterReadyDebug(o) {
+      console.log(o);
+    },
 
     setMapView(latLng, zoom) {
       this.$refs.map.mapObject.setView(latLng, zoom);
@@ -320,6 +326,10 @@ export default {
 </script>
 
 <style lang="scss">
+@import "~leaflet/dist/leaflet.css";
+@import "~leaflet.markercluster/dist/MarkerCluster.css";
+@import "~leaflet.markercluster/dist/MarkerCluster.Default.css";
+
 .map-container {
   position: relative;
   height: 100%;

@@ -1,7 +1,6 @@
 import Vue from "vue";
 import App from "./App";
 import { Icon } from "leaflet";
-import "leaflet/dist/leaflet.css";
 
 import store from "./store";
 

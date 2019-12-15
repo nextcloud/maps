@@ -116,24 +116,34 @@ FavoritesController.prototype = {
             }
             that.enterAddFavoriteMode(cat);
         });
-        // Open or close sharing dialogue for favorites category
-        $('body').on('click', '.categoryShareButton', function(e) {
-            var category = $(this).parent().parent().parent().attr('category');
-            var openCategory = that.sharingFavoriteId;
 
-            if (openCategory !== null) {
-                that.leaveSharingFavoriteMode();
-            }
+        // Stop click propagation on shareCategory action to prevent menu from closing
+        $('body').on('click', '.shareCategory', function(e) {
+          e.stopPropagation();
+        });
 
-            if (openCategory !== category) {
-                that.enterSharingFavoriteMode(category);
-            }
+        $('body').on('click', '.favorite-share-link-clipboard-button', function(e) {
+            var clipboardText = $(this).attr('data-clipboard-text');
+            var $temp = $("<input>");
+            $("body").append($temp);
+            $temp.val(clipboardText).select();
+            document.execCommand("copy");
+            $temp.remove();
+
+            var clipboardButton = $(this);
+            clipboardButton.addClass('tooltip-visible');
+
+            setTimeout(() => {
+              if (clipboardButton) {
+                clipboardButton.removeClass('tooltip-visible');
+              }
+            }, 1500);
         });
 
         $('body').on('change', '.category-sharing-checkbox', function(e) {
-            var category = $(this).parent().parent().attr('category');
+            var category = $(this).attr('data-category');
 
-            var shareDialogue = $(this).parent();
+            var shareMenuEntry = $(this).parent();
 
             if (!this.checked) {
                 $.ajax({
@@ -142,10 +152,10 @@ FavoritesController.prototype = {
                     data: {},
                     async: true
                 }).done(function () {
-                    var linkEl = shareDialogue.children('.category-sharing-link');
+                    var clipboardButton = shareMenuEntry.children('.favorite-share-link-clipboard-button');
 
-                    linkEl.val('');
-                    linkEl.removeClass('visible');
+                    clipboardButton.removeClass('visible');
+                    clipboardButton.attr('data-clipboard-text', null);
                 }).always(function () {
 
                 }).fail(function() {
@@ -158,11 +168,10 @@ FavoritesController.prototype = {
                     data: {},
                     async: true
                 }).done(function (response) {
-                    var linkEl = shareDialogue.children('.category-sharing-link');
+                    var clipboardButton = shareMenuEntry.children('.favorite-share-link-clipboard-button');
 
-                    linkEl.val(generateSharingUrl(response.token));
-                    linkEl.addClass('visible');
-                    linkEl.select();
+                    clipboardButton.addClass('visible');
+                    clipboardButton.attr('data-clipboard-text', generateSharingUrl(response.token));
                 }).always(function () {
 
                 }).fail(function() {
@@ -560,9 +569,6 @@ FavoritesController.prototype = {
             '    <div class="app-navigation-entry-utils">' +
             '        <ul>' +
             '            <li class="app-navigation-entry-utils-counter" style="display:none;">1</li>' +
-            '            <li class="app-navigation-entry-utils-menu-button categoryShareButton">' +
-            '                <button class="icon-shared"></button>' +
-            '            </li>' +
             '            <li class="app-navigation-entry-utils-menu-button categoryMenuButton">' +
             '                <button></button>' +
             '            </li>' +
@@ -580,6 +586,15 @@ FavoritesController.prototype = {
             '                <a href="#" class="renameCategory">' +
             '                    <span class="icon-rename"></span>' +
             '                    <span>'+t('maps', 'Rename')+'</span>' +
+            '                </a>' +
+            '            </li>' +
+            '            <li>' +
+            '                <a href="#" class="action-checkbox shareCategory">' +
+            '                  <input id="' + checkboxId + '" type="checkbox" class="checkbox category-sharing-checkbox" ' + (shareToken ? "checked" : "") + ' data-category="' + name + '">' +
+            '                  <label for="' + checkboxId + '">' + t("maps", "Share link") + '</label>' +
+            '                  <span class="icon icon-clippy favorite-share-link-clipboard-button ' + (shareToken ? "visible" : "") + '" data-clipboard-text="' + (shareToken ? generateSharingUrl(shareToken) : null) + '" title="' + t('maps', 'Copy link') + '">' +
+            '                    <span class="copied-tooltip">' + t('maps', 'Copied!') + '</span>' +
+            '                  </span>' +
             '                </a>' +
             '            </li>' +
             '            <li>' +
@@ -612,14 +627,6 @@ FavoritesController.prototype = {
             '            <input type="submit" value="" class="icon-close renameCategoryClose">' +
             '            <input type="submit" value="" class="icon-checkmark renameCategoryOk">' +
             '        </div>' +
-            '    </div>' +
-            '    <div class="category-sharing-dialogue">' +
-            '        <input id="' + checkboxId + '" type="checkbox" class="checkbox category-sharing-checkbox" ' + (shareToken ? "checked" : "") + '>' +
-            '        <label for="' + checkboxId + '" class="category-sharing-checkbox-container">' +
-                        t("maps", "Share link") +
-            '        </label> ' +
-            '        <input class="category-sharing-link ' + (shareToken ? "visible" : "") +
-            '            " value="' + (generateSharingUrl(shareToken) || "") + '">' +
             '    </div>' +
             '</li>';
 
@@ -763,16 +770,6 @@ FavoritesController.prototype = {
         $('#addFavoriteButton button').addClass('icon-add').removeClass('icon-history');
         this.addFavoriteMode = false;
         this.addFavoriteCategory = null;
-    },
-
-    enterSharingFavoriteMode: function(categoryName) {
-        $('#' + categoryName.replace(' ', '-') + '-category').addClass('sharingDialogueVisible');
-        this.sharingFavoriteId = categoryName;
-    },
-
-    leaveSharingFavoriteMode: function() {
-        $('#' + this.sharingFavoriteId.replace(' ', '-') + '-category').removeClass('sharingDialogueVisible');
-        this.sharingFavoriteId = null;
     },
 
     addFavoriteClickMap: function(e) {

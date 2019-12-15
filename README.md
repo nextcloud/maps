@@ -25,3 +25,14 @@ This requires that you [install node and npm](https://www.npmjs.com/get-npm).
 2. 👩‍💻 In the folder of the app, run the command `make` to install dependencies and build the Javascript.
 3. ✅ Enable the app through the app management of your Nextcloud
 4. 🎉 Partytime! Help fix [some issues](https://github.com/nextcloud/maps/issues) and [review pull requests](https://github.com/nextcloud/maps/pulls) 👍
+
+## Admin documentation
+
+Media scans are performed with the regular system background job.
+
+Scans can also be manually triggered via occ command:
+
+
+`./occ maps:scan-photos` to rescan photos' GPS exif data
+
+`./occ maps:scan-tracks` to rescan track files

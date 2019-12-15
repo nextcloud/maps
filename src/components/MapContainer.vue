@@ -51,7 +51,6 @@
       <LMarkerCluster
         v-for="categoryKey in Object.keys(favoriteCategories)"
         :key="categoryKey"
-        @ready="clusterReadyDebug"
         :options="{
           ...clusterOptions,
           iconCreateFunction: getClusterIconCreateFunction(categoryKey)
@@ -230,10 +229,6 @@ export default {
     ...mapActions({
       selectFavorite: `${PUBLIC_FAVORITES_NAMESPACE}/selectFavorite`
     }),
-
-    clusterReadyDebug(o) {
-      console.log(o);
-    },
 
     setMapView(latLng, zoom) {
       this.$refs.map.mapObject.setView(latLng, zoom);

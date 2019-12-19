@@ -24,7 +24,7 @@ export const getPublicShareCategory = () => {
   const el = document.querySelector(".header-appname");
 
   if (!el) {
-    throw new Error("Could not get publis share category");
+    throw new Error("Could not get public share category");
   }
 
   return el.textContent;

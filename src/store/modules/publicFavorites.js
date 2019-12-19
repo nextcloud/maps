@@ -20,9 +20,12 @@
  *
  */
 
-import { publicApiRequest, showNotification } from "../../utils/common";
+import {
+  publicApiRequest,
+  showNotification,
+  getPublicShareCategory
+} from "../../utils/common";
 import { getCategoryKey } from "../../utils/favoritesUtils";
-import { getPublicShareCategory } from "../../utils/publicShareUtils";
 
 export const PUBLIC_FAVORITES_NAMESPACE = "publicFavorites";
 

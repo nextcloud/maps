@@ -26,6 +26,16 @@ namespace OCA\Maps\DB;
 
 use OCP\AppFramework\Db\Entity;
 
+/**
+ * @method string getToken()
+ * @method string getCategory()
+ * @method string getAllowEdits()
+ * @method string getOwner()
+ * @method string setToken(string $token)
+ * @method string setCategory(string $category)
+ * @method string setAllowEdits(bool $allowEdits)
+ * @method string setOwner(string $owner)
+ */
 class FavoriteShare extends Entity {
   public $owner;
   public $token;

@@ -84,6 +84,11 @@ class PageController extends Controller {
             $csp->addAllowedConnectDomain('https://nominatim.openstreetmap.org');
             $response->setContentSecurityPolicy($csp);
         }
+        if (class_exists('\OC\Security\FeaturePolicy\FeaturePolicy')) {
+            $policy = new \OC\Security\FeaturePolicy\FeaturePolicy();
+            $policy->setGeolocationDomains(['*']);
+            $response->setFeaturePolicy($policy);
+        }
         return $response;
     }
 

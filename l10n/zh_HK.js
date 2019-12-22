@@ -1,0 +1,25 @@
+OC.L10N.register(
+    "maps",
+    {
+    "Maps" : "地圖",
+    "Home" : "主頁",
+    "Work" : "工作",
+    "Rename" : "重新命名",
+    "Export" : "滙出",
+    "Delete" : "刪除",
+    "Phone" : "電話",
+    "Date" : "Date",
+    "Personal" : "個人",
+    "Name" : "名稱",
+    "Move" : "Move",
+    "Destination" : "Destination",
+    "min" : "分鐘",
+    "Add to favorites" : "Add to favorites",
+    "File" : "File",
+    "Link" : "Link",
+    "Description" : "描述",
+    "Sort by name" : "Order by name",
+    "Sort by date" : "Order by date",
+    "Settings" : "設定"
+},
+"nplurals=1; plural=0;");

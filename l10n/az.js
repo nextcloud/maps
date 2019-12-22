@@ -1,0 +1,27 @@
+OC.L10N.register(
+    "maps",
+    {
+    "Maps" : "Xəritələr",
+    "Not grouped" : "Qruplaşdırılmayıb",
+    "Home" : "Ev",
+    "Work" : "İş",
+    "Rename" : "Adı dəyiş",
+    "Export" : "Çıxarış",
+    "Delete" : "Sil",
+    "Date" : "Date",
+    "Personal" : "Şəxsi",
+    "Name" : "Ad",
+    "Comment" : "Komentariya",
+    "Move" : "Move",
+    "right" : "Sağ",
+    "left" : "Sol",
+    "Destination" : "Destination",
+    "Add to favorites" : "Add to favorites",
+    "File" : "File",
+    "Link" : "Link",
+    "Description" : "Açıqlanma",
+    "Sort by name" : "Order by name",
+    "Sort by date" : "Order by date",
+    "Settings" : "Quraşdırmalar"
+},
+"nplurals=2; plural=(n != 1);");

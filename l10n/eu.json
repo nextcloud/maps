@@ -50,8 +50,23 @@
     "northwest" : "ipar-mendebaldea",
     "right" : "eskuina",
     "left" : "ezkerra",
+    "Start" : "Hasi",
     "Destination" : "Helmuga",
     "m" : "m",
-    "km" : "km"
+    "km" : "km",
+    "min" : "min",
+    "Cinema" : "Zinema",
+    "Add to favorites" : "Gehitu gogokoetan",
+    "Open" : "Ireki",
+    "Closed" : "Itxia",
+    "File" : "Fitxategia",
+    "Link" : "Esteka",
+    "Description" : "Deskribapena",
+    "download" : "deskargatu",
+    "End" : "Amaiera",
+    "Your photos" : "Zure argazkiak",
+    "Sort by name" : "Ordenatu izenaren arabera",
+    "Sort by date" : "Ordenatu dataren arabera",
+    "Settings" : "Ezarpenak"
 },"pluralForm" :"nplurals=2; plural=(n != 1);"
 }

@@ -58,6 +58,20 @@ OC.L10N.register(
     "west" : "vest",
     "northwest" : "nordvest",
     "right" : "høyre",
-    "left" : "venstre"
+    "left" : "venstre",
+    "Start" : "Start",
+    "Destination" : "Destinasjon",
+    "min" : "min",
+    "Add to favorites" : "Legg til i favoritter",
+    "Open" : "Åpne",
+    "Closed" : "Lukket",
+    "File" : "Fil",
+    "Link" : "Lenke",
+    "Description" : "Beskrivelse",
+    "download" : "last ned",
+    "End" : "Slutt",
+    "Sort by name" : "Sorter etter navn",
+    "Sort by date" : "Sorter etter dato",
+    "Settings" : "Innstillinger"
 },
 "nplurals=2; plural=(n != 1);");

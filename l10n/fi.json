@@ -77,6 +77,7 @@
     "sharp left" : "tiukka vasen",
     "Turn around" : "Käänny ympäri",
     "Continue {dir}" : "Jatka {dir}",
+    "Start" : "Aloita",
     "Via {viaNumber}" : "Kautta {viaNumber}",
     "Destination" : "Kohde",
     "m" : "m",
@@ -117,9 +118,12 @@
     "Closed" : "Suljettu",
     "opens at {date}" : "avautuu {date}",
     "File" : "Tiedosto",
+    "Link" : "Linkki",
     "Description" : "Kuvaus",
     "Symbol name" : "Symbolin nimi",
+    "download" : "lataa",
     "no name" : "ei nimeä",
+    "End" : "Loppu",
     "Maximum speed" : "Enimmäisnopeus",
     "Average speed" : "Keskinopeus",
     "Show elevation" : "Näytä korkeus",
@@ -146,6 +150,8 @@
     "Hide all" : "Piilota kaikki",
     "Export all" : "Vie kaikki",
     "Delete all" : "Poista kaikki",
+    "Sort by name" : "Järjestä nimen mukaan",
+    "Sort by date" : "Järjestä päiväyksen mukaan",
     "Settings" : "Asetukset"
 },"pluralForm" :"nplurals=2; plural=(n != 1);"
 }

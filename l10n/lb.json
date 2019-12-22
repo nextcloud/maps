@@ -1,0 +1,26 @@
+{ "translations": {
+    "Maps" : "Kaarten",
+    "Home" : "Doheem",
+    "Work" : "Aarbecht",
+    "Rename" : "Ëmbenennen",
+    "Export" : "Exportéieren",
+    "Delete" : "Läschen",
+    "Phone" : "Telefon",
+    "Date" : "Date",
+    "Personal" : "Perséinlech",
+    "Name" : "Numm",
+    "Comment" : "Kommentar",
+    "Move" : "Verschieben",
+    "right" : "riets",
+    "left" : "lénks",
+    "Destination" : "Destination",
+    "min" : "Minutt",
+    "Add to favorites" : "Add to favorites",
+    "File" : "File",
+    "Link" : "Link",
+    "Description" : "Beschreiwung",
+    "Sort by name" : "Order by name",
+    "Sort by date" : "Order by date",
+    "Settings" : "Astellungen"
+},"pluralForm" :"nplurals=2; plural=(n != 1);"
+}

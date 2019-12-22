@@ -1,0 +1,25 @@
+{ "translations": {
+    "Not grouped" : "Heb ei grwpio",
+    "Home" : "Cartref",
+    "Work" : "Gwaith",
+    "All contacts" : "Pob cyswllt",
+    "Rename" : "Ailenwi",
+    "Export" : "Allforio",
+    "Delete" : "Dileu",
+    "Phone" : "Ffôn",
+    "Date" : "Date",
+    "Personal" : "Personol",
+    "Name" : "Enw",
+    "Category" : "Categori",
+    "Move" : "Symud",
+    "Destination" : "Destination",
+    "min" : "mun",
+    "Add to favorites" : "Add to favorites",
+    "File" : "File",
+    "Link" : "Dolen",
+    "Description" : "Disgrifiad",
+    "Sort by name" : "Order by name",
+    "Sort by date" : "Order by date",
+    "Settings" : "Gosodiadau"
+},"pluralForm" :"nplurals=4; plural=(n==1) ? 0 : (n==2) ? 1 : (n != 8 && n != 11) ? 2 : 3;"
+}

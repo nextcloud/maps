@@ -38,7 +38,7 @@
     "leaflet-contextmenu": "^1.4.0",
     "leaflet.elevation": "^0.0.3",
     "mapbox-gl": "^1.4.1",
-    "mapbox-gl-leaflet": "^0.0.10",
+    "mapbox-gl-leaflet": "^0.0.11",
     "d3": "^3.5.17",
     "nouislider": "^14.0.2",
     "ua-parser-js": "^0.7.20",

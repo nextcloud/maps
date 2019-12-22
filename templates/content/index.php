@@ -30,6 +30,7 @@ style('maps', '../node_modules/leaflet-contextmenu/dist/leaflet.contextmenu.min'
 style('maps', '../node_modules/leaflet.elevation/dist/Leaflet.Elevation-0.0.2');
 style('maps', '../node_modules/mapbox-gl/dist/mapbox-gl');
 style('maps', 'fontawesome/css/all.min');
+script('viewer', 'viewer');
 script('maps', '../node_modules/leaflet/dist/leaflet');
 script('maps', '../node_modules/leaflet.markercluster/dist/leaflet.markercluster');
 script('maps', '../node_modules/leaflet.featuregroup.subgroup/dist/leaflet.featuregroup.subgroup');

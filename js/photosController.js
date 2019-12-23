@@ -13,6 +13,7 @@ function PhotosController (optionsController, timeFilterController) {
     this.timeFilterEnd = Date.now();
 
     this.movingPhotoPath = null;
+    this.isPhotosInstalled = OCP.InitialState.loadState('maps', 'photos');
 }
 
 PhotosController.prototype = {
@@ -115,7 +116,14 @@ PhotosController.prototype = {
                 OCA.Viewer.open(marker.data.path);
             }
             else {
-                var galleryUrl = OC.generateUrl('/apps/gallery/#'+encodeURIComponent(marker.data.path.replace(/^\//, '')));
+                var galleryUrl;
+                if (_app.isPhotosInstalled) {
+                    var dir = OC.dirname(marker.data.path);
+                    galleryUrl = OC.generateUrl('/apps/photos/albums/' + dir.replace(/^\//, ''));
+                }
+                else {
+                    galleryUrl = OC.generateUrl('/apps/gallery/#' + encodeURIComponent(marker.data.path.replace(/^\//, '')));
+                }
                 var win = window.open(galleryUrl, '_blank');
                 if (win) {
                     win.focus();

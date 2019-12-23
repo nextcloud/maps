@@ -29,6 +29,7 @@ OC.L10N.register(
     "Start" : "Начать",
     "Destination" : "Назначение",
     "min" : "мин",
+    "Cinema" : "Кинотеатр",
     "Add to favorites" : "Добавить в избранное",
     "Open" : "Открыть",
     "Closed" : "Закрытый",

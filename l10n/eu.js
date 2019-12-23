@@ -65,10 +65,15 @@ OC.L10N.register(
     "Link" : "Esteka",
     "Description" : "Deskribapena",
     "download" : "deskargatu",
+    "Distance" : "Distantzia",
+    "Duration" : "Iraupena",
     "End" : "Amaiera",
     "Your photos" : "Zure argazkiak",
+    "Your contacts" : "Zure kontaktuak",
+    "Your devices" : "Zure gailuak",
     "Sort by name" : "Ordenatu izenaren arabera",
     "Sort by date" : "Ordenatu dataren arabera",
-    "Settings" : "Ezarpenak"
+    "Settings" : "Ezarpenak",
+    "The True Size of Africa" : "Afrikaren egiazko neurria"
 },
 "nplurals=2; plural=(n != 1);");

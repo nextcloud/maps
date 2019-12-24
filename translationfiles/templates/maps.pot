@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Nextcloud 3.14159\n"
 "Report-Msgid-Bugs-To: translations\\@example.com\n"
-"POT-Creation-Date: 2019-12-23 03:11+0000\n"
+"POT-Creation-Date: 2019-12-24 03:10+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -271,7 +271,7 @@ msgstr ""
 msgid "Favorite name"
 msgstr ""
 
-#: /app/js/favoritesController.js:918 /app/js/photosController.js:238
+#: /app/js/favoritesController.js:918 /app/js/photosController.js:252
 msgid "Move"
 msgstr ""
 
@@ -324,39 +324,39 @@ msgstr ""
 msgid "Failed to load non-geolocalized photos"
 msgstr ""
 
-#: /app/js/photosController.js:239
+#: /app/js/photosController.js:253
 msgid "Remove geo data"
 msgstr ""
 
-#: /app/js/photosController.js:259
+#: /app/js/photosController.js:273
 msgid "Click on the map to move the photo, press ESC to cancel"
 msgstr ""
 
-#: /app/js/photosController.js:351
+#: /app/js/photosController.js:365
 msgid "Failed to load photos"
 msgstr ""
 
-#: /app/js/photosController.js:373
+#: /app/js/photosController.js:387
 msgid "Choose pictures to place"
 msgstr ""
 
-#: /app/js/photosController.js:387
+#: /app/js/photosController.js:401
 msgid "Choose directory of pictures to place"
 msgstr ""
 
-#: /app/js/photosController.js:417
+#: /app/js/photosController.js:431
 msgid "{nb} photos placed"
 msgstr ""
 
-#: /app/js/photosController.js:437
+#: /app/js/photosController.js:451
 msgid "Failed to place photos"
 msgstr ""
 
-#: /app/js/photosController.js:455
+#: /app/js/photosController.js:469
 msgid "{nb} photos reset"
 msgstr ""
 
-#: /app/js/photosController.js:475
+#: /app/js/photosController.js:489
 msgid "Failed to reset photos coordinates"
 msgstr ""
 
@@ -1017,7 +1017,7 @@ msgstr ""
 msgid "Mapbox API key"
 msgstr ""
 
-#: /app/templates/content/index.php:52
+#: /app/templates/content/index.php:53
 msgid "Search…"
 msgstr ""
 

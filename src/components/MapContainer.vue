@@ -353,110 +353,102 @@ export default {
 @import "~leaflet.markercluster/dist/MarkerCluster.css";
 @import "~leaflet.markercluster/dist/MarkerCluster.Default.css";
 
+.leaflet-tooltip {
+  white-space: normal !important;
+}
+
+.leaflet-container {
+  background: var(--color-main-background);
+}
+
+.leaflet-control-layers-base {
+  line-height: 30px;
+}
+
+.leaflet-control-layers-selector {
+  min-height: 0;
+}
+
+.leaflet-control-layers-toggle {
+  background-size: 75% !important;
+}
+
+.leaflet-control-layers:not(.leaflet-control-layers-expanded) {
+  width: 33px;
+  height: 37px;
+}
+
+.leaflet-control-layers:not(.leaflet-control-layers-expanded) > a {
+  width: 100%;
+  height: 100%;
+}
+
+.favorite-marker,
+.favorite-cluster-marker {
+  background: var(--maps-icon-favorite-star) no-repeat 50% 50%;
+  border-radius: 50%;
+  box-shadow: 0 0 4px #888;
+}
+
+.favorite-marker {
+  height: 18px;
+  width: 18px;
+  background-size: 12px 12px;
+}
+
+.favorite-cluster-marker {
+  height: 26px;
+  width: 26px;
+  background-size: 16px 16px;
+}
+
+.leaflet-marker-favorite-cluster {
+  .label {
+    position: absolute;
+    top: -7px;
+    right: -11px;
+    color: #fff;
+    background-color: #333;
+    border-radius: 9px;
+    height: 18px;
+    min-width: 18px;
+    line-height: 12px;
+    text-align: center;
+    padding: 3px;
+  }
+}
+
+.leaflet-touch {
+  .leaflet-control-layers,
+  .leaflet-bar {
+    border: none;
+    border-radius: var(--border-radius);
+  }
+}
+
+.leaflet-control-attribution.leaflet-control {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 50vw;
+}
+
+.leaflet-popup {
+  .leaflet-popup-content-wrapper {
+    border-radius: 4px;
+  }
+
+  .leaflet-popup-close-button {
+    top: 9px;
+    right: 9px;
+  }
+}
+</style>
+
+<style lang="scss" scoped>
 .map-container {
   position: relative;
   height: 100%;
   width: 100%;
-
-  * {
-    box-sizing: content-box;
-  }
-
-  .leaflet-tooltip {
-    white-space: normal !important;
-  }
-
-  .leaflet-container {
-    background: var(--color-main-background);
-  }
-
-  .leaflet-control-layers-base {
-    line-height: 30px;
-  }
-
-  .leaflet-control-layers-selector {
-    min-height: 0;
-  }
-
-  .leaflet-control-layers-toggle {
-    background-size: 75% !important;
-  }
-
-  .leaflet-control-layers:not(.leaflet-control-layers-expanded) {
-    width: 33px;
-    height: 37px;
-  }
-
-  .leaflet-control-layers:not(.leaflet-control-layers-expanded) > a {
-    width: 100%;
-    height: 100%;
-  }
-
-  .favorite-marker,
-  .favorite-cluster-marker {
-    -webkit-mask: url("/apps/maps/css/images/star-circle.svg") no-repeat 50% 50%;
-    mask: url("/apps/maps/css/images/star-circle.svg") no-repeat 50% 50%;
-    background: url("/apps/maps/css/images/star-white.svg") no-repeat 50% 50%;
-    border-radius: 50%;
-    box-shadow: 0 0 10px #888;
-  }
-
-  .favorite-marker {
-    height: 18px !important;
-    width: 18px !important;
-    -webkit-mask-size: 18px;
-    mask-size: 18px;
-    background-size: 18px 18px;
-  }
-
-  .favorite-cluster-marker {
-    height: 27px !important;
-    width: 27px !important;
-    -webkit-mask-size: 27px;
-    mask-size: 27px;
-    background-size: 27px 27px;
-  }
-
-  .leaflet-marker-favorite-cluster {
-    .label {
-      position: absolute;
-      top: -7px;
-      right: -11px;
-      color: #fff;
-      background-color: #333;
-      border-radius: 9px;
-      height: 18px;
-      min-width: 18px;
-      line-height: 12px;
-      text-align: center;
-      padding: 3px;
-    }
-  }
-
-  .leaflet-touch {
-    .leaflet-control-layers,
-    .leaflet-bar {
-      border: none;
-      border-radius: var(--border-radius);
-    }
-  }
-
-  .leaflet-control-attribution.leaflet-control {
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    max-width: 50vw;
-  }
-
-  .leaflet-popup {
-    .leaflet-popup-content-wrapper {
-      border-radius: 4px;
-    }
-
-    .leaflet-popup-close-button {
-      top: 9px;
-      right: 9px;
-    }
-  }
 }
 </style>

@@ -34,6 +34,7 @@ use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\Template\PublicTemplateResponse;
 use OCP\AppFramework\Http\DataResponse;
 use OCP\AppFramework\PublicShareController;
+use OCP\Util;
 
 class PublicPageController extends PublicShareController
 {
@@ -79,6 +80,9 @@ class PublicPageController extends PublicShareController
     } catch (MultipleObjectsReturnedException $e) {
       return new DataResponse([], Http::STATUS_INTERNAL_SERVER_ERROR);
     }
+
+    Util::addStyle($this->appName, 'merged-public-share');
+    Util::addScript($this->appName, 'maps');
 
     $response = new PublicTemplateResponse('maps', 'public/favorites_index', []);
 

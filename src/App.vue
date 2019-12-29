@@ -97,4 +97,8 @@ export default {
 #content {
   height: 100%;
 }
+
+* {
+  box-sizing: content-box;
+}
 </style>

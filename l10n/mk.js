@@ -22,6 +22,7 @@ OC.L10N.register(
     "left" : "лево",
     "Destination" : "Destination",
     "min" : "мин",
+    "Cinema" : "Кино",
     "Add to favorites" : "Додади во фаворити",
     "Open" : "Отвори",
     "File" : "Датотека",

@@ -112,7 +112,7 @@ OC.L10N.register(
     "slight left" : "lekko w lewo",
     "left" : "w lewo",
     "sharp left" : "ostro w lewo",
-    "Turn around" : "Obróć się",
+    "Turn around" : "Zawróć",
     "Head {dir}" : "Kieruj się {dir}",
     " on {road}" : " na {road}",
     "Continue {dir}" : "Kontynuuj {dir}",

@@ -167,6 +167,7 @@ OC.L10N.register(
     "no name" : "inget namn",
     "Distance" : "Distans",
     "Duration" : "Varaktighet",
+    "Moving time" : "Flyttningstid",
     "Pause time" : "Rasttid",
     "no date" : "inget datum",
     "Begin" : "Börja",

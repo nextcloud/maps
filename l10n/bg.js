@@ -40,6 +40,8 @@ OC.L10N.register(
     "Link" : "Връзка",
     "Description" : "Описание",
     "End" : "Край",
+    "Maximum speed" : "Максимална скорост",
+    "Average speed" : "Средна скорост",
     "Sort by name" : "Сортирай по име",
     "Sort by date" : "Сортирай по дата",
     "Settings" : "Настройки"

@@ -10,6 +10,7 @@ OC.L10N.register(
     "Export" : "گرفتن خروجی",
     "Delete" : "حذف",
     "Phone" : "شماره تلفن",
+    "Device" : "وسیله",
     "Date" : "Date",
     "Personal" : "شخصی",
     "Name" : "نام",

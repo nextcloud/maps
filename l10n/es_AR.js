@@ -29,6 +29,7 @@ OC.L10N.register(
     "Link" : "Link",
     "Description" : "Descripción",
     "End" : "Fin",
+    "Your photos" : "Tus fotos",
     "Sort by name" : "Ordenar por nombre",
     "Sort by date" : "Ordenar por fecha",
     "Settings" : "Ajustes"

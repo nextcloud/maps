@@ -2,6 +2,7 @@ OC.L10N.register(
     "maps",
     {
     "Maps" : "نقشه‌ها",
+    "Failed to save settings" : "تنظیمات ذخیره نشدند",
     "Not grouped" : "گروه بندی نشده",
     "Home" : "خانه ",
     "Work" : "کار",

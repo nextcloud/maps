@@ -42,7 +42,11 @@ class AddPhotoJob extends QueuedJob {
 
     public function run($arguments) {
         $userFolder = $this->root->getUserFolder($arguments['userId']);
-        $file = $userFolder->getById($arguments['photoId'])[0];
+        $files = $userFolder->getById($arguments['photoId']);
+        if (empty($files)) {
+                return;
+        }
+        $file = array_shift($files);
         if ($file !== null)
             $this->photofilesService->addPhotoNow($file, $arguments['userId']);
     }

@@ -11,8 +11,6 @@ OC.L10N.register(
     "Work" : "工作",
     "Delete this address" : "删除此地址",
     "All contacts" : "所有联系人",
-    "Open in Contacts app" : "在联系人应用中打开",
-    "Failed to delete contact address" : "无法删除联系人地址",
     "Failed to load contacts" : "无法加载联系人",
     "New contact address" : "新的联系人地址",
     "Contact name" : "联系人姓名",

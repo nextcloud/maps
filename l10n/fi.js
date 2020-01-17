@@ -9,7 +9,6 @@ OC.L10N.register(
     "Work" : "Työ",
     "Delete this address" : "Poista tämä osoite",
     "All contacts" : "Kaikki yhteystiedot",
-    "Open in Contacts app" : "Avaa Yhteystiedot-sovelluksessa",
     "Contact name" : "Yhteystiedon nimi",
     "Address type" : "Osoitetyyppi",
     "Rename" : "Nimeä uudelleen",

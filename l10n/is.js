@@ -9,7 +9,6 @@ OC.L10N.register(
     "Home" : "Heima",
     "Work" : "Vinna",
     "All contacts" : "Allir tengiliðir",
-    "Open in Contacts app" : "Opna í tengiliðaforriti",
     "Failed to load contacts" : "Mistókst að hlaða inn tengiliðum",
     "Contact name" : "Nafn tengiliðar",
     "Failed to get contact list" : "Tókst ekki að sækja lista yfir tengiliði",

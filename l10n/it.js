@@ -11,8 +11,6 @@ OC.L10N.register(
     "Work" : "Lavoro",
     "Delete this address" : "Elimina questo indirizzo",
     "All contacts" : "Tutti i contatti",
-    "Open in Contacts app" : "Apri nell'app Contatti",
-    "Failed to delete contact address" : "Eliminazione indirizzo del contatto non riuscita",
     "Failed to load contacts" : "Caricamento dei contatti non riuscito",
     "New contact address" : "Nuovo indirizzo contatto",
     "Contact name" : "Nome contatto",

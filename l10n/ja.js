@@ -10,8 +10,6 @@ OC.L10N.register(
     "Work" : "業種",
     "Delete this address" : "この住所を削除",
     "All contacts" : "すべての連絡先",
-    "Open in Contacts app" : "Contactアプリで開く",
-    "Failed to delete contact address" : "連絡先アドレスの削除に失敗しました",
     "Failed to load contacts" : "連絡先を読み込めませんでした",
     "New contact address" : "新しい連絡先の住所",
     "Contact name" : "連作先の名前",

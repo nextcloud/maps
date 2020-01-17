@@ -11,8 +11,6 @@ OC.L10N.register(
     "Work" : "Feina",
     "Delete this address" : "Suprimeix aquesta adreça",
     "All contacts" : "Tots els contactes",
-    "Open in Contacts app" : "Obre a l'aplicació de contactes",
-    "Failed to delete contact address" : "Ha fallat suprimir l'adreça de contacte",
     "Failed to load contacts" : "No s'han pogut carregar els contactes ",
     "New contact address" : "Adreça de contacte nova",
     "Contact name" : "Nom del contacte",

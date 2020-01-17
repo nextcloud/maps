@@ -11,8 +11,6 @@ OC.L10N.register(
     "Work" : "Posao",
     "Delete this address" : "Izbriši ovu adresu",
     "All contacts" : "Svi kontakti",
-    "Open in Contacts app" : "Otvori u aplikaciji Contacts",
-    "Failed to delete contact address" : "Brisanje adrese za kontakt nije uspjelo",
     "Failed to load contacts" : "Učitavanje kontakata nije uspjelo",
     "New contact address" : "Nova adresa za kontakt",
     "Contact name" : "Naziv kontakta",

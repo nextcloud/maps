@@ -9,7 +9,6 @@ OC.L10N.register(
     "Work" : "Arbeid",
     "Delete this address" : "Slett denne adressen",
     "All contacts" : "Alle kontakter",
-    "Open in Contacts app" : "Åpne i Kontakter app'en",
     "New contact address" : "Ny kontakt adresse",
     "Contact name" : "Kontakt navn",
     "Address type" : "Adressetype",

@@ -10,8 +10,6 @@ OC.L10N.register(
     "Work" : "Lana",
     "Delete this address" : "Ezabatu helbide hau",
     "All contacts" : "Kontaktu guztiak",
-    "Open in Contacts app" : "Ireki kontaktuen aplikazioan",
-    "Failed to delete contact address" : "Huts egin du kontaktuaren helbidea ezabatzen",
     "Rename" : "Aldatu izena",
     "Change color" : "Aldatu kolorea",
     "Export" : "Esportatu",

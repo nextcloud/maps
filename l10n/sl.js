@@ -9,7 +9,6 @@ OC.L10N.register(
     "Work" : "Službeni naslov",
     "Delete this address" : "Izbriši naslov",
     "All contacts" : "Vsi stiki",
-    "Failed to delete contact address" : "Brisanje naslova stika je spodletelo",
     "Failed to load contacts" : "Nalaganje stikov je spodletelo",
     "New contact address" : "Nov naslov stika",
     "Contact name" : "Ime stika",

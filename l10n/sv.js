@@ -11,8 +11,6 @@ OC.L10N.register(
     "Work" : "Arbete",
     "Delete this address" : "Radera denna adress",
     "All contacts" : "Alla kontakter",
-    "Open in Contacts app" : "Öppna i appen Kontakter",
-    "Failed to delete contact address" : "Kunde inte radera kontaktens adress",
     "Failed to load contacts" : "Kunde inte ladda kontakter",
     "New contact address" : "Ny kontaktadress",
     "Contact name" : "Kontaktens namn",

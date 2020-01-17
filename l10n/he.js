@@ -11,8 +11,6 @@ OC.L10N.register(
     "Work" : "עבודה",
     "Delete this address" : "מחיקת הכתובת הזאת",
     "All contacts" : "כל אנשי הקשר",
-    "Open in Contacts app" : "פתיחה ביישומון אנשי הקשר",
-    "Failed to delete contact address" : "מחיקת כתובת איש הקשר נכשלה",
     "Failed to load contacts" : "טעינת אנשי הקשר נכשלה",
     "New contact address" : "כתובת חדשה לאיש קשר",
     "Contact name" : "שם איש הקשר",

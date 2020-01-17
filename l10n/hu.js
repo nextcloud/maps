@@ -11,8 +11,6 @@ OC.L10N.register(
     "Work" : "Munkahelyi",
     "Delete this address" : "Cím törlése",
     "All contacts" : "Összes névjegy",
-    "Open in Contacts app" : "Megnyitás a Névjegyek alkalmazásban",
-    "Failed to delete contact address" : "A névjegy címének törlése sikertelen",
     "Failed to load contacts" : "A névjegyek betöltése sikertelen",
     "New contact address" : "Új cím a névjegyhez",
     "Contact name" : "Névjegyhez tartozó név",

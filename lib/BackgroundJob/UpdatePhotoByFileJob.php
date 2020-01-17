@@ -41,12 +41,11 @@ class UpdatePhotoByFileJob extends QueuedJob {
 
     public function run($arguments) {
         $userFolder = $this->root->getUserFolder($arguments['userId']);
-		$files = $userFolder->getById($arguments['photoId']);
-		if (empty($files)) {
-			return;
-		}
-		$file = array_shift($files);
-        if ($file !== null)
-            $this->photofilesService->updateByFileNow($file);
+        $files = $userFolder->getById($arguments['fileId']);
+        if (empty($files)) {
+        	return;
+        }
+        $file = array_shift($files);
+        $this->photofilesService->updateByFileNow($file);
     }
 }

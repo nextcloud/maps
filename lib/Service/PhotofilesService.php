@@ -22,9 +22,12 @@ use OCP\Files\Node;
 use OCP\ILogger;
 use OCP\Share\IManager;
 use OCP\Files\Mount\IMountPoint;
+use \OCP\BackgroundJob\IJobList;
 
 use OCA\Maps\DB\Geophoto;
 use OCA\Maps\DB\GeophotoMapper;
+use OCA\Maps\BackgroundJob\AddPhotoJob;
+use OCA\Maps\BackgroundJob\UpdatePhotoByFileJob;
 
 require_once __DIR__ . '/../../vendor/autoload.php';
 use lsolesen\pel\PelDataWindow;
@@ -47,14 +50,16 @@ class PhotofilesService {
     private $photoMapper;
     private $shareManager;
     private $logger;
+    private $jobList;
 
     public function __construct (ILogger $logger, IRootFolder $root, IL10N $l10n,
-                                GeophotoMapper $photoMapper, IManager $shareManager) {
+                                GeophotoMapper $photoMapper, IManager $shareManager, IJobList $jobList) {
         $this->root = $root;
         $this->l10n = $l10n;
         $this->photoMapper = $photoMapper;
         $this->shareManager = $shareManager;
         $this->logger = $logger;
+        $this->jobList = $jobList;
     }
 
     public function rescan($userId){
@@ -67,25 +72,18 @@ class PhotofilesService {
         }
     }
 
-    public function addByFile(Node $file) {
-        $userFolder = $this->root->getUserFolder($file->getOwner()->getUID());
-        if($this->isPhoto($file)) {
-            $this->addPhoto($file, $file->getOwner()->getUID());
-        }
-    }
-
     // add the file for its owner and users that have access
     // check if it's already in DB before adding
-    public function safeAddByFile(Node $file) {
+    public function addByFile(Node $file) {
         $ownerId = $file->getOwner()->getUID();
         $userFolder = $this->root->getUserFolder($ownerId);
         if ($this->isPhoto($file)) {
-            $this->safeAddPhoto($file, $ownerId);
+            $this->addPhoto($file, $ownerId);
             // is the file accessible to other users ?
             $accesses = $this->shareManager->getAccessList($file);
             foreach ($accesses['users'] as $uid) {
                 if ($uid !== $ownerId) {
-                    $this->safeAddPhoto($file, $uid);
+                    $this->addPhoto($file, $uid);
                 }
             }
             return true;
@@ -95,41 +93,38 @@ class PhotofilesService {
         }
     }
 
-    public function safeAddByFileIdUserId($fileId, $userId) {
+    public function addByFileIdUserId($fileId, $userId) {
         $userFolder = $this->root->getUserFolder($userId);
         $file = $userFolder->getById($fileId)[0];
         if ($file !== null and $this->isPhoto($file)) {
-            $this->safeAddPhoto($file, $userId);
+            $this->addPhoto($file, $userId);
         }
     }
 
-    public function safeAddByFolderIdUserId($folderId, $userId) {
+    public function addByFolderIdUserId($folderId, $userId) {
         $userFolder = $this->root->getUserFolder($userId);
         $folder = $userFolder->getById($folderId)[0];
         if ($folder !== null) {
             $photos = $this->gatherPhotoFiles($folder, true);
             foreach($photos as $photo) {
-                $this->safeAddPhoto($photo, $userId);
+                $this->addPhoto($photo, $userId);
             }
         }
     }
 
     // add all photos of a folder taking care of shared accesses
-    public function safeAddByFolder($folder) {
+    public function addByFolder($folder) {
         $photos = $this->gatherPhotoFiles($folder, true);
         foreach($photos as $photo) {
-            $this->safeAddByFile($photo);
-        }
-    }
-
-    public function addByFolder(Node $folder) {
-        $photos = $this->gatherPhotoFiles($folder, true);
-        foreach ($photos as $photo) {
-            $this->addPhoto($photo, $folder->getOwner()->getUID());
+            $this->addByFile($photo);
         }
     }
 
     public function updateByFile(Node $file) {
+        $this->jobList->add(UpdatePhotoByFileJob::class, ['fileId' => $file->getId(), 'userId' => $file->getOwner()->getUID()]);
+    }
+
+    public function updateByFileNow(Node $file) {
         if ($this->isPhoto($file)) {
             $exif = $this->getExif($file);
             if (!is_null($exif)) {
@@ -152,17 +147,14 @@ class PhotofilesService {
 
     // delete photo only if it's not accessible to user anymore
     // it might have been shared multiple times by different users
-    public function safeDeleteByFileIdUserId($fileId, $userId) {
+    public function deleteByFileIdUserId($fileId, $userId) {
         $userFolder = $this->root->getUserFolder($userId);
         $files = $userFolder->getById($fileId);
         if (!is_array($files) or count($files) === 0) {
             $this->photoMapper->deleteByFileIdUserId($fileId, $userId);
         }
     }
-
-    public function deleteByFileIdUserId($fileId, $userId) {
-        $this->photoMapper->deleteByFileIdUserId($fileId, $userId);
-    }
+    
 
     public function deleteByFolder(Node $folder) {
         $photos = $this->gatherPhotoFiles($folder, true);
@@ -172,22 +164,11 @@ class PhotofilesService {
     }
 
     // delete folder photos only if it's not accessible to user anymore
-    public function safeDeleteByFolderIdUserId($folderId, $userId) {
+    public function deleteByFolderIdUserId($folderId, $userId) {
         $userFolder = $this->root->getUserFolder($userId);
         $folders = $userFolder->getById($folderId);
         if (is_array($folders) and count($folders) === 1) {
             $folder = $folders[0];
-            $photos = $this->gatherPhotoFiles($folder, true);
-            foreach($photos as $photo) {
-                $this->photoMapper->deleteByFileIdUserId($photo->getId(), $userId);
-            }
-        }
-    }
-
-    public function deleteByFolderIdUserId($folderId, $userId) {
-        $userFolder = $this->root->getUserFolder($userId);
-        $folder = $userFolder->getById($folderId)[0];
-        if ($folder !== null) {
             $photos = $this->gatherPhotoFiles($folder, true);
             foreach($photos as $photo) {
                 $this->photoMapper->deleteByFileIdUserId($photo->getId(), $userId);
@@ -266,15 +247,12 @@ class PhotofilesService {
         return $nbDone;
     }
 
+    // avoid adding photo if it already exists in the DB
     private function addPhoto($photo, $userId) {
-        $exif = $this->getExif($photo);
-        if (!is_null($exif)) {
-            $this->insertPhoto($photo, $userId, $exif);
-        }
+        $this->jobList->add(AddPhotoJob::class, ['photoId' => $photo->getId(), 'userId' => $userId]);
     }
 
-    // avoid adding photo if it already exists in the DB
-    private function safeAddPhoto($photo, $userId) {
+    public function addPhotoNow($photo, $userId) {
         $exif = $this->getExif($photo);
         if (!is_null($exif)) {
             // filehooks are triggered several times (2 times for file creation)
@@ -286,6 +264,7 @@ class PhotofilesService {
             }
         }
     }
+
 
     private function insertPhoto($photo, $userId, $exif) {
         $photoEntity = new Geophoto();

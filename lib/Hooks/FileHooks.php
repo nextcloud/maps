@@ -53,7 +53,7 @@ class FileHooks {
                 if (!$this->lockingProvider->isLocked($path, ILockingProvider::LOCK_SHARED)
                     and !$this->lockingProvider->isLocked($path, ILockingProvider::LOCK_EXCLUSIVE)
                 ) {
-                    $isPhoto = $this->photofilesService->safeAddByFile($node);
+                    $isPhoto = $this->photofilesService->addByFile($node);
                     if (!$isPhoto) {
                         $this->tracksService->safeAddByFile($node);
                     }
@@ -92,14 +92,14 @@ class FileHooks {
                     // if moved (parents are different) => update DB with access list
                     if ($source->getParent()->getId() !== $target->getParent()->getId()) {
                         $this->photofilesService->deleteByFile($target);
-                        $this->photofilesService->safeAddByFile($target);
+                        $this->photofilesService->addByFile($target);
                         // tracks: nothing to do here because we use fileID
                     }
                 }
                 elseif ($target->getType() === FileInfo::TYPE_FOLDER) {
                     if ($source->getParent()->getId() !== $target->getParent()->getId()) {
                         $this->photofilesService->deleteByFolder($target);
-                        $this->photofilesService->safeAddByFolder($target);
+                        $this->photofilesService->addByFolder($target);
                         // tracks: nothing to do here because we use fileID
                     }
                 }
@@ -138,7 +138,7 @@ class FileHooks {
             if ($params['itemType'] === 'file') {
                 $targetUserId = $params['shareWith'];
                 $fileId = $params['fileSource']; // or itemSource
-                $this->photofilesService->safeDeleteByFileIdUserId($fileId, $targetUserId);
+                $this->photofilesService->deleteByFileIdUserId($fileId, $targetUserId);
                 $this->tracksService->safeDeleteByFileIdUserId($fileId, $targetUserId);
             }
         }
@@ -159,10 +159,10 @@ class FileHooks {
         $node = $this->getNodeForPath($params['filePath']);
         if ($this->isUserNode($node)) {
             if ($node->getType() === FileInfo::TYPE_FOLDER) {
-                $this->photofilesService->safeAddByFolder($node);
+                $this->photofilesService->addByFolder($node);
                 $this->tracksService->safeAddByFolder($node);
             } else {
-                $this->photofilesService->safeAddByFile($node);
+                $this->photofilesService->addByFile($node);
                 $this->tracksService->safeAddByFile($node);
             }
         }

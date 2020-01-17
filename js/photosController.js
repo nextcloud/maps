@@ -37,8 +37,15 @@ PhotosController.prototype = {
                 a.layer.zoomToBounds();
             }
             else {
-                a.layer.spiderfy();
-                that.map.clickpopup = true;
+                if (OCA.Viewer && OCA.Viewer.open) {
+                    var photolist = a.layer.getAllChildMarkers().map(function(m) {
+                        return  m.data;
+                    });
+                    OCA.Viewer.open({path: a.layer.getAllChildMarkers()[0].data.path, list: photolist });
+                } else {
+                    a.layer.spiderfy();
+                    that.map.clickpopup = true;
+                }
             }
         });
         // click on photo menu entry
@@ -210,15 +217,7 @@ PhotosController.prototype = {
     preparePhotoMarkers : function(photos) {
         var markers = [];
         for (var i = 0; i < photos.length; i++) {
-            var markerData = {
-                lat: photos[i].lat,
-                lng: photos[i].lng,
-                path: photos[i].path,
-                albumId: photos[i].folderId,
-                fileId: photos[i].fileId,
-                hasPreview : photos[i].hasPreview,
-                date: photos[i].dateTaken
-            };
+            var markerData = photos[i];
             var marker = L.marker(markerData, {
                 icon: this.createPhotoView(markerData)
             });

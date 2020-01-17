@@ -79,17 +79,24 @@ class GeophotoService {
                 if ($file === null) {
                     continue;
                 }
-                $path = preg_replace('/^\/'.$userId.'\//', '', $file->getPath());
+				$path = $userFolder->getRelativePath( $file->getPath());
+				$isRoot = $file === $userFolder;
 
-                $file_object = new \stdClass();
+				$file_object = new \stdClass();
                 $file_object->fileId = $photoEntity->getFileId();
+				$file_object->fileid = $file_object->fileId;
                 $file_object->lat = $photoEntity->getLat();
                 $file_object->lng = $photoEntity->getLng();
                 $file_object->dateTaken = $photoEntity->getDateTaken() ?? \time();
-                /* 30% longer
-                 * $file_object->folderId = $cache->getParentId($path);
-                 */
-                $file_object->path = $this->normalizePath($path);
+                $file_object->basename = $isRoot ? '' : $file->getName();
+                $file_object->filename = $this->normalizePath($path);
+                $file_object->etag = $cacheEntry->getEtag();
+                $file_object->permissions = $file->getPermissions();
+                $file_object->type = $file->getType();
+                $file_object->mime = $file->getMimetype();
+                $file_object->lastmod = $file->getMTime();
+                $file_object->size = $file->getSize;
+                $file_object->path = $path;
                 $file_object->hasPreview = in_array($cacheEntry->getMimeType(), $previewEnableMimetypes);
                 $filesById[] = $file_object;
             }

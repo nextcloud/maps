@@ -30,7 +30,8 @@ class AddPhotoJob extends QueuedJob {
      *
      * A QueuedJob to scan user storage for photos and tracks
      *
-     * @param IJobList $jobList
+	 * @param ITimeFactory $timeFactory
+	 * @param PhotofilesService $photofilesService
      */
     public function __construct(ITimeFactory $timeFactory,
                                 IRootFolder $root,

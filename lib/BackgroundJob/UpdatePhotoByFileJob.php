@@ -30,7 +30,8 @@ class UpdatePhotoByFileJob extends QueuedJob {
      *
      * A QueuedJob to scan user storage for photos and tracks
      *
-     * @param IJobList $jobList
+     * @param ITimeFactory $timeFactory
+	 * @param PhotofilesService $photofilesService
      */
     public function __construct(ITimeFactory $timeFactory,
                                 PhotofilesService $photofilesService) {
@@ -40,7 +41,11 @@ class UpdatePhotoByFileJob extends QueuedJob {
 
     public function run($arguments) {
         $userFolder = $this->root->getUserFolder($arguments['userId']);
-        $file = $userFolder->getById($arguments['fileId'])[0];
+		$files = $userFolder->getById($arguments['photoId']);
+		if (empty($files)) {
+			return;
+		}
+		$file = array_shift($files);
         if ($file !== null)
             $this->photofilesService->updateByFileNow($file);
     }

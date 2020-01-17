@@ -49,8 +49,8 @@ npm=$(shell which npm 2> /dev/null)
 composer=$(shell which composer 2> /dev/null)
 
 cert_dir=$(HOME)/.nextcloud/certificates
-webserveruser ?= www-data
-occ_dir ?= /var/www/html/n16
+webserveruser ?= wwwrun
+occ_dir ?= /srv/www/htdocs/server
 app_version=$(version)
 
 all: build

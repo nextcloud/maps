@@ -11,6 +11,7 @@ OC.L10N.register(
     "Work" : "Praca",
     "Delete this address" : "Usuń ten adres",
     "All contacts" : "Wszystkie kontakty",
+    "Open in Contacts" : "Otwórz w Kontaktach",
     "Failed to load contacts" : "Nie udało się wczytać kontaktów",
     "New contact address" : "Nowy adres kontaktowy",
     "Contact name" : "Nazwa kontaktu",

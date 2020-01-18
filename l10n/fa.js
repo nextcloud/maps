@@ -24,6 +24,7 @@ OC.L10N.register(
     "Destination" : "مقصد",
     "min" : "دقیقه",
     "Add to favorites" : "Add to favorites",
+    "Closed" : "بسته شده",
     "File" : "File",
     "Link" : "Link",
     "Description" : "توضیحات",

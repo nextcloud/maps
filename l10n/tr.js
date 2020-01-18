@@ -11,6 +11,7 @@ OC.L10N.register(
     "Work" : "İş",
     "Delete this address" : "Bu adresi sil",
     "All contacts" : "Tüm kişiler",
+    "Open in Contacts" : "Kişilerde Aç",
     "Failed to load contacts" : "Kişiler yüklenemedi",
     "New contact address" : "Kişi adresi ekle",
     "Contact name" : "Kişi adı",

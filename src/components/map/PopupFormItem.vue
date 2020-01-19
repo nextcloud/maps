@@ -20,47 +20,45 @@
 -->
 
 <template>
-  <div class="form-item">
-    <span class="icon" :class="icon" />
-    <div class="input-wrapper">
-      <template v-if="allowEdits">
-        <textarea
-          v-if="type === 'textarea'"
-          :placeholder="placeholder"
-          :value="value"
-          rows="4"
-          @input="$emit('input', $event.target.value)"
-        />
+	<div class="form-item">
+		<span class="icon" :class="icon" />
+		<div class="input-wrapper">
+			<template v-if="allowEdits">
+				<textarea
+					v-if="type === 'textarea'"
+					:placeholder="placeholder"
+					:value="value"
+					rows="4"
+					@input="$emit('input', $event.target.value)" />
 
-        <input
-          v-else
-          :type="type"
-          :placeholder="placeholder"
-          :value="value"
-          @input="$emit('input', $event.target.value)"
-        />
-      </template>
-      <template v-else>
-        <span>{{ value }}</span>
-      </template>
-    </div>
-  </div>
+				<input
+					v-else
+					:type="type"
+					:placeholder="placeholder"
+					:value="value"
+					@input="$emit('input', $event.target.value)">
+			</template>
+			<template v-else>
+				<span>{{ value }}</span>
+			</template>
+		</div>
+	</div>
 </template>
 
 <script>
-import VueTypes from "vue-types";
+import VueTypes from 'vue-types'
 
 export default {
-  name: "PopupFormItem",
+	name: 'PopupFormItem',
 
-  props: {
-    icon: VueTypes.string.isRequired,
-    value: VueTypes.any.isRequired,
-    placeholder: VueTypes.string.def(""),
-    type: VueTypes.oneOf(["textarea", "text"]).def("text"),
-    allowEdits: VueTypes.bool.def(true)
-  }
-};
+	props: {
+		icon: VueTypes.string.isRequired.def(''),
+		value: VueTypes.any.isRequired.def(null),
+		placeholder: VueTypes.string.def(''),
+		type: VueTypes.oneOf(['textarea', 'text']).def('text'),
+		allowEdits: VueTypes.bool.def(true),
+	},
+}
 </script>
 
 <style scoped lang="scss">

@@ -20,28 +20,28 @@
  *
  */
 
-import MapMode from "../../data/enum/MapMode";
+import MapMode from '../../data/enum/MapMode'
 
-export const MAP_NAMESPACE = "map";
+export const MAP_NAMESPACE = 'map'
 
 const state = {
-  mode: MapMode.DEFAULT
-};
+	mode: MapMode.DEFAULT,
+}
 
-const getters = {};
+const getters = {}
 
-const actions = {};
+const actions = {}
 
 const mutations = {
-  setMode(state, mode) {
-    state.mode = mode;
-  }
-};
+	setMode(state, mode) {
+		state.mode = mode
+	},
+}
 
 export default {
-  namespaced: true,
-  state,
-  getters,
-  actions,
-  mutations
-};
+	namespaced: true,
+	state,
+	getters,
+	actions,
+	mutations,
+}

@@ -21,6 +21,6 @@
  */
 
 export default {
-  DEFAULT: "default",
-  ADDING_FAVORITES: "adding-favorites"
-};
+	DEFAULT: 'default',
+	ADDING_FAVORITES: 'adding-favorites',
+}

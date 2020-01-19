@@ -24,21 +24,21 @@
 //   "Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN...";
 
 export const LayerTypes = {
-  Base: "base",
-  Overlay: "overlay"
-};
+	Base: 'base',
+	Overlay: 'overlay',
+}
 
 export const LayerIds = {
-  OSM: "osm"
-  // RoadsOverlay: "roads-overlay",
-  // ESRI: "esri",
-  // ESRITopo: "esri-topo",
-  // OpenTopo: "open-topo",
-  // Watercolor: "watercolor",
-};
+	OSM: 'osm',
+	// RoadsOverlay: "roads-overlay",
+	// ESRI: "esri",
+	// ESRITopo: "esri-topo",
+	// OpenTopo: "open-topo",
+	// Watercolor: "watercolor",
+}
 
 export const Layers = [
-  /*{
+	/* {
     id: LayerIds.RoadsOverlay,
     name: "Roads Overlay",
     type: LayerTypes.Overlay,
@@ -52,21 +52,21 @@ export const Layers = [
       maxZoom: 18
     },
     opacity: 0.7
-  },*/
-  {
-    id: LayerIds.OSM,
-    name: "Open Street Map",
-    type: LayerTypes.Base,
-    url: "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
-    attribution:
+  }, */
+	{
+		id: LayerIds.OSM,
+		name: 'Open Street Map',
+		type: LayerTypes.Base,
+		url: 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+		attribution:
       '&copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>',
-    options: {
-      noWrap: false,
-      detectRetina: false,
-      maxZoom: 19
-    }
-  }
-  /*{
+		options: {
+			noWrap: false,
+			detectRetina: false,
+			maxZoom: 19,
+		},
+	},
+	/* {
     id: LayerIds.ESRI,
     name: "ESRI",
     url:
@@ -117,5 +117,5 @@ export const Layers = [
       ext: "jpg",
       subdomains: "abcd"
     }
-  }*/
-];
+  } */
+]

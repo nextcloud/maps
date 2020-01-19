@@ -20,31 +20,31 @@
 -->
 
 <template>
-  <div class="popup">
-    <h2 v-if="title" class="popup-title">
-      {{ title }}
-    </h2>
+	<div class="popup">
+		<h2 v-if="title" class="popup-title">
+			{{ title }}
+		</h2>
 
-    <div class="popup-content">
-      <slot />
-    </div>
+		<div class="popup-content">
+			<slot />
+		</div>
 
-    <div class="buttons">
-      <slot name="buttons" />
-    </div>
-  </div>
+		<div class="buttons">
+			<slot name="buttons" />
+		</div>
+	</div>
 </template>
 
 <script>
-import VueTypes from "vue-types";
+import VueTypes from 'vue-types'
 
 export default {
-  name: "Popup",
+	name: 'Popup',
 
-  props: {
-    title: VueTypes.string
-  }
-};
+	props: {
+		title: VueTypes.string.def(''),
+	},
+}
 </script>
 
 <style scoped lang="scss">

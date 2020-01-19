@@ -4,8 +4,7 @@ module.exports = {
     node: true
   },
   extends: [
-    "plugin:prettier/recommended",
-    "plugin:vue/essential"
+    "nextcloud"
   ],
   rules: {
     "vue/component-name-in-template-casing": ["error", "PascalCase"],

@@ -20,159 +20,155 @@
 -->
 
 <template>
-  <Popup
-    :title="
-      addingFavorite ? t('maps', 'New Favorite') : t('maps', 'This Place')
-    "
-  >
-    <template v-if="addingFavorite">
-      <form class="new-favorite-form" @submit.prevent="handleNewFavoriteSubmit">
-        <span>Dumb</span>
-        <PopupFormItem
-          v-model="newFavorite.name"
-          icon="icon-add"
-          :placeholder="t('maps', 'Name')"
-        />
+	<Popup
+		:title="
+			addingFavorite ? t('maps', 'New Favorite') : t('maps', 'This Place')
+		">
+		<template v-if="addingFavorite">
+			<form class="new-favorite-form" @submit.prevent="handleNewFavoriteSubmit">
+				<span>Dumb</span>
+				<PopupFormItem
+					v-model="newFavorite.name"
+					icon="icon-add"
+					:placeholder="t('maps', 'Name')" />
 
-        <PopupFormItem
-          v-if="allowCategoryCustomization"
-          v-model="newFavorite.category"
-          icon="icon-category-organization"
-          type="text"
-          :placeholder="t('maps', 'Category')"
-        />
+				<PopupFormItem
+					v-if="allowCategoryCustomization"
+					v-model="newFavorite.category"
+					icon="icon-category-organization"
+					type="text"
+					:placeholder="t('maps', 'Category')" />
 
-        <PopupFormItem
-          v-model="newFavorite.comment"
-          icon="icon-comment"
-          :placeholder="t('maps', 'Comment')"
-        />
+				<PopupFormItem
+					v-model="newFavorite.comment"
+					icon="icon-comment"
+					:placeholder="t('maps', 'Comment')" />
 
-        <div class="buttons">
-          <button class="primary">
-            {{ t("maps", "Add") }}
-          </button>
-          <button @click.prevent="handleCancelAddingFavorite">
-            {{ t("maps", "Cancel") }}
-          </button>
-        </div>
-      </form>
-    </template>
-    <template v-else>
-      <SimpleOSMAddress :geocode-object="geocodeObject" />
+				<div class="buttons">
+					<button class="primary">
+						{{ t("maps", "Add") }}
+					</button>
+					<button @click.prevent="handleCancelAddingFavorite">
+						{{ t("maps", "Cancel") }}
+					</button>
+				</div>
+			</form>
+		</template>
+		<template v-else>
+			<SimpleOSMAddress :geocode-object="geocodeObject" />
 
-      <div v-if="allowEdits" class="buttons">
-        <button class="primary" @click="handleAddToFavorites">
-          {{ t("maps", "Add to Favorites") }}
-        </button>
-      </div>
-    </template>
-  </Popup>
+			<div v-if="allowEdits" class="buttons">
+				<button class="primary" @click="handleAddToFavorites">
+					{{ t("maps", "Add to Favorites") }}
+				</button>
+			</div>
+		</template>
+	</Popup>
 </template>
 
 <script>
-import { MAP_NAMESPACE } from "../../store/modules/map";
-import { mapState } from "vuex";
-import MapMode from "../../data/enum/MapMode";
-import { geocode } from "../../utils/mapUtils";
-import SimpleOSMAddress from "./SimpleOSMAddress";
-import VueTypes from "vue-types";
-import Popup from "./Popup";
-import PopupFormItem from "./PopupFormItem";
-import Types from "../../data/types";
-import { getDefaultCategoryName } from "../../utils/favoritesUtils";
+import { MAP_NAMESPACE } from '../../store/modules/map'
+import { mapState } from 'vuex'
+import MapMode from '../../data/enum/MapMode'
+import { geocode } from '../../utils/mapUtils'
+import SimpleOSMAddress from './SimpleOSMAddress'
+import VueTypes from 'vue-types'
+import Popup from './Popup'
+import PopupFormItem from './PopupFormItem'
+import Types from '../../data/types'
+import { getDefaultCategoryName } from '../../utils/favoritesUtils'
 
 export default {
-  name: "ClickPopup",
+	name: 'ClickPopup',
 
-  props: {
-    isVisible: VueTypes.bool.isRequired,
-    latLng: Types.LatLng,
-    allowCategoryCustomization: VueTypes.bool.isRequired,
-    allowEdits: VueTypes.bool.isRequired
-  },
+	components: {
+		Popup,
+		PopupFormItem,
+		SimpleOSMAddress,
+	},
 
-  data() {
-    return {
-      geocodeObject: null,
-      newFavorite: {
-        name: "New Favorite",
-        category: this.allowCategoryCustomization
-          ? getDefaultCategoryName()
-          : null,
-        comment: ""
-      },
-      addingFavorite: false
-    };
-  },
+	props: {
+		isVisible: VueTypes.bool.isRequired.def(false),
+		latLng: Types.LatLng.def(null),
+		allowCategoryCustomization: VueTypes.bool.isRequired.def(false),
+		allowEdits: VueTypes.bool.isRequired.def(false),
+	},
 
-  watch: {
-    isVisible(val) {
-      if (val) {
-        this.reset();
-      }
-    },
-    latLng: {
-      deep: true,
-      handler() {
-        this.reset();
-        this.updateAddress();
-      }
-    }
-  },
+	data() {
+		return {
+			geocodeObject: null,
+			newFavorite: {
+				name: 'New Favorite',
+				category: this.allowCategoryCustomization
+					? getDefaultCategoryName()
+					: null,
+				comment: '',
+			},
+			addingFavorite: false,
+		}
+	},
 
-  computed: {
-    ...mapState({
-      mapMode: state => state[MAP_NAMESPACE].mode
-    })
-  },
+	computed: {
+		...mapState({
+			mapMode: state => state[MAP_NAMESPACE].mode,
+		}),
+	},
 
-  methods: {
-    reset() {
-      this.geocodeObject = null;
-      this.addingFavorite = this.mapMode === MapMode.ADDING_FAVORITES;
-    },
+	watch: {
+		isVisible(val) {
+			if (val) {
+				this.reset()
+			}
+		},
+		latLng: {
+			deep: true,
+			handler() {
+				this.reset()
+				this.updateAddress()
+			},
+		},
+	},
 
-    handleAddToFavorites() {
-      this.addingFavorite = true;
-    },
+	methods: {
+		reset() {
+			this.geocodeObject = null
+			this.addingFavorite = this.mapMode === MapMode.ADDING_FAVORITES
+		},
 
-    handleCancelAddingFavorite() {
-      if (this.mapMode === MapMode.ADDING_FAVORITES) {
-        this.$emit("close");
-      } else {
-        this.addingFavorite = false;
-      }
-    },
+		handleAddToFavorites() {
+			this.addingFavorite = true
+		},
 
-    handleNewFavoriteSubmit() {
-      const { lat, lng } = this.latLng;
-      const { name, category, comment } = this.newFavorite;
+		handleCancelAddingFavorite() {
+			if (this.mapMode === MapMode.ADDING_FAVORITES) {
+				this.$emit('close')
+			} else {
+				this.addingFavorite = false
+			}
+		},
 
-      this.$emit("addFavorite", {
-        lat,
-        lng,
-        name,
-        category,
-        comment
-      });
-    },
+		handleNewFavoriteSubmit() {
+			const { lat, lng } = this.latLng
+			const { name, category, comment } = this.newFavorite
 
-    updateAddress() {
-      const { lat, lng } = this.latLng;
+			this.$emit('addFavorite', {
+				lat,
+				lng,
+				name,
+				category,
+				comment,
+			})
+		},
 
-      geocode(`${lat},${lng}`).then(res => {
-        this.geocodeObject = res;
-      });
-    }
-  },
+		updateAddress() {
+			const { lat, lng } = this.latLng
 
-  components: {
-    Popup,
-    PopupFormItem,
-    SimpleOSMAddress
-  }
-};
+			geocode(`${lat},${lng}`).then(res => {
+				this.geocodeObject = res
+			})
+		},
+	},
+}
 </script>
 
 <style scoped lang="scss">

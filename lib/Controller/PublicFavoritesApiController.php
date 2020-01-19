@@ -26,91 +26,84 @@
 namespace OCA\Maps\Controller;
 
 use OCA\Maps\DB\FavoriteShareMapper;
+use OCA\Maps\Service\FavoritesService;
 use OCP\AppFramework\Db\DoesNotExistException;
 use OCP\AppFramework\Db\MultipleObjectsReturnedException;
-use OCP\IRequest;
-use OCP\ISession;
-use OCA\Maps\Service\FavoritesService;
-use OCP\AppFramework\PublicShareController;
 use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\DataResponse;
+use OCP\AppFramework\PublicShareController;
+use OCP\IRequest;
+use OCP\ISession;
 
-class PublicFavoritesApiController extends PublicShareController
-{
-  /* @var FavoritesService */
-  private $favoritesService;
+class PublicFavoritesApiController extends PublicShareController {
+    /* @var FavoritesService */
+    private $favoritesService;
 
-  /* @var FavoriteShareMapper */
-  private $favoriteShareMapper;
+    /* @var FavoriteShareMapper */
+    private $favoriteShareMapper;
 
-  public function __construct(
-    $appName,
-    IRequest $request,
-    ISession $session,
-    FavoritesService $favoritesService,
-    FavoriteShareMapper $favoriteShareMapper
-  )
-  {
-    parent::__construct($appName, $request, $session);
+    public function __construct(
+        $appName,
+        IRequest $request,
+        ISession $session,
+        FavoritesService $favoritesService,
+        FavoriteShareMapper $favoriteShareMapper
+    ) {
+        parent::__construct($appName, $request, $session);
 
-    $this->favoriteShareMapper = $favoriteShareMapper;
-    $this->favoritesService = $favoritesService;
-  }
-
-  public function getPasswordHash(): string
-  {
-    return ""; // TODO
-  }
-
-  protected function isPasswordProtected(): bool
-  {
-    return false; // TODO
-  }
-
-  public function isValidToken(): bool
-  {
-    try {
-      $this->favoriteShareMapper->findByToken($this->getToken());
-    } catch (DoesNotExistException | MultipleObjectsReturnedException $e) {
-      return false;
+        $this->favoriteShareMapper = $favoriteShareMapper;
+        $this->favoritesService = $favoritesService;
     }
 
-    return true;
-  }
-
-  public function canEdit(): bool
-  {
-    try {
-      $share = $this->favoriteShareMapper->findByToken($this->getToken());
-    } catch (DoesNotExistException | MultipleObjectsReturnedException $e) {
-      return false;
+    public function getPasswordHash(): string {
+        return "";
     }
 
-    return $share->getAllowEdits();
-  }
-
-  /**
-   * @PublicPage
-   *
-   * @return DataResponse
-   */
-  public function getFavorites()
-  {
-    try {
-      $share = $this->favoriteShareMapper->findByToken($this->getToken());
-    } catch (DoesNotExistException $e) {
-      return new DataResponse([], Http::STATUS_NOT_FOUND);
-    } catch (MultipleObjectsReturnedException $e) {
-      return new DataResponse([], Http::STATUS_INTERNAL_SERVER_ERROR);
+    protected function isPasswordProtected(): bool {
+        return false;
     }
 
-    $favorites = $this->favoritesService->getFavoritesFromDB($share->getOwner(), 0, $share->getCategory());
+    public function isValidToken(): bool {
+        try {
+            $this->favoriteShareMapper->findByToken($this->getToken());
+        } catch (DoesNotExistException | MultipleObjectsReturnedException $e) {
+            return false;
+        }
 
-    return new DataResponse([
-      'share' => $share,
-      'favorites' => $favorites
-    ]);
-  }
+        return true;
+    }
+
+    public function canEdit(): bool {
+        try {
+            $share = $this->favoriteShareMapper->findByToken($this->getToken());
+        } catch (DoesNotExistException | MultipleObjectsReturnedException $e) {
+            return false;
+        }
+
+        return $share->getAllowEdits();
+    }
+
+    /**
+     * @PublicPage
+     *
+     * @return DataResponse
+     */
+    public function getFavorites() {
+        try {
+            $share = $this->favoriteShareMapper->findByToken($this->getToken());
+        } catch (DoesNotExistException $e) {
+            return new DataResponse([], Http::STATUS_NOT_FOUND);
+        } catch (MultipleObjectsReturnedException $e) {
+            return new DataResponse([], Http::STATUS_INTERNAL_SERVER_ERROR);
+        }
+
+        $favorites = $this->favoritesService->getFavoritesFromDB($share->getOwner(), 0, $share->getCategory());
+
+        return new DataResponse([
+            'share' => $share,
+            'favorites' => $favorites
+        ]);
+    }
 
 //  /**
 //   * @PublicPage

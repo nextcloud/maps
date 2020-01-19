@@ -37,15 +37,15 @@ use OCP\AppFramework\Db\Entity;
  * @method string setOwner(string $owner)
  */
 class FavoriteShare extends Entity {
-  public $owner;
-  public $token;
-  public $category;
-  public $allowEdits = false; // TODO
+    public $owner;
+    public $token;
+    public $category;
+    public $allowEdits = false;
 
-  public function __construct() {
-    $this->addType('owner', 'string');
-    $this->addType('token', 'string');
-    $this->addType('category', 'string');
-    $this->addType('allowEdits', 'boolean');
-  }
+    public function __construct() {
+        $this->addType('owner', 'string');
+        $this->addType('token', 'string');
+        $this->addType('category', 'string');
+        $this->addType('allowEdits', 'boolean');
+    }
 }

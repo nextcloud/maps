@@ -17,13 +17,18 @@ use \OCP\BackgroundJob\IJobList;
 use \OCP\AppFramework\Utility\ITimeFactory;
 use OCP\IUserManager;
 use OCP\IConfig;
+use OCP\Files\IRootFolder;
 
 use OCA\Maps\Service\PhotofilesService;
 
 
 class UpdatePhotoByFileJob extends QueuedJob {
 
-    private $jobList;
+	/** @var PhotofilesService */
+	private $photofilesService;
+
+	/** @var IRootFolder */
+	private $root;
 
     /**
      * UserInstallScanJob constructor.
@@ -34,9 +39,11 @@ class UpdatePhotoByFileJob extends QueuedJob {
 	 * @param PhotofilesService $photofilesService
      */
     public function __construct(ITimeFactory $timeFactory,
+								IRootFolder $root,
                                 PhotofilesService $photofilesService) {
         parent::__construct($timeFactory);
         $this->photofilesService = $photofilesService;
+        $this->root = $root;
     }
 
     public function run($arguments) {

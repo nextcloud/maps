@@ -24,6 +24,11 @@ use OCA\Maps\Service\PhotofilesService;
 
 class AddPhotoJob extends QueuedJob {
 
+	/** @var PhotofilesService */
+	private $photofilesService;
+
+	/** @var IRootFolder */
+	private $root;
 
     /**
      * UserInstallScanJob constructor.

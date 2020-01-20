@@ -24,6 +24,7 @@ class PageControllerTest extends \PHPUnit\Framework\TestCase {
 
     protected function setUp(): void {
         $request = $this->getMockBuilder('OCP\IRequest')->getMock();
+        $initialStateService = $this->getMockBuilder('OCP\IInitialStateService')->getMock();
         $this->app = new Application();
         $this->container = $this->app->getContainer();
         $c = $this->container;
@@ -33,7 +34,7 @@ class PageControllerTest extends \PHPUnit\Framework\TestCase {
         $this->config->setAppValue('maps', 'graphhopperURL', 'https://graphhopper.com:8080');
 
         $this->controller = new PageController(
-            'maps', $request, $this->userId, $this->config
+            'maps', $request, $this->userId, $this->config, $initialStateService
         );
     }
 

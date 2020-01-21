@@ -24,6 +24,8 @@ OC.L10N.register(
     "Start" : "Začať",
     "Destination" : "Cieľ",
     "min" : "min",
+    "Cinema" : "Kino",
+    "Dentist" : "Zubár",
     "Add to favorites" : "Pridať do obľúbených",
     "Open" : "Otvoriť",
     "Closed" : "Uzavreté",

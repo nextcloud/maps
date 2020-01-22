@@ -95,7 +95,11 @@ class PhotofilesService {
 
     public function addByFileIdUserId($fileId, $userId) {
         $userFolder = $this->root->getUserFolder($userId);
-        $file = $userFolder->getById($fileId)[0];
+        $files = $userFolder->getById($fileId);
+		if (empty($files)) {
+			return;
+		}
+		$file = array_shift($files);
         if ($file !== null and $this->isPhoto($file)) {
             $this->addPhoto($file, $userId);
         }
@@ -103,7 +107,11 @@ class PhotofilesService {
 
     public function addByFolderIdUserId($folderId, $userId) {
         $userFolder = $this->root->getUserFolder($userId);
-        $folder = $userFolder->getById($folderId)[0];
+        $folders = $userFolder->getById($folderId);
+		if (empty($folders)) {
+			retrun;
+		}
+		$folder = array_shift($folders);
         if ($folder !== null) {
             $photos = $this->gatherPhotoFiles($folder, true);
             foreach($photos as $photo) {
@@ -168,7 +176,7 @@ class PhotofilesService {
         $userFolder = $this->root->getUserFolder($userId);
         $folders = $userFolder->getById($folderId);
         if (is_array($folders) and count($folders) === 1) {
-            $folder = $folders[0];
+            $folder = array_shift($folders);
             $photos = $this->gatherPhotoFiles($folder, true);
             foreach($photos as $photo) {
                 $this->photoMapper->deleteByFileIdUserId($photo->getId(), $userId);

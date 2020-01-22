@@ -70,12 +70,10 @@ class GeophotoService {
                 //$path = $cacheEntry->getPath();
                 // but we want it relative to current user's storage
                 $files = $userFolder->getById($photoEntity->getFileId());
-                if (count($files) > 0) {
-                    $file = $files[0];
-                }
-                else {
-                    continue;
-                }
+				if (empty($files)) {
+					continue;
+				}
+				$file = array_shift($files);
                 if ($file === null) {
                     continue;
                 }
@@ -121,7 +119,11 @@ class GeophotoService {
                 // this path is relative to owner's storage
                 //$path = $cacheEntry->getPath();
                 // but we want it relative to current user's storage
-                $file = $userFolder->getById($photoEntity->getFileId())[0];
+				$files = $userFolder->getById($photoEntity->getFileId());
+				if (empty($files)) {
+					continue;
+				}
+				$file = array_shift($files);
                 if ($file === null) {
                     continue;
                 }
@@ -175,7 +177,7 @@ class GeophotoService {
         foreach ($this->tracksService->getTracksFromDB($userId) as $gpxfile) {
             $res = $userFolder->getById($gpxfile['file_id']);
             if (is_array($res) and count($res) > 0) {
-                $file = $res[0];
+                $file = array_shift($res);
                 if ($file->getType() === \OCP\Files\FileInfo::TYPE_FILE) {
                     foreach ($this->getTracksFromGPX($file->getContent()) as $track) {
                         $this->timeorderedPointSets[] = $this->getTimeorderdPointsFromTrack($track);

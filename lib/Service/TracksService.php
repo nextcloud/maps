@@ -79,7 +79,11 @@ class TracksService {
 
     public function safeAddByFileIdUserId($fileId, $userId) {
         $userFolder = $this->root->getUserFolder($userId);
-        $file = $userFolder->getById($fileId)[0];
+        $files = $userFolder->getById($fileId);
+		if (empty($files)) {
+			return;
+		}
+		$file = array_shift($files);
         if ($file !== null and $this->isTrack($file)) {
             $this->safeAddTrack($file, $userId);
         }
@@ -87,7 +91,11 @@ class TracksService {
 
     public function safeAddByFolderIdUserId($folderId, $userId) {
         $userFolder = $this->root->getUserFolder($userId);
-        $folder = $userFolder->getById($folderId)[0];
+        $folders = $userFolder->getById($folderId);
+		if (empty($folders)) {
+			return;
+		}
+		$folder = array_shift($folders);
         if ($folder !== null) {
             $tracks = $this->gatherTrackFiles($folder, true);
             foreach ($tracks as $track) {
@@ -148,7 +156,7 @@ class TracksService {
         $userFolder = $this->root->getUserFolder($userId);
         $folders = $userFolder->getById($folderId);
         if (is_array($folders) and count($folders) === 1) {
-            $folder = $folders[0];
+            $folder = array_shift($folders);
             $tracks = $this->gatherTrackFiles($folder, true);
             foreach($tracks as $track) {
                 $this->deleteByFileIdUserId($track->getId(), $userId);

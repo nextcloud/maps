@@ -121,13 +121,13 @@ class FileHooks {
                 //$sourceUserId = $params['uidOwner'];
                 $targetUserId = $params['shareWith'];
                 $fileId = $params['fileSource']; // or itemSource
-                $this->photofilesService->safeAddByFileIdUserId($fileId, $targetUserId);
+                $this->photofilesService->addByFileIdUserId($fileId, $targetUserId);
                 $this->tracksService->safeAddByFileIdUserId($fileId, $targetUserId);
             }
             else if ($params['itemType'] === 'folder') {
                 $targetUserId = $params['shareWith'];
                 $dirId = $params['fileSource']; // or itemSource
-                $this->photofilesService->safeAddByFolderIdUserId($dirId, $targetUserId);
+                $this->photofilesService->addByFolderIdUserId($dirId, $targetUserId);
                 $this->tracksService->safeAddByFolderIdUserId($dirId, $targetUserId);
             }
         }

@@ -11,6 +11,7 @@ OC.L10N.register(
     "Work" : "Посао",
     "Delete this address" : "Обриши ову адресу",
     "All contacts" : "Сви контакти",
+    "Open in Contacts" : "Отвори у контактима",
     "Failed to load contacts" : "Грешка при учитавању контаката",
     "New contact address" : "Нова адреса контакта",
     "Contact name" : "Име контакта",

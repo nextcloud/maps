@@ -93,7 +93,7 @@ class GeophotoService {
                 $file_object->type = $file->getType();
                 $file_object->mime = $file->getMimetype();
                 $file_object->lastmod = $file->getMTime();
-                $file_object->size = $file->getSize;
+                $file_object->size = $file->getSize();
                 $file_object->path = $path;
                 $file_object->hasPreview = in_array($cacheEntry->getMimeType(), $previewEnableMimetypes);
                 $filesById[] = $file_object;

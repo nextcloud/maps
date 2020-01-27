@@ -195,7 +195,20 @@
                     $('#display-slider').prop('checked', true);
                 }
 
-                if (optionsValues.hasOwnProperty('mapboxAPIKEY') && optionsValues.mapboxAPIKEY !== '') {
+                //detect Webgl
+                var canvas = document.createElement('canvas');
+                var experimental = false;
+                var gl;
+
+                try { gl = canvas.getContext("webgl"); }
+                catch (x) { gl = null; }
+
+                if (gl == null) {
+                    try { gl = canvas.getContext("experimental-webgl"); experimental = true; }
+                    catch (x) { gl = null; }
+                }
+
+                if (optionsValues.hasOwnProperty('mapboxAPIKEY') && optionsValues.mapboxAPIKEY !== '' && gl == null) {
                     // change "button" layers
                     delete mapController.baseLayers['OpenStreetMap'];
                     delete mapController.baseLayers['ESRI Aerial'];

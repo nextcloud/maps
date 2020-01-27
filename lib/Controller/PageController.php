@@ -49,6 +49,7 @@ class PageController extends Controller {
         $response = new TemplateResponse('maps', 'index', $params);
         if (class_exists('OCP\AppFramework\Http\ContentSecurityPolicy')) {
             $csp = new \OCP\AppFramework\Http\ContentSecurityPolicy();
+
             // map tiles
             $csp->addAllowedImageDomain('https://*.tile.openstreetmap.org');
             $csp->addAllowedImageDomain('https://server.arcgisonline.com');
@@ -83,12 +84,15 @@ class PageController extends Controller {
                     $csp->addAllowedConnectDomain($cleanUrl);
                 }
             }
-            //$csp->addAllowedConnectDomain('http://192.168.0.66:5000');
+
+            $csp->addAllowedScriptDomain('\'self\'');
+
 
             // poi images
             $csp->addAllowedImageDomain('https://nominatim.openstreetmap.org');
             // search and geocoder
             $csp->addAllowedConnectDomain('https://nominatim.openstreetmap.org');
+            $csp->addAllowedScriptDomain('blob:');
             $response->setContentSecurityPolicy($csp);
         }
         return $response;

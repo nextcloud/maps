@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Nextcloud 3.14159\n"
 "Report-Msgid-Bugs-To: translations\\@example.com\n"
-"POT-Creation-Date: 2020-01-27 02:44+0000\n"
+"POT-Creation-Date: 2020-01-28 02:45+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -221,7 +221,7 @@ msgstr ""
 msgid "Failed to load favorites"
 msgstr ""
 
-#: /app/js/favoritesController.js:489 /app/js/script.js:531
+#: /app/js/favoritesController.js:489 /app/js/script.js:544
 #: /app/templates/navigation/index.php:6
 msgid "Add a favorite"
 msgstr ""
@@ -370,404 +370,404 @@ msgid ""
 "to see your photos/tracks."
 msgstr ""
 
-#: /app/js/script.js:216
+#: /app/js/script.js:229
 msgid "Improve this map"
 msgstr ""
 
-#: /app/js/script.js:411
+#: /app/js/script.js:424
 msgid "Failed to restore options values"
 msgstr ""
 
-#: /app/js/script.js:535
+#: /app/js/script.js:548
 msgid "Place photos"
 msgstr ""
 
-#: /app/js/script.js:543
+#: /app/js/script.js:556
 msgid "Place contact"
 msgstr ""
 
-#: /app/js/script.js:547
+#: /app/js/script.js:560
 msgid "Share this location"
 msgstr ""
 
-#: /app/js/script.js:551
+#: /app/js/script.js:564
 msgid "Route from here"
 msgstr ""
 
-#: /app/js/script.js:555
+#: /app/js/script.js:568
 msgid "Add route point"
 msgstr ""
 
-#: /app/js/script.js:559
+#: /app/js/script.js:572
 msgid "Route to here"
 msgstr ""
 
-#: /app/js/script.js:622
+#: /app/js/script.js:635
 msgid "Current location"
 msgstr ""
 
-#: /app/js/script.js:643
+#: /app/js/script.js:656
 msgid "Other maps"
 msgstr ""
 
-#: /app/js/script.js:683
+#: /app/js/script.js:696
 msgid "Satellite map"
 msgstr ""
 
-#: /app/js/script.js:695
+#: /app/js/script.js:708
 msgid "Street map"
 msgstr ""
 
-#: /app/js/script.js:778
+#: /app/js/script.js:791
 msgid "north"
 msgstr ""
 
-#: /app/js/script.js:779
+#: /app/js/script.js:792
 msgid "northeast"
 msgstr ""
 
-#: /app/js/script.js:780
+#: /app/js/script.js:793
 msgid "east"
 msgstr ""
 
-#: /app/js/script.js:781
+#: /app/js/script.js:794
 msgid "southeast"
 msgstr ""
 
-#: /app/js/script.js:782
+#: /app/js/script.js:795
 msgid "south"
 msgstr ""
 
-#: /app/js/script.js:783
+#: /app/js/script.js:796
 msgid "southwest"
 msgstr ""
 
-#: /app/js/script.js:784
+#: /app/js/script.js:797
 msgid "west"
 msgstr ""
 
-#: /app/js/script.js:785
+#: /app/js/script.js:798
 msgid "northwest"
 msgstr ""
 
-#: /app/js/script.js:786
+#: /app/js/script.js:799
 msgid "slight right"
 msgstr ""
 
-#: /app/js/script.js:787
+#: /app/js/script.js:800
 msgid "right"
 msgstr ""
 
-#: /app/js/script.js:788
+#: /app/js/script.js:801
 msgid "sharp right"
 msgstr ""
 
-#: /app/js/script.js:789
+#: /app/js/script.js:802
 msgid "slight left"
 msgstr ""
 
-#: /app/js/script.js:790
+#: /app/js/script.js:803
 msgid "left"
 msgstr ""
 
-#: /app/js/script.js:791
+#: /app/js/script.js:804
 msgid "sharp left"
 msgstr ""
 
-#: /app/js/script.js:792 /app/js/script.js:801
+#: /app/js/script.js:805 /app/js/script.js:814
 msgid "Turn around"
 msgstr ""
 
-#: /app/js/script.js:797
+#: /app/js/script.js:810
 msgid "Head {dir}"
 msgstr ""
 
-#: /app/js/script.js:797
+#: /app/js/script.js:810
 msgid " on {road}"
 msgstr ""
 
-#: /app/js/script.js:799
+#: /app/js/script.js:812
 msgid "Continue {dir}"
 msgstr ""
 
-#: /app/js/script.js:803
+#: /app/js/script.js:816
 msgid "Waypoint reached"
 msgstr ""
 
-#: /app/js/script.js:805
+#: /app/js/script.js:818
 msgid "Take the {exitStr} exit in the roundabout"
 msgstr ""
 
-#: /app/js/script.js:805 /app/js/script.js:808 /app/js/script.js:809
-#: /app/js/script.js:810 /app/js/script.js:811 /app/js/script.js:812
+#: /app/js/script.js:818 /app/js/script.js:821 /app/js/script.js:822
+#: /app/js/script.js:823 /app/js/script.js:824 /app/js/script.js:825
 msgid " onto {road}"
 msgstr ""
 
-#: /app/js/script.js:807
+#: /app/js/script.js:820
 msgid "Destination reached"
 msgstr ""
 
-#: /app/js/script.js:808
+#: /app/js/script.js:821
 msgid "At the fork, turn {modifier}"
 msgstr ""
 
-#: /app/js/script.js:809
+#: /app/js/script.js:822
 msgid "Merge {modifier}"
 msgstr ""
 
-#: /app/js/script.js:810
+#: /app/js/script.js:823
 msgid "Turn {modifier} on the ramp"
 msgstr ""
 
-#: /app/js/script.js:811
+#: /app/js/script.js:824
 msgid "Take the ramp on the {modifier}"
 msgstr ""
 
-#: /app/js/script.js:812
+#: /app/js/script.js:825
 msgid "Turn {modifier} at the end of the road"
 msgstr ""
 
-#: /app/js/script.js:813
+#: /app/js/script.js:826
 msgid "onto {road}"
 msgstr ""
 
-#: /app/js/script.js:816
+#: /app/js/script.js:829
 msgid "Start"
 msgstr ""
 
-#: /app/js/script.js:817
+#: /app/js/script.js:830
 msgid "Via {viaNumber}"
 msgstr ""
 
-#: /app/js/script.js:818
+#: /app/js/script.js:831
 msgid "Destination"
 msgstr ""
 
-#: /app/js/script.js:824
+#: /app/js/script.js:837
 msgid "m"
 msgstr ""
 
-#: /app/js/script.js:825
+#: /app/js/script.js:838
 msgid "km"
 msgstr ""
 
-#: /app/js/script.js:826
+#: /app/js/script.js:839
 msgid "yd"
 msgstr ""
 
-#: /app/js/script.js:827
+#: /app/js/script.js:840
 msgid "mi"
 msgstr ""
 
-#: /app/js/script.js:828
+#: /app/js/script.js:841
 msgid "h"
 msgstr ""
 
-#: /app/js/script.js:829
+#: /app/js/script.js:842
 msgid "min"
 msgstr ""
 
-#: /app/js/script.js:830
+#: /app/js/script.js:843
 msgid "s"
 msgstr ""
 
-#: /app/js/script.js:834
+#: /app/js/script.js:847
 msgid "By car (OSRM demo)"
 msgstr ""
 
-#: /app/js/script.js:892
+#: /app/js/script.js:905
 msgid "By car (OSRM)"
 msgstr ""
 
-#: /app/js/script.js:896
+#: /app/js/script.js:909
 msgid "By bike (OSRM)"
 msgstr ""
 
-#: /app/js/script.js:900
+#: /app/js/script.js:913
 msgid "By foot (OSRM)"
 msgstr ""
 
-#: /app/js/script.js:904
+#: /app/js/script.js:917
 msgid "By bike (Mapbox)"
 msgstr ""
 
-#: /app/js/script.js:905
+#: /app/js/script.js:918
 msgid "By foot (Mapbox)"
 msgstr ""
 
-#: /app/js/script.js:906
+#: /app/js/script.js:919
 msgid "By car with traffic (Mapbox)"
 msgstr ""
 
-#: /app/js/script.js:907
+#: /app/js/script.js:920
 msgid "By car without traffic (Mapbox)"
 msgstr ""
 
-#: /app/js/script.js:916
+#: /app/js/script.js:929
 msgid "By car (GraphHopper)"
 msgstr ""
 
-#: /app/js/script.js:917
+#: /app/js/script.js:930
 msgid "By bike (GraphHopper)"
 msgstr ""
 
-#: /app/js/script.js:918
+#: /app/js/script.js:931
 msgid "By Foot (GraphHopper)"
 msgstr ""
 
-#: /app/js/script.js:985
+#: /app/js/script.js:998
 msgid "Routing is currently disabled."
 msgstr ""
 
-#: /app/js/script.js:986
+#: /app/js/script.js:999
 msgid "Add a routing service"
 msgstr ""
 
-#: /app/js/script.js:992
+#: /app/js/script.js:1005
 msgid "Export current route to GPX"
 msgstr ""
 
-#: /app/js/script.js:1081
+#: /app/js/script.js:1094
 msgid "Routing error:"
 msgstr ""
 
-#: /app/js/script.js:1158
+#: /app/js/script.js:1171
 msgid "Route exported in {path}"
 msgstr ""
 
-#: /app/js/script.js:1162
+#: /app/js/script.js:1175
 msgid "Failed to export current route"
 msgstr ""
 
-#: /app/js/script.js:1166
+#: /app/js/script.js:1179
 msgid "There is no route to export"
 msgstr ""
 
-#: /app/js/script.js:1660
+#: /app/js/script.js:1673
 msgid "No search result"
 msgstr ""
 
-#: /app/js/script.js:1696
+#: /app/js/script.js:1709
 msgid "No {POItypeName} found"
 msgstr ""
 
-#: /app/js/script.js:1708 /app/js/script.js:1709
+#: /app/js/script.js:1721 /app/js/script.js:1722
 msgid "My location"
 msgstr ""
 
-#: /app/js/script.js:1715
+#: /app/js/script.js:1728
 msgid "Restaurant"
 msgstr ""
 
-#: /app/js/script.js:1720
+#: /app/js/script.js:1733
 msgid "Fast food"
 msgstr ""
 
-#: /app/js/script.js:1725
+#: /app/js/script.js:1738
 msgid "Bar"
 msgstr ""
 
-#: /app/js/script.js:1730
+#: /app/js/script.js:1743
 msgid "Supermarket"
 msgstr ""
 
-#: /app/js/script.js:1735
+#: /app/js/script.js:1748
 msgid "Cafe"
 msgstr ""
 
-#: /app/js/script.js:1740
+#: /app/js/script.js:1753
 msgid "Library"
 msgstr ""
 
-#: /app/js/script.js:1745
+#: /app/js/script.js:1758
 msgid "School"
 msgstr ""
 
-#: /app/js/script.js:1750
+#: /app/js/script.js:1763
 msgid "Sports centre"
 msgstr ""
 
-#: /app/js/script.js:1755
+#: /app/js/script.js:1768
 msgid "Gas station"
 msgstr ""
 
-#: /app/js/script.js:1760
+#: /app/js/script.js:1773
 msgid "Parking"
 msgstr ""
 
-#: /app/js/script.js:1765
+#: /app/js/script.js:1778
 msgid "Bicycle parking"
 msgstr ""
 
-#: /app/js/script.js:1770
+#: /app/js/script.js:1783
 msgid "Car rental"
 msgstr ""
 
-#: /app/js/script.js:1775
+#: /app/js/script.js:1788
 msgid "ATM"
 msgstr ""
 
-#: /app/js/script.js:1780
+#: /app/js/script.js:1793
 msgid "Pharmacy"
 msgstr ""
 
-#: /app/js/script.js:1785
+#: /app/js/script.js:1798
 msgid "Cinema"
 msgstr ""
 
-#: /app/js/script.js:1790
+#: /app/js/script.js:1803
 msgid "Public toilets"
 msgstr ""
 
-#: /app/js/script.js:1795
+#: /app/js/script.js:1808
 msgid "Drinking water"
 msgstr ""
 
-#: /app/js/script.js:1800
+#: /app/js/script.js:1813
 msgid "Hospital"
 msgstr ""
 
-#: /app/js/script.js:1805
+#: /app/js/script.js:1818
 msgid "Doctors"
 msgstr ""
 
-#: /app/js/script.js:1810
+#: /app/js/script.js:1823
 msgid "Dentist"
 msgstr ""
 
-#: /app/js/script.js:1815
+#: /app/js/script.js:1828
 msgid "Hotel"
 msgstr ""
 
-#: /app/js/script.js:1947 /app/js/script.js:2036
+#: /app/js/script.js:1960 /app/js/script.js:2049
 msgid "Add to favorites"
 msgstr ""
 
-#: /app/js/script.js:1949 /app/js/script.js:2038
+#: /app/js/script.js:1962 /app/js/script.js:2051
 msgid "Add contact address"
 msgstr ""
 
-#: /app/js/script.js:1963
+#: /app/js/script.js:1976
 msgid "Open"
 msgstr ""
 
-#: /app/js/script.js:1965
+#: /app/js/script.js:1978
 msgid "closes in {nb} minutes"
 msgstr ""
 
-#: /app/js/script.js:1968
+#: /app/js/script.js:1981
 msgid "until {date}"
 msgstr ""
 
-#: /app/js/script.js:1972
+#: /app/js/script.js:1985
 msgid "Closed"
 msgstr ""
 
-#: /app/js/script.js:1973
+#: /app/js/script.js:1986
 msgid "opens at {date}"
 msgstr ""
 
-#: /app/js/script.js:2033
+#: /app/js/script.js:2046
 msgid "This place"
 msgstr ""
 

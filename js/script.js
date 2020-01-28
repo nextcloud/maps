@@ -234,7 +234,8 @@
                         style: 'mapbox://styles/mapbox/streets-v8',
                         minZoom: 1,
                         maxZoom: 22,
-                        attribution: attrib
+                        attribution: attrib,
+                        pitch: 45
                     });
                     //mapController.controlLayers.addBaseLayer(mapController.baseLayers['Mapbox vector streets'], 'Mapbox vector streets');
 
@@ -243,28 +244,9 @@
                         style: 'mapbox://styles/mapbox/outdoors-v11',
                         minZoom: 1,
                         maxZoom: 22,
-                        attribution: attrib
+                        attribution: attrib,
                     });
-                    mapController.controlLayers.addBaseLayer(mapController.baseLayers['Topographic'], 'Topographic');
-
-                    mapController.baseLayers['Dark'] = L.mapboxGL({
-                        accessToken: optionsValues.mapboxAPIKEY,
-                        style: 'mapbox://styles/mapbox/dark-v8',
-                        minZoom: 1,
-                        maxZoom: 22,
-                        attribution: attrib
-                    });
-                    mapController.controlLayers.addBaseLayer(mapController.baseLayers['Dark'], 'Dark');
-
-                    mapController.baseLayers['Mapbox satellite'] = L.mapboxGL({
-                        accessToken: optionsValues.mapboxAPIKEY,
-                        style: 'mapbox://styles/mapbox/satellite-streets-v9',
-                        minZoom: 1,
-                        maxZoom: 22,
-                        attribution: attribSat
-                    });
-                    //mapController.controlLayers.addBaseLayer(mapController.baseLayers['Mapbox satellite'], 'Mapbox satellite');
-                    mapController.map.addLayer(L.mapboxGL(
+                    mapController.controlLayers.addOverlay(L.mapboxGL(
                         {
                             'accessToken': optionsValues.mapboxAPIKEY,
                             'id': '3d-buildings',
@@ -299,7 +281,26 @@
                                 'fill-extrusion-opacity': 0.6
                             }
                         }
-                    ));
+                    ),"3d-buildings");
+                    mapController.controlLayers.addBaseLayer(mapController.baseLayers['Topographic'], 'Topographic');
+
+                    mapController.baseLayers['Dark'] = L.mapboxGL({
+                        accessToken: optionsValues.mapboxAPIKEY,
+                        style: 'mapbox://styles/mapbox/dark-v8',
+                        minZoom: 1,
+                        maxZoom: 22,
+                        attribution: attrib
+                    });
+                    mapController.controlLayers.addBaseLayer(mapController.baseLayers['Dark'], 'Dark');
+
+                    mapController.baseLayers['Mapbox satellite'] = L.mapboxGL({
+                        accessToken: optionsValues.mapboxAPIKEY,
+                        style: 'mapbox://styles/mapbox/satellite-streets-v9',
+                        minZoom: 1,
+                        maxZoom: 22,
+                        attribution: attribSat
+                    });
+                    //mapController.controlLayers.addBaseLayer(mapController.baseLayers['Mapbox satellite'], 'Mapbox satellite');
                 }
                 if (optionsValues.hasOwnProperty('tileLayer')) {
                     mapController.changeTileLayer(optionsValues.tileLayer);

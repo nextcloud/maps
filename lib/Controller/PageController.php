@@ -119,7 +119,7 @@ class PageController extends Controller {
             // routing engine
             $csp->addAllowedConnectDomain('https://*.project-osrm.org');
             // TODO allow connections to router engine
-            //$csp->addAllowedConnectDomain('http://192.168.0.66:8989');
+            $csp->addAllowedScriptDomain('https://linux-ilie');
             // poi images
             $csp->addAllowedImageDomain('https://nominatim.openstreetmap.org');
             // search and geocoder

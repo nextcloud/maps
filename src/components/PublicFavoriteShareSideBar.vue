@@ -107,8 +107,8 @@ export default {
 
 <style scoped lang="scss">
 .no-favorites {
-  padding: 2em;
-  text-align: center;
-  color: var(--color-text-light);
+    padding: 2em;
+    text-align: center;
+    color: var(--color-text-light);
 }
 </style>

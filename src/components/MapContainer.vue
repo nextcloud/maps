@@ -91,15 +91,7 @@
 import { DivIcon, latLngBounds } from 'leaflet'
 import VueTypes from 'vue-types'
 
-import {
-	LMap,
-	LTileLayer,
-	LMarker,
-	LPopup,
-	LFeatureGroup,
-	LControlZoom,
-	LControlScale,
-} from 'vue2-leaflet'
+import { LControlScale, LControlZoom, LFeatureGroup, LMap, LMarker, LPopup, LTileLayer } from 'vue2-leaflet'
 import LMarkerCluster from 'vue2-leaflet-markercluster'
 
 import { mapActions, mapState } from 'vuex'
@@ -181,7 +173,7 @@ export default {
 					? state[PUBLIC_FAVORITES_NAMESPACE].favorites.find(
 						favorite =>
 							favorite.id
-                === state[PUBLIC_FAVORITES_NAMESPACE].selectedFavoriteId
+                            === state[PUBLIC_FAVORITES_NAMESPACE].selectedFavoriteId
 					)
 					: null,
 		}),
@@ -304,13 +296,12 @@ export default {
 					iconAnchor: [14, 14],
 					iconSize: [28, 28],
 					className: 'leaflet-marker-favorite-cluster cluster-marker',
-					html: `<div
-                class="favorite-cluster-marker ${categoryKey}"
-                style="
-                    background-color: ${this.getMarkerBackgroundColor(categoryKey)};
-                "
-            ></div>​
-            <span class="label">${label}</span>`,
+					html: `
+                        <div
+                          class="favorite-cluster-marker ${categoryKey}"
+                          style="background-color: ${this.getMarkerBackgroundColor(categoryKey)};"
+                        ></div>
+                        <span class="label">${label}</span>`,
 				})
 			}
 		},
@@ -346,101 +337,101 @@ export default {
 @import "~leaflet.markercluster/dist/MarkerCluster.Default.css";
 
 .leaflet-tooltip {
-  white-space: normal !important;
+    white-space: normal !important;
 }
 
 .leaflet-container {
-  background: var(--color-main-background);
+    background: var(--color-main-background);
 }
 
 .leaflet-control-layers-base {
-  line-height: 30px;
+    line-height: 30px;
 }
 
 .leaflet-control-layers-selector {
-  min-height: 0;
+    min-height: 0;
 }
 
 .leaflet-control-layers-toggle {
-  background-size: 75% !important;
+    background-size: 75% !important;
 }
 
 .leaflet-control-layers:not(.leaflet-control-layers-expanded) {
-  width: 33px;
-  height: 37px;
+    width: 33px;
+    height: 37px;
 }
 
 .leaflet-control-layers:not(.leaflet-control-layers-expanded) > a {
-  width: 100%;
-  height: 100%;
+    width: 100%;
+    height: 100%;
 }
 
 .favorite-marker,
 .favorite-cluster-marker {
-  background: var(--maps-icon-favorite-star) no-repeat 50% 50%;
-  border-radius: 50%;
-  box-shadow: 0 0 4px #888;
+    background: var(--maps-icon-favorite-star) no-repeat 50% 50%;
+    border-radius: 50%;
+    box-shadow: 0 0 4px #888;
 }
 
 .favorite-marker {
-  height: 18px;
-  width: 18px;
-  background-size: 12px 12px;
+    height: 18px;
+    width: 18px;
+    background-size: 12px 12px;
 }
 
 .favorite-cluster-marker {
-  height: 26px;
-  width: 26px;
-  background-size: 16px 16px;
+    height: 26px;
+    width: 26px;
+    background-size: 16px 16px;
 }
 
 .leaflet-marker-favorite-cluster {
-  .label {
-    position: absolute;
-    top: -7px;
-    right: -11px;
-    color: #fff;
-    background-color: #333;
-    border-radius: 9px;
-    height: 18px;
-    min-width: 18px;
-    line-height: 12px;
-    text-align: center;
-    padding: 3px;
-  }
+    .label {
+        position: absolute;
+        top: -7px;
+        right: -11px;
+        color: #fff;
+        background-color: #333;
+        border-radius: 9px;
+        height: 18px;
+        min-width: 18px;
+        line-height: 12px;
+        text-align: center;
+        padding: 3px;
+    }
 }
 
 .leaflet-touch {
-  .leaflet-control-layers,
-  .leaflet-bar {
-    border: none;
-    border-radius: var(--border-radius);
-  }
+    .leaflet-control-layers,
+    .leaflet-bar {
+        border: none;
+        border-radius: var(--border-radius);
+    }
 }
 
 .leaflet-control-attribution.leaflet-control {
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  max-width: 50vw;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 50vw;
 }
 
 .leaflet-popup {
-  .leaflet-popup-content-wrapper {
-    border-radius: 4px;
-  }
+    .leaflet-popup-content-wrapper {
+        border-radius: 4px;
+    }
 
-  .leaflet-popup-close-button {
-    top: 9px;
-    right: 9px;
-  }
+    .leaflet-popup-close-button {
+        top: 9px;
+        right: 9px;
+    }
 }
 </style>
 
 <style lang="scss" scoped>
 .map-container {
-  position: relative;
-  height: 100%;
-  width: 100%;
+    position: relative;
+    height: 100%;
+    width: 100%;
 }
 </style>

@@ -88,16 +88,16 @@ export default {
 <style lang="scss">
 /* Override header style */
 #header {
-  .header-shared-by {
-    color: var(--color-primary-text);
-  }
+    .header-shared-by {
+        color: var(--color-primary-text);
+    }
 }
 
 #content {
-  height: 100%;
+    height: 100%;
 }
 
 * {
-  box-sizing: content-box;
+    box-sizing: content-box;
 }
 </style>

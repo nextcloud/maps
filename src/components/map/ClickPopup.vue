@@ -173,7 +173,7 @@ export default {
 
 <style scoped lang="scss">
 .new-favorite-form {
-  width: 100%;
-  margin: 0;
+    width: 100%;
+    margin: 0;
 }
 </style>

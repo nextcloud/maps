@@ -107,33 +107,33 @@ export default {
 $transitionDuration: 0.3s;
 
 .osm-address {
-  position: relative;
-  width: 100%;
-
-  .osm-address-text {
+    position: relative;
     width: 100%;
-    min-height: 8em;
-  }
 
-  .loading {
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    opacity: 0;
-    visibility: hidden;
-    transition: opacity $transitionDuration, visibility 0s $transitionDuration;
-    background: #fff;
-
-    &.visible {
-      opacity: 1;
-      visibility: visible;
-      transition: none;
+    .osm-address-text {
+        width: 100%;
+        min-height: 8em;
     }
-  }
+
+    .loading {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        opacity: 0;
+        visibility: hidden;
+        transition: opacity $transitionDuration, visibility 0s $transitionDuration;
+        background: #fff;
+
+        &.visible {
+            opacity: 1;
+            visibility: visible;
+            transition: none;
+        }
+    }
 }
 </style>

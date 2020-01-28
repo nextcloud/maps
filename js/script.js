@@ -208,7 +208,7 @@
                     catch (x) { gl = null; }
                 }
 
-                if (optionsValues.hasOwnProperty('mapboxAPIKEY') && optionsValues.mapboxAPIKEY !== '' && gl == null) {
+                if (optionsValues.hasOwnProperty('mapboxAPIKEY') && optionsValues.mapboxAPIKEY !== '' && gl != null) {
                     // change "button" layers
                     delete mapController.baseLayers['OpenStreetMap'];
                     delete mapController.baseLayers['ESRI Aerial'];

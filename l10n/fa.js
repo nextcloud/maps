@@ -23,6 +23,8 @@ OC.L10N.register(
     "Start" : "شروع کنید",
     "Destination" : "مقصد",
     "min" : "دقیقه",
+    "Cinema" : "سینما",
+    "Dentist" : "دندانپزشک",
     "Add to favorites" : "Add to favorites",
     "Closed" : "بسته شده",
     "File" : "File",

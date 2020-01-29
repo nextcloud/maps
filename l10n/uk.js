@@ -21,6 +21,8 @@ OC.L10N.register(
     "left" : "ліворуч",
     "Destination" : "Destination",
     "min" : "хв",
+    "Cinema" : "Кінотеатр",
+    "Dentist" : "Стоматолог",
     "Add to favorites" : "Додати до обраного",
     "Open" : "Відкрити",
     "Closed" : "Закрите",

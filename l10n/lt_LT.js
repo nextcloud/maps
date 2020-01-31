@@ -66,6 +66,7 @@ OC.L10N.register(
     "Cinema" : "Kinas",
     "Public toilets" : "Viešieji tualetai",
     "Drinking water" : "Geriamasis vanduo",
+    "Dentist" : "Stomatologas",
     "Hotel" : "Viešbutis",
     "Add to favorites" : "Pridėti į mėgstamus",
     "Open" : "Atverti",

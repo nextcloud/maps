@@ -26,6 +26,7 @@ OC.L10N.register(
     "Cinema" : "سینما",
     "Dentist" : "دندانپزشک",
     "Add to favorites" : "Add to favorites",
+    "Open" : "باز کن...",
     "Closed" : "بسته شده",
     "File" : "File",
     "Link" : "Link",

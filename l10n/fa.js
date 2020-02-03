@@ -33,6 +33,7 @@ OC.L10N.register(
     "Description" : "توضیحات",
     "download" : "بارگیری",
     "End" : "پایان ",
+    "Your photos" : "عکس های خود را",
     "Sort by name" : "Order by name",
     "Sort by date" : "Order by date",
     "Settings" : "تنظیمات"

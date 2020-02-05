@@ -21,9 +21,12 @@
 
 <template>
 	<div class="osm-address">
-		<div class="osm-address-text">
-			<p v-html="textContents" />
-		</div>
+		<p class="osm-address-text">
+			<template v-for="line in addressLines">
+				<span :key="line" :title="line" class="osm-address-line">{{ line }}</span>
+				<br :key="line">
+			</template>
+		</p>
 		<div class="loading" :class="{ visible: loading }" />
 	</div>
 </template>
@@ -43,13 +46,13 @@ export default {
 			return !this.geocodeObject
 		},
 
-		textContents() {
+		addressLines() {
 			if (!this.geocodeObject) {
-				return ''
+				return []
 			}
 
 			if (typeof this.geocodeObject.error !== 'undefined') {
-				return t('maps', 'Unknown Place')
+				return [t('maps', 'Unknown Place')]
 			}
 
 			const {
@@ -66,38 +69,37 @@ export default {
 				},
 			} = this.geocodeObject
 
-			const lineFeed = '<br />'
-			let address = ''
+		    const lines = []
 
 			if (road) {
-				address += `${road} ${houseNumber || ''}${lineFeed}`
+			    lines.push(`${road} ${houseNumber || ''}`)
 			} else if (pedestrian) {
-				address += `${pedestrian} ${houseNumber || ''}${lineFeed}`
+			    lines.push(`${pedestrian} ${houseNumber || ''}`)
 			}
 
 			if (city) {
-				address += `${postcode ? postcode + ' ' : ''}${city}${lineFeed}`
+			    lines.push(`${postcode ? postcode + ' ' : ''}${city}`)
 			} else if (village) {
-				address += `${postcode ? postcode + ' ' : ''}${village}${lineFeed}`
+			    lines.push(`${postcode ? postcode + ' ' : ''}${village}`)
 			}
 
 			if (county) {
-				address += `${county}${lineFeed}`
+			    lines.push(`${county}`)
 			}
 
 			if (state) {
-				address += `${state}${lineFeed}`
+			    lines.push(`${state}`)
 			}
 
 			if (country) {
-				address += country
+			    lines.push(country)
 			}
 
-			if (address.length === 0) {
-				return t('maps', 'Unknown Place')
+			if (lines.length === 0) {
+				return [t('maps', 'Unknown Place')]
 			}
 
-			return address
+		    return lines
 		},
 	},
 }
@@ -113,6 +115,13 @@ $transitionDuration: 0.3s;
     .osm-address-text {
         width: 100%;
         min-height: 8em;
+
+        .osm-address-line {
+            display: inline-block;
+            max-width: 100%;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
     }
 
     .loading {

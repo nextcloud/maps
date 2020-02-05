@@ -4,11 +4,13 @@ const { VueLoaderPlugin } = require('vue-loader')
 const StyleLintPlugin = require('stylelint-webpack-plugin')
 
 module.exports = {
-	entry: path.join(__dirname, 'src', 'main.js'),
+	entry: {
+		'public-favorite-share': path.join(__dirname, 'src', 'publicFavoriteShare.js'),
+	},
 	output: {
 		path: path.resolve(__dirname, './js'),
 		publicPath: '/js/',
-		filename: 'maps.js',
+		filename: '[name].js',
 	},
 	module: {
 		rules: [

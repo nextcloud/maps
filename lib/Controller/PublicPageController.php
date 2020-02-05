@@ -80,8 +80,8 @@ class PublicPageController extends PublicShareController {
             return new DataResponse([], Http::STATUS_INTERNAL_SERVER_ERROR);
         }
 
-        Util::addStyle($this->appName, 'merged-public-share');
-        Util::addScript($this->appName, 'maps');
+        Util::addStyle($this->appName, 'merged-public-favorite-share');
+        Util::addScript($this->appName, 'public-favorite-share');
 
         $response = new PublicTemplateResponse('maps', 'public/favorites_index', []);
 

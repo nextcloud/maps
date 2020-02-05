@@ -43,7 +43,7 @@ import { mapActions, mapGetters, mapState } from 'vuex'
 import { PUBLIC_FAVORITES_NAMESPACE } from './store/modules/publicFavorites'
 
 export default {
-	name: 'App',
+	name: 'PublicFavoriteShare',
 
 	components: {
 		AppContent,

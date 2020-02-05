@@ -21,10 +21,7 @@
  */
 
 import Vue from 'vue'
-import App from './App'
 import { Icon } from 'leaflet'
-
-import store from './store'
 
 Vue.prototype.t = window.t
 Vue.prototype.n = window.n
@@ -43,8 +40,3 @@ Icon.Default.mergeOptions({
 	iconUrl: require('leaflet/dist/images/marker-icon.png'),
 	shadowUrl: require('leaflet/dist/images/marker-shadow.png'),
 })
-
-new Vue({
-	render: h => h(App),
-	store,
-}).$mount('#content')

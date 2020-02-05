@@ -104,6 +104,7 @@ import { getThemingColorFromCategoryKey } from '../utils/favoritesUtils'
 import { getShouldMapUseImperial } from '../utils/mapUtils'
 
 const CLUSTER_MAX_ZOOM_LEVEL = 14
+const MARKER_TOUCH_TARGET_SIZE = 44
 
 export default {
 	name: 'MapContainer',
@@ -272,15 +273,11 @@ export default {
 
 		createNewDivIcon(categoryKey) {
 			return new DivIcon({
-				iconAnchor: [9, 9],
-				iconSize: [18, 18],
+				iconAnchor: [MARKER_TOUCH_TARGET_SIZE * 0.5, MARKER_TOUCH_TARGET_SIZE * 0.5],
+				iconSize: [MARKER_TOUCH_TARGET_SIZE, MARKER_TOUCH_TARGET_SIZE],
 				className: 'leaflet-marker-favorite',
-				html: `<div
-            class="favorite-marker ${categoryKey}"
-            style="
-              background-color: ${this.getMarkerBackgroundColor(categoryKey)};
-            "
-          ></div>`,
+				html: `<div class="favorite-marker ${categoryKey}"`
+                    + ` style="background-color: ${this.getMarkerBackgroundColor(categoryKey)};"></div>`,
 			})
 		},
 
@@ -293,15 +290,13 @@ export default {
 				const label = cluster.getChildCount()
 
 				return new DivIcon({
-					iconAnchor: [14, 14],
-					iconSize: [28, 28],
+					iconAnchor: [MARKER_TOUCH_TARGET_SIZE * 0.5, MARKER_TOUCH_TARGET_SIZE * 0.5],
+					iconSize: [MARKER_TOUCH_TARGET_SIZE, MARKER_TOUCH_TARGET_SIZE],
 					className: 'leaflet-marker-favorite-cluster cluster-marker',
-					html: `
-                        <div
-                          class="favorite-cluster-marker ${categoryKey}"
-                          style="background-color: ${this.getMarkerBackgroundColor(categoryKey)};"
-                        ></div>
-                        <span class="label">${label}</span>`,
+					html: '<div '
+                        + `class="favorite-cluster-marker ${categoryKey}" `
+                        + `style="background-color: ${this.getMarkerBackgroundColor(categoryKey)};">`
+                        + `</div><span class="label">${label}</span>`,
 				})
 			}
 		},
@@ -366,30 +361,38 @@ export default {
     height: 100%;
 }
 
-.favorite-marker,
-.favorite-cluster-marker {
-    background: var(--maps-icon-favorite-star) no-repeat 50% 50%;
+.leaflet-marker-favorite, .leaflet-marker-favorite-cluster {
+    display: flex;
+    align-items: center;
+    justify-content: center;
     border-radius: 50%;
-    box-shadow: 0 0 4px #888;
-}
 
-.favorite-marker {
-    height: 18px;
-    width: 18px;
-    background-size: 12px 12px;
-}
+    .favorite-marker,
+    .favorite-cluster-marker {
+        cursor: pointer;
+        background: var(--maps-icon-favorite-star) no-repeat 50% 50%;
+        border-radius: 50%;
+        box-shadow: 0 0 4px #888;
+    }
 
-.favorite-cluster-marker {
-    height: 26px;
-    width: 26px;
-    background-size: 16px 16px;
+    .favorite-marker {
+        height: 18px;
+        width: 18px;
+        background-size: 12px 12px;
+    }
+
+    .favorite-cluster-marker {
+        height: 26px;
+        width: 26px;
+        background-size: 16px 16px;
+    }
 }
 
 .leaflet-marker-favorite-cluster {
     .label {
         position: absolute;
-        top: -7px;
-        right: -11px;
+        top: 0;
+        right: 0;
         color: #fff;
         background-color: #333;
         border-radius: 9px;

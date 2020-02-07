@@ -109,7 +109,7 @@ class PhotofilesService {
         $userFolder = $this->root->getUserFolder($userId);
         $folders = $userFolder->getById($folderId);
 		if (empty($folders)) {
-			retrun;
+			return;
 		}
 		$folder = array_shift($folders);
         if ($folder !== null) {

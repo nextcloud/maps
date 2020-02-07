@@ -2,6 +2,7 @@ OC.L10N.register(
     "maps",
     {
     "Maps" : "Мапи",
+    "Failed to save settings" : "Неуспешно зачувување на параметрите",
     "Not grouped" : "Не групирани",
     "Home" : "Дома",
     "Work" : "Работа",

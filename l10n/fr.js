@@ -96,6 +96,7 @@ OC.L10N.register(
     "Current location" : "Position actuelle",
     "Other maps" : "Autres cartes",
     "Satellite map" : "Carte satellite",
+    "Street map" : "Carte routière",
     "north" : "nord",
     "northeast" : "nord-est",
     "east" : "est",

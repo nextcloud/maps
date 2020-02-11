@@ -87,8 +87,9 @@ endif
 .PHONY: npm
 npm:
 	$(npm) install
+	$(npm) run build
 	sed -i.bak 's/L\.Browser\.touch/L.Browser.mobile/g' node_modules/leaflet.elevation/dist/Leaflet.Elevation-0.0.2.min.js && rm node_modules/leaflet.elevation/dist/Leaflet.Elevation-0.0.2.min.js.bak
-	
+
 # Removes the appstore build
 .PHONY: clean
 clean:

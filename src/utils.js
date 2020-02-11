@@ -1,3 +1,5 @@
+import { UAParser } from 'ua-parser-js';
+
 function basename(str) {
     var base = new String(str).substring(str.lastIndexOf('/') + 1);
     return base;
@@ -320,4 +322,26 @@ function formatAddress(address) {
         (address.state || '')+' '+
         (address.country || '');
     return strAddress.replace(/\s+/g, ' ').trim();
+}
+
+export {
+	basename,
+	dirname,
+	Timer,
+	getLetterColor,
+	hslToRgb,
+	hexToRgb,
+	pad,
+	brify,
+	metersToDistance,
+	metersToElevation,
+	kmphToSpeed,
+	minPerKmToPace,
+	formatTimeSeconds,
+	isComputer,
+	isPhone,
+	getDeviceInfoFromUserAgent2,
+	getDeviceInfoFromUserAgent,
+	getUrlParameter,
+	formatAddress
 }

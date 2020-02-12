@@ -25,6 +25,7 @@ OC.L10N.register(
     "Destination" : "Destination",
     "min" : "мин",
     "Cinema" : "Кино",
+    "Dentist" : "Заболекар",
     "Add to favorites" : "Додади во фаворити",
     "Open" : "Отвори",
     "File" : "Датотека",

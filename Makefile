@@ -140,6 +140,7 @@ appstore:
 	--exclude=phpunit*xml \
 	--exclude=composer.* \
 	--exclude=js/node_modules \
+	--exclude=node_modules \
 	--exclude=js/tests \
 	--exclude=js/test \
 	--exclude=js/*.log \

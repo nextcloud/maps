@@ -1,3 +1,7 @@
+import $ from 'jquery';
+
+import { generateUrl } from '@nextcloud/router';
+
 $(document).ready(function() {
 
     if (OCA.Files && OCA.Files.fileActions) {
@@ -7,7 +11,7 @@ $(document).ready(function() {
             // if we are logged
             if (!token) {
                 var dir = (data.dir === '/') ? '' : data.dir;
-                var url = OC.generateUrl('apps/maps/?track={dir}%2F{file}',{'dir': dir, 'file': file});
+                var url = generateUrl('apps/maps/?track={dir}%2F{file}',{'dir': dir, 'file': file});
             }
             window.open(url, '_blank');
         }
@@ -19,7 +23,7 @@ $(document).ready(function() {
             var req = {
                 path: path
             };
-            var url = OC.generateUrl('/apps/maps/import/favorites');
+            var url = generateUrl('/apps/maps/import/favorites');
             $.ajax({
                 type: 'POST',
                 url: url,
@@ -41,7 +45,7 @@ $(document).ready(function() {
             var req = {
                 path: path
             };
-            var url = OC.generateUrl('/apps/maps/import/devices');
+            var url = generateUrl('/apps/maps/import/devices');
             $.ajax({
                 type: 'POST',
                 url: url,

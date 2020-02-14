@@ -1,3 +1,9 @@
+import $ from 'jquery';
+
+import { generateUrl } from '@nextcloud/router';
+
+import { Timer, getLetterColor, hslToRgb } from './utils';
+
 function FavoritesController(optionsController, timeFilterController) {
     this.CLUSTER_MARKER_VIEW_SIZE = 27;
     this.optionsController = optionsController;
@@ -410,7 +416,7 @@ FavoritesController.prototype = {
         var that = this;
         $('#navigation-favorites').addClass('icon-loading-small');
         var req = {};
-        var url = OC.generateUrl('/apps/maps/favorites');
+        var url = generateUrl('/apps/maps/favorites');
         $.ajax({
             type: 'GET',
             url: url,
@@ -470,7 +476,7 @@ FavoritesController.prototype = {
         });
 
         // side menu entry
-        var imgurl = OC.generateUrl('/svg/core/actions/star?color='+color);
+        var imgurl = generateUrl('/svg/core/actions/star?color='+color);
         var li = '<li class="category-line" id="'+name+'-category" category="'+rawName+'">' +
         '    <a href="#" class="category-name" id="'+name+'-category-name" style="background-image: url('+imgurl+')">'+rawName+'</a>' +
         '    <div class="app-navigation-entry-utils">' +
@@ -561,7 +567,7 @@ FavoritesController.prototype = {
             categories: origCatList,
             newName: newCategoryName
         };
-        var url = OC.generateUrl('/apps/maps/favorites-category');
+        var url = generateUrl('/apps/maps/favorites-category');
         $.ajax({
             type: 'PUT',
             url: url,
@@ -595,7 +601,7 @@ FavoritesController.prototype = {
         var req = {
             ids: favids
         };
-        var url = OC.generateUrl('/apps/maps/favorites');
+        var url = generateUrl('/apps/maps/favorites');
         $.ajax({
             type: 'DELETE',
             url: url,
@@ -700,7 +706,7 @@ FavoritesController.prototype = {
             comment: comment,
             extensions: extensions
         };
-        var url = OC.generateUrl('/apps/maps/favorites');
+        var url = generateUrl('/apps/maps/favorites');
         $.ajax({
             type: 'POST',
             url: url,
@@ -939,7 +945,7 @@ FavoritesController.prototype = {
         $('.leaflet-container').css('cursor', 'wait');
         var req = {
         };
-        var url = OC.generateUrl('/apps/maps/favorites/'+favid);
+        var url = generateUrl('/apps/maps/favorites/'+favid);
         $.ajax({
             type: 'DELETE',
             url: url,
@@ -1011,7 +1017,7 @@ FavoritesController.prototype = {
         if (lng) {
             req.lng = lng;
         }
-        var url = OC.generateUrl('/apps/maps/favorites/'+favid);
+        var url = generateUrl('/apps/maps/favorites/'+favid);
         $.ajax({
             type: 'PUT',
             url: url,
@@ -1120,7 +1126,7 @@ FavoritesController.prototype = {
             begin: begin,
             end: end
         };
-        var url = OC.generateUrl('/apps/maps/export/favorites');
+        var url = generateUrl('/apps/maps/export/favorites');
         $.ajax({
             type: 'POST',
             url: url,
@@ -1143,7 +1149,7 @@ FavoritesController.prototype = {
         var req = {
             path: path
         };
-        var url = OC.generateUrl('/apps/maps/import/favorites');
+        var url = generateUrl('/apps/maps/import/favorites');
         $.ajax({
             type: 'POST',
             url: url,
@@ -1199,3 +1205,4 @@ FavoritesController.prototype = {
 
 }
 
+export default FavoritesController;

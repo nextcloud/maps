@@ -1,3 +1,9 @@
+import $ from 'jquery'
+
+import { generateUrl } from '@nextcloud/router';
+
+import { basename, formatAddress } from './utils';
+
 function ContactsController (optionsController, searchController) {
     this.contact_MARKER_VIEW_SIZE = 40;
     this.contactLayer = null;
@@ -350,7 +356,7 @@ ContactsController.prototype = {
         this.groups[rawName].color = color;
 
         // side menu entry
-        var imgurl = OC.generateUrl('/svg/core/places/contacts?color='+color);
+        var imgurl = generateUrl('/svg/core/places/contacts?color='+color);
         var li = '<li class="contact-group-line" id="'+name+'-contact-group" contact-group="'+rawName+'">' +
         '    <a href="#" class="contact-group-name" id="'+name+'-category-name" style="background-image: url('+imgurl+')">'+displayName+'</a>' +
         '    <div class="app-navigation-entry-utils">' +
@@ -376,7 +382,7 @@ ContactsController.prototype = {
         var beforeThis = null;
         var rawLower = rawName.toLowerCase();
         $('#contact-group-list > li').each(function() {
-            groupName = $(this).attr('contact-group');
+            let groupName = $(this).attr('contact-group');
             if (rawLower.localeCompare(groupName) < 0) {
                 beforeThis = $(this);
                 return false;
@@ -515,7 +521,7 @@ ContactsController.prototype = {
             'uri="' + markerData.uri + '" uid="' + markerData.uid + '" vcardaddress="' + markerData.adr + '" '+
             'title="' + deleteText + '"></span>';*/
         contactPopup += '</p><p class="tooltip-contact-address">' + markerData.address + '</p>';
-        var contactUrl = OC.generateUrl('/apps/contacts/'+t('contacts', 'All contacts')+'/'+encodeURIComponent(markerData.uid+"~contacts"));
+        var contactUrl = generateUrl('/apps/contacts/'+t('contacts', 'All contacts')+'/'+encodeURIComponent(markerData.uid+"~contacts"));
         contactPopup += '<a href="'+contactUrl+'" target="_blank">'+t('maps', 'Open in Contacts')+'</a></div>';
         return contactPopup;
     },
@@ -577,7 +583,7 @@ ContactsController.prototype = {
             uid: uid,
             adr: vcardAddress
         };
-        var url = OC.generateUrl('/apps/maps/contacts/'+bookid+'/'+uri);
+        var url = generateUrl('/apps/maps/contacts/'+bookid+'/'+uri);
         $.ajax({
             type: 'DELETE',
             url: url,
@@ -599,7 +605,7 @@ ContactsController.prototype = {
         this.contactsRequestInProgress = true;
         $('#navigation-contacts').addClass('icon-loading-small');
         $.ajax({
-            url: OC.generateUrl('apps/maps/contacts'),
+            url: generateUrl('apps/maps/contacts'),
             type: 'GET',
             async: true,
             context: this
@@ -623,21 +629,21 @@ ContactsController.prototype = {
         // but if this is a 'user' contact, avatar is and address like
         // VALUE=uri:http://host/remote.php/dav/addressbooks/system/system/system/Database:toto.vcf?photo
         //return data ? data.replace(/^VALUE=uri:/, '') : data;
-        var url = OC.generateUrl('/remote.php/dav/addressbooks/users/' + OC.getCurrentUser().uid +
+        var url = generateUrl('/remote.php/dav/addressbooks/users/' + OC.getCurrentUser().uid +
                   '/' + data.bookuri + '/' + data.uri + '?photo').replace(/index\.php\//, '');
         return url;
     },
 
     getImageIconUrl: function() {
-        return OC.generateUrl('/apps/theming/img/core/places') + '/contacts.svg?v=2';
+        return generateUrl('/apps/theming/img/core/places') + '/contacts.svg?v=2';
     },
 
     getUserImageIconUrl: function() {
-        return OC.generateUrl('/apps/theming/img/core/actions') + '/user.svg?v=2';
+        return generateUrl('/apps/theming/img/core/actions') + '/user.svg?v=2';
     },
 
     getLetterAvatarUrl: function(name) {
-        return OC.generateUrl('/apps/maps/contacts-avatar?name='+encodeURIComponent(name));
+        return generateUrl('/apps/maps/contacts-avatar?name='+encodeURIComponent(name));
     },
 
     contextPlaceContact: function(e) {
@@ -684,7 +690,7 @@ ContactsController.prototype = {
         });
         // get the contact list
         var req = {};
-        var url = OC.generateUrl('/apps/maps/contacts-all');
+        var url = generateUrl('/apps/maps/contacts-all');
         $.ajax({
             type: 'GET',
             url: url,
@@ -791,7 +797,7 @@ ContactsController.prototype = {
             country: address.country,
             type: type
         };
-        var url = OC.generateUrl('/apps/maps/contacts/'+bookid+'/'+uri);
+        var url = generateUrl('/apps/maps/contacts/'+bookid+'/'+uri);
         $.ajax({
             type: 'PUT',
             url: url,
@@ -846,3 +852,5 @@ ContactsController.prototype = {
     },
 
 };
+
+export default ContactsController;

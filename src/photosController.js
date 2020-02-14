@@ -1,3 +1,9 @@
+import $ from 'jquery';
+
+import { generateUrl } from '@nextcloud/router';
+
+import { basename } from './utils';
+
 function PhotosController (optionsController, timeFilterController) {
     this.PHOTO_MARKER_VIEW_SIZE = 40;
     this.photosDataLoaded = false;
@@ -126,10 +132,10 @@ PhotosController.prototype = {
                 var galleryUrl;
                 if (_app.isPhotosInstalled) {
                     var dir = OC.dirname(marker.data.path);
-                    galleryUrl = OC.generateUrl('/apps/photos/albums/' + dir.replace(/^\//, ''));
+                    galleryUrl = generateUrl('/apps/photos/albums/' + dir.replace(/^\//, ''));
                 }
                 else {
-                    galleryUrl = OC.generateUrl('/apps/gallery/#' + encodeURIComponent(marker.data.path.replace(/^\//, '')));
+                    galleryUrl = generateUrl('/apps/gallery/#' + encodeURIComponent(marker.data.path.replace(/^\//, '')));
                 }
                 var win = window.open(galleryUrl, '_blank');
                 if (win) {
@@ -345,7 +351,7 @@ PhotosController.prototype = {
         this.photosRequestInProgress = true;
         $('#navigation-photos').addClass('icon-loading-small');
         $.ajax({
-            url: OC.generateUrl('apps/maps/photos'),
+            url: generateUrl('apps/maps/photos'),
             type: 'GET',
             async: true,
             context: this
@@ -367,16 +373,16 @@ PhotosController.prototype = {
 
     /* Preview size 32x32 is used in files view, so it sould be generated */
     generateThumbnailUrl: function (filename) {
-        return OC.generateUrl('core') + '/preview.png?file=' + encodeURI(filename) + '&x=32&y=32';
+        return generateUrl('core') + '/preview.png?file=' + encodeURI(filename) + '&x=32&y=32';
     },
 
     /* Preview size 341x256 is commonly found in preview folder */
     generatePreviewUrl: function (fileId) {
-        return OC.generateUrl('core') + '/preview?fileId=' + fileId + '&x=341&y=256&a=1';
+        return generateUrl('core') + '/preview?fileId=' + fileId + '&x=341&y=256&a=1';
     },
 
     getImageIconUrl: function() {
-        return OC.generateUrl('/apps/theming/img/core/filetypes') + '/image.svg?v=2';
+        return generateUrl('/apps/theming/img/core/filetypes') + '/image.svg?v=2';
     },
 
     contextPlacePhotos: function(e) {
@@ -420,7 +426,7 @@ PhotosController.prototype = {
             lngs: lngs,
             directory: directory
         };
-        var url = OC.generateUrl('/apps/maps/photos');
+        var url = generateUrl('/apps/maps/photos');
         $.ajax({
             type: 'POST',
             url: url,
@@ -458,7 +464,7 @@ PhotosController.prototype = {
         var req = {
             paths: paths
         };
-        var url = OC.generateUrl('/apps/maps/photos');
+        var url = generateUrl('/apps/maps/photos');
         $.ajax({
             type: 'DELETE',
             url: url,
@@ -510,3 +516,4 @@ PhotosController.prototype = {
 
 };
 
+export default PhotosController;

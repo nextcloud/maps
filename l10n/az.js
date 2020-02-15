@@ -2,6 +2,7 @@ OC.L10N.register(
     "maps",
     {
     "Maps" : "Xəritələr",
+    "Personal" : "Şəxsi",
     "Not grouped" : "Qruplaşdırılmayıb",
     "Home" : "Ev",
     "Work" : "İş",
@@ -9,7 +10,6 @@ OC.L10N.register(
     "Export" : "Çıxarış",
     "Delete" : "Sil",
     "Date" : "Date",
-    "Personal" : "Şəxsi",
     "Name" : "Ad",
     "Comment" : "Komentariya",
     "Move" : "Move",

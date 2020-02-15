@@ -1,5 +1,6 @@
 { "translations": {
     "Maps" : "Kort",
+    "Personal" : "Personlig",
     "Failed to save settings" : "Kunne ikke gemme indstillinger",
     "Not grouped" : "Ikke i gruppe",
     "Home" : "Hjem",
@@ -11,7 +12,6 @@
     "Phone" : "Telefon",
     "Device" : "Enhed",
     "Date" : "Dato",
-    "Personal" : "Personlig",
     "Name" : "Navn",
     "Category" : "Katergori",
     "Comment" : "Kommentér",

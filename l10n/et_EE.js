@@ -2,6 +2,7 @@ OC.L10N.register(
     "maps",
     {
     "Maps" : "Kaardid",
+    "Personal" : "Isiklik",
     "Not grouped" : "Pole grupeeritud",
     "Home" : "Avaleht",
     "Work" : "Töö",
@@ -12,7 +13,6 @@ OC.L10N.register(
     "Phone" : "Telefon",
     "Device" : "Seade",
     "Date" : "Kuupäev",
-    "Personal" : "Isiklik",
     "Name" : "Nimi",
     "Category" : "Kategooria",
     "Comment" : "Kommentaar",

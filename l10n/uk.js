@@ -2,6 +2,7 @@ OC.L10N.register(
     "maps",
     {
     "Maps" : "Мапи",
+    "Personal" : "Особисте",
     "Not grouped" : "Не згруповані",
     "Home" : "Домашній",
     "Work" : "Робочий",
@@ -12,7 +13,6 @@ OC.L10N.register(
     "Phone" : "Телефон",
     "Device" : "Пристрій",
     "Date" : "Date",
-    "Personal" : "Особисте",
     "Name" : "Ім'я",
     "Category" : "Категорія",
     "Comment" : "Коментар",

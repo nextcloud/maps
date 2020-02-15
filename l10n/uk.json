@@ -1,5 +1,6 @@
 { "translations": {
     "Maps" : "Мапи",
+    "Personal" : "Особисте",
     "Not grouped" : "Не згруповані",
     "Home" : "Домашній",
     "Work" : "Робочий",
@@ -10,7 +11,6 @@
     "Phone" : "Телефон",
     "Device" : "Пристрій",
     "Date" : "Date",
-    "Personal" : "Особисте",
     "Name" : "Ім'я",
     "Category" : "Категорія",
     "Comment" : "Коментар",

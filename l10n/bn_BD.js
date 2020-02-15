@@ -2,6 +2,7 @@ OC.L10N.register(
     "maps",
     {
     "Maps" : "মানচিত্র",
+    "Personal" : "ব্যক্তিগত",
     "Not grouped" : "দলবদ্ধ নয়",
     "Home" : "নিবাস",
     "Work" : "কর্মস্থল",
@@ -10,7 +11,6 @@ OC.L10N.register(
     "Delete" : "মুছে",
     "Phone" : "ফোন",
     "Date" : "Date",
-    "Personal" : "ব্যক্তিগত",
     "Name" : "নাম",
     "Comment" : "মন্তব্য",
     "Move" : "Move",

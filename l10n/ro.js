@@ -2,6 +2,7 @@ OC.L10N.register(
     "maps",
     {
     "Maps" : "Hărți",
+    "Personal" : "Personal",
     "Not grouped" : "Negrupate",
     "Home" : "Acasă",
     "Work" : "Serviciu",
@@ -12,7 +13,6 @@ OC.L10N.register(
     "Phone" : "Telefon",
     "Device" : "Dispozitiv",
     "Date" : "Date",
-    "Personal" : "Personal",
     "Name" : "Nume",
     "Comment" : "Comentariu",
     "Submit" : "Trimite",

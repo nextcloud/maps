@@ -1,4 +1,5 @@
 { "translations": {
+    "Personal" : "Personleg",
     "Not grouped" : "Ikkje gruppert",
     "Home" : "Heim",
     "Work" : "Arbeid",
@@ -7,7 +8,6 @@
     "Delete" : "Ta bort",
     "Phone" : "Telefonnummer",
     "Date" : "Date",
-    "Personal" : "Personleg",
     "Name" : "Namn",
     "Category" : "Kategori",
     "Comment" : "Kommentér",

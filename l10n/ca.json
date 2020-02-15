@@ -1,5 +1,7 @@
 { "translations": {
     "Maps" : "Mapes",
+    "Personal" : "Personal",
+    "🌍🌏🌎 The whole world fits inside your cloud!" : "🌍🌏🌎 Tot el món cap dins del vostre núvol!",
     "Settings were successfully saved" : "La configuració s'ha desat correctament",
     "Failed to save settings" : "Ha fallat desar la configuració",
     "There are no contacts to zoom on" : "No hi ha contactes per ampliar",
@@ -43,7 +45,6 @@
     "Failed to export devices" : "No s'han pogut exportar els dispositius",
     "{nb} devices imported from {path}" : "S'han importat {nb} dispositius des de {path}",
     "Failed to import devices" : "No s'han pogut importar els dispositius",
-    "Personal" : "Personal",
     "Import favorites from gpx (OsmAnd, Nextcloud Maps) or kmz/kml (F-Droid Maps, Maps.me, Marble)" : "Importa els favorits des d'un fitxer gpx (OSMAnd, Mapes de Nextcloud) o kmz/kml (mapes de F-Droid, Maps.me, Marble)",
     "Failed to load favorites" : "No s'han pogut carregar els favorits",
     "Add a favorite" : "Afegeix un favorit",
@@ -215,7 +216,6 @@
     "Moving average pace" : "Mitjana mòbil de ritme",
     "Show elevation" : "Mostra altitud",
     "Failed to change track color" : "No s'ha pogut canviar el color del trajecte",
-    "🌍🌏🌎 The whole world fits inside your cloud!" : "🌍🌏🌎 Tot el món cap dins del vostre núvol!",
     "Maps routing settings" : "Configuració dels mapes d'encaminament",
     "To enable routing, you must set up a routing engine below." : "Per habilitar l'encaminament, a continuació, has de configurar un sistema d'encaminament.",
     "OSRM Website" : "Lloc web de OSRM",

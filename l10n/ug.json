@@ -1,4 +1,5 @@
 { "translations": {
+    "Personal" : "شەخسىي",
     "Home" : "ئۆي",
     "Work" : "ئىش",
     "Rename" : "ئات ئۆزگەرت",
@@ -6,7 +7,6 @@
     "Delete" : "ئۆچۈر",
     "Phone" : "تېلېفون",
     "Date" : "Date",
-    "Personal" : "شەخسىي",
     "Name" : "ئاتى",
     "Move" : "Move",
     "Destination" : "Destination",

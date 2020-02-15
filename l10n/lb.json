@@ -1,5 +1,6 @@
 { "translations": {
     "Maps" : "Kaarten",
+    "Personal" : "Perséinlech",
     "Home" : "Doheem",
     "Work" : "Aarbecht",
     "Rename" : "Ëmbenennen",
@@ -7,7 +8,6 @@
     "Delete" : "Läschen",
     "Phone" : "Telefon",
     "Date" : "Date",
-    "Personal" : "Perséinlech",
     "Name" : "Numm",
     "Comment" : "Kommentar",
     "Move" : "Verschieben",

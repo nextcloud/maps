@@ -2,6 +2,7 @@ OC.L10N.register(
     "maps",
     {
     "Maps" : "Kaarte",
+    "Personal" : "Persoonlik",
     "Not grouped" : "Nie gegroepeer",
     "Home" : "Tuis",
     "Work" : "Werk",
@@ -12,7 +13,6 @@ OC.L10N.register(
     "Phone" : "Foon",
     "Device" : "Toestel",
     "Date" : "Datum",
-    "Personal" : "Persoonlik",
     "Name" : "Naam",
     "Category" : "Kategorie",
     "Comment" : "Kommentaar",

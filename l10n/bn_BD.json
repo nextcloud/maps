@@ -1,5 +1,6 @@
 { "translations": {
     "Maps" : "মানচিত্র",
+    "Personal" : "ব্যক্তিগত",
     "Not grouped" : "দলবদ্ধ নয়",
     "Home" : "নিবাস",
     "Work" : "কর্মস্থল",
@@ -8,7 +9,6 @@
     "Delete" : "মুছে",
     "Phone" : "ফোন",
     "Date" : "Date",
-    "Personal" : "ব্যক্তিগত",
     "Name" : "নাম",
     "Comment" : "মন্তব্য",
     "Move" : "Move",

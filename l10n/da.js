@@ -2,6 +2,7 @@ OC.L10N.register(
     "maps",
     {
     "Maps" : "Kort",
+    "Personal" : "Personlig",
     "Failed to save settings" : "Kunne ikke gemme indstillinger",
     "Not grouped" : "Ikke i gruppe",
     "Home" : "Hjem",
@@ -13,7 +14,6 @@ OC.L10N.register(
     "Phone" : "Telefon",
     "Device" : "Enhed",
     "Date" : "Dato",
-    "Personal" : "Personlig",
     "Name" : "Navn",
     "Category" : "Katergori",
     "Comment" : "Kommentér",

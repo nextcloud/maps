@@ -2,6 +2,7 @@ OC.L10N.register(
     "maps",
     {
     "Maps" : "Landakort",
+    "Personal" : "Persónulegt",
     "Settings were successfully saved" : "Tókst að vista stillingar",
     "Failed to save settings" : "Mistókst að vista stillingar",
     "Not grouped" : "Ekki hópaður",
@@ -40,7 +41,6 @@ OC.L10N.register(
     "Failed to export devices" : "Mistókst að flytja út tæki",
     "{nb} devices imported from {path}" : "{nb} tæki flutt inn úr {path}",
     "Failed to import devices" : "Mistókst að flytja inn tæki",
-    "Personal" : "Persónulegt",
     "Import favorites from gpx (OsmAnd, Nextcloud Maps) or kmz/kml (F-Droid Maps, Maps.me, Marble)" : "Flytja inn eftirlæti úr GPX (OsmAnd, Nextcloud Maps) eða kmz/kml (F-Droid Maps, Maps.me, Marble)",
     "Failed to load favorites" : "Mistókst að hlaða inn eftirlætum",
     "Add a favorite" : "Bæta við eftirlæti",

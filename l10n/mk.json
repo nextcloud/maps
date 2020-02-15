@@ -1,5 +1,6 @@
 { "translations": {
     "Maps" : "Мапи",
+    "Personal" : "Лично",
     "Failed to save settings" : "Неуспешно зачувување на параметрите",
     "Not grouped" : "Не групирани",
     "Home" : "Дома",
@@ -11,7 +12,6 @@
     "Phone" : "Телефон",
     "Device" : "Уред",
     "Date" : "Date",
-    "Personal" : "Лично",
     "Name" : "Име",
     "Category" : "Категорија",
     "Comment" : "Коментар",

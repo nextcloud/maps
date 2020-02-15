@@ -1,5 +1,6 @@
 { "translations": {
     "Maps" : "Mapes",
+    "Personal" : "Personal",
     "Not grouped" : "Nun s'agrupó",
     "Home" : "Aniciu",
     "Work" : "Trabayu",
@@ -10,7 +11,6 @@
     "Phone" : "Teléfonu",
     "Device" : "Preséu",
     "Date" : "Date",
-    "Personal" : "Personal",
     "Name" : "Nome",
     "Category" : "Estaya",
     "Comment" : "Comentariu",

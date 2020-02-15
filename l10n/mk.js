@@ -2,6 +2,7 @@ OC.L10N.register(
     "maps",
     {
     "Maps" : "Мапи",
+    "Personal" : "Лично",
     "Failed to save settings" : "Неуспешно зачувување на параметрите",
     "Not grouped" : "Не групирани",
     "Home" : "Дома",
@@ -13,7 +14,6 @@ OC.L10N.register(
     "Phone" : "Телефон",
     "Device" : "Уред",
     "Date" : "Date",
-    "Personal" : "Лично",
     "Name" : "Име",
     "Category" : "Категорија",
     "Comment" : "Коментар",

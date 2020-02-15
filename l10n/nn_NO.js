@@ -1,6 +1,7 @@
 OC.L10N.register(
     "maps",
     {
+    "Personal" : "Personleg",
     "Not grouped" : "Ikkje gruppert",
     "Home" : "Heim",
     "Work" : "Arbeid",
@@ -9,7 +10,6 @@ OC.L10N.register(
     "Delete" : "Ta bort",
     "Phone" : "Telefonnummer",
     "Date" : "Date",
-    "Personal" : "Personleg",
     "Name" : "Namn",
     "Category" : "Kategori",
     "Comment" : "Kommentér",

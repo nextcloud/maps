@@ -1,5 +1,6 @@
 { "translations": {
     "Maps" : "الخرائط",
+    "Personal" : "شخصي",
     "Not grouped" : "غير مصنف",
     "Home" : "الرئيسية",
     "Work" : "العمل",
@@ -12,7 +13,6 @@
     "Device" : "الجهاز",
     "Date" : "التاريخ",
     "Battery" : "البطارية",
-    "Personal" : "شخصي",
     "Name" : "الاسم",
     "Category" : "الفئة",
     "Comment" : "تعليق",

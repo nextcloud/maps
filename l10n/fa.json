@@ -1,5 +1,6 @@
 { "translations": {
     "Maps" : "نقشه‌ها",
+    "Personal" : "شخصی",
     "Settings were successfully saved" : "تنظیمات با موفقیت ذخیره شدند",
     "Failed to save settings" : "تنظیمات ذخیره نشدند",
     "There are no contacts to zoom on" : "هیچ مخاطبی برای بزرگنمایی وجود ندارد",
@@ -44,7 +45,6 @@
     "Failed to export devices" : "صادرات دستگاه انجام نشد",
     "{nb} devices imported from {path}" : "{nb} دستگاه های وارد شده از {path}",
     "Failed to import devices" : "وارد کردن دستگاه ها انجام نشد",
-    "Personal" : "شخصی",
     "Import favorites from gpx (OsmAnd, Nextcloud Maps) or kmz/kml (F-Droid Maps, Maps.me, Marble)" : "وارد کردن موارد دلخواه از gpx (OsmAnd ، نقشه های بعدی Cloud) یا kmz / kml (نقشه های F-Droid ، Maps.me ، مرمر)",
     "Failed to load favorites" : "بارگیری موارد دلخواه انجام نشد",
     "Add a favorite" : "مورد علاقه خود را اضافه کنید",

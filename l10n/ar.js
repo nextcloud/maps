@@ -2,6 +2,7 @@ OC.L10N.register(
     "maps",
     {
     "Maps" : "الخرائط",
+    "Personal" : "شخصي",
     "Not grouped" : "غير مصنف",
     "Home" : "الرئيسية",
     "Work" : "العمل",
@@ -14,7 +15,6 @@ OC.L10N.register(
     "Device" : "الجهاز",
     "Date" : "التاريخ",
     "Battery" : "البطارية",
-    "Personal" : "شخصي",
     "Name" : "الاسم",
     "Category" : "الفئة",
     "Comment" : "تعليق",

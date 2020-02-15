@@ -2,6 +2,7 @@ OC.L10N.register(
     "maps",
     {
     "Maps" : "Karte",
+    "Personal" : "Personīgs",
     "Not grouped" : "Negrupēts",
     "Home" : "Sākums",
     "Work" : "Darbs",
@@ -12,7 +13,6 @@ OC.L10N.register(
     "Phone" : "Tālrunis",
     "Device" : "Ierīce",
     "Date" : "Datums",
-    "Personal" : "Personīgs",
     "Name" : "Vārds",
     "Category" : "Kategorija",
     "Comment" : "Komentārs",

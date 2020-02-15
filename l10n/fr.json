@@ -1,5 +1,7 @@
 { "translations": {
     "Maps" : "Cartes",
+    "Personal" : "Personnel",
+    "🌍🌏🌎 The whole world fits inside your cloud!" : "🌍🌏🌎 Le monde entier rentre dans votre nuage !",
     "Settings were successfully saved" : "Paramètres enregistrés avec succès",
     "Failed to save settings" : "Impossible d'enregistrer les paramètres",
     "There are no contacts to zoom on" : "Il n'y a aucun contact sur lequel zoomer",
@@ -44,7 +46,6 @@
     "Failed to export devices" : "Echec de l'exportation des appareils",
     "{nb} devices imported from {path}" : "{nb} appareil·s importé·s depuis {path}",
     "Failed to import devices" : "Impossible d'importer les appareils",
-    "Personal" : "Personnel",
     "Import favorites from gpx (OsmAnd, Nextcloud Maps) or kmz/kml (F-Droid Maps, Maps.me, Marble)" : "Importer les favoris depuis GPX (OsmAnd, Nextcloud Maps) ou kmz/kml (F-Droid Maps, Maps.me, Marble)",
     "Failed to load favorites" : "Impossible de charger les favoris",
     "Add a favorite" : "Ajouter un favori",
@@ -216,7 +217,6 @@
     "Moving average pace" : "Allure moyenne de déplacement",
     "Show elevation" : "Afficher l'altitude",
     "Failed to change track color" : "Impossible de modifier la couleur de la trace",
-    "🌍🌏🌎 The whole world fits inside your cloud!" : "🌍🌏🌎 Le monde entier rentre dans votre nuage !",
     "Maps routing settings" : "Paramètres de calcul de route",
     "To enable routing, you must set up a routing engine below." : "Pour activer le calcul d'itinéraire, vous devez paramétrer l'un des services ci-dessous.",
     "OSRM Website" : "Site web OSRM",

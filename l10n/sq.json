@@ -1,5 +1,6 @@
 { "translations": {
     "Maps" : "Harta",
+    "Personal" : "Personale",
     "Not grouped" : "I pagrupuar",
     "Home" : "Kryefaqja",
     "Work" : "Punë",
@@ -10,7 +11,6 @@
     "Phone" : "Telefon",
     "Device" : "Pajisje",
     "Date" : "Data",
-    "Personal" : "Personale",
     "Name" : "Emri",
     "Category" : "Kategori",
     "Comment" : "Koment",

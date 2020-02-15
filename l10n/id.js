@@ -2,6 +2,7 @@ OC.L10N.register(
     "maps",
     {
     "Maps" : "Peta",
+    "Personal" : "Personal",
     "Not grouped" : "Tidak dikelompokkan",
     "Home" : "Beranda",
     "Work" : "Kantor",
@@ -12,7 +13,6 @@ OC.L10N.register(
     "Phone" : "Telpon",
     "Device" : "Perangkat",
     "Date" : "Date",
-    "Personal" : "Personal",
     "Name" : "Nama",
     "Category" : "Kategori",
     "Comment" : "Komentar",

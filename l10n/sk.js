@@ -2,6 +2,7 @@ OC.L10N.register(
     "maps",
     {
     "Maps" : "Mapy",
+    "Personal" : "Osobné",
     "Failed to save settings" : "Nepodarilo sa uložiť nastavenia",
     "Not grouped" : "Bez skupiny",
     "Home" : "Domov",
@@ -13,7 +14,6 @@ OC.L10N.register(
     "Phone" : "Telefón",
     "Device" : "Zariadenie",
     "Date" : "Dátum",
-    "Personal" : "Osobné",
     "Name" : "Názov",
     "Category" : "Kategória",
     "Comment" : "Komentár",

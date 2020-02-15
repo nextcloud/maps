@@ -2,6 +2,7 @@ OC.L10N.register(
     "maps",
     {
     "Maps" : "Карти",
+    "Personal" : "Лични",
     "Not grouped" : "Негрупирани",
     "Home" : "Начало",
     "Work" : "Служебен",
@@ -13,7 +14,6 @@ OC.L10N.register(
     "Device" : "Устройство",
     "Date" : "Дата",
     "Battery" : "Батерия",
-    "Personal" : "Лични",
     "Name" : "Име",
     "Category" : "Категория",
     "Comment" : "Коментар",

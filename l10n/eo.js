@@ -2,6 +2,7 @@ OC.L10N.register(
     "maps",
     {
     "Maps" : "Mapoj",
+    "Personal" : "Persona",
     "Failed to save settings" : "Konservo de agordoj malsukcesis",
     "Not grouped" : "Ne grupigita",
     "Home" : "Hejmo",
@@ -13,7 +14,6 @@ OC.L10N.register(
     "Phone" : "Telefono",
     "Device" : "Aparato",
     "Date" : "Date",
-    "Personal" : "Persona",
     "Name" : "Nomo",
     "Category" : "Kategorio",
     "Comment" : "Komento",

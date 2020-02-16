@@ -1,5 +1,3 @@
-import $ from 'jquery';
-
 import { generateUrl } from '@nextcloud/router';
 
 import { basename } from './utils';

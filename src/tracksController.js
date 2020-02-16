@@ -1,5 +1,3 @@
-import $ from 'jquery';
-
 import { generateUrl } from '@nextcloud/router';
 
 import { dirname, brify, metersToDistance, metersToElevation, kmphToSpeed, minPerKmToPace, formatTimeSeconds, getUrlParameter } from './utils';

@@ -33,7 +33,6 @@
     "d3": "^3.5.17",
     "i18next-client": "^1.11.4",
     "install": "^0.13.0",
-    "jquery": "^3.4.1",
     "leaflet": "^1.4.0",
     "leaflet-contextmenu": "^1.4.0",
     "leaflet-control-geocoder": "^1.7.0",

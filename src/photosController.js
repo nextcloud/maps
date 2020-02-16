@@ -86,8 +86,8 @@ PhotosController.prototype = {
     updateMyFirstLastDates: function() {
         var nbMarkers = this.photoMarkers.length;
         var layerVisible = this.map.hasLayer(this.photoLayer);
-        this.photoMarkersOldest = (layerVisible && nbMarkers > 0) ? this.photoMarkers[0].data.date : null;
-        this.photoMarkersNewest = (layerVisible && nbMarkers > 0) ? this.photoMarkers[nbMarkers - 1].data.date : null;
+        this.photoMarkersOldest = (layerVisible && nbMarkers > 0) ? this.photoMarkers[0].data.dateTaken : null;
+        this.photoMarkersNewest = (layerVisible && nbMarkers > 0) ? this.photoMarkers[nbMarkers - 1].data.dateTaken : null;
     },
 
     showLayer: function() {
@@ -205,7 +205,7 @@ PhotosController.prototype = {
     addPhotosToMap : function(photos) {
         var markers = this.preparePhotoMarkers(photos);
         this.photoMarkers.push.apply(this.photoMarkers, markers);
-        this.photoMarkers.sort(function (a, b) { return a.data.date - b.data.date;});
+        this.photoMarkers.sort(function (a, b) { return a.data.dateTaken - b.data.dateTaken;});
 
         // we update the counter
         var catCounter = $('#navigation-photos .app-navigation-entry-utils-counter');
@@ -302,14 +302,14 @@ PhotosController.prototype = {
             var i = this.photoMarkersFirstVisible;
             if (date < this.timeFilterBegin) {
                 i = i-1;
-                while (i >= 0 && i <= this.photoMarkersLastVisible && this.photoMarkers[i].data.date >= date) {
+                while (i >= 0 && i <= this.photoMarkersLastVisible && this.photoMarkers[i].data.dateTaken >= date) {
                     this.photoLayer.addLayer(this.photoMarkers[i]);
                     i = i-1;
                 }
                 this.photoMarkersFirstVisible = i + 1;
             }
             else {
-                while (i < this.photoMarkers.length && i >= 0 && i <= this.photoMarkersLastVisible && this.photoMarkers[i].data.date < date) {
+                while (i < this.photoMarkers.length && i >= 0 && i <= this.photoMarkersLastVisible && this.photoMarkers[i].data.dateTaken < date) {
                     this.photoLayer.removeLayer(this.photoMarkers[i]);
                     i = i + 1;
                 }
@@ -326,7 +326,7 @@ PhotosController.prototype = {
         if (date >= this.timeFilterBegin) {
             var i = this.photoMarkersLastVisible;
             if (date < this.timeFilterEnd) {
-                while (i >= 0 && i >= this.photoMarkersFirstVisible && this.photoMarkers[i].data.date > date ) {
+                while (i >= 0 && i >= this.photoMarkersFirstVisible && this.photoMarkers[i].data.dateTaken > date ) {
                     this.photoLayer.removeLayer(this.photoMarkers[i]);
                     i = i-1;
                 }
@@ -334,7 +334,7 @@ PhotosController.prototype = {
             }
             else {
                 i = i+1;
-                while (i >= this.photoMarkersFirstVisible && i < this.photoMarkers.length && this.photoMarkers[i].data.date <= date) {
+                while (i >= this.photoMarkersFirstVisible && i < this.photoMarkers.length && this.photoMarkers[i].data.dateTaken <= date) {
                     this.photoLayer.addLayer(this.photoMarkers[i]);
                     i = i+1;
                 }

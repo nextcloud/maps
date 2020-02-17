@@ -1,5 +1,3 @@
-import $ from 'jquery';
-
 import { generateUrl } from '@nextcloud/router';
 
 $(document).ready(function() {

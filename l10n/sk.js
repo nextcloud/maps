@@ -32,6 +32,7 @@ OC.L10N.register(
     "File" : "Súbor",
     "Link" : "Odkaz",
     "Description" : "Popis",
+    "download" : "stiahnuť",
     "End" : "Koniec",
     "Your photos" : "Vaše fotografie",
     "Sort by name" : "Zoradiť podľa mena",

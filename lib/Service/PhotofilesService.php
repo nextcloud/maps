@@ -13,7 +13,9 @@
 namespace OCA\Maps\Service;
 
 use lsolesen\pel\PelEntryTime;
+use OC\HintException;
 use OCP\Files\FileInfo;
+use OCP\Files\StorageNotAvailableException;
 use OCP\IL10N;
 use OCP\Files\IRootFolder;
 use OCP\Files\Storage\IStorage;
@@ -319,7 +321,11 @@ class PhotofilesService {
 
     private function gatherPhotoFiles ($folder, $recursive) {
         $notes = [];
-        $nodes = $folder->getDirectoryListing();
+        try {
+			$nodes = $folder->getDirectoryListing();
+		} catch (StorageNotAvailableException $e) {
+		};
+
         foreach ($nodes as $node) {
             if ($node->getType() === FileInfo::TYPE_FOLDER AND $recursive) {
                 // we don't explore external storages for which previews are disabled
@@ -329,7 +335,7 @@ class PhotofilesService {
                         continue;
                     }
                 }
-                $notes = array_merge($notes, $this->gatherPhotoFiles($node, $recursive));
+				$notes = array_merge($notes, $this->gatherPhotoFiles($node, $recursive));
                 continue;
             }
             if ($this->isPhoto($node)) {

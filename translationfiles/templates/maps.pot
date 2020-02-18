@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Nextcloud 3.14159\n"
 "Report-Msgid-Bugs-To: translations\\@example.com\n"
-"POT-Creation-Date: 2020-02-17 02:43+0000\n"
+"POT-Creation-Date: 2020-02-18 02:44+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -23,7 +23,7 @@ msgstr ""
 
 #: /app/lib/Service/FavoritesService.php:387
 #: /app/lib/Service/FavoritesService.php:504
-#: /app/lib/Service/FavoritesService.php:625 /app/src/favoritesController.js:29
+#: /app/lib/Service/FavoritesService.php:625 /app/src/favoritesController.js:27
 msgid "Personal"
 msgstr ""
 
@@ -54,881 +54,881 @@ msgid ""
 "[OwnTracks](https://owntracks.org) is planned."
 msgstr ""
 
-#: /app/src/adminSettings.js:25
+#: /app/src/adminSettings.js:23
 msgid "Settings were successfully saved"
 msgstr ""
 
-#: /app/src/adminSettings.js:29
+#: /app/src/adminSettings.js:27
 msgid "Failed to save settings"
 msgstr ""
 
-#: /app/src/contactsController.js:263
+#: /app/src/contactsController.js:261
 msgid "There are no contacts to zoom on"
 msgstr ""
 
-#: /app/src/contactsController.js:354
+#: /app/src/contactsController.js:352
 msgid "Not grouped"
 msgstr ""
 
-#: /app/src/contactsController.js:375 /app/src/devicesController.js:348
-#: /app/src/devicesController.js:1028 /app/src/favoritesController.js:507
-#: /app/src/tracksController.js:342 /app/templates/navigation/index.php:97
+#: /app/src/contactsController.js:373 /app/src/devicesController.js:346
+#: /app/src/devicesController.js:1026 /app/src/favoritesController.js:505
+#: /app/src/tracksController.js:340 /app/templates/navigation/index.php:97
 msgid "Zoom to bounds"
 msgstr ""
 
-#: /app/src/contactsController.js:499 /app/src/contactsController.js:514
-#: /app/src/contactsController.js:666
+#: /app/src/contactsController.js:497 /app/src/contactsController.js:512
+#: /app/src/contactsController.js:664
 msgid "Home"
 msgstr ""
 
-#: /app/src/contactsController.js:502 /app/src/contactsController.js:517
-#: /app/src/contactsController.js:667
+#: /app/src/contactsController.js:500 /app/src/contactsController.js:515
+#: /app/src/contactsController.js:665
 msgid "Work"
 msgstr ""
 
-#: /app/src/contactsController.js:509
+#: /app/src/contactsController.js:507
 msgid "Delete this address"
 msgstr ""
 
-#: /app/src/contactsController.js:524
+#: /app/src/contactsController.js:522
 msgid "All contacts"
 msgstr ""
 
-#: /app/src/contactsController.js:525
+#: /app/src/contactsController.js:523
 msgid "Open in Contacts"
 msgstr ""
 
-#: /app/src/contactsController.js:623
+#: /app/src/contactsController.js:621
 msgid "Failed to load contacts"
 msgstr ""
 
-#: /app/src/contactsController.js:658
+#: /app/src/contactsController.js:656
 msgid "New contact address"
 msgstr ""
 
-#: /app/src/contactsController.js:661
+#: /app/src/contactsController.js:659
 msgid "Contact name"
 msgstr ""
 
-#: /app/src/contactsController.js:664
+#: /app/src/contactsController.js:662
 msgid "Address type"
 msgstr ""
 
-#: /app/src/contactsController.js:668
+#: /app/src/contactsController.js:666
 msgid "Add address to contact"
 msgstr ""
 
-#: /app/src/contactsController.js:728
+#: /app/src/contactsController.js:726
 msgid "Failed to get contact list"
 msgstr ""
 
-#: /app/src/contactsController.js:814
+#: /app/src/contactsController.js:812
 msgid "Failed to place contact"
 msgstr ""
 
-#: /app/src/devicesController.js:170
+#: /app/src/devicesController.js:168
 msgid ""
 "Import devices from gpx (Nextcloud Maps) or kml/kmz (Google Timeline) file"
 msgstr ""
 
-#: /app/src/devicesController.js:272
+#: /app/src/devicesController.js:270
 msgid "Failed to load device list"
 msgstr ""
 
-#: /app/src/devicesController.js:330 /app/src/devicesController.js:1026
+#: /app/src/devicesController.js:328 /app/src/devicesController.js:1024
 msgid "Toggle history"
 msgstr ""
 
-#: /app/src/devicesController.js:336 /app/src/favoritesController.js:501
+#: /app/src/devicesController.js:334 /app/src/favoritesController.js:499
 msgid "Rename"
 msgstr ""
 
-#: /app/src/devicesController.js:342 /app/src/devicesController.js:1025
-#: /app/src/tracksController.js:336 /app/src/tracksController.js:967
+#: /app/src/devicesController.js:340 /app/src/devicesController.js:1023
+#: /app/src/tracksController.js:334 /app/src/tracksController.js:965
 msgid "Change color"
 msgstr ""
 
-#: /app/src/devicesController.js:354 /app/src/devicesController.js:1027
-#: /app/src/favoritesController.js:513 /app/templates/navigation/index.php:19
+#: /app/src/devicesController.js:352 /app/src/devicesController.js:1025
+#: /app/src/favoritesController.js:511 /app/templates/navigation/index.php:19
 msgid "Export"
 msgstr ""
 
-#: /app/src/devicesController.js:360 /app/src/favoritesController.js:519
-#: /app/src/favoritesController.js:861 /app/src/favoritesController.js:925
+#: /app/src/devicesController.js:358 /app/src/favoritesController.js:517
+#: /app/src/favoritesController.js:859 /app/src/favoritesController.js:923
 msgid "Delete"
 msgstr ""
 
-#: /app/src/devicesController.js:366
+#: /app/src/devicesController.js:364
 msgid "Device deleted"
 msgstr ""
 
-#: /app/src/devicesController.js:470
+#: /app/src/devicesController.js:468
 msgid "Failed to rename device"
 msgstr ""
 
-#: /app/src/devicesController.js:491
+#: /app/src/devicesController.js:489
 msgid "Failed to delete device"
 msgstr ""
 
-#: /app/src/devicesController.js:615
+#: /app/src/devicesController.js:613
 msgid "Failed to load device points"
 msgstr ""
 
-#: /app/src/devicesController.js:681
+#: /app/src/devicesController.js:679
 msgid "Failed to update device points"
 msgstr ""
 
-#: /app/src/devicesController.js:816
-#: /app/src/nonLocalizedPhotosController.js:72
+#: /app/src/devicesController.js:814
+#: /app/src/nonLocalizedPhotosController.js:70
 msgid "Impossible to get current location"
 msgstr ""
 
-#: /app/src/devicesController.js:827
+#: /app/src/devicesController.js:825
 msgid "Phone"
 msgstr ""
 
-#: /app/src/devicesController.js:830
+#: /app/src/devicesController.js:828
 msgid "Computer"
 msgstr ""
 
-#: /app/src/devicesController.js:833
+#: /app/src/devicesController.js:831
 msgid "Unknown device type"
 msgstr ""
 
-#: /app/src/devicesController.js:857
+#: /app/src/devicesController.js:855
 msgid "Failed to send current position"
 msgstr ""
 
-#: /app/src/devicesController.js:910
+#: /app/src/devicesController.js:908
 msgid "Failed to change device color"
 msgstr ""
 
-#: /app/src/devicesController.js:959
+#: /app/src/devicesController.js:957
 msgid "Device"
 msgstr ""
 
-#: /app/src/devicesController.js:960
+#: /app/src/devicesController.js:958
 msgid "Date"
 msgstr ""
 
-#: /app/src/devicesController.js:962 /app/src/tracksController.js:695
+#: /app/src/devicesController.js:960 /app/src/tracksController.js:693
 msgid "Elevation"
 msgstr ""
 
-#: /app/src/devicesController.js:965
+#: /app/src/devicesController.js:963
 msgid "Accuracy"
 msgstr ""
 
-#: /app/src/devicesController.js:968
+#: /app/src/devicesController.js:966
 msgid "Battery"
 msgstr ""
 
-#: /app/src/devicesController.js:1110
+#: /app/src/devicesController.js:1108
 msgid "Devices exported in {path}"
 msgstr ""
 
-#: /app/src/devicesController.js:1115
+#: /app/src/devicesController.js:1113
 msgid "Failed to export devices"
 msgstr ""
 
-#: /app/src/devicesController.js:1133 /app/src/filetypes.js:55
+#: /app/src/devicesController.js:1131 /app/src/filetypes.js:53
 msgid "{nb} devices imported from {path}"
 msgstr ""
 
-#: /app/src/devicesController.js:1143 /app/src/filetypes.js:59
+#: /app/src/devicesController.js:1141 /app/src/filetypes.js:57
 msgid "Failed to import devices"
 msgstr ""
 
-#: /app/src/favoritesController.js:201
+#: /app/src/favoritesController.js:199
 msgid ""
 "Import favorites from gpx (OsmAnd, Nextcloud Maps) or kmz/kml (F-Droid Maps, "
 "Maps.me, Marble)"
 msgstr ""
 
-#: /app/src/favoritesController.js:438
+#: /app/src/favoritesController.js:436
 msgid "Failed to load favorites"
 msgstr ""
 
-#: /app/src/favoritesController.js:495 /app/src/script.js:609
+#: /app/src/favoritesController.js:493 /app/src/script.js:607
 #: /app/templates/navigation/index.php:6
 msgid "Add a favorite"
 msgstr ""
 
-#: /app/src/favoritesController.js:525
+#: /app/src/favoritesController.js:523
 msgid "Category deleted"
 msgstr ""
 
-#: /app/src/favoritesController.js:588
+#: /app/src/favoritesController.js:586
 msgid "Failed to rename category"
 msgstr ""
 
-#: /app/src/favoritesController.js:616
+#: /app/src/favoritesController.js:614
 msgid "Failed to delete category favorites"
 msgstr ""
 
-#: /app/src/favoritesController.js:725
+#: /app/src/favoritesController.js:723
 msgid "Failed to add favorite"
 msgstr ""
 
-#: /app/src/favoritesController.js:815
+#: /app/src/favoritesController.js:813
 msgid "Name"
 msgstr ""
 
-#: /app/src/favoritesController.js:815
+#: /app/src/favoritesController.js:813
 msgid "No name"
 msgstr ""
 
-#: /app/src/favoritesController.js:816 /app/src/favoritesController.js:863
+#: /app/src/favoritesController.js:814 /app/src/favoritesController.js:861
 msgid "Category"
 msgstr ""
 
-#: /app/src/favoritesController.js:818 /app/src/favoritesController.js:864
-#: /app/src/tracksController.js:702
+#: /app/src/favoritesController.js:816 /app/src/favoritesController.js:862
+#: /app/src/tracksController.js:700
 msgid "Comment"
 msgstr ""
 
-#: /app/src/favoritesController.js:860
+#: /app/src/favoritesController.js:858
 msgid "Submit"
 msgstr ""
 
-#: /app/src/favoritesController.js:862
+#: /app/src/favoritesController.js:860
 msgid "Favorite name"
 msgstr ""
 
-#: /app/src/favoritesController.js:924 /app/src/photosController.js:257
+#: /app/src/favoritesController.js:922 /app/src/photosController.js:255
 msgid "Move"
 msgstr ""
 
-#: /app/src/favoritesController.js:962
+#: /app/src/favoritesController.js:960
 msgid "Failed to delete favorite"
 msgstr ""
 
-#: /app/src/favoritesController.js:1034
+#: /app/src/favoritesController.js:1032
 msgid "Failed to edit favorite"
 msgstr ""
 
-#: /app/src/favoritesController.js:1086
+#: /app/src/favoritesController.js:1084
 msgid "Click on the map to move the favorite, press ESC to cancel"
 msgstr ""
 
-#: /app/src/favoritesController.js:1136
+#: /app/src/favoritesController.js:1134
 msgid "Favorites exported in {path}"
 msgstr ""
 
-#: /app/src/favoritesController.js:1141
+#: /app/src/favoritesController.js:1139
 msgid "Failed to export favorites"
 msgstr ""
 
-#: /app/src/favoritesController.js:1159 /app/src/filetypes.js:33
+#: /app/src/favoritesController.js:1157 /app/src/filetypes.js:31
 msgid "{nb} favorites imported from {path}"
 msgstr ""
 
-#: /app/src/favoritesController.js:1170
+#: /app/src/favoritesController.js:1168
 msgid ""
 "Warning: tracks or routes were found in imported files, they were ignored."
 msgstr ""
 
-#: /app/src/favoritesController.js:1176 /app/src/filetypes.js:37
+#: /app/src/favoritesController.js:1174 /app/src/filetypes.js:35
 msgid "Failed to import favorites"
 msgstr ""
 
-#: /app/src/filetypes.js:68
+#: /app/src/filetypes.js:66
 msgid "View in Maps"
 msgstr ""
 
-#: /app/src/filetypes.js:81 /app/src/filetypes.js:90 /app/src/filetypes.js:99
+#: /app/src/filetypes.js:79 /app/src/filetypes.js:88 /app/src/filetypes.js:97
 msgid "Import as favorites in Maps"
 msgstr ""
 
-#: /app/src/filetypes.js:109 /app/src/filetypes.js:118
-#: /app/src/filetypes.js:127
+#: /app/src/filetypes.js:107 /app/src/filetypes.js:116
+#: /app/src/filetypes.js:125
 msgid "Import as devices in Maps"
 msgstr ""
 
-#: /app/src/nonLocalizedPhotosController.js:289
+#: /app/src/nonLocalizedPhotosController.js:287
 msgid "Failed to load non-geolocalized photos"
 msgstr ""
 
-#: /app/src/photosController.js:258
+#: /app/src/photosController.js:256
 msgid "Remove geo data"
 msgstr ""
 
-#: /app/src/photosController.js:278
+#: /app/src/photosController.js:276
 msgid "Click on the map to move the photo, press ESC to cancel"
 msgstr ""
 
-#: /app/src/photosController.js:370
+#: /app/src/photosController.js:368
 msgid "Failed to load photos"
 msgstr ""
 
-#: /app/src/photosController.js:392
+#: /app/src/photosController.js:390
 msgid "Choose pictures to place"
 msgstr ""
 
-#: /app/src/photosController.js:406
+#: /app/src/photosController.js:404
 msgid "Choose directory of pictures to place"
 msgstr ""
 
-#: /app/src/photosController.js:436
+#: /app/src/photosController.js:434
 msgid "{nb} photos placed"
 msgstr ""
 
-#: /app/src/photosController.js:456
+#: /app/src/photosController.js:454
 msgid "Failed to place photos"
 msgstr ""
 
-#: /app/src/photosController.js:474
+#: /app/src/photosController.js:472
 msgid "{nb} photos reset"
 msgstr ""
 
-#: /app/src/photosController.js:494
+#: /app/src/photosController.js:492
 msgid "Failed to reset photos coordinates"
 msgstr ""
 
-#: /app/src/script.js:207
+#: /app/src/script.js:205
 msgid "Geo link ({geoLink}) copied to clipboard"
 msgstr ""
 
-#: /app/src/script.js:232
+#: /app/src/script.js:230
 msgid "Failed to save option values"
 msgstr ""
 
-#: /app/src/script.js:253
+#: /app/src/script.js:251
 msgid ""
 "Media scan was not done yet. Wait a few minutes/hours and reload this page "
 "to see your photos/tracks."
 msgstr ""
 
-#: /app/src/script.js:294
+#: /app/src/script.js:292
 msgid "Improve this map"
 msgstr ""
 
-#: /app/src/script.js:489
+#: /app/src/script.js:487
 msgid "Failed to restore options values"
 msgstr ""
 
-#: /app/src/script.js:613
+#: /app/src/script.js:611
 msgid "Place photos"
 msgstr ""
 
-#: /app/src/script.js:621
+#: /app/src/script.js:619
 msgid "Place contact"
 msgstr ""
 
-#: /app/src/script.js:625
+#: /app/src/script.js:623
 msgid "Share this location"
 msgstr ""
 
-#: /app/src/script.js:629
+#: /app/src/script.js:627
 msgid "Route from here"
 msgstr ""
 
-#: /app/src/script.js:633
+#: /app/src/script.js:631
 msgid "Add route point"
 msgstr ""
 
-#: /app/src/script.js:637
+#: /app/src/script.js:635
 msgid "Route to here"
 msgstr ""
 
-#: /app/src/script.js:700
+#: /app/src/script.js:698
 msgid "Current location"
 msgstr ""
 
-#: /app/src/script.js:721
+#: /app/src/script.js:719
 msgid "Other maps"
 msgstr ""
 
-#: /app/src/script.js:761
+#: /app/src/script.js:759
 msgid "Satellite map"
 msgstr ""
 
-#: /app/src/script.js:773
+#: /app/src/script.js:771
 msgid "Street map"
 msgstr ""
 
-#: /app/src/script.js:856
+#: /app/src/script.js:854
 msgid "north"
 msgstr ""
 
-#: /app/src/script.js:857
+#: /app/src/script.js:855
 msgid "northeast"
 msgstr ""
 
-#: /app/src/script.js:858
+#: /app/src/script.js:856
 msgid "east"
 msgstr ""
 
-#: /app/src/script.js:859
+#: /app/src/script.js:857
 msgid "southeast"
 msgstr ""
 
-#: /app/src/script.js:860
+#: /app/src/script.js:858
 msgid "south"
 msgstr ""
 
-#: /app/src/script.js:861
+#: /app/src/script.js:859
 msgid "southwest"
 msgstr ""
 
-#: /app/src/script.js:862
+#: /app/src/script.js:860
 msgid "west"
 msgstr ""
 
-#: /app/src/script.js:863
+#: /app/src/script.js:861
 msgid "northwest"
 msgstr ""
 
-#: /app/src/script.js:864
+#: /app/src/script.js:862
 msgid "slight right"
 msgstr ""
 
-#: /app/src/script.js:865
+#: /app/src/script.js:863
 msgid "right"
 msgstr ""
 
-#: /app/src/script.js:866
+#: /app/src/script.js:864
 msgid "sharp right"
 msgstr ""
 
-#: /app/src/script.js:867
+#: /app/src/script.js:865
 msgid "slight left"
 msgstr ""
 
-#: /app/src/script.js:868
+#: /app/src/script.js:866
 msgid "left"
 msgstr ""
 
-#: /app/src/script.js:869
+#: /app/src/script.js:867
 msgid "sharp left"
 msgstr ""
 
-#: /app/src/script.js:870 /app/src/script.js:879
+#: /app/src/script.js:868 /app/src/script.js:877
 msgid "Turn around"
 msgstr ""
 
-#: /app/src/script.js:875
+#: /app/src/script.js:873
 msgid "Head {dir}"
 msgstr ""
 
-#: /app/src/script.js:875
+#: /app/src/script.js:873
 msgid " on {road}"
 msgstr ""
 
-#: /app/src/script.js:877
+#: /app/src/script.js:875
 msgid "Continue {dir}"
 msgstr ""
 
-#: /app/src/script.js:881
+#: /app/src/script.js:879
 msgid "Waypoint reached"
 msgstr ""
 
-#: /app/src/script.js:883
+#: /app/src/script.js:881
 msgid "Take the {exitStr} exit in the roundabout"
 msgstr ""
 
-#: /app/src/script.js:883 /app/src/script.js:886 /app/src/script.js:887
-#: /app/src/script.js:888 /app/src/script.js:889 /app/src/script.js:890
+#: /app/src/script.js:881 /app/src/script.js:884 /app/src/script.js:885
+#: /app/src/script.js:886 /app/src/script.js:887 /app/src/script.js:888
 msgid " onto {road}"
 msgstr ""
 
-#: /app/src/script.js:885
+#: /app/src/script.js:883
 msgid "Destination reached"
 msgstr ""
 
-#: /app/src/script.js:886
+#: /app/src/script.js:884
 msgid "At the fork, turn {modifier}"
 msgstr ""
 
-#: /app/src/script.js:887
+#: /app/src/script.js:885
 msgid "Merge {modifier}"
 msgstr ""
 
-#: /app/src/script.js:888
+#: /app/src/script.js:886
 msgid "Turn {modifier} on the ramp"
 msgstr ""
 
-#: /app/src/script.js:889
+#: /app/src/script.js:887
 msgid "Take the ramp on the {modifier}"
 msgstr ""
 
-#: /app/src/script.js:890
+#: /app/src/script.js:888
 msgid "Turn {modifier} at the end of the road"
 msgstr ""
 
-#: /app/src/script.js:891
+#: /app/src/script.js:889
 msgid "onto {road}"
 msgstr ""
 
-#: /app/src/script.js:894
+#: /app/src/script.js:892
 msgid "Start"
 msgstr ""
 
-#: /app/src/script.js:895
+#: /app/src/script.js:893
 msgid "Via {viaNumber}"
 msgstr ""
 
-#: /app/src/script.js:896
+#: /app/src/script.js:894
 msgid "Destination"
 msgstr ""
 
-#: /app/src/script.js:902
+#: /app/src/script.js:900
 msgid "m"
 msgstr ""
 
-#: /app/src/script.js:903
+#: /app/src/script.js:901
 msgid "km"
 msgstr ""
 
-#: /app/src/script.js:904
+#: /app/src/script.js:902
 msgid "yd"
 msgstr ""
 
-#: /app/src/script.js:905
+#: /app/src/script.js:903
 msgid "mi"
 msgstr ""
 
-#: /app/src/script.js:906
+#: /app/src/script.js:904
 msgid "h"
 msgstr ""
 
-#: /app/src/script.js:907
+#: /app/src/script.js:905
 msgid "min"
 msgstr ""
 
-#: /app/src/script.js:908
+#: /app/src/script.js:906
 msgid "s"
 msgstr ""
 
-#: /app/src/script.js:912
+#: /app/src/script.js:910
 msgid "By car (OSRM demo)"
 msgstr ""
 
-#: /app/src/script.js:970
+#: /app/src/script.js:968
 msgid "By car (OSRM)"
 msgstr ""
 
-#: /app/src/script.js:974
+#: /app/src/script.js:972
 msgid "By bike (OSRM)"
 msgstr ""
 
-#: /app/src/script.js:978
+#: /app/src/script.js:976
 msgid "By foot (OSRM)"
 msgstr ""
 
-#: /app/src/script.js:982
+#: /app/src/script.js:980
 msgid "By bike (Mapbox)"
 msgstr ""
 
-#: /app/src/script.js:983
+#: /app/src/script.js:981
 msgid "By foot (Mapbox)"
 msgstr ""
 
-#: /app/src/script.js:984
+#: /app/src/script.js:982
 msgid "By car with traffic (Mapbox)"
 msgstr ""
 
-#: /app/src/script.js:985
+#: /app/src/script.js:983
 msgid "By car without traffic (Mapbox)"
 msgstr ""
 
-#: /app/src/script.js:994
+#: /app/src/script.js:992
 msgid "By car (GraphHopper)"
 msgstr ""
 
-#: /app/src/script.js:995
+#: /app/src/script.js:993
 msgid "By bike (GraphHopper)"
 msgstr ""
 
-#: /app/src/script.js:996
+#: /app/src/script.js:994
 msgid "By Foot (GraphHopper)"
 msgstr ""
 
-#: /app/src/script.js:1063
+#: /app/src/script.js:1061
 msgid "Routing is currently disabled."
 msgstr ""
 
-#: /app/src/script.js:1064
+#: /app/src/script.js:1062
 msgid "Add a routing service"
 msgstr ""
 
-#: /app/src/script.js:1070
+#: /app/src/script.js:1068
 msgid "Export current route to GPX"
 msgstr ""
 
-#: /app/src/script.js:1159
+#: /app/src/script.js:1157
 msgid "Routing error:"
 msgstr ""
 
-#: /app/src/script.js:1236
+#: /app/src/script.js:1234
 msgid "Route exported in {path}"
 msgstr ""
 
-#: /app/src/script.js:1240
+#: /app/src/script.js:1238
 msgid "Failed to export current route"
 msgstr ""
 
-#: /app/src/script.js:1244
+#: /app/src/script.js:1242
 msgid "There is no route to export"
 msgstr ""
 
-#: /app/src/script.js:1738
+#: /app/src/script.js:1736
 msgid "No search result"
 msgstr ""
 
-#: /app/src/script.js:1774
+#: /app/src/script.js:1772
 msgid "No {POItypeName} found"
 msgstr ""
 
-#: /app/src/script.js:1786 /app/src/script.js:1787
+#: /app/src/script.js:1784 /app/src/script.js:1785
 msgid "My location"
 msgstr ""
 
-#: /app/src/script.js:1793
+#: /app/src/script.js:1791
 msgid "Restaurant"
 msgstr ""
 
-#: /app/src/script.js:1798
+#: /app/src/script.js:1796
 msgid "Fast food"
 msgstr ""
 
-#: /app/src/script.js:1803
+#: /app/src/script.js:1801
 msgid "Bar"
 msgstr ""
 
-#: /app/src/script.js:1808
+#: /app/src/script.js:1806
 msgid "Supermarket"
 msgstr ""
 
-#: /app/src/script.js:1813
+#: /app/src/script.js:1811
 msgid "Cafe"
 msgstr ""
 
-#: /app/src/script.js:1818
+#: /app/src/script.js:1816
 msgid "Library"
 msgstr ""
 
-#: /app/src/script.js:1823
+#: /app/src/script.js:1821
 msgid "School"
 msgstr ""
 
-#: /app/src/script.js:1828
+#: /app/src/script.js:1826
 msgid "Sports centre"
 msgstr ""
 
-#: /app/src/script.js:1833
+#: /app/src/script.js:1831
 msgid "Gas station"
 msgstr ""
 
-#: /app/src/script.js:1838
+#: /app/src/script.js:1836
 msgid "Parking"
 msgstr ""
 
-#: /app/src/script.js:1843
+#: /app/src/script.js:1841
 msgid "Bicycle parking"
 msgstr ""
 
-#: /app/src/script.js:1848
+#: /app/src/script.js:1846
 msgid "Car rental"
 msgstr ""
 
-#: /app/src/script.js:1853
+#: /app/src/script.js:1851
 msgid "ATM"
 msgstr ""
 
-#: /app/src/script.js:1858
+#: /app/src/script.js:1856
 msgid "Pharmacy"
 msgstr ""
 
-#: /app/src/script.js:1863
+#: /app/src/script.js:1861
 msgid "Cinema"
 msgstr ""
 
-#: /app/src/script.js:1868
+#: /app/src/script.js:1866
 msgid "Public toilets"
 msgstr ""
 
-#: /app/src/script.js:1873
+#: /app/src/script.js:1871
 msgid "Drinking water"
 msgstr ""
 
-#: /app/src/script.js:1878
+#: /app/src/script.js:1876
 msgid "Hospital"
 msgstr ""
 
-#: /app/src/script.js:1883
+#: /app/src/script.js:1881
 msgid "Doctors"
 msgstr ""
 
-#: /app/src/script.js:1888
+#: /app/src/script.js:1886
 msgid "Dentist"
 msgstr ""
 
-#: /app/src/script.js:1893
+#: /app/src/script.js:1891
 msgid "Hotel"
 msgstr ""
 
-#: /app/src/script.js:2025 /app/src/script.js:2114
+#: /app/src/script.js:2023 /app/src/script.js:2112
 msgid "Add to favorites"
 msgstr ""
 
-#: /app/src/script.js:2027 /app/src/script.js:2116
+#: /app/src/script.js:2025 /app/src/script.js:2114
 msgid "Add contact address"
 msgstr ""
 
-#: /app/src/script.js:2041
+#: /app/src/script.js:2039
 msgid "Open"
 msgstr ""
 
-#: /app/src/script.js:2043
+#: /app/src/script.js:2041
 msgid "closes in {nb} minutes"
 msgstr ""
 
-#: /app/src/script.js:2046
+#: /app/src/script.js:2044
 msgid "until {date}"
 msgstr ""
 
-#: /app/src/script.js:2050
+#: /app/src/script.js:2048
 msgid "Closed"
 msgstr ""
 
-#: /app/src/script.js:2051
+#: /app/src/script.js:2049
 msgid "opens at {date}"
 msgstr ""
 
-#: /app/src/script.js:2111
+#: /app/src/script.js:2109
 msgid "This place"
 msgstr ""
 
-#: /app/src/tracksController.js:131
+#: /app/src/tracksController.js:129
 msgid "Close elevation chart"
 msgstr ""
 
-#: /app/src/tracksController.js:348
+#: /app/src/tracksController.js:346
 msgid "Show track elevation"
 msgstr ""
 
-#: /app/src/tracksController.js:429
+#: /app/src/tracksController.js:427
 msgid "Track {n} was not found"
 msgstr ""
 
-#: /app/src/tracksController.js:435
+#: /app/src/tracksController.js:433
 msgid "Failed to load tracks"
 msgstr ""
 
-#: /app/src/tracksController.js:505
+#: /app/src/tracksController.js:503
 msgid "Failed to load track content"
 msgstr ""
 
-#: /app/src/tracksController.js:523
+#: /app/src/tracksController.js:521
 msgid "Failed to parse track {fname}"
 msgstr ""
 
-#: /app/src/tracksController.js:689 /app/src/tracksController.js:722
+#: /app/src/tracksController.js:687 /app/src/tracksController.js:720
 msgid "File"
 msgstr ""
 
-#: /app/src/tracksController.js:692
+#: /app/src/tracksController.js:690
 msgid "Link"
 msgstr ""
 
-#: /app/src/tracksController.js:698
+#: /app/src/tracksController.js:696
 msgid "Latitude"
 msgstr ""
 
-#: /app/src/tracksController.js:699
+#: /app/src/tracksController.js:697
 msgid "Longitude"
 msgstr ""
 
-#: /app/src/tracksController.js:706
+#: /app/src/tracksController.js:704
 msgid "Description"
 msgstr ""
 
-#: /app/src/tracksController.js:710
+#: /app/src/tracksController.js:708
 msgid "Symbol name"
 msgstr ""
 
-#: /app/src/tracksController.js:723
+#: /app/src/tracksController.js:721
 msgid "download"
 msgstr ""
 
-#: /app/src/tracksController.js:732 /app/src/tracksController.js:735
+#: /app/src/tracksController.js:730 /app/src/tracksController.js:733
 msgid "metadata link"
 msgstr ""
 
-#: /app/src/tracksController.js:739
+#: /app/src/tracksController.js:737
 msgid "tracks/routes name list"
 msgstr ""
 
-#: /app/src/tracksController.js:744
+#: /app/src/tracksController.js:742
 msgid "no name"
 msgstr ""
 
-#: /app/src/tracksController.js:754
+#: /app/src/tracksController.js:752
 msgid "Distance"
 msgstr ""
 
-#: /app/src/tracksController.js:764
+#: /app/src/tracksController.js:762
 msgid "Duration"
 msgstr ""
 
-#: /app/src/tracksController.js:767
+#: /app/src/tracksController.js:765
 msgid "Moving time"
 msgstr ""
 
-#: /app/src/tracksController.js:770
+#: /app/src/tracksController.js:768
 msgid "Pause time"
 msgstr ""
 
-#: /app/src/tracksController.js:773
+#: /app/src/tracksController.js:771
 msgid "no date"
 msgstr ""
 
-#: /app/src/tracksController.js:788
+#: /app/src/tracksController.js:786
 msgid "Begin"
 msgstr ""
 
-#: /app/src/tracksController.js:791
+#: /app/src/tracksController.js:789
 msgid "End"
 msgstr ""
 
-#: /app/src/tracksController.js:794
+#: /app/src/tracksController.js:792
 msgid "Cumulative elevation gain"
 msgstr ""
 
-#: /app/src/tracksController.js:798
+#: /app/src/tracksController.js:796
 msgid "Cumulative elevation loss"
 msgstr ""
 
-#: /app/src/tracksController.js:802
+#: /app/src/tracksController.js:800
 msgid "Minimum elevation"
 msgstr ""
 
-#: /app/src/tracksController.js:806
+#: /app/src/tracksController.js:804
 msgid "Maximum elevation"
 msgstr ""
 
-#: /app/src/tracksController.js:810
+#: /app/src/tracksController.js:808
 msgid "Maximum speed"
 msgstr ""
 
-#: /app/src/tracksController.js:821
+#: /app/src/tracksController.js:819
 msgid "Average speed"
 msgstr ""
 
-#: /app/src/tracksController.js:832
+#: /app/src/tracksController.js:830
 msgid "Moving average speed"
 msgstr ""
 
-#: /app/src/tracksController.js:842
+#: /app/src/tracksController.js:840
 msgid "Moving average pace"
 msgstr ""
 
-#: /app/src/tracksController.js:968
+#: /app/src/tracksController.js:966
 msgid "Show elevation"
 msgstr ""
 
-#: /app/src/tracksController.js:1036
+#: /app/src/tracksController.js:1034
 msgid "Failed to change track color"
 msgstr ""
 

@@ -727,7 +727,7 @@ FavoritesController.prototype = {
     // add a marker to the corresponding layer
     addFavoriteMap: function(fav, enableCategory=false, fromUserAction=false) {
         // manage category first
-        cat = fav.category;
+        var cat = fav.category;
         if (!this.categoryLayers.hasOwnProperty(cat)) {
             this.addCategory(cat, enableCategory);
             if (enableCategory) {

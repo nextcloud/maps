@@ -535,7 +535,7 @@ FavoritesController.prototype = {
         var beforeThis = null;
         var rawLower = rawName.toLowerCase();
         $('#category-list > li').each(function() {
-            catName = $(this).attr('category');
+            var catName = $(this).attr('category');
             if (rawLower.localeCompare(catName) < 0) {
                 beforeThis = $(this);
                 return false;

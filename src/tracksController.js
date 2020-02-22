@@ -547,6 +547,7 @@ TracksController.prototype = {
         });
 
         var trks = gpxx.find('trk');
+        var name, cmt, desc, linkText, linkUrl, popupText, date;
         trks.each(function() {
             name = $(this).find('>name').text();
             cmt = $(this).find('>cmt').text();

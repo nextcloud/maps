@@ -149,7 +149,7 @@ class FileHooks {
             if ($params['itemType'] === 'folder') {
                 $targetUserId = $params['shareWith'];
                 $dirId = $params['fileSource']; // or itemSource
-                $this->photofilesService->safeDeleteByFolderIdUserId($dirId, $targetUserId);
+                $this->photofilesService->deleteByFolderIdUserId($dirId, $targetUserId);
                 $this->tracksService->safeDeleteByFolderIdUserId($dirId, $targetUserId);
             }
         }

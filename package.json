@@ -35,7 +35,7 @@
     "install": "^0.13.0",
     "leaflet": "^1.4.0",
     "leaflet-contextmenu": "^1.4.0",
-    "leaflet-control-geocoder": "^1.7.0",
+    "leaflet-control-geocoder": "^1.12.1",
     "leaflet-easybutton": "^2.4.0",
     "leaflet-mouse-position": "^1.0.4",
     "leaflet-routing-machine": "^3.2.12",

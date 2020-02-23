@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Nextcloud 3.14159\n"
 "Report-Msgid-Bugs-To: translations\\@example.com\n"
-"POT-Creation-Date: 2020-02-22 02:45+0000\n"
+"POT-Creation-Date: 2020-02-23 02:45+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -144,7 +144,7 @@ msgid "Rename"
 msgstr ""
 
 #: /app/src/devicesController.js:340 /app/src/devicesController.js:1023
-#: /app/src/tracksController.js:334 /app/src/tracksController.js:965
+#: /app/src/tracksController.js:334 /app/src/tracksController.js:966
 msgid "Change color"
 msgstr ""
 
@@ -211,7 +211,7 @@ msgstr ""
 msgid "Date"
 msgstr ""
 
-#: /app/src/devicesController.js:960 /app/src/tracksController.js:693
+#: /app/src/devicesController.js:960 /app/src/tracksController.js:694
 msgid "Elevation"
 msgstr ""
 
@@ -283,7 +283,7 @@ msgid "Category"
 msgstr ""
 
 #: /app/src/favoritesController.js:816 /app/src/favoritesController.js:862
-#: /app/src/tracksController.js:700
+#: /app/src/tracksController.js:701
 msgid "Comment"
 msgstr ""
 
@@ -824,111 +824,111 @@ msgstr ""
 msgid "Failed to parse track {fname}"
 msgstr ""
 
-#: /app/src/tracksController.js:687 /app/src/tracksController.js:720
+#: /app/src/tracksController.js:688 /app/src/tracksController.js:721
 msgid "File"
 msgstr ""
 
-#: /app/src/tracksController.js:690
+#: /app/src/tracksController.js:691
 msgid "Link"
 msgstr ""
 
-#: /app/src/tracksController.js:696
+#: /app/src/tracksController.js:697
 msgid "Latitude"
 msgstr ""
 
-#: /app/src/tracksController.js:697
+#: /app/src/tracksController.js:698
 msgid "Longitude"
 msgstr ""
 
-#: /app/src/tracksController.js:704
+#: /app/src/tracksController.js:705
 msgid "Description"
 msgstr ""
 
-#: /app/src/tracksController.js:708
+#: /app/src/tracksController.js:709
 msgid "Symbol name"
 msgstr ""
 
-#: /app/src/tracksController.js:721
+#: /app/src/tracksController.js:722
 msgid "download"
 msgstr ""
 
-#: /app/src/tracksController.js:730 /app/src/tracksController.js:733
+#: /app/src/tracksController.js:731 /app/src/tracksController.js:734
 msgid "metadata link"
 msgstr ""
 
-#: /app/src/tracksController.js:737
+#: /app/src/tracksController.js:738
 msgid "tracks/routes name list"
 msgstr ""
 
-#: /app/src/tracksController.js:742
+#: /app/src/tracksController.js:743
 msgid "no name"
 msgstr ""
 
-#: /app/src/tracksController.js:752
+#: /app/src/tracksController.js:753
 msgid "Distance"
 msgstr ""
 
-#: /app/src/tracksController.js:762
+#: /app/src/tracksController.js:763
 msgid "Duration"
 msgstr ""
 
-#: /app/src/tracksController.js:765
+#: /app/src/tracksController.js:766
 msgid "Moving time"
 msgstr ""
 
-#: /app/src/tracksController.js:768
+#: /app/src/tracksController.js:769
 msgid "Pause time"
 msgstr ""
 
-#: /app/src/tracksController.js:771
+#: /app/src/tracksController.js:772
 msgid "no date"
 msgstr ""
 
-#: /app/src/tracksController.js:786
+#: /app/src/tracksController.js:787
 msgid "Begin"
 msgstr ""
 
-#: /app/src/tracksController.js:789
+#: /app/src/tracksController.js:790
 msgid "End"
 msgstr ""
 
-#: /app/src/tracksController.js:792
+#: /app/src/tracksController.js:793
 msgid "Cumulative elevation gain"
 msgstr ""
 
-#: /app/src/tracksController.js:796
+#: /app/src/tracksController.js:797
 msgid "Cumulative elevation loss"
 msgstr ""
 
-#: /app/src/tracksController.js:800
+#: /app/src/tracksController.js:801
 msgid "Minimum elevation"
 msgstr ""
 
-#: /app/src/tracksController.js:804
+#: /app/src/tracksController.js:805
 msgid "Maximum elevation"
 msgstr ""
 
-#: /app/src/tracksController.js:808
+#: /app/src/tracksController.js:809
 msgid "Maximum speed"
 msgstr ""
 
-#: /app/src/tracksController.js:819
+#: /app/src/tracksController.js:820
 msgid "Average speed"
 msgstr ""
 
-#: /app/src/tracksController.js:830
+#: /app/src/tracksController.js:831
 msgid "Moving average speed"
 msgstr ""
 
-#: /app/src/tracksController.js:840
+#: /app/src/tracksController.js:841
 msgid "Moving average pace"
 msgstr ""
 
-#: /app/src/tracksController.js:966
+#: /app/src/tracksController.js:967
 msgid "Show elevation"
 msgstr ""
 
-#: /app/src/tracksController.js:1034
+#: /app/src/tracksController.js:1035
 msgid "Failed to change track color"
 msgstr ""
 

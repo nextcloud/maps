@@ -162,7 +162,6 @@ class PhotofilesService {
             $this->photoMapper->deleteByFileIdUserId($fileId, $userId);
         }
     }
-    
 
     public function deleteByFolder(Node $folder) {
         $photos = $this->gatherPhotoFiles($folder, true);
@@ -207,7 +206,7 @@ class PhotofilesService {
                     foreach($nodes as $node) {
                         if ($this->isPhoto($node) and $node->isUpdateable()) {
                             $this->setExifCoords($node, $lat, $lng);
-                            $this->photoMapper->updateByFileId($node->getId(), $lat, $lng);
+                            $this->updateByFileNow($node);
                             $nbDone++;
                         }
                     }
@@ -229,7 +228,7 @@ class PhotofilesService {
                     $lat = (count($lats) > $i) ? $lats[$i] : $lats[0];
                     $lng = (count($lngs) > $i) ? $lngs[$i] : $lngs[0];
                     $this->setExifCoords($file, $lat, $lng);
-                    $this->photoMapper->updateByFileId($file->getId(), $lat, $lng);
+                    $this->updateByFileNow($file);
                     $nbDone++;
                 }
             }

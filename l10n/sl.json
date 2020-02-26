@@ -137,6 +137,7 @@
     "Maximum speed" : "Največja hitrost",
     "Average speed" : "Povprečna hitrost",
     "Show elevation" : "Pokaži višino",
+    "To enable routing, you must set up a routing engine below." : "Za omogočanje priprave načrta potovanja, je treba najprej nastaviti ozadnji program.",
     "OSRM Website" : "Spletišče OSRM",
     "OSRM settings" : "Nastavitve OSRM",
     "An OSRM server URL looks like this : https://my.osrm.server.org:5000/route/v1" : "Naslov URL strežnika OSRM je zapisan kot : https://moj.osrm.strežnik.org:5000/route/v1",

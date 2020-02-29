@@ -610,11 +610,7 @@ import { brify, getUrlParameter, formatAddress } from './utils';
                 }, {
                     text: t('maps', 'Place photos'),
                     icon: photoImageUrl,
-                    callback: photosController.contextPlacePhotos
-                //}, {
-                //    text: t('maps', 'Place photo folder'),
-                //    icon: photoImageUrl,
-                //    callback: photosController.contextPlacePhotoFolder
+                    callback: photosController.contextPlacePhotosOrFolder
                 }, {
                     text: t('maps', 'Place contact'),
                     icon: contactImageUrl,

@@ -383,8 +383,31 @@ PhotosController.prototype = {
         return generateUrl('/apps/theming/img/core/filetypes') + '/image.svg?v=2';
     },
 
-    contextPlacePhotos: function(e) {
+    contextPlacePhotosOrFolder: function(e) {
         var that = this.photosController;
+        OC.dialogs.confirmDestructive(
+            '',
+            t('maps', 'What do you want to place?'),
+            {
+                type: OC.dialogs.YES_NO_BUTTONS,
+                confirm: t('maps', 'Photo files'),
+                confirmClasses: '',
+                cancel: t('maps', 'Photo folders'),
+            },
+            function (result) {
+                if (result) {
+                    that.contextPlacePhotos(e);
+                }
+                else {
+                    that.contextPlacePhotoFolder(e);
+                }
+            },
+            true
+        );
+    },
+
+    contextPlacePhotos: function(e) {
+        var that = this;
         var latlng = e.latlng;
         OC.dialogs.filepicker(
             t('maps', 'Choose pictures to place'),
@@ -398,7 +421,7 @@ PhotosController.prototype = {
     },
 
     contextPlacePhotoFolder: function(e) {
-        var that = this.photosController;
+        var that = this;
         var latlng = e.latlng;
         OC.dialogs.filepicker(
             t('maps', 'Choose directory of pictures to place'),

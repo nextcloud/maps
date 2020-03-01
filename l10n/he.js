@@ -2,6 +2,7 @@ OC.L10N.register(
     "maps",
     {
     "Maps" : "מפות",
+    "Personal" : "אישי",
     "Settings were successfully saved" : "ההגדרות נשמרו בהצלחה",
     "Failed to save settings" : "שמירת ההגדרות נכשלה",
     "There are no contacts to zoom on" : "אין אנשי קשר להתמקד עליהם",
@@ -24,7 +25,6 @@ OC.L10N.register(
     "Phone" : "טלפון",
     "Device" : "התקן",
     "Date" : "תאריך",
-    "Personal" : "אישי",
     "Name" : "שם",
     "Category" : "קטגוריה",
     "Comment" : "הערה",
@@ -77,6 +77,7 @@ OC.L10N.register(
     "End" : "סיום",
     "Search…" : "חיפוש…",
     "Import from gpx/kml/kmz" : "ייבוא מ־gpx/kml/kmz",
+    "Your photos" : "התמונות שלך",
     "Refresh positions" : "לרענן מיקומים",
     "Show all" : "להציג הכול",
     "Hide all" : "להסתיר הכול",

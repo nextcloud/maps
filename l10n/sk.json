@@ -1,5 +1,6 @@
 { "translations": {
     "Maps" : "Mapy",
+    "Personal" : "Osobné",
     "Failed to save settings" : "Nepodarilo sa uložiť nastavenia",
     "Not grouped" : "Bez skupiny",
     "Home" : "Domov",
@@ -11,7 +12,6 @@
     "Phone" : "Telefón",
     "Device" : "Zariadenie",
     "Date" : "Dátum",
-    "Personal" : "Osobné",
     "Name" : "Názov",
     "Category" : "Kategória",
     "Comment" : "Komentár",
@@ -30,6 +30,7 @@
     "File" : "Súbor",
     "Link" : "Odkaz",
     "Description" : "Popis",
+    "download" : "stiahnuť",
     "End" : "Koniec",
     "Your photos" : "Vaše fotografie",
     "Sort by name" : "Zoradiť podľa mena",

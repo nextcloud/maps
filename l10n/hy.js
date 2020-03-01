@@ -1,11 +1,11 @@
 OC.L10N.register(
     "maps",
     {
+    "Personal" : "Անձնական",
     "Rename" : "Վերանվանել",
     "Export" : "Արտահանում",
     "Delete" : "հեռացնել",
     "Date" : "Date",
-    "Personal" : "Անձնական",
     "Name" : "Անուն",
     "Comment" : "Մեկնաբանել",
     "Move" : "Move",

@@ -2,6 +2,7 @@ OC.L10N.register(
     "maps",
     {
     "Maps" : "Газрын зураг",
+    "Personal" : "Хувийн",
     "Not grouped" : "Багт ороогүй",
     "Home" : "Нүүр",
     "Work" : "Ажил",
@@ -12,7 +13,6 @@ OC.L10N.register(
     "Phone" : "Утас",
     "Device" : "Төхөөрөмж",
     "Date" : "Он сар өдөр",
-    "Personal" : "Хувийн",
     "Name" : "Нэр",
     "Category" : "Ангилал",
     "Comment" : "undefined",

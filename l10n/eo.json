@@ -1,5 +1,6 @@
 { "translations": {
     "Maps" : "Mapoj",
+    "Personal" : "Persona",
     "Failed to save settings" : "Konservo de agordoj malsukcesis",
     "Not grouped" : "Ne grupigita",
     "Home" : "Hejmo",
@@ -11,7 +12,6 @@
     "Phone" : "Telefono",
     "Device" : "Aparato",
     "Date" : "Date",
-    "Personal" : "Persona",
     "Name" : "Nomo",
     "Category" : "Kategorio",
     "Comment" : "Komento",

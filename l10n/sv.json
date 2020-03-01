@@ -1,5 +1,7 @@
 { "translations": {
     "Maps" : "Kartor",
+    "Personal" : "Personlig",
+    "🌍🌏🌎 The whole world fits inside your cloud!" : "🌍🌏🌎 Hela världen får plats i ditt moln!",
     "Settings were successfully saved" : "Inställningarna sparades",
     "Failed to save settings" : "Kunde inte spara inställningarna",
     "There are no contacts to zoom on" : "Det finns inga kontakter att zooma på",
@@ -44,7 +46,6 @@
     "Failed to export devices" : "Kunde inte exportera enheter",
     "{nb} devices imported from {path}" : "{nb} enheter importerade från {path}",
     "Failed to import devices" : "Kunde inte importera enheter",
-    "Personal" : "Personlig",
     "Import favorites from gpx (OsmAnd, Nextcloud Maps) or kmz/kml (F-Droid Maps, Maps.me, Marble)" : "Importera favoriter från gpx (OsmAnd, Nextcloud Maps) eller kmz/kml (F-Droid Maps, Maps.me, Marble)",
     "Failed to load favorites" : "Kunde inte ladda favoriter",
     "Add a favorite" : "Lägg till en favorit",
@@ -184,7 +185,6 @@
     "Maximum speed" : "Högsta hastighet",
     "Average speed" : "Medelhastighet",
     "Show elevation" : "Visa höjd",
-    "🌍🌏🌎 The whole world fits inside your cloud!" : "🌍🌏🌎 Hela världen får plats i ditt moln!",
     "OSRM settings" : "OSRM-inställningar",
     "An OSRM server URL looks like this : https://my.osrm.server.org:5000/route/v1" : "En OSRM-serverwebbadress ser ut så här: https://my.osrm.server.org:5000/route/v1",
     "OSRM server URL (car profile)" : "OSRM-serverwebbadress (bilprofil)",

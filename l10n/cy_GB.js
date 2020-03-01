@@ -1,6 +1,7 @@
 OC.L10N.register(
     "maps",
     {
+    "Personal" : "Personol",
     "Not grouped" : "Heb ei grwpio",
     "Home" : "Cartref",
     "Work" : "Gwaith",
@@ -10,7 +11,6 @@ OC.L10N.register(
     "Delete" : "Dileu",
     "Phone" : "Ffôn",
     "Date" : "Date",
-    "Personal" : "Personol",
     "Name" : "Enw",
     "Category" : "Categori",
     "Move" : "Symud",

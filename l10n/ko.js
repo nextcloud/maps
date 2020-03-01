@@ -2,6 +2,7 @@ OC.L10N.register(
     "maps",
     {
     "Maps" : "지도",
+    "Personal" : "개인",
     "Not grouped" : "그룹되지 않음",
     "Home" : "집",
     "Work" : "직장",
@@ -15,7 +16,6 @@ OC.L10N.register(
     "Date" : "날짜",
     "Accuracy" : "정확도",
     "Battery" : "배터리",
-    "Personal" : "개인",
     "Name" : "이름",
     "Category" : "분류",
     "Comment" : "설명",

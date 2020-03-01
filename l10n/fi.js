@@ -2,6 +2,7 @@ OC.L10N.register(
     "maps",
     {
     "Maps" : "Kartat",
+    "Personal" : "Henkilökohtainen",
     "Settings were successfully saved" : "Asetukset tallennettiin onnistuneesti",
     "Failed to save settings" : "Asetusten tallentaminen epäonnistui",
     "Not grouped" : "Ei ryhmitelty",
@@ -27,7 +28,6 @@ OC.L10N.register(
     "Elevation" : "Korkeus",
     "Accuracy" : "Tarkkuus",
     "Battery" : "Akku",
-    "Personal" : "Henkilökohtainen",
     "Failed to load favorites" : "Suosikkien lataaminen epäonnistui",
     "Add a favorite" : "Lisää suosikki",
     "Category deleted" : "Luokka poistettu",

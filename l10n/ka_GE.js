@@ -2,6 +2,7 @@ OC.L10N.register(
     "maps",
     {
     "Maps" : "რუკები",
+    "Personal" : "პირადი",
     "Not grouped" : "არაა დაჯგუფებული",
     "Home" : "სახლი",
     "Work" : "სამსახური",
@@ -12,7 +13,6 @@ OC.L10N.register(
     "Phone" : "ტელეფონი",
     "Device" : "მოწყობილობა",
     "Date" : "თარიღი",
-    "Personal" : "პირადი",
     "Name" : "სახელი",
     "Category" : "კატეგორია",
     "Comment" : "კომენტარი",

@@ -1,3 +1,5 @@
+import { generateUrl } from "@nextcloud/router";
+
 (function() {
     if (!OCA.Maps) {
         OCA.Maps = {};
@@ -7,7 +9,7 @@
 function setMapsRoutingSettings(key, value) {
     var values = {};
     values[key] = value;
-    var url = OC.generateUrl('/apps/maps/setRoutingSettings');
+    var url = generateUrl('/apps/maps/setRoutingSettings');
     var req = {
         values: values
     }

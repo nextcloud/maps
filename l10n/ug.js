@@ -1,6 +1,7 @@
 OC.L10N.register(
     "maps",
     {
+    "Personal" : "شەخسىي",
     "Home" : "ئۆي",
     "Work" : "ئىش",
     "Rename" : "ئات ئۆزگەرت",
@@ -8,7 +9,6 @@ OC.L10N.register(
     "Delete" : "ئۆچۈر",
     "Phone" : "تېلېفون",
     "Date" : "Date",
-    "Personal" : "شەخسىي",
     "Name" : "ئاتى",
     "Move" : "Move",
     "Destination" : "Destination",

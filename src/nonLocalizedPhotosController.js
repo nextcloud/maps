@@ -1,3 +1,5 @@
+import { generateUrl } from '@nextcloud/router';
+
 function NonLocalizedPhotosController (optionsController, timeFilterController, photosController) {
     this.PHOTO_MARKER_VIEW_SIZE = 40;
     this.nonLocalizedPhotosDataLoaded = false;
@@ -41,7 +43,7 @@ NonLocalizedPhotosController.prototype = {
             }
         });
         // menu entry icon
-        var picimgurl = OC.generateUrl('/svg/core/places/picture?color=eca700');
+        var picimgurl = generateUrl('/svg/core/places/picture?color=eca700');
         $('#navigation-nonLocalizedPhotos > a.icon-picture').attr('style', 'background-image: url('+picimgurl+');')
         // click on nonLocalizedPhoto menu entry
         $('body').on('click', '#navigation-nonLocalizedPhotos > a', function(e) {
@@ -266,7 +268,7 @@ NonLocalizedPhotosController.prototype = {
         this.nonLocalizedPhotosRequestInProgress = true;
         $('#navigation-nonLocalizedPhotos').addClass('icon-loading-small');
         $.ajax({
-            url: OC.generateUrl('apps/maps/photos/nonlocalized'),
+            url: generateUrl('apps/maps/photos/nonlocalized'),
             type: 'GET',
             async: true,
             context: this
@@ -311,16 +313,16 @@ NonLocalizedPhotosController.prototype = {
 
     /* Preview size 32x32 is used in files view, so it sould be generated */
     generateThumbnailUrl: function (filename) {
-        return OC.generateUrl('core') + '/preview.png?file=' + encodeURI(filename) + '&x=32&y=32';
+        return generateUrl('core') + '/preview.png?file=' + encodeURI(filename) + '&x=32&y=32';
     },
 
     /* Preview size 341x256 is commonly found in preview folder */
     generatePreviewUrl: function (fileId) {
-        return OC.generateUrl('core') + '/preview?fileId=' + fileId + '&x=341&y=256&a=1';
+        return generateUrl('core') + '/preview?fileId=' + fileId + '&x=341&y=256&a=1';
     },
 
     getImageIconUrl: function() {
-        return OC.generateUrl('/apps/theming/img/core/filetypes') + '/image.svg?v=2';
+        return generateUrl('/apps/theming/img/core/filetypes') + '/image.svg?v=2';
     },
 
     menuSaveAllVisible: function(e) {
@@ -341,3 +343,4 @@ NonLocalizedPhotosController.prototype = {
     },
 };
 
+export default NonLocalizedPhotosController;

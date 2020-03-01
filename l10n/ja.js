@@ -2,6 +2,7 @@ OC.L10N.register(
     "maps",
     {
     "Maps" : "地図",
+    "Personal" : "個人",
     "Settings were successfully saved" : "設定は保存されました",
     "Failed to save settings" : "設定の保存に失敗しました",
     "Not grouped" : "グループ化されていません",
@@ -42,7 +43,6 @@ OC.L10N.register(
     "Failed to export devices" : "端末をエクスポートできませんでした",
     "{nb} devices imported from {path}" : "{path}からインポートされた{nb}端末",
     "Failed to import devices" : "端末のインポートに失敗",
-    "Personal" : "個人",
     "Import favorites from gpx (OsmAnd, Nextcloud Maps) or kmz/kml (F-Droid Maps, Maps.me, Marble)" : "gpxファイル（OsmAnd、Nextcloud Maps）またはkmz / kmlファイル（F-Droidマップ、Maps.me、Marble）からお気に入りをインポートする",
     "Failed to load favorites" : "お気に入りを読み込めませんでした",
     "Add a favorite" : "お気に入りを追加",

@@ -1,6 +1,7 @@
 OC.L10N.register(
     "maps",
     {
+    "Personal" : "Osobno",
     "Not grouped" : "Nije grupirano",
     "Home" : "Početna stranica",
     "Work" : "Posao",
@@ -9,7 +10,6 @@ OC.L10N.register(
     "Delete" : "Obriši",
     "Phone" : "Telefon",
     "Date" : "Date",
-    "Personal" : "Osobno",
     "Name" : "Ime",
     "Comment" : "Komentar",
     "Move" : "Move",

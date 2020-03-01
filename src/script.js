@@ -1,9 +1,72 @@
+/**
+ * Nextcloud - Maps
+ *
+ * @author Gary Kim <gary@garykim.dev>
+ *
+ * @copyright Copyright (c) 2020, Gary Kim <gary@garykim.dev>
+ *
+ * @license GNU AGPL version 3 or any later version
+ *
+ * This code is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License, version 3,
+ * as published by the Free Software Foundation.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License, version 3,
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>
+ *
+ */
+import 'leaflet/dist/leaflet';
+import 'leaflet/dist/leaflet.css';
+import 'leaflet.locatecontrol/dist/L.Control.Locate.min';
+import 'leaflet.locatecontrol/dist/L.Control.Locate.min.css';
+import 'leaflet.markercluster/dist/leaflet.markercluster';
+import 'leaflet.markercluster/dist/MarkerCluster.css';
+import 'leaflet.markercluster/dist/MarkerCluster.Default.css'
+import 'leaflet.elevation/dist/Leaflet.Elevation-0.0.2.min';
+import 'leaflet.elevation/dist/Leaflet.Elevation-0.0.2.css';
+import 'leaflet-control-geocoder/dist/Control.Geocoder';
+import 'leaflet-control-geocoder/dist/Control.Geocoder.css';
+import 'leaflet-mouse-position/src/L.Control.MousePosition';
+import 'leaflet-mouse-position/src/L.Control.MousePosition.css';
+import 'leaflet-contextmenu/dist/leaflet.contextmenu.min';
+import 'leaflet-contextmenu/dist/leaflet.contextmenu.min.css';
+import 'leaflet-easybutton/src/easy-button';
+import 'leaflet-easybutton/src/easy-button.css';
+import 'leaflet-routing-machine/dist/leaflet-routing-machine';
+import 'leaflet-routing-machine/dist/leaflet-routing-machine.css';
+import 'lrm-graphhopper';
+import 'leaflet.featuregroup.subgroup/dist/leaflet.featuregroup.subgroup';
+import 'd3';
+import 'mapbox-gl/dist/mapbox-gl';
+import 'mapbox-gl-leaflet/leaflet-mapbox-gl';
+import '@fortawesome/fontawesome-free/css/all.min.css';
+
+import noUiSlider from 'nouislider';
+import 'nouislider/distribute/nouislider.css';
+import opening_hours from 'opening_hours';
+
+import { generateUrl } from '@nextcloud/router';
+
+import ContactsController from './contactsController';
+import DevicesController from './devicesController';
+import FavoritesController from './favoritesController';
+import NonLocalizedPhotosController from './nonLocalizedPhotosController';
+import PhotosController from './photosController';
+import TracksController from './tracksController';
+
+import { brify, getUrlParameter, formatAddress } from './utils';
+
 (function($, OC) {
     $(function() {
         // avoid sidebar to appear when grabing map to the right
         OC.disallowNavigationBarSlideGesture();
         if (window.isSecureContext && window.navigator.registerProtocolHandler) {
-            window.navigator.registerProtocolHandler('geo', OC.generateUrl('/apps/maps/openGeoLink/') + '%s', 'Nextcloud Maps');
+            window.navigator.registerProtocolHandler('geo', generateUrl('/apps/maps/openGeoLink/') + '%s', 'Nextcloud Maps');
         }
         mapController.initMap();
         mapController.map.favoritesController = favoritesController;
@@ -155,7 +218,7 @@
             var req = {
                 options: optionValues
             };
-            var url = OC.generateUrl('/apps/maps/saveOptionValue');
+            var url = generateUrl('/apps/maps/saveOptionValue');
             $.ajax({
                 type: 'POST',
                 url: url,
@@ -171,7 +234,7 @@
 
         restoreOptions: function () {
             var that = this;
-            var url = OC.generateUrl('/apps/maps/getOptionsValues');
+            var url = generateUrl('/apps/maps/getOptionsValues');
             var req = {};
             var optionsValues = {};
             $.ajax({
@@ -208,7 +271,7 @@
                     catch (x) { gl = null; }
                 }
 
-                if (optionsValues.hasOwnProperty('mapboxAPIKEY') && optionsValues.mapboxAPIKEY !== '' && gl == null) {
+                if (optionsValues.hasOwnProperty('mapboxAPIKEY') && optionsValues.mapboxAPIKEY !== '' && gl != null) {
                     // change "button" layers
                     delete mapController.baseLayers['OpenStreetMap'];
                     delete mapController.baseLayers['ESRI Aerial'];
@@ -522,13 +585,13 @@
                 ext: 'jpg',
                 subdomains: 'abcd'
             });
-            var starImageUrl = OC.generateUrl('/svg/core/actions/star-dark?color=000000');
-            var markerRedImageUrl = OC.generateUrl('/svg/core/actions/address?color=EE3333');
-            var markerBlueImageUrl = OC.generateUrl('/svg/core/actions/address?color=3333EE');
-            var markerGreenImageUrl = OC.generateUrl('/svg/core/actions/address?color=33EE33');
-            var photoImageUrl = OC.generateUrl('/svg/core/places/picture?color=000000');
-            var contactImageUrl = OC.generateUrl('/svg/core/actions/user?color=000000');
-            var shareImageUrl = OC.generateUrl('/svg/core/actions/share?color=000000');
+            var starImageUrl = generateUrl('/svg/core/actions/star-dark?color=000000');
+            var markerRedImageUrl = generateUrl('/svg/core/actions/address?color=EE3333');
+            var markerBlueImageUrl = generateUrl('/svg/core/actions/address?color=3333EE');
+            var markerGreenImageUrl = generateUrl('/svg/core/actions/address?color=33EE33');
+            var photoImageUrl = generateUrl('/svg/core/places/picture?color=000000');
+            var contactImageUrl = generateUrl('/svg/core/actions/user?color=000000');
+            var shareImageUrl = generateUrl('/svg/core/actions/share?color=000000');
             this.map = L.map('map', {
                 zoom: 2,
                 zoomControl: false,
@@ -996,7 +1059,7 @@
                         $('.leaflet-routing-container').prepend(
                             '<p class="no-routing-engine-warning">' +
                             t('maps', 'Routing is currently disabled.') +
-                            `<a href="${OC.generateUrl('/settings/admin/additional#routing')}" title="${escapeHTML(t('maps', 'Nextcloud additional settings'))}" target="_blank">${t('maps', 'Add a routing service')}</a>` +
+                            `<a href="${generateUrl('/settings/admin/additional#routing')}" title="${escapeHTML(t('maps', 'Nextcloud additional settings'))}" target="_blank">${t('maps', 'Add a routing service')}</a>` +
                             '</p>'
                         );
                     }
@@ -1161,7 +1224,7 @@
                     totDist: totDist,
                     totTime: totTime
                 };
-                var url = OC.generateUrl('/apps/maps/exportRoute');
+                var url = generateUrl('/apps/maps/exportRoute');
                 $.ajax({
                     type: 'POST',
                     url: url,
@@ -1462,7 +1525,7 @@
             // to make 'one three' match 'one two three' for example.
             // search terms in the same order
             $.ui.autocomplete.filter = function (array, terms) {
-                arrayOfTerms = terms.split(' ');
+                let arrayOfTerms = terms.split(' ');
                 var term = $.map(arrayOfTerms, function (tm) {
                     return $.ui.autocomplete.escapeRegex(tm);
                 }).join('.*');
@@ -1714,7 +1777,7 @@
         },
 
         getExtraAutocompleteData: function(field) {
-            data = [];
+            let data = [];
             if (navigator.geolocation && window.isSecureContext) {
                 data.push({
                     type: 'mylocation',

@@ -2,6 +2,7 @@ OC.L10N.register(
     "maps",
     {
     "Maps" : "Kart",
+    "Personal" : "Personlig",
     "Settings were successfully saved" : "Innstillinger lagret",
     "Failed to save settings" : "Klarte ikke å lagre innstillinger",
     "Not grouped" : "Ikke gruppert",
@@ -30,7 +31,6 @@ OC.L10N.register(
     "Battery" : "Batteri",
     "Failed to export devices" : "Klarte ikke å eksportere enheter",
     "Failed to import devices" : "Klarte ikke å importere enheter",
-    "Personal" : "Personlig",
     "Failed to load favorites" : "Klarte ikke å laste inn favoritter",
     "Add a favorite" : "Legg til i favoritter",
     "Category deleted" : "Kategori slettet",

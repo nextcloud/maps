@@ -1,3 +1,8 @@
+import { generateUrl } from '@nextcloud/router';
+
+import { Timer, getLetterColor, hslToRgb } from './utils';
+
+
 function generateSharingUrl(token) {
   return window.location.origin + OC.generateUrl("/apps/maps/s/favorites/" + token);
 }
@@ -484,7 +489,7 @@ FavoritesController.prototype = {
 
         $.when(
             $.ajax({
-            url: OC.generateUrl('/apps/maps/favorites'),
+            url: generateUrl('/apps/maps/favorites'),
             data: {},
             type: 'GET',
             async: true,
@@ -563,7 +568,7 @@ FavoritesController.prototype = {
         var checkboxId = 'checkbox-' + name.toLowerCase();
 
         // side menu entry
-        var imgurl = OC.generateUrl('/svg/core/actions/star?color='+color);
+        var imgurl = generateUrl('/svg/core/actions/star?color='+color);
         var li = '<li class="category-line" id="'+name+'-category" category="'+rawName+'">' +
             '    <a href="#" class="category-name" id="'+name+'-category-name" style="background-image: url('+imgurl+')">'+rawName+'</a>' +
             '    <div class="app-navigation-entry-utils">' +
@@ -633,7 +638,7 @@ FavoritesController.prototype = {
         var beforeThis = null;
         var rawLower = rawName.toLowerCase();
         $('#category-list > li').each(function() {
-            catName = $(this).attr('category');
+            var catName = $(this).attr('category');
             if (rawLower.localeCompare(catName) < 0) {
                 beforeThis = $(this);
                 return false;
@@ -663,7 +668,7 @@ FavoritesController.prototype = {
             categories: origCatList,
             newName: newCategoryName
         };
-        var url = OC.generateUrl('/apps/maps/favorites-category');
+        var url = generateUrl('/apps/maps/favorites-category');
         $.ajax({
             type: 'PUT',
             url: url,
@@ -697,7 +702,7 @@ FavoritesController.prototype = {
         var req = {
             ids: favids
         };
-        var url = OC.generateUrl('/apps/maps/favorites');
+        var url = generateUrl('/apps/maps/favorites');
         $.ajax({
             type: 'DELETE',
             url: url,
@@ -802,7 +807,7 @@ FavoritesController.prototype = {
             comment: comment,
             extensions: extensions
         };
-        var url = OC.generateUrl('/apps/maps/favorites');
+        var url = generateUrl('/apps/maps/favorites');
         $.ajax({
             type: 'POST',
             url: url,
@@ -825,7 +830,7 @@ FavoritesController.prototype = {
     // add a marker to the corresponding layer
     addFavoriteMap: function(fav, enableCategory=false, fromUserAction=false, shareToken = null) {
         // manage category first
-        cat = fav.category;
+        var cat = fav.category;
         if (!this.categoryLayers.hasOwnProperty(cat)) {
             this.addCategory(cat, enableCategory, shareToken);
             if (enableCategory) {
@@ -1041,7 +1046,7 @@ FavoritesController.prototype = {
         $('.leaflet-container').css('cursor', 'wait');
         var req = {
         };
-        var url = OC.generateUrl('/apps/maps/favorites/'+favid);
+        var url = generateUrl('/apps/maps/favorites/'+favid);
         $.ajax({
             type: 'DELETE',
             url: url,
@@ -1113,7 +1118,7 @@ FavoritesController.prototype = {
         if (lng) {
             req.lng = lng;
         }
-        var url = OC.generateUrl('/apps/maps/favorites/'+favid);
+        var url = generateUrl('/apps/maps/favorites/'+favid);
         $.ajax({
             type: 'PUT',
             url: url,
@@ -1222,7 +1227,7 @@ FavoritesController.prototype = {
             begin: begin,
             end: end
         };
-        var url = OC.generateUrl('/apps/maps/export/favorites');
+        var url = generateUrl('/apps/maps/export/favorites');
         $.ajax({
             type: 'POST',
             url: url,
@@ -1245,7 +1250,7 @@ FavoritesController.prototype = {
         var req = {
             path: path
         };
-        var url = OC.generateUrl('/apps/maps/import/favorites');
+        var url = generateUrl('/apps/maps/import/favorites');
         $.ajax({
             type: 'POST',
             url: url,
@@ -1301,3 +1306,4 @@ FavoritesController.prototype = {
 
 }
 
+export default FavoritesController;

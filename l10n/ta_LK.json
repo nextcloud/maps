@@ -1,4 +1,5 @@
 { "translations": {
+    "Personal" : "தனிப்பட்ட",
     "Home" : "அகம்",
     "Work" : "வேலை",
     "Rename" : "பெயர்மாற்றம்",
@@ -6,7 +7,6 @@
     "Delete" : "நீக்குக",
     "Phone" : "தொலைப்பேசி",
     "Date" : "Date",
-    "Personal" : "தனிப்பட்ட",
     "Name" : "பெயர்",
     "Move" : "Move",
     "Destination" : "Destination",

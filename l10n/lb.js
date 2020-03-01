@@ -2,6 +2,7 @@ OC.L10N.register(
     "maps",
     {
     "Maps" : "Kaarten",
+    "Personal" : "Perséinlech",
     "Home" : "Doheem",
     "Work" : "Aarbecht",
     "Rename" : "Ëmbenennen",
@@ -9,7 +10,6 @@ OC.L10N.register(
     "Delete" : "Läschen",
     "Phone" : "Telefon",
     "Date" : "Date",
-    "Personal" : "Perséinlech",
     "Name" : "Numm",
     "Comment" : "Kommentar",
     "Move" : "Verschieben",

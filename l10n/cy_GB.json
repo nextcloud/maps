@@ -1,4 +1,5 @@
 { "translations": {
+    "Personal" : "Personol",
     "Not grouped" : "Heb ei grwpio",
     "Home" : "Cartref",
     "Work" : "Gwaith",
@@ -8,7 +9,6 @@
     "Delete" : "Dileu",
     "Phone" : "Ffôn",
     "Date" : "Date",
-    "Personal" : "Personol",
     "Name" : "Enw",
     "Category" : "Categori",
     "Move" : "Symud",

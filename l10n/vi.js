@@ -2,6 +2,7 @@ OC.L10N.register(
     "maps",
     {
     "Maps" : "Bản đồ",
+    "Personal" : "Cá nhân",
     "Not grouped" : "Không  nhóm",
     "Home" : "Trang nhất",
     "Work" : "Công việc",
@@ -12,7 +13,6 @@ OC.L10N.register(
     "Phone" : "Điện thoại",
     "Device" : "Thiết bị",
     "Date" : "Date",
-    "Personal" : "Cá nhân",
     "Name" : "Tên",
     "Comment" : "Bình luận",
     "Submit" : "Gửi đi",

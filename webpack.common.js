@@ -5,6 +5,8 @@ const StyleLintPlugin = require('stylelint-webpack-plugin')
 
 module.exports = {
 	entry: {
+        adminSettings: path.join(__dirname, 'src', 'adminSettings.js'),
+        script: path.join(__dirname, 'src', 'script.js'),
 		'public-favorite-share': path.join(__dirname, 'src', 'publicFavoriteShare.js'),
 	},
 	output: {
@@ -54,6 +56,10 @@ module.exports = {
 					publicPath: '/apps/maps/img/',
 				},
 			},
+            {
+                test: /\.(woff|woff2|eot|ttf)$/,
+                loader: 'url-loader',
+            }
 		],
 	},
 	plugins: [
@@ -64,6 +70,7 @@ module.exports = {
 		new StyleLintPlugin({
 			files: ['**/*.{vue,htm,html,css,sss,less,scss,sass}'],
 		}),
+        new CleanWebpackPlugin(),
 	],
 	resolve: {
 		extensions: ['*', '.js', '.vue', '.json'],

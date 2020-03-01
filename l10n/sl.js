@@ -2,6 +2,7 @@ OC.L10N.register(
     "maps",
     {
     "Maps" : "Zemljevidi",
+    "Personal" : "Osebno",
     "Settings were successfully saved" : "Nastavitve so uspešno shranjene",
     "Failed to save settings" : "Shranjevanje nastavitev je spodletelo",
     "Not grouped" : "Brez skupine",
@@ -40,7 +41,6 @@ OC.L10N.register(
     "Battery" : "Baterija",
     "Failed to export devices" : "Izvažanje naprav je spodletelo",
     "Failed to import devices" : "Uvažanje naprav je spodletelo",
-    "Personal" : "Osebno",
     "Failed to load favorites" : "Nalaganje priljubljenih je spodletelo",
     "Add a favorite" : "Dodaj med priljubljene",
     "Category deleted" : "Kategorija je izbrisana",
@@ -139,6 +139,7 @@ OC.L10N.register(
     "Maximum speed" : "Največja hitrost",
     "Average speed" : "Povprečna hitrost",
     "Show elevation" : "Pokaži višino",
+    "To enable routing, you must set up a routing engine below." : "Za omogočanje priprave načrta potovanja, je treba najprej nastaviti ozadnji program.",
     "OSRM Website" : "Spletišče OSRM",
     "OSRM settings" : "Nastavitve OSRM",
     "An OSRM server URL looks like this : https://my.osrm.server.org:5000/route/v1" : "Naslov URL strežnika OSRM je zapisan kot : https://moj.osrm.strežnik.org:5000/route/v1",

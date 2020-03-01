@@ -2,12 +2,12 @@ OC.L10N.register(
     "maps",
     {
     "Maps" : "ನಕಾಶೆ",
+    "Personal" : "﻿ವೈಯಕ್ತಿಕ",
     "Home" : "﻿ಮುಖಪುಟ",
     "Rename" : "﻿ಮರುಹೆಸರಿಸು",
     "Export" : "ರಫ್ತು",
     "Delete" : "﻿ಅಳಿಸಿ",
     "Date" : "Date",
-    "Personal" : "﻿ವೈಯಕ್ತಿಕ",
     "Name" : "﻿ಹೆಸರು",
     "Move" : "Move",
     "right" : "ಬಲ",

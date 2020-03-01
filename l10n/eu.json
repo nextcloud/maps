@@ -1,5 +1,7 @@
 { "translations": {
     "Maps" : "Mapak",
+    "Personal" : "Pertsonala",
+    "🌍🌏🌎 The whole world fits inside your cloud!" : "🌍🌏🌎 Mundu osoa sartzen da zure hodeian!",
     "Settings were successfully saved" : "Ezarpenak ongi gorde dira",
     "Failed to save settings" : "Huts egin du ezarpenak gordetzean",
     "There are no contacts to zoom on" : "Ez dago kontakturik zooma hurbiltzeko",
@@ -32,7 +34,6 @@
     "Accuracy" : "Zehaztasuna",
     "Battery" : "Bateria",
     "Devices exported in {path}" : "Gailuak esportatuak hemen {bidea}",
-    "Personal" : "Pertsonala",
     "Add a favorite" : "Gehitu gogoko bat",
     "Category deleted" : "Kategoria ezabatuta",
     "Failed to rename category" : "Huts egin du kategoriari izena aldatzean",
@@ -119,7 +120,6 @@
     "Maximum speed" : "Gehieneko abiadura",
     "Average speed" : "Batez besteko abiadura",
     "Show elevation" : "Erakutsi elebazioa",
-    "🌍🌏🌎 The whole world fits inside your cloud!" : "🌍🌏🌎 Mundu osoa sartzen da zure hodeian!",
     "OSRM Website" : "OSRM webgunea",
     "OSRM settings" : "OSRM ezarpenak",
     "Mapbox Website" : "Mapbox webgunea",

@@ -1,5 +1,6 @@
 { "translations": {
     "Maps" : "Peta",
+    "Personal" : "Personal",
     "Not grouped" : "Tidak dikelompokkan",
     "Home" : "Beranda",
     "Work" : "Kantor",
@@ -10,7 +11,6 @@
     "Phone" : "Telpon",
     "Device" : "Perangkat",
     "Date" : "Date",
-    "Personal" : "Personal",
     "Name" : "Nama",
     "Category" : "Kategori",
     "Comment" : "Komentar",

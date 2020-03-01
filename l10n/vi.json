@@ -1,5 +1,6 @@
 { "translations": {
     "Maps" : "Bản đồ",
+    "Personal" : "Cá nhân",
     "Not grouped" : "Không  nhóm",
     "Home" : "Trang nhất",
     "Work" : "Công việc",
@@ -10,7 +11,6 @@
     "Phone" : "Điện thoại",
     "Device" : "Thiết bị",
     "Date" : "Date",
-    "Personal" : "Cá nhân",
     "Name" : "Tên",
     "Comment" : "Bình luận",
     "Submit" : "Gửi đi",

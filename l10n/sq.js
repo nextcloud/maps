@@ -2,6 +2,7 @@ OC.L10N.register(
     "maps",
     {
     "Maps" : "Harta",
+    "Personal" : "Personale",
     "Not grouped" : "I pagrupuar",
     "Home" : "Kryefaqja",
     "Work" : "Punë",
@@ -12,7 +13,6 @@ OC.L10N.register(
     "Phone" : "Telefon",
     "Device" : "Pajisje",
     "Date" : "Data",
-    "Personal" : "Personale",
     "Name" : "Emri",
     "Category" : "Kategori",
     "Comment" : "Koment",

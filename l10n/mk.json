@@ -1,5 +1,7 @@
 { "translations": {
     "Maps" : "Мапи",
+    "Personal" : "Лично",
+    "Failed to save settings" : "Неуспешно зачувување на параметрите",
     "Not grouped" : "Не групирани",
     "Home" : "Дома",
     "Work" : "Работа",
@@ -10,7 +12,6 @@
     "Phone" : "Телефон",
     "Device" : "Уред",
     "Date" : "Date",
-    "Personal" : "Лично",
     "Name" : "Име",
     "Category" : "Категорија",
     "Comment" : "Коментар",
@@ -22,6 +23,7 @@
     "Destination" : "Destination",
     "min" : "мин",
     "Cinema" : "Кино",
+    "Dentist" : "Заболекар",
     "Add to favorites" : "Додади во фаворити",
     "Open" : "Отвори",
     "File" : "Датотека",

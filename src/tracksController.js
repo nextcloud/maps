@@ -1,3 +1,7 @@
+import { generateUrl } from '@nextcloud/router';
+
+import { dirname, brify, metersToDistance, metersToElevation, kmphToSpeed, minPerKmToPace, formatTimeSeconds, getUrlParameter } from './utils';
+
 function TracksController(optionsController, timeFilterController) {
     this.track_MARKER_VIEW_SIZE = 30;
     this.optionsController = optionsController;
@@ -312,7 +316,7 @@ TracksController.prototype = {
         var path = track.file_path;
 
         // side menu entry
-        var imgurl = OC.generateUrl('/svg/core/categories/monitoring?color='+color.replace('#', ''));
+        var imgurl = generateUrl('/svg/core/categories/monitoring?color='+color.replace('#', ''));
         var li = '<li class="track-line" id="'+name+'-track" track="'+track.id+'" name="'+name+'">' +
         '    <a href="#" class="track-name" id="'+name+'-track-name" title="'+escapeHTML(path)+'" style="background-image: url('+imgurl+')">'+name+'</a>' +
         '    <div class="app-navigation-entry-utils">' +
@@ -400,7 +404,7 @@ TracksController.prototype = {
         var that = this;
         $('#navigation-tracks').addClass('icon-loading-small');
         var req = {};
-        var url = OC.generateUrl('/apps/maps/tracks');
+        var url = generateUrl('/apps/maps/tracks');
         $.ajax({
             type: 'GET',
             url: url,
@@ -479,7 +483,7 @@ TracksController.prototype = {
         var that = this;
         $('#track-list > li[track="'+id+'"]').addClass('icon-loading-small');
         var req = {};
-        var url = OC.generateUrl('/apps/maps/tracks/'+id);
+        var url = generateUrl('/apps/maps/tracks/'+id);
         $.ajax({
             type: 'GET',
             url: url,
@@ -543,6 +547,7 @@ TracksController.prototype = {
         });
 
         var trks = gpxx.find('trk');
+        var name, cmt, desc, linkText, linkUrl, popupText, date;
         trks.each(function() {
             name = $(this).find('>name').text();
             cmt = $(this).find('>cmt').text();
@@ -708,7 +713,7 @@ TracksController.prototype = {
 
     getLinePopupText: function(id, name, cmt, desc, linkText, linkUrl) {
         var meta = this.tracks[id].metadata;
-        var url = OC.generateUrl('/apps/files/ajax/download.php');
+        var url = generateUrl('/apps/files/ajax/download.php');
         var dir = encodeURIComponent(dirname(this.tracks[id].file_path)) || '/';
         var file = encodeURIComponent(this.tracks[id].file_name);
         var dl_url = '"' + url + '?dir=' + dir + '&files=' + file + '"';
@@ -1013,14 +1018,14 @@ TracksController.prototype = {
         var req = {
             color: color
         };
-        var url = OC.generateUrl('/apps/maps/tracks/'+id);
+        var url = generateUrl('/apps/maps/tracks/'+id);
         $.ajax({
             type: 'PUT',
             url: url,
             data: req,
             async: true
         }).done(function (response) {
-            var imgurl = OC.generateUrl('/svg/core/categories/monitoring?color='+color.replace('#', ''));
+            var imgurl = generateUrl('/svg/core/categories/monitoring?color='+color.replace('#', ''));
             $('#track-list > li[track='+id+'] .track-name').attr('style', 'background-image: url('+imgurl+')');
 
             that.setTrackCss(id, color);
@@ -1034,7 +1039,7 @@ TracksController.prototype = {
     setTrackCss: function(id, color) {
         $('style[track='+id+']').remove();
 
-        var imgurl = OC.generateUrl('/svg/core/categories/monitoring?color='+color.replace('#', ''));
+        var imgurl = generateUrl('/svg/core/categories/monitoring?color='+color.replace('#', ''));
         $('<style track="' + id + '">' +
             '.tooltip' + id + ' { ' +
             'border: 2px solid ' + color + ';' +
@@ -1113,3 +1118,5 @@ TracksController.prototype = {
     },
 
 }
+
+export default TracksController;

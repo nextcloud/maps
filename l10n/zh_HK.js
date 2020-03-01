@@ -2,6 +2,7 @@ OC.L10N.register(
     "maps",
     {
     "Maps" : "地圖",
+    "Personal" : "個人",
     "Home" : "主頁",
     "Work" : "工作",
     "Rename" : "重新命名",
@@ -9,7 +10,6 @@ OC.L10N.register(
     "Delete" : "刪除",
     "Phone" : "電話",
     "Date" : "Date",
-    "Personal" : "個人",
     "Name" : "名稱",
     "Move" : "Move",
     "Destination" : "Destination",

@@ -1,3 +1,7 @@
+import { generateUrl } from '@nextcloud/router';
+
+import { Timer, brify, isComputer, isPhone, getDeviceInfoFromUserAgent2 } from './utils';
+
 function DevicesController(optionsController, timeFilterController) {
     this.device_MARKER_VIEW_SIZE = 30;
     this.optionsController = optionsController;
@@ -245,7 +249,7 @@ DevicesController.prototype = {
         var that = this;
         $('#navigation-devices').addClass('icon-loading-small');
         var req = {};
-        var url = OC.generateUrl('/apps/maps/devices');
+        var url = generateUrl('/apps/maps/devices');
         $.ajax({
             type: 'GET',
             url: url,
@@ -302,10 +306,10 @@ DevicesController.prototype = {
         // side menu entry
         var imgurl;
         if (isComputer(name)) {
-            imgurl = OC.generateUrl('/svg/core/clients/desktop?color='+color.replace('#', ''));
+            imgurl = generateUrl('/svg/core/clients/desktop?color='+color.replace('#', ''));
         }
         else {
-            imgurl = OC.generateUrl('/svg/core/clients/phone?color='+color.replace('#', ''));
+            imgurl = generateUrl('/svg/core/clients/phone?color='+color.replace('#', ''));
         }
         var li = '<li class="device-line" id="'+name+'-device" device="'+id+'" name="'+name+'">' +
         '    <a href="#" class="device-name" id="'+name+'-device-name" title="'+device.user_agent+'" style="background-image: url('+imgurl+')">'+name+'</a>' +
@@ -397,10 +401,10 @@ DevicesController.prototype = {
 
         var imgurl;
         if (isComputer(this.devices[id].user_agent)) {
-            imgurl = OC.generateUrl('/svg/core/clients/desktop?color='+color.replace('#', ''));
+            imgurl = generateUrl('/svg/core/clients/desktop?color='+color.replace('#', ''));
         }
         else {
-            imgurl = OC.generateUrl('/svg/core/clients/phone?color='+color.replace('#', ''));
+            imgurl = generateUrl('/svg/core/clients/phone?color='+color.replace('#', ''));
         }
         $('<style device="' + id + '">' +
             '.tooltip-dev-' + id + ' { ' +
@@ -431,7 +435,7 @@ DevicesController.prototype = {
         var req = {
             name: newDeviceName
         };
-        var url = OC.generateUrl('/apps/maps/devices/'+id);
+        var url = generateUrl('/apps/maps/devices/'+id);
         $.ajax({
             type: 'PUT',
             url: url,
@@ -443,10 +447,10 @@ DevicesController.prototype = {
             var color = device.color;
             var imgurl;
             if (isComputer(newDeviceName)) {
-                imgurl = OC.generateUrl('/svg/core/clients/desktop?color='+color.replace('#', ''));
+                imgurl = generateUrl('/svg/core/clients/desktop?color='+color.replace('#', ''));
             }
             else {
-                imgurl = OC.generateUrl('/svg/core/clients/phone?color='+color.replace('#', ''));
+                imgurl = generateUrl('/svg/core/clients/phone?color='+color.replace('#', ''));
             }
             var name = device.user_agent;
             device.name = name;
@@ -470,7 +474,7 @@ DevicesController.prototype = {
         $('#navigation-devices').addClass('icon-loading-small');
         $('.leaflet-container').css('cursor', 'wait');
         var req = {};
-        var url = OC.generateUrl('/apps/maps/devices/'+id);
+        var url = generateUrl('/apps/maps/devices/'+id);
         $.ajax({
             type: 'DELETE',
             url: url,
@@ -593,7 +597,7 @@ DevicesController.prototype = {
         var that = this;
         $('#device-list > li[device="'+id+'"]').addClass('icon-loading-small');
         var req = {};
-        var url = OC.generateUrl('/apps/maps/devices/'+id);
+        var url = generateUrl('/apps/maps/devices/'+id);
         $.ajax({
             type: 'GET',
             url: url,
@@ -659,7 +663,7 @@ DevicesController.prototype = {
         if (ts) {
             req.pruneBefore = ts;
         }
-        var url = OC.generateUrl('/apps/maps/devices/'+id);
+        var url = generateUrl('/apps/maps/devices/'+id);
         $.ajax({
             type: 'GET',
             url: url,
@@ -838,7 +842,7 @@ DevicesController.prototype = {
             accuracy: acc,
             timestamp: ts
         };
-        var url = OC.generateUrl('/apps/maps/devices');
+        var url = generateUrl('/apps/maps/devices');
         $.ajax({
             type: 'POST',
             url: url,
@@ -880,7 +884,7 @@ DevicesController.prototype = {
         var req = {
             color: color
         };
-        var url = OC.generateUrl('/apps/maps/devices/'+id);
+        var url = generateUrl('/apps/maps/devices/'+id);
         $.ajax({
             type: 'PUT',
             url: url,
@@ -890,10 +894,10 @@ DevicesController.prototype = {
             var imgurl;
             var device = that.devices[id];
             if (isComputer(device.user_agent)) {
-                imgurl = OC.generateUrl('/svg/core/clients/desktop?color='+color.replace('#', ''));
+                imgurl = generateUrl('/svg/core/clients/desktop?color='+color.replace('#', ''));
             }
             else {
-                imgurl = OC.generateUrl('/svg/core/clients/phone?color='+color.replace('#', ''));
+                imgurl = generateUrl('/svg/core/clients/phone?color='+color.replace('#', ''));
             }
             $('#device-list > li[device='+id+'] .device-name').attr('style', 'background-image: url('+imgurl+')');
 
@@ -1094,7 +1098,7 @@ DevicesController.prototype = {
             end: null,
             all: all
         };
-        var url = OC.generateUrl('/apps/maps/export/devices');
+        var url = generateUrl('/apps/maps/export/devices');
         $.ajax({
             type: 'POST',
             url: url,
@@ -1117,7 +1121,7 @@ DevicesController.prototype = {
         var req = {
             path: path
         };
-        var url = OC.generateUrl('/apps/maps/import/devices');
+        var url = generateUrl('/apps/maps/import/devices');
         $.ajax({
             type: 'POST',
             url: url,
@@ -1140,3 +1144,4 @@ DevicesController.prototype = {
 
 }
 
+export default DevicesController;

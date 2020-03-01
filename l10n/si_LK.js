@@ -1,6 +1,7 @@
 OC.L10N.register(
     "maps",
     {
+    "Personal" : "පෞද්ගලික",
     "Home" : "නිවස.",
     "Work" : "කාර්යය",
     "Rename" : "නැවත නම් කරන්න",
@@ -8,7 +9,6 @@ OC.L10N.register(
     "Delete" : "ඉවත් කරන්න",
     "Phone" : "දුරකථන",
     "Date" : "Date",
-    "Personal" : "පෞද්ගලික",
     "Name" : "නම",
     "Comment" : "අදහස",
     "Move" : "Move",

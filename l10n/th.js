@@ -2,6 +2,7 @@ OC.L10N.register(
     "maps",
     {
     "Maps" : "แผนที่",
+    "Personal" : "ส่วนตัว",
     "Not grouped" : "ไม่ถูกจัดกลุ่ม",
     "Home" : "หน้าหลัก",
     "Work" : "ที่ทำงาน",
@@ -11,7 +12,6 @@ OC.L10N.register(
     "Delete" : "ลบ",
     "Phone" : "โทรศัพท์",
     "Date" : "Date",
-    "Personal" : "ส่วนตัว",
     "Name" : "ชื่อ",
     "Comment" : "แสดงความคิดเห็น",
     "Move" : "Move",

@@ -1,5 +1,7 @@
 { "translations": {
     "Maps" : "Žemėlapiai",
+    "Personal" : "Asmeniniai",
+    "🌍🌏🌎 The whole world fits inside your cloud!" : "🌍🌏🌎 Visas pasaulis telpa į jūsų debesiją!",
     "Settings were successfully saved" : "Nustatymai buvo sėkmingai įrašyti",
     "Failed to save settings" : "Nepavyko įrašyti nustatymų",
     "Not grouped" : "Nesugrupuoti",
@@ -29,7 +31,6 @@
     "Accuracy" : "Tikslumas",
     "Failed to export devices" : "Nepavyko eksportuoti įrenginių",
     "Failed to import devices" : "Nepavyko importuoti įrenginių",
-    "Personal" : "Asmeniniai",
     "Category deleted" : "Kategorija ištrinta",
     "Failed to rename category" : "Nepavyko pervadinti kategorijos",
     "Name" : "Vardas",
@@ -79,7 +80,6 @@
     "Duration" : "Trukmė",
     "End" : "Pabaiga",
     "Average speed" : "Vidutinis greitis",
-    "🌍🌏🌎 The whole world fits inside your cloud!" : "🌍🌏🌎 Visas pasaulis telpa į jūsų debesiją!",
     "OSRM settings" : "OSRM nustatymai",
     "An OSRM server URL looks like this : https://my.osrm.server.org:5000/route/v1" : "OSRM serverio URL atrodo štai taip : https://my.osrm.server.org:5000/route/v1",
     "Search…" : "Ieškoti…",

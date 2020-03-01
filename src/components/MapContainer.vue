@@ -57,30 +57,30 @@
 					:key="favorite.id"
 					:lat-lng="[favorite.lat, favorite.lng]"
 					:icon="createNewDivIcon(categoryKey)"
-					@popupopen="handleMarkerPopupOpened(favorite.id)"
-					@popupclose="handleMarkerPopupClosed(favorite.id)"
-					@ready="marker => handleMarkerReady(favorite.id, marker)">
+					@popupopen="storeCurrentlyOpenPopup(favorite.id)"
+					@popupclose="forgetCurrentlyOpenPopup(favorite.id)"
+					@ready="marker => storeMarkerReference(favorite.id, marker)">
 					<LPopup>
 						<FavoritePopup
 							:favorite="favorite"
 							:is-visible="openMarkerPopupId === favorite.id"
 							:allow-category-customization="!isPublicShare"
 							:allow-edits="allowFavoriteEdits"
-							@deleteFavorite="handleDeleteFavorite"
-							@updateFavorite="handleUpdateFavorite" />
+							@deleteFavorite="emitDeleteFavoriteEvent"
+							@updateFavorite="emitUpdateFavoriteEvent" />
 					</LPopup>
 				</LMarker>
 			</LMarkerCluster>
 
 			<LFeatureGroup @ready="onFeatureGroupReady">
-				<LPopup :lat-lng="popup.latLng">
+				<LPopup :lat-lng="placePopup.latLng">
 					<ClickPopup
-						:is-visible="popup.visible"
-						:lat-lng="popup.latLng"
+						:is-visible="placePopup.visible"
+						:lat-lng="placePopup.latLng"
 						:allow-category-customization="!isPublicShare"
 						:allow-edits="allowFavoriteEdits"
-						@close="handlePopupCloseRequest"
-						@addFavorite="handleAddFavorite" />
+						@close="closePopup"
+						@addFavorite="emitAddFavoriteEvent" />
 				</LPopup>
 			</LFeatureGroup>
 		</LMap>
@@ -132,7 +132,7 @@ export default {
 		return {
 			activeLayerId: LayerIds.OSM,
 			openMarkerPopupId: null,
-			popup: {
+			placePopup: {
 				visible: false,
 				latLng: { lat: 0, lng: 0 },
 			},
@@ -206,7 +206,7 @@ export default {
 
 	created() {
 		this.featureGroup = null
-		this.popupWasJustClosed = false
+		this.mapClickPopupLocked = false
 		this.markerMap = []
 	},
 
@@ -219,35 +219,41 @@ export default {
 			this.$refs.map.mapObject.setView(latLng, zoom)
 		},
 
-		handleMarkerReady(favoriteId, marker) {
+		storeMarkerReference(favoriteId, marker) {
 			this.markerMap[favoriteId] = marker
 		},
 
-		handleAddFavorite(data) {
+		emitAddFavoriteEvent(data) {
 			this.$emit('addFavorite', data)
 		},
 
-		handleUpdateFavorite(data) {
+		emitUpdateFavoriteEvent(data) {
 			this.$emit('updateFavorite', data)
 		},
 
-		handleDeleteFavorite(data) {
+		emitDeleteFavoriteEvent(data) {
 			this.$emit('deleteFavorite', data)
 		},
 
-		handleMarkerPopupOpened(id) {
+		storeCurrentlyOpenPopup(id) {
 			this.openMarkerPopupId = id
 		},
 
-		handleMarkerPopupClosed() {
+		forgetCurrentlyOpenPopup() {
+			this.mapClickPopupLocked = true
+
 			this.openMarkerPopupId = null
+
+			this.$nextTick(() => {
+			    this.mapClickPopupLocked = false
+			})
 
 			this.selectFavorite(null)
 		},
 
 		openPopup(lat, lng) {
-			this.popup.visible = true
-			this.popup.latLng = { lat, lng }
+			this.placePopup.visible = true
+			this.placePopup.latLng = { lat, lng }
 			this.featureGroup.openPopup([lat, lng])
 		},
 
@@ -257,18 +263,14 @@ export default {
 		},
 
 		resetPopupState() {
-			this.popup.visible = false
-			this.popup.latLng = { lat: 0, lng: 0 }
+			this.placePopup.visible = false
+			this.placePopup.latLng = { lat: 0, lng: 0 }
 		},
 
 		handleMapClick(e) {
-			if (!this.popup.visible && !this.popupWasJustClosed) {
+			if (!this.placePopup.visible && !this.mapClickPopupLocked) {
 				this.openPopup(e.latlng.lat, e.latlng.lng)
 			}
-		},
-
-		handlePopupCloseRequest() {
-			this.closePopup()
 		},
 
 		createNewDivIcon(categoryKey) {
@@ -304,11 +306,11 @@ export default {
 		handlePopupOpenEvent() {},
 
 		handlePopupCloseEvent() {
-			this.popupWasJustClosed = true
+			this.mapClickPopupLocked = true
 			this.resetPopupState()
 
 			this.$nextTick(() => {
-				this.popupWasJustClosed = false
+				this.mapClickPopupLocked = false
 			})
 		},
 

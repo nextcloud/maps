@@ -25,13 +25,13 @@
 			<AppNavigationNew
 				v-if="allowFavoriteEdits"
 				:text="newFavoriteButtonLabel"
-				@click="handleAddFavoriteClick" />
+				@click="toggleMapMode" />
 			<AppNavigationItem
 				v-for="favorite in favorites"
 				:key="favorite.id"
 				:title="favorite.name || t('maps', '(No name)')"
 				icon="icon-star-dark"
-				@click="handleFavoriteClick(favorite.id)" />
+				@click="selectFavorite(favorite.id)" />
 			<AppNavigationSpacer />
 		</ul>
 
@@ -90,16 +90,12 @@ export default {
 			setMapMode: `${MAP_NAMESPACE}/setMode`,
 		}),
 
-		handleAddFavoriteClick() {
+		toggleMapMode() {
 			if (this.mapMode === MapMode.ADDING_FAVORITES) {
 				this.setMapMode(MapMode.DEFAULT)
 			} else {
 				this.setMapMode(MapMode.ADDING_FAVORITES)
 			}
-		},
-
-		handleFavoriteClick(id) {
-			this.selectFavorite(id)
 		},
 	},
 }

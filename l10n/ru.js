@@ -44,6 +44,7 @@ OC.L10N.register(
     "Elevation" : "Высота",
     "Accuracy" : "Точность",
     "Battery" : "Заряд",
+    "Failed to export devices" : "Не удалось экспортировать устройства",
     "Add a favorite" : "Добавить в избранное",
     "Category deleted" : "Категория удалена",
     "Failed to rename category" : "Не удалось переименовать категорию",

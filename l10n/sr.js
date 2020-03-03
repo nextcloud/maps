@@ -34,7 +34,7 @@ OC.L10N.register(
     "Failed to delete device" : "Грешка при брисању уређаја",
     "Failed to load device points" : "Грешка при учитавању тачака уређаја",
     "Failed to update device points" : "Грешка приликом ажурирања тачака уређаја",
-    "Impossible to get current location" : "Немогуће дохватити тренутну локацију",
+    "Impossible to get current location" : "Не могу да добијем тренутну локацију",
     "Phone" : "Телефон",
     "Computer" : "Рачунар",
     "Unknown device type" : "Непознати тип уређаја",

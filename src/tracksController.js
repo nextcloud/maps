@@ -1100,7 +1100,7 @@ TracksController.prototype = {
 
     getAutocompData: function() {
         var that = this;
-        var marker, devid;
+        var track, trackid;
         var data = [];
         if (this.map.hasLayer(this.mainLayer)) {
             for (trackid in this.tracks) {

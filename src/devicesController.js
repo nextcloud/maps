@@ -277,6 +277,10 @@ DevicesController.prototype = {
         var color = device.color || (OCA.Theming ? OCA.Theming.color : '#0082c9');
         this.devices[id] = device;
         this.devices[id].color = color;
+        // points data indexed by point id
+        this.devices[id].points = {};
+        // points coordinates (with id as third element)
+        this.devices[id].pointsLatLngId = [];
 
         this.devices[id].icon = L.divIcon(L.extend({
             html: '<div class="thumbnail"></div>​',
@@ -626,10 +630,6 @@ DevicesController.prototype = {
         this.devices[id].marker.on('mouseout', this.deviceMarkerMouseout);
         this.devices[id].marker.on('contextmenu', this.deviceMarkerMouseRightClick);
         //this.devices[id].marker.on('click', this.deviceMouseClick);
-        // points data indexed by point id
-        this.devices[id].points = {};
-        // points coordinates (with id as third element)
-        this.devices[id].pointsLatLngId = [];
         for (var i=0; i < points.length; i++) {
             this.devices[id].pointsLatLngId.push([points[i].lat, points[i].lng, points[i].id]);
             this.devices[id].points[points[i].id] = points[i];

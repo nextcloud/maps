@@ -1001,22 +1001,26 @@ DevicesController.prototype = {
     },
 
     deviceMarkerMouseRightClick: function(e) {
+        var that = this;
         var id = e.target.devid;
 
-        var yOffset = 5;
+        var yOffset = 7;
         if (e.target.lastPosMarker) {
-            yOffset = -20;
+            yOffset = -14;
         }
-        e.target.unbindPopup();
+        this._map.clickpopup = true;
         var popupContent = this._map.devicesController.getDeviceContextPopupContent(id);
-        e.target.bindPopup(popupContent, {
+        var popup = L.popup({
             closeOnClick: true,
             className: 'popovermenu open popupMarker',
-            offset: L.point(-5, yOffset)
+            offset: L.point(-6, yOffset)
+        })
+            .setLatLng(e.latlng)
+            .setContent(popupContent)
+            .openOn(this._map);
+        $(popup._closeButton).one('click', function (e) {
+            that._map.clickpopup = null;
         });
-        e.target.openPopup(e.latlng);
-        e.target.unbindPopup();
-        this._map.clickpopup = true;
     },
 
     getDeviceContextPopupContent: function(id) {

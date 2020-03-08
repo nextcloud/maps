@@ -239,17 +239,23 @@ PhotosController.prototype = {
     },
 
     photoMouseRightClick: function(e) {
+        var that = this;
         var filePath = e.target.data.path;
 
-        e.target.unbindPopup();
         var popupContent = this._map.photosController.getPhotoContextPopupContent(filePath);
-        e.target.bindPopup(popupContent, {
+        this._map.clickpopup = true;
+
+        var popup = L.popup({
             closeOnClick: true,
             className: 'popovermenu open popupMarker',
             offset: L.point(-5, -20)
+        })
+            .setLatLng(e.target._latlng)
+            .setContent(popupContent)
+            .openOn(this._map);
+        $(popup._closeButton).one('click', function (e) {
+            that._map.clickpopup = null;
         });
-        e.target.openPopup();
-        this._map.clickpopup = true;
     },
 
     getPhotoContextPopupContent: function(filePath) {

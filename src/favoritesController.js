@@ -830,6 +830,7 @@ FavoritesController.prototype = {
     },
 
     openEditionPopup: function(favid) {
+        var that = this;
         var fav = this.favorites[favid];
 
         //e.target.unbindPopup();
@@ -842,12 +843,9 @@ FavoritesController.prototype = {
             .setLatLng([fav.lat, fav.lng])
             .setContent(popupContent)
             .openOn(this.map);
-        //e.target.bindPopup(popupContent, {
-        //    closeOnClick: true,
-        //    className: 'popovermenu open popupMarker',
-        //    offset: L.point(-5, 9)
-        //});
-        //e.target.openPopup();
+        $(popup._closeButton).one('click', function(e){
+            that.map.clickpopup = null;
+        });
         // add completion to category field
         var catList = [];
         for (var c in this.categoryLayers) {
@@ -907,6 +905,7 @@ FavoritesController.prototype = {
     },
 
     favoriteMouseRightClick: function(e) {
+        var that = this;
         var favid = e.target.favid;
         var fav = this._map.favoritesController.favorites[favid];
         this._map.clickpopup = true;
@@ -922,6 +921,9 @@ FavoritesController.prototype = {
             .setLatLng([fav.lat, fav.lng])
             .setContent(popupContent)
             .openOn(this._map);
+        $(popup._closeButton).one('click', function (e) {
+            that._map.clickpopup = null;
+        });
     },
 
     getFavoriteContextPopupContent: function(fav) {

@@ -266,16 +266,21 @@ ContactsController.prototype = {
         var _app = this;
         return function(evt) {
             var marker = evt.layer;
-            var contactPopup = _app.getContactPopupContent(marker.data);
-            marker.unbindPopup();
+            var popupContent = _app.getContactPopupContent(marker.data);
             marker.unbindTooltip();
-            marker.bindPopup(contactPopup, {
+            this._map.clickpopup = true;
+
+            var popup = L.popup({
                 closeOnClick: true,
                 className: 'popovermenu open popupMarker contactPopup',
                 offset: L.point(-5, 10)
+            })
+                .setLatLng(marker.getLatLng())
+                .setContent(popupContent)
+                .openOn(_app.map);
+            $(popup._closeButton).one('click', function (e) {
+                _app.map.clickpopup = null;
             });
-            marker.openPopup();
-            this._map.clickpopup = true;
         };
     },
 
@@ -478,7 +483,8 @@ ContactsController.prototype = {
                 icon: this.createContactView(markerData)
             });
 
-            marker.on('contextmenu', this.onContactRightClick);
+            // disabled for the moment
+            //marker.on('contextmenu', this.onContactRightClick);
             marker.on('mouseover', this.onContactMouseover);
             marker.on('mouseout', this.onContactMouseout);
             marker.data = markerData;

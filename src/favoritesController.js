@@ -116,20 +116,24 @@ FavoritesController.prototype = {
         });
         // cancel favorite edition
         $('body').on('click', '.canceleditfavorite', function(e) {
+            that.map.clickpopup = null;
             that.map.closePopup();
         });
         $('body').on('click', '.valideditfavorite', function(e) {
             that.editFavoriteFromPopup($(this));
+            that.map.clickpopup = null;
             that.map.closePopup();
         });
         $('body').on('click', '.deletefavorite', function(e) {
             var favid = parseInt($(this).parent().parent().attr('favid'));
             that.deleteFavoriteDB(favid);
+            that.map.clickpopup = null;
             that.map.closePopup();
         });
         $('body').on('click', '.valideditdeletefavorite', function(e) {
             var favid = parseInt($(this).parent().parent().attr('favid'));
             that.deleteFavoriteDB(favid);
+            that.map.clickpopup = null;
             that.map.closePopup();
         });
         $('body').on('click', '.movefavorite', function(e) {
@@ -146,6 +150,7 @@ FavoritesController.prototype = {
         $('body').on('keyup', 'input[role=category], input[role=name]', function(e) {
             if (e.key === 'Enter') {
                 that.editFavoriteFromPopup($(this).parent().parent().parent().parent().find('.valideditfavorite'));
+                that.map.clickpopup = null;
                 that.map.closePopup();
             }
         });

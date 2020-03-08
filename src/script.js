@@ -96,6 +96,9 @@ import { brify, getUrlParameter, formatAddress } from './utils';
         document.onkeydown = function (e) {
             e = e || window.event;
             if (e.key === 'Escape') {
+                if (favoritesController.addFavoriteMode) {
+                    favoritesController.leaveAddFavoriteMode();
+                }
                 if (favoritesController.movingFavoriteId !== null) {
                     favoritesController.leaveMoveFavoriteMode();
                 }

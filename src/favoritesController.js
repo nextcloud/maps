@@ -663,6 +663,7 @@ FavoritesController.prototype = {
         $('#addFavoriteButton button').removeClass('icon-add').addClass('icon-history');
         $('#explainaddpoint').show();
         this.addFavoriteMode = true;
+        OC.Notification.showTemporary(t('maps', 'Click on the map to add a favorite, press ESC to cancel'));
     },
 
     leaveAddFavoriteMode: function() {

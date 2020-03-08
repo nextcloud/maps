@@ -271,13 +271,13 @@ PhotosController.prototype = {
     },
 
     enterMovePhotoMode: function() {
-        $('.leaflet-container').css('cursor', 'crosshair');
+        $('.leaflet-container, .mapboxgl-map').css('cursor', 'crosshair');
         this.map.on('click', this.movePhotoClickMap);
         OC.Notification.showTemporary(t('maps', 'Click on the map to move the photo, press ESC to cancel'));
     },
 
     leaveMovePhotoMode: function() {
-        $('.leaflet-container').css('cursor', 'grab');
+        $('.leaflet-container, .mapboxgl-map').css('cursor', 'grab');
         this.map.off('click', this.movePhotoClickMap);
         this.movingPhotoPath = null;
     },

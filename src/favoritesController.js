@@ -125,6 +125,7 @@ FavoritesController.prototype = {
         $('body').on('click', '.deletefavorite', function(e) {
             var favid = parseInt($(this).parent().parent().attr('favid'));
             that.deleteFavoriteDB(favid);
+            that.map.closePopup();
         });
         $('body').on('click', '.valideditdeletefavorite', function(e) {
             var favid = parseInt($(this).parent().parent().attr('favid'));

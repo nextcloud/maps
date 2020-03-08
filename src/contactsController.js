@@ -144,7 +144,6 @@ ContactsController.prototype = {
     },
 
     toggleGroup: function(groupName) {
-        var groupNoSpace = groupName.replace(' ', '-');
         var groupLine = $('#contact-group-list > li[contact-group="'+groupName+'"]');
         var groupCounter = groupLine.find('.app-navigation-entry-utils-counter');
         var showAgain = false;
@@ -344,7 +343,7 @@ ContactsController.prototype = {
 
     addGroup: function(rawName, enable=false) {
         this.groups[rawName] = {};
-        var name = rawName.replace(' ', '-');
+        var name = rawName.replace(/\s+/g, '-');
 
         var color = '000000';
         var displayName = rawName;

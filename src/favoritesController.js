@@ -232,7 +232,7 @@ FavoritesController.prototype = {
         return function(cluster) {
             var fid = parseInt(cluster.getAllChildMarkers()[0].favid);
             var category = that.favorites[fid].category;
-            category = category.replace(' ', '-');
+            category = category.replace(/\s+/g, '-');
             var label = cluster.getChildCount();
             return new L.DivIcon(L.extend({
                 iconAnchor: [14, 14],
@@ -287,7 +287,6 @@ FavoritesController.prototype = {
 
     toggleCategory: function(cat, updateSlider=false) {
         var subgroup = this.categoryLayers[cat];
-        var catNoSpace = cat.replace(' ', '-');
         var catLine = $('#category-list > li[category="'+cat+'"]');
         var catName = catLine.find('.category-name');
         var catCounter = catLine.find('.app-navigation-entry-utils-counter');
@@ -441,7 +440,7 @@ FavoritesController.prototype = {
     // add layer
     // set color and icon
     addCategory: function(rawName, enable=false) {
-        var name = rawName.replace(' ', '-');
+        var name = rawName.replace(/\s+/g, '-');
 
         // color
         var color = '0000EE';
@@ -634,7 +633,7 @@ FavoritesController.prototype = {
         delete this.categoryMarkers[cat];
         delete this.categoryDivIcon[cat];
         delete this.categoryColors[cat];
-        $('#category-list #'+cat.replace(' ', '-')+'-category').fadeOut('slow', function() {
+        $('#category-list #' + cat.replace(/\s+/g, '-') + '-category').fadeOut('slow', function() {
             $(this).remove();
         });
 
@@ -649,7 +648,7 @@ FavoritesController.prototype = {
         var total = 0;
         for (var cat in this.categoryMarkers) {
             count = Object.keys(this.categoryMarkers[cat]).length;
-            $('#'+cat.replace(' ', '-')+'-category .app-navigation-entry-utils-counter').text(count);
+            $('#' + cat.replace(/\s+/g, '-')+'-category .app-navigation-entry-utils-counter').text(count);
             total = total + count;
         }
         //$('#navigation-favorites > .app-navigation-entry-utils .app-navigation-entry-utils-counter').text(total);
@@ -795,7 +794,7 @@ FavoritesController.prototype = {
     favoriteMouseover: function(e) {
         var favid = e.target.favid;
         var fav = this._map.favoritesController.favorites[favid];
-        var cat = fav.category.replace(' ', '-');
+        var cat = fav.category.replace(/\s+/g, '-');
         var favTooltip = this._map.favoritesController.getFavoriteTooltipContent(fav);
         e.target.bindTooltip(favTooltip, {
             className: 'leaflet-marker-favorite-tooltip tooltipfav-' + cat,

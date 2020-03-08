@@ -249,6 +249,7 @@ PhotosController.prototype = {
             offset: L.point(-5, -20)
         });
         e.target.openPopup();
+        this._map.clickpopup = true;
     },
 
     getPhotoContextPopupContent: function(filePath) {
@@ -273,12 +274,14 @@ PhotosController.prototype = {
     enterMovePhotoMode: function() {
         $('.leaflet-container, .mapboxgl-map').css('cursor', 'crosshair');
         this.map.on('click', this.movePhotoClickMap);
+        this.map.clickpopup = true;
         OC.Notification.showTemporary(t('maps', 'Click on the map to move the photo, press ESC to cancel'));
     },
 
     leaveMovePhotoMode: function() {
         $('.leaflet-container, .mapboxgl-map').css('cursor', 'grab');
         this.map.off('click', this.movePhotoClickMap);
+        this.map.clickpopup = null;
         this.movingPhotoPath = null;
     },
 

@@ -125,6 +125,12 @@
     background: var(--color-main-background);
     font-family: var(--font-face);
 }
+.mapboxgl-map {
+    cursor: grab;
+}
+.leaflet-drag-target {
+    cursor: move !important;
+}
 
 .leaflet-control-layers-base {
     line-height: 30px;

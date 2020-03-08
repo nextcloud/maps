@@ -575,7 +575,7 @@ ContactsController.prototype = {
     deleteContactAddress: function(bookid, uri, uid, vcardAddress) {
         var that = this;
         $('#navigation-contacts').addClass('icon-loading-small');
-        $('.leaflet-container').css('cursor', 'wait');
+        $('.leaflet-container, .mapboxgl-map').css('cursor', 'wait');
         var req = {
             uid: uid,
             adr: vcardAddress
@@ -591,7 +591,7 @@ ContactsController.prototype = {
             that.map.closePopup();
             that.map.clickpopup = null;
             $('#navigation-contacts').removeClass('icon-loading-small');
-            $('.leaflet-container').css('cursor', 'grab');
+            $('.leaflet-container, .mapboxgl-map').css('cursor', 'grab');
             that.reloadContacts();
         }).fail(function(response) {
             OC.Notification.showTemporary(t('maps', 'Failed to delete contact address') + ': ' + response.responseText);
@@ -776,7 +776,7 @@ ContactsController.prototype = {
     placeContact: function(bookid, uri, uid, lat, lng, address, type='home') {
         var that = this;
         $('#navigation-contacts').addClass('icon-loading-small');
-        $('.leaflet-container').css('cursor', 'wait');
+        $('.leaflet-container, .mapboxgl-map').css('cursor', 'wait');
         var road = (address.road || '') + ' ' + (address.pedestrian || '') + ' ' + (address.suburb || '') + ' ' + (address.city_district || '');
         road = road.replace(/\s+/g, ' ').trim();
         var city = address.village || address.town || address.city || '';
@@ -805,7 +805,7 @@ ContactsController.prototype = {
             that.map.closePopup();
             that.map.clickpopup = null;
             $('#navigation-contacts').removeClass('icon-loading-small');
-            $('.leaflet-container').css('cursor', 'grab');
+            $('.leaflet-container, .mapboxgl-map').css('cursor', 'grab');
             that.reloadContacts();
         }).fail(function(response) {
             OC.Notification.showTemporary(t('maps', 'Failed to place contact') + ': ' + response.responseText);

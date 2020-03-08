@@ -560,7 +560,7 @@ FavoritesController.prototype = {
         var that = this;
         var origCatList = [cat];
         $('#navigation-favorites').addClass('icon-loading-small');
-        $('.leaflet-container').css('cursor', 'wait');
+        $('.leaflet-container, .mapboxgl-map').css('cursor', 'wait');
         var req = {
             categories: origCatList,
             newName: newCategoryName
@@ -581,7 +581,7 @@ FavoritesController.prototype = {
             that.updateCategoryCounters();
         }).always(function (response) {
             $('#navigation-favorites').removeClass('icon-loading-small');
-            $('.leaflet-container').css('cursor', 'grab');
+            $('.leaflet-container, .mapboxgl-map').css('cursor', 'grab');
         }).fail(function() {
             OC.Notification.showTemporary(t('maps', 'Failed to rename category'));
         });
@@ -595,7 +595,7 @@ FavoritesController.prototype = {
         }
         var that = this;
         $('#navigation-favorites').addClass('icon-loading-small');
-        $('.leaflet-container').css('cursor', 'wait');
+        $('.leaflet-container, .mapboxgl-map').css('cursor', 'wait');
         var req = {
             ids: favids
         };
@@ -609,7 +609,7 @@ FavoritesController.prototype = {
             that.deleteCategoryMap(cat, true);
         }).always(function (response) {
             $('#navigation-favorites').removeClass('icon-loading-small');
-            $('.leaflet-container').css('cursor', 'grab');
+            $('.leaflet-container, .mapboxgl-map').css('cursor', 'grab');
         }).fail(function() {
             OC.Notification.showTemporary(t('maps', 'Failed to delete category favorites'));
         });
@@ -695,7 +695,7 @@ FavoritesController.prototype = {
     addFavoriteDB: function(category, lat, lng, name, comment=null, extensions=null) {
         var that = this;
         $('#navigation-favorites').addClass('icon-loading-small');
-        $('.leaflet-container').css('cursor', 'wait');
+        $('.leaflet-container, .mapboxgl-map').css('cursor', 'wait');
         var req = {
             name: name,
             lat: lat,
@@ -718,7 +718,7 @@ FavoritesController.prototype = {
             that.openEditionPopup(response.id);
         }).always(function (response) {
             $('#navigation-favorites').removeClass('icon-loading-small');
-            $('.leaflet-container').css('cursor', 'grab');
+            $('.leaflet-container, .mapboxgl-map').css('cursor', 'grab');
         }).fail(function() {
             OC.Notification.showTemporary(t('maps', 'Failed to add favorite'));
         });
@@ -940,7 +940,7 @@ FavoritesController.prototype = {
     deleteFavoriteDB: function(favid) {
         var that = this;
         $('#navigation-favorites').addClass('icon-loading-small');
-        $('.leaflet-container').css('cursor', 'wait');
+        $('.leaflet-container, .mapboxgl-map').css('cursor', 'wait');
         var req = {
         };
         var url = generateUrl('/apps/maps/favorites/'+favid);
@@ -955,7 +955,7 @@ FavoritesController.prototype = {
             that.updateCategoryCounters();
         }).always(function (response) {
             $('#navigation-favorites').removeClass('icon-loading-small');
-            $('.leaflet-container').css('cursor', 'grab');
+            $('.leaflet-container, .mapboxgl-map').css('cursor', 'grab');
         }).fail(function() {
             OC.Notification.showTemporary(t('maps', 'Failed to delete favorite'));
         });
@@ -998,7 +998,7 @@ FavoritesController.prototype = {
     editFavoriteDB: function(favid, name, comment, category, lat, lng) {
         var that = this;
         $('#navigation-favorites').addClass('icon-loading-small');
-        $('.leaflet-container').css('cursor', 'wait');
+        $('.leaflet-container, .mapboxgl-map').css('cursor', 'wait');
         var req = {
             name: name,
             extensions: null
@@ -1027,7 +1027,7 @@ FavoritesController.prototype = {
             that.updateCategoryCounters();
         }).always(function (response) {
             $('#navigation-favorites').removeClass('icon-loading-small');
-            $('.leaflet-container').css('cursor', 'grab');
+            $('.leaflet-container, .mapboxgl-map').css('cursor', 'grab');
         }).fail(function() {
             OC.Notification.showTemporary(t('maps', 'Failed to edit favorite'));
         });
@@ -1106,7 +1106,7 @@ FavoritesController.prototype = {
 
     exportDisplayedFavorites: function(catList=null) {
         $('#navigation-favorites').addClass('icon-loading-small');
-        $('.leaflet-container').css('cursor', 'wait');
+        $('.leaflet-container, .mapboxgl-map').css('cursor', 'wait');
         if (catList === null) {
             catList = [];
             if (this.map.hasLayer(this.cluster)) {
@@ -1134,7 +1134,7 @@ FavoritesController.prototype = {
             OC.Notification.showTemporary(t('maps', 'Favorites exported in {path}', {path: response}));
         }).always(function (response) {
             $('#navigation-favorites').removeClass('icon-loading-small');
-            $('.leaflet-container').css('cursor', 'grab');
+            $('.leaflet-container, .mapboxgl-map').css('cursor', 'grab');
         }).fail(function(response) {
             OC.Notification.showTemporary(t('maps', 'Failed to export favorites') + ': ' + response.responseText);
         });
@@ -1142,7 +1142,7 @@ FavoritesController.prototype = {
 
     importFavorites: function(path) {
         $('#navigation-favorites').addClass('icon-loading-small');
-        $('.leaflet-container').css('cursor', 'wait');
+        $('.leaflet-container, .mapboxgl-map').css('cursor', 'wait');
         var that = this;
         var req = {
             path: path
@@ -1169,7 +1169,7 @@ FavoritesController.prototype = {
             }
         }).always(function (response) {
             $('#navigation-favorites').removeClass('icon-loading-small');
-            $('.leaflet-container').css('cursor', 'grab');
+            $('.leaflet-container, .mapboxgl-map').css('cursor', 'grab');
         }).fail(function() {
             OC.Notification.showTemporary(t('maps', 'Failed to import favorites'));
         });

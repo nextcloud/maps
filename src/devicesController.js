@@ -431,7 +431,7 @@ DevicesController.prototype = {
     renameDeviceDB: function(id, newDeviceName) {
         var that = this;
         $('#device-list > li[device="'+id+'"]').addClass('icon-loading-small');
-        $('.leaflet-container').css('cursor', 'wait');
+        $('.leaflet-container, .mapboxgl-map').css('cursor', 'wait');
         var req = {
             name: newDeviceName
         };
@@ -463,7 +463,7 @@ DevicesController.prototype = {
             that.setDeviceCss(id, color);
         }).always(function (response) {
             $('#device-list > li[device="'+id+'"]').removeClass('icon-loading-small');
-            $('.leaflet-container').css('cursor', 'grab');
+            $('.leaflet-container, .mapboxgl-map').css('cursor', 'grab');
         }).fail(function(response) {
             OC.Notification.showTemporary(t('maps', 'Failed to rename device') + ': ' + response.responseText);
         });
@@ -472,7 +472,7 @@ DevicesController.prototype = {
     deleteDeviceDB: function(id) {
         var that = this;
         $('#navigation-devices').addClass('icon-loading-small');
-        $('.leaflet-container').css('cursor', 'wait');
+        $('.leaflet-container, .mapboxgl-map').css('cursor', 'wait');
         var req = {};
         var url = generateUrl('/apps/maps/devices/'+id);
         $.ajax({
@@ -484,7 +484,7 @@ DevicesController.prototype = {
             that.deleteDeviceMap(id);
         }).always(function (response) {
             $('#navigation-devices').removeClass('icon-loading-small');
-            $('.leaflet-container').css('cursor', 'grab');
+            $('.leaflet-container, .mapboxgl-map').css('cursor', 'grab');
         }).fail(function() {
             OC.Notification.showTemporary(t('maps', 'Failed to delete device'));
         });
@@ -1091,7 +1091,7 @@ DevicesController.prototype = {
     exportDevices: function(idList, all=false) {
         var that = this;
         $('#navigation-devices').addClass('icon-loading-small');
-        $('.leaflet-container').css('cursor', 'wait');
+        $('.leaflet-container, .mapboxgl-map').css('cursor', 'wait');
         var req = {
             deviceIdList: idList,
             begin: null,
@@ -1108,7 +1108,7 @@ DevicesController.prototype = {
             OC.Notification.showTemporary(t('maps', 'Devices exported in {path}', {path: response}));
         }).always(function (response) {
             $('#navigation-devices').removeClass('icon-loading-small');
-            $('.leaflet-container').css('cursor', 'grab');
+            $('.leaflet-container, .mapboxgl-map').css('cursor', 'grab');
         }).fail(function(response) {
             OC.Notification.showTemporary(t('maps', 'Failed to export devices') + ': ' + response.responseText);
         });
@@ -1116,7 +1116,7 @@ DevicesController.prototype = {
 
     importDevices: function(path) {
         $('#navigation-devices').addClass('icon-loading-small');
-        $('.leaflet-container').css('cursor', 'wait');
+        $('.leaflet-container, .mapboxgl-map').css('cursor', 'wait');
         var that = this;
         var req = {
             path: path
@@ -1136,7 +1136,7 @@ DevicesController.prototype = {
             that.getDevices();
         }).always(function (response) {
             $('#navigation-devices').removeClass('icon-loading-small');
-            $('.leaflet-container').css('cursor', 'grab');
+            $('.leaflet-container, .mapboxgl-map').css('cursor', 'grab');
         }).fail(function(response) {
             OC.Notification.showTemporary(t('maps', 'Failed to import devices') + ': ' + response.responseText);
         });

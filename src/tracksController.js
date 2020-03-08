@@ -992,7 +992,7 @@ TracksController.prototype = {
         if (this.mainLayer.hasLayer(this.mapTrackLayers[id])) {
             var bounds = this.mapTrackLayers[id].getBounds();
             if (bounds && bounds.constructor === Object && Object.keys(bounds).length !== 0) {
-                this.map.fitBounds(this.mapTrackLayers[id].getBounds(), {padding: [30, 30]});
+                this.map.fitBounds(this.mapTrackLayers[id].getBounds(), {padding: [30, 30], maxZoom: 17});
                 this.mapTrackLayers[id].bringToFront();
                 // markers are hard to bring to front
                 var that = this;

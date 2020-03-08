@@ -414,7 +414,8 @@ tr.selected td {
 }
 
 .leaflet-marker-favorite-tooltip {
-    width: 300px;
+    min-width: 200px;
+    max-width: 300px;
 }
 
 .leaflet-marker-contact-tooltip p {

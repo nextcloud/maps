@@ -1177,7 +1177,7 @@ FavoritesController.prototype = {
 
     getAutocompData: function() {
         var that = this;
-        var fav, favid;
+        var fav, layer;
         var data = [];
         if (that.map.hasLayer(that.cluster)) {
             for (var cat in this.categoryLayers) {

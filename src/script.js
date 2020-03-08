@@ -499,6 +499,7 @@ import { brify, getUrlParameter, formatAddress } from './utils';
         locControl: undefined,
         baseLayers: undefined,
         displaySearchResult: function(results) {
+            var that = this;
             this.searchMarkerLayerGroup.clearLayers();
             var result, searchMarker;
             for (var i=0; i < results.length; i++) {
@@ -510,6 +511,9 @@ import { brify, getUrlParameter, formatAddress } from './utils';
                 // popup
                 var popupContent = searchController.parseOsmResult(result);
                 searchMarker.bindPopup(popupContent, {className: 'search-result-popup'});
+                searchMarker.on('click', function () {
+                    that.map.clickpopup = true;
+                });
                 // tooltip
                 var name = '';
                 if (result.namedetails && result.namedetails.name) {

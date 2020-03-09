@@ -614,9 +614,10 @@ TracksController.prototype = {
             // tooltip
             var tooltipText = this.tracks[id].file_name;
             this.tracks[id].marker.bindTooltip(tooltipText, {
-                sticky: true,
+                sticky: false,
                 className: coloredTooltipClass + ' leaflet-marker-track-tooltip',
-                direction: 'top'
+                direction: 'top',
+                offset: L.point(0, -16)
             });
             // popup
             popupText = that.getLinePopupText(id, '', '', '', '', '');
@@ -628,21 +629,23 @@ TracksController.prototype = {
     getTrackMarkerOnClickFunction: function() {
         var _app = this;
         return function(evt) {
-            console.log(evt);
             var marker = evt.layer;
-            var trackPopup = _app.tracks[marker.trackid].popupText;
+            var popupContent = _app.tracks[marker.trackid].popupText;
             marker.unbindPopup();
-            marker.bindPopup(
-                trackPopup,
-                {
-                    autoPan: true,
-                    autoClose: true,
-                    closeOnClick: true,
-                    className: 'trackPopup'
-                }
-            );
-            marker.openPopup();
             _app.map.clickpopup = true;
+
+            var popup = L.popup({
+                autoPan: true,
+                autoClose: true,
+                closeOnClick: true,
+                className: 'trackPopup'
+            })
+                .setLatLng(marker.getLatLng())
+                .setContent(popupContent)
+                .openOn(_app.map);
+            $(popup._closeButton).one('click', function (e) {
+                _app.map.clickpopup = null;
+            });
         };
     },
 
@@ -944,22 +947,26 @@ TracksController.prototype = {
     },
 
     trackMouseRightClick: function(e) {
+        var that = this;
         var id = e.target.trackid;
 
-        yOffset = 5;
+        var yOffset = 5;
         if (e.target instanceof L.Marker) {
             yOffset = -10;
         }
+        this._map.clickpopup = true;
         var popupContent = this._map.tracksController.getTrackContextPopupContent(id);
-        this._map.openPopup(
-            popupContent,
-            e.latlng,
-            {
+        var popup = L.popup({
             closeOnClick: true,
             className: 'popovermenu open popupMarker',
             offset: L.point(-5, yOffset)
+        })
+            .setLatLng(e.latlng)
+            .setContent(popupContent)
+            .openOn(this._map);
+        $(popup._closeButton).one('click', function (e) {
+            that._map.clickpopup = null;
         });
-        this._map.clickpopup = true;
     },
 
     getTrackContextPopupContent: function(id) {
@@ -985,7 +992,7 @@ TracksController.prototype = {
         if (this.mainLayer.hasLayer(this.mapTrackLayers[id])) {
             var bounds = this.mapTrackLayers[id].getBounds();
             if (bounds && bounds.constructor === Object && Object.keys(bounds).length !== 0) {
-                this.map.fitBounds(this.mapTrackLayers[id].getBounds(), {padding: [30, 30]});
+                this.map.fitBounds(this.mapTrackLayers[id].getBounds(), {padding: [30, 30], maxZoom: 17});
                 this.mapTrackLayers[id].bringToFront();
                 // markers are hard to bring to front
                 var that = this;

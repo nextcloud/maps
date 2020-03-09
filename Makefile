@@ -67,6 +67,15 @@ ifneq (,$(wildcard $(CURDIR)/package.json))
 	make npm
 endif
 
+.PHONY: dev
+dev:
+ifneq (,$(wildcard $(CURDIR)/composer.json))
+	make composer
+endif
+ifneq (,$(wildcard $(CURDIR)/package.json))
+	make npm-dev
+endif
+
 # Installs and updates the composer dependencies. If composer is not installed
 # a copy is fetched from the web
 .PHONY: composer
@@ -85,8 +94,14 @@ endif
 .PHONY: npm
 npm:
 	$(npm) install
-	$(npm) run build
 	sed -i.bak 's/L\.Browser\.touch/L.Browser.mobile/g' node_modules/leaflet.elevation/dist/Leaflet.Elevation-0.0.2.min.js && rm node_modules/leaflet.elevation/dist/Leaflet.Elevation-0.0.2.min.js.bak
+	$(npm) run build
+
+.PHONY: npm-dev
+npm-dev:
+	$(npm) install
+	sed -i.bak 's/L\.Browser\.touch/L.Browser.mobile/g' node_modules/leaflet.elevation/dist/Leaflet.Elevation-0.0.2.min.js && rm node_modules/leaflet.elevation/dist/Leaflet.Elevation-0.0.2.min.js.bak
+	$(npm) run dev
 
 # Removes the appstore build
 .PHONY: clean

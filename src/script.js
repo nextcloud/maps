@@ -96,6 +96,9 @@ import { brify, getUrlParameter, formatAddress } from './utils';
         document.onkeydown = function (e) {
             e = e || window.event;
             if (e.key === 'Escape') {
+                if (favoritesController.addFavoriteMode) {
+                    favoritesController.leaveAddFavoriteMode();
+                }
                 if (favoritesController.movingFavoriteId !== null) {
                     favoritesController.leaveMoveFavoriteMode();
                 }
@@ -511,6 +514,11 @@ import { brify, getUrlParameter, formatAddress } from './utils';
                 // popup
                 var popupContent = searchController.parseOsmResult(result);
                 searchMarker.bindPopup(popupContent, {className: 'search-result-popup'});
+                searchMarker.on('popupopen', function(e) {
+                    $(e.popup._closeButton).one('click', function (e) {
+                        that.map.clickpopup = null;
+                    });
+                })
                 searchMarker.on('click', function () {
                     that.map.clickpopup = true;
                 });
@@ -2113,7 +2121,15 @@ import { brify, getUrlParameter, formatAddress } from './utils';
             clickPopupContent += '<button id="click-search-place-contact">' +
                 '<span class="icon-user"> </span> ' + t('maps', 'Add contact address') + '</button>';
 
-            this.map.openPopup(clickPopupContent, e.latlng);
+            var popup = L.popup({
+                closeOnClick: true
+            })
+            .setLatLng(e.latlng)
+            .setContent(clickPopupContent)
+            .openOn(this.map);
+            $(popup._closeButton).one('click', function (e) {
+                that.map.clickpopup = null;
+            });
 
             this.geocode(strLatLng).then(function(results) {
                 $('#click-search-popup-title').removeClass('loading');

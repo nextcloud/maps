@@ -116,19 +116,24 @@ FavoritesController.prototype = {
         });
         // cancel favorite edition
         $('body').on('click', '.canceleditfavorite', function(e) {
+            that.map.clickpopup = null;
             that.map.closePopup();
         });
         $('body').on('click', '.valideditfavorite', function(e) {
             that.editFavoriteFromPopup($(this));
+            that.map.clickpopup = null;
             that.map.closePopup();
         });
         $('body').on('click', '.deletefavorite', function(e) {
             var favid = parseInt($(this).parent().parent().attr('favid'));
             that.deleteFavoriteDB(favid);
+            that.map.clickpopup = null;
+            that.map.closePopup();
         });
         $('body').on('click', '.valideditdeletefavorite', function(e) {
             var favid = parseInt($(this).parent().parent().attr('favid'));
             that.deleteFavoriteDB(favid);
+            that.map.clickpopup = null;
             that.map.closePopup();
         });
         $('body').on('click', '.movefavorite', function(e) {
@@ -145,6 +150,7 @@ FavoritesController.prototype = {
         $('body').on('keyup', 'input[role=category], input[role=name]', function(e) {
             if (e.key === 'Enter') {
                 that.editFavoriteFromPopup($(this).parent().parent().parent().parent().find('.valideditfavorite'));
+                that.map.clickpopup = null;
                 that.map.closePopup();
             }
         });
@@ -232,7 +238,7 @@ FavoritesController.prototype = {
         return function(cluster) {
             var fid = parseInt(cluster.getAllChildMarkers()[0].favid);
             var category = that.favorites[fid].category;
-            category = category.replace(' ', '-');
+            category = category.replace(/\s+/g, '-');
             var label = cluster.getChildCount();
             return new L.DivIcon(L.extend({
                 iconAnchor: [14, 14],
@@ -287,7 +293,6 @@ FavoritesController.prototype = {
 
     toggleCategory: function(cat, updateSlider=false) {
         var subgroup = this.categoryLayers[cat];
-        var catNoSpace = cat.replace(' ', '-');
         var catLine = $('#category-list > li[category="'+cat+'"]');
         var catName = catLine.find('.category-name');
         var catCounter = catLine.find('.app-navigation-entry-utils-counter');
@@ -441,7 +446,7 @@ FavoritesController.prototype = {
     // add layer
     // set color and icon
     addCategory: function(rawName, enable=false) {
-        var name = rawName.replace(' ', '-');
+        var name = rawName.replace(/\s+/g, '-');
 
         // color
         var color = '0000EE';
@@ -560,7 +565,7 @@ FavoritesController.prototype = {
         var that = this;
         var origCatList = [cat];
         $('#navigation-favorites').addClass('icon-loading-small');
-        $('.leaflet-container').css('cursor', 'wait');
+        $('.leaflet-container, .mapboxgl-map').css('cursor', 'wait');
         var req = {
             categories: origCatList,
             newName: newCategoryName
@@ -581,7 +586,7 @@ FavoritesController.prototype = {
             that.updateCategoryCounters();
         }).always(function (response) {
             $('#navigation-favorites').removeClass('icon-loading-small');
-            $('.leaflet-container').css('cursor', 'grab');
+            $('.leaflet-container, .mapboxgl-map').css('cursor', 'grab');
         }).fail(function() {
             OC.Notification.showTemporary(t('maps', 'Failed to rename category'));
         });
@@ -595,7 +600,7 @@ FavoritesController.prototype = {
         }
         var that = this;
         $('#navigation-favorites').addClass('icon-loading-small');
-        $('.leaflet-container').css('cursor', 'wait');
+        $('.leaflet-container, .mapboxgl-map').css('cursor', 'wait');
         var req = {
             ids: favids
         };
@@ -609,7 +614,7 @@ FavoritesController.prototype = {
             that.deleteCategoryMap(cat, true);
         }).always(function (response) {
             $('#navigation-favorites').removeClass('icon-loading-small');
-            $('.leaflet-container').css('cursor', 'grab');
+            $('.leaflet-container, .mapboxgl-map').css('cursor', 'grab');
         }).fail(function() {
             OC.Notification.showTemporary(t('maps', 'Failed to delete category favorites'));
         });
@@ -634,7 +639,7 @@ FavoritesController.prototype = {
         delete this.categoryMarkers[cat];
         delete this.categoryDivIcon[cat];
         delete this.categoryColors[cat];
-        $('#category-list #'+cat.replace(' ', '-')+'-category').fadeOut('slow', function() {
+        $('#category-list #' + cat.replace(/\s+/g, '-') + '-category').fadeOut('slow', function() {
             $(this).remove();
         });
 
@@ -649,7 +654,7 @@ FavoritesController.prototype = {
         var total = 0;
         for (var cat in this.categoryMarkers) {
             count = Object.keys(this.categoryMarkers[cat]).length;
-            $('#'+cat.replace(' ', '-')+'-category .app-navigation-entry-utils-counter').text(count);
+            $('#' + cat.replace(/\s+/g, '-')+'-category .app-navigation-entry-utils-counter').text(count);
             total = total + count;
         }
         //$('#navigation-favorites > .app-navigation-entry-utils .app-navigation-entry-utils-counter').text(total);
@@ -657,16 +662,17 @@ FavoritesController.prototype = {
 
     enterAddFavoriteMode: function(categoryName) {
         this.addFavoriteCategory = categoryName;
-        $('.leaflet-container').css('cursor','crosshair');
+        $('.leaflet-container, .mapboxgl-map').css('cursor','crosshair');
         this.map.on('click', this.addFavoriteClickMap);
         this.map.leftClickLock = true;
         $('#addFavoriteButton button').removeClass('icon-add').addClass('icon-history');
         $('#explainaddpoint').show();
         this.addFavoriteMode = true;
+        OC.Notification.showTemporary(t('maps', 'Click on the map to add a favorite, press ESC to cancel'));
     },
 
     leaveAddFavoriteMode: function() {
-        $('.leaflet-container').css('cursor','grab');
+        $('.leaflet-container, .mapboxgl-map').css('cursor','grab');
         this.map.off('click', this.addFavoriteClickMap);
         this.map.leftClickLock = false;
         $('#addFavoriteButton button').addClass('icon-add').removeClass('icon-history');
@@ -695,7 +701,7 @@ FavoritesController.prototype = {
     addFavoriteDB: function(category, lat, lng, name, comment=null, extensions=null) {
         var that = this;
         $('#navigation-favorites').addClass('icon-loading-small');
-        $('.leaflet-container').css('cursor', 'wait');
+        $('.leaflet-container, .mapboxgl-map').css('cursor', 'wait');
         var req = {
             name: name,
             lat: lat,
@@ -718,7 +724,7 @@ FavoritesController.prototype = {
             that.openEditionPopup(response.id);
         }).always(function (response) {
             $('#navigation-favorites').removeClass('icon-loading-small');
-            $('.leaflet-container').css('cursor', 'grab');
+            $('.leaflet-container, .mapboxgl-map').css('cursor', 'grab');
         }).fail(function() {
             OC.Notification.showTemporary(t('maps', 'Failed to add favorite'));
         });
@@ -795,7 +801,7 @@ FavoritesController.prototype = {
     favoriteMouseover: function(e) {
         var favid = e.target.favid;
         var fav = this._map.favoritesController.favorites[favid];
-        var cat = fav.category.replace(' ', '-');
+        var cat = fav.category.replace(/\s+/g, '-');
         var favTooltip = this._map.favoritesController.getFavoriteTooltipContent(fav);
         e.target.bindTooltip(favTooltip, {
             className: 'leaflet-marker-favorite-tooltip tooltipfav-' + cat,
@@ -824,6 +830,7 @@ FavoritesController.prototype = {
     },
 
     openEditionPopup: function(favid) {
+        var that = this;
         var fav = this.favorites[favid];
 
         //e.target.unbindPopup();
@@ -836,12 +843,9 @@ FavoritesController.prototype = {
             .setLatLng([fav.lat, fav.lng])
             .setContent(popupContent)
             .openOn(this.map);
-        //e.target.bindPopup(popupContent, {
-        //    closeOnClick: true,
-        //    className: 'popovermenu open popupMarker',
-        //    offset: L.point(-5, 9)
-        //});
-        //e.target.openPopup();
+        $(popup._closeButton).one('click', function(e){
+            that.map.clickpopup = null;
+        });
         // add completion to category field
         var catList = [];
         for (var c in this.categoryLayers) {
@@ -901,6 +905,7 @@ FavoritesController.prototype = {
     },
 
     favoriteMouseRightClick: function(e) {
+        var that = this;
         var favid = e.target.favid;
         var fav = this._map.favoritesController.favorites[favid];
         this._map.clickpopup = true;
@@ -916,6 +921,9 @@ FavoritesController.prototype = {
             .setLatLng([fav.lat, fav.lng])
             .setContent(popupContent)
             .openOn(this._map);
+        $(popup._closeButton).one('click', function (e) {
+            that._map.clickpopup = null;
+        });
     },
 
     getFavoriteContextPopupContent: function(fav) {
@@ -940,7 +948,7 @@ FavoritesController.prototype = {
     deleteFavoriteDB: function(favid) {
         var that = this;
         $('#navigation-favorites').addClass('icon-loading-small');
-        $('.leaflet-container').css('cursor', 'wait');
+        $('.leaflet-container, .mapboxgl-map').css('cursor', 'wait');
         var req = {
         };
         var url = generateUrl('/apps/maps/favorites/'+favid);
@@ -955,7 +963,7 @@ FavoritesController.prototype = {
             that.updateCategoryCounters();
         }).always(function (response) {
             $('#navigation-favorites').removeClass('icon-loading-small');
-            $('.leaflet-container').css('cursor', 'grab');
+            $('.leaflet-container, .mapboxgl-map').css('cursor', 'grab');
         }).fail(function() {
             OC.Notification.showTemporary(t('maps', 'Failed to delete favorite'));
         });
@@ -998,7 +1006,7 @@ FavoritesController.prototype = {
     editFavoriteDB: function(favid, name, comment, category, lat, lng) {
         var that = this;
         $('#navigation-favorites').addClass('icon-loading-small');
-        $('.leaflet-container').css('cursor', 'wait');
+        $('.leaflet-container, .mapboxgl-map').css('cursor', 'wait');
         var req = {
             name: name,
             extensions: null
@@ -1027,7 +1035,7 @@ FavoritesController.prototype = {
             that.updateCategoryCounters();
         }).always(function (response) {
             $('#navigation-favorites').removeClass('icon-loading-small');
-            $('.leaflet-container').css('cursor', 'grab');
+            $('.leaflet-container, .mapboxgl-map').css('cursor', 'grab');
         }).fail(function() {
             OC.Notification.showTemporary(t('maps', 'Failed to edit favorite'));
         });
@@ -1079,13 +1087,13 @@ FavoritesController.prototype = {
     },
 
     enterMoveFavoriteMode: function() {
-        $('.leaflet-container').css('cursor', 'crosshair');
+        $('.leaflet-container, .mapboxgl-map').css('cursor', 'crosshair');
         this.map.on('click', this.moveFavoriteClickMap);
         OC.Notification.showTemporary(t('maps', 'Click on the map to move the favorite, press ESC to cancel'));
     },
 
     leaveMoveFavoriteMode: function() {
-        $('.leaflet-container').css('cursor', 'grab');
+        $('.leaflet-container, .mapboxgl-map').css('cursor', 'grab');
         this.map.off('click', this.moveFavoriteClickMap);
         this.movingFavoriteId = null;
     },
@@ -1106,7 +1114,7 @@ FavoritesController.prototype = {
 
     exportDisplayedFavorites: function(catList=null) {
         $('#navigation-favorites').addClass('icon-loading-small');
-        $('.leaflet-container').css('cursor', 'wait');
+        $('.leaflet-container, .mapboxgl-map').css('cursor', 'wait');
         if (catList === null) {
             catList = [];
             if (this.map.hasLayer(this.cluster)) {
@@ -1134,7 +1142,7 @@ FavoritesController.prototype = {
             OC.Notification.showTemporary(t('maps', 'Favorites exported in {path}', {path: response}));
         }).always(function (response) {
             $('#navigation-favorites').removeClass('icon-loading-small');
-            $('.leaflet-container').css('cursor', 'grab');
+            $('.leaflet-container, .mapboxgl-map').css('cursor', 'grab');
         }).fail(function(response) {
             OC.Notification.showTemporary(t('maps', 'Failed to export favorites') + ': ' + response.responseText);
         });
@@ -1142,7 +1150,7 @@ FavoritesController.prototype = {
 
     importFavorites: function(path) {
         $('#navigation-favorites').addClass('icon-loading-small');
-        $('.leaflet-container').css('cursor', 'wait');
+        $('.leaflet-container, .mapboxgl-map').css('cursor', 'wait');
         var that = this;
         var req = {
             path: path
@@ -1169,7 +1177,7 @@ FavoritesController.prototype = {
             }
         }).always(function (response) {
             $('#navigation-favorites').removeClass('icon-loading-small');
-            $('.leaflet-container').css('cursor', 'grab');
+            $('.leaflet-container, .mapboxgl-map').css('cursor', 'grab');
         }).fail(function() {
             OC.Notification.showTemporary(t('maps', 'Failed to import favorites'));
         });

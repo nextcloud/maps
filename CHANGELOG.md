@@ -5,6 +5,28 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
+## 0.1.6 – 2020-03-09
+### Added
+- dialog to choose wether to place photo files or directories
+[#290](https://github.com/nextcloud/maps/pull/290) @wronny
+
+### Changed
+- a few style improvements in tooltips (position and size)
+- message when adding a favorite, ESC to cancel
+
+### Fixed
+- missing variable declarations breaking things in search, favorites, tracks, devices
+[#305](https://github.com/nextcloud/maps/pull/305) @doc75
+[#308](https://github.com/nextcloud/maps/pull/308) @Bergum
+- delay when placing photos
+[#290](https://github.com/nextcloud/maps/pull/290) @wronny
+- map left click activation in lots of cases
+- favorite and contact group style bug
+- cursor style with mapboxgl map
+- set max zoom level on tracks
+- bug when updating positions of disabled devices
+- L.Elevation mouse events
+
 ## 0.1.2 – 2019-09-01
 ### Added
 - Mapbox profiles (car, foot, bike)

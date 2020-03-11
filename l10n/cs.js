@@ -55,6 +55,7 @@ OC.L10N.register(
     "Category deleted" : "Kategorie smazána",
     "Failed to rename category" : "Přejmenování kategorie se nezdařilo",
     "Failed to delete category favorites" : "Kategorii oblíbených se nepodařilo smazat",
+    "Click on the map to add a favorite, press ESC to cancel" : "Oblíbenou položku přidáte kliknutím do mapy, akci zrušíte stiskem ESC",
     "Failed to add favorite" : "Přidání do oblíbených se nezdařilo",
     "Name" : "Název",
     "No name" : "Bez názvu",

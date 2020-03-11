@@ -77,6 +77,8 @@ OC.L10N.register(
     "Remove geo data" : "Radera geodata",
     "Click on the map to move the photo, press ESC to cancel" : "Klicka på kartan för att flytta bilden, tryck på ESC för att avbryta",
     "Failed to load photos" : "Kunde inte ladda foton",
+    "Photo files" : "Bilder",
+    "Photo folders" : "Bildmappar",
     "Choose pictures to place" : "Välj bilder att placera",
     "Choose directory of pictures to place" : "Välj mapp med bilder att placera",
     "{nb} photos placed" : "{nb} bilder placerade",

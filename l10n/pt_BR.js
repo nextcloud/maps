@@ -55,6 +55,7 @@ OC.L10N.register(
     "Category deleted" : "Categoria excluída",
     "Failed to rename category" : "Erro ao renomear categoria",
     "Failed to delete category favorites" : "Erro ao excluir categoria de favoritos",
+    "Click on the map to add a favorite, press ESC to cancel" : "Clique no mapa para adicionar um favorito, ESC para cancelar",
     "Failed to add favorite" : "Erro ao adicionar favorito",
     "Name" : "Nome",
     "No name" : "Sem nome",

@@ -52,6 +52,7 @@
     "Category deleted" : "Catégorie supprimée",
     "Failed to rename category" : "Impossible de renommer la catégorie",
     "Failed to delete category favorites" : "Impossible de supprimer la catégorie de favoris",
+    "Click on the map to add a favorite, press ESC to cancel" : "Cliquez sur la carte pour ajouter un favori, appuyez sur ESC pour annuler",
     "Failed to add favorite" : "Impossible d'ajouter le favori",
     "Name" : "Nom",
     "No name" : "Aucun nom",

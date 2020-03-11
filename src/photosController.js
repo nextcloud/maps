@@ -97,7 +97,8 @@ PhotosController.prototype = {
                 var photolist = that.map._layers[thisClusterLayerId].getAllChildMarkers().map(function(m) {
                     return  m.data;
                 });
-                OCA.Viewer.open({path: that.map._layers[thisClusterLayerId].getAllChildMarkers()[0].data.path, list: photolist });
+                photolist.sort(function (a, b) { return a.dateTaken - b.dateTaken;});
+                OCA.Viewer.open({path: photolist[0].path, list: photolist });
             } else {
                 that.map._layers[thisClusterLayerId].spiderfy();
                 that.map.clickpopup = true;

@@ -55,6 +55,7 @@ OC.L10N.register(
     "Category deleted" : "Kategori silindi",
     "Failed to rename category" : "Kategori yeniden adlandırılamadı",
     "Failed to delete category favorites" : "Sık kullanılanlar kategorisi silinemedi",
+    "Click on the map to add a favorite, press ESC to cancel" : "Favori eklemek için haritaya tıklayın, iptal için ESC tuşuna basın",
     "Failed to add favorite" : "Sık kullanılan eklenemedi",
     "Name" : "Ad",
     "No name" : "Adsız",

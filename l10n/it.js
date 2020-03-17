@@ -149,7 +149,7 @@ OC.L10N.register(
     "By foot (Mapbox)" : "A piedi (Mapbox)",
     "By car with traffic (Mapbox)" : "In macchina con traffico (Mapbox)",
     "By car without traffic (Mapbox)" : "In macchina senza traffico (Mapbox)",
-    "By car (GraphHopper)" : "In maccchina (GraphHopper)",
+    "By car (GraphHopper)" : "In macchina (GraphHopper)",
     "By bike (GraphHopper)" : "In bicicletta (GraphHopper)",
     "By Foot (GraphHopper)" : "A piedi (GraphHopper)",
     "Routing is currently disabled." : "Percorsi è attualmente disabilitata.",

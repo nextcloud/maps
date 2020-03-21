@@ -207,7 +207,7 @@ FavoritesController.prototype = {
                     that.importFavorites(targetPath);
                 },
                 false,
-                ['application/gpx+xml', 'application/vnd.google-earth.kmz', 'application/vnd.google-earth.kml+xml'],
+                ['application/gpx+xml', 'application/vnd.google-earth.kmz', 'application/vnd.google-earth.kml+xml', 'application/json'],
                 true
             );
         });

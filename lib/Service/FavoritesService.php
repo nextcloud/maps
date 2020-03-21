@@ -665,9 +665,7 @@ class FavoritesService {
 
         // Read file content
         $path = $file->getStorage()->getLocalFile($file->getInternalPath());
-        $fp = $file->fopen('r');
-        $fdata = fread($fp,filesize($path));
-        fclose($fp);
+        $fdata = file_get_contents($path);
 
         // Decode file content from JSON
         $data = json_decode($fdata, true, 512, JSON_THROW_ON_ERROR);

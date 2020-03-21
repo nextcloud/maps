@@ -421,6 +421,9 @@ class FavoritesService {
         elseif ($this->endswith($lowerFileName, '.kmz')) {
             return $this->importFavoritesFromKmz($userId, $file);
         }
+        elseif ($this->endswith($lowerFileName, '.json')) {
+            return $this->importFavoritesFromJSON($userId, $file);
+        }
     }
 
     public function importFavoritesFromKmz($userId, $file) {
@@ -653,6 +656,72 @@ class FavoritesService {
                 $this->currentFavorite['extensions'] = (array_key_exists('extensions', $this->currentFavorite)) ? $this->currentFavorite['extensions'].$d : $d;
             }
         }
+    }
+
+    public function importFavoritesFromJSON($userId, $file) {
+        $this->nbImported = 0;
+        $this->currentFavoritesList = [];
+        $this->importUserId = $userId;
+
+        // Read file content
+        $path = $file->getStorage()->getLocalFile($file->getInternalPath());
+        $fp = $file->fopen('r');
+        $fdata = fread($fp,filesize($path));
+        fclose($fp);
+
+        // Decode file content from JSON
+        $data = json_decode($fdata, true);
+
+        if(!array_key_exists('features', $data)) {
+            $this->logger->error(
+                'Exception parsing '.$file->getName().': no places found to import',
+                array('app' => 'maps')
+            );
+        }
+
+        // Loop over all favorite entries
+        foreach($data['features'] as $key => $value) {
+            // store new favorite
+            $this->nbImported++;
+            $this->currentFavorite = [];
+
+            $this->currentFavorite['name'] = $value['properties']['Title'];
+            $this->currentFavorite['category'] = $this->l10n->t('Personal');
+
+            $time = new \DateTime($value['properties']['Published']);
+            $this->currentFavorite['date_created'] = $time->getTimestamp();
+
+            $time = new \DateTime($value['properties']['Updated']);
+            $this->currentFavorite['date_modified'] = $time->getTimestamp();
+
+            if(array_key_exists('Address', $value['properties']['Location'])) {
+                $this->currentFavorite['comment'] = $value['properties']['Location']['Address'];
+            }
+
+            $this->currentFavorite['lng'] = floatval($value['geometry']['coordinates'][0]);
+            $this->currentFavorite['lat'] = floatval($value['geometry']['coordinates'][1]);
+
+            // Store this favorite
+            array_push($this->currentFavoritesList, $this->currentFavorite);
+
+            // if we have enough favorites, we create them and clean the array
+            if (count($this->currentFavoritesList) >= 500) {
+                $this->addMultipleFavoritesToDB($this->importUserId, $this->currentFavoritesList);
+                unset($this->currentFavoritesList);
+                $this->currentFavoritesList = [];
+            }
+        }
+
+        // Store last set of favorites
+        if (count($this->currentFavoritesList) > 0) {
+            $this->addMultipleFavoritesToDB($this->importUserId, $this->currentFavoritesList);
+        }
+        unset($this->currentFavoritesList);
+
+        return [
+            'nbImported'=>$this->nbImported,
+            'linesFound'=>false
+        ];
     }
 
     private function endswith($string, $test) {

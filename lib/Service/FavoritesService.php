@@ -421,8 +421,8 @@ class FavoritesService {
         elseif ($this->endswith($lowerFileName, '.kmz')) {
             return $this->importFavoritesFromKmz($userId, $file);
         }
-        elseif ($this->endswith($lowerFileName, '.json')) {
-            return $this->importFavoritesFromJSON($userId, $file);
+        elseif ($this->endswith($lowerFileName, '.json') or $this->endswith($lowerFileName, '.geojson')) {
+            return $this->importFavoritesFromGeoJSON($userId, $file);
         }
     }
 
@@ -658,7 +658,7 @@ class FavoritesService {
         }
     }
 
-    public function importFavoritesFromJSON($userId, $file) {
+    public function importFavoritesFromGeoJSON($userId, $file) {
         $this->nbImported = 0;
         $this->currentFavoritesList = [];
         $this->importUserId = $userId;

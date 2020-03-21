@@ -660,6 +660,7 @@ class FavoritesService {
 
     public function importFavoritesFromGeoJSON($userId, $file) {
         $this->nbImported = 0;
+        $this->linesFound = false;
         $this->currentFavoritesList = [];
         $this->importUserId = $userId;
 
@@ -679,9 +680,17 @@ class FavoritesService {
 
         // Loop over all favorite entries
         foreach($data['features'] as $key => $value) {
-            // store new favorite
-            $this->nbImported++;
             $this->currentFavorite = [];
+
+            // Ensure that we have a valid GeoJSON Point geometry
+            if($value['geometry']['type'] !== "Point") {
+                $this->linesFound = true;
+                continue;
+            }
+
+            // Read geometry
+            $this->currentFavorite['lng'] = floatval($value['geometry']['coordinates'][0]);
+            $this->currentFavorite['lat'] = floatval($value['geometry']['coordinates'][1]);
 
             $this->currentFavorite['name'] = $value['properties']['Title'];
             $this->currentFavorite['category'] = $this->l10n->t('Personal');
@@ -696,11 +705,10 @@ class FavoritesService {
                 $this->currentFavorite['comment'] = $value['properties']['Location']['Address'];
             }
 
-            $this->currentFavorite['lng'] = floatval($value['geometry']['coordinates'][0]);
-            $this->currentFavorite['lat'] = floatval($value['geometry']['coordinates'][1]);
 
             // Store this favorite
             array_push($this->currentFavoritesList, $this->currentFavorite);
+            $this->nbImported++;
 
             // if we have enough favorites, we create them and clean the array
             if (count($this->currentFavoritesList) >= 500) {
@@ -718,7 +726,7 @@ class FavoritesService {
 
         return [
             'nbImported'=>$this->nbImported,
-            'linesFound'=>false
+            'linesFound'=>$this->linesFound
         ];
     }
 

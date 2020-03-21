@@ -670,9 +670,9 @@ class FavoritesService {
         fclose($fp);
 
         // Decode file content from JSON
-        $data = json_decode($fdata, true);
+        $data = json_decode($fdata, true, 512, JSON_THROW_ON_ERROR);
 
-        if(!array_key_exists('features', $data)) {
+        if($data == null or !array_key_exists('features', $data)) {
             $this->logger->error(
                 'Exception parsing '.$file->getName().': no places found to import',
                 array('app' => 'maps')

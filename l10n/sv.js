@@ -185,7 +185,7 @@ OC.L10N.register(
     "Description" : "Beskrivning",
     "Symbol name" : "Symbolnamn",
     "download" : "hämta",
-    "metadata link" : "metadata-länk",
+    "metadata link" : "metadatalänk",
     "no name" : "inget namn",
     "Distance" : "Distans",
     "Duration" : "Varaktighet",

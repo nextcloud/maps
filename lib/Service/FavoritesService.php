@@ -15,15 +15,13 @@
 
 namespace OCA\Maps\Service;
 
+use OC\Archive\ZIP;
+use OC\Security\SecureRandom;
+use OCP\DB\QueryBuilder\IQueryBuilder;
 use OCP\IL10N;
 use OCP\ILogger;
-use OCP\DB\QueryBuilder\IQueryBuilder;
-use OC\Security\SecureRandom;
 
-use OC\Archive\ZIP;
-
-class FavoritesService
-{
+class FavoritesService {
 
     private $l10n;
     private $logger;
@@ -39,8 +37,7 @@ class FavoritesService
     private $kmlInsidePlacemark;
     private $kmlCurrentCategory;
 
-    public function __construct(ILogger $logger, IL10N $l10n, SecureRandom $secureRandom)
-    {
+    public function __construct(ILogger $logger, IL10N $l10n, SecureRandom $secureRandom) {
         $this->l10n = $l10n;
         $this->logger = $logger;
         $this->secureRandom = $secureRandom;
@@ -48,19 +45,17 @@ class FavoritesService
         $this->dbconnection = \OC::$server->getDatabaseConnection();
     }
 
-    private function db_quote_escape_string($str)
-    {
+    private function db_quote_escape_string($str) {
         return $this->dbconnection->quote($str);
     }
 
-  /**
-   * @param string $userId
-   * @param int $pruneBefore
-   * @param string|null $filterCategory
-   * @return array with favorites
-   */
-    public function getFavoritesFromDB($userId, $pruneBefore = 0, $filterCategory = null)
-    {
+    /**
+     * @param string $userId
+     * @param int $pruneBefore
+     * @param string|null $filterCategory
+     * @return array with favorites
+     */
+    public function getFavoritesFromDB($userId, $pruneBefore = 0, $filterCategory = null) {
         $favorites = [];
         $qb = $this->qb;
         $qb->select('id', 'name', 'date_created', 'date_modified', 'lat', 'lng', 'category', 'comment', 'extensions')
@@ -74,9 +69,9 @@ class FavoritesService
             );
         }
         if ($filterCategory !== null) {
-          $qb->andWhere(
-            $qb->expr()->eq('category', $qb->createNamedParameter($filterCategory, IQueryBuilder::PARAM_STR))
-          );
+            $qb->andWhere(
+                $qb->expr()->eq('category', $qb->createNamedParameter($filterCategory, IQueryBuilder::PARAM_STR))
+            );
         }
         $req = $qb->execute();
 
@@ -107,8 +102,7 @@ class FavoritesService
         return $favorites;
     }
 
-    public function getFavoriteFromDB($id, $userId = null, $category = null)
-    {
+    public function getFavoriteFromDB($id, $userId = null, $category = null) {
         $favorite = null;
         $qb = $this->qb;
         $qb->select('id', 'name', 'date_modified', 'date_created', 'lat', 'lng', 'category', 'comment', 'extensions')
@@ -156,8 +150,7 @@ class FavoritesService
         return $favorite;
     }
 
-    public function addFavoriteToDB($userId, $name, $lat, $lng, $category, $comment, $extensions)
-    {
+    public function addFavoriteToDB($userId, $name, $lat, $lng, $category, $comment, $extensions) {
         $nowTimeStamp = (new \DateTime())->getTimestamp();
         $qb = $this->qb;
         $qb->insert('maps_favorites')
@@ -178,8 +171,7 @@ class FavoritesService
         return $favoriteId;
     }
 
-    public function addMultipleFavoritesToDB($userId, $favoriteList)
-    {
+    public function addMultipleFavoritesToDB($userId, $favoriteList) {
         $nowTimeStamp = (new \DateTime())->getTimestamp();
 
         $values = [];
@@ -215,8 +207,7 @@ class FavoritesService
         $req->closeCursor();
     }
 
-    public function renameCategoryInDB($userId, $cat, $newName)
-    {
+    public function renameCategoryInDB($userId, $cat, $newName) {
         $qb = $this->qb;
         $qb->update('maps_favorites');
         $qb->set('category', $qb->createNamedParameter($newName, IQueryBuilder::PARAM_STR));
@@ -230,8 +221,7 @@ class FavoritesService
         $qb = $qb->resetQueryParts();
     }
 
-    public function editFavoriteInDB($id, $name, $lat, $lng, $category, $comment, $extensions)
-    {
+    public function editFavoriteInDB($id, $name, $lat, $lng, $category, $comment, $extensions) {
         $nowTimeStamp = (new \DateTime())->getTimestamp();
         $qb = $this->qb;
         $qb->update('maps_favorites');
@@ -261,8 +251,7 @@ class FavoritesService
         $qb = $qb->resetQueryParts();
     }
 
-    public function deleteFavoriteFromDB($id)
-    {
+    public function deleteFavoriteFromDB($id) {
         $qb = $this->qb;
         $qb->delete('maps_favorites')
             ->where(
@@ -272,8 +261,7 @@ class FavoritesService
         $qb = $qb->resetQueryParts();
     }
 
-    public function deleteFavoritesFromDB($ids, $userId)
-    {
+    public function deleteFavoritesFromDB($ids, $userId) {
         $qb = $this->qb;
         $qb->delete('maps_favorites')
             ->where(
@@ -292,8 +280,7 @@ class FavoritesService
         $qb = $qb->resetQueryParts();
     }
 
-    public function countFavorites($userId, $categoryList, $begin, $end)
-    {
+    public function countFavorites($userId, $categoryList, $begin, $end) {
         if ($categoryList === null or
             (is_array($categoryList) and count($categoryList) === 0)
         ) {
@@ -338,8 +325,7 @@ class FavoritesService
         return $nbFavorites;
     }
 
-    public function exportFavorites($userId, $fileHandler, $categoryList, $begin, $end, $appVersion)
-    {
+    public function exportFavorites($userId, $fileHandler, $categoryList, $begin, $end, $appVersion) {
         $qb = $this->qb;
         $nbFavorites = $this->countFavorites($userId, $categoryList, $begin, $end);
 
@@ -433,8 +419,7 @@ class FavoritesService
         fwrite($fileHandler, $gpxEnd);
     }
 
-    public function importFavorites($userId, $file)
-    {
+    public function importFavorites($userId, $file) {
         $lowerFileName = strtolower($file->getName());
         if ($this->endswith($lowerFileName, '.gpx')) {
             return $this->importFavoritesFromGpx($userId, $file);
@@ -447,8 +432,7 @@ class FavoritesService
         }
     }
 
-    public function importFavoritesFromKmz($userId, $file)
-    {
+    public function importFavoritesFromKmz($userId, $file) {
         $path = $file->getStorage()->getLocalFile($file->getInternalPath());
         $name = $file->getName();
         $zf = new ZIP($path);
@@ -466,8 +450,7 @@ class FavoritesService
         return $result;
     }
 
-    public function importFavoritesFromKml($userId, $fp, $name)
-    {
+    public function importFavoritesFromKml($userId, $fp, $name) {
         $this->nbImported = 0;
         $this->linesFound = false;
         $this->currentFavoritesList = [];
@@ -501,8 +484,7 @@ class FavoritesService
         ];
     }
 
-    private function kmlStartElement($parser, $name, $attrs)
-    {
+    private function kmlStartElement($parser, $name, $attrs) {
         $this->currentXmlTag = $name;
         if ($name === 'PLACEMARK') {
             $this->currentFavorite = [];
@@ -513,8 +495,7 @@ class FavoritesService
         }
     }
 
-    private function kmlEndElement($parser, $name)
-    {
+    private function kmlEndElement($parser, $name) {
         if ($name === 'KML') {
             // create last bunch
             if (count($this->currentFavoritesList) > 0) {
@@ -552,8 +533,7 @@ class FavoritesService
         }
     }
 
-    private function kmlDataElement($parser, $data)
-    {
+    private function kmlDataElement($parser, $data) {
         $d = trim($data);
         if (!empty($d)) {
             if (!$this->kmlInsidePlacemark) {
@@ -574,8 +554,7 @@ class FavoritesService
         }
     }
 
-    public function importFavoritesFromGpx($userId, $file)
-    {
+    public function importFavoritesFromGpx($userId, $file) {
         $this->nbImported = 0;
         $this->linesFound = false;
         $this->currentFavoritesList = [];
@@ -610,8 +589,7 @@ class FavoritesService
         ];
     }
 
-    private function gpxStartElement($parser, $name, $attrs)
-    {
+    private function gpxStartElement($parser, $name, $attrs) {
         $this->currentXmlTag = $name;
         if ($name === 'WPT') {
             $this->insideWpt = true;
@@ -628,8 +606,7 @@ class FavoritesService
         }
     }
 
-    private function gpxEndElement($parser, $name)
-    {
+    private function gpxEndElement($parser, $name) {
         if ($name === 'GPX') {
             // create last bunch
             if (count($this->currentFavoritesList) > 0) {
@@ -659,8 +636,7 @@ class FavoritesService
         }
     }
 
-    private function gpxDataElement($parser, $data)
-    {
+    private function gpxDataElement($parser, $data) {
         $d = trim($data);
         if (!empty($d)) {
             if ($this->insideWpt and $this->currentXmlTag === 'NAME') {
@@ -677,8 +653,7 @@ class FavoritesService
         }
     }
 
-    private function endswith($string, $test)
-    {
+    private function endswith($string, $test) {
         $strlen = strlen($string);
         $testlen = strlen($test);
         if ($testlen > $strlen) return false;

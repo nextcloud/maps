@@ -22,6 +22,8 @@ OC.L10N.register(
     "Start" : "Algus",
     "Destination" : "Sihtkoht",
     "min" : "min",
+    "Cinema" : "Kino",
+    "Dentist" : "Hambaarst",
     "Add to favorites" : "Lisa lemmikutesse",
     "Closed" : "Suletud",
     "File" : "Fail",

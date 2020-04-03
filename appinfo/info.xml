@@ -13,8 +13,8 @@
 - **🙋 Contacts on the map:** See where your friends live and plan your next visit.
 - **📱 Devices:** Lost your phone? Check the map!
 - **〰 Tracks:** Load GPS tracks or past trips. Recording with [PhoneTrack](https://f-droid.org/en/packages/net.eneiluj.nextcloud.phonetrack/) or [OwnTracks](https://owntracks.org) is planned.
-	]]></description>
-    <version>0.1.5</version>
+    ]]></description>
+    <version>0.1.6</version>
     <licence>agpl</licence>
     <author mail="eneiluj@posteo.net">Julien Veyssier</author>
     <author mail="kontakt+github@arne.email">Arne Hamann</author>
@@ -26,11 +26,11 @@
     <category>social</category>
     <category>tools</category>
     <website>https://github.com/nextcloud/maps</website>
-	<bugs>https://github.com/nextcloud/maps/issues</bugs>
-	<repository type="git">https://github.com/nextcloud/maps.git</repository>
+    <bugs>https://github.com/nextcloud/maps/issues</bugs>
+    <repository type="git">https://github.com/nextcloud/maps.git</repository>
     <screenshot>https://raw.githubusercontent.com/nextcloud/maps/master/screenshots/screenshot1.png</screenshot>
-	<screenshot>https://raw.githubusercontent.com/nextcloud/maps/master/screenshots/screenshot2.png</screenshot>
-	<screenshot>https://raw.githubusercontent.com/nextcloud/maps/master/screenshots/screenshot3.png</screenshot>
+    <screenshot>https://raw.githubusercontent.com/nextcloud/maps/master/screenshots/screenshot2.png</screenshot>
+    <screenshot>https://raw.githubusercontent.com/nextcloud/maps/master/screenshots/screenshot3.png</screenshot>
     <dependencies>
         <lib>exif</lib>
         <nextcloud min-version="16" max-version="19"/>

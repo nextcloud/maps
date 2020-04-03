@@ -125,6 +125,12 @@
     background: var(--color-main-background);
     font-family: var(--font-face);
 }
+.mapboxgl-map {
+    cursor: grab;
+}
+.leaflet-drag-target {
+    cursor: move !important;
+}
 
 .leaflet-control-layers-base {
     line-height: 30px;
@@ -414,7 +420,8 @@ tr.selected td {
 }
 
 .leaflet-marker-favorite-tooltip {
-    width: 300px;
+    min-width: 200px;
+    max-width: 300px;
 }
 
 .leaflet-marker-contact-tooltip p {
@@ -429,6 +436,7 @@ tr.selected td {
     opacity: 1 !important;
     background-color: var(--color-main-background);
     color: var(--color-main-text);
+    min-width: 150px;
 }
 .leaflet-marker-photo-tooltip {
     padding: 1px;

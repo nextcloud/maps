@@ -239,16 +239,23 @@ PhotosController.prototype = {
     },
 
     photoMouseRightClick: function(e) {
+        var that = this;
         var filePath = e.target.data.path;
 
-        e.target.unbindPopup();
         var popupContent = this._map.photosController.getPhotoContextPopupContent(filePath);
-        e.target.bindPopup(popupContent, {
+        this._map.clickpopup = true;
+
+        var popup = L.popup({
             closeOnClick: true,
             className: 'popovermenu open popupMarker',
             offset: L.point(-5, -20)
+        })
+            .setLatLng(e.target._latlng)
+            .setContent(popupContent)
+            .openOn(this._map);
+        $(popup._closeButton).one('click', function (e) {
+            that._map.clickpopup = null;
         });
-        e.target.openPopup();
     },
 
     getPhotoContextPopupContent: function(filePath) {
@@ -271,14 +278,16 @@ PhotosController.prototype = {
     },
 
     enterMovePhotoMode: function() {
-        $('.leaflet-container').css('cursor', 'crosshair');
+        $('.leaflet-container, .mapboxgl-map').css('cursor', 'crosshair');
         this.map.on('click', this.movePhotoClickMap);
+        this.map.clickpopup = true;
         OC.Notification.showTemporary(t('maps', 'Click on the map to move the photo, press ESC to cancel'));
     },
 
     leaveMovePhotoMode: function() {
-        $('.leaflet-container').css('cursor', 'grab');
+        $('.leaflet-container, .mapboxgl-map').css('cursor', 'grab');
         this.map.off('click', this.movePhotoClickMap);
+        this.map.clickpopup = null;
         this.movingPhotoPath = null;
     },
 
@@ -383,8 +392,31 @@ PhotosController.prototype = {
         return generateUrl('/apps/theming/img/core/filetypes') + '/image.svg?v=2';
     },
 
-    contextPlacePhotos: function(e) {
+    contextPlacePhotosOrFolder: function(e) {
         var that = this.photosController;
+        OC.dialogs.confirmDestructive(
+            '',
+            t('maps', 'What do you want to place?'),
+            {
+                type: OC.dialogs.YES_NO_BUTTONS,
+                confirm: t('maps', 'Photo files'),
+                confirmClasses: '',
+                cancel: t('maps', 'Photo folders'),
+            },
+            function (result) {
+                if (result) {
+                    that.contextPlacePhotos(e);
+                }
+                else {
+                    that.contextPlacePhotoFolder(e);
+                }
+            },
+            true
+        );
+    },
+
+    contextPlacePhotos: function(e) {
+        var that = this;
         var latlng = e.latlng;
         OC.dialogs.filepicker(
             t('maps', 'Choose pictures to place'),
@@ -398,7 +430,7 @@ PhotosController.prototype = {
     },
 
     contextPlacePhotoFolder: function(e) {
-        var that = this.photosController;
+        var that = this;
         var latlng = e.latlng;
         OC.dialogs.filepicker(
             t('maps', 'Choose directory of pictures to place'),
@@ -417,7 +449,7 @@ PhotosController.prototype = {
     placePhotos: function(paths, lats, lngs, directory=false) {
         var that = this;
         $('#navigation-photos').addClass('icon-loading-small');
-        $('.leaflet-container').css('cursor', 'wait');
+        $('.leaflet-container, .mapboxgl-map').css('cursor', 'wait');
         var req = {
             paths: paths,
             lats: lats,
@@ -449,7 +481,7 @@ PhotosController.prototype = {
             }
         }).always(function (response) {
             $('#navigation-photos').removeClass('icon-loading-small');
-            $('.leaflet-container').css('cursor', 'grab');
+            $('.leaflet-container, .mapboxgl-map').css('cursor', 'grab');
         }).fail(function(response) {
             OC.Notification.showTemporary(t('maps', 'Failed to place photos') + ': ' + response.responseText);
         });
@@ -458,7 +490,7 @@ PhotosController.prototype = {
     resetPhotoCoords: function(paths) {
         var that = this;
         $('#navigation-photos').addClass('icon-loading-small');
-        $('.leaflet-container').css('cursor', 'wait');
+        $('.leaflet-container, .mapboxgl-map').css('cursor', 'wait');
         var req = {
             paths: paths
         };
@@ -487,7 +519,7 @@ PhotosController.prototype = {
             }
         }).always(function (response) {
             $('#navigation-photos').removeClass('icon-loading-small');
-            $('.leaflet-container').css('cursor', 'grab');
+            $('.leaflet-container, .mapboxgl-map').css('cursor', 'grab');
         }).fail(function(response) {
             OC.Notification.showTemporary(t('maps', 'Failed to reset photos coordinates') + ': ' + response.responseText);
         });

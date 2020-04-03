@@ -19,6 +19,7 @@ OC.L10N.register(
     "Move" : "Mută",
     "right" : "dreapta",
     "left" : "stânga",
+    "Start" : "Începe",
     "Destination" : "Destination",
     "min" : "min",
     "Add to favorites" : "Adăugați la favorite",

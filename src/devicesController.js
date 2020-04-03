@@ -277,6 +277,10 @@ DevicesController.prototype = {
         var color = device.color || (OCA.Theming ? OCA.Theming.color : '#0082c9');
         this.devices[id] = device;
         this.devices[id].color = color;
+        // points data indexed by point id
+        this.devices[id].points = {};
+        // points coordinates (with id as third element)
+        this.devices[id].pointsLatLngId = [];
 
         this.devices[id].icon = L.divIcon(L.extend({
             html: '<div class="thumbnail"></div>​',
@@ -431,7 +435,7 @@ DevicesController.prototype = {
     renameDeviceDB: function(id, newDeviceName) {
         var that = this;
         $('#device-list > li[device="'+id+'"]').addClass('icon-loading-small');
-        $('.leaflet-container').css('cursor', 'wait');
+        $('.leaflet-container, .mapboxgl-map').css('cursor', 'wait');
         var req = {
             name: newDeviceName
         };
@@ -463,7 +467,7 @@ DevicesController.prototype = {
             that.setDeviceCss(id, color);
         }).always(function (response) {
             $('#device-list > li[device="'+id+'"]').removeClass('icon-loading-small');
-            $('.leaflet-container').css('cursor', 'grab');
+            $('.leaflet-container, .mapboxgl-map').css('cursor', 'grab');
         }).fail(function(response) {
             OC.Notification.showTemporary(t('maps', 'Failed to rename device') + ': ' + response.responseText);
         });
@@ -472,7 +476,7 @@ DevicesController.prototype = {
     deleteDeviceDB: function(id) {
         var that = this;
         $('#navigation-devices').addClass('icon-loading-small');
-        $('.leaflet-container').css('cursor', 'wait');
+        $('.leaflet-container, .mapboxgl-map').css('cursor', 'wait');
         var req = {};
         var url = generateUrl('/apps/maps/devices/'+id);
         $.ajax({
@@ -484,7 +488,7 @@ DevicesController.prototype = {
             that.deleteDeviceMap(id);
         }).always(function (response) {
             $('#navigation-devices').removeClass('icon-loading-small');
-            $('.leaflet-container').css('cursor', 'grab');
+            $('.leaflet-container, .mapboxgl-map').css('cursor', 'grab');
         }).fail(function() {
             OC.Notification.showTemporary(t('maps', 'Failed to delete device'));
         });
@@ -626,10 +630,6 @@ DevicesController.prototype = {
         this.devices[id].marker.on('mouseout', this.deviceMarkerMouseout);
         this.devices[id].marker.on('contextmenu', this.deviceMarkerMouseRightClick);
         //this.devices[id].marker.on('click', this.deviceMouseClick);
-        // points data indexed by point id
-        this.devices[id].points = {};
-        // points coordinates (with id as third element)
-        this.devices[id].pointsLatLngId = [];
         for (var i=0; i < points.length; i++) {
             this.devices[id].pointsLatLngId.push([points[i].lat, points[i].lng, points[i].id]);
             this.devices[id].points[points[i].id] = points[i];
@@ -1001,22 +1001,26 @@ DevicesController.prototype = {
     },
 
     deviceMarkerMouseRightClick: function(e) {
+        var that = this;
         var id = e.target.devid;
 
-        var yOffset = 5;
+        var yOffset = 7;
         if (e.target.lastPosMarker) {
-            yOffset = -20;
+            yOffset = -14;
         }
-        e.target.unbindPopup();
+        this._map.clickpopup = true;
         var popupContent = this._map.devicesController.getDeviceContextPopupContent(id);
-        e.target.bindPopup(popupContent, {
+        var popup = L.popup({
             closeOnClick: true,
             className: 'popovermenu open popupMarker',
-            offset: L.point(-5, yOffset)
+            offset: L.point(-6, yOffset)
+        })
+            .setLatLng(e.latlng)
+            .setContent(popupContent)
+            .openOn(this._map);
+        $(popup._closeButton).one('click', function (e) {
+            that._map.clickpopup = null;
         });
-        e.target.openPopup(e.latlng);
-        e.target.unbindPopup();
-        this._map.clickpopup = true;
     },
 
     getDeviceContextPopupContent: function(id) {
@@ -1091,7 +1095,7 @@ DevicesController.prototype = {
     exportDevices: function(idList, all=false) {
         var that = this;
         $('#navigation-devices').addClass('icon-loading-small');
-        $('.leaflet-container').css('cursor', 'wait');
+        $('.leaflet-container, .mapboxgl-map').css('cursor', 'wait');
         var req = {
             deviceIdList: idList,
             begin: null,
@@ -1108,7 +1112,7 @@ DevicesController.prototype = {
             OC.Notification.showTemporary(t('maps', 'Devices exported in {path}', {path: response}));
         }).always(function (response) {
             $('#navigation-devices').removeClass('icon-loading-small');
-            $('.leaflet-container').css('cursor', 'grab');
+            $('.leaflet-container, .mapboxgl-map').css('cursor', 'grab');
         }).fail(function(response) {
             OC.Notification.showTemporary(t('maps', 'Failed to export devices') + ': ' + response.responseText);
         });
@@ -1116,7 +1120,7 @@ DevicesController.prototype = {
 
     importDevices: function(path) {
         $('#navigation-devices').addClass('icon-loading-small');
-        $('.leaflet-container').css('cursor', 'wait');
+        $('.leaflet-container, .mapboxgl-map').css('cursor', 'wait');
         var that = this;
         var req = {
             path: path
@@ -1136,7 +1140,7 @@ DevicesController.prototype = {
             that.getDevices();
         }).always(function (response) {
             $('#navigation-devices').removeClass('icon-loading-small');
-            $('.leaflet-container').css('cursor', 'grab');
+            $('.leaflet-container, .mapboxgl-map').css('cursor', 'grab');
         }).fail(function(response) {
             OC.Notification.showTemporary(t('maps', 'Failed to import devices') + ': ' + response.responseText);
         });

@@ -144,7 +144,6 @@ ContactsController.prototype = {
     },
 
     toggleGroup: function(groupName) {
-        var groupNoSpace = groupName.replace(' ', '-');
         var groupLine = $('#contact-group-list > li[contact-group="'+groupName+'"]');
         var groupCounter = groupLine.find('.app-navigation-entry-utils-counter');
         var showAgain = false;
@@ -267,16 +266,21 @@ ContactsController.prototype = {
         var _app = this;
         return function(evt) {
             var marker = evt.layer;
-            var contactPopup = _app.getContactPopupContent(marker.data);
-            marker.unbindPopup();
+            var popupContent = _app.getContactPopupContent(marker.data);
             marker.unbindTooltip();
-            marker.bindPopup(contactPopup, {
+            this._map.clickpopup = true;
+
+            var popup = L.popup({
                 closeOnClick: true,
                 className: 'popovermenu open popupMarker contactPopup',
                 offset: L.point(-5, 10)
+            })
+                .setLatLng(marker.getLatLng())
+                .setContent(popupContent)
+                .openOn(_app.map);
+            $(popup._closeButton).one('click', function (e) {
+                _app.map.clickpopup = null;
             });
-            marker.openPopup();
-            this._map.clickpopup = true;
         };
     },
 
@@ -344,7 +348,7 @@ ContactsController.prototype = {
 
     addGroup: function(rawName, enable=false) {
         this.groups[rawName] = {};
-        var name = rawName.replace(' ', '-');
+        var name = rawName.replace(/\s+/g, '-');
 
         var color = '000000';
         var displayName = rawName;
@@ -479,7 +483,8 @@ ContactsController.prototype = {
                 icon: this.createContactView(markerData)
             });
 
-            marker.on('contextmenu', this.onContactRightClick);
+            // disabled for the moment
+            //marker.on('contextmenu', this.onContactRightClick);
             marker.on('mouseover', this.onContactMouseover);
             marker.on('mouseout', this.onContactMouseout);
             marker.data = markerData;
@@ -576,7 +581,7 @@ ContactsController.prototype = {
     deleteContactAddress: function(bookid, uri, uid, vcardAddress) {
         var that = this;
         $('#navigation-contacts').addClass('icon-loading-small');
-        $('.leaflet-container').css('cursor', 'wait');
+        $('.leaflet-container, .mapboxgl-map').css('cursor', 'wait');
         var req = {
             uid: uid,
             adr: vcardAddress
@@ -592,7 +597,7 @@ ContactsController.prototype = {
             that.map.closePopup();
             that.map.clickpopup = null;
             $('#navigation-contacts').removeClass('icon-loading-small');
-            $('.leaflet-container').css('cursor', 'grab');
+            $('.leaflet-container, .mapboxgl-map').css('cursor', 'grab');
             that.reloadContacts();
         }).fail(function(response) {
             OC.Notification.showTemporary(t('maps', 'Failed to delete contact address') + ': ' + response.responseText);
@@ -777,7 +782,7 @@ ContactsController.prototype = {
     placeContact: function(bookid, uri, uid, lat, lng, address, type='home') {
         var that = this;
         $('#navigation-contacts').addClass('icon-loading-small');
-        $('.leaflet-container').css('cursor', 'wait');
+        $('.leaflet-container, .mapboxgl-map').css('cursor', 'wait');
         var road = (address.road || '') + ' ' + (address.pedestrian || '') + ' ' + (address.suburb || '') + ' ' + (address.city_district || '');
         road = road.replace(/\s+/g, ' ').trim();
         var city = address.village || address.town || address.city || '';
@@ -806,7 +811,7 @@ ContactsController.prototype = {
             that.map.closePopup();
             that.map.clickpopup = null;
             $('#navigation-contacts').removeClass('icon-loading-small');
-            $('.leaflet-container').css('cursor', 'grab');
+            $('.leaflet-container, .mapboxgl-map').css('cursor', 'grab');
             that.reloadContacts();
         }).fail(function(response) {
             OC.Notification.showTemporary(t('maps', 'Failed to place contact') + ': ' + response.responseText);

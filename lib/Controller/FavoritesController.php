@@ -218,11 +218,13 @@ class FavoritesController extends Controller {
             if ($mapsFolder->getType() !== \OCP\Files\FileInfo::TYPE_FOLDER) {
                 $response = new DataResponse('/Maps is not a directory', 400);
                 return $response;
-            } else if (!$mapsFolder->isCreatable()) {
+            }
+            else if (!$mapsFolder->isCreatable()) {
                 $response = new DataResponse('/Maps is not writeable', 400);
                 return $response;
             }
-        } else {
+        }
+        else {
             $response = new DataResponse('Impossible to create /Maps', 400);
             return $response;
         }
@@ -238,7 +240,7 @@ class FavoritesController extends Controller {
         $tz = $this->dateTimeZone->getTimeZone();
         $now = new \DateTime('now', $tz);
         $dateStr = $now->format('Y-m-d H:i:s (P)');
-        $filename = $dateStr . ' ' . $prefix . 'favorites.gpx';
+        $filename = $dateStr.' '.$prefix.'favorites.gpx';
 
         if ($mapsFolder->nodeExists($filename)) {
             $mapsFolder->get($filename)->delete();
@@ -250,7 +252,7 @@ class FavoritesController extends Controller {
 
         fclose($handler);
         $file->touch();
-        return new DataResponse('/Maps/' . $filename);
+        return new DataResponse('/Maps/'.$filename);
     }
 
     /**
@@ -258,25 +260,28 @@ class FavoritesController extends Controller {
      */
     public function importFavorites($path) {
         $userFolder = $this->userfolder;
-        $cleanpath = str_replace(array('../', '..\\'), '', $path);
+        $cleanpath = str_replace(array('../', '..\\'), '',$path);
 
-        if ($userFolder->nodeExists($cleanpath)) {
+        if ($userFolder->nodeExists($cleanpath)){
             $file = $userFolder->get($cleanpath);
             if ($file->getType() === \OCP\Files\FileInfo::TYPE_FILE and
-                $file->isReadable()) {
+                $file->isReadable()){
                 $lowerFileName = strtolower($file->getName());
                 if ($this->endswith($lowerFileName, '.gpx') or $this->endswith($lowerFileName, '.kml') or $this->endswith($lowerFileName, '.kmz')) {
                     $result = $this->favoritesService->importFavorites($this->userId, $file);
                     return new DataResponse($result);
-                } else {
+                }
+                else {
                     // invalid extension
                     return new DataResponse('Invalid file extension', 400);
                 }
-            } else {
+            }
+            else {
                 // directory or not readable
                 return new DataResponse('Impossible to read the file', 400);
             }
-        } else {
+        }
+        else {
             // does not exist
             return new DataResponse('File does not exist', 400);
         }

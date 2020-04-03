@@ -570,70 +570,70 @@ FavoritesController.prototype = {
         // side menu entry
         var imgurl = generateUrl('/svg/core/actions/star?color='+color);
         var li = '<li class="category-line" id="'+name+'-category" category="'+rawName+'">' +
-            '    <a href="#" class="category-name" id="'+name+'-category-name" style="background-image: url('+imgurl+')">'+rawName+'</a>' +
-            '    <div class="app-navigation-entry-utils">' +
-            '        <ul>' +
-            '            <li class="app-navigation-entry-utils-counter" style="display:none;">1</li>' +
-            '            <li class="app-navigation-entry-utils-menu-button categoryMenuButton">' +
-            '                <button></button>' +
-            '            </li>' +
-            '        </ul>' +
-            '    </div>' +
-            '    <div class="app-navigation-entry-menu">' +
-            '        <ul>' +
-            '            <li>' +
-            '                <a href="#" class="addFavoriteInCategory">' +
-            '                    <span class="icon-add"></span>' +
-            '                    <span>'+t('maps', 'Add a favorite')+'</span>' +
-            '                </a>' +
-            '            </li>' +
-            '            <li>' +
-            '                <a href="#" class="renameCategory">' +
-            '                    <span class="icon-rename"></span>' +
-            '                    <span>'+t('maps', 'Rename')+'</span>' +
-            '                </a>' +
-            '            </li>' +
-            '            <li>' +
-            '                <a href="#" class="action-checkbox shareCategory">' +
-            '                  <input id="' + checkboxId + '" type="checkbox" class="checkbox category-sharing-checkbox" ' + (shareToken ? "checked" : "") + ' data-category="' + name + '">' +
-            '                  <label for="' + checkboxId + '">' + t("maps", "Share link") + '</label>' +
-            '                  <span class="icon icon-clippy favorite-share-link-clipboard-button ' + (shareToken ? "visible" : "") + '" data-clipboard-text="' + (shareToken ? generateSharingUrl(shareToken) : null) + '" title="' + t('maps', 'Copy link') + '">' +
-            '                    <span class="copied-tooltip">' + t('maps', 'Copied!') + '</span>' +
-            '                  </span>' +
-            '                </a>' +
-            '            </li>' +
-            '            <li>' +
-            '                <a href="#" class="zoomCategoryButton">' +
-            '                    <span class="icon-search"></span>' +
-            '                    <span>'+t('maps', 'Zoom to bounds')+'</span>' +
-            '                </a>' +
-            '            </li>' +
-            '            <li>' +
-            '                <a href="#" class="exportCategoryButton">' +
-            '                    <span class="icon-category-office"></span>' +
-            '                    <span>'+t('maps', 'Export')+'</span>' +
-            '                </a>' +
-            '            </li>' +
-            '            <li>' +
-            '                <a href="#" class="deleteCategory">' +
-            '                    <span class="icon-delete"></span>' +
-            '                    <span>'+t('maps', 'Delete')+'</span>' +
-            '                </a>' +
-            '            </li>' +
-            '        </ul>' +
-            '    </div>' +
-            '    <div class="app-navigation-entry-deleted">' +
-            '        <div class="app-navigation-entry-deleted-description">'+t('maps', 'Category deleted')+'</div>' +
-            '        <button class="app-navigation-entry-deleted-button icon-history undoDeleteCategory" title="Undo"></button>' +
-            '    </div>' +
-            '    <div class="app-navigation-entry-edit">' +
-            '        <div>' +
-            '            <input type="text" value="'+rawName+'" class="renameCategoryInput">' +
-            '            <input type="submit" value="" class="icon-close renameCategoryClose">' +
-            '            <input type="submit" value="" class="icon-checkmark renameCategoryOk">' +
-            '        </div>' +
-            '    </div>' +
-            '</li>';
+        '    <a href="#" class="category-name" id="'+name+'-category-name" style="background-image: url('+imgurl+')">'+rawName+'</a>' +
+        '    <div class="app-navigation-entry-utils">' +
+        '        <ul>' +
+        '            <li class="app-navigation-entry-utils-counter" style="display:none;">1</li>' +
+        '            <li class="app-navigation-entry-utils-menu-button categoryMenuButton">' +
+        '                <button></button>' +
+        '            </li>' +
+        '        </ul>' +
+        '    </div>' +
+        '    <div class="app-navigation-entry-menu">' +
+        '        <ul>' +
+        '            <li>' +
+        '                <a href="#" class="addFavoriteInCategory">' +
+        '                    <span class="icon-add"></span>' +
+        '                    <span>'+t('maps', 'Add a favorite')+'</span>' +
+        '                </a>' +
+        '            </li>' +
+        '            <li>' +
+        '                <a href="#" class="renameCategory">' +
+        '                    <span class="icon-rename"></span>' +
+        '                    <span>'+t('maps', 'Rename')+'</span>' +
+        '                </a>' +
+        '            </li>' +
+        '            <li>' +
+        '                <a href="#" class="action-checkbox shareCategory">' +
+        '                  <input id="' + checkboxId + '" type="checkbox" class="checkbox category-sharing-checkbox" ' + (shareToken ? "checked" : "") + ' data-category="' + name + '">' +
+        '                  <label for="' + checkboxId + '">' + t("maps", "Share link") + '</label>' +
+        '                  <span class="icon icon-clippy favorite-share-link-clipboard-button ' + (shareToken ? "visible" : "") + '" data-clipboard-text="' + (shareToken ? generateSharingUrl(shareToken) : null) + '" title="' + t('maps', 'Copy link') + '">' +
+        '                    <span class="copied-tooltip">' + t('maps', 'Copied!') + '</span>' +
+        '                  </span>' +
+        '                </a>' +
+        '            </li>' +
+        '            <li>' +
+        '                <a href="#" class="zoomCategoryButton">' +
+        '                    <span class="icon-search"></span>' +
+        '                    <span>'+t('maps', 'Zoom to bounds')+'</span>' +
+        '                </a>' +
+        '            </li>' +
+        '            <li>' +
+        '                <a href="#" class="exportCategoryButton">' +
+        '                    <span class="icon-category-office"></span>' +
+        '                    <span>'+t('maps', 'Export')+'</span>' +
+        '                </a>' +
+        '            </li>' +
+        '            <li>' +
+        '                <a href="#" class="deleteCategory">' +
+        '                    <span class="icon-delete"></span>' +
+        '                    <span>'+t('maps', 'Delete')+'</span>' +
+        '                </a>' +
+        '            </li>' +
+        '        </ul>' +
+        '    </div>' +
+        '    <div class="app-navigation-entry-deleted">' +
+        '        <div class="app-navigation-entry-deleted-description">'+t('maps', 'Category deleted')+'</div>' +
+        '        <button class="app-navigation-entry-deleted-button icon-history undoDeleteCategory" title="Undo"></button>' +
+        '    </div>' +
+        '    <div class="app-navigation-entry-edit">' +
+        '        <div>' +
+        '            <input type="text" value="'+rawName+'" class="renameCategoryInput">' +
+        '            <input type="submit" value="" class="icon-close renameCategoryClose">' +
+        '            <input type="submit" value="" class="icon-checkmark renameCategoryOk">' +
+        '        </div>' +
+        '    </div>' +
+        '</li>';
 
         var beforeThis = null;
         var rawLower = rawName.toLowerCase();

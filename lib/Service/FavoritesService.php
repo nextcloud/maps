@@ -181,7 +181,8 @@ class FavoritesService {
                 !array_key_exists('lng', $fav) or !is_numeric($fav['lng'])
             ) {
                 continue;
-            } else {
+            }
+            else {
                 $lat = floatval($fav['lat']);
                 $lng = floatval($fav['lng']);
             }
@@ -273,7 +274,8 @@ class FavoritesService {
                 $or->add($qb->expr()->eq('id', $qb->createNamedParameter($id, IQueryBuilder::PARAM_INT)));
             }
             $qb->andWhere($or);
-        } else {
+        }
+        else {
             return;
         }
         $req = $qb->execute();
@@ -394,7 +396,8 @@ class FavoritesService {
                 $gpxText .= '   <time>' . $date . '</time>' . "\n";
                 if ($category !== null && strlen($category) > 0) {
                     $gpxText .= '   <type>' . $category . '</type>' . "\n";
-                } else {
+                }
+                else {
                     $gpxText .= '   <type>' . $this->l10n->t('Personal') . '</type>' . "\n";
                 }
                 if ($comment !== null && strlen($comment) > 0) {
@@ -423,11 +426,13 @@ class FavoritesService {
         $lowerFileName = strtolower($file->getName());
         if ($this->endswith($lowerFileName, '.gpx')) {
             return $this->importFavoritesFromGpx($userId, $file);
-        } elseif ($this->endswith($lowerFileName, '.kml')) {
+        }
+        elseif ($this->endswith($lowerFileName, '.kml')) {
             $fp = $file->fopen('r');
             $name = $file->getName();
             return $this->importFavoritesFromKml($userId, $fp, $name);
-        } elseif ($this->endswith($lowerFileName, '.kmz')) {
+        }
+        elseif ($this->endswith($lowerFileName, '.kmz')) {
             return $this->importFavoritesFromKmz($userId, $file);
         }
     }
@@ -441,7 +446,8 @@ class FavoritesService {
             $fstream = $zf->getStream($zippedFilePath, 'r');
 
             $result = $this->importFavoritesFromKml($userId, $fstream, $name);
-        } else {
+        }
+        else {
             $result = [
                 'nbImported' => 0,
                 'linesFound' => false
@@ -502,7 +508,8 @@ class FavoritesService {
                 $this->addMultipleFavoritesToDB($this->importUserId, $this->currentFavoritesList);
             }
             unset($this->currentFavoritesList);
-        } else if ($name === 'PLACEMARK') {
+        }
+        else if ($name === 'PLACEMARK') {
             $this->kmlInsidePlacemark = false;
             // store favorite
             $this->nbImported++;
@@ -540,14 +547,18 @@ class FavoritesService {
                 if ($this->currentXmlTag === 'NAME') {
                     $this->kmlCurrentCategory = $this->kmlCurrentCategory . $d;
                 }
-            } else {
+            }
+            else {
                 if ($this->currentXmlTag === 'NAME') {
                     $this->currentFavorite['name'] = (array_key_exists('name', $this->currentFavorite)) ? $this->currentFavorite['name'] . $d : $d;
-                } else if ($this->currentXmlTag === 'WHEN') {
+                }
+                else if ($this->currentXmlTag === 'WHEN') {
                     $this->currentFavorite['date_created'] = (array_key_exists('date_created', $this->currentFavorite)) ? $this->currentFavorite['date_created'] . $d : $d;
-                } else if ($this->currentXmlTag === 'COORDINATES') {
+                }
+                else if ($this->currentXmlTag === 'COORDINATES') {
                     $this->currentFavorite['coordinates'] = (array_key_exists('coordinates', $this->currentFavorite)) ? $this->currentFavorite['coordinates'] . $d : $d;
-                } else if ($this->currentXmlTag === 'DESCRIPTION') {
+                }
+                else if ($this->currentXmlTag === 'DESCRIPTION') {
                     $this->currentFavorite['comment'] = (array_key_exists('comment', $this->currentFavorite)) ? $this->currentFavorite['comment'] . $d : $d;
                 }
             }
@@ -613,7 +624,8 @@ class FavoritesService {
                 $this->addMultipleFavoritesToDB($this->importUserId, $this->currentFavoritesList);
             }
             unset($this->currentFavoritesList);
-        } else if ($name === 'WPT') {
+        }
+        else if ($name === 'WPT') {
             $this->insideWpt = false;
             // store favorite
             $this->nbImported++;
@@ -641,13 +653,17 @@ class FavoritesService {
         if (!empty($d)) {
             if ($this->insideWpt and $this->currentXmlTag === 'NAME') {
                 $this->currentFavorite['name'] = (array_key_exists('name', $this->currentFavorite)) ? $this->currentFavorite['name'] . $d : $d;
-            } else if ($this->insideWpt and $this->currentXmlTag === 'TIME') {
+            }
+            else if ($this->insideWpt and $this->currentXmlTag === 'TIME') {
                 $this->currentFavorite['date_created'] = (array_key_exists('date_created', $this->currentFavorite)) ? $this->currentFavorite['date_created'] . $d : $d;
-            } else if ($this->insideWpt and $this->currentXmlTag === 'TYPE') {
+            }
+            else if ($this->insideWpt and $this->currentXmlTag === 'TYPE') {
                 $this->currentFavorite['category'] = (array_key_exists('category', $this->currentFavorite)) ? $this->currentFavorite['category'] . $d : $d;
-            } else if ($this->insideWpt and $this->currentXmlTag === 'DESC') {
+            }
+            else if ($this->insideWpt and $this->currentXmlTag === 'DESC') {
                 $this->currentFavorite['comment'] = (array_key_exists('comment', $this->currentFavorite)) ? $this->currentFavorite['comment'] . $d : $d;
-            } else if ($this->insideWpt and $this->currentXmlTag === 'MAPS-EXTENSIONS') {
+            }
+            else if ($this->insideWpt and $this->currentXmlTag === 'MAPS-EXTENSIONS') {
                 $this->currentFavorite['extensions'] = (array_key_exists('extensions', $this->currentFavorite)) ? $this->currentFavorite['extensions'] . $d : $d;
             }
         }

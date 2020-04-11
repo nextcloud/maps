@@ -55,6 +55,7 @@ OC.L10N.register(
     "Category deleted" : "Категорија обрисана",
     "Failed to rename category" : "Грешка при преименовања категорије",
     "Failed to delete category favorites" : "Грешка при брисању омиљених категорија",
+    "Click on the map to add a favorite, press ESC to cancel" : "Кликните на карту да додате омиљене, притисните ESC да поништите",
     "Failed to add favorite" : "Грешка при додавању омиљене",
     "Name" : "Име",
     "No name" : "Без имена",

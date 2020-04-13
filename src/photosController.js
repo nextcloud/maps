@@ -45,7 +45,8 @@ PhotosController.prototype = {
                     var photolist = a.layer.getAllChildMarkers().map(function(m) {
                         return  m.data;
                     });
-                    OCA.Viewer.open({path: a.layer.getAllChildMarkers()[0].data.path, list: photolist });
+                    photolist.sort(function (a, b) { return a.dateTaken - b.dateTaken;});
+                    OCA.Viewer.open({path: photolist[0].path, list: photolist });
                 } else {
                     a.layer.spiderfy();
                     that.map.clickpopup = true;

@@ -2,8 +2,8 @@
     <filter>
         <whitelist>
             <directory suffix=".php">appinfo</directory>
+            <directory suffix=".php">lib</directory>
             <exclude>
-                <directory suffix=".php">lib</directory>
                 <directory suffix=".php">templates</directory>
             </exclude>
         </whitelist>

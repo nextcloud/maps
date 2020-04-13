@@ -816,3 +816,33 @@ tr.selected td {
 .ui-autocomplete {
     z-index: 9999;
 }
+
+.favorite-share-link-clipboard-button {
+  display: none;
+  position: absolute;
+  right: 0;
+
+  &.visible {
+    display: block;
+  }
+
+  &.tooltip-visible .copied-tooltip {
+    opacity: .9;
+    transform: translate(-50%, 0);
+  }
+
+  .copied-tooltip {
+    position: absolute;
+    bottom: calc(100% - 10px);
+    line-height: normal;
+    left: 50%;
+    transition: transform .2s, opacity .2s;
+    transform: translate(-50%, 5px);
+    opacity: 0;
+    margin: auto;
+    background: #222;
+    color: #fff;
+    padding: 4px;
+    border-radius: 2px;
+  }
+}

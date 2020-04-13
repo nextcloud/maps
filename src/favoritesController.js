@@ -2,6 +2,12 @@ import { generateUrl } from '@nextcloud/router';
 
 import { Timer, getLetterColor, hslToRgb } from './utils';
 
+
+function generateSharingUrl(token) {
+  return window.location.origin + OC.generateUrl("/apps/maps/s/favorites/" + token);
+}
+
+
 function FavoritesController(optionsController, timeFilterController) {
     this.CLUSTER_MARKER_VIEW_SIZE = 27;
     this.optionsController = optionsController;
@@ -28,6 +34,7 @@ function FavoritesController(optionsController, timeFilterController) {
     this.lastUsedCategory = null;
 
     this.movingFavoriteId = null;
+    this.sharingFavoriteId = null;
 
     // used by optionsController to know if favorite loading
     // was done before or after option restoration
@@ -113,6 +120,69 @@ FavoritesController.prototype = {
                 that.leaveMoveFavoriteMode();
             }
             that.enterAddFavoriteMode(cat);
+        });
+
+        // Stop click propagation on shareCategory action to prevent menu from closing
+        $('body').on('click', '.shareCategory', function(e) {
+          e.stopPropagation();
+        });
+
+        $('body').on('click', '.favorite-share-link-clipboard-button', function(e) {
+            var clipboardText = $(this).attr('data-clipboard-text');
+            var $temp = $("<input>");
+            $("body").append($temp);
+            $temp.val(clipboardText).select();
+            document.execCommand("copy");
+            $temp.remove();
+
+            var clipboardButton = $(this);
+            clipboardButton.addClass('tooltip-visible');
+
+            setTimeout(() => {
+              if (clipboardButton) {
+                clipboardButton.removeClass('tooltip-visible');
+              }
+            }, 1500);
+        });
+
+        $('body').on('change', '.category-sharing-checkbox', function(e) {
+            var category = $(this).attr('data-category');
+
+            var shareMenuEntry = $(this).parent();
+
+            if (!this.checked) {
+                $.ajax({
+                    type: 'POST',
+                    url: OC.generateUrl('/apps/maps/favorites-category/' + category + '/un-share'),
+                    data: {},
+                    async: true
+                }).done(function () {
+                    var clipboardButton = shareMenuEntry.children('.favorite-share-link-clipboard-button');
+
+                    clipboardButton.removeClass('visible');
+                    clipboardButton.attr('data-clipboard-text', null);
+                }).always(function () {
+
+                }).fail(function() {
+                    OC.Notification.showTemporary(t('maps', 'Failed to remove favorites category share'));
+                });
+            } else {
+                $.ajax({
+                    type: 'POST',
+                    url:  OC.generateUrl('/apps/maps/favorites-category/' + category + '/share'),
+                    data: {},
+                    async: true
+                }).done(function (response) {
+                    var clipboardButton = shareMenuEntry.children('.favorite-share-link-clipboard-button');
+
+                    clipboardButton.addClass('visible');
+                    clipboardButton.attr('data-clipboard-text', generateSharingUrl(response.token));
+                }).always(function () {
+
+                }).fail(function() {
+                    OC.Notification.showTemporary(t('maps', 'Failed to share favorites category'));
+                });
+            }
         });
         // cancel favorite edition
         $('body').on('click', '.canceleditfavorite', function(e) {
@@ -418,34 +488,56 @@ FavoritesController.prototype = {
     getFavorites: function() {
         var that = this;
         $('#navigation-favorites').addClass('icon-loading-small');
-        var req = {};
-        var url = generateUrl('/apps/maps/favorites');
-        $.ajax({
+
+        var favorites = [];
+        var sharedCategories = [];
+
+        $.when(
+            $.ajax({
+            url: generateUrl('/apps/maps/favorites'),
+            data: {},
             type: 'GET',
-            url: url,
-            data: req,
-            async: true
-        }).done(function (response) {
-            var fav, marker, cat, color;
-            for (var i=0; i < response.length; i++) {
-                fav = response[i];
-                that.addFavoriteMap(fav);
+            async: true,
+            success: function(response) {
+                favorites = response;
+            },
+            fail: function(response) {
+                OC.Notification.showTemporary(t('maps', 'Failed to load favorites'));
             }
+        }), $.ajax({
+            url: OC.generateUrl('/apps/maps/favorites-category/shared'),
+            data: {},
+            type: 'GET',
+            async: true,
+            success: function(response) {
+                for (var i = 0; i < response.length; i++) {
+                    sharedCategories[response[i].category] = response[i].token;
+                }
+            },
+            fail: function(response) {
+                OC.Notification.showTemporary(t('maps', 'Failed to load favorite share token'));
+            }
+        })
+        ).then(function() {
+            for (var i=0; i < favorites.length; i++) {
+                var token = sharedCategories[favorites[i].category] || null;
+
+                that.addFavoriteMap(favorites[i], true, false, token);
+            }
+
             that.updateCategoryCounters();
             that.favoritesLoaded = true;
             that.updateTimeFilterRange();
             that.timeFilterController.setSliderToMaxInterval();
-        }).always(function (response) {
+
             $('#navigation-favorites').removeClass('icon-loading-small');
-        }).fail(function() {
-            OC.Notification.showTemporary(t('maps', 'Failed to load favorites'));
         });
     },
 
     // add category in side menu
     // add layer
     // set color and icon
-    addCategory: function(rawName, enable=false) {
+    addCategory: function(rawName, enable=false, shareToken = null) {
         var name = rawName.replace(/\s+/g, '-');
 
         // color
@@ -478,6 +570,8 @@ FavoritesController.prototype = {
             html: '<div class="favoriteMarker '+name+'CategoryMarker"></div>'
         });
 
+        var checkboxId = 'checkbox-' + name.toLowerCase();
+
         // side menu entry
         var imgurl = generateUrl('/svg/core/actions/star?color='+color);
         var li = '<li class="category-line" id="'+name+'-category" category="'+rawName+'">' +
@@ -502,6 +596,15 @@ FavoritesController.prototype = {
         '                <a href="#" class="renameCategory">' +
         '                    <span class="icon-rename"></span>' +
         '                    <span>'+t('maps', 'Rename')+'</span>' +
+        '                </a>' +
+        '            </li>' +
+        '            <li>' +
+        '                <a href="#" class="action-checkbox shareCategory">' +
+        '                  <input id="' + checkboxId + '" type="checkbox" class="checkbox category-sharing-checkbox" ' + (shareToken ? "checked" : "") + ' data-category="' + name + '">' +
+        '                  <label for="' + checkboxId + '">' + t("maps", "Share link") + '</label>' +
+        '                  <span class="icon icon-clippy favorite-share-link-clipboard-button ' + (shareToken ? "visible" : "") + '" data-clipboard-text="' + (shareToken ? generateSharingUrl(shareToken) : null) + '" title="' + t('maps', 'Copy link') + '">' +
+        '                    <span class="copied-tooltip">' + t('maps', 'Copied!') + '</span>' +
+        '                  </span>' +
         '                </a>' +
         '            </li>' +
         '            <li>' +
@@ -731,11 +834,11 @@ FavoritesController.prototype = {
     },
 
     // add a marker to the corresponding layer
-    addFavoriteMap: function(fav, enableCategory=false, fromUserAction=false) {
+    addFavoriteMap: function(fav, enableCategory=false, fromUserAction=false, shareToken = null) {
         // manage category first
         var cat = fav.category;
         if (!this.categoryLayers.hasOwnProperty(cat)) {
-            this.addCategory(cat, enableCategory);
+            this.addCategory(cat, enableCategory, shareToken);
             if (enableCategory) {
                 this.saveEnabledCategories();
             }

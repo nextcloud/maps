@@ -6,35 +6,24 @@
  * later. See the COPYING file.
  *
  * @author Julien Veyssier <eneiluj@posteo.net>
+ * @author Paul Schwörer <hello@paulschwoerer.de>
  * @copyright Julien Veyssier 2019
+ * @copyright Paul Schwörer 2019
  */
 
 namespace OCA\Maps\Controller;
 
-use OCP\App\IAppManager;
-
-use OCP\IURLGenerator;
-use OCP\IConfig;
-use \OCP\IL10N;
-
-use OCP\AppFramework\Http;
-use OCP\AppFramework\Http\RedirectResponse;
-
-use OCP\AppFramework\Http\ContentSecurityPolicy;
-
-use OCP\IRequest;
-use OCP\AppFramework\Http\TemplateResponse;
-use OCP\AppFramework\Http\DataResponse;
-use OCP\AppFramework\Controller;
-use OCP\AppFramework\ApiController;
-use OCP\Constants;
-use OCP\Share;
-
-use OCP\IDateTimeZone;
-
+use OCA\Maps\DB\FavoriteShareMapper;
 use OCA\Maps\Service\FavoritesService;
-
-//use function OCA\Maps\Service\endswith;
+use OCP\App\IAppManager;
+use OCP\AppFramework\Controller;
+use OCP\AppFramework\Db\DoesNotExistException;
+use OCP\AppFramework\Db\MultipleObjectsReturnedException;
+use OCP\AppFramework\Http;
+use OCP\AppFramework\Http\DataResponse;
+use OCP\IDateTimeZone;
+use OCP\IL10N;
+use OCP\IRequest;
 
 class FavoritesController extends Controller {
 
@@ -55,11 +44,14 @@ class FavoritesController extends Controller {
     private $dateTimeZone;
     protected $appName;
 
+    /* @var FavoriteShareMapper */
+    private $favoriteShareMapper;
+
     public function __construct($AppName, IRequest $request, $UserId,
                                 $userfolder, $config, $shareManager,
                                 IAppManager $appManager, $userManager,
                                 $groupManager, IL10N $trans, $logger, FavoritesService $favoritesService,
-                                IDateTimeZone $dateTimeZone){
+                                IDateTimeZone $dateTimeZone, FavoriteShareMapper $favoriteShareMapper) {
         parent::__construct($AppName, $request);
         $this->favoritesService = $favoritesService;
         $this->dateTimeZone = $dateTimeZone;
@@ -74,11 +66,12 @@ class FavoritesController extends Controller {
         // IConfig object
         $this->config = $config;
         $this->dbconnection = \OC::$server->getDatabaseConnection();
-        if ($UserId !== '' and $userfolder !== null){
+        if ($UserId !== '' and $userfolder !== null) {
             // path of user files folder relative to DATA folder
             $this->userfolder = $userfolder;
         }
         $this->shareManager = $shareManager;
+        $this->favoriteShareMapper = $favoriteShareMapper;
     }
 
     /**
@@ -97,8 +90,7 @@ class FavoritesController extends Controller {
             $favoriteId = $this->favoritesService->addFavoriteToDB($this->userId, $name, $lat, $lng, $category, $comment, $extensions);
             $favorite = $this->favoritesService->getFavoriteFromDB($favoriteId);
             return new DataResponse($favorite);
-        }
-        else {
+        } else {
             return new DataResponse('invalid values', 400);
         }
     }
@@ -115,12 +107,10 @@ class FavoritesController extends Controller {
                 $this->favoritesService->editFavoriteInDB($id, $name, $lat, $lng, $category, $comment, $extensions);
                 $editedFavorite = $this->favoritesService->getFavoriteFromDB($id);
                 return new DataResponse($editedFavorite);
-            }
-            else {
+            } else {
                 return new DataResponse('invalid values', 400);
             }
-        }
-        else {
+        } else {
             return new DataResponse('no such favorite', 400);
         }
     }
@@ -132,6 +122,14 @@ class FavoritesController extends Controller {
         if (is_array($categories)) {
             foreach ($categories as $cat) {
                 $this->favoritesService->renameCategoryInDB($this->userId, $cat, $newName);
+
+                // Rename share if one exists
+                try {
+                    $share = $this->favoriteShareMapper->findByOwnerAndCategory($this->userId, $cat);
+                    $share->setCategory($newName);
+                    $this->favoriteShareMapper->update($share);
+                } catch (DoesNotExistException | MultipleObjectsReturnedException $e) {
+                }
             }
         }
         return new DataResponse('RENAMED');
@@ -145,8 +143,7 @@ class FavoritesController extends Controller {
         if ($favorite !== null) {
             $this->favoritesService->deleteFavoriteFromDB($id);
             return new DataResponse('DELETED');
-        }
-        else {
+        } else {
             return new DataResponse('no such favorite', 400);
         }
     }
@@ -162,7 +159,48 @@ class FavoritesController extends Controller {
     /**
      * @NoAdminRequired
      */
-    public function exportFavorites($categoryList=null, $begin, $end, $all=false) {
+    public function getSharedCategories() {
+        $categories = $this->favoriteShareMapper->findAllByOwner($this->userId);
+
+        return new DataResponse($categories);
+    }
+
+    /**
+     * @NoAdminRequired
+     */
+    public function shareCategory($category) {
+        if ($this->favoritesService->countFavorites($this->userId, [$category], null, null) === 0) {
+            return new DataResponse("Unknown category", Http::STATUS_BAD_REQUEST);
+        }
+
+        $share = $this->favoriteShareMapper->findOrCreateByOwnerAndCategory($this->userId, $category);
+
+        if ($share === null) {
+            return new DataResponse("Error sharing favorite", Http::STATUS_INTERNAL_SERVER_ERROR);
+        }
+
+        return new DataResponse($share);
+    }
+
+    /**
+     * @NoAdminRequired
+     */
+    public function unShareCategory($category) {
+        if ($this->favoritesService->countFavorites($this->userId, [$category], null, null) === 0) {
+            return new DataResponse("Unknown category", Http::STATUS_BAD_REQUEST);
+        }
+
+        $didExist = $this->favoriteShareMapper->removeByOwnerAndCategory($this->userId, $category);
+
+        return new DataResponse([
+            'did_exist' => $didExist
+        ]);
+    }
+
+    /**
+     * @NoAdminRequired
+     */
+    public function exportFavorites($categoryList = null, $begin, $end, $all = false) {
         // sorry about ugly categoryList management:
         // when an empty list is passed in http request, we get null here
         if ($categoryList === null or (is_array($categoryList) and count($categoryList) === 0)) {
@@ -222,7 +260,7 @@ class FavoritesController extends Controller {
      */
     public function importFavorites($path) {
         $userFolder = $this->userfolder;
-        $cleanpath = str_replace(array('../', '..\\'), '',  $path);
+        $cleanpath = str_replace(array('../', '..\\'), '',$path);
 
         if ($userFolder->nodeExists($cleanpath)){
             $file = $userFolder->get($cleanpath);

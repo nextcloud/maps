@@ -12,6 +12,7 @@ return [
         ['name' => 'page#index', 'url' => '/', 'verb' => 'GET'],
         ['name' => 'page#do_echo', 'url' => '/echo', 'verb' => 'POST'],
         ['name' => 'page#openGeoLink', 'url' => '/openGeoLink/{url}', 'verb' => 'GET'],
+        ['name' => 'public_page#sharedFavoritesCategory', 'url' => '/s/favorites/{token}', 'verb' => 'GET'],
 
 
         // utils
@@ -47,13 +48,30 @@ return [
         ['name' => 'favorites_api#editFavorite', 'url' => '/api/{apiversion}/favorites/{id}', 'verb' => 'PUT'],
         ['name' => 'favorites_api#deleteFavorite', 'url' => '/api/{apiversion}/favorites/{id}', 'verb' => 'DELETE'],
 
+        // public favorites API
+        [
+            'name'         => 'favorites_api#preflighted_cors',
+            'url'          => '/api/1.0/public/favorites{path}',
+            'verb'         => 'OPTIONS',
+            'requirements' => ['path' => '.+']
+        ],
+        ['name' => 'public_favorites_api#getFavorites', 'url' => '/api/1.0/public/{token}/favorites', 'verb' => 'GET'],
+//        ['name' => 'public_favorites_api#addFavorite', 'url' => '/api/1.0/public/{token}/favorites', 'verb' => 'POST'],
+//        ['name' => 'public_favorites_api#editFavorite', 'url' => '/api/1.0/public/{token}/favorites/{id}', 'verb' => 'PUT'],
+//        ['name' => 'public_favorites_api#deleteFavorite', 'url' => '/api/1.0/public/{token}/favorites/{id}', 'verb' => 'DELETE'],
+
         // favorites
         ['name' => 'favorites#getFavorites', 'url' => '/favorites', 'verb' => 'GET'],
         ['name' => 'favorites#addFavorite', 'url' => '/favorites', 'verb' => 'POST'],
         ['name' => 'favorites#editFavorite', 'url' => '/favorites/{id}', 'verb' => 'PUT'],
         ['name' => 'favorites#deleteFavorite', 'url' => '/favorites/{id}', 'verb' => 'DELETE'],
         ['name' => 'favorites#deleteFavorites', 'url' => '/favorites', 'verb' => 'DELETE'],
+
+        // favorite categories
         ['name' => 'favorites#renameCategories', 'url' => '/favorites-category', 'verb' => 'PUT'],
+        ['name' => 'favorites#getSharedCategories', 'url' => '/favorites-category/shared', 'verb' => 'GET'],
+        ['name' => 'favorites#shareCategory', 'url' => '/favorites-category/{category}/share', 'verb' => 'POST'],
+        ['name' => 'favorites#unShareCategory', 'url' => '/favorites-category/{category}/un-share', 'verb' => 'POST'],
 
         ['name' => 'favorites#exportFavorites', 'url' => '/export/favorites', 'verb' => 'POST'],
         ['name' => 'favorites#importFavorites', 'url' => '/import/favorites', 'verb' => 'POST'],

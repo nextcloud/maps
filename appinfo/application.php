@@ -12,14 +12,14 @@
 namespace OCA\Maps\AppInfo;
 
 
-use OC\AppFramework\Utility\SimpleContainer;
-use OCA\Maps\Service\AddressService;
+use OCA\Maps\DB\FavoriteShareMapper;
+use OCA\Maps\Controller\PublicFavoritesApiController;
 use \OCP\AppFramework\App;
-use OCA\Maps\Controller\PageController;
 use OCA\Maps\Controller\UtilsController;
 use OCA\Maps\Controller\FavoritesController;
 use OCA\Maps\Controller\FavoritesApiController;
 use OCA\Maps\Controller\DevicesController;
+use OCA\Maps\Controller\PublicPageController;
 use OCA\Maps\Controller\DevicesApiController;
 use OCA\Maps\Controller\RoutingController;
 use OCA\Maps\Controller\TracksController;
@@ -66,9 +66,14 @@ class Application extends App {
                     $c->query('ServerContainer')->getLogger(),
                     new FavoritesService(
                         $c->query('ServerContainer')->getLogger(),
-                        $c->query('ServerContainer')->getL10N($c->query('AppName'))
+                        $c->query('ServerContainer')->getL10N($c->query('AppName')),
+                        $c->query('ServerContainer')->getSecureRandom()
                     ),
-                    $c->query('ServerContainer')->getDateTimeZone()
+                    $c->query('ServerContainer')->getDateTimeZone(),
+                  new FavoriteShareMapper(
+                    $c->query('DatabaseConnection'),
+                    $c->query('ServerContainer')->getSecureRandom()
+                  )
                 );
             }
         );
@@ -89,7 +94,43 @@ class Application extends App {
                     $c->query('ServerContainer')->getLogger(),
                     new FavoritesService(
                         $c->query('ServerContainer')->getLogger(),
-                        $c->query('ServerContainer')->getL10N($c->query('AppName'))
+                        $c->query('ServerContainer')->getL10N($c->query('AppName')),
+                        $c->query('ServerContainer')->getSecureRandom()
+                    )
+                );
+            }
+        );
+
+        $container->registerService(
+            'PublicFavoritesAPIController', function ($c) {
+                return new PublicFavoritesApiController(
+                    $c->query('AppName'),
+                    $c->query('Request'),
+                    $c->query('Session'),
+                    new FavoritesService(
+                        $c->query('ServerContainer')->getLogger(),
+                        $c->query('ServerContainer')->getL10N($c->query('AppName')),
+                        $c->query('ServerContainer')->getSecureRandom()
+                    ),
+                  new FavoriteShareMapper(
+                    $c->query('DatabaseConnection'),
+                    $c->query('ServerContainer')->getSecureRandom()
+                  )
+                );
+            }
+        );
+
+        $container->registerService(
+            'PublicPageController', function ($c) {
+                return new PublicPageController(
+                    $c->query('AppName'),
+                    $c->query('Request'),
+                    $c->query('Session'),
+                    $c->query('ServerContainer')->getConfig(),
+                    $c->query('Logger'),
+                    new FavoriteShareMapper(
+                        $c->query('DatabaseConnection'),
+                        $c->query('ServerContainer')->getSecureRandom()
                     )
                 );
             }

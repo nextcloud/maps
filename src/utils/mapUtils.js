@@ -1,0 +1,59 @@
+/**
+ * @copyright Copyright (c) 2019, Paul Schwörer <hello@paulschwoerer.de>
+ *
+ * @author Paul Schwörer <hello@paulschwoerer.de>
+ * @author Nextcloud Maps contributors
+ *
+ * @license GNU AGPL version 3 or any later version
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
+import { request } from './common'
+
+export const isGeocodeable = str => {
+	const pattern = /^\s*-?\d+\.?\d*,\s*-?\d+\.?\d*\s*$/
+
+	return pattern.test(str)
+}
+
+export const constructGeoCodeUrl = (lat, lng) =>
+	`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}&addressdetails=1`
+
+export const geocode = latLngStr => {
+	if (!isGeocodeable(latLngStr)) {
+		return Promise.reject(new Error(`${latLngStr} is not geocodable`))
+	}
+
+	const latLng = latLngStr.split(',')
+
+	const lat = latLng[0].trim()
+	const lng = latLng[1].trim()
+
+	return request(constructGeoCodeUrl(lat, lng), 'GET')
+}
+
+export const getShouldMapUseImperial = () => {
+	const locale = OC.getLocale()
+
+	return (
+		locale === 'en_US'
+    || locale === 'en_GB'
+    || locale === 'en_AU'
+    || locale === 'en_IE'
+    || locale === 'en_NZ'
+    || locale === 'en_CA'
+	)
+}

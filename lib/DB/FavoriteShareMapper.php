@@ -107,12 +107,12 @@ class FavoriteShareMapper extends QBMapper {
     public function findByOwnerAndCategory($owner, $category) {
         $qb = $this->db->getQueryBuilder();
 
-        $qb->select("*")
+        $qb->select('*')
             ->from($this->getTableName())
             ->where(
                 $qb->expr()->eq('category', $qb->createNamedParameter($category, IQueryBuilder::PARAM_STR))
             )->andWhere(
-                $qb->expr()->eq('owner', $qb->createNamedParameter($owner, IQueryBuilder::PARAM_INT))
+                $qb->expr()->eq('owner', $qb->createNamedParameter($owner, IQueryBuilder::PARAM_STR))
             );
 
         return $this->findEntity($qb);

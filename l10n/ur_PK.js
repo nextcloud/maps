@@ -2,11 +2,11 @@ OC.L10N.register(
     "maps",
     {
     "Personal" : "شخصی",
+    "Name" : "اسم",
+    "Delete" : "حذف کریں",
     "Work" : "کام",
     "Rename" : "Rename",
-    "Delete" : "حذف کریں",
     "Date" : "Date",
-    "Name" : "اسم",
     "Move" : "Move",
     "Destination" : "Destination",
     "Add to favorites" : "Add to favorites",

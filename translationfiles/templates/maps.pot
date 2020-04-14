@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Nextcloud 3.14159\n"
 "Report-Msgid-Bugs-To: translations\\@example.com\n"
-"POT-Creation-Date: 2020-04-13 02:51+0000\n"
+"POT-Creation-Date: 2020-04-14 02:43+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -21,9 +21,10 @@ msgstr ""
 msgid "Maps"
 msgstr ""
 
-#: /app/lib/Service/FavoritesService.php:387
-#: /app/lib/Service/FavoritesService.php:504
-#: /app/lib/Service/FavoritesService.php:625 /app/src/favoritesController.js:27
+#: /app/lib/Service/FavoritesService.php:401
+#: /app/lib/Service/FavoritesService.php:518
+#: /app/lib/Service/FavoritesService.php:639 /app/src/favoritesController.js:33
+#: /app/src/utils/favoritesUtils.js:27
 msgid "Personal"
 msgstr ""
 
@@ -54,6 +55,72 @@ msgid ""
 "[OwnTracks](https://owntracks.org) is planned."
 msgstr ""
 
+#: /app/specialVueFakeDummyForL10nScript.js:1
+msgid "(No name)"
+msgstr ""
+
+#: /app/specialVueFakeDummyForL10nScript.js:2
+msgid "No favorites to display"
+msgstr ""
+
+#: /app/specialVueFakeDummyForL10nScript.js:3
+msgid "New Favorite"
+msgstr ""
+
+#: /app/specialVueFakeDummyForL10nScript.js:3
+msgid "This Place"
+msgstr ""
+
+#: /app/specialVueFakeDummyForL10nScript.js:4
+#: /app/specialVueFakeDummyForL10nScript.js:10
+#: /app/src/favoritesController.js:922
+msgid "Name"
+msgstr ""
+
+#: /app/specialVueFakeDummyForL10nScript.js:5
+#: /app/specialVueFakeDummyForL10nScript.js:11
+#: /app/src/favoritesController.js:923 /app/src/favoritesController.js:968
+msgid "Category"
+msgstr ""
+
+#: /app/specialVueFakeDummyForL10nScript.js:6
+#: /app/specialVueFakeDummyForL10nScript.js:12
+#: /app/src/favoritesController.js:925 /app/src/favoritesController.js:969
+#: /app/src/tracksController.js:704
+msgid "Comment"
+msgstr ""
+
+#: /app/specialVueFakeDummyForL10nScript.js:7
+msgid "Add"
+msgstr ""
+
+#: /app/specialVueFakeDummyForL10nScript.js:8
+msgid "Cancel"
+msgstr ""
+
+#: /app/specialVueFakeDummyForL10nScript.js:9
+msgid "Add to Favorites"
+msgstr ""
+
+#: /app/specialVueFakeDummyForL10nScript.js:13
+msgid "Update"
+msgstr ""
+
+#: /app/specialVueFakeDummyForL10nScript.js:14
+#: /app/src/devicesController.js:362 /app/src/favoritesController.js:625
+#: /app/src/favoritesController.js:966 /app/src/favoritesController.js:1034
+msgid "Delete"
+msgstr ""
+
+#: /app/specialVueFakeDummyForL10nScript.js:15
+msgid "No comment"
+msgstr ""
+
+#: /app/specialVueFakeDummyForL10nScript.js:16
+#: /app/specialVueFakeDummyForL10nScript.js:17
+msgid "Unknown Place"
+msgstr ""
+
 #: /app/src/adminSettings.js:23
 msgid "Settings were successfully saved"
 msgstr ""
@@ -71,7 +138,7 @@ msgid "Not grouped"
 msgstr ""
 
 #: /app/src/contactsController.js:377 /app/src/devicesController.js:350
-#: /app/src/devicesController.js:1030 /app/src/favoritesController.js:510
+#: /app/src/devicesController.js:1030 /app/src/favoritesController.js:613
 #: /app/src/tracksController.js:340 /app/templates/navigation/index.php:97
 msgid "Zoom to bounds"
 msgstr ""
@@ -139,7 +206,7 @@ msgstr ""
 msgid "Toggle history"
 msgstr ""
 
-#: /app/src/devicesController.js:338 /app/src/favoritesController.js:504
+#: /app/src/devicesController.js:338 /app/src/favoritesController.js:598
 msgid "Rename"
 msgstr ""
 
@@ -149,13 +216,8 @@ msgid "Change color"
 msgstr ""
 
 #: /app/src/devicesController.js:356 /app/src/devicesController.js:1029
-#: /app/src/favoritesController.js:516 /app/templates/navigation/index.php:19
+#: /app/src/favoritesController.js:619 /app/templates/navigation/index.php:19
 msgid "Export"
-msgstr ""
-
-#: /app/src/devicesController.js:362 /app/src/favoritesController.js:522
-#: /app/src/favoritesController.js:863 /app/src/favoritesController.js:931
-msgid "Delete"
 msgstr ""
 
 #: /app/src/devicesController.js:368
@@ -239,100 +301,112 @@ msgstr ""
 msgid "Failed to import devices"
 msgstr ""
 
-#: /app/src/favoritesController.js:205
+#: /app/src/favoritesController.js:167
+msgid "Failed to remove favorites category share"
+msgstr ""
+
+#: /app/src/favoritesController.js:183
+msgid "Failed to share favorites category"
+msgstr ""
+
+#: /app/src/favoritesController.js:275
 msgid ""
 "Import favorites from gpx (OsmAnd, Nextcloud Maps) or kmz/kml (F-Droid Maps, "
 "Maps.me, Marble)"
 msgstr ""
 
-#: /app/src/favoritesController.js:441
+#: /app/src/favoritesController.js:505
 msgid "Failed to load favorites"
 msgstr ""
 
-#: /app/src/favoritesController.js:498 /app/src/script.js:619
+#: /app/src/favoritesController.js:518
+msgid "Failed to load favorite share token"
+msgstr ""
+
+#: /app/src/favoritesController.js:592 /app/src/script.js:619
 #: /app/templates/navigation/index.php:6
 msgid "Add a favorite"
 msgstr ""
 
-#: /app/src/favoritesController.js:528
+#: /app/src/favoritesController.js:604
+msgid "Share link"
+msgstr ""
+
+#: /app/src/favoritesController.js:605
+msgid "Copy link"
+msgstr ""
+
+#: /app/src/favoritesController.js:606
+msgid "Copied!"
+msgstr ""
+
+#: /app/src/favoritesController.js:631
 msgid "Category deleted"
 msgstr ""
 
-#: /app/src/favoritesController.js:591
+#: /app/src/favoritesController.js:694
 msgid "Failed to rename category"
 msgstr ""
 
-#: /app/src/favoritesController.js:619
+#: /app/src/favoritesController.js:722
 msgid "Failed to delete category favorites"
 msgstr ""
 
-#: /app/src/favoritesController.js:671
+#: /app/src/favoritesController.js:774
 msgid "Click on the map to add a favorite, press ESC to cancel"
 msgstr ""
 
-#: /app/src/favoritesController.js:729
+#: /app/src/favoritesController.js:832
 msgid "Failed to add favorite"
 msgstr ""
 
-#: /app/src/favoritesController.js:819
-msgid "Name"
-msgstr ""
-
-#: /app/src/favoritesController.js:819
+#: /app/src/favoritesController.js:922
 msgid "No name"
 msgstr ""
 
-#: /app/src/favoritesController.js:820 /app/src/favoritesController.js:865
-msgid "Category"
-msgstr ""
-
-#: /app/src/favoritesController.js:822 /app/src/favoritesController.js:866
-#: /app/src/tracksController.js:704
-msgid "Comment"
-msgstr ""
-
-#: /app/src/favoritesController.js:862
+#: /app/src/favoritesController.js:965
 msgid "Submit"
 msgstr ""
 
-#: /app/src/favoritesController.js:864
+#: /app/src/favoritesController.js:967
 msgid "Favorite name"
 msgstr ""
 
-#: /app/src/favoritesController.js:930 /app/src/photosController.js:262
+#: /app/src/favoritesController.js:1033 /app/src/photosController.js:263
 msgid "Move"
 msgstr ""
 
-#: /app/src/favoritesController.js:968
+#: /app/src/favoritesController.js:1071
+#: /app/src/store/modules/publicFavorites.js:95
 msgid "Failed to delete favorite"
 msgstr ""
 
-#: /app/src/favoritesController.js:1040
+#: /app/src/favoritesController.js:1143
 msgid "Failed to edit favorite"
 msgstr ""
 
-#: /app/src/favoritesController.js:1092
+#: /app/src/favoritesController.js:1195
 msgid "Click on the map to move the favorite, press ESC to cancel"
 msgstr ""
 
-#: /app/src/favoritesController.js:1142
+#: /app/src/favoritesController.js:1245
 msgid "Favorites exported in {path}"
 msgstr ""
 
-#: /app/src/favoritesController.js:1147
+#: /app/src/favoritesController.js:1250
 msgid "Failed to export favorites"
 msgstr ""
 
-#: /app/src/favoritesController.js:1165 /app/src/filetypes.js:31
+#: /app/src/favoritesController.js:1268 /app/src/filetypes.js:31
 msgid "{nb} favorites imported from {path}"
 msgstr ""
 
-#: /app/src/favoritesController.js:1176
+#: /app/src/favoritesController.js:1279
 msgid ""
 "Warning: tracks or routes were found in imported files, they were ignored."
 msgstr ""
 
-#: /app/src/favoritesController.js:1182 /app/src/filetypes.js:35
+#: /app/src/favoritesController.js:1285 /app/src/filetypes.js:35
 msgid "Failed to import favorites"
 msgstr ""
 
@@ -353,51 +427,51 @@ msgstr ""
 msgid "Failed to load non-geolocalized photos"
 msgstr ""
 
-#: /app/src/photosController.js:263
+#: /app/src/photosController.js:264
 msgid "Remove geo data"
 msgstr ""
 
-#: /app/src/photosController.js:284
+#: /app/src/photosController.js:285
 msgid "Click on the map to move the photo, press ESC to cancel"
 msgstr ""
 
-#: /app/src/photosController.js:377
+#: /app/src/photosController.js:378
 msgid "Failed to load photos"
 msgstr ""
 
-#: /app/src/photosController.js:399
+#: /app/src/photosController.js:400
 msgid "What do you want to place?"
 msgstr ""
 
-#: /app/src/photosController.js:402
+#: /app/src/photosController.js:403
 msgid "Photo files"
 msgstr ""
 
-#: /app/src/photosController.js:404
+#: /app/src/photosController.js:405
 msgid "Photo folders"
 msgstr ""
 
-#: /app/src/photosController.js:422
+#: /app/src/photosController.js:423
 msgid "Choose pictures to place"
 msgstr ""
 
-#: /app/src/photosController.js:436
+#: /app/src/photosController.js:437
 msgid "Choose directory of pictures to place"
 msgstr ""
 
-#: /app/src/photosController.js:466
+#: /app/src/photosController.js:467
 msgid "{nb} photos placed"
 msgstr ""
 
-#: /app/src/photosController.js:486
+#: /app/src/photosController.js:487
 msgid "Failed to place photos"
 msgstr ""
 
-#: /app/src/photosController.js:504
+#: /app/src/photosController.js:505
 msgid "{nb} photos reset"
 msgstr ""
 
-#: /app/src/photosController.js:524
+#: /app/src/photosController.js:525
 msgid "Failed to reset photos coordinates"
 msgstr ""
 
@@ -814,6 +888,18 @@ msgstr ""
 
 #: /app/src/script.js:2117
 msgid "This place"
+msgstr ""
+
+#: /app/src/store/modules/publicFavorites.js:61
+msgid "Failed to get favorites"
+msgstr ""
+
+#: /app/src/store/modules/publicFavorites.js:76
+msgid "Failed to create favorite"
+msgstr ""
+
+#: /app/src/store/modules/publicFavorites.js:88
+msgid "Failed to update favorite"
 msgstr ""
 
 #: /app/src/tracksController.js:129

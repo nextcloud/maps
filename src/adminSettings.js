@@ -1,4 +1,7 @@
+import Vue from 'vue';
+
 import { generateUrl } from "@nextcloud/router";
+import AdminSettings from "./components/AdminSettings";
 
 (function() {
     if (!OCA.Maps) {
@@ -30,6 +33,8 @@ function setMapsRoutingSettings(key, value) {
 }
 
 $(document).ready(function() {
+	const View = Vue.extend(AdminSettings);
+	new View().$mount('#routing');
     $('body').on('change',
         'input#osrmFootURL, ' +
         'input#osrmCarURL, ' +

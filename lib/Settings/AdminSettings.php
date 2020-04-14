@@ -7,6 +7,7 @@ use OCP\IRequest;
 use OCP\IL10N;
 use OCP\IConfig;
 use OCP\Settings\ISettings;
+use OCP\IInitialStateService;
 use OCP\Util;
 use OCP\IURLGenerator;
 
@@ -22,17 +23,22 @@ class AdminSettings implements ISettings {
     private $urlGenerator;
     private $l;
 
+    /** @var IInitialStateService */
+    private $initialStateService
+
     public function __construct(
                         IniGetWrapper $iniWrapper,
                         IL10N $l,
                         IRequest $request,
                         IConfig $config,
-                        IURLGenerator $urlGenerator) {
+                        IURLGenerator $urlGenerator,
+						IInitialStateService $initialStateService) {
         $this->urlGenerator = $urlGenerator;
         $this->iniWrapper = $iniWrapper;
         $this->request = $request;
         $this->l = $l;
         $this->config = $config;
+        $this->initialStateService = $initialStateService;
     }
 
     /**
@@ -48,13 +54,12 @@ class AdminSettings implements ISettings {
             'mapboxAPIKEY',
             'graphhopperURL'
         ];
-        $parameters = [];
         foreach ($keys as $k) {
-            $v = $this->config->getAppValue('maps', $k);
-            $parameters[$k] = $v;
+            $data = $this->config->getAppValue('maps', $k, '');
+            $this->initialStateService->provideInitialState('maps', $k, $data);
         }
 
-        return new TemplateResponse('maps', 'adminSettings', $parameters, '');
+        return new TemplateResponse('maps', 'adminSettings');
     }
 
     /**

@@ -3,10 +3,13 @@ OC.L10N.register(
     {
     "Personal" : "شخصی",
     "Name" : "اسم",
+    "Add" : "شامل کریں",
+    "Cancel" : "منسوخ کریں",
     "Delete" : "حذف کریں",
     "Work" : "کام",
     "Rename" : "Rename",
     "Date" : "Date",
+    "Share link" : "اشتراک لنک",
     "Move" : "Move",
     "Destination" : "Destination",
     "Add to favorites" : "Add to favorites",

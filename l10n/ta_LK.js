@@ -3,6 +3,9 @@ OC.L10N.register(
     {
     "Personal" : "தனிப்பட்ட",
     "Name" : "பெயர்",
+    "Add" : "சேர்க்க",
+    "Cancel" : "இரத்து செய்க",
+    "Update" : "இற்றைப்படுத்தல்",
     "Delete" : "நீக்குக",
     "Home" : "அகம்",
     "Work" : "வேலை",
@@ -10,6 +13,7 @@ OC.L10N.register(
     "Export" : "ஏற்றுமதி",
     "Phone" : "தொலைப்பேசி",
     "Date" : "Date",
+    "Share link" : "Share link",
     "Move" : "Move",
     "Destination" : "Destination",
     "Add to favorites" : "Add to favorites",

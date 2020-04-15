@@ -3,6 +3,9 @@ OC.L10N.register(
     {
     "Personal" : "شەخسىي",
     "Name" : "ئاتى",
+    "Add" : "قوش",
+    "Cancel" : "ۋاز كەچ",
+    "Update" : "يېڭىلا",
     "Delete" : "ئۆچۈر",
     "Home" : "ئۆي",
     "Work" : "ئىش",
@@ -10,6 +13,7 @@ OC.L10N.register(
     "Export" : "چىقار",
     "Phone" : "تېلېفون",
     "Date" : "Date",
+    "Share link" : "Share link",
     "Move" : "Move",
     "Destination" : "Destination",
     "Add to favorites" : "Add to favorites",

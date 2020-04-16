@@ -34,6 +34,7 @@ OC.L10N.register(
     "Link" : "Liên kết",
     "Description" : "Mô tả",
     "End" : "Kết thúc",
+    "Your photos" : "Ảnh của bạn",
     "Sort by name" : "Order by name",
     "Sort by date" : "Order by date",
     "Settings" : "Thiết lập"

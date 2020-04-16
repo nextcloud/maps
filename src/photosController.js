@@ -229,33 +229,42 @@ PhotosController.prototype = {
                         // this loop was previously visible therefore we continue with last visible image
                         $('#imgdiv' + imgIndexAttr ).show();  
                     }
-                    function toolTipImgLoop(maxI){
-                        setTimeout(function(maxI){
-                            // we use visibility of imgdiv to control to stop the following loop
-                            if($('#imgdiv').is(':visible')){
+                    var randomId = Math.random(); // 
+                    $('#imgdiv').parent().parent().attr('randomId', randomId);
+                    function toolTipImgLoop(maxI, randomId){
+                        // will will only continue the loop if randomId is matching randomId stored in imgdiv 
+                        // to prevent running multiple loops in parallel could be caused by to fast mouseout / mouseover events
+                        setTimeout(function(maxI){  // this function content will be executed after timeout of 3 sec (3000 ms)
+                            var randomIdFromImgdiv = $('#imgdiv').parent().parent().attr('randomId');
+                            if ( randomId == randomIdFromImgdiv ){ 
                                 var i = $('#imgdiv').parent().parent().attr('imgindex');
                                 var j = (parseInt(i)+1);
-        		                    if ( i == maxI ){ // if i reached max image j need to start with 0 again to continue with 1st image again
+        		        if ( i == maxI ){ // if i reached max image j need to start with 0 again to continue with 1st image again
                                     j = 0;
                                 }
+                                // now we will fade out the current img and fade in the next image
                                 $('#imgdiv' + i ).fadeOut('fast', function(){ 
                                     $('#imgdiv' + j ).fadeIn('fast'); 
                                 });  
-		                            if ( i == maxI ){ // and now we also need to switch i back to 0 to contine the loop
+		                if ( i == maxI ){ // and now we also need to switch i back to 0 to contine 
                                     i = 0;
                                 }else{
                                     i++;
                                 }
-                                $('#imgdiv').parent().parent().attr('imgindex', i);
-                                toolTipImgLoop(maxI); 
+                                $('#imgdiv').parent().parent().attr('imgindex', i); 
+                                // after storing current value of i (loop img index) in imgdiv imgindex attribute
+                                // we will call again toolTipImgLoop to continue the loop
+                                toolTipImgLoop(maxI, randomId);
                             }
-                        }, 3000, maxI);
+                        }, 3000, maxI); // timeout and variable of above setTimeout
                     };
-                    setTimeout(toolTipImgLoop(maxI), 500, maxI);
+                    // initial call of toolTipImgLoop 
+                    // we will do the inital call of toolTipImgLoop using setTimeout with timeout 500 ms to ensure that tooltipopen has been completed 
+                    setTimeout(toolTipImgLoop(maxI, randomId), 500, maxI, randomId); 
                 });
                 cluster.on( "tooltipclose", function( event, ui ) {
-                    // hide imgdiv on mouseout to stop the img preview loop (see above)
-                    $('#imgdiv').hide();
+                    // clearing randomId in imgdiv on mouseout to stop the img preview loop (see above)
+                    $('#imgdiv').parent().parent().attr('randomId', 0);
                 });
             }
             return new L.DivIcon(L.extend({

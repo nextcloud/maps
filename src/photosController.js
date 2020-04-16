@@ -170,6 +170,7 @@ PhotosController.prototype = {
     getClusterIconCreateFunction: function() {
         var _app = this;
         return function(cluster) {
+            var availZoomLevels =  cluster._map.getMaxZoom() - cluster._map.getZoom();
             var marker = cluster.getAllChildMarkers()[0].data;
             var iconUrl;
             if (marker.hasPreview) {
@@ -178,6 +179,95 @@ PhotosController.prototype = {
                 iconUrl = _app.getImageIconUrl();
             }
             var label = cluster.getChildCount();
+            if( availZoomLevels == 0 && label > 1){ 
+                // lets generate a preview slideshow for cluster of images at max zoom level
+                var iMarkerList = cluster.getAllChildMarkers();
+                // sort by dateTaken
+                iMarkerList.sort(function (a, b) { return a.data.dateTaken - b.data.dateTaken;});
+                var firstImageFileId = iMarkerList[0].data.fileId;
+                var imgList = '<div imgindex="0" id="imgdiv">';
+                for (var i = 0; i < cluster.getChildCount(); i++){
+                    var iMarker = iMarkerList[i].data;
+                    var iIconUrl = _app.generatePreviewUrl(iMarker.fileId);
+                    var iDateStr = OC.Util.formatDate(iMarker.dateTaken*1000);
+                    var iPhotoName = escapeHTML(basename(iMarker.path));
+                    var img = '<div id="imgdiv' + i + '" style="display: none">' +
+                    '<img class="photo-tooltip" src=' + iIconUrl + '/>' +
+                    '<p class="tooltip-photo-date">' + iDateStr + '</p>' +
+                    '<p class="tooltip-photo-name">' + iPhotoName + '</p>' + 
+                    '<p class="tooltip-photo-name">' + (parseInt(i)+1) + ' of ' + label  + '</p>' + 
+                    '</div>';
+                    imgList += img;
+                }
+                imgList += '</div>'
+                cluster.bindTooltip(imgList, {permanent: false, className: 'leaflet-marker-photo-tooltip', direction: 'right', offset: L.point(0, -150)});
+                cluster.on( "tooltipopen", function( event, ui ) { 
+                    var maxI = parseInt(cluster.getChildCount())-1;
+                    var imgIndexAttr = $('#imgdiv').parent().parent().attr('imgindex');
+                    if ( imgIndexAttr >= 0 ){ 
+                        // a preview image loop was already running before. 
+                        // need to check if again opening the same preview image loop as before to continue or if opening another preview image loop and start at first image. We identify this using the attribute firstImageFileId we stored in 2nd parent above #imgdiv
+                        var lastFirstImageFileId = $('#imgdiv').parent().parent().attr('firstImageFileId');
+                        if ( lastFirstImageFileId == firstImageFileId ){
+                            // we continue the loop that was already running before
+                        }else{
+                            // we start a new preview loop
+                            imgIndexAttr = 0;
+                            // we store imgindex of preview loop in attribute imgindex in 2nd parent above #imgdiv
+                            $('#imgdiv').parent().parent().attr('imgindex', '0' ); 
+                        }
+                    }
+                    $('#imgdiv').parent().parent().attr('firstImageFileId', firstImageFileId);
+                    $('#imgdiv').show();
+                    // For some browsers, `attr` is undefined; for others,
+                    // `attr` is false.  Check for both.
+                    if ( typeof imgIndexAttr == typeof undefined || imgIndexAttr == false ) {
+                        // imgindex not yet defined therefore this is the fist time tooltipopen running 
+                        // for this cluster. Therefore we start with imgindex 0
+                        $('#imgdiv').parent().parent().attr('imgindex', '0' ); // saving 0 as start value to attribute imgindex
+                        $('#imgdiv0').show(); // showing first image
+                    }else{
+                        // this loop was previously visible therefore we continue with last visible image
+                        $('#imgdiv' + imgIndexAttr ).show();  
+                    }
+                    var randomId = Math.random(); // 
+                    $('#imgdiv').parent().parent().attr('randomId', randomId);
+                    function toolTipImgLoop(maxI, randomId){
+                        // will will only continue the loop if randomId is matching randomId stored in imgdiv 
+                        // to prevent running multiple loops in parallel could be caused by to fast mouseout / mouseover events
+                        setTimeout(function(maxI){  // this function content will be executed after timeout of 3 sec (3000 ms)
+                            var randomIdFromImgdiv = $('#imgdiv').parent().parent().attr('randomId');
+                            if ( randomId == randomIdFromImgdiv ){ 
+                                var i = $('#imgdiv').parent().parent().attr('imgindex');
+                                var j = (parseInt(i)+1);
+        		        if ( i == maxI ){ // if i reached max image j need to start with 0 again to continue with 1st image again
+                                    j = 0;
+                                }
+                                // now we will fade out the current img and fade in the next image
+                                $('#imgdiv' + i ).fadeOut('fast', function(){ 
+                                    $('#imgdiv' + j ).fadeIn('fast'); 
+                                });  
+		                if ( i == maxI ){ // and now we also need to switch i back to 0 to contine 
+                                    i = 0;
+                                }else{
+                                    i++;
+                                }
+                                $('#imgdiv').parent().parent().attr('imgindex', i); 
+                                // after storing current value of i (loop img index) in imgdiv imgindex attribute
+                                // we will call again toolTipImgLoop to continue the loop
+                                toolTipImgLoop(maxI, randomId);
+                            }
+                        }, 3000, maxI); // timeout and variable of above setTimeout
+                    };
+                    // initial call of toolTipImgLoop 
+                    // we will do the inital call of toolTipImgLoop using setTimeout with timeout 500 ms to ensure that tooltipopen has been completed 
+                    setTimeout(toolTipImgLoop(maxI, randomId), 500, maxI, randomId); 
+                });
+                cluster.on( "tooltipclose", function( event, ui ) {
+                    // clearing randomId in imgdiv on mouseout to stop the img preview loop (see above)
+                    $('#imgdiv').parent().parent().attr('randomId', 0);
+                });
+            }
             return new L.DivIcon(L.extend({
                 className: 'leaflet-marker-photo cluster-marker',
                 html: '<div class="thumbnail" style="background-image: url(' + iconUrl + ');"></div>​<span class="label">' + label + '</span>'

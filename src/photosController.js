@@ -82,7 +82,7 @@ PhotosController.prototype = {
             }
         });
         // PhotoClusterMouseRightClick zoom-in
-        $('body').on('click', '.zoomin', function(e) {
+        $('body').on('click', '.zoomin-photo-cluster-right-click', function(e) {
             var ul = $(this).parent().parent();
             var thisClusterLayerId = ul.attr('layerId');
             if (that.map.getZoom() !== that.map.getMaxZoom()) {
@@ -287,7 +287,7 @@ PhotosController.prototype = {
             '       </button>' +
             '   </li>' +
             '   <li>' +
-            '       <button class="icon-search zoomin">' +
+            '       <button class="icon-search zoomin-photo-cluster-right-click">' +
             '           <span>' + zoomText + '</span>' +
             '       </button>' +
             '   </li>' +

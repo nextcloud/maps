@@ -53,6 +53,8 @@ PhotosController.prototype = {
                 }
             }
         });
+        //right click on photo cluster:
+        this.photoLayer.on('clustercontextmenu', this.photoClusterContextmenu);
         // click on photo menu entry
         $('body').on('click', '#navigation-photos > a', function(e) {
             that.toggleLayer();
@@ -79,6 +81,30 @@ PhotosController.prototype = {
                 that.toggleNavigation();
                 that.optionsController.saveOptionValues({photosNavigationShow: $('#navigation-favorites').hasClass('open')});
             }
+        });
+        // PhotoClusterMouseRightClick zoom-in
+        $('body').on('click', '.zoomin-photo-cluster-right-click', function(e) {
+            var ul = $(this).parent().parent();
+            var thisClusterLayerId = ul.attr('layerId');
+            if (that.map.getZoom() !== that.map.getMaxZoom()) {
+                that.map._layers[thisClusterLayerId].zoomToBounds();
+            }
+            that.map.closePopup();
+        });
+        $('body').on('click', '.viewphotos', function(e) {
+            var ul = $(this).parent().parent();
+            var thisClusterLayerId = ul.attr('layerId');
+            if (OCA.Viewer && OCA.Viewer.open) {
+                var photolist = that.map._layers[thisClusterLayerId].getAllChildMarkers().map(function(m) {
+                    return  m.data;
+                });
+                photolist.sort(function (a, b) { return a.dateTaken - b.dateTaken;});
+                OCA.Viewer.open({path: photolist[0].path, list: photolist });
+            } else {
+                that.map._layers[thisClusterLayerId].spiderfy();
+                that.map.clickpopup = true;
+            }
+            that.map.closePopup();
         });
     },
 
@@ -327,6 +353,37 @@ PhotosController.prototype = {
             markers.push(marker);
         }
         return markers;
+    },
+
+    photoClusterContextmenu: function(a) {
+        var layerId = a.layer._leaflet_id;
+        a.layer.unbindPopup();
+        var popupContent = this._map.photosController.getPhotoClusterContextmenuPopupContent(layerId);
+        a.layer.bindPopup(popupContent, {
+            closeOnClick: true,
+            className: 'popovermenu open popupMarker',
+            offset: L.point(-5, -20)
+        });
+        a.layer.openPopup();
+    },
+
+    getPhotoClusterContextmenuPopupContent: function(layerId) {
+        var viewText = t('maps', 'Show batch in viewer');
+        var zoomText = t('maps', 'Zoom in');
+        var res =
+            '<ul layerId="' + layerId + '">' +
+            '   <li>' +
+            '       <button class="icon-play viewphotos">' +
+            '           <span>' + viewText + '</span>' +
+            '       </button>' +
+            '   </li>' +
+            '   <li>' +
+            '       <button class="icon-search zoomin-photo-cluster-right-click">' +
+            '           <span>' + zoomText + '</span>' +
+            '       </button>' +
+            '   </li>' +
+            '</ul>';
+        return res;
     },
 
     photoMouseRightClick: function(e) {

@@ -92,6 +92,8 @@ OC.L10N.register(
     "Import as favorites in Maps" : "Importovat v mapách jako oblíbené",
     "Import as devices in Maps" : "Importovat jako zařízení v Mapy",
     "Failed to load non-geolocalized photos" : "Nepodařilo se načíst fotky, neobsahující souřadnice",
+    "Show batch in viewer" : "Zobrazit dávku v prohlížeči",
+    "Zoom in" : "Přiblížit",
     "Remove geo data" : "Odstranit geografická data ",
     "Click on the map to move the photo, press ESC to cancel" : "Fotku na mapě přesunete kliknutím na příslušné umístění, případně stisknutím ESC tuto akci ukončíte",
     "Failed to load photos" : "Načtení fotek se nezdařilo",

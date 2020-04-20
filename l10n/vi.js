@@ -28,6 +28,8 @@ OC.L10N.register(
     "Start" : "Bắt đầu",
     "Destination" : "Destination",
     "min" : "phút",
+    "Cinema" : "Rạp chiếu phim",
+    "Dentist" : "Nha sĩ",
     "Add to favorites" : "Thêm vào ưa thích",
     "Closed" : "Đã đóng",
     "File" : "Tập tin",

@@ -92,6 +92,8 @@ OC.L10N.register(
     "Import as favorites in Maps" : "Als Favorit in Karten importieren",
     "Import as devices in Maps" : "Als Geräte in Maps importieren",
     "Failed to load non-geolocalized photos" : "Laden der Bilder ohne GEO-Lokalisierung fehlgeschlagen",
+    "Show batch in viewer" : "Stapel im Betrachter anzeigen",
+    "Zoom in" : "Hinein zoomen",
     "Remove geo data" : "GEO-Daten entfernen",
     "Click on the map to move the photo, press ESC to cancel" : "Klicke auf die Karte, um das Bild zu verschieben oder drücke ESC, um abzubrechen",
     "Failed to load photos" : "Laden der Fotos fehlgeschlagen",

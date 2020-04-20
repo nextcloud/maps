@@ -92,6 +92,8 @@ OC.L10N.register(
     "Import as favorites in Maps" : "Haritalarda sık kullanılanlar olarak içe aktar",
     "Import as devices in Maps" : "Haritalarda aygıtlar olarak içe aktar",
     "Failed to load non-geolocalized photos" : "Coğrafi konumu belirlenemeyen fotoğraflar yüklenemedi",
+    "Show batch in viewer" : "Toplu işlemi görüntüle",
+    "Zoom in" : "Yakınlaştır",
     "Remove geo data" : "Coğrafi konum verilerini kaldır",
     "Click on the map to move the photo, press ESC to cancel" : "Fotoğrafı taşımak için harita üzerine tıklayın, iptal etmek için ESC tuşuna basın",
     "Failed to load photos" : "Fotoğraflar yüklenemedi",

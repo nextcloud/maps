@@ -17,6 +17,7 @@ function PhotosController (optionsController, timeFilterController) {
     this.timeFilterEnd = Date.now();
 
     this.movingPhotoPath = null;
+    this.movingPhotoClusterLayerId = null;
     this.isPhotosInstalled = OCP.InitialState.loadState('maps', 'photos');
 }
 
@@ -69,10 +70,30 @@ PhotosController.prototype = {
             that.enterMovePhotoMode();
             that.map.closePopup();
         });
+        $('body').on('click', '.move-all-cluster-photos', function(e) {
+            var ul = $(this).parent().parent();
+            var thisClusterLayerId = ul.attr('layerId');
+            that.movingPhotoClusterLayerId = thisClusterLayerId;
+            that.enterMoveAllPhotoMode();
+            that.map.closePopup();
+        });
         $('body').on('click', '.resetphoto', function(e) {
             var ul = $(this).parent().parent();
             var filePath = ul.attr('filepath');
             that.resetPhotoCoords([filePath]);
+            that.map.closePopup();
+        });
+        $('body').on('click', '.reset-all-cluster-photos', function(e) {
+            var ul = $(this).parent().parent();
+            var thisClusterLayerId = ul.attr('layerId');
+            var photoFilePathList = [];
+            var photolist = that.map._layers[thisClusterLayerId].getAllChildMarkers().map(function(m) {
+                 return  m.data;
+            });
+            for (var i = 0; i < photolist.length; i++){
+                photoFilePathList[i] = photolist[i].path;
+            }
+            that.resetPhotoCoords(photoFilePathList);
             that.map.closePopup();
         });
         // expand navigation
@@ -358,7 +379,8 @@ PhotosController.prototype = {
     photoClusterContextmenu: function(a) {
         var layerId = a.layer._leaflet_id;
         a.layer.unbindPopup();
-        var popupContent = this._map.photosController.getPhotoClusterContextmenuPopupContent(layerId);
+        var availZoomLevels =  this._map.getMaxZoom() - this._map.getZoom();
+        var popupContent = this._map.photosController.getPhotoClusterContextmenuPopupContent(layerId, availZoomLevels);
         a.layer.bindPopup(popupContent, {
             closeOnClick: true,
             className: 'popovermenu open popupMarker',
@@ -367,21 +389,39 @@ PhotosController.prototype = {
         a.layer.openPopup();
     },
 
-    getPhotoClusterContextmenuPopupContent: function(layerId) {
+    getPhotoClusterContextmenuPopupContent: function(layerId, availZoomLevels) {
         var viewText = t('maps', 'Show batch in viewer');
         var zoomText = t('maps', 'Zoom in');
+        var moveText = t('maps', 'Move all');
+        var resetText = t('maps', 'Remove all geo data');
         var res =
             '<ul layerId="' + layerId + '">' +
             '   <li>' +
             '       <button class="icon-play viewphotos">' +
             '           <span>' + viewText + '</span>' +
             '       </button>' +
-            '   </li>' +
+            '   </li>';
+        if (availZoomLevels > 0){
+            res +=
             '   <li>' +
             '       <button class="icon-search zoomin-photo-cluster-right-click">' +
             '           <span>' + zoomText + '</span>' +
             '       </button>' +
+            '   </li>';
+        }else{
+            res +=
+            '   <li>' +
+            '       <button class="icon-link move-all-cluster-photos">' +
+            '           <span>' + moveText + '</span>' +
+            '       </button>' +
             '   </li>' +
+            '   <li>' +
+            '       <button class="icon-history reset-all-cluster-photos">' +
+            '           <span>' + resetText + '</span>' +
+            '       </button>' +
+            '   </li>';
+        }
+            res +=
             '</ul>';
         return res;
     },
@@ -445,6 +485,35 @@ PhotosController.prototype = {
         var filePath = this.photosController.movingPhotoPath;
         this.photosController.leaveMovePhotoMode();
         this.photosController.placePhotos([filePath], [lat], [lng]);
+    },
+
+    enterMoveAllPhotoMode: function() {
+        $('.leaflet-container, .mapboxgl-map').css('cursor', 'crosshair');
+        this.map.on('click', this.moveAllPhotoClickMap);
+        this.map.clickpopup = true;
+        OC.Notification.showTemporary(t('maps', 'Click on the map to move the photo, press ESC to cancel'));
+    },
+
+    leaveMoveAllPhotoMode: function() {
+        $('.leaflet-container, .mapboxgl-map').css('cursor', 'grab');
+        this.map.off('click', this.moveAllPhotoClickMap);
+        this.map.clickpopup = null;
+        this.movingPhotoPath = null;
+    },
+
+    moveAllPhotoClickMap: function(e) { //working
+        var lat = e.latlng.lat;
+        var lng = e.latlng.lng;
+        var photoFilePathList = [];
+        var PhotoClusterLayerId = this.photosController.movingPhotoClusterLayerId;
+        var photolist = this._layers[PhotoClusterLayerId].getAllChildMarkers().map(function(m) {
+            return  m.data;
+        });
+        this.photosController.leaveMoveAllPhotoMode();
+        for (var i = 0; i < photolist.length; i++){
+            photoFilePathList[i] = photolist[i].path;
+        }
+        this.photosController.placePhotos(photoFilePathList, [lat], [lng], false);
     },
 
     updateTimeFilterRange: function() {

@@ -93,7 +93,7 @@ OC.L10N.register(
     "Import as devices in Maps" : "Importar como dispositivos no Maps",
     "Failed to load non-geolocalized photos" : "Erro ao carregar fotos não geolocalizadas",
     "Show batch in viewer" : "Mostrar lote no visualizador",
-    "Zoom in" : "Zoom in",
+    "Zoom in" : "Ampliar",
     "Remove geo data" : "Excluir dados geográficos",
     "Click on the map to move the photo, press ESC to cancel" : "Clique no mapa para mover a foto ou ESC para cancelar",
     "Failed to load photos" : "Erro ao carregar fotos",

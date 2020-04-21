@@ -92,6 +92,8 @@ OC.L10N.register(
     "Import as favorites in Maps" : "Importuj jako ulubione w Maps",
     "Import as devices in Maps" : "Importuj jako urządzenia w Maps",
     "Failed to load non-geolocalized photos" : "Nie udało się wczytać zdjęć niegeolokalizowanych",
+    "Show batch in viewer" : "Pokaż grupę w przeglądarce",
+    "Zoom in" : "Powiększ",
     "Remove geo data" : "Usuń dane geograficzne",
     "Click on the map to move the photo, press ESC to cancel" : "Aby przesunąć zdjęcie kliknij na mapę, aby anulować naciśnij ESC",
     "Failed to load photos" : "Nie udało się załadować zdjęć",

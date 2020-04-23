@@ -108,7 +108,7 @@ OC.L10N.register(
     "Failed to reset photos coordinates" : "Nie udało się zresetować zdjęć współrzędnych",
     "Geo link ({geoLink}) copied to clipboard" : "Link geograficzny ({geoLink}) skopiowany do schowka",
     "Failed to save option values" : "Nie udało się zapisać wartości opcji",
-    "Media scan was not done yet. Wait a few minutes/hours and reload this page to see your photos/tracks." : "Skanowanie multimediów nie zostało jeszcze wykonane. Poczekaj kilka minut/godzin i załaduj ponownie tę stronę, aby zobaczyć swoje zdjęcia/trasy.",
+    "Media scan was not done yet. Wait a few minutes/hours and reload this page to see your photos/tracks." : "Skanowanie multimediów nie zostało jeszcze wykonane. Poczekaj kilka minut/godzin i załaduj ponownie stronę, aby zobaczyć swoje zdjęcia/trasy.",
     "Improve this map" : "Ulepsz mapę",
     "Failed to restore options values" : "Nie udało się przywrócić wartości opcji",
     "Place photos" : "Umieść zdjęcia",

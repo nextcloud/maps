@@ -62,6 +62,7 @@ OC.L10N.register(
     "Failed to export devices" : "Echec de l'exportation des appareils",
     "{nb} devices imported from {path}" : "{nb} appareil·s importé·s depuis {path}",
     "Failed to import devices" : "Impossible d'importer les appareils",
+    "Failed to share favorites category" : "Impossible de partager la catégorie de favoris",
     "Import favorites from gpx (OsmAnd, Nextcloud Maps) or kmz/kml (F-Droid Maps, Maps.me, Marble)" : "Importer les favoris depuis GPX (OsmAnd, Nextcloud Maps) ou kmz/kml (F-Droid Maps, Maps.me, Marble)",
     "Failed to load favorites" : "Impossible de charger les favoris",
     "Add a favorite" : "Ajouter un favori",

@@ -376,7 +376,7 @@ class PhotofilesService {
         if (!$this->hasValidExifGeoTags($exif)) {
             try {
                 $exif = $this->getExifPelBackup($file);
-            } catch (PelException $exception) {
+            } catch (PelException | E_WARNING $exception) {
                 $exif = [];
             }
 

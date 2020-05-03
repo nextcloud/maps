@@ -202,7 +202,7 @@ FavoritesController.prototype = {
         // import favorites
         $('body').on('click', '#import-favorites', function(e) {
             OC.dialogs.filepicker(
-                t('maps', 'Import favorites from GeoJSON, gpx (OsmAnd, Nextcloud Maps) or kmz/kml (F-Droid Maps, Maps.me, Marble)'),
+                t('maps', 'Import favorites from GeoJSON (Google Maps), gpx (OsmAnd, Nextcloud Maps) or kmz/kml (F-Droid Maps, Maps.me, Marble)'),
                 function(targetPath) {
                     that.importFavorites(targetPath);
                 },

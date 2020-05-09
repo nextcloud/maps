@@ -151,7 +151,7 @@ PhotosController.prototype = {
             var marker = evt.layer;
             // use Viewer app if available and recent enough to provide standalone viewer
             if (OCA.Viewer && OCA.Viewer.open) {
-                OCA.Viewer.open(marker.data.path);
+                OCA.Viewer.open({path: marker.data.path, list: [marker.data]});
             }
             else {
                 var galleryUrl;

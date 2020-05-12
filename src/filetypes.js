@@ -100,6 +100,15 @@ $(document).ready(function() {
                 iconClass: 'icon-maps-black',
                 actionHandler: importFavoritesFile
             });
+            // import geojson files as favorites
+            OCA.Files.fileActions.registerAction({
+                name: 'importGeoJsonFavoritesMaps',
+                displayName: t('maps', 'Import as favorites in Maps'),
+                mime: 'application/geo+json',
+                permissions: OC.PERMISSION_READ,
+                iconClass: 'icon-maps-black',
+                actionHandler: importFavoritesFile
+            });
 
             // import gpx files as devices
             OCA.Files.fileActions.registerAction({

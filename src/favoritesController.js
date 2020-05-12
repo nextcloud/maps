@@ -272,12 +272,12 @@ FavoritesController.prototype = {
         // import favorites
         $('body').on('click', '#import-favorites', function(e) {
             OC.dialogs.filepicker(
-                t('maps', 'Import favorites from gpx (OsmAnd, Nextcloud Maps) or kmz/kml (F-Droid Maps, Maps.me, Marble)'),
+                t('maps', 'Import favorites from GeoJSON (Google Maps), gpx (OsmAnd, Nextcloud Maps) or kmz/kml (F-Droid Maps, Maps.me, Marble)'),
                 function(targetPath) {
                     that.importFavorites(targetPath);
                 },
                 false,
-                ['application/gpx+xml', 'application/vnd.google-earth.kmz', 'application/vnd.google-earth.kml+xml'],
+                ['application/gpx+xml', 'application/vnd.google-earth.kmz', 'application/vnd.google-earth.kml+xml', 'application/json', 'application/geo+json'],
                 true
             );
         });

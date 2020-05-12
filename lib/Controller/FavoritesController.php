@@ -267,7 +267,7 @@ class FavoritesController extends Controller {
             if ($file->getType() === \OCP\Files\FileInfo::TYPE_FILE and
                 $file->isReadable()){
                 $lowerFileName = strtolower($file->getName());
-                if ($this->endswith($lowerFileName, '.gpx') or $this->endswith($lowerFileName, '.kml') or $this->endswith($lowerFileName, '.kmz')) {
+                if ($this->endswith($lowerFileName, '.gpx') or $this->endswith($lowerFileName, '.kml') or $this->endswith($lowerFileName, '.kmz') or $this->endswith($lowerFileName, '.json') or $this->endswith($lowerFileName, '.geojson')) {
                     $result = $this->favoritesService->importFavorites($this->userId, $file);
                     return new DataResponse($result);
                 }

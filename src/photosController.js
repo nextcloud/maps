@@ -324,7 +324,14 @@ PhotosController.prototype = {
 
         // we update the counter
         var catCounter = $('#navigation-photos .app-navigation-entry-utils-counter');
-        catCounter.text(this.photoMarkers.length);
+        var photoCounter = this.photoMarkers.length;
+        if ( photoCounter >= 10000 ){
+            catCounter.attr('title', photoCounter + ' photos');
+            photoCounter = photoCounter = Math.floor(photoCounter / 1000) ;
+            catCounter.text( photoCounter + 'k');
+        }else{
+            catCounter.text(photoCounter);
+        }
 
         // we put them all in the layer
         this.photoMarkersFirstVisible = 0;

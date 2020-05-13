@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Nextcloud 3.14159\n"
 "Report-Msgid-Bugs-To: translations\\@example.com\n"
-"POT-Creation-Date: 2020-05-12 02:40+0000\n"
+"POT-Creation-Date: 2020-05-13 02:40+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -22,8 +22,9 @@ msgid "Maps"
 msgstr ""
 
 #: /app/lib/Service/FavoritesService.php:401
-#: /app/lib/Service/FavoritesService.php:518
-#: /app/lib/Service/FavoritesService.php:639 /app/src/favoritesController.js:33
+#: /app/lib/Service/FavoritesService.php:521
+#: /app/lib/Service/FavoritesService.php:642
+#: /app/lib/Service/FavoritesService.php:710 /app/src/favoritesController.js:33
 #: /app/src/utils/favoritesUtils.js:27
 msgid "Personal"
 msgstr ""
@@ -311,8 +312,8 @@ msgstr ""
 
 #: /app/src/favoritesController.js:275
 msgid ""
-"Import favorites from gpx (OsmAnd, Nextcloud Maps) or kmz/kml (F-Droid Maps, "
-"Maps.me, Marble)"
+"Import favorites from GeoJSON (Google Maps), gpx (OsmAnd, Nextcloud Maps) or "
+"kmz/kml (F-Droid Maps, Maps.me, Marble)"
 msgstr ""
 
 #: /app/src/favoritesController.js:505
@@ -415,11 +416,12 @@ msgid "View in Maps"
 msgstr ""
 
 #: /app/src/filetypes.js:79 /app/src/filetypes.js:88 /app/src/filetypes.js:97
+#: /app/src/filetypes.js:106
 msgid "Import as favorites in Maps"
 msgstr ""
 
-#: /app/src/filetypes.js:107 /app/src/filetypes.js:116
-#: /app/src/filetypes.js:125
+#: /app/src/filetypes.js:116 /app/src/filetypes.js:125
+#: /app/src/filetypes.js:134
 msgid "Import as devices in Maps"
 msgstr ""
 
@@ -1134,7 +1136,7 @@ msgid "Your favorites"
 msgstr ""
 
 #: /app/templates/navigation/index.php:25
-msgid "Import from gpx/kml/kmz"
+msgid "Import from file"
 msgstr ""
 
 #: /app/templates/navigation/index.php:31

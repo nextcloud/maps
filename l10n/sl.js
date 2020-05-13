@@ -177,7 +177,6 @@ OC.L10N.register(
     "Mapbox API key" : "Ključ API Mapbox",
     "Search…" : "Poišči ...",
     "Your favorites" : "Priljubljeno",
-    "Import from gpx/kml/kmz" : "Uvozi iz gpx / kml / kmz",
     "Toggle all" : "Preklopi vse",
     "Your photos" : "Slike",
     "Your contacts" : "Stiki",

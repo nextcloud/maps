@@ -130,7 +130,6 @@ OC.L10N.register(
     "Mapbox API key" : "Mapbox API raktas",
     "Search…" : "Ieškoti…",
     "Your favorites" : "Jūsų mėgstami",
-    "Import from gpx/kml/kmz" : "Importuoti iš gpx/kml/kmz",
     "Toggle all" : "Perjungti visus",
     "Your photos" : "Jūsų nuotraukos",
     "Your contacts" : "Jūsų adresatai",

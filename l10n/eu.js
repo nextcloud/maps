@@ -66,6 +66,7 @@ OC.L10N.register(
     "Failed to load photos" : "Ezin izan dira argazkiak kargatu",
     "What do you want to place?" : "Zer jarri nahi duzu?",
     "Photo files" : "Argazki fitxategiak",
+    "Photo folders" : "Argazki karpetak",
     "Failed to save option values" : "Aukera balioak gordetzeak huts egin du",
     "Improve this map" : "Hobetu mapa hau",
     "Route to here" : "Ibilbidea hona",

@@ -102,6 +102,7 @@ import { brify, getUrlParameter, formatAddress } from './utils';
         enabledDeviceLines: [],
         saveOptionValues: function (optionValues) {
             var req = {
+                myMapId: this.myMapId,
                 options: optionValues
             };
             var url = generateUrl('/apps/maps/saveOptionValue');
@@ -122,7 +123,7 @@ import { brify, getUrlParameter, formatAddress } from './utils';
             var that = this;
             var url = generateUrl('/apps/maps/getOptionsValues');
             var req = {
-                myMapId:this.myMapId
+                myMapId: this.myMapId
             };
             var optionsValues = {};
             $.ajax({

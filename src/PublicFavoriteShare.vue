@@ -86,13 +86,6 @@ export default {
 </script>
 
 <style lang="scss">
-/* Override header style */
-#header {
-    .header-shared-by {
-        color: var(--color-primary-text);
-    }
-}
-
 #content {
     height: 100%;
 }

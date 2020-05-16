@@ -24,6 +24,7 @@ use OCP\AppFramework\Http\ContentSecurityPolicy;
 use OCP\IRequest;
 use OCP\AppFramework\Http\DataResponse;
 use OCP\AppFramework\Controller;
+use PhpParser\JsonDecoder;
 
 class UtilsController extends Controller {
 
@@ -31,12 +32,14 @@ class UtilsController extends Controller {
     private $userId;
     private $config;
     private $dbconnection;
+    private $userfolder;
     private $dbtype;
 
     public function __construct($AppName, IRequest $request, $UserId,
         $userfolder, $config, IAppManager $appManager){
         parent::__construct($AppName, $request);
         $this->userId = $UserId;
+        $this->userfolder = $userfolder;
         // IConfig object
         $this->config = $config;
         $this->dbconnection = \OC::$server->getDatabaseConnection();
@@ -58,9 +61,21 @@ class UtilsController extends Controller {
      * Save options values to the DB for current user
      * @NoAdminRequired
      */
-    public function saveOptionValue($options) {
-        foreach ($options as $key => $value) {
-            $this->config->setUserValue($this->userId, 'maps', $key, $value);
+    public function saveOptionValue($options, $myMapId=null) {
+        if( is_null($myMapId)) {
+            foreach ($options as $key => $value) {
+                $this->config->setUserValue($this->userId, 'maps', $key, $value);
+            }
+        } else {
+            $folders = $this->userfolder->getById($myMapId);
+            $folder = array_shift($folders);
+            $file=$folder->get("./.maps");
+            $ov = json_decode($file->getContent(),true, 512, JSON_THROW_ON_ERROR);
+            foreach ($options as $key => $value) {
+                $ov[$key] = $value;
+            }
+            $file->putContent(json_encode($ov));
+
         }
         return new DataResponse(['done'=>1]);
     }
@@ -69,14 +84,21 @@ class UtilsController extends Controller {
      * get options values from the config for current user
      * @NoAdminRequired
      */
-    public function getOptionsValues() {
+    public function getOptionsValues($myMapId=null) {
         $ov = array();
 
-        // get all user values
-        $keys = $this->config->getUserKeys($this->userId, 'maps');
-        foreach ($keys as $key) {
-            $value = $this->config->getUserValue($this->userId, 'maps', $key);
-            $ov[$key] = $value;
+        if( is_null($myMapId)) {
+            // get all user values
+            $keys = $this->config->getUserKeys($this->userId, 'maps');
+            foreach ($keys as $key) {
+                $value = $this->config->getUserValue($this->userId, 'maps', $key);
+                $ov[$key] = $value;
+            }
+        } else {
+            $folders = $this->userfolder->getById($myMapId);
+            $folder = array_shift($folders);
+            $file=$folder->get("./.maps");
+            $ov = json_decode($file->getContent(),true, 512, JSON_THROW_ON_ERROR);
         }
 
         // get routing-specific admin settings values

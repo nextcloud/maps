@@ -97,7 +97,7 @@ class FavoritesController extends Controller {
             $folders = $this->userfolder->getById($myMapId);
             $folder = array_shift($folders);
             $file=$folder->get("./favorits.json");
-            $favorites = $this->favoritesService->readFavoritesFromGeoJSON($file);
+            $favorites = $this->favoritesService->getFavoritesFromJSON($file);
         }
         return new DataResponse($favorites);
     }
@@ -105,11 +105,21 @@ class FavoritesController extends Controller {
     /**
      * @NoAdminRequired
      */
-    public function addFavorite($name, $lat, $lng, $category, $comment, $extensions) {
+    public function addFavorite($name, $lat, $lng, $category, $comment, $extensions, $myMapId=null) {
         if (is_numeric($lat) && is_numeric($lng)) {
-            $favoriteId = $this->favoritesService->addFavoriteToDB($this->userId, $name, $lat, $lng, $category, $comment, $extensions);
-            $favorite = $this->favoritesService->getFavoriteFromDB($favoriteId);
-            return new DataResponse($favorite);
+            if (is_null($myMapId)) {
+                $favoriteId = $this->favoritesService->addFavoriteToDB($this->userId, $name, $lat, $lng, $category, $comment, $extensions);
+                $favorite = $this->favoritesService->getFavoriteFromDB($favoriteId);
+                return new DataResponse($favorite);
+            } else {
+                $folders = $this->userfolder->getById($myMapId);
+                $folder = array_shift($folders);
+                $file=$folder->get("./favorits.json");
+                $favoriteId = $this->favoritesService->addFavoriteToJSON($file, $name, $lat, $lng, $category, $comment, $extensions);
+                $favorite = $this->favoritesService->getFavoriteFromJSON($file, $favoriteId);
+                return new DataResponse($favorite);
+            }
+
         } else {
             return new DataResponse('invalid values', 400);
         }
@@ -118,37 +128,53 @@ class FavoritesController extends Controller {
     /**
      * @NoAdminRequired
      */
-    public function editFavorite($id, $name, $lat, $lng, $category, $comment, $extensions) {
-        $favorite = $this->favoritesService->getFavoriteFromDB($id, $this->userId);
-        if ($favorite !== null) {
-            if (($lat === null || is_numeric($lat)) &&
-                ($lng === null || is_numeric($lng))
-            ) {
-                $this->favoritesService->editFavoriteInDB($id, $name, $lat, $lng, $category, $comment, $extensions);
-                $editedFavorite = $this->favoritesService->getFavoriteFromDB($id);
-                return new DataResponse($editedFavorite);
+    public function editFavorite($id, $name, $lat, $lng, $category, $comment, $extensions, $myMapId=null) {
+        if (is_null($myMapId)) {
+            $favorite = $this->favoritesService->getFavoriteFromDB($id, $this->userId);
+            if ($favorite !== null) {
+                if (($lat === null || is_numeric($lat)) &&
+                    ($lng === null || is_numeric($lng))
+                ) {
+                    $this->favoritesService->editFavoriteInDB($id, $name, $lat, $lng, $category, $comment, $extensions);
+                    $editedFavorite = $this->favoritesService->getFavoriteFromDB($id);
+                    return new DataResponse($editedFavorite);
+                } else {
+                    return new DataResponse('invalid values', 400);
+                }
             } else {
-                return new DataResponse('invalid values', 400);
+                return new DataResponse('no such favorite', 400);
             }
         } else {
-            return new DataResponse('no such favorite', 400);
+            $folders = $this->userfolder->getById($myMapId);
+            $folder = array_shift($folders);
+            $file=$folder->get("./favorits.json");
+            $this->favoritesService->editFavoriteInJSON($file, $id, $name, $lat, $lng, $category, $comment, $extensions);
+            $editedFavorite = $this->favoritesService->getFavoriteFromJSON($file, $id);
+            return new DataResponse($editedFavorite);
         }
     }
 
     /**
      * @NoAdminRequired
      */
-    public function renameCategories($categories, $newName) {
+    public function renameCategories($categories, $newName, $myMapId=null) {
         if (is_array($categories)) {
             foreach ($categories as $cat) {
-                $this->favoritesService->renameCategoryInDB($this->userId, $cat, $newName);
+                if(is_null($myMapId)){
+                    $this->favoritesService->renameCategoryInDB($this->userId, $cat, $newName);
 
-                // Rename share if one exists
-                try {
-                    $share = $this->favoriteShareMapper->findByOwnerAndCategory($this->userId, $cat);
-                    $share->setCategory($newName);
-                    $this->favoriteShareMapper->update($share);
-                } catch (DoesNotExistException | MultipleObjectsReturnedException $e) {
+                    // Rename share if one exists
+                    try {
+                        $share = $this->favoriteShareMapper->findByOwnerAndCategory($this->userId, $cat);
+                        $share->setCategory($newName);
+                        $this->favoriteShareMapper->update($share);
+                    } catch (DoesNotExistException | MultipleObjectsReturnedException $e) {
+                    }
+                } else {
+                    $folders = $this->userfolder->getById($myMapId);
+                    $folder = array_shift($folders);
+                    $file=$folder->get("./favorits.json");
+                    $this->favoritesService->renameCategoryInJSON($file, $cat, $newName);
                 }
             }
         }
@@ -158,21 +184,36 @@ class FavoritesController extends Controller {
     /**
      * @NoAdminRequired
      */
-    public function deleteFavorite($id) {
-        $favorite = $this->favoritesService->getFavoriteFromDB($id, $this->userId);
-        if ($favorite !== null) {
-            $this->favoritesService->deleteFavoriteFromDB($id);
-            return new DataResponse('DELETED');
+    public function deleteFavorite($id, $myMapId=null) {
+        if(is_null($myMapId)) {
+            $favorite = $this->favoritesService->getFavoriteFromDB($id, $this->userId);
+            if ($favorite !== null) {
+                $this->favoritesService->deleteFavoriteFromDB($id);
+                return new DataResponse('DELETED');
+            } else {
+                return new DataResponse('no such favorite', 400);
+            }
         } else {
-            return new DataResponse('no such favorite', 400);
+            $folders = $this->userfolder->getById($myMapId);
+            $folder = array_shift($folders);
+            $file=$folder->get("./favorits.json");
+            $this->favoritesService->deleteFavoriteFromJSON($file, $id);
+            return new DataResponse('DELETED');
         }
     }
 
     /**
      * @NoAdminRequired
      */
-    public function deleteFavorites($ids) {
-        $this->favoritesService->deleteFavoritesFromDB($ids, $this->userId);
+    public function deleteFavorites($ids, $myMapId=null) {
+        if(is_null($myMapId)) {
+            $this->favoritesService->deleteFavoritesFromDB($ids, $this->userId);
+        } else {
+            $folders = $this->userfolder->getById($myMapId);
+            $folder = array_shift($folders);
+            $file=$folder->get("./favorits.json");
+            $this->favoritesService->deleteFavoritesFromJSON($file, $ids);
+        }
         return new DataResponse('DELETED');
     }
 

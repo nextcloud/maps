@@ -56,12 +56,8 @@
 			</div>
 		</form>
 		<div class="no-edits">
-			<p>
-				{{
-					favorite.comment.length
-						? favorite.comment
-						: t("maps", "No comment")
-				}}
+			<p v-if="favorite.comment">
+				{{ favorite.comment }}
 			</p>
 		</div>
 	</Popup>

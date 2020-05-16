@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Nextcloud 3.14159\n"
 "Report-Msgid-Bugs-To: translations\\@example.com\n"
-"POT-Creation-Date: 2020-05-15 02:41+0000\n"
+"POT-Creation-Date: 2020-05-16 02:41+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -373,7 +373,7 @@ msgstr ""
 msgid "Favorite name"
 msgstr ""
 
-#: /app/src/favoritesController.js:1033 /app/src/photosController.js:410
+#: /app/src/favoritesController.js:1033 /app/src/photosController.js:417
 msgid "Move"
 msgstr ""
 
@@ -429,59 +429,59 @@ msgstr ""
 msgid "Failed to load non-geolocalized photos"
 msgstr ""
 
-#: /app/src/photosController.js:371
+#: /app/src/photosController.js:378
 msgid "Show batch in viewer"
 msgstr ""
 
-#: /app/src/photosController.js:372
+#: /app/src/photosController.js:379
 msgid "Zoom in"
 msgstr ""
 
-#: /app/src/photosController.js:411
+#: /app/src/photosController.js:418
 msgid "Remove geo data"
 msgstr ""
 
-#: /app/src/photosController.js:432
+#: /app/src/photosController.js:439
 msgid "Click on the map to move the photo, press ESC to cancel"
 msgstr ""
 
-#: /app/src/photosController.js:525
+#: /app/src/photosController.js:532
 msgid "Failed to load photos"
 msgstr ""
 
-#: /app/src/photosController.js:547
+#: /app/src/photosController.js:554
 msgid "What do you want to place?"
 msgstr ""
 
-#: /app/src/photosController.js:550
+#: /app/src/photosController.js:557
 msgid "Photo files"
 msgstr ""
 
-#: /app/src/photosController.js:552
+#: /app/src/photosController.js:559
 msgid "Photo folders"
 msgstr ""
 
-#: /app/src/photosController.js:570
+#: /app/src/photosController.js:577
 msgid "Choose pictures to place"
 msgstr ""
 
-#: /app/src/photosController.js:584
+#: /app/src/photosController.js:591
 msgid "Choose directory of pictures to place"
 msgstr ""
 
-#: /app/src/photosController.js:614
+#: /app/src/photosController.js:621
 msgid "{nb} photos placed"
 msgstr ""
 
-#: /app/src/photosController.js:634
+#: /app/src/photosController.js:641
 msgid "Failed to place photos"
 msgstr ""
 
-#: /app/src/photosController.js:652
+#: /app/src/photosController.js:659
 msgid "{nb} photos reset"
 msgstr ""
 
-#: /app/src/photosController.js:672
+#: /app/src/photosController.js:679
 msgid "Failed to reset photos coordinates"
 msgstr ""
 

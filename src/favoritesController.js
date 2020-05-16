@@ -491,11 +491,13 @@ FavoritesController.prototype = {
 
         var favorites = [];
         var sharedCategories = [];
-
+        var myMapId = this.optionsController.myMapId;
         $.when(
             $.ajax({
             url: generateUrl('/apps/maps/favorites'),
-            data: {},
+            data: {
+                myMapId: myMapId
+            },
             type: 'GET',
             async: true,
             success: function(response) {
@@ -506,7 +508,9 @@ FavoritesController.prototype = {
             }
         }), $.ajax({
             url: OC.generateUrl('/apps/maps/favorites-category/shared'),
-            data: {},
+            data: {
+                myMapId: myMapId
+            },
             type: 'GET',
             async: true,
             success: function(response) {

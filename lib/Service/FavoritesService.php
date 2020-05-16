@@ -672,6 +672,59 @@ class FavoritesService {
         }
     }
 
+    public function readFavoritesFromGeoJSON( $file) {
+       $favorites = [];
+
+        // Read file content
+        $path = $file->getStorage()->getLocalFile($file->getInternalPath());
+        $fdata = file_get_contents($path);
+
+        // Decode file content from JSON
+        $data = json_decode($fdata, true, 512, JSON_THROW_ON_ERROR);
+
+        $id = 0;
+        // Loop over all favorite entries
+        foreach($data['features'] as $value) {
+            $this->currentFavorite = [
+                "id"=>$id,
+            ];
+
+            // Read geometry
+            $this->currentFavorite['lng'] = floatval($value['geometry']['coordinates'][0]);
+            $this->currentFavorite['lat'] = floatval($value['geometry']['coordinates'][1]);
+            if(array_key_exists('Title', $value['properties'])) {
+                $this->currentFavorite['name'] = $value['properties']['Title'];
+            }
+            if(array_key_exists('Category', $value['properties'])) {
+                $this->currentFavorite['category'] = $value['properties']['Category'];
+            } else {
+                $this->currentFavorite['category'] = $this->l10n->t('Personal');
+            }
+            if(array_key_exists('Published', $value['properties'])) {
+                $time = new \DateTime($value['properties']['Published']);
+                $this->currentFavorite['date_created'] = $time->getTimestamp();
+            }
+            if(array_key_exists('Updated', $value['properties'])) {
+                $time = new \DateTime($value['properties']['Updated']);
+                $this->currentFavorite['date_modified'] = $time->getTimestamp();
+            }
+
+            if(
+                array_key_exists('Location', $value['properties']) &&
+                array_key_exists('Address', $value['properties']['Location'])
+            ) {
+                $this->currentFavorite['comment'] = $value['properties']['Location']['Address'];
+            }
+
+            // Store this favorite
+            array_push($favorites, $this->currentFavorite);
+            $id++;
+        }
+
+
+        return $favorites;
+    }
+
     public function importFavoritesFromGeoJSON($userId, $file) {
         $this->nbImported = 0;
         $this->linesFound = false;

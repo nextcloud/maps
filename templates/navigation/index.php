@@ -194,6 +194,11 @@
         <ul id="track-list">
         </ul>
     </li>
+    <li id="navigation-my-maps" class="collapsible">
+        <a class="icon-timezone" href="#"><?php p($l->t('Your Maps')); ?></a>
+        <ul id="my-maps-list">
+        </ul>
+    </li>
 </ul>
 <input id="trackcolorinput" type="color"></input>
 <input id="devicecolorinput" type="color"></input>

@@ -58,6 +58,7 @@ import FavoritesController from './favoritesController';
 import NonLocalizedPhotosController from './nonLocalizedPhotosController';
 import PhotosController from './photosController';
 import TracksController from './tracksController';
+import MyMapsController from './myMapsController';
 
 import { brify, getUrlParameter, formatAddress } from './utils';
 
@@ -68,6 +69,7 @@ import { brify, getUrlParameter, formatAddress } from './utils';
         if (window.isSecureContext && window.navigator.registerProtocolHandler) {
             window.navigator.registerProtocolHandler('geo', generateUrl('/apps/maps/openGeoLink/') + '%s', 'Nextcloud Maps');
         }
+        optionsController.myMapId = document.location.pathname.split("/apps/maps/m/")[1].split("/")[0];
         mapController.initMap();
         mapController.map.favoritesController = favoritesController;
         favoritesController.initFavorites(mapController.map);
@@ -81,7 +83,7 @@ import { brify, getUrlParameter, formatAddress } from './utils';
         devicesController.initController(mapController.map);
         mapController.map.devicesController = devicesController;
         searchController.initController(mapController.map);
-
+        myMapsController.initController(mapController.map);
         // once controllers have been set/initialized, we can restore option values from server
         optionsController.restoreOptions();
         geoLinkController.showLinkLocation();
@@ -210,6 +212,7 @@ import { brify, getUrlParameter, formatAddress } from './utils';
     };
 
     var optionsController = {
+        myMapId: null,
         nbRouters: 0,
         optionValues: {},
         enabledFavoriteCategories: [],
@@ -238,7 +241,9 @@ import { brify, getUrlParameter, formatAddress } from './utils';
         restoreOptions: function () {
             var that = this;
             var url = generateUrl('/apps/maps/getOptionsValues');
-            var req = {};
+            var req = {
+                myMapId:this.myMapId
+            };
             var optionsValues = {};
             $.ajax({
                 type: 'POST',
@@ -2150,6 +2155,7 @@ import { brify, getUrlParameter, formatAddress } from './utils';
     var favoritesController = new FavoritesController(optionsController, timeFilterController);
     var tracksController = new TracksController(optionsController, timeFilterController);
     var devicesController = new DevicesController(optionsController, timeFilterController);
+    var myMapsController = new MyMapsController(optionsController, favoritesController, photosController, tracksController)
 
     timeFilterController.connect();
 

@@ -90,8 +90,15 @@ class FavoritesController extends Controller {
     /**
      * @NoAdminRequired
      */
-    public function getFavorites() {
-        $favorites = $this->favoritesService->getFavoritesFromDB($this->userId);
+    public function getFavorites($myMapId=null) {
+        if(is_null($myMapId)) {
+            $favorites = $this->favoritesService->getFavoritesFromDB($this->userId);
+        } else {
+            $folders = $this->userfolder->getById($myMapId);
+            $folder = array_shift($folders);
+            $file=$folder->get("./favorits.json");
+            $favorites = $this->favoritesService->readFavoritesFromGeoJSON($file);
+        }
         return new DataResponse($favorites);
     }
 

@@ -64,6 +64,20 @@ class PageController extends Controller {
     }
 
     /**
+    * @NoAdminRequired
+    * @NoCSRFRequired
+    */
+    public function indexMyMap($myMapId) {
+        $params = array('user' => $this->userId);
+        $this->initialStateService->provideInitialState($this->appName, 'photos', $this->config->getAppValue('photos', 'enabled', 'no') === 'yes');
+        $response = new TemplateResponse('maps', 'index', $params);
+
+        $this->addCsp($response);
+
+        return $response;
+    }
+
+    /**
      * @NoAdminRequired
      * @NoCSRFRequired
      */

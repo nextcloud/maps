@@ -10,6 +10,7 @@
 return [
     'routes' => [
         ['name' => 'page#index', 'url' => '/', 'verb' => 'GET'],
+        ['name' => 'page#indexMyMap', 'url' => '/m/{myMapId}', 'verb' => 'GET'],
         ['name' => 'page#do_echo', 'url' => '/echo', 'verb' => 'POST'],
         ['name' => 'page#openGeoLink', 'url' => '/openGeoLink/{url}', 'verb' => 'GET'],
         ['name' => 'public_page#sharedFavoritesCategory', 'url' => '/s/favorites/{token}', 'verb' => 'GET'],

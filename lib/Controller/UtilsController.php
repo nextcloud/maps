@@ -74,7 +74,7 @@ class UtilsController extends Controller {
             foreach ($options as $key => $value) {
                 $ov[$key] = $value;
             }
-            $file->putContent(json_encode($ov));
+            $file->putContent(json_encode($ov, JSON_PRETTY_PRINT));
 
         }
         return new DataResponse(['done'=>1]);

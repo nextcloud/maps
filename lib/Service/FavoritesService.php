@@ -425,10 +425,10 @@ class FavoritesService {
     public function renameCategoryInJSON($file, $cat, $newName) {
         $nowTimeStamp = (new \DateTime())->getTimestamp();
         $data = json_decode($file->getContent(), true, 512, JSON_THROW_ON_ERROR);
-        foreach ($data['features'] as $value) {
+        foreach ($data['features'] as $key => $value) {
             if ($value['properties']['Category'] == $cat) {
-                $value['properties']['Category'] = $newName;
-                $value['properties']['Updated'] = $nowTimeStamp;
+                $data['features']['properties']['Category'] = $newName;
+                $data['features']['properties']['Updated'] = $nowTimeStamp;
             }
         }
         $file->putContent(json_encode($data,JSON_PRETTY_PRINT));
@@ -443,21 +443,26 @@ class FavoritesService {
             "geometry" => [
                 "type" => "Point",
                 "coordinates" => [
-                    $lat,
-                    $lng
+                    $lng ?? $data['features'][$id]["geometry"]["coordinates"][0],
+                    $lat ?? $data['features'][$id]["geometry"]["coordinates"][1]
                 ]
             ],
             "properties" => [
-                "Title" => $name,
-                "Category" => $category,
+                "Title" => $name ?? $data['features'][$id]["properties"]["Title"],
+                "Category" => $category ?? $data['features'][$id]["properties"]["Category"],
                 "Published" => $createdTimeStamp,
                 "Updated" => $nowTimeStamp,
-                "Comment" => $comment,
+                "Comment" => $comment ?? $data['features'][$id]["properties"]["Category"],
             ]
         ];
-        foreach ($extensions as $key => $value) {
-            $favorite["properties"][$key] = $value;
+        if (is_array($extensions)) {
+            foreach ($extensions as $key => $value) {
+                $favorite["properties"][$key] = $value;
+            }
         }
+
+        $data['features'][$id] = $favorite;
+
         $file->putContent(json_encode($data,JSON_PRETTY_PRINT));
     }
 

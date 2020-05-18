@@ -675,7 +675,8 @@ FavoritesController.prototype = {
         $('.leaflet-container, .mapboxgl-map').css('cursor', 'wait');
         var req = {
             categories: origCatList,
-            newName: newCategoryName
+            newName: newCategoryName,
+            myMapId: this.optionsController.myMapId
         };
         var url = generateUrl('/apps/maps/favorites-category');
         $.ajax({
@@ -709,7 +710,8 @@ FavoritesController.prototype = {
         $('#navigation-favorites').addClass('icon-loading-small');
         $('.leaflet-container, .mapboxgl-map').css('cursor', 'wait');
         var req = {
-            ids: favids
+            ids: favids,
+            myMapId: this.optionsController.myMapId
         };
         var url = generateUrl('/apps/maps/favorites');
         $.ajax({
@@ -1119,7 +1121,7 @@ FavoritesController.prototype = {
         var req = {
             name: name,
             extensions: null,
-            myMapId: this.optionsController.myMapId
+            myMapId: this.optionsController.myMapId,
         };
         if (comment !== null) {
             req.comment = comment;

@@ -12,9 +12,11 @@
 namespace OCA\Maps\AppInfo;
 
 
+use OCA\Maps\Controller\PhotosController;
 use OCA\Maps\DB\FavoriteShareMapper;
 use OCA\Maps\Controller\PublicFavoritesApiController;
-use \OCP\AppFramework\App;
+use OCA\Maps\DB\GeophotoMapper;
+use OCA\Maps\Service\GeophotoService;
 use OCA\Maps\Controller\UtilsController;
 use OCA\Maps\Controller\FavoritesController;
 use OCA\Maps\Controller\FavoritesApiController;
@@ -28,6 +30,11 @@ use OCA\Maps\Service\PhotofilesService;
 use OCA\Maps\Service\FavoritesService;
 use OCA\Maps\Service\DevicesService;
 use OCA\Maps\Service\TracksService;
+use \OCP\AppFramework\App;
+use OCP\BackgroundJob\IJobList;
+use OCP\IDBConnection;
+use OCP\IPreview;
+use OCP\Share\IManager;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 
@@ -102,6 +109,56 @@ class Application extends App {
         );
 
         $container->registerService(
+            'GeophotoMapper', function ($c) {
+                return new GeophotoMapper(
+                    $c->query(IDBConnection::class)
+                );
+            }
+        );
+
+        $container->registerService(
+            'GeophotoService', function ($c) {
+                return new GeophotoService(
+                    $c->query('ServerContainer')->getLogger(),
+                    $c->query('ServerContainer')->getL10N($c->query('AppName')),
+                    $c->query('GeophotoMapper'),
+                    $c->query(IPreview::class),
+                    $c->query('TracksService'),
+                    $c->query('DevicesService'),
+                    $c->query('UserId'),
+                    $c->query('ServerContainer')->getUserFolder($c->query('UserId'))
+                );
+            }
+        );
+
+        $container->registerService(
+            PhotosController::class, function ($c) {
+                return new PhotosController(
+                    $c->query('AppName'),
+                    $c->query('ServerContainer')->getLogger(),
+                    $c->query('Request'),
+                    $c->query('GeophotoService'),
+                    $c->query(PhotofilesService::class),
+                    $c->query('UserId'),
+                    $c->query('ServerContainer')->getUserFolder($c->query('UserId'))
+                );
+            }
+        );
+
+        $container->registerService(
+            PhotofilesService::class, function ($c) {
+            return new PhotofilesService(
+                $c->query('ServerContainer')->getLogger(),
+                $c->query('ServerContainer')->getRootFolder(),
+                $c->query('ServerContainer')->getL10N($c->query('AppName')),
+                $c->query(GeophotoMapper::class),
+                $c->query(IManager::class),
+                $c->query(IJobList::class)
+            );
+        }
+        );
+
+        $container->registerService(
             'PublicFavoritesAPIController', function ($c) {
                 return new PublicFavoritesApiController(
                     $c->query('AppName'),
@@ -160,6 +217,14 @@ class Application extends App {
         );
 
         $container->registerService(
+            'DevicesService', function ($c) {
+                return new DevicesService(
+                    $c->query('ServerContainer')->getLogger(),
+                    $c->query('ServerContainer')->getL10N($c->query('AppName'))
+                );
+            }
+        );
+        $container->registerService(
             'DevicesApiController', function ($c) {
                 return new DevicesApiController(
                     $c->query('AppName'),
@@ -173,10 +238,7 @@ class Application extends App {
                     $c->getServer()->getGroupManager(),
                     $c->query('ServerContainer')->getL10N($c->query('AppName')),
                     $c->query('ServerContainer')->getLogger(),
-                    new DevicesService(
-                        $c->query('ServerContainer')->getLogger(),
-                        $c->query('ServerContainer')->getL10N($c->query('AppName'))
-                    )
+                    $c->query('DevicesService')
                 );
             }
         );
@@ -201,6 +263,17 @@ class Application extends App {
         );
 
         $container->registerService(
+            'TracksService', function ($c) {
+                return new TracksService(
+                    $c->query('ServerContainer')->getLogger(),
+                    $c->query('ServerContainer')->getL10N($c->query('AppName')),
+                    $c->query('ServerContainer')->getRootFolder(),
+                    $c->getServer()->getShareManager()
+                );
+            }
+        );
+
+        $container->registerService(
             'TracksController', function ($c) {
                 return new TracksController(
                     $c->query('AppName'),
@@ -214,12 +287,7 @@ class Application extends App {
                     $c->getServer()->getGroupManager(),
                     $c->query('ServerContainer')->getL10N($c->query('AppName')),
                     $c->query('ServerContainer')->getLogger(),
-                    new TracksService(
-                        $c->query('ServerContainer')->getLogger(),
-                        $c->query('ServerContainer')->getL10N($c->query('AppName')),
-                        $c->query('ServerContainer')->getRootFolder(),
-                        $c->getServer()->getShareManager()
-                    )
+                    $c->query('TracksService')
                 );
             }
         );

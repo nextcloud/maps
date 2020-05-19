@@ -117,7 +117,8 @@ class PhotosControllerTest extends \PHPUnit\Framework\TestCase {
                     $c->query('ServerContainer')->getLogger(),
                     $c->query('ServerContainer')->getL10N($c->query('AppName'))
                 ),
-                'test'
+                'test',
+                $c->query('ServerContainer')->getUserFolder()
             ),
             $this->photoFileService,
             'test'
@@ -145,7 +146,8 @@ class PhotosControllerTest extends \PHPUnit\Framework\TestCase {
                     $c->query('ServerContainer')->getLogger(),
                     $c->query('ServerContainer')->getL10N($c->query('AppName'))
                 ),
-                'test'
+                'test',
+                $c->query('ServerContainer')->getUserFolder()
             ),
             $this->photoFileService,
             'test'

@@ -78,7 +78,7 @@ class FavoritesController extends Controller {
      * @NoAdminRequired
      */
     public function getFavorites($myMapId=null) {
-        if(is_null($myMapId)) {
+        if (is_null($myMapId) || $myMapId === "") {
             $favorites = $this->favoritesService->getFavoritesFromDB($this->userId);
         } else {
             $folders = $this->userfolder->getById($myMapId);
@@ -147,7 +147,7 @@ class FavoritesController extends Controller {
     public function renameCategories($categories, $newName, $myMapId=null) {
         if (is_array($categories)) {
             foreach ($categories as $cat) {
-                if(is_null($myMapId)){
+                if (is_null($myMapId) || $myMapId === ""){
                     $this->favoritesService->renameCategoryInDB($this->userId, $cat, $newName);
 
                     // Rename share if one exists
@@ -172,7 +172,7 @@ class FavoritesController extends Controller {
      * @NoAdminRequired
      */
     public function deleteFavorite($id, $myMapId=null) {
-        if(is_null($myMapId)) {
+        if (is_null($myMapId) || $myMapId === "") {
             $favorite = $this->favoritesService->getFavoriteFromDB($id, $this->userId);
             if ($favorite !== null) {
                 $this->favoritesService->deleteFavoriteFromDB($id);
@@ -193,7 +193,7 @@ class FavoritesController extends Controller {
      * @NoAdminRequired
      */
     public function deleteFavorites($ids, $myMapId=null) {
-        if(is_null($myMapId)) {
+        if (is_null($myMapId) || $myMapId === "") {
             $this->favoritesService->deleteFavoritesFromDB($ids, $this->userId);
         } else {
             $folders = $this->userfolder->getById($myMapId);

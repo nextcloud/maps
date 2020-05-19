@@ -30,18 +30,17 @@ use OCA\Maps\Service\DevicesService;
 class GeophotoService {
 
     private $l10n;
-    private $root;
     private $photoMapper;
     private $logger;
     private $preview;
     private $tracksService;
     private $timeorderedPointSets;
     private $devicesService;
+    private $userfolder;
 
-    public function __construct (ILogger $logger, IRootFolder $root, IL10N $l10n,
+    public function __construct (ILogger $logger, IL10N $l10n,
                                 GeophotoMapper $photoMapper, IPreview $preview,
-                                TracksService $tracksService, DevicesService $devicesService, $userId) {
-        $this->root = $root;
+                                TracksService $tracksService, DevicesService $devicesService, $userId, $userfolder) {
         $this->l10n = $l10n;
         $this->photoMapper = $photoMapper;
         $this->logger = $logger;
@@ -49,19 +48,23 @@ class GeophotoService {
         $this->tracksService = $tracksService;
         $this->timeorderedPointSets = null;
         $this->userId = $userId;
+        $this->userfolder = $userfolder;
         $this->devicesService = $devicesService;
 
     }
 
     /**
      * @param string $userId
+     * @param Folder|null $folder
      * @return array with geodatas of all photos
      */
-     public function getAllFromDB($userId) {
+     public function getAllFromDB($userId, $folder=null) {
         $photoEntities = $this->photoMapper->findAll($userId);
-        $userFolder = $this->getFolderForUser($userId);
+        if (is_null($folder)) {
+            $folder = $this->userfolder;
+        }
         $filesById = [];
-        $cache = $userFolder->getStorage()->getCache();
+        $cache = $this->userfolder->getStorage()->getCache();
         $previewEnableMimetypes = $this->getPreviewEnabledMimetypes();
         foreach ($photoEntities as $photoEntity) {
             $cacheEntry = $cache->get($photoEntity->getFileId());
@@ -69,7 +72,7 @@ class GeophotoService {
                 // this path is relative to owner's storage
                 //$path = $cacheEntry->getPath();
                 // but we want it relative to current user's storage
-                $files = $userFolder->getById($photoEntity->getFileId());
+                $files = $folder->getById($photoEntity->getFileId());
 				if (empty($files)) {
 					continue;
 				}
@@ -77,8 +80,8 @@ class GeophotoService {
                 if ($file === null) {
                     continue;
                 }
-				$path = $userFolder->getRelativePath( $file->getPath());
-				$isRoot = $file === $userFolder;
+				$path = $this->userfolder->getRelativePath( $file->getPath());
+				$isRoot = $file === $this->userfolder;
 
 				$file_object = new \stdClass();
                 $file_object->fileId = $photoEntity->getFileId();
@@ -283,13 +286,7 @@ class GeophotoService {
      * @return Folder
      */
     private function getFolderForUser ($userId) {
-        $path = '/' . $userId . '/files';
-        if ($this->root->nodeExists($path)) {
-            $folder = $this->root->get($path);
-        } else {
-            $folder = $this->root->newFolder($path);
-        }
-        return $folder;
+        return $this->userfolder;
     }
 
 }

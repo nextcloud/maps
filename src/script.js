@@ -2130,7 +2130,12 @@ import { brify, getUrlParameter, formatAddress } from './utils';
         if (window.isSecureContext && window.navigator.registerProtocolHandler) {
             window.navigator.registerProtocolHandler('geo', generateUrl('/apps/maps/openGeoLink/') + '%s', 'Nextcloud Maps');
         }
-		optionsController.myMapId = document.location.pathname.split("/apps/maps/m/")[1].split("/")[0];
+		if (document.location.pathname.includes("/apps/maps/m/")) {
+			optionsController.myMapId = document.location.pathname.split("/apps/maps/m/")[1].split("/")[0];
+		} else {
+			optionsController.myMapId = null;
+		}
+
 		mapController.initMap();
         mapController.map.favoritesController = favoritesController;
         favoritesController.initFavorites(mapController.map);

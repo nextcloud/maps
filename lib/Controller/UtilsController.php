@@ -64,7 +64,7 @@ class UtilsController extends Controller {
      * @NoAdminRequired
      */
     public function saveOptionValue($options, $myMapId=null) {
-        if( is_null($myMapId)) {
+        if( is_null($myMapId) || $myMapId==="") {
             foreach ($options as $key => $value) {
                 $this->config->setUserValue($this->userId, 'maps', $key, $value);
             }
@@ -89,7 +89,7 @@ class UtilsController extends Controller {
     public function getOptionsValues($myMapId=null) {
         $ov = array();
 
-        if( is_null($myMapId)) {
+        if( is_null($myMapId) || $myMapId==="") {
             // get all user values
             $keys = $this->config->getUserKeys($this->userId, 'maps');
             foreach ($keys as $key) {

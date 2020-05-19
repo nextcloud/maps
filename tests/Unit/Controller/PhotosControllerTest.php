@@ -101,7 +101,8 @@ class PhotosControllerTest extends \PHPUnit\Framework\TestCase {
             $this->request,
             $c->query(GeoPhotoService::class),
             $this->photoFileService,
-            'test'
+            'test',
+			$c->query('ServerContainer')->getUserFolder()
         );
 
         $this->photosController2 = new PhotosController(
@@ -110,7 +111,8 @@ class PhotosControllerTest extends \PHPUnit\Framework\TestCase {
             $this->request,
             $c->query(GeoPhotoService::class),
             $this->photoFileService,
-            'test2'
+            'test2',
+			$c->query('ServerContainer')->getUserFolder()
         );
 
         $this->utilsController = new UtilsController(

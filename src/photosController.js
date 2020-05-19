@@ -530,6 +530,9 @@ PhotosController.prototype = {
             url: generateUrl('apps/maps/photos'),
             type: 'GET',
             async: true,
+            data: {
+                myMapId: this.optionsController.myMapId
+            },
             context: this
         }).done(function (response) {
             if (response.length == 0) {
@@ -621,6 +624,7 @@ PhotosController.prototype = {
             paths: paths,
             lats: lats,
             lngs: lngs,
+            myMapId: this.optionsController.myMapId,
             directory: directory
         };
         var url = generateUrl('/apps/maps/photos');
@@ -659,7 +663,8 @@ PhotosController.prototype = {
         $('#navigation-photos').addClass('icon-loading-small');
         $('.leaflet-container, .mapboxgl-map').css('cursor', 'wait');
         var req = {
-            paths: paths
+            paths: paths,
+            myMapId: this.optionsController.myMapId,
         };
         var url = generateUrl('/apps/maps/photos');
         $.ajax({

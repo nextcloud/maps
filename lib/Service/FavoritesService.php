@@ -425,10 +425,15 @@ class FavoritesService {
     public function renameCategoryInJSON($file, $cat, $newName) {
         $nowTimeStamp = (new \DateTime())->getTimestamp();
         $data = json_decode($file->getContent(), true, 512, JSON_THROW_ON_ERROR);
+        $this->logger->debug($cat);
         foreach ($data['features'] as $key => $value) {
-            if ($value['properties']['Category'] == $cat) {
-                $data['features']['properties']['Category'] = $newName;
-                $data['features']['properties']['Updated'] = $nowTimeStamp;
+            if (!array_key_exists('Category', $value['properties']) ){
+                $value['properties']['Category'] = $this->l10n->t('Personal');
+                $data['features'][$key]['properties']['Category'] = $this->l10n->t('Personal');
+            }
+            if (array_key_exists('Category', $value['properties']) && $value['properties']['Category'] == $cat) {
+                $data['features'][$key]['properties']['Category'] = $newName;
+                $data['features'][$key]['properties']['Updated'] = $nowTimeStamp;
             }
         }
         $file->putContent(json_encode($data,JSON_PRETTY_PRINT));
@@ -468,14 +473,14 @@ class FavoritesService {
 
     public function deleteFavoriteFromJSON($file, $id) {
         $data = json_decode($file->getContent(), true, 512, JSON_THROW_ON_ERROR);
-        unset($data['features'][$id]);
+        array_splice($data['features'], $id, 1);
         $file->putContent(json_encode($data,JSON_PRETTY_PRINT));
     }
 
     public function deleteFavoritesFromJSON($file, $ids) {
         $data = json_decode($file->getContent(), true, 512, JSON_THROW_ON_ERROR);
         foreach ($ids as $id) {
-            unset($data['features'][$id]);
+            array_splice($data['features'], $id, 1);
         }
         $file->putContent(json_encode($data,JSON_PRETTY_PRINT));
     }

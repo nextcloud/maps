@@ -44,6 +44,9 @@ ContactsController.prototype = {
                 that.map.clickpopup = true;
             }
         });
+        if(this.optionsController.myMapId !== null) {
+            $('#navigation-contacts').remove();
+        }
         // click on contact menu entry
         $('body').on('click', '#navigation-contacts > a', function(e) {
             that.toggleLayer();

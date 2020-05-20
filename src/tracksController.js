@@ -40,6 +40,9 @@ TracksController.prototype = {
         this.mainLayer.on('click', this.getTrackMarkerOnClickFunction());
         var that = this;
         // UI events
+        if(this.optionsController.myMapId !== null) {
+            $('#navigation-tracks').remove();
+        }
         // toggle a track
         $('body').on('click', '.track-line .track-name', function(e) {
             var id = $(this).parent().attr('track');

@@ -9,27 +9,23 @@ function MyMapsController (optionsController, favoritesController, photosControl
     this.myMapsEnabled = false;
     this.myMapsList = [
         {
-            name: "Map0",
-            path: "/",
-            enabled: false,
-            loaded: false,
-            id: 3,
+            name: t('maps',"Default Map"),
+            id: null,
+            color: "#098bd1"
+        },
+        {
+            name: "test-map",
+            id: 945,
             color: "#0503ff"
         },
         {
-            name: "Map1",
-            path: "/",
-            enabled: false,
-            loaded: false,
-            id: 7,
+            name: "Neuer Ordner",
+            id: 72,
             color: "#ff0335"
         },
         {
-            name: "Map2",
-            path: "/",
-            enabled: false,
-            loaded: false,
-            id: 13,
+            name: "test-map2",
+            id: 2161,
             color: "#22d016"
         }
     ];
@@ -63,12 +59,7 @@ MyMapsController.prototype = {
         });
         body.on('click', '.my-maps-item .my-maps-name', function(e) {
             var id = $(this).parent().attr('map');
-            that.toggleMyMap(
-                that.myMapsList.find(function(m) {
-                        return m.id == id;
-                    }
-                )
-            );
+            that.openMyMap(id);
         });
     },
 
@@ -82,7 +73,6 @@ MyMapsController.prototype = {
         var that = this;
         var n = $('#navigation-my-maps');
         if (this.myMapsEnabled) {
-            this.hideAllMyMaps()
             n.removeClass('active');
             $('#map').focus();
             this.myMapsEnabled = false;
@@ -96,40 +86,7 @@ MyMapsController.prototype = {
         }
     },
 
-    saveEnabledMyMaps: function () {
-        var myMapsList = [];
-        this.myMapsList.forEach(function (map) {
-            if (map.enabled) {
-                myMapsList.push(map.id);
-            }
-        })
 
-        var myMapsStringList = myMapsList.join('|');
-        this.optionsController.saveOptionValues({enabledMyMaps: myMapsStringList});
-        // this is used when tracks are loaded again
-        this.optionsController.enabledMyMaps = myMapsList;
-    },
-
-    showAllMyMaps: function () {
-        var that = this;
-        if (!this.myMapsEnabled) {
-            this.toggleMyMaps();
-        }
-        this.myMapsList.forEach(function (map) {
-            if (!map.enabled) {
-                that.toggleMyMap(map);
-            }
-        });
-    },
-
-    hideAllMyMaps: function () {
-        var that = this;
-        this.myMapsList.forEach(function (map) {
-            if (map.enabled) {
-                that.toggleMyMap(map);
-            }
-        });
-    },
 
     addMenuEntry: function (map) {
         var name = map.name;
@@ -138,7 +95,7 @@ MyMapsController.prototype = {
 
         // side menu entry
         var imgurl = generateUrl('/svg/core/actions/timezone?color=' + color.replace('#', ''));
-        var li = '<li class="my-maps-item" id="' + name + '" map="' + map.id + '" name="' + name + '">' +
+        var li = '<li class="my-maps-item" id="' + name + '" map="' + (map.id||"") + '" name="' + name + '">' +
             '    <a href="#" class="my-maps-name" id="' + name + '-my-maps-name" title="' + escapeHTML(path) + '" style="background-image: url(' + imgurl + ')">' + name + '</a>' +
             '    <div class="app-navigation-entry-utils">' +
             '        <ul>' +
@@ -231,81 +188,13 @@ MyMapsController.prototype = {
         }, 500)
     },
 
-    toggleMyMap: function (map) {
-        if (!map.loaded) {
-            OC.Notification.showTemporary("loaded map" + map.name);
-            map.loaded = true;
-        }
-        var myMapItem = $('#my-maps-list > li[map="' + str(map.id) + '"]').find('.my-maps-name');
-        if (map.enabled) {
-            myMapItem.removeClass('active');
-            $('#map').focus();
-            OC.Notification.showTemporary("disabled map" + map.name);
-            map.enabled = false;
+    openMyMap: function (id) {
+        if (id !== "") {
+            window.open(generateUrl('/apps/maps/m/'+id));
         } else {
-            myMapItem.addClass('active');
-            OC.Notification.showTemporary("enabled map" + map.name);
-            map.enabled = true;
+            window.open(generateUrl('/apps/maps/'));
         }
     },
-
-    /*toggleMapTrackLayer: function(id, zoom=false) {
-        var mapTrackLayer = this.mapTrackLayers[id];
-        var trackLine = $('#track-list > li[track="'+id+'"]');
-        var trackName = trackLine.find('.track-name');
-        // hide track
-        if (this.mainLayer.hasLayer(mapTrackLayer)) {
-            this.mainLayer.removeLayer(mapTrackLayer);
-            trackName.removeClass('active');
-            $('#map').focus();
-        }
-        // show track
-        else {
-            this.mainLayer.addLayer(mapTrackLayer);
-            // markers are hard to bring to front
-            var that = this;
-            this.trackLayers[id].eachLayer(function(l) {
-                if (l instanceof L.Marker){
-                    l.setZIndexOffset(that.lastZIndex++);
-                }
-            });
-            trackName.addClass('active');
-            if (zoom) {
-                this.zoomOnTrack(id);
-                this.showTrackElevation(id);
-            }
-        }
-    },*/
-
-    /*   loadTrack: function(id, save=false, pageLoad=false, zoom=false) {
-           var that = this;
-           $('#track-list > li[track="'+id+'"]').addClass('icon-loading-small');
-           var req = {};
-           var url = generateUrl('/apps/maps/tracks/'+id);
-           $.ajax({
-               type: 'GET',
-               url: url,
-               data: req,
-               async: true
-           }).done(function (response) {
-               that.processGpx(id, response.content, response.metadata);
-               that.trackLayers[id].loaded = true;
-               that.updateMyFirstLastDates(pageLoad);
-               if (zoom) {
-                   that.zoomOnTrack(id);
-                   that.showTrackElevation(id);
-               }
-           }).always(function (response) {
-               $('#track-list > li[track="'+id+'"]').removeClass('icon-loading-small');
-           }).fail(function() {
-               OC.Notification.showTemporary(t('maps', 'Failed to load track content'));
-           });
-       },
-
-       zoomOnMyMap: function(id) {
-           OC.Notification.showTemporary("zoomed To Map"+str(id));
-       },
-       */
 
 }
 

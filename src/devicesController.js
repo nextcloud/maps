@@ -38,6 +38,9 @@ DevicesController.prototype = {
         this.mainLayer = L.featureGroup();
         var that = this;
         // toggle a device
+        if(this.optionsController.myMapId !== null) {
+            $('#navigation-devices').remove();
+        }
         $('body').on('click', '.device-line .device-name', function(e) {
             var id = $(this).parent().attr('device');
             that.toggleDevice(id, true, true);

@@ -11,6 +11,8 @@
 
 namespace OCA\Maps\Controller;
 
+use League\Flysystem\FileNotFoundException;
+use OCP\Files\NotFoundException;
 use OCP\App\IAppManager;
 
 use OCP\IURLGenerator;
@@ -71,7 +73,11 @@ class UtilsController extends Controller {
         } else {
             $folders = $this->userfolder->getById($myMapId);
             $folder = array_shift($folders);
-            $file=$folder->get("./.maps");
+            try {
+                $file=$folder->get(".maps");
+            } catch (NotFoundException $e) {
+                $file=$folder->newFile(".maps", $content = "{}");
+            }
             $ov = json_decode($file->getContent(),true, 512, JSON_THROW_ON_ERROR);
             foreach ($options as $key => $value) {
                 $ov[$key] = $value;
@@ -99,7 +105,11 @@ class UtilsController extends Controller {
         } else {
             $folders = $this->userfolder->getById($myMapId);
             $folder = array_shift($folders);
-            $file=$folder->get("./.maps");
+            try {
+                $file=$folder->get(".maps");
+            } catch (NotFoundException $e) {
+                $file=$folder->newFile(".maps", $content = "{}");
+            }
             $ov = json_decode($file->getContent(),true, 512, JSON_THROW_ON_ERROR);
         }
 

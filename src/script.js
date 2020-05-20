@@ -310,6 +310,9 @@ import { brify, getUrlParameter, formatAddress } from './utils';
                 if (!optionsValues.hasOwnProperty('devicesEnabled') || optionsValues.devicesEnabled === 'true') {
                     devicesController.toggleDevices();
                 }
+                if (!optionsValues.hasOwnProperty('myMapsEnabled') || optionsValues.myMapsEnabled === 'true') {
+                    myMapsController.toggleMyMaps();
+                }
                 if (optionsValues.hasOwnProperty('trackMe') && optionsValues.trackMe === 'true') {
                     $('#track-me').prop('checked', true);
                     devicesController.launchTrackLoop();

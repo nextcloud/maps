@@ -26,6 +26,7 @@ use OCA\Maps\Controller\DevicesApiController;
 use OCA\Maps\Controller\RoutingController;
 use OCA\Maps\Controller\TracksController;
 use OCA\Maps\Hooks\FileHooks;
+use OCA\Maps\Service\MyMapsService;
 use OCA\Maps\Service\PhotofilesService;
 use OCA\Maps\Service\FavoritesService;
 use OCA\Maps\Service\DevicesService;
@@ -241,6 +242,16 @@ class Application extends App {
                     $c->query('DevicesService')
                 );
             }
+        );
+
+        $container->registerService(
+            MyMapsService::class, function ($c) {
+            return new MyMapsService(
+                $c->query('ServerContainer')->getLogger(),
+                $c->query('ServerContainer')->getUserFolder($c->query('UserId')),
+                $c->query('UserId')
+            );
+        }
         );
 
         $container->registerService(

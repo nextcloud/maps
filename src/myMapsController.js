@@ -1,4 +1,5 @@
 import {generateUrl} from '@nextcloud/router';
+import {hslToRgb,getLetterColor} from './utils';
 
 function MyMapsController (optionsController, favoritesController, photosController, tracksController) {
     this.optionsController = optionsController;
@@ -11,22 +12,8 @@ function MyMapsController (optionsController, favoritesController, photosControl
         {
             name: t('maps',"Default Map"),
             id: null,
+            path: t('maps',"Your Default Map"),
             color: "#098bd1"
-        },
-        {
-            name: "test-map",
-            id: 945,
-            color: "#0503ff"
-        },
-        {
-            name: "Neuer Ordner",
-            id: 72,
-            color: "#ff0335"
-        },
-        {
-            name: "test-map2",
-            id: 2161,
-            color: "#22d016"
         }
     ];
     this.myMapsListLoaded = false;
@@ -90,8 +77,9 @@ MyMapsController.prototype = {
 
     addMenuEntry: function (map) {
         var name = map.name;
+        var hsl = getLetterColor(name[0], name[1]);
         var path = map.path;
-        var color = map.color;
+        var color = map.color ||  hslToRgb(hsl.h/360, hsl.s/100, hsl.l/100);
 
         // side menu entry
         var imgurl = generateUrl('/svg/core/actions/timezone?color=' + color.replace('#', ''));
@@ -150,42 +138,25 @@ MyMapsController.prototype = {
     getMyMaps: function () {
         var that = this;
         $('#navigation-my-maps').addClass('icon-loading-small');
-        /*var req = {};
-        var url = generateUrl('/apps/maps/tracks');
+        var req = {};
+        var url = generateUrl('/apps/maps/maps');
         $.ajax({
             type: 'GET',
             url: url,
             data: req,
             async: true
         }).done(function (response) {
-            var i, track, show;
-            var getFound = false;
-            for (i=0; i < response.length; i++) {
-                track = response[i];
-                // show'n'zoom track if it was asked with a GET parameter
-                show = (getUrlParameter('track') === track.file_path);
-                that.addTrackMap(track, show, true, show);
-                if (show) {
-                    getFound = true;
-                }
-            }
-            // if the asked track wasn't already in track list, load it and zoom!
-            if (!getFound && getUrlParameter('track')) {
-                OC.Notification.showTemporary(t('maps', 'Track {n} was not found', {n: getUrlParameter('track')}));
-            }
-            that.trackListLoaded = true;
-        }).always(function (response) {
-            $('#navigation-my-maps').removeClass('icon-loading-small');
-        }).fail(function() {
-            OC.Notification.showTemporary(t('maps', 'Failed to load tracks'));
-        });*/
-        setTimeout(function () {
+            that.myMapsList.push.apply(that.myMapsList,response);
             $('#navigation-my-maps').removeClass('icon-loading-small');
             that.myMapsList.forEach(function (map) {
                 that.addMenuEntry(map)
             })
             that.myMapsListLoaded = true;
-        }, 500)
+        }).always(function (response) {
+            $('#navigation-my-maps').removeClass('icon-loading-small');
+        }).fail(function() {
+            OC.Notification.showTemporary(t('maps', 'Failed to load your maps'));
+        });
     },
 
     openMyMap: function (id) {

@@ -104,5 +104,8 @@ return [
         ['name' => 'devices#exportDevices', 'url' => '/export/devices', 'verb' => 'POST'],
         ['name' => 'devices#importDevices', 'url' => '/import/devices', 'verb' => 'POST'],
 
+        //MyMaps
+        ['name' => 'my_maps#getMyMaps', 'url' => '/maps', 'verb' => 'GET'],
+
     ]
 ];

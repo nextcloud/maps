@@ -9,7 +9,7 @@ OC.L10N.register(
     "Add" : "Додати",
     "Cancel" : "Скасувати",
     "Update" : "Оновлення",
-    "Delete" : "Видалити",
+    "Delete" : "Вилучити",
     "Failed to save settings" : "Неможливо зберегти налаштування",
     "Not grouped" : "Не згруповані",
     "Home" : "Домашній",

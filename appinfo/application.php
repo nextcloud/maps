@@ -19,6 +19,7 @@ use OCA\Maps\Service\GeophotoService;
 use \OCP\AppFramework\App;
 use \OCP\IServerContainer;
 use OCA\Maps\Hooks\FileHooks;
+use OCA\Maps\Service\MyMapsService;
 use OCA\Maps\Service\PhotofilesService;
 use OCA\Maps\Service\TracksService;
 use \OCP\AppFramework\App;

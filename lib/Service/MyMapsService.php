@@ -21,7 +21,6 @@ use OCP\Files\FileInfo;
 use OCP\Share\IManager;
 use OCP\Files\Folder;
 use OCP\Files\Node;
-use OCP\Files\Search\ISearchQuery;
 
 class MyMapsService {
 
@@ -38,17 +37,16 @@ class MyMapsService {
         $MyMaps = [];
         $MyMapsNodes = $this->userfolder->search('.maps');
         foreach($MyMapsNodes as $node) {
-            $this->logger->debug($node->getPath());
             if ($node->getType() === FileInfo::TYPE_FILE and $node->getName() === ".maps") {
-                $MapData = json_decode($node->getContent());
-                if (array_key_exists("name", $MapData)){
+                $MapData = json_decode($node->getContent(), true);
+                if (isset($MapData["name"])){
                     $name = $MapData["name"];
                 } else {
                     $name = $node->getParent()->getName();
                 }
                 $color = null;
-                if (array_key_exists("color", $MapData)){
-                    $name = $MapData["color"];
+                if (isset($MapData["color"])){
+                    $color = $MapData["color"];
                 }
                 $MyMap = [
                     "id"=>$node->getParent()->getId(),

@@ -26,6 +26,7 @@ OC.L10N.register(
     "Move" : "Перемістити",
     "right" : "праворуч",
     "left" : "ліворуч",
+    "Start" : "Початок",
     "Destination" : "Destination",
     "min" : "хв",
     "Cinema" : "Кінотеатр",

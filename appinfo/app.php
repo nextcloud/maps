@@ -17,7 +17,7 @@ use OCP\Util;
 use Symfony\Component\EventDispatcher\GenericEvent;
 use OCA\Maps\Hooks\FileHooks;
 
-$app = new Application();
+$app = \OC::$server->query(Application::class);
 $container = $app->getContainer();
 
 $eventDispatcher = \OC::$server->getEventDispatcher();

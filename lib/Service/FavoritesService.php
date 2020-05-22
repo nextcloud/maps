@@ -177,8 +177,8 @@ class FavoritesService {
         $values = [];
         foreach ($favoriteList as $fav) {
             if (
-                !array_key_exists('lat', $fav) or !is_numeric($fav['lat']) or
-                !array_key_exists('lng', $fav) or !is_numeric($fav['lng'])
+                !isset($fav['lat']) or !is_numeric($fav['lat']) or
+                !isset($fav['lng']) or !is_numeric($fav['lng'])
             ) {
                 continue;
             }
@@ -188,14 +188,14 @@ class FavoritesService {
             }
             $value = '(' .
                 $this->db_quote_escape_string($userId) . ', ' .
-                ((!array_key_exists('name', $fav) or !$fav['name']) ? 'NULL' : $this->db_quote_escape_string($fav['name'])) . ', ' .
-                ((!array_key_exists('date_created', $fav) or !is_numeric($fav['date_created'])) ? $this->db_quote_escape_string($nowTimeStamp) : $this->db_quote_escape_string($fav['date_created'])) . ', ' .
+                ((!isset($fav['name']) or !$fav['name']) ? 'NULL' : $this->db_quote_escape_string($fav['name'])) . ', ' .
+                ((!isset($fav['date_created']) or !is_numeric($fav['date_created'])) ? $this->db_quote_escape_string($nowTimeStamp) : $this->db_quote_escape_string($fav['date_created'])) . ', ' .
                 $this->db_quote_escape_string($nowTimeStamp) . ', ' .
                 $this->db_quote_escape_string($lat) . ', ' .
                 $this->db_quote_escape_string($lng) . ', ' .
-                ((!array_key_exists('category', $fav) or !$fav['category']) ? 'NULL' : $this->db_quote_escape_string($fav['category'])) . ', ' .
-                ((!array_key_exists('comment', $fav) or !$fav['comment']) ? 'NULL' : $this->db_quote_escape_string($fav['comment'])) . ', ' .
-                ((!array_key_exists('extensions', $fav) or !$fav['extensions']) ? 'NULL' : $this->db_quote_escape_string($fav['extensions'])) . ')';
+                ((!isset($fav['category']) or !$fav['category']) ? 'NULL' : $this->db_quote_escape_string($fav['category'])) . ', ' .
+                ((!isset($fav['comment']) or !$fav['comment']) ? 'NULL' : $this->db_quote_escape_string($fav['comment'])) . ', ' .
+                ((!isset($fav['extensions']) or !$fav['extensions']) ? 'NULL' : $this->db_quote_escape_string($fav['extensions'])) . ')';
             array_push($values, $value);
         }
         $valuesStr = implode(', ', $values);
@@ -517,16 +517,16 @@ class FavoritesService {
             // store favorite
             $this->nbImported++;
             $this->currentFavorite['category'] = $this->kmlCurrentCategory;
-            if (!array_key_exists('category', $this->currentFavorite) or $this->currentFavorite['category'] === '') {
+            if (!isset($this->currentFavorite['category']) or $this->currentFavorite['category'] === '') {
                 $this->currentFavorite['category'] = $this->l10n->t('Personal');
             }
             // convert date
-            if (array_key_exists('date_created', $this->currentFavorite)) {
+            if (isset($this->currentFavorite['date_created'])) {
                 $time = new \DateTime($this->currentFavorite['date_created']);
                 $timestamp = $time->getTimestamp();
                 $this->currentFavorite['date_created'] = $timestamp;
             }
-            if (array_key_exists('coordinates', $this->currentFavorite)) {
+            if (isset($this->currentFavorite['coordinates'])) {
                 $spl = explode(',', $this->currentFavorite['coordinates']);
                 if (count($spl) > 1) {
                     $this->currentFavorite['lat'] = floatval($spl[1]);
@@ -553,16 +553,16 @@ class FavoritesService {
             }
             else {
                 if ($this->currentXmlTag === 'NAME') {
-                    $this->currentFavorite['name'] = (array_key_exists('name', $this->currentFavorite)) ? $this->currentFavorite['name'] . $d : $d;
+                    $this->currentFavorite['name'] = (isset($this->currentFavorite['name'])) ? $this->currentFavorite['name'] . $d : $d;
                 }
                 else if ($this->currentXmlTag === 'WHEN') {
-                    $this->currentFavorite['date_created'] = (array_key_exists('date_created', $this->currentFavorite)) ? $this->currentFavorite['date_created'] . $d : $d;
+                    $this->currentFavorite['date_created'] = (isset($this->currentFavorite['date_created'])) ? $this->currentFavorite['date_created'] . $d : $d;
                 }
                 else if ($this->currentXmlTag === 'COORDINATES') {
-                    $this->currentFavorite['coordinates'] = (array_key_exists('coordinates', $this->currentFavorite)) ? $this->currentFavorite['coordinates'] . $d : $d;
+                    $this->currentFavorite['coordinates'] = (isset($this->currentFavorite['coordinates'])) ? $this->currentFavorite['coordinates'] . $d : $d;
                 }
                 else if ($this->currentXmlTag === 'DESCRIPTION') {
-                    $this->currentFavorite['comment'] = (array_key_exists('comment', $this->currentFavorite)) ? $this->currentFavorite['comment'] . $d : $d;
+                    $this->currentFavorite['comment'] = (isset($this->currentFavorite['comment'])) ? $this->currentFavorite['comment'] . $d : $d;
                 }
             }
         }
@@ -608,10 +608,10 @@ class FavoritesService {
         if ($name === 'WPT') {
             $this->insideWpt = true;
             $this->currentFavorite = [];
-            if (array_key_exists('LAT', $attrs)) {
+            if (isset($attrs['LAT'])) {
                 $this->currentFavorite['lat'] = floatval($attrs['LAT']);
             }
-            if (array_key_exists('LON', $attrs)) {
+            if (isset($attrs['LON'])) {
                 $this->currentFavorite['lng'] = floatval($attrs['LON']);
             }
         }
@@ -633,12 +633,12 @@ class FavoritesService {
             // store favorite
             $this->nbImported++;
             // convert date
-            if (array_key_exists('date_created', $this->currentFavorite)) {
+            if (isset($this->currentFavorite['date_created'])) {
                 $time = new \DateTime($this->currentFavorite['date_created']);
                 $timestamp = $time->getTimestamp();
                 $this->currentFavorite['date_created'] = $timestamp;
             }
-            if (!array_key_exists('category', $this->currentFavorite) or $this->currentFavorite['category'] === '') {
+            if (!isset($this->currentFavorite['category']) or $this->currentFavorite['category'] === '') {
                 $this->currentFavorite['category'] = $this->l10n->t('Personal');
             }
             array_push($this->currentFavoritesList, $this->currentFavorite);
@@ -655,19 +655,19 @@ class FavoritesService {
         $d = trim($data);
         if (!empty($d)) {
             if ($this->insideWpt and $this->currentXmlTag === 'NAME') {
-                $this->currentFavorite['name'] = (array_key_exists('name', $this->currentFavorite)) ? $this->currentFavorite['name'] . $d : $d;
+                $this->currentFavorite['name'] = (isset($this->currentFavorite['name'])) ? $this->currentFavorite['name'] . $d : $d;
             }
             else if ($this->insideWpt and $this->currentXmlTag === 'TIME') {
-                $this->currentFavorite['date_created'] = (array_key_exists('date_created', $this->currentFavorite)) ? $this->currentFavorite['date_created'] . $d : $d;
+                $this->currentFavorite['date_created'] = (isset($this->currentFavorite['date_created'])) ? $this->currentFavorite['date_created'] . $d : $d;
             }
             else if ($this->insideWpt and $this->currentXmlTag === 'TYPE') {
-                $this->currentFavorite['category'] = (array_key_exists('category', $this->currentFavorite)) ? $this->currentFavorite['category'] . $d : $d;
+                $this->currentFavorite['category'] = (isset($this->currentFavorite['category'])) ? $this->currentFavorite['category'] . $d : $d;
             }
             else if ($this->insideWpt and $this->currentXmlTag === 'DESC') {
-                $this->currentFavorite['comment'] = (array_key_exists('comment', $this->currentFavorite)) ? $this->currentFavorite['comment'] . $d : $d;
+                $this->currentFavorite['comment'] = (isset($this->currentFavorite['comment'])) ? $this->currentFavorite['comment'] . $d : $d;
             }
             else if ($this->insideWpt and $this->currentXmlTag === 'MAPS-EXTENSIONS') {
-                $this->currentFavorite['extensions'] = (array_key_exists('extensions', $this->currentFavorite)) ? $this->currentFavorite['extensions'] . $d : $d;
+                $this->currentFavorite['extensions'] = (isset($this->currentFavorite['extensions'])) ? $this->currentFavorite['extensions'] . $d : $d;
             }
         }
     }
@@ -685,7 +685,7 @@ class FavoritesService {
         // Decode file content from JSON
         $data = json_decode($fdata, true, 512, JSON_THROW_ON_ERROR);
 
-        if($data == null or !array_key_exists('features', $data)) {
+        if($data == null or !isset($data['features'])) {
             $this->logger->error(
                 'Exception parsing '.$file->getName().': no places found to import',
                 array('app' => 'maps')
@@ -715,7 +715,7 @@ class FavoritesService {
             $time = new \DateTime($value['properties']['Updated']);
             $this->currentFavorite['date_modified'] = $time->getTimestamp();
 
-            if(array_key_exists('Address', $value['properties']['Location'])) {
+            if(isset($value['properties']['Location']['Address'])) {
                 $this->currentFavorite['comment'] = $value['properties']['Location']['Address'];
             }
 

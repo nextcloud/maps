@@ -162,7 +162,7 @@ class PhotofilesService {
             $this->photoMapper->deleteByFileIdUserId($fileId, $userId);
         }
     }
-    
+
 
     public function deleteByFolder(Node $folder) {
         $photos = $this->gatherPhotoFiles($folder, true);
@@ -375,8 +375,8 @@ class PhotofilesService {
 
         if (!$this->hasValidExifGeoTags($exif)) {
             try {
-                $exif = $this->getExifPelBackup($file);
-            } catch (PelException | E_WARNING $exception) {
+                @$exif = $this->getExifPelBackup($file);
+            } catch (PelException $exception) {
                 $exif = [];
             }
 

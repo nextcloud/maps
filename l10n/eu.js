@@ -15,7 +15,6 @@ OC.L10N.register(
     "Add to Favorites" : "Gehitu gogokoetara",
     "Update" : "Eguneratu",
     "Delete" : "Ezabatu",
-    "No comment" : "Iruzkinik ez",
     "Unknown Place" : "Toki ezezaguna",
     "Settings were successfully saved" : "Ezarpenak ongi gorde dira",
     "Failed to save settings" : "Huts egin du ezarpenak gordetzean",

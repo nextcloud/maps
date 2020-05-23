@@ -17,7 +17,6 @@ OC.L10N.register(
     "Add to Favorites" : "Sık Kullanılanlara Ekle",
     "Update" : "Güncelle",
     "Delete" : "Sil",
-    "No comment" : "Açıklama yok",
     "Unknown Place" : "Bilinmeyen Yer",
     "Settings were successfully saved" : "Ayarlar kaydedildi",
     "Failed to save settings" : "Ayarlar kaydedilemedi",

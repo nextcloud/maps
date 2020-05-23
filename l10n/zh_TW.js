@@ -17,7 +17,6 @@ OC.L10N.register(
     "Add to Favorites" : "加到我的最愛",
     "Update" : "更新",
     "Delete" : "刪除",
-    "No comment" : "無留言",
     "Unknown Place" : "不明地點",
     "Settings were successfully saved" : "設定已儲存",
     "Failed to save settings" : "設定儲存失敗",

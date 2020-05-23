@@ -17,7 +17,6 @@ OC.L10N.register(
     "Add to Favorites" : "Añadir a favoritos",
     "Update" : "Actualizar",
     "Delete" : "Eliminar",
-    "No comment" : "Sin comentario",
     "Unknown Place" : "Lugar desconocido",
     "Settings were successfully saved" : "Configuración guardada con éxito",
     "Failed to save settings" : "Fallo al guardar la configuración",

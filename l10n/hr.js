@@ -17,7 +17,6 @@ OC.L10N.register(
     "Add to Favorites" : "Dodaj u favorite",
     "Update" : "Ažuriraj",
     "Delete" : "Izbriši",
-    "No comment" : "Nema komentara",
     "Unknown Place" : "Nepoznato mjesto",
     "Settings were successfully saved" : "Postavke su uspješno spremljene",
     "Failed to save settings" : "Spremanje postavki nije uspjelo",

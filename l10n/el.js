@@ -17,7 +17,6 @@ OC.L10N.register(
     "Add to Favorites" : "Προσθήκη στα Αγαπημένα",
     "Update" : "Ενημέρωση",
     "Delete" : "Διαγραφή",
-    "No comment" : "Χωρίς σχόλιο",
     "Unknown Place" : "Άγνωστη τοποθεσία",
     "Settings were successfully saved" : "Οι ρυθμίσεις αποθηκεύτηκαν επιτυχώς.",
     "Failed to save settings" : "Αποτυχία αποθήκευσης ρυθμίσεων",

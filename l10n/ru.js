@@ -17,7 +17,6 @@ OC.L10N.register(
     "Add to Favorites" : "Добавить в избранное",
     "Update" : "Обновить",
     "Delete" : "Удалить",
-    "No comment" : "Комментарий отсуствует",
     "Unknown Place" : "Неизвестное место",
     "Settings were successfully saved" : "Параметры сохранены",
     "Failed to save settings" : "Не удалось сохранить параметры",

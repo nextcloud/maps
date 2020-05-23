@@ -16,7 +16,6 @@ OC.L10N.register(
     "Add to Favorites" : "הוספה למועדפים",
     "Update" : "עדכון",
     "Delete" : "מחיקה",
-    "No comment" : "אין הערה",
     "Unknown Place" : "מיקום לא ידוע",
     "Settings were successfully saved" : "ההגדרות נשמרו בהצלחה",
     "Failed to save settings" : "שמירת ההגדרות נכשלה",

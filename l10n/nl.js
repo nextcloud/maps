@@ -17,7 +17,6 @@ OC.L10N.register(
     "Add to Favorites" : "Toevoegen aan favorieten",
     "Update" : "Bijwerken",
     "Delete" : "Verwijderen",
-    "No comment" : "Geen reactie",
     "Unknown Place" : "Onbekende plaats",
     "Settings were successfully saved" : "Instellingen werden goed opgeslagen",
     "Failed to save settings" : "Instellingen konden niet opgeslagen worden",

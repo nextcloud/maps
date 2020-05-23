@@ -17,7 +17,6 @@ OC.L10N.register(
     "Add to Favorites" : "Hozzáadás a kedvencekhez",
     "Update" : "Frissítés",
     "Delete" : "Törlés",
-    "No comment" : "Nincs megjegyzés",
     "Unknown Place" : "Ismeretlen hely",
     "Settings were successfully saved" : "A beállítások sikeresen mentve",
     "Failed to save settings" : "A beállítások mentése sikertelen",

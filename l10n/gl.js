@@ -17,7 +17,6 @@ OC.L10N.register(
     "Add to Favorites" : "Engadir a favoritos",
     "Update" : "Actualizar",
     "Delete" : "Eliminar",
-    "No comment" : "Non hai comentarios",
     "Unknown Place" : "Lugar descoñecido",
     "Settings were successfully saved" : "Os axustes gardáronse correctamente",
     "Failed to save settings" : "Produciuse un fallo ao gardar os axustes",

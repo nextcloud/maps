@@ -17,7 +17,6 @@ OC.L10N.register(
     "Add to Favorites" : "Pridať k obľúbeným",
     "Update" : "Aktualizovať",
     "Delete" : "Zmazať",
-    "No comment" : "Bez komentára",
     "Unknown Place" : "Neznáme miesto",
     "Settings were successfully saved" : "Nastavenia boli úspešne uložené",
     "Failed to save settings" : "Nepodarilo sa uložiť nastavenia",

@@ -104,7 +104,7 @@ OC.L10N.register(
     "{nb} photos placed" : "{nb} fotos situadas",
     "Failed to place photos" : "Produciuse un fallo ao situar as fotos",
     "{nb} photos reset" : "{nb} fotos restabelecidas",
-    "Failed to reset photos coordinates" : "Produciuse un fallo ao restablecer as coordenadas de fotos",
+    "Failed to reset photos coordinates" : "Produciuse un fallo ao restabelecer as coordenadas de fotos",
     "Geo link ({geoLink}) copied to clipboard" : "A ligazón «geo» ({geoLink}) foi copiada no portapapeis.",
     "Failed to save option values" : "Produciuse un fallo ao gardar os valores das opcións",
     "Media scan was not done yet. Wait a few minutes/hours and reload this page to see your photos/tracks." : "Aínda non se fixo o escaneado multimedia. Agarde uns minutos/horas e volva cargar esta páxina para ver as súas fotos/pistas.",

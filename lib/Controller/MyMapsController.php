@@ -37,6 +37,34 @@ class MyMapsController extends Controller {
     /**
      * @NoAdminRequired
      */
+    public function addMyMap($values) {
+        $newName = $values["newName"] ?? "New Map";
+        $myMap = $this->myMapsService->addMyMap($newName);
+        if (is_string($myMap)) {
+            new DataResponse($myMap, 400);
+        }
+        return new DataResponse($myMap);
+    }
+
+    /**
+     * @NoAdminRequired
+     */
+    public function updateMyMap($id, $values) {
+        $myMap = $this->myMapsService->updateMyMap($id, $values);
+        return new DataResponse($myMap);
+    }
+
+    /**
+     * @NoAdminRequired
+     */
+    public function deleteMyMap($id) {
+        $result = $this->myMapsService->deleteMyMap($id);
+        return new DataResponse($result);
+    }
+
+    /**
+     * @NoAdminRequired
+     */
     public function getMyMaps() {
         $myMaps = $this->myMapsService->getAllMyMaps();
         return new DataResponse($myMaps);

@@ -196,9 +196,30 @@
     </li>
     <li id="navigation-my-maps" class="collapsible">
         <a class="icon-timezone" href="#"><?php p($l->t('Your Maps')); ?></a>
+        <div class="app-navigation-entry-utils">
+            <ul>
+                <li id="addMyMapButton" class="app-navigation-entry-utils-menu-button" title="<?php p($l->t('New map')); ?>">
+                    <button class="icon-add"></button>
+                </li>
+                <li class="app-navigation-entry-utils-menu-button myMapsMenuButton">
+                    <button></button>
+                </li>
+            </ul>
+        </div>
+        <div class="app-navigation-entry-menu">
+            <ul>
+                <li>
+                    <a href="#" id="add-map">
+                        <span class="icon-category-office"></span>
+                        <span><?php p($l->t('New map')); ?></span>
+                    </a>
+                </li>
+            </ul>
+        </div>
         <ul id="my-maps-list">
         </ul>
     </li>
 </ul>
 <input id="trackcolorinput" type="color"></input>
 <input id="devicecolorinput" type="color"></input>
+<input id="mymapscolorinput" type="color"></input>

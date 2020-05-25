@@ -142,7 +142,7 @@ import { brify, getUrlParameter, formatAddress } from './utils';
         $('body').on('click',
             '.routingMenuButton, .favoritesMenuButton, .categoryMenuButton, .photosMenuButton, .contactsMenuButton, ' +
             '.contactGroupMenuButton, ' +
-            '.nonLocalizedPhotosMenuButton, .devicesMenuButton, .deviceMenuButton, .tracksMenuButton, .trackMenuButton',
+            '.nonLocalizedPhotosMenuButton, .devicesMenuButton, .deviceMenuButton, .tracksMenuButton, .trackMenuButton, .myMapsMenuButton, .myMapMenuButton ',
             function(e) {
             var menu = $(this).parent().parent().parent().find('> .app-navigation-entry-menu');
             var wasOpen = menu.hasClass('open');
@@ -164,7 +164,9 @@ import { brify, getUrlParameter, formatAddress } from './utils';
             '#navigation-nonLocalizedPhotos > .app-navigation-entry-utils, #navigation-nonLocalizedPhotos > a, ' +
             '#navigation-contacts > .app-navigation-entry-utils, #navigation-contacts > a, ' +
             '.contact-group-line > a, .contact-group-line > .app-navigation-entry-utils, ' +
-            '#navigation-photos > .app-navigation-entry-utils, #navigation-photos > a ',
+            '#navigation-photos > .app-navigation-entry-utils, #navigation-photos > a ,' +
+            '#navigation-my-maps > .app-navigation-entry-utils, #navigation-my-maps > a ,' +
+            '.my-maps-line > a, .my-maps-line > .app-navigation-entry-utils ',
             function(e) {
             var menu = $(this).parent().find('> .app-navigation-entry-menu');
             var wasOpen = menu.hasClass('open');
@@ -176,9 +178,9 @@ import { brify, getUrlParameter, formatAddress } from './utils';
             return false;
         });
         // right click on expand icon
-        $('body').on('contextmenu', '#navigation-favorites, #navigation-photos, #navigation-devices, #navigation-tracks', function(e) {
+        $('body').on('contextmenu', '#navigation-favorites, #navigation-photos, #navigation-devices, #navigation-tracks, #navigation-my-maps', function(e) {
             var id = $(e.target).attr('id');
-            if (e.target.tagName === 'LI' && (id === 'navigation-favorites' || id === 'navigation-photos' || id === 'navigation-devices' || id === 'navigation-tracks')) {
+            if (e.target.tagName === 'LI' && (id === 'navigation-favorites' || id === 'navigation-photos' || id === 'navigation-devices' || id === 'navigation-tracks' || id === 'navigation-my-maps')) {
                 var menu = $(this).find('> .app-navigation-entry-menu');
                 var wasOpen = menu.hasClass('open');
                 $('.app-navigation-entry-menu.open').removeClass('open');

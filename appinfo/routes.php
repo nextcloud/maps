@@ -107,6 +107,8 @@ return [
 
         //MyMaps
         ['name' => 'my_maps#getMyMaps', 'url' => '/maps', 'verb' => 'GET'],
-
+        ['name' => 'my_maps#addMyMap' , 'url' => '/maps', 'verb' => 'POST'],
+        ['name' => 'my_maps#updateMyMap' , 'url' => '/maps/{id}', 'verb' => 'PUT'],
+        ['name' => 'my_maps#deleteMyMap' , 'url' => '/maps/{id}', 'verb' => 'DELETE'],
     ]
 ];

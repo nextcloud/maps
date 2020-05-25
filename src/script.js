@@ -2230,7 +2230,9 @@ import { brify, getUrlParameter, formatAddress } from './utils';
             '#navigation-contacts > .app-navigation-entry-utils, #navigation-contacts > a, ' +
             '.contact-group-line > a, .contact-group-line > .app-navigation-entry-utils, ' +
             '#navigation-photos > .app-navigation-entry-utils, #navigation-photos > a ',
-            function(e) {
+			'#navigation-my-maps > .app-navigation-entry-utils, #navigation-my-maps > a ,' +
+			'.my-maps-line > a, .my-maps-line > .app-navigation-entry-utils ',
+			function(e) {
             var menu = $(this).parent().find('> .app-navigation-entry-menu');
             var wasOpen = menu.hasClass('open');
             $('.app-navigation-entry-menu.open').removeClass('open');

@@ -59,7 +59,7 @@
 					:icon="createNewDivIcon(categoryKey)"
 					@popupopen="storeCurrentlyOpenPopup(favorite.id)"
 					@popupclose="forgetCurrentlyOpenPopup(favorite.id)"
-					@ready="marker => storeMarkerReference(favorite.id, marker)">
+					@ready="marker => storeMarkerReference(favorite.id, marker, favoriteCategories[categoryKey].length)">
 					<LPopup>
 						<FavoritePopup
 							:favorite="favorite"
@@ -208,6 +208,13 @@ export default {
 		this.featureGroup = null
 		this.mapClickPopupLocked = false
 		this.markerMap = []
+		this.markerCounter = 0
+		// dummy values to replace with min and max values taking from favorites
+		// see storeMarkerReference below
+		this.minLat = 90
+		this.maxLat = -90
+		this.minLng = 720
+		this.maxLng = -720
 	},
 
 	methods: {
@@ -219,8 +226,25 @@ export default {
 			this.$refs.map.mapObject.setView(latLng, zoom)
 		},
 
-		storeMarkerReference(favoriteId, marker) {
+		storeMarkerReference(favoriteId, marker, favcount) {
+			this.markerCounter++
+			if (marker.getLatLng().lat < this.minLat) {
+				this.minLat = marker.getLatLng().lat
+			}
+			if (marker.getLatLng().lat > this.maxLat) {
+				this.maxLat = marker.getLatLng().lat
+			}
+			if (marker.getLatLng().lng < this.minLng) {
+				this.minLng = marker.getLatLng().lng
+			}
+			if (marker.getLatLng().lng > this.maxLng) {
+				this.maxLng = marker.getLatLng().lng
+			}
 			this.markerMap[favoriteId] = marker
+			// after getting latlng values from last favorite we can now fit map to max bounds taken from favorites:
+			if (this.markerCounter >= favcount) {
+				this.$refs.map.fitBounds([[this.minLat, this.minLng], [this.maxLat, this.maxLng]], { padding: [30, 30] })
+			}
 		},
 
 		emitAddFavoriteEvent(data) {

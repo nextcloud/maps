@@ -578,6 +578,7 @@ FavoritesController.prototype = {
 
         // side menu entry
         var imgurl = generateUrl('/svg/core/actions/star?color='+color);
+        var isDefaultMap = this.optionsController.myMapId === null;
         var li = '<li class="category-line" id="'+name+'-category" category="'+rawName+'">' +
         '    <a href="#" class="category-name" id="'+name+'-category-name" style="background-image: url('+imgurl+')">'+rawName+'</a>' +
         '    <div class="app-navigation-entry-utils">' +
@@ -602,6 +603,7 @@ FavoritesController.prototype = {
         '                    <span>'+t('maps', 'Rename')+'</span>' +
         '                </a>' +
         '            </li>' +
+            (isDefaultMap ?
         '            <li>' +
         '                <a href="#" class="action-checkbox shareCategory">' +
         '                  <input id="' + checkboxId + '" type="checkbox" class="checkbox category-sharing-checkbox" ' + (shareToken ? "checked" : "") + ' data-category="' + name + '">' +
@@ -610,7 +612,8 @@ FavoritesController.prototype = {
         '                    <span class="copied-tooltip">' + t('maps', 'Copied!') + '</span>' +
         '                  </span>' +
         '                </a>' +
-        '            </li>' +
+        '            </li>'
+                : '') +
         '            <li>' +
         '                <a href="#" class="zoomCategoryButton">' +
         '                    <span class="icon-search"></span>' +

@@ -76,7 +76,7 @@ class UtilsController extends Controller {
             } catch (NotFoundException $e) {
                 $file=$folder->newFile(".maps", $content = "{}");
             }
-            $ov = json_decode($file->getContent(),true, 512, JSON_THROW_ON_ERROR);
+            $ov = json_decode($file->getContent(),true, 512, is_int(JSON_THROW_ON_ERROR)?JSON_THROW_ON_ERROR:0);
             foreach ($options as $key => $value) {
                 $ov[$key] = $value;
             }
@@ -108,7 +108,7 @@ class UtilsController extends Controller {
             } catch (NotFoundException $e) {
                 $file=$folder->newFile(".maps", $content = "{}");
             }
-            $ov = json_decode($file->getContent(),true, 512, JSON_THROW_ON_ERROR);
+            $ov = json_decode($file->getContent(),true, 512, is_int(JSON_THROW_ON_ERROR)?JSON_THROW_ON_ERROR:0);
         }
 
         // get routing-specific admin settings values

@@ -331,7 +331,7 @@ class FavoritesService {
         $favorites = [];
 
         // Decode file content from JSON
-        $data = json_decode($file->getContent(), true, 512, is_int(JSON_THROW_ON_ERROR)?JSON_THROW_ON_ERROR:0);
+        $data = json_decode($file->getContent(), true, 512);
 
         $id = 0;
         // Loop over all favorite entries
@@ -391,7 +391,7 @@ class FavoritesService {
 
     public function addFavoriteToJSON($file, $name, $lat, $lng, $category, $comment, $extensions) {
         $nowTimeStamp = (new \DateTime())->getTimestamp();
-        $data = json_decode($file->getContent(), true, 512, is_int(JSON_THROW_ON_ERROR)?JSON_THROW_ON_ERROR:0);
+        $data = json_decode($file->getContent(), true, 512);
         $favorite = [
             "type" => "Feature",
             "geometry" => [
@@ -422,7 +422,7 @@ class FavoritesService {
 
     public function renameCategoryInJSON($file, $cat, $newName) {
         $nowTimeStamp = (new \DateTime())->getTimestamp();
-        $data = json_decode($file->getContent(), true, 512, is_int(JSON_THROW_ON_ERROR)?JSON_THROW_ON_ERROR:0);
+        $data = json_decode($file->getContent(), true, 512);
         $this->logger->debug($cat);
         foreach ($data['features'] as $key => $value) {
             if (!array_key_exists('Category', $value['properties']) ){
@@ -439,7 +439,7 @@ class FavoritesService {
 
     public function editFavoriteInJSON($file, $id, $name, $lat, $lng, $category, $comment, $extensions) {
         $nowTimeStamp = (new \DateTime())->getTimestamp();
-        $data = json_decode($file->getContent(), true, 512, is_int(JSON_THROW_ON_ERROR)?JSON_THROW_ON_ERROR:0);
+        $data = json_decode($file->getContent(), true, 512);
         $createdTimeStamp = $data['features'][$id]['properties']['Published'];
         $favorite = [
             "type" => "Feature",
@@ -470,13 +470,13 @@ class FavoritesService {
     }
 
     public function deleteFavoriteFromJSON($file, $id) {
-        $data = json_decode($file->getContent(), true, 512, is_int(JSON_THROW_ON_ERROR)?JSON_THROW_ON_ERROR:0);
+        $data = json_decode($file->getContent(), true, 512);
         array_splice($data['features'], $id, 1);
         $file->putContent(json_encode($data,JSON_PRETTY_PRINT));
     }
 
     public function deleteFavoritesFromJSON($file, $ids) {
-        $data = json_decode($file->getContent(), true, 512, is_int(JSON_THROW_ON_ERROR)?JSON_THROW_ON_ERROR:0);
+        $data = json_decode($file->getContent(), true, 512);
         foreach ($ids as $id) {
             array_splice($data['features'], $id, 1);
         }
@@ -836,7 +836,7 @@ class FavoritesService {
 
 
         // Decode file content from JSON
-        $data = json_decode($file->getContent(), true, 512, is_int(JSON_THROW_ON_ERROR)?JSON_THROW_ON_ERROR:0);
+        $data = json_decode($file->getContent(), true, 512);
 
         if($data == null or !array_key_exists('features', $data)) {
             $this->logger->error(

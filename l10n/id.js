@@ -29,6 +29,7 @@ OC.L10N.register(
     "Destination" : "Tujuan",
     "min" : "min",
     "Add to favorites" : "Tambah ke favorit",
+    "Open" : "Buka",
     "File" : "Berkas",
     "Link" : "Tautan",
     "Description" : "Deskrisi",

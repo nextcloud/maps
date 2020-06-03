@@ -39,6 +39,7 @@ OC.L10N.register(
     "Destination" : "대상",
     "min" : "분",
     "Add to favorites" : "즐겨찾기에 추가",
+    "Open" : "열기",
     "Closed" : "닫힘",
     "File" : "파일",
     "Link" : "링크",

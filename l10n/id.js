@@ -10,6 +10,7 @@ OC.L10N.register(
     "Cancel" : "Membatalkan",
     "Update" : "Perbarui",
     "Delete" : "Hapus",
+    "Failed to save settings" : "Gagal simpan setelan",
     "Not grouped" : "Tidak dikelompokkan",
     "Home" : "Beranda",
     "Work" : "Kantor",

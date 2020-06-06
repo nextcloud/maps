@@ -21,5 +21,5 @@
     "Sort by name" : "Order by name",
     "Sort by date" : "Order by date",
     "Settings" : "تەڭشەكلەر"
-},"pluralForm" :"nplurals=1; plural=0;"
+},"pluralForm" :"nplurals=2; plural=(n != 1);"
 }

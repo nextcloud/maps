@@ -282,7 +282,7 @@ OC.L10N.register(
     "Sort by date" : "Ordenar pola data",
     "Settings" : "Axustes",
     "Track my position" : "Rastrexar a miña posición",
-    "Display time filter slider" : "Amosar o potenciómetro do filtro de tempo",
+    "Display time filter slider" : "Amosar o cursor de desprazamento do filtro de tempo",
     "Keep in mind that map projections always distort sizes of countries. The standard Mercator projection is particularly biased. Read more at:" : "Teña presente que as proxeccións de mapas sempre distorsionan o tamaño dos países. A proxección estándar de Mercator está particularmente nesgada. Lea máis en:",
     "The True Size of Africa" : "O verdadeiro tamaño de África"
 },

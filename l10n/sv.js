@@ -123,6 +123,7 @@ OC.L10N.register(
     "left" : "vänster",
     "sharp left" : "skarp vänster",
     "Turn around" : "Vänd om",
+    "Head {dir}" : "Huvud {dir}",
     " on {road}" : " på {road}",
     "Continue {dir}" : "Fortsätt {dir}",
     "Take the {exitStr} exit in the roundabout" : "Ta den {exitStr} avfarten i rondellen",

@@ -80,6 +80,15 @@ class FavoritesController extends Controller {
         ],JSON_PRETTY_PRINT);
     }
 
+    private function getJSONFavoritesFile($folder) {
+        try {
+            $file = $folder->get('.favorites.json');
+        } catch (NotFoundException $e) {
+            $file = $folder->newFile('.favorites.json', $content = $this->defaultFavoritsJSON);
+        }
+        return $file;
+    }
+
     /**
      * @NoAdminRequired
      */
@@ -89,11 +98,7 @@ class FavoritesController extends Controller {
         } else {
             $folders = $this->userfolder->getById($myMapId);
             $folder = array_shift($folders);
-            try {
-                $file=$folder->get(".favorits.json");
-            } catch (NotFoundException $e) {
-                $file=$folder->newFile(".favorits.json", $content = $this->defaultFavoritsJSON);
-            }
+            $file = $this->getJSONFavoritesFile($folder);
             $favorites = $this->favoritesService->getFavoritesFromJSON($file);
         }
         return new DataResponse($favorites);
@@ -111,11 +116,7 @@ class FavoritesController extends Controller {
             } else {
                 $folders = $this->userfolder->getById($myMapId);
                 $folder = array_shift($folders);
-                try {
-                    $file=$folder->get(".favorits.json");
-                } catch (NotFoundException $e) {
-                    $file=$folder->newFile(".favorits.json", $content = $this->defaultFavoritsJSON);
-                }
+                $file = $this->getJSONFavoritesFile($folder);
                 $favoriteId = $this->favoritesService->addFavoriteToJSON($file, $name, $lat, $lng, $category, $comment, $extensions);
                 $favorite = $this->favoritesService->getFavoriteFromJSON($file, $favoriteId);
                 return new DataResponse($favorite);
@@ -148,11 +149,7 @@ class FavoritesController extends Controller {
         } else {
             $folders = $this->userfolder->getById($myMapId);
             $folder = array_shift($folders);
-            try {
-                $file=$folder->get(".favorits.json");
-            } catch (NotFoundException $e) {
-                $file=$folder->newFile(".favorits.json", $content = $this->defaultFavoritsJSON);
-            }
+            $file = $this->getJSONFavoritesFile($folder);
             $this->favoritesService->editFavoriteInJSON($file, $id, $name, $lat, $lng, $category, $comment, $extensions);
             $editedFavorite = $this->favoritesService->getFavoriteFromJSON($file, $id);
             return new DataResponse($editedFavorite);
@@ -178,11 +175,7 @@ class FavoritesController extends Controller {
                 } else {
                     $folders = $this->userfolder->getById($myMapId);
                     $folder = array_shift($folders);
-                    try {
-                        $file=$folder->get(".favorits.json");
-                    } catch (NotFoundException $e) {
-                        $file=$folder->newFile(".favorits.json", $content = $this->defaultFavoritsJSON);
-                    }
+                    $file = $this->getJSONFavoritesFile($folder);
                     $this->favoritesService->renameCategoryInJSON($file, $cat, $newName);
                 }
             }
@@ -205,11 +198,7 @@ class FavoritesController extends Controller {
         } else {
             $folders = $this->userfolder->getById($myMapId);
             $folder = array_shift($folders);
-            try {
-                $file=$folder->get(".favorits.json");
-            } catch (NotFoundException $e) {
-                $file=$folder->newFile(".favorits.json", $content = $this->defaultFavoritsJSON);
-            }
+            $file = $this->getJSONFavoritesFile($folder);
             $this->favoritesService->deleteFavoriteFromJSON($file, $id);
             return new DataResponse('DELETED');
         }
@@ -224,11 +213,7 @@ class FavoritesController extends Controller {
         } else {
             $folders = $this->userfolder->getById($myMapId);
             $folder = array_shift($folders);
-            try {
-                $file=$folder->get(".favorits.json");
-            } catch (NotFoundException $e) {
-                $file=$folder->newFile(".favorits.json", $content = $this->defaultFavoritsJSON);
-            }
+            $file = $this->getJSONFavoritesFile($folder);
             $this->favoritesService->deleteFavoritesFromJSON($file, $ids);
         }
         return new DataResponse('DELETED');

@@ -188,7 +188,7 @@ class TracksService {
     /**
      * @param string $userId
      */
-    public function getTracksFromDB($userId) {
+    public function getTracksFromDB($userId, $folder=null) {
         $tracks = [];
         $qb = $this->qb;
         $qb->select('id', 'file_id', 'color', 'metadata', 'etag')
@@ -198,14 +198,36 @@ class TracksService {
             );
         $req = $qb->execute();
 
-        while ($row = $req->fetch()) {
-            array_push($tracks, [
-                'id' => intval($row['id']),
-                'file_id' => intval($row['file_id']),
-                'color' => $row['color'],
-                'metadata' => $row['metadata'],
-                'etag' => $row['etag'],
-            ]);
+        if (is_null($folder)) {
+            while ($row = $req->fetch()) {
+                array_push($tracks, [
+                    'id' => intval($row['id']),
+                    'file_id' => intval($row['file_id']),
+                    'color' => $row['color'],
+                    'metadata' => $row['metadata'],
+                    'etag' => $row['etag'],
+                ]);
+            }
+        } else {
+            // my-maps context
+            while ($row = $req->fetch()) {
+                // avoid tracks that are not in "this map's" folder
+                $files = $folder->getById(intval($row['file_id']));
+				if (empty($files)) {
+					continue;
+				}
+				$file = array_shift($files);
+                if ($file === null) {
+                    continue;
+                }
+                array_push($tracks, [
+                    'id' => intval($row['id']),
+                    'file_id' => intval($row['file_id']),
+                    'color' => $row['color'],
+                    'metadata' => $row['metadata'],
+                    'etag' => $row['etag'],
+                ]);
+            }
         }
         $req->closeCursor();
         $qb = $qb->resetQueryParts();

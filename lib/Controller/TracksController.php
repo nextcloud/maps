@@ -91,8 +91,14 @@ class TracksController extends Controller {
     /**
      * @NoAdminRequired
      */
-    public function getTracks() {
-        $tracks = $this->tracksService->getTracksFromDB($this->userId);
+    public function getTracks($myMapId=null) {
+        if (is_null($myMapId) || $myMapId === '') {
+            $tracks = $this->tracksService->getTracksFromDB($this->userId, $this->userfolder);
+        } else {
+            $folders = $this->userfolder->getById($myMapId);
+            $folder = array_shift($folders);
+            $tracks = $this->tracksService->getTracksFromDB($this->userId, $folder);
+        }
         $existingTracks = [];
         foreach ($tracks as $track) {
             $res = $this->userfolder->getById($track['file_id']);

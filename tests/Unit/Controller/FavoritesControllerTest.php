@@ -17,6 +17,7 @@ use \OCA\Maps\AppInfo\Application;
 use OCA\Maps\DB\FavoriteShareMapper;
 use \OCA\Maps\Service\FavoritesService;
 use OCP\AppFramework\Http;
+use \OCP\IServerContainer;
 
 class FavoritesControllerTest extends \PHPUnit\Framework\TestCase
 {
@@ -85,21 +86,21 @@ class FavoritesControllerTest extends \PHPUnit\Framework\TestCase
     $this->app = new Application();
     $this->container = $this->app->getContainer();
     $c = $this->container;
-    $this->config = $c->query('ServerContainer')->getConfig();
+    $this->config = $c->query(IServerContainer::class)->getConfig();
 
     $this->favoritesController = new FavoritesController(
       $this->appName,
       $this->request,
-      $c->query('ServerContainer'),
-      $c->query('ServerContainer')->getConfig(),
+      $c->query(IServerContainer::class),
+      $c->query(IServerContainer::class)->getConfig(),
       $c->getServer()->getShareManager(),
       $c->getServer()->getAppManager(),
       $c->getServer()->getUserManager(),
       $c->getServer()->getGroupManager(),
-      $c->query('ServerContainer')->getL10N($c->query('AppName')),
-      $c->query('ServerContainer')->getLogger(),
+      $c->query(IServerContainer::class)->getL10N($c->query('AppName')),
+      $c->query(IServerContainer::class)->getLogger(),
       $c->query(FavoritesService::class),
-      $c->query('ServerContainer')->getDateTimeZone(),
+      $c->query(IServerContainer::class)->getDateTimeZone(),
       $c->query(FavoriteShareMapper::class),
       'test'
     );
@@ -107,16 +108,16 @@ class FavoritesControllerTest extends \PHPUnit\Framework\TestCase
     $this->favoritesController2 = new FavoritesController(
       $this->appName,
       $this->request,
-      $c->query('ServerContainer'),
-      $c->query('ServerContainer')->getConfig(),
+      $c->query(IServerContainer::class),
+      $c->query(IServerContainer::class)->getConfig(),
       $c->getServer()->getShareManager(),
       $c->getServer()->getAppManager(),
       $c->getServer()->getUserManager(),
       $c->getServer()->getGroupManager(),
-      $c->query('ServerContainer')->getL10N($c->query('AppName')),
-      $c->query('ServerContainer')->getLogger(),
+      $c->query(IServerContainer::class)->getL10N($c->query('AppName')),
+      $c->query(IServerContainer::class)->getLogger(),
       $c->query(FavoritesService::class),
-      $c->query('ServerContainer')->getDateTimeZone(),
+      $c->query(IServerContainer::class)->getDateTimeZone(),
       $c->query(FavoriteShareMapper::class),
       'test2'
     );
@@ -124,7 +125,7 @@ class FavoritesControllerTest extends \PHPUnit\Framework\TestCase
     $this->utilsController = new UtilsController(
       $this->appName,
       $this->request,
-      $c->query('ServerContainer')->getConfig(),
+      $c->query(IServerContainer::class)->getConfig(),
       $c->getServer()->getAppManager(),
       'test'
     );
@@ -208,7 +209,7 @@ class FavoritesControllerTest extends \PHPUnit\Framework\TestCase
 
   public function testImportExportFavorites()
   {
-    $userfolder = $this->container->query('ServerContainer')->getUserFolder('test');
+    $userfolder = $this->container->query(IServerContainer::class)->getUserFolder('test');
     $content1 = file_get_contents('tests/test_files/favoritesOk.gpx');
     $newFile = $userfolder->newFile('favoritesOk.gpx');
     $newFile->putContent($content1);

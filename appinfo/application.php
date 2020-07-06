@@ -14,6 +14,7 @@ namespace OCA\Maps\AppInfo;
 
 use OCA\Maps\DB\FavoriteShareMapper;
 use \OCP\AppFramework\App;
+use \OCP\IServerContainer;
 use OCA\Maps\Hooks\FileHooks;
 use OCA\Maps\Service\PhotofilesService;
 use OCA\Maps\Service\TracksService;
@@ -28,12 +29,12 @@ class Application extends App {
 
         $this->getContainer()->registerService('FileHooks', function($c) {
             return new FileHooks(
-                $c->query('ServerContainer')->getRootFolder(),
+                $c->query(IServerContainer::class)->getRootFolder(),
                 \OC::$server->query(PhotofilesService::class),
                 \OC::$server->query(TracksService::class),
-                $c->query('ServerContainer')->getLogger(),
+                $c->query(IServerContainer::class)->getLogger(),
                 $c->query('AppName'),
-                $c->query('ServerContainer')->getLockingProvider()
+                $c->query(IServerContainer::class)->getLockingProvider()
             );
         });
 

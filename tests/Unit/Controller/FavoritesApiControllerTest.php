@@ -11,6 +11,7 @@
 
 namespace OCA\Maps\Controller;
 
+use \OCP\IServerContainer;
 use \OCA\Maps\AppInfo\Application;
 use \OCA\Maps\Service\FavoritesService;
 use OCP\AppFramework\Http\TemplateResponse;
@@ -77,19 +78,19 @@ class FavoritesApiControllerTest extends \PHPUnit\Framework\TestCase
     $this->app = new Application();
     $this->container = $this->app->getContainer();
     $c = $this->container;
-    $this->config = $c->query('ServerContainer')->getConfig();
+    $this->config = $c->query(IServerContainer::class)->getConfig();
 
     $this->favoritesApiController = new FavoritesApiController(
       $this->appName,
       $this->request,
-      $c->query('ServerContainer'),
-      $c->query('ServerContainer')->getConfig(),
+      $c->query(IServerContainer::class),
+      $c->query(IServerContainer::class)->getConfig(),
       $c->getServer()->getShareManager(),
       $c->getServer()->getAppManager(),
       $c->getServer()->getUserManager(),
       $c->getServer()->getGroupManager(),
-      $c->query('ServerContainer')->getL10N($c->query('AppName')),
-      $c->query('ServerContainer')->getLogger(),
+      $c->query(IServerContainer::class)->getL10N($c->query('AppName')),
+      $c->query(IServerContainer::class)->getLogger(),
       $c->query(FavoritesService::class),
       'test'
     );
@@ -97,14 +98,14 @@ class FavoritesApiControllerTest extends \PHPUnit\Framework\TestCase
     $this->favoritesApiController2 = new FavoritesApiController(
       $this->appName,
       $this->request,
-      $c->query('ServerContainer'),
-      $c->query('ServerContainer')->getConfig(),
+      $c->query(IServerContainer::class),
+      $c->query(IServerContainer::class)->getConfig(),
       $c->getServer()->getShareManager(),
       $c->getServer()->getAppManager(),
       $c->getServer()->getUserManager(),
       $c->getServer()->getGroupManager(),
-      $c->query('ServerContainer')->getL10N($c->query('AppName')),
-      $c->query('ServerContainer')->getLogger(),
+      $c->query(IServerContainer::class)->getL10N($c->query('AppName')),
+      $c->query(IServerContainer::class)->getLogger(),
       $c->query(FavoritesService::class),
       'test2'
     );
@@ -112,7 +113,7 @@ class FavoritesApiControllerTest extends \PHPUnit\Framework\TestCase
     $this->utilsController = new UtilsController(
       $this->appName,
       $this->request,
-      $c->query('ServerContainer')->getConfig(),
+      $c->query(IServerContainer::class)->getConfig(),
       $c->getServer()->getAppManager(),
       'test'
     );

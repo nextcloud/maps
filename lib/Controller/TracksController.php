@@ -29,6 +29,11 @@ use OCP\AppFramework\Controller;
 use OCP\AppFramework\ApiController;
 use OCP\Constants;
 use OCP\Share;
+use OCP\IUserManager;
+use OCP\Share\IManager;
+use OCP\IServerContainer;
+use OCP\IGroupManager;
+use OCP\ILogger;
 
 use OCA\Maps\Service\TracksService;
 
@@ -54,10 +59,18 @@ class TracksController extends Controller {
     private $tracksService;
     protected $appName;
 
-    public function __construct($AppName, IRequest $request, $UserId,
-                                $userfolder, $config, $shareManager,
-                                IAppManager $appManager, $userManager,
-                                $groupManager, IL10N $trans, $logger, TracksService $tracksService){
+    public function __construct($AppName,
+                                IRequest $request,
+                                IServerContainer $serverContainer,
+                                IConfig $config,
+                                IManager $shareManager,
+                                IAppManager $appManager,
+                                IUserManager $userManager,
+                                IGroupManager $groupManager,
+                                IL10N $trans,
+                                ILogger $logger,
+                                TracksService $tracksService,
+                                $UserId){
         parent::__construct($AppName, $request);
         $this->tracksService = $tracksService;
         $this->logger = $logger;
@@ -69,8 +82,8 @@ class TracksController extends Controller {
         $this->trans = $trans;
         $this->dbtype = $config->getSystemValue('dbtype');
         $this->config = $config;
-        if ($UserId !== '' and $userfolder !== null){
-            $this->userfolder = $userfolder;
+        if ($UserId !== '' and $UserId !== null and $serverContainer !== null){
+            $this->userfolder = $serverContainer->getUserFolder($UserId);
         }
         $this->shareManager = $shareManager;
     }

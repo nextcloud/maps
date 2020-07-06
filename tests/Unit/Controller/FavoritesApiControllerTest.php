@@ -82,8 +82,7 @@ class FavoritesApiControllerTest extends \PHPUnit\Framework\TestCase
     $this->favoritesApiController = new FavoritesApiController(
       $this->appName,
       $this->request,
-      'test',
-      $c->query('ServerContainer')->getUserFolder('test'),
+      $c->query('ServerContainer'),
       $c->query('ServerContainer')->getConfig(),
       $c->getServer()->getShareManager(),
       $c->getServer()->getAppManager(),
@@ -91,18 +90,14 @@ class FavoritesApiControllerTest extends \PHPUnit\Framework\TestCase
       $c->getServer()->getGroupManager(),
       $c->query('ServerContainer')->getL10N($c->query('AppName')),
       $c->query('ServerContainer')->getLogger(),
-      new FavoritesService(
-        $c->query('ServerContainer')->getLogger(),
-        $c->query('ServerContainer')->getL10N($c->query('AppName')),
-        $c->query('ServerContainer')->getSecureRandom()
-      )
+      $c->query(FavoritesService::class),
+      'test'
     );
 
     $this->favoritesApiController2 = new FavoritesApiController(
       $this->appName,
       $this->request,
-      'test2',
-      $c->query('ServerContainer')->getUserFolder('test2'),
+      $c->query('ServerContainer'),
       $c->query('ServerContainer')->getConfig(),
       $c->getServer()->getShareManager(),
       $c->getServer()->getAppManager(),
@@ -110,20 +105,16 @@ class FavoritesApiControllerTest extends \PHPUnit\Framework\TestCase
       $c->getServer()->getGroupManager(),
       $c->query('ServerContainer')->getL10N($c->query('AppName')),
       $c->query('ServerContainer')->getLogger(),
-      new FavoritesService(
-        $c->query('ServerContainer')->getLogger(),
-        $c->query('ServerContainer')->getL10N($c->query('AppName')),
-        $c->query('ServerContainer')->getSecureRandom()
-      )
+      $c->query(FavoritesService::class),
+      'test2'
     );
 
     $this->utilsController = new UtilsController(
       $this->appName,
       $this->request,
-      'test',
-      $c->query('ServerContainer')->getUserFolder('test'),
       $c->query('ServerContainer')->getConfig(),
-      $c->getServer()->getAppManager()
+      $c->getServer()->getAppManager(),
+      'test'
     );
   }
 

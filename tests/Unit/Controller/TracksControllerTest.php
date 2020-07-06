@@ -96,8 +96,7 @@ class TracksControllerTest extends \PHPUnit\Framework\TestCase {
         $this->tracksController = new TracksController(
             $this->appName,
             $this->request,
-            'test',
-            $c->query('ServerContainer')->getUserFolder('test'),
+            $c->query('ServerContainer'),
             $c->query('ServerContainer')->getConfig(),
             $c->query('ServerContainer')->getShareManager(),
             $c->getServer()->getAppManager(),
@@ -105,14 +104,14 @@ class TracksControllerTest extends \PHPUnit\Framework\TestCase {
             $c->getServer()->getGroupManager(),
             $c->query('ServerContainer')->getL10N($c->query('AppName')),
             $c->query('ServerContainer')->getLogger(),
-            $this->tracksService
+            $c->query(TracksService::class),
+            'test',
         );
 
         $this->tracksController2 = new TracksController(
             $this->appName,
             $this->request,
-            'test2',
-            $c->query('ServerContainer')->getUserFolder('test2'),
+            $c->query('ServerContainer'),
             $c->query('ServerContainer')->getConfig(),
             $c->query('ServerContainer')->getShareManager(),
             $c->getServer()->getAppManager(),
@@ -120,16 +119,16 @@ class TracksControllerTest extends \PHPUnit\Framework\TestCase {
             $c->getServer()->getGroupManager(),
             $c->query('ServerContainer')->getL10N($c->query('AppName')),
             $c->query('ServerContainer')->getLogger(),
-            $this->tracksService
+            $c->query(TracksService::class),
+            'test2',
         );
 
         $this->utilsController = new UtilsController(
             $this->appName,
             $this->request,
-            'test',
-            $c->query('ServerContainer')->getUserFolder('test'),
             $c->query('ServerContainer')->getConfig(),
-            $c->getServer()->getAppManager()
+            $c->getServer()->getAppManager(),
+            'test'
         );
 
         $userfolder = $this->container->query('ServerContainer')->getUserFolder('test');

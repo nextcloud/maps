@@ -79,8 +79,7 @@ class DevicesApiControllerTest extends \PHPUnit\Framework\TestCase {
         $this->devicesApiController = new DevicesApiController(
             $this->appName,
             $this->request,
-            'test',
-            $c->query('ServerContainer')->getUserFolder('test'),
+            $c->query('ServerContainer'),
             $c->query('ServerContainer')->getConfig(),
             $c->getServer()->getShareManager(),
             $c->getServer()->getAppManager(),
@@ -88,18 +87,14 @@ class DevicesApiControllerTest extends \PHPUnit\Framework\TestCase {
             $c->getServer()->getGroupManager(),
             $c->query('ServerContainer')->getL10N($c->query('AppName')),
             $c->query('ServerContainer')->getLogger(),
-            new DevicesService(
-                $c->query('ServerContainer')->getLogger(),
-                $c->query('ServerContainer')->getL10N($c->query('AppName')),
-                $c->query('ServerContainer')->query(\OCP\IDBConnection::class)
-            )
+            $c->query(DevicesService::class),
+            'test'
         );
 
         $this->devicesApiController2 = new DevicesApiController(
             $this->appName,
             $this->request,
-            'test2',
-            $c->query('ServerContainer')->getUserFolder('test2'),
+            $c->query('ServerContainer'),
             $c->query('ServerContainer')->getConfig(),
             $c->getServer()->getShareManager(),
             $c->getServer()->getAppManager(),
@@ -107,20 +102,16 @@ class DevicesApiControllerTest extends \PHPUnit\Framework\TestCase {
             $c->getServer()->getGroupManager(),
             $c->query('ServerContainer')->getL10N($c->query('AppName')),
             $c->query('ServerContainer')->getLogger(),
-            new DevicesService(
-                $c->query('ServerContainer')->getLogger(),
-                $c->query('ServerContainer')->getL10N($c->query('AppName')),
-                $c->query('ServerContainer')->query(\OCP\IDBConnection::class)
-            )
+            $c->query(DevicesService::class),
+            'test2'
         );
 
         $this->utilsController = new UtilsController(
             $this->appName,
             $this->request,
-            'test',
-            $c->query('ServerContainer')->getUserFolder('test'),
             $c->query('ServerContainer')->getConfig(),
-            $c->getServer()->getAppManager()
+            $c->getServer()->getAppManager(),
+            'test'
         );
 
         // delete

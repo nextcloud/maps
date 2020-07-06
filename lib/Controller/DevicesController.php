@@ -29,6 +29,11 @@ use OCP\AppFramework\Controller;
 use OCP\AppFramework\ApiController;
 use OCP\Constants;
 use OCP\Share;
+use OCP\IUserManager;
+use OCP\Share\IManager;
+use OCP\IServerContainer;
+use OCP\IGroupManager;
+use OCP\ILogger;
 
 use OCP\IDateTimeZone;
 
@@ -54,11 +59,19 @@ class DevicesController extends Controller {
     private $dateTimeZone;
     protected $appName;
 
-    public function __construct($AppName, IRequest $request, $UserId,
-                                $userfolder, $config, $shareManager,
-                                IAppManager $appManager, $userManager,
-                                $groupManager, IL10N $trans, $logger, DevicesService $devicesService,
-                                IDateTimeZone $dateTimeZone){
+    public function __construct($AppName,
+                                IRequest $request,
+                                IServerContainer $serverContainer,
+                                IConfig $config,
+                                IManager $shareManager,
+                                IAppManager $appManager,
+                                IUserManager $userManager,
+                                IGroupManager $groupManager,
+                                IL10N $trans,
+                                ILogger $logger,
+                                DevicesService $devicesService,
+                                IDateTimeZone $dateTimeZone,
+                                $UserId){
         parent::__construct($AppName, $request);
         $this->devicesService = $devicesService;
         $this->dateTimeZone = $dateTimeZone;
@@ -72,9 +85,9 @@ class DevicesController extends Controller {
         $this->dbtype = $config->getSystemValue('dbtype');
         // IConfig object
         $this->config = $config;
-        if ($UserId !== '' and $userfolder !== null){
+        if ($UserId !== '' and $UserId !== null and $serverContainer !== null){
             // path of user files folder relative to DATA folder
-            $this->userfolder = $userfolder;
+            $this->userfolder = $serverContainer->getUserFolder($UserId);
         }
         $this->shareManager = $shareManager;
     }

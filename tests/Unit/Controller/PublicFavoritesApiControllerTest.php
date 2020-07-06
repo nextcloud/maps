@@ -62,7 +62,8 @@ class PublicFavoritesApiControllerTest extends TestCase
     $this->favoritesService = new FavoritesService(
       $container->query('ServerContainer')->getLogger(),
       $container->query('ServerContainer')->getL10N($appName),
-      $container->query('ServerContainer')->getSecureRandom()
+      $container->query('ServerContainer')->getSecureRandom(),
+      $container->query(\OCP\IDBConnection::class)
     );
 
     $this->favoriteShareMapper = new FavoriteShareMapper(

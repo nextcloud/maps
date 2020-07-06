@@ -90,8 +90,7 @@ class FavoritesControllerTest extends \PHPUnit\Framework\TestCase
     $this->favoritesController = new FavoritesController(
       $this->appName,
       $this->request,
-      'test',
-      $c->query('ServerContainer')->getUserFolder('test'),
+      $c->query('ServerContainer'),
       $c->query('ServerContainer')->getConfig(),
       $c->getServer()->getShareManager(),
       $c->getServer()->getAppManager(),
@@ -99,23 +98,16 @@ class FavoritesControllerTest extends \PHPUnit\Framework\TestCase
       $c->getServer()->getGroupManager(),
       $c->query('ServerContainer')->getL10N($c->query('AppName')),
       $c->query('ServerContainer')->getLogger(),
-      new FavoritesService(
-        $c->query('ServerContainer')->getLogger(),
-        $c->query('ServerContainer')->getL10N($c->query('AppName')),
-        $c->query('ServerContainer')->getSecureRandom()
-      ),
+      $c->query(FavoritesService::class),
       $c->query('ServerContainer')->getDateTimeZone(),
-      new FavoriteShareMapper(
-        $c->query(\OCP\IDBConnection::class),
-        $c->query('ServerContainer')->getSecureRandom()
-      ),
+      $c->query(FavoriteShareMapper::class),
+      'test'
     );
 
     $this->favoritesController2 = new FavoritesController(
       $this->appName,
       $this->request,
-      'test2',
-      $c->query('ServerContainer')->getUserFolder('test2'),
+      $c->query('ServerContainer'),
       $c->query('ServerContainer')->getConfig(),
       $c->getServer()->getShareManager(),
       $c->getServer()->getAppManager(),
@@ -123,25 +115,18 @@ class FavoritesControllerTest extends \PHPUnit\Framework\TestCase
       $c->getServer()->getGroupManager(),
       $c->query('ServerContainer')->getL10N($c->query('AppName')),
       $c->query('ServerContainer')->getLogger(),
-      new FavoritesService(
-        $c->query('ServerContainer')->getLogger(),
-        $c->query('ServerContainer')->getL10N($c->query('AppName')),
-        $c->query('ServerContainer')->getSecureRandom()
-      ),
+      $c->query(FavoritesService::class),
       $c->query('ServerContainer')->getDateTimeZone(),
-      new FavoriteShareMapper(
-        $c->query(\OCP\IDBConnection::class),
-        $c->query('ServerContainer')->getSecureRandom()
-      ),
+      $c->query(FavoriteShareMapper::class),
+      'test2'
     );
 
     $this->utilsController = new UtilsController(
       $this->appName,
       $this->request,
-      'test',
-      $c->query('ServerContainer')->getUserFolder('test'),
       $c->query('ServerContainer')->getConfig(),
-      $c->getServer()->getAppManager()
+      $c->getServer()->getAppManager(),
+      'test'
     );
   }
 

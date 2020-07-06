@@ -62,11 +62,11 @@ class PhotofilesService {
         $this->jobList = $jobList;
     }
 
-    public function rescan($userId){
+    public function rescan($userId) {
         $userFolder = $this->root->getUserFolder($userId);
         $photos = $this->gatherPhotoFiles($userFolder, true);
         $this->photoMapper->deleteAll($userId);
-        foreach($photos as $photo) {
+        foreach ($photos as $photo) {
             $this->addPhoto($photo, $userId);
             yield $photo->getPath();
         }

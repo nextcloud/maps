@@ -32,8 +32,11 @@ class UtilsController extends Controller {
     private $config;
     private $dbtype;
 
-    public function __construct($AppName, IRequest $request, $UserId,
-        $userfolder, $config, IAppManager $appManager){
+    public function __construct($AppName,
+                                IRequest $request,
+                                IConfig $config,
+                                IAppManager $appManager,
+                                $UserId){
         parent::__construct($AppName, $request);
         $this->userId = $UserId;
         // IConfig object

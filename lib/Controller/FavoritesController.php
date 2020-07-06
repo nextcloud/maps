@@ -16,6 +16,12 @@ namespace OCA\Maps\Controller;
 use OCA\Maps\DB\FavoriteShareMapper;
 use OCA\Maps\Service\FavoritesService;
 use OCP\App\IAppManager;
+use OCP\Share\IManager;
+use OCP\IConfig;
+use OCP\IUserManager;
+use OCP\IGroupManager;
+use OCP\ILogger;
+use OCP\IServerContainer;
 use OCP\AppFramework\Controller;
 use OCP\AppFramework\Db\DoesNotExistException;
 use OCP\AppFramework\Db\MultipleObjectsReturnedException;
@@ -46,11 +52,20 @@ class FavoritesController extends Controller {
     /* @var FavoriteShareMapper */
     private $favoriteShareMapper;
 
-    public function __construct($AppName, IRequest $request, $UserId,
-                                $userfolder, $config, $shareManager,
-                                IAppManager $appManager, $userManager,
-                                $groupManager, IL10N $trans, $logger, FavoritesService $favoritesService,
-                                IDateTimeZone $dateTimeZone, FavoriteShareMapper $favoriteShareMapper) {
+    public function __construct($AppName,
+                                IRequest $request,
+                                IServerContainer $serverContainer,
+                                IConfig $config,
+                                IManager $shareManager,
+                                IAppManager $appManager,
+                                IUserManager $userManager,
+                                IGroupManager $groupManager,
+                                IL10N $trans,
+                                ILogger $logger,
+                                FavoritesService $favoritesService,
+                                IDateTimeZone $dateTimeZone,
+                                FavoriteShareMapper $favoriteShareMapper,
+                                $UserId) {
         parent::__construct($AppName, $request);
         $this->favoritesService = $favoritesService;
         $this->dateTimeZone = $dateTimeZone;
@@ -64,9 +79,9 @@ class FavoritesController extends Controller {
         $this->dbtype = $config->getSystemValue('dbtype');
         // IConfig object
         $this->config = $config;
-        if ($UserId !== '' and $userfolder !== null) {
+        if ($UserId !== '' and $UserId !== null and $serverContainer !== null) {
             // path of user files folder relative to DATA folder
-            $this->userfolder = $userfolder;
+            $this->userfolder = $serverContainer->getUserFolder($UserId);
         }
         $this->shareManager = $shareManager;
         $this->favoriteShareMapper = $favoriteShareMapper;

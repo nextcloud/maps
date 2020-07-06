@@ -89,7 +89,8 @@ class TracksControllerTest extends \PHPUnit\Framework\TestCase {
             $c->query('ServerContainer')->getLogger(),
             $c->query('ServerContainer')->getL10N($c->query('AppName')),
             $this->rootFolder,
-            $c->query('ServerContainer')->getShareManager()
+            $c->query('ServerContainer')->getShareManager(),
+            $c->query('ServerContainer')->query(\OCP\IDBConnection::class)
         );
 
         $this->tracksController = new TracksController(
@@ -140,7 +141,7 @@ class TracksControllerTest extends \PHPUnit\Framework\TestCase {
             $file->delete();
         }
         // delete db
-        $qb = $c->query('ServerContainer')->getDatabaseConnection()->getQueryBuilder();
+        $qb = $c->query('ServerContainer')->query(\OCP\IDBConnection::class)->getQueryBuilder();
         $qb->delete('maps_tracks')
             ->where(
                 $qb->expr()->eq('user_id', $qb->createNamedParameter('test', IQueryBuilder::PARAM_STR))
@@ -173,7 +174,7 @@ class TracksControllerTest extends \PHPUnit\Framework\TestCase {
             $file->delete();
         }
         // delete db
-        $qb = $c->query('ServerContainer')->getDatabaseConnection()->getQueryBuilder();
+        $qb = $c->query('ServerContainer')->query(\OCP\IDBConnection::class)->getQueryBuilder();
         $qb->delete('maps_tracks')
             ->where(
                 $qb->expr()->eq('user_id', $qb->createNamedParameter('test', IQueryBuilder::PARAM_STR))

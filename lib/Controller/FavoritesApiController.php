@@ -27,7 +27,6 @@ class FavoritesApiController extends ApiController {
     private $shareManager;
     private $userManager;
     private $groupManager;
-    private $dbconnection;
     private $dbtype;
     private $dbdblquotes;
     private $defaultDeviceId;
@@ -55,7 +54,6 @@ class FavoritesApiController extends ApiController {
         $this->dbtype = $config->getSystemValue('dbtype');
         // IConfig object
         $this->config = $config;
-        $this->dbconnection = \OC::$server->getDatabaseConnection();
         if ($UserId !== '' and $userfolder !== null) {
             // path of user files folder relative to DATA folder
             $this->userfolder = $userfolder;

@@ -42,7 +42,7 @@ class FavoriteShareMapperTest extends TestCase {
     parent::setUp();
 
     $this->mapper = new FavoriteShareMapper(
-      OC::$server->getDatabaseConnection(),
+      OC::$server->query(\OCP\IDBConnection::class),
       OC::$server->getSecureRandom()
     );
   }

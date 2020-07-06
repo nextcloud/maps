@@ -47,7 +47,7 @@ class PublicFavoritesApiControllerTest extends TestCase
 
   protected function setUp(): void {
     // Begin transaction
-    $db = OC::$server->getDatabaseConnection();
+    $db = OC::$server->query(\OCP\IDBConnection::class);
     $db->beginTransaction();
 
     $container = (new Application())->getContainer();
@@ -66,7 +66,7 @@ class PublicFavoritesApiControllerTest extends TestCase
     );
 
     $this->favoriteShareMapper = new FavoriteShareMapper(
-      $container->query('DatabaseConnection'),
+      $container->query(\OCP\IDBConnection::class),
       $container->query('ServerContainer')->getSecureRandom()
     );
 
@@ -82,7 +82,7 @@ class PublicFavoritesApiControllerTest extends TestCase
   protected function tearDown(): void
   {
     // Rollback transaction
-    $db = OC::$server->getDatabaseConnection();
+    $db = OC::$server->query(\OCP\IDBConnection::class);
     $db->rollBack();
   }
 

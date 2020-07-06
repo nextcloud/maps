@@ -90,7 +90,7 @@ class PhotosControllerTest extends \PHPUnit\Framework\TestCase {
             $this->rootFolder,
             $c->query('ServerContainer')->getL10N($c->query('AppName')),
             new GeophotoMapper(
-                $c->query('ServerContainer')->getDatabaseConnection()
+                $c->query('ServerContainer')->query(\OCP\IDBConnection::class)
             ),
             $c->query('ServerContainer')->getShareManager()
         );
@@ -104,18 +104,20 @@ class PhotosControllerTest extends \PHPUnit\Framework\TestCase {
                 $this->rootFolder,
                 $c->query('ServerContainer')->getL10N($c->query('AppName')),
                 new GeophotoMapper(
-                    $c->query('ServerContainer')->getDatabaseConnection()
+                    $c->query('ServerContainer')->query(\OCP\IDBConnection::class)
                 ),
                 $c->query('ServerContainer')->getPreviewManager(),
                 new TracksService(
                     $c->query('ServerContainer')->getLogger(),
                     $c->query('ServerContainer')->getL10N($c->query('AppName')),
                     $this->rootFolder,
-                    $c->query('ServerContainer')->getShareManager()
+                    $c->query('ServerContainer')->getShareManager(),
+                    $c->query('ServerContainer')->query(\OCP\IDBConnection::class)
                 ),
                 new DevicesService(
                     $c->query('ServerContainer')->getLogger(),
-                    $c->query('ServerContainer')->getL10N($c->query('AppName'))
+                    $c->query('ServerContainer')->getL10N($c->query('AppName')),
+                    $c->query('ServerContainer')->query(\OCP\IDBConnection::class)
                 ),
                 'test'
             ),
@@ -132,18 +134,20 @@ class PhotosControllerTest extends \PHPUnit\Framework\TestCase {
                 $this->rootFolder,
                 $c->query('ServerContainer')->getL10N($c->query('AppName')),
                 new GeophotoMapper(
-                    $c->query('ServerContainer')->getDatabaseConnection()
+                    $c->query('ServerContainer')->query(\OCP\IDBConnection::class)
                 ),
                 $c->query('ServerContainer')->getPreviewManager(),
                 new TracksService(
                     $c->query('ServerContainer')->getLogger(),
                     $c->query('ServerContainer')->getL10N($c->query('AppName')),
                     $this->rootFolder,
-                    $c->query('ServerContainer')->getShareManager()
+                    $c->query('ServerContainer')->getShareManager(),
+                    $c->query('ServerContainer')->query(\OCP\IDBConnection::class)
                 ),
                 new DevicesService(
                     $c->query('ServerContainer')->getLogger(),
-                    $c->query('ServerContainer')->getL10N($c->query('AppName'))
+                    $c->query('ServerContainer')->getL10N($c->query('AppName')),
+                    $c->query('ServerContainer')->query(\OCP\IDBConnection::class)
                 ),
                 'test'
             ),
@@ -171,7 +175,7 @@ class PhotosControllerTest extends \PHPUnit\Framework\TestCase {
             $file->delete();
         }
         // delete db
-        $qb = $c->query('ServerContainer')->getDatabaseConnection()->getQueryBuilder();
+        $qb = $c->query('ServerContainer')->query(\OCP\IDBConnection::class)->getQueryBuilder();
         $qb->delete('maps_photos')
             ->where(
                 $qb->expr()->eq('user_id', $qb->createNamedParameter('test', IQueryBuilder::PARAM_STR))

@@ -90,7 +90,8 @@ class DevicesControllerTest extends \PHPUnit\Framework\TestCase {
             $c->query('ServerContainer')->getLogger(),
             new DevicesService(
                 $c->query('ServerContainer')->getLogger(),
-                $c->query('ServerContainer')->getL10N($c->query('AppName'))
+                $c->query('ServerContainer')->getL10N($c->query('AppName')),
+                $c->query('ServerContainer')->query(\OCP\IDBConnection::class)
             ),
             $c->query('ServerContainer')->getDateTimeZone()
         );
@@ -109,7 +110,8 @@ class DevicesControllerTest extends \PHPUnit\Framework\TestCase {
             $c->query('ServerContainer')->getLogger(),
             new DevicesService(
                 $c->query('ServerContainer')->getLogger(),
-                $c->query('ServerContainer')->getL10N($c->query('AppName'))
+                $c->query('ServerContainer')->getL10N($c->query('AppName')),
+                $c->query('ServerContainer')->query(\OCP\IDBConnection::class)
             ),
             $c->query('ServerContainer')->getDateTimeZone()
         );

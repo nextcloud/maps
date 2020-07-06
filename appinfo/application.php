@@ -67,11 +67,12 @@ class Application extends App {
                     new FavoritesService(
                         $c->query('ServerContainer')->getLogger(),
                         $c->query('ServerContainer')->getL10N($c->query('AppName')),
-                        $c->query('ServerContainer')->getSecureRandom()
+                        $c->query('ServerContainer')->getSecureRandom(),
+                        $c->query(\OCP\IDBConnection::class)
                     ),
                     $c->query('ServerContainer')->getDateTimeZone(),
                   new FavoriteShareMapper(
-                    $c->query('DatabaseConnection'),
+                    $c->query(\OCP\IDBConnection::class),
                     $c->query('ServerContainer')->getSecureRandom()
                   )
                 );
@@ -95,7 +96,8 @@ class Application extends App {
                     new FavoritesService(
                         $c->query('ServerContainer')->getLogger(),
                         $c->query('ServerContainer')->getL10N($c->query('AppName')),
-                        $c->query('ServerContainer')->getSecureRandom()
+                        $c->query('ServerContainer')->getSecureRandom(),
+                        $c->query(\OCP\IDBConnection::class)
                     )
                 );
             }
@@ -110,10 +112,11 @@ class Application extends App {
                     new FavoritesService(
                         $c->query('ServerContainer')->getLogger(),
                         $c->query('ServerContainer')->getL10N($c->query('AppName')),
-                        $c->query('ServerContainer')->getSecureRandom()
+                        $c->query('ServerContainer')->getSecureRandom(),
+                        $c->query(\OCP\IDBConnection::class)
                     ),
                   new FavoriteShareMapper(
-                    $c->query('DatabaseConnection'),
+                    $c->query(\OCP\IDBConnection::class),
                     $c->query('ServerContainer')->getSecureRandom()
                   )
                 );
@@ -129,7 +132,7 @@ class Application extends App {
                     $c->query('ServerContainer')->getConfig(),
                     $c->query('Logger'),
                     new FavoriteShareMapper(
-                        $c->query('DatabaseConnection'),
+                        $c->query(\OCP\IDBConnection::class),
                         $c->query('ServerContainer')->getSecureRandom()
                     )
                 );
@@ -152,7 +155,8 @@ class Application extends App {
                     $c->query('ServerContainer')->getLogger(),
                     new DevicesService(
                         $c->query('ServerContainer')->getLogger(),
-                        $c->query('ServerContainer')->getL10N($c->query('AppName'))
+                        $c->query('ServerContainer')->getL10N($c->query('AppName')),
+                        $c->query(\OCP\IDBConnection::class)
                     ),
                     $c->query('ServerContainer')->getDateTimeZone()
                 );
@@ -175,7 +179,8 @@ class Application extends App {
                     $c->query('ServerContainer')->getLogger(),
                     new DevicesService(
                         $c->query('ServerContainer')->getLogger(),
-                        $c->query('ServerContainer')->getL10N($c->query('AppName'))
+                        $c->query('ServerContainer')->getL10N($c->query('AppName')),
+                        $c->query(\OCP\IDBConnection::class)
                     )
                 );
             }
@@ -218,7 +223,8 @@ class Application extends App {
                         $c->query('ServerContainer')->getLogger(),
                         $c->query('ServerContainer')->getL10N($c->query('AppName')),
                         $c->query('ServerContainer')->getRootFolder(),
-                        $c->getServer()->getShareManager()
+                        $c->getServer()->getShareManager(),
+                        $c->query(\OCP\IDBConnection::class)
                     )
                 );
             }

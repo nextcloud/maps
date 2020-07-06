@@ -30,7 +30,6 @@ class UtilsController extends Controller {
 
     private $userId;
     private $config;
-    private $dbconnection;
     private $dbtype;
 
     public function __construct($AppName, IRequest $request, $UserId,
@@ -39,7 +38,6 @@ class UtilsController extends Controller {
         $this->userId = $UserId;
         // IConfig object
         $this->config = $config;
-        $this->dbconnection = \OC::$server->getDatabaseConnection();
     }
 
     /**

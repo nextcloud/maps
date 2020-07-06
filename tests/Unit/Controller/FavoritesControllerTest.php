@@ -106,7 +106,7 @@ class FavoritesControllerTest extends \PHPUnit\Framework\TestCase
       ),
       $c->query('ServerContainer')->getDateTimeZone(),
       new FavoriteShareMapper(
-        $c->query('DatabaseConnection'),
+        $c->query(\OCP\IDBConnection::class),
         $c->query('ServerContainer')->getSecureRandom()
       ),
     );
@@ -130,7 +130,7 @@ class FavoritesControllerTest extends \PHPUnit\Framework\TestCase
       ),
       $c->query('ServerContainer')->getDateTimeZone(),
       new FavoriteShareMapper(
-        $c->query('DatabaseConnection'),
+        $c->query(\OCP\IDBConnection::class),
         $c->query('ServerContainer')->getSecureRandom()
       ),
     );

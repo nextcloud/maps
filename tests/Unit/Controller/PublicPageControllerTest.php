@@ -56,7 +56,7 @@ class PublicPageControllerTest extends TestCase
   protected function setUp(): void
   {
     // Begin transaction
-    $db = OC::$server->getDatabaseConnection();
+    $db = OC::$server->query(\OCP\IDBConnection::class);
     $db->beginTransaction();
 
     $this->app = new Application();
@@ -73,7 +73,7 @@ class PublicPageControllerTest extends TestCase
     );
 
     $this->favoriteShareMapper = new FavoriteShareMapper(
-      $container->query('DatabaseConnection'),
+      $container->query(\OCP\IDBConnection::class),
       $container->query('ServerContainer')->getSecureRandom()
     );
 
@@ -95,7 +95,7 @@ class PublicPageControllerTest extends TestCase
   protected function tearDown(): void
   {
     // Rollback transaction
-    $db = OC::$server->getDatabaseConnection();
+    $db = OC::$server->query(\OCP\IDBConnection::class);
     $db->rollBack();
   }
 

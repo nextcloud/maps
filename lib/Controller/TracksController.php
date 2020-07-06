@@ -47,7 +47,6 @@ class TracksController extends Controller {
     private $shareManager;
     private $userManager;
     private $groupManager;
-    private $dbconnection;
     private $dbtype;
     private $dbdblquotes;
     private $trans;
@@ -70,7 +69,6 @@ class TracksController extends Controller {
         $this->trans = $trans;
         $this->dbtype = $config->getSystemValue('dbtype');
         $this->config = $config;
-        $this->dbconnection = \OC::$server->getDatabaseConnection();
         if ($UserId !== '' and $userfolder !== null){
             $this->userfolder = $userfolder;
         }

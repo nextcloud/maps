@@ -100,7 +100,8 @@ class ContactsControllerTest extends \PHPUnit\Framework\TestCase {
             $c->query('ServerContainer')->getConfig(),
             $c->query('ServerContainer')->getLogger(),
             $c->query('ServerContainer')->getJobList(),
-            $this->appData
+            $this->appData,
+            $c->query('ServerContainer')->query(\OCP\IDBConnection::class)
         );
 
         //$this->userPrincipalBackend = new Principal(
@@ -116,7 +117,7 @@ class ContactsControllerTest extends \PHPUnit\Framework\TestCase {
             ->getMock();
 
         $this->cdBackend = new CardDavBackend(
-            $c->query('ServerContainer')->getDatabaseConnection(),
+            $c->query('ServerContainer')->query(\OCP\IDBConnection::class),
             $this->userPrincipalBackend,
             $c->getServer()->getUserManager(),
             $c->getServer()->getGroupManager(),
@@ -127,6 +128,7 @@ class ContactsControllerTest extends \PHPUnit\Framework\TestCase {
             $this->appName,
             $c->query('ServerContainer')->getLogger(),
             $this->request,
+            $c->query('ServerContainer')->query(\OCP\IDBConnection::class),
             $this->contactsManager,
             $this->addressService,
             'test',
@@ -141,6 +143,7 @@ class ContactsControllerTest extends \PHPUnit\Framework\TestCase {
             $this->appName,
             $c->query('ServerContainer')->getLogger(),
             $this->request,
+            $c->query('ServerContainer')->query(\OCP\IDBConnection::class),
             $this->contactsManager,
             $this->addressService,
             'test2',

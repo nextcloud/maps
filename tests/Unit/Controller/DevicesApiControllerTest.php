@@ -90,7 +90,8 @@ class DevicesApiControllerTest extends \PHPUnit\Framework\TestCase {
             $c->query('ServerContainer')->getLogger(),
             new DevicesService(
                 $c->query('ServerContainer')->getLogger(),
-                $c->query('ServerContainer')->getL10N($c->query('AppName'))
+                $c->query('ServerContainer')->getL10N($c->query('AppName')),
+                $c->query('ServerContainer')->query(\OCP\IDBConnection::class)
             )
         );
 
@@ -108,7 +109,8 @@ class DevicesApiControllerTest extends \PHPUnit\Framework\TestCase {
             $c->query('ServerContainer')->getLogger(),
             new DevicesService(
                 $c->query('ServerContainer')->getLogger(),
-                $c->query('ServerContainer')->getL10N($c->query('AppName'))
+                $c->query('ServerContainer')->getL10N($c->query('AppName')),
+                $c->query('ServerContainer')->query(\OCP\IDBConnection::class)
             )
         );
 

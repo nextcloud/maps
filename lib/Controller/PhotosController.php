@@ -76,6 +76,10 @@ class PhotosController extends Controller {
      */
     public function placePhotos($paths, $lats, $lngs, $directory=false, $myMapId=null, $relative=false) {
         if (!is_null($myMapId) and $myMapId !== '') {
+            // forbid folder placement in my-maps
+            if ($directory === 'true') {
+                return 0;
+            }
             $folders = $this->userfolder->getById($myMapId);
             $folder = array_shift($folders);
             // photo's path is relative to this map's folder => get full path, don't copy

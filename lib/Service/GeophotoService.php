@@ -19,6 +19,7 @@ use OCP\Files\Storage\IStorage;
 use OCP\Files\Folder;
 use OCP\IPreview;
 use OCP\ILogger;
+use OCP\Files\IRootFolder;
 
 
 use OCA\Maps\Service\PhotofilesService;
@@ -40,6 +41,7 @@ class GeophotoService {
 
     public function __construct (ILogger $logger,
                                  IL10N $l10n,
+                                 IRootFolder $root,
                                  GeophotoMapper $photoMapper,
                                  IPreview $preview,
                                  TracksService $tracksService,
@@ -52,10 +54,8 @@ class GeophotoService {
         $this->preview = $preview;
         $this->tracksService = $tracksService;
         $this->timeorderedPointSets = null;
-        $this->userId = $userId;
-        $this->userfolder = $userfolder;
+        $this->root = $root;
         $this->devicesService = $devicesService;
-
     }
 
     /**
@@ -66,10 +66,10 @@ class GeophotoService {
      public function getAllFromDB($userId, $folder=null) {
         $photoEntities = $this->photoMapper->findAll($userId);
         if (is_null($folder)) {
-            $folder = $this->userfolder;
+            $folder = $this->getFolderForUser($userId);
         }
         $filesById = [];
-        $cache = $this->userfolder->getStorage()->getCache();
+        $cache = $folder->getStorage()->getCache();
         $previewEnableMimetypes = $this->getPreviewEnabledMimetypes();
         foreach ($photoEntities as $photoEntity) {
             $cacheEntry = $cache->get($photoEntity->getFileId());
@@ -85,8 +85,8 @@ class GeophotoService {
                 if ($file === null) {
                     continue;
                 }
-				$path = $this->userfolder->getRelativePath( $file->getPath());
-				$isRoot = $file === $this->userfolder;
+				$path = $folder->getRelativePath($file->getPath());
+				$isRoot = $file === $folder;
 
 				$file_object = new \stdClass();
                 $file_object->fileId = $photoEntity->getFileId();
@@ -294,7 +294,7 @@ class GeophotoService {
      * @return Folder
      */
     private function getFolderForUser ($userId) {
-        return $this->userfolder;
+        return $this->root->getUserFolder($userId);
     }
 
 }

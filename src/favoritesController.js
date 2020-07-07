@@ -526,7 +526,7 @@ FavoritesController.prototype = {
             for (var i=0; i < favorites.length; i++) {
                 var token = sharedCategories[favorites[i].category] || null;
 
-                that.addFavoriteMap(favorites[i], true, false, token);
+                that.addFavoriteMap(favorites[i], false, false, token);
             }
 
             that.updateCategoryCounters();
@@ -833,7 +833,6 @@ FavoritesController.prototype = {
             that.addFavoriteMap(response, true, true);
             that.updateCategoryCounters();
             // show edition popup
-            console.log(response);
             that.openEditionPopup(response.id);
         }).always(function (response) {
             $('#navigation-favorites').removeClass('icon-loading-small');

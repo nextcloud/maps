@@ -51,6 +51,7 @@ import 'nouislider/distribute/nouislider.css';
 import opening_hours from 'opening_hours';
 
 import { generateUrl } from '@nextcloud/router';
+import escapeHTML from 'escape-html';
 
 import ContactsController from './contactsController';
 import DevicesController from './devicesController';

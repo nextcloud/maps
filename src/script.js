@@ -227,6 +227,15 @@ import { brify, getUrlParameter, formatAddress } from './utils';
         enabledTracks: [],
         enabledDevices: [],
         enabledDeviceLines: [],
+        saveMapBounds: function(e) {
+            var bounds = mapController.map.getBounds();
+            optionsController.saveOptionValues({
+                mapBounds: bounds.getNorth() + ';' +
+                            bounds.getSouth() + ';' +
+                            bounds.getEast() + ';' +
+                            bounds.getWest()
+            });
+        },
         saveOptionValues: function (optionValues) {
             var req = {
                 myMapId: this.myMapId,
@@ -351,6 +360,7 @@ import { brify, getUrlParameter, formatAddress } from './utils';
                     mapController.changeTileLayer(mapController.defaultStreetLayer);
                 }
                 if (optionsValues.hasOwnProperty('mapBounds')) {
+                    mapController.map.off('moveend', optionsController.saveMapBounds);
                     var nsew = optionsValues.mapBounds.split(';');
                     if (nsew.length === 4) {
                         var n = parseFloat(nsew[0]);
@@ -364,6 +374,7 @@ import { brify, getUrlParameter, formatAddress } from './utils';
                             ]);
                         }
                     }
+                    mapController.map.on('moveend', optionsController.saveMapBounds);
                 }
                 if (!optionsValues.hasOwnProperty('photosLayer') || optionsValues.photosLayer === 'true') {
                     photosController.toggleLayer();
@@ -682,16 +693,6 @@ import { brify, getUrlParameter, formatAddress } from './utils';
                 }
             });
 
-            this.map.on('moveend', function(e) {
-                var bounds = that.map.getBounds();
-                optionsController.saveOptionValues({
-                    mapBounds: bounds.getNorth() + ';' +
-                               bounds.getSouth() + ';' +
-                               bounds.getEast() + ';' +
-                               bounds.getWest()
-                });
-            });
-
             this.searchMarkerLayerGroup = L.featureGroup();
             this.map.addLayer(this.searchMarkerLayerGroup);
 
@@ -798,6 +799,8 @@ import { brify, getUrlParameter, formatAddress } from './utils';
                     }
                 }]
             });
+
+            this.map.on('moveend', optionsController.saveMapBounds);
         },
 
         changeTileLayer: function(name, save=false) {

@@ -849,7 +849,7 @@ FavoritesController.prototype = {
         var cat = fav.category;
         if (!this.categoryLayers.hasOwnProperty(cat)) {
             this.addCategory(cat, enableCategory, shareToken);
-            if (enableCategory) {
+            if (enableCategory && fromUserAction) {
                 this.saveEnabledCategories();
             }
         }

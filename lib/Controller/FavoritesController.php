@@ -106,7 +106,7 @@ class FavoritesController extends Controller {
      * @NoAdminRequired
      */
     public function getFavorites($myMapId=null) {
-        if (is_null($myMapId) || $myMapId === "") {
+        if (is_null($myMapId) || $myMapId === '') {
             $favorites = $this->favoritesService->getFavoritesFromDB($this->userId);
         } else {
             $folders = $this->userfolder->getById($myMapId);
@@ -122,7 +122,7 @@ class FavoritesController extends Controller {
      */
     public function addFavorite($name, $lat, $lng, $category, $comment, $extensions, $myMapId=null) {
         if (is_numeric($lat) && is_numeric($lng)) {
-            if (is_null($myMapId)) {
+            if (is_null($myMapId) || $myMapId === '') {
                 $favoriteId = $this->favoritesService->addFavoriteToDB($this->userId, $name, $lat, $lng, $category, $comment, $extensions);
                 $favorite = $this->favoritesService->getFavoriteFromDB($favoriteId);
                 return new DataResponse($favorite);

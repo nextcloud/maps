@@ -1,5 +1,6 @@
 import {generateUrl} from '@nextcloud/router';
 import {hslToRgb, getLetterColor, Timer} from './utils';
+import escapeHTML from 'escape-html';
 
 function MyMapsController (optionsController, favoritesController, photosController, tracksController) {
     this.optionsController = optionsController;

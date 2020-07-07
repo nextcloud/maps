@@ -3,6 +3,8 @@ import { generateUrl } from '@nextcloud/router';
 import { basename, formatAddress } from './utils';
 import escapeHTML from 'escape-html';
 
+import escapeHTML from 'escape-html';
+
 function ContactsController (optionsController, searchController) {
     this.contact_MARKER_VIEW_SIZE = 40;
     this.contactLayer = null;

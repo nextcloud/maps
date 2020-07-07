@@ -1,5 +1,7 @@
 import { generateUrl } from '@nextcloud/router';
 
+import escapeHTML from 'escape-html';
+
 import { dirname, brify, metersToDistance, metersToElevation, kmphToSpeed, minPerKmToPace, formatTimeSeconds, getUrlParameter } from './utils';
 
 import escapeHTML from 'escape-html';

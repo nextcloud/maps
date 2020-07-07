@@ -4,6 +4,8 @@ import {basename} from './utils';
 
 import escapeHTML from 'escape-html';
 
+import escapeHTML from 'escape-html';
+
 function PhotosController (optionsController, timeFilterController) {
     this.PHOTO_MARKER_VIEW_SIZE = 40;
     this.photosDataLoaded = false;

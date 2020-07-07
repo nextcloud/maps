@@ -565,24 +565,29 @@ PhotosController.prototype = {
 
     contextPlacePhotosOrFolder: function (e) {
         var that = this.photosController;
-        OC.dialogs.confirmDestructive(
-            '',
-            t('maps', 'What do you want to place?'),
-            {
-                type: OC.dialogs.YES_NO_BUTTONS,
-                confirm: t('maps', 'Photo files'),
-                confirmClasses: '',
-                cancel: t('maps', 'Photo folders'),
-            },
-            function (result) {
-                if (result) {
-                    that.contextPlacePhotos(e);
-                } else {
-                    that.contextPlacePhotoFolder(e);
-                }
-            },
-            true
-        );
+        // forbid folder placement in my-maps
+        if (that.optionsController.myMapId !== null) {
+            that.contextPlacePhotos(e);
+        } else {
+            OC.dialogs.confirmDestructive(
+                '',
+                t('maps', 'What do you want to place?'),
+                {
+                    type: OC.dialogs.YES_NO_BUTTONS,
+                    confirm: t('maps', 'Photo files'),
+                    confirmClasses: '',
+                    cancel: t('maps', 'Photo folders'),
+                },
+                function (result) {
+                    if (result) {
+                        that.contextPlacePhotos(e);
+                    } else {
+                        that.contextPlacePhotoFolder(e);
+                    }
+                },
+                true
+            );
+        }
     },
 
     contextPlacePhotos: function (e) {

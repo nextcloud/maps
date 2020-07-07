@@ -72,6 +72,7 @@ export default {
 
 	mounted() {
 		this.getFavorites()
+		this.moveFooter()
 	},
 
 	methods: {
@@ -81,23 +82,38 @@ export default {
 			updateFavorite: `${PUBLIC_FAVORITES_NAMESPACE}/updateFavorite`,
 			deleteFavorite: `${PUBLIC_FAVORITES_NAMESPACE}/deleteFavorite`,
 		}),
+		// Place the footer in the app-navigation so it is not below the map
+		moveFooter() {
+			const footer = document.getElementsByTagName('footer')[0]
+			document.getElementById('app-navigation').appendChild(footer)
+		},
 	},
 }
 </script>
 
 <style lang="scss">
-/* Override header style */
-#header {
-    .header-shared-by {
-        color: var(--color-primary-text);
-    }
-}
-
 #content {
     height: 100%;
 }
 
 * {
     box-sizing: content-box;
+}
+
+// Special CSS for placing the footer in the app-navigation
+#body-public #app-navigation {
+    ul {
+        margin-bottom: 70px;
+    }
+
+    footer {
+        display: block;
+        position: absolute;
+        bottom: 0;
+        width: 100%;
+        background-color: var(--color-main-background);
+        z-index: 100;
+        height: 65px;
+    }
 }
 </style>

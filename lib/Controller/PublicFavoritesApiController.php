@@ -56,7 +56,7 @@ class PublicFavoritesApiController extends PublicShareController {
     }
 
     public function getPasswordHash(): string {
-        return "";
+        return '';
     }
 
     protected function isPasswordProtected(): bool {

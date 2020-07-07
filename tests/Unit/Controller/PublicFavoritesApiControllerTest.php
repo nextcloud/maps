@@ -25,6 +25,7 @@ namespace OCA\Maps\Controller;
 
 use OC;
 use OC\AppFramework\Http;
+use \OCP\IServerContainer;
 use OCA\Maps\AppInfo\Application;
 use OCA\Maps\DB\FavoriteShare;
 use OCA\Maps\DB\FavoriteShareMapper;
@@ -47,7 +48,7 @@ class PublicFavoritesApiControllerTest extends TestCase
 
   protected function setUp(): void {
     // Begin transaction
-    $db = OC::$server->getDatabaseConnection();
+    $db = OC::$server->query(\OCP\IDBConnection::class);
     $db->beginTransaction();
 
     $container = (new Application())->getContainer();
@@ -57,17 +58,18 @@ class PublicFavoritesApiControllerTest extends TestCase
     $requestMock = $this->getMockBuilder('OCP\IRequest')->getMock();
     $sessionMock = $this->getMockBuilder('OCP\ISession')->getMock();
 
-    $this->config = $container->query('ServerContainer')->getConfig();
+    $this->config = $container->query(IServerContainer::class)->getConfig();
 
     $this->favoritesService = new FavoritesService(
-      $container->query('ServerContainer')->getLogger(),
-      $container->query('ServerContainer')->getL10N($appName),
-      $container->query('ServerContainer')->getSecureRandom()
+      $container->query(IServerContainer::class)->getLogger(),
+      $container->query(IServerContainer::class)->getL10N($appName),
+      $container->query(IServerContainer::class)->getSecureRandom(),
+      $container->query(\OCP\IDBConnection::class)
     );
 
     $this->favoriteShareMapper = new FavoriteShareMapper(
-      $container->query('DatabaseConnection'),
-      $container->query('ServerContainer')->getSecureRandom()
+      $container->query(\OCP\IDBConnection::class),
+      $container->query(IServerContainer::class)->getSecureRandom()
     );
 
     $this->publicFavoritesApiController = new PublicFavoritesApiController(
@@ -82,7 +84,7 @@ class PublicFavoritesApiControllerTest extends TestCase
   protected function tearDown(): void
   {
     // Rollback transaction
-    $db = OC::$server->getDatabaseConnection();
+    $db = OC::$server->query(\OCP\IDBConnection::class);
     $db->rollBack();
   }
 

@@ -14,7 +14,6 @@ namespace OCA\Maps\Service;
 
 use OCP\Files\FileInfo;
 use OCP\IL10N;
-use OCP\Files\IRootFolder;
 use OCP\Files\Storage\IStorage;
 use OCP\Files\Folder;
 use OCP\IPreview;
@@ -38,9 +37,13 @@ class GeophotoService {
     private $devicesService;
     private $userfolder;
 
-    public function __construct (ILogger $logger, IL10N $l10n,
-                                GeophotoMapper $photoMapper, IPreview $preview,
-                                TracksService $tracksService, DevicesService $devicesService, $userId, $userfolder) {
+    public function __construct (ILogger $logger,
+                                 IL10N $l10n,
+                                 GeophotoMapper $photoMapper,
+                                 IPreview $preview,
+                                 TracksService $tracksService,
+                                 DevicesService $devicesService,
+                                 $userId) {
         $this->l10n = $l10n;
         $this->photoMapper = $photoMapper;
         $this->logger = $logger;

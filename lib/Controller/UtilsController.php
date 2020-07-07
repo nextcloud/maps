@@ -14,6 +14,7 @@ namespace OCA\Maps\Controller;
 use League\Flysystem\FileNotFoundException;
 use OCP\Files\NotFoundException;
 use OCP\App\IAppManager;
+use OCP\IServerContainer;
 
 use OCP\IURLGenerator;
 use OCP\IConfig;
@@ -33,18 +34,22 @@ class UtilsController extends Controller {
 
     private $userId;
     private $config;
-    private $dbconnection;
     private $userfolder;
     private $dbtype;
 
-    public function __construct($AppName, IRequest $request, $UserId,
-        $userfolder, $config, IAppManager $appManager){
+    public function __construct($AppName,
+                                IServerContainer $serverContainer,
+                                IRequest $request,
+                                IConfig $config,
+                                IAppManager $appManager,
+                                $UserId){
         parent::__construct($AppName, $request);
         $this->userId = $UserId;
-        $this->userfolder = $userfolder;
+        if ($UserId !== '' and $UserId !== null and $serverContainer !== null){
+            $this->userfolder = $serverContainer->getUserFolder($UserId);
+        }
         // IConfig object
         $this->config = $config;
-        $this->dbconnection = \OC::$server->getDatabaseConnection();
     }
 
     /**

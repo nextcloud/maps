@@ -15,6 +15,7 @@ namespace OCA\Maps\Service;
 use \OCA\Maps\BackgroundJob\LookupMissingGeoJob;
 use \OCP\ILogger;
 use \OCP\IConfig;
+use \OCP\IDBConnection;
 use \OCP\BackgroundJob\IJobList;
 use \OCP\DB\QueryBuilder\IQueryBuilder;
 use \Sabre\VObject\Reader;
@@ -44,9 +45,10 @@ class AddressService {
     private $jobList;
     private $appData;
 
-    public function __construct(IConfig $config, ILogger $logger, IJobList $jobList, IAppData $appData) {
-        $this->qb = \OC::$server->getDatabaseConnection()->getQueryBuilder();
-        $this->dbconnection = \OC::$server->getDatabaseConnection();
+    public function __construct(IConfig $config, ILogger $logger, IJobList $jobList,
+                                IAppData $appData, IDBConnection $dbconnection) {
+        $this->dbconnection = $dbconnection;
+        $this->qb = $dbconnection->getQueryBuilder();
         $this->config = $config;
         $this->logger = $logger;
         $this->jobList = $jobList;

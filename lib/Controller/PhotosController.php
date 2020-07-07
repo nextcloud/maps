@@ -17,6 +17,7 @@ use OCP\AppFramework\Http\TemplateResponse;
 use OCP\AppFramework\Http\DataResponse;
 use OCP\AppFramework\Controller;
 use OCP\ILogger;
+use OCP\IServerContainer;
 
 use OCA\Maps\Service\GeophotoService;
 use OCA\Maps\Service\PhotofilesService;
@@ -28,12 +29,19 @@ class PhotosController extends Controller {
     private $logger;
     private $userfolder;
 
-    public function __construct($AppName, ILogger $logger, IRequest $request, GeophotoService $GeophotoService,
-                                PhotofilesService $photofilesService, $UserId, $userfolder){
+    public function __construct($AppName,
+                                IServerContainer $serverContainer,
+                                ILogger $logger,
+                                IRequest $request,
+                                GeophotoService $GeophotoService,
+                                PhotofilesService $photofilesService,
+                                $UserId) {
         parent::__construct($AppName, $request);
         $this->logger = $logger;
         $this->userId = $UserId;
-        $this->userfolder = $userfolder;
+        if ($UserId !== '' and $UserId !== null and $serverContainer !== null){
+            $this->userfolder = $serverContainer->getUserFolder($UserId);
+        }
         $this->geophotoService = $GeophotoService;
         $this->photofilesService = $photofilesService;
     }

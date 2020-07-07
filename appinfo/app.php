@@ -17,7 +17,7 @@ use OCP\Util;
 use Symfony\Component\EventDispatcher\GenericEvent;
 use OCA\Maps\Hooks\FileHooks;
 
-$app = new Application();
+$app = \OC::$server->query(Application::class);
 $container = $app->getContainer();
 
 $eventDispatcher = \OC::$server->getEventDispatcher();
@@ -49,9 +49,9 @@ $eventDispatcher->addListener('\OCA\DAV\CardDAV\CardDavBackend::deleteCard', $de
 
 $l = \OC::$server->getL10N('maps');
 
-$container->query('OCP\INavigationManager')->add(function () use ($container) {
-    $urlGenerator = $container->query('OCP\IURLGenerator');
-    $l10n = $container->query('OCP\IL10N');
+$container->query(\OCP\INavigationManager::class)->add(function () use ($container) {
+    $urlGenerator = $container->query(\OCP\IURLGenerator::class);
+    $l10n = $container->query(\OCP\IL10N::class);
     return [
         'id' => 'maps',
 

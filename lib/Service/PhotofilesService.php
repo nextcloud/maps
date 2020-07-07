@@ -62,11 +62,11 @@ class PhotofilesService {
         $this->jobList = $jobList;
     }
 
-    public function rescan($userId){
+    public function rescan($userId) {
         $userFolder = $this->root->getUserFolder($userId);
         $photos = $this->gatherPhotoFiles($userFolder, true);
         $this->photoMapper->deleteAll($userId);
-        foreach($photos as $photo) {
+        foreach ($photos as $photo) {
             $this->addPhoto($photo, $userId);
             yield $photo->getPath();
         }
@@ -162,7 +162,7 @@ class PhotofilesService {
             $this->photoMapper->deleteByFileIdUserId($fileId, $userId);
         }
     }
-    
+
 
     public function deleteByFolder(Node $folder) {
         $photos = $this->gatherPhotoFiles($folder, true);
@@ -375,7 +375,7 @@ class PhotofilesService {
 
         if (!$this->hasValidExifGeoTags($exif)) {
             try {
-                $exif = $this->getExifPelBackup($file);
+                @$exif = $this->getExifPelBackup($file);
             } catch (PelException $exception) {
                 $exif = [];
             }

@@ -31,6 +31,7 @@ use OCA\Maps\Service\FavoritesService;
 use OCP\AppFramework\Http\DataResponse;
 use OCP\AppFramework\Http\TemplateResponse;
 use OCP\AppFramework\IAppContainer;
+use \OCP\IServerContainer;
 use PHPUnit\Framework\TestCase;
 
 
@@ -56,7 +57,7 @@ class PublicPageControllerTest extends TestCase
   protected function setUp(): void
   {
     // Begin transaction
-    $db = OC::$server->getDatabaseConnection();
+    $db = OC::$server->query(\OCP\IDBConnection::class);
     $db->beginTransaction();
 
     $this->app = new Application();
@@ -67,27 +68,28 @@ class PublicPageControllerTest extends TestCase
     $appName = $container->query('AppName');
 
     $this->favoritesService = new FavoritesService(
-      $container->query('ServerContainer')->getLogger(),
-      $container->query('ServerContainer')->getL10N($appName),
-      $container->query('ServerContainer')->getSecureRandom()
+      $container->query(IServerContainer::class)->getLogger(),
+      $container->query(IServerContainer::class)->getL10N($appName),
+      $container->query(IServerContainer::class)->getSecureRandom(),
+      $container->query(\OCP\IDBConnection::class)
     );
 
     $this->favoriteShareMapper = new FavoriteShareMapper(
-      $container->query('DatabaseConnection'),
-      $container->query('ServerContainer')->getSecureRandom()
+      $container->query(\OCP\IDBConnection::class),
+      $container->query(IServerContainer::class)->getSecureRandom()
     );
 
     $requestMock = $this->getMockBuilder('OCP\IRequest')->getMock();
     $sessionMock = $this->getMockBuilder('OCP\ISession')->getMock();
 
-    $this->config = $container->query('ServerContainer')->getConfig();
+    $this->config = $container->query(IServerContainer::class)->getConfig();
 
     $this->publicPageController = new PublicPageController(
       $appName,
       $requestMock,
       $sessionMock,
       $this->config,
-      $container->query('Logger'),
+      $container->query(\OCP\ILogger::class),
       $this->favoriteShareMapper
     );
   }
@@ -95,7 +97,7 @@ class PublicPageControllerTest extends TestCase
   protected function tearDown(): void
   {
     // Rollback transaction
-    $db = OC::$server->getDatabaseConnection();
+    $db = OC::$server->query(\OCP\IDBConnection::class);
     $db->rollBack();
   }
 

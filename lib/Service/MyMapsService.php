@@ -18,6 +18,7 @@ use OCP\Files\NotFoundException;
 use OCP\Files\Search\ISearchComparison;
 use OCP\IL10N;
 use OCP\ILogger;
+use OCP\IServerContainer;
 use OCP\DB\QueryBuilder\IQueryBuilder;
 use OCP\Files\IRootFolder;
 use OCP\Files\FileInfo;
@@ -30,10 +31,14 @@ class MyMapsService {
     private $logger;
     private $userId;
 
-    public function __construct (ILogger $logger, $userfolder, $userId) {
+    public function __construct (ILogger $logger,
+                                 IServerContainer $serverContainer,
+                                 $UserId) {
         $this->logger = $logger;
-        $this->userfolder = $userfolder;
-        $this->userId = $userId;
+        if ($UserId !== '' and $UserId !== null and $serverContainer !== null){
+            $this->userfolder = $serverContainer->getUserFolder($UserId);
+        }
+        $this->userId = $UserId;
     }
 
     public function addMyMap($newName) {

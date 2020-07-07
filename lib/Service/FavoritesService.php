@@ -20,6 +20,7 @@ use OC\Security\SecureRandom;
 use OCP\DB\QueryBuilder\IQueryBuilder;
 use OCP\IL10N;
 use OCP\ILogger;
+use OCP\IDBConnection;
 
 class FavoritesService {
 
@@ -37,12 +38,13 @@ class FavoritesService {
     private $kmlInsidePlacemark;
     private $kmlCurrentCategory;
 
-    public function __construct(ILogger $logger, IL10N $l10n, SecureRandom $secureRandom) {
+    public function __construct(ILogger $logger, IL10N $l10n, SecureRandom $secureRandom,
+                                IDBConnection $dbconnection) {
         $this->l10n = $l10n;
         $this->logger = $logger;
         $this->secureRandom = $secureRandom;
-        $this->qb = \OC::$server->getDatabaseConnection()->getQueryBuilder();
-        $this->dbconnection = \OC::$server->getDatabaseConnection();
+        $this->dbconnection = $dbconnection;
+        $this->qb = $dbconnection->getQueryBuilder();
     }
 
     private function db_quote_escape_string($str) {

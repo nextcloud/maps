@@ -166,7 +166,6 @@ OC.L10N.register(
     "Mapbox API key" : "Mapboxin API-avain",
     "Search…" : "Hae…",
     "Your favorites" : "Suosikkisi",
-    "Import from gpx/kml/kmz" : "Tuo gpx-, kml-, kmz-tiedostosta",
     "Your photos" : "Valokuvasi",
     "Your contacts" : "Yhteystietosi",
     "Your devices" : "Laitteesi",

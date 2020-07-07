@@ -38,9 +38,14 @@ class GeophotoService {
     private $timeorderedPointSets;
     private $devicesService;
 
-    public function __construct (ILogger $logger, IRootFolder $root, IL10N $l10n,
-                                GeophotoMapper $photoMapper, IPreview $preview,
-                                TracksService $tracksService, DevicesService $devicesService, $userId) {
+    public function __construct (ILogger $logger,
+                                 IRootFolder $root,
+                                 IL10N $l10n,
+                                 GeophotoMapper $photoMapper,
+                                 IPreview $preview,
+                                 TracksService $tracksService,
+                                 DevicesService $devicesService,
+                                 $userId) {
         $this->root = $root;
         $this->l10n = $l10n;
         $this->photoMapper = $photoMapper;

@@ -11,6 +11,7 @@
 
 namespace OCA\Maps\Controller;
 
+use \OCP\IServerContainer;
 use \OCA\Maps\AppInfo\Application;
 use \OCA\Maps\Service\DevicesService;
 use OCP\AppFramework\Http\TemplateResponse;
@@ -74,53 +75,46 @@ class DevicesControllerTest extends \PHPUnit\Framework\TestCase {
         $this->app = new Application();
         $this->container = $this->app->getContainer();
         $c = $this->container;
-        $this->config = $c->query('ServerContainer')->getConfig();
+        $this->config = $c->query(IServerContainer::class)->getConfig();
 
         $this->devicesController = new DevicesController(
             $this->appName,
             $this->request,
-            'test',
-            $c->query('ServerContainer')->getUserFolder('test'),
-            $c->query('ServerContainer')->getConfig(),
+            $c->query(IServerContainer::class),
+            $c->query(IServerContainer::class)->getConfig(),
             $c->getServer()->getShareManager(),
             $c->getServer()->getAppManager(),
             $c->getServer()->getUserManager(),
             $c->getServer()->getGroupManager(),
-            $c->query('ServerContainer')->getL10N($c->query('AppName')),
-            $c->query('ServerContainer')->getLogger(),
-            new DevicesService(
-                $c->query('ServerContainer')->getLogger(),
-                $c->query('ServerContainer')->getL10N($c->query('AppName'))
-            ),
-            $c->query('ServerContainer')->getDateTimeZone()
+            $c->query(IServerContainer::class)->getL10N($c->query('AppName')),
+            $c->query(IServerContainer::class)->getLogger(),
+            $c->query(DevicesService::class),
+            $c->query(IServerContainer::class)->getDateTimeZone(),
+            'test'
         );
 
         $this->devicesController2 = new DevicesController(
             $this->appName,
             $this->request,
-            'test2',
-            $c->query('ServerContainer')->getUserFolder('test2'),
-            $c->query('ServerContainer')->getConfig(),
+            $c->query(IServerContainer::class),
+            $c->query(IServerContainer::class)->getConfig(),
             $c->getServer()->getShareManager(),
             $c->getServer()->getAppManager(),
             $c->getServer()->getUserManager(),
             $c->getServer()->getGroupManager(),
-            $c->query('ServerContainer')->getL10N($c->query('AppName')),
-            $c->query('ServerContainer')->getLogger(),
-            new DevicesService(
-                $c->query('ServerContainer')->getLogger(),
-                $c->query('ServerContainer')->getL10N($c->query('AppName'))
-            ),
-            $c->query('ServerContainer')->getDateTimeZone()
+            $c->query(IServerContainer::class)->getL10N($c->query('AppName')),
+            $c->query(IServerContainer::class)->getLogger(),
+            $c->query(DevicesService::class),
+            $c->query(IServerContainer::class)->getDateTimeZone(),
+            'test2'
         );
 
         $this->utilsController = new UtilsController(
             $this->appName,
             $this->request,
-            'test',
-            $c->query('ServerContainer')->getUserFolder('test'),
-            $c->query('ServerContainer')->getConfig(),
-            $c->getServer()->getAppManager()
+            $c->query(IServerContainer::class)->getConfig(),
+            $c->getServer()->getAppManager(),
+            'test'
         );
 
         // delete
@@ -268,7 +262,7 @@ class DevicesControllerTest extends \PHPUnit\Framework\TestCase {
             $resp = $this->devicesController->deleteDevice($device['id']);
         }
 
-        $userfolder = $this->container->query('ServerContainer')->getUserFolder('test');
+        $userfolder = $this->container->query(IServerContainer::class)->getUserFolder('test');
         $content1 = file_get_contents('tests/test_files/devicesOk.gpx');
         $userfolder->newFile('devicesOk.gpx')->putContent($content1);
 

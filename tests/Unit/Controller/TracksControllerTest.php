@@ -13,6 +13,7 @@ namespace OCA\Maps\Controller;
 
 use \OCA\Maps\AppInfo\Application;
 use OCP\DB\QueryBuilder\IQueryBuilder;
+use \OCP\IServerContainer;
 use OCA\Maps\Service\GeophotoService;
 use OCA\Maps\Service\PhotofilesService;
 use OCA\Maps\Service\TracksService;
@@ -81,57 +82,57 @@ class TracksControllerTest extends \PHPUnit\Framework\TestCase {
         $this->app = new Application();
         $this->container = $this->app->getContainer();
         $c = $this->container;
-        $this->config = $c->query('ServerContainer')->getConfig();
+        $this->config = $c->query(IServerContainer::class)->getConfig();
 
-        $this->rootFolder = $c->query('ServerContainer')->getRootFolder();
+        $this->rootFolder = $c->query(IServerContainer::class)->getRootFolder();
 
         $this->tracksService = new TracksService(
-            $c->query('ServerContainer')->getLogger(),
-            $c->query('ServerContainer')->getL10N($c->query('AppName')),
+            $c->query(IServerContainer::class)->getLogger(),
+            $c->query(IServerContainer::class)->getL10N($c->query('AppName')),
             $this->rootFolder,
-            $c->query('ServerContainer')->getShareManager()
+            $c->query(IServerContainer::class)->getShareManager(),
+            $c->query(IServerContainer::class)->query(\OCP\IDBConnection::class)
         );
 
         $this->tracksController = new TracksController(
             $this->appName,
             $this->request,
-            'test',
-            $c->query('ServerContainer')->getUserFolder('test'),
-            $c->query('ServerContainer')->getConfig(),
-            $c->query('ServerContainer')->getShareManager(),
+            $c->query(IServerContainer::class),
+            $c->query(IServerContainer::class)->getConfig(),
+            $c->query(IServerContainer::class)->getShareManager(),
             $c->getServer()->getAppManager(),
             $c->getServer()->getUserManager(),
             $c->getServer()->getGroupManager(),
-            $c->query('ServerContainer')->getL10N($c->query('AppName')),
-            $c->query('ServerContainer')->getLogger(),
-            $this->tracksService
+            $c->query(IServerContainer::class)->getL10N($c->query('AppName')),
+            $c->query(IServerContainer::class)->getLogger(),
+            $c->query(TracksService::class),
+            'test',
         );
 
         $this->tracksController2 = new TracksController(
             $this->appName,
             $this->request,
-            'test2',
-            $c->query('ServerContainer')->getUserFolder('test2'),
-            $c->query('ServerContainer')->getConfig(),
-            $c->query('ServerContainer')->getShareManager(),
+            $c->query(IServerContainer::class),
+            $c->query(IServerContainer::class)->getConfig(),
+            $c->query(IServerContainer::class)->getShareManager(),
             $c->getServer()->getAppManager(),
             $c->getServer()->getUserManager(),
             $c->getServer()->getGroupManager(),
-            $c->query('ServerContainer')->getL10N($c->query('AppName')),
-            $c->query('ServerContainer')->getLogger(),
-            $this->tracksService
+            $c->query(IServerContainer::class)->getL10N($c->query('AppName')),
+            $c->query(IServerContainer::class)->getLogger(),
+            $c->query(TracksService::class),
+            'test2',
         );
 
         $this->utilsController = new UtilsController(
             $this->appName,
             $this->request,
-            'test',
-            $c->query('ServerContainer')->getUserFolder('test'),
-            $c->query('ServerContainer')->getConfig(),
-            $c->getServer()->getAppManager()
+            $c->query(IServerContainer::class)->getConfig(),
+            $c->getServer()->getAppManager(),
+            'test'
         );
 
-        $userfolder = $this->container->query('ServerContainer')->getUserFolder('test');
+        $userfolder = $this->container->query(IServerContainer::class)->getUserFolder('test');
 
         // delete first
         if ($userfolder->nodeExists('testFile1.gpx')) {
@@ -140,7 +141,7 @@ class TracksControllerTest extends \PHPUnit\Framework\TestCase {
             $file->delete();
         }
         // delete db
-        $qb = $c->query('ServerContainer')->getDatabaseConnection()->getQueryBuilder();
+        $qb = $c->query(IServerContainer::class)->query(\OCP\IDBConnection::class)->getQueryBuilder();
         $qb->delete('maps_tracks')
             ->where(
                 $qb->expr()->eq('user_id', $qb->createNamedParameter('test', IQueryBuilder::PARAM_STR))
@@ -166,14 +167,14 @@ class TracksControllerTest extends \PHPUnit\Framework\TestCase {
         // in case there was a failure and something was not deleted
         $c = $this->app->getContainer();
 
-        $userfolder = $this->container->query('ServerContainer')->getUserFolder('test');
+        $userfolder = $this->container->query(IServerContainer::class)->getUserFolder('test');
         // delete files
         if ($userfolder->nodeExists('testFile1.gpx')) {
             $file = $userfolder->get('testFile1.gpx');
             $file->delete();
         }
         // delete db
-        $qb = $c->query('ServerContainer')->getDatabaseConnection()->getQueryBuilder();
+        $qb = $c->query(IServerContainer::class)->query(\OCP\IDBConnection::class)->getQueryBuilder();
         $qb->delete('maps_tracks')
             ->where(
                 $qb->expr()->eq('user_id', $qb->createNamedParameter('test', IQueryBuilder::PARAM_STR))
@@ -185,7 +186,7 @@ class TracksControllerTest extends \PHPUnit\Framework\TestCase {
     public function testAddGetTracks() {
         $c = $this->app->getContainer();
 
-        $userfolder = $this->container->query('ServerContainer')->getUserFolder('test');
+        $userfolder = $this->container->query(IServerContainer::class)->getUserFolder('test');
 
         $filename = 'tests/test_files/testFile1.gpx';
         $content1 = file_get_contents($filename);

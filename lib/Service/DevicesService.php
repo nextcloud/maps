@@ -14,6 +14,7 @@ namespace OCA\Maps\Service;
 
 use OCP\IL10N;
 use OCP\ILogger;
+use OCP\IDBConnection;
 use OCP\DB\QueryBuilder\IQueryBuilder;
 
 class DevicesService {
@@ -32,11 +33,11 @@ class DevicesService {
     private $pointIndex;
     private $insideTrk;
 
-    public function __construct (ILogger $logger, IL10N $l10n) {
+    public function __construct (ILogger $logger, IL10N $l10n, IDBConnection $dbconnection) {
         $this->l10n = $l10n;
         $this->logger = $logger;
-        $this->qb = \OC::$server->getDatabaseConnection()->getQueryBuilder();
-        $this->dbconnection = \OC::$server->getDatabaseConnection();
+        $this->dbconnection = $dbconnection;
+        $this->qb = $dbconnection->getQueryBuilder();
     }
 
     private function db_quote_escape_string($str){

@@ -29,7 +29,7 @@ class AppTest extends \PHPUnit\Framework\TestCase {
     }
 
     public function testAppInstalled() {
-        $appManager = $this->container->query('OCP\App\IAppManager');
+        $appManager = $this->container->query(\OCP\App\IAppManager::class);
         $this->assertTrue($appManager->isInstalled('maps'));
     }
 }

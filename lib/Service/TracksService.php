@@ -14,6 +14,7 @@ namespace OCA\Maps\Service;
 
 use OCP\IL10N;
 use OCP\ILogger;
+use OCP\IDBConnection;
 use OCP\DB\QueryBuilder\IQueryBuilder;
 use OCP\Files\IRootFolder;
 use OCP\Files\FileInfo;
@@ -31,10 +32,11 @@ class TracksService {
     private $root;
     private $shareManager;
 
-    public function __construct (ILogger $logger, IL10N $l10n, IRootFolder $root, IManager $shareManager) {
+    public function __construct (ILogger $logger, IL10N $l10n, IRootFolder $root,
+                                 IManager $shareManager, IDBConnection $dbconnection) {
         $this->l10n = $l10n;
         $this->logger = $logger;
-        $this->qb = \OC::$server->getDatabaseConnection()->getQueryBuilder();
+        $this->qb = $dbconnection->getQueryBuilder();
         $this->root = $root;
         $this->shareManager = $shareManager;
     }

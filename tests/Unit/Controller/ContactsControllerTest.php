@@ -18,6 +18,7 @@ use OCP\AppFramework\Http\TemplateResponse;
 use OCA\DAV\Connector\Sabre\Principal;
 use OCA\Maps\Service\AddressService;
 use OCP\Files\IAppData;
+use \OCP\IServerContainer;
 use \OCA\DAV\CardDAV\CardDavBackend;
 use OCA\DAV\CardDAV\ContactsManager;
 
@@ -83,24 +84,25 @@ class ContactsControllerTest extends \PHPUnit\Framework\TestCase {
 
         $urlGenerator = $c->getServer()->getURLGenerator();
 
-        $this->contactsManager = $c->query('ServerContainer')->getContactsManager();
+        $this->contactsManager = $c->query(IServerContainer::class)->getContactsManager();
         $this->cm = $c->query(ContactsManager::class);
         $this->cm->setupContactsProvider($this->contactsManager, 'test', $urlGenerator);
 
         $this->app = new Application();
         $this->container = $this->app->getContainer();
         $c = $this->container;
-        $this->config = $c->query('ServerContainer')->getConfig();
+        $this->config = $c->query(IServerContainer::class)->getConfig();
 
         $this->appData = $this->getMockBuilder('\OCP\Files\IAppData')
             ->disableOriginalConstructor()
             ->getMock();
 
         $this->addressService = new AddressService(
-            $c->query('ServerContainer')->getConfig(),
-            $c->query('ServerContainer')->getLogger(),
-            $c->query('ServerContainer')->getJobList(),
-            $this->appData
+            $c->query(IServerContainer::class)->getConfig(),
+            $c->query(IServerContainer::class)->getLogger(),
+            $c->query(IServerContainer::class)->getJobList(),
+            $this->appData,
+            $c->query(IServerContainer::class)->query(\OCP\IDBConnection::class)
         );
 
         //$this->userPrincipalBackend = new Principal(
@@ -108,7 +110,7 @@ class ContactsControllerTest extends \PHPUnit\Framework\TestCase {
         //    $c->getServer()->getGroupManager(),
         //    $c->getServer()->getShareManager(),
         //    \OC::$server->getUserSession(),
-        //    $c->query('ServerContainer')->getConfig(),
+        //    $c->query(IServerContainer::class)->getConfig(),
         //    \OC::$server->getAppManager()
         //);
         $this->userPrincipalBackend = $this->getMockBuilder('OCA\DAV\Connector\Sabre\Principal')
@@ -116,7 +118,7 @@ class ContactsControllerTest extends \PHPUnit\Framework\TestCase {
             ->getMock();
 
         $this->cdBackend = new CardDavBackend(
-            $c->query('ServerContainer')->getDatabaseConnection(),
+            $c->query(IServerContainer::class)->query(\OCP\IDBConnection::class),
             $this->userPrincipalBackend,
             $c->getServer()->getUserManager(),
             $c->getServer()->getGroupManager(),
@@ -125,13 +127,14 @@ class ContactsControllerTest extends \PHPUnit\Framework\TestCase {
 
         $this->contactsController = new ContactsController(
             $this->appName,
-            $c->query('ServerContainer')->getLogger(),
+            $c->query(IServerContainer::class)->getLogger(),
             $this->request,
+            $c->query(IServerContainer::class)->query(\OCP\IDBConnection::class),
             $this->contactsManager,
             $this->addressService,
             'test',
             $this->cdBackend,
-            $c->query('ServerContainer')->getAvatarManager()
+            $c->query(IServerContainer::class)->getAvatarManager()
         );
         //$this->contactsController = $this->getMockBuilder('OCA\Maps\Controller\ContactsController')
         //    ->disableOriginalConstructor()
@@ -139,22 +142,22 @@ class ContactsControllerTest extends \PHPUnit\Framework\TestCase {
 
         $this->contactsController2 = new ContactsController(
             $this->appName,
-            $c->query('ServerContainer')->getLogger(),
+            $c->query(IServerContainer::class)->getLogger(),
             $this->request,
+            $c->query(IServerContainer::class)->query(\OCP\IDBConnection::class),
             $this->contactsManager,
             $this->addressService,
             'test2',
             $this->cdBackend,
-            $c->query('ServerContainer')->getAvatarManager()
+            $c->query(IServerContainer::class)->getAvatarManager()
         );
 
         $this->utilsController = new UtilsController(
             $this->appName,
             $this->request,
-            'test',
-            $c->query('ServerContainer')->getUserFolder('test'),
-            $c->query('ServerContainer')->getConfig(),
-            $c->getServer()->getAppManager()
+            $c->query(IServerContainer::class)->getConfig(),
+            $c->getServer()->getAppManager(),
+            'test'
         );
     }
 

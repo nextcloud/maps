@@ -17,6 +17,7 @@ use OCP\IAvatarManager;
 use OCP\AppFramework\Http\DataDisplayResponse;
 use OCP\AppFramework\Http\DataResponse;
 use OCP\ILogger;
+use OCP\IDBConnection;
 use OCP\AppFramework\Controller;
 use OCP\Contacts\IManager;
 use OCA\Maps\Service\AddressService;
@@ -35,7 +36,7 @@ class ContactsController extends Controller {
     private $cdBackend;
     private $avatarManager;
 
-    public function __construct($AppName, ILogger $logger, IRequest $request,
+    public function __construct($AppName, ILogger $logger, IRequest $request, IDBConnection $dbconnection,
                                 IManager $contactsManager, AddressService $addressService,
                                 $UserId, CardDavBackend $cdBackend, IAvatarManager $avatarManager){
         parent::__construct($AppName, $request);
@@ -44,8 +45,8 @@ class ContactsController extends Controller {
         $this->avatarManager = $avatarManager;
         $this->contactsManager = $contactsManager;
         $this->addressService = $addressService;
-        $this->dbconnection = \OC::$server->getDatabaseConnection();
-        $this->qb = \OC::$server->getDatabaseConnection()->getQueryBuilder();
+        $this->dbconnection = $dbconnection;
+        $this->qb = $dbconnection->getQueryBuilder();
         $this->cdBackend = $cdBackend;
     }
 

@@ -469,7 +469,7 @@ PhotosController.prototype = {
         var lng = e.latlng.lng;
         var filePath = this.photosController.movingPhotoPath;
         this.photosController.leaveMovePhotoMode();
-        this.photosController.placePhotos([filePath], [lat], [lng]);
+        this.photosController.placePhotos([filePath], [lat], [lng], false, true);
     },
 
     updateTimeFilterRange: function () {
@@ -625,6 +625,9 @@ PhotosController.prototype = {
             lats: lats,
             lngs: lngs,
             myMapId: this.optionsController.myMapId,
+            // we only have relative paths for photos displayed on a 'my-map'
+            // so we tell it to the controller
+            relative: (this.optionsController.myMapId !== null && moveAction),
             directory: directory
         };
         var url = generateUrl('/apps/maps/photos');

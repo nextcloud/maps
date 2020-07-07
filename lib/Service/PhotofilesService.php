@@ -96,10 +96,10 @@ class PhotofilesService {
     public function addByFileIdUserId($fileId, $userId) {
         $userFolder = $this->root->getUserFolder($userId);
         $files = $userFolder->getById($fileId);
-		if (empty($files)) {
-			return;
-		}
-		$file = array_shift($files);
+        if (empty($files)) {
+            return;
+        }
+        $file = array_shift($files);
         if ($file !== null and $this->isPhoto($file)) {
             $this->addPhoto($file, $userId);
         }
@@ -108,10 +108,10 @@ class PhotofilesService {
     public function addByFolderIdUserId($folderId, $userId) {
         $userFolder = $this->root->getUserFolder($userId);
         $folders = $userFolder->getById($folderId);
-		if (empty($folders)) {
-			return;
-		}
-		$folder = array_shift($folders);
+        if (empty($folders)) {
+            return;
+        }
+        $folder = array_shift($folders);
         if ($folder !== null) {
             $photos = $this->gatherPhotoFiles($folder, true);
             foreach($photos as $photo) {

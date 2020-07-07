@@ -74,14 +74,26 @@ class PhotosController extends Controller {
     /**
      * @NoAdminRequired
      */
-    public function placePhotos($paths, $lats, $lngs, $directory=false, $myMapId=null) {
-        if (!is_null($myMapId) and $myMapId !== "") {
-            foreach($paths as $key => $path) {
-                $folders = $this->userfolder->getById($myMapId);
-                $folder = array_shift($folders);
-                $photoFile = $this->userfolder->get($path);
-                $photoFile = $photoFile->copy($folder->getPath() . "/" . $photoFile->getName());
-                $paths[$key] = $this->userfolder->getRelativePath($photoFile->getPath());
+    public function placePhotos($paths, $lats, $lngs, $directory=false, $myMapId=null, $relative=false) {
+        if (!is_null($myMapId) and $myMapId !== '') {
+            $folders = $this->userfolder->getById($myMapId);
+            $folder = array_shift($folders);
+            // photo's path is relative to this map's folder => get full path, don't copy
+            if ($relative === 'true') {
+                foreach ($paths as $key => $path) {
+                    $photoFile = $folder->get($path);
+                    $paths[$key] = $this->userfolder->getRelativePath($photoFile->getPath());
+                }
+            } else {
+                // here the photo path is good, copy it in this map's folder if it's not already there
+                foreach ($paths as $key => $path) {
+                    $photoFile = $this->userfolder->get($path);
+                    // is the photo in this map's folder?
+                    if (!$folder->getById($photoFile->getId())) {
+                        $copiedFile = $photoFile->copy($folder->getPath() . '/' . $photoFile->getName());
+                        $paths[$key] = $this->userfolder->getRelativePath($copiedFile->getPath());
+                    }
+                }
             }
         }
         $result = $this->photofilesService->setPhotosFilesCoords($this->userId, $paths, $lats, $lngs, $directory);
@@ -93,8 +105,8 @@ class PhotosController extends Controller {
      */
     public function resetPhotosCoords($paths, $myMapId=null) {
         $result = 0;
-        if (!is_null($myMapId) and $myMapId !== "") {
-            foreach($paths as $key => $path) {
+        if (!is_null($myMapId) and $myMapId !== '') {
+            foreach ($paths as $key => $path) {
                 $folders = $this->userfolder->getById($myMapId);
                 $folder = array_shift($folders);
                 $photoFile = $this->userfolder->get($path);
@@ -105,7 +117,7 @@ class PhotosController extends Controller {
                 }
             }
         }
-        if (sizeof($paths)>0) {
+        if (sizeof($paths) > 0) {
             $result += $this->photofilesService->resetPhotosFilesCoords($this->userId, $paths);
         }
         return new DataResponse($result);

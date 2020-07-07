@@ -258,24 +258,24 @@ PhotosController.prototype = {
                     }
                     var randomId = Math.random(); //
                     $('#imgdiv').parent().parent().attr('randomId', randomId);
-                    function toolTipImgLoop(maxI, randomId){
+                    function toolTipImgLoop(maxI, randomId) {
                         // will will only continue the loop if randomId is matching randomId stored in imgdiv
                         // to prevent running multiple loops in parallel could be caused by to fast mouseout / mouseover events
-                        setTimeout(function(maxI){  // this function content will be executed after timeout of 3 sec (3000 ms)
+                        setTimeout(function (maxI) {  // this function content will be executed after timeout of 3 sec (3000 ms)
                             var randomIdFromImgdiv = $('#imgdiv').parent().parent().attr('randomId');
-                            if ( randomId == randomIdFromImgdiv ){
+                            if (randomId == randomIdFromImgdiv) {
                                 var i = $('#imgdiv').parent().parent().attr('imgindex');
-                                var j = (parseInt(i)+1);
-        		        if ( i == maxI ){ // if i reached max image j need to start with 0 again to continue with 1st image again
+                                var j = (parseInt(i) + 1);
+                                if (i == maxI) { // if i reached max image j need to start with 0 again to continue with 1st image again
                                     j = 0;
                                 }
                                 // now we will fade out the current img and fade in the next image
-                                $('#imgdiv' + i ).fadeOut('fast', function(){
-                                    $('#imgdiv' + j ).fadeIn('fast');
+                                $('#imgdiv' + i).fadeOut('fast', function () {
+                                    $('#imgdiv' + j).fadeIn('fast');
                                 });
-		                if ( i == maxI ){ // and now we also need to switch i back to 0 to contine
+                                if (i == maxI) { // and now we also need to switch i back to 0 to contine
                                     i = 0;
-                                }else{
+                                } else {
                                     i++;
                                 }
                                 $('#imgdiv').parent().parent().attr('imgindex', i);
@@ -451,7 +451,7 @@ PhotosController.prototype = {
         var lng = e.latlng.lng;
         var filePath = this.photosController.movingPhotoPath;
         this.photosController.leaveMovePhotoMode();
-        this.photosController.placePhotos([filePath], [lat], [lng]);
+        this.photosController.placePhotos([filePath], [lat], [lng], false, true);
     },
 
     updateTimeFilterRange: function() {
@@ -604,7 +604,7 @@ PhotosController.prototype = {
         );
     },
 
-    placePhotos: function(paths, lats, lngs, directory=false) {
+    placePhotos: function(paths, lats, lngs, directory=false, moveAction=false) {
         var that = this;
         $('#navigation-photos').addClass('icon-loading-small');
         $('.leaflet-container, .mapboxgl-map').css('cursor', 'wait');
@@ -613,6 +613,9 @@ PhotosController.prototype = {
             lats: lats,
             lngs: lngs,
             myMapId: this.optionsController.myMapId,
+            // we only have relative paths for photos displayed on a 'my-map'
+            // so we tell it to the controller
+            relative: (this.optionsController.myMapId !== null && moveAction),
             directory: directory
         };
         var url = generateUrl('/apps/maps/photos');

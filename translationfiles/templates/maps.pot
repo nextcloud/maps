@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Nextcloud 3.14159\n"
 "Report-Msgid-Bugs-To: translations\\@example.com\n"
-"POT-Creation-Date: 2020-07-07 02:50+0000\n"
+"POT-Creation-Date: 2020-07-08 02:43+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -21,10 +21,10 @@ msgstr ""
 msgid "Maps"
 msgstr ""
 
-#: /app/lib/Service/FavoritesService.php:401
-#: /app/lib/Service/FavoritesService.php:521
-#: /app/lib/Service/FavoritesService.php:642
-#: /app/lib/Service/FavoritesService.php:710 /app/src/favoritesController.js:33
+#: /app/lib/Service/FavoritesService.php:403
+#: /app/lib/Service/FavoritesService.php:523
+#: /app/lib/Service/FavoritesService.php:644
+#: /app/lib/Service/FavoritesService.php:712 /app/src/favoritesController.js:33
 #: /app/src/utils/favoritesUtils.js:27
 msgid "Personal"
 msgstr ""

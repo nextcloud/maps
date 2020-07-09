@@ -1,4 +1,5 @@
 import { generateUrl } from '@nextcloud/router';
+import escapeHTML from 'escape-html';
 
 function NonLocalizedPhotosController (optionsController, timeFilterController, photosController) {
     this.PHOTO_MARKER_VIEW_SIZE = 40;

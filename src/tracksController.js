@@ -2,6 +2,8 @@ import { generateUrl } from '@nextcloud/router';
 
 import { dirname, brify, metersToDistance, metersToElevation, kmphToSpeed, minPerKmToPace, formatTimeSeconds, getUrlParameter } from './utils';
 
+import escapeHTML from 'escape-html';
+
 function TracksController(optionsController, timeFilterController) {
     this.track_MARKER_VIEW_SIZE = 30;
     this.optionsController = optionsController;

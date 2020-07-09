@@ -16,6 +16,7 @@ OC.L10N.register(
     "min" : "mun",
     "Add to favorites" : "Ouzhpennañ er pennrolloù",
     "Open" : "Digeriñ",
+    "File" : "Restr",
     "Link" : "Liamm",
     "Description" : "Diskrivadur",
     "Settings" : "Arventennoù"

@@ -1920,7 +1920,7 @@ import { brify, getUrlParameter, formatAddress } from './utils';
             return pattern.test(str);
         },
         search: function(str, limit=8) {
-            let coordinateRegEx = /^((g|G)(e|E)(o|O):)?(\s*|"?(l|L)(a|A)(t|T)"?:)"?(?<lat>-?\d{1,2}.\d+\s*)"?,"?("?(l|L)(o|O)(n|N)"?:)?"?(?<lon>-?\d{1,3}.\d+)"?(;.*)?\s*$/gmi;
+            let coordinateRegEx = /(geo:)?(\s*|"?lat"?:)"?(?<lat>-?\d{1,2}.\d+\s*)"?,"?("?lon"?:)?"?(?<lon>-?\d{1,3}.\d+)"?(;.*)?\s*/gmi;
             let regResult = coordinateRegEx.exec(str);
             if (regResult) {
                 var coordinateSearchResults = [{

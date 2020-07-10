@@ -1745,38 +1745,39 @@ import { brify, getUrlParameter, formatAddress } from './utils';
         },
 
         submitSearchForm: function() {
-            var that = this;
             var str = $('#search-term').val();
             if (str.length < 1) {
                 return;
             }
 
-            this.search(str).then(function(results) {
-                if (results.length === 0) {
-                    OC.Notification.showTemporary(t('maps', 'No search result'));
-                    return;
+            this.search(str, this.handleSearchResult, this);
+        },
+
+        handleSearchResult: function(results, that) {
+            if (results.length === 0) {
+                OC.Notification.showTemporary(t('maps', 'No search result'));
+                return;
+            }
+            else if (results.length === 1) {
+                var result = results[0];
+                mapController.displaySearchResult([result]);
+            }
+            else {
+                var newData = [];
+                newData.push(...that.currentLocalAutocompleteData);
+                for (var i=0; i < results.length; i++) {
+                    newData.push({
+                        type: 'address',
+                        label: results[i].display_name,
+                        value: results[i].display_name,
+                        result: results[i],
+                        lat: results[i].lat,
+                        lng: results[i].lon
+                    });
                 }
-                else if (results.length === 1) {
-                    var result = results[0];
-                    mapController.displaySearchResult([result]);
-                }
-                else {
-                    var newData = [];
-                    newData.push(...that.currentLocalAutocompleteData);
-                    for (var i=0; i < results.length; i++) {
-                        newData.push({
-                            type: 'address',
-                            label: results[i].display_name,
-                            value: results[i].display_name,
-                            result: results[i],
-                            lat: results[i].lat,
-                            lng: results[i].lon
-                        });
-                    }
-                    $('#search-term').autocomplete('option', {source: newData});
-                    $('#search-term').autocomplete('search');
-                }
-            });
+                $('#search-term').autocomplete('option', {source: newData});
+                $('#search-term').autocomplete('search');
+            }
         },
 
         submitSearchPOI: function(type, typeName) {
@@ -1919,22 +1920,24 @@ import { brify, getUrlParameter, formatAddress } from './utils';
             var pattern = /^\s*-?\d+\.?\d*\,\s*-?\d+\.?\d*\s*$/;
             return pattern.test(str);
         },
-        search: function(str, limit=8) {
+        search: function(str, handleResultsFun, ctx, limit=8) {
             let coordinateRegEx = /(geo:)?(\s*|"?lat"?:)"?(?<lat>-?\d{1,2}.\d+\s*)"?,"?("?lon"?:)?"?(?<lon>-?\d{1,3}.\d+)"?(;.*)?\s*/gmi;
             let regResult = coordinateRegEx.exec(str);
+            let coordinateSearchResults;
             if (regResult) {
-                var coordinateSearchResults = [{
+                coordinateSearchResults = [{
                     lat: regResult.groups.lat,
                     lon: regResult.groups.lon
                 },];
             } else {
-                var coordinateSearchResults  = []
+                coordinateSearchResults  = []
             }
             var searchTerm = encodeURIComponent(str);
             var apiUrl = 'https://nominatim.openstreetmap.org/search/' + searchTerm + '?format=json&addressdetails=1&extratags=1&namedetails=1&limit='+limit;
-            return $.getJSON(apiUrl, {}, function(response) {
-                response =  coordinateSearchResults.concat(response);
+            $.getJSON(apiUrl, {}, function(response) {
                 return response
+            }).then(function(results) {
+                handleResultsFun(coordinateSearchResults.concat(results), ctx);
             });
         },
         searchPOI: function(type, latMin, latMax, lngMin, lngMax) {

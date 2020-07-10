@@ -50,6 +50,8 @@ import noUiSlider from 'nouislider';
 import 'nouislider/distribute/nouislider.css';
 import opening_hours from 'opening_hours';
 
+import escapeHTML from 'escape-html';
+
 import { generateUrl } from '@nextcloud/router';
 import escapeHTML from 'escape-html';
 
@@ -1636,6 +1638,9 @@ import { brify, getUrlParameter, formatAddress } from './utils';
                 source: data,
                 select: function (e, ui) {
                     var it = ui.item;
+                    if (it.type === 'coordinate') {
+                        that.map.setView([it.lat, it.lng], 15);
+                    }
                     if (it.type === 'favorite') {
                         that.map.setView([it.lat, it.lng], 15);
                     }
@@ -1716,6 +1721,9 @@ import { brify, getUrlParameter, formatAddress } from './utils';
                 else if (item.type === 'contact') {
                     iconClass = 'icon-group';
                 }
+                else if (item.type === 'coordinate') {
+                    iconClass = 'icon-address';
+                }
                 else if (item.type === 'device') {
                     if (item.subtype === 'computer') {
                         iconClass = 'icon-desktop';
@@ -1767,7 +1775,7 @@ import { brify, getUrlParameter, formatAddress } from './utils';
                 newData.push(...that.currentLocalAutocompleteData);
                 for (var i=0; i < results.length; i++) {
                     newData.push({
-                        type: 'address',
+                        type: results[i].maps_type ?? 'address',
                         label: results[i].display_name,
                         value: results[i].display_name,
                         result: results[i],
@@ -1926,6 +1934,8 @@ import { brify, getUrlParameter, formatAddress } from './utils';
             let coordinateSearchResults;
             if (regResult) {
                 coordinateSearchResults = [{
+                    maps_type: 'coordinate',
+                    display_name: t('maps', 'Point'),
                     lat: regResult.groups.lat,
                     lon: regResult.groups.lon
                 },];

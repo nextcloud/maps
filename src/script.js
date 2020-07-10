@@ -1920,10 +1920,21 @@ import { brify, getUrlParameter, formatAddress } from './utils';
             return pattern.test(str);
         },
         search: function(str, limit=8) {
+            let coordinateRegEx = /^((g|G)(e|E)(o|O):)?(\s*|"?(l|L)(a|A)(t|T)"?:)"?(?<lat>-?\d{1,2}.\d+\s*)"?,"?("?(l|L)(o|O)(n|N)"?:)?"?(?<lon>-?\d{1,3}.\d+)"?(;.*)?\s*$/gmi;
+            let regResult = coordinateRegEx.exec(str);
+            if (regResult) {
+                var coordinateSearchResults = [{
+                    lat: regResult.groups.lat,
+                    lon: regResult.groups.lon
+                },];
+            } else {
+                var coordinateSearchResults  = []
+            }
             var searchTerm = encodeURIComponent(str);
             var apiUrl = 'https://nominatim.openstreetmap.org/search/' + searchTerm + '?format=json&addressdetails=1&extratags=1&namedetails=1&limit='+limit;
             return $.getJSON(apiUrl, {}, function(response) {
-                return response;
+                response =  coordinateSearchResults.concat(response);
+                return response
             });
         },
         searchPOI: function(type, latMin, latMax, lngMin, lngMax) {

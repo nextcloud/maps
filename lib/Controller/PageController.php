@@ -11,11 +11,12 @@
 
 namespace OCA\Maps\Controller;
 
+use OCA\Files\Event\LoadSidebar;
+use OCA\Viewer\Event\LoadViewer;
 use OCP\IConfig;
 use OCP\IRequest;
 use OCP\AppFramework\Http\TemplateResponse;
-use OCP\AppFramework\Http\Template\PublicTemplateResponse;
-use OCP\AppFramework\Http\DataResponse;
+use OCP\EventDispatcher\IEventDispatcher;
 use OCP\AppFramework\Controller;
 use OCP\IInitialStateService;
 
@@ -23,13 +24,18 @@ class PageController extends Controller {
     private $userId;
     private $config;
 
+    /** @var IEventDispatcher */
+    private $eventDispatcher;
+
     public function __construct($AppName,
                                 IRequest $request,
+                                IEventDispatcher $eventDispatcher,
                                 IConfig $config,
                                 IInitialStateService $initialStateService,
                                 $UserId){
         parent::__construct($AppName, $request);
         $this->userId = $UserId;
+        $this->eventDispatcher = $eventDispatcher;
         $this->config = $config;
         $this->initialStateService = $initialStateService;
     }
@@ -44,7 +50,10 @@ class PageController extends Controller {
      * @NoAdminRequired
      * @NoCSRFRequired
      */
-    public function index() {
+    public function index(): TemplateResponse {
+        $this->eventDispatcher->dispatch(LoadSidebar::class, new LoadSidebar());
+        $this->eventDispatcher->dispatch(LoadViewer::class, new LoadViewer());
+
         $params = array('user' => $this->userId);
         $this->initialStateService->provideInitialState($this->appName, 'photos', $this->config->getAppValue('photos', 'enabled', 'no') === 'yes');
         $response = new TemplateResponse('maps', 'index', $params);

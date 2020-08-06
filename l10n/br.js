@@ -13,6 +13,7 @@ OC.L10N.register(
     "Share link" : "Rannan liamm",
     "Copy link" : "Kopiañ al liamm",
     "Copied!" : "Eilet eo !",
+    "Submit" : "Kinnig",
     "Move" : "Diplasañ",
     "min" : "mun",
     "Add to favorites" : "Ouzhpennañ er pennrolloù",

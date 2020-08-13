@@ -171,7 +171,13 @@ class TracksService {
         $nodes = $folder->getDirectoryListing();
         foreach ($nodes as $node) {
             if ($node->getType() === FileInfo::TYPE_FOLDER AND $recursive) {
-                $notes = array_merge($notes, $this->gatherTrackFiles($node, $recursive));
+                try {
+                        $notes = array_merge($notes, $this->gatherTrackFiles($node, $recursive));
+                } catch (\OCP\Files\StorageNotAvailableException | \Exception $e) {
+                        $msg = "WARNING: Could not access " . $node->getName();
+                        echo($msg . "\n");
+                        $this->logger->error($msg);
+                }
                 continue;
             }
             if ($this->isTrack($node)) {

@@ -329,7 +329,13 @@ class PhotofilesService {
                         continue;
                     }
                 }
-                $notes = array_merge($notes, $this->gatherPhotoFiles($node, $recursive));
+                try {
+                        $notes = array_merge($notes, $this->gatherPhotoFiles($node, $recursive));
+                } catch (\OCP\Files\StorageNotAvailableException | \Exception $e) {
+                        $msg = "WARNING: Could not access " . $node->getName();
+                        echo($msg . "\n");
+                        $this->logger->error($msg);
+                }
                 continue;
             }
             if ($this->isPhoto($node)) {

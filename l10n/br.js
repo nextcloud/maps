@@ -15,6 +15,8 @@ OC.L10N.register(
     "Copied!" : "Eilet eo !",
     "Submit" : "Kinnig",
     "Move" : "Diplasañ",
+    "Start" : "Kregiñ",
+    "Destination" : "Pall",
     "min" : "mun",
     "Add to favorites" : "Ouzhpennañ er pennrolloù",
     "Open" : "Digeriñ",

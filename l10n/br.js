@@ -10,6 +10,7 @@ OC.L10N.register(
     "Work" : "Labour",
     "Rename" : "Adenvel",
     "Device" : "Ardivink",
+    "Date" : "Deizat",
     "Share link" : "Rannan liamm",
     "Copy link" : "Kopiañ al liamm",
     "Copied!" : "Eilet eo !",

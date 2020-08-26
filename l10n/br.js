@@ -3,8 +3,10 @@ OC.L10N.register(
     {
     "Personal" : "Personel",
     "Name" : "Anv",
+    "Comment" : "Displegadenn",
     "Add" : "Ouzhpennañ",
     "Cancel" : "Arrest",
+    "Update" : "Adnevesaat",
     "Delete" : "Dilemel",
     "Home" : "Degemer",
     "Work" : "Labour",

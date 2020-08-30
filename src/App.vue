@@ -26,6 +26,9 @@
 					<!--vl-layer-tile id="osm">
 						<vl-source-osm />
 					</vl-layer-tile-->
+					<vl-layer-tile>
+						<vl-source-xyz :url="urlRaster2"></vl-source-xyz>
+					</vl-layer-tile>
 				</vl-map>
 			</div>
 			<Actions
@@ -81,7 +84,6 @@ export default {
 			rotation: 0,
 			geolocPosition: undefined,
 			key: 'pk.eyJ1IjoiZW5laWx1aiIsImEiOiJjazE4Y2xvajcxbGJ6M29xajY1bThuNjRnIn0.hZ4f0_kiPK5OvLBQ1GxVmgg',
-			mapId: 'mapbox-streets-v7',
 		}
 	},
 	computed: {
@@ -95,22 +97,36 @@ export default {
 			// ok to get data
 			return 'https://api.mapbox.com/v4/mapbox.mapbox-terrain-v2,mapbox.mapbox-streets-v7/{z}/{x}/{y}.vector.pbf?access_token=' + this.key
 		},
+		urlRaster() {
+			return 'https://api.mapbox.com/styles/v1/mapbox/streets-v11/tiles/256/{z}/{x}/{y}?access_token=' + this.key
+		},
+		urlRaster2() {
+			return 'https://api.mapbox.com/styles/v1/mapbox/satellite-streets-v9/tiles/256/{z}/{x}/{y}?access_token=' + this.key
+		},
 		url3() {
 			return 'https://api.mapbox.com/v4/mapbox.mapbox-terrain-v2,mapbox.mapbox-streets-v7.json?secure&access_token=' + this.key
 		},
 		url4() {
+			// ok but olms problems
 			return 'https://api.mapbox.com/styles/v1/mapbox/bright-v9?access_token=' + this.key
 		},
 		url5() {
-			return 'https://api.mapbox.com/styles/v1/mapbox/streets-v8?access_token=' + this.key
+			return 'https://api.mapbox.com/styles/v1/mapbox/streets-v6?access_token=' + this.key
+		},
+		url6() {
+			return 'https://api.mapbox.com/styles/v1/mapbox/satellite-streets-v9?access_token=' + this.key
+		},
+		url7() {
+			return 'https://{a-d}.tiles.mapbox.com/v4/mapbox.mapbox-streets-v6/{z}/{x}/{y}.vector.pbf?access_token=' + this.key
 		},
 	},
 	mounted() {
 	},
 	methods: {
-		onMapCreated: function() {
+		onMapCreated() {
+			return
 			// this.$refs.map.$map points to underlying OpenLayers ol/Map instance
-			olms(this.$refs.map.$map, this.url4)
+			olms(this.$refs.map.$map, this.url7)
 		},
 	},
 }

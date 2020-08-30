@@ -8,6 +8,7 @@ module.exports = {
 	entry: {
 		adminSettings: path.join(__dirname, 'src', 'adminSettings.js'),
 		script: path.join(__dirname, 'src', 'script.js'),
+		script2: path.join(__dirname, 'src', 'script2.js'),
 		'public-favorite-share': path.join(__dirname, 'src', 'publicFavoriteShare.js'),
 	},
 	output: {

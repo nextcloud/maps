@@ -67,6 +67,23 @@ class PageController extends Controller {
      * @NoAdminRequired
      * @NoCSRFRequired
      */
+    public function indexTwo(): TemplateResponse {
+        $this->eventDispatcher->dispatch(LoadSidebar::class, new LoadSidebar());
+        $this->eventDispatcher->dispatch(LoadViewer::class, new LoadViewer());
+
+        $params = array('user' => $this->userId);
+        $this->initialStateService->provideInitialState($this->appName, 'photos', $this->config->getAppValue('photos', 'enabled', 'no') === 'yes');
+        $response = new TemplateResponse('maps', 'index2', $params);
+
+        $this->addCsp($response);
+
+        return $response;
+    }
+
+    /**
+     * @NoAdminRequired
+     * @NoCSRFRequired
+     */
     public function openGeoLink($url) {
         $params = array('user' => $this->userId);
         $params["geourl"]  = $url;
@@ -105,12 +122,17 @@ class PageController extends Controller {
             $csp->addAllowedImageDomain('https://*.cartocdn.com');
             $csp->addAllowedImageDomain('https://*.ssl.fastly.net');
             $csp->addAllowedImageDomain('https://*.openstreetmap.se');
+            $csp->addAllowedImageDomain('https://*.mapbox.com');
 
             // default routing engine
             $csp->addAllowedConnectDomain('https://*.project-osrm.org');
             $csp->addAllowedConnectDomain('https://api.mapbox.com');
+            $csp->addAllowedConnectDomain('https://*.mapbox.com');
             $csp->addAllowedConnectDomain('https://events.mapbox.com');
             $csp->addAllowedConnectDomain('https://graphhopper.com');
+
+            $csp->addAllowedStyleDomain('*');
+            $csp->addAllowedFontDomain('*');
             // allow connections to custom routing engines
             $urlKeys = [
                 'osrmBikeURL',

@@ -255,7 +255,7 @@
     "Graphhopper Website" : "Graphhopper Webseite",
     "GraphHopper settings" : "GraphHopper Einstellungen",
     "A GraphHopper server URL looks like this : https://my.graphhopper.server.org:8989/route" : "A GraphHopper-Server URL sieht so aus: https://my.graphhopper.server.org:8989/route",
-    "GraphHopper server URL (will use main graphhopper server if empty)" : "GraphHopper Server URL (Wenn leer wird die Haupt-Server-URL verwandt)",
+    "GraphHopper server URL (will use main graphhopper server if empty)" : "GraphHopper Server URL (Wenn leer wird die Haupt-Server-URL verwendet)",
     "GraphHopper API key (mandatory if main server used)" : "GraphHopper APISchlüssel (erforderlich, wenn der Haupt-Server verwendet wird)",
     "Mapbox Website" : "Mapbox Webseite",
     "Mapbox settings" : "Mapbox-Einstellungen",

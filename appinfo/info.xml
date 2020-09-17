@@ -42,6 +42,7 @@
     </repair-steps>
     <commands>
         <command>OCA\Maps\Command\RescanPhotos</command>
+        <command>OCA\Maps\Command\RescanPhotosJobless</command>
         <command>OCA\Maps\Command\RescanTracks</command>
     </commands>
     <settings>

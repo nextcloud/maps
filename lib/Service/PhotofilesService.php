@@ -72,6 +72,35 @@ class PhotofilesService {
         }
     }
 
+    // Rescan the user folder without adding a background job.
+    public function rescanJobless($userId) {
+        $userFolder = $this->root->getUserFolder($userId);
+        $photos = $this->gatherPhotoFiles($userFolder, true);
+
+        $photoEntities = $this->photoMapper->findAll($userId);
+
+        // cleanup non existing entries.
+        foreach ($photoEntities as $photoEntity) {
+            $fileId = $photoEntity->getFileId();
+            $files = $userFolder->getById($fileId);
+            $fileFound = ! empty($files);
+
+            if ($fileFound) {
+                $file = array_shift($files);
+                $fileFound = $file != null;
+            }
+
+            if (! $fileFound) {
+                $this->photoMapper->deleteByFileIdUserId($fileId, $userId);
+            }
+        }
+
+        foreach($photos as $photo) {
+            $this->addPhotoNow($photo, $userId);
+            yield $photo->getPath();
+        }
+    }
+
     // add the file for its owner and users that have access
     // check if it's already in DB before adding
     public function addByFile(Node $file) {

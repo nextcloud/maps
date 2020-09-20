@@ -67,6 +67,8 @@ OC.L10N.register(
     "Start" : "Start",
     "Destination" : "Destinasjon",
     "min" : "min",
+    "Cinema" : "Kino",
+    "Dentist" : "Tannlege",
     "Add to favorites" : "Legg til i favoritter",
     "Open" : "Åpne",
     "Closed" : "Lukket",

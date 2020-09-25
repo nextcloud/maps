@@ -43,7 +43,7 @@ class Version000102Date20190901152326 extends SimpleMigrationStep {
 			$table = $schema->getTable('maps_address_geo');
 			$table->changeColumn('object_uri', [
 				'notnull' => true,
-				'default' => '',
+				'default' => '--',
 				'length' => 255,
 			]);
 		}

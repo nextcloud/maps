@@ -44,7 +44,7 @@ class Version000013Date20190723185417 extends SimpleMigrationStep {
 			$table->dropColumn('contact_uid');
 			$table->addColumn('object_uri', 'string', [
 				'notnull' => true,
-				'default' => '',
+				'default' => '--',
 				'length' => 64,
 			]);
 			$table->addIndex(['object_uri'], 'maps_object_uri');

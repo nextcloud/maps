@@ -111,6 +111,8 @@ class PageController extends Controller {
             $csp->addAllowedConnectDomain('https://api.mapbox.com');
             $csp->addAllowedConnectDomain('https://events.mapbox.com');
             $csp->addAllowedConnectDomain('https://graphhopper.com');
+
+            $csp->addAllowedChildSrcDomain("blob:");
             // allow connections to custom routing engines
             $urlKeys = [
                 'osrmBikeURL',

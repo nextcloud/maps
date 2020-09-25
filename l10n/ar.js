@@ -30,6 +30,7 @@ OC.L10N.register(
     "west" : "غرب",
     "right" : "اليمين",
     "left" : "اليسار",
+    "Start" : "ابدأ",
     "Destination" : "الهدف",
     "km" : "كم",
     "min" : "دقيقة",

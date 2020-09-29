@@ -3,6 +3,20 @@
     z-index: 100000;
 }
 
+#app-navigation > ul > li.active,
+#app-navigation > ul > li a.active,
+#app-navigation > ul > li.active > a {
+    background-color: var(--color-main-background) !important;
+}
+
+#app-navigation > ul > li > ul > li:hover > a.active {
+    background-color: var(--color-background-hover) !important;
+}
+
+#app-navigation > ul > li > ul > li > a:not(.active) {
+    opacity: 0.57 !important;
+}
+
 #search {
     position: absolute;
     margin: 10px 0 0 10px;

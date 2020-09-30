@@ -1787,6 +1787,15 @@ import { brify, getUrlParameter, formatAddress } from './utils';
                             lat: results[i].lat,
                             lng: results[i].lon
                         });
+                    } else if (isCoordinateSearch && results[i].maps_type) {
+                        newData.push({
+                            type: results[i].maps_type ?? 'address',
+                            label: results[i].display_name,
+                            value: "geo:"+results[i].lat+","+results[i].lon,
+                            result: results[i],
+                            lat: results[i].lat,
+                            lng: results[i].lon
+                        });
                     } else {
                         newData.push({
                             type: results[i].maps_type ?? 'address',

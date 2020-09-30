@@ -157,6 +157,7 @@ ContactsController.prototype = {
         if (this.groups[groupName].enabled) {
             this.groups[groupName].enabled = false;
             groupLine.removeClass('active');
+            groupLine.find('.contact-group-name').removeClass('active');
             groupCounter.hide();
             $('#map').focus();
         }
@@ -164,6 +165,7 @@ ContactsController.prototype = {
         else {
             this.groups[groupName].enabled = true;
             groupLine.addClass('active');
+            groupLine.find('.contact-group-name').addClass('active');
             groupCounter.show();
         }
         if (showAgain) {

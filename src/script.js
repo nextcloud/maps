@@ -1764,7 +1764,7 @@ import { brify, getUrlParameter, formatAddress } from './utils';
             this.search(str, this.handleSearchResult, this);
         },
 
-        handleSearchResult: function(results, that) {
+        handleSearchResult: function(results, that, isCoordinateSearch = false, searchString = '') {
             if (results.length === 0) {
                 OC.Notification.showTemporary(t('maps', 'No search result'));
                 return;
@@ -1777,14 +1777,26 @@ import { brify, getUrlParameter, formatAddress } from './utils';
                 var newData = [];
                 newData.push(...that.currentLocalAutocompleteData);
                 for (var i=0; i < results.length; i++) {
-                    newData.push({
-                        type: results[i].maps_type ?? 'address',
-                        label: results[i].display_name,
-                        value: results[i].display_name,
-                        result: results[i],
-                        lat: results[i].lat,
-                        lng: results[i].lon
-                    });
+                    if (isCoordinateSearch && !results[i].maps_type) {
+                        const label = results[i].display_name + ' (' + searchString + ')'
+                        newData.push({
+                            type: results[i].maps_type ?? 'address',
+                            label: label,
+                            value: label,
+                            result: results[i],
+                            lat: results[i].lat,
+                            lng: results[i].lon
+                        });
+                    } else {
+                        newData.push({
+                            type: results[i].maps_type ?? 'address',
+                            label: results[i].display_name,
+                            value: results[i].display_name,
+                            result: results[i],
+                            lat: results[i].lat,
+                            lng: results[i].lon
+                        });
+                    }
                 }
                 $('#search-term').autocomplete('option', {source: newData});
                 $('#search-term').autocomplete('search');
@@ -1934,11 +1946,12 @@ import { brify, getUrlParameter, formatAddress } from './utils';
         search: function(str, handleResultsFun, ctx, limit=8) {
             let coordinateRegEx = /(geo:)?(\s*|"?lat"?:)"?(?<lat>-?\d{1,2}.\d+\s*)"?,"?("?lon"?:)?"?(?<lon>-?\d{1,3}.\d+)"?(;.*)?\s*/gmi;
             let regResult = coordinateRegEx.exec(str);
+            const isCoordinateSearch = regResult ? true : false
             let coordinateSearchResults;
             if (regResult) {
                 coordinateSearchResults = [{
                     maps_type: 'coordinate',
-                    display_name: t('maps', 'Point'),
+                    display_name: t('maps', 'Point at {coords}', { coords: str }),
                     lat: regResult.groups.lat,
                     lon: regResult.groups.lon,
                     searchStr: str,
@@ -1951,7 +1964,7 @@ import { brify, getUrlParameter, formatAddress } from './utils';
             $.getJSON(apiUrl, {}, function(response) {
                 return response
             }).then(function(results) {
-                handleResultsFun(coordinateSearchResults.concat(results), ctx);
+                handleResultsFun(coordinateSearchResults.concat(results), ctx, isCoordinateSearch, str);
             });
         },
         searchPOI: function(type, latMin, latMax, lngMin, lngMax) {
@@ -2149,7 +2162,6 @@ import { brify, getUrlParameter, formatAddress } from './utils';
         },
 
         parseCoordinateResult: function(result) {
-
             var header = '<h2 class="location-header">' + result.display_name + '</h2>';
             if (result.icon) {
                 header = '<div class="inline-wrapper"><img class="location-icon" src="' + result.icon + '" />' + header + '</div>';

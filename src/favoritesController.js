@@ -522,7 +522,8 @@ FavoritesController.prototype = {
             for (var i=0; i < favorites.length; i++) {
                 var token = sharedCategories[favorites[i].category] || null;
 
-                that.addFavoriteMap(favorites[i], true, false, token);
+                const enableCategory = that.optionsController.enabledFavoriteCategories.includes(favorites[i].category)
+                that.addFavoriteMap(favorites[i], enableCategory, false, token);
             }
 
             that.updateCategoryCounters();
@@ -823,7 +824,6 @@ FavoritesController.prototype = {
             that.addFavoriteMap(response, true, true);
             that.updateCategoryCounters();
             // show edition popup
-            console.log(response);
             that.openEditionPopup(response.id);
         }).always(function (response) {
             $('#navigation-favorites').removeClass('icon-loading-small');
@@ -839,7 +839,7 @@ FavoritesController.prototype = {
         var cat = fav.category;
         if (!this.categoryLayers.hasOwnProperty(cat)) {
             this.addCategory(cat, enableCategory, shareToken);
-            if (enableCategory) {
+            if (enableCategory && fromUserAction) {
                 this.saveEnabledCategories();
             }
         }
@@ -1170,7 +1170,14 @@ FavoritesController.prototype = {
                 if (!this.categoryLayers.hasOwnProperty(newCategory)) {
                     this.addCategory(newCategory, true);
                     shouldSaveCategories = true;
+                } else {
+                    // enable category if it's not
+                    if (!this.map.hasLayer(this.categoryLayers[newCategory])) {
+                        this.toggleCategory(newCategory)
+                        shouldSaveCategories = true;
+                    }
                 }
+
                 if (shouldSaveCategories) {
                     this.saveEnabledCategories();
                 }

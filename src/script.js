@@ -50,7 +50,6 @@ import noUiSlider from 'nouislider';
 import 'nouislider/distribute/nouislider.css';
 import opening_hours from 'opening_hours';
 
-import escapeHTML from 'escape-html';
 
 import { generateUrl } from '@nextcloud/router';
 import escapeHTML from 'escape-html';
@@ -526,7 +525,11 @@ import { brify, getUrlParameter, formatAddress } from './utils';
                 });
                 var name = result.display_name;
                 // popup
-                var popupContent = searchController.parseOsmResult(result);
+                if (result.maps_type === "coordinate") {
+                    var popupContent = searchController.parseCoordinateResult(result);
+                } else {
+                    var popupContent = searchController.parseOsmResult(result);
+                }
                 searchMarker.bindPopup(popupContent, {className: 'search-result-popup'});
                 searchMarker.on('popupopen', function(e) {
                     $(e.popup._closeButton).one('click', function (e) {
@@ -1937,7 +1940,8 @@ import { brify, getUrlParameter, formatAddress } from './utils';
                     maps_type: 'coordinate',
                     display_name: t('maps', 'Point'),
                     lat: regResult.groups.lat,
-                    lon: regResult.groups.lon
+                    lon: regResult.groups.lon,
+                    searchStr: str,
                 },];
             } else {
                 coordinateSearchResults  = []
@@ -2140,6 +2144,23 @@ import { brify, getUrlParameter, formatAddress } from './utils';
             if (extras.email) {
                 desc += '<div class="inline-wrapper"><img class="popup-icon" src="'+OC.filePath('maps', 'img', 'mail.svg')+'" /><a href="mailto:' + extras.email + '" target="_blank">' + extras.email + '</a></div>';
             }
+
+            return header + desc;
+        },
+
+        parseCoordinateResult: function(result) {
+
+            var header = '<h2 class="location-header">' + result.display_name + '</h2>';
+            if (result.icon) {
+                header = '<div class="inline-wrapper"><img class="location-icon" src="' + result.icon + '" />' + header + '</div>';
+            }
+            var desc = '<span class="location-city">' + t('maps', 'Point encoded in: ')+ escapeHTML(result.searchStr) + '</span>';
+            desc += '<button class="search-add-favorite" lat="'+result.lat+'" lng="'+result.lon+'">' +
+                '<span class="icon-favorite"> </span> ' + t('maps', 'Add to favorites') + '</button>';
+            desc += '<button class="search-place-contact" lat="'+result.lat+'" lng="'+result.lon+'">' +
+                '<span class="icon-user"> </span> ' + t('maps', 'Add contact address') + '</button>';
+
+            // Add extras to parsed desc
 
             return header + desc;
         },

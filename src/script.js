@@ -50,6 +50,7 @@ import noUiSlider from 'nouislider';
 import 'nouislider/distribute/nouislider.css';
 import opening_hours from 'opening_hours';
 
+
 import { generateUrl } from '@nextcloud/router';
 import escapeHTML from 'escape-html';
 
@@ -524,7 +525,11 @@ import { brify, getUrlParameter, formatAddress } from './utils';
                 });
                 var name = result.display_name;
                 // popup
-                var popupContent = searchController.parseOsmResult(result);
+                if (result.maps_type === "coordinate") {
+                    var popupContent = searchController.parseCoordinateResult(result);
+                } else {
+                    var popupContent = searchController.parseOsmResult(result);
+                }
                 searchMarker.bindPopup(popupContent, {className: 'search-result-popup'});
                 searchMarker.on('popupopen', function(e) {
                     $(e.popup._closeButton).one('click', function (e) {
@@ -1636,6 +1641,9 @@ import { brify, getUrlParameter, formatAddress } from './utils';
                 source: data,
                 select: function (e, ui) {
                     var it = ui.item;
+                    if (it.type === 'coordinate') {
+                        mapController.displaySearchResult([it.result]);
+                    }
                     if (it.type === 'favorite') {
                         that.map.setView([it.lat, it.lng], 15);
                     }
@@ -1716,6 +1724,9 @@ import { brify, getUrlParameter, formatAddress } from './utils';
                 else if (item.type === 'contact') {
                     iconClass = 'icon-group';
                 }
+                else if (item.type === 'coordinate') {
+                    iconClass = 'icon-address';
+                }
                 else if (item.type === 'device') {
                     if (item.subtype === 'computer') {
                         iconClass = 'icon-desktop';
@@ -1745,27 +1756,49 @@ import { brify, getUrlParameter, formatAddress } from './utils';
         },
 
         submitSearchForm: function() {
-            var that = this;
             var str = $('#search-term').val();
             if (str.length < 1) {
                 return;
             }
 
-            this.search(str).then(function(results) {
-                if (results.length === 0) {
-                    OC.Notification.showTemporary(t('maps', 'No search result'));
-                    return;
-                }
-                else if (results.length === 1) {
-                    var result = results[0];
-                    mapController.displaySearchResult([result]);
-                }
-                else {
-                    var newData = [];
-                    newData.push(...that.currentLocalAutocompleteData);
-                    for (var i=0; i < results.length; i++) {
+            this.search(str, this.handleSearchResult, this);
+        },
+
+        handleSearchResult: function(results, that, isCoordinateSearch = false, searchString = '') {
+            if (results.length === 0) {
+                OC.Notification.showTemporary(t('maps', 'No search result'));
+                return;
+            }
+            else if (results.length === 1) {
+                var result = results[0];
+                mapController.displaySearchResult([result]);
+            }
+            else {
+                var newData = [];
+                newData.push(...that.currentLocalAutocompleteData);
+                for (var i=0; i < results.length; i++) {
+                    if (isCoordinateSearch && !results[i].maps_type) {
+                        const label = results[i].display_name + ' (' + searchString + ')'
                         newData.push({
                             type: 'address',
+                            label: label,
+                            value: label,
+                            result: results[i],
+                            lat: results[i].lat,
+                            lng: results[i].lon
+                        });
+                    } else if (isCoordinateSearch && results[i].maps_type) {
+                        newData.push({
+                            type: results[i].maps_type,
+                            label: results[i].display_name,
+                            value: 'geo:' + results[i].lat + ',' + results[i].lon,
+                            result: results[i],
+                            lat: results[i].lat,
+                            lng: results[i].lon
+                        });
+                    } else {
+                        newData.push({
+                            type: results[i].maps_type ?? 'address',
                             label: results[i].display_name,
                             value: results[i].display_name,
                             result: results[i],
@@ -1773,10 +1806,10 @@ import { brify, getUrlParameter, formatAddress } from './utils';
                             lng: results[i].lon
                         });
                     }
-                    $('#search-term').autocomplete('option', {source: newData});
-                    $('#search-term').autocomplete('search');
                 }
-            });
+                $('#search-term').autocomplete('option', {source: newData});
+                $('#search-term').autocomplete('search');
+            }
         },
 
         submitSearchPOI: function(type, typeName) {
@@ -1919,11 +1952,28 @@ import { brify, getUrlParameter, formatAddress } from './utils';
             var pattern = /^\s*-?\d+\.?\d*\,\s*-?\d+\.?\d*\s*$/;
             return pattern.test(str);
         },
-        search: function(str, limit=8) {
+        search: function(str, handleResultsFun, ctx, limit=8) {
+            let coordinateRegEx = /(geo:)?(\s*|"?lat"?:)"?(?<lat>-?\d{1,2}.\d+\s*)"?,"?("?lon"?:)?"?(?<lon>-?\d{1,3}.\d+)"?(;.*)?\s*/gmi;
+            let regResult = coordinateRegEx.exec(str);
+            const isCoordinateSearch = regResult ? true : false
+            let coordinateSearchResults;
+            if (regResult) {
+                coordinateSearchResults = [{
+                    maps_type: 'coordinate',
+                    display_name: t('maps', 'Point at {coords}', { coords: str }),
+                    lat: regResult.groups.lat,
+                    lon: regResult.groups.lon,
+                    searchStr: str,
+                },];
+            } else {
+                coordinateSearchResults  = []
+            }
             var searchTerm = encodeURIComponent(str);
             var apiUrl = 'https://nominatim.openstreetmap.org/search/' + searchTerm + '?format=json&addressdetails=1&extratags=1&namedetails=1&limit='+limit;
-            return $.getJSON(apiUrl, {}, function(response) {
-                return response;
+            $.getJSON(apiUrl, {}, function(response) {
+                return response
+            }).then(function(results) {
+                handleResultsFun(coordinateSearchResults.concat(results), ctx, isCoordinateSearch, str);
             });
         },
         searchPOI: function(type, latMin, latMax, lngMin, lngMax) {
@@ -2116,6 +2166,22 @@ import { brify, getUrlParameter, formatAddress } from './utils';
             if (extras.email) {
                 desc += '<div class="inline-wrapper"><img class="popup-icon" src="'+OC.filePath('maps', 'img', 'mail.svg')+'" /><a href="mailto:' + extras.email + '" target="_blank">' + extras.email + '</a></div>';
             }
+
+            return header + desc;
+        },
+
+        parseCoordinateResult: function(result) {
+            var header = '<h2 class="location-header">' + result.display_name + '</h2>';
+            if (result.icon) {
+                header = '<div class="inline-wrapper"><img class="location-icon" src="' + result.icon + '" />' + header + '</div>';
+            }
+            var desc = '<span class="location-city">' + t('maps', 'Point encoded in: ')+ escapeHTML(result.searchStr) + '</span>';
+            desc += '<button class="search-add-favorite" lat="'+result.lat+'" lng="'+result.lon+'">' +
+                '<span class="icon-favorite"> </span> ' + t('maps', 'Add to favorites') + '</button>';
+            desc += '<button class="search-place-contact" lat="'+result.lat+'" lng="'+result.lon+'">' +
+                '<span class="icon-user"> </span> ' + t('maps', 'Add contact address') + '</button>';
+
+            // Add extras to parsed desc
 
             return header + desc;
         },

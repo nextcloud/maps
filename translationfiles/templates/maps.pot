@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Nextcloud 3.14159\n"
 "Report-Msgid-Bugs-To: translations\\@example.com\n"
-"POT-Creation-Date: 2020-09-30 02:53+0000\n"
+"POT-Creation-Date: 2020-10-01 02:53+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -108,7 +108,7 @@ msgid "Update"
 msgstr ""
 
 #: /app/specialVueFakeDummyForL10nScript.js:14
-#: /app/src/devicesController.js:362 /app/src/favoritesController.js:625
+#: /app/src/devicesController.js:362 /app/src/favoritesController.js:626
 #: /app/src/favoritesController.js:966 /app/src/favoritesController.js:1034
 msgid "Delete"
 msgstr ""
@@ -126,67 +126,67 @@ msgstr ""
 msgid "Failed to save settings"
 msgstr ""
 
-#: /app/src/contactsController.js:261
+#: /app/src/contactsController.js:263
 msgid "There are no contacts to zoom on"
 msgstr ""
 
-#: /app/src/contactsController.js:357
+#: /app/src/contactsController.js:359
 msgid "Not grouped"
 msgstr ""
 
-#: /app/src/contactsController.js:378 /app/src/devicesController.js:350
-#: /app/src/devicesController.js:1030 /app/src/favoritesController.js:613
+#: /app/src/contactsController.js:380 /app/src/devicesController.js:350
+#: /app/src/devicesController.js:1030 /app/src/favoritesController.js:614
 #: /app/src/tracksController.js:342 /app/templates/navigation/index.php:97
 msgid "Zoom to bounds"
 msgstr ""
 
-#: /app/src/contactsController.js:503 /app/src/contactsController.js:518
-#: /app/src/contactsController.js:670
+#: /app/src/contactsController.js:505 /app/src/contactsController.js:520
+#: /app/src/contactsController.js:672
 msgid "Home"
 msgstr ""
 
-#: /app/src/contactsController.js:506 /app/src/contactsController.js:521
-#: /app/src/contactsController.js:671
+#: /app/src/contactsController.js:508 /app/src/contactsController.js:523
+#: /app/src/contactsController.js:673
 msgid "Work"
 msgstr ""
 
-#: /app/src/contactsController.js:513
+#: /app/src/contactsController.js:515
 msgid "Delete this address"
 msgstr ""
 
-#: /app/src/contactsController.js:528
+#: /app/src/contactsController.js:530
 msgid "All contacts"
 msgstr ""
 
-#: /app/src/contactsController.js:529
+#: /app/src/contactsController.js:531
 msgid "Open in Contacts"
 msgstr ""
 
-#: /app/src/contactsController.js:627
+#: /app/src/contactsController.js:629
 msgid "Failed to load contacts"
 msgstr ""
 
-#: /app/src/contactsController.js:662
+#: /app/src/contactsController.js:664
 msgid "New contact address"
 msgstr ""
 
-#: /app/src/contactsController.js:665
+#: /app/src/contactsController.js:667
 msgid "Contact name"
 msgstr ""
 
-#: /app/src/contactsController.js:668
+#: /app/src/contactsController.js:670
 msgid "Address type"
 msgstr ""
 
-#: /app/src/contactsController.js:672
+#: /app/src/contactsController.js:674
 msgid "Add address to contact"
 msgstr ""
 
-#: /app/src/contactsController.js:732
+#: /app/src/contactsController.js:734
 msgid "Failed to get contact list"
 msgstr ""
 
-#: /app/src/contactsController.js:818
+#: /app/src/contactsController.js:820
 msgid "Failed to place contact"
 msgstr ""
 
@@ -203,7 +203,7 @@ msgstr ""
 msgid "Toggle history"
 msgstr ""
 
-#: /app/src/devicesController.js:338 /app/src/favoritesController.js:598
+#: /app/src/devicesController.js:338 /app/src/favoritesController.js:599
 msgid "Rename"
 msgstr ""
 
@@ -213,7 +213,7 @@ msgid "Change color"
 msgstr ""
 
 #: /app/src/devicesController.js:356 /app/src/devicesController.js:1029
-#: /app/src/favoritesController.js:619 /app/templates/navigation/index.php:19
+#: /app/src/favoritesController.js:620 /app/templates/navigation/index.php:19
 msgid "Export"
 msgstr ""
 
@@ -320,36 +320,36 @@ msgstr ""
 msgid "Failed to load favorite share token"
 msgstr ""
 
-#: /app/src/favoritesController.js:592 /app/src/script.js:631
+#: /app/src/favoritesController.js:593 /app/src/script.js:631
 #: /app/templates/navigation/index.php:6
 msgid "Add a favorite"
 msgstr ""
 
-#: /app/src/favoritesController.js:604
+#: /app/src/favoritesController.js:605
 msgid "Share link"
 msgstr ""
 
-#: /app/src/favoritesController.js:605
+#: /app/src/favoritesController.js:606
 msgid "Copy link"
 msgstr ""
 
-#: /app/src/favoritesController.js:606
+#: /app/src/favoritesController.js:607
 msgid "Copied!"
 msgstr ""
 
-#: /app/src/favoritesController.js:631
+#: /app/src/favoritesController.js:632
 msgid "Category deleted"
 msgstr ""
 
-#: /app/src/favoritesController.js:694
+#: /app/src/favoritesController.js:695
 msgid "Failed to rename category"
 msgstr ""
 
-#: /app/src/favoritesController.js:722
+#: /app/src/favoritesController.js:723
 msgid "Failed to delete category favorites"
 msgstr ""
 
-#: /app/src/favoritesController.js:774
+#: /app/src/favoritesController.js:775
 msgid "Click on the map to add a favorite, press ESC to cancel"
 msgstr ""
 
@@ -382,28 +382,28 @@ msgstr ""
 msgid "Failed to edit favorite"
 msgstr ""
 
-#: /app/src/favoritesController.js:1195
+#: /app/src/favoritesController.js:1202
 msgid "Click on the map to move the favorite, press ESC to cancel"
 msgstr ""
 
-#: /app/src/favoritesController.js:1245
+#: /app/src/favoritesController.js:1252
 msgid "Favorites exported in {path}"
 msgstr ""
 
-#: /app/src/favoritesController.js:1250
+#: /app/src/favoritesController.js:1257
 msgid "Failed to export favorites"
 msgstr ""
 
-#: /app/src/favoritesController.js:1268 /app/src/filetypes.js:31
+#: /app/src/favoritesController.js:1275 /app/src/filetypes.js:31
 msgid "{nb} favorites imported from {path}"
 msgstr ""
 
-#: /app/src/favoritesController.js:1279
+#: /app/src/favoritesController.js:1286
 msgid ""
 "Warning: tracks or routes were found in imported files, they were ignored."
 msgstr ""
 
-#: /app/src/favoritesController.js:1285 /app/src/filetypes.js:35
+#: /app/src/favoritesController.js:1292 /app/src/filetypes.js:35
 msgid "Failed to import favorites"
 msgstr ""
 

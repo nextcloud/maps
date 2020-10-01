@@ -1642,7 +1642,7 @@ import { brify, getUrlParameter, formatAddress } from './utils';
                 select: function (e, ui) {
                     var it = ui.item;
                     if (it.type === 'coordinate') {
-                        that.map.setView([it.lat, it.lng], 15);
+                        mapController.displaySearchResult([it.result]);
                     }
                     if (it.type === 'favorite') {
                         that.map.setView([it.lat, it.lng], 15);
@@ -1780,7 +1780,7 @@ import { brify, getUrlParameter, formatAddress } from './utils';
                     if (isCoordinateSearch && !results[i].maps_type) {
                         const label = results[i].display_name + ' (' + searchString + ')'
                         newData.push({
-                            type: results[i].maps_type ?? 'address',
+                            type: 'address',
                             label: label,
                             value: label,
                             result: results[i],
@@ -1789,9 +1789,9 @@ import { brify, getUrlParameter, formatAddress } from './utils';
                         });
                     } else if (isCoordinateSearch && results[i].maps_type) {
                         newData.push({
-                            type: results[i].maps_type ?? 'address',
+                            type: results[i].maps_type,
                             label: results[i].display_name,
-                            value: "geo:"+results[i].lat+","+results[i].lon,
+                            value: 'geo:' + results[i].lat + ',' + results[i].lon,
                             result: results[i],
                             lat: results[i].lat,
                             lng: results[i].lon

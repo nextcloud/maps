@@ -22,7 +22,7 @@ OC.L10N.register(
     "Failed to save settings" : "Fallo al guardar la configuración",
     "There are no contacts to zoom on" : "No hay contactos sobre los que hacer zoom",
     "Not grouped" : "No agrupado",
-    "Zoom to bounds" : "Zum a bordes",
+    "Zoom to bounds" : "Zoom a bordes",
     "Home" : "Inicio",
     "Work" : "Trabajo",
     "Delete this address" : "Eliminar esta dirección",

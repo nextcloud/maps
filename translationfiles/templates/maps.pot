@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Nextcloud 3.14159\n"
 "Report-Msgid-Bugs-To: translations\\@example.com\n"
-"POT-Creation-Date: 2020-10-01 02:53+0000\n"
+"POT-Creation-Date: 2020-10-02 02:43+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -320,7 +320,7 @@ msgstr ""
 msgid "Failed to load favorite share token"
 msgstr ""
 
-#: /app/src/favoritesController.js:593 /app/src/script.js:631
+#: /app/src/favoritesController.js:593 /app/src/script.js:636
 #: /app/templates/navigation/index.php:6
 msgid "Add a favorite"
 msgstr ""
@@ -481,418 +481,426 @@ msgstr ""
 msgid "Failed to reset photos coordinates"
 msgstr ""
 
-#: /app/src/script.js:220
+#: /app/src/script.js:221
 msgid "Geo link ({geoLink}) copied to clipboard"
 msgstr ""
 
-#: /app/src/script.js:245
+#: /app/src/script.js:246
 msgid "Failed to save option values"
 msgstr ""
 
-#: /app/src/script.js:266
+#: /app/src/script.js:267
 msgid ""
 "Media scan was not done yet. Wait a few minutes/hours and reload this page "
 "to see your photos/tracks."
 msgstr ""
 
-#: /app/src/script.js:307
+#: /app/src/script.js:308
 msgid "Improve this map"
 msgstr ""
 
-#: /app/src/script.js:502
+#: /app/src/script.js:503
 msgid "Failed to restore options values"
 msgstr ""
 
-#: /app/src/script.js:635
+#: /app/src/script.js:640
 msgid "Place photos"
 msgstr ""
 
-#: /app/src/script.js:639
+#: /app/src/script.js:644
 msgid "Place contact"
 msgstr ""
 
-#: /app/src/script.js:643
+#: /app/src/script.js:648
 msgid "Share this location"
 msgstr ""
 
-#: /app/src/script.js:647
+#: /app/src/script.js:652
 msgid "Route from here"
 msgstr ""
 
-#: /app/src/script.js:651
+#: /app/src/script.js:656
 msgid "Add route point"
 msgstr ""
 
-#: /app/src/script.js:655
+#: /app/src/script.js:660
 msgid "Route to here"
 msgstr ""
 
-#: /app/src/script.js:718
+#: /app/src/script.js:723
 msgid "Current location"
 msgstr ""
 
-#: /app/src/script.js:739
+#: /app/src/script.js:744
 msgid "Other maps"
 msgstr ""
 
-#: /app/src/script.js:779
+#: /app/src/script.js:784
 msgid "Satellite map"
 msgstr ""
 
-#: /app/src/script.js:791
+#: /app/src/script.js:796
 msgid "Street map"
 msgstr ""
 
-#: /app/src/script.js:874
+#: /app/src/script.js:879
 msgid "north"
 msgstr ""
 
-#: /app/src/script.js:875
+#: /app/src/script.js:880
 msgid "northeast"
 msgstr ""
 
-#: /app/src/script.js:876
+#: /app/src/script.js:881
 msgid "east"
 msgstr ""
 
-#: /app/src/script.js:877
+#: /app/src/script.js:882
 msgid "southeast"
 msgstr ""
 
-#: /app/src/script.js:878
+#: /app/src/script.js:883
 msgid "south"
 msgstr ""
 
-#: /app/src/script.js:879
+#: /app/src/script.js:884
 msgid "southwest"
 msgstr ""
 
-#: /app/src/script.js:880
+#: /app/src/script.js:885
 msgid "west"
 msgstr ""
 
-#: /app/src/script.js:881
+#: /app/src/script.js:886
 msgid "northwest"
 msgstr ""
 
-#: /app/src/script.js:882
+#: /app/src/script.js:887
 msgid "slight right"
 msgstr ""
 
-#: /app/src/script.js:883
+#: /app/src/script.js:888
 msgid "right"
 msgstr ""
 
-#: /app/src/script.js:884
+#: /app/src/script.js:889
 msgid "sharp right"
 msgstr ""
 
-#: /app/src/script.js:885
+#: /app/src/script.js:890
 msgid "slight left"
 msgstr ""
 
-#: /app/src/script.js:886
+#: /app/src/script.js:891
 msgid "left"
 msgstr ""
 
-#: /app/src/script.js:887
+#: /app/src/script.js:892
 msgid "sharp left"
 msgstr ""
 
-#: /app/src/script.js:888 /app/src/script.js:897
+#: /app/src/script.js:893 /app/src/script.js:902
 msgid "Turn around"
 msgstr ""
 
-#: /app/src/script.js:893
+#: /app/src/script.js:898
 msgid "Head {dir}"
 msgstr ""
 
-#: /app/src/script.js:893
+#: /app/src/script.js:898
 msgid " on {road}"
 msgstr ""
 
-#: /app/src/script.js:895
+#: /app/src/script.js:900
 msgid "Continue {dir}"
 msgstr ""
 
-#: /app/src/script.js:899
+#: /app/src/script.js:904
 msgid "Waypoint reached"
 msgstr ""
 
-#: /app/src/script.js:901
+#: /app/src/script.js:906
 msgid "Take the {exitStr} exit in the roundabout"
 msgstr ""
 
-#: /app/src/script.js:901 /app/src/script.js:904 /app/src/script.js:905
-#: /app/src/script.js:906 /app/src/script.js:907 /app/src/script.js:908
+#: /app/src/script.js:906 /app/src/script.js:909 /app/src/script.js:910
+#: /app/src/script.js:911 /app/src/script.js:912 /app/src/script.js:913
 msgid " onto {road}"
 msgstr ""
 
-#: /app/src/script.js:903
+#: /app/src/script.js:908
 msgid "Destination reached"
 msgstr ""
 
-#: /app/src/script.js:904
+#: /app/src/script.js:909
 msgid "At the fork, turn {modifier}"
 msgstr ""
 
-#: /app/src/script.js:905
+#: /app/src/script.js:910
 msgid "Merge {modifier}"
 msgstr ""
 
-#: /app/src/script.js:906
+#: /app/src/script.js:911
 msgid "Turn {modifier} on the ramp"
 msgstr ""
 
-#: /app/src/script.js:907
+#: /app/src/script.js:912
 msgid "Take the ramp on the {modifier}"
 msgstr ""
 
-#: /app/src/script.js:908
+#: /app/src/script.js:913
 msgid "Turn {modifier} at the end of the road"
 msgstr ""
 
-#: /app/src/script.js:909
+#: /app/src/script.js:914
 msgid "onto {road}"
 msgstr ""
 
-#: /app/src/script.js:912
+#: /app/src/script.js:917
 msgid "Start"
 msgstr ""
 
-#: /app/src/script.js:913
+#: /app/src/script.js:918
 msgid "Via {viaNumber}"
 msgstr ""
 
-#: /app/src/script.js:914
+#: /app/src/script.js:919
 msgid "Destination"
 msgstr ""
 
-#: /app/src/script.js:920
+#: /app/src/script.js:925
 msgid "m"
 msgstr ""
 
-#: /app/src/script.js:921
+#: /app/src/script.js:926
 msgid "km"
 msgstr ""
 
-#: /app/src/script.js:922
+#: /app/src/script.js:927
 msgid "yd"
 msgstr ""
 
-#: /app/src/script.js:923
+#: /app/src/script.js:928
 msgid "mi"
 msgstr ""
 
-#: /app/src/script.js:924
+#: /app/src/script.js:929
 msgid "h"
 msgstr ""
 
-#: /app/src/script.js:925
+#: /app/src/script.js:930
 msgid "min"
 msgstr ""
 
-#: /app/src/script.js:926
+#: /app/src/script.js:931
 msgid "s"
 msgstr ""
 
-#: /app/src/script.js:930
+#: /app/src/script.js:935
 msgid "By car (OSRM demo)"
 msgstr ""
 
-#: /app/src/script.js:988
+#: /app/src/script.js:993
 msgid "By car (OSRM)"
 msgstr ""
 
-#: /app/src/script.js:992
+#: /app/src/script.js:997
 msgid "By bike (OSRM)"
 msgstr ""
 
-#: /app/src/script.js:996
+#: /app/src/script.js:1001
 msgid "By foot (OSRM)"
 msgstr ""
 
-#: /app/src/script.js:1000
+#: /app/src/script.js:1005
 msgid "By bike (Mapbox)"
 msgstr ""
 
-#: /app/src/script.js:1001
+#: /app/src/script.js:1006
 msgid "By foot (Mapbox)"
 msgstr ""
 
-#: /app/src/script.js:1002
+#: /app/src/script.js:1007
 msgid "By car with traffic (Mapbox)"
 msgstr ""
 
-#: /app/src/script.js:1003
+#: /app/src/script.js:1008
 msgid "By car without traffic (Mapbox)"
 msgstr ""
 
-#: /app/src/script.js:1012
+#: /app/src/script.js:1017
 msgid "By car (GraphHopper)"
 msgstr ""
 
-#: /app/src/script.js:1013
+#: /app/src/script.js:1018
 msgid "By bike (GraphHopper)"
 msgstr ""
 
-#: /app/src/script.js:1014
+#: /app/src/script.js:1019
 msgid "By Foot (GraphHopper)"
 msgstr ""
 
-#: /app/src/script.js:1081
+#: /app/src/script.js:1086
 msgid "Routing is currently disabled."
 msgstr ""
 
-#: /app/src/script.js:1082
+#: /app/src/script.js:1087
 msgid "Add a routing service"
 msgstr ""
 
-#: /app/src/script.js:1088
+#: /app/src/script.js:1093
 msgid "Export current route to GPX"
 msgstr ""
 
-#: /app/src/script.js:1177
+#: /app/src/script.js:1182
 msgid "Routing error:"
 msgstr ""
 
-#: /app/src/script.js:1254
+#: /app/src/script.js:1259
 msgid "Route exported in {path}"
 msgstr ""
 
-#: /app/src/script.js:1258
+#: /app/src/script.js:1263
 msgid "Failed to export current route"
 msgstr ""
 
-#: /app/src/script.js:1262
+#: /app/src/script.js:1267
 msgid "There is no route to export"
 msgstr ""
 
-#: /app/src/script.js:1756
+#: /app/src/script.js:1769
 msgid "No search result"
 msgstr ""
 
-#: /app/src/script.js:1792
+#: /app/src/script.js:1825
 msgid "No {POItypeName} found"
 msgstr ""
 
-#: /app/src/script.js:1804 /app/src/script.js:1805
+#: /app/src/script.js:1837 /app/src/script.js:1838
 msgid "My location"
 msgstr ""
 
-#: /app/src/script.js:1811
+#: /app/src/script.js:1844
 msgid "Restaurant"
 msgstr ""
 
-#: /app/src/script.js:1816
+#: /app/src/script.js:1849
 msgid "Fast food"
 msgstr ""
 
-#: /app/src/script.js:1821
+#: /app/src/script.js:1854
 msgid "Bar"
 msgstr ""
 
-#: /app/src/script.js:1826
+#: /app/src/script.js:1859
 msgid "Supermarket"
 msgstr ""
 
-#: /app/src/script.js:1831
+#: /app/src/script.js:1864
 msgid "Cafe"
 msgstr ""
 
-#: /app/src/script.js:1836
+#: /app/src/script.js:1869
 msgid "Library"
 msgstr ""
 
-#: /app/src/script.js:1841
+#: /app/src/script.js:1874
 msgid "School"
 msgstr ""
 
-#: /app/src/script.js:1846
+#: /app/src/script.js:1879
 msgid "Sports centre"
 msgstr ""
 
-#: /app/src/script.js:1851
+#: /app/src/script.js:1884
 msgid "Gas station"
 msgstr ""
 
-#: /app/src/script.js:1856
+#: /app/src/script.js:1889
 msgid "Parking"
 msgstr ""
 
-#: /app/src/script.js:1861
+#: /app/src/script.js:1894
 msgid "Bicycle parking"
 msgstr ""
 
-#: /app/src/script.js:1866
+#: /app/src/script.js:1899
 msgid "Car rental"
 msgstr ""
 
-#: /app/src/script.js:1871
+#: /app/src/script.js:1904
 msgid "ATM"
 msgstr ""
 
-#: /app/src/script.js:1876
+#: /app/src/script.js:1909
 msgid "Pharmacy"
 msgstr ""
 
-#: /app/src/script.js:1881
+#: /app/src/script.js:1914
 msgid "Cinema"
 msgstr ""
 
-#: /app/src/script.js:1886
+#: /app/src/script.js:1919
 msgid "Public toilets"
 msgstr ""
 
-#: /app/src/script.js:1891
+#: /app/src/script.js:1924
 msgid "Drinking water"
 msgstr ""
 
-#: /app/src/script.js:1896
+#: /app/src/script.js:1929
 msgid "Hospital"
 msgstr ""
 
-#: /app/src/script.js:1901
+#: /app/src/script.js:1934
 msgid "Doctors"
 msgstr ""
 
-#: /app/src/script.js:1906
+#: /app/src/script.js:1939
 msgid "Dentist"
 msgstr ""
 
-#: /app/src/script.js:1911
+#: /app/src/script.js:1944
 msgid "Hotel"
 msgstr ""
 
-#: /app/src/script.js:2043 /app/src/script.js:2132
+#: /app/src/script.js:1963
+msgid "Point at {coords}"
+msgstr ""
+
+#: /app/src/script.js:2093 /app/src/script.js:2180 /app/src/script.js:2198
 msgid "Add to favorites"
 msgstr ""
 
-#: /app/src/script.js:2045 /app/src/script.js:2134
+#: /app/src/script.js:2095 /app/src/script.js:2182 /app/src/script.js:2200
 msgid "Add contact address"
 msgstr ""
 
-#: /app/src/script.js:2059
+#: /app/src/script.js:2109
 msgid "Open"
 msgstr ""
 
-#: /app/src/script.js:2061
+#: /app/src/script.js:2111
 msgid "closes in {nb} minutes"
 msgstr ""
 
-#: /app/src/script.js:2064
+#: /app/src/script.js:2114
 msgid "until {date}"
 msgstr ""
 
-#: /app/src/script.js:2068
+#: /app/src/script.js:2118
 msgid "Closed"
 msgstr ""
 
-#: /app/src/script.js:2069
+#: /app/src/script.js:2119
 msgid "opens at {date}"
 msgstr ""
 
-#: /app/src/script.js:2129
+#: /app/src/script.js:2178
+msgid "Point encoded in: "
+msgstr ""
+
+#: /app/src/script.js:2195
 msgid "This place"
 msgstr ""
 

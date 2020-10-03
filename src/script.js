@@ -77,7 +77,9 @@ import { brify, getUrlParameter, formatAddress } from './utils';
 
     $(function() {
         // avoid sidebar to appear when grabing map to the right
-        OC.disallowNavigationBarSlideGesture();
+        if (OC.disallowNavigationBarSlideGesture) {
+            OC.disallowNavigationBarSlideGesture();
+        }
         if (window.isSecureContext && window.navigator.registerProtocolHandler) {
             window.navigator.registerProtocolHandler('geo', generateUrl('/apps/maps/openGeoLink/') + '%s', 'Nextcloud Maps');
         }

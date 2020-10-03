@@ -5,6 +5,11 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
+## 0.1.8 – 2020-10-03
+### Fixed
+- controllers not being declared soon enough in some cases
+- OC.disallowNavigationBarSlideGesture being absent in some cases
+
 ## 0.1.7 – 2020-10-01
 ### Added
 - favorite sharing by public link

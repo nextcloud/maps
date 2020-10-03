@@ -64,140 +64,6 @@ import TracksController from './tracksController';
 import { brify, getUrlParameter, formatAddress } from './utils';
 
 (function($, OC) {
-    // TODO: remove when we have a proper fileinfo standalone library
-    // original scripts are loaded from
-    // https://github.com/nextcloud/server/blob/5bf3d1bb384da56adbf205752be8f840aac3b0c5/lib/private/legacy/template.php#L120-L122
-    window.addEventListener('DOMContentLoaded', () => {
-        if (!window.OCA.Files) {
-            window.OCA.Files = {}
-        }
-        // register unused client for the sidebar to have access to its parser methods
-        Object.assign(window.OCA.Files, { App: { fileList: { filesClient: OC.Files.getClient() } } }, window.OCA.Files)
-    })
-
-    $(function() {
-        // avoid sidebar to appear when grabing map to the right
-        if (OC.disallowNavigationBarSlideGesture) {
-            OC.disallowNavigationBarSlideGesture();
-        }
-        if (window.isSecureContext && window.navigator.registerProtocolHandler) {
-            window.navigator.registerProtocolHandler('geo', generateUrl('/apps/maps/openGeoLink/') + '%s', 'Nextcloud Maps');
-        }
-        mapController.initMap();
-        mapController.map.favoritesController = favoritesController;
-        favoritesController.initFavorites(mapController.map);
-        photosController.initLayer(mapController.map);
-        nonLocalizedPhotosController.initLayer(mapController.map);
-        mapController.map.photosController = photosController;
-        contactsController.initLayer(mapController.map);
-        mapController.map.contactsController = contactsController;
-        tracksController.initController(mapController.map);
-        tracksController.map.tracksController = tracksController;
-        devicesController.initController(mapController.map);
-        mapController.map.devicesController = devicesController;
-        searchController.initController(mapController.map);
-
-        // once controllers have been set/initialized, we can restore option values from server
-        optionsController.restoreOptions();
-        geoLinkController.showLinkLocation();
-
-        // Popup
-        $(document).on('click', '#opening-hours-header', function() {
-            $('#opening-hours-table').toggle();
-            $('#opening-hours-table-toggle-expand').toggle();
-            $('#opening-hours-table-toggle-collapse').toggle();
-        });
-
-        document.onkeydown = function (e) {
-            e = e || window.event;
-            if (e.key === 'Escape') {
-                if (favoritesController.addFavoriteMode) {
-                    favoritesController.leaveAddFavoriteMode();
-                }
-                if (favoritesController.movingFavoriteId !== null) {
-                    favoritesController.leaveMoveFavoriteMode();
-                }
-                if (contactsController.movingBookid !== null) {
-                    contactsController.leaveMoveContactMode();
-                }
-                if (photosController.movingPhotoPath !== null) {
-                    photosController.leaveMovePhotoMode();
-                }
-            }
-        };
-        window.onclick = function(event) {
-            if (event.button === 0) {
-                $('.leaflet-control-layers').hide();
-                $('.easy-button-container').show();
-                if (!event.target.matches('.app-navigation-entry-utils-menu-button button')) {
-                    $('.app-navigation-entry-menu.open').removeClass('open');
-                }
-                mapController.map.contextmenu.hide();
-            }
-        };
-
-        $('#display-slider').click(function(e) {
-            optionsController.saveOptionValues({displaySlider: $(this).is(':checked')});
-            if ($(this).is(':checked')) {
-                $('#timeRangeSlider').show();
-            }
-            else {
-                $('#timeRangeSlider').hide();
-            }
-        });
-
-        // click on menu buttons
-        $('body').on('click',
-            '.routingMenuButton, .favoritesMenuButton, .categoryMenuButton, .photosMenuButton, .contactsMenuButton, ' +
-            '.contactGroupMenuButton, ' +
-            '.nonLocalizedPhotosMenuButton, .devicesMenuButton, .deviceMenuButton, .tracksMenuButton, .trackMenuButton',
-            function(e) {
-            var menu = $(this).parent().parent().parent().find('> .app-navigation-entry-menu');
-            var wasOpen = menu.hasClass('open');
-            $('.app-navigation-entry-menu.open').removeClass('open');
-            if (!wasOpen) {
-                menu.addClass('open');
-                mapController.map.clickpopup = true;
-            }
-        });
-        // right click on entry line
-        $('body').on('contextmenu',
-            '#navigation-routing > .app-navigation-entry-utils, #navigation-routing > a, ' +
-            '#navigation-favorites > .app-navigation-entry-utils, #navigation-favorites > a, ' +
-            '.category-line > a, .category-line > .app-navigation-entry-utils, ' +
-            '#navigation-devices > .app-navigation-entry-utils, #navigation-devices > a, ' +
-            '.device-line > a, .device-line > .app-navigation-entry-utils, ' +
-            '#navigation-tracks > .app-navigation-entry-utils, #navigation-tracks > a, ' +
-            '.track-line > a, .track-line > .app-navigation-entry-utils, ' +
-            '#navigation-nonLocalizedPhotos > .app-navigation-entry-utils, #navigation-nonLocalizedPhotos > a, ' +
-            '#navigation-contacts > .app-navigation-entry-utils, #navigation-contacts > a, ' +
-            '.contact-group-line > a, .contact-group-line > .app-navigation-entry-utils, ' +
-            '#navigation-photos > .app-navigation-entry-utils, #navigation-photos > a ',
-            function(e) {
-            var menu = $(this).parent().find('> .app-navigation-entry-menu');
-            var wasOpen = menu.hasClass('open');
-            $('.app-navigation-entry-menu.open').removeClass('open');
-            if (!wasOpen) {
-                menu.addClass('open');
-                mapController.map.clickpopup = true;
-            }
-            return false;
-        });
-        // right click on expand icon
-        $('body').on('contextmenu', '#navigation-favorites, #navigation-photos, #navigation-devices, #navigation-tracks', function(e) {
-            var id = $(e.target).attr('id');
-            if (e.target.tagName === 'LI' && (id === 'navigation-favorites' || id === 'navigation-photos' || id === 'navigation-devices' || id === 'navigation-tracks')) {
-                var menu = $(this).find('> .app-navigation-entry-menu');
-                var wasOpen = menu.hasClass('open');
-                $('.app-navigation-entry-menu.open').removeClass('open');
-                if (!wasOpen) {
-                    menu.addClass('open');
-                }
-                return false;
-            }
-        });
-    });
-
     var geoLinkController = {
         marker: null,
         lat: null,
@@ -2238,6 +2104,140 @@ import { brify, getUrlParameter, formatAddress } from './utils';
             return url.replace(/^(?:\w+:|)\/\/(?:www\.|)(.*[^\/])\/*$/, '$1');
         }
     };
+
+    // TODO: remove when we have a proper fileinfo standalone library
+    // original scripts are loaded from
+    // https://github.com/nextcloud/server/blob/5bf3d1bb384da56adbf205752be8f840aac3b0c5/lib/private/legacy/template.php#L120-L122
+    window.addEventListener('DOMContentLoaded', () => {
+        if (!window.OCA.Files) {
+            window.OCA.Files = {}
+        }
+        // register unused client for the sidebar to have access to its parser methods
+        Object.assign(window.OCA.Files, { App: { fileList: { filesClient: OC.Files.getClient() } } }, window.OCA.Files)
+    })
+
+    $(function() {
+        // avoid sidebar to appear when grabing map to the right
+        if (OC.disallowNavigationBarSlideGesture) {
+            OC.disallowNavigationBarSlideGesture();
+        }
+        if (window.isSecureContext && window.navigator.registerProtocolHandler) {
+            window.navigator.registerProtocolHandler('geo', generateUrl('/apps/maps/openGeoLink/') + '%s', 'Nextcloud Maps');
+        }
+        mapController.initMap();
+        mapController.map.favoritesController = favoritesController;
+        favoritesController.initFavorites(mapController.map);
+        photosController.initLayer(mapController.map);
+        nonLocalizedPhotosController.initLayer(mapController.map);
+        mapController.map.photosController = photosController;
+        contactsController.initLayer(mapController.map);
+        mapController.map.contactsController = contactsController;
+        tracksController.initController(mapController.map);
+        tracksController.map.tracksController = tracksController;
+        devicesController.initController(mapController.map);
+        mapController.map.devicesController = devicesController;
+        searchController.initController(mapController.map);
+
+        // once controllers have been set/initialized, we can restore option values from server
+        optionsController.restoreOptions();
+        geoLinkController.showLinkLocation();
+
+        // Popup
+        $(document).on('click', '#opening-hours-header', function() {
+            $('#opening-hours-table').toggle();
+            $('#opening-hours-table-toggle-expand').toggle();
+            $('#opening-hours-table-toggle-collapse').toggle();
+        });
+
+        document.onkeydown = function (e) {
+            e = e || window.event;
+            if (e.key === 'Escape') {
+                if (favoritesController.addFavoriteMode) {
+                    favoritesController.leaveAddFavoriteMode();
+                }
+                if (favoritesController.movingFavoriteId !== null) {
+                    favoritesController.leaveMoveFavoriteMode();
+                }
+                if (contactsController.movingBookid !== null) {
+                    contactsController.leaveMoveContactMode();
+                }
+                if (photosController.movingPhotoPath !== null) {
+                    photosController.leaveMovePhotoMode();
+                }
+            }
+        };
+        window.onclick = function(event) {
+            if (event.button === 0) {
+                $('.leaflet-control-layers').hide();
+                $('.easy-button-container').show();
+                if (!event.target.matches('.app-navigation-entry-utils-menu-button button')) {
+                    $('.app-navigation-entry-menu.open').removeClass('open');
+                }
+                mapController.map.contextmenu.hide();
+            }
+        };
+
+        $('#display-slider').click(function(e) {
+            optionsController.saveOptionValues({displaySlider: $(this).is(':checked')});
+            if ($(this).is(':checked')) {
+                $('#timeRangeSlider').show();
+            }
+            else {
+                $('#timeRangeSlider').hide();
+            }
+        });
+
+        // click on menu buttons
+        $('body').on('click',
+            '.routingMenuButton, .favoritesMenuButton, .categoryMenuButton, .photosMenuButton, .contactsMenuButton, ' +
+            '.contactGroupMenuButton, ' +
+            '.nonLocalizedPhotosMenuButton, .devicesMenuButton, .deviceMenuButton, .tracksMenuButton, .trackMenuButton',
+            function(e) {
+            var menu = $(this).parent().parent().parent().find('> .app-navigation-entry-menu');
+            var wasOpen = menu.hasClass('open');
+            $('.app-navigation-entry-menu.open').removeClass('open');
+            if (!wasOpen) {
+                menu.addClass('open');
+                mapController.map.clickpopup = true;
+            }
+        });
+        // right click on entry line
+        $('body').on('contextmenu',
+            '#navigation-routing > .app-navigation-entry-utils, #navigation-routing > a, ' +
+            '#navigation-favorites > .app-navigation-entry-utils, #navigation-favorites > a, ' +
+            '.category-line > a, .category-line > .app-navigation-entry-utils, ' +
+            '#navigation-devices > .app-navigation-entry-utils, #navigation-devices > a, ' +
+            '.device-line > a, .device-line > .app-navigation-entry-utils, ' +
+            '#navigation-tracks > .app-navigation-entry-utils, #navigation-tracks > a, ' +
+            '.track-line > a, .track-line > .app-navigation-entry-utils, ' +
+            '#navigation-nonLocalizedPhotos > .app-navigation-entry-utils, #navigation-nonLocalizedPhotos > a, ' +
+            '#navigation-contacts > .app-navigation-entry-utils, #navigation-contacts > a, ' +
+            '.contact-group-line > a, .contact-group-line > .app-navigation-entry-utils, ' +
+            '#navigation-photos > .app-navigation-entry-utils, #navigation-photos > a ',
+            function(e) {
+            var menu = $(this).parent().find('> .app-navigation-entry-menu');
+            var wasOpen = menu.hasClass('open');
+            $('.app-navigation-entry-menu.open').removeClass('open');
+            if (!wasOpen) {
+                menu.addClass('open');
+                mapController.map.clickpopup = true;
+            }
+            return false;
+        });
+        // right click on expand icon
+        $('body').on('contextmenu', '#navigation-favorites, #navigation-photos, #navigation-devices, #navigation-tracks', function(e) {
+            var id = $(e.target).attr('id');
+            if (e.target.tagName === 'LI' && (id === 'navigation-favorites' || id === 'navigation-photos' || id === 'navigation-devices' || id === 'navigation-tracks')) {
+                var menu = $(this).find('> .app-navigation-entry-menu');
+                var wasOpen = menu.hasClass('open');
+                $('.app-navigation-entry-menu.open').removeClass('open');
+                if (!wasOpen) {
+                    menu.addClass('open');
+                }
+                return false;
+            }
+        });
+    });
 
 })(jQuery, OC);
 

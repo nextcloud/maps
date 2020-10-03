@@ -200,6 +200,7 @@ OC.L10N.register(
     "Doctors" : "Médecins",
     "Dentist" : "Dentiste",
     "Hotel" : "Hôtel",
+    "Point at {coords}" : "Point au {coords}",
     "Add to favorites" : "Ajouter aux favoris",
     "Add contact address" : "Ajouter une adresse au contact",
     "Open" : "Ouvert",

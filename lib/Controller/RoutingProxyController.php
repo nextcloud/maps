@@ -134,6 +134,7 @@ class RoutingProxyController extends Controller {
      *
      * @NoAdminRequired
      * @NoCSRFRequired
+     * @UserRateThrottle(limit=20, period=60)
      */
     public function requestGraphHopperRoute(string $path): Response {
         $url = $this->config->getAppValue(
@@ -148,6 +149,7 @@ class RoutingProxyController extends Controller {
      *
      * @NoAdminRequired
      * @NoCSRFRequired
+     * @UserRateThrottle(limit=20, period=60)
      */
     public function requestMapboxRoute(string $path): Response {
         $url = 'https://api.mapbox.com/directions/v5';

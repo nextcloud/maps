@@ -208,6 +208,7 @@ OC.L10N.register(
     "until {date}" : "jusqu'au {date}",
     "Closed" : "Fermé",
     "opens at {date}" : "ouvre le {date}",
+    "Point encoded in: " : "Point encodé en:",
     "This place" : "Ce lieu",
     "Failed to get favorites" : "Impossible de récupérer les favoris",
     "Failed to create favorite" : "Impossible de créer le favori",

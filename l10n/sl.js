@@ -163,6 +163,7 @@ OC.L10N.register(
     "Failed to export current route" : "Izvoz trenutne poti je spodletel",
     "There is no route to export" : "Ni še vpisane poti za izvoz",
     "No search result" : "Ni zadetkov iskanja",
+    "No {POItypeName} found" : "Ni najdene vrste točke {POItypeName} ",
     "My location" : "Trenutno mesto",
     "Restaurant" : "Restavracija",
     "Fast food" : "Hitra hrana",

@@ -80,7 +80,7 @@ OC.L10N.register(
     "Favorite name" : "Favoriten-Name",
     "Move" : "Verschieben",
     "Failed to delete favorite" : "Favorit konnte nicht gelöscht werden",
-    "Failed to edit favorite" : "Bearbeiten der Favoriten fehlgeschlagen",
+    "Failed to edit favorite" : "Bearbeiten des Favoriten fehlgeschlagen",
     "Click on the map to move the favorite, press ESC to cancel" : "Klicken Sie auf die Karte, um den Favoriten zu verschieben oder drücken Sie ESC, um abzubrechen",
     "Favorites exported in {path}" : "Favoriten nach {path} exportiert",
     "Failed to export favorites" : "Export der Favoriten fehlgeschlagen",

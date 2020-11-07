@@ -224,7 +224,7 @@ OC.L10N.register(
     "Latitude" : "Breitengrad",
     "Longitude" : "Längengrad",
     "Description" : "Beschreibung",
-    "Symbol name" : "Symbolname",
+    "Symbol name" : "Name des Symbols",
     "download" : "Herunterladen",
     "metadata link" : "Metadaten-Link",
     "tracks/routes name list" : "Liste mit Namen von Strecken/Routen",
@@ -285,7 +285,7 @@ OC.L10N.register(
     "Settings" : "Einstellungen",
     "Track my position" : "Meine Position aufzeichnen",
     "Display time filter slider" : "Zeitfilter Schieberegler anzeigen",
-    "Keep in mind that map projections always distort sizes of countries. The standard Mercator projection is particularly biased. Read more at:" : "Beachte, dass Kartenprojektionen die tatsächliche Größe der Länder verzerren. Die Mercator-Standardprojektion ist besonders verzerrt. Weitere Infos hier:",
+    "Keep in mind that map projections always distort sizes of countries. The standard Mercator projection is particularly biased. Read more at:" : "Beachte, dass Kartenprojektionen die tatsächliche Größe der Länder verzerren. Die Mercator-Standardprojektion ist besonders verzerrt. Weitere Infos findest Du hier:",
     "The True Size of Africa" : "Die wahre Größe Afrikas"
 },
 "nplurals=2; plural=(n != 1);");

@@ -1,7 +1,7 @@
 /**
- * @copyright Copyright (c) 2019, Paul Schwörer <hello@paulschwoerer.de>
+ * @copyright Copyright (c) 2020, Julien Veyssier <eneiluj@posteo.net>
  *
- * @author Paul Schwörer <hello@paulschwoerer.de>
+ * @author Julien Veyssier <eneiluj@posteo.net>
  *
  * @license GNU AGPL version 3 or any later version
  *
@@ -21,22 +21,22 @@
  */
 
 import Vue from 'vue'
-import { Icon } from 'leaflet'
+import App from './views/App.vue'
+import './bootstrap'
+import optionsController from './optionsController'
 
-Vue.prototype.t = window.t
-Vue.prototype.n = window.n
-Vue.prototype.OC = window.OC
-Vue.prototype.OCA = window.OCA
+// eslint-disable-next-line
+'use strict'
 
-/* if (process && process.env.NODE_ENV === 'development') {
-	Vue.config.devtools = true
-} */
-
-// this part resolve an issue where the markers would not appear
-delete Icon.Default.prototype._getIconUrl
-
-Icon.Default.mergeOptions({
-	iconRetinaUrl: require('leaflet/dist/images/marker-icon-2x.png'),
-	iconUrl: require('leaflet/dist/images/marker-icon.png'),
-	shadowUrl: require('leaflet/dist/images/marker-shadow.png'),
+document.addEventListener('DOMContentLoaded', (event) => {
+	optionsController.restoreOptions(main)
 })
+
+function main() {
+	console.debug('exec main')
+	// eslint-disable-next-line
+	new Vue({
+		el: '#content',
+		render: h => h(App),
+	})
+}

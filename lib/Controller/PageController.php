@@ -56,7 +56,7 @@ class PageController extends Controller {
 
         $params = array('user' => $this->userId);
         $this->initialStateService->provideInitialState($this->appName, 'photos', $this->config->getAppValue('photos', 'enabled', 'no') === 'yes');
-        $response = new TemplateResponse('maps', 'index', $params);
+        $response = new TemplateResponse('maps', 'main', $params);
 
         $this->addCsp($response);
 

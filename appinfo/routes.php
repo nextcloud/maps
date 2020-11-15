@@ -16,7 +16,7 @@ return [
 
 
         // utils
-        ['name' => 'utils#getOptionsValues', 'url' => '/getOptionsValues', 'verb' => 'POST'],
+        ['name' => 'utils#getOptionsValues', 'url' => '/getOptionsValues', 'verb' => 'GET'],
         ['name' => 'utils#saveOptionValue', 'url' => '/saveOptionValue', 'verb' => 'POST'],
         ['name' => 'utils#setRoutingSettings', 'url' => '/setRoutingSettings', 'verb' => 'POST'],
 

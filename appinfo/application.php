@@ -22,7 +22,9 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 
 class Application extends App {
-    public function __construct (array $urlParams=array()) {
+    public const APP_ID = 'maps';
+
+    public function __construct (array $urlParams = array()) {
         parent::__construct('maps', $urlParams);
 
         $container = $this->getContainer();

@@ -20,6 +20,10 @@
  *
  */
 
+import { generateUrl } from '@nextcloud/router'
+import { showInfo } from '@nextcloud/dialogs'
+import axios from '@nextcloud/axios'
+
 export const getPublicShareCategory = () => {
 	const el = document.querySelector('.header-appname')
 
@@ -43,7 +47,7 @@ export const getCurrentPublicShareToken = () => {
 
 export const publicApiRequest = (slug, method, data = null) => {
 	return request(
-		OC.generateUrl(
+		generateUrl(
 			`/apps/maps/api/1.0/public/${getCurrentPublicShareToken()}/${slug}`
 		),
 		method,
@@ -53,7 +57,7 @@ export const publicApiRequest = (slug, method, data = null) => {
 
 export const apiRequest = (slug, method, data = null) => {
 	return request(
-		OC.generateUrl(`apps/maps/api/1.0/${getCurrentPublicShareToken()}/${slug}`),
+		generateUrl(`apps/maps/api/1.0/${getCurrentPublicShareToken()}/${slug}`),
 		method,
 		data
 	)
@@ -61,19 +65,18 @@ export const apiRequest = (slug, method, data = null) => {
 
 // TODO: Use axios or similar instead of jQuery ajax
 export const request = (url, method, data = null) => {
-	return new Promise((resolve, reject) => {
-		$.ajax({
-			url: url,
-			type: method.toUpperCase(),
-			data,
-			async: true,
-		})
-			.done(resolve)
-			.fail(reject)
-	})
+	const upMethod = method.toUpperCase()
+	if (upMethod === 'GET') {
+		return axios.get(url, { params: data })
+	} else if (upMethod === 'POST') {
+		return axios.post(url, data)
+	} else if (upMethod === 'PUT') {
+		return axios.put(url, data)
+	} else if (upMethod === 'DELETE') {
+		return axios.delete(url, data)
+	}
 }
 
-// TODO: Use non-deprecated function
 export const showNotification = message => {
-	OC.Notification.showTemporary(t('maps', message))
+	showInfo(t('maps', message))
 }

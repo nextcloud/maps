@@ -54,7 +54,7 @@ class AdminSettings implements ISettings {
             $parameters[$k] = $v;
         }
 
-        return new TemplateResponse('maps', 'adminSettings', $parameters, '');
+        return new TemplateResponse('maps', 'maps-adminSettings', $parameters, '');
     }
 
     /**

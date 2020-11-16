@@ -18,23 +18,34 @@
 					@update:bounds="onUpdateBounds"
 					@baselayerchange="onBaselayerchange">
 					<LControlZoom position="bottomright" />
-					<LControlLayers
-						position="bottomright"
-						:collapsed="true" />
 					<LControlScale
 						position="bottomleft"
 						:imperial="mapOptions.scaleControlShouldUseImperial"
 						:metric="!mapOptions.scaleControlShouldUseImperial" />
+					<LControlLayers
+						position="bottomright"
+						:collapsed="true" />
 					<LTileLayer
-						v-for="l in layers"
-						:key="l.id"
-						:visible="activeLayerName === l.name"
+						v-for="(l, lid) in allBaseLayers"
+						:key="lid"
+						:visible="activeLayerId === lid"
+						:url="l.url"
+						:attribution="l.attribution"
+						:name="l.name"
+						:layer-type="l.type"
+						:tile-layer-class="l.tileLayerClass"
+						:options="l.options"
+						:opacity="1" />
+					<LTileLayer
+						v-for="(l, lid) in allOverlayLayers"
+						:key="lid"
+						:visible="['Watercolor', 'ESRI'].includes(activeLayerId) && lid === 'Roads Overlay'"
 						:url="l.url"
 						:attribution="l.attribution"
 						:name="l.name"
 						:layer-type="l.type"
 						:options="l.options"
-						:opacity="l.type === 'overlay' ? l.opacity : 1" />
+						:opacity="l.opacity" />
 				</LMap>
 			</div>
 			<Actions
@@ -64,9 +75,13 @@ import Actions from '@nextcloud/vue/dist/Components/Actions'
 	latLngBounds,
 } from 'leaflet' */
 import L from 'leaflet'
+import 'mapbox-gl/dist/mapbox-gl'
+import 'mapbox-gl-leaflet/leaflet-mapbox-gl'
 import {
 	// LayerIds,
 	Layers,
+	baseLayersByName,
+	overlayLayersByName,
 } from '../data/mapLayers'
 import { LControlScale, LControlZoom, LMap, LTileLayer, LControlLayers } from 'vue2-leaflet'
 
@@ -91,7 +106,11 @@ export default {
 
 	data() {
 		return {
-			activeLayerName: 'Open Street Map',
+			allBaseLayers: {},
+			allOverlayLayers: {},
+			defaultStreetLayer: 'Open Street Map',
+			defaultSatelliteLayer: 'ESRI',
+			activeLayerId: null,
 			streetButton: null,
 			satelliteButton: null,
 			showExtraLayers: false,
@@ -135,6 +154,103 @@ export default {
 			// this.activeSidebarTab = 'project-settings'
 		},
 		onMapReady(map) {
+			// tile layers
+			this.allBaseLayers = baseLayersByName
+			this.allOverlayLayers = overlayLayersByName
+
+			// detect Webgl
+			const canvas = document.createElement('canvas')
+			// let experimental = false
+			let gl
+
+			try {
+				gl = canvas.getContext('webgl')
+			} catch (x) {
+				gl = null
+			}
+
+			if (gl == null) {
+				try {
+					gl = canvas.getContext('experimental-webgl')
+					// experimental = true
+				} catch (x) { gl = null }
+			}
+
+			const optionsValues = optionsController.optionValues
+			if ('mapboxAPIKEY' in optionsValues && optionsValues.mapboxAPIKEY !== '' && gl !== null) {
+				// wrapper to make tile layer component correctly pass arguments
+				L.myMapboxGL = function(url, options) {
+					return new L.MapboxGL(options)
+				}
+
+				this.defaultStreetLayer = 'Mapbox vector streets'
+				this.defaultSatelliteLayer = 'Mapbox satellite'
+
+				// add mapbox-gl tile servers
+				const attrib = '<a href="https://www.mapbox.com/about/maps/">© Mapbox</a> '
+					+ '<a href="https://www.openstreetmap.org/copyright">© OpenStreetMap</a> '
+					+ '<a href="https://www.mapbox.com/map-feedback/">' + t('maps', 'Improve this map') + '</a>'
+				const attribSat = attrib + '<a href="https://www.digitalglobe.com/">© DigitalGlobe</a>'
+
+				this.allOverlayLayers = {}
+				this.allBaseLayers = {
+					'Mapbox vector streets': {
+						name: 'Mapbox vector streets',
+						type: 'base',
+						attribution: attrib,
+						tileLayerClass: L.myMapboxGL,
+						options: {
+							accessToken: optionsValues.mapboxAPIKEY,
+							style: 'mapbox://styles/mapbox/streets-v8',
+							minZoom: 1,
+							maxZoom: 22,
+							attribution: attrib,
+						},
+					},
+					Topographic: {
+						name: 'Topographic',
+						type: 'base',
+						attribution: attrib,
+						tileLayerClass: L.myMapboxGL,
+						options: {
+							accessToken: optionsValues.mapboxAPIKEY,
+							style: 'mapbox://styles/mapbox/outdoors-v11',
+							minZoom: 1,
+							maxZoom: 22,
+							attribution: attrib,
+						},
+					},
+					'Mapbox satellite': {
+						name: 'Mapbox satellite',
+						type: 'base',
+						attribution: attrib,
+						tileLayerClass: L.myMapboxGL,
+						options: {
+							accessToken: optionsValues.mapboxAPIKEY,
+							style: 'mapbox://styles/mapbox/satellite-streets-v9',
+							minZoom: 1,
+							maxZoom: 22,
+							attribution: attribSat,
+						},
+					},
+					'Mapbox dark': {
+						name: 'Mapbox dark',
+						type: 'base',
+						attribution: attrib,
+						tileLayerClass: L.myMapboxGL,
+						options: {
+							accessToken: optionsValues.mapboxAPIKEY,
+							style: 'mapbox://styles/mapbox/dark-v8',
+							minZoom: 1,
+							maxZoom: 22,
+							attribution: attrib,
+						},
+					},
+					Watercolor: baseLayersByName.Watercolor,
+				}
+			}
+
+			// LAYER BUTTONS
 			this.streetButton = L.easyButton({
 				position: 'bottomright',
 				states: [{
@@ -142,7 +258,7 @@ export default {
 					icon: '<a class="icon icon-osm" style="height: 100%"> </a>',
 					title: t('maps', 'Street map'),
 					onClick: (btn, map) => {
-						this.activeLayerName = 'Open Street Map'
+						this.activeLayerId = this.defaultStreetLayer
 						btn.button.parentElement.classList.add('hidden')
 						this.satelliteButton.button.parentElement.classList.remove('hidden')
 					},
@@ -157,7 +273,7 @@ export default {
 					icon: '<a class="icon icon-esri" style="height: 100%"> </a>',
 					title: t('maps', 'Satellite map'),
 					onClick: (btn, map) => {
-						this.activeLayerName = 'ESRI'
+						this.activeLayerId = this.defaultSatelliteLayer
 						btn.button.parentElement.classList.add('hidden')
 						this.streetButton.button.parentElement.classList.remove('hidden')
 					},
@@ -166,16 +282,29 @@ export default {
 			this.satelliteButton.addTo(map)
 
 			this.streetButton.button.parentElement.classList.add('hidden')
+
+			// initial selected layer, restore or fallback to default street
+			if (optionsController.optionValues.tileLayer in this.allBaseLayers) {
+				this.activeLayerId = optionsController.optionValues.tileLayer
+			} else {
+				this.activeLayerId = this.defaultStreetLayer
+			}
 		},
 		onBaselayerchange(e) {
 			console.debug(e)
-			this.activeLayerName = e.name
-			if (e.name === 'Open Street Map') {
+			this.activeLayerId = e.name
+			if (e.name === this.defaultStreetLayer) {
 				this.streetButton.button.parentElement.classList.add('hidden')
 				this.satelliteButton.button.parentElement.classList.remove('hidden')
 			} else {
 				this.streetButton.button.parentElement.classList.remove('hidden')
 				this.satelliteButton.button.parentElement.classList.add('hidden')
+			}
+			optionsController.saveOptionValues({ tileLayer: this.activeLayerId })
+
+			// take care of max zoom issue
+			if (e.layer.options.maxZoom) {
+				e.layer._map.setMaxZoom(e.layer.options.maxZoom)
 			}
 		},
 		onUpdateBounds(b) {

@@ -58,7 +58,7 @@
     "ua-parser-js": "^0.7.20",
     "vue": "^2.6.12",
     "vue-types": "^2.0.1",
-    "vue2-leaflet": "^2.5.2",
+    "vue2-leaflet": "^2.6.0",
     "vue2-leaflet-markercluster": "^3.1.0",
     "vuex": "^3.5.1"
   },

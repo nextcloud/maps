@@ -67,6 +67,7 @@ export default {
 				this.nbRouters++
 			}
 			if (this.nbRouters === 0 && !OC.isUserAdmin()) {
+				// TODO
 				// // disable routing and hide it to the user
 				// // search bar
 				// $('#route-submit').hide();
@@ -82,6 +83,8 @@ export default {
 			}
 		},
 		initRoutingControl() {
+			const optionsValues = optionsController.optionValues
+
 			this.beginIcon = L.divIcon({
 				iconAnchor: [12, 25],
 				className: 'route-waypoint route-begin-waypoint',
@@ -207,8 +210,120 @@ export default {
 				.on('routingstart', this.onRoutingStart)
 				.on('routesfound', this.onRoutingEnd)
 
+			// add routers from options values
+			let nbRoutersAdded = 0
+			if ('osrmCarURL' in optionsValues && optionsValues.osrmCarURL !== '') {
+				this.addRouter('osrmCar', '🚗 ' + t('maps', 'By car (OSRM)'), optionsValues.osrmCarURL, null)
+				nbRoutersAdded++
+			}
+			if ('osrmBikeURL' in optionsValues && optionsValues.osrmBikeURL !== '') {
+				this.addRouter('osrmBike', '🚲 ' + t('maps', 'By bike (OSRM)'), optionsValues.osrmBikeURL, null)
+				nbRoutersAdded++
+			}
+			if ('osrmFootURL' in optionsValues && optionsValues.osrmFootURL !== '') {
+				this.addRouter('osrmFoot', '🚶 ' + t('maps', 'By foot (OSRM)'), optionsValues.osrmFootURL, null)
+				nbRoutersAdded++
+			}
+			if ('mapboxAPIKEY' in optionsValues && optionsValues.mapboxAPIKEY !== '') {
+				this.addRouter('mapbox/cycling', '🚲 ' + t('maps', 'By bike (Mapbox)'), null, optionsValues.mapboxAPIKEY)
+				this.addRouter('mapbox/walking', '🚶 ' + t('maps', 'By foot (Mapbox)'), null, optionsValues.mapboxAPIKEY)
+				this.addRouter('mapbox/driving-traffic', '🚗 ' + t('maps', 'By car with traffic (Mapbox)'), null, optionsValues.mapboxAPIKEY)
+				this.addRouter('mapbox/driving', '🚗 ' + t('maps', 'By car without traffic (Mapbox)'), null, optionsValues.mapboxAPIKEY)
+				nbRoutersAdded++
+			}
+			if (('graphhopperURL' in optionsValues && optionsValues.graphhopperURL !== '')
+				|| ('graphhopperAPIKEY' in optionsValues && optionsValues.graphhopperAPIKEY !== '')) {
+				let apikey
+				if ('graphhopperAPIKEY' in optionsValues && optionsValues.graphhopperAPIKEY !== '') {
+					apikey = optionsValues.graphhopperAPIKEY
+				}
+				this.addRouter('graphhopperCar', '🚗 ' + t('maps', 'By car (GraphHopper)'), optionsValues.graphhopperURL, apikey)
+				this.addRouter('graphhopperBike', '🚲 ' + t('maps', 'By bike (GraphHopper)'), optionsValues.graphhopperURL, apikey)
+				this.addRouter('graphhopperFoot', '🚶 ' + t('maps', 'By Foot (GraphHopper)'), optionsValues.graphhopperURL, apikey)
+				nbRoutersAdded++
+			}
+			if (nbRoutersAdded === 0 && 'osrmDEMO' in optionsValues && optionsValues.osrmDEMO === '1') {
+				this.addRouter('osrmDEMO', '🚗 ' + 'By car (OSRM demo)', null, null)
+			} else {
+				delete this.routers.osrmDEMO
+			}
+			if ('selectedRouter' in optionsValues && optionsValues.selectedRouter !== '') {
+				this.selectedRouter = optionsValues.selectedRouter
+				this.setRouter(optionsValues.selectedRouter)
+			} else {
+				let fallback = null
+				for (const type in this.routers) {
+					fallback = type
+					if (fallback) {
+						break
+					}
+				}
+				this.setRouter(fallback)
+			}
+
 			if (this.visible) {
 				this.control.addTo(this.map)
+			}
+		},
+		addRouter(type, name, url, apikey) {
+			if (type === 'graphhopperBike' || type === 'graphhopperCar' || type === 'graphhopperFoot') {
+				const options = {}
+				if (type === 'graphhopperCar') {
+					options.urlParameters = {
+						// available ones : car, foot, bike, bike2, mtb, racingbike, motorcycle
+						vehicle: 'car',
+					}
+				} else if (type === 'graphhopperBike') {
+					options.urlParameters = {
+						vehicle: 'bike',
+					}
+				} else if (type === 'graphhopperFoot') {
+					options.urlParameters = {
+						vehicle: 'foot',
+					}
+				}
+				if (url) {
+					options.serviceUrl = url
+				}
+				this.routers[type] = {
+					name,
+					router: L.Routing.graphHopper(apikey, options),
+				}
+			} else if (type === 'osrmBike' || type === 'osrmCar' || type === 'osrmFoot') {
+				const options = {
+					serviceUrl: url,
+					suppressDemoServerWarning: true,
+					// this makes OSRM use our local translations
+					// otherwise it uses osrm-text-instructions which requires to import another lib
+					stepToText(e) {
+					},
+				}
+				if (type === 'osrmCar') {
+					options.profile = 'car'
+				} else if (type === 'osrmBike') {
+					options.profile = 'bicycle'
+				} else if (type === 'osrmFoot') {
+					options.profile = 'foot'
+				}
+				this.routers[type] = {
+					name,
+					router: L.Routing.osrmv1(options),
+				}
+			} else if (type === 'mapbox/cycling' || type === 'mapbox/driving-traffic' || type === 'mapbox/driving' || type === 'mapbox/walking') {
+				const options = {
+					profile: type,
+				}
+				this.routers[type] = {
+					name,
+					router: L.Routing.mapbox(apikey, options),
+				}
+			}
+		},
+		setRouter(routerType) {
+			if (routerType in this.routers) {
+				const router = this.routers[routerType].router
+				this.control._router = router
+				this.control.options.router = router
 			}
 		},
 		createMarker(i, wpt, n) {
@@ -236,7 +351,10 @@ export default {
 		},
 
 		onRoutingStart(e) {
-			document.querySelector('.leaflet-routing-reverse-waypoints').classList.add('icon-loading-small')
+			const rev = document.querySelector('.leaflet-routing-reverse-waypoints')
+			if (rev) {
+				rev.classList.add('icon-loading-small')
+			}
 			this.$emit('routing-start')
 		},
 
@@ -249,7 +367,10 @@ export default {
 			// just in case routingstart is triggered again (weird):
 			setTimeout(() => {
 				// $('.leaflet-routing-reverse-waypoints').removeClass('icon-loading-small');
-				document.querySelector('.leaflet-routing-reverse-waypoints').classList.remove('icon-loading-small')
+				const rev = document.querySelector('.leaflet-routing-reverse-waypoints')
+				if (rev) {
+					rev.classList.remove('icon-loading-small')
+				}
 			}, 5000)
 			this.$emit('routing-end')
 		},
@@ -276,6 +397,15 @@ export default {
 					select.appendChild(option)
 				}
 
+				// select router
+				select.addEventListener('change', (e) => {
+					const type = e.target.value
+					this.selectedRouter = type
+					this.setRouter(type)
+					optionsController.saveOptionValues({ selectedRouter: type })
+					this.control.route()
+				})
+
 				const close = document.createElement('button')
 				close.classList.add('icon-close')
 				close.setAttribute('id', 'routing-close')
@@ -284,7 +414,7 @@ export default {
 				document.querySelector('.leaflet-routing-container').prepend(close)
 				document.querySelector('.leaflet-routing-geocoders').appendChild(select)
 
-				if (optionsController.nbRouters === 0 && OC.isUserAdmin()) {
+				if (this.nbRouters === 0 && OC.isUserAdmin()) {
 					const p = document.createElement('p')
 					p.textContent = t('maps', 'Routing is currently disabled.')
 					const a = document.createElement('a')
@@ -308,7 +438,13 @@ export default {
 
 				select.parentNode.insertBefore(exportButton, select.nextSibling)
 				exportButton.style.display = 'none'
+
+				// export
+				exportButton.addEventListener('click', this.exportRoute)
 			}
+		},
+		exportRoute() {
+			console.debug('EXPORT route, TODO')
 		},
 	},
 }

@@ -291,6 +291,7 @@ export default {
 						this.activeLayerId = this.defaultSatelliteLayer
 						btn.button.parentElement.classList.add('hidden')
 						this.streetButton.button.parentElement.classList.remove('hidden')
+						this.showRouting = !this.showRouting
 					},
 				}],
 			})

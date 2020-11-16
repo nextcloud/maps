@@ -40,7 +40,7 @@
     "@nextcloud/dialogs": "^3.0.0",
     "@nextcloud/l10n": "^1.4.1",
     "d3": "^3.5.17",
-    "leaflet": "^1.7.1",
+    "leaflet": "1.5.1",
     "leaflet-contextmenu": "^1.4.0",
     "leaflet-control-geocoder": "^1.13.0",
     "leaflet-easybutton": "^2.4.0",

@@ -17,6 +17,10 @@
 					@ready="onMapReady"
 					@update:bounds="onUpdateBounds"
 					@baselayerchange="onBaselayerchange">
+					<RoutingControl v-if="map"
+						:map="map"
+						:visible="showRouting"
+						@close="onRoutingClose" />
 					<LControlZoom position="bottomright" />
 					<LControlScale
 						position="bottomleft"
@@ -66,6 +70,7 @@
 </template>
 
 <script>
+import { getLocale } from '@nextcloud/l10n'
 import Content from '@nextcloud/vue/dist/Components/Content'
 import AppContent from '@nextcloud/vue/dist/Components/AppContent'
 import Actions from '@nextcloud/vue/dist/Components/Actions'
@@ -88,6 +93,7 @@ import { LControlScale, LControlZoom, LMap, LTileLayer, LControlLayers } from 'v
 import 'leaflet-easybutton/src/easy-button'
 import 'leaflet-easybutton/src/easy-button.css'
 
+import RoutingControl from '../components/map/RoutingControl'
 import optionsController from '../optionsController'
 
 export default {
@@ -102,10 +108,13 @@ export default {
 		LControlZoom,
 		LControlLayers,
 		LTileLayer,
+		RoutingControl,
 	},
 
 	data() {
 		return {
+			locale: getLocale(),
+			map: null,
 			allBaseLayers: {},
 			allOverlayLayers: {},
 			defaultStreetLayer: 'Open Street Map',
@@ -114,6 +123,7 @@ export default {
 			streetButton: null,
 			satelliteButton: null,
 			showExtraLayers: false,
+			showRouting: false,
 			mapOptions: {
 				center: [0, 0],
 				zoom: 2,
@@ -154,6 +164,10 @@ export default {
 			// this.activeSidebarTab = 'project-settings'
 		},
 		onMapReady(map) {
+			this.initLayers(map)
+			this.map = map
+		},
+		initLayers(map) {
 			// tile layers
 			this.allBaseLayers = baseLayersByName
 			this.allOverlayLayers = overlayLayersByName
@@ -261,6 +275,7 @@ export default {
 						this.activeLayerId = this.defaultStreetLayer
 						btn.button.parentElement.classList.add('hidden')
 						this.satelliteButton.button.parentElement.classList.remove('hidden')
+						this.showRouting = !this.showRouting
 					},
 				}],
 			})
@@ -291,7 +306,6 @@ export default {
 			}
 		},
 		onBaselayerchange(e) {
-			console.debug(e)
 			this.activeLayerId = e.name
 			if (e.name === this.defaultStreetLayer) {
 				this.streetButton.button.parentElement.classList.add('hidden')
@@ -310,6 +324,9 @@ export default {
 		onUpdateBounds(b) {
 			const boundsStr = b.getNorth() + ';' + b.getSouth() + ';' + b.getEast() + ';' + b.getWest()
 			optionsController.saveOptionValues({ mapBounds: boundsStr })
+		},
+		onRoutingClose() {
+			this.showRouting = false
 		},
 	},
 }

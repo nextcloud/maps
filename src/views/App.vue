@@ -28,7 +28,7 @@
 						:metric="!mapOptions.scaleControlShouldUseImperial" />
 					<LControlLayers
 						position="bottomright"
-						:collapsed="true" />
+						:collapsed="false" />
 					<LTileLayer
 						v-for="(l, lid) in allBaseLayers"
 						:key="lid"
@@ -120,6 +120,7 @@ export default {
 			defaultStreetLayer: 'Open Street Map',
 			defaultSatelliteLayer: 'ESRI',
 			activeLayerId: null,
+			layersButton: null,
 			streetButton: null,
 			satelliteButton: null,
 			showExtraLayers: false,
@@ -149,6 +150,12 @@ export default {
 	},
 
 	created() {
+		window.onclick = (event) => {
+			if (event.button === 0) {
+				document.querySelector('.leaflet-control-layers').style.display = 'none'
+				this.layersButton.button.parentElement.classList.remove('hidden')
+			}
+		}
 	},
 	mounted() {
 		// subscribe('nextcloud:unified-search.search', this.filter)
@@ -265,6 +272,20 @@ export default {
 			}
 
 			// LAYER BUTTONS
+			this.layersButton = L.easyButton({
+				position: 'bottomright',
+				states: [{
+					stateName: 'no-importa',
+					icon: '<a class="icon icon-menu" style="height: 100%"> </a>',
+					title: t('maps', 'Other maps'),
+					onClick(btn, map) {
+						document.querySelector('.leaflet-control-layers').style.display = 'block'
+						btn.button.parentElement.classList.add('hidden')
+					},
+				}],
+			})
+			this.layersButton.addTo(map)
+
 			this.streetButton = L.easyButton({
 				position: 'bottomright',
 				states: [{
@@ -305,6 +326,8 @@ export default {
 			} else {
 				this.activeLayerId = this.defaultStreetLayer
 			}
+
+			document.querySelector('.leaflet-control-layers').style.display = 'none'
 		},
 		onBaselayerchange(e) {
 			this.activeLayerId = e.name
@@ -321,6 +344,9 @@ export default {
 			if (e.layer.options.maxZoom) {
 				e.layer._map.setMaxZoom(e.layer.options.maxZoom)
 			}
+			// buttons/control visibility
+			document.querySelector('.leaflet-control-layers').style.display = 'none'
+			this.layersButton.button.parentElement.classList.remove('hidden')
 		},
 		onUpdateBounds(b) {
 			const boundsStr = b.getNorth() + ';' + b.getSouth() + ';' + b.getEast() + ';' + b.getWest()

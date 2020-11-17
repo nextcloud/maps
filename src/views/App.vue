@@ -1,8 +1,6 @@
 <template>
 	<Content app-name="maps">
-		<!--MapsNavigation
-			@project-clicked="onProjectClicked"
-			@save-option="onSaveOption" /-->
+		<MapsNavigation />
 		<AppContent>
 			<div id="app-content-wrapper">
 				<LMap
@@ -94,6 +92,7 @@ import 'leaflet-easybutton/src/easy-button'
 import 'leaflet-easybutton/src/easy-button.css'
 
 import RoutingControl from '../components/map/RoutingControl'
+import MapsNavigation from '../components/MapsNavigation'
 import optionsController from '../optionsController'
 
 export default {
@@ -109,6 +108,7 @@ export default {
 		LControlLayers,
 		LTileLayer,
 		RoutingControl,
+		MapsNavigation,
 	},
 
 	data() {

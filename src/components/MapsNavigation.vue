@@ -3,11 +3,7 @@
 		<template slot="list">
 			<h2 v-if="loading"
 				class="icon-loading-small loading-icon" />
-			<EmptyContent v-if="true"
-				icon="icon-address">
-				{{ t('maps', 'Nothing yet') }}
-			</EmptyContent>
-			<!--AppNavigationPhotoItem /-->
+			<slot name="items" />
 		</template>
 		<template slot="footer">
 			<AppNavigationSettings>
@@ -28,11 +24,9 @@
 
 <script>
 import ClickOutside from 'vue-click-outside'
-// import AppNavigationPhotoItem from './AppNavigationPhotoItem'
 
 import AppNavigation from '@nextcloud/vue/dist/Components/AppNavigation'
 import AppNavigationSettings from '@nextcloud/vue/dist/Components/AppNavigationSettings'
-import EmptyContent from '@nextcloud/vue/dist/Components/EmptyContent'
 import ActionCheckbox from '@nextcloud/vue/dist/Components/ActionCheckbox'
 
 import optionsController from '../optionsController'
@@ -47,10 +41,8 @@ import * as network from '../network' */
 export default {
 	name: 'MapsNavigation',
 	components: {
-		// AppNavigationPhotoItem,
 		AppNavigation,
 		AppNavigationSettings,
-		EmptyContent,
 		ActionCheckbox,
 	},
 	directives: {

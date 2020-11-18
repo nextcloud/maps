@@ -1,6 +1,12 @@
 <template>
 	<Content app-name="maps">
-		<MapsNavigation />
+		<MapsNavigation>
+			<template #items>
+				<AppNavigationContactsItem
+					:selected="true"
+					@contacts-clicked="onContactsClicked" />
+			</template>
+		</MapsNavigation>
 		<AppContent>
 			<div id="app-content-wrapper">
 				<LMap
@@ -82,7 +88,7 @@ import 'mapbox-gl/dist/mapbox-gl'
 import 'mapbox-gl-leaflet/leaflet-mapbox-gl'
 import {
 	// LayerIds,
-	Layers,
+	// Layers,
 	baseLayersByName,
 	overlayLayersByName,
 } from '../data/mapLayers'
@@ -93,6 +99,7 @@ import 'leaflet-easybutton/src/easy-button.css'
 
 import RoutingControl from '../components/map/RoutingControl'
 import MapsNavigation from '../components/MapsNavigation'
+import AppNavigationContactsItem from '../components/AppNavigationContactsItem'
 import optionsController from '../optionsController'
 
 export default {
@@ -109,6 +116,7 @@ export default {
 		LTileLayer,
 		RoutingControl,
 		MapsNavigation,
+		AppNavigationContactsItem,
 	},
 
 	data() {
@@ -144,9 +152,6 @@ export default {
 	},
 
 	computed: {
-		layers() {
-			return Layers
-		},
 	},
 
 	created() {
@@ -360,6 +365,9 @@ export default {
 		},
 		onRoutingClose() {
 			this.showRouting = false
+		},
+		onContactsClicked() {
+			console.debug('contacts item clicked')
 		},
 	},
 }

@@ -154,6 +154,8 @@ export default {
 			if (event.button === 0) {
 				document.querySelector('.leaflet-control-layers').style.display = 'none'
 				this.layersButton.button.parentElement.classList.remove('hidden')
+				this.streetButton.button.parentElement.classList.remove('hidden')
+				this.satelliteButton.button.parentElement.classList.remove('hidden')
 			}
 		}
 	},
@@ -278,9 +280,11 @@ export default {
 					stateName: 'no-importa',
 					icon: '<a class="icon icon-menu" style="height: 100%"> </a>',
 					title: t('maps', 'Other maps'),
-					onClick(btn, map) {
+					onClick: (btn, map) => {
 						document.querySelector('.leaflet-control-layers').style.display = 'block'
 						btn.button.parentElement.classList.add('hidden')
+						this.streetButton.button.parentElement.classList.add('hidden')
+						this.satelliteButton.button.parentElement.classList.add('hidden')
 					},
 				}],
 			})
@@ -294,8 +298,8 @@ export default {
 					title: t('maps', 'Street map'),
 					onClick: (btn, map) => {
 						this.activeLayerId = this.defaultStreetLayer
-						btn.button.parentElement.classList.add('hidden')
-						this.satelliteButton.button.parentElement.classList.remove('hidden')
+						btn.button.parentElement.classList.add('behind')
+						this.satelliteButton.button.parentElement.classList.remove('behind')
 						this.showRouting = !this.showRouting
 					},
 				}],
@@ -310,15 +314,15 @@ export default {
 					title: t('maps', 'Satellite map'),
 					onClick: (btn, map) => {
 						this.activeLayerId = this.defaultSatelliteLayer
-						btn.button.parentElement.classList.add('hidden')
-						this.streetButton.button.parentElement.classList.remove('hidden')
+						btn.button.parentElement.classList.add('behind')
+						this.streetButton.button.parentElement.classList.remove('behind')
 						this.showRouting = !this.showRouting
 					},
 				}],
 			})
 			this.satelliteButton.addTo(map)
 
-			this.streetButton.button.parentElement.classList.add('hidden')
+			this.streetButton.button.parentElement.classList.add('behind')
 
 			// initial selected layer, restore or fallback to default street
 			if (optionsController.optionValues.tileLayer in this.allBaseLayers) {
@@ -332,11 +336,11 @@ export default {
 		onBaselayerchange(e) {
 			this.activeLayerId = e.name
 			if (e.name === this.defaultStreetLayer) {
-				this.streetButton.button.parentElement.classList.add('hidden')
-				this.satelliteButton.button.parentElement.classList.remove('hidden')
+				this.streetButton.button.parentElement.classList.add('behind')
+				this.satelliteButton.button.parentElement.classList.remove('behind')
 			} else {
-				this.streetButton.button.parentElement.classList.remove('hidden')
-				this.satelliteButton.button.parentElement.classList.add('hidden')
+				this.streetButton.button.parentElement.classList.remove('behind')
+				this.satelliteButton.button.parentElement.classList.add('behind')
 			}
 			optionsController.saveOptionValues({ tileLayer: this.activeLayerId })
 
@@ -347,6 +351,8 @@ export default {
 			// buttons/control visibility
 			document.querySelector('.leaflet-control-layers').style.display = 'none'
 			this.layersButton.button.parentElement.classList.remove('hidden')
+			this.streetButton.button.parentElement.classList.remove('hidden')
+			this.satelliteButton.button.parentElement.classList.remove('hidden')
 		},
 		onUpdateBounds(b) {
 			const boundsStr = b.getNorth() + ';' + b.getSouth() + ';' + b.getEast() + ';' + b.getWest()
@@ -387,6 +393,10 @@ export default {
 ::v-deep .icon-esri {
 	background:  url('./../../css/images/esri.jpg');
 	background-size: 35px;
+}
+
+::v-deep .easy-button-container.behind {
+	display: none;
 }
 
 ::v-deep .easy-button-container.hidden {

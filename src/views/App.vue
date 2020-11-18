@@ -503,4 +503,9 @@ export default {
 ::v-deep .easy-button-container.hidden {
 	display: none;
 }
+
+::v-deep .leaflet-marker-contact {
+	width: 40px !important;
+	height: 40px !important;
+}
 </style>

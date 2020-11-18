@@ -1,16 +1,17 @@
 <template>
 	<AppNavigationItem
-		icon="icon-group"
-		:title="'toto'"
-		:class="{selected: selected}"
+		:icon="loading ? 'icon-loading-small' : 'icon-group'"
+		:title="t('maps', 'My contacts')"
+		:class="{ 'item-disabled': !selected }"
 		:allow-collapse="true"
 		:open="open"
 		:force-menu="false"
-		@click="onContactsClick">
-		<template slot="counter">
-			332
+		@click="onContactsClick"
+		@update:open="onUpdateOpen">
+		<template v-if="selected" slot="counter">
+			{{ contacts.length }}
 		</template>
-		<template slot="actions">
+		<template v-if="selected" slot="actions">
 			<ActionButton
 				icon="icon-checkmark"
 				@click="onToggleAllClick">
@@ -25,16 +26,16 @@
 		</template>
 		<template #default>
 			<AppNavigationItem
-				v-for="g in groups"
-				:key="g"
+				v-for="(g, gid) in groups"
+				:key="gid"
 				icon="icon-group"
-				:title="g"
-				:class="{}"
+				:title="g.name"
+				:class="{ 'subitem-disabled': !g.enabled }"
 				:allow-collapse="false"
 				:force-menu="false"
-				@click="onGroupClick(g)">
+				@click="onGroupClick(gid)">
 				<template slot="counter">
-					12
+					{{ g.counter }}
 				</template>
 				<template slot="actions">
 					<ActionButton
@@ -52,6 +53,7 @@
 <script>
 import AppNavigationItem from '@nextcloud/vue/dist/Components/AppNavigationItem'
 import ActionButton from '@nextcloud/vue/dist/Components/ActionButton'
+import optionsController from '../optionsController'
 
 export default {
 	name: 'AppNavigationContactsItem',
@@ -66,12 +68,23 @@ export default {
 			type: Boolean,
 			required: true,
 		},
+		loading: {
+			type: Boolean,
+			default: false,
+		},
+		contacts: {
+			type: Array,
+			required: true,
+		},
+		groups: {
+			type: Object,
+			required: true,
+		},
 	},
 
 	data() {
 		return {
-			open: true,
-			groups: ['aa', 'bb'],
+			open: optionsController.optionValues?.contactGroupListShow === 'true',
 		}
 	},
 
@@ -81,7 +94,15 @@ export default {
 
 	methods: {
 		onContactsClick() {
+			if (!this.selected && !this.open) {
+				this.open = true
+				optionsController.saveOptionValues({ contactGroupListShow: 'true' })
+			}
 			this.$emit('contacts-clicked')
+		},
+		onUpdateOpen(isOpen) {
+			this.open = isOpen
+			optionsController.saveOptionValues({ contactGroupListShow: isOpen ? 'true' : 'false' })
 		},
 		onToggleAllClick() {
 
@@ -92,9 +113,19 @@ export default {
 		onZoomGroupClick() {
 
 		},
-		onGroupClick() {
-
+		onGroupClick(groupName) {
+			this.$emit('group-clicked', groupName)
 		},
 	},
 }
 </script>
+
+<style lang="scss" scoped>
+.item-disabled {
+	opacity: 0.5;
+}
+
+.subitem-disabled {
+	opacity: 0.5;
+}
+</style>

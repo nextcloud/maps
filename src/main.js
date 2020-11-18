@@ -33,7 +33,6 @@ document.addEventListener('DOMContentLoaded', (event) => {
 })
 
 function main() {
-	console.debug('exec main')
 	// eslint-disable-next-line
 	new Vue({
 		el: '#content',

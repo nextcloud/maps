@@ -25,3 +25,8 @@ export function getOptionValues() {
 	const url = generateUrl('/apps/maps/getOptionsValues')
 	return axios.get(url)
 }
+
+export function getContacts() {
+	const url = generateUrl('/apps/maps/contacts')
+	return axios.get(url)
+}

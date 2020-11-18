@@ -3,8 +3,12 @@
 		<MapsNavigation>
 			<template #items>
 				<AppNavigationContactsItem
-					:selected="true"
-					@contacts-clicked="onContactsClicked" />
+					:selected="contactsEnabled"
+					:loading="contactsLoading"
+					:contacts="contacts"
+					:groups="contactGroups"
+					@contacts-clicked="onContactsClicked"
+					@group-clicked="onContactGroupClicked" />
 			</template>
 		</MapsNavigation>
 		<AppContent>
@@ -54,6 +58,10 @@
 						:layer-type="l.type"
 						:options="l.options"
 						:opacity="l.opacity" />
+					<ContactsLayer
+						v-if="contactsEnabled"
+						:contacts="contacts"
+						:groups="contactGroups" />
 				</LMap>
 			</div>
 			<Actions
@@ -98,9 +106,12 @@ import 'leaflet-easybutton/src/easy-button'
 import 'leaflet-easybutton/src/easy-button.css'
 
 import RoutingControl from '../components/map/RoutingControl'
+import ContactsLayer from '../components/map/ContactsLayer'
 import MapsNavigation from '../components/MapsNavigation'
 import AppNavigationContactsItem from '../components/AppNavigationContactsItem'
 import optionsController from '../optionsController'
+import * as network from '../network'
+import { showError } from '@nextcloud/dialogs'
 
 export default {
 	name: 'App',
@@ -117,22 +128,15 @@ export default {
 		RoutingControl,
 		MapsNavigation,
 		AppNavigationContactsItem,
+		ContactsLayer,
 	},
 
 	data() {
 		return {
 			locale: getLocale(),
+			optionValues: optionsController.optionValues,
+			// map
 			map: null,
-			allBaseLayers: {},
-			allOverlayLayers: {},
-			defaultStreetLayer: 'Open Street Map',
-			defaultSatelliteLayer: 'ESRI',
-			activeLayerId: null,
-			layersButton: null,
-			streetButton: null,
-			satelliteButton: null,
-			showExtraLayers: false,
-			showRouting: false,
 			mapOptions: {
 				center: [0, 0],
 				zoom: 2,
@@ -148,6 +152,24 @@ export default {
 				},
 				scaleControlShouldUseImperial: false,
 			},
+			// layers
+			allBaseLayers: {},
+			allOverlayLayers: {},
+			defaultStreetLayer: 'Open Street Map',
+			defaultSatelliteLayer: 'ESRI',
+			activeLayerId: null,
+			layersButton: null,
+			streetButton: null,
+			satelliteButton: null,
+			showExtraLayers: false,
+			// routing
+			showRouting: false,
+			// contacts
+			contactsLoading: false,
+			contactsEnabled: optionsController.contactsEnabled,
+			contacts: [],
+			contactGroups: {},
+			disabledContactGroups: [],
 		}
 	},
 
@@ -163,6 +185,8 @@ export default {
 				this.satelliteButton.button.parentElement.classList.remove('hidden')
 			}
 		}
+
+		this.getContacts()
 	},
 	mounted() {
 		// subscribe('nextcloud:unified-search.search', this.filter)
@@ -204,8 +228,7 @@ export default {
 				} catch (x) { gl = null }
 			}
 
-			const optionsValues = optionsController.optionValues
-			if ('mapboxAPIKEY' in optionsValues && optionsValues.mapboxAPIKEY !== '' && gl !== null) {
+			if ('mapboxAPIKEY' in this.optionValues && this.optionValues.mapboxAPIKEY !== '' && gl !== null) {
 				// wrapper to make tile layer component correctly pass arguments
 				L.myMapboxGL = function(url, options) {
 					return new L.MapboxGL(options)
@@ -228,7 +251,7 @@ export default {
 						attribution: attrib,
 						tileLayerClass: L.myMapboxGL,
 						options: {
-							accessToken: optionsValues.mapboxAPIKEY,
+							accessToken: this.optionValues.mapboxAPIKEY,
 							style: 'mapbox://styles/mapbox/streets-v8',
 							minZoom: 1,
 							maxZoom: 22,
@@ -241,7 +264,7 @@ export default {
 						attribution: attrib,
 						tileLayerClass: L.myMapboxGL,
 						options: {
-							accessToken: optionsValues.mapboxAPIKEY,
+							accessToken: this.optionValues.mapboxAPIKEY,
 							style: 'mapbox://styles/mapbox/outdoors-v11',
 							minZoom: 1,
 							maxZoom: 22,
@@ -254,7 +277,7 @@ export default {
 						attribution: attrib,
 						tileLayerClass: L.myMapboxGL,
 						options: {
-							accessToken: optionsValues.mapboxAPIKEY,
+							accessToken: this.optionValues.mapboxAPIKEY,
 							style: 'mapbox://styles/mapbox/satellite-streets-v9',
 							minZoom: 1,
 							maxZoom: 22,
@@ -267,7 +290,7 @@ export default {
 						attribution: attrib,
 						tileLayerClass: L.myMapboxGL,
 						options: {
-							accessToken: optionsValues.mapboxAPIKEY,
+							accessToken: this.optionValues.mapboxAPIKEY,
 							style: 'mapbox://styles/mapbox/dark-v8',
 							minZoom: 1,
 							maxZoom: 22,
@@ -330,8 +353,8 @@ export default {
 			this.streetButton.button.parentElement.classList.add('behind')
 
 			// initial selected layer, restore or fallback to default street
-			if (optionsController.optionValues.tileLayer in this.allBaseLayers) {
-				this.activeLayerId = optionsController.optionValues.tileLayer
+			if (this.optionValues.tileLayer in this.allBaseLayers) {
+				this.activeLayerId = this.optionValues.tileLayer
 			} else {
 				this.activeLayerId = this.defaultStreetLayer
 			}
@@ -367,7 +390,77 @@ export default {
 			this.showRouting = false
 		},
 		onContactsClicked() {
-			console.debug('contacts item clicked')
+			this.contactsEnabled = !this.contactsEnabled
+			optionsController.saveOptionValues({ contactLayer: this.contactsEnabled ? 'true' : 'false' })
+		},
+		onContactGroupClicked(groupId) {
+			this.contactGroups[groupId].enabled = !this.contactGroups[groupId].enabled
+			const newDisabledContactGroups = []
+			for (const gid in this.contactGroups) {
+				if (!this.contactGroups[gid].enabled) {
+					newDisabledContactGroups.push(gid)
+				}
+			}
+			optionsController.saveOptionValues({ jsonDisabledContactGroups: JSON.stringify(newDisabledContactGroups) })
+		},
+		getContacts() {
+			this.contactsLoading = true
+			this.disabledContactGroups = []
+			if ('jsonDisabledContactGroups' in this.optionValues) {
+				try {
+					this.disabledContactGroups = JSON.parse(this.optionValues.jsonDisabledContactGroups)
+				} catch (error) {
+					console.error(error)
+				}
+			}
+
+			network.getContacts().then((response) => {
+				this.contacts = response.data
+				this.buildContactGroups()
+			}).catch((error) => {
+				showError(
+					t('maps', 'Failed to load contacts')
+					+ ': ' + error.response?.request?.responseText
+				)
+			}).then(() => {
+				this.contactsLoading = false
+			})
+		},
+		buildContactGroups() {
+			const notGroupedId = '0'
+			this.$set(this.contactGroups, notGroupedId, {
+				name: t('maps', 'Not grouped'),
+				counter: 0,
+				enabled: !this.disabledContactGroups.includes(notGroupedId),
+			})
+			this.contacts.forEach((c) => {
+				if (c.GROUPS) {
+					try {
+						const cGroups = c.GROUPS.split(/[^\\],/).map((name) => {
+							return name.replace('\\,', ',')
+						})
+						if (cGroups.length > 0) {
+							cGroups.forEach((g) => {
+								if (this.contactGroups[g]) {
+									this.contactGroups[g].counter++
+								} else {
+									this.$set(this.contactGroups, g, {
+										name: g,
+										counter: 1,
+										enabled: !this.disabledContactGroups.includes(g),
+									})
+								}
+							})
+						} else {
+							this.contactGroups[notGroupedId].counter++
+						}
+					} catch (error) {
+						console.error(error)
+					}
+				} else {
+					this.contactGroups[notGroupedId].counter++
+				}
+			})
 		},
 	},
 }

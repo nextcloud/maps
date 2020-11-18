@@ -12,13 +12,17 @@ const optionsController = {
 	],
 	nbRouters: 0,
 	optionValues: {},
+	contactsEnabled: true,
 	enabledFavoriteCategories: [],
 	disabledContactGroups: [],
 	enabledTracks: [],
 	enabledDevices: [],
 	enabledDeviceLines: [],
-	saveOptionValues(optionValues) {
-		network.saveOptionValues(optionValues)
+	saveOptionValues(newOptionValues) {
+		for (const k in newOptionValues) {
+			this.optionValues[k] = newOptionValues[k]
+		}
+		network.saveOptionValues(newOptionValues)
 	},
 
 	restoreOptions(successCB) {
@@ -54,6 +58,10 @@ const optionsController = {
 			showWarning(
 				t('maps', 'Media scan was not done yet. Wait a few minutes/hours and reload this page to see your photos/tracks.')
 			)
+		}
+
+		if ('contactLayer' in optionsValues && optionsValues.contactLayer !== 'true') {
+			this.contactsEnabled = false
 		}
 		/*
 		// set tilelayer before showing photo layer because it needs a max zoom value
@@ -149,9 +157,6 @@ const optionsController = {
 			&& optionsValues.disabledContactGroups !== '')
 		{
 			that.disabledContactGroups = optionsValues.disabledContactGroups.split('|');
-		}
-		if (!optionsValues.hasOwnProperty('contactLayer') || optionsValues.contactLayer === 'true') {
-			contactsController.toggleLayer();
 		}
 		if (optionsValues.hasOwnProperty('locControlEnabled') && optionsValues.locControlEnabled === 'true') {
 			mapController.locControl.start();

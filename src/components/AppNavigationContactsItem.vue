@@ -41,7 +41,7 @@
 					<ActionButton
 						icon="icon-search"
 						:close-after-click="true"
-						@click="onZoomGroupClick">
+						@click="onZoomGroupClick(gid)">
 						{{ t('maps', 'Zoom') }}
 					</ActionButton>
 				</template>
@@ -105,13 +105,13 @@ export default {
 			optionsController.saveOptionValues({ contactGroupListShow: isOpen ? 'true' : 'false' })
 		},
 		onToggleAllClick() {
-
+			this.$emit('toggle-all-groups')
 		},
 		onZoomAllClick() {
-
+			this.$emit('zoom-all-groups')
 		},
-		onZoomGroupClick() {
-
+		onZoomGroupClick(gid) {
+			this.$emit('zoom-group', gid)
 		},
 		onGroupClick(groupName) {
 			this.$emit('group-clicked', groupName)

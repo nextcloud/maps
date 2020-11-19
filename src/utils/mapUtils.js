@@ -57,3 +57,14 @@ export const getShouldMapUseImperial = () => {
     || locale === 'en_CA'
 	)
 }
+
+export const geoToLatLng = (geo) => {
+	let ll
+	const fourFirsts = geo.substr(0, 4)
+	if (fourFirsts === 'geo:') {
+		ll = geo.substr(4).split(',')
+	} else {
+		ll = geo.split(';')
+	}
+	return ll
+}

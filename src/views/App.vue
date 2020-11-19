@@ -8,7 +8,10 @@
 					:contacts="contacts"
 					:groups="contactGroups"
 					@contacts-clicked="onContactsClicked"
-					@group-clicked="onContactGroupClicked" />
+					@group-clicked="onContactGroupClicked"
+					@zoom-all-groups="onZoomAllContactGroups"
+					@zoom-group="onZoomContactGroup"
+					@toggle-all-groups="onToggleAllContactGroups" />
 			</template>
 		</MapsNavigation>
 		<AppContent>
@@ -59,7 +62,7 @@
 						:options="l.options"
 						:opacity="l.opacity" />
 					<ContactsLayer
-						v-if="contactsEnabled"
+						v-if="map && contactsEnabled"
 						:contacts="contacts"
 						:groups="contactGroups" />
 				</LMap>
@@ -110,6 +113,7 @@ import ContactsLayer from '../components/map/ContactsLayer'
 import MapsNavigation from '../components/MapsNavigation'
 import AppNavigationContactsItem from '../components/AppNavigationContactsItem'
 import optionsController from '../optionsController'
+import { geoToLatLng } from '../utils/mapUtils'
 import * as network from '../network'
 import { showError } from '@nextcloud/dialogs'
 
@@ -395,6 +399,24 @@ export default {
 		},
 		onContactGroupClicked(groupId) {
 			this.contactGroups[groupId].enabled = !this.contactGroups[groupId].enabled
+			this.saveContactGroupStates()
+		},
+		onToggleAllContactGroups() {
+			let allEnabled = true
+			for (const gid in this.contactGroups) {
+				if (!this.contactGroups[gid].enabled) {
+					allEnabled = false
+					break
+				}
+			}
+
+			// disable all except if at least one is disabled
+			for (const gid in this.contactGroups) {
+				this.contactGroups[gid].enabled = !allEnabled
+			}
+			this.saveContactGroupStates()
+		},
+		saveContactGroupStates() {
 			const newDisabledContactGroups = []
 			for (const gid in this.contactGroups) {
 				if (!this.contactGroups[gid].enabled) {
@@ -402,6 +424,40 @@ export default {
 				}
 			}
 			optionsController.saveOptionValues({ jsonDisabledContactGroups: JSON.stringify(newDisabledContactGroups) })
+		},
+		onZoomAllContactGroups() {
+			const lats = this.contacts.map((c) => {
+				return geoToLatLng(c.GEO)[0]
+			})
+			const lons = this.contacts.map((c) => {
+				return geoToLatLng(c.GEO)[1]
+			})
+			if (lats && lons) {
+				const minLat = Math.min(...lats)
+				const maxLat = Math.max(...lats)
+				const minLon = Math.min(...lons)
+				const maxLon = Math.max(...lons)
+				this.$refs.map.fitBounds(L.latLngBounds([minLat, minLon], [maxLat, maxLon]), { padding: [30, 30] })
+			}
+		},
+		onZoomContactGroup(gid) {
+			const contactsOfGroup = this.contacts.filter((c) => {
+				return ((gid === '0' && c.groupList.length === 0)
+					|| c.groupList.includes(gid))
+			})
+			const lats = contactsOfGroup.map((c) => {
+				return geoToLatLng(c.GEO)[0]
+			})
+			const lons = contactsOfGroup.map((c) => {
+				return geoToLatLng(c.GEO)[1]
+			})
+			if (lats && lons) {
+				const minLat = Math.min(...lats)
+				const maxLat = Math.max(...lats)
+				const minLon = Math.min(...lons)
+				const maxLon = Math.max(...lons)
+				this.$refs.map.fitBounds(L.latLngBounds([minLat, minLon], [maxLat, maxLon]), { padding: [30, 30] })
+			}
 		},
 		getContacts() {
 			this.contactsLoading = true
@@ -434,6 +490,7 @@ export default {
 				enabled: !this.disabledContactGroups.includes(notGroupedId),
 			})
 			this.contacts.forEach((c) => {
+				c.groupList = []
 				if (c.GROUPS) {
 					try {
 						const cGroups = c.GROUPS.split(/[^\\],/).map((name) => {
@@ -441,6 +498,7 @@ export default {
 						})
 						if (cGroups.length > 0) {
 							cGroups.forEach((g) => {
+								c.groupList.push(g)
 								if (this.contactGroups[g]) {
 									this.contactGroups[g].counter++
 								} else {

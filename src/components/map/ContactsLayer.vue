@@ -4,7 +4,54 @@
 			:key="c.URI"
 			:options="{ data: c }"
 			:icon="getContactMarkerIcon(c)"
-			:lat-lng="geoToLatLng(c.GEO)" />
+			:lat-lng="geoToLatLng(c.GEO)">
+			<LTooltip
+				class="tooltip-contact-wrapper"
+				:options="tooltipOptions">
+				<img class="tooltip-contact-avatar"
+					:src="getContactAvatar(c)"
+					alt="">
+				<div class="tooltip-contact-content">
+					<h3 class="tooltip-contact-name">
+						{{ c.FN }}
+					</h3>
+					<p v-if=" c.ADRTYPE.toLowerCase() === 'home'"
+						class="tooltip-contact-address-type">
+						{{ t('maps', 'Home') }}
+					</p>
+					<p v-else-if=" c.ADRTYPE.toLowerCase() === 'work'"
+						class="tooltip-contact-address-type">
+						{{ t('maps', 'Work') }}
+					</p>
+					<p class="tooltip-contact-address" v-html="getFormattedAddress(c)" />
+				</div>
+			</LTooltip>
+			<LPopup
+				class="popup-contact-wrapper"
+				:options="popupOptions">
+				<img class="tooltip-contact-avatar"
+					:src="getContactAvatar(c)"
+					alt="">
+				<div class="tooltip-contact-content">
+					<h3 class="tooltip-contact-name">
+						{{ c.FN }}
+					</h3>
+					<p v-if=" c.ADRTYPE.toLowerCase() === 'home'"
+						class="tooltip-contact-address-type">
+						{{ t('maps', 'Home') }}
+					</p>
+					<p v-else-if=" c.ADRTYPE.toLowerCase() === 'work'"
+						class="tooltip-contact-address-type">
+						{{ t('maps', 'Work') }}
+					</p>
+					<p class="tooltip-contact-address" v-html="getFormattedAddress(c)" />
+					<a target="_blank"
+						:href="getContactUrl(c)">
+						{{ t('maps', 'Open in Contacts') }}
+					</a>
+				</div>
+			</LPopup>
+		</LMarker>
 	</Vue2LeafletMarkerCluster>
 </template>
 
@@ -13,10 +60,11 @@ import { generateUrl } from '@nextcloud/router'
 import { getCurrentUser } from '@nextcloud/auth'
 
 import L from 'leaflet'
-import { LMarker } from 'vue2-leaflet'
+import { LMarker, LTooltip, LPopup } from 'vue2-leaflet'
 import Vue2LeafletMarkerCluster from 'vue2-leaflet-markercluster'
 
 import optionsController from '../../optionsController'
+import { geoToLatLng } from '../../utils/mapUtils'
 
 const CONTACT_MARKER_VIEW_SIZE = 40
 
@@ -25,6 +73,8 @@ export default {
 	components: {
 		Vue2LeafletMarkerCluster,
 		LMarker,
+		LTooltip,
+		LPopup,
 	},
 
 	props: {
@@ -50,6 +100,16 @@ export default {
 				icon: {
 					iconSize: [CONTACT_MARKER_VIEW_SIZE, CONTACT_MARKER_VIEW_SIZE],
 				},
+			},
+			tooltipOptions: {
+				className: 'leaflet-marker-contact-tooltip',
+				direction: 'top',
+				offset: L.point(0, 0),
+			},
+			popupOptions: {
+				closeOnClick: true,
+				className: 'popovermenu open popupMarker contactPopup',
+				offset: L.point(-5, 10),
 			},
 		}
 	},
@@ -85,14 +145,7 @@ export default {
 
 	methods: {
 		geoToLatLng(geo) {
-			let ll
-			const fourFirsts = geo.substr(0, 4)
-			if (fourFirsts === 'geo:') {
-				ll = geo.substr(4).split(',')
-			} else {
-				ll = geo.split(';')
-			}
-			return ll
+			return geoToLatLng(geo)
 		},
 		getClusterMarkerIcon(cluster) {
 			const contact = cluster.getAllChildMarkers()[0].options.data
@@ -127,6 +180,21 @@ export default {
 				return generateUrl('/apps/maps/contacts-avatar?name=' + encodeURIComponent(name))
 			}
 		},
+		getFormattedAddress(contact) {
+			const adrTab = contact.ADR.split(';')
+			let formattedAddress = ''
+			if (adrTab.length > 6) {
+				// check if street name is set
+				if (adrTab[2] !== '') {
+					formattedAddress += adrTab[2] + '<br>'
+				}
+				formattedAddress += adrTab[5] + ' ' + adrTab[3] + '<br>' + adrTab[4] + ' ' + adrTab[6]
+			}
+			return formattedAddress
+		},
+		getContactUrl(contact) {
+			return generateUrl('/apps/contacts/' + t('contacts', 'All contacts') + '/' + encodeURIComponent(contact.UID + '~contacts'))
+		},
 	},
 }
 </script>
@@ -134,4 +202,9 @@ export default {
 <style lang="scss" scoped>
 @import '~leaflet.markercluster/dist/MarkerCluster.css';
 @import '~leaflet.markercluster/dist/MarkerCluster.Default.css';
+
+.popup-contact-wrapper,
+.tooltip-contact-wrapper {
+	display: flex;
+}
 </style>

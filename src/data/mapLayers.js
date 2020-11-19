@@ -44,6 +44,7 @@ export const Layers = [
 		url: 'https://{s}.tile.openstreetmap.se/hydda/roads_and_labels/{z}/{x}/{y}.png',
 		attribution: 'Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN...',
 		options: {
+			id: 'Roads Overlay',
 			noWrap: false,
 			detectRetina: false,
 			maxZoom: 18,
@@ -52,11 +53,12 @@ export const Layers = [
 	},
 	{
 		id: LayerIds.OSM,
-		name: 'Open Street Map',
+		name: 'Street map',
 		type: LayerTypes.Base,
 		url: 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
 		attribution: '&copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>',
 		options: {
+			id: 'Open Street Map',
 			noWrap: false,
 			detectRetina: false,
 			maxZoom: 19,
@@ -64,11 +66,12 @@ export const Layers = [
 	},
 	{
 		id: LayerIds.ESRI,
-		name: 'ESRI',
+		name: 'Satellite map',
 		type: LayerTypes.Base,
 		url: 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
 		attribution: attributionESRI,
 		options: {
+			id: 'ESRI',
 			noWrap: false,
 			detectRetina: false,
 			maxZoom: 19,
@@ -76,26 +79,15 @@ export const Layers = [
 	},
 	{
 		id: LayerIds.ESRITopo,
-		name: 'ESRI Topology',
+		name: 'Topographic',
 		type: LayerTypes.Base,
 		url: 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/{z}/{y}/{x}',
 		attribution: attributionESRI,
 		options: {
+			id: 'ESRI topo',
 			noWrap: false,
 			detectRetina: false,
 			maxZoom: 19,
-		},
-	},
-	{
-		id: LayerIds.OpenTopo,
-		name: 'Open Topo',
-		type: LayerTypes.Base,
-		url: 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/{z}/{y}/{x}',
-		attribution: 'Map data: &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>, <a href="http://viewfinderpanoramass.org">SRTM</a> | Map style: &copy; <a href="https://opentopomap.org">OpenTopoMap</a> (<a href="https://creativecommons.org/licenses/by-sa/3.0/">CC-BY-SA</a>)',
-		options: {
-			noWrap: false,
-			detectRetina: false,
-			maxZoom: 17,
 		},
 	},
 	{
@@ -105,6 +97,7 @@ export const Layers = [
 		url: 'https://stamen-tiles-{s}.a.ssl.fastly.net/watercolor/{z}/{x}/{y}.{ext}',
 		attribution: '<a href="https://leafletjs.com" title="A JS library for interactive maps">Leaflet</a> | © Map tiles by <a href="https://stamen.com">Stamen Design</a>, under <a href="https://creativecommons.org/licenses/by/3.0">CC BY 3.0</a>, Data by <a href="https://openstreetmap.org">OpenStreetMap</a>, under <a href="https://creativecommons.org/licenses/by-sa/3.0">CC BY SA</a>.',
 		options: {
+			id: 'Watercolor',
 			noWrap: false,
 			detectRetina: false,
 			maxZoom: 18,
@@ -118,8 +111,8 @@ export const baseLayersByName = {}
 export const overlayLayersByName = {}
 Layers.forEach((l) => {
 	if (l.type === LayerTypes.Base) {
-		baseLayersByName[l.name] = l
+		baseLayersByName[l.options.id] = l
 	} else {
-		overlayLayersByName[l.name] = l
+		overlayLayersByName[l.options.id] = l
 	}
 })

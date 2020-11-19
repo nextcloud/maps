@@ -250,16 +250,31 @@ export default {
 				this.allOverlayLayers = {}
 				this.allBaseLayers = {
 					'Mapbox vector streets': {
-						name: 'Mapbox vector streets',
+						name: 'Street map',
 						type: 'base',
 						attribution: attrib,
 						tileLayerClass: L.myMapboxGL,
 						options: {
+							id: 'Mapbox vector streets',
 							accessToken: this.optionValues.mapboxAPIKEY,
 							style: 'mapbox://styles/mapbox/streets-v8',
 							minZoom: 1,
 							maxZoom: 22,
 							attribution: attrib,
+						},
+					},
+					'Mapbox satellite': {
+						name: 'Satellite map',
+						type: 'base',
+						attribution: attrib,
+						tileLayerClass: L.myMapboxGL,
+						options: {
+							id: 'Mapbox satellite',
+							accessToken: this.optionValues.mapboxAPIKEY,
+							style: 'mapbox://styles/mapbox/satellite-streets-v9',
+							minZoom: 1,
+							maxZoom: 22,
+							attribution: attribSat,
 						},
 					},
 					Topographic: {
@@ -268,6 +283,7 @@ export default {
 						attribution: attrib,
 						tileLayerClass: L.myMapboxGL,
 						options: {
+							id: 'Topographic',
 							accessToken: this.optionValues.mapboxAPIKEY,
 							style: 'mapbox://styles/mapbox/outdoors-v11',
 							minZoom: 1,
@@ -275,25 +291,13 @@ export default {
 							attribution: attrib,
 						},
 					},
-					'Mapbox satellite': {
-						name: 'Mapbox satellite',
-						type: 'base',
-						attribution: attrib,
-						tileLayerClass: L.myMapboxGL,
-						options: {
-							accessToken: this.optionValues.mapboxAPIKEY,
-							style: 'mapbox://styles/mapbox/satellite-streets-v9',
-							minZoom: 1,
-							maxZoom: 22,
-							attribution: attribSat,
-						},
-					},
 					'Mapbox dark': {
-						name: 'Mapbox dark',
+						name: 'Dark',
 						type: 'base',
 						attribution: attrib,
 						tileLayerClass: L.myMapboxGL,
 						options: {
+							id: 'Mapbox dark',
 							accessToken: this.optionValues.mapboxAPIKEY,
 							style: 'mapbox://styles/mapbox/dark-v8',
 							minZoom: 1,
@@ -362,12 +366,13 @@ export default {
 			} else {
 				this.activeLayerId = this.defaultStreetLayer
 			}
+			console.debug(this.activeLayerId)
 
 			document.querySelector('.leaflet-control-layers').style.display = 'none'
 		},
 		onBaselayerchange(e) {
-			this.activeLayerId = e.name
-			if (e.name === this.defaultStreetLayer) {
+			this.activeLayerId = e.layer.options.id
+			if (this.activeLayerId === this.defaultStreetLayer) {
 				this.streetButton.button.parentElement.classList.add('behind')
 				this.satelliteButton.button.parentElement.classList.remove('behind')
 			} else {

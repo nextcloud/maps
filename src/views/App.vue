@@ -3,7 +3,7 @@
 		<MapsNavigation>
 			<template #items>
 				<AppNavigationContactsItem
-					:selected="contactsEnabled"
+					:enabled="contactsEnabled"
 					:loading="contactsLoading"
 					:contacts="contacts"
 					:groups="contactGroups"

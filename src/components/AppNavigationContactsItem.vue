@@ -2,16 +2,16 @@
 	<AppNavigationItem
 		:icon="loading ? 'icon-loading-small' : 'icon-group'"
 		:title="t('maps', 'My contacts')"
-		:class="{ 'item-disabled': !selected }"
+		:class="{ 'item-disabled': !enabled }"
 		:allow-collapse="true"
 		:open="open"
 		:force-menu="false"
 		@click="onContactsClick"
 		@update:open="onUpdateOpen">
-		<template v-if="selected" slot="counter">
+		<template v-if="enabled" slot="counter">
 			{{ contacts.length }}
 		</template>
-		<template v-if="selected" slot="actions">
+		<template v-if="enabled" slot="actions">
 			<ActionButton
 				icon="icon-checkmark"
 				@click="onToggleAllClick">
@@ -34,10 +34,10 @@
 				:allow-collapse="false"
 				:force-menu="false"
 				@click="onGroupClick(gid)">
-				<template slot="counter">
+				<template v-if="enabled && g.enabled" slot="counter">
 					{{ g.counter }}
 				</template>
-				<template slot="actions">
+				<template v-if="enabled && g.enabled" slot="actions">
 					<ActionButton
 						icon="icon-search"
 						:close-after-click="true"
@@ -64,7 +64,7 @@ export default {
 	},
 
 	props: {
-		selected: {
+		enabled: {
 			type: Boolean,
 			required: true,
 		},
@@ -94,7 +94,7 @@ export default {
 
 	methods: {
 		onContactsClick() {
-			if (!this.selected && !this.open) {
+			if (!this.enabled && !this.open) {
 				this.open = true
 				optionsController.saveOptionValues({ contactGroupListShow: 'true' })
 			}

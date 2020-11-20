@@ -33,23 +33,24 @@
 					{{ option.FN }}
 				</template>
 			</Multiselect>
-			<br>
-			<label for="addressTypeSelect">{{ t('maps', 'Address type') }}</label>
-			<select id="addressTypeSelect"
-				v-model="addressType"
-				:disabled="!selectedContact">
-				<option value="home">
-					{{ t('maps', 'Home') }}
-				</option>
-				<option value="work">
-					{{ t('maps', 'Work') }}
-				</option>
-			</select>
-			<br>
-			<button id="submitPlaceContactButton"
+			<div class="address-type">
+				<label for="addressTypeSelect">{{ t('maps', 'Address type') }}</label>
+				<select id="addressTypeSelect"
+					v-model="addressType"
+					:disabled="!selectedContact">
+					<option value="home">
+						{{ t('maps', 'Home') }}
+					</option>
+					<option value="work">
+						{{ t('maps', 'Work') }}
+					</option>
+				</select>
+			</div>
+			<button class="submit-place-contact"
 				:disabled="!selectedContact"
 				:class="{ loading: searchingEditedAddress }"
 				@click="onValidate">
+				<span class="icon-add" />
 				{{ t('maps', 'Add address to contact') }}
 			</button>
 		</LPopup>
@@ -194,6 +195,24 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.submit-place-contact {
+	height: 40px !important;
+	width: 100%;
+}
+
+.address-type {
+	display: flex;
+
+	label {
+		margin: auto 5px auto 0;
+		text-align: right;
+	}
+
+	* {
+		flex-grow: 1;
+	}
+}
+
 span.icon {
 	display: inline-block;
 	height: 34px;

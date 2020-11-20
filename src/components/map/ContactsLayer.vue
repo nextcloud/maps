@@ -23,7 +23,11 @@
 						class="tooltip-contact-address-type">
 						{{ t('maps', 'Work') }}
 					</p>
-					<p class="tooltip-contact-address" v-html="getFormattedAddress(c)" />
+					<p v-for="l in getFormattedAddressLines(c)"
+						:key="l"
+						class="tooltip-contact-address">
+						{{ l }}
+					</p>
 				</div>
 			</LTooltip>
 			<LPopup
@@ -50,7 +54,11 @@
 						class="tooltip-contact-address-type">
 						{{ t('maps', 'Work') }}
 					</p>
-					<p class="tooltip-contact-address" v-html="getFormattedAddress(c)" />
+					<p v-for="l in getFormattedAddressLines(c)"
+						:key="l"
+						class="tooltip-contact-address">
+						{{ l }}
+					</p>
 					<a target="_blank"
 						:href="getContactUrl(c)">
 						{{ t('maps', 'Open in Contacts') }}
@@ -188,17 +196,18 @@ export default {
 				return generateUrl('/apps/maps/contacts-avatar?name=' + encodeURIComponent(contact.FN))
 			}
 		},
-		getFormattedAddress(contact) {
+		getFormattedAddressLines(contact) {
 			const adrTab = contact.ADR.split(';')
-			let formattedAddress = ''
+			const formattedAddressLines = []
 			if (adrTab.length > 6) {
 				// check if street name is set
 				if (adrTab[2] !== '') {
-					formattedAddress += adrTab[2] + '<br>'
+					formattedAddressLines.push(adrTab[2])
 				}
-				formattedAddress += adrTab[5] + ' ' + adrTab[3] + '<br>' + adrTab[4] + ' ' + adrTab[6]
+				formattedAddressLines.push(adrTab[5] + ' ' + adrTab[3])
+				formattedAddressLines.push(adrTab[4] + ' ' + adrTab[6])
 			}
-			return formattedAddress
+			return formattedAddressLines
 		},
 		getContactUrl(contact) {
 			return generateUrl('/apps/contacts/' + t('contacts', 'All contacts') + '/' + encodeURIComponent(contact.UID + '~contacts'))

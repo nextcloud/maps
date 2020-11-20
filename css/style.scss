@@ -674,8 +674,8 @@ tr.selected td {
 .tooltip-contact-name,
 .tooltip-contact-address-type,
 .tooltip-contact-address {
-    margin: 0;
-    max-width: 160px;
+    margin: 0 !important;
+    max-width: 150px;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;

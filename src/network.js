@@ -43,8 +43,19 @@ export function geocode(lat, lng) {
 
 export function searchAddress(address, limit = 8) {
 	const query = encodeURIComponent(address)
-	const url = 'https://nominatim.openstreetmap.org/search/' + query + '?format=json&addressdetails=1&extratags=1&namedetails=1&limit=' + limit;
+	const url = 'https://nominatim.openstreetmap.org/search/' + query + '?format=json&addressdetails=1&extratags=1&namedetails=1&limit=' + limit
 	return axios.get(url)
+}
+
+export function deleteContactAddress(bookid, uri, uid, vcardAddress) {
+	const req = {
+		params: {
+			uid,
+			adr: vcardAddress,
+		},
+	}
+	const url = generateUrl('/apps/maps/contacts/' + bookid + '/' + uri)
+	return axios.delete(url, req)
 }
 
 export function placeContact(bookid, uri, uid, lat, lng, address, type = 'home') {

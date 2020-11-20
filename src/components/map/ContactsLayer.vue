@@ -1,7 +1,7 @@
 <template>
 	<Vue2LeafletMarkerCluster :options="clusterOptions">
 		<LMarker v-for="(c, i) in displayedContacts"
-			:key="c.URI + i"
+			:key="c.URI + i + c.ADR"
 			:options="{ data: c }"
 			:icon="getContactMarkerIcon(c)"
 			:lat-lng="geoToLatLng(c.GEO)">
@@ -29,9 +29,15 @@
 			<LPopup
 				class="popup-contact-wrapper"
 				:options="popupOptions">
-				<img class="tooltip-contact-avatar"
-					:src="getContactAvatar(c)"
-					alt="">
+				<div class="left-contact-popup">
+					<img class="tooltip-contact-avatar"
+						:src="getContactAvatar(c)"
+						alt="">
+					<button
+						v-tooltip="{ content: t('maps', 'Delete this address') }"
+						class="icon icon-delete"
+						@click="onDeleteAddressClick(c)" />
+				</div>
 				<div class="tooltip-contact-content">
 					<h3 class="tooltip-contact-name">
 						{{ c.FN }}
@@ -65,6 +71,8 @@ import Vue2LeafletMarkerCluster from 'vue2-leaflet-markercluster'
 
 import optionsController from '../../optionsController'
 import { geoToLatLng } from '../../utils/mapUtils'
+
+import { deleteContactAddress } from '../../network'
 
 const CONTACT_MARKER_VIEW_SIZE = 40
 
@@ -195,6 +203,13 @@ export default {
 		getContactUrl(contact) {
 			return generateUrl('/apps/contacts/' + t('contacts', 'All contacts') + '/' + encodeURIComponent(contact.UID + '~contacts'))
 		},
+		onDeleteAddressClick(contact) {
+			deleteContactAddress(contact.BOOKID, contact.URI, contact.UID, contact.ADR).then((response) => {
+				this.$emit('address-deleted')
+			}).catch((error) => {
+				console.error(error)
+			})
+		},
 	},
 }
 </script>
@@ -206,5 +221,20 @@ export default {
 .popup-contact-wrapper,
 .tooltip-contact-wrapper {
 	display: flex;
+}
+
+.left-contact-popup {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	button {
+		width: 44px;
+		height: 44px !important;
+		background-color: transparent;
+		border: 0;
+		&:hover {
+			background-color: var(--color-background-hover);
+		}
+	}
 }
 </style>

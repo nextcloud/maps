@@ -66,7 +66,8 @@
 					<ContactsLayer
 						v-if="map && contactsEnabled"
 						:contacts="contacts"
-						:groups="contactGroups" />
+						:groups="contactGroups"
+						@address-deleted="onContactAddressDeleted" />
 					<PlaceContactPopup v-if="placingContact"
 						:lat-lng="placingContactLatLng"
 						@contact-placed="contactPlaced" />
@@ -126,6 +127,10 @@ import { geoToLatLng } from '../utils/mapUtils'
 import * as network from '../network'
 import { showError } from '@nextcloud/dialogs'
 import { getCurrentUser } from '@nextcloud/auth'
+
+import Vue from 'vue'
+import { Tooltip } from '@nextcloud/vue'
+Vue.directive('tooltip', Tooltip)
 
 export default {
 	name: 'App',
@@ -594,6 +599,9 @@ export default {
 		},
 		contactPlaced() {
 			this.placingContact = false
+			this.getContacts()
+		},
+		onContactAddressDeleted() {
 			this.getContacts()
 		},
 	},

@@ -1,6 +1,10 @@
 <template>
 	<LMarker :lat-lng="latLng"
 		@ready="onMarkerReady">
+		<LIcon
+			class-name="placement-marker-icon"
+			:icon-size="[40, 40]"
+			:icon-url="markerIconUrl" />
 		<LPopup :options="popupOptions">
 			<h3>{{ t('maps', 'New contact address') }}</h3>
 			<span v-if="addressLoading"
@@ -56,7 +60,7 @@
 import { generateUrl } from '@nextcloud/router'
 import { getCurrentUser } from '@nextcloud/auth'
 
-import { LMarker, LPopup } from 'vue2-leaflet'
+import { LMarker, LPopup, LIcon } from 'vue2-leaflet'
 import Multiselect from '@nextcloud/vue/dist/Components/Multiselect'
 import Avatar from '@nextcloud/vue/dist/Components/Avatar'
 
@@ -68,6 +72,7 @@ export default {
 	components: {
 		LMarker,
 		LPopup,
+		LIcon,
 		Multiselect,
 		Avatar,
 	},
@@ -83,6 +88,7 @@ export default {
 		return {
 			popupOptions: {
 				closeButton: false,
+				offset: [-2, 40],
 			},
 			contactData: [],
 			addressLoading: false,
@@ -96,6 +102,13 @@ export default {
 	},
 
 	computed: {
+		markerIconUrl() {
+			return this.selectedContact
+				? this.getContactAvatar(this.selectedContact)
+					? this.getContactAvatar(this.selectedContact)
+					: generateUrl('/apps/maps/contacts-avatar?name=' + encodeURIComponent(this.selectedContact.FN))
+				: generateUrl('/svg/core/actions/user?color=000000')
+		},
 	},
 
 	watch: {

@@ -197,19 +197,6 @@ export default {
 	},
 
 	created() {
-		window.onclick = (event) => {
-			if (event.button === 0) {
-				document.querySelector('.leaflet-control-layers').style.display = 'none'
-				this.layersButton.button.parentElement.classList.remove('hidden')
-				this.streetButton.button.parentElement.classList.remove('hidden')
-				this.satelliteButton.button.parentElement.classList.remove('hidden')
-			}
-			this.map.contextmenu.hide()
-			if (event.target.getAttribute('id') === 'map' || event.target.classList.contains('mapboxgl-map')) {
-				this.placingContact = false
-			}
-		}
-
 		this.getContacts()
 	},
 	mounted() {
@@ -221,9 +208,6 @@ export default {
 		// unsubscribe('nextcloud:unified-search.reset', this.cleanSearch)
 	},
 	methods: {
-		onMapClick(e) {
-			console.debug(e)
-		},
 		onMainDetailClicked() {
 			// this.showSidebar = !this.showSidebar
 			// this.activeSidebarTab = 'project-settings'
@@ -273,10 +257,19 @@ export default {
 			}
 			return cmi
 		},
+		onMapClick(e) {
+			// layers management stuff
+			document.querySelector('.leaflet-control-layers').style.display = 'none'
+			this.layersButton.button.parentElement.classList.remove('hidden')
+			this.streetButton.button.parentElement.classList.remove('hidden')
+			this.satelliteButton.button.parentElement.classList.remove('hidden')
+
+			this.map.contextmenu.hide()
+			this.placingContact = false
+		},
 		onMapContextmenu(e) {
-			if (e.originalEvent.target.getAttribute('id') === 'map' || e.originalEvent.target.classList.contains('mapboxgl-map')) {
+			if (e.originalEvent.target.classList.contains('vue2leaflet-map') || e.originalEvent.target.classList.contains('mapboxgl-map')) {
 				this.map.contextmenu.showAt(L.latLng(e.latlng.lat, e.latlng.lng))
-				this.map.clickpopup = true
 			}
 		},
 		initLayers(map) {
@@ -648,5 +641,11 @@ export default {
 ::v-deep .leaflet-marker-contact {
 	width: 40px !important;
 	height: 40px !important;
+}
+
+::v-deep .placement-marker-icon {
+	border-radius: 50%;
+	object-fit: cover;
+	border: 2px solid var(--color-border);
 }
 </style>

@@ -556,6 +556,7 @@ export default {
 			})
 		},
 		buildContactGroups() {
+			this.contactGroups = {}
 			const notGroupedId = '0'
 			this.$set(this.contactGroups, notGroupedId, {
 				name: t('maps', 'Not grouped'),

@@ -27,7 +27,9 @@
 					:options="mapOptions.native"
 					@ready="onMapReady"
 					@update:bounds="onUpdateBounds"
-					@baselayerchange="onBaselayerchange">
+					@baselayerchange="onBaselayerchange"
+					@click="onMapClick"
+					@contextmenu="onMapContextmenu">
 					<RoutingControl v-if="map"
 						:map="map"
 						:visible="showRouting"
@@ -65,6 +67,9 @@
 						v-if="map && contactsEnabled"
 						:contacts="contacts"
 						:groups="contactGroups" />
+					<PlaceContactPopup v-if="placingContact"
+						:lat-lng="placingContactLatLng"
+						@contact-placed="contactPlaced" />
 				</LMap>
 			</div>
 			<Actions
@@ -86,6 +91,7 @@
 
 <script>
 import { getLocale } from '@nextcloud/l10n'
+import { generateUrl } from '@nextcloud/router'
 import Content from '@nextcloud/vue/dist/Components/Content'
 import AppContent from '@nextcloud/vue/dist/Components/AppContent'
 import Actions from '@nextcloud/vue/dist/Components/Actions'
@@ -107,15 +113,19 @@ import { LControlScale, LControlZoom, LMap, LTileLayer, LControlLayers } from 'v
 
 import 'leaflet-easybutton/src/easy-button'
 import 'leaflet-easybutton/src/easy-button.css'
+import 'leaflet-contextmenu/dist/leaflet.contextmenu.min'
+import 'leaflet-contextmenu/dist/leaflet.contextmenu.min.css'
 
 import RoutingControl from '../components/map/RoutingControl'
 import ContactsLayer from '../components/map/ContactsLayer'
+import PlaceContactPopup from '../components/map/PlaceContactPopup'
 import MapsNavigation from '../components/MapsNavigation'
 import AppNavigationContactsItem from '../components/AppNavigationContactsItem'
 import optionsController from '../optionsController'
 import { geoToLatLng } from '../utils/mapUtils'
 import * as network from '../network'
 import { showError } from '@nextcloud/dialogs'
+import { getCurrentUser } from '@nextcloud/auth'
 
 export default {
 	name: 'App',
@@ -133,6 +143,7 @@ export default {
 		MapsNavigation,
 		AppNavigationContactsItem,
 		ContactsLayer,
+		PlaceContactPopup,
 	},
 
 	data() {
@@ -153,6 +164,9 @@ export default {
 				]),
 				native: {
 					zoomControl: false,
+					contextmenu: false,
+					contextmenuWidth: 160,
+					contextmenuItems: this.getContextmenuItems(),
 				},
 				scaleControlShouldUseImperial: false,
 			},
@@ -174,6 +188,8 @@ export default {
 			contacts: [],
 			contactGroups: {},
 			disabledContactGroups: [],
+			placingContactLatLng: null,
+			placingContact: false,
 		}
 	},
 
@@ -188,6 +204,10 @@ export default {
 				this.streetButton.button.parentElement.classList.remove('hidden')
 				this.satelliteButton.button.parentElement.classList.remove('hidden')
 			}
+			this.map.contextmenu.hide()
+			if (event.target.getAttribute('id') === 'map' || event.target.classList.contains('mapboxgl-map')) {
+				this.placingContact = false
+			}
 		}
 
 		this.getContacts()
@@ -201,6 +221,9 @@ export default {
 		// unsubscribe('nextcloud:unified-search.reset', this.cleanSearch)
 	},
 	methods: {
+		onMapClick(e) {
+			console.debug(e)
+		},
 		onMainDetailClicked() {
 			// this.showSidebar = !this.showSidebar
 			// this.activeSidebarTab = 'project-settings'
@@ -208,6 +231,53 @@ export default {
 		onMapReady(map) {
 			this.initLayers(map)
 			this.map = map
+		},
+		getContextmenuItems() {
+			const cmi = [
+				{
+					text: t('maps', 'Add a favorite'),
+					icon: generateUrl('/svg/core/actions/starred?color=000000'),
+					callback: () => {},
+				}, {
+					text: t('maps', 'Place photos'),
+					icon: generateUrl('/svg/core/places/picture?color=000000'),
+					callback: () => {},
+				}, {
+					text: t('maps', 'Place contact'),
+					icon: generateUrl('/svg/core/actions/user?color=000000'),
+					callback: this.placeContactClicked,
+				}, {
+					text: t('maps', 'Share this location'),
+					icon: generateUrl('/svg/core/actions/share?color=000000'),
+					callback: () => {},
+				},
+			]
+			if (optionsController.nbRouters > 0 || getCurrentUser().isAdmin) {
+				const routingItems = [
+					'-',
+					{
+						text: t('maps', 'Route from here'),
+						icon: generateUrl('/svg/core/filetypes/location?color=00cc00'),
+						callback: () => {},
+					}, {
+						text: t('maps', 'Add route point'),
+						icon: generateUrl('/svg/core/filetypes/location?color=0000cc'),
+						callback: () => {},
+					}, {
+						text: t('maps', 'Route to here'),
+						icon: generateUrl('/svg/core/filetypes/location?color=cc0000'),
+						callback: () => {},
+					},
+				]
+				cmi.push(...routingItems)
+			}
+			return cmi
+		},
+		onMapContextmenu(e) {
+			if (e.originalEvent.target.getAttribute('id') === 'map' || e.originalEvent.target.classList.contains('mapboxgl-map')) {
+				this.map.contextmenu.showAt(L.latLng(e.latlng.lat, e.latlng.lng))
+				this.map.clickpopup = true
+			}
 		},
 		initLayers(map) {
 			// tile layers
@@ -524,6 +594,14 @@ export default {
 					this.contactGroups[notGroupedId].counter++
 				}
 			})
+		},
+		placeContactClicked(e) {
+			this.placingContactLatLng = L.latLng(e.latlng.lat, e.latlng.lng)
+			this.placingContact = true
+		},
+		contactPlaced() {
+			this.placingContact = false
+			this.getContacts()
 		},
 	},
 }

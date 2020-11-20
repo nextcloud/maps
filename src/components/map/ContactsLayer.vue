@@ -1,7 +1,7 @@
 <template>
 	<Vue2LeafletMarkerCluster :options="clusterOptions">
-		<LMarker v-for="c in displayedContacts"
-			:key="c.URI"
+		<LMarker v-for="(c, i) in displayedContacts"
+			:key="c.URI + i"
 			:options="{ data: c }"
 			:icon="getContactMarkerIcon(c)"
 			:lat-lng="geoToLatLng(c.GEO)">
@@ -177,7 +177,7 @@ export default {
 					+ '/' + encodeURIComponent(contact.BOOKURI)
 					+ '/' + encodeURIComponent(contact.URI) + '?photo').replace(/index\.php\//, '')
 			} else {
-				return generateUrl('/apps/maps/contacts-avatar?name=' + encodeURIComponent(name))
+				return generateUrl('/apps/maps/contacts-avatar?name=' + encodeURIComponent(contact.FN))
 			}
 		},
 		getFormattedAddress(contact) {

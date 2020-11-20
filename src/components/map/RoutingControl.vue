@@ -5,6 +5,7 @@
 <script>
 import { getLocale } from '@nextcloud/l10n'
 import { generateUrl } from '@nextcloud/router'
+import { getCurrentUser } from '@nextcloud/auth'
 import L from 'leaflet'
 import 'leaflet-control-geocoder/dist/Control.Geocoder'
 import 'leaflet-control-geocoder/dist/Control.Geocoder.css'
@@ -29,7 +30,7 @@ export default {
 	data() {
 		return {
 			locale: getLocale(),
-			nbRouters: 0,
+			nbRouters: optionsController.nbRouters,
 			routers: {},
 			selectedRouter: null,
 			control: null,
@@ -48,37 +49,7 @@ export default {
 
 	methods: {
 		initRouting() {
-			const optionsValues = optionsController.optionValues
-			this.nbRouters = 0
-			if ('osrmCarURL' in optionsValues && optionsValues.osrmCarURL !== '') {
-				this.nbRouters++
-			}
-			if ('osrmBikeURL' in optionsValues && optionsValues.osrmBikeURL !== '') {
-				this.nbRouters++
-			}
-			if ('osrmFootURL' in optionsValues && optionsValues.osrmFootURL !== '') {
-				this.nbRouters++
-			}
-			if ('mapboxAPIKEY' in optionsValues && optionsValues.mapboxAPIKEY !== '') {
-				this.nbRouters++
-			}
-			if (('graphhopperURL' in optionsValues && optionsValues.graphhopperURL !== '')
-				|| ('graphhopperAPIKEY' in optionsValues && optionsValues.graphhopperAPIKEY !== '')) {
-				this.nbRouters++
-			}
-			if (this.nbRouters === 0 && !OC.isUserAdmin()) {
-				// TODO
-				// // disable routing and hide it to the user
-				// // search bar
-				// $('#route-submit').hide();
-				// $('#search-submit').css('right', '10px');
-				// // context menu: remove routing related items
-				// mapController.map.contextmenu.removeItem(mapController.map.contextmenu._items[mapController.map.contextmenu._items.length-1].el);
-				// mapController.map.contextmenu.removeItem(mapController.map.contextmenu._items[mapController.map.contextmenu._items.length-1].el);
-				// mapController.map.contextmenu.removeItem(mapController.map.contextmenu._items[mapController.map.contextmenu._items.length-1].el);
-				// mapController.map.contextmenu.removeItem(mapController.map.contextmenu._items[mapController.map.contextmenu._items.length-1].el);
-				// // and we don't init routingController
-			} else {
+			if (this.nbRouters > 0 || getCurrentUser().isAdmin) {
 				this.initRoutingControl()
 			}
 		},

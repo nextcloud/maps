@@ -63,6 +63,24 @@ const optionsController = {
 		if ('contactLayer' in optionsValues && optionsValues.contactLayer !== 'true') {
 			this.contactsEnabled = false
 		}
+
+		// routing
+		if ('osrmCarURL' in optionsValues && optionsValues.osrmCarURL !== '') {
+			this.nbRouters++
+		}
+		if ('osrmBikeURL' in optionsValues && optionsValues.osrmBikeURL !== '') {
+			this.nbRouters++
+		}
+		if ('osrmFootURL' in optionsValues && optionsValues.osrmFootURL !== '') {
+			this.nbRouters++
+		}
+		if ('mapboxAPIKEY' in optionsValues && optionsValues.mapboxAPIKEY !== '') {
+			this.nbRouters++
+		}
+		if (('graphhopperURL' in optionsValues && optionsValues.graphhopperURL !== '')
+			|| ('graphhopperAPIKEY' in optionsValues && optionsValues.graphhopperAPIKEY !== '')) {
+			this.nbRouters++
+		}
 		/*
 		// set tilelayer before showing photo layer because it needs a max zoom value
 		if (optionsValues.hasOwnProperty('displaySlider') && optionsValues.displaySlider === 'true') {
@@ -239,20 +257,6 @@ const optionsController = {
 			mapController.layerChanged(e.name);
 		});
 
-		// routing
-		that.nbRouters = 0;
-		if (optionsValues.hasOwnProperty('osrmCarURL') && optionsValues.osrmCarURL !== '') {
-			that.nbRouters++;
-		}
-		if (optionsValues.hasOwnProperty('osrmBikeURL') && optionsValues.osrmBikeURL !== '') {
-			that.nbRouters++;
-		}
-		if (optionsValues.hasOwnProperty('osrmFootURL') && optionsValues.osrmFootURL !== '') {
-			that.nbRouters++;
-		}
-		if (optionsValues.hasOwnProperty('mapboxAPIKEY') && optionsValues.mapboxAPIKEY !== '') {
-			that.nbRouters++;
-		}
 		if ((optionsValues.hasOwnProperty('graphhopperURL') && optionsValues.graphhopperURL !== '') ||
 			(optionsValues.hasOwnProperty('graphhopperAPIKEY') && optionsValues.graphhopperAPIKEY !== '') ){
 			that.nbRouters++;

@@ -5,7 +5,8 @@
 			class-name="placement-marker-icon"
 			:icon-size="[40, 40]"
 			:icon-url="markerIconUrl" />
-		<LPopup :options="popupOptions">
+		<LPopup :options="popupOptions"
+			@ready="onPopupReady">
 			<h3>{{ t('maps', 'New contact address') }}</h3>
 			<span v-if="addressLoading"
 				class="icon icon-loading-small" />
@@ -89,7 +90,6 @@ export default {
 		return {
 			popupOptions: {
 				closeButton: false,
-				offset: [-2, 40],
 			},
 			contactData: [],
 			addressLoading: false,
@@ -141,6 +141,10 @@ export default {
 		},
 		onMarkerReady(m) {
 			m.openPopup()
+		},
+		onPopupReady(p) {
+			// i don't know why but it is placed too high when it's created
+			p.setLatLng(this.latLng)
 		},
 		getContactAvatar(contact) {
 			if (contact.HAS_PHOTO && !contact.HAS_PHOTO2) {

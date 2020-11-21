@@ -88,7 +88,7 @@ class ContactsController extends Controller {
                 $card = $this->cdBackend->getContact($c['addressbook-key'], $c['URI']);
                 if ($card) {
                     $vcard = Reader::read($card['carddata']);
-                    if (isset($vcard->ADR) and count($vcard->ADR) > 0) {
+                    if (isset($vcard->ADR) && count($vcard->ADR) > 0) {
                         foreach ($vcard->ADR as $adr) {
                             $geo = $this->addressService->addressToGeo($adr->getValue(), $c['URI']);
                             //var_dump($adr->parameters()['TYPE']->getValue());

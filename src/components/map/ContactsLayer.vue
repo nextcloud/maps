@@ -1,5 +1,6 @@
 <template>
-	<Vue2LeafletMarkerCluster :options="clusterOptions">
+	<Vue2LeafletMarkerCluster :options="clusterOptions"
+		@clusterclick="onClusterClick">
 		<LMarker v-for="(c, i) in displayedContacts"
 			:key="c.URI + i + c.ADR"
 			:options="{ data: c }"
@@ -162,6 +163,13 @@ export default {
 	methods: {
 		geoToLatLng(geo) {
 			return geoToLatLng(geo)
+		},
+		onClusterClick(a) {
+			if (a.layer.getChildCount() > 10 && a.layer._map.getZoom() !== a.layer._map.getMaxZoom()) {
+				a.layer.zoomToBounds()
+			} else {
+				a.layer.spiderfy()
+			}
 		},
 		getClusterMarkerIcon(cluster) {
 			const contact = cluster.getAllChildMarkers()[0].options.data

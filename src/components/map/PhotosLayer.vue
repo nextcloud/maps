@@ -144,7 +144,9 @@ export default {
 			return moment(photo.dateTaken).format('LLL')
 		},
 		onViewClick(photo) {
-
+			if (OCA.Viewer && OCA.Viewer.open) {
+				OCA.Viewer.open({ path: photo.path, list: [photo] })
+			}
 		},
 	},
 }

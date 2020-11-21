@@ -12,6 +12,11 @@
 					@zoom-all-groups="onZoomAllContactGroups"
 					@zoom-group="onZoomContactGroup"
 					@toggle-all-groups="onToggleAllContactGroups" />
+				<AppNavigationPhotosItem
+					:enabled="photosEnabled"
+					:loading="photosLoading"
+					:photos="photos"
+					@photos-clicked="onPhotosClicked" />
 			</template>
 		</MapsNavigation>
 		<AppContent>
@@ -63,6 +68,9 @@
 						:layer-type="l.type"
 						:options="l.options"
 						:opacity="l.opacity" />
+					<PhotosLayer
+						v-if="map && photosEnabled"
+						:photos="photos" />
 					<ContactsLayer
 						v-if="map && contactsEnabled"
 						:contacts="contacts"
@@ -118,9 +126,11 @@ import 'leaflet-contextmenu/dist/leaflet.contextmenu.min'
 import 'leaflet-contextmenu/dist/leaflet.contextmenu.min.css'
 
 import RoutingControl from '../components/map/RoutingControl'
+import PhotosLayer from '../components/map/PhotosLayer'
 import ContactsLayer from '../components/map/ContactsLayer'
 import PlaceContactPopup from '../components/map/PlaceContactPopup'
 import MapsNavigation from '../components/MapsNavigation'
+import AppNavigationPhotosItem from '../components/AppNavigationPhotosItem'
 import AppNavigationContactsItem from '../components/AppNavigationContactsItem'
 import optionsController from '../optionsController'
 import { geoToLatLng } from '../utils/mapUtils'
@@ -146,7 +156,9 @@ export default {
 		LTileLayer,
 		RoutingControl,
 		MapsNavigation,
+		AppNavigationPhotosItem,
 		AppNavigationContactsItem,
+		PhotosLayer,
 		ContactsLayer,
 		PlaceContactPopup,
 	},
@@ -187,6 +199,10 @@ export default {
 			showExtraLayers: false,
 			// routing
 			showRouting: false,
+			// photos
+			photosLoading: false,
+			photosEnabled: optionsController.photosEnabled,
+			photos: [],
 			// contacts
 			contactsLoading: false,
 			contactsEnabled: optionsController.contactsEnabled,
@@ -203,6 +219,7 @@ export default {
 
 	created() {
 		this.getContacts()
+		this.getPhotos()
 	},
 	mounted() {
 		// subscribe('nextcloud:unified-search.search', this.filter)
@@ -466,8 +483,36 @@ export default {
 		onRoutingClose() {
 			this.showRouting = false
 		},
+		// ================ PHOTOS =================
+		onPhotosClicked() {
+			this.photosEnabled = !this.photosEnabled
+			// get contacts if we don't have them yet
+			if (this.photosEnabled && this.photos.length === 0) {
+				this.getPhotos()
+			}
+			optionsController.saveOptionValues({ photosLayer: this.photosEnabled ? 'true' : 'false' })
+		},
+		getPhotos() {
+			if (!this.photosEnabled) {
+				return
+			}
+			this.photosLoading = true
+			network.getPhotos().then((response) => {
+				console.debug(response.data)
+				this.photos = response.data
+			}).catch((error) => {
+				console.error(error)
+			}).then(() => {
+				this.photosLoading = false
+			})
+		},
+		// ================ CONTACTS =================
 		onContactsClicked() {
 			this.contactsEnabled = !this.contactsEnabled
+			// get contacts if we don't have them yet
+			if (this.contactsEnabled && this.contacts.length === 0) {
+				this.getContacts()
+			}
 			optionsController.saveOptionValues({ contactLayer: this.contactsEnabled ? 'true' : 'false' })
 		},
 		onContactGroupClicked(groupId) {
@@ -533,6 +578,9 @@ export default {
 			}
 		},
 		getContacts() {
+			if (!this.contactsEnabled) {
+				return
+			}
 			this.contactsLoading = true
 			this.disabledContactGroups = []
 			if ('jsonDisabledContactGroups' in this.optionValues) {

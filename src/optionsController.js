@@ -12,6 +12,7 @@ const optionsController = {
 	],
 	nbRouters: 0,
 	optionValues: {},
+	photosEnabled: true,
 	contactsEnabled: true,
 	enabledFavoriteCategories: [],
 	disabledContactGroups: [],
@@ -58,6 +59,10 @@ const optionsController = {
 			showWarning(
 				t('maps', 'Media scan was not done yet. Wait a few minutes/hours and reload this page to see your photos/tracks.')
 			)
+		}
+
+		if ('photosLayer' in optionsValues && optionsValues.photosLayer !== 'true') {
+			this.photosEnabled = false
 		}
 
 		if ('contactLayer' in optionsValues && optionsValues.contactLayer !== 'true') {

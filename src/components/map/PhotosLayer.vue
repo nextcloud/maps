@@ -1,12 +1,12 @@
 <template>
 	<Vue2LeafletMarkerCluster :options="clusterOptions"
 		@clusterclick="onClusterClick">
-		<LMarker v-for="(c, i) in displayedContacts"
-			:key="c.URI + i + c.ADR"
-			:options="{ data: c }"
-			:icon="getContactMarkerIcon(c)"
-			:lat-lng="geoToLatLng(c.GEO)">
-			<LTooltip
+		<LMarker v-for="(p, i) in displayedPhotos"
+			:key="i"
+			:options="{ data: p }"
+			:icon="getPhotoMarkerIcon(p)"
+			:lat-lng="[p.lat, p.lng]">
+			<!--LTooltip
 				class="tooltip-contact-wrapper"
 				:options="tooltipOptions">
 				<img class="tooltip-contact-avatar"
@@ -65,7 +65,7 @@
 						{{ t('maps', 'Open in Contacts') }}
 					</a>
 				</div>
-			</LPopup>
+			</LPopup-->
 		</LMarker>
 	</Vue2LeafletMarkerCluster>
 </template>
@@ -81,12 +81,10 @@ import Vue2LeafletMarkerCluster from 'vue2-leaflet-markercluster'
 import optionsController from '../../optionsController'
 import { geoToLatLng } from '../../utils/mapUtils'
 
-import { deleteContactAddress } from '../../network'
-
-const CONTACT_MARKER_VIEW_SIZE = 40
+const PHOTO_MARKER_VIEW_SIZE = 40
 
 export default {
-	name: 'ContactsLayer',
+	name: 'PhotosLayer',
 	components: {
 		Vue2LeafletMarkerCluster,
 		LMarker,
@@ -95,12 +93,8 @@ export default {
 	},
 
 	props: {
-		contacts: {
+		photos: {
 			type: Array,
-			required: true,
-		},
-		groups: {
-			type: Object,
 			required: true,
 		},
 	},
@@ -113,9 +107,9 @@ export default {
 				spiderfyOnMaxZoom: false,
 				showCoverageOnHover: false,
 				zoomToBoundsOnClick: false,
-				maxClusterRadius: CONTACT_MARKER_VIEW_SIZE + 10,
+				maxClusterRadius: PHOTO_MARKER_VIEW_SIZE + 10,
 				icon: {
-					iconSize: [CONTACT_MARKER_VIEW_SIZE, CONTACT_MARKER_VIEW_SIZE],
+					iconSize: [PHOTO_MARKER_VIEW_SIZE, PHOTO_MARKER_VIEW_SIZE],
 				},
 			},
 			tooltipOptions: {
@@ -132,28 +126,8 @@ export default {
 	},
 
 	computed: {
-		displayedContacts() {
-			return this.contacts.filter((c) => {
-				if (c.GROUPS) {
-					try {
-						const cGroups = c.GROUPS.split(/[^\\],/).map((name) => {
-							return name.replace('\\,', ',')
-						})
-						for (let i = 0; i < cGroups.length; i++) {
-							// if at least in one enabled group
-							if (this.groups[cGroups[i]].enabled) {
-								return true
-							}
-						}
-					} catch (error) {
-						console.error(error)
-					}
-				} else if (this.groups['0'].enabled) {
-					// or not grouped and this is enabled
-					return true
-				}
-				return false
-			})
+		displayedPhotos() {
+			return this.photos
 		},
 	},
 
@@ -161,9 +135,6 @@ export default {
 	},
 
 	methods: {
-		geoToLatLng(geo) {
-			return geoToLatLng(geo)
-		},
 		onClusterClick(a) {
 			if (a.layer.getChildCount() > 10 && a.layer._map.getZoom() !== a.layer._map.getMaxZoom()) {
 				a.layer.zoomToBounds()
@@ -172,60 +143,28 @@ export default {
 			}
 		},
 		getClusterMarkerIcon(cluster) {
-			const contact = cluster.getAllChildMarkers()[0].options.data
-			const iconUrl = this.getContactAvatar(contact)
+			const photo = cluster.getAllChildMarkers()[0].options.data
+			const iconUrl = this.getPreviewUrl(photo)
 			const label = cluster.getChildCount()
 			return new L.DivIcon(L.extend({
-				className: 'leaflet-marker-contact cluster-marker',
+				className: 'leaflet-marker-photo cluster-marker',
 				html: '<div class="thumbnail" style="background-image: url(' + iconUrl + ');"></div>​<span class="label">' + label + '</span>',
 			}))
 		},
-		getContactMarkerIcon(contact) {
-			const iconUrl = this.getContactAvatar(contact)
-			return L.divIcon(
-				L.extend({
-					className: 'leaflet-marker-contact contact-marker',
-					html: '<div class="thumbnail" style="background-image: url(' + iconUrl + ');"></div>​',
-				},
-				contact,
-				{
-					iconSize: [CONTACT_MARKER_VIEW_SIZE, CONTACT_MARKER_VIEW_SIZE],
-					iconAnchor: [CONTACT_MARKER_VIEW_SIZE / 2, CONTACT_MARKER_VIEW_SIZE],
-				})
-			)
+		getPhotoMarkerIcon(photo) {
+			const iconUrl = this.getPreviewUrl(photo)
+			return L.divIcon(L.extend({
+				className: 'leaflet-marker-photo photo-marker',
+				html: '<div class="thumbnail" style="background-image: url(' + iconUrl + ');"></div>​',
+			}, photo, {
+				iconSize: [PHOTO_MARKER_VIEW_SIZE, PHOTO_MARKER_VIEW_SIZE],
+				iconAnchor: [PHOTO_MARKER_VIEW_SIZE / 2, PHOTO_MARKER_VIEW_SIZE],
+			}))
 		},
-		getContactAvatar(contact) {
-			if (contact.HAS_PHOTO) {
-				return generateUrl(
-					'/remote.php/dav/addressbooks/users/' + getCurrentUser().uid
-					+ '/' + encodeURIComponent(contact.BOOKURI)
-					+ '/' + encodeURIComponent(contact.URI) + '?photo').replace(/index\.php\//, '')
-			} else {
-				return generateUrl('/apps/maps/contacts-avatar?name=' + encodeURIComponent(contact.FN))
-			}
-		},
-		getFormattedAddressLines(contact) {
-			const adrTab = contact.ADR.split(';')
-			const formattedAddressLines = []
-			if (adrTab.length > 6) {
-				// check if street name is set
-				if (adrTab[2] !== '') {
-					formattedAddressLines.push(adrTab[2])
-				}
-				formattedAddressLines.push(adrTab[5] + ' ' + adrTab[3])
-				formattedAddressLines.push(adrTab[4] + ' ' + adrTab[6])
-			}
-			return formattedAddressLines
-		},
-		getContactUrl(contact) {
-			return generateUrl('/apps/contacts/' + t('contacts', 'All contacts') + '/' + encodeURIComponent(contact.UID + '~contacts'))
-		},
-		onDeleteAddressClick(contact) {
-			deleteContactAddress(contact.BOOKID, contact.URI, contact.UID, contact.ADR).then((response) => {
-				this.$emit('address-deleted')
-			}).catch((error) => {
-				console.error(error)
-			})
+		getPreviewUrl(photo) {
+			return photo.hasPreview
+				? generateUrl('core') + '/preview?fileId=' + photo.fileId + '&x=341&y=256&a=1'
+				: generateUrl('/apps/theming/img/core/filetypes') + '/image.svg?v=2'
 		},
 	},
 }

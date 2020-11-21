@@ -8,8 +8,9 @@
 		:force-menu="false"
 		@click="onContactsClick"
 		@update:open="onUpdateOpen">
-		<template v-if="enabled" slot="counter">
-			{{ contacts.length }}
+		<template slot="counter">
+			<span v-if="enabled && contacts.length">{{ contacts.length }}</span>
+			&nbsp;
 		</template>
 		<template v-if="enabled" slot="actions">
 			<ActionButton
@@ -34,11 +35,11 @@
 				:allow-collapse="false"
 				:force-menu="false"
 				@click="onGroupClick(gid)">
-				<template v-if="enabled && g.enabled" slot="counter">
-					{{ g.counter }}
+				<template slot="counter">
+					<span v-if="enabled && contacts.length && g.enabled">{{ g.counter }}</span>
 				</template>
-				<template v-if="enabled && g.enabled" slot="actions">
-					<ActionButton
+				<template slot="actions">
+					<ActionButton v-if="enabled && contacts.length && g.enabled"
 						icon="icon-search"
 						:close-after-click="true"
 						@click="onZoomGroupClick(gid)">

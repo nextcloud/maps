@@ -80,3 +80,8 @@ export function placeContact(bookid, uri, uid, lat, lng, address, type = 'home')
 	const url = generateUrl('/apps/maps/contacts/' + bookid + '/' + uri)
 	return axios.put(url, req)
 }
+
+export function getPhotos() {
+	const url = generateUrl('/apps/maps/photos')
+	return axios.get(url)
+}

@@ -771,4 +771,12 @@ export default {
 	object-fit: cover;
 	border: 2px solid var(--color-border);
 }
+
+::v-deep .popup-photo-wrapper .action {
+	height: 44px;
+	.action-button {
+		height: 44px !important;
+		padding: 0 !important;
+	}
+}
 </style>

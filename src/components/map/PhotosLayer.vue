@@ -5,7 +5,9 @@
 			:key="i"
 			:options="{ data: p }"
 			:icon="getPhotoMarkerIcon(p)"
-			:lat-lng="[p.lat, p.lng]">
+			:lat-lng="[p.lat, p.lng]"
+			@click="onPhotoClick($event, p)"
+			@contextmenu="onPhotoRightClick($event, p)">
 			<LTooltip
 				class="tooltip-photo-wrapper"
 				:options="tooltipOptions">
@@ -19,10 +21,16 @@
 				</p>
 			</LTooltip>
 			<LPopup
-				class="popup-contact-wrapper"
+				class="popup-photo-wrapper"
 				:options="popupOptions">
-				<ActionButton icon="icon-toggle" @click="onViewClick(p)">
-					{{ t('maps', 'View (double click)') }}
+				<ActionButton icon="icon-toggle" @click="viewPhoto(p)">
+					{{ t('maps', 'View') }}
+				</ActionButton>
+				<ActionButton icon="icon-link" @click="viewPhoto(p)">
+					{{ t('maps', 'Move') }}
+				</ActionButton>
+				<ActionButton icon="icon-history" @click="viewPhoto(p)">
+					{{ t('maps', 'Remove geo data') }}
 				</ActionButton>
 			</LPopup>
 		</LMarker>
@@ -81,7 +89,7 @@ export default {
 			popupOptions: {
 				closeOnClick: true,
 				className: 'popovermenu open popupMarker photoPopup',
-				offset: L.point(-5, 10),
+				offset: L.point(-5, -20),
 			},
 		}
 	},
@@ -143,17 +151,26 @@ export default {
 		getPhotoFormattedDate(photo) {
 			return moment(photo.dateTaken).format('LLL')
 		},
-		onViewClick(photo) {
+		onPhotoClick(e, photo) {
+			this.$nextTick(() => {
+				e.target.closePopup()
+			})
+			this.viewPhoto(photo)
+		},
+		viewPhoto(photo) {
 			if (OCA.Viewer && OCA.Viewer.open) {
 				OCA.Viewer.open({ path: photo.path, list: [photo] })
 			}
+		},
+		onPhotoRightClick(e, photo) {
+			this.$nextTick(() => {
+				e.target.openPopup()
+			})
 		},
 	},
 }
 </script>
 
 <style lang="scss" scoped>
-.tooltip-photo-wrapper {
-	// display: flex;
-}
+// nothing
 </style>

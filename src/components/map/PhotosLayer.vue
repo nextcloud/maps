@@ -6,80 +6,32 @@
 			:options="{ data: p }"
 			:icon="getPhotoMarkerIcon(p)"
 			:lat-lng="[p.lat, p.lng]">
-			<!--LTooltip
-				class="tooltip-contact-wrapper"
+			<LTooltip
+				class="tooltip-photo-wrapper"
 				:options="tooltipOptions">
-				<img class="tooltip-contact-avatar"
-					:src="getContactAvatar(c)"
-					alt="">
-				<div class="tooltip-contact-content">
-					<h3 class="tooltip-contact-name">
-						{{ c.FN }}
-					</h3>
-					<p v-if=" c.ADRTYPE.toLowerCase() === 'home'"
-						class="tooltip-contact-address-type">
-						{{ t('maps', 'Home') }}
-					</p>
-					<p v-else-if=" c.ADRTYPE.toLowerCase() === 'work'"
-						class="tooltip-contact-address-type">
-						{{ t('maps', 'Work') }}
-					</p>
-					<p v-for="l in getFormattedAddressLines(c)"
-						:key="l"
-						class="tooltip-contact-address">
-						{{ l }}
-					</p>
-				</div>
+				<img class="photo-tooltip"
+					:src="getPreviewUrl(p)">
+				<p class="tooltip-photo-date">
+					{{ getPhotoFormattedDate(p) }}
+				</p>
+				<p class="tooltip-photo-name">
+					{{ basename(p.path) }}
+				</p>
 			</LTooltip>
-			<LPopup
-				class="popup-contact-wrapper"
-				:options="popupOptions">
-				<div class="left-contact-popup">
-					<img class="tooltip-contact-avatar"
-						:src="getContactAvatar(c)"
-						alt="">
-					<button
-						v-tooltip="{ content: t('maps', 'Delete this address') }"
-						class="icon icon-delete"
-						@click="onDeleteAddressClick(c)" />
-				</div>
-				<div class="tooltip-contact-content">
-					<h3 class="tooltip-contact-name">
-						{{ c.FN }}
-					</h3>
-					<p v-if=" c.ADRTYPE.toLowerCase() === 'home'"
-						class="tooltip-contact-address-type">
-						{{ t('maps', 'Home') }}
-					</p>
-					<p v-else-if=" c.ADRTYPE.toLowerCase() === 'work'"
-						class="tooltip-contact-address-type">
-						{{ t('maps', 'Work') }}
-					</p>
-					<p v-for="l in getFormattedAddressLines(c)"
-						:key="l"
-						class="tooltip-contact-address">
-						{{ l }}
-					</p>
-					<a target="_blank"
-						:href="getContactUrl(c)">
-						{{ t('maps', 'Open in Contacts') }}
-					</a>
-				</div>
-			</LPopup-->
 		</LMarker>
 	</Vue2LeafletMarkerCluster>
 </template>
 
 <script>
 import { generateUrl } from '@nextcloud/router'
-import { getCurrentUser } from '@nextcloud/auth'
+import moment from '@nextcloud/moment'
+import { basename } from '@nextcloud/paths'
 
 import L from 'leaflet'
-import { LMarker, LTooltip, LPopup } from 'vue2-leaflet'
+import { LMarker, LTooltip } from 'vue2-leaflet'
 import Vue2LeafletMarkerCluster from 'vue2-leaflet-markercluster'
 
 import optionsController from '../../optionsController'
-import { geoToLatLng } from '../../utils/mapUtils'
 
 const PHOTO_MARKER_VIEW_SIZE = 40
 
@@ -89,7 +41,6 @@ export default {
 		Vue2LeafletMarkerCluster,
 		LMarker,
 		LTooltip,
-		LPopup,
 	},
 
 	props: {
@@ -113,14 +64,9 @@ export default {
 				},
 			},
 			tooltipOptions: {
-				className: 'leaflet-marker-contact-tooltip',
-				direction: 'top',
-				offset: L.point(0, 0),
-			},
-			popupOptions: {
-				closeOnClick: true,
-				className: 'popovermenu open popupMarker contactPopup',
-				offset: L.point(-5, 10),
+				className: 'leaflet-marker-photo-tooltip',
+				direction: 'right',
+				offset: L.point(0, -30),
 			},
 		}
 	},
@@ -135,6 +81,9 @@ export default {
 	},
 
 	methods: {
+		basename(path) {
+			return basename(path)
+		},
 		onClusterClick(a) {
 			if (a.layer.getChildCount() > 10 && a.layer._map.getZoom() !== a.layer._map.getMaxZoom()) {
 				a.layer.zoomToBounds()
@@ -166,31 +115,15 @@ export default {
 				? generateUrl('core') + '/preview?fileId=' + photo.fileId + '&x=341&y=256&a=1'
 				: generateUrl('/apps/theming/img/core/filetypes') + '/image.svg?v=2'
 		},
+		getPhotoFormattedDate(photo) {
+			return moment(photo.dateTaken).format('LLL')
+		},
 	},
 }
 </script>
 
 <style lang="scss" scoped>
-@import '~leaflet.markercluster/dist/MarkerCluster.css';
-@import '~leaflet.markercluster/dist/MarkerCluster.Default.css';
-
-.popup-contact-wrapper,
-.tooltip-contact-wrapper {
-	display: flex;
-}
-
-.left-contact-popup {
-	display: flex;
-	flex-direction: column;
-	align-items: center;
-	button {
-		width: 44px;
-		height: 44px !important;
-		background-color: transparent;
-		border: 0;
-		&:hover {
-			background-color: var(--color-background-hover);
-		}
-	}
+.tooltip-photo-wrapper {
+	// display: flex;
 }
 </style>

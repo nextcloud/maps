@@ -659,6 +659,8 @@ export default {
 
 <style lang="scss" scoped>
 @import '~leaflet/dist/leaflet.css';
+@import '~leaflet.markercluster/dist/MarkerCluster.css';
+@import '~leaflet.markercluster/dist/MarkerCluster.Default.css';
 
 .leaflet-container {
 	position: relative;
@@ -695,6 +697,7 @@ export default {
 	display: none;
 }
 
+::v-deep .leaflet-marker-photo,
 ::v-deep .leaflet-marker-contact {
 	width: 40px !important;
 	height: 40px !important;

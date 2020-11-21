@@ -85,3 +85,14 @@ export function getPhotos() {
 	const url = generateUrl('/apps/maps/photos')
 	return axios.get(url)
 }
+
+export function placePhotos(paths, lats, lngs, directory = false) {
+	const req = {
+		paths,
+		lats,
+		lngs,
+		directory,
+	}
+	const url = generateUrl('/apps/maps/photos')
+	return axios.post(url, req)
+}

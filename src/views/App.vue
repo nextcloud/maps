@@ -255,7 +255,7 @@ export default {
 				}, {
 					text: t('maps', 'Place photos'),
 					icon: generateUrl('/svg/core/places/picture?color=000000'),
-					callback: () => {},
+					callback: this.contextPlacePhotosOrFolder,
 				}, {
 					text: t('maps', 'Place contact'),
 					icon: generateUrl('/svg/core/actions/user?color=000000'),
@@ -512,6 +512,60 @@ export default {
 				console.error(error)
 			}).then(() => {
 				this.photosLoading = false
+			})
+		},
+		contextPlacePhotosOrFolder(e) {
+			OC.dialogs.confirmDestructive(
+				'',
+				t('maps', 'What do you want to place?'),
+				{
+					type: OC.dialogs.YES_NO_BUTTONS,
+					confirm: t('maps', 'Photo files'),
+					confirmClasses: '',
+					cancel: t('maps', 'Photo folders'),
+				},
+				(result) => {
+					if (result) {
+						this.contextPlacePhotos(e)
+					} else {
+						this.contextPlacePhotoFolder(e)
+					}
+				},
+				true
+			)
+		},
+		contextPlacePhotos(e) {
+			const latlng = e.latlng
+			OC.dialogs.filepicker(
+				t('maps', 'Choose pictures to place'),
+				(targetPath) => {
+					this.placePhotos(targetPath, [latlng.lat], [latlng.lng])
+				},
+				true,
+				['image/jpeg', 'image/tiff'],
+				true
+			)
+		},
+		contextPlacePhotoFolder(e) {
+			const latlng = e.latlng
+			OC.dialogs.filepicker(
+				t('maps', 'Choose directory of pictures to place'),
+				(targetPath) => {
+					if (targetPath === '') {
+						targetPath = '/'
+					}
+					this.placePhotos([targetPath], [latlng.lat], [latlng.lng], true)
+				},
+				false,
+				'httpd/unix-directory',
+				true
+			)
+		},
+		placePhotos(paths, lats, lngs, directory = false) {
+			network.placePhotos(paths, lats, lngs, directory).then((response) => {
+				this.getPhotos()
+			}).catch((error) => {
+				console.error(error)
 			})
 		},
 		// ================ CONTACTS =================

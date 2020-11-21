@@ -185,7 +185,7 @@ class PhotofilesService {
     }
 
     public function setPhotosFilesCoords($userId, $paths, $lats, $lngs, $directory) {
-        if ($directory === 'true') {
+        if ($directory) {
             return $this->setDirectoriesCoords($userId, $paths, $lats, $lngs);
         }
         else {
@@ -205,7 +205,7 @@ class PhotofilesService {
                 if ($dir->getType() === FileInfo::TYPE_FOLDER) {
                     $nodes = $dir->getDirectoryListing();
                     foreach($nodes as $node) {
-                        if ($this->isPhoto($node) and $node->isUpdateable()) {
+                        if ($this->isPhoto($node) && $node->isUpdateable()) {
                             $this->setExifCoords($node, $lat, $lng);
                             $this->updateByFileNow($node);
                             $nbDone++;

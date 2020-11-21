@@ -71,6 +71,7 @@ export default {
 		onDisplaySliderClick(e) {
 			this.optionValues.displaySlider = e.target.checked
 			optionsController.saveOptionValues({ displaySlider: e.target.checked ? 'true' : 'false' })
+			this.$emit('toggle-slider', e.target.checked)
 		},
 	},
 }
@@ -78,5 +79,9 @@ export default {
 <style scoped lang="scss">
 .loading-icon {
 	margin-top: 16px;
+}
+
+::v-deep #app-settings-content {
+	list-style: none;
 }
 </style>

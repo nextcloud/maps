@@ -1,6 +1,7 @@
 <template>
 	<Content app-name="maps">
-		<MapsNavigation>
+		<MapsNavigation
+			@toggle-slider="sliderEnabled = $event">
 			<template #items>
 				<AppNavigationContactsItem
 					:enabled="contactsEnabled"
@@ -88,6 +89,9 @@
 					icon="icon-menu-sidebar"
 					@click="onMainDetailClicked" />
 			</Actions>
+			<Slider v-show="sliderEnabled"
+				:min="3"
+				:max="33" />
 		</AppContent>
 		<!--Sidebar
 			v-if="currentProjectId"
@@ -125,6 +129,7 @@ import 'leaflet-easybutton/src/easy-button.css'
 import 'leaflet-contextmenu/dist/leaflet.contextmenu.min'
 import 'leaflet-contextmenu/dist/leaflet.contextmenu.min.css'
 
+import Slider from '../components/map/Slider'
 import RoutingControl from '../components/map/RoutingControl'
 import PhotosLayer from '../components/map/PhotosLayer'
 import ContactsLayer from '../components/map/ContactsLayer'
@@ -154,6 +159,7 @@ export default {
 		LControlZoom,
 		LControlLayers,
 		LTileLayer,
+		Slider,
 		RoutingControl,
 		MapsNavigation,
 		AppNavigationPhotosItem,
@@ -197,6 +203,8 @@ export default {
 			streetButton: null,
 			satelliteButton: null,
 			showExtraLayers: false,
+			// slider
+			sliderEnabled: optionsController.optionValues.displaySlider === 'true',
 			// routing
 			showRouting: false,
 			// photos

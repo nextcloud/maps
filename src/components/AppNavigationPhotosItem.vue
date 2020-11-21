@@ -1,6 +1,6 @@
 <template>
 	<AppNavigationItem
-		:icon="loading ? 'icon-loading-small' : 'icon-group'"
+		:icon="loading ? 'icon-loading-small' : 'icon-category-multimedia'"
 		:title="t('maps', 'My photos')"
 		:class="{ 'item-disabled': !enabled }"
 		:allow-collapse="false"

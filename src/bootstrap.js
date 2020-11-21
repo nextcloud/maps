@@ -32,7 +32,7 @@ Vue.prototype.OCA = window.OCA
 	Vue.config.devtools = true
 } */
 
-// this part resolve an issue where the markers would not appear
+// this is needed to get default marker icons
 delete Icon.Default.prototype._getIconUrl
 
 Icon.Default.mergeOptions({

@@ -687,6 +687,7 @@ export default {
 ::v-deep .icon-esri {
 	background:  url('./../../css/images/esri.jpg');
 	background-size: 35px;
+	border: none !important;
 }
 
 ::v-deep .easy-button-container.behind {

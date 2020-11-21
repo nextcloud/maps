@@ -29,6 +29,12 @@ import optionsController from './optionsController'
 'use strict'
 
 document.addEventListener('DOMContentLoaded', (event) => {
+	if (!window.OCA.Files) {
+		window.OCA.Files = {}
+	}
+	// register unused client for the sidebar to have access to its parser methods
+	Object.assign(window.OCA.Files, { App: { fileList: { filesClient: OC.Files.getClient() } } }, window.OCA.Files)
+
 	optionsController.restoreOptions(main)
 })
 

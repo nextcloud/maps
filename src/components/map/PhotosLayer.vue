@@ -18,6 +18,13 @@
 					{{ basename(p.path) }}
 				</p>
 			</LTooltip>
+			<LPopup
+				class="popup-contact-wrapper"
+				:options="popupOptions">
+				<ActionButton icon="icon-toggle" @click="onViewClick(p)">
+					{{ t('maps', 'View (double click)') }}
+				</ActionButton>
+			</LPopup>
 		</LMarker>
 	</Vue2LeafletMarkerCluster>
 </template>
@@ -28,8 +35,9 @@ import moment from '@nextcloud/moment'
 import { basename } from '@nextcloud/paths'
 
 import L from 'leaflet'
-import { LMarker, LTooltip } from 'vue2-leaflet'
+import { LMarker, LTooltip, LPopup } from 'vue2-leaflet'
 import Vue2LeafletMarkerCluster from 'vue2-leaflet-markercluster'
+import ActionButton from '@nextcloud/vue/dist/Components/ActionButton'
 
 import optionsController from '../../optionsController'
 
@@ -41,6 +49,8 @@ export default {
 		Vue2LeafletMarkerCluster,
 		LMarker,
 		LTooltip,
+		LPopup,
+		ActionButton,
 	},
 
 	props: {
@@ -68,6 +78,11 @@ export default {
 				direction: 'right',
 				offset: L.point(0, -30),
 			},
+			popupOptions: {
+				closeOnClick: true,
+				className: 'popovermenu open popupMarker photoPopup',
+				offset: L.point(-5, 10),
+			},
 		}
 	},
 
@@ -88,7 +103,17 @@ export default {
 			if (a.layer.getChildCount() > 10 && a.layer._map.getZoom() !== a.layer._map.getMaxZoom()) {
 				a.layer.zoomToBounds()
 			} else {
-				a.layer.spiderfy()
+				if (OCA.Viewer && OCA.Viewer.open) {
+					const photoList = a.layer.getAllChildMarkers().map((m) => {
+						return m.options.data
+					})
+					photoList.sort((a, b) => {
+						return a.dateTaken - b.dateTaken
+					})
+					OCA.Viewer.open({ path: photoList[0].path, list: photoList })
+				} else {
+					a.layer.spiderfy()
+				}
 			}
 		},
 		getClusterMarkerIcon(cluster) {
@@ -117,6 +142,9 @@ export default {
 		},
 		getPhotoFormattedDate(photo) {
 			return moment(photo.dateTaken).format('LLL')
+		},
+		onViewClick(photo) {
+
 		},
 	},
 }

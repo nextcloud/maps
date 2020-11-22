@@ -245,7 +245,7 @@ class PhotofilesService {
             $cleanpath = str_replace(array('../', '..\\'), '',  $path);
             if ($userFolder->nodeExists($cleanpath)) {
                 $file = $userFolder->get($cleanpath);
-                if ($this->isPhoto($file) and $file->isUpdateable()) {
+                if ($this->isPhoto($file) && $file->isUpdateable()) {
                     $this->resetExifCoords($file);
                     $this->photoMapper->updateByFileId($file->getId(), null, null);
                     $nbDone++;

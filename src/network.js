@@ -97,7 +97,7 @@ export function placePhotos(paths, lats, lngs, directory = false) {
 	return axios.post(url, req)
 }
 
-export function resetPhotoCoords(paths) {
+export function resetPhotosCoords(paths) {
 	const req = {
 		params: {
 			paths,

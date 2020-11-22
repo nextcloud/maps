@@ -30,7 +30,7 @@
 				<ActionButton icon="icon-link" @click="viewPhoto(p)">
 					{{ t('maps', 'Move') }}
 				</ActionButton>
-				<ActionButton icon="icon-history" @click="resetPhotoCoords(p)">
+				<ActionButton icon="icon-history" @click="resetPhotosCoords([p])">
 					{{ t('maps', 'Remove geo data') }}
 				</ActionButton>
 			</LPopup>
@@ -44,6 +44,9 @@
 			</ActionButton>
 			<ActionButton icon="icon-search" @click="onZoomClusterClick">
 				{{ t('maps', 'Zoom on bounds') }}
+			</ActionButton>
+			<ActionButton icon="icon-history" @click="resetClusterPhotoCoords">
+				{{ t('maps', 'Remove geo data') }}
 			</ActionButton>
 		</LPopup>
 	</Vue2LeafletMarkerCluster>
@@ -214,11 +217,40 @@ export default {
 				e.target.openPopup()
 			})
 		},
-		resetPhotoCoords(photo) {
-			network.resetPhotoCoords([photo.path]).then((response) => {
+		resetClusterPhotoCoords() {
+			const clusterSize = this.contextCluster.getChildCount()
+			OC.dialogs.confirmDestructive(
+				'',
+				t('maps', 'Are you sure you want to remove geo data of {nb} photos?', { nb: clusterSize }),
+				{
+					type: OC.dialogs.YES_NO_BUTTONS,
+					confirm: t('maps', 'Yes'),
+					confirmClasses: '',
+					cancel: t('maps', 'Cancel'),
+				},
+				(result) => {
+					console.debug(result)
+					if (result) {
+						const photos = this.contextCluster.getAllChildMarkers().map((m) => {
+							return m.options.data
+						})
+						console.debug('photo list to delete')
+						console.debug(photos)
+						this.resetPhotosCoords(photos)
+					}
+				},
+				true
+			)
+		},
+		resetPhotosCoords(photos) {
+			console.debug('resetPhotosCoords')
+			const paths = photos.map((p) => { return p.path })
+			network.resetPhotosCoords(paths).then((response) => {
 				this.$emit('coords-reset')
 			}).catch((error) => {
 				console.error(error)
+			}).then(() => {
+				this.map.closePopup()
 			})
 		},
 	},

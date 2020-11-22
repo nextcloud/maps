@@ -29,6 +29,7 @@
 					:contacts="contacts"
 					:contact-groups="contactGroups"
 					:contacts-enabled="contactsEnabled"
+					:slider-enabled="sliderEnabled"
 					@coords-reset="getPhotos"
 					@address-deleted="getContacts"
 					@contact-placed="getContacts"
@@ -85,6 +86,7 @@ export default {
 	data() {
 		return {
 			optionValues: optionsController.optionValues,
+			sliderEnabled: optionsController.optionValues.displaySlider === 'true',
 			// photos
 			photosLoading: false,
 			photosEnabled: optionsController.photosEnabled,

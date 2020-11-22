@@ -136,6 +136,10 @@ export default {
 			type: Boolean,
 			required: true,
 		},
+		sliderEnabled: {
+			type: Boolean,
+			required: true,
+		},
 	},
 
 	data() {
@@ -172,8 +176,6 @@ export default {
 			streetButton: null,
 			satelliteButton: null,
 			showExtraLayers: false,
-			// slider
-			sliderEnabled: optionsController.optionValues.displaySlider === 'true',
 			// routing
 			showRouting: false,
 			// contacts

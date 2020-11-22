@@ -6,11 +6,15 @@
 import { getLocale } from '@nextcloud/l10n'
 import { generateUrl } from '@nextcloud/router'
 import { getCurrentUser } from '@nextcloud/auth'
+import moment from '@nextcloud/moment'
+
 import L from 'leaflet'
 import 'leaflet-control-geocoder/dist/Control.Geocoder'
 import 'leaflet-control-geocoder/dist/Control.Geocoder.css'
 import 'leaflet-routing-machine/dist/leaflet-routing-machine'
 import 'leaflet-routing-machine/dist/leaflet-routing-machine.css'
+
+import * as network from '../../network'
 import optionsController from '../../optionsController'
 
 export default {
@@ -316,7 +320,6 @@ export default {
 			}
 			OC.Notification.showTemporary(t('maps', 'Routing error:') + ' ' + msg)
 			this.onRoutingEnd()
-			// $('.exportCurrentRoute').hide()
 			document.querySelector('.exportCurrentRoute').style.display = 'none'
 			this.$emit('routing-error')
 		},
@@ -330,14 +333,11 @@ export default {
 		},
 
 		onRoutingEnd(e) {
-			// $('.exportCurrentRoute').show();
 			document.querySelector('.exportCurrentRoute').style.display = 'block'
-			// $('.leaflet-routing-reverse-waypoints').removeClass('icon-loading-small');
 			document.querySelector('.leaflet-routing-reverse-waypoints').classList.remove('icon-loading-small')
 			// TODO understand why routingstart is sometimes triggered after routesfound
 			// just in case routingstart is triggered again (weird):
 			setTimeout(() => {
-				// $('.leaflet-routing-reverse-waypoints').removeClass('icon-loading-small');
 				const rev = document.querySelector('.leaflet-routing-reverse-waypoints')
 				if (rev) {
 					rev.classList.remove('icon-loading-small')
@@ -400,8 +400,6 @@ export default {
 
 				// export route button
 				const exportTitle = t('maps', 'Export current route to GPX')
-				// $('<button class="exportCurrentRoute" title="'+escapeHTML(exportTitle)+'">'+
-				// '<span></span></button>').insertAfter('#router-select');
 				const exportButton = document.createElement('button')
 				exportButton.classList.add('exportCurrentRoute')
 				exportButton.setAttribute('title', exportTitle)
@@ -411,11 +409,55 @@ export default {
 				exportButton.style.display = 'none'
 
 				// export
-				exportButton.addEventListener('click', this.exportRoute)
+				exportButton.addEventListener('click', this.onExportRoute)
 			}
 		},
-		exportRoute() {
-			console.debug('EXPORT route, TODO')
+		onExportRoute() {
+			if (this.control._selectedRoute?.coordinates
+				&& this.control._selectedRoute.coordinates.length > 0
+			) {
+				OC.dialogs.confirmDestructive(
+					'',
+					t('maps', 'Export as'),
+					{
+						type: OC.dialogs.YES_NO_BUTTONS,
+						confirm: t('maps', 'GPX track'),
+						confirmClasses: '',
+						cancel: t('maps', 'GPX route'),
+					},
+					(result) => {
+						if (result) {
+							this.exportRoute('track')
+						} else {
+							this.exportRoute('route')
+						}
+					},
+					true
+				)
+			}
+		},
+		exportRoute(type = 'route') {
+			document.querySelector('.exportCurrentRoute').classList.add('icon-loading-small')
+			const latLngCoords = this.control._selectedRoute.coordinates
+			const coords = latLngCoords.map((ll) => {
+				return {
+					lat: ll.lat,
+					lng: ll.lng,
+				}
+			})
+			const name = type === 'route'
+				? t('maps', 'Route {date}', { date: moment().format('LLL:ss') })
+				: t('maps', 'Track {date}', { date: moment().format('LLL:ss') })
+			const totDist = this.control._selectedRoute.summary.totalDistance
+			const totTime = this.control._selectedRoute.summary.totalTime
+
+			network.exportRoute(type, coords, name, totDist, totTime).then((response) => {
+
+			}).catch((error) => {
+				console.error(error)
+			}).then(() => {
+				document.querySelector('.exportCurrentRoute').classList.remove('icon-loading-small')
+			})
 		},
 	},
 }

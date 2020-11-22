@@ -47,6 +47,18 @@ export function searchAddress(address, limit = 8) {
 	return axios.get(url)
 }
 
+export function exportRoute(type, coords, name, totDist, totTime) {
+	const req = {
+		type,
+		coords,
+		name,
+		totDist,
+		totTime,
+	}
+	const url = generateUrl('/apps/maps/exportRoute')
+	return axios.post(url, req)
+}
+
 export function deleteContactAddress(bookid, uri, uid, vcardAddress) {
 	const req = {
 		params: {

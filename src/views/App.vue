@@ -71,7 +71,8 @@
 						:opacity="l.opacity" />
 					<PhotosLayer
 						v-if="map && photosEnabled"
-						:photos="photos" />
+						:photos="photos"
+						@coords-reset="getPhotos" />
 					<ContactsLayer
 						v-if="map && contactsEnabled"
 						:contacts="contacts"

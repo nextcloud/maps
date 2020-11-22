@@ -29,7 +29,7 @@
 				<ActionButton icon="icon-link" @click="viewPhoto(p)">
 					{{ t('maps', 'Move') }}
 				</ActionButton>
-				<ActionButton icon="icon-history" @click="viewPhoto(p)">
+				<ActionButton icon="icon-history" @click="resetPhotoCoords(p)">
 					{{ t('maps', 'Remove geo data') }}
 				</ActionButton>
 			</LPopup>
@@ -48,6 +48,7 @@ import Vue2LeafletMarkerCluster from 'vue2-leaflet-markercluster'
 import ActionButton from '@nextcloud/vue/dist/Components/ActionButton'
 
 import optionsController from '../../optionsController'
+import * as network from '../../network'
 
 const PHOTO_MARKER_VIEW_SIZE = 40
 
@@ -165,6 +166,13 @@ export default {
 		onPhotoRightClick(e, photo) {
 			this.$nextTick(() => {
 				e.target.openPopup()
+			})
+		},
+		resetPhotoCoords(photo) {
+			network.resetPhotoCoords([photo.path]).then((response) => {
+				this.$emit('coords-reset')
+			}).catch((error) => {
+				console.error(error)
 			})
 		},
 	},

@@ -99,8 +99,10 @@ export function placePhotos(paths, lats, lngs, directory = false) {
 
 export function resetPhotoCoords(paths) {
 	const req = {
-		paths,
+		params: {
+			paths,
+		},
 	}
 	const url = generateUrl('/apps/maps/photos')
-	return axios.post(url, req)
+	return axios.delete(url, req)
 }

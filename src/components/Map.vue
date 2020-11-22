@@ -547,10 +547,6 @@ export default {
 		margin-top: 10px;
 	}
 
-	/* Overriden routing/geocoder style */
-	.leaflet-routing-geocoder-result tr {
-		line-height: 35px;
-	}
 	/* hide button if placeholder is shown i.e. if field is empty */
 	.leaflet-routing-geocoder:first-child > input:placeholder-shown + span,
 	.leaflet-routing-geocoder:nth-last-child(5) > input:placeholder-shown + span {

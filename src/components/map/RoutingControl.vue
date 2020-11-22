@@ -358,6 +358,15 @@ export default {
 
 				routingContainer.querySelector('.leaflet-routing-reverse-waypoints').setAttribute('title', t('maps', 'Reverse steps order'))
 				routingContainer.querySelector('.leaflet-routing-add-waypoint').setAttribute('title', t('maps', 'Add step'))
+				// trick to make this button stop listening to click event...sorry for that
+				const el = routingContainer.querySelector('.leaflet-routing-add-waypoint')
+				const elClone = el.cloneNode(true)
+				el.parentNode.replaceChild(elClone, el)
+
+				// add a waypoint before the last one (and not at the end like done by default)
+				routingContainer.querySelector('.leaflet-routing-add-waypoint').addEventListener('click', (e) => {
+					this.control.spliceWaypoints(this.control.getWaypoints().length - 1, 0, null)
+				})
 
 				// add router selector
 				const select = document.createElement('select')

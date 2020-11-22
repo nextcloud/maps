@@ -353,7 +353,11 @@ export default {
 				this.control.remove()
 			} else {
 				this.control.addTo(this.map)
-				document.querySelector('.leaflet-routing-geocoder input').focus()
+				const routingContainer = document.querySelector('.leaflet-routing-container')
+				routingContainer.querySelector('.leaflet-routing-geocoder input').focus()
+
+				routingContainer.querySelector('.leaflet-routing-reverse-waypoints').setAttribute('title', t('maps', 'Reverse steps order'))
+				routingContainer.querySelector('.leaflet-routing-add-waypoint').setAttribute('title', t('maps', 'Add step'))
 
 				// add router selector
 				const select = document.createElement('select')
@@ -377,12 +381,24 @@ export default {
 					this.control.route()
 				})
 
+				const titleIcon = document.createElement('span')
+				titleIcon.classList.add('icon')
+				titleIcon.classList.add('icon-play-next')
+				const title = document.createElement('h3')
+				title.setAttribute('id', 'routing-title')
+				title.textContent = t('maps', 'Find directions')
 				const close = document.createElement('button')
 				close.classList.add('icon-close')
 				close.setAttribute('id', 'routing-close')
 				close.addEventListener('click', this.onCloseClick)
 
-				document.querySelector('.leaflet-routing-container').prepend(close)
+				const header = document.createElement('div')
+				header.classList.add('routing-header')
+				header.appendChild(titleIcon)
+				header.appendChild(title)
+				header.appendChild(close)
+
+				document.querySelector('.leaflet-routing-container').prepend(header)
 				document.querySelector('.leaflet-routing-geocoders').appendChild(select)
 
 				if (this.nbRouters === 0 && OC.isUserAdmin()) {
@@ -462,3 +478,7 @@ export default {
 	},
 }
 </script>
+
+<style lang="scss" scoped>
+// nothing
+</style>

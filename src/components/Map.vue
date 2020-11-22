@@ -49,6 +49,7 @@
 				:opacity="l.opacity" />
 			<PhotosLayer
 				v-if="map && photosEnabled"
+				:map="map"
 				:photos="photos"
 				@coords-reset="$emit('coords-reset')" />
 			<ContactsLayer

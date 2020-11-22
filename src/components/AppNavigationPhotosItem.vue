@@ -6,7 +6,10 @@
 		:allow-collapse="false"
 		@click="$emit('photos-clicked')">
 		<template slot="counter">
-			<span v-if="enabled && photos.length">{{ photos.length }}</span>
+			<span v-if="enabled && photos.length"
+				class="photo-counter">
+				{{ photos.length }}
+			</span>
 			&nbsp;
 		</template>
 	</AppNavigationItem>
@@ -53,5 +56,9 @@ export default {
 <style lang="scss" scoped>
 .item-disabled {
 	opacity: 0.5;
+}
+
+.photo-counter {
+	margin-right: 18px;
 }
 </style>

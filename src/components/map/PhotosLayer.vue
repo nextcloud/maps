@@ -1,6 +1,7 @@
 <template>
 	<Vue2LeafletMarkerCluster :options="clusterOptions"
-		@clusterclick="onClusterClick">
+		@clusterclick="onClusterClick"
+		@clustercontextmenu="onClusterRightClick">
 		<LMarker v-for="(p, i) in displayedPhotos"
 			:key="i"
 			:options="{ data: p }"
@@ -24,7 +25,7 @@
 				class="popup-photo-wrapper"
 				:options="popupOptions">
 				<ActionButton icon="icon-toggle" @click="viewPhoto(p)">
-					{{ t('maps', 'View') }}
+					{{ t('maps', 'Display picture') }}
 				</ActionButton>
 				<ActionButton icon="icon-link" @click="viewPhoto(p)">
 					{{ t('maps', 'Move') }}
@@ -34,6 +35,17 @@
 				</ActionButton>
 			</LPopup>
 		</LMarker>
+		<LPopup
+			ref="clusterPopup"
+			class="popup-photo-wrapper"
+			:options="clusterPopupOptions">
+			<ActionButton icon="icon-toggle" @click="onDisplayClusterClick">
+				{{ t('maps', 'Display pictures') }}
+			</ActionButton>
+			<ActionButton icon="icon-search" @click="onZoomClusterClick">
+				{{ t('maps', 'Zoom on bounds') }}
+			</ActionButton>
+		</LPopup>
 	</Vue2LeafletMarkerCluster>
 </template>
 
@@ -63,6 +75,10 @@ export default {
 	},
 
 	props: {
+		map: {
+			type: Object,
+			required: true,
+		},
 		photos: {
 			type: Array,
 			required: true,
@@ -92,6 +108,12 @@ export default {
 				className: 'popovermenu open popupMarker photoPopup',
 				offset: L.point(-5, -20),
 			},
+			clusterPopupOptions: {
+				closeOnClick: true,
+				className: 'popovermenu open popupMarker photoPopup',
+				offset: L.point(10, 20),
+			},
+			contextCluster: null,
 		}
 	},
 
@@ -109,21 +131,43 @@ export default {
 			return basename(path)
 		},
 		onClusterClick(a) {
-			if (a.layer.getChildCount() > 10 && a.layer._map.getZoom() !== a.layer._map.getMaxZoom()) {
+			if (a.layer.getChildCount() > 10 && this.map.getZoom() !== this.map.getMaxZoom()) {
 				a.layer.zoomToBounds()
 			} else {
 				if (OCA.Viewer && OCA.Viewer.open) {
-					const photoList = a.layer.getAllChildMarkers().map((m) => {
-						return m.options.data
-					})
-					photoList.sort((a, b) => {
-						return a.dateTaken - b.dateTaken
-					})
-					OCA.Viewer.open({ path: photoList[0].path, list: photoList })
+					this.displayCluster(a.layer)
 				} else {
 					a.layer.spiderfy()
 				}
 			}
+		},
+		onClusterRightClick(a) {
+			this.contextCluster = a.layer
+			const popup = this.$refs.clusterPopup.mapObject
+			popup.setLatLng(a.latlng)
+			this.$nextTick(() => {
+				popup.openOn(this.map)
+			})
+		},
+		onZoomClusterClick() {
+			const cluster = this.contextCluster
+			if (this.map.getZoom() !== this.map.getMaxZoom()) {
+				cluster.zoomToBounds()
+			}
+			this.map.closePopup()
+		},
+		onDisplayClusterClick() {
+			this.displayCluster(this.contextCluster)
+		},
+		displayCluster(cluster) {
+			const photoList = cluster.getAllChildMarkers().map((m) => {
+				return m.options.data
+			})
+			photoList.sort((a, b) => {
+				return a.dateTaken - b.dateTaken
+			})
+			OCA.Viewer.open({ path: photoList[0].path, list: photoList })
+			this.map.closePopup()
 		},
 		getClusterMarkerIcon(cluster) {
 			const photo = cluster.getAllChildMarkers()[0].options.data
@@ -153,6 +197,7 @@ export default {
 			return moment(photo.dateTaken).format('LLL')
 		},
 		onPhotoClick(e, photo) {
+			// we want popup to open on right click only
 			this.$nextTick(() => {
 				e.target.closePopup()
 			})
@@ -161,6 +206,7 @@ export default {
 		viewPhoto(photo) {
 			if (OCA.Viewer && OCA.Viewer.open) {
 				OCA.Viewer.open({ path: photo.path, list: [photo] })
+				this.map.closePopup()
 			}
 		},
 		onPhotoRightClick(e, photo) {

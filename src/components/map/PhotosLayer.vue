@@ -1,7 +1,8 @@
 <template>
 	<Vue2LeafletMarkerCluster :options="clusterOptions"
 		@clusterclick="onClusterClick"
-		@clustercontextmenu="onClusterRightClick">
+		@clustercontextmenu="onClusterRightClick"
+		@spiderfied="onSpiderfied">
 		<LMarker v-for="(p, i) in displayedPhotos"
 			:key="i"
 			:options="{ data: p }"
@@ -35,20 +36,27 @@
 				</ActionButton>
 			</LPopup>
 		</LMarker>
-		<LPopup
-			ref="clusterPopup"
-			class="popup-photo-wrapper"
-			:options="clusterPopupOptions">
-			<ActionButton icon="icon-toggle" @click="onDisplayClusterClick">
-				{{ t('maps', 'Display pictures') }}
-			</ActionButton>
-			<ActionButton icon="icon-search" @click="onZoomClusterClick">
-				{{ t('maps', 'Zoom on bounds') }}
-			</ActionButton>
-			<ActionButton icon="icon-history" @click="resetClusterPhotoCoords">
-				{{ t('maps', 'Remove geo data') }}
-			</ActionButton>
-		</LPopup>
+		<LMarker
+			:lat-lng="[0, 0]"
+			:visible="false">
+			<LPopup
+				ref="clusterPopup"
+				class="popup-photo-wrapper"
+				:options="clusterPopupOptions">
+				<ActionButton icon="icon-toggle" @click="onDisplayClusterClick">
+					{{ t('maps', 'Display pictures') }}
+				</ActionButton>
+				<ActionButton icon="icon-toggle-pictures" @click="onSpiderfyClusterClick">
+					{{ t('maps', 'Spiderfy') }}
+				</ActionButton>
+				<ActionButton icon="icon-search" @click="onZoomClusterClick">
+					{{ t('maps', 'Zoom on bounds') }}
+				</ActionButton>
+				<ActionButton icon="icon-history" @click="resetClusterPhotoCoords">
+					{{ t('maps', 'Remove geo data') }}
+				</ActionButton>
+			</LPopup>
+		</LMarker>
 	</Vue2LeafletMarkerCluster>
 </template>
 
@@ -118,7 +126,7 @@ export default {
 			clusterPopupOptions: {
 				closeOnClick: true,
 				className: 'popovermenu open popupMarker photoPopup',
-				offset: L.point(10, 20),
+				offset: L.point(10, 40),
 			},
 			contextCluster: null,
 		}
@@ -156,11 +164,24 @@ export default {
 				popup.openOn(this.map)
 			})
 		},
+		onSpiderfied(e) {
+			// markers that were in a cluster when draggable changed are not draggable
+			// so we set them when cluster is spiderfied
+			if (this.draggable) {
+				e.markers.forEach((m) => {
+					m.dragging.enable()
+				})
+			}
+		},
 		onZoomClusterClick() {
 			const cluster = this.contextCluster
 			if (this.map.getZoom() !== this.map.getMaxZoom()) {
 				cluster.zoomToBounds()
 			}
+			this.map.closePopup()
+		},
+		onSpiderfyClusterClick() {
+			this.contextCluster.spiderfy()
 			this.map.closePopup()
 		},
 		onDisplayClusterClick() {
@@ -240,13 +261,10 @@ export default {
 					cancel: t('maps', 'Cancel'),
 				},
 				(result) => {
-					console.debug(result)
 					if (result) {
 						const photos = this.contextCluster.getAllChildMarkers().map((m) => {
 							return m.options.data
 						})
-						console.debug('photo list to delete')
-						console.debug(photos)
 						this.resetPhotosCoords(photos)
 					}
 				},
@@ -254,7 +272,6 @@ export default {
 			)
 		},
 		resetPhotosCoords(photos) {
-			console.debug('resetPhotosCoords')
 			const paths = photos.map((p) => { return p.path })
 			network.resetPhotosCoords(paths).then((response) => {
 				this.$emit('coords-reset')

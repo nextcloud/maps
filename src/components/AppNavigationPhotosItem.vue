@@ -4,7 +4,7 @@
 		:title="t('maps', 'My photos')"
 		:class="{ 'item-disabled': !enabled }"
 		:allow-collapse="false"
-		:force-menu="false"
+		:force-menu="true"
 		@click="$emit('photos-clicked')">
 		<template slot="counter">
 			<span v-if="enabled && photos.length"
@@ -15,7 +15,7 @@
 		</template>
 		<template slot="actions">
 			<ActionButton v-if="enabled && photos.length"
-				icon="icon-category-security"
+				:icon="draggable ? 'icon-hand' : 'icon-hand-slash'"
 				:close-after-click="false"
 				@click="$emit('draggable-clicked')">
 				{{ draggable ? t('maps', 'Disable photo drag') : t('maps', 'Enable photo drag') }}
@@ -74,7 +74,31 @@ export default {
 	opacity: 0.5;
 }
 
-.photo-counter {
-	//margin-right: 18px;
+::v-deep .icon-hand {
+	opacity: 1;
+	background-color: black;
+	padding: 0 !important;
+	mask: url('../../img/hand.svg') no-repeat;
+	mask-size: 16px auto;
+	mask-position: center;
+	-webkit-mask: url('../../img/hand.svg') no-repeat;
+	-webkit-mask-size: 16px auto;
+	-webkit-mask-position: center;
+	min-width: 38px !important;
+	min-height: 36px !important;
+}
+
+::v-deep .icon-hand-slash {
+	opacity: 1;
+	background-color: black;
+	padding: 0 !important;
+	mask: url('../../img/hand-slash.svg') no-repeat;
+	mask-size: 16px auto;
+	mask-position: center;
+	-webkit-mask: url('../../img/hand-slash.svg') no-repeat;
+	-webkit-mask-size: 16px auto;
+	-webkit-mask-position: center;
+	min-width: 38px !important;
+	min-height: 36px !important;
 }
 </style>

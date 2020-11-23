@@ -501,6 +501,20 @@ export default {
 	width: 100%;
 }
 
+::v-deep .leaflet-marker-icon {
+	cursor: pointer;
+	* {
+		cursor: pointer;
+	}
+}
+
+::v-deep .leaflet-marker-draggable {
+	cursor: move;
+	* {
+		cursor: move;
+	}
+}
+
 ::v-deep .icon-osm {
 	background-image: url('./../../css/images/osm.png');
 	background-size: 35px;

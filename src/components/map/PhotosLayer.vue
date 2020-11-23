@@ -14,8 +14,8 @@
 			@contextmenu="onPhotoRightClick($event, p)"
 			@moveend="onPhotoMoved($event, p)">
 			<LTooltip
-				:class="{ 'tooltip-photo-wrapper': true, 'tooltip-hidden': draggable }"
-				:options="tooltipOptions">
+				:class="{ 'tooltip-photo-wrapper': true }"
+				:options="{ ...tooltipOptions, opacity: draggable ? 0 : 1 }">
 				<img class="photo-tooltip"
 					:src="getPreviewUrl(p)">
 				<p class="tooltip-photo-date">
@@ -293,7 +293,4 @@ export default {
 
 <style lang="scss" scoped>
 // nothing
-.tooltip-hidden {
-	display: none;
-}
 </style>

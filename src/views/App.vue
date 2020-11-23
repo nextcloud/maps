@@ -193,11 +193,9 @@ export default {
 				true
 			)
 		},
-		placePhotos(paths, lats, lngs, directory = false, reload = true) {
+		placePhotos(paths, lats, lngs, directory = false) {
 			network.placePhotos(paths, lats, lngs, directory).then((response) => {
-				if (reload) {
-					this.getPhotos()
-				}
+				this.getPhotos()
 				if (paths.length === 1) {
 					showSuccess(t('maps', '"{path}" successfully moved', { path: paths[0] }))
 				} else {
@@ -208,7 +206,7 @@ export default {
 			})
 		},
 		onPhotoMoved(photo, latLng) {
-			this.placePhotos([photo.path], [latLng.lat], [latLng.lng], false, false)
+			this.placePhotos([photo.path], [latLng.lat], [latLng.lng])
 		},
 		// ================ CONTACTS =================
 		onContactsClicked() {

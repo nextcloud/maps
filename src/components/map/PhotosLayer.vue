@@ -9,10 +9,11 @@
 			:draggable="draggable"
 			:lat-lng="[p.lat, p.lng]"
 			@click="onPhotoClick($event, p)"
+			@mouseover="onPhotoHover($event, p)"
 			@contextmenu="onPhotoRightClick($event, p)"
 			@moveend="onPhotoMoved($event, p)">
 			<LTooltip
-				class="tooltip-photo-wrapper"
+				:class="{ 'tooltip-photo-wrapper': true, 'tooltip-hidden': draggable }"
 				:options="tooltipOptions">
 				<img class="photo-tooltip"
 					:src="getPreviewUrl(p)">
@@ -202,6 +203,13 @@ export default {
 		getPhotoFormattedDate(photo) {
 			return moment(photo.dateTaken).format('LLL')
 		},
+		onPhotoHover(e, photo) {
+			if (this.draggable) {
+				this.$nextTick(() => {
+					e.target.closeTooltip()
+				})
+			}
+		},
 		onPhotoClick(e, photo) {
 			// we want popup to open on right click only
 			this.$nextTick(() => {
@@ -265,4 +273,7 @@ export default {
 
 <style lang="scss" scoped>
 // nothing
+.tooltip-hidden {
+	display: none;
+}
 </style>

@@ -6,6 +6,7 @@
 			:key="i"
 			:options="{ data: p }"
 			:icon="getPhotoMarkerIcon(p)"
+			:draggable="isDraggable[p.fileId]"
 			:lat-lng="[p.lat, p.lng]"
 			@click="onPhotoClick($event, p)"
 			@contextmenu="onPhotoRightClick($event, p)">
@@ -27,7 +28,7 @@
 				<ActionButton icon="icon-toggle" @click="viewPhoto(p)">
 					{{ t('maps', 'Display picture') }}
 				</ActionButton>
-				<ActionButton icon="icon-link" @click="viewPhoto(p)">
+				<ActionButton icon="icon-link" @click="movePhoto(p)">
 					{{ t('maps', 'Move') }}
 				</ActionButton>
 				<ActionButton icon="icon-history" @click="resetPhotosCoords([p])">
@@ -117,6 +118,7 @@ export default {
 				offset: L.point(10, 20),
 			},
 			contextCluster: null,
+			isDraggable: {},
 		}
 	},
 
@@ -252,6 +254,9 @@ export default {
 			}).then(() => {
 				this.map.closePopup()
 			})
+		},
+		movePhoto(photo) {
+			this.$set(this.isDraggable, photo.fileId, true)
 		},
 	},
 }

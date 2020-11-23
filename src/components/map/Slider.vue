@@ -46,4 +46,16 @@ export default {
 
 <style lang="scss" scoped>
 @import 'nouislider/distribute/nouislider.css';
+
+#timeRangeSlider {
+	position: absolute;
+	margin: 10px 0 0 10px;
+	left: 20%;
+	top: 90%;
+	z-index: 10000;
+	width: 60%;
+	height: 10px;
+	background-color: var(--color-main-background) !important;
+	box-shadow: none;
+}
 </style>

@@ -56,7 +56,9 @@
 				v-if="map && photosEnabled"
 				:map="map"
 				:photos="photos"
-				@coords-reset="$emit('coords-reset')" />
+				:draggable="photosDraggable"
+				@coords-reset="$emit('coords-reset')"
+				@photo-moved="onPhotoMoved" />
 			<ContactsLayer
 				v-if="map && contactsEnabled"
 				:contacts="contacts"
@@ -129,6 +131,10 @@ export default {
 			required: true,
 		},
 		photosEnabled: {
+			type: Boolean,
+			required: true,
+		},
+		photosDraggable: {
 			type: Boolean,
 			required: true,
 		},
@@ -470,6 +476,9 @@ export default {
 		// photos
 		contextPlacePhotos(e) {
 			this.$emit('place-photos', e.latlng)
+		},
+		onPhotoMoved(photo, latLng) {
+			this.$emit('photo-moved', photo, latLng)
 		},
 	},
 }

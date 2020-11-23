@@ -17,7 +17,9 @@
 					:enabled="photosEnabled"
 					:loading="photosLoading"
 					:photos="photos"
-					@photos-clicked="onPhotosClicked" />
+					:draggable="photosDraggable"
+					@photos-clicked="onPhotosClicked"
+					@draggable-clicked="photosDraggable = !photosDraggable" />
 			</template>
 		</MapsNavigation>
 		<AppContent>
@@ -26,6 +28,7 @@
 					ref="map"
 					:photos="photos"
 					:photos-enabled="photosEnabled"
+					:photos-draggable="photosDraggable"
 					:contacts="contacts"
 					:contact-groups="contactGroups"
 					:contacts-enabled="contactsEnabled"
@@ -33,7 +36,8 @@
 					@coords-reset="getPhotos"
 					@address-deleted="getContacts"
 					@contact-placed="getContacts"
-					@place-photos="placePhotoFilesOrFolder" />
+					@place-photos="placePhotoFilesOrFolder"
+					@photo-moved="onPhotoMoved" />
 			</div>
 			<Actions
 				class="content-buttons"
@@ -90,6 +94,7 @@ export default {
 			// photos
 			photosLoading: false,
 			photosEnabled: optionsController.photosEnabled,
+			photosDraggable: false,
 			photos: [],
 			// contacts
 			contactsLoading: false,
@@ -188,12 +193,17 @@ export default {
 				true
 			)
 		},
-		placePhotos(paths, lats, lngs, directory = false) {
+		placePhotos(paths, lats, lngs, directory = false, reload = true) {
 			network.placePhotos(paths, lats, lngs, directory).then((response) => {
-				this.getPhotos()
+				if (reload) {
+					this.getPhotos()
+				}
 			}).catch((error) => {
 				console.error(error)
 			})
+		},
+		onPhotoMoved(photo, latLng) {
+			this.placePhotos([photo.path], [latLng.lat], [latLng.lng], false, false)
 		},
 		// ================ CONTACTS =================
 		onContactsClicked() {

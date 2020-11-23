@@ -6,10 +6,11 @@
 			:key="i"
 			:options="{ data: p }"
 			:icon="getPhotoMarkerIcon(p)"
-			:draggable="isDraggable[p.fileId]"
+			:draggable="draggable"
 			:lat-lng="[p.lat, p.lng]"
 			@click="onPhotoClick($event, p)"
-			@contextmenu="onPhotoRightClick($event, p)">
+			@contextmenu="onPhotoRightClick($event, p)"
+			@moveend="onPhotoMoved($event, p)">
 			<LTooltip
 				class="tooltip-photo-wrapper"
 				:options="tooltipOptions">
@@ -27,9 +28,6 @@
 				:options="popupOptions">
 				<ActionButton icon="icon-toggle" @click="viewPhoto(p)">
 					{{ t('maps', 'Display picture') }}
-				</ActionButton>
-				<ActionButton icon="icon-link" @click="movePhoto(p)">
-					{{ t('maps', 'Move') }}
 				</ActionButton>
 				<ActionButton icon="icon-history" @click="resetPhotosCoords([p])">
 					{{ t('maps', 'Remove geo data') }}
@@ -87,6 +85,10 @@ export default {
 			type: Array,
 			required: true,
 		},
+		draggable: {
+			type: Boolean,
+			required: true,
+		},
 	},
 
 	data() {
@@ -118,7 +120,6 @@ export default {
 				offset: L.point(10, 20),
 			},
 			contextCluster: null,
-			isDraggable: {},
 		}
 	},
 
@@ -255,8 +256,8 @@ export default {
 				this.map.closePopup()
 			})
 		},
-		movePhoto(photo) {
-			this.$set(this.isDraggable, photo.fileId, true)
+		onPhotoMoved(e, photo) {
+			this.$emit('photo-moved', photo, e.target.getLatLng())
 		},
 	},
 }

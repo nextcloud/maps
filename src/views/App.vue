@@ -33,6 +33,7 @@
 					:contact-groups="contactGroups"
 					:contacts-enabled="contactsEnabled"
 					:slider-enabled="sliderEnabled"
+					:loading="mapLoading"
 					@coords-reset="getPhotos"
 					@address-deleted="getContacts"
 					@contact-placed="getContacts"
@@ -106,6 +107,9 @@ export default {
 	},
 
 	computed: {
+		mapLoading() {
+			return this.photosLoading || this.contactsLoading
+		}
 	},
 
 	created() {

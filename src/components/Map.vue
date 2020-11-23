@@ -154,6 +154,10 @@ export default {
 			type: Boolean,
 			required: true,
 		},
+		loading: {
+			type: Boolean,
+			required: true,
+		},
 	},
 
 	data() {
@@ -196,6 +200,16 @@ export default {
 			placingContactLatLng: null,
 			placingContact: false,
 		}
+	},
+
+	watch: {
+		loading() {
+			if (this.loading) {
+				this.$refs.map.$el.classList.add('loading')
+			} else {
+				this.$refs.map.$el.classList.remove('loading')
+			}
+		},
 	},
 
 	methods: {
@@ -499,6 +513,20 @@ export default {
 	position: relative;
 	height: 100%;
 	width: 100%;
+}
+
+::v-deep .leaflet-container {
+	cursor: grab;
+	.mapboxgl-map {
+		cursor: grab;
+	}
+}
+
+::v-deep .leaflet-container.loading {
+	cursor: progress;
+	.mapboxgl-map {
+		cursor: progress;
+	}
 }
 
 ::v-deep .leaflet-marker-icon {

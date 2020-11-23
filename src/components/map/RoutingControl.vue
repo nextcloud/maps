@@ -345,6 +345,26 @@ export default {
 			}, 5000)
 			this.$emit('routing-end')
 		},
+		setRouteFrom(latlng) {
+			if (this.control) {
+				this.control.spliceWaypoints(0, 1, latlng)
+			}
+		},
+		setRouteTo(latlng) {
+			if (this.control) {
+				this.control.spliceWaypoints(this.control.getWaypoints().length - 1, 1, latlng)
+			}
+		},
+		addRoutePoint(latlng) {
+			if (this.control) {
+				this.control.spliceWaypoints(this.control.getWaypoints().length - 1, 0, latlng)
+			}
+		},
+		setRoutePoint(i, latlng) {
+			if (this.control) {
+				this.control.spliceWaypoints(i, 1, latlng)
+			}
+		},
 		onCloseClick() {
 			this.$emit('close')
 		},

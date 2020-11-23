@@ -15,6 +15,7 @@
 			@click="onMapClick"
 			@contextmenu="onMapContextmenu">
 			<RoutingControl v-if="map"
+				ref="routingControl"
 				:map="map"
 				:visible="showRouting"
 				@close="onRoutingClose" />
@@ -219,15 +220,21 @@ export default {
 					{
 						text: t('maps', 'Route from here'),
 						icon: generateUrl('/svg/core/filetypes/location?color=00cc00'),
-						callback: () => {},
+						callback: (e) => {
+							this.$refs.routingControl.setRouteFrom(e.latlng)
+						},
 					}, {
 						text: t('maps', 'Add route point'),
 						icon: generateUrl('/svg/core/filetypes/location?color=0000cc'),
-						callback: () => {},
+						callback: (e) => {
+							this.$refs.routingControl.addRoutePoint(e.latlng)
+						},
 					}, {
 						text: t('maps', 'Route to here'),
 						icon: generateUrl('/svg/core/filetypes/location?color=cc0000'),
-						callback: () => {},
+						callback: (e) => {
+							this.$refs.routingControl.setRouteTo(e.latlng)
+						},
 					},
 				]
 				cmi.push(...routingItems)

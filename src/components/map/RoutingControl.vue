@@ -356,6 +356,13 @@ export default {
 				const routingContainer = document.querySelector('.leaflet-routing-container')
 				routingContainer.querySelector('.leaflet-routing-geocoder input').focus()
 
+				// get event when plan is changing
+				this.control.getPlan().addEventListener('waypointschanged', (e) => {
+					if (!this.control.getPlan().isReady()) {
+						document.querySelector('.exportCurrentRoute').style.display = 'none'
+					}
+				})
+
 				routingContainer.querySelector('.leaflet-routing-reverse-waypoints').setAttribute('title', t('maps', 'Reverse steps order'))
 				routingContainer.querySelector('.leaflet-routing-add-waypoint').setAttribute('title', t('maps', 'Add step'))
 				// trick to make this button stop listening to click event...sorry for that

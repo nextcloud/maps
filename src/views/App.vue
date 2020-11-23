@@ -68,7 +68,7 @@ import optionsController from '../optionsController'
 import L from 'leaflet'
 import { geoToLatLng } from '../utils/mapUtils'
 import * as network from '../network'
-import { showError } from '@nextcloud/dialogs'
+import { showError, showSuccess } from '@nextcloud/dialogs'
 
 import Vue from 'vue'
 import { Tooltip } from '@nextcloud/vue'
@@ -197,6 +197,11 @@ export default {
 			network.placePhotos(paths, lats, lngs, directory).then((response) => {
 				if (reload) {
 					this.getPhotos()
+				}
+				if (paths.length === 1) {
+					showSuccess(t('maps', '"{path}" successfully moved', { path: paths[0] }))
+				} else {
+					showSuccess(t('maps', '{nb} photos moved', { nb: paths.length }))
 				}
 			}).catch((error) => {
 				console.error(error)

@@ -9,8 +9,8 @@
 		@click="onContactsClick"
 		@update:open="onUpdateOpen">
 		<template slot="counter">
-			<span v-if="enabled && contacts.length">{{ contacts.length }}</span>
 			&nbsp;
+			<span v-if="enabled && contacts.length">{{ contacts.length }}</span>
 		</template>
 		<template v-if="enabled" slot="actions">
 			<ActionButton

@@ -4,23 +4,22 @@
 		:title="t('maps', 'My photos')"
 		:class="{ 'item-disabled': !enabled }"
 		:allow-collapse="false"
-		:force-menu="true"
+		:force-menu="enabled"
 		@click="$emit('photos-clicked')">
 		<template slot="counter">
+			&nbsp;
 			<span v-if="enabled && photos.length"
 				class="photo-counter">
 				{{ photos.length }}
 			</span>
-			&nbsp;
 		</template>
-		<template slot="actions">
-			<ActionButton v-if="enabled && photos.length"
+		<template v-if="enabled" slot="actions">
+			<ActionButton
 				:icon="draggable ? 'icon-hand' : 'icon-hand-slash'"
 				:close-after-click="false"
 				@click="$emit('draggable-clicked')">
 				{{ draggable ? t('maps', 'Disable photo drag') : t('maps', 'Enable photo drag') }}
 			</ActionButton>
-			&nbsp;
 		</template>
 	</AppNavigationItem>
 </template>

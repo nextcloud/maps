@@ -126,7 +126,7 @@ export default {
 			clusterPopupOptions: {
 				closeOnClick: true,
 				className: 'popovermenu open popupMarker photoPopup',
-				offset: L.point(10, 40),
+				offset: L.point(-5, 20),
 			},
 			contextCluster: null,
 		}
@@ -204,6 +204,9 @@ export default {
 			return new L.DivIcon(L.extend({
 				className: 'leaflet-marker-photo cluster-marker',
 				html: '<div class="thumbnail" style="background-image: url(' + iconUrl + ');"></div>​<span class="label">' + label + '</span>',
+			}, cluster, {
+				iconSize: [PHOTO_MARKER_VIEW_SIZE, PHOTO_MARKER_VIEW_SIZE],
+				iconAnchor: [PHOTO_MARKER_VIEW_SIZE / 2, PHOTO_MARKER_VIEW_SIZE],
 			}))
 		},
 		getPhotoMarkerIcon(photo) {

@@ -19,6 +19,10 @@
 				:map="map"
 				:visible="showRouting"
 				@close="onRoutingClose" />
+			<SearchBar v-if="map"
+				v-show="!showRouting"
+				:map="map"
+				@routing-clicked="showRouting = true" />
 			<LControlZoom position="bottomright" />
 			<LControlScale
 				position="bottomleft"
@@ -94,6 +98,7 @@ import 'leaflet-contextmenu/dist/leaflet.contextmenu.min'
 import 'leaflet-contextmenu/dist/leaflet.contextmenu.min.css'
 
 import Slider from '../components/map/Slider'
+import SearchBar from '../components/map/SearchBar'
 import RoutingControl from '../components/map/RoutingControl'
 import PhotosLayer from '../components/map/PhotosLayer'
 import ContactsLayer from '../components/map/ContactsLayer'
@@ -111,6 +116,7 @@ export default {
 		LControlLayers,
 		LTileLayer,
 		Slider,
+		SearchBar,
 		RoutingControl,
 		PhotosLayer,
 		ContactsLayer,
@@ -221,18 +227,27 @@ export default {
 						text: t('maps', 'Route from here'),
 						icon: generateUrl('/svg/core/filetypes/location?color=00cc00'),
 						callback: (e) => {
+							if (!this.showRouting) {
+								this.showRouting = true
+							}
 							this.$refs.routingControl.setRouteFrom(e.latlng)
 						},
 					}, {
 						text: t('maps', 'Add route point'),
 						icon: generateUrl('/svg/core/filetypes/location?color=0000cc'),
 						callback: (e) => {
+							if (!this.showRouting) {
+								this.showRouting = true
+							}
 							this.$refs.routingControl.addRoutePoint(e.latlng)
 						},
 					}, {
 						text: t('maps', 'Route to here'),
 						icon: generateUrl('/svg/core/filetypes/location?color=cc0000'),
 						callback: (e) => {
+							if (!this.showRouting) {
+								this.showRouting = true
+							}
 							this.$refs.routingControl.setRouteTo(e.latlng)
 						},
 					},
@@ -383,7 +398,6 @@ export default {
 						this.activeLayerId = this.defaultStreetLayer
 						btn.button.parentElement.classList.add('behind')
 						this.satelliteButton.button.parentElement.classList.remove('behind')
-						this.showRouting = !this.showRouting
 					},
 				}],
 			})
@@ -399,7 +413,6 @@ export default {
 						this.activeLayerId = this.defaultSatelliteLayer
 						btn.button.parentElement.classList.add('behind')
 						this.streetButton.button.parentElement.classList.remove('behind')
-						this.showRouting = !this.showRouting
 					},
 				}],
 			})
@@ -543,7 +556,7 @@ export default {
 			height: 44px;
 			float: right;
 			border: none;
-			margin: 0px 10px 0px 0px !important;
+			margin: 0px 5px 0px 0px !important;
 			background-color: var(--color-main-background) !important;
 			border-radius: var(--border-radius-pill);
 		}

@@ -84,4 +84,10 @@ export default {
 ::v-deep #app-settings-content {
 	list-style: none;
 }
+
+::v-deep .app-navigation-toggle {
+	background-color: var(--color-background-darker);
+	z-index: 100000;
+	border-radius: var(--border-radius-pill);
+}
 </style>

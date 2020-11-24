@@ -18,7 +18,11 @@
 					:loading="photosLoading"
 					:photos="photos"
 					:draggable="photosDraggable"
+					:can-cancel="lastPhotoMoves.length > 0"
+					:can-redo="lastPhotoCanceledMoves.length > 0"
 					@photos-clicked="onPhotosClicked"
+					@cancel-clicked="onCancelPhotoMoveClicked"
+					@redo-clicked="onRedoPhotoMoveClicked"
 					@draggable-clicked="photosDraggable = !photosDraggable" />
 			</template>
 		</MapsNavigation>
@@ -34,7 +38,7 @@
 					:contacts-enabled="contactsEnabled"
 					:slider-enabled="sliderEnabled"
 					:loading="mapLoading"
-					@coords-reset="getPhotos"
+					@coords-reset="resetPhotosCoords"
 					@address-deleted="getContacts"
 					@contact-placed="getContacts"
 					@place-photos="placePhotoFilesOrFolder"
@@ -97,6 +101,8 @@ export default {
 			photosEnabled: optionsController.photosEnabled,
 			photosDraggable: false,
 			photos: [],
+			lastPhotoMoves: [],
+			lastPhotoCanceledMoves: [],
 			// contacts
 			contactsLoading: false,
 			contactsEnabled: optionsController.contactsEnabled,
@@ -109,7 +115,7 @@ export default {
 	computed: {
 		mapLoading() {
 			return this.photosLoading || this.contactsLoading
-		}
+		},
 	},
 
 	created() {
@@ -197,9 +203,13 @@ export default {
 				true
 			)
 		},
-		placePhotos(paths, lats, lngs, directory = false) {
+		placePhotos(paths, lats, lngs, directory = false, save = true) {
 			network.placePhotos(paths, lats, lngs, directory).then((response) => {
 				this.getPhotos()
+				if (save) {
+					this.lastPhotoMoves.push(response.data)
+					this.lastPhotoCanceledMoves = []
+				}
 				if (paths.length === 1) {
 					showSuccess(t('maps', '"{path}" successfully moved', { path: paths[0] }))
 				} else {
@@ -211,6 +221,68 @@ export default {
 		},
 		onPhotoMoved(photo, latLng) {
 			this.placePhotos([photo.path], [latLng.lat], [latLng.lng])
+		},
+		resetPhotosCoords(paths, save = true) {
+			network.resetPhotosCoords(paths).then((response) => {
+				this.getPhotos()
+				if (save) {
+					this.lastPhotoMoves.push(response.data)
+					this.lastPhotoCanceledMoves = []
+				}
+			}).catch((error) => {
+				console.error(error)
+			}).then(() => {
+			})
+		},
+		onCancelPhotoMoveClicked() {
+			if (this.lastPhotoMoves.length === 0) {
+				return
+			}
+			const lastPhotoMove = this.lastPhotoMoves.pop()
+			this.lastPhotoCanceledMoves.push(lastPhotoMove)
+			// place the photos that previously had coordinates
+			const toPlace = lastPhotoMove.filter((action) => {
+				return (action.oldLat && action.oldLng)
+			})
+			// reset the photos that previously had NO coordinates and have new ones
+			const toReset = lastPhotoMove.filter((action) => {
+				return (action.lat && !action.oldLat)
+			})
+			if (toPlace.length > 0) {
+				const paths = toPlace.map((a) => { return a.path })
+				const lats = toPlace.map((a) => { return a.oldLat })
+				const lngs = toPlace.map((a) => { return a.oldLng })
+				this.placePhotos(paths, lats, lngs, false, false)
+			}
+			if (toReset.length > 0) {
+				const paths = toReset.map((a) => { return a.path })
+				this.resetPhotosCoords(paths, false)
+			}
+		},
+		onRedoPhotoMoveClicked() {
+			if (this.lastPhotoCanceledMoves.length === 0) {
+				return
+			}
+			const lastPhotoCanceledMove = this.lastPhotoCanceledMoves.pop()
+			this.lastPhotoMoves.push(lastPhotoCanceledMove)
+			// redo placement action
+			const toPlace = lastPhotoCanceledMove.filter((action) => {
+				return (action.lat && action.lng)
+			})
+			// redo reset action
+			const toReset = lastPhotoCanceledMove.filter((action) => {
+				return (!action.lat && action.oldLat)
+			})
+			if (toPlace.length > 0) {
+				const paths = toPlace.map((a) => { return a.path })
+				const lats = toPlace.map((a) => { return a.lat })
+				const lngs = toPlace.map((a) => { return a.lng })
+				this.placePhotos(paths, lats, lngs, false, false)
+			}
+			if (toReset.length > 0) {
+				const paths = toReset.map((a) => { return a.path })
+				this.resetPhotosCoords(paths, false)
+			}
 		},
 		// ================ CONTACTS =================
 		onContactsClicked() {

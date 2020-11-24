@@ -71,7 +71,6 @@ import Vue2LeafletMarkerCluster from 'vue2-leaflet-markercluster'
 import ActionButton from '@nextcloud/vue/dist/Components/ActionButton'
 
 import optionsController from '../../optionsController'
-import * as network from '../../network'
 
 const PHOTO_MARKER_VIEW_SIZE = 40
 
@@ -276,13 +275,8 @@ export default {
 		},
 		resetPhotosCoords(photos) {
 			const paths = photos.map((p) => { return p.path })
-			network.resetPhotosCoords(paths).then((response) => {
-				this.$emit('coords-reset')
-			}).catch((error) => {
-				console.error(error)
-			}).then(() => {
-				this.map.closePopup()
-			})
+			this.$emit('coords-reset', paths)
+			this.map.closePopup()
 		},
 		onPhotoMoved(e, photo) {
 			this.$emit('photo-moved', photo, e.target.getLatLng())

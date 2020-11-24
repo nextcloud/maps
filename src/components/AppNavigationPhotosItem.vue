@@ -20,6 +20,18 @@
 				@click="$emit('draggable-clicked')">
 				{{ draggable ? t('maps', 'Disable photo drag') : t('maps', 'Enable photo drag') }}
 			</ActionButton>
+			<ActionButton v-if="canCancel"
+				icon="icon-play-previous"
+				:close-after-click="false"
+				@click="$emit('cancel-clicked')">
+				{{ t('maps', 'Cancel photo move') }}
+			</ActionButton>
+			<ActionButton v-if="canRedo"
+				icon="icon-play-next"
+				:close-after-click="false"
+				@click="$emit('redo-clicked')">
+				{{ t('maps', 'Redo photo move') }}
+			</ActionButton>
 		</template>
 	</AppNavigationItem>
 </template>
@@ -50,6 +62,14 @@ export default {
 			required: true,
 		},
 		draggable: {
+			type: Boolean,
+			required: true,
+		},
+		canCancel: {
+			type: Boolean,
+			required: true,
+		},
+		canRedo: {
 			type: Boolean,
 			required: true,
 		},

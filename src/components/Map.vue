@@ -57,7 +57,7 @@
 				:map="map"
 				:photos="photos"
 				:draggable="photosDraggable"
-				@coords-reset="$emit('coords-reset')"
+				@coords-reset="$emit('coords-reset', $event)"
 				@photo-moved="onPhotoMoved" />
 			<ContactsLayer
 				v-if="map && contactsEnabled"

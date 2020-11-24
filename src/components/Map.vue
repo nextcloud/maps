@@ -446,7 +446,6 @@ export default {
 			} else {
 				this.activeLayerId = this.defaultStreetLayer
 			}
-			console.debug(this.activeLayerId)
 
 			document.querySelector('.leaflet-control-layers').style.display = 'none'
 		},

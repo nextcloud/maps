@@ -21,8 +21,8 @@
 					:can-cancel="lastPhotoMoves.length > 0"
 					:can-redo="lastPhotoCanceledMoves.length > 0"
 					@photos-clicked="onPhotosClicked"
-					@cancel-clicked="onCancelPhotoMoveClicked"
-					@redo-clicked="onRedoPhotoMoveClicked"
+					@cancel-clicked="cancelPhotoMove"
+					@redo-clicked="redoPhotoMove"
 					@draggable-clicked="photosDraggable = !photosDraggable" />
 			</template>
 		</MapsNavigation>
@@ -121,6 +121,16 @@ export default {
 	created() {
 		this.getContacts()
 		this.getPhotos()
+
+		document.onkeyup = (e) => {
+			if (e.ctrlKey) {
+				if (e.key === 'z' && !['INPUT', 'TEXTAREA'].includes(e.target.tagName)) {
+					this.cancelPhotoMove()
+				} else if (e.key === 'Z' && !['INPUT', 'TEXTAREA'].includes(e.target.tagName)) {
+					this.redoPhotoMove()
+				}
+			}
+		}
 	},
 	mounted() {
 		// subscribe('nextcloud:unified-search.search', this.filter)
@@ -150,7 +160,6 @@ export default {
 			}
 			this.photosLoading = true
 			network.getPhotos().then((response) => {
-				console.debug(response.data)
 				this.photos = response.data
 			}).catch((error) => {
 				console.error(error)
@@ -209,11 +218,11 @@ export default {
 				if (save) {
 					this.lastPhotoMoves.push(response.data)
 					this.lastPhotoCanceledMoves = []
-				}
-				if (paths.length === 1) {
-					showSuccess(t('maps', '"{path}" successfully moved', { path: paths[0] }))
-				} else {
-					showSuccess(t('maps', '{nb} photos moved', { nb: paths.length }))
+					if (paths.length === 1) {
+						showSuccess(t('maps', '"{path}" successfully moved', { path: paths[0] }))
+					} else {
+						showSuccess(t('maps', '{nb} photos moved', { nb: paths.length }))
+					}
 				}
 			}).catch((error) => {
 				console.error(error)
@@ -234,8 +243,8 @@ export default {
 			}).then(() => {
 			})
 		},
-		onCancelPhotoMoveClicked() {
-			if (this.lastPhotoMoves.length === 0) {
+		cancelPhotoMove() {
+			if (this.lastPhotoMoves.length === 0 || this.photosLoading) {
 				return
 			}
 			const lastPhotoMove = this.lastPhotoMoves.pop()
@@ -259,8 +268,8 @@ export default {
 				this.resetPhotosCoords(paths, false)
 			}
 		},
-		onRedoPhotoMoveClicked() {
-			if (this.lastPhotoCanceledMoves.length === 0) {
+		redoPhotoMove() {
+			if (this.lastPhotoCanceledMoves.length === 0 || this.photosLoading) {
 				return
 			}
 			const lastPhotoCanceledMove = this.lastPhotoCanceledMoves.pop()

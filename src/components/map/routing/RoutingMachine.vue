@@ -14,8 +14,8 @@ import 'leaflet-control-geocoder/dist/Control.Geocoder.css'
 import 'leaflet-routing-machine/dist/leaflet-routing-machine'
 import 'leaflet-routing-machine/dist/leaflet-routing-machine.css'
 
-import * as network from '../../network'
-import optionsController from '../../optionsController'
+import * as network from '../../../network'
+import optionsController from '../../../optionsController'
 
 export default {
 	name: 'RoutingMachine',
@@ -360,10 +360,25 @@ export default {
 				this.control.spliceWaypoints(this.control.getWaypoints().length - 1, 0, latlng)
 			}
 		},
+		deleteRoutePoint(i) {
+			if (this.control) {
+				// don't delete first and last steps, just clear them
+				if (this.control.getWaypoints().length <= 2) {
+					this.control.spliceWaypoints(i, 1, null)
+				} else {
+					this.control.spliceWaypoints(i, 1)
+				}
+			}
+		},
 		setRoutePoint(i, latlng) {
 			if (this.control) {
 				this.control.spliceWaypoints(i, 1, latlng)
 			}
+		},
+		reverseWaypoints() {
+			const points = this.control.getWaypoints()
+			points.reverse()
+			this.control.setWaypoints(points)
 		},
 		onCloseClick() {
 			this.$emit('close')

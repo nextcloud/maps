@@ -101,7 +101,7 @@ import 'leaflet-contextmenu/dist/leaflet.contextmenu.min.css'
 
 import Slider from '../components/map/Slider'
 import SearchBar from '../components/map/SearchBar'
-import RoutingControl from '../components/map/RoutingControl'
+import RoutingControl from '../components/map/routing/RoutingControl'
 import PhotosLayer from '../components/map/PhotosLayer'
 import ContactsLayer from '../components/map/ContactsLayer'
 import PlaceContactPopup from '../components/map/PlaceContactPopup'

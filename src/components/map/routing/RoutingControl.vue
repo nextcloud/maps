@@ -3,16 +3,26 @@
 		<RoutingSteps
 			:steps="steps"
 			@add-step="onAddStep"
+			@delete-step="onDeleteStep"
 			@reverse-steps="onReverseSteps" />
 		<RoutingMachine
+			ref="machine"
 			:map="map"
-			:visible="visible" />
+			:visible="visible"
+			@plan-changed="onPlanChanged" />
 	</div>
 </template>
 
 <script>
 import RoutingSteps from './RoutingSteps'
 import RoutingMachine from './RoutingMachine'
+
+const emptyStep = () => {
+	return {
+		latLng: null,
+		name: '',
+	}
+}
 
 export default {
 	name: 'RoutingControl',
@@ -35,7 +45,7 @@ export default {
 
 	data() {
 		return {
-			steps: [null, null],
+			steps: [emptyStep(), emptyStep()],
 		}
 	},
 
@@ -46,12 +56,19 @@ export default {
 	},
 
 	methods: {
-		// ============ custom plan list ============
+		// ============ custom plan list events ============
 		onAddStep() {
-			this.steps.splice(this.steps.length - 1, 0, null)
+			this.$refs.machine.addRoutePoint(emptyStep())
+		},
+		onDeleteStep(i) {
+			this.$refs.machine.deleteRoutePoint(i)
 		},
 		onReverseSteps() {
-			this.steps.reverse()
+			this.$refs.machine.reverseWaypoints()
+		},
+		// ============ routing machine events ============
+		onPlanChanged(waypoints) {
+			this.steps = waypoints
 		},
 	},
 }

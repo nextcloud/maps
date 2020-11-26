@@ -1,20 +1,27 @@
 <template>
 	<div id="routing-steps">
-		<p v-for="(s, i) in steps" :key="i">
-			superplop
-		</p>
-		<button id="add-step" @click="onAddStep">
+		<RoutingStep v-for="(s, i) in steps"
+			:key="i"
+			:step="s"
+			@delete="$emit('delete-step', i)" />
+		<button id="add-step" @click="$emit('add-step')">
 			Add step
 		</button>
-		<button id="reverse-steps" @click="onReverseSteps">
+		<button id="reverse-steps" @click="$emit('reverse-steps')">
 			Reverse steps order
 		</button>
 	</div>
 </template>
 
 <script>
+import RoutingStep from './RoutingStep'
+
 export default {
 	name: 'RoutingSteps',
+
+	components: {
+		RoutingStep,
+	},
 
 	props: {
 		steps: {
@@ -35,12 +42,6 @@ export default {
 	},
 
 	methods: {
-		onAddStep() {
-			this.$emit('add-step')
-		},
-		onReverseSteps() {
-			this.$emit('reverse-steps')
-		},
 	},
 }
 </script>

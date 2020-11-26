@@ -75,10 +75,6 @@ import { geoToLatLng } from '../utils/mapUtils'
 import * as network from '../network'
 import { showError, showSuccess } from '@nextcloud/dialogs'
 
-import Vue from 'vue'
-import { Tooltip } from '@nextcloud/vue'
-Vue.directive('tooltip', Tooltip)
-
 export default {
 	name: 'App',
 

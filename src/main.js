@@ -25,6 +25,9 @@ import App from './views/App.vue'
 import './bootstrap'
 import optionsController from './optionsController'
 
+import Tooltip from '@nextcloud/vue/dist/Directives/Tooltip'
+Vue.directive('tooltip', Tooltip)
+
 // eslint-disable-next-line
 'use strict'
 

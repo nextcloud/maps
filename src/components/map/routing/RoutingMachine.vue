@@ -380,9 +380,6 @@ export default {
 			points.reverse()
 			this.control.setWaypoints(points)
 		},
-		onCloseClick() {
-			this.$emit('close')
-		},
 		onPlanChanged(e) {
 			console.debug('control plan changed')
 			console.debug(e)
@@ -446,24 +443,6 @@ export default {
 					this.control.route()
 				})
 
-				const titleIcon = document.createElement('span')
-				titleIcon.classList.add('icon')
-				titleIcon.classList.add('icon-play-next')
-				const title = document.createElement('h3')
-				title.setAttribute('id', 'routing-title')
-				title.textContent = t('maps', 'Find directions')
-				const close = document.createElement('button')
-				close.classList.add('icon-close')
-				close.setAttribute('id', 'routing-close')
-				close.addEventListener('click', this.onCloseClick)
-
-				const header = document.createElement('div')
-				header.classList.add('routing-header')
-				header.appendChild(titleIcon)
-				header.appendChild(title)
-				header.appendChild(close)
-
-				document.querySelector('.leaflet-routing-container').prepend(header)
 				document.querySelector('.leaflet-routing-geocoders').appendChild(select)
 
 				if (this.nbRouters === 0 && OC.isUserAdmin()) {
@@ -545,9 +524,5 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-#routing-steps {
-	position: absolute;
-	z-index: 999999999;
-	margin: 10px 0 0 370px;
-}
+// nothing
 </style>

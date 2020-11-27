@@ -3,13 +3,19 @@
 		<RoutingStep v-for="(s, i) in steps"
 			:key="i"
 			:step="s"
+			:placeholder="getPlaceholder(i)"
+			@selected="$emit('step-selected', i, $event)"
 			@delete="$emit('delete-step', i)" />
-		<button id="add-step" @click="$emit('add-step')">
-			Add step
-		</button>
-		<button id="reverse-steps" @click="$emit('reverse-steps')">
-			Reverse steps order
-		</button>
+		<div class="steps-buttons">
+			<button id="add-step" @click="$emit('add-step')">
+				<span class="icon-add" />
+				{{ t('maps', 'Add step') }}
+			</button>
+			<button id="reverse-steps" @click="$emit('reverse-steps')">
+				<span class="icon-reverse" />
+				{{ t('maps', 'Reverse steps order') }}
+			</button>
+		</div>
 	</div>
 </template>
 
@@ -42,14 +48,31 @@ export default {
 	},
 
 	methods: {
+		getPlaceholder(i) {
+			return i === 0
+				? t('maps', 'Start')
+				: i === this.steps.length - 1
+					? t('maps', 'Destination')
+					: t('maps', 'Via {i}', { i })
+		},
 	},
 }
 </script>
 
 <style lang="scss" scoped>
 #routing-steps {
-	position: absolute;
-	z-index: 999999999;
-	margin: 10px 0 0 370px;
+	// position: absolute;
+	// z-index: 999999999;
+	// margin: 0 0 0 370px;
+	width: 350px;
+	display: flex;
+	flex-direction: column;
+	.steps-buttons {
+		display: flex;
+		flex-direction: row;
+		* {
+			flex-grow: 1;
+		}
+	}
 }
 </style>

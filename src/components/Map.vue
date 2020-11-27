@@ -15,11 +15,12 @@
 			@click="onMapClick"
 			@contextmenu="onMapContextmenu">
 			<RoutingControl v-if="map"
+				v-show="showRouting"
 				ref="routingControl"
-				:map="map"
 				:visible="showRouting"
-				@close="onRoutingClose" />
-			<SearchBar v-if="map"
+				:map="map"
+				@close="showRouting = false" />
+			<SearchControl v-if="map"
 				v-show="!showRouting"
 				:map="map"
 				@routing-clicked="showRouting = true" />
@@ -100,7 +101,7 @@ import 'leaflet-contextmenu/dist/leaflet.contextmenu.min'
 import 'leaflet-contextmenu/dist/leaflet.contextmenu.min.css'
 
 import Slider from '../components/map/Slider'
-import SearchBar from '../components/map/SearchBar'
+import SearchControl from '../components/map/SearchControl'
 import RoutingControl from '../components/map/routing/RoutingControl'
 import PhotosLayer from '../components/map/PhotosLayer'
 import ContactsLayer from '../components/map/ContactsLayer'
@@ -118,7 +119,7 @@ export default {
 		LControlLayers,
 		LTileLayer,
 		Slider,
-		SearchBar,
+		SearchControl,
 		RoutingControl,
 		PhotosLayer,
 		ContactsLayer,
@@ -473,9 +474,6 @@ export default {
 		onUpdateBounds(b) {
 			const boundsStr = b.getNorth() + ';' + b.getSouth() + ';' + b.getEast() + ';' + b.getWest()
 			optionsController.saveOptionValues({ mapBounds: boundsStr })
-		},
-		onRoutingClose() {
-			this.showRouting = false
 		},
 		// contacts
 		placeContactClicked(e) {

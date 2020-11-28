@@ -121,8 +121,7 @@ export default {
 				return {
 					type: 'contact',
 					icon: 'icon-contacts-dark',
-					id: c.UID,
-					// value:
+					id: c.UID + c.GEO,
 					label: c.FN + ' - ' + getFormattedADR(c.ADR),
 					latLng: geoToLatLng(c.GEO),
 				}

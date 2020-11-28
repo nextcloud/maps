@@ -25,6 +25,7 @@
 				v-show="!showRouting"
 				:map="map"
 				:search-data="searchData"
+				@validate="onSearchValidate"
 				@routing-clicked="showRouting = true" />
 			<LControlZoom position="bottomright" />
 			<LControlScale
@@ -496,6 +497,10 @@ export default {
 		},
 		onPhotoMoved(photo, latLng) {
 			this.$emit('photo-moved', photo, latLng)
+		},
+		// search
+		onSearchValidate(element) {
+			this.map.setView(element.latLng, 15)
 		},
 	},
 }

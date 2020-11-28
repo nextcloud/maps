@@ -79,5 +79,5 @@ export const getFormattedADR = (adr) => {
 		}
 		formattedAddress += adrTab[5] + ' ' + adrTab[3] + ' ' + adrTab[4] + ' ' + adrTab[6]
 	}
-	return formattedAddress
+	return formattedAddress.trim()
 }

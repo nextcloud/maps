@@ -1,14 +1,17 @@
 <template>
 	<Multiselect
 		ref="select"
-		v-model="selectedOption"
 		class="search-select"
 		label="label"
 		track-by="multiselectKey"
+		:value="selectedOption"
 		:auto-limit="false"
 		:limit="8"
 		:options-limit="8"
 		:max-height="8 * 45"
+		:close-on-select="false"
+		:clear-on-select="false"
+		:preserve-search="true"
 		:placeholder="placeholder"
 		:loading="searching"
 		:options="formattedOptions"
@@ -21,6 +24,9 @@
 			<span class="option-label" :title="option.label">
 				{{ option.label }}
 			</span>
+		</template>
+		<template #singleLabel="{option}">
+			{{ option.value || option.label }}
 		</template>
 	</Multiselect>
 </template>
@@ -72,8 +78,9 @@ export default {
 				: this.allData
 		},
 		allData() {
-			// return [{ type: 'result', label: 'PLPLPL' }]
-			return this.currentOsmResults || this.data
+			return this.currentOsmResults
+				? [...this.currentOsmResults, ...this.data]
+				: this.data
 		},
 	},
 
@@ -93,34 +100,33 @@ export default {
 		input.addEventListener('focus', e => {
 			console.debug('input FOCUS')
 			if (this.selectedOption) {
-				input.value = this.selectedOption.value
+				input.value = this.selectedOption.value || this.selectedOption.label
 			}
 		})
 		input.addEventListener('keyup', e => {
-			if (e.key === 'Enter') {
-				// trick to add member when pressing enter on NC user multiselect
-				// this.onMultiselectEnterPressed(e.target)
-			} else {
-				// add a simple user entry in multiselect when typing
+			if (!['ArrowDown', 'ArrowUp'].includes(e.key)) {
 				this.updateSearchOption(e.target.value)
 			}
 		})
-		// remove search option when loosing focus
+		// loosing focus
 		input.addEventListener('blur', e => {
 			// console.debug('BLUR')
-			// console.debug(e)
-			this.updateSearchOption(null)
 		})
 	},
 
 	methods: {
-		onOptionSelected() {
+		onOptionSelected(option, id) {
 			console.debug('option selected in search field')
-			console.debug(this.selectedOption)
-			if (this.selectedOption?.type === 'query') {
-				this.searchOsm(this.selectedOption.value)
+			console.debug(option)
+			console.debug(id)
+			if (option?.type === 'query') {
+				this.searchOsm(option.value)
+			} else {
+				if (option) {
+					this.$emit('validate', option)
+					this.selectedOption = option
+				}
 			}
-			// this.$refs.select.$el.querySelector('input').focus()
 		},
 		onUpdateValue(e) {
 			console.debug('on update value')
@@ -131,32 +137,34 @@ export default {
 			console.debug(e)
 		},
 		updateSearchOption(searchQuery) {
-			// delete existing search option
-			this.currentSearchQueryOption = null
-			// without this, it works once every two tries
-			// this.selectedOption = null
-			console.debug('updateSearchOption ' + searchQuery)
+			console.debug('updateSearchOption "' + searchQuery + '"')
 			// add one
 			if (searchQuery !== null && searchQuery !== '') {
 				this.currentSearchQueryOption = {
 					type: 'query',
 					icon: 'icon-search',
-					id: '',
+					id: searchQuery,
 					value: searchQuery,
 					label: t('cospend', 'Search for {q}', { q: searchQuery }),
 				}
+			} else {
+				// remove search option when query is empty
+				this.currentSearchQueryOption = null
 			}
 		},
 		searchOsm(query) {
+			this.selectedOption = this.currentSearchQueryOption
+			this.currentSearchQueryOption = null
 			this.searching = true
 			network.searchAddress(query, 5).then((response) => {
-				console.debug(response.data)
 				this.currentOsmResults = response.data.map((r) => {
 					return {
 						type: 'result',
+						id: r.osm_id,
 						icon: 'icon-link',
 						value: r.display_name,
 						label: r.display_name,
+						latLng: [r.lat, r.lon],
 					}
 				})
 				this.$refs.select.$el.querySelector('input').focus()

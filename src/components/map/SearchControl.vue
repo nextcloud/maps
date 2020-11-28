@@ -3,7 +3,8 @@
 		<div id="search">
 			<SearchField
 				class="search-field"
-				:data="searchData" />
+				:data="searchData"
+				@validate="$emit('validate', $event)" />
 			<button
 				@click="$emit('search-clicked')">
 				<span class="icon-search" />

@@ -590,93 +590,22 @@ export default {
 	}
 }
 
-// routing
+// routing machine
 ::v-deep .leaflet-routing-container {
 	width: 350px;
 	max-width: calc(100vw - 45px);
 
-	.routing-header {
-		display: flex;
-		.icon {
-			width: 44px;
-		}
-		#routing-title {
-			flex-grow: 1;
-			text-align: left;
-			font-size: 22px;
-			margin-top: auto;
-			margin-bottom: auto;
-		}
-		#routing-close:hover {
-			background-color: var(--color-background-hover) !important;
-		}
-		#routing-close {
-			width: 44px;
-			height: 44px;
-			float: right;
-			border: none;
-			margin: 0px 5px 0px 0px !important;
-			background-color: var(--color-main-background) !important;
-			border-radius: var(--border-radius-pill);
-		}
-	}
 	#router-select {
 		width: 100%;
 		text-overflow: ellipsis;
-		margin-top: 10px;
 	}
 
-	/* hide button if placeholder is shown i.e. if field is empty */
-	.leaflet-routing-geocoder:first-child > input:placeholder-shown + span,
-	.leaflet-routing-geocoder:nth-last-child(5) > input:placeholder-shown + span {
-		display: none;
-	}
+	// we don't need this
 	.leaflet-routing-geocoders {
-		width: 100%;
-		border-bottom: 0;
+		display: none;
 	}
 	.leaflet-routing-alternatives-container:not(:empty) {
 		border-top: 1px solid var(--color-border);
-	}
-	.leaflet-routing-reverse-waypoints.icon-loading-small::after {
-		content: '';
-	}
-	.leaflet-routing-reverse-waypoints {
-		float: left;
-	}
-	.leaflet-routing-reverse-waypoints,
-	.leaflet-routing-add-waypoint,
-	.exportCurrentRoute {
-		width: 44px !important;
-		height: 44px !important;
-		min-width: 44px !important;
-		min-height: 44px !important;
-		padding: 0px !important;
-		border: 1px solid var(--color-border) !important;
-		line-height: 0px !important;
-		border-radius: var(--border-radius-pill);
-	}
-	.leaflet-routing-remove-waypoint::after {
-		right: 6px !important;
-		width: 18px !important;
-		height: 5px !important;
-		background-color: var(--color-main-background) !important;
-	}
-	.leaflet-routing-remove-waypoint:hover:after {
-		color: var(--color-main-text) !important;
-	}
-	.exportCurrentRoute {
-		line-height: initial;
-		margin-left: auto;
-		margin-right: auto;
-		float: unset !important;
-	}
-	.exportCurrentRoute span{
-		line-height: initial;
-	}
-	.exportCurrentRoute span::after{
-		font-weight: normal;
-		content: '\1F4BE';
 	}
 
 	// instruction table

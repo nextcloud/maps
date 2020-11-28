@@ -12,15 +12,18 @@
 		<RoutingSteps
 			:steps="steps"
 			:search-data="searchData"
+			:can-export="canExport"
 			@add-step="addRoutePoint"
 			@step-selected="setRoutePoint"
 			@delete-step="deleteRoutePoint"
+			@export-route="onExportRoute"
 			@reverse-steps="reverseWaypoints" />
 		<RoutingMachine
 			ref="machine"
 			:map="map"
 			:visible="visible"
-			@plan-changed="onPlanChanged" />
+			@plan-changed="onPlanChanged"
+			@plan-ready-changed="canExport = $event" />
 	</LControl>
 </template>
 
@@ -64,6 +67,7 @@ export default {
 	data() {
 		return {
 			steps: [emptyStep(), emptyStep()],
+			canExport: false,
 		}
 	},
 
@@ -91,6 +95,9 @@ export default {
 		},
 		reverseWaypoints() {
 			this.$refs.machine.reverseWaypoints()
+		},
+		onExportRoute() {
+			this.$refs.machine.onExportRoute()
 		},
 		// ============ routing machine events ============
 		onPlanChanged(waypoints) {

@@ -9,13 +9,21 @@
 			@selected="$emit('step-selected', i, $event)"
 			@delete="$emit('delete-step', i)" />
 		<div class="steps-buttons">
-			<button id="add-step" @click="$emit('add-step')">
+			<button id="add-step"
+				v-tooltip="{ content: t('maps', 'Add step') }"
+				@click="$emit('add-step')">
 				<span class="icon-add" />
-				{{ t('maps', 'Add step') }}
 			</button>
-			<button id="reverse-steps" @click="$emit('reverse-steps')">
+			<button v-if="canExport"
+				id="export-route"
+				v-tooltip="{ content: t('maps', 'Export current route') }"
+				@click="$emit('export-route')">
+				<span class="icon-save" />
+			</button>
+			<button id="reverse-steps"
+				v-tooltip="{ content: t('maps', 'Reverse steps order') }"
+				@click="$emit('reverse-steps')">
 				<span class="icon-reverse" />
-				{{ t('maps', 'Reverse steps order') }}
 			</button>
 		</div>
 	</div>
@@ -39,6 +47,10 @@ export default {
 		searchData: {
 			type: Array,
 			required: true,
+		},
+		canExport: {
+			type: Boolean,
+			default: false,
 		},
 	},
 

@@ -320,7 +320,8 @@ export default {
 			}
 			OC.Notification.showTemporary(t('maps', 'Routing error:') + ' ' + msg)
 			this.onRoutingEnd()
-			document.querySelector('.exportCurrentRoute').style.display = 'none'
+			// document.querySelector('.exportCurrentRoute').style.display = 'none'
+			this.$emit('plan-ready-changed', false)
 			this.$emit('routing-error')
 		},
 
@@ -333,8 +334,9 @@ export default {
 		},
 
 		onRoutingEnd(e) {
-			document.querySelector('.exportCurrentRoute').style.display = 'block'
-			document.querySelector('.leaflet-routing-reverse-waypoints').classList.remove('icon-loading-small')
+			this.$emit('plan-ready-changed', true)
+			// document.querySelector('.exportCurrentRoute').style.display = 'block'
+			// document.querySelector('.leaflet-routing-reverse-waypoints').classList.remove('icon-loading-small')
 			// TODO understand why routingstart is sometimes triggered after routesfound
 			// just in case routingstart is triggered again (weird):
 			setTimeout(() => {
@@ -384,9 +386,10 @@ export default {
 			console.debug('control plan changed')
 			console.debug(e)
 			this.$emit('plan-changed', e.waypoints)
-			if (!this.control.getPlan().isReady()) {
+			this.$emit('plan-ready-changed', this.control.getPlan().isReady())
+			/* if (!this.control.getPlan().isReady()) {
 				document.querySelector('.exportCurrentRoute').style.display = 'none'
-			}
+			} */
 		},
 		onPlanSpliced(e) {
 			console.debug('control plan spliced')
@@ -399,7 +402,7 @@ export default {
 			} else {
 				this.control.addTo(this.map)
 				const routingContainer = document.querySelector('.leaflet-routing-container')
-				routingContainer.querySelector('.leaflet-routing-geocoder input').focus()
+				// routingContainer.querySelector('.leaflet-routing-geocoder input').focus()
 
 				// get event when plan is changing
 				this.control.getPlan().addEventListener('waypointschanged', (e) => {
@@ -443,7 +446,7 @@ export default {
 					this.control.route()
 				})
 
-				document.querySelector('.leaflet-routing-geocoders').appendChild(select)
+				document.querySelector('.leaflet-routing-container').prepend(select)
 
 				if (this.nbRouters === 0 && OC.isUserAdmin()) {
 					const p = document.createElement('p')
@@ -457,19 +460,6 @@ export default {
 					p.appendChild(a)
 					document.querySelector('.leaflet-routing-container').prepend(p)
 				}
-
-				// export route button
-				const exportTitle = t('maps', 'Export current route to GPX')
-				const exportButton = document.createElement('button')
-				exportButton.classList.add('exportCurrentRoute')
-				exportButton.setAttribute('title', exportTitle)
-				exportButton.appendChild(document.createElement('span'))
-
-				select.parentNode.insertBefore(exportButton, select.nextSibling)
-				exportButton.style.display = 'none'
-
-				// export
-				exportButton.addEventListener('click', this.onExportRoute)
 			}
 		},
 		onExportRoute() {
@@ -497,7 +487,6 @@ export default {
 			}
 		},
 		exportRoute(type = 'route') {
-			document.querySelector('.exportCurrentRoute').classList.add('icon-loading-small')
 			const latLngCoords = this.control._selectedRoute.coordinates
 			const coords = latLngCoords.map((ll) => {
 				return {
@@ -516,7 +505,6 @@ export default {
 			}).catch((error) => {
 				console.error(error)
 			}).then(() => {
-				document.querySelector('.exportCurrentRoute').classList.remove('icon-loading-small')
 			})
 		},
 	},

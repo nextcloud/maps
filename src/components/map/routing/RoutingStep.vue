@@ -1,7 +1,7 @@
 <template>
 	<div class="routing-step">
 		<SearchField
-			:data="[]"
+			:data="searchData"
 			:placeholder="placeholder" />
 		<button class="deleteButton" @click="$emit('delete')">
 			<span class="icon icon-close" />
@@ -22,6 +22,10 @@ export default {
 	props: {
 		step: {
 			type: Object,
+			required: true,
+		},
+		searchData: {
+			type: Array,
 			required: true,
 		},
 		placeholder: {

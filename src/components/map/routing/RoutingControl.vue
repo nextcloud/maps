@@ -11,6 +11,7 @@
 		</div>
 		<RoutingSteps
 			:steps="steps"
+			:search-data="searchData"
 			@add-step="addRoutePoint"
 			@step-selected="setRoutePoint"
 			@delete-step="deleteRoutePoint"
@@ -48,6 +49,10 @@ export default {
 	props: {
 		map: {
 			type: Object,
+			required: true,
+		},
+		searchData: {
+			type: Array,
 			required: true,
 		},
 		visible: {

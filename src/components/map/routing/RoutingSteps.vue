@@ -3,6 +3,7 @@
 		<RoutingStep v-for="(s, i) in steps"
 			:key="i"
 			:step="s"
+			:search-data="searchData"
 			:placeholder="getPlaceholder(i)"
 			@selected="$emit('step-selected', i, $event)"
 			@delete="$emit('delete-step', i)" />
@@ -31,6 +32,10 @@ export default {
 
 	props: {
 		steps: {
+			type: Array,
+			required: true,
+		},
+		searchData: {
 			type: Array,
 			required: true,
 		},

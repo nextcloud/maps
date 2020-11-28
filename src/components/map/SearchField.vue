@@ -2,16 +2,27 @@
 	<Multiselect
 		ref="select"
 		v-model="selectedOption"
-		class="affectUserInput"
+		class="search-select"
 		label="label"
 		track-by="multiselectKey"
+		:auto-limit="false"
+		:limit="8"
+		:options-limit="8"
+		:max-height="8 * 45"
 		:placeholder="placeholder"
 		:loading="searching"
 		:options="formattedOptions"
 		:user-select="false"
 		@input="onOptionSelected"
 		@update:value="onUpdateValue"
-		@change="onChange" />
+		@change="onChange">
+		<template #option="{option}">
+			<span :class="'option-icon ' + option.icon" />
+			<span class="option-label" :title="option.label">
+				{{ option.label }}
+			</span>
+		</template>
+	</Multiselect>
 </template>
 
 <script>
@@ -129,6 +140,7 @@ export default {
 			if (searchQuery !== null && searchQuery !== '') {
 				this.currentSearchQueryOption = {
 					type: 'query',
+					icon: 'icon-search',
 					id: '',
 					value: searchQuery,
 					label: t('cospend', 'Search for {q}', { q: searchQuery }),
@@ -142,6 +154,7 @@ export default {
 				this.currentOsmResults = response.data.map((r) => {
 					return {
 						type: 'result',
+						icon: 'icon-link',
 						value: r.display_name,
 						label: r.display_name,
 					}
@@ -158,5 +171,18 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-// nothing
+::v-deep .multiselect__option {
+	height: 44px !important;
+}
+
+.search-select {
+	.option-icon {
+		margin-right: 10px;
+	}
+
+	.option-label {
+		overflow: hidden;
+		text-overflow: ellipsis;
+	}
+}
 </style>

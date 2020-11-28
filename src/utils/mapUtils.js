@@ -68,3 +68,16 @@ export const geoToLatLng = (geo) => {
 	}
 	return ll
 }
+
+export const getFormattedADR = (adr) => {
+	const adrTab = adr.split(';')
+	let formattedAddress = ''
+	if (adrTab.length > 6) {
+		// check if street name is set
+		if (adrTab[2] !== '') {
+			formattedAddress += adrTab[2] + ' '
+		}
+		formattedAddress += adrTab[5] + ' ' + adrTab[3] + ' ' + adrTab[4] + ' ' + adrTab[6]
+	}
+	return formattedAddress
+}

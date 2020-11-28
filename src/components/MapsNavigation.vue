@@ -4,8 +4,6 @@
 			<h2 v-if="loading"
 				class="icon-loading-small loading-icon" />
 			<slot name="items" />
-			<SearchField
-				:data="[]" />
 		</template>
 		<template slot="footer">
 			<AppNavigationSettings>
@@ -31,8 +29,6 @@ import AppNavigation from '@nextcloud/vue/dist/Components/AppNavigation'
 import AppNavigationSettings from '@nextcloud/vue/dist/Components/AppNavigationSettings'
 import ActionCheckbox from '@nextcloud/vue/dist/Components/ActionCheckbox'
 
-import SearchField from './map/SearchField'
-
 import optionsController from '../optionsController'
 
 /* import { generateUrl } from '@nextcloud/router'
@@ -48,7 +44,6 @@ export default {
 		AppNavigation,
 		AppNavigationSettings,
 		ActionCheckbox,
-		SearchField,
 	},
 	directives: {
 		ClickOutside,

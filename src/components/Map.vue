@@ -19,10 +19,12 @@
 				ref="routingControl"
 				:visible="showRouting"
 				:map="map"
+				:search-data="searchData"
 				@close="showRouting = false" />
 			<SearchControl v-if="map"
 				v-show="!showRouting"
 				:map="map"
+				:search-data="searchData"
 				@routing-clicked="showRouting = true" />
 			<LControlZoom position="bottomright" />
 			<LControlScale
@@ -127,6 +129,10 @@ export default {
 	},
 
 	props: {
+		searchData: {
+			type: Array,
+			required: true,
+		},
 		photos: {
 			type: Array,
 			required: true,

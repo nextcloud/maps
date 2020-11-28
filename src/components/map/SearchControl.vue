@@ -3,7 +3,7 @@
 		<div id="search">
 			<SearchField
 				class="search-field"
-				:data="[]" />
+				:data="searchData" />
 			<button
 				@click="$emit('search-clicked')">
 				<span class="icon-search" />
@@ -38,6 +38,10 @@ export default {
 	props: {
 		map: {
 			type: Object,
+			required: true,
+		},
+		searchData: {
+			type: Array,
 			required: true,
 		},
 	},

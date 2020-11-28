@@ -30,6 +30,7 @@
 			<div id="app-content-wrapper">
 				<Map
 					ref="map"
+					:search-data="searchData"
 					:photos="photos"
 					:photos-enabled="photosEnabled"
 					:photos-draggable="photosDraggable"
@@ -71,7 +72,7 @@ import AppNavigationPhotosItem from '../components/AppNavigationPhotosItem'
 import AppNavigationContactsItem from '../components/AppNavigationContactsItem'
 import optionsController from '../optionsController'
 import L from 'leaflet'
-import { geoToLatLng } from '../utils/mapUtils'
+import { geoToLatLng, getFormattedADR } from '../utils/mapUtils'
 import * as network from '../network'
 import { showError, showSuccess } from '@nextcloud/dialogs'
 
@@ -111,6 +112,21 @@ export default {
 	computed: {
 		mapLoading() {
 			return this.photosLoading || this.contactsLoading
+		},
+		searchData() {
+			return [...this.contactSearchData]
+		},
+		contactSearchData() {
+			return this.contacts.map((c) => {
+				return {
+					type: 'contact',
+					icon: 'icon-contacts-dark',
+					id: c.UID,
+					// value:
+					label: c.FN + ' - ' + getFormattedADR(c.ADR),
+					latLng: geoToLatLng(c.GEO),
+				}
+			})
 		},
 	},
 

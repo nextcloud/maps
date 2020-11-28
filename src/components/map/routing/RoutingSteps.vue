@@ -1,10 +1,11 @@
 <template>
 	<div id="routing-steps">
 		<RoutingStep v-for="(s, i) in steps"
-			:key="i"
+			:key="i + s.name"
 			:step="s"
 			:search-data="searchData"
 			:placeholder="getPlaceholder(i)"
+			:can-delete="canDelete(s, i)"
 			@selected="$emit('step-selected', i, $event)"
 			@delete="$emit('delete-step', i)" />
 		<div class="steps-buttons">
@@ -59,6 +60,10 @@ export default {
 				: i === this.steps.length - 1
 					? t('maps', 'Destination')
 					: t('maps', 'Via {i}', { i })
+		},
+		canDelete(step, i) {
+			// impossible to delete first or last steps if it's empty
+			return !((i === 0 || i === this.steps.length - 1) && !step.latLng)
 		},
 	},
 }

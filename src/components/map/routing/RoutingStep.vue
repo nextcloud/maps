@@ -2,8 +2,12 @@
 	<div class="routing-step">
 		<SearchField
 			:data="searchData"
-			:placeholder="placeholder" />
-		<button class="deleteButton" @click="$emit('delete')">
+			:placeholder="placeholder"
+			:selected-option="selectedOption"
+			@validate="onValidate" />
+		<button v-if="canDelete"
+			class="deleteButton"
+			@click="$emit('delete')">
 			<span class="icon icon-close" />
 		</button>
 	</div>
@@ -32,11 +36,27 @@ export default {
 			type: String,
 			required: true,
 		},
+		canDelete: {
+			type: Boolean,
+			default: true,
+		},
 	},
 
 	data() {
 		return {
 		}
+	},
+
+	computed: {
+		selectedOption() {
+			return this.step && this.step.latLng
+				? {
+					type: 'initial',
+					id: this.step.name,
+					label: this.step.name,
+				}
+				: null
+		},
 	},
 
 	watch: {
@@ -46,6 +66,13 @@ export default {
 	},
 
 	methods: {
+		onValidate(option) {
+			const step = {
+				latLng: option.latLng,
+				name: option.label,
+			}
+			this.$emit('selected', step)
+		},
 	},
 }
 </script>

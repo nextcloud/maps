@@ -4,7 +4,7 @@
 		class="search-select"
 		label="label"
 		track-by="multiselectKey"
-		:value="selectedOption"
+		:value="mySelectedOption"
 		:auto-limit="false"
 		:limit="8"
 		:options-limit="8"
@@ -34,6 +34,8 @@
 <script>
 import Multiselect from '@nextcloud/vue/dist/Components/Multiselect'
 
+import L from 'leaflet'
+
 import * as network from '../../network'
 
 export default {
@@ -52,11 +54,15 @@ export default {
 			type: String,
 			default: t('maps', 'Search'),
 		},
+		selectedOption: {
+			type: Object,
+			default: null,
+		},
 	},
 
 	data() {
 		return {
-			selectedOption: null,
+			mySelectedOption: this.selectedOption,
 			searching: false,
 			currentOsmResults: null,
 			currentSearchQueryOption: null,
@@ -99,8 +105,8 @@ export default {
 		})
 		input.addEventListener('focus', e => {
 			console.debug('input FOCUS')
-			if (this.selectedOption) {
-				input.value = this.selectedOption.value || this.selectedOption.label
+			if (this.mySelectedOption) {
+				input.value = this.mySelectedOption.value || this.mySelectedOption.label
 			}
 		})
 		input.addEventListener('keyup', e => {
@@ -124,7 +130,7 @@ export default {
 			} else {
 				if (option) {
 					this.$emit('validate', option)
-					this.selectedOption = option
+					this.mySelectedOption = option
 				}
 			}
 		},
@@ -153,7 +159,7 @@ export default {
 			}
 		},
 		searchOsm(query) {
-			this.selectedOption = this.currentSearchQueryOption
+			this.mySelectedOption = this.currentSearchQueryOption
 			this.currentSearchQueryOption = null
 			this.searching = true
 			network.searchAddress(query, 5).then((response) => {
@@ -164,7 +170,7 @@ export default {
 						icon: 'icon-link',
 						value: r.display_name,
 						label: r.display_name,
-						latLng: [r.lat, r.lon],
+						latLng: L.latLng(r.lat, r.lon),
 					}
 				})
 				this.$refs.select.$el.querySelector('input').focus()

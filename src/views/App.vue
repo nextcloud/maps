@@ -123,7 +123,7 @@ export default {
 					icon: 'icon-contacts-dark',
 					id: c.UID + c.GEO,
 					label: c.FN + ' - ' + getFormattedADR(c.ADR),
-					latLng: geoToLatLng(c.GEO),
+					latLng: L.latLng(geoToLatLng(c.GEO)),
 				}
 			})
 		},

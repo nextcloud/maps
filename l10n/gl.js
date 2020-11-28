@@ -143,7 +143,7 @@ OC.L10N.register(
     " onto {road}" : "en {road}",
     "Destination reached" : "Destino rexeitado",
     "At the fork, turn {modifier}" : "Na bifurcación, xire á {modifier}",
-    "Merge {modifier}" : "Xuntar á {modifier}",
+    "Merge {modifier}" : "Fusionar {modifier}",
     "Turn {modifier} on the ramp" : "Xire á {modifier} na rampla",
     "Take the ramp on the {modifier}" : "Colla a rampla á {modifier}",
     "Turn {modifier} at the end of the road" : "Xire á {modifier} ao final da estrada",

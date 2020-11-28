@@ -44,7 +44,7 @@ OC.L10N.register(
     "Device deleted" : "Gerät gelöscht",
     "Failed to rename device" : "Konnte Gerät nicht umbenennen",
     "Failed to delete device" : "Löschen des Gerätes fehlgeschlagen",
-    "Failed to load device points" : "Es ist nicht gelungen, Gerätepunkte zu laden",
+    "Failed to load device points" : "Laden der Gerätepunkte fehlgeschlagen",
     "Failed to update device points" : "Die Gerätepunkte konnten nicht aktualisiert werden",
     "Impossible to get current location" : "Aktuelle Position kann nicht abgerufen werden",
     "Phone" : "Telefon",

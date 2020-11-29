@@ -54,6 +54,7 @@ OC.L10N.register(
     "Link" : "링크",
     "Description" : "설명",
     "download" : "다운로드",
+    "no date" : "데이터 없음",
     "End" : "끝",
     "Show all" : "모두 보기",
     "Sort by name" : "이름순 정렬",

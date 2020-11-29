@@ -597,6 +597,9 @@ export default {
 	margin-top: 0;
 	padding-top: 5px;
 	border-top: 0;
+	background-color: var(--color-main-background);
+	border-top-left-radius: 0;
+	border-top-right-radius: 0;
 
 	.router-container {
 		width: 100%;

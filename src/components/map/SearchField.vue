@@ -18,7 +18,8 @@
 		:user-select="false"
 		@input="onOptionSelected"
 		@update:value="onUpdateValue"
-		@change="onChange">
+		@change="onChange"
+		@search-change="onSearchChange">
 		<template #option="{option}">
 			<span :class="'option-icon ' + option.icon" />
 			<span class="option-label" :title="option.label">
@@ -26,7 +27,12 @@
 			</span>
 		</template>
 		<template #singleLabel="{option}">
-			{{ option.value || option.label }}
+			<div class="plop">
+				{{ option.value || option.label }}
+			</div>
+		</template>
+		<template #noOptions>
+			{{ t('maps', 'No suggestions') }}
 		</template>
 	</Multiselect>
 </template>
@@ -95,36 +101,15 @@ export default {
 
 	mounted() {
 		const input = this.$refs.select.$el.querySelector('input')
-		this.$refs.select.$el.addEventListener('click', e => {
-			console.debug('multiselect CLICK')
-			// e.preventDefault()
-			// e.stopPropagation()
-		})
-		input.addEventListener('click', e => {
-			console.debug('input CLICK')
-		})
 		input.addEventListener('focus', e => {
-			console.debug('input FOCUS')
 			if (this.mySelectedOption) {
 				input.value = this.mySelectedOption.value || this.mySelectedOption.label
 			}
-		})
-		input.addEventListener('keyup', e => {
-			if (!['ArrowDown', 'ArrowUp'].includes(e.key)) {
-				this.updateSearchOption(e.target.value)
-			}
-		})
-		// loosing focus
-		input.addEventListener('blur', e => {
-			// console.debug('BLUR')
 		})
 	},
 
 	methods: {
 		onOptionSelected(option, id) {
-			console.debug('option selected in search field')
-			console.debug(option)
-			console.debug(id)
 			if (option?.type === 'query') {
 				this.searchOsm(option.value)
 			} else {
@@ -135,15 +120,13 @@ export default {
 			}
 		},
 		onUpdateValue(e) {
-			console.debug('on update value')
-			console.debug(e)
 		},
 		onChange(e) {
-			console.debug('on change')
-			console.debug(e)
+		},
+		onSearchChange(query) {
+			this.updateSearchOption(query)
 		},
 		updateSearchOption(searchQuery) {
-			console.debug('updateSearchOption "' + searchQuery + '"')
 			// add one
 			if (searchQuery !== null && searchQuery !== '') {
 				this.currentSearchQueryOption = {

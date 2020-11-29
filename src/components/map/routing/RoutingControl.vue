@@ -125,10 +125,13 @@ export default {
 			margin: auto 0 auto 5px;
 			font-size: 20px;
 		}
-		button {
+		> button {
 			padding: 0;
 			margin: 0;
 			width: 34px;
+			&:hover span {
+				opacity: 1;
+			}
 		}
 		.icon-routing {
 			width: 34px;

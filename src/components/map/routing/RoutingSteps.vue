@@ -83,9 +83,6 @@ export default {
 
 <style lang="scss" scoped>
 #routing-steps {
-	// position: absolute;
-	// z-index: 999999999;
-	// margin: 0 0 0 370px;
 	width: 100%;
 	display: flex;
 	flex-direction: column;
@@ -93,11 +90,13 @@ export default {
 		display: flex;
 		flex-direction: row;
 		* {
-			// flex-grow: 1;
 			width: 44px;
 			height: 44px;
 			margin: 0 auto 0 auto;
 			padding: 0;
+			&:hover span {
+				opacity: 1;
+			}
 		}
 		.icon-save {
 			background-color: var(--color-main-text);

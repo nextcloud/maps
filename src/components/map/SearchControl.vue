@@ -8,7 +8,7 @@
 			<button
 				v-tooltip="{ content: t('maps', 'Search') }"
 				class="search-button"
-				@click="$emit('search-clicked')">
+				@click="onSearchClicked">
 				<span class="icon-search" />
 			</button>
 			<button
@@ -64,6 +64,8 @@ export default {
 	},
 
 	methods: {
+		onSearchClicked() {
+		},
 	},
 }
 </script>

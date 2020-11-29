@@ -117,15 +117,17 @@ export default {
 			return [...this.contactSearchData]
 		},
 		contactSearchData() {
-			return this.contacts.map((c) => {
-				return {
-					type: 'contact',
-					icon: 'icon-contacts-dark',
-					id: c.UID + c.GEO,
-					label: c.FN + ' - ' + getFormattedADR(c.ADR),
-					latLng: L.latLng(geoToLatLng(c.GEO)),
-				}
-			})
+			return this.contactsEnabled
+				? this.contacts.map((c) => {
+					return {
+						type: 'contact',
+						icon: 'icon-contacts-dark',
+						id: c.UID + c.GEO,
+						label: c.FN + ' - ' + getFormattedADR(c.ADR),
+						latLng: L.latLng(geoToLatLng(c.GEO)),
+					}
+				})
+				: []
 		},
 	},
 

@@ -27,7 +27,7 @@
 			</span>
 		</template>
 		<template #singleLabel="{option}">
-			<div class="plop">
+			<div class="single-label">
 				{{ option.value || option.label }}
 			</div>
 		</template>
@@ -170,6 +170,13 @@ export default {
 <style lang="scss" scoped>
 ::v-deep .multiselect__option {
 	height: 44px !important;
+}
+
+.single-label {
+	height: 18px;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
 }
 
 .search-select {

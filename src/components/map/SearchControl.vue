@@ -6,12 +6,6 @@
 				:data="searchData"
 				@validate="$emit('validate', $event)" />
 			<button
-				v-tooltip="{ content: t('maps', 'Search') }"
-				class="search-button"
-				@click="onSearchClicked">
-				<span class="icon-search" />
-			</button>
-			<button
 				v-tooltip="{ content: t('maps', 'Find directions') }"
 				class="routing-button"
 				@click="$emit('routing-clicked')">
@@ -64,8 +58,6 @@ export default {
 	},
 
 	methods: {
-		onSearchClicked() {
-		},
 	},
 }
 </script>
@@ -92,7 +84,6 @@ export default {
 	.icon-routing {
 		opacity: 0.5;
 	}
-	.search-button:hover .icon-search,
 	.routing-button:hover .icon-routing {
 		opacity: 1;
 	}

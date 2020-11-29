@@ -427,6 +427,9 @@ export default {
 				// add router selector
 				const select = document.createElement('select')
 				select.setAttribute('id', 'router-select')
+				const selectDiv = document.createElement('div')
+				selectDiv.classList.add('router-container')
+				selectDiv.appendChild(select)
 
 				for (const r in this.routers) {
 					const router = this.routers[r]
@@ -446,7 +449,7 @@ export default {
 					this.control.route()
 				})
 
-				document.querySelector('.leaflet-routing-container').prepend(select)
+				document.querySelector('.leaflet-routing-container').prepend(selectDiv)
 
 				if (this.nbRouters === 0 && OC.isUserAdmin()) {
 					const p = document.createElement('p')

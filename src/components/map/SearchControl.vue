@@ -6,10 +6,14 @@
 				:data="searchData"
 				@validate="$emit('validate', $event)" />
 			<button
+				v-tooltip="{ content: t('maps', 'Search') }"
+				class="search-button"
 				@click="$emit('search-clicked')">
 				<span class="icon-search" />
 			</button>
 			<button
+				v-tooltip="{ content: t('maps', 'Find directions') }"
+				class="routing-button"
 				@click="$emit('routing-clicked')">
 				<span class="icon-routing" />
 			</button>
@@ -85,16 +89,10 @@ export default {
 
 	.icon-routing {
 		opacity: 0.5;
-		background-color: black;
-		padding: 0 !important;
-		mask: url('../../../img/routing.svg') no-repeat;
-		mask-size: 16px auto;
-		mask-position: center;
-		-webkit-mask: url('../../../img/routing.svg') no-repeat;
-		-webkit-mask-size: 16px auto;
-		-webkit-mask-position: center;
-		// min-width: 38px !important;
-		// min-height: 36px !important;
+	}
+	.search-button:hover .icon-search,
+	.routing-button:hover .icon-routing {
+		opacity: 1;
 	}
 }
 </style>

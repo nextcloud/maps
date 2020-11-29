@@ -86,14 +86,36 @@ export default {
 	// position: absolute;
 	// z-index: 999999999;
 	// margin: 0 0 0 370px;
-	width: 350px;
+	width: 100%;
 	display: flex;
 	flex-direction: column;
 	.steps-buttons {
 		display: flex;
 		flex-direction: row;
 		* {
-			flex-grow: 1;
+			// flex-grow: 1;
+			width: 44px;
+			height: 44px;
+			margin: 0 auto 0 auto;
+			padding: 0;
+		}
+		.icon-save {
+			background-color: var(--color-main-text);
+			mask: url('../../../../img/save.svg') no-repeat;
+			mask-size: 16px auto;
+			mask-position: center;
+			-webkit-mask: url('../../../../img/save.svg') no-repeat;
+			-webkit-mask-size: 16px auto;
+			-webkit-mask-position: center;
+		}
+		.icon-reverse {
+			background-color: var(--color-main-text);
+			mask: url('../../../../img/reverse.svg') no-repeat;
+			mask-size: 16px auto;
+			mask-position: center;
+			-webkit-mask: url('../../../../img/reverse.svg') no-repeat;
+			-webkit-mask-size: 16px auto;
+			-webkit-mask-position: center;
 		}
 	}
 }

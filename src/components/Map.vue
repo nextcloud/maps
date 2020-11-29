@@ -594,10 +594,18 @@ export default {
 ::v-deep .leaflet-routing-container {
 	width: 350px;
 	max-width: calc(100vw - 45px);
+	margin-top: 0;
+	padding-top: 5px;
+	border-top: 0;
 
-	#router-select {
+	.router-container {
 		width: 100%;
-		text-overflow: ellipsis;
+		display: flex;
+		#router-select {
+			flex-grow: 1;
+			text-overflow: ellipsis;
+			margin: 0 5px 5px 5px;
+		}
 	}
 
 	// we don't need this
@@ -638,5 +646,16 @@ export default {
 			}
 		}
 	}
+}
+
+::v-deep .icon-routing {
+	background-color: var(--color-main-text);
+	padding: 0 !important;
+	mask: url('../../img/routing.svg') no-repeat;
+	mask-size: 16px auto;
+	mask-position: center;
+	-webkit-mask: url('../../img/routing.svg') no-repeat;
+	-webkit-mask-size: 16px auto;
+	-webkit-mask-position: center;
 }
 </style>

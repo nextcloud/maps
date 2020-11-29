@@ -1,7 +1,7 @@
 <template>
 	<LControl class="maps-routing-control" position="topleft">
 		<div class="routing-header">
-			<span class="icon icon-play-next" />
+			<span class="icon icon-routing" />
 			<span class="title">
 				{{ t('maps', 'Find directions') }}
 			</span>
@@ -110,6 +110,11 @@ export default {
 <style lang="scss" scoped>
 .maps-routing-control {
 	z-index: 99999999 !important;
+	background-color: var(--color-main-background);
+	width: 350px;
+	padding: 5px;
+	border: 2px solid rgba(0, 0, 0, 0.2);
+	border-bottom: 0;
 
 	.routing-header {
 		display: flex;
@@ -123,6 +128,9 @@ export default {
 		button {
 			padding: 0;
 			margin: 0;
+			width: 34px;
+		}
+		.icon-routing {
 			width: 34px;
 		}
 	}

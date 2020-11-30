@@ -56,6 +56,11 @@
 				:layer-type="l.type"
 				:options="l.options"
 				:opacity="l.opacity" />
+			<FavoritesLayer
+				v-if="map && favoritesEnabled"
+				:map="map"
+				:favorites="favorites"
+				:categories="favoriteCategories" />
 			<PhotosLayer
 				v-if="map && photosEnabled"
 				:map="map"
@@ -106,6 +111,7 @@ import 'leaflet-contextmenu/dist/leaflet.contextmenu.min.css'
 import Slider from '../components/map/Slider'
 import SearchControl from '../components/map/SearchControl'
 import RoutingControl from '../components/map/routing/RoutingControl'
+import FavoritesLayer from '../components/map/FavoritesLayer'
 import PhotosLayer from '../components/map/PhotosLayer'
 import ContactsLayer from '../components/map/ContactsLayer'
 import PlaceContactPopup from '../components/map/PlaceContactPopup'
@@ -124,6 +130,7 @@ export default {
 		Slider,
 		SearchControl,
 		RoutingControl,
+		FavoritesLayer,
 		PhotosLayer,
 		ContactsLayer,
 		PlaceContactPopup,
@@ -132,6 +139,18 @@ export default {
 	props: {
 		searchData: {
 			type: Array,
+			required: true,
+		},
+		favorites: {
+			type: Object,
+			required: true,
+		},
+		favoriteCategories: {
+			type: Object,
+			required: true,
+		},
+		favoritesEnabled: {
+			type: Boolean,
 			required: true,
 		},
 		photos: {
@@ -629,9 +648,6 @@ export default {
 				width: 1px;
 			}
 
-			td {
-				// display: table-cell !important;
-			}
 			td:nth-child(2),
 			td:nth-child(3) {
 				display: block;

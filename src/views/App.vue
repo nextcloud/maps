@@ -40,6 +40,9 @@
 				<Map
 					ref="map"
 					:search-data="searchData"
+					:favorites="favorites"
+					:favorite-categories="favoriteCategories"
+					:favorites-enabled="favoritesEnabled"
 					:photos="photos"
 					:photos-enabled="photosEnabled"
 					:photos-draggable="photosDraggable"

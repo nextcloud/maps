@@ -3,6 +3,15 @@
 		<MapsNavigation
 			@toggle-slider="sliderEnabled = $event">
 			<template #items>
+				<AppNavigationFavoritesItem
+					:enabled="favoritesEnabled"
+					:loading="favoritesLoading"
+					:favorites="favorites"
+					:categories="favoriteCategories"
+					:draggable="favoritesDraggable"
+					@favorites-clicked="onFavoritesClicked"
+					@category-clicked="onFavoriteCategoryClicked"
+					@draggable-clicked="favoritesDraggable = !favoritesDraggable" />
 				<AppNavigationContactsItem
 					:enabled="contactsEnabled"
 					:loading="contactsLoading"
@@ -66,15 +75,19 @@
 import Content from '@nextcloud/vue/dist/Components/Content'
 import AppContent from '@nextcloud/vue/dist/Components/AppContent'
 import Actions from '@nextcloud/vue/dist/Components/Actions'
+import { showError, showSuccess } from '@nextcloud/dialogs'
+
 import Map from '../components/Map'
 import MapsNavigation from '../components/MapsNavigation'
+import AppNavigationFavoritesItem from '../components/AppNavigationFavoritesItem'
 import AppNavigationPhotosItem from '../components/AppNavigationPhotosItem'
 import AppNavigationContactsItem from '../components/AppNavigationContactsItem'
 import optionsController from '../optionsController'
+import { getLetterColor, hslToRgb } from '../utils'
+
 import L from 'leaflet'
 import { geoToLatLng, getFormattedADR } from '../utils/mapUtils'
 import * as network from '../network'
-import { showError, showSuccess } from '@nextcloud/dialogs'
 
 export default {
 	name: 'App',
@@ -85,6 +98,7 @@ export default {
 		Actions,
 		Map,
 		MapsNavigation,
+		AppNavigationFavoritesItem,
 		AppNavigationPhotosItem,
 		AppNavigationContactsItem,
 	},
@@ -93,6 +107,12 @@ export default {
 		return {
 			optionValues: optionsController.optionValues,
 			sliderEnabled: optionsController.optionValues.displaySlider === 'true',
+			// favorites
+			favoritesLoading: false,
+			favoritesEnabled: optionsController.favoritesEnabled,
+			favoritesDraggable: false,
+			favorites: {},
+			disabledFavoriteCategories: optionsController.disabledFavoriteCategories,
 			// photos
 			photosLoading: false,
 			photosEnabled: optionsController.photosEnabled,
@@ -129,11 +149,37 @@ export default {
 				})
 				: []
 		},
+		favoriteCategories() {
+			const categories = {}
+			const noCategoryId = t('maps', 'Personal')
+			Object.keys(this.favorites).forEach((fid) => {
+				const f = this.favorites[fid]
+				const catid = f.category || noCategoryId
+				if (categories[catid]) {
+					categories[catid].counter++
+				} else {
+					const hsl = catid.length < 2
+						? getLetterColor('a', 'a')
+						: catid.length === 1
+							? getLetterColor(catid[0], 'a')
+							: getLetterColor(catid[0], catid[1])
+					const color = hslToRgb(hsl.h / 360, hsl.s / 100, hsl.l / 100)
+					categories[catid] = {
+						name: catid,
+						color,
+						counter: 1,
+						enabled: !this.disabledFavoriteCategories.includes(catid),
+					}
+				}
+			})
+			return categories
+		},
 	},
 
 	created() {
 		this.getContacts()
 		this.getPhotos()
+		this.getFavorites()
 
 		document.onkeyup = (e) => {
 			if (e.ctrlKey) {
@@ -161,7 +207,7 @@ export default {
 		// ================ PHOTOS =================
 		onPhotosClicked() {
 			this.photosEnabled = !this.photosEnabled
-			// get contacts if we don't have them yet
+			// get photos if we don't have them yet
 			if (this.photosEnabled && this.photos.length === 0) {
 				this.getPhotos()
 			}
@@ -441,6 +487,40 @@ export default {
 					this.contactGroups[notGroupedId].counter++
 				}
 			})
+		},
+		// favorites
+		onFavoritesClicked() {
+			this.favoritesEnabled = !this.favoritesEnabled
+			// get favorites if we don't have them yet
+			if (this.favoritesEnabled && Object.keys(this.favorites).length === 0) {
+				this.getFavorites()
+			}
+			optionsController.saveOptionValues({ favoritesEnabled: this.favoritesEnabled ? 'true' : 'false' })
+		},
+		getFavorites() {
+			if (!this.favoritesEnabled) {
+				return
+			}
+			this.favoritesLoading = true
+			network.getFavorites().then((response) => {
+				this.favorites = {}
+				response.data.forEach((f) => {
+					this.favorites[f.id] = f
+				})
+			}).catch((error) => {
+				console.error(error)
+			}).then(() => {
+				this.favoritesLoading = false
+			})
+		},
+		onFavoriteCategoryClicked(catid) {
+			if (this.disabledFavoriteCategories.includes(catid)) {
+				const i = this.disabledFavoriteCategories.indexOf(catid)
+				this.disabledFavoriteCategories.splice(i, 1)
+			} else {
+				this.disabledFavoriteCategories.push(catid)
+			}
+			optionsController.saveOptionValues({ jsonDisabledFavoriteCategories: JSON.stringify(this.disabledFavoriteCategories) })
 		},
 	},
 }

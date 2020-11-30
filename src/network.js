@@ -93,6 +93,11 @@ export function placeContact(bookid, uri, uid, lat, lng, address, type = 'home')
 	return axios.put(url, req)
 }
 
+export function getFavorites() {
+	const url = generateUrl('/apps/maps/favorites')
+	return axios.get(url)
+}
+
 export function getPhotos() {
 	const url = generateUrl('/apps/maps/photos')
 	return axios.get(url)

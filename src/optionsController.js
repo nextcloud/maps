@@ -14,7 +14,8 @@ const optionsController = {
 	optionValues: {},
 	photosEnabled: true,
 	contactsEnabled: true,
-	enabledFavoriteCategories: [],
+	favoritesEnabled: true,
+	disabledFavoriteCategories: [],
 	disabledContactGroups: [],
 	enabledTracks: [],
 	enabledDevices: [],
@@ -69,6 +70,19 @@ const optionsController = {
 			this.contactsEnabled = false
 		}
 
+		if ('favoritesEnabled' in optionsValues && optionsValues.favoritesEnabled !== 'true') {
+			this.favoritesEnabled = false
+		}
+		if ('jsonDisabledFavoriteCategories' in optionsValues
+			&& optionsValues.jsonDisabledFavoriteCategories
+			&& optionsValues.jsonDisabledFavoriteCategories !== '') {
+			try {
+				this.disabledFavoriteCategories = JSON.parse(this.optionValues.jsonDisabledFavoriteCategories)
+			} catch (error) {
+				console.error(error)
+			}
+		}
+
 		// routing
 		if ('osrmCarURL' in optionsValues && optionsValues.osrmCarURL !== '') {
 			this.nbRouters++
@@ -87,88 +101,6 @@ const optionsController = {
 			this.nbRouters++
 		}
 		/*
-		// set tilelayer before showing photo layer because it needs a max zoom value
-		if (optionsValues.hasOwnProperty('displaySlider') && optionsValues.displaySlider === 'true') {
-			$('#timeRangeSlider').show();
-			$('#display-slider').prop('checked', true);
-		}
-
-		//detect Webgl
-		var canvas = document.createElement('canvas');
-		var experimental = false;
-		var gl;
-
-		try { gl = canvas.getContext("webgl"); }
-		catch (x) { gl = null; }
-
-		if (gl == null) {
-			try { gl = canvas.getContext("experimental-webgl"); experimental = true; }
-			catch (x) { gl = null; }
-		}
-
-		if (optionsValues.hasOwnProperty('mapboxAPIKEY') && optionsValues.mapboxAPIKEY !== '' && gl != null) {
-			// change "button" layers
-			delete mapController.baseLayers['OpenStreetMap'];
-			delete mapController.baseLayers['ESRI Aerial'];
-			mapController.defaultStreetLayer = 'Mapbox vector streets';
-			mapController.defaultSatelliteLayer = 'Mapbox satellite';
-			// remove dark, esri topo and openTopoMap
-			// Mapbox outdoors and dark are good enough
-			mapController.controlLayers.removeLayer(mapController.baseLayers['ESRI Topo']);
-			mapController.controlLayers.removeLayer(mapController.baseLayers['OpenTopoMap']);
-			mapController.controlLayers.removeLayer(mapController.baseLayers['Dark']);
-			delete mapController.baseLayers['ESRI Topo'];
-			delete mapController.baseLayers['OpenTopoMap'];
-			delete mapController.baseLayers['Dark'];
-
-			// add mapbox-gl tile servers
-			var attrib = '<a href="https://www.mapbox.com/about/maps/">© Mapbox</a> '+
-				'<a href="https://www.openstreetmap.org/copyright">© OpenStreetMap</a> '+
-				'<a href="https://www.mapbox.com/map-feedback/">'+t('maps', 'Improve this map')+'</a>';
-			var attribSat = attrib + '<a href="https://www.digitalglobe.com/">© DigitalGlobe</a>'
-
-			mapController.baseLayers['Mapbox vector streets'] = L.mapboxGL({
-				accessToken: optionsValues.mapboxAPIKEY,
-				style: 'mapbox://styles/mapbox/streets-v8',
-				minZoom: 1,
-				maxZoom: 22,
-				attribution: attrib
-			});
-			//mapController.controlLayers.addBaseLayer(mapController.baseLayers['Mapbox vector streets'], 'Mapbox vector streets');
-
-			mapController.baseLayers['Topographic'] = L.mapboxGL({
-				accessToken: optionsValues.mapboxAPIKEY,
-				style: 'mapbox://styles/mapbox/outdoors-v11',
-				minZoom: 1,
-				maxZoom: 22,
-				attribution: attrib
-			});
-			mapController.controlLayers.addBaseLayer(mapController.baseLayers['Topographic'], 'Topographic');
-
-			mapController.baseLayers['Dark'] = L.mapboxGL({
-				accessToken: optionsValues.mapboxAPIKEY,
-				style: 'mapbox://styles/mapbox/dark-v8',
-				minZoom: 1,
-				maxZoom: 22,
-				attribution: attrib
-			});
-			mapController.controlLayers.addBaseLayer(mapController.baseLayers['Dark'], 'Dark');
-
-			mapController.baseLayers['Mapbox satellite'] = L.mapboxGL({
-				accessToken: optionsValues.mapboxAPIKEY,
-				style: 'mapbox://styles/mapbox/satellite-streets-v9',
-				minZoom: 1,
-				maxZoom: 22,
-				attribution: attribSat
-			});
-			//mapController.controlLayers.addBaseLayer(mapController.baseLayers['Mapbox satellite'], 'Mapbox satellite');
-		}
-		if (optionsValues.hasOwnProperty('tileLayer')) {
-			mapController.changeTileLayer(optionsValues.tileLayer);
-		}
-		else {
-			mapController.changeTileLayer(mapController.defaultStreetLayer);
-		}
 		if (!optionsValues.hasOwnProperty('photosLayer') || optionsValues.photosLayer === 'true') {
 			photosController.toggleLayer();
 		}
@@ -186,15 +118,6 @@ const optionsController = {
 		}
 		if (!optionsValues.hasOwnProperty('favoriteCategoryListShow') || optionsValues.favoriteCategoryListShow === 'true') {
 			favoritesController.toggleCategoryList();
-		}
-		if (optionsValues.hasOwnProperty('enabledFavoriteCategories')
-			&& optionsValues.enabledFavoriteCategories
-			&& optionsValues.enabledFavoriteCategories !== '')
-		{
-			that.enabledFavoriteCategories = optionsValues.enabledFavoriteCategories.split('|');
-		}
-		if (!optionsValues.hasOwnProperty('favoritesEnabled') || optionsValues.favoritesEnabled === 'true') {
-			favoritesController.toggleFavorites();
 		}
 		if (!optionsValues.hasOwnProperty('trackListShow') || optionsValues.trackListShow === 'true') {
 			tracksController.toggleTrackList();

@@ -1,16 +1,16 @@
 <template>
 	<AppNavigationItem
-		:icon="loading ? 'icon-loading-small' : 'icon-group'"
-		:title="t('maps', 'My contacts')"
+		:icon="loading ? 'icon-loading-small' : 'icon-favorite'"
+		:title="t('maps', 'My favorites')"
 		:class="{ 'item-disabled': !enabled }"
 		:allow-collapse="true"
 		:open="open"
 		:force-menu="false"
-		@click="onContactsClick"
+		@click="onFavoritesClick"
 		@update:open="onUpdateOpen">
 		<template slot="counter">
 			&nbsp;
-			<span v-if="enabled && contacts.length">{{ contacts.length }}</span>
+			<span v-if="enabled && nbFavorites">{{ nbFavorites }}</span>
 		</template>
 		<template v-if="enabled" slot="actions">
 			<ActionButton
@@ -27,23 +27,25 @@
 		</template>
 		<template #default>
 			<AppNavigationItem
-				v-for="(g, gid) in groups"
-				:key="gid"
-				icon="icon-group"
-				:title="g.name"
-				:class="{ 'subitem-disabled': !g.enabled }"
+				v-for="(c, catid) in categories"
+				:key="catid"
+				:title="c.name"
+				:class="{ 'subitem-disabled': !c.enabled }"
 				:allow-collapse="false"
 				:force-menu="false"
-				@click="onGroupClick(gid)">
+				@click="onCategoryClick(catid)">
+				<template #icon>
+					<img :src="getIconUrl(c.color)">
+				</template>
 				<template slot="counter">
 					&nbsp;
-					<span v-if="enabled && contacts.length && g.enabled">{{ g.counter }}</span>
+					<span v-if="enabled && nbFavorites && c.enabled">{{ c.counter }}</span>
 				</template>
 				<template slot="actions">
-					<ActionButton v-if="enabled && contacts.length && g.enabled"
+					<ActionButton v-if="enabled && nbFavorites && c.enabled"
 						icon="icon-search"
 						:close-after-click="true"
-						@click="onZoomGroupClick(gid)">
+						@click="onZoomCategoryClick(catid)">
 						{{ t('maps', 'Zoom') }}
 					</ActionButton>
 				</template>
@@ -55,10 +57,12 @@
 <script>
 import AppNavigationItem from '@nextcloud/vue/dist/Components/AppNavigationItem'
 import ActionButton from '@nextcloud/vue/dist/Components/ActionButton'
+import { generateUrl } from '@nextcloud/router'
+
 import optionsController from '../optionsController'
 
 export default {
-	name: 'AppNavigationContactsItem',
+	name: 'AppNavigationFavoritesItem',
 
 	components: {
 		AppNavigationItem,
@@ -74,11 +78,11 @@ export default {
 			type: Boolean,
 			default: false,
 		},
-		contacts: {
-			type: Array,
+		favorites: {
+			type: Object,
 			required: true,
 		},
-		groups: {
+		categories: {
 			type: Object,
 			required: true,
 		},
@@ -86,37 +90,42 @@ export default {
 
 	data() {
 		return {
-			open: optionsController.optionValues?.contactGroupListShow === 'true',
+			open: optionsController.optionValues?.favoriteCategoryListShow === 'true',
 		}
 	},
 
 	computed: {
-
+		nbFavorites() {
+			return Object.keys(this.favorites).length
+		},
 	},
 
 	methods: {
-		onContactsClick() {
+		onFavoritesClick() {
 			if (!this.enabled && !this.open) {
 				this.open = true
-				optionsController.saveOptionValues({ contactGroupListShow: 'true' })
+				optionsController.saveOptionValues({ favoriteCategoryListShow: 'true' })
 			}
-			this.$emit('contacts-clicked')
+			this.$emit('favorites-clicked')
 		},
 		onUpdateOpen(isOpen) {
 			this.open = isOpen
-			optionsController.saveOptionValues({ contactGroupListShow: isOpen ? 'true' : 'false' })
+			optionsController.saveOptionValues({ favoriteCategoryListShow: isOpen ? 'true' : 'false' })
 		},
 		onToggleAllClick() {
-			this.$emit('toggle-all-groups')
+			this.$emit('toggle-all-categories')
 		},
 		onZoomAllClick() {
-			this.$emit('zoom-all-groups')
+			this.$emit('zoom-all-categories')
 		},
-		onZoomGroupClick(gid) {
-			this.$emit('zoom-group', gid)
+		onZoomCategoryClick(catid) {
+			this.$emit('zoom-category', catid)
 		},
-		onGroupClick(groupName) {
-			this.$emit('group-clicked', groupName)
+		onCategoryClick(catid) {
+			this.$emit('category-clicked', catid)
+		},
+		getIconUrl(color) {
+			return generateUrl('/svg/core/actions/star?color=' + color)
 		},
 	},
 }

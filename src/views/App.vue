@@ -11,6 +11,8 @@
 					:draggable="favoritesDraggable"
 					@favorites-clicked="onFavoritesClicked"
 					@category-clicked="onFavoriteCategoryClicked"
+					@zoom-all-categories="onZoomAllFavorites"
+					@zoom-category="onZoomFavoriteCategory"
 					@draggable-clicked="favoritesDraggable = !favoritesDraggable" />
 				<AppNavigationContactsItem
 					:enabled="contactsEnabled"
@@ -393,29 +395,20 @@ export default {
 			optionsController.saveOptionValues({ jsonDisabledContactGroups: JSON.stringify(newDisabledContactGroups) })
 		},
 		onZoomAllContactGroups() {
-			const lats = this.contacts.map((c) => {
-				return geoToLatLng(c.GEO)[0]
-			})
-			const lons = this.contacts.map((c) => {
-				return geoToLatLng(c.GEO)[1]
-			})
-			if (lats && lons) {
-				const minLat = Math.min(...lats)
-				const maxLat = Math.max(...lats)
-				const minLon = Math.min(...lons)
-				const maxLon = Math.max(...lons)
-				this.$refs.map.fitBounds(L.latLngBounds([minLat, minLon], [maxLat, maxLon]), { padding: [30, 30] })
-			}
+			this.zoomOnContacts(this.contacts)
 		},
 		onZoomContactGroup(gid) {
 			const contactsOfGroup = this.contacts.filter((c) => {
 				return ((gid === '0' && c.groupList.length === 0)
 					|| c.groupList.includes(gid))
 			})
-			const lats = contactsOfGroup.map((c) => {
+			this.zoomOnContacts(contactsOfGroup)
+		},
+		zoomOnContacts(contacts) {
+			const lats = contacts.map((c) => {
 				return geoToLatLng(c.GEO)[0]
 			})
-			const lons = contactsOfGroup.map((c) => {
+			const lons = contacts.map((c) => {
 				return geoToLatLng(c.GEO)[1]
 			})
 			if (lats && lons) {
@@ -524,6 +517,30 @@ export default {
 				this.disabledFavoriteCategories.push(catid)
 			}
 			optionsController.saveOptionValues({ jsonDisabledFavoriteCategories: JSON.stringify(this.disabledFavoriteCategories) })
+		},
+		onZoomAllFavorites() {
+			this.zoomOnFavorites(Object.values(this.favorites))
+		},
+		onZoomFavoriteCategory(catid) {
+			const favoritesOfCategory = Object.values(this.favorites).filter((f) => {
+				return f.category === catid
+			})
+			this.zoomOnFavorites(favoritesOfCategory)
+		},
+		zoomOnFavorites(favorites) {
+			const lats = favorites.map((f) => {
+				return f.lat
+			})
+			const lons = favorites.map((f) => {
+				return f.lng
+			})
+			if (lats && lons) {
+				const minLat = Math.min(...lats)
+				const maxLat = Math.max(...lats)
+				const minLon = Math.min(...lons)
+				const maxLon = Math.max(...lons)
+				this.$refs.map.fitBounds(L.latLngBounds([minLat, minLon], [maxLat, maxLon]), { padding: [30, 30] })
+			}
 		},
 	},
 }

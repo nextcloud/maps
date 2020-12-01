@@ -1,86 +1,26 @@
 <template>
 	<Vue2LeafletMarkerCluster :options="clusterOptions"
 		@clusterclick="onClusterClick">
-		<LMarker v-for="f in displayedFavorites"
-			:key="f.id"
-			:options="{ data: f }"
+		<FavoriteMarker v-for="f in displayedFavorites"
+			:key="f.id + f.name + f.category"
+			:favorite="f"
+			:categories="categories"
+			:color="categories[f.category].color"
 			:icon="getFavoriteMarkerIcon(f)"
-			:lat-lng="[f.lat, f.lng]">
-			<!--LTooltip
-				class="tooltip-contact-wrapper"
-				:options="tooltipOptions">
-				<img class="tooltip-contact-avatar"
-					:src="getContactAvatar(c)"
-					alt="">
-				<div class="tooltip-contact-content">
-					<h3 class="tooltip-contact-name">
-						{{ c.FN }}
-					</h3>
-					<p v-if=" c.ADRTYPE.toLowerCase() === 'home'"
-						class="tooltip-contact-address-type">
-						{{ t('maps', 'Home') }}
-					</p>
-					<p v-else-if=" c.ADRTYPE.toLowerCase() === 'work'"
-						class="tooltip-contact-address-type">
-						{{ t('maps', 'Work') }}
-					</p>
-					<p v-for="l in getFormattedAddressLines(c)"
-						:key="l"
-						class="tooltip-contact-address">
-						{{ l }}
-					</p>
-				</div>
-			</LTooltip>
-			<LPopup
-				class="popup-contact-wrapper"
-				:options="popupOptions">
-				<div class="left-contact-popup">
-					<img class="tooltip-contact-avatar"
-						:src="getContactAvatar(c)"
-						alt="">
-					<button
-						v-tooltip="{ content: t('maps', 'Delete this address') }"
-						class="icon icon-delete"
-						@click="onDeleteAddressClick(c)" />
-				</div>
-				<div class="tooltip-contact-content">
-					<h3 class="tooltip-contact-name">
-						{{ c.FN }}
-					</h3>
-					<p v-if=" c.ADRTYPE.toLowerCase() === 'home'"
-						class="tooltip-contact-address-type">
-						{{ t('maps', 'Home') }}
-					</p>
-					<p v-else-if=" c.ADRTYPE.toLowerCase() === 'work'"
-						class="tooltip-contact-address-type">
-						{{ t('maps', 'Work') }}
-					</p>
-					<p v-for="l in getFormattedAddressLines(c)"
-						:key="l"
-						class="tooltip-contact-address">
-						{{ l }}
-					</p>
-					<a target="_blank"
-						:href="getContactUrl(c)">
-						{{ t('maps', 'Open in Contacts') }}
-					</a>
-				</div>
-			</LPopup-->
-		</LMarker>
+			@edit="$emit('edit', $event)"
+			@delete="$emit('delete', $event)" />
 	</Vue2LeafletMarkerCluster>
 </template>
 
 <script>
-import { generateUrl } from '@nextcloud/router'
-import { getCurrentUser } from '@nextcloud/auth'
+// import { generateUrl } from '@nextcloud/router'
+// import { getCurrentUser } from '@nextcloud/auth'
 
 import L from 'leaflet'
-import { LMarker, LTooltip, LPopup } from 'vue2-leaflet'
 import Vue2LeafletMarkerCluster from 'vue2-leaflet-markercluster'
 
+import FavoriteMarker from './FavoriteMarker'
 import optionsController from '../../optionsController'
-
-// import { deleteContactAddress } from '../../network'
 
 const CLUSTER_MARKER_VIEW_SIZE = 27
 
@@ -88,9 +28,7 @@ export default {
 	name: 'FavoritesLayer',
 	components: {
 		Vue2LeafletMarkerCluster,
-		LMarker,
-		LTooltip,
-		LPopup,
+		FavoriteMarker,
 	},
 
 	props: {
@@ -116,16 +54,6 @@ export default {
 				icon: {
 					iconSize: [CLUSTER_MARKER_VIEW_SIZE, CLUSTER_MARKER_VIEW_SIZE],
 				},
-			},
-			tooltipOptions: {
-				className: 'leaflet-marker-favorite-tooltip',
-				direction: 'top',
-				offset: L.point(0, 0),
-			},
-			popupOptions: {
-				closeOnClick: true,
-				className: 'popovermenu open popupMarker favoritePopup',
-				offset: L.point(-5, 10),
 			},
 		}
 	},

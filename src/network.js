@@ -98,6 +98,27 @@ export function getFavorites() {
 	return axios.get(url)
 }
 
+export function editFavorite(id, name, category = null, comment = null, lat = null, lng = null) {
+	const req = {
+		name,
+		extensions: null,
+	}
+	if (comment !== null) {
+		req.comment = comment
+	}
+	if (category !== null) {
+		req.category = category
+	}
+	if (lat !== null) {
+		req.lat = lat
+	}
+	if (lng !== null) {
+		req.lng = lng
+	}
+	const url = generateUrl('/apps/maps/favorites/' + id)
+	return axios.put(url, req)
+}
+
 export function getPhotos() {
 	const url = generateUrl('/apps/maps/photos')
 	return axios.get(url)

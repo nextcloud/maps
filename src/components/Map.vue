@@ -60,7 +60,9 @@
 				v-if="map && favoritesEnabled"
 				:map="map"
 				:favorites="favorites"
-				:categories="favoriteCategories" />
+				:categories="favoriteCategories"
+				@edit="$emit('edit-favorite', $event)"
+				@delete="$emit('delete-favorite', $event)" />
 			<PhotosLayer
 				v-if="map && photosEnabled"
 				:map="map"
@@ -607,6 +609,11 @@ export default {
 		height: 44px !important;
 		padding: 0 !important;
 	}
+}
+
+::v-deep .leaflet-marker-favorite-tooltip {
+	padding: 0 !important;
+	border: 0 !important;
 }
 
 // routing machine

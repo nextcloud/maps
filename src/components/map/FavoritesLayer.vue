@@ -1,10 +1,12 @@
 <template>
 	<Vue2LeafletMarkerCluster :options="clusterOptions"
-		@clusterclick="onClusterClick">
+		@clusterclick="onClusterClick"
+		@spiderfied="onSpiderfied">
 		<FavoriteMarker v-for="f in displayedFavorites"
 			:key="f.id + f.name + f.category"
 			:favorite="f"
 			:categories="categories"
+			:draggable="draggable"
 			:color="categories[f.category].color"
 			:icon="getFavoriteMarkerIcon(f)"
 			@edit="$emit('edit', $event)"
@@ -39,6 +41,10 @@ export default {
 		categories: {
 			type: Object,
 			required: true,
+		},
+		draggable: {
+			type: Boolean,
+			default: false,
 		},
 	},
 
@@ -109,6 +115,15 @@ export default {
 		},
 		getFavoriteMarkerIcon(favorite) {
 			return this.categoryIcons[favorite.category]
+		},
+		onSpiderfied(e) {
+			// markers that were in a cluster when draggable changed are not draggable
+			// so we set them when cluster is spiderfied
+			if (this.draggable) {
+				e.markers.forEach((m) => {
+					m.dragging.enable()
+				})
+			}
 		},
 	},
 }

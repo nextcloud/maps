@@ -14,6 +14,12 @@
 		</template>
 		<template v-if="enabled" slot="actions">
 			<ActionButton
+				:icon="draggable ? 'icon-hand' : 'icon-hand-slash'"
+				:close-after-click="false"
+				@click="$emit('draggable-clicked')">
+				{{ draggable ? t('maps', 'Disable favorite drag') : t('maps', 'Enable favorite drag') }}
+			</ActionButton>
+			<ActionButton
 				icon="icon-checkmark"
 				@click="onToggleAllClick">
 				{{ t('maps', 'Toggle all') }}
@@ -78,6 +84,10 @@ export default {
 			type: Boolean,
 			default: false,
 		},
+		draggable: {
+			type: Boolean,
+			required: true,
+		},
 		favorites: {
 			type: Object,
 			required: true,
@@ -138,5 +148,33 @@ export default {
 
 .subitem-disabled {
 	opacity: 0.5;
+}
+
+::v-deep .icon-hand {
+	opacity: 1;
+	background-color: black;
+	padding: 0 !important;
+	mask: url('../../img/hand.svg') no-repeat;
+	mask-size: 16px auto;
+	mask-position: center;
+	-webkit-mask: url('../../img/hand.svg') no-repeat;
+	-webkit-mask-size: 16px auto;
+	-webkit-mask-position: center;
+	min-width: 38px !important;
+	min-height: 36px !important;
+}
+
+::v-deep .icon-hand-slash {
+	opacity: 1;
+	background-color: black;
+	padding: 0 !important;
+	mask: url('../../img/hand-slash.svg') no-repeat;
+	mask-size: 16px auto;
+	mask-position: center;
+	-webkit-mask: url('../../img/hand-slash.svg') no-repeat;
+	-webkit-mask-size: 16px auto;
+	-webkit-mask-position: center;
+	min-width: 38px !important;
+	min-height: 36px !important;
 }
 </style>

@@ -3,9 +3,11 @@
 		:options="{ data: favorite }"
 		:icon="icon"
 		:lat-lng="[favorite.lat, favorite.lng]"
-		@popupopen="onPopupOpen">
+		:draggable="draggable"
+		@popupopen="onPopupOpen"
+		@moveend="onMoved">
 		<LTooltip
-			:options="tooltipOptions">
+			:options="{ ...tooltipOptions, opacity: draggable ? 0 : 1 }">
 			<div class="tooltip-favorite-wrapper"
 				:style="'border: 2px solid #' + color">
 				<b>{{ t('maps', 'Name') }}:</b>
@@ -103,6 +105,10 @@ export default {
 			type: String,
 			required: true,
 		},
+		draggable: {
+			type: Boolean,
+			default: false,
+		},
 	},
 
 	data() {
@@ -174,7 +180,7 @@ export default {
 		},
 		onOkClick() {
 			const editedFav = {
-				id: this.favorite.id,
+				...this.favorite,
 				name: this.name,
 				category: this.category,
 				comment: this.comment,
@@ -183,6 +189,14 @@ export default {
 		},
 		onDeleteClick() {
 			this.$emit('delete', this.favorite.id)
+		},
+		onMoved(e) {
+			const editedFav = {
+				...this.favorite,
+				lat: e.target.getLatLng().lat,
+				lng: e.target.getLatLng().lng,
+			}
+			this.$emit('edit', editedFav)
 		},
 	},
 }

@@ -45,6 +45,7 @@
 					:favorites="favorites"
 					:favorite-categories="favoriteCategories"
 					:favorites-enabled="favoritesEnabled"
+					:favorites-draggable="favoritesDraggable"
 					:photos="photos"
 					:photos-enabled="photosEnabled"
 					:photos-draggable="photosDraggable"
@@ -549,10 +550,12 @@ export default {
 			}
 		},
 		onFavoriteEdit(f) {
-			network.editFavorite(f.id, f.name, f.category, f.comment).then((response) => {
+			network.editFavorite(f.id, f.name, f.category, f.comment, f.lat, f.lng).then((response) => {
 				this.favorites[f.id].name = f.name
 				this.favorites[f.id].category = f.category
 				this.favorites[f.id].comment = f.comment
+				this.favorites[f.id].lat = f.lat
+				this.favorites[f.id].lng = f.lng
 			}).catch((error) => {
 				console.error(error)
 			})

@@ -61,6 +61,7 @@
 				:map="map"
 				:favorites="favorites"
 				:categories="favoriteCategories"
+				:draggable="favoritesDraggable"
 				@edit="onFavoriteEdit"
 				@delete="$emit('delete-favorite', $event)" />
 			<PhotosLayer
@@ -152,6 +153,10 @@ export default {
 			required: true,
 		},
 		favoritesEnabled: {
+			type: Boolean,
+			required: true,
+		},
+		favoritesDraggable: {
 			type: Boolean,
 			required: true,
 		},

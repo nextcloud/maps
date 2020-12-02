@@ -24,7 +24,7 @@ import Vue2LeafletMarkerCluster from 'vue2-leaflet-markercluster'
 import FavoriteMarker from './FavoriteMarker'
 import optionsController from '../../optionsController'
 
-const CLUSTER_MARKER_VIEW_SIZE = 27
+const CLUSTER_MARKER_VIEW_SIZE = 36
 
 export default {
 	name: 'FavoritesLayer',
@@ -59,6 +59,7 @@ export default {
 				maxClusterRadius: CLUSTER_MARKER_VIEW_SIZE + 10,
 				icon: {
 					iconSize: [CLUSTER_MARKER_VIEW_SIZE, CLUSTER_MARKER_VIEW_SIZE],
+					iconAnchor: [CLUSTER_MARKER_VIEW_SIZE / 2, CLUSTER_MARKER_VIEW_SIZE],
 				},
 			},
 		}
@@ -79,7 +80,7 @@ export default {
 			Object.keys(this.categories).forEach((catid) => {
 				const color = this.categories[catid].color
 				icons[catid] = L.divIcon({
-					iconAnchor: [9, 9],
+					iconAnchor: [18, 18],
 					className: 'leaflet-marker-favorite',
 					html: '<div class="favoriteMarker ' + catid + 'CategoryMarker" style="background-color: #' + color + '"></div>',
 				})

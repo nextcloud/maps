@@ -13,6 +13,7 @@
 					@category-clicked="onFavoriteCategoryClicked"
 					@zoom-all-categories="onZoomAllFavorites"
 					@zoom-category="onZoomFavoriteCategory"
+					@toggle-all-categories="onToggleAllFavoriteCategories"
 					@draggable-clicked="favoritesDraggable = !favoritesDraggable" />
 				<AppNavigationContactsItem
 					:enabled="contactsEnabled"
@@ -523,6 +524,29 @@ export default {
 				this.disabledFavoriteCategories.splice(i, 1)
 			} else {
 				this.disabledFavoriteCategories.push(catid)
+			}
+			optionsController.saveOptionValues({ jsonDisabledFavoriteCategories: JSON.stringify(this.disabledFavoriteCategories) })
+		},
+		onToggleAllFavoriteCategories() {
+			let allEnabled = true
+			for (const catid in this.favoriteCategories) {
+				if (this.disabledFavoriteCategories.includes(catid)) {
+					allEnabled = false
+					break
+				}
+			}
+
+			if (allEnabled) {
+				for (const catid in this.favoriteCategories) {
+					this.disabledFavoriteCategories.push(catid)
+				}
+			} else {
+				for (const catid in this.favoriteCategories) {
+					if (this.disabledFavoriteCategories.includes(catid)) {
+						const i = this.disabledFavoriteCategories.indexOf(catid)
+						this.disabledFavoriteCategories.splice(i, 1)
+					}
+				}
 			}
 			optionsController.saveOptionValues({ jsonDisabledFavoriteCategories: JSON.stringify(this.disabledFavoriteCategories) })
 		},

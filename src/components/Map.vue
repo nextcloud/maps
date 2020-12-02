@@ -61,7 +61,7 @@
 				:map="map"
 				:favorites="favorites"
 				:categories="favoriteCategories"
-				@edit="$emit('edit-favorite', $event)"
+				@edit="onFavoriteEdit"
 				@delete="$emit('delete-favorite', $event)" />
 			<PhotosLayer
 				v-if="map && photosEnabled"
@@ -254,7 +254,7 @@ export default {
 				{
 					text: t('maps', 'Add a favorite'),
 					icon: generateUrl('/svg/core/actions/starred?color=000000'),
-					callback: () => {},
+					callback: this.contextAddFavorite,
 				}, {
 					text: t('maps', 'Place photos'),
 					icon: generateUrl('/svg/core/places/picture?color=000000'),
@@ -502,6 +502,14 @@ export default {
 		onUpdateBounds(b) {
 			const boundsStr = b.getNorth() + ';' + b.getSouth() + ';' + b.getEast() + ';' + b.getWest()
 			optionsController.saveOptionValues({ mapBounds: boundsStr })
+		},
+		// favorites
+		contextAddFavorite(e) {
+			this.$emit('add-favorite', e.latlng)
+		},
+		onFavoriteEdit(e) {
+			this.$emit('edit-favorite', e)
+			this.$refs.map.mapObject.closePopup()
 		},
 		// contacts
 		placeContactClicked(e) {

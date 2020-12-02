@@ -98,6 +98,24 @@ export function getFavorites() {
 	return axios.get(url)
 }
 
+export function addFavorite(lat, lng, name, category = null, comment = null, extensions = null) {
+	const req = {
+		name,
+		lat,
+		lng,
+		category,
+		comment,
+		extensions,
+	}
+	const url = generateUrl('/apps/maps/favorites')
+	return axios.post(url, req)
+}
+
+export function deleteFavorite(favid) {
+	const url = generateUrl('/apps/maps/favorites/' + favid)
+	return axios.delete(url)
+}
+
 export function editFavorite(id, name, category = null, comment = null, lat = null, lng = null) {
 	const req = {
 		name,

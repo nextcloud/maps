@@ -19,6 +19,7 @@
 			</div>
 		</LTooltip>
 		<LPopup
+			ref="popup"
 			class="popup-favorite-wrapper"
 			:options="popupOptions">
 			<div class="popup-favorite-content">
@@ -172,7 +173,6 @@ export default {
 			this.category = option.catid
 		},
 		onOkClick() {
-			console.debug('edit fav ' + this.name + ' ' + this.category + ' ' + this.comment)
 			const editedFav = {
 				id: this.favorite.id,
 				name: this.name,

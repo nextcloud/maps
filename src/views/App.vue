@@ -54,6 +54,7 @@
 					:slider-enabled="sliderEnabled"
 					:loading="mapLoading"
 					@edit-favorite="onFavoriteEdit"
+					@add-favorite="onFavoriteAdd"
 					@delete-favorite="onFavoriteDelete"
 					@coords-reset="resetPhotosCoords"
 					@address-deleted="getContacts"
@@ -157,7 +158,6 @@ export default {
 				: []
 		},
 		favoriteCategories() {
-			console.debug('CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC')
 			const categories = {}
 			const noCategoryId = t('maps', 'Personal')
 			Object.keys(this.favorites).forEach((fid) => {
@@ -504,6 +504,9 @@ export default {
 			network.getFavorites().then((response) => {
 				this.favorites = {}
 				response.data.forEach((f) => {
+					if (!f.category) {
+						f.category = t('maps', 'Personal')
+					}
 					this.$set(this.favorites, f.id, f)
 				})
 			}).catch((error) => {
@@ -554,9 +557,23 @@ export default {
 				console.error(error)
 			})
 		},
-		onFavoriteDelete(e) {
-			console.debug('delete fav')
-			console.debug(e)
+		onFavoriteDelete(favid) {
+			network.deleteFavorite(favid).then((response) => {
+				this.$delete(this.favorites, favid)
+			}).catch((error) => {
+				console.error(error)
+			})
+		},
+		onFavoriteAdd(latLng) {
+			network.addFavorite(latLng.lat, latLng.lng).then((response) => {
+				const fav = response.data
+				if (!fav.category) {
+					fav.category = t('maps', 'Personal')
+				}
+				this.$set(this.favorites, fav.id, fav)
+			}).catch((error) => {
+				console.error(error)
+			})
 		},
 	},
 }

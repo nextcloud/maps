@@ -57,6 +57,7 @@
 					@edit-favorite="onFavoriteEdit"
 					@add-favorite="onFavoriteAdd"
 					@delete-favorite="onFavoriteDelete"
+					@delete-favorites="onFavoritesDelete"
 					@coords-reset="resetPhotosCoords"
 					@address-deleted="getContacts"
 					@contact-placed="getContacts"
@@ -563,6 +564,15 @@ export default {
 		onFavoriteDelete(favid) {
 			network.deleteFavorite(favid).then((response) => {
 				this.$delete(this.favorites, favid)
+			}).catch((error) => {
+				console.error(error)
+			})
+		},
+		onFavoritesDelete(favids) {
+			network.deleteFavorites(favids).then((response) => {
+				favids.forEach((favid) => {
+					this.$delete(this.favorites, favid)
+				})
 			}).catch((error) => {
 				console.error(error)
 			})

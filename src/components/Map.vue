@@ -63,7 +63,8 @@
 				:categories="favoriteCategories"
 				:draggable="favoritesDraggable"
 				@edit="onFavoriteEdit"
-				@delete="$emit('delete-favorite', $event)" />
+				@delete="$emit('delete-favorite', $event)"
+				@delete-multiple="$emit('delete-favorites', $event)" />
 			<PhotosLayer
 				v-if="map && photosEnabled"
 				:map="map"
@@ -616,6 +617,7 @@ export default {
 	border: 2px solid var(--color-border);
 }
 
+::v-deep .popup-favorite-wrapper .action,
 ::v-deep .popup-photo-wrapper .action {
 	height: 44px;
 	.action-button {

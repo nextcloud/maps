@@ -63,11 +63,11 @@
 import { generateUrl } from '@nextcloud/router'
 import moment from '@nextcloud/moment'
 import { basename } from '@nextcloud/paths'
+import ActionButton from '@nextcloud/vue/dist/Components/ActionButton'
 
 import L from 'leaflet'
 import { LMarker, LTooltip, LPopup } from 'vue2-leaflet'
 import Vue2LeafletMarkerCluster from 'vue2-leaflet-markercluster'
-import ActionButton from '@nextcloud/vue/dist/Components/ActionButton'
 
 import optionsController from '../../optionsController'
 

@@ -1,6 +1,7 @@
 <template>
 	<Vue2LeafletMarkerCluster :options="clusterOptions"
 		@clusterclick="onClusterClick"
+		@clustercontextmenu="onClusterRightClick"
 		@spiderfied="onSpiderfied">
 		<FavoriteMarker v-for="f in displayedFavorites"
 			:key="f.id + f.name + f.category"
@@ -11,14 +12,29 @@
 			:icon="getFavoriteMarkerIcon(f)"
 			@edit="$emit('edit', $event)"
 			@delete="$emit('delete', $event)" />
+		<LMarker
+			:lat-lng="[0, 0]"
+			:visible="false">
+			<LPopup
+				ref="clusterPopup"
+				class="popup-favorite-wrapper"
+				:options="clusterPopupOptions">
+				<ActionButton icon="icon-delete" @click="onDeleteClusterClick">
+					{{ t('maps', 'Delete favorites') }}
+				</ActionButton>
+				<ActionButton icon="icon-search" @click="onZoomClusterClick">
+					{{ t('maps', 'Zoom on bounds') }}
+				</ActionButton>
+			</LPopup>
+		</LMarker>
 	</Vue2LeafletMarkerCluster>
 </template>
 
 <script>
-// import { generateUrl } from '@nextcloud/router'
-// import { getCurrentUser } from '@nextcloud/auth'
+import ActionButton from '@nextcloud/vue/dist/Components/ActionButton'
 
 import L from 'leaflet'
+import { LMarker, LPopup } from 'vue2-leaflet'
 import Vue2LeafletMarkerCluster from 'vue2-leaflet-markercluster'
 
 import FavoriteMarker from './FavoriteMarker'
@@ -29,11 +45,18 @@ const CLUSTER_MARKER_VIEW_SIZE = 36
 export default {
 	name: 'FavoritesLayer',
 	components: {
+		LMarker,
+		LPopup,
 		Vue2LeafletMarkerCluster,
+		ActionButton,
 		FavoriteMarker,
 	},
 
 	props: {
+		map: {
+			type: Object,
+			required: true,
+		},
 		favorites: {
 			type: Object,
 			required: true,
@@ -62,6 +85,12 @@ export default {
 					iconAnchor: [CLUSTER_MARKER_VIEW_SIZE / 2, CLUSTER_MARKER_VIEW_SIZE],
 				},
 			},
+			clusterPopupOptions: {
+				closeOnClick: true,
+				className: 'popovermenu open popupMarker favoritePopup',
+				offset: L.point(-5, 20),
+			},
+			contextCluster: null,
 		}
 	},
 
@@ -99,6 +128,31 @@ export default {
 			} else {
 				a.layer.spiderfy()
 			}
+		},
+		onClusterRightClick(a) {
+			this.contextCluster = a.layer
+			const popup = this.$refs.clusterPopup.mapObject
+			popup.setLatLng(a.latlng)
+			this.$nextTick(() => {
+				popup.openOn(this.map)
+			})
+		},
+		onDeleteClusterClick() {
+			const favorites = this.contextCluster.getAllChildMarkers().map((m) => {
+				return m.options.data
+			})
+			const favIds = favorites.map((f) => {
+				return f.id
+			})
+			this.$emit('delete-multiple', favIds)
+			this.map.closePopup()
+		},
+		onZoomClusterClick() {
+			const cluster = this.contextCluster
+			if (this.map.getZoom() !== this.map.getMaxZoom()) {
+				cluster.zoomToBounds()
+			}
+			this.map.closePopup()
 		},
 		getClusterMarkerIcon(cluster) {
 			const favorite = cluster.getAllChildMarkers()[0].options.data

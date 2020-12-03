@@ -724,6 +724,11 @@ export default {
 	margin: auto;
 }
 
+::v-deep .favoriteMarkerDark,
+::v-deep .favoriteClusterMarkerDark {
+	background: url('../../img/star-black.svg') no-repeat 50% 50%;
+}
+
 ::v-deep .leaflet-marker-favorite-cluster,
 ::v-deep .leaflet-marker-favorite {
 	height: 36px !important;

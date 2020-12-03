@@ -106,12 +106,13 @@ export default {
 		},
 		categoryIcons() {
 			const icons = {}
+			const darkClass = OCA.Accessibility.theme === 'dark' ? 'favoriteMarkerDark' : ''
 			Object.keys(this.categories).forEach((catid) => {
 				const color = this.categories[catid].color
 				icons[catid] = L.divIcon({
 					iconAnchor: [18, 18],
 					className: 'leaflet-marker-favorite',
-					html: '<div class="favoriteMarker ' + catid + 'CategoryMarker" style="background-color: #' + color + '"></div>',
+					html: '<div class="favoriteMarker ' + darkClass + '" style="background-color: #' + color + '"></div>',
 				})
 			})
 			return icons
@@ -158,10 +159,11 @@ export default {
 			const favorite = cluster.getAllChildMarkers()[0].options.data
 			const catid = favorite.category
 			const color = this.categories[catid].color
+			const darkClass = OCA.Accessibility.theme === 'dark' ? 'favoriteMarkerDark' : ''
 			const label = cluster.getChildCount()
 			return new L.DivIcon(L.extend({
 				className: 'leaflet-marker-favorite-cluster cluster-marker',
-				html: '<div class="favoriteClusterMarker ' + catid + 'CategoryMarker" style="background-color: #' + color + '"></div>'
+				html: '<div class="favoriteClusterMarker ' + darkClass + '" style="background-color: #' + color + '"></div>'
 					+ '​<span class="label">' + label + '</span>',
 			}, cluster, {
 				iconSize: [CLUSTER_MARKER_VIEW_SIZE, CLUSTER_MARKER_VIEW_SIZE],

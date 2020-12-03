@@ -608,8 +608,8 @@ export default {
 				if (save) {
 					this.saveAction({
 						type: 'favoriteEdit',
-						old: { ...this.favorites[f.id] },
-						new: f,
+						before: { ...this.favorites[f.id] },
+						after: f,
 					})
 				}
 				this.favorites[f.id].name = f.name
@@ -674,12 +674,50 @@ export default {
 			})
 		},
 		cancelFavoriteAdd(action) {
-			this.onFavoriteDelete([action.favorite.id], false)
+			this.onFavoritesDelete([action.favorite.id], false)
+		},
+		cancelFavoriteEdit(action) {
+			this.onFavoriteEdit(action.before, false)
+		},
+		async cancelFavoriteDelete(action) {
+			for (let i = 0; i < action.favorites.length; i++) {
+				const f = action.favorites[i]
+				const newFavId = await this.addFavorite(L.latLng(f.lat, f.lng), f.name, f.category, f.comment, f.extensions, false)
+				this.updateActionFavoriteId(f.id, newFavId)
+			}
 		},
 		async redoFavoriteAdd(action) {
 			const f = action.favorite
 			const newFavId = await this.addFavorite(L.latLng(f.lat, f.lng), f.name, f.category, f.comment, f.extensions, false)
-			action.favorite.id = newFavId
+			this.updateActionFavoriteId(action.favorite.id, newFavId)
+		},
+		redoFavoriteEdit(action) {
+			this.onFavoriteEdit(action.after, false)
+		},
+		redoFavoriteDelete(action) {
+			const favIds = action.favorites.map((f) => {
+				return f.id
+			})
+			this.onFavoritesDelete(favIds, false)
+		},
+		// when a favorite is created by canceling deletion or redoing creation
+		// we need to update the ids in the action history
+		updateActionFavoriteId(oldId, newId) {
+			const allActions = this.lastCanceledActions.concat(this.lastActions)
+			allActions.forEach((a) => {
+				if (a.type === 'favoriteAdd' && a.favorite.id === oldId) {
+					a.favorite.id = newId
+				} else if (a.type === 'favoriteEdit' && a.before.id === oldId) {
+					a.before.id = newId
+					a.after.id = newId
+				} else if (a.type === 'favoriteDelete') {
+					a.favorites.forEach((f) => {
+						if (f.id === oldId) {
+							f.id = newId
+						}
+					})
+				}
+			})
 		},
 	},
 }

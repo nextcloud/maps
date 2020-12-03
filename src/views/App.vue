@@ -144,7 +144,10 @@ export default {
 			return this.photosLoading || this.contactsLoading || this.favoritesLoading
 		},
 		searchData() {
-			return [...this.contactSearchData]
+			return [
+				...this.contactSearchData,
+				...this.favoriteSearchData,
+			]
 		},
 		contactSearchData() {
 			return this.contactsEnabled
@@ -155,6 +158,20 @@ export default {
 						id: c.UID + c.GEO,
 						label: c.FN + ' - ' + getFormattedADR(c.ADR),
 						latLng: L.latLng(geoToLatLng(c.GEO)),
+					}
+				})
+				: []
+		},
+		favoriteSearchData() {
+			return this.favoritesEnabled
+				? Object.keys(this.favorites).map((favid) => {
+					const f = this.favorites[favid]
+					return {
+						type: 'favorite',
+						icon: 'icon-favorite',
+						id: favid,
+						label: f.name,
+						latLng: L.latLng(f.lat, f.lng),
 					}
 				})
 				: []

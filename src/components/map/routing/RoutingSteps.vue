@@ -14,11 +14,15 @@
 				@click="$emit('add-step')">
 				<span class="icon-add" />
 			</button>
-			<button v-if="canExport"
-				id="export-route"
+			<button v-if="planReady"
 				v-tooltip="{ content: t('maps', 'Export current route') }"
 				@click="$emit('export-route')">
 				<span class="icon-save" />
+			</button>
+			<button v-if="planReady"
+				v-tooltip="{ content: t('maps', 'Zoom on current route') }"
+				@click="$emit('zoom-route')">
+				<span class="icon-search" />
 			</button>
 			<button id="reverse-steps"
 				v-tooltip="{ content: t('maps', 'Reverse steps order') }"
@@ -48,7 +52,7 @@ export default {
 			type: Array,
 			required: true,
 		},
-		canExport: {
+		planReady: {
 			type: Boolean,
 			default: false,
 		},

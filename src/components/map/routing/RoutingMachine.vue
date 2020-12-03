@@ -510,6 +510,13 @@ export default {
 			}).then(() => {
 			})
 		},
+		onZoomRoute() {
+			const latLngCoords = this.control._selectedRoute.coordinates
+			const coords = latLngCoords.map((ll) => {
+				return [ll.lat, ll.lng]
+			})
+			this.map.fitBounds(L.latLngBounds(coords))
+		},
 	},
 }
 </script>

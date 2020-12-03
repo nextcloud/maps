@@ -226,6 +226,12 @@ export default {
 			this.lastCanceledActions.push(lastAction)
 			if (lastAction.type === 'photoMove') {
 				this.cancelPhotoMove(lastAction.content)
+			} else if (lastAction.type === 'favoriteAdd') {
+				this.cancelFavoriteAdd(lastAction)
+			} else if (lastAction.type === 'favoriteEdit') {
+				this.cancelFavoriteEdit(lastAction)
+			} else if (lastAction.type === 'favoriteDelete') {
+				this.cancelFavoriteDelete(lastAction)
 			}
 		},
 		redoAction() {
@@ -236,6 +242,12 @@ export default {
 			this.lastActions.push(lastCanceledAction)
 			if (lastCanceledAction.type === 'photoMove') {
 				this.redoPhotoMove(lastCanceledAction.content)
+			} else if (lastCanceledAction.type === 'favoriteAdd') {
+				this.redoFavoriteAdd(lastCanceledAction)
+			} else if (lastCanceledAction.type === 'favoriteEdit') {
+				this.redoFavoriteEdit(lastCanceledAction)
+			} else if (lastCanceledAction.type === 'favoriteDelete') {
+				this.redoFavoriteDelete(lastCanceledAction)
 			}
 		},
 		// ================ PHOTOS =================
@@ -507,7 +519,7 @@ export default {
 				}
 			})
 		},
-		// favorites
+		// ================ FAVORITES =================
 		onFavoritesClicked() {
 			this.favoritesEnabled = !this.favoritesEnabled
 			// get favorites if we don't have them yet
@@ -591,8 +603,15 @@ export default {
 				this.$refs.map.fitBounds(L.latLngBounds([minLat, minLon], [maxLat, maxLon]), { padding: [30, 30] })
 			}
 		},
-		onFavoriteEdit(f) {
+		onFavoriteEdit(f, save = true) {
 			network.editFavorite(f.id, f.name, f.category, f.comment, f.lat, f.lng).then((response) => {
+				if (save) {
+					this.saveAction({
+						type: 'favoriteEdit',
+						old: { ...this.favorites[f.id] },
+						new: f,
+					})
+				}
 				this.favorites[f.id].name = f.name
 				this.favorites[f.id].category = f.category
 				this.favorites[f.id].comment = f.comment
@@ -602,15 +621,30 @@ export default {
 				console.error(error)
 			})
 		},
-		onFavoriteDelete(favid) {
+		onFavoriteDelete(favid, save = true) {
 			network.deleteFavorite(favid).then((response) => {
+				if (save) {
+					this.saveAction({
+						type: 'favoriteDelete',
+						favorites: [{ ...this.favorites[favid] }],
+					})
+				}
 				this.$delete(this.favorites, favid)
 			}).catch((error) => {
 				console.error(error)
 			})
 		},
-		onFavoritesDelete(favids) {
+		onFavoritesDelete(favids, save = true) {
 			network.deleteFavorites(favids).then((response) => {
+				if (save) {
+					const deleted = favids.map((favid) => {
+						return { ...this.favorites[favid] }
+					})
+					this.saveAction({
+						type: 'favoriteDelete',
+						favorites: deleted,
+					})
+				}
 				favids.forEach((favid) => {
 					this.$delete(this.favorites, favid)
 				})
@@ -619,15 +653,33 @@ export default {
 			})
 		},
 		onFavoriteAdd(latLng) {
-			network.addFavorite(latLng.lat, latLng.lng).then((response) => {
+			this.addFavorite(latLng)
+		},
+		addFavorite(latLng, name = null, category = null, comment = null, extensions = null, save = true) {
+			return network.addFavorite(latLng.lat, latLng.lng, name, category, comment, extensions).then((response) => {
 				const fav = response.data
 				if (!fav.category) {
 					fav.category = t('maps', 'Personal')
 				}
+				if (save) {
+					this.saveAction({
+						type: 'favoriteAdd',
+						favorite: { ...fav },
+					})
+				}
 				this.$set(this.favorites, fav.id, fav)
+				return fav.id
 			}).catch((error) => {
 				console.error(error)
 			})
+		},
+		cancelFavoriteAdd(action) {
+			this.onFavoriteDelete([action.favorite.id], false)
+		},
+		async redoFavoriteAdd(action) {
+			const f = action.favorite
+			const newFavId = await this.addFavorite(L.latLng(f.lat, f.lng), f.name, f.category, f.comment, f.extensions, false)
+			action.favorite.id = newFavId
 		},
 	},
 }

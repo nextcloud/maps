@@ -37,6 +37,7 @@
 					class="category-select"
 					label="label"
 					track-by="multiselectKey"
+					open-direction="bottom"
 					:auto-limit="false"
 					:limit="8"
 					:options-limit="8"

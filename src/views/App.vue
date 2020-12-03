@@ -141,7 +141,7 @@ export default {
 
 	computed: {
 		mapLoading() {
-			return this.photosLoading || this.contactsLoading
+			return this.photosLoading || this.contactsLoading || this.favoritesLoading
 		},
 		searchData() {
 			return [...this.contactSearchData]
@@ -317,9 +317,11 @@ export default {
 				true
 			)
 		},
-		placePhotos(paths, lats, lngs, directory = false, save = true) {
+		placePhotos(paths, lats, lngs, directory = false, save = true, reload = true) {
 			network.placePhotos(paths, lats, lngs, directory).then((response) => {
-				this.getPhotos()
+				if (reload) {
+					this.getPhotos()
+				}
 				if (save) {
 					this.saveAction({
 						type: 'photoMove',
@@ -336,7 +338,7 @@ export default {
 			})
 		},
 		onPhotoMoved(photo, latLng) {
-			this.placePhotos([photo.path], [latLng.lat], [latLng.lng])
+			this.placePhotos([photo.path], [latLng.lat], [latLng.lng], false, true, false)
 		},
 		resetPhotosCoords(paths, save = true) {
 			network.resetPhotosCoords(paths).then((response) => {

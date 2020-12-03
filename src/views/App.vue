@@ -30,8 +30,6 @@
 					:loading="photosLoading"
 					:photos="photos"
 					:draggable="photosDraggable"
-					:can-cancel="lastPhotoMoves.length > 0"
-					:can-redo="lastPhotoCanceledMoves.length > 0"
 					@photos-clicked="onPhotosClicked"
 					@cancel-clicked="cancelPhotoMove"
 					@redo-clicked="redoPhotoMove"
@@ -118,6 +116,9 @@ export default {
 		return {
 			optionValues: optionsController.optionValues,
 			sliderEnabled: optionsController.optionValues.displaySlider === 'true',
+			// action history
+			lastActions: [],
+			lastCanceledActions: [],
 			// favorites
 			favoritesLoading: false,
 			favoritesEnabled: optionsController.favoritesEnabled,
@@ -129,8 +130,6 @@ export default {
 			photosEnabled: optionsController.photosEnabled,
 			photosDraggable: false,
 			photos: [],
-			lastPhotoMoves: [],
-			lastPhotoCanceledMoves: [],
 			// contacts
 			contactsLoading: false,
 			contactsEnabled: optionsController.contactsEnabled,
@@ -195,9 +194,9 @@ export default {
 		document.onkeyup = (e) => {
 			if (e.ctrlKey) {
 				if (e.key === 'z' && !['INPUT', 'TEXTAREA'].includes(e.target.tagName)) {
-					this.cancelPhotoMove()
+					this.cancelAction()
 				} else if (e.key === 'Z' && !['INPUT', 'TEXTAREA'].includes(e.target.tagName)) {
-					this.redoPhotoMove()
+					this.redoAction()
 				}
 			}
 		}
@@ -214,6 +213,30 @@ export default {
 		onMainDetailClicked() {
 			// this.showSidebar = !this.showSidebar
 			// this.activeSidebarTab = 'project-settings'
+		},
+		saveAction(action) {
+			this.lastActions.push(action)
+			this.lastCanceledActions = []
+		},
+		cancelAction() {
+			if (this.lastActions.length === 0 || this.mapLoading) {
+				return
+			}
+			const lastAction = this.lastActions.pop()
+			this.lastCanceledActions.push(lastAction)
+			if (lastAction.type === 'photoMove') {
+				this.cancelPhotoMove(lastAction.content)
+			}
+		},
+		redoAction() {
+			if (this.lastCanceledActions.length === 0 || this.mapLoading) {
+				return
+			}
+			const lastCanceledAction = this.lastCanceledActions.pop()
+			this.lastActions.push(lastCanceledAction)
+			if (lastCanceledAction.type === 'photoMove') {
+				this.redoPhotoMove(lastCanceledAction.content)
+			}
 		},
 		// ================ PHOTOS =================
 		onPhotosClicked() {
@@ -286,8 +309,10 @@ export default {
 			network.placePhotos(paths, lats, lngs, directory).then((response) => {
 				this.getPhotos()
 				if (save) {
-					this.lastPhotoMoves.push(response.data)
-					this.lastPhotoCanceledMoves = []
+					this.saveAction({
+						type: 'photoMove',
+						content: response.data,
+					})
 					if (paths.length === 1) {
 						showSuccess(t('maps', '"{path}" successfully moved', { path: paths[0] }))
 					} else {
@@ -305,26 +330,23 @@ export default {
 			network.resetPhotosCoords(paths).then((response) => {
 				this.getPhotos()
 				if (save) {
-					this.lastPhotoMoves.push(response.data)
-					this.lastPhotoCanceledMoves = []
+					this.saveAction({
+						type: 'photoMove',
+						content: response.data,
+					})
 				}
 			}).catch((error) => {
 				console.error(error)
 			}).then(() => {
 			})
 		},
-		cancelPhotoMove() {
-			if (this.lastPhotoMoves.length === 0 || this.photosLoading) {
-				return
-			}
-			const lastPhotoMove = this.lastPhotoMoves.pop()
-			this.lastPhotoCanceledMoves.push(lastPhotoMove)
+		cancelPhotoMove(actionContent) {
 			// place the photos that previously had coordinates
-			const toPlace = lastPhotoMove.filter((action) => {
+			const toPlace = actionContent.filter((action) => {
 				return (action.oldLat && action.oldLng)
 			})
 			// reset the photos that previously had NO coordinates and have new ones
-			const toReset = lastPhotoMove.filter((action) => {
+			const toReset = actionContent.filter((action) => {
 				return (action.lat && !action.oldLat)
 			})
 			if (toPlace.length > 0) {
@@ -338,18 +360,13 @@ export default {
 				this.resetPhotosCoords(paths, false)
 			}
 		},
-		redoPhotoMove() {
-			if (this.lastPhotoCanceledMoves.length === 0 || this.photosLoading) {
-				return
-			}
-			const lastPhotoCanceledMove = this.lastPhotoCanceledMoves.pop()
-			this.lastPhotoMoves.push(lastPhotoCanceledMove)
+		redoPhotoMove(actionContent) {
 			// redo placement action
-			const toPlace = lastPhotoCanceledMove.filter((action) => {
+			const toPlace = actionContent.filter((action) => {
 				return (action.lat && action.lng)
 			})
 			// redo reset action
-			const toReset = lastPhotoCanceledMove.filter((action) => {
+			const toReset = actionContent.filter((action) => {
 				return (!action.lat && action.oldLat)
 			})
 			if (toPlace.length > 0) {

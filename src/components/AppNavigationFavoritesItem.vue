@@ -37,9 +37,13 @@
 				:key="catid"
 				:title="c.name"
 				:class="{ 'subitem-disabled': !c.enabled }"
+				:editable="true"
+				:edit-placeholder="t('maps', 'Category name')"
+				:edit-label="t('maps', 'Rename')"
 				:allow-collapse="false"
 				:force-menu="false"
-				@click="onCategoryClick(catid)">
+				@click="onCategoryClick(catid)"
+				@update:title="$emit('rename-category', { old: catid, new: $event })">
 				<template #icon>
 					<img :src="getIconUrl(c.color)">
 				</template>

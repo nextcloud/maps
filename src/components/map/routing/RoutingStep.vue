@@ -88,7 +88,7 @@ export default {
 		background: transparent;
 	}
 	button {
-		margin: 0;
+		margin: 0 0 0 5px;
 		padding: 0;
 		width: 34px;
 	}

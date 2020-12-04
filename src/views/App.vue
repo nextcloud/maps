@@ -11,6 +11,7 @@
 					:draggable="favoritesDraggable"
 					@favorites-clicked="onFavoritesClicked"
 					@category-clicked="onFavoriteCategoryClicked"
+					@rename-category="onRenameFavoriteCategory"
 					@zoom-all-categories="onZoomAllFavorites"
 					@zoom-category="onZoomFavoriteCategory"
 					@toggle-all-categories="onToggleAllFavoriteCategories"
@@ -164,7 +165,10 @@ export default {
 		},
 		favoriteSearchData() {
 			return this.favoritesEnabled
-				? Object.keys(this.favorites).map((favid) => {
+				? Object.keys(this.favorites).filter((favid) => {
+					const f = this.favorites[favid]
+					return f.name
+				}).map((favid) => {
 					const f = this.favorites[favid]
 					return {
 						type: 'favorite',
@@ -249,6 +253,8 @@ export default {
 				this.cancelFavoriteEdit(lastAction)
 			} else if (lastAction.type === 'favoriteDelete') {
 				this.cancelFavoriteDelete(lastAction)
+			} else if (lastAction.type === 'favoriteRenameCategory') {
+				this.cancelFavoriteRenameCategory(lastAction)
 			}
 		},
 		redoAction() {
@@ -265,6 +271,8 @@ export default {
 				this.redoFavoriteEdit(lastCanceledAction)
 			} else if (lastCanceledAction.type === 'favoriteDelete') {
 				this.redoFavoriteDelete(lastCanceledAction)
+			} else if (lastCanceledAction.type === 'favoriteRenameCategory') {
+				this.redoFavoriteRenameCategory(lastCanceledAction)
 			}
 		},
 		// ================ PHOTOS =================
@@ -692,6 +700,25 @@ export default {
 				console.error(error)
 			})
 		},
+		onRenameFavoriteCategory(e, save = true) {
+			console.debug(' rename ' + e.old + ' into ' + e.new)
+			network.renameFavoriteCategory([e.old], e.new).then((response) => {
+				if (save) {
+					this.saveAction({
+						type: 'favoriteRenameCategory',
+						old: e.old,
+						new: e.new,
+					})
+				}
+				Object.keys(this.favorites).forEach((favid) => {
+					if (this.favorites[favid].category === e.old) {
+						this.favorites[favid].category = e.new
+					}
+				})
+			}).catch((error) => {
+				console.error(error)
+			})
+		},
 		cancelFavoriteAdd(action) {
 			this.onFavoritesDelete([action.favorite.id], false)
 		},
@@ -704,6 +731,9 @@ export default {
 				const newFavId = await this.addFavorite(L.latLng(f.lat, f.lng), f.name, f.category, f.comment, f.extensions, false)
 				this.updateActionFavoriteId(f.id, newFavId)
 			}
+		},
+		cancelFavoriteRenameCategory(action) {
+			this.onRenameFavoriteCategory({ old: action.new, new: action.old }, false)
 		},
 		async redoFavoriteAdd(action) {
 			const f = action.favorite
@@ -718,6 +748,9 @@ export default {
 				return f.id
 			})
 			this.onFavoritesDelete(favIds, false)
+		},
+		redoFavoriteRenameCategory(action) {
+			this.onRenameFavoriteCategory({ old: action.old, new: action.new }, false)
 		},
 		// when a favorite is created by canceling deletion or redoing creation
 		// we need to update the ids in the action history

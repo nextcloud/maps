@@ -116,6 +116,15 @@ export function deleteFavorite(favid) {
 	return axios.delete(url)
 }
 
+export function renameFavoriteCategory(catIds, newCatName) {
+	const req = {
+		categories: catIds,
+		newName: newCatName,
+	}
+	const url = generateUrl('/apps/maps/favorites-category')
+	return axios.put(url, req)
+}
+
 export function deleteFavorites(ids) {
 	const req = {
 		params: {

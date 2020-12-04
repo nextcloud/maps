@@ -85,6 +85,7 @@ export default {
 		margin: 0 0 0 5px;
 		.icon-routing {
 			opacity: 0.5;
+			margin-right: 2px;
 		}
 		&:hover .icon-routing {
 			opacity: 1;

@@ -4,15 +4,15 @@
 		<div id="history">
 			<button
 				v-if="lastActions.length"
-				v-tooltip="{ content: t('maps', 'Cancel {action}', { action: lastActionLabel }) }"
+				v-tooltip="{ content: t('maps', 'Cancel {action} (Ctrl+z)', { action: lastActionLabel }) }"
 				@click="$emit('cancel')">
-				<span class="icon-history" />
+				<span class="icon icon-history" />
 			</button>
 			<button
 				v-if="lastCanceledActions.length"
-				v-tooltip="{ content: t('maps', 'Redo {action}', { action: lastCanceledActionLabel }) }"
+				v-tooltip="{ content: t('maps', 'Redo {action} (Ctrl+Z)', { action: lastCanceledActionLabel }) }"
 				@click="$emit('redo')">
-				<span class="icon-redo" />
+				<span class="icon icon-redo" />
 			</button>
 		</div>
 	</LControl>
@@ -94,6 +94,10 @@ export default {
 			height: 34px;
 			margin: 0 5px 0 5px;
 			padding: 0;
+
+			&:hover .icon {
+				opacity: 1;
+			}
 		}
 	}
 

@@ -72,7 +72,7 @@ export default {
 		> button {
 			width: 34px;
 			height: 34px;
-			margin: 0;
+			// margin: 0;
 			padding: 0;
 		}
 		.multiselect {
@@ -81,11 +81,14 @@ export default {
 		}
 	}
 
-	.icon-routing {
-		opacity: 0.5;
-	}
-	.routing-button:hover .icon-routing {
-		opacity: 1;
+	.routing-button {
+		margin: 0 0 0 5px;
+		.icon-routing {
+			opacity: 0.5;
+		}
+		&:hover .icon-routing {
+			opacity: 1;
+		}
 	}
 }
 </style>

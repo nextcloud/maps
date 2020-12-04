@@ -57,7 +57,8 @@
 				@click="onCategoryClick(catid)"
 				@update:title="$emit('rename-category', { old: catid, new: $event })">
 				<template #icon>
-					<img :src="getIconUrl(c.color)">
+					<div :class="{ favoriteMarker: true, favoriteMarkerDark: isDarkTheme }"
+						:style="'background-color: #' + c.color" />
 				</template>
 				<template slot="counter">
 					&nbsp;
@@ -136,6 +137,9 @@ export default {
 		nbFavorites() {
 			return Object.keys(this.favorites).length
 		},
+		isDarkTheme() {
+			return OCA.Accessibility?.theme === 'dark'
+		},
 	},
 
 	methods: {
@@ -161,9 +165,6 @@ export default {
 		},
 		onCategoryClick(catid) {
 			this.$emit('category-clicked', catid)
-		},
-		getIconUrl(color) {
-			return generateUrl('/svg/core/actions/star?color=' + color)
 		},
 	},
 }

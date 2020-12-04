@@ -14,6 +14,8 @@
 					@rename-category="onRenameFavoriteCategory"
 					@zoom-all-categories="onZoomAllFavorites"
 					@zoom-category="onZoomFavoriteCategory"
+					@export-category="onExportFavoriteCategory"
+					@delete-category="onDeleteFavoriteCategory"
 					@toggle-all-categories="onToggleAllFavoriteCategories"
 					@draggable-clicked="favoritesDraggable = !favoritesDraggable" />
 				<AppNavigationContactsItem
@@ -675,6 +677,21 @@ export default {
 				favids.forEach((favid) => {
 					this.$delete(this.favorites, favid)
 				})
+			}).catch((error) => {
+				console.error(error)
+			})
+		},
+		onDeleteFavoriteCategory(catid) {
+			const favIds = Object.keys(this.favorites).filter((favid) => {
+				return this.favorites[favid].category === catid
+			})
+			this.onFavoritesDelete(favIds)
+		},
+		onExportFavoriteCategory(catid) {
+			this.exportFavorites([catid])
+		},
+		exportFavorites(catIdList) {
+			network.exportFavorites(catIdList).then((response) => {
 			}).catch((error) => {
 				console.error(error)
 			})

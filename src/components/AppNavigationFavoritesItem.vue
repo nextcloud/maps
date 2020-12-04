@@ -37,7 +37,7 @@
 				:key="catid"
 				:title="c.name"
 				:class="{ 'subitem-disabled': !c.enabled }"
-				:editable="true"
+				:editable="c.enabled"
 				:edit-placeholder="t('maps', 'Category name')"
 				:edit-label="t('maps', 'Rename')"
 				:allow-collapse="false"
@@ -56,7 +56,19 @@
 						icon="icon-search"
 						:close-after-click="true"
 						@click="onZoomCategoryClick(catid)">
-						{{ t('maps', 'Zoom') }}
+						{{ t('maps', 'Zoom to bounds') }}
+					</ActionButton>
+					<ActionButton v-if="enabled && nbFavorites && c.enabled"
+						icon="icon-save"
+						:close-after-click="true"
+						@click="$emit('export-category', catid)">
+						{{ t('maps', 'Export') }}
+					</ActionButton>
+					<ActionButton v-if="enabled && nbFavorites && c.enabled"
+						icon="icon-delete"
+						:close-after-click="true"
+						@click="$emit('delete-category', catid)">
+						{{ t('maps', 'Delete') }}
 					</ActionButton>
 				</template>
 			</AppNavigationItem>
@@ -180,5 +192,15 @@ export default {
 	-webkit-mask-position: center;
 	min-width: 38px !important;
 	min-height: 36px !important;
+}
+
+::v-deep .icon-save {
+	background-color: var(--color-main-text);
+	mask: url('../../img/save.svg') no-repeat;
+	mask-size: 16px auto;
+	mask-position: center;
+	-webkit-mask: url('../../img/save.svg') no-repeat;
+	-webkit-mask-size: 16px auto;
+	-webkit-mask-position: center;
 }
 </style>

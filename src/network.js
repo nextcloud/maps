@@ -156,6 +156,16 @@ export function editFavorite(id, name, category = null, comment = null, lat = nu
 	return axios.put(url, req)
 }
 
+export function exportFavorites(catIdList, begin = null, end = null) {
+	const req = {
+		categoryList: catIdList,
+		begin,
+		end,
+	}
+	const url = generateUrl('/apps/maps/export/favorites')
+	return axios.post(url, req)
+}
+
 export function getPhotos() {
 	const url = generateUrl('/apps/maps/photos')
 	return axios.get(url)

@@ -30,6 +30,12 @@
 				@click="onZoomAllClick">
 				{{ t('maps', 'Zoom') }}
 			</ActionButton>
+			<ActionButton
+				icon="icon-save"
+				:close-after-click="true"
+				@click="$emit('export')">
+				{{ t('maps', 'Export') }}
+			</ActionButton>
 		</template>
 		<template #default>
 			<AppNavigationItem

@@ -17,6 +17,7 @@
 					@export-category="onExportFavoriteCategory"
 					@delete-category="onDeleteFavoriteCategory"
 					@toggle-all-categories="onToggleAllFavoriteCategories"
+					@export="onExportFavorites"
 					@draggable-clicked="favoritesDraggable = !favoritesDraggable" />
 				<AppNavigationContactsItem
 					:enabled="contactsEnabled"
@@ -687,11 +688,18 @@ export default {
 			})
 			this.onFavoritesDelete(favIds)
 		},
+		onExportFavorites() {
+			const catIds = Object.keys(this.favoriteCategories).filter((catid) => {
+				return this.favoriteCategories[catid].enabled
+			})
+			this.exportFavorites(catIds)
+		},
 		onExportFavoriteCategory(catid) {
 			this.exportFavorites([catid])
 		},
 		exportFavorites(catIdList) {
 			network.exportFavorites(catIdList).then((response) => {
+				showSuccess(t('maps', 'Favorites exported in {path}', { path: response.data }))
 			}).catch((error) => {
 				console.error(error)
 			})

@@ -200,6 +200,7 @@ OC.L10N.register(
     "Doctors" : "医生",
     "Dentist" : "牙医",
     "Hotel" : "宾馆",
+    "Point at {coords}" : "{coords} 位置的点",
     "Add to favorites" : "添加到收藏夹",
     "Add contact address" : "添加联系人地址",
     "Open" : "打开",

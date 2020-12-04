@@ -85,7 +85,7 @@ export default {
 		// Place the footer in the app-navigation so it is not below the map
 		moveFooter() {
 			const footer = document.getElementsByTagName('footer')[0]
-			document.getElementById('app-navigation').appendChild(footer)
+			document.getElementById('app-navigation-vue').appendChild(footer)
 		},
 	},
 }

@@ -98,6 +98,11 @@ export function getFavorites() {
 	return axios.get(url)
 }
 
+export function getSharedFavoriteCategories() {
+	const url = generateUrl('/apps/maps/favorites-category/shared')
+	return axios.get(url)
+}
+
 export function addFavorite(lat, lng, name, category = null, comment = null, extensions = null) {
 	const req = {
 		name,
@@ -172,6 +177,16 @@ export function importFavorites(path) {
 	}
 	const url = generateUrl('/apps/maps/import/favorites')
 	return axios.post(url, req)
+}
+
+export function shareFavoriteCategory(catid) {
+	const url = generateUrl('/apps/maps/favorites-category/' + catid + '/share')
+	return axios.post(url)
+}
+
+export function unshareFavoriteCategory(catid) {
+	const url = generateUrl('/apps/maps/favorites-category/' + catid + '/un-share')
+	return axios.post(url)
 }
 
 export function getPhotos() {

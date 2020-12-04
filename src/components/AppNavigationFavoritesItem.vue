@@ -71,6 +71,18 @@
 						@click="onZoomCategoryClick(catid)">
 						{{ t('maps', 'Zoom to bounds') }}
 					</ActionButton>
+					<ActionCheckbox v-if="enabled && nbFavorites && c.enabled"
+						:checked="c.token && c.token !== ''"
+						:close-after-click="false"
+						@update:checked="$emit('category-share-change', catid, $event)">
+						{{ c.token ? t('maps', 'Delete share link') : t('maps', 'Create share link') }}
+					</ActionCheckbox>
+					<ActionButton v-if="enabled && nbFavorites && c.enabled && c.token"
+						icon="icon-clippy"
+						:close-after-click="false"
+						@click="onShareLinkCopy(c)">
+						{{ isLinkCopied[catid] ? t('maps', 'Copied!') : t('maps', 'Copy share link') }}
+					</ActionButton>
 					<ActionButton v-if="enabled && nbFavorites && c.enabled"
 						icon="icon-save"
 						:close-after-click="true"
@@ -92,6 +104,8 @@
 <script>
 import AppNavigationItem from '@nextcloud/vue/dist/Components/AppNavigationItem'
 import ActionButton from '@nextcloud/vue/dist/Components/ActionButton'
+import ActionCheckbox from '@nextcloud/vue/dist/Components/ActionCheckbox'
+import { showError, showSuccess } from '@nextcloud/dialogs'
 import { generateUrl } from '@nextcloud/router'
 
 import optionsController from '../optionsController'
@@ -102,6 +116,7 @@ export default {
 	components: {
 		AppNavigationItem,
 		ActionButton,
+		ActionCheckbox,
 	},
 
 	props: {
@@ -130,6 +145,7 @@ export default {
 	data() {
 		return {
 			open: optionsController.optionValues?.favoriteCategoryListShow === 'true',
+			isLinkCopied: {},
 		}
 	},
 
@@ -165,6 +181,20 @@ export default {
 		},
 		onCategoryClick(catid) {
 			this.$emit('category-clicked', catid)
+		},
+		async onShareLinkCopy(category) {
+			try {
+				const url = window.location.origin + generateUrl('/apps/maps/s/favorites/' + category.token)
+				await this.$copyText(url)
+				showSuccess(t('maps', 'Link copied!'))
+				this.$set(this.isLinkCopied, category.name, true)
+				setTimeout(() => {
+					this.$delete(this.isLinkCopied, category.name)
+				}, 5000)
+			} catch (error) {
+				console.debug(error)
+				showError(t('maps', 'Link could not be copied to clipboard.'))
+			}
 		},
 	},
 }

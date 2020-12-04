@@ -25,8 +25,11 @@ import App from './views/App.vue'
 import './bootstrap'
 import optionsController from './optionsController'
 
+import VueClipboard from 'vue-clipboard2'
+
 import Tooltip from '@nextcloud/vue/dist/Directives/Tooltip'
 Vue.directive('tooltip', Tooltip)
+Vue.use(VueClipboard)
 
 // eslint-disable-next-line
 'use strict'

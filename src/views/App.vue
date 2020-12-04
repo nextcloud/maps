@@ -16,6 +16,7 @@
 					@zoom-category="onZoomFavoriteCategory"
 					@export-category="onExportFavoriteCategory"
 					@delete-category="onDeleteFavoriteCategory"
+					@category-share-change="onFavoriteCategoryShareChange"
 					@toggle-all-categories="onToggleAllFavoriteCategories"
 					@export="onExportFavorites"
 					@import="onImportFavorites"
@@ -134,6 +135,7 @@ export default {
 			favoritesDraggable: false,
 			favorites: {},
 			disabledFavoriteCategories: optionsController.disabledFavoriteCategories,
+			favoriteCategoryTokens: {},
 			// photos
 			photosLoading: false,
 			photosEnabled: optionsController.photosEnabled,
@@ -197,7 +199,7 @@ export default {
 				if (categories[catid]) {
 					categories[catid].counter++
 				} else {
-					const hsl = catid.length < 2
+					const hsl = catid.length < 1
 						? getLetterColor('a', 'a')
 						: catid.length === 1
 							? getLetterColor(catid[0], 'a')
@@ -208,6 +210,7 @@ export default {
 						color,
 						counter: 1,
 						enabled: !this.disabledFavoriteCategories.includes(catid),
+						token: this.favoriteCategoryTokens[catid],
 					}
 				}
 			})
@@ -568,6 +571,12 @@ export default {
 				return
 			}
 			this.favoritesLoading = true
+			network.getSharedFavoriteCategories().then((response) => {
+				this.favoriteCategoryTokens = {}
+				response.data.forEach((s) => {
+					this.favoriteCategoryTokens[s.category] = s.token
+				})
+			})
 			network.getFavorites().then((response) => {
 				this.favorites = {}
 				response.data.forEach((f) => {
@@ -613,6 +622,21 @@ export default {
 				}
 			}
 			optionsController.saveOptionValues({ jsonDisabledFavoriteCategories: JSON.stringify(this.disabledFavoriteCategories) })
+		},
+		onFavoriteCategoryShareChange(catid, checked) {
+			if (checked) {
+				network.shareFavoriteCategory(catid).then((response) => {
+					this.$set(this.favoriteCategoryTokens, catid, response.data.token)
+				}).catch((error) => {
+					console.error(error)
+				})
+			} else {
+				network.unshareFavoriteCategory(catid).then((response) => {
+					this.$delete(this.favoriteCategoryTokens, catid)
+				}).catch((error) => {
+					console.error(error)
+				})
+			}
 		},
 		onZoomAllFavorites() {
 			this.zoomOnFavorites(Object.values(this.favorites))

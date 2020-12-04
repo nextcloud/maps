@@ -18,6 +18,7 @@
 					@delete-category="onDeleteFavoriteCategory"
 					@toggle-all-categories="onToggleAllFavoriteCategories"
 					@export="onExportFavorites"
+					@import="onImportFavorites"
 					@draggable-clicked="favoritesDraggable = !favoritesDraggable" />
 				<AppNavigationContactsItem
 					:enabled="contactsEnabled"
@@ -700,6 +701,24 @@ export default {
 		exportFavorites(catIdList) {
 			network.exportFavorites(catIdList).then((response) => {
 				showSuccess(t('maps', 'Favorites exported in {path}', { path: response.data }))
+			}).catch((error) => {
+				console.error(error)
+			})
+		},
+		onImportFavorites() {
+			OC.dialogs.filepicker(
+				t('maps', 'Import favorites from GeoJSON (Google Maps), gpx (OsmAnd, Nextcloud Maps) or kmz/kml (F-Droid Maps, Maps.me, Marble)'),
+				(targetPath) => {
+					this.importFavorites(targetPath)
+				},
+				false,
+				['application/gpx+xml', 'application/vnd.google-earth.kmz', 'application/vnd.google-earth.kml+xml', 'application/json', 'application/geo+json'],
+				true
+			)
+		},
+		importFavorites(path) {
+			network.importFavorites(path).then((response) => {
+				this.getFavorites()
 			}).catch((error) => {
 				console.error(error)
 			})

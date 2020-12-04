@@ -36,6 +36,12 @@
 				@click="$emit('export')">
 				{{ t('maps', 'Export') }}
 			</ActionButton>
+			<ActionButton
+				icon="icon-folder"
+				:close-after-click="true"
+				@click="$emit('import')">
+				{{ t('maps', 'Import') }}
+			</ActionButton>
 		</template>
 		<template #default>
 			<AppNavigationItem

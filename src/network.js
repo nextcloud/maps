@@ -166,6 +166,14 @@ export function exportFavorites(catIdList, begin = null, end = null) {
 	return axios.post(url, req)
 }
 
+export function importFavorites(path) {
+	const req = {
+		path,
+	}
+	const url = generateUrl('/apps/maps/import/favorites')
+	return axios.post(url, req)
+}
+
 export function getPhotos() {
 	const url = generateUrl('/apps/maps/photos')
 	return axios.get(url)

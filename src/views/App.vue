@@ -58,6 +58,8 @@
 					:contacts-enabled="contactsEnabled"
 					:slider-enabled="sliderEnabled"
 					:loading="mapLoading"
+					:last-actions="lastActions"
+					:last-canceled-actions="lastCanceledActions"
 					@edit-favorite="onFavoriteEdit"
 					@add-favorite="onFavoriteAdd"
 					@delete-favorite="onFavoriteDelete"
@@ -66,7 +68,9 @@
 					@address-deleted="getContacts"
 					@contact-placed="getContacts"
 					@place-photos="placePhotoFilesOrFolder"
-					@photo-moved="onPhotoMoved" />
+					@photo-moved="onPhotoMoved"
+					@cancel="cancelAction"
+					@redo="redoAction" />
 			</div>
 			<Actions
 				class="content-buttons"

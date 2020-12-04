@@ -27,6 +27,12 @@
 				:search-data="searchData"
 				@validate="onSearchValidate"
 				@routing-clicked="showRouting = true" />
+			<HistoryControl v-if="map"
+				position="topright"
+				:last-actions="lastActions"
+				:last-canceled-actions="lastCanceledActions"
+				@cancel="$emit('cancel')"
+				@redo="$emit('redo')" />
 			<LControlZoom position="bottomright" />
 			<LControlScale
 				position="bottomleft"
@@ -114,6 +120,7 @@ import 'leaflet-contextmenu/dist/leaflet.contextmenu.min.css'
 
 import Slider from '../components/map/Slider'
 import SearchControl from '../components/map/SearchControl'
+import HistoryControl from '../components/map/HistoryControl'
 import RoutingControl from '../components/map/routing/RoutingControl'
 import FavoritesLayer from '../components/map/FavoritesLayer'
 import PhotosLayer from '../components/map/PhotosLayer'
@@ -132,6 +139,7 @@ export default {
 		LControlLayers,
 		LTileLayer,
 		Slider,
+		HistoryControl,
 		SearchControl,
 		RoutingControl,
 		FavoritesLayer,
@@ -191,6 +199,14 @@ export default {
 		},
 		loading: {
 			type: Boolean,
+			required: true,
+		},
+		lastActions: {
+			type: Array,
+			required: true,
+		},
+		lastCanceledActions: {
+			type: Array,
 			required: true,
 		},
 	},

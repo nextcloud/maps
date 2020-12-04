@@ -180,7 +180,7 @@ export default {
 
 ::v-deep .icon-hand {
 	opacity: 1;
-	background-color: black;
+	background-color: var(--color-main-text);
 	padding: 0 !important;
 	mask: url('../../img/hand.svg') no-repeat;
 	mask-size: 16px auto;
@@ -194,7 +194,7 @@ export default {
 
 ::v-deep .icon-hand-slash {
 	opacity: 1;
-	background-color: black;
+	background-color: var(--color-main-text);
 	padding: 0 !important;
 	mask: url('../../img/hand-slash.svg') no-repeat;
 	mask-size: 16px auto;

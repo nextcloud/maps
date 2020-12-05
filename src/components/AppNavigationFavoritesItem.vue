@@ -146,15 +146,13 @@ export default {
 		return {
 			open: optionsController.optionValues?.favoriteCategoryListShow === 'true',
 			isLinkCopied: {},
+			isDarkTheme: OCA.Accessibility?.theme === 'dark',
 		}
 	},
 
 	computed: {
 		nbFavorites() {
 			return Object.keys(this.favorites).length
-		},
-		isDarkTheme() {
-			return OCA.Accessibility?.theme === 'dark'
 		},
 	},
 

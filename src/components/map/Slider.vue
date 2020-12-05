@@ -58,4 +58,37 @@ export default {
 	background-color: var(--color-main-background) !important;
 	box-shadow: none;
 }
+
+.timeRangeSlider-active {
+	background-color: var(--color-warning, #b10610) !important;
+}
+
+::v-deep .noUi-handle::after,
+::v-deep .noUi-handle::before {
+	height: 8px !important;
+}
+
+::v-deep .noUi-handle {
+	height: 20px !important;
+	border-radius: 10px !important;
+	background-color: var(--color-main-background) !important;
+	box-shadow: inset 0 0 1px var(--color-background-dark), inset 0 1px 7px var(--color-background-dark), 0 3px 6px -3px var(--color-background-darker) !important;
+}
+
+::v-deep .noUi-tooltip {
+	display: none;
+	z-index: 10001;
+	color: var(--color-main-text) !important;
+	background-color: var(--color-main-background) !important;
+}
+
+::v-deep .noUi-handle:hover .noUi-tooltip,
+::v-deep .noUi-active .noUi-tooltip {
+	display: block;
+	z-index: 10001;
+}
+
+::v-deep .noUi-connect {
+	background-color: var(--color-primary);
+}
 </style>

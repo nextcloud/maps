@@ -214,6 +214,7 @@ export default {
 	data() {
 		return {
 			locale: getLocale(),
+			isDarkTheme: OCA.Accessibility?.theme === 'dark',
 			optionValues: optionsController.optionValues,
 			// map
 			map: null,
@@ -253,6 +254,9 @@ export default {
 		}
 	},
 
+	computed: {
+	},
+
 	watch: {
 		loading() {
 			if (this.loading) {
@@ -272,22 +276,23 @@ export default {
 			this.map.fitBounds(latLng)
 		},
 		getContextmenuItems() {
+			const iconColor = OCA.Accessibility?.theme === 'dark' ? 'ffffff' : '000000'
 			const cmi = [
 				{
 					text: t('maps', 'Add a favorite'),
-					icon: generateUrl('/svg/core/actions/starred?color=000000'),
+					icon: generateUrl('/svg/core/actions/starred?color=' + iconColor),
 					callback: this.contextAddFavorite,
 				}, {
 					text: t('maps', 'Place photos'),
-					icon: generateUrl('/svg/core/places/picture?color=000000'),
+					icon: generateUrl('/svg/core/places/picture?color=' + iconColor),
 					callback: this.contextPlacePhotos,
 				}, {
 					text: t('maps', 'Place contact'),
-					icon: generateUrl('/svg/core/actions/user?color=000000'),
+					icon: generateUrl('/svg/core/actions/user?color=' + iconColor),
 					callback: this.placeContactClicked,
 				}, {
 					text: t('maps', 'Share this location'),
-					icon: generateUrl('/svg/core/actions/share?color=000000'),
+					icon: generateUrl('/svg/core/actions/share?color=' + iconColor),
 					callback: () => {},
 				},
 			]
@@ -619,6 +624,25 @@ export default {
 
 ::v-deep .easy-button-container.hidden {
 	display: none;
+}
+
+::v-deep .leaflet-contextmenu {
+	background-color: var(--color-main-background);
+}
+
+::v-deep .leaflet-contextmenu-item {
+	line-height: 30px !important;
+	color: var(--color-text-lighter) !important;
+}
+
+::v-deep .leaflet-contextmenu-item:hover {
+	color: var(--color-main-text) !important;
+	background-color: var(--color-background-hover) !important;
+	border-color: var(--color-border) !important;
+}
+
+::v-deep .leaflet-contextmenu-item img {
+	margin: 7px 8px 0 0 !important;
 }
 
 ::v-deep .leaflet-marker-photo,

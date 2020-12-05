@@ -890,5 +890,4 @@ export default {
 ::v-deep .favoriteMarkerDark {
 	background: url('../../img/star-black.svg') no-repeat 50% 50%;
 }
-
 </style>

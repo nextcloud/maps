@@ -20,33 +20,6 @@
     }
 }
 
-.noUi-handle::after,
-.noUi-handle::before {
-    height: 8px !important;
-}
-.noUi-handle {
-    height: 20px !important;
-    border-radius: 10px !important;
-    background-color: var(--color-main-background) !important;
-    box-shadow: inset 0 0 1px var(--color-background-dark), inset 0 1px 7px var(--color-background-dark), 0 3px 6px -3px var(--color-background-darker) !important;
-}
-
-.noUi-tooltip {
-    display: none;
-    z-index: 10001;
-}
-.noUi-active .noUi-tooltip {
-    display: block;
-    z-index: 10001;
-}
-
-.noUi-connect {
-    background-color: var(--color-primary);
-}
-.timeRangeSlider-active {
-    background-color: var(--color-warning, #b10610) !important;
-}
-
 #map {
     width: 100%;
     position: absolute;
@@ -443,16 +416,6 @@ tr.selected td {
 }
 .route-end-waypoint {
     background-color: red;
-}
-.leaflet-contextmenu-item {
-    line-height: 30px !important;
-    color: var(--color-text-lighter) !important;
-}
-.leaflet-contextmenu-item:hover {
-    color: var(--color-main-text) !important;
-}
-.leaflet-contextmenu-item img {
-    margin: 7px 8px 0 0 !important;
 }
 .line-enabled {
     background: var(--color-background-dark);

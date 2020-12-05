@@ -773,7 +773,6 @@ export default {
 			})
 		},
 		onRenameFavoriteCategory(e, save = true) {
-			console.debug(' rename ' + e.old + ' into ' + e.new)
 			network.renameFavoriteCategory([e.old], e.new).then((response) => {
 				if (save) {
 					this.saveAction({
@@ -787,6 +786,11 @@ export default {
 						this.favorites[favid].category = e.new
 					}
 				})
+				// update share token
+				if (this.favoriteCategoryTokens[e.old]) {
+					this.favoriteCategoryTokens[e.new] = this.favoriteCategoryTokens[e.old]
+					delete this.favoriteCategoryTokens[e.old]
+				}
 			}).catch((error) => {
 				console.error(error)
 			})

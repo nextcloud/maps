@@ -13,7 +13,7 @@
 		:clear-on-select="false"
 		:preserve-search="true"
 		:placeholder="placeholder"
-		:loading="searching"
+		:loading="searching || loading"
 		:options="formattedOptions"
 		:user-select="false"
 		@input="onOptionSelected"
@@ -63,6 +63,10 @@ export default {
 		selectedOption: {
 			type: Object,
 			default: null,
+		},
+		loading: {
+			type: Boolean,
+			default: false,
 		},
 	},
 

@@ -4,12 +4,19 @@
 			<SearchField
 				class="search-field"
 				:data="searchData"
+				:loading="loading"
 				@validate="$emit('validate', $event)" />
 			<button
 				v-tooltip="{ content: t('maps', 'Find directions') }"
-				class="routing-button"
+				class="bar-button"
 				@click="$emit('routing-clicked')">
-				<span class="icon-routing" />
+				<span class="icon icon-routing" />
+			</button>
+			<button v-if="resultPoiNumber > 0"
+				v-tooltip="{ content: t('maps', 'Clear POIs') }"
+				class="bar-button"
+				@click="$emit('clear-pois')">
+				<span class="icon icon-close" />
 			</button>
 		</div>
 	</LControl>
@@ -42,6 +49,14 @@ export default {
 		searchData: {
 			type: Array,
 			required: true,
+		},
+		loading: {
+			type: Boolean,
+			default: false,
+		},
+		resultPoiNumber: {
+			type: Number,
+			default: 0,
 		},
 	},
 
@@ -81,13 +96,15 @@ export default {
 		}
 	}
 
-	.routing-button {
+	.bar-button {
 		margin: 0 0 0 5px;
 		.icon-routing {
-			opacity: 0.5;
 			margin-right: 2px;
 		}
-		&:hover .icon-routing {
+		.icon {
+			opacity: 0.5;
+		}
+		&:hover .icon {
 			opacity: 1;
 		}
 	}

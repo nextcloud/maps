@@ -25,8 +25,11 @@
 				v-show="!showRouting"
 				:map="map"
 				:search-data="searchData"
+				:loading="searching"
+				:result-poi-number="searchPois.length"
 				@validate="onSearchValidate"
-				@routing-clicked="showRouting = true" />
+				@routing-clicked="showRouting = true"
+				@clear-pois="searchPois = []" />
 			<HistoryControl v-if="map"
 				position="topright"
 				:last-actions="lastActions"
@@ -86,8 +89,11 @@
 			<PlaceContactPopup v-if="placingContact"
 				:lat-lng="placingContactLatLng"
 				@contact-placed="onContactPlaced" />
-			<SearchPoiLayer
-				:pois="searchPois" />
+			<LFeatureGroup>
+				<PoiMarker v-for="poi in searchPois"
+					:key="poi.place_id"
+					:poi="poi" />
+			</LFeatureGroup>
 		</LMap>
 		<Slider v-show="sliderEnabled"
 			:min="3"
@@ -108,7 +114,7 @@ import {
 	baseLayersByName,
 	overlayLayersByName,
 } from '../data/mapLayers'
-import { LControlScale, LControlZoom, LMap, LTileLayer, LControlLayers } from 'vue2-leaflet'
+import { LControlScale, LControlZoom, LMap, LTileLayer, LControlLayers, LFeatureGroup } from 'vue2-leaflet'
 
 import 'leaflet-easybutton/src/easy-button'
 import 'leaflet-easybutton/src/easy-button.css'
@@ -123,7 +129,7 @@ import FavoritesLayer from '../components/map/FavoritesLayer'
 import PhotosLayer from '../components/map/PhotosLayer'
 import ContactsLayer from '../components/map/ContactsLayer'
 import PlaceContactPopup from '../components/map/PlaceContactPopup'
-import SearchPoiLayer from '../components/map/SearchPoiLayer'
+import PoiMarker from '../components/map/PoiMarker'
 import optionsController from '../optionsController'
 
 export default {
@@ -135,6 +141,7 @@ export default {
 		LControlZoom,
 		LControlLayers,
 		LTileLayer,
+		LFeatureGroup,
 		Slider,
 		HistoryControl,
 		SearchControl,
@@ -143,7 +150,7 @@ export default {
 		PhotosLayer,
 		ContactsLayer,
 		PlaceContactPopup,
-		SearchPoiLayer,
+		PoiMarker,
 	},
 
 	props: {
@@ -251,6 +258,7 @@ export default {
 			placingContact: false,
 			// poi
 			searchPois: [],
+			searching: false,
 		}
 	},
 
@@ -560,6 +568,7 @@ export default {
 			if (['contact', 'favorite'].includes(element.type)) {
 				this.map.setView(element.latLng, 15)
 			} else if (element.type === 'poi') {
+				this.searching = true
 				const mapBounds = this.map.getBounds()
 				const latMin = mapBounds.getSouth()
 				const latMax = mapBounds.getNorth()
@@ -572,6 +581,7 @@ export default {
 					+ 'bounded=1&' + query
 				axios.get(apiUrl).then((response) => {
 					this.searchPois = response.data
+					this.searching = false
 				})
 			}
 		},

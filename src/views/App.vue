@@ -226,7 +226,7 @@ export default {
 					value: 'restaurant',
 				}, {
 					type: 'poi',
-					subtype: 'amenity',
+					subtype: 'q',
 					label: t('maps', 'Fast food'),
 					value: 'fast food',
 				}, {
@@ -271,7 +271,7 @@ export default {
 					value: 'parking',
 				}, {
 					type: 'poi',
-					subtype: 'amenity',
+					subtype: 'q',
 					label: t('maps', 'Bicycle parking'),
 					value: 'bicycle parking',
 				}, {

@@ -89,6 +89,10 @@
 			<PlaceContactPopup v-if="placingContact"
 				:lat-lng="placingContactLatLng"
 				@contact-placed="onContactPlaced" />
+			<ClickSearchPopup v-if="leftClickSearching"
+				:lat-lng="leftClickSearchLatLng"
+				@place-contact="onAddContactAddress"
+				@add-favorite="$emit('add-address-favorite', $event); leftClickSearching = false" />
 			<LFeatureGroup>
 				<PoiMarker v-for="poi in searchPois"
 					:key="poi.place_id"
@@ -130,6 +134,7 @@ import PhotosLayer from '../components/map/PhotosLayer'
 import ContactsLayer from '../components/map/ContactsLayer'
 import PlaceContactPopup from '../components/map/PlaceContactPopup'
 import PoiMarker from '../components/map/PoiMarker'
+import ClickSearchPopup from '../components/map/ClickSearchPopup'
 import optionsController from '../optionsController'
 
 export default {
@@ -150,6 +155,7 @@ export default {
 		PhotosLayer,
 		ContactsLayer,
 		PlaceContactPopup,
+		ClickSearchPopup,
 		PoiMarker,
 	},
 
@@ -240,6 +246,7 @@ export default {
 					contextmenuItems: this.getContextmenuItems(),
 				},
 				scaleControlShouldUseImperial: false,
+				closePopupOnClick: false,
 			},
 			// layers
 			allBaseLayers: {},
@@ -254,11 +261,14 @@ export default {
 			// routing
 			showRouting: false,
 			// contacts
-			placingContactLatLng: null,
 			placingContact: false,
+			placingContactLatLng: null,
 			// poi
 			searchPois: [],
 			searching: false,
+			// left click search
+			leftClickSearching: false,
+			leftClickSearchLatLng: null,
 		}
 	},
 
@@ -347,13 +357,32 @@ export default {
 			this.streetButton.button.parentElement.classList.remove('hidden')
 			this.satelliteButton.button.parentElement.classList.remove('hidden')
 
+			const thereWasAPopup = this.map.contextmenu._visible
+				|| this.placingContact
+				|| (this.map._popup !== undefined && this.map._popup !== null)
+				|| this.leftClickSearching
+			this.map.closePopup()
 			this.map.contextmenu.hide()
 			this.placingContact = false
+			this.leftClickSearching = false
+			if (!thereWasAPopup) {
+				this.leftClickSearch(e.latlng.lat, e.latlng.lng)
+			}
 		},
 		onMapContextmenu(e) {
 			if (e.originalEvent.target.classList.contains('vue2leaflet-map') || e.originalEvent.target.classList.contains('mapboxgl-map')) {
 				this.map.contextmenu.showAt(L.latLng(e.latlng.lat, e.latlng.lng))
+				this.leftClickSearching = false
 			}
+		},
+		leftClickSearch(lat, lng) {
+			this.leftClickSearchLatLng = L.latLng(lat, lng)
+			this.leftClickSearching = true
+		},
+		onAddContactAddress(obj) {
+			this.leftClickSearching = false
+			this.placingContactLatLng = L.latLng(obj.latLng.lat, obj.latLng.lng)
+			this.placingContact = true
 		},
 		initLayers(map) {
 			// tile layers

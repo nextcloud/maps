@@ -86,7 +86,7 @@ export default {
 				},
 			},
 			clusterPopupOptions: {
-				closeOnClick: true,
+				closeOnClick: false,
 				className: 'popovermenu open popupMarker favoritePopup',
 				offset: L.point(-5, 20),
 			},

@@ -124,7 +124,7 @@ export default {
 				offset: L.point(0, 0),
 			},
 			popupOptions: {
-				closeOnClick: true,
+				closeOnClick: false,
 				className: 'popovermenu open popupMarker contactPopup',
 				offset: L.point(-5, 10),
 			},

@@ -117,12 +117,12 @@ export default {
 				offset: L.point(0, -30),
 			},
 			popupOptions: {
-				closeOnClick: true,
+				closeOnClick: false,
 				className: 'popovermenu open popupMarker photoPopup',
 				offset: L.point(-5, -20),
 			},
 			clusterPopupOptions: {
-				closeOnClick: true,
+				closeOnClick: false,
 				className: 'popovermenu open popupMarker photoPopup',
 				offset: L.point(-5, 20),
 			},

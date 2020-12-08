@@ -7,7 +7,9 @@
 			:icon-url="markerIconUrl" />
 		<LPopup :options="popupOptions"
 			@ready="onPopupReady">
-			<h3>{{ t('maps', 'New contact address') }}</h3>
+			<h3 id="place-popup-title">
+				{{ t('maps', 'New contact address') }}
+			</h3>
 			<span v-if="addressLoading"
 				class="icon icon-loading-small" />
 			<textarea v-else
@@ -231,5 +233,15 @@ span.icon {
 
 .contact-avatar {
 	margin-right: 10px;
+}
+
+#place-popup-title {
+	text-align: center;
+}
+
+#placeContactPopupAddress {
+	border: none;
+	width: 100%;
+	height: 75px;
 }
 </style>

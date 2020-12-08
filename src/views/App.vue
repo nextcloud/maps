@@ -63,6 +63,7 @@
 					:last-canceled-actions="lastCanceledActions"
 					@edit-favorite="onFavoriteEdit"
 					@add-favorite="onFavoriteAdd"
+					@add-address-favorite="onAddressFavoriteAdd"
 					@delete-favorite="onFavoriteDelete"
 					@delete-favorites="onFavoritesDelete"
 					@coords-reset="resetPhotosCoords"
@@ -866,6 +867,12 @@ export default {
 			}).catch((error) => {
 				console.error(error)
 			})
+		},
+		onAddressFavoriteAdd(obj) {
+			const name = obj.address.attraction
+				|| obj.address.road
+				|| obj.address.city_district
+			this.addFavorite(obj.latLng, name, null, obj.formattedAddress)
 		},
 		onFavoriteAdd(latLng) {
 			this.addFavorite(latLng)

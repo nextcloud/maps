@@ -86,6 +86,8 @@
 			<PlaceContactPopup v-if="placingContact"
 				:lat-lng="placingContactLatLng"
 				@contact-placed="onContactPlaced" />
+			<SearchPoiLayer
+				:pois="searchPois" />
 		</LMap>
 		<Slider v-show="sliderEnabled"
 			:min="3"
@@ -96,18 +98,13 @@
 <script>
 import { getLocale } from '@nextcloud/l10n'
 import { generateUrl } from '@nextcloud/router'
+import { getCurrentUser } from '@nextcloud/auth'
+import axios from '@nextcloud/axios'
 
-/* import {
-	L,
-	// DivIcon,
-	latLngBounds,
-} from 'leaflet' */
 import L from 'leaflet'
 import 'mapbox-gl/dist/mapbox-gl'
 import 'mapbox-gl-leaflet/leaflet-mapbox-gl'
 import {
-	// LayerIds,
-	// Layers,
 	baseLayersByName,
 	overlayLayersByName,
 } from '../data/mapLayers'
@@ -126,7 +123,7 @@ import FavoritesLayer from '../components/map/FavoritesLayer'
 import PhotosLayer from '../components/map/PhotosLayer'
 import ContactsLayer from '../components/map/ContactsLayer'
 import PlaceContactPopup from '../components/map/PlaceContactPopup'
-import { getCurrentUser } from '@nextcloud/auth'
+import SearchPoiLayer from '../components/map/SearchPoiLayer'
 import optionsController from '../optionsController'
 
 export default {
@@ -146,6 +143,7 @@ export default {
 		PhotosLayer,
 		ContactsLayer,
 		PlaceContactPopup,
+		SearchPoiLayer,
 	},
 
 	props: {
@@ -251,6 +249,8 @@ export default {
 			// contacts
 			placingContactLatLng: null,
 			placingContact: false,
+			// poi
+			searchPois: [],
 		}
 	},
 
@@ -556,7 +556,24 @@ export default {
 		},
 		// search
 		onSearchValidate(element) {
-			this.map.setView(element.latLng, 15)
+			console.debug(element)
+			if (['contact', 'favorite'].includes(element.type)) {
+				this.map.setView(element.latLng, 15)
+			} else if (element.type === 'poi') {
+				const mapBounds = this.map.getBounds()
+				const latMin = mapBounds.getSouth()
+				const latMax = mapBounds.getNorth()
+				const lngMin = mapBounds.getWest()
+				const lngMax = mapBounds.getEast()
+				const query = element.subtype + '=' + encodeURIComponent(element.value)
+				const apiUrl = 'https://nominatim.openstreetmap.org/search'
+					+ '?format=json&addressdetails=1&extratags=1&namedetails=1&limit=100&'
+					+ 'viewbox=' + parseFloat(lngMin) + ',' + parseFloat(latMin) + ',' + parseFloat(lngMax) + ',' + parseFloat(latMax) + '&'
+					+ 'bounded=1&' + query
+				axios.get(apiUrl).then((response) => {
+					this.searchPois = response.data
+				})
+			}
 		},
 	},
 }

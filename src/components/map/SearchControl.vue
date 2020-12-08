@@ -92,4 +92,14 @@ export default {
 		}
 	}
 }
+
+::v-deep .icon-dot-circle {
+	background-color: var(--color-main-text);
+	mask: url('../../../img/dot-circle.svg') no-repeat;
+	mask-size: 16px auto;
+	mask-position: center;
+	-webkit-mask: url('../../../img/dot-circle.svg') no-repeat;
+	-webkit-mask-size: 16px auto;
+	-webkit-mask-position: center;
+}
 </style>

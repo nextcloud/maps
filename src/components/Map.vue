@@ -100,8 +100,9 @@
 			</LFeatureGroup>
 		</LMap>
 		<Slider v-show="sliderEnabled"
-			:min="3"
-			:max="33" />
+			:min="minDataTimestamp"
+			:max="maxDataTimestamp"
+			@range-change="$emit('slider-range-changed', $event)" />
 	</div>
 </template>
 
@@ -206,6 +207,14 @@ export default {
 		},
 		sliderEnabled: {
 			type: Boolean,
+			required: true,
+		},
+		minDataTimestamp: {
+			type: Number,
+			required: true,
+		},
+		maxDataTimestamp: {
+			type: Number,
 			required: true,
 		},
 		loading: {

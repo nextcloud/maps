@@ -51,13 +51,15 @@
 					:favorite-categories="favoriteCategories"
 					:favorites-enabled="favoritesEnabled"
 					:favorites-draggable="favoritesDraggable"
-					:photos="photos"
+					:photos="displayedPhotos"
 					:photos-enabled="photosEnabled"
 					:photos-draggable="photosDraggable"
 					:contacts="contacts"
 					:contact-groups="contactGroups"
 					:contacts-enabled="contactsEnabled"
 					:slider-enabled="sliderEnabled"
+					:min-data-timestamp="minDataTimestamp"
+					:max-data-timestamp="maxDataTimestamp"
 					:loading="mapLoading"
 					:last-actions="lastActions"
 					:last-canceled-actions="lastCanceledActions"
@@ -72,7 +74,8 @@
 					@place-photos="placePhotoFilesOrFolder"
 					@photo-moved="onPhotoMoved"
 					@cancel="cancelAction"
-					@redo="redoAction" />
+					@redo="redoAction"
+					@slider-range-changed="sliderStart = $event.start; sliderEnd = $event.end" />
 			</div>
 			<Actions
 				class="content-buttons"
@@ -96,6 +99,7 @@ import Content from '@nextcloud/vue/dist/Components/Content'
 import AppContent from '@nextcloud/vue/dist/Components/AppContent'
 import Actions from '@nextcloud/vue/dist/Components/Actions'
 import { showError, showSuccess } from '@nextcloud/dialogs'
+import moment from '@nextcloud/moment'
 
 import Map from '../components/Map'
 import MapsNavigation from '../components/MapsNavigation'
@@ -126,7 +130,10 @@ export default {
 	data() {
 		return {
 			optionValues: optionsController.optionValues,
+			// slider
 			sliderEnabled: optionsController.optionValues.displaySlider === 'true',
+			sliderStart: 0,
+			sliderEnd: moment().unix(),
 			// action history
 			lastActions: [],
 			lastCanceledActions: [],
@@ -155,6 +162,37 @@ export default {
 		mapLoading() {
 			return this.photosLoading || this.contactsLoading || this.favoritesLoading
 		},
+		// slider
+		minDataTimestamp() {
+			return Math.min(
+				this.minPhotoTimestamp
+			) || 0
+		},
+		maxDataTimestamp() {
+			return Math.min(
+				this.maxPhotoTimestamp
+			) || moment().unix()
+		},
+		photoDates() {
+			return this.photos.map(p => p.dateTaken)
+		},
+		minPhotoTimestamp() {
+			return this.photos.length
+				? Math.min(...this.photoDates)
+				: 0
+		},
+		maxPhotoTimestamp() {
+			return this.photos.length
+				? Math.max(...this.photoDates)
+				: moment().unix()
+		},
+		// displayed data
+		displayedPhotos() {
+			return this.sliderEnabled
+				? this.photos.filter((p) => { return p.dateTaken >= this.sliderStart && p.dateTaken <= this.sliderEnd })
+				: this.photos
+		},
+		// search
 		searchData() {
 			return [
 				...this.contactSearchData,

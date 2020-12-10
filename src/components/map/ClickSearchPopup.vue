@@ -24,6 +24,7 @@
 </template>
 
 <script>
+import L from 'leaflet'
 import { LMarker, LPopup } from 'vue2-leaflet'
 
 import { formatAddress } from '../../utils'
@@ -47,6 +48,7 @@ export default {
 		return {
 			popupOptions: {
 				closeButton: false,
+				offset: L.point(-1, 42),
 			},
 			addressLoading: false,
 			address: null,

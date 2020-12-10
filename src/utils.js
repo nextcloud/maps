@@ -318,6 +318,9 @@ function getUrlParameter(sParam) {
 }
 
 function formatAddress(address) {
+    if (!address) {
+        return ''
+    }
     var strAddress =
         (address.attraction || '') +
         ' ' +

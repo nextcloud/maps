@@ -91,6 +91,7 @@ export default {
 				offset: L.point(-5, 20),
 			},
 			contextCluster: null,
+			spiderfied: false,
 		}
 	},
 
@@ -181,6 +182,7 @@ export default {
 					m.dragging.enable()
 				})
 			}
+			this.spiderfied = true
 		},
 	},
 }

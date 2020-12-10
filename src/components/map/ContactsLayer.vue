@@ -1,6 +1,7 @@
 <template>
 	<Vue2LeafletMarkerCluster :options="clusterOptions"
-		@clusterclick="onClusterClick">
+		@clusterclick="onClusterClick"
+		@spiderfied="spiderfied = true">
 		<LMarker v-for="(c, i) in displayedContacts"
 			:key="c.URI + i + c.ADR"
 			:options="{ data: c }"
@@ -128,6 +129,7 @@ export default {
 				className: 'popovermenu open popupMarker contactPopup',
 				offset: L.point(-5, 10),
 			},
+			spiderfied: false,
 		}
 	},
 

@@ -67,6 +67,7 @@
 				:opacity="l.opacity" />
 			<FavoritesLayer
 				v-if="map && favoritesEnabled"
+				ref="favoritesLayer"
 				:map="map"
 				:favorites="favorites"
 				:categories="favoriteCategories"
@@ -76,6 +77,7 @@
 				@delete-multiple="$emit('delete-favorites', $event)" />
 			<PhotosLayer
 				v-if="map && photosEnabled"
+				ref="photosLayer"
 				:map="map"
 				:photos="photos"
 				:draggable="photosDraggable"
@@ -83,6 +85,7 @@
 				@photo-moved="onPhotoMoved" />
 			<ContactsLayer
 				v-if="map && contactsEnabled"
+				ref="contactsLayer"
 				:contacts="contacts"
 				:groups="contactGroups"
 				@address-deleted="$emit('address-deleted')" />
@@ -370,11 +373,19 @@ export default {
 				|| this.placingContact
 				|| (this.map._popup !== undefined && this.map._popup !== null)
 				|| this.leftClickSearching
+
+			const hadSpider = this.$refs.favoritesLayer.spiderfied
+				|| this.$refs.contactsLayer.spiderfied
+				|| this.$refs.photosLayer.spiderfied
+			this.$refs.favoritesLayer.spiderfied = false
+			this.$refs.contactsLayer.spiderfied = false
+			this.$refs.photosLayer.spiderfied = false
+
 			this.map.closePopup()
 			this.map.contextmenu.hide()
 			this.placingContact = false
 			this.leftClickSearching = false
-			if (!thereWasAPopup) {
+			if (!thereWasAPopup && !hadSpider) {
 				this.leftClickSearch(e.latlng.lat, e.latlng.lng)
 			}
 		},

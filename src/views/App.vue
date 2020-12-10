@@ -47,7 +47,7 @@
 				<Map
 					ref="map"
 					:search-data="searchData"
-					:favorites="favorites"
+					:favorites="displayedFavorites"
 					:favorite-categories="favoriteCategories"
 					:favorites-enabled="favoritesEnabled"
 					:favorites-draggable="favoritesDraggable"
@@ -165,32 +165,61 @@ export default {
 		// slider
 		minDataTimestamp() {
 			return Math.min(
-				this.minPhotoTimestamp
+				this.minPhotoTimestamp,
+				this.minFavoriteTimestamp
 			) || 0
 		},
 		maxDataTimestamp() {
-			return Math.min(
-				this.maxPhotoTimestamp
+			return Math.max(
+				this.maxPhotoTimestamp,
+				this.maxFavoriteTimestamp
 			) || moment().unix()
 		},
 		photoDates() {
-			return this.photos.map(p => p.dateTaken)
+			return this.photos.filter(p => { return p.dateTaken !== null }).map(p => p.dateTaken)
 		},
 		minPhotoTimestamp() {
 			return this.photos.length
 				? Math.min(...this.photoDates)
-				: 0
+				: moment().unix() - 10
 		},
 		maxPhotoTimestamp() {
 			return this.photos.length
 				? Math.max(...this.photoDates)
 				: moment().unix()
 		},
+		favoritesDates() {
+			return Object.keys(this.favorites).filter((fid) => {
+				return this.favorites[fid].date_created !== null
+			}).map((fid) => {
+				return this.favorites[fid].date_created
+			})
+		},
+		minFavoriteTimestamp() {
+			return Object.keys(this.favorites).length
+				? Math.min(...this.favoritesDates)
+				: moment().unix() - 10
+		},
+		maxFavoriteTimestamp() {
+			return Object.keys(this.favorites).length
+				? Math.max(...this.favoritesDates)
+				: moment().unix()
+		},
 		// displayed data
 		displayedPhotos() {
 			return this.sliderEnabled
-				? this.photos.filter((p) => { return p.dateTaken >= this.sliderStart && p.dateTaken <= this.sliderEnd })
+				? this.photos.filter((p) => {
+					return p.dateTaken === null || (p.dateTaken >= this.sliderStart && p.dateTaken <= this.sliderEnd)
+				})
 				: this.photos
+		},
+		displayedFavorites() {
+			return this.sliderEnabled
+				? Object.keys(this.favorites).filter((fid) => {
+					return this.favorites[fid].date_created === null
+						|| (this.favorites[fid].date_created >= this.sliderStart && this.favorites[fid].date_created <= this.sliderEnd)
+				}).reduce((res, fid) => { res[fid] = this.favorites[fid]; return res }, {})
+				: this.favorites
 		},
 		// search
 		searchData() {

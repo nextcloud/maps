@@ -72,6 +72,9 @@ export default {
 		this.setSlider()
 		this.$refs.slider.noUiSlider.on('update', this.onUpdateSlider)
 		this.$refs.slider.noUiSlider.on('change', this.onChangeSlider)
+		this.$refs.slider.ondblclick = () => {
+			this.setSliderToMaxInterval()
+		}
 	},
 
 	methods: {
@@ -86,6 +89,15 @@ export default {
 		},
 		setSlider() {
 			this.$refs.slider.noUiSlider.set([this.myStart, this.myEnd])
+			this.$emit('range-change', { start: this.myStart, end: this.myEnd })
+		},
+		setSliderToMaxInterval() {
+			this.myMin = this.min
+			this.myMax = this.max
+			this.updateSliderRange()
+			this.myStart = this.min
+			this.myEnd = this.max
+			this.setSlider()
 		},
 		// slider handle moving
 		onUpdateSlider(values, handle, unencoded, tap, positions) {

@@ -1,4 +1,5 @@
 import axios from '@nextcloud/axios'
+import * as realAxios from 'axios'
 import { generateUrl } from '@nextcloud/router'
 import {
 	// showSuccess,
@@ -38,13 +39,13 @@ export function getAllContacts() {
 
 export function geocode(lat, lng) {
 	const url = 'https://nominatim.openstreetmap.org/reverse?format=json&lat=' + lat + '&lon=' + lng + '&addressdetails=1'
-	return axios.get(url)
+	return realAxios.get(url)
 }
 
 export function searchAddress(address, limit = 8) {
 	const query = encodeURIComponent(address)
 	const url = 'https://nominatim.openstreetmap.org/search/' + query + '?format=json&addressdetails=1&extratags=1&namedetails=1&limit=' + limit
-	return axios.get(url)
+	return realAxios.get(url)
 }
 
 export function exportRoute(type, coords, name, totDist, totTime) {

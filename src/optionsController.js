@@ -1,9 +1,5 @@
 import * as network from './network'
-import {
-	// showSuccess,
-	// showError,
-	showWarning,
-} from '@nextcloud/dialogs'
+import { showWarning } from '@nextcloud/dialogs'
 
 const optionsController = {
 	bounds: [
@@ -101,23 +97,8 @@ const optionsController = {
 			this.nbRouters++
 		}
 		/*
-		if (!optionsValues.hasOwnProperty('photosLayer') || optionsValues.photosLayer === 'true') {
-			photosController.toggleLayer();
-		}
-		if (!optionsValues.hasOwnProperty('contactGroupListShow') || optionsValues.contactGroupListShow === 'true') {
-			contactsController.toggleGroupList();
-		}
-		if (optionsValues.hasOwnProperty('disabledContactGroups')
-			&& optionsValues.disabledContactGroups
-			&& optionsValues.disabledContactGroups !== '')
-		{
-			that.disabledContactGroups = optionsValues.disabledContactGroups.split('|');
-		}
 		if (optionsValues.hasOwnProperty('locControlEnabled') && optionsValues.locControlEnabled === 'true') {
 			mapController.locControl.start();
-		}
-		if (!optionsValues.hasOwnProperty('favoriteCategoryListShow') || optionsValues.favoriteCategoryListShow === 'true') {
-			favoritesController.toggleCategoryList();
 		}
 		if (!optionsValues.hasOwnProperty('trackListShow') || optionsValues.trackListShow === 'true') {
 			tracksController.toggleTrackList();
@@ -166,44 +147,7 @@ const optionsController = {
 			devicesController.launchTrackLoop();
 		}
 
-		// save tile layer when changed
-		// do it after restore, otherwise restoring triggers save
-		mapController.map.on('baselayerchange ', function(e) {
-			optionsController.saveOptionValues({tileLayer: e.name});
-			// make sure map is clean
-			for (var ol in mapController.baseOverlays) {
-				mapController.map.removeLayer(mapController.baseOverlays[ol]);
-			}
-			for (var tl in mapController.baseLayers) {
-				if (tl !== e.name) {
-					mapController.map.removeLayer(mapController.baseLayers[tl]);
-				}
-			}
-			if (e.name === 'Watercolor') {
-				mapController.map.addLayer(mapController.baseOverlays['Roads and labels']);
-			}
-			mapController.layerChanged(e.name);
-		});
-
-		if ((optionsValues.hasOwnProperty('graphhopperURL') && optionsValues.graphhopperURL !== '') ||
-			(optionsValues.hasOwnProperty('graphhopperAPIKEY') && optionsValues.graphhopperAPIKEY !== '') ){
-			that.nbRouters++;
-		}
-		if (that.nbRouters === 0 && !OC.isUserAdmin()) {
-			// disable routing and hide it to the user
-			// search bar
-			$('#route-submit').hide();
-			$('#search-submit').css('right', '10px');
-			// context menu: remove routing related items
-			mapController.map.contextmenu.removeItem(mapController.map.contextmenu._items[mapController.map.contextmenu._items.length-1].el);
-			mapController.map.contextmenu.removeItem(mapController.map.contextmenu._items[mapController.map.contextmenu._items.length-1].el);
-			mapController.map.contextmenu.removeItem(mapController.map.contextmenu._items[mapController.map.contextmenu._items.length-1].el);
-			mapController.map.contextmenu.removeItem(mapController.map.contextmenu._items[mapController.map.contextmenu._items.length-1].el);
-			// and we don't init routingController
-		}
-		else {
-			routingController.initRoutingControl(mapController.map, optionsValues);
-		} */
+		*/
 	},
 }
 

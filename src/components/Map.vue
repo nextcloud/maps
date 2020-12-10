@@ -374,12 +374,18 @@ export default {
 				|| (this.map._popup !== undefined && this.map._popup !== null)
 				|| this.leftClickSearching
 
-			const hadSpider = this.$refs.favoritesLayer.spiderfied
-				|| this.$refs.contactsLayer.spiderfied
-				|| this.$refs.photosLayer.spiderfied
-			this.$refs.favoritesLayer.spiderfied = false
-			this.$refs.contactsLayer.spiderfied = false
-			this.$refs.photosLayer.spiderfied = false
+			const hadSpider = this.$refs.favoritesLayer?.spiderfied
+				|| this.$refs.contactsLayer?.spiderfied
+				|| this.$refs.photosLayer?.spiderfied
+			if (this.$refs.favoritesLayer) {
+				this.$refs.favoritesLayer.spiderfied = false
+			}
+			if (this.$refs.contactsLayer) {
+				this.$refs.contactsLayer.spiderfied = false
+			}
+			if (this.$refs.photosLayer) {
+				this.$refs.photosLayer.spiderfied = false
+			}
 
 			this.map.closePopup()
 			this.map.contextmenu.hide()

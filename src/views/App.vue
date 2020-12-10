@@ -180,14 +180,18 @@ export default {
 			return this.photos.filter(p => { return p.dateTaken !== null }).map(p => p.dateTaken)
 		},
 		minPhotoTimestamp() {
-			return this.photos.length
-				? Math.min(...this.photoDates)
-				: moment().unix() - 10
+			return this.photoDates.length >= 2
+				? this.photoDates[0]
+				: this.photoDates.length === 1
+					? this.photoDates[0] - 100
+					: moment().unix() - 100
 		},
 		maxPhotoTimestamp() {
-			return this.photos.length
-				? Math.max(...this.photoDates)
-				: moment().unix()
+			return this.photoDates.length >= 2
+				? this.photoDates[this.photoDates.length - 1]
+				: this.photoDates.length === 1
+					? this.photoDates[0] + 100
+					: moment().unix() + 100
 		},
 		favoritesDates() {
 			return Object.keys(this.favorites).filter((fid) => {
@@ -197,14 +201,18 @@ export default {
 			})
 		},
 		minFavoriteTimestamp() {
-			return Object.keys(this.favorites).length
+			return this.favoritesDates.length >= 2
 				? Math.min(...this.favoritesDates)
-				: moment().unix() - 10
+				: this.favoritesDates.length === 1
+					? this.favoritesDates[0] - 100
+					: moment().unix() - 100
 		},
 		maxFavoriteTimestamp() {
-			return Object.keys(this.favorites).length
+			return this.favoritesDates.length >= 2
 				? Math.max(...this.favoritesDates)
-				: moment().unix()
+				: this.favoritesDates.length === 1
+					? this.favoritesDates[0] + 100
+					: moment().unix() + 100
 		},
 		// displayed data
 		displayedPhotos() {
@@ -371,7 +379,14 @@ export default {
 			}
 			this.photosLoading = true
 			network.getPhotos().then((response) => {
-				this.photos = response.data
+				this.photos = response.data.sort((a, b) => {
+					if (a.dateTaken < b.dateTaken) {
+						return -1
+					} else if (a.dateTaken > b.dateTaken) {
+						return 1
+					}
+					return 0
+				})
 			}).catch((error) => {
 				console.error(error)
 			}).then(() => {

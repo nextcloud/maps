@@ -128,6 +128,8 @@ import 'leaflet-easybutton/src/easy-button'
 import 'leaflet-easybutton/src/easy-button.css'
 import 'leaflet-contextmenu/dist/leaflet.contextmenu.min'
 import 'leaflet-contextmenu/dist/leaflet.contextmenu.min.css'
+import 'leaflet.locatecontrol/dist/L.Control.Locate.min'
+import 'leaflet.locatecontrol/dist/L.Control.Locate.min.css'
 
 import Slider from '../components/map/Slider'
 import SearchControl from '../components/map/SearchControl'
@@ -299,6 +301,7 @@ export default {
 
 	methods: {
 		onMapReady(map) {
+			this.initLocControl(map)
 			this.initLayers(map)
 			this.map = map
 		},
@@ -409,6 +412,35 @@ export default {
 			this.leftClickSearching = false
 			this.placingContactLatLng = L.latLng(obj.latLng.lat, obj.latLng.lng)
 			this.placingContact = true
+		},
+		initLocControl(map) {
+			// location control
+			const locControl = L.control.locate({
+				position: 'bottomright',
+				drawCircle: true,
+				drawMarker: true,
+				showPopup: false,
+				icon: 'icon icon-address',
+				iconLoading: 'icon icon-loading-small',
+				strings: {
+					title: t('maps', 'Current location'),
+				},
+				flyTo: true,
+				returnToPrevBounds: true,
+				setView: 'untilPan',
+				showCompass: true,
+				locateOptions: { enableHighAccuracy: true, maxZoom: 15 },
+				onLocationError: (e) => {
+					optionsController.saveOptionValues({ locControlEnabled: 'false' })
+					alert(e.message)
+				},
+			}).addTo(map)
+			document.querySelector('.leaflet-control-locate a').addEventListener('click', (e) => {
+				optionsController.saveOptionValues({ locControlEnabled: locControl._active ? 'true' : 'false' })
+			})
+			if (optionsController.locControlEnabled) {
+				locControl.start()
+			}
 		},
 		initLayers(map) {
 			// tile layers
@@ -659,6 +691,20 @@ export default {
 	position: relative;
 	height: 100%;
 	width: 100%;
+}
+
+::v-deep .leaflet-control-locate {
+	&.active .icon {
+		-webkit-filter: drop-shadow(2px 3px 2px var(--color-main-text));
+		filter: drop-shadow(2px 3px 2px var(--color-main-text));
+	}
+	.icon {
+		display: inline-block;
+		width: 26px;
+		height: 26px;
+		margin-top: 1px;
+		background-size: 24px;
+	}
 }
 
 ::v-deep .leaflet-container {

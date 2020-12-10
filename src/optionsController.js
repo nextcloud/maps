@@ -8,6 +8,7 @@ const optionsController = {
 	],
 	nbRouters: 0,
 	optionValues: {},
+	locControlEnabled: false,
 	photosEnabled: true,
 	contactsEnabled: true,
 	favoritesEnabled: true,
@@ -96,10 +97,11 @@ const optionsController = {
 			|| ('graphhopperAPIKEY' in optionsValues && optionsValues.graphhopperAPIKEY !== '')) {
 			this.nbRouters++
 		}
-		/*
-		if (optionsValues.hasOwnProperty('locControlEnabled') && optionsValues.locControlEnabled === 'true') {
-			mapController.locControl.start();
+
+		if ('locControlEnabled' in optionsValues && optionsValues.locControlEnabled === 'true') {
+			this.locControlEnabled = true
 		}
+		/*
 		if (!optionsValues.hasOwnProperty('trackListShow') || optionsValues.trackListShow === 'true') {
 			tracksController.toggleTrackList();
 		}

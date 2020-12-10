@@ -1,6 +1,7 @@
 <template>
 	<Content app-name="maps">
 		<MapsNavigation
+			@toggle-trackme="onToggleTrackme"
 			@toggle-slider="sliderEnabled = $event">
 			<template #items>
 				<AppNavigationFavoritesItem
@@ -98,7 +99,7 @@
 import Content from '@nextcloud/vue/dist/Components/Content'
 import AppContent from '@nextcloud/vue/dist/Components/AppContent'
 import Actions from '@nextcloud/vue/dist/Components/Actions'
-import { showError, showSuccess } from '@nextcloud/dialogs'
+import { showError, showInfo, showSuccess } from '@nextcloud/dialogs'
 import moment from '@nextcloud/moment'
 
 import Map from '../components/Map'
@@ -107,7 +108,7 @@ import AppNavigationFavoritesItem from '../components/AppNavigationFavoritesItem
 import AppNavigationPhotosItem from '../components/AppNavigationPhotosItem'
 import AppNavigationContactsItem from '../components/AppNavigationContactsItem'
 import optionsController from '../optionsController'
-import { getLetterColor, hslToRgb } from '../utils'
+import { getLetterColor, hslToRgb, Timer, getDeviceInfoFromUserAgent2, isComputer, isPhone } from '../utils'
 import { poiSearchData } from '../utils/poiData'
 
 import L from 'leaflet'
@@ -131,6 +132,7 @@ export default {
 	data() {
 		return {
 			optionValues: optionsController.optionValues,
+			sendPositionTimer: null,
 			// slider
 			sliderEnabled: optionsController.optionValues.displaySlider === 'true',
 			sliderStart: 0,
@@ -300,6 +302,9 @@ export default {
 		this.getContacts()
 		this.getPhotos()
 		this.getFavorites()
+		if (optionsController.optionValues.trackMe === 'true') {
+			this.sendPositionLoop()
+		}
 
 		document.onkeyup = (e) => {
 			if (e.ctrlKey) {
@@ -324,6 +329,62 @@ export default {
 			// this.showSidebar = !this.showSidebar
 			// this.activeSidebarTab = 'project-settings'
 		},
+		onToggleTrackme(enabled) {
+			if (enabled) {
+				this.sendPositionLoop()
+			} else {
+				this.stopTrackLoop()
+			}
+		},
+		sendPositionLoop() {
+			// start a loop which get and send my position
+			if (navigator.geolocation && window.isSecureContext) {
+				navigator.geolocation.getCurrentPosition((position) => {
+					const lat = position.coords.latitude
+					const lng = position.coords.longitude
+					const acc = position.coords.accuracy
+					this.sendMyPosition(lat, lng, acc)
+					// loop
+					this.stopTrackLoop()
+					this.sendPositionTimer = new Timer(() => {
+						this.sendPositionLoop()
+					}, 10 * 1000)
+				})
+			} else {
+				showInfo(t('maps', 'Impossible to get current location'))
+			}
+		},
+		stopTrackLoop() {
+			if (this.sendPositionTimer) {
+				this.sendPositionTimer.pause()
+				delete this.sendPositionTimer
+				this.sendPositionTimer = null
+			}
+		},
+		sendMyPosition(lat, lng, acc) {
+			const uaString = navigator.userAgent
+			const info = getDeviceInfoFromUserAgent2(uaString)
+			let name = uaString
+			if (info.client && info.os) {
+				if (isPhone(info.os)) {
+					name = t('maps', 'Phone')
+				} else if (isComputer(info.os)) {
+					name = t('maps', 'Computer')
+				} else {
+					name = t('maps', 'Unknown device type')
+				}
+				name += ' (' + info.client
+				name += '/' + info.os
+				name += ')'
+			}
+			const ts = Math.floor(Date.now() / 1000)
+			network.sendMyPosition(lat, lng, name, acc, ts).then((response) => {
+				// TODO get new positions
+			}).catch((error) => {
+				showError(t('maps', 'Failed to send current position') + ' ' + error)
+			})
+		},
+		// action history
 		saveAction(action) {
 			this.lastActions.push(action)
 			this.lastCanceledActions = []

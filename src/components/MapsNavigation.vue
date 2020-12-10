@@ -67,6 +67,7 @@ export default {
 		onTrackMeClick(e) {
 			this.optionValues.trackMe = e.target.checked
 			optionsController.saveOptionValues({ trackMe: e.target.checked ? 'true' : 'false' })
+			this.$emit('toggle-trackme', e.target.checked)
 		},
 		onDisplaySliderClick(e) {
 			this.optionValues.displaySlider = e.target.checked

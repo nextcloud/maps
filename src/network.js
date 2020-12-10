@@ -27,6 +27,18 @@ export function getOptionValues() {
 	return axios.get(url)
 }
 
+export function sendMyPosition(lat, lng, name, acc, ts) {
+	const req = {
+		lat,
+		lng,
+		user_agent: name,
+		accuracy: acc,
+		timestamp: ts,
+	}
+	const url = generateUrl('/apps/maps/devices')
+	return axios.post(url, req)
+}
+
 export function getContacts() {
 	const url = generateUrl('/apps/maps/contacts')
 	return axios.get(url)

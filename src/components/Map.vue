@@ -467,7 +467,7 @@ export default {
 
 			if ('mapboxAPIKEY' in this.optionValues && this.optionValues.mapboxAPIKEY !== '' && gl !== null) {
 				// wrapper to make tile layer component correctly pass arguments
-				L.myMapboxGL = function(url, options) {
+				L.myMapboxGL = (url, options) => {
 					return new L.MapboxGL(options)
 				}
 
@@ -491,6 +491,7 @@ export default {
 							id: 'Mapbox vector streets',
 							accessToken: this.optionValues.mapboxAPIKEY,
 							style: 'mapbox://styles/mapbox/streets-v8',
+							// style: 'https://api.mapbox.com/v4/mapbox.mapbox-traffic-v1.json?access_token=' + this.optionValues.mapboxAPIKEY,
 							minZoom: 1,
 							maxZoom: 22,
 							attribution: attrib,

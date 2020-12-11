@@ -159,7 +159,7 @@ class UtilsController extends Controller {
                                     'congestion'
                                 ]
                             ],
-                            '#aab7ef',
+                            '#00ff00',
                             [
                                 '==',
                                 'moderate',
@@ -168,7 +168,7 @@ class UtilsController extends Controller {
                                     'congestion'
                                 ]
                             ],
-                            '#4264fb',
+                            '#ffad00',
                             [
                                 '==',
                                 'heavy',
@@ -177,7 +177,7 @@ class UtilsController extends Controller {
                                     'congestion'
                                 ]
                             ],
-                            '#ee4e8b',
+                            '#ff0000',
                             [
                                 '==',
                                 'severe',

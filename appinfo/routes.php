@@ -19,6 +19,7 @@ return [
         ['name' => 'utils#getOptionsValues', 'url' => '/getOptionsValues', 'verb' => 'GET'],
         ['name' => 'utils#saveOptionValue', 'url' => '/saveOptionValue', 'verb' => 'POST'],
         ['name' => 'utils#setRoutingSettings', 'url' => '/setRoutingSettings', 'verb' => 'POST'],
+        ['name' => 'utils#getTrafficStyle', 'url' => '/style/traffic', 'verb' => 'GET'],
 
         // photos
         ['name' => 'photos#getPhotosFromDb', 'url' => '/photos', 'verb' => 'GET'],

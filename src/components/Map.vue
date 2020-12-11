@@ -63,6 +63,7 @@
 				:attribution="l.attribution"
 				:name="l.name"
 				:layer-type="l.type"
+				:tile-layer-class="l.tileLayerClass"
 				:options="l.options"
 				:opacity="l.opacity" />
 			<FavoritesLayer
@@ -484,7 +485,23 @@ export default {
 					+ '<a href="https://www.mapbox.com/map-feedback/">' + t('maps', 'Improve this map') + '</a>'
 				const attribSat = attrib + '<a href="https://www.digitalglobe.com/">© DigitalGlobe</a>'
 
-				this.allOverlayLayers = {}
+				this.allOverlayLayers = {
+					'Mapbox traffic': {
+						name: 'Traffic',
+						type: 'overlay',
+						attribution: attrib,
+						tileLayerClass: L.myMapboxGL,
+						options: {
+							id: 'Mapbox Traffic',
+							accessToken: this.optionValues.mapboxAPIKEY,
+							style: generateUrl('/apps/maps/style/traffic'),
+							minZoom: 1,
+							maxZoom: 22,
+							attribution: attrib,
+							pane: 'overlayPane',
+						},
+					},
+				}
 				this.allBaseLayers = {
 					'Mapbox vector streets': {
 						name: 'Street map',
@@ -495,7 +512,6 @@ export default {
 							id: 'Mapbox vector streets',
 							accessToken: this.optionValues.mapboxAPIKEY,
 							style: 'mapbox://styles/mapbox/streets-v8',
-							// style: 'https://api.mapbox.com/v4/mapbox.mapbox-traffic-v1.json?access_token=' + this.optionValues.mapboxAPIKEY,
 							minZoom: 1,
 							maxZoom: 22,
 							attribution: attrib,

@@ -148,7 +148,7 @@ class UtilsController extends Controller {
                     'source-layer' => 'traffic',
                     'type' => 'line',
                     'paint' => [
-                        'line-width' => 1.5,
+                        'line-width' => 2.0,
                         'line-color' => [
                             'case',
                             [

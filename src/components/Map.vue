@@ -372,11 +372,14 @@ export default {
 		},
 		onMapClick(e) {
 			// layers management stuff
-			document.querySelector('.leaflet-control-layers').style.display = 'none'
+			const layerSelector = document.querySelector('.leaflet-control-layers')
+			const layerSelectorWasVisible = layerSelector.style.display !== 'none'
+			layerSelector.style.display = 'none'
 			this.layersButton.button.parentElement.classList.remove('hidden')
 			this.streetButton.button.parentElement.classList.remove('hidden')
 			this.satelliteButton.button.parentElement.classList.remove('hidden')
 
+			// check if there was a popup or a spiderfied cluster
 			const thereWasAPopup = this.map.contextmenu._visible
 				|| this.placingContact
 				|| (this.map._popup !== undefined && this.map._popup !== null)
@@ -399,7 +402,7 @@ export default {
 			this.map.contextmenu.hide()
 			this.placingContact = false
 			this.leftClickSearching = false
-			if (!thereWasAPopup && !hadSpider) {
+			if (!thereWasAPopup && !hadSpider && !layerSelectorWasVisible) {
 				this.leftClickSearch(e.latlng.lat, e.latlng.lng)
 			}
 		},
@@ -918,5 +921,15 @@ export default {
 
 ::v-deep .favoriteClusterMarkerDark {
 	background: url('../../img/star-black.svg') no-repeat 50% 50%;
+}
+
+::v-deep .leaflet-control-layers-base span,
+::v-deep .leaflet-control-layers-overlays span {
+	cursor: pointer !important;
+}
+
+::v-deep .leaflet-control-layers-selector {
+	min-height: 0;
+	cursor: pointer !important;
 }
 </style>

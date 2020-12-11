@@ -19,7 +19,7 @@
 				ref="routingControl"
 				:visible="showRouting"
 				:map="map"
-				:search-data="searchData"
+				:search-data="routingSearchData"
 				@close="showRouting = false" />
 			<SearchControl v-if="map"
 				v-show="!showRouting"
@@ -167,6 +167,10 @@ export default {
 
 	props: {
 		searchData: {
+			type: Array,
+			required: true,
+		},
+		routingSearchData: {
 			type: Array,
 			required: true,
 		},

@@ -48,6 +48,7 @@
 				<Map
 					ref="map"
 					:search-data="searchData"
+					:routing-search-data="routingSearchData"
 					:favorites="displayedFavorites"
 					:favorite-categories="favoriteCategories"
 					:favorites-enabled="favoritesEnabled"
@@ -238,6 +239,12 @@ export default {
 				...this.contactSearchData,
 				...this.favoriteSearchData,
 				...poiSearchData,
+			]
+		},
+		routingSearchData() {
+			return [
+				...this.contactSearchData,
+				...this.favoriteSearchData,
 			]
 		},
 		contactSearchData() {

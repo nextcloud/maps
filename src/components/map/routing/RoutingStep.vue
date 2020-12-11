@@ -90,7 +90,7 @@ export default {
 	button {
 		margin: 0 0 0 5px;
 		padding: 0;
-		width: 34px;
+		min-width: 34px;
 	}
 }
 </style>

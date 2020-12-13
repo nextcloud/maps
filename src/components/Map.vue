@@ -562,6 +562,34 @@ export default {
 							attribution: attrib,
 						},
 					},
+					'Mapbox traffic': {
+						name: 'Traffic',
+						type: 'base',
+						attribution: attrib,
+						tileLayerClass: L.myMapboxGL,
+						options: {
+							id: 'Mapbox traffic',
+							accessToken: this.optionValues.mapboxAPIKEY,
+							style: 'mapbox://styles/mapbox/traffic-day-v2',
+							minZoom: 1,
+							maxZoom: 22,
+							attribution: attrib,
+						},
+					},
+					'Mapbox traffic night': {
+						name: 'Traffic night',
+						type: 'base',
+						attribution: attrib,
+						tileLayerClass: L.myMapboxGL,
+						options: {
+							id: 'Mapbox traffic night',
+							accessToken: this.optionValues.mapboxAPIKEY,
+							style: 'mapbox://styles/mapbox/traffic-night-v2',
+							minZoom: 1,
+							maxZoom: 22,
+							attribution: attrib,
+						},
+					},
 					Watercolor: baseLayersByName.Watercolor,
 				}
 			}

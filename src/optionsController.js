@@ -12,6 +12,7 @@ const optionsController = {
 	photosEnabled: true,
 	contactsEnabled: true,
 	favoritesEnabled: true,
+	tracksEnabled: true,
 	disabledFavoriteCategories: [],
 	disabledContactGroups: [],
 	enabledTracks: [],
@@ -79,6 +80,20 @@ const optionsController = {
 				console.error(error)
 			}
 		}
+		// getUrlParameter('track') ||
+		if ('tracksEnabled' in optionsValues && optionsValues.tracksEnabled === 'true') {
+			this.tracksEnabled = true
+		}
+		if ('trackListShow' in optionsValues && optionsValues.trackListShow === 'true') {
+			this.trackListShow = true
+		}
+		if ('enabledDevices' in optionsValues
+			&& optionsValues.enabledDevices
+			&& optionsValues.enabledDevices !== '') {
+			this.enabledDevices = optionsValues.enabledDevices.split('|').map((x) => {
+				return parseInt(x)
+			})
+		}
 
 		// routing
 		if ('osrmCarURL' in optionsValues && optionsValues.osrmCarURL !== '') {
@@ -102,9 +117,6 @@ const optionsController = {
 			this.locControlEnabled = true
 		}
 		/*
-		if (!optionsValues.hasOwnProperty('trackListShow') || optionsValues.trackListShow === 'true') {
-			tracksController.toggleTrackList();
-		}
 		if (optionsValues.hasOwnProperty('enabledTracks')
 			&& optionsValues.enabledTracks
 			&& optionsValues.enabledTracks !== '')
@@ -119,19 +131,8 @@ const optionsController = {
 		else {
 			tracksController.sortOrder = 'date';
 		}
-		if (getUrlParameter('track') || !optionsValues.hasOwnProperty('tracksEnabled') || optionsValues.tracksEnabled === 'true') {
-			tracksController.toggleTracks();
-		}
 		if (!optionsValues.hasOwnProperty('deviceListShow') || optionsValues.deviceListShow === 'true') {
 			devicesController.toggleDeviceList();
-		}
-		if (optionsValues.hasOwnProperty('enabledDevices')
-			&& optionsValues.enabledDevices
-			&& optionsValues.enabledDevices !== '')
-		{
-			that.enabledDevices = optionsValues.enabledDevices.split('|').map(function (x) {
-				return parseInt(x);
-			});
 		}
 		if (optionsValues.hasOwnProperty('enabledDeviceLines')
 			&& optionsValues.enabledDeviceLines

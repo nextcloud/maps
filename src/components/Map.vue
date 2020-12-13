@@ -489,13 +489,13 @@ export default {
 				const attribSat = attrib + '<a href="https://www.digitalglobe.com/">© DigitalGlobe</a>'
 
 				this.allOverlayLayers = {
-					'Mapbox traffic': {
+					'Mapbox traffic overlay': {
 						name: 'Traffic',
 						type: 'overlay',
 						attribution: attrib,
 						tileLayerClass: L.myMapboxGL,
 						options: {
-							id: 'Mapbox Traffic',
+							id: 'Mapbox Traffic overlay',
 							accessToken: this.optionValues.mapboxAPIKEY,
 							style: generateUrl('/apps/maps/style/traffic'),
 							minZoom: 1,

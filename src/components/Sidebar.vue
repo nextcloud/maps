@@ -26,10 +26,10 @@
 </template>
 
 <script>
-import ActionButton from '@nextcloud/vue/dist/Components/ActionButton'
+// import ActionButton from '@nextcloud/vue/dist/Components/ActionButton'
+// import ActionLink from '@nextcloud/vue/dist/Components/ActionLink'
 import AppSidebar from '@nextcloud/vue/dist/Components/AppSidebar'
 import AppSidebarTab from '@nextcloud/vue/dist/Components/AppSidebarTab'
-import ActionLink from '@nextcloud/vue/dist/Components/ActionLink'
 
 import { generateUrl } from '@nextcloud/router'
 
@@ -37,10 +37,10 @@ export default {
 	name: 'Sidebar',
 
 	components: {
-		ActionButton,
+		// ActionButton,
+		// ActionLink,
 		AppSidebar,
 		AppSidebarTab,
-		ActionLink,
 	},
 
 	props: {

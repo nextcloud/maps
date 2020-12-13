@@ -41,6 +41,12 @@
 					@cancel-clicked="cancelPhotoMove"
 					@redo-clicked="redoPhotoMove"
 					@draggable-clicked="photosDraggable = !photosDraggable" />
+				<AppNavigationTracksItem
+					:enabled="tracksEnabled"
+					:loading="tracksLoading"
+					:tracks="tracks"
+					@track-clicked="onTrackClicked"
+					@tracks-clicked="onTracksClicked" />
 			</template>
 		</MapsNavigation>
 		<AppContent>
@@ -110,6 +116,7 @@ import Sidebar from '../components/Sidebar'
 import AppNavigationFavoritesItem from '../components/AppNavigationFavoritesItem'
 import AppNavigationPhotosItem from '../components/AppNavigationPhotosItem'
 import AppNavigationContactsItem from '../components/AppNavigationContactsItem'
+import AppNavigationTracksItem from '../components/AppNavigationTracksItem'
 import optionsController from '../optionsController'
 import { getLetterColor, hslToRgb, Timer, getDeviceInfoFromUserAgent2, isComputer, isPhone } from '../utils'
 import { poiSearchData } from '../utils/poiData'
@@ -132,6 +139,7 @@ export default {
 		AppNavigationFavoritesItem,
 		AppNavigationPhotosItem,
 		AppNavigationContactsItem,
+		AppNavigationTracksItem,
 	},
 
 	data() {
@@ -165,12 +173,16 @@ export default {
 			contacts: [],
 			contactGroups: {},
 			disabledContactGroups: [],
+			// tracks
+			tracksLoading: false,
+			tracks: [],
+			tracksEnabled: optionsController.tracksEnabled,
 		}
 	},
 
 	computed: {
 		mapLoading() {
-			return this.photosLoading || this.contactsLoading || this.favoritesLoading
+			return this.photosLoading || this.contactsLoading || this.favoritesLoading || this.tracksLoading
 		},
 		// slider
 		minDataTimestamp() {
@@ -315,6 +327,7 @@ export default {
 		this.getContacts()
 		this.getPhotos()
 		this.getFavorites()
+		this.getTracks()
 		if (optionsController.optionValues.trackMe === 'true') {
 			this.sendPositionLoop()
 		}
@@ -1014,6 +1027,31 @@ export default {
 					})
 				}
 			})
+		},
+		// tracks
+		onTracksClicked() {
+			this.tracksEnabled = !this.tracksEnabled
+			// get track if we don't have them yet
+			if (this.tracksEnabled && this.tracks.length === 0) {
+				this.getTracks()
+			}
+			optionsController.saveOptionValues({ tracksEnabled: this.tracksEnabled ? 'true' : 'false' })
+		},
+		getTracks() {
+			if (!this.tracksEnabled) {
+				return
+			}
+			this.tracksLoading = true
+			network.getTracks().then((response) => {
+				this.tracks = response.data
+			}).catch((error) => {
+				console.error(error)
+			}).then(() => {
+				this.tracksLoading = false
+			})
+		},
+		onTrackClicked(track) {
+
 		},
 	},
 }

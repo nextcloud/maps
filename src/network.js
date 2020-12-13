@@ -227,3 +227,8 @@ export function resetPhotosCoords(paths) {
 	const url = generateUrl('/apps/maps/photos')
 	return axios.delete(url, req)
 }
+
+export function getTracks() {
+	const url = generateUrl('/apps/maps/tracks')
+	return axios.get(url)
+}

@@ -208,6 +208,7 @@ OC.L10N.register(
     "until {date}" : "至 {date}",
     "Closed" : "已关闭",
     "opens at {date}" : "于 {date} 打开",
+    "Point encoded in: " : "点被编码为：",
     "This place" : "此处",
     "Failed to get favorites" : "无法获取收藏夹",
     "Failed to create favorite" : "无法创建收藏夹",

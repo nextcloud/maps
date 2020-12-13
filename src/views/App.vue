@@ -87,12 +87,12 @@
 					@click="onMainDetailClicked" />
 			</Actions>
 		</AppContent>
-		<!--Sidebar
-			v-if="currentProjectId"
+		<Sidebar
+			v-if="true"
 			:show="showSidebar"
 			:active-tab="activeSidebarTab"
 			@active-changed="onActiveSidebarTabChanged"
-			@close="showSidebar = false" /-->
+			@close="showSidebar = false" />
 	</Content>
 </template>
 
@@ -100,11 +100,13 @@
 import Content from '@nextcloud/vue/dist/Components/Content'
 import AppContent from '@nextcloud/vue/dist/Components/AppContent'
 import Actions from '@nextcloud/vue/dist/Components/Actions'
+import ActionButton from '@nextcloud/vue/dist/Components/ActionButton'
 import { showError, showInfo, showSuccess } from '@nextcloud/dialogs'
 import moment from '@nextcloud/moment'
 
 import Map from '../components/Map'
 import MapsNavigation from '../components/MapsNavigation'
+import Sidebar from '../components/Sidebar'
 import AppNavigationFavoritesItem from '../components/AppNavigationFavoritesItem'
 import AppNavigationPhotosItem from '../components/AppNavigationPhotosItem'
 import AppNavigationContactsItem from '../components/AppNavigationContactsItem'
@@ -123,8 +125,10 @@ export default {
 		Content,
 		AppContent,
 		Actions,
+		ActionButton,
 		Map,
 		MapsNavigation,
+		Sidebar,
 		AppNavigationFavoritesItem,
 		AppNavigationPhotosItem,
 		AppNavigationContactsItem,
@@ -134,6 +138,8 @@ export default {
 		return {
 			optionValues: optionsController.optionValues,
 			sendPositionTimer: null,
+			showSidebar: false,
+			activeSidebarTab: 'sharing',
 			// slider
 			sliderEnabled: optionsController.optionValues.displaySlider === 'true',
 			sliderStart: 0,
@@ -332,9 +338,12 @@ export default {
 		// unsubscribe('nextcloud:unified-search.reset', this.cleanSearch)
 	},
 	methods: {
+		onActiveSidebarTabChanged() {
+
+		},
 		onMainDetailClicked() {
-			// this.showSidebar = !this.showSidebar
-			// this.activeSidebarTab = 'project-settings'
+			this.showSidebar = !this.showSidebar
+			this.activeSidebarTab = 'main'
 		},
 		onToggleTrackme(enabled) {
 			if (enabled) {
@@ -1012,8 +1021,9 @@ export default {
 
 <style lang="scss" scoped>
 .content-buttons {
+	z-index: 99999;
 	position: absolute !important;
-	top: 0px;
+	top: 8px;
 	right: 8px;
 }
 

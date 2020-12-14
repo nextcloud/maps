@@ -46,7 +46,8 @@
 					:loading="tracksLoading"
 					:tracks="tracks"
 					@track-clicked="onTrackClicked"
-					@tracks-clicked="onTracksClicked" />
+					@tracks-clicked="onTracksClicked"
+					@color="onChangeTrackColor" />
 			</template>
 		</MapsNavigation>
 		<AppContent>
@@ -175,6 +176,7 @@ export default {
 			disabledContactGroups: [],
 			// tracks
 			tracksLoading: false,
+			loadingTrackFiles: {},
 			tracks: [],
 			tracksEnabled: optionsController.tracksEnabled,
 		}
@@ -1043,7 +1045,13 @@ export default {
 			}
 			this.tracksLoading = true
 			network.getTracks().then((response) => {
-				this.tracks = response.data
+				this.tracks = response.data.map((t) => {
+					return {
+						...t,
+						loading: false,
+						enabled: false,
+					}
+				})
 			}).catch((error) => {
 				console.error(error)
 			}).then(() => {
@@ -1051,7 +1059,25 @@ export default {
 			})
 		},
 		onTrackClicked(track) {
-
+			if (track.enabled) {
+				track.enabled = false
+			} else if (track.metadata && track.content) {
+				track.enabled = true
+			} else {
+				track.loading = true
+				network.getTrack(track.id).then((response) => {
+					track.metadata = response.data.metadata
+					track.content = response.data.content
+					track.enabled = true
+				}).catch((error) => {
+					console.error(error)
+				}).then(() => {
+					track.loading = false
+				})
+			}
+		},
+		onChangeTrackColor(e) {
+			e.track.color = e.color
 		},
 	},
 }

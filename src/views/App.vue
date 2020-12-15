@@ -66,6 +66,8 @@
 					:contacts="contacts"
 					:contact-groups="contactGroups"
 					:contacts-enabled="contactsEnabled"
+					:tracks="displayedTracks"
+					:tracks-enabled="tracksEnabled"
 					:slider-enabled="sliderEnabled"
 					:min-data-timestamp="minDataTimestamp"
 					:max-data-timestamp="maxDataTimestamp"
@@ -239,6 +241,13 @@ export default {
 					: moment().unix() + 100
 		},
 		// displayed data
+		displayedTracks() {
+			return this.sliderEnabled
+				? this.track.filter((p) => {
+					return true
+				})
+				: this.tracks
+		},
 		displayedPhotos() {
 			return this.sliderEnabled
 				? this.photos.filter((p) => {
@@ -1046,23 +1055,23 @@ export default {
 			}
 			this.tracksLoading = true
 			network.getTracks().then((response) => {
-				this.tracks = response.data.map((t) => {
-					if (t.metadata) {
+				this.tracks = response.data.map((track) => {
+					if (track.metadata) {
 						try {
-							t.metadata = JSON.parse(t.metadata)
+							track.metadata = JSON.parse(track.metadata)
 						} catch (error) {
 							console.error('Failed to parse track metadata')
 						}
 					}
 					return {
-						...t,
+						...track,
 						loading: false,
-						enabled: optionsController.enabledTracks.includes(t.id),
+						enabled: false,
 					}
 				})
 				this.tracks.forEach((track) => {
-					if (track.enabled) {
-						this.getTrack(track)
+					if (optionsController.enabledTracks.includes(track.id)) {
+						this.getTrack(track, true, false)
 					}
 				})
 			}).catch((error) => {
@@ -1079,10 +1088,10 @@ export default {
 				track.enabled = true
 				this.saveEnabledTracks()
 			} else {
-				this.getTrack(track, true)
+				this.getTrack(track, true, true)
 			}
 		},
-		getTrack(track, enable = false) {
+		getTrack(track, enable = false, save = true) {
 			track.loading = true
 			network.getTrack(track.id).then((response) => {
 				if (!track.metadata) {
@@ -1093,9 +1102,10 @@ export default {
 					}
 				}
 				track.data = processGpx(response.data.content)
-				console.debug(track.data)
 				if (enable) {
 					track.enabled = true
+				}
+				if (save) {
 					this.saveEnabledTracks()
 				}
 			}).catch((error) => {

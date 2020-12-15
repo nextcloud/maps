@@ -93,6 +93,11 @@
 			<PlaceContactPopup v-if="placingContact"
 				:lat-lng="placingContactLatLng"
 				@contact-placed="onContactPlaced" />
+			<TracksLayer
+				v-if="map && tracksEnabled"
+				ref="tracksLayer"
+				:map="map"
+				:tracks="tracks" />
 			<ClickSearchPopup v-if="leftClickSearching"
 				:lat-lng="leftClickSearchLatLng"
 				@place-contact="onAddContactAddress"
@@ -138,6 +143,7 @@ import HistoryControl from '../components/map/HistoryControl'
 import RoutingControl from '../components/map/routing/RoutingControl'
 import FavoritesLayer from '../components/map/FavoritesLayer'
 import PhotosLayer from '../components/map/PhotosLayer'
+import TracksLayer from '../components/map/TracksLayer'
 import ContactsLayer from '../components/map/ContactsLayer'
 import PlaceContactPopup from '../components/map/PlaceContactPopup'
 import PoiMarker from '../components/map/PoiMarker'
@@ -160,6 +166,7 @@ export default {
 		RoutingControl,
 		FavoritesLayer,
 		PhotosLayer,
+		TracksLayer,
 		ContactsLayer,
 		PlaceContactPopup,
 		ClickSearchPopup,
@@ -212,6 +219,14 @@ export default {
 			required: true,
 		},
 		contactsEnabled: {
+			type: Boolean,
+			required: true,
+		},
+		tracks: {
+			type: Array,
+			required: true,
+		},
+		tracksEnabled: {
 			type: Boolean,
 			required: true,
 		},

@@ -2,12 +2,10 @@ import moment from '@nextcloud/moment'
 
 export function processGpx(gpx) {
 	let xmlDoc
-	// let gpxx
 	if (window.DOMParser) {
 		try {
 			const parser = new DOMParser()
 			xmlDoc = parser.parseFromString(gpx.replace(/version="1.1"/, 'version="1.0"'), 'text/xml')
-			console.debug(xmlDoc)
 		} catch (err) {
 			return null
 		}
@@ -49,10 +47,12 @@ function parseTrk(e) {
 }
 
 function parseTrkseg(e) {
-	const seg = []
+	const seg = {
+		points: [],
+	}
 	e.childNodes.forEach((c) => {
 		if (c.tagName === 'trkpt') {
-			seg.push(parseWpt(c))
+			seg.points.push(parseWpt(c))
 		}
 	})
 	return seg
@@ -75,7 +75,7 @@ function parseRte(e) {
 function parseWpt(e) {
 	const wpt = {
 		lat: parseFloat(e.getAttribute('lat')),
-		lon: parseFloat(e.getAttribute('lon')),
+		lng: parseFloat(e.getAttribute('lon')),
 	}
 	e.childNodes.forEach((c) => {
 		if (c.tagName === 'ele') {

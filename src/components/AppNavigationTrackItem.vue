@@ -22,6 +22,13 @@
 					'icon-road': track.enabled,
 					'no-color': true,
 				}" />
+			<input v-show="false"
+				ref="col"
+				type="color"
+				class="color-inpur"
+				:value="track.color"
+				@change="updateTrackColor"
+				@click.stop="">
 		</template>
 		<template slot="counter">
 			&nbsp;
@@ -43,11 +50,7 @@
 				:close-after-click="false"
 				@click="onChangeColorClick">
 				<template #icon>
-					<ColorPicker ref="col"
-						:value="track.color || '#0082c9'"
-						@input="updateTrackColor">
-						<div class="icon-colorpicker" />
-					</ColorPicker>
+					<div class="icon-colorpicker" />
 				</template>
 				{{ t('maps', 'Change color') }}
 			</ActionButton>
@@ -58,7 +61,6 @@
 <script>
 import AppNavigationItem from '@nextcloud/vue/dist/Components/AppNavigationItem'
 import ActionButton from '@nextcloud/vue/dist/Components/ActionButton'
-import ColorPicker from '@nextcloud/vue/dist/Components/ColorPicker'
 
 export default {
 	name: 'AppNavigationTrackItem',
@@ -66,7 +68,6 @@ export default {
 	components: {
 		AppNavigationItem,
 		ActionButton,
-		ColorPicker,
 	},
 
 	props: {
@@ -91,13 +92,14 @@ export default {
 
 	methods: {
 		onChangeColorClick() {
-			this.$refs.col.$el.querySelector('.trigger').click()
+			this.$refs.col.click()
 		},
-		updateTrackColor(color) {
-			clearTimeout(this.myTimer)
+		updateTrackColor(e) {
+			this.$emit('color', { track: this.track, color: e.target.value })
+			/* clearTimeout(this.myTimer)
 			this.mytimer = setTimeout(() => {
-				this.$emit('color', { track: this.track, color })
-			}, 2000)
+				this.$emit('color', { track: this.track, color: e.target.value })
+			}, 2000) */
 		},
 	},
 }
@@ -118,6 +120,7 @@ export default {
 	mask-position: center;
 	-webkit-mask-size: 16px auto;
 	-webkit-mask-position: center;
-	width: 44px !important;
+	width: 44px;
+	height: 44px;
 }
 </style>

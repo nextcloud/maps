@@ -87,6 +87,13 @@ const optionsController = {
 		if ('trackListShow' in optionsValues && optionsValues.trackListShow === 'true') {
 			this.trackListShow = true
 		}
+		if ('enabledTracks' in optionsValues
+			&& optionsValues.enabledTracks
+			&& optionsValues.enabledTracks !== '') {
+			this.enabledTracks = optionsValues.enabledTracks.split('|').map((x) => {
+				return parseInt(x)
+			})
+		}
 		if ('enabledDevices' in optionsValues
 			&& optionsValues.enabledDevices
 			&& optionsValues.enabledDevices !== '') {
@@ -117,14 +124,6 @@ const optionsController = {
 			this.locControlEnabled = true
 		}
 		/*
-		if (optionsValues.hasOwnProperty('enabledTracks')
-			&& optionsValues.enabledTracks
-			&& optionsValues.enabledTracks !== '')
-		{
-			that.enabledTracks = optionsValues.enabledTracks.split('|').map(function (x) {
-				return parseInt(x);
-			});
-		}
 		if (optionsValues.hasOwnProperty('tracksSortOrder') && optionsValues.tracksSortOrder !== '') {
 			tracksController.sortOrder = optionsValues.tracksSortOrder;
 		}

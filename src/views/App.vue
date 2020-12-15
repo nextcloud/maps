@@ -1049,7 +1049,7 @@ export default {
 					return {
 						...t,
 						loading: false,
-						enabled: false,
+						enabled: optionsController.enabledTracks.includes(t.id),
 					}
 				})
 			}).catch((error) => {
@@ -1061,14 +1061,17 @@ export default {
 		onTrackClicked(track) {
 			if (track.enabled) {
 				track.enabled = false
+			this.saveEnabledTracks()
 			} else if (track.metadata && track.content) {
 				track.enabled = true
+			this.saveEnabledTracks()
 			} else {
 				track.loading = true
 				network.getTrack(track.id).then((response) => {
 					track.metadata = response.data.metadata
 					track.content = response.data.content
 					track.enabled = true
+					this.saveEnabledTracks()
 				}).catch((error) => {
 					console.error(error)
 				}).then(() => {
@@ -1076,8 +1079,19 @@ export default {
 				})
 			}
 		},
+		saveEnabledTracks() {
+			const trackStringList = this.tracks.filter((track) => { return track.enabled })
+				.map((track) => { return track.id })
+				.join('|')
+			optionsController.saveOptionValues({ enabledTracks: trackStringList })
+		},
 		onChangeTrackColor(e) {
 			e.track.color = e.color
+			network.editTrack(e.track.id, e.color).then((response) => {
+				console.debug(response.data)
+			}).catch((error) => {
+				console.error(error)
+			})
 		},
 	},
 }

@@ -237,3 +237,11 @@ export function getTrack(id) {
 	const url = generateUrl('/apps/maps/tracks/' + id)
 	return axios.get(url)
 }
+
+export function editTrack(id, color) {
+	const req = {
+		color,
+	}
+	const url = generateUrl('/apps/maps/tracks/' + id)
+	return axios.put(url, req)
+}

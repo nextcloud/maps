@@ -235,6 +235,7 @@ export function getTracks() {
 
 export function getTrack(id) {
 	const url = generateUrl('/apps/maps/tracks/' + id)
+	// return axios.get(url, { responseType: 'json' })
 	return axios.get(url)
 }
 

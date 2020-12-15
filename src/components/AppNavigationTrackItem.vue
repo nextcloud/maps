@@ -26,7 +26,7 @@
 				ref="col"
 				type="color"
 				class="color-inpur"
-				:value="track.color"
+				:value="track.color || '#0082c9'"
 				@change="updateTrackColor"
 				@click.stop="">
 		</template>

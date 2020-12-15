@@ -417,7 +417,7 @@ class TracksService {
         $south = null;
         $east = null;
         $west = null;
-        $trackNameList = '[';
+        $trackNameList = [];
         $linkurl = '';
         $linktext = '';
 
@@ -461,7 +461,7 @@ class TracksService {
                 $trackname = '';
             }
             $trackname = str_replace('"', "'", $trackname);
-            $trackNameList .= sprintf('"%s",', $trackname);
+            $trackNameList[] = sprintf('"%s"', $trackname);
             foreach ($track->trkseg as $segment) {
                 $lastPoint = null;
                 $lastTime = null;
@@ -625,7 +625,7 @@ class TracksService {
                 $routename = '';
             }
             $routename = str_replace('"', "'", $routename);
-            $trackNameList .= sprintf('"%s",', $routename);
+            $trackNameList[] = sprintf('"%s"', $routename);
 
             $lastPoint = null;
             $lastTime = null;
@@ -834,7 +834,7 @@ class TracksService {
             }
         }
 
-        $trackNameList = trim($trackNameList, ',').']';
+        $trackNameList = '[' . implode(',', $trackNameList) . ']';
         if ($north === null){
             $north = 0;
         }
@@ -869,7 +869,7 @@ class TracksService {
             $south,
             $east,
             $west,
-            (strlen($trackNameList) < 200) ? $trackNameList : '',
+            (strlen($trackNameList) < 200) ? $trackNameList : '[]',
             str_replace('"', "'", $linkurl),
             str_replace('"', "'", $linktext),
             $moving_pace

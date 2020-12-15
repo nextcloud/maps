@@ -121,6 +121,7 @@ import AppNavigationTracksItem from '../components/AppNavigationTracksItem'
 import optionsController from '../optionsController'
 import { getLetterColor, hslToRgb, Timer, getDeviceInfoFromUserAgent2, isComputer, isPhone } from '../utils'
 import { poiSearchData } from '../utils/poiData'
+import { processGpx } from '../tracksUtils'
 
 import L from 'leaflet'
 import { geoToLatLng, getFormattedADR } from '../utils/mapUtils'
@@ -1046,10 +1047,22 @@ export default {
 			this.tracksLoading = true
 			network.getTracks().then((response) => {
 				this.tracks = response.data.map((t) => {
+					if (t.metadata) {
+						try {
+							t.metadata = JSON.parse(t.metadata)
+						} catch (error) {
+							console.error('Failed to parse track metadata')
+						}
+					}
 					return {
 						...t,
 						loading: false,
 						enabled: optionsController.enabledTracks.includes(t.id),
+					}
+				})
+				this.tracks.forEach((track) => {
+					if (track.enabled) {
+						this.getTrack(track)
 					}
 				})
 			}).catch((error) => {
@@ -1061,23 +1074,35 @@ export default {
 		onTrackClicked(track) {
 			if (track.enabled) {
 				track.enabled = false
-			this.saveEnabledTracks()
+				this.saveEnabledTracks()
 			} else if (track.metadata && track.content) {
 				track.enabled = true
-			this.saveEnabledTracks()
+				this.saveEnabledTracks()
 			} else {
-				track.loading = true
-				network.getTrack(track.id).then((response) => {
-					track.metadata = response.data.metadata
-					track.content = response.data.content
+				this.getTrack(track, true)
+			}
+		},
+		getTrack(track, enable = false) {
+			track.loading = true
+			network.getTrack(track.id).then((response) => {
+				if (!track.metadata) {
+					try {
+						track.metadata = JSON.parse(response.data.metadata)
+					} catch (error) {
+						console.error('Failed to parse track metadata')
+					}
+				}
+				track.data = processGpx(response.data.content)
+				console.debug(track.data)
+				if (enable) {
 					track.enabled = true
 					this.saveEnabledTracks()
-				}).catch((error) => {
-					console.error(error)
-				}).then(() => {
-					track.loading = false
-				})
-			}
+				}
+			}).catch((error) => {
+				console.error(error)
+			}).then(() => {
+				track.loading = false
+			})
 		},
 		saveEnabledTracks() {
 			const trackStringList = this.tracks.filter((track) => { return track.enabled })

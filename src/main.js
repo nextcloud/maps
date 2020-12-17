@@ -24,6 +24,7 @@ import Vue from 'vue'
 import App from './views/App.vue'
 import './bootstrap'
 import optionsController from './optionsController'
+import '../css/style.scss'
 
 import VueClipboard from 'vue-clipboard2'
 

@@ -4,17 +4,24 @@
 			{{ track.file_name }}
 		</LPopup>
 		<LTooltip :options="tooltipOptions">
-			{{ track.file_name }}
+			<div class="tooltip-track-wrapper"
+				:style="'border: 2px solid ' + color">
+				<b>{{ t('maps', 'Name') }}:</b>
+				<span>{{ track.file_name }}</span>
+			</div>
 		</LTooltip>
+		<LMarker
+			:icon="markerIcon"
+			:lat-lng="firstPoint" />
 		<LFeatureGroup v-for="(line, i) in lines"
-			:key="line.name + i">
+			:key="i">
 			<LPolyline
 				color="black"
 				:opacity="1"
 				:weight="4 * 1.6"
 				:lat-lngs="line.points" />
 			<LPolyline
-				:color="track.color || '#0082c9'"
+				:color="color"
 				:opacity="1"
 				:weight="4"
 				:lat-lngs="line.points" />
@@ -75,10 +82,43 @@ export default {
 			})
 			return [...this.track.data.routes, ...trkSegments]
 		},
+		color() {
+			return this.track.color || '#0082c9'
+		},
+		markerIcon() {
+			return L.divIcon(L.extend({
+				html: '<div class="thumbnail-wrapper" style="--custom-color: ' + this.color + '; border-color: ' + this.color + ';">'
+					+ '<div class="thumbnail" style="background-color: ' + this.color + ';"></div></div>​',
+				className: 'leaflet-marker-track track-marker',
+			}, null, {
+				iconSize: [TRACK_MARKER_VIEW_SIZE, TRACK_MARKER_VIEW_SIZE],
+				iconAnchor: [TRACK_MARKER_VIEW_SIZE / 2, TRACK_MARKER_VIEW_SIZE],
+			}))
+		},
+		firstPoint() {
+			let firstPoint = null
+			if (this.track.data.tracks.length > 0
+				&& this.track.data.tracks[0].segments.length > 0
+				&& this.track.data.tracks[0].segments[0].points.length > 0
+				&& this.track.data.tracks[0].segments[0].points[0].timestamp) {
+				firstPoint = this.track.data.tracks[0].segments[0].points[0]
+			}
+			if (this.track.data.routes.length > 0
+				&& this.track.data.routes[0].points.length > 0
+				&& this.track.data.routes[0].points[0].timestamp
+				&& (firstPoint === null || this.track.data.routes[0].points[0].timestamp < firstPoint.timestamp)) {
+				firstPoint = this.track.data.routes[0].points[0]
+			}
+			if (this.track.data.waypoints.length > 0
+				&& this.track.data.waypoints[0].timestamp
+				&& this.track.data.waypoints[0].timestamp < firstPoint.timestamp) {
+				firstPoint = this.track.data.waypoints[0]
+			}
+			return firstPoint
+		},
 	},
 
 	created() {
-		console.debug('TTTT ' + this.track.file_name)
 	},
 
 	methods: {
@@ -88,4 +128,10 @@ export default {
 
 <style lang="scss" scoped>
 // nothing
+.tooltip-track-wrapper {
+	padding: 6px;
+	border-radius: 3px;
+	background-color: var(--color-main-background);
+	color: var(--color-main-text);
+}
 </style>

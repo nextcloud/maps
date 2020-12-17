@@ -861,6 +861,7 @@ export default {
 	}
 }
 
+::v-deep .leaflet-marker-track-tooltip,
 ::v-deep .leaflet-marker-favorite-tooltip {
 	padding: 0 !important;
 	border: 0 !important;

@@ -72,8 +72,6 @@
 </template>
 
 <script>
-// import { generateUrl } from '@nextcloud/router'
-// import { getCurrentUser } from '@nextcloud/auth'
 import Multiselect from '@nextcloud/vue/dist/Components/Multiselect'
 
 import L from 'leaflet'

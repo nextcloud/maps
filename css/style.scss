@@ -1,7 +1,8 @@
 .app-navigation-toggle {
     display: none;
 }
-@media only screen and (max-width: $breakpoint-mobile) {
+// @media only screen and (max-width: $breakpoint-mobile) {
+@media only screen and (max-width: 1024px) {
     // Account for navigation menu toggle on the top left
     #search-term,
     .leaflet-routing-container {
@@ -211,10 +212,12 @@ tr.selected td {
     bottom: 18px;
     border-width: 12px 8px 0;
 }
-.leaflet-marker-track.track-marker:after,
+.leaflet-marker-track.track-marker .thumbnail-wrapper:after,
+.leaflet-marker-device.device-marker:after {
+    border-width: 12px 7px 0;
+}
 .leaflet-marker-device.device-marker:after {
     bottom: 18px;
-    border-width: 12px 7px 0;
 }
 .leaflet-marker-nonLocalizedPhoto.nonLocalizedPhoto-marker:after,
 .leaflet-marker-photo.photo-marker:after {
@@ -222,7 +225,7 @@ tr.selected td {
     border-width: 11px 8px 0;
 }
 .leaflet-marker-contact.contact-marker:after,
-.leaflet-marker-track.track-marker:after,
+.leaflet-marker-track.track-marker .thumbnail-wrapper:after,
 .leaflet-marker-device.device-marker:after,
 .leaflet-marker-nonLocalizedPhoto.nonLocalizedPhoto-marker:after,
 .leaflet-marker-photo.photo-marker:after {
@@ -237,6 +240,9 @@ tr.selected td {
 }
 .leaflet-marker-nonLocalizedPhoto.nonLocalizedPhoto-marker:after {
     border-color: var(--color-warning) transparent;
+}
+.leaflet-marker-track.track-marker .thumbnail-wrapper:after {
+    border-color: var(--custom-color) transparent;
 }
 
 .leaflet-marker-favorite-cluster .thumbnail,
@@ -266,6 +272,15 @@ tr.selected td {
     width: 101%;
     height: 101%;
     border-radius: 50%;
+}
+.track-marker .thumbnail {
+    // height: 40px;
+	mask: url('../img/road.svg') no-repeat;
+	mask-size: 16px auto;
+	mask-position: center;
+	-webkit-mask: url('../img/road.svg') no-repeat;
+	-webkit-mask-size: 16px auto;
+	-webkit-mask-position: center;
 }
 .leaflet-marker-favorite-cluster .thumbnail {
     border-radius: 50%;
@@ -315,7 +330,13 @@ tr.selected td {
     padding: 1px;
 }
 
-.leaflet-marker-track,
+.leaflet-marker-track .thumbnail-wrapper {
+    border: 2px solid black;
+    border-radius: 50%;
+    height: 40px;
+    background-color: var(--color-main-background);
+}
+
 .leaflet-marker-device,
 .leaflet-marker-contact {
     border: 2px solid var(--color-main-background);

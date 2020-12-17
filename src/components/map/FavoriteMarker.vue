@@ -4,6 +4,7 @@
 		:icon="icon"
 		:lat-lng="[favorite.lat, favorite.lng]"
 		:draggable="draggable"
+		@click="$emit('click', favorite)"
 		@popupopen="onPopupOpen"
 		@moveend="onMoved">
 		<LTooltip

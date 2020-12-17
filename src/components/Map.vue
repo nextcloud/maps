@@ -73,6 +73,7 @@
 				:favorites="favorites"
 				:categories="favoriteCategories"
 				:draggable="favoritesDraggable"
+				@click="$emit('click-favorite', $event)"
 				@edit="onFavoriteEdit"
 				@delete="$emit('delete-favorite', $event)"
 				@delete-multiple="$emit('delete-favorites', $event)" />

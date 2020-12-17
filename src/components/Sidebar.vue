@@ -22,6 +22,14 @@
 			:order="2">
 			LALA
 		</AppSidebarTab>
+		<AppSidebarTab
+			id="favorite"
+			icon="icon-settings-dark"
+			:name="t('maps', 'Favorite')"
+			:order="3">
+			<FavoriteSidebarTab
+				:favorite="favorite" />
+		</AppSidebarTab>
 	</AppSidebar>
 </template>
 
@@ -30,17 +38,18 @@
 // import ActionLink from '@nextcloud/vue/dist/Components/ActionLink'
 import AppSidebar from '@nextcloud/vue/dist/Components/AppSidebar'
 import AppSidebarTab from '@nextcloud/vue/dist/Components/AppSidebarTab'
-
 import { generateUrl } from '@nextcloud/router'
+
+import FavoriteSidebarTab from '../components/FavoriteSidebarTab'
 
 export default {
 	name: 'Sidebar',
 
 	components: {
 		// ActionButton,
-		// ActionLink,
 		AppSidebar,
 		AppSidebarTab,
+		FavoriteSidebarTab,
 	},
 
 	props: {
@@ -50,6 +59,10 @@ export default {
 		},
 		activeTab: {
 			type: String,
+			required: true,
+		},
+		favorite: {
+			validator: prop => typeof prop === 'object' || prop === null,
 			required: true,
 		},
 	},

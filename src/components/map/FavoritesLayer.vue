@@ -10,6 +10,7 @@
 			:draggable="draggable"
 			:color="categories[f.category].color"
 			:icon="getFavoriteMarkerIcon(f)"
+			@click="$emit('click', $event)"
 			@edit="$emit('edit', $event)"
 			@delete="$emit('delete', $event)" />
 		<LMarker

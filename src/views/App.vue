@@ -74,6 +74,7 @@
 					:loading="mapLoading"
 					:last-actions="lastActions"
 					:last-canceled-actions="lastCanceledActions"
+					@click-favorite="onFavoriteClick"
 					@edit-favorite="onFavoriteEdit"
 					@add-favorite="onFavoriteAdd"
 					@add-address-favorite="onAddressFavoriteAdd"
@@ -100,6 +101,7 @@
 			v-if="true"
 			:show="showSidebar"
 			:active-tab="activeSidebarTab"
+			:favorite="selectedFavorite"
 			@active-changed="onActiveSidebarTabChanged"
 			@close="showSidebar = false" />
 	</Content>
@@ -166,6 +168,7 @@ export default {
 			favorites: {},
 			disabledFavoriteCategories: optionsController.disabledFavoriteCategories,
 			favoriteCategoryTokens: {},
+			selectedFavorite: null,
 			// photos
 			photosLoading: false,
 			photosEnabled: optionsController.photosEnabled,
@@ -848,6 +851,11 @@ export default {
 				const maxLon = Math.max(...lons)
 				this.$refs.map.fitBounds(L.latLngBounds([minLat, minLon], [maxLat, maxLon]), { padding: [30, 30] })
 			}
+		},
+		onFavoriteClick(f) {
+			this.showSidebar = true
+			this.activeSidebarTab = 'favorite'
+			this.selectedFavorite = f
 		},
 		onFavoriteEdit(f, save = true) {
 			network.editFavorite(f.id, f.name, f.category, f.comment, f.lat, f.lng).then((response) => {

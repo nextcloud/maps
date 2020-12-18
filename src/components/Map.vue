@@ -90,7 +90,7 @@
 				ref="contactsLayer"
 				:contacts="contacts"
 				:groups="contactGroups"
-				@address-deleted="$emit('address-deleted')" />
+				@address-deleted="$emit('address-deleted', $event)" />
 			<PlaceContactPopup v-if="placingContact"
 				:lat-lng="placingContactLatLng"
 				@contact-placed="onContactPlaced" />
@@ -702,9 +702,9 @@ export default {
 			this.placingContactLatLng = L.latLng(e.latlng.lat, e.latlng.lng)
 			this.placingContact = true
 		},
-		onContactPlaced() {
+		onContactPlaced(e) {
 			this.placingContact = false
-			this.$emit('contact-placed')
+			this.$emit('contact-placed', e)
 		},
 		// photos
 		contextPlacePhotos(e) {

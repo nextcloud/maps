@@ -81,8 +81,8 @@
 					@delete-favorite="onFavoriteDelete"
 					@delete-favorites="onFavoritesDelete"
 					@coords-reset="resetPhotosCoords"
-					@address-deleted="getContacts"
-					@contact-placed="getContacts"
+					@address-deleted="onContactAddressDelete"
+					@contact-placed="onContactPlace"
 					@place-photos="placePhotoFilesOrFolder"
 					@photo-moved="onPhotoMoved"
 					@cancel="cancelAction"
@@ -748,6 +748,21 @@ export default {
 				} else {
 					this.contactGroups[notGroupedId].counter++
 				}
+			})
+		},
+		onContactAddressDelete(contact) {
+			network.deleteContactAddress(contact.BOOKID, contact.URI, contact.UID, contact.ADR).then((response) => {
+				this.getContacts()
+			}).catch((error) => {
+				console.error(error)
+			})
+		},
+		onContactPlace(e) {
+			network.placeContact(e.contact.BOOKID, e.contact.URI,
+				e.contact.UID, e.latLng.lat, e.latLng.lng,
+				e.address, e.addressType
+			).then((response) => {
+				this.getContacts()
 			})
 		},
 		// ================ FAVORITES =================

@@ -87,8 +87,6 @@ import { LMarker, LTooltip, LPopup } from 'vue2-leaflet'
 import optionsController from '../../optionsController'
 import { geoToLatLng } from '../../utils/mapUtils'
 
-import { deleteContactAddress } from '../../network'
-
 const CONTACT_MARKER_VIEW_SIZE = 40
 
 export default {
@@ -188,11 +186,7 @@ export default {
 			})
 		},
 		onDeleteAddressClick() {
-			deleteContactAddress(this.contact.BOOKID, this.contact.URI, this.contact.UID, this.contact.ADR).then((response) => {
-				this.$emit('address-deleted')
-			}).catch((error) => {
-				console.error(error)
-			})
+			this.$emit('address-deleted', this.contact)
 		},
 	},
 }

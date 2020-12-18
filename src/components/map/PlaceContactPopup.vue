@@ -69,7 +69,7 @@ import Multiselect from '@nextcloud/vue/dist/Components/Multiselect'
 import Avatar from '@nextcloud/vue/dist/Components/Avatar'
 
 import { formatAddress } from '../../utils'
-import { getAllContacts, geocode, searchAddress, placeContact } from '../../network'
+import { getAllContacts, geocode, searchAddress } from '../../network'
 
 export default {
 	name: 'PlaceContactPopup',
@@ -170,11 +170,11 @@ export default {
 		},
 		onValidate() {
 			if (!this.addressEdited) {
-				placeContact(this.selectedContact.BOOKID, this.selectedContact.URI,
-					this.selectedContact.UID, this.latLng.lat, this.latLng.lng,
-					this.address, this.addressType
-				).then((response) => {
-					this.$emit('contact-placed')
+				this.$emit('contact-placed', {
+					contact: this.selectedContact,
+					latLng: this.latLng,
+					address: this.address,
+					addressType: this.addressType,
 				})
 			} else {
 				this.searchingEditedAddress = true
@@ -184,10 +184,12 @@ export default {
 					const address = addressFound ? res[0].address : this.address
 					const lat = addressFound ? res[0].lat : this.latLng.lat
 					const lng = addressFound ? res[0].lon : this.latLng.lng
-					placeContact(this.selectedContact.BOOKID, this.selectedContact.URI,
-						this.selectedContact.UID, lat, lng, address, this.addressType
-					).then((response) => {
-						this.$emit('contact-placed')
+
+					this.$emit('contact-placed', {
+						contact: this.selectedContact,
+						latLng: { lat, lng },
+						address,
+						addressType: this.addressType,
 					})
 				}).catch((error) => {
 					console.error(error)

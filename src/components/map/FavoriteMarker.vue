@@ -1,9 +1,12 @@
 <template>
 	<LMarker
+		ref="marker"
 		:options="{ data: favorite }"
 		:icon="icon"
 		:lat-lng="[favorite.lat, favorite.lng]"
 		:draggable="draggable"
+		@ready="onMarkerReady"
+		@contextmenu="onRightClick"
 		@click="$emit('click', favorite)"
 		@moveend="onMoved">
 		<LTooltip
@@ -20,12 +23,21 @@
 				<span v-if="favorite.comment">{{ favorite.comment }}</span>
 			</div>
 		</LTooltip>
+		<LPopup
+			class="popup-favorite-wrapper"
+			:options="popupOptions">
+			<ActionButton icon="icon-delete" @click="$emit('delete', favorite.id)">
+				{{ t('maps', 'Delete favorite') }}
+			</ActionButton>
+		</LPopup>
 	</LMarker>
 </template>
 
 <script>
+import ActionButton from '@nextcloud/vue/dist/Components/ActionButton'
+
 import L from 'leaflet'
-import { LMarker, LTooltip } from 'vue2-leaflet'
+import { LMarker, LTooltip, LPopup } from 'vue2-leaflet'
 
 export default {
 	name: 'FavoriteMarker',
@@ -33,6 +45,8 @@ export default {
 	components: {
 		LMarker,
 		LTooltip,
+		LPopup,
+		ActionButton,
 	},
 
 	props: {
@@ -66,6 +80,7 @@ export default {
 				offset: L.point(0, 0),
 			},
 			popupOptions: {
+				closeButton: false,
 				closeOnClick: false,
 				className: 'popovermenu open popupMarker favoritePopup',
 				offset: L.point(-5, 10),
@@ -87,6 +102,15 @@ export default {
 				lng: e.target.getLatLng().lng,
 			}
 			this.$emit('edit', editedFav)
+		},
+		onMarkerReady(m) {
+			// avoid left click popup
+			L.DomEvent.on(m, 'click', (ev) => {
+				m.closePopup()
+			})
+		},
+		onRightClick(e) {
+			this.$refs.marker.mapObject.openPopup()
 		},
 	},
 }

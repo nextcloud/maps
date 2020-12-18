@@ -167,7 +167,7 @@
     "By car (GraphHopper)" : "Autem (GraphHopper)",
     "By bike (GraphHopper)" : "Na kole (GraphHopper)",
     "By Foot (GraphHopper)" : "Pěšky (GraphHopper)",
-    "Routing is currently disabled." : "Trasování je v tuto chvíli vypnuto",
+    "Routing is currently disabled." : "Směrování je v tuto chvíli vypnuté",
     "Add a routing service" : "Přidat službu směrování",
     "Export current route to GPX" : "Exportovat trasu do formátu GPX",
     "Routing error:" : "Chyba hledání cesty:",

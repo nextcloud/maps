@@ -1,15 +1,15 @@
 <template>
 	<LMarker
 		:options="{ data: contact }"
-		:icon="getContactMarkerIcon()"
-		:lat-lng="getLatLng()"
+		:icon="contactMarkerIcon"
+		:lat-lng="latLng"
 		@click="onMarkerClick"
 		@contextmenu="onMarkerContextmenu">
 		<LTooltip
 			class="tooltip-contact-wrapper"
 			:options="tooltipOptions">
 			<img class="tooltip-contact-avatar"
-				:src="getContactAvatar()"
+				:src="contactAvatar"
 				alt="">
 			<div class="tooltip-contact-content">
 				<h3 class="tooltip-contact-name">
@@ -23,7 +23,7 @@
 					class="tooltip-contact-address-type">
 					{{ t('maps', 'Work') }}
 				</p>
-				<p v-for="l in getFormattedAddressLines()"
+				<p v-for="l in formattedAddressLines"
 					:key="l"
 					class="tooltip-contact-address">
 					{{ l }}
@@ -36,7 +36,7 @@
 			<div v-if="click === 'left'">
 				<div class="left-contact-popup">
 					<img class="tooltip-contact-avatar"
-						:src="getContactAvatar()"
+						:src="contactAvatar"
 						alt="">
 					<button
 						v-tooltip="{ content: t('maps', 'Delete this address') }"
@@ -55,13 +55,13 @@
 						class="tooltip-contact-address-type">
 						{{ t('maps', 'Work') }}
 					</p>
-					<p v-for="l in getFormattedAddressLines()"
+					<p v-for="l in formattedAddressLines"
 						:key="l"
 						class="tooltip-contact-address">
 						{{ l }}
 					</p>
 					<a target="_blank"
-						:href="getContactUrl()">
+						:href="contactUrl">
 						{{ t('maps', 'Open in Contacts') }}
 					</a>
 				</div>
@@ -125,6 +125,49 @@ export default {
 	},
 
 	computed: {
+		latLng() {
+			return geoToLatLng(this.contact.GEO)
+		},
+		contactMarkerIcon() {
+			const iconUrl = this.contactAvatar
+			return L.divIcon(
+				L.extend({
+					className: 'leaflet-marker-contact contact-marker',
+					html: '<div class="thumbnail" style="background-image: url(' + iconUrl + ');"></div>​',
+				},
+				this.contact,
+				{
+					iconSize: [CONTACT_MARKER_VIEW_SIZE, CONTACT_MARKER_VIEW_SIZE],
+					iconAnchor: [CONTACT_MARKER_VIEW_SIZE / 2, CONTACT_MARKER_VIEW_SIZE],
+				})
+			)
+		},
+		contactAvatar() {
+			if (this.contact.HAS_PHOTO) {
+				return generateUrl(
+					'/remote.php/dav/addressbooks/users/' + getCurrentUser().uid
+					+ '/' + encodeURIComponent(this.contact.BOOKURI)
+					+ '/' + encodeURIComponent(this.contact.URI) + '?photo').replace(/index\.php\//, '')
+			} else {
+				return generateUrl('/apps/maps/contacts-avatar?name=' + encodeURIComponent(this.contact.FN))
+			}
+		},
+		formattedAddressLines() {
+			const adrTab = this.contact.ADR.split(';')
+			const formattedAddressLines = []
+			if (adrTab.length > 6) {
+				// check if street name is set
+				if (adrTab[2] !== '') {
+					formattedAddressLines.push(adrTab[2])
+				}
+				formattedAddressLines.push(adrTab[5] + ' ' + adrTab[3])
+				formattedAddressLines.push(adrTab[4] + ' ' + adrTab[6])
+			}
+			return formattedAddressLines
+		},
+		contactUrl() {
+			return generateUrl('/apps/contacts/' + t('contacts', 'All contacts') + '/' + encodeURIComponent(this.contact.UID + '~contacts'))
+		},
 	},
 
 	methods: {
@@ -143,49 +186,6 @@ export default {
 				e.target.closeTooltip()
 				this.popupOptions.offset = L.point(-5, 10)
 			})
-		},
-		getLatLng() {
-			return geoToLatLng(this.contact.GEO)
-		},
-		getContactMarkerIcon() {
-			const iconUrl = this.getContactAvatar()
-			return L.divIcon(
-				L.extend({
-					className: 'leaflet-marker-contact contact-marker',
-					html: '<div class="thumbnail" style="background-image: url(' + iconUrl + ');"></div>​',
-				},
-				this.contact,
-				{
-					iconSize: [CONTACT_MARKER_VIEW_SIZE, CONTACT_MARKER_VIEW_SIZE],
-					iconAnchor: [CONTACT_MARKER_VIEW_SIZE / 2, CONTACT_MARKER_VIEW_SIZE],
-				})
-			)
-		},
-		getContactAvatar() {
-			if (this.contact.HAS_PHOTO) {
-				return generateUrl(
-					'/remote.php/dav/addressbooks/users/' + getCurrentUser().uid
-					+ '/' + encodeURIComponent(this.contact.BOOKURI)
-					+ '/' + encodeURIComponent(this.contact.URI) + '?photo').replace(/index\.php\//, '')
-			} else {
-				return generateUrl('/apps/maps/contacts-avatar?name=' + encodeURIComponent(this.contact.FN))
-			}
-		},
-		getFormattedAddressLines() {
-			const adrTab = this.contact.ADR.split(';')
-			const formattedAddressLines = []
-			if (adrTab.length > 6) {
-				// check if street name is set
-				if (adrTab[2] !== '') {
-					formattedAddressLines.push(adrTab[2])
-				}
-				formattedAddressLines.push(adrTab[5] + ' ' + adrTab[3])
-				formattedAddressLines.push(adrTab[4] + ' ' + adrTab[6])
-			}
-			return formattedAddressLines
-		},
-		getContactUrl() {
-			return generateUrl('/apps/contacts/' + t('contacts', 'All contacts') + '/' + encodeURIComponent(this.contact.UID + '~contacts'))
 		},
 		onDeleteAddressClick() {
 			deleteContactAddress(this.contact.BOOKID, this.contact.URI, this.contact.UID, this.contact.ADR).then((response) => {

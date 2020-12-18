@@ -130,15 +130,18 @@ export default {
 	methods: {
 		onMarkerClick(e) {
 			this.click = 'left'
+			this.popupOptions.offset = L.point(-5, 10)
 			this.$nextTick(() => {
 				e.target.closeTooltip()
 			})
 		},
 		onMarkerContextmenu(e) {
 			this.click = 'right'
+			this.popupOptions.offset = L.point(-5, -25)
 			this.$nextTick(() => {
 				e.target.openPopup()
 				e.target.closeTooltip()
+				this.popupOptions.offset = L.point(-5, 10)
 			})
 		},
 		getLatLng() {

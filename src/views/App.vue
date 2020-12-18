@@ -452,6 +452,10 @@ export default {
 				this.cancelFavoriteDelete(lastAction)
 			} else if (lastAction.type === 'favoriteRenameCategory') {
 				this.cancelFavoriteRenameCategory(lastAction)
+			} else if (lastAction.type === 'contactDelete') {
+				this.cancelContactDelete(lastAction)
+			} else if (lastAction.type === 'contactPlace') {
+				this.cancelContactPlace(lastAction)
 			}
 		},
 		redoAction() {
@@ -470,6 +474,10 @@ export default {
 				this.redoFavoriteDelete(lastCanceledAction)
 			} else if (lastCanceledAction.type === 'favoriteRenameCategory') {
 				this.redoFavoriteRenameCategory(lastCanceledAction)
+			} else if (lastCanceledAction.type === 'contactDelete') {
+				this.redoContactDelete(lastCanceledAction)
+			} else if (lastCanceledAction.type === 'contactPlace') {
+				this.redoContactPlace(lastCanceledAction)
 			}
 		},
 		// ================ PHOTOS =================
@@ -750,20 +758,72 @@ export default {
 				}
 			})
 		},
-		onContactAddressDelete(contact) {
+		onContactAddressDelete(contact, save = true) {
 			network.deleteContactAddress(contact.BOOKID, contact.URI, contact.UID, contact.ADR).then((response) => {
+				if (save) {
+					this.saveAction({
+						type: 'contactDelete',
+						content: contact,
+					})
+				}
 				this.getContacts()
 			}).catch((error) => {
 				console.error(error)
 			})
 		},
-		onContactPlace(e) {
+		onContactPlace(e, save = true) {
 			network.placeContact(e.contact.BOOKID, e.contact.URI,
 				e.contact.UID, e.latLng.lat, e.latLng.lng,
 				e.address, e.addressType
 			).then((response) => {
+				if (save) {
+					this.saveAction({
+						type: 'contactPlace',
+						content: e,
+					})
+				}
 				this.getContacts()
+			}).catch((error) => {
+				console.error(error)
 			})
+		},
+		cancelContactDelete(action) {
+			// here we have to generate all placement parameters
+			const latLng = geoToLatLng(action.content.GEO)
+			const split = action.content.ADR.split(';')
+			const address = {
+				attraction: '',
+				house_number: '',
+				road: split[2],
+				postcode: split[5],
+				city: split[3],
+				state: split[4],
+				country: split[6],
+			}
+			this.onContactPlace({
+				contact: action.content,
+				latLng: { lat: latLng[0], lng: latLng[1] },
+				address,
+				addressType: action.content.ADRTYPE,
+			}, false)
+		},
+		redoContactDelete(action) {
+			this.onContactAddressDelete(action.content, false)
+		},
+		cancelContactPlace(action) {
+			const a = action.content.address
+			let city = a.village || a.town || a.city || ''
+			city = city.replace(/\s+/g, ' ').trim()
+			action.content.contact.ADR = ';;'
+				+ (a.road || '') + ';'
+				+ (city || '') + ';'
+				+ (a.state || '') + ';'
+				+ (a.postcode || '') + ';'
+				+ (a.country || '')
+			this.onContactAddressDelete(action.content.contact, false)
+		},
+		redoContactPlace(action) {
+			this.onContactPlace(action.content, false)
 		},
 		// ================ FAVORITES =================
 		onFavoritesClicked() {

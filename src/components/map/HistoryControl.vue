@@ -77,6 +77,10 @@ export default {
 				return t('maps', 'delete favorite')
 			} else if (action.type === 'favoriteRenameCategory') {
 				return t('maps', 'rename favorite category')
+			} else if (action.type === 'contactPlace') {
+				return t('maps', 'place contact')
+			} else if (action.type === 'contactDelete') {
+				return t('maps', 'delete contact address')
 			}
 		},
 	},

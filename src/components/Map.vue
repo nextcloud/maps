@@ -849,6 +849,14 @@ export default {
 	border: 2px solid var(--color-border);
 }
 
+::v-deep .popup-contact-wrapper .action {
+	p {
+		height: 44px !important;
+		line-height: 28px;
+	}
+}
+
+::v-deep .popup-contact-wrapper .action,
 ::v-deep .popup-favorite-wrapper .action,
 ::v-deep .popup-photo-wrapper .action {
 	height: 44px;

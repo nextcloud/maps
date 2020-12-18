@@ -1,0 +1,225 @@
+<template>
+	<LMarker
+		:options="{ data: contact }"
+		:icon="getContactMarkerIcon()"
+		:lat-lng="getLatLng()"
+		@click="onMarkerClick"
+		@contextmenu="onMarkerContextmenu">
+		<LTooltip
+			class="tooltip-contact-wrapper"
+			:options="tooltipOptions">
+			<img class="tooltip-contact-avatar"
+				:src="getContactAvatar()"
+				alt="">
+			<div class="tooltip-contact-content">
+				<h3 class="tooltip-contact-name">
+					{{ contact.FN }}
+				</h3>
+				<p v-if=" contact.ADRTYPE.toLowerCase() === 'home'"
+					class="tooltip-contact-address-type">
+					{{ t('maps', 'Home') }}
+				</p>
+				<p v-else-if=" contact.ADRTYPE.toLowerCase() === 'work'"
+					class="tooltip-contact-address-type">
+					{{ t('maps', 'Work') }}
+				</p>
+				<p v-for="l in getFormattedAddressLines()"
+					:key="l"
+					class="tooltip-contact-address">
+					{{ l }}
+				</p>
+			</div>
+		</LTooltip>
+		<LPopup
+			class="popup-contact-wrapper"
+			:options="popupOptions">
+			<div v-if="click === 'left'">
+				<div class="left-contact-popup">
+					<img class="tooltip-contact-avatar"
+						:src="getContactAvatar()"
+						alt="">
+					<button
+						v-tooltip="{ content: t('maps', 'Delete this address') }"
+						class="icon icon-delete"
+						@click="onDeleteAddressClick()" />
+				</div>
+				<div class="tooltip-contact-content">
+					<h3 class="tooltip-contact-name">
+						{{ contact.FN }}
+					</h3>
+					<p v-if=" contact.ADRTYPE.toLowerCase() === 'home'"
+						class="tooltip-contact-address-type">
+						{{ t('maps', 'Home') }}
+					</p>
+					<p v-else-if=" contact.ADRTYPE.toLowerCase() === 'work'"
+						class="tooltip-contact-address-type">
+						{{ t('maps', 'Work') }}
+					</p>
+					<p v-for="l in getFormattedAddressLines()"
+						:key="l"
+						class="tooltip-contact-address">
+						{{ l }}
+					</p>
+					<a target="_blank"
+						:href="getContactUrl()">
+						{{ t('maps', 'Open in Contacts') }}
+					</a>
+				</div>
+			</div>
+			<div v-if="click === 'right'">
+				<ActionButton icon="icon-delete"
+					@click="onDeleteAddressClick()">
+					{{ t('maps', 'Delete this address') }}
+				</ActionButton>
+			</div>
+		</LPopup>
+	</LMarker>
+</template>
+
+<script>
+import { generateUrl } from '@nextcloud/router'
+import { getCurrentUser } from '@nextcloud/auth'
+import ActionButton from '@nextcloud/vue/dist/Components/ActionButton'
+
+import L from 'leaflet'
+import { LMarker, LTooltip, LPopup } from 'vue2-leaflet'
+
+import optionsController from '../../optionsController'
+import { geoToLatLng } from '../../utils/mapUtils'
+
+import { deleteContactAddress } from '../../network'
+
+const CONTACT_MARKER_VIEW_SIZE = 40
+
+export default {
+	name: 'ContactLayer',
+	components: {
+		LMarker,
+		LTooltip,
+		LPopup,
+		ActionButton,
+	},
+
+	props: {
+		contact: {
+			type: Object,
+			required: true,
+		},
+	},
+
+	data() {
+		return {
+			click: 'left',
+			optionValues: optionsController.optionValues,
+			tooltipOptions: {
+				className: 'leaflet-marker-contact-tooltip',
+				direction: 'top',
+				offset: L.point(0, 0),
+			},
+			popupOptions: {
+				closeOnClick: false,
+				className: 'popovermenu open popupMarker contactPopup',
+				offset: L.point(-5, 10),
+			},
+		}
+	},
+
+	computed: {
+	},
+
+	methods: {
+		onMarkerClick(e) {
+			this.click = 'left'
+			this.$nextTick(() => {
+				e.target.closeTooltip()
+			})
+		},
+		onMarkerContextmenu(e) {
+			this.click = 'right'
+			this.$nextTick(() => {
+				e.target.openPopup()
+				e.target.closeTooltip()
+			})
+		},
+		getLatLng() {
+			return geoToLatLng(this.contact.GEO)
+		},
+		getContactMarkerIcon() {
+			const iconUrl = this.getContactAvatar()
+			return L.divIcon(
+				L.extend({
+					className: 'leaflet-marker-contact contact-marker',
+					html: '<div class="thumbnail" style="background-image: url(' + iconUrl + ');"></div>​',
+				},
+				this.contact,
+				{
+					iconSize: [CONTACT_MARKER_VIEW_SIZE, CONTACT_MARKER_VIEW_SIZE],
+					iconAnchor: [CONTACT_MARKER_VIEW_SIZE / 2, CONTACT_MARKER_VIEW_SIZE],
+				})
+			)
+		},
+		getContactAvatar() {
+			if (this.contact.HAS_PHOTO) {
+				return generateUrl(
+					'/remote.php/dav/addressbooks/users/' + getCurrentUser().uid
+					+ '/' + encodeURIComponent(this.contact.BOOKURI)
+					+ '/' + encodeURIComponent(this.contact.URI) + '?photo').replace(/index\.php\//, '')
+			} else {
+				return generateUrl('/apps/maps/contacts-avatar?name=' + encodeURIComponent(this.contact.FN))
+			}
+		},
+		getFormattedAddressLines() {
+			const adrTab = this.contact.ADR.split(';')
+			const formattedAddressLines = []
+			if (adrTab.length > 6) {
+				// check if street name is set
+				if (adrTab[2] !== '') {
+					formattedAddressLines.push(adrTab[2])
+				}
+				formattedAddressLines.push(adrTab[5] + ' ' + adrTab[3])
+				formattedAddressLines.push(adrTab[4] + ' ' + adrTab[6])
+			}
+			return formattedAddressLines
+		},
+		getContactUrl() {
+			return generateUrl('/apps/contacts/' + t('contacts', 'All contacts') + '/' + encodeURIComponent(this.contact.UID + '~contacts'))
+		},
+		onDeleteAddressClick() {
+			deleteContactAddress(this.contact.BOOKID, this.contact.URI, this.contact.UID, this.contact.ADR).then((response) => {
+				this.$emit('address-deleted')
+			}).catch((error) => {
+				console.error(error)
+			})
+		},
+	},
+}
+</script>
+
+<style lang="scss" scoped>
+.popup-contact-wrapper {
+	width: 100%;
+	.action {
+		width: 100%;
+	}
+}
+
+.popup-contact-wrapper > div,
+.tooltip-contact-wrapper {
+	display: flex;
+}
+
+.left-contact-popup {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	button {
+		width: 44px;
+		height: 44px !important;
+		background-color: transparent;
+		border: 0;
+		&:hover {
+			background-color: var(--color-background-hover);
+		}
+	}
+}
+</style>

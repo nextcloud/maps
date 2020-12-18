@@ -16,7 +16,7 @@
 			PLOP
 		</AppSidebarTab>
 		<AppSidebarTab
-			id="settings"
+			id="settingss"
 			icon="icon-settings-dark"
 			:name="t('maps', 'Settings')"
 			:order="2">
@@ -24,7 +24,7 @@
 		</AppSidebarTab>
 		<AppSidebarTab
 			id="favorite"
-			icon="icon-settings-dark"
+			icon="icon-favorite"
 			:name="t('maps', 'Favorite')"
 			:order="3">
 			<FavoriteSidebarTab

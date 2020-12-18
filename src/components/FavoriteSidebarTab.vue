@@ -8,7 +8,9 @@
 			@delete="$emit('delete', $event)" />
 	</div>
 	<div v-else>
-		NOFAV
+		<p>
+			{{ t('maps', 'Select a favorite to edit.') }}
+		</p>
 	</div>
 </template>
 

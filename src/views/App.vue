@@ -102,6 +102,9 @@
 			:show="showSidebar"
 			:active-tab="activeSidebarTab"
 			:favorite="selectedFavorite"
+			:favorite-categories="favoriteCategories"
+			@edit-favorite="onFavoriteEdit"
+			@delete-favorite="onFavoriteDelete"
 			@active-changed="onActiveSidebarTabChanged"
 			@close="showSidebar = false" />
 	</Content>

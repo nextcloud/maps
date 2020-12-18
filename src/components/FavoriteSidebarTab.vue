@@ -1,6 +1,11 @@
 <template>
 	<div v-if="favorite">
-		{{ favorite.name }}
+		<FavoriteEditionForm
+			ref="form"
+			:favorite="favorite"
+			:categories="categories"
+			@edit="$emit('edit', $event)"
+			@delete="$emit('delete', $event)" />
 	</div>
 	<div v-else>
 		NOFAV
@@ -8,19 +13,23 @@
 </template>
 
 <script>
+import FavoriteEditionForm from './FavoriteEditionForm'
 
 export default {
 	name: 'FavoriteSidebarTab',
 
 	components: {
-		// ActionButton,
-		// ActionLink,
+		FavoriteEditionForm,
 	},
 
 	props: {
 		favorite: {
 			required: true,
 			validator: prop => typeof prop === 'object' || prop === null,
+		},
+		categories: {
+			type: Object,
+			required: true,
 		},
 	},
 

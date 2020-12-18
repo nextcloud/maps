@@ -74,7 +74,7 @@
 				:categories="favoriteCategories"
 				:draggable="favoritesDraggable"
 				@click="$emit('click-favorite', $event)"
-				@edit="onFavoriteEdit"
+				@edit="$emit('edit-favorite', $event)"
 				@delete="$emit('delete-favorite', $event)"
 				@delete-multiple="$emit('delete-favorites', $event)" />
 			<PhotosLayer
@@ -696,10 +696,6 @@ export default {
 		// favorites
 		contextAddFavorite(e) {
 			this.$emit('add-favorite', e.latlng)
-		},
-		onFavoriteEdit(e) {
-			this.$emit('edit-favorite', e)
-			this.$refs.map.mapObject.closePopup()
 		},
 		// contacts
 		placeContactClicked(e) {

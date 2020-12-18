@@ -28,7 +28,10 @@
 			:name="t('maps', 'Favorite')"
 			:order="3">
 			<FavoriteSidebarTab
-				:favorite="favorite" />
+				:favorite="favorite"
+				:categories="favoriteCategories"
+				@edit="$emit('edit-favorite', $event)"
+				@delete="$emit('delete-favorite', $event)" />
 		</AppSidebarTab>
 	</AppSidebar>
 </template>
@@ -63,6 +66,10 @@ export default {
 		},
 		favorite: {
 			validator: prop => typeof prop === 'object' || prop === null,
+			required: true,
+		},
+		favoriteCategories: {
+			type: Object,
 			required: true,
 		},
 	},

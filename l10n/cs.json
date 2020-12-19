@@ -85,7 +85,7 @@
     "{nb} favorites imported from {path}" : "{nb} oblíbených importováno z {path}",
     "Warning: tracks or routes were found in imported files, they were ignored." : "Varování: importovaných souborech byly nalezeny zaznamenané trasy nebo trasy – ty byly ignorovány.",
     "Failed to import favorites" : "Nepodařilo se importovat oblíbené",
-    "View in Maps" : "Zobrazit v mapě",
+    "View in Maps" : "Zobrazit na mapě",
     "Import as favorites in Maps" : "Importovat v mapách jako oblíbené",
     "Import as devices in Maps" : "Importovat jako zařízení v Mapy",
     "Failed to load non-geolocalized photos" : "Nepodařilo se načíst fotky, neobsahující souřadnice",

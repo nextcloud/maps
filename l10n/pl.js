@@ -76,7 +76,7 @@ OC.L10N.register(
     "Click on the map to add a favorite, press ESC to cancel" : "Kliknij na mapę, aby dodać ulubione, naciśnij ESC, aby anulować",
     "Failed to add favorite" : "Nie udało się dodać do ulubionych",
     "No name" : "Bez nazwy",
-    "Submit" : "Prześlij",
+    "Submit" : "Wyślij",
     "Favorite name" : "Nazwa ulubionych",
     "Move" : "Przenieś",
     "Failed to delete favorite" : "Nie udało się usunąć ulubionych",

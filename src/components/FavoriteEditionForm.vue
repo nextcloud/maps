@@ -78,7 +78,11 @@ export default {
 			categoryPH: t('maps', 'Category'),
 			commentPH: t('maps', 'Comment'),
 			newCategoryOption: null,
-			selectedCategory: null,
+			selectedCategory: {
+				label: this.favorite.category,
+				catid: this.favorite.category,
+				multiselectKey: this.favorite.category,
+			},
 		}
 	},
 

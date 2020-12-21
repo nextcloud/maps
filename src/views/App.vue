@@ -961,6 +961,7 @@ export default {
 						favorites: [{ ...this.favorites[favid] }],
 					})
 				}
+				this.selectedFavorite = null
 				this.$delete(this.favorites, favid)
 			}).catch((error) => {
 				console.error(error)

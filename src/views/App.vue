@@ -45,6 +45,7 @@
 					:enabled="tracksEnabled"
 					:loading="tracksLoading"
 					:tracks="tracks"
+					@zoom="onTrackZoom"
 					@track-clicked="onTrackClicked"
 					@tracks-clicked="onTracksClicked"
 					@color="onChangeTrackColor" />
@@ -1214,6 +1215,10 @@ export default {
 			}).catch((error) => {
 				console.error(error)
 			})
+		},
+		onTrackZoom(track) {
+			const meta = track.metadata
+			this.$refs.map.fitBounds(L.latLngBounds([meta.s, meta.w], [meta.n, meta.e]), { padding: [30, 30] })
 		},
 	},
 }

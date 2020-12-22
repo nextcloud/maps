@@ -27,8 +27,8 @@
 				:track="track"
 				:parent-enabled="enabled && tracks.length > 0"
 				@click="$emit('track-clicked', $event)"
-				@zoom="$emit('zoom', track, $event)"
-				@elevation="$emit('elevation', track, $event)"
+				@zoom="$emit('zoom', $event)"
+				@elevation="$emit('elevation', $event)"
 				@color="$emit('color', $event)" />
 		</template>
 	</AppNavigationItem>

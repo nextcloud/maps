@@ -137,6 +137,10 @@ import 'leaflet-contextmenu/dist/leaflet.contextmenu.min'
 import 'leaflet-contextmenu/dist/leaflet.contextmenu.min.css'
 import 'leaflet.locatecontrol/dist/L.Control.Locate.min'
 import 'leaflet.locatecontrol/dist/L.Control.Locate.min.css'
+// import 'd3/dist/d3.min'
+import GeoJSON from 'geojson'
+import '@raruto/leaflet-elevation/dist/leaflet-elevation'
+import '@raruto/leaflet-elevation/dist/leaflet-elevation.css'
 
 import Slider from '../components/map/Slider'
 import SearchControl from '../components/map/SearchControl'
@@ -298,6 +302,8 @@ export default {
 			// contacts
 			placingContact: false,
 			placingContactLatLng: null,
+			// tracks
+			elevationControl: null,
 			// poi
 			searchPois: [],
 			searching: false,
@@ -712,6 +718,56 @@ export default {
 		},
 		onPhotoMoved(photo, latLng) {
 			this.$emit('photo-moved', photo, latLng)
+		},
+		// tracks
+		clearElevationControl() {
+			if (this.elevationControl !== null) {
+				this.elevationControl.clear()
+				this.elevationControl.remove()
+				this.elevationControl = null
+			}
+		},
+		displayElevation(track) {
+			this.clearElevationControl()
+			const data = [
+				{
+					line: [[102.0, 0.0], [103.0, 1.0], [104.0, 0.0], [105.0, 1.0]],
+					prop0: 'value0',
+					prop1: 0.0,
+				},
+			]
+			const geojson = GeoJSON.parse(data, { LineString: 'line' })
+			console.debug(geojson)
+			const el = L.control.elevation({
+				lazyLoadJS: false,
+				position: 'bottomleft',
+				detached: false,
+				height: 150,
+				width: 700,
+				margins: {
+					top: 10,
+					right: 280,
+					bottom: 23,
+					left: 60,
+				},
+				collapsed: true,
+				autohide: false,
+				followMarker: false,
+				theme: 'steelblue-theme',
+				slope: true,
+				speed: true,
+				time: true,
+				summary: 'line',
+				ruler: false,
+			})
+			el.addTo(this.map)
+			// el.loadGeoJSON(geojson)
+			el.addData(geojson)
+			this.elevationControl = el
+			el.on('elechart_init', (e) => {
+				el._expand()
+				el._button.setAttribute('title', t('maps', 'Close'))
+			})
 		},
 		// search
 		onSearchValidate(element) {

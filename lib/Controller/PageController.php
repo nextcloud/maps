@@ -112,7 +112,9 @@ class PageController extends Controller {
             $csp->addAllowedConnectDomain('https://events.mapbox.com');
             $csp->addAllowedConnectDomain('https://graphhopper.com');
 
-            $csp->addAllowedChildSrcDomain("blob:");
+            $csp->addAllowedChildSrcDomain('blob:');
+            $csp->addAllowedWorkerSrcDomain('blob:');
+            $csp->addAllowedScriptDomain('https://unpkg.com');
             // allow connections to custom routing engines
             $urlKeys = [
                 'osrmBikeURL',

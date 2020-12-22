@@ -619,3 +619,21 @@ tr.selected td {
     border-radius: 2px;
   }
 }
+
+.elevation-control {
+	width: 700px !important;
+}
+
+.elevation-summary {
+    > span {
+        margin-right: 10px;
+    }
+}
+
+.elevation-toggle {
+    width: 44px !important;
+    height: 44px !important;
+    right: -50px !important;
+    top: 1px !important;
+    background-size: 25px !important;
+}

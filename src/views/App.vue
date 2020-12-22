@@ -46,6 +46,7 @@
 					:loading="tracksLoading"
 					:tracks="tracks"
 					@zoom="onTrackZoom"
+					@elevation="onTrackElevation"
 					@track-clicked="onTrackClicked"
 					@tracks-clicked="onTracksClicked"
 					@color="onChangeTrackColor" />
@@ -1219,6 +1220,9 @@ export default {
 		onTrackZoom(track) {
 			const meta = track.metadata
 			this.$refs.map.fitBounds(L.latLngBounds([meta.s, meta.w], [meta.n, meta.e]), { padding: [30, 30] })
+		},
+		onTrackElevation(track) {
+			this.$refs.map.displayElevation(track)
 		},
 	},
 }

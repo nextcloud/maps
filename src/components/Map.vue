@@ -729,39 +729,33 @@ export default {
 		},
 		displayElevation(track) {
 			this.clearElevationControl()
-			const data = [
-				{
-					line: [[102.0, 0.0], [103.0, 1.0], [104.0, 0.0], [105.0, 1.0]],
-					prop0: 'value0',
-					prop1: 0.0,
-				},
-			]
+			const data = []
+			track.data.routes.forEach((r) => {
+				data.push({ line: r.points.map((p) => { return [p.lng, p.lat, p.ele] }) })
+			})
+			track.data.tracks.forEach((t) => {
+				t.segments.forEach((s) => {
+					data.push({ line: s.points.map((p) => { return [p.lng, p.lat, p.ele] }) })
+				})
+			})
 			const geojson = GeoJSON.parse(data, { LineString: 'line' })
 			console.debug(geojson)
 			const el = L.control.elevation({
-				lazyLoadJS: false,
 				position: 'bottomleft',
 				detached: false,
 				height: 150,
 				width: 700,
-				margins: {
-					top: 10,
-					right: 280,
-					bottom: 23,
-					left: 60,
-				},
 				collapsed: true,
 				autohide: false,
 				followMarker: false,
 				theme: 'steelblue-theme',
-				slope: true,
-				speed: true,
-				time: true,
+				// slope: false,
+				// speed: true,
+				// time: true,
 				summary: 'line',
 				ruler: false,
 			})
 			el.addTo(this.map)
-			// el.loadGeoJSON(geojson)
 			el.addData(geojson)
 			this.elevationControl = el
 			el.on('elechart_init', (e) => {

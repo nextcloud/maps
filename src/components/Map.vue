@@ -98,7 +98,10 @@
 				v-if="map && tracksEnabled"
 				ref="tracksLayer"
 				:map="map"
-				:tracks="tracks" />
+				:tracks="tracks"
+				@click="$emit('click-track', $event)"
+				@change-color="$emit('change-track-color', $event)"
+				@display-elevation="displayElevation" />
 			<ClickSearchPopup v-if="leftClickSearching"
 				:lat-lng="leftClickSearchLatLng"
 				@place-contact="onAddContactAddress"
@@ -728,6 +731,7 @@ export default {
 			}
 		},
 		displayElevation(track) {
+			this.map.closePopup()
 			this.clearElevationControl()
 			const data = []
 			track.data.routes.forEach((r) => {
@@ -907,6 +911,7 @@ export default {
 }
 
 ::v-deep .popup-contact-wrapper .action,
+::v-deep .popup-track-wrapper .action,
 ::v-deep .popup-favorite-wrapper .action,
 ::v-deep .popup-photo-wrapper .action {
 	height: 44px;

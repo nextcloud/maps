@@ -1,7 +1,17 @@
 <template>
-	<LFeatureGroup>
-		<LPopup :options="popupOptions">
-			{{ track.file_name }}
+	<LFeatureGroup
+		ref="featgroup"
+		@ready="onFGReady"
+		@click="$emit('click', track)"
+		@contextmenu="onFGRightClick">
+		<LPopup :options="popupOptions"
+			class="popup-track-wrapper">
+			<ActionButton icon="icon-colorpicker" @click="$emit('change-color', track)">
+				{{ t('maps', 'Change color') }}
+			</ActionButton>
+			<ActionButton icon="icon-category-monitoring" @click="$emit('display-elevation', track)">
+				{{ t('maps', 'Display elevation') }}
+			</ActionButton>
 		</LPopup>
 		<LTooltip :options="tooltipOptions">
 			<div class="tooltip-track-wrapper"
@@ -33,6 +43,8 @@
 import L from 'leaflet'
 import { LMarker, LTooltip, LPopup, LFeatureGroup, LPolyline } from 'vue2-leaflet'
 
+import ActionButton from '@nextcloud/vue/dist/Components/ActionButton'
+
 import optionsController from '../../optionsController'
 
 const TRACK_MARKER_VIEW_SIZE = 40
@@ -45,6 +57,7 @@ export default {
 		LPopup,
 		LFeatureGroup,
 		LPolyline,
+		ActionButton,
 	},
 
 	props: {
@@ -70,6 +83,8 @@ export default {
 			popupOptions: {
 				closeButton: false,
 				closeOnClick: false,
+				className: 'popovermenu open popupMarker trackPopup',
+				offset: L.point(-5, -20),
 			},
 		}
 	},
@@ -122,6 +137,15 @@ export default {
 	},
 
 	methods: {
+		onFGReady(f) {
+			// avoid left click popup
+			L.DomEvent.on(f, 'click', (ev) => {
+				f.closePopup()
+			})
+		},
+		onFGRightClick(e) {
+			this.$refs.featgroup.mapObject.openPopup()
+		},
 	},
 }
 </script>
@@ -133,5 +157,19 @@ export default {
 	border-radius: 3px;
 	background-color: var(--color-main-background);
 	color: var(--color-main-text);
+}
+
+::v-deep .icon-colorpicker {
+	opacity: 1;
+	mask: url('../../../img/color_picker.svg') no-repeat;
+	-webkit-mask: url('../../../img/color_picker.svg') no-repeat;
+	background-color: var(--color-main-text);
+	padding: 0 !important;
+	mask-size: 16px auto;
+	mask-position: center;
+	-webkit-mask-size: 16px auto;
+	-webkit-mask-position: center;
+	width: 44px;
+	height: 44px;
 }
 </style>

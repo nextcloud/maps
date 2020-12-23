@@ -87,6 +87,7 @@
 					@contact-placed="onContactPlace"
 					@place-photos="placePhotoFilesOrFolder"
 					@photo-moved="onPhotoMoved"
+					@click-track="onTrackClick"
 					@cancel="cancelAction"
 					@redo="redoAction"
 					@slider-range-changed="sliderStart = $event.start; sliderEnd = $event.end" />
@@ -105,6 +106,7 @@
 			:active-tab="activeSidebarTab"
 			:favorite="selectedFavorite"
 			:favorite-categories="favoriteCategories"
+			:track="selectedTrack"
 			@edit-favorite="onFavoriteEdit"
 			@delete-favorite="onFavoriteDelete"
 			@active-changed="onActiveSidebarTabChanged"
@@ -190,6 +192,7 @@ export default {
 			loadingTrackFiles: {},
 			tracks: [],
 			tracksEnabled: optionsController.tracksEnabled,
+			selectedTrack: null,
 		}
 	},
 
@@ -371,8 +374,8 @@ export default {
 		// unsubscribe('nextcloud:unified-search.reset', this.cleanSearch)
 	},
 	methods: {
-		onActiveSidebarTabChanged() {
-
+		onActiveSidebarTabChanged(newActive) {
+			this.activeSidebarTab = newActive
 		},
 		onMainDetailClicked() {
 			this.showSidebar = !this.showSidebar
@@ -1223,6 +1226,11 @@ export default {
 		},
 		onTrackElevation(track) {
 			this.$refs.map.displayElevation(track)
+		},
+		onTrackClick(track) {
+			this.showSidebar = true
+			this.activeSidebarTab = 'track'
+			this.selectedTrack = track
 		},
 	},
 }

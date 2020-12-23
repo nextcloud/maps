@@ -33,6 +33,14 @@
 				@edit="$emit('edit-favorite', $event)"
 				@delete="$emit('delete-favorite', $event)" />
 		</AppSidebarTab>
+		<AppSidebarTab
+			id="track"
+			icon="icon-tab-track"
+			:name="t('maps', 'Track')"
+			:order="3">
+			<TrackSidebarTab
+				:track="track" />
+		</AppSidebarTab>
 	</AppSidebar>
 </template>
 
@@ -44,6 +52,7 @@ import AppSidebarTab from '@nextcloud/vue/dist/Components/AppSidebarTab'
 import { generateUrl } from '@nextcloud/router'
 
 import FavoriteSidebarTab from '../components/FavoriteSidebarTab'
+import TrackSidebarTab from '../components/TrackSidebarTab'
 
 export default {
 	name: 'Sidebar',
@@ -53,6 +62,7 @@ export default {
 		AppSidebar,
 		AppSidebarTab,
 		FavoriteSidebarTab,
+		TrackSidebarTab,
 	},
 
 	props: {
@@ -70,6 +80,10 @@ export default {
 		},
 		favoriteCategories: {
 			type: Object,
+			required: true,
+		},
+		track: {
+			validator: prop => typeof prop === 'object' || prop === null,
 			required: true,
 		},
 	},
@@ -92,5 +106,16 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-// nothing
+::v-deep .icon-tab-track {
+	background-color: var(--color-main-text);
+	padding: 0 !important;
+	mask: url('../../img/road.svg') no-repeat;
+	mask-size: 18px 18px;
+	mask-position: center 7px;
+	-webkit-mask: url('../../img/road.svg') no-repeat;
+	-webkit-mask-size: 18px 18px;
+	-webkit-mask-position: center 7px;
+	min-width: 44px !important;
+	min-height: 44px !important;
+}
 </style>

@@ -2,7 +2,10 @@
 	<LFeatureGroup>
 		<TrackLayer v-for="track in displayedTracks"
 			:key="track.id + track.color"
-			:track="track" />
+			:track="track"
+			@click="$emit('click', $event)"
+			@change-color="$emit('change-color', $event)"
+			@display-elevation="$emit('display-elevation', $event)" />
 	</LFeatureGroup>
 </template>
 

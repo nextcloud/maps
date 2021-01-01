@@ -24,6 +24,7 @@
 			<AppNavigationTrackItem
 				v-for="track in tracks"
 				:key="track.id"
+				:ref="'trackItem' + track.id"
 				:track="track"
 				:parent-enabled="enabled && tracks.length > 0"
 				@click="$emit('track-clicked', $event)"
@@ -84,6 +85,10 @@ export default {
 		onUpdateOpen(isOpen) {
 			this.open = isOpen
 			optionsController.saveOptionValues({ trackListShow: isOpen ? 'true' : 'false' })
+		},
+		changeTrackColor(track) {
+			console.debug(this.$refs)
+			this.$refs['trackItem' + track.id][0].onChangeColorClick()
 		},
 	},
 }

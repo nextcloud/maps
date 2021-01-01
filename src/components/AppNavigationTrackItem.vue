@@ -83,7 +83,6 @@ export default {
 
 	data() {
 		return {
-			myTimer: null,
 		}
 	},
 
@@ -96,10 +95,6 @@ export default {
 		},
 		updateTrackColor(e) {
 			this.$emit('color', { track: this.track, color: e.target.value })
-			/* clearTimeout(this.myTimer)
-			this.mytimer = setTimeout(() => {
-				this.$emit('color', { track: this.track, color: e.target.value })
-			}, 2000) */
 		},
 	},
 }

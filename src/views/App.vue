@@ -42,6 +42,7 @@
 					@redo-clicked="redoPhotoMove"
 					@draggable-clicked="photosDraggable = !photosDraggable" />
 				<AppNavigationTracksItem
+					ref="tracksNavigation"
 					:enabled="tracksEnabled"
 					:loading="tracksLoading"
 					:tracks="tracks"
@@ -88,6 +89,7 @@
 					@place-photos="placePhotoFilesOrFolder"
 					@photo-moved="onPhotoMoved"
 					@click-track="onTrackClick"
+					@change-track-color="onChangeTrackColorClicked"
 					@cancel="cancelAction"
 					@redo="redoAction"
 					@slider-range-changed="sliderStart = $event.start; sliderEnd = $event.end" />
@@ -1211,6 +1213,11 @@ export default {
 				.map((track) => { return track.id })
 				.join('|')
 			optionsController.saveOptionValues({ enabledTracks: trackStringList })
+		},
+		onChangeTrackColorClicked(track) {
+			console.debug('chchchc')
+			console.debug(track)
+			this.$refs.tracksNavigation.changeTrackColor(track)
 		},
 		onChangeTrackColor(e) {
 			e.track.color = e.color

@@ -14,15 +14,21 @@
 		</template>
 		<template v-if="enabled" slot="actions">
 			<ActionButton
-				icon="icon-search"
+				icon="icon-tag"
 				:close-after-click="true"
-				@click="$emit('plop')">
-				{{ t('maps', 'Zoom') }}
+				@click="onSortByName">
+				{{ t('maps', 'Sort by name') }}
+			</ActionButton>
+			<ActionButton
+				icon="icon-calendar-dark"
+				:close-after-click="true"
+				@click="onSortByDate">
+				{{ t('maps', 'Sort by date') }}
 			</ActionButton>
 		</template>
 		<template #default>
 			<AppNavigationTrackItem
-				v-for="track in tracks"
+				v-for="track in sortedTracks"
 				:key="track.id"
 				:ref="'trackItem' + track.id"
 				:track="track"
@@ -68,10 +74,44 @@ export default {
 	data() {
 		return {
 			open: optionsController.trackListShow,
+			sortOrder: optionsController.optionValues.tracksSortOrder,
 		}
 	},
 
 	computed: {
+		sortedTracks() {
+			if (this.sortOrder === 'name' || this.sortOrder === 'nameAsc') {
+				return this.tracks.slice().sort((a, b) => {
+					const nameA = a.file_name.toLowerCase()
+					const nameB = b.file_name.toLowerCase()
+					return nameA.localeCompare(nameB)
+				})
+			} else if (this.sortOrder === 'nameDesc') {
+				return this.tracks.slice().sort((a, b) => {
+					const nameA = a.file_name.toLowerCase()
+					const nameB = b.file_name.toLowerCase()
+					return -nameA.localeCompare(nameB)
+				})
+			} else if (this.sortOrder === 'date' || this.sortOrder === 'dateDesc') {
+				return this.tracks.slice().sort((a, b) => {
+					return a.mtime === b.mtime
+						? 0
+						: a.mtime > b.mtime
+							? 1
+							: -1
+				})
+			} else if (this.sortOrder === 'dateAsc') {
+				return this.tracks.slice().sort((a, b) => {
+					return a.mtime === b.mtime
+						? 0
+						: a.mtime < b.mtime
+							? 1
+							: -1
+				})
+			} else {
+				return this.tracks
+			}
+		},
 	},
 
 	methods: {
@@ -89,6 +129,22 @@ export default {
 		changeTrackColor(track) {
 			console.debug(this.$refs)
 			this.$refs['trackItem' + track.id][0].onChangeColorClick()
+		},
+		onSortByName() {
+			if (this.sortOrder === 'name' || this.sortOrder === 'nameAsc') {
+				this.sortOrder = 'nameDesc'
+			} else {
+				this.sortOrder = 'nameAsc'
+			}
+			optionsController.saveOptionValues({ tracksSortOrder: this.sortOrder })
+		},
+		onSortByDate() {
+			if (this.sortOrder === 'date' || this.sortOrder === 'dateDesc') {
+				this.sortOrder = 'dateAsc'
+			} else {
+				this.sortOrder = 'dateDesc'
+			}
+			optionsController.saveOptionValues({ tracksSortOrder: this.sortOrder })
 		},
 	},
 }

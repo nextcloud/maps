@@ -13,6 +13,7 @@ const optionsController = {
 	contactsEnabled: true,
 	favoritesEnabled: true,
 	tracksEnabled: true,
+	trackListShow: true,
 	disabledFavoriteCategories: [],
 	disabledContactGroups: [],
 	enabledTracks: [],
@@ -81,11 +82,11 @@ const optionsController = {
 			}
 		}
 		// getUrlParameter('track') ||
-		if ('tracksEnabled' in optionsValues && optionsValues.tracksEnabled === 'true') {
-			this.tracksEnabled = true
+		if ('tracksEnabled' in optionsValues && optionsValues.tracksEnabled !== 'true') {
+			this.tracksEnabled = false
 		}
-		if ('trackListShow' in optionsValues && optionsValues.trackListShow === 'true') {
-			this.trackListShow = true
+		if ('trackListShow' in optionsValues && optionsValues.trackListShow !== 'true') {
+			this.trackListShow = false
 		}
 		if ('enabledTracks' in optionsValues
 			&& optionsValues.enabledTracks

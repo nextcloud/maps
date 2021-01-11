@@ -77,7 +77,7 @@ PhotosController.prototype = {
             that.enterMoveAllPhotoMode();
             that.map.closePopup();
         });
-        $('body').on('click', '.resetphoto', function(e) {
+        $('body').on('click', '.resetphoto', function (e) {
             var ul = $(this).parent().parent();
             var filePath = ul.attr('filepath');
             that.resetPhotoCoords([filePath]);
@@ -389,7 +389,7 @@ PhotosController.prototype = {
         a.layer.openPopup();
     },
 
-    getPhotoClusterContextmenuPopupContent: function(layerId, availZoomLevels) {
+    getPhotoClusterContextmenuPopupContent: function (layerId, availZoomLevels) {
         var viewText = t('maps', 'Show batch in viewer');
         var zoomText = t('maps', 'Zoom in');
         var moveText = t('maps', 'Move all');
@@ -516,7 +516,7 @@ PhotosController.prototype = {
         this.photosController.placePhotos(photoFilePathList, [lat], [lng], false);
     },
 
-    updateTimeFilterRange: function() {
+    updateTimeFilterRange: function () {
         this.updateMyFirstLastDates();
         this.timeFilterController.updateSliderRangeFromController();
     },

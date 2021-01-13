@@ -265,7 +265,7 @@ OC.L10N.register(
     "Mapbox settings" : "Axustes do Mapbox",
     "Set the API key to use Mapbox routing service." : "Estabeleza a clave API para usar o servizo de cálculo de rutas de Mapbox.",
     "Leave empty to disable." : "Deixar baleiro para desactivar.",
-    "Mapbox API key" : "Chave da API do Mapbox",
+    "Mapbox API key" : "Clave da API do Mapbox",
     "Search…" : "Buscar…",
     "Your favorites" : "Os seus favoritos",
     "Import from file" : "Importar dende ficheiro",

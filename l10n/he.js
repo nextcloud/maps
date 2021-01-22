@@ -228,6 +228,8 @@ OC.L10N.register(
     "End" : "סיום",
     "Maximum speed" : "מהירות מרבית",
     "Average speed" : "מהירות ממוצעת",
+    "Moving average speed" : "מהירות ממוצעת נעה",
+    "Moving average pace" : "קצב ממוצע נע",
     "Show elevation" : "הצגת רום",
     "Failed to change track color" : "שינוי צבע המסלול נכשל",
     "Maps routing settings" : "הגדרות ניתוב במפות",

@@ -36,7 +36,7 @@
     "@nextcloud/router": "^1.0.0",
     "@nextcloud/vue": "^1.1.0",
     "@nextcloud/moment": "^1.1.1",
-    "d3": "^3.5.17",
+    "d3": "^6.4.0",
     "i18next-client": "^1.11.4",
     "leaflet": "^1.7.1",
     "leaflet-contextmenu": "^1.4.0",

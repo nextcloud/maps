@@ -48,6 +48,7 @@ OC.L10N.register(
     "End" : "Край",
     "Maximum speed" : "Максимална скорост",
     "Average speed" : "Средна скорост",
+    "Your photos" : "Вашите снимки",
     "Sort by name" : "Сортирай по име",
     "Sort by date" : "Сортирай по дата",
     "Settings" : "Настройки"

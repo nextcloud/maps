@@ -200,6 +200,7 @@ OC.L10N.register(
     "Doctors" : "Поликлиника",
     "Dentist" : "Стоматология",
     "Hotel" : "Гостиница",
+    "Point at {coords}" : "Координаты точки: {coords}",
     "Add to favorites" : "Добавить в избранное",
     "Add contact address" : "Добавить адрес контакта",
     "Open" : "Открыто",

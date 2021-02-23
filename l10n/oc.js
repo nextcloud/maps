@@ -27,6 +27,7 @@ OC.L10N.register(
     "File" : "File",
     "Link" : "Ligam",
     "Description" : "Descripcion",
+    "Distance" : "Distància",
     "Sort by name" : "Triar per nom",
     "Sort by date" : "Triar per data",
     "Settings" : "Paramètres"

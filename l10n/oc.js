@@ -19,6 +19,8 @@ OC.L10N.register(
     "Share link" : "Partejar lo ligam",
     "Copy link" : "Copiar lo ligam",
     "Move" : "Move",
+    "Photo files" : "Fichièrs fòto",
+    "Photo folders" : "Dossièrs fòto",
     "right" : "drecha",
     "left" : "esquèrra",
     "Destination" : "Destination",
@@ -28,6 +30,7 @@ OC.L10N.register(
     "Link" : "Ligam",
     "Description" : "Descripcion",
     "Distance" : "Distància",
+    "Your photos" : "Vòstras fòtos",
     "Sort by name" : "Triar per nom",
     "Sort by date" : "Triar per data",
     "Settings" : "Paramètres"

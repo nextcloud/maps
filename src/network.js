@@ -246,3 +246,22 @@ export function editTrack(id, color) {
 	const url = generateUrl('/apps/maps/tracks/' + id)
 	return axios.put(url, req)
 }
+
+export function getDevices() {
+	const url = generateUrl('/apps/maps/devices')
+	return axios.get(url)
+}
+
+export function getDevice(id) {
+	const url = generateUrl('/apps/maps/devices/' + id)
+	return axios.get(url)
+}
+
+export function editDevice(id, name, color) {
+	const req = {
+		color,
+		name,
+	}
+	const url = generateUrl('/apps/maps/devices/' + id)
+	return axios.put(url, req)
+}

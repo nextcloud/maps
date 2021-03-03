@@ -14,6 +14,8 @@ const optionsController = {
 	favoritesEnabled: true,
 	tracksEnabled: true,
 	trackListShow: true,
+	devicesEnabled: true,
+	deviceListShow: true,
 	disabledFavoriteCategories: [],
 	disabledContactGroups: [],
 	enabledTracks: [],
@@ -95,12 +97,27 @@ const optionsController = {
 				return parseInt(x)
 			})
 		}
+
+		// devices
 		if ('enabledDevices' in optionsValues
 			&& optionsValues.enabledDevices
 			&& optionsValues.enabledDevices !== '') {
 			this.enabledDevices = optionsValues.enabledDevices.split('|').map((x) => {
 				return parseInt(x)
 			})
+		}
+		if ('deviceListShow' in optionsValues && optionsValues.deviceListShow !== 'true') {
+			this.deviceListShow = false
+		}
+		if ('enabledDeviceLines' in optionsValues
+			&& optionsValues.enabledDeviceLines
+			&& optionsValues.enabledDeviceLines !== '') {
+			this.enabledDeviceLines = optionsValues.enabledDeviceLines.split('|').map((x) => {
+				return parseInt(x)
+			})
+		}
+		if ('devicesEnabled' in optionsValues && optionsValues.devicesEnabled !== 'true') {
+			this.devicesEnabled = false
 		}
 
 		// routing
@@ -130,20 +147,6 @@ const optionsController = {
 		}
 		else {
 			tracksController.sortOrder = 'date';
-		}
-		if (!optionsValues.hasOwnProperty('deviceListShow') || optionsValues.deviceListShow === 'true') {
-			devicesController.toggleDeviceList();
-		}
-		if (optionsValues.hasOwnProperty('enabledDeviceLines')
-			&& optionsValues.enabledDeviceLines
-			&& optionsValues.enabledDeviceLines !== '')
-		{
-			that.enabledDeviceLines = optionsValues.enabledDeviceLines.split('|').map(function (x) {
-				return parseInt(x);
-			});
-		}
-		if (!optionsValues.hasOwnProperty('devicesEnabled') || optionsValues.devicesEnabled === 'true') {
-			devicesController.toggleDevices();
 		}
 		if (optionsValues.hasOwnProperty('trackMe') && optionsValues.trackMe === 'true') {
 			$('#track-me').prop('checked', true);

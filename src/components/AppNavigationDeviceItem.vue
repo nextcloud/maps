@@ -1,58 +1,59 @@
 <template>
 	<AppNavigationItem
-		:title="track.file_name"
-		:class="{ 'subitem-disabled': !track.enabled }"
+		:title="device.user_agent"
+		:class="{ 'subitem-disabled': !device.enabled }"
 		:allow-collapse="false"
 		:force-menu="false"
-		@click="$emit('click', track)">
+		@click="$emit('click', device)">
 		<template slot="icon">
-			<div v-if="track.loading"
+			<div v-if="device.loading"
 				class="app-navigation-entry-icon icon-loading-small " />
-			<div v-else-if="track.color"
-				:class="{
-					'icon-in-picker': true,
-					'icon-road-thin': !track.enabled,
-					'icon-road': track.enabled,
-				}"
-				:style="'background-color: ' + track.color + ';'" />
 			<div v-else
-				:class="{
-					'icon-in-picker': true,
-					'icon-road-thin': !track.enabled,
-					'icon-road': track.enabled,
-					'no-color': true,
-				}" />
+				class="icon icon-group"
+				:style="'background-image: url(' + iconUrl + ');'" />
 			<input v-show="false"
 				ref="col"
 				type="color"
 				class="color-input"
-				:value="track.color || '#0082c9'"
-				@change="updateTrackColor"
+				:value="device.color || '#0082c9'"
+				@change="updateDeviceColor"
 				@click.stop="">
 		</template>
 		<template slot="counter">
 			&nbsp;
 		</template>
 		<template slot="actions">
-			<ActionButton v-if="parentEnabled && track.enabled"
-				icon="icon-search"
-				:close-after-click="true"
-				@click="$emit('zoom', track)">
-				{{ t('maps', 'Zoom') }}
-			</ActionButton>
-			<ActionButton v-if="parentEnabled && track.enabled"
+			<ActionButton v-if="parentEnabled && device.enabled"
 				icon="icon-category-monitoring"
 				:close-after-click="true"
-				@click="$emit('elevation', track)">
-				{{ t('maps', 'Show track elevation') }}
+				@click="$emit('toggle-history', device)">
+				{{ t('maps', 'Toggle history') }}
 			</ActionButton>
-			<ActionButton v-if="parentEnabled && track.enabled"
+			<ActionButton v-if="parentEnabled && device.enabled"
 				:close-after-click="false"
 				@click="onChangeColorClick">
 				<template #icon>
 					<div class="icon-colorpicker" />
 				</template>
 				{{ t('maps', 'Change color') }}
+			</ActionButton>
+			<ActionButton v-if="parentEnabled && device.enabled"
+				icon="icon-search"
+				:close-after-click="true"
+				@click="$emit('zoom', device)">
+				{{ t('maps', 'Zoom on area') }}
+			</ActionButton>
+			<ActionButton v-if="parentEnabled && device.enabled"
+				icon="icon-file"
+				:close-after-click="true"
+				@click="$emit('export', device)">
+				{{ t('maps', 'Export') }}
+			</ActionButton>
+			<ActionButton v-if="parentEnabled && device.enabled"
+				icon="icon-delete"
+				:close-after-click="true"
+				@click="$emit('delete', device)">
+				{{ t('maps', 'Delete') }}
 			</ActionButton>
 		</template>
 	</AppNavigationItem>
@@ -61,9 +62,11 @@
 <script>
 import AppNavigationItem from '@nextcloud/vue/dist/Components/AppNavigationItem'
 import ActionButton from '@nextcloud/vue/dist/Components/ActionButton'
+import { generateUrl } from '@nextcloud/router'
+import { isComputer } from '../utils'
 
 export default {
-	name: 'AppNavigationTrackItem',
+	name: 'AppNavigationDeviceItem',
 
 	components: {
 		AppNavigationItem,
@@ -71,7 +74,7 @@ export default {
 	},
 
 	props: {
-		track: {
+		device: {
 			type: Object,
 			required: true,
 		},
@@ -87,14 +90,20 @@ export default {
 	},
 
 	computed: {
+		iconUrl() {
+			const color = this.device.color || '#0082c9'
+			return isComputer(this.device.user_agent)
+				? generateUrl('/svg/core/clients/desktop?color=' + color.replace('#', ''))
+				: generateUrl('/svg/core/clients/phone?color=' + color.replace('#', ''))
+		},
 	},
 
 	methods: {
 		onChangeColorClick() {
 			this.$refs.col.click()
 		},
-		updateTrackColor(e) {
-			this.$emit('color', { track: this.track, color: e.target.value })
+		updateDeviceColor(e) {
+			this.$emit('color', { device: this.device, color: e.target.value })
 		},
 	},
 }

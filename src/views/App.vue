@@ -51,6 +51,19 @@
 					@track-clicked="onTrackClicked"
 					@tracks-clicked="onTracksClicked"
 					@color="onChangeTrackColor" />
+				<AppNavigationDevicesItem
+					ref="devicesNavigation"
+					:enabled="devicesEnabled"
+					:loading="devicesLoading"
+					:devices="devices"
+					@zoom="onDeviceZoom"
+					@rename="onRenameDevice"
+					@export="onExportDevice"
+					@delete="onDeleteDevice"
+					@toggle-history="onToggleDeviceHistory"
+					@color="onChangeDeviceColor"
+					@device-clicked="onDeviceClicked"
+					@devices-clicked="onDevicesClicked" />
 			</template>
 		</MapsNavigation>
 		<AppContent>
@@ -131,6 +144,7 @@ import AppNavigationFavoritesItem from '../components/AppNavigationFavoritesItem
 import AppNavigationPhotosItem from '../components/AppNavigationPhotosItem'
 import AppNavigationContactsItem from '../components/AppNavigationContactsItem'
 import AppNavigationTracksItem from '../components/AppNavigationTracksItem'
+import AppNavigationDevicesItem from '../components/AppNavigationDevicesItem'
 import optionsController from '../optionsController'
 import { getLetterColor, hslToRgb, Timer, getDeviceInfoFromUserAgent2, isComputer, isPhone } from '../utils'
 import { poiSearchData } from '../utils/poiData'
@@ -155,6 +169,7 @@ export default {
 		AppNavigationPhotosItem,
 		AppNavigationContactsItem,
 		AppNavigationTracksItem,
+		AppNavigationDevicesItem,
 	},
 
 	data() {
@@ -191,10 +206,13 @@ export default {
 			disabledContactGroups: [],
 			// tracks
 			tracksLoading: false,
-			loadingTrackFiles: {},
 			tracks: [],
 			tracksEnabled: optionsController.tracksEnabled,
 			selectedTrack: null,
+			// devices
+			devicesLoading: false,
+			devices: [],
+			devicesEnabled: optionsController.devicesEnabled,
 		}
 	},
 
@@ -256,10 +274,17 @@ export default {
 		// displayed data
 		displayedTracks() {
 			return this.sliderEnabled
-				? this.track.filter((p) => {
+				? this.tracks.filter((p) => {
 					return true
 				})
 				: this.tracks
+		},
+		displayedDevices() {
+			return this.sliderEnabled
+				? this.devices.filter((p) => {
+					return true
+				})
+				: this.devices
 		},
 		displayedPhotos() {
 			return this.sliderEnabled
@@ -353,6 +378,7 @@ export default {
 		this.getPhotos()
 		this.getFavorites()
 		this.getTracks()
+		this.getDevices()
 		if (optionsController.optionValues.trackMe === 'true') {
 			this.sendPositionLoop()
 		}
@@ -1137,7 +1163,7 @@ export default {
 		// tracks
 		onTracksClicked() {
 			this.tracksEnabled = !this.tracksEnabled
-			// get track if we don't have them yet
+			// get tracks if we don't have them yet
 			if (this.tracksEnabled && this.tracks.length === 0) {
 				this.getTracks()
 			}
@@ -1209,7 +1235,8 @@ export default {
 			})
 		},
 		saveEnabledTracks() {
-			const trackStringList = this.tracks.filter((track) => { return track.enabled })
+			const trackStringList = this.tracks
+				.filter((track) => { return track.enabled })
 				.map((track) => { return track.id })
 				.join('|')
 			optionsController.saveOptionValues({ enabledTracks: trackStringList })
@@ -1238,6 +1265,97 @@ export default {
 			this.showSidebar = true
 			this.activeSidebarTab = 'track'
 			this.selectedTrack = track
+		},
+		// devices
+		onDevicesClicked() {
+			this.devicesEnabled = !this.devicesEnabled
+			// get devices if we don't have them yet
+			if (this.devicesEnabled && this.devices.length === 0) {
+				this.getDevices()
+			}
+			optionsController.saveOptionValues({ devicesEnabled: this.devicesEnabled ? 'true' : 'false' })
+		},
+		getDevices() {
+			if (!this.devicesEnabled) {
+				return
+			}
+			this.devicesLoading = true
+			network.getDevices().then((response) => {
+				this.devices = response.data.map((device) => {
+					return {
+						...device,
+						loading: false,
+						enabled: false,
+					}
+				})
+				this.devices.forEach((device) => {
+					if (optionsController.enabledDevices.includes(device.id)) {
+						this.getDevice(device, true, false)
+					}
+				})
+			}).catch((error) => {
+				console.error(error)
+			}).then(() => {
+				this.devicesLoading = false
+			})
+		},
+		onDeviceClicked(device) {
+			if (device.enabled) {
+				device.enabled = false
+				this.saveEnabledDevices()
+			} else if (device.points) {
+				device.enabled = true
+				this.saveEnabledTracks()
+			} else {
+				this.getDevice(device, true, true)
+			}
+		},
+		getDevice(device, enable = false, save = true) {
+			device.loading = true
+			network.getDevice(device.id).then((response) => {
+				device.points = response.data
+				if (enable) {
+					device.enabled = true
+				}
+				if (save) {
+					this.saveEnabledDevices()
+				}
+			}).catch((error) => {
+				console.error(error)
+			}).then(() => {
+				device.loading = false
+			})
+		},
+		saveEnabledDevices() {
+			const deviceStringList = this.devices
+				.filter((d) => { return d.enabled })
+				.map((d) => { return d.id })
+				.join('|')
+			optionsController.saveOptionValues({ enabledDevices: deviceStringList })
+		},
+		onChangeDeviceColorClicked(device) {
+			console.debug('chchchc')
+			console.debug(device)
+			this.$refs.devicesNavigation.changeDeviceColor(device)
+		},
+		onChangeDeviceColor(e) {
+			e.device.color = e.color
+			network.editDevice(e.device.id, null, e.color).then((response) => {
+				console.debug(response.data)
+			}).catch((error) => {
+				console.error(error)
+			})
+		},
+		onDeviceZoom(device) {
+			this.$refs.map.zoomOnDevice(device.id)
+		},
+		onRenameDevice(device) {
+		},
+		onExportDevice(device) {
+		},
+		onDeleteDevice(device) {
+		},
+		onToggleDeviceHistory(device) {
 		},
 	},
 }

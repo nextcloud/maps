@@ -16,6 +16,9 @@ const optionsController = {
 	trackListShow: true,
 	devicesEnabled: true,
 	deviceListShow: true,
+	myMapId: null,
+	myMapListShow: null,
+	myMapsEnabled: true,
 	disabledFavoriteCategories: [],
 	disabledContactGroups: [],
 	enabledTracks: [],
@@ -118,6 +121,19 @@ const optionsController = {
 		}
 		if ('devicesEnabled' in optionsValues && optionsValues.devicesEnabled !== 'true') {
 			this.devicesEnabled = false
+		}
+
+		// my-maps
+		if ('myMapListShow' in optionsValues && optionsValues.myMapListShow !== 'true') {
+			this.myMapListShow = false
+		}
+		if ('myMapsEnabled' in optionsValues && optionsValues.myMapsEnabled !== 'true') {
+			this.myMapsEnabled = false
+		}
+		if (document.location.pathname.includes('/apps/maps/m/')) {
+			this.myMapId = document.location.pathname.split('/apps/maps/m/')[1].split('/')[0]
+		} else {
+			this.myMapId = null
 		}
 
 		// routing

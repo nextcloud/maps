@@ -69,6 +69,16 @@
 					@color="onChangeDeviceColor"
 					@device-clicked="onNavDeviceClicked"
 					@devices-clicked="onDevicesClicked" />
+				<AppNavigationMyMapsItem
+					ref="myMapsNavigation"
+					:enabled="myMapsEnabled"
+					:loading="myMapsLoading"
+					:my-maps="myMaps"
+					@rename="onRenameMyMap"
+					@delete="onDeleteMyMap"
+					@color="onChangeMyMapColor"
+					@myMap-clicked="onMyMapClicked"
+					@myMaps-clicked="onMyMapsClicked" />
 			</template>
 		</MapsNavigation>
 		<AppContent>
@@ -165,6 +175,7 @@ import AppNavigationPhotosItem from '../components/AppNavigationPhotosItem'
 import AppNavigationContactsItem from '../components/AppNavigationContactsItem'
 import AppNavigationTracksItem from '../components/AppNavigationTracksItem'
 import AppNavigationDevicesItem from '../components/AppNavigationDevicesItem'
+import AppNavigationMyMapsItem from '../components/AppNavigationMyMapsItem'
 import optionsController from '../optionsController'
 import { getLetterColor, hslToRgb, Timer, getDeviceInfoFromUserAgent2, isComputer, isPhone } from '../utils'
 import { binSearch } from '../utils/common'
@@ -191,6 +202,7 @@ export default {
 		AppNavigationContactsItem,
 		AppNavigationTracksItem,
 		AppNavigationDevicesItem,
+		AppNavigationMyMapsItem,
 	},
 
 	data() {
@@ -240,6 +252,11 @@ export default {
 			devicesEnabled: optionsController.devicesEnabled,
 			exportingDevices: false,
 			importingDevices: false,
+			// myMaps
+			myMapsLoading: false,
+			myMaps: [],
+			myMapsEnabled: optionsController.myMapsEnabled,
+			myMapId: optionsController.myMapId,
 		}
 	},
 
@@ -1726,6 +1743,16 @@ export default {
 			}).then(() => {
 				this.importingDevices = false
 			})
+		},
+		onMyMapsClicked(myMaps) {
+		},
+		onMyMapClicked(myMap) {
+		},
+		onChangeMyMapColor(myMap) {
+		},
+		onRenameMyMap(myMap) {
+		},
+		onDeleteMyMap(myMap) {
 		},
 	},
 }

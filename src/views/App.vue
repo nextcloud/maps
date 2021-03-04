@@ -1061,10 +1061,12 @@ export default {
 			})
 		},
 		onAddressFavoriteAdd(obj) {
-			const name = obj.address.attraction
+			const name = obj.address
+				? obj.address.attraction
 				|| obj.address.road
 				|| obj.address.city_district
-			this.addFavorite(obj.latLng, name, null, obj.formattedAddress)
+				: null
+			this.addFavorite(obj.latLng, name, null, obj.formattedAddress || null)
 		},
 		onFavoriteAdd(latLng) {
 			this.addFavorite(latLng)

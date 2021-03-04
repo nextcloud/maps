@@ -16,22 +16,22 @@
 			<ActionButton
 				icon="icon-download"
 				:close-after-click="true"
-				@click="onRefreshPositions">
+				@click="$emit('refresh-positions')">
 				{{ t('maps', 'Refresh positions') }}
 			</ActionButton>
 			<ActionButton
 				icon="icon-checkmark"
-				@click="onToggleAllClick">
+				@click="$emit('toggle-all')">
 				{{ t('maps', 'Toggle all') }}
 			</ActionButton>
 			<ActionButton
 				icon="icon-edit"
-				@click="onExportAllClick">
+				@click="$emit('export-all')">
 				{{ t('maps', 'Export all') }}
 			</ActionButton>
 			<ActionButton
 				icon="icon-folder"
-				@click="onImportClick">
+				@click="$emit('import')">
 				{{ t('maps', 'Import devices') }}
 			</ActionButton>
 			<ActionButton
@@ -120,14 +120,6 @@ export default {
 		changeDeviceColor(device) {
 			console.debug(this.$refs)
 			this.$refs['deviceItem' + device.id][0].onChangeColorClick()
-		},
-		onRefreshPositions(device) {
-		},
-		onToggleAllClick(device) {
-		},
-		onExportAllClick(device) {
-		},
-		onImportClick(device) {
 		},
 		onDelete(device) {
 		},

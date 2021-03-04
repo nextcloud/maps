@@ -20,11 +20,6 @@
 				{{ t('maps', 'Change color') }}
 			</ActionButton>
 			<ActionButton
-				icon="icon-search"
-				@click="$emit('zoom', device)">
-				{{ t('maps', 'Zoom on area') }}
-			</ActionButton>
-			<ActionButton
 				icon="icon-file"
 				@click="$emit('export', device)">
 				{{ t('maps', 'Export') }}
@@ -39,7 +34,7 @@
 		</LTooltip>
 		<LMarker
 			:icon="markerIcon"
-			:lat-lng="firstPoint" />
+			:lat-lng="lastPoint" />
 		<LPolyline v-if="device.historyEnabled"
 			color="black"
 			:opacity="1"
@@ -128,9 +123,9 @@ export default {
 				iconAnchor: [DEVICE_MARKER_VIEW_SIZE / 2, DEVICE_MARKER_VIEW_SIZE],
 			}))
 		},
-		firstPoint() {
+		lastPoint() {
 			return this.points.length > 0
-				? this.points[0]
+				? this.points[this.points.length - 1]
 				: null
 		},
 	},

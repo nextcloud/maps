@@ -108,6 +108,7 @@
 				:map="map"
 				:devices="devices"
 				@click="$emit('click-device', $event)"
+				@export="$emit('export-device', $event)"
 				@toggle-history="$emit('toggle-device-history', $event)"
 				@change-color="$emit('change-device-color', $event)" />
 			<ClickSearchPopup v-if="leftClickSearching"
@@ -784,6 +785,18 @@ export default {
 				el._expand()
 				el._button.setAttribute('title', t('maps', 'Close'))
 			})
+		},
+		// devices
+		zoomOnDevice(device) {
+			if (device.points) {
+				const lats = device.points.map(p => p.lat)
+				const lngs = device.points.map(p => p.lng)
+				const latMin = Math.min.apply(Math, lats)
+				const latMax = Math.max.apply(Math, lats)
+				const lngMin = Math.min.apply(Math, lngs)
+				const lngMax = Math.max.apply(Math, lngs)
+				this.map.fitBounds(L.latLngBounds([latMin, lngMin], [latMax, lngMax]), { padding: [30, 30] })
+			}
 		},
 		// search
 		onSearchValidate(element) {

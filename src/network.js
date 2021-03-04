@@ -265,3 +265,40 @@ export function editDevice(id, name, color) {
 	const url = generateUrl('/apps/maps/devices/' + id)
 	return axios.put(url, req)
 }
+
+export function exportDevices(deviceIdList, all = false, begin = null, end = null) {
+	const req = {
+		deviceIdList,
+		all,
+		begin,
+		end,
+	}
+	const url = generateUrl('/apps/maps/export/devices')
+	return axios.post(url, req)
+}
+
+export function updateDevicePositions(device) {
+	const pruneBefore = (device.points && device.points.length > 0)
+		? device.points[device.points.length - 1].timestamp
+		: null
+	const req = {
+		params: {
+			pruneBefore,
+		},
+	}
+	const url = generateUrl('/apps/maps/devices/' + device.id)
+	return axios.get(url, req)
+}
+
+export function importDevices(path) {
+	const req = {
+		path,
+	}
+	const url = generateUrl('/apps/maps/import/devices')
+	return axios.post(url, req)
+}
+
+export function deleteDevice(id) {
+	const url = generateUrl('/apps/maps/devices/' + id)
+	return axios.delete(url)
+}

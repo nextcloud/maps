@@ -4,6 +4,7 @@
 			:key="device.id + device.color"
 			:device="device"
 			@click="$emit('click', $event)"
+			@export="$emit('export', $event)"
 			@toggle-history="$emit('toggle-history', $event)"
 			@change-color="$emit('change-color', $event)" />
 	</LFeatureGroup>

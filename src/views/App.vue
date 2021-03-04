@@ -57,10 +57,13 @@
 					:loading="devicesLoading"
 					:devices="devices"
 					@zoom="onDeviceZoom"
-					@rename="onRenameDevice"
 					@export="onExportDevice"
+					@export-all="onExportAllDevices"
+					@import="onImportDevices"
+					@refresh-positions="onRefreshPositions"
 					@delete="onDeleteDevice"
 					@toggle-history="onToggleDeviceHistory"
+					@toggle-all="onToggleAllDevices"
 					@color="onChangeDeviceColor"
 					@device-clicked="onDeviceClicked"
 					@devices-clicked="onDevicesClicked" />
@@ -106,6 +109,8 @@
 					@click-track="onTrackClick"
 					@change-track-color="onChangeTrackColorClicked"
 					@toggle-device-history="onToggleDeviceHistory"
+					@change-device-color="onChangeDeviceColorClicked"
+					@export-device="onExportDevice"
 					@cancel="cancelAction"
 					@redo="redoAction"
 					@slider-range-changed="sliderStart = $event.start; sliderEnd = $event.end" />
@@ -216,12 +221,14 @@ export default {
 			devicesLoading: false,
 			devices: [],
 			devicesEnabled: optionsController.devicesEnabled,
+			exportingDevices: false,
 		}
 	},
 
 	computed: {
 		mapLoading() {
-			return this.photosLoading || this.contactsLoading || this.favoritesLoading || this.tracksLoading
+			return this.photosLoading || this.contactsLoading || this.favoritesLoading || this.tracksLoading || this.devicesLoading
+				|| this.exportingDevices || this.importingDevices
 		},
 		// slider
 		minDataTimestamp() {
@@ -1311,7 +1318,7 @@ export default {
 				this.saveEnabledDevices()
 			} else if (device.points) {
 				device.enabled = true
-				this.saveEnabledTracks()
+				this.saveEnabledDevices()
 			} else {
 				this.getDevice(device, true, true)
 			}
@@ -1342,13 +1349,11 @@ export default {
 		saveEnabledDeviceLines() {
 			const stringList = this.devices
 				.filter(d => d.historyEnabled)
-				.map(d => d.id )
+				.map(d => d.id)
 				.join('|')
 			optionsController.saveOptionValues({ enabledDeviceLines: stringList })
 		},
 		onChangeDeviceColorClicked(device) {
-			console.debug('chchchc')
-			console.debug(device)
 			this.$refs.devicesNavigation.changeDeviceColor(device)
 		},
 		onChangeDeviceColor(e) {
@@ -1360,17 +1365,103 @@ export default {
 			})
 		},
 		onDeviceZoom(device) {
-			this.$refs.map.zoomOnDevice(device.id)
-		},
-		onRenameDevice(device) {
+			this.$refs.map.zoomOnDevice(device)
 		},
 		onExportDevice(device) {
+			this.exportingDevices = true
+			network.exportDevices([device.id], false).then((response) => {
+				showSuccess(t('maps', 'Devices exported in {path}', { path: response.data }))
+			}).catch((error) => {
+				console.error(error)
+				showError(t('maps', 'Failed to export devices') + ': ' + error.data)
+			}).then(() => {
+				this.exportingDevices = false
+			})
+		},
+		onExportAllDevices() {
+			this.exportingDevices = true
+			const deviceIds = this.devices.map(d => d.id)
+			network.exportDevices(deviceIds, true).then((response) => {
+				showSuccess(t('maps', 'Devices exported in {path}', { path: response.data }))
+			}).catch((error) => {
+				console.error(error)
+				showError(t('maps', 'Failed to export devices') + ': ' + error.data)
+			}).then(() => {
+				this.exportingDevices = false
+			})
 		},
 		onDeleteDevice(device) {
+			network.deleteDevice(device.id).then((response) => {
+				const i = this.devices.findIndex(d => d.id === device.id)
+				if (i !== -1) {
+					this.devices.splice(i, 1)
+				}
+			}).catch((error) => {
+				console.error(error)
+				showError(t('maps', 'Failed to delete device') + ': ' + error.data)
+			})
 		},
 		onToggleDeviceHistory(device) {
 			device.historyEnabled = !device.historyEnabled
 			this.saveEnabledDeviceLines()
+		},
+		onRefreshPositions() {
+			this.devices.filter(d => d.enabled).forEach((d) => {
+				this.refreshPositions(d)
+			})
+		},
+		refreshPositions(device) {
+			network.updateDevicePositions(device).then((response) => {
+				if (device.points) {
+					device.points.push(...response.data)
+				} else {
+					device.points = response.data
+				}
+			}).catch((error) => {
+				console.error(error)
+			})
+		},
+		onToggleAllDevices() {
+			// hide all only if all are enabled
+			// otherwise, show all
+			const oneDisabled = this.devices.find(d => d.enabled === false)
+			if (oneDisabled) {
+				this.devices.forEach((device) => {
+					if (device.points) {
+						device.enabled = true
+					} else {
+						this.getDevice(device, true, true)
+					}
+				})
+			} else {
+				this.devices.forEach((d) => {
+					d.enabled = false
+				})
+			}
+			this.saveEnabledDevices()
+		},
+		onImportDevices() {
+			OC.dialogs.filepicker(
+				t('maps', 'Import devices from gpx (Nextcloud Maps) or kml/kmz (Google Timeline) file'),
+				(targetPath) => {
+					this.importDevices(targetPath)
+				},
+				false,
+				['application/gpx+xml', 'application/vnd.google-earth.kmz', 'application/vnd.google-earth.kml+xml'],
+				true
+			)
+		},
+		importDevices(path) {
+			this.importingDevices = true
+			network.importDevices(path).then((response) => {
+				showSuccess(t('maps', '{nb} devices imported from {path}', { nb: response.data, path }))
+				this.getDevices()
+			}).catch((error) => {
+				console.error(error)
+				showError(t('maps', 'Failed to import devices') + ': ' + error.data)
+			}).then(() => {
+				this.importingDevices = false
+			})
 		},
 	},
 }

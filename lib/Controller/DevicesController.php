@@ -176,8 +176,7 @@ class DevicesController extends Controller {
         // sorry about ugly deviceIdList management:
         // when an empty list is passed in http request, we get null here
         if ($deviceIdList === null or (is_array($deviceIdList) and count($deviceIdList) === 0)) {
-            $response = new DataResponse('No device to export', 400);
-            return $response;
+            return new DataResponse('No device to export', 400);
         }
 
         // create /Maps directory if necessary
@@ -188,23 +187,19 @@ class DevicesController extends Controller {
         if ($userFolder->nodeExists('/Maps')) {
             $mapsFolder = $userFolder->get('/Maps');
             if ($mapsFolder->getType() !== \OCP\Files\FileInfo::TYPE_FOLDER) {
-                $response = new DataResponse('/Maps is not a directory', 400);
-                return $response;
+                return new DataResponse('/Maps is not a directory', 400);
             }
             else if (!$mapsFolder->isCreatable()) {
-                $response = new DataResponse('/Maps is not writeable', 400);
-                return $response;
+                return new DataResponse('/Maps is not writeable', 400);
             }
         }
         else {
-            $response = new DataResponse('Impossible to create /Maps', 400);
-            return $response;
+            return new DataResponse('Impossible to create /Maps', 400);
         }
 
         $nbDevices = $this->devicesService->countPoints($this->userId, $deviceIdList, $begin, $end);
         if ($nbDevices === 0) {
-            $response = new DataResponse('Nothing to export', 400);
-            return $response;
+            return new DataResponse('Nothing to export', 400);
         }
 
         // generate export file name

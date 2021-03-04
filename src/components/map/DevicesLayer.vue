@@ -1,30 +1,29 @@
 <template>
 	<LFeatureGroup>
-		<TrackLayer v-for="track in displayedTracks"
-			:key="track.id + track.color"
-			:track="track"
+		<DeviceLayer v-for="device in displayedDevices"
+			:key="device.id + device.color"
+			:device="device"
 			@click="$emit('click', $event)"
-			@change-color="$emit('change-color', $event)"
-			@display-elevation="$emit('display-elevation', $event)" />
+			@change-color="$emit('change-color', $event)" />
 	</LFeatureGroup>
 </template>
 
 <script>
 import { LFeatureGroup } from 'vue2-leaflet'
 
-import TrackLayer from './TrackLayer'
+import DeviceLayer from './DeviceLayer'
 
 import optionsController from '../../optionsController'
 
 export default {
-	name: 'TracksLayer',
+	name: 'DevicesLayer',
 	components: {
 		LFeatureGroup,
-		TrackLayer,
+		DeviceLayer,
 	},
 
 	props: {
-		tracks: {
+		devices: {
 			type: Array,
 			required: true,
 		},
@@ -41,10 +40,8 @@ export default {
 	},
 
 	computed: {
-		displayedTracks() {
-			return this.tracks.filter((track) => {
-				return track.enabled
-			})
+		displayedDevices() {
+			return this.devices.filter(d => d.enabled)
 		},
 	},
 

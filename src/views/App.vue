@@ -84,6 +84,8 @@
 					:contacts-enabled="contactsEnabled"
 					:tracks="displayedTracks"
 					:tracks-enabled="tracksEnabled"
+					:devices="displayedDevices"
+					:devices-enabled="devicesEnabled"
 					:slider-enabled="sliderEnabled"
 					:min-data-timestamp="minDataTimestamp"
 					:max-data-timestamp="maxDataTimestamp"

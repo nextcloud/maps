@@ -102,6 +102,13 @@
 				@click="$emit('click-track', $event)"
 				@change-color="$emit('change-track-color', $event)"
 				@display-elevation="displayElevation" />
+			<DevicesLayer
+				v-if="map && devicesEnabled"
+				ref="devicesLayer"
+				:map="map"
+				:devices="devices"
+				@click="$emit('click-device', $event)"
+				@change-color="$emit('change-device-color', $event)" />
 			<ClickSearchPopup v-if="leftClickSearching"
 				:lat-lng="leftClickSearchLatLng"
 				@place-contact="onAddContactAddress"
@@ -152,6 +159,7 @@ import RoutingControl from '../components/map/routing/RoutingControl'
 import FavoritesLayer from '../components/map/FavoritesLayer'
 import PhotosLayer from '../components/map/PhotosLayer'
 import TracksLayer from '../components/map/TracksLayer'
+import DevicesLayer from '../components/map/DevicesLayer'
 import ContactsLayer from '../components/map/ContactsLayer'
 import PlaceContactPopup from '../components/map/PlaceContactPopup'
 import PoiMarker from '../components/map/PoiMarker'
@@ -175,6 +183,7 @@ export default {
 		FavoritesLayer,
 		PhotosLayer,
 		TracksLayer,
+		DevicesLayer,
 		ContactsLayer,
 		PlaceContactPopup,
 		ClickSearchPopup,
@@ -235,6 +244,14 @@ export default {
 			required: true,
 		},
 		tracksEnabled: {
+			type: Boolean,
+			required: true,
+		},
+		devices: {
+			type: Array,
+			required: true,
+		},
+		devicesEnabled: {
 			type: Boolean,
 			required: true,
 		},
@@ -912,6 +929,7 @@ export default {
 
 ::v-deep .popup-contact-wrapper .action,
 ::v-deep .popup-track-wrapper .action,
+::v-deep .popup-device-wrapper .action,
 ::v-deep .popup-favorite-wrapper .action,
 ::v-deep .popup-photo-wrapper .action {
 	height: 44px;
@@ -922,6 +940,7 @@ export default {
 }
 
 ::v-deep .leaflet-marker-track-tooltip,
+::v-deep .leaflet-marker-device-tooltip,
 ::v-deep .leaflet-marker-favorite-tooltip {
 	padding: 0 !important;
 	border: 0 !important;

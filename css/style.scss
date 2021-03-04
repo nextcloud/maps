@@ -213,11 +213,8 @@ tr.selected td {
     border-width: 12px 8px 0;
 }
 .leaflet-marker-track.track-marker .thumbnail-wrapper:after,
-.leaflet-marker-device.device-marker:after {
+.leaflet-marker-device.device-marker .thumbnail-wrapper:after {
     border-width: 12px 7px 0;
-}
-.leaflet-marker-device.device-marker:after {
-    bottom: 18px;
 }
 .leaflet-marker-nonLocalizedPhoto.nonLocalizedPhoto-marker:after,
 .leaflet-marker-photo.photo-marker:after {
@@ -226,7 +223,7 @@ tr.selected td {
 }
 .leaflet-marker-contact.contact-marker:after,
 .leaflet-marker-track.track-marker .thumbnail-wrapper:after,
-.leaflet-marker-device.device-marker:after,
+.leaflet-marker-device.device-marker .thumbnail-wrapper:after,
 .leaflet-marker-nonLocalizedPhoto.nonLocalizedPhoto-marker:after,
 .leaflet-marker-photo.photo-marker:after {
     content:"";
@@ -241,6 +238,7 @@ tr.selected td {
 .leaflet-marker-nonLocalizedPhoto.nonLocalizedPhoto-marker:after {
     border-color: var(--color-warning) transparent;
 }
+.leaflet-marker-device.device-marker .thumbnail-wrapper:after,
 .leaflet-marker-track.track-marker .thumbnail-wrapper:after {
     border-color: var(--custom-color) transparent;
 }
@@ -330,6 +328,7 @@ tr.selected td {
     padding: 1px;
 }
 
+.leaflet-marker-device .thumbnail-wrapper,
 .leaflet-marker-track .thumbnail-wrapper {
     border: 2px solid black;
     border-radius: 50%;
@@ -337,7 +336,6 @@ tr.selected td {
     background-color: var(--color-main-background);
 }
 
-.leaflet-marker-device,
 .leaflet-marker-contact {
     border: 2px solid var(--color-main-background);
     box-shadow: 0px 0px 10px #888;

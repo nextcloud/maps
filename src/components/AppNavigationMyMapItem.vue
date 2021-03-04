@@ -1,16 +1,12 @@
 <template>
 	<AppNavigationItem
-		:title="myMap.user_agent"
+		:title="myMap.name"
 		:class="{ 'subitem-disabled': !myMap.enabled }"
 		:allow-collapse="false"
 		:force-menu="false"
 		@click="$emit('click', myMap)">
 		<template slot="icon">
-			<div v-if="myMap.loading"
-				class="app-navigation-entry-icon icon-loading-small " />
-			<div v-else
-				class="icon icon-group"
-				:style="'background-image: url(' + iconUrl + ');'" />
+			<div class="icon icon-location" />
 			<input v-show="false"
 				ref="col"
 				type="color"

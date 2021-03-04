@@ -16,7 +16,7 @@
 			<ActionButton
 				icon="icon-add"
 				:close-after-click="true"
-				@click="onAddMyMap">
+				@click="$emit('add', $event)">
 				{{ t('maps', 'Add Map') }}
 			</ActionButton>
 		</template>
@@ -25,7 +25,7 @@
 				v-for="myMap in myMaps"
 				:key="myMap.id"
 				:ref="'myMapItem' + myMap.id"
-				:map="myMap"
+				:my-map="myMap"
 				:parent-enabled="enabled && myMaps.length > 0"
 				@click="$emit('myMap-clicked', $event)"
 				@rename="$emit('rename', $event)"

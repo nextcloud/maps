@@ -336,3 +336,37 @@ export function deleteDevice(id) {
 	const url = generateUrl('/apps/maps/devices/' + id)
 	return axios.delete(url)
 }
+
+export function addMyMap(newName) {
+	const req = {
+		id: null,
+		values: { newName },
+	}
+	const url = generateUrl('/apps/maps/maps')
+	return axios.post(url, req)
+}
+
+export function changeMyMapColor(id, color) {
+	const req = {
+		values: { color },
+	}
+	const url = generateUrl('/apps/maps/maps/' + id)
+	return axios.post(url, req)
+}
+
+export function deleteMyMap(id) {
+	const req = {
+		id,
+	}
+	const url = generateUrl('/apps/maps/maps/' + id)
+	return axios.delete(url, req)
+}
+
+export function renameMyMap(id, newName) {
+	const req = {
+		id,
+		values: { newName },
+	}
+	const url = generateUrl('/apps/maps/maps/' + id)
+	return axios.put(url, req)
+}

@@ -105,6 +105,7 @@
 					@photo-moved="onPhotoMoved"
 					@click-track="onTrackClick"
 					@change-track-color="onChangeTrackColorClicked"
+					@toggle-device-history="onToggleDeviceHistory"
 					@cancel="cancelAction"
 					@redo="redoAction"
 					@slider-range-changed="sliderStart = $event.start; sliderEnd = $event.end" />
@@ -1290,6 +1291,7 @@ export default {
 						...device,
 						loading: false,
 						enabled: false,
+						historyEnabled: optionsController.enabledDeviceLines.includes(device.id),
 					}
 				})
 				this.devices.forEach((device) => {
@@ -1337,6 +1339,13 @@ export default {
 				.join('|')
 			optionsController.saveOptionValues({ enabledDevices: deviceStringList })
 		},
+		saveEnabledDeviceLines() {
+			const stringList = this.devices
+				.filter(d => d.historyEnabled)
+				.map(d => d.id )
+				.join('|')
+			optionsController.saveOptionValues({ enabledDeviceLines: stringList })
+		},
 		onChangeDeviceColorClicked(device) {
 			console.debug('chchchc')
 			console.debug(device)
@@ -1360,6 +1369,8 @@ export default {
 		onDeleteDevice(device) {
 		},
 		onToggleDeviceHistory(device) {
+			device.historyEnabled = !device.historyEnabled
+			this.saveEnabledDeviceLines()
 		},
 	},
 }

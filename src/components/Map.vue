@@ -108,6 +108,7 @@
 				:map="map"
 				:devices="devices"
 				@click="$emit('click-device', $event)"
+				@toggle-history="$emit('toggle-device-history', $event)"
 				@change-color="$emit('change-device-color', $event)" />
 			<ClickSearchPopup v-if="leftClickSearching"
 				:lat-lng="leftClickSearchLatLng"

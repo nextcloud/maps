@@ -40,12 +40,12 @@
 		<LMarker
 			:icon="markerIcon"
 			:lat-lng="firstPoint" />
-		<LPolyline
+		<LPolyline v-if="device.historyEnabled"
 			color="black"
 			:opacity="1"
 			:weight="4 * 1.6"
 			:lat-lngs="points" />
-		<LPolyline
+		<LPolyline v-if="device.historyEnabled"
 			:color="color"
 			:opacity="1"
 			:weight="4"

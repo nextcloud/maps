@@ -25,10 +25,12 @@ export function saveOptionValues(optionValues, myMapId) {
 
 export function getOptionValues(myMapId = null) {
 	const url = generateUrl('/apps/maps/getOptionsValues')
-	const req = {
-		myMapId,
+	const conf = {
+		params: {
+			myMapId,
+		},
 	}
-	return axios.get(url, req)
+	return axios.get(url, conf)
 }
 
 export function sendMyPosition(lat, lng, name, acc, ts, myMapId = null) {

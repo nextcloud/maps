@@ -330,7 +330,7 @@ export default {
 			allOverlayLayers: {},
 			defaultStreetLayer: 'Open Street Map',
 			defaultSatelliteLayer: 'ESRI',
-			activeLayerId: null,
+			activeLayerId: optionsController.tileLayer,
 			layersButton: null,
 			streetButton: null,
 			satelliteButton: null,

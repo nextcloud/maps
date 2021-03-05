@@ -28,14 +28,16 @@ const optionsController = {
 		for (const k in newOptionValues) {
 			this.optionValues[k] = newOptionValues[k]
 		}
-		network.saveOptionValues(newOptionValues)
+		network.saveOptionValues(newOptionValues, this.myMapId)
 	},
 
-	restoreOptions(successCB) {
-		network.getOptionValues()
+	restoreOptions(successCB = null) {
+		network.getOptionValues(this.myMapId)
 			.then((response) => {
 				this.handleOptionValues(response.data)
-				successCB()
+				if (successCB) {
+					successCB()
+				}
 			})
 	},
 
@@ -131,7 +133,7 @@ const optionsController = {
 			this.myMapsEnabled = false
 		}
 		if (document.location.pathname.includes('/apps/maps/m/')) {
-			this.myMapId = document.location.pathname.split('/apps/maps/m/')[1].split('/')[0]
+			this.myMapId = parseInt(window.location.pathname.split('/apps/maps/m/')[1].split('/')[0])
 		} else {
 			this.myMapId = null
 		}

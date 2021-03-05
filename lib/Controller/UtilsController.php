@@ -26,6 +26,7 @@ use OCP\AppFramework\Http\ContentSecurityPolicy;
 use OCP\IRequest;
 use OCP\AppFramework\Http\DataResponse;
 use OCP\AppFramework\Controller;
+use OCP\Lock\LockedException;
 use PhpParser\JsonDecoder;
 
 class UtilsController extends Controller {
@@ -78,11 +79,15 @@ class UtilsController extends Controller {
             } catch (NotFoundException $e) {
                 $file=$folder->newFile(".maps", $content = "{}");
             }
-            $ov = json_decode($file->getContent(),true, 512);
-            foreach ($options as $key => $value) {
-                $ov[$key] = $value;
+            try {
+                $ov = json_decode($file->getContent(),true, 512);
+                foreach ($options as $key => $value) {
+                    $ov[$key] = $value;
+                }
+                $file->putContent(json_encode($ov, JSON_PRETTY_PRINT));
+            } catch (LockedException $e){
+                return new DataResponse("File is locked", 500);
             }
-            $file->putContent(json_encode($ov, JSON_PRETTY_PRINT));
 
         }
         return new DataResponse(['done'=>1]);

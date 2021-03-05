@@ -263,7 +263,7 @@ export default {
 
 	computed: {
 		mapLoading() {
-			return this.photosLoading || this.contactsLoading || this.favoritesLoading || this.tracksLoading || this.devicesLoading
+			return this.photosLoading || this.contactsLoading || this.favoritesLoading || this.tracksLoading || this.devicesLoading || this.myMapsLoading
 				|| this.exportingDevices || this.importingDevices
 		},
 		mapState() {
@@ -1775,16 +1775,11 @@ export default {
 		onMyMapsClicked() {
 		},
 		onMyMapClicked(myMap) {
-		    this.myMapId = myMap.id
-			this.getContacts()
-			this.getPhotos()
-			this.getFavorites()
-			this.getTracks()
-			this.getDevices()
-			this.getMyMaps()
-			if (optionsController.optionValues.trackMe === 'true') {
-				this.sendPositionLoop()
+		    if (!this.myMapsLoading) {
+				this.myMapsLoading = true
+		        this.loadMap((myMap))
 			}
+			this.myMapsLoading = false
 		},
 		onAddMyMap(name) {
 		    this.myMapsLoading = true
@@ -1804,6 +1799,27 @@ export default {
 		onRenameMyMap(myMap) {
 		},
 		onDeleteMyMap(myMap) {
+		},
+		loadMap(myMap) {
+			this.myMapId = myMap.id
+			optionsController.restoreOptions()
+			let newurl
+			if (this.myMapId === null) {
+				newurl = window.location.href.split('/apps/maps')[0].concat('/apps/maps/')
+
+			} else {
+				newurl = window.location.href.split('/apps/maps')[0].concat('/apps/maps/m/', this.myMapId)
+			}
+			window.history.pushState({ id: this.myMapId }, myMap.name, newurl)
+			this.getContacts()
+			this.getPhotos()
+			this.getFavorites()
+			this.getTracks()
+			this.getDevices()
+			this.getMyMaps()
+			if (optionsController.optionValues.trackMe === 'true') {
+				this.sendPositionLoop()
+			}
 		},
 	},
 }

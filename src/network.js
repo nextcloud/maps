@@ -6,7 +6,7 @@ import {
 	showError,
 } from '@nextcloud/dialogs'
 
-export function saveOptionValues(optionValues, myMapId = null) {
+export function saveOptionValues(optionValues, myMapId) {
 	const req = {
 		options: optionValues,
 		myMapId,
@@ -124,16 +124,23 @@ export function placeContact(bookid, uri, uid, lat, lng, address = null, type = 
 }
 
 export function getFavorites(myMapId = null) {
-	const req = {
-		myMapId,
+	const conf = {
+	    params: {
+			myMapId,
+		},
 	}
 	const url = generateUrl('/apps/maps/favorites')
-	return axios.get(url, req)
+	return axios.get(url, conf)
 }
 
-export function getSharedFavoriteCategories() {
+export function getSharedFavoriteCategories(myMapId = null) {
+	const conf = {
+		params: {
+			myMapId,
+		},
+	}
 	const url = generateUrl('/apps/maps/favorites-category/shared')
-	return axios.get(url)
+	return axios.get(url, conf)
 }
 
 export function addFavorite(lat, lng, name, category = null, comment = null, extensions = null, myMapId = null) {
@@ -172,8 +179,8 @@ export function deleteFavorites(ids, myMapId = null) {
 	const req = {
 		params: {
 			ids,
-			myMapId,
 		},
+		myMapId,
 	}
 	const url = generateUrl('/apps/maps/favorites')
 	return axios.delete(url, req)
@@ -233,10 +240,12 @@ export function unshareFavoriteCategory(catid) {
 
 export function getPhotos(myMapId = null) {
 	const url = generateUrl('/apps/maps/photos')
-	const req = {
-		myMapId,
+	const conf = {
+		params: {
+			myMapId,
+		},
 	}
-	return axios.get(url, req)
+	return axios.get(url, conf)
 }
 
 export function placePhotos(paths, lats, lngs, directory = false, myMapId = null) {
@@ -262,39 +271,61 @@ export function resetPhotosCoords(paths, myMapId = null) {
 	return axios.delete(url, req)
 }
 
-export function getTracks() {
+export function getTracks(myMapId = null) {
+	const conf = {
+		params: {
+			myMapId,
+		},
+	}
 	const url = generateUrl('/apps/maps/tracks')
-	return axios.get(url)
+	return axios.get(url, conf)
 }
 
-export function getTrack(id) {
+export function getTrack(id, myMapId = null) {
+	const conf = {
+		params: {
+			myMapId,
+		},
+	}
 	const url = generateUrl('/apps/maps/tracks/' + id)
 	// return axios.get(url, { responseType: 'json' })
-	return axios.get(url)
+	return axios.get(url, conf)
 }
 
-export function editTrack(id, color) {
+export function editTrack(id, color, myMapId = null) {
 	const req = {
 		color,
+		myMapId,
 	}
 	const url = generateUrl('/apps/maps/tracks/' + id)
 	return axios.put(url, req)
 }
 
-export function getDevices() {
+export function getDevices(myMapId = null) {
+	const conf = {
+		params: {
+			myMapId,
+		},
+	}
 	const url = generateUrl('/apps/maps/devices')
-	return axios.get(url)
+	return axios.get(url, conf)
 }
 
-export function getDevice(id) {
+export function getDevice(id, myMapId = null) {
+	const conf = {
+		params: {
+			myMapId,
+		},
+	}
 	const url = generateUrl('/apps/maps/devices/' + id)
-	return axios.get(url)
+	return axios.get(url, conf)
 }
 
-export function editDevice(id, name, color) {
+export function editDevice(id, name, color, myMapId = null) {
 	const req = {
 		color,
 		name,
+		myMapId,
 	}
 	const url = generateUrl('/apps/maps/devices/' + id)
 	return axios.put(url, req)

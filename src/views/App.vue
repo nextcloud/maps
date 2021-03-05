@@ -677,7 +677,7 @@ export default {
 				name += ')'
 			}
 			const ts = Math.floor(Date.now() / 1000)
-			network.sendMyPosition(lat, lng, name, acc, ts).then((response) => {
+			network.sendMyPosition(lat, lng, name, acc, ts, this.myMapId).then((response) => {
 				// TODO get new positions
 			}).catch((error) => {
 				showError(t('maps', 'Failed to send current position') + ' ' + error)
@@ -752,7 +752,7 @@ export default {
 				return
 			}
 			this.photosLoading = true
-			network.getPhotos().then((response) => {
+			network.getPhotos(this.myMapId).then((response) => {
 				this.photos = response.data.sort((p1, p2) => (p1.dateTaken || 0) - (p2.dateTaken || 0))
 			}).catch((error) => {
 				console.error(error)
@@ -806,7 +806,7 @@ export default {
 			)
 		},
 		placePhotos(paths, lats, lngs, directory = false, save = true, reload = true) {
-			network.placePhotos(paths, lats, lngs, directory).then((response) => {
+			network.placePhotos(paths, lats, lngs, directory, this.myMapId).then((response) => {
 				if (reload) {
 					this.getPhotos()
 				}
@@ -831,7 +831,7 @@ export default {
 			this.placePhotos([photo.path], [latLng.lat], [latLng.lng], false, true, false)
 		},
 		resetPhotosCoords(paths, save = true) {
-			network.resetPhotosCoords(paths).then((response) => {
+			network.resetPhotosCoords(paths, this.myMapId).then((response) => {
 				this.getPhotos()
 				if (save) {
 					this.saveAction({
@@ -960,7 +960,7 @@ export default {
 				}
 			}
 
-			network.getContacts().then((response) => {
+			network.getContacts(this.myMapId).then((response) => {
 				this.contacts = response.data
 				this.buildContactGroups()
 			}).catch((error) => {
@@ -1012,7 +1012,7 @@ export default {
 			})
 		},
 		onContactAddressDelete(contact, save = true) {
-			network.deleteContactAddress(contact.BOOKID, contact.URI, contact.UID, contact.ADR, contact.GEO).then((response) => {
+			network.deleteContactAddress(contact.BOOKID, contact.URI, contact.UID, contact.ADR, contact.GEO, this.myMapId).then((response) => {
 				if (save) {
 					this.saveAction({
 						type: 'contactDelete',
@@ -1027,7 +1027,7 @@ export default {
 		onContactPlace(e, save = true) {
 			network.placeContact(e.contact.BOOKID, e.contact.URI,
 				e.contact.UID, e.latLng.lat, e.latLng.lng,
-				e.address || null, e.addressType
+				e.address || null, e.addressType, this.myMapId
 			).then((response) => {
 				if (save) {
 					this.saveAction({
@@ -1092,13 +1092,13 @@ export default {
 				return
 			}
 			this.favoritesLoading = true
-			network.getSharedFavoriteCategories().then((response) => {
+			network.getSharedFavoriteCategories(this.myMapId).then((response) => {
 				this.favoriteCategoryTokens = {}
 				response.data.forEach((s) => {
 					this.favoriteCategoryTokens[s.category] = s.token
 				})
 			})
-			network.getFavorites().then((response) => {
+			network.getFavorites(this.myMapId).then((response) => {
 				this.favorites = {}
 				response.data.forEach((f) => {
 					if (!f.category) {
@@ -1147,13 +1147,13 @@ export default {
 		},
 		onFavoriteCategoryShareChange(catid, checked) {
 			if (checked) {
-				network.shareFavoriteCategory(catid).then((response) => {
+				network.shareFavoriteCategory(catid, this.myMapId).then((response) => {
 					this.$set(this.favoriteCategoryTokens, catid, response.data.token)
 				}).catch((error) => {
 					console.error(error)
 				})
 			} else {
-				network.unshareFavoriteCategory(catid).then((response) => {
+				network.unshareFavoriteCategory(catid, this.myMapId).then((response) => {
 					this.$delete(this.favoriteCategoryTokens, catid)
 				}).catch((error) => {
 					console.error(error)
@@ -1193,7 +1193,7 @@ export default {
 			this.selectedFavorite = f
 		},
 		onFavoriteEdit(f, save = true) {
-			network.editFavorite(f.id, f.name, f.category, f.comment, f.lat, f.lng).then((response) => {
+			network.editFavorite(f.id, f.name, f.category, f.comment, f.lat, f.lng, this.myMapId).then((response) => {
 				if (save) {
 					this.saveAction({
 						type: 'favoriteEdit',
@@ -1212,7 +1212,7 @@ export default {
 			})
 		},
 		onFavoriteDelete(favid, save = true) {
-			network.deleteFavorite(favid).then((response) => {
+			network.deleteFavorite(favid, this.myMapId).then((response) => {
 				if (save) {
 					this.saveAction({
 						type: 'favoriteDelete',
@@ -1226,7 +1226,7 @@ export default {
 			})
 		},
 		onFavoritesDelete(favids, save = true) {
-			network.deleteFavorites(favids).then((response) => {
+			network.deleteFavorites(favids, this.myMapId).then((response) => {
 				if (save) {
 					const deleted = favids.map((favid) => {
 						return { ...this.favorites[favid] }
@@ -1259,7 +1259,7 @@ export default {
 			this.exportFavorites([catid])
 		},
 		exportFavorites(catIdList) {
-			network.exportFavorites(catIdList).then((response) => {
+			network.exportFavorites(catIdList, this.myMapId).then((response) => {
 				showSuccess(t('maps', 'Favorites exported in {path}', { path: response.data }))
 			}).catch((error) => {
 				console.error(error)
@@ -1277,7 +1277,7 @@ export default {
 			)
 		},
 		importFavorites(path) {
-			network.importFavorites(path).then((response) => {
+			network.importFavorites(path, this.myMapId).then((response) => {
 				this.getFavorites()
 			}).catch((error) => {
 				console.error(error)
@@ -1298,7 +1298,7 @@ export default {
 			if (category === null) {
 				category = this.lastUsedFavoriteCategory
 			}
-			return network.addFavorite(latLng.lat, latLng.lng, name, category, comment, extensions).then((response) => {
+			return network.addFavorite(latLng.lat, latLng.lng, name, category, comment, extensions, this.myMapId).then((response) => {
 				const fav = response.data
 				if (!fav.category) {
 					fav.category = t('maps', 'Personal')
@@ -1321,7 +1321,7 @@ export default {
 			})
 		},
 		onRenameFavoriteCategory(e, save = true) {
-			network.renameFavoriteCategory([e.old], e.new).then((response) => {
+			network.renameFavoriteCategory([e.old], e.new, this.myMapId).then((response) => {
 				if (save) {
 					this.saveAction({
 						type: 'favoriteRenameCategory',
@@ -1418,7 +1418,7 @@ export default {
 				return
 			}
 			this.tracksLoading = true
-			network.getTracks().then((response) => {
+			network.getTracks(this.myMapId).then((response) => {
 				this.tracks = response.data.map((track) => {
 					if (track.metadata) {
 						try {
@@ -1472,7 +1472,7 @@ export default {
 		},
 		getTrack(track, enable = false, save = true, zoom = false) {
 			track.loading = true
-			network.getTrack(track.id).then((response) => {
+			network.getTrack(track.id, this.myMapId).then((response) => {
 				if (!track.metadata) {
 					try {
 						track.metadata = JSON.parse(response.data.metadata)
@@ -1510,7 +1510,7 @@ export default {
 		},
 		onChangeTrackColor(e) {
 			e.track.color = e.color
-			network.editTrack(e.track.id, e.color).then((response) => {
+			network.editTrack(e.track.id, e.color, this.myMapId).then((response) => {
 				console.debug(response.data)
 			}).catch((error) => {
 				console.error(error)
@@ -1552,7 +1552,7 @@ export default {
 				return
 			}
 			this.devicesLoading = true
-			network.getDevices().then((response) => {
+			network.getDevices(this.myMapId).then((response) => {
 				this.devices = response.data.map((device) => {
 					return {
 						...device,
@@ -1599,7 +1599,7 @@ export default {
 		},
 		getDevice(device, enable = false, save = true, zoom = false) {
 			device.loading = true
-			network.getDevice(device.id).then((response) => {
+			network.getDevice(device.id, this.myMapId).then((response) => {
 				this.$set(device, 'points', response.data.sort((p1, p2) => (p1.timestamp || 0) - (p2.timestamp || 0)))
 				if (enable) {
 					device.enabled = true
@@ -1635,7 +1635,7 @@ export default {
 		},
 		onChangeDeviceColor(e) {
 			e.device.color = e.color
-			network.editDevice(e.device.id, null, e.color).then((response) => {
+			network.editDevice(e.device.id, null, e.color, this.myMapId).then((response) => {
 				console.debug(response.data)
 			}).catch((error) => {
 				console.error(error)
@@ -1772,9 +1772,19 @@ export default {
 				this.myMapsLoading = false
 			})
 		},
-		onMyMapsClicked(myMaps) {
+		onMyMapsClicked() {
 		},
 		onMyMapClicked(myMap) {
+		    this.myMapId = myMap.id
+			this.getContacts()
+			this.getPhotos()
+			this.getFavorites()
+			this.getTracks()
+			this.getDevices()
+			this.getMyMaps()
+			if (optionsController.optionValues.trackMe === 'true') {
+				this.sendPositionLoop()
+			}
 		},
 		onAddMyMap(name) {
 		    this.myMapsLoading = true

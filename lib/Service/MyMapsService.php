@@ -36,10 +36,7 @@ class MyMapsService {
         $this->userId = $userId;
     }
 
-    public function addMyMap($newName) {
-        $MapData = [
-            'name' => $newName,
-        ];
+    public function addMyMap($newName, $counter=0) {
         if (!$this->userfolder->nodeExists('/Maps')) {
             $this->userfolder->newFolder('Maps');
         }
@@ -58,7 +55,20 @@ class MyMapsService {
             $response = 'Impossible to create /Maps';
             return $response;
         }
-        $mapFolder = $mapsFolder->newFolder($newName);
+        if ($counter>0) {
+            $folderName = $newName." ".$counter;
+        }
+        else {
+            $folderName = $newName;
+        }
+
+        if ($mapsFolder->nodeExists($folderName)) {
+            return $this->addMyMap($newName, $counter+1);
+        }
+        $MapData = [
+            'name' => $folderName,
+        ];
+        $mapFolder = $mapsFolder->newFolder($folderName);
         $MapData['id'] = $mapFolder->getId();
         $mapFolder->newFile(".maps","{}");
         return $MapData;

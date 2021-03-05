@@ -1752,13 +1752,20 @@ export default {
 			}
 			this.myMapsLoading = true
 			network.getMyMaps().then((response) => {
-				this.myMaps = response.data.map((myMap) => {
-					return {
-						...myMap,
-						enabled: this.myMapId === myMap.id,
-					}
-				})
-				this.myMaps = response.data
+				this.myMaps = [
+					{
+						name: t('maps', 'Default'),
+						id: null,
+						enabled: this.myMapId === null,
+					},
+				]
+			    this.myMaps.push(
+				    ...response.data.map((myMap) => {
+				        return {
+				            ...myMap,
+							enabled: this.myMapId === myMap.id,
+						}
+				    }))
 			}).catch((error) => {
 				console.error(error)
 			}).then(() => {
@@ -1770,7 +1777,17 @@ export default {
 		onMyMapClicked(myMap) {
 		},
 		onAddMyMap(name) {
-		    network.addMyMap(name)
+		    this.myMapsLoading = true
+		    network.addMyMap(name).then((response) => {
+				this.myMaps.push({
+					...response.data,
+					enabled: this.myMapId === response.data.id,
+				})
+			}).catch((error) => {
+				console.error(error)
+			}).then(() => {
+				this.myMapsLoading = false
+			})
 		},
 		onChangeMyMapColor(myMap) {
 		},

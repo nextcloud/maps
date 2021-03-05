@@ -19,7 +19,13 @@
 			&nbsp;
 		</template>
 		<template slot="actions">
-			<ActionButton v-if="parentEnabled && myMap.enabled"
+			<ActionButton v-if="parentEnabled"
+				icon="icon-rename"
+				:close-after-click="true"
+				@click="$emit('rename', myMap)">
+				{{ t('maps', 'Rename') }}
+			</ActionButton>
+			<ActionButton v-if="parentEnabled"
 				:close-after-click="false"
 				@click="onChangeColorClick">
 				<template #icon>
@@ -27,7 +33,7 @@
 				</template>
 				{{ t('maps', 'Change color') }}
 			</ActionButton>
-			<ActionButton v-if="parentEnabled && myMap.enabled"
+			<ActionButton v-if="parentEnabled"
 				icon="icon-delete"
 				:close-after-click="true"
 				@click="$emit('delete', myMap)">

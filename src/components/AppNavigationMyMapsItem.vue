@@ -1,7 +1,7 @@
 <template>
 	<AppNavigationItem
 		:icon="loading ? 'icon-loading-small' : 'icon-maps'"
-		:title="t('maps', 'My Maps')"
+		:title="t('maps', 'My maps')"
 		:class="{ 'item-disabled': !enabled }"
 		:allow-collapse="true"
 		:open="open"
@@ -9,14 +9,13 @@
 		@click="onClick"
 		@update:open="onUpdateOpen">
 		<template slot="counter">
-			&nbsp;
 			<span v-if="enabled && myMaps.length">{{ myMaps.length }}</span>
 		</template>
 		<template v-if="enabled" slot="actions">
 			<ActionButton
 				icon="icon-add"
 				:close-after-click="true"
-				@click="$emit('add', $event)">
+				@click="$emit('add', t('maps', 'New map'))">
 				{{ t('maps', 'Add Map') }}
 			</ActionButton>
 		</template>
@@ -78,14 +77,11 @@ export default {
 				this.open = true
 				optionsController.saveOptionValues({ myMapListShow: 'true' })
 			}
-			this.$emit('myMaps-clicked')
+			this.onUpdateOpen(!this.open)
 		},
 		onUpdateOpen(isOpen) {
 			this.open = isOpen
 			optionsController.saveOptionValues({ myMapListShow: isOpen ? 'true' : 'false' })
-		},
-		onAddMyMap() {
-
 		},
 	},
 }

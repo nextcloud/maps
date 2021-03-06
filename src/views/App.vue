@@ -1802,7 +1802,8 @@ export default {
 		},
 		loadMap(myMap) {
 			this.myMapId = myMap.id
-			optionsController.restoreOptions()
+			optionsController.myMapId = myMap.id
+			// fixme set new tilelayer and mapbounds in the map component
 			let newurl
 			if (this.myMapId === null) {
 				newurl = window.location.href.split('/apps/maps')[0].concat('/apps/maps/')

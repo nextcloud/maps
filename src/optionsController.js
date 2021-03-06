@@ -7,7 +7,8 @@ const optionsController = {
 		[40.82991732677597, -74.08716201782228],
 	],
 	nbRouters: 0,
-	optionValues: {},
+	optionValues: [],
+	tileLayer: '',
 	locControlEnabled: false,
 	photosEnabled: true,
 	contactsEnabled: true,
@@ -59,6 +60,10 @@ const optionsController = {
 					]
 				}
 			}
+		}
+
+		if ('tileLayer' in optionsValues) {
+			this.tileLayer = optionsValues.tileLayer
 		}
 
 		// check if install scan was done

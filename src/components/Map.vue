@@ -727,9 +727,12 @@ export default {
 			this.streetButton.button.parentElement.classList.add('behind')
 
 			// initial selected layer, restore or fallback to default street
-			if (this.optionValues.tileLayer in this.allBaseLayers) {
+			/* if (this.optionValues.tileLayer in this.allBaseLayers) {
 				this.activeLayerId = this.optionValues.tileLayer
 			} else {
+
+			 */
+			if (!this.activeLayerId) {
 				this.activeLayerId = this.defaultStreetLayer
 			}
 

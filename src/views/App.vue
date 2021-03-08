@@ -1821,6 +1821,9 @@ export default {
 			optionsController.restoreOptions(function() {
 				that.activeLayerId = optionsController.tileLayer
 				that.mapBounds = optionsController.bounds
+				if (!this.myMapId) {
+					that.devicesEnabled = optionsController.devicesEnabled
+				}
 			})
 			// fixme set new tilelayer and mapbounds in the map component
 			let newurl

@@ -1766,6 +1766,7 @@ export default {
 						name: t('maps', 'Default'),
 						id: null,
 						enabled: this.myMapId === null,
+						deletable: false,
 					},
 				]
 			    this.myMaps.push(
@@ -1817,7 +1818,16 @@ export default {
 				this.myMapsLoading = false
 			})
 		},
-		onDeleteMyMap(myMap) {
+		onDeleteMyMap(id) {
+			this.myMapsLoading = true
+			network.deleteMyMap(id).then((response) => {
+				const index = this.myMaps.findIndex((myMap) => myMap.id === id)
+				this.myMaps.splice(index, 1)
+			}).catch((error) => {
+				console.error(error)
+			}).then(() => {
+				this.myMapsLoading = false
+			})
 		},
 		loadMap(myMap) {
 			this.myMapId = myMap.id

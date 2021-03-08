@@ -38,10 +38,10 @@
 				</template>
 				{{ t('maps', 'Share') }}
 			</ActionButton>
-			<ActionButton v-if="parentEnabled"
+			<ActionButton v-if="deletable"
 				icon="icon-delete"
 				:close-after-click="true"
-				@click="$emit('delete', myMap)">
+				@click="$emit('delete', myMap.id)">
 				{{ t('maps', 'Delete') }}
 			</ActionButton>
 		</template>
@@ -77,6 +77,9 @@ export default {
 	},
 
 	computed: {
+	    deletable() {
+	        return this.parentEnabled && (this.myMap.deletable ?? true)
+		},
 	},
 
 	methods: {

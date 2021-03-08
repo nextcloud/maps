@@ -17,7 +17,9 @@ const optionsController = {
 	trackListShow: true,
 	devicesEnabled: true,
 	deviceListShow: true,
-	myMapId: null,
+	myMapId: (window.location.pathname.includes('/apps/maps/m/'))
+		? parseInt(window.location.pathname.split('/apps/maps/m/')[1].split('/')[0])
+		: null,
 	myMapListShow: null,
 	myMapsEnabled: true,
 	disabledFavoriteCategories: [],

@@ -201,6 +201,14 @@ export default {
 	},
 
 	props: {
+		activeLayerIdProp: {
+	        type: String,
+			required: true,
+		},
+		mapBoundsProp: {
+			type: Array,
+			required: true,
+		},
 		searchData: {
 			type: Array,
 			required: true,
@@ -311,7 +319,7 @@ export default {
 				zoom: 2,
 				minZoom: 2,
 				maxZoom: 19,
-				bounds: L.latLngBounds(optionsController.bounds),
+				bounds: L.latLngBounds(this.mapBoundsProp),
 				maxBounds: L.latLngBounds([
 					[-90, 720],
 					[90, -720],
@@ -330,7 +338,7 @@ export default {
 			allOverlayLayers: {},
 			defaultStreetLayer: 'Open Street Map',
 			defaultSatelliteLayer: 'ESRI',
-			activeLayerId: optionsController.tileLayer,
+			activeLayerId: this.activeLayerIdProp,
 			layersButton: null,
 			streetButton: null,
 			satelliteButton: null,
@@ -363,6 +371,14 @@ export default {
 			} else if (this.state === 'adding') {
 				this.$refs.map.$el.classList.add('adding')
 			}
+		},
+
+		activeLayerIdProp(newValue) {
+		    this.activeLayerId = newValue
+		},
+
+		mapBoundsProp(newValue) {
+			this.mapOptions.bounds = L.latLngBounds(newValue)
 		},
 	},
 

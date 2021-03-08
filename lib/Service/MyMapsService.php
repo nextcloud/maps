@@ -110,9 +110,12 @@ class MyMapsService {
             $file=$folder->newFile(".maps", $content = '{}');
         }
         $mapData = json_decode($file->getContent(),true);
+        $renamed = false;
         foreach ($values as $key=>$value) {
             if ($key === 'newName') {
                 $key = 'name';
+                $newName = $value;
+                $renamed = true;
             }
             if (is_null($value)) {
                 unset($mapData[$key]);
@@ -121,6 +124,18 @@ class MyMapsService {
             }
         }
         $file->putContent(json_encode($mapData,JSON_PRETTY_PRINT));
+        if ($renamed) {
+            if ($this->userfolder->nodeExists('/Maps')) {
+                $mapsFolder = $this->userfolder->get('/Maps');
+                if ($folder->getParent()->getId() === $mapsFolder->getId() ) {
+                    try {
+                        $folder->move($mapsFolder->getPath()."/".$newName);
+                    } catch (Exception $e) {
+                    }
+                }
+            }
+        }
+
         return $mapData;
     }
 

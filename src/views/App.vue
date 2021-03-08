@@ -1545,12 +1545,17 @@ export default {
 		},
 		// devices
 		onDevicesClicked() {
-			this.devicesEnabled = !this.devicesEnabled
-			// get devices if we don't have them yet
-			if (this.devicesEnabled && this.devices.length === 0) {
-				this.getDevices()
+		    if (this.myMapId) {
+				showInfo(t('maps', 'Devices are not yet available on custom Maps'))
+			} else {
+				this.devicesEnabled = !this.devicesEnabled
+				// get devices if we don't have them yet
+				if (this.devicesEnabled && this.devices.length === 0) {
+					this.getDevices()
+				}
+				optionsController.saveOptionValues({ devicesEnabled: this.devicesEnabled ? 'true' : 'false' })
 			}
-			optionsController.saveOptionValues({ devicesEnabled: this.devicesEnabled ? 'true' : 'false' })
+
 		},
 		getDevices() {
 			if (!this.devicesEnabled) {
@@ -1807,6 +1812,10 @@ export default {
 		},
 		loadMap(myMap) {
 			this.myMapId = myMap.id
+			// Disable devices for custom maps
+			if (this.myMapId) {
+				this.devicesEnabled = false
+			}
 			optionsController.myMapId = myMap.id
 			const that = this
 			optionsController.restoreOptions(function() {

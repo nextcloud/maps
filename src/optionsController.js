@@ -45,6 +45,12 @@ const optionsController = {
 	},
 
 	handleOptionValues(response) {
+		if (document.location.pathname.includes('/apps/maps/m/')) {
+			this.myMapId = parseInt(window.location.pathname.split('/apps/maps/m/')[1].split('/')[0])
+		} else {
+			this.myMapId = null
+		}
+
 		const optionsValues = response.values
 		this.optionValues = optionsValues
 
@@ -111,6 +117,9 @@ const optionsController = {
 		}
 
 		// devices
+		if (this.myMapId) {
+			this.devicesEnabled = false
+		}
 		if ('enabledDevices' in optionsValues
 			&& optionsValues.enabledDevices
 			&& optionsValues.enabledDevices !== '') {
@@ -138,11 +147,6 @@ const optionsController = {
 		}
 		if ('myMapsEnabled' in optionsValues && optionsValues.myMapsEnabled !== 'true') {
 			this.myMapsEnabled = false
-		}
-		if (document.location.pathname.includes('/apps/maps/m/')) {
-			this.myMapId = parseInt(window.location.pathname.split('/apps/maps/m/')[1].split('/')[0])
-		} else {
-			this.myMapId = null
 		}
 
 		// routing

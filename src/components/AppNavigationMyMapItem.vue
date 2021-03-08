@@ -4,7 +4,10 @@
 		:class="{ 'subitem-disabled': !myMap.enabled }"
 		:allow-collapse="false"
 		:force-menu="false"
-		@click="$emit('click', myMap)">
+		:editable="true"
+		:edit-label="t('maps', 'Rename')"
+		@click="$emit('click', myMap)"
+		@update:title="onRename">
 		<template slot="icon">
 			<div class="icon icon-location" />
 			<input v-show="false"
@@ -20,18 +23,20 @@
 		</template>
 		<template slot="actions">
 			<ActionButton v-if="parentEnabled"
-				icon="icon-rename"
-				:close-after-click="true"
-				@click="$emit('rename', myMap)">
-				{{ t('maps', 'Rename') }}
-			</ActionButton>
-			<ActionButton v-if="parentEnabled"
 				:close-after-click="false"
 				@click="onChangeColorClick">
 				<template #icon>
 					<div class="icon-colorpicker" />
 				</template>
 				{{ t('maps', 'Change color') }}
+			</ActionButton>
+			<ActionButton v-if="parentEnabled"
+				:close-after-click="false"
+				@click="onShareClick">
+				<template #icon>
+					<div class="icon-colorpicker" />
+				</template>
+				{{ t('maps', 'Share') }}
 			</ActionButton>
 			<ActionButton v-if="parentEnabled"
 				icon="icon-delete"
@@ -79,6 +84,11 @@ export default {
 		},
 		updateMyMapColor(e) {
 			this.$emit('color', { myMap: this.myMap, color: e.target.value })
+		},
+		onShareClick() {
+		},
+		onRename(newName) {
+			this.$emit('rename', { id: this.myMap.id, newName })
 		},
 	},
 }

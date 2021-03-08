@@ -1555,7 +1555,6 @@ export default {
 				}
 				optionsController.saveOptionValues({ devicesEnabled: this.devicesEnabled ? 'true' : 'false' })
 			}
-
 		},
 		getDevices() {
 			if (!this.devicesEnabled) {
@@ -1805,8 +1804,18 @@ export default {
 			})
 		},
 		onChangeMyMapColor(myMap) {
+
 		},
-		onRenameMyMap(myMap) {
+		onRenameMyMap({ id, newName }) {
+			this.myMapsLoading = true
+			network.renameMyMap(id, newName).then((response) => {
+				const index = this.myMaps.findIndex((myMap) => myMap.id === id)
+				this.myMaps[index] = response.data
+			}).catch((error) => {
+				console.error(error)
+			}).then(() => {
+				this.myMapsLoading = false
+			})
 		},
 		onDeleteMyMap(myMap) {
 		},
@@ -1821,7 +1830,7 @@ export default {
 			optionsController.restoreOptions(function() {
 				that.activeLayerId = optionsController.tileLayer
 				that.mapBounds = optionsController.bounds
-				if (!this.myMapId) {
+				if (!that.myMapId) {
 					that.devicesEnabled = optionsController.devicesEnabled
 				}
 			})

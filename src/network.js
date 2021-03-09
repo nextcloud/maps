@@ -47,16 +47,20 @@ export function sendMyPosition(lat, lng, name, acc, ts, myMapId = null) {
 }
 
 export function getContacts(myMapId = null) {
-	const req = {
-		myMapId,
+	const conf = {
+		params: {
+			myMapId,
+		},
 	}
 	const url = generateUrl('/apps/maps/contacts')
-	return axios.get(url, req)
+	return axios.get(url, conf)
 }
 
 export function searchContacts(query = '', myMapId = null) {
 	const req = {
-		myMapId,
+		params: {
+				myMapId,
+			},
 		query,
 	}
 	const url = generateUrl('/apps/maps/contacts-search')

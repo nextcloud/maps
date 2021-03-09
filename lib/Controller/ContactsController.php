@@ -54,68 +54,73 @@ class ContactsController extends Controller {
      * get contacts with coordinates
      * @NoAdminRequired
      */
-    public function getContacts() {
-        $contacts = $this->contactsManager->search('', ['GEO','ADR'], ['types'=>false]);
-        $addressBooks = $this->contactsManager->getUserAddressBooks();
-        $result = [];
-        $userid = trim($this->userId);
-        foreach ($contacts as $c) {
-            $addressBookUri = $addressBooks[$c['addressbook-key']]->getUri();
-            $uid = trim($c['UID']);
-            // we don't give users, just contacts
-            if (strcmp($c['URI'], 'Database:'.$c['UID'].'.vcf') !== 0 and
-                strcmp($uid, $userid) !== 0
-            ) {
-                // if the contact has a geo attibute use it
-                if (key_exists('GEO', $c)) {
-                    $geo = $c['GEO'];
-                    if (strlen($geo) > 1) {
-                        array_push($result, [
-                            'FN' => $c['FN'] ?? $this->N2FN($c['N']) ?? '???',
-                            'URI' => $c['URI'],
-                            'UID' => $c['UID'],
-                            'ADR' => '',
-                            'ADRTYPE' => '',
-                            'HAS_PHOTO' => (isset($c['PHOTO']) && $c['PHOTO'] !== null),
-                            'BOOKID' => $c['addressbook-key'],
-                            'BOOKURI' => $addressBookUri,
-                            'GEO' => $geo,
-                            'GROUPS' => $c['CATEGORIES'] ?? null
-                        ]);
+    public function getContacts($myMapId=null) {
+        if (is_null($myMapId) || $myMapId === '') {
+            $contacts = $this->contactsManager->search('', ['GEO', 'ADR'], ['types' => false]);
+            $addressBooks = $this->contactsManager->getUserAddressBooks();
+            $result = [];
+            $userid = trim($this->userId);
+            foreach ($contacts as $c) {
+                $addressBookUri = $addressBooks[$c['addressbook-key']]->getUri();
+                $uid = trim($c['UID']);
+                // we don't give users, just contacts
+                if (strcmp($c['URI'], 'Database:' . $c['UID'] . '.vcf') !== 0 and
+                    strcmp($uid, $userid) !== 0
+                ) {
+                    // if the contact has a geo attibute use it
+                    if (key_exists('GEO', $c)) {
+                        $geo = $c['GEO'];
+                        if (strlen($geo) > 1) {
+                            array_push($result, [
+                                'FN' => $c['FN'] ?? $this->N2FN($c['N']) ?? '???',
+                                'URI' => $c['URI'],
+                                'UID' => $c['UID'],
+                                'ADR' => '',
+                                'ADRTYPE' => '',
+                                'HAS_PHOTO' => (isset($c['PHOTO']) && $c['PHOTO'] !== null),
+                                'BOOKID' => $c['addressbook-key'],
+                                'BOOKURI' => $addressBookUri,
+                                'GEO' => $geo,
+                                'GROUPS' => $c['CATEGORIES'] ?? null
+                            ]);
+                        }
                     }
-                }
-                // anyway try to get it from the address
-                $card = $this->cdBackend->getContact($c['addressbook-key'], $c['URI']);
-                if ($card) {
-                    $vcard = Reader::read($card['carddata']);
-                    if (isset($vcard->ADR) && count($vcard->ADR) > 0) {
-                        foreach ($vcard->ADR as $adr) {
-                            $geo = $this->addressService->addressToGeo($adr->getValue(), $c['URI']);
-                            //var_dump($adr->parameters()['TYPE']->getValue());
-                            $adrtype = '';
-                            if (isset($adr->parameters()['TYPE'])) {
-                                $adrtype = $adr->parameters()['TYPE']->getValue();
-                            }
-                            if (strlen($geo) > 1) {
-                                array_push($result, [
-                                    'FN' => $c['FN'] ?? $this->N2FN($c['N']) ?? '???',
-                                    'URI' => $c['URI'],
-                                    'UID' => $c['UID'],
-                                    'ADR' => $adr->getValue(),
-                                    'ADRTYPE' => $adrtype,
-                                    'HAS_PHOTO' => (isset($c['PHOTO']) && $c['PHOTO'] !== null),
-                                    'BOOKID' => $c['addressbook-key'],
-                                    'BOOKURI' => $addressBookUri,
-                                    'GEO' => $geo,
-                                    'GROUPS' => $c['CATEGORIES'] ?? null,
-                                ]);
+                    // anyway try to get it from the address
+                    $card = $this->cdBackend->getContact($c['addressbook-key'], $c['URI']);
+                    if ($card) {
+                        $vcard = Reader::read($card['carddata']);
+                        if (isset($vcard->ADR) && count($vcard->ADR) > 0) {
+                            foreach ($vcard->ADR as $adr) {
+                                $geo = $this->addressService->addressToGeo($adr->getValue(), $c['URI']);
+                                //var_dump($adr->parameters()['TYPE']->getValue());
+                                $adrtype = '';
+                                if (isset($adr->parameters()['TYPE'])) {
+                                    $adrtype = $adr->parameters()['TYPE']->getValue();
+                                }
+                                if (strlen($geo) > 1) {
+                                    array_push($result, [
+                                        'FN' => $c['FN'] ?? $this->N2FN($c['N']) ?? '???',
+                                        'URI' => $c['URI'],
+                                        'UID' => $c['UID'],
+                                        'ADR' => $adr->getValue(),
+                                        'ADRTYPE' => $adrtype,
+                                        'HAS_PHOTO' => (isset($c['PHOTO']) && $c['PHOTO'] !== null),
+                                        'BOOKID' => $c['addressbook-key'],
+                                        'BOOKURI' => $addressBookUri,
+                                        'GEO' => $geo,
+                                        'GROUPS' => $c['CATEGORIES'] ?? null,
+                                    ]);
+                                }
                             }
                         }
                     }
                 }
             }
+            return new DataResponse($result);
+        } else {
+            //Fixme add contacts for my-maps
+            return new DataResponse([]);
         }
-        return new DataResponse($result);
     }
 
     private function N2FN(string $n) {

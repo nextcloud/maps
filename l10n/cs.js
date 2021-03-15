@@ -249,7 +249,7 @@ OC.L10N.register(
     "Maps routing settings" : "Nastavení hledání tras na mapách",
     "To enable routing, you must set up a routing engine below." : "Aby bylo možné zapnout směrování, je třeba nejprve níže nastavit směrovací engine.",
     "OSRM Website" : "Webová stránka OSRM",
-    "OSRM settings" : "Nastavení OSRM",
+    "OSRM settings" : "Nastavení pro OSRM",
     "An OSRM server URL looks like this : https://my.osrm.server.org:5000/route/v1" : "URL adresa OSRM serveru vypadá nějak takto: https://my.osrm.server.org:5000/route/v1",
     "Leave URL fields empty to disable OSRM routing provider." : "Pro vypnutí poskytovatele provádění výpočtů tras přes službu OSRM nevyplňujte kolonku URL adresa.",
     "OSRM server URL (car profile)" : "URL adresa OSRM serveru (pěší automobil)",

@@ -42,12 +42,10 @@ class Version000009Date20190625000800 extends SimpleMigrationStep {
 			$table->addColumn('adr', 'string', [
 				'notnull' => true,
 				'length' => 255,
-				'unique' => true,
 			]);
 			$table->addColumn('adr_norm', 'string', [
 				'notnull' => true,
 				'length' => 255,
-				'unique' => true,
 			]);
 			$table->addColumn('lat', 'float', [
 				'notnull' => false,

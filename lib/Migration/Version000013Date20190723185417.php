@@ -41,7 +41,9 @@ class Version000013Date20190723185417 extends SimpleMigrationStep {
 
 		if ($schema->hasTable('maps_address_geo')) {
 			$table = $schema->getTable('maps_address_geo');
-			$table->dropColumn('contact_uid');
+			if ($table->hasColumn('contact_uid')) {
+				$table->dropColumn('contact_uid');
+			}
 			$table->addColumn('object_uri', 'string', [
 				'notnull' => true,
 				'default' => '--',

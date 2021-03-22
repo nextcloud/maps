@@ -161,6 +161,8 @@ appstore:
 	--exclude=js/bower.json \
 	--exclude=js/karma.* \
 	--exclude=js/protractor.* \
+	--exclude=babel.config.js \
+	--exclude=webpack.*.js \
 	--exclude=package.json \
 	--exclude=bower.json \
 	--exclude=karma.* \
@@ -169,14 +171,19 @@ appstore:
 	--exclude=.* \
 	--exclude=js/.* \
 	../$(app_name) $(appstore_build_directory)
-	# give the webserver user the right to create signature file
-	sudo chown $(webserveruser) $(appstore_package_name)/appinfo
-	sudo -u $(webserveruser) php $(occ_dir)/occ integrity:sign-app --privateKey=$(cert_dir)/$(app_name).key --certificate=$(cert_dir)/$(app_name).crt --path=$(appstore_package_name)/
-	sudo chown -R $(USER) $(appstore_package_name)/appinfo
-	tar -czf $(appstore_package_name)-$(app_version).tar.gz \
+	@if [ -f $(cert_dir)/$(app_name).key ]; then \
+		sudo chown $(webserveruser) $(appstore_build_directory)/$(app_name)/appinfo ;\
+		sudo -u $(webserveruser) php $(occ_dir)/occ integrity:sign-app --privateKey=$(cert_dir)/$(app_name).key --certificate=$(cert_dir)/$(app_name).crt --path=$(appstore_build_directory)/$(app_name)/ ;\
+		sudo chown -R $(USER) $(appstore_build_directory)/$(app_name)/appinfo ;\
+	else \
+		echo "!!! WARNING signature key not found" ;\
+	fi
+	tar -czf $(appstore_build_directory)/$(app_name)-$(app_version).tar.gz \
 		-C $(appstore_build_directory) $(app_name)
-	echo NEXTCLOUD------------------------------------------
-	openssl dgst -sha512 -sign $(cert_dir)/$(app_name).key $(appstore_package_name)-$(app_version).tar.gz | openssl base64
+	@if [ -f $(cert_dir)/$(app_name).key ]; then \
+		echo NEXTCLOUD------------------------------------------ ;\
+		openssl dgst -sha512 -sign $(cert_dir)/$(app_name).key $(appstore_build_directory)/$(app_name)-$(app_version).tar.gz | openssl base64 | tee $(appstore_build_directory)/sign.txt ;\
+	fi
 
 # Command for running JS and PHP tests. Works for package.json files in the js/
 # and root directory. If phpunit is not installed systemwide, a copy is fetched

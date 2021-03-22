@@ -44,10 +44,11 @@ build_tools_directory=$(CURDIR)/build/tools
 source_build_directory=$(CURDIR)/build/artifacts/source
 source_package_name=$(source_build_directory)/$(app_name)
 appstore_build_directory=$(CURDIR)/build/artifacts/appstore
-appstore_package_name=$(appstore_build_directory)/$(app_name)
 npm=$(shell which npm 2> /dev/null)
 composer=$(shell which composer 2> /dev/null)
 
+build_dir=/tmp/build
+sign_dir=/tmp/sign
 cert_dir=$(HOME)/.nextcloud/certificates
 webserveruser ?= wwwrun
 occ_dir ?= /srv/www/htdocs/server
@@ -142,8 +143,10 @@ source:
 # Builds the source package for the app store, ignores php and js tests
 .PHONY: appstore
 appstore:
-	rm -rf $(appstore_build_directory)
-	mkdir -p $(appstore_build_directory)
+	rm -rf $(build_dir)
+	mkdir -p $(build_dir)
+	rm -rf $(sign_dir)
+	mkdir -p $(sign_dir)
 	rsync -a \
 	--exclude=.git \
 	--exclude=build \
@@ -161,6 +164,8 @@ appstore:
 	--exclude=js/bower.json \
 	--exclude=js/karma.* \
 	--exclude=js/protractor.* \
+	--exclude=babel.config.js \
+	--exclude=webpack.*.js \
 	--exclude=package.json \
 	--exclude=bower.json \
 	--exclude=karma.* \
@@ -168,15 +173,20 @@ appstore:
 	--exclude=translationfiles \
 	--exclude=.* \
 	--exclude=js/.* \
-	../$(app_name) $(appstore_build_directory)
-	# give the webserver user the right to create signature file
-	sudo chown $(webserveruser) $(appstore_package_name)/appinfo
-	sudo -u $(webserveruser) php $(occ_dir)/occ integrity:sign-app --privateKey=$(cert_dir)/$(app_name).key --certificate=$(cert_dir)/$(app_name).crt --path=$(appstore_package_name)/
-	sudo chown -R $(USER) $(appstore_package_name)/appinfo
-	tar -czf $(appstore_package_name)-$(app_version).tar.gz \
-		-C $(appstore_build_directory) $(app_name)
-	echo NEXTCLOUD------------------------------------------
-	openssl dgst -sha512 -sign $(cert_dir)/$(app_name).key $(appstore_package_name)-$(app_version).tar.gz | openssl base64
+	../$(app_name) $(sign_dir)
+	@if [ -f $(cert_dir)/$(app_name).key ]; then \
+		sudo chown $(webserveruser) $(sign_dir)/$(app_name)/appinfo ;\
+		sudo -u $(webserveruser) php $(occ_dir)/occ integrity:sign-app --privateKey=$(cert_dir)/$(app_name).key --certificate=$(cert_dir)/$(app_name).crt --path=$(sign_dir)/$(app_name)/ ;\
+		sudo chown -R $(USER) $(sign_dir)/$(app_name)/appinfo ;\
+	else \
+		echo "!!! WARNING signature key not found" ;\
+	fi
+	tar -czf $(build_dir)/$(app_name)-$(app_version).tar.gz \
+		-C $(sign_dir) $(app_name)
+	@if [ -f $(cert_dir)/$(app_name).key ]; then \
+		echo NEXTCLOUD------------------------------------------ ;\
+		openssl dgst -sha512 -sign $(cert_dir)/$(app_name).key $(build_dir)/$(app_name)-$(app_version).tar.gz | openssl base64 | tee /tmp/build/sign.txt ;\
+	fi
 
 # Command for running JS and PHP tests. Works for package.json files in the js/
 # and root directory. If phpunit is not installed systemwide, a copy is fetched

@@ -57,15 +57,15 @@ jobs:
           sed -i $'s|if (substr($fullPath, 0, strlen($root) + 1) === $root . \'/\')|if (is_string($root) and substr($fullPath, 0, strlen($root) + 1) === $root . \'/\')|g' ~/html/nextcloud/lib/autoloader.php
           cp -r $GITHUB_WORKSPACE ~/html/nextcloud/apps/${APP_ID}
           php ~/html/nextcloud/occ maintenance:install --database "sqlite" --admin-user "admin" --admin-pass "password"
-          php ~/html/nextcloud/occ app:enable ${APP_ID}
-          php ~/html/nextcloud/occ maintenance:mode --off
           cd ~/html/nextcloud/apps/${APP_ID}
           echo "###### make"
           webserveruser=runner occ_dir=~/html/nextcloud make > /dev/null
+          php ~/html/nextcloud/occ app:enable ${APP_ID}
+          php ~/html/nextcloud/occ maintenance:mode --off
           echo "###### make appstore"
           tag=${{ steps.tag.outputs.currenttag }}
           version=${tag/v/}
-          webserveruser=runner occ_dir=~/html/nextcloud version=$version make build_release
+          webserveruser=runner occ_dir=~/html/nextcloud version=$version make appstore
           echo "##[set-output name=version;]$version"
         env:
           APP_CRT: ${{ secrets.APP_CRT }}
@@ -91,7 +91,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: /tmp/build/${{ steps.build_release.outputs.app_id }}-${{ steps.build_release.outputs.version }}.tar.gz
+          asset_path: ~/html/nextcloud/apps/${{ steps.build_release.outputs.app_id }}/build/artifacts/appstore/${{ steps.build_release.outputs.app_id }}-${{ steps.build_release.outputs.version }}.tar.gz
           asset_name: ${{ steps.build_release.outputs.app_id }}-${{ steps.build_release.outputs.version }}.tar.gz
           asset_content_type: application/gzip
 
@@ -99,7 +99,7 @@ jobs:
         if: ${{ startsWith( steps.tag.outputs.currenttag , 'v' ) && !endsWith( steps.tag.outputs.currenttag , 'nightly' ) }}
         id: publish
         run: |
-          SIGNATURE=$(cat /tmp/build/sign.txt | tr -d '\n')
+          SIGNATURE=$(cat ~/html/nextcloud/apps/${APP_ID}/build/artifacts/appstore/sign.txt | tr -d '\n')
           VERSION=${{ steps.build_release.outputs.version }}
           DOWNLOAD_URL=https://github.com/${{ github.repository }}/releases/download/v${VERSION}/${APP_ID}-${VERSION}.tar.gz
           curl -X POST -H "Authorization: Token $APPSTORE_TOKEN" https://apps.nextcloud.com/api/v1/apps/releases -H "Content-Type: application/json" -d '{"download":"'${DOWNLOAD_URL}'", "signature": "'${SIGNATURE}'"}'
@@ -110,7 +110,7 @@ jobs:
         if: ${{ startsWith( steps.tag.outputs.currenttag , 'v' ) && endsWith( steps.tag.outputs.currenttag , 'nightly' ) }}
         id: nightly
         run: |
-          SIGNATURE=$(cat /tmp/build/sign.txt | tr -d '\n')
+          SIGNATURE=$(cat ~/html/nextcloud/apps/${APP_ID}/build/artifacts/appstore/sign.txt | tr -d '\n')
           VERSION=${{ steps.build_release.outputs.version }}
           DOWNLOAD_URL=https://github.com/${{ github.repository }}/releases/download/v${VERSION}/${APP_ID}-${VERSION}.tar.gz
           curl -X POST -H "Authorization: Token $APPSTORE_TOKEN" https://apps.nextcloud.com/api/v1/apps/releases -H "Content-Type: application/json" -d '{"download":"'${DOWNLOAD_URL}'", "signature": "'${SIGNATURE}'", "nightly": true}'

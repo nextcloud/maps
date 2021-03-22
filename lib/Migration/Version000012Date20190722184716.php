@@ -46,11 +46,6 @@ class Version000012Date20190722184716 extends SimpleMigrationStep {
 				'notnull' => true,
 				'length' => 41,
 			]);
-			$table->addColumn('contact_uid', 'string', [
-				'notnull' => true,
-				'default' => '',
-				'length' => 64,
-			]);
 			$table->addColumn('adr', 'string', [
 				'notnull' => true,
 				'default' => '',
@@ -75,7 +70,6 @@ class Version000012Date20190722184716 extends SimpleMigrationStep {
 			$table->setPrimaryKey(['id']);
 			$table->addIndex(['adr'], 'maps_adr');
 			$table->addIndex(['adr_norm'], 'maps_adr_norm');
-			$table->addIndex(['contact_uid'], 'maps_contact_uid');
 		}
 
 		return $schema;

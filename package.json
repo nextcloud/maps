@@ -34,7 +34,7 @@
   "dependencies": {
     "@fortawesome/fontawesome-free": "^5.12.1",
     "@nextcloud/router": "^1.0.0",
-    "@nextcloud/vue": "^1.1.0",
+    "@nextcloud/vue": "^3.8.0",
     "@nextcloud/moment": "^1.1.1",
     "d3": "^3.5.17",
     "i18next-client": "^1.11.4",

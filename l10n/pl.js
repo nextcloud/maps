@@ -19,7 +19,7 @@ OC.L10N.register(
     "Delete" : "Usuń",
     "Unknown Place" : "Nieznane miejsce",
     "Settings were successfully saved" : "Ustawienia zostały pomyślnie zapisane",
-    "Failed to save settings" : "Ustawienia nie zostały zapisane",
+    "Failed to save settings" : "Nie udało się zapisać ustawień",
     "There are no contacts to zoom on" : "Brak kontaktów do powiększenia",
     "Not grouped" : "Nie pogrupowane",
     "Zoom to bounds" : "Powiększ do granic",

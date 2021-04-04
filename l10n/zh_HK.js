@@ -266,7 +266,7 @@ OC.L10N.register(
     "Set the API key to use Mapbox routing service." : "設定 API 金鑰才能使用 Mapbox 導航服務",
     "Leave empty to disable." : "空白代表停用。",
     "Mapbox API key" : "Mapbox API 密鑰",
-    "Search…" : "搜尋中。。。",
+    "Search…" : "搜尋中...",
     "Your favorites" : "收藏的地點",
     "Import from file" : "從檔案導入",
     "Toggle all" : "全選",

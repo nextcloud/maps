@@ -6,7 +6,7 @@ OC.L10N.register(
     "Add" : "Agiunghe",
     "Cancel" : "Annulla",
     "Delete" : "Cantzella",
-    "Failed to save settings" : "No at fatu a sarbare is informatziones",
+    "Failed to save settings" : "No at fatu a sarvare is informatziones",
     "All contacts" : "Totu is cuntatos",
     "Rename" : "Torra a numenare",
     "Export" : "Esporta",

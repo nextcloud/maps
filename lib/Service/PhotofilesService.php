@@ -424,7 +424,7 @@ class PhotofilesService {
                 $pos = strpos($value, '/');
                 if ($pos !== false){
                     $temp = explode('/',$value);
-                    $gps[$key] = ($temp[1] == 0) ? 0 : ($temp[0] / $temp[1]);
+                    $gps[$key] = ($temp[1] == 0) ? $temp[0] : ($temp[0] / $temp[1]);
                 }
             }
             $file_object = new \stdClass();

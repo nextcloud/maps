@@ -69,27 +69,27 @@ class ExifGeoData
     /**
      * @var int|null
      */
-    private ?int $timestamp = null;
+    private $timestamp = null;
 
     /**
      * @var float|null
      */
-    private ?float $latitude = null;
+    private $latitude = null;
 
     /**
      * @var float|null
      */
-    private ?float $longitude = null;
+    private $longitude = null;
 
     /**
      * @var bool|null
      */
-    private ?bool $is_valid = null;
+    private $is_valid = null;
 
     /**
      * @var ?array
      */
-    protected ?array $exif_data = null;
+    protected $exif_data = null;
 
     /**
      * @param string $path

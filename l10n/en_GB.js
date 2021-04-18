@@ -15,8 +15,10 @@ OC.L10N.register(
     "Work" : "Work",
     "All contacts" : "All contacts",
     "Rename" : "Rename",
+    "Change color" : "Change colour",
     "Export" : "Export",
     "Phone" : "Phone",
+    "Failed to change device color" : "Failed to change device colour",
     "Device" : "Device",
     "Date" : "Date",
     "Share link" : "Share link",
@@ -36,6 +38,7 @@ OC.L10N.register(
     "Description" : "Description",
     "download" : "download",
     "End" : "End",
+    "Failed to change track color" : "Failed to change track colour",
     "Sort by name" : "Order by name",
     "Sort by date" : "Order by date",
     "Settings" : "Settings"

@@ -13,6 +13,8 @@
 namespace OCA\Maps\Service;
 
 use lsolesen\pel\PelEntryTime;
+use OCA\Maps\Helper\ExifDataException;
+use OCA\Maps\Helper\ExifGeoData;
 use OCP\Files\FileInfo;
 use OCP\IL10N;
 use OCP\Files\IRootFolder;
@@ -365,151 +367,26 @@ class PhotofilesService {
         return true;
     }
 
-    private function hasValidExifGeoTags($exif) {
-        if (!isset($exif["GPSLatitude"]) OR !isset($exif["GPSLongitude"])) {
-            return false;
+    /**
+     * Get exif geo Data object
+     * returns with null in any validation or Critical errors
+     *
+     * @param $file
+     * @return ExifGeoData|null
+     */
+    private function getExif($file) : ?ExifGeoData {
+        $path = $file->getStorage()->getLocalFile($file->getInternalPath());
+        try{
+            $exif_geo_data = ExifGeoData::get($path);
+            $exif_geo_data->validate(true);
+        }catch(ExifDataException $e){
+            $exif_geo_data = null;
+            $this->logger->notice($e->getMessage(), ['code'=>$e->getCode(),'path'=>$path]);
+        }catch(\Throwable $f){
+            $exif_geo_data = null;
+            $this->logger->error($f->getMessage(), ['code'=>$f->getCode(),'path'=>$path]);
         }
-        if (count($exif["GPSLatitude"]) !== 3 OR count($exif["GPSLongitude"]) !== 3) {
-            return false;
-        }
-        //Check photos are on the earth
-        if ($exif["GPSLatitude"][0] >= 90 OR $exif["GPSLongitude"][0] >= 180) {
-            return false;
-        }
-        //Check photos are not on NULL island, remove if they should be.
-        if ($exif["GPSLatitude"][0] === 0 AND
-            $exif["GPSLatitude"][1] === 0 AND
-            $exif["GPSLongitude"][0] === 0 AND
-            $exif["GPSLongitude"][1] === 0
-        ){
-            return false;
-        }
-        return true;
-    }
-
-    private function getExif($file) {
-        $file_object = null;
-        try {
-            $path = $file->getStorage()->getLocalFile($file->getInternalPath());
-
-            $exif = @exif_read_data($path);
-
-            if (!$this->hasValidExifGeoTags($exif)) {
-                @$exif = $this->getExifPelBackup($file);
-            }
-
-            if (!$this->hasValidExifGeoTags($exif)) {
-                throw new \Exception('Invalid GeoTags');
-            }
-
-            //Check if there is exif infor
-            $LatM = 1;
-            $LongM = 1;
-            if ($exif["GPSLatitudeRef"] === 'S') {
-                $LatM = -1;
-            }
-            if ($exif["GPSLongitudeRef"] === 'W') {
-                $LongM = -1;
-            }
-            //get the GPS data
-            $gps['LatDegree'] = $exif["GPSLatitude"][0];
-            $gps['LatMinute'] = $exif["GPSLatitude"][1];
-            $gps['LatgSeconds'] = $exif["GPSLatitude"][2];
-            $gps['LongDegree'] = $exif["GPSLongitude"][0];
-            $gps['LongMinute'] = $exif["GPSLongitude"][1];
-            $gps['LongSeconds'] = $exif["GPSLongitude"][2];
-
-            //convert strings to numbers
-            foreach ($gps as $key => $value) {
-                $value = trim($value,'/');
-                $pos = strpos($value, '/');
-                if ($pos !== false) {
-                    $temp = explode('/', $value);
-                    $gps[$key] = ($temp[1] == 0) ? $temp[0] : ($temp[0] / $temp[1]);
-                }
-            }
-
-            $file_object = new \stdClass();
-            //calculate the decimal degree
-            $file_object->lat = $LatM * ($gps['LatDegree'] + ($gps['LatMinute'] / 60) + ($gps['LatgSeconds'] / 3600));
-            $file_object->lng = $LongM * ($gps['LongDegree'] + ($gps['LongMinute'] / 60) + ($gps['LongSeconds'] / 3600));
-
-            // avoiding numeric noise -> round(...,6)
-            if( round($file_object->lat,6) == .0 && round($file_object->lng,6) == .0 ){
-                // coordinates can not be valid, maybe if someone really did a photo there...
-                throw new \Exception('Invalid coordinates');
-            }
-
-            if (isset($exif["DateTimeOriginal"])) {
-                $file_object->dateTaken = strtotime($exif["DateTimeOriginal"]);
-            }
-        }catch(\Throwable $t){
-            $file_object = null;
-        }
-        return $file_object;
-    }
-
-    private function getExifPelBackup($file) {
-        $data = new PelDataWindow($file->getContent());
-        if (PelJpeg::isValid($data)) {
-            $pelJpeg = new PelJpeg($data);
-
-            $pelExif = $pelJpeg->getExif();
-            if ($pelExif === null) {
-                return null;
-            }
-
-            $pelTiff = $pelExif->getTiff();
-        } elseif (PelTiff::isValid($data)) {
-            $pelTiff = new PelTiff($data);
-        } else {
-            return null;
-        }
-        if (is_null($pelTiff)) {
-            return null;
-        }
-        $pelIfd0 = $pelTiff->getIfd();
-        if (is_null($pelIfd0)) {
-            return null;
-        }
-        $pelIfdExif = $pelIfd0->getSubIfd(PelIfd::EXIF);
-
-        if (is_null($pelIfdExif)) {
-            return null;
-        }
-        $pelDateTimeOriginal = $pelIfdExif->getEntry(PelTag::DATE_TIME_ORIGINAL);
-        if (is_null($pelDateTimeOriginal)) {
-            return null;
-        }
-        $exif = [
-            'DateTimeOriginal' => $pelDateTimeOriginal->getValue(PelEntryTime::EXIF_STRING),
-        ];
-        $pelIfdGPS = $pelIfd0->getSubIfd(PelIfd::GPS);
-        if (!is_null($pelIfdGPS) && !is_null($pelIfdGPS->getEntry(PelTag::GPS_LATITUDE )) && !is_null( $pelIfdGPS->getEntry(PelTag::GPS_LONGITUDE))) {
-
-            $lat = $pelIfdGPS->getEntry(PelTag::GPS_LATITUDE)->getValue();
-            if ((int) $lat[0][1] !==0 && (int) $lat[1][1] !==0 && (int) $lat[2][1] !==0) {
-                $exif['GPSLatitudeRef'] = $pelIfdGPS->getEntry(PelTag::GPS_LATITUDE_REF)->getValue();
-                $exif['GPSLatitude'] = [
-                    0 => (int) $lat[0][0]/ (int) $lat[0][1],
-                    1 => (int) $lat[1][0]/ (int) $lat[1][1],
-                    2 => (int) $lat[2][0]/ (int) $lat[2][1]
-                ];
-            }
-
-            $lng = $pelIfdGPS->getEntry(PelTag::GPS_LONGITUDE)->getValue();
-            if ((int) $lng[0][1] !==0 && (int) $lng[1][1] !==0 && (int) $lng[2][1] !==0) {
-                $exif['GPSLongitudeRef'] = $pelIfdGPS->getEntry(PelTag::GPS_LONGITUDE_REF)->getValue();
-                $exif['GPSLongitude'] = [
-                    0 => (int)$lng[0][0] / (int)$lng[0][1],
-                    1 => (int)$lng[1][0] / (int)$lng[1][1],
-                    2 => (int)$lng[2][0] / (int)$lng[2][1]
-                ];
-            }
-        }
-        Pel::clearExceptions();
-        return $exif;
-
+        return $exif_geo_data;
     }
 
     private function resetExifCoords($file) {

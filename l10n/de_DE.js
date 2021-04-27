@@ -284,7 +284,7 @@ OC.L10N.register(
     "Sort by date" : "Nach Datum sortieren",
     "Settings" : "Einstellungen",
     "Track my position" : "Meine Position aufzeichnen",
-    "Display time filter slider" : "Zeitfilter Schieberegler anzeigen",
+    "Display time filter slider" : "Schieberegler für Zeitfilter anzeigen",
     "Keep in mind that map projections always distort sizes of countries. The standard Mercator projection is particularly biased. Read more at:" : "Beachten Sie, dass Kartenprojektionen die tatsächliche Größe der Länder verzerren. Die Mercator-Standardprojektion ist besonders verzerrt. Weitere Infos finden Sie hier:",
     "The True Size of Africa" : "Die wahre Größe Afrikas"
 },

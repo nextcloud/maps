@@ -53,7 +53,7 @@
     "mapbox-gl-leaflet": "^0.0.13",
     "nouislider": "^14.0.2",
     "opening_hours": "^3.5.0",
-    "ua-parser-js": "^0.7.20",
+    "ua-parser-js": "^0.7.24",
     "vue": "^2.6.12",
     "vue-types": "^2.0.1",
     "vue2-leaflet": "^2.5.2",

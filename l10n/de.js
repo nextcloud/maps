@@ -247,7 +247,7 @@ OC.L10N.register(
     "Show elevation" : "Höhe anzeigen",
     "Failed to change track color" : "Ändern der Streckenfarbe fehlgeschalgen",
     "Maps routing settings" : "Karten-Routing-Einstellungen",
-    "To enable routing, you must set up a routing engine below." : "Um die Naviagtion zu aktivieren, mußt Du unten ein Navigationsmodul einrichten.",
+    "To enable routing, you must set up a routing engine below." : "Um die Navigation zu aktivieren, musst Du unten ein Navigationsmodul einrichten.",
     "OSRM Website" : "OSRM Webseite",
     "OSRM settings" : "OSRM-Einstellungen",
     "An OSRM server URL looks like this : https://my.osrm.server.org:5000/route/v1" : "Eine OSRM-Server-URL sieht wie folgt aus: https://my.osrm.server.org:5000/route/v1",

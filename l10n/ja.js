@@ -10,6 +10,7 @@ OC.L10N.register(
     "Cancel" : "キャンセル",
     "Update" : "更新",
     "Delete" : "削除",
+    "Unknown Place" : "不明な場所",
     "Settings were successfully saved" : "設定は保存されました",
     "Failed to save settings" : "設定の保存に失敗しました",
     "Not grouped" : "グループ化されていません",

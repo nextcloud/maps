@@ -329,6 +329,20 @@ class PhotofilesService {
                         continue;
                     }
                 }
+				// we don't explore folders which contain .nomedia or .noimage
+				$stop = false;
+				$insideNodes = $node->getDirectoryListing();
+				foreach ($insideNodes as $insideNode) {
+					if ($insideNode->getType() !== FileInfo::TYPE_FOLDER) {
+						if ($insideNode->getName() === ".nomedia" OR $insideNode->getName() === ".noimage") {
+							$stop = true;
+                            break;
+						}
+					}
+				}
+				if ($stop === true) {
+					continue;
+				}
                 try {
                         $notes = array_merge($notes, $this->gatherPhotoFiles($node, $recursive));
                 } catch (\OCP\Files\StorageNotAvailableException | \Exception $e) {

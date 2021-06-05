@@ -329,17 +329,17 @@ class PhotofilesService {
                         continue;
                     }
                 }
-				// we don't explore folders which contain .nomedia or .noimage
-				$stop = false;
-				$insideNodes = $node->getDirectoryListing();
-				foreach ($insideNodes as $insideNode) {
-					if ($insideNode->getType() !== FileInfo::TYPE_FOLDER) {
-						if ($insideNode->getName() === ".nomedia" OR $insideNode->getName() === ".noimage") {
-							$stop = true;
+                // we don't explore folders which contain .nomedia or .noimage
+                $stop = false;
+                $insideNodes = $node->getDirectoryListing();
+                foreach ($insideNodes as $insideNode) {
+                    if ($insideNode->getType() !== FileInfo::TYPE_FOLDER) {
+                        if ($insideNode->getName() === ".nomedia" OR $insideNode->getName() === ".noimage") {
+                            $stop = true;
                             break;
-						}
-					}
-				}
+                        }
+                    }
+                }
 				if ($stop === true) {
 					continue;
 				}

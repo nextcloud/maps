@@ -340,7 +340,7 @@ class PhotofilesService {
                         }
                     }
                 }
-				if ($stop === true) {
+                if ($stop === true) {
                     continue;
                 }
                 try {

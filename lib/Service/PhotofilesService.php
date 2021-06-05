@@ -341,8 +341,8 @@ class PhotofilesService {
                     }
                 }
 				if ($stop === true) {
-					continue;
-				}
+                    continue;
+                }
                 try {
                         $notes = array_merge($notes, $this->gatherPhotoFiles($node, $recursive));
                 } catch (\OCP\Files\StorageNotAvailableException | \Exception $e) {

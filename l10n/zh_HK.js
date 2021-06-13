@@ -112,7 +112,7 @@ OC.L10N.register(
     "Failed to restore options values" : "回復選項失敗",
     "Place photos" : "放置照片",
     "Place contact" : "放置聯絡人",
-    "Share this location" : "分享位置",
+    "Share this location" : "分享此位置",
     "Route from here" : "從這裡出發的路線",
     "Add route point" : "新增多點路線",
     "Route to here" : "到達這裡的路線",

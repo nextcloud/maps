@@ -5,6 +5,21 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
+## 0.1.9 – 2021-06-29
+### Added
+- GitHub automated release action
+
+### Fixed
+- fix tracks not loading
+  [#587](https://github.com/nextcloud/maps/pull/587) @Ablu
+  [#574](https://github.com/nextcloud/maps/issues/574) @Tazzios
+- fix images not loading
+  [#559](https://github.com/nextcloud/maps/pull/559) @tacruc
+  [#543](https://github.com/nextcloud/maps/issues/543) @beardhatcode
+- fix db-related install problems on NC 21
+  [#568](https://github.com/nextcloud/maps/pull/568) @eneiluj
+  [#541](https://github.com/nextcloud/maps/issues/541) @J0WI
+
 ## 0.1.8 – 2020-10-03
 ### Fixed
 - controllers not being declared soon enough in some cases

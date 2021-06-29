@@ -114,7 +114,7 @@ export default {
 	mask-position: center 7px;
 	-webkit-mask: url('../../img/road.svg') no-repeat;
 	-webkit-mask-size: 18px 18px;
-	-webkit-mask-position: center 7px;
+	-webkit-mask-position: center top;
 	min-width: 44px !important;
 	min-height: 44px !important;
 }

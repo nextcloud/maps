@@ -1,6 +1,11 @@
 .app-navigation-toggle {
     display: none;
 }
+.leaflet-routing-container {
+	border: 2px solid rgba(0, 0, 0, 0.2) !important;
+	border-top: 0 !important;
+	border-radius: 0 0 var(--border-radius) var(--border-radius) !important;
+}
 // @media only screen and (max-width: $breakpoint-mobile) {
 @media only screen and (max-width: 1024px) {
     // Account for navigation menu toggle on the top left

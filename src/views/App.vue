@@ -992,6 +992,7 @@ export default {
 				this.favorites[f.id].comment = f.comment
 				this.favorites[f.id].lat = f.lat
 				this.favorites[f.id].lng = f.lng
+				showSuccess(t('maps', 'Favorite edited'))
 			}).catch((error) => {
 				console.error(error)
 			})

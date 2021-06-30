@@ -17,25 +17,27 @@
 				v-model="formattedAddress"
 				@input="addressEdited = true" />
 			<br>
-			<span class="icon icon-user" />
-			<Multiselect
-				ref="userMultiselect"
-				v-model="selectedContact"
-				class="contact-input"
-				track-by="URI"
-				label="FN"
-				:placeholder="t('maps', 'Choose a contact')"
-				:options="contactData"
-				:internal-search="true">
-				<template #option="{option}">
-					<Avatar
-						class="contact-avatar"
-						:is-no-user="true"
-						:url="option.AVATAR_URL"
-						:user="option.FN" />
-					{{ option.FN }}
-				</template>
-			</Multiselect>
+			<div class="contact-select">
+				<span class="icon icon-user" />
+				<Multiselect
+					ref="userMultiselect"
+					v-model="selectedContact"
+					class="contact-input"
+					track-by="URI"
+					label="FN"
+					:placeholder="t('maps', 'Choose a contact')"
+					:options="contactData"
+					:internal-search="true">
+					<template #option="{option}">
+						<Avatar
+							class="contact-avatar"
+							:is-no-user="true"
+							:url="option.AVATAR_URL"
+							:user="option.FN" />
+						{{ option.FN }}
+					</template>
+				</Multiselect>
+			</div>
 			<div class="address-type">
 				<label for="addressTypeSelect">{{ t('maps', 'Address type') }}</label>
 				<select id="addressTypeSelect"
@@ -208,6 +210,10 @@ export default {
 	width: 100%;
 }
 
+.contact-select {
+	display: flex;
+}
+
 .address-type {
 	display: flex;
 
@@ -239,6 +245,7 @@ span.icon {
 
 #place-popup-title {
 	text-align: center;
+	font-weight: bold;
 }
 
 #placeContactPopupAddress {

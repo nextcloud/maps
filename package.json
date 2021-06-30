@@ -31,6 +31,10 @@
   "browserslist": [
     "extends @nextcloud/browserslist-config"
   ],
+  "engines": {
+    "node": ">=14.0.0",
+    "npm": ">=7.0.0"
+  },
   "dependencies": {
     "@fortawesome/fontawesome-free": "^5.15.3",
     "@nextcloud/auth": "^1.3.0",

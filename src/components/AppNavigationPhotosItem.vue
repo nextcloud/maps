@@ -6,13 +6,10 @@
 		:allow-collapse="false"
 		:force-menu="enabled"
 		@click="$emit('photos-clicked')">
-		<template slot="counter">
-			&nbsp;
-			<span v-if="enabled && photos.length"
-				class="photo-counter">
-				{{ photos.length }}
-			</span>
-		</template>
+		<CounterBubble v-if="enabled && photos.length"
+			slot="counter">
+			{{ photos.length > 99 ? '99+' : photos.length }}
+		</CounterBubble>
 		<template v-if="enabled" slot="actions">
 			<ActionButton
 				:icon="draggable ? 'icon-hand' : 'icon-hand-slash'"
@@ -27,6 +24,7 @@
 <script>
 import AppNavigationItem from '@nextcloud/vue/dist/Components/AppNavigationItem'
 import ActionButton from '@nextcloud/vue/dist/Components/ActionButton'
+import CounterBubble from '@nextcloud/vue/dist/Components/CounterBubble'
 
 export default {
 	name: 'AppNavigationPhotosItem',
@@ -34,6 +32,7 @@ export default {
 	components: {
 		AppNavigationItem,
 		ActionButton,
+		CounterBubble,
 	},
 
 	props: {

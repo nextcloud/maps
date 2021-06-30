@@ -8,10 +8,10 @@
 		:force-menu="false"
 		@click="onContactsClick"
 		@update:open="onUpdateOpen">
-		<template slot="counter">
-			&nbsp;
-			<span v-if="enabled && contacts.length">{{ contacts.length }}</span>
-		</template>
+		<CounterBubble v-if="enabled && contacts.length"
+			slot="counter">
+			{{ contacts.length > 99 ? '99+' : contacts.length }}
+		</CounterBubble>
 		<template v-if="enabled" slot="actions">
 			<ActionButton
 				icon="icon-checkmark"
@@ -35,10 +35,10 @@
 				:allow-collapse="false"
 				:force-menu="false"
 				@click="onGroupClick(gid)">
-				<template slot="counter">
-					&nbsp;
-					<span v-if="enabled && contacts.length && g.enabled">{{ g.counter }}</span>
-				</template>
+				<CounterBubble v-if="enabled && contacts.length && g.enabled"
+					slot="counter">
+					{{ g.counter > 99 ? '99+' : g.counter }}
+				</CounterBubble>
 				<template slot="actions">
 					<ActionButton v-if="enabled && contacts.length && g.enabled"
 						icon="icon-search"
@@ -55,6 +55,7 @@
 <script>
 import AppNavigationItem from '@nextcloud/vue/dist/Components/AppNavigationItem'
 import ActionButton from '@nextcloud/vue/dist/Components/ActionButton'
+import CounterBubble from '@nextcloud/vue/dist/Components/CounterBubble'
 import optionsController from '../optionsController'
 
 export default {
@@ -63,6 +64,7 @@ export default {
 	components: {
 		AppNavigationItem,
 		ActionButton,
+		CounterBubble,
 	},
 
 	props: {

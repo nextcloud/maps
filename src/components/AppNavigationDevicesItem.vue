@@ -8,10 +8,10 @@
 		:force-menu="false"
 		@click="onClick"
 		@update:open="onUpdateOpen">
-		<template slot="counter">
-			&nbsp;
-			<span v-if="enabled && devices.length">{{ devices.length }}</span>
-		</template>
+		<CounterBubble v-if="enabled && devices.length"
+			slot="counter">
+			{{ devices.length > 99 ? '99+' : devices.length }}
+		</CounterBubble>
 		<template v-if="enabled" slot="actions">
 			<ActionButton
 				icon="icon-download"
@@ -62,6 +62,8 @@
 <script>
 import AppNavigationItem from '@nextcloud/vue/dist/Components/AppNavigationItem'
 import ActionButton from '@nextcloud/vue/dist/Components/ActionButton'
+import CounterBubble from '@nextcloud/vue/dist/Components/CounterBubble'
+
 import AppNavigationDeviceItem from './AppNavigationDeviceItem'
 import optionsController from '../optionsController'
 
@@ -71,6 +73,7 @@ export default {
 	components: {
 		AppNavigationItem,
 		ActionButton,
+		CounterBubble,
 		AppNavigationDeviceItem,
 	},
 

@@ -8,10 +8,10 @@
 		:force-menu="false"
 		@click="onTracksClick"
 		@update:open="onUpdateOpen">
-		<template slot="counter">
-			&nbsp;
-			<span v-if="enabled && tracks.length">{{ tracks.length }}</span>
-		</template>
+		<CounterBubble v-if="enabled && tracks.length"
+			slot="counter">
+			{{ tracks.length > 99 ? '99+' : tracks.length }}
+		</CounterBubble>
 		<template v-if="enabled" slot="actions">
 			<ActionButton
 				icon="icon-tag"
@@ -45,6 +45,8 @@
 import AppNavigationItem from '@nextcloud/vue/dist/Components/AppNavigationItem'
 import ActionButton from '@nextcloud/vue/dist/Components/ActionButton'
 import AppNavigationTrackItem from './AppNavigationTrackItem'
+import CounterBubble from '@nextcloud/vue/dist/Components/CounterBubble'
+
 import optionsController from '../optionsController'
 
 export default {
@@ -54,6 +56,7 @@ export default {
 		AppNavigationItem,
 		ActionButton,
 		AppNavigationTrackItem,
+		CounterBubble,
 	},
 
 	props: {

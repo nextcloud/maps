@@ -1123,7 +1123,7 @@ export default {
 				}
 				this.$set(this.favorites, fav.id, fav)
 				if (openSidebar) {
-					this.selectedFavorite = fav
+					this.selectedFavorite = this.favorites[fav.id]
 					this.showSidebar = true
 				}
 				return fav.id

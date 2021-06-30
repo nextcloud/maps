@@ -102,8 +102,11 @@ export default {
 	},
 
 	watch: {
-		favorite() {
-			this.reset()
+		favorite: {
+			handler() {
+				this.reset()
+			},
+			deep: true,
 		},
 	},
 

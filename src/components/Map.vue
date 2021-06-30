@@ -269,9 +269,9 @@ export default {
 			type: Number,
 			required: true,
 		},
-		loading: {
-			type: Boolean,
-			required: true,
+		state: {
+			type: String,
+			default: '',
 		},
 		lastActions: {
 			type: Array,
@@ -339,11 +339,13 @@ export default {
 	},
 
 	watch: {
-		loading() {
-			if (this.loading) {
+		state() {
+			this.$refs.map.$el.classList.remove('loading')
+			this.$refs.map.$el.classList.remove('adding')
+			if (this.state === 'loading') {
 				this.$refs.map.$el.classList.add('loading')
-			} else {
-				this.$refs.map.$el.classList.remove('loading')
+			} else if (this.state === 'adding') {
+				this.$refs.map.$el.classList.add('adding')
 			}
 		},
 	},
@@ -415,6 +417,13 @@ export default {
 			return cmi
 		},
 		onMapClick(e) {
+			if (this.state === 'adding') {
+				this.$emit('add-click', e)
+			} else {
+				this.onMapNormalLeftClick(e)
+			}
+		},
+		onMapNormalLeftClick(e) {
 			// layers management stuff
 			const layerSelector = document.querySelector('.leaflet-control-layers')
 			const layerSelectorWasVisible = layerSelector.style.display !== 'none'
@@ -873,6 +882,13 @@ export default {
 	cursor: progress;
 	.mapboxgl-map {
 		cursor: progress;
+	}
+}
+
+::v-deep .leaflet-container.adding {
+	cursor: crosshair;
+	.mapboxgl-map {
+		cursor: crosshair;
 	}
 }
 

@@ -44,6 +44,11 @@
 			</ActionButton>
 		</template>
 		<template #default>
+			<AppNavigationNew
+				v-if="enabled"
+				:text="addFavoriteText"
+				:button-class="addFavoriteIcon"
+				@click="onAddFavoriteClick" />
 			<AppNavigationItem
 				v-for="(c, catid) in categories"
 				:key="catid"
@@ -103,6 +108,7 @@
 
 <script>
 import AppNavigationItem from '@nextcloud/vue/dist/Components/AppNavigationItem'
+import AppNavigationNew from '@nextcloud/vue/dist/Components/AppNavigationNew'
 import ActionButton from '@nextcloud/vue/dist/Components/ActionButton'
 import ActionCheckbox from '@nextcloud/vue/dist/Components/ActionCheckbox'
 import CounterBubble from '@nextcloud/vue/dist/Components/CounterBubble'
@@ -116,6 +122,7 @@ export default {
 
 	components: {
 		AppNavigationItem,
+		AppNavigationNew,
 		ActionButton,
 		ActionCheckbox,
 		CounterBubble,
@@ -127,6 +134,10 @@ export default {
 			required: true,
 		},
 		loading: {
+			type: Boolean,
+			default: false,
+		},
+		addingFavorite: {
 			type: Boolean,
 			default: false,
 		},
@@ -155,6 +166,16 @@ export default {
 	computed: {
 		nbFavorites() {
 			return Object.keys(this.favorites).length
+		},
+		addFavoriteText() {
+			return this.addingFavorite
+				? t('maps', 'Cancel')
+				: t('maps', 'Add a favorite')
+		},
+		addFavoriteIcon() {
+			return this.addingFavorite
+				? 'icon-history'
+				: 'icon-add'
 		},
 	},
 
@@ -195,6 +216,9 @@ export default {
 				console.debug(error)
 				showError(t('maps', 'Link could not be copied to clipboard.'))
 			}
+		},
+		onAddFavoriteClick() {
+			this.$emit('add-favorite')
 		},
 	},
 }

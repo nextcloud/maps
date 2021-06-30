@@ -10,6 +10,8 @@
 					:favorites="favorites"
 					:categories="favoriteCategories"
 					:draggable="favoritesDraggable"
+					:adding-favorite="addingFavorite"
+					@add-favorite="onNavigationAddFavorite"
 					@favorites-clicked="onFavoritesClicked"
 					@category-clicked="onFavoriteCategoryClicked"
 					@rename-category="onRenameFavoriteCategory"
@@ -92,9 +94,10 @@
 					:slider-enabled="sliderEnabled"
 					:min-data-timestamp="minDataTimestamp"
 					:max-data-timestamp="maxDataTimestamp"
-					:loading="mapLoading"
+					:state="mapState"
 					:last-actions="lastActions"
 					:last-canceled-actions="lastCanceledActions"
+					@add-click="onMapAddClick"
 					@click-favorite="onFavoriteClick"
 					@edit-favorite="onFavoriteEdit"
 					@add-favorite="onFavoriteAdd"
@@ -201,6 +204,7 @@ export default {
 			disabledFavoriteCategories: optionsController.disabledFavoriteCategories,
 			favoriteCategoryTokens: {},
 			selectedFavorite: null,
+			addingFavorite: false,
 			// photos
 			photosLoading: false,
 			photosEnabled: optionsController.photosEnabled,
@@ -230,6 +234,14 @@ export default {
 		mapLoading() {
 			return this.photosLoading || this.contactsLoading || this.favoritesLoading || this.tracksLoading || this.devicesLoading
 				|| this.exportingDevices || this.importingDevices
+		},
+		mapState() {
+			if (this.addingFavorite) {
+				return 'adding'
+			} else if (this.mapLoading) {
+				return 'loading'
+			}
+			return ''
 		},
 		// slider
 		minDataTimestamp() {
@@ -483,6 +495,12 @@ export default {
 			}).catch((error) => {
 				showError(t('maps', 'Failed to send current position') + ' ' + error)
 			})
+		},
+		onMapAddClick(e) {
+			if (this.mapState === 'adding' && this.addingFavorite) {
+				this.addFavorite({ lat: e.latlng.lat, lng: e.latlng.lng })
+				this.addingFavorite = false
+			}
 		},
 		// action history
 		saveAction(action) {
@@ -1165,6 +1183,12 @@ export default {
 		},
 		redoFavoriteRenameCategory(action) {
 			this.onRenameFavoriteCategory({ old: action.old, new: action.new }, false)
+		},
+		onNavigationAddFavorite() {
+			this.addingFavorite = !this.addingFavorite
+			if (this.addingFavorite) {
+				showInfo(t('maps', 'Click on the map to add a favorite, press ESC to cancel'))
+			}
 		},
 		// when a favorite is created by canceling deletion or redoing creation
 		// we need to update the ids in the action history

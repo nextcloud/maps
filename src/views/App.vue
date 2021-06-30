@@ -628,6 +628,8 @@ export default {
 			})
 		},
 		onPhotoMoved(photo, latLng) {
+			photo.lat = latLng.lat
+			photo.lng = latLng.lng
 			this.placePhotos([photo.path], [latLng.lat], [latLng.lng], false, true, false)
 		},
 		resetPhotosCoords(paths, save = true) {

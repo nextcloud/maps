@@ -7,11 +7,6 @@
 			@edit="$emit('edit', $event)"
 			@delete="$emit('delete', $event)" />
 	</div>
-	<div v-else>
-		<p>
-			{{ t('maps', 'Select a favorite to edit.') }}
-		</p>
-	</div>
 </template>
 
 <script>

@@ -4,11 +4,6 @@
 			ref="table"
 			:track="track" />
 	</div>
-	<div v-else>
-		<p>
-			{{ t('maps', 'Select a track.') }}
-		</p>
-	</div>
 </template>
 
 <script>

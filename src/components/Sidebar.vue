@@ -1,54 +1,24 @@
 <template>
 	<AppSidebar v-show="show"
-		:title="t('maps', 'Nextcloud Maps')"
+		:title="sidebarTitle"
 		:compact="true"
 		:background="backgroundImageUrl"
 		:subtitle="''"
 		:active="activeTab"
 		@update:active="onActiveChanged"
 		@close="$emit('close')">
-		<!--template slot="primary-actions" /-->
-		<AppSidebarTab
-			id="sharing"
-			icon="icon-shared"
-			:name="t('maps', 'Sharing')"
-			:order="1">
-			PLOP
-		</AppSidebarTab>
-		<AppSidebarTab
-			id="settingss"
-			icon="icon-settings-dark"
-			:name="t('maps', 'Settings')"
-			:order="2">
-			LALA
-		</AppSidebarTab>
-		<AppSidebarTab
-			id="favorite"
-			icon="icon-favorite"
-			:name="t('maps', 'Favorite')"
-			:order="3">
-			<FavoriteSidebarTab
-				:favorite="favorite"
-				:categories="favoriteCategories"
-				@edit="$emit('edit-favorite', $event)"
-				@delete="$emit('delete-favorite', $event)" />
-		</AppSidebarTab>
-		<AppSidebarTab
-			id="track"
-			icon="icon-tab-track"
-			:name="t('maps', 'Track')"
-			:order="3">
-			<TrackSidebarTab
-				:track="track" />
-		</AppSidebarTab>
+		<FavoriteSidebarTab v-if="activeTab === 'favorite'"
+			:favorite="favorite"
+			:categories="favoriteCategories"
+			@edit="$emit('edit-favorite', $event)"
+			@delete="$emit('delete-favorite', $event)" />
+		<TrackSidebarTab v-if="activeTab === 'track'"
+			:track="track" />
 	</AppSidebar>
 </template>
 
 <script>
-// import ActionButton from '@nextcloud/vue/dist/Components/ActionButton'
-// import ActionLink from '@nextcloud/vue/dist/Components/ActionLink'
 import AppSidebar from '@nextcloud/vue/dist/Components/AppSidebar'
-import AppSidebarTab from '@nextcloud/vue/dist/Components/AppSidebarTab'
 import { generateUrl } from '@nextcloud/router'
 
 import FavoriteSidebarTab from '../components/FavoriteSidebarTab'
@@ -60,7 +30,6 @@ export default {
 	components: {
 		// ActionButton,
 		AppSidebar,
-		AppSidebarTab,
 		FavoriteSidebarTab,
 		TrackSidebarTab,
 	},
@@ -90,11 +59,27 @@ export default {
 
 	data() {
 		return {
-			backgroundImageUrl: generateUrl('/apps/theming/img/core/actions/address.svg?v=' + (window.OCA?.Theming?.cacheBuster || 0)),
 		}
 	},
 
 	computed: {
+		backgroundImageUrl() {
+			const iconColor = OCA.Accessibility?.theme === 'dark' ? 'ffffff' : '000000'
+			if (this.activeTab === 'track') {
+				return generateUrl('/svg/maps/road?color=' + iconColor)
+			} else if (this.activeTab === 'favorite') {
+				return generateUrl('/svg/core/actions/star?color=' + iconColor)
+			}
+			return ''
+		},
+		sidebarTitle() {
+			if (this.activeTab === 'track') {
+				return t('maps', 'Track')
+			} else if (this.activeTab === 'favorite') {
+				return t('maps', 'Favorite')
+			}
+			return ''
+		},
 	},
 
 	methods: {

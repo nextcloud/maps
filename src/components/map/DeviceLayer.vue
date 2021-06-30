@@ -53,7 +53,6 @@ import L from 'leaflet'
 import { LMarker, LTooltip, LPopup, LFeatureGroup, LPolyline } from 'vue2-leaflet'
 
 import ActionButton from '@nextcloud/vue/dist/Components/ActionButton'
-import { generateUrl } from '@nextcloud/router'
 
 import { isComputer } from '../../utils'
 import optionsController from '../../optionsController'
@@ -107,16 +106,15 @@ export default {
 		color() {
 			return this.device.color || '#0082c9'
 		},
-		iconUrl() {
-			const color = this.device.color || '#0082c9'
+		thumbnailClass() {
 			return isComputer(this.device.user_agent)
-				? generateUrl('/svg/core/clients/desktop?color=' + color.replace('#', ''))
-				: generateUrl('/svg/core/clients/phone?color=' + color.replace('#', ''))
+				? 'desktop'
+				: 'phone'
 		},
 		markerIcon() {
 			return L.divIcon(L.extend({
 				html: '<div class="thumbnail-wrapper" style="--custom-color: ' + this.color + '; border-color: ' + this.color + ';">'
-					+ '<div class="thumbnail" style="background-image: url(\'' + this.iconUrl + '\');"></div></div>​',
+					+ '<div class="thumbnail ' + this.thumbnailClass + '" style="background-color: ' + this.color + ';"></div></div>​',
 				className: 'leaflet-marker-device device-marker',
 			}, null, {
 				iconSize: [DEVICE_MARKER_VIEW_SIZE, DEVICE_MARKER_VIEW_SIZE],

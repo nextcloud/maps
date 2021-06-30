@@ -263,7 +263,7 @@ tr.selected td {
 }
 .leaflet-marker-nonLocalizedPhoto .thumbnail,
 .leaflet-marker-photo .thumbnail {
-    border-radius: 2px;
+    //border-radius: 2px;
 }
 .leaflet-marker-track .thumbnail,
 .leaflet-marker-device .thumbnail {
@@ -277,13 +277,33 @@ tr.selected td {
     border-radius: 50%;
 }
 .track-marker .thumbnail {
-    // height: 40px;
+	// height: 40px;
 	mask: url('../img/road.svg') no-repeat;
 	mask-size: 16px auto;
 	mask-position: center;
 	-webkit-mask: url('../img/road.svg') no-repeat;
 	-webkit-mask-size: 16px auto;
 	-webkit-mask-position: center;
+}
+.device-marker .thumbnail.phone {
+	// height: 40px;
+	mask: url('../img/phone.svg') no-repeat;
+	mask-size: 23px auto;
+	mask-position: center;
+	-webkit-mask: url('../img/phone.svg') no-repeat;
+	-webkit-mask-size: 23px auto;
+	-webkit-mask-position: center;
+}
+.device-marker .thumbnail.desktop {
+    // height: 40px;
+	mask: url('../img/desktop.svg') no-repeat;
+	mask-size: 23px auto;
+	mask-position: center;
+	-webkit-mask: url('../img/desktop.svg') no-repeat;
+	-webkit-mask-size: 23px auto;
+	-webkit-mask-position: center;
+}
+.device-marker .thumbnail {
 }
 .leaflet-marker-favorite-cluster .thumbnail {
     border-radius: 50%;
@@ -343,8 +363,14 @@ tr.selected td {
 
 .leaflet-marker-contact {
     border: 2px solid var(--color-main-background);
-    box-shadow: 0px 0px 10px #888;
     border-radius: 50%;
+}
+.leaflet-marker-nonLocalizedPhoto,
+.leaflet-marker-photo,
+.leaflet-marker-contact,
+.leaflet-marker-track,
+.leaflet-marker-device {
+	box-shadow: 0px 0px 10px #888;
 }
 .leaflet-marker-photo {
     border: 2px solid var(--color-main-background);
@@ -354,7 +380,6 @@ tr.selected td {
 }
 .leaflet-marker-nonLocalizedPhoto,
 .leaflet-marker-photo {
-    box-shadow: 3px 3px 10px #888;
     border-radius: var(--border-radius);
 }
 

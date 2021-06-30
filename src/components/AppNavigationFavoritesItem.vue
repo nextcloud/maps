@@ -8,10 +8,10 @@
 		:force-menu="false"
 		@click="onFavoritesClick"
 		@update:open="onUpdateOpen">
-		<template slot="counter">
-			&nbsp;
-			<span v-if="enabled && nbFavorites">{{ nbFavorites }}</span>
-		</template>
+		<CounterBubble v-if="enabled && nbFavorites"
+			slot="counter">
+			{{ nbFavorites > 99 ? '99+' : nbFavorites }}
+		</CounterBubble>
 		<template v-if="enabled" slot="actions">
 			<ActionButton
 				:icon="draggable ? 'icon-hand' : 'icon-hand-slash'"
@@ -49,7 +49,7 @@
 				:key="catid"
 				:title="c.name"
 				:class="{ 'subitem-disabled': !c.enabled }"
-				:editable="c.enabled"
+				:editable="enabled && c.enabled"
 				:edit-placeholder="t('maps', 'Category name')"
 				:edit-label="t('maps', 'Rename')"
 				:allow-collapse="false"
@@ -60,10 +60,10 @@
 					<div :class="{ favoriteMarker: true, favoriteMarkerDark: isDarkTheme }"
 						:style="'background-color: #' + c.color" />
 				</template>
-				<template slot="counter">
-					&nbsp;
-					<span v-if="enabled && nbFavorites && c.enabled">{{ c.counter }}</span>
-				</template>
+				<CounterBubble v-if="enabled && nbFavorites && c.enabled"
+					slot="counter">
+					{{ c.counter > 99 ? '99+' : c.counter }}
+				</CounterBubble>
 				<template slot="actions">
 					<ActionButton v-if="enabled && nbFavorites && c.enabled"
 						icon="icon-search"
@@ -105,6 +105,7 @@
 import AppNavigationItem from '@nextcloud/vue/dist/Components/AppNavigationItem'
 import ActionButton from '@nextcloud/vue/dist/Components/ActionButton'
 import ActionCheckbox from '@nextcloud/vue/dist/Components/ActionCheckbox'
+import CounterBubble from '@nextcloud/vue/dist/Components/CounterBubble'
 import { showError, showSuccess } from '@nextcloud/dialogs'
 import { generateUrl } from '@nextcloud/router'
 
@@ -117,6 +118,7 @@ export default {
 		AppNavigationItem,
 		ActionButton,
 		ActionCheckbox,
+		CounterBubble,
 	},
 
 	props: {

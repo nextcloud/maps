@@ -524,6 +524,9 @@ tr.selected td {
 .app-navigation-entry-menu {
     z-index: 10001;
 }
+.app-navigation-entry {
+	padding-right: 0;
+}
 #devicecolorinput,
 #trackcolorinput {
     opacity: 0;

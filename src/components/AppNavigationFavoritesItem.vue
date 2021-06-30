@@ -62,7 +62,7 @@
 				@click="onCategoryClick(catid)"
 				@update:title="$emit('rename-category', { old: catid, new: $event })">
 				<template #icon>
-					<div :class="{ favoriteMarker: true, favoriteMarkerDark: isDarkTheme }"
+					<div :class="{ favoriteMarker: true, navigationFavoriteMarkerDark: isDarkTheme, navigationFavoriteMarker: !isDarkTheme }"
 						:style="'background-color: #' + c.color" />
 				</template>
 				<CounterBubble v-if="enabled && nbFavorites && c.enabled"

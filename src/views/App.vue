@@ -1523,11 +1523,6 @@ export default {
 ::v-deep .favoriteMarker {
 	height: 18px !important;
 	width: 18px !important;
-	-webkit-mask: url('../../img/star-circle.svg') no-repeat 50% 50%;
-	-webkit-mask-size: 18px;
-	mask: url('../../img/star-circle.svg') no-repeat 50% 50%;
-	mask-size: 18px;
-	background: url('../../img/star-white.svg') no-repeat 50% 50%;
 	background-size: 18px 18px;
 	margin: auto;
 }
@@ -1535,16 +1530,17 @@ export default {
 ::v-deep .favoriteClusterMarker {
 	height: 27px !important;
 	width: 27px !important;
-	-webkit-mask: url('../../img/star-circle.svg') no-repeat 50% 50%;
-	-webkit-mask-size: 27px;
-	mask: url('../../img/star-circle.svg') no-repeat 50% 50%;
-	mask-size: 27px;
-	background: url('../../img/star-white.svg') no-repeat 50% 50%;
 	background-size: 27px 27px;
 	margin: auto;
 }
 
-::v-deep .favoriteMarkerDark {
+::v-deep .navigationFavoriteMarker {
+	background: url('../../img/star-white.svg') no-repeat 50% 50%;
+	border-radius: 50%;
+}
+
+::v-deep .navigationFavoriteMarkerDark {
 	background: url('../../img/star-black.svg') no-repeat 50% 50%;
+	border-radius: 50%;
 }
 </style>

@@ -281,4 +281,9 @@ export default {
 
 <style lang="scss" scoped>
 // nothing
+.tooltip-photo-wrapper {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+}
 </style>

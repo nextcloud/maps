@@ -67,11 +67,23 @@ export default {
 
 	methods: {
 		onValidate(option) {
-			const step = {
-				latLng: option.latLng,
-				name: option.label,
+			if (option.type === 'mylocation') {
+				navigator.geolocation.getCurrentPosition((position) => {
+					const lat = position.coords.latitude
+					const lng = position.coords.longitude
+					const step = {
+						latLng: { lat, lng },
+						name: option.label,
+					}
+					this.$emit('selected', step)
+				})
+			} else {
+				const step = {
+					latLng: option.latLng,
+					name: option.label,
+				}
+				this.$emit('selected', step)
 			}
-			this.$emit('selected', step)
 		},
 	},
 }

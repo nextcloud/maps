@@ -819,6 +819,12 @@ export default {
 					this.searchPois = response.data
 					this.searching = false
 				})
+			} else if (element.type === 'mylocation') {
+				navigator.geolocation.getCurrentPosition((position) => {
+					const lat = position.coords.latitude
+					const lng = position.coords.longitude
+					this.map.setView([lat, lng], 15)
+				})
 			}
 		},
 	},

@@ -222,6 +222,7 @@ export default {
 			devices: [],
 			devicesEnabled: optionsController.devicesEnabled,
 			exportingDevices: false,
+			importingDevices: false,
 		}
 	},
 
@@ -314,16 +315,25 @@ export default {
 		// search
 		searchData() {
 			return [
-				...this.contactSearchData,
-				...this.favoriteSearchData,
+				...this.routingSearchData,
 				...poiSearchData,
 			]
 		},
 		routingSearchData() {
-			return [
+			const data = [
 				...this.contactSearchData,
 				...this.favoriteSearchData,
 			]
+			if (navigator.geolocation && window.isSecureContext) {
+				data.push({
+					type: 'mylocation',
+					icon: 'icon-address',
+					id: 'dummyID',
+					label: t('maps', 'My location'),
+					value: t('maps', 'My location'),
+				})
+			}
+			return data
 		},
 		contactSearchData() {
 			return this.contactsEnabled

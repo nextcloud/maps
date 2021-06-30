@@ -498,7 +498,7 @@ export default {
 		},
 		onMapAddClick(e) {
 			if (this.mapState === 'adding' && this.addingFavorite) {
-				this.addFavorite({ lat: e.latlng.lat, lng: e.latlng.lng })
+				this.addFavorite({ lat: e.latlng.lat, lng: e.latlng.lng }, null, null, null, null, true, true)
 				this.addingFavorite = false
 			}
 		},
@@ -1022,7 +1022,6 @@ export default {
 				this.favorites[f.id].comment = f.comment
 				this.favorites[f.id].lat = f.lat
 				this.favorites[f.id].lng = f.lng
-				showSuccess(t('maps', 'Favorite edited'))
 			}).catch((error) => {
 				console.error(error)
 			})
@@ -1108,9 +1107,9 @@ export default {
 			this.addFavorite(obj.latLng, name, null, obj.formattedAddress || null)
 		},
 		onFavoriteAdd(latLng) {
-			this.addFavorite(latLng)
+			this.addFavorite(latLng, null, null, null, null, true, true)
 		},
-		addFavorite(latLng, name = null, category = null, comment = null, extensions = null, save = true) {
+		addFavorite(latLng, name = null, category = null, comment = null, extensions = null, save = true, openSidebar = false) {
 			return network.addFavorite(latLng.lat, latLng.lng, name, category, comment, extensions).then((response) => {
 				const fav = response.data
 				if (!fav.category) {
@@ -1123,6 +1122,10 @@ export default {
 					})
 				}
 				this.$set(this.favorites, fav.id, fav)
+				if (openSidebar) {
+					this.selectedFavorite = fav
+					this.showSidebar = true
+				}
 				return fav.id
 			}).catch((error) => {
 				console.error(error)

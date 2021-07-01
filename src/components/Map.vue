@@ -1056,6 +1056,7 @@ export default {
 	height: 36px !important;
 	width: 36px !important;
 	display: flex;
+	border-radius: 50%;
 }
 
 ::v-deep .favoriteMarker,

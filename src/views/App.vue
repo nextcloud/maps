@@ -422,6 +422,8 @@ export default {
 				} else if (e.key === 'Z' && !['INPUT', 'TEXTAREA'].includes(e.target.tagName)) {
 					this.redoAction()
 				}
+			} else if (e.key === 'Escape') {
+				this.addingFavorite = false
 			}
 		}
 	},
@@ -1124,6 +1126,7 @@ export default {
 				this.$set(this.favorites, fav.id, fav)
 				if (openSidebar) {
 					this.selectedFavorite = this.favorites[fav.id]
+					this.activeSidebarTab = 'favorite'
 					this.showSidebar = true
 				}
 				return fav.id

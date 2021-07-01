@@ -205,6 +205,7 @@ export default {
 			favoriteCategoryTokens: {},
 			selectedFavorite: null,
 			addingFavorite: false,
+			lastUsedFavoriteCategory: null,
 			// photos
 			photosLoading: false,
 			photosEnabled: optionsController.photosEnabled,
@@ -1024,6 +1025,7 @@ export default {
 				this.favorites[f.id].comment = f.comment
 				this.favorites[f.id].lat = f.lat
 				this.favorites[f.id].lng = f.lng
+				this.lastUsedFavoriteCategory = f.category
 			}).catch((error) => {
 				console.error(error)
 			})
@@ -1112,6 +1114,9 @@ export default {
 			this.addFavorite(latLng, null, null, null, null, true, true)
 		},
 		addFavorite(latLng, name = null, category = null, comment = null, extensions = null, save = true, openSidebar = false) {
+			if (category === null) {
+				category = this.lastUsedFavoriteCategory
+			}
 			return network.addFavorite(latLng.lat, latLng.lng, name, category, comment, extensions).then((response) => {
 				const fav = response.data
 				if (!fav.category) {
@@ -1190,7 +1195,10 @@ export default {
 		redoFavoriteRenameCategory(action) {
 			this.onRenameFavoriteCategory({ old: action.old, new: action.new }, false)
 		},
-		onNavigationAddFavorite() {
+		onNavigationAddFavorite(category = null) {
+			if (category !== null) {
+				this.lastUsedFavoriteCategory = category
+			}
 			this.addingFavorite = !this.addingFavorite
 			if (this.addingFavorite) {
 				showInfo(t('maps', 'Click on the map to add a favorite, press ESC to cancel'))

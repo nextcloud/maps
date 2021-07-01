@@ -71,6 +71,12 @@
 				</CounterBubble>
 				<template slot="actions">
 					<ActionButton v-if="enabled && nbFavorites && c.enabled"
+						icon="icon-add"
+						:close-after-click="true"
+						@click="onAddFavoriteClick(catid)">
+						{{ t('maps', 'Add a favorite') }}
+					</ActionButton>
+					<ActionButton v-if="enabled && nbFavorites && c.enabled"
 						icon="icon-search"
 						:close-after-click="true"
 						@click="onZoomCategoryClick(catid)">
@@ -217,8 +223,8 @@ export default {
 				showError(t('maps', 'Link could not be copied to clipboard.'))
 			}
 		},
-		onAddFavoriteClick() {
-			this.$emit('add-favorite')
+		onAddFavoriteClick(category = null) {
+			this.$emit('add-favorite', category)
 		},
 	},
 }

@@ -1064,6 +1064,10 @@ export default {
 	border-radius: 50%;
 }
 
+::v-deep .favoriteMarker.selected {
+	box-shadow: 0px 0px 10px #ff0000;
+}
+
 ::v-deep .leaflet-marker-favorite-cluster .label {
 	position: absolute;
 	top: -3px;

@@ -136,7 +136,7 @@
 			@edit-favorite="onFavoriteEdit"
 			@delete-favorite="onFavoriteDelete"
 			@active-changed="onActiveSidebarTabChanged"
-			@close="showSidebar = false" />
+			@close="onCloseSidebar" />
 	</Content>
 </template>
 
@@ -188,7 +188,7 @@ export default {
 			optionValues: optionsController.optionValues,
 			sendPositionTimer: null,
 			showSidebar: false,
-			activeSidebarTab: 'sharing',
+			activeSidebarTab: '',
 			// slider
 			sliderEnabled: optionsController.optionValues.displaySlider === 'true',
 			sliderStart: 0,
@@ -442,7 +442,18 @@ export default {
 		},
 		onMainDetailClicked() {
 			this.showSidebar = !this.showSidebar
-			this.activeSidebarTab = 'main'
+			this.activeSidebarTab = ''
+			this.deselectMarkers()
+		},
+		onCloseSidebar() {
+			this.showSidebar = false
+			this.deselectMarkers()
+		},
+		deselectMarkers() {
+			if (this.selectedFavorite) {
+				this.selectedFavorite.selected = false
+				this.selectedFavorite = null
+			}
 		},
 		onToggleTrackme(enabled) {
 			if (enabled) {
@@ -927,6 +938,7 @@ export default {
 					if (!f.category) {
 						f.category = t('maps', 'Personal')
 					}
+					f.selected = false
 					this.$set(this.favorites, f.id, f)
 				})
 			}).catch((error) => {
@@ -1007,6 +1019,14 @@ export default {
 			}
 		},
 		onFavoriteClick(f) {
+			// deselect favorites
+			Object.keys(this.favorites).filter((fid) => {
+				return this.favorites[fid].selected === true
+			}).forEach((fid) => {
+				this.favorites[fid].selected = false
+			})
+			// select
+			this.favorites[f.id].selected = true
 			this.showSidebar = true
 			this.activeSidebarTab = 'favorite'
 			this.selectedFavorite = f

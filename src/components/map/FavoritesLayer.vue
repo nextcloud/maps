@@ -111,7 +111,6 @@ export default {
 			const icons = {}
 			Object.keys(this.categories).forEach((catid) => {
 				const color = this.categories[catid].color
-				console.debug(OCA.Accessibility?.theme)
 				const iconUrl = OCA.Accessibility?.theme === 'dark'
 					? generateUrl('/svg/maps/star-circle-black') + '?color=' + color
 					: generateUrl('/svg/maps/star-circle-white') + '?color=' + color
@@ -120,6 +119,22 @@ export default {
 					className: 'leaflet-marker-favorite',
 					// html: '<div class="favoriteMarker ' + darkClass + '" style="background-color: #' + color + '"></div>',
 					html: '<div class="favoriteMarker" style="background-image: url(' + iconUrl + ');"></div>',
+				})
+			})
+			return icons
+		},
+		categoryIconsSelected() {
+			const icons = {}
+			Object.keys(this.categories).forEach((catid) => {
+				const color = this.categories[catid].color
+				const iconUrl = OCA.Accessibility?.theme === 'dark'
+					? generateUrl('/svg/maps/star-circle-black') + '?color=' + color
+					: generateUrl('/svg/maps/star-circle-white') + '?color=' + color
+				icons[catid] = L.divIcon({
+					iconAnchor: [18, 18],
+					className: 'leaflet-marker-favorite',
+					// html: '<div class="favoriteMarker ' + darkClass + '" style="background-color: #' + color + '"></div>',
+					html: '<div class="favoriteMarker selected" style="background-image: url(' + iconUrl + ');"></div>',
 				})
 			})
 			return icons
@@ -181,7 +196,9 @@ export default {
 			}))
 		},
 		getFavoriteMarkerIcon(favorite) {
-			return this.categoryIcons[favorite.category]
+			return favorite.selected
+				? this.categoryIconsSelected[favorite.category]
+				: this.categoryIcons[favorite.category]
 		},
 		onSpiderfied(e) {
 			// markers that were in a cluster when draggable changed are not draggable

@@ -39,9 +39,6 @@ export default {
 	},
 
 	watch: {
-		favorite() {
-			console.debug(this.favorite)
-		},
 	},
 
 	methods: {

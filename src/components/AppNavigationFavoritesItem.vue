@@ -8,7 +8,7 @@
 		:force-menu="false"
 		@click="onFavoritesClick"
 		@update:open="onUpdateOpen">
-		<CounterBubble v-if="enabled && nbFavorites"
+		<CounterBubble v-show="enabled && nbFavorites"
 			slot="counter">
 			{{ nbFavorites > 99 ? '99+' : nbFavorites }}
 		</CounterBubble>
@@ -65,7 +65,7 @@
 					<div :class="{ favoriteMarker: true, navigationFavoriteMarkerDark: isDarkTheme, navigationFavoriteMarker: !isDarkTheme }"
 						:style="'background-color: #' + c.color" />
 				</template>
-				<CounterBubble v-if="enabled && nbFavorites && c.enabled"
+				<CounterBubble v-show="enabled && nbFavorites && c.enabled"
 					slot="counter">
 					{{ c.counter > 99 ? '99+' : c.counter }}
 				</CounterBubble>

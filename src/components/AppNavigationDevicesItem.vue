@@ -8,7 +8,7 @@
 		:force-menu="false"
 		@click="onClick"
 		@update:open="onUpdateOpen">
-		<CounterBubble v-if="enabled && devices.length"
+		<CounterBubble v-show="enabled && devices.length"
 			slot="counter">
 			{{ devices.length > 99 ? '99+' : devices.length }}
 		</CounterBubble>

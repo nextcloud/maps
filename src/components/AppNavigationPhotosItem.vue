@@ -6,7 +6,7 @@
 		:allow-collapse="false"
 		:force-menu="enabled"
 		@click="$emit('photos-clicked')">
-		<CounterBubble v-if="enabled && photos.length"
+		<CounterBubble v-show="enabled && photos.length"
 			slot="counter">
 			{{ photos.length > 99 ? '99+' : photos.length }}
 		</CounterBubble>

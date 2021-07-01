@@ -8,7 +8,7 @@
 		:force-menu="false"
 		@click="onContactsClick"
 		@update:open="onUpdateOpen">
-		<CounterBubble v-if="enabled && contacts.length"
+		<CounterBubble v-show="enabled && contacts.length"
 			slot="counter">
 			{{ contacts.length > 99 ? '99+' : contacts.length }}
 		</CounterBubble>
@@ -35,7 +35,7 @@
 				:allow-collapse="false"
 				:force-menu="false"
 				@click="onGroupClick(gid)">
-				<CounterBubble v-if="enabled && contacts.length && g.enabled"
+				<CounterBubble v-show="enabled && contacts.length && g.enabled"
 					slot="counter">
 					{{ g.counter > 99 ? '99+' : g.counter }}
 				</CounterBubble>

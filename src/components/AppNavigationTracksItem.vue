@@ -8,7 +8,7 @@
 		:force-menu="false"
 		@click="onTracksClick"
 		@update:open="onUpdateOpen">
-		<CounterBubble v-if="enabled && tracks.length"
+		<CounterBubble v-show="enabled && tracks.length"
 			slot="counter">
 			{{ tracks.length > 99 ? '99+' : tracks.length }}
 		</CounterBubble>

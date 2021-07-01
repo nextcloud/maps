@@ -252,5 +252,6 @@ span.icon {
 	border: none;
 	width: 100%;
 	height: 75px;
+	resize: block;
 }
 </style>

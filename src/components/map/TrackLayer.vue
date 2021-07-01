@@ -101,10 +101,13 @@ export default {
 			return this.track.color || '#0082c9'
 		},
 		markerIcon() {
+			const selectedClass = this.track.selected
+				? 'selected'
+				: ''
 			return L.divIcon(L.extend({
 				html: '<div class="thumbnail-wrapper" style="--custom-color: ' + this.color + '; border-color: ' + this.color + ';">'
 					+ '<div class="thumbnail" style="background-color: ' + this.color + ';"></div></div>​',
-				className: 'leaflet-marker-track track-marker',
+				className: 'leaflet-marker-track track-marker ' + selectedClass,
 			}, null, {
 				iconSize: [TRACK_MARKER_VIEW_SIZE, TRACK_MARKER_VIEW_SIZE],
 				iconAnchor: [TRACK_MARKER_VIEW_SIZE / 2, TRACK_MARKER_VIEW_SIZE],

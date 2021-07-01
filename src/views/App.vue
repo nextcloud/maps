@@ -443,16 +443,20 @@ export default {
 		onMainDetailClicked() {
 			this.showSidebar = !this.showSidebar
 			this.activeSidebarTab = ''
-			this.deselectMarkers()
+			this.deselectAll()
 		},
 		onCloseSidebar() {
 			this.showSidebar = false
-			this.deselectMarkers()
+			this.deselectAll()
 		},
-		deselectMarkers() {
+		deselectAll() {
 			if (this.selectedFavorite) {
 				this.selectedFavorite.selected = false
 				this.selectedFavorite = null
+			}
+			if (this.selectedTrack) {
+				this.selectedTrack.selected = false
+				this.selectedTrack = null
 			}
 		},
 		onToggleTrackme(enabled) {
@@ -1019,12 +1023,7 @@ export default {
 			}
 		},
 		onFavoriteClick(f) {
-			// deselect favorites
-			Object.keys(this.favorites).filter((fid) => {
-				return this.favorites[fid].selected === true
-			}).forEach((fid) => {
-				this.favorites[fid].selected = false
-			})
+			this.deselectAll()
 			// select
 			this.favorites[f.id].selected = true
 			this.showSidebar = true
@@ -1270,6 +1269,7 @@ export default {
 						...track,
 						loading: false,
 						enabled: false,
+						selected: false,
 					}
 				})
 				this.tracks.forEach((track) => {
@@ -1345,6 +1345,9 @@ export default {
 			this.$refs.map.displayElevation(track)
 		},
 		onTrackClick(track) {
+			this.deselectAll()
+			// select
+			track.selected = true
 			this.showSidebar = true
 			this.activeSidebarTab = 'track'
 			this.selectedTrack = track

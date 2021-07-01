@@ -17,6 +17,14 @@
 					@change="onDisplaySliderClick">
 					{{ t('maps', 'Display time filter slider') }}
 				</ActionCheckbox>
+				<ActionText>
+					{{ trueSizeText }}
+				</ActionText>
+				<ActionLink href="http://kai.sub.blue/en/africa.html"
+					target="_blank"
+					icon="icon-external">
+					{{ t('maps', 'The True Size of Africa') }}
+				</ActionLink>
 			</AppNavigationSettings>
 		</template>
 	</AppNavigation>
@@ -28,15 +36,10 @@ import ClickOutside from 'vue-click-outside'
 import AppNavigation from '@nextcloud/vue/dist/Components/AppNavigation'
 import AppNavigationSettings from '@nextcloud/vue/dist/Components/AppNavigationSettings'
 import ActionCheckbox from '@nextcloud/vue/dist/Components/ActionCheckbox'
+import ActionText from '@nextcloud/vue/dist/Components/ActionText'
+import ActionLink from '@nextcloud/vue/dist/Components/ActionLink'
 
 import optionsController from '../optionsController'
-
-/* import { generateUrl } from '@nextcloud/router'
-import {
-	showSuccess,
-	showError,
-} from '@nextcloud/dialogs'
-import * as network from '../network' */
 
 export default {
 	name: 'MapsNavigation',
@@ -44,6 +47,8 @@ export default {
 		AppNavigation,
 		AppNavigationSettings,
 		ActionCheckbox,
+		ActionText,
+		ActionLink,
 	},
 	directives: {
 		ClickOutside,
@@ -57,6 +62,7 @@ export default {
 	data() {
 		return {
 			optionValues: optionsController.optionValues,
+			trueSizeText: t('maps', 'Keep in mind that map projections always distort sizes of countries. The standard Mercator projection is particularly biased. Read more at:'),
 		}
 	},
 	computed: {

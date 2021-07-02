@@ -1363,7 +1363,7 @@ export default {
 			if (track.enabled) {
 				this.disableTrack(track)
 			} else {
-				this.enableTrack(track)
+				this.enableTrack(track, true)
 			}
 		},
 		onSearchEnableTrack(track) {
@@ -1373,7 +1373,9 @@ export default {
 			if (track.metadata && track.data) {
 				track.enabled = true
 				this.saveEnabledTracks()
-				this.$refs.map.zoomOnTrack(track)
+				if (zoom) {
+					this.$refs.map.zoomOnTrack(track)
+				}
 			} else {
 				this.getTrack(track, true, true, zoom)
 			}
@@ -1480,7 +1482,7 @@ export default {
 			if (device.enabled) {
 				this.disableDevice(device)
 			} else {
-				this.enableDevice(device)
+				this.enableDevice(device, true)
 			}
 		},
 		onSearchEnableDevice(device) {
@@ -1490,7 +1492,9 @@ export default {
 			if (device.points) {
 				device.enabled = true
 				this.saveEnabledDevices()
-				this.$refs.map.zoomOnDevice(device)
+				if (zoom) {
+					this.$refs.map.zoomOnDevice(device)
+				}
 			} else {
 				this.getDevice(device, true, true, zoom)
 			}

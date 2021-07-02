@@ -18,8 +18,11 @@
 				@input="addressEdited = true" />
 			<br>
 			<div class="contact-select">
-				<span class="icon icon-user" />
+				<label for="userMultiselect">
+					<span class="icon icon-user" />
+				</label>
 				<Multiselect
+					id="userMultiselect"
 					ref="userMultiselect"
 					v-model="selectedContact"
 					class="contact-input"
@@ -39,16 +42,19 @@
 					</template>
 				</Multiselect>
 			</div>
-			<div class="address-type">
-				<label for="addressTypeSelect">{{ t('maps', 'Address type') }}</label>
+			<div class="address-type"
+				:title="t('maps', 'Address type')">
+				<label for="addressTypeSelect">
+					<span class="icon icon-address" />
+				</label>
 				<select id="addressTypeSelect"
 					v-model="addressType"
 					:disabled="!selectedContact">
 					<option value="home">
-						{{ t('maps', 'Home') }}
+						🏠 {{ t('maps', 'Home') }}
 					</option>
 					<option value="work">
-						{{ t('maps', 'Work') }}
+						🏢 {{ t('maps', 'Work') }}
 					</option>
 				</select>
 			</div>
@@ -214,20 +220,25 @@ export default {
 	width: 100%;
 }
 
-.contact-select {
+.contact-select,
+.address-type {
 	display: flex;
+	label {
+		margin: auto 0 auto 0;
+		text-align: right;
+	}
+}
+
+.contact-select {
+	.multiselect {
+		flex-grow: 1;
+	}
 }
 
 .address-type {
-	display: flex;
-
-	label {
-		margin: auto 5px auto 0;
-		text-align: right;
-	}
-
-	* {
+	select {
 		flex-grow: 1;
+		margin: 3px 0 0 0;
 	}
 }
 

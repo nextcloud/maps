@@ -67,7 +67,7 @@
 					@toggle-history="onToggleDeviceHistory"
 					@toggle-all="onToggleAllDevices"
 					@color="onChangeDeviceColor"
-					@device-clicked="onDeviceClicked"
+					@device-clicked="onNavDeviceClicked"
 					@devices-clicked="onDevicesClicked" />
 			</template>
 		</MapsNavigation>
@@ -115,6 +115,7 @@
 					@toggle-device-history="onToggleDeviceHistory"
 					@change-device-color="onChangeDeviceColorClicked"
 					@export-device="onExportDevice"
+					@search-enable-device="onSearchEnableDevice"
 					@cancel="cancelAction"
 					@redo="redoAction"
 					@slider-range-changed="sliderStart = $event.start; sliderEnd = $event.end" />
@@ -351,7 +352,7 @@ export default {
 				...this.contactSearchData,
 				...this.favoriteSearchData,
 				...this.trackRoutingSearchData,
-				...this.deviceSearchData,
+				...this.deviceRoutingSearchData,
 			]
 			if (navigator.geolocation && window.isSecureContext) {
 				data.unshift({
@@ -366,8 +367,21 @@ export default {
 		},
 		deviceSearchData() {
 			return this.devicesEnabled
+				? this.devices.map((d) => {
+					return {
+						type: 'device',
+						icon: isComputer(d.user_agent) ? 'icon-desktop' : 'icon-phone',
+						id: d.id,
+						label: d.user_agent,
+						device: d,
+					}
+				})
+				: []
+		},
+		deviceRoutingSearchData() {
+			return this.devicesEnabled
 				? this.devices.filter((d) => {
-					return d.enabled && d.points
+					return d.points
 				}).map((d) => {
 					const lastPoint = d.points[d.points.length - 1]
 					const ll = L.latLng([lastPoint.lat, lastPoint.lng])
@@ -1462,18 +1476,30 @@ export default {
 				this.devicesLoading = false
 			})
 		},
-		onDeviceClicked(device) {
+		onNavDeviceClicked(device) {
 			if (device.enabled) {
-				device.enabled = false
-				this.saveEnabledDevices()
-			} else if (device.points) {
-				device.enabled = true
-				this.saveEnabledDevices()
+				this.disableDevice(device)
 			} else {
-				this.getDevice(device, true, true)
+				this.enableDevice(device)
 			}
 		},
-		getDevice(device, enable = false, save = true) {
+		onSearchEnableDevice(device) {
+			this.enableDevice(device, true)
+		},
+		enableDevice(device, zoom = false) {
+			if (device.points) {
+				device.enabled = true
+				this.saveEnabledDevices()
+				this.$refs.map.zoomOnDevice(device)
+			} else {
+				this.getDevice(device, true, true, zoom)
+			}
+		},
+		disableDevice(device) {
+			device.enabled = false
+			this.saveEnabledDevices()
+		},
+		getDevice(device, enable = false, save = true, zoom = false) {
 			device.loading = true
 			network.getDevice(device.id).then((response) => {
 				this.$set(device, 'points', response.data)
@@ -1482,6 +1508,9 @@ export default {
 				}
 				if (save) {
 					this.saveEnabledDevices()
+				}
+				if (zoom) {
+					this.$refs.map.zoomOnDevice(device)
 				}
 			}).catch((error) => {
 				console.error(error)

@@ -815,8 +815,15 @@ export default {
 		},
 		// search
 		onSearchValidate(element) {
-			if (['contact', 'favorite', 'device'].includes(element.type)) {
+			if (['contact', 'favorite'].includes(element.type)) {
 				this.map.setView(element.latLng, 15)
+			} else if (element.type === 'device') {
+				if (!element.device.enabled) {
+					// zooming is done by parent component
+					this.$emit('search-enable-device', element.device)
+				} else {
+					this.zoomOnDevice(element.device)
+				}
 			} else if (element.type === 'track') {
 				if (!element.track.enabled) {
 					// zooming is done by parent component

@@ -336,6 +336,7 @@ export default {
 			const data = [
 				...this.contactSearchData,
 				...this.favoriteSearchData,
+				...this.deviceSearchData,
 			]
 			if (navigator.geolocation && window.isSecureContext) {
 				data.unshift({
@@ -347,6 +348,23 @@ export default {
 				})
 			}
 			return data
+		},
+		deviceSearchData() {
+			return this.devicesEnabled
+				? this.devices.filter((d) => {
+					return d.enabled && d.points
+				}).map((d) => {
+					const lastPoint = d.points[d.points.length - 1]
+					const ll = L.latLng([lastPoint.lat, lastPoint.lng])
+					return {
+						type: 'device',
+						icon: isComputer(d.user_agent) ? 'icon-desktop' : 'icon-phone',
+						id: d.id,
+						label: d.user_agent,
+						latLng: ll,
+					}
+				})
+				: []
 		},
 		contactSearchData() {
 			return this.contactsEnabled
@@ -1400,7 +1418,7 @@ export default {
 		getDevice(device, enable = false, save = true) {
 			device.loading = true
 			network.getDevice(device.id).then((response) => {
-				device.points = response.data
+				this.$set(device, 'points', response.data)
 				if (enable) {
 					device.enabled = true
 				}

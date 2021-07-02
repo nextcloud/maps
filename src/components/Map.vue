@@ -810,7 +810,7 @@ export default {
 		// search
 		onSearchValidate(element) {
 			console.debug(element)
-			if (['contact', 'favorite'].includes(element.type)) {
+			if (['contact', 'favorite', 'device'].includes(element.type)) {
 				this.map.setView(element.latLng, 15)
 			} else if (element.type === 'poi') {
 				this.searching = true

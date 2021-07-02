@@ -50,7 +50,7 @@
 					:tracks="tracks"
 					@zoom="onTrackZoom"
 					@elevation="onTrackElevation"
-					@track-clicked="onTrackClicked"
+					@track-clicked="onNavTrackClicked"
 					@tracks-clicked="onTracksClicked"
 					@color="onChangeTrackColor" />
 				<AppNavigationDevicesItem
@@ -110,6 +110,7 @@
 					@place-photos="placePhotoFilesOrFolder"
 					@photo-moved="onPhotoMoved"
 					@click-track="onTrackClick"
+					@search-enable-track="onSearchEnableTrack"
 					@change-track-color="onChangeTrackColorClicked"
 					@toggle-device-history="onToggleDeviceHistory"
 					@change-device-color="onChangeDeviceColorClicked"
@@ -327,16 +328,29 @@ export default {
 		},
 		// search
 		searchData() {
-			return [
-				...this.routingSearchData,
+			const data = [
+				...this.contactSearchData,
+				...this.favoriteSearchData,
+				...this.trackSearchData,
+				...this.deviceSearchData,
 				...poiSearchData,
 			]
+			if (navigator.geolocation && window.isSecureContext) {
+				data.unshift({
+					type: 'mylocation',
+					icon: 'icon-address',
+					id: 'dummyID',
+					label: t('maps', 'My location'),
+					value: t('maps', 'My location'),
+				})
+			}
+			return data
 		},
 		routingSearchData() {
 			const data = [
 				...this.contactSearchData,
 				...this.favoriteSearchData,
-				...this.trackSearchData,
+				...this.trackRoutingSearchData,
 				...this.deviceSearchData,
 			]
 			if (navigator.geolocation && window.isSecureContext) {
@@ -369,8 +383,21 @@ export default {
 		},
 		trackSearchData() {
 			return this.tracksEnabled
+				? this.tracks.map((t) => {
+					return {
+						type: 'track',
+						icon: 'icon-road',
+						id: t.id,
+						label: t.file_name,
+						track: t,
+					}
+				})
+				: []
+		},
+		trackRoutingSearchData() {
+			return this.tracksEnabled
 				? this.tracks.filter((t) => {
-					return t.enabled && t.metadata
+					return t.metadata
 				}).map((t) => {
 					const ll = L.latLng([t.metadata.lat, t.metadata.lng])
 					return {
@@ -1318,18 +1345,30 @@ export default {
 				this.tracksLoading = false
 			})
 		},
-		onTrackClicked(track) {
+		onNavTrackClicked(track) {
 			if (track.enabled) {
-				track.enabled = false
-				this.saveEnabledTracks()
-			} else if (track.metadata && track.content) {
-				track.enabled = true
-				this.saveEnabledTracks()
+				this.disableTrack(track)
 			} else {
-				this.getTrack(track, true, true)
+				this.enableTrack(track)
 			}
 		},
-		getTrack(track, enable = false, save = true) {
+		onSearchEnableTrack(track) {
+			this.enableTrack(track, true)
+		},
+		enableTrack(track, zoom = false) {
+			if (track.metadata && track.data) {
+				track.enabled = true
+				this.saveEnabledTracks()
+				this.$refs.map.zoomOnTrack(track)
+			} else {
+				this.getTrack(track, true, true, zoom)
+			}
+		},
+		disableTrack(track) {
+			track.enabled = false
+			this.saveEnabledTracks()
+		},
+		getTrack(track, enable = false, save = true, zoom = false) {
 			track.loading = true
 			network.getTrack(track.id).then((response) => {
 				if (!track.metadata) {
@@ -1345,6 +1384,9 @@ export default {
 				}
 				if (save) {
 					this.saveEnabledTracks()
+				}
+				if (zoom) {
+					this.$refs.map.zoomOnTrack(track)
 				}
 			}).catch((error) => {
 				console.error(error)
@@ -1373,8 +1415,7 @@ export default {
 			})
 		},
 		onTrackZoom(track) {
-			const meta = track.metadata
-			this.$refs.map.fitBounds(L.latLngBounds([meta.s, meta.w], [meta.n, meta.e]), { padding: [30, 30] })
+			this.$refs.map.zoomOnTrack(track)
 		},
 		onTrackElevation(track) {
 			this.$refs.map.displayElevation(track)

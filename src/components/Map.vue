@@ -751,6 +751,12 @@ export default {
 			this.$emit('photo-moved', photo, latLng)
 		},
 		// tracks
+		zoomOnTrack(track) {
+			if (track.metadata) {
+				const md = track.metadata
+				this.map.fitBounds(L.latLngBounds([md.s, md.w], [md.n, md.e]), { padding: [30, 30] })
+			}
+		},
 		clearElevationControl() {
 			if (this.elevationControl !== null) {
 				this.elevationControl.clear()
@@ -809,9 +815,15 @@ export default {
 		},
 		// search
 		onSearchValidate(element) {
-			console.debug(element)
-			if (['contact', 'favorite', 'device', 'track'].includes(element.type)) {
+			if (['contact', 'favorite', 'device'].includes(element.type)) {
 				this.map.setView(element.latLng, 15)
+			} else if (element.type === 'track') {
+				if (!element.track.enabled) {
+					// zooming is done by parent component
+					this.$emit('search-enable-track', element.track)
+				} else {
+					this.zoomOnTrack(element.track)
+				}
 			} else if (element.type === 'poi') {
 				this.searching = true
 				const mapBounds = this.map.getBounds()

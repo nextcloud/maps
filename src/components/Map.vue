@@ -810,7 +810,7 @@ export default {
 		// search
 		onSearchValidate(element) {
 			console.debug(element)
-			if (['contact', 'favorite', 'device'].includes(element.type)) {
+			if (['contact', 'favorite', 'device', 'track'].includes(element.type)) {
 				this.map.setView(element.latLng, 15)
 			} else if (element.type === 'poi') {
 				this.searching = true
@@ -1047,6 +1047,26 @@ export default {
 	mask-size: 16px auto;
 	mask-position: center;
 	-webkit-mask: url('../../img/routing.svg') no-repeat;
+	-webkit-mask-size: 16px auto;
+	-webkit-mask-position: center;
+}
+
+::v-deep .icon-road {
+	background-color: var(--color-main-text);
+	mask: url('../../img/road.svg') no-repeat;
+	mask-size: 16px auto;
+	mask-position: center;
+	-webkit-mask: url('../../img/road.svg') no-repeat;
+	-webkit-mask-size: 16px auto;
+	-webkit-mask-position: center;
+}
+
+::v-deep .icon-road-thin {
+	background-color: var(--color-main-text);
+	mask: url('../../img/road-thin.svg') no-repeat;
+	mask-size: 16px auto;
+	mask-position: center;
+	-webkit-mask: url('../../img/road-thin.svg') no-repeat;
 	-webkit-mask-size: 16px auto;
 	-webkit-mask-position: center;
 }

@@ -336,6 +336,7 @@ export default {
 			const data = [
 				...this.contactSearchData,
 				...this.favoriteSearchData,
+				...this.trackSearchData,
 				...this.deviceSearchData,
 			]
 			if (navigator.geolocation && window.isSecureContext) {
@@ -361,6 +362,22 @@ export default {
 						icon: isComputer(d.user_agent) ? 'icon-desktop' : 'icon-phone',
 						id: d.id,
 						label: d.user_agent,
+						latLng: ll,
+					}
+				})
+				: []
+		},
+		trackSearchData() {
+			return this.tracksEnabled
+				? this.tracks.filter((t) => {
+					return t.enabled && t.metadata
+				}).map((t) => {
+					const ll = L.latLng([t.metadata.lat, t.metadata.lng])
+					return {
+						type: 'track',
+						icon: 'icon-road',
+						id: t.id,
+						label: t.file_name,
 						latLng: ll,
 					}
 				})

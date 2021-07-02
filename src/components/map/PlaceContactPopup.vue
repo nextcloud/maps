@@ -155,7 +155,7 @@ export default {
 			p.setLatLng(this.latLng)
 		},
 		getContactAvatar(contact) {
-			if (contact.HAS_PHOTO && !contact.HAS_PHOTO2) {
+			if (contact.HAS_PHOTO && contact.HAS_PHOTO2) {
 				return generateUrl(
 					'/remote.php/dav/addressbooks/users/' + getCurrentUser().uid
 					+ '/' + encodeURIComponent(contact.BOOKURI)

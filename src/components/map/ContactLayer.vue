@@ -131,7 +131,7 @@ export default {
 			return L.divIcon(
 				L.extend({
 					className: 'leaflet-marker-contact contact-marker',
-					html: '<div class="thumbnail" style="background-image: url(' + iconUrl + ');"></div>​',
+					html: '<div class="thumbnail" style="background-image: url(\'' + iconUrl + '\');"></div>​',
 				},
 				this.contact,
 				{

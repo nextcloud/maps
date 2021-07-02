@@ -338,7 +338,7 @@ export default {
 				...this.favoriteSearchData,
 			]
 			if (navigator.geolocation && window.isSecureContext) {
-				data.push({
+				data.unshift({
 					type: 'mylocation',
 					icon: 'icon-address',
 					id: 'dummyID',

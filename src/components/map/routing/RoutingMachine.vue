@@ -7,6 +7,7 @@ import { getLocale } from '@nextcloud/l10n'
 import { generateUrl } from '@nextcloud/router'
 import { getCurrentUser } from '@nextcloud/auth'
 import moment from '@nextcloud/moment'
+import { showError } from '@nextcloud/dialogs'
 
 import L from 'leaflet'
 import 'leaflet-control-geocoder/dist/Control.Geocoder'
@@ -184,6 +185,7 @@ export default {
 				.on('routingerror', this.onRoutingError)
 				.on('routingstart', this.onRoutingStart)
 				.on('routesfound', this.onRoutingEnd)
+				.on('routeselected', this.onRouteSelected)
 
 			// add routers from options values
 			let nbRoutersAdded = 0
@@ -318,7 +320,7 @@ export default {
 				}
 			} catch (e) {
 			}
-			OC.Notification.showTemporary(t('maps', 'Routing error:') + ' ' + msg)
+			showError(t('maps', 'Routing error:') + ' ' + msg)
 			this.onRoutingEnd()
 			// document.querySelector('.exportCurrentRoute').style.display = 'none'
 			this.$emit('plan-ready-changed', false)
@@ -334,7 +336,6 @@ export default {
 		},
 
 		onRoutingEnd(e) {
-			this.$emit('plan-ready-changed', true)
 			// document.querySelector('.exportCurrentRoute').style.display = 'block'
 			// document.querySelector('.leaflet-routing-reverse-waypoints').classList.remove('icon-loading-small')
 			// TODO understand why routingstart is sometimes triggered after routesfound
@@ -346,6 +347,10 @@ export default {
 				}
 			}, 5000)
 			this.$emit('routing-end')
+			this.$emit('plan-ready-changed', true)
+		},
+		onRouteSelected(e) {
+			this.$emit('route-selected')
 		},
 		setRouteFrom(latlng) {
 			if (this.control) {

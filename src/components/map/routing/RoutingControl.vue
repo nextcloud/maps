@@ -24,7 +24,8 @@
 			:map="map"
 			:visible="visible"
 			@plan-changed="onPlanChanged"
-			@plan-ready-changed="planReady = $event" />
+			@plan-ready-changed="onPlanReadyChanged"
+			@route-selected="onRouteSelected" />
 	</LControl>
 </template>
 
@@ -106,6 +107,12 @@ export default {
 		// ============ routing machine events ============
 		onPlanChanged(waypoints) {
 			this.steps = waypoints
+		},
+		onPlanReadyChanged(ready) {
+			this.planReady = ready
+		},
+		onRouteSelected() {
+			this.onZoomRoute()
 		},
 	},
 }

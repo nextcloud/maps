@@ -1,5 +1,6 @@
 <template>
-	<div v-if="track">
+	<div v-if="track"
+		id="track-tab">
 		<TrackTable
 			ref="table"
 			:track="track" />
@@ -40,5 +41,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-// nothing
+#track-tab {
+	padding: 0 10px 0 10px;
+}
 </style>

@@ -85,6 +85,7 @@ export default {
 	#search {
 		display: flex;
 		> button {
+			min-width: 34px;
 			width: 34px;
 			height: 34px;
 			// margin: 0;

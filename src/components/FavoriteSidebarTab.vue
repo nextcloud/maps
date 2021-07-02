@@ -1,5 +1,6 @@
 <template>
-	<div v-if="favorite">
+	<div v-if="favorite"
+		id="favorite-tab">
 		<FavoriteEditionForm
 			ref="form"
 			:favorite="favorite"
@@ -47,5 +48,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-// nothing
+#favorite-tab {
+	padding: 0 10px 0 10px;
+}
 </style>

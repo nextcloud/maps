@@ -27,7 +27,8 @@
 					label="FN"
 					:placeholder="t('maps', 'Choose a contact')"
 					:options="contactData"
-					:internal-search="true">
+					:internal-search="true"
+					@search-change="asyncSearchContacts">
 					<template #option="{option}">
 						<Avatar
 							class="contact-avatar"
@@ -71,7 +72,7 @@ import Multiselect from '@nextcloud/vue/dist/Components/Multiselect'
 import Avatar from '@nextcloud/vue/dist/Components/Avatar'
 
 import { formatAddress } from '../../utils'
-import { getAllContacts, geocode, searchAddress } from '../../network'
+import { searchContacts, geocode, searchAddress } from '../../network'
 
 export default {
 	name: 'PlaceContactPopup',
@@ -126,13 +127,16 @@ export default {
 	},
 
 	beforeMount() {
-		this.getContactData()
 		this.getAddress()
 	},
 
 	methods: {
-		getContactData() {
-			getAllContacts().then((response) => {
+		asyncSearchContacts(query) {
+			if (query === '') {
+				this.contactData = []
+				return
+			}
+			searchContacts(query).then((response) => {
 				this.contactData = response.data.filter((c) => { return !c.READONLY }).map((c) => {
 					return {
 						...c,

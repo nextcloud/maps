@@ -137,8 +137,8 @@ class ContactsController extends Controller {
      * get all contacts
      * @NoAdminRequired
      */
-    public function getAllContacts() {
-        $contacts = $this->contactsManager->search('', ['FN'], ['types'=>false]);
+    public function searchContacts(string $query = ''): DataResponse {
+        $contacts = $this->contactsManager->search($query, ['FN'], ['types'=>false]);
         $booksReadOnly = $this->getAddressBooksReadOnly();
         $addressBooks = $this->contactsManager->getUserAddressBooks();
         $result = [];

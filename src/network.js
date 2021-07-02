@@ -44,9 +44,14 @@ export function getContacts() {
 	return axios.get(url)
 }
 
-export function getAllContacts() {
-	const url = generateUrl('/apps/maps/contacts-all')
-	return axios.get(url)
+export function searchContacts(query = '') {
+	const url = generateUrl('/apps/maps/contacts-search')
+	const req = {
+		params: {
+			query,
+		},
+	}
+	return axios.get(url, req)
 }
 
 export function geocode(lat, lng) {

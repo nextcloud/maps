@@ -22,7 +22,10 @@ export function processGpx(gpx) {
 	const routes = []
 	gpxx.childNodes.forEach((e) => {
 		if (e.tagName === 'wpt') {
-			waypoints.push(parseWpt(e))
+			const point = parseWpt(e)
+			if (point.lat && point.lng) {
+				waypoints.push(point)
+			}
 		} else if (e.tagName === 'trk') {
 			tracks.push(parseTrk(e))
 		} else if (e.tagName === 'rte') {
@@ -52,7 +55,10 @@ function parseTrkseg(e) {
 	}
 	e.childNodes.forEach((c) => {
 		if (c.tagName === 'trkpt') {
-			seg.points.push(parseWpt(c))
+			const point = parseWpt(c)
+			if (point.lat && point.lng) {
+				seg.points.push(point)
+			}
 		}
 	})
 	return seg
@@ -66,7 +72,10 @@ function parseRte(e) {
 		if (['name', 'desc'].includes(c.tagName)) {
 			rte[c.tagName] = c.textContent
 		} else if (c.tagName === 'rtept') {
-			rte.points.push(parseWpt(c))
+			const point = parseWpt(c)
+			if (point.lat && point.lng) {
+				rte.points.push(point)
+			}
 		}
 	})
 	return rte

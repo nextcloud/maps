@@ -5,7 +5,11 @@
 			:track="track"
 			@click="$emit('click', $event)"
 			@change-color="$emit('change-color', $event)"
-			@display-elevation="$emit('display-elevation', $event)" />
+			@display-elevation="$emit('display-elevation', $event)"
+			@point-hover="onPointHover" />
+		<TrackHoverMarker
+			v-if="hoverPoint"
+			:point="hoverPoint" />
 	</LFeatureGroup>
 </template>
 
@@ -13,6 +17,7 @@
 import { LFeatureGroup } from 'vue2-leaflet'
 
 import TrackLayer from './TrackLayer'
+import TrackHoverMarker from './TrackHoverMarker'
 
 import optionsController from '../../optionsController'
 
@@ -21,6 +26,7 @@ export default {
 	components: {
 		LFeatureGroup,
 		TrackLayer,
+		TrackHoverMarker,
 	},
 
 	props: {
@@ -37,6 +43,7 @@ export default {
 	data() {
 		return {
 			optionValues: optionsController.optionValues,
+			hoverPoint: null,
 		}
 	},
 
@@ -48,7 +55,19 @@ export default {
 		},
 	},
 
+	watch: {
+		tracks: {
+			handler() {
+				this.hoverPoint = null
+			},
+			deep: true,
+		},
+	},
+
 	methods: {
+		onPointHover(point) {
+			this.hoverPoint = point
+		},
 	},
 }
 </script>

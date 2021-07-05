@@ -27,7 +27,8 @@
 			:icon="markerIcon"
 			:lat-lng="firstPoint" />
 		<LFeatureGroup v-for="(line, i) in lines"
-			:key="i">
+			:key="i"
+			@mouseover="trackLineMouseover($event, line)">
 			<LPolyline
 				color="black"
 				:opacity="1"
@@ -102,7 +103,13 @@ export default {
 		lines() {
 			const trkSegments = []
 			this.track.data.tracks.forEach((trk) => {
-				trkSegments.push(...trk.segments)
+				trk.segments.forEach((segment) => {
+					// add track name to each segment
+					trkSegments.push({
+						...segment,
+						name: trk.name,
+					})
+				})
 			})
 			return [...this.track.data.routes, ...trkSegments]
 		},
@@ -157,6 +164,29 @@ export default {
 		},
 		onFGRightClick(e) {
 			this.$refs.featgroup.mapObject.openPopup()
+		},
+		trackLineMouseover(e, line) {
+			console.debug(this.track)
+			const overLatLng = e.layer._map.layerPointToLatLng(e.layerPoint)
+			let minDist = 40000000
+			let tmpDist
+			let closestI = -1
+			for (let i = 0; i < line.points.length; i++) {
+				tmpDist = e.layer._map.distance(overLatLng, line.points[i])
+				if (tmpDist < minDist) {
+					minDist = tmpDist
+					closestI = i
+				}
+			}
+			if (closestI !== -1) {
+				const hoverPoint = {
+					...line.points[closestI],
+					color: this.color,
+					file_name: this.track.file_name,
+					track_name: line.name,
+				}
+				this.$emit('point-hover', hoverPoint)
+			}
 		},
 	},
 }

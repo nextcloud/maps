@@ -6,8 +6,12 @@
 			<LTooltip :options="tooltipOptions">
 				<div class="tooltip-device-wrapper"
 					:style="'border: 2px solid ' + point.color">
-					<b>{{ t('maps', 'Device') }}:</b>
-					<span>{{ point.user_agent }}</span>
+					<b>{{ t('maps', 'File') }}:</b>
+					<span>{{ point.file_name }}</span>
+					<div v-if="trackName">
+						<b>{{ t('maps', 'Track/Route') }}:</b>
+						<span>{{ trackName }}</span>
+					</div>
 					<div v-if="date">
 						<b>{{ t('maps', 'Date') }}:</b>
 						<span>{{ date }}</span>
@@ -15,14 +19,6 @@
 					<div v-if="altitude">
 						<b>{{ t('maps', 'Altitude') }}:</b>
 						<span>{{ altitude }}</span>
-					</div>
-					<div v-if="battery">
-						<b>{{ t('maps', 'Battery') }}:</b>
-						<span>{{ battery }}</span>
-					</div>
-					<div v-if="accuracy">
-						<b>{{ t('maps', 'Accuracy') }}:</b>
-						<span>{{ accuracy }}</span>
 					</div>
 				</div>
 			</LTooltip>
@@ -37,7 +33,7 @@ import { LMarker, LTooltip, LFeatureGroup } from 'vue2-leaflet'
 import moment from '@nextcloud/moment'
 
 export default {
-	name: 'DeviceHoverMarker',
+	name: 'TrackHoverMarker',
 	components: {
 		LFeatureGroup,
 		LMarker,
@@ -81,18 +77,13 @@ export default {
 			}
 		},
 		altitude() {
-			return this.point.altitude
-				? this.point.altitude + ' m'
+			return this.point.ele
+				? this.point.ele + ' m'
 				: null
 		},
-		battery() {
-			return this.point.battery
-				? this.point.battery + ' %'
-				: null
-		},
-		accuracy() {
-			return this.point.accuracy
-				? this.point.accuracy + ' m'
+		trackName() {
+			return this.point.track_name
+				? this.point.track_name
 				: null
 		},
 	},

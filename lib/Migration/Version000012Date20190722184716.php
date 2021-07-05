@@ -65,7 +65,8 @@ class Version000012Date20190722184716 extends SimpleMigrationStep {
 				'length' => 10,
 			]);
 			$table->addColumn('looked_up', 'boolean', [
-				'notnull' => true,
+				'notnull' => false,
+				'default' => false,
 			]);
 			$table->setPrimaryKey(['id']);
 			$table->addIndex(['adr'], 'maps_adr');

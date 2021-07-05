@@ -18,6 +18,9 @@
 				:style="'border: 2px solid ' + color">
 				<b>{{ t('maps', 'Name') }}:</b>
 				<span>{{ track.file_name }}</span>
+				<br>
+				<b v-if="dateBegin">{{ t('maps', 'Begins at') }}:</b>
+				<span v-if="dateBegin">{{ dateBegin }}</span>
 			</div>
 		</LTooltip>
 		<LMarker
@@ -44,6 +47,7 @@ import L from 'leaflet'
 import { LMarker, LTooltip, LPopup, LFeatureGroup, LPolyline } from 'vue2-leaflet'
 
 import ActionButton from '@nextcloud/vue/dist/Components/ActionButton'
+import moment from '@nextcloud/moment'
 
 import optionsController from '../../optionsController'
 
@@ -90,6 +94,11 @@ export default {
 	},
 
 	computed: {
+		dateBegin() {
+			return this.track.metadata?.begin
+				? moment.unix(this.track.metadata.begin).format('LLL')
+				: ''
+		},
 		lines() {
 			const trkSegments = []
 			this.track.data.tracks.forEach((trk) => {

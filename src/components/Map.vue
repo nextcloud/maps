@@ -777,7 +777,6 @@ export default {
 				})
 			})
 			const geojson = GeoJSON.parse(data, { LineString: 'line' })
-			console.debug(geojson)
 			const el = L.control.elevation({
 				position: 'bottomleft',
 				detached: false,

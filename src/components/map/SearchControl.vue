@@ -24,13 +24,8 @@
 
 <script>
 import { getLocale } from '@nextcloud/l10n'
-// import { generateUrl } from '@nextcloud/router'
-// import moment from '@nextcloud/moment'
-
 import { LControl } from 'vue2-leaflet'
 
-// import * as network from '../../network'
-// import optionsController from '../../optionsController'
 import SearchField from './SearchField.vue'
 
 export default {

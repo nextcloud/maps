@@ -209,8 +209,14 @@ tr.selected td {
     text-align: center;
 }
 
+.device-over-marker-wrapper {
+	border: 0;
+}
 .device-over-marker {
     border-radius: 50%;
+	width: 16px;
+	height: 16px;
+	border: 1px solid grey;
 }
 
 .leaflet-marker-contact.contact-marker:after {

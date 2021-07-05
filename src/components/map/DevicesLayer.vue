@@ -6,7 +6,11 @@
 			@click="$emit('click', $event)"
 			@export="$emit('export', $event)"
 			@toggle-history="$emit('toggle-history', $event)"
-			@change-color="$emit('change-color', $event)" />
+			@change-color="$emit('change-color', $event)"
+			@point-hover="onPointHover" />
+		<DeviceHoverMarker
+			v-if="hoverPoint"
+			:point="hoverPoint" />
 	</LFeatureGroup>
 </template>
 
@@ -14,6 +18,7 @@
 import { LFeatureGroup } from 'vue2-leaflet'
 
 import DeviceLayer from './DeviceLayer'
+import DeviceHoverMarker from './DeviceHoverMarker'
 
 import optionsController from '../../optionsController'
 
@@ -22,6 +27,7 @@ export default {
 	components: {
 		LFeatureGroup,
 		DeviceLayer,
+		DeviceHoverMarker,
 	},
 
 	props: {
@@ -38,6 +44,7 @@ export default {
 	data() {
 		return {
 			optionValues: optionsController.optionValues,
+			hoverPoint: null,
 		}
 	},
 
@@ -47,7 +54,19 @@ export default {
 		},
 	},
 
+	watch: {
+		devices: {
+			handler() {
+				this.hoverPoint = null
+			},
+			deep: true,
+		},
+	},
+
 	methods: {
+		onPointHover(point) {
+			this.hoverPoint = point
+		},
 	},
 }
 </script>

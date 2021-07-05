@@ -34,17 +34,21 @@
 		</LTooltip>
 		<LMarker
 			:icon="markerIcon"
-			:lat-lng="lastPoint" />
-		<LPolyline v-if="device.historyEnabled"
-			color="black"
-			:opacity="1"
-			:weight="4 * 1.6"
-			:lat-lngs="points" />
-		<LPolyline v-if="device.historyEnabled"
-			:color="color"
-			:opacity="1"
-			:weight="4"
-			:lat-lngs="points" />
+			:lat-lng="lastPoint"
+			@mouseover="deviceLastPointMouseover" />
+		<LFeatureGroup
+			@mouseover="deviceLineMouseover">
+			<LPolyline v-if="device.historyEnabled"
+				color="black"
+				:opacity="1"
+				:weight="4 * 1.6"
+				:lat-lngs="points" />
+			<LPolyline v-if="device.historyEnabled"
+				:color="color"
+				:opacity="1"
+				:weight="4"
+				:lat-lngs="points" />
+		</LFeatureGroup>
 	</LFeatureGroup>
 </template>
 
@@ -140,6 +144,35 @@ export default {
 		},
 		onFGRightClick(e) {
 			this.$refs.featgroup.mapObject.openPopup()
+		},
+		deviceLineMouseover(e) {
+			const overLatLng = e.layer._map.layerPointToLatLng(e.layerPoint)
+			let minDist = 40000000
+			let tmpDist
+			let closestI = -1
+			for (let i = 0; i < this.points.length; i++) {
+				tmpDist = e.layer._map.distance(overLatLng, this.points[i])
+				if (tmpDist < minDist) {
+					minDist = tmpDist
+					closestI = i
+				}
+			}
+			if (closestI !== -1) {
+				const hoverPoint = {
+					...this.device.points[closestI],
+					color: this.color,
+					user_agent: this.device.user_agent,
+				}
+				this.$emit('point-hover', hoverPoint)
+			}
+		},
+		deviceLastPointMouseover() {
+			const hoverPoint = {
+				...this.device.points[this.device.points.length - 1],
+				color: this.color,
+				user_agent: this.device.user_agent,
+			}
+			this.$emit('point-hover', hoverPoint)
 		},
 	},
 }

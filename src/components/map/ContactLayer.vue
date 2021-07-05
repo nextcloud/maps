@@ -164,7 +164,7 @@ export default {
 			return formattedAddressLines
 		},
 		contactUrl() {
-			return generateUrl('/apps/contacts/' + t('contacts', 'All contacts') + '/' + encodeURIComponent(this.contact.UID + '~contacts'))
+			return generateUrl('/apps/contacts/direct/contact/' + encodeURIComponent(this.contact.UID + '~contacts'))
 		},
 	},
 

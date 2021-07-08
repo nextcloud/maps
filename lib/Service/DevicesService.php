@@ -168,9 +168,9 @@ class DevicesService {
                 $this->db_quote_escape_string($p['lat']).', '.
                 $this->db_quote_escape_string($p['lng']).', '.
                 $this->db_quote_escape_string($p['date']).', '.
-                ((array_key_exists('altitude', $p) and is_numeric($p['altitude'])) ? $this->db_quote_escape_string(floatval($p['altitude'])) : 'NULL').', '.
-                ((array_key_exists('battery', $p) and is_numeric($p['battery'])) ? $this->db_quote_escape_string(floatval($p['battery'])) : 'NULL').', '.
-                ((array_key_exists('accuracy', $p) and is_numeric($p['accuracy'])) ? $this->db_quote_escape_string(floatval($p['accuracy'])) : 'NULL').')';
+                ((isset($p['altitude']) and is_numeric($p['altitude'])) ? $this->db_quote_escape_string(floatval($p['altitude'])) : 'NULL').', '.
+                ((isset($p['battery']) and is_numeric($p['battery'])) ? $this->db_quote_escape_string(floatval($p['battery'])) : 'NULL').', '.
+                ((isset($p['accuracy']) and is_numeric($p['accuracy'])) ? $this->db_quote_escape_string(floatval($p['accuracy'])) : 'NULL').')';
             array_push($values, $value);
         }
         $valuesStr = implode(', ', $values);
@@ -463,10 +463,10 @@ class DevicesService {
         }
         else if ($name === 'TRKPT') {
             $this->currentPoint = [];
-            if (array_key_exists('LAT', $attrs)) {
+            if (isset($attrs['LAT'])) {
                 $this->currentPoint['lat'] = floatval($attrs['LAT']);
             }
-            if (array_key_exists('LON', $attrs)) {
+            if (isset($attrs['LON'])) {
                 $this->currentPoint['lng'] = floatval($attrs['LON']);
             }
         }
@@ -491,7 +491,7 @@ class DevicesService {
             // store track point
 
             // convert date
-            if (array_key_exists('date', $this->currentPoint)) {
+            if (isset($this->currentPoint['date'])) {
                 $time = new \DateTime($this->currentPoint['date']);
                 $timestamp = $time->getTimestamp();
                 $this->currentPoint['date'] = $timestamp;
@@ -515,16 +515,16 @@ class DevicesService {
         $d = trim($data);
         if (!empty($d)) {
             if ($this->currentXmlTag === 'ELE') {
-                $this->currentPoint['altitude'] = (array_key_exists('altitude', $this->currentPoint)) ? $this->currentPoint['altitude'].$d : $d;
+                $this->currentPoint['altitude'] = (isset($this->currentPoint['altitude'])) ? $this->currentPoint['altitude'].$d : $d;
             }
             else if ($this->currentXmlTag === 'BATTERYLEVEL') {
-                $this->currentPoint['battery'] = (array_key_exists('battery', $this->currentPoint)) ? $this->currentPoint['battery'].$d : $d;
+                $this->currentPoint['battery'] = (isset($this->currentPoint['battery'])) ? $this->currentPoint['battery'].$d : $d;
             }
             else if ($this->currentXmlTag === 'ACCURACY') {
-                $this->currentPoint['accuracy'] = (array_key_exists('accuracy', $this->currentPoint)) ? $this->currentPoint['accuracy'].$d : $d;
+                $this->currentPoint['accuracy'] = (isset($this->currentPoint['accuracy'])) ? $this->currentPoint['accuracy'].$d : $d;
             }
             else if ($this->insideTrk and $this->currentXmlTag === 'TIME') {
-                $this->currentPoint['date'] = (array_key_exists('date', $this->currentPoint)) ? $this->currentPoint['date'].$d : $d;
+                $this->currentPoint['date'] = (isset($this->currentPoint['date'])) ? $this->currentPoint['date'].$d : $d;
             }
             else if ($this->insideTrk and $this->currentXmlTag === 'NAME') {
                 $this->importDevName = $this->importDevName . $d;
@@ -576,7 +576,7 @@ class DevicesService {
     private function kmlStartElement($parser, $name, $attrs) {
         $this->currentXmlTag = $name;
         if ($name === 'GX:TRACK') {
-            if (array_key_exists('ID', $attrs)) {
+            if (isset($attrs['ID'])) {
                 $this->importDevName = $attrs['ID'];
             }
             else {
@@ -603,13 +603,13 @@ class DevicesService {
         }
         else if ($name === 'GX:COORD') {
             // convert date
-            if (array_key_exists('date', $this->currentPoint)) {
+            if (isset($this->currentPoint['date'])) {
                 $time = new \DateTime($this->currentPoint['date']);
                 $timestamp = $time->getTimestamp();
                 $this->currentPoint['date'] = $timestamp;
             }
             // get latlng
-            if (array_key_exists('coords', $this->currentPoint)) {
+            if (isset($this->currentPoint['coords'])) {
                 $spl = explode(' ', $this->currentPoint['coords']);
                 if (count($spl) > 1) {
                     $this->currentPoint['lat'] = floatval($spl[1]);
@@ -636,10 +636,10 @@ class DevicesService {
         $d = trim($data);
         if (!empty($d)) {
             if ($this->currentXmlTag === 'WHEN') {
-                $this->currentPoint['date'] = (array_key_exists('date', $this->currentPoint)) ? $this->currentPoint['date'].$d : $d;
+                $this->currentPoint['date'] = (isset($this->currentPoint['date'])) ? $this->currentPoint['date'].$d : $d;
             }
             else if ($this->currentXmlTag === 'GX:COORD') {
-                $this->currentPoint['coords'] = (array_key_exists('coords', $this->currentPoint)) ? $this->currentPoint['coords'].$d : $d;
+                $this->currentPoint['coords'] = (isset($this->currentPoint['coords'])) ? $this->currentPoint['coords'].$d : $d;
             }
         }
     }

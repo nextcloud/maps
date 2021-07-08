@@ -33,6 +33,11 @@ return [
         ['name' => 'contacts#deleteContactAddress', 'url' => '/contacts/{bookid}/{uri}', 'verb' => 'DELETE'],
         ['name' => 'contacts#getContactLetterAvatar', 'url' => '/contacts-avatar', 'verb' => 'GET'],
 
+        // routing API proxies
+        ['name' => 'routing_proxy#requestOsrmRoute', 'url' => '/api/requestRoute/osrm/{profile}/{path<.*>}', 'verb' => 'GET'],
+        ['name' => 'routing_proxy#requestGraphHopperRoute', 'url' => '/api/requestRoute/graphhopper/{path<.*>}', 'verb' => 'GET'],
+        ['name' => 'routing_proxy#requestMapboxRoute', 'url' => '/api/requestRoute/mapbox/{path<.*>}', 'verb' => 'GET'],
+
         // routing
         ['name' => 'routing#exportRoute', 'url' => '/exportRoute', 'verb' => 'POST'],
 

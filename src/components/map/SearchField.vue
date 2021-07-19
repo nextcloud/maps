@@ -14,8 +14,9 @@
 		:preserve-search="true"
 		:placeholder="placeholder"
 		:loading="searching || loading"
-		:options="formattedOptions"
+		:options="filteredOptions"
 		:user-select="false"
+		:internal-search="false"
 		@input="onOptionSelected"
 		@update:value="onUpdateValue"
 		@change="onChange"
@@ -43,6 +44,7 @@ import Multiselect from '@nextcloud/vue/dist/Components/Multiselect'
 import L from 'leaflet'
 
 import * as network from '../../network'
+import { accented } from '../../utils'
 
 export default {
 	name: 'SearchField',
@@ -74,12 +76,23 @@ export default {
 		return {
 			mySelectedOption: this.selectedOption,
 			searching: false,
+			query: '',
 			currentOsmResults: null,
 			currentSearchQueryOption: null,
 		}
 	},
 
 	computed: {
+		// apply custom filter based on query (because internal search is too restrictive)
+		filteredOptions() {
+			const queryParts = this.query.split(/\s+/).map((part) => {
+				return part.replace(/\S/g, (char) => { return accented[char.toUpperCase()] || char })
+			})
+			const regex = new RegExp(queryParts.join('|'), 'i')
+			return this.formattedOptions.filter((option) => {
+				return regex.test(option.label || option.value)
+			})
+		},
 		formattedOptions() {
 			return this.options.map((o) => {
 				return {
@@ -128,6 +141,7 @@ export default {
 		onChange(e) {
 		},
 		onSearchChange(query) {
+			this.query = query
 			this.updateSearchOption(query)
 		},
 		updateSearchOption(searchQuery) {

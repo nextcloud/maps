@@ -158,6 +158,7 @@ export default {
 						value: r.display_name,
 						label: r.display_name,
 						latLng: L.latLng(r.lat, r.lon),
+						rawResult: r,
 					}
 				})
 				this.$refs.select.$el.querySelector('input').focus()

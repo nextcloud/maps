@@ -66,7 +66,7 @@ OC.L10N.register(
     "Import favorites from GeoJSON (Google Maps), gpx (OsmAnd, Nextcloud Maps) or kmz/kml (F-Droid Maps, Maps.me, Marble)" : "Importar favoritos de GeoJSON (Google Maps), gpx (OsmAnd, Nextcloud Maps) ou kmz/kml (F-Droid Maps, Maps.me, Marble)",
     "Failed to load favorites" : "Erro ao carregar favoritos",
     "Failed to load favorite share token" : "Erro ao carregar o token de compartilhamento favorito",
-    "Add a favorite" : "Adicionar um favorito",
+    "Add a favorite" : "Adicionar favorito",
     "Share link" : "Link de compartilhamento",
     "Copy link" : "Copiar link",
     "Copied!" : "Copiado!",

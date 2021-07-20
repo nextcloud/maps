@@ -1,6 +1,7 @@
 <template>
 	<div class="routing-step">
 		<SearchField
+			ref="field"
 			:data="searchData"
 			:placeholder="placeholder"
 			:selected-option="selectedOption"
@@ -66,6 +67,9 @@ export default {
 	},
 
 	methods: {
+		focus() {
+			this.$refs.field.focus()
+		},
 		onValidate(option) {
 			if (option.type === 'mylocation') {
 				navigator.geolocation.getCurrentPosition((position) => {

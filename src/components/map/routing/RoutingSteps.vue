@@ -2,11 +2,12 @@
 	<div id="routing-steps">
 		<RoutingStep v-for="(s, i) in steps"
 			:key="i + s.name"
+			:ref="'step' + i"
 			:step="s"
 			:search-data="searchData"
 			:placeholder="getPlaceholder(i)"
 			:can-delete="canDelete(s, i)"
-			@selected="$emit('step-selected', i, $event)"
+			@selected="onStepSelected(i, $event)"
 			@delete="$emit('delete-step', i)" />
 		<div class="steps-buttons">
 			<button id="add-step"
@@ -70,6 +71,13 @@ export default {
 	},
 
 	methods: {
+		onStepSelected(i, e) {
+			this.$emit('step-selected', i, e)
+			const nextStepIndex = i + 1
+			if (nextStepIndex < this.steps.length) {
+				this.$refs['step' + nextStepIndex][0].focus()
+			}
+		},
 		getPlaceholder(i) {
 			return i === 0
 				? t('maps', 'Start')

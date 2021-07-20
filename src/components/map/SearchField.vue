@@ -126,6 +126,16 @@ export default {
 	},
 
 	methods: {
+		focus() {
+			const input = this.$refs.select.$el.querySelector('input')
+			input.focus()
+			// this does not work...
+			/*
+			if (this.mySelectedOption) {
+				input.value = this.mySelectedOption.value || this.mySelectedOption.label
+			}
+			*/
+		},
 		onOptionSelected(option, id) {
 			if (option?.type === 'query') {
 				this.searchOsm(option.value)

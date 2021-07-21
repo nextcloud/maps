@@ -1,6 +1,7 @@
 <?php
-OCP\Util::addscript('maps', 'adminSettings');
-OCP\Util::addstyle('maps', 'adminSettings');
+$appId = OCA\Maps\AppInfo\Application::APP_ID;
+script($appId, $appId . '-adminSettings');
+style($appId, 'adminSettings');
 $osrmDemoChecked = '';
 if (!isset($_['osrmDEMO']) || $_['osrmDEMO'] === '1') {
     $osrmDemoChecked = 'checked="checked"';

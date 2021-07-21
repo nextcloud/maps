@@ -87,7 +87,7 @@ class RoutingController extends Controller {
     /**
      * @NoAdminRequired
      */
-    public function exportRoute($coords, $name, $totDist, $totTime) {
+    public function exportRoute($type, $coords, $name, $totDist, $totTime) {
         // create /Maps directory if necessary
         $userFolder = $this->userfolder;
         if (!$userFolder->nodeExists('/Maps')) {
@@ -109,12 +109,7 @@ class RoutingController extends Controller {
             return $response;
         }
 
-        // generate export file name
-        $tz = $this->dateTimeZone->getTimeZone();
-        $now = new \DateTime('now', $tz);
-        $dateStr = $now->format('Y-m-d H:i:s (P)');
-        $filename = $dateStr.' '.$name.'.gpx';
-
+        $filename = $name.'.gpx';
         if ($mapsFolder->nodeExists($filename)) {
             $mapsFolder->get($filename)->delete();
         }
@@ -132,18 +127,29 @@ class RoutingController extends Controller {
   </metadata>';
         fwrite($fileHandler, $gpxHeader."\n");
 
-        fwrite($fileHandler, '  <rte>'."\n");
-        fwrite($fileHandler, '    <name>'.$name.'</name>'."\n");
-
-        fwrite($fileHandler, $coords);
-
-        $gpxEnd = '  </rte>'. "\n";
-        $gpxEnd .= '</gpx>' . "\n";
-        fwrite($fileHandler, $gpxEnd);
-
+        if ($type === 'route') {
+            fwrite($fileHandler, '  <rte>'."\n");
+            fwrite($fileHandler, '    <name>'.$name.'</name>'."\n");
+            foreach ($coords as $ll) {
+                $line = '    <rtept lat="' . $ll['lat'] . '" lon="' . $ll['lng'] . '"></rtept>' . "\n";
+                fwrite($fileHandler, $line);
+            }
+            fwrite($fileHandler, '  </rte>'."\n");
+        } elseif ($type === 'track') {
+            fwrite($fileHandler, '  <trk>'."\n");
+            fwrite($fileHandler, '    <name>'.$name.'</name>'."\n");
+            fwrite($fileHandler, '    <trkseg>'."\n");
+            foreach ($coords as $ll) {
+                $line = '      <trkpt lat="' . $ll['lat'] . '" lon="' . $ll['lng'] . '"></trkpt>' . "\n";
+                fwrite($fileHandler, $line);
+            }
+            fwrite($fileHandler, '    </trkseg>'."\n");
+            fwrite($fileHandler, '  </trk>'."\n");
+        }
+        fwrite($fileHandler, '</gpx>'."\n");
         fclose($fileHandler);
         $file->touch();
-        return new DataResponse('/Maps/'.$filename);
+        return new DataResponse('/Maps/' . $filename);
     }
 
 }

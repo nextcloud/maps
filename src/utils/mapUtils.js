@@ -57,3 +57,27 @@ export const getShouldMapUseImperial = () => {
     || locale === 'en_CA'
 	)
 }
+
+export const geoToLatLng = (geo) => {
+	let ll
+	const fourFirsts = geo.substr(0, 4)
+	if (fourFirsts === 'geo:') {
+		ll = geo.substr(4).split(',')
+	} else {
+		ll = geo.split(';')
+	}
+	return ll
+}
+
+export const getFormattedADR = (adr) => {
+	const adrTab = adr.split(';')
+	let formattedAddress = ''
+	if (adrTab.length > 6) {
+		// check if street name is set
+		if (adrTab[2] !== '') {
+			formattedAddress += adrTab[2] + ' '
+		}
+		formattedAddress += adrTab[5] + ' ' + adrTab[3] + ' ' + adrTab[4] + ' ' + adrTab[6]
+	}
+	return formattedAddress.trim()
+}

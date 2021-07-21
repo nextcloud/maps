@@ -69,37 +69,37 @@ export default {
 				},
 			} = this.geocodeObject
 
-		    const lines = []
+			const lines = []
 
 			if (road) {
-			    lines.push(`${road} ${houseNumber || ''}`)
+				lines.push(`${road} ${houseNumber || ''}`)
 			} else if (pedestrian) {
-			    lines.push(`${pedestrian} ${houseNumber || ''}`)
+				lines.push(`${pedestrian} ${houseNumber || ''}`)
 			}
 
 			if (city) {
-			    lines.push(`${postcode ? postcode + ' ' : ''}${city}`)
+				lines.push(`${postcode ? postcode + ' ' : ''}${city}`)
 			} else if (village) {
-			    lines.push(`${postcode ? postcode + ' ' : ''}${village}`)
+				lines.push(`${postcode ? postcode + ' ' : ''}${village}`)
 			}
 
 			if (county) {
-			    lines.push(`${county}`)
+				lines.push(`${county}`)
 			}
 
 			if (state) {
-			    lines.push(`${state}`)
+				lines.push(`${state}`)
 			}
 
 			if (country) {
-			    lines.push(country)
+				lines.push(country)
 			}
 
 			if (lines.length === 0) {
 				return [t('maps', 'Unknown Place')]
 			}
 
-		    return lines
+			return lines
 		},
 	},
 }
@@ -109,40 +109,40 @@ export default {
 $transitionDuration: 0.3s;
 
 .osm-address {
-    position: relative;
-    width: 100%;
+	position: relative;
+	width: 100%;
 
-    .osm-address-text {
-        width: 100%;
-        min-height: 8em;
+	.osm-address-text {
+		width: 100%;
+		min-height: 8em;
 
-        .osm-address-line {
-            display: inline-block;
-            max-width: 100%;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
-    }
+		.osm-address-line {
+			display: inline-block;
+			max-width: 100%;
+			overflow: hidden;
+			text-overflow: ellipsis;
+		}
+	}
 
-    .loading {
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        opacity: 0;
-        visibility: hidden;
-        transition: opacity $transitionDuration, visibility 0s $transitionDuration;
-        background: #fff;
+	.loading {
+		position: absolute;
+		top: 0;
+		left: 0;
+		right: 0;
+		bottom: 0;
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		opacity: 0;
+		visibility: hidden;
+		transition: opacity $transitionDuration, visibility 0s $transitionDuration;
+		background: #fff;
 
-        &.visible {
-            opacity: 1;
-            visibility: visible;
-            transition: none;
-        }
-    }
+		&.visible {
+			opacity: 1;
+			visibility: visible;
+			transition: none;
+		}
+	}
 }
 </style>

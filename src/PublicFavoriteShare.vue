@@ -27,9 +27,9 @@
 				:favorite-categories="favoritesMappedByCategory"
 				:is-public-share="true"
 				:allow-favorite-edits="allowFavoriteEdits"
-				@addFavorite="addFavorite"
-				@updateFavorite="updateFavorite"
-				@deleteFavorite="deleteFavorite" />
+				@add-favorite="addFavorite"
+				@update-favorite="updateFavorite"
+				@delete-favorite="deleteFavorite" />
 		</AppContent>
 	</Content>
 </template>
@@ -85,7 +85,7 @@ export default {
 		// Place the footer in the app-navigation so it is not below the map
 		moveFooter() {
 			const footer = document.getElementsByTagName('footer')[0]
-			document.getElementById('app-navigation').appendChild(footer)
+			document.getElementById('app-navigation-vue').appendChild(footer)
 		},
 	},
 }
@@ -93,27 +93,27 @@ export default {
 
 <style lang="scss">
 #content {
-    height: 100%;
+	height: 100%;
 }
 
 * {
-    box-sizing: content-box;
+	box-sizing: content-box;
 }
 
 // Special CSS for placing the footer in the app-navigation
 #body-public #app-navigation {
-    ul {
-        margin-bottom: 70px;
-    }
+	ul {
+		margin-bottom: 70px;
+	}
 
-    footer {
-        display: block;
-        position: absolute;
-        bottom: 0;
-        width: 100%;
-        background-color: var(--color-main-background);
-        z-index: 100;
-        height: 65px;
-    }
+	footer {
+		display: block;
+		position: absolute;
+		bottom: 0;
+		width: 100%;
+		background-color: var(--color-main-background);
+		z-index: 100;
+		height: 65px;
+	}
 }
 </style>

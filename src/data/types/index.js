@@ -29,10 +29,10 @@ const LatLng = VueTypes.shape({
 
 const Favorite = VueTypes.shape({
 	id: VueTypes.number,
-	name: VueTypes.string,
-	comment: VueTypes.string,
+	name: VueTypes.oneOfType([VueTypes.string, null]),
+	comment: VueTypes.oneOfType([VueTypes.string, null]),
 	category: VueTypes.string,
-	extensions: VueTypes.string,
+	extensions: VueTypes.oneOfType([VueTypes.string, null]),
 	date_created: VueTypes.number,
 	date_modified: VueTypes.number,
 	lat: VueTypes.number,

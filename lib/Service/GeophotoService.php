@@ -105,6 +105,7 @@ class GeophotoService {
                 $filesById[] = $file_object;
             }
         }
+        shuffle($filesById);
         return $filesById;
     }
 
@@ -151,6 +152,7 @@ class GeophotoService {
             }
 
         }
+        shuffle($filesById);
         return $filesById;
     }
 

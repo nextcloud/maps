@@ -36,6 +36,30 @@ Vue.use(VueClipboard)
 'use strict'
 
 document.addEventListener('DOMContentLoaded', (event) => {
+	// Maps actions registrations (other apps that want to receive a position)
+	if (!window.OCA.Maps) {
+		window.OCA.Maps = {
+			mapActions: [],
+		}
+	}
+
+	window.OCA.Maps.registerMapAction = ({ label, callback, icon }) => {
+		const mapAction = {
+			label,
+			callback,
+			icon,
+		}
+
+		window.OCA.Maps.mapActions.push(mapAction)
+	}
+
+	window.OCA.Maps.registerMapAction({
+		label: 'lala2',
+		callback: (p) => { console.debug(p) },
+		icon: 'icon-phone',
+	})
+
+	// SIDEBAR
 	if (!window.OCA.Files) {
 		window.OCA.Files = {}
 	}

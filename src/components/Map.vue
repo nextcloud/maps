@@ -133,6 +133,7 @@ import { getLocale } from '@nextcloud/l10n'
 import { generateUrl } from '@nextcloud/router'
 import { getCurrentUser } from '@nextcloud/auth'
 import axios from '@nextcloud/axios'
+import { showError, showSuccess } from '@nextcloud/dialogs'
 
 import L from 'leaflet'
 import 'mapbox-gl/dist/mapbox-gl'
@@ -377,7 +378,7 @@ export default {
 				}, {
 					text: t('maps', 'Share this location'),
 					icon: generateUrl('/svg/core/actions/share?color=' + iconColor),
-					callback: () => {},
+					callback: this.contextShareLocation,
 				},
 			]
 			window.OCA.Maps.mapActions.forEach((action) => {
@@ -747,6 +748,16 @@ export default {
 		// favorites
 		contextAddFavorite(e) {
 			this.$emit('add-favorite', e.latlng)
+		},
+		async contextShareLocation(e) {
+			const geoLink = 'geo:' + e.latlng.lat.toFixed(6) + ',' + e.latlng.lng.toFixed(6)
+			try {
+				await this.$copyText(geoLink)
+				showSuccess(t('maps', 'Geo link ({geoLink}) copied to clipboard', { geoLink }))
+			} catch (error) {
+				console.debug(error)
+				showError(t('maps', 'Geo link could not be copied to clipboard'))
+			}
 		},
 		// contacts
 		placeContactClicked(e) {

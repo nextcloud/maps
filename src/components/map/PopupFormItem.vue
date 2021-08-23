@@ -46,7 +46,7 @@
 </template>
 
 <script>
-import VueTypes from 'vue-types'
+import * as VueTypes from 'vue-types'
 
 export default {
 	name: 'PopupFormItem',

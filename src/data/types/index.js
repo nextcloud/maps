@@ -20,7 +20,7 @@
  *
  */
 
-import VueTypes from 'vue-types'
+import * as VueTypes from 'vue-types'
 
 const LatLng = VueTypes.shape({
 	lat: VueTypes.number,

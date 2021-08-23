@@ -20,7 +20,7 @@
  *
  */
 
-import Vuex from 'vuex'
+import * as Vuex from 'vuex'
 import Vue from 'vue'
 import publicFavorites from './modules/publicFavorites'
 import map from './modules/map'

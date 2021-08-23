@@ -380,6 +380,20 @@ export default {
 					callback: () => {},
 				},
 			]
+			window.OCA.Maps.mapActions.forEach((action) => {
+				cmi.push({
+					text: action.label,
+					iconCls: action.icon,
+					callback: (e) => {
+						action.callback({
+							id: 'geo:' + e.latlng.lat + ',' + e.latlng.lng,
+							name: t('maps', 'Shared location'),
+							latitude: e.latlng.lat,
+							longitude: e.latlng.lng,
+						})
+					},
+				})
+			})
 			if (optionsController.nbRouters > 0 || getCurrentUser().isAdmin) {
 				const routingItems = [
 					'-',

@@ -19,6 +19,13 @@
 				<span class="icon-user" />
 				{{ t('maps', 'Add contact address') }}
 			</button>
+			<button v-for="action in mapActions"
+				:key="action.label"
+				:icon="action.icon"
+				@click="actionCallback(action)">
+				<span :class="{ [action.icon]: true }" />
+				<span>{{ action.label }}</span>
+			</button>
 		</LPopup>
 	</LMarker>
 </template>
@@ -53,6 +60,7 @@ export default {
 			addressLoading: false,
 			address: null,
 			formattedAddress: '',
+			mapActions: window.OCA.Maps.mapActions,
 		}
 	},
 
@@ -89,6 +97,15 @@ export default {
 			}).then(() => {
 				this.addressLoading = false
 			})
+		},
+		actionCallback(action) {
+			const object = {
+				id: 'geo:' + this.latLng.lat + ',' + this.latLng.lng,
+				name: this.formattedAddress,
+				latitude: this.latLng.lat,
+				longitude: this.latLng.lng,
+			}
+			action.callback(object)
 		},
 	},
 }

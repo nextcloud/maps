@@ -35,7 +35,25 @@ Vue.use(VueClipboard)
 // eslint-disable-next-line
 'use strict'
 
+// Maps actions registrations (other apps that want to receive a position)
+if (!window.OCA.Maps) {
+	window.OCA.Maps = {
+		mapActions: [],
+	}
+}
+
+window.OCA.Maps.registerMapsAction = ({ label, callback, icon }) => {
+	const mapAction = {
+		label,
+		callback,
+		icon,
+	}
+
+	window.OCA.Maps.mapActions.push(mapAction)
+}
+
 document.addEventListener('DOMContentLoaded', (event) => {
+	// SIDEBAR
 	if (!window.OCA.Files) {
 		window.OCA.Files = {}
 	}

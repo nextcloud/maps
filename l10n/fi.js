@@ -195,6 +195,7 @@ OC.L10N.register(
     "Delete all" : "Poista kaikki",
     "Sort by name" : "Järjestä nimen mukaan",
     "Sort by date" : "Järjestä päiväyksen mukaan",
-    "Settings" : "Asetukset"
+    "Settings" : "Asetukset",
+    "The True Size of Africa" : "Afrikan todellinen koko"
 },
 "nplurals=2; plural=(n != 1);");

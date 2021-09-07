@@ -410,7 +410,9 @@ class PhotofilesService {
                 $pos = strpos($value, '/');
                 if ($pos !== false){
                     $temp = explode('/',$value);
-                    $gps[$key] = $temp[0] / $temp[1];
+                    if (is_numeric($temp[0]) && is_numeric($temp[1]) && $temp[1] != 0) {
+                        $gps[$key] = $temp[0] / $temp[1];
+                    }
                 }
             }
             $file_object = new \stdClass();

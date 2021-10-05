@@ -251,7 +251,7 @@ OC.L10N.register(
     "OSRM Website" : "Webová stránka OSRM",
     "OSRM settings" : "Nastavení pro OSRM",
     "An OSRM server URL looks like this : https://my.osrm.server.org:5000/route/v1" : "URL adresa OSRM serveru vypadá nějak takto: https://my.osrm.server.org:5000/route/v1",
-    "Leave URL fields empty to disable OSRM routing provider." : "Pro vypnutí poskytovatele provádění výpočtů tras přes službu OSRM nevyplňujte kolonku URL adresa.",
+    "Leave URL fields empty to disable OSRM routing provider." : "Pokud chcete vypnout poskytovatele provádění výpočtů tras přes službu OSRM, nevyplňujte kolonku URL adresa.",
     "OSRM server URL (car profile)" : "URL adresa OSRM serveru (profil pro automobil)",
     "OSRM server URL (bicycle profile)" : "URL adresa OSRM serveru (profil pro jízdní kolo)",
     "OSRM server URL (foot profile)" : "URL adresa OSRM serveru (profil pro pěší)",
@@ -263,8 +263,8 @@ OC.L10N.register(
     "GraphHopper API key (mandatory if main server used)" : "Klíč k aplikačnímu programovému rozhraní (API) služby GraphHopper (povinné, pokud je použit hlavní server)",
     "Mapbox Website" : "Webová stránka Mapbox",
     "Mapbox settings" : "Nastavení pro Mapbox",
-    "Set the API key to use Mapbox routing service." : "Pro provádění výpočtů tras prostřednictvím služby Mapbox nastavte klíč k jejímu aplikačnímu program. rozhraní (API).",
-    "Leave empty to disable." : "Pro vypnutí ponechte nevyplněné.",
+    "Set the API key to use Mapbox routing service." : "Pokud chcete provádět výpočty tras prostřednictvím služby Mapbox, nastavte klíč k jejímu aplikačnímu program. rozhraní (API).",
+    "Leave empty to disable." : "Pokud chcete vypnout, ponechte nevyplněné.",
     "Mapbox API key" : "Klíč aplikačnímu program. rozhraní (API) služby Mapbox",
     "Search…" : "Hledat…",
     "Your favorites" : "Vaše oblíbené",
@@ -285,7 +285,7 @@ OC.L10N.register(
     "Settings" : "Nastavení",
     "Track my position" : "Sledovat mou pozici",
     "Display time filter slider" : "Zobrazit posuvník časového filtru",
-    "Keep in mind that map projections always distort sizes of countries. The standard Mercator projection is particularly biased. Read more at:" : "Mějte na paměti, že projekce mapy vždy pokřiví velikost zemí. Standardní projekce Mercator je hlavně postižena. Více si přečtete na:",
+    "Keep in mind that map projections always distort sizes of countries. The standard Mercator projection is particularly biased. Read more at:" : "Mějte na paměti, že projekce mapy vždy pokřiví velikost zemí. Nejvíce se to projevuje na standardní projekci Mercator. Více k tématu:",
     "The True Size of Africa" : "Skutečná velikost Afriky"
 },
 "nplurals=4; plural=(n == 1 && n % 1 == 0) ? 0 : (n >= 2 && n <= 4 && n % 1 == 0) ? 1: (n % 1 != 0 ) ? 2 : 3;");

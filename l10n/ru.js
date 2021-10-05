@@ -208,6 +208,7 @@ OC.L10N.register(
     "until {date}" : "до {date}",
     "Closed" : "Закрыто",
     "opens at {date}" : "открывается {date}",
+    "Point encoded in: " : "Точка закодирована в:",
     "This place" : "Это место",
     "Failed to get favorites" : "Не удалось получить избранное",
     "Failed to create favorite" : "Не удалось создать избранное",

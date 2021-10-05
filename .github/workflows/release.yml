@@ -53,19 +53,19 @@ jobs:
           sudo apt install make openssl -y
           echo "###### installing nextcloud"
           mkdir ~/html
-          git clone https://github.com/nextcloud/server.git --recursive --depth 1 -b master ~/html/nextcloud
+          git clone https://github.com/nextcloud/server.git --recursive --depth 1 -b stable21 ~/html/nextcloud
           sed -i $'s|if (substr($fullPath, 0, strlen($root) + 1) === $root . \'/\')|if (is_string($root) and substr($fullPath, 0, strlen($root) + 1) === $root . \'/\')|g' ~/html/nextcloud/lib/autoloader.php
           cp -r $GITHUB_WORKSPACE ~/html/nextcloud/apps/${APP_ID}
           php ~/html/nextcloud/occ maintenance:install --database "sqlite" --admin-user "admin" --admin-pass "password"
-          php ~/html/nextcloud/occ app:enable ${APP_ID}
-          php ~/html/nextcloud/occ maintenance:mode --off
           cd ~/html/nextcloud/apps/${APP_ID}
           echo "###### make"
           webserveruser=runner occ_dir=~/html/nextcloud make > /dev/null
+          php ~/html/nextcloud/occ app:enable ${APP_ID}
+          php ~/html/nextcloud/occ maintenance:mode --off
           echo "###### make appstore"
           tag=${{ steps.tag.outputs.currenttag }}
           version=${tag/v/}
-          webserveruser=runner occ_dir=~/html/nextcloud version=$version make build_release
+          webserveruser=runner occ_dir=~/html/nextcloud version=$version make appstore
           echo "##[set-output name=version;]$version"
         env:
           APP_CRT: ${{ secrets.APP_CRT }}

@@ -35,6 +35,8 @@ OC.L10N.register(
     "Link" : "Saite",
     "Description" : "Apraksts",
     "End" : "Beigas",
+    "Your photos" : "Jūsu bildes",
+    "Hide all" : "Slēpt visu",
     "Sort by name" : "Kārtot pēc nosaukuma",
     "Sort by date" : "Kārtot pēc datuma",
     "Settings" : "Iestatījumi"

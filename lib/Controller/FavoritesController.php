@@ -213,7 +213,7 @@ class FavoritesController extends Controller {
     /**
      * @NoAdminRequired
      */
-    public function exportFavorites($categoryList = null, $begin, $end, $all = false) {
+    public function exportFavorites($begin, $end, $categoryList = null, $all = false) {
         // sorry about ugly categoryList management:
         // when an empty list is passed in http request, we get null here
         if ($categoryList === null or (is_array($categoryList) and count($categoryList) === 0)) {

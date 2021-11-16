@@ -63,6 +63,8 @@ import TracksController from './tracksController';
 
 import { brify, getUrlParameter, formatAddress } from './utils';
 
+import addressFormatter from '@fragaria/address-formatter';
+
 (function($, OC) {
     var geoLinkController = {
         marker: null,
@@ -1632,6 +1634,15 @@ import { brify, getUrlParameter, formatAddress } from './utils';
             this.search(str, this.handleSearchResult, this);
         },
 
+
+        formatAddress: function(searchResult) {
+            const displayName = addressFormatter.format(searchResult.address, {
+                countryCode: OC.getLocale(),
+                output: 'array',
+            });
+            return displayName.join(', ');
+        },
+
         handleSearchResult: function(results, that, isCoordinateSearch = false, searchString = '') {
             if (results.length === 0) {
                 OC.Notification.showTemporary(t('maps', 'No search result'));
@@ -1646,7 +1657,8 @@ import { brify, getUrlParameter, formatAddress } from './utils';
                 newData.push(...that.currentLocalAutocompleteData);
                 for (var i=0; i < results.length; i++) {
                     if (isCoordinateSearch && !results[i].maps_type) {
-                        const label = results[i].display_name + ' (' + searchString + ')'
+                        const displayName = searchController.formatAddress(results[i]);
+                        const label = displayName + ' (' + searchString + ')'
                         newData.push({
                             type: 'address',
                             label: label,
@@ -1665,10 +1677,11 @@ import { brify, getUrlParameter, formatAddress } from './utils';
                             lng: results[i].lon
                         });
                     } else {
+                        const displayName = searchController.formatAddress(results[i]);
                         newData.push({
                             type: results[i].maps_type ?? 'address',
-                            label: results[i].display_name,
-                            value: results[i].display_name,
+                            label: displayName,
+                            value: displayName,
                             result: results[i],
                             lat: results[i].lat,
                             lng: results[i].lon

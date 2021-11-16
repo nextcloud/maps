@@ -33,9 +33,10 @@
   ],
   "dependencies": {
     "@fortawesome/fontawesome-free": "^5.12.1",
+    "@fragaria/address-formatter": "^2.6.4",
+    "@nextcloud/moment": "^1.1.1",
     "@nextcloud/router": "^1.0.0",
     "@nextcloud/vue": "^1.1.0",
-    "@nextcloud/moment": "^1.1.1",
     "d3": "^3.5.17",
     "i18next-client": "^1.11.4",
     "leaflet": "^1.7.1",

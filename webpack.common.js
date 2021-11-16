@@ -23,7 +23,13 @@ module.exports = {
 			},
 			{
 				test: /\.scss$/,
-				use: ['vue-style-loader', 'css-loader', 'sass-loader'],
+				use: ['vue-style-loader', 'css-loader', {
+					loader: 'sass-loader',
+					options: {
+						// Prefer `node-sass`
+						implementation: require('node-sass'),
+					},
+				}],
 			},
 			{
 				test: /src\/.*\.(js|vue)$/,

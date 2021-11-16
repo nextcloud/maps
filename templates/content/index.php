@@ -29,7 +29,7 @@ style('maps', 'style');
 ?>
 <div id="search">
     <form id="search-form">
-        <input type="text" placeholder="<?php p($l->t('Search…')); ?>" id="search-term" />
+        <input type="text" placeholder="<?php p($l->t('Search…')); ?>" id="search-term" value="<?php p($_['search']); ?>" />
         <input type="submit" id="search-submit" value="" class="icon-search">
         <button id="route-submit" class=""><i class="fas fa-route" aria-hidden="true"></i></button>
     </form>

@@ -116,11 +116,12 @@ import { brify, getUrlParameter, formatAddress } from './utils';
             });
         },
 
-        restoreOptions: function () {
+        restoreOptions: function (afterRestore) {
             var that = this;
             var url = generateUrl('/apps/maps/getOptionsValues');
             var req = {};
             var optionsValues = {};
+            afterRestore = afterRestore || function() {};
             $.ajax({
                 type: 'POST',
                 url: url,
@@ -366,10 +367,15 @@ import { brify, getUrlParameter, formatAddress } from './utils';
                 //if (optionsValues.hasOwnProperty('routingEnabled') && optionsValues.routingEnabled === 'true') {
                 //    routingController.toggleRouting();
                 //}
+
+                afterRestore();
+
             }).fail(function() {
                 OC.Notification.showTemporary(
                     t('maps', 'Failed to restore options values')
                 );
+
+                afterRestore();
             });
         }
     };
@@ -2139,8 +2145,14 @@ import { brify, getUrlParameter, formatAddress } from './utils';
         searchController.initController(mapController.map);
 
         // once controllers have been set/initialized, we can restore option values from server
-        optionsController.restoreOptions();
-        geoLinkController.showLinkLocation();
+        optionsController.restoreOptions(function() {
+            geoLinkController.showLinkLocation();
+            if ($('#search-term').val() !== '') {
+                mapController.locControl.stop();
+                searchController.setSearchAutocomplete(searchController.SEARCH_BAR);
+                searchController.submitSearchForm();
+            }
+        });
 
         // Popup
         $(document).on('click', '#opening-hours-header', function() {
@@ -2240,4 +2252,3 @@ import { brify, getUrlParameter, formatAddress } from './utils';
     });
 
 })(jQuery, OC);
-

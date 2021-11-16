@@ -55,6 +55,8 @@ class PageController extends Controller {
         $this->eventDispatcher->dispatch(LoadViewer::class, new LoadViewer());
 
         $params = array('user' => $this->userId);
+        $searchString = $this->request->getParam('search');
+        $params['search'] = $searchString;
         $this->initialStateService->provideInitialState($this->appName, 'photos', $this->config->getAppValue('photos', 'enabled', 'no') === 'yes');
         $response = new TemplateResponse('maps', 'index', $params);
 

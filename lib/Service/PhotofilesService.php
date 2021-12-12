@@ -472,8 +472,8 @@ class PhotofilesService {
             'DateTimeOriginal' => $pelDateTimeOriginal->getValue(PelEntryTime::EXIF_STRING),
         ];
         $pelIfdGPS = $pelIfd0->getSubIfd(PelIfd::GPS);
-        if (!is_null($pelIfdGPS) && !is_null($pelIfdGPS->getEntry(PelTag::GPS_LATITUDE )) && !is_null( $pelIfdGPS->getEntry(PelTag::GPS_LONGITUDE))) {
-
+        if (!is_null($pelIfdGPS) && !is_null($pelIfdGPS->getEntry(PelTag::GPS_LATITUDE )) && !is_null( $pelIfdGPS->getEntry(PelTag::GPS_LONGITUDE)) && !is_null($pelIfdGPS->getEntry(PelTag::GPS_LATITUDE_REF))) {
+            
             $lat = $pelIfdGPS->getEntry(PelTag::GPS_LATITUDE)->getValue();
             if ((int) $lat[0][1] !==0 && (int) $lat[1][1] !==0 && (int) $lat[2][1] !==0) {
                 $exif['GPSLatitudeRef'] = $pelIfdGPS->getEntry(PelTag::GPS_LATITUDE_REF)->getValue();

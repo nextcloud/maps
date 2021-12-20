@@ -78,7 +78,7 @@ $spacing: 0.5em;
     .input-wrapper {
         width: 100%;
 
-        /deep/ {
+        &::v-deep {
             .textarea {
                 resize: vertical;
             }

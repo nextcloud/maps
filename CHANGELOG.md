@@ -5,6 +5,11 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
+## 0.1.10 – 2021-12-20
+### Fixed
+- Add padding on icons/name
+  [#654](https://github.com/nextcloud/maps/pull/654) @RobinFrcd
+
 ## 0.1.9 – 2021-06-29
 ### Added
 - GitHub automated release action

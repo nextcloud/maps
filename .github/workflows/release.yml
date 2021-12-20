@@ -12,10 +12,13 @@ jobs:
       APP_ID: maps
     runs-on: ubuntu-latest
     steps:
-      - name: Use Node 12
+      - name: Use Node 14
         uses: actions/setup-node@v1
         with:
-          node-version: 12
+          node-version: 14
+
+     - name: Set up npm
+        run: npm i -g npm
 
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
@@ -53,7 +56,7 @@ jobs:
           sudo apt install make openssl -y
           echo "###### installing nextcloud"
           mkdir ~/html
-          git clone https://github.com/nextcloud/server.git --recursive --depth 1 -b stable21 ~/html/nextcloud
+          git clone https://github.com/nextcloud/server.git --recursive --depth 1 -b master ~/html/nextcloud
           sed -i $'s|if (substr($fullPath, 0, strlen($root) + 1) === $root . \'/\')|if (is_string($root) and substr($fullPath, 0, strlen($root) + 1) === $root . \'/\')|g' ~/html/nextcloud/lib/autoloader.php
           cp -r $GITHUB_WORKSPACE ~/html/nextcloud/apps/${APP_ID}
           php ~/html/nextcloud/occ maintenance:install --database "sqlite" --admin-user "admin" --admin-pass "password"

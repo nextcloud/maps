@@ -1,6 +1,7 @@
 { "translations": {
     "Maps" : "地図",
     "Personal" : "個人",
+    "This Place" : "この場所",
     "Name" : "名前",
     "Category" : "カテゴリ",
     "Comment" : "コメント",
@@ -74,6 +75,8 @@
     "Remove geo data" : "位置情報を削除",
     "Click on the map to move the photo, press ESC to cancel" : "地図をクリックして写真を移動, ESCでキャンセルします",
     "Failed to load photos" : "写真を読み込めませんでした",
+    "Photo files" : "写真ファイル",
+    "Photo folders" : "写真フォルダー",
     "Choose pictures to place" : "配置する写真を選択",
     "Choose directory of pictures to place" : "配置する写真のディレクトリを選択",
     "{nb} photos placed" : "{nb} 枚の写真が配置されました",

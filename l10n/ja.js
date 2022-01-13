@@ -60,6 +60,7 @@ OC.L10N.register(
     "Category deleted" : "カテゴリ削除",
     "Failed to rename category" : "カテゴリ名を変更できませんでした",
     "Failed to delete category favorites" : "お気に入りカテゴリを削除できませんでした",
+    "Click on the map to add a favorite, press ESC to cancel" : "マップをクリックしてお気に入りに追加、ESCでキャンセルします",
     "Failed to add favorite" : "お気に入りに追加できませんでした",
     "No name" : "名前なし",
     "Submit" : "送信",

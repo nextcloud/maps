@@ -172,7 +172,7 @@ class DevicesController extends Controller {
     /**
      * @NoAdminRequired
      */
-    public function exportDevices($deviceIdList=null, $begin, $end, $all=false) {
+    public function exportDevices($deviceIdList, $begin, $end, $all=false) {
         // sorry about ugly deviceIdList management:
         // when an empty list is passed in http request, we get null here
         if ($deviceIdList === null or (is_array($deviceIdList) and count($deviceIdList) === 0)) {

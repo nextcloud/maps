@@ -1,6 +1,6 @@
 {
     "require": {
-        "lsolesen/pel": "^0.9.10"
+        "lsolesen/pel": "^0.9.11"
     },
     "require-dev": {
         "christophwurst/nextcloud_testing": "^0.9.1"

@@ -69,27 +69,27 @@ class ExifGeoData
     /**
      * @var int|null
      */
-    private $timestamp = null;
+    private ?int $timestamp = null;
 
     /**
      * @var float|null
      */
-    private $latitude = null;
+    private ?float $latitude = null;
 
     /**
      * @var float|null
      */
-    private $longitude = null;
+    private ?float $longitude = null;
 
     /**
      * @var bool|null
      */
-    private $is_valid = null;
+    private ?bool $is_valid = null;
 
     /**
      * @var ?array
      */
-    protected $exif_data = null;
+    protected ?array $exif_data = null;
 
     /**
      * @param string $path
@@ -136,7 +136,8 @@ class ExifGeoData
             return [];
         }
         $exif = [
-            self::TIMESTAMP => $pelDateTimeOriginal->getValue(PelEntryTime::EXIF_STRING)
+            # self::TIMESTAMP => $pelDateTimeOriginal->getValue(PelEntryTime::EXIF_STRING) // for pel 0.9.6
+			self::TIMESTAMP => $pelDateTimeOriginal->getValue() // for old pel >= 0.9.11
         ];
         $pelIfdGPS = $pelIfd0->getSubIfd(PelIfd::GPS);
         if (!is_null($pelIfdGPS) && !is_null($pelIfdGPS->getEntry(PelTag::GPS_LATITUDE )) && !is_null( $pelIfdGPS->getEntry(PelTag::GPS_LONGITUDE))) {

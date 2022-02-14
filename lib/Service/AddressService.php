@@ -13,15 +13,14 @@
 namespace OCA\Maps\Service;
 
 use \OCA\Maps\BackgroundJob\LookupMissingGeoJob;
+use OCP\ICacheFactory;
 use \OCP\ILogger;
-use \OCP\IConfig;
 use \OCP\IDBConnection;
 use \OCP\BackgroundJob\IJobList;
 use \OCP\DB\QueryBuilder\IQueryBuilder;
+use OCP\IMemcache;
 use \Sabre\VObject\Reader;
 use \OCP\Files\IAppData;
-use \OCP\Files\SimpleFS\ISimpleFile;
-use \OCP\Files\NotFoundException;
 
 /**
  * Class AddressService
@@ -45,11 +44,14 @@ class AddressService {
     private $jobList;
     private $appData;
 
-    public function __construct(IConfig $config, ILogger $logger, IJobList $jobList,
+	/** @var IMemcache */
+	private $memcache;
+
+    public function __construct(ICacheFactory $cacheFactory, ILogger $logger, IJobList $jobList,
                                 IAppData $appData, IDBConnection $dbconnection) {
         $this->dbconnection = $dbconnection;
         $this->qb = $dbconnection->getQueryBuilder();
-        $this->config = $config;
+        $this->memcache = $cacheFactory->createLocal('maps');
         $this->logger = $logger;
         $this->jobList = $jobList;
         $this->appData = $appData;
@@ -155,7 +157,7 @@ class AddressService {
     // looks up the address on external provider returns lat, lon, lookupstate
     // do lookup only if last one occured more than one second ago
     private function lookupAddressExternal($adr) {
-        if (time() - intval($this->config->getAppValue('maps', 'lastAddressLookup')) >= 1) {
+        if (time() - intval($this->memcache->get('lastAddressLookup')) >= 1) {
             $opts = [
                 'http' => [
                     'method' => 'GET',
@@ -180,7 +182,7 @@ class AddressService {
                 $result = \json_decode($result_json, true);
                 if (!(key_exists('request_failed', $result) AND $result['request_failed'])) {
                     $this->logger->debug('External looked up address: ' . $adr . ' with result' . print_r($result, true));
-                    $this->config->setAppValue('maps', 'lastAddressLookup', time());
+                    $this->memcache->set('lastAddressLookup', time());
                     if (sizeof($result) > 0) {
                         if (key_exists('lat', $result[0]) AND
                             key_exists('lon', $result[0])

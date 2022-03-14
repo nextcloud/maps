@@ -1,5 +1,6 @@
 <template>
 	<LMarker :lat-lng="latLng"
+		:icon="icon"
 		@ready="onMarkerReady">
 		<LPopup :options="popupOptions"
 			@ready="onPopupReady">
@@ -61,6 +62,9 @@ export default {
 			address: null,
 			formattedAddress: '',
 			mapActions: window.OCA.Maps.mapActions,
+			icon: L.icon({
+				iconUrl: 'noIcon',
+			}),
 		}
 	},
 

@@ -5,6 +5,57 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
+## 0.1.10 – 2021-12-20
+### Fixed
+- Add padding on icons/name
+  [#654](https://github.com/nextcloud/maps/pull/654) @RobinFrcd
+
+## 0.1.9 – 2021-06-29
+### Added
+- GitHub automated release action
+
+### Fixed
+- fix tracks not loading
+  [#587](https://github.com/nextcloud/maps/pull/587) @Ablu
+  [#574](https://github.com/nextcloud/maps/issues/574) @Tazzios
+- fix images not loading
+  [#559](https://github.com/nextcloud/maps/pull/559) @tacruc
+  [#543](https://github.com/nextcloud/maps/issues/543) @beardhatcode
+- fix db-related install problems on NC 21
+  [#568](https://github.com/nextcloud/maps/pull/568) @eneiluj
+  [#541](https://github.com/nextcloud/maps/issues/541) @J0WI
+
+## 0.1.8 – 2020-10-03
+### Fixed
+- controllers not being declared soon enough in some cases
+- OC.disallowNavigationBarSlideGesture being absent in some cases
+
+## 0.1.7 – 2020-10-01
+### Added
+- favorite sharing by public link
+[#217](https://github.com/nextcloud/maps/pull/217) @paulschwoerer
+- import favorites from Google Maps/Takeout GeoJSON files
+[#338](https://github.com/nextcloud/maps/pull/338) @simonspa
+- handle coordinate search
+[#420](https://github.com/nextcloud/maps/pull/420) @tacruc @eneiluj
+
+### Changed
+- use NC Viewer and show right sidebar for displayed photo file (with Sharing and Talk tabs)
+[#418](https://github.com/nextcloud/maps/pull/418) @tacruc
+- adapt to NC 20
+
+### Fixed
+- image count when > 1000
+[#378](https://github.com/nextcloud/maps/pull/378) @wronny
+- catch PEL warnings
+[#369](https://github.com/nextcloud/maps/pull/369) @tacruc
+- mistake in Migrations preventing app installation in some cases
+[#453](https://github.com/nextcloud/maps/pull/453) @eneiluj
+- correctly load inital category states
+[#462](https://github.com/nextcloud/maps/pull/462) @eneiluj
+- handle storage exceptions on occ scan import
+[#436](https://github.com/nextcloud/maps/pull/436) @vwbusguy
+
 ## 0.1.6 – 2020-03-09
 ### Added
 - dialog to choose wether to place photo files or directories

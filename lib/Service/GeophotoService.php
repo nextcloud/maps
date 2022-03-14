@@ -94,7 +94,8 @@ class GeophotoService {
                 $file_object->basename = $isRoot ? '' : $file->getName();
                 $file_object->filename = $this->normalizePath($path);
                 $file_object->etag = $cacheEntry->getEtag();
-                $file_object->permissions = $file->getPermissions();
+//Not working for NC21 as Viewer requires String representation of permissions
+//                $file_object->permissions = $file->getPermissions();
                 $file_object->type = $file->getType();
                 $file_object->mime = $file->getMimetype();
                 $file_object->lastmod = $file->getMTime();
@@ -104,6 +105,7 @@ class GeophotoService {
                 $filesById[] = $file_object;
             }
         }
+        shuffle($filesById);
         return $filesById;
     }
 
@@ -150,6 +152,7 @@ class GeophotoService {
             }
 
         }
+        shuffle($filesById);
         return $filesById;
     }
 

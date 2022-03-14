@@ -291,7 +291,7 @@ TracksController.prototype = {
             html: ''
         });
         this.tracks[track.id] = track;
-        this.tracks[track.id].metadata = $.parseJSON(track.metadata);
+        this.tracks[track.id].metadata = track.metadata === '' ? {} : $.parseJSON(track.metadata);
         this.tracks[track.id].icon = L.divIcon(L.extend({
             html: '<div class="thumbnail"></div>​',
             className: 'leaflet-marker-track track-marker track-marker-'+track.id

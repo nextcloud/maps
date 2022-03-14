@@ -254,7 +254,7 @@ OC.L10N.register(
     "Leave URL fields empty to disable OSRM routing provider." : "Laat URL velden leeg om de OSRM routing provider uit te schakelen.",
     "OSRM server URL (car profile)" : "OSRM server URL (autoprofiel)",
     "OSRM server URL (bicycle profile)" : "OSRM server URL (rijwielprofiel)",
-    "OSRM server URL (foot profile)" : "OSRM server URL (foot profile)",
+    "OSRM server URL (foot profile)" : "OSRM server URL (wandelprofiel)",
     "Show OSRM demo server" : "Toon OSRM demoserver",
     "Graphhopper Website" : "Graphhopper Website",
     "GraphHopper settings" : "GraphHopper instellingen",

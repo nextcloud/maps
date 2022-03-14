@@ -78,15 +78,17 @@ $spacing: 0.5em;
 	.input-wrapper {
 		width: 100%;
 
-		.textarea {
-			resize: vertical;
-		}
+		&::v-deep {
+			.textarea {
+				resize: vertical;
+			}
 
-		.input,
-		.textarea {
-			display: block;
-			width: 100%;
-			flex: 0;
+			.input,
+			.textarea {
+				display: block;
+				width: 100%;
+				flex: 0;
+			}
 		}
 	}
 }

@@ -66,7 +66,7 @@ export default {
 		width: 100%;
 	}
 
-	.buttons {
+	&::v-deep .buttons {
 		display: flex;
 	}
 }

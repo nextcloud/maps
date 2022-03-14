@@ -183,17 +183,21 @@ class AddressService {
                 if (!(key_exists('request_failed', $result) AND $result['request_failed'])) {
                     $this->logger->debug('External looked up address: ' . $adr . ' with result' . print_r($result, true));
                     $this->memcache->set('lastAddressLookup', time());
-                    if (sizeof($result) > 0) {
-                        if (key_exists('lat', $result[0]) AND
-                            key_exists('lon', $result[0])
+                    $lat = null;
+                    $lon = null;
+                    foreach ($result as $addr) {
+                        if (key_exists('lat', $addr) AND
+                            key_exists('lon', $addr)
                         ) {
-                            return [
-                                $result[0]['lat'],
-                                $result[0]['lon'], true
-                            ];
+                            if (is_null($lat) OR 
+                                (key_exists('class', $addr) AND 
+                                    ($addr['class'] == "building" OR $addr['class'] == "place"))) {
+                                $lat = $addr['lat'];
+                                $lon = $addr['lon'];
+                            }
                         }
                     }
-                    return [null, null, true];
+                    return [$lat, $lon, true];
                 }
             }
             $this->logger->debug('Externally looked failed');

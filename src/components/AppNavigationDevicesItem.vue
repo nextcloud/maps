@@ -41,7 +41,8 @@
 				{{ t('maps', 'Delete all') }}
 			</ActionButton>
 		</template>
-		<template #default>
+		<template slot="default">
+			<b v-show="false">dummy</b>
 			<AppNavigationDeviceItem
 				v-for="device in sortedDevices"
 				:key="device.id"

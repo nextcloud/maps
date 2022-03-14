@@ -26,7 +26,8 @@
 				{{ t('maps', 'Sort by date') }}
 			</ActionButton>
 		</template>
-		<template #default>
+		<template slot="default">
+			<b v-show="false">dummy</b>
 			<AppNavigationTrackItem
 				v-for="track in sortedTracks"
 				:key="track.id"

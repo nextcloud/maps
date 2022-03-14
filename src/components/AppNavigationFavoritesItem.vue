@@ -43,7 +43,7 @@
 				{{ t('maps', 'Import') }}
 			</ActionButton>
 		</template>
-		<template #default>
+		<template slot="default">
 			<AppNavigationNew
 				v-if="enabled"
 				:text="addFavoriteText"

@@ -25,7 +25,8 @@
 				{{ t('maps', 'Zoom') }}
 			</ActionButton>
 		</template>
-		<template #default>
+		<template slot="default">
+			<b v-show="false">dummy</b>
 			<AppNavigationItem
 				v-for="(g, gid) in groups"
 				:key="gid"

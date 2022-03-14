@@ -64,7 +64,7 @@
 </template>
 
 <script>
-import * as VueTypes from 'vue-types'
+import VueTypes from 'vue-types'
 import Popup from './Popup'
 import PopupFormItem from './PopupFormItem'
 import Types from '../../data/types'

@@ -36,7 +36,7 @@
 </template>
 
 <script>
-import * as VueTypes from 'vue-types'
+import VueTypes from 'vue-types'
 
 export default {
 	name: 'Popup',

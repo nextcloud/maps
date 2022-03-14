@@ -89,7 +89,7 @@
 
 <script>
 import { DivIcon, latLngBounds } from 'leaflet'
-import * as VueTypes from 'vue-types'
+import VueTypes from 'vue-types'
 
 import { LControlScale, LControlZoom, LFeatureGroup, LMap, LMarker, LPopup, LTileLayer } from 'vue2-leaflet'
 import LMarkerCluster from 'vue2-leaflet-markercluster'

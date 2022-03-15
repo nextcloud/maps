@@ -1,33 +1,34 @@
 {
     "_readme": [
         "This file locks the dependencies of your project to a known state",
-        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
+        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "751ce5aa3e6b31e01c1ddf2545d8a470",
+    "content-hash": "6a79ebd98196d94ba31fdf886e5496be",
     "packages": [
         {
             "name": "lsolesen/pel",
-            "version": "0.9.7",
+            "version": "0.9.11",
             "source": {
                 "type": "git",
                 "url": "https://github.com/pel/pel.git",
-                "reference": "0e7b8717ea681fc682749c4b73226c4c6fcc7362"
+                "reference": "3229f133f9403894fd77de7832b25aead8164221"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/pel/pel/zipball/0e7b8717ea681fc682749c4b73226c4c6fcc7362",
-                "reference": "0e7b8717ea681fc682749c4b73226c4c6fcc7362",
+                "url": "https://api.github.com/repos/pel/pel/zipball/3229f133f9403894fd77de7832b25aead8164221",
+                "reference": "3229f133f9403894fd77de7832b25aead8164221",
                 "shasum": ""
             },
             "require": {
-                "php": ">=5.4.0"
+                "php": ">=7.1.0"
             },
             "require-dev": {
+                "ext-exif": "*",
                 "ext-gd": "*",
-                "phpunit/phpunit": ">=4.8.36 <8",
-                "satooshi/php-coveralls": "1.0.*",
-                "squizlabs/php_codesniffer": "^3.0.0"
+                "php-coveralls/php-coveralls": ">2.4",
+                "squizlabs/php_codesniffer": ">3.5",
+                "symfony/phpunit-bridge": "^4 || ^5"
             },
             "type": "library",
             "autoload": {
@@ -59,7 +60,11 @@
                 "exif",
                 "image"
             ],
-            "time": "2019-12-03T15:35:01+00:00"
+            "support": {
+                "issues": "https://github.com/pel/pel/issues",
+                "source": "https://github.com/pel/pel/tree/0.9.11"
+            },
+            "time": "2022-02-04T15:03:47+00:00"
         }
     ],
     "packages-dev": [],
@@ -69,5 +74,6 @@
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": [],
-    "platform-dev": []
+    "platform-dev": [],
+    "plugin-api-version": "2.0.0"
 }

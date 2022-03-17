@@ -36,13 +36,14 @@
 				:allow-collapse="false"
 				:force-menu="false"
 				@click="onGroupClick(gid)">
-				<CounterBubble v-show="enabled && contacts.length && g.enabled"
+				<CounterBubble v-show="enabled && g.enabled"
 					slot="counter">
 					{{ g.counter > 99 ? '99+' : g.counter }}
 				</CounterBubble>
 				<template slot="actions">
-					<ActionButton v-if="enabled && contacts.length && g.enabled"
+					<ActionButton v-if="enabled && g.enabled"
 						icon="icon-search"
+						:disabled="!g.enabled || g.counter === 0"
 						:close-after-click="true"
 						@click="onZoomGroupClick(gid)">
 						{{ t('maps', 'Zoom') }}

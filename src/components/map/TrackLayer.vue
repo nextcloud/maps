@@ -23,7 +23,7 @@
 				<span v-if="dateBegin">{{ dateBegin }}</span>
 			</div>
 		</LTooltip>
-		<LMarker
+		<LMarker v-if="firstPoint"
 			:icon="markerIcon"
 			:lat-lng="firstPoint" />
 		<LFeatureGroup v-for="(line, i) in lines"
@@ -133,19 +133,22 @@ export default {
 			let firstPoint = null
 			if (this.track.data.tracks.length > 0
 				&& this.track.data.tracks[0].segments.length > 0
-				&& this.track.data.tracks[0].segments[0].points.length > 0
-				&& this.track.data.tracks[0].segments[0].points[0].timestamp) {
+				&& this.track.data.tracks[0].segments[0].points.length > 0) {
 				firstPoint = this.track.data.tracks[0].segments[0].points[0]
 			}
 			if (this.track.data.routes.length > 0
 				&& this.track.data.routes[0].points.length > 0
-				&& this.track.data.routes[0].points[0].timestamp
-				&& (firstPoint === null || this.track.data.routes[0].points[0].timestamp < firstPoint.timestamp)) {
+				&& (firstPoint === null
+					|| (!firstPoint.timestamp && this.track.data.routes[0].points[0].timestamp)
+					|| (this.track.data.routes[0].points[0].timestamp && firstPoint.timestamp
+						&& this.track.data.routes[0].points[0].timestamp < firstPoint.timestamp))) {
 				firstPoint = this.track.data.routes[0].points[0]
 			}
 			if (this.track.data.waypoints.length > 0
-				&& this.track.data.waypoints[0].timestamp
-				&& this.track.data.waypoints[0].timestamp < firstPoint.timestamp) {
+				&& (firstPoint === null
+					|| (!firstPoint.timestamp && this.track.data.waypoints[0].timestamp)
+					|| (this.track.data.waypoints[0].timestamp && firstPoint.timestamp
+						&& this.track.data.waypoints[0].timestamp < firstPoint.timestamp))) {
 				firstPoint = this.track.data.waypoints[0]
 			}
 			return firstPoint

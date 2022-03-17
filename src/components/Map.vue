@@ -785,8 +785,8 @@ export default {
 		clearElevationControl() {
 			if (this.elevationControl !== null) {
 				this.elevationControl.clear()
-				this.elevationControl.remove()
-				this.elevationControl = null
+				// this.elevationControl.remove()
+				// this.elevationControl = null
 			}
 		},
 		displayElevation(track) {
@@ -802,7 +802,7 @@ export default {
 				})
 			})
 			const geojson = GeoJSON.parse(data, { LineString: 'line' })
-			const el = L.control.elevation({
+			const el = this.elevationControl ?? L.control.elevation({
 				position: 'bottomleft',
 				detached: false,
 				height: 150,

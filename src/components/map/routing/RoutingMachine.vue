@@ -7,7 +7,7 @@ import { getLocale } from '@nextcloud/l10n'
 import { generateUrl } from '@nextcloud/router'
 import { getCurrentUser } from '@nextcloud/auth'
 import moment from '@nextcloud/moment'
-import { showError } from '@nextcloud/dialogs'
+import { showSuccess, showError } from '@nextcloud/dialogs'
 
 import L from 'leaflet'
 import 'leaflet-control-geocoder/dist/Control.Geocoder'
@@ -509,8 +509,14 @@ export default {
 			const totTime = this.control._selectedRoute.summary.totalTime
 
 			network.exportRoute(type, coords, name, totDist, totTime).then((response) => {
-
+				showSuccess(type === 'route'
+					? t('maps', 'Route exported to {path}.', { path: response.data })
+					: t('maps', 'Track exported to {path}.', { path: response.data })
+				)
 			}).catch((error) => {
+				showError(type === 'route'
+					? t('maps', 'Failed to export route')
+					: t('maps', 'Failed to export track'))
 				console.error(error)
 			}).then(() => {
 			})

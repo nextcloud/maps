@@ -1,5 +1,5 @@
 <template>
-	<Content app-name="maps">
+	<Content app-name='maps'>
 		<MapsNavigation
 			@toggle-trackme="onToggleTrackme"
 			@toggle-slider="sliderEnabled = $event">
@@ -128,19 +128,6 @@
 					@click="onMainDetailClicked" />
 			</Actions>
 		</AppContent>
-		<Sidebar
-			v-if="true"
-			:show="showSidebar"
-			:active-tab="activeSidebarTab"
-			:favorite="selectedFavorite"
-			:favorite-categories="favoriteCategories"
-			:track="selectedTrack"
-			:is-full-screen="sidebarIsFullScreen"
-			@edit-favorite="onFavoriteEdit"
-			@delete-favorite="onFavoriteDelete"
-			@active-changed="onActiveSidebarTabChanged"
-			@close="onCloseSidebar"
-			@opened="onOpenedSidebar" />
 	</Content>
 </template>
 
@@ -155,7 +142,6 @@ import { emit } from '@nextcloud/event-bus'
 
 import Map from '../components/Map'
 import MapsNavigation from '../components/MapsNavigation'
-import Sidebar from '../components/Sidebar'
 import AppNavigationFavoritesItem from '../components/AppNavigationFavoritesItem'
 import AppNavigationPhotosItem from '../components/AppNavigationPhotosItem'
 import AppNavigationContactsItem from '../components/AppNavigationContactsItem'
@@ -180,7 +166,6 @@ export default {
 		ActionButton,
 		Map,
 		MapsNavigation,
-		Sidebar,
 		AppNavigationFavoritesItem,
 		AppNavigationPhotosItem,
 		AppNavigationContactsItem,
@@ -496,9 +481,9 @@ export default {
 			this.sendPositionLoop()
 		}
 		// Register sidebar to be callable from viewer, possibly nicer in main.js but I failed to but it there
-		window.OCA.Files.Sidebar.open = this.openSidebar
-		window.OCA.Files.Sidebar.close = this.closeSidebar
-		window.OCA.Files.Sidebar.setFullScreenMode = this.sidebarSetFullScreenMode
+		//window.OCA.Files.Sidebar.open = this.openSidebar
+		//window.OCA.Files.Sidebar.close = this.closeSidebar
+		//window.OCA.Files.Sidebar.setFullScreenMode = this.sidebarSetFullScreenMode
 
 		document.onkeyup = (e) => {
 			if (e.ctrlKey) {

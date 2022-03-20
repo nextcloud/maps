@@ -1,10 +1,12 @@
 <template>
-	<AppSidebar v-show="show"
+	<AppSidebar v-if="provider==='maps'"
+		v-show="show"
 		:title="sidebarTitle"
 		:compact="true"
 		:background="backgroundImageUrl"
 		:subtitle="''"
 		:active="activeTab"
+		:force-menu="true"
 		:class="{'app-sidebar--full': isFullScreen}"
 		@update:active="onActiveChanged"
 		@opened="$emit('opened')"
@@ -27,7 +29,7 @@ import FavoriteSidebarTab from '../components/FavoriteSidebarTab'
 import TrackSidebarTab from '../components/TrackSidebarTab'
 
 export default {
-	name: 'Sidebar',
+	name: 'MapsSidebar',
 
 	components: {
 		// ActionButton,
@@ -65,7 +67,9 @@ export default {
 	},
 
 	data() {
-		return {}
+		return {
+			provider: 'files',
+		}
 	},
 
 	computed: {

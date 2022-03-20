@@ -6,6 +6,7 @@
 		:subtitle="''"
 		:active="activeTab"
 		@update:active="onActiveChanged"
+		@opened="$emit('opened')"
 		@close="$emit('close')">
 		<FavoriteSidebarTab v-if="activeTab === 'favorite'"
 			:favorite="favorite"

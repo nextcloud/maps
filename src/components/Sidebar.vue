@@ -5,6 +5,7 @@
 		:background="backgroundImageUrl"
 		:subtitle="''"
 		:active="activeTab"
+		:class="{'app-sidebar--full': isFullScreen}"
 		@update:active="onActiveChanged"
 		@opened="$emit('opened')"
 		@close="$emit('close')">
@@ -56,11 +57,15 @@ export default {
 			validator: prop => typeof prop === 'object' || prop === null,
 			required: true,
 		},
+		isFullScreen: {
+			type: Boolean,
+			required: false,
+			default: false,
+		},
 	},
 
 	data() {
-		return {
-		}
+		return {}
 	},
 
 	computed: {
@@ -103,5 +108,14 @@ export default {
 	-webkit-mask-position: center top;
 	min-width: 44px !important;
 	min-height: 44px !important;
+}
+
+.app-sidebar {
+	&--full {
+		position: fixed !important;
+		z-index: 2025 !important;
+		top: 0 !important;
+		height: 100% !important;
+	}
 }
 </style>

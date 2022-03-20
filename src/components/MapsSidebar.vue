@@ -1,24 +1,28 @@
 <template>
-	<AppSidebar v-if="provider==='maps'"
-		v-show="show"
-		:title="sidebarTitle"
-		:compact="true"
-		:background="backgroundImageUrl"
-		:subtitle="''"
-		:active="activeTab"
-		:force-menu="true"
-		:class="{'app-sidebar--full': isFullScreen}"
-		@update:active="onActiveChanged"
-		@opened="$emit('opened')"
-		@close="$emit('close')">
-		<FavoriteSidebarTab v-if="activeTab === 'favorite'"
-			:favorite="favorite"
-			:categories="favoriteCategories"
-			@edit="$emit('edit-favorite', $event)"
-			@delete="$emit('delete-favorite', $event)" />
-		<TrackSidebarTab v-if="activeTab === 'track'"
-			:track="track" />
-	</AppSidebar>
+	<div>
+		<div v-if="showFilesSidebar" id="app-sidebar"></div>
+		<AppSidebar
+			v-else
+			v-show="show"
+			:title="sidebarTitle"
+			:compact="true"
+			:background="backgroundImageUrl"
+			:subtitle="''"
+			:active="activeTab"
+			:force-menu="true"
+			:class="{'app-sidebar--full': isFullScreen}"
+			@update:active="onActiveChanged"
+			@opened="$emit('opened')"
+			@close="$emit('close')">
+			<FavoriteSidebarTab v-if="activeTab === 'favorite'"
+				:favorite="favorite"
+				:categories="favoriteCategories"
+				@edit="$emit('edit-favorite', $event)"
+				@delete="$emit('delete-favorite', $event)" />
+			<TrackSidebarTab v-if="activeTab === 'track'"
+				:track="track" />
+		</AppSidebar>
+	</div>
 </template>
 
 <script>
@@ -64,11 +68,15 @@ export default {
 			required: false,
 			default: false,
 		},
+		showFilesSidebar: {
+			type: Boolean,
+			required: false,
+			default: false,
+		},
 	},
 
 	data() {
 		return {
-			provider: 'files',
 		}
 	},
 
@@ -115,7 +123,7 @@ export default {
 }
 
 .app-sidebar {
-	&--full {
+		&--full {
 		position: fixed !important;
 		z-index: 2025 !important;
 		top: 0 !important;

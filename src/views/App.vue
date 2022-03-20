@@ -1,5 +1,5 @@
 <template>
-	<Content app-name='maps'>
+	<Content app-name="maps">
 		<MapsNavigation
 			@toggle-trackme="onToggleTrackme"
 			@toggle-slider="sliderEnabled = $event">
@@ -481,9 +481,9 @@ export default {
 			this.sendPositionLoop()
 		}
 		// Register sidebar to be callable from viewer, possibly nicer in main.js but I failed to but it there
-		//window.OCA.Files.Sidebar.open = this.openSidebar
-		//window.OCA.Files.Sidebar.close = this.closeSidebar
-		//window.OCA.Files.Sidebar.setFullScreenMode = this.sidebarSetFullScreenMode
+		// window.OCA.Files.Sidebar.open = this.openSidebar
+		// window.OCA.Files.Sidebar.close = this.closeSidebar
+		// window.OCA.Files.Sidebar.setFullScreenMode = this.sidebarSetFullScreenMode
 
 		document.onkeyup = (e) => {
 			if (e.ctrlKey) {
@@ -519,14 +519,13 @@ export default {
 		},
 		closeSidebar() {
 			emit('files:sidebar:closed')
-			window.OCA.Files.Sidebar.state.file = ''
+			// window.OCA.Files.Sidebar.state.file = ''
 			this.showSidebar = false
 			this.deselectAll()
 		},
 		openSidebar(path) {
-			window.OCA.Files.Sidebar.state.file = true
-			this.showSidebar = true
-			emit('files:sidebar:opening')
+			console.debug('Trying to open sidebar: ', path)
+			window.OCA.Files.Sidebar.open(path)
 		},
 		/**
 		 * Allow to set the Sidebar as fullscreen from OCA.Files.Sidebar
@@ -539,6 +538,40 @@ export default {
 		onOpenedSidebar() {
 			emit('files:sidebar:opened')
 			console.info('files:sidebar:opened')
+		},
+		registerSidebarTabs() {
+			// Here we would have to register tabs for map elements, which have no file corresponding file.
+			/*
+			let FavoriteTabInstance = null
+			const forvoriteTab = new OCA.Files.Sidebar.Tab({
+				id: 'maps-favorits',
+				name: t('maps', 'Favorite'),
+				icon: 'icon-favorite',
+
+				async mount(el, fileInfo, context) {
+					if (FavoriteTabInstance) {
+						FavoriteTabInstance.$destroy()
+					}
+					FavoriteTabInstance = new favoriteSidebarTab('favorite', {
+						// Better integration with vue parent component
+						parent: context,
+					})
+					// Only mount after we have all the info we need
+					await FavoriteTabInstance.update(fileInfo.id)
+					FavoriteTabInstance.$mount(el)
+				},
+				update(fileInfo) {
+					FavoriteTabInstance.update(fileInfo.id)
+				},
+				destroy() {
+					FavoriteTabInstance.$destroy()
+					FavoriteTabInstance = null
+				},
+				scrollBottomReached() {
+					FavoriteTabInstance.onScrollBottomReached()
+				},
+			})
+			window.OCA.Files.Sidebar.registerTab(forvoriteTab) */
 		},
 		deselectAll() {
 			if (this.selectedFavorite) {
@@ -1455,7 +1488,7 @@ export default {
 			this.deselectAll()
 			// select
 			track.selected = true
-			this.openSidebar()
+			this.openSidebar(track.file_path)
 			this.activeSidebarTab = 'track'
 			this.selectedTrack = track
 		},

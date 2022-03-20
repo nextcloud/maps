@@ -29,7 +29,6 @@ import '../css/style.scss'
 import VueClipboard from 'vue-clipboard2'
 
 import Tooltip from '@nextcloud/vue/dist/Directives/Tooltip'
-import { emit } from '@nextcloud/event-bus'
 
 Vue.directive('tooltip', Tooltip)
 Vue.use(VueClipboard)
@@ -59,7 +58,7 @@ if (!window.OCA.Files) {
 	window.OCA.Files = {}
 }
 // register unused client for the sidebar to have access to its parser methods
-if (!window.OCA.Files.Sidebar) {
+/* if (!window.OCA.Files.Sidebar) {
 	Object.assign(window.OCA.Files, {
 		Sidebar: {
 			state: {
@@ -74,7 +73,7 @@ if (!window.OCA.Files.Sidebar) {
 			setFullScreenMode: () => {}, // SIDEBARFULLSCREEN,
 		},
 	}, window.OCA.Files)
-}
+} */
 optionsController.restoreOptions(main)
 
 document.addEventListener('DOMContentLoaded', (event) => {
@@ -83,6 +82,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
 	}, window.OCA.Files)
 })
 
+// eslint-disable-next-line
 new Vue({
 	el: '#content',
 	render: h => h(App),

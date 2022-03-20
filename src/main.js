@@ -29,6 +29,7 @@ import '../css/style.scss'
 import VueClipboard from 'vue-clipboard2'
 
 import Tooltip from '@nextcloud/vue/dist/Directives/Tooltip'
+import { emit } from '@nextcloud/event-bus'
 
 // Fixing Some leaflet webpack stuff See https://vue2-leaflet.netlify.app/faq/#my-map-and-or-markers-don-t-fully-render-what-gives
 import L from 'leaflet'
@@ -64,14 +65,32 @@ window.OCA.Maps.registerMapsAction = ({ label, callback, icon }) => {
 	window.OCA.Maps.mapActions.push(mapAction)
 }
 
-document.addEventListener('DOMContentLoaded', (event) => {
-	// SIDEBAR
-	if (!window.OCA.Files) {
-		window.OCA.Files = {}
-	}
-	// register unused client for the sidebar to have access to its parser methods
-	Object.assign(window.OCA.Files, { App: { fileList: { filesClient: OC.Files.getClient() } } }, window.OCA.Files)
+// SIDEBAR
+if (!window.OCA.Files) {
+	window.OCA.Files = {}
+}
+// register unused client for the sidebar to have access to its parser methods
+if (!window.OCA.Files.Sidebar) {
+	Object.assign(window.OCA.Files, {
+		Sidebar: {
+			state: {
+				file: '',
+			},
+			open: (path) => {
+				emit('files:sidebar:opened')
+			},
+			close: () => {
+				emit('files:sidebar:closed')
+			},
+			setFullScreenMode: () => {}, // SIDEBARFULLSCREEN,
+		},
+	}, window.OCA.Files)
+}
 
+document.addEventListener('DOMContentLoaded', (event) => {
+	Object.assign(window.OCA.Files, {
+		App: { fileList: { filesClient: OC.Files.getClient() } },
+	}, window.OCA.Files)
 	optionsController.restoreOptions(main)
 })
 

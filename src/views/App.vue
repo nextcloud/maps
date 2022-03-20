@@ -140,7 +140,8 @@
 			@edit-favorite="onFavoriteEdit"
 			@delete-favorite="onFavoriteDelete"
 			@active-changed="onActiveSidebarTabChanged"
-			@close="onCloseSidebar" />
+			@close="onCloseSidebar"
+			@opened="onOpenedSidebar" />
 	</Content>
 </template>
 
@@ -151,6 +152,7 @@ import Actions from '@nextcloud/vue/dist/Components/Actions'
 import ActionButton from '@nextcloud/vue/dist/Components/ActionButton'
 import { showError, showInfo, showSuccess } from '@nextcloud/dialogs'
 import moment from '@nextcloud/moment'
+import { emit } from '@nextcloud/event-bus'
 
 import Map from '../components/Map'
 import MapsNavigation from '../components/MapsNavigation'
@@ -192,7 +194,7 @@ export default {
 		return {
 			optionValues: optionsController.optionValues,
 			sendPositionTimer: null,
-			showSidebar: false,
+			showSidebar: true,
 			activeSidebarTab: '',
 			// slider
 			sliderEnabled: optionsController.optionValues.displaySlider === 'true',
@@ -522,6 +524,9 @@ export default {
 		if (optionsController.optionValues.trackMe === 'true') {
 			this.sendPositionLoop()
 		}
+		// Register sidebar to be callable from viewer, possibly nicer in main.js but I failed to but it there
+		window.OCA.Files.Sidebar.open = this.openSidebar
+		window.OCA.Files.Sidebar.close = this.closeSidebar
 
 		document.onkeyup = (e) => {
 			if (e.ctrlKey) {
@@ -548,13 +553,27 @@ export default {
 			this.activeSidebarTab = newActive
 		},
 		onMainDetailClicked() {
-			this.showSidebar = !this.showSidebar
+			this.showSidebar ? this.closeSidebar() : this.openSidebar()
 			this.activeSidebarTab = ''
 			this.deselectAll()
 		},
 		onCloseSidebar() {
+			this.closeSidebar()
+		},
+		closeSidebar() {
+			emit('files:sidebar:closed')
+			window.OCA.Files.Sidebar.state.file = ''
 			this.showSidebar = false
 			this.deselectAll()
+		},
+		openSidebar(path) {
+			window.OCA.Files.Sidebar.state.file = true
+			this.showSidebar = true
+			emit('files:sidebar:opening')
+		},
+		onOpenedSidebar() {
+			emit('files:sidebar:opened')
+			console.info('files:sidebar:opened')
 		},
 		deselectAll() {
 			if (this.selectedFavorite) {
@@ -1126,7 +1145,7 @@ export default {
 			this.deselectAll()
 			// select
 			this.favorites[f.id].selected = true
-			this.showSidebar = true
+			this.openSidebar()
 			this.activeSidebarTab = 'favorite'
 			this.selectedFavorite = f
 		},
@@ -1251,7 +1270,7 @@ export default {
 				if (openSidebar) {
 					this.selectedFavorite = this.favorites[fav.id]
 					this.activeSidebarTab = 'favorite'
-					this.showSidebar = true
+					this.openSidebar()
 				}
 				return fav.id
 			}).catch((error) => {
@@ -1472,7 +1491,7 @@ export default {
 			this.deselectAll()
 			// select
 			track.selected = true
-			this.showSidebar = true
+			this.openSidebar()
 			this.activeSidebarTab = 'track'
 			this.selectedTrack = track
 		},

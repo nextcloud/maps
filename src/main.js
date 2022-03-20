@@ -65,28 +65,29 @@ if (!window.OCA.Files.Sidebar) {
 			state: {
 				file: '',
 			},
-			open: (path) => {
+			open: async (path) => {
 				emit('files:sidebar:opened')
-			},
+			}, // OPENSIDEBAR,
 			close: () => {
 				emit('files:sidebar:closed')
-			},
+			}, // CLOSESIDEBAR,
 			setFullScreenMode: () => {}, // SIDEBARFULLSCREEN,
 		},
 	}, window.OCA.Files)
 }
+optionsController.restoreOptions(main)
 
 document.addEventListener('DOMContentLoaded', (event) => {
 	Object.assign(window.OCA.Files, {
 		App: { fileList: { filesClient: OC.Files.getClient() } },
 	}, window.OCA.Files)
-	optionsController.restoreOptions(main)
+})
+
+new Vue({
+	el: '#content',
+	render: h => h(App),
 })
 
 function main() {
-	// eslint-disable-next-line
-	new Vue({
-		el: '#content',
-		render: h => h(App),
-	})
+
 }

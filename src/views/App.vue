@@ -137,6 +137,7 @@
 			:favorite="selectedFavorite"
 			:favorite-categories="favoriteCategories"
 			:track="selectedTrack"
+			:is-full-screen="sidebarIsFullScreen"
 			@edit-favorite="onFavoriteEdit"
 			@delete-favorite="onFavoriteDelete"
 			@active-changed="onActiveSidebarTabChanged"
@@ -195,6 +196,7 @@ export default {
 			optionValues: optionsController.optionValues,
 			sendPositionTimer: null,
 			showSidebar: true,
+			sidebarIsFullScreen: false,
 			activeSidebarTab: '',
 			// slider
 			sliderEnabled: optionsController.optionValues.displaySlider === 'true',
@@ -527,6 +529,7 @@ export default {
 		// Register sidebar to be callable from viewer, possibly nicer in main.js but I failed to but it there
 		window.OCA.Files.Sidebar.open = this.openSidebar
 		window.OCA.Files.Sidebar.close = this.closeSidebar
+		window.OCA.Files.Sidebar.setFullScreenMode = this.sidebarSetFullScreenMode
 
 		document.onkeyup = (e) => {
 			if (e.ctrlKey) {
@@ -570,6 +573,14 @@ export default {
 			window.OCA.Files.Sidebar.state.file = true
 			this.showSidebar = true
 			emit('files:sidebar:opening')
+		},
+		/**
+		 * Allow to set the Sidebar as fullscreen from OCA.Files.Sidebar
+		 *
+		 * @param {boolean} isFullScreen - Wether or not to render the Sidebar in fullscreen.
+		 */
+		sidebarSetFullScreenMode(isFullScreen) {
+			this.sidebarIsFullScreen = isFullScreen
 		},
 		onOpenedSidebar() {
 			emit('files:sidebar:opened')

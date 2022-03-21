@@ -16,6 +16,8 @@
 			@delete="$emit('delete-favorite', $event)" />
 		<TrackSidebarTab v-if="activeTab === 'track'"
 			:track="track" />
+		<PhotoSidebarTab v-if="activeTab === 'photo'"
+			:photo="photo" />
 	</AppSidebar>
 </template>
 
@@ -25,6 +27,7 @@ import { generateUrl } from '@nextcloud/router'
 
 import FavoriteSidebarTab from '../components/FavoriteSidebarTab'
 import TrackSidebarTab from '../components/TrackSidebarTab'
+import PhotoSidebarTab from '../components/PhotoSidebarTab'
 
 export default {
 	name: 'Sidebar',
@@ -34,6 +37,7 @@ export default {
 		AppSidebar,
 		FavoriteSidebarTab,
 		TrackSidebarTab,
+		PhotoSidebarTab,
 	},
 
 	props: {
@@ -43,6 +47,10 @@ export default {
 		},
 		activeTab: {
 			type: String,
+			required: true,
+		},
+		photo: {
+			validator: prop => typeof prop === 'object' || prop === null,
 			required: true,
 		},
 		favorite: {

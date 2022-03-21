@@ -84,7 +84,8 @@
 				:photos="photos"
 				:draggable="photosDraggable"
 				@coords-reset="$emit('coords-reset', $event)"
-				@photo-moved="onPhotoMoved" />
+				@photo-moved="onPhotoMoved"
+				@open-sidebar="$emit('open-sidebar',$event)" />
 			<ContactsLayer
 				v-if="map && contactsEnabled"
 				ref="contactsLayer"

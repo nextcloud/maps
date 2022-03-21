@@ -111,6 +111,7 @@
 					@contact-placed="onContactPlace"
 					@place-photos="placePhotoFilesOrFolder"
 					@photo-moved="onPhotoMoved"
+					@open-sidebar="openSidebar"
 					@click-track="onTrackClick"
 					@search-enable-track="onSearchEnableTrack"
 					@change-track-color="onChangeTrackColorClicked"
@@ -137,6 +138,7 @@
 			:favorite="selectedFavorite"
 			:favorite-categories="favoriteCategories"
 			:track="selectedTrack"
+			:photo="selectedPhoto"
 			:is-full-screen="sidebarIsFullScreen"
 			@edit-favorite="onFavoriteEdit"
 			@delete-favorite="onFavoriteDelete"
@@ -220,6 +222,7 @@ export default {
 			photosEnabled: optionsController.photosEnabled,
 			photosDraggable: false,
 			photos: [],
+			selectedPhoto: null,
 			// contacts
 			contactsLoading: false,
 			contactsEnabled: optionsController.contactsEnabled,
@@ -570,6 +573,14 @@ export default {
 			this.deselectAll()
 		},
 		openSidebar(path) {
+			const photo = this.photos.find((p) => p.path === path)
+			if (photo) {
+				this.activeSidebarTab = 'photo'
+				this.selectedPhoto = photo
+				window.OCA.Files.Sidebar.state.file = path
+			} else {
+				window.OCA.Files.Sidebar.state.file = true
+			}
 			window.OCA.Files.Sidebar.state.file = true
 			this.showSidebar = true
 			emit('files:sidebar:opening')

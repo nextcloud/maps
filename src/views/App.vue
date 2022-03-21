@@ -39,10 +39,12 @@
 					:loading="photosLoading"
 					:photos="photos"
 					:draggable="photosDraggable"
+					:show-suggestions="showPhotoSuggestions"
 					@photos-clicked="onPhotosClicked"
 					@cancel-clicked="cancelPhotoMove"
 					@redo-clicked="redoPhotoMove"
-					@draggable-clicked="photosDraggable = !photosDraggable" />
+					@draggable-clicked="photosDraggable = !photosDraggable"
+					@suggestions-clicked="onPhotoSuggestionsClicked" />
 				<AppNavigationTracksItem
 					ref="tracksNavigation"
 					:enabled="tracksEnabled"
@@ -174,6 +176,7 @@ import { processGpx } from '../tracksUtils'
 import L from 'leaflet'
 import { geoToLatLng, getFormattedADR } from '../utils/mapUtils'
 import * as network from '../network'
+import { getPhotoSuggestions } from '../network'
 
 export default {
 	name: 'App',
@@ -223,6 +226,8 @@ export default {
 			photosDraggable: false,
 			photos: [],
 			selectedPhoto: null,
+			showPhotoSuggestions: false,
+			photoSuggestions: [],
 			// contacts
 			contactsLoading: false,
 			contactsEnabled: optionsController.contactsEnabled,
@@ -729,6 +734,12 @@ export default {
 			}
 			optionsController.saveOptionValues({ photosLayer: this.photosEnabled ? 'true' : 'false' })
 		},
+		onPhotoSuggestionsClicked() {
+			this.showPhotoSuggestions = !this.showPhotoSuggestions
+			if (this.photosEnabled && this.showPhotoSuggestions && this.photoSuggestions.length === 0) {
+				this.getPhotoSuggestions()
+			}
+		},
 		getPhotos() {
 			if (!this.photosEnabled) {
 				return
@@ -736,6 +747,26 @@ export default {
 			this.photosLoading = true
 			network.getPhotos().then((response) => {
 				this.photos = response.data.sort((p1, p2) => (p1.dateTaken || 0) - (p2.dateTaken || 0))
+			}).catch((error) => {
+				console.error(error)
+			}).then(() => {
+				this.photosLoading = false
+			})
+		},
+		getPhotoSuggestions() {
+			if (!this.photosEnabled) {
+				return
+			}
+			this.photosLoading = true
+			network.getPhotoSuggestions().then((response) => {
+				this.photoSuggestions = response.data.sort((a, b) => {
+					if (a.dateTaken < b.dateTaken) {
+						return -1
+					} else if (a.dateTaken > b.dateTaken) {
+						return 1
+					}
+					return 0
+				})
 			}).catch((error) => {
 				console.error(error)
 			}).then(() => {

@@ -20,6 +20,15 @@
 			:track="track" />
 		<PhotoSidebarTab v-if="activeTab === 'photo'"
 			:photo="photo" />
+		<PhotoSuggestionsSidebarTab v-if="activeTab === 'photo-suggestion'"
+			:photo-suggestions="photoSuggestions"
+			:photo-suggestions-selected="photoSuggestionsSelected"
+			:loading="photosLoading"
+			@select-some="$emit('select-some-photo-suggestions')"
+			@select-all="$emit('select-all-photo-suggestions')"
+			@clear-selection="$emit('clear-photo-suggestions-selection')"
+			@cancel="$emit('cancel-photo-suggestions')"
+			@save="$emit('save-photo-suggestions-selection')" />
 	</AppSidebar>
 </template>
 
@@ -30,6 +39,7 @@ import { generateUrl } from '@nextcloud/router'
 import FavoriteSidebarTab from '../components/FavoriteSidebarTab'
 import TrackSidebarTab from '../components/TrackSidebarTab'
 import PhotoSidebarTab from '../components/PhotoSidebarTab'
+import PhotoSuggestionsSidebarTab from './PhotoSuggestionsSidebarTab'
 
 export default {
 	name: 'Sidebar',
@@ -40,6 +50,7 @@ export default {
 		FavoriteSidebarTab,
 		TrackSidebarTab,
 		PhotoSidebarTab,
+		PhotoSuggestionsSidebarTab,
 	},
 
 	props: {
@@ -54,6 +65,18 @@ export default {
 		photo: {
 			validator: prop => typeof prop === 'object' || prop === null,
 			required: true,
+		},
+		photosLoading: {
+			required: true,
+			type: Boolean,
+		},
+		photoSuggestions: {
+			required: true,
+			type: Array,
+		},
+		photoSuggestionsSelected: {
+			required: true,
+			type: Array,
 		},
 		favorite: {
 			validator: prop => typeof prop === 'object' || prop === null,
@@ -86,6 +109,8 @@ export default {
 				return t('maps', 'Favorite')
 			} else if (this.activeTab === 'photo') {
 				return this.photo.basename
+			} else if (this.activeTab === 'photo-suggestion') {
+				return t('maps', 'Photo location suggestions')
 			}
 			return t('maps', 'Sidebar')
 		},
@@ -96,6 +121,8 @@ export default {
 				return ''
 			} else if (this.activeTab === 'photo') {
 				return this.photo.filename
+			} else if (this.activeTab === 'photo-suggestion') {
+				return ''
 			}
 			return t('maps', 'shows cool information')
 		},
@@ -107,6 +134,8 @@ export default {
 				return generateUrl('/svg/core/actions/star?color=' + iconColor)
 			} else if (this.activeTab === 'photo') {
 				return this.previewUrl()
+			} else if (this.activeTab === 'photo-suggestion') {
+				return generateUrl('/apps/theming/img/core/filetypes') + '/image.svg?v=2'
 			}
 			return ''
 		},

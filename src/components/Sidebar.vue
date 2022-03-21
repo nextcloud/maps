@@ -1,11 +1,13 @@
 <template>
 	<AppSidebar v-show="show"
 		:title="sidebarTitle"
-		:compact="true"
+		:compact="!hasPreview || isFullScreen"
 		:background="backgroundImageUrl"
-		:subtitle="''"
+		:subtitle="sidebarSubtitle"
 		:active="activeTab"
-		:class="{'app-sidebar--full': isFullScreen}"
+		:class="{
+			'app-sidebar--has-preview': hasPreview,
+			'app-sidebar--full': isFullScreen,}"
 		@update:active="onActiveChanged"
 		@opened="$emit('opened')"
 		@close="$emit('close')">
@@ -77,20 +79,34 @@ export default {
 	},
 
 	computed: {
+		sidebarTitle() {
+			if (this.activeTab === 'track') {
+				return t('maps', 'Track')
+			} else if (this.activeTab === 'favorite') {
+				return t('maps', 'Favorite')
+			} else if (this.activeTab === 'photo') {
+				return this.photo.basename
+			}
+			return ''
+		},
+		sidebarSubtitle() {
+			if (this.activeTab === 'track') {
+				return ''
+			} else if (this.activeTab === 'favorite') {
+				return ''
+			} else if (this.activeTab === 'photo') {
+				return this.photo.filename
+			}
+			return ''
+		},
 		backgroundImageUrl() {
 			const iconColor = OCA.Accessibility?.theme === 'dark' ? 'ffffff' : '000000'
 			if (this.activeTab === 'track') {
 				return generateUrl('/svg/maps/road?color=' + iconColor)
 			} else if (this.activeTab === 'favorite') {
 				return generateUrl('/svg/core/actions/star?color=' + iconColor)
-			}
-			return ''
-		},
-		sidebarTitle() {
-			if (this.activeTab === 'track') {
-				return t('maps', 'Track')
-			} else if (this.activeTab === 'favorite') {
-				return t('maps', 'Favorite')
+			} else if (this.activeTab === 'photo') {
+				return this.previewUrl()
 			}
 			return ''
 		},
@@ -99,6 +115,14 @@ export default {
 	methods: {
 		onActiveChanged(newActive) {
 			this.$emit('active-changed', newActive)
+		},
+		previewUrl() {
+			return this.photo.hasPreview
+				? generateUrl('core') + '/preview?fileId=' + this.photo.fileId + '&x=500&y=300&a=1'
+				: generateUrl('/apps/theming/img/core/filetypes') + '/image.svg?v=2'
+		},
+		hasPreview() {
+			return this.activeTab === 'photo' && this.photo.hasPreview && !this.isFullScreen
 		},
 	},
 }
@@ -124,6 +148,18 @@ export default {
 		z-index: 2025 !important;
 		top: 0 !important;
 		height: 100% !important;
+	}
+	&--has-preview::v-deep {
+		.app-sidebar-header__figure {
+			background-size: cover;
+		}
+
+		&[data-mimetype="text/plain"],
+		&[data-mimetype="text/markdown"] {
+			.app-sidebar-header__figure {
+				background-size: contain;
+			}
+		}
 	}
 }
 </style>

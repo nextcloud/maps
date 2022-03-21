@@ -1,8 +1,6 @@
 <template>
 	<div v-if="photo"
 		id="photo-tab">
-		<img :src="previewUrl" :alt="filename" />
-		<h2>{{ title }}</h2>
 	</div>
 </template>
 

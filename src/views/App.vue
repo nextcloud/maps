@@ -197,7 +197,7 @@ export default {
 		return {
 			optionValues: optionsController.optionValues,
 			sendPositionTimer: null,
-			showSidebar: true,
+			showSidebar: false,
 			sidebarIsFullScreen: false,
 			activeSidebarTab: '',
 			// slider

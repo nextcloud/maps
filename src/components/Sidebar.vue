@@ -1,12 +1,12 @@
 <template>
 	<AppSidebar v-show="show"
 		:title="sidebarTitle"
-		:compact="!hasPreview || isFullScreen"
+		:compact="!hasPreview() || isFullScreen"
 		:background="backgroundImageUrl"
 		:subtitle="sidebarSubtitle"
 		:active="activeTab"
 		:class="{
-			'app-sidebar--has-preview': hasPreview,
+			'app-sidebar--has-preview': hasPreview(),
 			'app-sidebar--full': isFullScreen,}"
 		@update:active="onActiveChanged"
 		@opened="$emit('opened')"
@@ -122,7 +122,7 @@ export default {
 				: generateUrl('/apps/theming/img/core/filetypes') + '/image.svg?v=2'
 		},
 		hasPreview() {
-			return this.activeTab === 'photo' && this.photo.hasPreview && !this.isFullScreen
+			return this.activeTab === 'photo' && this.photo.hasPreview
 		},
 	},
 }

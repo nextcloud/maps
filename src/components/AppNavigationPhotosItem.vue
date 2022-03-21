@@ -17,6 +17,12 @@
 				@click="$emit('draggable-clicked')">
 				{{ draggable ? t('maps', 'Disable photo drag') : t('maps', 'Enable photo drag') }}
 			</ActionButton>
+			<ActionButton
+				:icon="showSuggestions ? 'icon-picture' : 'icon-picture'"
+				:close-after-click="false"
+				@click="$emit('suggestions-clicked')">
+				{{ showSuggestions ? t('maps', 'Hide suggestions') : t('maps', 'Suggest photo locations') }}
+			</ActionButton>
 		</template>
 	</AppNavigationItem>
 </template>
@@ -51,6 +57,11 @@ export default {
 		draggable: {
 			type: Boolean,
 			required: true,
+		},
+		showSuggestions: {
+			type: Boolean,
+			required: false,
+			default: false,
 		},
 	},
 
@@ -94,6 +105,20 @@ export default {
 	mask-size: 16px auto;
 	mask-position: center;
 	-webkit-mask: url('../../img/hand-slash.svg') no-repeat;
+	-webkit-mask-size: 16px auto;
+	-webkit-mask-position: center;
+	min-width: 38px !important;
+	min-height: 36px !important;
+}
+
+::v-deep .icon-picture {
+	opacity: 1;
+	//background-color: var(--color-main-text);
+	padding: 0 !important;
+	//mask: url('../../img/hand.svg') no-repeat;
+	mask-size: 16px auto;
+	mask-position: center;
+	//-webkit-mask: url('../../img/hand.svg') no-repeat;
 	-webkit-mask-size: 16px auto;
 	-webkit-mask-position: center;
 	min-width: 38px !important;

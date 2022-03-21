@@ -114,6 +114,8 @@
 					@contact-placed="onContactPlace"
 					@place-photos="placePhotoFilesOrFolder"
 					@photo-moved="onPhotoMoved"
+					@photo-suggestion-selected="onPhotoSuggestionSelected"
+					@photo-suggestion-moved="onPhotoSuggestionMoved"
 					@open-sidebar="openSidebar"
 					@click-track="onTrackClick"
 					@search-enable-track="onSearchEnableTrack"
@@ -151,7 +153,6 @@
 			@active-changed="onActiveSidebarTabChanged"
 			@close="onCloseSidebar"
 			@opened="onOpenedSidebar"
-			@select-some-photo-suggestions="onSelectSomePhotoSuggestions"
 			@select-all-photo-suggestions="onSelectAllPhotoSuggestions"
 			@clear-photo-suggestions-selection="photoSuggestionsSelectedIndices=[]"
 			@cancel-photo-suggestions="onCancelPhotoSuggestions"
@@ -545,11 +546,16 @@ export default {
 		},
 		onMainDetailClicked() {
 			this.showSidebar ? this.closeSidebar() : this.openSidebar()
-			this.activeSidebarTab = ''
+			this.activeSidebarTab = this.showPhotoSuggestions ? 'photo-suggestion' : ''
 			this.deselectAll()
 		},
 		onCloseSidebar() {
-			this.closeSidebar()
+			// Make shure that the active photo suggestions tab stays there if photo suggestions are loaded
+			if (this.showPhotoSuggestions && (this.activeSidebarTab && this.activeSidebarTab !== 'photo-suggestion')) {
+				this.activeSidebarTab = 'photo-suggestion'
+			} else {
+				this.closeSidebar()
+			}
 		},
 		closeSidebar() {
 			emit('files:sidebar:closed')
@@ -864,6 +870,18 @@ export default {
 			this.activeSidebarTab = 'photo-suggestion'
 			this.showPhotoSuggestions ? this.openSidebar() : this.closeSidebar()
 		},
+		onPhotoSuggestionSelected(index) {
+			const indexOfIndex = this.photoSuggestionsSelectedIndices.findIndex((e) => { return index === e })
+			if (indexOfIndex >= 0) {
+				this.photoSuggestionsSelectedIndices.splice(indexOfIndex, 1)
+			} else {
+				this.photoSuggestionsSelectedIndices.push(index)
+			}
+		},
+		onPhotoSuggestionMoved(index, latLng) {
+			this.photoSuggestions[index].lat = latLng.lat
+			this.photoSuggestions[index].lng = latLng.lng
+		},
 		getPhotoSuggestions() {
 			if (!this.photosEnabled) {
 				return
@@ -883,9 +901,6 @@ export default {
 			}).then(() => {
 				this.photosLoading = false
 			})
-		},
-		onSelectSomePhotoSuggestions() {
-			this.photoSuggestionsSelectedIndices = [0, 1]
 		},
 		onSelectAllPhotoSuggestions() {
 			this.photoSuggestionsSelectedIndices = []

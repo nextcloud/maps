@@ -93,8 +93,8 @@
 				:photo-suggestions="photoSuggestions"
 				:photo-suggestions-selected-indices="photoSuggestionsSelectedIndices"
 				:draggable="photosDraggable"
-				@photo-suggistion-moved="onPhotoSuggestionMoved"
-				@photo-suggistion-selected="$emit('photo-suggistion-selected', $event)" />
+				@photo-suggestion-moved="onPhotoSuggestionMoved"
+				@photo-suggestion-selected="$emit('photo-suggestion-selected', $event)" />
 			<ContactsLayer
 				v-if="map && contactsEnabled"
 				ref="contactsLayer"
@@ -800,8 +800,8 @@ export default {
 			this.$emit('photo-moved', photo, latLng)
 		},
 		// photo suggestions
-		onPhotoSuggestionMoved(photo, latLng) {
-			this.$emit('photo-suggestion-moved', photo, latLng)
+		onPhotoSuggestionMoved(index, latLng) {
+			this.$emit('photo-suggestion-moved', index, latLng)
 		},
 		// tracks
 		zoomOnTrack(track) {

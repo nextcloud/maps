@@ -86,6 +86,15 @@
 				@coords-reset="$emit('coords-reset', $event)"
 				@photo-moved="onPhotoMoved"
 				@open-sidebar="$emit('open-sidebar',$event)" />
+			<PhotoSuggestionsLayer
+				v-if="map && photosEnabled && showPhotoSuggestions"
+				ref="photoSuggestionsLayer"
+				:map="map"
+				:photo-suggestions="photoSuggestions"
+				:photo-suggestions-selected-indices="photoSuggestionsSelectedIndices"
+				:draggable="photosDraggable"
+				@photo-suggistion-moved="onPhotoSuggestionMoved"
+				@photo-suggistion-selected="$emit('photo-suggistion-selected', $event)" />
 			<ContactsLayer
 				v-if="map && contactsEnabled"
 				ref="contactsLayer"
@@ -169,6 +178,7 @@ import PlaceContactPopup from '../components/map/PlaceContactPopup'
 import PoiMarker from '../components/map/PoiMarker'
 import ClickSearchPopup from '../components/map/ClickSearchPopup'
 import optionsController from '../optionsController'
+import PhotoSuggestionsLayer from './map/PhotoSuggestionsLayer'
 
 export default {
 	name: 'Map',
@@ -186,6 +196,7 @@ export default {
 		RoutingControl,
 		FavoritesLayer,
 		PhotosLayer,
+		PhotoSuggestionsLayer,
 		TracksLayer,
 		DevicesLayer,
 		ContactsLayer,
@@ -229,6 +240,18 @@ export default {
 		},
 		photosDraggable: {
 			type: Boolean,
+			required: true,
+		},
+		showPhotoSuggestions: {
+			type: Boolean,
+			required: true,
+		},
+		photoSuggestions: {
+			type: Array,
+			required: true,
+		},
+		photoSuggestionsSelectedIndices: {
+			type: Array,
 			required: true,
 		},
 		contacts: {
@@ -775,6 +798,10 @@ export default {
 		},
 		onPhotoMoved(photo, latLng) {
 			this.$emit('photo-moved', photo, latLng)
+		},
+		// photo suggestions
+		onPhotoSuggestionMoved(photo, latLng) {
+			this.$emit('photo-suggestion-moved', photo, latLng)
 		},
 		// tracks
 		zoomOnTrack(track) {

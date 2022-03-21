@@ -15,6 +15,7 @@
     }
     .app-navigation-toggle {
         display: block;
+        display: block;
     }
 }
 
@@ -227,7 +228,8 @@ tr.selected td {
 .leaflet-marker-device.device-marker .thumbnail-wrapper:after {
     border-width: 12px 7px 0;
 }
-.leaflet-marker-nonLocalizedPhoto.nonLocalizedPhoto-marker:after,
+.leaflet-marker-photo-suggestion.photo-suggestion-marker:after,
+.leaflet-marker-photo-suggestion.photo-suggestion-marker-selected:after,
 .leaflet-marker-photo.photo-marker:after {
     bottom: 17px;
     border-width: 11px 8px 0;
@@ -235,7 +237,8 @@ tr.selected td {
 .leaflet-marker-contact.contact-marker:after,
 .leaflet-marker-track.track-marker .thumbnail-wrapper:after,
 .leaflet-marker-device.device-marker .thumbnail-wrapper:after,
-.leaflet-marker-nonLocalizedPhoto.nonLocalizedPhoto-marker:after,
+.leaflet-marker-photo-suggestion.photo-suggestion-marker:after,
+.leaflet-marker-photo-suggestion.photo-suggestion-marker-selected:after,
 .leaflet-marker-photo.photo-marker:after {
     content:"";
     position: relative;
@@ -246,8 +249,14 @@ tr.selected td {
     margin-left: auto;
     margin-right: auto;
 }
-.leaflet-marker-nonLocalizedPhoto.nonLocalizedPhoto-marker:after {
-    border-color: var(--color-warning) transparent;
+.leaflet-marker-photo-suggestion.photo-suggestion-marker:after {
+    border-color: var(--color-primary-element) transparent;
+}
+.leaflet-marker-photo-suggestion.photo-suggestion-marker-selected {
+	border-color: var(--color-warning) !important;
+}
+.leaflet-marker-photo-suggestion.photo-suggestion-marker-selected:after {
+	border-color: var(--color-warning) !important;
 }
 .leaflet-marker-device.device-marker .thumbnail-wrapper:after,
 .leaflet-marker-track.track-marker .thumbnail-wrapper:after {
@@ -258,7 +267,7 @@ tr.selected td {
 .leaflet-marker-contact .thumbnail,
 .leaflet-marker-track .thumbnail,
 .leaflet-marker-device .thumbnail,
-.leaflet-marker-nonLocalizedPhoto .thumbnail,
+.leaflet-marker-photo-suggestion .thumbnail,
 .leaflet-marker-photo .thumbnail {
     width: 100%;
     height: 100%;
@@ -267,7 +276,7 @@ tr.selected td {
     background-repeat: no-repeat;
     background-color: white;
 }
-.leaflet-marker-nonLocalizedPhoto .thumbnail,
+.leaflet-marker-photo-suggestion .thumbnail,
 .leaflet-marker-photo .thumbnail {
     //border-radius: 2px;
 }
@@ -314,7 +323,7 @@ tr.selected td {
 .leaflet-marker-favorite-cluster .thumbnail {
     border-radius: 50%;
 }
-.leaflet-marker-nonLocalizedPhoto .thumbnail {
+.leaflet-marker-photo-suggestion .thumbnail {
     -webkit-filter: grayscale(100%); /* Safari 6.0 - 9.0 */
     filter: grayscale(100%);
 }
@@ -322,7 +331,7 @@ tr.selected td {
 .leaflet-marker-track .label,
 .leaflet-marker-device .label,
 .leaflet-marker-contact .label,
-.leaflet-marker-nonLocalizedPhoto .label,
+.leaflet-marker-photo-suggestion .label,
 .leaflet-marker-photo .label {
     position: absolute;
     top: -7px;
@@ -371,7 +380,7 @@ tr.selected td {
     border: 2px solid var(--color-main-background);
     border-radius: 50%;
 }
-.leaflet-marker-nonLocalizedPhoto,
+.leaflet-marker-photo-suggestion,
 .leaflet-marker-photo,
 .leaflet-marker-contact,
 .leaflet-marker-track,
@@ -384,11 +393,15 @@ tr.selected td {
 .leaflet-marker-photo {
     border: 2px solid var(--color-main-background);
 }
-.leaflet-marker-nonLocalizedPhoto {
-    border: 2px solid var(--color-warning);
+.leaflet-marker-photo-suggestion {
+    border: 2px solid var(--color-primary-element);
 }
-.leaflet-marker-nonLocalizedPhoto,
-.leaflet-marker-photo {
+.leaflet-marker-photo-suggestion-selected {
+	border: 2px solid var(--color-warning);
+}
+.leaflet-marker-photo-suggestion,
+.leaflet-marker-photo,
+.leaflet-marker-photo-suggestion-selected {
     border-radius: var(--border-radius);
 }
 
@@ -400,7 +413,8 @@ tr.selected td {
 }
 
 .leaflet-marker-photo.photo-marker,
-.leaflet-marker-nonLocalizedPhoto.nonLocalizedPhoto-marker{
+.leaflet-marker-photo-suggestion.photo-suggestion-marker,
+.leaflet-marker-photo-suggestion.photo-suggestion-marker-selected{
     top: -10px;
 }
 .photo-tooltip {

@@ -217,6 +217,11 @@ export function getPhotos() {
 	return axios.get(url)
 }
 
+export function getPhotoSuggestions() {
+	const url = generateUrl('apps/maps/photos/nonlocalized')
+	return axios.get(url)
+}
+
 export function placePhotos(paths, lats, lngs, directory = false) {
 	const req = {
 		paths,

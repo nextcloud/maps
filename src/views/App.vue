@@ -141,12 +141,20 @@
 			:favorite-categories="favoriteCategories"
 			:track="selectedTrack"
 			:photo="selectedPhoto"
+			:photosLoading="photosLoading"
+			:photo-suggestions="photoSuggestions"
+			:photo-suggestions-selected="photoSuggestionsSelected"
 			:is-full-screen="sidebarIsFullScreen"
 			@edit-favorite="onFavoriteEdit"
 			@delete-favorite="onFavoriteDelete"
 			@active-changed="onActiveSidebarTabChanged"
 			@close="onCloseSidebar"
-			@opened="onOpenedSidebar" />
+			@opened="onOpenedSidebar"
+			@select-some-photo-suggestions="onSelectSomePhotoSuggestions"
+			@select-all-photo-suggestions="onSelectAllPhotoSuggestions"
+			@clear-photo-suggestions-selection="photoSuggestionsSelected=[]"
+			@cancel-photo-suggestions="onCancelPhotoSuggestions"
+			@save-photo-suggestions-selection="onSavePhotoSuggestionsSelection" />
 	</Content>
 </template>
 
@@ -176,7 +184,6 @@ import { processGpx } from '../tracksUtils'
 import L from 'leaflet'
 import { geoToLatLng, getFormattedADR } from '../utils/mapUtils'
 import * as network from '../network'
-import { getPhotoSuggestions } from '../network'
 
 export default {
 	name: 'App',
@@ -228,6 +235,7 @@ export default {
 			selectedPhoto: null,
 			showPhotoSuggestions: false,
 			photoSuggestions: [],
+			photoSuggestionsSelected: [],
 			// contacts
 			contactsLoading: false,
 			contactsEnabled: optionsController.contactsEnabled,
@@ -734,12 +742,6 @@ export default {
 			}
 			optionsController.saveOptionValues({ photosLayer: this.photosEnabled ? 'true' : 'false' })
 		},
-		onPhotoSuggestionsClicked() {
-			this.showPhotoSuggestions = !this.showPhotoSuggestions
-			if (this.photosEnabled && this.showPhotoSuggestions && this.photoSuggestions.length === 0) {
-				this.getPhotoSuggestions()
-			}
-		},
 		getPhotos() {
 			if (!this.photosEnabled) {
 				return
@@ -747,26 +749,6 @@ export default {
 			this.photosLoading = true
 			network.getPhotos().then((response) => {
 				this.photos = response.data.sort((p1, p2) => (p1.dateTaken || 0) - (p2.dateTaken || 0))
-			}).catch((error) => {
-				console.error(error)
-			}).then(() => {
-				this.photosLoading = false
-			})
-		},
-		getPhotoSuggestions() {
-			if (!this.photosEnabled) {
-				return
-			}
-			this.photosLoading = true
-			network.getPhotoSuggestions().then((response) => {
-				this.photoSuggestions = response.data.sort((a, b) => {
-					if (a.dateTaken < b.dateTaken) {
-						return -1
-					} else if (a.dateTaken > b.dateTaken) {
-						return 1
-					}
-					return 0
-				})
 			}).catch((error) => {
 				console.error(error)
 			}).then(() => {
@@ -896,6 +878,58 @@ export default {
 				const paths = toReset.map((a) => { return a.path })
 				this.resetPhotosCoords(paths, false)
 			}
+		},
+		// ================ PHOTOSUGGESTIONS ========
+		onPhotoSuggestionsClicked() {
+			this.showPhotoSuggestions = !this.showPhotoSuggestions
+			if (this.photosEnabled && this.showPhotoSuggestions && this.photoSuggestions.length === 0) {
+				this.getPhotoSuggestions()
+			}
+			this.activeSidebarTab = 'photo-suggestion'
+			this.showPhotoSuggestions ? this.openSidebar() : this.closeSidebar()
+		},
+		getPhotoSuggestions() {
+			if (!this.photosEnabled) {
+				return
+			}
+			this.photosLoading = true
+			network.getPhotoSuggestions().then((response) => {
+				this.photoSuggestions = response.data.sort((a, b) => {
+					if (a.dateTaken < b.dateTaken) {
+						return -1
+					} else if (a.dateTaken > b.dateTaken) {
+						return 1
+					}
+					return 0
+				})
+			}).catch((error) => {
+				console.error(error)
+			}).then(() => {
+				this.photosLoading = false
+			})
+		},
+		onSelectSomePhotoSuggestions() {
+			this.photoSuggestionsSelected = [
+				this.photoSuggestions[0],
+				this.photoSuggestions[1],
+			]
+		},
+		onSelectAllPhotoSuggestions() {
+			this.photoSuggestionsSelected = []
+			this.photoSuggestionsSelected.push(...this.photoSuggestions)
+		},
+		onCancelPhotoSuggestions() {
+			this.photoSuggestionsSelected = []
+			this.showPhotoSuggestions = false
+			this.closeSidebar()
+		},
+		onSavePhotoSuggestionsSelection() {
+			const paths = this.photoSuggestionsSelected.map((p) => { return p.path })
+			const lats = this.photoSuggestionsSelected.map((p) => { return p.lat })
+			const lngs = this.photoSuggestionsSelected.map((p) => { return p.lng })
+			this.placePhotos(paths, lats, lngs)
+			this.getPhotoSuggestions()
+			this.photoSuggestionsSelected = []
 		},
 		// ================ CONTACTS =================
 		onContactsClicked() {

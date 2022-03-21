@@ -87,7 +87,7 @@ export default {
 			} else if (this.activeTab === 'photo') {
 				return this.photo.basename
 			}
-			return ''
+			return t('maps', 'Sidebar')
 		},
 		sidebarSubtitle() {
 			if (this.activeTab === 'track') {
@@ -97,7 +97,7 @@ export default {
 			} else if (this.activeTab === 'photo') {
 				return this.photo.filename
 			}
-			return ''
+			return t('maps', 'shows cool information')
 		},
 		backgroundImageUrl() {
 			const iconColor = OCA.Accessibility?.theme === 'dark' ? 'ffffff' : '000000'

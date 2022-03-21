@@ -3,7 +3,7 @@
 		<div v-if="loading" class="icon-loading" />
 		<div v-else-if="photoSuggestions.length > 0">
 			<Button
-				v-show="photoSuggestionsSelected.length === 0"
+				v-show="photoSuggestionsSelectedIndices.length === 0"
 				@click="$emit('select-some')">
 				{{ t('maps', 'Select some') }}
 			</Button>
@@ -16,7 +16,7 @@
 				@click="$emit('select-all')">
 				{{ t('maps', 'Select all') }}
 			</Button>
-			<div v-if="photoSuggestionsSelected.length > 0">
+			<div v-if="photoSuggestionsSelectedIndices.length > 0">
 				<table class="photoSuggestionsSelected-table">
 					<tr v-for="p in photoSuggestionsSelected"
 						:key="p.fileid">
@@ -45,9 +45,9 @@
 			{{ t('maps', 'cancel') }}
 		</Button>
 		<Button
-			type="primary"
 			v-show="photoSuggestions.length > 0"
-			:disabled="photoSuggestionsSelected.length===0"
+			type="primary"
+			:disabled="photoSuggestionsSelectedIndices.length===0"
 			@click="$emit('save')">
 			{{ t('maps', 'save') }}
 		</Button>
@@ -71,7 +71,7 @@ export default {
 			required: true,
 			type: Array,
 		},
-		photoSuggestionsSelected: {
+		photoSuggestionsSelectedIndices: {
 			required: true,
 			type: Array,
 		},
@@ -86,7 +86,11 @@ export default {
 		}
 	},
 
-	computed: {},
+	computed: {
+		photoSuggestionsSelected() {
+			return this.photoSuggestionsSelectedIndices.map((i) => this.photoSuggestions[i])
+		},
+	},
 
 	watch: {
 	},

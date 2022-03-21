@@ -22,7 +22,7 @@
 			:photo="photo" />
 		<PhotoSuggestionsSidebarTab v-if="activeTab === 'photo-suggestion'"
 			:photo-suggestions="photoSuggestions"
-			:photo-suggestions-selected="photoSuggestionsSelected"
+			:photo-suggestions-selected-indices="photoSuggestionsSelectedIndices"
 			:loading="photosLoading"
 			@select-some="$emit('select-some-photo-suggestions')"
 			@select-all="$emit('select-all-photo-suggestions')"
@@ -74,7 +74,7 @@ export default {
 			required: true,
 			type: Array,
 		},
-		photoSuggestionsSelected: {
+		photoSuggestionsSelectedIndices: {
 			required: true,
 			type: Array,
 		},

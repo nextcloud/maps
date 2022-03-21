@@ -3,11 +3,6 @@
 		<div v-if="loading" class="icon-loading" />
 		<div v-else-if="photoSuggestions.length > 0">
 			<Button
-				v-show="photoSuggestionsSelectedIndices.length === 0"
-				@click="$emit('select-some')">
-				{{ t('maps', 'Select some') }}
-			</Button>
-			<Button
 				@click="$emit('clear-selection')">
 				{{ t('maps', 'Clear selection') }}
 			</Button>

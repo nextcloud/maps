@@ -24,7 +24,6 @@
 			:photo-suggestions="photoSuggestions"
 			:photo-suggestions-selected-indices="photoSuggestionsSelectedIndices"
 			:loading="photosLoading"
-			@select-some="$emit('select-some-photo-suggestions')"
 			@select-all="$emit('select-all-photo-suggestions')"
 			@clear-selection="$emit('clear-photo-suggestions-selection')"
 			@cancel="$emit('cancel-photo-suggestions')"

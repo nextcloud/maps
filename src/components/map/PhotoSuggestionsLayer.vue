@@ -9,9 +9,9 @@
 			:icon="getPhotoMarkerIcon(p, i)"
 			:draggable="draggable"
 			:lat-lng="[p.lat, p.lng]"
-			@click="onPhotoClick($event, p)"
-			@contextmenu="onPhotoRightClick($eventclusterOptions, p)"
-			@moveend="onPhotoMoved($event, p)">
+			@click="onPhotoClick($event, i)"
+			@contextmenu="onPhotoRightClick($event, p)"
+			@moveend="onPhotoMoved($event, i)">
 			<LTooltip
 				:class="{
 					'tooltip-photo-suggestion-wrapper': true,
@@ -181,6 +181,17 @@ export default {
 		onDisplayClusterClick() {
 			this.displayCluster(this.contextCluster)
 		},
+		displayCluster(cluster) {
+			const photoList = cluster.getAllChildMarkers().map((m) => {
+				return m.options.data
+			})
+			photoList.sort((a, b) => {
+				return a.dateTaken - b.dateTaken
+			})
+			this.$emit('open-sidebar', photoList[0].path)
+			OCA.Viewer.open({ path: photoList[0].path, list: photoList })
+			this.map.closePopup()
+		},
 		getClusterMarkerIcon(cluster) {
 			const photo = cluster.getAllChildMarkers()[0].options.data
 			const iconUrl = this.getPreviewUrl(photo)
@@ -219,6 +230,7 @@ export default {
 			this.$nextTick(() => {
 				e.target.closePopup()
 			})
+			this.$emit('photo-suggestion-selected', index)
 		},
 		viewPhoto(photo) {
 			if (OCA.Viewer && OCA.Viewer.open) {
@@ -253,8 +265,8 @@ export default {
 				true
 			)
 		},
-		onPhotoMoved(e, photo) {
-			this.$emit('photo-suggestion-moved', photo, e.target.getLatLng())
+		onPhotoMoved(e, index) {
+			this.$emit('photo-suggestion-moved', index, e.target.getLatLng())
 		},
 	},
 }

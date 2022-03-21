@@ -141,9 +141,9 @@
 			:favorite-categories="favoriteCategories"
 			:track="selectedTrack"
 			:photo="selectedPhoto"
-			:photosLoading="photosLoading"
+			:photos-loading="photosLoading"
 			:photo-suggestions="photoSuggestions"
-			:photo-suggestions-selected="photoSuggestionsSelected"
+			:photo-suggestions-selected-indices="photoSuggestionsSelectedIndices"
 			:is-full-screen="sidebarIsFullScreen"
 			@edit-favorite="onFavoriteEdit"
 			@delete-favorite="onFavoriteDelete"
@@ -152,7 +152,7 @@
 			@opened="onOpenedSidebar"
 			@select-some-photo-suggestions="onSelectSomePhotoSuggestions"
 			@select-all-photo-suggestions="onSelectAllPhotoSuggestions"
-			@clear-photo-suggestions-selection="photoSuggestionsSelected=[]"
+			@clear-photo-suggestions-selection="photoSuggestionsSelectedIndices=[]"
 			@cancel-photo-suggestions="onCancelPhotoSuggestions"
 			@save-photo-suggestions-selection="onSavePhotoSuggestionsSelection" />
 	</Content>
@@ -235,7 +235,7 @@ export default {
 			selectedPhoto: null,
 			showPhotoSuggestions: false,
 			photoSuggestions: [],
-			photoSuggestionsSelected: [],
+			photoSuggestionsSelectedIndices: [],
 			// contacts
 			contactsLoading: false,
 			contactsEnabled: optionsController.contactsEnabled,
@@ -909,27 +909,24 @@ export default {
 			})
 		},
 		onSelectSomePhotoSuggestions() {
-			this.photoSuggestionsSelected = [
-				this.photoSuggestions[0],
-				this.photoSuggestions[1],
-			]
+			this.photoSuggestionsSelectedIndices = [0, 1]
 		},
 		onSelectAllPhotoSuggestions() {
-			this.photoSuggestionsSelected = []
-			this.photoSuggestionsSelected.push(...this.photoSuggestions)
+			this.photoSuggestionsSelectedIndices = []
+			this.photoSuggestionsSelectedIndices = [...this.photoSuggestions.keys()]
 		},
 		onCancelPhotoSuggestions() {
-			this.photoSuggestionsSelected = []
+			this.photoSuggestionsSelectedIndices = []
 			this.showPhotoSuggestions = false
 			this.closeSidebar()
 		},
 		onSavePhotoSuggestionsSelection() {
-			const paths = this.photoSuggestionsSelected.map((p) => { return p.path })
-			const lats = this.photoSuggestionsSelected.map((p) => { return p.lat })
-			const lngs = this.photoSuggestionsSelected.map((p) => { return p.lng })
+			const paths = this.photoSuggestionsSelectedIndices.map((i) => { return this.photoSuggestions[i].path })
+			const lats = this.photoSuggestionsSelectedIndices.map((i) => { return this.photoSuggestions[i].lat })
+			const lngs = this.photoSuggestionsSelectedIndices.map((i) => { return this.photoSuggestions[i].lng })
 			this.placePhotos(paths, lats, lngs)
 			this.getPhotoSuggestions()
-			this.photoSuggestionsSelected = []
+			this.photoSuggestionsSelectedIndices = []
 		},
 		// ================ CONTACTS =================
 		onContactsClicked() {

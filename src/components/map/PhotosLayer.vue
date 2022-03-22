@@ -198,7 +198,7 @@ export default {
 			photoList.sort((a, b) => {
 				return a.dateTaken - b.dateTaken
 			})
-			this.$emit('open-sidebar', photoList[0].path)
+			// this.$emit('open-sidebar', photoList[0].path)
 			OCA.Viewer.open({ path: photoList[0].path, list: photoList })
 			this.map.closePopup()
 		},

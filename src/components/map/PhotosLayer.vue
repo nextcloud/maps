@@ -27,6 +27,9 @@
 			<LPopup
 				class="popup-photo-wrapper"
 				:options="popupOptions">
+				<ActionButton icon="icon-toggle" @click="$emit('open-sidebar',p.path)">
+					{{ t('maps', 'Open in Sidebar') }}
+				</ActionButton>
 				<ActionButton icon="icon-toggle" @click="viewPhoto(p)">
 					{{ t('maps', 'Display picture') }}
 				</ActionButton>
@@ -234,7 +237,7 @@ export default {
 			this.$nextTick(() => {
 				e.target.closePopup()
 			})
-			this.$emit('open-sidebar', photo.path)
+			// this.$emit('open-sidebar', photo.path)
 			this.viewPhoto(photo)
 		},
 		viewPhoto(photo) {

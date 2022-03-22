@@ -549,6 +549,7 @@ export default {
 	mounted() {
 		// subscribe('nextcloud:unified-search.search', this.filter)
 		// subscribe('nextcloud:unified-search.reset', this.cleanSearch)
+		emit('files:sidebar:closed')
 	},
 	beforeDestroy() {
 		// unsubscribe('nextcloud:unified-search.search', this.filter)
@@ -560,17 +561,15 @@ export default {
 		},
 		onMainDetailClicked() {
 			this.showSidebar ? this.closeSidebar() : this.openSidebar()
-			this.activeSidebarTab = ''
-			this.deselectAll()
 		},
 		onCloseSidebar() {
 			this.closeSidebar()
+			this.deselectAll()
+			this.activeSidebarTab = ''
 		},
 		closeSidebar() {
 			emit('files:sidebar:closed')
-			window.OCA.Files.Sidebar.state.file = ''
 			this.showSidebar = false
-			this.deselectAll()
 		},
 		openSidebar(path) {
 			const photo = this.photos.find((p) => p.path === path)
@@ -581,7 +580,6 @@ export default {
 			} else {
 				window.OCA.Files.Sidebar.state.file = true
 			}
-			window.OCA.Files.Sidebar.state.file = true
 			this.showSidebar = true
 			emit('files:sidebar:opening')
 		},

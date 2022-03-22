@@ -569,6 +569,7 @@ export default {
 		},
 		closeSidebar() {
 			emit('files:sidebar:closed')
+			window.OCA.Files.Sidebar.state.file = ''
 			this.showSidebar = false
 		},
 		openSidebar(path) {
@@ -592,8 +593,11 @@ export default {
 			this.sidebarIsFullScreen = isFullScreen
 		},
 		onOpenedSidebar() {
-			emit('files:sidebar:opened')
-			console.info('files:sidebar:opened')
+			// opened is emitted when the sidebar is mounted, but not actually shown
+			if (this.showSidebar) {
+				emit('files:sidebar:opened')
+				console.info('files:sidebar:opened')
+			}
 		},
 		deselectAll() {
 			if (this.selectedFavorite) {
@@ -604,6 +608,7 @@ export default {
 				this.selectedTrack.selected = false
 				this.selectedTrack = null
 			}
+			window.OCA.Files.Sidebar.state.file = ''
 		},
 		onToggleTrackme(enabled) {
 			if (enabled) {

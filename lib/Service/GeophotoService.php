@@ -131,10 +131,11 @@ class GeophotoService {
 					continue;
 				}
 				$file = array_shift($files);
-                if ($file === null) {
-                    continue;
-                }
-                $path = preg_replace('/^\/'.$userId.'\//', '', $file->getPath());
+				if ($file === null) {
+					continue;
+				}
+				$path = $userFolder->getRelativePath( $file->getPath());
+				$isRoot = $file === $userFolder;
 
                 $date = $photoEntity->getDateTaken() ?? \time();
                 $locations = $this->getLocationGuesses($date);
@@ -146,6 +147,17 @@ class GeophotoService {
                     $file_object->lat = $location[0];
                     $file_object->lng = $location[1];
                     $file_object->dateTaken = $date;
+					$file_object->basename = $isRoot ? '' : $file->getName();
+					$file_object->filename = $this->normalizePath($path);
+					$file_object->etag = $cacheEntry->getEtag();
+//Not working for NC21 as Viewer requires String representation of permissions
+//                $file_object->permissions = $file->getPermissions();
+					$file_object->type = $file->getType();
+					$file_object->mime = $file->getMimetype();
+					$file_object->lastmod = $file->getMTime();
+					$file_object->size = $file->getSize();
+					$file_object->path = $path;
+					$file_object->hasPreview = in_array($cacheEntry->getMimeType(), $previewEnableMimetypes);
                     $filesById[] = $file_object;
                 }
 

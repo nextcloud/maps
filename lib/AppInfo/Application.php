@@ -31,6 +31,8 @@ use OCA\Maps\Listener\CardDeletedListener;
 
 
 class Application extends App implements IBootstrap {
+	public const APP_ID = 'maps';
+
     public function __construct (array $urlParams=array()) {
         parent::__construct('maps', $urlParams);
     }

@@ -142,6 +142,7 @@ class GeophotoService {
                 foreach ($locations as $location) {
                     $file_object = new \stdClass();
                     $file_object->fileId = $photoEntity->getFileId();
+					$file_object->fileid = $file_object->fileId;
                     $file_object->path = $this->normalizePath($path);
                     $file_object->hasPreview = in_array($cacheEntry->getMimeType(), $previewEnableMimetypes);
                     $file_object->lat = $location[0];

@@ -64,12 +64,16 @@ class PhotofilesService {
         $this->jobList = $jobList;
     }
 
-    public function rescan($userId) {
+    public function rescan($userId, $inBackground=true) {
         $userFolder = $this->root->getUserFolder($userId);
         $photos = $this->gatherPhotoFiles($userFolder, true);
         $this->photoMapper->deleteAll($userId);
         foreach ($photos as $photo) {
-            $this->addPhoto($photo, $userId);
+			if ($inBackground) {
+				$this->addPhoto($photo, $userId);
+			} else {
+				$this->addPhotoNow($photo, $userId);
+			}
             yield $photo->getPath();
         }
     }
@@ -385,7 +389,7 @@ class PhotofilesService {
         $path = $file->getStorage()->getLocalFile($file->getInternalPath());
         try{
             $exif_geo_data = ExifGeoData::get($path);
-            $exif_geo_data->validate(true);
+            $exif_geo_data->validate(true,);
         }catch(ExifDataException $e){
             $exif_geo_data = null;
             $this->logger->notice($e->getMessage(), ['code'=>$e->getCode(),'path'=>$path]);

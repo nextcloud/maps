@@ -348,7 +348,7 @@ class PhotofilesService {
                 // we don't explore external storages for which previews are disabled
                 if ($node->isMounted()) {
                     $options = $node->getMountPoint()->getOptions();
-                    if (!(array_key_exists('previews', $options) && $options['previews'])) {
+                    if (!(isset($options['previews']) && $options['previews'])) {
                         continue;
                     }
                 }

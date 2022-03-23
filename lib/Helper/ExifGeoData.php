@@ -99,7 +99,7 @@ class ExifGeoData
      */
     protected static function get_exif_data_array(string $path) : array{
         if( function_exists('exif_read_data') ) {
-            $data = @exif_read_data($path, null, true);
+            $data = @exif_read_data($path, null, true)['EXIF'];
             if ($data && isset($data[self::LATITUDE]) && isset($data[self::LONGITUDE])) {
                 return $data;
             }
@@ -137,7 +137,7 @@ class ExifGeoData
         }
         $exif = [
             # self::TIMESTAMP => $pelDateTimeOriginal->getValue(PelEntryTime::EXIF_STRING) // for old pel 0.9.6 and above
-			self::TIMESTAMP => $pelDateTimeOriginal->getValue() // for new pel >= 0.9.11
+			self::TIMESTAMP => (int) $pelDateTimeOriginal->getValue() // for new pel >= 0.9.11
         ];
         $pelIfdGPS = $pelIfd0->getSubIfd(PelIfd::GPS);
         if (!is_null($pelIfdGPS) && !is_null($pelIfdGPS->getEntry(PelTag::GPS_LATITUDE )) && !is_null( $pelIfdGPS->getEntry(PelTag::GPS_LONGITUDE))) {

@@ -154,9 +154,10 @@
 			@close="onCloseSidebar"
 			@opened="onOpenedSidebar"
 			@select-all-photo-suggestions="onSelectAllPhotoSuggestions"
-			@clear-photo-suggestions-selection="photoSuggestionsSelectedIndices=[]"
+			@clear-photo-suggestions-selection="onClearPhotoSuggestionsSelection"
 			@cancel-photo-suggestions="onCancelPhotoSuggestions"
-			@save-photo-suggestions-selection="onSavePhotoSuggestionsSelection" />
+			@save-photo-suggestions-selection="onSavePhotoSuggestionsSelection"
+			@zoom-photo-suggestion="onPhotoSuggestionZoom" />
 	</Content>
 </template>
 
@@ -882,6 +883,9 @@ export default {
 			this.photoSuggestions[index].lat = latLng.lat
 			this.photoSuggestions[index].lng = latLng.lng
 		},
+		onPhotoSuggestionZoom(photo) {
+			this.$refs.map.zoomOnPhotoSuggestion(photo)
+		},
 		getPhotoSuggestions() {
 			if (!this.photosEnabled) {
 				return
@@ -906,18 +910,46 @@ export default {
 			this.photoSuggestionsSelectedIndices = []
 			this.photoSuggestionsSelectedIndices = [...this.photoSuggestions.keys()]
 		},
+		onClearPhotoSuggestionsSelection(indices) {
+			if (indices) {
+				this.photoSuggestionsSelectedIndices = this.photoSuggestionsSelectedIndices.filter((e) => { return !indices.includes(e) })
+			} else {
+				this.photoSuggestionsSelectedIndices = []
+			}
+		},
 		onCancelPhotoSuggestions() {
 			this.photoSuggestionsSelectedIndices = []
 			this.showPhotoSuggestions = false
 			this.closeSidebar()
 		},
-		onSavePhotoSuggestionsSelection() {
-			const paths = this.photoSuggestionsSelectedIndices.map((i) => { return this.photoSuggestions[i].path })
-			const lats = this.photoSuggestionsSelectedIndices.map((i) => { return this.photoSuggestions[i].lat })
-			const lngs = this.photoSuggestionsSelectedIndices.map((i) => { return this.photoSuggestions[i].lng })
-			this.placePhotos(paths, lats, lngs)
-			this.getPhotoSuggestions()
-			this.photoSuggestionsSelectedIndices = []
+		onSavePhotoSuggestionsSelection(indices = null) {
+			const toSave = indices || this.photoSuggestionsSelectedIndices
+			const paths = toSave.map((i) => { return this.photoSuggestions[i].path })
+			const lats = toSave.map((i) => { return this.photoSuggestions[i].lat })
+			const lngs = toSave.map((i) => { return this.photoSuggestions[i].lng })
+			network.placePhotos(paths, lats, lngs).then((response) => {
+				if (indices) {
+					// only some elements from sidebar where saved
+					indices.forEach((i) => {
+						this.photos.push(this.photoSuggestions[i])
+						this.photoSuggestions[i] = null
+						this.photoSuggestionsSelectedIndices = this.photoSuggestionsSelectedIndices.filter((e) => {
+							return !indices.includes(e)
+						})
+					})
+				} else {
+					// All elements in sidebar where saved
+					this.getPhotos()
+					this.getPhotoSuggestions()
+					this.photoSuggestionsSelectedIndices = []
+				}
+				response.data.length === toSave.length
+					? showSuccess(n('maps', 'saved location', 'saved all %n locations', toSave.length))
+					: showInfo(t('maps', 'saved {r} from {i} locations', { r: response.data.length, i: toSave.length }))
+			}).catch((error) => {
+				showError(t('maps', 'Failed to save locations'))
+				console.error(error)
+			})
 		},
 		// ================ CONTACTS =================
 		onContactsClicked() {

@@ -25,9 +25,10 @@
 			:photo-suggestions-selected-indices="photoSuggestionsSelectedIndices"
 			:loading="photosLoading"
 			@select-all="$emit('select-all-photo-suggestions')"
-			@clear-selection="$emit('clear-photo-suggestions-selection')"
+			@clear-selection="$emit('clear-photo-suggestions-selection',$event)"
 			@cancel="$emit('cancel-photo-suggestions')"
-			@save="$emit('save-photo-suggestions-selection')" />
+			@save="$emit('save-photo-suggestions-selection',$event)"
+			@zoom="$emit('zoom-photo-suggestion', $event)" />
 	</AppSidebar>
 </template>
 

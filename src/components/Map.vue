@@ -803,6 +803,17 @@ export default {
 		onPhotoSuggestionMoved(index, latLng) {
 			this.$emit('photo-suggestion-moved', index, latLng)
 		},
+		zoomOnPhotoSuggestion(photo) {
+			if (photo.lat && photo.lng) {
+				const md = {
+					s: photo.lat - 0.001,
+					w: photo.lng - 0.001,
+					n: photo.lat + 0.001,
+					e: photo.lng + 0.001,
+				}
+				this.map.fitBounds(L.latLngBounds([md.s, md.w], [md.n, md.e]), { padding: [30, 30] })
+			}
+		},
 		// tracks
 		zoomOnTrack(track) {
 			if (track.metadata) {

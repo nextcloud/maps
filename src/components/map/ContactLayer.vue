@@ -151,7 +151,7 @@ export default {
 			}
 		},
 		formattedAddressLines() {
-			const adrTab = this.contact.ADR.split(';')
+			const adrTab = this.contact.ADR.split(';').map((s) => { return s.trim() })
 			const formattedAddressLines = []
 			if (adrTab.length > 6) {
 				// check if street name is set
@@ -161,7 +161,7 @@ export default {
 				formattedAddressLines.push(adrTab[5] + ' ' + adrTab[3])
 				formattedAddressLines.push(adrTab[4] + ' ' + adrTab[6])
 			}
-			return formattedAddressLines
+			return formattedAddressLines.filter((s) => { return s.trim() !== '' })
 		},
 		contactUrl() {
 			return generateUrl('/apps/contacts/direct/contact/' + encodeURIComponent(this.contact.UID + '~contacts'))

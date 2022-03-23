@@ -169,9 +169,6 @@ class GeophotoService {
                 $locations[] = $location;
             }
         }
-        if (count($locations) === 0) {
-            $locations[] = [null, null];
-        }
         return $locations;
 
     }

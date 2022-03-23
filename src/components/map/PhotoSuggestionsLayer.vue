@@ -197,7 +197,7 @@ export default {
 			const iconUrl = this.getPreviewUrl(photo)
 			const label = cluster.getChildCount()
 			return new L.DivIcon(L.extend({
-				className: 'leaflet-marker-photo cluster-marker',
+				className: 'leaflet-marker-photo-suggestion cluster-suggestion-marker',
 				html: '<div class="thumbnail" style="background-image: url(' + iconUrl + ');"></div>​<span class="label">' + label + '</span>',
 			}, cluster, {
 				iconSize: [PHOTO_MARKER_VIEW_SIZE, PHOTO_MARKER_VIEW_SIZE],

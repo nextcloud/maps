@@ -155,6 +155,7 @@ class GeophotoService {
 				$path = $userFolder->getRelativePath( $file->getPath());
 				$isRoot = $file === $userFolder;
 				$isIgnored = false;
+
 				foreach ($ignoredPaths as $ignoredPath) {
 					if (str_starts_with($path, $ignoredPath)) {
 						$isIgnored = true;
@@ -164,6 +165,7 @@ class GeophotoService {
 				if (!$isIgnored) {
 					$date = $photoEntity->getDateTaken() ?? \time();
 					$locations = $this->getLocationGuesses($date);
+					$isRoot = $file === $userFolder;
 					foreach ($locations as $location) {
 						$file_object = new \stdClass();
 						$file_object->fileId = $photoEntity->getFileId();

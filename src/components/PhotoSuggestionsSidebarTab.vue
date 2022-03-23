@@ -2,31 +2,49 @@
 	<div id="photo-suggestions-tab">
 		<div v-if="loading" class="icon-loading" />
 		<div v-else-if="photoSuggestions.length > 0">
-			<Button
-				@click="$emit('clear-selection')">
-				{{ t('maps', 'Clear selection') }}
-			</Button>
-			<Button
-				type="primary"
-				@click="$emit('select-all')">
-				{{ t('maps', 'Select all') }}
-			</Button>
+			<div class="oc-dialog-buttonrow">
+				<Button
+					@click="$emit('clear-selection')">
+					{{ t('maps', 'Clear selection') }}
+				</Button>
+				<Button
+					type="primary"
+					@click="$emit('select-all')">
+					{{ t('maps', 'Select all') }}
+				</Button>
+			</div>
 			<div v-if="photoSuggestionsSelectedIndices.length > 0">
-				<table class="photoSuggestionsSelected-table">
-					<tr v-for="p in photoSuggestionsSelected"
-						:key="p.fileid">
-						<td>
-							<img
-								:src="previewUrl(p)"
-								:alt="p.basename"
-								width="64"
-								height="64">
-						</td>
-						<td>
-							{{ p.basename }}
-						</td>
-					</tr>
-				</table>
+				<ListItem v-for="p in photoSuggestionsSelected"
+					:key="p.photoSuggestionsIndex"
+					:title="p.basename"
+					:bold="false"
+					:details="getPhotoFormattedDate(p)"
+					@click="onListItemClick(p)">
+					<template #icon>
+						<img
+							:src="previewUrl(p)"
+							:alt="p.basename"
+							width="64"
+							height="64">
+					</template>
+					<template #subtitle>
+						{{ p.path }}
+					</template>
+					<template #actions>
+						<ActionButton @click="onListItemClick(p)">
+							{{ t('maps', 'Display picture') }}
+						</ActionButton>
+						<ActionButton @click="$emit('save',[p.photoSuggestionsIndex])">
+							{{ t('maps', 'Save') }}
+						</ActionButton>
+						<ActionButton @click="$emit('zoom', p)">
+							{{ t('maps', 'Zoom') }}
+						</ActionButton>
+						<ActionButton @click="$emit('clear-selection',[p.photoSuggestionsIndex])">
+							{{ t('maps', 'Remove form selection') }}
+						</ActionButton>
+					</template>
+				</ListItem>
 			</div>
 		</div>
 		<div v-else>
@@ -35,30 +53,37 @@
 				+ 'For future trips you can track your android phone using phonetrack.'
 				+ 'This information are then automatically used suggest photo location') }}
 		</div>
-		<Button
-			@click="$emit('cancel')">
-			{{ t('maps', 'cancel') }}
-		</Button>
-		<Button
-			v-show="photoSuggestions.length > 0"
-			type="primary"
-			:disabled="photoSuggestionsSelectedIndices.length===0"
-			@click="$emit('save')">
-			{{ t('maps', 'save') }}
-		</Button>
+		<div class="oc-dialog-buttonrow">
+			<Button
+				@click="$emit('cancel')">
+				{{ !photoSuggestions.includes(null) ? t('maps', 'cancel') : t('maps', 'quit') }}
+			</Button>
+			<Button
+				v-show="photoSuggestions.length > 0"
+				type='primary'
+				:disabled="photoSuggestionsSelectedIndices.length===0"
+				@click="$emit('save')">
+				{{ t('maps', 'save') }}
+			</Button>
+		</div>
 	</div>
 </template>
 
 <script>
 
 import { generateUrl } from '@nextcloud/router'
+import moment from '@nextcloud/moment'
 import Button from '@nextcloud/vue/dist/Components/Button'
+import ActionButton from '@nextcloud/vue/dist/Components/ActionButton'
+import ListItem from '@nextcloud/vue/dist/Components/ListItem'
 
 export default {
 	name: 'PhotoSuggestionsSidebarTab',
 
 	components: {
 		Button,
+		ActionButton,
+		ListItem,
 	},
 
 	props: {
@@ -83,7 +108,14 @@ export default {
 
 	computed: {
 		photoSuggestionsSelected() {
-			return this.photoSuggestionsSelectedIndices.map((i) => this.photoSuggestions[i])
+			return this.photoSuggestionsSelectedIndices.reduce((filtered, i) => {
+				const p = this.photoSuggestions[i]
+				if (p) {
+					p.photoSuggestionsIndex = i
+					filtered.push(p)
+				}
+				return filtered
+			}, [])
 		},
 	},
 
@@ -95,6 +127,14 @@ export default {
 			return photo.hasPreview
 				? generateUrl('core') + '/preview?fileId=' + photo.fileId + '&x=500&y=300&a=1'
 				: generateUrl('/apps/theming/img/core/filetypes') + '/image.svg?v=2'
+		},
+		getPhotoFormattedDate(photo) {
+			return moment.unix(photo.dateTaken).format('L')
+		},
+		onListItemClick(photo) {
+			if (OCA.Viewer && OCA.Viewer.open) {
+				OCA.Viewer.open({ path: photo.path, list: this.photoSuggestionsSelected })
+			}
 		},
 	},
 }

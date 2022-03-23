@@ -5,6 +5,7 @@
 		@spiderfied="onSpiderfied">
 		<LMarker v-for="(p, i) in photoSuggestions"
 			:key="i"
+			v-if="p"
 			:options="{ data: p }"
 			:icon="getPhotoMarkerIcon(p, i)"
 			:draggable="draggable"
@@ -12,7 +13,7 @@
 			@click="onPhotoClick($event, i)"
 			@contextmenu="onPhotoRightClick($event, p)"
 			@moveend="onPhotoMoved($event, i)">
-			<LTooltip
+			<LTooltip v-if="p"
 				:class="{
 					'tooltip-photo-suggestion-wrapper': true,
 					'photo-suggestion-marker-selected': photoSuggestionsSelectedIndices.includes(i)
@@ -27,7 +28,7 @@
 					{{ basename(p.path) }}
 				</p>
 			</LTooltip>
-			<LPopup
+			<LPopup v-if="p"
 				class="popup-photo-suggestion-wrapper"
 				:options="popupOptions">
 				<ActionButton icon="icon-toggle" @click="viewPhoto(p)">

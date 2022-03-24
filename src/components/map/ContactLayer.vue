@@ -39,7 +39,7 @@
 						:src="contactAvatar"
 						alt="">
 					<button
-						v-tooltip="{ content: t('maps', 'Delete this address') }"
+						v-tooltip="{ content: contact.ADR?t('maps', 'Delete this address'):t('maps', 'Delete this location') }"
 						class="icon icon-delete"
 						@click="onDeleteAddressClick()" />
 				</div>
@@ -69,7 +69,7 @@
 			<div v-if="click === 'right'">
 				<ActionButton icon="icon-delete"
 					@click="onDeleteAddressClick()">
-					{{ t('maps', 'Delete this address') }}
+					{{ contact.ADR?t('maps', 'Delete this address'):t('maps', 'Delete this location') }}
 				</ActionButton>
 			</div>
 		</LPopup>
@@ -186,6 +186,11 @@ export default {
 			})
 		},
 		onDeleteAddressClick() {
+			const c = this.contact
+			// We only want to delete the ADR not the GEO
+			if (c.ADR && c.GEO) {
+				delete c.GEO
+			}
 			this.$emit('address-deleted', this.contact)
 		},
 	},

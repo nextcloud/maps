@@ -926,7 +926,7 @@ export default {
 			})
 		},
 		onContactAddressDelete(contact, save = true) {
-			network.deleteContactAddress(contact.BOOKID, contact.URI, contact.UID, contact.ADR).then((response) => {
+			network.deleteContactAddress(contact.BOOKID, contact.URI, contact.UID, contact.ADR, contact.GEO).then((response) => {
 				if (save) {
 					this.saveAction({
 						type: 'contactDelete',
@@ -941,7 +941,7 @@ export default {
 		onContactPlace(e, save = true) {
 			network.placeContact(e.contact.BOOKID, e.contact.URI,
 				e.contact.UID, e.latLng.lat, e.latLng.lng,
-				e.address, e.addressType
+				e.address || null, e.addressType
 			).then((response) => {
 				if (save) {
 					this.saveAction({

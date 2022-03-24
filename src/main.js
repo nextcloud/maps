@@ -29,6 +29,18 @@ import '../css/style.scss'
 import VueClipboard from 'vue-clipboard2'
 
 import Tooltip from '@nextcloud/vue/dist/Directives/Tooltip'
+
+// Fixing Some leaflet webpack stuff See https://vue2-leaflet.netlify.app/faq/#my-map-and-or-markers-don-t-fully-render-what-gives
+import L from 'leaflet'
+delete L.Icon.Default.prototype._getIconUrl
+
+L.Icon.Default.mergeOptions({
+	iconRetinaUrl: require('leaflet/dist/images/marker-icon-2x.png'),
+	iconUrl: require('leaflet/dist/images/marker-icon.png'),
+	shadowUrl: require('leaflet/dist/images/marker-shadow.png'),
+})
+
+// Vue
 Vue.directive('tooltip', Tooltip)
 Vue.use(VueClipboard)
 

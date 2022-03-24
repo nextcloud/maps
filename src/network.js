@@ -77,35 +77,40 @@ export function exportRoute(type, coords, name, totDist, totTime) {
 	return axios.post(url, req)
 }
 
-export function deleteContactAddress(bookid, uri, uid, vcardAddress) {
+export function deleteContactAddress(bookid, uri, uid, vcardAddress = '', vcardGEO = '') {
 	const req = {
 		params: {
 			uid,
 			adr: vcardAddress,
+			geo: vcardGEO,
 		},
 	}
 	const url = generateUrl('/apps/maps/contacts/' + bookid + '/' + uri)
 	return axios.delete(url, req)
 }
 
-export function placeContact(bookid, uri, uid, lat, lng, address, type = 'home') {
-	let road = (address.road || '') + ' ' + (address.pedestrian || '')
-		+ ' ' + (address.suburb || '') + ' ' + (address.city_district || '')
-	road = road.replace(/\s+/g, ' ').trim()
-	let city = address.village || address.town || address.city || ''
-	city = city.replace(/\s+/g, ' ').trim()
-	const req = {
+export function placeContact(bookid, uri, uid, lat, lng, address = null, type = 'home') {
+	let req = {
 		lat,
 		lng,
 		uid,
-		attraction: address.attraction,
-		house_number: address.house_number,
-		road,
-		postcode: address.postcode,
-		city,
-		state: address.state,
-		country: address.country,
-		type,
+	}
+	if (address) {
+		let road = (address.road || '') + ' ' + (address.pedestrian || '')
+		+ ' ' + (address.suburb || '') + ' ' + (address.city_district || '')
+		road = road.replace(/\s+/g, ' ').trim()
+		let city = address.village || address.town || address.city || ''
+		city = city.replace(/\s+/g, ' ').trim()
+		req = Object.assign(req, {
+			attraction: address.attraction,
+			house_number: address.house_number,
+			road,
+			postcode: address.postcode,
+			city,
+			state: address.state,
+			country: address.country,
+			type,
+		})
 	}
 	const url = generateUrl('/apps/maps/contacts/' + bookid + '/' + uri)
 	return axios.put(url, req)

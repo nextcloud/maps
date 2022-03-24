@@ -26,9 +26,9 @@
 				:user-select="false"
 				@input="onCategorySelected"
 				@search-change="onSearchChange">
-				<template #singleLabel="{option}">
+				<template #singleLabel="{ option }">
 					<div class="single-label">
-						{{ option.catid }}
+						{{ option ? option.catid : '' }}
 					</div>
 				</template>
 			</Multiselect>
@@ -134,7 +134,7 @@ export default {
 			}
 		},
 		onCategorySelected(option) {
-			this.category = option.catid
+			this.category = option ? option.catid : ''
 		},
 		onOkClick() {
 			const editedFav = {

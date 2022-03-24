@@ -12,8 +12,15 @@
 					@click="$emit('select-all')">
 					{{ t('maps', 'Select all') }}
 				</Button>
+				<Actions>
+					<ActionButton
+						:icon="selectionLayout==='list'?'icon-toggle-pictures':'icon-toggle-filelist'"
+						@click="selectionLayout=selectionLayout==='list'?'grid':'list'">
+						{{ t('maps', selectionLayout==='list'?'grid view':'list view') }}
+					</ActionButton>
+				</Actions>
 			</div>
-			<div v-if="photoSuggestionsSelectedIndices.length > 0">
+			<div v-if="photoSuggestionsSelectedIndices.length > 0 && selectionLayout==='list'">
 				<ListItem v-for="p in photoSuggestionsSelected"
 					:key="p.photoSuggestionsIndex"
 					:title="p.basename"
@@ -46,6 +53,31 @@
 					</template>
 				</ListItem>
 			</div>
+			<div v-if="photoSuggestionsSelectedIndices.length > 0 && selectionLayout==='grid'"
+				class="photo-suggestion-selected-grid">
+				<div v-for="p in photoSuggestionsSelected"
+					:key="p.photoSuggestionsIndex"
+					class="photo-suggestion-selected-grid-item"
+					:style="{
+						'background-image': 'url('+previewUrl(p)+')',
+						'background-size': 'cover'}"
+					@click.self="onListItemClick(p)">
+					<Actions class="photo-suggestion-selected-grid-actions">
+						<ActionButton @click="onListItemClick(p)">
+							{{ t('maps', 'Display picture') }}
+						</ActionButton>
+						<ActionButton @click="$emit('save',[p.photoSuggestionsIndex])">
+							{{ t('maps', 'Save') }}
+						</ActionButton>
+						<ActionButton @click="$emit('zoom', p)">
+							{{ t('maps', 'Zoom') }}
+						</ActionButton>
+						<ActionButton @click="$emit('clear-selection',[p.photoSuggestionsIndex])">
+							{{ t('maps', 'Remove form selection') }}
+						</ActionButton>
+					</Actions>
+				</div>
+			</div>
 		</div>
 		<div v-else>
 			<h2> {{ t('maps','No Suggestions found') }} </h2>
@@ -60,7 +92,7 @@
 			</Button>
 			<Button
 				v-show="photoSuggestions.length > 0"
-				type='primary'
+				type="primary"
 				:disabled="photoSuggestionsSelectedIndices.length===0"
 				@click="$emit('save')">
 				{{ t('maps', 'save') }}
@@ -74,6 +106,7 @@
 import { generateUrl } from '@nextcloud/router'
 import moment from '@nextcloud/moment'
 import Button from '@nextcloud/vue/dist/Components/Button'
+import Actions from '@nextcloud/vue/dist/Components/Actions'
 import ActionButton from '@nextcloud/vue/dist/Components/ActionButton'
 import ListItem from '@nextcloud/vue/dist/Components/ListItem'
 
@@ -82,6 +115,7 @@ export default {
 
 	components: {
 		Button,
+		Actions,
 		ActionButton,
 		ListItem,
 	},
@@ -103,6 +137,7 @@ export default {
 
 	data() {
 		return {
+			selectionLayout: 'list',
 		}
 	},
 
@@ -153,4 +188,29 @@ export default {
 		-webkit-mask-position: center;
 	}
 }
+.photo-suggestion-selected-grid {
+	display: grid;
+	grid-template-columns: repeat(auto-fill, minmax(128px, 1fr));
+	grid-auto-rows: 1fr;
+	gap: 5px;
+	padding-left: 5px;
+}
+
+.photo-suggestion-selected-grid-item {
+	padding-bottom: calc(100% - 44px);
+}
+
+.photo-suggestion-selected-grid-actions {
+	position: absolute;
+	top:      0;
+	left:     calc(100% - 44px);
+	bottom:   0;
+	right:    0;
+	opacity: 0;
+}
+
+.photo-suggestion-selected-grid-item:hover .photo-suggestion-selected-grid-actions {
+	opacity: 1 !important;
+}
+
 </style>

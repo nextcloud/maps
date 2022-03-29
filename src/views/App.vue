@@ -304,7 +304,7 @@ export default {
 		trackDates() {
 			return [
 				...this.tracks.filter((t) => !!t.metadata?.begin && t.metadata?.begin >= 0).map((t) => t.metadata?.begin),
-				...this.tracks.filter((t) => !!t.metadata?.end && t.metadata?.end >= 0).map((t) => t.metadata?.end)
+				...this.tracks.filter((t) => !!t.metadata?.end && t.metadata?.end >= 0).map((t) => t.metadata?.end),
 			]
 		},
 		minTrackTimestamp() {
@@ -1584,7 +1584,12 @@ export default {
 		},
 		onExportDevice(device) {
 			this.exportingDevices = true
-			network.exportDevices([device.id], false).then((response) => {
+			network.exportDevices(
+				[device.id],
+				false,
+				this.sliderEnabled ? this.sliderStart : null,
+				this.sliderEnabled ? this.sliderEnd : null
+			).then((response) => {
 				showSuccess(t('maps', 'Devices exported in {path}', { path: response.data }))
 			}).catch((error) => {
 				console.error(error)

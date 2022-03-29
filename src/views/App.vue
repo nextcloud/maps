@@ -92,6 +92,8 @@
 					:devices="displayedDevices"
 					:devices-enabled="devicesEnabled"
 					:slider-enabled="sliderEnabled"
+					:slider-start-timestamp="sliderStart"
+					:slider-end-timestamp="sliderEnd"
 					:min-data-timestamp="minDataTimestamp"
 					:max-data-timestamp="maxDataTimestamp"
 					:state="mapState"

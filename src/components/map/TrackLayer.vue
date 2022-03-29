@@ -70,6 +70,16 @@ export default {
 			type: Object,
 			required: true,
 		},
+		start: {
+			type: Number,
+			required: false,
+			default: 0,
+		},
+		end: {
+			type: Number,
+			required: false,
+			default: moment.unix(),
+		},
 	},
 
 	data() {
@@ -108,6 +118,7 @@ export default {
 					trkSegments.push({
 						...segment,
 						name: trk.name,
+						points: segment.points.filter((point) => (!point.timestamp || (point.timestamp >= this.start && point.timestamp <= this.end))),
 					})
 				})
 			})

@@ -99,6 +99,8 @@
 				ref="tracksLayer"
 				:map="map"
 				:tracks="tracks"
+				:start="sliderStartTimestamp"
+				:end="sliderEndTimestamp"
 				@click="$emit('click-track', $event)"
 				@change-color="$emit('change-track-color', $event)"
 				@display-elevation="displayElevation" />
@@ -134,6 +136,7 @@ import { generateUrl } from '@nextcloud/router'
 import { getCurrentUser } from '@nextcloud/auth'
 import axios from '@nextcloud/axios'
 import { showError, showSuccess } from '@nextcloud/dialogs'
+import moment from '@nextcloud/moment'
 
 import L from 'leaflet'
 import 'mapbox-gl/dist/mapbox-gl'
@@ -261,6 +264,14 @@ export default {
 		sliderEnabled: {
 			type: Boolean,
 			required: true,
+		},
+		sliderStartTimestamp: {
+			type: Number,
+			default: 0,
+		},
+		sliderEndTimestamp: {
+			type: Number,
+			default: moment.unix(),
 		},
 		minDataTimestamp: {
 			type: Number,

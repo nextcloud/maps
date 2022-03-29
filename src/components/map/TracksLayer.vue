@@ -3,6 +3,8 @@
 		<TrackLayer v-for="track in displayedTracks"
 			:key="track.id + track.color"
 			:track="track"
+			:start="start"
+			:end="end"
 			@click="$emit('click', $event)"
 			@change-color="$emit('change-color', $event)"
 			@display-elevation="$emit('display-elevation', $event)"
@@ -20,6 +22,7 @@ import TrackLayer from './TrackLayer'
 import TrackHoverMarker from './TrackHoverMarker'
 
 import optionsController from '../../optionsController'
+import moment from '@nextcloud/moment'
 
 export default {
 	name: 'TracksLayer',
@@ -37,6 +40,16 @@ export default {
 		map: {
 			type: Object,
 			required: true,
+		},
+		start: {
+			type: Number,
+			required: false,
+			default: 0,
+		},
+		end: {
+			type: Number,
+			required: false,
+			default: moment.unix(),
 		},
 	},
 

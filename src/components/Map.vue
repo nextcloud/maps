@@ -124,8 +124,10 @@
 			</LFeatureGroup>
 		</LMap>
 		<Slider v-show="sliderEnabled"
-			:min="minDataTimestamp"
-			:max="maxDataTimestamp"
+			:start="sliderStartTimestamp"
+			:end="sliderEndTimestamp"
+			:range-min="minDataTimestamp"
+			:range-max="maxDataTimestamp"
 			@range-change="$emit('slider-range-changed', $event)" />
 	</div>
 </template>
@@ -136,7 +138,6 @@ import { generateUrl } from '@nextcloud/router'
 import { getCurrentUser } from '@nextcloud/auth'
 import axios from '@nextcloud/axios'
 import { showError, showSuccess } from '@nextcloud/dialogs'
-import moment from '@nextcloud/moment'
 
 import L from 'leaflet'
 import 'mapbox-gl/dist/mapbox-gl'
@@ -267,11 +268,11 @@ export default {
 		},
 		sliderStartTimestamp: {
 			type: Number,
-			default: 0,
+			required: true,
 		},
 		sliderEndTimestamp: {
 			type: Number,
-			default: moment.unix(),
+			required: true,
 		},
 		minDataTimestamp: {
 			type: Number,

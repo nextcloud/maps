@@ -252,13 +252,15 @@ export default {
 		minDataTimestamp() {
 			return Math.min(
 				this.minPhotoTimestamp,
-				this.minFavoriteTimestamp
+				this.minFavoriteTimestamp,
+				this.minTrackTimestamp,
 			) || 0
 		},
 		maxDataTimestamp() {
 			return Math.max(
 				this.maxPhotoTimestamp,
-				this.maxFavoriteTimestamp
+				this.maxFavoriteTimestamp,
+				this.maxTrackTimestamp,
 			) || moment().unix()
 		},
 		photoDates() {
@@ -299,11 +301,31 @@ export default {
 					? this.favoritesDates[0] + 100
 					: moment().unix() + 100
 		},
+		trackDates() {
+			return [
+				...this.tracks.filter((t) => !!t.metadata?.begin && t.metadata?.begin >= 0).map((t) => t.metadata?.begin),
+				...this.tracks.filter((t) => !!t.metadata?.end && t.metadata?.end >= 0).map((t) => t.metadata?.end)
+			]
+		},
+		minTrackTimestamp() {
+			return this.trackDates.length >= 2
+				? Math.min(...this.trackDates)
+				: this.trackDates.length === 1
+					? this.trackDates[0] - 100
+					: moment().unix() - 100
+		},
+		maxTrackTimestamp() {
+			return this.trackDates.length >= 2
+				? Math.max(...this.trackDates)
+				: this.trackDates.length === 1
+					? this.trackDates[0] + 100
+					: moment().unix() + 100
+		},
 		// displayed data
 		displayedTracks() {
 			return this.sliderEnabled
-				? this.tracks.filter((p) => {
-					return true
+				? this.tracks.filter((t) => {
+					return !(t.metadata?.begin >= this.sliderEnd || t.metadata?.end <= this.sliderStart)
 				})
 				: this.tracks
 		},
@@ -1434,6 +1456,14 @@ export default {
 		},
 		onTrackZoom(track) {
 			this.$refs.map.zoomOnTrack(track)
+			if (track.metadata && this.sliderEnabled) {
+				if (track.metadata.begin) {
+					this.sliderStart = track.metadata.begin
+				}
+				if (track.metadata.end) {
+					this.sliderEnd = track.metadata.end
+				}
+			}
 		},
 		onTrackElevation(track) {
 			this.$refs.map.displayElevation(track)

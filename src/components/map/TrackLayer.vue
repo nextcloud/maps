@@ -112,16 +112,30 @@ export default {
 		},
 		lines() {
 			const trkSegments = []
-			this.track.data.tracks.forEach((trk) => {
-				trk.segments.forEach((segment) => {
-					// add track name to each segment
-					trkSegments.push({
-						...segment,
-						name: trk.name,
-						points: segment.points.filter((point) => (!point.timestamp || (point.timestamp >= this.start && point.timestamp <= this.end))),
+			if (this.track.metadata?.begin >= this.end || this.track.metadata?.end <= this.start) {
+				return trkSegments
+			} else if (this.track.metadata?.begin >= this.start && this.track.metadata?.end <= this.end) {
+				this.track.data.tracks.forEach((trk) => {
+					trk.segments.forEach((segment) => {
+						// add track name to each segment
+						trkSegments.push({
+							...segment,
+							name: trk.name,
+						})
 					})
 				})
-			})
+			} else {
+				this.track.data.tracks.forEach((trk) => {
+					trk.segments.forEach((segment) => {
+						// add track name to each segment
+						trkSegments.push({
+							...segment,
+							name: trk.name,
+							points: segment.points.filter((point) => (!point.timestamp || (point.timestamp >= this.start && point.timestamp <= this.end))),
+						})
+					})
+				})
+			}
 			return [...this.track.data.routes, ...trkSegments]
 		},
 		color() {

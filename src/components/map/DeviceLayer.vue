@@ -60,6 +60,7 @@ import ActionButton from '@nextcloud/vue/dist/Components/ActionButton'
 
 import { isComputer } from '../../utils'
 import optionsController from '../../optionsController'
+import moment from '@nextcloud/moment'
 
 const DEVICE_MARKER_VIEW_SIZE = 40
 
@@ -78,6 +79,16 @@ export default {
 		device: {
 			type: Object,
 			required: true,
+		},
+		start: {
+			type: Number,
+			required: false,
+			default: 0,
+		},
+		end: {
+			type: Number,
+			required: false,
+			default: moment.unix(),
 		},
 	},
 
@@ -105,7 +116,12 @@ export default {
 
 	computed: {
 		points() {
-			return this.device.points.map(p => [p.lat, p.lng])
+			return this.device.points.reduce((filtered, p) => {
+				if (!p.timestamp || (p.timestamp >= this.start && p.timestamp <= this.end)) {
+					filtered.push([p.lat, p.lng])
+				}
+				return filtered
+			}, [])
 		},
 		color() {
 			return this.device.color || '#0082c9'
@@ -147,19 +163,19 @@ export default {
 		},
 		deviceLineMouseover(e) {
 			const overLatLng = e.layer._map.layerPointToLatLng(e.layerPoint)
-			let minDist = 40000000
-			let tmpDist
-			let closestI = -1
-			for (let i = 0; i < this.points.length; i++) {
-				tmpDist = e.layer._map.distance(overLatLng, this.points[i])
-				if (tmpDist < minDist) {
-					minDist = tmpDist
-					closestI = i
+			const closestPoint = this.device.points.reduce((target, p) => {
+				if (
+					(!p.timestamp || (p.timestamp >= this.start && p.timestamp <= this.end))
+						&& (e.layer._map.distance(overLatLng, [p.lat, p.lng]) < target.minDist)
+				) {
+					target.minDist = e.layer._map.distance(overLatLng, [p.lat, p.lng])
+					target.hoverPoint = p
 				}
-			}
-			if (closestI !== -1) {
+				return target
+			}, { minDist: 40000000, hoverPoint: null })
+			if (closestPoint.hoverPoint) {
 				const hoverPoint = {
-					...this.device.points[closestI],
+					...closestPoint.hoverPoint,
 					color: this.color,
 					user_agent: this.device.user_agent,
 				}

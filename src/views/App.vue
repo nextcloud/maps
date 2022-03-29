@@ -2,7 +2,7 @@
 	<Content app-name="maps">
 		<MapsNavigation
 			@toggle-trackme="onToggleTrackme"
-			@toggle-slider="sliderEnabled = $event">
+			@toggle-slider="sliderEnabled = $event; sliderStart=0; sliderEnd=moment.unix()">
 			<template #items>
 				<AppNavigationFavoritesItem
 					:enabled="favoritesEnabled"

@@ -3,6 +3,8 @@
 		<DeviceLayer v-for="device in displayedDevices"
 			:key="device.id + device.color"
 			:device="device"
+			:start="start"
+			:end="end"
 			@click="$emit('click', $event)"
 			@export="$emit('export', $event)"
 			@toggle-history="$emit('toggle-history', $event)"
@@ -21,6 +23,7 @@ import DeviceLayer from './DeviceLayer'
 import DeviceHoverMarker from './DeviceHoverMarker'
 
 import optionsController from '../../optionsController'
+import moment from '@nextcloud/moment'
 
 export default {
 	name: 'DevicesLayer',
@@ -38,6 +41,16 @@ export default {
 		map: {
 			type: Object,
 			required: true,
+		},
+		start: {
+			type: Number,
+			required: false,
+			default: 0,
+		},
+		end: {
+			type: Number,
+			required: false,
+			default: moment.unix(),
 		},
 	},
 

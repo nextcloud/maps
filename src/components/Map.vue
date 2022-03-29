@@ -109,6 +109,8 @@
 				ref="devicesLayer"
 				:map="map"
 				:devices="devices"
+				:start="sliderStartTimestamp"
+				:end="sliderEndTimestamp"
 				@click="$emit('click-device', $event)"
 				@export="$emit('export-device', $event)"
 				@toggle-history="$emit('toggle-device-history', $event)"

@@ -11,11 +11,19 @@ export default {
 	},
 
 	props: {
-		min: {
+		start: {
 			type: Number,
 			required: true,
 		},
-		max: {
+		end: {
+			type: Number,
+			required: true,
+		},
+		rangeMin: {
+			type: Number,
+			required: true,
+		},
+		rangeMax: {
 			type: Number,
 			required: true,
 		},
@@ -26,31 +34,31 @@ export default {
 			sliderConnect: null,
 			onUpdateCallbackBlock: false,
 			onChangeCallbackBlock: false,
-			myMin: this.min,
-			myMax: this.max,
-			myStart: this.min,
-			myEnd: this.max,
+			myRangeMin: this.rangeMin,
+			myRangeMax: this.rangeMax,
+			myStart: this.start,
+			myEnd: this.end,
 		}
 	},
 
 	watch: {
-		min() {
-			this.myMin = this.min
-			this.myStart = this.min
-			this.updateSliderRange()
-			this.setSlider()
+		start() {
+			this.updateStartEnd()
 		},
-		max() {
-			this.myMax = this.max
-			this.myEnd = this.max
-			this.updateSliderRange()
-			this.setSlider()
+		end() {
+			this.updateStartEnd()
+		},
+		rangeMin() {
+			this.updateRangeMinMax()
+		},
+		rangeMax() {
+			this.updateRangeMinMax()
 		},
 	},
-
 	mounted() {
+		this.updateRangeMinMax(false)
 		noUiSlider.create(this.$refs.slider, {
-			start: [this.myMin, this.myMax],
+			start: [this.myStart, this.myEnd],
 			connect: true,
 			behaviour: 'drag',
 			tooltips: [{
@@ -63,8 +71,8 @@ export default {
 				},
 			}],
 			range: {
-				min: this.myMin,
-				max: this.myMax,
+				min: this.myRangeMin,
+				max: this.myRangeMax,
 			},
 		})
 		this.sliderConnect = this.$refs.slider.getElementsByClassName('noUi-connect')[0]
@@ -78,25 +86,58 @@ export default {
 	},
 
 	methods: {
+		updateStartEnd(updateRange = true) {
+			const start = Math.min(Math.max(this.start, this.rangeMin), this.end - 1, this.rangeMax - 1)
+			const end = Math.max(Math.min(this.end, this.rangeMax), this.myStart + 1, this.rangeMin + 1)
+			updateRange = this.checkUpdateSliderRange(start, end) && updateRange
+			this.myEnd = end
+			this.myStart = start
+			if (updateRange) {
+				this.myRangeMin = start
+				this.myRangeMax = end
+				this.updateSliderRange()
+			}
+			this.setSlider(false)
+		},
+		updateRangeMinMax(updateRange = true) {
+			const min = this.start <= this.myRangeMin || this.end <= this.myRangeMin + 1
+				? Math.min(this.rangeMin, this.rangeMax - 1)
+				: this.myRangeMin
+			const max = this.end >= this.myRangeMax || this.start >= this.myRangeMax - 1
+				? Math.max(this.rangeMax, this.rangeMin + 1)
+				: this.myRangeMax
+			this.myRangeMin = min
+			this.myRangeMax = max
+			if (updateRange) {
+				this.updateSliderRange()
+				this.updateStartEnd(updateRange)
+			}
+		},
+		checkUpdateSliderRange(min, max) {
+			const range = (this.myRangeMax - this.myRangeMin) * 1.2
+			return min < max && (min < this.myRangeMin || max > this.myRangeMax || 100 * (max - min) < 10 * range)
+		},
 		updateSliderRange() {
-			const range = this.myMax - this.myMin
+			const range = this.myRangeMax - this.myRangeMin
 			this.$refs.slider.noUiSlider.updateOptions({
 				range: {
-					min: this.myMin - range / 10,
-					max: this.myMax + range / 10,
+					min: this.myRangeMin - range / 10,
+					max: this.myRangeMax + range / 10,
 				},
 			})
 		},
-		setSlider() {
+		setSlider(emit = true) {
 			this.$refs.slider.noUiSlider.set([this.myStart, this.myEnd])
-			this.$emit('range-change', { start: this.myStart, end: this.myEnd })
+			if (emit) {
+				this.$emit('range-change', { start: this.myStart, end: this.myEnd })
+			}
 		},
 		setSliderToMaxInterval() {
-			this.myMin = this.min
-			this.myMax = this.max
+			this.myRangeMin = this.rangeMin
+			this.myRangeMax = this.rangeMax
 			this.updateSliderRange()
-			this.myStart = this.min
-			this.myEnd = this.max
+			this.myStart = this.rangeMin
+			this.myEnd = this.rangeMax
 			this.setSlider()
 		},
 		// slider handle moving
@@ -110,8 +151,8 @@ export default {
 				} */
 
 				this.onUpdateCallbackBlock = false
-				if (Math.round(unencoded[0]) < Math.round(this.myMin)
-					|| Math.round(unencoded[1]) > Math.round(this.myMax)
+				if (Math.round(unencoded[0]) < Math.round(this.myRangeMin)
+					|| Math.round(unencoded[1]) > Math.round(this.myRangeMax)
 					|| positions[1] - positions[0] < 10) {
 					this.sliderConnect.classList.add('timeRangeSlider-active')
 				} else {
@@ -128,22 +169,22 @@ export default {
 				this.myEnd = unencoded[1]
 				this.$emit('range-change', { start: this.myStart, end: this.myEnd })
 
-				const r = this.myMax - this.myMin
-				if (unencoded[0] < this.myMin) {
-					const deltaMin = this.myMin - unencoded[0]
-					this.myMin = this.myMin - 25 * deltaMin * deltaMin / r
+				const r = this.myRangeMax - this.myRangeMin
+				if (unencoded[0] < this.myRangeMin) {
+					const deltaMin = this.myRangeMin - unencoded[0]
+					this.myRangeMin = Math.max(this.myRangeMin - 25 * deltaMin * deltaMin / r, this.rangeMin)
 					this.updateSliderRange()
 				}
-				if (unencoded[1] > this.myMax) {
-					const deltaMax = -this.myMax + unencoded[1]
-					this.myMax = this.myMax + 25 * deltaMax * deltaMax / r
+				if (unencoded[1] > this.myRangeMax) {
+					const deltaMax = -this.myRangeMax + unencoded[1]
+					this.myRangeMax = Math.min(this.myRangeMax + 25 * deltaMax * deltaMax / r, this.rangeMax)
 					this.updateSliderRange()
 				}
 				if (positions[1] - positions[0] < 10) {
 					const m = (unencoded[0] + unencoded[1]) / 2
 					const d = Math.max((unencoded[1] - unencoded[0]) / 2, 1)
-					this.myMin = m - 2.5 * d
-					this.myMax = m + 2.5 * d
+					this.myRangeMin = Math.max(m - 2.5 * d, this.rangeMin)
+					this.myRangeMax = Math.min(m + 2.5 * d, this.rangeMax)
 					this.updateSliderRange()
 					this.setSlider()
 				}

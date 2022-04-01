@@ -2,6 +2,7 @@
  * @copyright Copyright (c) 2019, Paul Schwörer <hello@paulschwoerer.de>
  *
  * @author Paul Schwörer <hello@paulschwoerer.de>
+ * @author Arne Hamann <git@arne.email>
  *
  * @license AGPL-3.0-or-later
  *
@@ -79,4 +80,19 @@ export const request = (url, method, data = null) => {
 
 export const showNotification = message => {
 	showInfo(t('maps', message))
+}
+
+// Binary search for last valid test in sortedArray.
+// Returns index of last element where test is true
+// array is assumed to be sorted by test starting with true.
+export const binSearch = (sortedArray, test) => {
+	let lo = 0; let hi = sortedArray.length
+	while (lo < hi) {
+		const mi = (lo + hi) >> 1
+		const t = test(sortedArray[mi])
+		if (t && (mi === sortedArray.length - 1 || !test(sortedArray[mi + 1]))) return mi
+		else if (t) lo = mi + 1
+		else hi = mi
+	}
+	return -1
 }

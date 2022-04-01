@@ -1538,7 +1538,7 @@ export default {
 		getDevice(device, enable = false, save = true, zoom = false) {
 			device.loading = true
 			network.getDevice(device.id).then((response) => {
-				this.$set(device, 'points', response.data)
+				this.$set(device, 'points', response.data.sort((p1, p2) => (p1.timestamp || 0) - (p2.timestamp || 0)))
 				if (enable) {
 					device.enabled = true
 				}

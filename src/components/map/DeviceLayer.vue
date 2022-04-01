@@ -59,6 +59,7 @@ import { LMarker, LTooltip, LPopup, LFeatureGroup, LPolyline } from 'vue2-leafle
 import ActionButton from '@nextcloud/vue/dist/Components/ActionButton'
 
 import { isComputer } from '../../utils'
+import { binSearch } from '../../utils/common'
 import optionsController from '../../optionsController'
 import moment from '@nextcloud/moment'
 
@@ -116,12 +117,14 @@ export default {
 
 	computed: {
 		points() {
-			return this.device.points.reduce((filtered, p) => {
-				if (!p.timestamp || (p.timestamp >= this.start && p.timestamp <= this.end)) {
-					filtered.push([p.lat, p.lng])
-				}
-				return filtered
-			}, [])
+			const lastNullIndex = binSearch(this.device.points, (p) => !p.timestamp)
+			const firstShownIndex = binSearch(this.device.points, (p) => (p.timestamp || 0) < this.start) + 1
+			const lastShownIndex = binSearch(this.device.points, (p) => (p.timestamp || 0) < this.end)
+			const filteredDevicePoints = [
+				...this.device.points.slice(0, lastNullIndex + 1),
+				...this.device.points.slice(firstShownIndex, lastShownIndex + 1),
+			]
+			return filteredDevicePoints.map((p) => [p.lat, p.lng])
 		},
 		color() {
 			return this.device.color || '#0082c9'

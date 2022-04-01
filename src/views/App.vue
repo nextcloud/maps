@@ -162,6 +162,7 @@ import AppNavigationTracksItem from '../components/AppNavigationTracksItem'
 import AppNavigationDevicesItem from '../components/AppNavigationDevicesItem'
 import optionsController from '../optionsController'
 import { getLetterColor, hslToRgb, Timer, getDeviceInfoFromUserAgent2, isComputer, isPhone } from '../utils'
+import { binSearch } from "../utils/common"
 import { poiSearchData } from '../utils/poiData'
 import { processGpx } from '../tracksUtils'
 
@@ -337,11 +338,17 @@ export default {
 				: this.devices
 		},
 		displayedPhotos() {
-			return this.sliderEnabled
-				? this.photos.filter((p) => {
-					return p.dateTaken === null || (p.dateTaken >= this.sliderStart && p.dateTaken <= this.sliderEnd)
-				})
-				: this.photos
+			if (this.sliderEnabled) {
+				const lastNullIndex = binSearch(this.photos, (p) => !p.dateTaken)
+				const firstShownIndex = binSearch(this.photos, (p) => (p.dateTaken || 0) < this.sliderStart) + 1
+				const lastShownIndex = binSearch(this.photos, (p) => (p.dateTaken || 0) < this.sliderEnd)
+				return [
+					...this.photos.slice(0, lastNullIndex + 1),
+					...this.photos.slice(firstShownIndex, lastShownIndex + 1),
+				]
+			} else {
+				return this.photos
+			}
 		},
 		displayedFavorites() {
 			return this.sliderEnabled
@@ -684,14 +691,7 @@ export default {
 			}
 			this.photosLoading = true
 			network.getPhotos().then((response) => {
-				this.photos = response.data.sort((a, b) => {
-					if (a.dateTaken < b.dateTaken) {
-						return -1
-					} else if (a.dateTaken > b.dateTaken) {
-						return 1
-					}
-					return 0
-				})
+				this.photos = response.data.sort((p1, p2) => (p1.dateTaken || 0) - (p2.dateTaken || 0))
 			}).catch((error) => {
 				console.error(error)
 			}).then(() => {

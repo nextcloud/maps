@@ -51,6 +51,7 @@ import ActionButton from '@nextcloud/vue/dist/Components/ActionButton'
 import moment from '@nextcloud/moment'
 
 import optionsController from '../../optionsController'
+import { binSearch } from '../../utils/common'
 
 const TRACK_MARKER_VIEW_SIZE = 40
 
@@ -127,11 +128,18 @@ export default {
 			} else {
 				this.track.data.tracks.forEach((trk) => {
 					trk.segments.forEach((segment) => {
+						const lastNullIndex = binSearch(segment.points, (p) => !p.timestamp)
+						const firstShownIndex = binSearch(segment.points, (p) => (p.timestamp || 0) < this.start) + 1
+						const lastShownIndex = binSearch(segment.points, (p) => (p.timestamp || 0) < this.end)
+						const points = [
+							...segment.points.slice(0, lastNullIndex + 1),
+							...segment.points.slice(firstShownIndex, lastShownIndex + 1),
+						]
 						// add track name to each segment
 						trkSegments.push({
 							...segment,
 							name: trk.name,
-							points: segment.points.filter((point) => (!point.timestamp || (point.timestamp >= this.start && point.timestamp <= this.end))),
+							points,
 						})
 					})
 				})

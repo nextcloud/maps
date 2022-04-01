@@ -61,6 +61,7 @@ function parseTrkseg(e) {
 			}
 		}
 	})
+	seg.points.sort((a, b) => (a.timestamp || 0) - (b.timestamp || 0))
 	return seg
 }
 

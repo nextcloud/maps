@@ -288,4 +288,4 @@ OC.L10N.register(
     "Keep in mind that map projections always distort sizes of countries. The standard Mercator projection is particularly biased. Read more at:" : "Gardez à l'esprit que les projections de la sphère terrestre sur des cartes planes déforment toujours la taille réelle des pays, c'est le cas de la projection de Mercator. En savoir plus :",
     "The True Size of Africa" : "La Vraie taille de l'Afrique"
 },
-"nplurals=2; plural=(n > 1);");
+"nplurals=3; plural=(n==0 || n==1) ? 0 : n != 0 && n % 1000000 == 0 ? 1 : 2;");

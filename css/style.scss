@@ -488,7 +488,8 @@ tr.selected td {
 #navigation-photos:not(.active) > * ,
 #navigation-contacts:not(.active) > * ,
 #navigation-tracks:not(.active) > * ,
-#navigation-devices:not(.active) > * {
+#navigation-devices:not(.active) > *,
+#navigation-my-maps:not(.active) > * {
     opacity: 0.57 !important;
 }
 .ui-autocomplete {

@@ -28,10 +28,12 @@ class MyMapsController extends Controller {
 
     /* @var MyMapsService */
     private $myMapsService;
+	private $userId;
 
-    public function __construct($AppName, IRequest $request, MyMapsService $myMapsService) {
+    public function __construct($AppName, IRequest $request, MyMapsService $myMapsService, $userId) {
         parent::__construct($AppName, $request);
         $this->myMapsService = $myMapsService;
+		$this->userId = $userId;
     }
 
     /**
@@ -39,7 +41,7 @@ class MyMapsController extends Controller {
      */
     public function addMyMap($values) {
         $newName = $values["newName"] ?? "New Map";
-        $myMap = $this->myMapsService->addMyMap($newName);
+        $myMap = $this->myMapsService->addMyMap($newName,  $this->userId);
         if (is_string($myMap)) {
             new DataResponse($myMap, 400);
         }
@@ -50,7 +52,7 @@ class MyMapsController extends Controller {
      * @NoAdminRequired
      */
     public function updateMyMap($id, $values) {
-        $myMap = $this->myMapsService->updateMyMap($id, $values);
+        $myMap = $this->myMapsService->updateMyMap($id, $values, $this->userId);
         return new DataResponse($myMap);
     }
 
@@ -58,7 +60,7 @@ class MyMapsController extends Controller {
      * @NoAdminRequired
      */
     public function deleteMyMap($id) {
-        $result = $this->myMapsService->deleteMyMap($id);
+        $result = $this->myMapsService->deleteMyMap($id, $this->userId);
         return new DataResponse($result);
     }
 
@@ -66,7 +68,7 @@ class MyMapsController extends Controller {
      * @NoAdminRequired
      */
     public function getMyMaps() {
-        $myMaps = $this->myMapsService->getAllMyMaps();
+        $myMaps = $this->myMapsService->getAllMyMaps($this->userId);
         return new DataResponse($myMaps);
     }
 }

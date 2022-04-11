@@ -59,8 +59,8 @@ export function getContacts(myMapId = null) {
 export function searchContacts(query = '', myMapId = null) {
 	const req = {
 		params: {
-				myMapId,
-			},
+			myMapId,
+		},
 		query,
 	}
 	const url = generateUrl('/apps/maps/contacts-search')
@@ -372,6 +372,11 @@ export function importDevices(path) {
 export function deleteDevice(id) {
 	const url = generateUrl('/apps/maps/devices/' + id)
 	return axios.delete(url)
+}
+
+export function getMyMaps() {
+	const url = generateUrl('/apps/maps/maps')
+	return axios.get(url)
 }
 
 export function addMyMap(newName) {

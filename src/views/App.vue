@@ -78,8 +78,8 @@
 					@rename="onRenameMyMap"
 					@delete="onDeleteMyMap"
 					@color="onChangeMyMapColor"
-					@myMap-clicked="onMyMapClicked"
-					@myMaps-clicked="onMyMapsClicked" />
+					@my-map-clicked="onMyMapClicked"
+					@my-maps-clicked="onMyMapsClicked" />
 			</template>
 		</MapsNavigation>
 		<AppContent>
@@ -549,6 +549,7 @@ export default {
 		this.getFavorites()
 		this.getTracks()
 		this.getDevices()
+		this.getMyMaps()
 		if (optionsController.optionValues.trackMe === 'true') {
 			this.sendPositionLoop()
 		}
@@ -1783,6 +1784,12 @@ export default {
 			})
 		},
 		onMyMapsClicked() {
+			this.myMapsEnabled = !this.myMapsEnabled
+			// get tracks if we don't have them yet
+			if (this.myMapsEnabled && this.myMaps.length === 0) {
+				this.getMyMaps()
+			}
+			optionsController.saveOptionValues({ myMapsEnabled: this.myMapsEnabled ? 'true' : 'false' })
 		},
 		onMyMapClicked(myMap) {
 		    if (!this.myMapsLoading) {

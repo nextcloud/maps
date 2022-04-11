@@ -22,7 +22,6 @@ use OCA\Maps\Hooks\FileHooks;
 use OCA\Maps\Service\MyMapsService;
 use OCA\Maps\Service\PhotofilesService;
 use OCA\Maps\Service\TracksService;
-use \OCP\AppFramework\App;
 use OCP\BackgroundJob\IJobList;
 use OCP\IDBConnection;
 use OCP\IPreview;

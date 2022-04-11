@@ -19,7 +19,6 @@ use OCP\Files\Storage\IStorage;
 use OCP\Files\Folder;
 use OCP\IPreview;
 use OCP\ILogger;
-use OCP\Files\IRootFolder;
 
 
 use OCA\Maps\Service\PhotofilesService;
@@ -45,9 +44,7 @@ class GeophotoService {
                                  GeophotoMapper $photoMapper,
                                  IPreview $preview,
                                  TracksService $tracksService,
-                                 DevicesService $devicesService,
-                                 $userId,
-								 $userfolder) {
+                                 DevicesService $devicesService) {
         $this->l10n = $l10n;
         $this->photoMapper = $photoMapper;
         $this->logger = $logger;

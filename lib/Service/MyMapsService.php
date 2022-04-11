@@ -28,20 +28,20 @@ use OCP\Files\Node;
 class MyMapsService {
 
     private $logger;
-    private $userId;
+	private $root;
 
-    public function __construct (ILogger $logger, $userfolder, $userId) {
+    public function __construct (ILogger $logger, IRootFolder $root) {
         $this->logger = $logger;
-        $this->userfolder = $userfolder;
-        $this->userId = $userId;
+		$this->root = $root;
     }
 
-    public function addMyMap($newName, $counter=0) {
-        if (!$this->userfolder->nodeExists('/Maps')) {
-            $this->userfolder->newFolder('Maps');
+    public function addMyMap($newName, $userId, $counter=0) {
+		$userFolder = $this->root->getUserFolder($userId);
+        if (!$userFolder->nodeExists('/Maps')) {
+			$userFolder->newFolder('Maps');
         }
-        if ($this->userfolder->nodeExists('/Maps')) {
-            $mapsFolder = $this->userfolder->get('/Maps');
+        if ($userFolder->nodeExists('/Maps')) {
+            $mapsFolder = $userFolder->get('/Maps');
             if ($mapsFolder->getType() !== \OCP\Files\FileInfo::TYPE_FOLDER) {
                 $response = '/Maps is not a directory';
                 return $response;
@@ -63,7 +63,7 @@ class MyMapsService {
         }
 
         if ($mapsFolder->nodeExists($folderName)) {
-            return $this->addMyMap($newName, $counter+1);
+            return $this->addMyMap($newName, $userId,$counter+1);
         }
         $MapData = [
             'name' => $folderName,
@@ -74,9 +74,10 @@ class MyMapsService {
         return $MapData;
     }
 
-    public function getAllMyMaps(){
+    public function getAllMyMaps($userId){
+		$userFolder = $this->root->getUserFolder($userId);
         $MyMaps = [];
-        $MyMapsNodes = $this->userfolder->search('.maps');
+        $MyMapsNodes = $userFolder->search('.maps');
         foreach($MyMapsNodes as $node) {
             if ($node->getType() === FileInfo::TYPE_FILE and $node->getName() === ".maps") {
                 $mapData = json_decode($node->getContent(), true);
@@ -93,7 +94,7 @@ class MyMapsService {
                     "id"=>$node->getParent()->getId(),
                     "name"=>$name,
                     "color"=>$color,
-                    "path"=>$this->userfolder->getRelativePath($node->getParent()->getPath())
+                    "path"=>$userFolder->getRelativePath($node->getParent()->getPath())
                 ];
                 array_push($MyMaps, $MyMap);
             }
@@ -101,8 +102,9 @@ class MyMapsService {
         return $MyMaps;
     }
 
-    public function updateMyMap($id, $values) {
-        $folders = $this->userfolder->getById($id);
+    public function updateMyMap($id, $values, $userId) {
+		$userFolder = $this->root->getUserFolder($userId);
+        $folders = $userFolder->getById($id);
         $folder = array_shift($folders);
         try {
             $file=$folder->get(".maps");
@@ -125,8 +127,8 @@ class MyMapsService {
         }
         $file->putContent(json_encode($mapData,JSON_PRETTY_PRINT));
         if ($renamed) {
-            if ($this->userfolder->nodeExists('/Maps')) {
-                $mapsFolder = $this->userfolder->get('/Maps');
+            if ($userFolder->nodeExists('/Maps')) {
+                $mapsFolder = $userFolder->get('/Maps');
                 if ($folder->getParent()->getId() === $mapsFolder->getId() ) {
                     try {
                         $folder->move($mapsFolder->getPath()."/".$newName);
@@ -139,11 +141,12 @@ class MyMapsService {
         return $mapData;
     }
 
-    public function deleteMyMap($id) {
-        $folders = $this->userfolder->getById($id);
+    public function deleteMyMap($id, $userId) {
+		$userFolder = $this->root->getUserFolder($userId);
+        $folders = $userFolder->getById($id);
         $folder = array_shift($folders);
-        if ($this->userfolder->nodeExists('/Maps')) {
-            $mapsFolder = $this->userfolder->get('/Maps');
+        if ($userFolder->nodeExists('/Maps')) {
+            $mapsFolder = $userFolder->get('/Maps');
             if ($folder->getParent()->getId() === $mapsFolder->getId() ) {
                 try {
                     $folder->delete();
@@ -161,4 +164,5 @@ class MyMapsService {
         }
         return 0;
     }
+
 }

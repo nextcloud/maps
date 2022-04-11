@@ -12,6 +12,7 @@
 namespace OCA\Maps\Controller;
 
 use League\Flysystem\FileNotFoundException;
+use OCP\Files\IRootFolder;
 use OCP\Files\NotFoundException;
 use OCP\App\IAppManager;
 
@@ -34,18 +35,19 @@ class UtilsController extends Controller {
 
     private $userId;
     private $config;
+	private $root;
     private $dbconnection;
-    private $userfolder;
     private $dbtype;
 
     public function __construct($AppName,
                                 IRequest $request,
                                 IConfig $config,
                                 IAppManager $appManager,
+								IRootFolder $root,
                                 $UserId){
         parent::__construct($AppName, $request);
+		$this->root = $root;
         $this->userId = $UserId;
-        $this->userfolder = $userfolder;
         // IConfig object
         $this->config = $config;
     }
@@ -72,7 +74,8 @@ class UtilsController extends Controller {
                 $this->config->setUserValue($this->userId, 'maps', $key, $value);
             }
         } else {
-            $folders = $this->userfolder->getById($myMapId);
+			$userFolder = $this->root->getUserFolder($this->userId);
+            $folders = $userFolder->getById($myMapId);
             $folder = array_shift($folders);
             try {
                 $file=$folder->get(".maps");
@@ -108,7 +111,8 @@ class UtilsController extends Controller {
                 $ov[$key] = $value;
             }
         } else {
-            $folders = $this->userfolder->getById($myMapId);
+			$userFolder = $this->root->getUserFolder($this->userId);
+            $folders = $userFolder->getById($myMapId);
             $folder = array_shift($folders);
             try {
                 $file=$folder->get(".maps");

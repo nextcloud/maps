@@ -12,6 +12,7 @@
 
 namespace OCA\Maps\Controller;
 
+use OCP\Files\IRootFolder;
 use OCP\IRequest;
 use OCP\AppFramework\Http\TemplateResponse;
 use OCP\AppFramework\Http\DataResponse;
@@ -26,20 +27,21 @@ class PhotosController extends Controller {
     private $geophotoService;
     private $photofilesService;
     private $logger;
-    private $userfolder;
+	private $root;
 
     public function __construct($AppName,
                                 ILogger $logger,
                                 IRequest $request,
                                 GeophotoService $GeophotoService,
                                 PhotofilesService $photofilesService,
-                                $UserId, $userfolder) {
+								IRootFolder $root,
+                                $UserId) {
         parent::__construct($AppName, $request);
         $this->logger = $logger;
         $this->userId = $UserId;
-        $this->userfolder = $userfolder;
         $this->geophotoService = $GeophotoService;
         $this->photofilesService = $photofilesService;
+		$this->root = $root;
     }
 
     /**
@@ -47,10 +49,11 @@ class PhotosController extends Controller {
      * @NoCSRFRequired
      */
     public function getPhotosFromDb($myMapId=null) {
+		$userFolder = $this->root->getUserFolder($this->userId);
         if (is_null($myMapId) || $myMapId === "") {
-            $result = $this->geophotoService->getAllFromDB($this->userId, $this->userfolder);
+            $result = $this->geophotoService->getAllFromDB($this->userId, $userFolder);
         } else {
-            $folders = $this->userfolder->getById($myMapId);
+            $folders = $userFolder->getById($myMapId);
             $folder = array_shift($folders);
             $result = $this->geophotoService->getAllFromDB($this->userId, $folder);
         }
@@ -71,27 +74,28 @@ class PhotosController extends Controller {
      * @NoAdminRequired
      */
     public function placePhotos($paths, $lats, $lngs, $directory=false, $myMapId=null, $relative=false) {
+		$userFolder = $this->root->getUserFolder($this->userId);
         if (!is_null($myMapId) and $myMapId !== '') {
             // forbid folder placement in my-maps
             if ($directory === 'true') {
                 return 0;
             }
-            $folders = $this->userfolder->getById($myMapId);
+            $folders = $userFolder->getById($myMapId);
             $folder = array_shift($folders);
             // photo's path is relative to this map's folder => get full path, don't copy
             if ($relative === 'true') {
                 foreach ($paths as $key => $path) {
                     $photoFile = $folder->get($path);
-                    $paths[$key] = $this->userfolder->getRelativePath($photoFile->getPath());
+                    $paths[$key] = $userFolder->getRelativePath($photoFile->getPath());
                 }
             } else {
                 // here the photo path is good, copy it in this map's folder if it's not already there
                 foreach ($paths as $key => $path) {
-                    $photoFile = $this->userfolder->get($path);
+                    $photoFile = $userFolder->get($path);
                     // is the photo in this map's folder?
                     if (!$folder->getById($photoFile->getId())) {
                         $copiedFile = $photoFile->copy($folder->getPath() . '/' . $photoFile->getName());
-                        $paths[$key] = $this->userfolder->getRelativePath($copiedFile->getPath());
+                        $paths[$key] = $userFolder->getRelativePath($copiedFile->getPath());
                     }
                 }
             }
@@ -104,12 +108,13 @@ class PhotosController extends Controller {
      * @NoAdminRequired
      */
     public function resetPhotosCoords($paths, $myMapId=null) {
+		$userFolder = $this->root->getUserFolder($this->userId);
         $result = 0;
         if (!is_null($myMapId) and $myMapId !== '') {
             foreach ($paths as $key => $path) {
-                $folders = $this->userfolder->getById($myMapId);
+                $folders = $userFolder->getById($myMapId);
                 $folder = array_shift($folders);
-                $photoFile = $this->userfolder->get($path);
+                $photoFile = $userFolder->get($path);
                 if ($folder->isSubNode($photoFile)) {
                     $photoFile->delete();
                     unset($paths[$key]);

@@ -20,7 +20,7 @@ const optionsController = {
 	myMapId: (window.location.pathname.includes('/apps/maps/m/'))
 		? parseInt(window.location.pathname.split('/apps/maps/m/')[1].split('/')[0])
 		: null,
-	myMapListShow: null,
+	myMapListShow: true,
 	myMapsEnabled: true,
 	disabledFavoriteCategories: [],
 	disabledContactGroups: [],

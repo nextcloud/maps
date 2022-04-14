@@ -416,8 +416,8 @@ ContactsController.prototype = {
         for (var i = 0; i < contacts.length; i++) {
 
             var geo = [];
-            if (contacts[i].GEO.substr(0,4) === "geo:") {
-                geo = contacts[i].GEO.substr(4).split(",");
+            if (contacts[i].GEO.slice(0,4) === "geo:") {
+                geo = contacts[i].GEO.slice(4).split(",");
             } else {
                 geo = contacts[i].GEO.split(";");
             }
@@ -429,12 +429,12 @@ ContactsController.prototype = {
                 date = new Date();
             }
             if (isNaN(date)) {
-                var year = parseInt(contacts[i].REV.substr(0,4));
-                var month = parseInt(contacts[i].REV.substr(4,2))-1;
-                var day = parseInt(contacts[i].REV.substr(6,2))-1;
-                var hour = parseInt(contacts[i].REV.substr(9,2))-1;
-                var min = parseInt(contacts[i].REV.substr(11,2))-1;
-                var sec = parseInt(contacts[i].REV.substr(13,2))-1;
+                var year = parseInt(contacts[i].REV.slice(0,4));
+                var month = parseInt(contacts[i].REV.slice(4,6))-1;
+                var day = parseInt(contacts[i].REV.slice(6,8))-1;
+                var hour = parseInt(contacts[i].REV.slice(9,11))-1;
+                var min = parseInt(contacts[i].REV.slice(11,13))-1;
+                var sec = parseInt(contacts[i].REV.slice(13,15))-1;
                 date = new Date(year,month,day,hour,min,sec);
                 date = date.getTime();
             }

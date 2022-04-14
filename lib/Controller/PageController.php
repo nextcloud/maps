@@ -51,7 +51,7 @@ class PageController extends Controller {
      * @NoCSRFRequired
      */
     public function index(): TemplateResponse {
-        $this->eventDispatcher->dispatch(LoadSidebar::class, new LoadSidebar());
+//        $this->eventDispatcher->dispatch(LoadSidebar::class, new LoadSidebar());
         $this->eventDispatcher->dispatch(LoadViewer::class, new LoadViewer());
 
         $params = array('user' => $this->userId);

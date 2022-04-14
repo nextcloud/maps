@@ -111,6 +111,7 @@
 					@contact-placed="onContactPlace"
 					@place-photos="placePhotoFilesOrFolder"
 					@photo-moved="onPhotoMoved"
+					@open-sidebar="openSidebar"
 					@click-track="onTrackClick"
 					@search-enable-track="onSearchEnableTrack"
 					@change-track-color="onChangeTrackColorClicked"
@@ -137,10 +138,13 @@
 			:favorite="selectedFavorite"
 			:favorite-categories="favoriteCategories"
 			:track="selectedTrack"
+			:photo="selectedPhoto"
+			:is-full-screen="sidebarIsFullScreen"
 			@edit-favorite="onFavoriteEdit"
 			@delete-favorite="onFavoriteDelete"
 			@active-changed="onActiveSidebarTabChanged"
-			@close="onCloseSidebar" />
+			@close="onCloseSidebar"
+			@opened="onOpenedSidebar" />
 	</Content>
 </template>
 
@@ -151,6 +155,7 @@ import Actions from '@nextcloud/vue/dist/Components/Actions'
 import ActionButton from '@nextcloud/vue/dist/Components/ActionButton'
 import { showError, showInfo, showSuccess } from '@nextcloud/dialogs'
 import moment from '@nextcloud/moment'
+import { emit } from '@nextcloud/event-bus'
 
 import Map from '../components/Map'
 import MapsNavigation from '../components/MapsNavigation'
@@ -193,6 +198,7 @@ export default {
 			optionValues: optionsController.optionValues,
 			sendPositionTimer: null,
 			showSidebar: false,
+			sidebarIsFullScreen: false,
 			activeSidebarTab: '',
 			// slider
 			sliderEnabled: optionsController.optionValues.displaySlider === 'true',
@@ -216,6 +222,7 @@ export default {
 			photosEnabled: optionsController.photosEnabled,
 			photosDraggable: false,
 			photos: [],
+			selectedPhoto: null,
 			// contacts
 			contactsLoading: false,
 			contactsEnabled: optionsController.contactsEnabled,
@@ -522,6 +529,10 @@ export default {
 		if (optionsController.optionValues.trackMe === 'true') {
 			this.sendPositionLoop()
 		}
+		// Register sidebar to be callable from viewer, possibly nicer in main.js but I failed to but it there
+		window.OCA.Files.Sidebar.open = this.openSidebar
+		window.OCA.Files.Sidebar.close = this.closeSidebar
+		window.OCA.Files.Sidebar.setFullScreenMode = this.sidebarSetFullScreenMode
 
 		document.onkeyup = (e) => {
 			if (e.ctrlKey) {
@@ -538,6 +549,7 @@ export default {
 	mounted() {
 		// subscribe('nextcloud:unified-search.search', this.filter)
 		// subscribe('nextcloud:unified-search.reset', this.cleanSearch)
+		emit('files:sidebar:closed')
 	},
 	beforeDestroy() {
 		// unsubscribe('nextcloud:unified-search.search', this.filter)
@@ -548,13 +560,44 @@ export default {
 			this.activeSidebarTab = newActive
 		},
 		onMainDetailClicked() {
-			this.showSidebar = !this.showSidebar
-			this.activeSidebarTab = ''
-			this.deselectAll()
+			this.showSidebar ? this.closeSidebar() : this.openSidebar()
 		},
 		onCloseSidebar() {
-			this.showSidebar = false
+			this.closeSidebar()
 			this.deselectAll()
+			this.activeSidebarTab = ''
+		},
+		closeSidebar() {
+			emit('files:sidebar:closed')
+			window.OCA.Files.Sidebar.state.file = ''
+			this.showSidebar = false
+		},
+		openSidebar(path) {
+			const photo = this.photos.find((p) => p.path === path)
+			if (photo) {
+				this.activeSidebarTab = 'photo'
+				this.selectedPhoto = photo
+				window.OCA.Files.Sidebar.state.file = path
+			} else {
+				window.OCA.Files.Sidebar.state.file = true
+			}
+			this.showSidebar = true
+			emit('files:sidebar:opening')
+		},
+		/**
+		 * Allow to set the Sidebar as fullscreen from OCA.Files.Sidebar
+		 *
+		 * @param {boolean} isFullScreen - Wether or not to render the Sidebar in fullscreen.
+		 */
+		sidebarSetFullScreenMode(isFullScreen) {
+			this.sidebarIsFullScreen = isFullScreen
+		},
+		onOpenedSidebar() {
+			// opened is emitted when the sidebar is mounted, but not actually shown
+			if (this.showSidebar) {
+				emit('files:sidebar:opened')
+				console.info('files:sidebar:opened')
+			}
 		},
 		deselectAll() {
 			if (this.selectedFavorite) {
@@ -565,6 +608,7 @@ export default {
 				this.selectedTrack.selected = false
 				this.selectedTrack = null
 			}
+			window.OCA.Files.Sidebar.state.file = ''
 		},
 		onToggleTrackme(enabled) {
 			if (enabled) {
@@ -1126,7 +1170,7 @@ export default {
 			this.deselectAll()
 			// select
 			this.favorites[f.id].selected = true
-			this.showSidebar = true
+			this.openSidebar()
 			this.activeSidebarTab = 'favorite'
 			this.selectedFavorite = f
 		},
@@ -1251,7 +1295,7 @@ export default {
 				if (openSidebar) {
 					this.selectedFavorite = this.favorites[fav.id]
 					this.activeSidebarTab = 'favorite'
-					this.showSidebar = true
+					this.openSidebar()
 				}
 				return fav.id
 			}).catch((error) => {
@@ -1472,7 +1516,7 @@ export default {
 			this.deselectAll()
 			// select
 			track.selected = true
-			this.showSidebar = true
+			this.openSidebar()
 			this.activeSidebarTab = 'track'
 			this.selectedTrack = track
 		},

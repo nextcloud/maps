@@ -27,6 +27,9 @@
 			<LPopup
 				class="popup-photo-wrapper"
 				:options="popupOptions">
+				<ActionButton icon="icon-toggle" @click="$emit('open-sidebar',p.path)">
+					{{ t('maps', 'Open in Sidebar') }}
+				</ActionButton>
 				<ActionButton icon="icon-toggle" @click="viewPhoto(p)">
 					{{ t('maps', 'Display picture') }}
 				</ActionButton>
@@ -151,6 +154,7 @@ export default {
 				if (OCA.Viewer && OCA.Viewer.open) {
 					this.displayCluster(a.layer)
 				} else {
+					this.$emit('open-sidebar', a.layer.getAllChildMarkers()[0].options.data.path)
 					a.layer.spiderfy()
 				}
 			}
@@ -194,6 +198,7 @@ export default {
 			photoList.sort((a, b) => {
 				return a.dateTaken - b.dateTaken
 			})
+			// this.$emit('open-sidebar', photoList[0].path)
 			OCA.Viewer.open({ path: photoList[0].path, list: photoList })
 			this.map.closePopup()
 		},
@@ -232,6 +237,7 @@ export default {
 			this.$nextTick(() => {
 				e.target.closePopup()
 			})
+			// this.$emit('open-sidebar', photo.path)
 			this.viewPhoto(photo)
 		},
 		viewPhoto(photo) {

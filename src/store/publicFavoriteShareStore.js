@@ -3,7 +3,7 @@
  *
  * @author Paul Schwörer <hello@paulschwoerer.de>
  *
- * @license GNU AGPL version 3 or any later version
+ * @license AGPL-3.0-or-later
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
@@ -20,7 +20,7 @@
  *
  */
 
-import Vuex from 'vuex'
+import * as Vuex from 'vuex'
 import Vue from 'vue'
 import publicFavorites from './modules/publicFavorites'
 import map from './modules/map'

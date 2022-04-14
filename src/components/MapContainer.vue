@@ -66,8 +66,8 @@
 							:is-visible="openMarkerPopupId === favorite.id"
 							:allow-category-customization="!isPublicShare"
 							:allow-edits="allowFavoriteEdits"
-							@deleteFavorite="emitDeleteFavoriteEvent"
-							@updateFavorite="emitUpdateFavoriteEvent" />
+							@delete-favorite="emitDeleteFavoriteEvent"
+							@update-favorite="emitUpdateFavoriteEvent" />
 					</LPopup>
 				</LMarker>
 			</LMarkerCluster>
@@ -80,7 +80,7 @@
 						:allow-category-customization="!isPublicShare"
 						:allow-edits="allowFavoriteEdits"
 						@close="closePopup"
-						@addFavorite="emitAddFavoriteEvent" />
+						@add-favorite="emitAddFavoriteEvent" />
 				</LPopup>
 			</LFeatureGroup>
 		</LMap>
@@ -174,7 +174,7 @@ export default {
 					? state[PUBLIC_FAVORITES_NAMESPACE].favorites.find(
 						favorite =>
 							favorite.id
-                            === state[PUBLIC_FAVORITES_NAMESPACE].selectedFavoriteId
+							=== state[PUBLIC_FAVORITES_NAMESPACE].selectedFavoriteId
 					)
 					: null,
 		}),
@@ -248,15 +248,15 @@ export default {
 		},
 
 		emitAddFavoriteEvent(data) {
-			this.$emit('addFavorite', data)
+			this.$emit('add-favorite', data)
 		},
 
 		emitUpdateFavoriteEvent(data) {
-			this.$emit('updateFavorite', data)
+			this.$emit('update-favorite', data)
 		},
 
 		emitDeleteFavoriteEvent(data) {
-			this.$emit('deleteFavorite', data)
+			this.$emit('delete-favorite', data)
 		},
 
 		storeCurrentlyOpenPopup(id) {
@@ -269,7 +269,7 @@ export default {
 			this.openMarkerPopupId = null
 
 			this.$nextTick(() => {
-			    this.mapClickPopupLocked = false
+				this.mapClickPopupLocked = false
 			})
 
 			this.selectFavorite(null)
@@ -303,7 +303,7 @@ export default {
 				iconSize: [MARKER_TOUCH_TARGET_SIZE, MARKER_TOUCH_TARGET_SIZE],
 				className: 'leaflet-marker-favorite',
 				html: `<div class="favorite-marker ${categoryKey}"`
-                    + ` style="background-color: ${this.getMarkerBackgroundColor(categoryKey)};"></div>`,
+					+ ` style="background-color: ${this.getMarkerBackgroundColor(categoryKey)};"></div>`,
 			})
 		},
 
@@ -320,9 +320,9 @@ export default {
 					iconSize: [MARKER_TOUCH_TARGET_SIZE, MARKER_TOUCH_TARGET_SIZE],
 					className: 'leaflet-marker-favorite-cluster cluster-marker',
 					html: '<div '
-                        + `class="favorite-cluster-marker ${categoryKey}" `
-                        + `style="background-color: ${this.getMarkerBackgroundColor(categoryKey)};">`
-                        + `</div><span class="label">${label}</span>`,
+						+ `class="favorite-cluster-marker ${categoryKey}" `
+						+ `style="background-color: ${this.getMarkerBackgroundColor(categoryKey)};">`
+						+ `</div><span class="label">${label}</span>`,
 				})
 			}
 		},
@@ -353,114 +353,114 @@ export default {
 </script>
 
 <style lang="scss">
-@import "~leaflet/dist/leaflet.css";
-@import "~leaflet.markercluster/dist/MarkerCluster.css";
-@import "~leaflet.markercluster/dist/MarkerCluster.Default.css";
+@import '~leaflet/dist/leaflet.css';
+@import '~leaflet.markercluster/dist/MarkerCluster.css';
+@import '~leaflet.markercluster/dist/MarkerCluster.Default.css';
 
 .leaflet-tooltip {
-    white-space: normal !important;
+	white-space: normal !important;
 }
 
 .leaflet-container {
-    background: var(--color-main-background);
+	background: var(--color-main-background);
 }
 
 .leaflet-control-layers-base {
-    line-height: 30px;
+	line-height: 30px;
 }
 
 .leaflet-control-layers-selector {
-    min-height: 0;
+	min-height: 0;
 }
 
 .leaflet-control-layers-toggle {
-    background-size: 75% !important;
+	background-size: 75% !important;
 }
 
 .leaflet-control-layers:not(.leaflet-control-layers-expanded) {
-    width: 33px;
-    height: 37px;
+	width: 33px;
+	height: 37px;
 }
 
 .leaflet-control-layers:not(.leaflet-control-layers-expanded) > a {
-    width: 100%;
-    height: 100%;
+	width: 100%;
+	height: 100%;
 }
 
 .leaflet-marker-favorite, .leaflet-marker-favorite-cluster {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: 50%;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	border-radius: 50%;
 
-    .favorite-marker,
-    .favorite-cluster-marker {
-        cursor: pointer;
-        background: var(--maps-icon-favorite-star) no-repeat 50% 50%;
-        border-radius: 50%;
-        box-shadow: 0 0 4px #888;
-    }
+	.favorite-marker,
+	.favorite-cluster-marker {
+		cursor: pointer;
+		background: var(--maps-icon-favorite-star) no-repeat 50% 50%;
+		border-radius: 50%;
+		box-shadow: 0 0 4px #888;
+	}
 
-    .favorite-marker {
-        height: 18px;
-        width: 18px;
-        background-size: 12px 12px;
-    }
+	.favorite-marker {
+		height: 18px;
+		width: 18px;
+		background-size: 12px 12px;
+	}
 
-    .favorite-cluster-marker {
-        height: 26px;
-        width: 26px;
-        background-size: 16px 16px;
-    }
+	.favorite-cluster-marker {
+		height: 26px;
+		width: 26px;
+		background-size: 16px 16px;
+	}
 }
 
 .leaflet-marker-favorite-cluster {
-    .label {
-        position: absolute;
-        top: 0;
-        right: 0;
-        color: #fff;
-        background-color: #333;
-        border-radius: 9px;
-        height: 18px;
-        min-width: 18px;
-        line-height: 12px;
-        text-align: center;
-        padding: 3px;
-    }
+	.label {
+		position: absolute;
+		top: 0;
+		right: 0;
+		color: #fff;
+		background-color: #333;
+		border-radius: 9px;
+		height: 18px;
+		min-width: 18px;
+		line-height: 12px;
+		text-align: center;
+		padding: 3px;
+	}
 }
 
 .leaflet-touch {
-    .leaflet-control-layers,
-    .leaflet-bar {
-        border: none;
-        border-radius: var(--border-radius);
-    }
+	.leaflet-control-layers,
+	.leaflet-bar {
+		border: none;
+		border-radius: var(--border-radius);
+	}
 }
 
 .leaflet-control-attribution.leaflet-control {
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    max-width: 50vw;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	max-width: 50vw;
 }
 
 .leaflet-popup {
-    .leaflet-popup-content-wrapper {
-        border-radius: 4px;
-    }
+	.leaflet-popup-content-wrapper {
+		border-radius: 4px;
+	}
 
-    .leaflet-popup-close-button {
-        top: 9px;
-        right: 9px;
-    }
+	.leaflet-popup-close-button {
+		top: 9px;
+		right: 9px;
+	}
 }
 </style>
 
 <style lang="scss" scoped>
 .map-container {
-    position: relative;
-    height: 100%;
-    width: 100%;
+	position: relative;
+	height: 100%;
+	width: 100%;
 }
 </style>

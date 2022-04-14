@@ -124,4 +124,75 @@ class UtilsController extends Controller {
         return $response;
     }
 
+    /**
+     * get content of mapbox traffic style
+     * @NoAdminRequired
+     * @NoCSRFRequired
+     *
+     * @return DataResponse
+     */
+    public function getTrafficStyle(): DataResponse {
+        $style = [
+            'version' => 8,
+            'name' => 'Mapbox Traffic tileset v1',
+            'sources' => [
+                'mapbox-traffic' => [
+                    'url' => 'mapbox://mapbox.mapbox-traffic-v1',
+                    'type' => 'vector'
+                ]
+            ],
+            'layers' => [
+                [
+                    'id' => 'traffic',
+                    'source' => 'mapbox-traffic',
+                    'source-layer' => 'traffic',
+                    'type' => 'line',
+                    'paint' => [
+                        'line-width' => 2.0,
+                        'line-color' => [
+                            'case',
+                            [
+                                '==',
+                                'low',
+                                [
+                                    'get',
+                                    'congestion'
+                                ]
+                            ],
+                            '#00ff00',
+                            [
+                                '==',
+                                'moderate',
+                                [
+                                    'get',
+                                    'congestion'
+                                ]
+                            ],
+                            '#ffad00',
+                            [
+                                '==',
+                                'heavy',
+                                [
+                                    'get',
+                                    'congestion'
+                                ]
+                            ],
+                            '#ff0000',
+                            [
+                                '==',
+                                'severe',
+                                [
+                                    'get',
+                                    'congestion'
+                                ]
+                            ],
+                            '#b43b71',
+                            '#000000'
+                        ]
+                    ]
+                ]
+            ]
+        ];
+        return new DataResponse($style);
+    }
 }

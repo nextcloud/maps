@@ -21,6 +21,7 @@ use \OCP\DB\QueryBuilder\IQueryBuilder;
 use OCP\IMemcache;
 use \Sabre\VObject\Reader;
 use \OCP\Files\IAppData;
+use OpenLocationCode\OpenLocationCode;
 
 /**
  * Class AddressService
@@ -136,6 +137,15 @@ class AddressService {
 
     private function lookupAddressInternal($adr) {
         $res = [null, null, False];
+
+        if (OpenLocationCode::isFull($adr)) {
+            $decoded = OpenLocationCode::decode($adr);
+            $res[0] = $decoded['latitudeCenter'];
+            $res[1] = $decoded['longitudeCenter'];
+            $res[2] = True;
+            return $res;
+        }
+
         $adr_norm = strtolower(preg_replace('/\s+/', '', $adr));
 
         $this->qb->select('lat', 'lng')

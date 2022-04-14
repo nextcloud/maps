@@ -1,6 +1,7 @@
 {
     "require": {
-        "lsolesen/pel": "^0.9.11"
+        "lsolesen/pel": "^0.9.11",
+        "bogdaan/open-location-code": "dev-master"
     },
     "require-dev": {
         "christophwurst/nextcloud_testing": "^0.9.1"

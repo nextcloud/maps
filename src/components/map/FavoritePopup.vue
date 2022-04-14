@@ -118,13 +118,13 @@ export default {
 		handleDeleteClick() {
 			const { id } = this.favorite
 
-			this.$emit('deleteFavorite', { id })
+			this.$emit('delete-favorite', { id })
 		},
 		handleFavoriteSubmit() {
 			const { id, lat, lng } = this.favorite
 			const { name, category, comment } = this.favoriteCopy
 
-			this.$emit('updateFavorite', {
+			this.$emit('update-favorite', {
 				id,
 				name,
 				category,

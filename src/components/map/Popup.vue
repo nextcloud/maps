@@ -48,26 +48,26 @@ export default {
 </script>
 
 <style scoped lang="scss">
-.popup {
-    width: 180px;
+::v-deep .popup {
+	width: 180px;
 
-    .popup-title {
-        display: inline-block;
-        line-height: 1em;
-        color: #333;
-        font-size: 1em;
-        margin: 0;
-        padding: 0;
-        white-space: nowrap;
-    }
+	.popup-title {
+		display: inline-block;
+		line-height: 1em;
+		color: #333;
+		font-size: 1em;
+		margin: 0;
+		padding: 0;
+		white-space: nowrap;
+	}
 
-    .popup-content {
-        position: relative;
-        width: 100%;
-    }
+	.popup-content {
+		position: relative;
+		width: 100%;
+	}
 
-    &::v-deep .buttons {
-        display: flex;
-    }
+	&::v-deep .buttons {
+		display: flex;
+	}
 }
 </style>

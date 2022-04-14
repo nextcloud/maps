@@ -3,7 +3,7 @@
  *
  * @author Paul Schwörer <hello@paulschwoerer.de>
  *
- * @license GNU AGPL version 3 or any later version
+ * @license AGPL-3.0-or-later
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
@@ -53,7 +53,8 @@ const actions = {
 	},
 	getFavorites({ commit }) {
 		publicApiRequest('favorites', 'GET')
-			.then(data => {
+			.then(response => {
+				const data = response.data
 				commit('setShareInfo', data.share)
 				commit('setFavorites', data.favorites)
 			})
@@ -70,7 +71,8 @@ const actions = {
 			comment,
 			extensions: '', // TODO:
 		})
-			.then(data => {
+			.then(response => {
+				const data = response.data
 				commit('addFavorite', data)
 			})
 			.catch(() => showNotification(t('maps', 'Failed to create favorite')))
@@ -82,7 +84,8 @@ const actions = {
 			comment,
 			extensions: '', // TODO:
 		})
-			.then(data => {
+			.then(response => {
+				const data = response.data
 				commit('editFavorite', data)
 			})
 			.catch(() => showNotification(t('maps', 'Failed to update favorite')))

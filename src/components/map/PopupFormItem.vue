@@ -64,32 +64,32 @@ export default {
 <style scoped lang="scss">
 $spacing: 0.5em;
 
-.form-item {
-    width: 100%;
-    margin: $spacing 0;
-    display: flex;
-    align-items: center;
+::v-deep .form-item {
+	width: 100%;
+	margin: $spacing 0;
+	display: flex;
+	align-items: center;
 
-    .icon {
-        height: 44px;
-        margin-right: 2 * $spacing;
-    }
+	.icon {
+		height: 44px;
+		margin-right: 2 * $spacing;
+	}
 
-    .input-wrapper {
-        width: 100%;
+	.input-wrapper {
+		width: 100%;
 
-        &::v-deep {
-            .textarea {
-                resize: vertical;
-            }
+		&::v-deep {
+			.textarea {
+				resize: vertical;
+			}
 
-            .input,
-            .textarea {
-                display: block;
-                width: 100%;
-                flex: 0;
-            }
-        }
-    }
+			.input,
+			.textarea {
+				display: block;
+				width: 100%;
+				flex: 0;
+			}
+		}
+	}
 }
 </style>

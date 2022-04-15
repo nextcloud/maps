@@ -97,7 +97,7 @@ export default {
 			} else if (this.activeTab === 'photo') {
 				return this.photo.filename
 			}
-			return t('maps', 'shows cool information')
+			return t('maps', 'Shows cool information')
 		},
 		backgroundImageUrl() {
 			const iconColor = OCA.Accessibility?.theme === 'dark' ? 'ffffff' : '000000'

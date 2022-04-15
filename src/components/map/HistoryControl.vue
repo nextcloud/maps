@@ -4,13 +4,13 @@
 		<div id="history">
 			<button
 				v-if="lastActions.length"
-				v-tooltip="{ content: t('maps', 'Cancel {action} (Ctrl+z)', { action: lastActionLabel }) }"
+				v-tooltip="{ content: t('maps', 'Undo {action} (Ctrl+Z)', { action: lastActionLabel }) }"
 				@click="$emit('cancel')">
 				<span class="icon icon-history" />
 			</button>
 			<button
 				v-if="lastCanceledActions.length"
-				v-tooltip="{ content: t('maps', 'Redo {action} (Ctrl+Z)', { action: lastCanceledActionLabel }) }"
+				v-tooltip="{ content: t('maps', 'Redo {action} (Ctrl+Shift+Z)', { action: lastCanceledActionLabel }) }"
 				@click="$emit('redo')">
 				<span class="icon icon-redo" />
 			</button>

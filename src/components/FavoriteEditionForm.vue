@@ -38,7 +38,7 @@
 		<div class="buttons">
 			<button @click="onOkClick">
 				<span class="icon-checkmark" />
-				{{ t('maps', 'Ok') }}
+				{{ t('maps', 'OK') }}
 			</button>
 			<button @click="onDeleteClick">
 				<span class="icon-delete" />

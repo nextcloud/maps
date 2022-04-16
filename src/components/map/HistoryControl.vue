@@ -68,19 +68,19 @@ export default {
 	methods: {
 		getActionLabel(action) {
 			if (action.type === 'photoMove') {
-				return t('maps', 'move photo')
+				return t('maps', 'Move photo')
 			} else if (action.type === 'favoriteAdd') {
-				return t('maps', 'add favorite')
+				return t('maps', 'Add favorite')
 			} else if (action.type === 'favoriteEdit') {
-				return t('maps', 'edit favorite')
+				return t('maps', 'Edit favorite')
 			} else if (action.type === 'favoriteDelete') {
-				return t('maps', 'delete favorite')
+				return t('maps', 'Delete favorite')
 			} else if (action.type === 'favoriteRenameCategory') {
-				return t('maps', 'rename favorite category')
+				return t('maps', 'Rename favorite category')
 			} else if (action.type === 'contactPlace') {
-				return t('maps', 'place contact')
+				return t('maps', 'Place contact')
 			} else if (action.type === 'contactDelete') {
-				return t('maps', 'delete contact address')
+				return t('maps', 'Delete contact address')
 			}
 		},
 	},

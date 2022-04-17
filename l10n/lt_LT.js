@@ -22,7 +22,6 @@ OC.L10N.register(
     "My photos" : "Mano nuotraukos",
     "Sort by name" : "Rikiuoti pagal pavadinimą",
     "Sort by date" : "Rikiuoti pagal datą",
-    "Ok" : "Gerai",
     "Favorite name" : "Mėgstamo pavadinimas",
     "Category" : "Kategorija",
     "Comment" : "Komentaras",

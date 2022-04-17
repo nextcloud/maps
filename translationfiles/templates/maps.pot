@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Nextcloud 3.14159\n"
 "Report-Msgid-Bugs-To: translations\\@example.com\n"
-"POT-Creation-Date: 2022-04-16 02:59+0000\n"
+"POT-Creation-Date: 2022-04-17 03:26+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -292,7 +292,7 @@ msgstr ""
 
 #. TRANSLATORS src/components/FavoriteEditionForm.vue:41
 #: /app/specialVueFakeDummyForL10nScript.js:86
-msgid "Ok"
+msgid "OK"
 msgstr ""
 
 #. TRANSLATORS src/components/FavoriteEditionForm.vue:77
@@ -337,7 +337,9 @@ msgid "Place photos"
 msgstr ""
 
 #. TRANSLATORS src/components/Map.vue:390
-#: /app/specialVueFakeDummyForL10nScript.js:102 /app/src/script.js:512
+#. TRANSLATORS src/components/map/HistoryControl.vue:81
+#: /app/specialVueFakeDummyForL10nScript.js:102
+#: /app/specialVueFakeDummyForL10nScript.js:268 /app/src/script.js:512
 msgid "Place contact"
 msgstr ""
 
@@ -459,7 +461,7 @@ msgstr ""
 
 #. TRANSLATORS src/components/Sidebar.vue:100
 #: /app/specialVueFakeDummyForL10nScript.js:148
-msgid "shows cool information"
+msgid "Shows cool information"
 msgstr ""
 
 #. TRANSLATORS src/components/TrackTable.vue:48
@@ -678,7 +680,9 @@ msgid "No name"
 msgstr ""
 
 #. TRANSLATORS src/components/map/FavoriteMarker.vue:30
+#. TRANSLATORS src/components/map/HistoryControl.vue:77
 #: /app/specialVueFakeDummyForL10nScript.js:238
+#: /app/specialVueFakeDummyForL10nScript.js:264
 msgid "Delete favorite"
 msgstr ""
 
@@ -711,37 +715,27 @@ msgstr ""
 
 #. TRANSLATORS src/components/map/HistoryControl.vue:71
 #: /app/specialVueFakeDummyForL10nScript.js:258
-msgid "move photo"
+msgid "Move photo"
 msgstr ""
 
 #. TRANSLATORS src/components/map/HistoryControl.vue:73
 #: /app/specialVueFakeDummyForL10nScript.js:260
-msgid "add favorite"
+msgid "Add favorite"
 msgstr ""
 
 #. TRANSLATORS src/components/map/HistoryControl.vue:75
 #: /app/specialVueFakeDummyForL10nScript.js:262
-msgid "edit favorite"
-msgstr ""
-
-#. TRANSLATORS src/components/map/HistoryControl.vue:77
-#: /app/specialVueFakeDummyForL10nScript.js:264
-msgid "delete favorite"
+msgid "Edit favorite"
 msgstr ""
 
 #. TRANSLATORS src/components/map/HistoryControl.vue:79
 #: /app/specialVueFakeDummyForL10nScript.js:266
-msgid "rename favorite category"
-msgstr ""
-
-#. TRANSLATORS src/components/map/HistoryControl.vue:81
-#: /app/specialVueFakeDummyForL10nScript.js:268
-msgid "place contact"
+msgid "Rename favorite category"
 msgstr ""
 
 #. TRANSLATORS src/components/map/HistoryControl.vue:83
 #: /app/specialVueFakeDummyForL10nScript.js:270
-msgid "delete contact address"
+msgid "Delete contact address"
 msgstr ""
 
 #. TRANSLATORS src/components/map/PhotosLayer.vue:31

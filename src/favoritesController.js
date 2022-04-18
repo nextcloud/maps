@@ -772,7 +772,7 @@ FavoritesController.prototype = {
         $('#addFavoriteButton button').removeClass('icon-add').addClass('icon-history');
         $('#explainaddpoint').show();
         this.addFavoriteMode = true;
-        OC.Notification.showTemporary(t('maps', 'Click on the map to add a favorite, press ESC to cancel'));
+        OC.Notification.showTemporary(t('maps', 'Click on the map to add a favorite, press Esc to cancel'));
     },
 
     leaveAddFavoriteMode: function() {
@@ -1199,7 +1199,7 @@ FavoritesController.prototype = {
     enterMoveFavoriteMode: function() {
         $('.leaflet-container, .mapboxgl-map').css('cursor', 'crosshair');
         this.map.on('click', this.moveFavoriteClickMap);
-        OC.Notification.showTemporary(t('maps', 'Click on the map to move the favorite, press ESC to cancel'));
+        OC.Notification.showTemporary(t('maps', 'Click on the map to move the favorite, press Esc to cancel'));
     },
 
     leaveMoveFavoriteMode: function() {

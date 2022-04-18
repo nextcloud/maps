@@ -1364,7 +1364,7 @@ export default {
 			}
 			this.addingFavorite = !this.addingFavorite
 			if (this.addingFavorite) {
-				showInfo(t('maps', 'Click on the map to add a favorite, press ESC to cancel'))
+				showInfo(t('maps', 'Click on the map to add a favorite, press Esc to cancel'))
 			}
 		},
 		// when a favorite is created by canceling deletion or redoing creation

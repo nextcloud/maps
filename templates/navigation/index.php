@@ -36,7 +36,7 @@
         <ul id="category-list">
         </ul>
     </li>
-    <li id="navigation-photos">
+    <li id="navigation-photos" class="collapsible">
         <a class="icon-picture" href="#"><?php p($l->t('Your photos')); ?></a>
         <div class="app-navigation-entry-utils">
             <ul>

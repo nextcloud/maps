@@ -9,7 +9,7 @@
  * @copyright Julien Veyssier 2019
  */
 
-namespace OCA\Maps\Tests\Unit\Controller;
+namespace OCA\Maps\Controller;
 
 use \OCA\Maps\AppInfo\Application;
 use \OCA\Maps\Service\DevicesService;
@@ -22,7 +22,7 @@ use \OCP\IServerContainer;
 use \OCP\EventDispatcher\IEventDispatcher;
 use \OCA\DAV\CardDAV\CardDavBackend;
 use OCA\DAV\CardDAV\ContactsManager;
-use Psr\EventDispatcher\EventDispatcherInterface;
+
 
 
 class ContactsControllerTest extends \PHPUnit\Framework\TestCase {
@@ -119,14 +119,8 @@ class ContactsControllerTest extends \PHPUnit\Framework\TestCase {
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->cdBackend = new CardDavBackend(
-            $c->query(IServerContainer::class)->query(\OCP\IDBConnection::class),
-            $this->userPrincipalBackend,
-            $c->getServer()->getUserManager(),
-            $c->getServer()->getGroupManager(),
-            $c->query(IServerContainer::class)->query(IEventDispatcher::class),
-			$c->query(IServerContainer::class)->query(EventDispatcherInterface::class),
-        );
+        $this->cdBackend =  $c->query(IServerContainer::class)->query(CardDavBackend::class);
+
 
         $this->contactsController = new ContactsController(
             $this->appName,

@@ -9,7 +9,7 @@
  * @copyright Julien Veyssier 2019
  */
 
-namespace OCA\Maps\Controller;
+namespace OCA\Maps\Tests\Unit\Controller;
 
 use \OCA\Maps\AppInfo\Application;
 use \OCA\Maps\Service\DevicesService;

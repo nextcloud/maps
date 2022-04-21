@@ -22,6 +22,7 @@ use \OCP\IServerContainer;
 use \OCP\EventDispatcher\IEventDispatcher;
 use \OCA\DAV\CardDAV\CardDavBackend;
 use OCA\DAV\CardDAV\ContactsManager;
+use Psr\EventDispatcher\EventDispatcherInterface;
 
 
 class ContactsControllerTest extends \PHPUnit\Framework\TestCase {
@@ -123,7 +124,8 @@ class ContactsControllerTest extends \PHPUnit\Framework\TestCase {
             $this->userPrincipalBackend,
             $c->getServer()->getUserManager(),
             $c->getServer()->getGroupManager(),
-            $c->query(IServerContainer::class)->query(IEventDispatcher::class)
+            $c->query(IServerContainer::class)->query(IEventDispatcher::class),
+			$c->query(IServerContainer::class)->query(EventDispatcherInterface::class),
         );
 
         $this->contactsController = new ContactsController(

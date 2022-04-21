@@ -36,6 +36,11 @@ jobs:
               run: git clone https://github.com/nextcloud/server.git --recursive --depth 1 -b ${{ matrix.nextcloud-versions }} nextcloud
             - name: Install Nextcloud
               run: php -f nextcloud/occ maintenance:install --database-name oc_autotest --database-user oc_autotest --admin-user admin --admin-pass admin --database sqlite --database-pass=''
+            - name: Checkout Viewer
+              run: git clone https://github.com/nextcloud/viewer.git -b ${{ matrix.nextcloud-versions }} viewer
+              working-directory: nextcloud/apps
+            - name: Enable Viewer
+              run: php -f nextcloud/occ app:enable viewer
             - name: Fix php-parser on stable20 incompatibility with phpunit 9.3+
               if: ${{ matrix.nextcloud-versions == 'stable20' }}
               working-directory: nextcloud/3rdparty

@@ -1,12 +1,4 @@
 js/
 l10n/
 src/adminSettings.js
-src/contactsController.js
-src/devicesController.js
-src/favoritesController.js
-src/filetypes.js
-src/nonLocalizedPhotosController.js
-src/photosController.js
-src/script.js
-src/tracksController.js
 src/utils.js

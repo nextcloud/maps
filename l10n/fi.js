@@ -101,6 +101,7 @@ OC.L10N.register(
     "Routing error:" : "Reititysvirhe:",
     "Routing is currently disabled." : "Reititys on pois käytöstä.",
     "Add a routing service" : "Lisää reitityspalvelu",
+    "Details" : "Tiedot",
     "My location" : "Oma sijainti",
     "Impossible to get current location" : "Nykyisen sijainnin määrittäminen ei ole mahdollista",
     "Phone" : "Puhelin",

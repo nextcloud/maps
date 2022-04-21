@@ -49,7 +49,7 @@ class PageControllerTest extends \PHPUnit\Framework\TestCase {
     public function testIndex() {
         $result = $this->controller->index();
 
-        $this->assertEquals('index', $result->getTemplateName());
+        $this->assertEquals('main', $result->getTemplateName());
         $this->assertTrue($result instanceof TemplateResponse);
     }
 

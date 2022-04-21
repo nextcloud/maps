@@ -26,8 +26,8 @@ jobs:
         uses: skjnldsv/read-package-engines-version-actions@v1.2
         id: versions
         with:
-          fallbackNode: '^12'
-          fallbackNpm: '^6'
+          fallbackNode: '^14'
+          fallbackNpm: '^7'
 
       - name: Set up node ${{ steps.versions.outputs.nodeVersion }}
         uses: actions/setup-node@v3
@@ -37,14 +37,9 @@ jobs:
       - name: Set up npm ${{ steps.versions.outputs.npmVersion }}
         run: npm i -g npm@"${{ steps.versions.outputs.npmVersion }}"
 
-      - name: Install dependencies & build
+      - name: Install dependencies
         run: |
           npm ci
-          npm run build --if-present
-
-      - name: Check webpack build changes
-        run: |
-          bash -c "[[ ! \"`git status --porcelain `\" ]] || exit 1"
 
       - name: Show changes on failure
         if: failure()

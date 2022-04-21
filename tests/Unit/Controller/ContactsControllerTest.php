@@ -19,6 +19,7 @@ use OCA\DAV\Connector\Sabre\Principal;
 use OCA\Maps\Service\AddressService;
 use OCP\Files\IAppData;
 use \OCP\IServerContainer;
+use \OCP\EventDispatcher\IEventDispatcher;
 use \OCA\DAV\CardDAV\CardDavBackend;
 use OCA\DAV\CardDAV\ContactsManager;
 
@@ -98,7 +99,7 @@ class ContactsControllerTest extends \PHPUnit\Framework\TestCase {
             ->getMock();
 
         $this->addressService = new AddressService(
-            $c->query(IServerContainer::class)->getConfig(),
+            $c->query(IServerContainer::class)->getMemCacheFactory(),
             $c->query(IServerContainer::class)->getLogger(),
             $c->query(IServerContainer::class)->getJobList(),
             $this->appData,
@@ -122,7 +123,7 @@ class ContactsControllerTest extends \PHPUnit\Framework\TestCase {
             $this->userPrincipalBackend,
             $c->getServer()->getUserManager(),
             $c->getServer()->getGroupManager(),
-            $c->getServer()->getEventDispatcher()
+            $c->query(IServerContainer::class)->query(IEventDispatcher::class)
         );
 
         $this->contactsController = new ContactsController(

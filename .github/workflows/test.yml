@@ -1,0 +1,75 @@
+name: Test
+
+on:
+    pull_request:
+    push:
+        branches:
+            - main
+            - stable*
+
+jobs:
+    unit-tests:
+        runs-on: ubuntu-latest
+        strategy:
+            matrix:
+                php-versions: [7.3, 7.4]
+                nextcloud-versions: ['stable21', 'stable22', 'stable23']
+                include:
+                    - php-versions: 7.4
+                      nextcloud-versions: stable24
+                    - php-versions: 8.0
+                      nextcloud-versions: stable24
+                    - php-versions: 7.4
+                      nextcloud-versions: master
+                    - php-versions: 8.0
+                      nextcloud-versions: master
+        name: Nextcloud ${{ matrix.nextcloud-versions }} php${{ matrix.php-versions }} unit tests
+        steps:
+            - name: Set up php${{ matrix.php-versions }}
+              uses: shivammathur/setup-php@master
+              with:
+                  php-version: ${{ matrix.php-versions }}
+                  tools: composer:v1
+                  extensions: ctype,curl,dom,gd,iconv,intl,json,mbstring,openssl,posix,sqlite,xml,zip,gmp
+                  coverage: xdebug
+            - name: Checkout Nextcloud
+              run: git clone https://github.com/nextcloud/server.git --recursive --depth 1 -b ${{ matrix.nextcloud-versions }} nextcloud
+            - name: Install Nextcloud
+              run: php -f nextcloud/occ maintenance:install --database-name oc_autotest --database-user oc_autotest --admin-user admin --admin-pass admin --database sqlite --database-pass=''
+            - name: Fix php-parser on stable20 incompatibility with phpunit 9.3+
+              if: ${{ matrix.nextcloud-versions == 'stable20' }}
+              working-directory: nextcloud/3rdparty
+              run: composer require nikic/php-parser:4.10
+            - name: Checkout Maps
+              uses: actions/checkout@v3
+              with:
+                  path: nextcloud/apps/maps
+            - name: Install dependencies
+              working-directory: nextcloud/apps/maps
+              run: composer install
+            - name: Run tests
+              working-directory: nextcloud/apps/maps
+              run: composer run test:unit
+              env:
+                  XDEBUG_MODE: coverage
+            - name: Report coverage
+              uses: codecov/codecov-action@v3.0.0
+              if: ${{ always() && matrix.nextcloud-versions == 'master' }}
+              with:
+                  file: ./nextcloud/apps/maps/tests/clover.unit.xml
+                  flags: unittests
+                  fail_ci_if_error: true
+
+    frontend-unit-test:
+        runs-on: ubuntu-latest
+        name: Front-end unit tests
+        steps:
+            - uses: actions/checkout@v3
+            - name: Set up Node
+              uses: actions/setup-node@v3
+              with:
+                  node-version: 12.x
+            - name: npm install
+              run: npm install
+        env:
+            CI: true

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Nextcloud 3.14159\n"
 "Report-Msgid-Bugs-To: translations\\@example.com\n"
-"POT-Creation-Date: 2022-04-22 03:02+0000\n"
+"POT-Creation-Date: 2022-04-23 03:01+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -1339,7 +1339,7 @@ msgstr ""
 #. TRANSLATORS src/views/App.vue:1367
 #: /app/specialVueFakeDummyForL10nScript.js:552
 #: /app/src/favoritesController.js:775
-msgid "Click on the map to add a favorite, press ESC to cancel"
+msgid "Click on the map to add a favorite, press Esc to cancel"
 msgstr ""
 
 #. TRANSLATORS src/views/App.vue:1637
@@ -1500,7 +1500,7 @@ msgid "Failed to edit favorite"
 msgstr ""
 
 #: /app/src/favoritesController.js:1202
-msgid "Click on the map to move the favorite, press ESC to cancel"
+msgid "Click on the map to move the favorite, press Esc to cancel"
 msgstr ""
 
 #: /app/src/favoritesController.js:1257
@@ -1557,7 +1557,7 @@ msgid "Zoom in"
 msgstr ""
 
 #: /app/src/photosController.js:457
-msgid "Click on the map to move the photo, press ESC to cancel"
+msgid "Click on the map to move the photo, press Esc to cancel"
 msgstr ""
 
 #: /app/src/photosController.js:545

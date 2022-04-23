@@ -120,7 +120,6 @@ OC.L10N.register(
     "View in Maps" : "Rodyti Žemėlapiuose",
     "Media scan was not done yet. Wait a few minutes/hours and reload this page to see your photos/tracks." : "Medijos peržiūra dar nebuvo atlikta. Palaukite kelias minutes/valandas ir įkelkite šį puslapį iš naujo norėdami matyti savo nuotraukas/takus.",
     "Zoom in" : "Didinti",
-    "Click on the map to move the photo, press ESC to cancel" : "Norėdami perkelti nuotrauką, spustelėkite ant žemėlapio arba paspauskite ESC, norėdami atsisakyti",
     "Failed to load photos" : "Nepavyko įkelti nuotraukų",
     "{nb} photos placed" : "Padėta nuotraukų: {nb}",
     "Failed to place photos" : "Nepavyko padėti nuotraukų",

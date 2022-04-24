@@ -177,7 +177,6 @@ class PhotosControllerTest extends \PHPUnit\Framework\TestCase {
         $file->move($userfolder->getPath().'/nc.jpg');
         $file = $userfolder->get('nc.jpg');
         $file->touch();
-
 		$this->photoFileService->addPhotoNow($file, 'test');
 
         $filename = 'tests/test_files/nut.jpg';
@@ -197,7 +196,6 @@ class PhotosControllerTest extends \PHPUnit\Framework\TestCase {
 
         // following section is not valid anymore
         // TODO fix photo scan (or make it really better) and then adjust tests ;-)
-
         $this->photoFileService->addPhotoNow($file, 'test');
 
         $resp = $this->photosController->getPhotosFromDb();
@@ -225,12 +223,31 @@ class PhotosControllerTest extends \PHPUnit\Framework\TestCase {
 		$this->assertEquals(0, count($data));
 		$file->delete();
 
-        // non localized
+        // non localized without track
         $resp = $this->photosController->getNonLocalizedPhotosFromDb();
         $status = $resp->getStatus();
         $this->assertEquals(200, $status);
         $data = $resp->getData();
-        $this->assertEquals(1, count($data));
+        $this->assertEquals(0, count($data));
+
+		// with track
+		$filename = 'tests/test_files/testFile1_locationNut.gpx';
+		$content1 = file_get_contents($filename);
+		$file = $userfolder->newFile('testFile1_locationNut.gpxx');
+		$file->putContent($content1);
+		//$file->touch();
+
+		$file = $userfolder->get('testFile1_locationNut.gpxx');
+		$file->move($userfolder->getPath().'/testFile1_locationNut.gpx');
+		//echo 'I MOVE TO '.$userfolder->getPath().'/testFile1.gpx'."\n";
+		$file = $userfolder->get('testFile1_locationNut.gpx');
+		$file->touch();
+
+		$resp = $this->photosController->getNonLocalizedPhotosFromDb();
+		$status = $resp->getStatus();
+		$this->assertEquals(200, $status);
+		$data = $resp->getData();
+		$this->assertEquals(1, count($data));
         $this->assertEquals('/nut.jpg', $data[0]->path);
 
 		//Test .nomedia repected
@@ -256,7 +273,7 @@ class PhotosControllerTest extends \PHPUnit\Framework\TestCase {
         $status = $resp->getStatus();
         $this->assertEquals(200, $status);
         $data = $resp->getData();
-        $this->assertEquals(1, $data);
+        $this->assertEquals(1, count($data));
 
         $resp = $this->photosController->getPhotosFromDb();
         $status = $resp->getStatus();
@@ -264,12 +281,18 @@ class PhotosControllerTest extends \PHPUnit\Framework\TestCase {
         $data = $resp->getData();
         $this->assertEquals(2, count($data));
 
+		$resp = $this->photosController->getNonLocalizedPhotosFromDb();
+		$status = $resp->getStatus();
+		$this->assertEquals(200, $status);
+		$data = $resp->getData();
+		$this->assertEquals(0, count($data));
+
         // reset coords
         $resp = $this->photosController->resetPhotosCoords(['/nut.jpg']);
         $status = $resp->getStatus();
         $this->assertEquals(200, $status);
         $data = $resp->getData();
-        $this->assertEquals(1, $data);
+        $this->assertEquals(1, count($data));
 
         $resp = $this->photosController->getPhotosFromDb();
         $status = $resp->getStatus();

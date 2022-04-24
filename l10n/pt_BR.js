@@ -40,6 +40,7 @@ OC.L10N.register(
     "My tracks" : "Minhas faixas",
     "Sort by name" : "Classificar por nome",
     "Sort by date" : "Classificar por data",
+    "OK" : "OK",
     "Favorite name" : "Nome do favorito",
     "Category" : "Categoria",
     "Comment" : "Comentar",

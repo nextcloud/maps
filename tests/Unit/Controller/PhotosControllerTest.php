@@ -178,6 +178,8 @@ class PhotosControllerTest extends \PHPUnit\Framework\TestCase {
         $file = $userfolder->get('nc.jpg');
         $file->touch();
 
+		$this->photoFileService->addPhotoNow($file, 'test');
+
         $filename = 'tests/test_files/nut.jpg';
         $handle = fopen($filename, 'rb');
         $content1 = fread($handle, filesize($filename));
@@ -195,7 +197,7 @@ class PhotosControllerTest extends \PHPUnit\Framework\TestCase {
 
         // following section is not valid anymore
         // TODO fix photo scan (or make it really better) and then adjust tests ;-)
-        /*
+
         $this->photoFileService->addPhotoNow($file, 'test');
 
         $resp = $this->photosController->getPhotosFromDb();
@@ -203,6 +205,25 @@ class PhotosControllerTest extends \PHPUnit\Framework\TestCase {
         $this->assertEquals(200, $status);
         $data = $resp->getData();
         $this->assertEquals(1, count($data));
+        $this->assertEquals('/nc.jpg', $data[0]->path);
+
+		//Test .nomedia repected
+		$file = $userfolder->newFile('.nomedia');
+		$resp = $this->photosController->getPhotosFromDb();
+		$status = $resp->getStatus();
+		$this->assertEquals(200, $status);
+		$data = $resp->getData();
+		$this->assertEquals(0, count($data));
+		$file->delete();
+
+		//Test .noimage repected
+		$file = $userfolder->newFile('.noimage');
+		$resp = $this->photosController->getPhotosFromDb();
+		$status = $resp->getStatus();
+		$this->assertEquals(200, $status);
+		$data = $resp->getData();
+		$this->assertEquals(0, count($data));
+		$file->delete();
 
         // non localized
         $resp = $this->photosController->getNonLocalizedPhotosFromDb();
@@ -212,14 +233,23 @@ class PhotosControllerTest extends \PHPUnit\Framework\TestCase {
         $this->assertEquals(1, count($data));
         $this->assertEquals('/nut.jpg', $data[0]->path);
 
-        foreach ($this->photoFileService->rescan('test') as $path) {
-        }
+		//Test .nomedia repected
+		$file = $userfolder->newFile('.nomedia');
+		$resp = $this->photosController->getNonLocalizedPhotosFromDb();
+		$status = $resp->getStatus();
+		$this->assertEquals(200, $status);
+		$data = $resp->getData();
+		$this->assertEquals(0, count($data));
+		$file->delete();
 
-        $resp = $this->photosController->getPhotosFromDb();
-        $status = $resp->getStatus();
-        $this->assertEquals(200, $status);
-        $data = $resp->getData();
-        $this->assertEquals(1, count($data));
+		//Test .noimage repected
+		$file = $userfolder->newFile('.noimage');
+		$resp = $this->photosController->getNonLocalizedPhotosFromDb();
+		$status = $resp->getStatus();
+		$this->assertEquals(200, $status);
+		$data = $resp->getData();
+		$this->assertEquals(0, count($data));
+		$file->delete();
 
         // place photos
         $resp = $this->photosController->placePhotos(['/nut.jpg'], [1.2345], [9.8765]);
@@ -246,7 +276,6 @@ class PhotosControllerTest extends \PHPUnit\Framework\TestCase {
         $this->assertEquals(200, $status);
         $data = $resp->getData();
         $this->assertEquals(1, count($data));
-        */
     }
 
 }

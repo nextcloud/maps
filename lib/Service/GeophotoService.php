@@ -149,9 +149,9 @@ class GeophotoService {
 					continue;
 				}
 				$file = array_shift($files);
-                if ($file === null) {
-                    continue;
-                }
+				if ($file === null) {
+					continue;
+				}
 				$path = $userFolder->getRelativePath( $file->getPath());
 				$isIgnored = false;
 				foreach ($ignoredPaths as $ignoredPath) {
@@ -161,16 +161,30 @@ class GeophotoService {
 					}
 				}
 				if (!$isIgnored) {
+					$isRoot = $file === $userFolder;
+
 					$date = $photoEntity->getDateTaken() ?? \time();
 					$locations = $this->getLocationGuesses($date);
 					foreach ($locations as $location) {
 						$file_object = new \stdClass();
 						$file_object->fileId = $photoEntity->getFileId();
+						$file_object->fileid = $file_object->fileId;
 						$file_object->path = $this->normalizePath($path);
 						$file_object->hasPreview = in_array($cacheEntry->getMimeType(), $previewEnableMimetypes);
 						$file_object->lat = $location[0];
 						$file_object->lng = $location[1];
 						$file_object->dateTaken = $date;
+						$file_object->basename = $isRoot ? '' : $file->getName();
+						$file_object->filename = $this->normalizePath($path);
+						$file_object->etag = $cacheEntry->getEtag();
+						//Not working for NC21 as Viewer requires String representation of permissions
+						//                $file_object->permissions = $file->getPermissions();
+						$file_object->type = $file->getType();
+						$file_object->mime = $file->getMimetype();
+						$file_object->lastmod = $file->getMTime();
+						$file_object->size = $file->getSize();
+						$file_object->path = $path;
+						$file_object->hasPreview = in_array($cacheEntry->getMimeType(), $previewEnableMimetypes);
 						$filesById[] = $file_object;
 					}
 				}
@@ -219,9 +233,6 @@ class GeophotoService {
             if (!is_null($location)) {
                 $locations[] = $location;
             }
-        }
-        if (count($locations) === 0) {
-            $locations[] = [null, null];
         }
         return $locations;
 

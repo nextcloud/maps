@@ -1768,6 +1768,7 @@ export default {
 						id: null,
 						enabled: this.myMapId === null,
 						deletable: false,
+						shareable: false,
 					},
 				]
 			    this.myMaps.push(

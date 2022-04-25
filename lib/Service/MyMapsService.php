@@ -90,12 +90,18 @@ class MyMapsService {
                 if (isset($mapData["color"])){
                     $color = $mapData["color"];
                 }
+				$parentNode = $node->getParent();
                 $MyMap = [
-                    "id"=>$node->getParent()->getId(),
+                    "id"=>$parentNode->getId(),
                     "name"=>$name,
                     "color"=>$color,
-                    "path"=>$userFolder->getRelativePath($node->getParent()->getPath())
-                ];
+                    "path"=>$userFolder->getRelativePath($parentNode->getPath()),
+					"shareable"=>$parentNode->isShareable(),
+					"deletable"=>$parentNode->isDeletable(),
+					"creatable"=>$parentNode->isCreatable(),
+					"updatable"=>$parentNode->isUpdateable(),
+					"readable"=>$parentNode->isReadable(),
+				];
                 array_push($MyMaps, $MyMap);
             }
         }

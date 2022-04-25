@@ -30,12 +30,10 @@
 				</template>
 				{{ t('maps', 'Change color') }}
 			</ActionButton>
-			<ActionButton v-if="parentEnabled"
+			<ActionButton v-if="shareable"
+				icon="icon-share"
 				:close-after-click="false"
 				@click="onShareClick">
-				<template #icon>
-					<div class="icon-colorpicker" />
-				</template>
 				{{ t('maps', 'Share') }}
 			</ActionButton>
 			<ActionButton v-if="deletable"
@@ -77,6 +75,9 @@ export default {
 	},
 
 	computed: {
+		shareable() {
+			return this.parentEnabled && (this.myMap.shareable ?? true)
+		},
 	    deletable() {
 	        return this.parentEnabled && (this.myMap.deletable ?? true)
 		},

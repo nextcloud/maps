@@ -13,7 +13,8 @@
 namespace OCA\Maps\Service;
 
 use lsolesen\pel\PelEntryTime;
-use OCA\Maps\Helper\ExifDataException;
+use OCA\Maps\Helper\ExifDataInvalidException;
+use OCA\Maps\Helper\ExifDataNoLocationException;
 use OCA\Maps\Helper\ExifGeoData;
 use OCP\Files\FileInfo;
 use OCP\IL10N;
@@ -386,10 +387,12 @@ class PhotofilesService {
         try{
             $exif_geo_data = ExifGeoData::get($path);
             $exif_geo_data->validate(true);
-        }catch(ExifDataException $e){
+        }catch(ExifDataInvalidException $e){
             $exif_geo_data = null;
             $this->logger->notice($e->getMessage(), ['code'=>$e->getCode(),'path'=>$path]);
-        }catch(\Throwable $f){
+		}catch(ExifDataNoLocationException $e){
+			$this->logger->notice($e->getMessage(), ['code'=>$e->getCode(),'path'=>$path]);
+		}catch(\Throwable $f){
             $exif_geo_data = null;
             $this->logger->error($f->getMessage(), ['code'=>$f->getCode(),'path'=>$path]);
         }

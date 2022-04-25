@@ -12,7 +12,8 @@
 namespace OCA\Maps\Controller;
 
 use \OCA\Maps\AppInfo\Application;
-use OCP\AppFramework\Http\TemplateResponse;
+use \OCP\AppFramework\Http\TemplateResponse;
+use \OCP\EventDispatcher\IEventDispatcher;
 use \OCP\IServerContainer;
 
 
@@ -20,6 +21,7 @@ class PageControllerTest extends \PHPUnit\Framework\TestCase {
     private $controller;
     private $userId = 'john';
     private $config;
+	private $eventDispatcher;
     private $app;
     private $container;
 
@@ -30,12 +32,13 @@ class PageControllerTest extends \PHPUnit\Framework\TestCase {
         $this->container = $this->app->getContainer();
         $c = $this->container;
         $this->config = $c->query(IServerContainer::class)->getConfig();
+		$this->eventDispatcher = $c->query(IServerContainer::class)->query(IEventDispatcher::class);
 
         $this->oldGHValue = $this->config->getAppValue('maps', 'graphhopperURL');
         $this->config->setAppValue('maps', 'graphhopperURL', 'https://graphhopper.com:8080');
 
         $this->controller = new PageController(
-            'maps', $request, $this->config, $initialStateService, $this->userId
+            'maps', $request, $this->eventDispatcher, $this->config, $initialStateService, $this->userId
         );
     }
 
@@ -46,7 +49,7 @@ class PageControllerTest extends \PHPUnit\Framework\TestCase {
     public function testIndex() {
         $result = $this->controller->index();
 
-        $this->assertEquals('index', $result->getTemplateName());
+        $this->assertEquals('main', $result->getTemplateName());
         $this->assertTrue($result instanceof TemplateResponse);
     }
 

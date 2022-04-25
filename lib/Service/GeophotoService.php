@@ -66,13 +66,14 @@ class GeophotoService {
 	 * @param string $userId
 	 * @param $folder
 	 * @param bool $respectNomediaAndNoimage
+	 * @param bool $hideImagesOnCustomMaps
 	 * @return array
 	 * @throws \OCP\Files\NotFoundException
 	 * @throws \OCP\Files\NotPermittedException
 	 * @throws \OC\User\NoUserException
 	 */
-     public function getAllFromDB(string $userId, $folder=null, bool $respectNomediaAndNoimage=true) {
-		$ignoredPaths = $respectNomediaAndNoimage ? $this->getIgnoredPaths($userId, $folder) : [];
+     public function getAllFromDB(string $userId, $folder=null, bool $respectNomediaAndNoimage=true, bool $hideImagesOnCustomMaps=true) {
+		$ignoredPaths = $respectNomediaAndNoimage ? $this->getIgnoredPaths($userId, $folder, $hideImagesOnCustomMaps) : [];
         $photoEntities = $this->photoMapper->findAll($userId);
 		$userfolder = $this->getFolderForUser($userId);
         if (is_null($folder)) {
@@ -209,21 +210,31 @@ class GeophotoService {
 	 * @throws \OCP\Files\NotPermittedException
 	 * @throws \OC\User\NoUserException
 	 */
-	private function getIgnoredPaths($userId, $folder=null){
+	private function getIgnoredPaths($userId, $folder=null, $hideImagesOnCustomMaps){
 		$ignoredPaths = [];
 		$folder = $this->getFolderForUser($userId);
 		if (is_null($folder)) {
 			$folder = $this->getFolderForUser($userId);
 		}
+		$ignoreMarkerFiles = [
+			'.nomedia',
+			'.noimage'
+		];
+		if ($hideImagesOnCustomMaps) {
+			$ignoreMarkerFiles[] = '.maps';
+		}
+		$func = function(string $i): SearchComparison {
+			return new SearchComparison(ISearchComparison::COMPARE_EQUAL, 'name', $i);
+		};
 		$excludedNodes = $folder->search(new SearchQuery(
 			new SearchBinaryOperator(ISearchBinaryOperator::OPERATOR_AND, [
 				new SearchBinaryOperator( ISearchBinaryOperator::OPERATOR_NOT, [
 					new SearchComparison(ISearchComparison::COMPARE_EQUAL, 'mimetype', FileInfo::TYPE_FOLDER)
 				]),
-				new SearchBinaryOperator(ISearchBinaryOperator::OPERATOR_OR, [
-					new SearchComparison(ISearchComparison::COMPARE_EQUAL, 'name', '.nomedia'),
-					new SearchComparison(ISearchComparison::COMPARE_EQUAL, 'name', '.noimage'),
-				]),
+				new SearchBinaryOperator(ISearchBinaryOperator::OPERATOR_OR, array_map(
+					$func,
+					$ignoreMarkerFiles)
+				),
 			]),
 			0,
 			0,

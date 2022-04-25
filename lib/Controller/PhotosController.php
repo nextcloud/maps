@@ -55,7 +55,7 @@ class PhotosController extends Controller {
         } else {
             $folders = $userFolder->getById($myMapId);
             $folder = array_shift($folders);
-            $result = $this->geophotoService->getAllFromDB($this->userId, $folder);
+            $result = $this->geophotoService->getAllFromDB($this->userId, $folder, true, false);
         }
         return new DataResponse($result);
     }

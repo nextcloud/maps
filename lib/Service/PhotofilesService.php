@@ -83,7 +83,6 @@ class PhotofilesService {
     // check if it's already in DB before adding
     public function addByFile(Node $file) {
         $ownerId = $file->getOwner()->getUID();
-        $userFolder = $this->root->getUserFolder($ownerId);
         if ($this->isPhoto($file)) {
             $this->addPhoto($file, $ownerId);
             // is the file accessible to other users ?
@@ -113,12 +112,11 @@ class PhotofilesService {
     }
 
     public function addByFolderIdUserId($folderId, $userId) {
-        $userFolder = $this->root->getUserFolder($userId);
-        $folders = $userFolder->getById($folderId);
-        if (empty($folders)) {
-            return;
-        }
-        $folder = array_shift($folders);
+        $folders =  $this->root->getById($folderId);
+		if (empty($folders)) {
+			return;
+		}
+		$folder = array_shift($folders);
         if ($folder !== null) {
             $photos = $this->gatherPhotoFiles($folder, true);
             foreach($photos as $photo) {

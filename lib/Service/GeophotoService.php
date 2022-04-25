@@ -62,13 +62,16 @@ class GeophotoService {
         $this->devicesService = $devicesService;
     }
 
-    /**
-     * @param string $userId
-	 * @param bool $respectNomediaAndNoimage=true
-	 * @param Folder|null $folder
-     * @return array with geodatas of all photos
-     */
-     public function getAllFromDB(string $userId, bool $respectNomediaAndNoimage=true, $folder=null) {
+	/**
+	 * @param string $userId
+	 * @param $folder
+	 * @param bool $respectNomediaAndNoimage
+	 * @return array
+	 * @throws \OCP\Files\NotFoundException
+	 * @throws \OCP\Files\NotPermittedException
+	 * @throws \OC\User\NoUserException
+	 */
+     public function getAllFromDB(string $userId, $folder=null, bool $respectNomediaAndNoimage=true) {
 		$ignoredPaths = $respectNomediaAndNoimage ? $this->getIgnoredPaths($userId, $folder) : [];
         $photoEntities = $this->photoMapper->findAll($userId);
         if (is_null($folder)) {

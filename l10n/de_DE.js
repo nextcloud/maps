@@ -195,7 +195,7 @@ OC.L10N.register(
     "Routing is currently disabled." : "Navigation ist derzeit ausgeschaltet.",
     "Nextcloud additional settings" : "Nextcloud zusätzliche Einstellungen",
     "Add a routing service" : "Navigationsdienst hinzufügen",
-    "Export as" : "Exportierenn als",
+    "Export as" : "Exportieren als",
     "GPX track" : "GPX-Track",
     "GPX route" : "GPX-Route",
     "Route exported to {path}." : "Route nach {path} exportiert",

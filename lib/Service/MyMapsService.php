@@ -91,6 +91,7 @@ class MyMapsService {
                     $color = $mapData["color"];
                 }
 				$parentNode = $node->getParent();
+				$isRoot = $parentNode->getPath() === $userFolder->getPath();
                 $MyMap = [
                     "id"=>$parentNode->getId(),
                     "name"=>$name,
@@ -101,6 +102,18 @@ class MyMapsService {
 					"creatable"=>$parentNode->isCreatable(),
 					"updatable"=>$parentNode->isUpdateable(),
 					"readable"=>$parentNode->isReadable(),
+					"fileinfo"=>[
+						"id" => $parentNode->getId(),
+						"name" => "",
+						"basename" => $isRoot ? '' : $parentNode->getName(),
+						"filename" => $userFolder->getRelativePath($parentNode->getPath()),
+						"etag" => $parentNode->getEtag(),
+		                "permissions" => $parentNode->getPermissions(),
+						"type" => $parentNode->getType(),
+						"mime" => $parentNode->getMimetype(),
+						"lastmod" => $parentNode->getMTime(),
+						"path"=>$userFolder->getRelativePath($parentNode->getPath()),
+					]
 				];
                 array_push($MyMaps, $MyMap);
             }

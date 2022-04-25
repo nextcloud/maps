@@ -77,6 +77,7 @@
 					@add="onAddMyMap"
 					@rename="onRenameMyMap"
 					@delete="onDeleteMyMap"
+					@share="onShareMyMap"
 					@color="onChangeMyMapColor"
 					@my-map-clicked="onMyMapClicked"
 					@my-maps-clicked="onMyMapsClicked" />
@@ -146,12 +147,14 @@
 		</AppContent>
 		<Sidebar
 			v-if="true"
+			ref="Sidebar"
 			:show="showSidebar"
 			:active-tab="activeSidebarTab"
 			:favorite="selectedFavorite"
 			:favorite-categories="favoriteCategories"
 			:track="selectedTrack"
 			:photo="selectedPhoto"
+			:my-map="selectedMyMap"
 			:is-full-screen="sidebarIsFullScreen"
 			@edit-favorite="onFavoriteEdit"
 			@delete-favorite="onFavoriteDelete"
@@ -263,6 +266,7 @@ export default {
 			myMaps: [],
 			myMapsEnabled: optionsController.myMapsEnabled,
 			myMapId: optionsController.myMapId,
+			selectedMyMap: null,
 		}
 	},
 
@@ -597,13 +601,21 @@ export default {
 			this.showSidebar = false
 		},
 		openSidebar(path) {
-			const photo = this.photos.find((p) => p.path === path)
-			if (photo) {
-				this.activeSidebarTab = 'photo'
-				this.selectedPhoto = photo
+			const myMap = path ? this.myMaps.find((m) => m.path === path) : false
+			if (myMap) {
+				this.activeSidebarTab = 'myMaps'
+				this.selectedMyMap = myMap
+				this.$refs.Sidebar.update()
 				window.OCA.Files.Sidebar.state.file = path
 			} else {
-				window.OCA.Files.Sidebar.state.file = true
+				const photo = this.photos.find((p) => p.path === path)
+				if (photo) {
+					this.activeSidebarTab = 'photo'
+					this.selectedPhoto = photo
+					window.OCA.Files.Sidebar.state.file = path
+				} else {
+					window.OCA.Files.Sidebar.state.file = true
+				}
 			}
 			this.showSidebar = true
 			emit('files:sidebar:opening')
@@ -1773,6 +1785,11 @@ export default {
 				]
 			    this.myMaps.push(
 				    ...response.data.map((myMap) => {
+						if (this.myMapId === myMap.id) {
+							this.selectedMyMap = myMap
+							this.selectedMyMap.enabled = true
+							this.$refs.Sidebar.update()
+						}
 				        return {
 				            ...myMap,
 							enabled: this.myMapId === myMap.id,
@@ -1793,6 +1810,7 @@ export default {
 			optionsController.saveOptionValues({ myMapsEnabled: this.myMapsEnabled ? 'true' : 'false' })
 		},
 		onMyMapClicked(myMap) {
+			this.selectedMyMap = myMap
 		    if (!this.myMapsLoading) {
 				this.myMapsLoading = true
 		        this.loadMap((myMap))
@@ -1836,6 +1854,9 @@ export default {
 			}).then(() => {
 				this.myMapsLoading = false
 			})
+		},
+		onShareMyMap(myMap) {
+			this.openSidebar(myMap.path)
 		},
 		loadMap(myMap) {
 			this.myMapId = myMap.id

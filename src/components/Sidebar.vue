@@ -20,16 +20,20 @@
 			:track="track" />
 		<PhotoSidebarTab v-if="activeTab === 'photo'"
 			:photo="photo" />
+		<SharingTab v-if="myMap"
+			v-show="activeTab === 'myMaps' && myMap.shareable"
+			ref="sharingTab" />
 	</AppSidebar>
 </template>
 
 <script>
 import AppSidebar from '@nextcloud/vue/dist/Components/AppSidebar'
-import { generateUrl } from '@nextcloud/router'
+import { generateUrl, generateFilePath } from '@nextcloud/router'
 
 import FavoriteSidebarTab from '../components/FavoriteSidebarTab'
 import TrackSidebarTab from '../components/TrackSidebarTab'
 import PhotoSidebarTab from '../components/PhotoSidebarTab'
+import SharingTab from '../../../../apps/files_sharing/src/views/SharingTab'
 
 export default {
 	name: 'Sidebar',
@@ -40,6 +44,7 @@ export default {
 		FavoriteSidebarTab,
 		TrackSidebarTab,
 		PhotoSidebarTab,
+		SharingTab,
 	},
 
 	props: {
@@ -67,6 +72,10 @@ export default {
 			validator: prop => typeof prop === 'object' || prop === null,
 			required: true,
 		},
+		myMap: {
+			validator: prop => typeof prop === 'object',
+			required: true,
+		},
 		isFullScreen: {
 			type: Boolean,
 			required: false,
@@ -86,6 +95,8 @@ export default {
 				return t('maps', 'Favorite')
 			} else if (this.activeTab === 'photo') {
 				return this.photo.basename
+			} else if (this.activeTab === 'myMaps') {
+				return this.myMap.name
 			}
 			return t('maps', 'Sidebar')
 		},
@@ -96,6 +107,8 @@ export default {
 				return ''
 			} else if (this.activeTab === 'photo') {
 				return this.photo.filename
+			} else if (this.activeTab === 'myMaps') {
+				return this.myMap.description ?? ''
 			}
 			return t('maps', 'Shows cool information')
 		},
@@ -107,11 +120,18 @@ export default {
 				return generateUrl('/svg/core/actions/star?color=' + iconColor)
 			} else if (this.activeTab === 'photo') {
 				return this.previewUrl()
+			} else if (this.activeTab === 'myMaps') {
+				return generateFilePath('maps', 'img', 'maps.png')
 			}
 			return ''
 		},
 	},
 
+	watch: {
+		myMap() {
+			this.update()
+		},
+	},
 	methods: {
 		onActiveChanged(newActive) {
 			this.$emit('active-changed', newActive)
@@ -122,7 +142,15 @@ export default {
 				: generateUrl('/apps/theming/img/core/filetypes') + '/image.svg?v=2'
 		},
 		hasPreview() {
-			return this.activeTab === 'photo' && this.photo.hasPreview
+			return (this.activeTab === 'photo' && this.photo.hasPreview)
+					|| (this.activeTab === 'myMaps' && this.myMap.hasPreview)
+		},
+		update() {
+			if (this.myMap) {
+				if (this.$refs.sharingTab) {
+					this.$refs.sharingTab.update(this.myMap.fileinfo)
+				}
+			}
 		},
 	},
 }

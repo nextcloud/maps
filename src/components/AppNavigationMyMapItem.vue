@@ -33,7 +33,7 @@
 			<ActionButton v-if="shareable"
 				icon="icon-share"
 				:close-after-click="false"
-				@click="onShareClick">
+				@click="$emit('share', myMap)">
 				{{ t('maps', 'Share') }}
 			</ActionButton>
 			<ActionButton v-if="deletable"
@@ -88,8 +88,6 @@ export default {
 		},
 		updateMyMapColor(e) {
 			this.$emit('color', { myMap: this.myMap, color: e.target.value })
-		},
-		onShareClick() {
 		},
 		onRename(newName) {
 			this.$emit('rename', { id: this.myMap.id, newName })

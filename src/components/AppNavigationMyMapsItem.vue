@@ -31,6 +31,7 @@
 				@click="$emit('my-map-clicked', $event)"
 				@rename="$emit('rename', $event)"
 				@delete="$emit('delete', $event)"
+				@share="$emit('share', $event)"
 				@color="$emit('color', $event)" />
 		</template>
 	</AppNavigationItem>

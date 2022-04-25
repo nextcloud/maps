@@ -12,7 +12,12 @@
 
 namespace OCA\Maps\Service;
 
+use OC\Files\Search\SearchBinaryOperator;
+use OC\Files\Search\SearchComparison;
+use OC\Files\Search\SearchQuery;
 use OCP\Files\FileInfo;
+use OCP\Files\Search\ISearchBinaryOperator;
+use OCP\Files\Search\ISearchComparison;
 use OCP\IL10N;
 use OCP\Files\IRootFolder;
 use OCP\Files\Storage\IStorage;
@@ -30,37 +35,41 @@ use OCA\Maps\Service\DevicesService;
 class GeophotoService {
 
     private $l10n;
+    private $root;
     private $photoMapper;
     private $logger;
     private $preview;
     private $tracksService;
     private $timeorderedPointSets;
     private $devicesService;
-    private $userfolder;
 
     public function __construct (ILogger $logger,
-                                 IL10N $l10n,
                                  IRootFolder $root,
+                                 IL10N $l10n,
                                  GeophotoMapper $photoMapper,
                                  IPreview $preview,
                                  TracksService $tracksService,
-                                 DevicesService $devicesService) {
+                                 DevicesService $devicesService,
+                                 $userId) {
+        $this->root = $root;
         $this->l10n = $l10n;
         $this->photoMapper = $photoMapper;
         $this->logger = $logger;
         $this->preview = $preview;
         $this->tracksService = $tracksService;
         $this->timeorderedPointSets = null;
-        $this->root = $root;
+        $this->userId = $userId;
         $this->devicesService = $devicesService;
     }
 
     /**
      * @param string $userId
-     * @param Folder|null $folder
+	 * @param bool $respectNomediaAndNoimage=true
+	 * @param Folder|null $folder
      * @return array with geodatas of all photos
      */
-     public function getAllFromDB($userId, $folder=null) {
+     public function getAllFromDB(string $userId, bool $respectNomediaAndNoimage=true, $folder=null) {
+		$ignoredPaths = $respectNomediaAndNoimage ? $this->getIgnoredPaths($userId, $folder) : [];
         $photoEntities = $this->photoMapper->findAll($userId);
         if (is_null($folder)) {
             $folder = $this->getFolderForUser($userId);
@@ -70,7 +79,7 @@ class GeophotoService {
         $previewEnableMimetypes = $this->getPreviewEnabledMimetypes();
         foreach ($photoEntities as $photoEntity) {
             $cacheEntry = $cache->get($photoEntity->getFileId());
-            if ($cacheEntry) {
+			if ($cacheEntry) {
                 // this path is relative to owner's storage
                 //$path = $cacheEntry->getPath();
                 // but we want it relative to current user's storage
@@ -82,27 +91,36 @@ class GeophotoService {
                 if ($file === null) {
                     continue;
                 }
-				$path = $folder->getRelativePath($file->getPath());
-				$isRoot = $file === $folder;
+				$path = $folder->getRelativePath( $file->getPath());
+				$isIgnored = false;
+				foreach ($ignoredPaths as $ignoredPath) {
+					if (str_starts_with($path, $ignoredPath)) {
+						$isIgnored = true;
+						break;
+					}
+				}
+				if (!$isIgnored) {
+					$isRoot = $file === $folder;
 
-				$file_object = new \stdClass();
-                $file_object->fileId = $photoEntity->getFileId();
-				$file_object->fileid = $file_object->fileId;
-                $file_object->lat = $photoEntity->getLat();
-                $file_object->lng = $photoEntity->getLng();
-                $file_object->dateTaken = $photoEntity->getDateTaken() ?? \time();
-                $file_object->basename = $isRoot ? '' : $file->getName();
-                $file_object->filename = $this->normalizePath($path);
-                $file_object->etag = $cacheEntry->getEtag();
+					$file_object = new \stdClass();
+					$file_object->fileId = $photoEntity->getFileId();
+					$file_object->fileid = $file_object->fileId;
+					$file_object->lat = $photoEntity->getLat();
+					$file_object->lng = $photoEntity->getLng();
+					$file_object->dateTaken = $photoEntity->getDateTaken() ?? \time();
+					$file_object->basename = $isRoot ? '' : $file->getName();
+					$file_object->filename = $this->normalizePath($path);
+					$file_object->etag = $cacheEntry->getEtag();
 //Not working for NC21 as Viewer requires String representation of permissions
 //                $file_object->permissions = $file->getPermissions();
-                $file_object->type = $file->getType();
-                $file_object->mime = $file->getMimetype();
-                $file_object->lastmod = $file->getMTime();
-                $file_object->size = $file->getSize();
-                $file_object->path = $path;
-                $file_object->hasPreview = in_array($cacheEntry->getMimeType(), $previewEnableMimetypes);
-                $filesById[] = $file_object;
+					$file_object->type = $file->getType();
+					$file_object->mime = $file->getMimetype();
+					$file_object->lastmod = $file->getMTime();
+					$file_object->size = $file->getSize();
+					$file_object->path = $path;
+					$file_object->hasPreview = in_array($cacheEntry->getMimeType(), $previewEnableMimetypes);
+					$filesById[] = $file_object;
+				}
             }
         }
         shuffle($filesById);
@@ -111,9 +129,11 @@ class GeophotoService {
 
     /**
      * @param string $userId
+	 * @param bool $respectNomediaAndNoimage
      * @return array with geodatas of all nonLocalizedPhotos
      */
-    public function getNonLocalizedFromDB ($userId) {
+    public function getNonLocalizedFromDB (string $userId, bool $respectNomediaAndNoimage=true) {
+		$ignoredPaths = $respectNomediaAndNoimage ? $this->getIgnoredPaths($userId) : [];
         $foo = $this->loadTimeorderedPointSets($userId);
         $photoEntities = $this->photoMapper->findAllNonLocalized($userId);
         $userFolder = $this->getFolderForUser($userId);
@@ -135,39 +155,81 @@ class GeophotoService {
 					continue;
 				}
 				$path = $userFolder->getRelativePath( $file->getPath());
-				$isRoot = $file === $userFolder;
+				$isIgnored = false;
+				foreach ($ignoredPaths as $ignoredPath) {
+					if (str_starts_with($path, $ignoredPath)) {
+						$isIgnored = true;
+						break;
+					}
+				}
+				if (!$isIgnored) {
+					$isRoot = $file === $userFolder;
 
-                $date = $photoEntity->getDateTaken() ?? \time();
-                $locations = $this->getLocationGuesses($date);
-                foreach ($locations as $location) {
-                    $file_object = new \stdClass();
-                    $file_object->fileId = $photoEntity->getFileId();
-					$file_object->fileid = $file_object->fileId;
-                    $file_object->path = $this->normalizePath($path);
-                    $file_object->hasPreview = in_array($cacheEntry->getMimeType(), $previewEnableMimetypes);
-                    $file_object->lat = $location[0];
-                    $file_object->lng = $location[1];
-                    $file_object->dateTaken = $date;
-					$file_object->basename = $isRoot ? '' : $file->getName();
-					$file_object->filename = $this->normalizePath($path);
-					$file_object->etag = $cacheEntry->getEtag();
-//Not working for NC21 as Viewer requires String representation of permissions
-//                $file_object->permissions = $file->getPermissions();
-					$file_object->type = $file->getType();
-					$file_object->mime = $file->getMimetype();
-					$file_object->lastmod = $file->getMTime();
-					$file_object->size = $file->getSize();
-					$file_object->path = $path;
-					$file_object->hasPreview = in_array($cacheEntry->getMimeType(), $previewEnableMimetypes);
-                    $filesById[] = $file_object;
-                }
-
+					$date = $photoEntity->getDateTaken() ?? \time();
+					$locations = $this->getLocationGuesses($date);
+					foreach ($locations as $location) {
+						$file_object = new \stdClass();
+						$file_object->fileId = $photoEntity->getFileId();
+						$file_object->fileid = $file_object->fileId;
+						$file_object->path = $this->normalizePath($path);
+						$file_object->hasPreview = in_array($cacheEntry->getMimeType(), $previewEnableMimetypes);
+						$file_object->lat = $location[0];
+						$file_object->lng = $location[1];
+						$file_object->dateTaken = $date;
+						$file_object->basename = $isRoot ? '' : $file->getName();
+						$file_object->filename = $this->normalizePath($path);
+						$file_object->etag = $cacheEntry->getEtag();
+						//Not working for NC21 as Viewer requires String representation of permissions
+						//                $file_object->permissions = $file->getPermissions();
+						$file_object->type = $file->getType();
+						$file_object->mime = $file->getMimetype();
+						$file_object->lastmod = $file->getMTime();
+						$file_object->size = $file->getSize();
+						$file_object->path = $path;
+						$file_object->hasPreview = in_array($cacheEntry->getMimeType(), $previewEnableMimetypes);
+						$filesById[] = $file_object;
+					}
+				}
             }
 
         }
         shuffle($filesById);
         return $filesById;
     }
+
+	/**
+	 * @param $userId
+	 * @param $folder
+	 * @return array
+	 * @throws \OCP\Files\NotFoundException
+	 * @throws \OCP\Files\NotPermittedException
+	 * @throws \OC\User\NoUserException
+	 */
+	private function getIgnoredPaths($userId, $folder=null){
+		$ignoredPaths = [];
+		$folder = $this->getFolderForUser($userId);
+		if (is_null($folder)) {
+			$folder = $this->getFolderForUser($userId);
+		}
+		$excludedNodes = $folder->search(new SearchQuery(
+			new SearchBinaryOperator(ISearchBinaryOperator::OPERATOR_AND, [
+				new SearchBinaryOperator( ISearchBinaryOperator::OPERATOR_NOT, [
+					new SearchComparison(ISearchComparison::COMPARE_EQUAL, 'mimetype', FileInfo::TYPE_FOLDER)
+				]),
+				new SearchBinaryOperator(ISearchBinaryOperator::OPERATOR_OR, [
+					new SearchComparison(ISearchComparison::COMPARE_EQUAL, 'name', '.nomedia'),
+					new SearchComparison(ISearchComparison::COMPARE_EQUAL, 'name', '.noimage'),
+				]),
+			]),
+			0,
+			0,
+			[]
+		));
+		foreach($excludedNodes as $node) {
+			$ignoredPaths[] = $folder->getRelativePath($node->getParent()->getPath());
+		}
+		return $ignoredPaths;
+	}
 
     /**
      * returns a array of locations for a given date
@@ -301,7 +363,7 @@ class GeophotoService {
      * @return Folder
      */
     private function getFolderForUser ($userId) {
-        return $this->root->getUserFolder($userId);
+		return $this->root->getUserFolder($userId);
     }
 
 }

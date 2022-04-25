@@ -108,7 +108,7 @@ export default {
 			} else if (this.activeTab === 'photo') {
 				return this.photo.filename
 			} else if (this.activeTab === 'myMaps') {
-				return this.myMap.description ?? ''
+				return this.myMap.path ?? ''
 			}
 			return t('maps', 'Shows cool information')
 		},

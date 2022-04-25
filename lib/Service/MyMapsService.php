@@ -113,6 +113,7 @@ class MyMapsService {
 						"mime" => $parentNode->getMimetype(),
 						"lastmod" => $parentNode->getMTime(),
 						"path"=>$userFolder->getRelativePath($parentNode->getPath()),
+						"sharePermissions"=>$parentNode->getPermissions(),
 					]
 				];
                 array_push($MyMaps, $MyMap);

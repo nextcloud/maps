@@ -115,22 +115,28 @@ class FileHooks {
     }
 
     public function postShare($params) {
-        if ($params['shareType'] === Share::SHARE_TYPE_USER) {
-            if ($params['itemType'] === 'file') {
-                //$targetFilePath = $params['itemTarget'];
-                //$sourceUserId = $params['uidOwner'];
-                $targetUserId = $params['shareWith'];
-                $fileId = $params['fileSource']; // or itemSource
-                $this->photofilesService->addByFileIdUserId($fileId, $targetUserId);
-                $this->tracksService->safeAddByFileIdUserId($fileId, $targetUserId);
-            }
-            else if ($params['itemType'] === 'folder') {
-                $targetUserId = $params['shareWith'];
-                $dirId = $params['fileSource']; // or itemSource
-                $this->photofilesService->addByFolderIdUserId($dirId, $targetUserId);
-                $this->tracksService->safeAddByFolderIdUserId($dirId, $targetUserId);
-            }
-        }
+		if ($params['itemType'] === 'file') {
+			//$targetFilePath = $params['itemTarget'];
+			//$sourceUserId = $params['uidOwner'];
+			$fileId = $params['fileSource']; // or itemSource
+			$files = $this->root->getById($fileId);
+			if (empty($files)) {
+				return;
+			}
+			$file = array_shift($files);
+			$this->photofilesService->addByFile($file,);
+			$this->tracksService->safeAddByFile($file);
+		}
+		else if ($params['itemType'] === 'folder') {
+			$dirId = $params['fileSource']; // or itemSource
+			$folders = $this->root->getById($dirId);
+			if (empty($folders)) {
+				return;
+			}
+			$folder = array_shift($folders);
+			$this->photofilesService->addByFolder($folder);
+			$this->tracksService->safeAddByFolder($folder);
+		}
     }
 
     public function postUnShare($params) {

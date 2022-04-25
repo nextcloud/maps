@@ -92,8 +92,7 @@ class TracksService {
     }
 
     public function safeAddByFolderIdUserId($folderId, $userId) {
-        $userFolder = $this->root->getUserFolder($userId);
-        $folders = $userFolder->getById($folderId);
+		$folders =  $this->root->getById($folderId);
 		if (empty($folders)) {
 			return;
 		}

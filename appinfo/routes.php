@@ -81,6 +81,7 @@ return [
         // tracks
         ['name' => 'tracks#getTracks', 'url' => '/tracks', 'verb' => 'GET'],
         ['name' => 'tracks#getTrackFileContent', 'url' => '/tracks/{id}', 'verb' => 'GET'],
+		['name' => 'tracks#getTrackContentByFileId', 'url' => '/tracks/file/{id}', 'verb' => 'GET'],
         ['name' => 'tracks#editTrack', 'url' => '/tracks/{id}', 'verb' => 'PUT'],
 
         // devices API

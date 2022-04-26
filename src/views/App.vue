@@ -1557,7 +1557,7 @@ export default {
 			// select
 			track.selected = true
 			this.openSidebar(track.path, 'track', track.name)
-			window.OCA.Files.Sidebar.setActiveTab('track')
+			window.OCA.Files.Sidebar.setActiveTab('maps-track-metadata')
 			this.selectedTrack = track
 		},
 		// devices

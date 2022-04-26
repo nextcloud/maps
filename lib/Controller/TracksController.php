@@ -121,6 +121,39 @@ class TracksController extends Controller {
         return new DataResponse($existingTracks);
     }
 
+	/**
+	 * @NoAdminRequired
+	 */
+	public function getTrackContentByFileId($id) {
+		$track = $this->tracksService->getTrackByFileIDFromDB($id);
+		$res = is_null($track) ? null : $this->userfolder->getById($track['file_id']);
+		if (is_array($res) and count($res) > 0) {
+			$trackFile = $res[0];
+			if ($trackFile->getType() === \OCP\Files\FileInfo::TYPE_FILE) {
+				$trackContent = remove_utf8_bom($trackFile->getContent());
+				// compute metadata if necessary
+				// first time we get it OR the file changed
+				if (!$track['metadata'] || $track['etag'] !== $trackFile->getEtag()) {
+					$metadata = $this->tracksService->generateTrackMetadata($trackFile);
+					$this->tracksService->editTrackInDB($track['id'], null, $metadata, $trackFile->getEtag());
+				}
+				else {
+					$metadata = $track['metadata'];
+				}
+				return new DataResponse([
+					'metadata'=>$metadata,
+					'content'=>$trackContent
+				]);
+			}
+			else {
+				return new DataResponse('bad file type', 400);
+			}
+		}
+		else {
+			return new DataResponse('file not found', 400);
+		}
+	}
+
     /**
      * @NoAdminRequired
      */

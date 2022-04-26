@@ -287,13 +287,13 @@ export function getTracks(myMapId = null) {
 	return axios.get(url, conf)
 }
 
-export function getTrack(id, myMapId = null) {
+export function getTrack(id, myMapId = null, isFileId = false) {
 	const conf = {
 		params: {
 			myMapId,
 		},
 	}
-	const url = generateUrl('/apps/maps/tracks/' + id)
+	const url = generateUrl('/apps/maps/tracks/' + (isFileId ? 'file/' : '') + id)
 	// return axios.get(url, { responseType: 'json' })
 	return axios.get(url, conf)
 }

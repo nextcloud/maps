@@ -26,7 +26,11 @@ use OCP\BackgroundJob\IJobList;
 use OCP\IDBConnection;
 use OCP\IPreview;
 use OCP\Share\IManager;
+use OCP\Util;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use OCA\Files\Event\LoadAdditionalScriptsEvent;
+use OCA\Files\Event\LoadSidebar;
+
 
 
 class Application extends App {
@@ -51,7 +55,20 @@ class Application extends App {
         $this->getContainer()->query('FileHooks')->register();
 
         $this->registerFeaturePolicy();
-    }
+
+
+		/** @var EventDispatcherInterface $dispatcher */
+		$dispatcher = $this->getContainer()->getServer()->getEventDispatcher();
+		$dispatcher->addListener(LoadAdditionalScriptsEvent::class, function() {
+			// Util::addScript('maps', 'maps-filetypes');
+			// Util::addStyle('maps', 'maps-filetypes');
+		});
+		$dispatcher->addListener(LoadSidebar::class, function() {
+			Util::addScript('maps', 'maps-track-metadata-tab');
+			// Util::addStyle('maps', 'maps-track-metadata-tab');
+		});
+
+	}
 
 	private function registerFeaturePolicy() {
 		/** @var EventDispatcherInterface $dispatcher */

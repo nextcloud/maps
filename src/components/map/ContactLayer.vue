@@ -60,7 +60,7 @@
 						class="tooltip-contact-address">
 						{{ l }}
 					</p>
-					<a target="_blank"
+					<a v-if="contact.UID && contact.URI" target="_blank"
 						:href="contactUrl">
 						{{ t('maps', 'Open in Contacts') }}
 					</a>

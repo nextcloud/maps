@@ -12,6 +12,11 @@
 
 namespace OCA\Maps\Service;
 
+use OC\Files\Search\SearchBinaryOperator;
+use OC\Files\Search\SearchComparison;
+use OC\Files\Search\SearchQuery;
+use OCP\Files\Search\ISearchBinaryOperator;
+use OCP\Files\Search\ISearchComparison;
 use OCP\IL10N;
 use OCP\ILogger;
 use OCP\IDBConnection;
@@ -195,7 +200,8 @@ class TracksService {
     /**
      * @param string $userId
      */
-    public function getTracksFromDB($userId, $folder=null) {
+    public function getTracksFromDB($userId, $folder=null, bool $respectNomediaAndNoimage=true, bool $hideImagesOnCustomMaps=true) {
+		$ignoredPaths = $respectNomediaAndNoimage ? $this->getIgnoredPaths($userId, $folder, $hideImagesOnCustomMaps) : [];
 		$userFolder = $this->root->getUserFolder($userId);
         $tracks = [];
         $qb = $this->qb;
@@ -217,8 +223,16 @@ class TracksService {
 						$shareable = $file->isShareable();
 					}
 				}
-
-
+				$isIgnored = false;
+				foreach ($ignoredPaths as $ignoredPath) {
+					if (str_starts_with($path, $ignoredPath)) {
+						$isIgnored = true;
+						break;
+					}
+				}
+				if ($isIgnored) {
+					continue;
+				}
                 array_push($tracks, [
                     'id' => intval($row['id']),
                     'file_id' => intval($row['file_id']),
@@ -241,13 +255,24 @@ class TracksService {
                 if ($file === null) {
                     continue;
                 }
+				$path = $userFolder->getRelativePath($file->getPath());
+				$isIgnored = false;
+				foreach ($ignoredPaths as $ignoredPath) {
+					if (str_starts_with($path, $ignoredPath)) {
+						$isIgnored = true;
+						break;
+					}
+				}
+				if ($isIgnored) {
+					continue;
+				}
                 array_push($tracks, [
                     'id' => intval($row['id']),
                     'file_id' => intval($row['file_id']),
                     'color' => $row['color'],
                     'metadata' => $row['metadata'],
                     'etag' => $row['etag'],
-					'path' => $userFolder->getRelativePath($file->getPath()),
+					'path' => $path,
 					'shareable' => $file->isShareable(),
                 ]);
             }
@@ -256,6 +281,50 @@ class TracksService {
         $qb = $qb->resetQueryParts();
         return $tracks;
     }
+
+	/**
+	 * @param $userId
+	 * @param $folder
+	 * @return array
+	 * @throws \OCP\Files\NotFoundException
+	 * @throws \OCP\Files\NotPermittedException
+	 * @throws \OC\User\NoUserException
+	 */
+	private function getIgnoredPaths($userId, $folder=null, $hideImagesOnCustomMaps){
+		$ignoredPaths = [];
+		$folder = $this->root->getUserFolder($userId);
+		if (is_null($folder)) {
+			$folder = $this->root->getUserFolder($userId);
+		}
+		$ignoreMarkerFiles = [
+			'.nomedia',
+			'.notrack'
+		];
+		if ($hideImagesOnCustomMaps) {
+			$ignoreMarkerFiles[] = '.maps';
+		}
+		$func = function(string $i): SearchComparison {
+			return new SearchComparison(ISearchComparison::COMPARE_EQUAL, 'name', $i);
+		};
+		$excludedNodes = $folder->search(new SearchQuery(
+			new SearchBinaryOperator(ISearchBinaryOperator::OPERATOR_AND, [
+				new SearchBinaryOperator( ISearchBinaryOperator::OPERATOR_NOT, [
+					new SearchComparison(ISearchComparison::COMPARE_EQUAL, 'mimetype', FileInfo::TYPE_FOLDER)
+				]),
+				new SearchBinaryOperator(ISearchBinaryOperator::OPERATOR_OR, array_map(
+						$func,
+						$ignoreMarkerFiles)
+				),
+			]),
+			0,
+			0,
+			[]
+		));
+		foreach($excludedNodes as $node) {
+			$ignoredPaths[] = $folder->getRelativePath($node->getParent()->getPath());
+		}
+		return $ignoredPaths;
+	}
 
     public function getTrackFromDB($id, $userId=null) {
         $track = null;

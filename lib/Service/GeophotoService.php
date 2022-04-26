@@ -218,7 +218,8 @@ class GeophotoService {
 		}
 		$ignoreMarkerFiles = [
 			'.nomedia',
-			'.noimage'
+			'.noimage',
+			'.noindex',
 		];
 		if ($hideImagesOnCustomMaps) {
 			$ignoreMarkerFiles[] = '.maps';

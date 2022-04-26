@@ -75,7 +75,7 @@ class GeophotoService {
      public function getAllFromDB(string $userId, $folder=null, bool $respectNomediaAndNoimage=true, bool $hideImagesOnCustomMaps=true) {
 		$ignoredPaths = $respectNomediaAndNoimage ? $this->getIgnoredPaths($userId, $folder, $hideImagesOnCustomMaps) : [];
         $photoEntities = $this->photoMapper->findAll($userId);
-		$userfolder = $this->getFolderForUser($userId);
+		$userFolder = $this->getFolderForUser($userId);
         if (is_null($folder)) {
             $folder = $this->getFolderForUser($userId);
         }
@@ -96,7 +96,7 @@ class GeophotoService {
                 if ($file === null) {
                     continue;
                 }
-				$path = $folder->getRelativePath( $file->getPath());
+				$path = $userFolder->getRelativePath( $file->getPath());
 				$isIgnored = false;
 				foreach ($ignoredPaths as $ignoredPath) {
 					if (str_starts_with($path, $ignoredPath)) {
@@ -105,7 +105,7 @@ class GeophotoService {
 					}
 				}
 				if (!$isIgnored) {
-					$isRoot = $file === $userfolder;
+					$isRoot = $file === $userFolder;
 
 					$file_object = new \stdClass();
 					$file_object->fileId = $photoEntity->getFileId();

@@ -102,7 +102,7 @@ class MyMapsService {
 					"creatable"=>$parentNode->isCreatable(),
 					"updatable"=>$parentNode->isUpdateable(),
 					"readable"=>$parentNode->isReadable(),
-					"fileinfo"=>[
+					"fileInfo"=>[
 						"id" => $parentNode->getId(),
 						"name" => "",
 						"basename" => $isRoot ? '' : $parentNode->getName(),

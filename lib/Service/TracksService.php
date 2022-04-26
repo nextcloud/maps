@@ -196,6 +196,7 @@ class TracksService {
      * @param string $userId
      */
     public function getTracksFromDB($userId, $folder=null) {
+		$userFolder = $this->root->getUserFolder($userId);
         $tracks = [];
         $qb = $this->qb;
         $qb->select('id', 'file_id', 'color', 'metadata', 'etag')
@@ -207,12 +208,25 @@ class TracksService {
 
         if (is_null($folder)) {
             while ($row = $req->fetch()) {
+				$files = $userFolder->getById(intval($row['file_id']));
+				$path = '';
+				if (! empty($files)) {
+					$file = array_shift($files);
+					if ($file !== null) {
+						$path = $userFolder->getRelativePath($file->getPath());
+						$shareable = $file->isShareable();
+					}
+				}
+
+
                 array_push($tracks, [
                     'id' => intval($row['id']),
                     'file_id' => intval($row['file_id']),
                     'color' => $row['color'],
                     'metadata' => $row['metadata'],
                     'etag' => $row['etag'],
+					'path' => $path,
+					'shareable' => $shareable,
                 ]);
             }
         } else {
@@ -233,6 +247,8 @@ class TracksService {
                     'color' => $row['color'],
                     'metadata' => $row['metadata'],
                     'etag' => $row['etag'],
+					'path' => $userFolder->getRelativePath($file->getPath()),
+					'shareable' => $file->isShareable(),
                 ]);
             }
         }

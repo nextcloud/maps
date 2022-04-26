@@ -149,13 +149,11 @@
 			v-if="true"
 			ref="Sidebar"
 			:show="showSidebar"
-			:active-tab="activeSidebarTab"
 			:favorite="selectedFavorite"
 			:favorite-categories="favoriteCategories"
 			:track="selectedTrack"
 			:photo="selectedPhoto"
 			:my-map="selectedMyMap"
-			:is-full-screen="sidebarIsFullScreen"
 			@edit-favorite="onFavoriteEdit"
 			@delete-favorite="onFavoriteDelete"
 			@active-changed="onActiveSidebarTabChanged"
@@ -219,7 +217,6 @@ export default {
 			optionValues: optionsController.optionValues,
 			sendPositionTimer: null,
 			showSidebar: false,
-			sidebarIsFullScreen: false,
 			activeSidebarTab: '',
 			// slider
 			sliderEnabled: optionsController.optionValues.displaySlider === 'true',
@@ -577,7 +574,7 @@ export default {
 	mounted() {
 		// subscribe('nextcloud:unified-search.search', this.filter)
 		// subscribe('nextcloud:unified-search.reset', this.cleanSearch)
-		emit('files:sidebar:closed')
+		setTimeout(() => { emit('files:sidebar:closed') }, 1000)
 	},
 	beforeDestroy() {
 		// unsubscribe('nextcloud:unified-search.search', this.filter)
@@ -585,7 +582,7 @@ export default {
 	},
 	methods: {
 		onActiveSidebarTabChanged(newActive) {
-			this.activeSidebarTab = newActive
+			window.OCA.Files.Sidebar.setActiveTab(newActive)
 		},
 		onMainDetailClicked() {
 			this.showSidebar ? this.closeSidebar() : this.openSidebar()
@@ -593,32 +590,37 @@ export default {
 		onCloseSidebar() {
 			this.closeSidebar()
 			this.deselectAll()
-			this.activeSidebarTab = ''
+			window.OCA.Files.Sidebar.setActiveTab('')
 		},
 		closeSidebar() {
+			this.$refs.Sidebar.close()
 			emit('files:sidebar:closed')
-			window.OCA.Files.Sidebar.state.file = ''
+			window.OCA.Files.Sidebar.setActiveTab('')
 			this.showSidebar = false
 		},
-		openSidebar(path) {
+		openSidebar(path = null, type = null) {
+			this.showSidebar = true
+			this.$refs.Sidebar.open(path, type)
+			/*
 			const myMap = path ? this.myMaps.find((m) => m.path === path) : false
 			if (myMap) {
-				this.activeSidebarTab = 'myMaps'
+				window.OCA.Files.state.activeTab = 'myMaps'
 				this.selectedMyMap = myMap
-				this.$refs.Sidebar.update()
+				this.sidebarFileInfo = myMap.fileInfo
 				window.OCA.Files.Sidebar.state.file = path
 			} else {
 				const photo = this.photos.find((p) => p.path === path)
 				if (photo) {
-					this.activeSidebarTab = 'photo'
+					window.OCA.Files.state.activeTab = 'photo'
 					this.selectedPhoto = photo
+					this.sidebarFileInfo = photo
 					window.OCA.Files.Sidebar.state.file = path
 				} else {
 					window.OCA.Files.Sidebar.state.file = true
 				}
 			}
-			this.showSidebar = true
 			emit('files:sidebar:opening')
+			 */
 		},
 		/**
 		 * Allow to set the Sidebar as fullscreen from OCA.Files.Sidebar
@@ -626,7 +628,9 @@ export default {
 		 * @param {boolean} isFullScreen - Wether or not to render the Sidebar in fullscreen.
 		 */
 		sidebarSetFullScreenMode(isFullScreen) {
-			this.sidebarIsFullScreen = isFullScreen
+			if (this.$refs.Sidebar) {
+				this.$refs.Sidebar.setFullScreenMode(isFullScreen)
+			}
 		},
 		onOpenedSidebar() {
 			// opened is emitted when the sidebar is mounted, but not actually shown
@@ -1206,8 +1210,8 @@ export default {
 			this.deselectAll()
 			// select
 			this.favorites[f.id].selected = true
-			this.openSidebar()
-			this.activeSidebarTab = 'favorite'
+			this.openSidebar(null, 'favorite')
+			window.OCA.Files.Sidebar.setActiveTab('favorite')
 			this.selectedFavorite = f
 		},
 		onFavoriteEdit(f, save = true) {
@@ -1330,8 +1334,8 @@ export default {
 				this.$set(this.favorites, fav.id, fav)
 				if (openSidebar) {
 					this.selectedFavorite = this.favorites[fav.id]
-					this.activeSidebarTab = 'favorite'
-					this.openSidebar()
+					window.OCA.Files.Sidebar.setActiveTab('favorite')
+					this.openSidebar(null, 'favorite')
 				}
 				return fav.id
 			}).catch((error) => {
@@ -1552,8 +1556,8 @@ export default {
 			this.deselectAll()
 			// select
 			track.selected = true
-			this.openSidebar()
-			this.activeSidebarTab = 'track'
+			this.openSidebar(track.path, 'track')
+			window.OCA.Files.Sidebar.setActiveTab('track')
 			this.selectedTrack = track
 		},
 		// devices
@@ -1785,11 +1789,6 @@ export default {
 				]
 			    this.myMaps.push(
 				    ...response.data.map((myMap) => {
-						if (this.myMapId === myMap.id) {
-							this.selectedMyMap = myMap
-							this.selectedMyMap.enabled = true
-							this.$refs.Sidebar.update()
-						}
 				        return {
 				            ...myMap,
 							enabled: this.myMapId === myMap.id,
@@ -1810,7 +1809,9 @@ export default {
 			optionsController.saveOptionValues({ myMapsEnabled: this.myMapsEnabled ? 'true' : 'false' })
 		},
 		onMyMapClicked(myMap) {
-			this.selectedMyMap = myMap
+			if (this.showSidebar) {
+				this.openSidebar(myMap.path, 'maps')
+			}
 		    if (!this.myMapsLoading) {
 				this.myMapsLoading = true
 		        this.loadMap((myMap))
@@ -1856,7 +1857,8 @@ export default {
 			})
 		},
 		onShareMyMap(myMap) {
-			this.openSidebar(myMap.path)
+			window.OCA.Files.Sidebar.setActiveTab('sharing')
+			this.openSidebar(myMap.path, 'maps')
 		},
 		loadMap(myMap) {
 			this.myMapId = myMap.id
@@ -1884,6 +1886,7 @@ export default {
 			window.history.pushState({ id: this.myMapId }, myMap.name, newurl)
 			this.getContacts()
 			this.getPhotos()
+
 			this.getFavorites()
 			this.getTracks()
 			this.getDevices()

@@ -108,6 +108,7 @@ export default {
 			error: false,
 			isFullScreen: false,
 			typeOpened: '',
+			title: null,
 		}
 	},
 
@@ -227,7 +228,7 @@ export default {
 					starred: this.fileInfo.isFavourited,
 					subtitle: this.subtitle,
 					subtitleTooltip: this.fullTime,
-					title: this.fileInfo.name,
+					title: this.title ?? this.fileInfo.name,
 					titleTooltip: this.fileInfo.name,
 				}
 			} else if (this.error) {
@@ -466,14 +467,16 @@ export default {
 		 *
 		 * @param {string} path the file path to load
 		 * @param type
+		 * @param title
 		 * @return {Promise}
 		 * @throws {Error} loading failure
 		 */
-		async open(path, type = null) {
+		async open(path = null, type = null, title = null) {
 			// update current opened file
 			this.Sidebar.file = path
-			if (type) {
+			if (path) {
 				this.typeOpened = type
+				this.title = title
 			}
 
 			if (path && path.trim() !== '') {

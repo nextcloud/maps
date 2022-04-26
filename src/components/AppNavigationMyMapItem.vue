@@ -22,7 +22,7 @@
 			&nbsp;
 		</template>
 		<template slot="actions">
-			<ActionButton v-if="parentEnabled"
+			<ActionButton v-if="false"
 				:close-after-click="false"
 				@click="onChangeColorClick">
 				<template #icon>
@@ -30,7 +30,7 @@
 				</template>
 				{{ t('maps', 'Change color') }}
 			</ActionButton>
-			<ActionButton v-if="shareable"
+			<ActionButton v-if="myMap.id"
 				icon="icon-share"
 				:close-after-click="false"
 				@click="$emit('share', myMap)">

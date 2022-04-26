@@ -598,9 +598,9 @@ export default {
 			window.OCA.Files.Sidebar.setActiveTab('')
 			this.showSidebar = false
 		},
-		openSidebar(path = null, type = null) {
+		openSidebar(path = null, type = null, title = null) {
 			this.showSidebar = true
-			this.$refs.Sidebar.open(path, type)
+			this.$refs.Sidebar.open(path, type, title)
 			/*
 			const myMap = path ? this.myMaps.find((m) => m.path === path) : false
 			if (myMap) {
@@ -1210,7 +1210,7 @@ export default {
 			this.deselectAll()
 			// select
 			this.favorites[f.id].selected = true
-			this.openSidebar(null, 'favorite')
+			this.openSidebar(null, 'favorite', f.name)
 			window.OCA.Files.Sidebar.setActiveTab('favorite')
 			this.selectedFavorite = f
 		},
@@ -1335,7 +1335,7 @@ export default {
 				if (openSidebar) {
 					this.selectedFavorite = this.favorites[fav.id]
 					window.OCA.Files.Sidebar.setActiveTab('favorite')
-					this.openSidebar(null, 'favorite')
+					this.openSidebar(null, 'favorite', fav.name)
 				}
 				return fav.id
 			}).catch((error) => {
@@ -1556,7 +1556,7 @@ export default {
 			this.deselectAll()
 			// select
 			track.selected = true
-			this.openSidebar(track.path, 'track')
+			this.openSidebar(track.path, 'track', track.name)
 			window.OCA.Files.Sidebar.setActiveTab('track')
 			this.selectedTrack = track
 		},
@@ -1810,7 +1810,7 @@ export default {
 		},
 		onMyMapClicked(myMap) {
 			if (this.showSidebar) {
-				this.openSidebar(myMap.path, 'maps')
+				this.openSidebar(myMap.path, 'maps', myMap.name)
 			}
 		    if (!this.myMapsLoading) {
 				this.myMapsLoading = true
@@ -1858,7 +1858,7 @@ export default {
 		},
 		onShareMyMap(myMap) {
 			window.OCA.Files.Sidebar.setActiveTab('sharing')
-			this.openSidebar(myMap.path, 'maps')
+			this.openSidebar(myMap.path, 'maps', myMap.name)
 		},
 		loadMap(myMap) {
 			this.myMapId = myMap.id

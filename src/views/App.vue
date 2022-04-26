@@ -535,6 +535,7 @@ export default {
 						name: catid,
 						color,
 						counter: 1,
+						shareable: this.myMapId === null || this.myMapId === '',
 						enabled: !this.disabledFavoriteCategories.includes(catid),
 						token: this.favoriteCategoryTokens[catid],
 					}

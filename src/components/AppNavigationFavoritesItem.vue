@@ -82,7 +82,7 @@
 						@click="onZoomCategoryClick(catid)">
 						{{ t('maps', 'Zoom to bounds') }}
 					</ActionButton>
-					<ActionCheckbox v-if="enabled && nbFavorites && c.enabled && c.name && c.name !== t('maps', 'Personal')"
+					<ActionCheckbox v-if="enabled && nbFavorites && c.enabled && c.name && c.name !== t('maps', 'Personal') && c.shareable"
 						:checked="c.token && c.token !== ''"
 						:close-after-click="false"
 						@update:checked="$emit('category-share-change', catid, $event)">

@@ -87,27 +87,40 @@ class RoutingController extends Controller {
     /**
      * @NoAdminRequired
      */
-    public function exportRoute($type, $coords, $name, $totDist, $totTime) {
+    public function exportRoute($type, $coords, $name, $totDist, $totTime, $myMapId=null) {
         // create /Maps directory if necessary
         $userFolder = $this->userfolder;
-        if (!$userFolder->nodeExists('/Maps')) {
-            $userFolder->newFolder('Maps');
-        }
-        if ($userFolder->nodeExists('/Maps')) {
-            $mapsFolder = $userFolder->get('/Maps');
-            if ($mapsFolder->getType() !== \OCP\Files\FileInfo::TYPE_FOLDER) {
-                $response = new DataResponse('/Maps is not a directory', 400);
-                return $response;
-            }
-            else if (!$mapsFolder->isCreatable()) {
-                $response = new DataResponse('/Maps is not writeable', 400);
-                return $response;
-            }
-        }
-        else {
-            $response = new DataResponse('Impossible to create /Maps', 400);
-            return $response;
-        }
+		if (is_null($myMapId) || $myMapId === '') {
+			if (!$userFolder->nodeExists('/Maps')) {
+				$userFolder->newFolder('Maps');
+			}
+			if ($userFolder->nodeExists('/Maps')) {
+				$mapsFolder = $userFolder->get('/Maps');
+				if ($mapsFolder->getType() !== \OCP\Files\FileInfo::TYPE_FOLDER) {
+					$response = new DataResponse('/Maps is not a directory', 400);
+					return $response;
+				}
+				else if (!$mapsFolder->isCreatable()) {
+					$response = new DataResponse('/Maps is not writeable', 400);
+					return $response;
+				}
+			}
+			else {
+				$response = new DataResponse('Impossible to create /Maps', 400);
+				return $response;
+			}
+		} else {
+			$folders = $userFolder->getById($myMapId);
+			if (!is_array($folders) or count($folders) === 0) {
+				$response = new DataResponse('myMaps Folder not found', 404);
+				return $response;
+			}
+			$mapsFolder = array_shift($folders);
+			if (is_null($mapsFolder)) {
+				$response = new DataResponse('myMaps Folder not found', 404);
+				return $response;
+			}
+		}
 
         $filename = $name.'.gpx';
         if ($mapsFolder->nodeExists($filename)) {
@@ -149,7 +162,7 @@ class RoutingController extends Controller {
         fwrite($fileHandler, '</gpx>'."\n");
         fclose($fileHandler);
         $file->touch();
-        return new DataResponse('/Maps/' . $filename);
+        return new DataResponse($userFolder->getRelativePath($file->getPath()));
     }
 
 }

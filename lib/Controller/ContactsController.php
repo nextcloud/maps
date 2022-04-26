@@ -12,6 +12,7 @@
 
 namespace OCA\Maps\Controller;
 
+use OCP\Files\IRootFolder;
 use OCP\IRequest;
 use OCP\IAvatarManager;
 use OCP\AppFramework\Http\DataDisplayResponse;
@@ -35,10 +36,11 @@ class ContactsController extends Controller {
     private $qb;
     private $cdBackend;
     private $avatarManager;
+	private $root;
 
     public function __construct($AppName, ILogger $logger, IRequest $request, IDBConnection $dbconnection,
                                 IManager $contactsManager, AddressService $addressService,
-                                $UserId, CardDavBackend $cdBackend, IAvatarManager $avatarManager){
+                                $UserId, CardDavBackend $cdBackend, IAvatarManager $avatarManager, IRootFolder $root){
         parent::__construct($AppName, $request);
         $this->logger = $logger;
         $this->userId = $UserId;
@@ -48,6 +50,7 @@ class ContactsController extends Controller {
         $this->dbconnection = $dbconnection;
         $this->qb = $dbconnection->getQueryBuilder();
         $this->cdBackend = $cdBackend;
+		$this->root = $root;
     }
 
     /**
@@ -71,21 +74,21 @@ class ContactsController extends Controller {
                     if (key_exists('GEO', $c)) {
                         $geo = $c['GEO'];
                         if (strlen($geo) > 1) {
-                            array_push($result, [
-                                'FN' => $c['FN'] ?? $this->N2FN($c['N']) ?? '???',
-                                'URI' => $c['URI'],
-                                'UID' => $c['UID'],
-                                'ADR' => '',
-                                'ADRTYPE' => '',
-                                'HAS_PHOTO' => (isset($c['PHOTO']) && $c['PHOTO'] !== null),
-                                'BOOKID' => $c['addressbook-key'],
-                                'BOOKURI' => $addressBookUri,
-                                'GEO' => $geo,
-                                'GROUPS' => $c['CATEGORIES'] ?? null
-                            ]);
+                            $result[] = [
+								'FN' => $c['FN'] ?? $this->N2FN($c['N']) ?? '???',
+								'URI' => $c['URI'],
+								'UID' => $c['UID'],
+								'ADR' => '',
+								'ADRTYPE' => '',
+								'HAS_PHOTO' => (isset($c['PHOTO']) && $c['PHOTO'] !== null),
+								'BOOKID' => $c['addressbook-key'],
+								'BOOKURI' => $addressBookUri,
+								'GEO' => $geo,
+								'GROUPS' => $c['CATEGORIES'] ?? null
+							];
                         } elseif (count($geo)>0) {
 						foreach ($geo as $g) {
-							array_push($result, [
+							$result[] = [
 								'FN' => $c['FN'] ?? $this->N2FN($c['N']) ?? '???',
 								'URI' => $c['URI'],
 								'UID' => $c['UID'],
@@ -96,7 +99,7 @@ class ContactsController extends Controller {
 								'BOOKURI' => $addressBookUri,
 								'GEO' => $g,
 								'GROUPS' => $c['CATEGORIES'] ?? null
-							]);
+							];
 						}
 					}
                     }
@@ -113,18 +116,18 @@ class ContactsController extends Controller {
                                     $adrtype = $adr->parameters()['TYPE']->getValue();
                                 }
                                 if (strlen($geo) > 1) {
-                                    array_push($result, [
-                                        'FN' => $c['FN'] ?? $this->N2FN($c['N']) ?? '???',
-                                        'URI' => $c['URI'],
-                                        'UID' => $c['UID'],
-                                        'ADR' => $adr->getValue(),
-                                        'ADRTYPE' => $adrtype,
-                                        'HAS_PHOTO' => (isset($c['PHOTO']) && $c['PHOTO'] !== null),
-                                        'BOOKID' => $c['addressbook-key'],
-                                        'BOOKURI' => $addressBookUri,
-                                        'GEO' => $geo,
-                                        'GROUPS' => $c['CATEGORIES'] ?? null,
-                                    ]);
+                                    $result[] = [
+										'FN' => $c['FN'] ?? $this->N2FN($c['N']) ?? '???',
+										'URI' => $c['URI'],
+										'UID' => $c['UID'],
+										'ADR' => $adr->getValue(),
+										'ADRTYPE' => $adrtype,
+										'HAS_PHOTO' => (isset($c['PHOTO']) && $c['PHOTO'] !== null),
+										'BOOKID' => $c['addressbook-key'],
+										'BOOKURI' => $addressBookUri,
+										'GEO' => $geo,
+										'GROUPS' => $c['CATEGORIES'] ?? null,
+									];
                                 }
                             }
                         }
@@ -133,8 +136,81 @@ class ContactsController extends Controller {
             }
             return new DataResponse($result);
         } else {
-            //Fixme add contacts for my-maps
-            return new DataResponse([]);
+			//Fixme add contacts for my-maps
+			$result = [];
+			$userFolder = $this->root->getUserFolder($this->userId);
+			$folders =  $userFolder->getById($myMapId);
+			if (empty($folders)) {
+				return DataResponse($result);
+			}
+			$folder = array_shift($folders);
+			if ($folder === null) {
+				return DataResponse($result);
+			}
+			$files = $folder->search('.vcf');
+            foreach ($files as $file) {
+//				$cards = explode("END:VCARD\r\n", $file->getContent());
+				$cards = [$file->getContent()];
+				foreach ($cards as $card) {
+					$vcard = Reader::read($card."END:VCARD\r\n");
+					if (isset($vcard->GEO)) {
+						$geo = $vcard->GEO;
+						if (strlen($geo) > 1) {
+							$result[] = [
+								'FN' => $vcard->FN->getJsonValue() ?? $this->N2FN($vcard->N->getJsonValue()) ?? '???',
+								'UID' => $vcard->UID->getJsonValue(),
+								'ADR' => '',
+								'HAS_PHOTO' => (isset($vcard->PHOTO) && $vcard->PHOTO !== null),
+								'FILEID' => $file->getId(),
+								'PHOTO' => $vcard->PHOTO ?? '',
+								'GEO' => $geo,
+								'GROUPS' => $vcard->CATEGORIES ?? null,
+							];
+						} elseif (count($geo)>0) {
+							foreach ($geo as $g) {
+								$result[] = [
+									'FN' => $vcard->FN->getJsonValue() ?? $this->N2FN($vcard->N->getJsonValue()) ?? '???',
+									'UID' => $vcard->UID->getJsonValue(),
+									'ADR' => '',
+									'HAS_PHOTO' => (isset($vcard->PHOTO) && $vcard->PHOTO !== null),
+									'FILEID' => $file->getId(),
+									'PHOTO' => $vcard->PHOTO ?? '',
+									'GEO' => $geo,
+									'GROUPS' => $vcard->CATEGORIES ?? null,
+								];
+							}
+						}
+					}
+					if (isset($vcard->ADR) && count($vcard->ADR) > 0) {
+						foreach ($vcard->ADR as $adr) {
+							$geo = $this->addressService->addressToGeo($adr->getValue(), $file->getId());
+							//var_dump($adr->parameters()['TYPE']->getValue());
+							$adrtype = '';
+							if (isset($adr->parameters()['TYPE'])) {
+								$adrtype = $adr->parameters()['TYPE']->getValue();
+							}
+							if (strlen($geo) > 1) {
+								$FNArray = $vcard->FN->getJsonValue() ?? $this->N2FN($vcard->N->getJsonValue());
+								$fn = array_shift($FNArray);
+								$UIDArray = $vcard->UID->getJsonValue();
+								$uid = array_shift($FNArray);
+								$result[] = [
+									'FN' => $fn ?? '???',
+									'UID' => $uid,
+									'ADR' => $adr->getValue(),
+									'ADRTYPE' => $adrtype,
+									'HAS_PHOTO' => (isset($vcard->PHOTO) && $vcard->PHOTO !== null),
+									'FILEID' => $file->getId(),
+									'PHOTO' => $vcard->PHOTO ?? '',
+									'GEO' => $geo,
+									'GROUPS' => $vcard->CATEGORIES ?? null,
+								];
+							}
+						}
+					}
+				}
+			}
+            return new DataResponse($result);
         }
     }
 

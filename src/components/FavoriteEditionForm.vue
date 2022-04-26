@@ -5,9 +5,10 @@
 			<input
 				v-model="name"
 				type="text"
-				:placeholder="namePH">
+				:placeholder="namePH"
+				:readonly="!favorite.editable">
 			<span class="icon icon-category-organization" />
-			<Multiselect
+			<Multiselect v-if="favorite.editable"
 				ref="select"
 				v-model="selectedCategory"
 				class="category-select"
@@ -32,30 +33,42 @@
 					</div>
 				</template>
 			</Multiselect>
+			<input v-else
+				v-model="selectedCategory.catid"
+				type="text"
+				:placeholder="namePH"
+				:readonly="!favorite.editable">
 			<span class="icon icon-comment" />
-			<textarea v-model="comment" :placeholder="commentPH" rows="1" />
+			<textarea v-model="comment"
+				:placeholder="commentPH"
+				:readonly="!favorite.editable"
+				rows="1" />
 		</div>
 		<div class="buttons">
-			<button @click="onOkClick">
+			<Button :disabled="!favorite.editable"
+				@click="onOkClick">
 				<span class="icon-checkmark" />
 				{{ t('maps', 'OK') }}
-			</button>
-			<button @click="onDeleteClick">
+			</Button>
+			<Button :disabled="!favorite.editable"
+				@click="onDeleteClick">
 				<span class="icon-delete" />
 				{{ t('maps', 'Delete') }}
-			</button>
+			</Button>
 		</div>
 	</div>
 </template>
 
 <script>
 import Multiselect from '@nextcloud/vue/dist/Components/Multiselect'
+import Button from '@nextcloud/vue/dist/Components/Button'
 
 export default {
 	name: 'FavoriteEditionForm',
 
 	components: {
 		Multiselect,
+		Button,
 	},
 
 	props: {

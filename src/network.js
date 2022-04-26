@@ -139,6 +139,13 @@ export function getFavorites(myMapId = null) {
 	return axios.get(url, conf)
 }
 
+export function getFavoritesByToken(token) {
+	const conf = {
+	}
+	const url = generateUrl('/apps/maps/api/1.0/public/' + token + '/favorites')
+	return axios.get(url, conf)
+}
+
 export function getSharedFavoriteCategories(myMapId = null) {
 	const conf = {
 		params: {

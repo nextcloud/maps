@@ -235,8 +235,12 @@ class FavoritesController extends Controller {
     /**
      * @NoAdminRequired
      */
-    public function getSharedCategories() {
-        $categories = $this->favoriteShareMapper->findAllByOwner($this->userId);
+    public function getSharedCategories($myMapId=null) {
+		if (is_null($myMapId) || $myMapId === '') {
+			$categories = $this->favoriteShareMapper->findAllByOwner($this->userId);
+		} else {
+			$categories = $this->favoriteShareMapper->findAllByMapId($this->userId, $myMapId);
+		}
 
         return new DataResponse($categories);
     }

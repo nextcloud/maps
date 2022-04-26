@@ -1114,25 +1114,40 @@ export default {
 				return
 			}
 			this.favoritesLoading = true
-			network.getSharedFavoriteCategories(this.myMapId).then((response) => {
-				this.favoriteCategoryTokens = {}
-				response.data.forEach((s) => {
-					this.favoriteCategoryTokens[s.category] = s.token
-				})
-			})
+			this.favorites = {}
 			network.getFavorites(this.myMapId).then((response) => {
-				this.favorites = {}
 				response.data.forEach((f) => {
 					if (!f.category) {
 						f.category = t('maps', 'Personal')
 					}
 					f.selected = false
+					f.editable = true
 					this.$set(this.favorites, f.id, f)
 				})
 			}).catch((error) => {
 				console.error(error)
 			}).then(() => {
 				this.favoritesLoading = false
+			})
+			network.getSharedFavoriteCategories(this.myMapId).then((response) => {
+				this.favoriteCategoryTokens = {}
+				response.data.forEach((s) => {
+					this.favoriteCategoryTokens[s.category] = s.token
+					if (!(this.myMapId === null || this.myMapId === '')) {
+						network.getFavoritesByToken(s.token).then((response) => {
+							response.data.favorites.forEach((f) => {
+								f.id = s.token + f.id
+								f.selected = false
+								f.editable = false
+								this.$set(this.favorites, f.id, f)
+							})
+						}).catch((error) => {
+							console.error(error)
+						}).then(() => {
+							this.favoritesLoading = false
+						})
+					}
+				})
 			})
 		},
 		onFavoriteCategoryClicked(catid) {
@@ -1325,6 +1340,7 @@ export default {
 				if (!fav.category) {
 					fav.category = t('maps', 'Personal')
 				}
+				fav.editable = true
 				if (save) {
 					this.saveAction({
 						type: 'favoriteAdd',

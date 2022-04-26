@@ -30,6 +30,8 @@ use OCP\AppFramework\Db\Entity;
 use OCP\AppFramework\Db\MultipleObjectsReturnedException;
 use OCP\AppFramework\Db\QBMapper;
 use OCP\DB\QueryBuilder\IQueryBuilder;
+use OCP\Files\IRootFolder;
+use OCP\Files\NotFoundException;
 use OCP\IDBConnection;
 use OCP\Security\ISecureRandom;
 
@@ -37,11 +39,13 @@ use OCP\Security\ISecureRandom;
 class FavoriteShareMapper extends QBMapper {
     /* @var ISecureRandom */
     private $secureRandom;
+	private $root;
 
-    public function __construct(IDBConnection $db, ISecureRandom $secureRandom) {
+    public function __construct(IDBConnection $db, ISecureRandom $secureRandom, IRootFolder $root) {
         parent::__construct($db, 'maps_favorite_shares');
 
         $this->secureRandom = $secureRandom;
+		$this->root = $root;
     }
 
     /**
@@ -96,6 +100,31 @@ class FavoriteShareMapper extends QBMapper {
 
         return $this->findEntities($qb);
     }
+
+	/**
+	 * @param $userId
+	 * @param $mapId
+	 * @return array|Entity[]
+	 * @throws \OCP\DB\Exception
+	 */
+	public function findAllByMapId($userId, $mapId) {
+		$userFolder = $this->root->getUserFolder($userId);
+		$folders = $userFolder->getById($mapId);
+		$shares = [];
+		if (empty($folders)) {
+			return $shares;
+		}
+		$folder = array_shift($folders);
+		if ($folder === null) {
+			return $shares;
+		}
+		try {
+			$file=$folder->get(".favorite_shares.json");
+		} catch (NotFoundException $e) {
+			$file=$folder->newFile(".favorite_shares.json", $content = '[]');
+		}
+		return json_decode($file->getContent(),true);;
+	}
 
     /**
      * @param $owner

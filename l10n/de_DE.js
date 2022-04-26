@@ -224,7 +224,7 @@ OC.L10N.register(
     "Not grouped" : "Nicht gruppiert",
     "Favorites exported in {path}" : "Favoriten nach {path} exportiert",
     "Import favorites from GeoJSON (Google Maps), gpx (OsmAnd, Nextcloud Maps) or kmz/kml (F-Droid Maps, Maps.me, Marble)" : "Favoriten aus GeoJSON (Google Maps), gpx (OsmAnd, Nextcloud Maps) oder kmz/kml (F-Droid Maps, Maps.me, Marble) importieren",
-    "Click on the map to add a favorite, press Esc to cancel" : "Klicken Sie auf die Karte, um den Favoriten hinzu zufügen oder drücken Sie ESC, um abzubrechen",
+    "Click on the map to add a favorite, press Esc to cancel" : "Klicken Sie auf die Karte, um einen Favoriten hinzuzufügen oder drücken Sie ESC, um abzubrechen",
     "Devices exported in {path}" : "Geräte nach {path} exportiert",
     "Failed to export devices" : "Export der Geräte fehlgeschlagen",
     "Route {date}" : "Route {date}",

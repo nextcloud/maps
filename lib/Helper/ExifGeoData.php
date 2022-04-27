@@ -107,7 +107,7 @@ class ExifGeoData
 				if (!isset($d[self::TIMESTAMP]) && isset($data['EXIF'][self::TIMESTAMP])) {
 					$d[self::TIMESTAMP] = $data['EXIF'][self::TIMESTAMP];
 				}
-				return $data['GPS'];
+				return $d;
 			}
         }
         $data = new PelDataWindow(file_get_contents($path));
@@ -306,7 +306,7 @@ class ExifGeoData
     {
         $result = null;
         $value = trim($value, '/');
-        if (false !== strpos('/', $value)) {
+        if (str_contains($value,'/')) {
             $value = array_map('intval', explode('/', $value));
             if (0 != $value[1]) {
                 $result = $value[0] / $value[1];

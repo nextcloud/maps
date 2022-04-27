@@ -11,11 +11,18 @@
 			{{ photos.length > 99 ? '99+' : photos.length }}
 		</CounterBubble>
 		<template v-if="enabled" slot="actions">
-			<ActionButton
+			<ActionButton v-if="!readOnly"
 				:icon="draggable ? 'icon-hand' : 'icon-hand-slash'"
 				:close-after-click="false"
 				@click="$emit('draggable-clicked')">
 				{{ draggable ? t('maps', 'Disable photo drag') : t('maps', 'Enable photo drag') }}
+			</ActionButton>
+			<!--FIXME Hack empty menu looks wired-->
+			<ActionButton v-else
+				:icon="'icon-hand'"
+				:close-after-click="false"
+				@click="sayHi">
+				{{ t('maps', 'Say hi') }}
 			</ActionButton>
 		</template>
 	</AppNavigationItem>
@@ -25,6 +32,9 @@
 import AppNavigationItem from '@nextcloud/vue/dist/Components/AppNavigationItem'
 import ActionButton from '@nextcloud/vue/dist/Components/ActionButton'
 import CounterBubble from '@nextcloud/vue/dist/Components/CounterBubble'
+
+import optionsController from '../optionsController'
+import { showInfo } from '@nextcloud/dialogs'
 
 export default {
 	name: 'AppNavigationPhotosItem',
@@ -60,9 +70,16 @@ export default {
 	},
 
 	computed: {
+		readOnly() {
+			return this.photos.every((p) => !p.isUpdateable)
+				|| (this.photos.length === 0 && !(optionsController.optionValues?.isCreateable && !optionsController.optionValues?.isUpdateable))
+		},
 	},
 
 	methods: {
+		sayHi() {
+			showInfo(t('maps', 'Hi'))
+		},
 	},
 }
 </script>

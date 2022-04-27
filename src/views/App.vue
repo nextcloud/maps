@@ -18,6 +18,7 @@
 					@zoom-all-categories="onZoomAllFavorites"
 					@zoom-category="onZoomFavoriteCategory"
 					@export-category="onExportFavoriteCategory"
+					@add-to-map-category="onAddCategoryToMap"
 					@delete-category="onDeleteFavoriteCategory"
 					@category-share-change="onFavoriteCategoryShareChange"
 					@toggle-all-categories="onToggleAllFavoriteCategories"
@@ -33,6 +34,8 @@
 					@group-clicked="onContactGroupClicked"
 					@zoom-all-groups="onZoomAllContactGroups"
 					@zoom-group="onZoomContactGroup"
+					@add-to-map-all-contacts="onAddAllContactsToMap"
+					@add-to-map-contact-group="onAddContactsGroupToMap"
 					@toggle-all-groups="onToggleAllContactGroups" />
 				<AppNavigationPhotosItem
 					:enabled="photosEnabled"
@@ -524,6 +527,9 @@ export default {
 				const catid = f.category || noCategoryId
 				if (categories[catid]) {
 					categories[catid].counter++
+					if (!f.isUpdateable) {
+						categories[catid].isUpdateable = false
+					}
 				} else {
 					const hsl = catid.length < 1
 						? getLetterColor('a', 'a')
@@ -536,6 +542,7 @@ export default {
 						color,
 						counter: 1,
 						isShareable: this.myMapId === null || this.myMapId === '',
+						isUpdateable: f.isUpdateable,
 						enabled: !this.disabledFavoriteCategories.includes(catid),
 						token: this.favoriteCategoryTokens[catid],
 					}
@@ -954,6 +961,14 @@ export default {
 			})
 			this.zoomOnContacts(contactsOfGroup)
 		},
+		onAddAllContactsToMap() {
+			// FIXME
+			showInfo('Adding all Contacts to my maps is not yet implemented')
+		},
+		onAddContactsGroupToMap(group) {
+			// FIXME
+			showInfo('Adding contact group to my maps is not yet implemented')
+		},
 		zoomOnContacts(contacts) {
 			const lats = contacts.map((c) => {
 				return geoToLatLng(c.GEO)[0]
@@ -1122,7 +1137,6 @@ export default {
 						f.category = t('maps', 'Personal')
 					}
 					f.selected = false
-					f.isUpdateable = true
 					this.$set(this.favorites, f.id, f)
 				})
 			}).catch((error) => {
@@ -1139,7 +1153,6 @@ export default {
 							response.data.favorites.forEach((f) => {
 								f.id = s.token + f.id
 								f.selected = false
-								f.isUpdatable = false
 								this.$set(this.favorites, f.id, f)
 							})
 						}).catch((error) => {
@@ -1296,6 +1309,10 @@ export default {
 		onExportFavoriteCategory(catid) {
 			this.exportFavorites([catid])
 		},
+		onAddCategoryToMap(catid) {
+			// FIXME
+			showInfo('Adding categories to my maps is not yet implemented')
+		},
 		exportFavorites(catIdList) {
 			network.exportFavorites(catIdList, this.myMapId).then((response) => {
 				showSuccess(t('maps', 'Favorites exported in {path}', { path: response.data }))
@@ -1341,7 +1358,6 @@ export default {
 				if (!fav.category) {
 					fav.category = t('maps', 'Personal')
 				}
-				fav.isUpdateable = true
 				if (save) {
 					this.saveAction({
 						type: 'favoriteAdd',

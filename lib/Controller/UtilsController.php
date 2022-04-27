@@ -110,7 +110,7 @@ class UtilsController extends Controller {
                 $value = $this->config->getUserValue($this->userId, 'maps', $key);
                 $ov[$key] = $value;
             }
-			$ov['isCreatable'] = true;
+			$ov['isCreateable'] = true;
 			$ov['isDeletable'] = false;
 			$ov['isReadable'] = true;
 			$ov['isUpdateable'] = true;

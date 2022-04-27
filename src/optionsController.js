@@ -31,7 +31,9 @@ const optionsController = {
 		for (const k in newOptionValues) {
 			this.optionValues[k] = newOptionValues[k]
 		}
-		network.saveOptionValues(newOptionValues, this.myMapId)
+		if (this.optionValues.isUpdateable) {
+			network.saveOptionValues(newOptionValues, this.myMapId)
+		}
 	},
 
 	restoreOptions(successCB = null) {

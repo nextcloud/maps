@@ -173,7 +173,14 @@ class MyMapsService {
                 } catch (Exception $e) {
                     return 1;
                 }
-            }
+            } else {
+				try {
+					$file = $folder->get('.maps');
+					$file->delete();
+				} catch (Exception $e) {
+					return 1;
+				}
+			}
         }
 
         try {

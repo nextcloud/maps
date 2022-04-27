@@ -12,11 +12,11 @@
 			<textarea v-else
 				id="clickSearchAddress"
 				v-model="formattedAddress" />
-			<button class="search-add-favorite" @click="$emit('add-favorite', { latLng, address, formattedAddress })">
+			<button v-if="favoriteIsCreatable" class="search-add-favorite" @click="$emit('add-favorite', { latLng, address, formattedAddress })">
 				<span class="icon-favorite" />
 				{{ t('maps', 'Add to favorites') }}
 			</button>
-			<button class="search-place-contact" @click="$emit('place-contact', { latLng, address })">
+			<button v-if="contactIsCreatable" class="search-place-contact" @click="$emit('place-contact', { latLng, address })">
 				<span class="icon-user" />
 				{{ t('maps', 'Add contact address') }}
 			</button>
@@ -49,6 +49,16 @@ export default {
 		latLng: {
 			type: Object,
 			required: true,
+		},
+		favoriteIsCreatable: {
+			type: Boolean,
+			required: false,
+			default: true,
+		},
+		contactIsCreatable: {
+			type: Boolean,
+			required: false,
+			default: true,
 		},
 	},
 

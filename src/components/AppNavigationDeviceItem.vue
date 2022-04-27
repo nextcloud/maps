@@ -66,7 +66,7 @@ import ActionButton from '@nextcloud/vue/dist/Components/ActionButton'
 import { generateUrl } from '@nextcloud/router'
 import { isComputer } from '../utils'
 
-import optionsController from "../optionsController";
+import optionsController from '../optionsController'
 
 export default {
 	name: 'AppNavigationDeviceItem',
@@ -101,7 +101,7 @@ export default {
 		},
 		mapIsUpdatable() {
 			return optionsController.optionValues?.isUpdateable
-		}
+		},
 	},
 
 	methods: {

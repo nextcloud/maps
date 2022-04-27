@@ -118,6 +118,8 @@
 				@change-color="$emit('change-device-color', $event)" />
 			<ClickSearchPopup v-if="leftClickSearching"
 				:lat-lng="leftClickSearchLatLng"
+				:favorite-is-creatable="isFavoriteCreatable"
+				:contact-is-creatable="isContactCreatable"
 				@place-contact="onAddContactAddress"
 				@add-favorite="$emit('add-address-favorite', $event); leftClickSearching = false" />
 			<LFeatureGroup>
@@ -360,6 +362,13 @@ export default {
 	},
 
 	computed: {
+		isFavoriteCreatable() {
+			const favArray = Object.values(this.favorites)
+			return (favArray.some((f) => (f.isUpdateable)) || (favArray.length === 0 && this.optionValues.isCreatable))
+		},
+		isContactCreatable() {
+			return this.optionValues.isCreatable
+		},
 	},
 
 	watch: {
@@ -398,20 +407,50 @@ export default {
 					text: t('maps', 'Add a favorite'),
 					icon: generateUrl('/svg/core/actions/starred?color=' + iconColor),
 					callback: this.contextAddFavorite,
-				}, {
+				},
+				{
 					text: t('maps', 'Place photos'),
 					icon: generateUrl('/svg/core/places/picture?color=' + iconColor),
 					callback: this.contextPlacePhotos,
-				}, {
+				},
+				{
 					text: t('maps', 'Place contact'),
 					icon: generateUrl('/svg/core/actions/user?color=' + iconColor),
 					callback: this.placeContactClicked,
-				}, {
+				},
+				{
 					text: t('maps', 'Share this location'),
 					icon: generateUrl('/svg/core/actions/share?color=' + iconColor),
 					callback: this.contextShareLocation,
 				},
 			]
+			/* Making this interactive does currently not work
+			const favArray = Object.values(this.favorites)
+			if (favArray.some((f) => (f.isUpdateable))
+				|| (favArray.length === 0 && optionsController.optionValues?.isCreatable)) {
+				cmi.push({
+					text: t('maps', 'Add a favorite'),
+					icon: generateUrl('/svg/core/actions/starred?color=' + iconColor),
+					callback: this.contextAddFavorite,
+				})
+			}
+			if (optionsController.optionValues?.isCreatable) {
+				cmi.push({
+					text: t('maps', 'Place photos'),
+					icon: generateUrl('/svg/core/places/picture?color=' + iconColor),
+					callback: this.contextPlacePhotos,
+				},
+				{
+					text: t('maps', 'Place contact'),
+					icon: generateUrl('/svg/core/actions/user?color=' + iconColor),
+					callback: this.placeContactClicked,
+				})
+			}
+			cmi.push({
+				text: t('maps', 'Share this location'),
+				icon: generateUrl('/svg/core/actions/share?color=' + iconColor),
+				callback: this.contextShareLocation,
+			}) */
 			window.OCA.Maps.mapActions.forEach((action) => {
 				cmi.push({
 					text: action.label,

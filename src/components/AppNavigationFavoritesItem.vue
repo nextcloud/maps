@@ -192,7 +192,7 @@ export default {
 		readOnly() {
 			const farray = Object.values(this.favorites)
 			return !farray.some((f) => (f.isUpdateable))
-			&& !(farray.length === 0 && optionsController.optionValues?.isCreateable && optionsController.optionValues?.isUpdateable)
+			&& !(farray.length === 0 && optionsController.optionValues?.isCreatable)
 		},
 	},
 

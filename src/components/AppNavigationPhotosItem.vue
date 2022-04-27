@@ -72,7 +72,7 @@ export default {
 	computed: {
 		readOnly() {
 			return this.photos.every((p) => !p.isUpdateable)
-				|| (this.photos.length === 0 && !(optionsController.optionValues?.isCreateable && !optionsController.optionValues?.isUpdateable))
+				|| (this.photos.length === 0 && !(optionsController.optionValues?.isCreatable && !optionsController.optionValues?.isUpdateable))
 		},
 	},
 

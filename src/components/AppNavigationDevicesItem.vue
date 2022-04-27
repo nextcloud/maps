@@ -29,7 +29,7 @@
 				@click="$emit('export-all')">
 				{{ t('maps', 'Export all') }}
 			</ActionButton>
-			<ActionButton v-if="isCreateable"
+			<ActionButton v-if="isCreatable"
 				icon="icon-folder"
 				@click="$emit('import')">
 				{{ t('maps', 'Import devices') }}
@@ -107,7 +107,7 @@ export default {
 				return nameA.localeCompare(nameB)
 			})
 		},
-		isCreateable() {
+		isCreatable() {
 			return optionsController.myMapId === null || optionsController.myMapId === ''
 		},
 		allDeletable() {

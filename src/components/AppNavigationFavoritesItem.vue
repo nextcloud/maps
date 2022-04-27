@@ -104,7 +104,7 @@
 						icon="icon-share"
 						:close-after-click="true"
 						@click="$emit('add-to-map-category', catid)">
-						{{ t('maps', 'Copy to map') }}
+						{{ c.token ? t('maps', 'Link to map') : t('maps', 'Copy to map') }}
 					</ActionButton>
 					<ActionButton v-if="enabled && nbFavorites && c.enabled && c.isDeletable"
 						icon="icon-delete"

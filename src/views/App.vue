@@ -55,7 +55,8 @@
 					@elevation="onTrackElevation"
 					@track-clicked="onNavTrackClicked"
 					@tracks-clicked="onTracksClicked"
-					@color="onChangeTrackColor" />
+					@color="onChangeTrackColor"
+					@add-to-map-track="onAddTrackToMap" />
 				<AppNavigationDevicesItem
 					ref="devicesNavigation"
 					:enabled="devicesEnabled"
@@ -1699,6 +1700,10 @@ export default {
 			}).catch((error) => {
 				console.error(error)
 			})
+		},
+		onAddTrackToMap(track) {
+			// FIXME
+			showInfo('Add track to map not supported yet')
 		},
 		onDeviceZoom(device) {
 			this.$refs.map.zoomOnDevice(device)

@@ -65,7 +65,7 @@ class DevicesService {
 				'user_agent' => $row['user_agent'],
 				'color' => $row['color'],
 				'isShareable' => true,
-				'isDeletable' => true,
+				'isDeleteable' => true,
 				'isUpdateable' => true,
 				'isReadable' => true,
 			];

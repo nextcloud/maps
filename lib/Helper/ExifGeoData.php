@@ -114,7 +114,7 @@ class ExifGeoData
 				if (!isset($d[self::TIMESTAMP]) && isset($data['EXIF'][self::TIMESTAMP])) {
 					$d[self::TIMESTAMP] = $data['EXIF'][self::TIMESTAMP];
 				}
-				return $data['GPS'];
+				return $d;
 			}
         }
         $data = new PelDataWindow(file_get_contents($path));

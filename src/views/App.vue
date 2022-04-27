@@ -1050,7 +1050,7 @@ export default {
 		onContactPlace(e, save = true) {
 			network.placeContact(e.contact.BOOKID, e.contact.URI,
 				e.contact.UID, e.latLng.lat, e.latLng.lng,
-				e.address || null, e.addressType, this.myMapId
+				e.address || null, e.addressType, e.FILEID || null, this.myMapId
 			).then((response) => {
 				if (save) {
 					this.saveAction({

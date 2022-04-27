@@ -103,11 +103,13 @@ export function deleteContactAddress(bookid, uri, uid, vcardAddress = '', vcardG
 	return axios.delete(url, req)
 }
 
-export function placeContact(bookid, uri, uid, lat, lng, address = null, type = 'home') {
+export function placeContact(bookid, uri, uid, lat, lng, address = null, type = 'home', fileId = null, myMapId = null) {
 	let req = {
 		lat,
 		lng,
 		uid,
+		fileId,
+		myMapId,
 	}
 	if (address) {
 		let road = (address.road || '') + ' ' + (address.pedestrian || '')

@@ -13,6 +13,7 @@
 namespace OCA\Maps\Controller;
 
 use OCP\Files\IRootFolder;
+use OCP\Files\NotFoundException;
 use OCP\IRequest;
 use OCP\IAvatarManager;
 use OCP\AppFramework\Http\DataDisplayResponse;
@@ -264,49 +265,109 @@ class ContactsController extends Controller {
     /**
      * @NoAdminRequired
      */
-    public function placeContact($bookid, $uri, $uid, $lat, $lng, $attraction, $house_number, $road, $postcode, $city, $state, $country, $type) {
-        // do not edit 'user' contact even myself
-        if (strcmp($uri, 'Database:'.$uid.'.vcf') === 0 or
-            strcmp($uid, $this->userId) === 0
-        ) {
-            return new DataResponse('Can\'t edit users', 400);
-        }
-        else {
-            // check addressbook permissions
-            if (!$this->addressBookIsReadOnly($bookid)) {
-                if ($lat !== null && $lng !== null) {
-                    // we set the geo tag
-                    if (!$attraction && !$house_number && !$road && !$postcode && !$city && !$state && !$country) {
-                        $result = $this->contactsManager->createOrUpdate(['URI'=>$uri, 'GEO'=>$lat.';'.$lng], $bookid);
-                    }
-                    // we set the address
-                    else {
-                        $street = trim($attraction.' '.$house_number.' '.$road);
-                        $stringAddress = ';;'.$street.';'.$city.';'.$state.';'.$postcode.';'.$country;
-                        // set the coordinates in the DB
-                        $lat = floatval($lat);
-                        $lng = floatval($lng);
-                        $this->setAddressCoordinates($lat, $lng, $stringAddress, $uri);
-                        // set the address in the vcard
-                        $card = $this->cdBackend->getContact($bookid, $uri);
-                        if ($card) {
-                            $vcard = Reader::read($card['carddata']);;
-                            $vcard->add(new Text($vcard, 'ADR', ['', '', $street, $city, $state, $postcode, $country], ['TYPE'=>$type]));
-                            $this->cdBackend->updateCard($bookid, $uri, $vcard->serialize());
-                        }
-                    }
-                }
-                else {
-                    // TODO find out how to remove a property
-                    // following does not work properly
-                    $result = $this->contactsManager->createOrUpdate(['URI'=>$uri, 'GEO'=>null], $bookid);
-                }
-                return new DataResponse('EDITED');
-            }
-            else {
-                return new DataResponse('READONLY', 400);
-            }
-        }
+    public function placeContact($bookid, $uri, $uid, $lat, $lng, $attraction, $house_number, $road, $postcode, $city, $state, $country, $type, $fileId=null, $myMapId=null) {
+		if (is_null($myMapId) || $myMapId === '') {
+			// do not edit 'user' contact even myself
+			if (strcmp($uri, 'Database:'.$uid.'.vcf') === 0 or
+				strcmp($uid, $this->userId) === 0
+			) {
+				return new DataResponse('Can\'t edit users', 400);
+			} else {
+				// check addressbook permissions
+				if (!$this->addressBookIsReadOnly($bookid)) {
+					if ($lat !== null && $lng !== null) {
+						// we set the geo tag
+						if (!$attraction && !$house_number && !$road && !$postcode && !$city && !$state && !$country) {
+							$result = $this->contactsManager->createOrUpdate(['URI'=>$uri, 'GEO'=>$lat.';'.$lng], $bookid);
+						}
+						// we set the address
+						else {
+							$street = trim($attraction.' '.$house_number.' '.$road);
+							$stringAddress = ';;'.$street.';'.$city.';'.$state.';'.$postcode.';'.$country;
+							// set the coordinates in the DB
+							$lat = floatval($lat);
+							$lng = floatval($lng);
+							$this->setAddressCoordinates($lat, $lng, $stringAddress, $uri);
+							// set the address in the vcard
+							$card = $this->cdBackend->getContact($bookid, $uri);
+							if ($card) {
+								$vcard = Reader::read($card['carddata']);;
+								$vcard->add(new Text($vcard, 'ADR', ['', '', $street, $city, $state, $postcode, $country], ['TYPE'=>$type]));
+								$result = $this->cdBackend->updateCard($bookid, $uri, $vcard->serialize());
+							}
+						}
+					}
+					else {
+						// TODO find out how to remove a property
+						// following does not work properly
+						$result = $this->contactsManager->createOrUpdate(['URI'=>$uri, 'GEO'=>null], $bookid);
+					}
+					return new DataResponse('EDITED');
+				}
+				else {
+					return new DataResponse('READONLY', 400);
+				}
+			}
+		} else {
+			$userFolder = $this->root->getUserFolder($this->userId);
+			$folders =  $userFolder->getById($myMapId);
+			if (empty($folders)) {
+				return DataResponse('MAP NOT FOUND', 404);
+			}
+			$mapsFolder = array_shift($folders);
+			if (is_null($mapsFolder)) {
+				return DataResponse('MAP NOT FOUND',404);
+			}
+			if (is_null($fileId)) {
+				$card = $this->cdBackend->getContact($bookid, $uri);
+				try {
+					$file=$mapsFolder->get($uri.'.vcf');
+					if (!$file->isWritable()) {
+						return DataResponse('CONTACT NOT WRITABLE', 400);
+					}
+				} catch (NotFoundException $e) {
+					if (!$mapsFolder->isCreatable()) {
+						return DataResponse('CONTACT NOT WRITABLE', 400);
+					}
+					$file=$mapsFolder->newFile($uri.'vcf');
+				}
+			} else {
+				$files = $mapsFolder->getById($fileId);
+				if (empty($files)) {
+					return DataResponse('CONTACT NOT FOUND', 404);
+				}
+				$file = array_shift($files);
+				if (is_null($file)) {
+					return DataResponse('CONTACT NOT FOUND', 404);
+				}
+				if (!$file->isWritable()) {
+					return DataResponse('CONTACT NOT WRITABLE', 400);
+				}
+				$card = $file->getContent();
+			}
+			if ($card) {
+				$vcard = Reader::read($card['carddata']);
+				if ($lat !== null && $lng !== null) {
+					if (!$attraction && !$house_number && !$road && !$postcode && !$city && !$state && !$country) {
+						$vcard->add('GEO',$lat.';'.$lng);
+					} else {
+						$street = trim($attraction.' '.$house_number.' '.$road);
+						$stringAddress = ';;'.$street.';'.$city.';'.$state.';'.$postcode.';'.$country;
+						// set the coordinates in the DB
+						$lat = floatval($lat);
+						$lng = floatval($lng);
+						$this->setAddressCoordinates($lat, $lng, $stringAddress, $uri);
+						$vcard = Reader::read($card['carddata']);
+						$vcard->add( 'ADR', ['', '', $street, $city, $state, $postcode, $country], ['TYPE'=>$type]);
+						$result = $this->cdBackend->updateCard($bookid, $uri, $vcard->serialize());
+					}
+				} else {
+					$vcard->remove('GEO');
+				}
+				$file->putContent($vcard->serialize());
+			}
+		}
+
     }
 
     private function addressBookIsReadOnly($bookid) {

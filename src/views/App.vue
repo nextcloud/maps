@@ -535,7 +535,7 @@ export default {
 						name: catid,
 						color,
 						counter: 1,
-						shareable: this.myMapId === null || this.myMapId === '',
+						isShareable: this.myMapId === null || this.myMapId === '',
 						enabled: !this.disabledFavoriteCategories.includes(catid),
 						token: this.favoriteCategoryTokens[catid],
 					}
@@ -1122,7 +1122,7 @@ export default {
 						f.category = t('maps', 'Personal')
 					}
 					f.selected = false
-					f.editable = true
+					f.isUpdateable = true
 					this.$set(this.favorites, f.id, f)
 				})
 			}).catch((error) => {
@@ -1139,7 +1139,7 @@ export default {
 							response.data.favorites.forEach((f) => {
 								f.id = s.token + f.id
 								f.selected = false
-								f.editable = false
+								f.isUpdatable = false
 								this.$set(this.favorites, f.id, f)
 							})
 						}).catch((error) => {
@@ -1341,7 +1341,7 @@ export default {
 				if (!fav.category) {
 					fav.category = t('maps', 'Personal')
 				}
-				fav.editable = true
+				fav.isUpdateable = true
 				if (save) {
 					this.saveAction({
 						type: 'favoriteAdd',
@@ -1800,8 +1800,8 @@ export default {
 						name: t('maps', 'Default'),
 						id: null,
 						enabled: this.myMapId === null,
-						deletable: false,
-						shareable: false,
+						isDeletable: false,
+						isShareable: false,
 					},
 				]
 			    this.myMaps.push(

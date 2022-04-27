@@ -87,17 +87,21 @@ class FavoritesService {
             $category = $row['category'];
             $comment = $row['comment'];
             $extensions = $row['extensions'];
-            array_push($favorites, [
-                'id' => $id,
-                'name' => $name,
-                'date_modified' => $date_modified,
-                'date_created' => $date_created,
-                'lat' => $lat,
-                'lng' => $lng,
-                'category' => $category,
-                'comment' => $comment,
-                'extensions' => $extensions
-            ]);
+            $favorites[] = [
+				'id' => $id,
+				'name' => $name,
+				'date_modified' => $date_modified,
+				'date_created' => $date_created,
+				'lat' => $lat,
+				'lng' => $lng,
+				'category' => $category,
+				'comment' => $comment,
+				'extensions' => $extensions,
+				'isDeletable' => true,
+				//Saving maps information in the file
+				'isUpdateable' => true,
+				'isShareable' => true,
+			];
         }
         $req->closeCursor();
         $qb = $qb->resetQueryParts();
@@ -143,7 +147,11 @@ class FavoritesService {
                 'lng' => $lng,
                 'category' => $category,
                 'comment' => $comment,
-                'extensions' => $extensions
+                'extensions' => $extensions,
+				'isDeletable' => true,
+				//Saving maps information in the file
+				'isUpdateable' => true,
+				'isShareable' => true,
             ];
             break;
         }
@@ -340,6 +348,10 @@ class FavoritesService {
         foreach($data['features'] as $value) {
             $this->currentFavorite = [
                 "id"=>$id,
+				'isDeletable' => $file->isUpdateable(),
+				//Saving maps information in the file
+				'isUpdateable' => $file->isUpdateable(),
+				'isShareable' => false,
             ];
 
             // Read geometry

@@ -110,6 +110,11 @@ class UtilsController extends Controller {
                 $value = $this->config->getUserValue($this->userId, 'maps', $key);
                 $ov[$key] = $value;
             }
+			$ov['isCreatable'] = true;
+			$ov['isDeletable'] = false;
+			$ov['isReadable'] = true;
+			$ov['isUpdateable'] = true;
+			$ov['isShareable'] = true;
         } else {
 			$userFolder = $this->root->getUserFolder($this->userId);
             $folders = $userFolder->getById($myMapId);
@@ -120,6 +125,15 @@ class UtilsController extends Controller {
                 $file=$folder->newFile(".maps", $content = "{}");
             }
             $ov = json_decode($file->getContent(),true, 512);
+			$ov['isCreatable'] = $folder->isCreatable();
+			//We can delete the map by deleting the folder or the .maps file
+			$ov['isDeletable'] = $folder->isDeletable() || $file->isDeletable();
+			// Maps content can be read mostly from the folder
+			$ov['isReadable'] = $folder->isReadable();
+			//Saving maps information in the file
+			$ov['isUpdateable'] = $file->isUpdateable();
+			// Share map by sharing the folder
+			$ov['isShareable'] = $folder->isShareable();
         }
 
         // get routing-specific admin settings values

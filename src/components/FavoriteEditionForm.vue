@@ -6,9 +6,9 @@
 				v-model="name"
 				type="text"
 				:placeholder="namePH"
-				:readonly="!favorite.editable">
+				:readonly="!favorite.isUpdateable">
 			<span class="icon icon-category-organization" />
-			<Multiselect v-if="favorite.editable"
+			<Multiselect v-if="favorite.isUpdateable"
 				ref="select"
 				v-model="selectedCategory"
 				class="category-select"
@@ -37,23 +37,28 @@
 				v-model="selectedCategory.catid"
 				type="text"
 				:placeholder="namePH"
-				:readonly="!favorite.editable">
+				:readonly="!favorite.isUpdateable">
 			<span class="icon icon-comment" />
 			<textarea v-model="comment"
 				:placeholder="commentPH"
-				:readonly="!favorite.editable"
+				:readonly="!favorite.isUpdateable"
 				rows="1" />
 		</div>
 		<div class="buttons">
-			<Button :disabled="!favorite.editable"
+			<Button
+				:disabled="!favorite.isUpdateable"
+				native-type="submit"
+				type="primary"
 				@click="onOkClick">
-				<span class="icon-checkmark" />
-				{{ t('maps', 'OK') }}
+				<template>
+					{{ t('maps', 'OK') }}
+				</template>
 			</Button>
-			<Button :disabled="!favorite.editable"
+			<Button :disabled="!favorite.isUpdateable"
 				@click="onDeleteClick">
-				<span class="icon-delete" />
-				{{ t('maps', 'Delete') }}
+				<template>
+					{{ t('maps', 'Delete') }}
+				</template>
 			</Button>
 		</div>
 	</div>

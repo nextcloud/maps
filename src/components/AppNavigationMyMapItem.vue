@@ -36,7 +36,7 @@
 				@click="$emit('share', myMap)">
 				{{ t('maps', 'Share') }}
 			</ActionButton>
-			<ActionButton v-if="deletable"
+			<ActionButton v-if="isDeletable"
 				icon="icon-delete"
 				:close-after-click="true"
 				@click="$emit('delete', myMap.id)">
@@ -75,11 +75,11 @@ export default {
 	},
 
 	computed: {
-		shareable() {
-			return this.parentEnabled && (this.myMap.shareable ?? true)
+		isShareable() {
+			return this.parentEnabled && (this.myMap.isShareable ?? true)
 		},
-	    deletable() {
-	        return this.parentEnabled && (this.myMap.deletable ?? true)
+	    isDeletable() {
+	        return this.parentEnabled && (this.myMap.isDeletable ?? true)
 		},
 	},
 

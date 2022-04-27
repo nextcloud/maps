@@ -220,7 +220,10 @@ class TracksService {
 					$file = array_shift($files);
 					if ($file !== null) {
 						$path = $userFolder->getRelativePath($file->getPath());
-						$shareable = $file->isShareable();
+						$isShareable = $file->isShareable();
+						$isDeletable = $file->isDeletable();
+						$isUpdateable = $file->isUpdateable();
+						$isReadable = $file->isReadable();
 					}
 				}
 				$isIgnored = false;
@@ -233,15 +236,18 @@ class TracksService {
 				if ($isIgnored) {
 					continue;
 				}
-                array_push($tracks, [
-                    'id' => intval($row['id']),
-                    'file_id' => intval($row['file_id']),
-                    'color' => $row['color'],
-                    'metadata' => $row['metadata'],
-                    'etag' => $row['etag'],
+                $tracks[] = [
+					'id' => intval($row['id']),
+					'file_id' => intval($row['file_id']),
+					'color' => $row['color'],
+					'metadata' => $row['metadata'],
+					'etag' => $row['etag'],
 					'path' => $path,
-					'shareable' => $shareable,
-                ]);
+					'isShareable' => $isShareable,
+					'isDeletable' => $isDeletable,
+					'isReadable' => $isReadable,
+					'isUpdateable' => $isUpdateable,
+				];
             }
         } else {
             // my-maps context
@@ -266,15 +272,18 @@ class TracksService {
 				if ($isIgnored) {
 					continue;
 				}
-                array_push($tracks, [
-                    'id' => intval($row['id']),
-                    'file_id' => intval($row['file_id']),
-                    'color' => $row['color'],
-                    'metadata' => $row['metadata'],
-                    'etag' => $row['etag'],
+                $tracks[] = [
+					'id' => intval($row['id']),
+					'file_id' => intval($row['file_id']),
+					'color' => $row['color'],
+					'metadata' => $row['metadata'],
+					'etag' => $row['etag'],
 					'path' => $path,
-					'shareable' => $file->isShareable(),
-                ]);
+					'isShareable' => $file->isShareable(),
+					'isDeletable' => $file->isDeletable(),
+					'isUpdateable' => $file->isUpdateable(),
+					'isReadable' => $file->isReadable(),
+				];
             }
         }
         $req->closeCursor();

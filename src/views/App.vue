@@ -1035,7 +1035,7 @@ export default {
 			})
 		},
 		onContactAddressDelete(contact, save = true) {
-			network.deleteContactAddress(contact.BOOKID, contact.URI, contact.UID, contact.ADR, contact.GEO, this.myMapId).then((response) => {
+			network.deleteContactAddress(contact.BOOKID, contact.URI, contact.UID, contact.ADR, contact.GEO, contact.FILEID || null, this.myMapId).then((response) => {
 				if (save) {
 					this.saveAction({
 						type: 'contactDelete',

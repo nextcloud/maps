@@ -157,28 +157,10 @@ class ContactsController extends Controller {
 					if (isset($vcard->GEO)) {
 						$geo = $vcard->GEO;
 						if (strlen($geo) > 1) {
-							$result[] = [
-								'FN' => $vcard->FN->getJsonValue() ?? $this->N2FN($vcard->N->getJsonValue()) ?? '???',
-								'UID' => $vcard->UID->getJsonValue(),
-								'ADR' => '',
-								'HAS_PHOTO' => (isset($vcard->PHOTO) && $vcard->PHOTO !== null),
-								'FILEID' => $file->getId(),
-								'PHOTO' => $vcard->PHOTO ?? '',
-								'GEO' => $geo,
-								'GROUPS' => $vcard->CATEGORIES ?? null,
-							];
+							$result[] = $this->vCardToArray($vcard, $geo->getValue());
 						} elseif (count($geo)>0) {
 							foreach ($geo as $g) {
-								$result[] = [
-									'FN' => $vcard->FN->getJsonValue() ?? $this->N2FN($vcard->N->getJsonValue()) ?? '???',
-									'UID' => $vcard->UID->getJsonValue(),
-									'ADR' => '',
-									'HAS_PHOTO' => (isset($vcard->PHOTO) && $vcard->PHOTO !== null),
-									'FILEID' => $file->getId(),
-									'PHOTO' => $vcard->PHOTO ?? '',
-									'GEO' => $geo,
-									'GROUPS' => $vcard->CATEGORIES ?? null,
-								];
+								$result[] = $this->vCardToArray($vcard, $geo->getValue());
 							}
 						}
 					}
@@ -191,21 +173,7 @@ class ContactsController extends Controller {
 								$adrtype = $adr->parameters()['TYPE']->getValue();
 							}
 							if (strlen($geo) > 1) {
-								$FNArray = $vcard->FN->getJsonValue() ?? $this->N2FN($vcard->N->getJsonValue());
-								$fn = array_shift($FNArray);
-								$UIDArray = $vcard->UID->getJsonValue();
-								$uid = array_shift($FNArray);
-								$result[] = [
-									'FN' => $fn ?? '???',
-									'UID' => $uid,
-									'ADR' => $adr->getValue(),
-									'ADRTYPE' => $adrtype,
-									'HAS_PHOTO' => (isset($vcard->PHOTO) && $vcard->PHOTO !== null),
-									'FILEID' => $file->getId(),
-									'PHOTO' => $vcard->PHOTO ?? '',
-									'GEO' => $geo,
-									'GROUPS' => $vcard->CATEGORIES ?? null,
-								];
+								$result[] = $this->vCardToArray($vcard, $geo, $adrtype, $adr->getValue(), $file->getId());
 							}
 						}
 					}
@@ -214,6 +182,30 @@ class ContactsController extends Controller {
             return new DataResponse($result);
         }
     }
+
+	private function vCardToArray($vcard, $geo, $adrtype=null, $adr=null, $fileId = null) {
+		$FNArray = $vcard->FN ? $vcard->FN->getJsonValue() : [];
+		$fn = array_shift($FNArray);
+		$NArray = $vcard->N ? $vcard->N->getJsonValue() : [];
+		$n = array_shift($NArray);
+		if (!is_null($n)) {
+			$n = $this->N2FN($n);
+		}
+		$UIDArray = $vcard->UID->getJsonValue();
+		$uid = array_shift($UIDArray);
+		$result = [
+			'FN' => $fn ?? $n ?? '???',
+			'UID' => $uid,
+			'HAS_PHOTO' => (isset($vcard->PHOTO) && $vcard->PHOTO !== null),
+			'FILEID' => $fileId,
+			'ADR' => $adr ?? '',
+			'ADRTYPE' => $adrtype ?? '',
+			'PHOTO' => $vcard->PHOTO ?? '',
+			'GEO' => $geo,
+			'GROUPS' => $vcard->CATEGORIES ?? null,
+		];
+		return $result;
+	}
 
     private function N2FN(string $n) {
         if ($n) {
@@ -321,15 +313,12 @@ class ContactsController extends Controller {
 			if (is_null($fileId)) {
 				$card = $this->cdBackend->getContact($bookid, $uri);
 				try {
-					$file=$mapsFolder->get($uri.'.vcf');
-					if (!$file->isWritable()) {
-						return DataResponse('CONTACT NOT WRITABLE', 400);
-					}
+					$file=$mapsFolder->get($uri);
 				} catch (NotFoundException $e) {
 					if (!$mapsFolder->isCreatable()) {
 						return DataResponse('CONTACT NOT WRITABLE', 400);
 					}
-					$file=$mapsFolder->newFile($uri.'vcf');
+					$file=$mapsFolder->newFile($uri);
 				}
 			} else {
 				$files = $mapsFolder->getById($fileId);
@@ -340,10 +329,10 @@ class ContactsController extends Controller {
 				if (is_null($file)) {
 					return DataResponse('CONTACT NOT FOUND', 404);
 				}
-				if (!$file->isWritable()) {
-					return DataResponse('CONTACT NOT WRITABLE', 400);
-				}
 				$card = $file->getContent();
+			}
+			if (!$file->isUpdateable()) {
+				return DataResponse('CONTACT NOT WRITABLE', 400);
 			}
 			if ($card) {
 				$vcard = Reader::read($card['carddata']);
@@ -445,7 +434,8 @@ class ContactsController extends Controller {
      * and delete corresponding entry in the DB
      * @NoAdminRequired
      */
-    public function deleteContactAddress($bookid, $uri, $uid, $adr, $geo) {
+    public function deleteContactAddress($bookid, $uri, $uid, $adr, $geo, $fileId=null, $myMapId=null) {
+
         // vcard
         $card = $this->cdBackend->getContact($bookid, $uri);
         if ($card) {

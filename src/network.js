@@ -91,7 +91,7 @@ export function exportRoute(type, coords, name, totDist, totTime, myMapId = null
 	return axios.post(url, req)
 }
 
-export function deleteContactAddress(bookid, uri, uid, vcardAddress = '', vcardGEO = '') {
+export function deleteContactAddress(bookid, uri, uid, vcardAddress = '', vcardGEO = '', fileId = null, myMapId = null) {
 	const req = {
 		params: {
 			uid,

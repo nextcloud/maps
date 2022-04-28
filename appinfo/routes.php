@@ -32,6 +32,7 @@ return [
         ['name' => 'contacts#getContacts', 'url' => '/contacts', 'verb' => 'GET'],
         ['name' => 'contacts#searchContacts', 'url' => '/contacts-search', 'verb' => 'GET'],
         ['name' => 'contacts#placeContact', 'url' => '/contacts/{bookid}/{uri}', 'verb' => 'PUT'],
+		['name' => 'contacts#addContactToMap', 'url' => '/contacts/{bookid}/{uri}/add-to-map/', 'verb' => 'PUT'],
         ['name' => 'contacts#deleteContactAddress', 'url' => '/contacts/{bookid}/{uri}', 'verb' => 'DELETE'],
         ['name' => 'contacts#getContactLetterAvatar', 'url' => '/contacts-avatar', 'verb' => 'GET'],
 

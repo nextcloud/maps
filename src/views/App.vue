@@ -200,7 +200,6 @@ import L from 'leaflet'
 import { geoToLatLng, getFormattedADR } from '../utils/mapUtils'
 import * as network from '../network'
 import { all as axiosAll, spread as axiosSpread } from 'axios'
-import {deleteSharedFavoriteCategoryFromMap} from "../network";
 
 export default {
 	name: 'App',
@@ -989,8 +988,7 @@ export default {
 		},
 		onAddContactToMap(c) {
 			this.chooseMyMap((map) => {
-				const latLng = geoToLatLng(c.GEO)
-				network.placeContact(c.BOOKID, c.URI, c.UID, latLng[0], latLng[1], c.ADR, c.ADRTYPE, c.FILEID, map.id).then((response) => {
+				network.addContactToMap(c.BOOKID, c.URI, c.UID, map.id, c.FILEID).then((response) => {
 					showSuccess(t('maps', 'Contact {contactName} added to map {mapName}', { contactName: c.FN ?? '', mapName: map.name ?? '' }))
 				}).catch((error) => {
 					console.error(error)
@@ -1001,8 +999,7 @@ export default {
 		onAddAllContactsToMap() {
 			this.chooseMyMap((map) => {
 				axiosAll(this.contacts.map((c) => {
-					const latLng = geoToLatLng(c.GEO)
-					return network.placeContact(c.BOOKID, c.URI, c.UID, latLng[0], latLng[1], c.ADR, c.ADRTYPE, c.FILEID, map.id)
+					return network.addContactToMap(c.BOOKID, c.URI, c.UID, map.id, c.FILEID)
 				})).then(axiosSpread((...responses) => {
 					showSuccess(t('maps', 'All Contacts added to map {mapName}', { mapName: map.name ?? '' }))
 				})).catch((error) => {
@@ -1035,8 +1032,7 @@ export default {
 			})
 			this.chooseMyMap((map) => {
 				axiosAll(contactsInGroup.map((c) => {
-					const latLng = geoToLatLng(c.GEO)
-					return network.placeContact(c.BOOKID, c.URI, c.UID, latLng[0], latLng[1], c.ADR, c.ADRTYPE, c.FILEID, map.id)
+					return network.addContactToMap(c.BOOKID, c.URI, c.UID, map.id, c.FILEID)
 				})).then(axiosSpread((...responses) => {
 					showSuccess(t('maps', 'All Contacts added to map {mapName}', { mapName: map.name ?? '' }))
 				})).catch((error) => {
@@ -1456,10 +1452,10 @@ export default {
 				favIds.forEach((favid) => {
 					this.$delete(this.favorites, favid)
 				})
-				showSuccess(t('maps', 'Favorite category {favoriteName} unlinked from map', { favoriteName: catid ?? ''}))
+				showSuccess(t('maps', 'Favorite category {favoriteName} unlinked from map', { favoriteName: catid ?? '' }))
 			}).catch((error) => {
 				console.error(error)
-				showError(t('maps', 'Failed to remove Favorite category {favoriteName} from map', { favoriteName: catid ?? ''}))
+				showError(t('maps', 'Failed to remove Favorite category {favoriteName} from map', { favoriteName: catid ?? '' }))
 			})
 		},
 		onFavoriteAdd(latLng) {

@@ -391,7 +391,51 @@ class ContactsController extends Controller {
 
     }
 
-    private function addressBookIsReadOnly($bookid) {
+	/**
+	 * @NoAdminRequired
+	 */
+	public function addContactToMap($bookid, $uri, $myMapId, $fileId=null) {
+		$userFolder = $this->root->getUserFolder($this->userId);
+		$folders =  $userFolder->getById($myMapId);
+		if (empty($folders)) {
+			return DataResponse('MAP NOT FOUND', 404);
+		}
+		$mapsFolder = array_shift($folders);
+		if (is_null($mapsFolder)) {
+			return DataResponse('MAP NOT FOUND',404);
+		}
+		if (is_null($fileId)) {
+			$card = $this->cdBackend->getContact($bookid, $uri);
+			try {
+				$file=$mapsFolder->get($uri);
+			} catch (NotFoundException $e) {
+				if (!$mapsFolder->isCreatable()) {
+					return DataResponse('CONTACT NOT WRITABLE', 400);
+				}
+				$file=$mapsFolder->newFile($uri);
+			}
+		} else {
+			$files = $mapsFolder->getById($fileId);
+			if (empty($files)) {
+				return DataResponse('CONTACT NOT FOUND', 404);
+			}
+			$file = array_shift($files);
+			if (is_null($file)) {
+				return DataResponse('CONTACT NOT FOUND', 404);
+			}
+			$card = $file->getContent();
+		}
+		if (!$file->isUpdateable()) {
+			return DataResponse('CONTACT NOT WRITABLE', 400);
+		}
+		if ($card) {
+			$vcard = Reader::read($card['carddata']);
+			$file->putContent($vcard->serialize());
+		}
+	}
+
+
+	private function addressBookIsReadOnly($bookid) {
         $userBooks = $this->cdBackend->getAddressBooksForUser('principals/users/'.$this->userId);
         foreach ($userBooks as $book) {
             if ($book['id'] === $bookid) {

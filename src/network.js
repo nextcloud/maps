@@ -136,6 +136,16 @@ export function placeContact(bookid, uri, uid, lat, lng, address = null, type = 
 	return axios.put(url, req)
 }
 
+export function addContactToMap(bookid, uri, uid, myMapId, fileId = null) {
+	const req = {
+		uid,
+		fileId,
+		myMapId,
+	}
+	const url = generateUrl('apps/maps/contacts/' + bookid + '/' + uri + '/add-to-map/')
+	return axios.put(url, req)
+}
+
 export function getFavorites(myMapId = null) {
 	const conf = {
 	    params: {

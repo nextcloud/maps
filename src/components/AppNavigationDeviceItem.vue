@@ -50,7 +50,7 @@
 				@click="$emit('export', device)">
 				{{ t('maps', 'Export') }}
 			</ActionButton>
-			<ActionButton v-if="parentEnabled && device.enabled && device.isDeleteable"
+			<ActionButton v-if="parentEnabled && device.enabled && device.isDeletable"
 				icon="icon-delete"
 				:close-after-click="true"
 				@click="$emit('delete', device)">

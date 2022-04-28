@@ -7,7 +7,7 @@
 			:key="i"
 			:options="{ data: p }"
 			:icon="getPhotoMarkerIcon(p)"
-			:draggable="draggable"
+			:draggable="draggable && p.isUpdateable"
 			:lat-lng="[p.lat, p.lng]"
 			@click="onPhotoClick($event, p)"
 			@contextmenu="onPhotoRightClick($event, p)"
@@ -33,7 +33,7 @@
 				<ActionButton icon="icon-toggle" @click="viewPhoto(p)">
 					{{ t('maps', 'Display picture') }}
 				</ActionButton>
-				<ActionButton icon="icon-history" @click="resetPhotosCoords([p])">
+				<ActionButton v-if="p.isUpdateable" icon="icon-history" @click="resetPhotosCoords([p])">
 					{{ t('maps', 'Remove geo data') }}
 				</ActionButton>
 			</LPopup>
@@ -54,7 +54,7 @@
 				<ActionButton icon="icon-search" @click="onZoomClusterClick">
 					{{ t('maps', 'Zoom on bounds') }}
 				</ActionButton>
-				<ActionButton icon="icon-history" @click="resetClusterPhotoCoords">
+				<ActionButton v-if="readOnly" icon="icon-history" @click="resetClusterPhotoCoords">
 					{{ t('maps', 'Remove geo data') }}
 				</ActionButton>
 			</LPopup>
@@ -135,6 +135,10 @@ export default {
 	},
 
 	computed: {
+		readOnly() {
+			return !this.photos.some((f) => (f.isUpdateable))
+				&& !(this.photos.length === 0 && optionsController.optionValues?.isCreatable)
+		},
 		displayedPhotos() {
 			return this.photos
 		},

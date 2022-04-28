@@ -11,7 +11,7 @@
 				@click="$emit('toggle-history', device)">
 				{{ t('maps', 'Toggle history') }}
 			</ActionButton>
-			<ActionButton
+			<ActionButton v-if="mapIsUpdatable"
 				icon="icon-colorpicker"
 				@click="$emit('change-color', device)">
 				<!--template #icon>
@@ -148,6 +148,9 @@ export default {
 			return this.points.length > 0
 				? this.points[this.points.length - 1]
 				: null
+		},
+		mapIsUpdatable() {
+			return optionsController.optionValues?.isUpdateable
 		},
 	},
 

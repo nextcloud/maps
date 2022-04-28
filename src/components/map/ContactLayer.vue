@@ -38,7 +38,7 @@
 					<img class="tooltip-contact-avatar"
 						:src="contactAvatar"
 						alt="">
-					<button
+					<button v-if="contact.isUpdateable"
 						v-tooltip="{ content: contact.ADR?t('maps', 'Delete this address'):t('maps', 'Delete this location') }"
 						class="icon icon-delete"
 						@click="onDeleteAddressClick()" />
@@ -68,9 +68,13 @@
 				</div>
 			</div>
 			<div v-if="click === 'right'">
-				<ActionButton icon="icon-delete"
+				<ActionButton v-if="contact.isUpdateable"
+					icon="icon-delete"
 					@click="onDeleteAddressClick()">
 					{{ contact.ADR?t('maps', 'Delete this address'):t('maps', 'Delete this location') }}
+				</ActionButton>
+				<ActionButton v-else icon="icon-hand">
+					{{ ('maps', 'read-only') }}
 				</ActionButton>
 			</div>
 		</LPopup>

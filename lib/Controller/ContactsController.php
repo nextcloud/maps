@@ -85,7 +85,9 @@ class ContactsController extends Controller {
 								'BOOKID' => $c['addressbook-key'],
 								'BOOKURI' => $addressBookUri,
 								'GEO' => $geo,
-								'GROUPS' => $c['CATEGORIES'] ?? null
+								'GROUPS' => $c['CATEGORIES'] ?? null,
+								'isDeletable' => true,
+								'isUpdateable' => true,
 							];
                         } elseif (count($geo)>0) {
 						foreach ($geo as $g) {
@@ -99,7 +101,9 @@ class ContactsController extends Controller {
 								'BOOKID' => $c['addressbook-key'],
 								'BOOKURI' => $addressBookUri,
 								'GEO' => $g,
-								'GROUPS' => $c['CATEGORIES'] ?? null
+								'GROUPS' => $c['CATEGORIES'] ?? null,
+								'isDeletable' => true,
+								'isUpdateable' => true,
 							];
 						}
 					}
@@ -128,6 +132,8 @@ class ContactsController extends Controller {
 										'BOOKURI' => $addressBookUri,
 										'GEO' => $geo,
 										'GROUPS' => $c['CATEGORIES'] ?? null,
+										'isDeletable' => true,
+										'isUpdateable' => true,
 									];
                                 }
                             }
@@ -157,10 +163,10 @@ class ContactsController extends Controller {
 					if (isset($vcard->GEO)) {
 						$geo = $vcard->GEO;
 						if (strlen($geo) > 1) {
-							$result[] = $this->vCardToArray($vcard, $geo->getValue());
+							$result[] = $this->vCardToArray($card, $vcard, $geo->getValue());
 						} elseif (count($geo)>0) {
 							foreach ($geo as $g) {
-								$result[] = $this->vCardToArray($vcard, $geo->getValue());
+								$result[] = $this->vCardToArray($card, $vcard, $geo->getValue());
 							}
 						}
 					}
@@ -173,7 +179,7 @@ class ContactsController extends Controller {
 								$adrtype = $adr->parameters()['TYPE']->getValue();
 							}
 							if (strlen($geo) > 1) {
-								$result[] = $this->vCardToArray($vcard, $geo, $adrtype, $adr->getValue(), $file->getId());
+								$result[] = $this->vCardToArray($card, $vcard, $geo, $adrtype, $adr->getValue(), $file->getId());
 							}
 						}
 					}
@@ -183,7 +189,7 @@ class ContactsController extends Controller {
         }
     }
 
-	private function vCardToArray($vcard, $geo, $adrtype=null, $adr=null, $fileId = null) {
+	private function vCardToArray($file, $vcard, $geo, $adrtype=null, $adr=null, $fileId = null) {
 		$FNArray = $vcard->FN ? $vcard->FN->getJsonValue() : [];
 		$fn = array_shift($FNArray);
 		$NArray = $vcard->N ? $vcard->N->getJsonValue() : [];
@@ -203,6 +209,8 @@ class ContactsController extends Controller {
 			'PHOTO' => $vcard->PHOTO ?? '',
 			'GEO' => $geo,
 			'GROUPS' => $vcard->CATEGORIES ?? null,
+			'isDeletable' => $file->isDeletable(),
+			'isUpdateable' => $file->isUpdateable(),
 		];
 		return $result;
 	}

@@ -4,13 +4,13 @@
 		:options="{ data: favorite }"
 		:icon="icon"
 		:lat-lng="[favorite.lat, favorite.lng]"
-		:draggable="draggable"
+		:draggable="draggable && favorite.isUpdateable"
 		@ready="onMarkerReady"
 		@contextmenu="onRightClick"
 		@click="$emit('click', favorite)"
 		@moveend="onMoved">
 		<LTooltip
-			:options="{ ...tooltipOptions, opacity: draggable ? 0 : 1 }">
+			:options="{ ...tooltipOptions, opacity: draggable && favorite.isUpdateable ? 0 : 1 }">
 			<div class="tooltip-favorite-wrapper"
 				:style="'border: 2px solid #' + color">
 				<b>{{ t('maps', 'Name') }}:</b>
@@ -26,8 +26,11 @@
 		<LPopup
 			class="popup-favorite-wrapper"
 			:options="popupOptions">
-			<ActionButton icon="icon-delete" @click="$emit('delete', favorite.id)">
+			<ActionButton v-if="favorite.isDeletable" icon="icon-delete" @click="$emit('delete', favorite.id)">
 				{{ t('maps', 'Delete favorite') }}
+			</ActionButton>
+			<ActionButton v-else icon="icon-hand">
+				{{ ('maps', 'read-only') }}
 			</ActionButton>
 		</LPopup>
 	</LMarker>

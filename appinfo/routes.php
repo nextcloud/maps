@@ -64,7 +64,8 @@ return [
 
         // favorites
         ['name' => 'favorites#getFavorites', 'url' => '/favorites', 'verb' => 'GET'],
-        ['name' => 'favorites#addFavorite', 'url' => '/favorites', 'verb' => 'POST'],
+        ['name' => 'favorites#addFavorite', 'url' => '/favorite', 'verb' => 'POST'],
+		['name' => 'favorites#addFavorites', 'url' => '/favorites', 'verb' => 'POST'],
         ['name' => 'favorites#editFavorite', 'url' => '/favorites/{id}', 'verb' => 'PUT'],
         ['name' => 'favorites#deleteFavorite', 'url' => '/favorites/{id}', 'verb' => 'DELETE'],
         ['name' => 'favorites#deleteFavorites', 'url' => '/favorites', 'verb' => 'DELETE'],

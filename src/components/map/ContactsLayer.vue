@@ -5,7 +5,8 @@
 		<ContactLayer v-for="(c, i) in displayedContacts"
 			:key="c.URI + i + c.ADR"
 			:contact="c"
-			@address-deleted="$emit('address-deleted', $event)" />
+			@address-deleted="$emit('address-deleted', $event)"
+			@add-to-map-contact="$emit('add-to-map-contact', $event)" />
 	</Vue2LeafletMarkerCluster>
 </template>
 

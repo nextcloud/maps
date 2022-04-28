@@ -6,6 +6,7 @@
 			:start="start"
 			:end="end"
 			@click="$emit('click', $event)"
+			@add-to-map-device="$emit('add-to-map-device', $event)"
 			@export="$emit('export', $event)"
 			@toggle-history="$emit('toggle-history', $event)"
 			@change-color="$emit('change-color', $event)"

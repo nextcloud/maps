@@ -169,6 +169,15 @@ export function addFavorite(lat, lng, name, category = null, comment = null, ext
 		extensions,
 		myMapId,
 	}
+	const url = generateUrl('/apps/maps/favorite')
+	return axios.post(url, req)
+}
+
+export function addFavorites(favorites, myMapId) {
+	const req = {
+		favorites,
+		myMapId,
+	}
 	const url = generateUrl('/apps/maps/favorites')
 	return axios.post(url, req)
 }
@@ -421,4 +430,8 @@ export function renameMyMap(id, newName) {
 	}
 	const url = generateUrl('/apps/maps/maps/' + id)
 	return axios.put(url, req)
+}
+
+export function copyByPath(from, to) {
+	// FIXME Actualy do something
 }

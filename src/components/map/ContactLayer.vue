@@ -71,15 +71,17 @@
 				</div>
 			</div>
 			<div v-if="click === 'right'" class="right-contact-popup">
-				<ActionButton v-if="contact.isUpdateable"
-					icon="icon-delete"
-					@click="onDeleteAddressClick()">
-					{{ contact.ADR?t('maps', 'Delete this address'):t('maps', 'Delete this location') }}
-				</ActionButton>
-				<ActionButton icon="icon-share"
-					@click="$emit('add-to-map-contact', contact)">
-					{{ t('maps', 'Copy to map') }}
-				</ActionButton>
+				<div>
+					<ActionButton v-if="contact.isUpdateable"
+						icon="icon-delete"
+						@click="onDeleteAddressClick()">
+						{{ contact.ADR?t('maps', 'Delete this address'):t('maps', 'Delete this location') }}
+					</ActionButton>
+					<ActionButton icon="icon-share"
+						@click="$emit('add-to-map-contact', contact)">
+						{{ t('maps', 'Copy to map') }}
+					</ActionButton>
+				</div>
 			</div>
 		</LPopup>
 	</LMarker>
@@ -125,6 +127,7 @@ export default {
 			},
 			popupOptions: {
 				closeOnClick: false,
+				closeButton: false,
 				className: 'popovermenu open popupMarker contactPopup',
 				offset: L.point(-5, 10),
 			},

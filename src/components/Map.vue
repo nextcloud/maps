@@ -74,6 +74,7 @@
 				:categories="favoriteCategories"
 				:draggable="favoritesDraggable"
 				@click="$emit('click-favorite', $event)"
+				@add-to-map-favorite="$emit('add-to-map-favorite', $event)"
 				@edit="$emit('edit-favorite', $event)"
 				@delete="$emit('delete-favorite', $event)"
 				@delete-multiple="$emit('delete-favorites', $event)" />
@@ -83,6 +84,7 @@
 				:map="map"
 				:photos="photos"
 				:draggable="photosDraggable"
+				@add-to-map-photo="$emit('add-to-map-photo', $event)"
 				@coords-reset="$emit('coords-reset', $event)"
 				@photo-moved="onPhotoMoved"
 				@open-sidebar="$emit('open-sidebar',$event)" />
@@ -91,7 +93,8 @@
 				ref="contactsLayer"
 				:contacts="contacts"
 				:groups="contactGroups"
-				@address-deleted="$emit('address-deleted', $event)" />
+				@address-deleted="$emit('address-deleted', $event)"
+				@add-to-map-contact="$emit('add-to-map-contact', $event)" />
 			<PlaceContactPopup v-if="placingContact"
 				:lat-lng="placingContactLatLng"
 				@contact-placed="onContactPlaced" />
@@ -102,6 +105,7 @@
 				:tracks="tracks"
 				:start="sliderStartTimestamp"
 				:end="sliderEndTimestamp"
+				@add-to-map-track="$emit('add-to-map-track', $event)"
 				@click="$emit('click-track', $event)"
 				@change-color="$emit('change-track-color', $event)"
 				@display-elevation="displayElevation" />

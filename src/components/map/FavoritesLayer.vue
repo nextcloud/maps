@@ -11,6 +11,7 @@
 			:color="categories[f.category].color"
 			:icon="getFavoriteMarkerIcon(f)"
 			@click="$emit('click', $event)"
+			@add-to-map-favorite="$emit('add-to-map-favorite', $event)"
 			@edit="$emit('edit', $event)"
 			@delete="$emit('delete', $event)" />
 		<LMarker

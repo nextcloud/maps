@@ -6,6 +6,7 @@
 			:start="start"
 			:end="end"
 			@click="$emit('click', $event)"
+			@add-to-map-track="$emit('add-to-map-track', $event)"
 			@change-color="$emit('change-color', $event)"
 			@display-elevation="$emit('display-elevation', $event)"
 			@point-hover="onPointHover" />

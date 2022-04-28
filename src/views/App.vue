@@ -18,7 +18,7 @@
 					@zoom-all-categories="onZoomAllFavorites"
 					@zoom-category="onZoomFavoriteCategory"
 					@export-category="onExportFavoriteCategory"
-					@add-to-map-category="onAddCategoryToMap"
+					@add-to-map-category="onAddFavoriteCategoryToMap"
 					@delete-category="onDeleteFavoriteCategory"
 					@category-share-change="onFavoriteCategoryShareChange"
 					@toggle-all-categories="onToggleAllFavoriteCategories"
@@ -122,17 +122,22 @@
 					@edit-favorite="onFavoriteEdit"
 					@add-favorite="onFavoriteAdd"
 					@add-address-favorite="onAddressFavoriteAdd"
+					@add-to-map-favorite="onAddFavoriteToMap"
 					@delete-favorite="onFavoriteDelete"
 					@delete-favorites="onFavoritesDelete"
 					@coords-reset="resetPhotosCoords"
 					@address-deleted="onContactAddressDelete"
+					@add-to-map-contact="onContactAddToMap"
 					@contact-placed="onContactPlace"
+					@add-to-map-photo="onAddPhotoToMap"
 					@place-photos="placePhotoFilesOrFolder"
 					@photo-moved="onPhotoMoved"
 					@open-sidebar="openSidebar"
 					@click-track="onTrackClick"
+					@add-to-map-track="onAddTrackToMap"
 					@search-enable-track="onSearchEnableTrack"
 					@change-track-color="onChangeTrackColorClicked"
+					@add-to-map-device="onAddDeviceToMap"
 					@toggle-device-history="onToggleDeviceHistory"
 					@change-device-color="onChangeDeviceColorClicked"
 					@export-device="onExportDevice"
@@ -778,6 +783,16 @@ export default {
 			}
 			optionsController.saveOptionValues({ photosLayer: this.photosEnabled ? 'true' : 'false' })
 		},
+		onAddPhotoToMap(photo) {
+			this.chooseMyMap((map) => {
+				network.copyByPath(photo.path, map.path + 'photo.basename').then((response) => {
+					showSuccess(t('maps', 'Track {photoName} added to map {mapName}', { photoName: photo.basename ?? '', mapName: map.name ?? '' }))
+				}).catch((error) => {
+					console.error(error)
+					showError(t('maps', 'Failed to save track {photoName} to map {mapName}', { trackName: photo.basename ?? '', mapName: map.name ?? '' }))
+				})
+			})
+		},
 		getPhotos() {
 			if (!this.photosEnabled) {
 				return
@@ -961,6 +976,10 @@ export default {
 					|| c.groupList.includes(gid))
 			})
 			this.zoomOnContacts(contactsOfGroup)
+		},
+		onContactAddToMap() {
+			// FIXME
+			showInfo('Adding contact to my maps is not yet implemented')
 		},
 		onAddAllContactsToMap() {
 			// FIXME
@@ -1310,10 +1329,6 @@ export default {
 		onExportFavoriteCategory(catid) {
 			this.exportFavorites([catid])
 		},
-		onAddCategoryToMap(catid) {
-			// FIXME
-			showInfo('Adding categories to my maps is not yet implemented')
-		},
 		exportFavorites(catIdList) {
 			network.exportFavorites(catIdList, this.myMapId).then((response) => {
 				showSuccess(t('maps', 'Favorites exported in {path}', { path: response.data }))
@@ -1346,6 +1361,36 @@ export default {
 				|| obj.address.city_district
 				: null
 			this.addFavorite(obj.latLng, name, null, obj.formattedAddress || null)
+		},
+		onAddFavoriteToMap(f) {
+			this.chooseMyMap((map) => {
+				network.addFavorite(f.lat, f.lng, f.name, f.category, f.comment, f.extensions, map.id).then((response) => {
+					showSuccess(t('maps', 'Favorite {favoriteName} added to map {mapName}', { favoriteName: f.name ?? '', mapName: map.name ?? '' }))
+				}).catch((error) => {
+					console.error(error)
+					showError(t('maps', 'Failed to save Favorite {favoriteName} to map {mapName}', { favoriteName: f.name ?? '', mapName: map.name ?? '' }))
+				})
+			})
+		},
+		onAddFavoriteCategoryToMap(catid) {
+			if (this.favoriteCategories[catid].token) {
+				this.chooseMyMap((map) => {
+					network.addSharedFavoriteCategoryToMap(this.favoriteCategories[catid], map.id).then((response) => {
+						showSuccess(t('maps', 'Favorite category {favoriteName} linked to map {mapName}', { favoriteName: this.favoriteCategories[catid].category ?? '', mapName: map.name ?? '' }))
+					}).catch((error) => {
+						console.error(error)
+						showError(t('maps', 'Failed to link Favorite category {favoriteName} to map {mapName}', { favoriteName: this.favoriteCategories[catid].category ?? '', mapName: map.name ?? '' }))
+					})
+				})
+			} else {
+				this.chooseMyMap((map) => {
+					network.addFavorites(Object.values(this.favorites).filter((f) => f.category === catid), map.id).then((responses) => {
+						showSuccess(t('maps', 'Favorite category {favoriteName} copied to map {mapName}', { favoriteName: this.favoriteCategories[catid].category ?? '', mapName: map.name ?? '' }))
+					}).catch(errors => {
+						showError(t('maps', 'Failed to copy Favorite category {favoriteName} to map {mapName}', { favoriteName: this.favoriteCategories[catid].category ?? '', mapName: map.name ?? '' }))
+					})
+				})
+			}
 		},
 		onFavoriteAdd(latLng) {
 			this.addFavorite(latLng, null, null, null, null, true, true)
@@ -1702,8 +1747,14 @@ export default {
 			})
 		},
 		onAddTrackToMap(track) {
-			// FIXME
-			showInfo('Add track to map not supported yet')
+			this.chooseMyMap((map) => {
+				network.copyByPath(track.path, map.path + 'track.name' + 'gpx').then((response) => {
+					showSuccess(t('maps', 'Track {trackName} added to map {mapName}', { trackName: track.name ?? '', mapName: map.name ?? '' }))
+				}).catch((error) => {
+					console.error(error)
+					showError(t('maps', 'Failed to save track {trackName} to map {mapName}', { trackName: track.name ?? '', mapName: map.name ?? '' }))
+				})
+			})
 		},
 		onDeviceZoom(device) {
 			this.$refs.map.zoomOnDevice(device)
@@ -1746,6 +1797,10 @@ export default {
 				console.error(error)
 				showError(t('maps', 'Failed to delete device') + ': ' + error.data)
 			})
+		},
+		onAddDeviceToMap(device) {
+			// Fixme
+			showInfo('Adding device to map not supported yet')
 		},
 		onToggleDeviceHistory(device) {
 			device.historyEnabled = !device.historyEnabled
@@ -1837,6 +1892,28 @@ export default {
 			}).then(() => {
 				this.myMapsLoading = false
 			})
+		},
+		chooseMyMap(callback) {
+			const that = this
+			const pathToIdAndName = (path) => {
+				const p = path === '' ? '/' : ''
+				const maps = that.myMaps.filter((m) => m.path === p)
+				if (maps.length > 0) {
+					return maps[0]
+				} else {
+					// Fixme
+					showError('Folder is not a map')
+					return { path, name: path.split('/')[-1] }
+				}
+			}
+			OC.dialogs.filepicker(
+				t('maps', 'Choose directory of pictures to place'),
+				(t) => callback(pathToIdAndName(t)),
+				false,
+				'httpd/unix-directory',
+				true,
+				OC.dialogs.FILEPICKER_TYPE_CHOOSE
+			)
 		},
 		onMyMapsClicked() {
 			this.myMapsEnabled = !this.myMapsEnabled

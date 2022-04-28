@@ -31,6 +31,7 @@ use OCP\AppFramework\Http\DataResponse;
 use OCP\IDateTimeZone;
 use OCP\IL10N;
 use OCP\IRequest;
+use function PHPUnit\Framework\isEmpty;
 
 class FavoritesController extends Controller {
 
@@ -128,7 +129,13 @@ class FavoritesController extends Controller {
                 return new DataResponse($favorite);
             } else {
                 $folders = $this->userfolder->getById($myMapId);
+				if(!isEmpty($folders) && $this->userfolder->getId() === $myMapId) {
+					$folders[] = $this->userfolder;
+				}
                 $folder = array_shift($folders);
+				if(is_null($folder)) {
+					return new DataResponse('Map not found', 404);
+				}
                 $file = $this->getJSONFavoritesFile($folder);
                 $favoriteId = $this->favoritesService->addFavoriteToJSON($file, $name, $lat, $lng, $category, $comment, $extensions);
                 $favorite = $this->favoritesService->getFavoriteFromJSON($file, $favoriteId);
@@ -139,6 +146,42 @@ class FavoritesController extends Controller {
             return new DataResponse('invalid values', 400);
         }
     }
+
+	/**
+	 * @NoAdminRequired
+	 */
+	public function addFavorites($favorites, $myMapId) {
+		if (is_null($myMapId) || $myMapId === '') {
+			$favoritesAfter = [];
+			forEach ($favorites as $favorite) {
+				if (is_numeric($lat) && is_numeric($lng)) {
+					$favoriteId = $this->favoritesService->addFavoriteToDB($this->userId, $favorite->name, $favorite->lat, $favorite->lng, $favorite->category, $favorite->comment, $favorite->extensions);
+					$favoritesAfter[] = $this->favoritesService->getFavoriteFromDB($favoriteId);
+				}  else {
+					return new DataResponse('invalid values', 400);
+				}
+			}
+			return new DataResponse($favoritesAfter);
+		} else {
+			$folders = $this->userfolder->getById($myMapId);
+			if(!isEmpty($folders) && $this->userfolder->getId() === $myMapId) {
+				$folders[] = $this->userfolder;
+			}
+			$folder = array_shift($folders);
+			if(is_null($folder)) {
+				return new DataResponse('Map not found', 404);
+			}
+			$file = $this->getJSONFavoritesFile($folder);
+			$favoriteIds = $this->favoritesService->addFavoritesToJSON($file, $favorites);
+			$favoritesAfter = [];
+			forEach ($this->favoritesService->getFavoritesFromJSON($file) as $favorite) {
+				if (in_array($favorite->id,$favoriteIds)) {
+					$favoritesAfter[] = $favorite;
+				}
+			};
+			return new DataResponse($favoritesAfter);
+		}
+	}
 
     /**
      * @NoAdminRequired

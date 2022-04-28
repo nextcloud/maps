@@ -403,36 +403,53 @@ class FavoritesService {
         return $this->getFavoritesFromJSON($file)[$id];
     }
 
+	private function addFavoriteToJSONData($data, $name, $lat, $lng, $category, $comment, $extensions, $nowTimeStamp) {
+		$favorite = [
+			"type" => "Feature",
+			"geometry" => [
+				"type" => "Point",
+				"coordinates" => [
+					$lng,
+					$lat
+				]
+			],
+			"properties" => [
+				"Title" => $name,
+				"Category" => $category,
+				"Published" => $nowTimeStamp,
+				"Updated" => $nowTimeStamp,
+				"Comment" => $comment,
+			]
+		];
+		if(is_array($extensions)){
+			foreach ($extensions as $key => $value) {
+				$favorite["properties"][$key] = $value;
+			}
+		}
+		$id = array_push($data['features'], $favorite) - 1;
+		return $id;
+	}
+
     public function addFavoriteToJSON($file, $name, $lat, $lng, $category, $comment, $extensions) {
         $nowTimeStamp = (new \DateTime())->getTimestamp();
         $data = json_decode($file->getContent(), true, 512);
-        $favorite = [
-            "type" => "Feature",
-            "geometry" => [
-                "type" => "Point",
-                "coordinates" => [
-                    $lng,
-                    $lat
-                ]
-            ],
-            "properties" => [
-                "Title" => $name,
-                "Category" => $category,
-                "Published" => $nowTimeStamp,
-                "Updated" => $nowTimeStamp,
-                "Comment" => $comment,
-            ]
-        ];
-        if(is_array($extensions)){
-            foreach ($extensions as $key => $value) {
-                $favorite["properties"][$key] = $value;
-            }
-        }
 
-        $id = array_push($data['features'], $favorite) - 1;
+		$id = $this->addFavoriteToJSONData($data, $name, $lat, $lng, $category, $comment, $extensions, $nowTimeStamp);
+
         $file->putContent(json_encode($data,JSON_PRETTY_PRINT));
         return $id;
     }
+
+	public function addFavoritesToJSON($file, $favorites) {
+		$nowTimeStamp = (new \DateTime())->getTimestamp();
+		$data = json_decode($file->getContent(), true, 512);
+		$ids = [];
+		foreach ($favorites as $favorite) {
+			$ids[] = $this->addFavoriteToJSONData($data, $favorite->name, $favorite->lat, $favorite->lng, $favorite->category, $favorite->comment, $favorite->extensions, $nowTimeStamp);
+		}
+		$file->putContent(json_encode($data,JSON_PRETTY_PRINT));
+		return $ids;
+	}
 
     public function renameCategoryInJSON($file, $cat, $newName) {
         $nowTimeStamp = (new \DateTime())->getTimestamp();

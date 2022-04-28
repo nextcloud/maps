@@ -19,6 +19,7 @@
 					@zoom-category="onZoomFavoriteCategory"
 					@export-category="onExportFavoriteCategory"
 					@add-to-map-category="onAddFavoriteCategoryToMap"
+					@delete-shared-category-from-map="onDeleteFavoriteCategoryFromMap"
 					@delete-category="onDeleteFavoriteCategory"
 					@category-share-change="onFavoriteCategoryShareChange"
 					@toggle-all-categories="onToggleAllFavoriteCategories"
@@ -1429,7 +1430,7 @@ export default {
 		onAddFavoriteCategoryToMap(catid) {
 			if (this.favoriteCategories[catid].token) {
 				this.chooseMyMap((map) => {
-					network.addSharedFavoriteCategoryToMap(this.favoriteCategories[catid], map.id).then((response) => {
+					network.addSharedFavoriteCategoryToMap(catid, map.id, optionsController.myMapId).then((response) => {
 						showSuccess(t('maps', 'Favorite category {favoriteName} linked to map {mapName}', { favoriteName: this.favoriteCategories[catid].category ?? '', mapName: map.name ?? '' }))
 					}).catch((error) => {
 						console.error(error)
@@ -1445,6 +1446,20 @@ export default {
 					})
 				})
 			}
+		},
+		onDeleteFavoriteCategoryFromMap(catid) {
+			network.deleteSharedFavoriteCategoryFromMap(catid, optionsController.myMapId).then((response) => {
+				const favIds = Object.keys(this.favorites).filter((favid) => {
+					return this.favorites[favid].category === catid
+				})
+				favIds.forEach((favid) => {
+					this.$delete(this.favorites, favid)
+				})
+				showSuccess(t('maps', 'Favorite category {favoriteName} unlinked from map', { favoriteName: catid ?? ''}))
+			}).catch((error) => {
+				console.error(error)
+				showError(t('maps', 'Failed to remove Favorite category {favoriteName} from map', { favoriteName: catid ?? ''}))
+			})
 		},
 		onFavoriteAdd(latLng) {
 			this.addFavorite(latLng, null, null, null, null, true, true)

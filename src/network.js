@@ -441,7 +441,18 @@ export function copyByPath(from, to) {
 	return fileClient.copy(from, to, false)
 }
 
-export function addSharedFavoriteCategoryToMap(sharedCategory, mapId) {
-	// Fixme Do something
-	return true
+export function addSharedFavoriteCategoryToMap(sharedCategory, targetMapId, myMapId = null) {
+	const req = {
+		myMapId,
+	}
+	const url = generateUrl('apps/maps/favorites-category/' + sharedCategory + '/add-to-map/' + targetMapId)
+	return axios.put(url, req)
+}
+
+export function deleteSharedFavoriteCategoryFromMap(catId, myMapId) {
+	const req = {
+		myMapId,
+	}
+	const url = generateUrl('apps/maps/favorites-category/' + catId + '/')
+	return axios.delete(url, req)
 }

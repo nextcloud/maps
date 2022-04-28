@@ -154,7 +154,7 @@ class FavoritesController extends Controller {
 		if (is_null($myMapId) || $myMapId === '') {
 			$favoritesAfter = [];
 			forEach ($favorites as $favorite) {
-				if (is_numeric($lat) && is_numeric($lng)) {
+				if (is_numeric($favorite->lat) && is_numeric($favorite->lng)) {
 					$favoriteId = $this->favoritesService->addFavoriteToDB($this->userId, $favorite->name, $favorite->lat, $favorite->lng, $favorite->category, $favorite->comment, $favorite->extensions);
 					$favoritesAfter[] = $this->favoritesService->getFavoriteFromDB($favoriteId);
 				}  else {
@@ -187,7 +187,7 @@ class FavoritesController extends Controller {
      * @NoAdminRequired
      */
     public function editFavorite($id, $name, $lat, $lng, $category, $comment, $extensions, $myMapId=null) {
-        if (is_null($myMapId)) {
+        if (is_null($myMapId) || $myMapId==='') {
             $favorite = $this->favoritesService->getFavoriteFromDB($id, $this->userId);
             if ($favorite !== null) {
                 if (($lat === null || is_numeric($lat)) &&
@@ -319,6 +319,51 @@ class FavoritesController extends Controller {
             'did_exist' => $didExist
         ]);
     }
+
+	/**
+	 * @NoAdminRequired
+	 */
+	public function addShareCategoryToMap($category, $targetMapId, $myMapId=null) {
+		if (is_null($myMapId) || $myMapId==='') {
+			$share = $this->favoriteShareMapper->findByOwnerAndCategory($this->userId, $category);
+		} else {
+			$share = $this->favoriteShareMapper->findByMapIdAndCategory($myMapId, $category);
+		}
+		$folders = $this->userfolder->getById($targetMapId);
+		$folder = array_shift($folders);
+		if(is_null($folder)) {
+			return new DataResponse('Map mot Found', 404);
+		}
+		try {
+			$file=$folder->get(".favorite_shares.json");
+		} catch (NotFoundException $e) {
+			$file=$folder->newFile(".favorite_shares.json", $content = '[]');
+		}
+		$data = json_decode($file->getContent(), true);
+		foreach ($data as $s) {
+			if ($s->token = $share->token) {
+				return new DataResponse('share was allready on map');
+			}
+		}
+		$share->id = count($data);
+		$share->isUpdateable = false;
+		$share->isDeletable = false;
+		$share->isShareable = false;
+		$data[] = $share;
+		$file->putContent(json_encode($data,JSON_PRETTY_PRINT));
+		return new DataResponse('Done');
+	}
+
+	/**
+	 * @NoAdminRequired
+	 */
+	public function removeShareCategoryFromMap($category, $myMapId) {
+		$d = $this->favoriteShareMapper->removeByMapIdAndCategory($this->userId, $myMapId, $category);
+		if (is_null($d)) {
+			return new DataResponse('Failed');
+		}
+		return new DataResponse('Done');
+	}
 
     /**
      * @NoAdminRequired

@@ -75,6 +75,8 @@ return [
         ['name' => 'favorites#getSharedCategories', 'url' => '/favorites-category/shared', 'verb' => 'GET'],
         ['name' => 'favorites#shareCategory', 'url' => '/favorites-category/{category}/share', 'verb' => 'POST'],
         ['name' => 'favorites#unShareCategory', 'url' => '/favorites-category/{category}/un-share', 'verb' => 'POST'],
+		['name' => 'favorites#addShareCategoryToMap', 'url' => '/favorites-category/{category}/add-to-map/{targetMapId}', 'verb' => 'PUT'],
+		['name' => 'favorites#removeShareCategoryFromMap', 'url' => '/favorites-category/{category}/', 'verb' => 'DELETE'],
 
         ['name' => 'favorites#exportFavorites', 'url' => '/export/favorites', 'verb' => 'POST'],
         ['name' => 'favorites#importFavorites', 'url' => '/import/favorites', 'verb' => 'POST'],

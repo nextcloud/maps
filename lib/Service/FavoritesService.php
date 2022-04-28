@@ -337,6 +337,11 @@ class FavoritesService {
         return $nbFavorites;
     }
 
+	/**
+	 * @param $file
+	 * @return array
+	 * @throws \Exception
+	 */
     public function getFavoritesFromJSON($file) {
         $favorites = [];
 
@@ -392,7 +397,7 @@ class FavoritesService {
             }
 
             // Store this favorite
-            array_push($favorites, $this->currentFavorite);
+            $favorites[] = $this->currentFavorite;
             $id++;
         }
 
@@ -427,17 +432,20 @@ class FavoritesService {
 			}
 		}
 		$id = array_push($data['features'], $favorite) - 1;
-		return $id;
+		return [
+			"id" => $id,
+			"data" =>$data,
+		];
 	}
 
     public function addFavoriteToJSON($file, $name, $lat, $lng, $category, $comment, $extensions) {
         $nowTimeStamp = (new \DateTime())->getTimestamp();
         $data = json_decode($file->getContent(), true, 512);
 
-		$id = $this->addFavoriteToJSONData($data, $name, $lat, $lng, $category, $comment, $extensions, $nowTimeStamp);
+		$tmp = $this->addFavoriteToJSONData($data, $name, $lat, $lng, $category, $comment, $extensions, $nowTimeStamp);
 
-        $file->putContent(json_encode($data,JSON_PRETTY_PRINT));
-        return $id;
+        $file->putContent(json_encode($tmp["data"],JSON_PRETTY_PRINT));
+        return $tmp["id"];
     }
 
 	public function addFavoritesToJSON($file, $favorites) {
@@ -445,7 +453,9 @@ class FavoritesService {
 		$data = json_decode($file->getContent(), true, 512);
 		$ids = [];
 		foreach ($favorites as $favorite) {
-			$ids[] = $this->addFavoriteToJSONData($data, $favorite->name, $favorite->lat, $favorite->lng, $favorite->category, $favorite->comment, $favorite->extensions, $nowTimeStamp);
+			$tmp = $this->addFavoriteToJSONData($data, $favorite->name, $favorite->lat, $favorite->lng, $favorite->category, $favorite->comment, $favorite->extensions, $nowTimeStamp);
+			$ids[] = $tmp["id"];
+			$data = $tmp["data"];
 		}
 		$file->putContent(json_encode($data,JSON_PRETTY_PRINT));
 		return $ids;

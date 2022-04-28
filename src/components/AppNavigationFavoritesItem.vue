@@ -88,7 +88,7 @@
 						@update:checked="$emit('category-share-change', catid, $event)">
 						{{ c.token ? t('maps', 'Delete share link') : t('maps', 'Create share link') }}
 					</ActionCheckbox>
-					<ActionButton v-if="enabled && nbFavorites && c.enabled && c.isShareable && c.token"
+					<ActionButton v-if="enabled && nbFavorites && c.enabled && c.token"
 						icon="icon-clippy"
 						:close-after-click="false"
 						@click="onShareLinkCopy(c)">
@@ -111,6 +111,12 @@
 						:close-after-click="true"
 						@click="$emit('delete-category', catid)">
 						{{ t('maps', 'Delete') }}
+					</ActionButton>
+					<ActionButton v-if="enabled && nbFavorites && c.enabled && c.token && !c.isShareable"
+						icon="icon-delete"
+						:close-after-click="true"
+						@click="$emit('delete-shared-category-from-map', catid)">
+						{{ t('maps', 'Leave share') }}
 					</ActionButton>
 				</template>
 			</AppNavigationItem>

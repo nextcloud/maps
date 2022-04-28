@@ -104,8 +104,9 @@ class FavoriteShareMapper extends QBMapper {
 	/**
 	 * @param $userId
 	 * @param $mapId
-	 * @return array|Entity[]
-	 * @throws \OCP\DB\Exception
+	 * @return array|mixed
+	 * @throws \OCP\Files\NotPermittedException
+	 * @throws \OC\User\NoUserException
 	 */
 	public function findAllByMapId($userId, $mapId) {
 		$userFolder = $this->root->getUserFolder($userId);
@@ -123,7 +124,7 @@ class FavoriteShareMapper extends QBMapper {
 		} catch (NotFoundException $e) {
 			$file=$folder->newFile(".favorite_shares.json", $content = '[]');
 		}
-		return json_decode($file->getContent(),true);;
+		return json_decode($file->getContent(),true);
 	}
 
     /**
@@ -146,6 +147,53 @@ class FavoriteShareMapper extends QBMapper {
 
         return $this->findEntity($qb);
     }
+
+	/**
+	 * @param $userId
+	 * @param $mapId
+	 * @param $category
+	 * @return mixed|null
+	 * @throws \OCP\Files\NotPermittedException
+	 * @throws \OC\User\NoUserException
+	 */
+	public function findByMapIdAndCategory($userId, $mapId, $category) {
+		$shares = $this->findAllByMapId($userId, $mapId);
+		foreach ($shares as $share) {
+			if ($share->category === $category) {
+				return $share;
+			}
+		}
+		return null;
+	}
+
+	public function removeByMapIdAndCategory($userId, $mapId, $category) {
+		$userFolder = $this->root->getUserFolder($userId);
+		$folders = $userFolder->getById($mapId);
+		$shares = [];
+		$deleted = null;
+		if (empty($folders)) {
+			return $deleted;
+		}
+		$folder = array_shift($folders);
+		if ($folder === null) {
+			return $deleted;
+		}
+		try {
+			$file=$folder->get(".favorite_shares.json");
+		} catch (NotFoundException $e) {
+			$file=$folder->newFile(".favorite_shares.json", $content = '[]');
+		}
+		$data = json_decode($file->getContent(),true);
+		foreach ($data as $share) {
+			if($share->category !== $category) {
+				$shares[] = $share;
+			} else {
+				$deleted = $share;
+			}
+		}
+		$file->putContent(json_encode($shares, JSON_PRETTY_PRINT));
+		return $deleted;
+	}
 
     /**
      * @param $owner

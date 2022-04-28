@@ -185,10 +185,11 @@ class FavoriteShareMapper extends QBMapper {
 		}
 		$data = json_decode($file->getContent(),true);
 		foreach ($data as $share) {
-			if($share->category !== $category) {
-				$shares[] = $share;
-			} else {
+			$c = $share["category"];
+			if($c === $category) {
 				$deleted = $share;
+			} else {
+				$shares[] = $share;
 			}
 		}
 		$file->putContent(json_encode($shares, JSON_PRETTY_PRINT));

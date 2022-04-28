@@ -200,6 +200,7 @@ import L from 'leaflet'
 import { geoToLatLng, getFormattedADR } from '../utils/mapUtils'
 import * as network from '../network'
 import { all as axiosAll, spread as axiosSpread } from 'axios'
+import {deleteSharedFavoriteCategoryFromMap} from "../network";
 
 export default {
 	name: 'App',

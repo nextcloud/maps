@@ -451,7 +451,9 @@ export function addSharedFavoriteCategoryToMap(sharedCategory, targetMapId, myMa
 
 export function deleteSharedFavoriteCategoryFromMap(catId, myMapId) {
 	const req = {
-		myMapId,
+		params: {
+			myMapId,
+		},
 	}
 	const url = generateUrl('apps/maps/favorites-category/' + catId + '/')
 	return axios.delete(url, req)

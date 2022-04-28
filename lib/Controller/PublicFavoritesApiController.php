@@ -97,7 +97,7 @@ class PublicFavoritesApiController extends PublicShareController {
             return new DataResponse([], Http::STATUS_INTERNAL_SERVER_ERROR);
         }
 
-        $favorites = $this->favoritesService->getFavoritesFromDB($share->getOwner(), 0, $share->getCategory());
+        $favorites = $this->favoritesService->getFavoritesFromDB($share->getOwner(), 0, $share->getCategory(), false, false, true);
 
         return new DataResponse([
             'share' => $share,

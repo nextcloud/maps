@@ -346,9 +346,6 @@ class FavoritesController extends Controller {
 			}
 		}
 		$share->id = count($data);
-		$share->isUpdateable = false;
-		$share->isDeletable = false;
-		$share->isShareable = false;
 		$data[] = $share;
 		$file->putContent(json_encode($data,JSON_PRETTY_PRINT));
 		return new DataResponse('Done');
@@ -360,7 +357,7 @@ class FavoritesController extends Controller {
 	public function removeShareCategoryFromMap($category, $myMapId) {
 		$d = $this->favoriteShareMapper->removeByMapIdAndCategory($this->userId, $myMapId, $category);
 		if (is_null($d)) {
-			return new DataResponse('Failed');
+			return new DataResponse('Failed', 500);
 		}
 		return new DataResponse('Done');
 	}

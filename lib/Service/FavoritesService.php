@@ -57,7 +57,7 @@ class FavoritesService {
      * @param string|null $filterCategory
      * @return array with favorites
      */
-    public function getFavoritesFromDB($userId, $pruneBefore = 0, $filterCategory = null) {
+    public function getFavoritesFromDB($userId, $pruneBefore = 0, $filterCategory = null, $isDeletable=true, $isUpdateable=true, $isShareable=true) {
         $favorites = [];
         $qb = $this->qb;
         $qb->select('id', 'name', 'date_created', 'date_modified', 'lat', 'lng', 'category', 'comment', 'extensions')
@@ -97,10 +97,10 @@ class FavoritesService {
 				'category' => $category,
 				'comment' => $comment,
 				'extensions' => $extensions,
-				'isDeletable' => true,
+				'isDeletable' => $isDeletable,
 				//Saving maps information in the file
-				'isUpdateable' => true,
-				'isShareable' => true,
+				'isUpdateable' => $isUpdateable,
+				'isShareable' => $isShareable,
 			];
         }
         $req->closeCursor();
@@ -108,7 +108,7 @@ class FavoritesService {
         return $favorites;
     }
 
-    public function getFavoriteFromDB($id, $userId = null, $category = null) {
+    public function getFavoriteFromDB($id, $userId = null, $category = null, $isDeletable=true, $isUpdateable=true, $isShareable=true) {
         $favorite = null;
         $qb = $this->qb;
         $qb->select('id', 'name', 'date_modified', 'date_created', 'lat', 'lng', 'category', 'comment', 'extensions')
@@ -148,10 +148,10 @@ class FavoritesService {
                 'category' => $category,
                 'comment' => $comment,
                 'extensions' => $extensions,
-				'isDeletable' => true,
+				'isDeletable' => $isDeletable,
 				//Saving maps information in the file
-				'isUpdateable' => true,
-				'isShareable' => true,
+				'isUpdateable' => $isUpdateable,
+				'isShareable' => $isShareable,
             ];
             break;
         }

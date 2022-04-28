@@ -163,10 +163,10 @@ class ContactsController extends Controller {
 					if (isset($vcard->GEO)) {
 						$geo = $vcard->GEO;
 						if (strlen($geo) > 1) {
-							$result[] = $this->vCardToArray($card, $vcard, $geo->getValue());
+							$result[] = $this->vCardToArray($file, $vcard, $geo->getValue());
 						} elseif (count($geo)>0) {
 							foreach ($geo as $g) {
-								$result[] = $this->vCardToArray($card, $vcard, $geo->getValue());
+								$result[] = $this->vCardToArray($file, $vcard, $geo->getValue());
 							}
 						}
 					}
@@ -179,7 +179,7 @@ class ContactsController extends Controller {
 								$adrtype = $adr->parameters()['TYPE']->getValue();
 							}
 							if (strlen($geo) > 1) {
-								$result[] = $this->vCardToArray($card, $vcard, $geo, $adrtype, $adr->getValue(), $file->getId());
+								$result[] = $this->vCardToArray($file, $vcard, $geo, $adrtype, $adr->getValue(), $file->getId());
 							}
 						}
 					}

@@ -29,8 +29,9 @@
 			<ActionButton v-if="favorite.isDeletable" icon="icon-delete" @click="$emit('delete', favorite.id)">
 				{{ t('maps', 'Delete favorite') }}
 			</ActionButton>
-			<ActionButton v-else icon="icon-hand">
-				{{ ('maps', 'read-only') }}
+			<ActionButton icon="icon-share"
+				@click="$emit('add-to-map-favorite', favorite)">
+				{{ t('maps', 'Copy to map') }}
 			</ActionButton>
 		</LPopup>
 	</LMarker>

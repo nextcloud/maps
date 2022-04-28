@@ -36,6 +36,10 @@
 				<ActionButton v-if="p.isUpdateable" icon="icon-history" @click="resetPhotosCoords([p])">
 					{{ t('maps', 'Remove geo data') }}
 				</ActionButton>
+				<ActionButton icon="icon-share"
+					@click="$emit('add-to-map-photo', p)">
+					{{ t('maps', 'Copy to map') }}
+				</ActionButton>
 			</LPopup>
 		</LMarker>
 		<LMarker

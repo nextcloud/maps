@@ -12,6 +12,10 @@
 			<ActionButton icon="icon-category-monitoring" @click="$emit('display-elevation', track)">
 				{{ t('maps', 'Display elevation') }}
 			</ActionButton>
+			<ActionButton icon="icon-share"
+				@click="$emit('add-to-map-track', track)">
+				{{ t('maps', 'Copy to map') }}
+			</ActionButton>
 		</LPopup>
 		<LTooltip :options="tooltipOptions">
 			<div class="tooltip-track-wrapper"

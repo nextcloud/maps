@@ -24,6 +24,10 @@
 				@click="$emit('export', device)">
 				{{ t('maps', 'Export') }}
 			</ActionButton>
+			<ActionButton icon="icon-share"
+						  @click="$emit('add-to-map-device', device)">
+				{{ t('maps', 'Link to map') }}
+			</ActionButton>
 		</LPopup>
 		<LTooltip :options="tooltipOptions">
 			<div class="tooltip-device-wrapper"

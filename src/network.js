@@ -111,7 +111,11 @@ export function placeContact(bookid, uri, uid, lat, lng, address = null, type = 
 		fileId,
 		myMapId,
 	}
-	if (address) {
+	if (address && (typeof address === 'string' || address instanceof String)) {
+		req = Object.assign(req, {
+			address_string: address,
+		})
+	} else if (address) {
 		let road = (address.road || '') + ' ' + (address.pedestrian || '')
 		+ ' ' + (address.suburb || '') + ' ' + (address.city_district || '')
 		road = road.replace(/\s+/g, ' ').trim()

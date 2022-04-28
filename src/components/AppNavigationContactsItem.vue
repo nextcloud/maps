@@ -55,7 +55,7 @@
 					</ActionButton>
 					<ActionButton icon="icon-share"
 						:close-after-click="true"
-						@click="$emit('add-to-map-contact-group', g)">
+						@click="$emit('add-to-map-contact-group', gid)">
 						{{ t('maps', 'Copy to map') }}
 					</ActionButton>
 				</template>

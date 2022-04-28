@@ -127,7 +127,7 @@
 					@delete-favorites="onFavoritesDelete"
 					@coords-reset="resetPhotosCoords"
 					@address-deleted="onContactAddressDelete"
-					@add-to-map-contact="onContactAddToMap"
+					@add-to-map-contact="onAddContactToMap"
 					@contact-placed="onContactPlace"
 					@add-to-map-photo="onAddPhotoToMap"
 					@place-photos="placePhotoFilesOrFolder"
@@ -198,6 +198,7 @@ import { processGpx } from '../tracksUtils'
 import L from 'leaflet'
 import { geoToLatLng, getFormattedADR } from '../utils/mapUtils'
 import * as network from '../network'
+import { all as axiosAll, spread as axiosSpread } from 'axios'
 
 export default {
 	name: 'App',
@@ -977,17 +978,63 @@ export default {
 			})
 			this.zoomOnContacts(contactsOfGroup)
 		},
-		onContactAddToMap() {
-			// FIXME
-			showInfo('Adding contact to my maps is not yet implemented')
+		onAddContactToMap(c) {
+			this.chooseMyMap((map) => {
+				const latLng = geoToLatLng(c.GEO)
+				network.placeContact(c.BOOKID, c.URI, c.UID, latLng[0], latLng[1], c.ADR, c.ADRTYPE, c.FILEID, map.id).then((response) => {
+					showSuccess(t('maps', 'Contact {contactName} added to map {mapName}', { contactName: c.FN ?? '', mapName: map.name ?? '' }))
+				}).catch((error) => {
+					console.error(error)
+					showError(t('maps', 'Failed to save Contact {contactName} to map {mapName}', { contactName: c.FN ?? '', mapName: map.name ?? '' }))
+				})
+			})
 		},
 		onAddAllContactsToMap() {
-			// FIXME
-			showInfo('Adding all Contacts to my maps is not yet implemented')
+			this.chooseMyMap((map) => {
+				axiosAll(this.contacts.map((c) => {
+					const latLng = geoToLatLng(c.GEO)
+					return network.placeContact(c.BOOKID, c.URI, c.UID, latLng[0], latLng[1], c.ADR, c.ADRTYPE, c.FILEID, map.id)
+				})).then(axiosSpread((...responses) => {
+					showSuccess(t('maps', 'All Contacts added to map {mapName}', { mapName: map.name ?? '' }))
+				})).catch((error) => {
+					console.error(error)
+					showError(t('maps', 'Failed to save all Contacts to map {mapName}', { mapName: map.name ?? '' }))
+				})
+			})
 		},
 		onAddContactsGroupToMap(group) {
-			// FIXME
-			showInfo('Adding contact group to my maps is not yet implemented')
+			const contactsInGroup = this.contacts.filter((c) => {
+				if (c.GROUPS) {
+					try {
+						const cGroups = c.GROUPS.split(/[^\\],/).map((name) => {
+							return name.replace('\\,', ',')
+						})
+						for (let i = 0; i < cGroups.length; i++) {
+							// if at least in one enabled group
+							if (cGroups[i] === group) {
+								return true
+							}
+						}
+					} catch (error) {
+						console.error(error)
+					}
+				} else if (!group) {
+					// or not grouped and this is enabled
+					return true
+				}
+				return false
+			})
+			this.chooseMyMap((map) => {
+				axiosAll(contactsInGroup.map((c) => {
+					const latLng = geoToLatLng(c.GEO)
+					return network.placeContact(c.BOOKID, c.URI, c.UID, latLng[0], latLng[1], c.ADR, c.ADRTYPE, c.FILEID, map.id)
+				})).then(axiosSpread((...responses) => {
+					showSuccess(t('maps', 'All Contacts added to map {mapName}', { mapName: map.name ?? '' }))
+				})).catch((error) => {
+					console.error(error)
+					showError(t('maps', 'Failed to save all Contacts to map {mapName}', { mapName: map.name ?? '' }))
+				})
+			})
 		},
 		zoomOnContacts(contacts) {
 			const lats = contacts.map((c) => {
@@ -1896,14 +1943,15 @@ export default {
 		chooseMyMap(callback) {
 			const that = this
 			const pathToIdAndName = (path) => {
-				const p = path === '' ? '/' : ''
-				const maps = that.myMaps.filter((m) => m.path === p)
-				if (maps.length > 0) {
-					return maps[0]
+				const p = (path === '' ? '/' : path)
+				const map = that.myMaps.find((m) => { return m.path === p })
+				if (map) {
+					return map
 				} else {
 					// Fixme
-					showError('Folder is not a map')
-					return { path, name: path.split('/')[-1] }
+					showError(t('maps', 'Folder is not a map'))
+					// return { path, name: path.split('/')[-1] }
+					return map
 				}
 			}
 			OC.dialogs.filepicker(

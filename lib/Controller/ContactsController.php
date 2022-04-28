@@ -72,7 +72,7 @@ class ContactsController extends Controller {
                     strcmp($uid, $userid) !== 0
                 ) {
                     // if the contact has a geo attibute use it
-                    if (key_exists('GEO', $c)) {
+                    if (key_exists('GEO')) {
                         $geo = $c['GEO'];
                         if (strlen($geo) > 1) {
                             $result[] = [
@@ -91,20 +91,22 @@ class ContactsController extends Controller {
 							];
                         } elseif (count($geo)>0) {
 						foreach ($geo as $g) {
-							$result[] = [
-								'FN' => $c['FN'] ?? $this->N2FN($c['N']) ?? '???',
-								'URI' => $c['URI'],
-								'UID' => $c['UID'],
-								'ADR' => '',
-								'ADRTYPE' => '',
-								'HAS_PHOTO' => (isset($c['PHOTO']) && $c['PHOTO'] !== null),
-								'BOOKID' => $c['addressbook-key'],
-								'BOOKURI' => $addressBookUri,
-								'GEO' => $g,
-								'GROUPS' => $c['CATEGORIES'] ?? null,
-								'isDeletable' => true,
-								'isUpdateable' => true,
-							];
+							if (strlen($g) > 1) {
+								$result[] = [
+									'FN' => $c['FN'] ?? $this->N2FN($c['N']) ?? '???',
+									'URI' => $c['URI'],
+									'UID' => $c['UID'],
+									'ADR' => '',
+									'ADRTYPE' => '',
+									'HAS_PHOTO' => (isset($c['PHOTO']) && $c['PHOTO'] !== null),
+									'BOOKID' => $c['addressbook-key'],
+									'BOOKURI' => $addressBookUri,
+									'GEO' => $g,
+									'GROUPS' => $c['CATEGORIES'] ?? null,
+									'isDeletable' => true,
+									'isUpdateable' => true,
+								];
+							}
 						}
 					}
                     }
@@ -162,11 +164,13 @@ class ContactsController extends Controller {
 					$vcard = Reader::read($card."END:VCARD\r\n");
 					if (isset($vcard->GEO)) {
 						$geo = $vcard->GEO;
-						if (strlen($geo) > 1) {
+						if (strlen($geo->getValue()) > 1) {
 							$result[] = $this->vCardToArray($file, $vcard, $geo->getValue());
 						} elseif (count($geo)>0) {
 							foreach ($geo as $g) {
-								$result[] = $this->vCardToArray($file, $vcard, $geo->getValue());
+								if (strlen($g->getValue()) > 1) {
+									$result[] = $this->vCardToArray($file, $vcard, $g->getValue());
+								}
 							}
 						}
 					}
@@ -199,6 +203,12 @@ class ContactsController extends Controller {
 		}
 		$UIDArray = $vcard->UID->getJsonValue();
 		$uid = array_shift($UIDArray);
+		$groups = $vcard->CATEGORIES;
+		if (!is_null($groups)) {
+			$groups = $groups->getValue();
+		} else {
+			$groups = '';
+		}
 		$result = [
 			'FN' => $fn ?? $n ?? '???',
 			'UID' => $uid,
@@ -208,7 +218,7 @@ class ContactsController extends Controller {
 			'ADRTYPE' => $adrtype ?? '',
 			'PHOTO' => $vcard->PHOTO ?? '',
 			'GEO' => $geo,
-			'GROUPS' => $vcard->CATEGORIES ?? null,
+			'GROUPS' => $groups,
 			'isDeletable' => $file->isDeletable(),
 			'isUpdateable' => $file->isUpdateable(),
 		];
@@ -265,7 +275,7 @@ class ContactsController extends Controller {
     /**
      * @NoAdminRequired
      */
-    public function placeContact($bookid, $uri, $uid, $lat, $lng, $attraction, $house_number, $road, $postcode, $city, $state, $country, $type, $fileId=null, $myMapId=null) {
+    public function placeContact($bookid, $uri, $uid, $lat, $lng, $attraction, $house_number, $road, $postcode, $city, $state, $country, $type, $address_string=null, $fileId=null, $myMapId=null) {
 		if (is_null($myMapId) || $myMapId === '') {
 			// do not edit 'user' contact even myself
 			if (strcmp($uri, 'Database:'.$uid.'.vcf') === 0 or
@@ -277,11 +287,11 @@ class ContactsController extends Controller {
 				if (!$this->addressBookIsReadOnly($bookid)) {
 					if ($lat !== null && $lng !== null) {
 						// we set the geo tag
-						if (!$attraction && !$house_number && !$road && !$postcode && !$city && !$state && !$country) {
+						if (!$attraction && !$house_number && !$road && !$postcode && !$city && !$state && !$country && !$address_string) {
 							$result = $this->contactsManager->createOrUpdate(['URI'=>$uri, 'GEO'=>$lat.';'.$lng], $bookid);
 						}
 						// we set the address
-						else {
+						elseif (!$address_string) {
 							$street = trim($attraction.' '.$house_number.' '.$road);
 							$stringAddress = ';;'.$street.';'.$city.';'.$state.';'.$postcode.';'.$country;
 							// set the coordinates in the DB
@@ -293,6 +303,13 @@ class ContactsController extends Controller {
 							if ($card) {
 								$vcard = Reader::read($card['carddata']);;
 								$vcard->add(new Text($vcard, 'ADR', ['', '', $street, $city, $state, $postcode, $country], ['TYPE'=>$type]));
+								$result = $this->cdBackend->updateCard($bookid, $uri, $vcard->serialize());
+							}
+						} else {
+							$card = $this->cdBackend->getContact($bookid, $uri);
+							if ($card) {
+								$vcard = Reader::read($card['carddata']);;
+								$vcard->add(new Text($vcard, 'ADR', explode(';',$address_string), ['TYPE'=>$type]));
 								$result = $this->cdBackend->updateCard($bookid, $uri, $vcard->serialize());
 							}
 						}
@@ -345,9 +362,9 @@ class ContactsController extends Controller {
 			if ($card) {
 				$vcard = Reader::read($card['carddata']);
 				if ($lat !== null && $lng !== null) {
-					if (!$attraction && !$house_number && !$road && !$postcode && !$city && !$state && !$country) {
+					if (!$attraction && !$house_number && !$road && !$postcode && !$city && !$state && !$country && !$address_string) {
 						$vcard->add('GEO',$lat.';'.$lng);
-					} else {
+					} elseif (!$address_string) {
 						$street = trim($attraction.' '.$house_number.' '.$road);
 						$stringAddress = ';;'.$street.';'.$city.';'.$state.';'.$postcode.';'.$country;
 						// set the coordinates in the DB
@@ -356,7 +373,14 @@ class ContactsController extends Controller {
 						$this->setAddressCoordinates($lat, $lng, $stringAddress, $uri);
 						$vcard = Reader::read($card['carddata']);
 						$vcard->add( 'ADR', ['', '', $street, $city, $state, $postcode, $country], ['TYPE'=>$type]);
-						$result = $this->cdBackend->updateCard($bookid, $uri, $vcard->serialize());
+					} else {
+						$stringAddress = $address_string;
+						// set the coordinates in the DB
+						$lat = floatval($lat);
+						$lng = floatval($lng);
+						$this->setAddressCoordinates($lat, $lng, $stringAddress, $uri);
+						$vcard = Reader::read($card['carddata']);
+						$vcard->add( 'ADR', explode(';',$address_string), ['TYPE'=>$type]);
 					}
 				} else {
 					$vcard->remove('GEO');

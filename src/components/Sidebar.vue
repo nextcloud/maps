@@ -64,13 +64,13 @@ import { emit } from '@nextcloud/event-bus'
 import { generateUrl, generateFilePath } from '@nextcloud/router'
 
 import FavoriteSidebarTab from '../components/FavoriteSidebarTab'
-import SidebarTab from '../../../../apps/files/src/components/SidebarTab'
-import LegacyView from '../../../../apps/files/src/components/LegacyView'
+import SidebarTab from './Sidebar/SidebarTab'
+import LegacyView from './Sidebar/LegacyView'
 import { encodePath } from '@nextcloud/paths'
 import moment from '@nextcloud/moment'
 import { Type as ShareTypes } from '@nextcloud/sharing'
 import axios from '@nextcloud/axios'
-import FileInfo from '../../../../apps/files/src/services/FileInfo'
+import FileInfo from '../services/FileInfo'
 
 export default {
 	name: 'Sidebar',

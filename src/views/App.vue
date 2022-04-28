@@ -786,12 +786,19 @@ export default {
 		},
 		onAddPhotoToMap(photo) {
 			this.chooseMyMap((map) => {
-				network.copyByPath(photo.path, map.path + 'photo.basename').then((response) => {
-					showSuccess(t('maps', 'Track {photoName} added to map {mapName}', { photoName: photo.basename ?? '', mapName: map.name ?? '' }))
-				}).catch((error) => {
+				try {
+					network.copyByPath(photo.path, map.path + '/' + photo.basename)
+					showSuccess(t('maps', 'Track {photoName} added to map {mapName}', {
+						photoName: photo.basename ?? '',
+						mapName: map.name ?? '',
+					}))
+				} catch (error) {
 					console.error(error)
-					showError(t('maps', 'Failed to save track {photoName} to map {mapName}', { trackName: photo.basename ?? '', mapName: map.name ?? '' }))
-				})
+					showError(t('maps', 'Failed to save track {photoName} to map {mapName}', {
+						trackName: photo.basename ?? '',
+						mapName: map.name ?? '',
+					}))
+				}
 			})
 		},
 		getPhotos() {
@@ -1795,12 +1802,23 @@ export default {
 		},
 		onAddTrackToMap(track) {
 			this.chooseMyMap((map) => {
-				network.copyByPath(track.path, map.path + 'track.name' + 'gpx').then((response) => {
-					showSuccess(t('maps', 'Track {trackName} added to map {mapName}', { trackName: track.name ?? '', mapName: map.name ?? '' }))
-				}).catch((error) => {
+				try {
+					network.copyByPath(track.path, (map.path + '/' + track.file_name).replace('//', '/'))
+					showSuccess(t('maps', 'Track {trackName} added to map {mapName}',
+						{
+							trackName: track.name ?? '',
+							mapName: map.name ?? '',
+						}))
+
+				} catch (error) {
 					console.error(error)
-					showError(t('maps', 'Failed to save track {trackName} to map {mapName}', { trackName: track.name ?? '', mapName: map.name ?? '' }))
-				})
+					showError(
+						t('maps', 'Failed to save track {trackName} to map {mapName}', {
+							trackName: track.name ?? '',
+							mapName: map.name ?? '',
+						}))
+
+				}
 			})
 		},
 		onDeviceZoom(device) {
@@ -1942,21 +1960,28 @@ export default {
 		},
 		chooseMyMap(callback) {
 			const that = this
-			const pathToIdAndName = (path) => {
+			const firstCallBack = (path) => {
 				const p = (path === '' ? '/' : path)
 				const map = that.myMaps.find((m) => { return m.path === p })
 				if (map) {
-					return map
+					callback(map)
 				} else {
-					// Fixme
-					showError(t('maps', 'Folder is not a map'))
-					// return { path, name: path.split('/')[-1] }
-					return map
+					showInfo(t('maps', 'Folder is not a map'))
+					const fileClient = OC.Files.getClient()
+					fileClient.getFileInfo(path).then((status, fileInfo) => {
+						const map = {
+							id: fileInfo.id,
+							path: fileInfo.name,
+							name: fileInfo.basename,
+							fileInfo,
+						}
+						callback(map)
+					})
 				}
 			}
 			OC.dialogs.filepicker(
 				t('maps', 'Choose directory of pictures to place'),
-				(t) => callback(pathToIdAndName(t)),
+				(t) => firstCallBack(t),
 				false,
 				'httpd/unix-directory',
 				true,

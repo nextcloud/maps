@@ -437,5 +437,11 @@ export function renameMyMap(id, newName) {
 }
 
 export function copyByPath(from, to) {
-	// FIXME Actualy do something
+	const fileClient = OC.Files.getClient()
+	return fileClient.copy(from, to, false)
+}
+
+export function addSharedFavoriteCategoryToMap(sharedCategory, mapId) {
+	// Fixme Do something
+	return true
 }

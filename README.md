@@ -16,6 +16,52 @@ Future plans:
 - **📆 Events on the map:** Know where you need to go next!
 - **🗺 Different projections:** The [Mercator projection](https://en.wikipedia.org/wiki/Mercator_projection) is very biased, as you can see from [The True Size of Africa](http://kai.sub.blue/en/africa.html). Another view like the [Gall-Peters projection](https://en.wikipedia.org/wiki/Gall%E2%80%93Peters_projection) would be a possibility.
 
+## User Documentation
+### My Maps
+Custom maps are stored by default in the "/Maps" folder. This folder can be found in the
+files app. Other folders turned into map by placing a ".maps" file into it.
+Content can therefore be added via:
+ - Webdav (Desktop and Mobile clients)
+ - Files app
+ - Maps app
+
+Custom maps can then be shared from the maps or any other app.
+
+####Sharing map
+Maps can be shared using the nextcloud sharing system.
+![](screenshots/shareMap.gif)
+
+####Favorites on custom map
+Favorites on custom the custom maps are stored in the .favorites.json file.
+
+Shared favorite categories can be linked to a custom map.
+Linked favorite categories are read-only.
+They can be edited on the owners default map.
+These links are stored in the ".favorite_shares.json".
+![](screenshots/addFavorites.gif)
+
+
+####Contacts on custom map
+Contacts on custom maps are stored as vCards (*.vfc) files.
+![](screenshots/addContacts.gif)
+
+####Tracks on custom map
+Tracks on custom map are stored as "*.gpx files".
+![](screenshots/addTracks.gif)
+
+####Photos on custom map
+Photos are stored in the corresponding folder.
+They can be added from files
+![](screenshots/addPhotosFromFiles.gif)
+or from maps
+![](screenshots/addPhotosFromMap.gif)
+Existing photo albums can be viewed
+on the map by placing a ".maps" file into it.
+![](screenshots/photoAlbumOnMap.gif)
+
+Scanning photos take time. Therefore photos are scanned in the background.
+After adding photos it might take a while,
+until the scan is done and the photos are shown on the map.
 
 ## 🏗 Development setup
 

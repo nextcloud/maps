@@ -117,9 +117,9 @@ export default {
 		},
 		lines() {
 			const trkSegments = []
-			if ((this.metadata?.begin && this.track.metadata.begin >= this.end) || (this.track.metadata?.end && this.track.metadata?.end <= this.start)) {
+			if ((this.metadata?.begin && this.metadata?.begin > 0 && this.track.metadata.begin >= this.end) || (this.track.metadata?.end && this.track.metadata?.end > 0 && this.track.metadata?.end <= this.start)) {
 				return [...this.track.data.routes, trkSegments]
-			} else if ((!this.track.metadata?.begin || this.track.metadata?.begin >= this.start) && (!this.track.metadata?.end || this.track.metadata?.end <= this.end)) {
+			} else if ((!this.track.metadata?.begin || this.metadata?.begin < 0 || this.track.metadata?.begin >= this.start) && (!this.track.metadata?.end || !this.track.metadata?.end < 0 || this.track.metadata?.end <= this.end)) {
 				this.track.data.tracks.forEach((trk) => {
 					trk.segments.forEach((segment) => {
 						// add track name to each segment

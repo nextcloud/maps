@@ -453,7 +453,7 @@ class FavoritesService {
 		$data = json_decode($file->getContent(), true, 512);
 		$ids = [];
 		foreach ($favorites as $favorite) {
-			$tmp = $this->addFavoriteToJSONData($data, $favorite->name, $favorite->lat, $favorite->lng, $favorite->category, $favorite->comment, $favorite->extensions, $nowTimeStamp);
+			$tmp = $this->addFavoriteToJSONData($data, $favorite['name'], $favorite['lat'], $favorite['lng'], $favorite['category'], $favorite['comment'], $favorite['extensions'], $nowTimeStamp);
 			$ids[] = $tmp["id"];
 			$data = $tmp["data"];
 		}

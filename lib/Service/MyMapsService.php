@@ -71,7 +71,32 @@ class MyMapsService {
         $mapFolder = $mapsFolder->newFolder($folderName);
         $MapData['id'] = $mapFolder->getId();
         $mapFolder->newFile(".maps","{}");
-        return $MapData;
+		$isRoot = $mapFolder->getPath() === $userFolder->getPath();
+		$MyMap = [
+			"id"=>$mapFolder->getId(),
+			"name"=>$folderName,
+			"color"=>null,
+			"path"=>$userFolder->getRelativePath($mapFolder->getPath()),
+			"isShareable"=>$mapFolder->isShareable(),
+			"isDeletable"=>$mapFolder->isDeletable(),
+			"isCreatable"=>$mapFolder->isCreatable(),
+			"isUpdateable"=>$mapFolder->isUpdateable(),
+			"isReadable"=>$mapFolder->isReadable(),
+			"fileInfo"=>[
+				"id" => $mapFolder->getId(),
+				"name" => "",
+				"basename" => $isRoot ? '' : $mapFolder->getName(),
+				"filename" => $userFolder->getRelativePath($mapFolder->getPath()),
+				"etag" => $mapFolder->getEtag(),
+				"permissions" => $mapFolder->getPermissions(),
+				"type" => $mapFolder->getType(),
+				"mime" => $mapFolder->getMimetype(),
+				"lastmod" => $mapFolder->getMTime(),
+				"path"=>$userFolder->getRelativePath($mapFolder->getPath()),
+				"sharePermissions"=>$mapFolder->getPermissions(),
+			]
+		];
+        return $MyMap;
     }
 
     public function getAllMyMaps($userId){

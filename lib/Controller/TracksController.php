@@ -99,33 +99,14 @@ class TracksController extends Controller {
             $folder = array_shift($folders);
             $tracks = $this->tracksService->getTracksFromDB($this->userId, $folder, true, false);
         }
-        $existingTracks = [];
-        foreach ($tracks as $track) {
-            $res = $this->userfolder->getById($track['file_id']);
-            if (is_array($res) and count($res) > 0) {
-                $trackFile = $res[0];
-                if ($trackFile->getType() === \OCP\Files\FileInfo::TYPE_FILE) {
-                    $track['mtime'] = $trackFile->getMTime();
-                    $track['file_name'] = $trackFile->getName();
-                    $track['file_path'] = \preg_replace("/^\/".$this->userId."\/files/", '', $trackFile->getPath());
-                    array_push($existingTracks, $track);
-                }
-                else {
-                    $this->deleteTrack($track['id']);
-                }
-            }
-            else {
-                $this->deleteTrack($track['id']);
-            }
-        }
-        return new DataResponse($existingTracks);
+        return new DataResponse($tracks);
     }
 
 	/**
 	 * @NoAdminRequired
 	 */
 	public function getTrackContentByFileId($id) {
-		$track = $this->tracksService->getTrackByFileIDFromDB($id);
+		$track = $this->tracksService->getTrackByFileIDFromDB($id, $this->userId);
 		$res = is_null($track) ? null : $this->userfolder->getById($track['file_id']);
 		if (is_array($res) and count($res) > 0) {
 			$trackFile = $res[0];

@@ -175,7 +175,7 @@ class FavoritesController extends Controller {
 			$favoriteIds = $this->favoritesService->addFavoritesToJSON($file, $favorites);
 			$favoritesAfter = [];
 			forEach ($this->favoritesService->getFavoritesFromJSON($file) as $favorite) {
-				if (in_array($favorite->id,$favoriteIds)) {
+				if (in_array($favorite['id'],$favoriteIds)) {
 					$favoritesAfter[] = $favorite;
 				}
 			};

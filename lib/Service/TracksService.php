@@ -197,6 +197,53 @@ class TracksService {
         return true;
     }
 
+	private function dbRowToTrack($row, $folder, $userFolder, $defaultMap, $ignoredPaths) {
+		// avoid tracks that are not in "this map's" folder
+		$files = $folder->getById(intval($row['file_id']));
+		if (empty($files)) {
+			if ($defaultMap) {
+				$this->deleteTrack($row['id']);
+			}
+			return null;
+		}
+		$file = array_shift($files);
+		if ($file === null || $file->getType() !== \OCP\Files\FileInfo::TYPE_FILE) {
+			if ($defaultMap) {
+				$this->deleteTrack($row['id']);
+			}
+			return null;
+		}
+
+		$path = $userFolder->getRelativePath($file->getPath());
+		$isIgnored = false;
+		foreach ($ignoredPaths as $ignoredPath) {
+			if (str_starts_with($path, $ignoredPath)) {
+				$isIgnored = true;
+				break;
+			}
+		}
+		if ($isIgnored) {
+			return null;
+		}
+
+		return [
+			'id' => intval($row['id']),
+			'file_id' => intval($row['file_id']),
+			'color' => $row['color'],
+			'metadata' => $row['metadata'],
+			'etag' => $row['etag'],
+			'path' => $path,
+			'isShareable' => $file->isShareable(),
+			'isDeletable' => $file->isDeletable(),
+			'isUpdateable' => $file->isUpdateable(),
+			'isReadable' => $file->isReadable(),
+			'mtime' => $file->getMTime(),
+			'file_name' => $file->getName(),
+			'file_path' => $userFolder->getRelativePath($file->getPath()),
+		];
+	}
+
+
     /**
      * @param string $userId
      */
@@ -213,79 +260,18 @@ class TracksService {
         $req = $qb->execute();
 
         if (is_null($folder)) {
-            while ($row = $req->fetch()) {
-				$files = $userFolder->getById(intval($row['file_id']));
-				$path = '';
-				if (! empty($files)) {
-					$file = array_shift($files);
-					if ($file !== null) {
-						$path = $userFolder->getRelativePath($file->getPath());
-						$isShareable = $file->isShareable();
-						$isDeletable = $file->isDeletable();
-						$isUpdateable = $file->isUpdateable();
-						$isReadable = $file->isReadable();
-					}
-				}
-				$isIgnored = false;
-				foreach ($ignoredPaths as $ignoredPath) {
-					if (str_starts_with($path, $ignoredPath)) {
-						$isIgnored = true;
-						break;
-					}
-				}
-				if ($isIgnored) {
-					continue;
-				}
-                $tracks[] = [
-					'id' => intval($row['id']),
-					'file_id' => intval($row['file_id']),
-					'color' => $row['color'],
-					'metadata' => $row['metadata'],
-					'etag' => $row['etag'],
-					'path' => $path,
-					'isShareable' => $isShareable,
-					'isDeletable' => $isDeletable,
-					'isReadable' => $isReadable,
-					'isUpdateable' => $isUpdateable,
-				];
-            }
-        } else {
-            // my-maps context
-            while ($row = $req->fetch()) {
-                // avoid tracks that are not in "this map's" folder
-                $files = $folder->getById(intval($row['file_id']));
-				if (empty($files)) {
-					continue;
-				}
-				$file = array_shift($files);
-                if ($file === null) {
-                    continue;
-                }
-				$path = $userFolder->getRelativePath($file->getPath());
-				$isIgnored = false;
-				foreach ($ignoredPaths as $ignoredPath) {
-					if (str_starts_with($path, $ignoredPath)) {
-						$isIgnored = true;
-						break;
-					}
-				}
-				if ($isIgnored) {
-					continue;
-				}
-                $tracks[] = [
-					'id' => intval($row['id']),
-					'file_id' => intval($row['file_id']),
-					'color' => $row['color'],
-					'metadata' => $row['metadata'],
-					'etag' => $row['etag'],
-					'path' => $path,
-					'isShareable' => $file->isShareable(),
-					'isDeletable' => $file->isDeletable(),
-					'isUpdateable' => $file->isUpdateable(),
-					'isReadable' => $file->isReadable(),
-				];
-            }
-        }
+			$folder = $userFolder;
+		}
+		$defaultMap = $folder->getId() === $userFolder->getId();
+
+		// my-maps context
+		while ($row = $req->fetch()) {
+			$track = $this->dbRowToTrack($row, $folder, $userFolder, $defaultMap, $ignoredPaths);
+			if (is_null($track)) {
+				continue;
+			}
+			$tracks[] = $track;
+		}
         $req->closeCursor();
         $qb = $qb->resetQueryParts();
         return $tracks;
@@ -299,7 +285,7 @@ class TracksService {
 	 * @throws \OCP\Files\NotPermittedException
 	 * @throws \OC\User\NoUserException
 	 */
-	private function getIgnoredPaths($userId, $folder=null, $hideImagesOnCustomMaps){
+	private function getIgnoredPaths($userId, $folder=null, $hideImagesOnCustomMaps=true){
 		$ignoredPaths = [];
 		$folder = $this->root->getUserFolder($userId);
 		if (is_null($folder)) {
@@ -350,16 +336,37 @@ class TracksService {
         }
         $req = $qb->execute();
 
-        while ($row = $req->fetch()) {
-            $track = [
-                'id' => intval($row['id']),
-                'file_id' => intval($row['file_id']),
-                'color' => $row['color'],
-                'metadata' => $row['metadata'],
-                'etag' => $row['etag'],
-            ];
-            break;
-        }
+		while ($row = $req->fetch()) {
+			if ($userId !== '' and $userId !== null) {
+				$userFolder = $this->root->getUserFolder($userId);
+				$files = $userFolder->getById(intval($row['file_id']));
+				if (empty($files)) {
+					break;
+				}
+				$file = array_shift($files);
+				if ($file === null) {
+					break;
+				}
+				$track = $this->dbRowToTrack($row, $userFolder, $userFolder, true, []);
+			} else {
+				$track = [
+					'id' => intval($row['id']),
+					'file_id' => intval($row['file_id']),
+					'color' => $row['color'],
+					'metadata' => $row['metadata'],
+					'etag' => $row['etag'],
+					'path' => '',
+					'isShareable' => false,
+					'isDeletable' => false,
+					'isUpdateable' => false,
+					'isReadable' => false,
+					'mtime' => 0,
+					'file_name' => '',
+					'file_path' => '',
+				];
+			}
+			break;
+		}
         $req->closeCursor();
         $qb = $qb->resetQueryParts();
         return $track;
@@ -381,13 +388,34 @@ class TracksService {
         $req = $qb->execute();
 
         while ($row = $req->fetch()) {
-            $track = [
-                'id' => intval($row['id']),
-                'file_id' => intval($row['file_id']),
-                'color' => $row['color'],
-                'metadata' => $row['metadata'],
-                'etag' => $row['etag'],
-            ];
+			if ($userId !== '' and $userId !== null) {
+				$userFolder = $this->root->getUserFolder($userId);
+				$files = $userFolder->getById(intval($row['file_id']));
+				if (empty($files)) {
+					break;
+				}
+				$file = array_shift($files);
+				if ($file === null) {
+					break;
+				}
+				$track = $this->dbRowToTrack($row, $userFolder, $userFolder, true, [] );
+			} else {
+				$track = [
+					'id' => intval($row['id']),
+					'file_id' => intval($row['file_id']),
+					'color' => $row['color'],
+					'metadata' => $row['metadata'],
+					'etag' => $row['etag'],
+					'path' => '',
+					'isShareable' => false,
+					'isDeletable' => false,
+					'isUpdateable' => false,
+					'isReadable' => false,
+					'mtime' => 0,
+					'file_name' => '',
+					'file_path' => '',
+				];
+			}
             break;
         }
         $req->closeCursor();

@@ -1,6 +1,6 @@
 import moment from '@nextcloud/moment'
 
-export function processGpx(gpx) {
+export function processGpx(gpx, overwriteZeroTimpstamp = true) {
 	let xmlDoc
 	if (window.DOMParser) {
 		try {

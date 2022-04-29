@@ -150,11 +150,11 @@ class ContactsController extends Controller {
 			$userFolder = $this->root->getUserFolder($this->userId);
 			$folders =  $userFolder->getById($myMapId);
 			if (empty($folders)) {
-				return DataResponse($result);
+				return new DataResponse($result);
 			}
 			$folder = array_shift($folders);
 			if ($folder === null) {
-				return DataResponse($result);
+				return new DataResponse($result);
 			}
 			$files = $folder->search('.vcf');
             foreach ($files as $file) {
@@ -398,11 +398,11 @@ class ContactsController extends Controller {
 		$userFolder = $this->root->getUserFolder($this->userId);
 		$folders =  $userFolder->getById($myMapId);
 		if (empty($folders)) {
-			return DataResponse('MAP NOT FOUND', 404);
+			return new DataResponse('MAP NOT FOUND', 404);
 		}
 		$mapsFolder = array_shift($folders);
 		if (is_null($mapsFolder)) {
-			return DataResponse('MAP NOT FOUND',404);
+			return new DataResponse('MAP NOT FOUND',404);
 		}
 		if (is_null($fileId)) {
 			$card = $this->cdBackend->getContact($bookid, $uri);
@@ -417,16 +417,16 @@ class ContactsController extends Controller {
 		} else {
 			$files = $mapsFolder->getById($fileId);
 			if (empty($files)) {
-				return DataResponse('CONTACT NOT FOUND', 404);
+				return new DataResponse('CONTACT NOT FOUND', 404);
 			}
 			$file = array_shift($files);
 			if (is_null($file)) {
-				return DataResponse('CONTACT NOT FOUND', 404);
+				return new DataResponse('CONTACT NOT FOUND', 404);
 			}
 			$card = $file->getContent();
 		}
 		if (!$file->isUpdateable()) {
-			return DataResponse('CONTACT NOT WRITABLE', 400);
+			return new DataResponse('CONTACT NOT WRITABLE', 400);
 		}
 		if ($card) {
 			$vcard = Reader::read($card['carddata']);

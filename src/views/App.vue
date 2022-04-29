@@ -138,6 +138,7 @@
 					@add-to-map-track="onAddTrackToMap"
 					@search-enable-track="onSearchEnableTrack"
 					@change-track-color="onChangeTrackColorClicked"
+					@track-added="onTrackAdded"
 					@add-to-map-device="onAddDeviceToMap"
 					@toggle-device-history="onToggleDeviceHistory"
 					@change-device-color="onChangeDeviceColorClicked"
@@ -1611,6 +1612,22 @@ export default {
 			}).then(() => {
 				this.tracksLoading = false
 			})
+		},
+		onTrackAdded(track) {
+			if (track.metadata) {
+				try {
+					track.metadata = JSON.parse(track.metadata)
+				} catch (error) {
+					console.error('Failed to parse track metadata')
+				}
+			}
+			track = this.tracks.push({
+				...track,
+				loading: false,
+				enabled: false,
+				selected: false,
+			}) - 1
+			this.getTrack(this.tracks[track], true, true, false)
 		},
 		onNavTrackClicked(track) {
 			if (track.enabled) {

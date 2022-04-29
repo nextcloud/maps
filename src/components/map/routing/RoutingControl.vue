@@ -25,7 +25,8 @@
 			:visible="visible"
 			@plan-changed="onPlanChanged"
 			@plan-ready-changed="onPlanReadyChanged"
-			@route-selected="onRouteSelected" />
+			@route-selected="onRouteSelected"
+			@track-added="$emit('track-added', $event)" />
 	</LControl>
 </template>
 

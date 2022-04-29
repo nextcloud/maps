@@ -20,7 +20,8 @@
 				:visible="showRouting"
 				:map="map"
 				:search-data="routingSearchData"
-				@close="showRouting = false" />
+				@close="showRouting = false"
+				@track-added="$emit('track-added', $event)" />
 			<SearchControl v-if="map"
 				v-show="!showRouting"
 				:map="map"

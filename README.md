@@ -27,11 +27,11 @@ Content can therefore be added via:
 
 Custom maps can then be shared from the maps or any other app.
 
-####Sharing map
+#### Sharing map
 Maps can be shared using the nextcloud sharing system.
 ![](screenshots/shareMap.gif)
 
-####Favorites on custom map
+#### Favorites on custom map
 Favorites on custom the custom maps are stored in the .favorites.json file.
 
 Shared favorite categories can be linked to a custom map.
@@ -41,15 +41,15 @@ These links are stored in the ".favorite_shares.json".
 ![](screenshots/addFavorites.gif)
 
 
-####Contacts on custom map
+#### Contacts on custom map
 Contacts on custom maps are stored as vCards (*.vfc) files.
 ![](screenshots/addContacts.gif)
 
-####Tracks on custom map
+#### Tracks on custom map
 Tracks on custom map are stored as "*.gpx files".
 ![](screenshots/addTracks.gif)
 
-####Photos on custom map
+#### Photos on custom map
 Photos are stored in the corresponding folder.
 They can be added from files
 ![](screenshots/addPhotosFromFiles.gif)

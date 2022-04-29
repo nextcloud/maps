@@ -236,7 +236,8 @@ export default {
 		}
 	}
 }
-.left-contact-popup {
+
+.right-contact-popup {
 	display: flex;
 	flex-direction: column;
 	align-items: center;

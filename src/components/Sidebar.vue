@@ -588,8 +588,8 @@ export default {
 			background-size: cover;
 		}
 
-		&[data-mimetype="text/plain"],
-		&[data-mimetype="text/markdown"] {
+		&[data-mimetype='text/plain'],
+		&[data-mimetype='text/markdown'] {
 			.app-sidebar-header__figure {
 				background-size: contain;
 			}

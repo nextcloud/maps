@@ -141,8 +141,8 @@ class GeophotoService {
 	 * @param bool $respectNomediaAndNoimage
      * @return array with geodatas of all nonLocalizedPhotos
      */
-    public function getNonLocalizedFromDB (string $userId, bool $respectNomediaAndNoimage=true) {
-		$ignoredPaths = $respectNomediaAndNoimage ? $this->getIgnoredPaths($userId) : [];
+    public function getNonLocalizedFromDB (string $userId, bool $respectNomediaAndNoimage=true, bool $hideImagesOnCustomMaps=true) {
+		$ignoredPaths = $respectNomediaAndNoimage ? $this->getIgnoredPaths($userId, $respectNomediaAndNoimage, $hideImagesOnCustomMaps) : [];
         $foo = $this->loadTimeorderedPointSets($userId);
         $photoEntities = $this->photoMapper->findAllNonLocalized($userId);
         $userFolder = $this->getFolderForUser($userId);

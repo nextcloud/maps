@@ -109,22 +109,21 @@ class PhotosController extends Controller {
      */
     public function resetPhotosCoords($paths, $myMapId=null) {
 		$userFolder = $this->root->getUserFolder($this->userId);
-        $result = 0;
-        if (!is_null($myMapId) and $myMapId !== '') {
-            foreach ($paths as $key => $path) {
-                $folders = $userFolder->getById($myMapId);
-                $folder = array_shift($folders);
-                $photoFile = $userFolder->get($path);
-                if ($folder->isSubNode($photoFile)) {
-                    $photoFile->delete();
-                    unset($paths[$key]);
-                    $result++;
-                }
-            }
-        }
+        $result = [];
         if (sizeof($paths) > 0) {
-            $result += $this->photofilesService->resetPhotosFilesCoords($this->userId, $paths);
+			$result = $this->photofilesService->resetPhotosFilesCoords($this->userId, $paths);
         }
+		if (!is_null($myMapId) and $myMapId !== '') {
+			foreach ($paths as $key => $path) {
+				$folders = $userFolder->getById($myMapId);
+				$folder = array_shift($folders);
+				$photoFile = $userFolder->get($path);
+				if ($folder->isSubNode($photoFile)) {
+					$photoFile->delete();
+					unset($paths[$key]);
+				}
+			}
+		}
         return new DataResponse($result);
     }
 

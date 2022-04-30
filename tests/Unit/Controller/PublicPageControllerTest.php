@@ -76,7 +76,8 @@ class PublicPageControllerTest extends TestCase
 
     $this->favoriteShareMapper = new FavoriteShareMapper(
       $container->query(\OCP\IDBConnection::class),
-      $container->query(IServerContainer::class)->getSecureRandom()
+      $container->query(IServerContainer::class)->getSecureRandom(),
+	  $container->query(IServerContainer::class)->getRootFolder()
     );
 
     $requestMock = $this->getMockBuilder('OCP\IRequest')->getMock();

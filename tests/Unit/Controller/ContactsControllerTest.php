@@ -38,6 +38,7 @@ class ContactsControllerTest extends \PHPUnit\Framework\TestCase {
     private $contactsController2;
     private $utilsController;
     private $cdBackend;
+	private $root;
 
     public static function setUpBeforeClass(): void {
         $app = new Application();
@@ -120,19 +121,20 @@ class ContactsControllerTest extends \PHPUnit\Framework\TestCase {
             ->getMock();
 
         $this->cdBackend =  $c->query(IServerContainer::class)->query(CardDavBackend::class);
+		$this->root = $c->query(IServerContainer::class)->getRootFolder();
 
 
         $this->contactsController = new ContactsController(
-            $this->appName,
-            $c->query(IServerContainer::class)->getLogger(),
-            $this->request,
-            $c->query(IServerContainer::class)->query(\OCP\IDBConnection::class),
-            $this->contactsManager,
-            $this->addressService,
-            'test',
-            $this->cdBackend,
-            $c->query(IServerContainer::class)->getAvatarManager()
-        );
+			$this->appName,
+			$c->query(IServerContainer::class)->getLogger(),
+			$this->request,
+			$c->query(IServerContainer::class)->query(\OCP\IDBConnection::class),
+			$this->contactsManager,
+			$this->addressService,
+			'test',
+			$this->cdBackend,
+			$c->query(IServerContainer::class)->getAvatarManager(),
+			$this->root);
         //$this->contactsController = $this->getMockBuilder('OCA\Maps\Controller\ContactsController')
         //    ->disableOriginalConstructor()
         //    ->getMock();
@@ -146,7 +148,8 @@ class ContactsControllerTest extends \PHPUnit\Framework\TestCase {
             $this->addressService,
             'test2',
             $this->cdBackend,
-            $c->query(IServerContainer::class)->getAvatarManager()
+            $c->query(IServerContainer::class)->getAvatarManager(),
+			$this->root
         );
 
         $this->utilsController = new UtilsController(
@@ -154,6 +157,7 @@ class ContactsControllerTest extends \PHPUnit\Framework\TestCase {
             $this->request,
             $c->query(IServerContainer::class)->getConfig(),
             $c->getServer()->getAppManager(),
+			$this->root,
             'test'
         );
     }

@@ -32,6 +32,7 @@ class FavoritesControllerTest extends \PHPUnit\Framework\TestCase
   private $pageController;
   private $pageController2;
   private $utilsController;
+  private $root;
 
   /* @var FavoritesController */
   private $favoritesController;
@@ -87,6 +88,7 @@ class FavoritesControllerTest extends \PHPUnit\Framework\TestCase
     $this->container = $this->app->getContainer();
     $c = $this->container;
     $this->config = $c->query(IServerContainer::class)->getConfig();
+	$this->root = $c->query(IServerContainer::class)->getRootFolder();
 
     $this->favoritesController = new FavoritesController(
       $this->appName,
@@ -127,6 +129,7 @@ class FavoritesControllerTest extends \PHPUnit\Framework\TestCase
       $this->request,
       $c->query(IServerContainer::class)->getConfig(),
       $c->getServer()->getAppManager(),
+	  $this->root,
       'test'
     );
   }

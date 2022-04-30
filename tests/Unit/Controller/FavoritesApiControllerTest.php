@@ -26,6 +26,7 @@ class FavoritesApiControllerTest extends \PHPUnit\Framework\TestCase
   private $container;
   private $config;
   private $app;
+  private $root;
 
   private $favoritesApiController;
   private $favoritesApiController2;
@@ -79,6 +80,7 @@ class FavoritesApiControllerTest extends \PHPUnit\Framework\TestCase
     $this->container = $this->app->getContainer();
     $c = $this->container;
     $this->config = $c->query(IServerContainer::class)->getConfig();
+	  $this->root = $c->query(IServerContainer::class)->getRootFolder();
 
     $this->favoritesApiController = new FavoritesApiController(
       $this->appName,
@@ -115,6 +117,7 @@ class FavoritesApiControllerTest extends \PHPUnit\Framework\TestCase
       $this->request,
       $c->query(IServerContainer::class)->getConfig(),
       $c->getServer()->getAppManager(),
+	  $this->root,
       'test'
     );
   }

@@ -29,6 +29,7 @@ class DevicesControllerTest extends \PHPUnit\Framework\TestCase {
     private $devicesController;
     private $devicesController2;
     private $utilsController;
+	private $root;
 
     public static function setUpBeforeClass(): void {
         $app = new Application();
@@ -76,6 +77,7 @@ class DevicesControllerTest extends \PHPUnit\Framework\TestCase {
         $this->container = $this->app->getContainer();
         $c = $this->container;
         $this->config = $c->query(IServerContainer::class)->getConfig();
+		$this->root = $c->query(IServerContainer::class)->getRootFolder();
 
         $this->devicesController = new DevicesController(
             $this->appName,
@@ -114,6 +116,7 @@ class DevicesControllerTest extends \PHPUnit\Framework\TestCase {
             $this->request,
             $c->query(IServerContainer::class)->getConfig(),
             $c->getServer()->getAppManager(),
+			$this->root,
             'test'
         );
 

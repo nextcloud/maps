@@ -129,6 +129,7 @@ class TracksControllerTest extends \PHPUnit\Framework\TestCase {
             $this->request,
             $c->query(IServerContainer::class)->getConfig(),
             $c->getServer()->getAppManager(),
+			$this->rootFolder,
             'test'
         );
 

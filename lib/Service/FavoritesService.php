@@ -416,7 +416,7 @@ class FavoritesService {
 
     public function getFavoriteFromJSON($file, $id) {
 		$favorites = $this->getFavoritesFromJSON($file);
-		if (array_key_exists($id,$favorites)) {
+		if (array_key_exists($id, $favorites)) {
 			return $favorites[$id];
 		} else {
 			return null;

@@ -226,6 +226,15 @@ class PhotosControllerTest extends \PHPUnit\Framework\TestCase {
 		$this->assertEquals(0, count($data));
 		$file->delete();
 
+		//Test .maps repected
+		$file = $userfolder->newFile('.maps');
+		$resp = $this->photosController->getPhotosFromDb();
+		$status = $resp->getStatus();
+		$this->assertEquals(200, $status);
+		$data = $resp->getData();
+		$this->assertEquals(0, count($data));
+		$file->delete();
+
         // non localized without track
         $resp = $this->photosController->getNonLocalizedPhotosFromDb();
         $status = $resp->getStatus();
@@ -265,6 +274,24 @@ class PhotosControllerTest extends \PHPUnit\Framework\TestCase {
 		//Test .noimage repected
 		$file = $userfolder->newFile('.noimage');
 		$resp = $this->photosController->getNonLocalizedPhotosFromDb();
+		$status = $resp->getStatus();
+		$this->assertEquals(200, $status);
+		$data = $resp->getData();
+		$this->assertEquals(0, count($data));
+		$file->delete();
+
+		//Test .maps repected
+		$file = $userfolder->newFile('.maps');
+		$resp = $this->photosController->getNonLocalizedPhotosFromDb();
+		$status = $resp->getStatus();
+		$this->assertEquals(200, $status);
+		$data = $resp->getData();
+		$this->assertEquals(0, count($data));
+		$file->delete();
+
+		//Test myMap
+		$file = $userfolder->newFile('.noimage');
+		$resp = $this->photosController->getNonLocalizedPhotosFromDb($userfolder->getId());
 		$status = $resp->getStatus();
 		$this->assertEquals(200, $status);
 		$data = $resp->getData();

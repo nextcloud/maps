@@ -206,9 +206,20 @@ class FavoritesController extends Controller {
             $folders = $this->userfolder->getById($myMapId);
             $folder = array_shift($folders);
             $file = $this->getJSONFavoritesFile($folder);
-            $this->favoritesService->editFavoriteInJSON($file, $id, $name, $lat, $lng, $category, $comment, $extensions);
-            $editedFavorite = $this->favoritesService->getFavoriteFromJSON($file, $id);
-            return new DataResponse($editedFavorite);
+			$favorite = $this->favoritesService->getFavoriteFromJSON($file, $id, $this->userId);
+			if ($favorite !== null) {
+				if (($lat === null || is_numeric($lat)) &&
+					($lng === null || is_numeric($lng))
+				) {
+					$this->favoritesService->editFavoriteInJSON($file, $id, $name, $lat, $lng, $category, $comment, $extensions);
+					$editedFavorite = $this->favoritesService->getFavoriteFromJSON($file, $id);
+					return new DataResponse($editedFavorite);
+				} else {
+					return new DataResponse('invalid values', 400);
+				}
+			} else {
+				return new DataResponse('no such favorite', 400);
+			}
         }
     }
 
@@ -255,8 +266,11 @@ class FavoritesController extends Controller {
             $folders = $this->userfolder->getById($myMapId);
             $folder = array_shift($folders);
             $file = $this->getJSONFavoritesFile($folder);
-            $this->favoritesService->deleteFavoriteFromJSON($file, $id);
-            return new DataResponse('DELETED');
+			if ($this->favoritesService->deleteFavoriteFromJSON($file, $id) > 0) {
+				return new DataResponse('DELETED');
+			} else {
+				return new DataResponse('no such favorite', 400);
+			}
         }
     }
 

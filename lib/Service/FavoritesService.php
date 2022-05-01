@@ -351,53 +351,63 @@ class FavoritesService {
         $id = 0;
         // Loop over all favorite entries
         foreach($data['features'] as $value) {
-            $this->currentFavorite = [
+            $currentFavorite = [
                 "id"=>$id,
 				'isDeletable' => $file->isUpdateable(),
 				//Saving maps information in the file
 				'isUpdateable' => $file->isUpdateable(),
 				'isShareable' => false,
+				'extensions' => [],
             ];
 
             // Read geometry
-            $this->currentFavorite['lng'] = floatval($value['geometry']['coordinates'][0]);
-            $this->currentFavorite['lat'] = floatval($value['geometry']['coordinates'][1]);
-            if(array_key_exists('Title', $value['properties'])) {
-                $this->currentFavorite['name'] = $value['properties']['Title'];
-            }
-            if(array_key_exists('Category', $value['properties'])) {
-                $this->currentFavorite['category'] = $value['properties']['Category'];
-            } else {
-                $this->currentFavorite['category'] = $this->l10n->t('Personal');
-            }
-            if(array_key_exists('Published', $value['properties'])) {
-                if (!is_numeric($value['properties']['Published'])){
-                    $time = new \DateTime($value['properties']['Published']);
-                    $time = $time->getTimestamp();
-                } else {
-                    $time = $value['properties']['Published'];
-                }
-                $this->currentFavorite['date_created'] = $time;
-            }
-            if(array_key_exists('Updated', $value['properties'])) {
-                if (!is_numeric($value['properties']['Updated'])){
-                    $time = new \DateTime($value['properties']['Updated']);
-                    $time = $time->getTimestamp();
-                } else {
-                    $time = $value['properties']['Updated'];
-                }
-                $this->currentFavorite['date_modified'] = $time;
-            }
+			$currentFavorite['lng'] = floatval($value['geometry']['coordinates'][0]);
+			$currentFavorite['lat'] = floatval($value['geometry']['coordinates'][1]);
+			foreach ($value['properties'] as $key => $v) {
+				if($key === 'Title') {
+					$currentFavorite['name'] = $value['properties']['Title'];
+				} else if($key === 'Published') {
+					if (!is_numeric($value['properties']['Published'])){
+						$time = new \DateTime($value['properties']['Published']);
+						$time = $time->getTimestamp();
+					} else {
+						$time = $value['properties']['Published'];
+					}
+					$currentFavorite['date_created'] = $time;
+				} else if($key === 'Updated') {
+					if (!is_numeric($value['properties']['Updated'])){
+						$time = new \DateTime($value['properties']['Updated']);
+						$time = $time->getTimestamp();
+					} else {
+						$time = $value['properties']['Updated'];
+					}
+					$currentFavorite['date_modified'] = $time;
+				} else if ($key === 'Category') {
+					$currentFavorite['category'] = $v;
+				} else if ($key === 'Comment') {
+					$currentFavorite['comment'] = $v;
+				} else {
+					$currentFavorite[$key] = $v;
+					$currentFavorite['extensions'][$key] = $v;
+				}
 
-            if(
-                array_key_exists('Location', $value['properties']) &&
-                array_key_exists('Address', $value['properties']['Location'])
-            ) {
-                $this->currentFavorite['comment'] = $value['properties']['Location']['Address'];
-            }
+
+			}
+			if(!array_key_exists('category', $currentFavorite)) {
+				$currentFavorite['category'] = $this->l10n->t('Personal');
+			}
+			if(!array_key_exists('comment', $currentFavorite)) {
+				$currentFavorite['comment'] = '';
+			}
+			if(
+				array_key_exists('Location', $value['properties']) &&
+				array_key_exists('Address', $value['properties']['Location'])
+			) {
+				$currentFavorite['comment'] = $currentFavorite['comment']."\n".$value['properties']['Location']['Address'];
+			}
 
             // Store this favorite
-            $favorites[] = $this->currentFavorite;
+            $favorites[] = $currentFavorite;
             $id++;
         }
 
@@ -405,7 +415,12 @@ class FavoritesService {
     }
 
     public function getFavoriteFromJSON($file, $id) {
-        return $this->getFavoritesFromJSON($file)[$id];
+		$favorites = $this->getFavoritesFromJSON($file);
+		if (array_key_exists($id,$favorites)) {
+			return $favorites[$id];
+		} else {
+			return null;
+		}
     }
 
 	private function addFavoriteToJSONData($data, $name, $lat, $lng, $category, $comment, $extensions, $nowTimeStamp) {
@@ -496,7 +511,7 @@ class FavoritesService {
                 "Category" => $category ?? $data['features'][$id]["properties"]["Category"],
                 "Published" => $createdTimeStamp,
                 "Updated" => $nowTimeStamp,
-                "Comment" => $comment ?? $data['features'][$id]["properties"]["Category"],
+                "Comment" => $comment ?? $data['features'][$id]["properties"]["Comment"],
             ]
         ];
         if (is_array($extensions)) {
@@ -510,10 +525,12 @@ class FavoritesService {
         $file->putContent(json_encode($data,JSON_PRETTY_PRINT));
     }
 
-    public function deleteFavoriteFromJSON($file, $id) {
+    public function deleteFavoriteFromJSON($file, $id): int {
         $data = json_decode($file->getContent(), true, 512);
+		$countBefore = count($data['features']);
         array_splice($data['features'], $id, 1);
         $file->putContent(json_encode($data,JSON_PRETTY_PRINT));
+		return $countBefore - count($data['features']);
     }
 
     public function deleteFavoritesFromJSON($file, $ids) {

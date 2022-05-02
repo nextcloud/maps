@@ -31,7 +31,6 @@ use OCP\AppFramework\Http\DataResponse;
 use OCP\IDateTimeZone;
 use OCP\IL10N;
 use OCP\IRequest;
-use function PHPUnit\Framework\isEmpty;
 
 class FavoritesController extends Controller {
 
@@ -129,7 +128,7 @@ class FavoritesController extends Controller {
                 return new DataResponse($favorite);
             } else {
                 $folders = $this->userfolder->getById($myMapId);
-				if(!isEmpty($folders) && $this->userfolder->getId() === $myMapId) {
+				if(!empty($folders) && $this->userfolder->getId() === $myMapId) {
 					$folders[] = $this->userfolder;
 				}
                 $folder = array_shift($folders);
@@ -164,7 +163,7 @@ class FavoritesController extends Controller {
 			return new DataResponse($favoritesAfter);
 		} else {
 			$folders = $this->userfolder->getById($myMapId);
-			if(!isEmpty($folders) && $this->userfolder->getId() === $myMapId) {
+			if(!empty($folders) && $this->userfolder->getId() === $myMapId) {
 				$folders[] = $this->userfolder;
 			}
 			$folder = array_shift($folders);

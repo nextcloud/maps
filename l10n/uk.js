@@ -7,6 +7,7 @@ OC.L10N.register(
     "Change color" : "Змінити колір",
     "Export" : "Експорт",
     "Delete" : "Вилучити",
+    "Delete all" : "Видалити все",
     "Import" : "Імпорт",
     "Rename" : "Перейменувати",
     "Delete share link" : "Вилучити посилання для спільного використання",

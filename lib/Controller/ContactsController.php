@@ -82,7 +82,22 @@ class ContactsController extends Controller {
                             'GEO' => $geo,
                             'GROUPS' => $c['CATEGORIES'] ?? null
                         ]);
-                    }
+                    } elseif (count($geo)>0) {
+						foreach ($geo as $g) {
+							array_push($result, [
+								'FN' => $c['FN'] ?? $this->N2FN($c['N']) ?? '???',
+								'URI' => $c['URI'],
+								'UID' => $c['UID'],
+								'ADR' => '',
+								'ADRTYPE' => '',
+								'HAS_PHOTO' => (isset($c['PHOTO']) && $c['PHOTO'] !== null),
+								'BOOKID' => $c['addressbook-key'],
+								'BOOKURI' => $addressBookUri,
+								'GEO' => $g,
+								'GROUPS' => $c['CATEGORIES'] ?? null
+							]);
+						}
+					}
                 }
                 // anyway try to get it from the address
                 $card = $this->cdBackend->getContact($c['addressbook-key'], $c['URI']);
@@ -288,11 +303,11 @@ class ContactsController extends Controller {
      * and delete corresponding entry in the DB
      * @NoAdminRequired
      */
-    public function deleteContactAddress($bookid, $uri, $uid, $adr) {
+    public function deleteContactAddress($bookid, $uri, $uid, $adr, $geo) {
         // vcard
         $card = $this->cdBackend->getContact($bookid, $uri);
         if ($card) {
-            $vcard = Reader::read($card['carddata']);;
+            $vcard = Reader::read($card['carddata']);
             //$bookId = $card['addressbookid'];
             if (!$this->addressBookIsReadOnly($bookid)) {
                 foreach ($vcard->children() as $property) {
@@ -302,7 +317,13 @@ class ContactsController extends Controller {
                             $vcard->remove($property);
                             break;
                         }
-                    }
+                    } elseif ($property->name === 'GEO') {
+						$cardAdr = $property->getValue();
+						if ($cardAdr === $geo) {
+							$vcard->remove($property);
+							break;
+						}
+					}
                 }
                 $this->cdBackend->updateCard($bookid, $uri, $vcard->serialize());
                 // no need to cleanup db here, it will be done when catching vcard change hook

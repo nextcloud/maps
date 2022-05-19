@@ -69,6 +69,7 @@ OC.L10N.register(
     "Track" : "足跡",
     "Favorite" : "我的最愛",
     "Sidebar" : "側邊欄",
+    "Shows cool information" : "顯示超酷的資訊",
     "Distance" : "距離",
     "Duration" : "歷時",
     "Moving time" : "移動時間",

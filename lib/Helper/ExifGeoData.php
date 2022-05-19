@@ -188,7 +188,7 @@ class ExifGeoData
      */
     public static function get(string $path) : ?ExifGeoData{
         try{
-            $data = static::get_exif_data_array($path);
+			$data = static::get_exif_data_array($path);
         }catch(\Throwable $e){
             $data = [];
         }

@@ -120,7 +120,7 @@ class TracksController extends Controller {
      */
     public function getTrackFileContent($id) {
         $track = $this->tracksService->getTrackFromDB($id);
-        $res = $this->userfolder->getById($track['file_id']);
+        $res = is_null($track) ? null : $this->userfolder->getById($track['file_id']);
         if (is_array($res) and count($res) > 0) {
             $trackFile = $res[0];
             if ($trackFile->getType() === \OCP\Files\FileInfo::TYPE_FILE) {

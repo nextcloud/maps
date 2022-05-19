@@ -125,19 +125,19 @@ class FavoritesController extends Controller {
 
 	/**
 	 * @NoAdminRequired
-	 * @param string $name
+	 * @param string|null $name
 	 * @param float $lat
 	 * @param float $lng
 	 * @param string|null $category
 	 * @param string|null $comment
-	 * @param array|null $extensions
+	 * @param string|null $extensions
 	 * @param int|null $myMapId
 	 * @return DataResponse
 	 * @throws NotFoundException
 	 * @throws \OCP\Files\InvalidPathException
 	 * @throws \OCP\Files\NotPermittedException
 	 */
-    public function addFavorite(string $name, float $lat, float $lng, ?string $category, ?string $comment, ?array $extensions, ?int $myMapId=null): DataResponse {
+    public function addFavorite(?string $name, float $lat, float $lng, ?string $category, ?string $comment, ?string $extensions, ?int $myMapId=null): DataResponse {
         if (is_numeric($lat) && is_numeric($lng)) {
             if (is_null($myMapId) || $myMapId === '') {
                 $favoriteId = $this->favoritesService->addFavoriteToDB($this->userId, $name, $lat, $lng, $category, $comment, $extensions);
@@ -208,17 +208,17 @@ class FavoritesController extends Controller {
 	/**
 	 * @NoAdminRequired
 	 * @param int $id
-	 * @param string $name
+	 * @param string|null $name
 	 * @param float $lat
 	 * @param float $lng
 	 * @param string|null $category
 	 * @param string|null $comment
-	 * @param array|null $extensions
+	 * @param string|null $extensions
 	 * @param int|null $myMapId
 	 * @return DataResponse
 	 * @throws \OCP\Files\NotPermittedException
 	 */
-    public function editFavorite(int $id, string $name, float $lat, float $lng, ?string $category, ?string $comment, ?array $extensions, ?int $myMapId=null): DataResponse {
+    public function editFavorite(int $id, ?string $name, float $lat, float $lng, ?string $category, ?string $comment, ?string $extensions, ?int $myMapId=null): DataResponse {
         if (is_null($myMapId) || $myMapId==='') {
             $favorite = $this->favoritesService->getFavoriteFromDB($id, $this->userId);
             if ($favorite !== null) {

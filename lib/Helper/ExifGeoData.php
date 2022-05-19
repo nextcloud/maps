@@ -99,10 +99,16 @@ class ExifGeoData
      */
     protected static function get_exif_data_array(string $path) : array{
         if( function_exists('exif_read_data') ) {
-            $data = @exif_read_data($path, null, true)['EXIF'];
-            if ($data && isset($data[self::LATITUDE]) && isset($data[self::LONGITUDE])) {
-                return $data;
-            }
+            $data = @exif_read_data($path, null, true);
+            if ($data && isset($data['EXIF']) && isset($data['EXIF'][self::LATITUDE]) && isset($data['EXIF'][self::LONGITUDE])) {
+                return $data['EXIF'];
+            } elseif ($data && isset($data['GPS']) && isset($data['GPS'][self::LATITUDE]) && isset($data['GPS'][self::LONGITUDE])) {
+				$d = $data['GPS'];
+				if (!isset($d[self::TIMESTAMP]) && isset($data['EXIF'][self::TIMESTAMP])) {
+					$d[self::TIMESTAMP] = $data['EXIF'][self::TIMESTAMP];
+				}
+				return $data['GPS'];
+			}
         }
         $data = new PelDataWindow(file_get_contents($path));
         if (PelJpeg::isValid($data)) {
@@ -254,7 +260,7 @@ class ExifGeoData
 		// optional
 		if (isset($this->exif_data[self::TIMESTAMP])) {
 			$t = $this->exif_data[self::TIMESTAMP];
-			$this->timestamp = is_string($t) ? $this->string2time($t) : is_int($t) ? $t : null;
+			$this->timestamp = is_string($t) ? $this->string2time($t) : ( is_int($t) ? $t : null );
 		}
     }
 

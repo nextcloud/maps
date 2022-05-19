@@ -130,7 +130,7 @@ class GeophotoService {
 	 * @param bool $respectNomediaAndNoimage
      * @return array with geodatas of all nonLocalizedPhotos
      */
-    public function getNonLocalizedFromDB (string $userId, bool $respectNomediaAndNoimage=true) {
+    public function getNonLocalizedFromDB (string $userId, bool $respectNomediaAndNoimage=true): array {
 		$ignoredPaths = $respectNomediaAndNoimage ? $this->getIgnoredPaths($userId) : [];
         $foo = $this->loadTimeorderedPointSets($userId);
         $photoEntities = $this->photoMapper->findAllNonLocalized($userId);
@@ -199,14 +199,12 @@ class GeophotoService {
 	/**
 	 * @return array
 	 */
-	private function getIgnoredPaths($userId){
+	private function getIgnoredPaths($userId): array {
 		$ignoredPaths = [];
 		$userFolder = $this->root->getUserFolder($userId);
 		$excludedNodes = $userFolder->search(new SearchQuery(
 			new SearchBinaryOperator(ISearchBinaryOperator::OPERATOR_AND, [
-				new SearchBinaryOperator( ISearchBinaryOperator::OPERATOR_NOT, [
-					new SearchComparison(ISearchComparison::COMPARE_EQUAL, 'mimetype', FileInfo::TYPE_FOLDER)
-				]),
+				new SearchComparison(ISearchComparison::COMPARE_EQUAL, 'mimetype', 'application/octet-stream'),
 				new SearchBinaryOperator(ISearchBinaryOperator::OPERATOR_OR, [
 					new SearchComparison(ISearchComparison::COMPARE_EQUAL, 'name', '.nomedia'),
 					new SearchComparison(ISearchComparison::COMPARE_EQUAL, 'name', '.noimage'),
@@ -224,10 +222,11 @@ class GeophotoService {
 
     /**
      * returns a array of locations for a given date
-     * @param $dateTaken
+     *
+     * @param $dateTaken int
      * @return array
      */
-    private function getLocationGuesses($dateTaken) {
+    private function getLocationGuesses(int $dateTaken): array {
         $locations = [];
         foreach (($this->timeorderedPointSets ?? []) as $timeordedPointSet) {
             $location = $this->getLocationFromSequenceOfPoints($dateTaken,$timeordedPointSet);
@@ -273,7 +272,7 @@ class GeophotoService {
      * @param $content
      * @return array
      */
-    private function getTracksFromGPX($content) {
+    private function getTracksFromGPX($content): array {
         $tracks = [];
         $gpx = simplexml_load_string($content);
         foreach ($gpx->trk as $trk) {
@@ -287,7 +286,7 @@ class GeophotoService {
      * @param $track
      * @return array
      */
-    private function getTimeorderdPointsFromTrack($track) {
+    private function getTimeorderdPointsFromTrack($track): array {
         $points = [];
         foreach ($track->trkseg as $seg) {
             foreach ($seg->trkpt as $pt) {
@@ -303,10 +302,10 @@ class GeophotoService {
     }
 
     /**
-     * @param $dateTaken date of the picture
+     * @param $dateTaken int timestamp of the picture
      * @param $points array sorted by keys timestamp => [lat, lng]
      */
-    private function getLocationFromSequenceOfPoints($dateTaken, $points) {
+    private function getLocationFromSequenceOfPoints(int $dateTaken, array $points): ?array {
         $foo = end($points);
         $end = key($points);
         $foo = reset($points);
@@ -335,7 +334,7 @@ class GeophotoService {
         }
     }
 
-    private function getPreviewEnabledMimetypes() {
+    private function getPreviewEnabledMimetypes(): array {
         $enabledMimeTypes = [];
         foreach (PhotofilesService::PHOTO_MIME_TYPES as $mimeType) {
             if ($this->preview->isMimeSupported($mimeType)) {

@@ -340,7 +340,7 @@ class FavoritesController extends Controller {
 		if (is_null($myMapId) || $myMapId==='') {
 			$share = $this->favoriteShareMapper->findByOwnerAndCategory($this->userId, $category);
 		} else {
-			$share = $this->favoriteShareMapper->findByMapIdAndCategory($myMapId, $category);
+			$share = $this->favoriteShareMapper->findByMapIdAndCategory($this->userId, $myMapId, $category);
 		}
 		$folders = $this->userfolder->getById($targetMapId);
 		$folder = array_shift($folders);

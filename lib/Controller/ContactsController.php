@@ -29,53 +29,53 @@ use \Sabre\VObject\Property\Text;
 use \Sabre\VObject\Reader;
 
 class ContactsController extends Controller {
-    private $userId;
-    private $logger;
-    private $contactsManager;
-    private $addressService;
-    private $dbconnection;
-    private $qb;
-    private $cdBackend;
-    private $avatarManager;
+	private $userId;
+	private $logger;
+	private $contactsManager;
+	private $addressService;
+	private $dbconnection;
+	private $qb;
+	private $cdBackend;
+	private $avatarManager;
 	private $root;
 
-    public function __construct($AppName, ILogger $logger, IRequest $request, IDBConnection $dbconnection,
-                                IManager $contactsManager, AddressService $addressService,
-                                $UserId, CardDavBackend $cdBackend, IAvatarManager $avatarManager, IRootFolder $root){
-        parent::__construct($AppName, $request);
-        $this->logger = $logger;
-        $this->userId = $UserId;
-        $this->avatarManager = $avatarManager;
-        $this->contactsManager = $contactsManager;
-        $this->addressService = $addressService;
-        $this->dbconnection = $dbconnection;
-        $this->qb = $dbconnection->getQueryBuilder();
-        $this->cdBackend = $cdBackend;
+	public function __construct($AppName, ILogger $logger, IRequest $request, IDBConnection $dbconnection,
+								IManager $contactsManager, AddressService $addressService,
+		$UserId, CardDavBackend $cdBackend, IAvatarManager $avatarManager, IRootFolder $root){
+		parent::__construct($AppName, $request);
+		$this->logger = $logger;
+		$this->userId = $UserId;
+		$this->avatarManager = $avatarManager;
+		$this->contactsManager = $contactsManager;
+		$this->addressService = $addressService;
+		$this->dbconnection = $dbconnection;
+		$this->qb = $dbconnection->getQueryBuilder();
+		$this->cdBackend = $cdBackend;
 		$this->root = $root;
-    }
+	}
 
-    /**
-     * get contacts with coordinates
-     * @NoAdminRequired
-     */
-    public function getContacts($myMapId=null) {
-        if (is_null($myMapId) || $myMapId === '') {
-            $contacts = $this->contactsManager->search('', ['GEO', 'ADR'], ['types' => false]);
-            $addressBooks = $this->contactsManager->getUserAddressBooks();
-            $result = [];
-            $userid = trim($this->userId);
-            foreach ($contacts as $c) {
-                $addressBookUri = $addressBooks[$c['addressbook-key']]->getUri();
-                $uid = trim($c['UID']);
-                // we don't give users, just contacts
-                if (strcmp($c['URI'], 'Database:' . $c['UID'] . '.vcf') !== 0 and
-                    strcmp($uid, $userid) !== 0
-                ) {
-                    // if the contact has a geo attibute use it
-                    if (key_exists('GEO')) {
-                        $geo = $c['GEO'];
-                        if (strlen($geo) > 1) {
-                            $result[] = [
+	/**
+	 * get contacts with coordinates
+	 * @NoAdminRequired
+	 */
+	public function getContacts($myMapId=null) {
+		if (is_null($myMapId) || $myMapId === '') {
+			$contacts = $this->contactsManager->search('', ['GEO', 'ADR'], ['types' => false]);
+			$addressBooks = $this->contactsManager->getUserAddressBooks();
+			$result = [];
+			$userid = trim($this->userId);
+			foreach ($contacts as $c) {
+				$addressBookUri = $addressBooks[$c['addressbook-key']]->getUri();
+				$uid = trim($c['UID']);
+				// we don't give users, just contacts
+				if (strcmp($c['URI'], 'Database:' . $c['UID'] . '.vcf') !== 0 and
+					strcmp($uid, $userid) !== 0
+				) {
+					// if the contact has a geo attibute use it
+					if (key_exists('GEO', $c)) {
+						$geo = $c['GEO'];
+						if (strlen($geo) > 1) {
+							$result[] = [
 								'FN' => $c['FN'] ?? $this->N2FN($c['N']) ?? '???',
 								'URI' => $c['URI'],
 								'UID' => $c['UID'],
@@ -89,41 +89,41 @@ class ContactsController extends Controller {
 								'isDeletable' => true,
 								'isUpdateable' => true,
 							];
-                        } elseif (count($geo)>0) {
-						foreach ($geo as $g) {
-							if (strlen($g) > 1) {
-								$result[] = [
-									'FN' => $c['FN'] ?? $this->N2FN($c['N']) ?? '???',
-									'URI' => $c['URI'],
-									'UID' => $c['UID'],
-									'ADR' => '',
-									'ADRTYPE' => '',
-									'HAS_PHOTO' => (isset($c['PHOTO']) && $c['PHOTO'] !== null),
-									'BOOKID' => $c['addressbook-key'],
-									'BOOKURI' => $addressBookUri,
-									'GEO' => $g,
-									'GROUPS' => $c['CATEGORIES'] ?? null,
-									'isDeletable' => true,
-									'isUpdateable' => true,
-								];
+						} elseif (count($geo)>0) {
+							foreach ($geo as $g) {
+								if (strlen($g) > 1) {
+									$result[] = [
+										'FN' => $c['FN'] ?? $this->N2FN($c['N']) ?? '???',
+										'URI' => $c['URI'],
+										'UID' => $c['UID'],
+										'ADR' => '',
+										'ADRTYPE' => '',
+										'HAS_PHOTO' => (isset($c['PHOTO']) && $c['PHOTO'] !== null),
+										'BOOKID' => $c['addressbook-key'],
+										'BOOKURI' => $addressBookUri,
+										'GEO' => $g,
+										'GROUPS' => $c['CATEGORIES'] ?? null,
+										'isDeletable' => true,
+										'isUpdateable' => true,
+									];
+								}
 							}
 						}
 					}
-                    }
-                    // anyway try to get it from the address
-                    $card = $this->cdBackend->getContact($c['addressbook-key'], $c['URI']);
-                    if ($card) {
-                        $vcard = Reader::read($card['carddata']);
-                        if (isset($vcard->ADR) && count($vcard->ADR) > 0) {
-                            foreach ($vcard->ADR as $adr) {
-                                $geo = $this->addressService->addressToGeo($adr->getValue(), $c['URI']);
-                                //var_dump($adr->parameters()['TYPE']->getValue());
-                                $adrtype = '';
-                                if (isset($adr->parameters()['TYPE'])) {
-                                    $adrtype = $adr->parameters()['TYPE']->getValue();
-                                }
-                                if (strlen($geo) > 1) {
-                                    $result[] = [
+					// anyway try to get it from the address
+					$card = $this->cdBackend->getContact($c['addressbook-key'], $c['URI']);
+					if ($card) {
+						$vcard = Reader::read($card['carddata']);
+						if (isset($vcard->ADR) && count($vcard->ADR) > 0) {
+							foreach ($vcard->ADR as $adr) {
+								$geo = $this->addressService->addressToGeo($adr->getValue(), $c['URI']);
+								//var_dump($adr->parameters()['TYPE']->getValue());
+								$adrtype = '';
+								if (isset($adr->parameters()['TYPE'])) {
+									$adrtype = $adr->parameters()['TYPE']->getValue();
+								}
+								if (strlen($geo) > 1) {
+									$result[] = [
 										'FN' => $c['FN'] ?? $this->N2FN($c['N']) ?? '???',
 										'URI' => $c['URI'],
 										'UID' => $c['UID'],
@@ -137,14 +137,14 @@ class ContactsController extends Controller {
 										'isDeletable' => true,
 										'isUpdateable' => true,
 									];
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-            return new DataResponse($result);
-        } else {
+								}
+							}
+						}
+					}
+				}
+			}
+			return new DataResponse($result);
+		} else {
 			//Fixme add contacts for my-maps
 			$result = [];
 			$userFolder = $this->root->getUserFolder($this->userId);
@@ -157,7 +157,7 @@ class ContactsController extends Controller {
 				return new DataResponse($result);
 			}
 			$files = $folder->search('.vcf');
-            foreach ($files as $file) {
+			foreach ($files as $file) {
 //				$cards = explode("END:VCARD\r\n", $file->getContent());
 				$cards = [$file->getContent()];
 				foreach ($cards as $card) {
@@ -189,9 +189,9 @@ class ContactsController extends Controller {
 					}
 				}
 			}
-            return new DataResponse($result);
-        }
-    }
+			return new DataResponse($result);
+		}
+	}
 
 	private function vCardToArray($file, $vcard, $geo, $adrtype=null, $adr=null, $fileId = null) {
 		$FNArray = $vcard->FN ? $vcard->FN->getJsonValue() : [];
@@ -225,57 +225,57 @@ class ContactsController extends Controller {
 		return $result;
 	}
 
-    private function N2FN(string $n) {
-        if ($n) {
-            $spl = explode($n, ';');
-            if (count($spl) >= 4) {
-                return $spl[3] + ' ' + $spl[1] + ' ' + $spl[0];
-            }
-            else {
-                return null;
-            }
-        }
-        else {
-            return null;
-        }
-    }
+	private function N2FN(string $n) {
+		if ($n) {
+			$spl = explode($n, ';');
+			if (count($spl) >= 4) {
+				return $spl[3] + ' ' + $spl[1] + ' ' + $spl[0];
+			}
+			else {
+				return null;
+			}
+		}
+		else {
+			return null;
+		}
+	}
 
-    /**
-     * get all contacts
-     * @NoAdminRequired
-     */
-    public function searchContacts(string $query = ''): DataResponse {
-        $contacts = $this->contactsManager->search($query, ['FN'], ['types'=>false]);
-        $booksReadOnly = $this->getAddressBooksReadOnly();
-        $addressBooks = $this->contactsManager->getUserAddressBooks();
-        $result = [];
-        $userid = trim($this->userId);
-        foreach ($contacts as $c) {
-            $uid = trim($c['UID']);
-            // we don't give users, just contacts
-            if (strcmp($c['URI'], 'Database:'.$c['UID'].'.vcf') !== 0 and
-                strcmp($uid, $userid) !== 0
-            ) {
-                $addressBookUri = $addressBooks[$c['addressbook-key']]->getUri();
-                array_push($result, [
-                    'FN' => $c['FN'] ?? $this->N2FN($c['N']) ?? '???',
-                    'URI' => $c['URI'],
-                    'UID' => $c['UID'],
-                    'BOOKID' => $c['addressbook-key'],
-                    'READONLY' => $booksReadOnly[$c['addressbook-key']],
-                    'BOOKURI' => $addressBookUri,
-                    'HAS_PHOTO' => (isset($c['PHOTO']) && $c['PHOTO'] !== null),
-                    'HAS_PHOTO2' => (isset($c['PHOTO']) && $c['PHOTO'] !== null && $c['PHOTO'] !== ''),
-                ]);
-            }
-        }
-        return new DataResponse($result);
-    }
+	/**
+	 * get all contacts
+	 * @NoAdminRequired
+	 */
+	public function searchContacts(string $query = ''): DataResponse {
+		$contacts = $this->contactsManager->search($query, ['FN'], ['types'=>false]);
+		$booksReadOnly = $this->getAddressBooksReadOnly();
+		$addressBooks = $this->contactsManager->getUserAddressBooks();
+		$result = [];
+		$userid = trim($this->userId);
+		foreach ($contacts as $c) {
+			$uid = trim($c['UID']);
+			// we don't give users, just contacts
+			if (strcmp($c['URI'], 'Database:'.$c['UID'].'.vcf') !== 0 and
+				strcmp($uid, $userid) !== 0
+			) {
+				$addressBookUri = $addressBooks[$c['addressbook-key']]->getUri();
+				array_push($result, [
+					'FN' => $c['FN'] ?? $this->N2FN($c['N']) ?? '???',
+					'URI' => $c['URI'],
+					'UID' => $c['UID'],
+					'BOOKID' => $c['addressbook-key'],
+					'READONLY' => $booksReadOnly[$c['addressbook-key']],
+					'BOOKURI' => $addressBookUri,
+					'HAS_PHOTO' => (isset($c['PHOTO']) && $c['PHOTO'] !== null),
+					'HAS_PHOTO2' => (isset($c['PHOTO']) && $c['PHOTO'] !== null && $c['PHOTO'] !== ''),
+				]);
+			}
+		}
+		return new DataResponse($result);
+	}
 
-    /**
-     * @NoAdminRequired
-     */
-    public function placeContact($bookid, $uri, $uid, $lat, $lng, $attraction, $house_number, $road, $postcode, $city, $state, $country, $type, $address_string=null, $fileId=null, $myMapId=null) {
+	/**
+	 * @NoAdminRequired
+	 */
+	public function placeContact($bookid, $uri, $uid, $lat, $lng, $attraction, $house_number, $road, $postcode, $city, $state, $country, $type, $address_string=null, $fileId=null, $myMapId=null) {
 		if (is_null($myMapId) || $myMapId === '') {
 			// do not edit 'user' contact even myself
 			if (strcmp($uri, 'Database:'.$uid.'.vcf') === 0 or
@@ -389,7 +389,7 @@ class ContactsController extends Controller {
 			}
 		}
 
-    }
+	}
 
 	/**
 	 * @NoAdminRequired
@@ -436,113 +436,113 @@ class ContactsController extends Controller {
 
 
 	private function addressBookIsReadOnly($bookid) {
-        $userBooks = $this->cdBackend->getAddressBooksForUser('principals/users/'.$this->userId);
-        foreach ($userBooks as $book) {
-            if ($book['id'] === $bookid) {
-                return (isset($book['{http://owncloud.org/ns}read-only']) and $book['{http://owncloud.org/ns}read-only']);
-            }
-        }
-        return true;
-    }
+		$userBooks = $this->cdBackend->getAddressBooksForUser('principals/users/'.$this->userId);
+		foreach ($userBooks as $book) {
+			if ($book['id'] === $bookid) {
+				return (isset($book['{http://owncloud.org/ns}read-only']) and $book['{http://owncloud.org/ns}read-only']);
+			}
+		}
+		return true;
+	}
 
-    private function getAddressBooksReadOnly() {
-        $booksReadOnly = [];
-        $userBooks = $this->cdBackend->getAddressBooksForUser('principals/users/'.$this->userId);
-        foreach ($userBooks as $book) {
-            $ro = (isset($book['{http://owncloud.org/ns}read-only']) and $book['{http://owncloud.org/ns}read-only']);
-            $booksReadOnly[$book['id']] = $ro;
-        }
-        return $booksReadOnly;
-    }
+	private function getAddressBooksReadOnly() {
+		$booksReadOnly = [];
+		$userBooks = $this->cdBackend->getAddressBooksForUser('principals/users/'.$this->userId);
+		foreach ($userBooks as $book) {
+			$ro = (isset($book['{http://owncloud.org/ns}read-only']) and $book['{http://owncloud.org/ns}read-only']);
+			$booksReadOnly[$book['id']] = $ro;
+		}
+		return $booksReadOnly;
+	}
 
-    private function setAddressCoordinates($lat, $lng, $adr, $uri) {
-        $qb = $this->qb;
-        $adr_norm = strtolower(preg_replace('/\s+/', '', $adr));
+	private function setAddressCoordinates($lat, $lng, $adr, $uri) {
+		$qb = $this->qb;
+		$adr_norm = strtolower(preg_replace('/\s+/', '', $adr));
 
-        $qb->select('id')
-             ->from('maps_address_geo')
-             ->where($qb->expr()->eq('adr_norm', $qb->createNamedParameter($adr_norm, IQueryBuilder::PARAM_STR)))
-             ->andWhere($qb->expr()->eq('object_uri', $qb->createNamedParameter($uri, IQueryBuilder::PARAM_STR)));
-        $req = $qb->execute();
-        $result = $req->fetchAll();
-        $req->closeCursor();
-        $qb = $qb->resetQueryParts();
-        if ($result and count($result) > 0) {
-            $id = $result[0]['id'];
-            $qb->update('maps_address_geo')
-                ->set('lat', $qb->createNamedParameter($lat, IQueryBuilder::PARAM_STR))
-                ->set('lng', $qb->createNamedParameter($lng, IQueryBuilder::PARAM_STR))
-                ->set('object_uri', $qb->createNamedParameter($uri, IQueryBuilder::PARAM_STR))
-                ->set('looked_up', $qb->createNamedParameter(true, IQueryBuilder::PARAM_BOOL))
-                ->where($qb->expr()->eq('id', $qb->createNamedParameter($id, IQueryBuilder::PARAM_STR)));
-            $req = $qb->execute();
-            $qb = $qb->resetQueryParts();
-        }
-        else {
-            $qb->insert('maps_address_geo')
-                ->values([
-                    'adr'=>$qb->createNamedParameter($adr, IQueryBuilder::PARAM_STR),
-                    'adr_norm'=>$qb->createNamedParameter($adr_norm, IQueryBuilder::PARAM_STR),
-                    'object_uri'=>$qb->createNamedParameter($uri, IQueryBuilder::PARAM_STR),
-                    'lat'=>$qb->createNamedParameter($lat, IQueryBuilder::PARAM_STR),
-                    'lng'=>$qb->createNamedParameter($lng, IQueryBuilder::PARAM_STR),
-                    'looked_up'=>$qb->createNamedParameter(true, IQueryBuilder::PARAM_BOOL),
-                ]);
-            $req = $qb->execute();
-            $id = $qb->getLastInsertId();
-            $qb = $qb->resetQueryParts();
-        }
-    }
+		$qb->select('id')
+			->from('maps_address_geo')
+			->where($qb->expr()->eq('adr_norm', $qb->createNamedParameter($adr_norm, IQueryBuilder::PARAM_STR)))
+			->andWhere($qb->expr()->eq('object_uri', $qb->createNamedParameter($uri, IQueryBuilder::PARAM_STR)));
+		$req = $qb->execute();
+		$result = $req->fetchAll();
+		$req->closeCursor();
+		$qb = $qb->resetQueryParts();
+		if ($result and count($result) > 0) {
+			$id = $result[0]['id'];
+			$qb->update('maps_address_geo')
+				->set('lat', $qb->createNamedParameter($lat, IQueryBuilder::PARAM_STR))
+				->set('lng', $qb->createNamedParameter($lng, IQueryBuilder::PARAM_STR))
+				->set('object_uri', $qb->createNamedParameter($uri, IQueryBuilder::PARAM_STR))
+				->set('looked_up', $qb->createNamedParameter(true, IQueryBuilder::PARAM_BOOL))
+				->where($qb->expr()->eq('id', $qb->createNamedParameter($id, IQueryBuilder::PARAM_STR)));
+			$req = $qb->execute();
+			$qb = $qb->resetQueryParts();
+		}
+		else {
+			$qb->insert('maps_address_geo')
+				->values([
+					'adr'=>$qb->createNamedParameter($adr, IQueryBuilder::PARAM_STR),
+					'adr_norm'=>$qb->createNamedParameter($adr_norm, IQueryBuilder::PARAM_STR),
+					'object_uri'=>$qb->createNamedParameter($uri, IQueryBuilder::PARAM_STR),
+					'lat'=>$qb->createNamedParameter($lat, IQueryBuilder::PARAM_STR),
+					'lng'=>$qb->createNamedParameter($lng, IQueryBuilder::PARAM_STR),
+					'looked_up'=>$qb->createNamedParameter(true, IQueryBuilder::PARAM_BOOL),
+				]);
+			$req = $qb->execute();
+			$id = $qb->getLastInsertId();
+			$qb = $qb->resetQueryParts();
+		}
+	}
 
-    /**
-     * get contacts with coordinates
-     * @NoAdminRequired
-     * @NoCSRFRequired
-     */
-    public function getContactLetterAvatar($name) {
-        $av = $this->avatarManager->getGuestAvatar($name);
-        $avatarContent = $av->getFile(64)->getContent();
-        return new DataDisplayResponse($avatarContent);
-    }
+	/**
+	 * get contacts with coordinates
+	 * @NoAdminRequired
+	 * @NoCSRFRequired
+	 */
+	public function getContactLetterAvatar($name) {
+		$av = $this->avatarManager->getGuestAvatar($name);
+		$avatarContent = $av->getFile(64)->getContent();
+		return new DataDisplayResponse($avatarContent);
+	}
 
-    /**
-     * removes the address from the vcard
-     * and delete corresponding entry in the DB
-     * @NoAdminRequired
-     */
-    public function deleteContactAddress($bookid, $uri, $uid, $adr, $geo, $fileId=null, $myMapId=null) {
+	/**
+	 * removes the address from the vcard
+	 * and delete corresponding entry in the DB
+	 * @NoAdminRequired
+	 */
+	public function deleteContactAddress($bookid, $uri, $uid, $adr, $geo, $fileId=null, $myMapId=null) {
 
-        // vcard
-        $card = $this->cdBackend->getContact($bookid, $uri);
-        if ($card) {
-            $vcard = Reader::read($card['carddata']);
-            //$bookId = $card['addressbookid'];
-            if (!$this->addressBookIsReadOnly($bookid)) {
-                foreach ($vcard->children() as $property) {
-                    if ($property->name === 'ADR') {
-                        $cardAdr = $property->getValue();
-                        if ($cardAdr === $adr) {
-                            $vcard->remove($property);
-                            break;
-                        }
-                    } elseif ($property->name === 'GEO') {
+		// vcard
+		$card = $this->cdBackend->getContact($bookid, $uri);
+		if ($card) {
+			$vcard = Reader::read($card['carddata']);
+			//$bookId = $card['addressbookid'];
+			if (!$this->addressBookIsReadOnly($bookid)) {
+				foreach ($vcard->children() as $property) {
+					if ($property->name === 'ADR') {
+						$cardAdr = $property->getValue();
+						if ($cardAdr === $adr) {
+							$vcard->remove($property);
+							break;
+						}
+					} elseif ($property->name === 'GEO') {
 						$cardAdr = $property->getValue();
 						if ($cardAdr === $geo) {
 							$vcard->remove($property);
 							break;
 						}
 					}
-                }
-                $this->cdBackend->updateCard($bookid, $uri, $vcard->serialize());
-                // no need to cleanup db here, it will be done when catching vcard change hook
-                return new DataResponse('DELETED');
-            }
-            else {
-                return new DataResponse('READONLY', 400);
-            }
-        }
-        else {
-            return new DataResponse('FAILED', 400);
-        }
-    }
+				}
+				$this->cdBackend->updateCard($bookid, $uri, $vcard->serialize());
+				// no need to cleanup db here, it will be done when catching vcard change hook
+				return new DataResponse('DELETED');
+			}
+			else {
+				return new DataResponse('READONLY', 400);
+			}
+		}
+		else {
+			return new DataResponse('FAILED', 400);
+		}
+	}
 }

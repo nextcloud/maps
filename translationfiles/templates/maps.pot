@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Nextcloud 3.14159\n"
 "Report-Msgid-Bugs-To: translations\\@example.com\n"
-"POT-Creation-Date: 2022-05-19 03:09+0000\n"
+"POT-Creation-Date: 2022-05-20 03:11+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -705,12 +705,12 @@ msgstr ""
 
 #. TRANSLATORS src/components/map/HistoryControl.vue:7
 #: /app/specialVueFakeDummyForL10nScript.js:254
-msgid "Cancel {action} (Ctrl+z)"
+msgid "Undo {action} (Ctrl+Z)"
 msgstr ""
 
 #. TRANSLATORS src/components/map/HistoryControl.vue:13
 #: /app/specialVueFakeDummyForL10nScript.js:256
-msgid "Redo {action} (Ctrl+Z)"
+msgid "Redo {action} (Ctrl+Shift+Z)"
 msgstr ""
 
 #. TRANSLATORS src/components/map/HistoryControl.vue:71

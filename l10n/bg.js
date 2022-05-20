@@ -107,8 +107,6 @@ OC.L10N.register(
     "Update" : "Обновяване",
     "Delete favorites" : "Изтриване на любими",
     "Zoom on bounds" : "Увеличение на границите",
-    "Cancel {action} (Ctrl+z)" : "Отказ на {action} (Ctrl+z)",
-    "Redo {action} (Ctrl+Z)" : "Повторение на {action} (Ctrl+Z)",
     "Move photo" : "Преместване на снимка",
     "Add favorite" : "Добавяне на любимо",
     "Edit favorite" : "Редактиране на любимо",

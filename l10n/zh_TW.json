@@ -105,8 +105,6 @@
     "Update" : "更新",
     "Delete favorites" : "刪除收藏",
     "Zoom on bounds" : "放大邊界",
-    "Cancel {action} (Ctrl+z)" : "取消 {action} (Ctrl+z)",
-    "Redo {action} (Ctrl+Z)" : "重做 {action} (Ctrl+Z)",
     "Move photo" : "移動照片",
     "Add favorite" : "新增收藏",
     "Edit favorite" : "編輯收藏",

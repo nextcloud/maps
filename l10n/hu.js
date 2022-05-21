@@ -107,6 +107,8 @@ OC.L10N.register(
     "Update" : "Frissítés",
     "Delete favorites" : "Kedvencek törlése",
     "Zoom on bounds" : "Nagyítás a keretre",
+    "Undo {action} (Ctrl+Z)" : "Visszavonás: {action} (Ctrl+Z)",
+    "Redo {action} (Ctrl+Shift+Z)" : "Mégis: {action} (Ctrl+Shift+Z)",
     "Move photo" : "Fénykép áthelyezése",
     "Add favorite" : "Kedvenc hozzáadása",
     "Edit favorite" : "Kedvenc szerkesztése",

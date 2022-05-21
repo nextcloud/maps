@@ -107,6 +107,8 @@ OC.L10N.register(
     "Update" : "Aktualizuj",
     "Delete favorites" : "Usuń ulubione",
     "Zoom on bounds" : "Powiększ granice",
+    "Undo {action} (Ctrl+Z)" : "Cofnij {action} (Ctrl+Z)",
+    "Redo {action} (Ctrl+Shift+Z)" : "Ponów {action} (Ctrl+Shift+Z)",
     "Move photo" : "Przenieś zdjęcie",
     "Add favorite" : "Dodaj do ulubionych",
     "Edit favorite" : "Edytuj ulubione",

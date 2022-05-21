@@ -107,6 +107,8 @@ OC.L10N.register(
     "Update" : "Aktualizovat",
     "Delete favorites" : "Smazat oblíbené",
     "Zoom on bounds" : "Přiblížit na obrys",
+    "Undo {action} (Ctrl+Z)" : "Zpět {action} (Ctrl+Z)",
+    "Redo {action} (Ctrl+Shift+Z)" : "Znovu {action} (Ctrl+Shift+Z)",
     "Move photo" : "Přesunout fotku",
     "Add favorite" : "Přidat oblíbené",
     "Edit favorite" : "Upravit oblíbené",

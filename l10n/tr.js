@@ -107,6 +107,8 @@ OC.L10N.register(
     "Update" : "Güncelle",
     "Delete favorites" : "Sık kullanılanları sil",
     "Zoom on bounds" : "Sınırlara yakınlaştır",
+    "Undo {action} (Ctrl+Z)" : "{action} işlemini geri al (Ctrl+Z)",
+    "Redo {action} (Ctrl+Shift+Z)" : "{action} işlemini yinele (Ctrl+Shift+Z)",
     "Move photo" : "Fotoğrafı taşıma",
     "Add favorite" : "Sık kullanılan ekleme",
     "Edit favorite" : "Sık kullanılanı düzenleme",

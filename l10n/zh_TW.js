@@ -107,6 +107,8 @@ OC.L10N.register(
     "Update" : "更新",
     "Delete favorites" : "刪除收藏",
     "Zoom on bounds" : "放大邊界",
+    "Undo {action} (Ctrl+Z)" : "取消動作 {action} (Ctrl+Z)",
+    "Redo {action} (Ctrl+Shift+Z)" : "重作 {action} (Ctrl+Shift+Z)",
     "Move photo" : "移動照片",
     "Add favorite" : "新增收藏",
     "Edit favorite" : "編輯收藏",

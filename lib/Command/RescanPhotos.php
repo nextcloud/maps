@@ -70,7 +70,7 @@ class RescanPhotos extends Command {
         $userId = $input->getArgument('user_id');
 		$inBackground = !$input->getOption('now');
         if ($userId === null) {
-            $this->userManager->callForSeenUsers(function (IUser $user) {
+            $this->userManager->callForSeenUsers(function (IUser $user) use ($inBackground) {
                 $this->rescanUserPhotos($user->getUID(), $inBackground);
             });
         } else {

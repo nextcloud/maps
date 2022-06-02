@@ -79,7 +79,7 @@ export default {
 		end: {
 			type: Number,
 			required: false,
-			default: moment.unix(),
+			default: moment().unix(),
 		},
 	},
 
@@ -113,7 +113,7 @@ export default {
 		},
 		lines() {
 			const trkSegments = []
-			if (this.track.metadata?.begin >= this.end || this.track.metadata?.end <= this.start) {
+			if (this.track.metadata?.begin >= this.end || (this.track.metadata?.end >= 0 && this.track.metadata?.end <= this.start)) {
 				return trkSegments
 			} else if (this.track.metadata?.begin >= this.start && this.track.metadata?.end <= this.end) {
 				this.track.data.tracks.forEach((trk) => {
@@ -129,8 +129,8 @@ export default {
 				this.track.data.tracks.forEach((trk) => {
 					trk.segments.forEach((segment) => {
 						const lastNullIndex = binSearch(segment.points, (p) => !p.timestamp)
-						const firstShownIndex = binSearch(segment.points, (p) => (p.timestamp || 0) < this.start) + 1
-						const lastShownIndex = binSearch(segment.points, (p) => (p.timestamp || 0) < this.end)
+						const firstShownIndex = binSearch(segment.points, (p) => (p.timestamp || -1) < this.start) + 1
+						const lastShownIndex = binSearch(segment.points, (p) => (p.timestamp || -1) < this.end)
 						const points = [
 							...segment.points.slice(0, lastNullIndex + 1),
 							...segment.points.slice(firstShownIndex, lastShownIndex + 1),

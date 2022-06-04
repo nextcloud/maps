@@ -18,6 +18,7 @@ OC.L10N.register(
     "OK" : "Гаразд",
     "Category" : "Категорія",
     "Comment" : "Коментар",
+    "Share this location" : "Поділіться цим розташуванням",
     "Route from here" : "Маршрут з цього місця",
     "Add route point" : "Додати точку на маршруті",
     "Route to here" : "Маршрут до цього місця",

@@ -20,6 +20,7 @@ use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Console\Input\InputOption;
 use OCP\IConfig;
 
 use OCA\Maps\Service\PhotofilesService;
@@ -51,7 +52,13 @@ class RescanPhotos extends Command {
                 'user_id',
                 InputArgument::OPTIONAL,
                 'Rescan photos GPS exif data for the given user'
-            );
+            )
+			->addOption(
+				'now',
+				null,
+				InputOption::VALUE_NONE,
+				'Dot the rescan now and not as background jobs. Doing it now might run out of memory.'
+			);
     }
 
     protected function execute(InputInterface $input, OutputInterface $output) {
@@ -61,23 +68,24 @@ class RescanPhotos extends Command {
         }
         $this->output = $output;
         $userId = $input->getArgument('user_id');
+		$inBackground = !$input->getOption('now');
         if ($userId === null) {
-            $this->userManager->callForSeenUsers(function (IUser $user) {
-                $this->rescanUserPhotos($user->getUID());
+            $this->userManager->callForSeenUsers(function (IUser $user) use ($inBackground) {
+                $this->rescanUserPhotos($user->getUID(), $inBackground);
             });
         } else {
             $user = $this->userManager->get($userId);
             if ($user !== null) {
-                $this->rescanUserPhotos($userId);
+                $this->rescanUserPhotos($userId, $inBackground);
             }
         }
         return 0;
     }
 
-    private function rescanUserPhotos($userId) {
+    private function rescanUserPhotos($userId, $inBackground=true) {
         echo '======== User '.$userId.' ========'."\n";
         $c = 1;
-        foreach ($this->photofilesService->rescan($userId) as $path) {
+        foreach ($this->photofilesService->rescan($userId, $inBackground) as $path) {
             echo '['.$c.'] Photo "'.$path.'" added'."\n";
             $c++;
         }

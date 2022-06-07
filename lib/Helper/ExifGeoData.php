@@ -21,6 +21,13 @@ use lsolesen\pel\PelJpeg;
 use lsolesen\pel\PelTag;
 use lsolesen\pel\PelTiff;
 
+//PHP 7 polyfill
+if (!function_exists('str_contains')) {
+	function str_contains(string $haystack, string $needle): bool {
+		return '' === $needle || false !== strpos($haystack, $needle);
+	}
+}
+
 /**
  * Class ExifGeoData
  *
@@ -100,9 +107,15 @@ class ExifGeoData
     protected static function get_exif_data_array(string $path) : array{
         if( function_exists('exif_read_data') ) {
             $data = @exif_read_data($path, null, true);
-            if ($data && isset($data[self::LATITUDE]) && isset($data[self::LONGITUDE])) {
-                return $data;
-            }
+            if ($data && isset($data['EXIF']) && isset($data['EXIF'][self::LATITUDE]) && isset($data['EXIF'][self::LONGITUDE])) {
+                return $data['EXIF'];
+            } elseif ($data && isset($data['GPS']) && isset($data['GPS'][self::LATITUDE]) && isset($data['GPS'][self::LONGITUDE])) {
+				$d = $data['GPS'];
+				if (!isset($d[self::TIMESTAMP]) && isset($data['EXIF'][self::TIMESTAMP])) {
+					$d[self::TIMESTAMP] = $data['EXIF'][self::TIMESTAMP];
+				}
+				return $d;
+			}
         }
         $data = new PelDataWindow(file_get_contents($path));
         if (PelJpeg::isValid($data)) {
@@ -137,7 +150,7 @@ class ExifGeoData
         }
         $exif = [
             # self::TIMESTAMP => $pelDateTimeOriginal->getValue(PelEntryTime::EXIF_STRING) // for old pel 0.9.6 and above
-			self::TIMESTAMP => $pelDateTimeOriginal->getValue() // for new pel >= 0.9.11
+			self::TIMESTAMP => (int) $pelDateTimeOriginal->getValue() // for new pel >= 0.9.11
         ];
         $pelIfdGPS = $pelIfd0->getSubIfd(PelIfd::GPS);
         if (!is_null($pelIfdGPS) && !is_null($pelIfdGPS->getEntry(PelTag::GPS_LATITUDE )) && !is_null( $pelIfdGPS->getEntry(PelTag::GPS_LONGITUDE))) {
@@ -206,17 +219,17 @@ class ExifGeoData
     public function validate( $invalidate_zero_iland = false )
     {
         if (!$this->exif_data) {
-            throw new ExifDataException('No exif_data found', 1);
+            throw new ExifDataInvalidException('No exif_data found', 1);
         }
         if (!is_array($this->exif_data)) {
-            throw new ExifDataException('exif_data is not an array', 2);
+            throw new ExifDataInvalidException('exif_data is not an array', 2);
         }
 
         if (!isset($this->exif_data[self::LATITUDE]) || !isset($this->exif_data[self::LONGITUDE])) {
-            throw new ExifDataException('Latitude and/or Longitude are missing from exif data', 3);
+            throw new ExifDataNoLocationException('Latitude and/or Longitude are missing from exif data', 1);
         }
         if( $invalidate_zero_iland  && $this->isZeroIsland() ){
-            throw new ExifDataException('Zero island is not valid', 4);
+            throw new ExifDataNoLocationException('Zero island is not valid', 2);
         }
     }
 
@@ -229,7 +242,7 @@ class ExifGeoData
             try {
                 $this->validate();
                 $this->is_valid = true;
-            } catch (\Throwable $e) {
+            } catch (\Throwable  $e) {
                 $this->is_valid = false;
             }
         }
@@ -241,7 +254,7 @@ class ExifGeoData
      */
     private function parse()
     {
-        if ($this->isValid() && null === $this->latitude && null === $this->longitude && null === $this->timestamp) {
+        if ($this->isValid() && (null === $this->latitude || null === $this->longitude)) {
             $this->longitude = $this->geo2float($this->exif_data[self::LONGITUDE]);
             if( isset($this->exif_data[self::LONGITUDE_REF]) && 'W' === $this->exif_data[self::LONGITUDE_REF] ){
                 $this->longitude*=-1;
@@ -250,11 +263,12 @@ class ExifGeoData
             if( isset($this->exif_data[self::LATITUDE_REF]) && 'S' === $this->exif_data[self::LATITUDE_REF] ){
                 $this->latitude*=-1;
             }
-            // optional
-            if (isset($this->exif_data[self::TIMESTAMP])) {
-                $this->timestamp = $this->string2time($this->exif_data[self::TIMESTAMP]);
-            }
         }
+		// optional
+		if (isset($this->exif_data[self::TIMESTAMP])) {
+			$t = $this->exif_data[self::TIMESTAMP];
+			$this->timestamp = is_string($t) ? $this->string2time($t) : ( is_int($t) ? $t : null );
+		}
     }
 
     /**
@@ -299,7 +313,7 @@ class ExifGeoData
     {
         $result = null;
         $value = trim($value, '/');
-        if (false !== strpos('/', $value)) {
+        if (str_contains($value, '/')) {
             $value = array_map('intval', explode('/', $value));
             if (0 != $value[1]) {
                 $result = $value[0] / $value[1];

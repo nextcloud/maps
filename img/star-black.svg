@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Svg Vector Icons : http://www.onlinewebfonts.com/icon -->
+
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   version="1.1"
+   x="0px"
+   y="0px"
+   viewBox="0 0 1000 1000"
+   enable-background="new 0 0 1000 1000"
+   xml:space="preserve"
+   id="svg10"
+   sodipodi:docname="star-black.svg"
+   inkscape:version="0.92.5 (2060ec1f9f, 2020-04-08)"><defs
+   id="defs14" /><sodipodi:namedview
+   pagecolor="#ffffff"
+   bordercolor="#666666"
+   borderopacity="1"
+   objecttolerance="10"
+   gridtolerance="10"
+   guidetolerance="10"
+   inkscape:pageopacity="0"
+   inkscape:pageshadow="2"
+   inkscape:window-width="1920"
+   inkscape:window-height="1051"
+   id="namedview12"
+   showgrid="false"
+   inkscape:zoom="0.6675088"
+   inkscape:cx="-379.79741"
+   inkscape:cy="551.15108"
+   inkscape:window-x="0"
+   inkscape:window-y="-37"
+   inkscape:window-maximized="1"
+   inkscape:current-layer="svg10" />
+<metadata
+   id="metadata2"> Svg Vector Icons : http://www.onlinewebfonts.com/icon <rdf:RDF><cc:Work
+     rdf:about=""><dc:format>image/svg+xml</dc:format><dc:type
+       rdf:resource="http://purl.org/dc/dcmitype/StillImage" /><dc:title /></cc:Work></rdf:RDF></metadata>
+
+<path
+   sodipodi:type="star"
+   style="opacity:1;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:0;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+   id="path833"
+   sodipodi:sides="5"
+   sodipodi:cx="497.37173"
+   sodipodi:cy="487.64722"
+   sodipodi:r1="372.51102"
+   sodipodi:r2="174.56351"
+   sodipodi:arg1="0.9482093"
+   sodipodi:arg2="1.5765278"
+   inkscape:flatsided="false"
+   inkscape:rounded="0"
+   inkscape:randomized="0"
+   d="M 714.59734,790.26495 496.37123,662.20786 276.69157,787.75507 331.04553,540.63789 143.75829,370.50633 395.57699,345.83661 499.50677,115.14232 600.78533,347.01277 852.30471,374.56741 663.0796,542.54095 Z"
+   inkscape:transform-center-x="-0.59699026"
+   inkscape:transform-center-y="-31.376723"
+   transform="matrix(0.90485473,0,0,0.89792529,52.628718,68.681207)" /></svg>

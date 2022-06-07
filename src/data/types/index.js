@@ -3,7 +3,7 @@
  *
  * @author Paul Schwörer <hello@paulschwoerer.de>
  *
- * @license GNU AGPL version 3 or any later version
+ * @license AGPL-3.0-or-later
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
@@ -20,7 +20,7 @@
  *
  */
 
-import VueTypes from 'vue-types'
+import * as VueTypes from 'vue-types'
 
 const LatLng = VueTypes.shape({
 	lat: VueTypes.number,
@@ -29,10 +29,10 @@ const LatLng = VueTypes.shape({
 
 const Favorite = VueTypes.shape({
 	id: VueTypes.number,
-	name: VueTypes.string,
-	comment: VueTypes.string,
+	name: VueTypes.oneOfType([VueTypes.string, null]),
+	comment: VueTypes.oneOfType([VueTypes.string, null]),
 	category: VueTypes.string,
-	extensions: VueTypes.string,
+	extensions: VueTypes.oneOfType([VueTypes.string, null]),
 	date_created: VueTypes.number,
 	date_modified: VueTypes.number,
 	lat: VueTypes.number,

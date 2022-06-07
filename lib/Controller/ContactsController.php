@@ -71,24 +71,39 @@ class ContactsController extends Controller {
                     $geo = $c['GEO'];
                     if (strlen($geo) > 1) {
                         array_push($result, [
-                            'FN'=>$c['FN'] ?? $this->N2FN($c['N']) ?? '???',
-                            'URI'=>$c['URI'],
-                            'UID'=>$c['UID'],
-                            'ADR'=>'',
-                            'ADRTYPE'=>'',
-                            'HAS_PHOTO'=>(isset($c['PHOTO']) and $c['PHOTO'] !== null),
-                            'BOOKID'=>$c['addressbook-key'],
-                            'BOOKURI'=>$addressBookUri,
-                            'GEO'=>$geo,
-                            'GROUPS'=>$c['CATEGORIES'] ?? null
+                            'FN' => $c['FN'] ?? $this->N2FN($c['N']) ?? '???',
+                            'URI' => $c['URI'],
+                            'UID' => $c['UID'],
+                            'ADR' => '',
+                            'ADRTYPE' => '',
+                            'HAS_PHOTO' => (isset($c['PHOTO']) && $c['PHOTO'] !== null),
+                            'BOOKID' => $c['addressbook-key'],
+                            'BOOKURI' => $addressBookUri,
+                            'GEO' => $geo,
+                            'GROUPS' => $c['CATEGORIES'] ?? null
                         ]);
-                    }
+                    } elseif (count($geo)>0) {
+						foreach ($geo as $g) {
+							array_push($result, [
+								'FN' => $c['FN'] ?? $this->N2FN($c['N']) ?? '???',
+								'URI' => $c['URI'],
+								'UID' => $c['UID'],
+								'ADR' => '',
+								'ADRTYPE' => '',
+								'HAS_PHOTO' => (isset($c['PHOTO']) && $c['PHOTO'] !== null),
+								'BOOKID' => $c['addressbook-key'],
+								'BOOKURI' => $addressBookUri,
+								'GEO' => $g,
+								'GROUPS' => $c['CATEGORIES'] ?? null
+							]);
+						}
+					}
                 }
                 // anyway try to get it from the address
                 $card = $this->cdBackend->getContact($c['addressbook-key'], $c['URI']);
                 if ($card) {
                     $vcard = Reader::read($card['carddata']);
-                    if (isset($vcard->ADR) and count($vcard->ADR) > 0) {
+                    if (isset($vcard->ADR) && count($vcard->ADR) > 0) {
                         foreach ($vcard->ADR as $adr) {
                             $geo = $this->addressService->addressToGeo($adr->getValue(), $c['URI']);
                             //var_dump($adr->parameters()['TYPE']->getValue());
@@ -98,16 +113,16 @@ class ContactsController extends Controller {
                             }
                             if (strlen($geo) > 1) {
                                 array_push($result, [
-                                    'FN'=>$c['FN'] ?? $this->N2FN($c['N']) ?? '???',
-                                    'URI'=>$c['URI'],
-                                    'UID'=>$c['UID'],
-                                    'ADR'=>$adr->getValue(),
-                                    'ADRTYPE'=>$adrtype,
-                                    'HAS_PHOTO'=>(isset($c['PHOTO']) and $c['PHOTO'] !== null),
-                                    'BOOKID'=>$c['addressbook-key'],
-                                    'BOOKURI'=>$addressBookUri,
-                                    'GEO'=>$geo,
-                                    'GROUPS'=>$c['CATEGORIES'] ?? null
+                                    'FN' => $c['FN'] ?? $this->N2FN($c['N']) ?? '???',
+                                    'URI' => $c['URI'],
+                                    'UID' => $c['UID'],
+                                    'ADR' => $adr->getValue(),
+                                    'ADRTYPE' => $adrtype,
+                                    'HAS_PHOTO' => (isset($c['PHOTO']) && $c['PHOTO'] !== null),
+                                    'BOOKID' => $c['addressbook-key'],
+                                    'BOOKURI' => $addressBookUri,
+                                    'GEO' => $geo,
+                                    'GROUPS' => $c['CATEGORIES'] ?? null,
                                 ]);
                             }
                         }
@@ -137,9 +152,10 @@ class ContactsController extends Controller {
      * get all contacts
      * @NoAdminRequired
      */
-    public function getAllContacts() {
-        $contacts = $this->contactsManager->search('', ['FN'], ['types'=>false]);
+    public function searchContacts(string $query = ''): DataResponse {
+        $contacts = $this->contactsManager->search($query, ['FN'], ['types'=>false]);
         $booksReadOnly = $this->getAddressBooksReadOnly();
+        $addressBooks = $this->contactsManager->getUserAddressBooks();
         $result = [];
         $userid = trim($this->userId);
         foreach ($contacts as $c) {
@@ -148,12 +164,16 @@ class ContactsController extends Controller {
             if (strcmp($c['URI'], 'Database:'.$c['UID'].'.vcf') !== 0 and
                 strcmp($uid, $userid) !== 0
             ) {
+                $addressBookUri = $addressBooks[$c['addressbook-key']]->getUri();
                 array_push($result, [
-                    'FN'=>$c['FN'] ?? $this->N2FN($c['N']) ?? '???',
-                    'URI'=>$c['URI'],
-                    'UID'=>$c['UID'],
-                    'BOOKID'=>$c['addressbook-key'],
-                    'READONLY'=>$booksReadOnly[$c['addressbook-key']]
+                    'FN' => $c['FN'] ?? $this->N2FN($c['N']) ?? '???',
+                    'URI' => $c['URI'],
+                    'UID' => $c['UID'],
+                    'BOOKID' => $c['addressbook-key'],
+                    'READONLY' => $booksReadOnly[$c['addressbook-key']],
+                    'BOOKURI' => $addressBookUri,
+                    'HAS_PHOTO' => (isset($c['PHOTO']) && $c['PHOTO'] !== null),
+                    'HAS_PHOTO2' => (isset($c['PHOTO']) && $c['PHOTO'] !== null && $c['PHOTO'] !== ''),
                 ]);
             }
         }
@@ -283,11 +303,11 @@ class ContactsController extends Controller {
      * and delete corresponding entry in the DB
      * @NoAdminRequired
      */
-    public function deleteContactAddress($bookid, $uri, $uid, $adr) {
+    public function deleteContactAddress($bookid, $uri, $uid, $adr, $geo) {
         // vcard
         $card = $this->cdBackend->getContact($bookid, $uri);
         if ($card) {
-            $vcard = Reader::read($card['carddata']);;
+            $vcard = Reader::read($card['carddata']);
             //$bookId = $card['addressbookid'];
             if (!$this->addressBookIsReadOnly($bookid)) {
                 foreach ($vcard->children() as $property) {
@@ -297,7 +317,13 @@ class ContactsController extends Controller {
                             $vcard->remove($property);
                             break;
                         }
-                    }
+                    } elseif ($property->name === 'GEO') {
+						$cardAdr = $property->getValue();
+						if ($cardAdr === $geo) {
+							$vcard->remove($property);
+							break;
+						}
+					}
                 }
                 $this->cdBackend->updateCard($bookid, $uri, $vcard->serialize());
                 // no need to cleanup db here, it will be done when catching vcard change hook

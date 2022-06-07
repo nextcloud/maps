@@ -2,8 +2,9 @@
  * @copyright Copyright (c) 2019, Paul Schwörer <hello@paulschwoerer.de>
  *
  * @author Paul Schwörer <hello@paulschwoerer.de>
+ * @author Arne Hamann <git@arne.email>
  *
- * @license GNU AGPL version 3 or any later version
+ * @license AGPL-3.0-or-later
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
@@ -19,6 +20,10 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
+
+import { generateUrl } from '@nextcloud/router'
+import { showInfo } from '@nextcloud/dialogs'
+import axios from '@nextcloud/axios'
 
 export const getPublicShareCategory = () => {
 	const el = document.querySelector('.header-appname')
@@ -43,7 +48,7 @@ export const getCurrentPublicShareToken = () => {
 
 export const publicApiRequest = (slug, method, data = null) => {
 	return request(
-		OC.generateUrl(
+		generateUrl(
 			`/apps/maps/api/1.0/public/${getCurrentPublicShareToken()}/${slug}`
 		),
 		method,
@@ -53,7 +58,7 @@ export const publicApiRequest = (slug, method, data = null) => {
 
 export const apiRequest = (slug, method, data = null) => {
 	return request(
-		OC.generateUrl(`apps/maps/api/1.0/${getCurrentPublicShareToken()}/${slug}`),
+		generateUrl(`apps/maps/api/1.0/${getCurrentPublicShareToken()}/${slug}`),
 		method,
 		data
 	)
@@ -61,19 +66,33 @@ export const apiRequest = (slug, method, data = null) => {
 
 // TODO: Use axios or similar instead of jQuery ajax
 export const request = (url, method, data = null) => {
-	return new Promise((resolve, reject) => {
-		$.ajax({
-			url: url,
-			type: method.toUpperCase(),
-			data,
-			async: true,
-		})
-			.done(resolve)
-			.fail(reject)
-	})
+	const upMethod = method.toUpperCase()
+	if (upMethod === 'GET') {
+		return axios.get(url, { params: data })
+	} else if (upMethod === 'POST') {
+		return axios.post(url, data)
+	} else if (upMethod === 'PUT') {
+		return axios.put(url, data)
+	} else if (upMethod === 'DELETE') {
+		return axios.delete(url, data)
+	}
 }
 
-// TODO: Use non-deprecated function
 export const showNotification = message => {
-	OC.Notification.showTemporary(t('maps', message))
+	showInfo(t('maps', message))
+}
+
+// Binary search for last valid test in sortedArray.
+// Returns index of last element where test is true
+// array is assumed to be sorted by test starting with true.
+export const binSearch = (sortedArray, test) => {
+	let lo = 0; let hi = sortedArray.length
+	while (lo < hi) {
+		const mi = (lo + hi) >> 1
+		const t = test(sortedArray[mi])
+		if (t && (mi === sortedArray.length - 1 || !test(sortedArray[mi + 1]))) return mi
+		else if (t) lo = mi + 1
+		else hi = mi
+	}
+	return -1
 }

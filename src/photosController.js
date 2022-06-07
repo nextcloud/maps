@@ -454,7 +454,7 @@ PhotosController.prototype = {
         $('.leaflet-container, .mapboxgl-map').css('cursor', 'crosshair');
         this.map.on('click', this.movePhotoClickMap);
         this.map.clickpopup = true;
-        OC.Notification.showTemporary(t('maps', 'Click on the map to move the photo, press ESC to cancel'));
+        OC.Notification.showTemporary(t('maps', 'Click on the map to move the photo, press Esc to cancel'));
     },
 
     leaveMovePhotoMode: function () {

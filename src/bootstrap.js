@@ -3,7 +3,7 @@
  *
  * @author Paul Schwörer <hello@paulschwoerer.de>
  *
- * @license GNU AGPL version 3 or any later version
+ * @license AGPL-3.0-or-later
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
@@ -28,15 +28,15 @@ Vue.prototype.n = window.n
 Vue.prototype.OC = window.OC
 Vue.prototype.OCA = window.OCA
 
-if (process && process.env.NODE_ENV === 'development') {
+/* if (process && process.env.NODE_ENV === 'development') {
 	Vue.config.devtools = true
-}
+} */
 
-// this part resolve an issue where the markers would not appear
+// this is needed to get default marker icons
 delete Icon.Default.prototype._getIconUrl
 
 Icon.Default.mergeOptions({
-	iconRetinaUrl: require('leaflet/dist/images/marker-icon-2x.png'),
-	iconUrl: require('leaflet/dist/images/marker-icon.png'),
-	shadowUrl: require('leaflet/dist/images/marker-shadow.png'),
+	iconRetinaUrl: require('leaflet/dist/images/marker-icon-2x.png').default,
+	iconUrl: require('leaflet/dist/images/marker-icon.png').default,
+	shadowUrl: require('leaflet/dist/images/marker-shadow.png').default,
 })

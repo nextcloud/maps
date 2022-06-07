@@ -51,12 +51,12 @@ class PageController extends Controller {
      * @NoCSRFRequired
      */
     public function index(): TemplateResponse {
-        $this->eventDispatcher->dispatch(LoadSidebar::class, new LoadSidebar());
+//        $this->eventDispatcher->dispatch(LoadSidebar::class, new LoadSidebar());
         $this->eventDispatcher->dispatch(LoadViewer::class, new LoadViewer());
 
         $params = array('user' => $this->userId);
         $this->initialStateService->provideInitialState($this->appName, 'photos', $this->config->getAppValue('photos', 'enabled', 'no') === 'yes');
-        $response = new TemplateResponse('maps', 'index', $params);
+        $response = new TemplateResponse('maps', 'main', $params);
 
         $this->addCsp($response);
 
@@ -112,7 +112,9 @@ class PageController extends Controller {
             $csp->addAllowedConnectDomain('https://events.mapbox.com');
             $csp->addAllowedConnectDomain('https://graphhopper.com');
 
-            $csp->addAllowedChildSrcDomain("blob:");
+            $csp->addAllowedChildSrcDomain('blob:');
+            $csp->addAllowedWorkerSrcDomain('blob:');
+            $csp->addAllowedScriptDomain('https://unpkg.com');
             // allow connections to custom routing engines
             $urlKeys = [
                 'osrmBikeURL',

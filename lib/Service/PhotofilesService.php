@@ -13,7 +13,8 @@
 namespace OCA\Maps\Service;
 
 use lsolesen\pel\PelEntryTime;
-use OCA\Maps\Helper\ExifDataException;
+use OCA\Maps\Helper\ExifDataInvalidException;
+use OCA\Maps\Helper\ExifDataNoLocationException;
 use OCA\Maps\Helper\ExifGeoData;
 use OCP\Files\FileInfo;
 use OCP\IL10N;
@@ -64,21 +65,34 @@ class PhotofilesService {
         $this->jobList = $jobList;
     }
 
-    public function rescan($userId) {
+    public function rescan($userId, $inBackground=true) {
         $userFolder = $this->root->getUserFolder($userId);
         $photos = $this->gatherPhotoFiles($userFolder, true);
         $this->photoMapper->deleteAll($userId);
         foreach ($photos as $photo) {
-            $this->addPhoto($photo, $userId);
+			if ($inBackground) {
+				$this->addPhoto($photo, $userId);
+			} else {
+				$this->addPhotoNow($photo, $userId);
+			}
             yield $photo->getPath();
         }
     }
+
+	public function checkForChanges($userId) {
+		$userFolder = $this->root->getUserFolder($userId);
+		$photos = $this->gatherPhotoFiles($userFolder, true);
+		$this->photoMapper->findAll($userId);
+		foreach ($photos as $photo) {
+			$this->addPhoto($photo, $userId);
+			yield $photo->getPath();
+		}
+	}
 
     // add the file for its owner and users that have access
     // check if it's already in DB before adding
     public function addByFile(Node $file) {
         $ownerId = $file->getOwner()->getUID();
-        $userFolder = $this->root->getUserFolder($ownerId);
         if ($this->isPhoto($file)) {
             $this->addPhoto($file, $ownerId);
             // is the file accessible to other users ?
@@ -108,8 +122,7 @@ class PhotofilesService {
     }
 
     public function addByFolderIdUserId($folderId, $userId) {
-        $userFolder = $this->root->getUserFolder($userId);
-        $folders = $userFolder->getById($folderId);
+        $folders =  $this->root->getById($folderId);
 		if (empty($folders)) {
 			return;
 		}
@@ -187,7 +200,7 @@ class PhotofilesService {
     }
 
     public function setPhotosFilesCoords($userId, $paths, $lats, $lngs, $directory) {
-        if ($directory === 'true') {
+        if ($directory) {
             return $this->setDirectoriesCoords($userId, $paths, $lats, $lngs);
         }
         else {
@@ -199,7 +212,7 @@ class PhotofilesService {
         $lat = $lats[0] ?? 0;
         $lng = $lngs[0] ?? 0;
         $userFolder = $this->root->getUserFolder($userId);
-        $nbDone = 0;
+        $done = [];
         foreach ($paths as $dirPath) {
             $cleanDirPath = str_replace(array('../', '..\\'), '',  $dirPath);
             if ($userFolder->nodeExists($cleanDirPath)) {
@@ -207,54 +220,75 @@ class PhotofilesService {
                 if ($dir->getType() === FileInfo::TYPE_FOLDER) {
                     $nodes = $dir->getDirectoryListing();
                     foreach($nodes as $node) {
-                        if ($this->isPhoto($node) and $node->isUpdateable()) {
+                        if ($this->isPhoto($node) && $node->isUpdateable()) {
+                            $photo = $this->photoMapper->findByFileId($userId, $node->getId());
+                            $done[] = [
+                                'path' => preg_replace('/^files/', '', $node->getInternalPath()),
+                                'lat' => $lat,
+                                'lng' => $lng,
+                                'oldLat' => $photo ? $photo->getLat() : null,
+                                'oldLng' => $photo ? $photo->getLng() : null,
+                            ];
                             $this->setExifCoords($node, $lat, $lng);
                             $this->updateByFileNow($node);
-                            $nbDone++;
                         }
                     }
                 }
             }
         }
-        return $nbDone;
+        return $done;
     }
 
     private function setFilesCoords($userId, $paths, $lats, $lngs) {
         $userFolder = $this->root->getUserFolder($userId);
-        $nbDone = 0;
+        $done = [];
 
         foreach ($paths as $i => $path) {
             $cleanpath = str_replace(array('../', '..\\'), '',  $path);
             if ($userFolder->nodeExists($cleanpath)) {
                 $file = $userFolder->get($cleanpath);
-                if ($this->isPhoto($file) and $file->isUpdateable()) {
+                if ($this->isPhoto($file) && $file->isUpdateable()) {
                     $lat = (count($lats) > $i) ? $lats[$i] : $lats[0];
                     $lng = (count($lngs) > $i) ? $lngs[$i] : $lngs[0];
+                    $photo = $this->photoMapper->findByFileId($userId, $file->getId());
+                    $done[] = [
+                        'path' => preg_replace('/^files/', '', $file->getInternalPath()),
+                        'lat' => $lat,
+                        'lng' => $lng,
+                        'oldLat' => $photo ? $photo->getLat() : null,
+                        'oldLng' => $photo ? $photo->getLng() : null,
+                    ];
                     $this->setExifCoords($file, $lat, $lng);
                     $this->updateByFileNow($file);
-                    $nbDone++;
                 }
             }
         }
-        return $nbDone;
+        return $done;
     }
 
     public function resetPhotosFilesCoords($userId, $paths) {
         $userFolder = $this->root->getUserFolder($userId);
-        $nbDone = 0;
+        $done = [];
 
         foreach ($paths as $i => $path) {
             $cleanpath = str_replace(array('../', '..\\'), '',  $path);
             if ($userFolder->nodeExists($cleanpath)) {
                 $file = $userFolder->get($cleanpath);
-                if ($this->isPhoto($file) and $file->isUpdateable()) {
+                if ($this->isPhoto($file) && $file->isUpdateable()) {
+                    $photo = $this->photoMapper->findByFileId($userId, $file->getId());
+                    $done[] = [
+                        'path' => preg_replace('/^files/', '', $file->getInternalPath()),
+                        'lat' => null,
+                        'lng' => null,
+                        'oldLat' => $photo ? $photo->getLat() : null,
+                        'oldLng' => $photo ? $photo->getLng() : null,
+                    ];
                     $this->resetExifCoords($file);
                     $this->photoMapper->updateByFileId($file->getId(), null, null);
-                    $nbDone++;
                 }
             }
         }
-        return $nbDone;
+        return $done;
     }
 
     // avoid adding photo if it already exists in the DB
@@ -365,10 +399,12 @@ class PhotofilesService {
         try{
             $exif_geo_data = ExifGeoData::get($path);
             $exif_geo_data->validate(true);
-        }catch(ExifDataException $e){
+        }catch(ExifDataInvalidException $e){
             $exif_geo_data = null;
             $this->logger->notice($e->getMessage(), ['code'=>$e->getCode(),'path'=>$path]);
-        }catch(\Throwable $f){
+		}catch(ExifDataNoLocationException $e){
+			$this->logger->notice($e->getMessage(), ['code'=>$e->getCode(),'path'=>$path]);
+		}catch(\Throwable $f){
             $exif_geo_data = null;
             $this->logger->error($f->getMessage(), ['code'=>$f->getCode(),'path'=>$path]);
         }

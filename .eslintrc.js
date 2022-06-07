@@ -1,26 +1,20 @@
 module.exports = {
-  root: true,
-  env: {
-    node: true
-  },
-  extends: [
-    "nextcloud"
-  ],
-  rules: {
-    "vue/component-name-in-template-casing": ["error", "PascalCase"],
-    "no-console": process.env.NODE_ENV === "production" ? "error" : "off",
-    "no-debugger": process.env.NODE_ENV === "production" ? "error" : "off"
-  },
-  globals: {
-    OC: false,
-    OCA: false,
-    t: false,
-    n: false,
-    $: false // TODO: remove once jQuery has been removed
-  },
-  parserOptions: {
-    ecmaVersion: 6,
-    sourceType: "module",
-    parser: "babel-eslint"
-  }
-};
+	globals: {
+		appVersion: true
+	},
+	parserOptions: {
+		requireConfigFile: false
+	},
+	extends: [
+		'@nextcloud'
+	],
+	rules: {
+		'no-restricted-properties': [
+			'error',
+			{ property: 'substr', message: 'Use .slice instead of .substr.' },
+		],
+		'jsdoc/require-jsdoc': 'off',
+		'jsdoc/tag-lines': 'off',
+		'vue/first-attribute-linebreak': 'off'
+	}
+}

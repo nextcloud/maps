@@ -151,7 +151,7 @@ export default {
 			const { lat, lng } = this.latLng
 			const { name, category, comment } = this.newFavorite
 
-			this.$emit('addFavorite', {
+			this.$emit('add-favorite', {
 				lat,
 				lng,
 				name,
@@ -173,7 +173,7 @@ export default {
 
 <style scoped lang="scss">
 .new-favorite-form {
-    width: 100%;
-    margin: 0;
+	width: 100%;
+	margin: 0;
 }
 </style>

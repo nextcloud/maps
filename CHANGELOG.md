@@ -63,7 +63,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Changed
 - a few style improvements in tooltips (position and size)
-- message when adding a favorite, ESC to cancel
+- message when adding a favorite, Esc to cancel
 
 ### Fixed
 - missing variable declarations breaking things in search, favorites, tracks, devices

@@ -75,6 +75,8 @@ OC.L10N.register(
     "No name" : "名前なし",
     "Update" : "更新",
     "Move photo" : "写真の移動",
+    "Add favorite" : "お気に入りを追加",
+    "Edit favorite" : "お気に入りを編集",
     "Remove geo data" : "位置情報を削除",
     "Yes" : "はい",
     "New contact address" : "新しい連絡先の住所",

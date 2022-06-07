@@ -48,7 +48,6 @@
 		"@nextcloud/vue": "^5.1.0",
 		"@raruto/leaflet-elevation": "^1.7.0",
 		"axios": "^0.26.1",
-		"d3": "^6.7.0",
 		"geojson": "^0.5.0",
 		"leaflet": "^1.5.1",
 		"leaflet-contextmenu": "^1.4.0",

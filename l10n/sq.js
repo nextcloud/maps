@@ -16,6 +16,7 @@ OC.L10N.register(
     "Comment" : "Koment",
     "Close" : "Mbylleni",
     "Favorite" : "I/E Preferuar",
+    "Duration" : "Kohëzgjatja",
     "End" : "Mbarim",
     "Name" : "Emri",
     "Add" : "Shto",

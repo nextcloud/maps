@@ -724,7 +724,7 @@ TracksController.prototype = {
         var dl_url = '"' + url + '?dir=' + dir + '&files=' + file + '"';
         var popupTxt = '<h3 class="trackPopupTitle">' +
             t('maps','File') + ' : <a href=' +
-            dl_url + ' title="' + t('maps','download') + ' ' + this.tracks[id].file_path + '"' +
+            dl_url + ' title="' + t('maps','Download') + ' ' + this.tracks[id].file_path + '"' +
             ' class="getGpx" >' +
             '<i class="fa fa-cloud-download-alt" aria-hidden="true"></i> ' + this.tracks[id].file_name + '</a> ';
         popupTxt = popupTxt + '<button class="drawElevationButton" track="'+id+'"><i class="fa fa-chart-area" aria-hidden="true"></i></button>';
@@ -733,19 +733,19 @@ TracksController.prototype = {
         if (meta.lnktxt) {
             var lt = meta.lnktxt;
             if (!lt) {
-                lt = t('maps', 'metadata link');
+                lt = t('maps', 'Metadata link');
             }
             popupTxt = popupTxt + '<a class="metadatalink" title="' +
-                t('maps', 'metadata link') + '" href="' + meta.lnkurl +
+                t('maps', 'Metadata link') + '" href="' + meta.lnkurl +
                 '" target="_blank">' + lt + '</a>';
         }
         if (meta.trnl && meta.trnl.length > 0) {
-            popupTxt = popupTxt + '<ul title="' + t('maps', 'tracks/routes name list') +
+            popupTxt = popupTxt + '<ul title="' + t('maps', 'Tracks/routes name list') +
                 '" class="trackNamesList">';
             for (var z=0; z < meta.trnl.length; z++) {
                 var trname = meta.trnl[z];
                 if (trname === '') {
-                    trname = t('maps', 'no name');
+                    trname = t('maps', 'No name');
                 }
                 popupTxt = popupTxt + '<li>' + escapeHTML(trname) + '</li>';
             }

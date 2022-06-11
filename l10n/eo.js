@@ -47,6 +47,7 @@ OC.L10N.register(
     "Move" : "Movi",
     "Link" : "Ligilo",
     "Description" : "Priskribo",
+    "Download" : "Elŝuti",
     "Settings" : "Agordoj"
 },
 "nplurals=2; plural=(n != 1);");

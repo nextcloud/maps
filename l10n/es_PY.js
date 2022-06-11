@@ -45,7 +45,7 @@ OC.L10N.register(
     "Move" : "Mover",
     "Link" : "Liga",
     "Description" : "Descripción",
-    "download" : "descargar",
+    "Download" : "Descargar",
     "Your photos" : "Tus fotos",
     "Settings" : "Configuraciones "
 },

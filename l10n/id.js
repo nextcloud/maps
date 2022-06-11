@@ -45,7 +45,7 @@ OC.L10N.register(
     "Move" : "Pindah",
     "Link" : "Tautan",
     "Description" : "Deskrisi",
-    "download" : "unduh",
+    "Download" : "Unduh",
     "Settings" : "Setelan"
 },
 "nplurals=1; plural=0;");

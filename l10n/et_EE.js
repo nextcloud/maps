@@ -52,7 +52,7 @@ OC.L10N.register(
     "Dentist" : "Hambaarst",
     "Link" : "Link",
     "Description" : "Kirjeldus",
-    "download" : "laadi alla",
+    "Download" : "Lae alla",
     "Your photos" : "Sinu fotod",
     "Settings" : "Seaded"
 },

@@ -44,7 +44,7 @@ OC.L10N.register(
     "Move" : "Move",
     "Link" : "ลิงค์",
     "Description" : "รายละเอียด",
-    "download" : "ดาวน์โหลด",
+    "Download" : "ดาวน์โหลด",
     "Your photos" : "รูปภาพของคุณ",
     "Settings" : "ตั้งค่า"
 },

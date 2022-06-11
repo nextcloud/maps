@@ -42,6 +42,7 @@ OC.L10N.register(
     "Move" : "Mover",
     "Link" : "Ligamine",
     "Description" : "Description",
+    "Download" : "Discargar",
     "Settings" : "Configurationes"
 },
 "nplurals=2; plural=(n != 1);");

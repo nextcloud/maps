@@ -44,6 +44,7 @@ OC.L10N.register(
     "Move" : "Зөөх",
     "Link" : "Холбоос",
     "Description" : "Тодорхойлолт",
+    "Download" : "Татах",
     "Your photos" : "Таны зурагнууд ",
     "Settings" : "Тохиргоо"
 },

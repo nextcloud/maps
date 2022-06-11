@@ -34,6 +34,7 @@ OC.L10N.register(
     "Move" : "Move",
     "Link" : "Lenkje",
     "Description" : "Skildring",
+    "Download" : "Last ned",
     "Settings" : "Instillingar"
 },
 "nplurals=2; plural=(n != 1);");

@@ -37,6 +37,7 @@ OC.L10N.register(
     "Copy link" : "සබැඳිය පිටපත් කරන්න",
     "Link" : "සබැඳිය",
     "Description" : "විස්තරය",
+    "Download" : "බාගන්න",
     "Your photos" : "ඔබේ ඡායාරූප",
     "Settings" : "සැකසුම්"
 },

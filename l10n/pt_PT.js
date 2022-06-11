@@ -52,7 +52,7 @@ OC.L10N.register(
     "Move" : "Mover",
     "Link" : "Link",
     "Description" : "Descrição",
-    "download" : "transferir",
+    "Download" : "Transferir",
     "Your photos" : "As suas fotos",
     "Show all" : "Mostrar tudo",
     "Settings" : "Definições"

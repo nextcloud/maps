@@ -73,7 +73,7 @@ OC.L10N.register(
     "Failed to update favorite" : "Failed to update favourite",
     "Link" : "Link",
     "Description" : "Description",
-    "download" : "download",
+    "Download" : "Download",
     "Failed to change track color" : "Failed to change track colour",
     "Your favorites" : "Your favourites",
     "Settings" : "Settings"

@@ -60,7 +60,7 @@ OC.L10N.register(
     "Move" : "Flyt",
     "Link" : "Link",
     "Description" : "Beskrivelse",
-    "download" : "hent",
+    "Download" : "Download",
     "Your photos" : "Dine billeder",
     "Settings" : "Indstillinger"
 },

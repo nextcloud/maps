@@ -36,6 +36,7 @@ OC.L10N.register(
     "Move" : "Verschieben",
     "Link" : "Link",
     "Description" : "Beschreiwung",
+    "Download" : "Eroflueden",
     "Settings" : "Astellungen"
 },
 "nplurals=2; plural=(n != 1);");

@@ -43,6 +43,7 @@ OC.L10N.register(
     "Move" : "Mover",
     "Link" : "Link",
     "Description" : "Descripción",
+    "Download" : "Baxar",
     "Settings" : "Settings"
 },
 "nplurals=2; plural=(n != 1);");

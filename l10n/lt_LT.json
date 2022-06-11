@@ -149,7 +149,7 @@
     "Latitude" : "Platuma",
     "Longitude" : "Ilguma",
     "Description" : "Aprašas",
-    "download" : "atsisiųsti",
+    "Download" : "Atsisiųsti",
     "OSRM settings" : "OSRM nustatymai",
     "An OSRM server URL looks like this : https://my.osrm.server.org:5000/route/v1" : "OSRM serverio URL atrodo štai taip : https://my.osrm.server.org:5000/route/v1",
     "Mapbox API key" : "Mapbox API raktas",

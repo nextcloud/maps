@@ -40,6 +40,7 @@
     "Move" : "Mover",
     "Link" : "Ligamine",
     "Description" : "Description",
+    "Download" : "Discargar",
     "Settings" : "Configurationes"
 },"pluralForm" :"nplurals=2; plural=(n != 1);"
 }

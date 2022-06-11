@@ -52,7 +52,7 @@ OC.L10N.register(
     "Dentist" : "Nha sĩ",
     "Link" : "Liên kết",
     "Description" : "Mô tả",
-    "download" : "tải xuống",
+    "Download" : "Tải xuống",
     "Your photos" : "Ảnh của bạn",
     "Settings" : "Thiết lập"
 },

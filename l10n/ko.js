@@ -125,7 +125,7 @@ OC.L10N.register(
     "Dentist" : "치과",
     "Link" : "링크",
     "Description" : "설명",
-    "download" : "다운로드",
+    "Download" : "다운로드",
     "no date" : "데이터 없음",
     "Show all" : "모두 보기",
     "Settings" : "설정"

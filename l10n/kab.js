@@ -20,6 +20,7 @@ OC.L10N.register(
     "Copy link" : "Nɣel aseɣwen",
     "Move" : "Senkez",
     "Link" : "Aseɣwen",
+    "Download" : "Sider",
     "Settings" : "Iɣewwaṛen"
 },
 "nplurals=2; plural=(n != 1);");

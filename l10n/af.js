@@ -45,6 +45,7 @@ OC.L10N.register(
     "Move" : "Skuif",
     "Link" : "Skakel",
     "Description" : "Beskrywing",
+    "Download" : "Laai af",
     "Settings" : "Instellings"
 },
 "nplurals=2; plural=(n != 1);");

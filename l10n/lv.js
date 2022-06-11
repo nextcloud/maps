@@ -45,6 +45,7 @@ OC.L10N.register(
     "Move" : "Pārvietot",
     "Link" : "Saite",
     "Description" : "Apraksts",
+    "Download" : "Lejupielādēt",
     "Your photos" : "Jūsu bildes",
     "Hide all" : "Slēpt visu",
     "Settings" : "Iestatījumi"

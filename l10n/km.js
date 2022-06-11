@@ -35,6 +35,7 @@ OC.L10N.register(
     "Bar" : "របារ",
     "Link" : "Link",
     "Description" : "ការ​អធិប្បាយ",
+    "Download" : "ទាញយក",
     "Settings" : "ការកំណត់"
 },
 "nplurals=1; plural=0;");

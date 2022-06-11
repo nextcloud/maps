@@ -74,7 +74,7 @@ OC.L10N.register(
     "Hotel" : "فندق",
     "Link" : "الرابط",
     "Description" : "الوصف",
-    "download" : "تنزيل",
+    "Download" : "تنزيل",
     "Your photos" : "صورك",
     "Your devices" : "أجهزتك",
     "Your tracks" : "مساراتك",

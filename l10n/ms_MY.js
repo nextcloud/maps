@@ -28,6 +28,7 @@ OC.L10N.register(
     "Move" : "Move",
     "Link" : "Link",
     "Description" : "Keterangan",
+    "Download" : "Muat turun",
     "Settings" : "Tetapan"
 },
 "nplurals=1; plural=0;");

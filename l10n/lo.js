@@ -25,6 +25,7 @@ OC.L10N.register(
     "Copy link" : "ສຳເນົາລິງ",
     "Move" : "ຍ້າຍ",
     "Link" : "ລິງ",
+    "Download" : "ດາວໂຫລດ",
     "Settings" : "ການຕັ້ງຄ່າ"
 },
 "nplurals=1; plural=0;");

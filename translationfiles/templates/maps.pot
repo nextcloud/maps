@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Nextcloud 3.14159\n"
 "Report-Msgid-Bugs-To: translations\\@example.com\n"
-"POT-Creation-Date: 2022-06-10 03:12+0000\n"
+"POT-Creation-Date: 2022-06-11 03:06+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -675,7 +675,7 @@ msgstr ""
 
 #. TRANSLATORS src/components/map/FavoriteMarker.vue:17
 #: /app/specialVueFakeDummyForL10nScript.js:232
-#: /app/src/favoritesController.js:922
+#: /app/src/favoritesController.js:922 /app/src/tracksController.js:748
 msgid "No name"
 msgstr ""
 
@@ -1753,19 +1753,15 @@ msgid "Symbol name"
 msgstr ""
 
 #: /app/src/tracksController.js:727
-msgid "download"
+msgid "Download"
 msgstr ""
 
 #: /app/src/tracksController.js:736 /app/src/tracksController.js:739
-msgid "metadata link"
+msgid "Metadata link"
 msgstr ""
 
 #: /app/src/tracksController.js:743
-msgid "tracks/routes name list"
-msgstr ""
-
-#: /app/src/tracksController.js:748
-msgid "no name"
+msgid "Tracks/routes name list"
 msgstr ""
 
 #: /app/src/tracksController.js:777

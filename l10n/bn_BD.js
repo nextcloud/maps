@@ -36,6 +36,7 @@ OC.L10N.register(
     "Move" : "Move",
     "Link" : "Link",
     "Description" : "বিবরণ",
+    "Download" : "ডাউনলোড",
     "Settings" : "সেটিংস"
 },
 "nplurals=2; plural=(n != 1);");

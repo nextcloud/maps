@@ -45,7 +45,7 @@ OC.L10N.register(
     "Move" : "Zhvendos",
     "Link" : "Lidhje",
     "Description" : "Përshkrim",
-    "download" : "shkarkoje",
+    "Download" : "Shkarko",
     "Settings" : "Rregullimet"
 },
 "nplurals=2; plural=(n != 1);");

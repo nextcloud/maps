@@ -34,6 +34,7 @@ OC.L10N.register(
     "Move" : "Move",
     "Link" : "Link",
     "Description" : "Açıqlanma",
+    "Download" : "Yüklə",
     "Settings" : "Quraşdırmalar"
 },
 "nplurals=2; plural=(n != 1);");

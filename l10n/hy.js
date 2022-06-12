@@ -28,6 +28,7 @@ OC.L10N.register(
     "Move" : "Move",
     "Link" : "Հղում",
     "Description" : "Նկարագրություն",
+    "Download" : "Ներբեռնել",
     "Settings" : "կարգավորումներ"
 },
 "nplurals=2; plural=(n != 1);");

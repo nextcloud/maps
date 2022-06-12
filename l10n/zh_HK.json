@@ -321,6 +321,8 @@
     "Description" : "描述",
     "Symbol name" : "符號名稱",
     "Download" : "下載",
+    "Metadata link" : "元數據連結 ",
+    "Tracks/routes name list" : "軌跡/路線名單",
     "no date" : "無日期",
     "Show elevation" : "顯示高程",
     "Failed to change track color" : "變更軌跡顏色失敗",

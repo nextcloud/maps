@@ -323,6 +323,8 @@ OC.L10N.register(
     "Description" : "Beschreibung",
     "Symbol name" : "Name des Symbols",
     "Download" : "Herunterladen",
+    "Metadata link" : "Metadaten-Link",
+    "Tracks/routes name list" : "Liste mit Namen von Strecken/Routen",
     "no date" : "Kein Datum",
     "Show elevation" : "Höhe anzeigen",
     "Failed to change track color" : "Ändern der Streckenfarbe fehlgeschalgen",

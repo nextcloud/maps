@@ -223,6 +223,7 @@ OC.L10N.register(
     "Longitude" : "Longitud",
     "Description" : "Beskrivning",
     "Symbol name" : "Symbolnamn",
+    "Download" : "Ladda ner",
     "no date" : "inget datum",
     "Show elevation" : "Visa höjd",
     "Failed to change track color" : "Misslyckades att ändra spårfärg",

@@ -24,8 +24,12 @@
 			</div>
 		</LTooltip>
 		<LMarker v-if="firstPoint"
-			:icon="markerIcon"
+			:icon="firstPointMarkerIcon"
 			:lat-lng="firstPoint" />
+		<LMarker v-for="(point, i) in wayPoints"
+			:key="i"
+			:icon="wayPointMarkerIcon"
+			:lat-lng="point" />
 		<LFeatureGroup v-for="(line, i) in lines"
 			:key="i"
 			@mouseover="trackLineMouseover($event, line)">
@@ -54,6 +58,7 @@ import optionsController from '../../optionsController'
 import { binSearch } from '../../utils/common'
 
 const TRACK_MARKER_VIEW_SIZE = 40
+const WAYPOINT_MARKER_VIEW_SIZE = 30
 
 export default {
 	name: 'TrackLayer',
@@ -149,7 +154,7 @@ export default {
 		color() {
 			return this.track.color || '#0082c9'
 		},
-		markerIcon() {
+		firstPointMarkerIcon() {
 			const selectedClass = this.track.selected
 				? 'selected'
 				: ''
@@ -160,6 +165,16 @@ export default {
 			}, null, {
 				iconSize: [TRACK_MARKER_VIEW_SIZE, TRACK_MARKER_VIEW_SIZE],
 				iconAnchor: [TRACK_MARKER_VIEW_SIZE / 2, TRACK_MARKER_VIEW_SIZE],
+			}))
+		},
+		wayPointMarkerIcon() {
+			return L.divIcon(L.extend({
+				html: '<div class="thumbnail-wrapper" style="--custom-color: ' + this.color + '; border-color: ' + this.color + ';">'
+					+ '<div class="thumbnail" style="background-color: ' + this.color + ';"></div></div>​',
+				className: 'leaflet-marker-track track-waypoint ',
+			}, null, {
+				iconSize: [WAYPOINT_MARKER_VIEW_SIZE, WAYPOINT_MARKER_VIEW_SIZE],
+				iconAnchor: [WAYPOINT_MARKER_VIEW_SIZE / 2, WAYPOINT_MARKER_VIEW_SIZE],
 			}))
 		},
 		firstPoint() {
@@ -185,6 +200,27 @@ export default {
 				firstPoint = this.track.data.waypoints[0]
 			}
 			return firstPoint
+		},
+		wayPoints() {
+			let points = []
+			if (this.firstPoint === this.track.data.waypoints[0]) {
+				points = this.track.data.waypoints.slice(1)
+			} else {
+				points = this.track.data.waypoints
+			}
+			if (this.track.metadata?.begin >= this.end || (this.track.metadata?.end >= 0 && this.track.metadata?.end <= this.start)) {
+				return []
+			} else if (this.track.metadata?.begin >= this.start && this.track.metadata?.end <= this.end) {
+				return points
+			} else {
+				const lastNullIndex = binSearch(points, (p) => !p.timestamp)
+				const firstShownIndex = binSearch(points, (p) => (p.timestamp || -1) < this.start) + 1
+				const lastShownIndex = binSearch(points, (p) => (p.timestamp || -1) < this.end)
+				return [
+					...points.slice(0, lastNullIndex + 1),
+					...points.slice(firstShownIndex, lastShownIndex + 1),
+				]
+			}
 		},
 	},
 

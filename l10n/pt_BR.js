@@ -323,6 +323,8 @@ OC.L10N.register(
     "Description" : "Descrição",
     "Symbol name" : "Nome do símbolo",
     "Download" : "Baixar",
+    "Metadata link" : "Link de metadados",
+    "Tracks/routes name list" : "Lista de nomes de trilhas/rotas",
     "no date" : "sem data",
     "Show elevation" : "Mostrar elevação",
     "Failed to change track color" : "Erro ao trocar a cor da rota",

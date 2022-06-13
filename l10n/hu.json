@@ -321,6 +321,8 @@
     "Description" : "Leírás",
     "Symbol name" : "Szimbólum neve",
     "Download" : "Letöltés",
+    "Metadata link" : "Metaadat-hivatkozás",
+    "Tracks/routes name list" : "Nyomvonal/útvonal névlista",
     "no date" : "nincs adat",
     "Show elevation" : "Szintemelkedés megjelenítése",
     "Failed to change track color" : "A nyomvonal színének módosítása sikertelen",

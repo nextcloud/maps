@@ -15,6 +15,7 @@ namespace OCA\Maps\AppInfo;
 use \OCP\AppFramework\App;
 use OCP\AppFramework\Bootstrap\IBootContext;
 use OCP\AppFramework\Bootstrap\IBootstrap;
+use OCP\AppFramework\Http\EmptyFeaturePolicy;
 use \OCP\IServerContainer;
 use OCA\Maps\Hooks\FileHooks;
 use OCA\Maps\Service\PhotofilesService;
@@ -28,6 +29,7 @@ use OCA\Maps\Listener\LoadAdditionalScriptsListener;
 use OCA\Maps\Listener\CardCreatedListener;
 use OCA\Maps\Listener\CardUpdatedListener;
 use OCA\Maps\Listener\CardDeletedListener;
+use OCP\Security\FeaturePolicy\AddFeaturePolicyEvent;
 
 
 class Application extends App implements IBootstrap {
@@ -82,8 +84,8 @@ class Application extends App implements IBootstrap {
 	private function registerFeaturePolicy() {
 		$dispatcher = $this->getContainer()->getServer()->getEventDispatcher();
 
-		$dispatcher->addListener('OCP\Security\FeaturePolicy\AddFeaturePolicyEvent', function (\OCP\Security\FeaturePolicy\AddFeaturePolicyEvent $e) {
-			$fp = new \OCP\AppFramework\Http\EmptyFeaturePolicy();
+		$dispatcher->addListener(AddFeaturePolicyEvent::class, function (AddFeaturePolicyEvent $e) {
+			$fp = new EmptyFeaturePolicy();
 			$fp->addAllowedGeoLocationDomain('\'self\'');
 			$e->addPolicy($fp);
 		});

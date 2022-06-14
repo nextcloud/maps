@@ -59,7 +59,20 @@ class ContactsController extends Controller {
         $addressBooks = $this->contactsManager->getUserAddressBooks();
         $result = [];
         $userid = trim($this->userId);
+        // get addressbook ids
+        $bookids = [];
         foreach ($contacts as $c) {
+            if (!in_array($c['addressbook-key'], $bookids)) {
+                array_push($bookids, $c['addressbook-key']);
+            }
+        }
+        // determine if addressbooks are enabled
+        $bookIsEnabled = $this->getBookIsEnabled($bookids);
+
+        foreach ($contacts as $c) {
+            if (!$bookIsEnabled[$c['addressbook-key']]) {
+                continue;
+            }
             $addressBookUri = $addressBooks[$c['addressbook-key']]->getUri();
             $uid = trim($c['UID']);
             // we don't give users, just contacts
@@ -133,6 +146,44 @@ class ContactsController extends Controller {
         return new DataResponse($result);
     }
 
+    private function getBookIsEnabled($bookids) {
+        $bookIsEnabled = [];
+        $qb = $this->qb;
+        foreach ($bookids as $bookid) {
+            // first get the address book uri in oc_addressbooks
+            $qb->select('uri', 'principaluri')
+                ->from('addressbooks')
+                ->where($qb->expr()->eq('id', $qb->createNamedParameter($bookid, IQueryBuilder::PARAM_INT)));
+            $req = $qb->execute();
+            $uri = null;
+            $principaluri = null;
+            while ($row = $req->fetch()) {
+                $uri = $row['uri'];
+                $principaluri = $row['principaluri'];
+            }
+            $req->closeCursor();
+            $qb = $qb->resetQueryParts();
+            // then check its {http://owncloud.org/ns}enabled property in oc_properties
+            if ($uri !== null) {
+                $propertypath = str_replace('principals/users/', 'addressbooks/users/', $principaluri) . '/' . $uri;
+                $qb->select('propertyvalue')
+                    ->from('properties')
+                    ->where($qb->expr()->eq('propertypath', $qb->createNamedParameter($propertypath, IQueryBuilder::PARAM_STR)))
+                    ->andWhere($qb->expr()->eq('propertyname', $qb->createNamedParameter('{http://owncloud.org/ns}enabled', IQueryBuilder::PARAM_STR)));
+                $req = $qb->execute();
+                $propertyvalue = null;
+                while ($row = $req->fetch()) {
+                    $propertyvalue = intval($row['propertyvalue']);
+                }
+                $req->closeCursor();
+                $qb = $qb->resetQueryParts();
+
+                $bookIsEnabled[$bookid] = ($propertyvalue === null or $propertyvalue === 1);
+            }
+        }
+        return $bookIsEnabled;
+    }
+
     private function N2FN(string $n) {
         if ($n) {
             $spl = explode($n, ';');
@@ -158,7 +209,21 @@ class ContactsController extends Controller {
         $addressBooks = $this->contactsManager->getUserAddressBooks();
         $result = [];
         $userid = trim($this->userId);
+
+        // get addressbook ids
+        $bookids = [];
         foreach ($contacts as $c) {
+            if (!in_array($c['addressbook-key'], $bookids)) {
+                array_push($bookids, $c['addressbook-key']);
+            }
+        }
+        // determine if addressbooks are enabled
+        $bookIsEnabled = $this->getBookIsEnabled($bookids);
+
+        foreach ($contacts as $c) {
+            if (!$bookIsEnabled[$c['addressbook-key']]) {
+                continue;
+            }
             $uid = trim($c['UID']);
             // we don't give users, just contacts
             if (strcmp($c['URI'], 'Database:'.$c['UID'].'.vcf') !== 0 and

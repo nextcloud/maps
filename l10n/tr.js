@@ -323,6 +323,8 @@ OC.L10N.register(
     "Description" : "Açıklama",
     "Symbol name" : "Simge adı",
     "Download" : "İndir",
+    "Metadata link" : "Üst veri bağlantısı",
+    "Tracks/routes name list" : "Yol/rota adları listesi",
     "no date" : "tarih yok",
     "Show elevation" : "Yüksekliği görüntüle",
     "Failed to change track color" : "Yol rengi değiştirilemedi",

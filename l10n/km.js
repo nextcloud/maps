@@ -1,8 +1,8 @@
 OC.L10N.register(
     "maps",
     {
-    "Maps" : "ផែនទី",
     "Personal" : "ផ្ទាល់​ខ្លួន",
+    "Maps" : "ផែនទី",
     "Export" : "នាំចេញ",
     "Delete" : "លុប",
     "Import" : "នាំយកចូល",

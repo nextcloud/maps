@@ -1,8 +1,8 @@
 OC.L10N.register(
     "maps",
     {
-    "Maps" : "Газрын зураг",
     "Personal" : "Хувийн",
+    "Maps" : "Газрын зураг",
     "Export" : "Экспорт",
     "Delete" : "Устгах",
     "Import" : "Импорт",

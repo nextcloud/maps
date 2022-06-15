@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Nextcloud 3.14159\n"
 "Report-Msgid-Bugs-To: translations\\@example.com\n"
-"POT-Creation-Date: 2022-06-14 03:06+0000\n"
+"POT-Creation-Date: 2022-06-15 03:05+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -16,10 +16,6 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-
-#: /app/appinfo/app.php:69 /app/specialAppInfoFakeDummyForL10nScript.php:2
-msgid "Maps"
-msgstr ""
 
 #. TRANSLATORS src/components/AppNavigationFavoritesItem.vue:85
 #. TRANSLATORS src/views/App.vue:497
@@ -33,6 +29,10 @@ msgstr ""
 #: /app/specialVueFakeDummyForL10nScript.js:550
 #: /app/src/favoritesController.js:33 /app/src/utils/favoritesUtils.js:27
 msgid "Personal"
+msgstr ""
+
+#: /app/specialAppInfoFakeDummyForL10nScript.php:2
+msgid "Maps"
 msgstr ""
 
 #: /app/specialAppInfoFakeDummyForL10nScript.php:3

@@ -1,8 +1,8 @@
 OC.L10N.register(
     "maps",
     {
-    "Maps" : "แผนที่",
     "Personal" : "ส่วนตัว",
+    "Maps" : "แผนที่",
     "Export" : "ส่งออก",
     "Delete" : "ลบ",
     "Import" : "นำเข้า",

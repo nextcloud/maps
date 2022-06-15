@@ -1,8 +1,8 @@
 OC.L10N.register(
     "maps",
     {
-    "Maps" : "Žemėlapiai",
     "Personal" : "Asmeniniai",
+    "Maps" : "Žemėlapiai",
     "🌍🌏🌎 The whole world fits inside your cloud!" : "🌍🌏🌎 Visas pasaulis telpa į jūsų debesiją!",
     "My contacts" : "Mano adresatai",
     "Toggle all" : "Perjungti visus",

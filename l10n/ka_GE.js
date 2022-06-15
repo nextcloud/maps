@@ -1,8 +1,8 @@
 OC.L10N.register(
     "maps",
     {
-    "Maps" : "რუკები",
     "Personal" : "პირადი",
+    "Maps" : "რუკები",
     "Export" : "ექსპორტი",
     "Delete" : "წაშლა",
     "Import" : "იმპორტი",

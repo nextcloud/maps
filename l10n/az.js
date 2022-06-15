@@ -1,8 +1,8 @@
 OC.L10N.register(
     "maps",
     {
-    "Maps" : "Xəritələr",
     "Personal" : "Şəxsi",
+    "Maps" : "Xəritələr",
     "Export" : "Çıxarış",
     "Delete" : "Sil",
     "Import" : "Əlavə et",

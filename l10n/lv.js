@@ -1,8 +1,8 @@
 OC.L10N.register(
     "maps",
     {
-    "Maps" : "Karte",
     "Personal" : "Personīgs",
+    "Maps" : "Karte",
     "Export" : "Eksportēt",
     "Delete" : "Dzēst",
     "Import" : "Importēt",

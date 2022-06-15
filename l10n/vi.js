@@ -1,8 +1,8 @@
 OC.L10N.register(
     "maps",
     {
-    "Maps" : "Bản đồ",
     "Personal" : "Cá nhân",
+    "Maps" : "Bản đồ",
     "Export" : "Xuất ra",
     "Delete" : "Xóa",
     "Import" : "Nhập vào",

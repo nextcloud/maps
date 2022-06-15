@@ -1,8 +1,8 @@
 OC.L10N.register(
     "maps",
     {
-    "Maps" : "Kartat",
     "Personal" : "Henkilökohtainen",
+    "Maps" : "Kartat",
     "🌍🌏🌎 The whole world fits inside your cloud!" : "🌍🌏🌎 Koko maailma mahtuu pilvesi sisään!",
     "My contacts" : "Omat yhteystiedot",
     "Change color" : "Vaihda väriä",

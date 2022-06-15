@@ -1,8 +1,8 @@
 OC.L10N.register(
     "maps",
     {
-    "Maps" : "ನಕಾಶೆ",
     "Personal" : "﻿ವೈಯಕ್ತಿಕ",
+    "Maps" : "ನಕಾಶೆ",
     "Export" : "ರಫ್ತು",
     "Delete" : "﻿ಅಳಿಸಿ",
     "Import" : "ಆಮದು",

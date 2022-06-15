@@ -1,8 +1,8 @@
 OC.L10N.register(
     "maps",
     {
-    "Maps" : "মানচিত্র",
     "Personal" : "ব্যক্তিগত",
+    "Maps" : "মানচিত্র",
     "Export" : "রপ্তানি",
     "Delete" : "মুছে",
     "Import" : "আমদানি",

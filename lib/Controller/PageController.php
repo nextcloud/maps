@@ -40,16 +40,17 @@ class PageController extends Controller {
         $this->initialStateService = $initialStateService;
     }
 
-    /**
-     * CAUTION: the @Stuff turns off security checks; for this page no admin is
-     *          required and no CSRF check. If you don't know what CSRF is, read
-     *          it up in the docs or you might create a security hole. This is
-     *          basically the only required method to add this exemption, don't
-     *          add it to any other method if you don't exactly know what it does
-     *
-     * @NoAdminRequired
-     * @NoCSRFRequired
-     */
+	/**
+	 * CAUTION: the @Stuff turns off security checks; for this page no admin is
+	 *          required and no CSRF check. If you don't know what CSRF is, read
+	 *          it up in the docs or you might create a security hole. This is
+	 *          basically the only required method to add this exemption, don't
+	 *          add it to any other method if you don't exactly know what it does
+	 *
+	 * @NoAdminRequired
+	 * @NoCSRFRequired
+	 * @return TemplateResponse
+	 */
     public function index(): TemplateResponse {
 //        $this->eventDispatcher->dispatch(LoadSidebar::class, new LoadSidebar());
         $this->eventDispatcher->dispatch(LoadViewer::class, new LoadViewer());
@@ -63,11 +64,13 @@ class PageController extends Controller {
         return $response;
     }
 
-    /**
-     * @NoAdminRequired
-     * @NoCSRFRequired
-     */
-    public function openGeoLink($url) {
+	/**
+	 * @NoAdminRequired
+	 * @NoCSRFRequired
+	 * @param $url
+	 * @return TemplateResponse
+	 */
+    public function openGeoLink($url): TemplateResponse {
         $params = array('user' => $this->userId);
         $params["geourl"]  = $url;
         $response = new TemplateResponse('maps', 'index', $params);
@@ -94,7 +97,11 @@ class PageController extends Controller {
         return $response;
     }
 
-    private function addCsp($response) {
+	/**
+	 * @param $response
+	 * @return void
+	 */
+    private function addCsp($response): void {
         if (class_exists('OCP\AppFramework\Http\ContentSecurityPolicy')) {
             $csp = new \OCP\AppFramework\Http\ContentSecurityPolicy();
             // map tiles

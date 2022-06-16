@@ -345,20 +345,20 @@ class ContactsController extends Controller {
 	 * and delete corresponding entry in the DB
 	 *
 	 * @NoAdminRequired
-	 * @param $bookId
+	 * @param $bookid
 	 * @param $uri
 	 * @param $uid
 	 * @param $adr
 	 * @param $geo
 	 * @return DataResponse
 	 */
-    public function deleteContactAddress($bookId, $uri, $uid, $adr, $geo): DataResponse {
+    public function deleteContactAddress($bookid, $uri, $uid, $adr, $geo): DataResponse {
         // vcard
-        $card = $this->cdBackend->getContact($bookId, $uri);
+        $card = $this->cdBackend->getContact($bookid, $uri);
         if ($card) {
             $vcard = Reader::read($card['carddata']);
             //$bookId = $card['addressbookid'];
-            if (!$this->addressBookIsReadOnly($bookId)) {
+            if (!$this->addressBookIsReadOnly($bookid)) {
                 foreach ($vcard->children() as $property) {
                     if ($property->name === 'ADR') {
                         $cardAdr = $property->getValue();
@@ -374,7 +374,7 @@ class ContactsController extends Controller {
 						}
 					}
                 }
-                $this->cdBackend->updateCard($bookId, $uri, $vcard->serialize());
+                $this->cdBackend->updateCard($bookid, $uri, $vcard->serialize());
                 // no need to cleanup db here, it will be done when catching vcard change hook
                 return new DataResponse('DELETED');
             }

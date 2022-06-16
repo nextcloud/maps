@@ -112,7 +112,7 @@ class FavoritesController extends Controller {
             $favorite = $this->favoritesService->getFavoriteFromDB($favoriteId);
             return new DataResponse($favorite);
         } else {
-            return new DataResponse($this->l->t('invalid values'), 400);
+            return new DataResponse($this->l->t('Invalid values'), 400);
         }
     }
 
@@ -137,10 +137,10 @@ class FavoritesController extends Controller {
                 $editedFavorite = $this->favoritesService->getFavoriteFromDB($id);
                 return new DataResponse($editedFavorite);
             } else {
-                return new DataResponse($this->l->t('invalid values'), 400);
+                return new DataResponse($this->l->t('Invalid values'), 400);
             }
         } else {
-            return new DataResponse($this->l->t('no such favorite'), 400);
+            return new DataResponse($this->l->t('No such favorite'), 400);
         }
     }
 
@@ -179,7 +179,7 @@ class FavoritesController extends Controller {
             $this->favoritesService->deleteFavoriteFromDB($id);
             return new DataResponse('DELETED');
         } else {
-            return new DataResponse($this->l->t('no such favorite'), 400);
+            return new DataResponse($this->l->t('No such favorite'), 400);
         }
     }
 

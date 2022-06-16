@@ -158,7 +158,7 @@ class DevicesApiController extends ApiController {
             ]);
         }
         else {
-            return new DataResponse($this->l->t('invalid values'), 400);
+            return new DataResponse($this->l->t('Invalid values'), 400);
         }
     }
 
@@ -179,11 +179,11 @@ class DevicesApiController extends ApiController {
                 return new DataResponse($editedDevice);
             }
             else {
-                return new DataResponse($this->l->t('invalid values'), 400);
+                return new DataResponse($this->l->t('Invalid values'), 400);
             }
         }
         else {
-            return new DataResponse($this->l->t('no such device'), 400);
+            return new DataResponse($this->l->t('No such device'), 400);
         }
     }
 
@@ -201,7 +201,7 @@ class DevicesApiController extends ApiController {
             return new DataResponse('DELETED');
         }
         else {
-            return new DataResponse($this->l->t('no such device'), 400);
+            return new DataResponse($this->l->t('No such device'), 400);
         }
     }
 
@@ -209,7 +209,7 @@ class DevicesApiController extends ApiController {
 	 * @param $value
 	 * @return float|int|string|null
 	 */
-    private function normalizeOptionalNumber($value): float|int|string|null {
+    private function normalizeOptionalNumber($value) {
         if (!is_numeric($value)) {
             return null;
         }

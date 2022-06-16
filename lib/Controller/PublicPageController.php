@@ -67,7 +67,7 @@ class PublicPageController extends PublicShareController {
      * @PublicPage
      * @NoCSRFRequired
      */
-    public function sharedFavoritesCategory($token): DataResponse|PublicTemplateResponse {
+    public function sharedFavoritesCategory($token) {
         if ($token === '') {
             return new DataResponse([], Http::STATUS_BAD_REQUEST);
         }

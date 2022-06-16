@@ -151,11 +151,11 @@ class TracksController extends Controller {
                 ]);
             }
             else {
-                return new DataResponse($this->l->t('bad file type'), 400);
+                return new DataResponse($this->l->t('Bad file type'), 400);
             }
         }
         else {
-            return new DataResponse($this->l->t('file not found'), 400);
+            return new DataResponse($this->l->t('File not found'), 400);
         }
     }
 
@@ -174,7 +174,7 @@ class TracksController extends Controller {
             return new DataResponse('EDITED');
         }
         else {
-            return new DataResponse($this->l->t('no such track'), 400);
+            return new DataResponse($this->l->t('No such track'), 400);
         }
     }
 
@@ -190,7 +190,7 @@ class TracksController extends Controller {
             return new DataResponse('DELETED');
         }
         else {
-            return new DataResponse($this->l->t('no such track'), 400);
+            return new DataResponse($this->l->t('No such track'), 400);
         }
     }
 

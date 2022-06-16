@@ -67,7 +67,7 @@ class PublicPageController extends PublicShareController {
      * @PublicPage
      * @NoCSRFRequired
      */
-    public function sharedFavoritesCategory($token) {
+    public function sharedFavoritesCategory($token): DataResponse|PublicTemplateResponse {
         if ($token === '') {
             return new DataResponse([], Http::STATUS_BAD_REQUEST);
         }
@@ -95,25 +95,27 @@ class PublicPageController extends PublicShareController {
         return $response;
     }
 
-    /**
-     * Get a hash of the password for this share
-     *
-     * To ensure access is blocked when the password to a share is changed we store
-     * a hash of the password for this token.
-     *
-     * @since 14.0.0
-     */
+	/**
+	 * Get a hash of the password for this share
+	 *
+	 * To ensure access is blocked when the password to a share is changed we store
+	 * a hash of the password for this token.
+	 *
+	 * @return string
+	 * @since 14.0.0
+	 */
     protected function getPasswordHash(): string {
         return "";
     }
 
-    /**
-     * Is the provided token a valid token
-     *
-     * This function is already called from the middleware directly after setting the token.
-     *
-     * @since 14.0.0
-     */
+	/**
+	 * Is the provided token a valid token
+	 *
+	 * This function is already called from the middleware directly after setting the token.
+	 *
+	 * @return bool
+	 * @since 14.0.0
+	 */
     public function isValidToken(): bool {
         try {
             $this->favoriteShareMapper->findByToken($this->getToken());
@@ -124,16 +126,21 @@ class PublicPageController extends PublicShareController {
         return true;
     }
 
-    /**
-     * Is a share with this token password protected
-     *
-     * @since 14.0.0
-     */
+	/**
+	 * Is a share with this token password protected
+	 *
+	 * @return bool
+	 * @since 14.0.0
+	 */
     protected function isPasswordProtected(): bool {
         return false;
     }
 
-    private function addCsp($response) {
+	/**
+	 * @param $response
+	 * @return void
+	 */
+	private function addCsp($response): void {
         if (class_exists('OCP\AppFramework\Http\ContentSecurityPolicy')) {
             $csp = new ContentSecurityPolicy();
             // map tiles

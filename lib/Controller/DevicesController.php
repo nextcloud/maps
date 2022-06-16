@@ -53,7 +53,7 @@ class DevicesController extends Controller {
     private $dbtype;
     private $dbdblquotes;
     private $defaultDeviceId;
-    private $trans;
+    private $l;
     private $logger;
     private $devicesService;
     private $dateTimeZone;
@@ -67,7 +67,7 @@ class DevicesController extends Controller {
                                 IAppManager $appManager,
                                 IUserManager $userManager,
                                 IGroupManager $groupManager,
-                                IL10N $trans,
+                                IL10N $l,
                                 ILogger $logger,
                                 DevicesService $devicesService,
                                 IDateTimeZone $dateTimeZone,
@@ -81,7 +81,7 @@ class DevicesController extends Controller {
         $this->userId = $UserId;
         $this->userManager = $userManager;
         $this->groupManager = $groupManager;
-        $this->trans = $trans;
+        $this->l = $l;
         $this->dbtype = $config->getSystemValue('dbtype');
         // IConfig object
         $this->config = $config;
@@ -92,26 +92,38 @@ class DevicesController extends Controller {
         $this->shareManager = $shareManager;
     }
 
-    /**
-     * @NoAdminRequired
-     */
-    public function getDevices() {
+	/**
+	 * @NoAdminRequired
+	 * @return DataResponse
+	 */
+    public function getDevices(): DataResponse {
         $devices = $this->devicesService->getDevicesFromDB($this->userId);
         return new DataResponse($devices);
     }
 
-    /**
-     * @NoAdminRequired
-     */
-    public function getDevicePoints($id, $pruneBefore=0) {
+	/**
+	 * @NoAdminRequired
+	 * @param $id
+	 * @param int $pruneBefore
+	 * @return DataResponse
+	 */
+    public function getDevicePoints($id, int $pruneBefore=0): DataResponse {
         $points = $this->devicesService->getDevicePointsFromDB($this->userId, $id, $pruneBefore);
         return new DataResponse($points);
     }
 
-    /**
-     * @NoAdminRequired
-     */
-    public function addDevicePoint($lat, $lng, $timestamp=null, $user_agent=null, $altitude=null, $battery=null, $accuracy=null) {
+	/**
+	 * @NoAdminRequired
+	 * @param $lat
+	 * @param $lng
+	 * @param null $timestamp
+	 * @param null $user_agent
+	 * @param null $altitude
+	 * @param null $battery
+	 * @param null $accuracy
+	 * @return DataResponse
+	 */
+    public function addDevicePoint($lat, $lng, $timestamp=null, $user_agent=null, $altitude=null, $battery=null, $accuracy=null): DataResponse {
         if (is_numeric($lat) and is_numeric($lng)) {
             $ts = $timestamp;
             if ($timestamp === null) {
@@ -133,10 +145,14 @@ class DevicesController extends Controller {
         }
     }
 
-    /**
-     * @NoAdminRequired
-     */
-    public function editDevice($id, $color, $name) {
+	/**
+	 * @NoAdminRequired
+	 * @param $id
+	 * @param $color
+	 * @param $name
+	 * @return DataResponse
+	 */
+    public function editDevice($id, $color, $name): DataResponse {
         $device = $this->devicesService->getDeviceFromDB($id, $this->userId);
         if ($device !== null) {
             if ((is_string($color) && strlen($color) > 0) ||
@@ -147,36 +163,45 @@ class DevicesController extends Controller {
                 return new DataResponse($editedDevice);
             }
             else {
-                return new DataResponse('invalid values', 400);
+                return new DataResponse($this->l->t('invalid values'), 400);
             }
         }
         else {
-            return new DataResponse('no such device', 400);
+            return new DataResponse($this->l->t('no such device'), 400);
         }
     }
 
-    /**
-     * @NoAdminRequired
-     */
-    public function deleteDevice($id) {
+	/**
+	 * @NoAdminRequired
+	 * @param $id
+	 * @return DataResponse
+	 */
+    public function deleteDevice($id): DataResponse {
         $device = $this->devicesService->getDeviceFromDB($id, $this->userId);
         if ($device !== null) {
             $this->devicesService->deleteDeviceFromDB($id);
             return new DataResponse('DELETED');
         }
         else {
-            return new DataResponse('no such device', 400);
+            return new DataResponse($this->l->t('no such device'), 400);
         }
     }
 
-    /**
-     * @NoAdminRequired
-     */
-    public function exportDevices($deviceIdList=null, $begin, $end, $all=false) {
+	/**
+	 * @NoAdminRequired
+	 * @param null $deviceIdList
+	 * @param $begin
+	 * @param $end
+	 * @param bool $all=false
+	 * @return DataResponse
+	 * @throws \OCP\Files\NotFoundException
+	 * @throws \OCP\Files\NotPermittedException
+	 */
+    public function exportDevices($deviceIdList, $begin, $end, bool $all=false): DataResponse {
         // sorry about ugly deviceIdList management:
         // when an empty list is passed in http request, we get null here
         if ($deviceIdList === null or (is_array($deviceIdList) and count($deviceIdList) === 0)) {
-            return new DataResponse('No device to export', 400);
+            return new DataResponse($this->l->t('No device to export'), 400);
         }
 
         // create /Maps directory if necessary
@@ -187,19 +212,19 @@ class DevicesController extends Controller {
         if ($userFolder->nodeExists('/Maps')) {
             $mapsFolder = $userFolder->get('/Maps');
             if ($mapsFolder->getType() !== \OCP\Files\FileInfo::TYPE_FOLDER) {
-                return new DataResponse('/Maps is not a directory', 400);
+                return new DataResponse($this->l->t('/Maps is not a directory'), 400);
             }
             else if (!$mapsFolder->isCreatable()) {
-                return new DataResponse('/Maps is not writeable', 400);
+                return new DataResponse($this->l->t('/Maps is not writeable'), 400);
             }
         }
         else {
-            return new DataResponse('Impossible to create /Maps', 400);
+            return new DataResponse($this->l->t('Impossible to create /Maps'), 400);
         }
 
         $nbDevices = $this->devicesService->countPoints($this->userId, $deviceIdList, $begin, $end);
         if ($nbDevices === 0) {
-            return new DataResponse('Nothing to export', 400);
+            return new DataResponse($this->l->t('Nothing to export'), 400);
         }
 
         // generate export file name
@@ -222,10 +247,14 @@ class DevicesController extends Controller {
         return new DataResponse('/Maps/'.$filename);
     }
 
-    /**
-     * @NoAdminRequired
-     */
-    public function importDevices($path) {
+	/**
+	 * @NoAdminRequired
+	 * @param $path
+	 * @return DataResponse
+	 * @throws \OCP\Files\InvalidPathException
+	 * @throws \OCP\Files\NotFoundException
+	 */
+    public function importDevices($path): DataResponse {
         $userFolder = $this->userfolder;
         $cleanpath = str_replace(array('../', '..\\'), '',  $path);
 
@@ -234,27 +263,32 @@ class DevicesController extends Controller {
             if ($file->getType() === \OCP\Files\FileInfo::TYPE_FILE and
                 $file->isReadable()){
                 $lowerFileName = strtolower($file->getName());
-                if ($this->endswith($lowerFileName, '.gpx') or $this->endswith($lowerFileName, '.kml') or $this->endswith($lowerFileName, '.kmz')) {
+                if ($this->endsWith($lowerFileName, '.gpx') or $this->endsWith($lowerFileName, '.kml') or $this->endsWith($lowerFileName, '.kmz')) {
                     $nbImported = $this->devicesService->importDevices($this->userId, $file);
                     return new DataResponse($nbImported);
                 }
                 else {
                     // invalid extension
-                    return new DataResponse('Invalid file extension', 400);
+                    return new DataResponse($this->l->t('Invalid file extension'), 400);
                 }
             }
             else {
                 // directory or not readable
-                return new DataResponse('Impossible to read the file', 400);
+                return new DataResponse($this->l->t('Impossible to read the file'), 400);
             }
         }
         else {
             // does not exist
-            return new DataResponse('File does not exist', 400);
+            return new DataResponse($this->l->t('File does not exist'), 400);
         }
     }
 
-    private function endswith($string, $test) {
+	/**
+	 * @param $string
+	 * @param $test
+	 * @return bool
+	 */
+    private function endsWith($string, $test): bool {
         $strlen = strlen($string);
         $testlen = strlen($test);
         if ($testlen > $strlen) return false;

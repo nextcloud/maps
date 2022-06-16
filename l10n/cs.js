@@ -323,6 +323,8 @@ OC.L10N.register(
     "Description" : "Popis",
     "Symbol name" : "Název symbolu",
     "Download" : "Stáhnout",
+    "Metadata link" : "Odkaz na metadata",
+    "Tracks/routes name list" : "Seznam názvů stop/tras",
     "no date" : "žádné datum",
     "Show elevation" : "Zobrazit nadmořskou výšku",
     "Failed to change track color" : "Barvu trasy se nepodařilo změnit",

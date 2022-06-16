@@ -141,7 +141,7 @@ class DevicesController extends Controller {
             ]);
         }
         else {
-            return new DataResponse('invalid values', 400);
+            return new DataResponse('Invalid values', 400);
         }
     }
 

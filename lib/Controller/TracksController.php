@@ -37,7 +37,11 @@ use OCP\ILogger;
 
 use OCA\Maps\Service\TracksService;
 
-function remove_utf8_bom($text) {
+/**
+ * @param string $text
+ * @return string
+ */
+function remove_utf8_bom(string $text): string {
     $bom = pack('H*','EFBBBF');
     $text = preg_replace("/^$bom/", '', $text);
     return $text;
@@ -54,7 +58,7 @@ class TracksController extends Controller {
     private $groupManager;
     private $dbtype;
     private $dbdblquotes;
-    private $trans;
+    private $l;
     private $logger;
     private $tracksService;
     protected $appName;
@@ -67,7 +71,7 @@ class TracksController extends Controller {
                                 IAppManager $appManager,
                                 IUserManager $userManager,
                                 IGroupManager $groupManager,
-                                IL10N $trans,
+                                IL10N $l,
                                 ILogger $logger,
                                 TracksService $tracksService,
                                 $UserId){
@@ -79,7 +83,7 @@ class TracksController extends Controller {
         $this->userId = $UserId;
         $this->userManager = $userManager;
         $this->groupManager = $groupManager;
-        $this->trans = $trans;
+        $this->l = $l;
         $this->dbtype = $config->getSystemValue('dbtype');
         $this->config = $config;
         if ($UserId !== '' and $UserId !== null and $serverContainer !== null){
@@ -88,10 +92,13 @@ class TracksController extends Controller {
         $this->shareManager = $shareManager;
     }
 
-    /**
-     * @NoAdminRequired
-     */
-    public function getTracks() {
+	/**
+	 * @NoAdminRequired
+	 * @return DataResponse
+	 * @throws \OCP\Files\InvalidPathException
+	 * @throws \OCP\Files\NotFoundException
+	 */
+    public function getTracks(): DataResponse {
         $tracks = $this->tracksService->getTracksFromDB($this->userId);
         $existingTracks = [];
         foreach ($tracks as $track) {
@@ -115,10 +122,14 @@ class TracksController extends Controller {
         return new DataResponse($existingTracks);
     }
 
-    /**
-     * @NoAdminRequired
-     */
-    public function getTrackFileContent($id) {
+	/**
+	 * @NoAdminRequired
+	 * @param $id
+	 * @return DataResponse
+	 * @throws \OCP\Files\InvalidPathException
+	 * @throws \OCP\Files\NotFoundException
+	 */
+    public function getTrackFileContent($id): DataResponse {
         $track = $this->tracksService->getTrackFromDB($id);
         $res = is_null($track) ? null : $this->userfolder->getById($track['file_id']);
         if (is_array($res) and count($res) > 0) {
@@ -140,39 +151,46 @@ class TracksController extends Controller {
                 ]);
             }
             else {
-                return new DataResponse('bad file type', 400);
+                return new DataResponse($this->l->t('bad file type'), 400);
             }
         }
         else {
-            return new DataResponse('file not found', 400);
+            return new DataResponse($this->l->t('file not found'), 400);
         }
     }
 
-    /**
-     * @NoAdminRequired
-     */
-    public function editTrack($id, $color, $metadata, $etag) {
+	/**
+	 * @NoAdminRequired
+	 * @param $id
+	 * @param $color
+	 * @param $metadata
+	 * @param $etag
+	 * @return DataResponse
+	 */
+    public function editTrack($id, $color, $metadata, $etag): DataResponse {
         $track = $this->tracksService->getTrackFromDB($id, $this->userId);
         if ($track !== null) {
             $this->tracksService->editTrackInDB($id, $color, $metadata, $etag);
             return new DataResponse('EDITED');
         }
         else {
-            return new DataResponse('no such track', 400);
+            return new DataResponse($this->l->t('no such track'), 400);
         }
     }
 
-    /**
-     * @NoAdminRequired
-     */
-    public function deleteTrack($id) {
+	/**
+	 * @NoAdminRequired
+	 * @param $id
+	 * @return DataResponse
+	 */
+    public function deleteTrack($id): DataResponse {
         $track = $this->tracksService->getTrackFromDB($id, $this->userId);
         if ($track !== null) {
             $this->tracksService->deleteTrackFromDB($id);
             return new DataResponse('DELETED');
         }
         else {
-            return new DataResponse('no such track', 400);
+            return new DataResponse($this->l->t('no such track'), 400);
         }
     }
 

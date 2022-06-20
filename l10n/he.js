@@ -1,8 +1,8 @@
 OC.L10N.register(
     "maps",
     {
-    "Maps" : "מפות",
     "Personal" : "אישי",
+    "Maps" : "מפות",
     "🌍🌏🌎 The whole world fits inside your cloud!" : "🌍🌏🌎 כל העולם בתוך הענן שלך!",
     "Zoom" : "תקריב",
     "Toggle history" : "החלפת מצב היסטוריה",

@@ -1,8 +1,8 @@
 OC.L10N.register(
     "maps",
     {
-    "Maps" : "Kaardid",
     "Personal" : "Isiklik",
+    "Maps" : "Kaardid",
     "Export" : "Ekspordi",
     "Delete" : "Kustuta",
     "Delete all" : "Kustuta kõik",

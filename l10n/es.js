@@ -1,8 +1,8 @@
 OC.L10N.register(
     "maps",
     {
-    "Maps" : "Mapas",
     "Personal" : "Personal",
+    "Maps" : "Mapas",
     "🌍🌏🌎 The whole world fits inside your cloud!" : "🌍🌏🌎 ¡El mundo entero cabe en tu nube!",
     "**The whole world fits inside your cloud!**\n\n- **🗺 Beautiful map:** Using [OpenStreetMap](https://www.openstreetmap.org) and [Leaflet](https://leafletjs.com), you can choose between standard map, satellite, topographical, dark mode or even watercolor! 🎨\n- **⭐ Favorites:** Save your favorite places, privately! Sync with [GNOME Maps](https://github.com/nextcloud/maps/issues/30) and mobile apps is planned.\n- **🧭 Routing:** Possible using either [OSRM](http://project-osrm.org), [GraphHopper](https://www.graphhopper.com) or [Mapbox](https://www.mapbox.com).\n- **🖼 Photos on the map:** No more boring slideshows, just show directly where you were!\n- **🙋 Contacts on the map:** See where your friends live and plan your next visit.\n- **📱 Devices:** Lost your phone? Check the map!\n- **〰 Tracks:** Load GPS tracks or past trips. Recording with [PhoneTrack](https://f-droid.org/en/packages/net.eneiluj.nextcloud.phonetrack/) or [OwnTracks](https://owntracks.org) is planned." : "**¡El mundo entero cabe dentro de su nube!**\n\n- **🗺 Hermoso mapa:** ¡Usando [OpenStreetMap](https://www.openstreetmap.org) and [Leaflet](https://leafletjs.com), podrá elegir entre mapa estándar, satélite, topográfico, modo oscuro o incluso acuarela! 🎨\n- **⭐ Favoritos:** ¡Guarde sus sitios favoritos, de forma privada! Está planificada una sincronización con [GNOME Maps](https://github.com/nextcloud/maps/issues/30) y apps móviles.\n- **🧭 Navegación:** Posible tanto a través de [OSRM](http://project-osrm.org), [GraphHopper](https://www.graphhopper.com) o [Mapbox](https://www.mapbox.com).\n- **🖼 Fotos en el mapa:** ¡No más aburridas presentaciones de diapositivas, sino simplemente véalas directamente donde estuvo!\n- **🙋 Contactos en el mapa:** Vea dónde viven sus amigos y planifique su próxima visita.\n- **📱 Dispositivos:** ¿Ha perdido su móvil? ¡Compruebe el mapa!\n- **〰 Rutas:** Cargue las rutas del GPS o los viajes pasados. Registro de la ruta con [PhoneTrack](https://f-droid.org/en/packages/net.eneiluj.nextcloud.phonetrack/) o [OwnTracks](https://owntracks.org).",
     "My contacts" : "Mis contactos",
@@ -323,6 +323,8 @@ OC.L10N.register(
     "Description" : "Descripción",
     "Symbol name" : "Nombre del símbolo",
     "Download" : "Descargar",
+    "Metadata link" : "Enlace de los metadatos",
+    "Tracks/routes name list" : "Lista de nombres de las pistas/rutas",
     "no date" : "sin fecha",
     "Show elevation" : "Mostrar elevación",
     "Failed to change track color" : "Fallo al cambiar el color de la pista",

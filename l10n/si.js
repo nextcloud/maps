@@ -1,8 +1,8 @@
 OC.L10N.register(
     "maps",
     {
-    "Maps" : "සිතියම්",
     "Personal" : "පුද්ගලික",
+    "Maps" : "සිතියම්",
     "Change color" : "වර්ණය වෙනස් කරන්න",
     "Rename" : "නැවත නම් කරන්න",
     "Copied!" : "පිටපත් කළා!",

@@ -1,8 +1,8 @@
 OC.L10N.register(
     "maps",
     {
-    "Maps" : "Kort",
     "Personal" : "Personlig",
+    "Maps" : "Kort",
     "🌍🌏🌎 The whole world fits inside your cloud!" : "🌍🌏🌎 The whole world fits inside your cloud!",
     "Zoom" : "Zoom",
     "Export" : "Eksportér",

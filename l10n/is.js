@@ -1,8 +1,8 @@
 OC.L10N.register(
     "maps",
     {
-    "Maps" : "Landakort",
     "Personal" : "Persónulegt",
+    "Maps" : "Landakort",
     "Toggle all" : "Víxla öllu",
     "Zoom" : "Aðdráttur",
     "Toggle history" : "Víxla aðgerðaferli af/á",

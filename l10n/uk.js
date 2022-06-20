@@ -1,8 +1,8 @@
 OC.L10N.register(
     "maps",
     {
-    "Maps" : "Мапи",
     "Personal" : "Особисте",
+    "Maps" : "Мапи",
     "Toggle history" : "Перемкнути історію",
     "Change color" : "Змінити колір",
     "Export" : "Експорт",

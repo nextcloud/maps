@@ -1,8 +1,8 @@
 OC.L10N.register(
     "maps",
     {
-    "Maps" : "Xaritalar",
     "Personal" : "Shaxsiy",
+    "Maps" : "Xaritalar",
     "Delete" : "O'chir",
     "Rename" : "Nomni o'zgartiring",
     "Copied!" : "Nusxa olindi!",

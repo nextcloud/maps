@@ -1,8 +1,8 @@
 OC.L10N.register(
     "maps",
     {
-    "Maps" : "Kart",
     "Personal" : "Personlig",
+    "Maps" : "Kart",
     "Change color" : "Endre farge",
     "Export" : "Eksporter",
     "Delete" : "Slett",

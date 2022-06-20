@@ -1,8 +1,8 @@
 OC.L10N.register(
     "maps",
     {
-    "Maps" : "Mapas",
     "Personal" : "Personal",
+    "Maps" : "Mapas",
     "Export" : "Exportar",
     "Delete" : "Suprimir",
     "Import" : "Importar",

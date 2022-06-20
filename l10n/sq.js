@@ -1,8 +1,8 @@
 OC.L10N.register(
     "maps",
     {
-    "Maps" : "Harta",
     "Personal" : "Personale",
+    "Maps" : "Harta",
     "Export" : "Eksport",
     "Delete" : "Delete",
     "Import" : "Import",

@@ -1,8 +1,8 @@
 OC.L10N.register(
     "maps",
     {
-    "Maps" : "Hărți",
     "Personal" : "Personal",
+    "Maps" : "Hărți",
     "Export" : "Exportă",
     "Delete" : "Șterge",
     "Import" : "Importă",

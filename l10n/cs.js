@@ -1,8 +1,8 @@
 OC.L10N.register(
     "maps",
     {
-    "Maps" : "Mapy",
     "Personal" : "Osobní",
+    "Maps" : "Mapy",
     "🌍🌏🌎 The whole world fits inside your cloud!" : "🌍🌏🌎 Celý svět se vejde do vašeho cloudu!",
     "**The whole world fits inside your cloud!**\n\n- **🗺 Beautiful map:** Using [OpenStreetMap](https://www.openstreetmap.org) and [Leaflet](https://leafletjs.com), you can choose between standard map, satellite, topographical, dark mode or even watercolor! 🎨\n- **⭐ Favorites:** Save your favorite places, privately! Sync with [GNOME Maps](https://github.com/nextcloud/maps/issues/30) and mobile apps is planned.\n- **🧭 Routing:** Possible using either [OSRM](http://project-osrm.org), [GraphHopper](https://www.graphhopper.com) or [Mapbox](https://www.mapbox.com).\n- **🖼 Photos on the map:** No more boring slideshows, just show directly where you were!\n- **🙋 Contacts on the map:** See where your friends live and plan your next visit.\n- **📱 Devices:** Lost your phone? Check the map!\n- **〰 Tracks:** Load GPS tracks or past trips. Recording with [PhoneTrack](https://f-droid.org/en/packages/net.eneiluj.nextcloud.phonetrack/) or [OwnTracks](https://owntracks.org) is planned." : "**Celý svět ve vašem cloudu!**\n\n- **🗺 Překrásná mapa:** Díky [OpenStreetMap](https://www.openstreetmap.org) a [Leafletu](https://leafletjs.com), si můžete vybrat mezi standardní, satelitní, topografickou a tmavou verzí! 🎨\n- **⭐ Oblíbená místa:** Uložte si svá oblíbená místa soukromě! Připravujeme synchronizaci s [GNOME Maps](https://github.com/nextcloud/maps/issues/30) a mobilem.\n- **🧭 Navigace:** Díky [OSRM](http://project-osrm.org), [GraphHopper](https://www.graphhopper.com) či [Mapbox](https://www.mapbox.com).\n- **🖼 Fotky přímo na mapě:** Konec nudným prezentacím, prostě rovnou ukažte kde jste byli!\n- **🙋 Přátelé na mapě:** Vidíte kde bydlí vaši přátelé a můžete si snadno naplánovat jejich návštěvu.\n- **📱 Ztracený mobil?** Mrkněte na mapu!\n- **〰 GPS stopy:** Nahrajte GPS stopy svých výletů. Nahrávání pomocí  [PhoneTrack](https://f-droid.org/en/packages/net.eneiluj.nextcloud.phonetrack/) či [OwnTracks](https://owntracks.org) připravujeme.",
     "My contacts" : "Moje kontakty",
@@ -323,6 +323,8 @@ OC.L10N.register(
     "Description" : "Popis",
     "Symbol name" : "Název symbolu",
     "Download" : "Stáhnout",
+    "Metadata link" : "Odkaz na metadata",
+    "Tracks/routes name list" : "Seznam názvů stop/tras",
     "no date" : "žádné datum",
     "Show elevation" : "Zobrazit nadmořskou výšku",
     "Failed to change track color" : "Barvu trasy se nepodařilo změnit",

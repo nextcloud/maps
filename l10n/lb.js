@@ -1,8 +1,8 @@
 OC.L10N.register(
     "maps",
     {
-    "Maps" : "Kaarten",
     "Personal" : "Perséinlech",
+    "Maps" : "Kaarten",
     "Export" : "Exportéieren",
     "Delete" : "Läschen",
     "Import" : "Importéieren",

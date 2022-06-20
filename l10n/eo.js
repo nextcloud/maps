@@ -1,8 +1,8 @@
 OC.L10N.register(
     "maps",
     {
-    "Maps" : "Mapoj",
     "Personal" : "Persona",
+    "Maps" : "Mapoj",
     "Export" : "Eksporti",
     "Delete" : "Forigi",
     "Import" : "Importi",

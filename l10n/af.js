@@ -1,8 +1,8 @@
 OC.L10N.register(
     "maps",
     {
-    "Maps" : "Kaarte",
     "Personal" : "Persoonlik",
+    "Maps" : "Kaarte",
     "Export" : "Voer uit",
     "Delete" : "Skrap",
     "Import" : "Voer In",

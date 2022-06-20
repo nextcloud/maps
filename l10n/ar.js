@@ -1,8 +1,8 @@
 OC.L10N.register(
     "maps",
     {
-    "Maps" : "الخرائط",
     "Personal" : "شخصي",
+    "Maps" : "الخرائط",
     "Export" : "تصدير",
     "Delete" : "حذف ",
     "Delete all" : "مسح الكل",

@@ -1,8 +1,8 @@
 OC.L10N.register(
     "maps",
     {
-    "Maps" : "地図",
     "Personal" : "個人",
+    "Maps" : "地図",
     "Zoom" : "ズーム",
     "Toggle history" : "履歴の切り替え",
     "Change color" : "色を変える",

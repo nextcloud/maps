@@ -43,11 +43,13 @@ class UtilsController extends Controller {
         $this->config = $config;
     }
 
-    /**
-     * Delete user options
-     * @NoAdminRequired
-     */
-    public function deleteOptionsValues() {
+	/**
+	 * Delete user options
+	 *
+	 * @NoAdminRequired
+	 * @return DataResponse
+	 */
+    public function deleteOptionsValues(): DataResponse {
         $keys = $this->config->getUserKeys($this->userId, 'maps');
         foreach ($keys as $key) {
             $this->config->deleteUserValue($this->userId, 'maps', $key);
@@ -55,22 +57,28 @@ class UtilsController extends Controller {
         return new DataResponse(['done'=>1]);
     }
 
-    /**
-     * Save options values to the DB for current user
-     * @NoAdminRequired
-     */
-    public function saveOptionValue($options) {
+	/**
+	 * Save options values to the DB for current user
+	 *
+	 * @NoAdminRequired
+	 * @param $options
+	 * @return DataResponse
+	 * @throws \OCP\PreConditionNotMetException
+	 */
+    public function saveOptionValue($options): DataResponse {
         foreach ($options as $key => $value) {
             $this->config->setUserValue($this->userId, 'maps', $key, $value);
         }
         return new DataResponse(['done'=>1]);
     }
 
-    /**
-     * get options values from the config for current user
-     * @NoAdminRequired
-     */
-    public function getOptionsValues() {
+	/**
+	 * get options values from the config for current user
+	 *
+	 * @NoAdminRequired
+	 * @return DataResponse
+	 */
+    public function getOptionsValues(): DataResponse {
         $ov = array();
 
         // get all user values
@@ -97,10 +105,13 @@ class UtilsController extends Controller {
         return new DataResponse(['values'=>$ov]);
     }
 
-    /**
-     * set routing settings
-     */
-    public function setRoutingSettings($values) {
+	/**
+	 * set routing settings
+	 *
+	 * @param $values
+	 * @return DataResponse
+	 */
+    public function setRoutingSettings($values): DataResponse {
         $acceptedKeys = [
             'osrmCarURL',
             'osrmBikeURL',

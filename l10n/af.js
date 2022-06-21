@@ -1,6 +1,7 @@
 OC.L10N.register(
     "maps",
     {
+    "File not found" : "Lêer nie gevind nie",
     "Personal" : "Persoonlik",
     "Maps" : "Kaarte",
     "Export" : "Voer uit",

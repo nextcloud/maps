@@ -1,6 +1,7 @@
 OC.L10N.register(
     "maps",
     {
+    "File not found" : "Archivo no encontrado",
     "Personal" : "Personal",
     "Maps" : "Mapas",
     "Export" : "Exportar",

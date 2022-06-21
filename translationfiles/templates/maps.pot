@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Nextcloud 3.14159\n"
 "Report-Msgid-Bugs-To: translations\\@example.com\n"
-"POT-Creation-Date: 2022-06-20 03:03+0000\n"
+"POT-Creation-Date: 2022-06-21 03:04+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -16,6 +16,95 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+
+#: /app/lib/Controller/DevicesApiController.php:161
+#: /app/lib/Controller/DevicesApiController.php:182
+#: /app/lib/Controller/DevicesController.php:166
+#: /app/lib/Controller/FavoritesApiController.php:119
+#: /app/lib/Controller/FavoritesApiController.php:146
+#: /app/lib/Controller/FavoritesController.php:115
+#: /app/lib/Controller/FavoritesController.php:140
+msgid "Invalid values"
+msgstr ""
+
+#: /app/lib/Controller/DevicesApiController.php:186
+#: /app/lib/Controller/DevicesApiController.php:204
+#: /app/lib/Controller/DevicesController.php:170
+#: /app/lib/Controller/DevicesController.php:186
+msgid "No such device"
+msgstr ""
+
+#: /app/lib/Controller/DevicesController.php:204
+msgid "No device to export"
+msgstr ""
+
+#: /app/lib/Controller/DevicesController.php:215
+#: /app/lib/Controller/FavoritesController.php:268
+#: /app/lib/Controller/RoutingController.php:107
+msgid "/Maps is not a directory"
+msgstr ""
+
+#: /app/lib/Controller/DevicesController.php:218
+#: /app/lib/Controller/FavoritesController.php:272
+#: /app/lib/Controller/RoutingController.php:111
+msgid "/Maps is not writeable"
+msgstr ""
+
+#: /app/lib/Controller/DevicesController.php:222
+#: /app/lib/Controller/FavoritesController.php:277
+#: /app/lib/Controller/RoutingController.php:116
+msgid "Impossible to create /Maps"
+msgstr ""
+
+#: /app/lib/Controller/DevicesController.php:227
+#: /app/lib/Controller/FavoritesController.php:256
+#: /app/lib/Controller/FavoritesController.php:283
+msgid "Nothing to export"
+msgstr ""
+
+#: /app/lib/Controller/DevicesController.php:272
+#: /app/lib/Controller/FavoritesController.php:329
+msgid "Invalid file extension"
+msgstr ""
+
+#: /app/lib/Controller/DevicesController.php:277
+#: /app/lib/Controller/FavoritesController.php:334
+msgid "Impossible to read the file"
+msgstr ""
+
+#: /app/lib/Controller/DevicesController.php:282
+#: /app/lib/Controller/FavoritesController.php:339
+msgid "File does not exist"
+msgstr ""
+
+#: /app/lib/Controller/FavoritesApiController.php:149
+#: /app/lib/Controller/FavoritesApiController.php:166
+#: /app/lib/Controller/FavoritesController.php:143
+#: /app/lib/Controller/FavoritesController.php:182
+msgid "No such favorite"
+msgstr ""
+
+#: /app/lib/Controller/FavoritesController.php:213
+#: /app/lib/Controller/FavoritesController.php:232
+msgid "Unknown category"
+msgstr ""
+
+#: /app/lib/Controller/FavoritesController.php:219
+msgid "Error sharing favorite"
+msgstr ""
+
+#: /app/lib/Controller/TracksController.php:154
+msgid "Bad file type"
+msgstr ""
+
+#: /app/lib/Controller/TracksController.php:158
+msgid "File not found"
+msgstr ""
+
+#: /app/lib/Controller/TracksController.php:177
+#: /app/lib/Controller/TracksController.php:193
+msgid "No such track"
+msgstr ""
 
 #. TRANSLATORS src/components/AppNavigationFavoritesItem.vue:85
 #. TRANSLATORS src/views/App.vue:497

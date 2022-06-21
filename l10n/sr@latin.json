@@ -1,4 +1,5 @@
 { "translations": {
+    "File not found" : "Fajl nije nađen",
     "Delete" : "Delete",
     "Import" : "Uvezi",
     "Rename" : "Rename",

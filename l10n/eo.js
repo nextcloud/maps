@@ -1,6 +1,7 @@
 OC.L10N.register(
     "maps",
     {
+    "File not found" : "Netrovita dosiero",
     "Personal" : "Persona",
     "Maps" : "Mapoj",
     "Export" : "Eksporti",

@@ -1,6 +1,7 @@
 OC.L10N.register(
     "maps",
     {
+    "File not found" : "Fajl nije nađen",
     "Delete" : "Delete",
     "Import" : "Uvezi",
     "Rename" : "Rename",

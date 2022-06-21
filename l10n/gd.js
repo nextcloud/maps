@@ -1,6 +1,7 @@
 OC.L10N.register(
     "maps",
     {
+    "File not found" : "Cha deach am faidhle a lorg",
     "Delete" : "Sguab às",
     "Rename" : "Thoir ainm ùr air",
     "Cancel" : "Sguir dheth",

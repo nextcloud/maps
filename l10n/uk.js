@@ -1,6 +1,7 @@
 OC.L10N.register(
     "maps",
     {
+    "File not found" : "Файл не знайдено",
     "Personal" : "Особисте",
     "Maps" : "Мапи",
     "Toggle history" : "Перемкнути історію",

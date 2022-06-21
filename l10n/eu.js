@@ -1,6 +1,7 @@
 OC.L10N.register(
     "maps",
     {
+    "File not found" : "Ez da fitxategia aurkitu",
     "Personal" : "Pertsonala",
     "Maps" : "Mapak",
     "🌍🌏🌎 The whole world fits inside your cloud!" : "🌍🌏🌎 Mundu osoa sartzen da zure hodeian!",

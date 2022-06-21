@@ -1,6 +1,7 @@
 OC.L10N.register(
     "maps",
     {
+    "File not found" : "Không tìm thấy tập tin",
     "Personal" : "Cá nhân",
     "Maps" : "Bản đồ",
     "Export" : "Xuất ra",

@@ -1,6 +1,7 @@
 OC.L10N.register(
     "maps",
     {
+    "File not found" : "Datoteka nije pronađena",
     "Personal" : "Osobno",
     "Export" : "Izvezi",
     "Delete" : "Obriši",

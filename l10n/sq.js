@@ -1,6 +1,7 @@
 OC.L10N.register(
     "maps",
     {
+    "File not found" : "Skedari nuk u gjet",
     "Personal" : "Personale",
     "Maps" : "Harta",
     "Export" : "Eksport",

@@ -1,6 +1,7 @@
 OC.L10N.register(
     "maps",
     {
+    "File not found" : "ಕಡತ ಕಂಡುಬಂದಿಲ್ಲ",
     "Personal" : "﻿ವೈಯಕ್ತಿಕ",
     "Maps" : "ನಕಾಶೆ",
     "Export" : "ರಫ್ತು",

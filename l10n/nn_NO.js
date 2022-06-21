@@ -1,6 +1,7 @@
 OC.L10N.register(
     "maps",
     {
+    "File not found" : "Fann ikkje fila",
     "Personal" : "Personleg",
     "Export" : "Eksporter",
     "Delete" : "Ta bort",

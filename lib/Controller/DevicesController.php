@@ -215,11 +215,11 @@ class DevicesController extends Controller {
                 return new DataResponse($this->l->t('/Maps is not a directory'), 400);
             }
             else if (!$mapsFolder->isCreatable()) {
-                return new DataResponse($this->l->t('/Maps is not writeable'), 400);
+                return new DataResponse($this->l->t('/Maps directory is not writeable'), 400);
             }
         }
         else {
-            return new DataResponse($this->l->t('Impossible to create /Maps'), 400);
+            return new DataResponse($this->l->t('Impossible to create /Maps directory'), 400);
         }
 
         $nbDevices = $this->devicesService->countPoints($this->userId, $deviceIdList, $begin, $end);

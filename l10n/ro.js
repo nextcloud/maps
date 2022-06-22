@@ -1,6 +1,7 @@
 OC.L10N.register(
     "maps",
     {
+    "File not found" : "Fișierul nu a fost găsit",
     "Personal" : "Personal",
     "Maps" : "Hărți",
     "Export" : "Exportă",

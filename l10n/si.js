@@ -1,6 +1,7 @@
 OC.L10N.register(
     "maps",
     {
+    "File not found" : "ගොනුව හමු නොවිණි",
     "Personal" : "පුද්ගලික",
     "Maps" : "සිතියම්",
     "Change color" : "වර්ණය වෙනස් කරන්න",

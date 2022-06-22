@@ -1,6 +1,7 @@
 OC.L10N.register(
     "maps",
     {
+    "File not found" : "Datne nav atrasta",
     "Personal" : "Personīgs",
     "Maps" : "Karte",
     "Export" : "Eksportēt",

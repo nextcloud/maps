@@ -1,6 +1,7 @@
 OC.L10N.register(
     "maps",
     {
+    "File not found" : "ფაილი ვერ იქნა ნაპოვნი",
     "Personal" : "პირადი",
     "Maps" : "რუკები",
     "Export" : "ექსპორტი",

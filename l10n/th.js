@@ -1,6 +1,7 @@
 OC.L10N.register(
     "maps",
     {
+    "File not found" : "ไม่พบไฟล์",
     "Personal" : "ส่วนตัว",
     "Maps" : "แผนที่",
     "Export" : "ส่งออก",

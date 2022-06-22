@@ -1,6 +1,9 @@
 OC.L10N.register(
     "maps",
     {
+    "Nothing to export" : "Niets te exporteren",
+    "Invalid file extension" : "Ongeldige bestandsextensie",
+    "Impossible to read the file" : "Kon bestand niet lezen",
     "File not found" : "Bestand niet gevonden",
     "Personal" : "Persoonlijk",
     "Maps" : "Kaarten",

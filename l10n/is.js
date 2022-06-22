@@ -1,6 +1,7 @@
 OC.L10N.register(
     "maps",
     {
+    "File not found" : "Skrá finnst ekki",
     "Personal" : "Persónulegt",
     "Maps" : "Landakort",
     "Toggle all" : "Víxla öllu",

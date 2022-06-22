@@ -1,6 +1,7 @@
 OC.L10N.register(
     "maps",
     {
+    "File not found" : "Faýl tapylmady",
     "Delete" : "Pozmak",
     "Rename" : "Adyny üýtgetmek",
     "Cancel" : "ýatyrmak",

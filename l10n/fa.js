@@ -1,6 +1,7 @@
 OC.L10N.register(
     "maps",
     {
+    "File not found" : "فایل یافت نشد",
     "Personal" : "شخصی",
     "Maps" : "نقشه‌ها",
     "🌍🌏🌎 The whole world fits inside your cloud!" : "تمام دنیا درون ابر شما جای می گیرد!",

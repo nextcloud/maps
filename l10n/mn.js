@@ -1,6 +1,7 @@
 OC.L10N.register(
     "maps",
     {
+    "File not found" : "Файл олдсонгүй",
     "Personal" : "Хувийн",
     "Maps" : "Газрын зураг",
     "Export" : "Экспорт",

@@ -1,6 +1,7 @@
 OC.L10N.register(
     "maps",
     {
+    "File not found" : " ບໍ່ພົບຟາຍ",
     "Personal" : "ສ່ວນບຸກຄົນ",
     "Delete" : "ລຶບ",
     "Rename" : "ປ່ຽນຊື່",

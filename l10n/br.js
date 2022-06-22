@@ -1,6 +1,7 @@
 OC.L10N.register(
     "maps",
     {
+    "File not found" : "N'eo ket bet kavet ar restr",
     "Personal" : "Personel",
     "Delete" : "Dilemel",
     "Import" : "Emporzhiañ ",

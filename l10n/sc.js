@@ -1,6 +1,7 @@
 OC.L10N.register(
     "maps",
     {
+    "File not found" : "Archìviu no agatadu",
     "Personal" : "Personale",
     "Maps" : "Mapas",
     "🌍🌏🌎 The whole world fits inside your cloud!" : "🌍🌏🌎 Totu su mundu cabet in sa nue virtuale tua!",

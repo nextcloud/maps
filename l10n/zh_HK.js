@@ -1,6 +1,7 @@
 OC.L10N.register(
     "maps",
     {
+    "File not found" : "找不到檔案",
     "Personal" : "個人的",
     "Maps" : "地圖",
     "🌍🌏🌎 The whole world fits inside your cloud!" : "🌍🌏🌎 全球地圖盡在自己的私有雲中!",

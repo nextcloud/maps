@@ -1,6 +1,7 @@
 OC.L10N.register(
     "maps",
     {
+    "File not found" : "Failas nerastas",
     "Personal" : "Asmeniniai",
     "Maps" : "Žemėlapiai",
     "🌍🌏🌎 The whole world fits inside your cloud!" : "🌍🌏🌎 Visas pasaulis telpa į jūsų debesiją!",

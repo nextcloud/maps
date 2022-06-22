@@ -1,6 +1,7 @@
 OC.L10N.register(
     "maps",
     {
+    "File not found" : "Filen ble ikke funnet",
     "Personal" : "Personlig",
     "Maps" : "Kart",
     "Change color" : "Endre farge",

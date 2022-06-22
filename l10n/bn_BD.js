@@ -1,6 +1,7 @@
 OC.L10N.register(
     "maps",
     {
+    "File not found" : "ফাইল খুঁজে পাওয়া গেল না",
     "Personal" : "ব্যক্তিগত",
     "Maps" : "মানচিত্র",
     "Export" : "রপ্তানি",

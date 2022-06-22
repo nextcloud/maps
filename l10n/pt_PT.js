@@ -1,6 +1,7 @@
 OC.L10N.register(
     "maps",
     {
+    "File not found" : "Ficheiro não encontrado",
     "Personal" : "Pessoal",
     "Maps" : "Mapas",
     "Zoom" : "Zoom",

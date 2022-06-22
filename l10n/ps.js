@@ -1,6 +1,7 @@
 OC.L10N.register(
     "maps",
     {
+    "File not found" : "فایل نشته",
     "Personal" : "شخصي",
     "Delete" : "ړنګول",
     "Rename" : "نوم بدلول",

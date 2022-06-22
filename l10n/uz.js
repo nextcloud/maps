@@ -1,6 +1,7 @@
 OC.L10N.register(
     "maps",
     {
+    "File not found" : "Fayl topilmadi",
     "Personal" : "Shaxsiy",
     "Maps" : "Xaritalar",
     "Delete" : "O'chir",

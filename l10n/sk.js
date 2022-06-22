@@ -1,6 +1,7 @@
 OC.L10N.register(
     "maps",
     {
+    "File not found" : "Súbor nenájdený",
     "Personal" : "Osobné",
     "Maps" : "Mapy",
     "🌍🌏🌎 The whole world fits inside your cloud!" : "🌍🌏🌎 Celý svet vojde do vášho  cloudu!",

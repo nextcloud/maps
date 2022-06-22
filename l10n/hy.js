@@ -1,6 +1,7 @@
 OC.L10N.register(
     "maps",
     {
+    "File not found" : "Ֆայլը չգտնվեց",
     "Personal" : "Անձնական",
     "Export" : "Արտահանում",
     "Delete" : "հեռացնել",

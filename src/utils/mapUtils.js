@@ -60,9 +60,9 @@ export const getShouldMapUseImperial = () => {
 
 export const geoToLatLng = (geo) => {
 	let ll
-	const fourFirsts = geo.substr(0, 4)
+	const fourFirsts = geo.slice(0, 4)
 	if (fourFirsts === 'geo:') {
-		ll = geo.substr(4).split(',')
+		ll = geo.slice(4).split(',')
 	} else {
 		ll = geo.split(';')
 	}

@@ -1,0 +1,27 @@
+OC.L10N.register(
+    "maps",
+    {
+    "File not found" : "Ulac afaylu",
+    "Delete" : "Kkes",
+    "Rename" : "Beddel isem",
+    "Copied!" : "Yenɣel!",
+    "Cancel" : "Sefsex",
+    "OK" : "IH",
+    "Close" : "Mdel",
+    "Favorite" : "Menyif",
+    "Name" : "Nom",
+    "Add" : "Rnu",
+    "Add to favorites" : "Rnu ismal",
+    "Home" : "Asnubeg",
+    "Yes" : "Oui",
+    "Search" : "Nadi",
+    "File" : "Afaylu",
+    "Details" : "Talqayt",
+    "Share link" : "Fren aseɣwen",
+    "Copy link" : "Nɣel aseɣwen",
+    "Move" : "Senkez",
+    "Link" : "Aseɣwen",
+    "Download" : "Sider",
+    "Settings" : "Iɣewwaṛen"
+},
+"nplurals=2; plural=(n != 1);");

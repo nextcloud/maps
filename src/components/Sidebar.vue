@@ -124,7 +124,7 @@ export default {
 			} else if (this.activeTab === 'photo-suggestion') {
 				return ''
 			}
-			return t('maps', 'shows cool information')
+			return t('maps', 'Shows cool information')
 		},
 		backgroundImageUrl() {
 			const iconColor = OCA.Accessibility?.theme === 'dark' ? 'ffffff' : '000000'
@@ -183,8 +183,8 @@ export default {
 			background-size: cover;
 		}
 
-		&[data-mimetype="text/plain"],
-		&[data-mimetype="text/markdown"] {
+		&[data-mimetype='text/plain'],
+		&[data-mimetype='text/markdown'] {
 			.app-sidebar-header__figure {
 				background-size: contain;
 			}

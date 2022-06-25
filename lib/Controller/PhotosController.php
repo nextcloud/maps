@@ -40,37 +40,46 @@ class PhotosController extends Controller {
         $this->photofilesService = $photofilesService;
     }
 
-    /**
-     * @NoAdminRequired
-     * @NoCSRFRequired
-     */
-    public function getPhotosFromDb() {
+	/**
+	 * @NoAdminRequired
+	 * @NoCSRFRequired
+	 * @return DataResponse
+	 */
+    public function getPhotosFromDb(): DataResponse {
         $result = $this->geophotoService->getAllFromDB($this->userId);
         return new DataResponse($result);
     }
 
-    /**
-     * @NoAdminRequired
-     * @NoCSRFRequired
-     */
-    public function getNonLocalizedPhotosFromDb() {
+	/**
+	 * @NoAdminRequired
+	 * @NoCSRFRequired
+	 * @return DataResponse
+	 */
+    public function getNonLocalizedPhotosFromDb(): DataResponse {
         $result = $this->geophotoService->getNonLocalizedFromDB($this->userId);
         return new DataResponse($result);
     }
 
 
-    /**
-     * @NoAdminRequired
-     */
-    public function placePhotos($paths, $lats, $lngs, $directory=false) {
+	/**
+	 * @NoAdminRequired
+	 * @param $paths
+	 * @param $lats
+	 * @param $lngs
+	 * @param bool $directory
+	 * @return DataResponse
+	 */
+    public function placePhotos($paths, $lats, $lngs, bool $directory=false): DataResponse {
         $result = $this->photofilesService->setPhotosFilesCoords($this->userId, $paths, $lats, $lngs, $directory);
         return new DataResponse($result);
     }
 
-    /**
-     * @NoAdminRequired
-     */
-    public function resetPhotosCoords($paths) {
+	/**
+	 * @NoAdminRequired
+	 * @param $paths
+	 * @return DataResponse
+	 */
+    public function resetPhotosCoords($paths): DataResponse {
         $result = $this->photofilesService->resetPhotosFilesCoords($this->userId, $paths);
         return new DataResponse($result);
     }

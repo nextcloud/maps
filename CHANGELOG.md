@@ -4,7 +4,54 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
-## [Unreleased]
+## 0.2.0 - 2022.xx.yy New Vue based frontend
+### Fixed
+- Add .contact-group-name to padding exception
+  [#678](https://github.com/nextcloud/maps/pull/678) @RobinFrcd
+- Welcome PHP8
+  [#683](https://github.com/nextcloud/maps/pull/683) @umgfoin fixes
+  [#656](https://github.com/nextcloud/maps/issues/656) @Emporea
+  [#652](https://github.com/nextcloud/maps/issues/652) @GHJester
+  [#640](https://github.com/nextcloud/maps/issues/640) @benjaminsabatini
+- Migrated app to Bootstrap
+  [#703](https://github.com/nextcloud/maps/pull/703) @eneiluj @tacruc fixes
+  [#689](https://github.com/nextcloud/maps/issues/689) @l1gi
+- Improved image metadata extraction
+  [#705](https://github.com/nextcloud/maps/pull/705) @tacruc
+- Replace deprecated String.prototype.substr()
+  [#716](https://github.com/nextcloud/maps/pull/716) @CommanderRoot
+- Scan shared Photos
+  [#727](https://github.com/nextcloud/maps/pull/727) @tacruc fixes
+  [#447](https://github.com/nextcloud/maps/issues/447) @mayermart
+- Remove empty lines from address lookup
+  [708](https://github.com/nextcloud/maps/pull/708) @SeanDS fixes
+  [706](https://github.com/nextcloud/maps/issues/706) @SeanDS
+- Show Waypoints in tracks
+  [764](https://github.com/nextcloud/maps/pull/764) @tacruc fixes
+  [753](https://github.com/nextcloud/maps/issues/753) @nougatbyte
+- Allways show tracks without timestamps
+  [739](https://github.com/nextcloud/maps/pull/739) @tacruc fixes
+  [738](https://github.com/nextcloud/maps/issues/738) @nougatbyte
+### Added
+- new Vue frontend
+  [#510](https://github.com/nextcloud/maps/pull/510) @eneiluj @tacruc
+  [#700](https://github.com/nextcloud/maps/pull/700) @tacruc
+- Added Option to scan photos now
+  [#704](https://github.com/nextcloud/maps/pull/704) @tacruc
+- Added phpUnit tests workflow
+  [#725](https://github.com/nextcloud/maps/pull/725) @tacruc
+- Added unit test for exif extraction
+  [737](https://github.com/nextcloud/maps/pull/737) @tacruc
+- Added node  workflow
+  [740](https://github.com/nextcloud/maps/pull/740) @tacruc
+- Respect .nomedia and .noimage files
+  [7226](https://github.com/nextcloud/maps/pull/726) @tacruc
+-
+
+### Performance
+- Replace use of IConfig with IMemcache to store the last address lookup
+  [#688](https://github.com/nextcloud/maps/pull/688) @tcitworld
+
 ## 0.1.10 – 2021-12-20
 ### Fixed
 - Add padding on icons/name
@@ -63,7 +110,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Changed
 - a few style improvements in tooltips (position and size)
-- message when adding a favorite, ESC to cancel
+- message when adding a favorite, Esc to cancel
 
 ### Fixed
 - missing variable declarations breaking things in search, favorites, tracks, devices

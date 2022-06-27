@@ -59,7 +59,7 @@
 
 			<div v-if="allowEdits" class="buttons">
 				<button class="primary" @click="handleAddToFavorites">
-					{{ t("maps", "Add to Favorites") }}
+					{{ t("maps", "Add to favorites") }}
 				</button>
 			</div>
 		</template>

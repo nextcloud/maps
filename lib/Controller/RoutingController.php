@@ -108,12 +108,12 @@ class RoutingController extends Controller {
                 return $response;
             }
             else if (!$mapsFolder->isCreatable()) {
-                $response = new DataResponse($this->l->t('/Maps is not writeable'), 400);
+                $response = new DataResponse($this->l->t('/Maps directory is not writeable'), 400);
                 return $response;
             }
         }
         else {
-            $response = new DataResponse($this->l->t('Impossible to create /Maps'), 400);
+            $response = new DataResponse($this->l->t('Impossible to create /Maps directory'), 400);
             return $response;
         }
 

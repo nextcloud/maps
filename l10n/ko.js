@@ -36,7 +36,6 @@ OC.L10N.register(
     "This Place" : "이 위치",
     "Name" : "이름",
     "Add" : "추가",
-    "Add to Favorites" : "즐겨찾기 추가",
     "Add to favorites" : "즐겨찾기에 추가",
     "Home" : "집",
     "Work" : "직장",

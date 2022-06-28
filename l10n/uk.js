@@ -31,7 +31,6 @@ OC.L10N.register(
     "This Place" : "Це місце",
     "Name" : "Ім'я",
     "Add" : "Додати",
-    "Add to Favorites" : "Додати до улюблених",
     "Add to favorites" : "Додати до обраного",
     "Home" : "Домашній",
     "Work" : "Робочий",

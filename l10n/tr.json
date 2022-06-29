@@ -3,6 +3,8 @@
     "No such device" : "Böyle bir aygıt yok",
     "No device to export" : "Dışa aktarılacak bir aygıt yok",
     "/Maps is not a directory" : "/Maps bir klasör değil",
+    "/Maps directory is not writeable" : "/Maps klasörü yazılabilir değil",
+    "Impossible to create /Maps directory" : "/Maps klasörü oluşturulamadı",
     "Nothing to export" : "Dışa aktarılabilecek bir şey yok",
     "Invalid file extension" : "Dosya uzantısı geçersiz",
     "Impossible to read the file" : "Dosya okunamadı",

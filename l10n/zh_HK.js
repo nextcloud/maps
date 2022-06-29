@@ -5,6 +5,8 @@ OC.L10N.register(
     "No such device" : "無此裝置",
     "No device to export" : "無可導出的裝置",
     "/Maps is not a directory" : "/Maps 不是目錄",
+    "/Maps directory is not writeable" : "/Maps 目錄無法寫入。",
+    "Impossible to create /Maps directory" : "無法建立 /Maps 目錄",
     "Nothing to export" : "沒有可導出的東西",
     "Invalid file extension" : "無效的副檔名",
     "Impossible to read the file" : "無法讀取檔案",

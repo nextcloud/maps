@@ -5,6 +5,8 @@ OC.L10N.register(
     "No such device" : "Žádné takové zařízení",
     "No device to export" : "Žádné zařízení k exportu",
     "/Maps is not a directory" : "/Maps není složka",
+    "/Maps directory is not writeable" : "do adresáře /Maps se nedaří zapisovat",
+    "Impossible to create /Maps directory" : "Není možné vytvořit adresář /Maps",
     "Nothing to export" : "Nic k exportu",
     "Invalid file extension" : "Neplatná přípona souboru",
     "Impossible to read the file" : "Nedaří se načíst soubor",

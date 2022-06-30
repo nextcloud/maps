@@ -5,6 +5,8 @@ OC.L10N.register(
     "No such device" : "No existe ese dispositivo",
     "No device to export" : "No hay dispositivo al que exportar",
     "/Maps is not a directory" : "/Maps no es una carpeta",
+    "/Maps directory is not writeable" : "El directorio /Maps no es editable",
+    "Impossible to create /Maps directory" : "No se puede crear el directorio /Maps",
     "Nothing to export" : "Nada que exportar",
     "Invalid file extension" : "Extensión de archivo inválida",
     "Impossible to read the file" : "No se puede leer el archivo",

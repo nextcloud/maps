@@ -3,6 +3,8 @@
     "No such device" : "Nenhum tal dispositivo",
     "No device to export" : "Nenhum dispositivo para exportar",
     "/Maps is not a directory" : "/Maps não é um diretório",
+    "/Maps directory is not writeable" : "O diretório /Maps não pode receber arquivos",
+    "Impossible to create /Maps directory" : "Impossível criar o diretório /Maps",
     "Nothing to export" : "Nada para exportar",
     "Invalid file extension" : "Extensão de arquivo inválida",
     "Impossible to read the file" : "Impossível ler o arquivo",

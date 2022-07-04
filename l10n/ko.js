@@ -122,6 +122,7 @@ OC.L10N.register(
     "Zoom in" : "확대",
     "Failed to load photos" : "사진 불러오기 실패",
     "Cinema" : "영화",
+    "Hospital" : "병원",
     "Dentist" : "치과",
     "Link" : "링크",
     "Description" : "설명",

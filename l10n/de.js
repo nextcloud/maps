@@ -335,7 +335,7 @@ OC.L10N.register(
     "Longitude" : "Längengrad",
     "Description" : "Beschreibung",
     "Symbol name" : "Name des Symbols",
-    "Download" : "Benötigt keine Übersetzung. Hier wird nur die formelle Übersetzung verwendet (de_DE).",
+    "Download" : "Herunterladen",
     "Metadata link" : "Metadaten-Link",
     "Tracks/routes name list" : "Liste mit Namen von Strecken/Routen",
     "no date" : "Kein Datum",

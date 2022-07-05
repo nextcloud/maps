@@ -5,6 +5,8 @@ OC.L10N.register(
     "No such device" : "Nincs ilyen eszköz",
     "No device to export" : "Nincs exportálandó eszköz",
     "/Maps is not a directory" : "A /Maps nem könyvtár",
+    "/Maps directory is not writeable" : "A /Maps könyvtár nem írható",
+    "Impossible to create /Maps directory" : "Nem lehet létrehozni a /Maps könyvtárat",
     "Nothing to export" : "Nincs mit exportálni",
     "Invalid file extension" : "Érvénytelen fájlkiterjesztés",
     "Impossible to read the file" : "A fájl nem olvasható",

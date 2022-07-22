@@ -303,6 +303,7 @@ OC.L10N.register(
     "Description" : "Opis",
     "Symbol name" : "Ime simbola",
     "Download" : "Prejmi",
+    "Metadata link" : "Povezava metapodatkov",
     "no date" : "brez datuma",
     "Show elevation" : "Pokaži višino",
     "Failed to change track color" : "Spreminjanje barve sledi je spodletelo",

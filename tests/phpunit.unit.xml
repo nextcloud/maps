@@ -11,7 +11,7 @@
 			<clover outputFile="./clover.unit.xml"/>
 		</report>
 	</coverage>
-	<testsuite name="Mail app tests">
+	<testsuite name="Maps app tests">
 		<directory suffix="Test.php">Unit</directory>
 	</testsuite>
 </phpunit>

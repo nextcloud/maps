@@ -174,7 +174,7 @@ OC.L10N.register(
     "Failed to rename category" : "Kunde inte byta namn på kategori",
     "Failed to delete category favorites" : "Kunde inte radera kategorifavoriter",
     "Failed to add favorite" : "Kunde inte lägga till favorit",
-    "Submit" : "Verkställ",
+    "Submit" : "Skicka",
     "Move" : "Flytta",
     "Failed to delete favorite" : "Kunde inte radera favorit",
     "Failed to edit favorite" : "Kunde inte redigera favorit",

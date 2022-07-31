@@ -66,8 +66,15 @@ class PhotosController extends Controller {
 	 * @NoCSRFRequired
 	 * @return DataResponse
 	 */
-    public function getNonLocalizedPhotosFromDb(): DataResponse {
-        $result = $this->geophotoService->getNonLocalizedFromDB($this->userId);
+    public function getNonLocalizedPhotosFromDb($myMapId=null): DataResponse {
+		$userFolder = $this->root->getUserFolder($this->userId);
+		if (is_null($myMapId) || $myMapId === "") {
+        	$result = $this->geophotoService->getNonLocalizedFromDB($this->userId, $userFolder);
+		} else {
+			$folders = $userFolder->getById($myMapId);
+			$folder = array_shift($folders);
+			$result = $this->geophotoService->getNonLocalizedFromDB($this->userId, $folder, true, false);
+		}
         return new DataResponse($result);
     }
 

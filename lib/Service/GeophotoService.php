@@ -137,18 +137,27 @@ class GeophotoService {
         return $filesById;
     }
 
-    /**
-     * @param string $userId
+	/**
+	 * @param string $userId
+	 * @param $folder=null
 	 * @param bool $respectNomediaAndNoimage
-     * @return array with geodatas of all nonLocalizedPhotos
-     */
-    public function getNonLocalizedFromDB (string $userId, bool $respectNomediaAndNoimage=true, bool $hideImagesOnCustomMaps=true): array {
-		$ignoredPaths = $respectNomediaAndNoimage ? $this->getIgnoredPaths($userId, $respectNomediaAndNoimage, $hideImagesOnCustomMaps) : [];
+	 * @param bool $hideImagesOnCustomMaps
+	 * @return array with geodatas of all nonLocalizedPhotos
+	 * @throws \OCP\Files\InvalidPathException
+	 * @throws \OCP\Files\NotFoundException
+	 * @throws \OCP\Files\NotPermittedException
+	 * @throws \OC\User\NoUserException
+	 */
+    public function getNonLocalizedFromDB (string $userId, $folder=null, bool $respectNomediaAndNoimage=true, bool $hideImagesOnCustomMaps=true): array {
+		$ignoredPaths = $respectNomediaAndNoimage ? $this->getIgnoredPaths($userId, $folder, $hideImagesOnCustomMaps) : [];
         $foo = $this->loadTimeorderedPointSets($userId);
         $photoEntities = $this->photoMapper->findAllNonLocalized($userId);
-        $userFolder = $this->getFolderForUser($userId);
+		$userFolder = $this->getFolderForUser($userId);
+		if (is_null($folder)) {
+			$folder = $userFolder;
+		}
         $filesById = [];
-        $cache = $userFolder->getStorage()->getCache();
+        $cache = $folder->getStorage()->getCache();
         $previewEnableMimetypes = $this->getPreviewEnabledMimetypes();
         foreach ($photoEntities as $photoEntity) {
             $cacheEntry = $cache->get($photoEntity->getFileId());
@@ -156,7 +165,7 @@ class GeophotoService {
                 // this path is relative to owner's storage
                 //$path = $cacheEntry->getPath();
                 // but we want it relative to current user's storage
-				$files = $userFolder->getById($photoEntity->getFileId());
+				$files = $folder->getById($photoEntity->getFileId());
 				if (empty($files)) {
 					continue;
 				}

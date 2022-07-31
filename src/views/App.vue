@@ -994,6 +994,12 @@ export default {
 		onPhotoSuggestionZoom(photo) {
 			this.$refs.map.zoomOnPhotoSuggestion(photo)
 		},
+		cancelPhotoSuggestions() {
+			this.photoSuggestionsSelectedIndices = []
+			this.showPhotoSuggestions = false
+			this.closeSidebar()
+			this.photoSuggestions = []
+		},
 		getPhotoSuggestions() {
 			if (!this.photosEnabled) {
 				return
@@ -1026,9 +1032,7 @@ export default {
 			}
 		},
 		onCancelPhotoSuggestions() {
-			this.photoSuggestionsSelectedIndices = []
-			this.showPhotoSuggestions = false
-			this.closeSidebar()
+			this.cancelPhotoSuggestions()
 		},
 		onSavePhotoSuggestionsSelection(indices = null) {
 			const toSave = indices || this.photoSuggestionsSelectedIndices
@@ -2197,6 +2201,9 @@ export default {
 			this.openSidebar(myMap.path, 'maps', myMap.name)
 		},
 		loadMap(myMap) {
+			if (this.photoSuggestions) {
+				this.cancelPhotoSuggestions()
+			}
 			this.myMapId = myMap.id
 			// Disable devices for custom maps
 			if (this.myMapId) {

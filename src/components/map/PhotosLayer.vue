@@ -238,7 +238,7 @@ export default {
 				: generateUrl('/apps/theming/img/core/filetypes') + '/image.svg?v=2'
 		},
 		getPhotoFormattedDate(photo) {
-			return moment(photo.dateTaken).format('LLL')
+			return moment(photo.dateTaken * 1000).format('LLL')
 		},
 		onPhotoClick(e, photo) {
 			// we want popup to open on right click only

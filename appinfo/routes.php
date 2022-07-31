@@ -10,6 +10,7 @@
 return [
     'routes' => [
         ['name' => 'page#index', 'url' => '/', 'verb' => 'GET'],
+        ['name' => 'page#indexMyMap', 'url' => '/m/{myMapId}', 'verb' => 'GET'],
         ['name' => 'page#do_echo', 'url' => '/echo', 'verb' => 'POST'],
         ['name' => 'page#openGeoLink', 'url' => '/openGeoLink/{url}', 'verb' => 'GET'],
         ['name' => 'public_page#sharedFavoritesCategory', 'url' => '/s/favorites/{token}', 'verb' => 'GET'],
@@ -31,6 +32,7 @@ return [
         ['name' => 'contacts#getContacts', 'url' => '/contacts', 'verb' => 'GET'],
         ['name' => 'contacts#searchContacts', 'url' => '/contacts-search', 'verb' => 'GET'],
         ['name' => 'contacts#placeContact', 'url' => '/contacts/{bookid}/{uri}', 'verb' => 'PUT'],
+		['name' => 'contacts#addContactToMap', 'url' => '/contacts/{bookid}/{uri}/add-to-map/', 'verb' => 'PUT'],
         ['name' => 'contacts#deleteContactAddress', 'url' => '/contacts/{bookid}/{uri}', 'verb' => 'DELETE'],
         ['name' => 'contacts#getContactLetterAvatar', 'url' => '/contacts-avatar', 'verb' => 'GET'],
 
@@ -63,7 +65,8 @@ return [
 
         // favorites
         ['name' => 'favorites#getFavorites', 'url' => '/favorites', 'verb' => 'GET'],
-        ['name' => 'favorites#addFavorite', 'url' => '/favorites', 'verb' => 'POST'],
+        ['name' => 'favorites#addFavorite', 'url' => '/favorite', 'verb' => 'POST'],
+		['name' => 'favorites#addFavorites', 'url' => '/favorites', 'verb' => 'POST'],
         ['name' => 'favorites#editFavorite', 'url' => '/favorites/{id}', 'verb' => 'PUT'],
         ['name' => 'favorites#deleteFavorite', 'url' => '/favorites/{id}', 'verb' => 'DELETE'],
         ['name' => 'favorites#deleteFavorites', 'url' => '/favorites', 'verb' => 'DELETE'],
@@ -73,6 +76,8 @@ return [
         ['name' => 'favorites#getSharedCategories', 'url' => '/favorites-category/shared', 'verb' => 'GET'],
         ['name' => 'favorites#shareCategory', 'url' => '/favorites-category/{category}/share', 'verb' => 'POST'],
         ['name' => 'favorites#unShareCategory', 'url' => '/favorites-category/{category}/un-share', 'verb' => 'POST'],
+		['name' => 'favorites#addShareCategoryToMap', 'url' => '/favorites-category/{category}/add-to-map/{targetMapId}', 'verb' => 'PUT'],
+		['name' => 'favorites#removeShareCategoryFromMap', 'url' => '/favorites-category/{category}/', 'verb' => 'DELETE'],
 
         ['name' => 'favorites#exportFavorites', 'url' => '/export/favorites', 'verb' => 'POST'],
         ['name' => 'favorites#importFavorites', 'url' => '/import/favorites', 'verb' => 'POST'],
@@ -80,6 +85,7 @@ return [
         // tracks
         ['name' => 'tracks#getTracks', 'url' => '/tracks', 'verb' => 'GET'],
         ['name' => 'tracks#getTrackFileContent', 'url' => '/tracks/{id}', 'verb' => 'GET'],
+		['name' => 'tracks#getTrackContentByFileId', 'url' => '/tracks/file/{id}', 'verb' => 'GET'],
         ['name' => 'tracks#editTrack', 'url' => '/tracks/{id}', 'verb' => 'PUT'],
 
         // devices API
@@ -104,5 +110,10 @@ return [
         ['name' => 'devices#exportDevices', 'url' => '/export/devices', 'verb' => 'POST'],
         ['name' => 'devices#importDevices', 'url' => '/import/devices', 'verb' => 'POST'],
 
+        //MyMaps
+        ['name' => 'my_maps#getMyMaps', 'url' => '/maps', 'verb' => 'GET'],
+        ['name' => 'my_maps#addMyMap' , 'url' => '/maps', 'verb' => 'POST'],
+        ['name' => 'my_maps#updateMyMap' , 'url' => '/maps/{id}', 'verb' => 'PUT'],
+        ['name' => 'my_maps#deleteMyMap' , 'url' => '/maps/{id}', 'verb' => 'DELETE'],
     ]
 ];

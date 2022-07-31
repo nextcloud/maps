@@ -29,12 +29,12 @@
 				@click="$emit('export-all')">
 				{{ t('maps', 'Export all') }}
 			</ActionButton>
-			<ActionButton
+			<ActionButton v-if="isCreatable"
 				icon="icon-folder"
 				@click="$emit('import')">
 				{{ t('maps', 'Import devices') }}
 			</ActionButton>
-			<ActionButton
+			<ActionButton v-if="allDeletable"
 				icon="icon-delete"
 				:close-after-click="true"
 				@click="onDelete">
@@ -107,6 +107,12 @@ export default {
 				return nameA.localeCompare(nameB)
 			})
 		},
+		isCreatable() {
+			return optionsController.myMapId === null || optionsController.myMapId === ''
+		},
+		allDeletable() {
+			return this.devices.every((d) => d.isDeletable)
+		}
 	},
 
 	methods: {

@@ -4,6 +4,8 @@ import {basename} from './utils';
 
 import escapeHTML from 'escape-html';
 
+import escapeHTML from 'escape-html';
+
 function PhotosController (optionsController, timeFilterController) {
     this.PHOTO_MARKER_VIEW_SIZE = 40;
     this.photosDataLoaded = false;
@@ -469,7 +471,7 @@ PhotosController.prototype = {
         var lng = e.latlng.lng;
         var filePath = this.photosController.movingPhotoPath;
         this.photosController.leaveMovePhotoMode();
-        this.photosController.placePhotos([filePath], [lat], [lng]);
+        this.photosController.placePhotos([filePath], [lat], [lng], false, true);
     },
 
     updateTimeFilterRange: function () {
@@ -530,6 +532,9 @@ PhotosController.prototype = {
             url: generateUrl('apps/maps/photos'),
             type: 'GET',
             async: true,
+            data: {
+                myMapId: this.optionsController.myMapId
+            },
             context: this
         }).done(function (response) {
             if (response.length == 0) {
@@ -562,24 +567,29 @@ PhotosController.prototype = {
 
     contextPlacePhotosOrFolder: function (e) {
         var that = this.photosController;
-        OC.dialogs.confirmDestructive(
-            '',
-            t('maps', 'What do you want to place?'),
-            {
-                type: OC.dialogs.YES_NO_BUTTONS,
-                confirm: t('maps', 'Photo files'),
-                confirmClasses: '',
-                cancel: t('maps', 'Photo folders'),
-            },
-            function (result) {
-                if (result) {
-                    that.contextPlacePhotos(e);
-                } else {
-                    that.contextPlacePhotoFolder(e);
-                }
-            },
-            true
-        );
+        // forbid folder placement in my-maps
+        if (that.optionsController.myMapId !== null) {
+            that.contextPlacePhotos(e);
+        } else {
+            OC.dialogs.confirmDestructive(
+                '',
+                t('maps', 'What do you want to place?'),
+                {
+                    type: OC.dialogs.YES_NO_BUTTONS,
+                    confirm: t('maps', 'Photo files'),
+                    confirmClasses: '',
+                    cancel: t('maps', 'Photo folders'),
+                },
+                function (result) {
+                    if (result) {
+                        that.contextPlacePhotos(e);
+                    } else {
+                        that.contextPlacePhotoFolder(e);
+                    }
+                },
+                true
+            );
+        }
     },
 
     contextPlacePhotos: function (e) {
@@ -621,6 +631,10 @@ PhotosController.prototype = {
             paths: paths,
             lats: lats,
             lngs: lngs,
+            myMapId: this.optionsController.myMapId,
+            // we only have relative paths for photos displayed on a 'my-map'
+            // so we tell it to the controller
+            relative: (this.optionsController.myMapId !== null && moveAction),
             directory: directory
         };
         var url = generateUrl('/apps/maps/photos');
@@ -659,7 +673,8 @@ PhotosController.prototype = {
         $('#navigation-photos').addClass('icon-loading-small');
         $('.leaflet-container, .mapboxgl-map').css('cursor', 'wait');
         var req = {
-            paths: paths
+            paths: paths,
+            myMapId: this.optionsController.myMapId,
         };
         var url = generateUrl('/apps/maps/photos');
         $.ajax({

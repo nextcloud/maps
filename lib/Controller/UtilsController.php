@@ -11,6 +11,9 @@
 
 namespace OCA\Maps\Controller;
 
+use League\Flysystem\FileNotFoundException;
+use OCP\Files\IRootFolder;
+use OCP\Files\NotFoundException;
 use OCP\App\IAppManager;
 
 use OCP\IURLGenerator;
@@ -24,20 +27,26 @@ use OCP\AppFramework\Http\ContentSecurityPolicy;
 use OCP\IRequest;
 use OCP\AppFramework\Http\DataResponse;
 use OCP\AppFramework\Controller;
+use OCP\Lock\LockedException;
+use PhpParser\JsonDecoder;
 
 class UtilsController extends Controller {
 
 
     private $userId;
     private $config;
+	private $root;
+    private $dbconnection;
     private $dbtype;
 
     public function __construct($AppName,
                                 IRequest $request,
                                 IConfig $config,
                                 IAppManager $appManager,
+								IRootFolder $root,
                                 $UserId){
         parent::__construct($AppName, $request);
+		$this->root = $root;
         $this->userId = $UserId;
         // IConfig object
         $this->config = $config;
@@ -65,9 +74,29 @@ class UtilsController extends Controller {
 	 * @return DataResponse
 	 * @throws \OCP\PreConditionNotMetException
 	 */
-    public function saveOptionValue($options): DataResponse {
-        foreach ($options as $key => $value) {
-            $this->config->setUserValue($this->userId, 'maps', $key, $value);
+    public function saveOptionValue($options, $myMapId=null): DataResponse  {
+        if( is_null($myMapId) || $myMapId==="") {
+            foreach ($options as $key => $value) {
+                $this->config->setUserValue($this->userId, 'maps', $key, $value);
+            }
+        } else {
+			$userFolder = $this->root->getUserFolder($this->userId);
+            $folders = $userFolder->getById($myMapId);
+            $folder = array_shift($folders);
+            try {
+                $file=$folder->get(".maps");
+            } catch (NotFoundException $e) {
+                $file=$folder->newFile(".maps", $content = "{}");
+            }
+            try {
+                $ov = json_decode($file->getContent(),true, 512);
+                foreach ($options as $key => $value) {
+                    $ov[$key] = $value;
+                }
+                $file->putContent(json_encode($ov, JSON_PRETTY_PRINT));
+            } catch (LockedException $e){
+                return new DataResponse("File is locked", 500);
+            }
         }
         return new DataResponse(['done'=>1]);
     }
@@ -78,14 +107,40 @@ class UtilsController extends Controller {
 	 * @NoAdminRequired
 	 * @return DataResponse
 	 */
-    public function getOptionsValues(): DataResponse {
+    public function getOptionsValues($myMapId=null): DataResponse {
         $ov = array();
 
-        // get all user values
-        $keys = $this->config->getUserKeys($this->userId, 'maps');
-        foreach ($keys as $key) {
-            $value = $this->config->getUserValue($this->userId, 'maps', $key);
-            $ov[$key] = $value;
+        if( is_null($myMapId) || $myMapId==="") {
+            // get all user values
+            $keys = $this->config->getUserKeys($this->userId, 'maps');
+            foreach ($keys as $key) {
+                $value = $this->config->getUserValue($this->userId, 'maps', $key);
+                $ov[$key] = $value;
+            }
+			$ov['isCreatable'] = true;
+			$ov['isDeletable'] = false;
+			$ov['isReadable'] = true;
+			$ov['isUpdateable'] = true;
+			$ov['isShareable'] = true;
+        } else {
+			$userFolder = $this->root->getUserFolder($this->userId);
+            $folders = $userFolder->getById($myMapId);
+            $folder = array_shift($folders);
+            try {
+                $file=$folder->get(".maps");
+            } catch (NotFoundException $e) {
+                $file=$folder->newFile(".maps", $content = "{}");
+            }
+            $ov = json_decode($file->getContent(),true, 512);
+			$ov['isCreatable'] = $folder->isCreatable();
+			//We can delete the map by deleting the folder or the .maps file
+			$ov['isDeletable'] = $folder->isDeletable() || $file->isDeletable();
+			// Maps content can be read mostly from the folder
+			$ov['isReadable'] = $folder->isReadable();
+			//Saving maps information in the file
+			$ov['isUpdateable'] = $file->isUpdateable();
+			// Share map by sharing the folder
+			$ov['isShareable'] = $folder->isShareable();
         }
 
         // get routing-specific admin settings values

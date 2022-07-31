@@ -3,6 +3,8 @@ import { generateUrl } from '@nextcloud/router';
 import { basename, formatAddress } from './utils';
 import escapeHTML from 'escape-html';
 
+import escapeHTML from 'escape-html';
+
 function ContactsController (optionsController, searchController) {
     this.contact_MARKER_VIEW_SIZE = 40;
     this.contactLayer = null;
@@ -45,6 +47,9 @@ ContactsController.prototype = {
                 that.map.clickpopup = true;
             }
         });
+        if(this.optionsController.myMapId !== null) {
+            $('#navigation-contacts').remove();
+        }
         // click on contact menu entry
         $('body').on('click', '#navigation-contacts > a', function(e) {
             that.toggleLayer();

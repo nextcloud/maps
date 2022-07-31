@@ -13,7 +13,7 @@
 			{{ nbFavorites > 99 ? '99+' : nbFavorites }}
 		</CounterBubble>
 		<template v-if="enabled" slot="actions">
-			<ActionButton
+			<ActionButton v-if="!readOnly"
 				:icon="draggable ? 'icon-hand' : 'icon-hand-slash'"
 				:close-after-click="false"
 				@click="$emit('draggable-clicked')">
@@ -36,7 +36,7 @@
 				@click="$emit('export')">
 				{{ t('maps', 'Export') }}
 			</ActionButton>
-			<ActionButton
+			<ActionButton v-if="!readOnly"
 				icon="icon-folder"
 				:close-after-click="true"
 				@click="$emit('import')">
@@ -45,7 +45,7 @@
 		</template>
 		<template slot="default">
 			<AppNavigationNew
-				v-if="enabled"
+				v-if="enabled && !readOnly"
 				:text="addFavoriteText"
 				:button-class="addFavoriteIcon"
 				@click="onAddFavoriteClick" />
@@ -54,7 +54,7 @@
 				:key="catid"
 				:title="c.name"
 				:class="{ 'subitem-disabled': !c.enabled }"
-				:editable="enabled && c.enabled"
+				:editable="enabled && c.enabled && c.isUpdateable"
 				:edit-placeholder="t('maps', 'Category name')"
 				:edit-label="t('maps', 'Rename')"
 				:allow-collapse="false"
@@ -70,7 +70,7 @@
 					{{ c.counter > 99 ? '99+' : c.counter }}
 				</CounterBubble>
 				<template slot="actions">
-					<ActionButton v-if="enabled && nbFavorites && c.enabled"
+					<ActionButton v-if="enabled && nbFavorites && c.enabled && c.isUpdateable"
 						icon="icon-add"
 						:close-after-click="true"
 						@click="onAddFavoriteClick(catid)">
@@ -82,7 +82,7 @@
 						@click="onZoomCategoryClick(catid)">
 						{{ t('maps', 'Zoom to bounds') }}
 					</ActionButton>
-					<ActionCheckbox v-if="enabled && nbFavorites && c.enabled && c.name && c.name !== t('maps', 'Personal')"
+					<ActionCheckbox v-if="enabled && nbFavorites && c.enabled && c.name && c.name !== t('maps', 'Personal') && c.isShareable"
 						:checked="c.token && c.token !== ''"
 						:close-after-click="false"
 						@update:checked="$emit('category-share-change', catid, $event)">
@@ -101,10 +101,22 @@
 						{{ t('maps', 'Export') }}
 					</ActionButton>
 					<ActionButton v-if="enabled && nbFavorites && c.enabled"
+						icon="icon-share"
+						:close-after-click="true"
+						@click="$emit('add-to-map-category', catid)">
+						{{ c.token ? t('maps', 'Link to map') : t('maps', 'Copy to map') }}
+					</ActionButton>
+					<ActionButton v-if="enabled && nbFavorites && c.enabled && c.isDeletable"
 						icon="icon-delete"
 						:close-after-click="true"
 						@click="$emit('delete-category', catid)">
 						{{ t('maps', 'Delete') }}
+					</ActionButton>
+					<ActionButton v-if="enabled && nbFavorites && c.enabled && c.token && !c.isShareable"
+						icon="icon-delete"
+						:close-after-click="true"
+						@click="$emit('delete-shared-category-from-map', catid)">
+						{{ t('maps', 'Leave share') }}
 					</ActionButton>
 				</template>
 			</AppNavigationItem>
@@ -182,6 +194,11 @@ export default {
 			return this.addingFavorite
 				? 'icon-history'
 				: 'icon-add'
+		},
+		readOnly() {
+			const farray = Object.values(this.favorites)
+			return !farray.some((f) => (f.isUpdateable))
+			&& !(farray.length === 0 && optionsController.optionValues?.isCreatable)
 		},
 	},
 

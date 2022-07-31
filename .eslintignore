@@ -9,4 +9,5 @@ src/nonLocalizedPhotosController.js
 src/photosController.js
 src/script.js
 src/tracksController.js
+src/myMapsController.js
 src/utils.js

@@ -59,7 +59,7 @@ class AddressService {
     }
 
     // converts the address to geo lat;lon
-    public function addressToGeo($adr, $uri) {
+    public function addressToGeo($adr, $uri): string {
         $geo = $this->lookupAddress($adr, $uri);
         return strval($geo[0]).';'.strval($geo[1]);
     }
@@ -73,7 +73,7 @@ class AddressService {
      * @param $uri ressource identifier (contact URI for example)
      * @return array($lat,$lng,$lookedUp)
      */
-    public function lookupAddress($adr, $uri) {
+    public function lookupAddress($adr, $uri): array {
         $adr_norm = strtolower(preg_replace('/\s+/', '', $adr));
         $this->qb->select('id', 'lat', 'lng', 'looked_up')
             ->from('maps_address_geo')
@@ -135,7 +135,7 @@ class AddressService {
         return [$lat, $lng, $lookedUp];
     }
 
-    private function lookupAddressInternal($adr) {
+    private function lookupAddressInternal($adr): array {
         $res = [null, null, False];
 
         if (OpenLocationCode::isFull($adr)) {
@@ -166,7 +166,7 @@ class AddressService {
 
     // looks up the address on external provider returns lat, lon, lookupstate
     // do lookup only if last one occured more than one second ago
-    private function lookupAddressExternal($adr) {
+    private function lookupAddressExternal($adr): array {
         if (time() - intval($this->memcache->get('lastAddressLookup')) >= 1) {
             $opts = [
                 'http' => [
@@ -202,8 +202,8 @@ class AddressService {
                         if (key_exists('lat', $addr) AND
                             key_exists('lon', $addr)
                         ) {
-                            if (is_null($lat) OR 
-                                (key_exists('class', $addr) AND 
+                            if (is_null($lat) OR
+                                (key_exists('class', $addr) AND
                                     ($addr['class'] == "building" OR $addr['class'] == "place"))) {
                                 $lat = $addr['lat'];
                                 $lon = $addr['lon'];
@@ -279,7 +279,7 @@ class AddressService {
     }
 
     // schedules the address for an external lookup
-    private function scheduleForLookup($adr, $uri) {
+    private function scheduleForLookup($adr, $uri): array {
         $geo = $this->lookupAddressInternal($adr);
         // if not found internally, ask external service
         if (!$geo[2]) {

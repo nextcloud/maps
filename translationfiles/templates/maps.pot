@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Nextcloud 3.14159\n"
 "Report-Msgid-Bugs-To: translations\\@example.com\n"
-"POT-Creation-Date: 2022-06-22 03:03+0000\n"
+"POT-Creation-Date: 2022-07-31 02:36+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -47,13 +47,13 @@ msgstr ""
 #: /app/lib/Controller/DevicesController.php:218
 #: /app/lib/Controller/FavoritesController.php:272
 #: /app/lib/Controller/RoutingController.php:111
-msgid "/Maps is not writeable"
+msgid "/Maps directory is not writeable"
 msgstr ""
 
 #: /app/lib/Controller/DevicesController.php:222
 #: /app/lib/Controller/FavoritesController.php:277
 #: /app/lib/Controller/RoutingController.php:116
-msgid "Impossible to create /Maps"
+msgid "Impossible to create /Maps directory"
 msgstr ""
 
 #: /app/lib/Controller/DevicesController.php:227
@@ -666,21 +666,18 @@ msgid "Add"
 msgstr ""
 
 #. TRANSLATORS src/components/map/ClickPopup.vue:62
+#. TRANSLATORS src/components/map/ClickSearchPopup.vue:17
+#. TRANSLATORS src/components/map/PoiMarker.vue:17
 #: /app/specialVueFakeDummyForL10nScript.js:190
-msgid "Add to Favorites"
+#: /app/specialVueFakeDummyForL10nScript.js:194
+#: /app/specialVueFakeDummyForL10nScript.js:304 /app/src/script.js:1961
+#: /app/src/script.js:2048 /app/src/script.js:2066
+msgid "Add to favorites"
 msgstr ""
 
 #. TRANSLATORS src/components/map/ClickSearchPopup.vue:8
 #: /app/specialVueFakeDummyForL10nScript.js:192 /app/src/script.js:2063
 msgid "This place"
-msgstr ""
-
-#. TRANSLATORS src/components/map/ClickSearchPopup.vue:17
-#. TRANSLATORS src/components/map/PoiMarker.vue:17
-#: /app/specialVueFakeDummyForL10nScript.js:194
-#: /app/specialVueFakeDummyForL10nScript.js:304 /app/src/script.js:1961
-#: /app/src/script.js:2048 /app/src/script.js:2066
-msgid "Add to favorites"
 msgstr ""
 
 #. TRANSLATORS src/components/map/ClickSearchPopup.vue:21

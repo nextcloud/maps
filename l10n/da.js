@@ -30,7 +30,6 @@ OC.L10N.register(
     "This Place" : "Dette Sted",
     "Name" : "Navn",
     "Add" : "Tilføj",
-    "Add to Favorites" : "Tilføj til Favoritter",
     "Add to favorites" : "Føj til favoritter",
     "Home" : "Hjem",
     "Work" : "Arbejde",

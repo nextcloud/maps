@@ -60,6 +60,7 @@ import FavoritesController from './favoritesController';
 import NonLocalizedPhotosController from './nonLocalizedPhotosController';
 import PhotosController from './photosController';
 import TracksController from './tracksController';
+import MyMapsController from './myMapsController';
 
 import { brify, getUrlParameter, formatAddress } from './utils';
 
@@ -91,6 +92,7 @@ import { brify, getUrlParameter, formatAddress } from './utils';
     };
 
     var optionsController = {
+        myMapId: null,
         nbRouters: 0,
         optionValues: {},
         enabledFavoriteCategories: [],
@@ -98,8 +100,18 @@ import { brify, getUrlParameter, formatAddress } from './utils';
         enabledTracks: [],
         enabledDevices: [],
         enabledDeviceLines: [],
+        saveMapBounds: function(e) {
+            var bounds = mapController.map.getBounds();
+            optionsController.saveOptionValues({
+                mapBounds: bounds.getNorth() + ';' +
+                            bounds.getSouth() + ';' +
+                            bounds.getEast() + ';' +
+                            bounds.getWest()
+            });
+        },
         saveOptionValues: function (optionValues) {
             var req = {
+                myMapId: this.myMapId,
                 options: optionValues
             };
             var url = generateUrl('/apps/maps/saveOptionValue');
@@ -119,7 +131,9 @@ import { brify, getUrlParameter, formatAddress } from './utils';
         restoreOptions: function () {
             var that = this;
             var url = generateUrl('/apps/maps/getOptionsValues');
-            var req = {};
+            var req = {
+                myMapId: this.myMapId
+            };
             var optionsValues = {};
             $.ajax({
                 type: 'POST',
@@ -219,6 +233,7 @@ import { brify, getUrlParameter, formatAddress } from './utils';
                     mapController.changeTileLayer(mapController.defaultStreetLayer);
                 }
                 if (optionsValues.hasOwnProperty('mapBounds')) {
+                    mapController.map.off('moveend', optionsController.saveMapBounds);
                     var nsew = optionsValues.mapBounds.split(';');
                     if (nsew.length === 4) {
                         var n = parseFloat(nsew[0]);
@@ -232,6 +247,7 @@ import { brify, getUrlParameter, formatAddress } from './utils';
                             ]);
                         }
                     }
+                    mapController.map.on('moveend', optionsController.saveMapBounds);
                 }
                 if (!optionsValues.hasOwnProperty('photosLayer') || optionsValues.photosLayer === 'true') {
                     photosController.toggleLayer();
@@ -304,6 +320,9 @@ import { brify, getUrlParameter, formatAddress } from './utils';
                 }
                 if (!optionsValues.hasOwnProperty('devicesEnabled') || optionsValues.devicesEnabled === 'true') {
                     devicesController.toggleDevices();
+                }
+                if (!optionsValues.hasOwnProperty('myMapsEnabled') || optionsValues.myMapsEnabled === 'true') {
+                    myMapsController.toggleMyMaps();
                 }
                 if (optionsValues.hasOwnProperty('trackMe') && optionsValues.trackMe === 'true') {
                     $('#track-me').prop('checked', true);
@@ -551,16 +570,6 @@ import { brify, getUrlParameter, formatAddress } from './utils';
                 }
             });
 
-            this.map.on('moveend', function(e) {
-                var bounds = that.map.getBounds();
-                optionsController.saveOptionValues({
-                    mapBounds: bounds.getNorth() + ';' +
-                               bounds.getSouth() + ';' +
-                               bounds.getEast() + ';' +
-                               bounds.getWest()
-                });
-            });
-
             this.searchMarkerLayerGroup = L.featureGroup();
             this.map.addLayer(this.searchMarkerLayerGroup);
 
@@ -667,6 +676,8 @@ import { brify, getUrlParameter, formatAddress } from './utils';
                     }
                 }]
             });
+
+            this.map.on('moveend', optionsController.saveMapBounds);
         },
 
         changeTileLayer: function(name, save=false) {
@@ -2096,6 +2107,7 @@ import { brify, getUrlParameter, formatAddress } from './utils';
     var favoritesController = new FavoritesController(optionsController, timeFilterController);
     var tracksController = new TracksController(optionsController, timeFilterController);
     var devicesController = new DevicesController(optionsController, timeFilterController);
+    var myMapsController = new MyMapsController(optionsController, favoritesController, photosController, tracksController)
 
     timeFilterController.connect();
 
@@ -2124,7 +2136,13 @@ import { brify, getUrlParameter, formatAddress } from './utils';
         if (window.isSecureContext && window.navigator.registerProtocolHandler) {
             window.navigator.registerProtocolHandler('geo', generateUrl('/apps/maps/openGeoLink/') + '%s', 'Nextcloud Maps');
         }
-        mapController.initMap();
+		if (document.location.pathname.includes("/apps/maps/m/")) {
+			optionsController.myMapId = document.location.pathname.split("/apps/maps/m/")[1].split("/")[0];
+		} else {
+			optionsController.myMapId = null;
+		}
+
+		mapController.initMap();
         mapController.map.favoritesController = favoritesController;
         favoritesController.initFavorites(mapController.map);
         photosController.initLayer(mapController.map);
@@ -2137,6 +2155,7 @@ import { brify, getUrlParameter, formatAddress } from './utils';
         devicesController.initController(mapController.map);
         mapController.map.devicesController = devicesController;
         searchController.initController(mapController.map);
+		myMapsController.initController(mapController.map);
 
         // once controllers have been set/initialized, we can restore option values from server
         optionsController.restoreOptions();
@@ -2214,7 +2233,9 @@ import { brify, getUrlParameter, formatAddress } from './utils';
             '#navigation-contacts > .app-navigation-entry-utils, #navigation-contacts > a, ' +
             '.contact-group-line > a, .contact-group-line > .app-navigation-entry-utils, ' +
             '#navigation-photos > .app-navigation-entry-utils, #navigation-photos > a ',
-            function(e) {
+			'#navigation-my-maps > .app-navigation-entry-utils, #navigation-my-maps > a ,' +
+			'.my-maps-line > a, .my-maps-line > .app-navigation-entry-utils ',
+			function(e) {
             var menu = $(this).parent().find('> .app-navigation-entry-menu');
             var wasOpen = menu.hasClass('open');
             $('.app-navigation-entry-menu.open').removeClass('open');

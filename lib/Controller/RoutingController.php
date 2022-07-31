@@ -11,6 +11,7 @@
 
 namespace OCA\Maps\Controller;
 
+use OCA\Maps\Service\TracksService;
 use OCP\App\IAppManager;
 
 use OCP\IURLGenerator;
@@ -51,6 +52,7 @@ class RoutingController extends Controller {
     private $l;
     private $logger;
     private $dateTimeZone;
+	private $tracksService;
     protected $appName;
 
     public function __construct($AppName,
@@ -64,6 +66,7 @@ class RoutingController extends Controller {
                                 IL10N $l,
                                 ILogger $logger,
                                 IDateTimeZone $dateTimeZone,
+								TracksService $tracksService,
                                 $UserId){
         parent::__construct($AppName, $request);
         $this->logger = $logger;
@@ -82,6 +85,7 @@ class RoutingController extends Controller {
             $this->userfolder = $serverContainer->getUserFolder($UserId);
         }
         $this->shareManager = $shareManager;
+		$this->tracksService = $tracksService;
     }
 
 	/**
@@ -95,33 +99,49 @@ class RoutingController extends Controller {
 	 * @throws \OCP\Files\NotFoundException
 	 * @throws \OCP\Files\NotPermittedException
 	 */
-    public function exportRoute($type, $coords, $name, $totDist, $totTime): DataResponse {
+    public function exportRoute($type, $coords, $name, $totDist, $totTime, $myMapId=null): DataResponse {
         // create /Maps directory if necessary
         $userFolder = $this->userfolder;
-        if (!$userFolder->nodeExists('/Maps')) {
-            $userFolder->newFolder('Maps');
-        }
-        if ($userFolder->nodeExists('/Maps')) {
-            $mapsFolder = $userFolder->get('/Maps');
-            if ($mapsFolder->getType() !== \OCP\Files\FileInfo::TYPE_FOLDER) {
-                $response = new DataResponse($this->l->t('/Maps is not a directory'), 400);
-                return $response;
-            }
-            else if (!$mapsFolder->isCreatable()) {
-                $response = new DataResponse($this->l->t('/Maps is not writeable'), 400);
-                return $response;
-            }
-        }
-        else {
-            $response = new DataResponse($this->l->t('Impossible to create /Maps'), 400);
-            return $response;
-        }
+		if (is_null($myMapId) || $myMapId === '') {
+			if (!$userFolder->nodeExists('/Maps')) {
+				$userFolder->newFolder('Maps');
+			}
+			if ($userFolder->nodeExists('/Maps')) {
+				$mapsFolder = $userFolder->get('/Maps');
+				if ($mapsFolder->getType() !== \OCP\Files\FileInfo::TYPE_FOLDER) {
+					$response = new DataResponse($this->l->t('/Maps is not a directory'), 400);
+					return $response;
+				}
+				else if (!$mapsFolder->isCreatable()) {
+					$response = new DataResponse($this->l->t('/Maps directory is not writeable'), 400);
+					return $response;
+				}
+			}
+			else {
+				$response = new DataResponse($this->l->t('Impossible to create /Maps directory'), 400);
+				return $response;
+			}
+		} else {
+			$folders = $userFolder->getById($myMapId);
+			if (!is_array($folders) or count($folders) === 0) {
+				$response = new DataResponse('myMaps Folder not found', 404);
+				return $response;
+			}
+			$mapsFolder = array_shift($folders);
+			if (is_null($mapsFolder)) {
+				$response = new DataResponse('myMaps Folder not found', 404);
+				return $response;
+			}
+		}
 
         $filename = $name.'.gpx';
         if ($mapsFolder->nodeExists($filename)) {
             $mapsFolder->get($filename)->delete();
         }
-        $file = $mapsFolder->newFile($filename);
+		if ($mapsFolder->nodeExists($filename.'.tmp')) {
+			$mapsFolder->get($filename.'.tmp')->delete();
+		}
+        $file = $mapsFolder->newFile($filename.'tmp');
         $fileHandler = $file->fopen('w');
 
         $dt = new \DateTime();
@@ -156,8 +176,10 @@ class RoutingController extends Controller {
         }
         fwrite($fileHandler, '</gpx>'."\n");
         fclose($fileHandler);
-        $file->touch();
-        return new DataResponse('/Maps/' . $filename);
+		$file->touch();
+        $file->move(substr($file->getPath(), 0, -3));
+		$track = $this->tracksService->getTrackByFileIDFromDB($file->getId(), $this->userId);
+        return new DataResponse($track);
     }
 
 }

@@ -12,6 +12,10 @@
 			<ActionButton icon="icon-category-monitoring" @click="$emit('display-elevation', track)">
 				{{ t('maps', 'Display elevation') }}
 			</ActionButton>
+			<ActionButton icon="icon-share"
+				@click="$emit('add-to-map-track', track)">
+				{{ t('maps', 'Copy to map') }}
+			</ActionButton>
 		</LPopup>
 		<LTooltip :options="tooltipOptions">
 			<div class="tooltip-track-wrapper"
@@ -118,9 +122,9 @@ export default {
 		},
 		lines() {
 			const trkSegments = []
-			if (this.track.metadata?.begin >= this.end || (this.track.metadata?.end >= 0 && this.track.metadata?.end <= this.start)) {
-				return trkSegments
-			} else if (this.track.metadata?.begin >= this.start && this.track.metadata?.end <= this.end) {
+			if ((this.metadata?.begin && this.metadata?.begin > 0 && this.track.metadata.begin >= this.end) || (this.track.metadata?.end && this.track.metadata?.end > 0 && this.track.metadata?.end <= this.start)) {
+				return [...this.track.data.routes, trkSegments]
+			} else if ((!this.track.metadata?.begin || this.metadata?.begin < 0 || this.track.metadata?.begin >= this.start) && (!this.track.metadata?.end || !this.track.metadata?.end < 0 || this.track.metadata?.end <= this.end)) {
 				this.track.data.tracks.forEach((trk) => {
 					trk.segments.forEach((segment) => {
 						// add track name to each segment

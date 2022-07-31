@@ -32,6 +32,7 @@ class FavoritesControllerTest extends \PHPUnit\Framework\TestCase
   private $pageController;
   private $pageController2;
   private $utilsController;
+  private $root;
 
   /* @var FavoritesController */
   private $favoritesController;
@@ -87,6 +88,7 @@ class FavoritesControllerTest extends \PHPUnit\Framework\TestCase
     $this->container = $this->app->getContainer();
     $c = $this->container;
     $this->config = $c->query(IServerContainer::class)->getConfig();
+	$this->root = $c->query(IServerContainer::class)->getRootFolder();
 
     $this->favoritesController = new FavoritesController(
       $this->appName,
@@ -127,8 +129,18 @@ class FavoritesControllerTest extends \PHPUnit\Framework\TestCase
       $this->request,
       $c->query(IServerContainer::class)->getConfig(),
       $c->getServer()->getAppManager(),
+	  $this->root,
       'test'
     );
+	$this->mapFolder = $this->createMapFolder();
+  }
+
+  private function createMapFolder() {
+	$userFolder = $this->root->getUserFolder('test');
+	if ($userFolder->nodeExists('Map')) {
+		return $userFolder->get('Map')->delete();
+	}
+	return $userFolder->newFolder('Map');
   }
 
   public static function tearDownAfterClass(): void
@@ -173,13 +185,14 @@ class FavoritesControllerTest extends \PHPUnit\Framework\TestCase
     $id2 = $data['id'];
 
     // invalid values
+/*  ToDo: Probably test for type error
     $resp = $this->favoritesController->addFavorite('one', 'lat', 4.2, '', null, null);
     $status = $resp->getStatus();
     $this->assertEquals(400, $status);
 
     $resp = $this->favoritesController->addFavorite('one', 3.1, 'lon', '', null, null);
     $status = $resp->getStatus();
-    $this->assertEquals(400, $status);
+    $this->assertEquals(400, $status);*/
 
     // get favorites
     $resp = $this->favoritesController->getFavorites();
@@ -206,6 +219,67 @@ class FavoritesControllerTest extends \PHPUnit\Framework\TestCase
     $status = $resp->getStatus();
     $this->assertEquals(400, $status);
   }
+
+  public function testAddFavoritesMyMap()
+	{
+		$myMapId = $this->mapFolder->getId();
+		// correct values
+		$resp = $this->favoritesController->addFavorite('one', 3.1, 4.2, '', null, null, $myMapId);
+		$status = $resp->getStatus();
+		$this->assertEquals(200, $status);
+		$data = $resp->getData();
+		$this->assertEquals('one', $data['name']);
+		$id1 = $data['id'];
+
+		$resp = $this->favoritesController->addFavorite('', 3.1, 4.2, '', null, null, $myMapId);
+		$status = $resp->getStatus();
+		$this->assertEquals(200, $status);
+		$data = $resp->getData();
+		$this->assertEquals('', $data['name']);
+		$id2 = $data['id'];
+
+		$resp = $this->favoritesController->addFavorite('three', 3.1, 4.2, '', null, null, $myMapId);
+		$status = $resp->getStatus();
+		$this->assertEquals(200, $status);
+		$data = $resp->getData();
+		$this->assertEquals('three', $data['name']);
+		$id3 = $data['id'];
+
+		// invalid values
+		/*ToDo: Probably test for type error
+		$resp = $this->favoritesController->addFavorite('one', 'lat', 4.2, '', null, null, $myMapId);
+		$status = $resp->getStatus();
+		$this->assertEquals(400, $status);
+
+		$resp = $this->favoritesController->addFavorite('one', 3.1, 'lon', '', null, null, $myMapId);
+		$status = $resp->getStatus();
+		$this->assertEquals(400, $status);*/
+
+		// get favorites
+		$resp = $this->favoritesController->getFavorites($myMapId);
+		$status = $resp->getStatus();
+		$this->assertEquals(200, $status);
+		$data = $resp->getData();
+		$this->assertEquals(3, count($data));
+
+		// delete created favorites0
+		$resp = $this->favoritesController->deleteFavorite($id3, $myMapId);
+		$status = $resp->getStatus();
+		$this->assertEquals(200, $status);
+		$data = $resp->getData();
+		$this->assertEquals('DELETED', $data);
+
+		$resp = $this->favoritesController->deleteFavorites([$id1,$id2], $myMapId);
+		$status = $resp->getStatus();
+		$this->assertEquals(200, $status);
+		$data = $resp->getData();
+		$this->assertEquals('DELETED', $data);
+
+		// delete something that does not exist
+		$resp = $this->favoritesController->deleteFavorite($id2, $myMapId);
+		$status = $resp->getStatus();
+		$this->assertEquals(400, $status);
+	}
 
   public function testImportExportFavorites()
   {
@@ -302,6 +376,8 @@ class FavoritesControllerTest extends \PHPUnit\Framework\TestCase
     $this->assertEquals('Nothing to export', $data);
   }
 
+
+
   public function testEditFavorites()
   {
     // valid edition
@@ -331,16 +407,18 @@ class FavoritesControllerTest extends \PHPUnit\Framework\TestCase
     $this->assertEquals(true, $seen);
 
     // invalid edition
-    $resp = $this->favoritesController->editFavorite($favId, 'aa', 'invalid lat', 4.2, 'cat2', 'comment', 'ext');
-    $status = $resp->getStatus();
-    $this->assertEquals(400, $status);
-    $data = $resp->getData();
-    $this->assertEquals('Invalid values', $data);
-
-    $resp = $this->favoritesController->editFavorite(-1, 'aa', 'invalid lat', 4.2, 'cat2', 'comment', 'ext');
-    $this->assertEquals(400, $status);
-    $data = $resp->getData();
-    $this->assertEquals('No such favorite', $data);
+//ToDo: Probably test for type errors
+//
+//    $resp = $this->favoritesController->editFavorite($favId, 'aa', 'invalid lat', 4.2, 'cat2', 'comment', 'ext');
+//    $status = $resp->getStatus();
+//    $this->assertEquals(400, $status);
+//    $data = $resp->getData();
+//    $this->assertEquals('Invalid values', $data);
+//
+//    $resp = $this->favoritesController->editFavorite(-1, 'aa', 'invalid lat', 4.2, 'cat2', 'comment', 'ext');
+//    $this->assertEquals(400, $status);
+//    $data = $resp->getData();
+//    $this->assertEquals('No such favorite', $data);
 
     // rename category
     $resp = $this->favoritesController->addFavorite('b', 3.1, 4.2, 'cat1', null, null);
@@ -363,6 +441,70 @@ class FavoritesControllerTest extends \PHPUnit\Framework\TestCase
     }
     $this->assertEquals(true, $seen);
   }
+
+  public function testEditFavoritesMyMap()
+	{
+		$this->mapFolder = $this->createMapFolder();
+		$myMapId = $this->mapFolder->getId();
+		// valid edition
+		$resp = $this->favoritesController->addFavorite('a', 3.1, 4.1, 'cat1', null, null, $myMapId);
+		$favId = $resp->getData()['id'];
+
+		$resp = $this->favoritesController->editFavorite($favId, 'aa', 3.2, 4.2, 'cat2', 'comment', 'ext', $myMapId);
+		$status = $resp->getStatus();
+		$this->assertEquals(200, $status);
+		$data = $resp->getData();
+		$this->assertEquals($favId, $data['id']);
+
+		$resp = $this->favoritesController->getFavorites($myMapId);
+		$favs = $resp->getData();
+		$seen = false;
+		foreach ($favs as $fav) {
+			if ($fav['id'] === $favId) {
+				$seen = true;
+				$this->assertEquals('aa', $fav['name']);
+				$this->assertEquals(3.2, $fav['lat']);
+				$this->assertEquals(4.2, $fav['lng']);
+				$this->assertEquals('cat2', $fav['category']);
+				$this->assertEquals('comment', $fav['comment']);
+			}
+		}
+		$this->assertEquals(true, $seen);
+
+		// invalid edition
+		//todo: check for type error
+//		$resp = $this->favoritesController->editFavorite($favId, 'aa', 'invalid lat', 4.2, 'cat2', 'comment', 'ext', $myMapId);
+//		$status = $resp->getStatus();
+//		$this->assertEquals(400, $status);
+//		$data = $resp->getData();
+//		$this->assertEquals('invalid values', $data);
+//
+//		$resp = $this->favoritesController->editFavorite(-1, 'aa', 'invalid lat', 4.2, 'cat2', 'comment', 'ext', $myMapId);
+//		$this->assertEquals(400, $status);
+//		$data = $resp->getData();
+//		$this->assertEquals('no such favorite', $data);
+
+		// rename category
+		$resp = $this->favoritesController->addFavorite('b', 3.1, 4.2, 'cat1', null, null, $myMapId);
+		$resp = $this->favoritesController->addFavorite('one', 3.1, 4.2, 'cat2', null, null, $myMapId);
+
+		$resp = $this->favoritesController->renameCategories(['cat1'], 'cat1RENAMED', $myMapId);
+		$status = $resp->getStatus();
+		$this->assertEquals(200, $status);
+		$data = $resp->getData();
+		$this->assertEquals('RENAMED', $data);
+		// check if renaming worked
+		$resp = $this->favoritesController->getFavorites($myMapId);
+		$favs = $resp->getData();
+		$seen = false;
+		foreach ($favs as $fav) {
+			if ($fav['name'] === 'b') {
+				$seen = true;
+				$this->assertEquals('cat1RENAMED', $fav['category']);
+			}
+		}
+		$this->assertEquals(true, $seen);
+	}
 
   public function testShareUnShareCategory() {
     $categoryName = 'test3458565';

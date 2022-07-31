@@ -502,7 +502,8 @@ tr.selected td {
 #navigation-photos:not(.active) > * ,
 #navigation-contacts:not(.active) > * ,
 #navigation-tracks:not(.active) > * ,
-#navigation-devices:not(.active) > * {
+#navigation-devices:not(.active) > *,
+#navigation-my-maps:not(.active) > * {
     opacity: 0.57 !important;
 }
 .ui-autocomplete {
@@ -576,7 +577,8 @@ tr.selected td {
 	padding-right: 0;
 }
 #devicecolorinput,
-#trackcolorinput {
+#trackcolorinput,
+#mymapscolorinput {
     opacity: 0;
     width: 0px;
     height: 0px;

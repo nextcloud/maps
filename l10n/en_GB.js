@@ -27,7 +27,6 @@ OC.L10N.register(
     "New Favorite" : "New Favourite",
     "Name" : "Name",
     "Add" : "Add",
-    "Add to Favorites" : "Add to Favourites",
     "Add to favorites" : "Add to favourites",
     "Home" : "Home",
     "Work" : "Work",

@@ -52,7 +52,24 @@ class PageController extends Controller {
 	 * @return TemplateResponse
 	 */
     public function index(): TemplateResponse {
-//        $this->eventDispatcher->dispatch(LoadSidebar::class, new LoadSidebar());
+        $this->eventDispatcher->dispatch(LoadSidebar::class, new LoadSidebar());
+        $this->eventDispatcher->dispatch(LoadViewer::class, new LoadViewer());
+
+        $params = array('user' => $this->userId);
+        $this->initialStateService->provideInitialState($this->appName, 'photos', $this->config->getAppValue('photos', 'enabled', 'no') === 'yes');
+        $response = new TemplateResponse('maps', 'main', $params);
+
+        $this->addCsp($response);
+
+        return $response;
+    }
+
+    /**
+    * @NoAdminRequired
+    * @NoCSRFRequired
+    */
+    public function indexMyMap($myMapId): TemplateResponse {
+        $this->eventDispatcher->dispatch(LoadSidebar::class, new LoadSidebar());
         $this->eventDispatcher->dispatch(LoadViewer::class, new LoadViewer());
 
         $params = array('user' => $this->userId);

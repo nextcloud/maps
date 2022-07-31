@@ -29,6 +29,7 @@ class ContactsControllerTest extends \PHPUnit\Framework\TestCase {
     private $appName;
     private $request;
     private $contacts;
+	private $mapFolder;
 
     private $container;
     private $config;
@@ -38,6 +39,7 @@ class ContactsControllerTest extends \PHPUnit\Framework\TestCase {
     private $contactsController2;
     private $utilsController;
     private $cdBackend;
+	private $root;
 
     public static function setUpBeforeClass(): void {
         $app = new Application();
@@ -120,19 +122,21 @@ class ContactsControllerTest extends \PHPUnit\Framework\TestCase {
             ->getMock();
 
         $this->cdBackend =  $c->query(IServerContainer::class)->query(CardDavBackend::class);
+		$this->root = $c->query(IServerContainer::class)->getRootFolder();
+		$this->mapFolder = $this->createMapFolder();
 
 
         $this->contactsController = new ContactsController(
-            $this->appName,
-            $c->query(IServerContainer::class)->getLogger(),
-            $this->request,
-            $c->query(IServerContainer::class)->query(\OCP\IDBConnection::class),
-            $this->contactsManager,
-            $this->addressService,
-            'test',
-            $this->cdBackend,
-            $c->query(IServerContainer::class)->getAvatarManager()
-        );
+			$this->appName,
+			$c->query(IServerContainer::class)->getLogger(),
+			$this->request,
+			$c->query(IServerContainer::class)->query(\OCP\IDBConnection::class),
+			$this->contactsManager,
+			$this->addressService,
+			'test',
+			$this->cdBackend,
+			$c->query(IServerContainer::class)->getAvatarManager(),
+			$this->root);
         //$this->contactsController = $this->getMockBuilder('OCA\Maps\Controller\ContactsController')
         //    ->disableOriginalConstructor()
         //    ->getMock();
@@ -146,7 +150,8 @@ class ContactsControllerTest extends \PHPUnit\Framework\TestCase {
             $this->addressService,
             'test2',
             $this->cdBackend,
-            $c->query(IServerContainer::class)->getAvatarManager()
+            $c->query(IServerContainer::class)->getAvatarManager(),
+			$this->root
         );
 
         $this->utilsController = new UtilsController(
@@ -154,9 +159,19 @@ class ContactsControllerTest extends \PHPUnit\Framework\TestCase {
             $this->request,
             $c->query(IServerContainer::class)->getConfig(),
             $c->getServer()->getAppManager(),
+			$this->root,
             'test'
         );
     }
+
+	private function createMapFolder() {
+		$userFolder = $this->root->getUserFolder('test');
+		if ($userFolder->nodeExists('Map')) {
+			return $userFolder->get('Map');
+		} else {
+			return $userFolder->newFolder('Map');
+		}
+	}
 
     public static function tearDownAfterClass(): void {
     }
@@ -178,4 +193,19 @@ class ContactsControllerTest extends \PHPUnit\Framework\TestCase {
         $data = $resp->getData();
         //var_dump($data);
     }
+
+	public function testAddContactMyMap() {
+		$c = $this->container;
+		//$this->contacts->createOrUpdate()
+		//var_dump($this->contactsManager->isEnabled());
+		// TODO understand why this only returns system address book
+		//var_dump($this->contactsManager->getUserAddressBooks());
+
+		$resp = $this->contactsController->getContacts($this->mapFolder->getId());
+		$status = $resp->getStatus();
+		$this->assertEquals(200, $status);
+		$data = $resp->getData();
+		//var_dump($data);
+	}
+
 }

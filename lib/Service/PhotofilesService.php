@@ -79,16 +79,6 @@ class PhotofilesService {
         }
     }
 
-	public function checkForChanges($userId) {
-		$userFolder = $this->root->getUserFolder($userId);
-		$photos = $this->gatherPhotoFiles($userFolder, true);
-		$this->photoMapper->findAll($userId);
-		foreach ($photos as $photo) {
-			$this->addPhoto($photo, $userId);
-			yield $photo->getPath();
-		}
-	}
-
     // add the file for its owner and users that have access
     // check if it's already in DB before adding
     public function addByFile(Node $file) {
@@ -112,10 +102,10 @@ class PhotofilesService {
     public function addByFileIdUserId($fileId, $userId) {
         $userFolder = $this->root->getUserFolder($userId);
         $files = $userFolder->getById($fileId);
-		if (empty($files)) {
-			return;
-		}
-		$file = array_shift($files);
+        if (empty($files)) {
+            return;
+        }
+        $file = array_shift($files);
         if ($file !== null and $this->isPhoto($file)) {
             $this->addPhoto($file, $userId);
         }

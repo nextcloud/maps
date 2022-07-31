@@ -20,7 +20,8 @@
 				:visible="showRouting"
 				:map="map"
 				:search-data="routingSearchData"
-				@close="showRouting = false" />
+				@close="showRouting = false"
+				@track-added="$emit('track-added', $event)" />
 			<SearchControl v-if="map"
 				v-show="!showRouting"
 				:map="map"
@@ -74,6 +75,7 @@
 				:categories="favoriteCategories"
 				:draggable="favoritesDraggable"
 				@click="$emit('click-favorite', $event)"
+				@add-to-map-favorite="$emit('add-to-map-favorite', $event)"
 				@edit="$emit('edit-favorite', $event)"
 				@delete="$emit('delete-favorite', $event)"
 				@delete-multiple="$emit('delete-favorites', $event)" />
@@ -83,6 +85,7 @@
 				:map="map"
 				:photos="photos"
 				:draggable="photosDraggable"
+				@add-to-map-photo="$emit('add-to-map-photo', $event)"
 				@coords-reset="$emit('coords-reset', $event)"
 				@photo-moved="onPhotoMoved"
 				@open-sidebar="$emit('open-sidebar',$event)" />
@@ -100,7 +103,8 @@
 				ref="contactsLayer"
 				:contacts="contacts"
 				:groups="contactGroups"
-				@address-deleted="$emit('address-deleted', $event)" />
+				@address-deleted="$emit('address-deleted', $event)"
+				@add-to-map-contact="$emit('add-to-map-contact', $event)" />
 			<PlaceContactPopup v-if="placingContact"
 				:lat-lng="placingContactLatLng"
 				@contact-placed="onContactPlaced" />
@@ -111,6 +115,7 @@
 				:tracks="tracks"
 				:start="sliderStartTimestamp"
 				:end="sliderEndTimestamp"
+				@add-to-map-track="$emit('add-to-map-track', $event)"
 				@click="$emit('click-track', $event)"
 				@change-color="$emit('change-track-color', $event)"
 				@display-elevation="displayElevation" />
@@ -127,6 +132,8 @@
 				@change-color="$emit('change-device-color', $event)" />
 			<ClickSearchPopup v-if="leftClickSearching"
 				:lat-lng="leftClickSearchLatLng"
+				:favorite-is-creatable="isFavoriteCreatable"
+				:contact-is-creatable="isContactCreatable"
 				@place-contact="onAddContactAddress"
 				@add-favorite="$emit('add-address-favorite', $event); leftClickSearching = false" />
 			<LFeatureGroup>
@@ -166,7 +173,7 @@ import 'leaflet-contextmenu/dist/leaflet.contextmenu.min'
 import 'leaflet-contextmenu/dist/leaflet.contextmenu.min.css'
 import 'leaflet.locatecontrol/dist/L.Control.Locate.min'
 import 'leaflet.locatecontrol/dist/L.Control.Locate.min.css'
-// import 'd3/dist/d3.min'
+import 'd3/dist/d3.min'
 import GeoJSON from 'geojson'
 import '@raruto/leaflet-elevation/dist/leaflet-elevation'
 import '@raruto/leaflet-elevation/dist/leaflet-elevation.css'
@@ -212,6 +219,14 @@ export default {
 	},
 
 	props: {
+		activeLayerIdProp: {
+	        type: String,
+			required: true,
+		},
+		mapBoundsProp: {
+			type: Array,
+			required: true,
+		},
 		searchData: {
 			type: Array,
 			required: true,
@@ -334,7 +349,7 @@ export default {
 				zoom: 2,
 				minZoom: 2,
 				maxZoom: 19,
-				bounds: L.latLngBounds(optionsController.bounds),
+				bounds: L.latLngBounds(this.mapBoundsProp),
 				maxBounds: L.latLngBounds([
 					[-90, 720],
 					[90, -720],
@@ -353,7 +368,7 @@ export default {
 			allOverlayLayers: {},
 			defaultStreetLayer: 'Open Street Map',
 			defaultSatelliteLayer: 'ESRI',
-			activeLayerId: null,
+			activeLayerId: this.activeLayerIdProp,
 			layersButton: null,
 			streetButton: null,
 			satelliteButton: null,
@@ -375,6 +390,13 @@ export default {
 	},
 
 	computed: {
+		isFavoriteCreatable() {
+			const favArray = Object.values(this.favorites)
+			return (favArray.some((f) => (f.isUpdateable)) || (favArray.length === 0 && this.optionValues.isCreatable))
+		},
+		isContactCreatable() {
+			return this.optionValues.isCreatable
+		},
 	},
 
 	watch: {
@@ -386,6 +408,14 @@ export default {
 			} else if (this.state === 'adding') {
 				this.$refs.map.$el.classList.add('adding')
 			}
+		},
+
+		activeLayerIdProp(newValue) {
+		    this.activeLayerId = newValue
+		},
+
+		mapBoundsProp(newValue) {
+			this.mapOptions.bounds = L.latLngBounds(newValue)
 		},
 	},
 
@@ -405,20 +435,50 @@ export default {
 					text: t('maps', 'Add a favorite'),
 					icon: generateUrl('/svg/core/actions/starred?color=' + iconColor),
 					callback: this.contextAddFavorite,
-				}, {
+				},
+				{
 					text: t('maps', 'Place photos'),
 					icon: generateUrl('/svg/core/places/picture?color=' + iconColor),
 					callback: this.contextPlacePhotos,
-				}, {
+				},
+				{
 					text: t('maps', 'Place contact'),
 					icon: generateUrl('/svg/core/actions/user?color=' + iconColor),
 					callback: this.placeContactClicked,
-				}, {
+				},
+				{
 					text: t('maps', 'Share this location'),
 					icon: generateUrl('/svg/core/actions/share?color=' + iconColor),
 					callback: this.contextShareLocation,
 				},
 			]
+			/* Making this interactive does currently not work
+			const favArray = Object.values(this.favorites)
+			if (favArray.some((f) => (f.isUpdateable))
+				|| (favArray.length === 0 && optionsController.optionValues?.isCreatable)) {
+				cmi.push({
+					text: t('maps', 'Add a favorite'),
+					icon: generateUrl('/svg/core/actions/starred?color=' + iconColor),
+					callback: this.contextAddFavorite,
+				})
+			}
+			if (optionsController.optionValues?.isCreatable) {
+				cmi.push({
+					text: t('maps', 'Place photos'),
+					icon: generateUrl('/svg/core/places/picture?color=' + iconColor),
+					callback: this.contextPlacePhotos,
+				},
+				{
+					text: t('maps', 'Place contact'),
+					icon: generateUrl('/svg/core/actions/user?color=' + iconColor),
+					callback: this.placeContactClicked,
+				})
+			}
+			cmi.push({
+				text: t('maps', 'Share this location'),
+				icon: generateUrl('/svg/core/actions/share?color=' + iconColor),
+				callback: this.contextShareLocation,
+			}) */
 			window.OCA.Maps.mapActions.forEach((action) => {
 				cmi.push({
 					text: action.label,
@@ -750,9 +810,12 @@ export default {
 			this.streetButton.button.parentElement.classList.add('behind')
 
 			// initial selected layer, restore or fallback to default street
-			if (this.optionValues.tileLayer in this.allBaseLayers) {
+			/* if (this.optionValues.tileLayer in this.allBaseLayers) {
 				this.activeLayerId = this.optionValues.tileLayer
 			} else {
+
+			 */
+			if (!this.activeLayerId) {
 				this.activeLayerId = this.defaultStreetLayer
 			}
 

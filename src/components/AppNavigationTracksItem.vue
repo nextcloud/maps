@@ -37,7 +37,8 @@
 				@click="$emit('track-clicked', $event)"
 				@zoom="$emit('zoom', $event)"
 				@elevation="$emit('elevation', $event)"
-				@color="$emit('color', $event)" />
+				@color="$emit('color', $event)"
+				@add-to-map-track="$emit('add-to-map-track', $event)" />
 		</template>
 	</AppNavigationItem>
 </template>

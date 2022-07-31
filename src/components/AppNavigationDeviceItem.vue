@@ -11,7 +11,8 @@
 			<div v-else
 				class="icon icon-group"
 				:style="'background-image: url(' + iconUrl + ');'" />
-			<input v-show="false"
+			<input v-if="device.isUpdateable"
+				v-show="false"
 				ref="col"
 				type="color"
 				class="color-input"
@@ -29,7 +30,7 @@
 				@click="$emit('toggle-history', device)">
 				{{ t('maps', 'Toggle history') }}
 			</ActionButton>
-			<ActionButton v-if="parentEnabled && device.enabled"
+			<ActionButton v-if="parentEnabled && device.enabled && mapIsUpdatable"
 				:close-after-click="false"
 				@click="onChangeColorClick">
 				<template #icon>
@@ -49,7 +50,7 @@
 				@click="$emit('export', device)">
 				{{ t('maps', 'Export') }}
 			</ActionButton>
-			<ActionButton v-if="parentEnabled && device.enabled"
+			<ActionButton v-if="parentEnabled && device.enabled && device.isDeletable"
 				icon="icon-delete"
 				:close-after-click="true"
 				@click="$emit('delete', device)">
@@ -64,6 +65,8 @@ import AppNavigationItem from '@nextcloud/vue/dist/Components/AppNavigationItem'
 import ActionButton from '@nextcloud/vue/dist/Components/ActionButton'
 import { generateUrl } from '@nextcloud/router'
 import { isComputer } from '../utils'
+
+import optionsController from '../optionsController'
 
 export default {
 	name: 'AppNavigationDeviceItem',
@@ -95,6 +98,9 @@ export default {
 			return isComputer(this.device.user_agent)
 				? generateUrl('/svg/core/clients/desktop?color=' + color.replace('#', ''))
 				: generateUrl('/svg/core/clients/phone?color=' + color.replace('#', ''))
+		},
+		mapIsUpdatable() {
+			return optionsController.optionValues?.isUpdateable
 		},
 	},
 

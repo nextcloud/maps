@@ -7,7 +7,8 @@ const optionsController = {
 		[40.82991732677597, -74.08716201782228],
 	],
 	nbRouters: 0,
-	optionValues: {},
+	optionValues: [],
+	tileLayer: '',
 	locControlEnabled: false,
 	photosEnabled: true,
 	contactsEnabled: true,
@@ -16,6 +17,11 @@ const optionsController = {
 	trackListShow: true,
 	devicesEnabled: true,
 	deviceListShow: true,
+	myMapId: (window.location.pathname.includes('/apps/maps/m/'))
+		? parseInt(window.location.pathname.split('/apps/maps/m/')[1].split('/')[0])
+		: null,
+	myMapListShow: true,
+	myMapsEnabled: true,
 	disabledFavoriteCategories: [],
 	disabledContactGroups: [],
 	enabledTracks: [],
@@ -25,18 +31,28 @@ const optionsController = {
 		for (const k in newOptionValues) {
 			this.optionValues[k] = newOptionValues[k]
 		}
-		network.saveOptionValues(newOptionValues)
+		if (this.optionValues.isUpdateable) {
+			network.saveOptionValues(newOptionValues, this.myMapId)
+		}
 	},
 
-	restoreOptions(successCB) {
-		network.getOptionValues()
+	restoreOptions(successCB = null) {
+		network.getOptionValues(this.myMapId)
 			.then((response) => {
 				this.handleOptionValues(response.data)
-				successCB()
+				if (successCB) {
+					successCB()
+				}
 			})
 	},
 
 	handleOptionValues(response) {
+		if (document.location.pathname.includes('/apps/maps/m/')) {
+			this.myMapId = parseInt(window.location.pathname.split('/apps/maps/m/')[1].split('/')[0])
+		} else {
+			this.myMapId = null
+		}
+
 		const optionsValues = response.values
 		this.optionValues = optionsValues
 
@@ -56,6 +72,10 @@ const optionsController = {
 			}
 		}
 
+		if ('tileLayer' in optionsValues) {
+			this.tileLayer = optionsValues.tileLayer
+		}
+
 		// check if install scan was done
 		if ('installScanDone' in optionsValues && optionsValues.installScanDone === 'no') {
 			showWarning(
@@ -65,14 +85,20 @@ const optionsController = {
 
 		if ('photosLayer' in optionsValues && optionsValues.photosLayer !== 'true') {
 			this.photosEnabled = false
+		} else {
+		    this.photosEnabled = true
 		}
 
 		if ('contactLayer' in optionsValues && optionsValues.contactLayer !== 'true') {
 			this.contactsEnabled = false
+		} else {
+		    this.contactsEnabled = true
 		}
 
 		if ('favoritesEnabled' in optionsValues && optionsValues.favoritesEnabled !== 'true') {
 			this.favoritesEnabled = false
+		} else {
+		    this.favoritesEnabled = true
 		}
 		if ('jsonDisabledFavoriteCategories' in optionsValues
 			&& optionsValues.jsonDisabledFavoriteCategories
@@ -86,9 +112,13 @@ const optionsController = {
 		// getUrlParameter('track') ||
 		if ('tracksEnabled' in optionsValues && optionsValues.tracksEnabled !== 'true') {
 			this.tracksEnabled = false
+		} else {
+		    this.tracksEnabled = true
 		}
 		if ('trackListShow' in optionsValues && optionsValues.trackListShow !== 'true') {
 			this.trackListShow = false
+		} else {
+		    this.trackListShow = true
 		}
 		if ('enabledTracks' in optionsValues
 			&& optionsValues.enabledTracks
@@ -108,6 +138,8 @@ const optionsController = {
 		}
 		if ('deviceListShow' in optionsValues && optionsValues.deviceListShow !== 'true') {
 			this.deviceListShow = false
+		} else {
+		    this.deviceListShow = true
 		}
 		if ('enabledDeviceLines' in optionsValues
 			&& optionsValues.enabledDeviceLines
@@ -116,8 +148,22 @@ const optionsController = {
 				return parseInt(x)
 			})
 		}
-		if ('devicesEnabled' in optionsValues && optionsValues.devicesEnabled !== 'true') {
+		if (this.myMapId || ('devicesEnabled' in optionsValues && optionsValues.devicesEnabled !== 'true')) {
 			this.devicesEnabled = false
+		} else {
+		    this.devicesEnabled = true
+		}
+
+		// my-maps
+		if ('myMapListShow' in optionsValues && optionsValues.myMapListShow !== 'true') {
+			this.myMapListShow = false
+		} else {
+		    this.myMapListShow = true
+		}
+		if ('myMapsEnabled' in optionsValues && optionsValues.myMapsEnabled !== 'true') {
+			this.myMapsEnabled = false
+		} else {
+		    this.myMapsEnabled = true
 		}
 
 		// routing

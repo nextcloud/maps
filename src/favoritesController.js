@@ -491,11 +491,13 @@ FavoritesController.prototype = {
 
         var favorites = [];
         var sharedCategories = [];
-
+        var myMapId = this.optionsController.myMapId;
         $.when(
             $.ajax({
             url: generateUrl('/apps/maps/favorites'),
-            data: {},
+            data: {
+                myMapId: myMapId
+            },
             type: 'GET',
             async: true,
             success: function(response) {
@@ -506,7 +508,9 @@ FavoritesController.prototype = {
             }
         }), $.ajax({
             url: OC.generateUrl('/apps/maps/favorites-category/shared'),
-            data: {},
+            data: {
+                myMapId: myMapId
+            },
             type: 'GET',
             async: true,
             success: function(response) {
@@ -575,6 +579,7 @@ FavoritesController.prototype = {
 
         // side menu entry
         var imgurl = generateUrl('/svg/core/actions/star?color='+color);
+        var isDefaultMap = this.optionsController.myMapId === null;
         var li = '<li class="category-line" id="'+name+'-category" category="'+rawName+'">' +
         '    <a href="#" class="category-name" id="'+name+'-category-name" style="background-image: url('+imgurl+')">'+rawName+'</a>' +
         '    <div class="app-navigation-entry-utils">' +
@@ -599,6 +604,7 @@ FavoritesController.prototype = {
         '                    <span>'+t('maps', 'Rename')+'</span>' +
         '                </a>' +
         '            </li>' +
+            (isDefaultMap ?
         '            <li>' +
         '                <a href="#" class="action-checkbox shareCategory">' +
         '                  <input id="' + checkboxId + '" type="checkbox" class="checkbox category-sharing-checkbox" ' + (shareToken ? "checked" : "") + ' data-category="' + name + '">' +
@@ -607,7 +613,8 @@ FavoritesController.prototype = {
         '                    <span class="copied-tooltip">' + t('maps', 'Copied!') + '</span>' +
         '                  </span>' +
         '                </a>' +
-        '            </li>' +
+        '            </li>'
+                : '') +
         '            <li>' +
         '                <a href="#" class="zoomCategoryButton">' +
         '                    <span class="icon-search"></span>' +
@@ -672,7 +679,8 @@ FavoritesController.prototype = {
         $('.leaflet-container, .mapboxgl-map').css('cursor', 'wait');
         var req = {
             categories: origCatList,
-            newName: newCategoryName
+            newName: newCategoryName,
+            myMapId: this.optionsController.myMapId
         };
         var url = generateUrl('/apps/maps/favorites-category');
         $.ajax({
@@ -706,7 +714,8 @@ FavoritesController.prototype = {
         $('#navigation-favorites').addClass('icon-loading-small');
         $('.leaflet-container, .mapboxgl-map').css('cursor', 'wait');
         var req = {
-            ids: favids
+            ids: favids,
+            myMapId: this.optionsController.myMapId
         };
         var url = generateUrl('/apps/maps/favorites');
         $.ajax({
@@ -812,7 +821,8 @@ FavoritesController.prototype = {
             lng: lng,
             category: category,
             comment: comment,
-            extensions: extensions
+            extensions: extensions,
+            myMapId: this.optionsController.myMapId
         };
         var url = generateUrl('/apps/maps/favorites');
         $.ajax({
@@ -1053,6 +1063,7 @@ FavoritesController.prototype = {
         $('#navigation-favorites').addClass('icon-loading-small');
         $('.leaflet-container, .mapboxgl-map').css('cursor', 'wait');
         var req = {
+            myMapId: this.optionsController.myMapId
         };
         var url = generateUrl('/apps/maps/favorites/'+favid);
         $.ajax({
@@ -1112,7 +1123,8 @@ FavoritesController.prototype = {
         $('.leaflet-container, .mapboxgl-map').css('cursor', 'wait');
         var req = {
             name: name,
-            extensions: null
+            extensions: null,
+            myMapId: this.optionsController.myMapId,
         };
         if (comment !== null) {
             req.comment = comment;

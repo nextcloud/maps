@@ -1,5 +1,7 @@
 import { generateUrl } from '@nextcloud/router';
 
+import escapeHTML from 'escape-html';
+
 import { dirname, brify, metersToDistance, metersToElevation, kmphToSpeed, minPerKmToPace, formatTimeSeconds, getUrlParameter } from './utils';
 
 import escapeHTML from 'escape-html';
@@ -405,7 +407,9 @@ TracksController.prototype = {
     getTracks: function() {
         var that = this;
         $('#navigation-tracks').addClass('icon-loading-small');
-        var req = {};
+        var req = {
+            myMapId: this.optionsController.myMapId
+        };
         var url = generateUrl('/apps/maps/tracks');
         $.ajax({
             type: 'GET',

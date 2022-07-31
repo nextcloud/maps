@@ -63,17 +63,25 @@ class GeophotoService {
 
     }
 
-    /**
-     * @param string $userId
+	/**
+	 * @param string $userId
+	 * @param $folder=null
 	 * @param bool $respectNomediaAndNoimage=true
-     * @return array with geodatas of all photos
-     */
-     public function getAllFromDB(string $userId, bool $respectNomediaAndNoimage=true) {
-		$ignoredPaths = $respectNomediaAndNoimage ? $this->getIgnoredPaths($userId) : [];
+	 * @param bool $hideImagesOnCustomMaps=true
+	 * @return array
+	 * @throws \OCP\Files\NotFoundException
+	 * @throws \OCP\Files\NotPermittedException
+	 * @throws \OC\User\NoUserException
+	 */
+     public function getAllFromDB(string $userId, $folder=null, bool $respectNomediaAndNoimage=true, bool $hideImagesOnCustomMaps=true) {
+		$ignoredPaths = $respectNomediaAndNoimage ? $this->getIgnoredPaths($userId, $folder, $hideImagesOnCustomMaps) : [];
         $photoEntities = $this->photoMapper->findAll($userId);
-        $userFolder = $this->getFolderForUser($userId);
+		$userFolder = $this->getFolderForUser($userId);
+        if (is_null($folder)) {
+            $folder = $this->getFolderForUser($userId);
+        }
         $filesById = [];
-        $cache = $userFolder->getStorage()->getCache();
+        $cache = $folder->getStorage()->getCache();
         $previewEnableMimetypes = $this->getPreviewEnabledMimetypes();
         foreach ($photoEntities as $photoEntity) {
             $cacheEntry = $cache->get($photoEntity->getFileId());
@@ -81,7 +89,7 @@ class GeophotoService {
                 // this path is relative to owner's storage
                 //$path = $cacheEntry->getPath();
                 // but we want it relative to current user's storage
-                $files = $userFolder->getById($photoEntity->getFileId());
+                $files = $folder->getById($photoEntity->getFileId());
 				if (empty($files)) {
 					continue;
 				}
@@ -116,6 +124,10 @@ class GeophotoService {
 					$file_object->lastmod = $file->getMTime();
 					$file_object->size = $file->getSize();
 					$file_object->path = $path;
+					$file_object->isReadable = $file->isReadable();
+					$file_object->isUpdateable = $file->isUpdateable();
+					$file_object->isShareable = $file->isShareable();
+					$file_object->isDeletable = $file->isDeletable();
 					$file_object->hasPreview = in_array($cacheEntry->getMimeType(), $previewEnableMimetypes);
 					$filesById[] = $file_object;
 				}
@@ -130,8 +142,8 @@ class GeophotoService {
 	 * @param bool $respectNomediaAndNoimage
      * @return array with geodatas of all nonLocalizedPhotos
      */
-    public function getNonLocalizedFromDB (string $userId, bool $respectNomediaAndNoimage=true): array {
-		$ignoredPaths = $respectNomediaAndNoimage ? $this->getIgnoredPaths($userId) : [];
+    public function getNonLocalizedFromDB (string $userId, bool $respectNomediaAndNoimage=true, bool $hideImagesOnCustomMaps=true): array {
+		$ignoredPaths = $respectNomediaAndNoimage ? $this->getIgnoredPaths($userId, $respectNomediaAndNoimage, $hideImagesOnCustomMaps) : [];
         $foo = $this->loadTimeorderedPointSets($userId);
         $photoEntities = $this->photoMapper->findAllNonLocalized($userId);
         $userFolder = $this->getFolderForUser($userId);
@@ -153,9 +165,7 @@ class GeophotoService {
 					continue;
 				}
 				$path = $userFolder->getRelativePath( $file->getPath());
-				$isRoot = $file === $userFolder;
 				$isIgnored = false;
-
 				foreach ($ignoredPaths as $ignoredPath) {
 					if (str_starts_with($path, $ignoredPath)) {
 						$isIgnored = true;
@@ -163,9 +173,10 @@ class GeophotoService {
 					}
 				}
 				if (!$isIgnored) {
+					$isRoot = $file === $userFolder;
+
 					$date = $photoEntity->getDateTaken() ?? \time();
 					$locations = $this->getLocationGuesses($date);
-					$isRoot = $file === $userFolder;
 					foreach ($locations as $location) {
 						$file_object = new \stdClass();
 						$file_object->fileId = $photoEntity->getFileId();
@@ -178,8 +189,8 @@ class GeophotoService {
 						$file_object->basename = $isRoot ? '' : $file->getName();
 						$file_object->filename = $this->normalizePath($path);
 						$file_object->etag = $cacheEntry->getEtag();
-//Not working for NC21 as Viewer requires String representation of permissions
-//                $file_object->permissions = $file->getPermissions();
+						//Not working for NC21 as Viewer requires String representation of permissions
+						//                $file_object->permissions = $file->getPermissions();
 						$file_object->type = $file->getType();
 						$file_object->mime = $file->getMimetype();
 						$file_object->lastmod = $file->getMTime();
@@ -197,25 +208,44 @@ class GeophotoService {
     }
 
 	/**
+	 * @param $userId
+	 * @param $folder
 	 * @return array
+	 * @throws \OCP\Files\NotFoundException
+	 * @throws \OCP\Files\NotPermittedException
+	 * @throws \OC\User\NoUserException
 	 */
-	private function getIgnoredPaths($userId): array {
+	private function getIgnoredPaths($userId, $folder=null, $hideImagesOnCustomMaps){
 		$ignoredPaths = [];
-		$userFolder = $this->root->getUserFolder($userId);
-		$excludedNodes = $userFolder->search(new SearchQuery(
+		$folder = $this->getFolderForUser($userId);
+		if (is_null($folder)) {
+			$folder = $this->getFolderForUser($userId);
+		}
+		$ignoreMarkerFiles = [
+			'.nomedia',
+			'.noimage',
+			'.noindex',
+		];
+		if ($hideImagesOnCustomMaps) {
+			$ignoreMarkerFiles[] = '.maps';
+		}
+		$func = function(string $i): SearchComparison {
+			return new SearchComparison(ISearchComparison::COMPARE_EQUAL, 'name', $i);
+		};
+		$excludedNodes = $folder->search(new SearchQuery(
 			new SearchBinaryOperator(ISearchBinaryOperator::OPERATOR_AND, [
 				new SearchComparison(ISearchComparison::COMPARE_EQUAL, 'mimetype', 'application/octet-stream'),
-				new SearchBinaryOperator(ISearchBinaryOperator::OPERATOR_OR, [
-					new SearchComparison(ISearchComparison::COMPARE_EQUAL, 'name', '.nomedia'),
-					new SearchComparison(ISearchComparison::COMPARE_EQUAL, 'name', '.noimage'),
-				]),
+				new SearchBinaryOperator(ISearchBinaryOperator::OPERATOR_OR, array_map(
+					$func,
+					$ignoreMarkerFiles)
+				),
 			]),
 			0,
 			0,
 			[]
 		));
 		foreach($excludedNodes as $node) {
-			$ignoredPaths[] = $userFolder->getRelativePath($node->getParent()->getPath());
+			$ignoredPaths[] = $folder->getRelativePath($node->getParent()->getPath());
 		}
 		return $ignoredPaths;
 	}

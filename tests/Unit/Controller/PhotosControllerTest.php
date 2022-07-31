@@ -101,7 +101,8 @@ class PhotosControllerTest extends \PHPUnit\Framework\TestCase {
             $this->request,
             $c->query(GeoPhotoService::class),
             $this->photoFileService,
-            'test'
+			$this->rootFolder,
+			'test'
         );
 
         $this->photosController2 = new PhotosController(
@@ -110,6 +111,7 @@ class PhotosControllerTest extends \PHPUnit\Framework\TestCase {
             $this->request,
             $c->query(GeoPhotoService::class),
             $this->photoFileService,
+			$this->rootFolder,
             'test2'
         );
 
@@ -118,6 +120,7 @@ class PhotosControllerTest extends \PHPUnit\Framework\TestCase {
             $this->request,
             $c->query(IServerContainer::class)->getConfig(),
             $c->getServer()->getAppManager(),
+			$this->rootFolder,
             'test'
         );
 
@@ -202,7 +205,7 @@ class PhotosControllerTest extends \PHPUnit\Framework\TestCase {
         $status = $resp->getStatus();
         $this->assertEquals(200, $status);
         $data = $resp->getData();
-        $this->assertEquals(1, count($data));
+        $this->assertCount(1, $data);
         $this->assertEquals('/nc.jpg', $data[0]->path);
 
 		//Test .nomedia repected
@@ -211,11 +214,20 @@ class PhotosControllerTest extends \PHPUnit\Framework\TestCase {
 		$status = $resp->getStatus();
 		$this->assertEquals(200, $status);
 		$data = $resp->getData();
-		$this->assertEquals(0, count($data));
+		$this->assertCount(0, $data);
 		$file->delete();
 
 		//Test .noimage repected
 		$file = $userfolder->newFile('.noimage');
+		$resp = $this->photosController->getPhotosFromDb();
+		$status = $resp->getStatus();
+		$this->assertEquals(200, $status);
+		$data = $resp->getData();
+		$this->assertCount(0, $data);
+		$file->delete();
+
+		//Test .maps repected
+		$file = $userfolder->newFile('.maps');
 		$resp = $this->photosController->getPhotosFromDb();
 		$status = $resp->getStatus();
 		$this->assertEquals(200, $status);
@@ -228,7 +240,7 @@ class PhotosControllerTest extends \PHPUnit\Framework\TestCase {
         $status = $resp->getStatus();
         $this->assertEquals(200, $status);
         $data = $resp->getData();
-        $this->assertEquals(0, count($data));
+        $this->assertCount(0, $data);
 
 		// with track
 		$filename = 'tests/test_files/testFile1_locationNut.gpx';
@@ -247,7 +259,7 @@ class PhotosControllerTest extends \PHPUnit\Framework\TestCase {
 		$status = $resp->getStatus();
 		$this->assertEquals(200, $status);
 		$data = $resp->getData();
-		$this->assertEquals(1, count($data));
+		$this->assertCount(1, $data);
         $this->assertEquals('/nut.jpg', $data[0]->path);
 
 		//Test .nomedia repected
@@ -256,12 +268,30 @@ class PhotosControllerTest extends \PHPUnit\Framework\TestCase {
 		$status = $resp->getStatus();
 		$this->assertEquals(200, $status);
 		$data = $resp->getData();
-		$this->assertEquals(0, count($data));
+		$this->assertCount(0, $data);
 		$file->delete();
 
 		//Test .noimage repected
 		$file = $userfolder->newFile('.noimage');
 		$resp = $this->photosController->getNonLocalizedPhotosFromDb();
+		$status = $resp->getStatus();
+		$this->assertEquals(200, $status);
+		$data = $resp->getData();
+		$this->assertCount(0, $data);
+		$file->delete();
+
+		//Test .maps repected
+		$file = $userfolder->newFile('.maps');
+		$resp = $this->photosController->getNonLocalizedPhotosFromDb();
+		$status = $resp->getStatus();
+		$this->assertEquals(200, $status);
+		$data = $resp->getData();
+		$this->assertEquals(0, count($data));
+		$file->delete();
+
+		//Test myMap
+		$file = $userfolder->newFile('.noimage');
+		$resp = $this->photosController->getNonLocalizedPhotosFromDb($userfolder->getId());
 		$status = $resp->getStatus();
 		$this->assertEquals(200, $status);
 		$data = $resp->getData();
@@ -273,32 +303,32 @@ class PhotosControllerTest extends \PHPUnit\Framework\TestCase {
         $status = $resp->getStatus();
         $this->assertEquals(200, $status);
         $data = $resp->getData();
-        $this->assertEquals(1, count($data));
+        $this->assertCount(1, $data);
 
         $resp = $this->photosController->getPhotosFromDb();
         $status = $resp->getStatus();
         $this->assertEquals(200, $status);
         $data = $resp->getData();
-        $this->assertEquals(2, count($data));
+        $this->assertCount(2, $data);
 
 		$resp = $this->photosController->getNonLocalizedPhotosFromDb();
 		$status = $resp->getStatus();
 		$this->assertEquals(200, $status);
 		$data = $resp->getData();
-		$this->assertEquals(0, count($data));
+		$this->assertCount(0, $data);
 
         // reset coords
         $resp = $this->photosController->resetPhotosCoords(['/nut.jpg']);
         $status = $resp->getStatus();
         $this->assertEquals(200, $status);
         $data = $resp->getData();
-        $this->assertEquals(1, count($data));
+        $this->assertCount(1, $data);
 
         $resp = $this->photosController->getPhotosFromDb();
         $status = $resp->getStatus();
         $this->assertEquals(200, $status);
         $data = $resp->getData();
-        $this->assertEquals(1, count($data));
+        $this->assertCount(1, $data);
     }
 
 }

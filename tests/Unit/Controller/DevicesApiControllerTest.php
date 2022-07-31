@@ -11,6 +11,7 @@
 
 namespace OCA\Maps\Controller;
 
+use OCP\Files\IRootFolder;
 use \OCP\IServerContainer;
 use \OCA\Maps\AppInfo\Application;
 use \OCA\Maps\Service\DevicesService;
@@ -29,6 +30,7 @@ class DevicesApiControllerTest extends \PHPUnit\Framework\TestCase {
     private $devicesApiController;
     private $devicesApiController2;
     private $utilsController;
+	private $root;
 
     public static function setUpBeforeClass(): void {
         $app = new Application();
@@ -76,6 +78,7 @@ class DevicesApiControllerTest extends \PHPUnit\Framework\TestCase {
         $this->container = $this->app->getContainer();
         $c = $this->container;
         $this->config = $c->query(IServerContainer::class)->getConfig();
+		$this->root = $c->query(IServerContainer::class)->getRootFolder();
 
         $this->devicesApiController = new DevicesApiController(
             $this->appName,
@@ -112,6 +115,7 @@ class DevicesApiControllerTest extends \PHPUnit\Framework\TestCase {
             $this->request,
             $c->query(IServerContainer::class)->getConfig(),
             $c->getServer()->getAppManager(),
+			$this->root,
             'test'
         );
 

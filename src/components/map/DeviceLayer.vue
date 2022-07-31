@@ -11,7 +11,7 @@
 				@click="$emit('toggle-history', device)">
 				{{ t('maps', 'Toggle history') }}
 			</ActionButton>
-			<ActionButton
+			<ActionButton v-if="mapIsUpdatable"
 				icon="icon-colorpicker"
 				@click="$emit('change-color', device)">
 				<!--template #icon>
@@ -23,6 +23,10 @@
 				icon="icon-file"
 				@click="$emit('export', device)">
 				{{ t('maps', 'Export') }}
+			</ActionButton>
+			<ActionButton icon="icon-share"
+				@click="$emit('add-to-map-device', device)">
+				{{ t('maps', 'Link to map') }}
 			</ActionButton>
 		</LPopup>
 		<LTooltip :options="tooltipOptions">
@@ -148,6 +152,9 @@ export default {
 			return this.points.length > 0
 				? this.points[this.points.length - 1]
 				: null
+		},
+		mapIsUpdatable() {
+			return optionsController.optionValues?.isUpdateable
 		},
 	},
 

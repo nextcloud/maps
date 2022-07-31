@@ -1,8 +1,9 @@
 OC.L10N.register(
     "maps",
     {
-    "Maps" : "Mapas",
+    "File not found" : "Fichièr pas trobat",
     "Personal" : "Personal",
+    "Maps" : "Mapas",
     "Export" : "Exportar",
     "Delete" : "Suprimir",
     "Import" : "Importar",
@@ -52,6 +53,7 @@ OC.L10N.register(
     "Dentist" : "Dentista",
     "Link" : "Ligam",
     "Description" : "Descripcion",
+    "Download" : "Telecargar",
     "OSRM settings" : "Paramètres OSRM",
     "GraphHopper settings" : "Paramètres GraphHopper",
     "Mapbox settings" : "Paramètres Mapbox",

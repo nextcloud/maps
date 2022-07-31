@@ -2,7 +2,7 @@
 	<Content app-name="maps">
 		<MapsNavigation
 			@toggle-trackme="onToggleTrackme"
-			@toggle-slider="sliderEnabled = $event; sliderStart=0; sliderEnd=moment.unix()">
+			@toggle-slider="onToggleSlider">
 			<template #items>
 				<AppNavigationFavoritesItem
 					:enabled="favoritesEnabled"
@@ -369,7 +369,7 @@ export default {
 		displayedTracks() {
 			return this.sliderEnabled
 				? this.tracks.filter((t) => {
-					return !(t.metadata?.begin >= this.sliderEnd || t.metadata?.end <= this.sliderStart)
+					return !(t.metadata?.begin >= this.sliderEnd || (t.metadata?.end >= 0 && t.metadata?.end <= this.sliderStart))
 				})
 				: this.tracks
 		},
@@ -673,6 +673,11 @@ export default {
 			} else {
 				this.stopTrackLoop()
 			}
+		},
+		onToggleSlider(enabled) {
+			this.sliderEnabled = enabled
+			this.sliderStart = 0
+			this.sliderEnd = moment().unix()
 		},
 		sendPositionLoop() {
 			// start a loop which get and send my position

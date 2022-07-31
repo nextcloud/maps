@@ -1,8 +1,9 @@
 OC.L10N.register(
     "maps",
     {
-    "Maps" : "Karte",
+    "File not found" : "Datne nav atrasta",
     "Personal" : "Personīgs",
+    "Maps" : "Karte",
     "Export" : "Eksportēt",
     "Delete" : "Dzēst",
     "Import" : "Importēt",
@@ -45,6 +46,7 @@ OC.L10N.register(
     "Move" : "Pārvietot",
     "Link" : "Saite",
     "Description" : "Apraksts",
+    "Download" : "Lejupielādēt",
     "Your photos" : "Jūsu bildes",
     "Hide all" : "Slēpt visu",
     "Settings" : "Iestatījumi"

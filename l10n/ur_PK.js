@@ -22,6 +22,7 @@ OC.L10N.register(
     "Move" : "Move",
     "Link" : "Link",
     "Description" : "تصریح",
+    "Download" : "ڈاؤن لوڈ",
     "Settings" : "سیٹینگز"
 },
 "nplurals=2; plural=(n != 1);");

@@ -32,6 +32,7 @@ export function processGpx(gpx, overwriteZeroTimpstamp = true) {
 			routes.push(parseRte(e))
 		}
 	})
+	waypoints.sort((a, b) => (a.timestamp || 0) - (b.timestamp || 0))
 	return { tracks, routes, waypoints }
 }
 

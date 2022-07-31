@@ -1,6 +1,7 @@
 OC.L10N.register(
     "maps",
     {
+    "File not found" : " ບໍ່ພົບຟາຍ",
     "Personal" : "ສ່ວນບຸກຄົນ",
     "Delete" : "ລຶບ",
     "Rename" : "ປ່ຽນຊື່",
@@ -25,6 +26,7 @@ OC.L10N.register(
     "Copy link" : "ສຳເນົາລິງ",
     "Move" : "ຍ້າຍ",
     "Link" : "ລິງ",
+    "Download" : "ດາວໂຫລດ",
     "Settings" : "ການຕັ້ງຄ່າ"
 },
 "nplurals=1; plural=0;");

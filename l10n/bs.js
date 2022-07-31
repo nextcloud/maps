@@ -1,6 +1,7 @@
 OC.L10N.register(
     "maps",
     {
+    "File not found" : "Datoteka nije pronađena",
     "Personal" : "Osobno",
     "Export" : "Izvezi",
     "Delete" : "Obriši",
@@ -31,6 +32,7 @@ OC.L10N.register(
     "Move" : "Move",
     "Link" : "Veza",
     "Description" : "Opis",
+    "Download" : "Preuzmi",
     "Settings" : "Podešavanje"
 },
 "nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);");

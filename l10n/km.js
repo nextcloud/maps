@@ -1,12 +1,13 @@
 OC.L10N.register(
     "maps",
     {
-    "Maps" : "ផែនទី",
     "Personal" : "ផ្ទាល់​ខ្លួន",
+    "Maps" : "ផែនទី",
     "Export" : "នាំចេញ",
     "Delete" : "លុប",
     "Import" : "នាំយកចូល",
     "Rename" : "ប្ដូរ​ឈ្មោះ",
+    "Copied!" : "បានចម្លង",
     "Cancel" : "បោះបង់",
     "Sort by name" : "Order by name",
     "Sort by date" : "Order by date",
@@ -16,6 +17,7 @@ OC.L10N.register(
     "Name" : "ឈ្មោះ",
     "Add" : "បញ្ចូល",
     "Add to favorites" : "Add to favorites",
+    "Home" : "ទំព័រដើម",
     "Work" : "ធ្វើការ",
     "Date" : "Date",
     "Update" : "ធ្វើ​បច្ចុប្បន្នភាព",
@@ -28,9 +30,12 @@ OC.L10N.register(
     "Details" : "ព័ត៌មាន​លម្អិត",
     "Not grouped" : "គ្មាន​ក្រុម",
     "Share link" : "Share link",
+    "Copy link" : "ចម្លងតំណ",
     "Move" : "Move",
+    "Bar" : "របារ",
     "Link" : "Link",
     "Description" : "ការ​អធិប្បាយ",
+    "Download" : "ទាញយក",
     "Settings" : "ការកំណត់"
 },
 "nplurals=1; plural=0;");

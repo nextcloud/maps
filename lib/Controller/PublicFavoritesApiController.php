@@ -55,14 +55,23 @@ class PublicFavoritesApiController extends PublicShareController {
         $this->favoritesService = $favoritesService;
     }
 
+	/**
+	 * @return string
+	 */
     public function getPasswordHash(): string {
         return '';
     }
 
+	/**
+	 * @return bool
+	 */
     protected function isPasswordProtected(): bool {
         return false;
     }
 
+	/**
+	 * @return bool
+	 */
     public function isValidToken(): bool {
         try {
             $this->favoriteShareMapper->findByToken($this->getToken());
@@ -73,6 +82,9 @@ class PublicFavoritesApiController extends PublicShareController {
         return true;
     }
 
+	/**
+	 * @return bool
+	 */
     public function canEdit(): bool {
         try {
             $share = $this->favoriteShareMapper->findByToken($this->getToken());
@@ -88,7 +100,7 @@ class PublicFavoritesApiController extends PublicShareController {
      *
      * @return DataResponse
      */
-    public function getFavorites() {
+    public function getFavorites(): DataResponse {
         try {
             $share = $this->favoriteShareMapper->findByToken($this->getToken());
         } catch (DoesNotExistException $e) {

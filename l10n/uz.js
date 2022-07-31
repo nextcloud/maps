@@ -1,8 +1,9 @@
 OC.L10N.register(
     "maps",
     {
-    "Maps" : "Xaritalar",
+    "File not found" : "Fayl topilmadi",
     "Personal" : "Shaxsiy",
+    "Maps" : "Xaritalar",
     "Delete" : "O'chir",
     "Rename" : "Nomni o'zgartiring",
     "Copied!" : "Nusxa olindi!",
@@ -19,6 +20,7 @@ OC.L10N.register(
     "Share link" : "Ulanishni ulashing",
     "Move" : "Ko'chiring",
     "Link" : "Ulanish",
+    "Download" : "Yuklab oling",
     "Settings" : "Sozlamalar"
 },
 "nplurals=1; plural=0;");

@@ -1,8 +1,9 @@
 OC.L10N.register(
     "maps",
     {
-    "Maps" : "Mapoj",
+    "File not found" : "Netrovita dosiero",
     "Personal" : "Persona",
+    "Maps" : "Mapoj",
     "Export" : "Eksporti",
     "Delete" : "Forigi",
     "Import" : "Importi",
@@ -47,6 +48,7 @@ OC.L10N.register(
     "Move" : "Movi",
     "Link" : "Ligilo",
     "Description" : "Priskribo",
+    "Download" : "Elŝuti",
     "Settings" : "Agordoj"
 },
 "nplurals=2; plural=(n != 1);");

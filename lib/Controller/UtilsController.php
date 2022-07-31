@@ -52,11 +52,13 @@ class UtilsController extends Controller {
         $this->config = $config;
     }
 
-    /**
-     * Delete user options
-     * @NoAdminRequired
-     */
-    public function deleteOptionsValues() {
+	/**
+	 * Delete user options
+	 *
+	 * @NoAdminRequired
+	 * @return DataResponse
+	 */
+    public function deleteOptionsValues(): DataResponse {
         $keys = $this->config->getUserKeys($this->userId, 'maps');
         foreach ($keys as $key) {
             $this->config->deleteUserValue($this->userId, 'maps', $key);
@@ -64,11 +66,15 @@ class UtilsController extends Controller {
         return new DataResponse(['done'=>1]);
     }
 
-    /**
-     * Save options values to the DB for current user
-     * @NoAdminRequired
-     */
-    public function saveOptionValue($options, $myMapId=null) {
+	/**
+	 * Save options values to the DB for current user
+	 *
+	 * @NoAdminRequired
+	 * @param $options
+	 * @return DataResponse
+	 * @throws \OCP\PreConditionNotMetException
+	 */
+    public function saveOptionValue($options, $myMapId=null): DataResponse  {
         if( is_null($myMapId) || $myMapId==="") {
             foreach ($options as $key => $value) {
                 $this->config->setUserValue($this->userId, 'maps', $key, $value);
@@ -91,16 +97,17 @@ class UtilsController extends Controller {
             } catch (LockedException $e){
                 return new DataResponse("File is locked", 500);
             }
-
         }
         return new DataResponse(['done'=>1]);
     }
 
-    /**
-     * get options values from the config for current user
-     * @NoAdminRequired
-     */
-    public function getOptionsValues($myMapId=null) {
+	/**
+	 * get options values from the config for current user
+	 *
+	 * @NoAdminRequired
+	 * @return DataResponse
+	 */
+    public function getOptionsValues($myMapId=null): DataResponse {
         $ov = array();
 
         if( is_null($myMapId) || $myMapId==="") {
@@ -153,10 +160,13 @@ class UtilsController extends Controller {
         return new DataResponse(['values'=>$ov]);
     }
 
-    /**
-     * set routing settings
-     */
-    public function setRoutingSettings($values) {
+	/**
+	 * set routing settings
+	 *
+	 * @param $values
+	 * @return DataResponse
+	 */
+    public function setRoutingSettings($values): DataResponse {
         $acceptedKeys = [
             'osrmCarURL',
             'osrmBikeURL',

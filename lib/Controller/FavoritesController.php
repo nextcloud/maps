@@ -42,7 +42,7 @@ class FavoritesController extends Controller {
     private IUserManager $userManager;
     private IGroupManager $groupManager;
     private string $dbtype;
-	private IL10N $trans;
+	private IL10N $l;
     private ILogger $logger;
     private FavoritesService $favoritesService;
     private IDateTimeZone $dateTimeZone;
@@ -60,7 +60,7 @@ class FavoritesController extends Controller {
                                 IAppManager $appManager,
                                 IUserManager $userManager,
                                 IGroupManager $groupManager,
-                                IL10N $trans,
+                                IL10N $l,
                                 ILogger $logger,
                                 FavoritesService $favoritesService,
                                 IDateTimeZone $dateTimeZone,
@@ -75,7 +75,7 @@ class FavoritesController extends Controller {
         $this->userId = $UserId;
         $this->userManager = $userManager;
         $this->groupManager = $groupManager;
-        $this->trans = $trans;
+        $this->l = $l;
         $this->dbtype = $config->getSystemValue('dbtype');
         // IConfig object
         $this->config = $config;
@@ -159,7 +159,7 @@ class FavoritesController extends Controller {
             }
 
         } else {
-            return new DataResponse('invalid values', 400);
+            return new DataResponse($this->l->t('Invalid values'), 400);
         }
     }
 
@@ -229,10 +229,10 @@ class FavoritesController extends Controller {
                     $editedFavorite = $this->favoritesService->getFavoriteFromDB($id);
                     return new DataResponse($editedFavorite);
                 } else {
-                    return new DataResponse('invalid values', 400);
+                    return new DataResponse($this->l->t('invalid values'), 400);
                 }
             } else {
-                return new DataResponse('no such favorite', 400);
+                return new DataResponse($this->l->t('no such favorite'), 400);
             }
         } else {
             $folders = $this->userFolder->getById($myMapId);
@@ -247,10 +247,10 @@ class FavoritesController extends Controller {
 					$editedFavorite = $this->favoritesService->getFavoriteFromJSON($file, $id);
 					return new DataResponse($editedFavorite);
 				} else {
-					return new DataResponse('invalid values', 400);
+					return new DataResponse($this->l->t('invalid values'), 400);
 				}
 			} else {
-				return new DataResponse('no such favorite', 400);
+				return new DataResponse($this->l->t('no such favorite'), 400);
 			}
         }
     }
@@ -302,7 +302,7 @@ class FavoritesController extends Controller {
                 $this->favoritesService->deleteFavoriteFromDB($id);
                 return new DataResponse('DELETED');
             }
-			return new DataResponse('no such favorite', 400);
+			return new DataResponse($this->l->t('no such favorite'), 400);
         }
 		$folders = $this->userFolder->getById($myMapId);
 		$folder = array_shift($folders);
@@ -310,7 +310,7 @@ class FavoritesController extends Controller {
 		if ($this->favoritesService->deleteFavoriteFromJSON($file, $id) > 0) {
 			return new DataResponse('DELETED');
 		}
-		return new DataResponse('no such favorite', 400);
+		return new DataResponse($this->l->t('no such favorite'), 400);
     }
 
 	/**
@@ -356,13 +356,13 @@ class FavoritesController extends Controller {
 	 */
     public function shareCategory(string $category): DataResponse {
         if ($this->favoritesService->countFavorites($this->userId, [$category], null, null) === 0) {
-            return new DataResponse("Unknown category", Http::STATUS_BAD_REQUEST);
+            return new DataResponse($this->l->t("Unknown category"), Http::STATUS_BAD_REQUEST);
         }
 
         $share = $this->favoriteShareMapper->findOrCreateByOwnerAndCategory($this->userId, $category);
 
         if ($share === null) {
-            return new DataResponse("Error sharing favorite", Http::STATUS_INTERNAL_SERVER_ERROR);
+            return new DataResponse($this->l->t("Error sharing favorite"), Http::STATUS_INTERNAL_SERVER_ERROR);
         }
 
         return new DataResponse($share);
@@ -375,7 +375,7 @@ class FavoritesController extends Controller {
 	 */
     public function unShareCategory(string $category): DataResponse {
         if ($this->favoritesService->countFavorites($this->userId, [$category], null, null) === 0) {
-            return new DataResponse("Unknown category", Http::STATUS_BAD_REQUEST);
+            return new DataResponse($this->l->t("Unknown category"), Http::STATUS_BAD_REQUEST);
         }
 
         $didExist = $this->favoriteShareMapper->removeByOwnerAndCategory($this->userId, $category);
@@ -405,7 +405,7 @@ class FavoritesController extends Controller {
 		$folders = $this->userFolder->getById($targetMapId);
 		$folder = array_shift($folders);
 		if(is_null($folder)) {
-			return new DataResponse('Map mot Found', 404);
+			return new DataResponse($this->l->t('Map mot Found'), 404);
 		}
 		try {
 			$file=$folder->get(".favorite_shares.json");
@@ -415,7 +415,7 @@ class FavoritesController extends Controller {
 		$data = json_decode($file->getContent(), true);
 		foreach ($data as $s) {
 			if ($s->token = $share->token) {
-				return new DataResponse('share was allready on map');
+				return new DataResponse($this->l->t('share was allready on map'));
 			}
 		}
 		$share->id = count($data);
@@ -452,7 +452,7 @@ class FavoritesController extends Controller {
         // sorry about ugly categoryList management:
         // when an empty list is passed in http request, we get null here
         if ($categoryList === null or (is_array($categoryList) and count($categoryList) === 0)) {
-            $response = new DataResponse('Nothing to export', 400);
+            $response = new DataResponse($this->l->t('Nothing to export'), 400);
             return $response;
         }
 
@@ -464,22 +464,22 @@ class FavoritesController extends Controller {
         if ($userFolder->nodeExists('/Maps')) {
             $mapsFolder = $userFolder->get('/Maps');
             if ($mapsFolder->getType() !== \OCP\Files\FileInfo::TYPE_FOLDER) {
-                $response = new DataResponse('/Maps is not a directory', 400);
+                $response = new DataResponse($this->l->t('/Maps is not a directory'), 400);
                 return $response;
             }
             else if (!$mapsFolder->isCreatable()) {
-                $response = new DataResponse('/Maps is not writeable', 400);
+                $response = new DataResponse($this->l->t('/Maps directory is not writeable'), 400);
                 return $response;
             }
         }
         else {
-            $response = new DataResponse('Impossible to create /Maps', 400);
+            $response = new DataResponse($this->l->t('Impossible to create /Maps directory'), 400);
             return $response;
         }
 
         $nbFavorites = $this->favoritesService->countFavorites($this->userId, $categoryList, $begin, $end);
         if ($nbFavorites === 0) {
-            $response = new DataResponse('Nothing to export', 400);
+            $response = new DataResponse($this->l->t('Nothing to export'), 400);
             return $response;
         }
 
@@ -525,17 +525,17 @@ class FavoritesController extends Controller {
                 }
                 else {
                     // invalid extension
-                    return new DataResponse('Invalid file extension', 400);
+                    return new DataResponse($this->l->t('Invalid file extension'), 400);
                 }
             }
             else {
                 // directory or not readable
-                return new DataResponse('Impossible to read the file', 400);
+                return new DataResponse($this->l->t('Impossible to read the file'), 400);
             }
         }
         else {
             // does not exist
-            return new DataResponse('File does not exist', 400);
+            return new DataResponse($this->l->t('File does not exist'), 400);
         }
     }
 

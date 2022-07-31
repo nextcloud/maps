@@ -21,6 +21,13 @@ use lsolesen\pel\PelJpeg;
 use lsolesen\pel\PelTag;
 use lsolesen\pel\PelTiff;
 
+//PHP 7 polyfill
+if (!function_exists('str_contains')) {
+	function str_contains(string $haystack, string $needle): bool {
+		return '' === $needle || false !== strpos($haystack, $needle);
+	}
+}
+
 /**
  * Class ExifGeoData
  *
@@ -306,7 +313,7 @@ class ExifGeoData
     {
         $result = null;
         $value = trim($value, '/');
-        if (str_contains($value,'/')) {
+        if (str_contains($value, '/')) {
             $value = array_map('intval', explode('/', $value));
             if (0 != $value[1]) {
                 $result = $value[0] / $value[1];

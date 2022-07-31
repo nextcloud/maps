@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Nextcloud 3.14159\n"
 "Report-Msgid-Bugs-To: translations\\@example.com\n"
-"POT-Creation-Date: 2022-05-19 03:09+0000\n"
+"POT-Creation-Date: 2022-07-31 02:36+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,8 +17,93 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: /app/appinfo/app.php:69 /app/specialAppInfoFakeDummyForL10nScript.php:2
-msgid "Maps"
+#: /app/lib/Controller/DevicesApiController.php:161
+#: /app/lib/Controller/DevicesApiController.php:182
+#: /app/lib/Controller/DevicesController.php:166
+#: /app/lib/Controller/FavoritesApiController.php:119
+#: /app/lib/Controller/FavoritesApiController.php:146
+#: /app/lib/Controller/FavoritesController.php:115
+#: /app/lib/Controller/FavoritesController.php:140
+msgid "Invalid values"
+msgstr ""
+
+#: /app/lib/Controller/DevicesApiController.php:186
+#: /app/lib/Controller/DevicesApiController.php:204
+#: /app/lib/Controller/DevicesController.php:170
+#: /app/lib/Controller/DevicesController.php:186
+msgid "No such device"
+msgstr ""
+
+#: /app/lib/Controller/DevicesController.php:204
+msgid "No device to export"
+msgstr ""
+
+#: /app/lib/Controller/DevicesController.php:215
+#: /app/lib/Controller/FavoritesController.php:268
+#: /app/lib/Controller/RoutingController.php:107
+msgid "/Maps is not a directory"
+msgstr ""
+
+#: /app/lib/Controller/DevicesController.php:218
+#: /app/lib/Controller/FavoritesController.php:272
+#: /app/lib/Controller/RoutingController.php:111
+msgid "/Maps directory is not writeable"
+msgstr ""
+
+#: /app/lib/Controller/DevicesController.php:222
+#: /app/lib/Controller/FavoritesController.php:277
+#: /app/lib/Controller/RoutingController.php:116
+msgid "Impossible to create /Maps directory"
+msgstr ""
+
+#: /app/lib/Controller/DevicesController.php:227
+#: /app/lib/Controller/FavoritesController.php:256
+#: /app/lib/Controller/FavoritesController.php:283
+msgid "Nothing to export"
+msgstr ""
+
+#: /app/lib/Controller/DevicesController.php:272
+#: /app/lib/Controller/FavoritesController.php:329
+msgid "Invalid file extension"
+msgstr ""
+
+#: /app/lib/Controller/DevicesController.php:277
+#: /app/lib/Controller/FavoritesController.php:334
+msgid "Impossible to read the file"
+msgstr ""
+
+#: /app/lib/Controller/DevicesController.php:282
+#: /app/lib/Controller/FavoritesController.php:339
+msgid "File does not exist"
+msgstr ""
+
+#: /app/lib/Controller/FavoritesApiController.php:149
+#: /app/lib/Controller/FavoritesApiController.php:166
+#: /app/lib/Controller/FavoritesController.php:143
+#: /app/lib/Controller/FavoritesController.php:182
+msgid "No such favorite"
+msgstr ""
+
+#: /app/lib/Controller/FavoritesController.php:213
+#: /app/lib/Controller/FavoritesController.php:232
+msgid "Unknown category"
+msgstr ""
+
+#: /app/lib/Controller/FavoritesController.php:219
+msgid "Error sharing favorite"
+msgstr ""
+
+#: /app/lib/Controller/TracksController.php:154
+msgid "Bad file type"
+msgstr ""
+
+#: /app/lib/Controller/TracksController.php:158
+msgid "File not found"
+msgstr ""
+
+#: /app/lib/Controller/TracksController.php:177
+#: /app/lib/Controller/TracksController.php:193
+msgid "No such track"
 msgstr ""
 
 #. TRANSLATORS src/components/AppNavigationFavoritesItem.vue:85
@@ -33,6 +118,10 @@ msgstr ""
 #: /app/specialVueFakeDummyForL10nScript.js:550
 #: /app/src/favoritesController.js:33 /app/src/utils/favoritesUtils.js:27
 msgid "Personal"
+msgstr ""
+
+#: /app/specialAppInfoFakeDummyForL10nScript.php:2
+msgid "Maps"
 msgstr ""
 
 #: /app/specialAppInfoFakeDummyForL10nScript.php:3
@@ -577,21 +666,18 @@ msgid "Add"
 msgstr ""
 
 #. TRANSLATORS src/components/map/ClickPopup.vue:62
+#. TRANSLATORS src/components/map/ClickSearchPopup.vue:17
+#. TRANSLATORS src/components/map/PoiMarker.vue:17
 #: /app/specialVueFakeDummyForL10nScript.js:190
-msgid "Add to Favorites"
+#: /app/specialVueFakeDummyForL10nScript.js:194
+#: /app/specialVueFakeDummyForL10nScript.js:304 /app/src/script.js:1961
+#: /app/src/script.js:2048 /app/src/script.js:2066
+msgid "Add to favorites"
 msgstr ""
 
 #. TRANSLATORS src/components/map/ClickSearchPopup.vue:8
 #: /app/specialVueFakeDummyForL10nScript.js:192 /app/src/script.js:2063
 msgid "This place"
-msgstr ""
-
-#. TRANSLATORS src/components/map/ClickSearchPopup.vue:17
-#. TRANSLATORS src/components/map/PoiMarker.vue:17
-#: /app/specialVueFakeDummyForL10nScript.js:194
-#: /app/specialVueFakeDummyForL10nScript.js:304 /app/src/script.js:1961
-#: /app/src/script.js:2048 /app/src/script.js:2066
-msgid "Add to favorites"
 msgstr ""
 
 #. TRANSLATORS src/components/map/ClickSearchPopup.vue:21
@@ -675,7 +761,7 @@ msgstr ""
 
 #. TRANSLATORS src/components/map/FavoriteMarker.vue:17
 #: /app/specialVueFakeDummyForL10nScript.js:232
-#: /app/src/favoritesController.js:922
+#: /app/src/favoritesController.js:922 /app/src/tracksController.js:748
 msgid "No name"
 msgstr ""
 
@@ -705,12 +791,12 @@ msgstr ""
 
 #. TRANSLATORS src/components/map/HistoryControl.vue:7
 #: /app/specialVueFakeDummyForL10nScript.js:254
-msgid "Cancel {action} (Ctrl+z)"
+msgid "Undo {action} (Ctrl+Z)"
 msgstr ""
 
 #. TRANSLATORS src/components/map/HistoryControl.vue:13
 #: /app/specialVueFakeDummyForL10nScript.js:256
-msgid "Redo {action} (Ctrl+Z)"
+msgid "Redo {action} (Ctrl+Shift+Z)"
 msgstr ""
 
 #. TRANSLATORS src/components/map/HistoryControl.vue:71
@@ -1234,32 +1320,32 @@ msgstr ""
 msgid "My location"
 msgstr ""
 
-#. TRANSLATORS src/views/App.vue:635
+#. TRANSLATORS src/views/App.vue:640
 #: /app/specialVueFakeDummyForL10nScript.js:516
 #: /app/src/devicesController.js:814
 #: /app/src/nonLocalizedPhotosController.js:71
 msgid "Impossible to get current location"
 msgstr ""
 
-#. TRANSLATORS src/views/App.vue:651
+#. TRANSLATORS src/views/App.vue:656
 #: /app/specialVueFakeDummyForL10nScript.js:518
 #: /app/src/devicesController.js:825
 msgid "Phone"
 msgstr ""
 
-#. TRANSLATORS src/views/App.vue:653
+#. TRANSLATORS src/views/App.vue:658
 #: /app/specialVueFakeDummyForL10nScript.js:520
 #: /app/src/devicesController.js:828
 msgid "Computer"
 msgstr ""
 
-#. TRANSLATORS src/views/App.vue:655
+#. TRANSLATORS src/views/App.vue:660
 #: /app/specialVueFakeDummyForL10nScript.js:522
 #: /app/src/devicesController.js:831
 msgid "Unknown device type"
 msgstr ""
 
-#. TRANSLATORS src/views/App.vue:665
+#. TRANSLATORS src/views/App.vue:670
 #: /app/specialVueFakeDummyForL10nScript.js:524
 #: /app/src/devicesController.js:855
 msgid "Failed to send current position"
@@ -1270,65 +1356,65 @@ msgstr ""
 msgid "Track {date}"
 msgstr ""
 
-#. TRANSLATORS src/views/App.vue:748
+#. TRANSLATORS src/views/App.vue:753
 #: /app/specialVueFakeDummyForL10nScript.js:526
 #: /app/src/photosController.js:567
 msgid "What do you want to place?"
 msgstr ""
 
-#. TRANSLATORS src/views/App.vue:751
+#. TRANSLATORS src/views/App.vue:756
 #: /app/specialVueFakeDummyForL10nScript.js:528
 #: /app/src/photosController.js:570
 msgid "Photo files"
 msgstr ""
 
-#. TRANSLATORS src/views/App.vue:753
+#. TRANSLATORS src/views/App.vue:758
 #: /app/specialVueFakeDummyForL10nScript.js:530
 #: /app/src/photosController.js:572
 msgid "Photo folders"
 msgstr ""
 
-#. TRANSLATORS src/views/App.vue:767
+#. TRANSLATORS src/views/App.vue:772
 #: /app/specialVueFakeDummyForL10nScript.js:532
 #: /app/src/photosController.js:589
 msgid "Choose pictures to place"
 msgstr ""
 
-#. TRANSLATORS src/views/App.vue:778
+#. TRANSLATORS src/views/App.vue:783
 #: /app/specialVueFakeDummyForL10nScript.js:534
 #: /app/src/photosController.js:603
 msgid "Choose directory of pictures to place"
 msgstr ""
 
-#. TRANSLATORS src/views/App.vue:801
+#. TRANSLATORS src/views/App.vue:806
 #: /app/specialVueFakeDummyForL10nScript.js:536
 msgid "\"{path}\" successfully moved"
 msgstr ""
 
-#. TRANSLATORS src/views/App.vue:803
+#. TRANSLATORS src/views/App.vue:808
 #: /app/specialVueFakeDummyForL10nScript.js:538
 msgid "{nb} photos moved"
 msgstr ""
 
-#. TRANSLATORS src/views/App.vue:950
+#. TRANSLATORS src/views/App.vue:955
 #: /app/specialVueFakeDummyForL10nScript.js:540
 #: /app/src/contactsController.js:629
 msgid "Failed to load contacts"
 msgstr ""
 
-#. TRANSLATORS src/views/App.vue:961
+#. TRANSLATORS src/views/App.vue:966
 #: /app/specialVueFakeDummyForL10nScript.js:542
 #: /app/src/contactsController.js:359
 msgid "Not grouped"
 msgstr ""
 
-#. TRANSLATORS src/views/App.vue:1245
+#. TRANSLATORS src/views/App.vue:1250
 #: /app/specialVueFakeDummyForL10nScript.js:546
 #: /app/src/favoritesController.js:1252
 msgid "Favorites exported in {path}"
 msgstr ""
 
-#. TRANSLATORS src/views/App.vue:1252
+#. TRANSLATORS src/views/App.vue:1257
 #: /app/specialVueFakeDummyForL10nScript.js:548
 #: /app/src/favoritesController.js:275
 msgid ""
@@ -1336,20 +1422,20 @@ msgid ""
 "kmz/kml (F-Droid Maps, Maps.me, Marble)"
 msgstr ""
 
-#. TRANSLATORS src/views/App.vue:1367
+#. TRANSLATORS src/views/App.vue:1372
 #: /app/specialVueFakeDummyForL10nScript.js:552
 #: /app/src/favoritesController.js:775
 msgid "Click on the map to add a favorite, press Esc to cancel"
 msgstr ""
 
-#. TRANSLATORS src/views/App.vue:1637
+#. TRANSLATORS src/views/App.vue:1642
 #: /app/specialVueFakeDummyForL10nScript.js:554
 #: /app/specialVueFakeDummyForL10nScript.js:558
 #: /app/src/devicesController.js:1112
 msgid "Devices exported in {path}"
 msgstr ""
 
-#. TRANSLATORS src/views/App.vue:1640
+#. TRANSLATORS src/views/App.vue:1645
 #: /app/specialVueFakeDummyForL10nScript.js:556
 #: /app/specialVueFakeDummyForL10nScript.js:560
 #: /app/src/devicesController.js:1117
@@ -1361,26 +1447,26 @@ msgstr ""
 msgid "Route {date}"
 msgstr ""
 
-#. TRANSLATORS src/views/App.vue:1665
+#. TRANSLATORS src/views/App.vue:1670
 #: /app/specialVueFakeDummyForL10nScript.js:562
 #: /app/src/devicesController.js:493
 msgid "Failed to delete device"
 msgstr ""
 
-#. TRANSLATORS src/views/App.vue:1709
+#. TRANSLATORS src/views/App.vue:1714
 #: /app/specialVueFakeDummyForL10nScript.js:564
 #: /app/src/devicesController.js:168
 msgid ""
 "Import devices from gpx (Nextcloud Maps) or kml/kmz (Google Timeline) file"
 msgstr ""
 
-#. TRANSLATORS src/views/App.vue:1721
+#. TRANSLATORS src/views/App.vue:1726
 #: /app/specialVueFakeDummyForL10nScript.js:566
 #: /app/src/devicesController.js:1135 /app/src/filetypes.js:53
 msgid "{nb} devices imported from {path}"
 msgstr ""
 
-#. TRANSLATORS src/views/App.vue:1725
+#. TRANSLATORS src/views/App.vue:1730
 #: /app/specialVueFakeDummyForL10nScript.js:568
 #: /app/src/devicesController.js:1145 /app/src/filetypes.js:57
 msgid "Failed to import devices"
@@ -1753,19 +1839,15 @@ msgid "Symbol name"
 msgstr ""
 
 #: /app/src/tracksController.js:727
-msgid "download"
+msgid "Download"
 msgstr ""
 
 #: /app/src/tracksController.js:736 /app/src/tracksController.js:739
-msgid "metadata link"
+msgid "Metadata link"
 msgstr ""
 
 #: /app/src/tracksController.js:743
-msgid "tracks/routes name list"
-msgstr ""
-
-#: /app/src/tracksController.js:748
-msgid "no name"
+msgid "Tracks/routes name list"
 msgstr ""
 
 #: /app/src/tracksController.js:777

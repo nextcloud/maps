@@ -47,8 +47,9 @@ class PhotosController extends Controller {
     /**
      * @NoAdminRequired
      * @NoCSRFRequired
+	 * @return DataResponse
      */
-    public function getPhotosFromDb($myMapId=null) {
+    public function getPhotosFromDb($myMapId=null): DataResponse {
 		$userFolder = $this->root->getUserFolder($this->userId);
         if (is_null($myMapId) || $myMapId === "") {
             $result = $this->geophotoService->getAllFromDB($this->userId, $userFolder);
@@ -60,20 +61,26 @@ class PhotosController extends Controller {
         return new DataResponse($result);
     }
 
-    /**
-     * @NoAdminRequired
-     * @NoCSRFRequired
-     */
-    public function getNonLocalizedPhotosFromDb() {
+	/**
+	 * @NoAdminRequired
+	 * @NoCSRFRequired
+	 * @return DataResponse
+	 */
+    public function getNonLocalizedPhotosFromDb(): DataResponse {
         $result = $this->geophotoService->getNonLocalizedFromDB($this->userId);
         return new DataResponse($result);
     }
 
 
-    /**
-     * @NoAdminRequired
-     */
-    public function placePhotos($paths, $lats, $lngs, $directory=false, $myMapId=null, $relative=false) {
+	/**
+	 * @NoAdminRequired
+	 * @param $paths
+	 * @param $lats
+	 * @param $lngs
+	 * @param bool $directory
+	 * @return DataResponse
+	 */
+    public function placePhotos($paths, $lats, $lngs, bool $directory=false, $myMapId=null, $relative=false): DataResponse {
 		$userFolder = $this->root->getUserFolder($this->userId);
         if (!is_null($myMapId) and $myMapId !== '') {
             // forbid folder placement in my-maps
@@ -104,10 +111,12 @@ class PhotosController extends Controller {
         return new DataResponse($result);
     }
 
-    /**
-     * @NoAdminRequired
-     */
-    public function resetPhotosCoords($paths, $myMapId=null) {
+	/**
+	 * @NoAdminRequired
+	 * @param $paths
+	 * @return DataResponse
+	 */
+    public function resetPhotosCoords($paths, $myMapId=null): DataResponse {
 		$userFolder = $this->root->getUserFolder($this->userId);
         $result = [];
         if (sizeof($paths) > 0) {

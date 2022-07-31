@@ -49,7 +49,7 @@ class DevicesApiController extends ApiController {
     private $dbtype;
     private $dbdblquotes;
     private $defaultDeviceId;
-    private $trans;
+    private $l;
     private $logger;
     private $devicesService;
     protected $appName;
@@ -62,7 +62,7 @@ class DevicesApiController extends ApiController {
                                 IAppManager $appManager,
                                 IUserManager $userManager,
                                 IGroupManager $groupManager,
-                                IL10N $trans,
+                                IL10N $l,
                                 ILogger $logger,
                                 DevicesService $devicesService,
                                 $UserId){
@@ -77,7 +77,7 @@ class DevicesApiController extends ApiController {
         $this->userId = $UserId;
         $this->userManager = $userManager;
         $this->groupManager = $groupManager;
-        $this->trans = $trans;
+        $this->l = $l;
         $this->dbtype = $config->getSystemValue('dbtype');
         // IConfig object
         $this->config = $config;
@@ -88,12 +88,14 @@ class DevicesApiController extends ApiController {
         $this->shareManager = $shareManager;
     }
 
-    /**
-     * @NoAdminRequired
-     * @NoCSRFRequired
-     * @CORS
-     */
-    public function getDevices($apiversion) {
+	/**
+	 * @NoAdminRequired
+	 * @NoCSRFRequired
+	 * @CORS
+	 * @param $apiversion
+	 * @return DataResponse
+	 */
+    public function getDevices($apiversion): DataResponse {
         $now = new \DateTime();
 
         $devices = $this->devicesService->getDevicesFromDB($this->userId);
@@ -107,22 +109,34 @@ class DevicesApiController extends ApiController {
             ->setETag($etag);
     }
 
-    /**
-     * @NoAdminRequired
-     * @NoCSRFRequired
-     * @CORS
-     */
-    public function getDevicePoints($id, $pruneBefore=0) {
+	/**
+	 * @NoAdminRequired
+	 * @NoCSRFRequired
+	 * @CORS
+	 * @param $id
+	 * @param int $pruneBefore
+	 * @return DataResponse
+	 */
+    public function getDevicePoints($id, int $pruneBefore=0): DataResponse {
         $points = $this->devicesService->getDevicePointsFromDB($this->userId, $id, $pruneBefore);
         return new DataResponse($points);
     }
 
-    /**
-     * @NoAdminRequired
-     * @NoCSRFRequired
-     * @CORS
-     */
-    public function addDevicePoint($apiversion, $lat, $lng, $timestamp=null, $user_agent=null, $altitude=null, $battery=null, $accuracy=null) {
+	/**
+	 * @NoAdminRequired
+	 * @NoCSRFRequired
+	 * @CORS
+	 * @param $apiversion
+	 * @param $lat
+	 * @param $lng
+	 * @param $timestamp
+	 * @param $user_agent
+	 * @param $altitude
+	 * @param $battery
+	 * @param $accuracy
+	 * @return DataResponse
+	 */
+    public function addDevicePoint($apiversion, $lat, $lng, $timestamp=null, $user_agent=null, $altitude=null, $battery=null, $accuracy=null): DataResponse {
         if (is_numeric($lat) and is_numeric($lng)) {
             $timestamp = $this->normalizeOptionalNumber($timestamp);
             $altitude = $this->normalizeOptionalNumber($altitude);
@@ -144,16 +158,19 @@ class DevicesApiController extends ApiController {
             ]);
         }
         else {
-            return new DataResponse('invalid values', 400);
+            return new DataResponse($this->l->t('Invalid values'), 400);
         }
     }
 
-    /**
-     * @NoAdminRequired
-     * @NoCSRFRequired
-     * @CORS
-     */
-    public function editDevice($id, $color) {
+	/**
+	 * @NoAdminRequired
+	 * @NoCSRFRequired
+	 * @CORS
+	 * @param $id
+	 * @param $color
+	 * @return DataResponse
+	 */
+    public function editDevice($id, $color): DataResponse {
         $device = $this->devicesService->getDeviceFromDB($id, $this->userId);
         if ($device !== null) {
             if (is_string($color) && strlen($color) > 0) {
@@ -162,30 +179,36 @@ class DevicesApiController extends ApiController {
                 return new DataResponse($editedDevice);
             }
             else {
-                return new DataResponse('invalid values', 400);
+                return new DataResponse($this->l->t('Invalid values'), 400);
             }
         }
         else {
-            return new DataResponse('no such device', 400);
+            return new DataResponse($this->l->t('No such device'), 400);
         }
     }
 
-    /**
-     * @NoAdminRequired
-     * @NoCSRFRequired
-     * @CORS
-     */
-    public function deleteDevice($id) {
+	/**
+	 * @NoAdminRequired
+	 * @NoCSRFRequired
+	 * @CORS
+	 * @param $id
+	 * @return DataResponse
+	 */
+    public function deleteDevice($id): DataResponse {
         $device = $this->devicesService->getDeviceFromDB($id, $this->userId);
         if ($device !== null) {
             $this->devicesService->deleteDeviceFromDB($id);
             return new DataResponse('DELETED');
         }
         else {
-            return new DataResponse('no such device', 400);
+            return new DataResponse($this->l->t('No such device'), 400);
         }
     }
 
+	/**
+	 * @param $value
+	 * @return float|int|string|null
+	 */
     private function normalizeOptionalNumber($value) {
         if (!is_numeric($value)) {
             return null;

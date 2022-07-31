@@ -1,8 +1,9 @@
 OC.L10N.register(
     "maps",
     {
-    "Maps" : "Kaarte",
+    "File not found" : "Lêer nie gevind nie",
     "Personal" : "Persoonlik",
+    "Maps" : "Kaarte",
     "Export" : "Voer uit",
     "Delete" : "Skrap",
     "Import" : "Voer In",
@@ -45,6 +46,7 @@ OC.L10N.register(
     "Move" : "Skuif",
     "Link" : "Skakel",
     "Description" : "Beskrywing",
+    "Download" : "Laai af",
     "Settings" : "Instellings"
 },
 "nplurals=2; plural=(n != 1);");

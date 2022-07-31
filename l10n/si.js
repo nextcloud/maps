@@ -1,8 +1,9 @@
 OC.L10N.register(
     "maps",
     {
-    "Maps" : "සිතියම්",
+    "File not found" : "ගොනුව හමු නොවිණි",
     "Personal" : "පුද්ගලික",
+    "Maps" : "සිතියම්",
     "Change color" : "වර්ණය වෙනස් කරන්න",
     "Rename" : "නැවත නම් කරන්න",
     "Copied!" : "පිටපත් කළා!",
@@ -37,6 +38,7 @@ OC.L10N.register(
     "Copy link" : "සබැඳිය පිටපත් කරන්න",
     "Link" : "සබැඳිය",
     "Description" : "විස්තරය",
+    "Download" : "බාගන්න",
     "Your photos" : "ඔබේ ඡායාරූප",
     "Settings" : "සැකසුම්"
 },

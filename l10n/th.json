@@ -1,6 +1,7 @@
 { "translations": {
-    "Maps" : "แผนที่",
+    "File not found" : "ไม่พบไฟล์",
     "Personal" : "ส่วนตัว",
+    "Maps" : "แผนที่",
     "Export" : "ส่งออก",
     "Delete" : "ลบ",
     "Import" : "นำเข้า",
@@ -42,7 +43,7 @@
     "Move" : "Move",
     "Link" : "ลิงค์",
     "Description" : "รายละเอียด",
-    "download" : "ดาวน์โหลด",
+    "Download" : "ดาวน์โหลด",
     "Your photos" : "รูปภาพของคุณ",
     "Settings" : "ตั้งค่า"
 },"pluralForm" :"nplurals=1; plural=0;"

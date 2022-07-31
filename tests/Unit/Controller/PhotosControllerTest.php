@@ -205,7 +205,7 @@ class PhotosControllerTest extends \PHPUnit\Framework\TestCase {
         $status = $resp->getStatus();
         $this->assertEquals(200, $status);
         $data = $resp->getData();
-        $this->assertEquals(1, count($data));
+        $this->assertCount(1, $data);
         $this->assertEquals('/nc.jpg', $data[0]->path);
 
 		//Test .nomedia repected
@@ -214,7 +214,7 @@ class PhotosControllerTest extends \PHPUnit\Framework\TestCase {
 		$status = $resp->getStatus();
 		$this->assertEquals(200, $status);
 		$data = $resp->getData();
-		$this->assertEquals(0, count($data));
+		$this->assertCount(0, $data);
 		$file->delete();
 
 		//Test .noimage repected
@@ -223,7 +223,7 @@ class PhotosControllerTest extends \PHPUnit\Framework\TestCase {
 		$status = $resp->getStatus();
 		$this->assertEquals(200, $status);
 		$data = $resp->getData();
-		$this->assertEquals(0, count($data));
+		$this->assertCount(0, $data);
 		$file->delete();
 
 		//Test .maps repected
@@ -240,7 +240,7 @@ class PhotosControllerTest extends \PHPUnit\Framework\TestCase {
         $status = $resp->getStatus();
         $this->assertEquals(200, $status);
         $data = $resp->getData();
-        $this->assertEquals(0, count($data));
+        $this->assertCount(0, $data);
 
 		// with track
 		$filename = 'tests/test_files/testFile1_locationNut.gpx';
@@ -259,7 +259,7 @@ class PhotosControllerTest extends \PHPUnit\Framework\TestCase {
 		$status = $resp->getStatus();
 		$this->assertEquals(200, $status);
 		$data = $resp->getData();
-		$this->assertEquals(1, count($data));
+		$this->assertCount(1, $data);
         $this->assertEquals('/nut.jpg', $data[0]->path);
 
 		//Test .nomedia repected
@@ -268,7 +268,7 @@ class PhotosControllerTest extends \PHPUnit\Framework\TestCase {
 		$status = $resp->getStatus();
 		$this->assertEquals(200, $status);
 		$data = $resp->getData();
-		$this->assertEquals(0, count($data));
+		$this->assertCount(0, $data);
 		$file->delete();
 
 		//Test .noimage repected
@@ -277,7 +277,7 @@ class PhotosControllerTest extends \PHPUnit\Framework\TestCase {
 		$status = $resp->getStatus();
 		$this->assertEquals(200, $status);
 		$data = $resp->getData();
-		$this->assertEquals(0, count($data));
+		$this->assertCount(0, $data);
 		$file->delete();
 
 		//Test .maps repected
@@ -303,32 +303,32 @@ class PhotosControllerTest extends \PHPUnit\Framework\TestCase {
         $status = $resp->getStatus();
         $this->assertEquals(200, $status);
         $data = $resp->getData();
-        $this->assertEquals(1, count($data));
+        $this->assertCount(1, $data);
 
         $resp = $this->photosController->getPhotosFromDb();
         $status = $resp->getStatus();
         $this->assertEquals(200, $status);
         $data = $resp->getData();
-        $this->assertEquals(2, count($data));
+        $this->assertCount(2, $data);
 
 		$resp = $this->photosController->getNonLocalizedPhotosFromDb();
 		$status = $resp->getStatus();
 		$this->assertEquals(200, $status);
 		$data = $resp->getData();
-		$this->assertEquals(0, count($data));
+		$this->assertCount(0, $data);
 
         // reset coords
         $resp = $this->photosController->resetPhotosCoords(['/nut.jpg']);
         $status = $resp->getStatus();
         $this->assertEquals(200, $status);
         $data = $resp->getData();
-        $this->assertEquals(1, count($data));
+        $this->assertCount(1, $data);
 
         $resp = $this->photosController->getPhotosFromDb();
         $status = $resp->getStatus();
         $this->assertEquals(200, $status);
         $data = $resp->getData();
-        $this->assertEquals(1, count($data));
+        $this->assertCount(1, $data);
     }
 
 }

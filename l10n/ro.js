@@ -1,8 +1,9 @@
 OC.L10N.register(
     "maps",
     {
-    "Maps" : "Hărți",
+    "File not found" : "Fișierul nu a fost găsit",
     "Personal" : "Personal",
+    "Maps" : "Hărți",
     "Export" : "Exportă",
     "Delete" : "Șterge",
     "Import" : "Importă",
@@ -47,7 +48,7 @@ OC.L10N.register(
     "Restaurant" : "Restaurant",
     "Link" : "Legătură",
     "Description" : "Descriere",
-    "download" : "descarcă",
+    "Download" : "Descărcare",
     "Settings" : "Setări"
 },
 "nplurals=3; plural=(n==1?0:(((n%100>19)||((n%100==0)&&(n!=0)))?2:1));");

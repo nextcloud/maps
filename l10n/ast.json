@@ -1,6 +1,7 @@
 { "translations": {
-    "Maps" : "Mapes",
+    "File not found" : "Nun s'alcontró'l ficheru",
     "Personal" : "Personal",
+    "Maps" : "Mapes",
     "Export" : "Esportar",
     "Delete" : "Desaniciar",
     "Import" : "Importar",
@@ -41,6 +42,7 @@
     "Move" : "Mover",
     "Link" : "Link",
     "Description" : "Descripción",
+    "Download" : "Baxar",
     "Settings" : "Settings"
 },"pluralForm" :"nplurals=2; plural=(n != 1);"
 }

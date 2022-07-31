@@ -1,8 +1,9 @@
 OC.L10N.register(
     "maps",
     {
-    "Maps" : "Kort",
+    "File not found" : "Fil ikke fundet",
     "Personal" : "Personlig",
+    "Maps" : "Kort",
     "🌍🌏🌎 The whole world fits inside your cloud!" : "🌍🌏🌎 The whole world fits inside your cloud!",
     "Zoom" : "Zoom",
     "Export" : "Eksportér",
@@ -29,7 +30,6 @@ OC.L10N.register(
     "This Place" : "Dette Sted",
     "Name" : "Navn",
     "Add" : "Tilføj",
-    "Add to Favorites" : "Tilføj til Favoritter",
     "Add to favorites" : "Føj til favoritter",
     "Home" : "Hjem",
     "Work" : "Arbejde",
@@ -60,7 +60,7 @@ OC.L10N.register(
     "Move" : "Flyt",
     "Link" : "Link",
     "Description" : "Beskrivelse",
-    "download" : "hent",
+    "Download" : "Download",
     "Your photos" : "Dine billeder",
     "Settings" : "Indstillinger"
 },

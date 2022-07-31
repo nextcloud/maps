@@ -1,6 +1,7 @@
 { "translations": {
-    "Maps" : "Xaritalar",
+    "File not found" : "Fayl topilmadi",
     "Personal" : "Shaxsiy",
+    "Maps" : "Xaritalar",
     "Delete" : "O'chir",
     "Rename" : "Nomni o'zgartiring",
     "Copied!" : "Nusxa olindi!",
@@ -17,6 +18,7 @@
     "Share link" : "Ulanishni ulashing",
     "Move" : "Ko'chiring",
     "Link" : "Ulanish",
+    "Download" : "Yuklab oling",
     "Settings" : "Sozlamalar"
 },"pluralForm" :"nplurals=1; plural=0;"
 }

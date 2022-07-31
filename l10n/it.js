@@ -1,8 +1,9 @@
 OC.L10N.register(
     "maps",
     {
-    "Maps" : "Mappe",
+    "File not found" : "File non trovato",
     "Personal" : "Personale",
+    "Maps" : "Mappe",
     "🌍🌏🌎 The whole world fits inside your cloud!" : "🌍🌏🌎 Il mondo intero nel tuo cloud!",
     "**The whole world fits inside your cloud!**\n\n- **🗺 Beautiful map:** Using [OpenStreetMap](https://www.openstreetmap.org) and [Leaflet](https://leafletjs.com), you can choose between standard map, satellite, topographical, dark mode or even watercolor! 🎨\n- **⭐ Favorites:** Save your favorite places, privately! Sync with [GNOME Maps](https://github.com/nextcloud/maps/issues/30) and mobile apps is planned.\n- **🧭 Routing:** Possible using either [OSRM](http://project-osrm.org), [GraphHopper](https://www.graphhopper.com) or [Mapbox](https://www.mapbox.com).\n- **🖼 Photos on the map:** No more boring slideshows, just show directly where you were!\n- **🙋 Contacts on the map:** See where your friends live and plan your next visit.\n- **📱 Devices:** Lost your phone? Check the map!\n- **〰 Tracks:** Load GPS tracks or past trips. Recording with [PhoneTrack](https://f-droid.org/en/packages/net.eneiluj.nextcloud.phonetrack/) or [OwnTracks](https://owntracks.org) is planned." : "**Il mondo intero nella tua nuvola!**\n\n- **🗺 Bellissime mappe:** Usando [OpenStreetMap](https://www.openstreetmap.org) e [Leaflet](https://leafletjs.com), puoi scegliere tra mappa standard, satellite, topografica, modalità scura o addirittura acquerelli! 🎨\n- **⭐ Preferiti:** Salva i tuoi luoghi preferiti, in modo privato! La sincronizzazione con [GNOME Mappe](https://github.com/nextcloud/maps/issues/30) e le applicazioni mobili è in lavorazione.\n- **🧭 Percorsi:** Possibili usando [OSRM](http://project-osrm.org), [GraphHopper](https://www.graphhopper.com) o [Mapbox](https://www.mapbox.com).\n- **🖼 Foto sulla mappa:** Niente più noiose presentazioni, mostra direttamente dove sei stato!\n- **🙋 Contatti sulla mappa:** Vedi dove vivono i tuoi amici e pianifica la tua prossima visita.\n- **📱 Dispositivi:** Telefono smarrito? Controlla la mappa!\n- **〰 Tracciati:** Carica tracciati GPS o viaggi passati. La registrazione con [PhoneTrack](https://f-droid.org/en/packages/net.eneiluj.nextcloud.phonetrack/) o [OwnTracks](https://owntracks.org) è in lavorazione.",
     "Toggle all" : "Commuta tutto",
@@ -71,9 +72,8 @@ OC.L10N.register(
     "This Place" : "Questo luogo",
     "Name" : "Nome",
     "Add" : "Aggiungi",
-    "Add to Favorites" : "Aggiungi ai Preferiti",
-    "This place" : "Questo posto",
     "Add to favorites" : "Aggiungi ai preferiti",
+    "This place" : "Questo posto",
     "Add contact address" : "Aggiungi indirizzo contatto",
     "Home" : "Pagina principale",
     "Work" : "Lavoro",
@@ -166,6 +166,7 @@ OC.L10N.register(
     "Not grouped" : "Non raggruppati",
     "Favorites exported in {path}" : "Preferiti esportati in {path}",
     "Import favorites from GeoJSON (Google Maps), gpx (OsmAnd, Nextcloud Maps) or kmz/kml (F-Droid Maps, Maps.me, Marble)" : "Importa i preferiti da GeoJSON (Google Maps), gpx (OsmAnd, Nextcloud Maps) o kmz/kml (F-Droid Maps, Maps.me, Marble)",
+    "Click on the map to add a favorite, press Esc to cancel" : "Fai clic sulla mappa per aggiungere un preferito, premi ESC per annullare",
     "Devices exported in {path}" : "Dispositivi esportati in {path}",
     "Failed to export devices" : "Esportazione dispositivi non riuscita",
     "Failed to delete device" : "Eliminazione del dispositivo non riuscita",
@@ -200,6 +201,7 @@ OC.L10N.register(
     "Move" : "Sposta",
     "Failed to delete favorite" : "Eliminazione del preferito non riuscita",
     "Failed to edit favorite" : "Modifica del preferito non riuscita",
+    "Click on the map to move the favorite, press Esc to cancel" : "Fai clic sulla mappa per spostare il preferito, premi ESC per annullare",
     "Failed to export favorites" : "Esportazione preferiti non riuscita",
     "{nb} favorites imported from {path}" : "{nb} preferiti importati da {path}",
     "Warning: tracks or routes were found in imported files, they were ignored." : "Avviso: tracce o percorsi sono stati trovati nei file importati, sono state ignorate. ",
@@ -212,6 +214,7 @@ OC.L10N.register(
     "Media scan was not done yet. Wait a few minutes/hours and reload this page to see your photos/tracks." : "La scansione multimediale non è stata ancora completata. Attendi qualche minuto/ora e ricarica questa pagina per vedere le tue foto/tracce.",
     "Show batch in viewer" : "Mostra sequenza nel visualizzatore",
     "Zoom in" : "Ingrandisci",
+    "Click on the map to move the photo, press Esc to cancel" : " Fai clic sulla mappa per spostare la foto, premi ESC per annullare",
     "Failed to load photos" : "Caricamento delle foto non riuscito",
     "{nb} photos placed" : "{nb} foto posizionate",
     "Failed to place photos" : "Posizionamento delle foto non riuscito",
@@ -260,10 +263,7 @@ OC.L10N.register(
     "Longitude" : "Longitudine",
     "Description" : "Descrizione",
     "Symbol name" : "Nome del simbolo",
-    "download" : "scarica",
-    "metadata link" : "collegamento metadati",
-    "tracks/routes name list" : "elenco nomi tracce/percorsi",
-    "no name" : "nessun nome",
+    "Download" : "Scarica",
     "no date" : "nessuna data",
     "Show elevation" : "Mostra quota",
     "Failed to change track color" : "Modifica colore della traccia non riuscita",
@@ -298,4 +298,4 @@ OC.L10N.register(
     "Your tracks" : "Le tue tracce",
     "Settings" : "Impostazioni"
 },
-"nplurals=2; plural=(n != 1);");
+"nplurals=3; plural=n == 1 ? 0 : n != 0 && n % 1000000 == 0 ? 1 : 2;");

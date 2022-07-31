@@ -4,6 +4,7 @@
     "Delete" : "Dileu",
     "Import" : "Mewnforio",
     "Rename" : "Ailenwi",
+    "Delete share link" : "Dileu dolen rhannu",
     "Cancel" : "Diddymu",
     "Sort by name" : "Order by name",
     "Sort by date" : "Order by date",
@@ -11,6 +12,7 @@
     "Category" : "Categori",
     "Close" : "Cau",
     "Favorite" : "Ffefryn",
+    "Duration" : "Hyd",
     "Name" : "Enw",
     "Add" : "Ychwanegu",
     "Add to favorites" : "Add to favorites",
@@ -30,8 +32,12 @@
     "Share link" : "Rhannu dolen",
     "Copy link" : "Copïo dolen",
     "Move" : "Symud",
+    "Cinema" : "Sinema",
+    "Hospital" : "Ysbyty",
+    "Dentist" : "Deintydd",
     "Link" : "Dolen",
     "Description" : "Disgrifiad",
+    "Download" : "Llwytho i lawr",
     "Settings" : "Gosodiadau"
 },"pluralForm" :"nplurals=4; plural=(n==1) ? 0 : (n==2) ? 1 : (n != 8 && n != 11) ? 2 : 3;"
 }

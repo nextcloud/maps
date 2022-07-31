@@ -1,8 +1,8 @@
 OC.L10N.register(
     "maps",
     {
-    "Maps" : "Kaarten",
     "Personal" : "Perséinlech",
+    "Maps" : "Kaarten",
     "Export" : "Exportéieren",
     "Delete" : "Läschen",
     "Import" : "Importéieren",
@@ -36,6 +36,7 @@ OC.L10N.register(
     "Move" : "Verschieben",
     "Link" : "Link",
     "Description" : "Beschreiwung",
+    "Download" : "Eroflueden",
     "Settings" : "Astellungen"
 },
 "nplurals=2; plural=(n != 1);");

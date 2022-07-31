@@ -6,6 +6,7 @@ OC.L10N.register(
     "Delete" : "Dileu",
     "Import" : "Mewnforio",
     "Rename" : "Ailenwi",
+    "Delete share link" : "Dileu dolen rhannu",
     "Cancel" : "Diddymu",
     "Sort by name" : "Order by name",
     "Sort by date" : "Order by date",
@@ -13,6 +14,7 @@ OC.L10N.register(
     "Category" : "Categori",
     "Close" : "Cau",
     "Favorite" : "Ffefryn",
+    "Duration" : "Hyd",
     "Name" : "Enw",
     "Add" : "Ychwanegu",
     "Add to favorites" : "Add to favorites",
@@ -32,8 +34,12 @@ OC.L10N.register(
     "Share link" : "Rhannu dolen",
     "Copy link" : "Copïo dolen",
     "Move" : "Symud",
+    "Cinema" : "Sinema",
+    "Hospital" : "Ysbyty",
+    "Dentist" : "Deintydd",
     "Link" : "Dolen",
     "Description" : "Disgrifiad",
+    "Download" : "Llwytho i lawr",
     "Settings" : "Gosodiadau"
 },
 "nplurals=4; plural=(n==1) ? 0 : (n==2) ? 1 : (n != 8 && n != 11) ? 2 : 3;");

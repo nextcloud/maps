@@ -50,7 +50,7 @@ export default {
 		end: {
 			type: Number,
 			required: false,
-			default: moment.unix(),
+			default: moment().unix(),
 		},
 	},
 

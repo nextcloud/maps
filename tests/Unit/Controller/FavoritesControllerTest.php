@@ -413,12 +413,12 @@ class FavoritesControllerTest extends \PHPUnit\Framework\TestCase
 //    $status = $resp->getStatus();
 //    $this->assertEquals(400, $status);
 //    $data = $resp->getData();
-//    $this->assertEquals('invalid values', $data);
+//    $this->assertEquals('Invalid values', $data);
 //
 //    $resp = $this->favoritesController->editFavorite(-1, 'aa', 'invalid lat', 4.2, 'cat2', 'comment', 'ext');
 //    $this->assertEquals(400, $status);
 //    $data = $resp->getData();
-//    $this->assertEquals('no such favorite', $data);
+//    $this->assertEquals('No such favorite', $data);
 
     // rename category
     $resp = $this->favoritesController->addFavorite('b', 3.1, 4.2, 'cat1', null, null);

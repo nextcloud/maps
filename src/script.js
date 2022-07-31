@@ -41,7 +41,7 @@ import 'leaflet-routing-machine/dist/leaflet-routing-machine';
 import 'leaflet-routing-machine/dist/leaflet-routing-machine.css';
 import 'lrm-graphhopper';
 import 'leaflet.featuregroup.subgroup/dist/leaflet.featuregroup.subgroup';
-import 'd3';
+//import 'd3';
 import 'mapbox-gl/dist/mapbox-gl';
 import 'mapbox-gl-leaflet/leaflet-mapbox-gl';
 import '@fortawesome/fontawesome-free/css/all.min.css';

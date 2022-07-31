@@ -1,8 +1,9 @@
 OC.L10N.register(
     "maps",
     {
-    "Maps" : "الخرائط",
+    "File not found" : "تعذر العثور على الملف",
     "Personal" : "شخصي",
+    "Maps" : "الخرائط",
     "Export" : "تصدير",
     "Delete" : "حذف ",
     "Delete all" : "مسح الكل",
@@ -74,7 +75,7 @@ OC.L10N.register(
     "Hotel" : "فندق",
     "Link" : "الرابط",
     "Description" : "الوصف",
-    "download" : "تنزيل",
+    "Download" : "تنزيل",
     "Your photos" : "صورك",
     "Your devices" : "أجهزتك",
     "Your tracks" : "مساراتك",

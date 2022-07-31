@@ -1,6 +1,7 @@
 OC.L10N.register(
     "maps",
     {
+    "File not found" : "Faýl tapylmady",
     "Delete" : "Pozmak",
     "Rename" : "Adyny üýtgetmek",
     "Cancel" : "ýatyrmak",
@@ -18,6 +19,7 @@ OC.L10N.register(
     "Copy link" : "Link-y nusgalaň",
     "Move" : "Göçüriň",
     "Link" : "Baglanyşyk",
+    "Download" : "Göçürip almak",
     "Settings" : "Sazlamalar"
 },
 "nplurals=2; plural=(n != 1);");

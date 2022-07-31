@@ -29,6 +29,7 @@ OC.L10N.register(
     "Move" : "Move",
     "Link" : "Link",
     "Description" : "விவரிப்பு",
+    "Download" : "பதிவிறக்குக",
     "Settings" : "அமைப்புகள்"
 },
 "nplurals=2; plural=(n != 1);");

@@ -1,6 +1,7 @@
 { "translations": {
-    "Maps" : "Harta",
+    "File not found" : "Skedari nuk u gjet",
     "Personal" : "Personale",
+    "Maps" : "Harta",
     "Export" : "Eksport",
     "Delete" : "Delete",
     "Import" : "Import",
@@ -14,6 +15,7 @@
     "Comment" : "Koment",
     "Close" : "Mbylleni",
     "Favorite" : "I/E Preferuar",
+    "Duration" : "Kohëzgjatja",
     "End" : "Mbarim",
     "Name" : "Emri",
     "Add" : "Shto",
@@ -42,7 +44,7 @@
     "Move" : "Zhvendos",
     "Link" : "Lidhje",
     "Description" : "Përshkrim",
-    "download" : "shkarkoje",
+    "Download" : "Shkarko",
     "Settings" : "Rregullimet"
 },"pluralForm" :"nplurals=2; plural=(n != 1);"
 }

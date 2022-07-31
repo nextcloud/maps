@@ -1,8 +1,9 @@
 OC.L10N.register(
     "maps",
     {
-    "Maps" : "Harta",
+    "File not found" : "Skedari nuk u gjet",
     "Personal" : "Personale",
+    "Maps" : "Harta",
     "Export" : "Eksport",
     "Delete" : "Delete",
     "Import" : "Import",
@@ -16,6 +17,7 @@ OC.L10N.register(
     "Comment" : "Koment",
     "Close" : "Mbylleni",
     "Favorite" : "I/E Preferuar",
+    "Duration" : "Kohëzgjatja",
     "End" : "Mbarim",
     "Name" : "Emri",
     "Add" : "Shto",
@@ -44,7 +46,7 @@ OC.L10N.register(
     "Move" : "Zhvendos",
     "Link" : "Lidhje",
     "Description" : "Përshkrim",
-    "download" : "shkarkoje",
+    "Download" : "Shkarko",
     "Settings" : "Rregullimet"
 },
 "nplurals=2; plural=(n != 1);");

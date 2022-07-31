@@ -1,8 +1,9 @@
 OC.L10N.register(
     "maps",
     {
-    "Maps" : "지도",
+    "File not found" : "파일을 찾을 수 없음",
     "Personal" : "개인",
+    "Maps" : "지도",
     "🌍🌏🌎 The whole world fits inside your cloud!" : "🌍🌏🌎 전 세계가 당신의 클라우드 안에!",
     "Toggle history" : "기록 전환",
     "Change color" : "색깔 바꾸기",
@@ -35,7 +36,6 @@ OC.L10N.register(
     "This Place" : "이 위치",
     "Name" : "이름",
     "Add" : "추가",
-    "Add to Favorites" : "즐겨찾기 추가",
     "Add to favorites" : "즐겨찾기에 추가",
     "Home" : "집",
     "Work" : "직장",
@@ -122,10 +122,11 @@ OC.L10N.register(
     "Zoom in" : "확대",
     "Failed to load photos" : "사진 불러오기 실패",
     "Cinema" : "영화",
+    "Hospital" : "병원",
     "Dentist" : "치과",
     "Link" : "링크",
     "Description" : "설명",
-    "download" : "다운로드",
+    "Download" : "다운로드",
     "no date" : "데이터 없음",
     "Show all" : "모두 보기",
     "Settings" : "설정"

@@ -571,7 +571,7 @@ class ContactsController extends Controller {
 				->set('looked_up', $qb->createNamedParameter(true, IQueryBuilder::PARAM_BOOL))
 				->where($qb->expr()->eq('id', $qb->createNamedParameter($id, IQueryBuilder::PARAM_STR)));
 			$req = $qb->execute();
-			$qb = $qb->resetQueryParts();
+
 		}
 		else {
 			$qb->insert('maps_address_geo')
@@ -585,9 +585,9 @@ class ContactsController extends Controller {
 				]);
 			$req = $qb->execute();
 			$id = $qb->getLastInsertId();
-			$qb = $qb->resetQueryParts();
+			}$qb = $qb->resetQueryParts();
 		}
-	}
+
 
 	/**
 	 * get contacts with coordinates

@@ -146,7 +146,7 @@ class DevicesApiControllerTest extends \PHPUnit\Framework\TestCase {
         $status = $resp->getStatus();
         $this->assertEquals(400, $status);
         $data = $resp->getData();
-        $this->assertEquals('no such device', $data);
+        $this->assertEquals('No such device', $data);
 
         // correct values
         $resp = $this->devicesApiController->addDevicePoint('1.0', 1.1, 2.2, 12345, 'testDevice', 1000, 99, 50);
@@ -197,13 +197,13 @@ class DevicesApiControllerTest extends \PHPUnit\Framework\TestCase {
         $status = $resp->getStatus();
         $this->assertEquals(400, $status);
         $data = $resp->getData();
-        $this->assertEquals('invalid values', $data);
+        $this->assertEquals('Invalid values', $data);
 
         $resp = $this->devicesApiController->addDevicePoint('1.0', 1.1, 'aaa', 12345, 'testDevice', 1000, 99, 50);
         $status = $resp->getStatus();
         $this->assertEquals(400, $status);
         $data = $resp->getData();
-        $this->assertEquals('invalid values', $data);
+        $this->assertEquals('Invalid values', $data);
     }
 
     public function testEditDevice() {
@@ -377,7 +377,7 @@ class DevicesApiControllerTest extends \PHPUnit\Framework\TestCase {
         //$resp = $this->favoritesController->editFavorite(-1, 'aa', 'invalid lat', 4.2, 'cat2', 'comment', 'ext');
         //$this->assertEquals(400, $status);
         //$data = $resp->getData();
-        //$this->assertEquals('no such favorite', $data);
+        //$this->assertEquals('No such favorite', $data);
 
         //// rename category
         //$resp = $this->favoritesController->addFavorite('b', 3.1, 4.2, 'cat1', null, null);

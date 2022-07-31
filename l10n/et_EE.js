@@ -1,8 +1,9 @@
 OC.L10N.register(
     "maps",
     {
-    "Maps" : "Kaardid",
+    "File not found" : "Faili ei leitud",
     "Personal" : "Isiklik",
+    "Maps" : "Kaardid",
     "Export" : "Ekspordi",
     "Delete" : "Kustuta",
     "Delete all" : "Kustuta kõik",
@@ -52,7 +53,7 @@ OC.L10N.register(
     "Dentist" : "Hambaarst",
     "Link" : "Link",
     "Description" : "Kirjeldus",
-    "download" : "laadi alla",
+    "Download" : "Lae alla",
     "Your photos" : "Sinu fotod",
     "Settings" : "Seaded"
 },

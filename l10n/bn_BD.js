@@ -1,8 +1,9 @@
 OC.L10N.register(
     "maps",
     {
-    "Maps" : "মানচিত্র",
+    "File not found" : "ফাইল খুঁজে পাওয়া গেল না",
     "Personal" : "ব্যক্তিগত",
+    "Maps" : "মানচিত্র",
     "Export" : "রপ্তানি",
     "Delete" : "মুছে",
     "Import" : "আমদানি",
@@ -36,6 +37,7 @@ OC.L10N.register(
     "Move" : "Move",
     "Link" : "Link",
     "Description" : "বিবরণ",
+    "Download" : "ডাউনলোড",
     "Settings" : "সেটিংস"
 },
 "nplurals=2; plural=(n != 1);");

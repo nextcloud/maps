@@ -73,7 +73,7 @@ class GeophotoService {
 	 * @throws \OCP\Files\NotPermittedException
 	 * @throws \OC\User\NoUserException
 	 */
-     public function getAllFromDB(string $userId, $folder=null, bool $respectNomediaAndNoimage=true, bool $hideImagesOnCustomMaps=true) {
+     public function getAllFromDB(string $userId, $folder=null, bool $respectNomediaAndNoimage=true, bool $hideImagesOnCustomMaps=true): array {
 		$ignoredPaths = $respectNomediaAndNoimage ? $this->getIgnoredPaths($userId, $folder, $hideImagesOnCustomMaps) : [];
         $photoEntities = $this->photoMapper->findAll($userId);
 		$userFolder = $this->getFolderForUser($userId);
@@ -150,7 +150,7 @@ class GeophotoService {
 	 */
     public function getNonLocalizedFromDB (string $userId, $folder=null, bool $respectNomediaAndNoimage=true, bool $hideImagesOnCustomMaps=true): array {
 		$ignoredPaths = $respectNomediaAndNoimage ? $this->getIgnoredPaths($userId, $folder, $hideImagesOnCustomMaps) : [];
-        $foo = $this->loadTimeorderedPointSets($userId);
+        $foo = $this->loadTimeorderedPointSets($userId, $folder, $respectNomediaAndNoimage, $hideImagesOnCustomMaps);
         $photoEntities = $this->photoMapper->findAllNonLocalized($userId);
 		$userFolder = $this->getFolderForUser($userId);
 		if (is_null($folder)) {
@@ -281,9 +281,9 @@ class GeophotoService {
      * Timeorderd Point sets is an Array of Arrays with time => location as key=>value pair, which are orderd by the key.
      * This function loads this Arrays from all Track files of the user.
      */
-    private function loadTimeorderedPointSets($userId) {
+    private function loadTimeorderedPointSets(string $userId, $folder=null, bool $respectNomediaAndNoimage=true, bool $hideImagesOnCustomMaps=true) {
         $userFolder = $this->getFolderForUser($userId);
-        foreach ($this->tracksService->getTracksFromDB($userId) as $gpxfile) {
+        foreach ($this->tracksService->getTracksFromDB($userId, $folder, $respectNomediaAndNoimage, $hideImagesOnCustomMaps) as $gpxfile) {
             $res = $userFolder->getById($gpxfile['file_id']);
             if (is_array($res) and count($res) > 0) {
                 $file = array_shift($res);

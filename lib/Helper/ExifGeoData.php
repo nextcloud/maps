@@ -212,10 +212,11 @@ class ExifGeoData
         $this->parse();
     }
 
-    /**
-     * @param false $invalidate_zero_iland
-     * @throws ExifDataException
-     */
+	/**
+	 * @param false $invalidate_zero_iland
+	 * @throws ExifDataInvalidException
+	 * @throws ExifDataNoLocationException
+	 */
     public function validate( $invalidate_zero_iland = false )
     {
         if (!$this->exif_data) {
@@ -229,6 +230,8 @@ class ExifGeoData
             throw new ExifDataNoLocationException('Latitude and/or Longitude are missing from exif data', 1);
         }
         if( $invalidate_zero_iland  && $this->isZeroIsland() ){
+			$this->latitude = null;
+			$this->longitude = null;
             throw new ExifDataNoLocationException('Zero island is not valid', 2);
         }
     }

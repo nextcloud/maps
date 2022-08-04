@@ -4,6 +4,7 @@ namespace OCA\Maps\Helper;
 
 use PHPUnit\Framework\TestCase;
 use OCA\Maps\Helper\ExifGeoData;
+use OCA\Maps\Helper\ExifDataNoLocationException;
 
 class ExifGeoDataTest extends TestCase {
 
@@ -53,5 +54,48 @@ class ExifGeoDataTest extends TestCase {
 		//This is the same upto ~55cm
 		$this->assertEqualsWithDelta($lat, $exif_geo_data->lat,  	0.000005);
 		$this->assertEqualsWithDelta($lng, $exif_geo_data->lng, 0.000005);
+	}
+
+	public function imageWithZeroIslandProvider(): array {
+		return [
+			["tests/test_files/Photos/ZeroIsland/imageZeroIsland1.JPG", 1653829180 + 7200],
+		];
+	}
+	/**
+	 * @dataProvider imageWithZeroIslandProvider
+	 */
+	public function testImagesWithZeroIslandException(string $path, int $date) {
+		$this->expectException(ExifDataNoLocationException::class);
+		$this->expectExceptionMessage("Zero island is not valid");
+		$exif_geo_data = ExifGeoData::get($path);
+		$exif_geo_data->validate(true);
+	}
+
+	/**
+	 * @dataProvider imageWithZeroIslandProvider
+	 */
+	public function testImagesWithZeroIslandGeoDataNull(string $path, int $date) {
+		$exif_geo_data = ExifGeoData::get($path);
+		try {
+			$exif_geo_data->validate(true);
+			$this->assertEquals(true,false);
+		} catch (ExifDataNoLocationException $e) {
+			$this->assertEquals($date, $exif_geo_data->dateTaken);
+			//This is the same upto ~55cm
+			$this->assertEqualsWithDelta(null, $exif_geo_data->lat,  	0.000005);
+			$this->assertEqualsWithDelta(null, $exif_geo_data->lng, 0.000005);
+		}
+	}
+
+	/**
+	 * @dataProvider imageWithZeroIslandProvider
+	 */
+	public function testImagesWithZeroIsland(string $path, int $date) {
+		$exif_geo_data = ExifGeoData::get($path);
+		$exif_geo_data->validate(false);
+		$this->assertEquals($date, $exif_geo_data->dateTaken);
+		//This is the same upto ~55cm
+		$this->assertEqualsWithDelta(0.0, $exif_geo_data->lat,  	0.000005);
+		$this->assertEqualsWithDelta(0.0, $exif_geo_data->lng, 0.000005);
 	}
 }

@@ -85,6 +85,7 @@ OC.L10N.register(
     "Track" : "Strecken",
     "Favorite" : "Favorisieren",
     "Sidebar" : "Seitenleiste",
+    "Shows cool information" : "Zeigt coole Informationen",
     "Distance" : "Entfernung",
     "Duration" : "Dauer",
     "Moving time" : "Bewegungszeit",

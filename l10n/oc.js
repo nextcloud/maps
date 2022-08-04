@@ -38,6 +38,7 @@ OC.L10N.register(
     "min" : "min",
     "Details" : "Detalhs",
     "Phone" : "Telefòn",
+    "Computer" : "Ordenador",
     "Photo files" : "Fichièrs fòto",
     "Photo folders" : "Dossièrs fòto",
     "Not grouped" : "Pas gropats",

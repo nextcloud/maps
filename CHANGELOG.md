@@ -4,6 +4,20 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## 0.2.1 - 2022.08.xx Further Improvements
+### Fixed
+- Fixes Mapbox tiles are not moved
+  [#798](https://github.com/nextcloud/maps/pull/798) @tacruc
+  [#786](https://github.com/nextcloud/maps/issues/786) @Doppellhelix @BWibo
+- Correct date on map tooltip-photo-date
+  [#798](https://github.com/nextcloud/maps/pull/808) @tacruc
+  [#786](https://github.com/nextcloud/maps/issues/807) @adripo
+- Don't show Photos on ZeroIsland
+  [#811](https://github.com/nextcloud/maps/pull/811) @tacruc
+  [#671](https://github.com/nextcloud/maps/issues/671) @zhangguojvn @adripo
+
+
+
 ## 0.2.0 - 2022.07.18 New Vue based frontend
 ### Fixed
 - Add .contact-group-name to padding exception

@@ -79,6 +79,7 @@ export default {
 			query: '',
 			currentOsmResults: null,
 			currentSearchQueryOption: null,
+			currentCoordinateOption: null,
 		}
 	},
 
@@ -102,9 +103,16 @@ export default {
 			})
 		},
 		options() {
-			return this.currentSearchQueryOption
-				? [this.currentSearchQueryOption, ...this.allData]
-				: this.allData
+			if (this.currentCoordinateOption && this.currentSearchQueryOption) {
+				return [this.currentCoordinateOption, this.currentSearchQueryOption, ...this.allData]
+			}
+			if (this.currentCoordinateOption) {
+				return [this.currentCoordinateOption, ...this.allData]
+			}
+			if (this.currentSearchQueryOption) {
+				return [this.currentSearchQueryOption, ...this.allData]
+			}
+			return this.allData
 		},
 		allData() {
 			return this.currentOsmResults
@@ -152,7 +160,30 @@ export default {
 		},
 		onSearchChange(query) {
 			this.query = query
+			this.updateCoordinateOption(query)
 			this.updateSearchOption(query)
+		},
+		updateCoordinateOption(searchQuery) {
+			const coordinateRegExp = /(geo:)?(\s*|"?lat"?:)"?(?<lat>-?\d{1,2}.\d+\s*)"?,"?("?lon"?:)?"?(?<lng>-?\d{1,3}.\d+)"?(;.*)?\s*/gmi
+			const regResult = coordinateRegExp.exec(searchQuery)
+			if (regResult) {
+				const lat = parseFloat(regResult.groups.lat)
+				const lng = parseFloat(regResult.groups.lng)
+				this.currentCoordinateOption = {
+					type: 'coordinate',
+					latLng: L.latLng([
+						lat,
+						lng,
+					]),
+					lat,
+					lng,
+					id: 'coordinateSearch_' + searchQuery,
+					value: searchQuery,
+					label: t('maps', 'Point at {coords}', { coords: searchQuery }),
+				}
+			} else {
+				this.currentCoordinateOption = null
+			}
 		},
 		updateSearchOption(searchQuery) {
 			// add one
@@ -160,9 +191,9 @@ export default {
 				this.currentSearchQueryOption = {
 					type: 'query',
 					icon: 'icon-search',
-					id: searchQuery,
+					id: 'osmSearch_' + searchQuery,
 					value: searchQuery,
-					label: t('cospend', 'Search for {q}', { q: searchQuery }),
+					label: t('maps', 'Search for {q}', { q: searchQuery }),
 				}
 			} else {
 				// remove search option when query is empty

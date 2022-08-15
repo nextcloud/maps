@@ -1,5 +1,5 @@
 name: "Bug report: Nextcloud Maps"
-description: "Submit a report and help us improve Nextcloud Server"
+description: "Submit a report and help us improve Nextcloud Maps"
 title: "[Bug]: "
 labels: ["bug", "0. Needs triage"]
 body:

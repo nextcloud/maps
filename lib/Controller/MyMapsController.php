@@ -39,7 +39,7 @@ class MyMapsController extends Controller {
     /**
      * @NoAdminRequired
      */
-    public function addMyMap($values) {
+    public function addMyMap(array $values): DataResponse {
         $newName = $values["newName"] ?? "New Map";
         $myMap = $this->myMapsService->addMyMap($newName,  $this->userId);
         if (is_string($myMap)) {

@@ -59,7 +59,7 @@ class MyMapsController extends Controller {
     /**
      * @NoAdminRequired
      */
-    public function deleteMyMap($id) {
+    public function deleteMyMap(string $id): DataResponse {
         $result = $this->myMapsService->deleteMyMap($id, $this->userId);
         return new DataResponse($result);
     }

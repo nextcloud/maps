@@ -129,14 +129,14 @@ body:
         - "Updated to a major version (ex. 22.2.3 to 23.0.1)"
         - "Fresh Nextcloud Server install"
   - type: dropdown
-      id: fresh-app
-      attributes:
-          label: Is this bug present after an update or on a fresh install of the app?
-          description: |
-              Select if bug is present after an update or on a fresh install.
-          options:
-              - "Updated from a minor version"
-              - "Fresh Nextcloud Maps install (never installed before)"
+    id: fresh-app
+    attributes:
+      label: Is this bug present after an update or on a fresh install of the app?
+      description: |
+        Select if bug is present after an update or on a fresh install.
+      options:
+        - "Updated from a minor version"
+        - "Fresh Nextcloud Maps install (never installed before)"
   - type: dropdown
     id: encryption
     attributes:

@@ -15,6 +15,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Don't show Photos on ZeroIsland
   [#811](https://github.com/nextcloud/maps/pull/811) @tacruc
   [#671](https://github.com/nextcloud/maps/issues/671) @zhangguojvn @adripo
+- Search for coordinates
+  [#824](https://github.com/nextcloud/maps/pull/824) @tacruc
+  [#802](https://github.com/nextcloud/maps/issues/802) @downtownallday
 
 
 
@@ -50,7 +53,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - new Vue frontend
   [#510](https://github.com/nextcloud/maps/pull/510) @eneiluj @tacruc
   [#700](https://github.com/nextcloud/maps/pull/700) @tacruc
-- Added Option to scan photos now
+- Added Option to scan photos now3
   [#704](https://github.com/nextcloud/maps/pull/704) @tacruc
 - Added phpUnit tests workflow
   [#725](https://github.com/nextcloud/maps/pull/725) @tacruc

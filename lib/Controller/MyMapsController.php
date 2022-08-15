@@ -30,7 +30,7 @@ class MyMapsController extends Controller {
     private $myMapsService;
 	private $userId;
 
-    public function __construct($AppName, IRequest $request, MyMapsService $myMapsService, $userId) {
+    public function __construct(string $AppName, IRequest $request, MyMapsService $myMapsService, $userId) {
         parent::__construct($AppName, $request);
         $this->myMapsService = $myMapsService;
 		$this->userId = $userId;

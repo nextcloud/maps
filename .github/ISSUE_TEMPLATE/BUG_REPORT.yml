@@ -209,12 +209,12 @@ body:
         > NOTE: This will be automatically formatted into code for better readability.
       render: shell
   - type: textarea
-    id: nextcloud-log
+    id: browser-console
     attributes:
       label: Browser Console
       description: |
         Provide Browser Console log lines.
-    render: shell
+      render: shell
   - type: textarea
     id: additional-info
     attributes:

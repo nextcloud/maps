@@ -51,7 +51,7 @@ class MyMapsController extends Controller {
     /**
      * @NoAdminRequired
      */
-    public function updateMyMap($id, $values) {
+    public function updateMyMap(string $id, array $values): DataResponse {
         $myMap = $this->myMapsService->updateMyMap($id, $values, $this->userId);
         return new DataResponse($myMap);
     }

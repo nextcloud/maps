@@ -67,7 +67,7 @@ class MyMapsController extends Controller {
     /**
      * @NoAdminRequired
      */
-    public function getMyMaps() {
+    public function getMyMaps(): DataResponse {
         $myMaps = $this->myMapsService->getAllMyMaps($this->userId);
         return new DataResponse($myMaps);
     }

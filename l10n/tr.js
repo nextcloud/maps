@@ -173,7 +173,7 @@ OC.L10N.register(
     "Turn around" : "Etrafında dön",
     "Head {dir}" : "{dir} yönünde",
     " on {road}" : " {road} yoluyla",
-    "Continue {dir}" : "{dir} ile sürdür",
+    "Continue {dir}" : "{dir} ile ilerle",
     "Waypoint reached" : "Durağa ulaşıldı",
     "Take the {exitStr} exit in the roundabout" : "Kavşakta {exitStr} çıkıştan çık",
     " onto {road}" : " {road} yönüne",

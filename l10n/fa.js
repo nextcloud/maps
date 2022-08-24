@@ -72,6 +72,7 @@ OC.L10N.register(
     "Open in Contacts" : "در مخاطبین باز کنید",
     "Device" : "وسیله",
     "Date" : "Date",
+    "Altitude" : "ارتفاع",
     "Battery" : "باتری",
     "Accuracy" : "دقت",
     "No name" : "بدون نام",

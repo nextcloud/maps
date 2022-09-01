@@ -6,12 +6,12 @@
 		@contextmenu="onFGRightClick">
 		<LPopup :options="popupOptions"
 			class="popup-track-wrapper">
-			<ActionButton icon="icon-colorpicker" @click="$emit('change-color', track)">
+			<NcActionButton icon="icon-colorpicker" @click="$emit('change-color', track)">
 				{{ t('maps', 'Change color') }}
-			</ActionButton>
-			<ActionButton icon="icon-category-monitoring" @click="$emit('display-elevation', track)">
+			</NcActionButton>
+			<NcActionButton icon="icon-category-monitoring" @click="$emit('display-elevation', track)">
 				{{ t('maps', 'Display elevation') }}
-			</ActionButton>
+			</NcActionButton>
 		</LPopup>
 		<LTooltip :options="tooltipOptions">
 			<div class="tooltip-track-wrapper"
@@ -51,7 +51,7 @@
 import L from 'leaflet'
 import { LMarker, LTooltip, LPopup, LFeatureGroup, LPolyline } from 'vue2-leaflet'
 
-import ActionButton from '@nextcloud/vue/dist/Components/ActionButton'
+import NcActionButton from '@nextcloud/vue/dist/Components/NcActionButton'
 import moment from '@nextcloud/moment'
 
 import optionsController from '../../optionsController'
@@ -68,7 +68,7 @@ export default {
 		LPopup,
 		LFeatureGroup,
 		LPolyline,
-		ActionButton,
+		NcActionButton,
 	},
 
 	props: {

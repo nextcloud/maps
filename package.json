@@ -45,7 +45,7 @@
     "@nextcloud/moment": "^1.2.1",
     "@nextcloud/paths": "^2.1.0",
     "@nextcloud/router": "^2.0.0",
-    "@nextcloud/vue": "^6.0.0-beta.6",
+    "@nextcloud/vue": "^7.0.0-beta.0",
     "@raruto/leaflet-elevation": "^1.7.0",
     "axios": "^0.27.2",
     "geojson": "^0.5.0",
@@ -74,7 +74,7 @@
   "devDependencies": {
     "@nextcloud/babel-config": "^1.0.0",
     "@nextcloud/browserslist-config": "^2.3.0",
-    "@nextcloud/eslint-config": "^8.0.0",
+    "@nextcloud/eslint-config": "^8.1.2",
     "@nextcloud/stylelint-config": "^2.2.0",
     "@nextcloud/webpack-vue-config": "^5.1.0",
     "@types/leaflet": "^1.5.4"

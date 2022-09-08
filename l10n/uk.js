@@ -66,6 +66,7 @@ OC.L10N.register(
     "Submit" : "Гаразд",
     "Move" : "Перемістити",
     "No search result" : "Нічого не знайдено",
+    "Restaurant" : "Ресторан",
     "Bar" : "Бар",
     "Cinema" : "Кінотеатр",
     "Dentist" : "Стоматолог",

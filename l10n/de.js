@@ -206,6 +206,7 @@ OC.L10N.register(
     "By bike (GraphHopper)" : "Mit dem Fahrrad (GraphHopper)",
     "By Foot (GraphHopper)" : "Zu Fuß (GraphHopper)",
     "Routing error:" : "Streckenfehler:",
+    "Reverse steps order" : "Sortierung der Schritte rückgängig machen",
     "Add step" : "Schritt hinzufügen",
     "Routing is currently disabled." : "Navigation ist derzeit ausgeschaltet",
     "Nextcloud additional settings" : "Nextcloud zusätzliche Einstellungen",

@@ -27,6 +27,7 @@ OC.L10N.register(
     "Date" : "Fecha",
     "Update" : "Actualizar",
     "Yes" : "Sí",
+    "Open" : "Abrir",
     "Closed" : "Cerrado",
     "Search" : "Buscar",
     "File" : "Archivo",

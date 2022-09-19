@@ -69,6 +69,7 @@ OC.L10N.register(
     "Restaurant" : "Ресторан",
     "Bar" : "Бар",
     "Cinema" : "Кінотеатр",
+    "Hospital" : "Лікарня",
     "Dentist" : "Стоматолог",
     "Link" : "Посилання",
     "Description" : "Опис",

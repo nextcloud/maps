@@ -65,6 +65,7 @@ OC.L10N.register(
     "Copy link" : "Скопіювати посилання",
     "Submit" : "Гаразд",
     "Move" : "Перемістити",
+    "Zoom in" : "Приближувати",
     "No search result" : "Нічого не знайдено",
     "Restaurant" : "Ресторан",
     "Bar" : "Бар",

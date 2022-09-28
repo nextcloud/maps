@@ -27,6 +27,7 @@ OC.L10N.register(
     "(No name)" : "(Без назви)",
     "No favorites to display" : "Немає улюблених",
     "Favorite" : "До улюблених",
+    "Duration" : "Тривалість",
     "New Favorite" : "Нове улюблене",
     "This Place" : "Це місце",
     "Name" : "Ім'я",

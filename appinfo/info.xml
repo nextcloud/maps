@@ -18,7 +18,7 @@
     <licence>agpl</licence>
     <author mail="eneiluj@posteo.net">Julien Veyssier</author>
     <author mail="kontakt+github@arne.email">Arne Hamann</author>
-    <author mail="hey@jancborchardt.net" homepage="https://jancborchardt.net">Jan-Christoph Borchardt</author>
+    <author homepage="https://jancborchardt.net">Jan C. Borchardt</author>
     <namespace>Maps</namespace>
     <category>integration</category>
     <category>multimedia</category>
@@ -33,7 +33,7 @@
     <screenshot>https://raw.githubusercontent.com/nextcloud/maps/master/screenshots/screenshot3.png</screenshot>
     <dependencies>
         <lib>exif</lib>
-        <nextcloud min-version="22" max-version="25"/>
+        <nextcloud min-version="22" max-version="26"/>
         <php min-version="7.4" max-version="8.1"/>
     </dependencies>
     <repair-steps>

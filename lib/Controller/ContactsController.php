@@ -92,7 +92,7 @@ class ContactsController extends Controller {
 					// if the contact has a geo attibute use it
 					if (key_exists('GEO', $c)) {
 						$geo = $c['GEO'];
-						if (strlen($geo) > 1) {
+						if (is_string($geo) && strlen($geo) > 1) {
 							$result[] = [
 								'FN' => $c['FN'] ?? $this->N2FN($c['N']) ?? '???',
 								'URI' => $c['URI'],
@@ -107,7 +107,7 @@ class ContactsController extends Controller {
 								'isDeletable' => true,
 								'isUpdateable' => true,
 							];
-						} elseif (count($geo)>0) {
+						} elseif (is_countable($geo) && count($geo)>0 && is_iterable($geo)) {
 							foreach ($geo as $g) {
 								if (strlen($g) > 1) {
 									$result[] = [
@@ -140,7 +140,7 @@ class ContactsController extends Controller {
 								if (isset($adr->parameters()['TYPE'])) {
 									$adrtype = $adr->parameters()['TYPE']->getValue();
 								}
-								if (strlen($geo) > 1) {
+								if (is_string($geo) && strlen($geo) > 1) {
 									$result[] = [
 										'FN' => $c['FN'] ?? $this->N2FN($c['N']) ?? '???',
 										'URI' => $c['URI'],
@@ -182,9 +182,9 @@ class ContactsController extends Controller {
 					$vcard = Reader::read($card."END:VCARD\r\n");
 					if (isset($vcard->GEO)) {
 						$geo = $vcard->GEO;
-						if (strlen($geo->getValue()) > 1) {
+						if (is_string($geo) && strlen($geo->getValue()) > 1) {
 							$result[] = $this->vCardToArray($file, $vcard, $geo->getValue());
-						} elseif (count($geo)>0) {
+						} elseif (is_countable($geo) && count($geo)>0 && is_iterable($geo)) {
 							foreach ($geo as $g) {
 								if (strlen($g->getValue()) > 1) {
 									$result[] = $this->vCardToArray($file, $vcard, $g->getValue());
@@ -200,7 +200,7 @@ class ContactsController extends Controller {
 							if (isset($adr->parameters()['TYPE'])) {
 								$adrtype = $adr->parameters()['TYPE']->getValue();
 							}
-							if (strlen($geo) > 1) {
+							if (is_string($geo) && strlen($geo) > 1) {
 								$result[] = $this->vCardToArray($file, $vcard, $geo, $adrtype, $adr->getValue(), $file->getId());
 							}
 						}

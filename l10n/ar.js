@@ -33,6 +33,7 @@ OC.L10N.register(
     "Work" : "العمل",
     "Device" : "الجهاز",
     "Date" : "التاريخ",
+    "Altitude" : "الارتفاع",
     "Battery" : "البطارية",
     "Update" : "تحديث",
     "Yes" : "نعم",

@@ -49,7 +49,7 @@
     "@raruto/leaflet-elevation": "^1.7.0",
     "axios": "^0.27.2",
     "geojson": "^0.5.0",
-    "leaflet": "^1.5.1",
+    "leaflet": "^1.9.1",
     "leaflet-contextmenu": "^1.4.0",
     "leaflet-control-geocoder": "2.4.0",
     "leaflet-easybutton": "^2.4.0",
@@ -77,6 +77,6 @@
     "@nextcloud/eslint-config": "^8.0.0",
     "@nextcloud/stylelint-config": "^2.2.0",
     "@nextcloud/webpack-vue-config": "^5.1.0",
-    "@types/leaflet": "^1.5.4"
+    "@types/leaflet": "^1.8.0"
   }
 }

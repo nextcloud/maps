@@ -202,6 +202,7 @@ OC.L10N.register(
     "Library" : "Kirjasto",
     "School" : "Koulu",
     "Sports centre" : "Liikuntakeskus",
+    "Gas station" : "Huoltoasema",
     "Parking" : "Pysäköinti",
     "Bicycle parking" : "Polkupyöräparkki",
     "Car rental" : "Autovuokraus",

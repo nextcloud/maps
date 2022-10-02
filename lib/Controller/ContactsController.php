@@ -71,20 +71,20 @@ class ContactsController extends Controller {
                 // if the contact has a geo attibute use it
                 if (key_exists('GEO', $c)) {
                     $geo = $c['GEO'];
-                    if (strlen($geo) > 1) {
+                    if (is_string($geo) && strlen($geo) > 1) {
                         $result[] = [
 							'FN' => $c['FN'] ?? $this->N2FN($c['N']) ?? '???',
 							'URI' => $c['URI'],
 							'UID' => $c['UID'],
 							'ADR' => '',
 							'ADRTYPE' => '',
-							'HAS_PHOTO' => (isset($c['PHOTO']) && $c['PHOTO'] !== null),
+							'HAS_PHOTO' => (isset($c['PHOTO'])),
 							'BOOKID' => $c['addressbook-key'],
 							'BOOKURI' => $addressBookUri,
 							'GEO' => $geo,
 							'GROUPS' => $c['CATEGORIES'] ?? null
 						];
-                    } elseif (count($geo)>0) {
+                    } elseif (is_countable($geo) && count($geo)>0 && is_iterable($geo)) {
 						foreach ($geo as $g) {
 							$result[] = [
 								'FN' => $c['FN'] ?? $this->N2FN($c['N']) ?? '???',
@@ -92,7 +92,7 @@ class ContactsController extends Controller {
 								'UID' => $c['UID'],
 								'ADR' => '',
 								'ADRTYPE' => '',
-								'HAS_PHOTO' => (isset($c['PHOTO']) && $c['PHOTO'] !== null),
+								'HAS_PHOTO' => (isset($c['PHOTO'])),
 								'BOOKID' => $c['addressbook-key'],
 								'BOOKURI' => $addressBookUri,
 								'GEO' => $g,

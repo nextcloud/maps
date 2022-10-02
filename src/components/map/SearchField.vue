@@ -164,8 +164,8 @@ export default {
 			this.updateSearchOption(query)
 		},
 		updateCoordinateOption(searchQuery) {
-			const coordinateRegExp = /(geo:)?(\s*|"?lat"?:)"?(?<lat>-?\d{1,2}.\d+\s*)"?,"?("?lon"?:)?"?(?<lng>-?\d{1,3}.\d+)"?(;.*)?\s*/gmi
-			const regResult = coordinateRegExp.exec(searchQuery)
+			const coordinateRegExp = /(geo:)?("?lat"?:)?"?(?<lat>-?\d{1,2}.\d+)"?,"?("?lon"?:)?"?(?<lng>-?\d{1,3}.\d+)"?(;.*)?/gmi
+			const regResult = coordinateRegExp.exec(searchQuery.replace(/\s*/g, ''))
 			if (regResult) {
 				const lat = parseFloat(regResult.groups.lat)
 				const lng = parseFloat(regResult.groups.lng)

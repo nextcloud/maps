@@ -8,7 +8,7 @@
 				:placeholder="namePH"
 				:readonly="!favorite.isUpdateable">
 			<span class="icon icon-category-organization" />
-			<Multiselect v-if="favorite.isUpdateable"
+			<NcMultiselect v-if="favorite.isUpdateable"
 				ref="select"
 				v-model="selectedCategory"
 				class="category-select"
@@ -32,7 +32,7 @@
 						{{ option ? option.catid : '' }}
 					</div>
 				</template>
-			</Multiselect>
+			</NcMultiselect>
 			<input v-else
 				v-model="selectedCategory.catid"
 				type="text"
@@ -45,7 +45,7 @@
 				rows="1" />
 		</div>
 		<div class="buttons">
-			<Button
+			<NcButton
 				:disabled="!favorite.isUpdateable"
 				native-type="submit"
 				type="primary"
@@ -53,27 +53,27 @@
 				<template>
 					{{ t('maps', 'OK') }}
 				</template>
-			</Button>
-			<Button :disabled="!favorite.isUpdateable"
+			</NcButton>
+			<NcButton :disabled="!favorite.isUpdateable"
 				@click="onDeleteClick">
 				<template>
 					{{ t('maps', 'Delete') }}
 				</template>
-			</Button>
+			</NcButton>
 		</div>
 	</div>
 </template>
 
 <script>
-import Multiselect from '@nextcloud/vue/dist/Components/Multiselect'
-import Button from '@nextcloud/vue/dist/Components/Button'
+import NcMultiselect from '@nextcloud/vue/dist/Components/NcMultiselect'
+import NcButton from '@nextcloud/vue/dist/Components/NcButton'
 
 export default {
 	name: 'FavoriteEditionForm',
 
 	components: {
-		Multiselect,
-		Button,
+		NcMultiselect,
+		NcButton,
 	},
 
 	props: {

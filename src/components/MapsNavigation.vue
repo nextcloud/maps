@@ -1,54 +1,54 @@
 <template>
-	<AppNavigation>
+	<NcAppNavigation>
 		<template slot="list">
 			<h2 v-if="loading"
 				class="icon-loading-small loading-icon" />
 			<slot name="items" />
 		</template>
 		<template slot="footer">
-			<AppNavigationSettings>
-				<ActionCheckbox
+			<NcAppNavigationSettings>
+				<NcActionCheckbox
 					:checked="optionValues.trackMe === 'true'"
 					@change="onTrackMeClick">
 					{{ t('maps', 'Track my position') }}
-				</ActionCheckbox>
-				<ActionCheckbox
+				</NcActionCheckbox>
+				<NcActionCheckbox
 					:checked="optionValues.displaySlider === 'true'"
 					@change="onDisplaySliderClick">
 					{{ t('maps', 'Display time filter slider') }}
-				</ActionCheckbox>
-				<ActionText>
+				</NcActionCheckbox>
+				<NcActionText>
 					{{ trueSizeText }}
-				</ActionText>
-				<ActionLink href="http://kai.sub.blue/en/africa.html"
+				</NcActionText>
+				<NcActionLink href="http://kai.sub.blue/en/africa.html"
 					target="_blank"
 					icon="icon-external">
 					{{ t('maps', 'The True Size of Africa') }}
-				</ActionLink>
-			</AppNavigationSettings>
+				</NcActionLink>
+			</NcAppNavigationSettings>
 		</template>
-	</AppNavigation>
+	</NcAppNavigation>
 </template>
 
 <script>
 import ClickOutside from 'vue-click-outside'
 
-import AppNavigation from '@nextcloud/vue/dist/Components/AppNavigation'
-import AppNavigationSettings from '@nextcloud/vue/dist/Components/AppNavigationSettings'
-import ActionCheckbox from '@nextcloud/vue/dist/Components/ActionCheckbox'
-import ActionText from '@nextcloud/vue/dist/Components/ActionText'
-import ActionLink from '@nextcloud/vue/dist/Components/ActionLink'
+import NcAppNavigation from '@nextcloud/vue/dist/Components/NcAppNavigation'
+import NcAppNavigationSettings from '@nextcloud/vue/dist/Components/NcAppNavigationSettings'
+import NcActionCheckbox from '@nextcloud/vue/dist/Components/NcActionCheckbox'
+import NcActionText from '@nextcloud/vue/dist/Components/NcActionText'
+import NcActionLink from '@nextcloud/vue/dist/Components/NcActionLink'
 
 import optionsController from '../optionsController'
 
 export default {
 	name: 'MapsNavigation',
 	components: {
-		AppNavigation,
-		AppNavigationSettings,
-		ActionCheckbox,
-		ActionText,
-		ActionLink,
+		NcAppNavigation,
+		NcAppNavigationSettings,
+		NcActionCheckbox,
+		NcActionText,
+		NcActionLink,
 	},
 	directives: {
 		ClickOutside,

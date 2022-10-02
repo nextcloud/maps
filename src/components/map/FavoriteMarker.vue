@@ -26,19 +26,19 @@
 		<LPopup
 			class="popup-favorite-wrapper"
 			:options="popupOptions">
-			<ActionButton v-if="favorite.isDeletable" icon="icon-delete" @click="$emit('delete', favorite.id)">
+			<NcActionButton v-if="favorite.isDeletable" icon="icon-delete" @click="$emit('delete', favorite.id)">
 				{{ t('maps', 'Delete favorite') }}
-			</ActionButton>
-			<ActionButton icon="icon-share"
+			</NcActionButton>
+			<NcActionButton icon="icon-share"
 				@click="$emit('add-to-map-favorite', favorite)">
 				{{ t('maps', 'Copy to map') }}
-			</ActionButton>
+			</NcActionButton>
 		</LPopup>
 	</LMarker>
 </template>
 
 <script>
-import ActionButton from '@nextcloud/vue/dist/Components/ActionButton'
+import NcActionButton from '@nextcloud/vue/dist/Components/NcActionButton'
 
 import L from 'leaflet'
 import { LMarker, LTooltip, LPopup } from 'vue2-leaflet'
@@ -50,7 +50,7 @@ export default {
 		LMarker,
 		LTooltip,
 		LPopup,
-		ActionButton,
+		NcActionButton,
 	},
 
 	props: {

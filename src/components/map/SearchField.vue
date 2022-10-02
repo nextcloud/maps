@@ -1,5 +1,5 @@
 <template>
-	<Multiselect
+	<NcMultiselect
 		ref="select"
 		class="search-select"
 		label="label"
@@ -35,11 +35,11 @@
 		<template #noOptions>
 			{{ t('maps', 'No suggestions') }}
 		</template>
-	</Multiselect>
+	</NcMultiselect>
 </template>
 
 <script>
-import Multiselect from '@nextcloud/vue/dist/Components/Multiselect'
+import NcMultiselect from '@nextcloud/vue/dist/Components/NcMultiselect'
 
 import L from 'leaflet'
 
@@ -50,7 +50,7 @@ export default {
 	name: 'SearchField',
 
 	components: {
-		Multiselect,
+		NcMultiselect,
 	},
 
 	props: {

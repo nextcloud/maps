@@ -72,15 +72,15 @@
 			</div>
 			<div v-if="click === 'right'" class="right-contact-popup">
 				<div>
-					<ActionButton v-if="contact.isUpdateable"
+					<NcActionButton v-if="contact.isUpdateable"
 						icon="icon-delete"
 						@click="onDeleteAddressClick()">
 						{{ contact.ADR?t('maps', 'Delete this address'):t('maps', 'Delete this location') }}
-					</ActionButton>
-					<ActionButton icon="icon-share"
+					</NcActionButton>
+					<NcActionButton icon="icon-share"
 						@click="$emit('add-to-map-contact', contact)">
 						{{ t('maps', 'Copy to map') }}
-					</ActionButton>
+					</NcActionButton>
 				</div>
 			</div>
 		</LPopup>
@@ -90,7 +90,7 @@
 <script>
 import { generateUrl } from '@nextcloud/router'
 import { getCurrentUser } from '@nextcloud/auth'
-import ActionButton from '@nextcloud/vue/dist/Components/ActionButton'
+import NcActionButton from '@nextcloud/vue/dist/Components/NcActionButton'
 
 import L from 'leaflet'
 import { LMarker, LTooltip, LPopup } from 'vue2-leaflet'
@@ -106,7 +106,7 @@ export default {
 		LMarker,
 		LTooltip,
 		LPopup,
-		ActionButton,
+		NcActionButton,
 	},
 
 	props: {

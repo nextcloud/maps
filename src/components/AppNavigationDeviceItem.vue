@@ -1,5 +1,5 @@
 <template>
-	<AppNavigationItem
+	<NcAppNavigationItem
 		:title="device.user_agent"
 		:class="{ 'subitem-disabled': !device.enabled }"
 		:allow-collapse="false"
@@ -24,45 +24,45 @@
 			&nbsp;
 		</template>
 		<template slot="actions">
-			<ActionButton v-if="parentEnabled && device.enabled"
+			<NcActionButton v-if="parentEnabled && device.enabled"
 				icon="icon-category-monitoring"
 				:close-after-click="true"
 				@click="$emit('toggle-history', device)">
 				{{ t('maps', 'Toggle history') }}
-			</ActionButton>
-			<ActionButton v-if="parentEnabled && device.enabled && mapIsUpdatable"
+			</NcActionButton>
+			<NcActionButton v-if="parentEnabled && device.enabled && mapIsUpdatable"
 				:close-after-click="false"
 				@click="onChangeColorClick">
 				<template #icon>
 					<div class="icon-colorpicker" />
 				</template>
 				{{ t('maps', 'Change color') }}
-			</ActionButton>
-			<ActionButton v-if="parentEnabled && device.enabled"
+			</NcActionButton>
+			<NcActionButton v-if="parentEnabled && device.enabled"
 				icon="icon-search"
 				:close-after-click="true"
 				@click="$emit('zoom', device)">
 				{{ t('maps', 'Zoom on area') }}
-			</ActionButton>
-			<ActionButton v-if="parentEnabled && device.enabled"
+			</NcActionButton>
+			<NcActionButton v-if="parentEnabled && device.enabled"
 				icon="icon-file"
 				:close-after-click="true"
 				@click="$emit('export', device)">
 				{{ t('maps', 'Export') }}
-			</ActionButton>
-			<ActionButton v-if="parentEnabled && device.enabled && device.isDeletable"
+			</NcActionButton>
+			<NcActionButton v-if="parentEnabled && device.enabled && device.isDeletable"
 				icon="icon-delete"
 				:close-after-click="true"
 				@click="$emit('delete', device)">
 				{{ t('maps', 'Delete') }}
-			</ActionButton>
+			</NcActionButton>
 		</template>
-	</AppNavigationItem>
+	</NcAppNavigationItem>
 </template>
 
 <script>
-import AppNavigationItem from '@nextcloud/vue/dist/Components/AppNavigationItem'
-import ActionButton from '@nextcloud/vue/dist/Components/ActionButton'
+import NcAppNavigationItem from '@nextcloud/vue/dist/Components/NcAppNavigationItem'
+import NcActionButton from '@nextcloud/vue/dist/Components/NcActionButton'
 import { generateUrl } from '@nextcloud/router'
 import { isComputer } from '../utils'
 
@@ -72,8 +72,8 @@ export default {
 	name: 'AppNavigationDeviceItem',
 
 	components: {
-		AppNavigationItem,
-		ActionButton,
+		NcAppNavigationItem,
+		NcActionButton,
 	},
 
 	props: {

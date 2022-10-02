@@ -3,25 +3,25 @@
 		<div v-if="loading" class="icon-loading" />
 		<div v-else-if="photoSuggestions.length > 0">
 			<div class="oc-dialog-buttonrow">
-				<Button
+				<NcButton
 					@click="$emit('clear-selection')">
 					{{ t('maps', 'Clear selection') }}
-				</Button>
-				<Button
+				</NcButton>
+				<NcButton
 					type="primary"
 					@click="$emit('select-all')">
 					{{ t('maps', 'Select all') }}
-				</Button>
-				<Actions>
-					<ActionButton
+				</NcButton>
+				<NcActions>
+					<NcActionButton
 						:icon="selectionLayout==='list'?'icon-toggle-pictures':'icon-toggle-filelist'"
 						@click="selectionLayout=selectionLayout==='list'?'grid':'list'">
 						{{ t('maps', selectionLayout==='list'?'grid view':'list view') }}
-					</ActionButton>
-				</Actions>
+					</NcActionButton>
+				</NcActions>
 			</div>
 			<div v-if="photoSuggestionsSelectedIndices.length > 0 && selectionLayout==='list'">
-				<ListItem v-for="p in photoSuggestionsSelected"
+				<NcListItem v-for="p in photoSuggestionsSelected"
 					:key="p.photoSuggestionsIndex"
 					:title="p.basename"
 					:bold="false"
@@ -38,20 +38,20 @@
 						{{ p.path }}
 					</template>
 					<template #actions>
-						<ActionButton @click="onListItemClick(p)">
+						<NcActionButton @click="onListItemClick(p)">
 							{{ t('maps', 'Display picture') }}
-						</ActionButton>
-						<ActionButton @click="$emit('save',[p.photoSuggestionsIndex])">
+						</NcActionButton>
+						<NcActionButton @click="$emit('save',[p.photoSuggestionsIndex])">
 							{{ t('maps', 'Save') }}
-						</ActionButton>
-						<ActionButton @click="$emit('zoom', p)">
+						</NcActionButton>
+						<NcActionButton @click="$emit('zoom', p)">
 							{{ t('maps', 'Zoom') }}
-						</ActionButton>
-						<ActionButton @click="$emit('clear-selection',[p.photoSuggestionsIndex])">
+						</NcActionButton>
+						<NcActionButton @click="$emit('clear-selection',[p.photoSuggestionsIndex])">
 							{{ t('maps', 'Remove form selection') }}
-						</ActionButton>
+						</NcActionButton>
 					</template>
-				</ListItem>
+				</NcListItem>
 			</div>
 			<div v-if="photoSuggestionsSelectedIndices.length > 0 && selectionLayout==='grid'"
 				class="photo-suggestion-selected-grid">
@@ -62,20 +62,20 @@
 						'background-image': 'url('+previewUrl(p)+')',
 						'background-size': 'cover'}"
 					@click.self="onListItemClick(p)">
-					<Actions class="photo-suggestion-selected-grid-actions">
-						<ActionButton @click="onListItemClick(p)">
+					<NcActions class="photo-suggestion-selected-grid-actions">
+						<NcActionButton @click="onListItemClick(p)">
 							{{ t('maps', 'Display picture') }}
-						</ActionButton>
-						<ActionButton @click="$emit('save',[p.photoSuggestionsIndex])">
+						</NcActionButton>
+						<NcActionButton @click="$emit('save',[p.photoSuggestionsIndex])">
 							{{ t('maps', 'Save') }}
-						</ActionButton>
-						<ActionButton @click="$emit('zoom', p)">
+						</NcActionButton>
+						<NcActionButton @click="$emit('zoom', p)">
 							{{ t('maps', 'Zoom') }}
-						</ActionButton>
-						<ActionButton @click="$emit('clear-selection',[p.photoSuggestionsIndex])">
+						</NcActionButton>
+						<NcActionButton @click="$emit('clear-selection',[p.photoSuggestionsIndex])">
 							{{ t('maps', 'Remove form selection') }}
-						</ActionButton>
-					</Actions>
+						</NcActionButton>
+					</NcActions>
 				</div>
 			</div>
 		</div>
@@ -86,17 +86,17 @@
 				+ 'This information are then automatically used suggest photo location') }}
 		</div>
 		<div class="oc-dialog-buttonrow">
-			<Button
+			<NcButton
 				@click="$emit('cancel')">
 				{{ !photoSuggestions.includes(null) ? t('maps', 'cancel') : t('maps', 'quit') }}
-			</Button>
-			<Button
+			</NcButton>
+			<NcButton
 				v-show="photoSuggestions.length > 0"
 				type="primary"
 				:disabled="photoSuggestionsSelectedIndices.length===0"
 				@click="$emit('save')">
 				{{ t('maps', 'save') }}
-			</Button>
+			</NcButton>
 		</div>
 	</div>
 </template>
@@ -105,19 +105,19 @@
 
 import { generateUrl } from '@nextcloud/router'
 import moment from '@nextcloud/moment'
-import Button from '@nextcloud/vue/dist/Components/Button'
-import Actions from '@nextcloud/vue/dist/Components/Actions'
-import ActionButton from '@nextcloud/vue/dist/Components/ActionButton'
-import ListItem from '@nextcloud/vue/dist/Components/ListItem'
+import NcButton from '@nextcloud/vue/dist/Components/NcButton'
+import NcActions from '@nextcloud/vue/dist/Components/NcActions'
+import NcActionButton from '@nextcloud/vue/dist/Components/NcActionButton'
+import NcListItem from '@nextcloud/vue/dist/Components/NcListItem'
 
 export default {
 	name: 'PhotoSuggestionsSidebarTab',
 
 	components: {
-		Button,
-		Actions,
-		ActionButton,
-		ListItem,
+		NcButton,
+		NcActions,
+		NcActionButton,
+		NcListItem,
 	},
 
 	props: {

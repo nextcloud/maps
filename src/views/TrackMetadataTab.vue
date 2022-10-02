@@ -27,9 +27,9 @@
 
 <script>
 
-import TrackSidebarMetadataTab from '../components/TrackMetadataTab'
-import * as network from '../network'
-import { processGpx } from '../tracksUtils'
+import TrackSidebarMetadataTab from '../components/TrackMetadataTab.vue'
+import * as network from '../network.js'
+import { processGpx } from '../tracksUtils.js'
 
 export default {
 	name: 'TrackMetadataTab',

@@ -31,7 +31,7 @@
 				:file-info="fileInfo" />
 		</template>
 
-		<!-- Actions menu -->
+		<!-- NcActions menu -->
 		<template v-if="fileInfo" #secondary-actions>
 			<!-- TODO: create proper api for apps to register actions
 			And inject themselves here. -->
@@ -86,7 +86,7 @@ export default {
 	name: 'Sidebar',
 
 	components: {
-		// ActionButton,
+		// NcActionButton,
 		NcAppSidebar,
 		FavoriteSidebarTab,
 		PhotoSuggestionsSidebarTab,

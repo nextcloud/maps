@@ -1,5 +1,5 @@
 <template>
-	<AppNavigationItem
+	<NcAppNavigationItem
 		:title="myMap.name"
 		:class="{ 'subitem-disabled': !myMap.enabled }"
 		:allow-collapse="false"
@@ -22,40 +22,40 @@
 			&nbsp;
 		</template>
 		<template slot="actions">
-			<ActionButton v-if="false"
+			<NcActionButton v-if="false"
 				:close-after-click="false"
 				@click="onChangeColorClick">
 				<template #icon>
 					<div class="icon-colorpicker" />
 				</template>
 				{{ t('maps', 'Change color') }}
-			</ActionButton>
-			<ActionButton v-if="myMap.id"
+			</NcActionButton>
+			<NcActionButton v-if="myMap.id"
 				icon="icon-share"
 				:close-after-click="false"
 				@click="$emit('share', myMap)">
 				{{ t('maps', 'Share') }}
-			</ActionButton>
-			<ActionButton v-if="isDeletable"
+			</NcActionButton>
+			<NcActionButton v-if="isDeletable"
 				icon="icon-delete"
 				:close-after-click="true"
 				@click="$emit('delete', myMap.id)">
 				{{ t('maps', 'Delete') }}
-			</ActionButton>
+			</NcActionButton>
 		</template>
-	</AppNavigationItem>
+	</NcAppNavigationItem>
 </template>
 
 <script>
-import AppNavigationItem from '@nextcloud/vue/dist/Components/AppNavigationItem'
-import ActionButton from '@nextcloud/vue/dist/Components/ActionButton'
+import NcAppNavigationItem from '@nextcloud/vue/dist/Components/NcAppNavigationItem'
+import NcActionButton from '@nextcloud/vue/dist/Components/NcActionButton'
 
 export default {
 	name: 'AppNavigationMyMapItem',
 
 	components: {
-		AppNavigationItem,
-		ActionButton,
+		NcAppNavigationItem,
+		NcActionButton,
 	},
 
 	props: {

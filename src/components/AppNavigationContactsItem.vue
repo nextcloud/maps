@@ -24,11 +24,11 @@
 				@click="onZoomAllClick">
 				{{ t('maps', 'Zoom') }}
 			</NcActionButton>
-			<ActionButton icon="icon-share"
+			<NcActionButton icon="icon-share"
 				:close-after-click="true"
 				@click="$emit('add-to-map-all-contacts')">
 				{{ t('maps', 'Copy to map') }}
-			</ActionButton>
+			</NcActionButton>
 		</template>
 		<template slot="default">
 			<b v-show="false">dummy</b>

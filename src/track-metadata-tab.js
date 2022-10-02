@@ -23,7 +23,7 @@ import Vue from 'vue'
 import VueClipboard from 'vue-clipboard2'
 import { translate as t, translatePlural as n } from '@nextcloud/l10n'
 
-import TrackMetadataTab from './views/TrackMetadataTab'
+import TrackMetadataTab from './views/TrackMetadataTab.vue'
 
 Vue.prototype.t = t
 Vue.prototype.n = n

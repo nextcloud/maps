@@ -1,5 +1,5 @@
 <template>
-	<AppNavigationItem
+	<NcAppNavigationItem
 		:icon="loading ? 'icon-loading-small' : 'icon-maps-dark'"
 		:title="t('maps', 'My maps')"
 		:class="{ 'item-disabled': !enabled }"
@@ -8,17 +8,17 @@
 		:force-menu="false"
 		@click="onClick"
 		@update:open="onUpdateOpen">
-		<CounterBubble v-show="enabled && myMaps.length"
+		<NcCounterBubble v-show="enabled && myMaps.length"
 			slot="counter">
 			{{ myMaps.length > 99 ? '99+' : myMaps.length }}
-		</CounterBubble>
+		</NcCounterBubble>
 		<template v-if="enabled" slot="actions">
-			<ActionButton
+			<NcActionButton
 				icon="icon-add"
 				:close-after-click="true"
 				@click="$emit('add', t('maps', 'New map'))">
 				{{ t('maps', 'Add Map') }}
-			</ActionButton>
+			</NcActionButton>
 		</template>
 		<template slot="default">
 			<b v-show="false">dummy</b>
@@ -34,24 +34,24 @@
 				@share="$emit('share', $event)"
 				@color="$emit('color', $event)" />
 		</template>
-	</AppNavigationItem>
+	</NcAppNavigationItem>
 </template>
 
 <script>
-import AppNavigationItem from '@nextcloud/vue/dist/Components/AppNavigationItem'
-import ActionButton from '@nextcloud/vue/dist/Components/ActionButton'
+import NcAppNavigationItem from '@nextcloud/vue/dist/Components/NcAppNavigationItem'
+import NcActionButton from '@nextcloud/vue/dist/Components/NcActionButton'
 import AppNavigationMyMapItem from './AppNavigationMyMapItem'
 import optionsController from '../optionsController'
-import CounterBubble from '@nextcloud/vue/dist/Components/CounterBubble'
+import NcCounterBubble from '@nextcloud/vue/dist/Components/NcCounterBubble'
 
 export default {
 	name: 'AppNavigationMyMapsItem',
 
 	components: {
-		AppNavigationItem,
-		ActionButton,
+		NcAppNavigationItem,
+		NcActionButton,
 		AppNavigationMyMapItem,
-		CounterBubble,
+		NcCounterBubble,
 	},
 
 	props: {

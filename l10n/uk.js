@@ -184,7 +184,7 @@ OC.L10N.register(
     "Choose directory of pictures to place" : "Виберіть каталог із зображеннями для розміщення",
     "\"{path}\" successfully moved" : "\"{path}\" успішно переміщено",
     "{nb} photos moved" : "{nb} світлин переміщено",
-    "Not grouped" : "Не згруповані",
+    "Not grouped" : "Поза групами",
     "Import favorites from GeoJSON (Google Maps), gpx (OsmAnd, Nextcloud Maps) or kmz/kml (F-Droid Maps, Maps.me, Marble)" : " Імпорт вподобаного з GeoJSON (Мап Google), gpx (OsmAnd, Мап Nextcloud) або kmz/kml (F-Droid Maps, Maps.me, Marble)",
     "Click on the map to add a favorite, press Esc to cancel" : "Натисність на мапі, щоби додати до \"Вподобаного\", натисніть Esc, щоб скасувати",
     "Import devices from gpx (Nextcloud Maps) or kml/kmz (Google Timeline) file" : "Імпорт пристроїв з файлів у форматі GPX (Мапи Nextcloud) або файлів у форматі kml/kmz (Google Timeline)",

@@ -219,6 +219,7 @@ OC.L10N.register(
     "Dentist" : "Tandläkare",
     "Hotel" : "Hotell",
     "Close elevation chart" : "Stäng höjddiagram",
+    "Failed to load tracks" : "Kunde inte läsa in spår",
     "Link" : "Länk",
     "Latitude" : "Latitud",
     "Longitude" : "Longitud",

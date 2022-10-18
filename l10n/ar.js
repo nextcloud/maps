@@ -61,6 +61,7 @@ OC.L10N.register(
     "Move" : "نقل",
     "Restaurant" : "مطعم",
     "Fast food" : "أكل خفيف",
+    "Bar" : "عمود",
     "Cafe" : "مقهى",
     "Library" : "مكتبة",
     "School" : "مدرسة",

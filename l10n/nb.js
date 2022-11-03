@@ -32,6 +32,7 @@ OC.L10N.register(
     "Close" : "Lukk",
     "The True Size of Africa" : "Vis ekte størrelse av Afrika",
     "(No name)" : "(Ingen navn)",
+    "Track" : "Spor",
     "Favorite" : "Favoritt",
     "Distance" : "Distanse",
     "Duration" : "Varighet",

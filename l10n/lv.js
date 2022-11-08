@@ -18,6 +18,7 @@ OC.L10N.register(
     "Comment" : "Komentārs",
     "Close" : "Aizvērt",
     "Favorite" : "Favorīts",
+    "Sidebar" : "Sānjosla",
     "End" : "Beigas",
     "Name" : "Vārds",
     "Add" : "Pievienot",

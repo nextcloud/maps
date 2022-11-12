@@ -40,6 +40,7 @@ OC.L10N.register(
     "Details" : "Detaļas",
     "Phone" : "Tālrunis",
     "Not grouped" : "Negrupēts",
+    "Failed to save settings" : "Neizdevās saglabāt iestatījumus",
     "All contacts" : "Visi kontakti",
     "Share link" : "Koplietot saiti",
     "Copy link" : "Kopēt saiti",

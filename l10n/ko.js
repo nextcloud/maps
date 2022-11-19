@@ -121,6 +121,7 @@ OC.L10N.register(
     "Import as devices in Maps" : "지도에서 장치 로 가져오기",
     "Zoom in" : "확대",
     "Failed to load photos" : "사진 불러오기 실패",
+    "Restaurant" : "식당",
     "Cinema" : "영화",
     "Hospital" : "병원",
     "Dentist" : "치과",

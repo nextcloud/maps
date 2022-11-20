@@ -58,6 +58,7 @@ OC.L10N.register(
     "Copy link" : "Kopiér link",
     "Submit" : "Tilføj",
     "Move" : "Flyt",
+    "Bar" : "Bar",
     "Cinema" : "Biograf",
     "Hospital" : "Hospital",
     "Dentist" : "Tandlæge",

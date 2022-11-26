@@ -38,7 +38,7 @@
   "dependencies": {
     "@fortawesome/fontawesome-free": "^6.2.0",
     "@nextcloud/auth": "^2.0.0",
-    "@nextcloud/axios": "^2.0.0",
+    "@nextcloud/axios": "^2.2.0",
     "@nextcloud/dialogs": "^3.2.0",
     "@nextcloud/event-bus": "^3.0.2",
     "@nextcloud/l10n": "^1.6.0",

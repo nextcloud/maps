@@ -35,6 +35,7 @@ OC.L10N.register(
     "Place photos" : "Ubica fotos",
     "Place contact" : "Ubica un contacte",
     "Share this location" : "Comparteix aquesta localització",
+    "Shared location" : "Ubicació compartida",
     "Route from here" : "Ruta des d'aquí",
     "Add route point" : "Afegeix un punt de ruta",
     "Route to here" : "Ruta fins a aquí",

@@ -107,7 +107,7 @@ OC.L10N.register(
     "Add to favorites" : "Ajouter aux favoris",
     "This place" : "Ce lieu",
     "Add contact address" : "Ajouter une adresse au contact",
-    "Home" : "Domicile",
+    "Home" : "Personnel",
     "Work" : "Travail",
     "Delete this address" : "Supprimer cette adresse",
     "Delete this location" : "Supprimer cette position",

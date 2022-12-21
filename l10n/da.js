@@ -12,6 +12,7 @@ OC.L10N.register(
     "Rename" : "Omdøb",
     "Delete share link" : "Slet delingslink",
     "Copied!" : "Kopieret!",
+    "Copy share link" : "Kopiér delelink",
     "Cancel" : "Annullér",
     "Link copied!" : "Link kopieret!",
     "Sort by name" : "Order by name",

@@ -45,7 +45,7 @@
     "@nextcloud/moment": "^1.2.1",
     "@nextcloud/paths": "^2.1.0",
     "@nextcloud/router": "^2.0.0",
-    "@nextcloud/vue": "^7.0.0-beta.7",
+    "@nextcloud/vue": "^7.3.0",
     "@raruto/leaflet-elevation": "^1.7.0",
     "axios": "^0.27.2",
     "geojson": "^0.5.0",

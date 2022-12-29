@@ -4,6 +4,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## 0.2.3 - 2022.12.29 NC 25 Redesign
+### Fixed
+### Updated
+- New nextcloud vue components
+  [#840](https://github.com/nextcloud/maps/pull/840) @tacruc
+
 ## 0.2.2 - 2022.12.29 NC 24 Redesign
 ### Fixed
 - Search for coordinate

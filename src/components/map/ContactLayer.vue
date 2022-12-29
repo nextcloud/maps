@@ -67,10 +67,10 @@
 				</div>
 			</div>
 			<div v-if="click === 'right'">
-				<ActionButton icon="icon-delete"
+				<NcActionButton icon="icon-delete"
 					@click="onDeleteAddressClick()">
 					{{ contact.ADR?t('maps', 'Delete this address'):t('maps', 'Delete this location') }}
-				</ActionButton>
+				</NcActionButton>
 			</div>
 		</LPopup>
 	</LMarker>
@@ -79,7 +79,7 @@
 <script>
 import { generateUrl } from '@nextcloud/router'
 import { getCurrentUser } from '@nextcloud/auth'
-import ActionButton from '@nextcloud/vue/dist/Components/ActionButton'
+import NcActionButton from '@nextcloud/vue/dist/Components/NcActionButton'
 
 import L from 'leaflet'
 import { LMarker, LTooltip, LPopup } from 'vue2-leaflet'
@@ -95,7 +95,7 @@ export default {
 		LMarker,
 		LTooltip,
 		LPopup,
-		ActionButton,
+		NcActionButton,
 	},
 
 	props: {

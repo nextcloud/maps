@@ -1,5 +1,5 @@
 <template>
-	<AppNavigationItem
+	<NcAppNavigationItem
 		:icon="loading ? 'icon-loading-small' : 'icon-favorite'"
 		:title="t('maps', 'My favorites')"
 		:class="{ 'item-disabled': !enabled }"
@@ -8,48 +8,48 @@
 		:force-menu="false"
 		@click="onFavoritesClick"
 		@update:open="onUpdateOpen">
-		<CounterBubble v-show="enabled && nbFavorites"
+		<NcCounterBubble v-show="enabled && nbFavorites"
 			slot="counter">
 			{{ nbFavorites > 99 ? '99+' : nbFavorites }}
-		</CounterBubble>
+		</NcCounterBubble>
 		<template v-if="enabled" slot="actions">
-			<ActionButton
+			<NcActionButton
 				:icon="draggable ? 'icon-hand' : 'icon-hand-slash'"
 				:close-after-click="false"
 				@click="$emit('draggable-clicked')">
 				{{ draggable ? t('maps', 'Disable favorite drag') : t('maps', 'Enable favorite drag') }}
-			</ActionButton>
-			<ActionButton
+			</NcActionButton>
+			<NcActionButton
 				icon="icon-checkmark"
 				@click="onToggleAllClick">
 				{{ t('maps', 'Toggle all') }}
-			</ActionButton>
-			<ActionButton
+			</NcActionButton>
+			<NcActionButton
 				icon="icon-search"
 				:close-after-click="true"
 				@click="onZoomAllClick">
 				{{ t('maps', 'Zoom') }}
-			</ActionButton>
-			<ActionButton
+			</NcActionButton>
+			<NcActionButton
 				icon="icon-save"
 				:close-after-click="true"
 				@click="$emit('export')">
 				{{ t('maps', 'Export') }}
-			</ActionButton>
-			<ActionButton
+			</NcActionButton>
+			<NcActionButton
 				icon="icon-folder"
 				:close-after-click="true"
 				@click="$emit('import')">
 				{{ t('maps', 'Import') }}
-			</ActionButton>
+			</NcActionButton>
 		</template>
 		<template slot="default">
-			<AppNavigationNew
+			<NcAppNavigationNew
 				v-if="enabled"
 				:text="addFavoriteText"
 				:button-class="addFavoriteIcon"
 				@click="onAddFavoriteClick" />
-			<AppNavigationItem
+			<NcAppNavigationItem
 				v-for="(c, catid) in categories"
 				:key="catid"
 				:title="c.name"
@@ -65,59 +65,59 @@
 					<div :class="{ favoriteMarker: true, navigationFavoriteMarkerDark: isDarkTheme, navigationFavoriteMarker: !isDarkTheme }"
 						:style="'background-color: #' + c.color" />
 				</template>
-				<CounterBubble v-show="enabled && nbFavorites && c.enabled"
+				<NcCounterBubble v-show="enabled && nbFavorites && c.enabled"
 					slot="counter">
 					{{ c.counter > 99 ? '99+' : c.counter }}
-				</CounterBubble>
+				</NcCounterBubble>
 				<template slot="actions">
-					<ActionButton v-if="enabled && nbFavorites && c.enabled"
+					<NcActionButton v-if="enabled && nbFavorites && c.enabled"
 						icon="icon-add"
 						:close-after-click="true"
 						@click="onAddFavoriteClick(catid)">
 						{{ t('maps', 'Add a favorite') }}
-					</ActionButton>
-					<ActionButton v-if="enabled && nbFavorites && c.enabled"
+					</NcActionButton>
+					<NcActionButton v-if="enabled && nbFavorites && c.enabled"
 						icon="icon-search"
 						:close-after-click="true"
 						@click="onZoomCategoryClick(catid)">
 						{{ t('maps', 'Zoom to bounds') }}
-					</ActionButton>
-					<ActionCheckbox v-if="enabled && nbFavorites && c.enabled && c.name && c.name !== t('maps', 'Personal')"
+					</NcActionButton>
+					<NcActionCheckbox v-if="enabled && nbFavorites && c.enabled && c.name && c.name !== t('maps', 'Personal')"
 						:checked="c.token && c.token !== ''"
 						:close-after-click="false"
 						@update:checked="$emit('category-share-change', catid, $event)">
 						{{ c.token ? t('maps', 'Delete share link') : t('maps', 'Create share link') }}
-					</ActionCheckbox>
-					<ActionButton v-if="enabled && nbFavorites && c.enabled && c.token"
+					</NcActionCheckbox>
+					<NcActionButton v-if="enabled && nbFavorites && c.enabled && c.token"
 						icon="icon-clippy"
 						:close-after-click="false"
 						@click="onShareLinkCopy(c)">
 						{{ isLinkCopied[catid] ? t('maps', 'Copied!') : t('maps', 'Copy share link') }}
-					</ActionButton>
-					<ActionButton v-if="enabled && nbFavorites && c.enabled"
+					</NcActionButton>
+					<NcActionButton v-if="enabled && nbFavorites && c.enabled"
 						icon="icon-save"
 						:close-after-click="true"
 						@click="$emit('export-category', catid)">
 						{{ t('maps', 'Export') }}
-					</ActionButton>
-					<ActionButton v-if="enabled && nbFavorites && c.enabled"
+					</NcActionButton>
+					<NcActionButton v-if="enabled && nbFavorites && c.enabled"
 						icon="icon-delete"
 						:close-after-click="true"
 						@click="$emit('delete-category', catid)">
 						{{ t('maps', 'Delete') }}
-					</ActionButton>
+					</NcActionButton>
 				</template>
-			</AppNavigationItem>
+			</NcAppNavigationItem>
 		</template>
-	</AppNavigationItem>
+	</NcAppNavigationItem>
 </template>
 
 <script>
-import AppNavigationItem from '@nextcloud/vue/dist/Components/AppNavigationItem'
-import AppNavigationNew from '@nextcloud/vue/dist/Components/AppNavigationNew'
-import ActionButton from '@nextcloud/vue/dist/Components/ActionButton'
-import ActionCheckbox from '@nextcloud/vue/dist/Components/ActionCheckbox'
-import CounterBubble from '@nextcloud/vue/dist/Components/CounterBubble'
+import NcAppNavigationItem from '@nextcloud/vue/dist/Components/NcAppNavigationItem'
+import NcAppNavigationNew from '@nextcloud/vue/dist/Components/NcAppNavigationNew'
+import NcActionButton from '@nextcloud/vue/dist/Components/NcActionButton'
+import NcActionCheckbox from '@nextcloud/vue/dist/Components/NcActionCheckbox'
+import NcCounterBubble from '@nextcloud/vue/dist/Components/NcCounterBubble'
 import { showError, showSuccess } from '@nextcloud/dialogs'
 import { generateUrl } from '@nextcloud/router'
 
@@ -127,11 +127,11 @@ export default {
 	name: 'AppNavigationFavoritesItem',
 
 	components: {
-		AppNavigationItem,
-		AppNavigationNew,
-		ActionButton,
-		ActionCheckbox,
-		CounterBubble,
+		NcAppNavigationItem,
+		NcAppNavigationNew,
+		NcActionButton,
+		NcActionCheckbox,
+		NcCounterBubble,
 	},
 
 	props: {

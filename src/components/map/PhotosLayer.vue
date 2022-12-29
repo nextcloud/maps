@@ -27,15 +27,15 @@
 			<LPopup
 				class="popup-photo-wrapper"
 				:options="popupOptions">
-				<ActionButton icon="icon-toggle" @click="$emit('open-sidebar',p.path)">
+				<NcActionButton icon="icon-toggle" @click="$emit('open-sidebar',p.path)">
 					{{ t('maps', 'Open in Sidebar') }}
-				</ActionButton>
-				<ActionButton icon="icon-toggle" @click="viewPhoto(p)">
+				</NcActionButton>
+				<NcActionButton icon="icon-toggle" @click="viewPhoto(p)">
 					{{ t('maps', 'Display picture') }}
-				</ActionButton>
-				<ActionButton icon="icon-history" @click="resetPhotosCoords([p])">
+				</NcActionButton>
+				<NcActionButton icon="icon-history" @click="resetPhotosCoords([p])">
 					{{ t('maps', 'Remove geo data') }}
-				</ActionButton>
+				</NcActionButton>
 			</LPopup>
 		</LMarker>
 		<LMarker
@@ -45,18 +45,18 @@
 				ref="clusterPopup"
 				class="popup-photo-wrapper"
 				:options="clusterPopupOptions">
-				<ActionButton icon="icon-toggle" @click="onDisplayClusterClick">
+				<NcActionButton icon="icon-toggle" @click="onDisplayClusterClick">
 					{{ t('maps', 'Display pictures') }}
-				</ActionButton>
-				<ActionButton icon="icon-toggle-pictures" @click="onSpiderfyClusterClick">
+				</NcActionButton>
+				<NcActionButton icon="icon-toggle-pictures" @click="onSpiderfyClusterClick">
 					{{ t('maps', 'Spiderfy') }}
-				</ActionButton>
-				<ActionButton icon="icon-search" @click="onZoomClusterClick">
+				</NcActionButton>
+				<NcActionButton icon="icon-search" @click="onZoomClusterClick">
 					{{ t('maps', 'Zoom on bounds') }}
-				</ActionButton>
-				<ActionButton icon="icon-history" @click="resetClusterPhotoCoords">
+				</NcActionButton>
+				<NcActionButton icon="icon-history" @click="resetClusterPhotoCoords">
 					{{ t('maps', 'Remove geo data') }}
-				</ActionButton>
+				</NcActionButton>
 			</LPopup>
 		</LMarker>
 	</Vue2LeafletMarkerCluster>
@@ -66,7 +66,7 @@
 import { generateUrl } from '@nextcloud/router'
 import moment from '@nextcloud/moment'
 import { basename } from '@nextcloud/paths'
-import ActionButton from '@nextcloud/vue/dist/Components/ActionButton'
+import NcActionButton from '@nextcloud/vue/dist/Components/NcActionButton'
 
 import L from 'leaflet'
 import { LMarker, LTooltip, LPopup } from 'vue2-leaflet'
@@ -83,7 +83,7 @@ export default {
 		LMarker,
 		LTooltip,
 		LPopup,
-		ActionButton,
+		NcActionButton,
 	},
 
 	props: {

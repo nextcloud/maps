@@ -1,5 +1,5 @@
 <template>
-	<AppSidebar v-show="show"
+	<NcAppSidebar v-show="show"
 		:title="sidebarTitle"
 		:compact="!hasPreview() || isFullScreen"
 		:background="backgroundImageUrl"
@@ -20,11 +20,11 @@
 			:track="track" />
 		<PhotoSidebarTab v-if="activeTab === 'photo'"
 			:photo="photo" />
-	</AppSidebar>
+	</NcAppSidebar>
 </template>
 
 <script>
-import AppSidebar from '@nextcloud/vue/dist/Components/AppSidebar'
+import NcAppSidebar from '@nextcloud/vue/dist/Components/NcAppSidebar'
 import { generateUrl } from '@nextcloud/router'
 
 import FavoriteSidebarTab from '../components/FavoriteSidebarTab'
@@ -36,7 +36,7 @@ export default {
 
 	components: {
 		// ActionButton,
-		AppSidebar,
+		NcAppSidebar,
 		FavoriteSidebarTab,
 		TrackSidebarTab,
 		PhotoSidebarTab,

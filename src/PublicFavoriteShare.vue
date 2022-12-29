@@ -35,8 +35,8 @@
 </template>
 
 <script>
-import Content from '@nextcloud/vue/dist/Components/Content'
-import AppContent from '@nextcloud/vue/dist/Components/AppContent'
+import NcContent from '@nextcloud/vue/dist/Components/NcContent'
+import NcAppContent from '@nextcloud/vue/dist/Components/NcAppContent'
 import MapContainer from './components/MapContainer'
 import PublicFavoriteShareSideBar from './components/PublicFavoriteShareSideBar'
 import { mapActions, mapGetters, mapState } from 'vuex'
@@ -46,8 +46,8 @@ export default {
 	name: 'PublicFavoriteShare',
 
 	components: {
-		AppContent,
-		Content,
+		NcAppContent,
+		NcContent,
 		MapContainer,
 		PublicFavoriteShareSideBar,
 	},

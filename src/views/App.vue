@@ -1,5 +1,5 @@
 <template>
-	<Content app-name="maps">
+	<NcContent app-name="maps">
 		<MapsNavigation
 			@toggle-trackme="onToggleTrackme"
 			@toggle-slider="onToggleSlider">
@@ -71,7 +71,7 @@
 					@devices-clicked="onDevicesClicked" />
 			</template>
 		</MapsNavigation>
-		<AppContent>
+		<NcAppContent>
 			<div id="app-content-wrapper">
 				<Map
 					ref="map"
@@ -123,14 +123,14 @@
 					@redo="redoAction"
 					@slider-range-changed="sliderStart = $event.start; sliderEnd = $event.end" />
 			</div>
-			<Actions
+			<NcActions
 				class="content-buttons"
 				:title="t('maps', 'Details')">
-				<ActionButton
+				<NcActionButton
 					icon="icon-menu-sidebar"
 					@click="onMainDetailClicked" />
-			</Actions>
-		</AppContent>
+			</NcActions>
+		</NcAppContent>
 		<Sidebar
 			v-if="true"
 			:show="showSidebar"
@@ -145,14 +145,14 @@
 			@active-changed="onActiveSidebarTabChanged"
 			@close="onCloseSidebar"
 			@opened="onOpenedSidebar" />
-	</Content>
+	</NcContent>
 </template>
 
 <script>
-import Content from '@nextcloud/vue/dist/Components/Content'
-import AppContent from '@nextcloud/vue/dist/Components/AppContent'
-import Actions from '@nextcloud/vue/dist/Components/Actions'
-import ActionButton from '@nextcloud/vue/dist/Components/ActionButton'
+import NcContent from '@nextcloud/vue/dist/Components/NcContent'
+import NcAppContent from '@nextcloud/vue/dist/Components/NcAppContent'
+import NcActions from '@nextcloud/vue/dist/Components/NcActions'
+import NcActionButton from '@nextcloud/vue/dist/Components/NcActionButton'
 import { showError, showInfo, showSuccess } from '@nextcloud/dialogs'
 import moment from '@nextcloud/moment'
 import { emit } from '@nextcloud/event-bus'
@@ -179,10 +179,10 @@ export default {
 	name: 'App',
 
 	components: {
-		Content,
-		AppContent,
-		Actions,
-		ActionButton,
+		NcContent,
+		NcAppContent,
+		NcActions,
+		NcActionButton,
 		Map,
 		MapsNavigation,
 		Sidebar,

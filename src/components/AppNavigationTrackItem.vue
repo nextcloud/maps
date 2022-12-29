@@ -1,5 +1,5 @@
 <template>
-	<AppNavigationItem
+	<NcAppNavigationItem
 		:title="track.file_name"
 		:class="{ 'subitem-disabled': !track.enabled }"
 		:allow-collapse="false"
@@ -34,40 +34,40 @@
 			&nbsp;
 		</template>
 		<template slot="actions">
-			<ActionButton v-if="parentEnabled && track.enabled"
+			<NcActionButton v-if="parentEnabled && track.enabled"
 				icon="icon-search"
 				:close-after-click="true"
 				@click="$emit('zoom', track)">
 				{{ t('maps', 'Zoom') }}
-			</ActionButton>
-			<ActionButton v-if="parentEnabled && track.enabled"
+			</NcActionButton>
+			<NcActionButton v-if="parentEnabled && track.enabled"
 				icon="icon-category-monitoring"
 				:close-after-click="true"
 				@click="$emit('elevation', track)">
 				{{ t('maps', 'Show track elevation') }}
-			</ActionButton>
-			<ActionButton v-if="parentEnabled && track.enabled"
+			</NcActionButton>
+			<NcActionButton v-if="parentEnabled && track.enabled"
 				:close-after-click="false"
 				@click="onChangeColorClick">
 				<template #icon>
 					<div class="icon-colorpicker" />
 				</template>
 				{{ t('maps', 'Change color') }}
-			</ActionButton>
+			</NcActionButton>
 		</template>
-	</AppNavigationItem>
+	</NcAppNavigationItem>
 </template>
 
 <script>
-import AppNavigationItem from '@nextcloud/vue/dist/Components/AppNavigationItem'
-import ActionButton from '@nextcloud/vue/dist/Components/ActionButton'
+import NcAppNavigationItem from '@nextcloud/vue/dist/Components/NcAppNavigationItem'
+import NcActionButton from '@nextcloud/vue/dist/Components/NcActionButton'
 
 export default {
 	name: 'AppNavigationTrackItem',
 
 	components: {
-		AppNavigationItem,
-		ActionButton,
+		NcAppNavigationItem,
+		NcActionButton,
 	},
 
 	props: {

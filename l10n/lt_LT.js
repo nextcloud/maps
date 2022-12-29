@@ -55,6 +55,7 @@ OC.L10N.register(
     "Distance" : "Atstumas",
     "Duration" : "Trukmė",
     "End" : "Pabaiga",
+    "Maximum speed" : "Didžiausias greitis",
     "Average speed" : "Vidutinis greitis",
     "Name" : "Pavadinimas",
     "Add" : "Pridėti",

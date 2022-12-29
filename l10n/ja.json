@@ -188,6 +188,7 @@
     "Import as favorites in Maps" : "Mapsのお気に入りをインポート",
     "Failed to save option values" : "オプション値を保存できませんでした",
     "Failed to load non-geolocalized photos" : "位置情報がない写真を読み込めませんでした",
+    "Zoom in" : "拡大",
     "Failed to load photos" : "写真を読み込めませんでした",
     "{nb} photos placed" : "{nb} 枚の写真が配置されました",
     "Failed to place photos" : "写真を配置できませんでした",

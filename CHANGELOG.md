@@ -4,6 +4,23 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## 0.2.2 - 2022.12.29 NC 24 Redesign
+### Fixed
+- Search for coordinate
+  [#851](https://github.com/nextcloud/maps/pull/851) @tacruc
+  [#824](https://github.com/nextcloud/maps/pull/824) @tacruc
+  [#802](https://github.com/nextcloud/maps/issues/802) @downtownallday @aaronsegura
+
+- Fixes  No contacts shown in maps since version >= 0.2.0
+  [#849](https://github.com/nextcloud/maps/pull/849) @tacruc
+  [#858](https://github.com/nextcloud/maps/issues/847) @Kieltux
+- Fixes  PHP 8.1.9: class "logger" does not exist
+  [#863](https://github.com/nextcloud/maps/pull/863) @sylvainmetayer @tcitworld
+  [#858](https://github.com/nextcloud/maps/issues/858) @joergmschulz
+### Updated
+- New nextcloud vue components
+  [#839](https://github.com/nextcloud/maps/pull/839) @tacruc
+
 ## 0.2.1 - 2022.08.31 Further Improvements
 ### Fixed
 - Fixes Mapbox tiles are not moved

@@ -198,7 +198,9 @@ export function addFavorites(favorites, myMapId) {
 
 export function deleteFavorite(favid, myMapId = null) {
 	const req = {
-		myMapId,
+		params: {
+			myMapId,
+		},
 	}
 	const url = generateUrl('/apps/maps/favorites/' + favid)
 	return axios.delete(url, req)
@@ -218,8 +220,8 @@ export function deleteFavorites(ids, myMapId = null) {
 	const req = {
 		params: {
 			ids,
+			myMapId,
 		},
-		myMapId,
 	}
 	const url = generateUrl('/apps/maps/favorites')
 	return axios.delete(url, req)
@@ -313,8 +315,8 @@ export function resetPhotosCoords(paths, myMapId = null) {
 	const req = {
 		params: {
 			paths,
+			myMapId,
 		},
-		myMapId,
 	}
 	const url = generateUrl('/apps/maps/photos')
 	return axios.delete(url, req)
@@ -441,7 +443,6 @@ export function changeMyMapColor(id, color) {
 
 export function deleteMyMap(id) {
 	const req = {
-		id,
 	}
 	const url = generateUrl('/apps/maps/maps/' + id)
 	return axios.delete(url, req)

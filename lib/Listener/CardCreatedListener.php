@@ -50,7 +50,7 @@ class CardCreatedListener implements IEventListener {
 			return;
 		}
 		$cData = $event->getCardData();
-		$cUri = $cData->uri;
-		$this->addressService->scheduleVCardForLookup($cData, $cUri);
+		$cUri = $cData["uri"];
+		$this->addressService->scheduleVCardForLookup($cData["carddata"], $cUri);
 	}
 }

@@ -50,7 +50,7 @@ class CardDeletedListener implements IEventListener {
 			return;
 		}
 		$cData = $event->getCardData();
-		$cUri = $cData->uri;
+		$cUri = $cData["uri"];
 		$this->addressService->deleteDBContactAddresses($cUri);
 	}
 }

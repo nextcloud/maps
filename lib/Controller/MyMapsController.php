@@ -51,7 +51,7 @@ class MyMapsController extends Controller {
     /**
      * @NoAdminRequired
      */
-    public function updateMyMap(string $id, array $values): DataResponse {
+    public function updateMyMap(int $id, array $values): DataResponse {
         $myMap = $this->myMapsService->updateMyMap($id, $values, $this->userId);
         return new DataResponse($myMap);
     }
@@ -59,7 +59,7 @@ class MyMapsController extends Controller {
     /**
      * @NoAdminRequired
      */
-    public function deleteMyMap(string $id): DataResponse {
+    public function deleteMyMap(int $id): DataResponse {
         $result = $this->myMapsService->deleteMyMap($id, $this->userId);
         return new DataResponse($result);
     }

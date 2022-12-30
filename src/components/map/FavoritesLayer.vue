@@ -117,14 +117,11 @@ export default {
 			const icons = {}
 			Object.keys(this.categories).forEach((catid) => {
 				const color = this.categories[catid].color
-				const iconUrl = OCA.Accessibility?.theme === 'dark'
-					? generateUrl('/svg/maps/star-circle-black') + '?color=' + color
-					: generateUrl('/svg/maps/star-circle-white') + '?color=' + color
 				icons[catid] = L.divIcon({
 					iconAnchor: [18, 18],
 					className: 'leaflet-marker-favorite',
 					// html: '<div class="favoriteMarker ' + darkClass + '" style="background-color: #' + color + '"></div>',
-					html: '<div class="favoriteMarker" style="background-image: url(' + iconUrl + ');"></div>',
+					html: '<div class="favoriteMarker icon-star-white" style="background-color: #' + color + ';"></div>',
 				})
 			})
 			return icons
@@ -133,14 +130,11 @@ export default {
 			const icons = {}
 			Object.keys(this.categories).forEach((catid) => {
 				const color = this.categories[catid].color
-				const iconUrl = OCA.Accessibility?.theme === 'dark'
-					? generateUrl('/svg/maps/star-circle-black') + '?color=' + color
-					: generateUrl('/svg/maps/star-circle-white') + '?color=' + color
 				icons[catid] = L.divIcon({
 					iconAnchor: [18, 18],
 					className: 'leaflet-marker-favorite',
 					// html: '<div class="favoriteMarker ' + darkClass + '" style="background-color: #' + color + '"></div>',
-					html: '<div class="favoriteMarker selected" style="background-image: url(' + iconUrl + ');"></div>',
+					html: '<div class="favoriteMarker selected icon-star-white" style="background-color: #' + color + ';"></div>',
 				})
 			})
 			return icons
@@ -188,13 +182,10 @@ export default {
 			const catid = favorite.category
 			const color = this.categories[catid].color
 			const label = cluster.getChildCount()
-			const iconUrl = OCA.Accessibility?.theme === 'dark'
-				? generateUrl('/svg/maps/star-circle-black') + '?color=' + color
-				: generateUrl('/svg/maps/star-circle-white') + '?color=' + color
 			return new L.DivIcon(L.extend({
 				className: 'leaflet-marker-favorite-cluster cluster-marker',
 				// html: '<div class="favoriteClusterMarker ' + darkClass + '" style="background-color: #' + color + '"></div>'
-				html: '<div class="favoriteClusterMarker" style="background-image: url(' + iconUrl + ');"></div>'
+				html: '<div class="favoriteClusterMarker icon-star-white" style="background-color: #' + color + ';"></div>'
 					+ '​<span class="label">' + label + '</span>',
 			}, cluster, {
 				iconSize: [CLUSTER_MARKER_VIEW_SIZE, CLUSTER_MARKER_VIEW_SIZE],
@@ -221,5 +212,5 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-// nothing
+
 </style>

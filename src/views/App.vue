@@ -2278,4 +2278,5 @@ export default {
 	background: url('../../img/star-black.svg') no-repeat 50% 50%;
 	border-radius: 50%;
 }
+
 </style>

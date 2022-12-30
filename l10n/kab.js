@@ -2,6 +2,7 @@ OC.L10N.register(
     "maps",
     {
     "File not found" : "Ulac afaylu",
+    "Personal" : "Udmawan",
     "Delete" : "Kkes",
     "Rename" : "Beddel isem",
     "Copied!" : "Yenɣel!",

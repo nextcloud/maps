@@ -6,6 +6,7 @@ OC.L10N.register(
     "Delete" : "நீக்குக",
     "Import" : "இறக்குமதி",
     "Rename" : "பெயர்மாற்றம்",
+    "Copy share link" : "பகிர்வு இணைப்பை நகலெடுக்கவும்",
     "Cancel" : "இரத்து செய்க",
     "Sort by name" : "Order by name",
     "Sort by date" : "Order by date",

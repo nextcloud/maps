@@ -1,5 +1,5 @@
 import axios from '@nextcloud/axios'
-import * as realAxios from 'axios'
+import { default as realAxios } from 'axios'
 import { generateUrl } from '@nextcloud/router'
 import {
 	// showSuccess,

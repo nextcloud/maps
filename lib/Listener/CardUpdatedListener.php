@@ -23,6 +23,7 @@ declare(strict_types=1);
 
 namespace OCA\Maps\Listener;
 
+use OCP\ILogger;
 use OCA\DAV\Events\CardUpdatedEvent;
 use OCA\Maps\Service\AddressService;
 use OCP\EventDispatcher\Event;

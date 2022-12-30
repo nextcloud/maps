@@ -38,19 +38,19 @@
   "dependencies": {
     "@fortawesome/fontawesome-free": "^6.2.0",
     "@nextcloud/auth": "^2.0.0",
-    "@nextcloud/axios": "^2.0.0",
+    "@nextcloud/axios": "^2.3.0",
     "@nextcloud/dialogs": "^3.2.0",
     "@nextcloud/event-bus": "^3.0.2",
     "@nextcloud/l10n": "^1.6.0",
     "@nextcloud/moment": "^1.2.1",
     "@nextcloud/paths": "^2.1.0",
     "@nextcloud/router": "^2.0.0",
+    "@nextcloud/vue": "^7.3.0",
     "@nextcloud/sharing": "^0.1.0",
-	"@nextcloud/vue": "^7.0.0-beta.7",
     "@raruto/leaflet-elevation": "^1.7.0",
-    "axios": "^0.27.2",
+    "axios": "^1.2.2",
     "geojson": "^0.5.0",
-    "leaflet": "^1.5.1",
+    "leaflet": "^1.9.3",
     "leaflet-contextmenu": "^1.4.0",
     "leaflet-control-geocoder": "2.4.0",
     "leaflet-easybutton": "^2.4.0",
@@ -64,7 +64,7 @@
     "nouislider": "^14.0.2",
     "opening_hours": "^3.8.0",
     "ua-parser-js": "^1.0.2",
-    "vue": "^2.6.14",
+    "vue": "^2.7.14",
     "vue-click-outside": "^1.1.0",
     "vue-clipboard2": "^0.3.1",
     "vue-types": "^4.2.1",
@@ -75,9 +75,9 @@
   "devDependencies": {
     "@nextcloud/babel-config": "^1.0.0",
     "@nextcloud/browserslist-config": "^2.3.0",
-    "@nextcloud/eslint-config": "^8.0.0",
-    "@nextcloud/stylelint-config": "^2.2.0",
-    "@nextcloud/webpack-vue-config": "^5.1.0",
-    "@types/leaflet": "^1.5.4"
+    "@nextcloud/eslint-config": "^8.1.4",
+    "@nextcloud/stylelint-config": "^2.3.0",
+    "@nextcloud/webpack-vue-config": "^5.4.0",
+    "@types/leaflet": "^1.9.0"
   }
 }

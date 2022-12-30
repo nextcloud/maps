@@ -12,10 +12,19 @@
 
 namespace OCA\Maps\Service;
 
+use OC\Files\Search\SearchBinaryOperator;
+use OC\Files\Search\SearchComparison;
+use OC\Files\Search\SearchQuery;
 use OC\OCS\Exception;
+use OC\User\NoUserException;
+use OCP\Files\InvalidPathException;
+use OCP\Files\NotPermittedException;
+use OCP\Files\Search\ISearchQuery;
 use OCP\AppFramework\Http\DataResponse;
 use OCP\Files\NotFoundException;
+use OCP\Files\Search\ISearchBinaryOperator;
 use OCP\Files\Search\ISearchComparison;
+use OCP\ICacheFactory;
 use OCP\IL10N;
 use OCP\ILogger;
 use OCP\DB\QueryBuilder\IQueryBuilder;
@@ -30,9 +39,11 @@ class MyMapsService {
     private $logger;
 	private $root;
 
-    public function __construct (ILogger $logger, IRootFolder $root) {
+    public function __construct (ILogger $logger, IRootFolder $root, ICacheFactory $cacheFactory) {
         $this->logger = $logger;
 		$this->root = $root;
+		$this->cacheFactory = $cacheFactory;
+		$this->myMapsPathsCache = $this->cacheFactory->createLocal('maps:myMaps-paths');
     }
 
     public function addMyMap($newName, $userId, $counter=0) {
@@ -96,54 +107,85 @@ class MyMapsService {
 				"sharePermissions"=>$mapFolder->getPermissions(),
 			]
 		];
+		$key = $userId . ':' . $userFolder->getEtag();
+		$MyMaps = $this->myMapsPathsCache->get($key);
+		if ($MyMaps !== null) {
+			$MyMaps[] = $MyMap;
+			$this->myMapsPathsCache->set($key, $MyMaps, 60 * 60 * 24 * 28);
+		}
         return $MyMap;
     }
 
-    public function getAllMyMaps($userId){
+	private function updateMyMapsCache($userId): array{
 		$userFolder = $this->root->getUserFolder($userId);
+		$key = $userId . ':' . $userFolder->getEtag();
+		$MyMaps = [];
+		$MyMapsNodes = $userFolder->search(new SearchQuery(
+			new SearchComparison(ISearchComparison::COMPARE_EQUAL, 'name', '.maps'),
+			0, 0, []));
+
+		foreach ($MyMapsNodes as $node) {
+			if ($node->getType() === FileInfo::TYPE_FILE and $node->getName() === ".maps") {
+				$MyMaps[] = $this->node2MyMap($node, $userFolder);
+			}
+		}
+		$this->myMapsPathsCache->set($key, $MyMaps, 60 * 60 * 24 * 28);
+		return $MyMaps;
+	}
+
+	private function node2MyMap($node, $userFolder):array{
+		$mapData = json_decode($node->getContent(), true);
+		if (isset($mapData["name"])) {
+			$name = $mapData["name"];
+		} else {
+			$name = $node->getParent()->getName();
+		}
+		$color = null;
+		if (isset($mapData["color"])) {
+			$color = $mapData["color"];
+		}
+		$parentNode = $node->getParent();
+		$isRoot = $parentNode->getPath() === $userFolder->getPath();
+		$MyMap = [
+			"id" => $parentNode->getId(),
+			"name" => $name,
+			"color" => $color,
+			"path" => $userFolder->getRelativePath($parentNode->getPath()),
+			"isShareable" => $parentNode->isShareable(),
+			"isDeletable" => $parentNode->isDeletable(),
+			"isCreatable" => $parentNode->isCreatable(),
+			"isUpdateable" => $parentNode->isUpdateable(),
+			"isReadable" => $parentNode->isReadable(),
+			"fileInfo" => [
+				"id" => $parentNode->getId(),
+				"name" => "",
+				"basename" => $isRoot ? '' : $parentNode->getName(),
+				"filename" => $userFolder->getRelativePath($parentNode->getPath()),
+				"etag" => $parentNode->getEtag(),
+				"permissions" => $parentNode->getPermissions(),
+				"type" => $parentNode->getType(),
+				"mime" => $parentNode->getMimetype(),
+				"lastmod" => $parentNode->getMTime(),
+				"path" => $userFolder->getRelativePath($parentNode->getPath()),
+				"sharePermissions" => $parentNode->getPermissions(),
+			]
+		];
+		return $MyMap;
+	}
+
+    public function getAllMyMaps($userId){
+
         $MyMaps = [];
-        $MyMapsNodes = $userFolder->search('.maps');
-        foreach($MyMapsNodes as $node) {
-            if ($node->getType() === FileInfo::TYPE_FILE and $node->getName() === ".maps") {
-                $mapData = json_decode($node->getContent(), true);
-                if (isset($mapData["name"])){
-                    $name = $mapData["name"];
-                } else {
-                    $name = $node->getParent()->getName();
-                }
-                $color = null;
-                if (isset($mapData["color"])){
-                    $color = $mapData["color"];
-                }
-				$parentNode = $node->getParent();
-				$isRoot = $parentNode->getPath() === $userFolder->getPath();
-                $MyMap = [
-                    "id"=>$parentNode->getId(),
-                    "name"=>$name,
-                    "color"=>$color,
-                    "path"=>$userFolder->getRelativePath($parentNode->getPath()),
-					"isShareable"=>$parentNode->isShareable(),
-					"isDeletable"=>$parentNode->isDeletable(),
-					"isCreatable"=>$parentNode->isCreatable(),
-					"isUpdateable"=>$parentNode->isUpdateable(),
-					"isReadable"=>$parentNode->isReadable(),
-					"fileInfo"=>[
-						"id" => $parentNode->getId(),
-						"name" => "",
-						"basename" => $isRoot ? '' : $parentNode->getName(),
-						"filename" => $userFolder->getRelativePath($parentNode->getPath()),
-						"etag" => $parentNode->getEtag(),
-		                "permissions" => $parentNode->getPermissions(),
-						"type" => $parentNode->getType(),
-						"mime" => $parentNode->getMimetype(),
-						"lastmod" => $parentNode->getMTime(),
-						"path"=>$userFolder->getRelativePath($parentNode->getPath()),
-						"sharePermissions"=>$parentNode->getPermissions(),
-					]
-				];
-                array_push($MyMaps, $MyMap);
-            }
-        }
+		try {
+			$userFolder = $this->root->getUserFolder($userId);
+			$key = $userId . ':' . $userFolder->getEtag();
+			$MyMaps = $this->myMapsPathsCache->get($key);
+			if ($MyMaps === null) {
+				$MyMaps = $this->updateMyMapsCache($userId);
+			}
+		} catch (InvalidPathException | NotFoundException | NotPermittedException | NoUserException $e) {
+			$this->logger->error($e->getMessage());
+		}
         return $MyMaps;
     }
 
@@ -182,12 +224,31 @@ class MyMapsService {
                 }
             }
         }
-
+		$key = $userId . ':' . $userFolder->getEtag();
+		$MyMaps = $this->myMapsPathsCache->get($key);
+		if ($MyMaps !== null) {
+			$MyMap = $this->node2MyMap($file, $userFolder);
+			$oldKey = array_key_first(array_filter($MyMaps, function ($m) use ($id) {
+				return $m['id']===$id;
+			}));
+			$MyMaps[$oldKey] = $MyMap;
+			$this->myMapsPathsCache->set($key, $MyMaps, 60 * 60 * 24 * 28);
+		}
         return $mapData;
     }
 
     public function deleteMyMap($id, $userId) {
 		$userFolder = $this->root->getUserFolder($userId);
+		$key = $userId . ':' . $userFolder->getEtag();
+		$MyMaps = $this->myMapsPathsCache->get($key);
+		if ($MyMaps !== null) {
+			$oldKey = array_key_first(array_filter($MyMaps, function ($m) use ($id) {
+				return $m['id']===$id;
+			}));
+			unset($MyMaps[$oldKey]);
+			$this->myMapsPathsCache->set($key, $MyMaps, 60 * 60 * 24 * 28);
+		}
+
         $folders = $userFolder->getById($id);
         $folder = array_shift($folders);
         if ($userFolder->nodeExists('/Maps')) {
@@ -207,7 +268,6 @@ class MyMapsService {
 				}
 			}
         }
-
         try {
             $file=$folder->get(".maps");
             $file->delete();

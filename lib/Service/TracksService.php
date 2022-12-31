@@ -287,9 +287,9 @@ class TracksService {
 	 */
 	private function getIgnoredPaths($userId, $folder=null, $hideImagesOnCustomMaps=true){
 		$ignoredPaths = [];
-		$folder = $this->root->getUserFolder($userId);
+		$userFolder = $this->root->getUserFolder($userId);
 		if (is_null($folder)) {
-			$folder = $this->root->getUserFolder($userId);
+			$folder = $userFolder;
 		}
 		$ignoreMarkerFiles = [
 			'.nomedia',
@@ -316,7 +316,7 @@ class TracksService {
 			[]
 		));
 		foreach($excludedNodes as $node) {
-			$ignoredPaths[] = $folder->getRelativePath($node->getParent()->getPath());
+			$ignoredPaths[] = $userFolder->getRelativePath($node->getParent()->getPath());
 		}
 		return $ignoredPaths;
 	}

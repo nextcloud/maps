@@ -224,11 +224,11 @@ class GeophotoService {
 	 * @throws \OCP\Files\NotPermittedException
 	 * @throws \OC\User\NoUserException
 	 */
-	private function getIgnoredPaths($userId, $folder=null, $hideImagesOnCustomMaps){
+	private function getIgnoredPaths($userId, $folder=null, $hideImagesOnCustomMaps=true){
 		$ignoredPaths = [];
-		$folder = $this->getFolderForUser($userId);
+		$userFolder=$this->getFolderForUser($userId);
 		if (is_null($folder)) {
-			$folder = $this->getFolderForUser($userId);
+			$folder = $userFolder;
 		}
 		$ignoreMarkerFiles = [
 			'.nomedia',
@@ -254,7 +254,7 @@ class GeophotoService {
 			[]
 		));
 		foreach($excludedNodes as $node) {
-			$ignoredPaths[] = $folder->getRelativePath($node->getParent()->getPath());
+			$ignoredPaths[] = $userFolder->getRelativePath($node->getParent()->getPath());
 		}
 		return $ignoredPaths;
 	}

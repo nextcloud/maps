@@ -43,7 +43,7 @@ class MyMapsService {
         $this->logger = $logger;
 		$this->root = $root;
 		$this->cacheFactory = $cacheFactory;
-		$this->myMapsPathsCache = $this->cacheFactory->createLocal('maps:myMaps-paths');
+		$this->myMapsPathsCache = $this->cacheFactory->createDistributed('maps:myMaps-paths');
     }
 
     public function addMyMap($newName, $userId, $counter=0) {

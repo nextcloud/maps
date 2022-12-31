@@ -228,7 +228,12 @@ class ContactsController extends Controller {
 		$NArray = $vcard->N ? $vcard->N->getJsonValue() : [];
 		$n = array_shift($NArray);
 		if (!is_null($n)) {
-			$n = $this->N2FN($n);
+			if (is_array($n)) {
+				$n = $this->N2FN(array_shift($n));
+			} elseif (is_string($n)) {
+				$n = $this->N2FN($n);
+			}
+
 		}
 		$UIDArray = $vcard->UID->getJsonValue();
 		$uid = array_shift($UIDArray);
@@ -313,8 +318,8 @@ class ContactsController extends Controller {
 	 * @param string $bookid
 	 * @param string $uri
 	 * @param string $uid
-	 * @param float $lat
-	 * @param float $lng
+	 * @param float|null $lat
+	 * @param float|null $lng
 	 * @param string $attraction
 	 * @param string $house_number
 	 * @param string $road
@@ -327,6 +332,7 @@ class ContactsController extends Controller {
 	 * @param int|null $fileId
 	 * @param int|null $myMapId
 	 * @return DataResponse
+	 * @throws \OCP\DB\Exception
 	 * @throws \OCP\Files\NotPermittedException
 	 * @throws \OC\User\NoUserException
 	 */
@@ -334,16 +340,16 @@ class ContactsController extends Controller {
 		string $bookid,
 		string $uri,
 		string $uid,
-		float $lat,
-		float $lng,
-		string $attraction,
-		string $house_number,
-		string $road,
-		string $postcode,
-		string $city,
-		string $state,
-		string $country,
-		string $type,
+		?float $lat,
+		?float $lng,
+		string $attraction='',
+		string $house_number='',
+		string $road='',
+		string $postcode='',
+		string $city='',
+		string $state='',
+		string $country='',
+		string $type='',
 		?string $address_string=null,
 		?int $fileId=null,
 		?int $myMapId=null): DataResponse {

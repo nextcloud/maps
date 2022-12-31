@@ -103,18 +103,16 @@ class MyMapsService {
 				"sharePermissions"=>$mapFolder->getPermissions(),
 			]
 		];
-		$key = $userId . ':' . $userFolder->getEtag();
-		$MyMaps = $this->myMapsPathsCache->get($key);
+		$MyMaps = $this->myMapsPathsCache->get($userId);
 		if ($MyMaps !== null) {
 			$MyMaps[] = $MyMap;
-			$this->myMapsPathsCache->set($key, $MyMaps, 60 * 60 * 24 );
+			$this->myMapsPathsCache->set($userId, $MyMaps, 60 * 60 * 24 );
 		}
         return $MyMap;
     }
 
 	private function updateMyMapsCache($userId): array{
 		$userFolder = $this->root->getUserFolder($userId);
-		$key = $userId . ':' . $userFolder->getEtag();
 		$MyMaps = [];
 		$MyMapsNodes = $userFolder->search(new SearchQuery(
 			new SearchComparison(ISearchComparison::COMPARE_EQUAL, 'name', '.maps'),
@@ -125,7 +123,7 @@ class MyMapsService {
 				$MyMaps[] = $this->node2MyMap($node, $userFolder);
 			}
 		}
-		$this->myMapsPathsCache->set($key, $MyMaps, 60 * 60 * 24);
+		$this->myMapsPathsCache->set($userId, $MyMaps, 60 * 60 * 24);
 		return $MyMaps;
 	}
 
@@ -173,9 +171,7 @@ class MyMapsService {
 
         $MyMaps = [];
 		try {
-			$userFolder = $this->root->getUserFolder($userId);
-			$key = $userId . ':' . $userFolder->getEtag();
-			$MyMaps = $this->myMapsPathsCache->get($key);
+			$MyMaps = $this->myMapsPathsCache->get($userId);
 			if ($MyMaps === null) {
 				$MyMaps = $this->updateMyMapsCache($userId);
 			}
@@ -209,6 +205,15 @@ class MyMapsService {
             }
         }
         $file->putContent(json_encode($mapData,JSON_PRETTY_PRINT));
+		$MyMaps = $this->myMapsPathsCache->get($userId);
+		if ($MyMaps !== null) {
+			$MyMap = $this->node2MyMap($file, $userFolder);
+			$oldKey = array_key_first(array_filter($MyMaps, function ($m) use ($id) {
+				return $m['id']===$id;
+			}));
+			$MyMaps[$oldKey] = $MyMap;
+			$this->myMapsPathsCache->set($userId, $MyMaps, 60 * 60 * 24);
+		}
         if ($renamed) {
             if ($userFolder->nodeExists('/Maps')) {
                 $mapsFolder = $userFolder->get('/Maps');
@@ -220,29 +225,18 @@ class MyMapsService {
                 }
             }
         }
-		$key = $userId . ':' . $userFolder->getEtag();
-		$MyMaps = $this->myMapsPathsCache->get($key);
-		if ($MyMaps !== null) {
-			$MyMap = $this->node2MyMap($file, $userFolder);
-			$oldKey = array_key_first(array_filter($MyMaps, function ($m) use ($id) {
-				return $m['id']===$id;
-			}));
-			$MyMaps[$oldKey] = $MyMap;
-			$this->myMapsPathsCache->set($key, $MyMaps, 60 * 60 * 24);
-		}
         return $mapData;
     }
 
     public function deleteMyMap($id, $userId) {
 		$userFolder = $this->root->getUserFolder($userId);
-		$key = $userId . ':' . $userFolder->getEtag();
-		$MyMaps = $this->myMapsPathsCache->get($key);
+		$MyMaps = $this->myMapsPathsCache->get($userId);
 		if ($MyMaps !== null) {
 			$oldKey = array_key_first(array_filter($MyMaps, function ($m) use ($id) {
 				return $m['id']===$id;
 			}));
 			unset($MyMaps[$oldKey]);
-			$this->myMapsPathsCache->set($key, $MyMaps, 60 * 60 * 24);
+			$this->myMapsPathsCache->set($userId, $MyMaps, 60 * 60 * 24);
 		}
 
         $folders = $userFolder->getById($id);

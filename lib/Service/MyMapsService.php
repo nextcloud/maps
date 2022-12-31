@@ -76,11 +76,7 @@ class MyMapsService {
         if ($mapsFolder->nodeExists($folderName)) {
             return $this->addMyMap($newName, $userId,$counter+1);
         }
-        $MapData = [
-            'name' => $folderName,
-        ];
         $mapFolder = $mapsFolder->newFolder($folderName);
-        $MapData['id'] = $mapFolder->getId();
         $mapFolder->newFile(".maps","{}");
 		$isRoot = $mapFolder->getPath() === $userFolder->getPath();
 		$MyMap = [
@@ -111,7 +107,7 @@ class MyMapsService {
 		$MyMaps = $this->myMapsPathsCache->get($key);
 		if ($MyMaps !== null) {
 			$MyMaps[] = $MyMap;
-			$this->myMapsPathsCache->set($key, $MyMaps, 60 * 60 * 24 * 28);
+			$this->myMapsPathsCache->set($key, $MyMaps, 60 * 60 * 24 );
 		}
         return $MyMap;
     }
@@ -129,7 +125,7 @@ class MyMapsService {
 				$MyMaps[] = $this->node2MyMap($node, $userFolder);
 			}
 		}
-		$this->myMapsPathsCache->set($key, $MyMaps, 60 * 60 * 24 * 28);
+		$this->myMapsPathsCache->set($key, $MyMaps, 60 * 60 * 24);
 		return $MyMaps;
 	}
 
@@ -232,7 +228,7 @@ class MyMapsService {
 				return $m['id']===$id;
 			}));
 			$MyMaps[$oldKey] = $MyMap;
-			$this->myMapsPathsCache->set($key, $MyMaps, 60 * 60 * 24 * 28);
+			$this->myMapsPathsCache->set($key, $MyMaps, 60 * 60 * 24);
 		}
         return $mapData;
     }
@@ -246,7 +242,7 @@ class MyMapsService {
 				return $m['id']===$id;
 			}));
 			unset($MyMaps[$oldKey]);
-			$this->myMapsPathsCache->set($key, $MyMaps, 60 * 60 * 24 * 28);
+			$this->myMapsPathsCache->set($key, $MyMaps, 60 * 60 * 24);
 		}
 
         $folders = $userFolder->getById($id);

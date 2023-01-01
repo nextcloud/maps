@@ -4,6 +4,15 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## 0.2.4 - 2023.01.01 Minor Fixes
+### Fixed
+- Shows favorites on NC25
+  [#909](https://github.com/nextcloud/maps/pull/909) @tacruc
+  [#866](https://github.com/nextcloud/maps/issues/866) @meichthys
+- New contacts should again appear on the map
+  [#910](https://github.com/nextcloud/maps/pull/910) @tacruc
+  [#864](https://github.com/nextcloud/maps/issues/864) @sylvainmetayer
+
 ## 0.2.3 - 2022.12.29 NC 25 Redesign
 ### Fixed
 ### Updated

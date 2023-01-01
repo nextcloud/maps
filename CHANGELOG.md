@@ -4,6 +4,14 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## 0.2.5 - 2023.XX.YY Collaborative maps & Image location suggestions
+### New
+- [Collaborative Maps](https://nextcloud.com/de/blog/plan-your-next-trip-with-nextcloud-maps-new-features/)
+  [#731](https://github.com/nextcloud/maps/pull/731) @tacruc
+- Get geodata suggestions for images without location
+  [#701](https://github.com/nextcloud/maps/pull/701) @tacruc
+
+
 ## 0.2.4 - 2023.01.01 Minor Fixes
 ### Fixed
 - Shows favorites on NC25

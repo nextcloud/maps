@@ -8,7 +8,7 @@
 		@click="$emit('photos-clicked')">
 		<NcCounterBubble v-show="enabled && photos.length"
 			slot="counter">
-			{{ photos.length > 99 ? '99+' : photos.length }}
+			{{ photos.length > 1000 ? Math.floor(photos.length/1000).toString() + 'k' : photos.length > 99 ? '99+' : photos.length }}
 		</NcCounterBubble>
 		<template v-if="enabled" slot="actions">
 			<NcActionButton v-if="!readOnly"

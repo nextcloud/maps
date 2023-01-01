@@ -279,7 +279,7 @@ export function unshareFavoriteCategory(catid) {
 	return axios.post(url)
 }
 
-export function getPhotos(myMapId = null) {
+export async function getPhotos(myMapId = null) {
 	const url = generateUrl('/apps/maps/photos')
 	const conf = {
 		params: {
@@ -289,7 +289,7 @@ export function getPhotos(myMapId = null) {
 	return axios.get(url, conf)
 }
 
-export function getPhotoSuggestions(myMapId = null) {
+export async function getPhotoSuggestions(myMapId = null) {
 	const url = generateUrl('apps/maps/photos/nonlocalized')
 	const conf = {
 		params: {

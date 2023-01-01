@@ -1,5 +1,5 @@
 <template>
-	<Vue2LeafletMarkerCluster :options="clusterOptions"
+	<Vue2LeafletDelayedMarkerCluster :options="clusterOptions"
 		@clusterclick="onClusterClick"
 		@clustercontextmenu="onClusterRightClick"
 		@spiderfied="onSpiderfied">
@@ -63,7 +63,7 @@
 				</NcActionButton>
 			</LPopup>
 		</LMarker>
-	</Vue2LeafletMarkerCluster>
+	</Vue2LeafletDelayedMarkerCluster>
 </template>
 
 <script>
@@ -74,7 +74,7 @@ import NcActionButton from '@nextcloud/vue/dist/Components/NcActionButton'
 
 import L from 'leaflet'
 import { LMarker, LTooltip, LPopup } from 'vue2-leaflet'
-import Vue2LeafletMarkerCluster from 'vue2-leaflet-markercluster'
+import Vue2LeafletDelayedMarkerCluster from './Vue2LeafletDelayedMarkerCluster'
 
 import optionsController from '../../optionsController'
 
@@ -83,7 +83,7 @@ const PHOTO_MARKER_VIEW_SIZE = 40
 export default {
 	name: 'PhotosLayer',
 	components: {
-		Vue2LeafletMarkerCluster,
+		Vue2LeafletDelayedMarkerCluster,
 		LMarker,
 		LTooltip,
 		LPopup,
@@ -117,6 +117,9 @@ export default {
 				icon: {
 					iconSize: [PHOTO_MARKER_VIEW_SIZE, PHOTO_MARKER_VIEW_SIZE],
 				},
+				chunkedLoading: true,
+				chunkDelay: 200,
+				chunkInterval: 50,
 			},
 			tooltipOptions: {
 				className: 'leaflet-marker-photo-tooltip',

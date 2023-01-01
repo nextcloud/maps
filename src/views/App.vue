@@ -207,7 +207,7 @@ import AppNavigationTracksItem from '../components/AppNavigationTracksItem'
 import AppNavigationDevicesItem from '../components/AppNavigationDevicesItem'
 import AppNavigationMyMapsItem from '../components/AppNavigationMyMapsItem'
 import optionsController from '../optionsController'
-import { getLetterColor, hslToRgb, Timer, getDeviceInfoFromUserAgent2, isComputer, isPhone } from '../utils'
+import { getLetterColor, hslToRgb, Timer, getDeviceInfoFromUserAgent2, isComputer, isPhone, sleep } from '../utils'
 import { binSearch } from '../utils/common'
 import { poiSearchData } from '../utils/poiData'
 import { processGpx } from '../tracksUtils'
@@ -839,10 +839,19 @@ export default {
 				return
 			}
 			this.photosLoading = true
-			network.getPhotos(this.myMapId).then((response) => {
-				this.photos = response.data
+			network.getPhotos(this.myMapId).then(
+				/* async (response) => {
+					for (let i = 0; i * 500 < response.data.length; i++) {
+						this.photos.push(...response.data.slice(i * 500, (i + 1) * 500))
+						await sleep(i * 1000 + 500)
+					}
 				// this.photos = response.data.sort((p1, p2) => (p1.dateTaken || 0) - (p2.dateTaken || 0))
-			}).catch((error) => {
+				} */
+				async (response) => {
+					// this.photos = response.data.sort((p1, p2) => (p1.dateTaken || 0) - (p2.dateTaken || 0))
+					this.photos = response.data
+				}
+			).catch((error) => {
 				console.error(error)
 			}).then(() => {
 				this.photosLoading = false

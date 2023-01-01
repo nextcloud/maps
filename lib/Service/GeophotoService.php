@@ -18,6 +18,7 @@ use OC\Files\Search\SearchQuery;
 use OCP\Files\FileInfo;
 use OCP\Files\Search\ISearchBinaryOperator;
 use OCP\Files\Search\ISearchComparison;
+use OCP\ICacheFactory;
 use OCP\IL10N;
 use OCP\Files\IRootFolder;
 use OCP\Files\Storage\IStorage;
@@ -42,14 +43,19 @@ class GeophotoService {
     private $tracksService;
     private $timeorderedPointSets;
     private $devicesService;
+	private $cacheFactory;
+	private $userId;
+	private \OCP\ICache $photosCache;
+	private \OCP\ICache $nonLocalizedPhotosCache;
 
-    public function __construct (ILogger $logger,
+	public function __construct (ILogger $logger,
                                  IRootFolder $root,
                                  IL10N $l10n,
                                  GeophotoMapper $photoMapper,
                                  IPreview $preview,
                                  TracksService $tracksService,
                                  DevicesService $devicesService,
+								 ICacheFactory $cacheFactory,
                                  $userId) {
         $this->root = $root;
         $this->l10n = $l10n;
@@ -60,6 +66,9 @@ class GeophotoService {
         $this->timeorderedPointSets = null;
         $this->userId = $userId;
         $this->devicesService = $devicesService;
+		$this->cacheFactory = $cacheFactory;
+		$this->photosCache = $this->cacheFactory->createDistributed('maps:photos');
+		$this->nonLocalizedPhotosCache = $this->cacheFactory->createDistributed('maps:nonLocalizedPhotos');
 
     }
 
@@ -74,68 +83,74 @@ class GeophotoService {
 	 * @throws \OC\User\NoUserException
 	 */
      public function getAllFromDB(string $userId, $folder=null, bool $respectNomediaAndNoimage=true, bool $hideImagesOnCustomMaps=true): array {
-		$ignoredPaths = $respectNomediaAndNoimage ? $this->getIgnoredPaths($userId, $folder, $hideImagesOnCustomMaps) : [];
-        $photoEntities = $this->photoMapper->findAll($userId);
-		$userFolder = $this->getFolderForUser($userId);
-        if (is_null($folder)) {
-            $folder = $this->getFolderForUser($userId);
-        }
-        $filesById = [];
-        $cache = $folder->getStorage()->getCache();
-        $previewEnableMimetypes = $this->getPreviewEnabledMimetypes();
-        foreach ($photoEntities as $photoEntity) {
-            $cacheEntry = $cache->get($photoEntity->getFileId());
-			if ($cacheEntry) {
-                // this path is relative to owner's storage
-                //$path = $cacheEntry->getPath();
-                // but we want it relative to current user's storage
-                $files = $folder->getById($photoEntity->getFileId());
-				if (empty($files)) {
-					continue;
-				}
-				$file = array_shift($files);
-                if ($file === null) {
-                    continue;
-                }
-				$path = $userFolder->getRelativePath( $file->getPath());
-				$isIgnored = false;
-				foreach ($ignoredPaths as $ignoredPath) {
-					if (str_starts_with($path, $ignoredPath)) {
-						$isIgnored = true;
-						break;
-					}
-				}
-				if (!$isIgnored) {
-					$isRoot = $file === $userFolder;
+		 $userFolder = $this->getFolderForUser($userId);
+		 if (is_null($folder)) {
+			 $folder = $userFolder;
+		 }
+		 $key = $userId . ':' . $userFolder->getRelativePath($folder->getPath()) . ':' . (string) $respectNomediaAndNoimage . ':' . (string) $hideImagesOnCustomMaps;
+		 $filesById = $this->photosCache->get($key);
+		 if ($filesById === null) {
+			 $ignoredPaths = $respectNomediaAndNoimage ? $this->getIgnoredPaths($userId, $folder, $hideImagesOnCustomMaps) : [];
+			 $photoEntities = $this->photoMapper->findAll($userId);
 
-					$file_object = new \stdClass();
-					$file_object->fileId = $photoEntity->getFileId();
-					$file_object->fileid = $file_object->fileId;
-					$file_object->lat = $photoEntity->getLat();
-					$file_object->lng = $photoEntity->getLng();
-					$file_object->dateTaken = $photoEntity->getDateTaken() ?? \time();
-					$file_object->basename = $isRoot ? '' : $file->getName();
-					$file_object->filename = $this->normalizePath($path);
-					$file_object->etag = $cacheEntry->getEtag();
-//Not working for NC21 as Viewer requires String representation of permissions
-//                $file_object->permissions = $file->getPermissions();
-					$file_object->type = $file->getType();
-					$file_object->mime = $file->getMimetype();
-					$file_object->lastmod = $file->getMTime();
-					$file_object->size = $file->getSize();
-					$file_object->path = $path;
-					$file_object->isReadable = $file->isReadable();
-					$file_object->isUpdateable = $file->isUpdateable();
-					$file_object->isShareable = $file->isShareable();
-					$file_object->isDeletable = $file->isDeletable();
-					$file_object->hasPreview = in_array($cacheEntry->getMimeType(), $previewEnableMimetypes);
-					$filesById[] = $file_object;
-				}
-            }
-        }
-        shuffle($filesById);
-        return $filesById;
-    }
+			 $filesById = [];
+			 $cache = $folder->getStorage()->getCache();
+			 $previewEnableMimetypes = $this->getPreviewEnabledMimetypes();
+			 foreach ($photoEntities as $photoEntity) {
+				 $cacheEntry = $cache->get($photoEntity->getFileId());
+				 if ($cacheEntry) {
+					 // this path is relative to owner's storage
+					 //$path = $cacheEntry->getPath();
+					 //but we want it relative to current user's storage
+					 $files = $folder->getById($photoEntity->getFileId());
+					 if (empty($files)) {
+						 continue;
+					 }
+					 $file = array_shift($files);
+					 if ($file === null) {
+						 continue;
+					 }
+					 $path = $userFolder->getRelativePath($file->getPath());
+					 $isIgnored = false;
+					 foreach ($ignoredPaths as $ignoredPath) {
+						 if (str_starts_with($path, $ignoredPath)) {
+							 $isIgnored = true;
+							 break;
+						 }
+					 }
+					 if (!$isIgnored) {
+						 $isRoot = $file === $userFolder;
+
+						 $file_object = new \stdClass();
+						 $file_object->fileId = $photoEntity->getFileId();
+						 $file_object->fileid = $file_object->fileId;
+						 $file_object->lat = $photoEntity->getLat();
+						 $file_object->lng = $photoEntity->getLng();
+						 $file_object->dateTaken = $photoEntity->getDateTaken() ?? \time();
+						 $file_object->basename = $isRoot ? '' : $file->getName();
+						 $file_object->filename = $this->normalizePath($path);
+						 $file_object->etag = $cacheEntry->getEtag();
+						 //Not working for NC21 as Viewer requires String representation of permissions
+						 //                $file_object->permissions = $file->getPermissions();
+						 $file_object->type = $file->getType();
+						 $file_object->mime = $file->getMimetype();
+						 $file_object->lastmod = $file->getMTime();
+						 $file_object->size = $file->getSize();
+						 $file_object->path = $path;
+						 $file_object->isReadable = $file->isReadable();
+						 $file_object->isUpdateable = $file->isUpdateable();
+						 $file_object->isShareable = $file->isShareable();
+						 $file_object->isDeletable = $file->isDeletable();
+						 $file_object->hasPreview = in_array($cacheEntry->getMimeType(), $previewEnableMimetypes);
+						 $filesById[] = $file_object;
+					 }
+				 }
+			 }
+			 $this->photosCache->set($key, $filesById, 60 * 60 * 24);
+		 }
+		 shuffle($filesById);
+		 return $filesById;
+	 }
 
 	/**
 	 * @param string $userId
@@ -149,68 +164,72 @@ class GeophotoService {
 	 * @throws \OC\User\NoUserException
 	 */
     public function getNonLocalizedFromDB (string $userId, $folder=null, bool $respectNomediaAndNoimage=true, bool $hideImagesOnCustomMaps=true): array {
-		$ignoredPaths = $respectNomediaAndNoimage ? $this->getIgnoredPaths($userId, $folder, $hideImagesOnCustomMaps) : [];
-        $foo = $this->loadTimeorderedPointSets($userId, $folder, $respectNomediaAndNoimage, $hideImagesOnCustomMaps);
-        $photoEntities = $this->photoMapper->findAllNonLocalized($userId);
 		$userFolder = $this->getFolderForUser($userId);
 		if (is_null($folder)) {
 			$folder = $userFolder;
 		}
-        $filesById = [];
-        $cache = $folder->getStorage()->getCache();
-        $previewEnableMimetypes = $this->getPreviewEnabledMimetypes();
-        foreach ($photoEntities as $photoEntity) {
-            $cacheEntry = $cache->get($photoEntity->getFileId());
-            if ($cacheEntry) {
-                // this path is relative to owner's storage
-                //$path = $cacheEntry->getPath();
-                // but we want it relative to current user's storage
-				$files = $folder->getById($photoEntity->getFileId());
-				if (empty($files)) {
-					continue;
-				}
-				$file = array_shift($files);
-				if ($file === null) {
-					continue;
-				}
-				$path = $userFolder->getRelativePath( $file->getPath());
-				$isIgnored = false;
-				foreach ($ignoredPaths as $ignoredPath) {
-					if (str_starts_with($path, $ignoredPath)) {
-						$isIgnored = true;
-						break;
+		$key = $userId . ':' . $userFolder->getRelativePath($folder->getPath()) . ':' . (string) $respectNomediaAndNoimage . ':' . (string) $hideImagesOnCustomMaps;
+		$filesById = $this->nonLocalizedPhotosCache->get($key);
+		if ($filesById === null) {
+			$ignoredPaths = $respectNomediaAndNoimage ? $this->getIgnoredPaths($userId, $folder, $hideImagesOnCustomMaps) : [];
+			$foo = $this->loadTimeorderedPointSets($userId, $folder, $respectNomediaAndNoimage, $hideImagesOnCustomMaps);
+			$photoEntities = $this->photoMapper->findAllNonLocalized($userId);
+			$filesById = [];
+			$cache = $folder->getStorage()->getCache();
+			$previewEnableMimetypes = $this->getPreviewEnabledMimetypes();
+			foreach ($photoEntities as $photoEntity) {
+				$cacheEntry = $cache->get($photoEntity->getFileId());
+				if ($cacheEntry) {
+					// this path is relative to owner's storage
+					//$path = $cacheEntry->getPath();
+					// but we want it relative to current user's storage
+					$files = $folder->getById($photoEntity->getFileId());
+					if (empty($files)) {
+						continue;
+					}
+					$file = array_shift($files);
+					if ($file === null) {
+						continue;
+					}
+					$path = $userFolder->getRelativePath($file->getPath());
+					$isIgnored = false;
+					foreach ($ignoredPaths as $ignoredPath) {
+						if (str_starts_with($path, $ignoredPath)) {
+							$isIgnored = true;
+							break;
+						}
+					}
+					if (!$isIgnored) {
+						$isRoot = $file === $userFolder;
+
+						$date = $photoEntity->getDateTaken() ?? \time();
+						$locations = $this->getLocationGuesses($date);
+						foreach ($locations as $location) {
+							$file_object = new \stdClass();
+							$file_object->fileId = $photoEntity->getFileId();
+							$file_object->fileid = $file_object->fileId;
+							$file_object->path = $this->normalizePath($path);
+							$file_object->hasPreview = in_array($cacheEntry->getMimeType(), $previewEnableMimetypes);
+							$file_object->lat = $location[0];
+							$file_object->lng = $location[1];
+							$file_object->dateTaken = $date;
+							$file_object->basename = $isRoot ? '' : $file->getName();
+							$file_object->filename = $this->normalizePath($path);
+							$file_object->etag = $cacheEntry->getEtag();
+							//Not working for NC21 as Viewer requires String representation of permissions
+							//                $file_object->permissions = $file->getPermissions();
+							$file_object->type = $file->getType();
+							$file_object->mime = $file->getMimetype();
+							$file_object->lastmod = $file->getMTime();
+							$file_object->size = $file->getSize();
+							$file_object->path = $path;
+							$file_object->hasPreview = in_array($cacheEntry->getMimeType(), $previewEnableMimetypes);
+							$filesById[] = $file_object;
+						}
 					}
 				}
-				if (!$isIgnored) {
-					$isRoot = $file === $userFolder;
-
-					$date = $photoEntity->getDateTaken() ?? \time();
-					$locations = $this->getLocationGuesses($date);
-					foreach ($locations as $location) {
-						$file_object = new \stdClass();
-						$file_object->fileId = $photoEntity->getFileId();
-						$file_object->fileid = $file_object->fileId;
-						$file_object->path = $this->normalizePath($path);
-						$file_object->hasPreview = in_array($cacheEntry->getMimeType(), $previewEnableMimetypes);
-						$file_object->lat = $location[0];
-						$file_object->lng = $location[1];
-						$file_object->dateTaken = $date;
-						$file_object->basename = $isRoot ? '' : $file->getName();
-						$file_object->filename = $this->normalizePath($path);
-						$file_object->etag = $cacheEntry->getEtag();
-						//Not working for NC21 as Viewer requires String representation of permissions
-						//                $file_object->permissions = $file->getPermissions();
-						$file_object->type = $file->getType();
-						$file_object->mime = $file->getMimetype();
-						$file_object->lastmod = $file->getMTime();
-						$file_object->size = $file->getSize();
-						$file_object->path = $path;
-						$file_object->hasPreview = in_array($cacheEntry->getMimeType(), $previewEnableMimetypes);
-						$filesById[] = $file_object;
-					}
-				}
-            }
-
+			}
+			$this->nonLocalizedPhotosCache->set($key, $filesById, 60 * 60 * 24);
         }
         shuffle($filesById);
         return $filesById;

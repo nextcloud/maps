@@ -38,8 +38,10 @@ class MyMapsService {
 
     private $logger;
 	private $root;
+	private ICacheFactory $cacheFactory;
+	private \OCP\ICache $myMapsPathsCache;
 
-    public function __construct (ILogger $logger, IRootFolder $root, ICacheFactory $cacheFactory) {
+	public function __construct (ILogger $logger, IRootFolder $root, ICacheFactory $cacheFactory) {
         $this->logger = $logger;
 		$this->root = $root;
 		$this->cacheFactory = $cacheFactory;

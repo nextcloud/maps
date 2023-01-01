@@ -109,6 +109,7 @@ class PhotosControllerTest extends \PHPUnit\Framework\TestCase {
         $this->photosController2 = new PhotosController(
             $this->appName,
             $c->query(IServerContainer::class)->getLogger(),
+			$c->query(IServerContainer::class)->getMemCacheFactory(),
             $this->request,
             $c->query(GeoPhotoService::class),
             $this->photoFileService,

@@ -1,5 +1,5 @@
 <template>
-	<AppNavigationItem
+	<NcAppNavigationItem
 		:icon="loading ? 'icon-loading-small' : 'icon-road'"
 		:title="t('maps', 'My tracks')"
 		:class="{ 'item-disabled': !enabled }"
@@ -8,23 +8,23 @@
 		:force-menu="false"
 		@click="onTracksClick"
 		@update:open="onUpdateOpen">
-		<CounterBubble v-show="enabled && tracks.length"
+		<NcCounterBubble v-show="enabled && tracks.length"
 			slot="counter">
 			{{ tracks.length > 99 ? '99+' : tracks.length }}
-		</CounterBubble>
+		</NcCounterBubble>
 		<template v-if="enabled" slot="actions">
-			<ActionButton
+			<NcActionButton
 				icon="icon-tag"
 				:close-after-click="true"
 				@click="onSortByName">
 				{{ t('maps', 'Sort by name') }}
-			</ActionButton>
-			<ActionButton
+			</NcActionButton>
+			<NcActionButton
 				icon="icon-calendar-dark"
 				:close-after-click="true"
 				@click="onSortByDate">
 				{{ t('maps', 'Sort by date') }}
-			</ActionButton>
+			</NcActionButton>
 		</template>
 		<template slot="default">
 			<b v-show="false">dummy</b>
@@ -39,14 +39,14 @@
 				@elevation="$emit('elevation', $event)"
 				@color="$emit('color', $event)" />
 		</template>
-	</AppNavigationItem>
+	</NcAppNavigationItem>
 </template>
 
 <script>
-import AppNavigationItem from '@nextcloud/vue/dist/Components/AppNavigationItem'
-import ActionButton from '@nextcloud/vue/dist/Components/ActionButton'
+import NcAppNavigationItem from '@nextcloud/vue/dist/Components/NcAppNavigationItem'
+import NcActionButton from '@nextcloud/vue/dist/Components/NcActionButton'
 import AppNavigationTrackItem from './AppNavigationTrackItem'
-import CounterBubble from '@nextcloud/vue/dist/Components/CounterBubble'
+import NcCounterBubble from '@nextcloud/vue/dist/Components/NcCounterBubble'
 
 import optionsController from '../optionsController'
 
@@ -54,10 +54,10 @@ export default {
 	name: 'AppNavigationTracksItem',
 
 	components: {
-		AppNavigationItem,
-		ActionButton,
+		NcAppNavigationItem,
+		NcActionButton,
 		AppNavigationTrackItem,
-		CounterBubble,
+		NcCounterBubble,
 	},
 
 	props: {

@@ -1,6 +1,7 @@
 { "translations": {
-    "Maps" : "Peta",
+    "File not found" : "Berkas tidak ditemukan",
     "Personal" : "Personal",
+    "Maps" : "Peta",
     "Export" : "Ekspor",
     "Delete" : "Hapus",
     "Import" : "Impor",
@@ -43,7 +44,7 @@
     "Move" : "Pindah",
     "Link" : "Tautan",
     "Description" : "Deskrisi",
-    "download" : "unduh",
+    "Download" : "Unduh",
     "Settings" : "Setelan"
 },"pluralForm" :"nplurals=1; plural=0;"
 }

@@ -1,6 +1,7 @@
 { "translations": {
-    "Maps" : "რუკები",
+    "File not found" : "ფაილი ვერ იქნა ნაპოვნი",
     "Personal" : "პირადი",
+    "Maps" : "რუკები",
     "Export" : "ექსპორტი",
     "Delete" : "წაშლა",
     "Import" : "იმპორტი",
@@ -43,7 +44,7 @@
     "Move" : "გადატანა",
     "Link" : "ბმული",
     "Description" : "აღწერილობა",
-    "download" : "ჩამოტვირთვა",
+    "Download" : "ჩამოტვირთვა",
     "Settings" : "პარამეტრები"
 },"pluralForm" :"nplurals=2; plural=(n!=1);"
 }

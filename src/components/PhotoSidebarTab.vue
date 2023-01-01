@@ -44,6 +44,11 @@ export default {
 		size() {
 			return this.photo.size
 		},
+		cssProps() {
+			return {
+				'--preview-url': (this.previewUrl),
+			}
+		},
 	},
 
 	watch: {
@@ -57,6 +62,6 @@ export default {
 <style lang="scss" scoped>
 #photo-tab {
 	padding: 0 10px 0 10px;
-	background-image: "previewUrl";
+	background-image: var(--preview-url);
 }
 </style>

@@ -1,8 +1,9 @@
 OC.L10N.register(
     "maps",
     {
-    "Maps" : "Mapes",
+    "File not found" : "Nun s'alcontró'l ficheru",
     "Personal" : "Personal",
+    "Maps" : "Mapes",
     "Export" : "Esportar",
     "Delete" : "Desaniciar",
     "Import" : "Importar",
@@ -43,6 +44,7 @@ OC.L10N.register(
     "Move" : "Mover",
     "Link" : "Link",
     "Description" : "Descripción",
+    "Download" : "Baxar",
     "Settings" : "Settings"
 },
 "nplurals=2; plural=(n != 1);");

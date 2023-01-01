@@ -1,38 +1,38 @@
 <template>
-	<AppNavigationItem
+	<NcAppNavigationItem
 		:icon="loading ? 'icon-loading-small' : 'icon-category-multimedia'"
 		:title="t('maps', 'My photos')"
 		:class="{ 'item-disabled': !enabled }"
 		:allow-collapse="false"
 		:force-menu="enabled"
 		@click="$emit('photos-clicked')">
-		<CounterBubble v-show="enabled && photos.length"
+		<NcCounterBubble v-show="enabled && photos.length"
 			slot="counter">
 			{{ photos.length > 99 ? '99+' : photos.length }}
-		</CounterBubble>
+		</NcCounterBubble>
 		<template v-if="enabled" slot="actions">
-			<ActionButton
+			<NcActionButton
 				:icon="draggable ? 'icon-hand' : 'icon-hand-slash'"
 				:close-after-click="false"
 				@click="$emit('draggable-clicked')">
 				{{ draggable ? t('maps', 'Disable photo drag') : t('maps', 'Enable photo drag') }}
-			</ActionButton>
+			</NcActionButton>
 		</template>
-	</AppNavigationItem>
+	</NcAppNavigationItem>
 </template>
 
 <script>
-import AppNavigationItem from '@nextcloud/vue/dist/Components/AppNavigationItem'
-import ActionButton from '@nextcloud/vue/dist/Components/ActionButton'
-import CounterBubble from '@nextcloud/vue/dist/Components/CounterBubble'
+import NcAppNavigationItem from '@nextcloud/vue/dist/Components/NcAppNavigationItem'
+import NcActionButton from '@nextcloud/vue/dist/Components/NcActionButton'
+import NcCounterBubble from '@nextcloud/vue/dist/Components/NcCounterBubble'
 
 export default {
 	name: 'AppNavigationPhotosItem',
 
 	components: {
-		AppNavigationItem,
-		ActionButton,
-		CounterBubble,
+		NcAppNavigationItem,
+		NcActionButton,
+		NcCounterBubble,
 	},
 
 	props: {

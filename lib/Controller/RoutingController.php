@@ -48,7 +48,7 @@ class RoutingController extends Controller {
     private $dbtype;
     private $dbdblquotes;
     private $defaultDeviceId;
-    private $trans;
+    private $l;
     private $logger;
     private $dateTimeZone;
     protected $appName;
@@ -61,7 +61,7 @@ class RoutingController extends Controller {
                                 IAppManager $appManager,
                                 IUserManager $userManager,
                                 IGroupManager $groupManager,
-                                IL10N $trans,
+                                IL10N $l,
                                 ILogger $logger,
                                 IDateTimeZone $dateTimeZone,
                                 $UserId){
@@ -73,7 +73,7 @@ class RoutingController extends Controller {
         $this->userId = $UserId;
         $this->userManager = $userManager;
         $this->groupManager = $groupManager;
-        $this->trans = $trans;
+        $this->l = $l;
         $this->dbtype = $config->getSystemValue('dbtype');
         // IConfig object
         $this->config = $config;
@@ -84,10 +84,18 @@ class RoutingController extends Controller {
         $this->shareManager = $shareManager;
     }
 
-    /**
-     * @NoAdminRequired
-     */
-    public function exportRoute($type, $coords, $name, $totDist, $totTime) {
+	/**
+	 * @NoAdminRequired
+	 * @param $type
+	 * @param $coords
+	 * @param $name
+	 * @param $totDist
+	 * @param $totTime
+	 * @return DataResponse
+	 * @throws \OCP\Files\NotFoundException
+	 * @throws \OCP\Files\NotPermittedException
+	 */
+    public function exportRoute($type, $coords, $name, $totDist, $totTime): DataResponse {
         // create /Maps directory if necessary
         $userFolder = $this->userfolder;
         if (!$userFolder->nodeExists('/Maps')) {
@@ -96,16 +104,16 @@ class RoutingController extends Controller {
         if ($userFolder->nodeExists('/Maps')) {
             $mapsFolder = $userFolder->get('/Maps');
             if ($mapsFolder->getType() !== \OCP\Files\FileInfo::TYPE_FOLDER) {
-                $response = new DataResponse('/Maps is not a directory', 400);
+                $response = new DataResponse($this->l->t('/Maps is not a directory'), 400);
                 return $response;
             }
             else if (!$mapsFolder->isCreatable()) {
-                $response = new DataResponse('/Maps is not writeable', 400);
+                $response = new DataResponse($this->l->t('/Maps directory is not writeable'), 400);
                 return $response;
             }
         }
         else {
-            $response = new DataResponse('Impossible to create /Maps', 400);
+            $response = new DataResponse($this->l->t('Impossible to create /Maps directory'), 400);
             return $response;
         }
 

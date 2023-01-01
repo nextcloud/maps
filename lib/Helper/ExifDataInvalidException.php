@@ -14,6 +14,6 @@ namespace OCA\Maps\Helper;
 /**
  * Class GeoPhotoException
  */
-class ExifDataException extends \Exception
+class ExifDataInvalidException extends \Exception
 {
 }

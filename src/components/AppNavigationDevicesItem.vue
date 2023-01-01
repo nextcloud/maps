@@ -1,5 +1,5 @@
 <template>
-	<AppNavigationItem
+	<NcAppNavigationItem
 		:icon="loading ? 'icon-loading-small' : 'icon-phone'"
 		:title="t('maps', 'My devices')"
 		:class="{ 'item-disabled': !enabled }"
@@ -8,38 +8,38 @@
 		:force-menu="false"
 		@click="onClick"
 		@update:open="onUpdateOpen">
-		<CounterBubble v-show="enabled && devices.length"
+		<NcCounterBubble v-show="enabled && devices.length"
 			slot="counter">
 			{{ devices.length > 99 ? '99+' : devices.length }}
-		</CounterBubble>
+		</NcCounterBubble>
 		<template v-if="enabled" slot="actions">
-			<ActionButton
+			<NcActionButton
 				icon="icon-download"
 				:close-after-click="true"
 				@click="$emit('refresh-positions')">
 				{{ t('maps', 'Refresh positions') }}
-			</ActionButton>
-			<ActionButton
+			</NcActionButton>
+			<NcActionButton
 				icon="icon-checkmark"
 				@click="$emit('toggle-all')">
 				{{ t('maps', 'Toggle all') }}
-			</ActionButton>
-			<ActionButton
+			</NcActionButton>
+			<NcActionButton
 				icon="icon-edit"
 				@click="$emit('export-all')">
 				{{ t('maps', 'Export all') }}
-			</ActionButton>
-			<ActionButton
+			</NcActionButton>
+			<NcActionButton
 				icon="icon-folder"
 				@click="$emit('import')">
 				{{ t('maps', 'Import devices') }}
-			</ActionButton>
-			<ActionButton
+			</NcActionButton>
+			<NcActionButton
 				icon="icon-delete"
 				:close-after-click="true"
 				@click="onDelete">
 				{{ t('maps', 'Delete all') }}
-			</ActionButton>
+			</NcActionButton>
 		</template>
 		<template slot="default">
 			<b v-show="false">dummy</b>
@@ -57,13 +57,13 @@
 				@toggle-history="$emit('toggle-history', $event)"
 				@color="$emit('color', $event)" />
 		</template>
-	</AppNavigationItem>
+	</NcAppNavigationItem>
 </template>
 
 <script>
-import AppNavigationItem from '@nextcloud/vue/dist/Components/AppNavigationItem'
-import ActionButton from '@nextcloud/vue/dist/Components/ActionButton'
-import CounterBubble from '@nextcloud/vue/dist/Components/CounterBubble'
+import NcAppNavigationItem from '@nextcloud/vue/dist/Components/NcAppNavigationItem'
+import NcActionButton from '@nextcloud/vue/dist/Components/NcActionButton'
+import NcCounterBubble from '@nextcloud/vue/dist/Components/NcCounterBubble'
 
 import AppNavigationDeviceItem from './AppNavigationDeviceItem'
 import optionsController from '../optionsController'
@@ -72,9 +72,9 @@ export default {
 	name: 'AppNavigationDevicesItem',
 
 	components: {
-		AppNavigationItem,
-		ActionButton,
-		CounterBubble,
+		NcAppNavigationItem,
+		NcActionButton,
+		NcCounterBubble,
 		AppNavigationDeviceItem,
 	},
 

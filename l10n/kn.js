@@ -1,8 +1,9 @@
 OC.L10N.register(
     "maps",
     {
-    "Maps" : "ನಕಾಶೆ",
+    "File not found" : "ಕಡತ ಕಂಡುಬಂದಿಲ್ಲ",
     "Personal" : "﻿ವೈಯಕ್ತಿಕ",
+    "Maps" : "ನಕಾಶೆ",
     "Export" : "ರಫ್ತು",
     "Delete" : "﻿ಅಳಿಸಿ",
     "Import" : "ಆಮದು",
@@ -28,6 +29,7 @@ OC.L10N.register(
     "Share link" : "ಸಂಪರ್ಕ ಕೊಂಡಿಯನ್ನು  ﻿ಹಂಚಿಕೊಳ್ಳಬಹುದು",
     "Move" : "Move",
     "Link" : "ಸಂಪರ್ಕ ಕೊಂಡಿ",
+    "Download" : "ಪ್ರತಿಯನ್ನು ಸ್ಥಳೀಯವಾಗಿ ಉಳಿಸಿಕೊಳ್ಳಿ",
     "Settings" : "ಆಯ್ಕೆ"
 },
 "nplurals=2; plural=(n > 1);");

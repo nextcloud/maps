@@ -7,7 +7,7 @@
 				type="text"
 				:placeholder="namePH">
 			<span class="icon icon-category-organization" />
-			<Multiselect
+			<NcMultiselect
 				ref="select"
 				v-model="selectedCategory"
 				class="category-select"
@@ -31,7 +31,7 @@
 						{{ option ? option.catid : '' }}
 					</div>
 				</template>
-			</Multiselect>
+			</NcMultiselect>
 			<span class="icon icon-comment" />
 			<textarea v-model="comment" :placeholder="commentPH" rows="1" />
 		</div>
@@ -49,13 +49,13 @@
 </template>
 
 <script>
-import Multiselect from '@nextcloud/vue/dist/Components/Multiselect'
+import NcMultiselect from '@nextcloud/vue/dist/Components/NcMultiselect'
 
 export default {
 	name: 'FavoriteEditionForm',
 
 	components: {
-		Multiselect,
+		NcMultiselect,
 	},
 
 	props: {

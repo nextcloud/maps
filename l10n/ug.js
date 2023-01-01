@@ -28,6 +28,7 @@ OC.L10N.register(
     "Move" : "Move",
     "Link" : "Link",
     "Description" : "چۈشەندۈرۈش",
+    "Download" : "چۈشۈر",
     "Settings" : "تەڭشەكلەر"
 },
 "nplurals=2; plural=(n != 1);");

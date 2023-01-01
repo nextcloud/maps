@@ -1,8 +1,9 @@
 OC.L10N.register(
     "maps",
     {
-    "Maps" : "Peta",
+    "File not found" : "Berkas tidak ditemukan",
     "Personal" : "Personal",
+    "Maps" : "Peta",
     "Export" : "Ekspor",
     "Delete" : "Hapus",
     "Import" : "Impor",
@@ -45,7 +46,7 @@ OC.L10N.register(
     "Move" : "Pindah",
     "Link" : "Tautan",
     "Description" : "Deskrisi",
-    "download" : "unduh",
+    "Download" : "Unduh",
     "Settings" : "Setelan"
 },
 "nplurals=1; plural=0;");

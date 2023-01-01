@@ -1,6 +1,7 @@
 { "translations": {
-    "Maps" : "Kaardid",
+    "File not found" : "Faili ei leitud",
     "Personal" : "Isiklik",
+    "Maps" : "Kaardid",
     "Export" : "Ekspordi",
     "Delete" : "Kustuta",
     "Delete all" : "Kustuta kõik",
@@ -50,7 +51,7 @@
     "Dentist" : "Hambaarst",
     "Link" : "Link",
     "Description" : "Kirjeldus",
-    "download" : "laadi alla",
+    "Download" : "Lae alla",
     "Your photos" : "Sinu fotod",
     "Settings" : "Seaded"
 },"pluralForm" :"nplurals=2; plural=(n != 1);"

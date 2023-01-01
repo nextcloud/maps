@@ -1,0 +1,5 @@
+blank_issues_enabled: false
+contact_links:
+    - name: ❓ Community Support and Help
+      url: https://help.nextcloud.com/c/apps/maps/158
+      about: Configuration, webserver/proxy or performance issues and other questions

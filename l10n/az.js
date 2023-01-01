@@ -1,8 +1,8 @@
 OC.L10N.register(
     "maps",
     {
-    "Maps" : "Xəritələr",
     "Personal" : "Şəxsi",
+    "Maps" : "Xəritələr",
     "Export" : "Çıxarış",
     "Delete" : "Sil",
     "Import" : "Əlavə et",
@@ -34,6 +34,7 @@ OC.L10N.register(
     "Move" : "Move",
     "Link" : "Link",
     "Description" : "Açıqlanma",
+    "Download" : "Yüklə",
     "Settings" : "Quraşdırmalar"
 },
 "nplurals=2; plural=(n != 1);");

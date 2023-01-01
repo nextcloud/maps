@@ -36,7 +36,7 @@ class FavoritesApiController extends ApiController {
     private $dbtype;
     private $dbdblquotes;
     private $defaultDeviceId;
-    private $trans;
+    private $l;
     private $logger;
     private $favoritesService;
     protected $appName;
@@ -49,7 +49,7 @@ class FavoritesApiController extends ApiController {
                                 IAppManager $appManager,
                                 IUserManager $userManager,
                                 IGroupManager $groupManager,
-                                IL10N $trans,
+                                IL10N $l,
                                 ILogger $logger,
                                 FavoritesService $favoritesService,
                                 $UserId) {
@@ -64,7 +64,7 @@ class FavoritesApiController extends ApiController {
         $this->userId = $UserId;
         $this->userManager = $userManager;
         $this->groupManager = $groupManager;
-        $this->trans = $trans;
+        $this->l = $l;
         $this->dbtype = $config->getSystemValue('dbtype');
         // IConfig object
         $this->config = $config;
@@ -75,12 +75,15 @@ class FavoritesApiController extends ApiController {
         $this->shareManager = $shareManager;
     }
 
-    /**
-     * @NoAdminRequired
-     * @NoCSRFRequired
-     * @CORS
-     */
-    public function getFavorites($apiversion, $pruneBefore = 0) {
+	/**
+	 * @NoAdminRequired
+	 * @NoCSRFRequired
+	 * @CORS
+	 * @param $apiversion
+	 * @param int $pruneBefore
+	 * @return DataResponse
+	 */
+    public function getFavorites($apiversion, int $pruneBefore = 0): DataResponse {
         $now = new \DateTime();
 
         $favorites = $this->favoritesService->getFavoritesFromDB($this->userId, $pruneBefore);
@@ -94,27 +97,43 @@ class FavoritesApiController extends ApiController {
             ->setETag($etag);
     }
 
-    /**
-     * @NoAdminRequired
-     * @NoCSRFRequired
-     * @CORS
-     */
-    public function addFavorite($apiversion, $name, $lat, $lng, $category, $comment, $extensions) {
+	/**
+	 * @NoAdminRequired
+	 * @NoCSRFRequired
+	 * @CORS
+	 * @param $apiversion
+	 * @param $name
+	 * @param $lat
+	 * @param $lng
+	 * @param $category
+	 * @param $comment
+	 * @param $extensions
+	 * @return DataResponse
+	 */
+    public function addFavorite($apiversion, $name, $lat, $lng, $category, $comment, $extensions): DataResponse {
         if (is_numeric($lat) && is_numeric($lng)) {
             $favoriteId = $this->favoritesService->addFavoriteToDB($this->userId, $name, $lat, $lng, $category, $comment, $extensions);
             $favorite = $this->favoritesService->getFavoriteFromDB($favoriteId);
             return new DataResponse($favorite);
         } else {
-            return new DataResponse('invalid values', 400);
+            return new DataResponse($this->l->t('Invalid values'), 400);
         }
     }
 
-    /**
-     * @NoAdminRequired
-     * @NoCSRFRequired
-     * @CORS
-     */
-    public function editFavorite($id, $name, $lat, $lng, $category, $comment, $extensions) {
+	/**
+	 * @NoAdminRequired
+	 * @NoCSRFRequired
+	 * @CORS
+	 * @param $id
+	 * @param $name
+	 * @param $lat
+	 * @param $lng
+	 * @param $category
+	 * @param $comment
+	 * @param $extensions
+	 * @return DataResponse
+	 */
+    public function editFavorite($id, $name, $lat, $lng, $category, $comment, $extensions): DataResponse {
         $favorite = $this->favoritesService->getFavoriteFromDB($id, $this->userId);
         if ($favorite !== null) {
             if (($lat === null || is_numeric($lat)) &&
@@ -124,25 +143,27 @@ class FavoritesApiController extends ApiController {
                 $editedFavorite = $this->favoritesService->getFavoriteFromDB($id);
                 return new DataResponse($editedFavorite);
             } else {
-                return new DataResponse('invalid values', 400);
+                return new DataResponse($this->l->t('Invalid values'), 400);
             }
         } else {
-            return new DataResponse('no such favorite', 400);
+            return new DataResponse($this->l->t('No such favorite'), 400);
         }
     }
 
-    /**
-     * @NoAdminRequired
-     * @NoCSRFRequired
-     * @CORS
-     */
-    public function deleteFavorite($id) {
+	/**
+	 * @NoAdminRequired
+	 * @NoCSRFRequired
+	 * @CORS
+	 * @param $id
+	 * @return DataResponse
+	 */
+    public function deleteFavorite($id): DataResponse {
         $favorite = $this->favoritesService->getFavoriteFromDB($id, $this->userId);
         if ($favorite !== null) {
             $this->favoritesService->deleteFavoriteFromDB($id);
             return new DataResponse('DELETED');
         } else {
-            return new DataResponse('no such favorite', 400);
+            return new DataResponse($this->l->t('No such favorite'), 400);
         }
     }
 

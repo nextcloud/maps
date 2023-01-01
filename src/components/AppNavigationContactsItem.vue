@@ -1,5 +1,5 @@
 <template>
-	<AppNavigationItem
+	<NcAppNavigationItem
 		:icon="loading ? 'icon-loading-small' : 'icon-group'"
 		:title="t('maps', 'My contacts')"
 		:class="{ 'item-disabled': !enabled }"
@@ -8,26 +8,26 @@
 		:force-menu="false"
 		@click="onContactsClick"
 		@update:open="onUpdateOpen">
-		<CounterBubble v-show="enabled && contacts.length"
+		<NcCounterBubble v-show="enabled && contacts.length"
 			slot="counter">
 			{{ contacts.length > 99 ? '99+' : contacts.length }}
-		</CounterBubble>
+		</NcCounterBubble>
 		<template v-if="enabled" slot="actions">
-			<ActionButton
+			<NcActionButton
 				icon="icon-checkmark"
 				@click="onToggleAllClick">
 				{{ t('maps', 'Toggle all') }}
-			</ActionButton>
-			<ActionButton
+			</NcActionButton>
+			<NcActionButton
 				icon="icon-search"
 				:close-after-click="true"
 				@click="onZoomAllClick">
 				{{ t('maps', 'Zoom') }}
-			</ActionButton>
+			</NcActionButton>
 		</template>
 		<template slot="default">
 			<b v-show="false">dummy</b>
-			<AppNavigationItem
+			<NcAppNavigationItem
 				v-for="(g, gid) in groups"
 				:key="gid"
 				icon="icon-group"
@@ -36,37 +36,37 @@
 				:allow-collapse="false"
 				:force-menu="false"
 				@click="onGroupClick(gid)">
-				<CounterBubble v-show="enabled && g.enabled"
+				<NcCounterBubble v-show="enabled && g.enabled"
 					slot="counter">
 					{{ g.counter > 99 ? '99+' : g.counter }}
-				</CounterBubble>
+				</NcCounterBubble>
 				<template slot="actions">
-					<ActionButton v-if="enabled && g.enabled"
+					<NcActionButton v-if="enabled && g.enabled"
 						icon="icon-search"
 						:disabled="!g.enabled || g.counter === 0"
 						:close-after-click="true"
 						@click="onZoomGroupClick(gid)">
 						{{ t('maps', 'Zoom') }}
-					</ActionButton>
+					</NcActionButton>
 				</template>
-			</AppNavigationItem>
+			</NcAppNavigationItem>
 		</template>
-	</AppNavigationItem>
+	</NcAppNavigationItem>
 </template>
 
 <script>
-import AppNavigationItem from '@nextcloud/vue/dist/Components/AppNavigationItem'
-import ActionButton from '@nextcloud/vue/dist/Components/ActionButton'
-import CounterBubble from '@nextcloud/vue/dist/Components/CounterBubble'
+import NcAppNavigationItem from '@nextcloud/vue/dist/Components/NcAppNavigationItem'
+import NcActionButton from '@nextcloud/vue/dist/Components/NcActionButton'
+import NcCounterBubble from '@nextcloud/vue/dist/Components/NcCounterBubble'
 import optionsController from '../optionsController'
 
 export default {
 	name: 'AppNavigationContactsItem',
 
 	components: {
-		AppNavigationItem,
-		ActionButton,
-		CounterBubble,
+		NcAppNavigationItem,
+		NcActionButton,
+		NcCounterBubble,
 	},
 
 	props: {

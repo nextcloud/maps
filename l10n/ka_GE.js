@@ -1,8 +1,9 @@
 OC.L10N.register(
     "maps",
     {
-    "Maps" : "რუკები",
+    "File not found" : "ფაილი ვერ იქნა ნაპოვნი",
     "Personal" : "პირადი",
+    "Maps" : "რუკები",
     "Export" : "ექსპორტი",
     "Delete" : "წაშლა",
     "Import" : "იმპორტი",
@@ -45,7 +46,7 @@ OC.L10N.register(
     "Move" : "გადატანა",
     "Link" : "ბმული",
     "Description" : "აღწერილობა",
-    "download" : "ჩამოტვირთვა",
+    "Download" : "ჩამოტვირთვა",
     "Settings" : "პარამეტრები"
 },
 "nplurals=2; plural=(n!=1);");

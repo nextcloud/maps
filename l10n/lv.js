@@ -1,8 +1,9 @@
 OC.L10N.register(
     "maps",
     {
-    "Maps" : "Karte",
+    "File not found" : "Datne nav atrasta",
     "Personal" : "Personīgs",
+    "Maps" : "Karte",
     "Export" : "Eksportēt",
     "Delete" : "Dzēst",
     "Import" : "Importēt",
@@ -17,6 +18,7 @@ OC.L10N.register(
     "Comment" : "Komentārs",
     "Close" : "Aizvērt",
     "Favorite" : "Favorīts",
+    "Sidebar" : "Sānjosla",
     "End" : "Beigas",
     "Name" : "Vārds",
     "Add" : "Pievienot",
@@ -38,6 +40,7 @@ OC.L10N.register(
     "Details" : "Detaļas",
     "Phone" : "Tālrunis",
     "Not grouped" : "Negrupēts",
+    "Failed to save settings" : "Neizdevās saglabāt iestatījumus",
     "All contacts" : "Visi kontakti",
     "Share link" : "Koplietot saiti",
     "Copy link" : "Kopēt saiti",
@@ -45,6 +48,7 @@ OC.L10N.register(
     "Move" : "Pārvietot",
     "Link" : "Saite",
     "Description" : "Apraksts",
+    "Download" : "Lejupielādēt",
     "Your photos" : "Jūsu bildes",
     "Hide all" : "Slēpt visu",
     "Settings" : "Iestatījumi"

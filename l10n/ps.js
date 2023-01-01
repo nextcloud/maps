@@ -1,6 +1,7 @@
 OC.L10N.register(
     "maps",
     {
+    "File not found" : "فایل نشته",
     "Personal" : "شخصي",
     "Delete" : "ړنګول",
     "Rename" : "نوم بدلول",
@@ -22,6 +23,7 @@ OC.L10N.register(
     "Copy link" : "لېنک کاپي کول",
     "Move" : "انتقال",
     "Link" : "لېنک",
+    "Download" : "ښکته کول",
     "Settings" : "سمونې"
 },
 "nplurals=2; plural=(n != 1);");

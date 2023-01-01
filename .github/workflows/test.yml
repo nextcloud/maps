@@ -12,17 +12,8 @@ jobs:
         runs-on: ubuntu-latest
         strategy:
             matrix:
-                php-versions: [7.3, 7.4]
-                nextcloud-versions: ['stable21', 'stable22', 'stable23']
-                include:
-                    - php-versions: 7.4
-                      nextcloud-versions: stable24
-                    - php-versions: 8.0
-                      nextcloud-versions: stable24
-                    - php-versions: 7.4
-                      nextcloud-versions: master
-                    - php-versions: 8.0
-                      nextcloud-versions: master
+                php-versions: [7.4, 8.0, 8.1]
+                nextcloud-versions: ['stable25']
         name: Nextcloud ${{ matrix.nextcloud-versions }} php${{ matrix.php-versions }} unit tests
         steps:
             - name: Set up php${{ matrix.php-versions }}
@@ -41,10 +32,6 @@ jobs:
               working-directory: nextcloud/apps
             - name: Enable Viewer
               run: php -f nextcloud/occ app:enable viewer
-            - name: Fix php-parser on stable20 incompatibility with phpunit 9.3+
-              if: ${{ matrix.nextcloud-versions == 'stable20' }}
-              working-directory: nextcloud/3rdparty
-              run: composer require nikic/php-parser:4.10
             - name: Checkout Maps
               uses: actions/checkout@v3
               with:
@@ -56,13 +43,20 @@ jobs:
               working-directory: nextcloud
               run: php -f occ app:enable maps
             - name: Run tests
+              if: ${{ always() && matrix.php-versions != 8.1 }}
               working-directory: nextcloud/apps/maps
               run: composer run test:unit
               env:
                   XDEBUG_MODE: coverage
+            - name: Run tests
+              if: ${{ always() && matrix.php-versions == 8.1 }}
+              working-directory: nextcloud/apps/maps
+              run: composer run test:unit
+              env:
+                  XDEBUG_MODE: off
             - name: Report coverage
               uses: codecov/codecov-action@v3.0.0
-              if: ${{ always() && matrix.nextcloud-versions == 'master' }}
+              if: ${{ always() && matrix.nextcloud-versions == 'master' && matrix.php-versions != 8.1}}
               with:
                   file: ./nextcloud/apps/maps/tests/clover.unit.xml
                   flags: unittests

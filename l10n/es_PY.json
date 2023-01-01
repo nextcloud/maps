@@ -1,6 +1,7 @@
 { "translations": {
-    "Maps" : "Mapas",
+    "File not found" : "Archivo no encontrado",
     "Personal" : "Personal",
+    "Maps" : "Mapas",
     "Export" : "Exportar",
     "Delete" : "Borrar",
     "Import" : "Importar",
@@ -43,8 +44,8 @@
     "Move" : "Mover",
     "Link" : "Liga",
     "Description" : "Descripción",
-    "download" : "descargar",
+    "Download" : "Descargar",
     "Your photos" : "Tus fotos",
     "Settings" : "Configuraciones "
-},"pluralForm" :"nplurals=2; plural=(n != 1);"
+},"pluralForm" :"nplurals=3; plural=n == 1 ? 0 : n != 0 && n % 1000000 == 0 ? 1 : 2;"
 }

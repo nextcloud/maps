@@ -20,19 +20,19 @@
 				ref="clusterPopup"
 				class="popup-favorite-wrapper"
 				:options="clusterPopupOptions">
-				<ActionButton icon="icon-delete" @click="onDeleteClusterClick">
+				<NcActionButton icon="icon-delete" @click="onDeleteClusterClick">
 					{{ t('maps', 'Delete favorites') }}
-				</ActionButton>
-				<ActionButton icon="icon-search" @click="onZoomClusterClick">
+				</NcActionButton>
+				<NcActionButton icon="icon-search" @click="onZoomClusterClick">
 					{{ t('maps', 'Zoom on bounds') }}
-				</ActionButton>
+				</NcActionButton>
 			</LPopup>
 		</LMarker>
 	</Vue2LeafletMarkerCluster>
 </template>
 
 <script>
-import ActionButton from '@nextcloud/vue/dist/Components/ActionButton'
+import NcActionButton from '@nextcloud/vue/dist/Components/NcActionButton'
 
 import L from 'leaflet'
 import { LMarker, LPopup } from 'vue2-leaflet'
@@ -50,7 +50,7 @@ export default {
 		LMarker,
 		LPopup,
 		Vue2LeafletMarkerCluster,
-		ActionButton,
+		NcActionButton,
 		FavoriteMarker,
 	},
 

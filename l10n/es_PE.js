@@ -1,8 +1,9 @@
 OC.L10N.register(
     "maps",
     {
-    "Maps" : "Mapas",
+    "File not found" : "Archivo no encontrado",
     "Personal" : "Personal",
+    "Maps" : "Mapas",
     "Export" : "Exportar",
     "Delete" : "Borrar",
     "Import" : "Importar",
@@ -26,6 +27,7 @@ OC.L10N.register(
     "Date" : "Fecha",
     "Update" : "Actualizar",
     "Yes" : "Sí",
+    "Open" : "Abrir",
     "Closed" : "Cerrado",
     "Search" : "Buscar",
     "File" : "Archivo",
@@ -44,7 +46,7 @@ OC.L10N.register(
     "Move" : "Mover",
     "Link" : "Liga",
     "Description" : "Descripción",
-    "download" : "descargar",
+    "Download" : "Descargar",
     "Settings" : "Configuraciones "
 },
-"nplurals=2; plural=(n != 1);");
+"nplurals=3; plural=n == 1 ? 0 : n != 0 && n % 1000000 == 0 ? 1 : 2;");

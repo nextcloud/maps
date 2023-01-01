@@ -1,6 +1,7 @@
 OC.L10N.register(
     "maps",
     {
+    "File not found" : "Fann ikkje fila",
     "Personal" : "Personleg",
     "Export" : "Eksporter",
     "Delete" : "Ta bort",
@@ -20,6 +21,7 @@ OC.L10N.register(
     "Add to favorites" : "Add to favorites",
     "Home" : "Heim",
     "Work" : "Arbeid",
+    "Device" : "Eining",
     "Date" : "Date",
     "Update" : "Oppdater",
     "Yes" : "Ja",
@@ -31,9 +33,11 @@ OC.L10N.register(
     "Phone" : "Telefonnummer",
     "Not grouped" : "Ikkje gruppert",
     "Share link" : "Del lenkje",
+    "Copy link" : "Kopier lenkje",
     "Move" : "Move",
     "Link" : "Lenkje",
     "Description" : "Skildring",
+    "Download" : "Last ned",
     "Settings" : "Instillingar"
 },
 "nplurals=2; plural=(n != 1);");

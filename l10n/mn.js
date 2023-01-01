@@ -1,8 +1,9 @@
 OC.L10N.register(
     "maps",
     {
-    "Maps" : "Газрын зураг",
+    "File not found" : "Файл олдсонгүй",
     "Personal" : "Хувийн",
+    "Maps" : "Газрын зураг",
     "Export" : "Экспорт",
     "Delete" : "Устгах",
     "Import" : "Импорт",
@@ -44,6 +45,7 @@ OC.L10N.register(
     "Move" : "Зөөх",
     "Link" : "Холбоос",
     "Description" : "Тодорхойлолт",
+    "Download" : "Татах",
     "Your photos" : "Таны зурагнууд ",
     "Settings" : "Тохиргоо"
 },

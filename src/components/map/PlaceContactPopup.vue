@@ -21,7 +21,7 @@
 				<label for="userMultiselect">
 					<span class="icon icon-user" />
 				</label>
-				<Multiselect
+				<NcMultiselect
 					id="userMultiselect"
 					ref="userMultiselect"
 					v-model="selectedContact"
@@ -40,7 +40,7 @@
 							:user="option.FN" />
 						{{ option.FN }}
 					</template>
-				</Multiselect>
+				</NcMultiselect>
 			</div>
 			<div class="address-type"
 				:title="t('maps', 'Address type')">
@@ -74,8 +74,8 @@ import { generateUrl } from '@nextcloud/router'
 import { getCurrentUser } from '@nextcloud/auth'
 
 import { LMarker, LPopup, LIcon } from 'vue2-leaflet'
-import Multiselect from '@nextcloud/vue/dist/Components/Multiselect'
-import Avatar from '@nextcloud/vue/dist/Components/Avatar'
+import NcMultiselect from '@nextcloud/vue/dist/Components/NcMultiselect'
+import NcAvatar from '@nextcloud/vue/dist/Components/NcAvatar'
 
 import { formatAddress } from '../../utils'
 import { searchContacts, geocode, searchAddress } from '../../network'
@@ -86,8 +86,8 @@ export default {
 		LMarker,
 		LPopup,
 		LIcon,
-		Multiselect,
-		Avatar,
+		NcMultiselect,
+		NcAvatar,
 	},
 
 	props: {

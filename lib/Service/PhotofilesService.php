@@ -13,7 +13,8 @@
 namespace OCA\Maps\Service;
 
 use lsolesen\pel\PelEntryTime;
-use OCA\Maps\Helper\ExifDataException;
+use OCA\Maps\Helper\ExifDataInvalidException;
+use OCA\Maps\Helper\ExifDataNoLocationException;
 use OCA\Maps\Helper\ExifGeoData;
 use OCP\Files\FileInfo;
 use OCP\IL10N;
@@ -64,12 +65,16 @@ class PhotofilesService {
         $this->jobList = $jobList;
     }
 
-    public function rescan($userId) {
+    public function rescan($userId, $inBackground=true) {
         $userFolder = $this->root->getUserFolder($userId);
         $photos = $this->gatherPhotoFiles($userFolder, true);
         $this->photoMapper->deleteAll($userId);
         foreach ($photos as $photo) {
-            $this->addPhoto($photo, $userId);
+			if ($inBackground) {
+				$this->addPhoto($photo, $userId);
+			} else {
+				$this->addPhotoNow($photo, $userId);
+			}
             yield $photo->getPath();
         }
     }
@@ -394,10 +399,12 @@ class PhotofilesService {
         try{
             $exif_geo_data = ExifGeoData::get($path);
             $exif_geo_data->validate(true);
-        }catch(ExifDataException $e){
+        }catch(ExifDataInvalidException $e){
             $exif_geo_data = null;
             $this->logger->notice($e->getMessage(), ['code'=>$e->getCode(),'path'=>$path]);
-        }catch(\Throwable $f){
+		}catch(ExifDataNoLocationException $e){
+			$this->logger->notice($e->getMessage(), ['code'=>$e->getCode(),'path'=>$path]);
+		}catch(\Throwable $f){
             $exif_geo_data = null;
             $this->logger->error($f->getMessage(), ['code'=>$f->getCode(),'path'=>$path]);
         }

@@ -1,8 +1,9 @@
 OC.L10N.register(
     "maps",
     {
-    "Maps" : "Mapas",
+    "File not found" : "Ficheiro não encontrado",
     "Personal" : "Pessoal",
+    "Maps" : "Mapas",
     "Zoom" : "Zoom",
     "Export" : "Exportar",
     "Delete" : "Apagar",
@@ -52,9 +53,9 @@ OC.L10N.register(
     "Move" : "Mover",
     "Link" : "Link",
     "Description" : "Descrição",
-    "download" : "transferir",
+    "Download" : "Transferir",
     "Your photos" : "As suas fotos",
     "Show all" : "Mostrar tudo",
     "Settings" : "Definições"
 },
-"nplurals=2; plural=(n != 1);");
+"nplurals=3; plural=(n == 0 || n == 1) ? 0 : n != 0 && n % 1000000 == 0 ? 1 : 2;");

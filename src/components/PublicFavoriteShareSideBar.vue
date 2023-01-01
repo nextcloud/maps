@@ -20,13 +20,13 @@
 -->
 
 <template>
-	<AppNavigation>
+	<NcAppNavigation>
 		<ul v-if="favorites.length">
-			<AppNavigationNew
+			<NcAppNavigationNew
 				v-if="allowFavoriteEdits"
 				:text="newFavoriteButtonLabel"
 				@click="toggleMapMode" />
-			<AppNavigationItem
+			<NcAppNavigationItem
 				v-for="favorite in favorites"
 				:key="favorite.id"
 				:title="favorite.name || t('maps', '(No name)')"
@@ -38,14 +38,14 @@
 		<div v-else class="no-favorites">
 			{{ t("maps", "No favorites to display") }}
 		</div>
-	</AppNavigation>
+	</NcAppNavigation>
 </template>
 
 <script>
-import AppNavigation from '@nextcloud/vue/dist/Components/AppNavigation'
-import AppNavigationItem from '@nextcloud/vue/dist/Components/AppNavigationItem'
-import AppNavigationNew from '@nextcloud/vue/dist/Components/AppNavigationNew'
-import AppNavigationSpacer from '@nextcloud/vue/dist/Components/AppNavigationSpacer'
+import NcAppNavigation from '@nextcloud/vue/dist/Components/NcAppNavigation'
+import NcAppNavigationItem from '@nextcloud/vue/dist/Components/NcAppNavigationItem'
+import NcAppNavigationNew from '@nextcloud/vue/dist/Components/NcAppNavigationNew'
+import NcAppNavigationSpacer from '@nextcloud/vue/dist/Components/NcAppNavigationSpacer'
 import { mapMutations, mapState, mapActions } from 'vuex'
 import { PUBLIC_FAVORITES_NAMESPACE } from '../store/modules/publicFavorites'
 import MapMode from '../data/enum/MapMode'
@@ -55,10 +55,10 @@ export default {
 	name: 'PublicFavoriteShareSideBar',
 
 	components: {
-		AppNavigation,
-		AppNavigationItem,
-		AppNavigationNew,
-		AppNavigationSpacer,
+		NcAppNavigation,
+		NcAppNavigationItem,
+		NcAppNavigationNew,
+		NcAppNavigationSpacer,
 	},
 
 	computed: {

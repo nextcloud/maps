@@ -6,24 +6,24 @@
 		@contextmenu="onFGRightClick">
 		<LPopup :options="popupOptions"
 			class="popup-device-wrapper">
-			<ActionButton
+			<NcActionButton
 				icon="icon-category-monitoring"
 				@click="$emit('toggle-history', device)">
 				{{ t('maps', 'Toggle history') }}
-			</ActionButton>
-			<ActionButton
+			</NcActionButton>
+			<NcActionButton
 				icon="icon-colorpicker"
 				@click="$emit('change-color', device)">
 				<!--template #icon>
 					<div class="icon-colorpicker" />
 				</template-->
 				{{ t('maps', 'Change color') }}
-			</ActionButton>
-			<ActionButton
+			</NcActionButton>
+			<NcActionButton
 				icon="icon-file"
 				@click="$emit('export', device)">
 				{{ t('maps', 'Export') }}
-			</ActionButton>
+			</NcActionButton>
 		</LPopup>
 		<LTooltip :options="tooltipOptions">
 			<div class="tooltip-device-wrapper"
@@ -56,7 +56,7 @@
 import L from 'leaflet'
 import { LMarker, LTooltip, LPopup, LFeatureGroup, LPolyline } from 'vue2-leaflet'
 
-import ActionButton from '@nextcloud/vue/dist/Components/ActionButton'
+import NcActionButton from '@nextcloud/vue/dist/Components/NcActionButton'
 
 import { isComputer } from '../../utils'
 import { binSearch } from '../../utils/common'
@@ -73,7 +73,7 @@ export default {
 		LPopup,
 		LFeatureGroup,
 		LPolyline,
-		ActionButton,
+		NcActionButton,
 	},
 
 	props: {

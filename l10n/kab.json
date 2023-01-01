@@ -1,4 +1,6 @@
 { "translations": {
+    "File not found" : "Ulac afaylu",
+    "Personal" : "Udmawan",
     "Delete" : "Kkes",
     "Rename" : "Beddel isem",
     "Copied!" : "Yenɣel!",
@@ -18,6 +20,7 @@
     "Copy link" : "Nɣel aseɣwen",
     "Move" : "Senkez",
     "Link" : "Aseɣwen",
+    "Download" : "Sider",
     "Settings" : "Iɣewwaṛen"
 },"pluralForm" :"nplurals=2; plural=(n != 1);"
 }

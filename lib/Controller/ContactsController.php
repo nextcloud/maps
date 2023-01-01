@@ -50,11 +50,13 @@ class ContactsController extends Controller {
         $this->cdBackend = $cdBackend;
     }
 
-    /**
-     * get contacts with coordinates
-     * @NoAdminRequired
-     */
-    public function getContacts() {
+	/**
+	 * get contacts with coordinates
+	 *
+	 * @NoAdminRequired
+	 * @return DataResponse
+	 */
+    public function getContacts(): DataResponse {
         $contacts = $this->contactsManager->search('', ['GEO','ADR'], ['types'=>false]);
         $addressBooks = $this->contactsManager->getUserAddressBooks();
         $result = [];
@@ -69,20 +71,35 @@ class ContactsController extends Controller {
                 // if the contact has a geo attibute use it
                 if (key_exists('GEO', $c)) {
                     $geo = $c['GEO'];
-                    if (strlen($geo) > 1) {
-                        array_push($result, [
-                            'FN' => $c['FN'] ?? $this->N2FN($c['N']) ?? '???',
-                            'URI' => $c['URI'],
-                            'UID' => $c['UID'],
-                            'ADR' => '',
-                            'ADRTYPE' => '',
-                            'HAS_PHOTO' => (isset($c['PHOTO']) && $c['PHOTO'] !== null),
-                            'BOOKID' => $c['addressbook-key'],
-                            'BOOKURI' => $addressBookUri,
-                            'GEO' => $geo,
-                            'GROUPS' => $c['CATEGORIES'] ?? null
-                        ]);
-                    }
+                    if (is_string($geo) && strlen($geo) > 1) {
+                        $result[] = [
+							'FN' => $c['FN'] ?? $this->N2FN($c['N']) ?? '???',
+							'URI' => $c['URI'],
+							'UID' => $c['UID'],
+							'ADR' => '',
+							'ADRTYPE' => '',
+							'HAS_PHOTO' => (isset($c['PHOTO'])),
+							'BOOKID' => $c['addressbook-key'],
+							'BOOKURI' => $addressBookUri,
+							'GEO' => $geo,
+							'GROUPS' => $c['CATEGORIES'] ?? null
+						];
+                    } elseif (is_countable($geo) && count($geo)>0 && is_iterable($geo)) {
+						foreach ($geo as $g) {
+							$result[] = [
+								'FN' => $c['FN'] ?? $this->N2FN($c['N']) ?? '???',
+								'URI' => $c['URI'],
+								'UID' => $c['UID'],
+								'ADR' => '',
+								'ADRTYPE' => '',
+								'HAS_PHOTO' => (isset($c['PHOTO'])),
+								'BOOKID' => $c['addressbook-key'],
+								'BOOKURI' => $addressBookUri,
+								'GEO' => $g,
+								'GROUPS' => $c['CATEGORIES'] ?? null
+							];
+						}
+					}
                 }
                 // anyway try to get it from the address
                 $card = $this->cdBackend->getContact($c['addressbook-key'], $c['URI']);
@@ -97,18 +114,18 @@ class ContactsController extends Controller {
                                 $adrtype = $adr->parameters()['TYPE']->getValue();
                             }
                             if (strlen($geo) > 1) {
-                                array_push($result, [
-                                    'FN' => $c['FN'] ?? $this->N2FN($c['N']) ?? '???',
-                                    'URI' => $c['URI'],
-                                    'UID' => $c['UID'],
-                                    'ADR' => $adr->getValue(),
-                                    'ADRTYPE' => $adrtype,
-                                    'HAS_PHOTO' => (isset($c['PHOTO']) && $c['PHOTO'] !== null),
-                                    'BOOKID' => $c['addressbook-key'],
-                                    'BOOKURI' => $addressBookUri,
-                                    'GEO' => $geo,
-                                    'GROUPS' => $c['CATEGORIES'] ?? null,
-                                ]);
+                                $result[] = [
+									'FN' => $c['FN'] ?? $this->N2FN($c['N']) ?? '???',
+									'URI' => $c['URI'],
+									'UID' => $c['UID'],
+									'ADR' => $adr->getValue(),
+									'ADRTYPE' => $adrtype,
+									'HAS_PHOTO' => (isset($c['PHOTO']) && $c['PHOTO'] !== null),
+									'BOOKID' => $c['addressbook-key'],
+									'BOOKURI' => $addressBookUri,
+									'GEO' => $geo,
+									'GROUPS' => $c['CATEGORIES'] ?? null,
+								];
                             }
                         }
                     }
@@ -118,7 +135,11 @@ class ContactsController extends Controller {
         return new DataResponse($result);
     }
 
-    private function N2FN(string $n) {
+	/**
+	 * @param string $n
+	 * @return string|null
+	 */
+    private function N2FN(string $n): ?string {
         if ($n) {
             $spl = explode($n, ';');
             if (count($spl) >= 4) {
@@ -133,10 +154,13 @@ class ContactsController extends Controller {
         }
     }
 
-    /**
-     * get all contacts
-     * @NoAdminRequired
-     */
+	/**
+	 * get all contacts
+	 *
+	 * @NoAdminRequired
+	 * @param string $query
+	 * @return DataResponse
+	 */
     public function searchContacts(string $query = ''): DataResponse {
         $contacts = $this->contactsManager->search($query, ['FN'], ['types'=>false]);
         $booksReadOnly = $this->getAddressBooksReadOnly();
@@ -150,25 +174,39 @@ class ContactsController extends Controller {
                 strcmp($uid, $userid) !== 0
             ) {
                 $addressBookUri = $addressBooks[$c['addressbook-key']]->getUri();
-                array_push($result, [
-                    'FN' => $c['FN'] ?? $this->N2FN($c['N']) ?? '???',
-                    'URI' => $c['URI'],
-                    'UID' => $c['UID'],
-                    'BOOKID' => $c['addressbook-key'],
-                    'READONLY' => $booksReadOnly[$c['addressbook-key']],
-                    'BOOKURI' => $addressBookUri,
-                    'HAS_PHOTO' => (isset($c['PHOTO']) && $c['PHOTO'] !== null),
-                    'HAS_PHOTO2' => (isset($c['PHOTO']) && $c['PHOTO'] !== null && $c['PHOTO'] !== ''),
-                ]);
+                $result[] = [
+					'FN' => $c['FN'] ?? $this->N2FN($c['N']) ?? '???',
+					'URI' => $c['URI'],
+					'UID' => $c['UID'],
+					'BOOKID' => $c['addressbook-key'],
+					'READONLY' => $booksReadOnly[$c['addressbook-key']],
+					'BOOKURI' => $addressBookUri,
+					'HAS_PHOTO' => (isset($c['PHOTO']) && $c['PHOTO'] !== null),
+					'HAS_PHOTO2' => (isset($c['PHOTO']) && $c['PHOTO'] !== null && $c['PHOTO'] !== ''),
+				];
             }
         }
         return new DataResponse($result);
     }
 
-    /**
-     * @NoAdminRequired
-     */
-    public function placeContact($bookid, $uri, $uid, $lat, $lng, $attraction, $house_number, $road, $postcode, $city, $state, $country, $type) {
+	/**
+	 * @NoAdminRequired
+	 * @param $bookid
+	 * @param $uri
+	 * @param $uid
+	 * @param $lat
+	 * @param $lng
+	 * @param $attraction
+	 * @param $house_number
+	 * @param $road
+	 * @param $postcode
+	 * @param $city
+	 * @param $state
+	 * @param $country
+	 * @param $type
+	 * @return DataResponse
+	 */
+    public function placeContact($bookid, $uri, $uid, $lat, $lng, $attraction, $house_number, $road, $postcode, $city, $state, $country, $type): DataResponse {
         // do not edit 'user' contact even myself
         if (strcmp($uri, 'Database:'.$uid.'.vcf') === 0 or
             strcmp($uid, $this->userId) === 0
@@ -213,17 +251,24 @@ class ContactsController extends Controller {
         }
     }
 
-    private function addressBookIsReadOnly($bookid) {
+	/**
+	 * @param $bookId
+	 * @return bool
+	 */
+    private function addressBookIsReadOnly($bookId): bool {
         $userBooks = $this->cdBackend->getAddressBooksForUser('principals/users/'.$this->userId);
         foreach ($userBooks as $book) {
-            if ($book['id'] === $bookid) {
+            if ($book['id'] === $bookId) {
                 return (isset($book['{http://owncloud.org/ns}read-only']) and $book['{http://owncloud.org/ns}read-only']);
             }
         }
         return true;
     }
 
-    private function getAddressBooksReadOnly() {
+	/**
+	 * @return array
+	 */
+    private function getAddressBooksReadOnly(): array {
         $booksReadOnly = [];
         $userBooks = $this->cdBackend->getAddressBooksForUser('principals/users/'.$this->userId);
         foreach ($userBooks as $book) {
@@ -233,6 +278,14 @@ class ContactsController extends Controller {
         return $booksReadOnly;
     }
 
+	/**
+	 * @param $lat
+	 * @param $lng
+	 * @param $adr
+	 * @param $uri
+	 * @return void
+	 * @throws \OCP\DB\Exception
+	 */
     private function setAddressCoordinates($lat, $lng, $adr, $uri) {
         $qb = $this->qb;
         $adr_norm = strtolower(preg_replace('/\s+/', '', $adr));
@@ -254,8 +307,7 @@ class ContactsController extends Controller {
                 ->set('looked_up', $qb->createNamedParameter(true, IQueryBuilder::PARAM_BOOL))
                 ->where($qb->expr()->eq('id', $qb->createNamedParameter($id, IQueryBuilder::PARAM_STR)));
             $req = $qb->execute();
-            $qb = $qb->resetQueryParts();
-        }
+		}
         else {
             $qb->insert('maps_address_geo')
                 ->values([
@@ -268,31 +320,43 @@ class ContactsController extends Controller {
                 ]);
             $req = $qb->execute();
             $id = $qb->getLastInsertId();
-            $qb = $qb->resetQueryParts();
-        }
-    }
+		}
+		$qb = $qb->resetQueryParts();
+	}
 
-    /**
-     * get contacts with coordinates
-     * @NoAdminRequired
-     * @NoCSRFRequired
-     */
-    public function getContactLetterAvatar($name) {
+	/**
+	 * get contacts with coordinates
+	 *
+	 * @NoAdminRequired
+	 * @NoCSRFRequired
+	 * @param $name
+	 * @return DataDisplayResponse
+	 * @throws \OCP\Files\NotFoundException
+	 * @throws \OCP\Files\NotPermittedException
+	 */
+    public function getContactLetterAvatar($name): DataDisplayResponse {
         $av = $this->avatarManager->getGuestAvatar($name);
         $avatarContent = $av->getFile(64)->getContent();
         return new DataDisplayResponse($avatarContent);
     }
 
-    /**
-     * removes the address from the vcard
-     * and delete corresponding entry in the DB
-     * @NoAdminRequired
-     */
-    public function deleteContactAddress($bookid, $uri, $uid, $adr) {
+	/**
+	 * removes the address from the vcard
+	 * and delete corresponding entry in the DB
+	 *
+	 * @NoAdminRequired
+	 * @param $bookid
+	 * @param $uri
+	 * @param $uid
+	 * @param $adr
+	 * @param $geo
+	 * @return DataResponse
+	 */
+    public function deleteContactAddress($bookid, $uri, $uid, $adr, $geo): DataResponse {
         // vcard
         $card = $this->cdBackend->getContact($bookid, $uri);
         if ($card) {
-            $vcard = Reader::read($card['carddata']);;
+            $vcard = Reader::read($card['carddata']);
             //$bookId = $card['addressbookid'];
             if (!$this->addressBookIsReadOnly($bookid)) {
                 foreach ($vcard->children() as $property) {
@@ -302,7 +366,13 @@ class ContactsController extends Controller {
                             $vcard->remove($property);
                             break;
                         }
-                    }
+                    } elseif ($property->name === 'GEO') {
+						$cardAdr = $property->getValue();
+						if ($cardAdr === $geo) {
+							$vcard->remove($property);
+							break;
+						}
+					}
                 }
                 $this->cdBackend->updateCard($bookid, $uri, $vcard->serialize());
                 // no need to cleanup db here, it will be done when catching vcard change hook

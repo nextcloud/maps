@@ -160,7 +160,7 @@ class FavoritesApiControllerTest extends \PHPUnit\Framework\TestCase
     $this->assertEquals('', $data['name']);
     $id2 = $data['id'];
 
-    // invalid values
+    // Invalid values
     $resp = $this->favoritesApiController->addFavorite('1.0', 'one', 'lat', 4.2, '', null, null);
     $status = $resp->getStatus();
     $this->assertEquals(400, $status);
@@ -238,12 +238,12 @@ class FavoritesApiControllerTest extends \PHPUnit\Framework\TestCase
     $status = $resp->getStatus();
     $this->assertEquals(400, $status);
     $data = $resp->getData();
-    $this->assertEquals('invalid values', $data);
+    $this->assertEquals('Invalid values', $data);
 
     $resp = $this->favoritesApiController->editFavorite(-1, 'aa', 'invalid lat', 4.2, 'cat2', 'comment', 'ext');
     $this->assertEquals(400, $status);
     $data = $resp->getData();
-    $this->assertEquals('no such favorite', $data);
+    $this->assertEquals('No such favorite', $data);
   }
 
 }

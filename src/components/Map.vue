@@ -889,6 +889,9 @@ export default {
 			} else if (element.type === 'result') {
 				this.searchPois = [element.rawResult]
 				this.map.setView(element.latLng, 15)
+			} else if (element.type === 'coordinate') {
+				this.leftClickSearch(element.lat, element.lng)
+				this.map.setView(element.latLng, 15)
 			} else if (element.type === 'mylocation') {
 				navigator.geolocation.getCurrentPosition((position) => {
 					const lat = position.coords.latitude

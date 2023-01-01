@@ -1,6 +1,6 @@
 {
   "name": "maps",
-  "version": "0.2.4",
+  "version": "0.2.5",
   "description": "Maps app",
   "main": "main.js",
   "directories": {

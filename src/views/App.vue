@@ -834,6 +834,7 @@ export default {
 			})
 		},
 		getPhotos() {
+			this.photos = []
 			if (!this.photosEnabled) {
 				return
 			}
@@ -1181,6 +1182,7 @@ export default {
 			}
 		},
 		getContacts() {
+			this.contacts = []
 			if (!this.contactsEnabled) {
 				return
 			}
@@ -1322,11 +1324,13 @@ export default {
 			optionsController.saveOptionValues({ favoritesEnabled: this.favoritesEnabled ? 'true' : 'false' })
 		},
 		getFavorites() {
+			this.favorites = {}
 			if (!this.favoritesEnabled) {
 				return
 			}
 			this.favoritesLoading = true
 			this.favorites = {}
+			this.favoriteCategoryTokens = {}
 			network.getFavorites(this.myMapId).then((response) => {
 				response.data.forEach((f) => {
 					if (!f.category) {
@@ -1705,6 +1709,7 @@ export default {
 			optionsController.saveOptionValues({ tracksEnabled: this.tracksEnabled ? 'true' : 'false' })
 		},
 		getTracks() {
+			this.tracks = []
 			if (!this.tracksEnabled) {
 				return
 			}
@@ -1859,6 +1864,7 @@ export default {
 			}
 		},
 		getDevices() {
+			this.devices = []
 			if (!this.devicesEnabled) {
 				return
 			}
@@ -2087,6 +2093,15 @@ export default {
 				return
 			}
 			this.myMapsLoading = true
+			this.myMaps = [
+				{
+					name: t('maps', 'Default'),
+					id: null,
+					enabled: this.myMapId === null,
+					isDeletable: false,
+					isShareable: false,
+				},
+			]
 			network.getMyMaps().then((response) => {
 				this.myMaps = [
 					{
@@ -2154,7 +2169,7 @@ export default {
 			}
 		    if (!this.myMapsLoading) {
 				this.myMapsLoading = true
-		        this.loadMap((myMap))
+		        this.loadMap(myMap)
 			}
 			this.myMapsLoading = false
 		},

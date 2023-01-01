@@ -18,6 +18,8 @@
 					@zoom-all-categories="onZoomAllFavorites"
 					@zoom-category="onZoomFavoriteCategory"
 					@export-category="onExportFavoriteCategory"
+					@add-to-map-category="onAddFavoriteCategoryToMap"
+					@delete-shared-category-from-map="onDeleteFavoriteCategoryFromMap"
 					@delete-category="onDeleteFavoriteCategory"
 					@category-share-change="onFavoriteCategoryShareChange"
 					@toggle-all-categories="onToggleAllFavoriteCategories"
@@ -33,16 +35,20 @@
 					@group-clicked="onContactGroupClicked"
 					@zoom-all-groups="onZoomAllContactGroups"
 					@zoom-group="onZoomContactGroup"
+					@add-to-map-all-contacts="onAddAllContactsToMap"
+					@add-to-map-contact-group="onAddContactsGroupToMap"
 					@toggle-all-groups="onToggleAllContactGroups" />
 				<AppNavigationPhotosItem
 					:enabled="photosEnabled"
 					:loading="photosLoading"
 					:photos="photos"
 					:draggable="photosDraggable"
+					:show-suggestions="showPhotoSuggestions"
 					@photos-clicked="onPhotosClicked"
 					@cancel-clicked="cancelPhotoMove"
 					@redo-clicked="redoPhotoMove"
-					@draggable-clicked="photosDraggable = !photosDraggable" />
+					@draggable-clicked="photosDraggable = !photosDraggable"
+					@suggestions-clicked="onPhotoSuggestionsClicked" />
 				<AppNavigationTracksItem
 					ref="tracksNavigation"
 					:enabled="tracksEnabled"
@@ -52,7 +58,8 @@
 					@elevation="onTrackElevation"
 					@track-clicked="onNavTrackClicked"
 					@tracks-clicked="onTracksClicked"
-					@color="onChangeTrackColor" />
+					@color="onChangeTrackColor"
+					@add-to-map-track="onAddTrackToMap" />
 				<AppNavigationDevicesItem
 					ref="devicesNavigation"
 					:enabled="devicesEnabled"
@@ -69,12 +76,26 @@
 					@color="onChangeDeviceColor"
 					@device-clicked="onNavDeviceClicked"
 					@devices-clicked="onDevicesClicked" />
+				<AppNavigationMyMapsItem
+					ref="myMapsNavigation"
+					:enabled="myMapsEnabled"
+					:loading="myMapsLoading"
+					:my-maps="myMaps"
+					@add="onAddMyMap"
+					@rename="onRenameMyMap"
+					@delete="onDeleteMyMap"
+					@share="onShareMyMap"
+					@color="onChangeMyMapColor"
+					@my-map-clicked="onMyMapClicked"
+					@my-maps-clicked="onMyMapsClicked" />
 			</template>
 		</MapsNavigation>
 		<NcAppContent>
 			<div id="app-content-wrapper">
 				<Map
 					ref="map"
+					:active-layer-id-prop="activeLayerId"
+					:map-bounds-prop="mapBounds"
 					:search-data="searchData"
 					:routing-search-data="routingSearchData"
 					:favorites="displayedFavorites"
@@ -84,6 +105,9 @@
 					:photos="displayedPhotos"
 					:photos-enabled="photosEnabled"
 					:photos-draggable="photosDraggable"
+					:show-photo-suggestions="showPhotoSuggestions"
+					:photo-suggestions="photoSuggestions"
+					:photo-suggestions-selected-indices="photoSuggestionsSelectedIndices"
 					:contacts="contacts"
 					:contact-groups="contactGroups"
 					:contacts-enabled="contactsEnabled"
@@ -104,17 +128,25 @@
 					@edit-favorite="onFavoriteEdit"
 					@add-favorite="onFavoriteAdd"
 					@add-address-favorite="onAddressFavoriteAdd"
+					@add-to-map-favorite="onAddFavoriteToMap"
 					@delete-favorite="onFavoriteDelete"
 					@delete-favorites="onFavoritesDelete"
 					@coords-reset="resetPhotosCoords"
 					@address-deleted="onContactAddressDelete"
+					@add-to-map-contact="onAddContactToMap"
 					@contact-placed="onContactPlace"
+					@add-to-map-photo="onAddPhotoToMap"
 					@place-photos="placePhotoFilesOrFolder"
 					@photo-moved="onPhotoMoved"
+					@photo-suggestion-selected="onPhotoSuggestionSelected"
+					@photo-suggestion-moved="onPhotoSuggestionMoved"
 					@open-sidebar="openSidebar"
 					@click-track="onTrackClick"
+					@add-to-map-track="onAddTrackToMap"
 					@search-enable-track="onSearchEnableTrack"
 					@change-track-color="onChangeTrackColorClicked"
+					@track-added="onTrackAdded"
+					@add-to-map-device="onAddDeviceToMap"
 					@toggle-device-history="onToggleDeviceHistory"
 					@change-device-color="onChangeDeviceColorClicked"
 					@export-device="onExportDevice"
@@ -133,18 +165,26 @@
 		</NcAppContent>
 		<Sidebar
 			v-if="true"
+			ref="Sidebar"
 			:show="showSidebar"
-			:active-tab="activeSidebarTab"
 			:favorite="selectedFavorite"
 			:favorite-categories="favoriteCategories"
 			:track="selectedTrack"
 			:photo="selectedPhoto"
-			:is-full-screen="sidebarIsFullScreen"
+			:photos-loading="photosLoading"
+			:photo-suggestions="photoSuggestions"
+			:photo-suggestions-selected-indices="photoSuggestionsSelectedIndices"
+			:my-map="selectedMyMap"
 			@edit-favorite="onFavoriteEdit"
 			@delete-favorite="onFavoriteDelete"
 			@active-changed="onActiveSidebarTabChanged"
 			@close="onCloseSidebar"
-			@opened="onOpenedSidebar" />
+			@opened="onOpenedSidebar"
+			@select-all-photo-suggestions="onSelectAllPhotoSuggestions"
+			@clear-photo-suggestions-selection="onClearPhotoSuggestionsSelection"
+			@cancel-photo-suggestions="onCancelPhotoSuggestions"
+			@save-photo-suggestions-selection="onSavePhotoSuggestionsSelection"
+			@zoom-photo-suggestion="onPhotoSuggestionZoom" />
 	</NcContent>
 </template>
 
@@ -165,8 +205,9 @@ import AppNavigationPhotosItem from '../components/AppNavigationPhotosItem'
 import AppNavigationContactsItem from '../components/AppNavigationContactsItem'
 import AppNavigationTracksItem from '../components/AppNavigationTracksItem'
 import AppNavigationDevicesItem from '../components/AppNavigationDevicesItem'
+import AppNavigationMyMapsItem from '../components/AppNavigationMyMapsItem'
 import optionsController from '../optionsController'
-import { getLetterColor, hslToRgb, Timer, getDeviceInfoFromUserAgent2, isComputer, isPhone } from '../utils'
+import { getLetterColor, hslToRgb, Timer, getDeviceInfoFromUserAgent2, isComputer, isPhone, sleep } from '../utils'
 import { binSearch } from '../utils/common'
 import { poiSearchData } from '../utils/poiData'
 import { processGpx } from '../tracksUtils'
@@ -174,6 +215,7 @@ import { processGpx } from '../tracksUtils'
 import L from 'leaflet'
 import { geoToLatLng, getFormattedADR } from '../utils/mapUtils'
 import * as network from '../network'
+import { all as axiosAll, spread as axiosSpread } from 'axios'
 
 export default {
 	name: 'App',
@@ -191,14 +233,17 @@ export default {
 		AppNavigationContactsItem,
 		AppNavigationTracksItem,
 		AppNavigationDevicesItem,
+		AppNavigationMyMapsItem,
 	},
 
 	data() {
 		return {
+		    // Map Options
+		    activeLayerId: optionsController.tileLayer,
+			mapBounds: optionsController.bounds,
 			optionValues: optionsController.optionValues,
 			sendPositionTimer: null,
 			showSidebar: false,
-			sidebarIsFullScreen: false,
 			activeSidebarTab: '',
 			// slider
 			sliderEnabled: optionsController.optionValues.displaySlider === 'true',
@@ -223,6 +268,9 @@ export default {
 			photosDraggable: false,
 			photos: [],
 			selectedPhoto: null,
+			showPhotoSuggestions: false,
+			photoSuggestions: [],
+			photoSuggestionsSelectedIndices: [],
 			// contacts
 			contactsLoading: false,
 			contactsEnabled: optionsController.contactsEnabled,
@@ -240,12 +288,18 @@ export default {
 			devicesEnabled: optionsController.devicesEnabled,
 			exportingDevices: false,
 			importingDevices: false,
+			// myMaps
+			myMapsLoading: false,
+			myMaps: [],
+			myMapsEnabled: optionsController.myMapsEnabled,
+			myMapId: optionsController.myMapId,
+			selectedMyMap: null,
 		}
 	},
 
 	computed: {
 		mapLoading() {
-			return this.photosLoading || this.contactsLoading || this.favoritesLoading || this.tracksLoading || this.devicesLoading
+			return this.photosLoading || this.contactsLoading || this.favoritesLoading || this.tracksLoading || this.devicesLoading || this.myMapsLoading
 				|| this.exportingDevices || this.importingDevices
 		},
 		mapState() {
@@ -500,6 +554,9 @@ export default {
 				const catid = f.category || noCategoryId
 				if (categories[catid]) {
 					categories[catid].counter++
+					if (!f.isUpdateable) {
+						categories[catid].isUpdateable = false
+					}
 				} else {
 					const hsl = catid.length < 1
 						? getLetterColor('a', 'a')
@@ -511,6 +568,8 @@ export default {
 						name: catid,
 						color,
 						counter: 1,
+						isShareable: this.myMapId === null || this.myMapId === '',
+						isUpdateable: f.isUpdateable,
 						enabled: !this.disabledFavoriteCategories.includes(catid),
 						token: this.favoriteCategoryTokens[catid],
 					}
@@ -526,6 +585,7 @@ export default {
 		this.getFavorites()
 		this.getTracks()
 		this.getDevices()
+		this.getMyMaps()
 		if (optionsController.optionValues.trackMe === 'true') {
 			this.sendPositionLoop()
 		}
@@ -549,7 +609,7 @@ export default {
 	mounted() {
 		// subscribe('nextcloud:unified-search.search', this.filter)
 		// subscribe('nextcloud:unified-search.reset', this.cleanSearch)
-		emit('files:sidebar:closed')
+		setTimeout(() => { emit('files:sidebar:closed') }, 1000)
 	},
 	beforeDestroy() {
 		// unsubscribe('nextcloud:unified-search.search', this.filter)
@@ -557,7 +617,7 @@ export default {
 	},
 	methods: {
 		onActiveSidebarTabChanged(newActive) {
-			this.activeSidebarTab = newActive
+			window.OCA.Files.Sidebar.setActiveTab(newActive)
 		},
 		onMainDetailClicked() {
 			this.showSidebar ? this.closeSidebar() : this.openSidebar()
@@ -565,24 +625,44 @@ export default {
 		onCloseSidebar() {
 			this.closeSidebar()
 			this.deselectAll()
-			this.activeSidebarTab = ''
+			// Make shure that the active photo suggestions tab stays there if photo suggestions are loaded
+			if (this.showPhotoSuggestions) {
+				this.openSidebar()
+				window.OCA.Files.Sidebar.setActiveTab('photo-suggestion')
+			}
 		},
 		closeSidebar() {
+			this.$refs.Sidebar.close()
 			emit('files:sidebar:closed')
-			window.OCA.Files.Sidebar.state.file = ''
+			window.OCA.Files.Sidebar.setActiveTab('')
 			this.showSidebar = false
 		},
-		openSidebar(path) {
-			const photo = this.photos.find((p) => p.path === path)
-			if (photo) {
-				this.activeSidebarTab = 'photo'
-				this.selectedPhoto = photo
+		openSidebar(path = null, type = null, title = null) {
+			this.showSidebar = true
+			this.$refs.Sidebar.open(path, type, title)
+			if (!path && this.showPhotoSuggestions) {
+				window.OCA.Files.Sidebar.setActiveTab('photo-suggestion')
+			}
+			/*
+			const myMap = path ? this.myMaps.find((m) => m.path === path) : false
+			if (myMap) {
+				window.OCA.Files.state.activeTab = 'myMaps'
+				this.selectedMyMap = myMap
+				this.sidebarFileInfo = myMap.fileInfo
 				window.OCA.Files.Sidebar.state.file = path
 			} else {
-				window.OCA.Files.Sidebar.state.file = true
+				const photo = this.photos.find((p) => p.path === path)
+				if (photo) {
+					window.OCA.Files.state.activeTab = 'photo'
+					this.selectedPhoto = photo
+					this.sidebarFileInfo = photo
+					window.OCA.Files.Sidebar.state.file = path
+				} else {
+					window.OCA.Files.Sidebar.state.file = true
+				}
 			}
-			this.showSidebar = true
 			emit('files:sidebar:opening')
+			 */
 		},
 		/**
 		 * Allow to set the Sidebar as fullscreen from OCA.Files.Sidebar
@@ -590,7 +670,9 @@ export default {
 		 * @param {boolean} isFullScreen - Wether or not to render the Sidebar in fullscreen.
 		 */
 		sidebarSetFullScreenMode(isFullScreen) {
-			this.sidebarIsFullScreen = isFullScreen
+			if (this.$refs.Sidebar) {
+				this.$refs.Sidebar.setFullScreenMode(isFullScreen)
+			}
 		},
 		onOpenedSidebar() {
 			// opened is emitted when the sidebar is mounted, but not actually shown
@@ -664,7 +746,7 @@ export default {
 				name += ')'
 			}
 			const ts = Math.floor(Date.now() / 1000)
-			network.sendMyPosition(lat, lng, name, acc, ts).then((response) => {
+			network.sendMyPosition(lat, lng, name, acc, ts, this.myMapId).then((response) => {
 				// TODO get new positions
 			}).catch((error) => {
 				showError(t('maps', 'Failed to send current position') + ' ' + error)
@@ -734,14 +816,42 @@ export default {
 			}
 			optionsController.saveOptionValues({ photosLayer: this.photosEnabled ? 'true' : 'false' })
 		},
+		onAddPhotoToMap(photo) {
+			this.chooseMyMap((map) => {
+				try {
+					network.copyByPath(photo.path, map.path + '/' + photo.basename)
+					showSuccess(t('maps', 'Track {photoName} added to map {mapName}', {
+						photoName: photo.basename ?? '',
+						mapName: map.name ?? '',
+					}))
+				} catch (error) {
+					console.error(error)
+					showError(t('maps', 'Failed to save track {photoName} to map {mapName}', {
+						trackName: photo.basename ?? '',
+						mapName: map.name ?? '',
+					}))
+				}
+			})
+		},
 		getPhotos() {
+			this.photos = []
 			if (!this.photosEnabled) {
 				return
 			}
 			this.photosLoading = true
-			network.getPhotos().then((response) => {
-				this.photos = response.data.sort((p1, p2) => (p1.dateTaken || 0) - (p2.dateTaken || 0))
-			}).catch((error) => {
+			network.getPhotos(this.myMapId).then(
+				/* async (response) => {
+					for (let i = 0; i * 500 < response.data.length; i++) {
+						this.photos.push(...response.data.slice(i * 500, (i + 1) * 500))
+						await sleep(i * 1000 + 500)
+					}
+				// this.photos = response.data.sort((p1, p2) => (p1.dateTaken || 0) - (p2.dateTaken || 0))
+				} */
+				async (response) => {
+					// this.photos = response.data.sort((p1, p2) => (p1.dateTaken || 0) - (p2.dateTaken || 0))
+					this.photos = response.data
+				}
+			).catch((error) => {
 				console.error(error)
 			}).then(() => {
 				this.photosLoading = false
@@ -793,7 +903,7 @@ export default {
 			)
 		},
 		placePhotos(paths, lats, lngs, directory = false, save = true, reload = true) {
-			network.placePhotos(paths, lats, lngs, directory).then((response) => {
+			network.placePhotos(paths, lats, lngs, directory, this.myMapId).then((response) => {
 				if (reload) {
 					this.getPhotos()
 				}
@@ -818,7 +928,7 @@ export default {
 			this.placePhotos([photo.path], [latLng.lat], [latLng.lng], false, true, false)
 		},
 		resetPhotosCoords(paths, save = true) {
-			network.resetPhotosCoords(paths).then((response) => {
+			network.resetPhotosCoords(paths, this.myMapId).then((response) => {
 				this.getPhotos()
 				if (save) {
 					this.saveAction({
@@ -871,6 +981,99 @@ export default {
 				this.resetPhotosCoords(paths, false)
 			}
 		},
+		// ================ PHOTOSUGGESTIONS ========
+		onPhotoSuggestionsClicked() {
+			this.showPhotoSuggestions = !this.showPhotoSuggestions
+			if (this.photosEnabled && this.showPhotoSuggestions && this.photoSuggestions.length === 0) {
+				this.getPhotoSuggestions()
+			}
+			window.OCA.Files.Sidebar.setActiveTab('photo-suggestion')
+			this.showPhotoSuggestions ? this.openSidebar() : this.closeSidebar()
+		},
+		onPhotoSuggestionSelected(index) {
+			const indexOfIndex = this.photoSuggestionsSelectedIndices.findIndex((e) => { return index === e })
+			if (indexOfIndex >= 0) {
+				this.photoSuggestionsSelectedIndices.splice(indexOfIndex, 1)
+			} else {
+				this.photoSuggestionsSelectedIndices.push(index)
+			}
+		},
+		onPhotoSuggestionMoved(index, latLng) {
+			this.photoSuggestions[index].lat = latLng.lat
+			this.photoSuggestions[index].lng = latLng.lng
+		},
+		onPhotoSuggestionZoom(photo) {
+			this.$refs.map.zoomOnPhotoSuggestion(photo)
+		},
+		cancelPhotoSuggestions() {
+			this.photoSuggestionsSelectedIndices = []
+			this.showPhotoSuggestions = false
+			this.closeSidebar()
+			this.photoSuggestions = []
+		},
+		getPhotoSuggestions() {
+			if (!this.photosEnabled) {
+				return
+			}
+			this.photosLoading = true
+			network.getPhotoSuggestions(this.myMapId).then((response) => {
+				this.photoSuggestions = response.data.sort((a, b) => {
+					if (a.dateTaken < b.dateTaken) {
+						return -1
+					} else if (a.dateTaken > b.dateTaken) {
+						return 1
+					}
+					return 0
+				})
+			}).catch((error) => {
+				console.error(error)
+			}).then(() => {
+				this.photosLoading = false
+			})
+		},
+		onSelectAllPhotoSuggestions() {
+			this.photoSuggestionsSelectedIndices = []
+			this.photoSuggestionsSelectedIndices = [...this.photoSuggestions.keys()]
+		},
+		onClearPhotoSuggestionsSelection(indices) {
+			if (indices) {
+				this.photoSuggestionsSelectedIndices = this.photoSuggestionsSelectedIndices.filter((e) => { return !indices.includes(e) })
+			} else {
+				this.photoSuggestionsSelectedIndices = []
+			}
+		},
+		onCancelPhotoSuggestions() {
+			this.cancelPhotoSuggestions()
+		},
+		onSavePhotoSuggestionsSelection(indices = null) {
+			const toSave = indices || this.photoSuggestionsSelectedIndices
+			const paths = toSave.map((i) => { return this.photoSuggestions[i].path })
+			const lats = toSave.map((i) => { return this.photoSuggestions[i].lat })
+			const lngs = toSave.map((i) => { return this.photoSuggestions[i].lng })
+			network.placePhotos(paths, lats, lngs).then((response) => {
+				if (indices) {
+					// only some elements from sidebar where saved
+					indices.forEach((i) => {
+						this.photos.push(this.photoSuggestions[i])
+						this.photoSuggestions[i] = null
+						this.photoSuggestionsSelectedIndices = this.photoSuggestionsSelectedIndices.filter((e) => {
+							return !indices.includes(e)
+						})
+					})
+				} else {
+					// All elements in sidebar where saved
+					this.getPhotos()
+					this.getPhotoSuggestions()
+					this.photoSuggestionsSelectedIndices = []
+				}
+				response.data.length === toSave.length
+					? showSuccess(n('maps', 'saved location', 'saved all %n locations', toSave.length))
+					: showInfo(t('maps', 'saved {r} from {i} locations', { r: response.data.length, i: toSave.length }))
+			}).catch((error) => {
+				showError(t('maps', 'Failed to save locations'))
+				console.error(error)
+			})
+		},
 		// ================ CONTACTS =================
 		onContactsClicked() {
 			this.contactsEnabled = !this.contactsEnabled
@@ -918,6 +1121,61 @@ export default {
 			})
 			this.zoomOnContacts(contactsOfGroup)
 		},
+		onAddContactToMap(c) {
+			this.chooseMyMap((map) => {
+				network.addContactToMap(c.BOOKID, c.URI, c.UID, map.id, c.FILEID).then((response) => {
+					showSuccess(t('maps', 'Contact {contactName} added to map {mapName}', { contactName: c.FN ?? '', mapName: map.name ?? '' }))
+				}).catch((error) => {
+					console.error(error)
+					showError(t('maps', 'Failed to save Contact {contactName} to map {mapName}', { contactName: c.FN ?? '', mapName: map.name ?? '' }))
+				})
+			})
+		},
+		onAddAllContactsToMap() {
+			this.chooseMyMap((map) => {
+				axiosAll(this.contacts.map((c) => {
+					return network.addContactToMap(c.BOOKID, c.URI, c.UID, map.id, c.FILEID)
+				})).then(axiosSpread((...responses) => {
+					showSuccess(t('maps', 'All Contacts added to map {mapName}', { mapName: map.name ?? '' }))
+				})).catch((error) => {
+					console.error(error)
+					showError(t('maps', 'Failed to save all Contacts to map {mapName}', { mapName: map.name ?? '' }))
+				})
+			})
+		},
+		onAddContactsGroupToMap(group) {
+			const contactsInGroup = this.contacts.filter((c) => {
+				if (c.GROUPS) {
+					try {
+						const cGroups = c.GROUPS.split(/[^\\],/).map((name) => {
+							return name.replace('\\,', ',')
+						})
+						for (let i = 0; i < cGroups.length; i++) {
+							// if at least in one enabled group
+							if (cGroups[i] === group) {
+								return true
+							}
+						}
+					} catch (error) {
+						console.error(error)
+					}
+				} else if (!group) {
+					// or not grouped and this is enabled
+					return true
+				}
+				return false
+			})
+			this.chooseMyMap((map) => {
+				axiosAll(contactsInGroup.map((c) => {
+					return network.addContactToMap(c.BOOKID, c.URI, c.UID, map.id, c.FILEID)
+				})).then(axiosSpread((...responses) => {
+					showSuccess(t('maps', 'All Contacts added to map {mapName}', { mapName: map.name ?? '' }))
+				})).catch((error) => {
+					console.error(error)
+					showError(t('maps', 'Failed to save all Contacts to map {mapName}', { mapName: map.name ?? '' }))
+				})
+			})
+		},
 		zoomOnContacts(contacts) {
 			const lats = contacts.map((c) => {
 				return geoToLatLng(c.GEO)[0]
@@ -934,6 +1192,7 @@ export default {
 			}
 		},
 		getContacts() {
+			this.contacts = []
 			if (!this.contactsEnabled) {
 				return
 			}
@@ -947,7 +1206,7 @@ export default {
 				}
 			}
 
-			network.getContacts().then((response) => {
+			network.getContacts(this.myMapId).then((response) => {
 				this.contacts = response.data
 				this.buildContactGroups()
 			}).catch((error) => {
@@ -999,7 +1258,7 @@ export default {
 			})
 		},
 		onContactAddressDelete(contact, save = true) {
-			network.deleteContactAddress(contact.BOOKID, contact.URI, contact.UID, contact.ADR, contact.GEO).then((response) => {
+			network.deleteContactAddress(contact.BOOKID, contact.URI, contact.UID, contact.ADR, contact.GEO, contact.FILEID || null, this.myMapId).then((response) => {
 				if (save) {
 					this.saveAction({
 						type: 'contactDelete',
@@ -1014,7 +1273,7 @@ export default {
 		onContactPlace(e, save = true) {
 			network.placeContact(e.contact.BOOKID, e.contact.URI,
 				e.contact.UID, e.latLng.lat, e.latLng.lng,
-				e.address || null, e.addressType
+				e.address || null, e.addressType, e.FILEID || null, this.myMapId
 			).then((response) => {
 				if (save) {
 					this.saveAction({
@@ -1075,18 +1334,14 @@ export default {
 			optionsController.saveOptionValues({ favoritesEnabled: this.favoritesEnabled ? 'true' : 'false' })
 		},
 		getFavorites() {
+			this.favorites = {}
 			if (!this.favoritesEnabled) {
 				return
 			}
 			this.favoritesLoading = true
-			network.getSharedFavoriteCategories().then((response) => {
-				this.favoriteCategoryTokens = {}
-				response.data.forEach((s) => {
-					this.favoriteCategoryTokens[s.category] = s.token
-				})
-			})
-			network.getFavorites().then((response) => {
-				this.favorites = {}
+			this.favorites = {}
+			this.favoriteCategoryTokens = {}
+			network.getFavorites(this.myMapId).then((response) => {
 				response.data.forEach((f) => {
 					if (!f.category) {
 						f.category = t('maps', 'Personal')
@@ -1098,6 +1353,25 @@ export default {
 				console.error(error)
 			}).then(() => {
 				this.favoritesLoading = false
+			})
+			network.getSharedFavoriteCategories(this.myMapId).then((response) => {
+				this.favoriteCategoryTokens = {}
+				response.data.forEach((s) => {
+					this.favoriteCategoryTokens[s.category] = s.token
+					if (!(this.myMapId === null || this.myMapId === '')) {
+						network.getFavoritesByToken(s.token).then((response) => {
+							response.data.favorites.forEach((f) => {
+								f.id = s.token + f.id
+								f.selected = false
+								this.$set(this.favorites, f.id, f)
+							})
+						}).catch((error) => {
+							console.error(error)
+						}).then(() => {
+							this.favoritesLoading = false
+						})
+					}
+				})
 			})
 		},
 		onFavoriteCategoryClicked(catid) {
@@ -1134,13 +1408,13 @@ export default {
 		},
 		onFavoriteCategoryShareChange(catid, checked) {
 			if (checked) {
-				network.shareFavoriteCategory(catid).then((response) => {
+				network.shareFavoriteCategory(catid, this.myMapId).then((response) => {
 					this.$set(this.favoriteCategoryTokens, catid, response.data.token)
 				}).catch((error) => {
 					console.error(error)
 				})
 			} else {
-				network.unshareFavoriteCategory(catid).then((response) => {
+				network.unshareFavoriteCategory(catid, this.myMapId).then((response) => {
 					this.$delete(this.favoriteCategoryTokens, catid)
 				}).catch((error) => {
 					console.error(error)
@@ -1175,12 +1449,12 @@ export default {
 			this.deselectAll()
 			// select
 			this.favorites[f.id].selected = true
-			this.openSidebar()
-			this.activeSidebarTab = 'favorite'
+			this.openSidebar(null, 'favorite', f.name)
+			window.OCA.Files.Sidebar.setActiveTab('favorite')
 			this.selectedFavorite = f
 		},
 		onFavoriteEdit(f, save = true) {
-			network.editFavorite(f.id, f.name, f.category, f.comment, f.lat, f.lng).then((response) => {
+			network.editFavorite(f.id, f.name, f.category, f.comment, f.lat, f.lng, this.myMapId).then((response) => {
 				if (save) {
 					this.saveAction({
 						type: 'favoriteEdit',
@@ -1199,7 +1473,7 @@ export default {
 			})
 		},
 		onFavoriteDelete(favid, save = true) {
-			network.deleteFavorite(favid).then((response) => {
+			network.deleteFavorite(favid, this.myMapId).then((response) => {
 				if (save) {
 					this.saveAction({
 						type: 'favoriteDelete',
@@ -1213,7 +1487,7 @@ export default {
 			})
 		},
 		onFavoritesDelete(favids, save = true) {
-			network.deleteFavorites(favids).then((response) => {
+			network.deleteFavorites(favids, this.myMapId).then((response) => {
 				if (save) {
 					const deleted = favids.map((favid) => {
 						return { ...this.favorites[favid] }
@@ -1246,7 +1520,7 @@ export default {
 			this.exportFavorites([catid])
 		},
 		exportFavorites(catIdList) {
-			network.exportFavorites(catIdList).then((response) => {
+			network.exportFavorites(catIdList, this.myMapId).then((response) => {
 				showSuccess(t('maps', 'Favorites exported in {path}', { path: response.data }))
 			}).catch((error) => {
 				console.error(error)
@@ -1264,7 +1538,7 @@ export default {
 			)
 		},
 		importFavorites(path) {
-			network.importFavorites(path).then((response) => {
+			network.importFavorites(path, this.myMapId).then((response) => {
 				this.getFavorites()
 			}).catch((error) => {
 				console.error(error)
@@ -1278,6 +1552,50 @@ export default {
 				: null
 			this.addFavorite(obj.latLng, name, null, obj.formattedAddress || null)
 		},
+		onAddFavoriteToMap(f) {
+			this.chooseMyMap((map) => {
+				network.addFavorite(f.lat, f.lng, f.name, f.category, f.comment, f.extensions, map.id).then((response) => {
+					showSuccess(t('maps', 'Favorite {favoriteName} added to map {mapName}', { favoriteName: f.name ?? '', mapName: map.name ?? '' }))
+				}).catch((error) => {
+					console.error(error)
+					showError(t('maps', 'Failed to save Favorite {favoriteName} to map {mapName}', { favoriteName: f.name ?? '', mapName: map.name ?? '' }))
+				})
+			})
+		},
+		onAddFavoriteCategoryToMap(catid) {
+			if (this.favoriteCategories[catid].token) {
+				this.chooseMyMap((map) => {
+					network.addSharedFavoriteCategoryToMap(catid, map.id, optionsController.myMapId).then((response) => {
+						showSuccess(t('maps', 'Favorite category {favoriteName} linked to map {mapName}', { favoriteName: this.favoriteCategories[catid].category ?? '', mapName: map.name ?? '' }))
+					}).catch((error) => {
+						console.error(error)
+						showError(t('maps', 'Failed to link Favorite category {favoriteName} to map {mapName}', { favoriteName: this.favoriteCategories[catid].category ?? '', mapName: map.name ?? '' }))
+					})
+				})
+			} else {
+				this.chooseMyMap((map) => {
+					network.addFavorites(Object.values(this.favorites).filter((f) => f.category === catid), map.id).then((responses) => {
+						showSuccess(t('maps', 'Favorite category {favoriteName} copied to map {mapName}', { favoriteName: this.favoriteCategories[catid].category ?? '', mapName: map.name ?? '' }))
+					}).catch(errors => {
+						showError(t('maps', 'Failed to copy Favorite category {favoriteName} to map {mapName}', { favoriteName: this.favoriteCategories[catid].category ?? '', mapName: map.name ?? '' }))
+					})
+				})
+			}
+		},
+		onDeleteFavoriteCategoryFromMap(catid) {
+			network.deleteSharedFavoriteCategoryFromMap(catid, optionsController.myMapId).then((response) => {
+				const favIds = Object.keys(this.favorites).filter((favid) => {
+					return this.favorites[favid].category === catid
+				})
+				favIds.forEach((favid) => {
+					this.$delete(this.favorites, favid)
+				})
+				showSuccess(t('maps', 'Favorite category {favoriteName} unlinked from map', { favoriteName: catid ?? '' }))
+			}).catch((error) => {
+				console.error(error)
+				showError(t('maps', 'Failed to remove Favorite category {favoriteName} from map', { favoriteName: catid ?? '' }))
+			})
+		},
 		onFavoriteAdd(latLng) {
 			this.addFavorite(latLng, null, null, null, null, true, true)
 		},
@@ -1285,7 +1603,7 @@ export default {
 			if (category === null) {
 				category = this.lastUsedFavoriteCategory
 			}
-			return network.addFavorite(latLng.lat, latLng.lng, name, category, comment, extensions).then((response) => {
+			return network.addFavorite(latLng.lat, latLng.lng, name, category, comment, extensions, this.myMapId).then((response) => {
 				const fav = response.data
 				if (!fav.category) {
 					fav.category = t('maps', 'Personal')
@@ -1299,8 +1617,8 @@ export default {
 				this.$set(this.favorites, fav.id, fav)
 				if (openSidebar) {
 					this.selectedFavorite = this.favorites[fav.id]
-					this.activeSidebarTab = 'favorite'
-					this.openSidebar()
+					window.OCA.Files.Sidebar.setActiveTab('favorite')
+					this.openSidebar(null, 'favorite', fav.name)
 				}
 				return fav.id
 			}).catch((error) => {
@@ -1308,7 +1626,7 @@ export default {
 			})
 		},
 		onRenameFavoriteCategory(e, save = true) {
-			network.renameFavoriteCategory([e.old], e.new).then((response) => {
+			network.renameFavoriteCategory([e.old], e.new, this.myMapId).then((response) => {
 				if (save) {
 					this.saveAction({
 						type: 'favoriteRenameCategory',
@@ -1401,11 +1719,12 @@ export default {
 			optionsController.saveOptionValues({ tracksEnabled: this.tracksEnabled ? 'true' : 'false' })
 		},
 		getTracks() {
+			this.tracks = []
 			if (!this.tracksEnabled) {
 				return
 			}
 			this.tracksLoading = true
-			network.getTracks().then((response) => {
+			network.getTracks(this.myMapId).then((response) => {
 				this.tracks = response.data.map((track) => {
 					if (track.metadata) {
 						try {
@@ -1431,6 +1750,22 @@ export default {
 			}).then(() => {
 				this.tracksLoading = false
 			})
+		},
+		onTrackAdded(track) {
+			if (track.metadata) {
+				try {
+					track.metadata = JSON.parse(track.metadata)
+				} catch (error) {
+					console.error('Failed to parse track metadata')
+				}
+			}
+			track = this.tracks.push({
+				...track,
+				loading: false,
+				enabled: false,
+				selected: false,
+			}) - 1
+			this.getTrack(this.tracks[track], true, true, false)
 		},
 		onNavTrackClicked(track) {
 			if (track.enabled) {
@@ -1459,7 +1794,7 @@ export default {
 		},
 		getTrack(track, enable = false, save = true, zoom = false) {
 			track.loading = true
-			network.getTrack(track.id).then((response) => {
+			network.getTrack(track.id, this.myMapId).then((response) => {
 				if (!track.metadata) {
 					try {
 						track.metadata = JSON.parse(response.data.metadata)
@@ -1497,7 +1832,7 @@ export default {
 		},
 		onChangeTrackColor(e) {
 			e.track.color = e.color
-			network.editTrack(e.track.id, e.color).then((response) => {
+			network.editTrack(e.track.id, e.color, this.myMapId).then((response) => {
 				console.debug(response.data)
 			}).catch((error) => {
 				console.error(error)
@@ -1521,25 +1856,30 @@ export default {
 			this.deselectAll()
 			// select
 			track.selected = true
-			this.openSidebar()
-			this.activeSidebarTab = 'track'
+			this.openSidebar(track.path, 'track', track.name)
+			window.OCA.Files.Sidebar.setActiveTab('maps-track-metadata')
 			this.selectedTrack = track
 		},
 		// devices
 		onDevicesClicked() {
-			this.devicesEnabled = !this.devicesEnabled
-			// get devices if we don't have them yet
-			if (this.devicesEnabled && this.devices.length === 0) {
-				this.getDevices()
+		    if (this.myMapId) {
+				showInfo(t('maps', 'Devices are not yet available on custom Maps'))
+			} else {
+				this.devicesEnabled = !this.devicesEnabled
+				// get devices if we don't have them yet
+				if (this.devicesEnabled && this.devices.length === 0) {
+					this.getDevices()
+				}
+				optionsController.saveOptionValues({ devicesEnabled: this.devicesEnabled ? 'true' : 'false' })
 			}
-			optionsController.saveOptionValues({ devicesEnabled: this.devicesEnabled ? 'true' : 'false' })
 		},
 		getDevices() {
+			this.devices = []
 			if (!this.devicesEnabled) {
 				return
 			}
 			this.devicesLoading = true
-			network.getDevices().then((response) => {
+			network.getDevices(this.myMapId).then((response) => {
 				this.devices = response.data.map((device) => {
 					return {
 						...device,
@@ -1586,7 +1926,7 @@ export default {
 		},
 		getDevice(device, enable = false, save = true, zoom = false) {
 			device.loading = true
-			network.getDevice(device.id).then((response) => {
+			network.getDevice(device.id, this.myMapId).then((response) => {
 				this.$set(device, 'points', response.data.sort((p1, p2) => (p1.timestamp || 0) - (p2.timestamp || 0)))
 				if (enable) {
 					device.enabled = true
@@ -1622,10 +1962,31 @@ export default {
 		},
 		onChangeDeviceColor(e) {
 			e.device.color = e.color
-			network.editDevice(e.device.id, null, e.color).then((response) => {
+			network.editDevice(e.device.id, null, e.color, this.myMapId).then((response) => {
 				console.debug(response.data)
 			}).catch((error) => {
 				console.error(error)
+			})
+		},
+		onAddTrackToMap(track) {
+			this.chooseMyMap((map) => {
+				try {
+					network.copyByPath(track.path, (map.path + '/' + track.file_name).replace('//', '/'))
+					showSuccess(t('maps', 'Track {trackName} added to map {mapName}',
+						{
+							trackName: track.name ?? '',
+							mapName: map.name ?? '',
+						}))
+
+				} catch (error) {
+					console.error(error)
+					showError(
+						t('maps', 'Failed to save track {trackName} to map {mapName}', {
+							trackName: track.name ?? '',
+							mapName: map.name ?? '',
+						}))
+
+				}
 			})
 		},
 		onDeviceZoom(device) {
@@ -1669,6 +2030,10 @@ export default {
 				console.error(error)
 				showError(t('maps', 'Failed to delete device') + ': ' + error.data)
 			})
+		},
+		onAddDeviceToMap(device) {
+			// Fixme
+			showInfo('Adding device to map not supported yet')
 		},
 		onToggleDeviceHistory(device) {
 			device.historyEnabled = !device.historyEnabled
@@ -1731,6 +2096,172 @@ export default {
 			}).then(() => {
 				this.importingDevices = false
 			})
+		},
+		// MyMaps
+		getMyMaps() {
+			if (!this.myMapsEnabled) {
+				return
+			}
+			this.myMapsLoading = true
+			this.myMaps = [
+				{
+					name: t('maps', 'Default'),
+					id: null,
+					enabled: this.myMapId === null,
+					isDeletable: false,
+					isShareable: false,
+				},
+			]
+			network.getMyMaps().then((response) => {
+				this.myMaps = [
+					{
+						name: t('maps', 'Default'),
+						id: null,
+						enabled: this.myMapId === null,
+						isDeletable: false,
+						isShareable: false,
+					},
+				]
+			    this.myMaps.push(
+				    ...response.data.map((myMap) => {
+				        return {
+				            ...myMap,
+							enabled: this.myMapId === myMap.id,
+						}
+				    }))
+			}).catch((error) => {
+				console.error(error)
+			}).then(() => {
+				this.myMapsLoading = false
+			})
+		},
+		chooseMyMap(callback) {
+			const that = this
+			const firstCallBack = (path) => {
+				const p = (path === '' ? '/' : path)
+				const map = that.myMaps.find((m) => { return m.path === p })
+				if (map) {
+					callback(map)
+				} else {
+					showInfo(t('maps', 'Folder is not a map'))
+					const fileClient = OC.Files.getClient()
+					fileClient.getFileInfo(path).then((status, fileInfo) => {
+						const map = {
+							id: fileInfo.id,
+							path: fileInfo.name,
+							name: fileInfo.basename,
+							fileInfo,
+						}
+						callback(map)
+					})
+				}
+			}
+			OC.dialogs.filepicker(
+				t('maps', 'Choose directory of pictures to place'),
+				(t) => firstCallBack(t),
+				false,
+				'httpd/unix-directory',
+				true,
+				OC.dialogs.FILEPICKER_TYPE_CHOOSE
+			)
+		},
+		onMyMapsClicked() {
+			this.myMapsEnabled = !this.myMapsEnabled
+			// get tracks if we don't have them yet
+			if (this.myMapsEnabled && this.myMaps.length === 0) {
+				this.getMyMaps()
+			}
+			optionsController.saveOptionValues({ myMapsEnabled: this.myMapsEnabled ? 'true' : 'false' })
+		},
+		onMyMapClicked(myMap) {
+			if (this.showSidebar) {
+				this.openSidebar(myMap.path, 'maps', myMap.name)
+			}
+		    if (!this.myMapsLoading) {
+				this.myMapsLoading = true
+		        this.loadMap(myMap)
+			}
+			this.myMapsLoading = false
+		},
+		onAddMyMap(name) {
+		    this.myMapsLoading = true
+		    network.addMyMap(name).then((response) => {
+				this.myMaps.push({
+					...response.data,
+					enabled: this.myMapId === response.data.id,
+				})
+			}).catch((error) => {
+				console.error(error)
+			}).then(() => {
+				this.myMapsLoading = false
+			})
+		},
+		onChangeMyMapColor(myMap) {
+
+		},
+		onRenameMyMap({ id, newName }) {
+			this.myMapsLoading = true
+			network.renameMyMap(id, newName).then((response) => {
+				const index = this.myMaps.findIndex((myMap) => myMap.id === id)
+				this.myMaps[index] = response.data
+			}).catch((error) => {
+				console.error(error)
+			}).then(() => {
+				this.myMapsLoading = false
+			})
+		},
+		onDeleteMyMap(id) {
+			this.myMapsLoading = true
+			network.deleteMyMap(id).then((response) => {
+				const index = this.myMaps.findIndex((myMap) => myMap.id === id)
+				this.myMaps.splice(index, 1)
+			}).catch((error) => {
+				console.error(error)
+			}).then(() => {
+				this.myMapsLoading = false
+			})
+		},
+		onShareMyMap(myMap) {
+			window.OCA.Files.Sidebar.setActiveTab('sharing')
+			this.openSidebar(myMap.path, 'maps', myMap.name)
+		},
+		loadMap(myMap) {
+			if (this.photoSuggestions) {
+				this.cancelPhotoSuggestions()
+			}
+			this.myMapId = myMap.id
+			// Disable devices for custom maps
+			if (this.myMapId) {
+				this.devicesEnabled = false
+			}
+			optionsController.myMapId = myMap.id
+			const that = this
+			optionsController.restoreOptions(function() {
+				that.activeLayerId = optionsController.tileLayer
+				that.mapBounds = optionsController.bounds
+				if (!that.myMapId) {
+					that.devicesEnabled = optionsController.devicesEnabled
+				}
+			})
+			// fixme set new tilelayer and mapbounds in the map component
+			let newurl
+			if (this.myMapId === null) {
+				newurl = window.location.href.split('/apps/maps')[0].concat('/apps/maps/')
+
+			} else {
+				newurl = window.location.href.split('/apps/maps')[0].concat('/apps/maps/m/', this.myMapId)
+			}
+			window.history.pushState({ id: this.myMapId }, myMap.name, newurl)
+			this.getContacts()
+			this.getPhotos()
+
+			this.getFavorites()
+			this.getTracks()
+			this.getDevices()
+			this.getMyMaps()
+			if (optionsController.optionValues.trackMe === 'true') {
+				this.sendPositionLoop()
+			}
 		},
 	},
 }

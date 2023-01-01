@@ -11,7 +11,7 @@
 import TrackTable from './TrackTable'
 
 export default {
-	name: 'TrackSidebarTab',
+	name: 'TrackMetadataTab',
 
 	components: {
 		TrackTable,

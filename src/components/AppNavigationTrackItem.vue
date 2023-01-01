@@ -54,6 +54,12 @@
 				</template>
 				{{ t('maps', 'Change color') }}
 			</NcActionButton>
+			<NcActionButton v-if="parentEnabled && track.enabled"
+				icon="icon-share"
+				:close-after-click="true"
+				@click="$emit('add-to-map-track', track)">
+				{{ t('maps', 'Copy to map') }}
+			</NcActionButton>
 		</template>
 	</NcAppNavigationItem>
 </template>

@@ -57,7 +57,7 @@ class FavoritesService {
      * @param string|null $filterCategory
      * @return array with favorites
      */
-    public function getFavoritesFromDB($userId, $pruneBefore = 0, $filterCategory = null) {
+    public function getFavoritesFromDB($userId, $pruneBefore = 0, $filterCategory = null, $isDeletable=true, $isUpdateable=true, $isShareable=true) {
         $favorites = [];
         $qb = $this->qb;
         $qb->select('id', 'name', 'date_created', 'date_modified', 'lat', 'lng', 'category', 'comment', 'extensions')
@@ -87,24 +87,28 @@ class FavoritesService {
             $category = $row['category'];
             $comment = $row['comment'];
             $extensions = $row['extensions'];
-            array_push($favorites, [
-                'id' => $id,
-                'name' => $name,
-                'date_modified' => $date_modified,
-                'date_created' => $date_created,
-                'lat' => $lat,
-                'lng' => $lng,
-                'category' => $category,
-                'comment' => $comment,
-                'extensions' => $extensions
-            ]);
+            $favorites[] = [
+				'id' => $id,
+				'name' => $name,
+				'date_modified' => $date_modified,
+				'date_created' => $date_created,
+				'lat' => $lat,
+				'lng' => $lng,
+				'category' => $category,
+				'comment' => $comment,
+				'extensions' => $extensions,
+				'isDeletable' => $isDeletable,
+				//Saving maps information in the file
+				'isUpdateable' => $isUpdateable,
+				'isShareable' => $isShareable,
+			];
         }
         $req->closeCursor();
         $qb = $qb->resetQueryParts();
         return $favorites;
     }
 
-    public function getFavoriteFromDB($id, $userId = null, $category = null) {
+    public function getFavoriteFromDB($id, $userId = null, $category = null, $isDeletable=true, $isUpdateable=true, $isShareable=true) {
         $favorite = null;
         $qb = $this->qb;
         $qb->select('id', 'name', 'date_modified', 'date_created', 'lat', 'lng', 'category', 'comment', 'extensions')
@@ -143,7 +147,11 @@ class FavoritesService {
                 'lng' => $lng,
                 'category' => $category,
                 'comment' => $comment,
-                'extensions' => $extensions
+                'extensions' => $extensions,
+				'isDeletable' => $isDeletable,
+				//Saving maps information in the file
+				'isUpdateable' => $isUpdateable,
+				'isShareable' => $isShareable,
             ];
             break;
         }
@@ -327,6 +335,210 @@ class FavoritesService {
         $qb = $qb->resetQueryParts();
 
         return $nbFavorites;
+    }
+
+	/**
+	 * @param $file
+	 * @return array
+	 * @throws \Exception
+	 */
+    public function getFavoritesFromJSON($file) {
+        $favorites = [];
+
+        // Decode file content from JSON
+        $data = json_decode($file->getContent(), true, 512);
+
+        $id = 0;
+        // Loop over all favorite entries
+        foreach($data['features'] as $value) {
+            $currentFavorite = [
+                "id"=>$id,
+				'isDeletable' => $file->isUpdateable(),
+				//Saving maps information in the file
+				'isUpdateable' => $file->isUpdateable(),
+				'isShareable' => false,
+				'extensions' => [],
+            ];
+
+            // Read geometry
+			$currentFavorite['lng'] = floatval($value['geometry']['coordinates'][0]);
+			$currentFavorite['lat'] = floatval($value['geometry']['coordinates'][1]);
+			foreach ($value['properties'] as $key => $v) {
+				if($key === 'Title') {
+					$currentFavorite['name'] = $value['properties']['Title'];
+				} else if($key === 'Published') {
+					if (!is_numeric($value['properties']['Published'])){
+						$time = new \DateTime($value['properties']['Published']);
+						$time = $time->getTimestamp();
+					} else {
+						$time = $value['properties']['Published'];
+					}
+					$currentFavorite['date_created'] = $time;
+				} else if($key === 'Updated') {
+					if (!is_numeric($value['properties']['Updated'])){
+						$time = new \DateTime($value['properties']['Updated']);
+						$time = $time->getTimestamp();
+					} else {
+						$time = $value['properties']['Updated'];
+					}
+					$currentFavorite['date_modified'] = $time;
+				} else if ($key === 'Category') {
+					$currentFavorite['category'] = $v;
+				} else if ($key === 'Comment') {
+					$currentFavorite['comment'] = $v;
+				} else {
+					$currentFavorite[$key] = $v;
+					$currentFavorite['extensions'][$key] = $v;
+				}
+
+
+			}
+			if(!array_key_exists('category', $currentFavorite)) {
+				$currentFavorite['category'] = $this->l10n->t('Personal');
+			}
+			if(!array_key_exists('comment', $currentFavorite)) {
+				$currentFavorite['comment'] = '';
+			}
+			if(
+				array_key_exists('Location', $value['properties']) &&
+				array_key_exists('Address', $value['properties']['Location'])
+			) {
+				$currentFavorite['comment'] = $currentFavorite['comment']."\n".$value['properties']['Location']['Address'];
+			}
+
+            // Store this favorite
+            $favorites[] = $currentFavorite;
+            $id++;
+        }
+
+        return $favorites;
+    }
+
+    public function getFavoriteFromJSON($file, $id) {
+		$favorites = $this->getFavoritesFromJSON($file);
+		if (array_key_exists($id, $favorites)) {
+			return $favorites[$id];
+		} else {
+			return null;
+		}
+    }
+
+	private function addFavoriteToJSONData($data, $name, $lat, $lng, $category, $comment, $extensions, $nowTimeStamp) {
+		$favorite = [
+			"type" => "Feature",
+			"geometry" => [
+				"type" => "Point",
+				"coordinates" => [
+					$lng,
+					$lat
+				]
+			],
+			"properties" => [
+				"Title" => $name,
+				"Category" => $category,
+				"Published" => $nowTimeStamp,
+				"Updated" => $nowTimeStamp,
+				"Comment" => $comment,
+			]
+		];
+		if(is_array($extensions)){
+			foreach ($extensions as $key => $value) {
+				$favorite["properties"][$key] = $value;
+			}
+		}
+		$id = array_push($data['features'], $favorite) - 1;
+		return [
+			"id" => $id,
+			"data" =>$data,
+		];
+	}
+
+    public function addFavoriteToJSON($file, $name, $lat, $lng, $category, $comment, $extensions) {
+        $nowTimeStamp = (new \DateTime())->getTimestamp();
+        $data = json_decode($file->getContent(), true, 512);
+
+		$tmp = $this->addFavoriteToJSONData($data, $name, $lat, $lng, $category, $comment, $extensions, $nowTimeStamp);
+
+        $file->putContent(json_encode($tmp["data"],JSON_PRETTY_PRINT));
+        return $tmp["id"];
+    }
+
+	public function addFavoritesToJSON($file, $favorites) {
+		$nowTimeStamp = (new \DateTime())->getTimestamp();
+		$data = json_decode($file->getContent(), true, 512);
+		$ids = [];
+		foreach ($favorites as $favorite) {
+			$tmp = $this->addFavoriteToJSONData($data, $favorite['name'], $favorite['lat'], $favorite['lng'], $favorite['category'], $favorite['comment'], $favorite['extensions'], $nowTimeStamp);
+			$ids[] = $tmp["id"];
+			$data = $tmp["data"];
+		}
+		$file->putContent(json_encode($data,JSON_PRETTY_PRINT));
+		return $ids;
+	}
+
+    public function renameCategoryInJSON($file, $cat, $newName) {
+        $nowTimeStamp = (new \DateTime())->getTimestamp();
+        $data = json_decode($file->getContent(), true, 512);
+        $this->logger->debug($cat);
+        foreach ($data['features'] as $key => $value) {
+            if (!array_key_exists('Category', $value['properties']) ){
+                $value['properties']['Category'] = $this->l10n->t('Personal');
+                $data['features'][$key]['properties']['Category'] = $this->l10n->t('Personal');
+            }
+            if (array_key_exists('Category', $value['properties']) && $value['properties']['Category'] == $cat) {
+                $data['features'][$key]['properties']['Category'] = $newName;
+                $data['features'][$key]['properties']['Updated'] = $nowTimeStamp;
+            }
+        }
+        $file->putContent(json_encode($data,JSON_PRETTY_PRINT));
+    }
+
+    public function editFavoriteInJSON($file, $id, $name, $lat, $lng, $category, $comment, $extensions) {
+        $nowTimeStamp = (new \DateTime())->getTimestamp();
+        $data = json_decode($file->getContent(), true, 512);
+        $createdTimeStamp = $data['features'][$id]['properties']['Published'];
+        $favorite = [
+            "type" => "Feature",
+            "geometry" => [
+                "type" => "Point",
+                "coordinates" => [
+                    $lng ?? $data['features'][$id]["geometry"]["coordinates"][0],
+                    $lat ?? $data['features'][$id]["geometry"]["coordinates"][1]
+                ]
+            ],
+            "properties" => [
+                "Title" => $name ?? $data['features'][$id]["properties"]["Title"],
+                "Category" => $category ?? $data['features'][$id]["properties"]["Category"],
+                "Published" => $createdTimeStamp,
+                "Updated" => $nowTimeStamp,
+                "Comment" => $comment ?? $data['features'][$id]["properties"]["Comment"],
+            ]
+        ];
+        if (is_array($extensions)) {
+            foreach ($extensions as $key => $value) {
+                $favorite["properties"][$key] = $value;
+            }
+        }
+
+        $data['features'][$id] = $favorite;
+
+        $file->putContent(json_encode($data,JSON_PRETTY_PRINT));
+    }
+
+    public function deleteFavoriteFromJSON($file, $id): int {
+        $data = json_decode($file->getContent(), true, 512);
+		$countBefore = count($data['features']);
+        array_splice($data['features'], $id, 1);
+        $file->putContent(json_encode($data,JSON_PRETTY_PRINT));
+		return $countBefore - count($data['features']);
+    }
+
+    public function deleteFavoritesFromJSON($file, $ids) {
+        $data = json_decode($file->getContent(), true, 512);
+        foreach ($ids as $id) {
+            array_splice($data['features'], $id, 1);
+        }
+        $file->putContent(json_encode($data,JSON_PRETTY_PRINT));
     }
 
     public function exportFavorites($userId, $fileHandler, $categoryList, $begin, $end, $appVersion) {
@@ -680,12 +892,9 @@ class FavoritesService {
         $this->currentFavoritesList = [];
         $this->importUserId = $userId;
 
-        // Read file content
-        $path = $file->getStorage()->getLocalFile($file->getInternalPath());
-        $fdata = file_get_contents($path);
 
         // Decode file content from JSON
-        $data = json_decode($fdata, true, 512, JSON_THROW_ON_ERROR);
+        $data = json_decode($file->getContent(), true, 512);
 
         if($data == null or !isset($data['features'])) {
             $this->logger->error(

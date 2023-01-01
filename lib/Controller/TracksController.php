@@ -98,29 +98,49 @@ class TracksController extends Controller {
 	 * @throws \OCP\Files\InvalidPathException
 	 * @throws \OCP\Files\NotFoundException
 	 */
-    public function getTracks(): DataResponse {
-        $tracks = $this->tracksService->getTracksFromDB($this->userId);
-        $existingTracks = [];
-        foreach ($tracks as $track) {
-            $res = $this->userfolder->getById($track['file_id']);
-            if (is_array($res) and count($res) > 0) {
-                $trackFile = $res[0];
-                if ($trackFile->getType() === \OCP\Files\FileInfo::TYPE_FILE) {
-                    $track['mtime'] = $trackFile->getMTime();
-                    $track['file_name'] = $trackFile->getName();
-                    $track['file_path'] = \preg_replace("/^\/".$this->userId."\/files/", '', $trackFile->getPath());
-                    array_push($existingTracks, $track);
-                }
-                else {
-                    $this->deleteTrack($track['id']);
-                }
-            }
-            else {
-                $this->deleteTrack($track['id']);
-            }
+    public function getTracks($myMapId=null): DataResponse {
+        if (is_null($myMapId) || $myMapId === '') {
+            $tracks = $this->tracksService->getTracksFromDB($this->userId, $this->userfolder);
+        } else {
+            $folders = $this->userfolder->getById($myMapId);
+            $folder = array_shift($folders);
+            $tracks = $this->tracksService->getTracksFromDB($this->userId, $folder, true, false);
         }
-        return new DataResponse($existingTracks);
+        return new DataResponse($tracks);
     }
+
+	/**
+	 * @NoAdminRequired
+	 */
+	public function getTrackContentByFileId($id) {
+		$track = $this->tracksService->getTrackByFileIDFromDB($id, $this->userId);
+		$res = is_null($track) ? null : $this->userfolder->getById($track['file_id']);
+		if (is_array($res) and count($res) > 0) {
+			$trackFile = $res[0];
+			if ($trackFile->getType() === \OCP\Files\FileInfo::TYPE_FILE) {
+				$trackContent = remove_utf8_bom($trackFile->getContent());
+				// compute metadata if necessary
+				// first time we get it OR the file changed
+				if (!$track['metadata'] || $track['etag'] !== $trackFile->getEtag()) {
+					$metadata = $this->tracksService->generateTrackMetadata($trackFile);
+					$this->tracksService->editTrackInDB($track['id'], null, $metadata, $trackFile->getEtag());
+				}
+				else {
+					$metadata = $track['metadata'];
+				}
+				return new DataResponse([
+					'metadata'=>$metadata,
+					'content'=>$trackContent
+				]);
+			}
+			else {
+				return new DataResponse($this->l->t('Bad file type'), 400);
+			}
+		}
+		else {
+			return new DataResponse($this->l->t('File not found'), 400);
+		}
+	}
 
 	/**
 	 * @NoAdminRequired

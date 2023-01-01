@@ -17,6 +17,7 @@ use OCA\Maps\Helper\ExifDataInvalidException;
 use OCA\Maps\Helper\ExifDataNoLocationException;
 use OCA\Maps\Helper\ExifGeoData;
 use OCP\Files\FileInfo;
+use OCP\ICacheFactory;
 use OCP\IL10N;
 use OCP\Files\IRootFolder;
 use OCP\Files\Storage\IStorage;
@@ -54,18 +55,31 @@ class PhotofilesService {
     private $shareManager;
     private $logger;
     private $jobList;
+	private ICacheFactory $cacheFactory;
+	private \OCP\ICache $photosCache;
+	private \OCP\ICache $nonLocalizedPhotosCache;
 
-    public function __construct (ILogger $logger, IRootFolder $root, IL10N $l10n,
-                                GeophotoMapper $photoMapper, IManager $shareManager, IJobList $jobList) {
+	public function __construct (ILogger $logger,
+								 ICacheFactory $cacheFactory,
+								 IRootFolder $root,
+								 IL10N $l10n,
+								 GeophotoMapper $photoMapper,
+								 IManager $shareManager,
+								 IJobList $jobList) {
         $this->root = $root;
         $this->l10n = $l10n;
         $this->photoMapper = $photoMapper;
         $this->shareManager = $shareManager;
         $this->logger = $logger;
         $this->jobList = $jobList;
+		$this->cacheFactory = $cacheFactory;
+		$this->photosCache = $this->cacheFactory->createDistributed('maps:photos');
+		$this->nonLocalizedPhotosCache = $this->cacheFactory->createDistributed('maps:nonLocalizedPhotos');
     }
 
     public function rescan($userId, $inBackground=true) {
+		$this->photosCache->clear($userId);
+		$this->nonLocalizedPhotosCache->clear($userId);
         $userFolder = $this->root->getUserFolder($userId);
         $photos = $this->gatherPhotoFiles($userFolder, true);
         $this->photoMapper->deleteAll($userId);
@@ -78,16 +92,6 @@ class PhotofilesService {
             yield $photo->getPath();
         }
     }
-
-	public function checkForChanges($userId) {
-		$userFolder = $this->root->getUserFolder($userId);
-		$photos = $this->gatherPhotoFiles($userFolder, true);
-		$this->photoMapper->findAll($userId);
-		foreach ($photos as $photo) {
-			$this->addPhoto($photo, $userId);
-			yield $photo->getPath();
-		}
-	}
 
     // add the file for its owner and users that have access
     // check if it's already in DB before adding
@@ -112,10 +116,10 @@ class PhotofilesService {
     public function addByFileIdUserId($fileId, $userId) {
         $userFolder = $this->root->getUserFolder($userId);
         $files = $userFolder->getById($fileId);
-		if (empty($files)) {
-			return;
-		}
-		$file = array_shift($files);
+        if (empty($files)) {
+            return;
+        }
+        $file = array_shift($files);
         if ($file !== null and $this->isPhoto($file)) {
             $this->addPhoto($file, $userId);
         }
@@ -159,6 +163,8 @@ class PhotofilesService {
                 }
                 else {
                     $this->updatePhoto($file, $exif);
+					$this->photosCache->clear($ownerId);
+					$this->nonLocalizedPhotosCache->clear($ownerId);
                 }
             }
         }
@@ -306,6 +312,8 @@ class PhotofilesService {
             if ($this->photoMapper->findByFileId($userId, $photo->getId()) === null) {
                 $this->insertPhoto($photo, $userId, $exif);
             }
+			$this->photosCache->clear($userId);
+			$this->nonLocalizedPhotosCache->clear($userId);
         }
     }
 
@@ -323,6 +331,9 @@ class PhotofilesService {
         // alternative should be file creation date
         $photoEntity->setDateTaken($exif->dateTaken ?? $photo->getMTime());
         $this->photoMapper->insert($photoEntity);
+
+		$this->photosCache->clear($userId);
+		$this->nonLocalizedPhotosCache->clear($userId);
     }
 
     private function updatePhoto($file, $exif) {

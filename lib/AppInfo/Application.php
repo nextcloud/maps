@@ -12,6 +12,8 @@
 namespace OCA\Maps\AppInfo;
 
 
+use OCA\Files\Event\LoadSidebar;
+use OCA\Maps\Listener\LoadSidebarListener;
 use \OCP\AppFramework\App;
 use OCP\AppFramework\Bootstrap\IBootContext;
 use OCP\AppFramework\Bootstrap\IBootstrap;
@@ -47,6 +49,11 @@ class Application extends App implements IBootstrap {
 		$context->registerEventListener(
 			LoadAdditionalScriptsEvent::class,
 			LoadAdditionalScriptsListener::class
+		);
+
+		$context->registerEventListener(
+			LoadSidebar::class,
+			LoadSidebarListener::class
 		);
 
 		$context->registerEventListener(

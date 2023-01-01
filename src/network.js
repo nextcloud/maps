@@ -6,9 +6,10 @@ import {
 	showError,
 } from '@nextcloud/dialogs'
 
-export function saveOptionValues(optionValues) {
+export function saveOptionValues(optionValues, myMapId) {
 	const req = {
 		options: optionValues,
+		myMapId,
 	}
 	const url = generateUrl('/apps/maps/saveOptionValue')
 	axios.post(url, req)
@@ -22,13 +23,19 @@ export function saveOptionValues(optionValues) {
 		})
 }
 
-export function getOptionValues() {
+export function getOptionValues(myMapId = null) {
 	const url = generateUrl('/apps/maps/getOptionsValues')
-	return axios.get(url)
+	const conf = {
+		params: {
+			myMapId,
+		},
+	}
+	return axios.get(url, conf)
 }
 
-export function sendMyPosition(lat, lng, name, acc, ts) {
+export function sendMyPosition(lat, lng, name, acc, ts, myMapId = null) {
 	const req = {
+		myMapId,
 		lat,
 		lng,
 		user_agent: name,
@@ -39,18 +46,24 @@ export function sendMyPosition(lat, lng, name, acc, ts) {
 	return axios.post(url, req)
 }
 
-export function getContacts() {
-	const url = generateUrl('/apps/maps/contacts')
-	return axios.get(url)
-}
-
-export function searchContacts(query = '') {
-	const url = generateUrl('/apps/maps/contacts-search')
-	const req = {
+export function getContacts(myMapId = null) {
+	const conf = {
 		params: {
-			query,
+			myMapId,
 		},
 	}
+	const url = generateUrl('/apps/maps/contacts')
+	return axios.get(url, conf)
+}
+
+export function searchContacts(query = '', myMapId = null) {
+	const req = {
+		params: {
+			myMapId,
+		},
+		query,
+	}
+	const url = generateUrl('/apps/maps/contacts-search')
 	return axios.get(url, req)
 }
 
@@ -65,19 +78,20 @@ export function searchAddress(address, limit = 8) {
 	return realAxios.get(url)
 }
 
-export function exportRoute(type, coords, name, totDist, totTime) {
+export function exportRoute(type, coords, name, totDist, totTime, myMapId = null) {
 	const req = {
 		type,
 		coords,
 		name,
 		totDist,
 		totTime,
+		myMapId,
 	}
 	const url = generateUrl('/apps/maps/exportRoute')
 	return axios.post(url, req)
 }
 
-export function deleteContactAddress(bookid, uri, uid, vcardAddress = '', vcardGEO = '') {
+export function deleteContactAddress(bookid, uri, uid, vcardAddress = '', vcardGEO = '', fileId = null, myMapId = null) {
 	const req = {
 		params: {
 			uid,
@@ -89,13 +103,19 @@ export function deleteContactAddress(bookid, uri, uid, vcardAddress = '', vcardG
 	return axios.delete(url, req)
 }
 
-export function placeContact(bookid, uri, uid, lat, lng, address = null, type = 'home') {
+export function placeContact(bookid, uri, uid, lat, lng, address = null, type = 'home', fileId = null, myMapId = null) {
 	let req = {
 		lat,
 		lng,
 		uid,
+		fileId,
+		myMapId,
 	}
-	if (address) {
+	if (address && (typeof address === 'string' || address instanceof String)) {
+		req = Object.assign(req, {
+			address_string: address,
+		})
+	} else if (address) {
 		let road = (address.road || '') + ' ' + (address.pedestrian || '')
 		+ ' ' + (address.suburb || '') + ' ' + (address.city_district || '')
 		road = road.replace(/\s+/g, ' ').trim()
@@ -116,17 +136,44 @@ export function placeContact(bookid, uri, uid, lat, lng, address = null, type = 
 	return axios.put(url, req)
 }
 
-export function getFavorites() {
+export function addContactToMap(bookid, uri, uid, myMapId, fileId = null) {
+	const req = {
+		uid,
+		fileId,
+		myMapId,
+	}
+	const url = generateUrl('apps/maps/contacts/' + bookid + '/' + uri + '/add-to-map/')
+	return axios.put(url, req)
+}
+
+export function getFavorites(myMapId = null) {
+	const conf = {
+	    params: {
+			myMapId,
+		},
+	}
 	const url = generateUrl('/apps/maps/favorites')
-	return axios.get(url)
+	return axios.get(url, conf)
 }
 
-export function getSharedFavoriteCategories() {
+export function getFavoritesByToken(token) {
+	const conf = {
+	}
+	const url = generateUrl('/apps/maps/api/1.0/public/' + token + '/favorites')
+	return axios.get(url, conf)
+}
+
+export function getSharedFavoriteCategories(myMapId = null) {
+	const conf = {
+		params: {
+			myMapId,
+		},
+	}
 	const url = generateUrl('/apps/maps/favorites-category/shared')
-	return axios.get(url)
+	return axios.get(url, conf)
 }
 
-export function addFavorite(lat, lng, name, category = null, comment = null, extensions = null) {
+export function addFavorite(lat, lng, name, category = null, comment = null, extensions = null, myMapId = null) {
 	const req = {
 		name,
 		lat,
@@ -134,39 +181,57 @@ export function addFavorite(lat, lng, name, category = null, comment = null, ext
 		category,
 		comment,
 		extensions,
+		myMapId,
+	}
+	const url = generateUrl('/apps/maps/favorite')
+	return axios.post(url, req)
+}
+
+export function addFavorites(favorites, myMapId) {
+	const req = {
+		favorites,
+		myMapId,
 	}
 	const url = generateUrl('/apps/maps/favorites')
 	return axios.post(url, req)
 }
 
-export function deleteFavorite(favid) {
+export function deleteFavorite(favid, myMapId = null) {
+	const req = {
+		params: {
+			myMapId,
+		},
+	}
 	const url = generateUrl('/apps/maps/favorites/' + favid)
-	return axios.delete(url)
+	return axios.delete(url, req)
 }
 
-export function renameFavoriteCategory(catIds, newCatName) {
+export function renameFavoriteCategory(catIds, newCatName, myMapId = null) {
 	const req = {
 		categories: catIds,
 		newName: newCatName,
+		myMapId,
 	}
 	const url = generateUrl('/apps/maps/favorites-category')
 	return axios.put(url, req)
 }
 
-export function deleteFavorites(ids) {
+export function deleteFavorites(ids, myMapId = null) {
 	const req = {
 		params: {
 			ids,
+			myMapId,
 		},
 	}
 	const url = generateUrl('/apps/maps/favorites')
 	return axios.delete(url, req)
 }
 
-export function editFavorite(id, name, category = null, comment = null, lat = null, lng = null) {
+export function editFavorite(id, name, category = null, comment = null, lat = null, lng = null, myMapId = null) {
 	const req = {
 		name,
 		extensions: null,
+		myMapId,
 	}
 	if (comment !== null) {
 		req.comment = comment
@@ -184,19 +249,21 @@ export function editFavorite(id, name, category = null, comment = null, lat = nu
 	return axios.put(url, req)
 }
 
-export function exportFavorites(catIdList, begin = null, end = null) {
+export function exportFavorites(catIdList, begin = null, end = null, myMapId = null) {
 	const req = {
 		categoryList: catIdList,
 		begin,
 		end,
+		myMapId,
 	}
 	const url = generateUrl('/apps/maps/export/favorites')
 	return axios.post(url, req)
 }
 
-export function importFavorites(path) {
+export function importFavorites(path, myMapId = null) {
 	const req = {
 		path,
+		myMapId,
 	}
 	const url = generateUrl('/apps/maps/import/favorites')
 	return axios.post(url, req)
@@ -212,65 +279,104 @@ export function unshareFavoriteCategory(catid) {
 	return axios.post(url)
 }
 
-export function getPhotos() {
+export async function getPhotos(myMapId = null) {
 	const url = generateUrl('/apps/maps/photos')
-	return axios.get(url)
+	const conf = {
+		params: {
+			myMapId,
+		},
+	}
+	return axios.get(url, conf)
 }
 
-export function placePhotos(paths, lats, lngs, directory = false) {
+export async function getPhotoSuggestions(myMapId = null) {
+	const url = generateUrl('apps/maps/photos/nonlocalized')
+	const conf = {
+		params: {
+			myMapId,
+		},
+	}
+	return axios.get(url, conf)
+}
+
+export function placePhotos(paths, lats, lngs, directory = false, myMapId = null) {
 	const req = {
 		paths,
 		lats,
 		lngs,
 		directory,
+		myMapId,
 	}
 	const url = generateUrl('/apps/maps/photos')
 	return axios.post(url, req)
 }
 
-export function resetPhotosCoords(paths) {
+export function resetPhotosCoords(paths, myMapId = null) {
 	const req = {
 		params: {
 			paths,
+			myMapId,
 		},
 	}
 	const url = generateUrl('/apps/maps/photos')
 	return axios.delete(url, req)
 }
 
-export function getTracks() {
+export function getTracks(myMapId = null) {
+	const conf = {
+		params: {
+			myMapId,
+		},
+	}
 	const url = generateUrl('/apps/maps/tracks')
-	return axios.get(url)
+	return axios.get(url, conf)
 }
 
-export function getTrack(id) {
-	const url = generateUrl('/apps/maps/tracks/' + id)
+export function getTrack(id, myMapId = null, isFileId = false) {
+	const conf = {
+		params: {
+			myMapId,
+		},
+	}
+	const url = generateUrl('/apps/maps/tracks/' + (isFileId ? 'file/' : '') + id)
 	// return axios.get(url, { responseType: 'json' })
-	return axios.get(url)
+	return axios.get(url, conf)
 }
 
-export function editTrack(id, color) {
+export function editTrack(id, color, myMapId = null) {
 	const req = {
 		color,
+		myMapId,
 	}
 	const url = generateUrl('/apps/maps/tracks/' + id)
 	return axios.put(url, req)
 }
 
-export function getDevices() {
+export function getDevices(myMapId = null) {
+	const conf = {
+		params: {
+			myMapId,
+		},
+	}
 	const url = generateUrl('/apps/maps/devices')
-	return axios.get(url)
+	return axios.get(url, conf)
 }
 
-export function getDevice(id) {
+export function getDevice(id, myMapId = null) {
+	const conf = {
+		params: {
+			myMapId,
+		},
+	}
 	const url = generateUrl('/apps/maps/devices/' + id)
-	return axios.get(url)
+	return axios.get(url, conf)
 }
 
-export function editDevice(id, name, color) {
+export function editDevice(id, name, color, myMapId = null) {
 	const req = {
 		color,
 		name,
+		myMapId,
 	}
 	const url = generateUrl('/apps/maps/devices/' + id)
 	return axios.put(url, req)
@@ -311,4 +417,65 @@ export function importDevices(path) {
 export function deleteDevice(id) {
 	const url = generateUrl('/apps/maps/devices/' + id)
 	return axios.delete(url)
+}
+
+export function getMyMaps() {
+	const url = generateUrl('/apps/maps/maps')
+	return axios.get(url)
+}
+
+export function addMyMap(newName) {
+	const req = {
+		id: null,
+		values: { newName },
+	}
+	const url = generateUrl('/apps/maps/maps')
+	return axios.post(url, req)
+}
+
+export function changeMyMapColor(id, color) {
+	const req = {
+		values: { color },
+	}
+	const url = generateUrl('/apps/maps/maps/' + id)
+	return axios.post(url, req)
+}
+
+export function deleteMyMap(id) {
+	const req = {
+	}
+	const url = generateUrl('/apps/maps/maps/' + id)
+	return axios.delete(url, req)
+}
+
+export function renameMyMap(id, newName) {
+	const req = {
+		id,
+		values: { newName },
+	}
+	const url = generateUrl('/apps/maps/maps/' + id)
+	return axios.put(url, req)
+}
+
+export function copyByPath(from, to) {
+	const fileClient = OC.Files.getClient()
+	return fileClient.copy(from, to, false)
+}
+
+export function addSharedFavoriteCategoryToMap(sharedCategory, targetMapId, myMapId = null) {
+	const req = {
+		myMapId,
+	}
+	const url = generateUrl('apps/maps/favorites-category/' + sharedCategory + '/add-to-map/' + targetMapId)
+	return axios.put(url, req)
+}
+
+export function deleteSharedFavoriteCategoryFromMap(catId, myMapId) {
+	const req = {
+		params: {
+			myMapId,
+		},
+	}
+	const url = generateUrl('apps/maps/favorites-category/' + catId + '/')
+	return axios.delete(url, req)
 }

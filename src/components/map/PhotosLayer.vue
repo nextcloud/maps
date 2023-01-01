@@ -1,5 +1,5 @@
 <template>
-	<Vue2LeafletMarkerCluster :options="clusterOptions"
+	<Vue2LeafletDelayedMarkerCluster :options="clusterOptions"
 		@clusterclick="onClusterClick"
 		@clustercontextmenu="onClusterRightClick"
 		@spiderfied="onSpiderfied">
@@ -7,7 +7,7 @@
 			:key="i"
 			:options="{ data: p }"
 			:icon="getPhotoMarkerIcon(p)"
-			:draggable="draggable"
+			:draggable="draggable && p.isUpdateable"
 			:lat-lng="[p.lat, p.lng]"
 			@click="onPhotoClick($event, p)"
 			@contextmenu="onPhotoRightClick($event, p)"
@@ -33,8 +33,12 @@
 				<NcActionButton icon="icon-toggle" @click="viewPhoto(p)">
 					{{ t('maps', 'Display picture') }}
 				</NcActionButton>
-				<NcActionButton icon="icon-history" @click="resetPhotosCoords([p])">
+				<NcActionButton v-if="p.isUpdateable" icon="icon-history" @click="resetPhotosCoords([p])">
 					{{ t('maps', 'Remove geo data') }}
+				</NcActionButton>
+				<NcActionButton icon="icon-share"
+					@click="$emit('add-to-map-photo', p)">
+					{{ t('maps', 'Copy to map') }}
 				</NcActionButton>
 			</LPopup>
 		</LMarker>
@@ -54,12 +58,12 @@
 				<NcActionButton icon="icon-search" @click="onZoomClusterClick">
 					{{ t('maps', 'Zoom on bounds') }}
 				</NcActionButton>
-				<NcActionButton icon="icon-history" @click="resetClusterPhotoCoords">
+				<NcActionButton v-if="readOnly" icon="icon-history" @click="resetClusterPhotoCoords">
 					{{ t('maps', 'Remove geo data') }}
 				</NcActionButton>
 			</LPopup>
 		</LMarker>
-	</Vue2LeafletMarkerCluster>
+	</Vue2LeafletDelayedMarkerCluster>
 </template>
 
 <script>
@@ -70,7 +74,7 @@ import NcActionButton from '@nextcloud/vue/dist/Components/NcActionButton'
 
 import L from 'leaflet'
 import { LMarker, LTooltip, LPopup } from 'vue2-leaflet'
-import Vue2LeafletMarkerCluster from 'vue2-leaflet-markercluster'
+import Vue2LeafletDelayedMarkerCluster from './Vue2LeafletDelayedMarkerCluster'
 
 import optionsController from '../../optionsController'
 
@@ -79,7 +83,7 @@ const PHOTO_MARKER_VIEW_SIZE = 40
 export default {
 	name: 'PhotosLayer',
 	components: {
-		Vue2LeafletMarkerCluster,
+		Vue2LeafletDelayedMarkerCluster,
 		LMarker,
 		LTooltip,
 		LPopup,
@@ -113,6 +117,9 @@ export default {
 				icon: {
 					iconSize: [PHOTO_MARKER_VIEW_SIZE, PHOTO_MARKER_VIEW_SIZE],
 				},
+				chunkedLoading: true,
+				chunkDelay: 200,
+				chunkInterval: 50,
 			},
 			tooltipOptions: {
 				className: 'leaflet-marker-photo-tooltip',
@@ -135,6 +142,10 @@ export default {
 	},
 
 	computed: {
+		readOnly() {
+			return !this.photos.some((f) => (f.isUpdateable))
+				&& !(this.photos.length === 0 && optionsController.optionValues?.isCreatable)
+		},
 		displayedPhotos() {
 			return this.photos
 		},

@@ -5,9 +5,10 @@
 			<input
 				v-model="name"
 				type="text"
-				:placeholder="namePH">
+				:placeholder="namePH"
+				:readonly="!favorite.isUpdateable">
 			<span class="icon icon-category-organization" />
-			<NcMultiselect
+			<NcMultiselect v-if="favorite.isUpdateable"
 				ref="select"
 				v-model="selectedCategory"
 				class="category-select"
@@ -32,30 +33,47 @@
 					</div>
 				</template>
 			</NcMultiselect>
+			<input v-else
+				v-model="selectedCategory.catid"
+				type="text"
+				:placeholder="namePH"
+				:readonly="!favorite.isUpdateable">
 			<span class="icon icon-comment" />
-			<textarea v-model="comment" :placeholder="commentPH" rows="1" />
+			<textarea v-model="comment"
+				:placeholder="commentPH"
+				:readonly="!favorite.isUpdateable"
+				rows="1" />
 		</div>
 		<div class="buttons">
-			<button @click="onOkClick">
-				<span class="icon-checkmark" />
-				{{ t('maps', 'OK') }}
-			</button>
-			<button @click="onDeleteClick">
-				<span class="icon-delete" />
-				{{ t('maps', 'Delete') }}
-			</button>
+			<NcButton
+				:disabled="!favorite.isUpdateable"
+				native-type="submit"
+				type="primary"
+				@click="onOkClick">
+				<template>
+					{{ t('maps', 'OK') }}
+				</template>
+			</NcButton>
+			<NcButton :disabled="!favorite.isUpdateable"
+				@click="onDeleteClick">
+				<template>
+					{{ t('maps', 'Delete') }}
+				</template>
+			</NcButton>
 		</div>
 	</div>
 </template>
 
 <script>
 import NcMultiselect from '@nextcloud/vue/dist/Components/NcMultiselect'
+import NcButton from '@nextcloud/vue/dist/Components/NcButton'
 
 export default {
 	name: 'FavoriteEditionForm',
 
 	components: {
 		NcMultiselect,
+		NcButton,
 	},
 
 	props: {

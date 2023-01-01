@@ -508,11 +508,12 @@ export default {
 			const totDist = this.control._selectedRoute.summary.totalDistance
 			const totTime = this.control._selectedRoute.summary.totalTime
 
-			network.exportRoute(type, coords, name, totDist, totTime).then((response) => {
+			network.exportRoute(type, coords, name, totDist, totTime, optionsController.myMapId).then((response) => {
 				showSuccess(type === 'route'
-					? t('maps', 'Route exported to {path}.', { path: response.data })
-					: t('maps', 'Track exported to {path}.', { path: response.data })
+					? t('maps', 'Route exported to {path}.', { path: response.data.path })
+					: t('maps', 'Track exported to {path}.', { path: response.data.path })
 				)
+				this.$emit('track-added', response.data)
 			}).catch((error) => {
 				showError(type === 'route'
 					? t('maps', 'Failed to export route')

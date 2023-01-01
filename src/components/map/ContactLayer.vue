@@ -38,10 +38,13 @@
 					<img class="tooltip-contact-avatar"
 						:src="contactAvatar"
 						alt="">
-					<button
+					<button v-if="contact.isUpdateable"
 						v-tooltip="{ content: contact.ADR?t('maps', 'Delete this address'):t('maps', 'Delete this location') }"
 						class="icon icon-delete"
 						@click="onDeleteAddressClick()" />
+					<button v-tooltip="{ content: t('maps', 'Copy to map') }"
+						class="icon icon-share"
+						@click="$emit('add-to-map-contact', contact)" />
 				</div>
 				<div class="tooltip-contact-content">
 					<h3 class="tooltip-contact-name">
@@ -60,17 +63,25 @@
 						class="tooltip-contact-address">
 						{{ l }}
 					</p>
-					<a target="_blank"
+					<a v-if="contact.UID && contact.URI"
+						target="_blank"
 						:href="contactUrl">
 						{{ t('maps', 'Open in Contacts') }}
 					</a>
 				</div>
 			</div>
-			<div v-if="click === 'right'">
-				<NcActionButton icon="icon-delete"
-					@click="onDeleteAddressClick()">
-					{{ contact.ADR?t('maps', 'Delete this address'):t('maps', 'Delete this location') }}
-				</NcActionButton>
+			<div v-if="click === 'right'" class="right-contact-popup">
+				<div>
+					<NcActionButton v-if="contact.isUpdateable"
+						icon="icon-delete"
+						@click="onDeleteAddressClick()">
+						{{ contact.ADR?t('maps', 'Delete this address'):t('maps', 'Delete this location') }}
+					</NcActionButton>
+					<NcActionButton icon="icon-share"
+						@click="$emit('add-to-map-contact', contact)">
+						{{ t('maps', 'Copy to map') }}
+					</NcActionButton>
+				</div>
 			</div>
 		</LPopup>
 	</LMarker>
@@ -116,6 +127,7 @@ export default {
 			},
 			popupOptions: {
 				closeOnClick: false,
+				closeButton: false,
 				className: 'popovermenu open popupMarker contactPopup',
 				offset: L.point(-5, 10),
 			},
@@ -223,5 +235,11 @@ export default {
 			background-color: var(--color-background-hover);
 		}
 	}
+}
+
+.right-contact-popup {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
 }
 </style>

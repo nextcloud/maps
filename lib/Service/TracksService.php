@@ -12,6 +12,11 @@
 
 namespace OCA\Maps\Service;
 
+use OC\Files\Search\SearchBinaryOperator;
+use OC\Files\Search\SearchComparison;
+use OC\Files\Search\SearchQuery;
+use OCP\Files\Search\ISearchBinaryOperator;
+use OCP\Files\Search\ISearchComparison;
 use OCP\IL10N;
 use OCP\ILogger;
 use OCP\IDBConnection;
@@ -192,10 +197,59 @@ class TracksService {
         return true;
     }
 
+	private function dbRowToTrack($row, $folder, $userFolder, $defaultMap, $ignoredPaths) {
+		// avoid tracks that are not in "this map's" folder
+		$files = $folder->getById(intval($row['file_id']));
+		if (empty($files)) {
+			if ($defaultMap) {
+				$this->deleteTrack($row['id']);
+			}
+			return null;
+		}
+		$file = array_shift($files);
+		if ($file === null || $file->getType() !== \OCP\Files\FileInfo::TYPE_FILE) {
+			if ($defaultMap) {
+				$this->deleteTrack($row['id']);
+			}
+			return null;
+		}
+
+		$path = $userFolder->getRelativePath($file->getPath());
+		$isIgnored = false;
+		foreach ($ignoredPaths as $ignoredPath) {
+			if (str_starts_with($path, $ignoredPath)) {
+				$isIgnored = true;
+				break;
+			}
+		}
+		if ($isIgnored) {
+			return null;
+		}
+
+		return [
+			'id' => intval($row['id']),
+			'file_id' => intval($row['file_id']),
+			'color' => $row['color'],
+			'metadata' => $row['metadata'],
+			'etag' => $row['etag'],
+			'path' => $path,
+			'isShareable' => $file->isShareable(),
+			'isDeletable' => $file->isDeletable(),
+			'isUpdateable' => $file->isUpdateable(),
+			'isReadable' => $file->isReadable(),
+			'mtime' => $file->getMTime(),
+			'file_name' => $file->getName(),
+			'file_path' => $userFolder->getRelativePath($file->getPath()),
+		];
+	}
+
+
     /**
      * @param string $userId
      */
-    public function getTracksFromDB($userId) {
+    public function getTracksFromDB($userId, $folder=null, bool $respectNomediaAndNoimage=true, bool $hideImagesOnCustomMaps=true) {
+		$ignoredPaths = $respectNomediaAndNoimage ? $this->getIgnoredPaths($userId, $folder, $hideImagesOnCustomMaps) : [];
+		$userFolder = $this->root->getUserFolder($userId);
         $tracks = [];
         $qb = $this->qb;
         $qb->select('id', 'file_id', 'color', 'metadata', 'etag')
@@ -205,19 +259,67 @@ class TracksService {
             );
         $req = $qb->execute();
 
-        while ($row = $req->fetch()) {
-            array_push($tracks, [
-                'id' => intval($row['id']),
-                'file_id' => intval($row['file_id']),
-                'color' => $row['color'],
-                'metadata' => $row['metadata'],
-                'etag' => $row['etag'],
-            ]);
-        }
+        if (is_null($folder)) {
+			$folder = $userFolder;
+		}
+		$defaultMap = $folder->getId() === $userFolder->getId();
+
+		// my-maps context
+		while ($row = $req->fetch()) {
+			$track = $this->dbRowToTrack($row, $folder, $userFolder, $defaultMap, $ignoredPaths);
+			if (is_null($track)) {
+				continue;
+			}
+			$tracks[] = $track;
+		}
         $req->closeCursor();
         $qb = $qb->resetQueryParts();
         return $tracks;
     }
+
+	/**
+	 * @param $userId
+	 * @param $folder
+	 * @return array
+	 * @throws \OCP\Files\NotFoundException
+	 * @throws \OCP\Files\NotPermittedException
+	 * @throws \OC\User\NoUserException
+	 */
+	private function getIgnoredPaths($userId, $folder=null, $hideImagesOnCustomMaps=true){
+		$ignoredPaths = [];
+		$userFolder = $this->root->getUserFolder($userId);
+		if (is_null($folder)) {
+			$folder = $userFolder;
+		}
+		$ignoreMarkerFiles = [
+			'.nomedia',
+			'.notrack'
+		];
+		if ($hideImagesOnCustomMaps) {
+			$ignoreMarkerFiles[] = '.maps';
+		}
+		$func = function(string $i): SearchComparison {
+			return new SearchComparison(ISearchComparison::COMPARE_EQUAL, 'name', $i);
+		};
+		$excludedNodes = $folder->search(new SearchQuery(
+			new SearchBinaryOperator(ISearchBinaryOperator::OPERATOR_AND, [
+				new SearchBinaryOperator( ISearchBinaryOperator::OPERATOR_NOT, [
+					new SearchComparison(ISearchComparison::COMPARE_EQUAL, 'mimetype', FileInfo::TYPE_FOLDER)
+				]),
+				new SearchBinaryOperator(ISearchBinaryOperator::OPERATOR_OR, array_map(
+						$func,
+						$ignoreMarkerFiles)
+				),
+			]),
+			0,
+			0,
+			[]
+		));
+		foreach($excludedNodes as $node) {
+			$ignoredPaths[] = $userFolder->getRelativePath($node->getParent()->getPath());
+		}
+		return $ignoredPaths;
+	}
 
     public function getTrackFromDB($id, $userId=null) {
         $track = null;
@@ -234,16 +336,37 @@ class TracksService {
         }
         $req = $qb->execute();
 
-        while ($row = $req->fetch()) {
-            $track = [
-                'id' => intval($row['id']),
-                'file_id' => intval($row['file_id']),
-                'color' => $row['color'],
-                'metadata' => $row['metadata'],
-                'etag' => $row['etag'],
-            ];
-            break;
-        }
+		while ($row = $req->fetch()) {
+			if ($userId !== '' and $userId !== null) {
+				$userFolder = $this->root->getUserFolder($userId);
+				$files = $userFolder->getById(intval($row['file_id']));
+				if (empty($files)) {
+					break;
+				}
+				$file = array_shift($files);
+				if ($file === null) {
+					break;
+				}
+				$track = $this->dbRowToTrack($row, $userFolder, $userFolder, true, []);
+			} else {
+				$track = [
+					'id' => intval($row['id']),
+					'file_id' => intval($row['file_id']),
+					'color' => $row['color'],
+					'metadata' => $row['metadata'],
+					'etag' => $row['etag'],
+					'path' => '',
+					'isShareable' => false,
+					'isDeletable' => false,
+					'isUpdateable' => false,
+					'isReadable' => false,
+					'mtime' => 0,
+					'file_name' => '',
+					'file_path' => '',
+				];
+			}
+			break;
+		}
         $req->closeCursor();
         $qb = $qb->resetQueryParts();
         return $track;
@@ -265,13 +388,34 @@ class TracksService {
         $req = $qb->execute();
 
         while ($row = $req->fetch()) {
-            $track = [
-                'id' => intval($row['id']),
-                'file_id' => intval($row['file_id']),
-                'color' => $row['color'],
-                'metadata' => $row['metadata'],
-                'etag' => $row['etag'],
-            ];
+			if ($userId !== '' and $userId !== null) {
+				$userFolder = $this->root->getUserFolder($userId);
+				$files = $userFolder->getById(intval($row['file_id']));
+				if (empty($files)) {
+					break;
+				}
+				$file = array_shift($files);
+				if ($file === null) {
+					break;
+				}
+				$track = $this->dbRowToTrack($row, $userFolder, $userFolder, true, [] );
+			} else {
+				$track = [
+					'id' => intval($row['id']),
+					'file_id' => intval($row['file_id']),
+					'color' => $row['color'],
+					'metadata' => $row['metadata'],
+					'etag' => $row['etag'],
+					'path' => '',
+					'isShareable' => false,
+					'isDeletable' => false,
+					'isUpdateable' => false,
+					'isReadable' => false,
+					'mtime' => 0,
+					'file_name' => '',
+					'file_path' => '',
+				];
+			}
             break;
         }
         $req->closeCursor();

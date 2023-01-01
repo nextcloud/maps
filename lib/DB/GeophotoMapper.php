@@ -40,12 +40,12 @@ class GeophotoMapper extends Mapper {
     }
 
     public function findAll($userId, $limit=null, $offset=null) {
-        $sql = 'SELECT * FROM `*PREFIX*maps_photos` where `user_id` = ? and `lat` is not null and `lng` is not null';
+        $sql = 'SELECT * FROM `*PREFIX*maps_photos` where `user_id` = ? and `lat` is not null and `lng` is not null ORDER BY `date_taken` ASC';
         return $this->findEntities($sql, [$userId], $limit, $offset);
     }
 
     public function findAllNonLocalized($userId, $limit=null, $offset=null) {
-        $sql = 'SELECT * FROM `*PREFIX*maps_photos` where `user_id` = ? and (`lat` is null or `lng` is  null)';
+        $sql = 'SELECT * FROM `*PREFIX*maps_photos` where `user_id` = ? and (`lat` is null or `lng` is  null) ORDER BY `date_taken` ASC';
         return $this->findEntities($sql, [$userId], $limit, $offset);
     }
 

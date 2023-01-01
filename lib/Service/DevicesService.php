@@ -60,11 +60,15 @@ class DevicesService {
         $req = $qb->execute();
 
         while ($row = $req->fetch()) {
-            array_push($devices, [
-                'id' => intval($row['id']),
-                'user_agent' => $row['user_agent'],
-                'color' => $row['color']
-            ]);
+            $devices[] = [
+				'id' => intval($row['id']),
+				'user_agent' => $row['user_agent'],
+				'color' => $row['color'],
+				'isShareable' => true,
+				'isDeleteable' => true,
+				'isUpdateable' => true,
+				'isReadable' => true,
+			];
         }
         $req->closeCursor();
         $qb = $qb->resetQueryParts();
@@ -93,15 +97,15 @@ class DevicesService {
 
         $points = [];
         while ($row = $req->fetch()) {
-            array_push($points, [
-                'id' => intval($row['id']),
-                'lat' => floatval($row['lat']),
-                'lng' => floatval($row['lng']),
-                'timestamp' => intval($row['timestamp']),
-                'altitude' => is_numeric($row['altitude']) ? floatval($row['altitude']) : null,
-                'accuracy' => is_numeric($row['accuracy']) ? floatval($row['accuracy']) : null,
-                'battery' => is_numeric($row['battery']) ? floatval($row['battery']) : null
-            ]);
+            $points[] = [
+				'id' => intval($row['id']),
+				'lat' => floatval($row['lat']),
+				'lng' => floatval($row['lng']),
+				'timestamp' => intval($row['timestamp']),
+				'altitude' => is_numeric($row['altitude']) ? floatval($row['altitude']) : null,
+				'accuracy' => is_numeric($row['accuracy']) ? floatval($row['accuracy']) : null,
+				'battery' => is_numeric($row['battery']) ? floatval($row['battery']) : null
+			];
         }
         $req->closeCursor();
         $qb = $qb->resetQueryParts();

@@ -24,6 +24,11 @@
 				@click="onZoomAllClick">
 				{{ t('maps', 'Zoom') }}
 			</NcActionButton>
+			<NcActionButton icon="icon-share"
+				:close-after-click="true"
+				@click="$emit('add-to-map-all-contacts')">
+				{{ t('maps', 'Copy to map') }}
+			</NcActionButton>
 		</template>
 		<template slot="default">
 			<b v-show="false">dummy</b>
@@ -47,6 +52,11 @@
 						:close-after-click="true"
 						@click="onZoomGroupClick(gid)">
 						{{ t('maps', 'Zoom') }}
+					</NcActionButton>
+					<NcActionButton icon="icon-share"
+						:close-after-click="true"
+						@click="$emit('add-to-map-contact-group', gid)">
+						{{ t('maps', 'Copy to map') }}
 					</NcActionButton>
 				</template>
 			</NcAppNavigationItem>

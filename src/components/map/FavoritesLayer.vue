@@ -11,6 +11,7 @@
 			:color="categories[f.category].color"
 			:icon="getFavoriteMarkerIcon(f)"
 			@click="$emit('click', $event)"
+			@add-to-map-favorite="$emit('add-to-map-favorite', $event)"
 			@edit="$emit('edit', $event)"
 			@delete="$emit('delete', $event)" />
 		<LMarker
@@ -20,7 +21,7 @@
 				ref="clusterPopup"
 				class="popup-favorite-wrapper"
 				:options="clusterPopupOptions">
-				<NcActionButton icon="icon-delete" @click="onDeleteClusterClick">
+				<NcActionButton v-if="!readOnly" icon="icon-delete" @click="onDeleteClusterClick">
 					{{ t('maps', 'Delete favorites') }}
 				</NcActionButton>
 				<NcActionButton icon="icon-search" @click="onZoomClusterClick">
@@ -98,6 +99,11 @@ export default {
 	},
 
 	computed: {
+		readOnly() {
+			const farray = Object.values(this.favorites)
+			return !farray.some((f) => (f.isUpdateable))
+				&& !(farray.length === 0 && optionsController.optionValues?.isCreatable)
+		},
 		displayedFavorites() {
 			const favIds = Object.keys(this.favorites).filter((fid) => {
 				const catid = this.favorites[fid].category

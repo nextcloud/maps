@@ -45,6 +45,10 @@ class RescanPhotos extends Command {
         $this->photofilesService = $photofilesService;
         $this->config = $config;
     }
+
+	/**
+	 * @return void
+	 */
     protected function configure() {
         $this->setName('maps:scan-photos')
             ->setDescription('Rescan photos GPS exif data')
@@ -61,14 +65,22 @@ class RescanPhotos extends Command {
 			);
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output) {
+	/**
+	 * @param InputInterface $input
+	 * @param OutputInterface $output
+	 * @return int
+	 */
+    protected function execute(InputInterface $input, OutputInterface $output): int {
         if ($this->encryptionManager->isEnabled()) {
             $output->writeln('Encryption is enabled. Aborted.');
             return 1;
         }
         $this->output = $output;
         $userId = $input->getArgument('user_id');
-		$inBackground = !$input->getOption('now');
+		$inBackground = !($input->getOption('now') ?? true);
+		if ($inBackground) {
+			echo "Extracting coordinates from photo is performed in a BackgroundJob \n";
+		}
         if ($userId === null) {
             $this->userManager->callForSeenUsers(function (IUser $user) use ($inBackground) {
                 $this->rescanUserPhotos($user->getUID(), $inBackground);
@@ -82,7 +94,13 @@ class RescanPhotos extends Command {
         return 0;
     }
 
-    private function rescanUserPhotos($userId, $inBackground=true) {
+	/**
+	 * @param string $userId
+	 * @param bool $inBackground
+	 * @return void
+	 * @throws \OCP\PreConditionNotMetException
+	 */
+    private function rescanUserPhotos(string $userId, bool $inBackground=true) {
         echo '======== User '.$userId.' ========'."\n";
         $c = 1;
         foreach ($this->photofilesService->rescan($userId, $inBackground) as $path) {

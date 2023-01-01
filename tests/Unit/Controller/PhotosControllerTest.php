@@ -88,6 +88,7 @@ class PhotosControllerTest extends \PHPUnit\Framework\TestCase {
 
         $this->photoFileService = new PhotoFilesService(
             $c->query(IServerContainer::class)->getLogger(),
+			$c->query(IServerContainer::class)->getCacheFactory(),
             $this->rootFolder,
             $c->query(IServerContainer::class)->getL10N($c->query('AppName')),
             $c->query(GeophotoMapper::class),

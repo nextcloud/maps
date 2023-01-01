@@ -840,7 +840,8 @@ export default {
 			}
 			this.photosLoading = true
 			network.getPhotos(this.myMapId).then((response) => {
-				this.photos = response.data.sort((p1, p2) => (p1.dateTaken || 0) - (p2.dateTaken || 0))
+				this.photos = response.data
+				// this.photos = response.data.sort((p1, p2) => (p1.dateTaken || 0) - (p2.dateTaken || 0))
 			}).catch((error) => {
 				console.error(error)
 			}).then(() => {

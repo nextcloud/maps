@@ -74,6 +74,15 @@ class GeophotoService {
 
 	/**
 	 * @param string $userId
+	 * @return void
+	 */
+	public function clearCache(string $userId=''): void {
+		$this->photosCache->clear($userId);
+		$this->nonLocalizedPhotosCache->clear($userId);
+	}
+
+	/**
+	 * @param string $userId
 	 * @param $folder=null
 	 * @param bool $respectNomediaAndNoimage=true
 	 * @param bool $hideImagesOnCustomMaps=true

@@ -10,6 +10,9 @@ OC.L10N.register(
     "Cancel" : "Cancel",
     "OK" : "OK",
     "Close" : "Close",
+    "Select all" : "Select all",
+    "Save" : "Save",
+    "Tags" : "Tags",
     "Favorite" : "Favorite",
     "Name" : "Name",
     "Add" : "Add",
@@ -22,10 +25,6 @@ OC.L10N.register(
     "right" : "right",
     "left" : "left",
     "Details" : "Details",
-    "Share link" : "Share link",
-    "Move" : "Move",
-    "Link" : "Link",
-    "Download" : "Download",
     "Settings" : "Settings"
 },
 "nplurals=1; plural=0;");

@@ -20,6 +20,7 @@
     "Shared location" : "الموقع المشارك",
     "Close" : "إغلاق",
     "Favorite" : "المفضلة",
+    "Error while loading the file data" : "خطأ اثناء تحميل بيانات الملف",
     "Distance" : "المسافة",
     "Duration" : "المدة الزمنية",
     "Average speed" : "متوسط السرعة",
@@ -52,11 +53,7 @@
     "Phone" : "الهاتف",
     "Computer" : "كمبيوتر",
     "Not grouped" : "غير مصنف",
-    "All contacts" : "كل الجهات",
-    "Share link" : "مشاركة الرابط",
-    "Copy link" : "انسخ الرابط",
-    "Submit" : "إرسال ",
-    "Move" : "نقل",
+    "Metadata" : "البيانات الوصفية ( ميتاداتا)",
     "Restaurant" : "مطعم",
     "Fast food" : "أكل خفيف",
     "Bar" : "عمود",
@@ -73,12 +70,6 @@
     "Doctors" : "أطباء",
     "Dentist" : "طبيب أسنان",
     "Hotel" : "فندق",
-    "Link" : "الرابط",
-    "Description" : "الوصف",
-    "Download" : "تنزيل",
-    "Your photos" : "صورك",
-    "Your devices" : "أجهزتك",
-    "Your tracks" : "مساراتك",
     "Settings" : "الإعدادات"
 },"pluralForm" :"nplurals=6; plural=n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 && n%100<=10 ? 3 : n%100>=11 && n%100<=99 ? 4 : 5;"
 }

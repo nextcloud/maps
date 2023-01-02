@@ -6,9 +6,13 @@
     "Delete share link" : "د شريکېدو لېنک ړنګول",
     "Copied!" : "کاپي شو!",
     "Cancel" : "پرېښول",
+    "Share" : "شریکول",
     "OK" : "سمه ده",
     "Comment" : "تبصره",
     "Close" : "بندول",
+    "Select all" : "ټول ټاکل",
+    "Save" : "ساتل",
+    "Tags" : "نښکې",
     "Favorite" : "په نښه شوی",
     "Name" : "نوم",
     "Add to favorites" : "په نښه کول",
@@ -17,11 +21,6 @@
     "Yes" : "هو",
     "Open" : "پرانيستل",
     "Details" : "معلومات",
-    "Share link" : "د شرېکېدو لېنک",
-    "Copy link" : "لېنک کاپي کول",
-    "Move" : "انتقال",
-    "Link" : "لېنک",
-    "Download" : "ښکته کول",
     "Settings" : "سمونې"
 },"pluralForm" :"nplurals=2; plural=(n != 1);"
 }

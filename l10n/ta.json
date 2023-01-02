@@ -6,10 +6,13 @@
     "Rename" : "பெயர்மாற்றம்",
     "Copy share link" : "பகிர்வு இணைப்பை நகலெடுக்கவும்",
     "Cancel" : "இரத்து செய்க",
+    "Share" : "பகிர்வு",
     "Sort by name" : "Order by name",
     "Sort by date" : "Order by date",
     "OK" : "சரி ",
     "Close" : "மூடுக",
+    "Save" : "சேமிக்க ",
+    "Tags" : "சீட்டுகள்",
     "Favorite" : "விருப்பமான",
     "Name" : "பெயர்",
     "Add" : "சேர்க்க",
@@ -24,11 +27,6 @@
     "Destination" : "Destination",
     "Details" : "விவரங்கள்",
     "Phone" : "தொலைப்பேசி",
-    "Share link" : "Share link",
-    "Move" : "Move",
-    "Link" : "Link",
-    "Description" : "விவரிப்பு",
-    "Download" : "பதிவிறக்குக",
     "Settings" : "அமைப்புகள்"
 },"pluralForm" :"nplurals=2; plural=(n != 1);"
 }

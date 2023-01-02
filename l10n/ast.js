@@ -37,14 +37,6 @@ OC.L10N.register(
     "Details" : "Detalles",
     "Phone" : "Teléfonu",
     "Not grouped" : "Nun s'agrupó",
-    "All contacts" : "Tolos contautos",
-    "Share link" : "Share link",
-    "Copy link" : "Copiar enllaz",
-    "Submit" : "Unviar",
-    "Move" : "Mover",
-    "Link" : "Link",
-    "Description" : "Descripción",
-    "Download" : "Baxar",
     "Settings" : "Settings"
 },
 "nplurals=2; plural=(n != 1);");

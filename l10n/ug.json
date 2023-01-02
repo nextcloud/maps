@@ -5,10 +5,13 @@
     "Import" : "ئەكىر",
     "Rename" : "ئات ئۆزگەرت",
     "Cancel" : "ۋاز كەچ",
+    "Share" : "ھەمبەھىر",
     "Sort by name" : "Order by name",
     "Sort by date" : "Order by date",
     "OK" : "جەزملە",
     "Close" : "ياپ",
+    "Save" : "ساقلا",
+    "Tags" : "بەلگەلەر",
     "Favorite" : "يىغقۇچ",
     "Name" : "ئاتى",
     "Add" : "قوش",
@@ -22,11 +25,7 @@
     "File" : "File",
     "Destination" : "Destination",
     "Phone" : "تېلېفون",
-    "Share link" : "Share link",
-    "Move" : "Move",
-    "Link" : "Link",
-    "Description" : "چۈشەندۈرۈش",
-    "Download" : "چۈشۈر",
+    "Default" : "كۆڭۈلدىكى",
     "Settings" : "تەڭشەكلەر"
 },"pluralForm" :"nplurals=2; plural=(n != 1);"
 }

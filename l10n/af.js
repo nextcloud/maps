@@ -39,14 +39,6 @@ OC.L10N.register(
     "My location" : "My ligging",
     "Phone" : "Foon",
     "Not grouped" : "Nie gegroepeer",
-    "All contacts" : "Alle kontakte",
-    "Share link" : "Deelskakel",
-    "Copy link" : "Kopieer skakel",
-    "Submit" : "Dien in",
-    "Move" : "Skuif",
-    "Link" : "Skakel",
-    "Description" : "Beskrywing",
-    "Download" : "Laai af",
     "Settings" : "Instellings"
 },
 "nplurals=2; plural=(n != 1);");

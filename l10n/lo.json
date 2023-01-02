@@ -5,8 +5,12 @@
     "Rename" : "ປ່ຽນຊື່",
     "Delete share link" : "ລົບລິງແບ່ງປັນ",
     "Cancel" : "ຍົກເລີກ",
+    "Share" : "ແບ່ງປັນ",
     "OK" : "ຕົກລົງ",
     "Close" : "ປິດ",
+    "Select all" : "ເລືອກທັງໝົດ",
+    "Save" : "ບັນທຶກ",
+    "Tags" : "ປ້າຍກຳກັບ",
     "Favorite" : "ລາຍການທີ່ມັກ",
     "Duration" : "ໄລຍະ",
     "Name" : "ຊື່",
@@ -20,11 +24,7 @@
     "Start" : "ເລີ່ມຕົ້ນ",
     "Destination" : "ປາຍທາງ",
     "Details" : "ລາຍລະອຽດ",
-    "Share link" : "ແບ່ງປັນລິງ",
-    "Copy link" : "ສຳເນົາລິງ",
-    "Move" : "ຍ້າຍ",
-    "Link" : "ລິງ",
-    "Download" : "ດາວໂຫລດ",
+    "Default" : "ເລີ່ມຕົ້ນ",
     "Settings" : "ການຕັ້ງຄ່າ"
 },"pluralForm" :"nplurals=1; plural=0;"
 }

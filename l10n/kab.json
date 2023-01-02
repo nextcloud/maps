@@ -5,8 +5,12 @@
     "Rename" : "Beddel isem",
     "Copied!" : "Yenɣel!",
     "Cancel" : "Sefsex",
+    "Share" : "Bḍu",
     "OK" : "IH",
     "Close" : "Mdel",
+    "Select all" : "Fren akk",
+    "Save" : "Sekles",
+    "Tags" : "Tibzimin",
     "Favorite" : "Menyif",
     "Name" : "Nom",
     "Add" : "Rnu",
@@ -16,11 +20,7 @@
     "Search" : "Nadi",
     "File" : "Afaylu",
     "Details" : "Talqayt",
-    "Share link" : "Fren aseɣwen",
-    "Copy link" : "Nɣel aseɣwen",
-    "Move" : "Senkez",
-    "Link" : "Aseɣwen",
-    "Download" : "Sider",
+    "Default" : "Prédéfini(e)",
     "Settings" : "Iɣewwaṛen"
 },"pluralForm" :"nplurals=2; plural=(n != 1);"
 }

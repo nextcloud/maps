@@ -32,12 +32,6 @@ OC.L10N.register(
     "Details" : "বিসতারিত",
     "Phone" : "ফোন",
     "Not grouped" : "দলবদ্ধ নয়",
-    "Share link" : "লিংক ভাগাভাগি করেন",
-    "Copy link" : "লিঙ্ক কপি করো",
-    "Move" : "Move",
-    "Link" : "Link",
-    "Description" : "বিবরণ",
-    "Download" : "ডাউনলোড",
     "Settings" : "সেটিংস"
 },
 "nplurals=2; plural=(n != 1);");

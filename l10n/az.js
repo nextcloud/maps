@@ -29,12 +29,6 @@ OC.L10N.register(
     "Destination" : "Destination",
     "Details" : "Detallar",
     "Not grouped" : "Qruplaşdırılmayıb",
-    "Share link" : "Linki yayımla",
-    "Copy link" : "linki nüsxələ",
-    "Move" : "Move",
-    "Link" : "Link",
-    "Description" : "Açıqlanma",
-    "Download" : "Yüklə",
     "Settings" : "Quraşdırmalar"
 },
 "nplurals=2; plural=(n != 1);");

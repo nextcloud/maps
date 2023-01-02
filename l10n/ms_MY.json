@@ -6,10 +6,12 @@
     "Rename" : "Namakan",
     "Copied!" : "Disalin!",
     "Cancel" : "Batal",
+    "Share" : "Kongsi",
     "Sort by name" : "Order by name",
     "Sort by date" : "Order by date",
     "OK" : "OK",
     "Close" : "Tutup",
+    "Save" : "Simpan",
     "Name" : "Nama",
     "Add" : "Tambah",
     "Add to favorites" : "Add to favorites",
@@ -22,11 +24,6 @@
     "File" : "File",
     "Destination" : "Destination",
     "Phone" : "Telefon",
-    "Share link" : "Share link",
-    "Move" : "Move",
-    "Link" : "Link",
-    "Description" : "Keterangan",
-    "Download" : "Muat turun",
     "Settings" : "Tetapan"
 },"pluralForm" :"nplurals=1; plural=0;"
 }

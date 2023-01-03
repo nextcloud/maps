@@ -39,7 +39,14 @@
     <repair-steps>
         <install>
             <step>OCA\Maps\Migration\InstallScan</step>
+			<step>OCA\Maps\Migration\RegisterMimeType</step>
         </install>
+		<post-migrate>
+			<step>OCA\Maps\Migration\RegisterMimeType</step>
+		</post-migrate>
+		<uninstall>
+			<step>OCA\Maps\Migration\UnregisterMimeType</step>
+		</uninstall>
     </repair-steps>
     <commands>
         <command>OCA\Maps\Command\RescanPhotos</command>

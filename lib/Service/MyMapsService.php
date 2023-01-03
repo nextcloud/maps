@@ -117,13 +117,11 @@ class MyMapsService {
 		$userFolder = $this->root->getUserFolder($userId);
 		$MyMaps = [];
 		$MyMapsNodes = $userFolder->search(new SearchQuery(
-			new SearchComparison(ISearchComparison::COMPARE_EQUAL, 'name', '.maps'),
+			new SearchComparison(ISearchComparison::COMPARE_EQUAL, 'mimetype', 'application/x-nextcloud-maps'),
 			0, 0, []));
 
 		foreach ($MyMapsNodes as $node) {
-			if ($node->getType() === FileInfo::TYPE_FILE and $node->getName() === ".maps") {
-				$MyMaps[] = $this->node2MyMap($node, $userFolder);
-			}
+			$MyMaps[] = $this->node2MyMap($node, $userFolder);
 		}
 		$this->myMapsPathsCache->set($userId, $MyMaps, 60 * 60 * 24);
 		return $MyMaps;

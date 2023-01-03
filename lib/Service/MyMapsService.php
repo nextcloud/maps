@@ -171,7 +171,7 @@ class MyMapsService {
 
         $MyMaps = [];
 		try {
-			$MyMaps = $this->myMapsPathsCache->get($userId);
+			$MyMaps = null; // $this->myMapsPathsCache->get($userId);
 			if ($MyMaps === null) {
 				$MyMaps = $this->updateMyMapsCache($userId);
 			}

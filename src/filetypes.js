@@ -4,7 +4,14 @@ $(document).ready(function() {
 
     if (OCA.Files && OCA.Files.fileActions) {
 
-        function openFile(file, data) {
+		function openMap(file, data) {
+			var mapId = data.fileList.dirInfo.id;
+			var url = generateUrl('apps/maps/m/{mapId}',{mapId});
+
+			window.open(url, '_blank');
+		}
+
+        function openTrackFile(file, data) {
             var token = $('#sharingToken').val();
             // if we are logged
             if (!token) {
@@ -60,6 +67,16 @@ $(document).ready(function() {
 
         // default action is set only for logged in users
         if (!$('#sharingToken').val()){
+			//Open in Maps
+			OCA.Files.fileActions.registerAction({
+				name: 'viewMap',
+				displayName: t('maps', 'View in Maps'),
+				mime: 'application/x-nextcloud-maps',
+				permissions: OC.PERMISSION_READ,
+				iconClass: 'icon-maps-black',
+				actionHandler: openMap
+			});
+			OCA.Files.fileActions.setDefault('application/x-nextcloud-maps', 'viewMap');
 
             OCA.Files.fileActions.registerAction({
                 name: 'viewTrackMaps',
@@ -67,10 +84,10 @@ $(document).ready(function() {
                 mime: 'application/gpx+xml',
                 permissions: OC.PERMISSION_READ,
                 iconClass: 'icon-maps-black',
-                actionHandler: openFile
+                actionHandler: openTrackFile
             });
 
-            OCA.Files.fileActions.register('application/gpx+xml', 'viewTrackMapsDefault', OC.PERMISSION_READ, '', openFile);
+            OCA.Files.fileActions.register('application/gpx+xml', 'viewTrackMapsDefault', OC.PERMISSION_READ, '', openTrackFile);
             OCA.Files.fileActions.setDefault('application/gpx+xml', 'viewTrackMapsDefault');
 
             // import gpx files as favorites

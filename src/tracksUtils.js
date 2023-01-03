@@ -12,10 +12,10 @@ export function processGpx(gpx, overwriteZeroTimpstamp = true) {
 	} else {
 		return null
 	}
-	if (xmlDoc.childNodes.length === 0 || xmlDoc.childNodes[0].tagName !== 'gpx') {
+	if ( !xmlDoc.documentElement || xmlDoc.documentElement.tagName !== 'gpx') {
 		return null
 	}
-	const gpxx = xmlDoc.childNodes[0]
+	const gpxx = xmlDoc.documentElement
 
 	const waypoints = []
 	const tracks = []

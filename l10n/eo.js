@@ -18,6 +18,8 @@ OC.L10N.register(
     "Category" : "Kategorio",
     "Comment" : "Komento",
     "Close" : "Malfermi",
+    "Select all" : "Elekti ĉion",
+    "Save" : "Konservi",
     "save" : "konservi",
     "Tags" : "Etikedoj",
     "Favorite" : "Pliŝatati",
@@ -45,6 +47,7 @@ OC.L10N.register(
     "Details" : "Detaloj",
     "Phone" : "Telefono",
     "Not grouped" : "Ne grupigita",
+    "Default" : "Defaŭlta",
     "Failed to save settings" : "Konservo de agordoj malsukcesis",
     "Settings" : "Agordoj"
 },

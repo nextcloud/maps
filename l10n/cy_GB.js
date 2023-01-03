@@ -14,6 +14,7 @@ OC.L10N.register(
     "OK" : "Iawn",
     "Category" : "Categori",
     "Close" : "Cau",
+    "Save" : "Cadw",
     "Tags" : "Tagiau",
     "Favorite" : "Ffefryn",
     "Duration" : "Hyd",

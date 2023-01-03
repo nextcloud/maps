@@ -8,11 +8,15 @@ OC.L10N.register(
     "Import" : "Əlavə et",
     "Rename" : "Adı dəyiş",
     "Cancel" : "Dayandır",
+    "Share" : "Paylaş",
     "Sort by name" : "Order by name",
     "Sort by date" : "Order by date",
     "OK" : "Oldu",
     "Comment" : "Komentariya",
     "Close" : "Bağla",
+    "Select all" : "Hamısıı seç",
+    "Save" : "Saxla",
+    "Tags" : "Işarələr",
     "Favorite" : "İstəkli",
     "Name" : "Ad",
     "Add" : "Əlavə etmək",
@@ -29,6 +33,7 @@ OC.L10N.register(
     "Destination" : "Destination",
     "Details" : "Detallar",
     "Not grouped" : "Qruplaşdırılmayıb",
+    "Default" : "Susmaya görə",
     "Settings" : "Quraşdırmalar"
 },
 "nplurals=2; plural=(n != 1);");

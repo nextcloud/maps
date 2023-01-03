@@ -10,10 +10,14 @@ OC.L10N.register(
     "Rename" : "Hernoem",
     "Copied!" : "Gekopieer!",
     "Cancel" : "Kanselleer",
+    "Share" : "Deel",
     "OK" : "Goed",
     "Category" : "Kategorie",
     "Comment" : "Kommentaar",
     "Close" : "Sluit",
+    "Select all" : "Kies alle",
+    "Save" : "Bewaar",
+    "Tags" : "Etikette",
     "Favorite" : "Gunsteling",
     "Duration" : "Duur",
     "End" : "Einde",
@@ -39,6 +43,7 @@ OC.L10N.register(
     "My location" : "My ligging",
     "Phone" : "Foon",
     "Not grouped" : "Nie gegroepeer",
+    "Default" : "Verstek",
     "Settings" : "Instellings"
 },
 "nplurals=2; plural=(n != 1);");

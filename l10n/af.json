@@ -8,10 +8,14 @@
     "Rename" : "Hernoem",
     "Copied!" : "Gekopieer!",
     "Cancel" : "Kanselleer",
+    "Share" : "Deel",
     "OK" : "Goed",
     "Category" : "Kategorie",
     "Comment" : "Kommentaar",
     "Close" : "Sluit",
+    "Select all" : "Kies alle",
+    "Save" : "Bewaar",
+    "Tags" : "Etikette",
     "Favorite" : "Gunsteling",
     "Duration" : "Duur",
     "End" : "Einde",
@@ -37,6 +41,7 @@
     "My location" : "My ligging",
     "Phone" : "Foon",
     "Not grouped" : "Nie gegroepeer",
+    "Default" : "Verstek",
     "Settings" : "Instellings"
 },"pluralForm" :"nplurals=2; plural=(n != 1);"
 }

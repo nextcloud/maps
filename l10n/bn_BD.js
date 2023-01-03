@@ -10,11 +10,14 @@ OC.L10N.register(
     "Rename" : "পূনঃনামকরণ",
     "Copied!" : "অনুলিপি!",
     "Cancel" : "বাতির",
+    "Share" : "ভাগাভাগি কর",
     "Sort by name" : "Order by name",
     "Sort by date" : "Order by date",
     "OK" : "তথাস্তু",
     "Comment" : "মন্তব্য",
     "Close" : "বন্ধ",
+    "Save" : "সংরক্ষণ",
+    "Tags" : "ট্যাগ",
     "Favorite" : "প্রিয়জন",
     "Name" : "নাম",
     "Add" : "যোগ করুন",
@@ -32,6 +35,7 @@ OC.L10N.register(
     "Details" : "বিসতারিত",
     "Phone" : "ফোন",
     "Not grouped" : "দলবদ্ধ নয়",
+    "Default" : "পূর্বনির্ধারিত",
     "Settings" : "সেটিংস"
 },
 "nplurals=2; plural=(n != 1);");

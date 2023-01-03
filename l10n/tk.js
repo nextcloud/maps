@@ -1,0 +1,25 @@
+OC.L10N.register(
+    "maps",
+    {
+    "File not found" : "Faýl tapylmady",
+    "Delete" : "Pozmak",
+    "Rename" : "Adyny üýtgetmek",
+    "Cancel" : "ýatyrmak",
+    "Share" : "Paýlaş",
+    "OK" : "Bolýar",
+    "Close" : "Ýap",
+    "Select all" : "Hemmesini saýlaň",
+    "Save" : "Saklamak",
+    "Tags" : "Bellikler",
+    "Favorite" : "Halaýan",
+    "Name" : "Ady",
+    "Add to favorites" : "Saýlananlara goşuň",
+    "Home" : "Baş sahypa",
+    "Yes" : "Hawa",
+    "Search" : "Gözlemek",
+    "File" : "Faýl",
+    "Details" : "Jikme-jiklikler",
+    "Default" : "Bellenen",
+    "Settings" : "Sazlamalar"
+},
+"nplurals=2; plural=(n != 1);");

@@ -143,4 +143,17 @@ class PhotosController extends Controller {
         return new DataResponse($result);
     }
 
+	/**
+	 * @NoAdminRequired
+	 * @return DataResponse
+	 */
+	public function clearCache(): DataResponse {
+		$result = $this->geophotoService->clearCache();
+		if ($result) {
+			return new DataResponse("Cache cleared");
+		} else {
+			return new DataResponse("Failed to clear Cache", 400);
+		}
+	}
+
 }

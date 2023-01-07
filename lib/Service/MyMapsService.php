@@ -24,7 +24,6 @@ use OCP\AppFramework\Http\DataResponse;
 use OCP\Files\NotFoundException;
 use OCP\Files\Search\ISearchBinaryOperator;
 use OCP\Files\Search\ISearchComparison;
-use OCP\ICacheFactory;
 use OCP\IL10N;
 use OCP\ILogger;
 use OCP\DB\QueryBuilder\IQueryBuilder;

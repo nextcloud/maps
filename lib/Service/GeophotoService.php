@@ -74,11 +74,12 @@ class GeophotoService {
 
 	/**
 	 * @param string $userId
-	 * @return void
+	 * @return bool
 	 */
-	public function clearCache(string $userId=''): void {
-		$this->photosCache->clear($userId);
-		$this->nonLocalizedPhotosCache->clear($userId);
+	public function clearCache(string $userId=''): bool {
+		 $a = $this->photosCache->clear($userId);
+		 $b = $this->nonLocalizedPhotosCache->clear($userId);
+		 return $a and $b;
 	}
 
 	/**
@@ -259,9 +260,9 @@ class GeophotoService {
 			$folder = $userFolder;
 		}
 		$ignoreFileMimetypes = [
-			'.application/x-nextcloud-noindex',
-			'.application/x-nextcloud-nomedia',
-			'.application/x-nextcloud-noimage',
+			'application/x-nextcloud-noindex',
+			'application/x-nextcloud-nomedia',
+			'application/x-nextcloud-noimage',
 		];
 		if ($hideImagesOnCustomMaps) {
 			$ignoreFileMimetypes[] = 'application/x-nextcloud-maps';

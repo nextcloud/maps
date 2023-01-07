@@ -30,6 +30,12 @@
 				@click="$emit('suggestions-clicked')">
 				{{ showSuggestions ? t('maps', 'Hide suggestions') : t('maps', 'Suggest photo locations') }}
 			</NcActionButton>
+			<NcActionButton
+				:icon="'icon-reload'"
+				:close-after-click="true"
+				@click="$emit('clear-cache')">
+				{{ t('maps', 'Clear photo cache') }}
+			</NcActionButton>
 		</template>
 	</NcAppNavigationItem>
 </template>
@@ -140,5 +146,16 @@ export default {
 	-webkit-mask-position: center;
 	min-width: 38px !important;
 	min-height: 36px !important;
+}
+
+::v-deep .icon-reload {
+	opacity: 0.6;
+	background-color: var(--color-main-text);
+	mask: url('../../img/reload.svg') no-repeat;
+	mask-size: 16px auto;
+	mask-position: center;
+	-webkit-mask: url('../../img/reload.svg') no-repeat;
+	-webkit-mask-size: 16px auto;
+	-webkit-mask-position: center;
 }
 </style>

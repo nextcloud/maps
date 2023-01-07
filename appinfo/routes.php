@@ -27,6 +27,7 @@ return [
         ['name' => 'photos#getNonLocalizedPhotosFromDb', 'url' => '/photos/nonlocalized', 'verb' => 'GET'],
         ['name' => 'photos#placePhotos', 'url' => '/photos', 'verb' => 'POST'],
         ['name' => 'photos#resetPhotosCoords', 'url' => '/photos', 'verb' => 'DELETE'],
+		['name' => 'photos#clearCache', 'url' => '/photos/clearCache', 'verb' => 'GET'],
 
         // contacts
         ['name' => 'contacts#getContacts', 'url' => '/contacts', 'verb' => 'GET'],

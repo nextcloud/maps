@@ -292,9 +292,9 @@ class TracksService {
 			$folder = $userFolder;
 		}
 		$ignoreFileMimetypes = [
-			'.application/x-nextcloud-noindex',
-			'.application/x-nextcloud-nomedia',
-			'.application/x-nextcloud-noimage',
+			'application/x-nextcloud-noindex',
+			'application/x-nextcloud-nomedia',
+			'application/x-nextcloud-notrack',
 		];
 		if ($hideImagesOnCustomMaps) {
 			$ignoreFileMimetypes[] = 'application/x-nextcloud-maps';

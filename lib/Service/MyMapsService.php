@@ -75,7 +75,7 @@ class MyMapsService {
             return $this->addMyMap($newName, $userId,$counter+1);
         }
         $mapFolder = $mapsFolder->newFolder($folderName);
-        $mapFolder->newFile(".maps","{}");
+        $mapFolder->newFile(".index.maps","{}");
 		$isRoot = $mapFolder->getPath() === $userFolder->getPath();
 		$MyMap = [
 			"id"=>$mapFolder->getId(),
@@ -152,7 +152,7 @@ class MyMapsService {
 			0, 0, []));
 
 		foreach ($MyMapsNodes as $node) {
-			if ($node->getName() === ".maps") {
+			if ($node->getName() === ".index.maps") {
 				$MyMaps[] = $this->node2MyMap($node, $userFolder);
 			}
 		}
@@ -164,9 +164,9 @@ class MyMapsService {
         $folders = $userFolder->getById($id);
         $folder = array_shift($folders);
         try {
-            $file=$folder->get(".maps");
+            $file=$folder->get(".index.maps");
         } catch (NotFoundException $e) {
-            $file=$folder->newFile(".maps", $content = '{}');
+            $file=$folder->newFile(".index.maps", $content = '{}');
         }
         $mapData = json_decode($file->getContent(),true);
         $renamed = false;
@@ -212,7 +212,7 @@ class MyMapsService {
                 }
             } else {
 				try {
-					$file = $folder->get('.maps');
+					$file = $folder->get('.index.maps');
 					$file->delete();
 				} catch (Exception $e) {
 					return 1;
@@ -220,7 +220,7 @@ class MyMapsService {
 			}
         }
         try {
-            $file=$folder->get(".maps");
+            $file=$folder->get(".index.maps");
             $file->delete();
         } catch (NotFoundException $e) {
             return 1;

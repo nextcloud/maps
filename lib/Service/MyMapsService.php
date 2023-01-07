@@ -24,7 +24,6 @@ use OCP\AppFramework\Http\DataResponse;
 use OCP\Files\NotFoundException;
 use OCP\Files\Search\ISearchBinaryOperator;
 use OCP\Files\Search\ISearchComparison;
-use OCP\ICacheFactory;
 use OCP\IL10N;
 use OCP\ILogger;
 use OCP\DB\QueryBuilder\IQueryBuilder;
@@ -38,14 +37,10 @@ class MyMapsService {
 
     private $logger;
 	private $root;
-	private ICacheFactory $cacheFactory;
-	private \OCP\ICache $myMapsPathsCache;
 
-	public function __construct (ILogger $logger, IRootFolder $root, ICacheFactory $cacheFactory) {
+	public function __construct (ILogger $logger, IRootFolder $root) {
         $this->logger = $logger;
 		$this->root = $root;
-		$this->cacheFactory = $cacheFactory;
-		$this->myMapsPathsCache = $this->cacheFactory->createDistributed('maps:myMaps-paths');
     }
 
     public function addMyMap($newName, $userId, $counter=0) {
@@ -79,7 +74,7 @@ class MyMapsService {
             return $this->addMyMap($newName, $userId,$counter+1);
         }
         $mapFolder = $mapsFolder->newFolder($folderName);
-        $mapFolder->newFile(".maps","{}");
+        $mapFolder->newFile(".index.maps","{}");
 		$isRoot = $mapFolder->getPath() === $userFolder->getPath();
 		$MyMap = [
 			"id"=>$mapFolder->getId(),
@@ -105,29 +100,8 @@ class MyMapsService {
 				"sharePermissions"=>$mapFolder->getPermissions(),
 			]
 		];
-		$MyMaps = $this->myMapsPathsCache->get($userId);
-		if ($MyMaps !== null) {
-			$MyMaps[] = $MyMap;
-			$this->myMapsPathsCache->set($userId, $MyMaps, 60 * 60 * 24 );
-		}
         return $MyMap;
     }
-
-	private function updateMyMapsCache($userId): array{
-		$userFolder = $this->root->getUserFolder($userId);
-		$MyMaps = [];
-		$MyMapsNodes = $userFolder->search(new SearchQuery(
-			new SearchComparison(ISearchComparison::COMPARE_EQUAL, 'name', '.maps'),
-			0, 0, []));
-
-		foreach ($MyMapsNodes as $node) {
-			if ($node->getType() === FileInfo::TYPE_FILE and $node->getName() === ".maps") {
-				$MyMaps[] = $this->node2MyMap($node, $userFolder);
-			}
-		}
-		$this->myMapsPathsCache->set($userId, $MyMaps, 60 * 60 * 24);
-		return $MyMaps;
-	}
 
 	private function node2MyMap($node, $userFolder):array{
 		$mapData = json_decode($node->getContent(), true);
@@ -170,17 +144,18 @@ class MyMapsService {
 	}
 
     public function getAllMyMaps($userId){
+		$userFolder = $this->root->getUserFolder($userId);
+		$MyMaps = [];
+		$MyMapsNodes = $userFolder->search(new SearchQuery(
+			new SearchComparison(ISearchComparison::COMPARE_EQUAL, 'mimetype', 'application/x-nextcloud-maps'),
+			0, 0, []));
 
-        $MyMaps = [];
-		try {
-			$MyMaps = $this->myMapsPathsCache->get($userId);
-			if ($MyMaps === null) {
-				$MyMaps = $this->updateMyMapsCache($userId);
+		foreach ($MyMapsNodes as $node) {
+			if ($node->getName() === ".index.maps") {
+				$MyMaps[] = $this->node2MyMap($node, $userFolder);
 			}
-		} catch (InvalidPathException | NotFoundException | NotPermittedException | NoUserException $e) {
-			$this->logger->error($e->getMessage());
 		}
-        return $MyMaps;
+		return $MyMaps;
     }
 
     public function updateMyMap($id, $values, $userId) {
@@ -188,9 +163,9 @@ class MyMapsService {
         $folders = $userFolder->getById($id);
         $folder = array_shift($folders);
         try {
-            $file=$folder->get(".maps");
+            $file=$folder->get(".index.maps");
         } catch (NotFoundException $e) {
-            $file=$folder->newFile(".maps", $content = '{}');
+            $file=$folder->newFile(".index.maps", $content = '{}');
         }
         $mapData = json_decode($file->getContent(),true);
         $renamed = false;
@@ -207,15 +182,6 @@ class MyMapsService {
             }
         }
         $file->putContent(json_encode($mapData,JSON_PRETTY_PRINT));
-		$MyMaps = $this->myMapsPathsCache->get($userId);
-		if ($MyMaps !== null) {
-			$MyMap = $this->node2MyMap($file, $userFolder);
-			$oldKey = array_key_first(array_filter($MyMaps, function ($m) use ($id) {
-				return $m['id']===$id;
-			}));
-			$MyMaps[$oldKey] = $MyMap;
-			$this->myMapsPathsCache->set($userId, $MyMaps, 60 * 60 * 24);
-		}
         if ($renamed) {
             if ($userFolder->nodeExists('/Maps')) {
                 $mapsFolder = $userFolder->get('/Maps');
@@ -232,14 +198,6 @@ class MyMapsService {
 
     public function deleteMyMap($id, $userId) {
 		$userFolder = $this->root->getUserFolder($userId);
-		$MyMaps = $this->myMapsPathsCache->get($userId);
-		if ($MyMaps !== null) {
-			$oldKey = array_key_first(array_filter($MyMaps, function ($m) use ($id) {
-				return $m['id']===$id;
-			}));
-			unset($MyMaps[$oldKey]);
-			$this->myMapsPathsCache->set($userId, $MyMaps, 60 * 60 * 24);
-		}
 
         $folders = $userFolder->getById($id);
         $folder = array_shift($folders);
@@ -253,7 +211,7 @@ class MyMapsService {
                 }
             } else {
 				try {
-					$file = $folder->get('.maps');
+					$file = $folder->get('.index.maps');
 					$file->delete();
 				} catch (Exception $e) {
 					return 1;
@@ -261,7 +219,7 @@ class MyMapsService {
 			}
         }
         try {
-            $file=$folder->get(".maps");
+            $file=$folder->get(".index.maps");
             $file->delete();
         } catch (NotFoundException $e) {
             return 1;

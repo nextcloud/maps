@@ -48,7 +48,8 @@
 					@cancel-clicked="cancelPhotoMove"
 					@redo-clicked="redoPhotoMove"
 					@draggable-clicked="photosDraggable = !photosDraggable"
-					@suggestions-clicked="onPhotoSuggestionsClicked" />
+					@suggestions-clicked="onPhotoSuggestionsClicked"
+					@clear-cache="onPhotosClearCache" />
 				<AppNavigationTracksItem
 					ref="tracksNavigation"
 					:enabled="tracksEnabled"
@@ -980,6 +981,17 @@ export default {
 				const paths = toReset.map((a) => { return a.path })
 				this.resetPhotosCoords(paths, false)
 			}
+		},
+		onPhotosClearCache() {
+			this.photosLoading = true
+			network.clearPhotoCache().then(() => {
+				showSuccess(t('maps', 'Cleared photo cache'))
+			}).catch((error) => {
+				console.error(error)
+				showError(t('maps', 'Failed to clear photos cache'))
+			}).then(() => {
+				this.photosLoading = false
+			})
 		},
 		// ================ PHOTOSUGGESTIONS ========
 		onPhotoSuggestionsClicked() {

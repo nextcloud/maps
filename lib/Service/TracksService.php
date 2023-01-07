@@ -291,26 +291,22 @@ class TracksService {
 		if (is_null($folder)) {
 			$folder = $userFolder;
 		}
-		$ignoreMarkerFiles = [
-			'.nomedia',
-			'.notrack'
+		$ignoreFileMimetypes = [
+			'application/x-nextcloud-noindex',
+			'application/x-nextcloud-nomedia',
+			'application/x-nextcloud-notrack',
 		];
 		if ($hideImagesOnCustomMaps) {
-			$ignoreMarkerFiles[] = '.maps';
+			$ignoreFileMimetypes[] = 'application/x-nextcloud-maps';
 		}
 		$func = function(string $i): SearchComparison {
-			return new SearchComparison(ISearchComparison::COMPARE_EQUAL, 'name', $i);
+			return new SearchComparison(ISearchComparison::COMPARE_EQUAL, 'mimetype', $i);
 		};
 		$excludedNodes = $folder->search(new SearchQuery(
-			new SearchBinaryOperator(ISearchBinaryOperator::OPERATOR_AND, [
-				new SearchBinaryOperator( ISearchBinaryOperator::OPERATOR_NOT, [
-					new SearchComparison(ISearchComparison::COMPARE_EQUAL, 'mimetype', FileInfo::TYPE_FOLDER)
-				]),
-				new SearchBinaryOperator(ISearchBinaryOperator::OPERATOR_OR, array_map(
+			new SearchBinaryOperator(ISearchBinaryOperator::OPERATOR_OR, array_map(
 						$func,
-						$ignoreMarkerFiles)
+						$ignoreFileMimetypes)
 				),
-			]),
 			0,
 			0,
 			[]

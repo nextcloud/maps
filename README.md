@@ -19,7 +19,7 @@ Future plans:
 ## User Documentation
 ### My Maps
 Custom maps are stored by default in the "/Maps" folder. This folder can be found in the
-files app. Other folders turned into map by placing a ".maps" file into it.
+files app. Other folders turned into map by placing a ".index.maps" file into it.
 Content can therefore be added via:
  - Webdav (Desktop and Mobile clients)
  - Files app
@@ -56,7 +56,7 @@ They can be added from files
 or from maps
 ![](screenshots/addPhotosFromMap.gif)
 Existing photo albums can be viewed
-on the map by placing a ".maps" file into it.
+on the map by placing a ".index.maps" file into it.
 ![](screenshots/photoAlbumOnMap.gif)
 
 Scanning photos take time. Therefore photos are scanned in the background.

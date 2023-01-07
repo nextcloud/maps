@@ -84,9 +84,9 @@ class UtilsController extends Controller {
             $folders = $userFolder->getById($myMapId);
             $folder = array_shift($folders);
             try {
-                $file=$folder->get(".maps");
+                $file=$folder->get(".index.maps");
             } catch (NotFoundException $e) {
-                $file=$folder->newFile(".maps", $content = "{}");
+                $file=$folder->newFile(".index.maps", $content = "{}");
             }
             try {
                 $ov = json_decode($file->getContent(),true, 512);
@@ -127,13 +127,13 @@ class UtilsController extends Controller {
             $folders = $userFolder->getById($myMapId);
             $folder = array_shift($folders);
             try {
-                $file=$folder->get(".maps");
+                $file=$folder->get(".index.maps");
             } catch (NotFoundException $e) {
-                $file=$folder->newFile(".maps", $content = "{}");
+                $file=$folder->newFile(".index.maps", $content = "{}");
             }
             $ov = json_decode($file->getContent(),true, 512);
 			$ov['isCreatable'] = $folder->isCreatable();
-			//We can delete the map by deleting the folder or the .maps file
+			//We can delete the map by deleting the folder or the .index.maps file
 			$ov['isDeletable'] = $folder->isDeletable() || $file->isDeletable();
 			// Maps content can be read mostly from the folder
 			$ov['isReadable'] = $folder->isReadable();

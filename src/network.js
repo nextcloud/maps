@@ -289,6 +289,11 @@ export async function getPhotos(myMapId = null) {
 	return axios.get(url, conf)
 }
 
+export async function clearPhotoCache() {
+	const url = generateUrl('/apps/maps/photos/clearCache')
+	return axios.get(url)
+}
+
 export async function getPhotoSuggestions(myMapId = null) {
 	const url = generateUrl('apps/maps/photos/nonlocalized')
 	const conf = {

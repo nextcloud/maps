@@ -84,11 +84,16 @@
 				ref="photosLayer"
 				:map="map"
 				:photos="photos"
+				:date-filter-enabled="sliderEnabled"
+				:date-filter-start="sliderStartTimestamp"
+				:date-filter-end="sliderEndTimestamp"
 				:draggable="photosDraggable"
 				@add-to-map-photo="$emit('add-to-map-photo', $event)"
 				@coords-reset="$emit('coords-reset', $event)"
 				@photo-moved="onPhotoMoved"
-				@open-sidebar="$emit('open-sidebar',$event)" />
+				@open-sidebar="$emit('open-sidebar',$event)"
+				@cluster-loading="$emit('photo-clusters-loading',$event)"
+				@cluster-loaded="$emit('photo-clusters-loaded')" />
 			<PhotoSuggestionsLayer
 				v-if="map && photosEnabled && showPhotoSuggestions"
 				ref="photoSuggestionsLayer"

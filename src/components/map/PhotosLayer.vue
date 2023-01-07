@@ -1,43 +1,41 @@
 <template>
-	<Vue2LeafletDelayedMarkerCluster :options="clusterOptions"
+	<Vue2LeafletMarkerCluster
+		ref="markerCluster"
+		:options="clusterOptions"
 		@clusterclick="onClusterClick"
 		@clustercontextmenu="onClusterRightClick"
 		@spiderfied="onSpiderfied">
-		<LMarker v-for="(p, i) in displayedPhotos"
-			:key="i"
-			:options="{ data: p }"
-			:icon="getPhotoMarkerIcon(p)"
-			:draggable="draggable && p.isUpdateable"
-			:lat-lng="[p.lat, p.lng]"
-			@click="onPhotoClick($event, p)"
-			@contextmenu="onPhotoRightClick($event, p)"
-			@moveend="onPhotoMoved($event, p)">
+		<LMarker
+			:lat-lng="[0, 0]"
+			:visible="false">
 			<LTooltip
+				ref="markerTooltip"
 				:class="{ 'tooltip-photo-wrapper': true }"
 				:options="{ ...tooltipOptions, opacity: draggable ? 0 : 1 }">
 				<img class="photo-tooltip"
-					:src="getPreviewUrl(p)">
+					:src="getPreviewUrl(currentPhoto)">
 				<p class="tooltip-photo-date">
-					{{ getPhotoFormattedDate(p) }}
+					{{ getPhotoFormattedDate(currentPhoto) }}
 				</p>
 				<p class="tooltip-photo-name">
-					{{ basename(p.path) }}
+					{{ currentPhoto ? basename(currentPhoto.path) : '' }}
 				</p>
 			</LTooltip>
 			<LPopup
+				ref="markerPopup"
 				class="popup-photo-wrapper"
 				:options="popupOptions">
-				<NcActionButton icon="icon-toggle" @click="$emit('open-sidebar',p.path)">
+				<NcActionButton v-if="currentPhoto && currentPhoto.path" icon="icon-toggle" @click="$emit('open-sidebar',currentPhoto.path)">
 					{{ t('maps', 'Open in Sidebar') }}
 				</NcActionButton>
-				<NcActionButton icon="icon-toggle" @click="viewPhoto(p)">
+				<NcActionButton icon="icon-toggle" @click="viewPhoto(currentPhoto)">
 					{{ t('maps', 'Display picture') }}
 				</NcActionButton>
-				<NcActionButton v-if="p.isUpdateable" icon="icon-history" @click="resetPhotosCoords([p])">
+				<NcActionButton v-if="currentPhoto && currentPhoto.isUpdateable" icon="icon-history" @click="resetPhotosCoords([currentPhoto])">
 					{{ t('maps', 'Remove geo data') }}
 				</NcActionButton>
 				<NcActionButton icon="icon-share"
-					@click="$emit('add-to-map-photo', p)">
+					@click="$emit('add-to-map-photo', currentPhoto)">
 					{{ t('maps', 'Copy to map') }}
 				</NcActionButton>
 			</LPopup>
@@ -63,7 +61,7 @@
 				</NcActionButton>
 			</LPopup>
 		</LMarker>
-	</Vue2LeafletDelayedMarkerCluster>
+	</Vue2LeafletMarkerCluster>
 </template>
 
 <script>
@@ -74,16 +72,17 @@ import NcActionButton from '@nextcloud/vue/dist/Components/NcActionButton'
 
 import L from 'leaflet'
 import { LMarker, LTooltip, LPopup } from 'vue2-leaflet'
-import Vue2LeafletDelayedMarkerCluster from './Vue2LeafletDelayedMarkerCluster'
+import Vue2LeafletMarkerCluster from 'vue2-leaflet-markercluster'
 
 import optionsController from '../../optionsController'
+import {binSearch} from "../../utils/common";
 
 const PHOTO_MARKER_VIEW_SIZE = 40
 
 export default {
 	name: 'PhotosLayer',
 	components: {
-		Vue2LeafletDelayedMarkerCluster,
+		Vue2LeafletMarkerCluster,
 		LMarker,
 		LTooltip,
 		LPopup,
@@ -99,6 +98,18 @@ export default {
 			type: Array,
 			required: true,
 		},
+		dateFilterEnabled: {
+			type: Boolean,
+			required: true,
+		},
+		dateFilterStart: {
+			type: Number,
+			required: true,
+		},
+		dateFilterEnd: {
+			type: Number,
+			required: true,
+		},
 		draggable: {
 			type: Boolean,
 			required: true,
@@ -108,9 +119,13 @@ export default {
 	data() {
 		return {
 			optionValues: optionsController.optionValues,
+			markerOptions: {
+				draggable: this.draggable,
+			},
 			clusterOptions: {
 				iconCreateFunction: this.getClusterMarkerIcon,
 				spiderfyOnMaxZoom: false,
+				singleMarkerMode: true,
 				showCoverageOnHover: false,
 				zoomToBoundsOnClick: false,
 				maxClusterRadius: PHOTO_MARKER_VIEW_SIZE + 10,
@@ -118,8 +133,9 @@ export default {
 					iconSize: [PHOTO_MARKER_VIEW_SIZE, PHOTO_MARKER_VIEW_SIZE],
 				},
 				chunkedLoading: true,
-				chunkDelay: 200,
-				chunkInterval: 50,
+				chunkDelay: 50,
+				chunkInterval: 250,
+				chunkProgress: this.updateClusterLoadingProgress,
 			},
 			tooltipOptions: {
 				className: 'leaflet-marker-photo-tooltip',
@@ -138,6 +154,9 @@ export default {
 			},
 			contextCluster: null,
 			spiderfied: false,
+			currentPhoto: null,
+			photoMarkers: [],
+			clustersLoading: false,
 		}
 	},
 
@@ -146,12 +165,95 @@ export default {
 			return !this.photos.some((f) => (f.isUpdateable))
 				&& !(this.photos.length === 0 && optionsController.optionValues?.isCreatable)
 		},
-		displayedPhotos() {
-			return this.photos
+		photosLastNullIndex() {
+			return this.dateFilterEnabled ? binSearch(this.photos, (p) => !p.dateTaken) : -1
+		},
+		photosFirstShownIndex() {
+			return this.dateFilterEnabled ? binSearch(this.photos, (p) => (p.dateTaken || 0) < this.dateFilterStart) + 1 : 0
+		},
+		photosLastShownIndex() {
+			return this.dateFilterEnabled ? binSearch(this.photos, (p) => (p.dateTaken || 0) < this.dateFilterEnd) : this.photos.length - 1
+		},
+	},
+
+	watch: {
+		photos() {
+			this.updatePhotoMarkers()
+		},
+		draggable() {
+			this.updatePhotoMarkersDraggable()
+		},
+		dateFilterEnabled(newValue) {
+			if (newValue) {
+				this.$refs.markerCluster.mapObject.removeLayers(
+					this.photoMarkers.slice(
+						this.photosLastNullIndex + 1,
+						this.photosFirstShownIndex
+					)
+				)
+				this.$refs.markerCluster.mapObject.removeLayers(
+					this.photoMarkers.slice(
+						this.photosLastShownIndex + 1,
+					)
+				)
+			} else {
+				this.$refs.markerCluster.mapObject.addLayers(
+					this.photoMarkers.slice(
+						this.photosLastNullIndex + 1,
+						this.photosFirstShownIndex
+					)
+				)
+				this.$refs.markerCluster.mapObject.addLayers(
+					this.photoMarkers.slice(
+						this.photosLastShownIndex + 1,
+					)
+				)
+			}
+		},
+		photosFirstShownIndex(newIndex, oldIndex) {
+			if (newIndex < oldIndex) {
+				this.$refs.markerCluster.mapObject.addLayers(
+					this.photoMarkers.slice(
+						newIndex,
+						oldIndex
+					)
+				)
+			} else if (newIndex > oldIndex) {
+				this.$refs.markerCluster.mapObject.removeLayers(
+					this.photoMarkers.slice(
+						oldIndex,
+						newIndex
+					)
+				)
+			}
+		},
+		photosLastShownIndex(newIndex, oldIndex) {
+			if (newIndex < oldIndex) {
+				this.$refs.markerCluster.mapObject.removeLayers(
+					this.photoMarkers.slice(
+						newIndex + 1,
+						oldIndex + 1
+					)
+				)
+			} else if (newIndex > oldIndex) {
+				this.$refs.markerCluster.mapObject.addLayers(
+					this.photoMarkers.slice(
+						oldIndex + 1,
+						newIndex + 1
+					)
+				)
+			}
+		},
+		dateFilterEnd(newEnd, oldEnd) {
+
 		},
 	},
 
 	beforeMount() {
+	},
+
+	mounted() {
+		this.updatePhotoMarkers()
 	},
 
 	methods: {
@@ -165,7 +267,7 @@ export default {
 				if (OCA.Viewer && OCA.Viewer.open) {
 					this.displayCluster(a.layer)
 				} else {
-					this.$emit('open-sidebar', a.layer.getAllChildMarkers()[0].options.data.path)
+					this.$emit('open-sidebar', a.layer.getAllChildMarkers()[0].data.path)
 					a.layer.spiderfy()
 				}
 			}
@@ -204,7 +306,7 @@ export default {
 		},
 		displayCluster(cluster) {
 			const photoList = cluster.getAllChildMarkers().map((m) => {
-				return m.options.data
+				return m.data
 			})
 			photoList.sort((a, b) => {
 				return a.dateTaken - b.dateTaken
@@ -214,12 +316,15 @@ export default {
 			this.map.closePopup()
 		},
 		getClusterMarkerIcon(cluster) {
-			const photo = cluster.getAllChildMarkers()[0].options.data
+			const count = cluster.getChildCount()
+			const photo = cluster.getAllChildMarkers()[0].data
+			if (count === 1) {
+				return this.getPhotoMarkerIcon(photo)
+			}
 			const iconUrl = this.getPreviewUrl(photo)
-			const label = cluster.getChildCount()
 			return new L.DivIcon(L.extend({
 				className: 'leaflet-marker-photo cluster-marker',
-				html: '<div class="thumbnail" style="background-image: url(' + iconUrl + ');"></div>​<span class="label">' + label + '</span>',
+				html: '<div class="thumbnail" style="background-image: url(' + iconUrl + ');"></div>​<span class="label">' + count + '</span>',
 			}, cluster, {
 				iconSize: [PHOTO_MARKER_VIEW_SIZE, PHOTO_MARKER_VIEW_SIZE],
 				iconAnchor: [PHOTO_MARKER_VIEW_SIZE / 2, PHOTO_MARKER_VIEW_SIZE],
@@ -236,14 +341,15 @@ export default {
 			}))
 		},
 		getPreviewUrl(photo) {
-			return photo.hasPreview
+			return photo && photo.hasPreview
 				? generateUrl('core') + '/preview?fileId=' + photo.fileId + '&x=341&y=256&a=1'
 				: generateUrl('/apps/theming/img/core/filetypes') + '/image.svg?v=2'
 		},
 		getPhotoFormattedDate(photo) {
-			return moment(photo.dateTaken * 1000).format('LLL')
+			return photo ? moment(photo.dateTaken * 1000).format('LLL') : ''
 		},
-		onPhotoClick(e, photo) {
+		onPhotoClick(e) {
+			const photo = e.target.data
 			// we want popup to open on right click only
 			this.$nextTick(() => {
 				e.target.closePopup()
@@ -257,10 +363,31 @@ export default {
 				this.map.closePopup()
 			}
 		},
-		onPhotoRightClick(e, photo) {
+		onPhotoRightClick(e) {
+			const photo = e.target.data
+			this.currentPhoto = photo
+			const popup = this.$refs.markerPopup.mapObject
+			popup.setLatLng([photo.lat, photo.lng])
 			this.$nextTick(() => {
-				e.target.openPopup()
+				popup.openOn(this.map)
 			})
+		},
+		onPhotoMouseOver(e) {
+			const photo = e.target.data
+			this.currentPhoto = photo
+			const tooltip = this.$refs.markerTooltip.mapObject
+			tooltip.setLatLng([photo.lat, photo.lng])
+			this.$nextTick(() => {
+				tooltip.openOn(this.map)
+			})
+		},
+		onPhotoMouseOut(e) {
+			const tooltip = this.$refs.markerTooltip.mapObject
+			tooltip.close()
+		},
+		onPhotoMoved(e) {
+			const photo = e.target.data
+			this.$emit('photo-moved', photo, e.target.getLatLng())
 		},
 		resetClusterPhotoCoords() {
 			const clusterSize = this.contextCluster.getChildCount()
@@ -276,7 +403,7 @@ export default {
 				(result) => {
 					if (result) {
 						const photos = this.contextCluster.getAllChildMarkers().map((m) => {
-							return m.options.data
+							return m.data
 						})
 						this.resetPhotosCoords(photos)
 					}
@@ -289,8 +416,68 @@ export default {
 			this.$emit('coords-reset', paths)
 			this.map.closePopup()
 		},
-		onPhotoMoved(e, photo) {
-			this.$emit('photo-moved', photo, e.target.getLatLng())
+		updateClusterLoadingProgress(processed, total, elapsed, layersArray) {
+			if (elapsed > 100 && !this.clustersLoading) {
+				this.clustersLoading = true
+			}
+			this.$emit('cluster-loading', processed, total)
+
+			if (processed === total) {
+				this.clustersLoading = false
+				// all markers processed - hide the progress bar:
+				this.$emit('cluster-loaded')
+			}
+		},
+
+		async updatePhotoMarkers() {
+			this.$refs.markerCluster.mapObject.removeLayers(this.photoMarkers)
+			this.photoMarkers = this.photos.map((p, i) => {
+				const m = new L.Marker([p.lat, p.lng],
+					{
+						draggable: this.draggable,
+					},
+				)
+				m.on(
+					'click', this.onPhotoClick
+				)
+				m.on(
+					'contextmenu', this.onPhotoRightClick
+				)
+				m.on(
+					'mouseover', this.onPhotoMouseOver
+				)
+				m.on(
+					'mouseout', this.onPhotoMouseOut
+				)
+				m.on(
+					'moveend', this.onPhotoMoved
+				)
+				m.data = p
+				return m
+			})
+			this.$refs.markerCluster.mapObject.addLayers(this.photoMarkers)
+			if (this.dateFilterEnabled) {
+				this.$refs.markerCluster.mapObject.removeLayers(
+					this.photoMarkers.slice(
+						this.photosLastNullIndex + 1,
+						this.photosFirstShownIndex
+					)
+				)
+				this.$refs.markerCluster.mapObject.removeLayers(
+					this.photoMarkers.slice(
+						this.photosLastShownIndex + 1,
+					)
+				)
+			}
+		},
+		async updatePhotoMarkersDraggable() {
+			this.photoMarkers.forEach((m) => {
+				if (m.dragging) {
+					this.draggable ? m.dragging.enable() : m.dragging.disable()
+				}
+				m.options.draggable = this.draggable
+				m.update()
+			})
 		},
 	},
 }

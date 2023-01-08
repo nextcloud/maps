@@ -45,6 +45,7 @@ OC.L10N.register(
     "Details" : "Detalles",
     "Phone" : "Teléfono fijo",
     "Not grouped" : "No agrupado",
+    "Default" : "Predeterminado",
     "Settings" : "Configuraciones "
 },
 "nplurals=3; plural=n == 1 ? 0 : n != 0 && n % 1000000 == 0 ? 1 : 2;");

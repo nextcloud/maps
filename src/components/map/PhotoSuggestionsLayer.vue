@@ -1,11 +1,13 @@
 <template>
-	<Vue2LeafletMarkerCluster :options="clusterOptions"
+	<Vue2LeafletMarkerCluster
+		ref="markerCluster"
+		:options="clusterOptions"
 		@clusterclick="onClusterClick"
 		@clustercontextmenu="onClusterRightClick"
 		@spiderfied="onSpiderfied">
-		<LMarker v-for="(p, i) in photoSuggestions"
-			:key="i"
+<!--		<LMarker v-for="(p, i) in photoSuggestions"
 			v-if="p"
+			:key="i"
 			:options="{ data: p }"
 			:icon="getPhotoMarkerIcon(p, i)"
 			:draggable="draggable"
@@ -32,6 +34,34 @@
 				class="popup-photo-suggestion-wrapper"
 				:options="popupOptions">
 				<NcActionButton icon="icon-toggle" @click="viewPhoto(p)">
+					{{ t('maps', 'Display picture') }}
+				</NcActionButton>
+			</LPopup>
+		</LMarker>-->
+		<LMarker
+			:lat-lng="[0, 0]"
+			:visible="false">
+			<LTooltip
+				ref="markerTooltip"
+				:class="{
+					'tooltip-photo-suggestion-wrapper': true,
+					'photo-suggestion-marker-selected': photoSuggestionsSelectedIndices.includes(currentSuggestion?.i)
+				}"
+				:options="{ ...tooltipOptions, opacity: draggable ? 0 : 1 }">
+				<img class="photo-suggestion-tooltip"
+					:src="getPreviewUrl(currentSuggestion)">
+				<p class="tooltip-photo-suggestion-date">
+					{{ getPhotoFormattedDate(currentSuggestion) }}
+				</p>
+				<p class="tooltip-photo-suggestion-name">
+					{{ currentSuggestion ? basename(currentSuggestion.path) : ''}}
+				</p>
+			</LTooltip>
+			<LPopup
+				ref="markerPopup"
+				class="popup-photo-wrapper"
+				:options="popupOptions">
+				<NcActionButton icon="icon-toggle" @click="viewPhoto(currentSuggestion)">
 					{{ t('maps', 'Display picture') }}
 				</NcActionButton>
 			</LPopup>
@@ -68,6 +98,7 @@ import { LMarker, LTooltip, LPopup } from 'vue2-leaflet'
 import Vue2LeafletMarkerCluster from 'vue2-leaflet-markercluster'
 
 import optionsController from '../../optionsController'
+import {binSearch} from "../../utils/common";
 
 const PHOTO_MARKER_VIEW_SIZE = 40
 
@@ -94,6 +125,18 @@ export default {
 			type: Array,
 			required: true,
 		},
+		dateFilterEnabled: {
+			type: Boolean,
+			required: true,
+		},
+		dateFilterStart: {
+			type: Number,
+			required: true,
+		},
+		dateFilterEnd: {
+			type: Number,
+			required: true,
+		},
 		draggable: {
 			type: Boolean,
 			required: true,
@@ -106,12 +149,17 @@ export default {
 			clusterOptions: {
 				iconCreateFunction: this.getClusterMarkerIcon,
 				spiderfyOnMaxZoom: false,
+				singleMarkerMode: true,
 				showCoverageOnHover: false,
 				zoomToBoundsOnClick: false,
 				maxClusterRadius: PHOTO_MARKER_VIEW_SIZE + 10,
 				icon: {
 					iconSize: [PHOTO_MARKER_VIEW_SIZE, PHOTO_MARKER_VIEW_SIZE],
 				},
+				chunkedLoading: true,
+				chunkDelay: 50,
+				chunkInterval: 250,
+				chunkProgress: this.updateClusterLoadingProgress,
 			},
 			tooltipOptions: {
 				className: 'leaflet-marker-photo-suggestion-tooltip',
@@ -130,13 +178,99 @@ export default {
 			},
 			contextCluster: null,
 			spiderfied: false,
+			currentSuggestion: null,
+			suggestionMarkers: [],
+			clustersLoading: false,
 		}
 	},
 
 	computed: {
+		suggestionsLastNullIndex() {
+			return this.dateFilterEnabled ? binSearch(this.photoSuggestions, (p) => !p.dateTaken) : -1
+		},
+		suggestionsFirstShownIndex() {
+			return this.dateFilterEnabled ? binSearch(this.photoSuggestions, (p) => (p.dateTaken || 0) < this.dateFilterStart) + 1 : 0
+		},
+		suggestionsLastShownIndex() {
+			return this.dateFilterEnabled ? binSearch(this.photoSuggestions, (p) => (p.dateTaken || 0) < this.dateFilterEnd) : this.photoSuggestions.length - 1
+		},
+	},
+
+	watch: {
+		photoSuggestions() {
+			this.updateSuggestionMarkers()
+		},
+		draggable() {
+			this.updateSuggestionMarkersDraggable()
+		},
+		dateFilterEnabled(newValue) {
+			if (newValue) {
+				this.$refs.markerCluster.mapObject.removeLayers(
+					this.suggestionMarkers.slice(
+						this.suggestionsLastNullIndex + 1,
+						this.suggestionsFirstShownIndex
+					)
+				)
+				this.$refs.markerCluster.mapObject.removeLayers(
+					this.suggestionMarkers.slice(
+						this.suggestionsLastShownIndex + 1,
+					)
+				)
+			} else {
+				this.$refs.markerCluster.mapObject.addLayers(
+					this.suggestionMarkers.slice(
+						this.suggestionsLastNullIndex + 1,
+						this.suggestionsFirstShownIndex
+					)
+				)
+				this.$refs.markerCluster.mapObject.addLayers(
+					this.suggestionMarkers.slice(
+						this.suggestionsLastShownIndex + 1,
+					)
+				)
+			}
+		},
+		suggestionsFirstShownIndex(newIndex, oldIndex) {
+			if (newIndex < oldIndex) {
+				this.$refs.markerCluster.mapObject.addLayers(
+					this.suggestionMarkers.slice(
+						newIndex,
+						oldIndex
+					)
+				)
+			} else if (newIndex > oldIndex) {
+				this.$refs.markerCluster.mapObject.removeLayers(
+					this.suggestionMarkers.slice(
+						oldIndex,
+						newIndex
+					)
+				)
+			}
+		},
+		suggestionsLastShownIndex(newIndex, oldIndex) {
+			if (newIndex < oldIndex) {
+				this.$refs.markerCluster.mapObject.removeLayers(
+					this.suggestionMarkers.slice(
+						newIndex + 1,
+						oldIndex + 1
+					)
+				)
+			} else if (newIndex > oldIndex) {
+				this.$refs.markerCluster.mapObject.addLayers(
+					this.suggestionMarkers.slice(
+						oldIndex + 1,
+						newIndex + 1
+					)
+				)
+			}
+		},
 	},
 
 	beforeMount() {
+	},
+
+	mounted() {
+		this.updateSuggestionMarkers()
 	},
 
 	methods: {
@@ -184,7 +318,7 @@ export default {
 		},
 		displayCluster(cluster) {
 			const photoList = cluster.getAllChildMarkers().map((m) => {
-				return m.options.data
+				return m.data
 			})
 			photoList.sort((a, b) => {
 				return a.dateTaken - b.dateTaken
@@ -194,20 +328,23 @@ export default {
 			this.map.closePopup()
 		},
 		getClusterMarkerIcon(cluster) {
-			const photo = cluster.getAllChildMarkers()[0].options.data
+			const count = cluster.getChildCount()
+			const photo = cluster.getAllChildMarkers()[0].data
+			if (count === 1) {
+				return this.getPhotoMarkerIcon(photo)
+			}
 			const iconUrl = this.getPreviewUrl(photo)
-			const label = cluster.getChildCount()
 			return new L.DivIcon(L.extend({
 				className: 'leaflet-marker-photo-suggestion cluster-suggestion-marker',
-				html: '<div class="thumbnail" style="background-image: url(' + iconUrl + ');"></div>​<span class="label">' + label + '</span>',
+				html: '<div class="thumbnail" style="background-image: url(' + iconUrl + ');"></div>​<span class="label">' + count + '</span>',
 			}, cluster, {
 				iconSize: [PHOTO_MARKER_VIEW_SIZE, PHOTO_MARKER_VIEW_SIZE],
 				iconAnchor: [PHOTO_MARKER_VIEW_SIZE / 2, PHOTO_MARKER_VIEW_SIZE],
 			}))
 		},
-		getPhotoMarkerIcon(photo, i) {
+		getPhotoMarkerIcon(photo) {
 			const iconUrl = this.getPreviewUrl(photo)
-			const selectedClass = this.photoSuggestionsSelectedIndices.includes(i)
+			const selectedClass = this.photoSuggestionsSelectedIndices.includes(photo.i)
 				? '-selected'
 				: ''
 			return L.divIcon(L.extend({
@@ -219,14 +356,15 @@ export default {
 			}))
 		},
 		getPreviewUrl(photo) {
-			return photo.hasPreview
+			return photo && photo.hasPreview
 				? generateUrl('core') + '/preview?fileId=' + photo.fileId + '&x=341&y=256&a=1'
 				: generateUrl('/apps/theming/img/core/filetypes') + '/image.svg?v=2'
 		},
 		getPhotoFormattedDate(photo) {
-			return moment.unix(photo.dateTaken).format('LLL')
+			return photo ? moment.unix(photo.dateTaken).format('LLL') : ''
 		},
-		onPhotoClick(e, index) {
+		onPhotoClick(e) {
+			const index = e.target.i
 			// we want popup to open on right click only
 			this.$nextTick(() => {
 				e.target.closePopup()
@@ -239,35 +377,94 @@ export default {
 				this.map.closePopup()
 			}
 		},
-		onPhotoRightClick(e, photo) {
+		onPhotoRightClick(e) {
+			const photo = e.target.data
+			this.currentSuggestion = photo
+			const popup = this.$refs.markerPopup.mapObject
+			popup.setLatLng([photo.lat, photo.lng])
 			this.$nextTick(() => {
-				e.target.openPopup()
+				popup.openOn(this.map)
 			})
 		},
-		resetClusterPhotoCoords() {
-			const clusterSize = this.contextCluster.getChildCount()
-			OC.dialogs.confirmDestructive(
-				'',
-				t('maps', 'Are you sure you want to remove geo data of {nb} photos?', { nb: clusterSize }),
-				{
-					type: OC.dialogs.YES_NO_BUTTONS,
-					confirm: t('maps', 'Yes'),
-					confirmClasses: '',
-					cancel: t('maps', 'Cancel'),
-				},
-				(result) => {
-					if (result) {
-						const photos = this.contextCluster.getAllChildMarkers().map((m) => {
-							return m.options.data
-						})
-						this.resetPhotosCoords(photos)
-					}
-				},
-				true
-			)
+		onPhotoMouseOver(e) {
+			const photo = e.target.data
+			this.currentSuggestion = photo
+			const tooltip = this.$refs.markerTooltip.mapObject
+			tooltip.setLatLng([photo.lat, photo.lng])
+			this.$nextTick(() => {
+				tooltip.openOn(this.map)
+			})
 		},
-		onPhotoMoved(e, index) {
-			this.$emit('photo-suggestion-moved', index, e.target.getLatLng())
+		onPhotoMouseOut(e) {
+			const tooltip = this.$refs.markerTooltip.mapObject
+			tooltip.close()
+		},
+		onPhotoMoved(e) {
+			this.$emit('photo-suggestion-moved', e.target.i, e.target.getLatLng())
+		},
+		updateClusterLoadingProgress(processed, total, elapsed, layersArray) {
+			if (elapsed > 100 && !this.clustersLoading) {
+				this.clustersLoading = true
+			}
+			this.$emit('cluster-loading', processed, total)
+
+			if (processed === total) {
+				this.clustersLoading = false
+				// all markers processed - hide the progress bar:
+				this.$emit('cluster-loaded')
+			}
+		},
+
+		async updateSuggestionMarkers() {
+			this.$refs.markerCluster.mapObject.removeLayers(this.suggestionMarkers)
+			this.suggestionMarkers = this.photoSuggestions.map((p, i) => {
+				const m = new L.Marker([p.lat, p.lng],
+					{
+						draggable: this.draggable,
+					},
+				)
+				m.on(
+					'click', this.onPhotoClick
+				)
+				m.on(
+					'contextmenu', this.onPhotoRightClick
+				)
+				m.on(
+					'mouseover', this.onPhotoMouseOver
+				)
+				m.on(
+					'mouseout', this.onPhotoMouseOut
+				)
+				m.on(
+					'moveend', this.onPhotoMoved
+				)
+				m.data = p
+				m.i = i
+				return m
+			})
+			this.$refs.markerCluster.mapObject.addLayers(this.suggestionMarkers)
+			if (this.dateFilterEnabled) {
+				this.$refs.markerCluster.mapObject.removeLayers(
+					this.suggestionMarkers.slice(
+						this.suggestionsLastNullIndex + 1,
+						this.suggestionsFirstShownIndex
+					)
+				)
+				this.$refs.markerCluster.mapObject.removeLayers(
+					this.suggestionMarkers.slice(
+						this.suggestionsLastShownIndex + 1,
+					)
+				)
+			}
+		},
+		async updateSuggestionMarkersDraggable() {
+			this.suggestionMarkers.forEach((m) => {
+				if (m.dragging) {
+					this.draggable ? m.dragging.enable() : m.dragging.disable()
+				}
+				m.options.draggable = this.draggable
+				m.update()
+			})
 		},
 	},
 }

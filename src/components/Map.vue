@@ -100,6 +100,9 @@
 				:map="map"
 				:photo-suggestions="photoSuggestions"
 				:photo-suggestions-selected-indices="photoSuggestionsSelectedIndices"
+				:date-filter-enabled="sliderEnabled"
+				:date-filter-start="sliderStartTimestamp"
+				:date-filter-end="sliderEndTimestamp"
 				:draggable="photosDraggable"
 				@photo-suggestion-moved="onPhotoSuggestionMoved"
 				@photo-suggestion-selected="$emit('photo-suggestion-selected', $event)" />

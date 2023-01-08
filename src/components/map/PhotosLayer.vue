@@ -119,9 +119,6 @@ export default {
 	data() {
 		return {
 			optionValues: optionsController.optionValues,
-			markerOptions: {
-				draggable: this.draggable,
-			},
 			clusterOptions: {
 				iconCreateFunction: this.getClusterMarkerIcon,
 				spiderfyOnMaxZoom: false,
@@ -243,9 +240,6 @@ export default {
 					)
 				)
 			}
-		},
-		dateFilterEnd(newEnd, oldEnd) {
-
 		},
 	},
 

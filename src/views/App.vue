@@ -1020,12 +1020,11 @@ export default {
 			this.showPhotoSuggestions ? this.openSidebar() : this.closeSidebar()
 		},
 		onPhotoSuggestionSelected(index) {
-			const indexOfIndex = this.photoSuggestionsSelectedIndices.findIndex((e) => { return index === e })
-			if (indexOfIndex >= 0) {
-				this.photoSuggestionsSelectedIndices.splice(indexOfIndex, 1)
-			} else {
-				this.photoSuggestionsSelectedIndices.push(index)
+			const newIndices = this.photoSuggestionsSelectedIndices.filter((e) => { return index !== e })
+			if (newIndices.length === this.photoSuggestionsSelectedIndices.length) {
+				newIndices.push(index)
 			}
+			this.photoSuggestionsSelectedIndices = newIndices
 		},
 		onPhotoSuggestionMoved(index, latLng) {
 			this.photoSuggestions[index].lat = latLng.lat

@@ -5,39 +5,6 @@
 		@clusterclick="onClusterClick"
 		@clustercontextmenu="onClusterRightClick"
 		@spiderfied="onSpiderfied">
-<!--		<LMarker v-for="(p, i) in photoSuggestions"
-			v-if="p"
-			:key="i"
-			:options="{ data: p }"
-			:icon="getPhotoMarkerIcon(p, i)"
-			:draggable="draggable"
-			:lat-lng="[p.lat, p.lng]"
-			@click="onPhotoClick($event, i)"
-			@contextmenu="onPhotoRightClick($event, p)"
-			@moveend="onPhotoMoved($event, i)">
-			<LTooltip v-if="p"
-				:class="{
-					'tooltip-photo-suggestion-wrapper': true,
-					'photo-suggestion-marker-selected': photoSuggestionsSelectedIndices.includes(i)
-				}"
-				:options="{ ...tooltipOptions, opacity: draggable ? 0 : 1 }">
-				<img class="photo-suggestion-tooltip"
-					:src="getPreviewUrl(p)">
-				<p class="tooltip-photo-suggestion-date">
-					{{ getPhotoFormattedDate(p) }}
-				</p>
-				<p class="tooltip-photo-suggestion-name">
-					{{ basename(p.path) }}
-				</p>
-			</LTooltip>
-			<LPopup v-if="p"
-				class="popup-photo-suggestion-wrapper"
-				:options="popupOptions">
-				<NcActionButton icon="icon-toggle" @click="viewPhoto(p)">
-					{{ t('maps', 'Display picture') }}
-				</NcActionButton>
-			</LPopup>
-		</LMarker>-->
 		<LMarker
 			:lat-lng="[0, 0]"
 			:visible="false">
@@ -54,7 +21,7 @@
 					{{ getPhotoFormattedDate(currentSuggestion) }}
 				</p>
 				<p class="tooltip-photo-suggestion-name">
-					{{ currentSuggestion ? basename(currentSuggestion.path) : ''}}
+					{{ currentSuggestion ? basename(currentSuggestion.path) : '' }}
 				</p>
 			</LTooltip>
 			<LPopup
@@ -98,7 +65,7 @@ import { LMarker, LTooltip, LPopup } from 'vue2-leaflet'
 import Vue2LeafletMarkerCluster from 'vue2-leaflet-markercluster'
 
 import optionsController from '../../optionsController'
-import {binSearch} from "../../utils/common";
+import { binSearch } from '../../utils/common'
 
 const PHOTO_MARKER_VIEW_SIZE = 40
 
@@ -264,6 +231,14 @@ export default {
 				)
 			}
 		},
+		photoSuggestionsSelectedIndices(newIndices, oldIndices) {
+			const oldSet = new Set(oldIndices)
+			const newSet = new Set(newIndices)
+			const removedIndices = oldIndices.filter((i) => { return !newSet.has(i) })
+			const addedIndices = newIndices.filter((i) => { return !oldSet.has(i) })
+			const changedMarkers = removedIndices.concat(addedIndices).map((i) => { return this.suggestionMarkers[i] })
+			this.$refs.markerCluster.mapObject.refreshClusters(changedMarkers)
+		},
 	},
 
 	beforeMount() {
@@ -329,22 +304,28 @@ export default {
 		},
 		getClusterMarkerIcon(cluster) {
 			const count = cluster.getChildCount()
-			const photo = cluster.getAllChildMarkers()[0].data
+			const markers = cluster.getAllChildMarkers()
+			const selectedCount = markers.filter((m) => this.photoSuggestionsSelectedIndices.includes(m.i)).length
+			const marker = markers[0]
+			const photo = marker.data
+			const index = marker.i
 			if (count === 1) {
-				return this.getPhotoMarkerIcon(photo)
+				return this.getPhotoMarkerIcon(photo, index)
 			}
 			const iconUrl = this.getPreviewUrl(photo)
 			return new L.DivIcon(L.extend({
 				className: 'leaflet-marker-photo-suggestion cluster-suggestion-marker',
-				html: '<div class="thumbnail" style="background-image: url(' + iconUrl + ');"></div>​<span class="label">' + count + '</span>',
+				html: '<div class="thumbnail" style="background-image: url(' + iconUrl + ');"></div>​<span class="label">'
+					+ (selectedCount > 0 ? '<div style="color: var(--color-warning); display: inline;">' + selectedCount + '</div>/' : '')
+					+ count + '</span>',
 			}, cluster, {
 				iconSize: [PHOTO_MARKER_VIEW_SIZE, PHOTO_MARKER_VIEW_SIZE],
 				iconAnchor: [PHOTO_MARKER_VIEW_SIZE / 2, PHOTO_MARKER_VIEW_SIZE],
 			}))
 		},
-		getPhotoMarkerIcon(photo) {
+		getPhotoMarkerIcon(photo, index) {
 			const iconUrl = this.getPreviewUrl(photo)
-			const selectedClass = this.photoSuggestionsSelectedIndices.includes(photo.i)
+			const selectedClass = this.photoSuggestionsSelectedIndices.includes(index)
 				? '-selected'
 				: ''
 			return L.divIcon(L.extend({

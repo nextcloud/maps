@@ -821,13 +821,13 @@ export default {
 			this.chooseMyMap((map) => {
 				try {
 					network.copyByPath(photo.path, map.path + '/' + photo.basename)
-					showSuccess(t('maps', 'Track {photoName} added to map {mapName}', {
+					showSuccess(t('maps', 'Photo {photoName} added to map {mapName}', {
 						photoName: photo.basename ?? '',
 						mapName: map.name ?? '',
 					}))
 				} catch (error) {
 					console.error(error)
-					showError(t('maps', 'Failed to save track {photoName} to map {mapName}', {
+					showError(t('maps', 'Failed to save photo {photoName} to map {mapName}', {
 						trackName: photo.basename ?? '',
 						mapName: map.name ?? '',
 					}))

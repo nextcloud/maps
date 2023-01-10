@@ -68,9 +68,9 @@ export default {
 		},
 		scheduleUpdate() {
 			setTimeout(function() {
-					this.update()
-				}.bind(this),
-				this.delay + 1
+				this.update()
+			}.bind(this),
+			this.delay + 1
 			)
 		},
 		update() {

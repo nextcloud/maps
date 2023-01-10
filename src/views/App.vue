@@ -41,7 +41,9 @@
 				<AppNavigationPhotosItem
 					:enabled="photosEnabled"
 					:loading="photosLoading"
-					:photos="photos"
+					:total-photos="countVisiblePhotos"
+					:loaded-photos="loadedPhotos"
+					:read-only="photosReadOnly"
 					:draggable="photosDraggable"
 					:show-suggestions="showPhotoSuggestions"
 					@photos-clicked="onPhotosClicked"
@@ -103,7 +105,7 @@
 					:favorite-categories="favoriteCategories"
 					:favorites-enabled="favoritesEnabled"
 					:favorites-draggable="favoritesDraggable"
-					:photos="displayedPhotos"
+					:photos="photos"
 					:photos-enabled="photosEnabled"
 					:photos-draggable="photosDraggable"
 					:show-photo-suggestions="showPhotoSuggestions"
@@ -136,6 +138,8 @@
 					@address-deleted="onContactAddressDelete"
 					@add-to-map-contact="onAddContactToMap"
 					@contact-placed="onContactPlace"
+					@photo-clusters-loading="onPhotoClustersLoading"
+					@photo-clusters-loaded="onPhotoClustersLoaded"
 					@add-to-map-photo="onAddPhotoToMap"
 					@place-photos="placePhotoFilesOrFolder"
 					@photo-moved="onPhotoMoved"
@@ -268,6 +272,7 @@ export default {
 			photosEnabled: optionsController.photosEnabled,
 			photosDraggable: false,
 			photos: [],
+			loadedPhotos: 0,
 			selectedPhoto: null,
 			showPhotoSuggestions: false,
 			photoSuggestions: [],
@@ -399,18 +404,21 @@ export default {
 				})
 				: this.devices
 		},
-		displayedPhotos() {
-			if (this.sliderEnabled) {
-				const lastNullIndex = binSearch(this.photos, (p) => !p.dateTaken)
-				const firstShownIndex = binSearch(this.photos, (p) => (p.dateTaken || 0) < this.sliderStart) + 1
-				const lastShownIndex = binSearch(this.photos, (p) => (p.dateTaken || 0) < this.sliderEnd)
-				return [
-					...this.photos.slice(0, lastNullIndex + 1),
-					...this.photos.slice(firstShownIndex, lastShownIndex + 1),
-				]
-			} else {
-				return this.photos
-			}
+		photosLastNullIndex() {
+			return this.sliderEnabled ? binSearch(this.photos, (p) => !p.dateTaken) : -1
+		},
+		photosFirstShownIndex() {
+			return this.sliderEnabled ? binSearch(this.photos, (p) => (p.dateTaken || 0) < this.sliderStart) + 1 : 0
+		},
+		photosLastShownIndex() {
+			return this.sliderEnabled ? binSearch(this.photos, (p) => (p.dateTaken || 0) < this.sliderEnd) : this.photos.length - 1
+		},
+		countVisiblePhotos() {
+			return 1 + this.photosLastNullIndex + Math.min(this.photos.length - 1 ?? 0, this.photosLastShownIndex) - this.photosFirstShownIndex + 1
+		},
+		photosReadOnly() {
+			return this.photos.every((p) => !p.isUpdateable)
+				|| (this.photos.length === 0 && !(optionsController.optionValues?.isCreatable && !optionsController.optionValues?.isUpdateable))
 		},
 		displayedFavorites() {
 			return this.sliderEnabled
@@ -809,6 +817,15 @@ export default {
 			}
 		},
 		// ================ PHOTOS =================
+		onPhotoClustersLoading(processed, total) {
+			this.photosLoading = true
+			this.loadedPhotos = processed
+		},
+		onPhotoClustersLoaded() {
+			if (this.loadedPhotos > 0) {
+				this.photosLoading = false
+			}
+		},
 		onPhotosClicked() {
 			this.photosEnabled = !this.photosEnabled
 			// get photos if we don't have them yet
@@ -1003,12 +1020,11 @@ export default {
 			this.showPhotoSuggestions ? this.openSidebar() : this.closeSidebar()
 		},
 		onPhotoSuggestionSelected(index) {
-			const indexOfIndex = this.photoSuggestionsSelectedIndices.findIndex((e) => { return index === e })
-			if (indexOfIndex >= 0) {
-				this.photoSuggestionsSelectedIndices.splice(indexOfIndex, 1)
-			} else {
-				this.photoSuggestionsSelectedIndices.push(index)
+			const newIndices = this.photoSuggestionsSelectedIndices.filter((e) => { return index !== e })
+			if (newIndices.length === this.photoSuggestionsSelectedIndices.length) {
+				newIndices.push(index)
 			}
+			this.photoSuggestionsSelectedIndices = newIndices
 		},
 		onPhotoSuggestionMoved(index, latLng) {
 			this.photoSuggestions[index].lat = latLng.lat

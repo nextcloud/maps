@@ -6,9 +6,16 @@
 		:allow-collapse="false"
 		:force-menu="enabled"
 		@click="$emit('photos-clicked')">
-		<NcCounterBubble v-show="enabled && photos.length"
+		<NcCounterBubble v-if="enabled && loading"
 			slot="counter">
-			{{ photos.length > 1000 ? Math.floor(photos.length/1000).toString() + 'k' : photos.length > 99 ? '99+' : photos.length }}
+			{{
+				(loadedPhotos > 1000 ? Math.floor(loadedPhotos/1000).toString() + 'k' : loadedPhotos > 99 ? '99+' : loadedPhotos) + '/' +
+					(totalPhotos > 1000 ? Math.floor(totalPhotos/1000).toString() + 'k' : totalPhotos > 99 ? '99+' : totalPhotos)
+			}}
+		</NcCounterBubble>
+		<NcCounterBubble v-else-if="enabled"
+			slot="counter">
+			{{ totalPhotos > 1000 ? Math.floor(totalPhotos/1000).toString() + 'k' : totalPhotos > 99 ? '99+' : totalPhotos }}
 		</NcCounterBubble>
 		<template v-if="enabled" slot="actions">
 			<NcActionButton v-if="!readOnly"
@@ -66,9 +73,17 @@ export default {
 			type: Boolean,
 			default: false,
 		},
-		photos: {
-			type: Array,
+		loadedPhotos: {
+			type: Number,
 			required: true,
+		},
+		totalPhotos: {
+			type: Number,
+			required: true,
+		},
+		readOnly: {
+			type: Boolean,
+			default: false
 		},
 		draggable: {
 			type: Boolean,
@@ -87,10 +102,6 @@ export default {
 	},
 
 	computed: {
-		readOnly() {
-			return this.photos.every((p) => !p.isUpdateable)
-				|| (this.photos.length === 0 && !(optionsController.optionValues?.isCreatable && !optionsController.optionValues?.isUpdateable))
-		},
 	},
 
 	methods: {

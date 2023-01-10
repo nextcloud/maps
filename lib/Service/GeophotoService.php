@@ -158,7 +158,6 @@ class GeophotoService {
 			 }
 			 $this->photosCache->set($key, $filesById, 60 * 60 * 24);
 		 }
-		 shuffle($filesById);
 		 return $filesById;
 	 }
 
@@ -241,7 +240,6 @@ class GeophotoService {
 			}
 			$this->nonLocalizedPhotosCache->set($key, $filesById, 60 * 60 * 24);
         }
-        shuffle($filesById);
         return $filesById;
     }
 

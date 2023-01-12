@@ -109,7 +109,7 @@ class ContactsController extends Controller {
 							];
 						} elseif (is_countable($geo) && count($geo)>0 && is_iterable($geo)) {
 							foreach ($geo as $g) {
-								if (strlen($g) > 1) {
+								if (is_string($g) && strlen($g) > 1) {
 									$result[] = [
 										'FN' => $c['FN'] ?? $this->N2FN($c['N']) ?? '???',
 										'URI' => $c['URI'],
@@ -267,7 +267,7 @@ class ContactsController extends Controller {
 		if ($n) {
 			$spl = explode($n, ';');
 			if (count($spl) >= 4) {
-				return $spl[3] + ' ' + $spl[1] + ' ' + $spl[0];
+				return $spl[3] . ' ' . $spl[1] . ' ' . $spl[0];
 			}
 			else {
 				return null;

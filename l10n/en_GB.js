@@ -259,6 +259,8 @@ OC.L10N.register(
     "Unknown device type" : "Unknown device type",
     "Failed to send current position" : "Failed to send current position",
     "Track {date}" : "Track {date}",
+    "Photo {photoName} added to map {mapName}" : "Photo {photoName} added to map {mapName}",
+    "Failed to save photo {photoName} to map {mapName}" : "Failed to save photo {photoName} to map {mapName}",
     "What do you want to place?" : "What do you want to place?",
     "Photo files" : "Photo files",
     "Photo folders" : "Photo folders",

@@ -259,6 +259,8 @@ OC.L10N.register(
     "Unknown device type" : "未知的裝置類型",
     "Failed to send current position" : "發送目前位置失敗",
     "Track {date}" : "足跡 {date}",
+    "Photo {photoName} added to map {mapName}" : "照片 {photoName} 添加到地圖 {mapName}",
+    "Failed to save photo {photoName} to map {mapName}" : "無法將照片 {photoName} 保存到地圖 {mapName}",
     "What do you want to place?" : "您想要放什麼？",
     "Photo files" : "照片檔案",
     "Photo folders" : "照片資料夾",

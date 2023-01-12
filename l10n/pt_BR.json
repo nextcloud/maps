@@ -257,6 +257,8 @@
     "Unknown device type" : "Tipo de dispositivo desconhecido",
     "Failed to send current position" : "Erro ao enviar a posição atual",
     "Track {date}" : "Trilha {date}",
+    "Photo {photoName} added to map {mapName}" : "Foto {photoName} adicionada ao mapa {mapName}",
+    "Failed to save photo {photoName} to map {mapName}" : "Falha ao salvar a foto {photoName} no mapa {mapName}",
     "What do you want to place?" : "O que você quer colocar?",
     "Photo files" : "Arquivos de foto",
     "Photo folders" : "Pastas de foto",

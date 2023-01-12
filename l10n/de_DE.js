@@ -259,6 +259,8 @@ OC.L10N.register(
     "Unknown device type" : "Unbekannter Gerätetyp",
     "Failed to send current position" : "Senden der aktuellen Position ist fehlgeschlagen",
     "Track {date}" : "Strecke {date}",
+    "Photo {photoName} added to map {mapName}" : "Foto {photoName} wurde zur Karte {mapName} hinzugefügt.",
+    "Failed to save photo {photoName} to map {mapName}" : "Foto {photoName} zur Karte {mapName} konnte nicht gespeichert werden.",
     "What do you want to place?" : "Was möchten Sie platzieren?",
     "Photo files" : "Foto-Dateien",
     "Photo folders" : "Foto-Ordner",

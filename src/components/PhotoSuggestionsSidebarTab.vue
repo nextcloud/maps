@@ -80,7 +80,7 @@
 			</div>
 		</div>
 		<div v-else>
-			<h2> {{ t('maps','No Suggestions found') }} </h2>
+			<h2> {{ t('maps','No suggestions found') }} </h2>
 			{{ t('maps','To get suggestions upload tracks from the trips, when you took your photos.'
 				+ 'For future trips you can track your android phone using phonetrack.'
 				+ 'This information are then automatically used suggest photo location') }}

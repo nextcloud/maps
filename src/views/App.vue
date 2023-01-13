@@ -1095,8 +1095,8 @@ export default {
 					this.photoSuggestionsSelectedIndices = []
 				}
 				response.data.length === toSave.length
-					? showSuccess(n('maps', 'saved location', 'saved all %n locations', toSave.length))
-					: showInfo(t('maps', 'saved {r} from {i} locations', { r: response.data.length, i: toSave.length }))
+					? showSuccess(n('maps', 'Saved location', 'Saved all %n locations', toSave.length))
+					: showInfo(t('maps', 'Saved {r} from {i} locations', { r: response.data.length, i: toSave.length }))
 			}).catch((error) => {
 				showError(t('maps', 'Failed to save locations'))
 				console.error(error)

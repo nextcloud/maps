@@ -88,14 +88,14 @@
 		<div class="oc-dialog-buttonrow">
 			<NcButton
 				@click="$emit('cancel')">
-				{{ !photoSuggestions.includes(null) ? t('maps', 'cancel') : t('maps', 'quit') }}
+				{{ !photoSuggestions.includes(null) ? t('maps', 'Cancel') : t('maps', 'Quit') }}
 			</NcButton>
 			<NcButton
 				v-show="photoSuggestions.length > 0"
 				type="primary"
 				:disabled="photoSuggestionsSelectedIndices.length===0"
 				@click="$emit('save')">
-				{{ t('maps', 'save') }}
+				{{ t('maps', 'Save') }}
 			</NcButton>
 		</div>
 	</div>

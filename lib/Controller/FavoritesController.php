@@ -405,7 +405,7 @@ class FavoritesController extends Controller {
 		$folders = $this->userFolder->getById($targetMapId);
 		$folder = array_shift($folders);
 		if(is_null($folder)) {
-			return new DataResponse($this->l->t('Map mot Found'), 404);
+			return new DataResponse($this->l->t('Map not Found'), 404);
 		}
 		try {
 			$file=$folder->get(".favorite_shares.json");
@@ -415,7 +415,7 @@ class FavoritesController extends Controller {
 		$data = json_decode($file->getContent(), true);
 		foreach ($data as $s) {
 			if ($s->token = $share->token) {
-				return new DataResponse($this->l->t('share was allready on map'));
+				return new DataResponse($this->l->t('Share was already on map'));
 			}
 		}
 		$share->id = count($data);

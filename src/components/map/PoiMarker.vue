@@ -16,7 +16,7 @@
 				<span class="icon-favorite" />
 				{{ t('maps', 'Add to favorites') }}
 			</button>
-			<button class="search-place-contact" @click="$emit('place-contact', poi)">
+			<button class="search-place-contact" @click="onAddContact">
 				<span class="icon-user" />
 				{{ t('maps', 'Add contact address') }}
 			</button>
@@ -242,9 +242,21 @@ export default {
 					...this.poi,
 					latLng: {
 						lat: this.poi.lat,
-						lng: this.poi.lon
+						lng: this.poi.lon,
 					},
-					name: this.poi.name,
+					name: this.header,
+					formattedAddress: formatAddress(this.poi.address)
+				})
+		},
+		onAddContact() {
+			this.$emit('place-contact',
+				{
+					...this.poi,
+					latLng: {
+						lat: this.poi.lat,
+						lng: this.poi.lon,
+					},
+					name: this.header,
 					formattedAddress: formatAddress(this.poi.address)
 				})
 		},

@@ -197,7 +197,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-@import 'nouislider/distribute/nouislider.css';
+@import 'nouislider/dist/nouislider.css';
 
 #timeRangeSlider {
 	position: absolute;

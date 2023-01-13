@@ -326,7 +326,7 @@ MyMapsController.prototype = {
     },
 
     shareMyMap: function(id) {
-        OC.Notification.showTemporary(t('maps', 'Share map not implemented yet, just goto files and share the folder.'));
+        OC.Notification.showTemporary(t('maps', 'Share map not implemented yet, just go to files and share the folder.'));
     },
 
     getMyMaps: function () {

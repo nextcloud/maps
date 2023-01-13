@@ -1573,11 +1573,13 @@ export default {
 			})
 		},
 		onAddressFavoriteAdd(obj) {
-			const name = obj.address
-				? obj.address.attraction
-				|| obj.address.road
-				|| obj.address.city_district
-				: null
+			const name = obj.name
+				? obj.name
+				: obj.address
+					? obj.address.attraction
+					|| obj.address.road
+					|| obj.address.city_district
+					: null
 			this.addFavorite(obj.latLng, name, null, obj.formattedAddress || null)
 		},
 		onAddFavoriteToMap(f) {

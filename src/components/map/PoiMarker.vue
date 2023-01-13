@@ -12,7 +12,7 @@
 				</h2>
 			</div>
 			<span class="location-city">{{ desc }}</span>
-			<button class="search-add-favorite" @click="$emit('add-favorite', poi)">
+			<button class="search-add-favorite" @click="onAddFavorite">
 				<span class="icon-favorite" />
 				{{ t('maps', 'Add to favorites') }}
 			</button>
@@ -95,6 +95,7 @@
 <script>
 import { imagePath } from '@nextcloud/router'
 import moment from '@nextcloud/moment'
+import { formatAddress } from '../../utils'
 
 import { LMarker, LPopup, LTooltip } from 'vue2-leaflet'
 import OpeningHours from 'opening_hours'
@@ -235,6 +236,18 @@ export default {
 	},
 
 	methods: {
+		onAddFavorite() {
+			this.$emit('add-favorite',
+				{
+					...this.poi,
+					latLng: {
+						lat: this.poi.lat,
+						lng: this.poi.lon
+					},
+					name: this.poi.name,
+					formattedAddress: formatAddress(this.poi.address)
+				})
+		},
 	},
 
 }

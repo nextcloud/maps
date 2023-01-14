@@ -20,9 +20,9 @@
 -->
 
 <template>
-	<Content app-name="maps">
+	<NcContent app-name="maps">
 		<PublicFavoriteShareSideBar />
-		<AppContent class="content-wrapper">
+		<NcAppContent class="content-wrapper">
 			<MapContainer
 				:favorite-categories="favoritesMappedByCategory"
 				:is-public-share="true"
@@ -30,17 +30,17 @@
 				@add-favorite="addFavorite"
 				@update-favorite="updateFavorite"
 				@delete-favorite="deleteFavorite" />
-		</AppContent>
-	</Content>
+		</NcAppContent>
+	</NcContent>
 </template>
 
 <script>
 import NcContent from '@nextcloud/vue/dist/Components/NcContent'
 import NcAppContent from '@nextcloud/vue/dist/Components/NcAppContent'
-import MapContainer from './components/MapContainer'
-import PublicFavoriteShareSideBar from './components/PublicFavoriteShareSideBar'
+import MapContainer from '../components/MapContainer'
+import PublicFavoriteShareSideBar from '../components/PublicFavoriteShareSideBar'
 import { mapActions, mapGetters, mapState } from 'vuex'
-import { PUBLIC_FAVORITES_NAMESPACE } from './store/modules/publicFavorites'
+import { PUBLIC_FAVORITES_NAMESPACE } from '../store/modules/publicFavorites'
 
 export default {
 	name: 'PublicFavoriteShare',

@@ -21,7 +21,7 @@
  */
 
 import Vue from 'vue'
-import PublicFavoriteShare from './PublicFavoriteShare'
+import PublicFavoriteShare from './views/PublicFavoriteShare'
 import './bootstrap'
 
 import store from './store/publicFavoriteShareStore'

@@ -89,7 +89,7 @@ export default {
 
 	props: {
 		isVisible: VueTypes.bool.isRequired.def(false),
-		latLng: Types.LatLng.def(null),
+		latLng: Types.LatLng.def({ lat: 0, lng: 0 }),
 		allowCategoryCustomization: VueTypes.bool.isRequired.def(false),
 		allowEdits: VueTypes.bool.isRequired.def(false),
 	},

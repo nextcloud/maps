@@ -78,7 +78,7 @@ export default {
 	},
 
 	props: {
-		favorite: Types.Favorite.isRequired.def({}),
+		favorite: Types.Favorite.isRequired,
 		isVisible: VueTypes.bool.isRequired.def(false),
 		allowEdits: VueTypes.bool.isRequired.def(false),
 		allowCategoryCustomization: VueTypes.bool.def(true),

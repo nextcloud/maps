@@ -36,8 +36,6 @@ class UtilsController extends Controller {
     private $userId;
     private $config;
 	private $root;
-    private $dbconnection;
-    private $dbtype;
 
     public function __construct($AppName,
                                 IRequest $request,

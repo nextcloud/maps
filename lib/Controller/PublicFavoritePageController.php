@@ -38,7 +38,7 @@ use OCP\IRequest;
 use OCP\ISession;
 use OCP\Util;
 
-class PublicPageController extends PublicShareController {
+class PublicFavoritePageController extends PublicShareController {
     private $config;
     private $logger;
 

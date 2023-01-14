@@ -35,9 +35,9 @@ use \OCP\IServerContainer;
 use PHPUnit\Framework\TestCase;
 
 
-class PublicPageControllerTest extends TestCase
+class PublicFavoritePageControllerTest extends TestCase
 {
-  /* @var PublicPageController */
+  /* @var PublicFavoritePageController */
   private $publicPageController;
 
   private $config;
@@ -85,7 +85,7 @@ class PublicPageControllerTest extends TestCase
 
     $this->config = $container->query(IServerContainer::class)->getConfig();
 
-    $this->publicPageController = new PublicPageController(
+    $this->publicPageController = new PublicFavoritePageController(
       $appName,
       $requestMock,
       $sessionMock,

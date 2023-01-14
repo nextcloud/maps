@@ -24,8 +24,6 @@ OC.L10N.register(
     "Close" : "Luk",
     "Select all" : "Vælg alle",
     "Save" : "Gem",
-    "cancel" : "Annullér",
-    "save" : "Gem",
     "(No name)" : "(Uden navn)",
     "No favorites to display" : "Ingen favoritter at vise",
     "Tags" : "Mærker",

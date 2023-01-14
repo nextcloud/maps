@@ -16,6 +16,7 @@ OC.L10N.register(
     "Comment" : "មតិ",
     "Close" : "បិទ",
     "Save" : "រក្សាទុក",
+    "Quit" : "ចាក់ចេញ",
     "Tags" : "ស្លាក",
     "Name" : "ឈ្មោះ",
     "Add" : "បញ្ចូល",

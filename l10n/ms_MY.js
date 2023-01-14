@@ -14,6 +14,7 @@ OC.L10N.register(
     "OK" : "OK",
     "Close" : "Tutup",
     "Save" : "Simpan",
+    "Quit" : "Berhenti",
     "Name" : "Nama",
     "Add" : "Tambah",
     "Add to favorites" : "Add to favorites",

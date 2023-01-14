@@ -19,6 +19,7 @@ OC.L10N.register(
     "Close" : "ปิด",
     "Select all" : "เลือกทั้งหมด",
     "Save" : "บันทึก",
+    "Quit" : "ออก",
     "Tags" : "แท็ก",
     "Favorite" : "รายการโปรด",
     "Unable to change the favourite state of the file" : "ไม่สามารถเปลี่ยนสถานะรายการโปรดของไฟล์",

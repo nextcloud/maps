@@ -12,6 +12,7 @@ OC.L10N.register(
     "Close" : "ປິດ",
     "Select all" : "ເລືອກທັງໝົດ",
     "Save" : "ບັນທຶກ",
+    "Quit" : "ຢຸດ",
     "Tags" : "ປ້າຍກຳກັບ",
     "Favorite" : "ລາຍການທີ່ມັກ",
     "Duration" : "ໄລຍະ",

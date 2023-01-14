@@ -53,8 +53,6 @@ OC.L10N.register(
     "Keep in mind that map projections always distort sizes of countries. The standard Mercator projection is particularly biased. Read more at:" : "Tingueu en compte que les projeccions de mapes sempre distorsionen la mida dels països. La projecció estàndard de Mercator és esbiaixada. Llegiu-ne més a:",
     "Select all" : "Selecciona-ho tot",
     "Save" : "Desa",
-    "cancel" : "cancel·la",
-    "save" : "desa",
     "(No name)" : "(Sense nom)",
     "No favorites to display" : "Sense preferits per mostrar",
     "Tags" : "Etiquetes",

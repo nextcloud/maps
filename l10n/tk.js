@@ -10,6 +10,7 @@ OC.L10N.register(
     "Close" : "Ýap",
     "Select all" : "Hemmesini saýlaň",
     "Save" : "Saklamak",
+    "Quit" : "Çykmak, taşlamak",
     "Tags" : "Bellikler",
     "Favorite" : "Halaýan",
     "Name" : "Ady",

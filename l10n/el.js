@@ -1,7 +1,6 @@
 OC.L10N.register(
     "maps",
     {
-    "Map mot Found" : "Ο χάρτης δεν βρέθηκε",
     "File not found" : "Δε βρέθηκε το αρχείο",
     "Personal" : "Προσωπικά",
     "Maps" : "Χάρτες",
@@ -62,9 +61,6 @@ OC.L10N.register(
     "Clear selection" : "Καθαρισμός επιλογής",
     "Select all" : "Επιλογή όλων",
     "Save" : "Αποθήκευση",
-    "No Suggestions found" : "Δε βρέθηκαν προτάσεις",
-    "cancel" : "άκυρο",
-    "save" : "αποθήκευση",
     "(No name)" : "(Ανώνυμο)",
     "No favorites to display" : "Δεν υπάρχουν αγαπημένα εμφάνιση",
     "Tags" : "Ετικέτες",

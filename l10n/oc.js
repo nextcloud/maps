@@ -18,6 +18,7 @@ OC.L10N.register(
     "Comment" : "Comentar",
     "Close" : "Tampar",
     "Save" : "Enregistrar",
+    "Quit" : "Quitar",
     "Tags" : "Etiquetas",
     "Favorite" : "Favorit",
     "Track" : "Pista",

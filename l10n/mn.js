@@ -19,6 +19,7 @@ OC.L10N.register(
     "Close" : "Хаах",
     "Select all" : "бүгдийг сонгох",
     "Save" : "Хадгалах",
+    "Quit" : "Гарах",
     "Tags" : "Tag-үүд",
     "Favorite" : "Дуртай",
     "End" : "дуусгах",

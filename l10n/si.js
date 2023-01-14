@@ -16,6 +16,7 @@ OC.L10N.register(
     "Close" : "වසන්න",
     "Select all" : "සියල්ල තෝරන්න",
     "Save" : "සුරකින්න",
+    "Quit" : "ඉවත් වන්න",
     "(No name)" : "(නමක් නැත)",
     "Favorite" : "ප්‍රියතම",
     "Duration" : "කාල සීමාව",

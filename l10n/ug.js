@@ -13,6 +13,7 @@ OC.L10N.register(
     "OK" : "جەزملە",
     "Close" : "ياپ",
     "Save" : "ساقلا",
+    "Quit" : "چېكىن",
     "Tags" : "بەلگەلەر",
     "Favorite" : "يىغقۇچ",
     "Name" : "ئاتى",

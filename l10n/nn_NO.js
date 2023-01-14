@@ -18,6 +18,7 @@ OC.L10N.register(
     "Close" : "Lukk",
     "Select all" : "Merk alt",
     "Save" : "Lagre",
+    "Quit" : "Avslutt",
     "Tags" : "Emneord",
     "Favorite" : "Favoritt",
     "Name" : "Namn",

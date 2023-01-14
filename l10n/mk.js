@@ -84,6 +84,7 @@ OC.L10N.register(
     "Select all" : "Избери се",
     "Display picture" : "Прикажи фотографија",
     "Save" : "Зачувај",
+    "Quit" : "Прекини",
     "(No name)" : "(Нема име)",
     "No favorites to display" : "Нема омилени места за приказ",
     "Tags" : "Ознаки",

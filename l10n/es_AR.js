@@ -20,8 +20,6 @@ OC.L10N.register(
     "Close" : "Cerrar",
     "Select all" : "Seleccionar todo",
     "Save" : "Guardar",
-    "cancel" : "celar",
-    "save" : "guardar",
     "Tags" : "Etiquetas",
     "Favorite" : "Favorito",
     "End" : "Fin",

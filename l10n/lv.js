@@ -20,6 +20,7 @@ OC.L10N.register(
     "Close" : "Aizvērt",
     "Select all" : "Atzīmēt visu",
     "Save" : "Saglabāt",
+    "Quit" : "Iziet",
     "Tags" : "Birkas",
     "Sidebar" : "Sānjosla",
     "Favorite" : "Favorīts",

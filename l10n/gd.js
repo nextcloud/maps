@@ -11,6 +11,7 @@ OC.L10N.register(
     "Close" : "Dùin",
     "Select all" : "Tagh na h-uile",
     "Save" : "Sàbhail",
+    "Quit" : "Fàg an-seo",
     "Tags" : "Tagaichean",
     "Favorite" : "Annsachd",
     "Name" : "Ainm",

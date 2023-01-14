@@ -17,6 +17,7 @@ OC.L10N.register(
     "Close" : "Zoumaachen",
     "Select all" : "All auswielen",
     "Save" : "Späicheren",
+    "Quit" : "Erausgoen",
     "Tags" : "Tags",
     "Favorite" : "Favorit",
     "Name" : "Numm",

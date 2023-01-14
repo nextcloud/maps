@@ -12,6 +12,7 @@ OC.L10N.register(
     "Close" : "Mdel",
     "Select all" : "Fren akk",
     "Save" : "Sekles",
+    "Quit" : "Quitter",
     "Tags" : "Tibzimin",
     "Favorite" : "Menyif",
     "Name" : "Nom",

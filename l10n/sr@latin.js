@@ -16,6 +16,7 @@ OC.L10N.register(
     "Close" : "Zatvori",
     "Select all" : "Označi sve",
     "Save" : "Sačuvaj",
+    "Quit" : "Napusti",
     "Tags" : "Oznake",
     "Favorite" : "Omiljene",
     "Name" : "naziv",

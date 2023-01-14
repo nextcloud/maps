@@ -19,6 +19,7 @@ OC.L10N.register(
     "Close" : "Mbylleni",
     "Select all" : "Zgjidhi të gjitha",
     "Save" : "Ruaj",
+    "Quit" : "Dilni",
     "Tags" : "Etiketat",
     "Favorite" : "I/E Preferuar",
     "Duration" : "Kohëzgjatja",

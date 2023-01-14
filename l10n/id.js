@@ -20,6 +20,7 @@ OC.L10N.register(
     "Close" : "Tutup",
     "Select all" : "Pilih semua",
     "Save" : "Simpan",
+    "Quit" : "Keluar",
     "Tags" : "Tag",
     "Favorite" : "Favorit",
     "Unable to change the favourite state of the file" : "Gagal mengubah status favorit berkas",

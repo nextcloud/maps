@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Nextcloud 3.14159\n"
 "Report-Msgid-Bugs-To: translations\\@example.com\n"
-"POT-Creation-Date: 2023-01-13 02:48+0000\n"
+"POT-Creation-Date: 2023-01-14 02:48+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -104,11 +104,11 @@ msgid "Error sharing favorite"
 msgstr ""
 
 #: /app/lib/Controller/FavoritesController.php:408
-msgid "Map mot Found"
+msgid "Map not Found"
 msgstr ""
 
 #: /app/lib/Controller/FavoritesController.php:418
-msgid "share was allready on map"
+msgid "Share was already on map"
 msgstr ""
 
 #: /app/lib/Controller/TracksController.php:137
@@ -370,9 +370,11 @@ msgid "Leave share"
 msgstr ""
 
 #. TRANSLATORS src/components/AppNavigationFavoritesItem.vue:190
+#. TRANSLATORS src/components/PhotoSuggestionsSidebarTab.vue:91
 #. TRANSLATORS src/components/map/ClickPopup.vue:52
 #. TRANSLATORS src/components/map/PhotosLayer.vue:395
 #: /app/specialVueFakeDummyForL10nScript.js:70
+#: /app/specialVueFakeDummyForL10nScript.js:202
 #: /app/specialVueFakeDummyForL10nScript.js:276
 #: /app/specialVueFakeDummyForL10nScript.js:396
 msgid "Cancel"
@@ -632,6 +634,7 @@ msgstr ""
 #. TRANSLATORS src/components/PhotoSuggestionsSidebarTab.vue:45
 #: /app/specialVueFakeDummyForL10nScript.js:184
 #: /app/specialVueFakeDummyForL10nScript.js:192
+#: /app/specialVueFakeDummyForL10nScript.js:204
 msgid "Save"
 msgstr ""
 
@@ -643,7 +646,7 @@ msgstr ""
 
 #. TRANSLATORS src/components/PhotoSuggestionsSidebarTab.vue:83
 #: /app/specialVueFakeDummyForL10nScript.js:198
-msgid "No Suggestions found"
+msgid "No suggestions found"
 msgstr ""
 
 #. TRANSLATORS src/components/PhotoSuggestionsSidebarTab.vue:84
@@ -652,18 +655,8 @@ msgid ""
 "To get suggestions upload tracks from the trips, when you took your photos."
 msgstr ""
 
-#. TRANSLATORS src/components/PhotoSuggestionsSidebarTab.vue:91
 #: /app/specialVueFakeDummyForL10nScript.js:202
-msgid "cancel"
-msgstr ""
-
-#: /app/specialVueFakeDummyForL10nScript.js:202
-msgid "quit"
-msgstr ""
-
-#. TRANSLATORS src/components/PhotoSuggestionsSidebarTab.vue:98
-#: /app/specialVueFakeDummyForL10nScript.js:204
-msgid "save"
+msgid "Quit"
 msgstr ""
 
 #. TRANSLATORS src/components/PublicFavoriteShareSideBar.vue:32
@@ -1550,7 +1543,7 @@ msgstr ""
 
 #. TRANSLATORS src/views/App.vue:1099
 #: /app/specialVueFakeDummyForL10nScript.js:658
-msgid "saved {r} from {i} locations"
+msgid "Saved {r} from {i} locations"
 msgstr ""
 
 #. TRANSLATORS src/views/App.vue:1101
@@ -1713,8 +1706,8 @@ msgstr ""
 
 #. TRANSLATORS src/views/App.vue:1098
 #: /app/specialVueFakeDummyForL10nScript.js:734
-msgid "saved location"
-msgid_plural "saved all %n locations"
+msgid "Saved location"
+msgid_plural "Saved all %n locations"
 msgstr[0] ""
 msgstr[1] ""
 
@@ -1777,7 +1770,7 @@ msgid "Failed to rename map"
 msgstr ""
 
 #: /app/src/myMapsController.js:329
-msgid "Share map not implemented yet, just goto files and share the folder."
+msgid "Share map not implemented yet, just go to files and share the folder."
 msgstr ""
 
 #: /app/src/myMapsController.js:352

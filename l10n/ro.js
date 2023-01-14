@@ -20,6 +20,7 @@ OC.L10N.register(
     "Close" : "Închide",
     "Select all" : "Selectează tot",
     "Save" : "Salvează",
+    "Quit" : "Renunță",
     "Tags" : "Etichete",
     "Favorite" : "Favorite",
     "Unable to change the favourite state of the file" : "Nu s-a putut schimba starea fișierelor favorite",

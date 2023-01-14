@@ -32,7 +32,7 @@
 				:title="favorite.name || t('maps', '(No name)')"
 				icon="icon-star-dark"
 				@click="selectFavorite(favorite.id)" />
-			<AppNavigationSpacer />
+			<NcAppNavigationSpacer />
 		</ul>
 
 		<div v-else class="no-favorites">

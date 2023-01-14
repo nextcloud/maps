@@ -55,7 +55,7 @@
 				<LMarker
 					v-for="favorite in favoriteCategories[categoryKey]"
 					:key="favorite.id"
-					:lat-lng="[favorite.lat, favorite.lng]"
+					:lat-lng="{lat:favorite.lat, lng: favorite.lng}"
 					:icon="createNewDivIcon(categoryKey)"
 					@popupopen="storeCurrentlyOpenPopup(favorite.id)"
 					@popupclose="forgetCurrentlyOpenPopup(favorite.id)"
@@ -123,7 +123,7 @@ export default {
 	},
 
 	props: {
-		favoriteCategories: VueTypes.object.isRequired.def(null),
+		favoriteCategories: VueTypes.object.isRequired.def({}),
 		isPublicShare: VueTypes.bool.isRequired.def(false),
 		allowFavoriteEdits: VueTypes.bool.def(false),
 	},

@@ -14,6 +14,9 @@ return [
         ['name' => 'page#do_echo', 'url' => '/echo', 'verb' => 'POST'],
         ['name' => 'page#openGeoLink', 'url' => '/openGeoLink/{url}', 'verb' => 'GET'],
         ['name' => 'public_favorite_page#sharedFavoritesCategory', 'url' => '/s/favorites/{token}', 'verb' => 'GET'],
+		['name' => 'PublicPage#showShare', 'url' => '/s/{token}', 'verb' => 'GET'],
+		['name' => 'PublicPage#showAuthenticate', 'url' => '/s/{token}/authenticate/{redirect}', 'verb' => 'GET'],
+		['name' => 'PublicPage#authenticate', 'url' => '/s/{token}/authenticate/{redirect}', 'verb' => 'POST'],
 
 
         // utils
@@ -21,6 +24,10 @@ return [
         ['name' => 'utils#saveOptionValue', 'url' => '/saveOptionValue', 'verb' => 'POST'],
         ['name' => 'utils#setRoutingSettings', 'url' => '/setRoutingSettings', 'verb' => 'POST'],
         ['name' => 'utils#getTrafficStyle', 'url' => '/style/traffic', 'verb' => 'GET'],
+		['name' => 'PublicUtils#getOptionsValues', 'url' => '/s/{token}/getOptionsValues', 'verb' => 'GET'],
+		['name' => 'PublicUtils#saveOptionValue', 'url' => '/s/{token}/saveOptionValue', 'verb' => 'POST'],
+		['name' => 'PublicUtils#setRoutingSettings', 'url' => '/s/{token}/setRoutingSettings', 'verb' => 'POST'],
+		['name' => 'PublicUtils#getTrafficStyle', 'url' => '/s/{token}/style/traffic', 'verb' => 'GET'],
 
         // photos
         ['name' => 'photos#getPhotosFromDb', 'url' => '/photos', 'verb' => 'GET'],

@@ -147,7 +147,9 @@
 			<LFeatureGroup>
 				<PoiMarker v-for="poi in searchPois"
 					:key="poi.place_id"
-					:poi="poi" />
+					:poi="poi"
+					@place-contact="onAddContactAddress"
+					@add-favorite="$emit('add-address-favorite', $event); leftClickSearching = false"/>
 			</LFeatureGroup>
 		</LMap>
 		<Slider v-show="sliderEnabled"

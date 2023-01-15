@@ -1573,11 +1573,13 @@ export default {
 			})
 		},
 		onAddressFavoriteAdd(obj) {
-			const name = obj.address
-				? obj.address.attraction
-				|| obj.address.road
-				|| obj.address.city_district
-				: null
+			const name = obj.name
+				? obj.name
+				: obj.address
+					? obj.address.attraction
+					|| obj.address.road
+					|| obj.address.city_district
+					: null
 			this.addFavorite(obj.latLng, name, null, obj.formattedAddress || null)
 		},
 		onAddFavoriteToMap(f) {
@@ -1628,6 +1630,7 @@ export default {
 			this.addFavorite(latLng, null, null, null, null, true, true)
 		},
 		addFavorite(latLng, name = null, category = null, comment = null, extensions = null, save = true, openSidebar = false) {
+			this.favoritesLoading = true
 			if (category === null) {
 				category = this.lastUsedFavoriteCategory
 			}
@@ -1648,8 +1651,18 @@ export default {
 					window.OCA.Files.Sidebar.setActiveTab('favorite')
 					this.openSidebar(null, 'favorite', fav.name)
 				}
+				if (this.sliderEnabled) {
+					if (this.sliderStart > fav.date_created) {
+						this.sliderStart = this.minDataTimestamp
+					}
+					if (this.sliderEnd < fav.date_created) {
+						this.sliderEnd = this.maxDataTimestamp
+					}
+				}
+				this.favoritesLoading = false
 				return fav.id
 			}).catch((error) => {
+				this.favoritesLoading = false
 				console.error(error)
 			})
 		},

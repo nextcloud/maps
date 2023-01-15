@@ -79,6 +79,13 @@ return [
         ['name' => 'favorites#deleteFavorite', 'url' => '/favorites/{id}', 'verb' => 'DELETE'],
         ['name' => 'favorites#deleteFavorites', 'url' => '/favorites', 'verb' => 'DELETE'],
 
+		['name' => 'PublicFavorites#getFavorites', 'url' => '/s/{token}/favorites', 'verb' => 'GET'],
+		['name' => 'PublicFavorites#addFavorite', 'url' => '/s/{token}/favorite', 'verb' => 'POST'],
+		['name' => 'PublicFavorites#addFavorites', 'url' => '/s/{token}/favorites', 'verb' => 'POST'],
+		['name' => 'PublicFavorites#editFavorite', 'url' => '/s/{token}/favorites/{id}', 'verb' => 'PUT'],
+		['name' => 'PublicFavorites#deleteFavorite', 'url' => '/s/{token}/favorites/{id}', 'verb' => 'DELETE'],
+		['name' => 'PublicFavorites#deleteFavorites', 'url' => '/s/{token}/favorites', 'verb' => 'DELETE'],
+
         // favorite categories
         ['name' => 'favorites#renameCategories', 'url' => '/favorites-category', 'verb' => 'PUT'],
         ['name' => 'favorites#getSharedCategories', 'url' => '/favorites-category/shared', 'verb' => 'GET'],
@@ -89,6 +96,9 @@ return [
 
         ['name' => 'favorites#exportFavorites', 'url' => '/export/favorites', 'verb' => 'POST'],
         ['name' => 'favorites#importFavorites', 'url' => '/import/favorites', 'verb' => 'POST'],
+
+		['name' => 'PublicFavorites#renameCategories', 'url' => '/s/{token}/favorites-category', 'verb' => 'PUT'],
+		['name' => 'PublicFavorites#getSharedCategories', 'url' => '/s/{token}/favorites-category/shared', 'verb' => 'GET'],
 
         // tracks
         ['name' => 'tracks#getTracks', 'url' => '/tracks', 'verb' => 'GET'],

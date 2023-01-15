@@ -1386,7 +1386,7 @@ export default {
 			this.favoritesLoading = true
 			this.favorites = {}
 			this.favoriteCategoryTokens = {}
-			network.getFavorites(this.myMapId).then((response) => {
+			network.getFavorites(this.myMapId, this.token).then((response) => {
 				response.data.forEach((f) => {
 					if (!f.category) {
 						f.category = t('maps', 'Personal')
@@ -1399,7 +1399,7 @@ export default {
 			}).then(() => {
 				this.favoritesLoading = false
 			})
-			network.getSharedFavoriteCategories(this.myMapId).then((response) => {
+			network.getSharedFavoriteCategories(this.myMapId, this.token).then((response) => {
 				this.favoriteCategoryTokens = {}
 				response.data.forEach((s) => {
 					this.favoriteCategoryTokens[s.category] = s.token
@@ -1499,7 +1499,7 @@ export default {
 			this.selectedFavorite = f
 		},
 		onFavoriteEdit(f, save = true) {
-			network.editFavorite(f.id, f.name, f.category, f.comment, f.lat, f.lng, this.myMapId).then((response) => {
+			network.editFavorite(f.id, f.name, f.category, f.comment, f.lat, f.lng, this.myMapId, this.token).then((response) => {
 				if (save) {
 					this.saveAction({
 						type: 'favoriteEdit',
@@ -1518,7 +1518,7 @@ export default {
 			})
 		},
 		onFavoriteDelete(favid, save = true) {
-			network.deleteFavorite(favid, this.myMapId).then((response) => {
+			network.deleteFavorite(favid, this.myMapId, this.token).then((response) => {
 				if (save) {
 					this.saveAction({
 						type: 'favoriteDelete',
@@ -1532,7 +1532,7 @@ export default {
 			})
 		},
 		onFavoritesDelete(favids, save = true) {
-			network.deleteFavorites(favids, this.myMapId).then((response) => {
+			network.deleteFavorites(favids, this.myMapId, this.token).then((response) => {
 				if (save) {
 					const deleted = favids.map((favid) => {
 						return { ...this.favorites[favid] }
@@ -1651,7 +1651,7 @@ export default {
 			if (category === null) {
 				category = this.lastUsedFavoriteCategory
 			}
-			return network.addFavorite(latLng.lat, latLng.lng, name, category, comment, extensions, this.myMapId).then((response) => {
+			return network.addFavorite(latLng.lat, latLng.lng, name, category, comment, extensions, this.myMapId, this.token).then((response) => {
 				const fav = response.data
 				if (!fav.category) {
 					fav.category = t('maps', 'Personal')
@@ -1684,7 +1684,7 @@ export default {
 			})
 		},
 		onRenameFavoriteCategory(e, save = true) {
-			network.renameFavoriteCategory([e.old], e.new, this.myMapId).then((response) => {
+			network.renameFavoriteCategory([e.old], e.new, this.myMapId, this.token).then((response) => {
 				if (save) {
 					this.saveAction({
 						type: 'favoriteRenameCategory',

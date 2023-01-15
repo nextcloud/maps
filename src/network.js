@@ -146,13 +146,13 @@ export function addContactToMap(bookid, uri, uid, myMapId, fileId = null) {
 	return axios.put(url, req)
 }
 
-export function getFavorites(myMapId = null) {
+export function getFavorites(myMapId = null, token = null) {
 	const conf = {
 	    params: {
 			myMapId,
 		},
 	}
-	const url = generateUrl('/apps/maps/favorites')
+	const url = generateUrl('/apps/maps' + (token ? '/s/' + token : '') + '/favorites')
 	return axios.get(url, conf)
 }
 
@@ -163,17 +163,25 @@ export function getFavoritesByToken(token) {
 	return axios.get(url, conf)
 }
 
-export function getSharedFavoriteCategories(myMapId = null) {
+export function getSharedFavoriteCategories(myMapId = null, token = null) {
 	const conf = {
 		params: {
 			myMapId,
 		},
 	}
-	const url = generateUrl('/apps/maps/favorites-category/shared')
+	const url = generateUrl('/apps/maps/favorites-category' + (token ? '/s/' + token : '') + '/shared')
 	return axios.get(url, conf)
 }
 
-export function addFavorite(lat, lng, name, category = null, comment = null, extensions = null, myMapId = null) {
+export function addFavorite(
+	lat,
+	lng,
+	name,
+	category = null,
+	comment = null,
+	extensions = null,
+	myMapId = null,
+	token = null) {
 	const req = {
 		name,
 		lat,
@@ -183,51 +191,59 @@ export function addFavorite(lat, lng, name, category = null, comment = null, ext
 		extensions,
 		myMapId,
 	}
-	const url = generateUrl('/apps/maps/favorite')
+	const url = generateUrl('/apps/maps' + (token ? '/s/' + token : '') + '/favorite')
 	return axios.post(url, req)
 }
 
-export function addFavorites(favorites, myMapId) {
+export function addFavorites(favorites, myMapId, token = null) {
 	const req = {
 		favorites,
 		myMapId,
 	}
-	const url = generateUrl('/apps/maps/favorites')
+	const url = generateUrl('/apps/maps' + (token ? '/s/' + token : '') + '/favorites')
 	return axios.post(url, req)
 }
 
-export function deleteFavorite(favid, myMapId = null) {
+export function deleteFavorite(favid, myMapId = null, token = null) {
 	const req = {
 		params: {
 			myMapId,
 		},
 	}
-	const url = generateUrl('/apps/maps/favorites/' + favid)
+	const url = generateUrl('/apps/maps' + (token ? '/s/' + token : '') + '/favorites/' + favid)
 	return axios.delete(url, req)
 }
 
-export function renameFavoriteCategory(catIds, newCatName, myMapId = null) {
+export function renameFavoriteCategory(catIds, newCatName, myMapId = null, token = null) {
 	const req = {
 		categories: catIds,
 		newName: newCatName,
 		myMapId,
 	}
-	const url = generateUrl('/apps/maps/favorites-category')
+	const url = generateUrl('/apps/maps' + (token ? '/s/' + token : '') + '/favorites-category')
 	return axios.put(url, req)
 }
 
-export function deleteFavorites(ids, myMapId = null) {
+export function deleteFavorites(ids, myMapId = null, token = null) {
 	const req = {
 		params: {
 			ids,
 			myMapId,
 		},
 	}
-	const url = generateUrl('/apps/maps/favorites')
+	const url = generateUrl('/apps/maps' + (token ? '/s/' + token : '') + '/favorites')
 	return axios.delete(url, req)
 }
 
-export function editFavorite(id, name, category = null, comment = null, lat = null, lng = null, myMapId = null) {
+export function editFavorite(
+	id,
+	name,
+	category = null,
+	comment = null,
+	lat = null,
+	lng = null,
+	myMapId = null,
+	token = null) {
 	const req = {
 		name,
 		extensions: null,
@@ -245,11 +261,15 @@ export function editFavorite(id, name, category = null, comment = null, lat = nu
 	if (lng !== null) {
 		req.lng = lng
 	}
-	const url = generateUrl('/apps/maps/favorites/' + id)
+	const url = generateUrl('/apps/maps' + (token ? '/s/' + token : '') + '/favorites/' + id)
 	return axios.put(url, req)
 }
 
-export function exportFavorites(catIdList, begin = null, end = null, myMapId = null) {
+export function exportFavorites(
+	catIdList,
+	begin = null,
+	end = null,
+	myMapId = null) {
 	const req = {
 		categoryList: catIdList,
 		begin,

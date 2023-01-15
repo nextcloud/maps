@@ -30,13 +30,13 @@
 				@click="onZoomAllClick">
 				{{ t('maps', 'Zoom') }}
 			</NcActionButton>
-			<NcActionButton
+			<NcActionButton v-if="!publicShare"
 				icon="icon-save"
 				:close-after-click="true"
 				@click="$emit('export')">
 				{{ t('maps', 'Export') }}
 			</NcActionButton>
-			<NcActionButton v-if="!readOnly"
+			<NcActionButton v-if="!readOnly && !publicShare"
 				icon="icon-folder"
 				:close-after-click="true"
 				@click="$emit('import')">
@@ -199,6 +199,9 @@ export default {
 			const farray = Object.values(this.favorites)
 			return !farray.some((f) => (f.isUpdateable))
 			&& !(farray.length === 0 && optionsController.optionValues?.isCreatable)
+		},
+		publicShare() {
+			return optionsController.token !== null;
 		},
 	},
 

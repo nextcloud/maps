@@ -169,7 +169,7 @@ export function getSharedFavoriteCategories(myMapId = null, token = null) {
 			myMapId,
 		},
 	}
-	const url = generateUrl('/apps/maps/favorites-category' + (token ? '/s/' + token : '') + '/shared')
+	const url = generateUrl('/apps/maps' + (token ? '/s/' + token : '') + '/favorites-category/shared')
 	return axios.get(url, conf)
 }
 
@@ -299,8 +299,8 @@ export function unshareFavoriteCategory(catid) {
 	return axios.post(url)
 }
 
-export async function getPhotos(myMapId = null) {
-	const url = generateUrl('/apps/maps/photos')
+export async function getPhotos(myMapId = null, token = null) {
+	const url = generateUrl('/apps/maps' + (token ? '/s/' + token : '') + '/photos')
 	const conf = {
 		params: {
 			myMapId,
@@ -309,13 +309,13 @@ export async function getPhotos(myMapId = null) {
 	return axios.get(url, conf)
 }
 
-export async function clearPhotoCache() {
-	const url = generateUrl('/apps/maps/photos/clearCache')
+export async function clearPhotoCache(token = null) {
+	const url = generateUrl('/apps/maps' + (token ? '/s/' + token : '') + '/photos/clearCache')
 	return axios.get(url)
 }
 
-export async function getPhotoSuggestions(myMapId = null) {
-	const url = generateUrl('apps/maps/photos/nonlocalized')
+export async function getPhotoSuggestions(myMapId = null, token = null) {
+	const url = generateUrl('apps/maps' + (token ? '/s/' + token : '') + '/photos/nonlocalized')
 	const conf = {
 		params: {
 			myMapId,

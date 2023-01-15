@@ -335,9 +335,14 @@ export default {
 			}))
 		},
 		getPreviewUrl(photo) {
-			return photo && photo.hasPreview
-				? generateUrl('core') + '/preview?fileId=' + photo.fileId + '&x=341&y=256&a=1'
-				: generateUrl('/apps/theming/img/core/filetypes') + '/image.svg?v=2'
+			if (photo && photo.hasPreview) {
+				const token = optionsController.token
+				return token
+					? generateUrl('apps/files_sharing/publicpreview/') + token + '?file=' + encodeURIComponent(photo.path) + '&x=341&y=256&a=1'
+					: generateUrl('core') + '/preview?fileId=' + photo.fileId + '&x=341&y=256&a=1'
+			} else {
+				return generateUrl('/apps/theming/img/core/filetypes') + '/image.svg?v=2'
+			}
 		},
 		getPhotoFormattedDate(photo) {
 			return photo ? moment(photo.dateTaken * 1000).format('LLL') : ''

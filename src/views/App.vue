@@ -1,5 +1,9 @@
 <template>
 	<NcContent app-name="maps">
+		<input id="sharingToken"
+			type="hidden"
+			name="sharingToken"
+			:value="token">
 		<MapsNavigation
 			@toggle-trackme="onToggleTrackme"
 			@toggle-slider="onToggleSlider"
@@ -304,7 +308,7 @@ export default {
 			myMapsEnabled: optionsController.myMapsEnabled,
 			myMapId: optionsController.myMapId,
 			selectedMyMap: null,
-			//Public Page
+			// Public Page
 			token: optionsController.token,
 		}
 	},
@@ -874,7 +878,7 @@ export default {
 				return
 			}
 			this.photosLoading = true
-			network.getPhotos(this.myMapId).then(
+			network.getPhotos(this.myMapId, this.token).then(
 				/* async (response) => {
 					for (let i = 0; i * 500 < response.data.length; i++) {
 						this.photos.push(...response.data.slice(i * 500, (i + 1) * 500))
@@ -1018,7 +1022,7 @@ export default {
 		},
 		onPhotosClearCache() {
 			this.photosLoading = true
-			network.clearPhotoCache().then(() => {
+			network.clearPhotoCache(this.token).then(() => {
 				showSuccess(t('maps', 'Cleared photo cache'))
 			}).catch((error) => {
 				console.error(error)
@@ -1061,7 +1065,7 @@ export default {
 				return
 			}
 			this.photosLoading = true
-			network.getPhotoSuggestions(this.myMapId).then((response) => {
+			network.getPhotoSuggestions(this.myMapId, this.token).then((response) => {
 				this.photoSuggestions = response.data.sort((a, b) => {
 					if (a.dateTaken < b.dateTaken) {
 						return -1

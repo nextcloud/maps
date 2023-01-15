@@ -41,7 +41,6 @@ class PublicUtilsController extends PublicPageController {
 								IURLGenerator $urlGenerator,
 								IInitialStateService $initialStateService,
 								IUserManager $userManager,
-								ILogger $logger,
 								ShareManager $shareManager,
 								ISession $session,
 								IRootFolder $root,

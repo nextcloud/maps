@@ -133,9 +133,10 @@ class PublicPageController extends AuthPublicShareController {
         $this->eventDispatcher->dispatch(LoadSidebar::class, new LoadSidebar());
         $this->eventDispatcher->dispatch(LoadViewer::class, new LoadViewer());
 
-        $params = array('user' => Null);
+        $params = [];
+		$params['sharingToken'] = $this->getToken();
         $this->initialStateService->provideInitialState($this->appName, 'photos', $this->config->getAppValue('photos', 'enabled', 'no') === 'yes');
-        $response = new PublicTemplateResponse('maps', 'main', $params);
+        $response = new PublicTemplateResponse('maps', 'public/main', $params);
 
         $this->addCsp($response);
 

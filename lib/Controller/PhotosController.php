@@ -49,14 +49,14 @@ class PhotosController extends Controller {
      * @NoCSRFRequired
 	 * @return DataResponse
      */
-    public function getPhotosFromDb($myMapId=null): DataResponse {
+    public function getPhotos($myMapId=null): DataResponse {
 		$userFolder = $this->root->getUserFolder($this->userId);
         if (is_null($myMapId) || $myMapId === "") {
-            $result = $this->geophotoService->getAllFromDB($this->userId, $userFolder);
+            $result = $this->geophotoService->getAll($this->userId, $userFolder);
         } else {
             $folders = $userFolder->getById($myMapId);
             $folder = array_shift($folders);
-            $result = $this->geophotoService->getAllFromDB($this->userId, $folder, true, false);
+            $result = $this->geophotoService->getAll($this->userId, $folder, true, false);
         }
         return new DataResponse($result);
     }
@@ -66,14 +66,14 @@ class PhotosController extends Controller {
 	 * @NoCSRFRequired
 	 * @return DataResponse
 	 */
-    public function getNonLocalizedPhotosFromDb($myMapId=null): DataResponse {
+    public function getNonLocalizedPhotos($myMapId=null): DataResponse {
 		$userFolder = $this->root->getUserFolder($this->userId);
 		if (is_null($myMapId) || $myMapId === "") {
-        	$result = $this->geophotoService->getNonLocalizedFromDB($this->userId, $userFolder);
+        	$result = $this->geophotoService->getNonLocalized($this->userId, $userFolder);
 		} else {
 			$folders = $userFolder->getById($myMapId);
 			$folder = array_shift($folders);
-			$result = $this->geophotoService->getNonLocalizedFromDB($this->userId, $folder, true, false);
+			$result = $this->geophotoService->getNonLocalized($this->userId, $folder, true, false);
 		}
         return new DataResponse($result);
     }

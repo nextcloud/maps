@@ -30,11 +30,15 @@ return [
 		['name' => 'PublicUtils#getTrafficStyle', 'url' => '/s/{token}/style/traffic', 'verb' => 'GET'],
 
         // photos
-        ['name' => 'photos#getPhotosFromDb', 'url' => '/photos', 'verb' => 'GET'],
-        ['name' => 'photos#getNonLocalizedPhotosFromDb', 'url' => '/photos/nonlocalized', 'verb' => 'GET'],
+        ['name' => 'photos#getPhotos', 'url' => '/photos', 'verb' => 'GET'],
+        ['name' => 'photos#getNonLocalizedPhotos', 'url' => '/photos/nonlocalized', 'verb' => 'GET'],
         ['name' => 'photos#placePhotos', 'url' => '/photos', 'verb' => 'POST'],
         ['name' => 'photos#resetPhotosCoords', 'url' => '/photos', 'verb' => 'DELETE'],
 		['name' => 'photos#clearCache', 'url' => '/photos/clearCache', 'verb' => 'GET'],
+
+		['name' => 'PublicPhotos#getPhotos', 'url' => '/s/{token}/photos', 'verb' => 'GET'],
+		['name' => 'PublicPhotos#getNonLocalizedPhotos', 'url' => '/s/{token}/photos/nonlocalized', 'verb' => 'GET'],
+		['name' => 'PublicPhotos#clearCache', 'url' => '/s/{token}/photos/clearCache', 'verb' => 'GET'],
 
         // contacts
         ['name' => 'contacts#getContacts', 'url' => '/contacts', 'verb' => 'GET'],

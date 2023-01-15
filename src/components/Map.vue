@@ -503,7 +503,7 @@ export default {
 					},
 				})
 			})
-			if (optionsController.nbRouters > 0 || getCurrentUser().isAdmin) {
+			if (optionsController.nbRouters > 0 || getCurrentUser()?.isAdmin) {
 				const routingItems = [
 					'-',
 					{

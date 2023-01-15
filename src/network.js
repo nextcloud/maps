@@ -6,12 +6,12 @@ import {
 	showError,
 } from '@nextcloud/dialogs'
 
-export function saveOptionValues(optionValues, myMapId) {
+export function saveOptionValues(optionValues, myMapId = null, token = null) {
 	const req = {
 		options: optionValues,
 		myMapId,
 	}
-	const url = generateUrl('/apps/maps/saveOptionValue')
+	const url = generateUrl('/apps/maps' + (token ? '/s/' + token : '') + '/saveOptionValue')
 	axios.post(url, req)
 		.then((response) => {
 		})
@@ -23,8 +23,8 @@ export function saveOptionValues(optionValues, myMapId) {
 		})
 }
 
-export function getOptionValues(myMapId = null) {
-	const url = generateUrl('/apps/maps/getOptionsValues')
+export function getOptionValues(myMapId = null, token = null) {
+	const url = generateUrl('/apps/maps' + (token ? '/s/' + token : '') + '/getOptionsValues')
 	const conf = {
 		params: {
 			myMapId,

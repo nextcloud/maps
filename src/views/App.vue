@@ -65,6 +65,7 @@
 					@color="onChangeTrackColor"
 					@add-to-map-track="onAddTrackToMap" />
 				<AppNavigationDevicesItem
+					v-if="!token"
 					ref="devicesNavigation"
 					:enabled="devicesEnabled"
 					:loading="devicesLoading"
@@ -81,6 +82,7 @@
 					@device-clicked="onNavDeviceClicked"
 					@devices-clicked="onDevicesClicked" />
 				<AppNavigationMyMapsItem
+					v-if="!token"
 					ref="myMapsNavigation"
 					:enabled="myMapsEnabled"
 					:loading="myMapsLoading"
@@ -302,6 +304,8 @@ export default {
 			myMapsEnabled: optionsController.myMapsEnabled,
 			myMapId: optionsController.myMapId,
 			selectedMyMap: null,
+			//Public Page
+			token: optionsController.token,
 		}
 	},
 

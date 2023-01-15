@@ -17,12 +17,11 @@ use OCA\Files\Event\LoadSidebar;
 use OCA\Files_Sharing\Event\BeforeTemplateRenderedEvent;
 use OCA\Viewer\Event\LoadViewer;
 use OCP\AppFramework\AuthPublicShareController;
-use OCP\Files\IRootFolder;
+use OCP\AppFramework\Http\Template\PublicTemplateResponse;
 use OCP\Files\NotFoundException;
 use OCP\IConfig;
 use OCP\ILogger;
 use OCP\IRequest;
-use OCP\AppFramework\Http\TemplateResponse;
 use OCP\EventDispatcher\IEventDispatcher;
 use OCP\IInitialStateService;
 use OCP\ISession;
@@ -66,6 +65,10 @@ class PublicPageController extends AuthPublicShareController {
 		}
 
 		return true;
+	}
+
+	protected function verifyPassword(string $password): bool {
+		return $this->shareManager->checkPassword($this->share, $password);
 	}
 
 	protected function getPasswordHash(): string {
@@ -124,7 +127,7 @@ class PublicPageController extends AuthPublicShareController {
     * @PublicPage
     * @NoCSRFRequired
     */
-    public function showShare(): TemplateResponse {
+    public function showShare(): PublicTemplateResponse {
 		$shareNode = $this->getShareNode();
 
         $this->eventDispatcher->dispatch(LoadSidebar::class, new LoadSidebar());
@@ -132,7 +135,7 @@ class PublicPageController extends AuthPublicShareController {
 
         $params = array('user' => Null);
         $this->initialStateService->provideInitialState($this->appName, 'photos', $this->config->getAppValue('photos', 'enabled', 'no') === 'yes');
-        $response = new TemplateResponse('maps', 'main', $params);
+        $response = new PublicTemplateResponse('maps', 'main', $params);
 
         $this->addCsp($response);
 
@@ -146,12 +149,12 @@ class PublicPageController extends AuthPublicShareController {
 	 * Show the authentication page
 	 * The form has to submit to the authenticate method route
 	 */
-	public function showAuthenticate(): TemplateResponse {
+	public function showAuthenticate(): PublicTemplateResponse {
 		$templateParameters = ['share' => $this->share];
 
 		$this->eventDispatcher->dispatchTyped(new BeforeTemplateRenderedEvent($this->share, BeforeTemplateRenderedEvent::SCOPE_PUBLIC_SHARE_AUTH));
 
-		$response = new TemplateResponse('core', 'publicshareauth', $templateParameters, 'guest');
+		$response = new PublicTemplateResponse('core', 'publicshareauth', $templateParameters, 'guest');
 		if ($this->share->getSendPasswordByTalk()) {
 			$csp = new ContentSecurityPolicy();
 			$csp->addAllowedConnectDomain('*');
@@ -165,12 +168,12 @@ class PublicPageController extends AuthPublicShareController {
 	/**
 	 * The template to show when authentication failed
 	 */
-	protected function showAuthFailed(): TemplateResponse {
+	protected function showAuthFailed(): PublicTemplateResponse {
 		$templateParameters = ['share' => $this->share, 'wrongpw' => true];
 
 		$this->eventDispatcher->dispatchTyped(new BeforeTemplateRenderedEvent($this->share, BeforeTemplateRenderedEvent::SCOPE_PUBLIC_SHARE_AUTH));
 
-		$response = new TemplateResponse('core', 'publicshareauth', $templateParameters, 'guest');
+		$response = new PublicTemplateResponse('core', 'publicshareauth', $templateParameters, 'guest');
 		if ($this->share->getSendPasswordByTalk()) {
 			$csp = new ContentSecurityPolicy();
 			$csp->addAllowedConnectDomain('*');
@@ -184,12 +187,12 @@ class PublicPageController extends AuthPublicShareController {
 	/**
 	 * The template to show after user identification
 	 */
-	protected function showIdentificationResult(bool $success = false): TemplateResponse {
+	protected function showIdentificationResult(bool $success = false): PublicTemplateResponse {
 		$templateParameters = ['share' => $this->share, 'identityOk' => $success];
 
 		$this->eventDispatcher->dispatchTyped(new BeforeTemplateRenderedEvent($this->share, BeforeTemplateRenderedEvent::SCOPE_PUBLIC_SHARE_AUTH));
 
-		$response = new TemplateResponse('core', 'publicshareauth', $templateParameters, 'guest');
+		$response = new PublicTemplateResponse('core', 'publicshareauth', $templateParameters, 'guest');
 		if ($this->share->getSendPasswordByTalk()) {
 			$csp = new ContentSecurityPolicy();
 			$csp->addAllowedConnectDomain('*');

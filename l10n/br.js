@@ -16,6 +16,7 @@ OC.L10N.register(
     "Close" : "Seriñ",
     "Select all" : "Dibab pep tra",
     "Save" : "Enrollañ",
+    "Quit" : "Kuitaat",
     "Tags" : "Klavioù",
     "Favorite" : "Pennrollañ",
     "Unable to change the favourite state of the file" : "Dibosupl eo cheñch stad pennroll ar restr",

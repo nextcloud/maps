@@ -19,6 +19,7 @@ OC.L10N.register(
     "Close" : "Zarrar",
     "Select all" : "Esbillar too",
     "Save" : "Guardar",
+    "Quit" : "Colar",
     "Tags" : "Etiquetes",
     "Favorite" : "Marcar como favoritu",
     "End" : "Fin",

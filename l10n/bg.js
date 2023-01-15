@@ -99,6 +99,7 @@ OC.L10N.register(
     "Save" : "Запиши",
     "Remove form selection" : "Премахване от селекцията",
     "To get suggestions upload tracks from the trips, when you took your photos." : "За да получите предложения, качете записи от пътуванията, когато сте направили снимките си.",
+    "Quit" : "Изход",
     "(No name)" : "(Без име)",
     "No favorites to display" : "Няма любими за показване",
     "Tags" : "Етикети",

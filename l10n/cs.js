@@ -100,6 +100,7 @@ OC.L10N.register(
     "Save" : "Uložit",
     "Remove form selection" : "Odebrat z výběru",
     "To get suggestions upload tracks from the trips, when you took your photos." : "Pokud chcete dostávat doporučení, nahrajte trasy z výletů, když pořizujete fotky.",
+    "Quit" : "Ukončit",
     "(No name)" : "(Bez názvu)",
     "No favorites to display" : "Žádné oblíbené položky k zobrazení",
     "Tags" : "Štítky",

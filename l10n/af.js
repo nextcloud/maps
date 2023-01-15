@@ -17,6 +17,7 @@ OC.L10N.register(
     "Close" : "Sluit",
     "Select all" : "Kies alle",
     "Save" : "Bewaar",
+    "Quit" : "Sluit af",
     "Tags" : "Etikette",
     "Favorite" : "Gunsteling",
     "Duration" : "Duur",

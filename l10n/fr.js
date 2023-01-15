@@ -16,6 +16,7 @@ OC.L10N.register(
     "no such favorite" : "aucun favori correspondant",
     "Unknown category" : "Catégorie inconnue",
     "Error sharing favorite" : "Erreur lors du partage du favori",
+    "Map not Found" : "Carte introuvable",
     "Bad file type" : "Mauvais type de fichier",
     "File not found" : "Fichier non trouvé",
     "No such track" : "Aucune trace de ce type",

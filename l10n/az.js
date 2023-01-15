@@ -16,6 +16,7 @@ OC.L10N.register(
     "Close" : "Bağla",
     "Select all" : "Hamısıı seç",
     "Save" : "Saxla",
+    "Quit" : "Çıx",
     "Tags" : "Işarələr",
     "Favorite" : "İstəkli",
     "Name" : "Ad",

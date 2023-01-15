@@ -17,6 +17,7 @@ OC.L10N.register(
     "Comment" : "মন্তব্য",
     "Close" : "বন্ধ",
     "Save" : "সংরক্ষণ",
+    "Quit" : "বন্ধ",
     "Tags" : "ট্যাগ",
     "Favorite" : "প্রিয়জন",
     "Name" : "নাম",

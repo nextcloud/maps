@@ -24,6 +24,7 @@ OC.L10N.register(
     "Close" : "إغلاق",
     "Select all" : "تحديد الكل",
     "Save" : "Save",
+    "Quit" : "خروج",
     "Tags" : "الوسوم",
     "Favorite" : "المفضلة",
     "Unable to change the favourite state of the file" : "لم نستطع تغير الحالة المفضلة للملف",

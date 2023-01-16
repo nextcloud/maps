@@ -99,6 +99,7 @@ OC.L10N.register(
     "Save" : "Speichern",
     "Remove form selection" : "Von Auswahl entfernen",
     "To get suggestions upload tracks from the trips, when you took your photos." : "Um Vorschläge zu erhalten, lade deine Fotos von deinen Tracks hoch.",
+    "Quit" : "Beenden",
     "(No name)" : "(Kein Name)",
     "No favorites to display" : "Keine Favoriten zum Anzeigen",
     "Tags" : "Schlagworte",

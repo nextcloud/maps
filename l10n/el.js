@@ -61,6 +61,7 @@ OC.L10N.register(
     "Clear selection" : "Καθαρισμός επιλογής",
     "Select all" : "Επιλογή όλων",
     "Save" : "Αποθήκευση",
+    "Quit" : "Έξοδος",
     "(No name)" : "(Ανώνυμο)",
     "No favorites to display" : "Δεν υπάρχουν αγαπημένα εμφάνιση",
     "Tags" : "Ετικέτες",

@@ -73,7 +73,8 @@ const optionsController = {
 		}
 
 		if (document.location.pathname.includes('/apps/maps/openGeoLink/')) {
-			const latLng = window.location.pathname.split('/apps/maps/openGeoLink/geo:')[1].split(',').map(parseFloat)
+			const url = decodeURI(window.location.pathname)
+			const latLng = url.split('/apps/maps/openGeoLink/geo:')[1].split(',').map(parseFloat)
 			const ns = this.bounds[0][0] - this.bounds[1][0]
 			const ew = this.bounds[0][1] - this.bounds[1][1]
 			this.bounds = [

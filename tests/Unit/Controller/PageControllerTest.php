@@ -56,7 +56,7 @@ class PageControllerTest extends \PHPUnit\Framework\TestCase {
     public function testOpenGeoLink() {
         $result = $this->controller->openGeoLink('geo:1.1,2.2');
 
-        $this->assertEquals('index', $result->getTemplateName());
+        $this->assertEquals('main', $result->getTemplateName());
         $this->assertTrue($result instanceof TemplateResponse);
     }
 

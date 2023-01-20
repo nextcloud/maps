@@ -15,7 +15,7 @@
 				<NcActionCheckbox
 					:checked="false"
 					@change="onGeoLinkClick">
-					{{ t('maps', 'Track my position') }}
+					{{ t('maps', 'Open geo links') }}
 				</NcActionCheckbox>
 				<NcActionCheckbox
 					:checked="optionValues.displaySlider === 'true'"

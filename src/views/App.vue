@@ -2,7 +2,8 @@
 	<NcContent app-name="maps">
 		<MapsNavigation
 			@toggle-trackme="onToggleTrackme"
-			@toggle-slider="onToggleSlider">
+			@toggle-slider="onToggleSlider"
+			@toggle-geo-link="onToggleGeoLink">
 			<template #items>
 				<AppNavigationFavoritesItem
 					:enabled="favoritesEnabled"
@@ -221,6 +222,7 @@ import L from 'leaflet'
 import { geoToLatLng, getFormattedADR } from '../utils/mapUtils'
 import * as network from '../network'
 import { all as axiosAll, spread as axiosSpread } from 'axios'
+import {generateUrl} from "@nextcloud/router";
 
 export default {
 	name: 'App',
@@ -706,6 +708,17 @@ export default {
 				this.sendPositionLoop()
 			} else {
 				this.stopTrackLoop()
+			}
+		},
+		onToggleGeoLink(enabled) {
+			if (enabled) {
+				if (window.navigator.registerProtocolHandler) {
+					window.navigator.registerProtocolHandler('geo', generateUrl('/apps/maps/openGeoLink/') + '%s', 'Nextcloud Maps')
+				}
+			} else {
+				if (window.navigator.unregisterProtocolHandler) {
+					window.navigator.unregisterProtocolHandler('geo', generateUrl('/apps/maps/openGeoLink/') + '%s')
+				}
 			}
 		},
 		onToggleSlider(enabled) {

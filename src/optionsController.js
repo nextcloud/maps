@@ -72,6 +72,17 @@ const optionsController = {
 			}
 		}
 
+		if (document.location.pathname.includes('/apps/maps/openGeoLink/')) {
+			const url = decodeURIComponent(window.location.pathname)
+			const latLng = url.split('/apps/maps/openGeoLink/geo:')[1].split(',').map(parseFloat)
+			const ns = this.bounds[0][0] - this.bounds[1][0]
+			const ew = this.bounds[0][1] - this.bounds[1][1]
+			this.bounds = [
+				[latLng[0] + ns / 2, latLng[1] + ew / 2],
+				[latLng[0] - ns / 2, latLng[1] - ew / 2],
+			]
+		}
+
 		if ('tileLayer' in optionsValues) {
 			this.tileLayer = optionsValues.tileLayer
 		}
@@ -86,19 +97,19 @@ const optionsController = {
 		if ('photosLayer' in optionsValues && optionsValues.photosLayer !== 'true') {
 			this.photosEnabled = false
 		} else {
-		    this.photosEnabled = true
+			this.photosEnabled = true
 		}
 
 		if ('contactLayer' in optionsValues && optionsValues.contactLayer !== 'true') {
 			this.contactsEnabled = false
 		} else {
-		    this.contactsEnabled = true
+			this.contactsEnabled = true
 		}
 
 		if ('favoritesEnabled' in optionsValues && optionsValues.favoritesEnabled !== 'true') {
 			this.favoritesEnabled = false
 		} else {
-		    this.favoritesEnabled = true
+			this.favoritesEnabled = true
 		}
 		if ('jsonDisabledFavoriteCategories' in optionsValues
 			&& optionsValues.jsonDisabledFavoriteCategories
@@ -113,12 +124,12 @@ const optionsController = {
 		if ('tracksEnabled' in optionsValues && optionsValues.tracksEnabled !== 'true') {
 			this.tracksEnabled = false
 		} else {
-		    this.tracksEnabled = true
+			this.tracksEnabled = true
 		}
 		if ('trackListShow' in optionsValues && optionsValues.trackListShow !== 'true') {
 			this.trackListShow = false
 		} else {
-		    this.trackListShow = true
+			this.trackListShow = true
 		}
 		if ('enabledTracks' in optionsValues
 			&& optionsValues.enabledTracks
@@ -139,7 +150,7 @@ const optionsController = {
 		if ('deviceListShow' in optionsValues && optionsValues.deviceListShow !== 'true') {
 			this.deviceListShow = false
 		} else {
-		    this.deviceListShow = true
+			this.deviceListShow = true
 		}
 		if ('enabledDeviceLines' in optionsValues
 			&& optionsValues.enabledDeviceLines
@@ -151,19 +162,19 @@ const optionsController = {
 		if (this.myMapId || ('devicesEnabled' in optionsValues && optionsValues.devicesEnabled !== 'true')) {
 			this.devicesEnabled = false
 		} else {
-		    this.devicesEnabled = true
+			this.devicesEnabled = true
 		}
 
 		// my-maps
 		if ('myMapListShow' in optionsValues && optionsValues.myMapListShow !== 'true') {
 			this.myMapListShow = false
 		} else {
-		    this.myMapListShow = true
+			this.myMapListShow = true
 		}
 		if ('myMapsEnabled' in optionsValues && optionsValues.myMapsEnabled !== 'true') {
 			this.myMapsEnabled = false
 		} else {
-		    this.myMapsEnabled = true
+			this.myMapsEnabled = true
 		}
 
 		// routing

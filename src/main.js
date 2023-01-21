@@ -31,6 +31,8 @@ import VueClipboard from 'vue-clipboard2'
 import Tooltip from '@nextcloud/vue/dist/Directives/Tooltip'
 import { emit } from '@nextcloud/event-bus'
 
+import {generateUrl} from "@nextcloud/router"
+
 // Fixing Some leaflet webpack stuff See https://vue2-leaflet.netlify.app/faq/#my-map-and-or-markers-don-t-fully-render-what-gives
 import L from 'leaflet'
 delete L.Icon.Default.prototype._getIconUrl
@@ -85,6 +87,10 @@ if (!window.OCA.Files.Sidebar) {
 			setFullScreenMode: () => {}, // SIDEBARFULLSCREEN,
 		},
 	}, window.OCA.Files)
+}
+
+if (window.navigator.registerProtocolHandler) {
+	window.navigator.registerProtocolHandler('geo', generateUrl('/apps/maps/openGeoLink/') + '%s', 'Nextcloud Maps')
 }
 
 document.addEventListener('DOMContentLoaded', (event) => {

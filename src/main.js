@@ -89,6 +89,10 @@ if (!window.OCA.Files.Sidebar) {
 	}, window.OCA.Files)
 }
 
+if (window.navigator.registerProtocolHandler) {
+	window.navigator.registerProtocolHandler('geo', generateUrl('/apps/maps/openGeoLink/') + '%s', 'Nextcloud Maps')
+}
+
 document.addEventListener('DOMContentLoaded', (event) => {
 	Object.assign(window.OCA.Files, {
 		App: { fileList: { filesClient: OC.Files.getClient() } },

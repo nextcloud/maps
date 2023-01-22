@@ -93,6 +93,7 @@ OC.L10N.register(
     "Geo link could not be copied to clipboard" : "地理連結無法複製到剪貼板。",
     "Close" : "關閉",
     "Track my position" : "目前位置",
+    "Open geo links" : "打開地理連結",
     "Display time filter slider" : "顯示時間篩選拖曳條",
     "The True Size of Africa" : "非洲真實大小（The True Size of Africa）",
     "Keep in mind that map projections always distort sizes of countries. The standard Mercator projection is particularly biased. Read more at:" : "請注意，地圖投影常造成某些地區形狀失真，麥卡托投影法失真情況特別嚴重。進一步閱讀：",

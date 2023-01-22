@@ -4,6 +4,7 @@ OC.L10N.register(
     "File not found" : "Fișierul nu a fost găsit",
     "Personal" : "Personal",
     "Maps" : "Hărți",
+    "Change color" : "Schimbă culoarea",
     "Export" : "Exportă",
     "Delete" : "Șterge",
     "Import" : "Importă",

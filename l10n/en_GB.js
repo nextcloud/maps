@@ -93,6 +93,7 @@ OC.L10N.register(
     "Geo link could not be copied to clipboard" : "Geo link could not be copied to clipboard",
     "Close" : "Close",
     "Track my position" : "Track my position",
+    "Open geo links" : "Open geo links",
     "Display time filter slider" : "Display time filter slider",
     "The True Size of Africa" : "The True Size of Africa",
     "Keep in mind that map projections always distort sizes of countries. The standard Mercator projection is particularly biased. Read more at:" : "Keep in mind that map projections always distort sizes of countries. The standard Mercator projection is particularly biased. Read more at:",

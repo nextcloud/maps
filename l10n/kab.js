@@ -9,6 +9,7 @@ OC.L10N.register(
     "Cancel" : "Sefsex",
     "Share" : "Bḍu",
     "OK" : "IH",
+    "Comment" : "Commentaire",
     "Close" : "Mdel",
     "Select all" : "Fren akk",
     "Save" : "Sekles",
@@ -23,6 +24,7 @@ OC.L10N.register(
     "Search" : "Nadi",
     "File" : "Afaylu",
     "Details" : "Talqayt",
+    "Phone" : "Tiliɣri",
     "Default" : "Prédéfini(e)",
     "Settings" : "Iɣewwaṛen"
 },

@@ -93,6 +93,7 @@ OC.L10N.register(
     "Geo link could not be copied to clipboard" : "Geodkaz se nepodařilo zkopírovat do schránky",
     "Close" : "Zavřít",
     "Track my position" : "Sledovat mou pozici",
+    "Open geo links" : "Otevřít geoodkazy",
     "Display time filter slider" : "Zobrazit posuvník časového filtru",
     "The True Size of Africa" : "Skutečná velikost Afriky",
     "Keep in mind that map projections always distort sizes of countries. The standard Mercator projection is particularly biased. Read more at:" : "Mějte na paměti, že projekce mapy vždy pokřiví velikost zemí. Nejvíce se to projevuje na standardní projekci Mercator. Více k tématu:",

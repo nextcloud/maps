@@ -4,7 +4,7 @@
 		:class="{ 'subitem-disabled': !myMap.enabled }"
 		:allow-collapse="false"
 		:force-menu="false"
-		:editable="true"
+		:editable="!!myMap.id"
 		:edit-label="t('maps', 'Rename')"
 		@click="$emit('click', myMap)"
 		@update:title="onRename">
@@ -22,6 +22,15 @@
 			&nbsp;
 		</template>
 		<template slot="actions">
+			<NcActionLink v-if="myMap.id"
+				target="_blank"
+				:href="folderUrl"
+				:close-after-click="true">
+				<template #icon>
+					<Folder :size="20" />
+				</template>
+				{{ t('maps', 'Open folder') }}
+			</NcActionLink>
 			<NcActionButton v-if="false"
 				:close-after-click="false"
 				@click="onChangeColorClick">
@@ -49,6 +58,9 @@
 <script>
 import NcAppNavigationItem from '@nextcloud/vue/dist/Components/NcAppNavigationItem'
 import NcActionButton from '@nextcloud/vue/dist/Components/NcActionButton'
+import NcActionLink from '@nextcloud/vue/dist/Components/NcActionLink'
+import Folder from 'vue-material-design-icons/Folder'
+import { generateUrl } from "@nextcloud/router";
 
 export default {
 	name: 'AppNavigationMyMapItem',
@@ -56,6 +68,8 @@ export default {
 	components: {
 		NcAppNavigationItem,
 		NcActionButton,
+		NcActionLink,
+		Folder,
 	},
 
 	props: {
@@ -81,6 +95,9 @@ export default {
 	    isDeletable() {
 	        return this.parentEnabled && (this.myMap.isDeletable ?? true)
 		},
+		folderUrl() {
+			return generateUrl('apps/files?fileid=') + this.myMap.id
+		}
 	},
 
 	methods: {

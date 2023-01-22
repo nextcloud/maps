@@ -206,7 +206,7 @@ class PhotosControllerTest extends \PHPUnit\Framework\TestCase {
         $this->photoFileService->addPhotoNow($file, 'test');
 
 		$this->GeoPhotosService->clearCache();
-        $resp = $this->photosController->getPhotosFromDb();
+        $resp = $this->photosController->getPhotos();
         $status = $resp->getStatus();
         $this->assertEquals(200, $status);
         $data = $resp->getData();
@@ -216,7 +216,7 @@ class PhotosControllerTest extends \PHPUnit\Framework\TestCase {
 		//Test .nomedia repected
 		$this->GeoPhotosService->clearCache();
 		$file = $userfolder->newFile('.maps.nomedia');
-		$resp = $this->photosController->getPhotosFromDb();
+		$resp = $this->photosController->getPhotos();
 		$status = $resp->getStatus();
 		$this->assertEquals(200, $status);
 		$data = $resp->getData();
@@ -226,7 +226,7 @@ class PhotosControllerTest extends \PHPUnit\Framework\TestCase {
 		//Test .noimage repected
 		$this->GeoPhotosService->clearCache();
 		$file = $userfolder->newFile('.maps.noimage');
-		$resp = $this->photosController->getPhotosFromDb();
+		$resp = $this->photosController->getPhotos();
 		$status = $resp->getStatus();
 		$this->assertEquals(200, $status);
 		$data = $resp->getData();
@@ -236,7 +236,7 @@ class PhotosControllerTest extends \PHPUnit\Framework\TestCase {
 		//Test .maps repected
 		$this->GeoPhotosService->clearCache();
 		$file = $userfolder->newFile('.index.maps');
-		$resp = $this->photosController->getPhotosFromDb();
+		$resp = $this->photosController->getPhotos();
 		$status = $resp->getStatus();
 		$this->assertEquals(200, $status);
 		$data = $resp->getData();
@@ -245,7 +245,7 @@ class PhotosControllerTest extends \PHPUnit\Framework\TestCase {
 
         // non localized without track
 		$this->GeoPhotosService->clearCache();
-        $resp = $this->photosController->getNonLocalizedPhotosFromDb();
+        $resp = $this->photosController->getNonLocalizedPhotos();
         $status = $resp->getStatus();
         $this->assertEquals(200, $status);
         $data = $resp->getData();
@@ -265,7 +265,7 @@ class PhotosControllerTest extends \PHPUnit\Framework\TestCase {
 		$file->touch();
 
 		$this->GeoPhotosService->clearCache();
-		$resp = $this->photosController->getNonLocalizedPhotosFromDb();
+		$resp = $this->photosController->getNonLocalizedPhotos();
 		$status = $resp->getStatus();
 		$this->assertEquals(200, $status);
 		$data = $resp->getData();
@@ -275,7 +275,7 @@ class PhotosControllerTest extends \PHPUnit\Framework\TestCase {
 		//Test .nomedia repected
 		$this->GeoPhotosService->clearCache();
 		$file = $userfolder->newFile('.maps.nomedia');
-		$resp = $this->photosController->getNonLocalizedPhotosFromDb();
+		$resp = $this->photosController->getNonLocalizedPhotos();
 		$status = $resp->getStatus();
 		$this->assertEquals(200, $status);
 		$data = $resp->getData();
@@ -285,7 +285,7 @@ class PhotosControllerTest extends \PHPUnit\Framework\TestCase {
 		//Test .noimage repected
 		$this->GeoPhotosService->clearCache();
 		$file = $userfolder->newFile('.maps.noimage');
-		$resp = $this->photosController->getNonLocalizedPhotosFromDb();
+		$resp = $this->photosController->getNonLocalizedPhotos();
 		$status = $resp->getStatus();
 		$this->assertEquals(200, $status);
 		$data = $resp->getData();
@@ -295,7 +295,7 @@ class PhotosControllerTest extends \PHPUnit\Framework\TestCase {
 		//Test .index.maps repected
 		$this->GeoPhotosService->clearCache();
 		$file = $userfolder->newFile('.index.maps');
-		$resp = $this->photosController->getNonLocalizedPhotosFromDb();
+		$resp = $this->photosController->getNonLocalizedPhotos();
 		$status = $resp->getStatus();
 		$this->assertEquals(200, $status);
 		$data = $resp->getData();
@@ -305,7 +305,7 @@ class PhotosControllerTest extends \PHPUnit\Framework\TestCase {
 		//Test myMap
 		$this->GeoPhotosService->clearCache();
 		$file = $userfolder->newFile('.maps.noimage');
-		$resp = $this->photosController->getNonLocalizedPhotosFromDb($userfolder->getId());
+		$resp = $this->photosController->getNonLocalizedPhotos($userfolder->getId());
 		$status = $resp->getStatus();
 		$this->assertEquals(200, $status);
 		$data = $resp->getData();
@@ -320,14 +320,14 @@ class PhotosControllerTest extends \PHPUnit\Framework\TestCase {
         $this->assertCount(1, $data);
 
 		$this->GeoPhotosService->clearCache();
-        $resp = $this->photosController->getPhotosFromDb();
+        $resp = $this->photosController->getPhotos();
         $status = $resp->getStatus();
         $this->assertEquals(200, $status);
         $data = $resp->getData();
         $this->assertCount(2, $data);
 
 		$this->GeoPhotosService->clearCache();
-		$resp = $this->photosController->getNonLocalizedPhotosFromDb();
+		$resp = $this->photosController->getNonLocalizedPhotos();
 		$status = $resp->getStatus();
 		$this->assertEquals(200, $status);
 		$data = $resp->getData();
@@ -341,7 +341,7 @@ class PhotosControllerTest extends \PHPUnit\Framework\TestCase {
         $this->assertCount(1, $data);
 
 		$this->GeoPhotosService->clearCache();
-        $resp = $this->photosController->getPhotosFromDb();
+        $resp = $this->photosController->getPhotos();
         $status = $resp->getStatus();
         $this->assertEquals(200, $status);
         $data = $resp->getData();
@@ -355,14 +355,14 @@ class PhotosControllerTest extends \PHPUnit\Framework\TestCase {
 		$this->assertCount(1, $data);
 
 		//We do not clear the cache so we expect to still 1 photo
-		$resp = $this->photosController->getPhotosFromDb();
+		$resp = $this->photosController->getPhotos();
 		$status = $resp->getStatus();
 		$this->assertEquals(200, $status);
 		$data = $resp->getData();
 		$this->assertCount(1, $data);
 
 		//And we expect that there is still zero non Localized Photo
-		$resp = $this->photosController->getNonLocalizedPhotosFromDb();
+		$resp = $this->photosController->getNonLocalizedPhotos();
 		$status = $resp->getStatus();
 		$this->assertEquals(200, $status);
 		$data = $resp->getData();

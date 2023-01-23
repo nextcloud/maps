@@ -149,8 +149,7 @@ class GeophotoMapper extends QBMapper {
     public function deleteByFileId($fileId) {
 		$qb = $this->db->getQueryBuilder();
 
-		$qb->delete()
-			->from($this->getTableName())
+		$qb->delete($this->getTableName())
 			->where(
 				$qb->expr()->eq('file_id', $qb->createNamedParameter($fileId, IQueryBuilder::PARAM_STR))
 			);
@@ -167,8 +166,7 @@ class GeophotoMapper extends QBMapper {
     public function deleteByFileIdUserId($fileId, $userId) {
 		$qb = $this->db->getQueryBuilder();
 
-		$qb->delete()
-			->from($this->getTableName())
+		$qb->delete($this->getTableName())
 			->where(
 				$qb->expr()->eq('user_id', $qb->createNamedParameter($userId, IQueryBuilder::PARAM_STR))
 			)->andWhere(
@@ -185,8 +183,7 @@ class GeophotoMapper extends QBMapper {
     public function deleteAll($userId) {
 		$qb = $this->db->getQueryBuilder();
 
-		$qb->delete()
-			->from($this->getTableName())
+		$qb->delete($this->getTableName())
 			->where(
 				$qb->expr()->eq('user_id', $qb->createNamedParameter($userId, IQueryBuilder::PARAM_STR))
 			);

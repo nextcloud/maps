@@ -157,7 +157,7 @@ class PhotofilesService {
             if (!is_null($exif)) {
                 $ownerId = $file->getOwner()->getUID();
                 // in case there is no entry for this file yet (normally there is because non-localized photos are added)
-                if ($this->photoMapper->findByFileId($ownerId, $file->getId()) === null) {
+                if ($this->photoMapper->findByFileIdUserId($file->getId(), $ownerId) === null) {
                     // TODO insert for all users having access to this file, not just the owner
                     $this->insertPhoto($file, $ownerId, $exif);
                 }
@@ -227,7 +227,7 @@ class PhotofilesService {
                     $nodes = $dir->getDirectoryListing();
                     foreach($nodes as $node) {
                         if ($this->isPhoto($node) && $node->isUpdateable()) {
-                            $photo = $this->photoMapper->findByFileId($userId, $node->getId());
+                            $photo = $this->photoMapper->findByFileIdUserId($node->getId(), $userId);
                             $done[] = [
                                 'path' => preg_replace('/^files/', '', $node->getInternalPath()),
                                 'lat' => $lat,
@@ -256,7 +256,7 @@ class PhotofilesService {
                 if ($this->isPhoto($file) && $file->isUpdateable()) {
                     $lat = (count($lats) > $i) ? $lats[$i] : $lats[0];
                     $lng = (count($lngs) > $i) ? $lngs[$i] : $lngs[0];
-                    $photo = $this->photoMapper->findByFileId($userId, $file->getId());
+                    $photo = $this->photoMapper->findByFileIdUserId($file->getId(), $userId);
                     $done[] = [
                         'path' => preg_replace('/^files/', '', $file->getInternalPath()),
                         'lat' => $lat,
@@ -281,7 +281,7 @@ class PhotofilesService {
             if ($userFolder->nodeExists($cleanpath)) {
                 $file = $userFolder->get($cleanpath);
                 if ($this->isPhoto($file) && $file->isUpdateable()) {
-                    $photo = $this->photoMapper->findByFileId($userId, $file->getId());
+                    $photo = $this->photoMapper->findByFileIdUserId($file->getId(), $userId);
                     $done[] = [
                         'path' => preg_replace('/^files/', '', $file->getInternalPath()),
                         'lat' => null,
@@ -309,7 +309,7 @@ class PhotofilesService {
             // so we need to be sure it's not inserted several times
             // by checking if it already exists in DB
             // OR by using file_id in primary key
-            if ($this->photoMapper->findByFileId($userId, $photo->getId()) === null) {
+            if ($this->photoMapper->findByFileIdUserId($photo->getId(), $userId) === null) {
                 $this->insertPhoto($photo, $userId, $exif);
             }
 			$this->photosCache->clear($userId);

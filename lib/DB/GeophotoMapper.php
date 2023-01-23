@@ -12,61 +12,200 @@
 
  namespace OCA\Maps\DB;
 
+use OCP\AppFramework\Db\DoesNotExistException;
+use OCP\AppFramework\Db\MultipleObjectsReturnedException;
+use OCP\DB\QueryBuilder\IQueryBuilder;
 use OCP\IDBConnection;
-use OCP\AppFramework\Db\Mapper;
+use OCP\AppFramework\Db\QBMapper;
 
-class GeophotoMapper extends Mapper {
+class GeophotoMapper extends QBMapper {
 
     public function __construct(IDBConnection $db) {
         parent::__construct($db, 'maps_photos');
     }
 
+	/**
+	 * @param $id
+	 * @return mixed|\OCP\AppFramework\Db\Entity
+	 * @throws \OCP\AppFramework\Db\DoesNotExistException
+	 * @throws \OCP\AppFramework\Db\MultipleObjectsReturnedException
+	 * @throws \OCP\DB\Exception
+	 */
     public function find($id) {
-        $sql = 'SELECT * FROM `*PREFIX*maps_photos` ' .
-            'WHERE `id` = ?';
-        return $this->findEntity($sql, [$id]);
+		$qb = $this->db->getQueryBuilder();
+
+		$qb->select("*")
+			->from($this->getTableName())
+			->where(
+				$qb->expr()->eq('id', $qb->createNamedParameter($id, IQueryBuilder::PARAM_STR))
+			);
+
+		return $this->findEntity($qb);
     }
 
-    public function findByFileId($userId, $fileId) {
-        try {
-            $sql = 'SELECT * FROM `*PREFIX*maps_photos` ' .
-                'WHERE `user_id` = ? ' .
-                'AND `file_id` = ? ';
-            return $this->findEntity($sql, [$userId, $fileId]);
-        }
-        catch (\Throwable $e) {
-            return null;
-        }
+	/**
+	 * @param $fileId
+	 * @param $userId
+	 * @return mixed|\OCP\AppFramework\Db\Entity
+	 * @throws \OCP\AppFramework\Db\DoesNotExistException
+	 * @throws \OCP\AppFramework\Db\MultipleObjectsReturnedException
+	 * @throws \OCP\DB\Exception
+	 */
+    public function findByFileIdUserId($fileId, $userId) {
+		$qb = $this->db->getQueryBuilder();
+
+		$qb->select("*")
+			->from($this->getTableName())
+			->where(
+				$qb->expr()->eq('user_id', $qb->createNamedParameter($userId, IQueryBuilder::PARAM_STR))
+			)->andWhere(
+				$qb->expr()->eq('file_id', $qb->createNamedParameter($fileId, IQueryBuilder::PARAM_STR))
+			);
+
+		return $this->findEntity($qb);
     }
 
+	/**
+	 * @param $fileId
+	 * @return mixed|\OCP\AppFramework\Db\Entity
+	 * @throws \OCP\AppFramework\Db\DoesNotExistException
+	 * @throws \OCP\AppFramework\Db\MultipleObjectsReturnedException
+	 * @throws \OCP\DB\Exception
+	 */
+	public function findByFileId($fileId) {
+		$qb = $this->db->getQueryBuilder();
+
+		$qb->select("*")
+			->from($this->getTableName())
+			->where(
+				$qb->expr()->eq('file_id', $qb->createNamedParameter($fileId, IQueryBuilder::PARAM_STR))
+			);
+
+		return $this->findEntity($qb);
+	}
+
+	/**
+	 * @param $userId
+	 * @param $limit
+	 * @param $offset
+	 * @return array|\OCP\AppFramework\Db\Entity[]
+	 * @throws \OCP\DB\Exception
+	 */
     public function findAll($userId, $limit=null, $offset=null) {
-        $sql = 'SELECT * FROM `*PREFIX*maps_photos` where `user_id` = ? and `lat` is not null and `lng` is not null ORDER BY `date_taken` ASC';
-        return $this->findEntities($sql, [$userId], $limit, $offset);
+		$qb = $this->db->getQueryBuilder();
+
+		$qb->select("*")
+			->from($this->getTableName())
+			->where(
+				$qb->expr()->eq('user_id', $qb->createNamedParameter($userId, IQueryBuilder::PARAM_STR))
+			)->andWhere(
+				$qb->expr()->isNotNull('lat')
+			)->andWhere(
+				$qb->expr()->isNotNull('lng')
+			)->orderBy('date_taken', 'ASC');
+		if (!is_null($offset)) {
+			$qb->setFirstResult($offset);
+		}
+		if (!is_null($limit)) {
+			$qb->setMaxResults($limit);
+		}
+		return $this->findEntities($qb);
     }
 
+	/**
+	 * @param $userId
+	 * @param $limit
+	 * @param $offset
+	 * @return array|\OCP\AppFramework\Db\Entity[]
+	 * @throws \OCP\DB\Exception
+	 */
     public function findAllNonLocalized($userId, $limit=null, $offset=null) {
-        $sql = 'SELECT * FROM `*PREFIX*maps_photos` where `user_id` = ? and (`lat` is null or `lng` is  null) ORDER BY `date_taken` ASC';
-        return $this->findEntities($sql, [$userId], $limit, $offset);
+		$qb = $this->db->getQueryBuilder();
+
+		$qb->select("*")
+			->from($this->getTableName())
+			->where(
+				$qb->expr()->eq('user_id', $qb->createNamedParameter($userId, IQueryBuilder::PARAM_STR))
+			)->andWhere(
+				$qb->expr()->orX(
+					$qb->expr()->isNull('lat'),
+					$qb->expr()->isNull('lng')
+				)
+			)->orderBy('date_taken', 'ASC');
+		if (!is_null($offset)) {
+			$qb->setFirstResult($offset);
+		}
+		if (!is_null($limit)) {
+			$qb->setMaxResults($limit);
+		}
+		return $this->findEntities($qb);
     }
 
+	/**
+	 * @param $fileId
+	 * @return false|void
+	 * @throws \OCP\DB\Exception
+	 */
     public function deleteByFileId($fileId) {
-        $sql = 'DELETE FROM `*PREFIX*maps_photos` where `file_id` = ?';
-        return $this->execute($sql, [$fileId]);
+		$qb = $this->db->getQueryBuilder();
+
+		$qb->delete()
+			->from($this->getTableName())
+			->where(
+				$qb->expr()->eq('file_id', $qb->createNamedParameter($fileId, IQueryBuilder::PARAM_STR))
+			);
+
+		return $qb->executeStatement();
     }
 
+	/**
+	 * @param $fileId
+	 * @param $userId
+	 * @return bool
+	 * @throws \OCP\DB\Exception
+	 */
     public function deleteByFileIdUserId($fileId, $userId) {
-        $sql = 'DELETE FROM `*PREFIX*maps_photos` where `file_id` = ? and `user_id` = ?';
-        return $this->execute($sql, [$fileId, $userId]);
+		try {
+			$entity = $this->findByFileIdUserId( $fileId, $userId);
+		} catch (DoesNotExistException | MultipleObjectsReturnedException $e) {
+			return false;
+		}
+		$this->delete($entity);
+        return true;
     }
 
+	/**
+	 * @param $userId
+	 * @return bool
+	 * @throws \OCP\DB\Exception
+	 */
     public function deleteAll($userId) {
-        $sql = 'DELETE FROM `*PREFIX*maps_photos` where `user_id` = ?';
-        return $this->execute($sql, [$userId]);
+		$qb = $this->db->getQueryBuilder();
+
+		$qb->delete()
+			->from($this->getTableName())
+			->where(
+				$qb->expr()->eq('user_id', $qb->createNamedParameter($userId, IQueryBuilder::PARAM_STR))
+			);
+		return $qb->executeStatement();
     }
 
+	/**
+	 * @param $fileId
+	 * @param $lat
+	 * @param $lng
+	 * @return int
+	 * @throws \OCP\DB\Exception
+	 */
     public function updateByFileId($fileId, $lat, $lng) {
-        $sql = 'UPDATE `*PREFIX*maps_photos` set `lat` = ? , `lng` = ? where `file_id` = ?';
-        return $this->execute($sql, [$lat, $lng, $fileId]);
+		$qb = $this->db->getQueryBuilder();
+
+		$qb->update(
+		)->set('lat', $qb->createNamedParameter($lat)
+		)->set('lng', $qb->createNamedParameter($lng)
+		)->where('file_id', $qb->createNamedParameter($fileId));
+
+        return $qb->executeStatement();
     }
 
 }

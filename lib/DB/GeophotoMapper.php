@@ -200,9 +200,10 @@ class GeophotoMapper extends QBMapper {
     public function updateByFileId($fileId, $lat, $lng) {
 		$qb = $this->db->getQueryBuilder();
 
-		$qb->update($this->getTableName())->set('lat', $qb->createNamedParameter($lat)
-		)->set('lng', $qb->createNamedParameter($lng)
-		)->where('file_id', $qb->createNamedParameter($fileId));
+		$qb->update($this->getTableName())
+			->set('lat', $qb->createNamedParameter($lat))
+			->set('lng', $qb->createNamedParameter($lng))
+			->where($qb->expr()->eq('file_id', $qb->createNamedParameter($fileId)));
 
         return $qb->executeStatement();
     }

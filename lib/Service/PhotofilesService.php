@@ -163,7 +163,7 @@ class PhotofilesService {
 					$this->updatePhoto($file, $exif);
 					$this->photosCache->clear($ownerId);
 					$this->nonLocalizedPhotosCache->clear($ownerId);
-				} catch (DoesNotExistException) {
+				} catch (DoesNotExistException $exception) {
 					$this->insertPhoto($file, $ownerId, $exif);
 				}
             }
@@ -311,7 +311,7 @@ class PhotofilesService {
             // OR by using file_id in primary key
             try {
 				$this->photoMapper->findByFileIdUserId($photo->getId(), $userId);
-			} catch (DoesNotExistException) {
+			} catch (DoesNotExistException $exception) {
                 $this->insertPhoto($photo, $userId, $exif);
             }
 			$this->photosCache->clear($userId);

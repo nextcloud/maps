@@ -143,7 +143,7 @@ class GeophotoMapper extends QBMapper {
 
 	/**
 	 * @param $fileId
-	 * @return false|void
+	 * @return int
 	 * @throws \OCP\DB\Exception
 	 */
     public function deleteByFileId($fileId) {

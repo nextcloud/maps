@@ -60,7 +60,12 @@
 				:on-update="tab.update"
 				:on-destroy="tab.destroy"
 				:on-scroll-bottom-reached="tab.scrollBottomReached"
-				:file-info="fileInfo" />
+				:file-info="fileInfo">
+				<template v-if="tab.iconSvg !== undefined" #icon>
+					<!-- eslint-disable-next-line vue/no-v-html -->
+					<span class="svg-icon" v-html="tab.iconSvg" />
+				</template>
+			</SidebarTab>
 		</template>
 	</NcAppSidebar>
 </template>
@@ -619,22 +624,31 @@ export default {
 }
 
 .app-sidebar {
+	&--has-preview::v-deep {
+		.app-sidebar-header__figure {
+			background-size: cover;
+		}
+
+		&[data-mimetype="text/plain"],
+		&[data-mimetype="text/markdown"] {
+			.app-sidebar-header__figure {
+				background-size: contain;
+			}
+		}
+	}
+
 	&--full {
 		position: fixed !important;
 		z-index: 2025 !important;
 		top: 0 !important;
 		height: 100% !important;
 	}
-	&--has-preview::v-deep {
-		.app-sidebar-header__figure {
-			background-size: cover;
-		}
 
-		&[data-mimetype='text/plain'],
-		&[data-mimetype='text/markdown'] {
-			.app-sidebar-header__figure {
-				background-size: contain;
-			}
+	.svg-icon {
+		::v-deep svg {
+			width: 20px;
+			height: 20px;
+			fill: currentColor;
 		}
 	}
 }

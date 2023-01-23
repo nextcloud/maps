@@ -165,13 +165,16 @@ class GeophotoMapper extends QBMapper {
 	 * @throws \OCP\DB\Exception
 	 */
     public function deleteByFileIdUserId($fileId, $userId) {
-		try {
-			$entity = $this->findByFileIdUserId( $fileId, $userId);
-		} catch (DoesNotExistException | MultipleObjectsReturnedException $e) {
-			return false;
-		}
-		$this->delete($entity);
-        return true;
+		$qb = $this->db->getQueryBuilder();
+
+		$qb->delete()
+			->from($this->getTableName())
+			->where(
+				$qb->expr()->eq('user_id', $qb->createNamedParameter($userId, IQueryBuilder::PARAM_STR))
+			)->andWhere(
+				$qb->expr()->eq('file_id', $qb->createNamedParameter($fileId, IQueryBuilder::PARAM_STR))
+			);
+		return $qb->executeStatement();
     }
 
 	/**

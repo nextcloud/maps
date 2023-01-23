@@ -176,7 +176,7 @@ class GeophotoMapper extends QBMapper {
 
 	/**
 	 * @param $userId
-	 * @return bool
+	 * @return int
 	 * @throws \OCP\DB\Exception
 	 */
     public function deleteAll($userId) {

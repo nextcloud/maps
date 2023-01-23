@@ -32,7 +32,7 @@ OC.L10N.register(
     "Device" : "อุปกรณ์",
     "Date" : "Date",
     "Accuracy" : "ความแม่นยำ",
-    "Update" : "อัพเดท",
+    "Update" : "อัปเดต",
     "Yes" : "ใช่",
     "Open" : "เปิด",
     "Search" : "ค้นหา",

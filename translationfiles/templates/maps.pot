@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Nextcloud 3.14159\n"
 "Report-Msgid-Bugs-To: translations\\@example.com\n"
-"POT-Creation-Date: 2023-01-22 02:48+0000\n"
+"POT-Creation-Date: 2023-01-23 02:51+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -136,9 +136,9 @@ msgstr ""
 #: /app/lib/Service/FavoritesService.php:856
 #: /app/lib/Service/FavoritesService.php:921
 #: /app/specialVueFakeDummyForL10nScript.js:56
-#: /app/specialVueFakeDummyForL10nScript.js:626
-#: /app/specialVueFakeDummyForL10nScript.js:680
-#: /app/specialVueFakeDummyForL10nScript.js:702
+#: /app/specialVueFakeDummyForL10nScript.js:628
+#: /app/specialVueFakeDummyForL10nScript.js:682
+#: /app/specialVueFakeDummyForL10nScript.js:704
 #: /app/src/utils/favoritesUtils.js:27
 msgid "Personal"
 msgstr ""
@@ -195,9 +195,9 @@ msgstr ""
 #: /app/specialVueFakeDummyForL10nScript.js:6
 #: /app/specialVueFakeDummyForL10nScript.js:10
 #: /app/specialVueFakeDummyForL10nScript.js:42
-#: /app/specialVueFakeDummyForL10nScript.js:104
-#: /app/specialVueFakeDummyForL10nScript.js:188
-#: /app/specialVueFakeDummyForL10nScript.js:196
+#: /app/specialVueFakeDummyForL10nScript.js:106
+#: /app/specialVueFakeDummyForL10nScript.js:190
+#: /app/specialVueFakeDummyForL10nScript.js:198
 msgid "Zoom"
 msgstr ""
 
@@ -210,32 +210,32 @@ msgstr ""
 #: /app/specialVueFakeDummyForL10nScript.js:8
 #: /app/specialVueFakeDummyForL10nScript.js:12
 #: /app/specialVueFakeDummyForL10nScript.js:64
-#: /app/specialVueFakeDummyForL10nScript.js:110
-#: /app/specialVueFakeDummyForL10nScript.js:294
-#: /app/specialVueFakeDummyForL10nScript.js:304
-#: /app/specialVueFakeDummyForL10nScript.js:336
-#: /app/specialVueFakeDummyForL10nScript.js:384
-#: /app/specialVueFakeDummyForL10nScript.js:454
+#: /app/specialVueFakeDummyForL10nScript.js:112
+#: /app/specialVueFakeDummyForL10nScript.js:296
+#: /app/specialVueFakeDummyForL10nScript.js:306
+#: /app/specialVueFakeDummyForL10nScript.js:338
+#: /app/specialVueFakeDummyForL10nScript.js:386
+#: /app/specialVueFakeDummyForL10nScript.js:456
 msgid "Copy to map"
 msgstr ""
 
 #. TRANSLATORS src/components/AppNavigationDeviceItem.vue:31
 #. TRANSLATORS src/components/map/DeviceLayer.vue:12
 #: /app/specialVueFakeDummyForL10nScript.js:14
-#: /app/specialVueFakeDummyForL10nScript.js:316
+#: /app/specialVueFakeDummyForL10nScript.js:318
 msgid "Toggle history"
 msgstr ""
 
 #. TRANSLATORS src/components/AppNavigationDeviceItem.vue:39
-#. TRANSLATORS src/components/AppNavigationMyMapItem.vue:31
+#. TRANSLATORS src/components/AppNavigationMyMapItem.vue:40
 #. TRANSLATORS src/components/AppNavigationTrackItem.vue:55
 #. TRANSLATORS src/components/map/DeviceLayer.vue:20
 #. TRANSLATORS src/components/map/TrackLayer.vue:10
 #: /app/specialVueFakeDummyForL10nScript.js:16
-#: /app/specialVueFakeDummyForL10nScript.js:80
-#: /app/specialVueFakeDummyForL10nScript.js:108
-#: /app/specialVueFakeDummyForL10nScript.js:318
-#: /app/specialVueFakeDummyForL10nScript.js:450
+#: /app/specialVueFakeDummyForL10nScript.js:82
+#: /app/specialVueFakeDummyForL10nScript.js:110
+#: /app/specialVueFakeDummyForL10nScript.js:320
+#: /app/specialVueFakeDummyForL10nScript.js:452
 #: /app/src/myMapsController.js:170
 msgid "Change color"
 msgstr ""
@@ -251,20 +251,20 @@ msgstr ""
 #: /app/specialVueFakeDummyForL10nScript.js:20
 #: /app/specialVueFakeDummyForL10nScript.js:44
 #: /app/specialVueFakeDummyForL10nScript.js:62
-#: /app/specialVueFakeDummyForL10nScript.js:320
+#: /app/specialVueFakeDummyForL10nScript.js:322
 msgid "Export"
 msgstr ""
 
 #. TRANSLATORS src/components/AppNavigationDeviceItem.vue:57
 #. TRANSLATORS src/components/AppNavigationFavoritesItem.vue:113
-#. TRANSLATORS src/components/AppNavigationMyMapItem.vue:43
+#. TRANSLATORS src/components/AppNavigationMyMapItem.vue:52
 #. TRANSLATORS src/components/FavoriteEditionForm.vue:60
 #. TRANSLATORS src/components/map/FavoritePopup.vue:54
 #: /app/specialVueFakeDummyForL10nScript.js:22
 #: /app/specialVueFakeDummyForL10nScript.js:66
-#: /app/specialVueFakeDummyForL10nScript.js:84
-#: /app/specialVueFakeDummyForL10nScript.js:120
-#: /app/specialVueFakeDummyForL10nScript.js:346
+#: /app/specialVueFakeDummyForL10nScript.js:86
+#: /app/specialVueFakeDummyForL10nScript.js:122
+#: /app/specialVueFakeDummyForL10nScript.js:348
 #: /app/src/myMapsController.js:182
 msgid "Delete"
 msgstr ""
@@ -329,8 +329,8 @@ msgstr ""
 #. TRANSLATORS src/components/Map.vue:445
 #: /app/specialVueFakeDummyForL10nScript.js:52
 #: /app/specialVueFakeDummyForL10nScript.js:72
-#: /app/specialVueFakeDummyForL10nScript.js:130
-#: /app/specialVueFakeDummyForL10nScript.js:138
+#: /app/specialVueFakeDummyForL10nScript.js:132
+#: /app/specialVueFakeDummyForL10nScript.js:140
 msgid "Add a favorite"
 msgstr ""
 
@@ -360,7 +360,7 @@ msgstr ""
 #. TRANSLATORS src/components/AppNavigationFavoritesItem.vue:107
 #. TRANSLATORS src/components/map/DeviceLayer.vue:29
 #: /app/specialVueFakeDummyForL10nScript.js:64
-#: /app/specialVueFakeDummyForL10nScript.js:322
+#: /app/specialVueFakeDummyForL10nScript.js:324
 msgid "Link to map"
 msgstr ""
 
@@ -374,9 +374,9 @@ msgstr ""
 #. TRANSLATORS src/components/map/ClickPopup.vue:52
 #. TRANSLATORS src/components/map/PhotosLayer.vue:395
 #: /app/specialVueFakeDummyForL10nScript.js:70
-#: /app/specialVueFakeDummyForL10nScript.js:204
-#: /app/specialVueFakeDummyForL10nScript.js:278
-#: /app/specialVueFakeDummyForL10nScript.js:398
+#: /app/specialVueFakeDummyForL10nScript.js:206
+#: /app/specialVueFakeDummyForL10nScript.js:280
+#: /app/specialVueFakeDummyForL10nScript.js:400
 msgid "Cancel"
 msgstr ""
 
@@ -390,91 +390,96 @@ msgstr ""
 msgid "Link could not be copied to clipboard."
 msgstr ""
 
-#. TRANSLATORS src/components/AppNavigationMyMapItem.vue:37
-#: /app/specialVueFakeDummyForL10nScript.js:82 /app/src/myMapsController.js:176
+#. TRANSLATORS src/components/AppNavigationMyMapItem.vue:32
+#: /app/specialVueFakeDummyForL10nScript.js:80
+msgid "Open folder"
+msgstr ""
+
+#. TRANSLATORS src/components/AppNavigationMyMapItem.vue:46
+#: /app/specialVueFakeDummyForL10nScript.js:84 /app/src/myMapsController.js:176
 msgid "Share"
 msgstr ""
 
 #. TRANSLATORS src/components/AppNavigationMyMapsItem.vue:4
-#: /app/specialVueFakeDummyForL10nScript.js:86
+#: /app/specialVueFakeDummyForL10nScript.js:88
 msgid "My maps"
 msgstr ""
 
 #. TRANSLATORS src/components/AppNavigationMyMapsItem.vue:19
-#: /app/specialVueFakeDummyForL10nScript.js:88
+#: /app/specialVueFakeDummyForL10nScript.js:90
 msgid "New map"
 msgstr ""
 
 #. TRANSLATORS src/components/AppNavigationMyMapsItem.vue:20
-#: /app/specialVueFakeDummyForL10nScript.js:90
+#: /app/specialVueFakeDummyForL10nScript.js:92
 msgid "Add Map"
 msgstr ""
 
 #. TRANSLATORS src/components/AppNavigationPhotosItem.vue:4
-#: /app/specialVueFakeDummyForL10nScript.js:92
+#: /app/specialVueFakeDummyForL10nScript.js:94
 msgid "My photos"
 msgstr ""
 
 #. TRANSLATORS src/components/AppNavigationPhotosItem.vue:25
-#: /app/specialVueFakeDummyForL10nScript.js:94
+#: /app/specialVueFakeDummyForL10nScript.js:96
 msgid "Disable photo drag"
 msgstr ""
 
-#: /app/specialVueFakeDummyForL10nScript.js:94
+#: /app/specialVueFakeDummyForL10nScript.js:96
 msgid "Enable photo drag"
 msgstr ""
 
 #. TRANSLATORS src/components/AppNavigationPhotosItem.vue:32
-#: /app/specialVueFakeDummyForL10nScript.js:96
+#: /app/specialVueFakeDummyForL10nScript.js:98
 msgid "Say hi"
 msgstr ""
 
 #. TRANSLATORS src/components/AppNavigationPhotosItem.vue:38
-#: /app/specialVueFakeDummyForL10nScript.js:98
+#: /app/specialVueFakeDummyForL10nScript.js:100
 msgid "Hide suggestions"
 msgstr ""
 
-#: /app/specialVueFakeDummyForL10nScript.js:98
+#: /app/specialVueFakeDummyForL10nScript.js:100
 msgid "Suggest photo locations"
 msgstr ""
 
 #. TRANSLATORS src/components/AppNavigationPhotosItem.vue:44
-#: /app/specialVueFakeDummyForL10nScript.js:100
+#: /app/specialVueFakeDummyForL10nScript.js:102
 msgid "Clear photo cache"
 msgstr ""
 
 #. TRANSLATORS src/components/AppNavigationPhotosItem.vue:109
-#: /app/specialVueFakeDummyForL10nScript.js:102
+#: /app/specialVueFakeDummyForL10nScript.js:104
 msgid "Hi"
 msgstr ""
 
 #. TRANSLATORS src/components/AppNavigationTrackItem.vue:47
-#: /app/specialVueFakeDummyForL10nScript.js:106
+#: /app/specialVueFakeDummyForL10nScript.js:108
 msgid "Show track elevation"
 msgstr ""
 
 #. TRANSLATORS src/components/AppNavigationTracksItem.vue:4
-#: /app/specialVueFakeDummyForL10nScript.js:112
+#: /app/specialVueFakeDummyForL10nScript.js:114
 msgid "My tracks"
 msgstr ""
 
 #. TRANSLATORS src/components/AppNavigationTracksItem.vue:20
-#: /app/specialVueFakeDummyForL10nScript.js:114
+#: /app/specialVueFakeDummyForL10nScript.js:116
 msgid "Sort by name"
 msgstr ""
 
 #. TRANSLATORS src/components/AppNavigationTracksItem.vue:26
-#: /app/specialVueFakeDummyForL10nScript.js:116
+#: /app/specialVueFakeDummyForL10nScript.js:118
 msgid "Sort by date"
 msgstr ""
 
 #. TRANSLATORS src/components/FavoriteEditionForm.vue:54
-#: /app/specialVueFakeDummyForL10nScript.js:118
+#: /app/specialVueFakeDummyForL10nScript.js:120
 msgid "OK"
 msgstr ""
 
 #. TRANSLATORS src/components/FavoriteEditionForm.vue:95
-#: /app/specialVueFakeDummyForL10nScript.js:122
+#: /app/specialVueFakeDummyForL10nScript.js:124
 msgid "Favorite name"
 msgstr ""
 
@@ -482,10 +487,10 @@ msgstr ""
 #. TRANSLATORS src/components/map/ClickPopup.vue:40
 #. TRANSLATORS src/components/map/FavoriteMarker.vue:19
 #. TRANSLATORS src/components/map/FavoritePopup.vue:40
-#: /app/specialVueFakeDummyForL10nScript.js:124
-#: /app/specialVueFakeDummyForL10nScript.js:272
-#: /app/specialVueFakeDummyForL10nScript.js:330
-#: /app/specialVueFakeDummyForL10nScript.js:340
+#: /app/specialVueFakeDummyForL10nScript.js:126
+#: /app/specialVueFakeDummyForL10nScript.js:274
+#: /app/specialVueFakeDummyForL10nScript.js:332
+#: /app/specialVueFakeDummyForL10nScript.js:342
 msgid "Category"
 msgstr ""
 
@@ -493,123 +498,123 @@ msgstr ""
 #. TRANSLATORS src/components/map/ClickPopup.vue:45
 #. TRANSLATORS src/components/map/FavoriteMarker.vue:22
 #. TRANSLATORS src/components/map/FavoritePopup.vue:46
-#: /app/specialVueFakeDummyForL10nScript.js:126
-#: /app/specialVueFakeDummyForL10nScript.js:274
-#: /app/specialVueFakeDummyForL10nScript.js:332
-#: /app/specialVueFakeDummyForL10nScript.js:342
+#: /app/specialVueFakeDummyForL10nScript.js:128
+#: /app/specialVueFakeDummyForL10nScript.js:276
+#: /app/specialVueFakeDummyForL10nScript.js:334
+#: /app/specialVueFakeDummyForL10nScript.js:344
 msgid "Comment"
 msgstr ""
 
 #. TRANSLATORS src/components/FavoriteEditionForm.vue:148
-#: /app/specialVueFakeDummyForL10nScript.js:128
+#: /app/specialVueFakeDummyForL10nScript.js:130
 msgid "New category {n}"
 msgstr ""
 
 #. TRANSLATORS src/components/Map.vue:450
-#: /app/specialVueFakeDummyForL10nScript.js:132
-#: /app/specialVueFakeDummyForL10nScript.js:140
+#: /app/specialVueFakeDummyForL10nScript.js:134
+#: /app/specialVueFakeDummyForL10nScript.js:142
 msgid "Place photos"
 msgstr ""
 
 #. TRANSLATORS src/components/Map.vue:455
 #. TRANSLATORS src/components/map/HistoryControl.vue:81
-#: /app/specialVueFakeDummyForL10nScript.js:134
-#: /app/specialVueFakeDummyForL10nScript.js:142
-#: /app/specialVueFakeDummyForL10nScript.js:366
+#: /app/specialVueFakeDummyForL10nScript.js:136
+#: /app/specialVueFakeDummyForL10nScript.js:144
+#: /app/specialVueFakeDummyForL10nScript.js:368
 msgid "Place contact"
 msgstr ""
 
 #. TRANSLATORS src/components/Map.vue:460
-#: /app/specialVueFakeDummyForL10nScript.js:136
-#: /app/specialVueFakeDummyForL10nScript.js:144
+#: /app/specialVueFakeDummyForL10nScript.js:138
+#: /app/specialVueFakeDummyForL10nScript.js:146
 msgid "Share this location"
 msgstr ""
 
 #. TRANSLATORS src/components/Map.vue:499
-#: /app/specialVueFakeDummyForL10nScript.js:146
+#: /app/specialVueFakeDummyForL10nScript.js:148
 msgid "Shared location"
 msgstr ""
 
 #. TRANSLATORS src/components/Map.vue:510
-#: /app/specialVueFakeDummyForL10nScript.js:148
+#: /app/specialVueFakeDummyForL10nScript.js:150
 msgid "Route from here"
 msgstr ""
 
 #. TRANSLATORS src/components/Map.vue:519
-#: /app/specialVueFakeDummyForL10nScript.js:150
+#: /app/specialVueFakeDummyForL10nScript.js:152
 msgid "Add route point"
 msgstr ""
 
 #. TRANSLATORS src/components/Map.vue:528
-#: /app/specialVueFakeDummyForL10nScript.js:152
+#: /app/specialVueFakeDummyForL10nScript.js:154
 msgid "Route to here"
 msgstr ""
 
 #. TRANSLATORS src/components/Map.vue:610
-#: /app/specialVueFakeDummyForL10nScript.js:154
+#: /app/specialVueFakeDummyForL10nScript.js:156
 msgid "Current location"
 msgstr ""
 
 #. TRANSLATORS src/components/Map.vue:664
-#: /app/specialVueFakeDummyForL10nScript.js:156
+#: /app/specialVueFakeDummyForL10nScript.js:158
 msgid "Improve this map"
 msgstr ""
 
 #. TRANSLATORS src/components/Map.vue:779
-#: /app/specialVueFakeDummyForL10nScript.js:158
+#: /app/specialVueFakeDummyForL10nScript.js:160
 msgid "Other maps"
 msgstr ""
 
 #. TRANSLATORS src/components/Map.vue:795
-#: /app/specialVueFakeDummyForL10nScript.js:160
+#: /app/specialVueFakeDummyForL10nScript.js:162
 msgid "Street map"
 msgstr ""
 
 #. TRANSLATORS src/components/Map.vue:810
-#: /app/specialVueFakeDummyForL10nScript.js:162
+#: /app/specialVueFakeDummyForL10nScript.js:164
 msgid "Satellite map"
 msgstr ""
 
 #. TRANSLATORS src/components/Map.vue:867
-#: /app/specialVueFakeDummyForL10nScript.js:164
+#: /app/specialVueFakeDummyForL10nScript.js:166
 msgid "Geo link ({geoLink}) copied to clipboard"
 msgstr ""
 
 #. TRANSLATORS src/components/Map.vue:870
-#: /app/specialVueFakeDummyForL10nScript.js:166
+#: /app/specialVueFakeDummyForL10nScript.js:168
 msgid "Geo link could not be copied to clipboard"
 msgstr ""
 
 #. TRANSLATORS src/components/Map.vue:951
-#: /app/specialVueFakeDummyForL10nScript.js:168
+#: /app/specialVueFakeDummyForL10nScript.js:170
 msgid "Close"
 msgstr ""
 
 #. TRANSLATORS src/components/MapsNavigation.vue:13
-#: /app/specialVueFakeDummyForL10nScript.js:170
+#: /app/specialVueFakeDummyForL10nScript.js:172
 #: /app/templates/settings/index.php:10
 msgid "Track my position"
 msgstr ""
 
 #. TRANSLATORS src/components/MapsNavigation.vue:18
-#: /app/specialVueFakeDummyForL10nScript.js:172
+#: /app/specialVueFakeDummyForL10nScript.js:174
 msgid "Open geo links"
 msgstr ""
 
 #. TRANSLATORS src/components/MapsNavigation.vue:23
-#: /app/specialVueFakeDummyForL10nScript.js:174
+#: /app/specialVueFakeDummyForL10nScript.js:176
 #: /app/templates/settings/index.php:12
 msgid "Display time filter slider"
 msgstr ""
 
 #. TRANSLATORS src/components/MapsNavigation.vue:31
-#: /app/specialVueFakeDummyForL10nScript.js:176
+#: /app/specialVueFakeDummyForL10nScript.js:178
 #: /app/templates/settings/index.php:15
 msgid "The True Size of Africa"
 msgstr ""
 
 #. TRANSLATORS src/components/MapsNavigation.vue:70
-#: /app/specialVueFakeDummyForL10nScript.js:178
+#: /app/specialVueFakeDummyForL10nScript.js:180
 #: /app/templates/settings/index.php:14
 msgid ""
 "Keep in mind that map projections always distort sizes of countries. The "
@@ -617,189 +622,189 @@ msgid ""
 msgstr ""
 
 #. TRANSLATORS src/components/PhotoSuggestionsSidebarTab.vue:8
-#: /app/specialVueFakeDummyForL10nScript.js:180
+#: /app/specialVueFakeDummyForL10nScript.js:182
 msgid "Clear selection"
 msgstr ""
 
 #. TRANSLATORS src/components/PhotoSuggestionsSidebarTab.vue:13
-#: /app/specialVueFakeDummyForL10nScript.js:182
+#: /app/specialVueFakeDummyForL10nScript.js:184
 msgid "Select all"
 msgstr ""
 
 #. TRANSLATORS src/components/PhotoSuggestionsSidebarTab.vue:42
 #. TRANSLATORS src/components/map/PhotoSuggestionsLayer.vue:32
 #. TRANSLATORS src/components/map/PhotosLayer.vue:32
-#: /app/specialVueFakeDummyForL10nScript.js:184
-#: /app/specialVueFakeDummyForL10nScript.js:192
-#: /app/specialVueFakeDummyForL10nScript.js:370
-#: /app/specialVueFakeDummyForL10nScript.js:380
+#: /app/specialVueFakeDummyForL10nScript.js:186
+#: /app/specialVueFakeDummyForL10nScript.js:194
+#: /app/specialVueFakeDummyForL10nScript.js:372
+#: /app/specialVueFakeDummyForL10nScript.js:382
 msgid "Display picture"
 msgstr ""
 
 #. TRANSLATORS src/components/PhotoSuggestionsSidebarTab.vue:45
-#: /app/specialVueFakeDummyForL10nScript.js:186
-#: /app/specialVueFakeDummyForL10nScript.js:194
-#: /app/specialVueFakeDummyForL10nScript.js:206
+#: /app/specialVueFakeDummyForL10nScript.js:188
+#: /app/specialVueFakeDummyForL10nScript.js:196
+#: /app/specialVueFakeDummyForL10nScript.js:208
 msgid "Save"
 msgstr ""
 
 #. TRANSLATORS src/components/PhotoSuggestionsSidebarTab.vue:51
-#: /app/specialVueFakeDummyForL10nScript.js:190
-#: /app/specialVueFakeDummyForL10nScript.js:198
+#: /app/specialVueFakeDummyForL10nScript.js:192
+#: /app/specialVueFakeDummyForL10nScript.js:200
 msgid "Remove form selection"
 msgstr ""
 
 #. TRANSLATORS src/components/PhotoSuggestionsSidebarTab.vue:83
-#: /app/specialVueFakeDummyForL10nScript.js:200
+#: /app/specialVueFakeDummyForL10nScript.js:202
 msgid "No suggestions found"
 msgstr ""
 
 #. TRANSLATORS src/components/PhotoSuggestionsSidebarTab.vue:84
-#: /app/specialVueFakeDummyForL10nScript.js:202
+#: /app/specialVueFakeDummyForL10nScript.js:204
 msgid ""
 "To get suggestions upload tracks from the trips, when you took your photos."
 msgstr ""
 
-#: /app/specialVueFakeDummyForL10nScript.js:204
+#: /app/specialVueFakeDummyForL10nScript.js:206
 msgid "Quit"
 msgstr ""
 
 #. TRANSLATORS src/components/PublicFavoriteShareSideBar.vue:32
-#: /app/specialVueFakeDummyForL10nScript.js:208
+#: /app/specialVueFakeDummyForL10nScript.js:210
 msgid "(No name)"
 msgstr ""
 
 #. TRANSLATORS src/components/PublicFavoriteShareSideBar.vue:39
-#: /app/specialVueFakeDummyForL10nScript.js:210
+#: /app/specialVueFakeDummyForL10nScript.js:212
 msgid "No favorites to display"
 msgstr ""
 
 #. TRANSLATORS src/components/Sidebar.vue:42
-#: /app/specialVueFakeDummyForL10nScript.js:212
+#: /app/specialVueFakeDummyForL10nScript.js:214
 msgid "Tags"
 msgstr ""
 
 #. TRANSLATORS src/components/Sidebar.vue:267
-#: /app/specialVueFakeDummyForL10nScript.js:214
-#: /app/specialVueFakeDummyForL10nScript.js:222
-#: /app/specialVueFakeDummyForL10nScript.js:234
+#: /app/specialVueFakeDummyForL10nScript.js:216
+#: /app/specialVueFakeDummyForL10nScript.js:224
+#: /app/specialVueFakeDummyForL10nScript.js:236
 msgid "Shows cool information"
 msgstr ""
 
 #. TRANSLATORS src/components/Sidebar.vue:268
-#: /app/specialVueFakeDummyForL10nScript.js:216
-#: /app/specialVueFakeDummyForL10nScript.js:224
-#: /app/specialVueFakeDummyForL10nScript.js:232
+#: /app/specialVueFakeDummyForL10nScript.js:218
+#: /app/specialVueFakeDummyForL10nScript.js:226
+#: /app/specialVueFakeDummyForL10nScript.js:234
 msgid "Sidebar"
 msgstr ""
 
 #. TRANSLATORS src/components/Sidebar.vue:273
-#: /app/specialVueFakeDummyForL10nScript.js:218
-#: /app/specialVueFakeDummyForL10nScript.js:228
+#: /app/specialVueFakeDummyForL10nScript.js:220
+#: /app/specialVueFakeDummyForL10nScript.js:230
 msgid "Favorite"
 msgstr ""
 
 #. TRANSLATORS src/components/Sidebar.vue:286
-#: /app/specialVueFakeDummyForL10nScript.js:220
+#: /app/specialVueFakeDummyForL10nScript.js:222
 msgid "Photo suggestions"
 msgstr ""
 
 #. TRANSLATORS src/components/Sidebar.vue:339
-#: /app/specialVueFakeDummyForL10nScript.js:226
+#: /app/specialVueFakeDummyForL10nScript.js:228
 msgid "Track"
 msgstr ""
 
 #. TRANSLATORS src/components/Sidebar.vue:345
-#: /app/specialVueFakeDummyForL10nScript.js:230
+#: /app/specialVueFakeDummyForL10nScript.js:232
 msgid "Photo location suggestions"
 msgstr ""
 
 #. TRANSLATORS src/components/Sidebar.vue:479
-#: /app/specialVueFakeDummyForL10nScript.js:236
+#: /app/specialVueFakeDummyForL10nScript.js:238
 msgid "Unable to change the favourite state of the file"
 msgstr ""
 
 #. TRANSLATORS src/components/Sidebar.vue:546
-#: /app/specialVueFakeDummyForL10nScript.js:238
+#: /app/specialVueFakeDummyForL10nScript.js:240
 msgid "Error while loading the file data"
 msgstr ""
 
 #. TRANSLATORS src/components/TrackTable.vue:48
-#: /app/specialVueFakeDummyForL10nScript.js:240
+#: /app/specialVueFakeDummyForL10nScript.js:242
 msgid "Distance"
 msgstr ""
 
 #. TRANSLATORS src/components/TrackTable.vue:53
-#: /app/specialVueFakeDummyForL10nScript.js:242
+#: /app/specialVueFakeDummyForL10nScript.js:244
 msgid "Duration"
 msgstr ""
 
 #. TRANSLATORS src/components/TrackTable.vue:58
-#: /app/specialVueFakeDummyForL10nScript.js:244
+#: /app/specialVueFakeDummyForL10nScript.js:246
 msgid "Moving time"
 msgstr ""
 
 #. TRANSLATORS src/components/TrackTable.vue:63
-#: /app/specialVueFakeDummyForL10nScript.js:246
+#: /app/specialVueFakeDummyForL10nScript.js:248
 msgid "Pause time"
 msgstr ""
 
 #. TRANSLATORS src/components/TrackTable.vue:68
-#: /app/specialVueFakeDummyForL10nScript.js:248
+#: /app/specialVueFakeDummyForL10nScript.js:250
 msgid "Begin"
 msgstr ""
 
 #. TRANSLATORS src/components/TrackTable.vue:73
-#: /app/specialVueFakeDummyForL10nScript.js:250
+#: /app/specialVueFakeDummyForL10nScript.js:252
 msgid "End"
 msgstr ""
 
 #. TRANSLATORS src/components/TrackTable.vue:78
-#: /app/specialVueFakeDummyForL10nScript.js:252
+#: /app/specialVueFakeDummyForL10nScript.js:254
 msgid "Cumulative elevation gain"
 msgstr ""
 
 #. TRANSLATORS src/components/TrackTable.vue:83
-#: /app/specialVueFakeDummyForL10nScript.js:254
+#: /app/specialVueFakeDummyForL10nScript.js:256
 msgid "Cumulative elevation loss"
 msgstr ""
 
 #. TRANSLATORS src/components/TrackTable.vue:88
-#: /app/specialVueFakeDummyForL10nScript.js:256
+#: /app/specialVueFakeDummyForL10nScript.js:258
 msgid "Minimum elevation"
 msgstr ""
 
 #. TRANSLATORS src/components/TrackTable.vue:93
-#: /app/specialVueFakeDummyForL10nScript.js:258
+#: /app/specialVueFakeDummyForL10nScript.js:260
 msgid "Maximum elevation"
 msgstr ""
 
 #. TRANSLATORS src/components/TrackTable.vue:98
-#: /app/specialVueFakeDummyForL10nScript.js:260
+#: /app/specialVueFakeDummyForL10nScript.js:262
 msgid "Maximum speed"
 msgstr ""
 
 #. TRANSLATORS src/components/TrackTable.vue:103
-#: /app/specialVueFakeDummyForL10nScript.js:262
+#: /app/specialVueFakeDummyForL10nScript.js:264
 msgid "Average speed"
 msgstr ""
 
 #. TRANSLATORS src/components/TrackTable.vue:108
-#: /app/specialVueFakeDummyForL10nScript.js:264
+#: /app/specialVueFakeDummyForL10nScript.js:266
 msgid "Moving average speed"
 msgstr ""
 
 #. TRANSLATORS src/components/TrackTable.vue:113
-#: /app/specialVueFakeDummyForL10nScript.js:266
+#: /app/specialVueFakeDummyForL10nScript.js:268
 msgid "Moving average pace"
 msgstr ""
 
 #. TRANSLATORS src/components/map/ClickPopup.vue:25
-#: /app/specialVueFakeDummyForL10nScript.js:268
+#: /app/specialVueFakeDummyForL10nScript.js:270
 msgid "New Favorite"
 msgstr ""
 
-#: /app/specialVueFakeDummyForL10nScript.js:268
+#: /app/specialVueFakeDummyForL10nScript.js:270
 msgid "This Place"
 msgstr ""
 
@@ -808,909 +813,909 @@ msgstr ""
 #. TRANSLATORS src/components/map/FavoriteMarker.vue:16
 #. TRANSLATORS src/components/map/FavoritePopup.vue:32
 #. TRANSLATORS src/components/map/TrackLayer.vue:23
-#: /app/specialVueFakeDummyForL10nScript.js:270
-#: /app/specialVueFakeDummyForL10nScript.js:324
+#: /app/specialVueFakeDummyForL10nScript.js:272
 #: /app/specialVueFakeDummyForL10nScript.js:326
-#: /app/specialVueFakeDummyForL10nScript.js:338
-#: /app/specialVueFakeDummyForL10nScript.js:456
+#: /app/specialVueFakeDummyForL10nScript.js:328
+#: /app/specialVueFakeDummyForL10nScript.js:340
+#: /app/specialVueFakeDummyForL10nScript.js:458
 msgid "Name"
 msgstr ""
 
 #. TRANSLATORS src/components/map/ClickPopup.vue:49
-#: /app/specialVueFakeDummyForL10nScript.js:276
+#: /app/specialVueFakeDummyForL10nScript.js:278
 msgid "Add"
 msgstr ""
 
 #. TRANSLATORS src/components/map/ClickPopup.vue:62
 #. TRANSLATORS src/components/map/ClickSearchPopup.vue:17
 #. TRANSLATORS src/components/map/PoiMarker.vue:17
-#: /app/specialVueFakeDummyForL10nScript.js:280
-#: /app/specialVueFakeDummyForL10nScript.js:284
-#: /app/specialVueFakeDummyForL10nScript.js:412
+#: /app/specialVueFakeDummyForL10nScript.js:282
+#: /app/specialVueFakeDummyForL10nScript.js:286
+#: /app/specialVueFakeDummyForL10nScript.js:414
 msgid "Add to favorites"
 msgstr ""
 
 #. TRANSLATORS src/components/map/ClickSearchPopup.vue:8
-#: /app/specialVueFakeDummyForL10nScript.js:282
+#: /app/specialVueFakeDummyForL10nScript.js:284
 msgid "This place"
 msgstr ""
 
 #. TRANSLATORS src/components/map/ClickSearchPopup.vue:21
 #. TRANSLATORS src/components/map/PoiMarker.vue:21
-#: /app/specialVueFakeDummyForL10nScript.js:286
-#: /app/specialVueFakeDummyForL10nScript.js:414
+#: /app/specialVueFakeDummyForL10nScript.js:288
+#: /app/specialVueFakeDummyForL10nScript.js:416
 msgid "Add contact address"
 msgstr ""
 
 #. TRANSLATORS src/components/map/ContactLayer.vue:20
 #. TRANSLATORS src/components/map/PlaceContactPopup.vue:54
-#: /app/specialVueFakeDummyForL10nScript.js:288
-#: /app/specialVueFakeDummyForL10nScript.js:296
-#: /app/specialVueFakeDummyForL10nScript.js:406
+#: /app/specialVueFakeDummyForL10nScript.js:290
+#: /app/specialVueFakeDummyForL10nScript.js:298
+#: /app/specialVueFakeDummyForL10nScript.js:408
 msgid "Home"
 msgstr ""
 
 #. TRANSLATORS src/components/map/ContactLayer.vue:24
 #. TRANSLATORS src/components/map/PlaceContactPopup.vue:57
-#: /app/specialVueFakeDummyForL10nScript.js:290
-#: /app/specialVueFakeDummyForL10nScript.js:298
-#: /app/specialVueFakeDummyForL10nScript.js:408
+#: /app/specialVueFakeDummyForL10nScript.js:292
+#: /app/specialVueFakeDummyForL10nScript.js:300
+#: /app/specialVueFakeDummyForL10nScript.js:410
 msgid "Work"
 msgstr ""
 
 #. TRANSLATORS src/components/map/ContactLayer.vue:42
-#: /app/specialVueFakeDummyForL10nScript.js:292
-#: /app/specialVueFakeDummyForL10nScript.js:302
+#: /app/specialVueFakeDummyForL10nScript.js:294
+#: /app/specialVueFakeDummyForL10nScript.js:304
 msgid "Delete this address"
 msgstr ""
 
-#: /app/specialVueFakeDummyForL10nScript.js:292
-#: /app/specialVueFakeDummyForL10nScript.js:302
+#: /app/specialVueFakeDummyForL10nScript.js:294
+#: /app/specialVueFakeDummyForL10nScript.js:304
 msgid "Delete this location"
 msgstr ""
 
 #. TRANSLATORS src/components/map/ContactLayer.vue:69
-#: /app/specialVueFakeDummyForL10nScript.js:300
+#: /app/specialVueFakeDummyForL10nScript.js:302
 msgid "Open in Contacts"
 msgstr ""
 
 #. TRANSLATORS src/components/map/DeviceHoverMarker.vue:9
-#: /app/specialVueFakeDummyForL10nScript.js:306
+#: /app/specialVueFakeDummyForL10nScript.js:308
 msgid "Device"
 msgstr ""
 
 #. TRANSLATORS src/components/map/DeviceHoverMarker.vue:12
 #. TRANSLATORS src/components/map/TrackHoverMarker.vue:16
-#: /app/specialVueFakeDummyForL10nScript.js:308
-#: /app/specialVueFakeDummyForL10nScript.js:446
+#: /app/specialVueFakeDummyForL10nScript.js:310
+#: /app/specialVueFakeDummyForL10nScript.js:448
 msgid "Date"
 msgstr ""
 
 #. TRANSLATORS src/components/map/DeviceHoverMarker.vue:16
 #. TRANSLATORS src/components/map/TrackHoverMarker.vue:20
-#: /app/specialVueFakeDummyForL10nScript.js:310
-#: /app/specialVueFakeDummyForL10nScript.js:448
+#: /app/specialVueFakeDummyForL10nScript.js:312
+#: /app/specialVueFakeDummyForL10nScript.js:450
 msgid "Altitude"
 msgstr ""
 
 #. TRANSLATORS src/components/map/DeviceHoverMarker.vue:20
-#: /app/specialVueFakeDummyForL10nScript.js:312
+#: /app/specialVueFakeDummyForL10nScript.js:314
 msgid "Battery"
 msgstr ""
 
 #. TRANSLATORS src/components/map/DeviceHoverMarker.vue:24
-#: /app/specialVueFakeDummyForL10nScript.js:314
+#: /app/specialVueFakeDummyForL10nScript.js:316
 msgid "Accuracy"
 msgstr ""
 
 #. TRANSLATORS src/components/map/FavoriteMarker.vue:17
-#: /app/specialVueFakeDummyForL10nScript.js:328
+#: /app/specialVueFakeDummyForL10nScript.js:330
 msgid "No name"
 msgstr ""
 
 #. TRANSLATORS src/components/map/FavoriteMarker.vue:30
 #. TRANSLATORS src/components/map/HistoryControl.vue:77
-#: /app/specialVueFakeDummyForL10nScript.js:334
-#: /app/specialVueFakeDummyForL10nScript.js:362
+#: /app/specialVueFakeDummyForL10nScript.js:336
+#: /app/specialVueFakeDummyForL10nScript.js:364
 msgid "Delete favorite"
 msgstr ""
 
 #. TRANSLATORS src/components/map/FavoritePopup.vue:51
-#: /app/specialVueFakeDummyForL10nScript.js:344
+#: /app/specialVueFakeDummyForL10nScript.js:346
 msgid "Update"
 msgstr ""
 
 #. TRANSLATORS src/components/map/FavoritesLayer.vue:25
-#: /app/specialVueFakeDummyForL10nScript.js:348
+#: /app/specialVueFakeDummyForL10nScript.js:350
 msgid "Delete favorites"
 msgstr ""
 
 #. TRANSLATORS src/components/map/FavoritesLayer.vue:28
 #. TRANSLATORS src/components/map/PhotoSuggestionsLayer.vue:50
 #. TRANSLATORS src/components/map/PhotosLayer.vue:57
-#: /app/specialVueFakeDummyForL10nScript.js:350
-#: /app/specialVueFakeDummyForL10nScript.js:376
-#: /app/specialVueFakeDummyForL10nScript.js:390
+#: /app/specialVueFakeDummyForL10nScript.js:352
+#: /app/specialVueFakeDummyForL10nScript.js:378
+#: /app/specialVueFakeDummyForL10nScript.js:392
 msgid "Zoom on bounds"
 msgstr ""
 
 #. TRANSLATORS src/components/map/HistoryControl.vue:7
-#: /app/specialVueFakeDummyForL10nScript.js:352
+#: /app/specialVueFakeDummyForL10nScript.js:354
 msgid "Undo {action} (Ctrl+Z)"
 msgstr ""
 
 #. TRANSLATORS src/components/map/HistoryControl.vue:13
-#: /app/specialVueFakeDummyForL10nScript.js:354
+#: /app/specialVueFakeDummyForL10nScript.js:356
 msgid "Redo {action} (Ctrl+Shift+Z)"
 msgstr ""
 
 #. TRANSLATORS src/components/map/HistoryControl.vue:71
-#: /app/specialVueFakeDummyForL10nScript.js:356
+#: /app/specialVueFakeDummyForL10nScript.js:358
 msgid "Move photo"
 msgstr ""
 
 #. TRANSLATORS src/components/map/HistoryControl.vue:73
-#: /app/specialVueFakeDummyForL10nScript.js:358
+#: /app/specialVueFakeDummyForL10nScript.js:360
 msgid "Add favorite"
 msgstr ""
 
 #. TRANSLATORS src/components/map/HistoryControl.vue:75
-#: /app/specialVueFakeDummyForL10nScript.js:360
+#: /app/specialVueFakeDummyForL10nScript.js:362
 msgid "Edit favorite"
 msgstr ""
 
 #. TRANSLATORS src/components/map/HistoryControl.vue:79
-#: /app/specialVueFakeDummyForL10nScript.js:364
+#: /app/specialVueFakeDummyForL10nScript.js:366
 msgid "Rename favorite category"
 msgstr ""
 
 #. TRANSLATORS src/components/map/HistoryControl.vue:83
-#: /app/specialVueFakeDummyForL10nScript.js:368
+#: /app/specialVueFakeDummyForL10nScript.js:370
 msgid "Delete contact address"
 msgstr ""
 
 #. TRANSLATORS src/components/map/PhotoSuggestionsLayer.vue:44
 #. TRANSLATORS src/components/map/PhotosLayer.vue:51
-#: /app/specialVueFakeDummyForL10nScript.js:372
-#: /app/specialVueFakeDummyForL10nScript.js:386
+#: /app/specialVueFakeDummyForL10nScript.js:374
+#: /app/specialVueFakeDummyForL10nScript.js:388
 msgid "Display pictures"
 msgstr ""
 
 #. TRANSLATORS src/components/map/PhotoSuggestionsLayer.vue:47
 #. TRANSLATORS src/components/map/PhotosLayer.vue:54
-#: /app/specialVueFakeDummyForL10nScript.js:374
-#: /app/specialVueFakeDummyForL10nScript.js:388
+#: /app/specialVueFakeDummyForL10nScript.js:376
+#: /app/specialVueFakeDummyForL10nScript.js:390
 msgid "Spiderfy"
 msgstr ""
 
 #. TRANSLATORS src/components/map/PhotosLayer.vue:29
-#: /app/specialVueFakeDummyForL10nScript.js:378
+#: /app/specialVueFakeDummyForL10nScript.js:380
 msgid "Open in Sidebar"
 msgstr ""
 
 #. TRANSLATORS src/components/map/PhotosLayer.vue:35
-#: /app/specialVueFakeDummyForL10nScript.js:382
-#: /app/specialVueFakeDummyForL10nScript.js:392
+#: /app/specialVueFakeDummyForL10nScript.js:384
+#: /app/specialVueFakeDummyForL10nScript.js:394
 msgid "Remove geo data"
 msgstr ""
 
 #. TRANSLATORS src/components/map/PhotosLayer.vue:390
-#: /app/specialVueFakeDummyForL10nScript.js:394
+#: /app/specialVueFakeDummyForL10nScript.js:396
 msgid "Are you sure you want to remove geo data of {nb} photos?"
 msgstr ""
 
 #. TRANSLATORS src/components/map/PhotosLayer.vue:393
-#: /app/specialVueFakeDummyForL10nScript.js:396
+#: /app/specialVueFakeDummyForL10nScript.js:398
 msgid "Yes"
 msgstr ""
 
 #. TRANSLATORS src/components/map/PlaceContactPopup.vue:11
-#: /app/specialVueFakeDummyForL10nScript.js:400
+#: /app/specialVueFakeDummyForL10nScript.js:402
 msgid "New contact address"
 msgstr ""
 
 #. TRANSLATORS src/components/map/PlaceContactPopup.vue:31
-#: /app/specialVueFakeDummyForL10nScript.js:402
+#: /app/specialVueFakeDummyForL10nScript.js:404
 msgid "Choose a contact"
 msgstr ""
 
 #. TRANSLATORS src/components/map/PlaceContactPopup.vue:46
-#: /app/specialVueFakeDummyForL10nScript.js:404
+#: /app/specialVueFakeDummyForL10nScript.js:406
 msgid "Address type"
 msgstr ""
 
 #. TRANSLATORS src/components/map/PlaceContactPopup.vue:66
-#: /app/specialVueFakeDummyForL10nScript.js:410
+#: /app/specialVueFakeDummyForL10nScript.js:412
 msgid "Add address to contact"
 msgstr ""
 
 #. TRANSLATORS src/components/map/PoiMarker.vue:30
-#: /app/specialVueFakeDummyForL10nScript.js:416
+#: /app/specialVueFakeDummyForL10nScript.js:418
 msgid "Open"
 msgstr ""
 
 #. TRANSLATORS src/components/map/PoiMarker.vue:36
-#: /app/specialVueFakeDummyForL10nScript.js:418
+#: /app/specialVueFakeDummyForL10nScript.js:420
 msgid "closes in {nb} minutes"
 msgstr ""
 
 #. TRANSLATORS src/components/map/PoiMarker.vue:40
-#: /app/specialVueFakeDummyForL10nScript.js:420
+#: /app/specialVueFakeDummyForL10nScript.js:422
 msgid "until {date}"
 msgstr ""
 
 #. TRANSLATORS src/components/map/PoiMarker.vue:45
-#: /app/specialVueFakeDummyForL10nScript.js:422
+#: /app/specialVueFakeDummyForL10nScript.js:424
 msgid "Closed"
 msgstr ""
 
 #. TRANSLATORS src/components/map/PoiMarker.vue:50
-#: /app/specialVueFakeDummyForL10nScript.js:424
+#: /app/specialVueFakeDummyForL10nScript.js:426
 msgid "opens at {date}"
 msgstr ""
 
 #. TRANSLATORS src/components/map/SearchControl.vue:10
 #. TRANSLATORS src/components/map/routing/RoutingControl.vue:6
-#: /app/specialVueFakeDummyForL10nScript.js:426
-#: /app/specialVueFakeDummyForL10nScript.js:460
+#: /app/specialVueFakeDummyForL10nScript.js:428
+#: /app/specialVueFakeDummyForL10nScript.js:462
 msgid "Find directions"
 msgstr ""
 
 #. TRANSLATORS src/components/map/SearchControl.vue:16
-#: /app/specialVueFakeDummyForL10nScript.js:428
+#: /app/specialVueFakeDummyForL10nScript.js:430
 msgid "Clear POIs"
 msgstr ""
 
 #. TRANSLATORS src/components/map/SearchField.vue:36
-#: /app/specialVueFakeDummyForL10nScript.js:430
+#: /app/specialVueFakeDummyForL10nScript.js:432
 msgid "No suggestions"
 msgstr ""
 
 #. TRANSLATORS src/components/map/SearchField.vue:63
-#: /app/specialVueFakeDummyForL10nScript.js:432
+#: /app/specialVueFakeDummyForL10nScript.js:434
 msgid "Search"
 msgstr ""
 
 #. TRANSLATORS src/components/map/SearchField.vue:182
-#: /app/specialVueFakeDummyForL10nScript.js:434
+#: /app/specialVueFakeDummyForL10nScript.js:436
 msgid "Point at {coords}"
 msgstr ""
 
 #. TRANSLATORS src/components/map/SearchField.vue:196
-#: /app/specialVueFakeDummyForL10nScript.js:436
+#: /app/specialVueFakeDummyForL10nScript.js:438
 msgid "Search for {q}"
 msgstr ""
 
 #. TRANSLATORS src/components/map/SimpleOSMAddress.vue:55
-#: /app/specialVueFakeDummyForL10nScript.js:438
 #: /app/specialVueFakeDummyForL10nScript.js:440
+#: /app/specialVueFakeDummyForL10nScript.js:442
 msgid "Unknown Place"
 msgstr ""
 
 #. TRANSLATORS src/components/map/TrackHoverMarker.vue:9
-#: /app/specialVueFakeDummyForL10nScript.js:442
+#: /app/specialVueFakeDummyForL10nScript.js:444
 msgid "File"
 msgstr ""
 
 #. TRANSLATORS src/components/map/TrackHoverMarker.vue:12
-#: /app/specialVueFakeDummyForL10nScript.js:444
+#: /app/specialVueFakeDummyForL10nScript.js:446
 msgid "Track/Route"
 msgstr ""
 
 #. TRANSLATORS src/components/map/TrackLayer.vue:13
-#: /app/specialVueFakeDummyForL10nScript.js:452
+#: /app/specialVueFakeDummyForL10nScript.js:454
 msgid "Display elevation"
 msgstr ""
 
 #. TRANSLATORS src/components/map/TrackLayer.vue:26
-#: /app/specialVueFakeDummyForL10nScript.js:458
+#: /app/specialVueFakeDummyForL10nScript.js:460
 msgid "Begins at"
 msgstr ""
 
 #. TRANSLATORS src/components/map/routing/RoutingMachine.vue:83
-#: /app/specialVueFakeDummyForL10nScript.js:462
+#: /app/specialVueFakeDummyForL10nScript.js:464
 msgid "north"
 msgstr ""
 
 #. TRANSLATORS src/components/map/routing/RoutingMachine.vue:84
-#: /app/specialVueFakeDummyForL10nScript.js:464
+#: /app/specialVueFakeDummyForL10nScript.js:466
 msgid "northeast"
 msgstr ""
 
 #. TRANSLATORS src/components/map/routing/RoutingMachine.vue:85
-#: /app/specialVueFakeDummyForL10nScript.js:466
+#: /app/specialVueFakeDummyForL10nScript.js:468
 msgid "east"
 msgstr ""
 
 #. TRANSLATORS src/components/map/routing/RoutingMachine.vue:86
-#: /app/specialVueFakeDummyForL10nScript.js:468
+#: /app/specialVueFakeDummyForL10nScript.js:470
 msgid "southeast"
 msgstr ""
 
 #. TRANSLATORS src/components/map/routing/RoutingMachine.vue:87
-#: /app/specialVueFakeDummyForL10nScript.js:470
+#: /app/specialVueFakeDummyForL10nScript.js:472
 msgid "south"
 msgstr ""
 
 #. TRANSLATORS src/components/map/routing/RoutingMachine.vue:88
-#: /app/specialVueFakeDummyForL10nScript.js:472
+#: /app/specialVueFakeDummyForL10nScript.js:474
 msgid "southwest"
 msgstr ""
 
 #. TRANSLATORS src/components/map/routing/RoutingMachine.vue:89
-#: /app/specialVueFakeDummyForL10nScript.js:474
+#: /app/specialVueFakeDummyForL10nScript.js:476
 msgid "west"
 msgstr ""
 
 #. TRANSLATORS src/components/map/routing/RoutingMachine.vue:90
-#: /app/specialVueFakeDummyForL10nScript.js:476
+#: /app/specialVueFakeDummyForL10nScript.js:478
 msgid "northwest"
 msgstr ""
 
 #. TRANSLATORS src/components/map/routing/RoutingMachine.vue:91
-#: /app/specialVueFakeDummyForL10nScript.js:478
+#: /app/specialVueFakeDummyForL10nScript.js:480
 msgid "slight right"
 msgstr ""
 
 #. TRANSLATORS src/components/map/routing/RoutingMachine.vue:92
-#: /app/specialVueFakeDummyForL10nScript.js:480
+#: /app/specialVueFakeDummyForL10nScript.js:482
 msgid "right"
 msgstr ""
 
 #. TRANSLATORS src/components/map/routing/RoutingMachine.vue:93
-#: /app/specialVueFakeDummyForL10nScript.js:482
+#: /app/specialVueFakeDummyForL10nScript.js:484
 msgid "sharp right"
 msgstr ""
 
 #. TRANSLATORS src/components/map/routing/RoutingMachine.vue:94
-#: /app/specialVueFakeDummyForL10nScript.js:484
+#: /app/specialVueFakeDummyForL10nScript.js:486
 msgid "slight left"
 msgstr ""
 
 #. TRANSLATORS src/components/map/routing/RoutingMachine.vue:95
-#: /app/specialVueFakeDummyForL10nScript.js:486
+#: /app/specialVueFakeDummyForL10nScript.js:488
 msgid "left"
 msgstr ""
 
 #. TRANSLATORS src/components/map/routing/RoutingMachine.vue:96
-#: /app/specialVueFakeDummyForL10nScript.js:488
+#: /app/specialVueFakeDummyForL10nScript.js:490
 msgid "sharp left"
 msgstr ""
 
 #. TRANSLATORS src/components/map/routing/RoutingMachine.vue:97
 #. TRANSLATORS src/components/map/routing/RoutingMachine.vue:106
-#: /app/specialVueFakeDummyForL10nScript.js:490
-#: /app/specialVueFakeDummyForL10nScript.js:498
+#: /app/specialVueFakeDummyForL10nScript.js:492
+#: /app/specialVueFakeDummyForL10nScript.js:500
 msgid "Turn around"
 msgstr ""
 
 #. TRANSLATORS src/components/map/routing/RoutingMachine.vue:102
-#: /app/specialVueFakeDummyForL10nScript.js:492
+#: /app/specialVueFakeDummyForL10nScript.js:494
 msgid "Head {dir}"
 msgstr ""
 
 #. TRANSLATORS src/components/map/routing/RoutingMachine.vue:103
-#: /app/specialVueFakeDummyForL10nScript.js:494
+#: /app/specialVueFakeDummyForL10nScript.js:496
 msgid " on {road}"
 msgstr ""
 
 #. TRANSLATORS src/components/map/routing/RoutingMachine.vue:105
-#: /app/specialVueFakeDummyForL10nScript.js:496
+#: /app/specialVueFakeDummyForL10nScript.js:498
 msgid "Continue {dir}"
 msgstr ""
 
 #. TRANSLATORS src/components/map/routing/RoutingMachine.vue:107
-#: /app/specialVueFakeDummyForL10nScript.js:500
+#: /app/specialVueFakeDummyForL10nScript.js:502
 msgid "Waypoint reached"
 msgstr ""
 
 #. TRANSLATORS src/components/map/routing/RoutingMachine.vue:109
-#: /app/specialVueFakeDummyForL10nScript.js:502
+#: /app/specialVueFakeDummyForL10nScript.js:504
 msgid "Take the {exitStr} exit in the roundabout"
 msgstr ""
 
 #. TRANSLATORS src/components/map/routing/RoutingMachine.vue:110
-#: /app/specialVueFakeDummyForL10nScript.js:504
-#: /app/specialVueFakeDummyForL10nScript.js:510
-#: /app/specialVueFakeDummyForL10nScript.js:514
-#: /app/specialVueFakeDummyForL10nScript.js:518
-#: /app/specialVueFakeDummyForL10nScript.js:522
-#: /app/specialVueFakeDummyForL10nScript.js:526
+#: /app/specialVueFakeDummyForL10nScript.js:506
+#: /app/specialVueFakeDummyForL10nScript.js:512
+#: /app/specialVueFakeDummyForL10nScript.js:516
+#: /app/specialVueFakeDummyForL10nScript.js:520
+#: /app/specialVueFakeDummyForL10nScript.js:524
+#: /app/specialVueFakeDummyForL10nScript.js:528
 msgid " onto {road}"
 msgstr ""
 
 #. TRANSLATORS src/components/map/routing/RoutingMachine.vue:112
-#: /app/specialVueFakeDummyForL10nScript.js:506
+#: /app/specialVueFakeDummyForL10nScript.js:508
 msgid "Destination reached"
 msgstr ""
 
 #. TRANSLATORS src/components/map/routing/RoutingMachine.vue:114
-#: /app/specialVueFakeDummyForL10nScript.js:508
+#: /app/specialVueFakeDummyForL10nScript.js:510
 msgid "At the fork, turn {modifier}"
 msgstr ""
 
 #. TRANSLATORS src/components/map/routing/RoutingMachine.vue:118
-#: /app/specialVueFakeDummyForL10nScript.js:512
+#: /app/specialVueFakeDummyForL10nScript.js:514
 msgid "Merge {modifier}"
 msgstr ""
 
 #. TRANSLATORS src/components/map/routing/RoutingMachine.vue:122
-#: /app/specialVueFakeDummyForL10nScript.js:516
+#: /app/specialVueFakeDummyForL10nScript.js:518
 msgid "Turn {modifier} on the ramp"
 msgstr ""
 
 #. TRANSLATORS src/components/map/routing/RoutingMachine.vue:126
-#: /app/specialVueFakeDummyForL10nScript.js:520
+#: /app/specialVueFakeDummyForL10nScript.js:522
 msgid "Take the ramp on the {modifier}"
 msgstr ""
 
 #. TRANSLATORS src/components/map/routing/RoutingMachine.vue:130
-#: /app/specialVueFakeDummyForL10nScript.js:524
+#: /app/specialVueFakeDummyForL10nScript.js:526
 msgid "Turn {modifier} at the end of the road"
 msgstr ""
 
 #. TRANSLATORS src/components/map/routing/RoutingMachine.vue:133
-#: /app/specialVueFakeDummyForL10nScript.js:528
+#: /app/specialVueFakeDummyForL10nScript.js:530
 msgid "onto {road}"
 msgstr ""
 
 #. TRANSLATORS src/components/map/routing/RoutingMachine.vue:136
 #. TRANSLATORS src/components/map/routing/RoutingSteps.vue:83
-#: /app/specialVueFakeDummyForL10nScript.js:530
-#: /app/specialVueFakeDummyForL10nScript.js:610
+#: /app/specialVueFakeDummyForL10nScript.js:532
+#: /app/specialVueFakeDummyForL10nScript.js:612
 msgid "Start"
 msgstr ""
 
 #. TRANSLATORS src/components/map/routing/RoutingMachine.vue:137
-#: /app/specialVueFakeDummyForL10nScript.js:532
+#: /app/specialVueFakeDummyForL10nScript.js:534
 msgid "Via {viaNumber}"
 msgstr ""
 
 #. TRANSLATORS src/components/map/routing/RoutingMachine.vue:138
 #. TRANSLATORS src/components/map/routing/RoutingSteps.vue:85
-#: /app/specialVueFakeDummyForL10nScript.js:534
-#: /app/specialVueFakeDummyForL10nScript.js:612
+#: /app/specialVueFakeDummyForL10nScript.js:536
+#: /app/specialVueFakeDummyForL10nScript.js:614
 msgid "Destination"
 msgstr ""
 
 #. TRANSLATORS src/components/map/routing/RoutingMachine.vue:144
-#: /app/specialVueFakeDummyForL10nScript.js:536
+#: /app/specialVueFakeDummyForL10nScript.js:538
 msgid "m"
 msgstr ""
 
 #. TRANSLATORS src/components/map/routing/RoutingMachine.vue:145
-#: /app/specialVueFakeDummyForL10nScript.js:538
+#: /app/specialVueFakeDummyForL10nScript.js:540
 msgid "km"
 msgstr ""
 
 #. TRANSLATORS src/components/map/routing/RoutingMachine.vue:146
-#: /app/specialVueFakeDummyForL10nScript.js:540
+#: /app/specialVueFakeDummyForL10nScript.js:542
 msgid "yd"
 msgstr ""
 
 #. TRANSLATORS src/components/map/routing/RoutingMachine.vue:147
-#: /app/specialVueFakeDummyForL10nScript.js:542
+#: /app/specialVueFakeDummyForL10nScript.js:544
 msgid "mi"
 msgstr ""
 
 #. TRANSLATORS src/components/map/routing/RoutingMachine.vue:148
-#: /app/specialVueFakeDummyForL10nScript.js:544
+#: /app/specialVueFakeDummyForL10nScript.js:546
 msgid "h"
 msgstr ""
 
 #. TRANSLATORS src/components/map/routing/RoutingMachine.vue:149
-#: /app/specialVueFakeDummyForL10nScript.js:546
+#: /app/specialVueFakeDummyForL10nScript.js:548
 msgid "min"
 msgstr ""
 
 #. TRANSLATORS src/components/map/routing/RoutingMachine.vue:150
-#: /app/specialVueFakeDummyForL10nScript.js:548
+#: /app/specialVueFakeDummyForL10nScript.js:550
 msgid "s"
 msgstr ""
 
 #. TRANSLATORS src/components/map/routing/RoutingMachine.vue:154
-#: /app/specialVueFakeDummyForL10nScript.js:550
+#: /app/specialVueFakeDummyForL10nScript.js:552
 msgid "By car (OSRM demo)"
 msgstr ""
 
 #. TRANSLATORS src/components/map/routing/RoutingMachine.vue:193
-#: /app/specialVueFakeDummyForL10nScript.js:552
+#: /app/specialVueFakeDummyForL10nScript.js:554
 msgid "By car (OSRM)"
 msgstr ""
 
 #. TRANSLATORS src/components/map/routing/RoutingMachine.vue:197
-#: /app/specialVueFakeDummyForL10nScript.js:554
+#: /app/specialVueFakeDummyForL10nScript.js:556
 msgid "By bike (OSRM)"
 msgstr ""
 
 #. TRANSLATORS src/components/map/routing/RoutingMachine.vue:201
-#: /app/specialVueFakeDummyForL10nScript.js:556
+#: /app/specialVueFakeDummyForL10nScript.js:558
 msgid "By foot (OSRM)"
 msgstr ""
 
 #. TRANSLATORS src/components/map/routing/RoutingMachine.vue:205
-#: /app/specialVueFakeDummyForL10nScript.js:558
+#: /app/specialVueFakeDummyForL10nScript.js:560
 msgid "By bike (Mapbox)"
 msgstr ""
 
 #. TRANSLATORS src/components/map/routing/RoutingMachine.vue:206
-#: /app/specialVueFakeDummyForL10nScript.js:560
+#: /app/specialVueFakeDummyForL10nScript.js:562
 msgid "By foot (Mapbox)"
 msgstr ""
 
 #. TRANSLATORS src/components/map/routing/RoutingMachine.vue:207
-#: /app/specialVueFakeDummyForL10nScript.js:562
+#: /app/specialVueFakeDummyForL10nScript.js:564
 msgid "By car with traffic (Mapbox)"
 msgstr ""
 
 #. TRANSLATORS src/components/map/routing/RoutingMachine.vue:208
-#: /app/specialVueFakeDummyForL10nScript.js:564
+#: /app/specialVueFakeDummyForL10nScript.js:566
 msgid "By car without traffic (Mapbox)"
 msgstr ""
 
 #. TRANSLATORS src/components/map/routing/RoutingMachine.vue:217
-#: /app/specialVueFakeDummyForL10nScript.js:566
+#: /app/specialVueFakeDummyForL10nScript.js:568
 msgid "By car (GraphHopper)"
 msgstr ""
 
 #. TRANSLATORS src/components/map/routing/RoutingMachine.vue:218
-#: /app/specialVueFakeDummyForL10nScript.js:568
+#: /app/specialVueFakeDummyForL10nScript.js:570
 msgid "By bike (GraphHopper)"
 msgstr ""
 
 #. TRANSLATORS src/components/map/routing/RoutingMachine.vue:219
-#: /app/specialVueFakeDummyForL10nScript.js:570
+#: /app/specialVueFakeDummyForL10nScript.js:572
 msgid "By Foot (GraphHopper)"
 msgstr ""
 
 #. TRANSLATORS src/components/map/routing/RoutingMachine.vue:323
-#: /app/specialVueFakeDummyForL10nScript.js:572
+#: /app/specialVueFakeDummyForL10nScript.js:574
 msgid "Routing error:"
 msgstr ""
 
 #. TRANSLATORS src/components/map/routing/RoutingMachine.vue:420
 #. TRANSLATORS src/components/map/routing/RoutingSteps.vue:29
-#: /app/specialVueFakeDummyForL10nScript.js:574
-#: /app/specialVueFakeDummyForL10nScript.js:608
+#: /app/specialVueFakeDummyForL10nScript.js:576
+#: /app/specialVueFakeDummyForL10nScript.js:610
 msgid "Reverse steps order"
 msgstr ""
 
 #. TRANSLATORS src/components/map/routing/RoutingMachine.vue:421
 #. TRANSLATORS src/components/map/routing/RoutingSteps.vue:14
-#: /app/specialVueFakeDummyForL10nScript.js:576
-#: /app/specialVueFakeDummyForL10nScript.js:602
+#: /app/specialVueFakeDummyForL10nScript.js:578
+#: /app/specialVueFakeDummyForL10nScript.js:604
 msgid "Add step"
 msgstr ""
 
 #. TRANSLATORS src/components/map/routing/RoutingMachine.vue:461
-#: /app/specialVueFakeDummyForL10nScript.js:578
+#: /app/specialVueFakeDummyForL10nScript.js:580
 msgid "Routing is currently disabled."
 msgstr ""
 
 #. TRANSLATORS src/components/map/routing/RoutingMachine.vue:464
-#: /app/specialVueFakeDummyForL10nScript.js:580
+#: /app/specialVueFakeDummyForL10nScript.js:582
 msgid "Nextcloud additional settings"
 msgstr ""
 
 #. TRANSLATORS src/components/map/routing/RoutingMachine.vue:467
-#: /app/specialVueFakeDummyForL10nScript.js:582
+#: /app/specialVueFakeDummyForL10nScript.js:584
 msgid "Add a routing service"
 msgstr ""
 
 #. TRANSLATORS src/components/map/routing/RoutingMachine.vue:479
-#: /app/specialVueFakeDummyForL10nScript.js:584
+#: /app/specialVueFakeDummyForL10nScript.js:586
 msgid "Export as"
 msgstr ""
 
 #. TRANSLATORS src/components/map/routing/RoutingMachine.vue:482
-#: /app/specialVueFakeDummyForL10nScript.js:586
+#: /app/specialVueFakeDummyForL10nScript.js:588
 msgid "GPX track"
 msgstr ""
 
 #. TRANSLATORS src/components/map/routing/RoutingMachine.vue:484
-#: /app/specialVueFakeDummyForL10nScript.js:588
+#: /app/specialVueFakeDummyForL10nScript.js:590
 msgid "GPX route"
 msgstr ""
 
 #. TRANSLATORS src/components/map/routing/RoutingMachine.vue:513
-#: /app/specialVueFakeDummyForL10nScript.js:594
+#: /app/specialVueFakeDummyForL10nScript.js:596
 msgid "Route exported to {path}."
 msgstr ""
 
 #. TRANSLATORS src/components/map/routing/RoutingMachine.vue:514
-#: /app/specialVueFakeDummyForL10nScript.js:596
+#: /app/specialVueFakeDummyForL10nScript.js:598
 msgid "Track exported to {path}."
 msgstr ""
 
 #. TRANSLATORS src/components/map/routing/RoutingMachine.vue:519
-#: /app/specialVueFakeDummyForL10nScript.js:598
+#: /app/specialVueFakeDummyForL10nScript.js:600
 msgid "Failed to export route"
 msgstr ""
 
 #. TRANSLATORS src/components/map/routing/RoutingMachine.vue:520
-#: /app/specialVueFakeDummyForL10nScript.js:600
+#: /app/specialVueFakeDummyForL10nScript.js:602
 msgid "Failed to export track"
 msgstr ""
 
 #. TRANSLATORS src/components/map/routing/RoutingSteps.vue:19
-#: /app/specialVueFakeDummyForL10nScript.js:604
+#: /app/specialVueFakeDummyForL10nScript.js:606
 msgid "Export current route"
 msgstr ""
 
 #. TRANSLATORS src/components/map/routing/RoutingSteps.vue:24
-#: /app/specialVueFakeDummyForL10nScript.js:606
+#: /app/specialVueFakeDummyForL10nScript.js:608
 msgid "Zoom on current route"
 msgstr ""
 
 #. TRANSLATORS src/components/map/routing/RoutingSteps.vue:86
-#: /app/specialVueFakeDummyForL10nScript.js:614
+#: /app/specialVueFakeDummyForL10nScript.js:616
 msgid "Via {i}"
 msgstr ""
 
 #. TRANSLATORS src/views/App.vue:166
-#: /app/specialVueFakeDummyForL10nScript.js:616
+#: /app/specialVueFakeDummyForL10nScript.js:618
 msgid "Details"
 msgstr ""
 
 #. TRANSLATORS src/views/App.vue:447
-#: /app/specialVueFakeDummyForL10nScript.js:618
 #: /app/specialVueFakeDummyForL10nScript.js:620
 #: /app/specialVueFakeDummyForL10nScript.js:622
 #: /app/specialVueFakeDummyForL10nScript.js:624
+#: /app/specialVueFakeDummyForL10nScript.js:626
 msgid "My location"
 msgstr ""
 
 #. TRANSLATORS src/views/App.vue:744
-#: /app/specialVueFakeDummyForL10nScript.js:628
+#: /app/specialVueFakeDummyForL10nScript.js:630
 msgid "Impossible to get current location"
 msgstr ""
 
 #. TRANSLATORS src/views/App.vue:760
-#: /app/specialVueFakeDummyForL10nScript.js:630
+#: /app/specialVueFakeDummyForL10nScript.js:632
 msgid "Phone"
 msgstr ""
 
 #. TRANSLATORS src/views/App.vue:762
-#: /app/specialVueFakeDummyForL10nScript.js:632
+#: /app/specialVueFakeDummyForL10nScript.js:634
 msgid "Computer"
 msgstr ""
 
 #. TRANSLATORS src/views/App.vue:764
-#: /app/specialVueFakeDummyForL10nScript.js:634
+#: /app/specialVueFakeDummyForL10nScript.js:636
 msgid "Unknown device type"
 msgstr ""
 
 #. TRANSLATORS src/views/App.vue:774
-#: /app/specialVueFakeDummyForL10nScript.js:636
+#: /app/specialVueFakeDummyForL10nScript.js:638
 msgid "Failed to send current position"
 msgstr ""
 
 #. TRANSLATORS src/components/map/routing/RoutingMachine.vue:507
-#: /app/specialVueFakeDummyForL10nScript.js:592
+#: /app/specialVueFakeDummyForL10nScript.js:594
 msgid "Track {date}"
 msgstr ""
 
 #. TRANSLATORS src/views/App.vue:854
-#: /app/specialVueFakeDummyForL10nScript.js:638
+#: /app/specialVueFakeDummyForL10nScript.js:640
 msgid "Photo {photoName} added to map {mapName}"
 msgstr ""
 
 #. TRANSLATORS src/views/App.vue:860
-#: /app/specialVueFakeDummyForL10nScript.js:640
+#: /app/specialVueFakeDummyForL10nScript.js:642
 msgid "Failed to save photo {photoName} to map {mapName}"
 msgstr ""
 
 #. TRANSLATORS src/views/App.vue:894
-#: /app/specialVueFakeDummyForL10nScript.js:642
+#: /app/specialVueFakeDummyForL10nScript.js:644
 msgid "What do you want to place?"
 msgstr ""
 
 #. TRANSLATORS src/views/App.vue:897
-#: /app/specialVueFakeDummyForL10nScript.js:644
+#: /app/specialVueFakeDummyForL10nScript.js:646
 msgid "Photo files"
 msgstr ""
 
 #. TRANSLATORS src/views/App.vue:899
-#: /app/specialVueFakeDummyForL10nScript.js:646
+#: /app/specialVueFakeDummyForL10nScript.js:648
 msgid "Photo folders"
 msgstr ""
 
 #. TRANSLATORS src/views/App.vue:913
-#: /app/specialVueFakeDummyForL10nScript.js:648
+#: /app/specialVueFakeDummyForL10nScript.js:650
 msgid "Choose pictures to place"
 msgstr ""
 
 #. TRANSLATORS src/views/App.vue:924
-#: /app/specialVueFakeDummyForL10nScript.js:650
-#: /app/specialVueFakeDummyForL10nScript.js:734
+#: /app/specialVueFakeDummyForL10nScript.js:652
+#: /app/specialVueFakeDummyForL10nScript.js:736
 msgid "Choose directory of pictures to place"
 msgstr ""
 
 #. TRANSLATORS src/views/App.vue:947
-#: /app/specialVueFakeDummyForL10nScript.js:652
+#: /app/specialVueFakeDummyForL10nScript.js:654
 msgid "\"{path}\" successfully moved"
 msgstr ""
 
 #. TRANSLATORS src/views/App.vue:949
-#: /app/specialVueFakeDummyForL10nScript.js:654
+#: /app/specialVueFakeDummyForL10nScript.js:656
 msgid "{nb} photos moved"
 msgstr ""
 
 #. TRANSLATORS src/views/App.vue:1018
-#: /app/specialVueFakeDummyForL10nScript.js:656
+#: /app/specialVueFakeDummyForL10nScript.js:658
 msgid "Cleared photo cache"
 msgstr ""
 
 #. TRANSLATORS src/views/App.vue:1021
-#: /app/specialVueFakeDummyForL10nScript.js:658
+#: /app/specialVueFakeDummyForL10nScript.js:660
 msgid "Failed to clear photos cache"
 msgstr ""
 
 #. TRANSLATORS src/views/App.vue:1112
-#: /app/specialVueFakeDummyForL10nScript.js:660
+#: /app/specialVueFakeDummyForL10nScript.js:662
 msgid "Saved {r} from {i} locations"
 msgstr ""
 
 #. TRANSLATORS src/views/App.vue:1114
-#: /app/specialVueFakeDummyForL10nScript.js:662
+#: /app/specialVueFakeDummyForL10nScript.js:664
 msgid "Failed to save locations"
 msgstr ""
 
 #. TRANSLATORS src/views/App.vue:1168
-#: /app/specialVueFakeDummyForL10nScript.js:664
+#: /app/specialVueFakeDummyForL10nScript.js:666
 msgid "Contact {contactName} added to map {mapName}"
 msgstr ""
 
 #. TRANSLATORS src/views/App.vue:1171
-#: /app/specialVueFakeDummyForL10nScript.js:666
+#: /app/specialVueFakeDummyForL10nScript.js:668
 msgid "Failed to save Contact {contactName} to map {mapName}"
 msgstr ""
 
 #. TRANSLATORS src/views/App.vue:1180
-#: /app/specialVueFakeDummyForL10nScript.js:668
-#: /app/specialVueFakeDummyForL10nScript.js:672
+#: /app/specialVueFakeDummyForL10nScript.js:670
+#: /app/specialVueFakeDummyForL10nScript.js:674
 msgid "All Contacts added to map {mapName}"
 msgstr ""
 
 #. TRANSLATORS src/views/App.vue:1183
-#: /app/specialVueFakeDummyForL10nScript.js:670
-#: /app/specialVueFakeDummyForL10nScript.js:674
+#: /app/specialVueFakeDummyForL10nScript.js:672
+#: /app/specialVueFakeDummyForL10nScript.js:676
 msgid "Failed to save all Contacts to map {mapName}"
 msgstr ""
 
 #. TRANSLATORS src/views/App.vue:1255
-#: /app/specialVueFakeDummyForL10nScript.js:676
+#: /app/specialVueFakeDummyForL10nScript.js:678
 msgid "Failed to load contacts"
 msgstr ""
 
 #. TRANSLATORS src/views/App.vue:1266
-#: /app/specialVueFakeDummyForL10nScript.js:678
+#: /app/specialVueFakeDummyForL10nScript.js:680
 msgid "Not grouped"
 msgstr ""
 
 #. TRANSLATORS src/views/App.vue:1565
-#: /app/specialVueFakeDummyForL10nScript.js:682
+#: /app/specialVueFakeDummyForL10nScript.js:684
 msgid "Favorites exported in {path}"
 msgstr ""
 
 #. TRANSLATORS src/views/App.vue:1572
-#: /app/specialVueFakeDummyForL10nScript.js:684
+#: /app/specialVueFakeDummyForL10nScript.js:686
 msgid ""
 "Import favorites from GeoJSON (Google Maps), gpx (OsmAnd, Nextcloud Maps) or "
 "kmz/kml (F-Droid Maps, Maps.me, Marble)"
 msgstr ""
 
 #. TRANSLATORS src/views/App.vue:1601
-#: /app/specialVueFakeDummyForL10nScript.js:686
+#: /app/specialVueFakeDummyForL10nScript.js:688
 msgid "Favorite {favoriteName} added to map {mapName}"
 msgstr ""
 
 #. TRANSLATORS src/views/App.vue:1604
-#: /app/specialVueFakeDummyForL10nScript.js:688
+#: /app/specialVueFakeDummyForL10nScript.js:690
 msgid "Failed to save Favorite {favoriteName} to map {mapName}"
 msgstr ""
 
 #. TRANSLATORS src/views/App.vue:1612
-#: /app/specialVueFakeDummyForL10nScript.js:690
+#: /app/specialVueFakeDummyForL10nScript.js:692
 msgid "Favorite category {favoriteName} linked to map {mapName}"
 msgstr ""
 
 #. TRANSLATORS src/views/App.vue:1615
-#: /app/specialVueFakeDummyForL10nScript.js:692
+#: /app/specialVueFakeDummyForL10nScript.js:694
 msgid "Failed to link Favorite category {favoriteName} to map {mapName}"
 msgstr ""
 
 #. TRANSLATORS src/views/App.vue:1621
-#: /app/specialVueFakeDummyForL10nScript.js:694
+#: /app/specialVueFakeDummyForL10nScript.js:696
 msgid "Favorite category {favoriteName} copied to map {mapName}"
 msgstr ""
 
 #. TRANSLATORS src/views/App.vue:1623
-#: /app/specialVueFakeDummyForL10nScript.js:696
+#: /app/specialVueFakeDummyForL10nScript.js:698
 msgid "Failed to copy Favorite category {favoriteName} to map {mapName}"
 msgstr ""
 
 #. TRANSLATORS src/views/App.vue:1636
-#: /app/specialVueFakeDummyForL10nScript.js:698
+#: /app/specialVueFakeDummyForL10nScript.js:700
 msgid "Favorite category {favoriteName} unlinked from map"
 msgstr ""
 
 #. TRANSLATORS src/views/App.vue:1639
-#: /app/specialVueFakeDummyForL10nScript.js:700
+#: /app/specialVueFakeDummyForL10nScript.js:702
 msgid "Failed to remove Favorite category {favoriteName} from map"
 msgstr ""
 
 #. TRANSLATORS src/views/App.vue:1744
-#: /app/specialVueFakeDummyForL10nScript.js:704
+#: /app/specialVueFakeDummyForL10nScript.js:706
 msgid "Click on the map to add a favorite, press Esc to cancel"
 msgstr ""
 
 #. TRANSLATORS src/views/App.vue:1920
-#: /app/specialVueFakeDummyForL10nScript.js:706
+#: /app/specialVueFakeDummyForL10nScript.js:708
 msgid "Devices are not yet available on custom Maps"
 msgstr ""
 
 #. TRANSLATORS src/views/App.vue:2029
-#: /app/specialVueFakeDummyForL10nScript.js:708
+#: /app/specialVueFakeDummyForL10nScript.js:710
 msgid "Track {trackName} added to map {mapName}"
 msgstr ""
 
 #. TRANSLATORS src/views/App.vue:2038
-#: /app/specialVueFakeDummyForL10nScript.js:710
+#: /app/specialVueFakeDummyForL10nScript.js:712
 msgid "Failed to save track {trackName} to map {mapName}"
 msgstr ""
 
 #. TRANSLATORS src/views/App.vue:2057
-#: /app/specialVueFakeDummyForL10nScript.js:712
-#: /app/specialVueFakeDummyForL10nScript.js:716
+#: /app/specialVueFakeDummyForL10nScript.js:714
+#: /app/specialVueFakeDummyForL10nScript.js:718
 msgid "Devices exported in {path}"
 msgstr ""
 
 #. TRANSLATORS src/views/App.vue:2060
-#: /app/specialVueFakeDummyForL10nScript.js:714
-#: /app/specialVueFakeDummyForL10nScript.js:718
+#: /app/specialVueFakeDummyForL10nScript.js:716
+#: /app/specialVueFakeDummyForL10nScript.js:720
 msgid "Failed to export devices"
 msgstr ""
 
 #. TRANSLATORS src/components/map/routing/RoutingMachine.vue:506
-#: /app/specialVueFakeDummyForL10nScript.js:590
+#: /app/specialVueFakeDummyForL10nScript.js:592
 msgid "Route {date}"
 msgstr ""
 
 #. TRANSLATORS src/views/App.vue:2085
-#: /app/specialVueFakeDummyForL10nScript.js:720
+#: /app/specialVueFakeDummyForL10nScript.js:722
 msgid "Failed to delete device"
 msgstr ""
 
 #. TRANSLATORS src/views/App.vue:2133
-#: /app/specialVueFakeDummyForL10nScript.js:722
+#: /app/specialVueFakeDummyForL10nScript.js:724
 msgid ""
 "Import devices from gpx (Nextcloud Maps) or kml/kmz (Google Timeline) file"
 msgstr ""
 
 #. TRANSLATORS src/views/App.vue:2145
-#: /app/specialVueFakeDummyForL10nScript.js:724 /app/src/filetypes.js:60
+#: /app/specialVueFakeDummyForL10nScript.js:726 /app/src/filetypes.js:60
 msgid "{nb} devices imported from {path}"
 msgstr ""
 
 #. TRANSLATORS src/views/App.vue:2149
-#: /app/specialVueFakeDummyForL10nScript.js:726 /app/src/filetypes.js:64
+#: /app/specialVueFakeDummyForL10nScript.js:728 /app/src/filetypes.js:64
 msgid "Failed to import devices"
 msgstr ""
 
 #. TRANSLATORS src/views/App.vue:2162
-#: /app/specialVueFakeDummyForL10nScript.js:728
 #: /app/specialVueFakeDummyForL10nScript.js:730
+#: /app/specialVueFakeDummyForL10nScript.js:732
 msgid "Default"
 msgstr ""
 
 #. TRANSLATORS src/views/App.vue:2200
-#: /app/specialVueFakeDummyForL10nScript.js:732
+#: /app/specialVueFakeDummyForL10nScript.js:734
 msgid "Folder is not a map"
 msgstr ""
 
 #. TRANSLATORS src/views/App.vue:1111
-#: /app/specialVueFakeDummyForL10nScript.js:736
+#: /app/specialVueFakeDummyForL10nScript.js:738
 msgid "Saved location"
 msgid_plural "Saved all %n locations"
 msgstr[0] ""

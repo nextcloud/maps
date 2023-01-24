@@ -75,7 +75,7 @@ import { LMarker, LTooltip, LPopup } from 'vue2-leaflet'
 import Vue2LeafletMarkerCluster from 'vue2-leaflet-markercluster'
 
 import optionsController from '../../optionsController'
-import {binSearch} from "../../utils/common";
+import {binSearch, getToken} from "../../utils/common";
 
 const PHOTO_MARKER_VIEW_SIZE = 40
 
@@ -336,7 +336,7 @@ export default {
 		},
 		getPreviewUrl(photo) {
 			if (photo && photo.hasPreview) {
-				const token = optionsController.token
+				const token = getToken()
 				return token
 					? generateUrl('apps/files_sharing/publicpreview/') + token + '?file=' + encodeURIComponent(photo.path) + '&x=341&y=256&a=1'
 					: generateUrl('core') + '/preview?fileId=' + photo.fileId + '&x=341&y=256&a=1'

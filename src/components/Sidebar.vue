@@ -86,6 +86,7 @@ import moment from '@nextcloud/moment'
 import { Type as ShareTypes } from '@nextcloud/sharing'
 import axios from '@nextcloud/axios'
 import FileInfo from '../services/FileInfo'
+import optionsController from "../optionsController";
 
 export default {
 	name: 'Sidebar',
@@ -526,7 +527,7 @@ export default {
 				this.title = title
 			}
 
-			if (path && path.trim() !== '') {
+			if (path && path.trim() !== '' && !isPublic()) {
 				// reset data, keep old fileInfo to not reload all tabs and just hide them
 				this.error = null
 				this.loading = true

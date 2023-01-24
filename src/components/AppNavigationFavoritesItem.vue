@@ -30,13 +30,13 @@
 				@click="onZoomAllClick">
 				{{ t('maps', 'Zoom') }}
 			</NcActionButton>
-			<NcActionButton v-if="!publicShare"
+			<NcActionButton v-if="!isPublic"
 				icon="icon-save"
 				:close-after-click="true"
 				@click="$emit('export')">
 				{{ t('maps', 'Export') }}
 			</NcActionButton>
-			<NcActionButton v-if="!readOnly && !publicShare"
+			<NcActionButton v-if="!readOnly && !isPublic"
 				icon="icon-folder"
 				:close-after-click="true"
 				@click="$emit('import')">
@@ -132,6 +132,7 @@ import NcActionCheckbox from '@nextcloud/vue/dist/Components/NcActionCheckbox'
 import NcCounterBubble from '@nextcloud/vue/dist/Components/NcCounterBubble'
 import { showError, showSuccess } from '@nextcloud/dialogs'
 import { generateUrl } from '@nextcloud/router'
+import { isPublic } from '../utils/common'
 
 import optionsController from '../optionsController'
 
@@ -200,9 +201,6 @@ export default {
 			return !farray.some((f) => (f.isUpdateable))
 			&& !(farray.length === 0 && optionsController.optionValues?.isCreatable)
 		},
-		publicShare() {
-			return optionsController.token !== null;
-		},
 	},
 
 	methods: {
@@ -245,6 +243,9 @@ export default {
 		},
 		onAddFavoriteClick(category = null) {
 			this.$emit('add-favorite', category)
+		},
+		isPublic() {
+			return isPublic()
 		},
 	},
 }

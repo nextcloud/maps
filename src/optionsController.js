@@ -1,5 +1,6 @@
 import * as network from './network'
 import { showWarning } from '@nextcloud/dialogs'
+import {getToken} from "./utils/common";
 
 const optionsController = {
 	bounds: [
@@ -20,9 +21,6 @@ const optionsController = {
 	myMapId: (window.location.pathname.includes('/apps/maps/m/'))
 		? parseInt(window.location.pathname.split('/apps/maps/m/')[1].split('/')[0])
 		: null,
-	token: (window.location.pathname.includes('/apps/maps/s/'))
-		? window.location.pathname.split('/apps/maps/s/')[1].split('/')[0]
-		: null,
 	myMapListShow: true,
 	myMapsEnabled: true,
 	disabledFavoriteCategories: [],
@@ -35,12 +33,12 @@ const optionsController = {
 			this.optionValues[k] = newOptionValues[k]
 		}
 		if (this.optionValues.isUpdateable) {
-			network.saveOptionValues(newOptionValues, this.myMapId, this.token)
+			network.saveOptionValues(newOptionValues, this.myMapId, getToken())
 		}
 	},
 
 	restoreOptions(successCB = null) {
-		network.getOptionValues(this.myMapId, this.token)
+		network.getOptionValues(this.myMapId, getToken())
 			.then((response) => {
 				this.handleOptionValues(response.data)
 				if (successCB) {

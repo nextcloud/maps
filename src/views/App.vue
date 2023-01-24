@@ -220,7 +220,7 @@ import AppNavigationDevicesItem from '../components/AppNavigationDevicesItem'
 import AppNavigationMyMapsItem from '../components/AppNavigationMyMapsItem'
 import optionsController from '../optionsController'
 import { getLetterColor, hslToRgb, Timer, getDeviceInfoFromUserAgent2, isComputer, isPhone, sleep } from '../utils'
-import { binSearch } from '../utils/common'
+import {binSearch, getToken, isPublic} from '../utils/common'
 import { poiSearchData } from '../utils/poiData'
 import { processGpx } from '../tracksUtils'
 
@@ -308,8 +308,10 @@ export default {
 			myMapsEnabled: optionsController.myMapsEnabled,
 			myMapId: optionsController.myMapId,
 			selectedMyMap: null,
-			// Public Page
-			token: optionsController.token,
+			// PublicPage
+			token: (window.location.pathname.includes('/apps/maps/s/')
+				? window.location.pathname.split('/apps/maps/s/')[1].split('/')[0]
+				: null),
 		}
 	},
 
@@ -709,7 +711,9 @@ export default {
 				this.selectedTrack.selected = false
 				this.selectedTrack = null
 			}
-			window.OCA.Files.Sidebar.state.file = ''
+			if (!isPublic()) {
+				window.OCA.Files.Sidebar.state.file = ''
+			}
 		},
 		onToggleTrackme(enabled) {
 			if (enabled) {
@@ -878,7 +882,7 @@ export default {
 				return
 			}
 			this.photosLoading = true
-			network.getPhotos(this.myMapId, this.token).then(
+			network.getPhotos(this.myMapId, getToken()).then(
 				/* async (response) => {
 					for (let i = 0; i * 500 < response.data.length; i++) {
 						this.photos.push(...response.data.slice(i * 500, (i + 1) * 500))
@@ -1022,7 +1026,7 @@ export default {
 		},
 		onPhotosClearCache() {
 			this.photosLoading = true
-			network.clearPhotoCache(this.token).then(() => {
+			network.clearPhotoCache(getToken()).then(() => {
 				showSuccess(t('maps', 'Cleared photo cache'))
 			}).catch((error) => {
 				console.error(error)
@@ -1065,7 +1069,7 @@ export default {
 				return
 			}
 			this.photosLoading = true
-			network.getPhotoSuggestions(this.myMapId, this.token).then((response) => {
+			network.getPhotoSuggestions(this.myMapId, getToken()).then((response) => {
 				this.photoSuggestions = response.data.sort((a, b) => {
 					if (a.dateTaken < b.dateTaken) {
 						return -1
@@ -1390,7 +1394,7 @@ export default {
 			this.favoritesLoading = true
 			this.favorites = {}
 			this.favoriteCategoryTokens = {}
-			network.getFavorites(this.myMapId, this.token).then((response) => {
+			network.getFavorites(this.myMapId, getToken()).then((response) => {
 				response.data.forEach((f) => {
 					if (!f.category) {
 						f.category = t('maps', 'Personal')
@@ -1403,7 +1407,7 @@ export default {
 			}).then(() => {
 				this.favoritesLoading = false
 			})
-			network.getSharedFavoriteCategories(this.myMapId, this.token).then((response) => {
+			network.getSharedFavoriteCategories(this.myMapId, getToken()).then((response) => {
 				this.favoriteCategoryTokens = {}
 				response.data.forEach((s) => {
 					this.favoriteCategoryTokens[s.category] = s.token
@@ -1503,7 +1507,7 @@ export default {
 			this.selectedFavorite = f
 		},
 		onFavoriteEdit(f, save = true) {
-			network.editFavorite(f.id, f.name, f.category, f.comment, f.lat, f.lng, this.myMapId, this.token).then((response) => {
+			network.editFavorite(f.id, f.name, f.category, f.comment, f.lat, f.lng, this.myMapId, getToken()).then((response) => {
 				if (save) {
 					this.saveAction({
 						type: 'favoriteEdit',
@@ -1522,7 +1526,7 @@ export default {
 			})
 		},
 		onFavoriteDelete(favid, save = true) {
-			network.deleteFavorite(favid, this.myMapId, this.token).then((response) => {
+			network.deleteFavorite(favid, this.myMapId, getToken()).then((response) => {
 				if (save) {
 					this.saveAction({
 						type: 'favoriteDelete',
@@ -1536,7 +1540,7 @@ export default {
 			})
 		},
 		onFavoritesDelete(favids, save = true) {
-			network.deleteFavorites(favids, this.myMapId, this.token).then((response) => {
+			network.deleteFavorites(favids, this.myMapId, getToken()).then((response) => {
 				if (save) {
 					const deleted = favids.map((favid) => {
 						return { ...this.favorites[favid] }
@@ -1655,7 +1659,7 @@ export default {
 			if (category === null) {
 				category = this.lastUsedFavoriteCategory
 			}
-			return network.addFavorite(latLng.lat, latLng.lng, name, category, comment, extensions, this.myMapId, this.token).then((response) => {
+			return network.addFavorite(latLng.lat, latLng.lng, name, category, comment, extensions, this.myMapId, getToken()).then((response) => {
 				const fav = response.data
 				if (!fav.category) {
 					fav.category = t('maps', 'Personal')
@@ -1688,7 +1692,7 @@ export default {
 			})
 		},
 		onRenameFavoriteCategory(e, save = true) {
-			network.renameFavoriteCategory([e.old], e.new, this.myMapId, this.token).then((response) => {
+			network.renameFavoriteCategory([e.old], e.new, this.myMapId, getToken()).then((response) => {
 				if (save) {
 					this.saveAction({
 						type: 'favoriteRenameCategory',

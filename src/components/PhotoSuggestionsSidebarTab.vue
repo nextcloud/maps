@@ -110,6 +110,7 @@ import NcActions from '@nextcloud/vue/dist/Components/NcActions'
 import NcActionButton from '@nextcloud/vue/dist/Components/NcActionButton'
 import NcListItem from '@nextcloud/vue/dist/Components/NcListItem'
 import optionsController from '../optionsController'
+import {getToken} from "../utils/common";
 
 export default {
 	name: 'PhotoSuggestionsSidebarTab',
@@ -161,7 +162,7 @@ export default {
 	methods: {
 		previewUrl(photo) {
 			if (photo && photo.hasPreview) {
-				const token = optionsController.token
+				const token = getToken()
 				return token
 					? generateUrl('apps/files_sharing/publicpreview/') + token + '?file=' + encodeURIComponent(photo.path) + '&x=341&y=256&a=1'
 					: generateUrl('core') + '/preview?fileId=' + photo.fileId + '&x=341&y=256&a=1'

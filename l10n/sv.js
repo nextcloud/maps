@@ -25,6 +25,7 @@ OC.L10N.register(
     "Copy share link" : "Kopiera delningslänk",
     "Cancel" : "Avbryt",
     "Link copied!" : "Länk kopierad!",
+    "Open folder" : "Öppna mapp",
     "Share" : "Dela",
     "Show track elevation" : "Visa spårets höjd",
     "Sort by name" : "Sortera efter namn",

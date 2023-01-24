@@ -49,6 +49,7 @@ OC.L10N.register(
     "Cancel" : "取消",
     "Link copied!" : "已复制链接",
     "Link could not be copied to clipboard." : "链接无法复制到剪贴板。",
+    "Open folder" : "打开文件夹",
     "Share" : "共享",
     "My photos" : "我的照片",
     "Disable photo drag" : "禁用图片拖拽",

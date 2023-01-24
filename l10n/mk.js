@@ -49,6 +49,7 @@ OC.L10N.register(
     "Cancel" : "Откажи",
     "Link copied!" : "Линкот е копиран!",
     "Link could not be copied to clipboard." : "Врската неможе да се копира",
+    "Open folder" : "Отвори папка",
     "Share" : "Сподели",
     "My photos" : "Мој форографии",
     "Disable photo drag" : "Оневозможи влечење на фотографии",

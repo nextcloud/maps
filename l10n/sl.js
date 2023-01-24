@@ -44,6 +44,7 @@ OC.L10N.register(
     "Cancel" : "Prekliči",
     "Link copied!" : "Povezava je kopirana",
     "Link could not be copied to clipboard." : "Povezave ni mogoče kopirati v odložišče.",
+    "Open folder" : "Odpri mapo",
     "Share" : "Souporaba",
     "My photos" : "Fotografije",
     "Show track elevation" : "Pokaži diagram višinskih sprememb",

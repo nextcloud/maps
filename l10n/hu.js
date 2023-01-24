@@ -56,6 +56,7 @@ OC.L10N.register(
     "Cancel" : "Mégse",
     "Link copied!" : "Hivatkozás másolva!",
     "Link could not be copied to clipboard." : "A hivatkozást nem sikerült a vágólapra másolni.",
+    "Open folder" : "Mappa megnyitása",
     "Share" : "Megosztás",
     "My maps" : "Saját térképek",
     "New map" : "Új térképek",

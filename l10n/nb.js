@@ -18,6 +18,7 @@ OC.L10N.register(
     "Copied!" : "Kopiert!",
     "Cancel" : "Avbryt",
     "Link copied!" : "Lenke kopiert!",
+    "Open folder" : "Åpne mappe",
     "Share" : "Del",
     "Sort by name" : "Sorter etter navn",
     "Sort by date" : "Sorter etter dato",

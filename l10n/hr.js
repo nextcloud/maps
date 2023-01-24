@@ -25,6 +25,7 @@ OC.L10N.register(
     "Copy share link" : "Kopiraj poveznicu dijeljenja",
     "Cancel" : "Odustani",
     "Link copied!" : "Poveznica je kopirana!",
+    "Open folder" : "Otvori mapu",
     "Share" : "Dijeli",
     "Show track elevation" : "Prikaži nadmorsku visinu staze",
     "Sort by name" : "Razvrstaj po imenu",

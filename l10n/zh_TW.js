@@ -54,6 +54,7 @@ OC.L10N.register(
     "Cancel" : "取消",
     "Link copied!" : "連結已複製！",
     "Link could not be copied to clipboard." : "無法將連結複製到剪貼簿。",
+    "Open folder" : "開啟資料夾",
     "Share" : "分享",
     "My maps" : "我的地圖",
     "New map" : "新地圖",

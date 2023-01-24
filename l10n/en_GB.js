@@ -56,6 +56,7 @@ OC.L10N.register(
     "Cancel" : "Cancel",
     "Link copied!" : "Link copied!",
     "Link could not be copied to clipboard." : "Link could not be copied to clipboard.",
+    "Open folder" : "Open folder",
     "Share" : "Share",
     "My maps" : "My maps",
     "New map" : "New map",

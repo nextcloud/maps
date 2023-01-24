@@ -56,6 +56,7 @@ OC.L10N.register(
     "Cancel" : "Cancelar",
     "Link copied!" : "Link copiado!",
     "Link could not be copied to clipboard." : "O link não pôde ser copiado para a área de transferência.",
+    "Open folder" : "Abrir pasta",
     "Share" : "Compartilhar",
     "My maps" : "Meus mapas",
     "New map" : "Novo mapa",

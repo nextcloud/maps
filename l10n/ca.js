@@ -25,6 +25,7 @@ OC.L10N.register(
     "Copy share link" : "Copia l'enllaç per compartir",
     "Cancel" : "Cancel·la",
     "Link copied!" : "S'ha copiat l'enllaç!",
+    "Open folder" : "Obre la carpeta",
     "Share" : "Compartir",
     "Show track elevation" : "Mostra el desnivell del trajecte",
     "Sort by name" : "Ordena per nom",

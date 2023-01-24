@@ -23,6 +23,7 @@ OC.L10N.register(
     "Copy share link" : "Afrita deilitengil",
     "Cancel" : "Hætta við",
     "Link copied!" : "Tengill afritaður!",
+    "Open folder" : "Opna möppu",
     "Share" : "Deila",
     "Show track elevation" : "Birta hæð ferils",
     "Sort by name" : "Raða eftir heiti",

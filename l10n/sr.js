@@ -24,6 +24,7 @@ OC.L10N.register(
     "Copy share link" : "Копирај везу дељења",
     "Cancel" : "Поништи",
     "Link copied!" : "Веза ископирана!",
+    "Open folder" : "Отвори фасциклу",
     "Share" : "Подели",
     "Show track elevation" : "Прикажи надморске висине на путањи",
     "Sort by name" : "Сортирај по имену",

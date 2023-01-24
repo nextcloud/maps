@@ -55,6 +55,7 @@ OC.L10N.register(
     "Cancel" : "Annuler",
     "Link copied!" : "Lien copié !",
     "Link could not be copied to clipboard." : "Le lien n'a pas pu être copié dans le presse-papiers.",
+    "Open folder" : "Ouvrir le dossier",
     "Share" : "Partager",
     "My maps" : "Mes cartes",
     "New map" : "Nouvelle carte",

@@ -56,6 +56,7 @@ OC.L10N.register(
     "Cancel" : "Отказ",
     "Link copied!" : "Връзката е копирана!",
     "Link could not be copied to clipboard." : "Връзката не можа да бъде копирана в клипборда.",
+    "Open folder" : "Отвори папката",
     "Share" : "Споделяне",
     "My maps" : "Моите карти",
     "New map" : "Нова карта",

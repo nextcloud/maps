@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Nextcloud 3.14159\n"
 "Report-Msgid-Bugs-To: translations\\@example.com\n"
-"POT-Creation-Date: 2023-01-23 02:51+0000\n"
+"POT-Creation-Date: 2023-01-24 02:49+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -684,47 +684,47 @@ msgstr ""
 msgid "Tags"
 msgstr ""
 
-#. TRANSLATORS src/components/Sidebar.vue:267
+#. TRANSLATORS src/components/Sidebar.vue:272
 #: /app/specialVueFakeDummyForL10nScript.js:216
 #: /app/specialVueFakeDummyForL10nScript.js:224
 #: /app/specialVueFakeDummyForL10nScript.js:236
 msgid "Shows cool information"
 msgstr ""
 
-#. TRANSLATORS src/components/Sidebar.vue:268
+#. TRANSLATORS src/components/Sidebar.vue:273
 #: /app/specialVueFakeDummyForL10nScript.js:218
 #: /app/specialVueFakeDummyForL10nScript.js:226
 #: /app/specialVueFakeDummyForL10nScript.js:234
 msgid "Sidebar"
 msgstr ""
 
-#. TRANSLATORS src/components/Sidebar.vue:273
+#. TRANSLATORS src/components/Sidebar.vue:278
 #: /app/specialVueFakeDummyForL10nScript.js:220
 #: /app/specialVueFakeDummyForL10nScript.js:230
 msgid "Favorite"
 msgstr ""
 
-#. TRANSLATORS src/components/Sidebar.vue:286
+#. TRANSLATORS src/components/Sidebar.vue:291
 #: /app/specialVueFakeDummyForL10nScript.js:222
 msgid "Photo suggestions"
 msgstr ""
 
-#. TRANSLATORS src/components/Sidebar.vue:339
+#. TRANSLATORS src/components/Sidebar.vue:344
 #: /app/specialVueFakeDummyForL10nScript.js:228
 msgid "Track"
 msgstr ""
 
-#. TRANSLATORS src/components/Sidebar.vue:345
+#. TRANSLATORS src/components/Sidebar.vue:350
 #: /app/specialVueFakeDummyForL10nScript.js:232
 msgid "Photo location suggestions"
 msgstr ""
 
-#. TRANSLATORS src/components/Sidebar.vue:479
+#. TRANSLATORS src/components/Sidebar.vue:484
 #: /app/specialVueFakeDummyForL10nScript.js:238
 msgid "Unable to change the favourite state of the file"
 msgstr ""
 
-#. TRANSLATORS src/components/Sidebar.vue:546
+#. TRANSLATORS src/components/Sidebar.vue:551
 #: /app/specialVueFakeDummyForL10nScript.js:240
 msgid "Error while loading the file data"
 msgstr ""

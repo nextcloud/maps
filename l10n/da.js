@@ -15,6 +15,7 @@ OC.L10N.register(
     "Copy share link" : "Kopiér delelink",
     "Cancel" : "Annullér",
     "Link copied!" : "Link kopieret!",
+    "Open folder" : "Åben mappe",
     "Share" : "Del",
     "Sort by name" : "Order by name",
     "Sort by date" : "Order by date",

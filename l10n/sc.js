@@ -23,6 +23,7 @@ OC.L10N.register(
     "Delete share link" : "Cantzella ligòngiu de cumpartzidura",
     "Copied!" : "Copiadu!",
     "Cancel" : "Annulla",
+    "Open folder" : "Aberi cartella",
     "Share" : "Cumpartzidura",
     "Show track elevation" : "Mustra sa cuota de su caminu",
     "Sort by name" : "Assenta pro nùmene",

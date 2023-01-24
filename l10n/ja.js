@@ -23,6 +23,7 @@ OC.L10N.register(
     "Copy share link" : "共有リンクをコピー",
     "Cancel" : "キャンセル",
     "Link copied!" : "リンクをコピーしました",
+    "Open folder" : "フォルダーを開く",
     "Share" : "共有",
     "Show track elevation" : "標高トラックを表示",
     "Sort by name" : "名前で整列",

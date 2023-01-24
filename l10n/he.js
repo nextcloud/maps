@@ -23,6 +23,7 @@ OC.L10N.register(
     "Copy share link" : "העתקת קישור השיתוף",
     "Cancel" : "ביטול",
     "Link copied!" : "קישור הועתק!",
+    "Open folder" : "פתיחת תיקייה",
     "Share" : "שתף",
     "Show track elevation" : "הצגת רום מסלול",
     "Sort by name" : "מיון על פי שם",

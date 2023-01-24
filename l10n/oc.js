@@ -10,6 +10,7 @@ OC.L10N.register(
     "Rename" : "Renomenar",
     "Copied!" : "Copiat !",
     "Cancel" : "Anullar",
+    "Open folder" : "Dobrir lo dossièr",
     "Share" : "Partejar",
     "Sort by name" : "Triar per nom",
     "Sort by date" : "Triar per data",

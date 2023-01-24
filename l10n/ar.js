@@ -13,6 +13,7 @@ OC.L10N.register(
     "Copied!" : "تم نسخه !",
     "Copy share link" : "انسخ رابط المشاركة",
     "Cancel" : "إلغاء",
+    "Open folder" : "افتح المجلد",
     "Share" : "مشاركة",
     "Sort by name" : "Order by name",
     "Sort by date" : "Order by date",

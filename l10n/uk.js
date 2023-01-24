@@ -46,6 +46,7 @@ OC.L10N.register(
     "Cancel" : "Скасувати",
     "Link copied!" : "Посилання скопійовано!",
     "Link could not be copied to clipboard." : "Посилання неможливо скопіювати до буферу обміну.",
+    "Open folder" : "Відкрити каталог",
     "Share" : "Спільний доступ",
     "My photos" : "Мої світлини",
     "Disable photo drag" : "Вимкнути перетягування світлин",

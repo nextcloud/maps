@@ -27,6 +27,7 @@ OC.L10N.register(
     "Copy share link" : "Copiar a ligazón compartida",
     "Cancel" : "Cancelar",
     "Link copied!" : "Ligazón copiada!",
+    "Open folder" : "Abrir o cartafol",
     "Share" : "Compartir",
     "Show track elevation" : "Amosar a altitude do rastro",
     "Sort by name" : "Ordenar polo nome",

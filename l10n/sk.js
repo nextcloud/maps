@@ -49,6 +49,7 @@ OC.L10N.register(
     "Cancel" : "Zrušiť",
     "Link copied!" : "Odkaz skopírovaný!",
     "Link could not be copied to clipboard." : "Odkaz nie je možné skopírovať do schránky",
+    "Open folder" : "Otvoriť priečinok",
     "Share" : "Zdieľať",
     "My photos" : "Moje fotky",
     "Disable photo drag" : "Vypnúť presúvanie obrázka",

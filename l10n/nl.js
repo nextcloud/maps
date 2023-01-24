@@ -28,6 +28,7 @@ OC.L10N.register(
     "Copy share link" : "Kopiëren deellink ",
     "Cancel" : "Annuleren",
     "Link copied!" : "Link gekopieerd!",
+    "Open folder" : "Open map",
     "Share" : "Delen",
     "Show track elevation" : "Tonen padhelling",
     "Sort by name" : "Sorteren op naam",

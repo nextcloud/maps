@@ -56,6 +56,7 @@ OC.L10N.register(
     "Cancel" : "Abbrechen",
     "Link copied!" : "Link kopiert",
     "Link could not be copied to clipboard." : "Link konnte nicht in die Zwischenablage kopiert werden",
+    "Open folder" : "Ordner öffnen",
     "Share" : "Teilen",
     "My maps" : "Mein Karten",
     "New map" : "Neue Karte",

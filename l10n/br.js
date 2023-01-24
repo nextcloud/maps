@@ -10,6 +10,7 @@ OC.L10N.register(
     "Copied!" : "Eilet eo !",
     "Cancel" : "Arrest",
     "Link copied!" : "Liamm eilet !",
+    "Open folder" : "Digor an teuliad",
     "Share" : "Rannan",
     "OK" : "OK",
     "Comment" : "Displegadenn",

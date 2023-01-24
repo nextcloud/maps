@@ -56,6 +56,7 @@ OC.L10N.register(
     "Cancel" : "İptal",
     "Link copied!" : "Bağlantı kopyalandı!",
     "Link could not be copied to clipboard." : "Bağlantı panoya kopyalanamadı. ",
+    "Open folder" : "Klasörü aç",
     "Share" : "Paylaş",
     "My maps" : "Haritalarım",
     "New map" : "Yeni harita",

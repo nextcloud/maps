@@ -49,6 +49,7 @@ OC.L10N.register(
     "Cancel" : "Отмена",
     "Link copied!" : "Ссылка скопирована!",
     "Link could not be copied to clipboard." : "Не удалось скопировать ссылку в буфер обмена.",
+    "Open folder" : "Открыть папку",
     "Share" : "Поделиться",
     "My photos" : "Мои фотографии",
     "Disable photo drag" : "Отключить перетаскивание фотографий",

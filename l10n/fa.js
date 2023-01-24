@@ -22,6 +22,7 @@ OC.L10N.register(
     "Delete share link" : "پیوند اشتراک را حذف کنید",
     "Copied!" : "کپی شده",
     "Cancel" : "لغو",
+    "Open folder" : "پوشه را بازکن",
     "Share" : "هم‌رسانی",
     "Show track elevation" : "نمایش ارتفاع مسیر",
     "Sort by name" : "Order by name",

@@ -11,6 +11,7 @@ OC.L10N.register(
     "Delete share link" : "Forigi kunhavo-ligilon",
     "Copied!" : "Kopiita!",
     "Cancel" : "Nuligi",
+    "Open folder" : "Malfermi dosierujon",
     "Share" : "Kunhavigi",
     "Sort by name" : "Ordigi laŭ nomo",
     "Sort by date" : "Ordigi laŭ dato",

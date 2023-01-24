@@ -56,6 +56,7 @@ OC.L10N.register(
     "Cancel" : "Storno",
     "Link copied!" : "Odkaz zkopírován",
     "Link could not be copied to clipboard." : "Odkaz se nepodařilo zkopírovat do schránky.",
+    "Open folder" : "Otevřít složku",
     "Share" : "Sdílet",
     "My maps" : "Moje mapy",
     "New map" : "Nová mapa",

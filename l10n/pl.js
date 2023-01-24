@@ -56,6 +56,7 @@ OC.L10N.register(
     "Cancel" : "Anuluj",
     "Link copied!" : "Skopiowano link!",
     "Link could not be copied to clipboard." : "Nie udało się skopiować linku do schowka.",
+    "Open folder" : "Otwórz katalog",
     "Share" : "Udostępnij",
     "My maps" : "Moje mapy",
     "New map" : "Nowa mapa",

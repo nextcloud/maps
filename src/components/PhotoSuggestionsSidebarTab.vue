@@ -93,7 +93,7 @@
 			<NcButton
 				v-show="photoSuggestions.length > 0"
 				type="primary"
-				:disabled="photoSuggestionsSelectedIndices.length===0"
+				:disabled="photoSuggestionsSelectedIndices.length===0 || readOnly"
 				@click="$emit('save')">
 				{{ t('maps', 'Save') }}
 			</NcButton>
@@ -153,6 +153,9 @@ export default {
 				}
 				return filtered
 			}, [])
+		},
+		readOnly() {
+			return !this.photoSuggestions.some((f) => (f.isUpdateable))
 		},
 	},
 

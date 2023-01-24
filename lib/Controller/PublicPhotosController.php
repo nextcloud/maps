@@ -125,12 +125,13 @@ class PublicPhotosController extends PublicPageController {
 			$pre_path = $this->root->getUserFolder($owner)->getPath();
 			$result = $this->geophotoService->getAll($owner, $folder, true, false);
 			$photos = array_map(function ($photo) use ($folder, $permissions, $pre_path) {
-				$photo['isCreatable'] = ($permissions & (1 << 2)) && $photo['isCreatable'];
-				$photo['isUpdateable'] = ($permissions & (1 << 1)) && $photo['isUpdateable'];
-				$photo['isDeletable'] = ($permissions & (1 << 3)) && $photo['isDeletable'];
-				$photo['path'] = $folder->getRelativePath($pre_path.$photo['path']);
-				$photo['filename'] = $photo['path'];
-				return $photo;
+				$photo_object = (object) $photo;
+				$photo_object->isCreatable = ($permissions & (1 << 2)) && $photo['isCreatable'];
+				$photo_object->isUpdateable = ($permissions & (1 << 1)) && $photo['isUpdateable'];
+				$photo_object->isDeletable = ($permissions & (1 << 3)) && $photo['isDeletable'];
+				$photo_object->path = $folder->getRelativePath($pre_path.$photo['path']);
+				$photo_object->filename = $photo_object->path;
+				return $photo_object;
 			}, $result);
 		} else {
 			throw new NotPermittedException();
@@ -157,12 +158,13 @@ class PublicPhotosController extends PublicPageController {
 			$pre_path = $this->root->getUserFolder($owner)->getPath();
 			$result = $this->geophotoService->getNonLocalized($owner, $folder, true, false);
 			$photos = array_map(function ($photo) use ($folder, $permissions, $pre_path) {
-				$photo['isCreatable'] = ($permissions & (1 << 2)) && $photo['isCreatable'];
-				$photo['isUpdateable'] = ($permissions & (1 << 1)) && $photo['isUpdateable'];
-				$photo['isDeletable'] = ($permissions & (1 << 3)) && $photo['isDeletable'];
-				$photo['path'] = $folder->getRelativePath($pre_path.$photo['path']);
-				$photo['filename'] = $photo['path'];
-				return $photo;
+				$photo_object = (object) $photo;
+				$photo_object->isCreatable = ($permissions & (1 << 2)) && $photo['isCreatable'];
+				$photo_object->isUpdateable = ($permissions & (1 << 1)) && $photo['isUpdateable'];
+				$photo_object->isDeletable = ($permissions & (1 << 3)) && $photo['isDeletable'];
+				$photo_object->path = $folder->getRelativePath($pre_path.$photo['path']);
+				$photo_object->filename = $photo_object->path;
+				return $photo_object;
 			}, $result);
 		} else {
 			throw new NotPermittedException();

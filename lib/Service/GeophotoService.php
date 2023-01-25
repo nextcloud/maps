@@ -232,6 +232,10 @@ class GeophotoService {
 							$file_object->lastmod = $file->getMTime();
 							$file_object->size = $file->getSize();
 							$file_object->path = $path;
+							$file_object->isReadable = $file->isReadable();
+							$file_object->isUpdateable = $file->isUpdateable();
+							$file_object->isShareable = $file->isShareable();
+							$file_object->isDeletable = $file->isDeletable();
 							$file_object->hasPreview = in_array($cacheEntry->getMimeType(), $previewEnableMimetypes);
 							$filesById[] = $file_object;
 						}

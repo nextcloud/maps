@@ -24,7 +24,8 @@
 				@click="$emit('export', device)">
 				{{ t('maps', 'Export') }}
 			</NcActionButton>
-			<NcActionButton icon="icon-share"
+			<NcActionButton v-if="!isPublic()"
+				icon="icon-share"
 				@click="$emit('add-to-map-device', device)">
 				{{ t('maps', 'Link to map') }}
 			</NcActionButton>
@@ -63,7 +64,7 @@ import { LMarker, LTooltip, LPopup, LFeatureGroup, LPolyline } from 'vue2-leafle
 import NcActionButton from '@nextcloud/vue/dist/Components/NcActionButton'
 
 import { isComputer } from '../../utils'
-import { binSearch } from '../../utils/common'
+import {binSearch, isPublic} from '../../utils/common'
 import optionsController from '../../optionsController'
 import moment from '@nextcloud/moment'
 
@@ -199,6 +200,9 @@ export default {
 				user_agent: this.device.user_agent,
 			}
 			this.$emit('point-hover', hoverPoint)
+		},
+		isPublic() {
+			return isPublic()
 		},
 	},
 }

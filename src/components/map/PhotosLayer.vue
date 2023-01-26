@@ -34,7 +34,8 @@
 				<NcActionButton v-if="currentPhoto && currentPhoto.isUpdateable" icon="icon-history" @click="resetPhotosCoords([currentPhoto])">
 					{{ t('maps', 'Remove geo data') }}
 				</NcActionButton>
-				<NcActionButton icon="icon-share"
+				<NcActionButton v-if="!isPublic()"
+					icon="icon-share"
 					@click="$emit('add-to-map-photo', currentPhoto)">
 					{{ t('maps', 'Copy to map') }}
 				</NcActionButton>
@@ -75,7 +76,7 @@ import { LMarker, LTooltip, LPopup } from 'vue2-leaflet'
 import Vue2LeafletMarkerCluster from 'vue2-leaflet-markercluster'
 
 import optionsController from '../../optionsController'
-import {binSearch, getToken} from "../../utils/common";
+import {binSearch, getToken, isPublic} from "../../utils/common";
 
 const PHOTO_MARKER_VIEW_SIZE = 40
 
@@ -477,6 +478,9 @@ export default {
 				m.options.draggable = this.draggable
 				m.update()
 			})
+		},
+		isPublic() {
+			return isPublic()
 		},
 	},
 }

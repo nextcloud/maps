@@ -100,7 +100,7 @@
 						@click="$emit('export-category', catid)">
 						{{ t('maps', 'Export') }}
 					</NcActionButton>
-					<NcActionButton v-if="enabled && nbFavorites && c.enabled"
+					<NcActionButton v-if="enabled && nbFavorites && c.enabled && !isPublic()"
 						icon="icon-share"
 						:close-after-click="true"
 						@click="$emit('add-to-map-category', catid)">

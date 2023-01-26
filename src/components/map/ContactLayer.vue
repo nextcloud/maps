@@ -78,7 +78,8 @@
 						@click="onDeleteAddressClick()">
 						{{ contact.ADR?t('maps', 'Delete this address'):t('maps', 'Delete this location') }}
 					</NcActionButton>
-					<NcActionButton icon="icon-share"
+					<NcActionButton v-if="!isPublic()"
+						icon="icon-share"
 						@click="$emit('add-to-map-contact', contact)">
 						{{ t('maps', 'Copy to map') }}
 					</NcActionButton>

@@ -24,7 +24,8 @@
 				@click="onZoomAllClick">
 				{{ t('maps', 'Zoom') }}
 			</NcActionButton>
-			<NcActionButton icon="icon-share"
+			<NcActionButton v-if="!isPublic()"
+				icon="icon-share"
 				:close-after-click="true"
 				@click="$emit('add-to-map-all-contacts')">
 				{{ t('maps', 'Copy to map') }}
@@ -53,7 +54,8 @@
 						@click="onZoomGroupClick(gid)">
 						{{ t('maps', 'Zoom') }}
 					</NcActionButton>
-					<NcActionButton icon="icon-share"
+					<NcActionButton v-if="!isPublic()"
+						icon="icon-share"
 						:close-after-click="true"
 						@click="$emit('add-to-map-contact-group', gid)">
 						{{ t('maps', 'Copy to map') }}
@@ -69,6 +71,7 @@ import NcAppNavigationItem from '@nextcloud/vue/dist/Components/NcAppNavigationI
 import NcActionButton from '@nextcloud/vue/dist/Components/NcActionButton'
 import NcCounterBubble from '@nextcloud/vue/dist/Components/NcCounterBubble'
 import optionsController from '../optionsController'
+import {isPublic} from "../utils/common";
 
 export default {
 	name: 'AppNavigationContactsItem',
@@ -131,6 +134,9 @@ export default {
 		},
 		onGroupClick(groupName) {
 			this.$emit('group-clicked', groupName)
+		},
+		isPublic() {
+			return isPublic()
 		},
 	},
 }

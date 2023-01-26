@@ -54,7 +54,7 @@
 				</template>
 				{{ t('maps', 'Change color') }}
 			</NcActionButton>
-			<NcActionButton v-if="parentEnabled && track.enabled && track.isShareable"
+			<NcActionButton v-if="parentEnabled && track.enabled && track.isShareable && !isPublic()"
 				icon="icon-share"
 				:close-after-click="true"
 				@click="$emit('add-to-map-track', track)">
@@ -67,6 +67,7 @@
 <script>
 import NcAppNavigationItem from '@nextcloud/vue/dist/Components/NcAppNavigationItem'
 import NcActionButton from '@nextcloud/vue/dist/Components/NcActionButton'
+import {isPublic} from "../utils/common";
 
 export default {
 	name: 'AppNavigationTrackItem',
@@ -101,6 +102,9 @@ export default {
 		},
 		updateTrackColor(e) {
 			this.$emit('color', { track: this.track, color: e.target.value })
+		},
+		isPublic() {
+			return isPublic()
 		},
 	},
 }

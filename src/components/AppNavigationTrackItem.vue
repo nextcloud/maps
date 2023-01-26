@@ -46,7 +46,7 @@
 				@click="$emit('elevation', track)">
 				{{ t('maps', 'Show track elevation') }}
 			</NcActionButton>
-			<NcActionButton v-if="parentEnabled && track.enabled"
+			<NcActionButton v-if="parentEnabled && track.enabled && track.isUpdateable"
 				:close-after-click="false"
 				@click="onChangeColorClick">
 				<template #icon>
@@ -54,7 +54,7 @@
 				</template>
 				{{ t('maps', 'Change color') }}
 			</NcActionButton>
-			<NcActionButton v-if="parentEnabled && track.enabled"
+			<NcActionButton v-if="parentEnabled && track.enabled && track.isShareable"
 				icon="icon-share"
 				:close-after-click="true"
 				@click="$emit('add-to-map-track', track)">

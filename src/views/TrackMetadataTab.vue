@@ -30,6 +30,7 @@
 import TrackSidebarMetadataTab from '../components/TrackMetadataTab.vue'
 import * as network from '../network.js'
 import { processGpx } from '../tracksUtils.js'
+import {getToken} from "../utils/common";
 
 export default {
 	name: 'TrackMetadataTab',
@@ -65,7 +66,7 @@ export default {
 		getTrack(trackFileId) {
 			this.loading = true
 			const track = {}
-			network.getTrack(trackFileId, null, true).then((response) => {
+			network.getTrack(trackFileId, null, true, getToken()).then((response) => {
 				if (!track.metadata) {
 					try {
 						track.metadata = JSON.parse(response.data.metadata)

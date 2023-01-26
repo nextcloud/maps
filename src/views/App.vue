@@ -1790,7 +1790,7 @@ export default {
 				return
 			}
 			this.tracksLoading = true
-			network.getTracks(this.myMapId).then((response) => {
+			network.getTracks(this.myMapId, this.token).then((response) => {
 				this.tracks = response.data.map((track) => {
 					if (track.metadata) {
 						try {
@@ -1860,7 +1860,7 @@ export default {
 		},
 		getTrack(track, enable = false, save = true, zoom = false) {
 			track.loading = true
-			network.getTrack(track.id, this.myMapId).then((response) => {
+			network.getTrack(track.id, this.myMapId, false, this.token).then((response) => {
 				if (!track.metadata) {
 					try {
 						track.metadata = JSON.parse(response.data.metadata)
@@ -1898,7 +1898,7 @@ export default {
 		},
 		onChangeTrackColor(e) {
 			e.track.color = e.color
-			network.editTrack(e.track.id, e.color, this.myMapId).then((response) => {
+			network.editTrack(e.track.id, e.color, this.myMapId, this.token).then((response) => {
 				console.debug(response.data)
 			}).catch((error) => {
 				console.error(error)

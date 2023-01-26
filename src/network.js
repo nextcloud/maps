@@ -347,33 +347,33 @@ export function resetPhotosCoords(paths, myMapId = null) {
 	return axios.delete(url, req)
 }
 
-export function getTracks(myMapId = null) {
+export function getTracks(myMapId = null, token = null) {
 	const conf = {
 		params: {
 			myMapId,
 		},
 	}
-	const url = generateUrl('/apps/maps/tracks')
+	const url = generateUrl('/apps/maps' + (token ? '/s/' + token : '') + '/tracks')
 	return axios.get(url, conf)
 }
 
-export function getTrack(id, myMapId = null, isFileId = false) {
+export function getTrack(id, myMapId = null, isFileId = false, token = null) {
 	const conf = {
 		params: {
 			myMapId,
 		},
 	}
-	const url = generateUrl('/apps/maps/tracks/' + (isFileId ? 'file/' : '') + id)
+	const url = generateUrl('/apps/maps' + (token ? '/s/' + token : '') + '/tracks/' + (isFileId ? 'file/' : '') + id)
 	// return axios.get(url, { responseType: 'json' })
 	return axios.get(url, conf)
 }
 
-export function editTrack(id, color, myMapId = null) {
+export function editTrack(id, color, myMapId = null, token = null) {
 	const req = {
 		color,
 		myMapId,
 	}
-	const url = generateUrl('/apps/maps/tracks/' + id)
+	const url = generateUrl('/apps/maps' + (token ? '/s/' + token : '') + '/tracks/' + id)
 	return axios.put(url, req)
 }
 

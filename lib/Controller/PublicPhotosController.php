@@ -44,8 +44,8 @@ class PublicPhotosController extends PublicPageController {
 								IInitialStateService $initialStateService,
 								IURLGenerator $urlGenerator,
 								ShareManager $shareManager,
-								ISession $session,
 								IUserManager $userManager,
+								ISession $session,
                                 GeophotoService $GeophotoService,
                                 PhotofilesService $photofilesService,
 								IRootFolder $root) {

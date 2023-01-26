@@ -110,6 +110,11 @@ return [
 		['name' => 'tracks#getTrackContentByFileId', 'url' => '/tracks/file/{id}', 'verb' => 'GET'],
         ['name' => 'tracks#editTrack', 'url' => '/tracks/{id}', 'verb' => 'PUT'],
 
+		['name' => 'PublicTracks#getTracks', 'url' => '/s/{token}/tracks', 'verb' => 'GET'],
+		['name' => 'PublicTracks#getTrackFileContent', 'url' => '/s/{token}/tracks/{id}', 'verb' => 'GET'],
+		['name' => 'PublicTracks#getTrackContentByFileId', 'url' => '/s/{token}/tracks/file/{id}', 'verb' => 'GET'],
+		['name' => 'PublicTracks#editTrack', 'url' => '/s/{token}/tracks/{id}', 'verb' => 'PUT'],
+
         // devices API
         [
             'name'         => 'devices_api#preflighted_cors',

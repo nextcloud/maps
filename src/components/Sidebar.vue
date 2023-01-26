@@ -23,6 +23,8 @@
 			@cancel="$emit('cancel-photo-suggestions')"
 			@save="$emit('save-photo-suggestions-selection',$event)"
 			@zoom="$emit('zoom-photo-suggestion', $event)" />
+		<TrackMetadataTab v-if="isPublic() && activeTab === 'maps-track-metadata' && !fileInfo"
+			:track="track" />
 		<!-- TODO: create a standard to allow multiple elements here? -->
 		<template v-if="fileInfo" #description>
 			<LegacyView v-for="view in views"
@@ -86,12 +88,14 @@ import moment from '@nextcloud/moment'
 import { Type as ShareTypes } from '@nextcloud/sharing'
 import axios from '@nextcloud/axios'
 import FileInfo from '../services/FileInfo'
-import {isPublic} from "../utils/common";
+import { isPublic } from '../utils/common'
+import TrackMetadataTab from './TrackMetadataTab'
 
 export default {
 	name: 'Sidebar',
 
 	components: {
+		TrackMetadataTab,
 		// NcActionButton,
 		NcAppSidebar,
 		FavoriteSidebarTab,
@@ -127,6 +131,11 @@ export default {
 		photoSuggestionsSelectedIndices: {
 			required: true,
 			type: Array,
+		},
+		track: {
+			required: false,
+			validator: prop => typeof prop === 'object' || prop === null,
+			default: null,
 		},
 	},
 
@@ -228,7 +237,7 @@ export default {
 		background() {
 			const iconColor = OCA.Accessibility?.theme === 'dark' ? 'ffffff' : '000000'
 			if (this.typeOpened === 'track') {
-				return generateUrl('/svg/maps/road?color=' + iconColor)
+				return generateFilePath('maps', 'img', 'road.svg')
 			}
 			if (this.typeOpened === 'maps') {
 				return generateFilePath('maps', 'img', 'maps.png')
@@ -292,6 +301,19 @@ export default {
 					title: t('maps', 'Photo suggestions'),
 					compact: true,
 					background: generateUrl('/apps/theming/img/core/filetypes/image.svg?color=' + iconColor),
+					subtitle: '',
+					active: this.activeTab,
+					class: {
+						'app-sidebar--has-preview': false,
+						'app-sidebar--full': this.isFullScreen,
+					},
+				}
+			} else if (this.activeTab === 'maps-track-metadata') {
+				const iconColor = OCA.Accessibility?.theme === 'dark' ? 'ffffff' : '000000'
+				return {
+					title: t('maps', 'Track metadata'),
+					compact: true,
+					background: this.background,
 					subtitle: '',
 					active: this.activeTab,
 					class: {
@@ -388,6 +410,9 @@ export default {
 	watch: {
 	},
 	methods: {
+		isPublic() {
+			return isPublic()
+		},
 		/**
 		 * Can this tab be displayed ?
 		 *

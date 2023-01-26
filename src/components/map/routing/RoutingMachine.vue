@@ -54,7 +54,7 @@ export default {
 
 	methods: {
 		initRouting() {
-			if (this.nbRouters > 0 || getCurrentUser().isAdmin) {
+			if (this.nbRouters > 0 || getCurrentUser()?.isAdmin) {
 				this.initRoutingControl()
 			}
 		},

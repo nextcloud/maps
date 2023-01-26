@@ -48,6 +48,9 @@ return [
         ['name' => 'contacts#deleteContactAddress', 'url' => '/contacts/{bookid}/{uri}', 'verb' => 'DELETE'],
         ['name' => 'contacts#getContactLetterAvatar', 'url' => '/contacts-avatar', 'verb' => 'GET'],
 
+		['name' => 'PublicContacts#getContacts', 'url' => '/s/{token}/contacts', 'verb' => 'GET'],
+		['name' => 'PublicContacts#getContactLetterAvatar', 'url' => '/s/{token}/contacts-avatar', 'verb' => 'GET'],
+
         // routing
         ['name' => 'routing#exportRoute', 'url' => '/exportRoute', 'verb' => 'POST'],
 

@@ -46,13 +46,13 @@ export function sendMyPosition(lat, lng, name, acc, ts, myMapId = null) {
 	return axios.post(url, req)
 }
 
-export function getContacts(myMapId = null) {
+export function getContacts(myMapId = null, token = null) {
 	const conf = {
 		params: {
 			myMapId,
 		},
 	}
-	const url = generateUrl('/apps/maps/contacts')
+	const url = generateUrl('/apps/maps' + (token ? '/s/' + token : '') + '/contacts')
 	return axios.get(url, conf)
 }
 

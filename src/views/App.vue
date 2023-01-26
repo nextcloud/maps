@@ -299,13 +299,13 @@ export default {
 			// devices
 			devicesLoading: false,
 			devices: [],
-			devicesEnabled: optionsController.devicesEnabled,
+			devicesEnabled: optionsController.devicesEnabled && !isPublic(),
 			exportingDevices: false,
 			importingDevices: false,
 			// myMaps
 			myMapsLoading: false,
 			myMaps: [],
-			myMapsEnabled: optionsController.myMapsEnabled,
+			myMapsEnabled: optionsController.myMapsEnabled  && !isPublic(),
 			myMapId: optionsController.myMapId,
 			selectedMyMap: null,
 			// PublicPage
@@ -1259,7 +1259,7 @@ export default {
 				}
 			}
 
-			network.getContacts(this.myMapId).then((response) => {
+			network.getContacts(this.myMapId, this.token).then((response) => {
 				this.contacts = response.data
 				this.buildContactGroups()
 			}).catch((error) => {

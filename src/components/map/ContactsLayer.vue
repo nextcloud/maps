@@ -19,6 +19,7 @@ import Vue2LeafletMarkerCluster from 'vue2-leaflet-markercluster'
 
 import ContactLayer from './ContactLayer'
 import optionsController from '../../optionsController'
+import {getToken, isPublic} from "../../utils/common";
 
 const CONTACT_MARKER_VIEW_SIZE = 40
 
@@ -107,7 +108,7 @@ export default {
 					+ '/' + encodeURIComponent(contact.BOOKURI)
 					+ '/' + encodeURIComponent(contact.URI) + '?photo').replace(/index\.php\//, '')
 			} else {
-				return generateUrl('/apps/maps/contacts-avatar?name=' + encodeURIComponent(contact.FN))
+				return generateUrl('/apps/maps' + (isPublic() ? '/s/' + getToken() : '') + '/contacts-avatar?name=' + encodeURIComponent(contact.FN))
 			}
 		},
 	},

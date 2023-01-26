@@ -86,7 +86,7 @@ import moment from '@nextcloud/moment'
 import { Type as ShareTypes } from '@nextcloud/sharing'
 import axios from '@nextcloud/axios'
 import FileInfo from '../services/FileInfo'
-import optionsController from "../optionsController";
+import {isPublic} from "../utils/common";
 
 export default {
 	name: 'Sidebar',

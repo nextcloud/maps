@@ -29,7 +29,8 @@
 			<NcActionButton v-if="favorite.isDeletable" icon="icon-delete" @click="$emit('delete', favorite.id)">
 				{{ t('maps', 'Delete favorite') }}
 			</NcActionButton>
-			<NcActionButton icon="icon-share"
+			<NcActionButton v-if="!isPublic()"
+				icon="icon-share"
 				@click="$emit('add-to-map-favorite', favorite)">
 				{{ t('maps', 'Copy to map') }}
 			</NcActionButton>
@@ -42,6 +43,7 @@ import NcActionButton from '@nextcloud/vue/dist/Components/NcActionButton'
 
 import L from 'leaflet'
 import { LMarker, LTooltip, LPopup } from 'vue2-leaflet'
+import {isPublic} from "../../utils/common";
 
 export default {
 	name: 'FavoriteMarker',
@@ -115,6 +117,9 @@ export default {
 		},
 		onRightClick(e) {
 			this.$refs.marker.mapObject.openPopup()
+		},
+		isPublic() {
+			return isPublic()
 		},
 	},
 }

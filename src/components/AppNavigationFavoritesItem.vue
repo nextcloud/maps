@@ -30,13 +30,13 @@
 				@click="onZoomAllClick">
 				{{ t('maps', 'Zoom') }}
 			</NcActionButton>
-			<NcActionButton
+			<NcActionButton v-if="!isPublic"
 				icon="icon-save"
 				:close-after-click="true"
 				@click="$emit('export')">
 				{{ t('maps', 'Export') }}
 			</NcActionButton>
-			<NcActionButton v-if="!readOnly"
+			<NcActionButton v-if="!readOnly && !isPublic"
 				icon="icon-folder"
 				:close-after-click="true"
 				@click="$emit('import')">
@@ -100,7 +100,7 @@
 						@click="$emit('export-category', catid)">
 						{{ t('maps', 'Export') }}
 					</NcActionButton>
-					<NcActionButton v-if="enabled && nbFavorites && c.enabled"
+					<NcActionButton v-if="enabled && nbFavorites && c.enabled && !isPublic()"
 						icon="icon-share"
 						:close-after-click="true"
 						@click="$emit('add-to-map-category', catid)">
@@ -132,6 +132,7 @@ import NcActionCheckbox from '@nextcloud/vue/dist/Components/NcActionCheckbox'
 import NcCounterBubble from '@nextcloud/vue/dist/Components/NcCounterBubble'
 import { showError, showSuccess } from '@nextcloud/dialogs'
 import { generateUrl } from '@nextcloud/router'
+import { isPublic } from '../utils/common'
 
 import optionsController from '../optionsController'
 
@@ -242,6 +243,9 @@ export default {
 		},
 		onAddFavoriteClick(category = null) {
 			this.$emit('add-favorite', category)
+		},
+		isPublic() {
+			return isPublic()
 		},
 	},
 }

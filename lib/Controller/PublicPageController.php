@@ -1,94 +1,142 @@
 <?php
 /**
- * @copyright Copyright (c) 2019, Paul Schwörer <hello@paulschwoerer.de>
+ * Nextcloud - maps
  *
- * @author Paul Schwörer <hello@paulschwoerer.de>
+ * This file is licensed under the Affero General Public License version 3 or
+ * later. See the COPYING file.
  *
- * @license GNU AGPL version 3 or any later version
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License as
- * published by the Free Software Foundation, either version 3 of the
- * License, or (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Affero General Public License for more details.
- *
- * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- *
+ * @authorVinzenz Rosenkranz <vinzenz.rosenkranz@gmail.com>
+ * @copyright Vinzenz Rosenkranz 2017
  */
 
 namespace OCA\Maps\Controller;
 
-use OC;
-use OCA\Maps\DB\FavoriteShareMapper;
-use OCP\AppFramework\Db\DoesNotExistException;
-use OCP\AppFramework\Db\MultipleObjectsReturnedException;
-use OCP\AppFramework\Http;
-use OCP\AppFramework\Http\ContentSecurityPolicy;
-use OCP\AppFramework\Http\DataResponse;
+use OC\InitialStateService;
+use OC\Security\CSP\ContentSecurityPolicy;
+use OCA\Files\Event\LoadSidebar;
+use OCA\Files_Sharing\Event\BeforeTemplateRenderedEvent;
+use OCA\Viewer\Event\LoadViewer;
+use OCP\AppFramework\AuthPublicShareController;
 use OCP\AppFramework\Http\Template\PublicTemplateResponse;
-use OCP\AppFramework\PublicShareController;
+use OCP\Files\NotFoundException;
 use OCP\IConfig;
 use OCP\ILogger;
 use OCP\IRequest;
+use OCP\EventDispatcher\IEventDispatcher;
+use OCP\IInitialStateService;
 use OCP\ISession;
-use OCP\Util;
+use OCP\IURLGenerator;
+use OCP\IUserManager;
+use OCP\Share\Exceptions\ShareNotFound;
+use OCP\Share\IManager as ShareManager;
 
-class PublicPageController extends PublicShareController {
-    private $config;
-    private $logger;
+class PublicPageController extends AuthPublicShareController {
+	protected InitialStateService $initialStateService;
+	protected IConfig $config;
+	protected ILogger $logger;
+	protected \OCP\Activity\IManager $activityManager;
+	protected IEventDispatcher $eventDispatcher;
+	protected ShareManager $shareManager;
+	protected IUserManager $userManager;
 
-    /* @var FavoriteShareMapper */
-    private $favoriteShareMapper;
-
-    public function __construct(
-        $appName,
-        IRequest $request,
-        ISession $session,
-        IConfig $config,
-        ILogger $logger,
-        FavoriteShareMapper $favoriteShareMapper
-    ) {
-        parent::__construct($appName, $request, $session);
+    public function __construct($AppName,
+                                IRequest $request,
+                                IEventDispatcher $eventDispatcher,
+                                IConfig $config,
+                                IInitialStateService $initialStateService,
+								IURLGenerator $urlGenerator,
+								ShareManager $shareManager,
+								IUserManager $userManager,
+								ISession $session
+								) {
+        parent::__construct($AppName, $request, $session, $urlGenerator);
+        $this->eventDispatcher = $eventDispatcher;
         $this->config = $config;
-        $this->logger = $logger;
-        $this->favoriteShareMapper = $favoriteShareMapper;
+        $this->initialStateService = $initialStateService;
+		$this->shareManager = $shareManager;
+		$this->userManager = $userManager;
     }
 
+	public function isValidToken(): bool {
+		try {
+			$this->share = $this->shareManager->getShareByToken($this->getToken());
+		} catch (ShareNotFound $e) {
+			return false;
+		}
+
+		return true;
+	}
+
+	protected function verifyPassword(string $password): bool {
+		return $this->shareManager->checkPassword($this->share, $password);
+	}
+
+	protected function getPasswordHash(): string {
+		return $this->share->getPassword();
+	}
+
+	protected function isPasswordProtected(): bool {
+		return $this->share->getPassword() !== null;
+	}
+
+	/**
+	 * Validate the permissions of the share
+	 *
+	 * @param Share\IShare $share
+	 * @return bool
+	 */
+	private function validateShare(\OCP\Share\IShare $share) {
+		// If the owner is disabled no access to the link is granted
+		$owner = $this->userManager->get($share->getShareOwner());
+		if ($owner === null || !$owner->isEnabled()) {
+			return false;
+		}
+
+		// If the initiator of the share is disabled no access is granted
+		$initiator = $this->userManager->get($share->getSharedBy());
+		if ($initiator === null || !$initiator->isEnabled()) {
+			return false;
+		}
+
+		return $share->getNode()->isReadable() && $share->getNode()->isShareable();
+	}
+
+	/**
+	 * @return \OCP\Files\File|\OCP\Files\Folder
+	 * @throws NotFoundException
+	 */
+	private function getShareNode() {
+		\OC_User::setIncognitoMode(true);
+
+		// Check whether share exists
+		try {
+			$share = $this->shareManager->getShareByToken($this->getToken());
+		} catch (ShareNotFound $e) {
+			// The share does not exists, we do not emit an ShareLinkAccessedEvent
+			throw new NotFoundException();
+		}
+
+		if (!$this->validateShare($share)) {
+			throw new NotFoundException();
+		}
+
+		return $share->getNode();
+	}
+
     /**
-     * @param $token
-     *
-     * @return DataResponse|PublicTemplateResponse
-     *
-     * @PublicPage
-     * @NoCSRFRequired
-     */
-    public function sharedFavoritesCategory($token) {
-        if ($token === '') {
-            return new DataResponse([], Http::STATUS_BAD_REQUEST);
-        }
+    * @PublicPage
+    * @NoCSRFRequired
+    */
+    public function showShare(): PublicTemplateResponse {
+		$shareNode = $this->getShareNode();
 
-        try {
-            $share = $this->favoriteShareMapper->findByToken($token);
-        } catch (DoesNotExistException $e) {
-            return new DataResponse([], Http::STATUS_NOT_FOUND);
-        } catch (MultipleObjectsReturnedException $e) {
-            return new DataResponse([], Http::STATUS_INTERNAL_SERVER_ERROR);
-        }
+        $this->eventDispatcher->dispatch(LoadSidebar::class, new LoadSidebar());
+        $this->eventDispatcher->dispatch(LoadViewer::class, new LoadViewer());
 
-        Util::addStyle($this->appName, 'merged-public-favorite-share');
-        Util::addScript($this->appName, 'maps-publicFavoriteShare');
-
-        $response = new PublicTemplateResponse('maps', 'public/favorites_index', []);
-
-        $ownerName = OC::$server->getUserManager()->get($share->getOwner())->getDisplayName();
-
-        $response->setHeaderTitle($share->getCategory());
-        $response->setHeaderDetails('shared by ' . $ownerName);
+        $params = [];
+		$params['sharingToken'] = $this->getToken();
+        $this->initialStateService->provideInitialState($this->appName, 'photos', $this->config->getAppValue('photos', 'enabled', 'no') === 'yes');
+        $response = new PublicTemplateResponse('maps', 'public/main', $params);
 
         $this->addCsp($response);
 
@@ -96,53 +144,74 @@ class PublicPageController extends PublicShareController {
     }
 
 	/**
-	 * Get a hash of the password for this share
+	 * @PublicPage
+	 * @NoCSRFRequired
 	 *
-	 * To ensure access is blocked when the password to a share is changed we store
-	 * a hash of the password for this token.
-	 *
-	 * @return string
-	 * @since 14.0.0
+	 * Show the authentication page
+	 * The form has to submit to the authenticate method route
 	 */
-    protected function getPasswordHash(): string {
-        return "";
-    }
+	public function showAuthenticate(): PublicTemplateResponse {
+		$templateParameters = ['share' => $this->share];
+
+		$this->eventDispatcher->dispatchTyped(new BeforeTemplateRenderedEvent($this->share, BeforeTemplateRenderedEvent::SCOPE_PUBLIC_SHARE_AUTH));
+
+		$response = new PublicTemplateResponse('core', 'publicshareauth', $templateParameters, 'guest');
+		if ($this->share->getSendPasswordByTalk()) {
+			$csp = new ContentSecurityPolicy();
+			$csp->addAllowedConnectDomain('*');
+			$csp->addAllowedMediaDomain('blob:');
+			$response->setContentSecurityPolicy($csp);
+		}
+
+		return $response;
+	}
 
 	/**
-	 * Is the provided token a valid token
-	 *
-	 * This function is already called from the middleware directly after setting the token.
-	 *
-	 * @return bool
-	 * @since 14.0.0
+	 * The template to show when authentication failed
 	 */
-    public function isValidToken(): bool {
-        try {
-            $this->favoriteShareMapper->findByToken($this->getToken());
-        } catch (DoesNotExistException | MultipleObjectsReturnedException $e) {
-            return false;
-        }
+	protected function showAuthFailed(): PublicTemplateResponse {
+		$templateParameters = ['share' => $this->share, 'wrongpw' => true];
 
-        return true;
-    }
+		$this->eventDispatcher->dispatchTyped(new BeforeTemplateRenderedEvent($this->share, BeforeTemplateRenderedEvent::SCOPE_PUBLIC_SHARE_AUTH));
+
+		$response = new PublicTemplateResponse('core', 'publicshareauth', $templateParameters, 'guest');
+		if ($this->share->getSendPasswordByTalk()) {
+			$csp = new ContentSecurityPolicy();
+			$csp->addAllowedConnectDomain('*');
+			$csp->addAllowedMediaDomain('blob:');
+			$response->setContentSecurityPolicy($csp);
+		}
+
+		return $response;
+	}
 
 	/**
-	 * Is a share with this token password protected
-	 *
-	 * @return bool
-	 * @since 14.0.0
+	 * The template to show after user identification
 	 */
-    protected function isPasswordProtected(): bool {
-        return false;
-    }
+	protected function showIdentificationResult(bool $success = false): PublicTemplateResponse {
+		$templateParameters = ['share' => $this->share, 'identityOk' => $success];
+
+		$this->eventDispatcher->dispatchTyped(new BeforeTemplateRenderedEvent($this->share, BeforeTemplateRenderedEvent::SCOPE_PUBLIC_SHARE_AUTH));
+
+		$response = new PublicTemplateResponse('core', 'publicshareauth', $templateParameters, 'guest');
+		if ($this->share->getSendPasswordByTalk()) {
+			$csp = new ContentSecurityPolicy();
+			$csp->addAllowedConnectDomain('*');
+			$csp->addAllowedMediaDomain('blob:');
+			$response->setContentSecurityPolicy($csp);
+		}
+
+		return $response;
+	}
+
 
 	/**
 	 * @param $response
 	 * @return void
 	 */
-	private function addCsp($response): void {
+    private function addCsp($response): void {
         if (class_exists('OCP\AppFramework\Http\ContentSecurityPolicy')) {
-            $csp = new ContentSecurityPolicy();
+            $csp = new \OCP\AppFramework\Http\ContentSecurityPolicy();
             // map tiles
             $csp->addAllowedImageDomain('https://*.tile.openstreetmap.org');
             $csp->addAllowedImageDomain('https://server.arcgisonline.com');
@@ -155,7 +224,12 @@ class PublicPageController extends PublicShareController {
             // default routing engine
             $csp->addAllowedConnectDomain('https://*.project-osrm.org');
             $csp->addAllowedConnectDomain('https://api.mapbox.com');
+            $csp->addAllowedConnectDomain('https://events.mapbox.com');
             $csp->addAllowedConnectDomain('https://graphhopper.com');
+
+            $csp->addAllowedChildSrcDomain('blob:');
+            $csp->addAllowedWorkerSrcDomain('blob:');
+            $csp->addAllowedScriptDomain('https://unpkg.com');
             // allow connections to custom routing engines
             $urlKeys = [
                 'osrmBikeURL',
@@ -176,7 +250,6 @@ class PublicPageController extends PublicShareController {
                     $csp->addAllowedConnectDomain($cleanUrl);
                 }
             }
-            //$csp->addAllowedConnectDomain('http://192.168.0.66:5000');
 
             // poi images
             $csp->addAllowedImageDomain('https://nominatim.openstreetmap.org');

@@ -34,7 +34,8 @@
 				<NcActionButton v-if="currentPhoto && currentPhoto.isUpdateable" icon="icon-history" @click="resetPhotosCoords([currentPhoto])">
 					{{ t('maps', 'Remove geo data') }}
 				</NcActionButton>
-				<NcActionButton icon="icon-share"
+				<NcActionButton v-if="!isPublic()"
+					icon="icon-share"
 					@click="$emit('add-to-map-photo', currentPhoto)">
 					{{ t('maps', 'Copy to map') }}
 				</NcActionButton>
@@ -75,7 +76,7 @@ import { LMarker, LTooltip, LPopup } from 'vue2-leaflet'
 import Vue2LeafletMarkerCluster from 'vue2-leaflet-markercluster'
 
 import optionsController from '../../optionsController'
-import {binSearch} from "../../utils/common";
+import {binSearch, getToken, isPublic} from "../../utils/common";
 
 const PHOTO_MARKER_VIEW_SIZE = 40
 
@@ -335,9 +336,14 @@ export default {
 			}))
 		},
 		getPreviewUrl(photo) {
-			return photo && photo.hasPreview
-				? generateUrl('core') + '/preview?fileId=' + photo.fileId + '&x=341&y=256&a=1'
-				: generateUrl('/apps/theming/img/core/filetypes') + '/image.svg?v=2'
+			if (photo && photo.hasPreview) {
+				const token = getToken()
+				return token
+					? generateUrl('apps/files_sharing/publicpreview/') + token + '?file=' + encodeURIComponent(photo.path) + '&x=341&y=256&a=1'
+					: generateUrl('core') + '/preview?fileId=' + photo.fileId + '&x=341&y=256&a=1'
+			} else {
+				return generateUrl('/apps/theming/img/core/filetypes') + '/image.svg?v=2'
+			}
 		},
 		getPhotoFormattedDate(photo) {
 			return photo ? moment(photo.dateTaken * 1000).format('LLL') : ''
@@ -472,6 +478,9 @@ export default {
 				m.options.draggable = this.draggable
 				m.update()
 			})
+		},
+		isPublic() {
+			return isPublic()
 		},
 	},
 }

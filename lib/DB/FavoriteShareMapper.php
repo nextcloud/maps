@@ -119,10 +119,24 @@ class FavoriteShareMapper extends QBMapper {
 		if ($folder === null) {
 			return $shares;
 		}
+		return $this->findAllByFolder($folder);
+	}
+
+	/**
+	 * @param $folder
+	 * @param $isCreatable
+	 * @return mixed
+	 * @throws NotFoundException
+	 */
+	public function findAllByFolder($folder, $isCreatable=true) {
 		try {
 			$file=$folder->get(".favorite_shares.json");
 		} catch (NotFoundException $e) {
-			$file=$folder->newFile(".favorite_shares.json", $content = '[]');
+			if ($isCreatable) {
+				$file=$folder->newFile(".favorite_shares.json", $content = '[]');
+			} else {
+				throw new NotFoundException();
+			}
 		}
 		return json_decode($file->getContent(),true);
 	}

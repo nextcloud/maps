@@ -24,6 +24,7 @@
 import { generateUrl } from '@nextcloud/router'
 import { showInfo } from '@nextcloud/dialogs'
 import axios from '@nextcloud/axios'
+import {getCurrentUser} from "@nextcloud/auth";
 
 export const getPublicShareCategory = () => {
 	const el = document.querySelector('.header-appname')
@@ -95,4 +96,19 @@ export const binSearch = (sortedArray, test) => {
 		else hi = mi
 	}
 	return -1
+}
+
+/**
+ * Is the current user an unauthenticated user?
+ */
+export const isPublic = function() {
+	return !getCurrentUser()
+}
+
+/**
+ * Get the current share link token
+ */
+export const getToken = function() {
+	return document.getElementById('sharingToken')
+		&& document.getElementById('sharingToken').value
 }

@@ -92,7 +92,7 @@ class GeophotoService {
 	 * @throws \OCP\Files\NotPermittedException
 	 * @throws \OC\User\NoUserException
 	 */
-     public function getAllFromDB(string $userId, $folder=null, bool $respectNomediaAndNoimage=true, bool $hideImagesOnCustomMaps=true): array {
+     public function getAll(string $userId, $folder=null, bool $respectNomediaAndNoimage=true, bool $hideImagesOnCustomMaps=true): array {
 		 $userFolder = $this->getFolderForUser($userId);
 		 if (is_null($folder)) {
 			 $folder = $userFolder;
@@ -172,7 +172,7 @@ class GeophotoService {
 	 * @throws \OCP\Files\NotPermittedException
 	 * @throws \OC\User\NoUserException
 	 */
-    public function getNonLocalizedFromDB (string $userId, $folder=null, bool $respectNomediaAndNoimage=true, bool $hideImagesOnCustomMaps=true): array {
+    public function getNonLocalized (string $userId, $folder=null, bool $respectNomediaAndNoimage=true, bool $hideImagesOnCustomMaps=true): array {
 		$userFolder = $this->getFolderForUser($userId);
 		if (is_null($folder)) {
 			$folder = $userFolder;
@@ -232,6 +232,10 @@ class GeophotoService {
 							$file_object->lastmod = $file->getMTime();
 							$file_object->size = $file->getSize();
 							$file_object->path = $path;
+							$file_object->isReadable = $file->isReadable();
+							$file_object->isUpdateable = $file->isUpdateable();
+							$file_object->isShareable = $file->isShareable();
+							$file_object->isDeletable = $file->isDeletable();
 							$file_object->hasPreview = in_array($cacheEntry->getMimeType(), $previewEnableMimetypes);
 							$filesById[] = $file_object;
 						}

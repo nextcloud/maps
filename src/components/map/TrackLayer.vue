@@ -12,7 +12,8 @@
 			<NcActionButton icon="icon-category-monitoring" @click="$emit('display-elevation', track)">
 				{{ t('maps', 'Display elevation') }}
 			</NcActionButton>
-			<NcActionButton icon="icon-share"
+			<NcActionButton v-if="!isPublic()"
+				icon="icon-share"
 				@click="$emit('add-to-map-track', track)">
 				{{ t('maps', 'Copy to map') }}
 			</NcActionButton>
@@ -59,7 +60,7 @@ import NcActionButton from '@nextcloud/vue/dist/Components/NcActionButton'
 import moment from '@nextcloud/moment'
 
 import optionsController from '../../optionsController'
-import { binSearch } from '../../utils/common'
+import {binSearch, isPublic} from '../../utils/common'
 
 const TRACK_MARKER_VIEW_SIZE = 40
 const WAYPOINT_MARKER_VIEW_SIZE = 30
@@ -263,6 +264,9 @@ export default {
 				}
 				this.$emit('point-hover', hoverPoint)
 			}
+		},
+		isPublic() {
+			return isPublic()
 		},
 	},
 }

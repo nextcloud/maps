@@ -38,11 +38,12 @@
 					<img class="tooltip-contact-avatar"
 						:src="contactAvatar"
 						alt="">
-					<button v-if="contact.isUpdateable"
+					<button v-if="contact.isDeletable"
 						v-tooltip="{ content: contact.ADR?t('maps', 'Delete this address'):t('maps', 'Delete this location') }"
 						class="icon icon-delete"
 						@click="onDeleteAddressClick()" />
-					<button v-tooltip="{ content: t('maps', 'Copy to map') }"
+					<button v-if="!isPublic()"
+						v-tooltip="{ content: t('maps', 'Copy to map') }"
 						class="icon icon-share"
 						@click="$emit('add-to-map-contact', contact)" />
 				</div>
@@ -77,7 +78,8 @@
 						@click="onDeleteAddressClick()">
 						{{ contact.ADR?t('maps', 'Delete this address'):t('maps', 'Delete this location') }}
 					</NcActionButton>
-					<NcActionButton icon="icon-share"
+					<NcActionButton v-if="!isPublic()"
+						icon="icon-share"
 						@click="$emit('add-to-map-contact', contact)">
 						{{ t('maps', 'Copy to map') }}
 					</NcActionButton>
@@ -97,6 +99,7 @@ import { LMarker, LTooltip, LPopup } from 'vue2-leaflet'
 
 import optionsController from '../../optionsController'
 import { geoToLatLng } from '../../utils/mapUtils'
+import { getToken, isPublic } from '../../utils/common'
 
 const CONTACT_MARKER_VIEW_SIZE = 40
 
@@ -159,7 +162,7 @@ export default {
 					+ '/' + encodeURIComponent(this.contact.BOOKURI)
 					+ '/' + encodeURIComponent(this.contact.URI) + '?photo').replace(/index\.php\//, '')
 			} else {
-				return generateUrl('/apps/maps/contacts-avatar?name=' + encodeURIComponent(this.contact.FN))
+				return generateUrl('/apps/maps' + (isPublic() ? '/s/' + getToken() : '') + '/contacts-avatar?name=' + encodeURIComponent(this.contact.FN))
 			}
 		},
 		formattedAddressLines() {
@@ -181,6 +184,9 @@ export default {
 	},
 
 	methods: {
+		isPublic() {
+			return isPublic()
+		},
 		onMarkerClick(e) {
 			this.click = 'left'
 			this.popupOptions.offset = L.point(-5, 10)

@@ -1,5 +1,6 @@
 import * as network from './network'
 import { showWarning } from '@nextcloud/dialogs'
+import {getToken} from "./utils/common";
 
 const optionsController = {
 	bounds: [
@@ -32,12 +33,12 @@ const optionsController = {
 			this.optionValues[k] = newOptionValues[k]
 		}
 		if (this.optionValues.isUpdateable) {
-			network.saveOptionValues(newOptionValues, this.myMapId)
+			network.saveOptionValues(newOptionValues, this.myMapId, getToken())
 		}
 	},
 
 	restoreOptions(successCB = null) {
-		network.getOptionValues(this.myMapId)
+		network.getOptionValues(this.myMapId, getToken())
 			.then((response) => {
 				this.handleOptionValues(response.data)
 				if (successCB) {

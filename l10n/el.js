@@ -67,6 +67,7 @@ OC.L10N.register(
     "No favorites to display" : "Δεν υπάρχουν αγαπημένα εμφάνιση",
     "Tags" : "Ετικέτες",
     "Favorite" : "Αγαπημένο",
+    "Track metadata" : "Παρακολούθηση μεταδεδομένων",
     "Track" : "Κομμάτι",
     "Unable to change the favourite state of the file" : "Αδυναμία αλλαγής αγαπημένης κατάστασης αρχείου",
     "Error while loading the file data" : "Σφάλμα κατά την φόρτωση αρχείου δεδομένων",

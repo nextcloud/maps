@@ -113,6 +113,7 @@ OC.L10N.register(
     "Sidebar" : "Yan çubuk",
     "Favorite" : "Sık kullanılanlara ekle",
     "Photo suggestions" : "Fotoğraf önerileri",
+    "Track metadata" : "Rota üst verileri",
     "Track" : "Rota",
     "Photo location suggestions" : "Fotoğraf konumu önerileri",
     "Unable to change the favourite state of the file" : "Dosyanın sık kullanılan durumu değiştirilemedi",

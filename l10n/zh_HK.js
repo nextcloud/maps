@@ -113,6 +113,7 @@ OC.L10N.register(
     "Sidebar" : "側邊欄",
     "Favorite" : "我的最愛",
     "Photo suggestions" : "照片建議",
+    "Track metadata" : "記錄元數據",
     "Track" : "足跡",
     "Photo location suggestions" : "照片位置建議",
     "Unable to change the favourite state of the file" : "無法更改檔案的最愛狀態",

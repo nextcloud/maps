@@ -76,7 +76,7 @@ import { LMarker, LTooltip, LPopup } from 'vue2-leaflet'
 import Vue2LeafletMarkerCluster from 'vue2-leaflet-markercluster'
 
 import optionsController from '../../optionsController'
-import {binSearch, getToken, isPublic} from "../../utils/common";
+import { binSearch, getToken, isPublic } from '../../utils/common'
 
 const PHOTO_MARKER_VIEW_SIZE = 40
 
@@ -346,7 +346,12 @@ export default {
 			}
 		},
 		getPhotoFormattedDate(photo) {
-			return photo ? moment(photo.dateTaken * 1000).format('LLL') : ''
+			if (photo) {
+				const d = new Date(photo.dateTaken*1000)
+				const mom = moment.unix(photo.dateTaken + d.getTimezoneOffset() * 60)
+				return mom.format('LL') + ' ' + mom.format('HH:mm:ss')
+			}
+			return ''
 		},
 		onPhotoClick(e) {
 			const photo = e.target.data

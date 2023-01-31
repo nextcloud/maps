@@ -15,7 +15,11 @@ namespace OCA\Maps\Service;
 use OC\Files\Search\SearchBinaryOperator;
 use OC\Files\Search\SearchComparison;
 use OC\Files\Search\SearchQuery;
+use OC\User\NoUserException;
+use OCP\DB\Exception;
 use OCP\Files\FileInfo;
+use OCP\Files\NotFoundException;
+use OCP\Files\NotPermittedException;
 use OCP\Files\Search\ISearchBinaryOperator;
 use OCP\Files\Search\ISearchComparison;
 use OCP\ICacheFactory;
@@ -163,21 +167,22 @@ class GeophotoService {
 
 	/**
 	 * @param string $userId
-	 * @param $folder=null
+	 * @param null $folder =null
 	 * @param bool $respectNomediaAndNoimage
 	 * @param bool $hideImagesOnCustomMaps
+	 * @param string|null $timezone locale time zone used by images
 	 * @return array with geodatas of all nonLocalizedPhotos
-	 * @throws \OCP\Files\InvalidPathException
-	 * @throws \OCP\Files\NotFoundException
-	 * @throws \OCP\Files\NotPermittedException
-	 * @throws \OC\User\NoUserException
+	 * @throws Exception
+	 * @throws NotFoundException
+	 * @throws NotPermittedException
+	 * @throws NoUserException
 	 */
-    public function getNonLocalized (string $userId, $folder=null, bool $respectNomediaAndNoimage=true, bool $hideImagesOnCustomMaps=true): array {
+    public function getNonLocalized (string $userId, $folder=null, bool $respectNomediaAndNoimage=true, bool $hideImagesOnCustomMaps=true, string $timezone=null): array {
 		$userFolder = $this->getFolderForUser($userId);
 		if (is_null($folder)) {
 			$folder = $userFolder;
 		}
-		$key = $userId . ':' . $userFolder->getRelativePath($folder->getPath()) . ':' . (string) $respectNomediaAndNoimage . ':' . (string) $hideImagesOnCustomMaps;
+		$key = $userId . ':' . $userFolder->getRelativePath($folder->getPath()) . ':' . (string) $respectNomediaAndNoimage . ':' . (string) $hideImagesOnCustomMaps . ':' . (string) $timezone;
 		$filesById = $this->nonLocalizedPhotosCache->get($key);
 		if ($filesById === null) {
 			$ignoredPaths = $respectNomediaAndNoimage ? $this->getIgnoredPaths($userId, $folder, $hideImagesOnCustomMaps) : [];
@@ -211,8 +216,16 @@ class GeophotoService {
 					if (!$isIgnored) {
 						$isRoot = $file === $userFolder;
 
+						//Unfortunately Exif stores the local and not the UTC time. There is no way to get the timezone, therefore it has to be given by the user.
 						$date = $photoEntity->getDateTaken() ?? \time();
-						$locations = $this->getLocationGuesses($date);
+						if (!is_null($timezone)) {
+							$tz = new \DateTimeZone($timezone);
+						} else {
+							$tz = new \DateTimeZone(\date_default_timezone_get());
+						}
+
+						$dateWithTimezone = new \DateTime(gmdate('Y-m-d H:i:s', $date), $tz);
+						$locations = $this->getLocationGuesses($dateWithTimezone->getTimestamp());
 						foreach ($locations as $location) {
 							$file_object = new \stdClass();
 							$file_object->fileId = $photoEntity->getFileId();
@@ -367,6 +380,16 @@ class GeophotoService {
         $foo = ksort($points);
         return $points;
     }
+
+	/**
+	 * @param int $timeUTC
+	 * @param float $lat
+	 * @param float $lng
+	 * @return void
+	 */
+	private function getLocalTime(int $timeUTC, float $lat, float $lng) {
+
+	}
 
     /**
      * @param $dateTaken int timestamp of the picture

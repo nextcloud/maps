@@ -314,11 +314,12 @@ export async function clearPhotoCache(token = null) {
 	return axios.get(url)
 }
 
-export async function getPhotoSuggestions(myMapId = null, token = null) {
+export async function getPhotoSuggestions(myMapId = null, token = null, timezone = null) {
 	const url = generateUrl('apps/maps' + (token ? '/s/' + token : '') + '/photos/nonlocalized')
 	const conf = {
 		params: {
 			myMapId,
+			timezone,
 		},
 	}
 	return axios.get(url, conf)

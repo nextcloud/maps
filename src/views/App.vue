@@ -186,6 +186,7 @@
 			:photos-loading="photosLoading"
 			:photo-suggestions="photoSuggestions"
 			:photo-suggestions-selected-indices="photoSuggestionsSelectedIndices"
+			:photo-suggestions-timezone="photoSuggestionsTimezone"
 			:my-map="selectedMyMap"
 			@edit-favorite="onFavoriteEdit"
 			@delete-favorite="onFavoriteDelete"
@@ -196,6 +197,7 @@
 			@clear-photo-suggestions-selection="onClearPhotoSuggestionsSelection"
 			@cancel-photo-suggestions="onCancelPhotoSuggestions"
 			@save-photo-suggestions-selection="onSavePhotoSuggestionsSelection"
+			@change-photo-suggestions-timezone="onChangePhotoSuggestionsTimezone"
 			@zoom-photo-suggestion="onPhotoSuggestionZoom" />
 	</NcContent>
 </template>
@@ -207,6 +209,7 @@ import NcActions from '@nextcloud/vue/dist/Components/NcActions'
 import NcActionButton from '@nextcloud/vue/dist/Components/NcActionButton'
 import { showError, showInfo, showSuccess } from '@nextcloud/dialogs'
 import moment from '@nextcloud/moment'
+import 'moment-timezone';
 import { emit } from '@nextcloud/event-bus'
 
 import Map from '../components/Map'
@@ -219,7 +222,7 @@ import AppNavigationTracksItem from '../components/AppNavigationTracksItem'
 import AppNavigationDevicesItem from '../components/AppNavigationDevicesItem'
 import AppNavigationMyMapsItem from '../components/AppNavigationMyMapsItem'
 import optionsController from '../optionsController'
-import { getLetterColor, hslToRgb, Timer, getDeviceInfoFromUserAgent2, isComputer, isPhone, sleep } from '../utils'
+import { getLetterColor, hslToRgb, Timer, getDeviceInfoFromUserAgent2, isComputer, isPhone } from '../utils'
 import {binSearch, getToken, isPublic} from '../utils/common'
 import { poiSearchData } from '../utils/poiData'
 import { processGpx } from '../tracksUtils'
@@ -285,6 +288,7 @@ export default {
 			showPhotoSuggestions: false,
 			photoSuggestions: [],
 			photoSuggestionsSelectedIndices: [],
+			photoSuggestionsTimezone: moment.tz.guess(),
 			// contacts
 			contactsLoading: false,
 			contactsEnabled: optionsController.contactsEnabled,
@@ -305,7 +309,7 @@ export default {
 			// myMaps
 			myMapsLoading: false,
 			myMaps: [],
-			myMapsEnabled: optionsController.myMapsEnabled  && !isPublic(),
+			myMapsEnabled: optionsController.myMapsEnabled && !isPublic(),
 			myMapId: optionsController.myMapId,
 			selectedMyMap: null,
 			// PublicPage
@@ -1069,7 +1073,7 @@ export default {
 				return
 			}
 			this.photosLoading = true
-			network.getPhotoSuggestions(this.myMapId, getToken()).then((response) => {
+			network.getPhotoSuggestions(this.myMapId, getToken(), this.photoSuggestionsTimezone).then((response) => {
 				this.photoSuggestions = response.data.sort((a, b) => {
 					if (a.dateTaken < b.dateTaken) {
 						return -1
@@ -1097,6 +1101,11 @@ export default {
 		},
 		onCancelPhotoSuggestions() {
 			this.cancelPhotoSuggestions()
+		},
+		onChangePhotoSuggestionsTimezone(tz) {
+			this.photoSuggestionsTimezone = tz
+			this.photoSuggestionsSelectedIndices = []
+			this.getPhotoSuggestions()
 		},
 		onSavePhotoSuggestionsSelection(indices = null) {
 			const toSave = indices || this.photoSuggestionsSelectedIndices

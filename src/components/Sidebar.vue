@@ -17,7 +17,9 @@
 		<PhotoSuggestionsSidebarTab v-if="activeTab === 'photo-suggestion' && !fileInfo"
 			:photo-suggestions="photoSuggestions"
 			:photo-suggestions-selected-indices="photoSuggestionsSelectedIndices"
+			:photo-suggestions-timezone="photoSuggestionsTimezone"
 			:loading="photosLoading"
+			@change-timezone="$emit('change-photo-suggestions-timezone',$event)"
 			@select-all="$emit('select-all-photo-suggestions')"
 			@clear-selection="$emit('clear-photo-suggestions-selection',$event)"
 			@cancel="$emit('cancel-photo-suggestions')"
@@ -131,6 +133,10 @@ export default {
 		photoSuggestionsSelectedIndices: {
 			required: true,
 			type: Array,
+		},
+		photoSuggestionsTimezone: {
+			required: true,
+			type: String,
 		},
 		track: {
 			required: false,

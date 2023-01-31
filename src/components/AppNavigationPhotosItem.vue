@@ -33,7 +33,7 @@
 			</NcActionButton>
 			<NcActionButton
 				:icon="showSuggestions ? 'icon-picture' : 'icon-picture'"
-				:close-after-click="false"
+				:close-after-click="true"
 				@click="$emit('suggestions-clicked')">
 				{{ showSuggestions ? t('maps', 'Hide suggestions') : t('maps', 'Suggest photo locations') }}
 			</NcActionButton>

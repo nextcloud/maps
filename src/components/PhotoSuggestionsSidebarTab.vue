@@ -12,6 +12,9 @@
 					@click="$emit('select-all')">
 					{{ t('maps', 'Select all') }}
 				</NcButton>
+				<NcTimezonePicker
+					:value="photoSuggestionsTimezone"
+					@input="$emit('change-timezone', $event)" />
 				<NcActions>
 					<NcActionButton
 						:icon="selectionLayout==='list'?'icon-toggle-pictures':'icon-toggle-filelist'"
@@ -110,7 +113,8 @@ import NcActions from '@nextcloud/vue/dist/Components/NcActions'
 import NcActionButton from '@nextcloud/vue/dist/Components/NcActionButton'
 import NcListItem from '@nextcloud/vue/dist/Components/NcListItem'
 import optionsController from '../optionsController'
-import {getToken} from "../utils/common";
+import { getToken } from '../utils/common'
+import NcTimezonePicker from '@nextcloud/vue/dist/Components/NcTimezonePicker'
 
 export default {
 	name: 'PhotoSuggestionsSidebarTab',
@@ -120,6 +124,7 @@ export default {
 		NcActions,
 		NcActionButton,
 		NcListItem,
+		NcTimezonePicker,
 	},
 
 	props: {
@@ -130,6 +135,10 @@ export default {
 		photoSuggestionsSelectedIndices: {
 			required: true,
 			type: Array,
+		},
+		photoSuggestionsTimezone: {
+			reuired: true,
+			type: String,
 		},
 		loading: {
 			required: true,

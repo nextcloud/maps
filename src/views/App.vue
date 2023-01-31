@@ -208,8 +208,9 @@ import NcAppContent from '@nextcloud/vue/dist/Components/NcAppContent'
 import NcActions from '@nextcloud/vue/dist/Components/NcActions'
 import NcActionButton from '@nextcloud/vue/dist/Components/NcActionButton'
 import { showError, showInfo, showSuccess } from '@nextcloud/dialogs'
+
 import moment from '@nextcloud/moment'
-import 'moment-timezone';
+
 import { emit } from '@nextcloud/event-bus'
 
 import Map from '../components/Map'
@@ -288,7 +289,7 @@ export default {
 			showPhotoSuggestions: false,
 			photoSuggestions: [],
 			photoSuggestionsSelectedIndices: [],
-			photoSuggestionsTimezone: moment.tz.guess(),
+			photoSuggestionsTimezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
 			// contacts
 			contactsLoading: false,
 			contactsEnabled: optionsController.contactsEnabled,

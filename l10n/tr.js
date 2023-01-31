@@ -206,7 +206,7 @@ OC.L10N.register(
     " on {road}" : " {road} yoluyla",
     "Continue {dir}" : "{dir} ile ilerle",
     "Waypoint reached" : "Durağa ulaşıldı",
-    "Take the {exitStr} exit in the roundabout" : "Kavşakta {exitStr} çıkıştan çık",
+    "Take the {exitStr} exit in the roundabout" : "Dönel kavşakta {exitStr} çıkıştan çık",
     " onto {road}" : " {road} yönüne",
     "Destination reached" : "Hedefe ulaşıldı",
     "At the fork, turn {modifier}" : "Yol ayrımından {modifier} yönüne dön",

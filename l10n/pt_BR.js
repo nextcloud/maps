@@ -113,6 +113,7 @@ OC.L10N.register(
     "Sidebar" : "Barra Lateral",
     "Favorite" : "Favorito",
     "Photo suggestions" : "Sugestões de fotos",
+    "Track metadata" : "Rastrear metadados",
     "Track" : "Acompanhar",
     "Photo location suggestions" : "Sugestões de localização de fotos",
     "Unable to change the favourite state of the file" : "Não foi possível alterar o estado favorito do arquivo",

@@ -113,6 +113,7 @@ OC.L10N.register(
     "Sidebar" : "Postranní panel",
     "Favorite" : "Přidat do oblíbených",
     "Photo suggestions" : "Doporučování fotek",
+    "Track metadata" : "Metadata trasy",
     "Track" : "Stopa",
     "Photo location suggestions" : "Doporučování umístění fotek",
     "Unable to change the favourite state of the file" : "Nedaří se změnit stav „oblíbené“ souboru",

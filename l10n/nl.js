@@ -64,6 +64,7 @@ OC.L10N.register(
     "(No name)" : "(geen naam)",
     "No favorites to display" : "Geen favorieten om te vertonen",
     "Tags" : "Tags",
+    "Sidebar" : "Zijbalk",
     "Favorite" : "Favoriet",
     "Track" : "Nummer",
     "Unable to change the favourite state of the file" : "Niet mogelijk om favoriet status van het bestand te wijzigen",

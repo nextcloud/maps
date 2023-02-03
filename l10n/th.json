@@ -1,4 +1,10 @@
 { "translations": {
+    "Invalid values" : "ค่าไม่ถูกต้อง",
+    "No such device" : "ไม่มีอุปกรณ์",
+    "No device to export" : "ไม่มีอุปกรณ์ที่จะส่งออก",
+    "/Maps is not a directory" : "/Maps ไม่ใช่ไดเร็กทอรี",
+    "/Maps directory is not writeable" : "ไดเร็กทอรี /Maps เขียนไม่ได้",
+    "Impossible to create /Maps directory" : "ไม่สามารถสร้างไดเร็กทอรี /Maps",
     "File not found" : "ไม่พบไฟล์",
     "Personal" : "ส่วนตัว",
     "Maps" : "แผนที่",

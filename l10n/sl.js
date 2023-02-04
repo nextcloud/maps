@@ -85,6 +85,7 @@ OC.L10N.register(
     "Shows cool information" : "Pokaže zanimive podrobnosti",
     "Sidebar" : "Bočno okno",
     "Favorite" : "Priljubljeno",
+    "Track metadata" : "Metapodatki sledi",
     "Track" : "Sled",
     "Unable to change the favourite state of the file" : "Ni mogoče spremeniti stanja priljubljenosti datoteke",
     "Error while loading the file data" : "Prišlo je do napake med nalaganjem podatkov računa",

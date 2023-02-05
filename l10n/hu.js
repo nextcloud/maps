@@ -113,6 +113,7 @@ OC.L10N.register(
     "Sidebar" : "Oldalsáv",
     "Favorite" : "Kedvenc",
     "Photo suggestions" : "Fényképjavaslatok",
+    "Track metadata" : "Nyomvonal-metaadatok",
     "Track" : "Nyomvonal",
     "Photo location suggestions" : "Fényképhely-javaslatok",
     "Unable to change the favourite state of the file" : "Nem lehet megváltoztatni a fájl kedvenc állapotát",

@@ -254,6 +254,8 @@
     "Choose directory of pictures to place" : "Aukeratu irudien direktorioa jartzeko",
     "\"{path}\" successfully moved" : "\"{path}\"-a behar bezala mugitu da",
     "{nb} photos moved" : "{nb} argazkiak mugitu dira",
+    "Cleared photo cache" : "Argazkien cachea garbituta",
+    "Failed to clear photos cache" : "Argazkiak garbitzeak huts egin du",
     "Failed to load contacts" : "Ezin izan dira kontaktuak kargatu",
     "Not grouped" : "Taldekatu gabe",
     "Favorites exported in {path}" : "Gogokoak esportatu dira hona: [path]",

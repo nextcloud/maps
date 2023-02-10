@@ -32,11 +32,11 @@
 			:icon="firstPointMarkerIcon"
 			:lat-lng="firstPoint" />
 		<LMarker v-for="(point, i) in wayPoints"
-			:key="i"
+			:key="'waypoint:'.concat(i)"
 			:icon="wayPointMarkerIcon"
 			:lat-lng="point" />
 		<LFeatureGroup v-for="(line, i) in lines"
-			:key="i"
+			:key="'line'.concat(i)"
 			@mouseover="trackLineMouseover($event, line)">
 			<LPolyline
 				color="black"

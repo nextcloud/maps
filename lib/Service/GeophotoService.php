@@ -88,23 +88,28 @@ class GeophotoService {
 
 	/**
 	 * @param string $userId
-	 * @param $folder=null
-	 * @param bool $respectNomediaAndNoimage=true
-	 * @param bool $hideImagesOnCustomMaps=true
+	 * @param null $folder =null
+	 * @param bool $respectNomediaAndNoimage =true
+	 * @param bool $hideImagesOnCustomMaps =true
+	 * @param bool $hideImagesInMapsFolder
 	 * @return array
-	 * @throws \OCP\Files\NotFoundException
-	 * @throws \OCP\Files\NotPermittedException
-	 * @throws \OC\User\NoUserException
+	 * @throws Exception
+	 * @throws NoUserException
+	 * @throws NotFoundException
+	 * @throws NotPermittedException
 	 */
-     public function getAll(string $userId, $folder=null, bool $respectNomediaAndNoimage=true, bool $hideImagesOnCustomMaps=true): array {
+     public function getAll(string $userId, $folder=null, bool $respectNomediaAndNoimage=true, bool $hideImagesOnCustomMaps=false, bool $hideImagesInMapsFolder=true): array {
 		 $userFolder = $this->getFolderForUser($userId);
 		 if (is_null($folder)) {
 			 $folder = $userFolder;
 		 }
-		 $key = $userId . ':' . $userFolder->getRelativePath($folder->getPath()) . ':' . (string) $respectNomediaAndNoimage . ':' . (string) $hideImagesOnCustomMaps;
+		 $key = $userId . ':' . $userFolder->getRelativePath($folder->getPath()) . ':' . (string) $respectNomediaAndNoimage . ':' . (string) $hideImagesOnCustomMaps . ':' . (string) $hideImagesInMapsFolder;
 		 $filesById = $this->photosCache->get($key);
 		 if ($filesById === null) {
 			 $ignoredPaths = $respectNomediaAndNoimage ? $this->getIgnoredPaths($userId, $folder, $hideImagesOnCustomMaps) : [];
+			 if ($hideImagesInMapsFolder) {
+				 $ignoredPaths[] = "/Maps";
+			 }
 			 $photoEntities = $this->photoMapper->findAll($userId);
 
 			 $filesById = [];
@@ -170,24 +175,30 @@ class GeophotoService {
 	 * @param null $folder =null
 	 * @param bool $respectNomediaAndNoimage
 	 * @param bool $hideImagesOnCustomMaps
+	 * @param bool $hideImagesInMapsFolder
 	 * @param string|null $timezone locale time zone used by images
+	 * @param int $limit
+	 * @param int $offset
 	 * @return array with geodatas of all nonLocalizedPhotos
 	 * @throws Exception
+	 * @throws NoUserException
 	 * @throws NotFoundException
 	 * @throws NotPermittedException
-	 * @throws NoUserException
 	 */
-    public function getNonLocalized (string $userId, $folder=null, bool $respectNomediaAndNoimage=true, bool $hideImagesOnCustomMaps=true, string $timezone=null): array {
+    public function getNonLocalized (string $userId, $folder=null, bool $respectNomediaAndNoimage=true, bool $hideImagesOnCustomMaps=false, bool $hideImagesInMapsFolder=true, string $timezone=null, int $limit=250, int $offset=0): array {
 		$userFolder = $this->getFolderForUser($userId);
 		if (is_null($folder)) {
 			$folder = $userFolder;
 		}
-		$key = $userId . ':' . $userFolder->getRelativePath($folder->getPath()) . ':' . (string) $respectNomediaAndNoimage . ':' . (string) $hideImagesOnCustomMaps . ':' . (string) $timezone;
-		$filesById = $this->nonLocalizedPhotosCache->get($key);
-		if ($filesById === null) {
+//		$key = $userId . ':' . $userFolder->getRelativePath($folder->getPath()) . ':' . (string) $respectNomediaAndNoimage . ':' . (string) $hideImagesOnCustomMaps . ':' . (string) $hideImageInMapsFolder . ':' . (string) $timezone . ':' . (string) $limit . ':' . (string) $offset;
+//		$filesById = $this->nonLocalizedPhotosCache->get($key);
+//		if ($filesById === null) {
 			$ignoredPaths = $respectNomediaAndNoimage ? $this->getIgnoredPaths($userId, $folder, $hideImagesOnCustomMaps) : [];
+			if ($hideImagesInMapsFolder) {
+				$ignoredPaths[] = "/Maps";
+			}
 			$foo = $this->loadTimeorderedPointSets($userId, $folder, $respectNomediaAndNoimage, $hideImagesOnCustomMaps);
-			$photoEntities = $this->photoMapper->findAllNonLocalized($userId);
+			$photoEntities = $this->photoMapper->findAllNonLocalized($userId, $limit, $offset);
 			$filesById = [];
 			$cache = $folder->getStorage()->getCache();
 			$previewEnableMimetypes = $this->getPreviewEnabledMimetypes();
@@ -255,8 +266,8 @@ class GeophotoService {
 					}
 				}
 			}
-			$this->nonLocalizedPhotosCache->set($key, $filesById, 60 * 60 * 24);
-        }
+//			$this->nonLocalizedPhotosCache->set($key, $filesById, 60 * 60 * 24);
+//        }
         return $filesById;
     }
 

@@ -94,6 +94,10 @@
 				{{ !photoSuggestions.includes(null) ? t('maps', 'Cancel') : t('maps', 'Quit') }}
 			</NcButton>
 			<NcButton
+				@click="$emit('load-more')">
+				{{ t('maps', 'Load more') }}
+			</NcButton>
+			<NcButton
 				v-show="photoSuggestions.length > 0"
 				type="primary"
 				:disabled="photoSuggestionsSelectedIndices.length===0 || readOnly"

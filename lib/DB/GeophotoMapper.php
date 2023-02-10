@@ -131,14 +131,14 @@ class GeophotoMapper extends QBMapper {
 					$qb->expr()->isNull('lat'),
 					$qb->expr()->isNull('lng')
 				)
-			)->orderBy('date_taken', 'ASC');
+			)->orderBy('date_taken', 'DESC');
 		if (!is_null($offset)) {
 			$qb->setFirstResult($offset);
 		}
 		if (!is_null($limit)) {
 			$qb->setMaxResults($limit);
 		}
-		return $this->findEntities($qb);
+		return array_reverse($this->findEntities($qb));
     }
 
 	/**

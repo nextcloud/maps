@@ -193,6 +193,7 @@
 			@active-changed="onActiveSidebarTabChanged"
 			@close="onCloseSidebar"
 			@opened="onOpenedSidebar"
+			@load-more-photo-suggestions="getPhotoSuggestions"
 			@select-all-photo-suggestions="onSelectAllPhotoSuggestions"
 			@clear-photo-suggestions-selection="onClearPhotoSuggestionsSelection"
 			@cancel-photo-suggestions="onCancelPhotoSuggestions"
@@ -290,6 +291,8 @@ export default {
 			photoSuggestions: [],
 			photoSuggestionsSelectedIndices: [],
 			photoSuggestionsTimezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+			photoSuggestionsLimit: 250,
+			photoSuggestionsOffset: 0,
 			// contacts
 			contactsLoading: false,
 			contactsEnabled: optionsController.contactsEnabled,
@@ -1070,19 +1073,20 @@ export default {
 			this.photoSuggestions = []
 		},
 		getPhotoSuggestions() {
-			if (!this.photosEnabled) {
+			if (!this.photosEnabled || this.photosLoading) {
 				return
 			}
 			this.photosLoading = true
-			network.getPhotoSuggestions(this.myMapId, getToken(), this.photoSuggestionsTimezone).then((response) => {
-				this.photoSuggestions = response.data.sort((a, b) => {
+			network.getPhotoSuggestions(this.myMapId, getToken(), this.photoSuggestionsTimezone, this.photoSuggestionsLimit, this.photoSuggestionsOffset).then((response) => {
+				this.photoSuggestions.unshift(...response.data.sort((a, b) => {
 					if (a.dateTaken < b.dateTaken) {
 						return -1
 					} else if (a.dateTaken > b.dateTaken) {
 						return 1
 					}
 					return 0
-				})
+				}))
+				this.photoSuggestionsOffset += this.photoSuggestionsLimit
 			}).catch((error) => {
 				console.error(error)
 			}).then(() => {

@@ -19,6 +19,7 @@
 			:photo-suggestions-selected-indices="photoSuggestionsSelectedIndices"
 			:photo-suggestions-timezone="photoSuggestionsTimezone"
 			:loading="photosLoading"
+			@load-more="$emit('load-more-photo-suggestions')"
 			@change-timezone="$emit('change-photo-suggestions-timezone',$event)"
 			@select-all="$emit('select-all-photo-suggestions')"
 			@clear-selection="$emit('clear-photo-suggestions-selection',$event)"

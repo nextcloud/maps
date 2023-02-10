@@ -12,7 +12,12 @@
 
 namespace OCA\Maps\Controller;
 
+use OC\User\NoUserException;
+use OCP\DB\Exception;
+use OCP\Files\InvalidPathException;
 use OCP\Files\IRootFolder;
+use OCP\Files\NotFoundException;
+use OCP\Files\NotPermittedException;
 use OCP\IRequest;
 use OCP\AppFramework\Http\TemplateResponse;
 use OCP\AppFramework\Http\DataResponse;
@@ -52,11 +57,11 @@ class PhotosController extends Controller {
     public function getPhotos($myMapId=null): DataResponse {
 		$userFolder = $this->root->getUserFolder($this->userId);
         if (is_null($myMapId) || $myMapId === "") {
-            $result = $this->geophotoService->getAll($this->userId, $userFolder);
+            $result = $this->geophotoService->getAll($this->userId, $userFolder, true, false, true);
         } else {
             $folders = $userFolder->getById($myMapId);
             $folder = array_shift($folders);
-            $result = $this->geophotoService->getAll($this->userId, $folder, true, false);
+            $result = $this->geophotoService->getAll($this->userId, $folder, true, false, false);
         }
         return new DataResponse($result);
     }
@@ -64,16 +69,24 @@ class PhotosController extends Controller {
 	/**
 	 * @NoAdminRequired
 	 * @NoCSRFRequired
+	 * @param int|null $myMapId
+	 * @param string|null $timezone
+	 * @param int $limit
+	 * @param int $offset
 	 * @return DataResponse
+	 * @throws Exception
+	 * @throws NoUserException
+	 * @throws NotFoundException
+	 * @throws NotPermittedException
 	 */
-    public function getNonLocalizedPhotos($myMapId=null, $timezone=null): DataResponse {
+    public function getNonLocalizedPhotos(?int $myMapId=null, ?string $timezone=null, int $limit=250, int $offset=0): DataResponse {
 		$userFolder = $this->root->getUserFolder($this->userId);
 		if (is_null($myMapId) || $myMapId === "") {
-        	$result = $this->geophotoService->getNonLocalized($this->userId, $userFolder, true, true, $timezone);
+        	$result = $this->geophotoService->getNonLocalized($this->userId, $userFolder, true, false, true, $timezone, $limit, $offset);
 		} else {
 			$folders = $userFolder->getById($myMapId);
 			$folder = array_shift($folders);
-			$result = $this->geophotoService->getNonLocalized($this->userId, $folder, true, false, $timezone);
+			$result = $this->geophotoService->getNonLocalized($this->userId, $folder, true, false, false, $timezone, $limit, $offset);
 		}
         return new DataResponse($result);
     }
@@ -85,14 +98,20 @@ class PhotosController extends Controller {
 	 * @param $lats
 	 * @param $lngs
 	 * @param bool $directory
+	 * @param null $myMapId
+	 * @param bool $relative
 	 * @return DataResponse
+	 * @throws NoUserException
+	 * @throws NotFoundException
+	 * @throws NotPermittedException
+	 * @throws InvalidPathException
 	 */
-    public function placePhotos($paths, $lats, $lngs, bool $directory=false, $myMapId=null, $relative=false): DataResponse {
+    public function placePhotos($paths, $lats, $lngs, bool $directory=false, $myMapId=null, bool $relative=false): DataResponse {
 		$userFolder = $this->root->getUserFolder($this->userId);
         if (!is_null($myMapId) and $myMapId !== '') {
             // forbid folder placement in my-maps
             if ($directory === 'true') {
-                return 0;
+                throw new NotPermittedException();
             }
             $folders = $userFolder->getById($myMapId);
             $folder = array_shift($folders);

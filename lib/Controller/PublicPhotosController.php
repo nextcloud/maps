@@ -123,7 +123,7 @@ class PublicPhotosController extends PublicPageController {
 		if ($isReadable) {
 			$owner = $share->getShareOwner();
 			$pre_path = $this->root->getUserFolder($owner)->getPath();
-			$result = $this->geophotoService->getAll($owner, $folder, true, false);
+			$result = $this->geophotoService->getAll($owner, $folder, true, false, false);
 			$photos = array_map(function ($photo) use ($folder, $permissions, $pre_path) {
 				$photo_object = (object) $photo;
 				$photo_object->isCreatable = ($permissions & (1 << 2)) && $photo['isCreatable'];
@@ -148,7 +148,7 @@ class PublicPhotosController extends PublicPageController {
 	 * @throws \OCP\Files\InvalidPathException
 	 * @throws \OC\User\NoUserException
 	 */
-    public function getNonLocalizedPhotos(): DataResponse {
+    public function getNonLocalizedPhotos(?string $timezone=null, int $limit=250, int $offset=0): DataResponse {
 		$share = $this->getShare();
 		$permissions = $share->getPermissions();
 		$folder = $this->getShareNode();
@@ -156,7 +156,7 @@ class PublicPhotosController extends PublicPageController {
 		if ($isReadable) {
 			$owner = $share->getShareOwner();
 			$pre_path = $this->root->getUserFolder($owner)->getPath();
-			$result = $this->geophotoService->getNonLocalized($owner, $folder, true, false);
+			$result = $this->geophotoService->getNonLocalized($owner, $folder, true, false, false, $timezone, $limit, $offset);
 			$photos = array_map(function ($photo) use ($folder, $permissions, $pre_path) {
 				$photo_object = (object) $photo;
 				$photo_object->isCreatable = ($permissions & (1 << 2)) && $photo['isCreatable'];

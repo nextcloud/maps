@@ -213,7 +213,7 @@ class PhotosControllerTest extends \PHPUnit\Framework\TestCase {
         $this->assertCount(1, $data);
         $this->assertEquals('/nc.jpg', $data[0]->path);
 
-		//Test .nomedia repected
+		//Test .nomedia respected
 		$this->GeoPhotosService->clearCache();
 		$file = $userfolder->newFile('.maps.nomedia');
 		$resp = $this->photosController->getPhotos();
@@ -223,7 +223,7 @@ class PhotosControllerTest extends \PHPUnit\Framework\TestCase {
 		$this->assertCount(0, $data);
 		$file->delete();
 
-		//Test .noimage repected
+		//Test .noimage respected
 		$this->GeoPhotosService->clearCache();
 		$file = $userfolder->newFile('.maps.noimage');
 		$resp = $this->photosController->getPhotos();
@@ -233,10 +233,10 @@ class PhotosControllerTest extends \PHPUnit\Framework\TestCase {
 		$this->assertCount(0, $data);
 		$file->delete();
 
-		//Test .maps repected
+		//Test .maps respected
 		$this->GeoPhotosService->clearCache();
 		$file = $userfolder->newFile('.index.maps');
-		$resp = $this->photosController->getPhotos();
+		$resp = $this->photosController->getPhotos(null, null, true);
 		$status = $resp->getStatus();
 		$this->assertEquals(200, $status);
 		$data = $resp->getData();
@@ -272,7 +272,7 @@ class PhotosControllerTest extends \PHPUnit\Framework\TestCase {
 		$this->assertCount(1, $data);
         $this->assertEquals('/nut.jpg', $data[0]->path);
 
-		//Test .nomedia repected
+		//Test .nomedia respected
 		$this->GeoPhotosService->clearCache();
 		$file = $userfolder->newFile('.maps.nomedia');
 		$resp = $this->photosController->getNonLocalizedPhotos();
@@ -282,7 +282,7 @@ class PhotosControllerTest extends \PHPUnit\Framework\TestCase {
 		$this->assertCount(0, $data);
 		$file->delete();
 
-		//Test .noimage repected
+		//Test .noimage respected
 		$this->GeoPhotosService->clearCache();
 		$file = $userfolder->newFile('.maps.noimage');
 		$resp = $this->photosController->getNonLocalizedPhotos();
@@ -292,10 +292,10 @@ class PhotosControllerTest extends \PHPUnit\Framework\TestCase {
 		$this->assertCount(0, $data);
 		$file->delete();
 
-		//Test .index.maps repected
+		//Test .index.maps respected
 		$this->GeoPhotosService->clearCache();
 		$file = $userfolder->newFile('.index.maps');
-		$resp = $this->photosController->getNonLocalizedPhotos();
+		$resp = $this->photosController->getNonLocalizedPhotos(null, null, 250, 0, true, true);
 		$status = $resp->getStatus();
 		$this->assertEquals(200, $status);
 		$data = $resp->getData();

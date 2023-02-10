@@ -49,19 +49,27 @@ class PhotosController extends Controller {
 		$this->root = $root;
     }
 
-    /**
-     * @NoAdminRequired
-     * @NoCSRFRequired
+	/**
+	 * @NoAdminRequired
+	 * @NoCSRFRequired
+	 * @param null $myMapId
+	 * @param null $respectNoMediaAndNoimage
+	 * @param null $hideImagesOnCustomMaps
+	 * @param null $hideImagesInMapsFolder
 	 * @return DataResponse
-     */
-    public function getPhotos($myMapId=null): DataResponse {
+	 * @throws Exception
+	 * @throws NoUserException
+	 * @throws NotFoundException
+	 * @throws NotPermittedException
+	 */
+    public function getPhotos($myMapId=null, $respectNoMediaAndNoimage=null, $hideImagesOnCustomMaps=null, $hideImagesInMapsFolder=null): DataResponse {
 		$userFolder = $this->root->getUserFolder($this->userId);
         if (is_null($myMapId) || $myMapId === "") {
-            $result = $this->geophotoService->getAll($this->userId, $userFolder, true, false, true);
+            $result = $this->geophotoService->getAll($this->userId, $userFolder, $respectNoMediaAndNoimage??true, $hideImagesOnCustomMaps??false, $hideImagesInMapsFolder??true);
         } else {
             $folders = $userFolder->getById($myMapId);
             $folder = array_shift($folders);
-            $result = $this->geophotoService->getAll($this->userId, $folder, true, false, false);
+            $result = $this->geophotoService->getAll($this->userId, $folder, $respectNoMediaAndNoimage??true, $hideImagesOnCustomMaps??false, $hideImagesInMapsFolder??false);
         }
         return new DataResponse($result);
     }
@@ -73,20 +81,23 @@ class PhotosController extends Controller {
 	 * @param string|null $timezone
 	 * @param int $limit
 	 * @param int $offset
+	 * @param null $respectNoMediaAndNoimage
+	 * @param null $hideImagesOnCustomMaps
+	 * @param null $hideImagesInMapsFolder
 	 * @return DataResponse
 	 * @throws Exception
 	 * @throws NoUserException
 	 * @throws NotFoundException
 	 * @throws NotPermittedException
 	 */
-    public function getNonLocalizedPhotos(?int $myMapId=null, ?string $timezone=null, int $limit=250, int $offset=0): DataResponse {
+    public function getNonLocalizedPhotos(?int $myMapId=null, ?string $timezone=null, int $limit=250, int $offset=0, $respectNoMediaAndNoimage=null, $hideImagesOnCustomMaps=null, $hideImagesInMapsFolder=null): DataResponse {
 		$userFolder = $this->root->getUserFolder($this->userId);
 		if (is_null($myMapId) || $myMapId === "") {
-        	$result = $this->geophotoService->getNonLocalized($this->userId, $userFolder, true, false, true, $timezone, $limit, $offset);
+        	$result = $this->geophotoService->getNonLocalized($this->userId, $userFolder, $respectNoMediaAndNoimage??true, $hideImagesOnCustomMaps??false, $hideImagesInMapsFolder??true, $timezone, $limit, $offset);
 		} else {
 			$folders = $userFolder->getById($myMapId);
 			$folder = array_shift($folders);
-			$result = $this->geophotoService->getNonLocalized($this->userId, $folder, true, false, false, $timezone, $limit, $offset);
+			$result = $this->geophotoService->getNonLocalized($this->userId, $folder, $respectNoMediaAndNoimage??true, $hideImagesOnCustomMaps??false, $hideImagesInMapsFolder??false, $timezone, $limit, $offset);
 		}
         return new DataResponse($result);
     }

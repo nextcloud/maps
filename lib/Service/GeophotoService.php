@@ -91,23 +91,23 @@ class GeophotoService {
 	 * @param null $folder =null
 	 * @param bool $respectNomediaAndNoimage =true
 	 * @param bool $hideImagesOnCustomMaps =true
-	 * @param bool $hideImageInMapsFolder
+	 * @param bool $hideImagesInMapsFolder
 	 * @return array
 	 * @throws Exception
 	 * @throws NoUserException
 	 * @throws NotFoundException
 	 * @throws NotPermittedException
 	 */
-     public function getAll(string $userId, $folder=null, bool $respectNomediaAndNoimage=true, bool $hideImagesOnCustomMaps=false, bool $hideImageInMapsFolder=true): array {
+     public function getAll(string $userId, $folder=null, bool $respectNomediaAndNoimage=true, bool $hideImagesOnCustomMaps=false, bool $hideImagesInMapsFolder=true): array {
 		 $userFolder = $this->getFolderForUser($userId);
 		 if (is_null($folder)) {
 			 $folder = $userFolder;
 		 }
-		 $key = $userId . ':' . $userFolder->getRelativePath($folder->getPath()) . ':' . (string) $respectNomediaAndNoimage . ':' . (string) $hideImagesOnCustomMaps . ':' . (string) $hideImageInMapsFolder;
+		 $key = $userId . ':' . $userFolder->getRelativePath($folder->getPath()) . ':' . (string) $respectNomediaAndNoimage . ':' . (string) $hideImagesOnCustomMaps . ':' . (string) $hideImagesInMapsFolder;
 		 $filesById = $this->photosCache->get($key);
 		 if ($filesById === null) {
 			 $ignoredPaths = $respectNomediaAndNoimage ? $this->getIgnoredPaths($userId, $folder, $hideImagesOnCustomMaps) : [];
-			 if ($hideImageInMapsFolder) {
+			 if ($hideImagesInMapsFolder) {
 				 $ignoredPaths[] = "/Maps";
 			 }
 			 $photoEntities = $this->photoMapper->findAll($userId);
@@ -175,7 +175,7 @@ class GeophotoService {
 	 * @param null $folder =null
 	 * @param bool $respectNomediaAndNoimage
 	 * @param bool $hideImagesOnCustomMaps
-	 * @param bool $hideImageInMapsFolder
+	 * @param bool $hideImagesInMapsFolder
 	 * @param string|null $timezone locale time zone used by images
 	 * @param int $limit
 	 * @param int $offset
@@ -185,7 +185,7 @@ class GeophotoService {
 	 * @throws NotFoundException
 	 * @throws NotPermittedException
 	 */
-    public function getNonLocalized (string $userId, $folder=null, bool $respectNomediaAndNoimage=true, bool $hideImagesOnCustomMaps=false, bool $hideImageInMapsFolder=true, string $timezone=null, int $limit=250, int $offset=0): array {
+    public function getNonLocalized (string $userId, $folder=null, bool $respectNomediaAndNoimage=true, bool $hideImagesOnCustomMaps=false, bool $hideImagesInMapsFolder=true, string $timezone=null, int $limit=250, int $offset=0): array {
 		$userFolder = $this->getFolderForUser($userId);
 		if (is_null($folder)) {
 			$folder = $userFolder;
@@ -194,7 +194,7 @@ class GeophotoService {
 //		$filesById = $this->nonLocalizedPhotosCache->get($key);
 //		if ($filesById === null) {
 			$ignoredPaths = $respectNomediaAndNoimage ? $this->getIgnoredPaths($userId, $folder, $hideImagesOnCustomMaps) : [];
-			if ($hideImageInMapsFolder) {
+			if ($hideImagesInMapsFolder) {
 				$ignoredPaths[] = "/Maps";
 			}
 			$foo = $this->loadTimeorderedPointSets($userId, $folder, $respectNomediaAndNoimage, $hideImagesOnCustomMaps);

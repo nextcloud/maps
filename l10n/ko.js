@@ -80,6 +80,7 @@ OC.L10N.register(
     "Display picture" : "사진을 표시하다",
     "Save" : "저장",
     "Quit" : "끝내기",
+    "Load more" : "더 불러오기",
     "(No name)" : "(이름 없음)",
     "No favorites to display" : "표시할 즐겨찾기 없음",
     "Tags" : "태그",

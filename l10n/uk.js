@@ -78,6 +78,7 @@ OC.L10N.register(
     "Select all" : "Вибрати все",
     "Save" : "Зберегти",
     "Quit" : "Вийти",
+    "Load more" : "Більше",
     "(No name)" : "(Без назви)",
     "No favorites to display" : "Немає вподобаного вмісту",
     "Tags" : "Мітки",

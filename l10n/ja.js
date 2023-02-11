@@ -48,6 +48,7 @@ OC.L10N.register(
     "Select all" : "すべて選択",
     "Save" : "保存",
     "Quit" : "終了",
+    "Load more" : "さらに読み込む",
     "(No name)" : "(名なし)",
     "Tags" : "タグ",
     "Favorite" : "お気に入り",

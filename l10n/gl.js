@@ -56,6 +56,7 @@ OC.L10N.register(
     "Select all" : "Seleccionar todo",
     "Save" : "Gardar",
     "Quit" : "Saír",
+    "Load more" : "Cargar máis",
     "(No name)" : "(Sen nome)",
     "No favorites to display" : "Non hai favoritos para amosar",
     "Tags" : "Etiquetas",

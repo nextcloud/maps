@@ -61,6 +61,7 @@ OC.L10N.register(
     "Select all" : "Alles selecteren",
     "Save" : "Opslaan",
     "Quit" : "Afsluiten",
+    "Load more" : "Laad meer",
     "(No name)" : "(geen naam)",
     "No favorites to display" : "Geen favorieten om te vertonen",
     "Tags" : "Tags",

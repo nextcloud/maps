@@ -86,6 +86,7 @@ OC.L10N.register(
     "Display picture" : "Отображение изображения",
     "Save" : "Сохранить",
     "Quit" : "Выход",
+    "Load more" : "Загрузить больше",
     "(No name)" : "(Без имени)",
     "No favorites to display" : "Избранное для показа отсутствует",
     "Tags" : "Метки",

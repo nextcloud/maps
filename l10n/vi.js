@@ -22,6 +22,7 @@ OC.L10N.register(
     "Select all" : "Chọn tất cả",
     "Save" : "Lưu",
     "Quit" : "Thoát",
+    "Load more" : "Tải thêm",
     "Tags" : "Nhãn",
     "Favorite" : "Ưa thích",
     "Unable to change the favourite state of the file" : "‎Không thể thay đổi trạng thái yêu thích của tệp‎",

@@ -50,6 +50,7 @@ OC.L10N.register(
     "Select all" : "Select all",
     "Save" : "Vista",
     "Quit" : "Hætta",
+    "Load more" : "Hlaða inn meira",
     "(No name)" : "(ekkert nafn)",
     "No favorites to display" : "Engin eftirlæti til að birta",
     "Tags" : "Merki",

@@ -106,6 +106,7 @@ OC.L10N.register(
     "No suggestions found" : "Herhangi bir öneri bulunamadı",
     "To get suggestions upload tracks from the trips, when you took your photos." : "Öneri almak için fotoğraflarınızı çektiğiniz gezilerin rotalarını yükleyin.",
     "Quit" : "Çıkış",
+    "Load more" : "Diğerlerini yükle",
     "(No name)" : "(Adsız)",
     "No favorites to display" : "Görüntülenebilecek bir sık kullanılan yok",
     "Tags" : "Etiketler",

@@ -106,6 +106,7 @@ OC.L10N.register(
     "No suggestions found" : "找不到建議",
     "To get suggestions upload tracks from the trips, when you took your photos." : "要獲得建議，請在您拍攝照片時上傳旅行軌跡。",
     "Quit" : "退出",
+    "Load more" : "載入更多",
     "(No name)" : "（未命名）",
     "No favorites to display" : "沒有我的收藏可顯示",
     "Tags" : "標籤",

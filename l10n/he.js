@@ -51,6 +51,7 @@ OC.L10N.register(
     "Select all" : "בחר הכל",
     "Save" : "שמירה",
     "Quit" : "יציאה",
+    "Load more" : "לטעון עוד",
     "(No name)" : "(אין שם)",
     "No favorites to display" : "אין מועדפים להצגה",
     "Tags" : "תגיות",

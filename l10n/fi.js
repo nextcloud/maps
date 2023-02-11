@@ -85,6 +85,7 @@ OC.L10N.register(
     "Save" : "Tallenna",
     "No suggestions found" : "Ehdotuksia ei löytynyt",
     "Quit" : "Lopeta",
+    "Load more" : "Lataa lisää",
     "(No name)" : "(Ei nimeä)",
     "No favorites to display" : "Ei suosikkeja näytettäväksi",
     "Tags" : "Tunnisteet",

@@ -63,6 +63,7 @@ OC.L10N.register(
     "Select all" : "Επιλογή όλων",
     "Save" : "Αποθήκευση",
     "Quit" : "Έξοδος",
+    "Load more" : "Φόρτωση περισσότερων",
     "(No name)" : "(Ανώνυμο)",
     "No favorites to display" : "Δεν υπάρχουν αγαπημένα εμφάνιση",
     "Tags" : "Ετικέτες",

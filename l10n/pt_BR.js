@@ -106,6 +106,7 @@ OC.L10N.register(
     "No suggestions found" : "Nenhuma sugestão encontrada",
     "To get suggestions upload tracks from the trips, when you took your photos." : "Para obter sugestões, faça o upload das trilhas das viagens, quando você tirou suas fotos.",
     "Quit" : "Sair",
+    "Load more" : "Carregar mais",
     "(No name)" : "(Sem nome)",
     "No favorites to display" : "Não há favoritos para mostrar",
     "Tags" : "Etiquetas",

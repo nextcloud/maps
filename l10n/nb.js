@@ -36,6 +36,7 @@ OC.L10N.register(
     "Select all" : "Velg alle",
     "Save" : "Lagre",
     "Quit" : "Avslutt",
+    "Load more" : "Last mer",
     "(No name)" : "(Ingen navn)",
     "Tags" : "Merkelapper",
     "Favorite" : "Favoritt",

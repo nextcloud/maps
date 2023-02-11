@@ -24,6 +24,7 @@ OC.L10N.register(
     "Select all" : "Seleccionar todos",
     "Save" : "Guardar",
     "Quit" : "Sair",
+    "Load more" : "Carregar mais",
     "Tags" : "Etiquetas",
     "Favorite" : "Favorito",
     "Distance" : "Distancia",

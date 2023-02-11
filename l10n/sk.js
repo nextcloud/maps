@@ -86,6 +86,7 @@ OC.L10N.register(
     "Display picture" : "Zobraziť obrázok",
     "Save" : "Uložiť",
     "Quit" : "Koniec",
+    "Load more" : "Načítať viac",
     "(No name)" : "(Bez názvu)",
     "No favorites to display" : "Žiadne obľúbené položky na zobrazenie",
     "Tags" : "Štítky",

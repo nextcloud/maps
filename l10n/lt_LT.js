@@ -54,6 +54,7 @@ OC.L10N.register(
     "Select all" : "Pažymėti viską",
     "Save" : "Įrašyti",
     "Quit" : "Išeiti",
+    "Load more" : "Įkelti daugiau",
     "Tags" : "Žymės",
     "Sidebar" : "Šoninė juosta",
     "Favorite" : "Mėgstamas",

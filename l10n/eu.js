@@ -98,6 +98,7 @@ OC.L10N.register(
     "Save" : "Gorde",
     "No suggestions found" : "Ez da iradokizunik aurkitu",
     "Quit" : "Irten",
+    "Load more" : "Kargatu gehiago",
     "(No name)" : "(Izenik ez)",
     "No favorites to display" : "Ez dago erakusteko gogokorik",
     "Tags" : "Etiketak",

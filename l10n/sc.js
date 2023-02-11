@@ -53,6 +53,7 @@ OC.L10N.register(
     "Select all" : "Seletziona totu",
     "Save" : "Sarva",
     "Quit" : "Essi·nche",
+    "Load more" : "Càrriga àteru",
     "(No name)" : "(Perunu nùmene)",
     "No favorites to display" : "Perunu preferidu de mustrare",
     "Tags" : "Etichetas",

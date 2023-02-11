@@ -53,6 +53,7 @@ OC.L10N.register(
     "Select all" : "Одабери све ",
     "Save" : "Сачувај",
     "Quit" : "Напусти",
+    "Load more" : "Учитај још",
     "(No name)" : "(Без имена)",
     "No favorites to display" : "Нема омиљених за приказ",
     "Tags" : "Ознаке",

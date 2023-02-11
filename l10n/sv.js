@@ -54,6 +54,7 @@ OC.L10N.register(
     "Select all" : "Välj alla",
     "Save" : "Spara",
     "Quit" : "Avsluta",
+    "Load more" : "Ladda mer",
     "Tags" : "Taggar",
     "Favorite" : "Favorit",
     "Unable to change the favourite state of the file" : "Kan inte ändra filens favoritstatus",

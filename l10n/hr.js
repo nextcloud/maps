@@ -55,6 +55,7 @@ OC.L10N.register(
     "Select all" : "Odaberi sve",
     "Save" : "Spremi",
     "Quit" : "Zatvori",
+    "Load more" : "Učitaj više",
     "(No name)" : "(Bez naziva)",
     "No favorites to display" : "Nema favorita za prikaz",
     "Tags" : "Oznake",

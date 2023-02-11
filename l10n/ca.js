@@ -55,6 +55,7 @@ OC.L10N.register(
     "Select all" : "Selecciona-ho tot",
     "Save" : "Desa",
     "Quit" : "Surt",
+    "Load more" : "Carrega'n més",
     "(No name)" : "(Sense nom)",
     "No favorites to display" : "Sense preferits per mostrar",
     "Tags" : "Etiquetes",

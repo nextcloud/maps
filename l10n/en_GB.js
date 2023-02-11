@@ -106,6 +106,7 @@ OC.L10N.register(
     "No suggestions found" : "No suggestions found",
     "To get suggestions upload tracks from the trips, when you took your photos." : "To get suggestions upload tracks from the trips, when you took your photos.",
     "Quit" : "Quit",
+    "Load more" : "Load more",
     "(No name)" : "(No name)",
     "No favorites to display" : "No favourites to display",
     "Tags" : "Tags",

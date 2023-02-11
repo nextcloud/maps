@@ -99,6 +99,7 @@
 				ref="photoSuggestionsLayer"
 				:map="map"
 				:photo-suggestions="photoSuggestions"
+				:photo-suggestions-tracks-and-devices="photoSuggestionsTracksAndDevices"
 				:photo-suggestions-selected-indices="photoSuggestionsSelectedIndices"
 				:date-filter-enabled="sliderEnabled"
 				:date-filter-start="sliderStartTimestamp"
@@ -280,6 +281,10 @@ export default {
 		photoSuggestions: {
 			type: Array,
 			required: true,
+		},
+		photoSuggestionsTracksAndDevices: {
+			type: Array,
+			required: true
 		},
 		photoSuggestionsSelectedIndices: {
 			type: Array,

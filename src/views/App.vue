@@ -117,6 +117,7 @@
 					:photos-draggable="photosDraggable"
 					:show-photo-suggestions="showPhotoSuggestions"
 					:photo-suggestions="photoSuggestions"
+					:photo-suggestions-tracks-and-devices="photoSuggestionsTracksAndDevices"
 					:photo-suggestions-selected-indices="photoSuggestionsSelectedIndices"
 					:contacts="contacts"
 					:contact-groups="contactGroups"
@@ -185,6 +186,7 @@
 			:photo="selectedPhoto"
 			:photos-loading="photosLoading"
 			:photo-suggestions="photoSuggestions"
+			:photo-suggestions-tracks-and-devices="photoSuggestionsTracksAndDevices"
 			:photo-suggestions-selected-indices="photoSuggestionsSelectedIndices"
 			:photo-suggestions-timezone="photoSuggestionsTimezone"
 			:my-map="selectedMyMap"
@@ -289,6 +291,7 @@ export default {
 			selectedPhoto: null,
 			showPhotoSuggestions: false,
 			photoSuggestions: [],
+			photoSuggestionsTracksAndDevices: [],
 			photoSuggestionsSelectedIndices: [],
 			photoSuggestionsTimezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
 			photoSuggestionsLimit: 250,
@@ -1079,6 +1082,7 @@ export default {
 		cancelPhotoSuggestions() {
 			this.photoSuggestionsSelectedIndices = []
 			this.showPhotoSuggestions = false
+			this.photoSuggestionsOffset = 0
 			this.closeSidebar()
 			this.photoSuggestions = []
 		},
@@ -1088,7 +1092,43 @@ export default {
 			}
 			this.photosLoading = true
 			network.getPhotoSuggestions(this.myMapId, getToken(), this.photoSuggestionsTimezone, this.photoSuggestionsLimit, this.photoSuggestionsOffset).then((response) => {
-				this.photoSuggestions.unshift(...response.data.sort((a, b) => {
+				const photoSuggestions = []
+				Object.entries(response.data).forEach(([i,v]) => {
+					photoSuggestions.push(...v)
+					if (!this.photoSuggestionsTracksAndDevices[i]) {
+						const isplit = i.split(':')
+						if (isplit[0] === 'track') {
+							const track = this.tracks.find((t) => {
+								return t.id === parseInt(isplit[1])
+							})
+							if (track) {
+								this.photoSuggestionsTracksAndDevices[i] = {
+									enabled: true,
+									visible: true,
+									color: track.color || '#0082c9',
+									name: track.file_name,
+									track,
+								}
+							} else {
+								this.photoSuggestionsTracksAndDevices[i] = {
+									enabled: false,
+									visible: false,
+								}
+							}
+						} else if (isplit[0] === 'device') {
+							const device = this.devices.find((d) => {
+								return d.id === isplit[1]
+							})
+							this.photoSuggestionsTracksAndDevices[i] = {
+								enabled: true,
+								color: device.color || '#0082c9',
+								name: device.name,
+								device,
+							}
+						}
+					}
+				})
+				this.photoSuggestions.unshift(...photoSuggestions.sort((a, b) => {
 					if (a.dateTaken < b.dateTaken) {
 						return -1
 					} else if (a.dateTaken > b.dateTaken) {

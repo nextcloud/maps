@@ -50,7 +50,7 @@ class GeophotoService {
 	private $cacheFactory;
 	private $userId;
 	private \OCP\ICache $photosCache;
-	private \OCP\ICache $nonLocalizedPhotosCache;
+	private \OCP\ICache $timeOrderedPointSetsCache;
 
 	public function __construct (ILogger $logger,
                                  IRootFolder $root,
@@ -72,8 +72,7 @@ class GeophotoService {
         $this->devicesService = $devicesService;
 		$this->cacheFactory = $cacheFactory;
 		$this->photosCache = $this->cacheFactory->createDistributed('maps:photos');
-		$this->nonLocalizedPhotosCache = $this->cacheFactory->createDistributed('maps:nonLocalizedPhotos');
-
+		$this->timeOrderedPointSetsCache = $this->cacheFactory->createDistributed('maps:time-ordered-point-sets');
     }
 
 	/**
@@ -82,7 +81,7 @@ class GeophotoService {
 	 */
 	public function clearCache(string $userId=''): bool {
 		 $a = $this->photosCache->clear($userId);
-		 $b = $this->nonLocalizedPhotosCache->clear($userId);
+		 $b = $this->timeOrderedPointSetsCache->clear($userId);
 		 return $a and $b;
 	}
 
@@ -190,85 +189,85 @@ class GeophotoService {
 		if (is_null($folder)) {
 			$folder = $userFolder;
 		}
-//		$key = $userId . ':' . $userFolder->getRelativePath($folder->getPath()) . ':' . (string) $respectNomediaAndNoimage . ':' . (string) $hideImagesOnCustomMaps . ':' . (string) $hideImageInMapsFolder . ':' . (string) $timezone . ':' . (string) $limit . ':' . (string) $offset;
-//		$filesById = $this->nonLocalizedPhotosCache->get($key);
-//		if ($filesById === null) {
-			$ignoredPaths = $respectNomediaAndNoimage ? $this->getIgnoredPaths($userId, $folder, $hideImagesOnCustomMaps) : [];
-			if ($hideImagesInMapsFolder) {
-				$ignoredPaths[] = "/Maps";
-			}
-			$foo = $this->loadTimeorderedPointSets($userId, $folder, $respectNomediaAndNoimage, $hideImagesOnCustomMaps);
-			$photoEntities = $this->photoMapper->findAllNonLocalized($userId, $limit, $offset);
-			$filesById = [];
-			$cache = $folder->getStorage()->getCache();
-			$previewEnableMimetypes = $this->getPreviewEnabledMimetypes();
-			foreach ($photoEntities as $photoEntity) {
-				$cacheEntry = $cache->get($photoEntity->getFileId());
-				if ($cacheEntry) {
-					// this path is relative to owner's storage
-					//$path = $cacheEntry->getPath();
-					// but we want it relative to current user's storage
-					$files = $folder->getById($photoEntity->getFileId());
-					if (empty($files)) {
-						continue;
-					}
-					$file = array_shift($files);
-					if ($file === null) {
-						continue;
-					}
-					$path = $userFolder->getRelativePath($file->getPath());
-					$isIgnored = false;
-					foreach ($ignoredPaths as $ignoredPath) {
-						if (str_starts_with($path, $ignoredPath)) {
-							$isIgnored = true;
-							break;
-						}
-					}
-					if (!$isIgnored) {
-						$isRoot = $file === $userFolder;
 
-						//Unfortunately Exif stores the local and not the UTC time. There is no way to get the timezone, therefore it has to be given by the user.
-						$date = $photoEntity->getDateTaken() ?? \time();
-						if (!is_null($timezone)) {
-							$tz = new \DateTimeZone($timezone);
-						} else {
-							$tz = new \DateTimeZone(\date_default_timezone_get());
-						}
+		$ignoredPaths = $respectNomediaAndNoimage ? $this->getIgnoredPaths($userId, $folder, $hideImagesOnCustomMaps) : [];
+		if ($hideImagesInMapsFolder) {
+			$ignoredPaths[] = "/Maps";
+		}
+		$this->loadTimeorderedPointSets($userId, $folder, $respectNomediaAndNoimage, $hideImagesOnCustomMaps, $hideImagesInMapsFolder);
+		$photoEntities = $this->photoMapper->findAllNonLocalized($userId, $limit, $offset);
+		$suggestionsBySource = [];
+		$cache = $folder->getStorage()->getCache();
+		$previewEnableMimetypes = $this->getPreviewEnabledMimetypes();
+		foreach ($photoEntities as $photoEntity) {
+			$cacheEntry = $cache->get($photoEntity->getFileId());
+			if ($cacheEntry) {
+				// this path is relative to owner's storage
+				//$path = $cacheEntry->getPath();
+				// but we want it relative to current user's storage
+				$files = $folder->getById($photoEntity->getFileId());
+				if (empty($files)) {
+					continue;
+				}
+				$file = array_shift($files);
+				if ($file === null) {
+					continue;
+				}
+				$path = $userFolder->getRelativePath($file->getPath());
+				$isIgnored = false;
+				foreach ($ignoredPaths as $ignoredPath) {
+					if (str_starts_with($path, $ignoredPath)) {
+						$isIgnored = true;
+						break;
+					}
+				}
+				if (!$isIgnored) {
+					$isRoot = $file === $userFolder;
 
-						$dateWithTimezone = new \DateTime(gmdate('Y-m-d H:i:s', $date), $tz);
-						$locations = $this->getLocationGuesses($dateWithTimezone->getTimestamp());
-						foreach ($locations as $location) {
-							$file_object = new \stdClass();
-							$file_object->fileId = $photoEntity->getFileId();
-							$file_object->fileid = $file_object->fileId;
-							$file_object->path = $this->normalizePath($path);
-							$file_object->hasPreview = in_array($cacheEntry->getMimeType(), $previewEnableMimetypes);
-							$file_object->lat = $location[0];
-							$file_object->lng = $location[1];
-							$file_object->dateTaken = $date;
-							$file_object->basename = $isRoot ? '' : $file->getName();
-							$file_object->filename = $this->normalizePath($path);
-							$file_object->etag = $cacheEntry->getEtag();
-							//Not working for NC21 as Viewer requires String representation of permissions
-							//                $file_object->permissions = $file->getPermissions();
-							$file_object->type = $file->getType();
-							$file_object->mime = $file->getMimetype();
-							$file_object->lastmod = $file->getMTime();
-							$file_object->size = $file->getSize();
-							$file_object->path = $path;
-							$file_object->isReadable = $file->isReadable();
-							$file_object->isUpdateable = $file->isUpdateable();
-							$file_object->isShareable = $file->isShareable();
-							$file_object->isDeletable = $file->isDeletable();
-							$file_object->hasPreview = in_array($cacheEntry->getMimeType(), $previewEnableMimetypes);
-							$filesById[] = $file_object;
+					//Unfortunately Exif stores the local and not the UTC time. There is no way to get the timezone, therefore it has to be given by the user.
+					$date = $photoEntity->getDateTaken() ?? \time();
+					if (!is_null($timezone)) {
+						$tz = new \DateTimeZone($timezone);
+					} else {
+						$tz = new \DateTimeZone(\date_default_timezone_get());
+					}
+
+					$dateWithTimezone = new \DateTime(gmdate('Y-m-d H:i:s', $date), $tz);
+					$locations = $this->getLocationGuesses($dateWithTimezone->getTimestamp());
+					foreach ($locations as $key => $location) {
+						$file_object = new \stdClass();
+						$file_object->fileId = $photoEntity->getFileId();
+						$file_object->fileid = $file_object->fileId;
+						$file_object->path = $this->normalizePath($path);
+						$file_object->hasPreview = in_array($cacheEntry->getMimeType(), $previewEnableMimetypes);
+						$file_object->lat = $location[0];
+						$file_object->lng = $location[1];
+						$file_object->dateTaken = $date;
+						$file_object->basename = $isRoot ? '' : $file->getName();
+						$file_object->filename = $this->normalizePath($path);
+						$file_object->etag = $cacheEntry->getEtag();
+						//Not working for NC21 as Viewer requires String representation of permissions
+						//                $file_object->permissions = $file->getPermissions();
+						$file_object->type = $file->getType();
+						$file_object->mime = $file->getMimetype();
+						$file_object->lastmod = $file->getMTime();
+						$file_object->size = $file->getSize();
+						$file_object->path = $path;
+						$file_object->isReadable = $file->isReadable();
+						$file_object->isUpdateable = $file->isUpdateable();
+						$file_object->isShareable = $file->isShareable();
+						$file_object->isDeletable = $file->isDeletable();
+						$file_object->hasPreview = in_array($cacheEntry->getMimeType(), $previewEnableMimetypes);
+						$file_object->trackOrDeviceId = $key;
+						if(!array_key_exists($key, $suggestionsBySource)){
+							$suggestionsBySource[$key] = [];
 						}
+						$suggestionsBySource[$key][] = $file_object;
 					}
 				}
 			}
-//			$this->nonLocalizedPhotosCache->set($key, $filesById, 60 * 60 * 24);
-//        }
-        return $filesById;
+		}
+        return $suggestionsBySource;
     }
 
 	/**
@@ -319,10 +318,10 @@ class GeophotoService {
      */
     private function getLocationGuesses(int $dateTaken): array {
         $locations = [];
-        foreach (($this->timeorderedPointSets ?? []) as $timeordedPointSet) {
+        foreach (($this->timeorderedPointSets ?? []) as $key => $timeordedPointSet) {
             $location = $this->getLocationFromSequenceOfPoints($dateTaken,$timeordedPointSet);
             if (!is_null($location)) {
-                $locations[] = $location;
+                $locations[$key] = $location;
             }
         }
         return $locations;
@@ -330,32 +329,36 @@ class GeophotoService {
     }
 
     /*
-     * Timeorderd Point sets is an Array of Arrays with time => location as key=>value pair, which are orderd by the key.
+     * Timeordered Point sets is an Array of Arrays with time => location as key=>value pair, which are orderd by the key.
      * This function loads this Arrays from all Track files of the user.
      */
-    private function loadTimeorderedPointSets(string $userId, $folder=null, bool $respectNomediaAndNoimage=true, bool $hideImagesOnCustomMaps=true) {
-        $userFolder = $this->getFolderForUser($userId);
-        foreach ($this->tracksService->getTracksFromDB($userId, $folder, $respectNomediaAndNoimage, $hideImagesOnCustomMaps) as $gpxfile) {
-            $res = $userFolder->getById($gpxfile['file_id']);
-            if (is_array($res) and count($res) > 0) {
-                $file = array_shift($res);
-                if ($file->getType() === \OCP\Files\FileInfo::TYPE_FILE) {
-                    foreach ($this->getTracksFromGPX($file->getContent()) as $track) {
-                        $this->timeorderedPointSets[] = $this->getTimeorderdPointsFromTrack($track);
-                    }
-                }
-            }
-        }
-        foreach ($this->devicesService->getDevicesFromDB($userId) as $device) {
-            $device_points = $this->devicesService->getDevicePointsFromDB($userId, $device['id']);
-            $points = [];
-            foreach ($device_points as $pt) {
-                $points[$pt['timestamp']] = [$pt['lat'], $pt['lng']];
-            }
-            $foo = ksort($points);
-            $this->timeorderedPointSets[] = $points;
-        }
-        return null;
+    private function loadTimeorderedPointSets(string $userId, $folder=null, bool $respectNomediaAndNoimage=true, bool $hideTracksOnCustomMaps=false, bool $hideTracksInMapsFolder=true): void {
+		$key = $userId . ':' . (string) $respectNomediaAndNoimage . ':' . (string) $hideTracksOnCustomMaps . ':' . (string) $hideTracksInMapsFolder;
+		$this->timeorderedPointSets = $this->timeOrderedPointSetsCache->get($key);
+		if (is_null($this->timeorderedPointSets)) {
+			$userFolder = $this->getFolderForUser($userId);
+			foreach ($this->tracksService->getTracksFromDB($userId, $folder, $respectNomediaAndNoimage, $hideTracksOnCustomMaps, $hideTracksInMapsFolder) as $gpxfile) {
+				$res = $userFolder->getById($gpxfile['file_id']);
+				if (is_array($res) and count($res) > 0) {
+					$file = array_shift($res);
+					if ($file->getType() === \OCP\Files\FileInfo::TYPE_FILE) {
+						foreach ($this->getTracksFromGPX($file->getContent()) as $i => $track) {
+							$this->timeorderedPointSets['track:' . $gpxfile['id'] . ':' . $i] = $this->getTimeorderdPointsFromTrack($track);
+						}
+					}
+				}
+			}
+			foreach ($this->devicesService->getDevicesFromDB($userId) as $device) {
+				$device_points = $this->devicesService->getDevicePointsFromDB($userId, $device['id']);
+				$points = [];
+				foreach ($device_points as $pt) {
+					$points[$pt['timestamp']] = [$pt['lat'], $pt['lng']];
+				}
+				$foo = ksort($points);
+				$this->timeorderedPointSets['device:' . $device->id] = $points;
+			}
+			$this->timeOrderedPointSetsCache->set($key, $this->timeorderedPointSets);
+		}
     }
 
     /*

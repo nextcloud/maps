@@ -88,6 +88,10 @@ export default {
 			type: Array,
 			required: true,
 		},
+		photoSuggestionsTracksAndDevices: {
+			type: Array,
+			required: true,
+		},
 		photoSuggestionsSelectedIndices: {
 			type: Array,
 			required: true,

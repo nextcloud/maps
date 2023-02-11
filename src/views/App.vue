@@ -1122,15 +1122,16 @@ export default {
 							}
 						} else if (isplit[0] === 'device') {
 							const device = this.devices.find((d) => {
-								return d.id === isplit[1]
+								return d.id === parseInt(isplit[1])
 							})
 							if (device) {
 								photoSuggestions.push(...v)
 								this.$set(this.photoSuggestionsTracksAndDevices, i, {
 									key: i,
 									enabled: true,
+									visible: true,
 									color: device.color || '#0082c9',
-									name: device.name,
+									name: device.user_agent,
 									id: device.id,
 									suggestionCount: v.length,
 								})

@@ -355,7 +355,7 @@ class GeophotoService {
 					$points[$pt['timestamp']] = [$pt['lat'], $pt['lng']];
 				}
 				$foo = ksort($points);
-				$this->timeorderedPointSets['device:' . $device->id] = $points;
+				$this->timeorderedPointSets['device:' . $device['id']] = $points;
 			}
 			$this->timeOrderedPointSetsCache->set($key, $this->timeorderedPointSets);
 		}

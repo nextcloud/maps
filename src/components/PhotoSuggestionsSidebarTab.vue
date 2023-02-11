@@ -9,38 +9,40 @@
 				:open="tracksOpen"
 				:force-menu="false"
 				@click="onTracksClick"
-				@update:open="onUpdateOpen">
+				@update:open="onUpdateTracksOpen">
 				<NcCounterBubble v-show="tracks.length"
 					slot="counter">
 					{{ tracks.length > 99 ? '99+' : tracks.length }}
 				</NcCounterBubble>
 				<template slot="default">
 					<b v-show="false">dummy</b>
-					<NcAppNavigationItem
+					<PhotoSideBarTabTrackItem
 						v-for="tr in tracks"
 						:key="'track:'.concat(tr.id)"
-						:icon="'icon-road'"
-						:class="{ 'item-disabled': subtracks(tr).every((t)=>{return !t.enabled}) }"
-						:title="tr.name"
-						:allow-collapse="subtracks(tr).length > 1"
-						:open="openTracks[tr.id]"
-						:force-menu="false"
-						@click="onTrackClick(tr)">
-						<NcCounterBubble v-show="subtracks(tr).length && subtracks(tr).length > 1"
-							slot="counter">
-							{{ subtracks(tr).length > 99 ? '99+' : subtracks(tr).length }}
-						</NcCounterBubble>
-						<template v-if="subtracks(tr).length && subtracks(tr).length > 1" slot="default">
-							<b v-show="false">dummy</b>
-							<NcAppNavigationItem
-								v-for="st in subtracks(tr)"
-								:key="st.key"
-								:class="{ 'item-disabled': !st.enabled }"
-								:title="tr.name"
-								:force-menu="false"
-								@click="onSubTrackClick(st)" />
-						</template>
-					</NcAppNavigationItem>
+						:track="tr"
+						:sub-tracks="subtracks(tr)"
+						@subtrack-click="onSubTrackClick($event)" />
+				</template>
+			</NcAppNavigationItem>
+			<NcAppNavigationItem
+				:icon="'icon-phone'"
+				:title="t('maps', 'Devices')"
+				:allow-collapse="true"
+				:open="devicesOpen"
+				:force-menu="false"
+				@click="onDevicesClick"
+				@update:open="onUpdateDevicesOpen">
+				<NcCounterBubble v-show="devices.length"
+					slot="counter">
+					{{ devices.length > 99 ? '99+' : devices.length }}
+				</NcCounterBubble>
+				<template slot="default">
+					<b v-show="false">dummy</b>
+					<PhotoSideBarTabDeviceItem
+						v-for="d in devices"
+						:key="'device:'.concat(d.id)"
+						:device="d"
+						@device-click="$emit('toggle-track-or-device', d)" />
 				</template>
 			</NcAppNavigationItem>
 
@@ -156,14 +158,15 @@ import { generateUrl } from '@nextcloud/router'
 import moment from '@nextcloud/moment'
 import NcButton from '@nextcloud/vue/dist/Components/NcButton'
 import NcActions from '@nextcloud/vue/dist/Components/NcActions'
-import NcActionButton from '@nextcloud/vue/dist/Components/NcActionButton'
 import NcListItem from '@nextcloud/vue/dist/Components/NcListItem'
-import NcAppNavigationItem from '@nextcloud/vue/dist/Components/NcAppNavigationItem'
 import NcCounterBubble from '@nextcloud/vue/dist/Components/NcCounterBubble'
+import NcAppNavigationItem from '@nextcloud/vue/dist/Components/NcAppNavigationItem'
+import NcActionButton from '@nextcloud/vue/dist/Components/NcActionButton'
 
 import { getToken } from '../utils/common'
 import NcTimezonePicker from '@nextcloud/vue/dist/Components/NcTimezonePicker'
-import optionsController from '../optionsController'
+import PhotoSideBarTabTrackItem from './Sidebar/PhotoSideBarTabTrackItem'
+import PhotoSideBarTabDeviceItem from './Sidebar/PhotoSideBarTabDeviceItem'
 
 export default {
 	name: 'PhotoSuggestionsSidebarTab',
@@ -174,8 +177,10 @@ export default {
 		NcActionButton,
 		NcListItem,
 		NcTimezonePicker,
-		NcAppNavigationItem,
 		NcCounterBubble,
+		PhotoSideBarTabTrackItem,
+		PhotoSideBarTabDeviceItem,
+		NcAppNavigationItem,
 	},
 
 	props: {
@@ -205,6 +210,7 @@ export default {
 		return {
 			selectionLayout: 'list',
 			tracksOpen: false,
+			devicesOpen: false,
 			openTracks: {},
 		}
 	},
@@ -224,7 +230,18 @@ export default {
 			return !this.photoSuggestions.some((f) => (f.isUpdateable))
 		},
 		tracks() {
-			return Object.values(this.photoSuggestionsTracksAndDevices).filter((v) => { return v.key.startsWith('track') && v.visible })
+			const f = Object.values(this.photoSuggestionsTracksAndDevices).reduce((filtered, v) => {
+				if (v.key.startsWith('track') && v.visible && !filtered[v.id]) {
+					if (!filtered[v.id]) {
+						v.open = !!this.openTracks[v.id]
+						filtered[v.id] = v
+					} else {
+						filtered[v.id].suggestionCount += v.suggestionCount
+					}
+				}
+				return filtered
+			}, {})
+			return Object.values(f)
 		},
 		devices() {
 			return Object.values(this.photoSuggestionsTracksAndDevices).filter((v) => { return v.key.startsWith('device') && v.visible })
@@ -236,19 +253,18 @@ export default {
 			this.tracksOpen = !this.tracksOpen
 			this.$emit('tracks-clicked')
 		},
-		onUpdateOpen(isOpen) {
+		onUpdateTracksOpen(isOpen) {
 			this.tracksOpen = isOpen
-		},
-		onTrackClick(t) {
-			this.openTracks[t.id] = !this.openTracks[t.id]
-			if (this.subtracks(t).length < 2) {
-				this.$emit('toggle-track-or-device', t)
-				this.$forceUpdate()
-			}
 		},
 		onSubTrackClick(t) {
 			this.$emit('toggle-track-or-device', t)
-			this.$forceUpdate()
+		},
+		onDevicesClick() {
+			this.devicesOpen = !this.devicesOpen
+			this.$emit('devices-clicked')
+		},
+		onUpdateDevicesOpen(isOpen) {
+			this.devicesOpen = isOpen
 		},
 		previewUrl(photo) {
 			if (photo && photo.hasPreview) {
@@ -313,10 +329,6 @@ export default {
 	opacity: 1 !important;
 }
 
-::v-deep .item-disabled {
-	opacity: 0.5;
-}
-
 ::v-deep .icon-road {
 	background-color: var(--color-main-text);
 	mask: url('../../img/road.svg') no-repeat;
@@ -325,6 +337,10 @@ export default {
 	-webkit-mask: url('../../img/road.svg') no-repeat;
 	-webkit-mask-size: 16px auto;
 	-webkit-mask-position: center;
+}
+
+::v-deep .item-disabled {
+	opacity: 0.5;
 }
 
 </style>

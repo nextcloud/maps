@@ -171,6 +171,12 @@ export default {
 		photoSuggestions() {
 			this.updateSuggestionMarkers()
 		},
+		photoSuggestionsTracksAndDevices: {
+			handler() {
+				this.updateSuggestionMarkers()
+			},
+			deep: true,
+		},
 		draggable() {
 			this.updateSuggestionMarkersDraggable()
 		},
@@ -352,7 +358,7 @@ export default {
 		},
 		getPhotoFormattedDate(photo) {
 			if (photo) {
-				const d = new Date(photo.dateTaken*1000)
+				const d = new Date(photo.dateTaken * 1000)
 				const mom = moment.unix(photo.dateTaken + d.getTimezoneOffset() * 60)
 				return mom.format('LL') + ' ' + mom.format('HH:mm:ss')
 			}
@@ -437,7 +443,7 @@ export default {
 				m.i = i
 				return m
 			})
-			this.$refs.markerCluster.mapObject.addLayers(this.suggestionMarkers)
+			this.$refs.markerCluster.mapObject.addLayers(this.suggestionMarkers.filter((m) => { return this.photoSuggestionsTracksAndDevices[m.data.trackOrDeviceId].enabled }))
 			if (this.dateFilterEnabled) {
 				this.$refs.markerCluster.mapObject.removeLayers(
 					this.suggestionMarkers.slice(

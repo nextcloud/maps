@@ -1084,6 +1084,7 @@ export default {
 			this.photoSuggestionsSelectedIndices = []
 			this.showPhotoSuggestions = false
 			this.photoSuggestionsOffset = 0
+			this.photoSuggestionsTracksAndDevices = {}
 			this.closeSidebar()
 			this.photoSuggestions = []
 		},
@@ -1095,7 +1096,6 @@ export default {
 			network.getPhotoSuggestions(this.myMapId, getToken(), this.photoSuggestionsTimezone, this.photoSuggestionsLimit, this.photoSuggestionsOffset).then((response) => {
 				const photoSuggestions = []
 				Object.entries(response.data).forEach(([i, v]) => {
-					photoSuggestions.push(...v)
 					if (!this.photoSuggestionsTracksAndDevices[i]) {
 						const isplit = i.split(':')
 						if (isplit[0] === 'track') {
@@ -1103,31 +1103,43 @@ export default {
 								return t.id === parseInt(isplit[1])
 							})
 							if (track) {
-								this.photoSuggestionsTracksAndDevices[i] = {
+								this.$set(this.photoSuggestionsTracksAndDevices, i, {
 									key: i,
 									enabled: true,
 									visible: true,
 									color: track.color || '#0082c9',
 									name: track.file_name,
 									id: track.id,
-								}
+									suggestionCount: v.length,
+								})
+								photoSuggestions.push(...v)
 							} else {
-								this.photoSuggestionsTracksAndDevices[i] = {
+								this.$set(this.photoSuggestionsTracksAndDevices, i, {
 									key: i,
 									enabled: false,
 									visible: false,
-								}
+								})
 							}
 						} else if (isplit[0] === 'device') {
 							const device = this.devices.find((d) => {
 								return d.id === isplit[1]
 							})
-							this.photoSuggestionsTracksAndDevices[i] = {
-								key: i,
-								enabled: true,
-								color: device.color || '#0082c9',
-								name: device.name,
-								id: device.id,
+							if (device) {
+								photoSuggestions.push(...v)
+								this.$set(this.photoSuggestionsTracksAndDevices, i, {
+									key: i,
+									enabled: true,
+									color: device.color || '#0082c9',
+									name: device.name,
+									id: device.id,
+									suggestionCount: v.length,
+								})
+							} else {
+								this.$set(this.photoSuggestionsTracksAndDevices, i, {
+									key: i,
+									enabled: false,
+									visible: false,
+								})
 							}
 						}
 					}
@@ -1149,7 +1161,11 @@ export default {
 		},
 		onSelectAllPhotoSuggestions() {
 			this.photoSuggestionsSelectedIndices = []
-			this.photoSuggestionsSelectedIndices = [...this.photoSuggestions.keys()]
+			const indices = [...this.photoSuggestions.keys()]
+			this.photoSuggestionsSelectedIndices = indices.filter((i) => {
+				const tod = this.photoSuggestionsTracksAndDevices[this.photoSuggestions[i].trackOrDeviceId]
+				return tod.visible && tod.enabled
+			})
 		},
 		onClearPhotoSuggestionsSelection(indices) {
 			if (indices) {

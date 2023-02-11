@@ -200,6 +200,7 @@
 			@clear-photo-suggestions-selection="onClearPhotoSuggestionsSelection"
 			@cancel-photo-suggestions="onCancelPhotoSuggestions"
 			@save-photo-suggestions-selection="onSavePhotoSuggestionsSelection"
+			@photo-suggestion-toggle-track-or-device="onPhotoSuggestionToggleTrackOrDevice"
 			@change-photo-suggestions-timezone="onChangePhotoSuggestionsTimezone"
 			@zoom-photo-suggestion="onPhotoSuggestionZoom" />
 	</NcContent>
@@ -291,7 +292,7 @@ export default {
 			selectedPhoto: null,
 			showPhotoSuggestions: false,
 			photoSuggestions: [],
-			photoSuggestionsTracksAndDevices: [],
+			photoSuggestionsTracksAndDevices: {},
 			photoSuggestionsSelectedIndices: [],
 			photoSuggestionsTimezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
 			photoSuggestionsLimit: 250,
@@ -1093,7 +1094,7 @@ export default {
 			this.photosLoading = true
 			network.getPhotoSuggestions(this.myMapId, getToken(), this.photoSuggestionsTimezone, this.photoSuggestionsLimit, this.photoSuggestionsOffset).then((response) => {
 				const photoSuggestions = []
-				Object.entries(response.data).forEach(([i,v]) => {
+				Object.entries(response.data).forEach(([i, v]) => {
 					photoSuggestions.push(...v)
 					if (!this.photoSuggestionsTracksAndDevices[i]) {
 						const isplit = i.split(':')
@@ -1103,14 +1104,16 @@ export default {
 							})
 							if (track) {
 								this.photoSuggestionsTracksAndDevices[i] = {
+									key: i,
 									enabled: true,
 									visible: true,
 									color: track.color || '#0082c9',
 									name: track.file_name,
-									track,
+									id: track.id,
 								}
 							} else {
 								this.photoSuggestionsTracksAndDevices[i] = {
+									key: i,
 									enabled: false,
 									visible: false,
 								}
@@ -1120,10 +1123,11 @@ export default {
 								return d.id === isplit[1]
 							})
 							this.photoSuggestionsTracksAndDevices[i] = {
+								key: i,
 								enabled: true,
 								color: device.color || '#0082c9',
 								name: device.name,
-								device,
+								id: device.id,
 							}
 						}
 					}
@@ -1156,6 +1160,9 @@ export default {
 		},
 		onCancelPhotoSuggestions() {
 			this.cancelPhotoSuggestions()
+		},
+		onPhotoSuggestionToggleTrackOrDevice(t) {
+			this.photoSuggestionsTracksAndDevices[t.key].enabled = !this.photoSuggestionsTracksAndDevices[t.key].enabled
 		},
 		onChangePhotoSuggestionsTimezone(tz) {
 			this.photoSuggestionsTimezone = tz

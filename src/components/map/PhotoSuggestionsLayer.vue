@@ -89,7 +89,7 @@ export default {
 			required: true,
 		},
 		photoSuggestionsTracksAndDevices: {
-			type: Array,
+			type: Object,
 			required: true,
 		},
 		photoSuggestionsSelectedIndices: {

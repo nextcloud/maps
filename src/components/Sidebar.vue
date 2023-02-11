@@ -16,6 +16,7 @@
 			@delete="$emit('delete-favorite', $event)" />
 		<PhotoSuggestionsSidebarTab v-if="activeTab === 'photo-suggestion' && !fileInfo"
 			:photo-suggestions="photoSuggestions"
+			:photo-suggestions-tracks-and-devices="photoSuggestionsTracksAndDevices"
 			:photo-suggestions-selected-indices="photoSuggestionsSelectedIndices"
 			:photo-suggestions-timezone="photoSuggestionsTimezone"
 			:loading="photosLoading"
@@ -25,7 +26,8 @@
 			@clear-selection="$emit('clear-photo-suggestions-selection',$event)"
 			@cancel="$emit('cancel-photo-suggestions')"
 			@save="$emit('save-photo-suggestions-selection',$event)"
-			@zoom="$emit('zoom-photo-suggestion', $event)" />
+			@zoom="$emit('zoom-photo-suggestion', $event)"
+			@toggle-track-or-device="$emit('photo-suggestion-toggle-track-or-device', $event)" />
 		<TrackMetadataTab v-if="isPublic() && activeTab === 'maps-track-metadata' && !fileInfo"
 			:track="track" />
 		<!-- TODO: create a standard to allow multiple elements here? -->
@@ -130,6 +132,10 @@ export default {
 		photoSuggestions: {
 			required: true,
 			type: Array,
+		},
+		photoSuggestionsTracksAndDevices: {
+			required: true,
+			type: Object,
 		},
 		photoSuggestionsSelectedIndices: {
 			required: true,

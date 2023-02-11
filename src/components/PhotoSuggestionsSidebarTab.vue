@@ -2,6 +2,48 @@
 	<div id="photo-suggestions-tab">
 		<div v-if="loading" class="icon-loading" />
 		<div v-else-if="photoSuggestions.length > 0">
+			<NcAppNavigationItem
+				:icon="'icon-road'"
+				:title="t('maps', 'Tracks')"
+				:allow-collapse="true"
+				:open="tracksOpen"
+				:force-menu="false"
+				@click="onTracksClick"
+				@update:open="onUpdateOpen">
+				<NcCounterBubble v-show="tracks.length"
+					slot="counter">
+					{{ tracks.length > 99 ? '99+' : tracks.length }}
+				</NcCounterBubble>
+				<template slot="default">
+					<b v-show="false">dummy</b>
+					<NcAppNavigationItem
+						v-for="tr in tracks"
+						:key="'track:'.concat(tr.id)"
+						:icon="'icon-road'"
+						:class="{ 'item-disabled': subtracks(tr).every((t)=>{return !t.enabled}) }"
+						:title="tr.name"
+						:allow-collapse="subtracks(tr).length > 1"
+						:open="openTracks[tr.id]"
+						:force-menu="false"
+						@click="onTrackClick(tr)">
+						<NcCounterBubble v-show="subtracks(tr).length && subtracks(tr).length > 1"
+							slot="counter">
+							{{ subtracks(tr).length > 99 ? '99+' : subtracks(tr).length }}
+						</NcCounterBubble>
+						<template v-if="subtracks(tr).length && subtracks(tr).length > 1" slot="default">
+							<b v-show="false">dummy</b>
+							<NcAppNavigationItem
+								v-for="st in subtracks(tr)"
+								:key="st.key"
+								:class="{ 'item-disabled': !st.enabled }"
+								:title="tr.name"
+								:force-menu="false"
+								@click="onSubTrackClick(st)" />
+						</template>
+					</NcAppNavigationItem>
+				</template>
+			</NcAppNavigationItem>
+
 			<div class="oc-dialog-buttonrow">
 				<NcButton
 					@click="$emit('clear-selection')">
@@ -116,9 +158,12 @@ import NcButton from '@nextcloud/vue/dist/Components/NcButton'
 import NcActions from '@nextcloud/vue/dist/Components/NcActions'
 import NcActionButton from '@nextcloud/vue/dist/Components/NcActionButton'
 import NcListItem from '@nextcloud/vue/dist/Components/NcListItem'
-import optionsController from '../optionsController'
+import NcAppNavigationItem from '@nextcloud/vue/dist/Components/NcAppNavigationItem'
+import NcCounterBubble from '@nextcloud/vue/dist/Components/NcCounterBubble'
+
 import { getToken } from '../utils/common'
 import NcTimezonePicker from '@nextcloud/vue/dist/Components/NcTimezonePicker'
+import optionsController from '../optionsController'
 
 export default {
 	name: 'PhotoSuggestionsSidebarTab',
@@ -129,6 +174,8 @@ export default {
 		NcActionButton,
 		NcListItem,
 		NcTimezonePicker,
+		NcAppNavigationItem,
+		NcCounterBubble,
 	},
 
 	props: {
@@ -136,12 +183,16 @@ export default {
 			required: true,
 			type: Array,
 		},
+		photoSuggestionsTracksAndDevices: {
+			required: true,
+			type: Object,
+		},
 		photoSuggestionsSelectedIndices: {
 			required: true,
 			type: Array,
 		},
 		photoSuggestionsTimezone: {
-			reuired: true,
+			required: true,
 			type: String,
 		},
 		loading: {
@@ -153,6 +204,8 @@ export default {
 	data() {
 		return {
 			selectionLayout: 'list',
+			tracksOpen: false,
+			openTracks: {},
 		}
 	},
 
@@ -170,12 +223,33 @@ export default {
 		readOnly() {
 			return !this.photoSuggestions.some((f) => (f.isUpdateable))
 		},
-	},
-
-	watch: {
+		tracks() {
+			return Object.values(this.photoSuggestionsTracksAndDevices).filter((v) => { return v.key.startsWith('track') && v.visible })
+		},
+		devices() {
+			return Object.values(this.photoSuggestionsTracksAndDevices).filter((v) => { return v.key.startsWith('device') && v.visible })
+		},
 	},
 
 	methods: {
+		onTracksClick() {
+			this.tracksOpen = !this.tracksOpen
+			this.$emit('tracks-clicked')
+		},
+		onUpdateOpen(isOpen) {
+			this.tracksOpen = isOpen
+		},
+		onTrackClick(t) {
+			this.openTracks[t.id] = !this.openTracks[t.id]
+			if (this.subtracks(t).length < 2) {
+				this.$emit('toggle-track-or-device', t)
+				this.$forceUpdate()
+			}
+		},
+		onSubTrackClick(t) {
+			this.$emit('toggle-track-or-device', t)
+			this.$forceUpdate()
+		},
 		previewUrl(photo) {
 			if (photo && photo.hasPreview) {
 				const token = getToken()
@@ -193,6 +267,9 @@ export default {
 			if (OCA.Viewer && OCA.Viewer.open) {
 				OCA.Viewer.open({ path: photo.path, list: this.photoSuggestionsSelected })
 			}
+		},
+		subtracks(t) {
+			return Object.values(this.photoSuggestionsTracksAndDevices).filter((v) => { return v.key.startsWith('track:'.concat(t.id)) && v.visible })
 		},
 	},
 }
@@ -234,6 +311,20 @@ export default {
 
 .photo-suggestion-selected-grid-item:hover .photo-suggestion-selected-grid-actions {
 	opacity: 1 !important;
+}
+
+::v-deep .item-disabled {
+	opacity: 0.5;
+}
+
+::v-deep .icon-road {
+	background-color: var(--color-main-text);
+	mask: url('../../img/road.svg') no-repeat;
+	mask-size: 16px auto;
+	mask-position: center;
+	-webkit-mask: url('../../img/road.svg') no-repeat;
+	-webkit-mask-size: 16px auto;
+	-webkit-mask-position: center;
 }
 
 </style>

@@ -100,11 +100,11 @@ class TracksController extends Controller {
 	 */
     public function getTracks($myMapId=null): DataResponse {
         if (is_null($myMapId) || $myMapId === '') {
-            $tracks = $this->tracksService->getTracksFromDB($this->userId, $this->userfolder);
+            $tracks = $this->tracksService->getTracksFromDB($this->userId, $this->userfolder, true, false, true);
         } else {
             $folders = $this->userfolder->getById($myMapId);
             $folder = array_shift($folders);
-            $tracks = $this->tracksService->getTracksFromDB($this->userId, $folder, true, false);
+            $tracks = $this->tracksService->getTracksFromDB($this->userId, $folder, true, false, true);
         }
         return new DataResponse($tracks);
     }

@@ -41,5 +41,6 @@ class LoadSidebarListener implements IEventListener {
 
 		Util::addScript('maps', 'maps-track-metadata-tab');
 		//Util::addStyle('maps', 'maps-track-metadata-tab');
+		Util::addScript('maps', 'maps-copy-map-link');
 	}
 }

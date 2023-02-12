@@ -225,7 +225,7 @@ import AppNavigationDevicesItem from '../components/AppNavigationDevicesItem'
 import AppNavigationMyMapsItem from '../components/AppNavigationMyMapsItem'
 import optionsController from '../optionsController'
 import { getLetterColor, hslToRgb, Timer, getDeviceInfoFromUserAgent2, isComputer, isPhone } from '../utils'
-import {binSearch, getToken, isPublic} from '../utils/common'
+import { binSearch, getToken, isPublic } from '../utils/common'
 import { poiSearchData } from '../utils/poiData'
 import { processGpx } from '../tracksUtils'
 
@@ -1975,7 +1975,7 @@ export default {
 						...device,
 						loading: false,
 						enabled: false,
-						historyEnabled: false // optionsController.enabledDeviceLines.includes(device.id),
+						historyEnabled: false, // optionsController.enabledDeviceLines.includes(device.id),
 					}
 				})
 				this.devices.forEach((device) => {
@@ -1993,7 +1993,7 @@ export default {
 			if (device.enabled) {
 				this.disableDevice(device)
 			} else {
-				this.enableDevice(device, true)
+				this.enableDevice(device, false)
 			}
 		},
 		onSearchEnableDevice(device) {
@@ -2017,8 +2017,9 @@ export default {
 		},
 		getDevice(device, enable = false, save = true, zoom = false) {
 			device.loading = true
-			network.getDevice(device.id, this.myMapId).then((response) => {
-				this.$set(device, 'points', response.data /*.sort((p1, p2) => (p1.timestamp || 0) - (p2.timestamp || 0))*/)
+			network.getDevice(device.id, this.myMapId).then(async (response) => {
+				this.$set(device, 'points', response.data /* .sort((p1, p2) => (p1.timestamp || 0) - (p2.timestamp || 0)) */)
+
 				if (enable) {
 					device.enabled = true
 				}

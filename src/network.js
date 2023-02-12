@@ -390,7 +390,7 @@ export function getDevices(myMapId = null) {
 	return axios.get(url, conf)
 }
 
-export function getDevice(id, myMapId = null) {
+export async function getDevice(id, myMapId = null) {
 	const conf = {
 		params: {
 			myMapId,

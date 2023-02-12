@@ -98,7 +98,7 @@ export default {
 							...device.points.slice(firstShownIndex, lastShownIndex + 1),
 						]
 						const deviceLatLngs = filteredDevicePoints.map((p) => [p.lat, p.lng])
-						points.push(...deviceLatLngs)
+						points = points.concat(deviceLatLngs)
 					}
 				}
 				return points

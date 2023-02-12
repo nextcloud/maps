@@ -342,6 +342,7 @@ export default {
 				this.minPhotoTimestamp,
 				this.minFavoriteTimestamp,
 				this.minTrackTimestamp,
+				this.minDevicesTimestamp,
 			) || 0
 		},
 		maxDataTimestamp() {
@@ -408,6 +409,15 @@ export default {
 				: this.trackDates.length === 1
 					? this.trackDates[0] + 100
 					: moment().unix() + 100
+		},
+		minDevicesTimestamp() {
+			return this.devices.reduce((min, device) => {
+				if (device.enabled && device.historyEnabled) {
+					const lastNullIndex = binSearch(device.points, (p) => !p.timestamp)
+					min = Math.min(min, device.points[lastNullIndex + 1].timestamp)
+				}
+				return min
+			}, moment().unix() + 100)
 		},
 		// displayed data
 		displayedTracks() {
@@ -1965,7 +1975,7 @@ export default {
 						...device,
 						loading: false,
 						enabled: false,
-						historyEnabled: optionsController.enabledDeviceLines.includes(device.id),
+						historyEnabled: false // optionsController.enabledDeviceLines.includes(device.id),
 					}
 				})
 				this.devices.forEach((device) => {
@@ -2002,12 +2012,13 @@ export default {
 		},
 		disableDevice(device) {
 			device.enabled = false
+			device.historyEnabled = false
 			this.saveEnabledDevices()
 		},
 		getDevice(device, enable = false, save = true, zoom = false) {
 			device.loading = true
 			network.getDevice(device.id, this.myMapId).then((response) => {
-				this.$set(device, 'points', response.data.sort((p1, p2) => (p1.timestamp || 0) - (p2.timestamp || 0)))
+				this.$set(device, 'points', response.data /*.sort((p1, p2) => (p1.timestamp || 0) - (p2.timestamp || 0))*/)
 				if (enable) {
 					device.enabled = true
 				}

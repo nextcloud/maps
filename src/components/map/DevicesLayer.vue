@@ -92,11 +92,11 @@ export default {
 					const lastNullIndex = binSearch(device.points, (p) => !p.timestamp)
 					const firstShownIndex = binSearch(device.points, (p) => (p.timestamp || 0) < this.start) + 1
 					const lastShownIndex = binSearch(device.points, (p) => (p.timestamp || 0) < this.end)
-					const filteredDevicePoints = [
-						...device.points.slice(0, lastNullIndex + 1),
-						...device.points.slice(firstShownIndex, lastShownIndex + 1),
-					]
-					if (filteredDevicePoints >= 2500) {
+					if (lastNullIndex + 1 + lastShownIndex - firstShownIndex + 1 > 2500) {
+						const filteredDevicePoints = [
+							...device.points.slice(0, lastNullIndex + 1),
+							...device.points.slice(firstShownIndex, lastShownIndex + 1),
+						]
 						const deviceLatLngs = filteredDevicePoints.map((p) => [p.lat, p.lng])
 						points.push(...deviceLatLngs)
 					}

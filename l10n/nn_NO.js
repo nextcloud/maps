@@ -38,6 +38,7 @@ OC.L10N.register(
     "Phone" : "Telefonnummer",
     "Not grouped" : "Ikkje gruppert",
     "Default" : "Standard",
+    "Link copied" : "Lenkje kopiert",
     "Settings" : "Instillingar"
 },
 "nplurals=2; plural=(n != 1);");

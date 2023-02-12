@@ -52,6 +52,7 @@ OC.L10N.register(
     "Not grouped" : "Không  nhóm",
     "Default" : "Mặc định",
     "Failed to save settings" : "Lưu cấu hình thất bại",
+    "Link copied" : "Đã sao chép liên kết",
     "Cinema" : "Rạp chiếu phim",
     "Hospital" : "Bệnh viện",
     "Dentist" : "Nha sĩ",

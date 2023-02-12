@@ -277,6 +277,7 @@ OC.L10N.register(
     "View in Maps" : "Pogled na zemljevidu",
     "Import as favorites in Maps" : "Izvozi kot priljubljene v mapo Maps",
     "Import as devices in Maps" : "Izvozi kot naprave v mapo Maps",
+    "Link copied" : "Povezava je kopirana",
     "Default Map" : "Privzeti zemljevid",
     "Your Default Map" : "Vaš privzeti zemljevid",
     "New Map" : "Nov zemljevid",

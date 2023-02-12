@@ -45,6 +45,7 @@ OC.L10N.register(
     "Phone" : "Telefon",
     "Not grouped" : "I pagrupuar",
     "Default" : "E paracaktuar",
+    "Link copied" : "Linku u kopjua",
     "Settings" : "Rregullimet"
 },
 "nplurals=2; plural=(n != 1);");

@@ -280,6 +280,7 @@ OC.L10N.register(
     "View in Maps" : "Ikusi mapetan",
     "Import as favorites in Maps" : "Inportatu gogokoenak gisa Maps-en",
     "Import as devices in Maps" : "Inportatu gailu gisa Maps-en",
+    "Link copied" : "Esteka kopiatu da",
     "Default Map" : "Lehenetsitako mapa",
     "Your Default Map" : "Zure lehenetsitako mapa",
     "New Map" : "Mapa berria",

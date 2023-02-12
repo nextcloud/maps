@@ -311,6 +311,7 @@ OC.L10N.register(
     "View in Maps" : "Voir dans Maps",
     "Import as favorites in Maps" : "Importer comme favoris sur la carte",
     "Import as devices in Maps" : "Importer comme appareils sur la carte",
+    "Link copied" : "Lien copié",
     "Default Map" : "Carte par défaut",
     "Your Default Map" : "Votre carte par défaut",
     "New Map" : "Nouvelle carte",

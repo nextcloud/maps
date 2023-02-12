@@ -173,6 +173,7 @@ OC.L10N.register(
     "View in Maps" : "Skoða í Kortum",
     "Import as favorites in Maps" : "Flytja inn sem eftirlæti í kortaforriti",
     "Import as devices in Maps" : "Flytja inn sem tæki í kortaforriti",
+    "Link copied" : "Tengill afritaður",
     "Failed to save option values" : "Mistókst að vista gildi valkosta",
     "Failed to delete favorite" : "Mistókst að eyða eftirlæti",
     "Metadata" : "Lýsigögn",

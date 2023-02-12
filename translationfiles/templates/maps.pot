@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Nextcloud 3.14159\n"
 "Report-Msgid-Bugs-To: translations\\@example.com\n"
-"POT-Creation-Date: 2023-02-11 02:48+0000\n"
+"POT-Creation-Date: 2023-02-12 02:48+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -1769,6 +1769,19 @@ msgstr ""
 #: /app/src/filetypes.js:133 /app/src/filetypes.js:142
 #: /app/src/filetypes.js:151
 msgid "Import as devices in Maps"
+msgstr ""
+
+#: /app/src/models/copyMapsLinkAction.js:44
+#: /app/src/models/copyMapsLinkAction.js:46
+msgid "Copy link to map"
+msgstr ""
+
+#: /app/src/models/copyMapsLinkAction.js:57
+msgid "Link copied"
+msgstr ""
+
+#: /app/src/models/copyMapsLinkAction.js:60
+msgid "Link {url} could not be copied to clipboard."
 msgstr ""
 
 #: /app/src/myMapsController.js:14

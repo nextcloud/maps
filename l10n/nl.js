@@ -203,6 +203,7 @@ OC.L10N.register(
     "View in Maps" : "Bekijk in Maps",
     "Import as favorites in Maps" : "Importeren als favorieten in Maps",
     "Import as devices in Maps" : "Importeren als toestellen in Maps",
+    "Link copied" : "Link gekopieerd",
     "Failed to save option values" : "Niet gelukt om optiewaarden te bewaren",
     "Media scan was not done yet. Wait a few minutes/hours and reload this page to see your photos/tracks." : "Er is nog geen mediascan uitgevoerd. Wacht een paar minuten/uur en herlaad deze pagina om je foto's/nummers te zien.",
     "Failed to get favorites" : "Kon favorieten niet ophalen",

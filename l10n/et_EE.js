@@ -48,6 +48,7 @@ OC.L10N.register(
     "Not grouped" : "Pole grupeeritud",
     "Failed to delete device" : "Seadme kustutamine ebaõnnestus",
     "Default" : "Vaikeväärtus",
+    "Link copied" : "Link kopeeritud",
     "Failed to delete favorite" : "Lemmiku kustutamine ebaõnnestus",
     "Cinema" : "Kino",
     "Dentist" : "Hambaarst",

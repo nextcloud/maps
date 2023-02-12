@@ -200,6 +200,7 @@ OC.L10N.register(
     "View in Maps" : "Προβολής στους Χάρτες",
     "Import as favorites in Maps" : "Εισαγωγή ως αγαπημένα στους Χάρτες",
     "Import as devices in Maps" : "Εισαγωγή ώς συσκευές στους Χάρτες",
+    "Link copied" : "Ο σύνδεσμος αντιγράφηκε",
     "Default Map" : "Προεπιλεγμένος Χάρτης",
     "Your Default Map" : "Ο προεπιλεγμένος χάρτης σας",
     "New Map" : "Νέος Χάρτης",

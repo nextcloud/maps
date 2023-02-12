@@ -53,6 +53,7 @@ OC.L10N.register(
     "Not grouped" : "Não agrupados",
     "Default" : "Predefinido",
     "Failed to save settings" : "Erro ao gravar as definições",
+    "Link copied" : "Hiperligação copiada",
     "Metadata" : "Metadados",
     "Settings" : "Definições"
 },

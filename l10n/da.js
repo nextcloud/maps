@@ -63,6 +63,7 @@ OC.L10N.register(
     "Default" : "Standard",
     "Settings were successfully saved" : "Indstillingerne blev gemt korrekt",
     "Failed to save settings" : "Kunne ikke gemme indstillinger",
+    "Link copied" : "Link kopieret",
     "Metadata" : "Metadata",
     "Bar" : "Bar",
     "Cinema" : "Biograf",

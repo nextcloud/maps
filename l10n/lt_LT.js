@@ -132,6 +132,7 @@ OC.L10N.register(
     "Failed to save settings" : "Nepavyko įrašyti nustatymų",
     "Failed to import favorites" : "Nepavyko importuoti mėgstamų",
     "View in Maps" : "Rodyti Žemėlapiuose",
+    "Link copied" : "Nuoroda nukopijuota",
     "Media scan was not done yet. Wait a few minutes/hours and reload this page to see your photos/tracks." : "Medijos peržiūra dar nebuvo atlikta. Palaukite kelias minutes/valandas ir įkelkite šį puslapį iš naujo norėdami matyti savo nuotraukas/takus.",
     "Metadata" : "Metaduomenys",
     "Restaurant" : "Restoranas",

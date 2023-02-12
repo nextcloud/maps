@@ -130,6 +130,7 @@ OC.L10N.register(
     "View in Maps" : "Vis i kart",
     "Import as favorites in Maps" : "Importer som favoritter i kart",
     "Import as devices in Maps" : "Importer som enheter i kart",
+    "Link copied" : "Lenke kopiert",
     "Failed to get favorites" : "Klarte ikke å hente favoritter",
     "Failed to create favorite" : "Klarte ikke å opprette favoritten",
     "Failed to update favorite" : "Klarte ikke å oppdatere favoritten",

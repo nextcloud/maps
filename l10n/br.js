@@ -39,6 +39,7 @@ OC.L10N.register(
     "min" : "mun",
     "Details" : "Munudoù",
     "Default" : "Dre ziouer",
+    "Link copied" : "Liamm eilet",
     "Cinema" : "Sinema",
     "Dentist" : "Dentour",
     "Settings" : "Arventennoù"

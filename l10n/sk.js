@@ -265,6 +265,7 @@ OC.L10N.register(
     "View in Maps" : "Zobraziť v Mapách",
     "Import as favorites in Maps" : "Importovať v Mapách ako obľúbené",
     "Import as devices in Maps" : "Importovať v Mapách ako zariadenia",
+    "Link copied" : "Odkaz skopírovaný",
     "Failed to save option values" : "Nepodarilo sa uložiť vybrané hodnoty",
     "Media scan was not done yet. Wait a few minutes/hours and reload this page to see your photos/tracks." : "Kontrola médií zatiaľ nebola dokončená. Aby ste videli svoje fotografie/skladby, počkajte pár minút/hodín a znova načítajte túto stránku.",
     "Failed to get favorites" : "Nepodarilo sa získať obľúbené položky",

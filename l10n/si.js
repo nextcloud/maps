@@ -39,6 +39,7 @@ OC.L10N.register(
     "Details" : "විස්තර",
     "Phone" : "දුරකථනය",
     "Computer" : "පරිගණකය",
+    "Link copied" : "සබැඳිය පිටපත් කළා",
     "Settings" : "සැකසුම්"
 },
 "nplurals=2; plural=(n != 1);");

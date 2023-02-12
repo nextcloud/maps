@@ -47,6 +47,7 @@ OC.L10N.register(
     "Not grouped" : "Negrupēts",
     "Default" : "Noklusējuma",
     "Failed to save settings" : "Neizdevās saglabāt iestatījumus",
+    "Link copied" : "Saite nokopēta",
     "Metadata" : "Metadati",
     "Settings" : "Iestatījumi"
 },

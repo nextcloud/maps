@@ -209,6 +209,7 @@ OC.L10N.register(
     "{nb} favorites imported from {path}" : "{nb} suosikkia tuotu polusta {path}",
     "Failed to import favorites" : "Suosikkien tuominen epäonnistui",
     "View in Maps" : "Näytä karttasovelluksessa",
+    "Link copied" : "Linkki kopioitu",
     "Default Map" : "Oletuskartta",
     "New Map" : "Uusi kartta",
     "Map deleted" : "Kartta poistettu",

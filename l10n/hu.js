@@ -311,6 +311,7 @@ OC.L10N.register(
     "View in Maps" : "Megtekintése a Térképekben",
     "Import as favorites in Maps" : "Importálás kedvencként a Térképekbe",
     "Import as devices in Maps" : "Importálás eszközként a Térképekbe",
+    "Link copied" : "Hivatkozás másolva",
     "Default Map" : "Alapértelmezett térkép",
     "Your Default Map" : "Az Ön alapértelmezett térképe",
     "New Map" : "Új térkép",

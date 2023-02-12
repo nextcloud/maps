@@ -173,6 +173,7 @@ OC.L10N.register(
     "View in Maps" : "مشاهده در نقشه ها",
     "Import as favorites in Maps" : "به عنوان موارد دلخواه در Maps وارد کنید",
     "Import as devices in Maps" : "به عنوان دستگاه در Maps وارد کنید",
+    "Link copied" : "پیوند رونوشت شد",
     "Failed to save option values" : "مقادیر گزینه ذخیره نشد",
     "Media scan was not done yet. Wait a few minutes/hours and reload this page to see your photos/tracks." : "اسکن رسانه هنوز انجام نشده است. چند دقیقه / ساعت صبر کنید و این صفحه را بارگیری مجدد کنید تا عکس / آهنگ خود را ببینید.",
     "Failed to delete favorite" : "حذف مورد علاقه انجام نشد",

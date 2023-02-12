@@ -189,6 +189,7 @@ OC.L10N.register(
     "View in Maps" : "Погледај у Картама",
     "Import as favorites in Maps" : "Увези као омиљено у Карте",
     "Import as devices in Maps" : "Увези као уређаје у Карте",
+    "Link copied" : "Веза ископирана",
     "Failed to save option values" : "Грешка при чувању вредности опција",
     "Media scan was not done yet. Wait a few minutes/hours and reload this page to see your photos/tracks." : "Скенирање медија још није готово. Сачекајте пар минута/сати и поново учитајте страну да погледате Ваше слике/путање.",
     "Failed to get favorites" : "Грешка при дохватању омиљених",

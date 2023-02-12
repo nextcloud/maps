@@ -311,6 +311,7 @@ OC.L10N.register(
     "View in Maps" : "在地圖中檢視",
     "Import as favorites in Maps" : "從地圖上匯入收藏",
     "Import as devices in Maps" : "從地圖上匯入裝置",
+    "Link copied" : "已複製連結",
     "Default Map" : "預設地圖",
     "Your Default Map" : "您的預設地圖",
     "New Map" : "新地圖",

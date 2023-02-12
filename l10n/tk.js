@@ -21,6 +21,7 @@ OC.L10N.register(
     "File" : "Faýl",
     "Details" : "Jikme-jiklikler",
     "Default" : "Bellenen",
+    "Link copied" : "Link-yň nusgasy alyndy",
     "Settings" : "Sazlamalar"
 },
 "nplurals=2; plural=(n != 1);");

@@ -311,6 +311,7 @@ OC.L10N.register(
     "View in Maps" : "Haritalarda görüntüle",
     "Import as favorites in Maps" : "Haritalarda sık kullanılanlar olarak içe aktar",
     "Import as devices in Maps" : "Haritalarda aygıtlar olarak içe aktar",
+    "Link copied" : "Bağlantı kopyalandı",
     "Default Map" : "Varsayılan harita",
     "Your Default Map" : "Varsayılan haritanız",
     "New Map" : "Yeni harita",

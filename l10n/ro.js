@@ -49,6 +49,7 @@ OC.L10N.register(
     "Phone" : "Telefon",
     "Not grouped" : "Negrupate",
     "Default" : "Implicit",
+    "Link copied" : "Link copiat",
     "Restaurant" : "Restaurant",
     "Settings" : "Setări"
 },

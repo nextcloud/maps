@@ -265,6 +265,7 @@ OC.L10N.register(
     "View in Maps" : "Погледни во мапата",
     "Import as favorites in Maps" : "Увези во омилени места во мапите",
     "Import as devices in Maps" : "Увези како уред во мапите",
+    "Link copied" : "Линкот е копиран",
     "Failed to save option values" : "Неуспешно зачувување на вредностите",
     "Media scan was not done yet. Wait a few minutes/hours and reload this page to see your photos/tracks." : "Скенирањето на медиумите сè уште не е завршено. Почекајте неколку минути/часови и повторно вчитајте ја оваа страница за да ги вашите вашите фотографии/патеки.",
     "Failed to get favorites" : "Неуспешено преземање на омилени места",

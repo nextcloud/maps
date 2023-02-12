@@ -50,6 +50,7 @@ OC.L10N.register(
     "Not grouped" : "Ne grupigita",
     "Default" : "Defaŭlta",
     "Failed to save settings" : "Konservo de agordoj malsukcesis",
+    "Link copied" : "Ligilo kopiita",
     "Settings" : "Agordoj"
 },
 "nplurals=2; plural=(n != 1);");

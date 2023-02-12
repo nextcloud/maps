@@ -26,6 +26,7 @@ OC.L10N.register(
     "Details" : "Talqayt",
     "Phone" : "Tiliɣri",
     "Default" : "Prédéfini(e)",
+    "Link copied" : "Aseɣwen yettwanɣel",
     "Settings" : "Iɣewwaṛen"
 },
 "nplurals=2; plural=(n != 1);");

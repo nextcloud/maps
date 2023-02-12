@@ -49,6 +49,7 @@ OC.L10N.register(
     "Not grouped" : "Pas gropats",
     "Default" : "Defaut",
     "Settings were successfully saved" : "Paramètres corrèctament salvats",
+    "Link copied" : "Ligam copiat",
     "Metadata" : "Metadonadas",
     "Fast food" : "Restauracion rapida",
     "Cinema" : "Cinèma",

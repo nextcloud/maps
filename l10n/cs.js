@@ -311,6 +311,7 @@ OC.L10N.register(
     "View in Maps" : "Zobrazit na mapě",
     "Import as favorites in Maps" : "Importovat v mapách jako oblíbené",
     "Import as devices in Maps" : "Importovat jako zařízení v Mapy",
+    "Link copied" : "Odkaz zkopírován",
     "Default Map" : "Výchozí mapa",
     "Your Default Map" : "Vaše výchozí mapa",
     "New Map" : "Nová mapa",

@@ -204,6 +204,7 @@ OC.L10N.register(
     "Settings were successfully saved" : "Налаштування збережено",
     "Failed to save settings" : "Неможливо зберегти налаштування",
     "Import as devices in Maps" : "Імпортувати як пристрої у Мапах",
+    "Link copied" : "Посилання скопійовано",
     "Metadata" : "Метадані",
     "Restaurant" : "Ресторан",
     "Bar" : "Бар",

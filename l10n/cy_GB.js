@@ -34,6 +34,7 @@ OC.L10N.register(
     "Details" : "Manylion",
     "Phone" : "Ffôn",
     "Not grouped" : "Heb ei grwpio",
+    "Link copied" : "Dolen wedi'i gopïo",
     "Cinema" : "Sinema",
     "Hospital" : "Ysbyty",
     "Dentist" : "Deintydd",

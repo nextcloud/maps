@@ -89,7 +89,7 @@ class DevicesService {
             );
         if (intval($pruneBefore) > 0) {
             $qb->andWhere(
-                $qb->expr()->gt('timestamp', $qb->createNamedParameter($pruneBefore, IQueryBuilder::PARAM_INT))
+                $qb->expr()->gt('timestamp', $qb->createNamedParameter(intval($pruneBefore), IQueryBuilder::PARAM_INT))
             );
         }
         $qb->orderBy('timestamp', 'ASC');
@@ -153,7 +153,7 @@ class DevicesService {
                 'device_id' => $qb->createNamedParameter($deviceId, IQueryBuilder::PARAM_STR),
                 'lat' => $qb->createNamedParameter($lat, IQueryBuilder::PARAM_STR),
                 'lng' => $qb->createNamedParameter($lng, IQueryBuilder::PARAM_STR),
-                'timestamp' => $qb->createNamedParameter($ts, IQueryBuilder::PARAM_INT),
+                'timestamp' => $qb->createNamedParameter(intval($ts), IQueryBuilder::PARAM_INT),
                 'altitude' => $qb->createNamedParameter(is_numeric($altitude) ? $altitude : null, IQueryBuilder::PARAM_STR),
                 'battery' => $qb->createNamedParameter(is_numeric($battery) ? $battery : null, IQueryBuilder::PARAM_STR),
                 'accuracy' => $qb->createNamedParameter(is_numeric($accuracy) ? $accuracy : null, IQueryBuilder::PARAM_STR)
@@ -269,12 +269,12 @@ class DevicesService {
         }
         if ($begin !== null && is_numeric($begin)) {
             $qb->andWhere(
-                $qb->expr()->gt('p.timestamp', $qb->createNamedParameter($begin, IQueryBuilder::PARAM_INT))
+                $qb->expr()->gt('p.timestamp', $qb->createNamedParameter(intval($begin), IQueryBuilder::PARAM_INT))
             );
         }
         if ($end !== null && is_numeric($end)) {
             $qb->andWhere(
-                $qb->expr()->lt('p.timestamp', $qb->createNamedParameter($end, IQueryBuilder::PARAM_INT))
+                $qb->expr()->lt('p.timestamp', $qb->createNamedParameter(intval($end), IQueryBuilder::PARAM_INT))
             );
         }
         $req = $qb->execute();
@@ -351,12 +351,12 @@ class DevicesService {
                 );
             if (intval($begin) > 0) {
                 $qb->andWhere(
-                    $qb->expr()->gt('timestamp', $qb->createNamedParameter($begin, IQueryBuilder::PARAM_INT))
+                    $qb->expr()->gt('timestamp', $qb->createNamedParameter(intval($begin), IQueryBuilder::PARAM_INT))
                 );
             }
             if (intval($end) > 0) {
                 $qb->andWhere(
-                    $qb->expr()->lt('timestamp', $qb->createNamedParameter($end, IQueryBuilder::PARAM_INT))
+                    $qb->expr()->lt('timestamp', $qb->createNamedParameter(intval($end), IQueryBuilder::PARAM_INT))
                 );
             }
             $qb->setFirstResult($pointIndex);

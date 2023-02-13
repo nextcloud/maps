@@ -879,9 +879,7 @@ export default {
 		},
 		onPhotosClicked() {
 			this.photosEnabled = !this.photosEnabled
-			if (this.showPhotoSuggestions) {
-				this.cancelPhotoSuggestions()
-			}
+			
 			// get photos if we don't have them yet
 			if (this.photosEnabled && this.photos.length === 0) {
 				this.getPhotos()

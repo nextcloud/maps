@@ -119,6 +119,7 @@
 					:photo-suggestions="photoSuggestions"
 					:photo-suggestions-tracks-and-devices="photoSuggestionsTracksAndDevices"
 					:photo-suggestions-selected-indices="photoSuggestionsSelectedIndices"
+					:photo-suggestions-hide-photos="photoSuggestionsHidePhotos"
 					:contacts="contacts"
 					:contact-groups="contactGroups"
 					:contacts-enabled="contactsEnabled"
@@ -189,6 +190,7 @@
 			:photo-suggestions-tracks-and-devices="photoSuggestionsTracksAndDevices"
 			:photo-suggestions-selected-indices="photoSuggestionsSelectedIndices"
 			:photo-suggestions-timezone="photoSuggestionsTimezone"
+			:photo-suggestions-hide-photos="photoSuggestionsHidePhotos"
 			:my-map="selectedMyMap"
 			@edit-favorite="onFavoriteEdit"
 			@delete-favorite="onFavoriteDelete"
@@ -199,6 +201,7 @@
 			@select-all-photo-suggestions="onSelectAllPhotoSuggestions"
 			@clear-photo-suggestions-selection="onClearPhotoSuggestionsSelection"
 			@cancel-photo-suggestions="onCancelPhotoSuggestions"
+			@toggle-photo-suggestions-hide-photo="photoSuggestionsHidePhotos=!photoSuggestionsHidePhotos"
 			@save-photo-suggestions-selection="onSavePhotoSuggestionsSelection"
 			@photo-suggestion-toggle-track-or-device="onPhotoSuggestionToggleTrackOrDevice"
 			@change-photo-suggestions-timezone="onChangePhotoSuggestionsTimezone"
@@ -294,6 +297,7 @@ export default {
 			photoSuggestions: [],
 			photoSuggestionsTracksAndDevices: {},
 			photoSuggestionsSelectedIndices: [],
+			photoSuggestionsHidePhotos: false,
 			photoSuggestionsTimezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
 			photoSuggestionsLimit: 250,
 			photoSuggestionsOffset: 0,
@@ -875,6 +879,9 @@ export default {
 		},
 		onPhotosClicked() {
 			this.photosEnabled = !this.photosEnabled
+			if (this.showPhotoSuggestions) {
+				this.cancelPhotoSuggestions()
+			}
 			// get photos if we don't have them yet
 			if (this.photosEnabled && this.photos.length === 0) {
 				this.getPhotos()

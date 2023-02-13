@@ -81,6 +81,7 @@
 				@delete-multiple="$emit('delete-favorites', $event)" />
 			<PhotosLayer
 				v-if="map && photosEnabled"
+				v-show="!photoSuggestionsHidePhotos"
 				ref="photosLayer"
 				:map="map"
 				:photos="photos"
@@ -289,6 +290,10 @@ export default {
 		photoSuggestionsSelectedIndices: {
 			type: Array,
 			required: true,
+		},
+		photoSuggestionsHidePhotos: {
+			type: Boolean,
+			default: false,
 		},
 		contacts: {
 			type: Array,

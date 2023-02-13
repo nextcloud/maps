@@ -18,6 +18,7 @@
 			:photo-suggestions="photoSuggestions"
 			:photo-suggestions-tracks-and-devices="photoSuggestionsTracksAndDevices"
 			:photo-suggestions-selected-indices="photoSuggestionsSelectedIndices"
+			:photo-suggestions-hide-photos="photoSuggestionsHidePhotos"
 			:photo-suggestions-timezone="photoSuggestionsTimezone"
 			:loading="photosLoading"
 			@load-more="$emit('load-more-photo-suggestions')"
@@ -25,6 +26,7 @@
 			@select-all="$emit('select-all-photo-suggestions')"
 			@clear-selection="$emit('clear-photo-suggestions-selection',$event)"
 			@cancel="$emit('cancel-photo-suggestions')"
+			@toggle-hide-photos="$emit('toggle-photo-suggestions-hide-photo')"
 			@save="$emit('save-photo-suggestions-selection',$event)"
 			@zoom="$emit('zoom-photo-suggestion', $event)"
 			@toggle-track-or-device="$emit('photo-suggestion-toggle-track-or-device', $event)" />
@@ -85,7 +87,7 @@ import { emit } from '@nextcloud/event-bus'
 import { generateUrl, generateFilePath } from '@nextcloud/router'
 
 import FavoriteSidebarTab from '../components/FavoriteSidebarTab'
-import PhotoSuggestionsSidebarTab from './PhotoSuggestionsSidebarTab'
+import PhotoSuggestionsSidebarTab from './Sidebar/PhotoSuggestionsSidebarTab'
 import SidebarTab from './Sidebar/SidebarTab'
 import LegacyView from './Sidebar/LegacyView'
 import { encodePath } from '@nextcloud/paths'
@@ -140,6 +142,10 @@ export default {
 		photoSuggestionsSelectedIndices: {
 			required: true,
 			type: Array,
+		},
+		photoSuggestionsHidePhotos: {
+			type: Boolean,
+			default: false,
 		},
 		photoSuggestionsTimezone: {
 			required: true,

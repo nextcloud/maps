@@ -138,6 +138,10 @@
 				{{ !photoSuggestions.includes(null) ? t('maps', 'Cancel') : t('maps', 'Quit') }}
 			</NcButton>
 			<NcButton
+				@click="$emit('toggle-hide-photos')">
+				{{ photoSuggestionsHidePhotos ? t('maps', 'Show localized photos'): t('maps', 'Hide localized photos') }}
+			</NcButton>
+			<NcButton
 				@click="$emit('load-more')">
 				{{ t('maps', 'Load more') }}
 			</NcButton>
@@ -163,10 +167,10 @@ import NcCounterBubble from '@nextcloud/vue/dist/Components/NcCounterBubble'
 import NcAppNavigationItem from '@nextcloud/vue/dist/Components/NcAppNavigationItem'
 import NcActionButton from '@nextcloud/vue/dist/Components/NcActionButton'
 
-import { getToken } from '../utils/common'
+import { getToken } from '../../utils/common'
 import NcTimezonePicker from '@nextcloud/vue/dist/Components/NcTimezonePicker'
-import PhotoSideBarTabTrackItem from './Sidebar/PhotoSideBarTabTrackItem'
-import PhotoSideBarTabDeviceItem from './Sidebar/PhotoSideBarTabDeviceItem'
+import PhotoSideBarTabTrackItem from './PhotoSideBarTabTrackItem'
+import PhotoSideBarTabDeviceItem from './PhotoSideBarTabDeviceItem'
 
 export default {
 	name: 'PhotoSuggestionsSidebarTab',
@@ -195,6 +199,10 @@ export default {
 		photoSuggestionsSelectedIndices: {
 			required: true,
 			type: Array,
+		},
+		photoSuggestionsHidePhotos: {
+			type: Boolean,
+			default: false,
 		},
 		photoSuggestionsTimezone: {
 			required: true,
@@ -327,20 +335,6 @@ export default {
 
 .photo-suggestion-selected-grid-item:hover .photo-suggestion-selected-grid-actions {
 	opacity: 1 !important;
-}
-
-::v-deep .icon-road {
-	background-color: var(--color-main-text);
-	mask: url('../../img/road.svg') no-repeat;
-	mask-size: 16px auto;
-	mask-position: center;
-	-webkit-mask: url('../../img/road.svg') no-repeat;
-	-webkit-mask-size: 16px auto;
-	-webkit-mask-position: center;
-}
-
-::v-deep .item-disabled {
-	opacity: 0.5;
 }
 
 </style>

@@ -80,8 +80,7 @@
 				@delete="$emit('delete-favorite', $event)"
 				@delete-multiple="$emit('delete-favorites', $event)" />
 			<PhotosLayer
-				v-if="map && photosEnabled"
-				v-show="!photoSuggestionsHidePhotos"
+				v-if="map && photosEnabled && !photoSuggestionsHidePhotos"
 				ref="photosLayer"
 				:map="map"
 				:photos="photos"
@@ -285,7 +284,7 @@ export default {
 		},
 		photoSuggestionsTracksAndDevices: {
 			type: Object,
-			required: true
+			required: true,
 		},
 		photoSuggestionsSelectedIndices: {
 			type: Array,

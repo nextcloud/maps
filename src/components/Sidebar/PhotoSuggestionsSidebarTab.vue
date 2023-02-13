@@ -2,50 +2,55 @@
 	<div id="photo-suggestions-tab">
 		<div v-if="loading" class="icon-loading" />
 		<div v-else-if="photoSuggestions.length > 0">
-			<NcAppNavigationItem
-				:icon="'icon-road'"
-				:title="t('maps', 'Tracks')"
-				:allow-collapse="true"
-				:open="tracksOpen"
-				:force-menu="false"
-				@click="onTracksClick"
-				@update:open="onUpdateTracksOpen">
-				<NcCounterBubble v-show="tracks.length"
-					slot="counter">
-					{{ tracks.length > 99 ? '99+' : tracks.length }}
-				</NcCounterBubble>
-				<template slot="default">
-					<b v-show="false">dummy</b>
-					<PhotoSideBarTabTrackItem
-						v-for="tr in tracks"
-						:key="'track:'.concat(tr.id)"
-						:track="tr"
-						:sub-tracks="subtracks(tr)"
-						@subtrack-click="onSubTrackClick($event)" />
-				</template>
-			</NcAppNavigationItem>
-			<NcAppNavigationItem
-				:icon="'icon-phone'"
-				:title="t('maps', 'Devices')"
-				:allow-collapse="true"
-				:open="devicesOpen"
-				:force-menu="false"
-				@click="onDevicesClick"
-				@update:open="onUpdateDevicesOpen">
-				<NcCounterBubble v-show="devices.length"
-					slot="counter">
-					{{ devices.length > 99 ? '99+' : devices.length }}
-				</NcCounterBubble>
-				<template slot="default">
-					<b v-show="false">dummy</b>
-					<PhotoSideBarTabDeviceItem
-						v-for="d in devices"
-						:key="'device:'.concat(d.id)"
-						:device="d"
-						@device-click="$emit('toggle-track-or-device', d)" />
-				</template>
-			</NcAppNavigationItem>
-
+			<div>
+				<NcAppNavigationItem
+					:icon="'icon-road'"
+					:title="t('maps', 'Tracks')"
+					:allow-collapse="true"
+					:open="tracksOpen"
+					:force-menu="false"
+					@click="onTracksClick"
+					@update:open="onUpdateTracksOpen">
+					<NcCounterBubble v-show="tracks.length"
+						slot="counter">
+						{{ tracks.length > 99 ? '99+' : tracks.length }}
+					</NcCounterBubble>
+					<template slot="default">
+						<b v-show="false">dummy</b>
+						<PhotoSideBarTabTrackItem
+							v-for="tr in tracks"
+							:key="'track:'.concat(tr.id)"
+							:track="tr"
+							:sub-tracks="subtracks(tr)"
+							@subtrack-click="onSubTrackClick($event)" />
+					</template>
+				</NcAppNavigationItem>
+				<NcAppNavigationItem
+					:icon="'icon-phone'"
+					:title="t('maps', 'Devices')"
+					:allow-collapse="true"
+					:open="devicesOpen"
+					:force-menu="false"
+					@click="onDevicesClick"
+					@update:open="onUpdateDevicesOpen">
+					<NcCounterBubble v-show="devices.length"
+						slot="counter">
+						{{ devices.length > 99 ? '99+' : devices.length }}
+					</NcCounterBubble>
+					<template slot="default">
+						<b v-show="false">dummy</b>
+						<PhotoSideBarTabDeviceItem
+							v-for="d in devices"
+							:key="'device:'.concat(d.id)"
+							:device="d"
+							@device-click="$emit('toggle-track-or-device', d)" />
+					</template>
+				</NcAppNavigationItem>
+				<NcButton
+					@click="$emit('toggle-hide-photos')">
+					{{ photoSuggestionsHidePhotos ? t('maps', 'Show localized photos'): t('maps', 'Hide localized photos') }}
+				</NcButton>
+			</div>
 			<div class="oc-dialog-buttonrow">
 				<NcButton
 					@click="$emit('clear-selection')">
@@ -136,10 +141,6 @@
 			<NcButton
 				@click="$emit('cancel')">
 				{{ !photoSuggestions.includes(null) ? t('maps', 'Cancel') : t('maps', 'Quit') }}
-			</NcButton>
-			<NcButton
-				@click="$emit('toggle-hide-photos')">
-				{{ photoSuggestionsHidePhotos ? t('maps', 'Show localized photos'): t('maps', 'Hide localized photos') }}
 			</NcButton>
 			<NcButton
 				@click="$emit('load-more')">

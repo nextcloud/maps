@@ -107,8 +107,8 @@ class DevicesController extends Controller {
 	 * @param int $pruneBefore
 	 * @return DataResponse
 	 */
-    public function getDevicePoints($id, int $pruneBefore=0): DataResponse {
-        $points = $this->devicesService->getDevicePointsFromDB($this->userId, $id, $pruneBefore);
+    public function getDevicePoints($id, ?int $pruneBefore=0, ?int $limit=10000, ?int $offset=0): DataResponse {
+        $points = $this->devicesService->getDevicePointsFromDB($this->userId, $id, $pruneBefore, $limit, $offset);
         return new DataResponse($points);
     }
 

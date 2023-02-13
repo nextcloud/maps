@@ -2017,9 +2017,17 @@ export default {
 		},
 		getDevice(device, enable = false, save = true, zoom = false) {
 			device.loading = true
-			network.getDevice(device.id, this.myMapId).then(async (response) => {
-				this.$set(device, 'points', response.data /* .sort((p1, p2) => (p1.timestamp || 0) - (p2.timestamp || 0)) */)
-
+			network.getDevice(device.id, this.myMapId, 100000, device.points?.length || 0).then((response) => {
+				//There are too many points making it responsiv crashes most browsers
+				// this.$set(device, 'points', response.data /* .sort((p1, p2) => (p1.timestamp || 0) - (p2.timestamp || 0)) */)
+				if (device.points) {
+					device.points = response.data.concat(device.points)
+				} else {
+					device.points = response.data
+				}
+				if (response.data.length >= 100000) {
+					this.getDevice(device, false, false, false)
+				}
 				if (enable) {
 					device.enabled = true
 				}
@@ -2127,7 +2135,7 @@ export default {
 			// Fixme
 			showInfo('Adding device to map not supported yet')
 		},
-		onToggleDeviceHistory(device) {
+		async onToggleDeviceHistory(device) {
 			device.historyEnabled = !device.historyEnabled
 			this.saveEnabledDeviceLines()
 		},

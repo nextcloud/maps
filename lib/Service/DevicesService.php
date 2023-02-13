@@ -75,7 +75,16 @@ class DevicesService {
         return $devices;
     }
 
-    public function getDevicePointsFromDB($userId, $deviceId, $pruneBefore=0) {
+	/**
+	 * @param $userId
+	 * @param $deviceId
+	 * @param int|null $pruneBefore
+	 * @param int|null $limit
+	 * @param int|null $offset
+	 * @return array
+	 * @throws \OCP\DB\Exception
+	 */
+    public function getDevicePointsFromDB($userId, $deviceId, ?int $pruneBefore=0, ?int $limit=null, ?int $offset=null) {
         $qb = $this->qb;
         // get coordinates
         $qb->select('p.id', 'lat', 'lng', 'timestamp', 'altitude', 'accuracy', 'battery')
@@ -92,7 +101,13 @@ class DevicesService {
                 $qb->expr()->gt('timestamp', $qb->createNamedParameter(intval($pruneBefore), IQueryBuilder::PARAM_INT))
             );
         }
-        $qb->orderBy('timestamp', 'ASC');
+		if (!is_null($offset)) {
+			$qb->setFirstResult($offset);
+		}
+		if (!is_null($limit)) {
+			$qb->setMaxResults($limit);
+		}
+        $qb->orderBy('timestamp', 'DESC');
         $req = $qb->execute();
 
         $points = [];
@@ -110,7 +125,7 @@ class DevicesService {
         $req->closeCursor();
         $qb = $qb->resetQueryParts();
 
-        return $points;
+        return array_reverse($points);
     }
 
     public function getOrCreateDeviceFromDB($userId, $userAgent) {

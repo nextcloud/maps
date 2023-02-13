@@ -43,12 +43,12 @@
 			@mouseover="deviceLastPointMouseover" />
 		<LFeatureGroup
 			@mouseover="deviceLineMouseover">
-			<LPolyline v-if="device.historyEnabled"
+			<LPolyline v-if="device.historyEnabled && points.length <= 2500"
 				color="black"
 				:opacity="1"
 				:weight="4 * 1.6"
 				:lat-lngs="points" />
-			<LPolyline v-if="device.historyEnabled"
+			<LPolyline v-if="device.historyEnabled && points.length <= 2500"
 				:color="color"
 				:opacity="1"
 				:weight="4"
@@ -64,7 +64,7 @@ import { LMarker, LTooltip, LPopup, LFeatureGroup, LPolyline } from 'vue2-leafle
 import NcActionButton from '@nextcloud/vue/dist/Components/NcActionButton'
 
 import { isComputer } from '../../utils'
-import {binSearch, isPublic} from '../../utils/common'
+import { binSearch, isPublic } from '../../utils/common'
 import optionsController from '../../optionsController'
 import moment from '@nextcloud/moment'
 

@@ -225,7 +225,7 @@ import AppNavigationDevicesItem from '../components/AppNavigationDevicesItem'
 import AppNavigationMyMapsItem from '../components/AppNavigationMyMapsItem'
 import optionsController from '../optionsController'
 import { getLetterColor, hslToRgb, Timer, getDeviceInfoFromUserAgent2, isComputer, isPhone } from '../utils'
-import {binSearch, getToken, isPublic} from '../utils/common'
+import { binSearch, getToken, isPublic } from '../utils/common'
 import { poiSearchData } from '../utils/poiData'
 import { processGpx } from '../tracksUtils'
 
@@ -342,6 +342,7 @@ export default {
 				this.minPhotoTimestamp,
 				this.minFavoriteTimestamp,
 				this.minTrackTimestamp,
+				this.minDevicesTimestamp,
 			) || 0
 		},
 		maxDataTimestamp() {
@@ -408,6 +409,15 @@ export default {
 				: this.trackDates.length === 1
 					? this.trackDates[0] + 100
 					: moment().unix() + 100
+		},
+		minDevicesTimestamp() {
+			return this.devices.reduce((min, device) => {
+				if (device.enabled && device.historyEnabled) {
+					const lastNullIndex = binSearch(device.points, (p) => !p.timestamp)
+					min = Math.min(min, device.points[lastNullIndex + 1].timestamp)
+				}
+				return min
+			}, moment().unix() + 100)
 		},
 		// displayed data
 		displayedTracks() {
@@ -1965,7 +1975,7 @@ export default {
 						...device,
 						loading: false,
 						enabled: false,
-						historyEnabled: optionsController.enabledDeviceLines.includes(device.id),
+						historyEnabled: false, // optionsController.enabledDeviceLines.includes(device.id),
 					}
 				})
 				this.devices.forEach((device) => {
@@ -1983,7 +1993,7 @@ export default {
 			if (device.enabled) {
 				this.disableDevice(device)
 			} else {
-				this.enableDevice(device, true)
+				this.enableDevice(device, false)
 			}
 		},
 		onSearchEnableDevice(device) {
@@ -2002,12 +2012,22 @@ export default {
 		},
 		disableDevice(device) {
 			device.enabled = false
+			device.historyEnabled = false
 			this.saveEnabledDevices()
 		},
 		getDevice(device, enable = false, save = true, zoom = false) {
 			device.loading = true
-			network.getDevice(device.id, this.myMapId).then((response) => {
-				this.$set(device, 'points', response.data.sort((p1, p2) => (p1.timestamp || 0) - (p2.timestamp || 0)))
+			network.getDevice(device.id, this.myMapId, 100000, device.points?.length || 0).then((response) => {
+				//There are too many points making it responsiv crashes most browsers
+				// this.$set(device, 'points', response.data /* .sort((p1, p2) => (p1.timestamp || 0) - (p2.timestamp || 0)) */)
+				if (device.points) {
+					device.points = response.data.concat(device.points)
+				} else {
+					device.points = response.data
+				}
+				if (response.data.length >= 100000) {
+					this.getDevice(device, false, false, false)
+				}
 				if (enable) {
 					device.enabled = true
 				}
@@ -2115,7 +2135,7 @@ export default {
 			// Fixme
 			showInfo('Adding device to map not supported yet')
 		},
-		onToggleDeviceHistory(device) {
+		async onToggleDeviceHistory(device) {
 			device.historyEnabled = !device.historyEnabled
 			this.saveEnabledDeviceLines()
 		},

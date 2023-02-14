@@ -63,6 +63,7 @@ OC.L10N.register(
     "Computer" : "كمبيوتر",
     "Not grouped" : "غير مصنف",
     "Default" : "افتراضي",
+    "Link copied" : "تم نسخ الرابط",
     "Metadata" : "البيانات الوصفية ( ميتاداتا)",
     "Restaurant" : "مطعم",
     "Fast food" : "أكل خفيف",

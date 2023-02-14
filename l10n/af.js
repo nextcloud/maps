@@ -45,6 +45,7 @@ OC.L10N.register(
     "Phone" : "Foon",
     "Not grouped" : "Nie gegroepeer",
     "Default" : "Verstek",
+    "Link copied" : "Skakel gekopieer",
     "Settings" : "Instellings"
 },
 "nplurals=2; plural=(n != 1);");

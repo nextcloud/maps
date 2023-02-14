@@ -311,6 +311,7 @@ OC.L10N.register(
     "View in Maps" : "Преглед в Карти",
     "Import as favorites in Maps" : "Импортиране като любими в Карти",
     "Import as devices in Maps" : "Импортиране като устройства в Карти",
+    "Link copied" : "Връзката е копирана",
     "Default Map" : "Карта по подразбиране",
     "Your Default Map" : "Вашата карта по подразбиране",
     "New Map" : "Нова карта",

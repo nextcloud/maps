@@ -53,6 +53,7 @@ OC.L10N.register(
     "Default" : "Mặc định",
     "Failed to save settings" : "Lưu cấu hình thất bại",
     "Link copied" : "Đã sao chép liên kết",
+    "Bar" : "Thanh",
     "Cinema" : "Rạp chiếu phim",
     "Hospital" : "Bệnh viện",
     "Dentist" : "Nha sĩ",

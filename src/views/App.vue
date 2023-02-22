@@ -879,7 +879,7 @@ export default {
 		},
 		onPhotosClicked() {
 			this.photosEnabled = !this.photosEnabled
-			
+
 			// get photos if we don't have them yet
 			if (this.photosEnabled && this.photos.length === 0) {
 				this.getPhotos()
@@ -1088,6 +1088,7 @@ export default {
 		cancelPhotoSuggestions() {
 			this.photoSuggestionsSelectedIndices = []
 			this.showPhotoSuggestions = false
+			this.photoSuggestionsHidePhotos = false
 			this.photoSuggestionsOffset = 0
 			this.photoSuggestionsTracksAndDevices = {}
 			this.closeSidebar()
@@ -1189,6 +1190,8 @@ export default {
 		onChangePhotoSuggestionsTimezone(tz) {
 			this.photoSuggestionsTimezone = tz
 			this.photoSuggestionsSelectedIndices = []
+			this.photoSuggestionsTracksAndDevices = {}
+			this.photoSuggestionsOffset = 0
 			this.getPhotoSuggestions()
 		},
 		onSavePhotoSuggestionsSelection(indices = null) {
@@ -2087,7 +2090,7 @@ export default {
 		getDevice(device, enable = false, save = true, zoom = false) {
 			device.loading = true
 			network.getDevice(device.id, this.myMapId, 100000, device.points?.length || 0).then((response) => {
-				//There are too many points making it responsiv crashes most browsers
+				// There are too many points making it responsiv crashes most browsers
 				// this.$set(device, 'points', response.data /* .sort((p1, p2) => (p1.timestamp || 0) - (p2.timestamp || 0)) */)
 				if (device.points) {
 					device.points = response.data.concat(device.points)

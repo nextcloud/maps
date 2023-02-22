@@ -58,7 +58,6 @@ class PhotofilesService {
     private $jobList;
 	private ICacheFactory $cacheFactory;
 	private \OCP\ICache $photosCache;
-	private \OCP\ICache $nonLocalizedPhotosCache;
 
 	public function __construct (ILogger $logger,
 								 ICacheFactory $cacheFactory,
@@ -75,12 +74,10 @@ class PhotofilesService {
         $this->jobList = $jobList;
 		$this->cacheFactory = $cacheFactory;
 		$this->photosCache = $this->cacheFactory->createDistributed('maps:photos');
-		$this->nonLocalizedPhotosCache = $this->cacheFactory->createDistributed('maps:nonLocalizedPhotos');
     }
 
     public function rescan($userId, $inBackground=true) {
 		$this->photosCache->clear($userId);
-		$this->nonLocalizedPhotosCache->clear($userId);
         $userFolder = $this->root->getUserFolder($userId);
         $photos = $this->gatherPhotoFiles($userFolder, true);
         $this->photoMapper->deleteAll($userId);
@@ -162,7 +159,6 @@ class PhotofilesService {
 					$this->photoMapper->findByFileIdUserId($file->getId(), $ownerId);
 					$this->updatePhoto($file, $exif);
 					$this->photosCache->clear($ownerId);
-					$this->nonLocalizedPhotosCache->clear($ownerId);
 				} catch (DoesNotExistException $exception) {
 					$this->insertPhoto($file, $ownerId, $exif);
 				}
@@ -315,7 +311,6 @@ class PhotofilesService {
                 $this->insertPhoto($photo, $userId, $exif);
             }
 			$this->photosCache->clear($userId);
-			$this->nonLocalizedPhotosCache->clear($userId);
         }
     }
 
@@ -335,7 +330,6 @@ class PhotofilesService {
         $this->photoMapper->insert($photoEntity);
 
 		$this->photosCache->clear($userId);
-		$this->nonLocalizedPhotosCache->clear($userId);
     }
 
     private function updatePhoto($file, $exif) {

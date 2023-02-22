@@ -199,6 +199,11 @@ class GeophotoService {
 		$suggestionsBySource = [];
 		$cache = $folder->getStorage()->getCache();
 		$previewEnableMimetypes = $this->getPreviewEnabledMimetypes();
+		if (!is_null($timezone)) {
+			$tz = new \DateTimeZone($timezone);
+		} else {
+			$tz = new \DateTimeZone(\date_default_timezone_get());
+		}
 		foreach ($photoEntities as $photoEntity) {
 			$cacheEntry = $cache->get($photoEntity->getFileId());
 			if ($cacheEntry) {
@@ -226,11 +231,6 @@ class GeophotoService {
 
 					//Unfortunately Exif stores the local and not the UTC time. There is no way to get the timezone, therefore it has to be given by the user.
 					$date = $photoEntity->getDateTaken() ?? \time();
-					if (!is_null($timezone)) {
-						$tz = new \DateTimeZone($timezone);
-					} else {
-						$tz = new \DateTimeZone(\date_default_timezone_get());
-					}
 
 					$dateWithTimezone = new \DateTime(gmdate('Y-m-d H:i:s', $date), $tz);
 					$locations = $this->getLocationGuesses($dateWithTimezone->getTimestamp());

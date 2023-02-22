@@ -2,158 +2,160 @@
 	<div id="photo-suggestions-tab">
 		<div v-if="loading" class="icon-loading" />
 		<div v-else-if="photoSuggestions.length > 0">
-			<div>
-				<NcAppNavigationItem
-					:icon="'icon-road'"
-					:title="t('maps', 'Tracks')"
-					:allow-collapse="true"
-					:open="tracksOpen"
-					:force-menu="false"
-					@click="onTracksClick"
-					@update:open="onUpdateTracksOpen">
-					<NcCounterBubble v-show="tracks.length"
-						slot="counter">
-						{{ tracks.length > 99 ? '99+' : tracks.length }}
-					</NcCounterBubble>
-					<template slot="default">
-						<b v-show="false">dummy</b>
-						<PhotoSideBarTabTrackItem
-							v-for="tr in tracks"
-							:key="'track:'.concat(tr.id)"
-							:track="tr"
-							:sub-tracks="subtracks(tr)"
-							@subtrack-click="onSubTrackClick($event)" />
-					</template>
-				</NcAppNavigationItem>
-				<NcAppNavigationItem
-					:icon="'icon-phone'"
-					:title="t('maps', 'Devices')"
-					:allow-collapse="true"
-					:open="devicesOpen"
-					:force-menu="false"
-					@click="onDevicesClick"
-					@update:open="onUpdateDevicesOpen">
-					<NcCounterBubble v-show="devices.length"
-						slot="counter">
-						{{ devices.length > 99 ? '99+' : devices.length }}
-					</NcCounterBubble>
-					<template slot="default">
-						<b v-show="false">dummy</b>
-						<PhotoSideBarTabDeviceItem
-							v-for="d in devices"
-							:key="'device:'.concat(d.id)"
-							:device="d"
-							@device-click="$emit('toggle-track-or-device', d)" />
-					</template>
-				</NcAppNavigationItem>
-				<NcButton
-					@click="$emit('toggle-hide-photos')">
-					{{ photoSuggestionsHidePhotos ? t('maps', 'Show localized photos'): t('maps', 'Hide localized photos') }}
-				</NcButton>
-			</div>
 			<div class="oc-dialog-buttonrow">
-				<NcButton
-					@click="$emit('clear-selection')">
-					{{ t('maps', 'Clear selection') }}
-				</NcButton>
-				<NcButton
-					type="primary"
-					@click="$emit('select-all')">
-					{{ t('maps', 'Select all') }}
-				</NcButton>
-				<NcTimezonePicker
-					:value="photoSuggestionsTimezone"
-					@input="$emit('change-timezone', $event)" />
-				<NcActions>
-					<NcActionButton
-						:icon="selectionLayout==='list'?'icon-toggle-pictures':'icon-toggle-filelist'"
-						@click="selectionLayout=selectionLayout==='list'?'grid':'list'">
-						{{ t('maps', selectionLayout==='list'?'grid view':'list view') }}
-					</NcActionButton>
-				</NcActions>
-			</div>
-			<div v-if="photoSuggestionsSelectedIndices.length > 0 && selectionLayout==='list'">
-				<NcListItem v-for="p in photoSuggestionsSelected"
-					:key="p.photoSuggestionsIndex"
-					:title="p.basename"
-					:bold="false"
-					:details="getPhotoFormattedDate(p)"
-					@click="onListItemClick(p)">
-					<template #icon>
-						<img
-							:src="previewUrl(p)"
-							:alt="p.basename"
-							width="64"
-							height="64">
-					</template>
-					<template #subtitle>
-						{{ p.path }}
-					</template>
-					<template #actions>
-						<NcActionButton @click="onListItemClick(p)">
-							{{ t('maps', 'Display picture') }}
-						</NcActionButton>
-						<NcActionButton @click="$emit('save',[p.photoSuggestionsIndex])">
-							{{ t('maps', 'Save') }}
-						</NcActionButton>
-						<NcActionButton @click="$emit('zoom', p)">
-							{{ t('maps', 'Zoom') }}
-						</NcActionButton>
-						<NcActionButton @click="$emit('clear-selection',[p.photoSuggestionsIndex])">
-							{{ t('maps', 'Remove form selection') }}
-						</NcActionButton>
-					</template>
-				</NcListItem>
-			</div>
-			<div v-if="photoSuggestionsSelectedIndices.length > 0 && selectionLayout==='grid'"
-				class="photo-suggestion-selected-grid">
-				<div v-for="p in photoSuggestionsSelected"
-					:key="p.photoSuggestionsIndex"
-					class="photo-suggestion-selected-grid-item"
-					:style="{
-						'background-image': 'url('+previewUrl(p)+')',
-						'background-size': 'cover'}"
-					@click.self="onListItemClick(p)">
-					<NcActions class="photo-suggestion-selected-grid-actions">
-						<NcActionButton @click="onListItemClick(p)">
-							{{ t('maps', 'Display picture') }}
-						</NcActionButton>
-						<NcActionButton @click="$emit('save',[p.photoSuggestionsIndex])">
-							{{ t('maps', 'Save') }}
-						</NcActionButton>
-						<NcActionButton @click="$emit('zoom', p)">
-							{{ t('maps', 'Zoom') }}
-						</NcActionButton>
-						<NcActionButton @click="$emit('clear-selection',[p.photoSuggestionsIndex])">
-							{{ t('maps', 'Remove form selection') }}
+					<NcButton
+						@click="$emit('clear-selection')">
+						{{ t('maps', 'Clear selection') }}
+					</NcButton>
+					<NcButton
+						type="primary"
+						@click="$emit('select-all')">
+						{{ t('maps', 'Select all') }}
+					</NcButton>
+					<NcActions>
+						<NcActionButton
+							:icon="selectionLayout==='list'?'icon-toggle-pictures':'icon-toggle-filelist'"
+							@click="selectionLayout=selectionLayout==='list'?'grid':'list'">
+							{{ t('maps', selectionLayout==='list'?'grid view':'list view') }}
 						</NcActionButton>
 					</NcActions>
 				</div>
-			</div>
+			<div v-if="photoSuggestionsSelectedIndices.length > 0 && selectionLayout==='list'">
+					<NcListItem v-for="p in photoSuggestionsSelected"
+								:key="p.photoSuggestionsIndex"
+								:title="p.basename"
+								:bold="false"
+								:details="getPhotoFormattedDate(p)"
+								@click="onListItemClick(p)">
+						<template #icon>
+							<img
+								:src="previewUrl(p)"
+								:alt="p.basename"
+								width="64"
+								height="64">
+						</template>
+						<template #subtitle>
+							{{ p.path }}
+						</template>
+						<template #actions>
+							<NcActionButton @click="onListItemClick(p)">
+								{{ t('maps', 'Display picture') }}
+							</NcActionButton>
+							<NcActionButton @click="$emit('save',[p.photoSuggestionsIndex])">
+								{{ t('maps', 'Save') }}
+							</NcActionButton>
+							<NcActionButton @click="$emit('zoom', p)">
+								{{ t('maps', 'Zoom') }}
+							</NcActionButton>
+							<NcActionButton @click="$emit('clear-selection',[p.photoSuggestionsIndex])">
+								{{ t('maps', 'Remove form selection') }}
+							</NcActionButton>
+						</template>
+					</NcListItem>
+				</div>
+			<div v-if="photoSuggestionsSelectedIndices.length > 0 && selectionLayout==='grid'"
+					 class="photo-suggestion-selected-grid">
+					<div v-for="p in photoSuggestionsSelected"
+						 :key="p.photoSuggestionsIndex"
+						 class="photo-suggestion-selected-grid-item"
+						 :style="{
+						'background-image': 'url('+previewUrl(p)+')',
+						'background-size': 'cover'}"
+						 @click.self="onListItemClick(p)">
+						<NcActions class="photo-suggestion-selected-grid-actions">
+							<NcActionButton @click="onListItemClick(p)">
+								{{ t('maps', 'Display picture') }}
+							</NcActionButton>
+							<NcActionButton @click="$emit('save',[p.photoSuggestionsIndex])">
+								{{ t('maps', 'Save') }}
+							</NcActionButton>
+							<NcActionButton @click="$emit('zoom', p)">
+								{{ t('maps', 'Zoom') }}
+							</NcActionButton>
+							<NcActionButton @click="$emit('clear-selection',[p.photoSuggestionsIndex])">
+								{{ t('maps', 'Remove form selection') }}
+							</NcActionButton>
+						</NcActions>
+					</div>
+				</div>
 		</div>
 		<div v-else>
-			<h2> {{ t('maps','No suggestions found') }} </h2>
-			{{ t('maps','To get suggestions upload tracks from the trips, when you took your photos.'
+				<h2> {{ t('maps','No suggestions found') }} </h2>
+				{{ t('maps','To get suggestions upload tracks from the trips, when you took your photos.'
 				+ 'For future trips you can track your android phone using phonetrack.'
 				+ 'This information are then automatically used suggest photo location') }}
-		</div>
+			</div>
 		<div class="oc-dialog-buttonrow">
+				<NcButton
+					@click="$emit('cancel')">
+					{{ !photoSuggestions.includes(null) ? t('maps', 'Cancel') : t('maps', 'Quit') }}
+				</NcButton>
+				<NcButton
+					@click="$emit('load-more')">
+					{{ t('maps', 'Load more') }}
+				</NcButton>
+				<NcButton
+					v-show="photoSuggestions.length > 0"
+					type="primary"
+					:disabled="photoSuggestionsSelectedIndices.length===0 || readOnly"
+					@click="$emit('save')">
+					{{ t('maps', 'Save') }}
+				</NcButton>
+			</div>
+		<NcAppNavigationSettings class="footer">
+			{{ t('maps', 'Photos default timezone:') }}
+			<NcTimezonePicker
+				:value="photoSuggestionsTimezone"
+				@input="$emit('change-timezone', $event)" />
+			{{ t('maps', 'Location sources:') }}
+			<NcAppNavigationItem
+				:icon="'icon-road'"
+				:title="t('maps', 'Tracks')"
+				:allow-collapse="true"
+				:open="tracksOpen"
+				:force-menu="false"
+				@click="onTracksClick"
+				@update:open="onUpdateTracksOpen">
+				<NcCounterBubble v-show="tracks.length"
+					slot="counter">
+					{{ tracks.length > 99 ? '99+' : tracks.length }}
+				</NcCounterBubble>
+				<template slot="default">
+					<b v-show="false">dummy</b>
+					<PhotoSideBarTabTrackItem
+						v-for="tr in tracks"
+						:key="'track:'.concat(tr.id)"
+						:track="tr"
+						:sub-tracks="subtracks(tr)"
+						@subtrack-click="onSubTrackClick($event)" />
+				</template>
+			</NcAppNavigationItem>
+			<NcAppNavigationItem
+				:icon="'icon-phone'"
+				:title="t('maps', 'Devices')"
+				:allow-collapse="true"
+				:open="devicesOpen"
+				:force-menu="false"
+				@click="onDevicesClick"
+				@update:open="onUpdateDevicesOpen">
+				<NcCounterBubble v-show="devices.length"
+					slot="counter">
+					{{ devices.length > 99 ? '99+' : devices.length }}
+				</NcCounterBubble>
+				<template slot="default">
+					<b v-show="false">dummy</b>
+					<PhotoSideBarTabDeviceItem
+						v-for="d in devices"
+						:key="'device:'.concat(d.id)"
+						:device="d"
+						@device-click="$emit('toggle-track-or-device', d)" />
+				</template>
+			</NcAppNavigationItem>
 			<NcButton
-				@click="$emit('cancel')">
-				{{ !photoSuggestions.includes(null) ? t('maps', 'Cancel') : t('maps', 'Quit') }}
+				@click="$emit('toggle-hide-photos')">
+				{{ photoSuggestionsHidePhotos ? t('maps', 'Show localized photos'): t('maps', 'Hide localized photos') }}
 			</NcButton>
-			<NcButton
-				@click="$emit('load-more')">
-				{{ t('maps', 'Load more') }}
-			</NcButton>
-			<NcButton
-				v-show="photoSuggestions.length > 0"
-				type="primary"
-				:disabled="photoSuggestionsSelectedIndices.length===0 || readOnly"
-				@click="$emit('save')">
-				{{ t('maps', 'Save') }}
-			</NcButton>
-		</div>
+		</NcAppNavigationSettings>
 	</div>
 </template>
 
@@ -166,6 +168,7 @@ import NcActions from '@nextcloud/vue/dist/Components/NcActions'
 import NcListItem from '@nextcloud/vue/dist/Components/NcListItem'
 import NcCounterBubble from '@nextcloud/vue/dist/Components/NcCounterBubble'
 import NcAppNavigationItem from '@nextcloud/vue/dist/Components/NcAppNavigationItem'
+import NcAppNavigationSettings from '@nextcloud/vue/dist/Components/NcAppNavigationSettings'
 import NcActionButton from '@nextcloud/vue/dist/Components/NcActionButton'
 
 import { getToken } from '../../utils/common'
@@ -186,6 +189,7 @@ export default {
 		PhotoSideBarTabTrackItem,
 		PhotoSideBarTabDeviceItem,
 		NcAppNavigationItem,
+		NcAppNavigationSettings,
 	},
 
 	props: {
@@ -336,6 +340,26 @@ export default {
 
 .photo-suggestion-selected-grid-item:hover .photo-suggestion-selected-grid-actions {
 	opacity: 1 !important;
+}
+
+.footer {
+	position: absolute;
+	bottom: 0;
+	width: 100%;
+	padding: 0;
+	margin: 0;
+	background-color: var(--color-main-background);
+	box-shadow: none;
+	border: 0;
+	text-align: left;
+	font-weight: normal;
+	font-size: 100%;
+	color: var(--color-main-text);
+	line-height: 44px
+}
+
+.item-disabled {
+	opacity: 0.5;
 }
 
 </style>

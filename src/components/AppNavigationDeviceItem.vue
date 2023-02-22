@@ -28,7 +28,7 @@
 				icon="icon-category-monitoring"
 				:close-after-click="true"
 				@click="$emit('toggle-history', device)">
-				{{ t('maps', 'Toggle history') }}
+				{{ device.historyEnabled ? t('maps', 'Hide history') : t('maps', 'Show history') }}
 			</NcActionButton>
 			<NcActionButton v-if="parentEnabled && device.enabled && mapIsUpdatable"
 				:close-after-click="false"

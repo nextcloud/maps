@@ -9,7 +9,7 @@
 			<NcActionButton
 				icon="icon-category-monitoring"
 				@click="$emit('toggle-history', device)">
-				{{ t('maps', 'Toggle history') }}
+				{{ device.historyEnabled ? t('maps', 'Hide history') : t('maps', 'Show history') }}
 			</NcActionButton>
 			<NcActionButton v-if="mapIsUpdatable"
 				icon="icon-colorpicker"

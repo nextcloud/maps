@@ -270,7 +270,10 @@ class PhotosControllerTest extends \PHPUnit\Framework\TestCase {
 		$this->assertEquals(200, $status);
 		$data = $resp->getData();
 		$this->assertCount(1, $data);
-        $this->assertEquals('/nut.jpg', $data[0]->path);
+		$this->assertStringStartsWith('track:', array_key_first($data));
+		$dataForTrack = array_shift($data);
+		$this->assertCount(1, $dataForTrack);
+        $this->assertEquals('/nut.jpg', $dataForTrack[0]->path);
 
 		//Test .nomedia respected
 		$this->GeoPhotosService->clearCache();

@@ -157,7 +157,7 @@ class PublicTracksController extends PublicPageController {
 		if ($isReadable) {
 			$owner = $share->getShareOwner();
 			$pre_path = $this->root->getUserFolder($owner)->getPath();
-			$tracks = $this->tracksService->getTracksFromDB($owner, $folder, true, false);
+			$tracks = $this->tracksService->getTracksFromDB($owner, $folder, true, false, false);
 			$new_tracks = array_map(function ($track) use ($folder, $permissions, $pre_path) {
 				$track['isCreatable'] = ($permissions & (1 << 2)) && $track['isCreatable'];
 				$track['isUpdateable'] = ($permissions & (1 << 1)) && $track['isUpdateable'];

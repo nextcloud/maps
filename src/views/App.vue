@@ -117,7 +117,9 @@
 					:photos-draggable="photosDraggable"
 					:show-photo-suggestions="showPhotoSuggestions"
 					:photo-suggestions="photoSuggestions"
+					:photo-suggestions-tracks-and-devices="photoSuggestionsTracksAndDevices"
 					:photo-suggestions-selected-indices="photoSuggestionsSelectedIndices"
+					:photo-suggestions-hide-photos="photoSuggestionsHidePhotos"
 					:contacts="contacts"
 					:contact-groups="contactGroups"
 					:contacts-enabled="contactsEnabled"
@@ -185,8 +187,10 @@
 			:photo="selectedPhoto"
 			:photos-loading="photosLoading"
 			:photo-suggestions="photoSuggestions"
+			:photo-suggestions-tracks-and-devices="photoSuggestionsTracksAndDevices"
 			:photo-suggestions-selected-indices="photoSuggestionsSelectedIndices"
 			:photo-suggestions-timezone="photoSuggestionsTimezone"
+			:photo-suggestions-hide-photos="photoSuggestionsHidePhotos"
 			:my-map="selectedMyMap"
 			@edit-favorite="onFavoriteEdit"
 			@delete-favorite="onFavoriteDelete"
@@ -197,7 +201,9 @@
 			@select-all-photo-suggestions="onSelectAllPhotoSuggestions"
 			@clear-photo-suggestions-selection="onClearPhotoSuggestionsSelection"
 			@cancel-photo-suggestions="onCancelPhotoSuggestions"
+			@toggle-photo-suggestions-hide-photo="photoSuggestionsHidePhotos=!photoSuggestionsHidePhotos"
 			@save-photo-suggestions-selection="onSavePhotoSuggestionsSelection"
+			@photo-suggestion-toggle-track-or-device="onPhotoSuggestionToggleTrackOrDevice"
 			@change-photo-suggestions-timezone="onChangePhotoSuggestionsTimezone"
 			@zoom-photo-suggestion="onPhotoSuggestionZoom" />
 	</NcContent>
@@ -289,7 +295,9 @@ export default {
 			selectedPhoto: null,
 			showPhotoSuggestions: false,
 			photoSuggestions: [],
+			photoSuggestionsTracksAndDevices: {},
 			photoSuggestionsSelectedIndices: [],
+			photoSuggestionsHidePhotos: false,
 			photoSuggestionsTimezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
 			photoSuggestionsLimit: 250,
 			photoSuggestionsOffset: 0,
@@ -871,6 +879,7 @@ export default {
 		},
 		onPhotosClicked() {
 			this.photosEnabled = !this.photosEnabled
+
 			// get photos if we don't have them yet
 			if (this.photosEnabled && this.photos.length === 0) {
 				this.getPhotos()
@@ -1079,6 +1088,9 @@ export default {
 		cancelPhotoSuggestions() {
 			this.photoSuggestionsSelectedIndices = []
 			this.showPhotoSuggestions = false
+			this.photoSuggestionsHidePhotos = false
+			this.photoSuggestionsOffset = 0
+			this.photoSuggestionsTracksAndDevices = {}
 			this.closeSidebar()
 			this.photoSuggestions = []
 		},
@@ -1088,7 +1100,58 @@ export default {
 			}
 			this.photosLoading = true
 			network.getPhotoSuggestions(this.myMapId, getToken(), this.photoSuggestionsTimezone, this.photoSuggestionsLimit, this.photoSuggestionsOffset).then((response) => {
-				this.photoSuggestions.unshift(...response.data.sort((a, b) => {
+				const photoSuggestions = []
+				Object.entries(response.data).forEach(([i, v]) => {
+					if (!this.photoSuggestionsTracksAndDevices[i]) {
+						const isplit = i.split(':')
+						if (isplit[0] === 'track') {
+							const track = this.tracks.find((t) => {
+								return t.id === parseInt(isplit[1])
+							})
+							if (track) {
+								this.$set(this.photoSuggestionsTracksAndDevices, i, {
+									key: i,
+									enabled: true,
+									visible: true,
+									color: track.color || '#0082c9',
+									name: track.file_name,
+									id: track.id,
+									suggestionCount: v.length,
+								})
+								photoSuggestions.push(...v)
+							} else {
+								this.$set(this.photoSuggestionsTracksAndDevices, i, {
+									key: i,
+									enabled: false,
+									visible: false,
+								})
+							}
+						} else if (isplit[0] === 'device') {
+							const device = this.devices.find((d) => {
+								return d.id === parseInt(isplit[1])
+							})
+							if (device) {
+								photoSuggestions.push(...v)
+								this.$set(this.photoSuggestionsTracksAndDevices, i, {
+									key: i,
+									enabled: true,
+									visible: true,
+									color: device.color || '#0082c9',
+									name: device.user_agent,
+									id: device.id,
+									suggestionCount: v.length,
+								})
+							} else {
+								this.$set(this.photoSuggestionsTracksAndDevices, i, {
+									key: i,
+									enabled: false,
+									visible: false,
+								})
+							}
+						}
+					}
+				})
+				this.photoSuggestions.unshift(...photoSuggestions.sort((a, b) => {
 					if (a.dateTaken < b.dateTaken) {
 						return -1
 					} else if (a.dateTaken > b.dateTaken) {
@@ -1105,7 +1168,11 @@ export default {
 		},
 		onSelectAllPhotoSuggestions() {
 			this.photoSuggestionsSelectedIndices = []
-			this.photoSuggestionsSelectedIndices = [...this.photoSuggestions.keys()]
+			const indices = [...this.photoSuggestions.keys()]
+			this.photoSuggestionsSelectedIndices = indices.filter((i) => {
+				const tod = this.photoSuggestionsTracksAndDevices[this.photoSuggestions[i].trackOrDeviceId]
+				return tod.visible && tod.enabled
+			})
 		},
 		onClearPhotoSuggestionsSelection(indices) {
 			if (indices) {
@@ -1117,9 +1184,15 @@ export default {
 		onCancelPhotoSuggestions() {
 			this.cancelPhotoSuggestions()
 		},
+		onPhotoSuggestionToggleTrackOrDevice(t) {
+			this.photoSuggestionsTracksAndDevices[t.key].enabled = !this.photoSuggestionsTracksAndDevices[t.key].enabled
+		},
 		onChangePhotoSuggestionsTimezone(tz) {
 			this.photoSuggestionsTimezone = tz
 			this.photoSuggestionsSelectedIndices = []
+			this.photoSuggestions = []
+			this.photoSuggestionsTracksAndDevices = {}
+			this.photoSuggestionsOffset = 0
 			this.getPhotoSuggestions()
 		},
 		onSavePhotoSuggestionsSelection(indices = null) {
@@ -2018,7 +2091,7 @@ export default {
 		getDevice(device, enable = false, save = true, zoom = false) {
 			device.loading = true
 			network.getDevice(device.id, this.myMapId, 100000, device.points?.length || 0).then((response) => {
-				//There are too many points making it responsiv crashes most browsers
+				// There are too many points making it responsiv crashes most browsers
 				// this.$set(device, 'points', response.data /* .sort((p1, p2) => (p1.timestamp || 0) - (p2.timestamp || 0)) */)
 				if (device.points) {
 					device.points = response.data.concat(device.points)

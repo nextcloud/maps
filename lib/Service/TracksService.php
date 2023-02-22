@@ -247,8 +247,11 @@ class TracksService {
     /**
      * @param string $userId
      */
-    public function getTracksFromDB($userId, $folder=null, bool $respectNomediaAndNoimage=true, bool $hideImagesOnCustomMaps=true) {
-		$ignoredPaths = $respectNomediaAndNoimage ? $this->getIgnoredPaths($userId, $folder, $hideImagesOnCustomMaps) : [];
+    public function getTracksFromDB($userId, $folder=null, bool $respectNomediaAndNoimage=true, bool $hideTracksOnCustomMaps=false, bool $hideTracksInMapsFolder=true) {
+		$ignoredPaths = $respectNomediaAndNoimage ? $this->getIgnoredPaths($userId, $folder, $hideTracksOnCustomMaps) : [];
+		if ($hideTracksInMapsFolder) {
+			$ignoredPaths[] = '/Maps';
+		}
 		$userFolder = $this->root->getUserFolder($userId);
         $tracks = [];
         $qb = $this->qb;

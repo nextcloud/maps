@@ -104,7 +104,7 @@ class TracksController extends Controller {
         } else {
             $folders = $this->userfolder->getById($myMapId);
             $folder = array_shift($folders);
-            $tracks = $this->tracksService->getTracksFromDB($this->userId, $folder, true, false, true);
+            $tracks = $this->tracksService->getTracksFromDB($this->userId, $folder, true, false, false);
         }
         return new DataResponse($tracks);
     }

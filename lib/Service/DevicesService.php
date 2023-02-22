@@ -12,6 +12,7 @@
 
 namespace OCA\Maps\Service;
 
+use OCP\DB\Exception;
 use OCP\IL10N;
 use OCP\ILogger;
 use OCP\IDBConnection;
@@ -127,6 +128,36 @@ class DevicesService {
 
         return array_reverse($points);
     }
+
+	/**
+	 * @param $userId
+	 * @param $deviceId
+	 * @return array
+	 * @throws Exception
+	 */
+	public function getDeviceTimePointsFromDb($userId, $deviceId) {
+		$qb = $this->qb;
+		// get coordinates
+		$qb->select('lat', 'lng', 'timestamp')
+			->from('maps_device_points', 'p')
+			->innerJoin('p', 'maps_devices', 'd', $qb->expr()->eq('d.id', 'p.device_id'))
+			->where(
+				$qb->expr()->eq('p.device_id', $qb->createNamedParameter($deviceId, IQueryBuilder::PARAM_INT))
+			)
+			->andWhere(
+				$qb->expr()->eq('d.user_id', $qb->createNamedParameter($userId, IQueryBuilder::PARAM_STR))
+			);
+		$qb->orderBy('timestamp', 'ASC');
+		$req = $qb->execute();
+
+		$points = [];
+		while ($row = $req->fetch()) {
+			$points[intval($row['timestamp'])] = [floatval($row['lat']), floatval($row['lng'])];
+		}
+		$req->closeCursor();
+		$qb = $qb->resetQueryParts();
+		return $points;
+	}
 
     public function getOrCreateDeviceFromDB($userId, $userAgent) {
         $deviceId = null;

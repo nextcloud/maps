@@ -1190,6 +1190,7 @@ export default {
 		onChangePhotoSuggestionsTimezone(tz) {
 			this.photoSuggestionsTimezone = tz
 			this.photoSuggestionsSelectedIndices = []
+			this.photoSuggestions = []
 			this.photoSuggestionsTracksAndDevices = {}
 			this.photoSuggestionsOffset = 0
 			this.getPhotoSuggestions()

@@ -247,7 +247,7 @@ class TracksService {
     /**
      * @param string $userId
      */
-    public function getTracksFromDB($userId, $folder=null, bool $respectNomediaAndNoimage=true, bool $hideTracksOnCustomMaps=false, bool $hideTracksInMapsFolder) {
+    public function getTracksFromDB($userId, $folder=null, bool $respectNomediaAndNoimage=true, bool $hideTracksOnCustomMaps=false, bool $hideTracksInMapsFolder=true) {
 		$ignoredPaths = $respectNomediaAndNoimage ? $this->getIgnoredPaths($userId, $folder, $hideTracksOnCustomMaps) : [];
 		if ($hideTracksInMapsFolder) {
 			$ignoredPaths[] = '/Maps';

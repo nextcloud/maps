@@ -349,13 +349,8 @@ class GeophotoService {
 				}
 			}
 			foreach ($this->devicesService->getDevicesFromDB($userId) as $device) {
-				$device_points = $this->devicesService->getDevicePointsFromDB($userId, $device['id']);
-				$points = [];
-				foreach ($device_points as $pt) {
-					$points[$pt['timestamp']] = [$pt['lat'], $pt['lng']];
-				}
-				$foo = ksort($points);
-				$this->timeorderedPointSets['device:' . $device['id']] = $points;
+				$device_points = $this->devicesService->getDeviceTimePointsFromDb($userId, $device['id']);
+				$this->timeorderedPointSets['device:' . $device['id']] = $device_points;
 			}
 			$this->timeOrderedPointSetsCache->set($key, $this->timeorderedPointSets);
 		}

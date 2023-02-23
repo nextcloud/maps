@@ -55,6 +55,7 @@ OC.L10N.register(
     "Save" : "Įrašyti",
     "Quit" : "Išeiti",
     "Load more" : "Įkelti daugiau",
+    "Devices" : "Įrenginiai",
     "Tags" : "Žymės",
     "Sidebar" : "Šoninė juosta",
     "Favorite" : "Mėgstamas",

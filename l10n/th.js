@@ -35,6 +35,7 @@ OC.L10N.register(
     "Select all" : "เลือกทั้งหมด",
     "Save" : "บันทึก",
     "Quit" : "ออก",
+    "Devices" : "อุปกรณ์",
     "Tags" : "แท็ก",
     "Favorite" : "รายการโปรด",
     "Unable to change the favourite state of the file" : "ไม่สามารถเปลี่ยนสถานะรายการโปรดของไฟล์",

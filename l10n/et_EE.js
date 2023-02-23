@@ -22,6 +22,7 @@ OC.L10N.register(
     "Select all" : "Vali kõik",
     "Save" : "Salvesta",
     "Quit" : "Lõpeta",
+    "Devices" : "Seadmed",
     "Tags" : "Sildid",
     "Favorite" : "Lemmik",
     "End" : "Lõpp",

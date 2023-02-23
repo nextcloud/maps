@@ -21,6 +21,7 @@ OC.L10N.register(
     "Select all" : "Seleccionar todo",
     "Save" : "Guardar",
     "Quit" : "Salir",
+    "Devices" : "Dispositivos",
     "Tags" : "Etiquetas",
     "Favorite" : "Favorito",
     "End" : "Fin",

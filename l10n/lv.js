@@ -21,6 +21,7 @@ OC.L10N.register(
     "Select all" : "Atzīmēt visu",
     "Save" : "Saglabāt",
     "Quit" : "Iziet",
+    "Devices" : "Ierīces",
     "Tags" : "Birkas",
     "Sidebar" : "Sānjosla",
     "Favorite" : "Favorīts",

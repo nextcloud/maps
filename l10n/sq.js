@@ -20,6 +20,7 @@ OC.L10N.register(
     "Select all" : "Zgjidhi të gjitha",
     "Save" : "Ruaj",
     "Quit" : "Dilni",
+    "Devices" : "Pajisjet",
     "Tags" : "Etiketat",
     "Favorite" : "I/E Preferuar",
     "Duration" : "Kohëzgjatja",

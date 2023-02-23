@@ -21,6 +21,7 @@ OC.L10N.register(
     "Select all" : "Seleccionar todo",
     "Save" : "Guardar",
     "Quit" : "Salir",
+    "Devices" : "Dispositivos",
     "Tags" : "Etiquetas",
     "Favorite" : "Marcar como favorito",
     "Unable to change the favourite state of the file" : "No se ha podido cambiar el estado de favorito del fichero",

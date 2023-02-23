@@ -22,6 +22,7 @@ OC.L10N.register(
     "Select all" : "Selectează tot",
     "Save" : "Salvează",
     "Quit" : "Renunță",
+    "Devices" : "Dispozitive",
     "Tags" : "Etichete",
     "Favorite" : "Favorite",
     "Unable to change the favourite state of the file" : "Nu s-a putut schimba starea fișierelor favorite",

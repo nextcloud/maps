@@ -18,6 +18,7 @@ OC.L10N.register(
     "Select all" : "Kies alle",
     "Save" : "Bewaar",
     "Quit" : "Sluit af",
+    "Devices" : "Toestelle",
     "Tags" : "Etikette",
     "Favorite" : "Gunsteling",
     "Duration" : "Duur",

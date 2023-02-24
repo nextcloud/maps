@@ -20,6 +20,7 @@ OC.L10N.register(
     "Select all" : "Esbillar too",
     "Save" : "Guardar",
     "Quit" : "Colar",
+    "Devices" : "Preseos",
     "Tags" : "Etiquetes",
     "Favorite" : "Marcar como favoritu",
     "End" : "Fin",

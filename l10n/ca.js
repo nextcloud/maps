@@ -58,6 +58,7 @@ OC.L10N.register(
     "Quit" : "Surt",
     "Load more" : "Carrega'n més",
     "Tracks" : "Trajectes",
+    "Devices" : "Dispositius",
     "Tags" : "Etiquetes",
     "Favorite" : "Preferit",
     "Track" : "Pista",

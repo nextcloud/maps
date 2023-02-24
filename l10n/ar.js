@@ -26,6 +26,8 @@ OC.L10N.register(
     "Select all" : "تحديد الكل",
     "Save" : "Save",
     "Quit" : "خروج",
+    "Tracks" : "المسارات",
+    "Devices" : "الأجهزة",
     "Tags" : "الوسوم",
     "Favorite" : "المفضلة",
     "Unable to change the favourite state of the file" : "لم نستطع تغير الحالة المفضلة للملف",

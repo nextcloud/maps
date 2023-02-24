@@ -108,6 +108,7 @@ OC.L10N.register(
     "To get suggestions upload tracks from the trips, when you took your photos." : "За да получите предложения, качете записи от пътуванията, когато сте направили снимките си.",
     "Quit" : "Изход",
     "Load more" : "Зареждане на още",
+    "Devices" : "Устройства",
     "Tags" : "Етикети",
     "Shows cool information" : "Показва страхотна информация",
     "Sidebar" : "Странична лента",

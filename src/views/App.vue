@@ -1201,21 +1201,14 @@ export default {
 			const lats = toSave.map((i) => { return this.photoSuggestions[i].lat })
 			const lngs = toSave.map((i) => { return this.photoSuggestions[i].lng })
 			network.placePhotos(paths, lats, lngs).then((response) => {
-				if (indices) {
-					// only some elements from sidebar where saved
-					indices.forEach((i) => {
-						this.photos.push(this.photoSuggestions[i])
-						this.photoSuggestions[i] = null
-						this.photoSuggestionsSelectedIndices = this.photoSuggestionsSelectedIndices.filter((e) => {
-							return !indices.includes(e)
-						})
-					})
-				} else {
-					// All elements in sidebar where saved
-					this.getPhotos()
-					this.getPhotoSuggestions()
-					this.photoSuggestionsSelectedIndices = []
-				}
+				toSave.forEach((i) => {
+					this.photos.push(this.photoSuggestions[i])
+					this.photoSuggestionsTracksAndDevices[this.photoSuggestions[i].trackOrDeviceId].length -= 1
+					this.$set(this.photoSuggestions, i, null)
+				})
+				this.photoSuggestionsSelectedIndices = this.photoSuggestionsSelectedIndices.filter((e) => {
+					return !toSave.includes(e)
+				})
 				response.data.length === toSave.length
 					? showSuccess(n('maps', 'Saved location', 'Saved all %n locations', toSave.length))
 					: showInfo(t('maps', 'Saved {r} from {i} locations', { r: response.data.length, i: toSave.length }))

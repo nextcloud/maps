@@ -40,10 +40,13 @@
 				ref="clusterPopup"
 				class="popup-photo-suggestion-wrapper"
 				:options="clusterPopupOptions">
+				<NcActionButton icon="icon-checkmark" @click="onSelectAll">
+					{{ t('maps', 'Select All') }}
+				</NcActionButton>
 				<NcActionButton icon="icon-toggle" @click="onDisplayClusterClick">
 					{{ t('maps', 'Display pictures') }}
 				</NcActionButton>
-				<NcActionButton icon="icon-toggle-suggestion-pictures" @click="onSpiderfyClusterClick">
+				<NcActionButton icon="icon-toggle-pictures" @click="onSpiderfyClusterClick">
 					{{ t('maps', 'Spiderfy') }}
 				</NcActionButton>
 				<NcActionButton icon="icon-search" @click="onZoomClusterClick">
@@ -300,6 +303,11 @@ export default {
 		},
 		onDisplayClusterClick() {
 			this.displayCluster(this.contextCluster)
+		},
+		onSelectAll() {
+			this.contextCluster.getAllChildMarkers().forEach((m) => {
+				this.$emit('photo-suggestion-selected', m.i)
+			})
 		},
 		displayCluster(cluster) {
 			const photoList = cluster.getAllChildMarkers().map((m) => {

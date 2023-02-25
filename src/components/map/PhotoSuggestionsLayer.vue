@@ -40,10 +40,13 @@
 				ref="clusterPopup"
 				class="popup-photo-suggestion-wrapper"
 				:options="clusterPopupOptions">
+				<NcActionButton icon="icon-checkmark" @click="onSelectAll">
+					{{ t('maps', 'Select All') }}
+				</NcActionButton>
 				<NcActionButton icon="icon-toggle" @click="onDisplayClusterClick">
 					{{ t('maps', 'Display pictures') }}
 				</NcActionButton>
-				<NcActionButton icon="icon-toggle-suggestion-pictures" @click="onSpiderfyClusterClick">
+				<NcActionButton icon="icon-toggle-pictures" @click="onSpiderfyClusterClick">
 					{{ t('maps', 'Spiderfy') }}
 				</NcActionButton>
 				<NcActionButton icon="icon-search" @click="onZoomClusterClick">
@@ -246,7 +249,7 @@ export default {
 			const newSet = new Set(newIndices)
 			const removedIndices = oldIndices.filter((i) => { return !newSet.has(i) })
 			const addedIndices = newIndices.filter((i) => { return !oldSet.has(i) })
-			const changedMarkers = removedIndices.concat(addedIndices).map((i) => { return this.suggestionMarkers[i] })
+			const changedMarkers = removedIndices.concat(addedIndices).filter((i) => { return !!this.suggestionMarkers[i] }).map((i) => { return this.suggestionMarkers[i] })
 			this.$refs.markerCluster.mapObject.refreshClusters(changedMarkers)
 		},
 	},
@@ -300,6 +303,11 @@ export default {
 		},
 		onDisplayClusterClick() {
 			this.displayCluster(this.contextCluster)
+		},
+		onSelectAll() {
+			this.contextCluster.getAllChildMarkers().forEach((m) => {
+				this.$emit('photo-suggestion-selected', m.i)
+			})
 		},
 		displayCluster(cluster) {
 			const photoList = cluster.getAllChildMarkers().map((m) => {
@@ -417,33 +425,37 @@ export default {
 		},
 
 		async updateSuggestionMarkers() {
-			this.$refs.markerCluster.mapObject.removeLayers(this.suggestionMarkers)
+			this.$refs.markerCluster.mapObject.removeLayers(this.suggestionMarkers.filter((m) => !!m))
 			this.suggestionMarkers = this.photoSuggestions.map((p, i) => {
-				const m = new L.Marker([p.lat, p.lng],
-					{
-						draggable: this.draggable,
-					},
-				)
-				m.on(
-					'click', this.onPhotoClick
-				)
-				m.on(
-					'contextmenu', this.onPhotoRightClick
-				)
-				m.on(
-					'mouseover', this.onPhotoMouseOver
-				)
-				m.on(
-					'mouseout', this.onPhotoMouseOut
-				)
-				m.on(
-					'moveend', this.onPhotoMoved
-				)
-				m.data = p
-				m.i = i
-				return m
+				if (p) {
+					const m = new L.Marker([p.lat, p.lng],
+						{
+							draggable: this.draggable,
+						},
+					)
+					m.on(
+						'click', this.onPhotoClick
+					)
+					m.on(
+						'contextmenu', this.onPhotoRightClick
+					)
+					m.on(
+						'mouseover', this.onPhotoMouseOver
+					)
+					m.on(
+						'mouseout', this.onPhotoMouseOut
+					)
+					m.on(
+						'moveend', this.onPhotoMoved
+					)
+					m.data = p
+					m.i = i
+					return m
+				} else {
+					return null
+				}
 			})
-			this.$refs.markerCluster.mapObject.addLayers(this.suggestionMarkers.filter((m) => { return this.photoSuggestionsTracksAndDevices[m.data.trackOrDeviceId].enabled }))
+			this.$refs.markerCluster.mapObject.addLayers(this.suggestionMarkers.filter((m) => { return m ? this.photoSuggestionsTracksAndDevices[m.data.trackOrDeviceId].enabled : false }))
 			if (this.dateFilterEnabled) {
 				this.$refs.markerCluster.mapObject.removeLayers(
 					this.suggestionMarkers.slice(
@@ -460,11 +472,13 @@ export default {
 		},
 		async updateSuggestionMarkersDraggable() {
 			this.suggestionMarkers.forEach((m) => {
-				if (m.dragging) {
-					this.draggable ? m.dragging.enable() : m.dragging.disable()
+				if (m) {
+					if (m.dragging) {
+						this.draggable ? m.dragging.enable() : m.dragging.disable()
+					}
+					m.options.draggable = this.draggable
+					m.update()
 				}
-				m.options.draggable = this.draggable
-				m.update()
 			})
 		},
 	},

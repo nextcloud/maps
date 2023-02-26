@@ -124,6 +124,7 @@ OC.L10N.register(
     "Add favorite" : "Додати \"Вподобане\"",
     "Edit favorite" : "Редагувати вподобане",
     "Delete contact address" : "Вилучити адресу контакту",
+    "Select All" : "Вибрати все",
     "Yes" : "Так",
     "New contact address" : "Нова адреса контакту",
     "Choose a contact" : "Виберіть контакт",

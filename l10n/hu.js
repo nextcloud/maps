@@ -163,6 +163,7 @@ OC.L10N.register(
     "Edit favorite" : "Kedvenc szerkesztése",
     "Rename favorite category" : "Kedvenc kategória átnevezése",
     "Delete contact address" : "Névjegycím törlése",
+    "Select All" : "Összes kiválasztása",
     "Display pictures" : "Megjelenítendő képek",
     "Spiderfy" : "Spiderfy",
     "Open in Sidebar" : "Megnyitás az oldalsávban",

@@ -169,6 +169,7 @@ OC.L10N.register(
     "Edit favorite" : "Upravit oblíbené",
     "Rename favorite category" : "Přejmenovat kategorii oblíbeného",
     "Delete contact address" : "Smazat adresu kontaktu",
+    "Select All" : "Vybrat vše",
     "Display pictures" : "Zobrazit obrázky",
     "Spiderfy" : "Paveoukomoucha",
     "Open in Sidebar" : "Otevřít v postranním panelu",

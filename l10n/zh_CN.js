@@ -140,6 +140,7 @@ OC.L10N.register(
     "Edit favorite" : "编辑收藏",
     "Rename favorite category" : "重命名收藏分类",
     "Delete contact address" : "删除联系人地址",
+    "Select All" : "全选",
     "Display pictures" : "显示照片",
     "Spiderfy" : "Spiderfy",
     "Open in Sidebar" : "在侧边栏中打开",

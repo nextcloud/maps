@@ -163,6 +163,7 @@ OC.L10N.register(
     "Edit favorite" : "Sık kullanılanı düzenleme",
     "Rename favorite category" : "Sık kullanılan kategorisi yeniden adlandırma",
     "Delete contact address" : "Kişi adresini silme",
+    "Select All" : "Tümünü seç",
     "Display pictures" : "Görselleri görünüleme",
     "Spiderfy" : "Spiderfy",
     "Open in Sidebar" : "Yan çubukta aç",

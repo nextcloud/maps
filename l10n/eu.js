@@ -151,6 +151,7 @@ OC.L10N.register(
     "Edit favorite" : "Editatu gogokoa",
     "Rename favorite category" : "Berrizendatu kategoria gogokoa",
     "Delete contact address" : "Ezabatu kontaktuaren helbidea",
+    "Select All" : "Hautatu denak",
     "Display pictures" : "Erakutsi irudiak",
     "Spiderfy" : "Armiarma",
     "Open in Sidebar" : "Ireki albo-barran",

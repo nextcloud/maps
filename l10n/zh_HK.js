@@ -169,6 +169,7 @@ OC.L10N.register(
     "Edit favorite" : "編輯最愛",
     "Rename favorite category" : "重新命名最愛分類",
     "Delete contact address" : "刪除聯絡人地址",
+    "Select All" : "選擇所有",
     "Display pictures" : "顯示圖片",
     "Spiderfy" : "Spiderfy",
     "Open in Sidebar" : "在側邊欄中打開",

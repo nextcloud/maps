@@ -82,6 +82,7 @@ OC.L10N.register(
     "Accuracy" : "دقت",
     "No name" : "بدون نام",
     "Update" : "به روز رسانی",
+    "Select All" : "گزینش همه",
     "Remove geo data" : "داده های جغرافیایی را حذف کنید",
     "Yes" : "بله",
     "New contact address" : "آدرس مخاطب جدید",

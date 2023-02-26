@@ -29,6 +29,7 @@ OC.L10N.register(
     "Save" : "Gem",
     "Quit" : "Afslut",
     "Load more" : "Hent flere",
+    "Devices" : "Enhed",
     "Tags" : "Mærker",
     "Favorite" : "Favorit",
     "Track" : "Spor",

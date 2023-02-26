@@ -110,6 +110,7 @@ OC.L10N.register(
     "Accuracy" : "Nauwkeurigheid",
     "No name" : "Geen naam",
     "Update" : "Bijwerken",
+    "Select All" : "Alles Selecteren",
     "Spiderfy" : "Spiderfy",
     "Remove geo data" : "Verwijder geo data",
     "Yes" : "Ja",

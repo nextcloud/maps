@@ -169,6 +169,7 @@ OC.L10N.register(
     "Edit favorite" : "Favorit bearbeiten",
     "Rename favorite category" : "Favoriten-Kategorie umbenennen",
     "Delete contact address" : "Kontaktadresse löschen",
+    "Select All" : "Alle auswählen",
     "Display pictures" : "Bilder anzeigen",
     "Spiderfy" : "Spinnenartig",
     "Open in Sidebar" : "In der Seitenleiste öffnen",

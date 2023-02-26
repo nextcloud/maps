@@ -139,6 +139,7 @@ OC.L10N.register(
     "Edit favorite" : "Upraviť obľúbené",
     "Rename favorite category" : "Premenovať obľúbenú kategóriu",
     "Delete contact address" : "Odstrániť kontaktnú adresu",
+    "Select All" : "Vybrať všetko",
     "Display pictures" : "Zobraziť obrázky",
     "Spiderfy" : "Spiderfy",
     "Open in Sidebar" : "Otvoriť v bočnom paneli",

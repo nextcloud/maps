@@ -88,6 +88,7 @@ OC.L10N.register(
     "Accuracy" : "Exakthet",
     "No name" : "Inget namn",
     "Update" : "Uppdatera",
+    "Select All" : "Välj Alla",
     "Remove geo data" : "Ta bort geodata",
     "Yes" : "Ja",
     "New contact address" : "Ny kontaktadress",

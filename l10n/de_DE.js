@@ -121,7 +121,7 @@ OC.L10N.register(
     "Sidebar" : "Seitenleiste",
     "Favorite" : "Favorisieren",
     "Photo suggestions" : "Foto-Vorschläge",
-    "Track metadata" : "Metadata verfolgen",
+    "Track metadata" : "Metadaten verfolgen",
     "Track" : "Strecke",
     "Photo location suggestions" : "Vorschläge für Foto-Orte",
     "Unable to change the favourite state of the file" : "Der favorisierte Status der Datei kann nicht geändert werden",

@@ -26,6 +26,8 @@ OC.L10N.register(
     "Toggle all" : "Txandakatu denak",
     "Zoom" : "Zoom",
     "Copy to map" : "Kopiatu mapara",
+    "Hide history" : "Ezkutatu historia",
+    "Show history" : "Erakutsi historia",
     "Change color" : "Aldatu kolorea",
     "Zoom on area" : "Handitu eremua",
     "Export" : "Esportatu",

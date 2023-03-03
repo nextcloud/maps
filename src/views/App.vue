@@ -904,6 +904,7 @@ export default {
 			})
 		},
 		getPhotos() {
+			this.showPhotoBackgroundJobInfo()
 			this.photos = []
 			if (!this.photosEnabled) {
 				return
@@ -925,6 +926,31 @@ export default {
 				console.error(error)
 			}).then(() => {
 				this.photosLoading = false
+			})
+		},
+		async showPhotoBackgroundJobInfo() {
+			network.getBackgroundJobStatus().then((response) => {
+				const status = response.data
+				if (status.addJobsRemainingForUser > 0) {
+					showInfo(t(
+						'maps',
+						'A background job added {current} from {total} new photos. This might take a while.',
+						{
+							current: status.recentlyAdded,
+							total: status.recentlyAdded + status.addJobsRemainingForUser,
+						}))
+				}
+				if (status.updateJobsRemainingForUser > 0) {
+					showInfo(t(
+						'maps',
+						'A background job updated {current} from {total} changed photos. This might take a while.',
+						{
+							current: status.recentlyUpdated,
+							total: status.recentlyUpdated + status.updateJobsRemainingForUser,
+						}))
+				}
+			}).catch((error) => {
+				console.error(error)
 			})
 		},
 		placePhotoFilesOrFolder(latlng) {

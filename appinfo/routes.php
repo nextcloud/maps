@@ -35,6 +35,7 @@ return [
         ['name' => 'photos#placePhotos', 'url' => '/photos', 'verb' => 'POST'],
         ['name' => 'photos#resetPhotosCoords', 'url' => '/photos', 'verb' => 'DELETE'],
 		['name' => 'photos#clearCache', 'url' => '/photos/clearCache', 'verb' => 'GET'],
+		['name' => 'photos#getBackgroundJobStatus', 'url' => '/photos/backgroundJobStatus', 'verb' => 'GET'],
 
 		['name' => 'PublicPhotos#getPhotos', 'url' => '/s/{token}/photos', 'verb' => 'GET'],
 		['name' => 'PublicPhotos#getNonLocalizedPhotos', 'url' => '/s/{token}/photos/nonlocalized', 'verb' => 'GET'],

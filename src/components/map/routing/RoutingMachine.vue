@@ -503,8 +503,8 @@ export default {
 				}
 			})
 			const name = type === 'route'
-				? t('maps', 'Route {date}', { date: moment().format('LLL:ss') })
-				: t('maps', 'Track {date}', { date: moment().format('LLL:ss') })
+				? t('maps', 'Route {date}', { date: moment().format('LLL:ss') }).replace(':', '')
+				: t('maps', 'Track {date}', { date: moment().format('LLL:ss') }).replace(':', '')
 			const totDist = this.control._selectedRoute.summary.totalDistance
 			const totTime = this.control._selectedRoute.summary.totalTime
 

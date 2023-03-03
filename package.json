@@ -68,7 +68,6 @@
     "ua-parser-js": "^1.0.33",
     "vue": "^2.7.14",
     "vue-click-outside": "^1.1.0",
-    "vue-clipboard2": "^0.3.1",
     "vue-types": "^5.0.2",
     "vue2-leaflet": "^2.6.0",
     "vue2-leaflet-markercluster": "^3.1.0",

@@ -111,6 +111,7 @@ OC.L10N.register(
     "Quit" : "Quitter",
     "Load more" : "Charger d'avantage",
     "Photos default timezone:" : "Fuseau horaire par défaut des photos:",
+    "Location sources:" : "Sources de localisation :",
     "Tracks" : "Traces",
     "Devices" : "Appareils",
     "Show localized photos" : "Montrer les photos localisées.",

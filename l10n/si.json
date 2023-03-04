@@ -6,6 +6,7 @@
     "Rename" : "නැවත නම් කරන්න",
     "Copied!" : "පිටපත් කළා!",
     "Cancel" : "අවලංගු කරන්න",
+    "Link copied" : "සබැඳිය පිටපත් කළා",
     "Share" : "බෙදාගන්න",
     "OK" : "හරි",
     "Favorite name" : "ප්‍රියතම නම",
@@ -37,7 +38,6 @@
     "Details" : "විස්තර",
     "Phone" : "දුරකථනය",
     "Computer" : "පරිගණකය",
-    "Link copied" : "සබැඳිය පිටපත් කළා",
     "Settings" : "සැකසුම්"
 },"pluralForm" :"nplurals=2; plural=(n != 1);"
 }

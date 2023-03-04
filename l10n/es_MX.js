@@ -10,7 +10,7 @@ OC.L10N.register(
     "Rename" : "Renombrar",
     "Copied!" : "¡Copiado!",
     "Cancel" : "Cancelar",
-    "Link copied!" : "¡Liga copiada!",
+    "Link copied" : "Enlace copiado",
     "Share" : "Compartir",
     "Sort by name" : "Ordenar por nombre",
     "Sort by date" : "Ordenar por fecha",
@@ -51,7 +51,6 @@ OC.L10N.register(
     "Phone" : "Teléfono fijo",
     "Not grouped" : "No agrupado",
     "Default" : "Predeterminado",
-    "Link copied" : "Enlace copiado",
     "Settings" : "Configuraciones "
 },
 "nplurals=3; plural=n == 1 ? 0 : n != 0 && n % 1000000 == 0 ? 1 : 2;");

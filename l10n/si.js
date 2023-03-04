@@ -8,6 +8,7 @@ OC.L10N.register(
     "Rename" : "නැවත නම් කරන්න",
     "Copied!" : "පිටපත් කළා!",
     "Cancel" : "අවලංගු කරන්න",
+    "Link copied" : "සබැඳිය පිටපත් කළා",
     "Share" : "බෙදාගන්න",
     "OK" : "හරි",
     "Favorite name" : "ප්‍රියතම නම",
@@ -39,7 +40,6 @@ OC.L10N.register(
     "Details" : "විස්තර",
     "Phone" : "දුරකථනය",
     "Computer" : "පරිගණකය",
-    "Link copied" : "සබැඳිය පිටපත් කළා",
     "Settings" : "සැකසුම්"
 },
 "nplurals=2; plural=(n != 1);");

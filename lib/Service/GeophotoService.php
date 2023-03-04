@@ -51,6 +51,7 @@ class GeophotoService {
 	private $userId;
 	private \OCP\ICache $photosCache;
 	private \OCP\ICache $timeOrderedPointSetsCache;
+	private \OCP\ICache $backgroundJobCache;
 
 	public function __construct (ILogger $logger,
                                  IRootFolder $root,
@@ -73,6 +74,7 @@ class GeophotoService {
 		$this->cacheFactory = $cacheFactory;
 		$this->photosCache = $this->cacheFactory->createDistributed('maps:photos');
 		$this->timeOrderedPointSetsCache = $this->cacheFactory->createDistributed('maps:time-ordered-point-sets');
+		$this->backgroundJobCache = $this->cacheFactory->createDistributed('maps:background-jobs');
     }
 
 	/**
@@ -82,7 +84,9 @@ class GeophotoService {
 	public function clearCache(string $userId=''): bool {
 		 $a = $this->photosCache->clear($userId);
 		 $b = $this->timeOrderedPointSetsCache->clear($userId);
-		 return $a and $b;
+		 $c = $this->backgroundJobCache->clear('recentlyAdded:'.$userId);
+		 $d = $this->backgroundJobCache->clear('recentlyUpdated:'.$userId);
+		 return $a and $b and $c and $d;
 	}
 
 	/**

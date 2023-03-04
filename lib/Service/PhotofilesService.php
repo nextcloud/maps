@@ -58,6 +58,7 @@ class PhotofilesService {
     private $jobList;
 	private ICacheFactory $cacheFactory;
 	private \OCP\ICache $photosCache;
+	private \OCP\ICache $backgroundJobCache;
 
 	public function __construct (ILogger $logger,
 								 ICacheFactory $cacheFactory,
@@ -74,6 +75,7 @@ class PhotofilesService {
         $this->jobList = $jobList;
 		$this->cacheFactory = $cacheFactory;
 		$this->photosCache = $this->cacheFactory->createDistributed('maps:photos');
+		$this->backgroundJobCache = $this->cacheFactory->createDistributed('maps:background-jobs');
     }
 
     public function rescan($userId, $inBackground=true) {
@@ -177,6 +179,7 @@ class PhotofilesService {
         $files = $userFolder->getById($fileId);
         if (!is_array($files) or count($files) === 0) {
             $this->photoMapper->deleteByFileIdUserId($fileId, $userId);
+			$this->photosCache->clear($userId);
         }
     }
 
@@ -198,8 +201,42 @@ class PhotofilesService {
             foreach($photos as $photo) {
                 $this->photoMapper->deleteByFileIdUserId($photo->getId(), $userId);
             }
+			$this->photosCache->clear($userId);
         }
     }
+
+	/**
+	 * @param $userId
+	 * @return array
+	 */
+	public function getBackgroundJobStatus($userId): array {
+		$add_counter =  0;
+		$addJobsRunning = False;
+		foreach ($this->jobList->getJobsIterator(AddPhotoJob::class, Null, 0) as $job) {
+			if ($job->getArgument()['userId'] === $userId) {
+				$add_counter += 1;
+			}
+			$addJobsRunning = True;
+		}
+		$update_counter = 0;
+		$updateJobsRunning = False;
+		foreach ($this->jobList->getJobsIterator(UpdatePhotoByFileJob::class, Null, 0) as $job) {
+			if ($job->getArgument()['userId'] === $userId) {
+				$update_counter += 1;
+			}
+			$updateJobsRunning = True;
+		}
+		$recentlyAdded = $this->backgroundJobCache->get('recentlyAdded:'.$userId) ?? 0;
+		$recentlyUpdated = $this->backgroundJobCache->get('$recentlyUpdated:'.$userId) ?? 0;
+		return [
+			'addJobsRunning' => $addJobsRunning,
+			'addJobsRemainingForUser' => $add_counter,
+			'recentlyAdded' => $recentlyAdded,
+			'updateJobsRunning' => $updateJobsRunning,
+			'updateJobsRemainingForUser' => $update_counter,
+			'recentlyUpdated' => $recentlyUpdated
+		];
+	}
 
     public function setPhotosFilesCoords($userId, $paths, $lats, $lngs, $directory) {
         if ($directory) {

@@ -309,6 +309,11 @@ export async function getPhotos(myMapId = null, token = null) {
 	return axios.get(url, conf)
 }
 
+export async function getBackgroundJobStatus() {
+	const url = generateUrl('/apps/maps/photos/backgroundJobStatus')
+	return axios.get(url)
+}
+
 export async function clearPhotoCache(token = null) {
 	const url = generateUrl('/apps/maps' + (token ? '/s/' + token : '') + '/photos/clearCache')
 	return axios.get(url)

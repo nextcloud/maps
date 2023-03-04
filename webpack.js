@@ -16,6 +16,7 @@ webpackConfig.entry = {
 	main: { import: path.join(__dirname, 'src', 'main.js'), filename: 'maps-main.js' },
 	'track-metadata-tab': { import: path.join(__dirname, 'src', 'track-metadata-tab.js'), filename: 'maps-track-metadata-tab.js' },
 	'copy-map-link': { import: path.join(__dirname, 'src', 'copy-map-link.js'), filename: 'maps-copy-map-link.js' },
+	'report-error-map-action': { import: path.join(__dirname, 'src', 'report-error-map-action.js'), filename: 'maps-report-error-map-action.js' },
 	filetypes: { import: path.join(__dirname, 'src', 'filetypes.js'), filename: 'maps-filetypes.js' },
 	'public-favorite-share': { import: path.join(__dirname, 'src', 'publicFavoriteShare.js'), filename: 'maps-publicFavoriteShare.js' },
 }

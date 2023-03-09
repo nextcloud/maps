@@ -48,7 +48,7 @@
 								{{ t('maps', 'Zoom') }}
 							</NcActionButton>
 							<NcActionButton @click="$emit('clear-selection',[p.photoSuggestionsIndex])">
-								{{ t('maps', 'Remove form selection') }}
+								{{ t('maps', 'Remove from selection') }}
 							</NcActionButton>
 						</template>
 					</NcListItem>
@@ -73,7 +73,7 @@
 								{{ t('maps', 'Zoom') }}
 							</NcActionButton>
 							<NcActionButton @click="$emit('clear-selection',[p.photoSuggestionsIndex])">
-								{{ t('maps', 'Remove form selection') }}
+								{{ t('maps', 'Remove from selection') }}
 							</NcActionButton>
 						</NcActions>
 					</div>

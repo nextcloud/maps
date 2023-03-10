@@ -179,7 +179,7 @@ export default {
 			return formattedAddressLines.filter((s) => { return s.trim() !== '' })
 		},
 		contactUrl() {
-			return generateUrl('/apps/contacts/direct/contact/' + encodeURIComponent(this.contact.UID + '~contacts'))
+			return this.contact.URL || generateUrl('/apps/contacts/direct/contact/' + encodeURIComponent(this.contact.UID + '~contacts'))
 		},
 	},
 

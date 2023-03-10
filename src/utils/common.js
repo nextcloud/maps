@@ -79,10 +79,6 @@ export const request = (url, method, data = null) => {
 	}
 }
 
-export const showNotification = message => {
-	showInfo(t('maps', message))
-}
-
 // Binary search for last valid test in sortedArray.
 // Returns index of last element where test is true
 // array is assumed to be sorted by test starting with true.

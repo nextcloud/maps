@@ -1,6 +1,7 @@
 import {generateUrl} from '@nextcloud/router';
 import {hslToRgb, getLetterColor, Timer} from './utils';
 import escapeHTML from 'escape-html';
+import { showError, showWarning } from "@nextcloud/dialogs";
 
 function MyMapsController (optionsController, favoritesController, photosController, tracksController) {
     this.optionsController = optionsController;
@@ -252,7 +253,7 @@ MyMapsController.prototype = {
         }).always(function (response) {
             $('#my-maps-list > li[map="'+id+'"]').removeClass('icon-loading-small');
         }).fail(function() {
-            OC.Notification.showTemporary(
+            showError(
                 t('maps', 'Failed to save map color')
             );
         });
@@ -298,7 +299,7 @@ MyMapsController.prototype = {
         }).always(function (response) {
             $('#navigation-my-maps').removeClass('icon-loading-small');
         }).fail(function() {
-            OC.Notification.showTemporary(t('maps', 'Failed to delete map'));
+            showError(t('maps', 'Failed to delete map'));
         });
     },
 
@@ -321,12 +322,12 @@ MyMapsController.prototype = {
         }).always(function (response) {
             $('#map-list #' + id + '-map').removeClass('icon-loading-small');
         }).fail(function() {
-            OC.Notification.showTemporary(t('maps', 'Failed to rename map'));
+            showError(t('maps', 'Failed to rename map'));
         });
     },
 
     shareMyMap: function(id) {
-        OC.Notification.showTemporary(t('maps', 'Share map not implemented yet, just go to files and share the folder.'));
+        showWarning(t('maps', 'Share map not implemented yet, just go to files and share the folder.'));
     },
 
     getMyMaps: function () {
@@ -349,7 +350,7 @@ MyMapsController.prototype = {
         }).always(function (response) {
             $('#navigation-my-maps').removeClass('icon-loading-small');
         }).fail(function() {
-            OC.Notification.showTemporary(t('maps', 'Failed to load your maps'));
+            showError(t('maps', 'Failed to load your maps'));
         });
     },
 

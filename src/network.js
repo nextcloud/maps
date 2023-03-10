@@ -2,7 +2,6 @@ import axios from '@nextcloud/axios'
 import { default as realAxios } from 'axios'
 import { generateUrl } from '@nextcloud/router'
 import {
-	// showSuccess,
 	showError,
 } from '@nextcloud/dialogs'
 
@@ -16,10 +15,7 @@ export function saveOptionValues(optionValues, myMapId = null, token = null) {
 		.then((response) => {
 		})
 		.catch((error) => {
-			showError(
-				t('maps', 'Failed to save option values')
-				+ ': ' + error.response?.request?.responseText
-			)
+			console.log('Failed to save option values' + ': ' + error.response?.request?.responseText)
 		})
 }
 

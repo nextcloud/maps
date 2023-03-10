@@ -22,7 +22,7 @@ use \OCP\IServerContainer;
 use \OCP\EventDispatcher\IEventDispatcher;
 use \OCA\DAV\CardDAV\CardDavBackend;
 use OCA\DAV\CardDAV\ContactsManager;
-
+use OCP\IURLGenerator;
 
 
 class ContactsControllerTest extends \PHPUnit\Framework\TestCase {
@@ -136,7 +136,8 @@ class ContactsControllerTest extends \PHPUnit\Framework\TestCase {
 			'test',
 			$this->cdBackend,
 			$c->query(IServerContainer::class)->getAvatarManager(),
-			$this->root);
+			$this->root,
+			$urlGenerator);
         //$this->contactsController = $this->getMockBuilder('OCA\Maps\Controller\ContactsController')
         //    ->disableOriginalConstructor()
         //    ->getMock();
@@ -151,7 +152,8 @@ class ContactsControllerTest extends \PHPUnit\Framework\TestCase {
             'test2',
             $this->cdBackend,
             $c->query(IServerContainer::class)->getAvatarManager(),
-			$this->root
+			$this->root,
+			$urlGenerator
         );
 
         $this->utilsController = new UtilsController(

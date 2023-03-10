@@ -106,7 +106,6 @@ OC.L10N.register(
     "Select all" : "Select all",
     "Display picture" : "Display picture",
     "Save" : "Save",
-    "Remove form selection" : "Remove form selection",
     "No suggestions found" : "No suggestions found",
     "To get suggestions upload tracks from the trips, when you took your photos." : "To get suggestions upload tracks from the trips, when you took your photos.",
     "Quit" : "Quit",

@@ -106,7 +106,6 @@ OC.L10N.register(
     "Select all" : "Избери всички",
     "Display picture" : "Показване на снимка",
     "Save" : "Запиши",
-    "Remove form selection" : "Премахване от селекцията",
     "No suggestions found" : "Няма намерени препоръки",
     "To get suggestions upload tracks from the trips, when you took your photos." : "За да получите предложения, качете записи от пътуванията, когато сте направили снимките си.",
     "Quit" : "Изход",

@@ -103,7 +103,6 @@ OC.L10N.register(
     "Select all" : "Összes kiválasztása",
     "Display picture" : "Megjelenítendő kép",
     "Save" : "Mentés",
-    "Remove form selection" : "Űrlapkiválasztás eltávolítása",
     "No suggestions found" : "Nem találhatók javaslatok",
     "To get suggestions upload tracks from the trips, when you took your photos." : "Hogy javaslatokat kapjon, töltse fel nyomvonalakat a kirándulásokról, amikor fényképeket készített.",
     "Quit" : "Kilépés",

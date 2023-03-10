@@ -96,7 +96,6 @@ OC.L10N.register(
     "Select all" : "Izberi vse",
     "Display picture" : "Prikaži sliko",
     "Save" : "Shrani",
-    "Remove form selection" : "Odstrani iz izbora",
     "No suggestions found" : "Ni najdenih predlogov",
     "Quit" : "Končaj",
     "Load more" : "Naloži več",

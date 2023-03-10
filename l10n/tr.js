@@ -106,7 +106,6 @@ OC.L10N.register(
     "Select all" : "Tümünü seç",
     "Display picture" : "Görsel görüntüleme",
     "Save" : "Kaydet",
-    "Remove form selection" : "Seçimden çıkar",
     "No suggestions found" : "Herhangi bir öneri bulunamadı",
     "To get suggestions upload tracks from the trips, when you took your photos." : "Öneri almak için fotoğraflarınızı çektiğiniz gezilerin rotalarını yükleyin.",
     "Quit" : "Çıkış",

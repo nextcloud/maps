@@ -1,6 +1,7 @@
 OC.L10N.register(
     "maps",
     {
+    "Invalid values" : "قيم غير مقبولة",
     "File not found" : "تعذر العثور على الملف",
     "Personal" : "شخصي",
     "Maps" : "الخرائط",
@@ -66,6 +67,7 @@ OC.L10N.register(
     "Computer" : "كمبيوتر",
     "Not grouped" : "غير مصنف",
     "Default" : "افتراضي",
+    "Failed to save settings" : "فشل حفظ الإعدادات",
     "Metadata" : "البيانات الوصفية ( ميتاداتا)",
     "Restaurant" : "مطعم",
     "Fast food" : "أكل خفيف",

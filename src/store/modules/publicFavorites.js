@@ -22,10 +22,10 @@
 
 import {
 	publicApiRequest,
-	showNotification,
 	getPublicShareCategory,
 } from '../../utils/common'
 import { getCategoryKey } from '../../utils/favoritesUtils'
+import { showError } from "@nextcloud/dialogs"
 
 export const PUBLIC_FAVORITES_NAMESPACE = 'publicFavorites'
 
@@ -59,7 +59,7 @@ const actions = {
 				commit('setFavorites', data.favorites)
 			})
 			.catch(() => {
-				showNotification(t('maps', 'Failed to get favorites'))
+				showError(t('maps', 'Failed to get favorites'))
 			})
 	},
 	addFavorite({ commit }, { lat, lng, name, comment }) {
@@ -75,7 +75,7 @@ const actions = {
 				const data = response.data
 				commit('addFavorite', data)
 			})
-			.catch(() => showNotification(t('maps', 'Failed to create favorite')))
+			.catch(() => showError(t('maps', 'Failed to create favorite')))
 	},
 	updateFavorite({ commit }, { id, name, comment }) {
 		return publicApiRequest(`favorites/${id}`, 'PUT', {
@@ -88,14 +88,14 @@ const actions = {
 				const data = response.data
 				commit('editFavorite', data)
 			})
-			.catch(() => showNotification(t('maps', 'Failed to update favorite')))
+			.catch(() => showError(t('maps', 'Failed to update favorite')))
 	},
 	deleteFavorite({ commit }, { id }) {
 		return publicApiRequest(`favorites/${id}`, 'DELETE')
 			.then(() => {
 				commit('deleteFavorite', id)
 			})
-			.catch(() => showNotification(t('maps', 'Failed to delete favorite')))
+			.catch(() => showError(t('maps', 'Failed to delete favorite')))
 	},
 }
 

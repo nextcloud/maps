@@ -1,4 +1,5 @@
 import { generateUrl } from "@nextcloud/router";
+import { showSuccess, showError } from "@nextcloud/dialogs";
 
 (function() {
     if (!OCA.Maps) {
@@ -19,11 +20,11 @@ function setMapsRoutingSettings(key, value) {
         data: req,
         async: true
     }).done(function (response) {
-        OC.Notification.showTemporary(
+		showSuccess(
             t('maps', 'Settings were successfully saved')
         );
     }).fail(function() {
-        OC.Notification.showTemporary(
+        showError(
             t('maps', 'Failed to save settings')
         );
     });

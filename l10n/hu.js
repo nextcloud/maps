@@ -321,7 +321,6 @@ OC.L10N.register(
     "Failed to rename map" : "A térkép átnevezése sikertelen",
     "Share map not implemented yet, just go to files and share the folder." : "A térkép megosztása még nincs megvalósítva, csak menjen a fájlokhoz, és ossza meg a mappát.",
     "Failed to load your maps" : "A térképei betöltése sikertelen",
-    "Failed to save option values" : "A beállításértékek mentése sikertelen",
     "Media scan was not done yet. Wait a few minutes/hours and reload this page to see your photos/tracks." : "A médiaátvizsgálás még nem készült el. Várjon néhány percet/órát és töltse újra az oldalt, hogy lássa a fényképeit/nyomvonalait.",
     "Failed to get favorites" : "Kedvencek lekérése sikertelen",
     "Failed to create favorite" : "Kedvenc létrehozása sikertelen",

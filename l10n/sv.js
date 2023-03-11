@@ -180,7 +180,6 @@ OC.L10N.register(
     "View in Maps" : "Visa i kartor",
     "Import as favorites in Maps" : "Importera som favoriter i Kartor",
     "Import as devices in Maps" : "Importera som enheter i Kartor",
-    "Failed to save option values" : "Kunde inte spara alternativinställningar",
     "Media scan was not done yet. Wait a few minutes/hours and reload this page to see your photos/tracks." : "Mediesökning är inte gjord än. Vänta några minuter/timmar och ladda om den här sidan för att se dina foton/spår.",
     "Failed to delete favorite" : "Kunde inte radera favorit",
     "Metadata" : "Metadata",

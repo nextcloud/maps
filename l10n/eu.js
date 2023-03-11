@@ -291,7 +291,6 @@ OC.L10N.register(
     "Failed to delete map" : "Mapa ezabatzeak huts egin du",
     "Failed to rename map" : "Mapa berrizendatzeak huts egin du",
     "Failed to load your maps" : "Zure mapak kargatzeak huts egin du",
-    "Failed to save option values" : "Huts egin du aukera balioak gordetzen",
     "Media scan was not done yet. Wait a few minutes/hours and reload this page to see your photos/tracks." : "Multimedia bilaketa ez da oraindik egin. Itxaron minutu/ordu batzuk eta berriro kargatu orri hau zure argazkiak/ibilbideak ikusteko.",
     "Failed to get favorites" : "Gogokoak eskuratzeak huts egin du",
     "Failed to create favorite" : "Gogokoa sortzeak huts egin du",

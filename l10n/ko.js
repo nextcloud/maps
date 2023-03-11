@@ -236,7 +236,6 @@ OC.L10N.register(
     "View in Maps" : "지도에서 보기",
     "Import as favorites in Maps" : "지도에서 즐겨찾기로 가져오기",
     "Import as devices in Maps" : "지도에서 장치 로 가져오기",
-    "Failed to save option values" : "옵션 값을 저장하지 못했습니다",
     "Media scan was not done yet. Wait a few minutes/hours and reload this page to see your photos/tracks." : "미디어 검색이 아직 완료되지 않았습니다. 사진/기록을 보려면 몇 분/시간 기다린 후 이 페이지를 다시 로드하시오.",
     "Failed to get favorites" : "즐겨찾기 실패",
     "Failed to create favorite" : "즐겨찾기 생성 실패",

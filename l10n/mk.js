@@ -315,7 +315,6 @@ OC.L10N.register(
     "Failed to delete map" : "Неуспешно бришење на мапата",
     "Failed to rename map" : "Неуспешно преименување на мапата",
     "Failed to load your maps" : "Неуспешно вчитување на вашите мапи",
-    "Failed to save option values" : "Неуспешно зачувување на вредностите",
     "Media scan was not done yet. Wait a few minutes/hours and reload this page to see your photos/tracks." : "Скенирањето на медиумите сè уште не е завршено. Почекајте неколку минути/часови и повторно вчитајте ја оваа страница за да ги вашите вашите фотографии/патеки.",
     "Report Error" : "Пријави грешка",
     "Failed to get favorites" : "Неуспешено преземање на омилени места",

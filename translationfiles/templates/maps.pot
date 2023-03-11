@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Nextcloud 3.14159\n"
 "Report-Msgid-Bugs-To: translations\\@example.com\n"
-"POT-Creation-Date: 2023-03-10 03:08+0000\n"
+"POT-Creation-Date: 2023-03-11 03:06+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -251,7 +251,7 @@ msgstr ""
 #: /app/specialVueFakeDummyForL10nScript.js:112
 #: /app/specialVueFakeDummyForL10nScript.js:336
 #: /app/specialVueFakeDummyForL10nScript.js:470
-#: /app/src/myMapsController.js:170
+#: /app/src/myMapsController.js:171
 msgid "Change color"
 msgstr ""
 
@@ -280,7 +280,7 @@ msgstr ""
 #: /app/specialVueFakeDummyForL10nScript.js:88
 #: /app/specialVueFakeDummyForL10nScript.js:124
 #: /app/specialVueFakeDummyForL10nScript.js:364
-#: /app/src/myMapsController.js:182
+#: /app/src/myMapsController.js:183
 msgid "Delete"
 msgstr ""
 
@@ -336,7 +336,7 @@ msgstr ""
 #. TRANSLATORS src/components/AppNavigationFavoritesItem.vue:59
 #. TRANSLATORS src/components/AppNavigationMyMapItem.vue:8
 #: /app/specialVueFakeDummyForL10nScript.js:50
-#: /app/specialVueFakeDummyForL10nScript.js:80 /app/src/myMapsController.js:164
+#: /app/specialVueFakeDummyForL10nScript.js:80 /app/src/myMapsController.js:165
 msgid "Rename"
 msgstr ""
 
@@ -418,7 +418,7 @@ msgid "Open folder"
 msgstr ""
 
 #. TRANSLATORS src/components/AppNavigationMyMapItem.vue:46
-#: /app/specialVueFakeDummyForL10nScript.js:86 /app/src/myMapsController.js:176
+#: /app/specialVueFakeDummyForL10nScript.js:86 /app/src/myMapsController.js:177
 msgid "Share"
 msgstr ""
 
@@ -740,52 +740,52 @@ msgstr ""
 msgid "Tags"
 msgstr ""
 
-#. TRANSLATORS src/components/Sidebar.vue:301
+#. TRANSLATORS src/components/Sidebar.vue:302
 #: /app/specialVueFakeDummyForL10nScript.js:230
 #: /app/specialVueFakeDummyForL10nScript.js:240
 #: /app/specialVueFakeDummyForL10nScript.js:252
 msgid "Shows cool information"
 msgstr ""
 
-#. TRANSLATORS src/components/Sidebar.vue:302
+#. TRANSLATORS src/components/Sidebar.vue:303
 #: /app/specialVueFakeDummyForL10nScript.js:232
 #: /app/specialVueFakeDummyForL10nScript.js:242
 #: /app/specialVueFakeDummyForL10nScript.js:250
 msgid "Sidebar"
 msgstr ""
 
-#. TRANSLATORS src/components/Sidebar.vue:307
+#. TRANSLATORS src/components/Sidebar.vue:308
 #: /app/specialVueFakeDummyForL10nScript.js:234
 #: /app/specialVueFakeDummyForL10nScript.js:246
 msgid "Favorite"
 msgstr ""
 
-#. TRANSLATORS src/components/Sidebar.vue:320
+#. TRANSLATORS src/components/Sidebar.vue:321
 #: /app/specialVueFakeDummyForL10nScript.js:236
 msgid "Photo suggestions"
 msgstr ""
 
-#. TRANSLATORS src/components/Sidebar.vue:333
+#. TRANSLATORS src/components/Sidebar.vue:334
 #: /app/specialVueFakeDummyForL10nScript.js:238
 msgid "Track metadata"
 msgstr ""
 
-#. TRANSLATORS src/components/Sidebar.vue:386
+#. TRANSLATORS src/components/Sidebar.vue:387
 #: /app/specialVueFakeDummyForL10nScript.js:244
 msgid "Track"
 msgstr ""
 
-#. TRANSLATORS src/components/Sidebar.vue:392
+#. TRANSLATORS src/components/Sidebar.vue:393
 #: /app/specialVueFakeDummyForL10nScript.js:248
 msgid "Photo location suggestions"
 msgstr ""
 
-#. TRANSLATORS src/components/Sidebar.vue:529
+#. TRANSLATORS src/components/Sidebar.vue:530
 #: /app/specialVueFakeDummyForL10nScript.js:254
 msgid "Unable to change the favourite state of the file"
 msgstr ""
 
-#. TRANSLATORS src/components/Sidebar.vue:596
+#. TRANSLATORS src/components/Sidebar.vue:597
 #: /app/specialVueFakeDummyForL10nScript.js:256
 msgid "Error while loading the file data"
 msgstr ""
@@ -1774,12 +1774,12 @@ msgid ""
 msgstr ""
 
 #. TRANSLATORS src/views/App.vue:2283
-#: /app/specialVueFakeDummyForL10nScript.js:748 /app/src/filetypes.js:60
+#: /app/specialVueFakeDummyForL10nScript.js:748 /app/src/filetypes.js:61
 msgid "{nb} devices imported from {path}"
 msgstr ""
 
 #. TRANSLATORS src/views/App.vue:2287
-#: /app/specialVueFakeDummyForL10nScript.js:750 /app/src/filetypes.js:64
+#: /app/specialVueFakeDummyForL10nScript.js:750 /app/src/filetypes.js:65
 msgid "Failed to import devices"
 msgstr ""
 
@@ -1801,33 +1801,33 @@ msgid_plural "Saved all %n locations"
 msgstr[0] ""
 msgstr[1] ""
 
-#: /app/src/adminSettings.js:23
+#: /app/src/adminSettings.js:24
 msgid "Settings were successfully saved"
 msgstr ""
 
-#: /app/src/adminSettings.js:27
+#: /app/src/adminSettings.js:28
 msgid "Failed to save settings"
 msgstr ""
 
-#: /app/src/filetypes.js:38
+#: /app/src/filetypes.js:39
 msgid "{nb} favorites imported from {path}"
 msgstr ""
 
-#: /app/src/filetypes.js:42
+#: /app/src/filetypes.js:43
 msgid "Failed to import favorites"
 msgstr ""
 
-#: /app/src/filetypes.js:73 /app/src/filetypes.js:83
+#: /app/src/filetypes.js:74 /app/src/filetypes.js:84
 msgid "View in Maps"
 msgstr ""
 
-#: /app/src/filetypes.js:96 /app/src/filetypes.js:105 /app/src/filetypes.js:114
-#: /app/src/filetypes.js:123
+#: /app/src/filetypes.js:97 /app/src/filetypes.js:106 /app/src/filetypes.js:115
+#: /app/src/filetypes.js:124
 msgid "Import as favorites in Maps"
 msgstr ""
 
-#: /app/src/filetypes.js:133 /app/src/filetypes.js:142
-#: /app/src/filetypes.js:151
+#: /app/src/filetypes.js:134 /app/src/filetypes.js:143
+#: /app/src/filetypes.js:152
 msgid "Import as devices in Maps"
 msgstr ""
 
@@ -1836,44 +1836,40 @@ msgstr ""
 msgid "Copy link to map"
 msgstr ""
 
-#: /app/src/myMapsController.js:14
+#: /app/src/myMapsController.js:15
 msgid "Default Map"
 msgstr ""
 
-#: /app/src/myMapsController.js:16
+#: /app/src/myMapsController.js:17
 msgid "Your Default Map"
 msgstr ""
 
-#: /app/src/myMapsController.js:24
+#: /app/src/myMapsController.js:25
 msgid "New Map"
 msgstr ""
 
-#: /app/src/myMapsController.js:188
+#: /app/src/myMapsController.js:189
 msgid "Map deleted"
 msgstr ""
 
-#: /app/src/myMapsController.js:256
+#: /app/src/myMapsController.js:257
 msgid "Failed to save map color"
 msgstr ""
 
-#: /app/src/myMapsController.js:301
+#: /app/src/myMapsController.js:302
 msgid "Failed to delete map"
 msgstr ""
 
-#: /app/src/myMapsController.js:324
+#: /app/src/myMapsController.js:325
 msgid "Failed to rename map"
 msgstr ""
 
-#: /app/src/myMapsController.js:329
+#: /app/src/myMapsController.js:330
 msgid "Share map not implemented yet, just go to files and share the folder."
 msgstr ""
 
-#: /app/src/myMapsController.js:352
+#: /app/src/myMapsController.js:353
 msgid "Failed to load your maps"
-msgstr ""
-
-#: /app/src/network.js:20
-msgid "Failed to save option values"
 msgstr ""
 
 #: /app/src/optionsController.js:94

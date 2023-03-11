@@ -189,7 +189,6 @@ OC.L10N.register(
     "View in Maps" : "Càstia in Mapas",
     "Import as favorites in Maps" : "Importa comente preferidos in Mapas",
     "Import as devices in Maps" : "Importa comente dispositivos in Mapas",
-    "Failed to save option values" : "No at fatu a sarvare is balores de sèberu",
     "Media scan was not done yet. Wait a few minutes/hours and reload this page to see your photos/tracks." : "S'iscansione multimediale no est ancora acabbada. Abeta unos minutos/oras e torra a carrigare custa pàgina po bìdere fotografias/caminos",
     "Failed to get favorites" : "No at fatu a otènnere is preferidos",
     "Failed to create favorite" : "No at fatu a creare su preferidu",

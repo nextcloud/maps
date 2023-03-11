@@ -204,7 +204,6 @@ OC.L10N.register(
     "Your Default Map" : "Ο προεπιλεγμένος χάρτης σας",
     "New Map" : "Νέος Χάρτης",
     "Map deleted" : "Ο χάρτης διαγράφηκε",
-    "Failed to save option values" : "Αποτυχία αποθήκευσης τιμών επιλογής",
     "Media scan was not done yet. Wait a few minutes/hours and reload this page to see your photos/tracks." : "Η σάρωση μέσων δεν τελείωσε. Περιμένετε λίγα λεπτά / ώρα και ανανεώστε τη σελίδα για να δείτε τις φωτογραφίες / κομμάτια σας.",
     "Failed to get favorites" : "Αποτυχία λήψης αγαπημένων",
     "Failed to create favorite" : "Αποτυχία δημιουργίας αγαπημένου",

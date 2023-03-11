@@ -331,7 +331,6 @@ OC.L10N.register(
     "Failed to rename map" : "Fallo al renombrar el mapa",
     "Share map not implemented yet, just go to files and share the folder." : "No está implementada la funcionalidad para compartir mapas, vaya a archivos y comparta la carpeta.",
     "Failed to load your maps" : "Fallo al cargar sus mapas",
-    "Failed to save option values" : "Fallo al guardar los valores de las opciones",
     "Media scan was not done yet. Wait a few minutes/hours and reload this page to see your photos/tracks." : "El escaneo de medios no ha acabado todavía. Espera unos minutos/horas y vuelve a cargar esta página para ver tus fotos/pistas.",
     "Report Error" : "Reportar error",
     "Failed to get favorites" : "Fallo al obtener favoritos",

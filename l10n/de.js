@@ -331,7 +331,6 @@ OC.L10N.register(
     "Failed to rename map" : "Karte konnte nicht umbenannt werden.",
     "Share map not implemented yet, just go to files and share the folder." : "Karte freigeben ist noch nicht implementiert, einfach zu den Dateien gehen und den Ordner freigeben.",
     "Failed to load your maps" : "Deine Karten konnten nicht geladen werden.",
-    "Failed to save option values" : "Speichern der Optionswerte fehlgeschlagen",
     "Media scan was not done yet. Wait a few minutes/hours and reload this page to see your photos/tracks." : "Medien-Scan noch nicht durchgeführt. Bitte warte einige Minuten/Stunden und lade diese Seite neu um deine Fotos/Routen anzusehen.",
     "Report Error" : "Fehler melden",
     "Failed to get favorites" : "Fehler beim Laden der Favoriten",

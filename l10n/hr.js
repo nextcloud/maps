@@ -189,7 +189,6 @@ OC.L10N.register(
     "View in Maps" : "Pogledajte u Maps",
     "Import as favorites in Maps" : "Uvezi kao favorite u Maps",
     "Import as devices in Maps" : "Uvezi kao uređaje u Maps",
-    "Failed to save option values" : "Spremanje vrijednosti opcija nije uspjelo",
     "Media scan was not done yet. Wait a few minutes/hours and reload this page to see your photos/tracks." : "Još uvijek nije izvršeno medijsko skeniranje. Pričekajte nekoliko minuta/sati i ponovno otvorite ovu stranicu kako biste vidjeli svoje fotografije/datoteke.",
     "Failed to get favorites" : "Dohvaćanje favorita nije uspjelo",
     "Failed to create favorite" : "Stvaranje favorita nije uspjelo",

@@ -175,7 +175,6 @@ OC.L10N.register(
     "View in Maps" : "הצגה במפות",
     "Import as favorites in Maps" : "ייבוא כמועדף למפות",
     "Import as devices in Maps" : "ייבוא כמכשירים במפות",
-    "Failed to save option values" : "שמירת ערכי האפשרויות נכשלה",
     "Media scan was not done yet. Wait a few minutes/hours and reload this page to see your photos/tracks." : "המדיה טרם נסרקה. נא להמתין דקות/שעות ולטעון את העמוד הזה מחדש כדי לצפות בתמונות/נתיבים שלך.",
     "Failed to get favorites" : "קבלת המועדפים נכשלה",
     "Failed to create favorite" : "יצירת המועדף נכשלה",

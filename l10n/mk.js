@@ -13,6 +13,7 @@ OC.L10N.register(
     "File does not exist" : "Датотеката не постои",
     "No such favorite" : "Нема омилени",
     "invalid values" : "Неправилни вредности",
+    "no such favorite" : "нема омилени",
     "Unknown category" : "Непозната категорија",
     "Error sharing favorite" : "Грешка при споделување на омилени",
     "Map not Found" : "Мапата не е пронајдена",

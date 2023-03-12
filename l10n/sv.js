@@ -100,6 +100,7 @@ OC.L10N.register(
     "Closed" : "Stängd",
     "opens at {date}" : "öppnar {date}",
     "Search" : "Sök",
+    "Search for {q}" : "Sök efter {q}",
     "File" : "Fil",
     "north" : "norr",
     "northeast" : "nordost",

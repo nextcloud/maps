@@ -106,6 +106,7 @@ OC.L10N.register(
     "Select all" : "全選",
     "Display picture" : "顯示圖片",
     "Save" : "保存",
+    "Remove from selection" : "從選擇中刪除",
     "No suggestions found" : "找不到建議",
     "To get suggestions upload tracks from the trips, when you took your photos." : "要獲得建議，請在您拍攝照片時上傳旅行軌跡。",
     "Quit" : "退出",

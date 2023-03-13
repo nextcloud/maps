@@ -93,7 +93,7 @@ OC.L10N.register(
     "Geo link could not be copied to clipboard" : "A geohivatkozást nem sikerült a vágólapra másolni",
     "Close" : "Bezárás",
     "Track my position" : "Saját pozíció követése",
-    "Open geo links" : "Földrajzi linkek megnyitása",
+    "Open geo links" : "Földrajzi hivatkozások megnyitása",
     "Display time filter slider" : "Időszűrő csúszka megjelenítése",
     "The True Size of Africa" : "Afrika valódi mérete",
     "Keep in mind that map projections always distort sizes of countries. The standard Mercator projection is particularly biased. Read more at:" : "Vegye figyelembe, hogy a térképvetületek mindig eltorzítják az országok méreteit. A szokásos Mercator-vetületre ez különösen jellemző. További olvasnivaló:",

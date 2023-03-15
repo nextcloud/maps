@@ -44,6 +44,7 @@ OC.L10N.register(
     "Start" : "Mulai",
     "Destination" : "Tujuan",
     "min" : "min",
+    "Nextcloud additional settings" : "Setelan tambahan Nextcloud",
     "Details" : "Detail",
     "Phone" : "Telpon",
     "Not grouped" : "Tidak dikelompokkan",

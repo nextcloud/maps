@@ -146,6 +146,15 @@ appstore:
 	rsync -a \
 	--exclude=.git \
 	--exclude=build \
+	--exclude=screenshots/addContacts.gif \
+  	--exclude=screenshots/addFavorites.gif \
+	--exclude=screenshots/addPhotoFromFiles.gif \
+	--exclude=screenshots/addPhotosFromMap.gif \
+	--exclude=screenshots/addTracks.gif \
+	--exclude=screenshots/old-contacts.png \
+	--exclude=screenshots/old-start.png \
+	--exclude=screenshots/photoAlbumOnMap.gif \
+	--exclude=screenshots/shareMap.gif \
 	--exclude=tests \
 	--exclude=Makefile \
 	--exclude=*.log \

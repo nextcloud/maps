@@ -87,18 +87,18 @@ class FileHooks {
         // move file: delete then add it again in DB to be sure it's there for all users with access to target file
         // TODO understand why it's triggered twice and avoid double DB update
         $this->root->listen('\OC\Files', 'postRename', function(\OCP\Files\Node $source, \OCP\Files\Node $target) {
-            if ($this->isUserNode($source) and $this->isUserNode($target)) {
+            if ($this->isUserNode($target)) {
                 if ($target->getType() === FileInfo::TYPE_FILE) {
                     // if moved (parents are different) => update DB with access list
                     if ($source->getParent()->getId() !== $target->getParent()->getId()) {
-                        $this->photofilesService->deleteByFile($target);
+                        $this->photofilesService->deleteByFile($source);
                         $this->photofilesService->addByFile($target);
                         // tracks: nothing to do here because we use fileID
                     }
                 }
                 elseif ($target->getType() === FileInfo::TYPE_FOLDER) {
                     if ($source->getParent()->getId() !== $target->getParent()->getId()) {
-                        $this->photofilesService->deleteByFolder($target);
+                        $this->photofilesService->deleteByFolder($source);
                         $this->photofilesService->addByFolder($target);
                         // tracks: nothing to do here because we use fileID
                     }

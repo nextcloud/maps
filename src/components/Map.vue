@@ -171,6 +171,7 @@ import { showError, showSuccess } from '@nextcloud/dialogs'
 
 import L from 'leaflet'
 import 'mapbox-gl/dist/mapbox-gl'
+
 import 'mapbox-gl-leaflet/leaflet-mapbox-gl'
 import {
 	baseLayersByName,
@@ -1289,6 +1290,14 @@ export default {
 
 ::v-deep .favoriteClusterMarkerDark {
 	background: url('../../img/star-black.svg') no-repeat 50% 50%;
+}
+
+::v-deep .leaflet-left {
+	margin-left: 52px;
+}
+
+::v-deep .leaflet-control {
+	margin-left: 0px;
 }
 
 ::v-deep .leaflet-control-layers-base span,

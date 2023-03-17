@@ -171,7 +171,7 @@ import { showError, showSuccess } from '@nextcloud/dialogs'
 
 import L from 'leaflet'
 import 'mapbox-gl/dist/mapbox-gl'
-
+import 'mapbox-gl/dist/mapbox-gl.css'
 import 'mapbox-gl-leaflet/leaflet-mapbox-gl'
 import {
 	baseLayersByName,

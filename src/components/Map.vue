@@ -1173,10 +1173,11 @@ export default {
 	max-width: calc(100vw - 45px);
 	margin-top: 0;
 	padding-top: 5px;
-	border-top: 0;
 	background-color: var(--color-main-background);
-	border-top-left-radius: 0;
-	border-top-right-radius: 0;
+	border: 2px solid var(--color-border-dark);
+	border-bottom-left-radius: var(--border-radius-large) !important;
+	border-bottom-right-radius: var(--border-radius-large) !important;
+	border-top: 0;
 
 	.router-container {
 		width: 100%;

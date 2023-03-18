@@ -147,7 +147,7 @@ appstore:
 	--exclude=.git \
 	--exclude=build \
 	--exclude=screenshots/addContacts.gif \
-  	--exclude=screenshots/addFavorites.gif \
+	--exclude=screenshots/addFavorites.gif \
 	--exclude=screenshots/addPhotoFromFiles.gif \
 	--exclude=screenshots/addPhotosFromMap.gif \
 	--exclude=screenshots/addTracks.gif \

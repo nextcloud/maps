@@ -125,7 +125,8 @@ export default {
 	background-color: var(--color-main-background);
 	width: 350px;
 	padding: 5px;
-	border: 2px solid rgba(0, 0, 0, 0.2);
+	border: 2px solid var(--color-border-dark);
+	border-radius: var(--border-radius-large) var(--border-radius-large) 0 0;
 	border-bottom: 0;
 
 	.routing-header {

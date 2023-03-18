@@ -1174,10 +1174,10 @@ export default {
 	margin-top: 0;
 	padding-top: 5px;
 	background-color: var(--color-main-background);
-	border: 2px solid var(--color-border-dark);
+	border: 2px solid var(--color-border-dark) !important;
 	border-bottom-left-radius: var(--border-radius-large) !important;
 	border-bottom-right-radius: var(--border-radius-large) !important;
-	border-top: 0;
+	border-top: 0 !important;
 
 	.router-container {
 		width: 100%;

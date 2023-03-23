@@ -1399,7 +1399,8 @@ export default {
 				c.groupList = []
 				if (c.GROUPS) {
 					try {
-						const cGroups = c.GROUPS.split(/(?<!\\),/).map((name) => {
+						// const cGroups = c.GROUPS.split(/(?<!\\),/).map((name) => {
+						const cGroups = c.GROUPS.split(/[^\\],/).map((name) => {
 							return name.replace('\\,', ',')
 						})
 						if (cGroups.length > 0) {

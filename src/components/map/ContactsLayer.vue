@@ -63,7 +63,7 @@ export default {
 			return this.contacts.filter((c) => {
 				if (c.GROUPS) {
 					try {
-						const cGroups = c.GROUPS.split(/(?<!\\),/).map((name) => {
+						const cGroups = c.GROUPS.split(/[^\\],/).map((name) => {
 							return name.replace('\\,', ',')
 						})
 						for (let i = 0; i < cGroups.length; i++) {

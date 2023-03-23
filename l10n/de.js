@@ -106,6 +106,7 @@ OC.L10N.register(
     "Select all" : "Alle auswählen",
     "Display picture" : "Bild anzeigen",
     "Save" : "Speichern",
+    "Remove from selection" : "Von Auswahl entfernen",
     "No suggestions found" : "Keine Vorschläge gefunden",
     "To get suggestions upload tracks from the trips, when you took your photos." : "Um Vorschläge zu erhalten, lade deine Fotos von deinen Tracks hoch.",
     "Quit" : "Beenden",

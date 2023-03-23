@@ -9,6 +9,21 @@ function dirname(path) {
     return path.replace(/\\/g, '/').replace(/\/[^\/]*$/, '');
 }
 
+function splitByNonEscapedComma(str) {
+	// As safari doesn't support lookbehind we need to work with reversed strings
+	return str.split('')
+		.reverse()
+		.join('')
+		.split(/,(?!(?:(?:\\\\)*\\(?!\\)))/)
+		.map((g) => {
+				return g.replaceAll(',\\',',')
+					.replaceAll('\\\\','\\')
+					.split('')
+					.reverse()
+					.join('')
+			}).reverse()
+}
+
 function Timer(callback, mydelay) {
     var timerId,
         start,
@@ -382,6 +397,7 @@ export const accented = {
 export {
 	basename,
 	dirname,
+	splitByNonEscapedComma,
 	Timer,
 	getLetterColor,
 	hslToRgb,

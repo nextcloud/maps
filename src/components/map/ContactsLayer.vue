@@ -20,6 +20,7 @@ import Vue2LeafletMarkerCluster from 'vue2-leaflet-markercluster'
 import ContactLayer from './ContactLayer'
 import optionsController from '../../optionsController'
 import {getToken, isPublic} from "../../utils/common";
+import {splitByNonEscapedComma} from "../../utils";
 
 const CONTACT_MARKER_VIEW_SIZE = 40
 
@@ -63,9 +64,7 @@ export default {
 			return this.contacts.filter((c) => {
 				if (c.GROUPS) {
 					try {
-						const cGroups = c.GROUPS.split(/[^\\],/).map((name) => {
-							return name.replace('\\,', ',')
-						})
+						const cGroups = splitByNonEscapedComma(c.GROUPS)
 						for (let i = 0; i < cGroups.length; i++) {
 							// if at least in one enabled group
 							if (this.groups[cGroups[i]].enabled) {

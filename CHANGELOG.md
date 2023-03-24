@@ -4,6 +4,17 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## 1.0.2 - 2023.03.24 Collaborative maps & Image location suggestions
+### Fixed
+- Maps not loading on safari and other webkit browsers [#1015](https://github.com/nextcloud/maps/issues/1015)@finsyfins
+  [#1017]((https://github.com/nextcloud/maps/pull/1017) @tacruc)
+
+
+## 1.0.1 - 2023.03.21 Collaborative maps & Image location suggestions
+### Fixed
+- Error when moving a folder [#1015](https://github.com/nextcloud/maps/issues/1015)@AndyXheli
+  [#1012]((https://github.com/nextcloud/maps/pull/1012) @tacruc)
+
 ## 1.0.0 - 2023.03.21 Collaborative maps & Image location suggestions
 ### New
 - [Collaborative Maps](https://nextcloud.com/de/blog/plan-your-next-trip-with-nextcloud-maps-new-features/)

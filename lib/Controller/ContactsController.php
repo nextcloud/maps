@@ -149,31 +149,35 @@ class ContactsController extends Controller {
 					$card = $this->cdBackend->getContact($c['addressbook-key'], $c['URI']);
 					if ($card) {
 						$vcard = Reader::read($card['carddata']);
-						if (isset($vcard->ADR) && count($vcard->ADR) > 0) {
-							foreach ($vcard->ADR as $adr) {
-								$geo = $this->addressService->addressToGeo($adr->getValue(), $c['URI']);
-								//var_dump($adr->parameters()['TYPE']->getValue());
-								$adrtype = '';
-								if (isset($adr->parameters()['TYPE'])) {
-									$adrtype = $adr->parameters()['TYPE']->getValue();
-								}
-								if (is_string($geo) && strlen($geo) > 1) {
-									$result[] = [
-										'FN' => $c['FN'] ?? $this->N2FN($c['N']) ?? '???',
-										'URI' => $c['URI'],
-										'UID' => $c['UID'],
-										'URL' => $url,
-										'ADR' => $adr->getValue(),
-										'ADRTYPE' => $adrtype,
-										'HAS_PHOTO' => (isset($c['PHOTO']) && $c['PHOTO'] !== null),
-										'BOOKID' => $c['addressbook-key'],
-										'BOOKURI' => $addressBookUri,
-										'GEO' => $geo,
-										'GROUPS' => $c['CATEGORIES'] ?? null,
-										'isDeletable' => true,
-										'isUpdateable' => true,
-									];
-								}
+                        if (isset($vcard->ADR) && count($vcard->ADR) > 0) {
+                            $prevAdr = "";
+                            foreach ($vcard->ADR as $adr) {
+                                if (strcmp($prevAdr, $adr) != 0) {
+                                    $prevAdr = $adr;
+			    					$geo = $this->addressService->addressToGeo($adr->getValue(), $c['URI']);
+			    					//var_dump($adr->parameters()['TYPE']->getValue());
+			    					$adrtype = '';
+			    					if (isset($adr->parameters()['TYPE'])) {
+			    						$adrtype = $adr->parameters()['TYPE']->getValue();
+			    					}
+			    					if (is_string($geo) && strlen($geo) > 1) {
+			    						$result[] = [
+			    							'FN' => $c['FN'] ?? $this->N2FN($c['N']) ?? '???',
+			    							'URI' => $c['URI'],
+			    							'UID' => $c['UID'],
+			    							'URL' => $url,
+			    							'ADR' => $adr->getValue(),
+			    							'ADRTYPE' => $adrtype,
+			    							'HAS_PHOTO' => (isset($c['PHOTO']) && $c['PHOTO'] !== null),
+			    							'BOOKID' => $c['addressbook-key'],
+							    			'BOOKURI' => $addressBookUri,
+							    			'GEO' => $geo,
+								    		'GROUPS' => $c['CATEGORIES'] ?? null,
+								    		'isDeletable' => true,
+								    		'isUpdateable' => true,
+								    	];
+                                    }
+                                }
 							}
 						}
 					}
@@ -203,24 +207,32 @@ class ContactsController extends Controller {
 						if (is_string($geo) && strlen($geo->getValue()) > 1) {
 							$result[] = $this->vCardToArray($file, $vcard, $geo->getValue());
 						} elseif (is_countable($geo) && count($geo)>0 && is_iterable($geo)) {
-							foreach ($geo as $g) {
-								if (strlen($g->getValue()) > 1) {
-									$result[] = $this->vCardToArray($file, $vcard, $g->getValue());
-								}
+                            $prevGeo = "";
+                            foreach ($geo as $g) {
+                                if (strcmp($prevGeo, $g->getValue()) != 0) {
+                                    $prevGeo = $g->getValue();
+								    if (strlen($g->getValue()) > 1) {
+									    $result[] = $this->vCardToArray($file, $vcard, $g->getValue());
+                                    }
+                                }
 							}
 						}
 					}
 					if (isset($vcard->ADR) && count($vcard->ADR) > 0) {
-						foreach ($vcard->ADR as $adr) {
-							$geo = $this->addressService->addressToGeo($adr->getValue(), $file->getId());
-							//var_dump($adr->parameters()['TYPE']->getValue());
-							$adrtype = '';
-							if (isset($adr->parameters()['TYPE'])) {
-								$adrtype = $adr->parameters()['TYPE']->getValue();
-							}
-							if (is_string($geo) && strlen($geo) > 1) {
-								$result[] = $this->vCardToArray($file, $vcard, $geo, $adrtype, $adr->getValue(), $file->getId());
-							}
+                        $prevAdr = "";
+                        foreach ($vcard->ADR as $adr) {
+                            if (strcmp($prevAdr, $adr) != 0) {
+                                $prevAdr = $adr;
+							    $geo = $this->addressService->addressToGeo($adr->getValue(), $file->getId());
+    							//var_dump($adr->parameters()['TYPE']->getValue());
+    							$adrtype = '';
+    							if (isset($adr->parameters()['TYPE'])) {
+    								$adrtype = $adr->parameters()['TYPE']->getValue();
+    							}
+    							if (is_string($geo) && strlen($geo) > 1) {
+    								$result[] = $this->vCardToArray($file, $vcard, $geo, $adrtype, $adr->getValue(), $file->getId());
+    							}
+                            }
 						}
 					}
 				}

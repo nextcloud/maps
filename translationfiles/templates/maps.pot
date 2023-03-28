@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Nextcloud 3.14159\n"
 "Report-Msgid-Bugs-To: translations\\@example.com\n"
-"POT-Creation-Date: 2023-03-23 03:09+0000\n"
+"POT-Creation-Date: 2023-03-28 02:58+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -137,7 +137,7 @@ msgid "No such track"
 msgstr ""
 
 #. TRANSLATORS src/components/AppNavigationFavoritesItem.vue:85
-#. TRANSLATORS src/views/App.vue:598
+#. TRANSLATORS src/views/App.vue:597
 #: /app/lib/Service/FavoritesService.php:397
 #: /app/lib/Service/FavoritesService.php:485
 #: /app/lib/Service/FavoritesService.php:486
@@ -1533,7 +1533,7 @@ msgstr ""
 msgid "Details"
 msgstr ""
 
-#. TRANSLATORS src/views/App.vue:483
+#. TRANSLATORS src/views/App.vue:482
 #: /app/specialVueFakeDummyForL10nScript.js:638
 #: /app/specialVueFakeDummyForL10nScript.js:640
 #: /app/specialVueFakeDummyForL10nScript.js:642
@@ -1541,260 +1541,260 @@ msgstr ""
 msgid "My location"
 msgstr ""
 
-#. TRANSLATORS src/views/App.vue:782
+#. TRANSLATORS src/views/App.vue:781
 #: /app/specialVueFakeDummyForL10nScript.js:648
 msgid "Impossible to get current location"
 msgstr ""
 
-#. TRANSLATORS src/views/App.vue:798
+#. TRANSLATORS src/views/App.vue:797
 #: /app/specialVueFakeDummyForL10nScript.js:650
 msgid "Phone"
 msgstr ""
 
-#. TRANSLATORS src/views/App.vue:800
+#. TRANSLATORS src/views/App.vue:799
 #: /app/specialVueFakeDummyForL10nScript.js:652
 msgid "Computer"
 msgstr ""
 
-#. TRANSLATORS src/views/App.vue:802
+#. TRANSLATORS src/views/App.vue:801
 #: /app/specialVueFakeDummyForL10nScript.js:654
 msgid "Unknown device type"
 msgstr ""
 
-#. TRANSLATORS src/views/App.vue:812
+#. TRANSLATORS src/views/App.vue:811
 #: /app/specialVueFakeDummyForL10nScript.js:656
 msgid "Failed to send current position"
 msgstr ""
 
-#. TRANSLATORS src/views/App.vue:893
+#. TRANSLATORS src/views/App.vue:892
 #: /app/specialVueFakeDummyForL10nScript.js:658
 msgid "Photo {photoName} added to map {mapName}"
 msgstr ""
 
-#. TRANSLATORS src/views/App.vue:899
+#. TRANSLATORS src/views/App.vue:898
 #: /app/specialVueFakeDummyForL10nScript.js:660
 msgid "Failed to save photo {photoName} to map {mapName}"
 msgstr ""
 
-#. TRANSLATORS src/views/App.vue:935
+#. TRANSLATORS src/views/App.vue:934
 #: /app/specialVueFakeDummyForL10nScript.js:662
 msgid ""
 "A background job added {current} from {total} new photos. This might take a "
 "while."
 msgstr ""
 
-#. TRANSLATORS src/views/App.vue:944
+#. TRANSLATORS src/views/App.vue:943
 #: /app/specialVueFakeDummyForL10nScript.js:664
 msgid ""
 "A background job updated {current} from {total} changed photos. This might "
 "take a while."
 msgstr ""
 
-#. TRANSLATORS src/views/App.vue:959
+#. TRANSLATORS src/views/App.vue:958
 #: /app/specialVueFakeDummyForL10nScript.js:666
 msgid "What do you want to place?"
 msgstr ""
 
-#. TRANSLATORS src/views/App.vue:962
+#. TRANSLATORS src/views/App.vue:961
 #: /app/specialVueFakeDummyForL10nScript.js:668
 msgid "Photo files"
 msgstr ""
 
-#. TRANSLATORS src/views/App.vue:964
+#. TRANSLATORS src/views/App.vue:963
 #: /app/specialVueFakeDummyForL10nScript.js:670
 msgid "Photo folders"
 msgstr ""
 
-#. TRANSLATORS src/views/App.vue:978
+#. TRANSLATORS src/views/App.vue:977
 #: /app/specialVueFakeDummyForL10nScript.js:672
 msgid "Choose pictures to place"
 msgstr ""
 
-#. TRANSLATORS src/views/App.vue:989
+#. TRANSLATORS src/views/App.vue:988
 #: /app/specialVueFakeDummyForL10nScript.js:674
 #: /app/specialVueFakeDummyForL10nScript.js:758
 msgid "Choose directory of pictures to place"
 msgstr ""
 
-#. TRANSLATORS src/views/App.vue:1012
+#. TRANSLATORS src/views/App.vue:1011
 #: /app/specialVueFakeDummyForL10nScript.js:676
 msgid "\"{path}\" successfully moved"
 msgstr ""
 
-#. TRANSLATORS src/views/App.vue:1014
+#. TRANSLATORS src/views/App.vue:1013
 #: /app/specialVueFakeDummyForL10nScript.js:678
 msgid "{nb} photos moved"
 msgstr ""
 
-#. TRANSLATORS src/views/App.vue:1083
+#. TRANSLATORS src/views/App.vue:1082
 #: /app/specialVueFakeDummyForL10nScript.js:680
 msgid "Cleared photo cache"
 msgstr ""
 
-#. TRANSLATORS src/views/App.vue:1086
+#. TRANSLATORS src/views/App.vue:1085
 #: /app/specialVueFakeDummyForL10nScript.js:682
 msgid "Failed to clear photos cache"
 msgstr ""
 
-#. TRANSLATORS src/views/App.vue:1240
+#. TRANSLATORS src/views/App.vue:1239
 #: /app/specialVueFakeDummyForL10nScript.js:684
 msgid "Saved {r} from {i} locations"
 msgstr ""
 
-#. TRANSLATORS src/views/App.vue:1242
+#. TRANSLATORS src/views/App.vue:1241
 #: /app/specialVueFakeDummyForL10nScript.js:686
 msgid "Failed to save locations"
 msgstr ""
 
-#. TRANSLATORS src/views/App.vue:1296
+#. TRANSLATORS src/views/App.vue:1295
 #: /app/specialVueFakeDummyForL10nScript.js:688
 msgid "Contact {contactName} added to map {mapName}"
 msgstr ""
 
-#. TRANSLATORS src/views/App.vue:1299
+#. TRANSLATORS src/views/App.vue:1298
 #: /app/specialVueFakeDummyForL10nScript.js:690
 msgid "Failed to save Contact {contactName} to map {mapName}"
 msgstr ""
 
-#. TRANSLATORS src/views/App.vue:1308
+#. TRANSLATORS src/views/App.vue:1307
 #: /app/specialVueFakeDummyForL10nScript.js:692
 #: /app/specialVueFakeDummyForL10nScript.js:696
 msgid "All Contacts added to map {mapName}"
 msgstr ""
 
-#. TRANSLATORS src/views/App.vue:1311
+#. TRANSLATORS src/views/App.vue:1310
 #: /app/specialVueFakeDummyForL10nScript.js:694
 #: /app/specialVueFakeDummyForL10nScript.js:698
 msgid "Failed to save all Contacts to map {mapName}"
 msgstr ""
 
-#. TRANSLATORS src/views/App.vue:1383
+#. TRANSLATORS src/views/App.vue:1380
 #: /app/specialVueFakeDummyForL10nScript.js:700
 msgid "Failed to load contacts"
 msgstr ""
 
-#. TRANSLATORS src/views/App.vue:1394
+#. TRANSLATORS src/views/App.vue:1391
 #: /app/specialVueFakeDummyForL10nScript.js:702
 msgid "Not grouped"
 msgstr ""
 
-#. TRANSLATORS src/views/App.vue:1693
+#. TRANSLATORS src/views/App.vue:1688
 #: /app/specialVueFakeDummyForL10nScript.js:706
 msgid "Favorites exported in {path}"
 msgstr ""
 
-#. TRANSLATORS src/views/App.vue:1700
+#. TRANSLATORS src/views/App.vue:1695
 #: /app/specialVueFakeDummyForL10nScript.js:708
 msgid ""
 "Import favorites from GeoJSON (Google Maps), gpx (OsmAnd, Nextcloud Maps) or "
 "kmz/kml (F-Droid Maps, Maps.me, Marble)"
 msgstr ""
 
-#. TRANSLATORS src/views/App.vue:1729
+#. TRANSLATORS src/views/App.vue:1724
 #: /app/specialVueFakeDummyForL10nScript.js:710
 msgid "Favorite {favoriteName} added to map {mapName}"
 msgstr ""
 
-#. TRANSLATORS src/views/App.vue:1732
+#. TRANSLATORS src/views/App.vue:1727
 #: /app/specialVueFakeDummyForL10nScript.js:712
 msgid "Failed to save Favorite {favoriteName} to map {mapName}"
 msgstr ""
 
-#. TRANSLATORS src/views/App.vue:1740
+#. TRANSLATORS src/views/App.vue:1735
 #: /app/specialVueFakeDummyForL10nScript.js:714
 msgid "Favorite category {favoriteName} linked to map {mapName}"
 msgstr ""
 
-#. TRANSLATORS src/views/App.vue:1743
+#. TRANSLATORS src/views/App.vue:1738
 #: /app/specialVueFakeDummyForL10nScript.js:716
 msgid "Failed to link Favorite category {favoriteName} to map {mapName}"
 msgstr ""
 
-#. TRANSLATORS src/views/App.vue:1749
+#. TRANSLATORS src/views/App.vue:1744
 #: /app/specialVueFakeDummyForL10nScript.js:718
 msgid "Favorite category {favoriteName} copied to map {mapName}"
 msgstr ""
 
-#. TRANSLATORS src/views/App.vue:1751
+#. TRANSLATORS src/views/App.vue:1746
 #: /app/specialVueFakeDummyForL10nScript.js:720
 msgid "Failed to copy Favorite category {favoriteName} to map {mapName}"
 msgstr ""
 
-#. TRANSLATORS src/views/App.vue:1764
+#. TRANSLATORS src/views/App.vue:1759
 #: /app/specialVueFakeDummyForL10nScript.js:722
 msgid "Favorite category {favoriteName} unlinked from map"
 msgstr ""
 
-#. TRANSLATORS src/views/App.vue:1767
+#. TRANSLATORS src/views/App.vue:1762
 #: /app/specialVueFakeDummyForL10nScript.js:724
 msgid "Failed to remove Favorite category {favoriteName} from map"
 msgstr ""
 
-#. TRANSLATORS src/views/App.vue:1872
+#. TRANSLATORS src/views/App.vue:1867
 #: /app/specialVueFakeDummyForL10nScript.js:728
 msgid "Click on the map to add a favorite, press Esc to cancel"
 msgstr ""
 
-#. TRANSLATORS src/views/App.vue:2048
+#. TRANSLATORS src/views/App.vue:2043
 #: /app/specialVueFakeDummyForL10nScript.js:730
 msgid "Devices are not yet available on custom Maps"
 msgstr ""
 
-#. TRANSLATORS src/views/App.vue:2167
+#. TRANSLATORS src/views/App.vue:2162
 #: /app/specialVueFakeDummyForL10nScript.js:732
 msgid "Track {trackName} added to map {mapName}"
 msgstr ""
 
-#. TRANSLATORS src/views/App.vue:2176
+#. TRANSLATORS src/views/App.vue:2171
 #: /app/specialVueFakeDummyForL10nScript.js:734
 msgid "Failed to save track {trackName} to map {mapName}"
 msgstr ""
 
-#. TRANSLATORS src/views/App.vue:2195
+#. TRANSLATORS src/views/App.vue:2190
 #: /app/specialVueFakeDummyForL10nScript.js:736
 #: /app/specialVueFakeDummyForL10nScript.js:740
 msgid "Devices exported in {path}"
 msgstr ""
 
-#. TRANSLATORS src/views/App.vue:2198
+#. TRANSLATORS src/views/App.vue:2193
 #: /app/specialVueFakeDummyForL10nScript.js:738
 #: /app/specialVueFakeDummyForL10nScript.js:742
 msgid "Failed to export devices"
 msgstr ""
 
-#. TRANSLATORS src/views/App.vue:2223
+#. TRANSLATORS src/views/App.vue:2218
 #: /app/specialVueFakeDummyForL10nScript.js:744
 msgid "Failed to delete device"
 msgstr ""
 
-#. TRANSLATORS src/views/App.vue:2271
+#. TRANSLATORS src/views/App.vue:2266
 #: /app/specialVueFakeDummyForL10nScript.js:746
 msgid ""
 "Import devices from gpx (Nextcloud Maps) or kml/kmz (Google Timeline) file"
 msgstr ""
 
-#. TRANSLATORS src/views/App.vue:2283
+#. TRANSLATORS src/views/App.vue:2278
 #: /app/specialVueFakeDummyForL10nScript.js:748 /app/src/filetypes.js:61
 msgid "{nb} devices imported from {path}"
 msgstr ""
 
-#. TRANSLATORS src/views/App.vue:2287
+#. TRANSLATORS src/views/App.vue:2282
 #: /app/specialVueFakeDummyForL10nScript.js:750 /app/src/filetypes.js:65
 msgid "Failed to import devices"
 msgstr ""
 
-#. TRANSLATORS src/views/App.vue:2300
+#. TRANSLATORS src/views/App.vue:2295
 #: /app/specialVueFakeDummyForL10nScript.js:752
 #: /app/specialVueFakeDummyForL10nScript.js:754
 msgid "Default"
 msgstr ""
 
-#. TRANSLATORS src/views/App.vue:2338
+#. TRANSLATORS src/views/App.vue:2333
 #: /app/specialVueFakeDummyForL10nScript.js:756
 msgid "Folder is not a map"
 msgstr ""
 
-#. TRANSLATORS src/views/App.vue:1239
+#. TRANSLATORS src/views/App.vue:1238
 #: /app/specialVueFakeDummyForL10nScript.js:760
 msgid "Saved location"
 msgid_plural "Saved all %n locations"

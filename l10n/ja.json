@@ -42,6 +42,7 @@
     "Geo link ({geoLink}) copied to clipboard" : "クリップボードに位置情報リンク（{geoLink}）をコピー",
     "Close" : "閉じる",
     "Track my position" : "自分の位置を追跡",
+    "Keep in mind that map projections always distort sizes of countries. The standard Mercator projection is particularly biased. Read more at:" : "地図を投影すると、必ず国土の大きさの歪みが発生します。標準的なメルカトル図法は特に偏りがあります。詳しくは:",
     "(No name)" : "(名なし)",
     "Select all" : "すべて選択",
     "Save" : "保存",
@@ -197,6 +198,7 @@
     "Doctors" : "診療所",
     "Dentist" : "歯医者",
     "Hotel" : "ホテル",
+    "Maps routing settings" : "地図の経路設定",
     "OSRM Website" : "OSRMサイト",
     "OSRM settings" : "OSRMの設定",
     "An OSRM server URL looks like this : https://my.osrm.server.org:5000/route/v1" : "OSRMサーバーのURL　例:https://my.osrm.server.org:5000/route/v1",
@@ -205,6 +207,7 @@
     "Show OSRM demo server" : "OSRMデモサーバーを表示",
     "Mapbox Website" : "Mapboxサイト",
     "Mapbox settings" : "Mapbox設定",
+    "Leave empty to disable." : "無効にするには空欄にしてください",
     "Settings" : "セッティング"
 },"pluralForm" :"nplurals=1; plural=0;"
 }

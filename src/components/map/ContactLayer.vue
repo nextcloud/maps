@@ -60,14 +60,6 @@
 						{{ contact.FN }}
 					</h3>
 				    <p class="tooltip-contact-address-type">
-                        <!--template v-for="adrtype in contact.ADRTYPE">
-    				        <span v-if=" adrtype.toLowerCase() === 'home'">
-	    		    		    {{ t('maps', 'Home') }}
-        		    		</span>
-        	    			<span v-else-if=" adrtype.toLowerCase() === 'work'">
-            					{{ t('maps', 'Work') }}
-                            </span>
-                        </template-->
                         <template v-for="adrtype in contact.ADRTYPE">
     				        <span v-if=" adrtype.toLowerCase() === 'home'"
                                     class="tooltip-contact-address-type">
@@ -83,14 +75,6 @@
                             </span>
                         </template>
     				</p>
-					<!--p v-if=" contact.ADRTYPE.toLowerCase() === 'home'"
-						class="tooltip-contact-address-type">
-						{{ t('maps', 'Home') }}
-					</p>
-					<p v-else-if=" contact.ADRTYPE.toLowerCase() === 'work'"
-						class="tooltip-contact-address-type">
-						{{ t('maps', 'Work') }}
-					</p-->
 					<p v-for="l in formattedAddressLines"
 						:key="l"
 						class="tooltip-contact-address">

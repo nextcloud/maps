@@ -97,7 +97,6 @@ class ContactsController extends Controller {
      * @return integer : -1 if address is new, index of duplicated address in other cases
      */
     private function isNewAddress($prevGeo, $geo) {
-//        print "++<br/>";
         if (empty($geo)) { // Address not converted to geo coords
             return -1;
         } 
@@ -110,7 +109,6 @@ class ContactsController extends Controller {
             }
             $counter++;
         }
-//        var_dump($result); print'**<br/>';
         return $result;
     }
 
@@ -134,7 +132,6 @@ class ContactsController extends Controller {
         $a = (sin($dlat) * sin($dlat)) + cos($latA) * cos($latB) * (sin($dlon) * sin($dlon
 ));
         $d = 2 * atan2(sqrt($a), sqrt(1 - $a));
-//        print '['.$coordsA[0].' ; '.$coordsA[1].' ]  -  ['.$coordsB[0].' ; '.$coordsB[1].' ]  =  '.($d * $earthRadius).'<br/>';
         return $d * $earthRadius;
     }
 
@@ -210,17 +207,12 @@ class ContactsController extends Controller {
 					if ($card) {
 						$vcard = Reader::read($card['carddata']);
                         if (isset($vcard->ADR) && count($vcard->ADR) > 0) {
-//                            print '------- '.$c['FN'].' ----<br/>';
                             $prevGeo = [];
                             $prevRes = [];
                             foreach ($vcard->ADR as $adr) {
-//                                print $adr.'<br/>';
                                 $geo = $this->addressService->addressToGeo($adr->getValue(), $c['URI']);
                                 $geof = $this->geoAsFloatArray($geo);
-//                                var_dump($prevGeo); print "<br/>";
-//                                var_dump($geof); print "----<br/>";
                                 $duplicatedIndex = $this->isNewAddress($prevGeo, $geof);
-//                                print $duplicatedIndex.'<br/>';
 			    				$adrtype = '';
 			    				if (isset($adr->parameters()['TYPE'])) {
 			    					$adrtype = $adr->parameters()['TYPE']->getValue();
@@ -228,7 +220,6 @@ class ContactsController extends Controller {
                                 if (is_string($geo) && strlen($geo) > 1) {
                                     if ($duplicatedIndex < 0 ) {
                                         array_push($prevGeo, $geof);
-		    	    					//var_dump($adr->parameters()['TYPE']->getValue());
                                         array_push($prevRes, count($result)); // Add index of new item so that we can update the ADRTYPE in case of duplicate address
 			    						$result[] = [
 			    							'FN' => $c['FN'] ?? $this->N2FN($c['N']) ?? '???',
@@ -292,19 +283,26 @@ class ContactsController extends Controller {
 					}
 					if (isset($vcard->ADR) && count($vcard->ADR) > 0) {
                         $prevGeo = [];
+                        $prevRes = [];
                         foreach ($vcard->ADR as $adr) {
 							$geo = $this->addressService->addressToGeo($adr->getValue(), $file->getId());
-                            if (empty($prevGeo) || $this->getDistance($prevGeo, $geo) <= $this->geoDistanceMax) {
-                                $prevGeo = $geo;
-    							//var_dump($adr->parameters()['TYPE']->getValue());
-    							$adrtype = '';
-    							if (isset($adr->parameters()['TYPE'])) {
-    								$adrtype = $adr->parameters()['TYPE']->getValue();
-    							}
-    							if (is_string($geo) && strlen($geo) > 1) {
-    								$result[] = $this->vCardToArray($file, $vcard, $geo, $adrtype, $adr->getValue(), $file->getId());
-    							}
-                            }
+                            $geof = $this->geoAsFloatArray($geo);
+                            $duplicatedIndex = $this->isNewAddress($prevGeo, $geof);
+    						//var_dump($adr->parameters()['TYPE']->getValue());
+    						$adrtype = '';
+    						if (isset($adr->parameters()['TYPE'])) {
+    							$adrtype = $adr->parameters()['TYPE']->getValue();
+    						}
+    						if (is_string($geo) && strlen($geo) > 1) {
+                                if ($duplicatedIndex < 0 ) {
+                                    array_push($prevGeo, $geof);
+                                    array_push($prevRes, count($result)); // Add index of new item so that we can update the ADRTYPE in case of duplicate address
+                                    $result[] = $this->vCardToArray($file, $vcard, $geo, array($adrtype), $adr->getValue(), $file->getId());
+                                } else {
+                                    // Concatenate AddressType to the corresponding record
+                                    array_push($result[$prevRes[$duplicatedIndex]]['ADRTYPE'], $adrtype);
+                                }
+    						}
 						}
 					}
 				}

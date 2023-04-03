@@ -40,7 +40,8 @@ class ContactsController extends Controller {
 	private $cdBackend;
 	private $avatarManager;
 	private $root;
-	private $urlGenerator;
+    private $urlGenerator;
+    private $geoDistanceMax; // Max distance in meters to consider that 2 addresses are the same location
 
 	/**
 	 * @param $AppName
@@ -76,8 +77,66 @@ class ContactsController extends Controller {
 		$this->qb = $dbconnection->getQueryBuilder();
 		$this->cdBackend = $cdBackend;
 		$this->root = $root;
-		$this->urlGenerator = $urlGenerator;
+        $this->urlGenerator = $urlGenerator;
+        $this->geoDistanceMax = 5; 
 	}
+    /**
+     * Converts a geo string as a float array
+     * @param string formatted as "lat;lon"
+     * @return float array containing [lat;lon]
+     */
+    private function geoAsFloatArray($geo) {
+        $res = array_map(function($value) {return floatval($value);}, explode(";", $geo) );
+        return $res;
+    }
+
+    /**
+     * check if geographical address is duplicated
+     * @param array containing contact's previous different addresses
+     * @param contact's address to check
+     * @return integer : -1 if address is new, index of duplicated address in other cases
+     */
+    private function isNewAddress($prevGeo, $geo) {
+//        print "++<br/>";
+        if (empty($geo)) { // Address not converted to geo coords
+            return -1;
+        } 
+        $result = -1;
+        $counter = 0;
+        foreach ($prevGeo as $prev) {
+            if ($this->getDistance($prev, $geo) <= $this->geoDistanceMax) {
+                $result = $counter;
+                break;
+            }
+            $counter++;
+        }
+//        var_dump($result); print'**<br/>';
+        return $result;
+    }
+
+    /**
+     * get distance between two geo points
+     * @param GPS coordinates of first point
+     * @param GPS coordinates of second point
+     * @return Distance in meters between these two points
+     */
+    private function getDistance($coordsA, $coordsB) {
+        if (empty($coordsA) || empty($coordsB) ) {
+            return 9E999;
+        }
+        $latA = deg2rad($coordsA[0]);
+        $lonA = deg2rad($coordsA[1]);
+        $latB = deg2rad($coordsB[0]);
+        $lonB = deg2rad($coordsB[1]);
+        $earthRadius = 6378137; // in m
+        $dlon = ($lonB - $lonA) / 2;
+        $dlat = ($latB - $latA) / 2;
+        $a = (sin($dlat) * sin($dlat)) + cos($latA) * cos($latB) * (sin($dlon) * sin($dlon
+));
+        $d = 2 * atan2(sqrt($a), sqrt(1 - $a));
+//        print '['.$coordsA[0].' ; '.$coordsA[1].' ]  -  ['.$coordsB[0].' ; '.$coordsB[1].' ]  =  '.($d * $earthRadius).'<br/>';
+        return $d * $earthRadius;
+    }
 
 	/**
 	 * get contacts with coordinates
@@ -93,7 +152,8 @@ class ContactsController extends Controller {
 			$contacts = $this->contactsManager->search('', ['GEO', 'ADR'], ['types' => false]);
 			$addressBooks = $this->contactsManager->getUserAddressBooks();
 			$result = [];
-			$userid = trim($this->userId);
+            $userid = trim($this->userId);
+
 			foreach ($contacts as $c) {
 				$addressBookUri = $addressBooks[$c['addressbook-key']]->getUri();
 				$uid = trim($c['UID']);
@@ -150,24 +210,33 @@ class ContactsController extends Controller {
 					if ($card) {
 						$vcard = Reader::read($card['carddata']);
                         if (isset($vcard->ADR) && count($vcard->ADR) > 0) {
-                            $prevAdr = "";
+//                            print '------- '.$c['FN'].' ----<br/>';
+                            $prevGeo = [];
+                            $prevRes = [];
                             foreach ($vcard->ADR as $adr) {
-                                if (strcmp($prevAdr, $adr) != 0) {
-                                    $prevAdr = $adr;
-			    					$geo = $this->addressService->addressToGeo($adr->getValue(), $c['URI']);
-			    					//var_dump($adr->parameters()['TYPE']->getValue());
-			    					$adrtype = '';
-			    					if (isset($adr->parameters()['TYPE'])) {
-			    						$adrtype = $adr->parameters()['TYPE']->getValue();
-			    					}
-			    					if (is_string($geo) && strlen($geo) > 1) {
+//                                print $adr.'<br/>';
+                                $geo = $this->addressService->addressToGeo($adr->getValue(), $c['URI']);
+                                $geof = $this->geoAsFloatArray($geo);
+//                                var_dump($prevGeo); print "<br/>";
+//                                var_dump($geof); print "----<br/>";
+                                $duplicatedIndex = $this->isNewAddress($prevGeo, $geof);
+//                                print $duplicatedIndex.'<br/>';
+			    				$adrtype = '';
+			    				if (isset($adr->parameters()['TYPE'])) {
+			    					$adrtype = $adr->parameters()['TYPE']->getValue();
+			    				}
+                                if (is_string($geo) && strlen($geo) > 1) {
+                                    if ($duplicatedIndex < 0 ) {
+                                        array_push($prevGeo, $geof);
+		    	    					//var_dump($adr->parameters()['TYPE']->getValue());
+                                        array_push($prevRes, count($result)); // Add index of new item so that we can update the ADRTYPE in case of duplicate address
 			    						$result[] = [
 			    							'FN' => $c['FN'] ?? $this->N2FN($c['N']) ?? '???',
 			    							'URI' => $c['URI'],
 			    							'UID' => $c['UID'],
 			    							'URL' => $url,
 			    							'ADR' => $adr->getValue(),
-			    							'ADRTYPE' => $adrtype,
+			    							'ADRTYPE' => array($adrtype),
 			    							'HAS_PHOTO' => (isset($c['PHOTO']) && $c['PHOTO'] !== null),
 			    							'BOOKID' => $c['addressbook-key'],
 							    			'BOOKURI' => $addressBookUri,
@@ -176,6 +245,9 @@ class ContactsController extends Controller {
 								    		'isDeletable' => true,
 								    		'isUpdateable' => true,
 								    	];
+                                    } else {
+                                        // Concatenate AddressType to the corresponding record
+                                        array_push($result[$prevRes[$duplicatedIndex]]['ADRTYPE'], $adrtype);
                                     }
                                 }
 							}
@@ -219,11 +291,11 @@ class ContactsController extends Controller {
 						}
 					}
 					if (isset($vcard->ADR) && count($vcard->ADR) > 0) {
-                        $prevAdr = "";
+                        $prevGeo = [];
                         foreach ($vcard->ADR as $adr) {
-                            if (strcmp($prevAdr, $adr) != 0) {
-                                $prevAdr = $adr;
-							    $geo = $this->addressService->addressToGeo($adr->getValue(), $file->getId());
+							$geo = $this->addressService->addressToGeo($adr->getValue(), $file->getId());
+                            if (empty($prevGeo) || $this->getDistance($prevGeo, $geo) <= $this->geoDistanceMax) {
+                                $prevGeo = $geo;
     							//var_dump($adr->parameters()['TYPE']->getValue());
     							$adrtype = '';
     							if (isset($adr->parameters()['TYPE'])) {

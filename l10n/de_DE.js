@@ -60,7 +60,7 @@ OC.L10N.register(
     "Link could not be copied to clipboard." : "Link konnte nicht in die Zwischenablage kopiert werden.",
     "Open folder" : "Ordner öffnen",
     "Share" : "Teilen",
-    "My maps" : "Mein Karten",
+    "My maps" : "Meine Karten",
     "New map" : "Neue Karte",
     "Add Map" : "Karte hinzufügen",
     "My photos" : "Meine Fotos",

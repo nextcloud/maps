@@ -50,6 +50,7 @@ OC.L10N.register(
     "Link could not be copied to clipboard." : "链接无法复制到剪贴板。",
     "Open folder" : "打开文件夹",
     "Share" : "共享",
+    "My maps" : "我的地图",
     "My photos" : "我的照片",
     "Disable photo drag" : "禁用图片拖拽",
     "Enable photo drag" : "启用图片拖拽",

@@ -191,7 +191,7 @@ OC.L10N.register(
     "No suggestions" : "Herhangi bir öneri yok",
     "Search" : "Arama",
     "Point at {coords}" : "{coords} noktası",
-    "Search for {q}" : "{q} araması",
+    "Search for {q}" : "{q} ara",
     "Unknown Place" : "Bilinmeyen yer",
     "File" : "Dosya",
     "Track/Route" : "Yol/Rota",

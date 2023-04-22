@@ -3,7 +3,8 @@
 #osrmFootURL,
 #graphhopperURL,
 #graphhopperAPIKEY,
-#mapboxAPIKEY
+#mapboxAPIKEY,
+#maplibreStreetStyleURL
 {
     width: 400px;
 }

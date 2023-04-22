@@ -46,4 +46,12 @@ if (!isset($_['osrmDEMO']) || $_['osrmDEMO'] === '1') {
         <label for="mapboxAPIKEY"><?php p($l->t('Mapbox API key')); ?></label><br/>
         <input id="mapboxAPIKEY" type="text" value="<?php if (isset($_['mapboxAPIKEY'])) p($_['mapboxAPIKEY']); ?>"/>
     </div><br/>
+
+	<h3><a href="https://maplibre.org/" title="<?php p($l->t('MapLibre Website')) ?>" target="_blank"><?php p($l->t('MapLibre settings')); ?></a></h3>
+	<p><?php p($l->t('Set the URL of style.json for OpenStreetMap Vector Tiles with MapLibre-GL-JS')); ?></p>
+	<p><?php p($l->t('Leave empty to disable.')); ?></p><br/>
+	<div id="maplibre_street">
+		<label for="maplibreStreetStyleURL"><?php p($l->t('MapLibre Street style URL')); ?></label><br/>
+		<input id="maplibreStreetStyleURL" type="text" value="<?php if (isset($_['maplibreStreetStyleURL'])) p($_['maplibreStreetStyleURL']); ?>"/>
+	</div><br/>
 </div>

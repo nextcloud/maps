@@ -208,6 +208,7 @@ class PublicUtilsController extends PublicPageController {
             'osrmDEMO',
             'graphhopperAPIKEY',
             'mapboxAPIKEY',
+			'maplibreStreetStyleURL',
             'graphhopperURL'
         ];
         foreach ($settingsKeys as $k) {

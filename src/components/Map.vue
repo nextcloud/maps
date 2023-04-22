@@ -173,6 +173,7 @@ import L from 'leaflet'
 import 'mapbox-gl/dist/mapbox-gl'
 import 'mapbox-gl/dist/mapbox-gl.css'
 import 'mapbox-gl-leaflet/leaflet-mapbox-gl'
+import '@maplibre/maplibre-gl-leaflet'
 import {
 	baseLayersByName,
 	overlayLayersByName,
@@ -778,6 +779,30 @@ export default {
 					},
 					Watercolor: baseLayersByName.Watercolor,
 				}
+			}
+
+			if ((gl !== null) &&
+				('maplibreStreetStyleURL' in this.optionValues && this.optionValues.maplibreStreetStyleURL !== '')) {
+				// wrapper to make tile layer component correctly pass arguments
+				L.myMaplibreGL = (url, options) => {
+					return new L.maplibreGL(options)
+				}
+
+				this.allBaseLayers = {}
+				Object.keys(baseLayersByName).forEach(id => {
+					if (id === 'Open Street Map') {
+						let layer = Object.assign({}, baseLayersByName[id]);
+						delete layer.url
+						layer.tileLayerClass = L.myMaplibreGL
+						layer.options = Object.assign({}, layer.options);
+						layer.options.style = this.optionValues.maplibreStreetStyleURL
+						layer.options.minZoom = 0
+						layer.options.maxZoom = 22
+						this.allBaseLayers[id] = layer
+					} else {
+						this.allBaseLayers[id] = baseLayersByName[id]
+					}
+				})
 			}
 
 			// LAYER BUTTONS

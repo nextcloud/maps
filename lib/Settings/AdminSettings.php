@@ -46,6 +46,7 @@ class AdminSettings implements ISettings {
             'osrmDEMO',
             'graphhopperAPIKEY',
             'mapboxAPIKEY',
+			'maplibreStreetStyleURL',
             'graphhopperURL'
         ];
         $parameters = [];

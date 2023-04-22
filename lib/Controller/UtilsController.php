@@ -7,6 +7,7 @@
  *
  * @author Julien Veyssier <eneiluj@posteo.net>
  * @copyright Julien Veyssier 2019
+ * @copyright Benstone Zhang <benstonezhang@gmail.com> 2023
  */
 
 namespace OCA\Maps\Controller;

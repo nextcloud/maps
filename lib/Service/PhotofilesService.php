@@ -48,7 +48,7 @@ use lsolesen\pel\Pel;
 
 class PhotofilesService {
 
-    const PHOTO_MIME_TYPES = ['image/jpeg', 'image/tiff'];
+    const PHOTO_MIME_TYPES = ['image/jpeg', 'image/tiff', 'image/heic'];
 
     private $l10n;
     private $root;

@@ -52,7 +52,7 @@ OC.L10N.register(
     "Create share link" : "Paylaşım bağlantısı oluştur",
     "Copied!" : "Kopyalandı!",
     "Copy share link" : "Paylaşım bağlantısını kopyala",
-    "Link to map" : "Harita ile ilişkilendir",
+    "Link to map" : "Harita bağlantısı",
     "Leave share" : "Paylaşımdan ayrıl",
     "Cancel" : "İptal",
     "Link copied" : "Bağlantı kopyalandı",

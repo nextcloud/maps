@@ -641,7 +641,7 @@ class ContactsController extends Controller {
 	private function addressBookIsReadOnly(string $bookid): bool {
 		$userBooks = $this->cdBackend->getAddressBooksForUser('principals/users/'.$this->userId);
 		foreach ($userBooks as $book) {
-			if ($book['id'] === $bookid) {
+			if ($book['id'] === (int)$bookid) {
 				return (isset($book['{http://owncloud.org/ns}read-only']) and $book['{http://owncloud.org/ns}read-only']);
 			}
 		}

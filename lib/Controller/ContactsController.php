@@ -239,6 +239,9 @@ class ContactsController extends Controller {
                                     } else {
                                         // Concatenate AddressType to the corresponding record
                                         array_push($result[$prevRes[$duplicatedIndex]]['ADRTYPE'], $adrtype);
+                                        $result[$prevRes[$duplicatedIndex]]['isUpdateable'] = false;
+                                        $result[$prevRes[$duplicatedIndex]]['isDeletable'] = false;
+                                        $result[$prevRes[$duplicatedIndex]]['isShareable'] = false;
                                     }
                                 }
 							}
@@ -301,6 +304,9 @@ class ContactsController extends Controller {
                                 } else {
                                     // Concatenate AddressType to the corresponding record
                                     array_push($result[$prevRes[$duplicatedIndex]]['ADRTYPE'], $adrtype);
+                                    $result[$prevRes[$duplicatedIndex]]['isUpdateable'] = false;
+                                    $result[$prevRes[$duplicatedIndex]]['isDeletable'] = false;
+                                    $result[$prevRes[$duplicatedIndex]]['isShareable'] = false;
                                 }
     						}
 						}

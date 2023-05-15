@@ -143,6 +143,6 @@ export default {
 }
 
 ::v-deep .no-color {
-	color: var(--color-primary);
+	color: var(--color-primary-element);
 }
 </style>

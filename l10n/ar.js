@@ -20,7 +20,7 @@ OC.L10N.register(
     "Sort by name" : "Order by name",
     "Sort by date" : "Order by date",
     "OK" : "موافق",
-    "Category" : "الفئة",
+    "Category" : "التصنيف",
     "Comment" : "تعليق",
     "Share this location" : "أرسل هذا الموقع",
     "Shared location" : "الموقع المشارك",

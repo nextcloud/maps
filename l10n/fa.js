@@ -69,7 +69,7 @@ OC.L10N.register(
     "Moving average pace" : "حرکت سرعت متوسط",
     "Name" : "نام",
     "Add" : "افزودن",
-    "Add to favorites" : "Add to favorites",
+    "Add to favorites" : "افزودن به برگزیده‌ها",
     "This place" : "این مکان",
     "Add contact address" : "آدرس مخاطب را اضافه کنید",
     "Home" : "خانه ",

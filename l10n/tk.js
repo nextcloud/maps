@@ -5,6 +5,7 @@ OC.L10N.register(
     "Delete" : "Pozmak",
     "Rename" : "Adyny üýtgetmek",
     "Cancel" : "ýatyrmak",
+    "Link copied" : "Link-yň nusgasy alyndy",
     "Share" : "Paýlaş",
     "OK" : "Bolýar",
     "Close" : "Ýap",
@@ -21,7 +22,6 @@ OC.L10N.register(
     "File" : "Faýl",
     "Details" : "Jikme-jiklikler",
     "Default" : "Bellenen",
-    "Link copied" : "Link-yň nusgasy alyndy",
     "Settings" : "Sazlamalar"
 },
 "nplurals=2; plural=(n != 1);");

@@ -12,6 +12,7 @@ OC.L10N.register(
     "Delete share link" : "Șterge linkul partajat",
     "Copied!" : "S-a copiat!",
     "Cancel" : "Anulează",
+    "Link copied" : "Link copiat",
     "Share" : "Partajează",
     "Sort by name" : "Sortează după nume",
     "Sort by date" : "Sortează după dată",
@@ -50,7 +51,6 @@ OC.L10N.register(
     "Phone" : "Telefon",
     "Not grouped" : "Negrupate",
     "Default" : "Implicit",
-    "Link copied" : "Link copiat",
     "Restaurant" : "Restaurant",
     "Settings" : "Setări"
 },

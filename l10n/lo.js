@@ -7,6 +7,7 @@ OC.L10N.register(
     "Rename" : "ປ່ຽນຊື່",
     "Delete share link" : "ລົບລິງແບ່ງປັນ",
     "Cancel" : "ຍົກເລີກ",
+    "Link copied" : "ສຳເນົາລິງ",
     "Share" : "ແບ່ງປັນ",
     "OK" : "ຕົກລົງ",
     "Close" : "ປິດ",
@@ -28,7 +29,6 @@ OC.L10N.register(
     "Destination" : "ປາຍທາງ",
     "Details" : "ລາຍລະອຽດ",
     "Default" : "ເລີ່ມຕົ້ນ",
-    "Link copied" : "ສຳເນົາລິງ",
     "Settings" : "ການຕັ້ງຄ່າ"
 },
 "nplurals=1; plural=0;");

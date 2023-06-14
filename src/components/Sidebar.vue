@@ -85,6 +85,7 @@ import NcActionButton from '@nextcloud/vue/dist/Components/NcActionButton'
 import NcEmptyContent from '@nextcloud/vue/dist/Components/NcEmptyContent'
 import { emit } from '@nextcloud/event-bus'
 import { generateUrl, generateFilePath } from '@nextcloud/router'
+import { showError } from "@nextcloud/dialogs";
 
 import FavoriteSidebarTab from '../components/FavoriteSidebarTab'
 import PhotoSuggestionsSidebarTab from './Sidebar/PhotoSuggestionsSidebarTab'
@@ -526,7 +527,7 @@ export default {
 				}
 
 			} catch (error) {
-				OC.Notification.showTemporary(t('files', 'Unable to change the favourite state of the file'))
+				showError(t('files', 'Unable to change the favourite state of the file'))
 				console.error('Unable to change favourite state', error)
 			}
 			this.starLoading = false

@@ -1,4 +1,5 @@
 import { generateUrl } from '@nextcloud/router';
+import { showSuccess, showError } from "@nextcloud/dialogs";
 
 $(document).ready(function() {
 
@@ -35,11 +36,11 @@ $(document).ready(function() {
                 data: req,
                 async: true
             }).done(function (response) {
-                OC.Notification.showTemporary(t('maps', '{nb} favorites imported from {path}', {nb: response, path: path}));
+                showSuccess(t('maps', '{nb} favorites imported from {path}', {nb: response, path: path}));
             }).always(function (response) {
                 $('#content').css('cursor', 'default');
             }).fail(function() {
-                OC.Notification.showTemporary(t('maps', 'Failed to import favorites'));
+                showError(t('maps', 'Failed to import favorites'));
             });
         }
 
@@ -57,11 +58,11 @@ $(document).ready(function() {
                 data: req,
                 async: true
             }).done(function (response) {
-                OC.Notification.showTemporary(t('maps', '{nb} devices imported from {path}', {nb: response, path: path}));
+                showSuccess(t('maps', '{nb} devices imported from {path}', {nb: response, path: path}));
             }).always(function (response) {
                 $('#content').css('cursor', 'default');
             }).fail(function(response) {
-                OC.Notification.showTemporary(t('maps', 'Failed to import devices') + ': ' + response.responseText);
+                showError(t('maps', 'Failed to import devices') + ': ' + response.responseText);
             });
         }
 

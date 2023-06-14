@@ -9,7 +9,7 @@ OC.L10N.register(
     "Delete share link" : "Dilamet eo bet al liamm lodañ",
     "Copied!" : "Eilet eo !",
     "Cancel" : "Arrest",
-    "Link copied!" : "Liamm eilet !",
+    "Link copied" : "Liamm eilet",
     "Open folder" : "Digor an teuliad",
     "Share" : "Rannan",
     "OK" : "OK",
@@ -39,7 +39,6 @@ OC.L10N.register(
     "min" : "mun",
     "Details" : "Munudoù",
     "Default" : "Dre ziouer",
-    "Link copied" : "Liamm eilet",
     "Cinema" : "Sinema",
     "Dentist" : "Dentour",
     "Settings" : "Arventennoù"

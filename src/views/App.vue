@@ -230,11 +230,10 @@ import AppNavigationTracksItem from '../components/AppNavigationTracksItem'
 import AppNavigationDevicesItem from '../components/AppNavigationDevicesItem'
 import AppNavigationMyMapsItem from '../components/AppNavigationMyMapsItem'
 import optionsController from '../optionsController'
-import { getLetterColor, hslToRgb, Timer, getDeviceInfoFromUserAgent2, isComputer, isPhone } from '../utils'
+import { getLetterColor, hslToRgb, Timer, getDeviceInfoFromUserAgent2, isComputer, isPhone, splitByNonEscapedComma } from '../utils'
 import { binSearch, getToken, isPublic } from '../utils/common'
 import { poiSearchData } from '../utils/poiData'
 import { processGpx } from '../tracksUtils'
-
 import L from 'leaflet'
 import { geoToLatLng, getFormattedADR } from '../utils/mapUtils'
 import * as network from '../network'
@@ -904,6 +903,7 @@ export default {
 			})
 		},
 		getPhotos() {
+			this.showPhotoBackgroundJobInfo()
 			this.photos = []
 			if (!this.photosEnabled) {
 				return
@@ -925,6 +925,31 @@ export default {
 				console.error(error)
 			}).then(() => {
 				this.photosLoading = false
+			})
+		},
+		async showPhotoBackgroundJobInfo() {
+			network.getBackgroundJobStatus().then((response) => {
+				const status = response.data
+				if (status.addJobsRemainingForUser > 0) {
+					showInfo(t(
+						'maps',
+						'A background job added {current} from {total} new photos. This might take a while.',
+						{
+							current: status.recentlyAdded,
+							total: status.recentlyAdded + status.addJobsRemainingForUser,
+						}))
+				}
+				if (status.updateJobsRemainingForUser > 0) {
+					showInfo(t(
+						'maps',
+						'A background job updated {current} from {total} changed photos. This might take a while.',
+						{
+							current: status.recentlyUpdated,
+							total: status.recentlyUpdated + status.updateJobsRemainingForUser,
+						}))
+				}
+			}).catch((error) => {
+				console.error(error)
 			})
 		},
 		placePhotoFilesOrFolder(latlng) {
@@ -1201,21 +1226,14 @@ export default {
 			const lats = toSave.map((i) => { return this.photoSuggestions[i].lat })
 			const lngs = toSave.map((i) => { return this.photoSuggestions[i].lng })
 			network.placePhotos(paths, lats, lngs).then((response) => {
-				if (indices) {
-					// only some elements from sidebar where saved
-					indices.forEach((i) => {
-						this.photos.push(this.photoSuggestions[i])
-						this.photoSuggestions[i] = null
-						this.photoSuggestionsSelectedIndices = this.photoSuggestionsSelectedIndices.filter((e) => {
-							return !indices.includes(e)
-						})
-					})
-				} else {
-					// All elements in sidebar where saved
-					this.getPhotos()
-					this.getPhotoSuggestions()
-					this.photoSuggestionsSelectedIndices = []
-				}
+				toSave.forEach((i) => {
+					this.photos.push(this.photoSuggestions[i])
+					this.photoSuggestionsTracksAndDevices[this.photoSuggestions[i].trackOrDeviceId].length -= 1
+					this.$set(this.photoSuggestions, i, null)
+				})
+				this.photoSuggestionsSelectedIndices = this.photoSuggestionsSelectedIndices.filter((e) => {
+					return !toSave.includes(e)
+				})
 				response.data.length === toSave.length
 					? showSuccess(n('maps', 'Saved location', 'Saved all %n locations', toSave.length))
 					: showInfo(t('maps', 'Saved {r} from {i} locations', { r: response.data.length, i: toSave.length }))
@@ -1297,9 +1315,7 @@ export default {
 			const contactsInGroup = this.contacts.filter((c) => {
 				if (c.GROUPS) {
 					try {
-						const cGroups = c.GROUPS.split(/[^\\],/).map((name) => {
-							return name.replace('\\,', ',')
-						})
+						const cGroups = splitByNonEscapedComma(c.GROUPS)
 						for (let i = 0; i < cGroups.length; i++) {
 							// if at least in one enabled group
 							if (cGroups[i] === group) {
@@ -1380,9 +1396,7 @@ export default {
 				c.groupList = []
 				if (c.GROUPS) {
 					try {
-						const cGroups = c.GROUPS.split(/(?<!\\),/).map((name) => {
-							return name.replace('\\,', ',')
-						})
+						const cGroups = splitByNonEscapedComma(c.GROUPS)
 						if (cGroups.length > 0) {
 							cGroups.forEach((g) => {
 								c.groupList.push(g)

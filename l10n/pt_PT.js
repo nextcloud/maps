@@ -13,7 +13,7 @@ OC.L10N.register(
     "Copied!" : "Copiado!",
     "Copy share link" : "Copie partilhe ligação",
     "Cancel" : "Cancelar",
-    "Link copied!" : "Ligação copiada!",
+    "Link copied" : "Hiperligação copiada",
     "Share" : "Partilhar",
     "Sort by name" : "Order by name",
     "Sort by date" : "Order by date",
@@ -53,7 +53,6 @@ OC.L10N.register(
     "Not grouped" : "Não agrupados",
     "Default" : "Predefinido",
     "Failed to save settings" : "Erro ao gravar as definições",
-    "Link copied" : "Hiperligação copiada",
     "Metadata" : "Metadados",
     "Settings" : "Definições"
 },

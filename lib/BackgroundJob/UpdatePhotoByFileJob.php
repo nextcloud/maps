@@ -15,6 +15,8 @@ namespace OCA\Maps\BackgroundJob;
 use \OCP\BackgroundJob\QueuedJob;
 use \OCP\BackgroundJob\IJobList;
 use \OCP\AppFramework\Utility\ITimeFactory;
+use OCP\ICache;
+use OCP\ICacheFactory;
 use OCP\IUserManager;
 use OCP\IConfig;
 use OCP\Files\IRootFolder;
@@ -25,10 +27,16 @@ use OCA\Maps\Service\PhotofilesService;
 class UpdatePhotoByFileJob extends QueuedJob {
 
 	/** @var PhotofilesService */
-	private $photofilesService;
+	private PhotofilesService $photofilesService;
 
 	/** @var IRootFolder */
-	private $root;
+	private IRootFolder $root;
+
+	/** @var ICacheFactory */
+	private ICacheFactory $cacheFactory;
+
+	/** @var ICache */
+	private ICache $backgroundJobCache;
 
     /**
      * UserInstallScanJob constructor.
@@ -40,10 +48,13 @@ class UpdatePhotoByFileJob extends QueuedJob {
      */
     public function __construct(ITimeFactory $timeFactory,
 								IRootFolder $root,
-                                PhotofilesService $photofilesService) {
+                                PhotofilesService $photofilesService,
+								ICacheFactory $cacheFactory) {
         parent::__construct($timeFactory);
         $this->photofilesService = $photofilesService;
         $this->root = $root;
+		$this->cacheFactory = $cacheFactory;
+		$this->backgroundJobCache = $this->cacheFactory->createDistributed('maps:background-jobs');
     }
 
     public function run($arguments) {
@@ -54,5 +65,8 @@ class UpdatePhotoByFileJob extends QueuedJob {
         }
         $file = array_shift($files);
         $this->photofilesService->updateByFileNow($file);
+
+		$counter = $this->backgroundJobCache->get('recentlyUpdated:'.$arguments['userId']) ?? 0;
+		$this->backgroundJobCache->set('recentlyUpdated:'.$arguments['userId'], (int) $counter + 1, 60 * 60 * 3);
     }
 }

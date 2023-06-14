@@ -5,6 +5,7 @@ OC.L10N.register(
     "Delete" : "Sguab às",
     "Rename" : "Thoir ainm ùr air",
     "Cancel" : "Sguir dheth",
+    "Link copied" : "Chaidh lethbhreac dhen cheangal a dhèanamh",
     "Share" : "Co-roinn",
     "OK" : "Ceart ma-thà",
     "Category" : "Roinn-seòrsa",
@@ -22,7 +23,6 @@ OC.L10N.register(
     "File" : "Faidhle",
     "Details" : "Mion-fhiosrachadh",
     "Default" : "Bunaiteach",
-    "Link copied" : "Chaidh lethbhreac dhen cheangal a dhèanamh",
     "Settings" : "Roghainnean"
 },
 "nplurals=4; plural=(n==1 || n==11) ? 0 : (n==2 || n==12) ? 1 : (n > 2 && n < 20) ? 2 : 3;");

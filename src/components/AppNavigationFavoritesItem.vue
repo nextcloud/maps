@@ -230,8 +230,13 @@ export default {
 		async onShareLinkCopy(category) {
 			try {
 				const url = window.location.origin + generateUrl('/apps/maps/s/favorites/' + category.token)
-				await this.$copyText(url)
-				showSuccess(t('maps', 'Link copied!'))
+				try {
+					await navigator.clipboard.writeText(url)
+					showSuccess(t('maps', 'Link copied'))
+				} catch (error) {
+					console.debug(error)
+					showError(t('maps', 'Link {url} could not be copied to clipboard.', { url }))
+				}
 				this.$set(this.isLinkCopied, category.name, true)
 				setTimeout(() => {
 					this.$delete(this.isLinkCopied, category.name)

@@ -10,7 +10,7 @@ OC.L10N.register(
     "Rename" : "Pārsaukt",
     "Copied!" : "Nokopēts!",
     "Cancel" : "Atcelt",
-    "Link copied!" : "Saite nokopēta!",
+    "Link copied" : "Saite nokopēta",
     "Share" : "Koplietot",
     "Sort by name" : "Kārtot pēc nosaukuma",
     "Sort by date" : "Kārtot pēc datuma",
@@ -48,7 +48,6 @@ OC.L10N.register(
     "Not grouped" : "Negrupēts",
     "Default" : "Noklusējuma",
     "Failed to save settings" : "Neizdevās saglabāt iestatījumus",
-    "Link copied" : "Saite nokopēta",
     "Metadata" : "Metadati",
     "Settings" : "Iestatījumi"
 },

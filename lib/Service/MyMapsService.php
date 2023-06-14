@@ -143,6 +143,12 @@ class MyMapsService {
 		return $MyMap;
 	}
 
+	/**
+	 * @param $userId
+	 * @return array
+	 * @throws NoUserException
+	 * @throws NotPermittedException
+	 */
     public function getAllMyMaps($userId){
 		$userFolder = $this->root->getUserFolder($userId);
 		$MyMaps = [];

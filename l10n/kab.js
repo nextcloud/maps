@@ -7,6 +7,7 @@ OC.L10N.register(
     "Rename" : "Beddel isem",
     "Copied!" : "Yenɣel!",
     "Cancel" : "Sefsex",
+    "Link copied" : "Aseɣwen yettwanɣel",
     "Share" : "Bḍu",
     "OK" : "IH",
     "Comment" : "Commentaire",
@@ -26,7 +27,6 @@ OC.L10N.register(
     "Details" : "Talqayt",
     "Phone" : "Tiliɣri",
     "Default" : "Prédéfini(e)",
-    "Link copied" : "Aseɣwen yettwanɣel",
     "Settings" : "Iɣewwaṛen"
 },
 "nplurals=2; plural=(n != 1);");

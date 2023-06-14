@@ -241,6 +241,6 @@ export default {
 }
 
 ::v-deep .noUi-connect {
-	background-color: var(--color-primary);
+	background-color: var(--color-primary-element);
 }
 </style>

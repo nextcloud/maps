@@ -171,6 +171,7 @@ import { showError, showSuccess } from '@nextcloud/dialogs'
 
 import L from 'leaflet'
 import 'mapbox-gl/dist/mapbox-gl'
+import 'mapbox-gl/dist/mapbox-gl.css'
 import 'mapbox-gl-leaflet/leaflet-mapbox-gl'
 import {
 	baseLayersByName,
@@ -1172,10 +1173,11 @@ export default {
 	max-width: calc(100vw - 45px);
 	margin-top: 0;
 	padding-top: 5px;
-	border-top: 0;
 	background-color: var(--color-main-background);
-	border-top-left-radius: 0;
-	border-top-right-radius: 0;
+	border: 2px solid var(--color-border-dark) !important;
+	border-bottom-left-radius: var(--border-radius-large) !important;
+	border-bottom-right-radius: var(--border-radius-large) !important;
+	border-top: 0 !important;
 
 	.router-container {
 		width: 100%;
@@ -1289,6 +1291,14 @@ export default {
 
 ::v-deep .favoriteClusterMarkerDark {
 	background: url('../../img/star-black.svg') no-repeat 50% 50%;
+}
+
+::v-deep .leaflet-left {
+	margin-left: 52px;
+}
+
+::v-deep .leaflet-control {
+	margin-left: 0px;
 }
 
 ::v-deep .leaflet-control-layers-base span,

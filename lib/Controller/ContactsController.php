@@ -26,6 +26,7 @@ use OCP\Contacts\IManager;
 use OCA\Maps\Service\AddressService;
 use \OCP\DB\QueryBuilder\IQueryBuilder;
 use \OCA\DAV\CardDAV\CardDavBackend;
+use OCP\IURLGenerator;
 use \Sabre\VObject\Property\Text;
 use \Sabre\VObject\Reader;
 
@@ -39,6 +40,7 @@ class ContactsController extends Controller {
 	private $cdBackend;
 	private $avatarManager;
 	private $root;
+	private $urlGenerator;
 
 	/**
 	 * @param $AppName
@@ -52,9 +54,18 @@ class ContactsController extends Controller {
 	 * @param IAvatarManager $avatarManager
 	 * @param IRootFolder $root
 	 */
-	public function __construct($AppName, ILogger $logger, IRequest $request, IDBConnection $dbconnection,
-								IManager $contactsManager, AddressService $addressService,
-		$UserId, CardDavBackend $cdBackend, IAvatarManager $avatarManager, IRootFolder $root){
+	public function __construct(
+								$AppName,
+								ILogger $logger,
+								IRequest $request,
+								IDBConnection $dbconnection,
+								IManager $contactsManager,
+								AddressService $addressService,
+								$UserId,
+								CardDavBackend $cdBackend,
+								IAvatarManager $avatarManager,
+								IRootFolder $root,
+								IURLGenerator $urlGenerator){
 		parent::__construct($AppName, $request);
 		$this->logger = $logger;
 		$this->userId = $UserId;
@@ -65,6 +76,7 @@ class ContactsController extends Controller {
 		$this->qb = $dbconnection->getQueryBuilder();
 		$this->cdBackend = $cdBackend;
 		$this->root = $root;
+		$this->urlGenerator = $urlGenerator;
 	}
 
 	/**
@@ -85,6 +97,9 @@ class ContactsController extends Controller {
 			foreach ($contacts as $c) {
 				$addressBookUri = $addressBooks[$c['addressbook-key']]->getUri();
 				$uid = trim($c['UID']);
+
+				$url = $this->directUrlToContact($uid, $addressBookUri);
+
 				// we don't give users, just contacts
 				if (strcmp($c['URI'], 'Database:' . $c['UID'] . '.vcf') !== 0 and
 					strcmp($uid, $userid) !== 0
@@ -97,6 +112,7 @@ class ContactsController extends Controller {
 								'FN' => $c['FN'] ?? $this->N2FN($c['N']) ?? '???',
 								'URI' => $c['URI'],
 								'UID' => $c['UID'],
+								'URL' => $url,
 								'ADR' => '',
 								'ADRTYPE' => '',
 								'HAS_PHOTO' => (isset($c['PHOTO']) && $c['PHOTO'] !== null),
@@ -114,6 +130,7 @@ class ContactsController extends Controller {
 										'FN' => $c['FN'] ?? $this->N2FN($c['N']) ?? '???',
 										'URI' => $c['URI'],
 										'UID' => $c['UID'],
+										'URL' => $url,
 										'ADR' => '',
 										'ADRTYPE' => '',
 										'HAS_PHOTO' => (isset($c['PHOTO']) && $c['PHOTO'] !== null),
@@ -145,6 +162,7 @@ class ContactsController extends Controller {
 										'FN' => $c['FN'] ?? $this->N2FN($c['N']) ?? '???',
 										'URI' => $c['URI'],
 										'UID' => $c['UID'],
+										'URL' => $url,
 										'ADR' => $adr->getValue(),
 										'ADRTYPE' => $adrtype,
 										'HAS_PHOTO' => (isset($c['PHOTO']) && $c['PHOTO'] !== null),
@@ -209,6 +227,19 @@ class ContactsController extends Controller {
 			}
 			return new DataResponse($result);
 		}
+	}
+
+	/**
+	 * @param $contactUid
+	 * @param $addressBookUri
+	 * @return string
+	 */
+	private function directUrlToContact($contactUid, $addressBookUri) {
+		return $this->urlGenerator->getAbsoluteURL(
+			$this->urlGenerator->linkToRoute('contacts.contacts.direct', [
+				'contact' => $contactUid . '~' . $addressBookUri
+			])
+		);
 	}
 
 	/**

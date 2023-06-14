@@ -93,7 +93,7 @@ export default {
 	}
 
 	.bar-button {
-		margin: 0 0 0 5px;
+		margin: 7px 7px 5px 5px;
 		.icon-routing {
 			margin-right: 2px;
 		}

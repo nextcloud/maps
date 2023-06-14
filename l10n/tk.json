@@ -3,6 +3,7 @@
     "Delete" : "Pozmak",
     "Rename" : "Adyny üýtgetmek",
     "Cancel" : "ýatyrmak",
+    "Link copied" : "Link-yň nusgasy alyndy",
     "Share" : "Paýlaş",
     "OK" : "Bolýar",
     "Close" : "Ýap",
@@ -19,7 +20,6 @@
     "File" : "Faýl",
     "Details" : "Jikme-jiklikler",
     "Default" : "Bellenen",
-    "Link copied" : "Link-yň nusgasy alyndy",
     "Settings" : "Sazlamalar"
 },"pluralForm" :"nplurals=2; plural=(n != 1);"
 }

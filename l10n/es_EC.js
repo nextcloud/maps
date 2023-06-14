@@ -10,7 +10,6 @@ OC.L10N.register(
     "Rename" : "Renombrar",
     "Copied!" : "¡Copiado!",
     "Cancel" : "Cancelar",
-    "Link copied!" : "¡Liga copiada!",
     "Share" : "Compartir",
     "Sort by name" : "Ordenar por nombre",
     "Sort by date" : "Ordenar por fecha",

@@ -10,6 +10,7 @@ OC.L10N.register(
     "Rename" : "Rename",
     "Copied!" : "I kopjuar!",
     "Cancel" : "Anullo",
+    "Link copied" : "Linku u kopjua",
     "Share" : "Shpërndaje",
     "Sort by name" : "Order by name",
     "Sort by date" : "Order by date",
@@ -46,7 +47,6 @@ OC.L10N.register(
     "Phone" : "Telefon",
     "Not grouped" : "I pagrupuar",
     "Default" : "E paracaktuar",
-    "Link copied" : "Linku u kopjua",
     "Settings" : "Rregullimet"
 },
 "nplurals=2; plural=(n != 1);");

@@ -11,6 +11,7 @@ OC.L10N.register(
     "Delete share link" : "Hapus tautan berbagi",
     "Copied!" : "Tersalin!",
     "Cancel" : "Membatalkan",
+    "Link copied" : "Link tersalin",
     "Share" : "Bagikan",
     "Sort by name" : "Urutkan berdasarkan nama",
     "Sort by date" : "Urutkan berdasarkan tanggal",
@@ -43,12 +44,12 @@ OC.L10N.register(
     "Start" : "Mulai",
     "Destination" : "Tujuan",
     "min" : "min",
+    "Nextcloud additional settings" : "Setelan tambahan Nextcloud",
     "Details" : "Detail",
     "Phone" : "Telpon",
     "Not grouped" : "Tidak dikelompokkan",
     "Default" : "Bawaan",
     "Failed to save settings" : "Gagal simpan setelan",
-    "Link copied" : "Link tersalin",
     "Settings" : "Setelan"
 },
 "nplurals=1; plural=0;");

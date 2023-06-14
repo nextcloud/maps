@@ -25,6 +25,7 @@ OC.L10N.register(
     "Rename" : "เปลี่ยนชื่อ",
     "Copied!" : "คัดลอกแล้ว",
     "Cancel" : "ยกเลิก",
+    "Link copied" : "คัดลอกลิงก์แล้ว",
     "Share" : "แชร์",
     "Sort by name" : "เรียงตามชื่อ",
     "Sort by date" : "เรียงตามวันที่",
@@ -62,7 +63,6 @@ OC.L10N.register(
     "Phone" : "โทรศัพท์",
     "Not grouped" : "ไม่ถูกจัดกลุ่ม",
     "Default" : "ค่าเริ่มต้น",
-    "Link copied" : "คัดลอกลิงก์แล้ว",
     "Settings" : "การตั้งค่า"
 },
 "nplurals=1; plural=0;");

@@ -186,4 +186,12 @@ class PhotosController extends Controller {
 		}
 	}
 
+	/**
+	 * @NoAdminRequired
+	 * @return DataResponse
+	 */
+	public function getBackgroundJobStatus(): DataResponse {
+		return new DataResponse($this->photofilesService->getBackgroundJobStatus($this->userId));
+	}
+
 }

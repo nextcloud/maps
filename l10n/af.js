@@ -10,6 +10,7 @@ OC.L10N.register(
     "Rename" : "Hernoem",
     "Copied!" : "Gekopieer!",
     "Cancel" : "Kanselleer",
+    "Link copied" : "Skakel gekopieer",
     "Share" : "Deel",
     "OK" : "Goed",
     "Category" : "Kategorie",
@@ -46,7 +47,6 @@ OC.L10N.register(
     "Phone" : "Foon",
     "Not grouped" : "Nie gegroepeer",
     "Default" : "Verstek",
-    "Link copied" : "Skakel gekopieer",
     "Settings" : "Instellings"
 },
 "nplurals=2; plural=(n != 1);");

@@ -28,6 +28,7 @@ OC.L10N.register(
     "Select all" : "تحديد الكل",
     "Save" : "Save",
     "Quit" : "خروج",
+    "Load more" : "حمّل أكثر",
     "Tracks" : "المسارات",
     "Devices" : "الأجهزة",
     "Tags" : "الوسوم",

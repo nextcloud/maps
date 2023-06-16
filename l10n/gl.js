@@ -237,12 +237,12 @@ OC.L10N.register(
     "GraphHopper settings" : "Axustes GraphHopper",
     "A GraphHopper server URL looks like this : https://my.graphhopper.server.org:8989/route" : "Un URL do servidor GraphHopper ten este aspecto : https://my.graphhopper.server.org:8989/route",
     "GraphHopper server URL (will use main graphhopper server if empty)" : "URL do servidor GraphHopper (empregará o servidor principal Graphhopper se está baleiro)",
-    "GraphHopper API key (mandatory if main server used)" : "Clave API GraphHopper (obrigatorio se se emprega o servidor principal)",
+    "GraphHopper API key (mandatory if main server used)" : "Chave API GraphHopper (obrigatorio se se emprega o servidor principal)",
     "Mapbox Website" : "Sitio web de Mapbox",
     "Mapbox settings" : "Axustes do Mapbox",
-    "Set the API key to use Mapbox routing service." : "Estabeleza a clave API para usar o servizo de cálculo de rutas de Mapbox.",
+    "Set the API key to use Mapbox routing service." : "Estabeleza a chave API para usar o servizo de cálculo de rutas de Mapbox.",
     "Leave empty to disable." : "Deixar baleiro para desactivar.",
-    "Mapbox API key" : "Clave da API do Mapbox",
+    "Mapbox API key" : "Chave da API do Mapbox",
     "Settings" : "Axustes"
 },
 "nplurals=2; plural=(n != 1);");

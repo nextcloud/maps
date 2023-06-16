@@ -1,6 +1,6 @@
 {
     "require": {
-        "lsolesen/pel": "^0.9.11",
+        "lsolesen/pel": "^0.9.12",
         "bogdaan/open-location-code": "dev-master"
     },
     "require-dev": {

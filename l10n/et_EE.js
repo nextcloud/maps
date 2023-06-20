@@ -37,6 +37,7 @@ OC.L10N.register(
     "Date" : "Kuupäev",
     "Update" : "Uuenda",
     "Yes" : "Jah",
+    "Open" : "Ava",
     "Closed" : "Suletud",
     "Search" : "Otsi",
     "File" : "Fail",

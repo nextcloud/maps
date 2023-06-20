@@ -181,7 +181,7 @@ OC.L10N.register(
     "Address type" : "地址类型",
     "Add address to contact" : "为联系人添加地址",
     "Open" : "打开",
-    "closes in {nb} minutes" : "{nb} 分钟后关闭",
+    "closes in {nb} minutes" : "{nb}分钟后关闭",
     "until {date}" : "至 {date}",
     "Closed" : "已关闭",
     "opens at {date}" : "于 {date} 打开",

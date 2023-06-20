@@ -1,7 +1,7 @@
 OC.L10N.register(
     "maps",
     {
-    "File not found" : "Arquivo non atopado",
+    "File not found" : "Ficheiro non atopado",
     "Personal" : "Persoal",
     "Maps" : "Mapas",
     "🌍🌏🌎 The whole world fits inside your cloud!" : "🌍🌏🌎 O mundo cabe dentro da súa nube!",
@@ -185,7 +185,7 @@ OC.L10N.register(
     "Devices exported in {path}" : "Dispositivos exportados en {path}",
     "Failed to export devices" : "Produciuse un fallo ao exportar os dispositivos",
     "Failed to delete device" : "Produciuse un fallo ao eliminar o dispositivo",
-    "Import devices from gpx (Nextcloud Maps) or kml/kmz (Google Timeline) file" : "Importar dispositivos dende gpx (Mapas do Nextcloud) ou ficheiros kml/kmz (Google Timeline)",
+    "Import devices from gpx (Nextcloud Maps) or kml/kmz (Google Timeline) file" : "Importar dispositivos dende gpx (Mapas de Nextcloud) ou ficheiros kml/kmz (Google Timeline)",
     "{nb} devices imported from {path}" : "{nb} dispositivos importados dende {path}",
     "Failed to import devices" : "Produciuse un fallo ao importar os dispositivos",
     "Default" : "Predeterminado",

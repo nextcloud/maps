@@ -196,7 +196,7 @@ OC.L10N.register(
     "View in Maps" : "Ver en Mapas",
     "Import as favorites in Maps" : "Importar como favoritos en Mapas",
     "Import as devices in Maps" : "Importar como dispositivos en Mapas",
-    "Media scan was not done yet. Wait a few minutes/hours and reload this page to see your photos/tracks." : "Aínda non se fixo o escaneamento multimedia. Agarde uns minutos/horas e volva cargar esta páxina para ver as súas fotos/pistas.",
+    "Media scan was not done yet. Wait a few minutes/hours and reload this page to see your photos/tracks." : "Aínda non se fixo o escaneamento de medios. Agarde uns minutos/horas e volva cargar esta páxina para ver as súas fotos/pistas.",
     "Failed to get favorites" : "Produciuse un fallo ao obter os favoritos",
     "Failed to create favorite" : "Produciuse un fallo ao crear o favorito",
     "Failed to update favorite" : "Produciuse un fallo ao actualizar o favorito",

@@ -177,6 +177,10 @@ class PublicUtilsController extends PublicPageController {
 		$share = $this->getShare();
 		$permissions = $share->getPermissions();
 		$folder = $this->getShareNode();
+		$isReadable = ($permissions & (1 << 0)) && $folder->isReadable();
+		if (!$isReadable) {
+			throw new NotPermittedException();
+		}
 		$isCreatable = ($permissions & (1 << 2)) && $folder->isCreatable();
 		try {
 			$file=$folder->get(".index.maps");
@@ -190,7 +194,7 @@ class PublicUtilsController extends PublicPageController {
 		$ov = json_decode($file->getContent(),true, 512);
 
 		// Maps content can be read mostly from the folder
-		$ov['isReadable'] = ($permissions & (1 << 0)) && $folder->isReadable();
+		$ov['isReadable'] = $isReadable;
 		//Saving maps information in the file
 		$ov['isUpdateable'] = ($permissions & (1 << 1)) && $file->isUpdateable();
 		$ov['isCreatable'] = ($permissions & (1 << 2)) && $folder->isCreatable();

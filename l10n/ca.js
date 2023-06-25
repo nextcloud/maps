@@ -101,7 +101,7 @@ OC.L10N.register(
     "Address type" : "Tipus d'adreça",
     "Add address to contact" : "Afegeix una adreça al contacte",
     "Open" : "Obert",
-    "closes in {nb} minutes" : "tanca d'aquí {nb} minuts",
+    "closes in {nb} minutes" : "tanca d'aquí a {nb} minuts",
     "until {date}" : "fins {date}",
     "Closed" : "Tancat",
     "opens at {date}" : "obre el {date}",

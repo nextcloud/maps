@@ -1,7 +1,7 @@
 OC.L10N.register(
     "maps",
     {
-    "File not found" : "Arquivo non atopado",
+    "File not found" : "Ficheiro non atopado",
     "Personal" : "Persoal",
     "Maps" : "Mapas",
     "🌍🌏🌎 The whole world fits inside your cloud!" : "🌍🌏🌎 O mundo cabe dentro da súa nube!",
@@ -185,7 +185,7 @@ OC.L10N.register(
     "Devices exported in {path}" : "Dispositivos exportados en {path}",
     "Failed to export devices" : "Produciuse un fallo ao exportar os dispositivos",
     "Failed to delete device" : "Produciuse un fallo ao eliminar o dispositivo",
-    "Import devices from gpx (Nextcloud Maps) or kml/kmz (Google Timeline) file" : "Importar dispositivos dende gpx (Mapas do Nextcloud) ou ficheiros kml/kmz (Google Timeline)",
+    "Import devices from gpx (Nextcloud Maps) or kml/kmz (Google Timeline) file" : "Importar dispositivos dende gpx (Mapas de Nextcloud) ou ficheiros kml/kmz (Google Timeline)",
     "{nb} devices imported from {path}" : "{nb} dispositivos importados dende {path}",
     "Failed to import devices" : "Produciuse un fallo ao importar os dispositivos",
     "Default" : "Predeterminado",
@@ -196,7 +196,7 @@ OC.L10N.register(
     "View in Maps" : "Ver en Mapas",
     "Import as favorites in Maps" : "Importar como favoritos en Mapas",
     "Import as devices in Maps" : "Importar como dispositivos en Mapas",
-    "Media scan was not done yet. Wait a few minutes/hours and reload this page to see your photos/tracks." : "Aínda non se fixo o escaneamento multimedia. Agarde uns minutos/horas e volva cargar esta páxina para ver as súas fotos/pistas.",
+    "Media scan was not done yet. Wait a few minutes/hours and reload this page to see your photos/tracks." : "Aínda non se fixo o escaneamento de medios. Agarde uns minutos/horas e volva cargar esta páxina para ver as súas fotos/pistas.",
     "Failed to get favorites" : "Produciuse un fallo ao obter os favoritos",
     "Failed to create favorite" : "Produciuse un fallo ao crear o favorito",
     "Failed to update favorite" : "Produciuse un fallo ao actualizar o favorito",

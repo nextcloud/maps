@@ -561,6 +561,12 @@ tr.selected td {
 .tooltip-contact-address-type {
     color: var(--color-text-maxcontrast);
 }
+span.tooltip-contact-address-type{
+    background-color: var(--color-background-dark);
+    padding: 0.1em 0.3em;
+    border-radius: 0.5em;
+    margin-right: 0.3em !important;
+}
 .contactPopup .deleteContactAddress {
     display: inline-block;
     cursor: pointer;

@@ -15,13 +15,21 @@
 				<h3 class="tooltip-contact-name">
 					{{ contact.FN }}
 				</h3>
-				<p v-if=" contact.ADRTYPE.toLowerCase() === 'home'"
-					class="tooltip-contact-address-type">
-					{{ t('maps', 'Home') }}
-				</p>
-				<p v-else-if=" contact.ADRTYPE.toLowerCase() === 'work'"
-					class="tooltip-contact-address-type">
-					{{ t('maps', 'Work') }}
+				<p class="tooltip-contact-address-type">
+                    <template v-for="adrtype in contact.ADRTYPE">
+    				    <span v-if=" adrtype.toLowerCase() === 'home'"
+                                class="tooltip-contact-address-type">
+	    		    		{{ t('maps', 'Home') }}
+    		    		</span>
+    	    			<span v-else-if=" adrtype.toLowerCase() === 'work'"
+                                class="tooltip-contact-address-type">
+        					{{ t('maps', 'Work') }}
+                        </span>
+    	    			<span v-else
+                                class="tooltip-contact-address-type">
+        					{{ t('maps', adrtype.toLowerCase()) }}
+                        </span>
+                    </template>
 				</p>
 				<p v-for="l in formattedAddressLines"
 					:key="l"
@@ -51,14 +59,22 @@
 					<h3 class="tooltip-contact-name">
 						{{ contact.FN }}
 					</h3>
-					<p v-if=" contact.ADRTYPE.toLowerCase() === 'home'"
-						class="tooltip-contact-address-type">
-						{{ t('maps', 'Home') }}
-					</p>
-					<p v-else-if=" contact.ADRTYPE.toLowerCase() === 'work'"
-						class="tooltip-contact-address-type">
-						{{ t('maps', 'Work') }}
-					</p>
+				    <p class="tooltip-contact-address-type">
+                        <template v-for="adrtype in contact.ADRTYPE">
+    				        <span v-if=" adrtype.toLowerCase() === 'home'"
+                                    class="tooltip-contact-address-type">
+    	    		    		{{ t('maps', 'Home') }}
+        		    		</span>
+        	    			<span v-else-if=" adrtype.toLowerCase() === 'work'"
+                                    class="tooltip-contact-address-type">
+            					{{ t('maps', 'Work') }}
+                            </span>
+        	    			<span v-else
+                                    class="tooltip-contact-address-type">
+            					{{ t('maps', adrtype.toLowerCase()) }}
+                            </span>
+                        </template>
+    				</p>
 					<p v-for="l in formattedAddressLines"
 						:key="l"
 						class="tooltip-contact-address">

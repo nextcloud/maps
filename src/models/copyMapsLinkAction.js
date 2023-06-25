@@ -40,7 +40,7 @@ export default class CopyMapsLinkAction {
 	data({ share, fileInfo }) {
 		this._share = share
 		return {
-			is: NcActionButton,
+			is: share.hasReadPermission ? NcActionButton : null,
 			ariaLabel: t('maps', 'Copy link to map'),
 			icon: 'icon-clippy',
 			title: t('maps', 'Copy link to map'),

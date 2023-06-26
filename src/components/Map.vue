@@ -1294,7 +1294,7 @@ export default {
 }
 
 ::v-deep .leaflet-left {
-	margin-left: 52px;
+	margin-left: 0px;
 }
 
 ::v-deep .leaflet-control {

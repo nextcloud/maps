@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Nextcloud 3.14159\n"
 "Report-Msgid-Bugs-To: translations\\@example.com\n"
-"POT-Creation-Date: 2023-06-25 01:15+0000\n"
+"POT-Creation-Date: 2023-06-26 01:17+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -213,7 +213,7 @@ msgstr ""
 
 #. TRANSLATORS src/components/AppNavigationContactsItem.vue:31
 #. TRANSLATORS src/components/AppNavigationTrackItem.vue:61
-#. TRANSLATORS src/components/map/ContactLayer.vue:46
+#. TRANSLATORS src/components/map/ContactLayer.vue:54
 #. TRANSLATORS src/components/map/FavoriteMarker.vue:35
 #. TRANSLATORS src/components/map/PhotosLayer.vue:40
 #. TRANSLATORS src/components/map/TrackLayer.vue:18
@@ -908,7 +908,7 @@ msgstr ""
 msgid "Add contact address"
 msgstr ""
 
-#. TRANSLATORS src/components/map/ContactLayer.vue:20
+#. TRANSLATORS src/components/map/ContactLayer.vue:22
 #. TRANSLATORS src/components/map/PlaceContactPopup.vue:54
 #: /app/specialVueFakeDummyForL10nScript.js:306
 #: /app/specialVueFakeDummyForL10nScript.js:314
@@ -916,7 +916,7 @@ msgstr ""
 msgid "Home"
 msgstr ""
 
-#. TRANSLATORS src/components/map/ContactLayer.vue:24
+#. TRANSLATORS src/components/map/ContactLayer.vue:26
 #. TRANSLATORS src/components/map/PlaceContactPopup.vue:57
 #: /app/specialVueFakeDummyForL10nScript.js:308
 #: /app/specialVueFakeDummyForL10nScript.js:316
@@ -924,7 +924,7 @@ msgstr ""
 msgid "Work"
 msgstr ""
 
-#. TRANSLATORS src/components/map/ContactLayer.vue:42
+#. TRANSLATORS src/components/map/ContactLayer.vue:50
 #: /app/specialVueFakeDummyForL10nScript.js:310
 #: /app/specialVueFakeDummyForL10nScript.js:320
 msgid "Delete this address"
@@ -935,7 +935,7 @@ msgstr ""
 msgid "Delete this location"
 msgstr ""
 
-#. TRANSLATORS src/components/map/ContactLayer.vue:70
+#. TRANSLATORS src/components/map/ContactLayer.vue:86
 #: /app/specialVueFakeDummyForL10nScript.js:318
 msgid "Open in Contacts"
 msgstr ""

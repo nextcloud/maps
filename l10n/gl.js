@@ -134,7 +134,7 @@ OC.L10N.register(
     "Waypoint reached" : "Acadouse o punto de referencia",
     "Take the {exitStr} exit in the roundabout" : "Na rotonda, tome a {exitStr} saída",
     " onto {road}" : "en {road}",
-    "Destination reached" : "Destino rexeitado",
+    "Destination reached" : "Destino acadado",
     "At the fork, turn {modifier}" : "Na bifurcación, xire á {modifier}",
     "Merge {modifier}" : "Fusionar {modifier}",
     "Turn {modifier} on the ramp" : "Xire á {modifier} na rampla",

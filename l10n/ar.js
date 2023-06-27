@@ -5,6 +5,7 @@ OC.L10N.register(
     "File not found" : "تعذر العثور على الملف",
     "Personal" : "شخصي",
     "Maps" : "الخرائط",
+    "Change color" : "غيّر اللون",
     "Export" : "تصدير",
     "Delete" : "حذف ",
     "Delete all" : "مسح الكل",

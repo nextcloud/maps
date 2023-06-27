@@ -1,5 +1,5 @@
 <template>
-	<LControl class="maps-routing-control" position="topleft">
+	<LControl class="maps-routing-control leaflet-control" :class="{'mobile': isMobile, 'desktop':!isMobile}" position="topleft">
 		<div class="routing-header">
 			<span class="icon icon-routing" />
 			<span class="title">
@@ -32,6 +32,7 @@
 
 <script>
 import { LControl } from 'vue2-leaflet'
+import { isMobile } from '@nextcloud/vue'
 
 import RoutingSteps from './RoutingSteps'
 import RoutingMachine from './RoutingMachine'
@@ -51,6 +52,8 @@ export default {
 		RoutingMachine,
 		LControl,
 	},
+
+	mixins: [isMobile],
 
 	props: {
 		map: {
@@ -120,14 +123,28 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.maps-routing-control {
-	z-index: 99999999 !important;
-	background-color: var(--color-main-background);
+.desktop {
 	width: 350px;
+	margin-left: 52px !important;
+	background-color: var(--color-main-background);
 	padding: 5px;
 	border: 2px solid var(--color-border-dark);
 	border-radius: var(--border-radius-large) var(--border-radius-large) 0 0;
 	border-bottom: 0;
+}
+.mobile {
+	width: 100vw;
+	background: var(--color-main-background);
+	padding-left: 52px;
+	padding-right: 52px;
+	padding-top: 10px;
+	padding-bottom: 7px;
+	margin-top: 0px !important;
+}
+
+.maps-routing-control {
+	z-index: 99999999 !important;
+
 
 	.routing-header {
 		display: flex;

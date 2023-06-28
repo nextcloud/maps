@@ -1167,65 +1167,6 @@ export default {
 	border: 0 !important;
 }
 
-// routing machine
-::v-deep .leaflet-routing-container {
-	width: 350px;
-	max-width: calc(100vw - 45px);
-	margin-top: 0;
-	padding-top: 5px;
-	background-color: var(--color-main-background);
-	border: 2px solid var(--color-border-dark) !important;
-	border-bottom-left-radius: var(--border-radius-large) !important;
-	border-bottom-right-radius: var(--border-radius-large) !important;
-	border-top: 0 !important;
-
-	.router-container {
-		width: 100%;
-		display: flex;
-		#router-select {
-			flex-grow: 1;
-			text-overflow: ellipsis;
-			margin: 0 5px 5px 5px;
-		}
-	}
-
-	// we don't need this
-	.leaflet-routing-geocoders {
-		display: none;
-	}
-	.leaflet-routing-alternatives-container:not(:empty) {
-		border-top: 1px solid var(--color-border);
-	}
-
-	// instruction table
-	.leaflet-routing-alt {
-		table {
-			white-space: normal;
-			width: 100%;
-
-			.leaflet-routing-instruction-distance {
-				width: 1px;
-			}
-
-			td:nth-child(2),
-			td:nth-child(3) {
-				display: block;
-			}
-
-			td:nth-child(3) {
-				color: var(--color-text-light);
-			}
-
-			tr:nth-child(odd) {
-				background-color: var(--color-background-dark);
-			}
-			tr:hover {
-				background-color: var(--color-background-darker);
-			}
-		}
-	}
-}
-
 ::v-deep .icon-routing {
 	background-color: var(--color-main-text);
 	padding: 0 !important;
@@ -1294,7 +1235,7 @@ export default {
 }
 
 ::v-deep .leaflet-left {
-	margin-left: 52px;
+	margin-left: 0px;
 }
 
 ::v-deep .leaflet-control {

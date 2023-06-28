@@ -1,5 +1,5 @@
 <template>
-	<LControl class="maps-search-control" position="topleft">
+	<LControl position="topleft" class="maps-search-control leaflet-control" :class="{'mobile':isMobile, 'desktop': !isMobile}">
 		<div id="search">
 			<SearchField
 				class="search-field"
@@ -25,6 +25,7 @@
 <script>
 import { getLocale } from '@nextcloud/l10n'
 import { LControl } from 'vue2-leaflet'
+import { isMobile } from '@nextcloud/vue'
 
 import SearchField from './SearchField.vue'
 
@@ -35,6 +36,8 @@ export default {
 		LControl,
 		SearchField,
 	},
+
+	mixins: [isMobile],
 
 	props: {
 		map: {
@@ -73,10 +76,21 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.desktop {
+	width: 350px;
+	margin-left: 52px !important;
+}
+.mobile {
+	width: 100vw;
+	background: var(--color-main-background);
+	padding-left: 52px;
+	padding-right: 52px;
+	padding-top: 10px;
+	padding-bottom: 7px;
+	margin-top: 0px !important;
+}
 .maps-search-control {
 	z-index: 99999999 !important;
-	width: 350px;
-
 	#search {
 		display: flex;
 		> button {
@@ -88,12 +102,15 @@ export default {
 		}
 		.multiselect {
 			flex-grow: 1;
+			min-width: 100px;
 			background: transparent;
 		}
 	}
 
 	.bar-button {
-		margin: 7px 7px 5px 5px;
+		margin: 5px;
+		padding: 0px 0px 2px;
+
 		.icon-routing {
 			margin-right: 2px;
 		}

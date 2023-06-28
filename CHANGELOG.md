@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Added
 - Add an option to deduplicate same address for a contact [#1013](https://github.com/nextcloud/maps/issues/1013) @vincowl
   [#1024](https://github.com/nextcloud/maps/pull/1024) @vincowl
+- Mobile improvements [#1068](https://github.com/nextcloud/maps/issues/1068) @ant0nwax [#1082](https://github.com/nextcloud/maps/pull/1082) @tracruc
 
 ### Fixed
 - update maximum PHP version [#1061](https://github.com/nextcloud/maps/issues/1061) @t-lo

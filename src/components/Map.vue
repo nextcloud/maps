@@ -453,22 +453,22 @@ export default {
 			const cmi = [
 				{
 					text: t('maps', 'Add a favorite'),
-					icon: generateUrl('/svg/core/actions/starred?color=' + iconColor),
+					iconCls: 'icon-favorite',
 					callback: this.contextAddFavorite,
 				},
 				{
 					text: t('maps', 'Place photos'),
-					icon: generateUrl('/svg/core/places/picture?color=' + iconColor),
+					iconCls: 'icon-category-multimedia',
 					callback: this.contextPlacePhotos,
 				},
 				{
 					text: t('maps', 'Place contact'),
-					icon: generateUrl('/svg/core/actions/user?color=' + iconColor),
+					iconCls: 'icon-group',
 					callback: this.placeContactClicked,
 				},
 				{
 					text: t('maps', 'Share this location'),
-					icon: generateUrl('/svg/core/actions/share?color=' + iconColor),
+					iconCls: 'icon-address',
 					callback: this.contextShareLocation,
 				},
 			]
@@ -518,7 +518,7 @@ export default {
 					'-',
 					{
 						text: t('maps', 'Route from here'),
-						icon: generateUrl('/svg/core/filetypes/location?color=00cc00'),
+						iconCls: 'icon-address',
 						callback: (e) => {
 							if (!this.showRouting) {
 								this.showRouting = true
@@ -527,7 +527,7 @@ export default {
 						},
 					}, {
 						text: t('maps', 'Add route point'),
-						icon: generateUrl('/svg/core/filetypes/location?color=0000cc'),
+						iconCls: 'icon-add',
 						callback: (e) => {
 							if (!this.showRouting) {
 								this.showRouting = true
@@ -536,7 +536,7 @@ export default {
 						},
 					}, {
 						text: t('maps', 'Route to here'),
-						icon: generateUrl('/svg/core/filetypes/location?color=cc0000'),
+						iconCls: 'icon-address',
 						callback: (e) => {
 							if (!this.showRouting) {
 								this.showRouting = true
@@ -1117,6 +1117,7 @@ export default {
 ::v-deep .leaflet-contextmenu-item {
 	line-height: 30px !important;
 	color: var(--color-text-lighter) !important;
+	cursor: pointer !important;
 }
 
 ::v-deep .leaflet-contextmenu-item:hover {
@@ -1125,7 +1126,7 @@ export default {
 	border-color: var(--color-border) !important;
 }
 
-::v-deep .leaflet-contextmenu-item img {
+::v-deep .leaflet-contextmenu-icon {
 	margin: 7px 8px 0 0 !important;
 }
 

@@ -1130,6 +1130,10 @@ export default {
 	margin: 7px 8px 0 0 !important;
 }
 
+::v-deep .leaflet-contextmenu-separator {
+	border-color: var(--color-border) !important;
+}
+
 ::v-deep .leaflet-marker-photo,
 ::v-deep .leaflet-marker-contact {
 	width: 40px !important;

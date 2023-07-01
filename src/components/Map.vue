@@ -1242,13 +1242,44 @@ export default {
 	margin-left: 0px;
 }
 
-::v-deep .leaflet-control-layers-base span,
-::v-deep .leaflet-control-layers-overlays span {
+::v-deep .leaflet-control-layers-expanded {
+	padding: 4px 0px !important;
+}
+
+::v-deep .leaflet-control-layers-base span:nth-child(1),
+::v-deep .leaflet-control-layers-overlays span:nth-child(1) {
+	display: block;
+	height: 38px;
+	padding: 4px 10px;
+	border-top: 1px solid transparent;
+	border-bottom: 1px solid transparent;
+	color: var(--color-text-lighter) !important;
+	cursor: pointer !important;
+}
+
+::v-deep .leaflet-control-layers-base span:hover,
+::v-deep .leaflet-control-layers-overlays span:hover {
+	color: var(--color-main-text) !important;
+	background-color: var(--color-background-hover) !important;
+	border-color: var(--color-border) !important;
+}
+
+::v-deep .leaflet-control-layers-base span:nth-child(2),
+::v-deep .leaflet-control-layers-overlays span:nth-child(2) {
+	display: inline-block;
+	vertical-align: top;
+	line-height: 30px;
+	margin: 0px 10px;
 	cursor: pointer !important;
 }
 
 ::v-deep .leaflet-control-layers-selector {
-	min-height: 0;
-	cursor: pointer !important;
+	display: inline-block;
+	height: 30px;
+	margin: 0px;
+}
+
+::v-deep .leaflet-control-layers-separator {
+	border-color: var(--color-border) !important;
 }
 </style>

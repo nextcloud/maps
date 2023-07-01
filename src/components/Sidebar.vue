@@ -9,11 +9,15 @@
 		@closing="handleClosing"
 		@closed="handleClosed"
 		@close="$emit('close')">
+		<template v-slot:header>
+			<span :class="['header-icon icon', icon]" v-if="icon"></span>
+		</template>
 		<FavoriteSidebarTab v-if="activeTab === 'favorite'"
 			:favorite="favorite"
 			:categories="favoriteCategories"
 			@edit="$emit('edit-favorite', $event)"
-			@delete="$emit('delete-favorite', $event)" />
+			@delete="$emit('delete-favorite', $event)"
+			@close="$emit('close')" />
 		<PhotoSuggestionsSidebarTab v-if="activeTab === 'photo-suggestion' && !fileInfo"
 			:photo-suggestions="photoSuggestions"
 			:photo-suggestions-tracks-and-devices="photoSuggestionsTracksAndDevices"
@@ -167,6 +171,7 @@ export default {
 			isFullScreen: false,
 			typeOpened: '',
 			title: null,
+			icon: null,
 		}
 	},
 
@@ -250,33 +255,17 @@ export default {
 		},
 
 		/**
-		 * File background/figure to illustrate the sidebar header
-		 *
-		 * @return {string}
-		 */
-		background() {
-			const iconColor = OCA.Accessibility?.theme === 'dark' ? 'ffffff' : '000000'
-			if (this.typeOpened === 'track') {
-				return generateFilePath('maps', 'img', 'road.svg')
-			}
-			if (this.typeOpened === 'maps') {
-				return generateFilePath('maps', 'img', 'maps.png')
-			}
-			return this.getPreviewIfAny(this.fileInfo)
-		},
-
-		/**
 		 * App sidebar v-binding object
 		 *
 		 * @return {object}
 		 */
 		appSidebar() {
+			this.icon = null // Reset header icon
 			if (this.fileInfo) {
 				return {
 					'data-mimetype': this.fileInfo.mimetype,
 					'star-loading': this.starLoading,
 					active: this.activeTab,
-					background: this.background,
 					class: {
 						'app-sidebar--has-preview': this.fileInfo.hasPreview && !this.isFullScreen,
 						'app-sidebar--full': this.isFullScreen,
@@ -299,15 +288,14 @@ export default {
 				// no fileInfo yet, showing empty data
 				return {
 					loading: this.loading,
-					subtitle: t('maps', 'Shows cool information'),
-					title: t('maps', 'Sidebar'),
+					subtitle: '',
+					title: '',
 				}
 			} else if (this.activeTab === 'favorite') {
-				const iconColor = OCA.Accessibility?.theme === 'dark' ? 'ffffff' : '000000'
+				this.icon = 'icon-favorite'
 				return {
 					title: t('maps', 'Favorite'),
 					compact: true,
-					background: generateUrl('/svg/core/actions/star?color=' + iconColor),
 					subtitle: '',
 					active: this.activeTab,
 					class: {
@@ -316,11 +304,10 @@ export default {
 					},
 				}
 			} else if (this.activeTab === 'photo-suggestion') {
-				const iconColor = OCA.Accessibility?.theme === 'dark' ? 'ffffff' : '000000'
+				this.icon = 'icon-picture'
 				return {
 					title: t('maps', 'Photo suggestions'),
 					compact: true,
-					background: generateUrl('/apps/theming/img/core/filetypes/image.svg?color=' + iconColor),
 					subtitle: '',
 					active: this.activeTab,
 					class: {
@@ -329,11 +316,9 @@ export default {
 					},
 				}
 			} else if (this.activeTab === 'maps-track-metadata') {
-				const iconColor = OCA.Accessibility?.theme === 'dark' ? 'ffffff' : '000000'
 				return {
 					title: t('maps', 'Track metadata'),
 					compact: true,
-					background: this.background,
 					subtitle: '',
 					active: this.activeTab,
 					class: {
@@ -344,8 +329,8 @@ export default {
 			} else {
 				return {
 					loading: false,
-					subtitle: t('maps', 'Shows cool information'),
-					title: t('maps', 'Sidebar'),
+					subtitle: '',
+					title: '',
 				}
 			}
 		},
@@ -380,53 +365,6 @@ export default {
 			return OCA && 'SystemTags' in OCA
 		},
 	},
-
-	/*
-	sidebarTitle() {
-			if (this.activeTab === 'track') {
-				return t('maps', 'Track')
-			} else if (this.activeTab === 'favorite') {
-				return t('maps', 'Favorite')
-			} else if (this.activeTab === 'photo') {
-				return this.photo.basename
-			} else if (this.activeTab === 'photo-suggestion') {
-				return t('maps', 'Photo location suggestions')
-			} else if (this.activeTab === 'myMaps') {
-				return this.myMap.name
-			}
-			return t('maps', 'Sidebar')
-		},
-		sidebarSubtitle() {
-			if (this.activeTab === 'track') {
-				return ''
-			} else if (this.activeTab === 'favorite') {
-				return ''
-			} else if (this.activeTab === 'photo') {
-				return this.photo.filename
-			} else if (this.activeTab === 'photo-suggestion') {
-				return ''
-			} else if (this.activeTab === 'myMaps') {
-				return this.myMap.path ?? ''
-			}
-			return t('maps', 'Shows cool information')
-		},
-		backgroundImageUrl() {
-			const iconColor = OCA.Accessibility?.theme === 'dark' ? 'ffffff' : '000000'
-			if (this.activeTab === 'track') {
-				return generateUrl('/svg/maps/road?color=' + iconColor)
-			} else if (this.activeTab === 'favorite') {
-				return generateUrl('/svg/core/actions/star?color=' + iconColor)
-			} else if (this.activeTab === 'photo') {
-				return this.previewUrl()
-			} else if (this.activeTab === 'photo-suggestion') {
-				return generateUrl('/apps/theming/img/core/filetypes') + '/image.svg?v=2'
-			} else if (this.activeTab === 'myMaps') {
-				return generateFilePath('maps', 'img', 'maps.png')
-			}
-			return ''
-		},
-	}, */
-
 	watch: {
 	},
 	methods: {
@@ -697,5 +635,12 @@ export default {
 			fill: currentColor;
 		}
 	}
+}
+
+.header-icon {
+	display: block;
+	width: 70px;
+	height: 60px;
+	background-size: 40px 40px;
 }
 </style>

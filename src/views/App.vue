@@ -169,13 +169,6 @@
 					@redo="redoAction"
 					@slider-range-changed="sliderStart = $event.start; sliderEnd = $event.end" />
 			</div>
-			<NcActions
-				class="content-buttons"
-				:title="t('maps', 'Details')">
-				<NcActionButton
-					icon="icon-menu-sidebar"
-					@click="onMainDetailClicked" />
-			</NcActions>
 		</NcAppContent>
 		<Sidebar
 			v-if="true"

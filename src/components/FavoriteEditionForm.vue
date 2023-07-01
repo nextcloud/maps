@@ -188,6 +188,7 @@ export default {
 		},
 		onDeleteClick() {
 			this.$emit('delete', this.favorite.id)
+			this.$emit('close')
 		},
 	},
 }

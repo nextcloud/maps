@@ -6,7 +6,8 @@
 			:favorite="favorite"
 			:categories="categories"
 			@edit="$emit('edit', $event)"
-			@delete="$emit('delete', $event)" />
+			@delete="$emit('delete', $event)" 
+			@close="$emit('close')" />
 	</div>
 </template>
 

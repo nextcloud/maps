@@ -16,8 +16,7 @@
 			:favorite="favorite"
 			:categories="favoriteCategories"
 			@edit="$emit('edit-favorite', $event)"
-			@delete="$emit('delete-favorite', $event)"
-			@close="$emit('close')" />
+			@delete="$emit('delete-favorite', $event)" />
 		<PhotoSuggestionsSidebarTab v-if="activeTab === 'photo-suggestion' && !fileInfo"
 			:photo-suggestions="photoSuggestions"
 			:photo-suggestions-tracks-and-devices="photoSuggestionsTracksAndDevices"

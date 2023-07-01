@@ -1625,6 +1625,7 @@ export default {
 				this.favorites[f.id].lat = f.lat
 				this.favorites[f.id].lng = f.lng
 				this.lastUsedFavoriteCategory = f.category
+				showSuccess(t('maps', 'Favorite {name} was saved', { name: f.name }))
 			}).catch((error) => {
 				console.error(error)
 			})
@@ -1638,6 +1639,8 @@ export default {
 					})
 				}
 				this.selectedFavorite = null
+				this.closeSidebar()
+				showError(t('maps', 'Favorite was deleted'))
 				this.$delete(this.favorites, favid)
 			}).catch((error) => {
 				console.error(error)

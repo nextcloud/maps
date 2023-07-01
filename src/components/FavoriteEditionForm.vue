@@ -188,7 +188,6 @@ export default {
 		},
 		onDeleteClick() {
 			this.$emit('delete', this.favorite.id)
-			this.$emit('close')
 		},
 	},
 }
@@ -207,6 +206,17 @@ export default {
 	textarea {
 		width: 100%;
 	}
+
+	span,
+	input,
+	textarea,
+	.multiselect {
+		margin-top: 10px;
+	}
+}
+
+.buttons {
+	margin-top: 15px;
 }
 
 .favorite-edition {

@@ -19,7 +19,6 @@
 				:limit="8"
 				:options-limit="8"
 				:max-height="8 * 45"
-				:close-on-select="false"
 				:clear-on-select="false"
 				:preserve-search="false"
 				:placeholder="categoryPH"
@@ -42,7 +41,8 @@
 			<textarea v-model="comment"
 				:placeholder="commentPH"
 				:readonly="!favorite.isUpdateable"
-				rows="1" />
+				rows="1"
+				style="resize: vertical;" />
 			<span class="icon icon-address" />
 			<input
 				v-model="location"
@@ -57,7 +57,7 @@
 				type="primary"
 				@click="onOkClick">
 				<template>
-					{{ t('maps', 'OK') }}
+					{{ t('maps', 'Save') }}
 				</template>
 			</NcButton>
 			<NcButton :disabled="!favorite.isUpdateable"
@@ -202,9 +202,14 @@ export default {
 	display: grid;
 	grid-template: 1fr / 40px 1fr;
 
+	input {
+		height: auto !important;
+	}
+
 	input,
 	textarea {
 		width: 100%;
+		padding: 12px 10px;
 	}
 
 	span,
@@ -215,8 +220,25 @@ export default {
 	}
 }
 
+::v-deep .multiselect__tags {
+	border: 2px solid var(--color-border-maxcontrast) !important;
+
+	.multiselect__single {
+		color: var(--color-main-text) !important;
+	}
+
+	&:hover {
+		border-color: var(--color-primary-element) !important;
+	}
+}
+
 .buttons {
-	margin-top: 15px;
+	margin-top: 20px;
+
+	button {
+		width: 100%;
+		margin: 0px 5px !important;
+	}
 }
 
 .favorite-edition {

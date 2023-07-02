@@ -11,6 +11,7 @@ OC.L10N.register(
     "Sort by name" : "Order by name",
     "Sort by date" : "Order by date",
     "OK" : "جەزملە",
+    "Location" : "ئورنى",
     "Close" : "ياپ",
     "Save" : "ساقلا",
     "Quit" : "چېكىن",

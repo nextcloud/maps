@@ -79,6 +79,7 @@ OC.L10N.register(
     "Favorite name" : "Име омиљене",
     "Category" : "Категорија",
     "Comment" : "Коментар",
+    "Location" : "Локација",
     "New category {n}" : "Нова категорија {n}",
     "Place photos" : "Постави слике",
     "Place contact" : "Поставки контакте",

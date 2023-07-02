@@ -17,6 +17,7 @@ OC.L10N.register(
     "OK" : "OK",
     "Category" : "Kategori",
     "Comment" : "Koment",
+    "Location" : "Vendndodhje",
     "Close" : "Mbylleni",
     "Select all" : "Zgjidhi të gjitha",
     "Save" : "Ruaj",

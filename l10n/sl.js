@@ -79,6 +79,7 @@ OC.L10N.register(
     "Favorite name" : "Ime priljubljene točke",
     "Category" : "Kategorija",
     "Comment" : "Opomba",
+    "Location" : "Mesto",
     "New category {n}" : "Nova kategorija {n}",
     "Place photos" : "Mesto slike",
     "Place contact" : "Mesto stika",

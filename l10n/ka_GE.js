@@ -16,6 +16,7 @@ OC.L10N.register(
     "OK" : "კარგი",
     "Category" : "კატეგორია",
     "Comment" : "კომენტარი",
+    "Location" : "ადგილმდებარეობა",
     "Close" : "დახურვა",
     "Select all" : "ყველას არჩევა",
     "Save" : "შენახვა",

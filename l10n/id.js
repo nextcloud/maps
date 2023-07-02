@@ -18,6 +18,7 @@ OC.L10N.register(
     "OK" : "OK",
     "Category" : "Kategori",
     "Comment" : "Komentar",
+    "Location" : "Lokasi",
     "Close" : "Tutup",
     "Select all" : "Pilih semua",
     "Save" : "Simpan",

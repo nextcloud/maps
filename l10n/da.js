@@ -22,6 +22,7 @@ OC.L10N.register(
     "OK" : "OK",
     "Category" : "Katergori",
     "Comment" : "Kommentér",
+    "Location" : "Placering",
     "Close" : "Luk",
     "(No name)" : "(Uden navn)",
     "No favorites to display" : "Ingen favoritter at vise",

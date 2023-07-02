@@ -31,6 +31,7 @@ OC.L10N.register(
     "Favorite name" : "お気に入りの名前",
     "Category" : "カテゴリ",
     "Comment" : "コメント",
+    "Location" : "場所",
     "Place photos" : "写真を配置",
     "Place contact" : "連絡先を配置",
     "Share this location" : "この位置を共有",

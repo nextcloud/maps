@@ -31,6 +31,7 @@ OC.L10N.register(
     "Favorite name" : "Nafn eftirlætis",
     "Category" : "Flokkur",
     "Comment" : "Athugasemd",
+    "Location" : "Staðsetning",
     "Place photos" : "Staðsetja ljósmyndir",
     "Place contact" : "Staðsetja tengilið",
     "Share this location" : "Deila þessari staðsetningu",

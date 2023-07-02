@@ -19,6 +19,7 @@ OC.L10N.register(
     "OK" : "Bone",
     "Category" : "Kategorio",
     "Comment" : "Komento",
+    "Location" : "Loko",
     "Close" : "Malfermi",
     "Select all" : "Elekti ĉion",
     "Save" : "Konservi",

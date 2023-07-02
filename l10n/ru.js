@@ -61,6 +61,7 @@ OC.L10N.register(
     "Favorite name" : "Название избранного",
     "Category" : "Категория",
     "Comment" : "Коментарий",
+    "Location" : "Расположение",
     "New category {n}" : "Новая категория {n}",
     "Place photos" : "Геопривязка фотографий",
     "Place contact" : "Геопривязка контакта",

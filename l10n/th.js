@@ -32,6 +32,7 @@ OC.L10N.register(
     "OK" : "ตกลง",
     "Category" : "หมวดหมู่",
     "Comment" : "ความคิดเห็น",
+    "Location" : "ตำแหน่ง",
     "Close" : "ปิด",
     "Select all" : "เลือกทั้งหมด",
     "Save" : "บันทึก",

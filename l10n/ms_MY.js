@@ -12,6 +12,7 @@ OC.L10N.register(
     "Sort by name" : "Order by name",
     "Sort by date" : "Order by date",
     "OK" : "OK",
+    "Location" : "Lokasi",
     "Close" : "Tutup",
     "Save" : "Simpan",
     "Quit" : "Berhenti",

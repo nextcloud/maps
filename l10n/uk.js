@@ -66,6 +66,7 @@ OC.L10N.register(
     "Favorite name" : "Назва вподобаного",
     "Category" : "Категорія",
     "Comment" : "Коментар",
+    "Location" : "Місце",
     "New category {n}" : "Нова категорія {n}",
     "Place photos" : "Додати світлини",
     "Place contact" : "Додати контакт",

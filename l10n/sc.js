@@ -32,6 +32,7 @@ OC.L10N.register(
     "Favorite name" : "Nùmene preferidu",
     "Category" : "Categoria",
     "Comment" : "Cummenta",
+    "Location" : "Positzione",
     "Place photos" : "Còlloca is fotografias",
     "Place contact" : "Còlloca su cuntatu",
     "Share this location" : "Cumpartzi custa positzione",

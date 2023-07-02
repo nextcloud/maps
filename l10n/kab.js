@@ -11,6 +11,7 @@ OC.L10N.register(
     "Share" : "Bḍu",
     "OK" : "IH",
     "Comment" : "Commentaire",
+    "Location" : "Adig",
     "Close" : "Mdel",
     "Select all" : "Fren akk",
     "Save" : "Sekles",

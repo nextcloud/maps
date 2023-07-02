@@ -38,6 +38,7 @@ OC.L10N.register(
     "Favorite name" : "Mėgstamo pavadinimas",
     "Category" : "Kategorija",
     "Comment" : "Komentaras",
+    "Location" : "Vieta",
     "Place photos" : "Padėti nuotraukas",
     "Place contact" : "Padėti adresatą",
     "Share this location" : "Bendrinti šią vietą",

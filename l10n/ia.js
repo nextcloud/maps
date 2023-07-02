@@ -15,6 +15,7 @@ OC.L10N.register(
     "OK" : "Ok",
     "Category" : "Categoria",
     "Comment" : "Commentario",
+    "Location" : "Loco",
     "Close" : "Clauder",
     "Select all" : "Selectionar toto",
     "Save" : "Salveguardar",

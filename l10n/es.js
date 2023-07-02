@@ -79,6 +79,7 @@ OC.L10N.register(
     "Favorite name" : "Nombre del favorito",
     "Category" : "Categoría",
     "Comment" : "Comentario",
+    "Location" : "Localización",
     "New category {n}" : "Nueva categoría {n}",
     "Place photos" : "Localizar fotos",
     "Place contact" : "Localizar contacto",

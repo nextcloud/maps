@@ -59,6 +59,7 @@
         <navigation>
             <name>Maps</name>
             <route>maps.page.index</route>
+            <icon>app.svg</icon>
         </navigation>
     </navigations>
     <types>

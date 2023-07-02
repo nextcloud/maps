@@ -43,6 +43,12 @@
 				:placeholder="commentPH"
 				:readonly="!favorite.isUpdateable"
 				rows="1" />
+			<span class="icon icon-address" />
+			<input
+				v-model="location"
+				type="text"
+				:placeholder="locationPH"
+				:readonly="!favorite.isUpdateable">
 		</div>
 		<div class="buttons">
 			<NcButton
@@ -92,9 +98,12 @@ export default {
 			name: this.favorite.name,
 			category: this.favorite.category,
 			comment: this.favorite.comment,
+			lat: this.favorite.lat,
+			lng: this.favorite.lng,
 			namePH: t('maps', 'Favorite name'),
 			categoryPH: t('maps', 'Category'),
 			commentPH: t('maps', 'Comment'),
+			locationPH: t('maps', 'Location'),
 			newCategoryOption: null,
 			selectedCategory: {
 				label: this.favorite.category,
@@ -116,6 +125,16 @@ export default {
 			return this.newCategoryOption
 				? [this.newCategoryOption, ...categoryOptions]
 				: categoryOptions
+		},
+		location: {
+			get() {
+				return `${this.lat},${this.lng}`
+			},
+			set(value) {
+				const [lat, lng] = value.split(',')
+				this.lat = lat
+				this.lng = lng
+			},
 		},
 	},
 
@@ -139,6 +158,8 @@ export default {
 				multiselectKey: this.favorite.category,
 			}
 			this.comment = this.favorite.comment
+			this.lat = this.favorite.lat
+			this.lng = this.favorite.lng
 		},
 		onSearchChange(query) {
 			if (query === '' || Object.keys(this.categories).includes(query)) {
@@ -160,6 +181,8 @@ export default {
 				name: this.name,
 				category: this.category,
 				comment: this.comment,
+				lat: this.lat,
+				lng: this.lng,
 			}
 			this.$emit('edit', editedFav)
 		},

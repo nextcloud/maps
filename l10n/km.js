@@ -14,6 +14,7 @@ OC.L10N.register(
     "Sort by date" : "Order by date",
     "OK" : "ព្រម",
     "Comment" : "មតិ",
+    "Location" : "ទីតាំង",
     "Close" : "បិទ",
     "Save" : "រក្សាទុក",
     "Quit" : "ចាក់ចេញ",

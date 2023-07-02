@@ -33,6 +33,7 @@ OC.L10N.register(
     "Favorite name" : "Favoritnamn",
     "Category" : "Kategori",
     "Comment" : "Kommentar",
+    "Location" : "Plats",
     "Place photos" : "Placera foton",
     "Place contact" : "Placera kontakt",
     "Share this location" : "Dela den här platsen",

@@ -14,6 +14,7 @@ OC.L10N.register(
     "Sort by date" : "Order by date",
     "OK" : "OK",
     "Comment" : "Kommentar",
+    "Location" : "Uert",
     "Close" : "Zoumaachen",
     "Select all" : "All auswielen",
     "Save" : "Späicheren",

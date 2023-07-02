@@ -21,6 +21,7 @@ OC.L10N.register(
     "OK" : "D’acòrdi",
     "Category" : "Categoria",
     "Comment" : "Comentar",
+    "Location" : "Emplaçament",
     "Close" : "Tampar",
     "Save" : "Enregistrar",
     "Quit" : "Quitar",

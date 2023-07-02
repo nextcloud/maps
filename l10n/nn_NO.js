@@ -16,6 +16,7 @@ OC.L10N.register(
     "OK" : "OK",
     "Category" : "Kategori",
     "Comment" : "Kommentér",
+    "Location" : "Stad",
     "Close" : "Lukk",
     "Select all" : "Merk alt",
     "Save" : "Lagre",

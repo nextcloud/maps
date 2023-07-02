@@ -79,6 +79,7 @@ OC.L10N.register(
     "Favorite name" : "收藏的名稱",
     "Category" : "分類",
     "Comment" : "備註",
+    "Location" : "地點",
     "New category {n}" : "新分類 {n}",
     "Place photos" : "放置照片",
     "Place contact" : "放置聯絡人",

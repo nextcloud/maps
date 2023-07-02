@@ -20,6 +20,7 @@ OC.L10N.register(
     "OK" : "Ok",
     "Category" : "Categoria",
     "Comment" : "Comentário",
+    "Location" : "Localização:",
     "Close" : "Fechar",
     "Select all" : "Seleccionar todos",
     "Save" : "Guardar",

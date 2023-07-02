@@ -18,6 +18,7 @@ OC.L10N.register(
     "OK" : "OK",
     "Category" : "Hạng mục",
     "Comment" : "Bình luận",
+    "Location" : "Vị trí",
     "Close" : "Đóng",
     "Select all" : "Chọn tất cả",
     "Save" : "Lưu",

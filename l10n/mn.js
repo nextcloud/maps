@@ -16,6 +16,7 @@ OC.L10N.register(
     "OK" : "ок",
     "Category" : "Ангилал",
     "Comment" : "undefined",
+    "Location" : "Байршил",
     "Close" : "Хаах",
     "Select all" : "бүгдийг сонгох",
     "Save" : "Хадгалах",

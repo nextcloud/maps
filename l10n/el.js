@@ -40,6 +40,7 @@ OC.L10N.register(
     "Favorite name" : "Όνομα αγαπημένου",
     "Category" : "Κατηγορία",
     "Comment" : "Σχόλιο",
+    "Location" : "Τοποθεσία",
     "Place photos" : "Τοποθετήστε φωτογραφίες",
     "Place contact" : "Τοποθετήστε επαφές",
     "Share this location" : "Μοιραστείτε αυτήν την τοποθεσία",

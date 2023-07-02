@@ -17,6 +17,7 @@ OC.L10N.register(
     "OK" : "Labi",
     "Category" : "Kategorija",
     "Comment" : "Komentārs",
+    "Location" : "Vieta",
     "Close" : "Aizvērt",
     "Select all" : "Atzīmēt visu",
     "Save" : "Saglabāt",

@@ -14,6 +14,7 @@ OC.L10N.register(
     "Sort by date" : "Order by date",
     "OK" : "Լավ",
     "Comment" : "Մեկնաբանել",
+    "Location" : "Տեղակայություն",
     "Close" : "Փակել",
     "Select all" : "Նշել բոլորը",
     "Save" : "Պահպանել",

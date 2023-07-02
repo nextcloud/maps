@@ -14,6 +14,7 @@ OC.L10N.register(
     "Favorite name" : "ප්‍රියතම නම",
     "Category" : "ප්‍රවර්ගය",
     "Comment" : "අදහස",
+    "Location" : "ස්ථානය",
     "Close" : "වසන්න",
     "(No name)" : "(නමක් නැත)",
     "Select all" : "සියල්ල තෝරන්න",

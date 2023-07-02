@@ -19,6 +19,7 @@ OC.L10N.register(
     "OK" : "OK",
     "Category" : "Kategooria",
     "Comment" : "Kommentaar",
+    "Location" : "Asukoht",
     "Close" : "Sulge",
     "Select all" : "Vali kõik",
     "Save" : "Salvesta",

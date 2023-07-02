@@ -31,6 +31,7 @@ OC.L10N.register(
     "Favorite name" : "نام مورد علاقه",
     "Category" : "دسته‌بندی",
     "Comment" : "نظر",
+    "Location" : "محل",
     "Place photos" : "عکس ها را قرار دهید",
     "Place contact" : "تماس با محل",
     "Share this location" : "اشتراک این مکان",

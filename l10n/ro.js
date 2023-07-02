@@ -19,6 +19,7 @@ OC.L10N.register(
     "OK" : "OK",
     "Category" : "Categorie",
     "Comment" : "Comentariu",
+    "Location" : "Locație",
     "Close" : "Închide",
     "Select all" : "Selectează tot",
     "Save" : "Salvează",

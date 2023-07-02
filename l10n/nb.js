@@ -26,6 +26,7 @@ OC.L10N.register(
     "Favorite name" : "Favoritt navn",
     "Category" : "Kategori",
     "Comment" : "Kommentar",
+    "Location" : "Sted",
     "Place photos" : "Plasser bilder",
     "Current location" : "Nåværende posisjon",
     "Other maps" : "Andre kart",

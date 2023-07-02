@@ -31,6 +31,7 @@ OC.L10N.register(
     "Favorite name" : "שם מועדף",
     "Category" : "קטגוריה",
     "Comment" : "הערה",
+    "Location" : "מיקום",
     "Place photos" : "תמונות המיקום",
     "Place contact" : "איש קשר של המיקום",
     "Share this location" : "שיתוף המיקום הזה",

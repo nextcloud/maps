@@ -873,7 +873,7 @@ export default {
 		async contextShareLocation(e) {
 			const geoLink = 'geo:' + e.latlng.lat.toFixed(6) + ',' + e.latlng.lng.toFixed(6)
 			try {
-				await this.$copyText(geoLink)
+				await navigator.clipboard.writeText(geoLink)
 				showSuccess(t('maps', 'Geo link ({geoLink}) copied to clipboard', { geoLink }))
 			} catch (error) {
 				console.debug(error)

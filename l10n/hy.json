@@ -10,12 +10,11 @@
     "Share" : "Կիսվել",
     "Sort by name" : "Order by name",
     "Sort by date" : "Order by date",
-    "OK" : "Լավ",
+    "Save" : "Պահպանել",
     "Comment" : "Մեկնաբանել",
     "Location" : "Տեղակայություն",
     "Close" : "Փակել",
     "Select all" : "Նշել բոլորը",
-    "Save" : "Պահպանել",
     "Name" : "Անուն",
     "Add" : "Ավելացնել",
     "Add to favorites" : "Add to favorites",
@@ -27,7 +26,6 @@
     "File" : "File",
     "Destination" : "Destination",
     "min" : "րոպե",
-    "Details" : "Մանրամասներ",
     "Default" : "Լռելյայն",
     "Settings" : "կարգավորումներ"
 },"pluralForm" :"nplurals=2; plural=(n != 1);"

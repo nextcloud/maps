@@ -5,10 +5,9 @@
     "Cancel" : "ýatyrmak",
     "Link copied" : "Link-yň nusgasy alyndy",
     "Share" : "Paýlaş",
-    "OK" : "Bolýar",
+    "Save" : "Saklamak",
     "Close" : "Ýap",
     "Select all" : "Hemmesini saýlaň",
-    "Save" : "Saklamak",
     "Quit" : "Çykmak, taşlamak",
     "Tags" : "Bellikler",
     "Favorite" : "Halaýan",
@@ -18,7 +17,6 @@
     "Yes" : "Hawa",
     "Search" : "Gözlemek",
     "File" : "Faýl",
-    "Details" : "Jikme-jiklikler",
     "Default" : "Bellenen",
     "Settings" : "Sazlamalar"
 },"pluralForm" :"nplurals=2; plural=(n != 1);"

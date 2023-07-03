@@ -9,10 +9,9 @@
     "Share" : "பகிர்வு",
     "Sort by name" : "Order by name",
     "Sort by date" : "Order by date",
-    "OK" : "சரி ",
+    "Save" : "சேமிக்க ",
     "Location" : "இடம்",
     "Close" : "மூடுக",
-    "Save" : "சேமிக்க ",
     "Quit" : "விலகுக",
     "Tags" : "சீட்டுகள்",
     "Favorite" : "விருப்பமான",
@@ -27,7 +26,6 @@
     "Search" : "Search",
     "File" : "File",
     "Destination" : "Destination",
-    "Details" : "விவரங்கள்",
     "Phone" : "தொலைப்பேசி",
     "Settings" : "அமைப்புகள்"
 },"pluralForm" :"nplurals=2; plural=(n != 1);"

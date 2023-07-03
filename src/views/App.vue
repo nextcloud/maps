@@ -1625,7 +1625,7 @@ export default {
 				this.favorites[f.id].lat = f.lat
 				this.favorites[f.id].lng = f.lng
 				this.lastUsedFavoriteCategory = f.category
-				showSuccess(t('maps', 'Favorite {name} was saved', { name: f.name }))
+				showSuccess(t('maps', 'Favorite {name} was saved', { name: f.name ? f.name : '' }))
 			}).catch((error) => {
 				console.error(error)
 			})

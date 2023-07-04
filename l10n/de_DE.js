@@ -287,6 +287,8 @@ OC.L10N.register(
     "Failed to save all Contacts to map {mapName}" : "Fehler beim Speichern aller Kontakte auf der Karte {mapName}",
     "Failed to load contacts" : "Laden der Kontakte fehlgeschlagen",
     "Not grouped" : "Nicht gruppiert",
+    "Favorite {name} was saved" : "Favorit {name} gespeichert",
+    "Favorite was deleted" : "Favorit wurde gelöscht",
     "Favorites exported in {path}" : "Favoriten nach {path} exportiert",
     "Import favorites from GeoJSON (Google Maps), gpx (OsmAnd, Nextcloud Maps) or kmz/kml (F-Droid Maps, Maps.me, Marble)" : "Favoriten aus GeoJSON (Google Maps), gpx (OsmAnd, Nextcloud Maps) oder kmz/kml (F-Droid Maps, Maps.me, Marble) importieren",
     "Favorite {favoriteName} added to map {mapName}" : "Favorit {favoriteName} zur Karte {mapName} hinzugefügt",

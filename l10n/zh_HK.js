@@ -287,6 +287,8 @@ OC.L10N.register(
     "Failed to save all Contacts to map {mapName}" : "無法將所有聯絡人 {contactName} 保存到地圖 {mapName}",
     "Failed to load contacts" : "加載聯絡人失敗",
     "Not grouped" : "未歸類",
+    "Favorite {name} was saved" : "已保存最愛「{name}」",
+    "Favorite was deleted" : "已刪除最愛",
     "Favorites exported in {path}" : "導出的我的收藏位置 {path}",
     "Import favorites from GeoJSON (Google Maps), gpx (OsmAnd, Nextcloud Maps) or kmz/kml (F-Droid Maps, Maps.me, Marble)" : "從 GeoJSON（Google 地圖）、gpx（OSMAnd、Nextcloud 地圖）或 kmz/kml（F-Droid 地圖、Maps.me、Marble）導入收藏",
     "Favorite {favoriteName} added to map {mapName}" : "已將最愛 {favoriteName} 添加到地圖 {mapName}",

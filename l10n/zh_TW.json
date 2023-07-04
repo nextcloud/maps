@@ -285,6 +285,8 @@
     "Failed to save all Contacts to map {mapName}" : "儲存所有聯絡人至地圖 {mapName} 失敗",
     "Failed to load contacts" : "載入聯絡人失敗",
     "Not grouped" : "未歸類",
+    "Favorite {name} was saved" : "最愛 {name} 已儲存",
+    "Favorite was deleted" : "最愛已刪除",
     "Favorites exported in {path}" : "匯出的收藏位置 {path}",
     "Import favorites from GeoJSON (Google Maps), gpx (OsmAnd, Nextcloud Maps) or kmz/kml (F-Droid Maps, Maps.me, Marble)" : "從 GeoJSON（Google 地圖）、gpx（OSMAnd、Nextcloud 地圖）或 kmz/kml（F-Droid 地圖、Maps.me、Marble）匯入收藏",
     "Favorite {favoriteName} added to map {mapName}" : "已將最愛 {favoriteName} 新增至地圖 {mapName}",

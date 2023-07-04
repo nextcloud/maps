@@ -287,6 +287,8 @@ OC.L10N.register(
     "Failed to save all Contacts to map {mapName}" : "Није успело чување свих контаката на мапу {mapName}",
     "Failed to load contacts" : "Грешка при учитавању контаката",
     "Not grouped" : "Негруписани",
+    "Favorite {name} was saved" : "Сачувано је омиљено место {name}",
+    "Favorite was deleted" : "Омиљено место је обрисано",
     "Favorites exported in {path}" : "Омиљени извезени у {path}",
     "Import favorites from GeoJSON (Google Maps), gpx (OsmAnd, Nextcloud Maps) or kmz/kml (F-Droid Maps, Maps.me, Marble)" : "Увези омиљене из  GeoJSON-а (Google Maps), gpx (OsmAnd, Некстклауд Мапе) или kml/kmz (F-Droid Maps, Maps.me, Marble)",
     "Favorite {favoriteName} added to map {mapName}" : "Омиљено {favoriteName} је додато на мапу {mapName}",

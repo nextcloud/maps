@@ -182,6 +182,8 @@
     "Choose directory of pictures to place" : "Escolla o directorio das imaxes para situar",
     "Failed to load contacts" : "Produciuse un fallo ao cargar os contactos",
     "Not grouped" : "Sen agrupar",
+    "Favorite {name} was saved" : "Foi gardado o favorito {name}",
+    "Favorite was deleted" : "Foi eliminado o favorito",
     "Favorites exported in {path}" : "Favoritos exportados en {path}",
     "Import favorites from GeoJSON (Google Maps), gpx (OsmAnd, Nextcloud Maps) or kmz/kml (F-Droid Maps, Maps.me, Marble)" : "Importar favoritos dende GeoJSON (Google Maps), gpx (OsmAnd, Nextcloud Maps) ou kmz/kml (F-Droid Maps, Maps.me, Marble)",
     "Devices exported in {path}" : "Dispositivos exportados en {path}",

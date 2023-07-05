@@ -93,6 +93,7 @@ OC.L10N.register(
     "Open in Contacts" : "Abrir en Contactos",
     "Device" : "Dispositivo",
     "Date" : "Data",
+    "Altitude" : "Altitude",
     "Battery" : "Batería",
     "Accuracy" : "Precisión",
     "No name" : "Sen nome",

@@ -75,6 +75,7 @@ OC.L10N.register(
     "Favorite name" : "Gogokoaren izena",
     "Category" : "Kategoria",
     "Comment" : "Iruzkina",
+    "Location" : "Kokapena",
     "New category {n}" : "{n} kategoria berria",
     "Place photos" : "Kokatu argazkiak",
     "Place contact" : "Kokatu kontaktua",

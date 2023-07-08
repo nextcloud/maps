@@ -107,6 +107,7 @@ OC.L10N.register(
     "Closed" : "مغلق",
     "opens at {date}" : "يفتح في {تاريخ}",
     "Search" : "البحث",
+    "Point at {coords}" : "أشر إلى {coords}",
     "Unknown Place" : "مكان غير معروف",
     "File" : "الملف",
     "north" : "شمال",

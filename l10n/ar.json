@@ -2,28 +2,28 @@
     "Invalid values" : "قيم غير مقبولة",
     "No such device" : "هذا الجهاز غير موجود",
     "No device to export" : "لا يوجد جهاز للتصدير",
-    "/Maps is not a directory" : "/ الخرائط ليست دليل",
+    "/Maps is not a directory" : "/Maps ليست دليل تخزين",
     "/Maps directory is not writeable" : "/ دليل الخرائط غير قابل للكتابة عليه",
     "Impossible to create /Maps directory" : "يستحيل إنشاء/ دليل الخرائط",
     "Nothing to export" : "لا يوجد شيء لتصديره",
     "Invalid file extension" : "امتداد الملف غير صالح",
-    "Impossible to read the file" : "يستحيل قراءة الملف",
+    "Impossible to read the file" : "تستحيل قراءة الملف",
     "File does not exist" : "الملف غير موجود",
     "No such favorite" : "هذه المفضلة غير موجودة",
-    "Unknown category" : "فئة غير معروفة",
-    "Error sharing favorite" : "خطأ في مشاركة المفضلة",
-    "Bad file type" : "ملف من نوع Bad ",
+    "Unknown category" : "تصنيف غير معروف",
+    "Error sharing favorite" : "خطأ في مشاركة مُفضّلة",
+    "Bad file type" : "نوع الملف غير صحيح",
     "File not found" : "تعذر العثور على الملف",
-    "No such track" : "هذا المسار غير موجود",
+    "No such track" : "هذا التسجيل track غير موجود",
     "Personal" : "شخصي",
     "Maps" : "الخرائط",
     "🌍🌏🌎 The whole world fits inside your cloud!" : "🌍🌏🌎 العالم كله داخل سحابتك!",
     "**The whole world fits inside your cloud!**\n\n- **🗺 Beautiful map:** Using [OpenStreetMap](https://www.openstreetmap.org) and [Leaflet](https://leafletjs.com), you can choose between standard map, satellite, topographical, dark mode or even watercolor! 🎨\n- **⭐ Favorites:** Save your favorite places, privately! Sync with [GNOME Maps](https://github.com/nextcloud/maps/issues/30) and mobile apps is planned.\n- **🧭 Routing:** Possible using either [OSRM](http://project-osrm.org), [GraphHopper](https://www.graphhopper.com) or [Mapbox](https://www.mapbox.com).\n- **🖼 Photos on the map:** No more boring slideshows, just show directly where you were!\n- **🙋 Contacts on the map:** See where your friends live and plan your next visit.\n- **📱 Devices:** Lost your phone? Check the map!\n- **〰 Tracks:** Load GPS tracks or past trips. Recording with [PhoneTrack](https://f-droid.org/en/packages/net.eneiluj.nextcloud.phonetrack/) or [OwnTracks](https://owntracks.org) is planned." : "** العالم كله مشمول داخل سحابتك! ** \n\n- ** 🗺خريطة جميلة: ** باستخدام [أوبن ستريت ماب OpenStreetMap] (https://www.openstreetmap.org) و [برمجية مكتبة جافا سكريبت Leaflet] (https://leafletjs.com )، يمكنك الاختيار بين الخريطة القياسية أو القمر الصناعي أو الطبوغرافية أو الوضع المظلم أو حتى الألوان المائية! 🎨\n- ** المفضلات: ** احفظ أماكنك المفضلة، بشكل خاص! تم التخطيط للمزامنة مع [خرائط جنوم] (https://github.com/nextcloud/maps/issues/30) وتطبيقات الجوال.\n-** 🧭التوجيه: ** ممكن باستخدام أيٍّ من [OSRM] (http://project-osrm.org) أو [مكتبة التوجيه جراف هوبر ] (https://www.graphhopper.com) أو [ماب بوكس] (https://www.mapbox.com).\n- ** 🖼 الصور على الخريطة: ** لا لعروض الشرائح المملة بعد الآن، فقط قم بعرض مكانك مباشرة! \n- ** 🙋 جهات الاتصال على الخريطة: ** شاهد أين يعيش أصدقاؤك وخطط لزيارتك القادمة.\n-** 📱 الأجهزة: ** هل فقدت هاتفك؟ تحقق من الخريطة \n- ** 〰 المسارات: ** تحميل مسارات الـ جي بي اس أو الرحلات السابقة. التسجيل باستخدام [فون تراك PhoneTrack] (https://f-droid.org/en/packages/net.eneiluj.nextcloud.phonetrack/) أو [أون تراكس OwnTracks] (https://owntracks.org) أمر مخطط له.",
-    "My contacts" : "جهات الاتصال الخاصة بي",
+    "My contacts" : "جهات اتّصالي",
     "Toggle all" : "تبديل الكل",
     "Zoom" : "تكبير zoom",
     "Change color" : "غيّر اللون",
-    "Zoom on area" : "تكبير المنطقة",
+    "Zoom on area" : "تكبير المساحة",
     "Export" : "تصدير",
     "Delete" : "حذف ",
     "My devices" : "أجهزتي",
@@ -31,16 +31,16 @@
     "Export all" : "تصدير الكل",
     "Import devices" : "استيراد الأجهزة",
     "Delete all" : "مسح الكل",
-    "My favorites" : "مفضلتي",
-    "Disable favorite drag" : "تعطيل سحب المفضلة",
-    "Enable favorite drag" : "تفعيل سحب المفضلة",
+    "My favorites" : "تفضيلاتي",
+    "Disable favorite drag" : "تعطيل سحب المُفضّلة",
+    "Enable favorite drag" : "تفعيل سحب المُفضّلة",
     "Import" : "استيراد",
-    "Category name" : "اسم الفئة",
+    "Category name" : "اسم التصنيف",
     "Rename" : "إعادة التسمية",
     "Add a favorite" : "إضافة مفضلة",
     "Zoom to bounds" : "تكبير للحدود",
     "Delete share link" : "حذف ارتباط المشاركة",
-    "Create share link" : "إنشاء رابط المشاركة",
+    "Create share link" : "إنشاء رابط مُشارَكة",
     "Copied!" : "تم نسخه !",
     "Copy share link" : "انسخ رابط المشاركة",
     "Cancel" : "إلغاء",
@@ -48,11 +48,11 @@
     "Link could not be copied to clipboard." : "لا يمكن نسخ الرابط إلى الحافظة.",
     "Open folder" : "افتح المجلد",
     "Share" : "مشاركة",
-    "My photos" : "صوري",
-    "Disable photo drag" : "تعطيل سحب الصور",
-    "Enable photo drag" : "تفعيل سحب الصور",
+    "My photos" : "صِوَرِي",
+    "Disable photo drag" : "تعطيل سحب الصِّور",
+    "Enable photo drag" : "تفعيل سحب الصِّور",
     "Show track elevation" : "إظهار ارتفاع المسار",
-    "My tracks" : "مساراتي",
+    "My tracks" : "تسجيلاتي my tracks",
     "Sort by name" : "Order by name",
     "Sort by date" : "Order by date",
     "Save" : "Save",
@@ -60,7 +60,7 @@
     "Category" : "التصنيف",
     "Comment" : "تعليق",
     "Location" : "الموقع",
-    "New category {n}" : "فئة جديدة {ن}",
+    "New category {n}" : "تصنيف جديد {n}",
     "Place photos" : "صور المكان",
     "Place contact" : "مكان الاتصال",
     "Share this location" : "أرسل هذا الموقع",
@@ -83,7 +83,7 @@
     "(No name)" : "(لا يوجد اسم)",
     "No favorites to display" : "لا توجد مفضلات لعرضها",
     "Select all" : "تحديد الكل",
-    "Display picture" : "عرض الصورة",
+    "Display picture" : "عرض الصُّورة",
     "Quit" : "خروج",
     "Load more" : "حمّل أكثر",
     "Tracks" : "المسارات",
@@ -116,7 +116,7 @@
     "Home" : "الرئيسية",
     "Work" : "العمل",
     "Delete this address" : "احذف هذا العنوان",
-    "Delete this location" : "حذف هذا الموقع",
+    "Delete this location" : "إحذِف هذا الموقع",
     "Open in Contacts" : "فتح في جهات الاتصال",
     "Device" : "الجهاز",
     "Date" : "التاريخ",
@@ -124,25 +124,26 @@
     "Battery" : "البطارية",
     "Accuracy" : "الدقة",
     "No name" : "لا يوجد اسم",
-    "Delete favorite" : "حذف المفضلة",
+    "Delete favorite" : "إحذِف مٌفضّلةً",
     "Update" : "تحديث",
-    "Delete favorites" : "حذف المفضلة",
-    "Zoom on bounds" : "تقريب الحدود",
+    "Delete favorites" : "إحذِف المُفضّلة",
+    "Zoom on bounds" : "تكبير الحدود bounds",
     "Undo {action} (Ctrl+Z)" : "تراجع عن {action} (Ctrl + Z)",
     "Redo {action} (Ctrl+Shift+Z)" : "إعادة {action} (Ctrl + Shift + Z)",
-    "Move photo" : "نقل الصورة",
-    "Add favorite" : "إضافة مفضلة",
-    "Edit favorite" : "تحرير المفضلة",
-    "Rename favorite category" : "إعادة تسمية فئة المفضلة",
-    "Delete contact address" : "حذف عنوان الاتصال",
-    "Display pictures" : "عرض الصور",
-    "Spiderfy" : "تأثير سبايدرفاي \"Spiderfy\"",
+    "Move photo" : "نقل الصُّورة",
+    "Add favorite" : "إضافة مُفضّلة",
+    "Edit favorite" : "تحرير المُفضّلة",
+    "Rename favorite category" : "تغيير تسمية تصنيف المُفضّلة",
+    "Delete contact address" : "حذف عنوان جهة الاتصال",
+    "Select All" : "اختيار الكُل",
+    "Display pictures" : "عرض الصِّور",
+    "Spiderfy" : "العَنكَبَة Spiderfy",
     "Open in Sidebar" : "فتح في الشريط الجانبي",
     "Remove geo data" : "إزالة البيانات الجغرافية",
-    "Are you sure you want to remove geo data of {nb} photos?" : "هل أنت متأكد من أنك تريد إزالة البيانات الجغرافية لـ {nb} من الصور؟",
+    "Are you sure you want to remove geo data of {nb} photos?" : "هل أنت متأكد من أنك تريد إزالة البيانات الجغرافية لـ {nb} من الصِّور؟",
     "Yes" : "نعم",
     "New contact address" : "عنوان جهة اتصال جديد",
-    "Choose a contact" : "اختر جهة اتصال",
+    "Choose a contact" : "إختَر جهة اتصال",
     "Address type" : "نوع العنوان",
     "Add address to contact" : "إضافة عنوان للاتصال",
     "Open" : "افتح",
@@ -150,16 +151,16 @@
     "until {date}" : "حتى {تاريخ}",
     "Closed" : "مغلق",
     "opens at {date}" : "يفتح في {تاريخ}",
-    "Find directions" : "ابحث عن الاتجاهات",
-    "Clear POIs" : "مسح النقاط المهمة",
+    "Find directions" : "إبحث عن الاتجاهات",
+    "Clear POIs" : "محو النقاط الهامة POI",
     "No suggestions" : "لا يوجد اقتراحات",
     "Search" : "البحث",
     "Point at {coords}" : "أشر إلى {coords}",
     "Search for {q}" : "بحث عن {q}",
     "Unknown Place" : "مكان غير معروف",
     "File" : "الملف",
-    "Track/Route" : "المسار/الطريق",
-    "Display elevation" : "عرض الارتفاع",
+    "Track/Route" : "مسار / طريق",
+    "Display elevation" : "أُعرُض الارتفاع",
     "Begins at" : "يبدأ في",
     "north" : "شمال",
     "northeast" : "شمال شرق",
@@ -214,13 +215,13 @@
     "Reverse steps order" : "ترتيب الخطوات العكسية",
     "Add step" : "إضافة خطوة",
     "Routing is currently disabled." : "التوجيه معطل حاليا.",
-    "Nextcloud additional settings" : "الإعدادات الإضافية لنكست كلود",
+    "Nextcloud additional settings" : "الإعدادات الإضافية لنكست كلاود",
     "Add a routing service" : "إضافة خدمة التوجيه",
     "Export as" : "تصدير بتنسيق",
     "GPX track" : "مسار GPX",
     "GPX route" : "طريق GPX",
     "Route {date}" : "طريق {date}",
-    "Track {date}" : "تتبع {date}",
+    "Track {date}" : "تتبّع {date}",
     "Route exported to {path}." : "تم تصدير الطريق إلى {path}.",
     "Track exported to {path}." : "تم تصدير المسار إلى {path}.",
     "Failed to export route" : "فشل تصدير الطريق",
@@ -240,14 +241,14 @@
     "Choose pictures to place" : "اختيار الصور لوضعها",
     "Choose directory of pictures to place" : "اختر دليل للصور لوضعها",
     "\"{path}\" successfully moved" : "تم نقل \"{path}\" بنجاح",
-    "{nb} photos moved" : "تم نقل {nb} من الصور",
+    "{nb} photos moved" : "تم نقل {nb} من الصِّور",
     "Failed to load contacts" : "فشل تحميل جهات الاتصال",
     "Not grouped" : "غير مصنف",
     "Favorite {name} was saved" : "تم حفظ المفضلة {name}",
     "Favorite was deleted" : "تم حذف المفضلة",
     "Favorites exported in {path}" : "تم تصدير المفضلة إلي {المسار}",
     "Import favorites from GeoJSON (Google Maps), gpx (OsmAnd, Nextcloud Maps) or kmz/kml (F-Droid Maps, Maps.me, Marble)" : "استيراد المفضلة من الملفات بتنسيق GeoJSON (خرائط جوجل) أو gpx (خرائط OsmAnd، خرائط نكست كلود) أو kmz/kml (خرائط F-Droid، Maps.me، Marble)",
-    "Click on the map to add a favorite, press Esc to cancel" : "انقر على الخريطة لإضافة مفضلة، واضغط على Esc للإلغاء",
+    "Click on the map to add a favorite, press Esc to cancel" : "أنقُر على الخريطة لإضافة مُفضّلة، أو اضغط على Esc للإلغاء",
     "Devices exported in {path}" : "الأجهزة التي تم تصديرها في {المسار}",
     "Failed to export devices" : "فشل تصدير الأجهزة",
     "Failed to delete device" : "فشل حذف الجهاز",

@@ -22,6 +22,7 @@ OC.L10N.register(
     "Add to favorites" : "Rnu ismal",
     "Home" : "Asnubeg",
     "Yes" : "Oui",
+    "Open" : "Ldi",
     "Search" : "Nadi",
     "File" : "Afaylu",
     "Phone" : "Tiliɣri",

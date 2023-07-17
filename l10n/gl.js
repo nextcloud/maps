@@ -183,7 +183,7 @@ OC.L10N.register(
     "Closed" : "Pechado",
     "opens at {date}" : "abre o {date}",
     "Find directions" : "Atopar indicacións",
-    "Clear POIs" : "Limpar PDI",
+    "Clear POIs" : "Limpar os PDI",
     "No suggestions" : "Non hai suxestións",
     "Search" : "Buscar",
     "Point at {coords}" : "Punto en {coords}",

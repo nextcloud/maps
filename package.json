@@ -47,7 +47,7 @@
     "@nextcloud/router": "^2.1.2",
     "@nextcloud/sharing": "^0.1.0",
     "@nextcloud/vue": "^7.12.1",
-    "@raruto/leaflet-elevation": "^1.7.0",
+    "@raruto/leaflet-elevation": "^2.5.0",
     "axios": "^1.4.0",
     "geojson": "^0.5.0",
     "leaflet": "^1.9.4",

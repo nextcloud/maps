@@ -4,10 +4,19 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
-## 1.1.0 - 2023.06.20 Nextcloud 27
+## 1.1.0 - 2023.07.04 Nextcloud 27
 ### Added
 - Add an option to deduplicate same address for a contact [#1013](https://github.com/nextcloud/maps/issues/1013) @vincowl
   [#1024](https://github.com/nextcloud/maps/pull/1024) @vincowl
+- Mobile improvements [#1068](https://github.com/nextcloud/maps/issues/1068) @ant0nwax [#1082](https://github.com/nextcloud/maps/pull/1082) @tacruc
+- Location field in favorites form [#1083](https://github.com/nextcloud/maps/pull/1083) @alaskanpuffin
+- Interface improvments
+[#1084](https://github.com/nextcloud/maps/pull/1084) @alaskanpuffin
+[#1085](https://github.com/nextcloud/maps/pull/1085) @alaskanpuffin
+[#1088](https://github.com/nextcloud/maps/pull/1088) @tacruc
+[#1089](https://github.com/nextcloud/maps/pull/1089) @alaskanpuffin
+[#1091](https://github.com/nextcloud/maps/pull/1091) @alaskanpuffin
+[#1094](https://github.com/nextcloud/maps/pull/1094) @alaskanpuffin
 
 ### Fixed
 - update maximum PHP version [#1061](https://github.com/nextcloud/maps/issues/1061) @t-lo

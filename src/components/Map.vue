@@ -453,22 +453,22 @@ export default {
 			const cmi = [
 				{
 					text: t('maps', 'Add a favorite'),
-					icon: generateUrl('/svg/core/actions/starred?color=' + iconColor),
+					iconCls: 'icon-favorite',
 					callback: this.contextAddFavorite,
 				},
 				{
 					text: t('maps', 'Place photos'),
-					icon: generateUrl('/svg/core/places/picture?color=' + iconColor),
+					iconCls: 'icon-category-multimedia',
 					callback: this.contextPlacePhotos,
 				},
 				{
 					text: t('maps', 'Place contact'),
-					icon: generateUrl('/svg/core/actions/user?color=' + iconColor),
+					iconCls: 'icon-group',
 					callback: this.placeContactClicked,
 				},
 				{
 					text: t('maps', 'Share this location'),
-					icon: generateUrl('/svg/core/actions/share?color=' + iconColor),
+					iconCls: 'icon-address',
 					callback: this.contextShareLocation,
 				},
 			]
@@ -518,7 +518,7 @@ export default {
 					'-',
 					{
 						text: t('maps', 'Route from here'),
-						icon: generateUrl('/svg/core/filetypes/location?color=00cc00'),
+						iconCls: 'icon-address',
 						callback: (e) => {
 							if (!this.showRouting) {
 								this.showRouting = true
@@ -527,7 +527,7 @@ export default {
 						},
 					}, {
 						text: t('maps', 'Add route point'),
-						icon: generateUrl('/svg/core/filetypes/location?color=0000cc'),
+						iconCls: 'icon-add',
 						callback: (e) => {
 							if (!this.showRouting) {
 								this.showRouting = true
@@ -536,7 +536,7 @@ export default {
 						},
 					}, {
 						text: t('maps', 'Route to here'),
-						icon: generateUrl('/svg/core/filetypes/location?color=cc0000'),
+						iconCls: 'icon-address',
 						callback: (e) => {
 							if (!this.showRouting) {
 								this.showRouting = true
@@ -873,7 +873,7 @@ export default {
 		async contextShareLocation(e) {
 			const geoLink = 'geo:' + e.latlng.lat.toFixed(6) + ',' + e.latlng.lng.toFixed(6)
 			try {
-				await this.$copyText(geoLink)
+				await navigator.clipboard.writeText(geoLink)
 				showSuccess(t('maps', 'Geo link ({geoLink}) copied to clipboard', { geoLink }))
 			} catch (error) {
 				console.debug(error)
@@ -1117,6 +1117,7 @@ export default {
 ::v-deep .leaflet-contextmenu-item {
 	line-height: 30px !important;
 	color: var(--color-text-lighter) !important;
+	cursor: pointer !important;
 }
 
 ::v-deep .leaflet-contextmenu-item:hover {
@@ -1125,8 +1126,12 @@ export default {
 	border-color: var(--color-border) !important;
 }
 
-::v-deep .leaflet-contextmenu-item img {
+::v-deep .leaflet-contextmenu-icon {
 	margin: 7px 8px 0 0 !important;
+}
+
+::v-deep .leaflet-contextmenu-separator {
+	border-color: var(--color-border) !important;
 }
 
 ::v-deep .leaflet-marker-photo,
@@ -1165,65 +1170,6 @@ export default {
 ::v-deep .leaflet-marker-favorite-tooltip {
 	padding: 0 !important;
 	border: 0 !important;
-}
-
-// routing machine
-::v-deep .leaflet-routing-container {
-	width: 350px;
-	max-width: calc(100vw - 45px);
-	margin-top: 0;
-	padding-top: 5px;
-	background-color: var(--color-main-background);
-	border: 2px solid var(--color-border-dark) !important;
-	border-bottom-left-radius: var(--border-radius-large) !important;
-	border-bottom-right-radius: var(--border-radius-large) !important;
-	border-top: 0 !important;
-
-	.router-container {
-		width: 100%;
-		display: flex;
-		#router-select {
-			flex-grow: 1;
-			text-overflow: ellipsis;
-			margin: 0 5px 5px 5px;
-		}
-	}
-
-	// we don't need this
-	.leaflet-routing-geocoders {
-		display: none;
-	}
-	.leaflet-routing-alternatives-container:not(:empty) {
-		border-top: 1px solid var(--color-border);
-	}
-
-	// instruction table
-	.leaflet-routing-alt {
-		table {
-			white-space: normal;
-			width: 100%;
-
-			.leaflet-routing-instruction-distance {
-				width: 1px;
-			}
-
-			td:nth-child(2),
-			td:nth-child(3) {
-				display: block;
-			}
-
-			td:nth-child(3) {
-				color: var(--color-text-light);
-			}
-
-			tr:nth-child(odd) {
-				background-color: var(--color-background-dark);
-			}
-			tr:hover {
-				background-color: var(--color-background-darker);
-			}
-		}
-	}
 }
 
 ::v-deep .icon-routing {
@@ -1294,20 +1240,51 @@ export default {
 }
 
 ::v-deep .leaflet-left {
-	margin-left: 52px;
+	margin-left: 0px;
 }
 
 ::v-deep .leaflet-control {
 	margin-left: 0px;
 }
 
-::v-deep .leaflet-control-layers-base span,
-::v-deep .leaflet-control-layers-overlays span {
+::v-deep .leaflet-control-layers-expanded {
+	padding: 4px 0px !important;
+}
+
+::v-deep .leaflet-control-layers-base span:nth-child(1),
+::v-deep .leaflet-control-layers-overlays span:nth-child(1) {
+	display: block;
+	height: 38px;
+	padding: 4px 10px;
+	border-top: 1px solid transparent;
+	border-bottom: 1px solid transparent;
+	color: var(--color-text-lighter) !important;
+	cursor: pointer !important;
+}
+
+::v-deep .leaflet-control-layers-base span:hover,
+::v-deep .leaflet-control-layers-overlays span:hover {
+	color: var(--color-main-text) !important;
+	background-color: var(--color-background-hover) !important;
+	border-color: var(--color-border) !important;
+}
+
+::v-deep .leaflet-control-layers-base span:nth-child(2),
+::v-deep .leaflet-control-layers-overlays span:nth-child(2) {
+	display: inline-block;
+	vertical-align: top;
+	line-height: 30px;
+	margin: 0px 10px;
 	cursor: pointer !important;
 }
 
 ::v-deep .leaflet-control-layers-selector {
-	min-height: 0;
-	cursor: pointer !important;
+	display: inline-block;
+	height: 30px;
+	margin: 0px;
+}
+
+::v-deep .leaflet-control-layers-separator {
+	border-color: var(--color-border) !important;
 }
 </style>

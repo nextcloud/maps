@@ -93,7 +93,6 @@ export default {
 
 	#history {
 		display: flex;
-		margin-right: 50px;
 		> button {
 			width: 44px;
 			height: 44px;

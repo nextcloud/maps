@@ -7,10 +7,9 @@
     "Cancel" : "ຍົກເລີກ",
     "Link copied" : "ສຳເນົາລິງ",
     "Share" : "ແບ່ງປັນ",
-    "OK" : "ຕົກລົງ",
+    "Save" : "ບັນທຶກ",
     "Close" : "ປິດ",
     "Select all" : "ເລືອກທັງໝົດ",
-    "Save" : "ບັນທຶກ",
     "Quit" : "ຢຸດ",
     "Tags" : "ປ້າຍກຳກັບ",
     "Favorite" : "ລາຍການທີ່ມັກ",
@@ -25,7 +24,6 @@
     "File" : "ຟາຍ",
     "Start" : "ເລີ່ມຕົ້ນ",
     "Destination" : "ປາຍທາງ",
-    "Details" : "ລາຍລະອຽດ",
     "Default" : "ເລີ່ມຕົ້ນ",
     "Settings" : "ການຕັ້ງຄ່າ"
 },"pluralForm" :"nplurals=1; plural=0;"

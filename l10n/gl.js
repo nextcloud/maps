@@ -171,7 +171,7 @@ OC.L10N.register(
     "Spiderfy" : "Spiderfy",
     "Open in Sidebar" : "Abrir na barra lateral",
     "Remove geo data" : "Retirar os datos «geo»",
-    "Are you sure you want to remove geo data of {nb} photos?" : "Confirma que quere eliminar os datos «geo» de {nb} fotos?",
+    "Are you sure you want to remove geo data of {nb} photos?" : "Confirma que quere retirar os datos «geo» de {nb} fotos?",
     "Yes" : "Si",
     "New contact address" : "Novo enderezo do contacto",
     "Choose a contact" : "Escolla un contacto",

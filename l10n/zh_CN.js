@@ -283,7 +283,7 @@ OC.L10N.register(
     "Failed to load contacts" : "加载联系人失败",
     "Not grouped" : "未分组",
     "Favorites exported in {path}" : "收藏已导出到 {path}",
-    "Import favorites from GeoJSON (Google Maps), gpx (OsmAnd, Nextcloud Maps) or kmz/kml (F-Droid Maps, Maps.me, Marble)" : "从GeoJSON（谷歌地图），gpx（OsmAnd，Nextcloud地图）或kmz/kml（F-Droid地图，Maps.me，Marble）文件中导入收藏",
+    "Import favorites from GeoJSON (Google Maps), gpx (OsmAnd, Nextcloud Maps) or kmz/kml (F-Droid Maps, Maps.me, Marble)" : "从GeoJSON（Google地图），gpx（OsmAnd，Nextcloud地图）或kmz/kml（F-Droid地图，Maps.me，Marble）文件中导入收藏",
     "Favorite {favoriteName} added to map {mapName}" : "已将收藏{favoriteName}添加到地图{mapName}",
     "Failed to save Favorite {favoriteName} to map {mapName}" : "将收藏{favoriteName}添加到地图{mapName}失败",
     "Click on the map to add a favorite, press Esc to cancel" : "点击地图添加收藏，按 Esc 取消",

@@ -108,7 +108,7 @@ OC.L10N.register(
     "Display picture" : "Presentar a imaxe",
     "Remove from selection" : "Retirar da selección",
     "No suggestions found" : "Non se atopou ningunha suxestión",
-    "To get suggestions upload tracks from the trips, when you took your photos." : "Para obter suxestións, cargue os trazados das viaxes, cando fixo as súas fotos.",
+    "To get suggestions upload tracks from the trips, when you took your photos." : "Para obter suxestións, envíe os trazados das viaxes, cando fixo as súas fotos.",
     "Quit" : "Saír",
     "Load more" : "Cargar máis",
     "Photos default timezone:" : "Fuso horario predeterminado das fotos:",

@@ -13,6 +13,7 @@
 namespace OCA\Maps\Service;
 
 use OCP\DB\Exception;
+use OCP\Files\NotFoundException;
 use OCP\IL10N;
 use OCP\ILogger;
 use OCP\IDBConnection;
@@ -61,7 +62,7 @@ class DevicesService {
         $req = $qb->execute();
 
         while ($row = $req->fetch()) {
-            $devices[] = [
+            $devices[intval($row['id'])] = [
 				'id' => intval($row['id']),
 				'user_agent' => $row['user_agent'],
 				'color' => $row['color'],
@@ -69,6 +70,7 @@ class DevicesService {
 				'isDeleteable' => true,
 				'isUpdateable' => true,
 				'isReadable' => true,
+				'shares' => []
 			];
         }
         $req->closeCursor();
@@ -128,6 +130,60 @@ class DevicesService {
 
         return array_reverse($points);
     }
+
+	/**
+	 * @param string $token
+	 * @param int|null $pruneBefore
+	 * @param int|null $limit
+	 * @param int|null $offset
+	 * @return array
+	 * @throws Exception
+	 */
+	public function getDevicePointsByToken(string $token, ?int $pruneBefore=0, ?int $limit=10000, ?int $offset=0) {
+		$qb = $this->qb;
+		// get coordinates
+		$qb->select('p.id', 'lat', 'lng', 'timestamp', 'altitude', 'accuracy', 'battery')
+			->from('maps_device_points', 'p')
+			->innerJoin('p', 'maps_device_shares', 'd', $qb->expr()->eq('d.id', 'p.device_id'))
+			->where(
+				$qb->expr()->eq('d.token', $qb->createNamedParameter($token, IQueryBuilder::PARAM_STR))
+			)
+			->andWhere(
+				$qb->expr()->lte('p.timestamp', 'd.timestamp_to')
+			)->andWhere(
+				$qb->expr()->gte('p.timestamp', 'd.timestamp_from')
+			);
+		if (intval($pruneBefore) > 0) {
+			$qb->andWhere(
+				$qb->expr()->gt('timestamp', $qb->createNamedParameter(intval($pruneBefore), IQueryBuilder::PARAM_INT))
+			);
+		}
+		if (!is_null($offset)) {
+			$qb->setFirstResult($offset);
+		}
+		if (!is_null($limit)) {
+			$qb->setMaxResults($limit);
+		}
+		$qb->orderBy('timestamp', 'DESC');
+		$req = $qb->execute();
+
+		$points = [];
+		while ($row = $req->fetch()) {
+			$points[] = [
+				'id' => intval($row['id']),
+				'lat' => floatval($row['lat']),
+				'lng' => floatval($row['lng']),
+				'timestamp' => intval($row['timestamp']),
+				'altitude' => is_numeric($row['altitude']) ? floatval($row['altitude']) : null,
+				'accuracy' => is_numeric($row['accuracy']) ? floatval($row['accuracy']) : null,
+				'battery' => is_numeric($row['battery']) ? floatval($row['battery']) : null
+			];
+		}
+		$req->closeCursor();
+		$qb = $qb->resetQueryParts();
+
+		return array_reverse($points);
+	}
 
 	/**
 	 * @param $userId
@@ -700,5 +756,24 @@ class DevicesService {
         if ($testlen > $strlen) return false;
         return substr_compare($string, $test, $strlen - $testlen, $testlen) === 0;
     }
+
+	/**
+	 * @param $folder
+	 * @param bool $isCreatable
+	 * @return mixed
+	 * @throws NotFoundException
+	 */
+	public function getSharedDevicesFromFolder($folder, bool $isCreatable=true) {
+		try {
+			$file=$folder->get(".device_shares.json");
+		} catch (NotFoundException $e) {
+			if ($isCreatable) {
+				$file=$folder->newFile(".device_shares.json", $content = '[]');
+			} else {
+				throw new NotFoundException();
+			}
+		}
+		return json_decode($file->getContent(),true);
+	}
 
 }

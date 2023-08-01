@@ -135,11 +135,18 @@ return [
         // devices
         ['name' => 'devices#getDevices', 'url' => '/devices', 'verb' => 'GET'],
         ['name' => 'devices#getDevicePoints', 'url' => '/devices/{id}', 'verb' => 'GET'],
+		['name' => 'getDevicePointsByToken', 'url' => '/devices/by-token/{token}', 'verb' => 'GET'],
         ['name' => 'devices#addDevicePoint', 'url' => '/devices', 'verb' => 'POST'],
         ['name' => 'devices#editDevice', 'url' => '/devices/{id}', 'verb' => 'PUT'],
         ['name' => 'devices#deleteDevice', 'url' => '/devices/{id}', 'verb' => 'DELETE'],
         ['name' => 'devices#exportDevices', 'url' => '/export/devices', 'verb' => 'POST'],
         ['name' => 'devices#importDevices', 'url' => '/import/devices', 'verb' => 'POST'],
+		// devices sharing
+		['name' => 'devices#getSharedDevices', 'url' => '/devices/s/', 'verb' => 'GET'],
+		['name' => 'devices#shareDevice', 'url' => '/devices/s/', 'verb' => 'POST'],
+		['name' => 'devices#removeDeviceShare', 'url' => '/devices/s/{token}', 'verb' => 'DELETE'],
+		['name' => 'devices#addSharedDeviceToMap', 'url' => '/devices/s/{token}/map-link/{targetMapId}', 'verb' => 'POST'],
+		['name' => 'devices#removeSharedDeviceFromMap', 'url' => '/devices/s/{token}/map-link/{targetMapId}', 'verb' => 'DELETE'],
 
         //MyMaps
         ['name' => 'my_maps#getMyMaps', 'url' => '/maps', 'verb' => 'GET'],

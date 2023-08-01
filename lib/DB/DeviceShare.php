@@ -32,20 +32,20 @@ use OCP\AppFramework\Db\Entity;
  * @method string getTimestampFrom()
  * @method string getTimestampTo()
  * @method string setToken(string $token)
- * @method string setDeviceId(string $deviceId)
- * @method string setTimestampFrom(string $timestampFrom)
- * @method string setTimestampTo(string $timestampTo)
+ * @method string setDeviceId(int $deviceId)
+ * @method string setTimestampFrom(int $timestampFrom)
+ * @method string setTimestampTo(int $timestampTo)
  */
 class DeviceShare extends Entity {
-    public string $token;
-    public string $deviceId;
-	public string $timestampFrom;
-	public string $timestampTo;
+    public $token;
+    public $deviceId;
+	public $timestampFrom;
+	public $timestampTo;
 
     public function __construct() {
         $this->addType('token', 'string');
-        $this->addType('deviceId', 'string');
-		$this->addType('timestampFrom', 'string');
-		$this->addType('timestampTo', 'string');
+        $this->addType('deviceId', 'int');
+		$this->addType('timestampFrom', 'int');
+		$this->addType('timestampTo', 'int');
     }
 }

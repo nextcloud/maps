@@ -86,11 +86,11 @@ class DeviceShareMapper extends QBMapper {
 
     /**
      * @param $deviceId
-	 * @param $timeStampFrom
-	 * @param $timeStampTo
+	 * @param $timestampFrom
+	 * @param $timestampTo
      * @return Entity
      */
-    public function create($deviceId, $timeStampFrom, $timeStampTo) {
+    public function create($deviceId, $timestampFrom, $timestampTo): Entity {
         $token = $this->secureRandom->generate(
             Constants::TOKEN_LENGTH,
             ISecureRandom::CHAR_HUMAN_READABLE
@@ -99,8 +99,8 @@ class DeviceShareMapper extends QBMapper {
         $newShare = new DeviceShare();
         $newShare->setToken($token);
         $newShare->setDeviceId($deviceId);
-        $newShare->setTimestampFrom($timeStampFrom);
-		$newShare->setTimestampFrom($timeStampTo);
+        $newShare->setTimestampFrom($timestampFrom);
+		$newShare->setTimestampTo($timestampTo);
 
         return $this->insert($newShare);
     }
@@ -117,7 +117,7 @@ class DeviceShareMapper extends QBMapper {
         $qb->select('*')
             ->from($this->getTableName())
             ->where(
-                $qb->expr()->eq('deviceId', $qb->createNamedParameter($deviceId, IQueryBuilder::PARAM_STR))
+                $qb->expr()->eq('device_id', $qb->createNamedParameter($deviceId, IQueryBuilder::PARAM_INT::PARAM_STR))
             );
 
         return $this->findEntities($qb);
@@ -126,7 +126,6 @@ class DeviceShareMapper extends QBMapper {
 	/**
 	 * @param $deviceIds
 	 * @return Entity[]
-	 * @throws DoesNotExistException
 	 */
 	public function findByDeviceIds($deviceIds) {
 		$qb = $this->db->getQueryBuilder();
@@ -134,7 +133,7 @@ class DeviceShareMapper extends QBMapper {
 		$qb->select('*')
 			->from($this->getTableName())
 			->where(
-				$qb->expr()->in('deviceId', $qb->createNamedParameter($deviceIds, IQueryBuilder::PARAM_STR))
+				$qb->expr()->in('device_id', $qb->createNamedParameter($deviceIds, IQueryBuilder::PARAM_INT_ARRAY))
 			);
 
 		return $this->findEntities($qb);

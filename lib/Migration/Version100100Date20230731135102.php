@@ -14,7 +14,7 @@ use Doctrine\DBAL\Types\Type;
 /**
  * Auto-generated migration step: Please modify to your needs!
  */
-class Version100100Date20230731135100 extends SimpleMigrationStep {
+class Version100100Date20230731135102 extends SimpleMigrationStep {
 
 	protected $db;
 
@@ -40,16 +40,14 @@ class Version100100Date20230731135100 extends SimpleMigrationStep {
 		/** @var ISchemaWrapper $schema */
 		$schema = $schemaClosure();
 
+		$schema->dropTable('maps_device_shares');
+
 		if (!$schema->hasTable('maps_device_shares')) {
 			$table = $schema->createTable('maps_device_shares');
 			$table->addColumn('id', 'bigint', [
 				'autoincrement' => true,
 				'notnull' => true,
 				'length' => 41,
-			]);
-			$table->addColumn('owner', 'string', [
-				'notnull' => true,
-				'length' => 64,
 			]);
 			$table->addColumn('device_id', 'bigint', [
 				'notnull' => true,

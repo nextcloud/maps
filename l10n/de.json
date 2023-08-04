@@ -285,6 +285,8 @@
     "Failed to save all Contacts to map {mapName}" : "Es konnten nicht alle Kontake zur Karte {mapName} gespeichert werden.",
     "Failed to load contacts" : "Laden der Kontakte fehlgeschlagen",
     "Not grouped" : "Nicht gruppiert",
+    "Favorite {name} was saved" : "Favorit {name} wurde gespeichert",
+    "Favorite was deleted" : "Favorit wurde gelöscht",
     "Favorites exported in {path}" : "Favoriten nach {path} exportiert",
     "Import favorites from GeoJSON (Google Maps), gpx (OsmAnd, Nextcloud Maps) or kmz/kml (F-Droid Maps, Maps.me, Marble)" : "Favoriten aus GeoJSON (Google Maps), gpx (OsmAnd, Nextcloud Maps) oder kmz/kml (F-Droid Maps, Maps.me, Marble) importieren",
     "Favorite {favoriteName} added to map {mapName}" : "Favorit {favoriteName} wurde zur Karte {mapName} hinzugefügt.",

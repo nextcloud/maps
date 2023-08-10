@@ -51,6 +51,8 @@
     "Quit" : "خروج",
     "Tags" : "برچسب ها",
     "Favorite" : "مورد‌ ‌علاقه‌",
+    "Unable to change the favourite state of the file" : "امکان تغییر حالت دلخواه فایل وجود ندارد",
+    "Error while loading the file data" : "خطا هنگام بارگیری داده های فایل",
     "Distance" : "فاصله",
     "Duration" : "مدت زمان",
     "Moving time" : "مدت زمان",

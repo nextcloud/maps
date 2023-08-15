@@ -36,7 +36,7 @@
     "npm": "^9.0.0"
   },
   "dependencies": {
-    "@fortawesome/fontawesome-free": "^6.4.0",
+    "@fortawesome/fontawesome-free": "^6.4.2",
     "@nextcloud/auth": "^2.1.0",
     "@nextcloud/axios": "^2.4.0",
     "@nextcloud/dialogs": "^4.1.0",

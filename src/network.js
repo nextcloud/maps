@@ -70,7 +70,7 @@ export function geocode(lat, lng) {
 
 export function searchAddress(address, limit = 8) {
 	const query = encodeURIComponent(address)
-	const url = 'https://nominatim.openstreetmap.org/search/' + query + '?format=json&addressdetails=1&extratags=1&namedetails=1&limit=' + limit
+	const url = 'https://nominatim.openstreetmap.org/search?q=' + query + '&format=json&addressdetails=1&extratags=1&namedetails=1&limit=' + limit
 	return realAxios.get(url)
 }
 

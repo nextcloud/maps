@@ -6,6 +6,7 @@ OC.L10N.register(
     "Delete" : "ລຶບ",
     "Rename" : "ປ່ຽນຊື່",
     "Delete share link" : "ລົບລິງແບ່ງປັນ",
+    "Copied!" : "ກ໋ອບປີ້ແລ້ວ",
     "Cancel" : "ຍົກເລີກ",
     "Link copied" : "ສຳເນົາລິງ",
     "Share" : "ແບ່ງປັນ",

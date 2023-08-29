@@ -11,6 +11,8 @@
 
 namespace OCA\Maps\Controller;
 
+use OCA\Maps\DB\DeviceShareMapper;
+use OCP\Files\IRootFolder;
 use \OCP\IServerContainer;
 use \OCA\Maps\AppInfo\Application;
 use \OCA\Maps\Service\DevicesService;
@@ -91,7 +93,9 @@ class DevicesControllerTest extends \PHPUnit\Framework\TestCase {
             $c->query(IServerContainer::class)->getL10N($c->query('AppName')),
             $c->query(IServerContainer::class)->getLogger(),
             $c->query(DevicesService::class),
+			$c->query(DeviceShareMapper::class),
             $c->query(IServerContainer::class)->getDateTimeZone(),
+			$c->query(IRootFolder::class),
             'test'
         );
 
@@ -107,7 +111,9 @@ class DevicesControllerTest extends \PHPUnit\Framework\TestCase {
             $c->query(IServerContainer::class)->getL10N($c->query('AppName')),
             $c->query(IServerContainer::class)->getLogger(),
             $c->query(DevicesService::class),
+			$c->query(DeviceShareMapper::class),
             $c->query(IServerContainer::class)->getDateTimeZone(),
+			$c->query(IRootFolder::class),
             'test2'
         );
 

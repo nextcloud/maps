@@ -117,7 +117,7 @@ class DeviceShareMapper extends QBMapper {
         $qb->select('*')
             ->from($this->getTableName())
             ->where(
-                $qb->expr()->eq('device_id', $qb->createNamedParameter($deviceId, IQueryBuilder::PARAM_INT::PARAM_STR))
+                $qb->expr()->eq('device_id', $qb->createNamedParameter($deviceId, IQueryBuilder::PARAM_INT))
             );
 
         return $this->findEntities($qb);

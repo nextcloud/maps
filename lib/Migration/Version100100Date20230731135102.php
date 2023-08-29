@@ -40,8 +40,9 @@ class Version100100Date20230731135102 extends SimpleMigrationStep {
 		/** @var ISchemaWrapper $schema */
 		$schema = $schemaClosure();
 
-		$schema->dropTable('maps_device_shares');
-
+		if ($schema->hasTable('maps_device_shares')) {
+			$schema->dropTable('maps_device_shares');
+		}
 		if (!$schema->hasTable('maps_device_shares')) {
 			$table = $schema->createTable('maps_device_shares');
 			$table->addColumn('id', 'bigint', [

@@ -4,6 +4,11 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## 1.1.1 - 2023.08.29 Fix search
+### Added
+-  Fix nominatim search address query [#1111](https://github.com/nextcloud/maps/issues/1111) @fl0e
+  [#1110](https://github.com/nextcloud/maps/pull/1110) @Simounet
+
 ## 1.1.0 - 2023.07.04 Nextcloud 27
 ### Added
 - Add an option to deduplicate same address for a contact [#1013](https://github.com/nextcloud/maps/issues/1013) @vincowl

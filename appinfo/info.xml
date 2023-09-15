@@ -51,6 +51,7 @@
     <commands>
         <command>OCA\Maps\Command\RescanPhotos</command>
         <command>OCA\Maps\Command\RescanTracks</command>
+		<command>OCA\Maps\Command\RegisterMimetypes</command>
     </commands>
     <settings>
         <admin>OCA\Maps\Settings\AdminSettings</admin>

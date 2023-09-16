@@ -65,7 +65,7 @@
     "mapbox-gl-leaflet": "^0.0.16",
     "nouislider": "^15.7.1",
     "opening_hours": "^3.8.0",
-    "ua-parser-js": "^1.0.35",
+    "ua-parser-js": "^1.0.36",
     "vue": "^2.7.14",
     "vue-click-outside": "^1.1.0",
     "vue-types": "^5.1.1",

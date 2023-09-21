@@ -19,7 +19,6 @@ OC.L10N.register(
     "Yes" : "Yes",
     "Search" : "Search",
     "File" : "File",
-    "Destination" : "Destination",
-    "Settings" : "سیٹینگز"
+    "Destination" : "Destination"
 },
 "nplurals=2; plural=(n != 1);");

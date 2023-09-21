@@ -376,7 +376,6 @@ OC.L10N.register(
     "Mapbox settings" : "Mapbox 設定",
     "Set the API key to use Mapbox routing service." : "設定 API 金鑰才能使用 Mapbox 導航服務",
     "Leave empty to disable." : "空白代表停用",
-    "Mapbox API key" : "Mapbox API 金鑰",
-    "Settings" : "設定"
+    "Mapbox API key" : "Mapbox API 金鑰"
 },
 "nplurals=1; plural=0;");

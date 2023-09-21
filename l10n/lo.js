@@ -27,7 +27,6 @@ OC.L10N.register(
     "File" : "ຟາຍ",
     "Start" : "ເລີ່ມຕົ້ນ",
     "Destination" : "ປາຍທາງ",
-    "Default" : "ເລີ່ມຕົ້ນ",
-    "Settings" : "ການຕັ້ງຄ່າ"
+    "Default" : "ເລີ່ມຕົ້ນ"
 },
 "nplurals=1; plural=0;");

@@ -28,7 +28,6 @@ OC.L10N.register(
     "File" : "File",
     "Destination" : "Destination",
     "Phone" : "تېلېفون",
-    "Default" : "كۆڭۈلدىكى",
-    "Settings" : "تەڭشەكلەر"
+    "Default" : "كۆڭۈلدىكى"
 },
 "nplurals=2; plural=(n != 1);");

@@ -376,7 +376,6 @@ OC.L10N.register(
     "Mapbox settings" : "تنظیمات Mapbox",
     "Set the API key to use Mapbox routing service." : "کلید API را برای استفاده از سرویس مسیریابی Mapbox تنظیم کنید.",
     "Leave empty to disable." : "خالی بگذارید تا غیرفعال شود.",
-    "Mapbox API key" : "کلید API Mapbox",
-    "Settings" : "تنظیمات"
+    "Mapbox API key" : "کلید API Mapbox"
 },
 "nplurals=2; plural=(n > 1);");

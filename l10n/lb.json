@@ -33,7 +33,6 @@
     "Destination" : "Destination",
     "min" : "Minutt",
     "Phone" : "Telefon",
-    "Default" : "Standard",
-    "Settings" : "Astellungen"
+    "Default" : "Standard"
 },"pluralForm" :"nplurals=2; plural=(n != 1);"
 }

@@ -20,7 +20,6 @@ OC.L10N.register(
     "Home" : "کور",
     "Work" : "دفتر",
     "Yes" : "هو",
-    "Open" : "پرانيستل",
-    "Settings" : "سمونې"
+    "Open" : "پرانيستل"
 },
 "nplurals=2; plural=(n != 1);");

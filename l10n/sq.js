@@ -45,7 +45,6 @@ OC.L10N.register(
     "min" : "min",
     "Phone" : "Telefon",
     "Not grouped" : "I pagrupuar",
-    "Default" : "E paracaktuar",
-    "Settings" : "Rregullimet"
+    "Default" : "E paracaktuar"
 },
 "nplurals=2; plural=(n != 1);");

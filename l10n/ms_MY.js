@@ -26,7 +26,6 @@ OC.L10N.register(
     "Search" : "Search",
     "File" : "File",
     "Destination" : "Destination",
-    "Phone" : "Telefon",
-    "Settings" : "Tetapan"
+    "Phone" : "Telefon"
 },
 "nplurals=1; plural=0;");

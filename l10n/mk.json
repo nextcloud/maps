@@ -356,7 +356,6 @@
     "Mapbox settings" : "Mapbox параметри",
     "Set the API key to use Mapbox routing service." : "Постави API клуч за да го кориси Mapbox сервисот за рутирање.",
     "Leave empty to disable." : "Остави го празно за оневозможено.",
-    "Mapbox API key" : "Mapbox API клуч",
-    "Settings" : "Параметри"
+    "Mapbox API key" : "Mapbox API клуч"
 },"pluralForm" :"nplurals=2; plural=(n % 10 == 1 && n % 100 != 11) ? 0 : 1;"
 }

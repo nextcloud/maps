@@ -235,7 +235,6 @@ OC.L10N.register(
     "Mapbox settings" : "Configuració de Mapbox",
     "Set the API key to use Mapbox routing service." : "Estableix la clau de l'API per utilitzar el servei d'encaminament de Mapbox.",
     "Leave empty to disable." : "Deixeu-ho en blanc per inhabilitar-ho.",
-    "Mapbox API key" : "Clau de l'API de Mapbox",
-    "Settings" : "Paràmetres"
+    "Mapbox API key" : "Clau de l'API de Mapbox"
 },
 "nplurals=2; plural=(n != 1);");

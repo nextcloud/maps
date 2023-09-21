@@ -37,7 +37,6 @@ OC.L10N.register(
     "Destination" : "Destination",
     "Phone" : "Telefonnummer",
     "Not grouped" : "Ikkje gruppert",
-    "Default" : "Standard",
-    "Settings" : "Instillingar"
+    "Default" : "Standard"
 },
 "nplurals=2; plural=(n != 1);");

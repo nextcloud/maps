@@ -207,7 +207,6 @@ OC.L10N.register(
     "Show OSRM demo server" : "OSRMデモサーバーを表示",
     "Mapbox Website" : "Mapboxサイト",
     "Mapbox settings" : "Mapbox設定",
-    "Leave empty to disable." : "無効にするには空欄にしてください",
-    "Settings" : "セッティング"
+    "Leave empty to disable." : "無効にするには空欄にしてください"
 },
 "nplurals=1; plural=0;");

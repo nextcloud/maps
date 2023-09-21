@@ -33,7 +33,6 @@ OC.L10N.register(
     "Destination" : "Destination",
     "Not grouped" : "គ្មាន​ក្រុម",
     "Default" : "លំនាំ​ដើម",
-    "Bar" : "របារ",
-    "Settings" : "ការកំណត់"
+    "Bar" : "របារ"
 },
 "nplurals=1; plural=0;");

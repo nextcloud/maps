@@ -273,7 +273,6 @@ OC.L10N.register(
     "Mapbox Website" : "Mapbox 웹사이트",
     "Mapbox settings" : "Mapbox 설정",
     "Set the API key to use Mapbox routing service." : "Mapbox 라우팅 서비스를 사용하도록 API 키를 설정합니다.",
-    "Mapbox API key" : "Mapbox API 키",
-    "Settings" : "설정"
+    "Mapbox API key" : "Mapbox API 키"
 },
 "nplurals=1; plural=0;");

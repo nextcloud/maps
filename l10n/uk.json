@@ -233,7 +233,6 @@
     "To enable routing, you must set up a routing engine below." : "Для увімкнення маршрутів спочатку потрібно встановити рушій побудови маршрутів.",
     "Leave URL fields empty to disable OSRM routing provider." : "Залиште поле адреси порожнім, щоби вимкнути OSRM-постачальника послуг маршрутів.",
     "Show OSRM demo server" : "Показувати OSRM демонстраційний сервер",
-    "Set the API key to use Mapbox routing service." : "Встановіть ключ API, щоби почати використовувати службу маршрутів Mapbox.",
-    "Settings" : "Налаштування"
+    "Set the API key to use Mapbox routing service." : "Встановіть ключ API, щоби почати використовувати службу маршрутів Mapbox."
 },"pluralForm" :"nplurals=4; plural=(n % 1 == 0 && n % 10 == 1 && n % 100 != 11 ? 0 : n % 1 == 0 && n % 10 >= 2 && n % 10 <= 4 && (n % 100 < 12 || n % 100 > 14) ? 1 : n % 1 == 0 && (n % 10 ==0 || (n % 10 >=5 && n % 10 <=9) || (n % 100 >=11 && n % 100 <=14 )) ? 2: 3);"
 }

@@ -35,7 +35,6 @@ OC.L10N.register(
     "Destination" : "Destination",
     "Phone" : "ফোন",
     "Not grouped" : "দলবদ্ধ নয়",
-    "Default" : "পূর্বনির্ধারিত",
-    "Settings" : "সেটিংস"
+    "Default" : "পূর্বনির্ধারিত"
 },
 "nplurals=2; plural=(n != 1);");

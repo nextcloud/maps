@@ -19,7 +19,6 @@ OC.L10N.register(
     "Yes" : "Hawa",
     "Search" : "Gözlemek",
     "File" : "Faýl",
-    "Default" : "Bellenen",
-    "Settings" : "Sazlamalar"
+    "Default" : "Bellenen"
 },
 "nplurals=2; plural=(n != 1);");

@@ -145,7 +145,6 @@
     "Hotel" : "Viešbutis",
     "OSRM settings" : "OSRM nustatymai",
     "An OSRM server URL looks like this : https://my.osrm.server.org:5000/route/v1" : "OSRM serverio URL atrodo štai taip : https://my.osrm.server.org:5000/route/v1",
-    "Mapbox API key" : "Mapbox API raktas",
-    "Settings" : "Nustatymai"
+    "Mapbox API key" : "Mapbox API raktas"
 },"pluralForm" :"nplurals=4; plural=(n % 10 == 1 && (n % 100 > 19 || n % 100 < 11) ? 0 : (n % 10 >= 2 && n % 10 <=9) && (n % 100 > 19 || n % 100 < 11) ? 1 : n % 1 != 0 ? 2: 3);"
 }

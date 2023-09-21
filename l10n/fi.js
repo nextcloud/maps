@@ -285,7 +285,6 @@ OC.L10N.register(
     "Mapbox settings" : "Mapbox-asetukset",
     "Set the API key to use Mapbox routing service." : "Aseta API-avain käyttääksesi Mapboxin reitityspalvelua.",
     "Leave empty to disable." : "Jätä tyhjäksi poistaaksesi käytöstä.",
-    "Mapbox API key" : "Mapboxin API-avain",
-    "Settings" : "Asetukset"
+    "Mapbox API key" : "Mapboxin API-avain"
 },
 "nplurals=2; plural=(n != 1);");

@@ -26,7 +26,6 @@ OC.L10N.register(
     "Search" : "Nadi",
     "File" : "Afaylu",
     "Phone" : "Tiliɣri",
-    "Default" : "Prédéfini(e)",
-    "Settings" : "Iɣewwaṛen"
+    "Default" : "Prédéfini(e)"
 },
 "nplurals=2; plural=(n != 1);");

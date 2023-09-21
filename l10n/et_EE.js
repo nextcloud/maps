@@ -52,7 +52,6 @@ OC.L10N.register(
     "Default" : "Vaikeväärtus",
     "Failed to delete favorite" : "Lemmiku kustutamine ebaõnnestus",
     "Cinema" : "Kino",
-    "Dentist" : "Hambaarst",
-    "Settings" : "Seaded"
+    "Dentist" : "Hambaarst"
 },
 "nplurals=2; plural=(n != 1);");

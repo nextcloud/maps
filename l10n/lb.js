@@ -35,7 +35,6 @@ OC.L10N.register(
     "Destination" : "Destination",
     "min" : "Minutt",
     "Phone" : "Telefon",
-    "Default" : "Standard",
-    "Settings" : "Astellungen"
+    "Default" : "Standard"
 },
 "nplurals=2; plural=(n != 1);");

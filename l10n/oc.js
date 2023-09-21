@@ -57,7 +57,6 @@ OC.L10N.register(
     "Dentist" : "Dentista",
     "OSRM settings" : "Paramètres OSRM",
     "GraphHopper settings" : "Paramètres GraphHopper",
-    "Mapbox settings" : "Paramètres Mapbox",
-    "Settings" : "Paramètres"
+    "Mapbox settings" : "Paramètres Mapbox"
 },
 "nplurals=2; plural=(n > 1);");

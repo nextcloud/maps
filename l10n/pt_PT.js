@@ -52,7 +52,6 @@ OC.L10N.register(
     "Not grouped" : "Não agrupados",
     "Default" : "Predefinido",
     "Failed to save settings" : "Erro ao gravar as definições",
-    "Metadata" : "Metadados",
-    "Settings" : "Definições"
+    "Metadata" : "Metadados"
 },
 "nplurals=3; plural=(n == 0 || n == 1) ? 0 : n != 0 && n % 1000000 == 0 ? 1 : 2;");

@@ -375,7 +375,6 @@ OC.L10N.register(
     "Mapbox settings" : "Mapbox ezarpenak",
     "Set the API key to use Mapbox routing service." : "Ezarri API key-a erabiltzeko Mapbox bideratze zerbitzua.",
     "Leave empty to disable." : "Laga hutsik desgaitzeko.",
-    "Mapbox API key" : "Mapbox API gakoa",
-    "Settings" : "Ezarpenak"
+    "Mapbox API key" : "Mapbox API gakoa"
 },
 "nplurals=2; plural=(n != 1);");

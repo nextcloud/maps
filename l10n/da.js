@@ -66,7 +66,6 @@ OC.L10N.register(
     "Bar" : "Bar",
     "Cinema" : "Biograf",
     "Hospital" : "Hospital",
-    "Dentist" : "Tandlæge",
-    "Settings" : "Indstillinger"
+    "Dentist" : "Tandlæge"
 },
 "nplurals=2; plural=(n != 1);");

@@ -28,7 +28,6 @@ OC.L10N.register(
     "Search" : "Search",
     "File" : "File",
     "Destination" : "Destination",
-    "Phone" : "தொலைப்பேசி",
-    "Settings" : "அமைப்புகள்"
+    "Phone" : "தொலைப்பேசி"
 },
 "nplurals=2; plural=(n != 1);");

@@ -43,7 +43,6 @@
     "min" : "min",
     "Phone" : "Telefon",
     "Not grouped" : "I pagrupuar",
-    "Default" : "E paracaktuar",
-    "Settings" : "Rregullimet"
+    "Default" : "E paracaktuar"
 },"pluralForm" :"nplurals=2; plural=(n != 1);"
 }

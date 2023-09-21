@@ -42,7 +42,6 @@ OC.L10N.register(
     "Destination" : "Destination",
     "min" : "мин",
     "Phone" : "Утас",
-    "Not grouped" : "Багт ороогүй",
-    "Settings" : "Тохиргоо"
+    "Not grouped" : "Багт ороогүй"
 },
 "nplurals=2; plural=(n != 1);");

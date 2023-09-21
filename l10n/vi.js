@@ -54,7 +54,6 @@ OC.L10N.register(
     "Bar" : "Thanh",
     "Cinema" : "Rạp chiếu phim",
     "Hospital" : "Bệnh viện",
-    "Dentist" : "Nha sĩ",
-    "Settings" : "Thiết lập"
+    "Dentist" : "Nha sĩ"
 },
 "nplurals=1; plural=0;");

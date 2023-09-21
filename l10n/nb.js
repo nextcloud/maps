@@ -161,7 +161,6 @@ OC.L10N.register(
     "GraphHopper settings" : "GraphHopper innstillinger",
     "Mapbox Website" : "Mapbox nettside",
     "Mapbox settings" : "Mapbox innstillinger",
-    "Mapbox API key" : "Mapbox API-nøkkel",
-    "Settings" : "Innstillinger"
+    "Mapbox API key" : "Mapbox API-nøkkel"
 },
 "nplurals=2; plural=(n != 1);");

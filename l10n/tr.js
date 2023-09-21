@@ -376,7 +376,6 @@ OC.L10N.register(
     "Mapbox settings" : "Mapbox ayarları",
     "Set the API key to use Mapbox routing service." : "Mapbox yön bulma hizmetini kullanabilmek için gereken API anahtarını yazın.",
     "Leave empty to disable." : "Kullanılmaması için boş bırakın.",
-    "Mapbox API key" : "Mapbox API anahtarı",
-    "Settings" : "Ayarlar"
+    "Mapbox API key" : "Mapbox API anahtarı"
 },
 "nplurals=2; plural=(n > 1);");

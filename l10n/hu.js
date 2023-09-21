@@ -373,7 +373,6 @@ OC.L10N.register(
     "Mapbox settings" : "Mapbox beállítások",
     "Set the API key to use Mapbox routing service." : "Adja meg a Mapbox útvonalkereső szolgáltatáshoz használandó API-kulcsot.",
     "Leave empty to disable." : "A letiltáshoz hagyja üresen.",
-    "Mapbox API key" : "Mapbox API-kulcs",
-    "Settings" : "Beállítások"
+    "Mapbox API key" : "Mapbox API-kulcs"
 },
 "nplurals=2; plural=(n != 1);");

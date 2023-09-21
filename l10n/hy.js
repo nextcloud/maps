@@ -28,7 +28,6 @@ OC.L10N.register(
     "File" : "File",
     "Destination" : "Destination",
     "min" : "րոպե",
-    "Default" : "Լռելյայն",
-    "Settings" : "կարգավորումներ"
+    "Default" : "Լռելյայն"
 },
 "nplurals=2; plural=(n != 1);");

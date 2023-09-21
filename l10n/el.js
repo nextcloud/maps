@@ -248,7 +248,6 @@ OC.L10N.register(
     "Mapbox settings" : "Ρυθμίσεις Mapbox",
     "Set the API key to use Mapbox routing service." : "Καταχωρήστε το κλειδί API για χρήση της υπηρεσίας δρομολόγησης Mapbox.",
     "Leave empty to disable." : "Αφήστε κενό για απενεργοποίηση.",
-    "Mapbox API key" : "Mapbox API κλειδί",
-    "Settings" : "Ρυθμίσεις"
+    "Mapbox API key" : "Mapbox API κλειδί"
 },
 "nplurals=2; plural=(n != 1);");

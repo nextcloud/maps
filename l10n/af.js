@@ -44,7 +44,6 @@ OC.L10N.register(
     "My location" : "My ligging",
     "Phone" : "Foon",
     "Not grouped" : "Nie gegroepeer",
-    "Default" : "Verstek",
-    "Settings" : "Instellings"
+    "Default" : "Verstek"
 },
 "nplurals=2; plural=(n != 1);");

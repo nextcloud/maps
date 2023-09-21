@@ -46,7 +46,6 @@ OC.L10N.register(
     "Not grouped" : "Negrupēts",
     "Default" : "Noklusējuma",
     "Failed to save settings" : "Neizdevās saglabāt iestatījumus",
-    "Metadata" : "Metadati",
-    "Settings" : "Iestatījumi"
+    "Metadata" : "Metadati"
 },
 "nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n != 0 ? 1 : 2);");

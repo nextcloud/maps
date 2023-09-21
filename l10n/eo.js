@@ -50,7 +50,6 @@ OC.L10N.register(
     "Phone" : "Telefono",
     "Not grouped" : "Ne grupigita",
     "Default" : "Defaŭlta",
-    "Failed to save settings" : "Konservo de agordoj malsukcesis",
-    "Settings" : "Agordoj"
+    "Failed to save settings" : "Konservo de agordoj malsukcesis"
 },
 "nplurals=2; plural=(n != 1);");

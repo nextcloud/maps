@@ -35,7 +35,6 @@
     "Destination" : "Destination",
     "Phone" : "Telefonnummer",
     "Not grouped" : "Ikkje gruppert",
-    "Default" : "Standard",
-    "Settings" : "Instillingar"
+    "Default" : "Standard"
 },"pluralForm" :"nplurals=2; plural=(n != 1);"
 }

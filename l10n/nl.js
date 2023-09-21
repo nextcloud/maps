@@ -260,7 +260,6 @@ OC.L10N.register(
     "Mapbox settings" : "Mapbox instellingen",
     "Set the API key to use Mapbox routing service." : "Stel een API-sleutel in om de Mapbox routeringsservice te gebruiken.",
     "Leave empty to disable." : "Leeglaten om uit te schakelen",
-    "Mapbox API key" : "Mapbox API key",
-    "Settings" : "Instellingen"
+    "Mapbox API key" : "Mapbox API key"
 },
 "nplurals=2; plural=(n != 1);");

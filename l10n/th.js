@@ -61,7 +61,6 @@ OC.L10N.register(
     "min" : "นาที",
     "Phone" : "โทรศัพท์",
     "Not grouped" : "ไม่ถูกจัดกลุ่ม",
-    "Default" : "ค่าเริ่มต้น",
-    "Settings" : "การตั้งค่า"
+    "Default" : "ค่าเริ่มต้น"
 },
 "nplurals=1; plural=0;");

@@ -233,7 +233,6 @@ OC.L10N.register(
     "Mapbox settings" : "Impostatziones de Mapbox",
     "Set the API key to use Mapbox routing service." : "Imposta sa crae API pro impreare su servìtziu de diretzione Mapbox.",
     "Leave empty to disable." : "Lassa bòidu pro disativare.",
-    "Mapbox API key" : "Crae API de Mapbox",
-    "Settings" : "Impostatziones"
+    "Mapbox API key" : "Crae API de Mapbox"
 },
 "nplurals=2; plural=(n != 1);");

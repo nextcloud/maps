@@ -203,7 +203,6 @@ OC.L10N.register(
     "Mapbox Website" : "Vefsvæði Mapbox",
     "Mapbox settings" : "Stillingar Mapbox",
     "Leave empty to disable." : "Skildu eftir autt til að gera óvirkt.",
-    "Mapbox API key" : "Mapbox API-forrritsviðmótslykill",
-    "Settings" : "Stillingar"
+    "Mapbox API key" : "Mapbox API-forrritsviðmótslykill"
 },
 "nplurals=2; plural=(n % 10 != 1 || n % 100 == 11);");

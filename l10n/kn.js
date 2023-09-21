@@ -28,7 +28,6 @@ OC.L10N.register(
     "right" : "ಬಲ",
     "left" : "ಎಡ",
     "Destination" : "Destination",
-    "Default" : "ಆರಂಭದ ಪ್ರತಿ",
-    "Settings" : "ಆಯ್ಕೆ"
+    "Default" : "ಆರಂಭದ ಪ್ರತಿ"
 },
 "nplurals=2; plural=(n > 1);");

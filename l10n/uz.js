@@ -22,7 +22,6 @@ OC.L10N.register(
     "Search" : "Search",
     "File" : "File",
     "right" : "right",
-    "left" : "left",
-    "Settings" : "Settings"
+    "left" : "left"
 },
 "nplurals=1; plural=0;");

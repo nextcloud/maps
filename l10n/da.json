@@ -64,7 +64,6 @@
     "Bar" : "Bar",
     "Cinema" : "Biograf",
     "Hospital" : "Hospital",
-    "Dentist" : "Tandlæge",
-    "Settings" : "Indstillinger"
+    "Dentist" : "Tandlæge"
 },"pluralForm" :"nplurals=2; plural=(n != 1);"
 }

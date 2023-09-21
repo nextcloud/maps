@@ -305,7 +305,6 @@
     "Mapbox settings" : "Nastavenie Mapbox",
     "Set the API key to use Mapbox routing service." : "Nastavte kľúč API na používanie výpočtov trás služby Mapbox.",
     "Leave empty to disable." : "Pre vypnutie nechajte prázne.",
-    "Mapbox API key" : "Kľúč API služby Mapbox",
-    "Settings" : "Nastavenia"
+    "Mapbox API key" : "Kľúč API služby Mapbox"
 },"pluralForm" :"nplurals=4; plural=(n % 1 == 0 && n == 1 ? 0 : n % 1 == 0 && n >= 2 && n <= 4 ? 1 : n % 1 != 0 ? 2: 3);"
 }

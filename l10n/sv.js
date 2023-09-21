@@ -217,7 +217,6 @@ OC.L10N.register(
     "GraphHopper server URL (will use main graphhopper server if empty)" : "GraphHopper-serverwebbadress (kommer att använda huvud Graphhopper-server om den är tom)",
     "GraphHopper API key (mandatory if main server used)" : "GraphHopper API-nyckel (obligatorisk om huvudserver används)",
     "Mapbox Website" : "Mapbox hemsida",
-    "Leave empty to disable." : "Lämna tom för att inaktivera.",
-    "Settings" : "Inställningar"
+    "Leave empty to disable." : "Lämna tom för att inaktivera."
 },
 "nplurals=2; plural=(n != 1);");

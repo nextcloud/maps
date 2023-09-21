@@ -219,7 +219,6 @@ OC.L10N.register(
     "Mapbox settings" : "הגדרות Mapbox",
     "Set the API key to use Mapbox routing service." : "יש להגדיר את מפתח ה־API כדי להשתמש בשירותי הניתוב של Mapbox.",
     "Leave empty to disable." : "יש להשאיר ריק כדי להשבית.",
-    "Mapbox API key" : "מפתח ה־API של Mapbox",
-    "Settings" : "הגדרות"
+    "Mapbox API key" : "מפתח ה־API של Mapbox"
 },
 "nplurals=4; plural=(n == 1 && n % 1 == 0) ? 0 : (n == 2 && n % 1 == 0) ? 1: (n % 10 == 0 && n % 1 == 0 && n > 10) ? 2 : 3;");

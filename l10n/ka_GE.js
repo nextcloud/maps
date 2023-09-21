@@ -43,7 +43,6 @@ OC.L10N.register(
     "min" : "წთ",
     "Phone" : "ტელეფონი",
     "Not grouped" : "არაა დაჯგუფებული",
-    "Default" : "საწყისი",
-    "Settings" : "პარამეტრები"
+    "Default" : "საწყისი"
 },
 "nplurals=2; plural=(n!=1);");

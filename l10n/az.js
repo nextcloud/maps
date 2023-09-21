@@ -36,7 +36,6 @@ OC.L10N.register(
     "left" : "Sol",
     "Destination" : "Destination",
     "Not grouped" : "Qruplaşdırılmayıb",
-    "Default" : "Susmaya görə",
-    "Settings" : "Quraşdırmalar"
+    "Default" : "Susmaya görə"
 },
 "nplurals=2; plural=(n != 1);");

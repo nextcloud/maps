@@ -38,7 +38,6 @@ OC.L10N.register(
     "Destination" : "Destination",
     "min" : "minutas",
     "Phone" : "Phono",
-    "Not grouped" : "Non gruppate",
-    "Settings" : "Configurationes"
+    "Not grouped" : "Non gruppate"
 },
 "nplurals=2; plural=(n != 1);");

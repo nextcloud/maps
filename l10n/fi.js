@@ -222,6 +222,8 @@ OC.L10N.register(
     "All Contacts added to map {mapName}" : "Kaikki yhteystiedot lisätty karttaan {mapName}",
     "Failed to load contacts" : "Yhteystietojen lataaminen epäonnistui",
     "Not grouped" : "Ei ryhmitelty",
+    "Favorite {name} was saved" : "Suosikki {name} tallennettiin",
+    "Favorite was deleted" : "Suosikki poistettiin",
     "Favorites exported in {path}" : "Suosikit viety polkuun {path}",
     "Favorite {favoriteName} added to map {mapName}" : "Suosikki {favoriteName} lisätty karttaan {mapName}",
     "Click on the map to add a favorite, press Esc to cancel" : "Napsauta karttaa lisätäksesi suosikin, paina Esc peruaksesi.",
@@ -243,6 +245,7 @@ OC.L10N.register(
     "Failed to delete map" : "Kartan poistaminen epäonnistui",
     "Failed to rename map" : "Kartan nimeäminen uudelleen epäonnistui",
     "Failed to load your maps" : "Karttojen lataaminen epäonnistui",
+    "Report Error" : "Ilmoita virheestä",
     "Failed to get favorites" : "Suosikkien noutaminen epäonnistui",
     "Failed to create favorite" : "Suosikin luominen epäonnistui",
     "Failed to update favorite" : "Suosikin päivittäminen epäonnistui",
@@ -285,6 +288,7 @@ OC.L10N.register(
     "Mapbox settings" : "Mapbox-asetukset",
     "Set the API key to use Mapbox routing service." : "Aseta API-avain käyttääksesi Mapboxin reitityspalvelua.",
     "Leave empty to disable." : "Jätä tyhjäksi poistaaksesi käytöstä.",
-    "Mapbox API key" : "Mapboxin API-avain"
+    "Mapbox API key" : "Mapboxin API-avain",
+    "Maps settings" : "Kartan asetukset"
 },
 "nplurals=2; plural=(n != 1);");

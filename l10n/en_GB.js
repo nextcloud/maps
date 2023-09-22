@@ -376,6 +376,7 @@ OC.L10N.register(
     "Mapbox settings" : "Mapbox settings",
     "Set the API key to use Mapbox routing service." : "Set the API key to use Mapbox routing service.",
     "Leave empty to disable." : "Leave empty to disable.",
-    "Mapbox API key" : "Mapbox API key"
+    "Mapbox API key" : "Mapbox API key",
+    "Maps settings" : "Maps settings"
 },
 "nplurals=2; plural=(n != 1);");

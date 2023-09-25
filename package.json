@@ -79,6 +79,6 @@
     "@nextcloud/eslint-config": "^8.2.1",
     "@nextcloud/stylelint-config": "^2.3.1",
     "@nextcloud/webpack-vue-config": "^6.0.0",
-    "@types/leaflet": "^1.9.5"
+    "@types/leaflet": "^1.9.6"
   }
 }

@@ -378,7 +378,7 @@ class DevicesController extends Controller {
 			$share = $this->deviceShareMapper->create($id, $timestampFrom, $timestampTo);
 
 			if ($share === null) {
-				return new DataResponse($this->l->t("Error sharing favorite"), Http::STATUS_INTERNAL_SERVER_ERROR);
+				return new DataResponse($this->l->t("Error sharing device"), Http::STATUS_INTERNAL_SERVER_ERROR);
 			}
 		}
 		else {

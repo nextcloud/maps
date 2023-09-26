@@ -138,7 +138,8 @@
 				@click="$emit('click-device', $event)"
 				@export="$emit('export-device', $event)"
 				@toggle-history="$emit('toggle-device-history', $event)"
-				@change-color="$emit('change-device-color', $event)" />
+				@change-color="$emit('change-device-color', $event)"
+				@add-to-map-device="$emit('add-to-map-device', $event)" />
 			<ClickSearchPopup v-if="leftClickSearching"
 				:lat-lng="leftClickSearchLatLng"
 				:favorite-is-creatable="isFavoriteCreatable"

@@ -4,6 +4,18 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## 1.2.0 - 2023.xx.yy Link devices to map
+### Added
+-  Command for registering maps mimetypes [#1098](https://github.com/nextcloud/maps/issues/1098) @ratte-rizzo
+   [#1118](https://github.com/nextcloud/maps/pull/1118) @tacruc
+- Replace "Settings" by "Maps settings" [#1127](https://github.com/nextcloud/maps/pull/1127) @Jerome-Herbinet
+- Link device to map [#1105](https://github.com/nextcloud/maps/pull/1105) @tacruc
+
+### Fixed
+- Creation of dynamic property $lockingProvider is deprecated at apps/maps/lib/Hooks/FileHooks.php#46
+  [#1023](https://github.com/nextcloud/maps/issues/1023) @rcmlz
+  [#1134](https://github.com/nextcloud/maps/pull/1134) @tacruc
+
 ## 1.1.1 - 2023.08.29 Fix search
 ### Added
 -  Fix nominatim search address query [#1111](https://github.com/nextcloud/maps/issues/1111) @fl0e

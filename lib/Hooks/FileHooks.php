@@ -37,7 +37,9 @@ class FileHooks {
 
     private $root;
 
-    public function __construct(IRootFolder $root, PhotofilesService $photofilesService, TracksService $tracksService,
+	private ILockingProvider $lockingProvider;
+
+	public function __construct(IRootFolder $root, PhotofilesService $photofilesService, TracksService $tracksService,
                                 ILogger $logger, $appName, ILockingProvider $lockingProvider) {
         $this->photofilesService = $photofilesService;
         $this->tracksService = $tracksService;

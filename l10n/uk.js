@@ -3,6 +3,7 @@ OC.L10N.register(
     {
     "Invalid values" : "Недійсні значення",
     "No such device" : "Такий пристрій відсутній",
+    "Map not Found" : "Мапу не знайдено",
     "No device to export" : "Відсутні пристрої для експорту",
     "/Maps is not a directory" : "/Maps не є каталогом",
     "/Maps directory is not writeable" : "Неможливо записати дані в каталог /Maps",
@@ -15,7 +16,6 @@ OC.L10N.register(
     "invalid values" : "недопустимі значення",
     "Unknown category" : "Невідома категорія",
     "Error sharing favorite" : "Помилка з наданням доступу до вподобаного",
-    "Map not Found" : "Мапу не знайдено",
     "Bad file type" : "Неправильний тип файлу",
     "File not found" : "Файл не знайдено",
     "No such track" : "Відсутній такий шлях",

@@ -12,6 +12,8 @@ OC.L10N.register(
     "Invalid file extension" : "Neplatná přípona souboru",
     "Impossible to read the file" : "Nedaří se načíst soubor",
     "File does not exist" : "Soubor neexistuje",
+    "Error sharing device" : "Chyba při sdílení zařízení",
+    "Share not Found" : "Sdílení nenalezeno",
     "Share was already on map" : "Sdílení už bylo na mapě",
     "No such favorite" : "Žádná taková oblíbená položka",
     "invalid values" : "neplatné hodnoty",
@@ -305,6 +307,9 @@ OC.L10N.register(
     "Devices exported in {path}" : "Zařízení exportovaná v {path}",
     "Failed to export devices" : "Zařízení se nepodařilo exportovat",
     "Failed to delete device" : "Smazání zařízení se nezdařilo",
+    "Device {deviceName} linked to map {mapName}" : "Zařízení {deviceName} propojeno s mapou {mapName}",
+    "Failed to link Device to map {mapName}" : "Nepodařilo se propojit zařízení s mapou {mapName}",
+    "Failed to share Device" : "Nepodařilo se nasdílet zařízení",
     "Import devices from gpx (Nextcloud Maps) or kml/kmz (Google Timeline) file" : "Importovat zařízení ze souboru gpx (Mapy Nextcloud) nebo kml/kmz (Google Timeline)",
     "{nb} devices imported from {path}" : "{nb} zařízení importováno z {path}",
     "Failed to import devices" : "Nepodařilo se importovat zařízení",
@@ -375,6 +380,7 @@ OC.L10N.register(
     "Mapbox settings" : "Nastavení pro Mapbox",
     "Set the API key to use Mapbox routing service." : "Pokud chcete provádět výpočty tras prostřednictvím služby Mapbox, nastavte klíč k jejímu aplikačnímu program. rozhraní (API).",
     "Leave empty to disable." : "Pokud chcete vypnout, ponechte nevyplněné.",
-    "Mapbox API key" : "Klíč aplikačnímu program. rozhraní (API) služby Mapbox"
+    "Mapbox API key" : "Klíč aplikačnímu program. rozhraní (API) služby Mapbox",
+    "Maps settings" : "Nastavení pro Mapy"
 },
 "nplurals=4; plural=(n == 1 && n % 1 == 0) ? 0 : (n >= 2 && n <= 4 && n % 1 == 0) ? 1: (n % 1 != 0 ) ? 2 : 3;");

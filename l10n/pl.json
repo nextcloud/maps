@@ -10,6 +10,8 @@
     "Invalid file extension" : "Nieprawidłowe rozszerzenie pliku",
     "Impossible to read the file" : "Nie można odczytać pliku",
     "File does not exist" : "Plik nie istnieje",
+    "Error sharing device" : "Błąd udostępniania urządzenia",
+    "Share not Found" : "Nie znaleziono udostępnienia",
     "Share was already on map" : "Udostępnienie było już na mapie",
     "No such favorite" : "Nie ma ulubionych",
     "invalid values" : "nieprawidłowe wartości",
@@ -77,6 +79,7 @@
     "Favorite name" : "Nazwa ulubionych",
     "Category" : "Kategoria",
     "Comment" : "Komentarz",
+    "Location" : "Lokalizacja",
     "New category {n}" : "Nowa kategoria {n}",
     "Place photos" : "Umieść zdjęcia",
     "Place contact" : "Umieść kontakt",
@@ -284,6 +287,8 @@
     "Failed to save all Contacts to map {mapName}" : "Nie udało się zapisać wszystkich kontaktów na mapie {mapName}",
     "Failed to load contacts" : "Nie udało się wczytać kontaktów",
     "Not grouped" : "Nie pogrupowane",
+    "Favorite {name} was saved" : "Ulubione {name} zostało zapisane",
+    "Favorite was deleted" : "Ulubione zostało usunięte",
     "Favorites exported in {path}" : "Ulubione wyeksportowane do {path}",
     "Import favorites from GeoJSON (Google Maps), gpx (OsmAnd, Nextcloud Maps) or kmz/kml (F-Droid Maps, Maps.me, Marble)" : "Importuj ulubione z GeoJSON (Google Maps), gpx (OsmAnd, Nextcloud Maps) lub kmz/kml (F-Droid Maps, Maps.me, Marble)",
     "Favorite {favoriteName} added to map {mapName}" : "Ulubione {favoriteName} dodano do mapy {mapName}",
@@ -300,6 +305,9 @@
     "Devices exported in {path}" : "Urządzenia wyeksportowane do {path}",
     "Failed to export devices" : "Nie udało się wyeksportować urządzeń",
     "Failed to delete device" : "Nie udało się usunąć urządzenia",
+    "Device {deviceName} linked to map {mapName}" : "Urządzenie {deviceName} połączone z mapą {mapName}",
+    "Failed to link Device to map {mapName}" : "Nie udało się połączyć urządzenia z mapą {mapName}",
+    "Failed to share Device" : "Nie udało się udostępnić urządzenia",
     "Import devices from gpx (Nextcloud Maps) or kml/kmz (Google Timeline) file" : "Importuj urządzenia z pliku gpx (Nextcloud Maps) lub z pliku kml/kmz (Google Timeline)",
     "{nb} devices imported from {path}" : "Zaimportowanych {nb} urządzeń z {path}",
     "Failed to import devices" : "Nie udało się zaimportować urządzeń",
@@ -370,6 +378,7 @@
     "Mapbox settings" : "Ustawienia Mapbox",
     "Set the API key to use Mapbox routing service." : "Ustaw klucz API, aby korzystać z usługi routingu Mapbox.",
     "Leave empty to disable." : "Pozostaw puste, aby wyłączyć.",
-    "Mapbox API key" : "Klucz API Mapbox"
+    "Mapbox API key" : "Klucz API Mapbox",
+    "Maps settings" : "Ustawienia Map"
 },"pluralForm" :"nplurals=4; plural=(n==1 ? 0 : (n%10>=2 && n%10<=4) && (n%100<12 || n%100>14) ? 1 : n!=1 && (n%10>=0 && n%10<=1) || (n%10>=5 && n%10<=9) || (n%100>=12 && n%100<=14) ? 2 : 3);"
 }

@@ -16,12 +16,12 @@ OC.L10N.register(
     "Share" : "Kunhavigi",
     "Sort by name" : "Ordigi laŭ nomo",
     "Sort by date" : "Ordigi laŭ dato",
-    "OK" : "Bone",
+    "Save" : "Konservi",
     "Category" : "Kategorio",
     "Comment" : "Komento",
+    "Location" : "Loko",
     "Close" : "Malfermi",
     "Select all" : "Elekti ĉion",
-    "Save" : "Konservi",
     "Quit" : "Forlasi",
     "Devices" : "Aparatoj",
     "Tags" : "Etikedoj",
@@ -47,11 +47,10 @@ OC.L10N.register(
     "Start" : "Komenco",
     "Destination" : "Destination",
     "min" : "min",
-    "Details" : "Detaloj",
     "Phone" : "Telefono",
     "Not grouped" : "Ne grupigita",
     "Default" : "Defaŭlta",
     "Failed to save settings" : "Konservo de agordoj malsukcesis",
-    "Settings" : "Agordoj"
+    "Cinema" : "Kinejo"
 },
 "nplurals=2; plural=(n != 1);");

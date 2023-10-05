@@ -11,9 +11,9 @@ OC.L10N.register(
     "Share" : "Kongsi",
     "Sort by name" : "Order by name",
     "Sort by date" : "Order by date",
-    "OK" : "OK",
-    "Close" : "Tutup",
     "Save" : "Simpan",
+    "Location" : "Lokasi",
+    "Close" : "Tutup",
     "Quit" : "Berhenti",
     "Name" : "Nama",
     "Add" : "Tambah",
@@ -26,7 +26,6 @@ OC.L10N.register(
     "Search" : "Search",
     "File" : "File",
     "Destination" : "Destination",
-    "Phone" : "Telefon",
-    "Settings" : "Tetapan"
+    "Phone" : "Telefon"
 },
 "nplurals=1; plural=0;");

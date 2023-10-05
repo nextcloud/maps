@@ -13,12 +13,12 @@ OC.L10N.register(
     "Share" : "Del",
     "Sort by name" : "Order by name",
     "Sort by date" : "Order by date",
-    "OK" : "OK",
+    "Save" : "Lagre",
     "Category" : "Kategori",
     "Comment" : "Kommentér",
+    "Location" : "Stad",
     "Close" : "Lukk",
     "Select all" : "Merk alt",
-    "Save" : "Lagre",
     "Quit" : "Avslutt",
     "Tags" : "Emneord",
     "Favorite" : "Favoritt",
@@ -35,10 +35,8 @@ OC.L10N.register(
     "File" : "Fil",
     "Start" : "Start",
     "Destination" : "Destination",
-    "Details" : "Detaljar",
     "Phone" : "Telefonnummer",
     "Not grouped" : "Ikkje gruppert",
-    "Default" : "Standard",
-    "Settings" : "Instillingar"
+    "Default" : "Standard"
 },
 "nplurals=2; plural=(n != 1);");

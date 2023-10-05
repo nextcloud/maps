@@ -29,10 +29,11 @@ OC.L10N.register(
     "Show track elevation" : "Visa spårets höjd",
     "Sort by name" : "Sortera efter namn",
     "Sort by date" : "Sortera efter datum",
-    "OK" : "OK",
+    "Save" : "Spara",
     "Favorite name" : "Favoritnamn",
     "Category" : "Kategori",
     "Comment" : "Kommentar",
+    "Location" : "Plats",
     "Place photos" : "Placera foton",
     "Place contact" : "Placera kontakt",
     "Share this location" : "Dela den här platsen",
@@ -51,7 +52,6 @@ OC.L10N.register(
     "The True Size of Africa" : "Afrikas faktiska storlek",
     "Keep in mind that map projections always distort sizes of countries. The standard Mercator projection is particularly biased. Read more at:" : "Kom ihåg att kartprojektioner alltid förvränger verkligheten, tex länders storlek. Den vanliga Mercator-projektion är särskilt missvisande. Läs mer:",
     "Select all" : "Välj alla",
-    "Save" : "Spara",
     "Quit" : "Avsluta",
     "Load more" : "Ladda mer",
     "Devices" : "Enheter",
@@ -152,7 +152,6 @@ OC.L10N.register(
     "By bike (GraphHopper)" : "Med cyckel (GraphHopper)",
     "By Foot (GraphHopper)" : "Till fots (GraphHopper)",
     "Routing error:" : "Ruttfel: ",
-    "Details" : "Detaljer",
     "My location" : "Min plats",
     "Impossible to get current location" : "Omöjligt att få aktuell plats",
     "Phone" : "Telefon",
@@ -218,7 +217,6 @@ OC.L10N.register(
     "GraphHopper server URL (will use main graphhopper server if empty)" : "GraphHopper-serverwebbadress (kommer att använda huvud Graphhopper-server om den är tom)",
     "GraphHopper API key (mandatory if main server used)" : "GraphHopper API-nyckel (obligatorisk om huvudserver används)",
     "Mapbox Website" : "Mapbox hemsida",
-    "Leave empty to disable." : "Lämna tom för att inaktivera.",
-    "Settings" : "Inställningar"
+    "Leave empty to disable." : "Lämna tom för att inaktivera."
 },
 "nplurals=2; plural=(n != 1);");

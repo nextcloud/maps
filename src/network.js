@@ -70,7 +70,7 @@ export function geocode(lat, lng) {
 
 export function searchAddress(address, limit = 8) {
 	const query = encodeURIComponent(address)
-	const url = 'https://nominatim.openstreetmap.org/search/' + query + '?format=json&addressdetails=1&extratags=1&namedetails=1&limit=' + limit
+	const url = 'https://nominatim.openstreetmap.org/search?q=' + query + '&format=json&addressdetails=1&extratags=1&namedetails=1&limit=' + limit
 	return realAxios.get(url)
 }
 
@@ -391,12 +391,13 @@ export function getDevices(myMapId = null) {
 	return axios.get(url, conf)
 }
 
-export async function getDevice(id, myMapId = null, limit= null, offset = null) {
+export async function getDevice(id, myMapId = null, limit = null, offset = null, tokens = null) {
 	const conf = {
 		params: {
 			myMapId,
 			limit,
 			offset,
+			tokens,
 		},
 	}
 	const url = generateUrl('/apps/maps/devices/' + id)
@@ -447,6 +448,25 @@ export function importDevices(path) {
 
 export function deleteDevice(id) {
 	const url = generateUrl('/apps/maps/devices/' + id)
+	return axios.delete(url)
+}
+
+export function shareDevice(id, timestampFrom, timestampTo) {
+	const url = generateUrl('/apps/maps/devices/' + id + '/share')
+	const req = {
+		timestampFrom,
+		timestampTo,
+	}
+	return axios.post(url, req)
+}
+
+export function addSharedDeviceToMap(token, targetMapId) {
+	const url = generateUrl('/apps/maps/devices/s/' + token + '/map-link/' + targetMapId)
+	return axios.post(url)
+}
+
+export function removeDeviceShare(token) {
+	const url = generateUrl('/apps/maps/devices/s/' + token)
 	return axios.delete(url)
 }
 

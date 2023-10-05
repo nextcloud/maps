@@ -29,12 +29,12 @@ OC.L10N.register(
     "Share" : "แชร์",
     "Sort by name" : "เรียงตามชื่อ",
     "Sort by date" : "เรียงตามวันที่",
-    "OK" : "ตกลง",
+    "Save" : "บันทึก",
     "Category" : "หมวดหมู่",
     "Comment" : "ความคิดเห็น",
+    "Location" : "ตำแหน่ง",
     "Close" : "ปิด",
     "Select all" : "เลือกทั้งหมด",
-    "Save" : "บันทึก",
     "Quit" : "ออก",
     "Devices" : "อุปกรณ์",
     "Tags" : "แท็ก",
@@ -59,10 +59,8 @@ OC.L10N.register(
     "Start" : "เริ่ม",
     "Destination" : "ปลายทาง",
     "min" : "นาที",
-    "Details" : "รายละเอียด",
     "Phone" : "โทรศัพท์",
     "Not grouped" : "ไม่ถูกจัดกลุ่ม",
-    "Default" : "ค่าเริ่มต้น",
-    "Settings" : "การตั้งค่า"
+    "Default" : "ค่าเริ่มต้น"
 },
 "nplurals=1; plural=0;");

@@ -12,10 +12,10 @@ OC.L10N.register(
     "Share" : "Rhannu",
     "Sort by name" : "Order by name",
     "Sort by date" : "Order by date",
-    "OK" : "Iawn",
-    "Category" : "Categori",
-    "Close" : "Cau",
     "Save" : "Cadw",
+    "Category" : "Categori",
+    "Location" : "Lleoliad",
+    "Close" : "Cau",
     "Quit" : "Gadael",
     "Tags" : "Tagiau",
     "Favorite" : "Ffefryn",
@@ -32,12 +32,10 @@ OC.L10N.register(
     "File" : "File",
     "Destination" : "Destination",
     "min" : "mun",
-    "Details" : "Manylion",
     "Phone" : "Ffôn",
     "Not grouped" : "Heb ei grwpio",
     "Cinema" : "Sinema",
     "Hospital" : "Ysbyty",
-    "Dentist" : "Deintydd",
-    "Settings" : "Gosodiadau"
+    "Dentist" : "Deintydd"
 },
 "nplurals=4; plural=(n==1) ? 0 : (n==2) ? 1 : (n != 8 && n != 11) ? 2 : 3;");

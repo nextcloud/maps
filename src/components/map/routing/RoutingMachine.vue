@@ -8,6 +8,7 @@ import { generateUrl } from '@nextcloud/router'
 import { getCurrentUser } from '@nextcloud/auth'
 import moment from '@nextcloud/moment'
 import { showSuccess, showError } from '@nextcloud/dialogs'
+import { isMobile } from '@nextcloud/vue'
 
 import L from 'leaflet'
 import 'leaflet-control-geocoder/dist/Control.Geocoder'
@@ -20,6 +21,8 @@ import optionsController from '../../../optionsController'
 
 export default {
 	name: 'RoutingMachine',
+
+	mixins: [isMobile],
 
 	props: {
 		map: {
@@ -407,6 +410,7 @@ export default {
 			} else {
 				this.control.addTo(this.map)
 				const routingContainer = document.querySelector('.leaflet-routing-container')
+				routingContainer.classList.add(this.isMobile ? 'leaflet-routing-container-mobile' : 'leaflet-routing-container-desktop')
 				// routingContainer.querySelector('.leaflet-routing-geocoder input').focus()
 
 				// get event when plan is changing
@@ -456,7 +460,7 @@ export default {
 
 				document.querySelector('.leaflet-routing-container').prepend(selectDiv)
 
-				if (this.nbRouters === 0 && OC.isUserAdmin()) {
+				if (!this.isMobile && this.nbRouters === 0 && OC.isUserAdmin()) {
 					const p = document.createElement('p')
 					p.textContent = t('maps', 'Routing is currently disabled.')
 					const a = document.createElement('a')

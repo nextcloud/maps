@@ -7,11 +7,10 @@ OC.L10N.register(
     "Cancel" : "Sguir dheth",
     "Link copied" : "Chaidh lethbhreac dhen cheangal a dhèanamh",
     "Share" : "Co-roinn",
-    "OK" : "Ceart ma-thà",
+    "Save" : "Sàbhail",
     "Category" : "Roinn-seòrsa",
     "Close" : "Dùin",
     "Select all" : "Tagh na h-uile",
-    "Save" : "Sàbhail",
     "Quit" : "Fàg an-seo",
     "Tags" : "Tagaichean",
     "Favorite" : "Annsachd",
@@ -21,8 +20,6 @@ OC.L10N.register(
     "Yes" : "Tha",
     "Search" : "Lorg",
     "File" : "Faidhle",
-    "Details" : "Mion-fhiosrachadh",
-    "Default" : "Bunaiteach",
-    "Settings" : "Roghainnean"
+    "Default" : "Bunaiteach"
 },
 "nplurals=4; plural=(n==1 || n==11) ? 0 : (n==2 || n==12) ? 1 : (n > 2 && n < 20) ? 2 : 3;");

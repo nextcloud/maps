@@ -14,12 +14,12 @@
     "Share" : "Jaga",
     "Sort by name" : "Sorteeri nime järgi",
     "Sort by date" : "Sorteeri kuupäeva järgi",
-    "OK" : "OK",
+    "Save" : "Salvesta",
     "Category" : "Kategooria",
     "Comment" : "Kommentaar",
+    "Location" : "Asukoht",
     "Close" : "Sulge",
     "Select all" : "Vali kõik",
-    "Save" : "Salvesta",
     "Quit" : "Lõpeta",
     "Devices" : "Seadmed",
     "Tags" : "Sildid",
@@ -35,6 +35,7 @@
     "Date" : "Kuupäev",
     "Update" : "Uuenda",
     "Yes" : "Jah",
+    "Open" : "Ava",
     "Closed" : "Suletud",
     "Search" : "Otsi",
     "File" : "Fail",
@@ -43,14 +44,12 @@
     "Start" : "Algus",
     "Destination" : "Sihtkoht",
     "min" : "min",
-    "Details" : "Üksikasjad",
     "Phone" : "Telefon",
     "Not grouped" : "Pole grupeeritud",
     "Failed to delete device" : "Seadme kustutamine ebaõnnestus",
     "Default" : "Vaikeväärtus",
     "Failed to delete favorite" : "Lemmiku kustutamine ebaõnnestus",
     "Cinema" : "Kino",
-    "Dentist" : "Hambaarst",
-    "Settings" : "Seaded"
+    "Dentist" : "Hambaarst"
 },"pluralForm" :"nplurals=2; plural=(n != 1);"
 }

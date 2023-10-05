@@ -14,12 +14,12 @@ OC.L10N.register(
     "Share" : "Shpërndaje",
     "Sort by name" : "Order by name",
     "Sort by date" : "Order by date",
-    "OK" : "OK",
+    "Save" : "Ruaj",
     "Category" : "Kategori",
     "Comment" : "Koment",
+    "Location" : "Vendndodhje",
     "Close" : "Mbylleni",
     "Select all" : "Zgjidhi të gjitha",
-    "Save" : "Ruaj",
     "Quit" : "Dilni",
     "Devices" : "Pajisjet",
     "Tags" : "Etiketat",
@@ -43,10 +43,8 @@ OC.L10N.register(
     "Start" : "Fillo",
     "Destination" : "Destination",
     "min" : "min",
-    "Details" : "Detajet",
     "Phone" : "Telefon",
     "Not grouped" : "I pagrupuar",
-    "Default" : "E paracaktuar",
-    "Settings" : "Rregullimet"
+    "Default" : "E paracaktuar"
 },
 "nplurals=2; plural=(n != 1);");

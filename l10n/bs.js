@@ -12,11 +12,11 @@ OC.L10N.register(
     "Share" : "Podjeli",
     "Sort by name" : "Order by name",
     "Sort by date" : "Order by date",
-    "OK" : "OK",
+    "Save" : "Spremi",
     "Comment" : "Komentar",
+    "Location" : "Lokacija",
     "Close" : "Zatvori",
     "Select all" : "Označi sve",
-    "Save" : "Spremi",
     "Favorite" : "Favorit",
     "Name" : "Ime",
     "Add" : "Dodaj",
@@ -31,7 +31,6 @@ OC.L10N.register(
     "Destination" : "Destination",
     "Phone" : "Telefon",
     "Not grouped" : "Nije grupirano",
-    "Default" : "Zadano",
-    "Settings" : "Podešavanje"
+    "Default" : "Zadano"
 },
 "nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);");

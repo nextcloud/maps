@@ -78,7 +78,7 @@ export default {
 
 	computed: {
 		displayedDevices() {
-			return this.devices.filter(d => d.enabled)
+			return this.devices.filter(d => d.enabled && d.points.length > 0)
 		},
 		enabledDevices() {
 			return this.devices.map(d => d.enabled)

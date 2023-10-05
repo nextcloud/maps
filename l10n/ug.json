@@ -8,9 +8,9 @@
     "Share" : "ھەمبەھىر",
     "Sort by name" : "Order by name",
     "Sort by date" : "Order by date",
-    "OK" : "جەزملە",
-    "Close" : "ياپ",
     "Save" : "ساقلا",
+    "Location" : "ئورنى",
+    "Close" : "ياپ",
     "Quit" : "چېكىن",
     "Tags" : "بەلگەلەر",
     "Favorite" : "يىغقۇچ",
@@ -26,7 +26,6 @@
     "File" : "File",
     "Destination" : "Destination",
     "Phone" : "تېلېفون",
-    "Default" : "كۆڭۈلدىكى",
-    "Settings" : "تەڭشەكلەر"
+    "Default" : "كۆڭۈلدىكى"
 },"pluralForm" :"nplurals=2; plural=(n != 1);"
 }

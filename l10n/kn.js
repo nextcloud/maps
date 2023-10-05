@@ -12,10 +12,9 @@ OC.L10N.register(
     "Share" : "﻿ಹಂಚಿಕೊಳ್ಳಿ",
     "Sort by name" : "Order by name",
     "Sort by date" : "Order by date",
-    "OK" : "ಸರಿ",
+    "Save" : "﻿ಉಳಿಸಿ",
     "Close" : "ಮುಚ್ಚು",
     "Select all" : "﻿ಎಲ್ಲಾ ಆಯ್ಕೆ ಮಾಡಿ",
-    "Save" : "﻿ಉಳಿಸಿ",
     "Favorite" : "ಅಚ್ಚುಮೆಚ್ಚಿನ",
     "Name" : "﻿ಹೆಸರು",
     "Add" : "﻿ಸೇರಿಸಿ",
@@ -29,7 +28,6 @@ OC.L10N.register(
     "right" : "ಬಲ",
     "left" : "ಎಡ",
     "Destination" : "Destination",
-    "Default" : "ಆರಂಭದ ಪ್ರತಿ",
-    "Settings" : "ಆಯ್ಕೆ"
+    "Default" : "ಆರಂಭದ ಪ್ರತಿ"
 },
 "nplurals=2; plural=(n > 1);");

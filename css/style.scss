@@ -1,22 +1,6 @@
 .app-navigation-toggle {
     display: none;
 }
-.leaflet-routing-container {
-	border: 2px solid rgba(0, 0, 0, 0.2) !important;
-	border-top: 0 !important;
-	border-radius: 0 0 var(--border-radius) var(--border-radius) !important;
-}
-// @media only screen and (max-width: $breakpoint-mobile) {
-@media only screen and (max-width: 1024px) {
-    // Account for navigation menu toggle on the top left
-    #search-term,
-    .leaflet-routing-container {
-        margin-left: 44px !important;
-    }
-    .app-navigation-toggle {
-        display: block;
-    }
-}
 
 .no-routing-engine-warning {
     padding: 10px 10px 0 10px;
@@ -43,6 +27,82 @@
     background: var(--color-main-background);
     font-family: var(--font-face);
 }
+
+//leaflet-routing
+.leaflet-routing-container-mobile {
+	width: 100vw !important;
+	max-width: 100vw !important;
+	margin-top: 0 !important;
+	margin-left: 0 !important;
+	padding-left: 52px !important;
+	padding-right: 52px !important;
+	border: 0 !important;
+	border-bottom-left-radius: 0 !important;
+	border-bottom-right-radius: 0 !important;
+	.leaflet-routing-alt {
+		display: none;
+	}
+}
+
+.leaflet-routing-container-desktop {
+	width: 350px;
+	margin-top: 0 !important;
+	margin-left: 52px !important;
+	padding-top: 5px;
+	border: 2px solid var(--color-border-dark) !important;
+	border-bottom-left-radius: var(--border-radius-large) !important;
+	border-bottom-right-radius: var(--border-radius-large) !important;
+	border-top: 0 !important;
+	background-color: var(--color-main-background);
+}
+
+.leaflet-routing-container {
+	.router-container {
+		width: 100%;
+		display: flex;
+		#router-select {
+			flex-grow: 1;
+			text-overflow: ellipsis;
+			margin: 0 5px 5px 5px;
+		}
+	}
+	// we don't need this
+	.leaflet-routing-geocoders {
+		display: none;
+	}
+	.leaflet-routing-alternatives-container:not(:empty) {
+		border-top: 1px solid var(--color-border);
+	}
+
+	// instruction table
+	.leaflet-routing-alt {
+		table {
+			white-space: normal;
+			width: 100%;
+
+			.leaflet-routing-instruction-distance {
+				width: 1px;
+			}
+
+			td:nth-child(2),
+			td:nth-child(3) {
+				display: block;
+			}
+
+			td:nth-child(3) {
+				color: var(--color-text-light);
+			}
+
+			tr:nth-child(odd) {
+				background-color: var(--color-background-dark);
+			}
+			tr:hover {
+				background-color: var(--color-background-darker);
+			}
+		}
+	}
+}
+
 .mapboxgl-map {
     cursor: grab;
 }
@@ -560,6 +620,12 @@ tr.selected td {
 }
 .tooltip-contact-address-type {
     color: var(--color-text-maxcontrast);
+}
+span.tooltip-contact-address-type{
+    background-color: var(--color-background-dark);
+    padding: 0.1em 0.3em;
+    border-radius: 0.5em;
+    margin-right: 0.3em !important;
 }
 .contactPopup .deleteContactAddress {
     display: inline-block;

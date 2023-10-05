@@ -8,10 +8,9 @@ OC.L10N.register(
     "Rename" : "Rename",
     "Copied!" : "Copied!",
     "Cancel" : "Cancel",
-    "OK" : "OK",
+    "Save" : "Save",
     "Close" : "Close",
     "Select all" : "Select all",
-    "Save" : "Save",
     "Tags" : "Tags",
     "Favorite" : "Favorite",
     "Name" : "Name",
@@ -23,8 +22,6 @@ OC.L10N.register(
     "Search" : "Search",
     "File" : "File",
     "right" : "right",
-    "left" : "left",
-    "Details" : "Details",
-    "Settings" : "Settings"
+    "left" : "left"
 },
 "nplurals=1; plural=0;");

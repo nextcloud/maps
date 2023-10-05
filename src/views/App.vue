@@ -80,6 +80,7 @@
 					@import="onImportDevices"
 					@refresh-positions="onRefreshPositions"
 					@delete="onDeleteDevice"
+					@add-to-map-device="onAddDeviceToMap"
 					@toggle-history="onToggleDeviceHistory"
 					@toggle-all="onToggleAllDevices"
 					@color="onChangeDeviceColor"
@@ -169,13 +170,6 @@
 					@redo="redoAction"
 					@slider-range-changed="sliderStart = $event.start; sliderEnd = $event.end" />
 			</div>
-			<NcActions
-				class="content-buttons"
-				:title="t('maps', 'Details')">
-				<NcActionButton
-					icon="icon-menu-sidebar"
-					@click="onMainDetailClicked" />
-			</NcActions>
 		</NcAppContent>
 		<Sidebar
 			v-if="true"
@@ -239,6 +233,7 @@ import { geoToLatLng, getFormattedADR } from '../utils/mapUtils'
 import * as network from '../network'
 import { all as axiosAll, spread as axiosSpread } from 'axios'
 import { generateUrl } from '@nextcloud/router'
+import {addSharedDeviceToMap} from "../network";
 
 export default {
 	name: 'App',
@@ -1632,6 +1627,7 @@ export default {
 				this.favorites[f.id].lat = f.lat
 				this.favorites[f.id].lng = f.lng
 				this.lastUsedFavoriteCategory = f.category
+				showSuccess(t('maps', 'Favorite {name} was saved', { name: f.name ? f.name : '' }))
 			}).catch((error) => {
 				console.error(error)
 			})
@@ -1645,6 +1641,8 @@ export default {
 					})
 				}
 				this.selectedFavorite = null
+				this.closeSidebar()
+				showError(t('maps', 'Favorite was deleted'))
 				this.$delete(this.favorites, favid)
 			}).catch((error) => {
 				console.error(error)
@@ -2039,16 +2037,12 @@ export default {
 		},
 		// devices
 		onDevicesClicked() {
-		    if (this.myMapId) {
-				showInfo(t('maps', 'Devices are not yet available on custom Maps'))
-			} else {
-				this.devicesEnabled = !this.devicesEnabled
-				// get devices if we don't have them yet
-				if (this.devicesEnabled && this.devices.length === 0) {
-					this.getDevices()
-				}
-				optionsController.saveOptionValues({ devicesEnabled: this.devicesEnabled ? 'true' : 'false' })
+			this.devicesEnabled = !this.devicesEnabled
+			// get devices if we don't have them yet
+			if (this.devicesEnabled && this.devices.length === 0) {
+				this.getDevices()
 			}
+			optionsController.saveOptionValues({ devicesEnabled: this.devicesEnabled ? 'true' : 'false' })
 		},
 		getDevices() {
 			this.devices = []
@@ -2104,7 +2098,7 @@ export default {
 		},
 		getDevice(device, enable = false, save = true, zoom = false) {
 			device.loading = true
-			network.getDevice(device.id, this.myMapId, 100000, device.points?.length || 0).then((response) => {
+			network.getDevice(device.id, this.myMapId, 100000, device.points?.length || 0, device.tokens).then((response) => {
 				// There are too many points making it responsiv crashes most browsers
 				// this.$set(device, 'points', response.data /* .sort((p1, p2) => (p1.timestamp || 0) - (p2.timestamp || 0)) */)
 				if (device.points) {
@@ -2218,9 +2212,26 @@ export default {
 				showError(t('maps', 'Failed to delete device') + ': ' + error.data)
 			})
 		},
-		onAddDeviceToMap(device) {
-			// Fixme
-			showInfo('Adding device to map not supported yet')
+		async onAddDeviceToMap(device) {
+			const timestampFrom = this.sliderEnabled ? this.sliderStart : Number.MIN_SAFE_INTEGER
+			const timestampTo = this.sliderEnabled ? this.sliderEnd : Number.MAX_SAFE_INTEGER
+			device.loading = true
+			await network.shareDevice(device.id, timestampFrom, timestampTo).then((response) => {
+				const share = response.data
+				this.chooseMyMap((map) => {
+					network.addSharedDeviceToMap(share.token, map.id).then((response) => {
+						showSuccess(t('maps', 'Device {deviceName} linked to map {mapName}', { favoriteName: device.name ?? '', mapName: map.name ?? '' }))
+					}).catch((error) => {
+						console.error(error)
+						showError(t('maps', 'Failed to link Device to map {mapName}', { mapName: map.name ?? '' }))
+					})
+				})
+			}).catch((error) => {
+				console.error(error)
+				showError(t('maps', 'Failed to share Device'))
+			})
+			device.loading = false
+
 		},
 		async onToggleDeviceHistory(device) {
 			device.historyEnabled = !device.historyEnabled
@@ -2417,10 +2428,6 @@ export default {
 				this.cancelPhotoSuggestions()
 			}
 			this.myMapId = myMap.id
-			// Disable devices for custom maps
-			if (this.myMapId) {
-				this.devicesEnabled = false
-			}
 			optionsController.myMapId = myMap.id
 			const that = this
 			optionsController.restoreOptions(function() {

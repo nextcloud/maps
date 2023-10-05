@@ -55,7 +55,8 @@
 				@export="$emit('export', $event)"
 				@delete="$emit('delete', $event)"
 				@toggle-history="$emit('toggle-history', $event)"
-				@color="$emit('color', $event)" />
+				@color="$emit('color', $event)"
+				@add-to-map-device="$emit('add-to-map-device', $event)" />
 		</template>
 	</NcAppNavigationItem>
 </template>

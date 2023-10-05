@@ -12,12 +12,12 @@ OC.L10N.register(
     "Share" : "Compartir",
     "Sort by name" : "Ordinar per nomine",
     "Sort by date" : "Ordinar per data",
-    "OK" : "Ok",
+    "Save" : "Salveguardar",
     "Category" : "Categoria",
     "Comment" : "Commentario",
+    "Location" : "Loco",
     "Close" : "Clauder",
     "Select all" : "Selectionar toto",
-    "Save" : "Salveguardar",
     "Tags" : "Etiquettas",
     "Favorite" : "Favorite",
     "End" : "Fin",
@@ -37,9 +37,7 @@ OC.L10N.register(
     "Start" : "Initio",
     "Destination" : "Destination",
     "min" : "minutas",
-    "Details" : "Detalios",
     "Phone" : "Phono",
-    "Not grouped" : "Non gruppate",
-    "Settings" : "Configurationes"
+    "Not grouped" : "Non gruppate"
 },
 "nplurals=2; plural=(n != 1);");

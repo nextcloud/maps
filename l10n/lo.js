@@ -6,13 +6,13 @@ OC.L10N.register(
     "Delete" : "ລຶບ",
     "Rename" : "ປ່ຽນຊື່",
     "Delete share link" : "ລົບລິງແບ່ງປັນ",
+    "Copied!" : "ກ໋ອບປີ້ແລ້ວ",
     "Cancel" : "ຍົກເລີກ",
     "Link copied" : "ສຳເນົາລິງ",
     "Share" : "ແບ່ງປັນ",
-    "OK" : "ຕົກລົງ",
+    "Save" : "ບັນທຶກ",
     "Close" : "ປິດ",
     "Select all" : "ເລືອກທັງໝົດ",
-    "Save" : "ບັນທຶກ",
     "Quit" : "ຢຸດ",
     "Tags" : "ປ້າຍກຳກັບ",
     "Favorite" : "ລາຍການທີ່ມັກ",
@@ -27,8 +27,6 @@ OC.L10N.register(
     "File" : "ຟາຍ",
     "Start" : "ເລີ່ມຕົ້ນ",
     "Destination" : "ປາຍທາງ",
-    "Details" : "ລາຍລະອຽດ",
-    "Default" : "ເລີ່ມຕົ້ນ",
-    "Settings" : "ການຕັ້ງຄ່າ"
+    "Default" : "ເລີ່ມຕົ້ນ"
 },
 "nplurals=1; plural=0;");

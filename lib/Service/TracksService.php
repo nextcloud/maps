@@ -202,14 +202,14 @@ class TracksService {
 		$files = $folder->getById(intval($row['file_id']));
 		if (empty($files)) {
 			if ($defaultMap) {
-				$this->deleteTrack($row['id']);
+				$this->deleteTrackFromDB($row['id']);
 			}
 			return null;
 		}
 		$file = array_shift($files);
 		if ($file === null || $file->getType() !== \OCP\Files\FileInfo::TYPE_FILE) {
 			if ($defaultMap) {
-				$this->deleteTrack($row['id']);
+				$this->deleteTrackFromDB($row['id']);
 			}
 			return null;
 		}

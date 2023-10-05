@@ -9,11 +9,10 @@ OC.L10N.register(
     "Copied!" : "کاپي شو!",
     "Cancel" : "پرېښول",
     "Share" : "شریکول",
-    "OK" : "سمه ده",
+    "Save" : "ساتل",
     "Comment" : "تبصره",
     "Close" : "بندول",
     "Select all" : "ټول ټاکل",
-    "Save" : "ساتل",
     "Tags" : "نښکې",
     "Favorite" : "په نښه شوی",
     "Name" : "نوم",
@@ -21,8 +20,6 @@ OC.L10N.register(
     "Home" : "کور",
     "Work" : "دفتر",
     "Yes" : "هو",
-    "Open" : "پرانيستل",
-    "Details" : "معلومات",
-    "Settings" : "سمونې"
+    "Open" : "پرانيستل"
 },
 "nplurals=2; plural=(n != 1);");

@@ -12,10 +12,10 @@ OC.L10N.register(
     "Share" : "ចែក​រំលែក",
     "Sort by name" : "Order by name",
     "Sort by date" : "Order by date",
-    "OK" : "ព្រម",
-    "Comment" : "មតិ",
-    "Close" : "បិទ",
     "Save" : "រក្សាទុក",
+    "Comment" : "មតិ",
+    "Location" : "ទីតាំង",
+    "Close" : "បិទ",
     "Quit" : "ចាក់ចេញ",
     "Tags" : "ស្លាក",
     "Name" : "ឈ្មោះ",
@@ -31,10 +31,8 @@ OC.L10N.register(
     "right" : "ខាង​ស្ដាំ",
     "left" : "ខាង​ឆ្វេង",
     "Destination" : "Destination",
-    "Details" : "ព័ត៌មាន​លម្អិត",
     "Not grouped" : "គ្មាន​ក្រុម",
     "Default" : "លំនាំ​ដើម",
-    "Bar" : "របារ",
-    "Settings" : "ការកំណត់"
+    "Bar" : "របារ"
 },
 "nplurals=1; plural=0;");

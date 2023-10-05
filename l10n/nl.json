@@ -40,7 +40,7 @@
     "Show track elevation" : "Tonen padhelling",
     "Sort by name" : "Sorteren op naam",
     "Sort by date" : "Sorteren op datum",
-    "OK" : "OK",
+    "Save" : "Opslaan",
     "Favorite name" : "Naam favoriet",
     "Category" : "Categorie",
     "Comment" : "Reactie",
@@ -66,15 +66,12 @@
     "(No name)" : "(geen naam)",
     "No favorites to display" : "Geen favorieten om te vertonen",
     "Select all" : "Alles selecteren",
-    "Save" : "Opslaan",
     "Quit" : "Afsluiten",
     "Load more" : "Laad meer",
     "Tracks" : "Routes",
     "Devices" : "Apparaten",
     "Tags" : "Tags",
-    "Sidebar" : "Zijbalk",
     "Favorite" : "Favoriet",
-    "Track" : "Nummer",
     "Unable to change the favourite state of the file" : "Niet mogelijk om favoriet status van het bestand te wijzigen",
     "Error while loading the file data" : "Fout bij het lezen van de bestandsgegevens",
     "Distance" : "Afstand",
@@ -181,7 +178,6 @@
     "Route {date}" : "Route {date}",
     "Track {date}" : "Track {date}",
     "Via {i}" : "Via {i}",
-    "Details" : "Details",
     "My location" : "Mijn locatie",
     "Impossible to get current location" : "Kon huidige locatie niet vinden",
     "Phone" : "Telefoon",
@@ -262,7 +258,6 @@
     "Mapbox settings" : "Mapbox instellingen",
     "Set the API key to use Mapbox routing service." : "Stel een API-sleutel in om de Mapbox routeringsservice te gebruiken.",
     "Leave empty to disable." : "Leeglaten om uit te schakelen",
-    "Mapbox API key" : "Mapbox API key",
-    "Settings" : "Instellingen"
+    "Mapbox API key" : "Mapbox API key"
 },"pluralForm" :"nplurals=2; plural=(n != 1);"
 }

@@ -50,6 +50,12 @@
 				@click="$emit('export', device)">
 				{{ t('maps', 'Export') }}
 			</NcActionButton>
+			<NcActionButton v-if="parentEnabled && device.enabled && device.isShareable && !isPublic()"
+				icon="icon-share"
+				:close-after-click="true"
+				@click="$emit('add-to-map-device', device)">
+				{{ t('maps', 'Link to map') }}
+			</NcActionButton>
 			<NcActionButton v-if="parentEnabled && device.enabled && device.isDeletable"
 				icon="icon-delete"
 				:close-after-click="true"
@@ -65,6 +71,7 @@ import NcAppNavigationItem from '@nextcloud/vue/dist/Components/NcAppNavigationI
 import NcActionButton from '@nextcloud/vue/dist/Components/NcActionButton'
 import { generateUrl } from '@nextcloud/router'
 import { isComputer } from '../utils'
+import { isPublic } from '../utils/common'
 
 import optionsController from '../optionsController'
 
@@ -110,6 +117,9 @@ export default {
 		},
 		updateDeviceColor(e) {
 			this.$emit('color', { device: this.device, color: e.target.value })
+		},
+		isPublic() {
+			return isPublic()
 		},
 	},
 }

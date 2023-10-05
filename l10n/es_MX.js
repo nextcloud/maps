@@ -14,12 +14,12 @@ OC.L10N.register(
     "Share" : "Compartir",
     "Sort by name" : "Ordenar por nombre",
     "Sort by date" : "Ordenar por fecha",
-    "OK" : "OK",
+    "Save" : "Guardar",
     "Category" : "Categoría",
     "Comment" : "Comentario",
+    "Location" : "Ubicación",
     "Close" : "Cerrar",
     "Select all" : "Seleccionar todo",
-    "Save" : "Guardar",
     "Quit" : "Salir",
     "Devices" : "Dispositivos",
     "Tags" : "Etiquetas",
@@ -47,10 +47,8 @@ OC.L10N.register(
     "Start" : "Iniciar",
     "Destination" : "Destino",
     "min" : "min",
-    "Details" : "Detalles",
     "Phone" : "Teléfono fijo",
     "Not grouped" : "No agrupado",
-    "Default" : "Predeterminado",
-    "Settings" : "Configuraciones "
+    "Default" : "Predeterminado"
 },
 "nplurals=3; plural=n == 1 ? 0 : n != 0 && n % 1000000 == 0 ? 1 : 2;");

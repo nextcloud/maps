@@ -19,7 +19,6 @@
 				:limit="8"
 				:options-limit="8"
 				:max-height="8 * 45"
-				:close-on-select="false"
 				:clear-on-select="false"
 				:preserve-search="false"
 				:placeholder="categoryPH"
@@ -42,7 +41,14 @@
 			<textarea v-model="comment"
 				:placeholder="commentPH"
 				:readonly="!favorite.isUpdateable"
-				rows="1" />
+				rows="1"
+				style="resize: vertical;" />
+			<span class="icon icon-address" />
+			<input
+				v-model="location"
+				type="text"
+				:placeholder="locationPH"
+				:readonly="!favorite.isUpdateable">
 		</div>
 		<div class="buttons">
 			<NcButton
@@ -51,7 +57,7 @@
 				type="primary"
 				@click="onOkClick">
 				<template>
-					{{ t('maps', 'OK') }}
+					{{ t('maps', 'Save') }}
 				</template>
 			</NcButton>
 			<NcButton :disabled="!favorite.isUpdateable"
@@ -92,9 +98,12 @@ export default {
 			name: this.favorite.name,
 			category: this.favorite.category,
 			comment: this.favorite.comment,
+			lat: this.favorite.lat,
+			lng: this.favorite.lng,
 			namePH: t('maps', 'Favorite name'),
 			categoryPH: t('maps', 'Category'),
 			commentPH: t('maps', 'Comment'),
+			locationPH: t('maps', 'Location'),
 			newCategoryOption: null,
 			selectedCategory: {
 				label: this.favorite.category,
@@ -116,6 +125,16 @@ export default {
 			return this.newCategoryOption
 				? [this.newCategoryOption, ...categoryOptions]
 				: categoryOptions
+		},
+		location: {
+			get() {
+				return `${this.lat},${this.lng}`
+			},
+			set(value) {
+				const [lat, lng] = value.split(',')
+				this.lat = lat
+				this.lng = lng
+			},
 		},
 	},
 
@@ -139,6 +158,8 @@ export default {
 				multiselectKey: this.favorite.category,
 			}
 			this.comment = this.favorite.comment
+			this.lat = this.favorite.lat
+			this.lng = this.favorite.lng
 		},
 		onSearchChange(query) {
 			if (query === '' || Object.keys(this.categories).includes(query)) {
@@ -160,6 +181,8 @@ export default {
 				name: this.name,
 				category: this.category,
 				comment: this.comment,
+				lat: this.lat,
+				lng: this.lng,
 			}
 			this.$emit('edit', editedFav)
 		},
@@ -179,9 +202,42 @@ export default {
 	display: grid;
 	grid-template: 1fr / 40px 1fr;
 
+	input {
+		height: auto !important;
+	}
+
 	input,
 	textarea {
 		width: 100%;
+		padding: 12px 10px;
+	}
+
+	span,
+	input,
+	textarea,
+	.multiselect {
+		margin-top: 10px;
+	}
+}
+
+::v-deep .multiselect__tags {
+	border: 2px solid var(--color-border-maxcontrast) !important;
+
+	.multiselect__single {
+		color: var(--color-main-text) !important;
+	}
+
+	&:hover {
+		border-color: var(--color-primary-element) !important;
+	}
+}
+
+.buttons {
+	margin-top: 20px;
+
+	button {
+		width: 100%;
+		margin: 0px 5px !important;
 	}
 }
 

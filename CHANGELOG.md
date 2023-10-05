@@ -4,16 +4,52 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## 1.2.0 - 2023.xx.yy Link devices to map
+### Added
+-  Command for registering maps mimetypes [#1098](https://github.com/nextcloud/maps/issues/1098) @ratte-rizzo
+   [#1118](https://github.com/nextcloud/maps/pull/1118) @tacruc
+- Replace "Settings" by "Maps settings" [#1127](https://github.com/nextcloud/maps/pull/1127) @Jerome-Herbinet
+- Link device to map [#1105](https://github.com/nextcloud/maps/pull/1105) @tacruc
+
+### Fixed
+- Creation of dynamic property $lockingProvider is deprecated at apps/maps/lib/Hooks/FileHooks.php#46
+  [#1023](https://github.com/nextcloud/maps/issues/1023) @rcmlz
+  [#1134](https://github.com/nextcloud/maps/pull/1134) @tacruc
+
+## 1.1.1 - 2023.08.29 Fix search
+### Added
+-  Fix nominatim search address query [#1111](https://github.com/nextcloud/maps/issues/1111) @fl0e
+  [#1110](https://github.com/nextcloud/maps/pull/1110) @Simounet
+
+## 1.1.0 - 2023.07.04 Nextcloud 27
+### Added
+- Add an option to deduplicate same address for a contact [#1013](https://github.com/nextcloud/maps/issues/1013) @vincowl
+  [#1024](https://github.com/nextcloud/maps/pull/1024) @vincowl
+- Mobile improvements [#1068](https://github.com/nextcloud/maps/issues/1068) @ant0nwax [#1082](https://github.com/nextcloud/maps/pull/1082) @tacruc
+- Location field in favorites form [#1083](https://github.com/nextcloud/maps/pull/1083) @alaskanpuffin
+- Interface improvments
+[#1084](https://github.com/nextcloud/maps/pull/1084) @alaskanpuffin
+[#1085](https://github.com/nextcloud/maps/pull/1085) @alaskanpuffin
+[#1088](https://github.com/nextcloud/maps/pull/1088) @tacruc
+[#1089](https://github.com/nextcloud/maps/pull/1089) @alaskanpuffin
+[#1091](https://github.com/nextcloud/maps/pull/1091) @alaskanpuffin
+[#1094](https://github.com/nextcloud/maps/pull/1094) @alaskanpuffin
+
+### Fixed
+- update maximum PHP version [#1061](https://github.com/nextcloud/maps/issues/1061) @t-lo
+  [#1062](https://github.com/nextcloud/maps/issues/1062) @MrLoverLoverMMMM
+  [#1070](https://github.com/nextcloud/maps/pull/1070) @adripo, @skjnldsv, @tacruc
+
 ## 1.0.2 - 2023.03.24 Collaborative maps & Image location suggestions
 ### Fixed
 - Maps not loading on safari and other webkit browsers [#1015](https://github.com/nextcloud/maps/issues/1015)@finsyfins
-  [#1017]((https://github.com/nextcloud/maps/pull/1017) @tacruc)
+  [#1017](https://github.com/nextcloud/maps/pull/1017) @tacruc
 
 
 ## 1.0.1 - 2023.03.21 Collaborative maps & Image location suggestions
 ### Fixed
 - Error when moving a folder [#1015](https://github.com/nextcloud/maps/issues/1015)@AndyXheli
-  [#1012]((https://github.com/nextcloud/maps/pull/1012) @tacruc)
+  [#1012](https://github.com/nextcloud/maps/pull/1012) @tacruc
 
 ## 1.0.0 - 2023.03.21 Collaborative maps & Image location suggestions
 ### New

@@ -7,11 +7,11 @@
     "Cancel" : "Sefsex",
     "Link copied" : "Aseɣwen yettwanɣel",
     "Share" : "Bḍu",
-    "OK" : "IH",
+    "Save" : "Sekles",
     "Comment" : "Commentaire",
+    "Location" : "Adig",
     "Close" : "Mdel",
     "Select all" : "Fren akk",
-    "Save" : "Sekles",
     "Quit" : "Quitter",
     "Tags" : "Tibzimin",
     "Favorite" : "Menyif",
@@ -20,11 +20,10 @@
     "Add to favorites" : "Rnu ismal",
     "Home" : "Asnubeg",
     "Yes" : "Oui",
+    "Open" : "Ldi",
     "Search" : "Nadi",
     "File" : "Afaylu",
-    "Details" : "Talqayt",
     "Phone" : "Tiliɣri",
-    "Default" : "Prédéfini(e)",
-    "Settings" : "Iɣewwaṛen"
+    "Default" : "Prédéfini(e)"
 },"pluralForm" :"nplurals=2; plural=(n != 1);"
 }

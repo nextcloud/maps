@@ -6,10 +6,9 @@
     "Rename" : "Rename",
     "Copied!" : "Copied!",
     "Cancel" : "Cancel",
-    "OK" : "OK",
+    "Save" : "Save",
     "Close" : "Close",
     "Select all" : "Select all",
-    "Save" : "Save",
     "Tags" : "Tags",
     "Favorite" : "Favorite",
     "Name" : "Name",
@@ -21,8 +20,6 @@
     "Search" : "Search",
     "File" : "File",
     "right" : "right",
-    "left" : "left",
-    "Details" : "Details",
-    "Settings" : "Settings"
+    "left" : "left"
 },"pluralForm" :"nplurals=1; plural=0;"
 }

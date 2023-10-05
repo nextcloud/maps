@@ -11,10 +11,10 @@
     "Share" : "ভাগাভাগি কর",
     "Sort by name" : "Order by name",
     "Sort by date" : "Order by date",
-    "OK" : "তথাস্তু",
-    "Comment" : "মন্তব্য",
-    "Close" : "বন্ধ",
     "Save" : "সংরক্ষণ",
+    "Comment" : "মন্তব্য",
+    "Location" : "অবস্থান",
+    "Close" : "বন্ধ",
     "Quit" : "বন্ধ",
     "Tags" : "ট্যাগ",
     "Favorite" : "প্রিয়জন",
@@ -31,10 +31,8 @@
     "right" : "ডান",
     "left" : "বাম",
     "Destination" : "Destination",
-    "Details" : "বিসতারিত",
     "Phone" : "ফোন",
     "Not grouped" : "দলবদ্ধ নয়",
-    "Default" : "পূর্বনির্ধারিত",
-    "Settings" : "সেটিংস"
+    "Default" : "পূর্বনির্ধারিত"
 },"pluralForm" :"nplurals=2; plural=(n != 1);"
 }

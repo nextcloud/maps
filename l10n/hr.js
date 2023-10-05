@@ -29,7 +29,7 @@ OC.L10N.register(
     "Show track elevation" : "Prikaži nadmorsku visinu staze",
     "Sort by name" : "Razvrstaj po imenu",
     "Sort by date" : "Razvrstaj po datumu",
-    "OK" : "U redu",
+    "Save" : "Spremi",
     "Favorite name" : "Naziv favorita",
     "Category" : "Kategorija",
     "Comment" : "Komentar",
@@ -54,7 +54,6 @@ OC.L10N.register(
     "(No name)" : "(Bez naziva)",
     "No favorites to display" : "Nema favorita za prikaz",
     "Select all" : "Odaberi sve",
-    "Save" : "Spremi",
     "Quit" : "Zatvori",
     "Load more" : "Učitaj više",
     "Devices" : "Uređaji",
@@ -159,7 +158,6 @@ OC.L10N.register(
     "Routing error:" : "Pogreška usmjeravanja:",
     "Routing is currently disabled." : "Usmjeravanje je trenutno onemogućeno.",
     "Add a routing service" : "Dodaj uslugu usmjeravanja",
-    "Details" : "Pojedinosti",
     "My location" : "Moja lokacija",
     "Impossible to get current location" : "Nije moguće dobiti trenutnu lokaciju",
     "Phone" : "Telefon",
@@ -235,7 +233,6 @@ OC.L10N.register(
     "Mapbox settings" : "Postavke servisa Mapbox",
     "Set the API key to use Mapbox routing service." : "Postavite ključ API-ja ako se želite koristiti servisom za usmjeravanje Mapbox.",
     "Leave empty to disable." : "Ostavite polje praznim kako biste onemogućili ovu postavku.",
-    "Mapbox API key" : "Ključ API-ja za Mapbox",
-    "Settings" : "Postavke"
+    "Mapbox API key" : "Ključ API-ja za Mapbox"
 },
 "nplurals=3; plural=n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2;");

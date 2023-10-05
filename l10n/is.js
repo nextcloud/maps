@@ -27,10 +27,11 @@ OC.L10N.register(
     "Show track elevation" : "Birta hæð ferils",
     "Sort by name" : "Raða eftir heiti",
     "Sort by date" : "Raða eftir dagsetningu",
-    "OK" : "Í lagi",
+    "Save" : "Vista",
     "Favorite name" : "Nafn eftirlætis",
     "Category" : "Flokkur",
     "Comment" : "Athugasemd",
+    "Location" : "Staðsetning",
     "Place photos" : "Staðsetja ljósmyndir",
     "Place contact" : "Staðsetja tengilið",
     "Share this location" : "Deila þessari staðsetningu",
@@ -49,7 +50,6 @@ OC.L10N.register(
     "(No name)" : "(ekkert nafn)",
     "No favorites to display" : "Engin eftirlæti til að birta",
     "Select all" : "Select all",
-    "Save" : "Vista",
     "Quit" : "Hætta",
     "Load more" : "Hlaða inn meira",
     "Tracks" : "Ferlar",
@@ -145,7 +145,6 @@ OC.L10N.register(
     "By Foot (GraphHopper)" : "Fótgangandi (GraphHopper)",
     "Routing error:" : "Villa í leiðavali:",
     "Add a routing service" : "Bæta við leiðsagnarþjónustu",
-    "Details" : "Details",
     "My location" : "Staðsetningin mín",
     "Impossible to get current location" : "Tekst ekki að ná núverandi staðsetningu",
     "Phone" : "Sími",
@@ -204,7 +203,6 @@ OC.L10N.register(
     "Mapbox Website" : "Vefsvæði Mapbox",
     "Mapbox settings" : "Stillingar Mapbox",
     "Leave empty to disable." : "Skildu eftir autt til að gera óvirkt.",
-    "Mapbox API key" : "Mapbox API-forrritsviðmótslykill",
-    "Settings" : "Stillingar"
+    "Mapbox API key" : "Mapbox API-forrritsviðmótslykill"
 },
 "nplurals=2; plural=(n % 10 != 1 || n % 100 == 11);");

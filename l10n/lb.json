@@ -10,11 +10,11 @@
     "Share" : "Deelen",
     "Sort by name" : "Order by name",
     "Sort by date" : "Order by date",
-    "OK" : "OK",
+    "Save" : "Späicheren",
     "Comment" : "Kommentar",
+    "Location" : "Uert",
     "Close" : "Zoumaachen",
     "Select all" : "All auswielen",
-    "Save" : "Späicheren",
     "Quit" : "Erausgoen",
     "Tags" : "Tags",
     "Favorite" : "Favorit",
@@ -32,9 +32,7 @@
     "left" : "lénks",
     "Destination" : "Destination",
     "min" : "Minutt",
-    "Details" : "Detailer",
     "Phone" : "Telefon",
-    "Default" : "Standard",
-    "Settings" : "Astellungen"
+    "Default" : "Standard"
 },"pluralForm" :"nplurals=2; plural=(n != 1);"
 }

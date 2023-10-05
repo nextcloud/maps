@@ -13,12 +13,12 @@ OC.L10N.register(
     "Share" : "Түгээх",
     "Sort by name" : "Order by name",
     "Sort by date" : "Order by date",
-    "OK" : "ок",
+    "Save" : "Хадгалах",
     "Category" : "Ангилал",
     "Comment" : "undefined",
+    "Location" : "Байршил",
     "Close" : "Хаах",
     "Select all" : "бүгдийг сонгох",
-    "Save" : "Хадгалах",
     "Quit" : "Гарах",
     "Devices" : "Төхөөрөмжүүд",
     "Tags" : "Tag-үүд",
@@ -41,9 +41,7 @@ OC.L10N.register(
     "Start" : "эхлэх",
     "Destination" : "Destination",
     "min" : "мин",
-    "Details" : "Дэлгэрэнгүй",
     "Phone" : "Утас",
-    "Not grouped" : "Багт ороогүй",
-    "Settings" : "Тохиргоо"
+    "Not grouped" : "Багт ороогүй"
 },
 "nplurals=2; plural=(n != 1);");

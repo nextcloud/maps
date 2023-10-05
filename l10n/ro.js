@@ -16,12 +16,12 @@ OC.L10N.register(
     "Share" : "Partajează",
     "Sort by name" : "Sortează după nume",
     "Sort by date" : "Sortează după dată",
-    "OK" : "OK",
+    "Save" : "Salvează",
     "Category" : "Categorie",
     "Comment" : "Comentariu",
+    "Location" : "Locație",
     "Close" : "Închide",
     "Select all" : "Selectează tot",
-    "Save" : "Salvează",
     "Quit" : "Renunță",
     "Devices" : "Dispozitive",
     "Tags" : "Etichete",
@@ -47,11 +47,9 @@ OC.L10N.register(
     "Start" : "Începe",
     "Destination" : "Destination",
     "min" : "min",
-    "Details" : "Detalii",
     "Phone" : "Telefon",
     "Not grouped" : "Negrupate",
     "Default" : "Implicit",
-    "Restaurant" : "Restaurant",
-    "Settings" : "Setări"
+    "Restaurant" : "Restaurant"
 },
 "nplurals=3; plural=(n==1?0:(((n%100>19)||((n%100==0)&&(n!=0)))?2:1));");

@@ -38,7 +38,8 @@ $(document).ready(function() {
         'input#graphhopperURL, ' +
         'input#graphhopperAPIKEY, ' +
         '#osrmDEMO, ' +
-        'input#mapboxAPIKEY', function(e) {
+        'input#mapboxAPIKEY, ' +
+        'input#maplibreStreetStyleURL', function(e) {
         var value = $(this).val();
         setMapsRoutingSettings($(this).attr('id'), value);
     });

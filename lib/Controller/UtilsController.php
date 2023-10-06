@@ -7,6 +7,7 @@
  *
  * @author Julien Veyssier <eneiluj@posteo.net>
  * @copyright Julien Veyssier 2019
+ * @copyright Benstone Zhang <benstonezhang@gmail.com> 2023
  */
 
 namespace OCA\Maps\Controller;
@@ -149,6 +150,7 @@ class UtilsController extends Controller {
             'osrmDEMO',
             'graphhopperAPIKEY',
             'mapboxAPIKEY',
+			'maplibreStreetStyleURL',
             'graphhopperURL'
         ];
         foreach ($settingsKeys as $k) {
@@ -172,6 +174,7 @@ class UtilsController extends Controller {
             'osrmDEMO',
             'graphhopperAPIKEY',
             'mapboxAPIKEY',
+			'maplibreStreetStyleURL',
             'graphhopperURL'
         ];
         foreach ($values as $k=>$v) {

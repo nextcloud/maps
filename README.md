@@ -1,5 +1,7 @@
 # Nextcloud Maps
 
+**With MapLibre-GL support**
+
 **🌍🌏🌎 The whole world fits inside your cloud!**
 
 ![](screenshots/screenshot1.png)

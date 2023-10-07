@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Nextcloud 3.14159\n"
 "Report-Msgid-Bugs-To: translations\\@example.com\n"
-"POT-Creation-Date: 2023-10-06 01:13+0000\n"
+"POT-Creation-Date: 2023-10-07 02:00+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -363,7 +363,7 @@ msgid "Rename"
 msgstr ""
 
 #. TRANSLATORS src/components/AppNavigationFavoritesItem.vue:77
-#. TRANSLATORS src/components/Map.vue:456
+#. TRANSLATORS src/components/Map.vue:457
 #: /app/specialVueFakeDummyForL10nScript.js:54
 #: /app/specialVueFakeDummyForL10nScript.js:74
 #: /app/specialVueFakeDummyForL10nScript.js:138
@@ -556,13 +556,13 @@ msgstr ""
 msgid "New category {n}"
 msgstr ""
 
-#. TRANSLATORS src/components/Map.vue:461
+#. TRANSLATORS src/components/Map.vue:462
 #: /app/specialVueFakeDummyForL10nScript.js:140
 #: /app/specialVueFakeDummyForL10nScript.js:148
 msgid "Place photos"
 msgstr ""
 
-#. TRANSLATORS src/components/Map.vue:466
+#. TRANSLATORS src/components/Map.vue:467
 #. TRANSLATORS src/components/map/HistoryControl.vue:81
 #: /app/specialVueFakeDummyForL10nScript.js:142
 #: /app/specialVueFakeDummyForL10nScript.js:150
@@ -570,68 +570,68 @@ msgstr ""
 msgid "Place contact"
 msgstr ""
 
-#. TRANSLATORS src/components/Map.vue:471
+#. TRANSLATORS src/components/Map.vue:472
 #: /app/specialVueFakeDummyForL10nScript.js:144
 #: /app/specialVueFakeDummyForL10nScript.js:152
 msgid "Share this location"
 msgstr ""
 
-#. TRANSLATORS src/components/Map.vue:510
+#. TRANSLATORS src/components/Map.vue:511
 #: /app/specialVueFakeDummyForL10nScript.js:154
 msgid "Shared location"
 msgstr ""
 
-#. TRANSLATORS src/components/Map.vue:521
+#. TRANSLATORS src/components/Map.vue:522
 #: /app/specialVueFakeDummyForL10nScript.js:156
 msgid "Route from here"
 msgstr ""
 
-#. TRANSLATORS src/components/Map.vue:530
+#. TRANSLATORS src/components/Map.vue:531
 #: /app/specialVueFakeDummyForL10nScript.js:158
 msgid "Add route point"
 msgstr ""
 
-#. TRANSLATORS src/components/Map.vue:539
+#. TRANSLATORS src/components/Map.vue:540
 #: /app/specialVueFakeDummyForL10nScript.js:160
 msgid "Route to here"
 msgstr ""
 
-#. TRANSLATORS src/components/Map.vue:621
+#. TRANSLATORS src/components/Map.vue:622
 #: /app/specialVueFakeDummyForL10nScript.js:162
 msgid "Current location"
 msgstr ""
 
-#. TRANSLATORS src/components/Map.vue:675
+#. TRANSLATORS src/components/Map.vue:676
 #: /app/specialVueFakeDummyForL10nScript.js:164
 msgid "Improve this map"
 msgstr ""
 
-#. TRANSLATORS src/components/Map.vue:790
+#. TRANSLATORS src/components/Map.vue:815
 #: /app/specialVueFakeDummyForL10nScript.js:166
 msgid "Other maps"
 msgstr ""
 
-#. TRANSLATORS src/components/Map.vue:806
+#. TRANSLATORS src/components/Map.vue:831
 #: /app/specialVueFakeDummyForL10nScript.js:168
 msgid "Street map"
 msgstr ""
 
-#. TRANSLATORS src/components/Map.vue:821
+#. TRANSLATORS src/components/Map.vue:846
 #: /app/specialVueFakeDummyForL10nScript.js:170
 msgid "Satellite map"
 msgstr ""
 
-#. TRANSLATORS src/components/Map.vue:878
+#. TRANSLATORS src/components/Map.vue:903
 #: /app/specialVueFakeDummyForL10nScript.js:172
 msgid "Geo link ({geoLink}) copied to clipboard"
 msgstr ""
 
-#. TRANSLATORS src/components/Map.vue:881
+#. TRANSLATORS src/components/Map.vue:906
 #: /app/specialVueFakeDummyForL10nScript.js:174
 msgid "Geo link could not be copied to clipboard"
 msgstr ""
 
-#. TRANSLATORS src/components/Map.vue:962
+#. TRANSLATORS src/components/Map.vue:987
 #: /app/specialVueFakeDummyForL10nScript.js:176
 msgid "Close"
 msgstr ""
@@ -2068,12 +2068,29 @@ msgstr ""
 msgid "Set the API key to use Mapbox routing service."
 msgstr ""
 
-#: /app/templates/adminSettings.php:44
+#: /app/templates/adminSettings.php:44 /app/templates/adminSettings.php:52
 msgid "Leave empty to disable."
 msgstr ""
 
 #: /app/templates/adminSettings.php:46
 msgid "Mapbox API key"
+msgstr ""
+
+#: /app/templates/adminSettings.php:50
+msgid "MapLibre Website"
+msgstr ""
+
+#: /app/templates/adminSettings.php:50
+msgid "MapLibre settings"
+msgstr ""
+
+#: /app/templates/adminSettings.php:51
+msgid ""
+"Set the URL of style.json for OpenStreetMap Vector Tiles with MapLibre-GL-JS"
+msgstr ""
+
+#: /app/templates/adminSettings.php:54
+msgid "MapLibre Street style URL"
 msgstr ""
 
 #: /app/templates/settings/index.php:4

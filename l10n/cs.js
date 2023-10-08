@@ -381,6 +381,10 @@ OC.L10N.register(
     "Set the API key to use Mapbox routing service." : "Pokud chcete provádět výpočty tras prostřednictvím služby Mapbox, nastavte klíč k jejímu aplikačnímu program. rozhraní (API).",
     "Leave empty to disable." : "Pokud chcete vypnout, ponechte nevyplněné.",
     "Mapbox API key" : "Klíč aplikačnímu program. rozhraní (API) služby Mapbox",
+    "MapLibre Website" : "Webové stránky MapLibre",
+    "MapLibre settings" : "Nastavení pro MapLibre",
+    "Set the URL of style.json for OpenStreetMap Vector Tiles with MapLibre-GL-JS" : "Nastavit URL style.json pro OpenStreetMap vektorové dlaždice s MapLibre-GL-JS",
+    "MapLibre Street style URL" : "URL MapLibre Street stylu",
     "Maps settings" : "Nastavení pro Mapy"
 },
 "nplurals=4; plural=(n == 1 && n % 1 == 0) ? 0 : (n >= 2 && n <= 4 && n % 1 == 0) ? 1: (n % 1 != 0 ) ? 2 : 3;");

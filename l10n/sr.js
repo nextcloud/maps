@@ -381,6 +381,10 @@ OC.L10N.register(
     "Set the API key to use Mapbox routing service." : "Подесите API кључ да користите Mapbox сервис за рутирање.",
     "Leave empty to disable." : "Оставите празно да га искључите.",
     "Mapbox API key" : "Mapbox API кључ",
+    "MapLibre Website" : "MapLibre веб сајт",
+    "MapLibre settings" : "MapLibre подешавања",
+    "Set the URL of style.json for OpenStreetMap Vector Tiles with MapLibre-GL-JS" : "Поставите URL style.json фајла за OpenStreetMap векторске плочице са MapLibre-GL-JS",
+    "MapLibre Street style URL" : "URL MapLibre Street стила",
     "Maps settings" : "Подешавања Мапа"
 },
 "nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);");

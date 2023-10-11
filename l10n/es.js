@@ -381,6 +381,10 @@ OC.L10N.register(
     "Set the API key to use Mapbox routing service." : "Establece la clave API para usar el servicio de rutas de Mapbox",
     "Leave empty to disable." : "Déjalo vacío para desactivarlo.",
     "Mapbox API key" : "Clave API de Mapbox",
+    "MapLibre Website" : "Sitio web de MapLibre",
+    "MapLibre settings" : "Ajustes de MapLibre",
+    "Set the URL of style.json for OpenStreetMap Vector Tiles with MapLibre-GL-JS" : "Establezca la URL de style.json para los mosaicos de vector de OpenStreeMap con MapLibre-GL-JS",
+    "MapLibre Street style URL" : "Estilo de URL para MapLibre Street ",
     "Maps settings" : "Ajustes de Mapas"
 },
 "nplurals=3; plural=n == 1 ? 0 : n != 0 && n % 1000000 == 0 ? 1 : 2;");

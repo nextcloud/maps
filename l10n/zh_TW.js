@@ -381,6 +381,10 @@ OC.L10N.register(
     "Set the API key to use Mapbox routing service." : "設定 API 金鑰才能使用 Mapbox 導航服務",
     "Leave empty to disable." : "空白代表停用",
     "Mapbox API key" : "Mapbox API 金鑰",
+    "MapLibre Website" : "MapLibre 網站",
+    "MapLibre settings" : "MapLibre 設定",
+    "Set the URL of style.json for OpenStreetMap Vector Tiles with MapLibre-GL-JS" : "使用 MapLibre-GL-JS 設定 OpenStreetMap 向量圖磚的 style.json URL",
+    "MapLibre Street style URL" : "MapLibre Street 樣式 URL",
     "Maps settings" : "地圖設定"
 },
 "nplurals=1; plural=0;");

@@ -63,6 +63,7 @@ OC.L10N.register(
     "Favorite name" : "Názov obľúbenej položky",
     "Category" : "Kategória",
     "Comment" : "Komentár",
+    "Location" : "Miesto",
     "New category {n}" : "Nová kategória {n}",
     "Place photos" : "Umiestniť fotografie",
     "Place contact" : "Umiestniť kontakt",

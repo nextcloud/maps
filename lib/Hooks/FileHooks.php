@@ -92,7 +92,8 @@ class FileHooks {
                 if ($target->getType() === FileInfo::TYPE_FILE) {
                     // if moved (parents are different) => update DB with access list
                     if ($source->getParent()->getId() !== $target->getParent()->getId()) {
-                        $this->photofilesService->deleteByFile($source);
+						// we renamed therefore target and source are identical
+                        $this->photofilesService->deleteByFile($target);
                         $this->photofilesService->addByFile($target);
                         // tracks: nothing to do here because we use fileID
                     }

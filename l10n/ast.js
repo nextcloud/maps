@@ -1,0 +1,25 @@
+OC.L10N.register(
+    "maps",
+    {
+    "Delete" : "Desaniciar",
+    "Copied!" : "¡Copióse!",
+    "Category" : "Categoría",
+    "Load more" : "Cargar más",
+    "Devices" : "Preseos",
+    "Tags" : "Etiquetes",
+    "Distance" : "Distancia",
+    "Duration" : "Duración",
+    "This Place" : "Esti llugar",
+    "Name" : "Nome",
+    "Add" : "Amestar",
+    "Home" : "Aniciu",
+    "Device" : "Preséu",
+    "Date" : "Data",
+    "Altitude" : "Altitú",
+    "Yes" : "Sí",
+    "Destination" : "Destín",
+    "Metadata" : "Metadatos",
+    "Cinema" : "Cine",
+    "Hospital" : "Hospital"
+},
+"nplurals=2; plural=(n != 1);");

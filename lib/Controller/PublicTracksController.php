@@ -45,6 +45,7 @@ use OCP\ILogger;
 use OCA\Maps\Service\TracksService;
 use OCP\Share\IManager as ShareManager;
 
+
 /**
  * @param string $text
  * @return string
@@ -151,6 +152,7 @@ class PublicTracksController extends PublicPageController {
 	 */
     public function getTracks(): DataResponse {
 		$share = $this->getShare();
+		$hideDownload = (bool) $share->getHideDownload();
 		$permissions = $share->getPermissions();
 		$folder = $this->getShareNode();
 		$isReadable = (bool) ($permissions & (1 << 0));
@@ -158,12 +160,13 @@ class PublicTracksController extends PublicPageController {
 			$owner = $share->getShareOwner();
 			$pre_path = $this->root->getUserFolder($owner)->getPath();
 			$tracks = $this->tracksService->getTracksFromDB($owner, $folder, true, false, false);
-			$new_tracks = array_map(function ($track) use ($folder, $permissions, $pre_path) {
+			$new_tracks = array_map(function ($track) use ($folder, $permissions, $pre_path, $hideDownload) {
 				$track['isCreatable'] = ($permissions & (1 << 2)) && $track['isCreatable'];
 				$track['isUpdateable'] = ($permissions & (1 << 1)) && $track['isUpdateable'];
 				$track['isDeletable'] = ($permissions & (1 << 3)) && $track['isDeletable'];
 				$track['path'] = $folder->getRelativePath($pre_path.$track['path']);
 				$track['filename'] = $track['path'];
+				$track['hideDownload'] = $hideDownload;
 				return $track;
 			}, $tracks);
 		} else {

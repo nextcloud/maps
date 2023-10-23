@@ -60,6 +60,21 @@
 				@click="$emit('add-to-map-track', track)">
 				{{ t('maps', 'Copy to map') }}
 			</NcActionButton>
+			<NcActionLink v-if="parentEnabled && track.enabled && !isPublic()"
+                                target="_self"
+                                :href="downloadTrackUrl"
+				icon="icon-download"
+                                :close-after-click="true">
+                                {{ t('maps', 'Download track') }}
+                        </NcActionLink>
+			<NcActionLink v-if="parentEnabled && track.enabled && isPublic() && !(track.hideDownload)"
+                                target="_self"
+                                :href="downloadTrackShareUrl"
+				icon="icon-download"
+                                :close-after-click="true">
+                                {{ t('maps', 'Download track') }}
+                        </NcActionLink>
+
 		</template>
 	</NcAppNavigationItem>
 </template>
@@ -67,7 +82,9 @@
 <script>
 import NcAppNavigationItem from '@nextcloud/vue/dist/Components/NcAppNavigationItem'
 import NcActionButton from '@nextcloud/vue/dist/Components/NcActionButton'
-import {isPublic} from "../utils/common";
+import NcActionLink from '@nextcloud/vue/dist/Components/NcActionLink'
+import {isPublic, getToken} from "../utils/common";
+import { generateUrl } from "@nextcloud/router";
 
 export default {
 	name: 'AppNavigationTrackItem',
@@ -75,6 +92,7 @@ export default {
 	components: {
 		NcAppNavigationItem,
 		NcActionButton,
+		NcActionLink,
 	},
 
 	props: {
@@ -94,6 +112,12 @@ export default {
 	},
 
 	computed: {
+		downloadTrackUrl() {
+			return OCA.Files.App.fileList.filesClient.getBaseUrl() + this.track.file_path
+		},
+		downloadTrackShareUrl() {
+			return generateUrl('s/' + getToken() + '/download' + '?path=/&files=' + this.track.file_name )
+		},
 	},
 
 	methods: {

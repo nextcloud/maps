@@ -10,11 +10,15 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
    [#1118](https://github.com/nextcloud/maps/pull/1118) @tacruc
 - Replace "Settings" by "Maps settings" [#1127](https://github.com/nextcloud/maps/pull/1127) @Jerome-Herbinet
 - Link device to map [#1105](https://github.com/nextcloud/maps/pull/1105) @tacruc
+- Support OpenStreetMap vector tiles with Maplibre-gl-js [#1038](https://github.com/nextcloud/maps/pull/1038) @benstonezhang
+- added "Download Track" button to AppNavigationTrackItem [#1147](https://github.com/nextcloud/maps/pull/1147) @wronny
 
 ### Fixed
 - Creation of dynamic property $lockingProvider is deprecated at apps/maps/lib/Hooks/FileHooks.php#46
   [#1023](https://github.com/nextcloud/maps/issues/1023) @rcmlz
   [#1134](https://github.com/nextcloud/maps/pull/1134) @tacruc
+- Change postRename hook to fix [#1139](https://github.com/nextcloud/maps/issues/1139) @powerflo
+  [#1140](https://github.com/nextcloud/maps/pull/1140) @powerflo
 
 ## 1.1.1 - 2023.08.29 Fix search
 ### Added

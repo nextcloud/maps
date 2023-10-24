@@ -12,6 +12,7 @@ OC.L10N.register(
     "Invalid file extension" : "Extension du fichier invalide",
     "Impossible to read the file" : "Impossible de lire le fichier",
     "File does not exist" : "Le fichier n’existe pas",
+    "Share not Found" : "Partage non trouvé",
     "Share was already on map" : "Partage déjà présent sur la carte",
     "No such favorite" : "Aucun favori de ce type",
     "invalid values" : "valeurs invalides",

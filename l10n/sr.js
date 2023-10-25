@@ -74,6 +74,7 @@ OC.L10N.register(
     "Clear photo cache" : "Очисти кеш слика",
     "Hi" : "Здраво",
     "Show track elevation" : "Прикажи надморске висине на путањи",
+    "Download track" : "Презми путању",
     "My tracks" : "Моје путање",
     "Sort by name" : "Сортирај по имену",
     "Sort by date" : "Сортирај по датуму",

@@ -74,6 +74,7 @@ OC.L10N.register(
     "Clear photo cache" : "清除照片快取",
     "Hi" : "嗨",
     "Show track elevation" : "顯示軌跡高程",
+    "Download track" : "下載軌跡",
     "My tracks" : "我的軌跡",
     "Sort by name" : "依名稱排序",
     "Sort by date" : "依日期排序",

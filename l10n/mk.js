@@ -115,7 +115,7 @@ OC.L10N.register(
     "Show localized photos" : "Прикажи локализирани фотографии",
     "Hide localized photos" : "Сокриј локализирани фотографии",
     "Tags" : "Ознаки",
-    "Favorite" : "Омилен",
+    "Favorite" : "Омилени",
     "Photo suggestions" : "Предлог за фотографии",
     "Unable to change the favourite state of the file" : "Неможе да се промени статусот на омимени на датотеката",
     "Error while loading the file data" : "Грешка при вчитување на податоците од датотеката",

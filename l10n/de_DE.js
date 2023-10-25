@@ -74,6 +74,7 @@ OC.L10N.register(
     "Clear photo cache" : "Foto-Cache löschen",
     "Hi" : "Hallo",
     "Show track elevation" : "Streckenhöhe anzeigen",
+    "Download track" : "Strecke herunterladen",
     "My tracks" : "Meine Strecken",
     "Sort by name" : "Nach Namen sortieren",
     "Sort by date" : "Nach Datum sortieren",

@@ -74,6 +74,7 @@ OC.L10N.register(
     "Clear photo cache" : "مسح ذاكرة التخزين المؤقت للصور",
     "Hi" : "مرحبا",
     "Show track elevation" : "إظهار ارتفاع المسار",
+    "Download track" : "تنزيل المسار",
     "My tracks" : "تسجيلاتي my tracks",
     "Sort by name" : "Order by name",
     "Sort by date" : "Order by date",

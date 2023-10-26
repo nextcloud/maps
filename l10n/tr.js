@@ -74,6 +74,7 @@ OC.L10N.register(
     "Clear photo cache" : "Fotoğraf ön belleğini temizle",
     "Hi" : "Selam",
     "Show track elevation" : "Rota yüksekliği görüntülensin",
+    "Download track" : "İzi indir",
     "My tracks" : "Rotalarım",
     "Sort by name" : "Ada göre sırala",
     "Sort by date" : "Tarihe göre sırala",

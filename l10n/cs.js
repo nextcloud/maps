@@ -74,6 +74,7 @@ OC.L10N.register(
     "Clear photo cache" : "Vyprázdnit mezipaměť fotek",
     "Hi" : "Ahoj",
     "Show track elevation" : "Zobrazit převýšení trasy",
+    "Download track" : "Stáhnout si trasu",
     "My tracks" : "Mé trasy",
     "Sort by name" : "Seřadit podle názvu",
     "Sort by date" : "Seřadit podle data",

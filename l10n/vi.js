@@ -4,6 +4,7 @@ OC.L10N.register(
     "File not found" : "Không tìm thấy tập tin",
     "Personal" : "Cá nhân",
     "Maps" : "Bản đồ",
+    "Change color" : "Thay đổi màu sắc",
     "Export" : "Xuất ra",
     "Delete" : "Xóa",
     "Import" : "Nhập vào",

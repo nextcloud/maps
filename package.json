@@ -68,7 +68,7 @@
     "nouislider": "^15.7.1",
     "opening_hours": "^3.8.0",
     "ua-parser-js": "^1.0.37",
-    "vue": "^2.7.14",
+    "vue": "^2.7.15",
     "vue-click-outside": "^1.1.0",
     "vue-types": "^5.1.1",
     "vue2-leaflet": "^2.6.0",

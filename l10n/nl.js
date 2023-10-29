@@ -103,6 +103,7 @@ OC.L10N.register(
     "Open in Contacts" : "Openen in Contacten",
     "Device" : "Apparaat",
     "Date" : "Datum",
+    "Altitude" : "Hoogte",
     "Battery" : "Accu",
     "Accuracy" : "Nauwkeurigheid",
     "No name" : "Geen naam",

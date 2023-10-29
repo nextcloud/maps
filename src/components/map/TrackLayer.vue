@@ -6,13 +6,15 @@
 		@contextmenu="onFGRightClick">
 		<LPopup :options="popupOptions"
 			class="popup-track-wrapper">
-			<NcActionButton icon="icon-colorpicker" @click="$emit('change-color', track)">
+			<NcActionButton v-if="track.isUpdateable"
+				icon="icon-colorpicker" 
+				@click="$emit('change-color', track)">
 				{{ t('maps', 'Change color') }}
 			</NcActionButton>
 			<NcActionButton icon="icon-category-monitoring" @click="$emit('display-elevation', track)">
 				{{ t('maps', 'Display elevation') }}
 			</NcActionButton>
-			<NcActionButton v-if="!isPublic()"
+			<NcActionButton v-if="!isPublic() && track.isShareable"
 				icon="icon-share"
 				@click="$emit('add-to-map-track', track)">
 				{{ t('maps', 'Copy to map') }}

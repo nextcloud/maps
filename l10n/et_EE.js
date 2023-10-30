@@ -26,6 +26,7 @@ OC.L10N.register(
     "Devices" : "Seadmed",
     "Tags" : "Sildid",
     "Favorite" : "Lemmik",
+    "Duration" : "Kestus",
     "End" : "Lõpp",
     "Name" : "Nimi",
     "Add" : "Lisa",
@@ -51,6 +52,7 @@ OC.L10N.register(
     "Failed to delete device" : "Seadme kustutamine ebaõnnestus",
     "Default" : "Vaikeväärtus",
     "Failed to delete favorite" : "Lemmiku kustutamine ebaõnnestus",
+    "Metadata" : "Metaandmed",
     "Cinema" : "Kino",
     "Dentist" : "Hambaarst"
 },

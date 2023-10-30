@@ -24,6 +24,7 @@
     "Devices" : "Seadmed",
     "Tags" : "Sildid",
     "Favorite" : "Lemmik",
+    "Duration" : "Kestus",
     "End" : "Lõpp",
     "Name" : "Nimi",
     "Add" : "Lisa",
@@ -49,6 +50,7 @@
     "Failed to delete device" : "Seadme kustutamine ebaõnnestus",
     "Default" : "Vaikeväärtus",
     "Failed to delete favorite" : "Lemmiku kustutamine ebaõnnestus",
+    "Metadata" : "Metaandmed",
     "Cinema" : "Kino",
     "Dentist" : "Hambaarst"
 },"pluralForm" :"nplurals=2; plural=(n != 1);"

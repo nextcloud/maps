@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Nextcloud 3.14159\n"
 "Report-Msgid-Bugs-To: translations\\@example.com\n"
-"POT-Creation-Date: 2023-10-30 01:12+0000\n"
+"POT-Creation-Date: 2023-10-31 01:15+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -229,7 +229,7 @@ msgstr ""
 #. TRANSLATORS src/components/map/ContactLayer.vue:54
 #. TRANSLATORS src/components/map/FavoriteMarker.vue:35
 #. TRANSLATORS src/components/map/PhotosLayer.vue:40
-#. TRANSLATORS src/components/map/TrackLayer.vue:18
+#. TRANSLATORS src/components/map/TrackLayer.vue:20
 #: /app/specialVueFakeDummyForL10nScript.js:8
 #: /app/specialVueFakeDummyForL10nScript.js:12
 #: /app/specialVueFakeDummyForL10nScript.js:66
@@ -258,7 +258,7 @@ msgstr ""
 #. TRANSLATORS src/components/AppNavigationMyMapItem.vue:40
 #. TRANSLATORS src/components/AppNavigationTrackItem.vue:55
 #. TRANSLATORS src/components/map/DeviceLayer.vue:20
-#. TRANSLATORS src/components/map/TrackLayer.vue:10
+#. TRANSLATORS src/components/map/TrackLayer.vue:12
 #: /app/specialVueFakeDummyForL10nScript.js:16
 #: /app/specialVueFakeDummyForL10nScript.js:86
 #: /app/specialVueFakeDummyForL10nScript.js:114
@@ -496,7 +496,7 @@ msgid "Show track elevation"
 msgstr ""
 
 #. TRANSLATORS src/components/AppNavigationTrackItem.vue:68
-#. TRANSLATORS src/components/map/TrackLayer.vue:30
+#. TRANSLATORS src/components/map/TrackLayer.vue:32
 #: /app/specialVueFakeDummyForL10nScript.js:118
 #: /app/specialVueFakeDummyForL10nScript.js:120
 #: /app/specialVueFakeDummyForL10nScript.js:466
@@ -874,7 +874,7 @@ msgstr ""
 #. TRANSLATORS src/components/map/DeviceLayer.vue:36
 #. TRANSLATORS src/components/map/FavoriteMarker.vue:16
 #. TRANSLATORS src/components/map/FavoritePopup.vue:32
-#. TRANSLATORS src/components/map/TrackLayer.vue:48
+#. TRANSLATORS src/components/map/TrackLayer.vue:50
 #: /app/specialVueFakeDummyForL10nScript.js:278
 #: /app/specialVueFakeDummyForL10nScript.js:332
 #: /app/specialVueFakeDummyForL10nScript.js:334
@@ -1169,12 +1169,12 @@ msgstr ""
 msgid "Track/Route"
 msgstr ""
 
-#. TRANSLATORS src/components/map/TrackLayer.vue:13
+#. TRANSLATORS src/components/map/TrackLayer.vue:15
 #: /app/specialVueFakeDummyForL10nScript.js:462
 msgid "Display elevation"
 msgstr ""
 
-#. TRANSLATORS src/components/map/TrackLayer.vue:51
+#. TRANSLATORS src/components/map/TrackLayer.vue:53
 #: /app/specialVueFakeDummyForL10nScript.js:472
 msgid "Begins at"
 msgstr ""

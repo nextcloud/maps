@@ -3,6 +3,8 @@ OC.L10N.register(
     {
     "Delete" : "Desaniciar",
     "Copied!" : "¡Copióse!",
+    "Cancel" : "Encaboxar",
+    "Save" : "Guardar",
     "Category" : "Categoría",
     "Load more" : "Cargar más",
     "Devices" : "Preseos",

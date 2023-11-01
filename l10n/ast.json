@@ -1,6 +1,8 @@
 { "translations": {
     "Delete" : "Desaniciar",
     "Copied!" : "¡Copióse!",
+    "Cancel" : "Encaboxar",
+    "Save" : "Guardar",
     "Category" : "Categoría",
     "Load more" : "Cargar más",
     "Devices" : "Preseos",

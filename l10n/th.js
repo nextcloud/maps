@@ -61,6 +61,7 @@ OC.L10N.register(
     "min" : "นาที",
     "Phone" : "โทรศัพท์",
     "Not grouped" : "ไม่ถูกจัดกลุ่ม",
-    "Default" : "ค่าเริ่มต้น"
+    "Default" : "ค่าเริ่มต้น",
+    "Failed to save settings" : "ไม่สามารถบันทึกการตั้งค่าได้"
 },
 "nplurals=1; plural=0;");

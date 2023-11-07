@@ -111,7 +111,7 @@ OC.L10N.register(
     "No suggestions found" : "Accune suggestions à trouvée",
     "To get suggestions upload tracks from the trips, when you took your photos." : "Pour obtenir des suggestions, téléversez les traces des excursions pendant lesquelles vous avez pris vos photos.",
     "Quit" : "Quitter",
-    "Load more" : "Charger d'avantage",
+    "Load more" : "Charger davantage",
     "Photos default timezone:" : "Fuseau horaire par défaut des photos:",
     "Location sources:" : "Sources de localisation :",
     "Tracks" : "Traces",

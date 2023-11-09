@@ -12,6 +12,7 @@ OC.L10N.register(
     "Invalid file extension" : "Extension du fichier invalide",
     "Impossible to read the file" : "Impossible de lire le fichier",
     "File does not exist" : "Le fichier n’existe pas",
+    "Error sharing device" : "Erreur lors du partage de l'appareil",
     "Share not Found" : "Partage non trouvé",
     "Share was already on map" : "Partage déjà présent sur la carte",
     "No such favorite" : "Aucun favori de ce type",
@@ -73,6 +74,7 @@ OC.L10N.register(
     "Clear photo cache" : "Vider le cache des photo",
     "Hi" : "Bonjour",
     "Show track elevation" : "Afficher l'altitude de la trace",
+    "Download track" : "Télécharger la trace",
     "My tracks" : "Mes traces",
     "Sort by name" : "Trier par nom",
     "Sort by date" : "Trier par date",
@@ -378,6 +380,7 @@ OC.L10N.register(
     "Leave empty to disable." : "Laisser vide pour désactiver.",
     "Mapbox API key" : "Clé d'API Mapbox",
     "MapLibre Website" : "Site web MapLibre",
-    "MapLibre settings" : "Paramètres MapLibre"
+    "MapLibre settings" : "Paramètres MapLibre",
+    "Maps settings" : "Paramètres de Maps"
 },
 "nplurals=3; plural=(n == 0 || n == 1) ? 0 : n != 0 && n % 1000000 == 0 ? 1 : 2;");

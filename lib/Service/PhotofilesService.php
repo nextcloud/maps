@@ -212,8 +212,8 @@ class PhotofilesService {
 	public function getBackgroundJobStatus($userId): array {
 		$add_counter =  0;
 		$addJobsRunning = False;
-# ToDo when NC 25 is Dropped		foreach ($this->jobList->getJobsIterator(AddPhotoJob::class, Null, 0) as $job) {
-		foreach ($this->jobList->getJobs(AddPhotoJob::class, Null, 0) as $job) {
+
+		foreach ($this->jobList->getJobsIterator(AddPhotoJob::class, Null, 0) as $job) {
 			if ($job->getArgument()['userId'] === $userId) {
 				$add_counter += 1;
 			}
@@ -221,8 +221,8 @@ class PhotofilesService {
 		}
 		$update_counter = 0;
 		$updateJobsRunning = False;
-# ToDo when NC 25 is Dropped				foreach ($this->jobList->getJobsIterator(UpdatePhotoByFileJob::class, Null, 0) as $job) {
-		foreach ($this->jobList->getJobs(UpdatePhotoByFileJob::class, Null, 0) as $job) {
+
+		foreach ($this->jobList->getJobsIterator(UpdatePhotoByFileJob::class, Null, 0) as $job) {
 			if ($job->getArgument()['userId'] === $userId) {
 				$update_counter += 1;
 			}

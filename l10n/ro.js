@@ -23,6 +23,7 @@ OC.L10N.register(
     "Close" : "Închide",
     "Select all" : "Selectează tot",
     "Quit" : "Renunță",
+    "Load more" : "Încarcă mai mult",
     "Devices" : "Dispozitive",
     "Tags" : "Etichete",
     "Favorite" : "Favorite",

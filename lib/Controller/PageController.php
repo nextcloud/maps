@@ -122,7 +122,8 @@ class PageController extends Controller {
                 'osrmCarURL',
                 'osrmFootURL',
                 'graphhopperURL',
-				'maplibreStreetStyleURL'
+				'maplibreStreetStyleURL',
+				'maplibreStreetStyleAuth'
             ];
             foreach ($urlKeys as $key) {
                 $url = $this->config->getAppValue('maps', $key);

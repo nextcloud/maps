@@ -39,10 +39,12 @@ $(document).ready(function() {
         'input#graphhopperAPIKEY, ' +
         '#osrmDEMO, ' +
         'input#mapboxAPIKEY, ' +
-        'input#maplibreStreetStyleURL', function(e) {
-        var value = $(this).val();
-        setMapsRoutingSettings($(this).attr('id'), value);
-    });
+        'input#maplibreStreetStyleURL, ' +
+		'input#maplibreStreetStyleAuth',
+		function(e) {
+	        var value = $(this).val();
+    	    setMapsRoutingSettings($(this).attr('id'), value);
+    	});
     $('body').on('change', '#osrmDEMO', function(e) {
         var value = $(this).is(':checked') ? '1' : '0';
         setMapsRoutingSettings($(this).attr('id'), value);

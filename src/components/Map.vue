@@ -175,6 +175,7 @@ import 'mapbox-gl/dist/mapbox-gl'
 import 'mapbox-gl/dist/mapbox-gl.css'
 import 'mapbox-gl-leaflet/leaflet-mapbox-gl'
 import '@maplibre/maplibre-gl-leaflet'
+import ResourceType from 'maplibre-gl'
 import {
 	baseLayersByName,
 	overlayLayersByName,
@@ -784,18 +785,37 @@ export default {
 
 			if ((gl !== null) &&
 				('maplibreStreetStyleURL' in this.optionValues && this.optionValues.maplibreStreetStyleURL !== '')) {
+				let token = null
+				if ('maplibreStreetStyleAuth' in this.optionValues && this.optionValues.maplibreStreetStyleAuth !== '') {
+					token = this.optionValues.maplibreStreetStyleAuth
+				}
+
 				// wrapper to make tile layer component correctly pass arguments
 				L.myMaplibreGL = (url, options) => {
+					if (token !== null) {
+						token = 'Basic ' + btoa(token)
+						const oldTransform = options.transformRequest
+						options.transformRequest = (url, resourceType) => {
+							const param = oldTransform?.() || {}
+							param.url = param.url || url
+							if (resourceType === ResourceType.Tile) {
+								param.type = 'arrayBuffer'
+							}
+							param.headers = param.headers || {}
+							param.headers.Authorization = token
+							return param
+						}
+					}
 					return new L.maplibreGL(options)
 				}
 
 				this.allBaseLayers = {}
 				Object.keys(baseLayersByName).forEach(id => {
 					if (id === 'Open Street Map') {
-						let layer = Object.assign({}, baseLayersByName[id]);
+						const layer = Object.assign({}, baseLayersByName[id])
 						delete layer.url
 						layer.tileLayerClass = L.myMaplibreGL
-						layer.options = Object.assign({}, layer.options);
+						layer.options = Object.assign({}, layer.options)
 						layer.options.style = this.optionValues.maplibreStreetStyleURL
 						layer.options.minZoom = 0
 						layer.options.maxZoom = 22

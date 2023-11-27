@@ -56,6 +56,7 @@ OC.L10N.register(
     "Devices" : "Tæki",
     "Tags" : "Merki",
     "Favorite" : "Eftirlæti",
+    "Unable to change the favourite state of the file" : "Get ekki breytt stöðu sem eftirlæti á skránni",
     "Error while loading the file data" : "Villa við að hlaða inn skráagögnum",
     "Distance" : "Vegalengd",
     "Duration" : "Tímalengd",

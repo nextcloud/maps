@@ -4,7 +4,8 @@
 #graphhopperURL,
 #graphhopperAPIKEY,
 #mapboxAPIKEY,
-#maplibreStreetStyleURL
+#maplibreStreetStyleURL,
+#maplibreStreetStyleAuth
 {
     width: 400px;
 }

@@ -384,7 +384,6 @@ OC.L10N.register(
     "Mapbox API key" : "Mapbox API 金鑰",
     "MapLibre Website" : "MapLibre 網站",
     "MapLibre settings" : "MapLibre 設定",
-    "Set the URL of style.json for OpenStreetMap Vector Tiles with MapLibre-GL-JS" : "使用 MapLibre-GL-JS 設定 OpenStreetMap 向量圖磚的 style.json URL",
     "MapLibre Street style URL" : "MapLibre Street 樣式 URL",
     "Maps settings" : "地圖設定"
 },

@@ -74,6 +74,7 @@ OC.L10N.register(
     "Clear photo cache" : "Wyczyść pamięć podręczną zdjęć",
     "Hi" : "Cześć",
     "Show track elevation" : "Pokaż wysokość ścieżki",
+    "Download track" : "Pobierz ścieżkę",
     "My tracks" : "Moje ścieżki",
     "Sort by name" : "Sortuj według nazwy",
     "Sort by date" : "Sortuj według daty",
@@ -381,6 +382,9 @@ OC.L10N.register(
     "Set the API key to use Mapbox routing service." : "Ustaw klucz API, aby korzystać z usługi routingu Mapbox.",
     "Leave empty to disable." : "Pozostaw puste, aby wyłączyć.",
     "Mapbox API key" : "Klucz API Mapbox",
+    "MapLibre Website" : "Witryna MapLibre",
+    "MapLibre settings" : "Ustawienia MapLibre",
+    "MapLibre Street style URL" : "Adres URL w stylu MapLibre Street",
     "Maps settings" : "Ustawienia Map"
 },
 "nplurals=4; plural=(n==1 ? 0 : (n%10>=2 && n%10<=4) && (n%100<12 || n%100>14) ? 1 : n!=1 && (n%10>=0 && n%10<=1) || (n%10>=5 && n%10<=9) || (n%100>=12 && n%100<=14) ? 2 : 3);");

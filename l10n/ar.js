@@ -384,7 +384,6 @@ OC.L10N.register(
     "Mapbox API key" : "مفتاح API لماب بوكس",
     "MapLibre Website" : "موقع \"ماب ليبر\" MapLibre",
     "MapLibre settings" : "إعدادات \"ماب ليبر\" MapLibre",
-    "Set the URL of style.json for OpenStreetMap Vector Tiles with MapLibre-GL-JS" : "قُم بتعيين عنوان URL لـ style.json لـ OpenStreetMap Vector Tiles كـ MapLibre-GL-JS",
     "MapLibre Street style URL" : "عنوان URL لـ MapLibre Street style ",
     "Maps settings" : "إعدادات \"الخرائط\" Maps"
 },

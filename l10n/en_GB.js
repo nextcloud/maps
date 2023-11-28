@@ -384,7 +384,6 @@ OC.L10N.register(
     "Mapbox API key" : "Mapbox API key",
     "MapLibre Website" : "MapLibre Website",
     "MapLibre settings" : "MapLibre settings",
-    "Set the URL of style.json for OpenStreetMap Vector Tiles with MapLibre-GL-JS" : "Set the URL of style.json for OpenStreetMap Vector Tiles with MapLibre-GL-JS",
     "MapLibre Street style URL" : "MapLibre Street style URL",
     "Maps settings" : "Maps settings"
 },

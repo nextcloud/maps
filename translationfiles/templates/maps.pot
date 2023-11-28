@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Nextcloud 3.14159\n"
 "Report-Msgid-Bugs-To: translations\\@example.com\n"
-"POT-Creation-Date: 2023-11-27 01:12+0000\n"
+"POT-Creation-Date: 2023-11-28 01:18+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -363,7 +363,7 @@ msgid "Rename"
 msgstr ""
 
 #. TRANSLATORS src/components/AppNavigationFavoritesItem.vue:77
-#. TRANSLATORS src/components/Map.vue:457
+#. TRANSLATORS src/components/Map.vue:458
 #: /app/specialVueFakeDummyForL10nScript.js:54
 #: /app/specialVueFakeDummyForL10nScript.js:74
 #: /app/specialVueFakeDummyForL10nScript.js:142
@@ -565,13 +565,13 @@ msgstr ""
 msgid "New category {n}"
 msgstr ""
 
-#. TRANSLATORS src/components/Map.vue:462
+#. TRANSLATORS src/components/Map.vue:463
 #: /app/specialVueFakeDummyForL10nScript.js:144
 #: /app/specialVueFakeDummyForL10nScript.js:152
 msgid "Place photos"
 msgstr ""
 
-#. TRANSLATORS src/components/Map.vue:467
+#. TRANSLATORS src/components/Map.vue:468
 #. TRANSLATORS src/components/map/HistoryControl.vue:81
 #: /app/specialVueFakeDummyForL10nScript.js:146
 #: /app/specialVueFakeDummyForL10nScript.js:154
@@ -579,68 +579,68 @@ msgstr ""
 msgid "Place contact"
 msgstr ""
 
-#. TRANSLATORS src/components/Map.vue:472
+#. TRANSLATORS src/components/Map.vue:473
 #: /app/specialVueFakeDummyForL10nScript.js:148
 #: /app/specialVueFakeDummyForL10nScript.js:156
 msgid "Share this location"
 msgstr ""
 
-#. TRANSLATORS src/components/Map.vue:511
+#. TRANSLATORS src/components/Map.vue:512
 #: /app/specialVueFakeDummyForL10nScript.js:158
 msgid "Shared location"
 msgstr ""
 
-#. TRANSLATORS src/components/Map.vue:522
+#. TRANSLATORS src/components/Map.vue:523
 #: /app/specialVueFakeDummyForL10nScript.js:160
 msgid "Route from here"
 msgstr ""
 
-#. TRANSLATORS src/components/Map.vue:531
+#. TRANSLATORS src/components/Map.vue:532
 #: /app/specialVueFakeDummyForL10nScript.js:162
 msgid "Add route point"
 msgstr ""
 
-#. TRANSLATORS src/components/Map.vue:540
+#. TRANSLATORS src/components/Map.vue:541
 #: /app/specialVueFakeDummyForL10nScript.js:164
 msgid "Route to here"
 msgstr ""
 
-#. TRANSLATORS src/components/Map.vue:622
+#. TRANSLATORS src/components/Map.vue:623
 #: /app/specialVueFakeDummyForL10nScript.js:166
 msgid "Current location"
 msgstr ""
 
-#. TRANSLATORS src/components/Map.vue:676
+#. TRANSLATORS src/components/Map.vue:677
 #: /app/specialVueFakeDummyForL10nScript.js:168
 msgid "Improve this map"
 msgstr ""
 
-#. TRANSLATORS src/components/Map.vue:815
+#. TRANSLATORS src/components/Map.vue:835
 #: /app/specialVueFakeDummyForL10nScript.js:170
 msgid "Other maps"
 msgstr ""
 
-#. TRANSLATORS src/components/Map.vue:831
+#. TRANSLATORS src/components/Map.vue:851
 #: /app/specialVueFakeDummyForL10nScript.js:172
 msgid "Street map"
 msgstr ""
 
-#. TRANSLATORS src/components/Map.vue:846
+#. TRANSLATORS src/components/Map.vue:866
 #: /app/specialVueFakeDummyForL10nScript.js:174
 msgid "Satellite map"
 msgstr ""
 
-#. TRANSLATORS src/components/Map.vue:903
+#. TRANSLATORS src/components/Map.vue:923
 #: /app/specialVueFakeDummyForL10nScript.js:176
 msgid "Geo link ({geoLink}) copied to clipboard"
 msgstr ""
 
-#. TRANSLATORS src/components/Map.vue:906
+#. TRANSLATORS src/components/Map.vue:926
 #: /app/specialVueFakeDummyForL10nScript.js:178
 msgid "Geo link could not be copied to clipboard"
 msgstr ""
 
-#. TRANSLATORS src/components/Map.vue:987
+#. TRANSLATORS src/components/Map.vue:1007
 #: /app/specialVueFakeDummyForL10nScript.js:180
 msgid "Close"
 msgstr ""
@@ -2095,11 +2095,16 @@ msgstr ""
 
 #: /app/templates/adminSettings.php:51
 msgid ""
-"Set the URL of style.json for OpenStreetMap Vector Tiles with MapLibre-GL-JS"
+"Set the URL and Basic Authorization of style.json for OpenStreetMap Vector "
+"Tiles with MapLibre-GL-JS."
 msgstr ""
 
 #: /app/templates/adminSettings.php:54
 msgid "MapLibre Street style URL"
+msgstr ""
+
+#: /app/templates/adminSettings.php:56
+msgid "Basic Authorization if required. Format is \"user:password\""
 msgstr ""
 
 #: /app/templates/settings/index.php:4

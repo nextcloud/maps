@@ -384,7 +384,6 @@ OC.L10N.register(
     "Mapbox API key" : "Klíč aplikačnímu program. rozhraní (API) služby Mapbox",
     "MapLibre Website" : "Webové stránky MapLibre",
     "MapLibre settings" : "Nastavení pro MapLibre",
-    "Set the URL of style.json for OpenStreetMap Vector Tiles with MapLibre-GL-JS" : "Nastavit URL style.json pro OpenStreetMap vektorové dlaždice s MapLibre-GL-JS",
     "MapLibre Street style URL" : "URL MapLibre Street stylu",
     "Maps settings" : "Nastavení pro Mapy"
 },

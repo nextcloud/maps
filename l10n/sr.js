@@ -384,7 +384,6 @@ OC.L10N.register(
     "Mapbox API key" : "Mapbox API кључ",
     "MapLibre Website" : "MapLibre веб сајт",
     "MapLibre settings" : "MapLibre подешавања",
-    "Set the URL of style.json for OpenStreetMap Vector Tiles with MapLibre-GL-JS" : "Поставите URL style.json фајла за OpenStreetMap векторске плочице са MapLibre-GL-JS",
     "MapLibre Street style URL" : "URL MapLibre Street стила",
     "Maps settings" : "Подешавања Мапа"
 },

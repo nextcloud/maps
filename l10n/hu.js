@@ -383,7 +383,6 @@ OC.L10N.register(
     "Mapbox API key" : "Mapbox API-kulcs",
     "MapLibre Website" : "MapLibre weboldal",
     "MapLibre settings" : "MapLibre beállítások",
-    "Set the URL of style.json for OpenStreetMap Vector Tiles with MapLibre-GL-JS" : "Állítsa be a style.json URL-jét az OpenStreetMap Vector Tiles with MapLibre-GL-JS -hez",
     "MapLibre Street style URL" : "MapLibre Street URL stílus",
     "Maps settings" : "Térkép beállítások"
 },

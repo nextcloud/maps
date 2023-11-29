@@ -384,7 +384,9 @@ OC.L10N.register(
     "Mapbox API key" : "مفتاح API لماب بوكس",
     "MapLibre Website" : "موقع \"ماب ليبر\" MapLibre",
     "MapLibre settings" : "إعدادات \"ماب ليبر\" MapLibre",
+    "Set the URL and Basic Authorization of style.json for OpenStreetMap Vector Tiles with MapLibre-GL-JS." : "قم بتعيين عنوان URL و التخويل الأساسي لـ style.json في OpenStreetMap Vector Tiles باستخدام MapLibre-GL-JS.",
     "MapLibre Street style URL" : "عنوان URL لـ MapLibre Street style ",
+    "Basic Authorization if required. Format is \"user:password\"" : "التخويل الأساسي إذا لزم الأمر. الصيغة هي \"المستخدِم: كلمة المرور\" \"user:password\"",
     "Maps settings" : "إعدادات \"الخرائط\" Maps"
 },
 "nplurals=6; plural=n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 && n%100<=10 ? 3 : n%100>=11 && n%100<=99 ? 4 : 5;");

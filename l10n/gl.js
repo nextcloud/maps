@@ -384,7 +384,9 @@ OC.L10N.register(
     "Mapbox API key" : "Chave da API do Mapbox",
     "MapLibre Website" : "Sitio web de MapLibre",
     "MapLibre settings" : "Axustes de MapLibre",
+    "Set the URL and Basic Authorization of style.json for OpenStreetMap Vector Tiles with MapLibre-GL-JS." : "Definir o URL e a autorización básica de style.json para as teselas vectoriais de OpenStreetMap con MapLibre-GL-JS",
     "MapLibre Street style URL" : "URL de estilo de rúa de MapLibre",
+    "Basic Authorization if required. Format is \"user:password\"" : "Autorización básica se é necesario. O formato é «usuario:contrasinal»",
     "Maps settings" : "Axustes de Mapas"
 },
 "nplurals=2; plural=(n != 1);");

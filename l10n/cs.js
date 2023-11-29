@@ -384,7 +384,9 @@ OC.L10N.register(
     "Mapbox API key" : "Klíč aplikačnímu program. rozhraní (API) služby Mapbox",
     "MapLibre Website" : "Webové stránky MapLibre",
     "MapLibre settings" : "Nastavení pro MapLibre",
+    "Set the URL and Basic Authorization of style.json for OpenStreetMap Vector Tiles with MapLibre-GL-JS." : "Nastavit URL a Basic Authorization pro style.json pro OpenStreetMap vektorové dlaždice s MapLibre-GL-JS.",
     "MapLibre Street style URL" : "URL MapLibre Street stylu",
+    "Basic Authorization if required. Format is \"user:password\"" : "Basic Authorization je vyžadováno. Formát je „uzivatel:heslo“",
     "Maps settings" : "Nastavení pro Mapy"
 },
 "nplurals=4; plural=(n == 1 && n % 1 == 0) ? 0 : (n >= 2 && n <= 4 && n % 1 == 0) ? 1: (n % 1 != 0 ) ? 2 : 3;");

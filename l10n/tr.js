@@ -384,7 +384,9 @@ OC.L10N.register(
     "Mapbox API key" : "Mapbox API anahtarı",
     "MapLibre Website" : "MapLibre sitesi",
     "MapLibre settings" : "MapLibre ayarları",
+    "Set the URL and Basic Authorization of style.json for OpenStreetMap Vector Tiles with MapLibre-GL-JS." : "MapLibre-GL-JS ile OpenStreetMap vektör döşemelerinin style.json adresini ve temel kimlik doğrulamasını ayarlayın",
     "MapLibre Street style URL" : "MapLibre Street biçem adresi",
+    "Basic Authorization if required. Format is \"user:password\"" : "Temel kimlik doğrulaması gereklidir. Biçim: \"KullaniciAdi:Parola\"",
     "Maps settings" : "Haritalar ayarları"
 },
 "nplurals=2; plural=(n > 1);");

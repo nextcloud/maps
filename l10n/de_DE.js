@@ -386,7 +386,7 @@ OC.L10N.register(
     "MapLibre settings" : "MapLibre-Einstellungen",
     "Set the URL and Basic Authorization of style.json for OpenStreetMap Vector Tiles with MapLibre-GL-JS." : "Die URL und die Basisautorisierung von style.json für OpenStreetMap Vector Tiles mit MapLibre-GL-JS festlegen.",
     "MapLibre Street style URL" : "MapLibre Street-Style-URL",
-    "Basic Authorization if required. Format is \"user:password\"" : "Basisautorisierung falls erforderlich. Format ist „Benutzer:Passwort“",
+    "Basic Authorization if required. Format is \"user:password\"" : "Basisautorisierung falls erforderlich. Format ist \"Benutzer:Passwort“",
     "Maps settings" : "Karten-Einstellungen"
 },
 "nplurals=2; plural=(n != 1);");

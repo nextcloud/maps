@@ -22,11 +22,11 @@
 
 import Vue from 'vue'
 import App from './views/App.vue'
-import './bootstrap'
-import optionsController from './optionsController'
+import './bootstrap.js'
+import optionsController from './optionsController.js'
 import '../css/style.scss'
 
-import Tooltip from '@nextcloud/vue/dist/Directives/Tooltip'
+import Tooltip from '@nextcloud/vue/dist/Directives/Tooltip.js'
 import { emit } from '@nextcloud/event-bus'
 
 import { generateUrl } from '@nextcloud/router'

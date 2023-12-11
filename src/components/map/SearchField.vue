@@ -1,5 +1,5 @@
 <template>
-	<NcMultiselect
+	<NcSelect
 		ref="select"
 		class="search-select"
 		label="label"
@@ -20,7 +20,7 @@
 		@input="onOptionSelected"
 		@update:value="onUpdateValue"
 		@change="onChange"
-		@search-change="onSearchChange">
+		@search="onSearchChange">
 		<template #option="{option}">
 			<span :class="'option-icon ' + option.icon" />
 			<span class="option-label" :title="option.label">
@@ -35,11 +35,11 @@
 		<template #noOptions>
 			{{ t('maps', 'No suggestions') }}
 		</template>
-	</NcMultiselect>
+	</NcSelect>
 </template>
 
 <script>
-import NcMultiselect from '@nextcloud/vue/dist/Components/NcMultiselect.js'
+import NcSelect from '@nextcloud/vue/dist/Components/NcSelect.js'
 
 import L from 'leaflet'
 
@@ -50,7 +50,7 @@ export default {
 	name: 'SearchField',
 
 	components: {
-		NcMultiselect,
+		NcSelect,
 	},
 
 	props: {

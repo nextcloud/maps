@@ -18,7 +18,7 @@
 				:class="{ 'item-disabled': !st.enabled }"
 				:title="track.name.concat(' ', st.key.split(':')[2])"
 				:force-menu="false"
-				@click="$emit('subtrack-click', st)" >
+				@click="$emit('subtrack-click', st)">
 				<NcCounterBubble slot="counter">
 					{{ st.suggestionCount > 99 ? '99+' : st.suggestionCount }}
 				</NcCounterBubble>
@@ -29,8 +29,8 @@
 
 <script>
 
-import NcAppNavigationItem from '@nextcloud/vue/dist/Components/NcAppNavigationItem.js';
-import NcCounterBubble from '@nextcloud/vue/dist/Components/NcCounterBubble.js';
+import NcAppNavigationItem from '@nextcloud/vue/dist/Components/NcAppNavigationItem.js'
+import NcCounterBubble from '@nextcloud/vue/dist/Components/NcCounterBubble.js'
 
 export default {
 	name: 'PhotoSideBarTabTrackItem',
@@ -55,7 +55,7 @@ export default {
 	data() {
 		return {
 			open: !!this.track.open,
-			enabled: this.subTracks.some((t) => { return t.enabled })
+			enabled: this.subTracks.some((t) => { return t.enabled }),
 		}
 	},
 

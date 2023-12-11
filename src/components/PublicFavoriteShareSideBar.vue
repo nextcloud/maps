@@ -47,9 +47,9 @@ import NcAppNavigationItem from '@nextcloud/vue/dist/Components/NcAppNavigationI
 import NcAppNavigationNew from '@nextcloud/vue/dist/Components/NcAppNavigationNew.js'
 import NcAppNavigationSpacer from '@nextcloud/vue/dist/Components/NcAppNavigationSpacer.js'
 import { mapMutations, mapState, mapActions } from 'vuex'
-import { PUBLIC_FAVORITES_NAMESPACE } from '../store/modules/publicFavorites'
-import MapMode from '../data/enum/MapMode'
-import { MAP_NAMESPACE } from '../store/modules/map'
+import { PUBLIC_FAVORITES_NAMESPACE } from '../store/modules/publicFavorites.js'
+import MapMode from '../data/enum/MapMode.js'
+import { MAP_NAMESPACE } from '../store/modules/map.js'
 
 export default {
 	name: 'PublicFavoriteShareSideBar',
@@ -77,7 +77,7 @@ export default {
 				'maps',
 				this.mapMode === MapMode.ADDING_FAVORITES
 					? 'Cancel adding favorites'
-					: 'Add favorites'
+					: 'Add favorites',
 			)
 		},
 	},

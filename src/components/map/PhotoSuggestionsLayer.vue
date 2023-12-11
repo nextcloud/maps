@@ -67,8 +67,8 @@ import L from 'leaflet'
 import { LMarker, LTooltip, LPopup } from 'vue2-leaflet'
 import Vue2LeafletMarkerCluster from 'vue2-leaflet-markercluster'
 
-import optionsController from '../../optionsController'
-import { binSearch, getToken } from '../../utils/common'
+import optionsController from '../../optionsController.js'
+import { binSearch, getToken } from '../../utils/common.js'
 
 const PHOTO_MARKER_VIEW_SIZE = 40
 
@@ -188,25 +188,25 @@ export default {
 				this.$refs.markerCluster.mapObject.removeLayers(
 					this.suggestionMarkers.slice(
 						this.suggestionsLastNullIndex + 1,
-						this.suggestionsFirstShownIndex
-					)
+						this.suggestionsFirstShownIndex,
+					),
 				)
 				this.$refs.markerCluster.mapObject.removeLayers(
 					this.suggestionMarkers.slice(
 						this.suggestionsLastShownIndex + 1,
-					)
+					),
 				)
 			} else {
 				this.$refs.markerCluster.mapObject.addLayers(
 					this.suggestionMarkers.slice(
 						this.suggestionsLastNullIndex + 1,
-						this.suggestionsFirstShownIndex
-					)
+						this.suggestionsFirstShownIndex,
+					),
 				)
 				this.$refs.markerCluster.mapObject.addLayers(
 					this.suggestionMarkers.slice(
 						this.suggestionsLastShownIndex + 1,
-					)
+					),
 				)
 			}
 		},
@@ -215,15 +215,15 @@ export default {
 				this.$refs.markerCluster.mapObject.addLayers(
 					this.suggestionMarkers.slice(
 						newIndex,
-						oldIndex
-					)
+						oldIndex,
+					),
 				)
 			} else if (newIndex > oldIndex) {
 				this.$refs.markerCluster.mapObject.removeLayers(
 					this.suggestionMarkers.slice(
 						oldIndex,
-						newIndex
-					)
+						newIndex,
+					),
 				)
 			}
 		},
@@ -232,15 +232,15 @@ export default {
 				this.$refs.markerCluster.mapObject.removeLayers(
 					this.suggestionMarkers.slice(
 						newIndex + 1,
-						oldIndex + 1
-					)
+						oldIndex + 1,
+					),
 				)
 			} else if (newIndex > oldIndex) {
 				this.$refs.markerCluster.mapObject.addLayers(
 					this.suggestionMarkers.slice(
 						oldIndex + 1,
-						newIndex + 1
-					)
+						newIndex + 1,
+					),
 				)
 			}
 		},
@@ -434,19 +434,19 @@ export default {
 						},
 					)
 					m.on(
-						'click', this.onPhotoClick
+						'click', this.onPhotoClick,
 					)
 					m.on(
-						'contextmenu', this.onPhotoRightClick
+						'contextmenu', this.onPhotoRightClick,
 					)
 					m.on(
-						'mouseover', this.onPhotoMouseOver
+						'mouseover', this.onPhotoMouseOver,
 					)
 					m.on(
-						'mouseout', this.onPhotoMouseOut
+						'mouseout', this.onPhotoMouseOut,
 					)
 					m.on(
-						'moveend', this.onPhotoMoved
+						'moveend', this.onPhotoMoved,
 					)
 					m.data = p
 					m.i = i
@@ -460,13 +460,13 @@ export default {
 				this.$refs.markerCluster.mapObject.removeLayers(
 					this.suggestionMarkers.slice(
 						this.suggestionsLastNullIndex + 1,
-						this.suggestionsFirstShownIndex
-					)
+						this.suggestionsFirstShownIndex,
+					),
 				)
 				this.$refs.markerCluster.mapObject.removeLayers(
 					this.suggestionMarkers.slice(
 						this.suggestionsLastShownIndex + 1,
-					)
+					),
 				)
 			}
 		},

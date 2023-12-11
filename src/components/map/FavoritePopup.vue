@@ -65,9 +65,9 @@
 
 <script>
 import VueTypes from 'vue-types'
-import Popup from './Popup'
-import PopupFormItem from './PopupFormItem'
-import Types from '../../data/types'
+import Popup from './Popup.js'
+import PopupFormItem from './PopupFormItem.js'
+import Types from '../../data/types.js'
 
 export default {
 	name: 'FavoritePopup',

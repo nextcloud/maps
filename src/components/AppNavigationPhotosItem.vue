@@ -52,7 +52,7 @@ import NcAppNavigationItem from '@nextcloud/vue/dist/Components/NcAppNavigationI
 import NcActionButton from '@nextcloud/vue/dist/Components/NcActionButton.js'
 import NcCounterBubble from '@nextcloud/vue/dist/Components/NcCounterBubble.js'
 
-import optionsController from '../optionsController'
+import optionsController from '../optionsController.js'
 import { showInfo } from '@nextcloud/dialogs'
 
 export default {
@@ -83,7 +83,7 @@ export default {
 		},
 		readOnly: {
 			type: Boolean,
-			default: false
+			default: false,
 		},
 		draggable: {
 			type: Boolean,

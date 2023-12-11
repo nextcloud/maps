@@ -43,8 +43,8 @@ import NcSelect from '@nextcloud/vue/dist/Components/NcSelect.js'
 
 import L from 'leaflet'
 
-import * as network from '../../network'
-import { accented } from '../../utils'
+import * as network from '../../network.js'
+import { accented } from '../../utils.js'
 
 export default {
 	name: 'SearchField',

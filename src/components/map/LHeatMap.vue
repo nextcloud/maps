@@ -1,4 +1,3 @@
-
 <template>
 	<div style="display: none;">
 		<slot v-if="ready" />

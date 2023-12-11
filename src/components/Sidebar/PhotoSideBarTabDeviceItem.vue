@@ -14,8 +14,8 @@
 
 <script>
 
-import NcAppNavigationItem from '@nextcloud/vue/dist/Components/NcAppNavigationItem.js';
-import NcCounterBubble from '@nextcloud/vue/dist/Components/NcCounterBubble.js';
+import NcAppNavigationItem from '@nextcloud/vue/dist/Components/NcAppNavigationItem.js'
+import NcCounterBubble from '@nextcloud/vue/dist/Components/NcCounterBubble.js'
 
 export default {
 	name: 'PhotoSideBarTabDeviceItem',
@@ -45,6 +45,5 @@ export default {
 ::v-deep .item-disabled {
 	opacity: 0.5;
 }
-
 
 </style>

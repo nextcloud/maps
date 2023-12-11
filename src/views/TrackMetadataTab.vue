@@ -30,7 +30,7 @@
 import TrackSidebarMetadataTab from '../components/TrackMetadataTab.vue'
 import * as network from '../network.js'
 import { processGpx } from '../tracksUtils.js'
-import {getToken} from "../utils/common";
+import { getToken } from '../utils/common'
 
 export default {
 	name: 'TrackMetadataTab',

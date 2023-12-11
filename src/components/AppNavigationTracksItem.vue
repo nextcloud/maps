@@ -46,10 +46,10 @@
 <script>
 import NcAppNavigationItem from '@nextcloud/vue/dist/Components/NcAppNavigationItem.js'
 import NcActionButton from '@nextcloud/vue/dist/Components/NcActionButton.js'
-import AppNavigationTrackItem from './AppNavigationTrackItem'
+import AppNavigationTrackItem from './AppNavigationTrackItem.vue'
 import NcCounterBubble from '@nextcloud/vue/dist/Components/NcCounterBubble.js'
 
-import optionsController from '../optionsController'
+import optionsController from '../optionsController.js'
 
 export default {
 	name: 'AppNavigationTracksItem',

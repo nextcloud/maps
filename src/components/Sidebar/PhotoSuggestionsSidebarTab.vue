@@ -3,105 +3,105 @@
 		<div v-if="loading" class="icon-loading" />
 		<div v-else-if="photoSuggestions.length > 0">
 			<div class="oc-dialog-buttonrow">
-					<NcButton
-						@click="$emit('clear-selection')">
-						{{ t('maps', 'Clear selection') }}
-					</NcButton>
-					<NcButton
-						type="primary"
-						@click="$emit('select-all')">
-						{{ t('maps', 'Select all') }}
-					</NcButton>
-					<NcActions>
-						<NcActionButton
-							:icon="selectionLayout==='list'?'icon-toggle-pictures':'icon-toggle-filelist'"
-							@click="selectionLayout=selectionLayout==='list'?'grid':'list'">
-							{{ t('maps', selectionLayout==='list'?'grid view':'list view') }}
+				<NcButton
+					@click="$emit('clear-selection')">
+					{{ t('maps', 'Clear selection') }}
+				</NcButton>
+				<NcButton
+					type="primary"
+					@click="$emit('select-all')">
+					{{ t('maps', 'Select all') }}
+				</NcButton>
+				<NcActions>
+					<NcActionButton
+						:icon="selectionLayout==='list'?'icon-toggle-pictures':'icon-toggle-filelist'"
+						@click="selectionLayout=selectionLayout==='list'?'grid':'list'">
+						{{ t('maps', selectionLayout==='list'?'grid view':'list view') }}
+					</NcActionButton>
+				</NcActions>
+			</div>
+			<div v-if="photoSuggestionsSelectedIndices.length > 0 && selectionLayout==='list'">
+				<NcListItem v-for="p in photoSuggestionsSelected"
+					:key="p.photoSuggestionsIndex"
+					:title="p.basename"
+					:bold="false"
+					:details="getPhotoFormattedDate(p)"
+					@click="onListItemClick(p)">
+					<template #icon>
+						<img
+							:src="previewUrl(p)"
+							:alt="p.basename"
+							width="64"
+							height="64">
+					</template>
+					<template #subtitle>
+						{{ p.path }}
+					</template>
+					<template #actions>
+						<NcActionButton @click="onListItemClick(p)">
+							{{ t('maps', 'Display picture') }}
+						</NcActionButton>
+						<NcActionButton @click="$emit('save',[p.photoSuggestionsIndex])">
+							{{ t('maps', 'Save') }}
+						</NcActionButton>
+						<NcActionButton @click="$emit('zoom', p)">
+							{{ t('maps', 'Zoom') }}
+						</NcActionButton>
+						<NcActionButton @click="$emit('clear-selection',[p.photoSuggestionsIndex])">
+							{{ t('maps', 'Remove from selection') }}
+						</NcActionButton>
+					</template>
+				</NcListItem>
+			</div>
+			<div v-if="photoSuggestionsSelectedIndices.length > 0 && selectionLayout==='grid'"
+				class="photo-suggestion-selected-grid">
+				<div v-for="p in photoSuggestionsSelected"
+					:key="p.photoSuggestionsIndex"
+					class="photo-suggestion-selected-grid-item"
+					:style="{
+						'background-image': 'url('+previewUrl(p)+')',
+						'background-size': 'cover'}"
+					@click.self="onListItemClick(p)">
+					<NcActions class="photo-suggestion-selected-grid-actions">
+						<NcActionButton @click="onListItemClick(p)">
+							{{ t('maps', 'Display picture') }}
+						</NcActionButton>
+						<NcActionButton @click="$emit('save',[p.photoSuggestionsIndex])">
+							{{ t('maps', 'Save') }}
+						</NcActionButton>
+						<NcActionButton @click="$emit('zoom', p)">
+							{{ t('maps', 'Zoom') }}
+						</NcActionButton>
+						<NcActionButton @click="$emit('clear-selection',[p.photoSuggestionsIndex])">
+							{{ t('maps', 'Remove from selection') }}
 						</NcActionButton>
 					</NcActions>
 				</div>
-			<div v-if="photoSuggestionsSelectedIndices.length > 0 && selectionLayout==='list'">
-					<NcListItem v-for="p in photoSuggestionsSelected"
-								:key="p.photoSuggestionsIndex"
-								:title="p.basename"
-								:bold="false"
-								:details="getPhotoFormattedDate(p)"
-								@click="onListItemClick(p)">
-						<template #icon>
-							<img
-								:src="previewUrl(p)"
-								:alt="p.basename"
-								width="64"
-								height="64">
-						</template>
-						<template #subtitle>
-							{{ p.path }}
-						</template>
-						<template #actions>
-							<NcActionButton @click="onListItemClick(p)">
-								{{ t('maps', 'Display picture') }}
-							</NcActionButton>
-							<NcActionButton @click="$emit('save',[p.photoSuggestionsIndex])">
-								{{ t('maps', 'Save') }}
-							</NcActionButton>
-							<NcActionButton @click="$emit('zoom', p)">
-								{{ t('maps', 'Zoom') }}
-							</NcActionButton>
-							<NcActionButton @click="$emit('clear-selection',[p.photoSuggestionsIndex])">
-								{{ t('maps', 'Remove from selection') }}
-							</NcActionButton>
-						</template>
-					</NcListItem>
-				</div>
-			<div v-if="photoSuggestionsSelectedIndices.length > 0 && selectionLayout==='grid'"
-					 class="photo-suggestion-selected-grid">
-					<div v-for="p in photoSuggestionsSelected"
-						 :key="p.photoSuggestionsIndex"
-						 class="photo-suggestion-selected-grid-item"
-						 :style="{
-						'background-image': 'url('+previewUrl(p)+')',
-						'background-size': 'cover'}"
-						 @click.self="onListItemClick(p)">
-						<NcActions class="photo-suggestion-selected-grid-actions">
-							<NcActionButton @click="onListItemClick(p)">
-								{{ t('maps', 'Display picture') }}
-							</NcActionButton>
-							<NcActionButton @click="$emit('save',[p.photoSuggestionsIndex])">
-								{{ t('maps', 'Save') }}
-							</NcActionButton>
-							<NcActionButton @click="$emit('zoom', p)">
-								{{ t('maps', 'Zoom') }}
-							</NcActionButton>
-							<NcActionButton @click="$emit('clear-selection',[p.photoSuggestionsIndex])">
-								{{ t('maps', 'Remove from selection') }}
-							</NcActionButton>
-						</NcActions>
-					</div>
-				</div>
+			</div>
 		</div>
 		<div v-else>
-				<h2> {{ t('maps','No suggestions found') }} </h2>
-				{{ t('maps','To get suggestions upload tracks from the trips, when you took your photos.'
+			<h2> {{ t('maps','No suggestions found') }} </h2>
+			{{ t('maps','To get suggestions upload tracks from the trips, when you took your photos.'
 				+ 'For future trips you can track your android phone using phonetrack.'
 				+ 'This information are then automatically used suggest photo location') }}
-			</div>
+		</div>
 		<div class="oc-dialog-buttonrow">
-				<NcButton
-					@click="$emit('cancel')">
-					{{ !photoSuggestions.includes(null) ? t('maps', 'Cancel') : t('maps', 'Quit') }}
-				</NcButton>
-				<NcButton
-					@click="$emit('load-more')">
-					{{ t('maps', 'Load more') }}
-				</NcButton>
-				<NcButton
-					v-show="photoSuggestions.length > 0"
-					type="primary"
-					:disabled="photoSuggestionsSelectedIndices.length===0 || readOnly"
-					@click="$emit('save')">
-					{{ t('maps', 'Save') }}
-				</NcButton>
-			</div>
+			<NcButton
+				@click="$emit('cancel')">
+				{{ !photoSuggestions.includes(null) ? t('maps', 'Cancel') : t('maps', 'Quit') }}
+			</NcButton>
+			<NcButton
+				@click="$emit('load-more')">
+				{{ t('maps', 'Load more') }}
+			</NcButton>
+			<NcButton
+				v-show="photoSuggestions.length > 0"
+				type="primary"
+				:disabled="photoSuggestionsSelectedIndices.length===0 || readOnly"
+				@click="$emit('save')">
+				{{ t('maps', 'Save') }}
+			</NcButton>
+		</div>
 		<NcAppNavigationSettings class="footer">
 			{{ t('maps', 'Photos default timezone:') }}
 			<NcTimezonePicker
@@ -171,10 +171,10 @@ import NcAppNavigationItem from '@nextcloud/vue/dist/Components/NcAppNavigationI
 import NcAppNavigationSettings from '@nextcloud/vue/dist/Components/NcAppNavigationSettings.js'
 import NcActionButton from '@nextcloud/vue/dist/Components/NcActionButton.js'
 
-import { getToken } from '../../utils/common'
+import { getToken } from '../../utils/common.js'
 import NcTimezonePicker from '@nextcloud/vue/dist/Components/NcTimezonePicker.js'
-import PhotoSideBarTabTrackItem from './PhotoSideBarTabTrackItem'
-import PhotoSideBarTabDeviceItem from './PhotoSideBarTabDeviceItem'
+import PhotoSideBarTabTrackItem from './PhotoSideBarTabTrackItem.js'
+import PhotoSideBarTabDeviceItem from './PhotoSideBarTabDeviceItem.js'
 
 export default {
 	name: 'PhotoSuggestionsSidebarTab',

@@ -22,8 +22,8 @@
 
 import * as Vuex from 'vuex'
 import Vue from 'vue'
-import publicFavorites from './modules/publicFavorites'
-import map from './modules/map'
+import publicFavorites from './modules/publicFavorites.js'
+import map from './modules/map.js'
 
 Vuex.install(Vue)
 

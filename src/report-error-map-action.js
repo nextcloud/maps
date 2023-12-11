@@ -1,4 +1,3 @@
-
 OCA.Maps?.registerMapsAction({
 	label: t('maps', 'Report Error'),
 	icon: 'icon-alert-outline',

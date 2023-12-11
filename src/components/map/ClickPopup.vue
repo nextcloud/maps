@@ -67,16 +67,16 @@
 </template>
 
 <script>
-import { MAP_NAMESPACE } from '../../store/modules/map'
+import { MAP_NAMESPACE } from '../../store/modules/map.js'
 import { mapState } from 'vuex'
-import MapMode from '../../data/enum/MapMode'
-import { geocode } from '../../utils/mapUtils'
-import SimpleOSMAddress from './SimpleOSMAddress'
+import MapMode from '../../data/enum/MapMode.js'
+import { geocode } from '../../utils/mapUtils.js'
+import SimpleOSMAddress from './SimpleOSMAddress.js'
 import VueTypes from 'vue-types'
-import Popup from './Popup'
-import PopupFormItem from './PopupFormItem'
-import Types from '../../data/types'
-import { getDefaultCategoryName } from '../../utils/favoritesUtils'
+import Popup from './Popup.js'
+import PopupFormItem from './PopupFormItem.js'
+import Types from '../../data/types.js'
+import { getDefaultCategoryName } from '../../utils/favoritesUtils.js'
 
 export default {
 	name: 'ClickPopup',

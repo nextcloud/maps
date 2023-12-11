@@ -9,8 +9,8 @@
 		@closing="handleClosing"
 		@closed="handleClosed"
 		@close="$emit('close')">
-		<template v-slot:header>
-			<span :class="['header-icon icon', icon]" v-if="icon"></span>
+		<template #header>
+			<span v-if="icon" :class="['header-icon icon', icon]" />
 		</template>
 		<FavoriteSidebarTab v-if="activeTab === 'favorite'"
 			:favorite="favorite"
@@ -88,19 +88,19 @@ import NcActionButton from '@nextcloud/vue/dist/Components/NcActionButton.js'
 import NcEmptyContent from '@nextcloud/vue/dist/Components/NcEmptyContent.js'
 import { emit } from '@nextcloud/event-bus'
 import { generateUrl, generateFilePath } from '@nextcloud/router'
-import { showError } from "@nextcloud/dialogs";
+import { showError } from '@nextcloud/dialogs'
 
-import FavoriteSidebarTab from '../components/FavoriteSidebarTab'
-import PhotoSuggestionsSidebarTab from './Sidebar/PhotoSuggestionsSidebarTab'
-import SidebarTab from './Sidebar/SidebarTab'
-import LegacyView from './Sidebar/LegacyView'
+import FavoriteSidebarTab from '../components/FavoriteSidebarTab.js'
+import PhotoSuggestionsSidebarTab from './Sidebar/PhotoSuggestionsSidebarTab.js'
+import SidebarTab from './Sidebar/SidebarTab.js'
+import LegacyView from './Sidebar/LegacyView.js'
 import { encodePath } from '@nextcloud/paths'
 import moment from '@nextcloud/moment'
 import { Type as ShareTypes } from '@nextcloud/sharing'
 import axios from '@nextcloud/axios'
-import FileInfo from '../services/FileInfo'
-import { isPublic } from '../utils/common'
-import TrackMetadataTab from './TrackMetadataTab'
+import FileInfo from '../services/FileInfo.js'
+import { isPublic } from '../utils/common.js'
+import TrackMetadataTab from './TrackMetadataTab.js'
 
 export default {
 	name: 'Sidebar',

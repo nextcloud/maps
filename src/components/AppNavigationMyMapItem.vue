@@ -60,7 +60,7 @@ import NcAppNavigationItem from '@nextcloud/vue/dist/Components/NcAppNavigationI
 import NcActionButton from '@nextcloud/vue/dist/Components/NcActionButton.js'
 import NcActionLink from '@nextcloud/vue/dist/Components/NcActionLink.js'
 import Folder from 'vue-material-design-icons/Folder'
-import { generateUrl } from "@nextcloud/router";
+import { generateUrl } from '@nextcloud/router'
 
 export default {
 	name: 'AppNavigationMyMapItem',
@@ -97,7 +97,7 @@ export default {
 		},
 		folderUrl() {
 			return generateUrl('apps/files?fileid=') + this.myMap.id
-		}
+		},
 	},
 
 	methods: {

@@ -44,7 +44,7 @@ import NcActionCheckbox from '@nextcloud/vue/dist/Components/NcActionCheckbox.js
 import NcActionText from '@nextcloud/vue/dist/Components/NcActionText.js'
 import NcActionLink from '@nextcloud/vue/dist/Components/NcActionLink.js'
 
-import optionsController from '../optionsController'
+import optionsController from '../optionsController.js'
 
 export default {
 	name: 'MapsNavigation',

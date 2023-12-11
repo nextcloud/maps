@@ -132,9 +132,9 @@ import NcActionCheckbox from '@nextcloud/vue/dist/Components/NcActionCheckbox.js
 import NcCounterBubble from '@nextcloud/vue/dist/Components/NcCounterBubble.js'
 import { showError, showSuccess } from '@nextcloud/dialogs'
 import { generateUrl } from '@nextcloud/router'
-import { isPublic } from '../utils/common'
+import { isPublic } from '../utils/common.js'
 
-import optionsController from '../optionsController'
+import optionsController from '../optionsController.js'
 
 export default {
 	name: 'AppNavigationFavoritesItem',

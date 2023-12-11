@@ -95,13 +95,13 @@ import { LControlScale, LControlZoom, LFeatureGroup, LMap, LMarker, LPopup, LTil
 import LMarkerCluster from 'vue2-leaflet-markercluster'
 
 import { mapActions, mapState } from 'vuex'
-import ClickPopup from './map/ClickPopup'
-import FavoritePopup from './map/FavoritePopup'
-import { isPublicShare } from '../utils/common'
-import { PUBLIC_FAVORITES_NAMESPACE } from '../store/modules/publicFavorites'
-import { LayerIds, Layers } from '../data/mapLayers'
-import { getThemingColorFromCategoryKey } from '../utils/favoritesUtils'
-import { getShouldMapUseImperial } from '../utils/mapUtils'
+import ClickPopup from './map/ClickPopup.js'
+import FavoritePopup from './map/FavoritePopup.js'
+import { isPublicShare } from '../utils/common.js'
+import { PUBLIC_FAVORITES_NAMESPACE } from '../store/modules/publicFavorites.js'
+import { LayerIds, Layers } from '../data/mapLayers.js'
+import { getThemingColorFromCategoryKey } from '../utils/favoritesUtils.js'
+import { getShouldMapUseImperial } from '../utils/mapUtils.js'
 
 const CLUSTER_MAX_ZOOM_LEVEL = 14
 const MARKER_TOUCH_TARGET_SIZE = 44
@@ -174,7 +174,7 @@ export default {
 					? state[PUBLIC_FAVORITES_NAMESPACE].favorites.find(
 						favorite =>
 							favorite.id
-							=== state[PUBLIC_FAVORITES_NAMESPACE].selectedFavoriteId
+							=== state[PUBLIC_FAVORITES_NAMESPACE].selectedFavoriteId,
 					)
 					: null,
 		}),
@@ -197,7 +197,7 @@ export default {
 				} else {
 					console.warn(
 						'[MapContainer] Cannot find marker for favorite id: ',
-						val
+						val,
 					)
 				}
 			}

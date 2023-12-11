@@ -34,8 +34,8 @@
 import { LControl } from 'vue2-leaflet'
 import { isMobile } from '@nextcloud/vue'
 
-import RoutingSteps from './RoutingSteps'
-import RoutingMachine from './RoutingMachine'
+import RoutingSteps from './RoutingSteps.js'
+import RoutingMachine from './RoutingMachine.js'
 
 const emptyStep = () => {
 	return {
@@ -144,7 +144,6 @@ export default {
 
 .maps-routing-control {
 	z-index: 99999999 !important;
-
 
 	.routing-header {
 		display: flex;

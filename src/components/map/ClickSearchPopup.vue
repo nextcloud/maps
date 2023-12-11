@@ -35,8 +35,8 @@
 import L from 'leaflet'
 import { LMarker, LPopup } from 'vue2-leaflet'
 
-import { formatAddress } from '../../utils'
-import { geocode } from '../../network'
+import { formatAddress } from '../../utils.js'
+import { geocode } from '../../network.js'
 
 export default {
 	name: 'ClickSearchPopup',

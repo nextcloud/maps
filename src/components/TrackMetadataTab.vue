@@ -8,7 +8,7 @@
 </template>
 
 <script>
-import TrackTable from './TrackTable'
+import TrackTable from './TrackTable.js'
 
 export default {
 	name: 'TrackMetadataTab',

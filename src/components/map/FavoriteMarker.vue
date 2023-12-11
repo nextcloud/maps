@@ -43,7 +43,7 @@ import NcActionButton from '@nextcloud/vue/dist/Components/NcActionButton.js'
 
 import L from 'leaflet'
 import { LMarker, LTooltip, LPopup } from 'vue2-leaflet'
-import {isPublic} from "../../utils/common";
+import { isPublic } from '../../utils/common'
 
 export default {
 	name: 'FavoriteMarker',

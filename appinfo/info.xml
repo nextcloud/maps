@@ -14,7 +14,7 @@
 - **📱 Devices:** Lost your phone? Check the map!
 - **〰 Tracks:** Load GPS tracks or past trips. Recording with [PhoneTrack](https://f-droid.org/en/packages/net.eneiluj.nextcloud.phonetrack/) or [OwnTracks](https://owntracks.org) is planned.
     ]]></description>
-    <version>1.2.0</version>
+    <version>1.3.0</version>
     <licence>agpl</licence>
     <author mail="eneiluj@posteo.net">Julien Veyssier</author>
     <author mail="kontakt+github@arne.email">Arne Hamann</author>
@@ -33,8 +33,8 @@
     <screenshot>https://raw.githubusercontent.com/nextcloud/maps/master/screenshots/screenshot3.png</screenshot>
     <dependencies>
         <lib>exif</lib>
-        <nextcloud min-version="26" max-version="27"/>
-        <php min-version="8.1" max-version="8.2"/>
+        <nextcloud min-version="26" max-version="28"/>
+        <php min-version="8.1" max-version="8.3"/>
     </dependencies>
     <repair-steps>
         <install>

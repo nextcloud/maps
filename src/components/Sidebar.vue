@@ -169,7 +169,7 @@ export default {
 			error: false,
 			isFullScreen: false,
 			typeOpened: '',
-			title: null,
+			name: null,
 			icon: null,
 		}
 	},
@@ -227,11 +227,11 @@ export default {
 		},
 
 		/**
-		 * Sidebar subtitle
+		 * Sidebar subname
 		 *
 		 * @return {string}
 		 */
-		subtitle() {
+		subname() {
 			return `${this.size}, ${moment(this.fileInfo.mtime).fromNow()}`
 		},
 
@@ -272,30 +272,30 @@ export default {
 					compact: !this.fileInfo.hasPreview || this.isFullScreen,
 					loading: this.loading,
 					starred: this.fileInfo.isFavourited,
-					subtitle: this.subtitle,
-					subtitleTooltip: this.fullTime,
-					title: this.title ?? this.fileInfo.name,
-					titleTooltip: this.fileInfo.name,
+					subname: this.subname,
+					subnameTooltip: this.fullTime,
+					name: this.name ?? this.fileInfo.name,
+					nameTooltip: this.fileInfo.name,
 				}
 			} else if (this.error) {
 				return {
 					key: 'error', // force key to re-render
-					subtitle: '',
-					title: '',
+					subname: '',
+					name: '',
 				}
 			} else if (this.loading) {
 				// no fileInfo yet, showing empty data
 				return {
 					loading: this.loading,
-					subtitle: '',
-					title: '',
+					subname: '',
+					name: '',
 				}
 			} else if (this.activeTab === 'favorite') {
 				this.icon = 'icon-favorite'
 				return {
-					title: t('maps', 'Favorite'),
+					name: t('maps', 'Favorite'),
 					compact: true,
-					subtitle: '',
+					subname: '',
 					active: this.activeTab,
 					class: {
 						'app-sidebar--has-preview': false,
@@ -305,9 +305,9 @@ export default {
 			} else if (this.activeTab === 'photo-suggestion') {
 				this.icon = 'icon-picture'
 				return {
-					title: t('maps', 'Photo suggestions'),
+					name: t('maps', 'Photo suggestions'),
 					compact: true,
-					subtitle: '',
+					subname: '',
 					active: this.activeTab,
 					class: {
 						'app-sidebar--has-preview': false,
@@ -316,9 +316,9 @@ export default {
 				}
 			} else if (this.activeTab === 'maps-track-metadata') {
 				return {
-					title: t('maps', 'Track metadata'),
+					name: t('maps', 'Track metadata'),
 					compact: true,
-					subtitle: '',
+					subname: '',
 					active: this.activeTab,
 					class: {
 						'app-sidebar--has-preview': false,
@@ -328,8 +328,8 @@ export default {
 			} else {
 				return {
 					loading: false,
-					subtitle: '',
-					title: '',
+					subname: '',
+					name: '',
 				}
 			}
 		},
@@ -497,16 +497,16 @@ export default {
 		 *
 		 * @param {string} path the file path to load
 		 * @param type
-		 * @param title
+		 * @param name
 		 * @return {Promise}
 		 * @throws {Error} loading failure
 		 */
-		async open(path = null, type = null, title = null) {
+		async open(path = null, type = null, name = null) {
 			// update current opened file
 			this.Sidebar.file = path
 			if (path) {
 				this.typeOpened = type
-				this.title = title
+				this.name = name
 			}
 
 			if (path && path.trim() !== '' && !isPublic()) {

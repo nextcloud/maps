@@ -32,7 +32,7 @@
 					:options="contactData"
 					:internal-search="true"
 					@search="asyncSearchContacts">
-					<template #option="{option}">
+					<template #option="option">
 						<Avatar
 							class="contact-avatar"
 							:is-no-user="true"
@@ -43,7 +43,7 @@
 				</NcSelect>
 			</div>
 			<div class="address-type"
-				:title="t('maps', 'Address type')">
+				:name="t('maps', 'Address type')">
 				<label for="addressTypeSelect">
 					<span class="icon icon-address" />
 				</label>

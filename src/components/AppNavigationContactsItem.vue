@@ -1,7 +1,7 @@
 <template>
 	<NcAppNavigationItem
 		:icon="loading ? 'icon-loading-small' : 'icon-group'"
-		:title="t('maps', 'My contacts')"
+		:name="t('maps', 'My contacts')"
 		:class="{ 'item-disabled': !enabled }"
 		:allow-collapse="true"
 		:open="open"
@@ -37,7 +37,7 @@
 				v-for="(g, gid) in groups"
 				:key="gid"
 				icon="icon-group"
-				:title="g.name"
+				:name="g.name"
 				:class="{ 'subitem-disabled': !g.enabled }"
 				:allow-collapse="false"
 				:force-menu="false"

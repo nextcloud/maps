@@ -2,7 +2,7 @@
 	<NcAppNavigationItem
 		:icon="'icon-road'"
 		:class="{ 'item-disabled': !enabled }"
-		:title="track.name"
+		:name="track.name"
 		:allow-collapse="subTracks.length > 1"
 		:open="open"
 		:force-menu="false"
@@ -16,7 +16,7 @@
 				v-for="st in subTracks"
 				:key="st.key"
 				:class="{ 'item-disabled': !st.enabled }"
-				:title="track.name.concat(' ', st.key.split(':')[2])"
+				:name="track.name.concat(' ', st.key.split(':')[2])"
 				:force-menu="false"
 				@click="$emit('subtrack-click', st)">
 				<NcCounterBubble slot="counter">

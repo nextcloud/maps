@@ -1,6 +1,6 @@
 <template>
 	<NcAppNavigationItem
-		:title="track.file_name"
+		:name="track.file_name"
 		:class="{ 'subitem-disabled': !track.enabled }"
 		:allow-collapse="false"
 		:force-menu="false"

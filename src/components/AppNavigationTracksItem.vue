@@ -1,7 +1,7 @@
 <template>
 	<NcAppNavigationItem
 		:icon="loading ? 'icon-loading-small' : 'icon-road'"
-		:title="t('maps', 'My tracks')"
+		:name="t('maps', 'My tracks')"
 		:class="{ 'item-disabled': !enabled }"
 		:allow-collapse="true"
 		:open="open"

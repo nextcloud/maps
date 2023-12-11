@@ -1,7 +1,7 @@
 <template>
 	<NcAppNavigationItem
 		:icon="loading ? 'icon-loading-small' : 'icon-phone'"
-		:title="t('maps', 'My devices')"
+		:name="t('maps', 'My devices')"
 		:class="{ 'item-disabled': !enabled }"
 		:allow-collapse="true"
 		:open="open"

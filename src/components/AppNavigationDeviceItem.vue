@@ -1,6 +1,6 @@
 <template>
 	<NcAppNavigationItem
-		:title="device.user_agent"
+		:name="device.user_agent"
 		:class="{ 'subitem-disabled': !device.enabled }"
 		:allow-collapse="false"
 		:force-menu="false"

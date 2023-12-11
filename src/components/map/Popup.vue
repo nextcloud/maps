@@ -21,8 +21,8 @@
 
 <template>
 	<div class="popup">
-		<h2 v-if="title" class="popup-title">
-			{{ title }}
+		<h2 v-if="name" class="popup-title">
+			{{ name }}
 		</h2>
 
 		<div class="popup-content">
@@ -42,7 +42,7 @@ export default {
 	name: 'Popup',
 
 	props: {
-		title: VueTypes.string.def(''),
+		name: VueTypes.string.def(''),
 	},
 }
 </script>

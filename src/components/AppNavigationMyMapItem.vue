@@ -1,13 +1,13 @@
 <template>
 	<NcAppNavigationItem
-		:title="myMap.name"
+		:name="myMap.name"
 		:class="{ 'subitem-disabled': !myMap.enabled }"
 		:allow-collapse="false"
 		:force-menu="false"
 		:editable="!!myMap.id"
 		:edit-label="t('maps', 'Rename')"
 		@click="$emit('click', myMap)"
-		@update:title="onRename">
+		@update:name="onRename">
 		<template slot="icon">
 			<div class="icon icon-location" />
 			<input v-show="false"

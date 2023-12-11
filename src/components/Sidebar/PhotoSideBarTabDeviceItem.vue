@@ -2,7 +2,7 @@
 	<NcAppNavigationItem
 		:icon="'icon-phone'"
 		:class="{ 'item-disabled': !device.enabled }"
-		:title="device.name"
+		:name="device.name"
 		:open="false"
 		:force-menu="false"
 		@click="$emit('device-click')">

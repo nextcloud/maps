@@ -20,7 +20,7 @@
 -->
 
 <template>
-	<Popup :title="favorite.name || '(No name)'">
+	<Popup :name="favorite.name || '(No name)'">
 		<form
 			v-if="allowEdits"
 			class="favorite"

@@ -21,13 +21,13 @@
 		@update:value="onUpdateValue"
 		@change="onChange"
 		@search="onSearchChange">
-		<template #option="{option}">
+		<template #option="option">
 			<span :class="'option-icon ' + option.icon" />
 			<span class="option-label" :title="option.label">
 				{{ option.label }}
 			</span>
 		</template>
-		<template #singleLabel="{option}">
+		<template #singleLabel="option">
 			<div class="single-label">
 				{{ option.value || option.label }}
 			</div>

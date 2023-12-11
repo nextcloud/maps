@@ -23,7 +23,7 @@
 			<div v-if="photoSuggestionsSelectedIndices.length > 0 && selectionLayout==='list'">
 				<NcListItem v-for="p in photoSuggestionsSelected"
 					:key="p.photoSuggestionsIndex"
-					:title="p.basename"
+					:name="p.basename"
 					:bold="false"
 					:details="getPhotoFormattedDate(p)"
 					@click="onListItemClick(p)">
@@ -34,7 +34,7 @@
 							width="64"
 							height="64">
 					</template>
-					<template #subtitle>
+					<template #subname>
 						{{ p.path }}
 					</template>
 					<template #actions>
@@ -110,7 +110,7 @@
 			{{ t('maps', 'Location sources:') }}
 			<NcAppNavigationItem
 				:icon="'icon-road'"
-				:title="t('maps', 'Tracks')"
+				:name="t('maps', 'Tracks')"
 				:allow-collapse="true"
 				:open="tracksOpen"
 				:force-menu="false"
@@ -132,7 +132,7 @@
 			</NcAppNavigationItem>
 			<NcAppNavigationItem
 				:icon="'icon-phone'"
-				:title="t('maps', 'Devices')"
+				:name="t('maps', 'Devices')"
 				:allow-collapse="true"
 				:open="devicesOpen"
 				:force-menu="false"

@@ -21,7 +21,7 @@
 
 <template>
 	<Popup
-		:title="
+		:name="
 			addingFavorite ? t('maps', 'New Favorite') : t('maps', 'This Place')
 		">
 		<template v-if="addingFavorite">

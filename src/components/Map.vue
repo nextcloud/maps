@@ -779,6 +779,20 @@ export default {
 							attribution: attrib,
 						},
 					},
+					'Mapbox 3d Preview (Beta)': {
+						name: 'Mapbox 3d Preview (Beta)',
+						type: 'base',
+						attribution: attrib,
+						tileLayerClass: L.myMapboxGL,
+						options: {
+							id: '3d',
+							accessToken: this.optionValues.mapboxAPIKEY,
+							minZoom: 1,
+							maxZoom: 22,
+							pitch: 60,
+							attribution: attrib,
+						},
+					},
 					Watercolor: baseLayersByName.Watercolor,
 				}
 			}

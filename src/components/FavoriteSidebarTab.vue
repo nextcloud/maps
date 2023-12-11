@@ -11,7 +11,7 @@
 </template>
 
 <script>
-import FavoriteEditionForm from './FavoriteEditionForm.js'
+import FavoriteEditionForm from './FavoriteEditionForm.vue'
 
 export default {
 	name: 'FavoriteSidebarTab',

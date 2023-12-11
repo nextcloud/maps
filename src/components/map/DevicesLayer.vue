@@ -24,13 +24,13 @@
 <script>
 import { LFeatureGroup } from 'vue2-leaflet'
 
-import DeviceLayer from './DeviceLayer.js'
-import DeviceHoverMarker from './DeviceHoverMarker.js'
+import DeviceLayer from './DeviceLayer.vue'
+import DeviceHoverMarker from './DeviceHoverMarker.vue'
 
 import optionsController from '../../optionsController.js'
 import moment from '@nextcloud/moment'
 import { binSearch } from '../../utils/common.js'
-import LHeatMap from './LHeatMap.js'
+import LHeatMap from './LHeatMap.vue'
 
 export default {
 	name: 'DevicesLayer',

@@ -95,8 +95,8 @@ import { LControlScale, LControlZoom, LFeatureGroup, LMap, LMarker, LPopup, LTil
 import LMarkerCluster from 'vue2-leaflet-markercluster'
 
 import { mapActions, mapState } from 'vuex'
-import ClickPopup from './map/ClickPopup.js'
-import FavoritePopup from './map/FavoritePopup.js'
+import ClickPopup from './map/ClickPopup.vue'
+import FavoritePopup from './map/FavoritePopup.vue'
 import { isPublicShare } from '../utils/common.js'
 import { PUBLIC_FAVORITES_NAMESPACE } from '../store/modules/publicFavorites.js'
 import { LayerIds, Layers } from '../data/mapLayers.js'

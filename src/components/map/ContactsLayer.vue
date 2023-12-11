@@ -17,10 +17,10 @@ import { getCurrentUser } from '@nextcloud/auth'
 import L from 'leaflet'
 import Vue2LeafletMarkerCluster from 'vue2-leaflet-markercluster'
 
-import ContactLayer from './ContactLayer.js'
+import ContactLayer from './ContactLayer.vue'
 import optionsController from '../../optionsController.js'
-import { getToken, isPublic } from '../../utils/common'
-import { splitByNonEscapedComma } from 'from '../../utils.js'
+import { getToken, isPublic } from '../../utils/common.js'
+import { splitByNonEscapedComma } from '../../utils.js'
 
 const CONTACT_MARKER_VIEW_SIZE = 40
 

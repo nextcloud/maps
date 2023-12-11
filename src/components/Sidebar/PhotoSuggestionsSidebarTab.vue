@@ -173,8 +173,8 @@ import NcActionButton from '@nextcloud/vue/dist/Components/NcActionButton.js'
 
 import { getToken } from '../../utils/common.js'
 import NcTimezonePicker from '@nextcloud/vue/dist/Components/NcTimezonePicker.js'
-import PhotoSideBarTabTrackItem from './PhotoSideBarTabTrackItem.js'
-import PhotoSideBarTabDeviceItem from './PhotoSideBarTabDeviceItem.js'
+import PhotoSideBarTabTrackItem from './PhotoSideBarTabTrackItem.vue'
+import PhotoSideBarTabDeviceItem from './PhotoSideBarTabDeviceItem.vue'
 
 export default {
 	name: 'PhotoSuggestionsSidebarTab',

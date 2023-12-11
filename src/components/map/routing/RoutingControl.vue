@@ -34,8 +34,8 @@
 import { LControl } from 'vue2-leaflet'
 import { isMobile } from '@nextcloud/vue'
 
-import RoutingSteps from './RoutingSteps.js'
-import RoutingMachine from './RoutingMachine.js'
+import RoutingSteps from './RoutingSteps.vue'
+import RoutingMachine from './RoutingMachine.vue'
 
 const emptyStep = () => {
 	return {

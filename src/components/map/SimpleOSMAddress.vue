@@ -32,7 +32,7 @@
 </template>
 
 <script>
-import Types from '../../data/types.js'
+import Types from '../../data/types'
 
 export default {
 	name: 'SimpleOSMAddress',

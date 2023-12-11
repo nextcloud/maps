@@ -15,7 +15,7 @@
 </template>
 
 <script>
-import SearchField from '../SearchField.js'
+import SearchField from '../SearchField.vue'
 
 export default {
 	name: 'RoutingStep',

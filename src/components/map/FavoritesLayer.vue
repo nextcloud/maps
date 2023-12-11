@@ -39,9 +39,8 @@ import L from 'leaflet'
 import { LMarker, LPopup } from 'vue2-leaflet'
 import Vue2LeafletMarkerCluster from 'vue2-leaflet-markercluster'
 
-import FavoriteMarker from './FavoriteMarker.js'
+import FavoriteMarker from './FavoriteMarker.vue'
 import optionsController from '../../optionsController.js'
-import { generateUrl } from '@nextcloud/router'
 
 const CLUSTER_MARKER_VIEW_SIZE = 36
 

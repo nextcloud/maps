@@ -35,7 +35,7 @@
 </template>
 
 <script>
-import RoutingStep from './RoutingStep.js'
+import RoutingStep from './RoutingStep.vue'
 
 export default {
 	name: 'RoutingSteps',

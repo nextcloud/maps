@@ -19,8 +19,8 @@
 <script>
 import { LFeatureGroup } from 'vue2-leaflet'
 
-import TrackLayer from './TrackLayer.js'
-import TrackHoverMarker from './TrackHoverMarker.js'
+import TrackLayer from './TrackLayer.vue'
+import TrackHoverMarker from './TrackHoverMarker.vue'
 
 import optionsController from '../../optionsController.js'
 import moment from '@nextcloud/moment'

@@ -214,9 +214,9 @@ import moment from '@nextcloud/moment'
 
 import { emit } from '@nextcloud/event-bus'
 
-import Map from '../components/Map.js'
-import MapsNavigation from '../components/MapsNavigation.js'
-import Sidebar from '../components/Sidebar.js'
+import Map from '../components/Map.vue'
+import MapsNavigation from '../components/MapsNavigation.vue'
+import Sidebar from '../components/Sidebar.vue'
 import AppNavigationFavoritesItem from '../components/AppNavigationFavoritesItem.vue'
 import AppNavigationPhotosItem from '../components/AppNavigationPhotosItem.vue'
 import AppNavigationContactsItem from '../components/AppNavigationContactsItem.vue'
@@ -233,7 +233,6 @@ import { geoToLatLng, getFormattedADR } from '../utils/mapUtils.js'
 import * as network from '../network.js'
 import { all as axiosAll, spread as axiosSpread } from 'axios'
 import { generateUrl } from '@nextcloud/router'
-import { addSharedDeviceToMap } from 'from '../network.js'
 
 export default {
 	name: 'App',

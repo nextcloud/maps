@@ -11,9 +11,9 @@ import { showSuccess, showError } from '@nextcloud/dialogs'
 import { isMobile } from '@nextcloud/vue'
 
 import L from 'leaflet'
-import 'leaflet-control-geocoder/dist/Control.Geocoder'
+import 'leaflet-control-geocoder/dist/Control.Geocoder.js'
 import 'leaflet-control-geocoder/dist/Control.Geocoder.css'
-import 'leaflet-routing-machine/dist/leaflet-routing-machine'
+import 'leaflet-routing-machine/dist/leaflet-routing-machine.js'
 import 'leaflet-routing-machine/dist/leaflet-routing-machine.css'
 
 import * as network from '../../../network.js'

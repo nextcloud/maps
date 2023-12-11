@@ -35,8 +35,8 @@
 </template>
 
 <script>
-import NcContent from '@nextcloud/vue/dist/Components/NcContent'
-import NcAppContent from '@nextcloud/vue/dist/Components/NcAppContent'
+import NcContent from '@nextcloud/vue/dist/Components/NcContent.js'
+import NcAppContent from '@nextcloud/vue/dist/Components/NcAppContent.js'
 import MapContainer from '../components/MapContainer'
 import PublicFavoriteShareSideBar from '../components/PublicFavoriteShareSideBar'
 import { mapActions, mapGetters, mapState } from 'vuex'

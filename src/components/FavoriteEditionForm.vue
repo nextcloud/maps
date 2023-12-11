@@ -71,8 +71,8 @@
 </template>
 
 <script>
-import NcMultiselect from '@nextcloud/vue/dist/Components/NcMultiselect'
-import NcButton from '@nextcloud/vue/dist/Components/NcButton'
+import NcMultiselect from '@nextcloud/vue/dist/Components/NcMultiselect.js'
+import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 
 export default {
 	name: 'FavoriteEditionForm',

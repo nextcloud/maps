@@ -39,7 +39,7 @@
 </template>
 
 <script>
-import NcMultiselect from '@nextcloud/vue/dist/Components/NcMultiselect'
+import NcMultiselect from '@nextcloud/vue/dist/Components/NcMultiselect.js'
 
 import L from 'leaflet'
 

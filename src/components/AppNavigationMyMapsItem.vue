@@ -38,11 +38,11 @@
 </template>
 
 <script>
-import NcAppNavigationItem from '@nextcloud/vue/dist/Components/NcAppNavigationItem'
-import NcActionButton from '@nextcloud/vue/dist/Components/NcActionButton'
+import NcAppNavigationItem from '@nextcloud/vue/dist/Components/NcAppNavigationItem.js'
+import NcActionButton from '@nextcloud/vue/dist/Components/NcActionButton.js'
 import AppNavigationMyMapItem from './AppNavigationMyMapItem'
 import optionsController from '../optionsController'
-import NcCounterBubble from '@nextcloud/vue/dist/Components/NcCounterBubble'
+import NcCounterBubble from '@nextcloud/vue/dist/Components/NcCounterBubble.js'
 
 export default {
 	name: 'AppNavigationMyMapsItem',

@@ -74,8 +74,8 @@ import { generateUrl } from '@nextcloud/router'
 import { getCurrentUser } from '@nextcloud/auth'
 
 import { LMarker, LPopup, LIcon } from 'vue2-leaflet'
-import NcMultiselect from '@nextcloud/vue/dist/Components/NcMultiselect'
-import NcAvatar from '@nextcloud/vue/dist/Components/NcAvatar'
+import NcMultiselect from '@nextcloud/vue/dist/Components/NcMultiselect.js'
+import NcAvatar from '@nextcloud/vue/dist/Components/NcAvatar.js'
 
 import { formatAddress } from '../../utils'
 import { searchContacts, geocode, searchAddress } from '../../network'

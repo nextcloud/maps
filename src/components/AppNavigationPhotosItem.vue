@@ -48,9 +48,9 @@
 </template>
 
 <script>
-import NcAppNavigationItem from '@nextcloud/vue/dist/Components/NcAppNavigationItem'
-import NcActionButton from '@nextcloud/vue/dist/Components/NcActionButton'
-import NcCounterBubble from '@nextcloud/vue/dist/Components/NcCounterBubble'
+import NcAppNavigationItem from '@nextcloud/vue/dist/Components/NcAppNavigationItem.js'
+import NcActionButton from '@nextcloud/vue/dist/Components/NcActionButton.js'
+import NcCounterBubble from '@nextcloud/vue/dist/Components/NcCounterBubble.js'
 
 import optionsController from '../optionsController'
 import { showInfo } from '@nextcloud/dialogs'

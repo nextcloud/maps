@@ -29,8 +29,8 @@
 
 <script>
 
-import NcAppNavigationItem from '@nextcloud/vue/dist/Components/NcAppNavigationItem';
-import NcCounterBubble from '@nextcloud/vue/dist/Components/NcCounterBubble';
+import NcAppNavigationItem from '@nextcloud/vue/dist/Components/NcAppNavigationItem.js';
+import NcCounterBubble from '@nextcloud/vue/dist/Components/NcCounterBubble.js';
 
 export default {
 	name: 'PhotoSideBarTabTrackItem',

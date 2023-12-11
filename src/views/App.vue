@@ -204,10 +204,10 @@
 </template>
 
 <script>
-import NcContent from '@nextcloud/vue/dist/Components/NcContent'
-import NcAppContent from '@nextcloud/vue/dist/Components/NcAppContent'
-import NcActions from '@nextcloud/vue/dist/Components/NcActions'
-import NcActionButton from '@nextcloud/vue/dist/Components/NcActionButton'
+import NcContent from '@nextcloud/vue/dist/Components/NcContent.js'
+import NcAppContent from '@nextcloud/vue/dist/Components/NcAppContent.js'
+import NcActions from '@nextcloud/vue/dist/Components/NcActions.js'
+import NcActionButton from '@nextcloud/vue/dist/Components/NcActionButton.js'
 import { showError, showInfo, showSuccess } from '@nextcloud/dialogs'
 
 import moment from '@nextcloud/moment'

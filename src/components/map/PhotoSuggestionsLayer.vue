@@ -61,7 +61,7 @@
 import { generateUrl } from '@nextcloud/router'
 import moment from '@nextcloud/moment'
 import { basename } from '@nextcloud/paths'
-import NcActionButton from '@nextcloud/vue/dist/Components/NcActionButton'
+import NcActionButton from '@nextcloud/vue/dist/Components/NcActionButton.js'
 
 import L from 'leaflet'
 import { LMarker, LTooltip, LPopup } from 'vue2-leaflet'

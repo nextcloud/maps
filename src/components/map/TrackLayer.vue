@@ -7,7 +7,7 @@
 		<LPopup :options="popupOptions"
 			class="popup-track-wrapper">
 			<NcActionButton v-if="track.isUpdateable"
-				icon="icon-colorpicker" 
+				icon="icon-colorpicker"
 				@click="$emit('change-color', track)">
 				{{ t('maps', 'Change color') }}
 			</NcActionButton>
@@ -25,19 +25,19 @@
 				icon="icon-download"
 				:close-after-click="true"
 				@click="closeafterclickworkaround">
-				<!-- 
+				<!--
 				looks like close-after-click not working in this popovermenu
 				therefore added workaround closeafterclickworkaround
 				-->
 				{{ t('maps', 'Download track') }}
 			</NcActionLink>
-			<NcActionLink v-if="isPublic() && !(track.hideDownload)" 
+			<NcActionLink v-if="isPublic() && !(track.hideDownload)"
 				target="_self"
 				:href="downloadTrackShareUrl"
 				icon="icon-download"
 				:close-after-click="true"
 				@click="closeafterclickworkaround">
-				<!-- 
+				<!--
 				looks like close-after-click not working in this popovermenu
 				therefore added workaround closeafterclickworkaround
 				-->
@@ -82,8 +82,8 @@
 import L from 'leaflet'
 import { LMarker, LTooltip, LPopup, LFeatureGroup, LPolyline } from 'vue2-leaflet'
 
-import NcActionButton from '@nextcloud/vue/dist/Components/NcActionButton'
-import NcActionLink from '@nextcloud/vue/dist/Components/NcActionLink'
+import NcActionButton from '@nextcloud/vue/dist/Components/NcActionButton.js'
+import NcActionLink from '@nextcloud/vue/dist/Components/NcActionLink.js'
 import moment from '@nextcloud/moment'
 import { generateUrl } from "@nextcloud/router";
 
@@ -268,7 +268,7 @@ export default {
 	},
 
 	methods: {
-		// looks like close-after-click not working for NcAcionLink 
+		// looks like close-after-click not working for NcAcionLink
 		// added working closeafterclickworkaround
 		closeafterclickworkaround() {
 			this.$refs.featgroup.mapObject.closePopup()

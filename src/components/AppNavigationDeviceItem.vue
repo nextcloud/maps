@@ -67,8 +67,8 @@
 </template>
 
 <script>
-import NcAppNavigationItem from '@nextcloud/vue/dist/Components/NcAppNavigationItem'
-import NcActionButton from '@nextcloud/vue/dist/Components/NcActionButton'
+import NcAppNavigationItem from '@nextcloud/vue/dist/Components/NcAppNavigationItem.js'
+import NcActionButton from '@nextcloud/vue/dist/Components/NcActionButton.js'
 import { generateUrl } from '@nextcloud/router'
 import { isComputer } from '../utils'
 import { isPublic } from '../utils/common'

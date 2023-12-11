@@ -80,9 +80,9 @@
 </template>
 
 <script>
-import NcAppNavigationItem from '@nextcloud/vue/dist/Components/NcAppNavigationItem'
-import NcActionButton from '@nextcloud/vue/dist/Components/NcActionButton'
-import NcActionLink from '@nextcloud/vue/dist/Components/NcActionLink'
+import NcAppNavigationItem from '@nextcloud/vue/dist/Components/NcAppNavigationItem.js'
+import NcActionButton from '@nextcloud/vue/dist/Components/NcActionButton.js'
+import NcActionLink from '@nextcloud/vue/dist/Components/NcActionLink.js'
 import {isPublic, getToken} from "../utils/common";
 import { generateUrl } from "@nextcloud/router";
 

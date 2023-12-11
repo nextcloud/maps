@@ -42,10 +42,10 @@
 </template>
 
 <script>
-import NcAppNavigation from '@nextcloud/vue/dist/Components/NcAppNavigation'
-import NcAppNavigationItem from '@nextcloud/vue/dist/Components/NcAppNavigationItem'
-import NcAppNavigationNew from '@nextcloud/vue/dist/Components/NcAppNavigationNew'
-import NcAppNavigationSpacer from '@nextcloud/vue/dist/Components/NcAppNavigationSpacer'
+import NcAppNavigation from '@nextcloud/vue/dist/Components/NcAppNavigation.js'
+import NcAppNavigationItem from '@nextcloud/vue/dist/Components/NcAppNavigationItem.js'
+import NcAppNavigationNew from '@nextcloud/vue/dist/Components/NcAppNavigationNew.js'
+import NcAppNavigationSpacer from '@nextcloud/vue/dist/Components/NcAppNavigationSpacer.js'
 import { mapMutations, mapState, mapActions } from 'vuex'
 import { PUBLIC_FAVORITES_NAMESPACE } from '../store/modules/publicFavorites'
 import MapMode from '../data/enum/MapMode'

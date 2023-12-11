@@ -125,11 +125,11 @@
 </template>
 
 <script>
-import NcAppNavigationItem from '@nextcloud/vue/dist/Components/NcAppNavigationItem'
-import NcAppNavigationNew from '@nextcloud/vue/dist/Components/NcAppNavigationNew'
-import NcActionButton from '@nextcloud/vue/dist/Components/NcActionButton'
-import NcActionCheckbox from '@nextcloud/vue/dist/Components/NcActionCheckbox'
-import NcCounterBubble from '@nextcloud/vue/dist/Components/NcCounterBubble'
+import NcAppNavigationItem from '@nextcloud/vue/dist/Components/NcAppNavigationItem.js'
+import NcAppNavigationNew from '@nextcloud/vue/dist/Components/NcAppNavigationNew.js'
+import NcActionButton from '@nextcloud/vue/dist/Components/NcActionButton.js'
+import NcActionCheckbox from '@nextcloud/vue/dist/Components/NcActionCheckbox.js'
+import NcCounterBubble from '@nextcloud/vue/dist/Components/NcCounterBubble.js'
 import { showError, showSuccess } from '@nextcloud/dialogs'
 import { generateUrl } from '@nextcloud/router'
 import { isPublic } from '../utils/common'

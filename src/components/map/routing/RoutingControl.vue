@@ -125,7 +125,7 @@ export default {
 <style lang="scss" scoped>
 .desktop {
 	width: 350px;
-	margin-left: 52px !important;
+	margin-left: 56px !important;
 	background-color: var(--color-main-background);
 	padding: 5px;
 	border: 2px solid var(--color-border-dark);
@@ -135,8 +135,8 @@ export default {
 .mobile {
 	width: 100vw;
 	background: var(--color-main-background);
-	padding-left: 52px;
-	padding-right: 52px;
+	padding-left: 56px;
+	padding-right: 56px;
 	padding-top: 10px;
 	padding-bottom: 7px;
 	margin-top: 0px !important;

@@ -59,7 +59,7 @@
 import NcAppNavigationItem from '@nextcloud/vue/dist/Components/NcAppNavigationItem.js'
 import NcActionButton from '@nextcloud/vue/dist/Components/NcActionButton.js'
 import NcActionLink from '@nextcloud/vue/dist/Components/NcActionLink.js'
-import Folder from 'vue-material-design-icons/Folder'
+import Folder from 'vue-material-design-icons/Folder.vue'
 import { generateUrl } from '@nextcloud/router'
 
 export default {

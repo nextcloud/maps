@@ -5,6 +5,8 @@ const buildMode = process.env.NODE_ENV
 const isDev = buildMode === 'development'
 webpackConfig.devtool = isDev ? 'cheap-source-map' : 'source-map'
 
+webpackConfig.resolve.extensions = [".*",".ts",".js",".vue",".jsx",".tsx"]
+
 webpackConfig.stats = {
 	colors: true,
 	modules: false,

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Nextcloud 3.14159\n"
 "Report-Msgid-Bugs-To: translations\\@example.com\n"
-"POT-Creation-Date: 2023-12-11 01:12+0000\n"
+"POT-Creation-Date: 2023-12-12 01:07+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -615,32 +615,32 @@ msgstr ""
 msgid "Improve this map"
 msgstr ""
 
-#. TRANSLATORS src/components/Map.vue:835
+#. TRANSLATORS src/components/Map.vue:849
 #: /app/specialVueFakeDummyForL10nScript.js:170
 msgid "Other maps"
 msgstr ""
 
-#. TRANSLATORS src/components/Map.vue:851
+#. TRANSLATORS src/components/Map.vue:865
 #: /app/specialVueFakeDummyForL10nScript.js:172
 msgid "Street map"
 msgstr ""
 
-#. TRANSLATORS src/components/Map.vue:866
+#. TRANSLATORS src/components/Map.vue:880
 #: /app/specialVueFakeDummyForL10nScript.js:174
 msgid "Satellite map"
 msgstr ""
 
-#. TRANSLATORS src/components/Map.vue:923
+#. TRANSLATORS src/components/Map.vue:937
 #: /app/specialVueFakeDummyForL10nScript.js:176
 msgid "Geo link ({geoLink}) copied to clipboard"
 msgstr ""
 
-#. TRANSLATORS src/components/Map.vue:926
+#. TRANSLATORS src/components/Map.vue:940
 #: /app/specialVueFakeDummyForL10nScript.js:178
 msgid "Geo link could not be copied to clipboard"
 msgstr ""
 
-#. TRANSLATORS src/components/Map.vue:1007
+#. TRANSLATORS src/components/Map.vue:1021
 #: /app/specialVueFakeDummyForL10nScript.js:180
 msgid "Close"
 msgstr ""

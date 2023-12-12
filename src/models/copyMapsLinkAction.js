@@ -43,7 +43,7 @@ export default class CopyMapsLinkAction {
 			is: NcActionButton,
 			ariaLabel: t('maps', 'Copy link to map'),
 			icon: 'icon-clippy',
-			title: t('maps', 'Copy link to map'),
+			name: t('maps', 'Copy link to map'),
 		}
 	}
 

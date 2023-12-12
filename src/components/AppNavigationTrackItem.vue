@@ -1,6 +1,6 @@
 <template>
 	<NcAppNavigationItem
-		:title="track.file_name"
+		:name="track.file_name"
 		:class="{ 'subitem-disabled': !track.enabled }"
 		:allow-collapse="false"
 		:force-menu="false"
@@ -61,30 +61,29 @@
 				{{ t('maps', 'Copy to map') }}
 			</NcActionButton>
 			<NcActionLink v-if="parentEnabled && track.enabled && !isPublic()"
-                                target="_self"
-                                :href="downloadTrackUrl"
+				target="_self"
+				:href="downloadTrackUrl"
 				icon="icon-download"
-                                :close-after-click="true">
-                                {{ t('maps', 'Download track') }}
-                        </NcActionLink>
+				:close-after-click="true">
+				{{ t('maps', 'Download track') }}
+			</NcActionLink>
 			<NcActionLink v-if="parentEnabled && track.enabled && isPublic() && !(track.hideDownload)"
-                                target="_self"
-                                :href="downloadTrackShareUrl"
+				target="_self"
+				:href="downloadTrackShareUrl"
 				icon="icon-download"
-                                :close-after-click="true">
-                                {{ t('maps', 'Download track') }}
-                        </NcActionLink>
-
+				:close-after-click="true">
+				{{ t('maps', 'Download track') }}
+			</NcActionLink>
 		</template>
 	</NcAppNavigationItem>
 </template>
 
 <script>
-import NcAppNavigationItem from '@nextcloud/vue/dist/Components/NcAppNavigationItem'
-import NcActionButton from '@nextcloud/vue/dist/Components/NcActionButton'
-import NcActionLink from '@nextcloud/vue/dist/Components/NcActionLink'
-import {isPublic, getToken} from "../utils/common";
-import { generateUrl } from "@nextcloud/router";
+import NcAppNavigationItem from '@nextcloud/vue/dist/Components/NcAppNavigationItem.js'
+import NcActionButton from '@nextcloud/vue/dist/Components/NcActionButton.js'
+import NcActionLink from '@nextcloud/vue/dist/Components/NcActionLink.js'
+import { isPublic, getToken } from '../utils/common'
+import { generateUrl } from '@nextcloud/router'
 
 export default {
 	name: 'AppNavigationTrackItem',
@@ -116,7 +115,7 @@ export default {
 			return OCA.Files.App.fileList.filesClient.getBaseUrl() + this.track.file_path
 		},
 		downloadTrackShareUrl() {
-			return generateUrl('s/' + getToken() + '/download' + '?path=/&files=' + this.track.file_name )
+			return generateUrl('s/' + getToken() + '/download' + '?path=/&files=' + this.track.file_name)
 		},
 	},
 

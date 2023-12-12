@@ -61,11 +61,11 @@
 import L from 'leaflet'
 import { LMarker, LTooltip, LPopup, LFeatureGroup, LPolyline } from 'vue2-leaflet'
 
-import NcActionButton from '@nextcloud/vue/dist/Components/NcActionButton'
+import NcActionButton from '@nextcloud/vue/dist/Components/NcActionButton.js'
 
-import { isComputer } from '../../utils'
-import { binSearch, isPublic } from '../../utils/common'
-import optionsController from '../../optionsController'
+import { isComputer } from '../../utils.js'
+import { binSearch, isPublic } from '../../utils/common.js'
+import optionsController from '../../optionsController.js'
 import moment from '@nextcloud/moment'
 
 const DEVICE_MARKER_VIEW_SIZE = 40

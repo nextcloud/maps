@@ -8,13 +8,12 @@
 				:placeholder="namePH"
 				:readonly="!favorite.isUpdateable">
 			<span class="icon icon-category-organization" />
-			<NcMultiselect v-if="favorite.isUpdateable"
+			<NcSelect v-if="favorite.isUpdateable"
 				ref="select"
 				v-model="selectedCategory"
 				class="category-select"
 				label="label"
 				track-by="multiselectKey"
-				open-direction="bottom"
 				:auto-limit="false"
 				:limit="8"
 				:options-limit="8"
@@ -25,13 +24,13 @@
 				:options="formattedCategories"
 				:user-select="false"
 				@input="onCategorySelected"
-				@search-change="onSearchChange">
+				@search="onSearchChange">
 				<template #singleLabel="{ option }">
 					<div class="single-label">
 						{{ option ? option.catid : '' }}
 					</div>
 				</template>
-			</NcMultiselect>
+			</NcSelect>
 			<input v-else
 				v-model="selectedCategory.catid"
 				type="text"
@@ -71,14 +70,14 @@
 </template>
 
 <script>
-import NcMultiselect from '@nextcloud/vue/dist/Components/NcMultiselect'
-import NcButton from '@nextcloud/vue/dist/Components/NcButton'
+import NcSelect from '@nextcloud/vue/dist/Components/NcSelect.js'
+import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 
 export default {
 	name: 'FavoriteEditionForm',
 
 	components: {
-		NcMultiselect,
+		NcSelect,
 		NcButton,
 	},
 

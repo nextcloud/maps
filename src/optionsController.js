@@ -1,6 +1,6 @@
-import * as network from './network'
+import * as network from './network.js'
 import { showWarning } from '@nextcloud/dialogs'
-import {getToken} from "./utils/common";
+import { getToken } from './utils/common'
 
 const optionsController = {
 	bounds: [
@@ -91,7 +91,7 @@ const optionsController = {
 		// check if install scan was done
 		if ('installScanDone' in optionsValues && optionsValues.installScanDone === 'no') {
 			showWarning(
-				t('maps', 'Media scan was not done yet. Wait a few minutes/hours and reload this page to see your photos/tracks.')
+				t('maps', 'Media scan was not done yet. Wait a few minutes/hours and reload this page to see your photos/tracks.'),
 			)
 		}
 

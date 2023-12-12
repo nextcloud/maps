@@ -23,9 +23,9 @@
 import {
 	publicApiRequest,
 	getPublicShareCategory,
-} from '../../utils/common'
-import { getCategoryKey } from '../../utils/favoritesUtils'
-import { showError } from "@nextcloud/dialogs"
+} from '../../utils/common.js'
+import { getCategoryKey } from '../../utils/favoritesUtils.js'
+import { showError } from '@nextcloud/dialogs'
 
 export const PUBLIC_FAVORITES_NAMESPACE = 'publicFavorites'
 
@@ -111,7 +111,7 @@ const mutations = {
 	},
 	editFavorite(state, favorite) {
 		state.favorites = state.favorites.map(el =>
-			el.id === favorite.id ? favorite : el
+			el.id === favorite.id ? favorite : el,
 		)
 	},
 	deleteFavorite(state, id) {

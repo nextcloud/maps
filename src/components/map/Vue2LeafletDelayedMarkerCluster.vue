@@ -70,16 +70,16 @@ export default {
 			setTimeout(function() {
 				this.update()
 			}.bind(this),
-			this.delay + 1
+			this.delay + 1,
 			)
 		},
 		update() {
 			if ((Date.now() - this.lastChange) >= this.delay) {
 				this.mapObject.addLayers(
-					Object.values(this.addLayerCache)
+					Object.values(this.addLayerCache),
 				)
 				this.mapObject.removeLayers(
-					Object.values(this.removeLayerCache)
+					Object.values(this.removeLayerCache),
 				)
 				this.caching = false
 				this.addLayerCache = {}

@@ -21,10 +21,10 @@
  */
 
 import Vue from 'vue'
-import PublicFavoriteShare from './views/PublicFavoriteShare'
-import './bootstrap'
+import PublicFavoriteShare from './views/PublicFavoriteShare.vue'
+import './bootstrap.js'
 
-import store from './store/publicFavoriteShareStore'
+import store from './store/publicFavoriteShareStore.js'
 
 new Vue({
 	render: h => h(PublicFavoriteShare),

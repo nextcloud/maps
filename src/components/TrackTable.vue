@@ -20,7 +20,7 @@
 <script>
 import moment from '@nextcloud/moment'
 
-import { metersToDistance, formatTimeSeconds, metersToElevation, kmphToSpeed, minPerKmToPace } from '../utils'
+import { metersToDistance, formatTimeSeconds, metersToElevation, kmphToSpeed, minPerKmToPace } from '../utils.js'
 
 export default {
 	name: 'TrackTable',

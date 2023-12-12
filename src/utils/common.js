@@ -24,7 +24,7 @@
 import { generateUrl } from '@nextcloud/router'
 import { showInfo } from '@nextcloud/dialogs'
 import axios from '@nextcloud/axios'
-import {getCurrentUser} from "@nextcloud/auth";
+import { getCurrentUser } from '@nextcloud/auth'
 
 export const getPublicShareCategory = () => {
 	const el = document.querySelector('.header-appname')
@@ -50,10 +50,10 @@ export const getCurrentPublicShareToken = () => {
 export const publicApiRequest = (slug, method, data = null) => {
 	return request(
 		generateUrl(
-			`/apps/maps/api/1.0/public/${getCurrentPublicShareToken()}/${slug}`
+			`/apps/maps/api/1.0/public/${getCurrentPublicShareToken()}/${slug}`,
 		),
 		method,
-		data
+		data,
 	)
 }
 
@@ -61,7 +61,7 @@ export const apiRequest = (slug, method, data = null) => {
 	return request(
 		generateUrl(`apps/maps/api/1.0/${getCurrentPublicShareToken()}/${slug}`),
 		method,
-		data
+		data,
 	)
 }
 

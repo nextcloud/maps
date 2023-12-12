@@ -11,13 +11,13 @@ import { showSuccess, showError } from '@nextcloud/dialogs'
 import { isMobile } from '@nextcloud/vue'
 
 import L from 'leaflet'
-import 'leaflet-control-geocoder/dist/Control.Geocoder'
+import 'leaflet-control-geocoder/dist/Control.Geocoder.js'
 import 'leaflet-control-geocoder/dist/Control.Geocoder.css'
-import 'leaflet-routing-machine/dist/leaflet-routing-machine'
+import 'leaflet-routing-machine/dist/leaflet-routing-machine.js'
 import 'leaflet-routing-machine/dist/leaflet-routing-machine.css'
 
-import * as network from '../../../network'
-import optionsController from '../../../optionsController'
+import * as network from '../../../network.js'
+import optionsController from '../../../optionsController.js'
 
 export default {
 	name: 'RoutingMachine',
@@ -494,7 +494,7 @@ export default {
 							this.exportRoute('route')
 						}
 					},
-					true
+					true,
 				)
 			}
 		},
@@ -515,7 +515,7 @@ export default {
 			network.exportRoute(type, coords, name, totDist, totTime, optionsController.myMapId).then((response) => {
 				showSuccess(type === 'route'
 					? t('maps', 'Route exported to {path}.', { path: response.data.path })
-					: t('maps', 'Track exported to {path}.', { path: response.data.path })
+					: t('maps', 'Track exported to {path}.', { path: response.data.path }),
 				)
 				this.$emit('track-added', response.data)
 			}).catch((error) => {

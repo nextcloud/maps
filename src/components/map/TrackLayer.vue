@@ -7,7 +7,7 @@
 		<LPopup :options="popupOptions"
 			class="popup-track-wrapper">
 			<NcActionButton v-if="track.isUpdateable"
-				icon="icon-colorpicker" 
+				icon="icon-colorpicker"
 				@click="$emit('change-color', track)">
 				{{ t('maps', 'Change color') }}
 			</NcActionButton>
@@ -25,19 +25,19 @@
 				icon="icon-download"
 				:close-after-click="true"
 				@click="closeafterclickworkaround">
-				<!-- 
+				<!--
 				looks like close-after-click not working in this popovermenu
 				therefore added workaround closeafterclickworkaround
 				-->
 				{{ t('maps', 'Download track') }}
 			</NcActionLink>
-			<NcActionLink v-if="isPublic() && !(track.hideDownload)" 
+			<NcActionLink v-if="isPublic() && !(track.hideDownload)"
 				target="_self"
 				:href="downloadTrackShareUrl"
 				icon="icon-download"
 				:close-after-click="true"
 				@click="closeafterclickworkaround">
-				<!-- 
+				<!--
 				looks like close-after-click not working in this popovermenu
 				therefore added workaround closeafterclickworkaround
 				-->
@@ -82,13 +82,13 @@
 import L from 'leaflet'
 import { LMarker, LTooltip, LPopup, LFeatureGroup, LPolyline } from 'vue2-leaflet'
 
-import NcActionButton from '@nextcloud/vue/dist/Components/NcActionButton'
-import NcActionLink from '@nextcloud/vue/dist/Components/NcActionLink'
+import NcActionButton from '@nextcloud/vue/dist/Components/NcActionButton.js'
+import NcActionLink from '@nextcloud/vue/dist/Components/NcActionLink.js'
 import moment from '@nextcloud/moment'
-import { generateUrl } from "@nextcloud/router";
+import { generateUrl } from '@nextcloud/router'
 
-import optionsController from '../../optionsController'
-import {binSearch, isPublic, getToken} from '../../utils/common'
+import optionsController from '../../optionsController.js'
+import { binSearch, isPublic, getToken } from '../../utils/common.js'
 
 const TRACK_MARKER_VIEW_SIZE = 40
 const WAYPOINT_MARKER_VIEW_SIZE = 30
@@ -149,7 +149,7 @@ export default {
 			return OCA.Files.App.fileList.filesClient.getBaseUrl() + this.track.file_path
 		},
 		downloadTrackShareUrl() {
-			return generateUrl('s/' + getToken() + '/download' + '?path=/&files=' + this.track.file_name )
+			return generateUrl('s/' + getToken() + '/download' + '?path=/&files=' + this.track.file_name)
 		},
 		dateBegin() {
 			return this.track.metadata?.begin
@@ -268,7 +268,7 @@ export default {
 	},
 
 	methods: {
-		// looks like close-after-click not working for NcAcionLink 
+		// looks like close-after-click not working for NcAcionLink
 		// added working closeafterclickworkaround
 		closeafterclickworkaround() {
 			this.$refs.featgroup.mapObject.closePopup()

@@ -33,15 +33,14 @@
 </template>
 
 <script>
-import NcActionButton from '@nextcloud/vue/dist/Components/NcActionButton'
+import NcActionButton from '@nextcloud/vue/dist/Components/NcActionButton.js'
 
 import L from 'leaflet'
 import { LMarker, LPopup } from 'vue2-leaflet'
 import Vue2LeafletMarkerCluster from 'vue2-leaflet-markercluster'
 
-import FavoriteMarker from './FavoriteMarker'
-import optionsController from '../../optionsController'
-import { generateUrl } from '@nextcloud/router'
+import FavoriteMarker from './FavoriteMarker.vue'
+import optionsController from '../../optionsController.js'
 
 const CLUSTER_MARKER_VIEW_SIZE = 36
 

@@ -204,36 +204,35 @@
 </template>
 
 <script>
-import NcContent from '@nextcloud/vue/dist/Components/NcContent'
-import NcAppContent from '@nextcloud/vue/dist/Components/NcAppContent'
-import NcActions from '@nextcloud/vue/dist/Components/NcActions'
-import NcActionButton from '@nextcloud/vue/dist/Components/NcActionButton'
+import NcContent from '@nextcloud/vue/dist/Components/NcContent.js'
+import NcAppContent from '@nextcloud/vue/dist/Components/NcAppContent.js'
+import NcActions from '@nextcloud/vue/dist/Components/NcActions.js'
+import NcActionButton from '@nextcloud/vue/dist/Components/NcActionButton.js'
 import { showError, showInfo, showSuccess } from '@nextcloud/dialogs'
 
 import moment from '@nextcloud/moment'
 
 import { emit } from '@nextcloud/event-bus'
 
-import Map from '../components/Map'
-import MapsNavigation from '../components/MapsNavigation'
-import Sidebar from '../components/Sidebar'
-import AppNavigationFavoritesItem from '../components/AppNavigationFavoritesItem'
-import AppNavigationPhotosItem from '../components/AppNavigationPhotosItem'
-import AppNavigationContactsItem from '../components/AppNavigationContactsItem'
-import AppNavigationTracksItem from '../components/AppNavigationTracksItem'
-import AppNavigationDevicesItem from '../components/AppNavigationDevicesItem'
-import AppNavigationMyMapsItem from '../components/AppNavigationMyMapsItem'
-import optionsController from '../optionsController'
-import { getLetterColor, hslToRgb, Timer, getDeviceInfoFromUserAgent2, isComputer, isPhone, splitByNonEscapedComma } from '../utils'
-import { binSearch, getToken, isPublic } from '../utils/common'
-import { poiSearchData } from '../utils/poiData'
-import { processGpx } from '../tracksUtils'
+import Map from '../components/Map.vue'
+import MapsNavigation from '../components/MapsNavigation.vue'
+import Sidebar from '../components/Sidebar.vue'
+import AppNavigationFavoritesItem from '../components/AppNavigationFavoritesItem.vue'
+import AppNavigationPhotosItem from '../components/AppNavigationPhotosItem.vue'
+import AppNavigationContactsItem from '../components/AppNavigationContactsItem.vue'
+import AppNavigationTracksItem from '../components/AppNavigationTracksItem.vue'
+import AppNavigationDevicesItem from '../components/AppNavigationDevicesItem.vue'
+import AppNavigationMyMapsItem from '../components/AppNavigationMyMapsItem.vue'
+import optionsController from '../optionsController.js'
+import { getLetterColor, hslToRgb, Timer, getDeviceInfoFromUserAgent2, isComputer, isPhone, splitByNonEscapedComma } from '../utils.js'
+import { binSearch, getToken, isPublic } from '../utils/common.js'
+import { poiSearchData } from '../utils/poiData.js'
+import { processGpx } from '../tracksUtils.js'
 import L from 'leaflet'
-import { geoToLatLng, getFormattedADR } from '../utils/mapUtils'
-import * as network from '../network'
+import { geoToLatLng, getFormattedADR } from '../utils/mapUtils.js'
+import * as network from '../network.js'
 import { all as axiosAll, spread as axiosSpread } from 'axios'
 import { generateUrl } from '@nextcloud/router'
-import {addSharedDeviceToMap} from "../network";
 
 export default {
 	name: 'App',
@@ -915,7 +914,7 @@ export default {
 				async (response) => {
 					// this.photos = response.data.sort((p1, p2) => (p1.dateTaken || 0) - (p2.dateTaken || 0))
 					this.photos = response.data
-				}
+				},
 			).catch((error) => {
 				console.error(error)
 			}).then(() => {
@@ -964,7 +963,7 @@ export default {
 						this.placePhotoFolder(latlng)
 					}
 				},
-				true
+				true,
 			)
 		},
 		placePhotoFiles(latlng) {
@@ -975,7 +974,7 @@ export default {
 				},
 				true,
 				['image/jpeg', 'image/tiff'],
-				true
+				true,
 			)
 		},
 		placePhotoFolder(latlng) {
@@ -989,7 +988,7 @@ export default {
 				},
 				false,
 				'httpd/unix-directory',
-				true
+				true,
 			)
 		},
 		placePhotos(paths, lats, lngs, directory = false, save = true, reload = true) {
@@ -1373,7 +1372,7 @@ export default {
 			}).catch((error) => {
 				showError(
 					t('maps', 'Failed to load contacts')
-					+ ': ' + error.response?.request?.responseText
+					+ ': ' + error.response?.request?.responseText,
 				)
 			}).then(() => {
 				this.contactsLoading = false
@@ -1432,7 +1431,7 @@ export default {
 		onContactPlace(e, save = true) {
 			network.placeContact(e.contact.BOOKID, e.contact.URI,
 				e.contact.UID, e.latLng.lat, e.latLng.lng,
-				e.address || null, e.addressType, e.FILEID || null, this.myMapId
+				e.address || null, e.addressType, e.FILEID || null, this.myMapId,
 			).then((response) => {
 				if (save) {
 					this.saveAction({
@@ -1696,7 +1695,7 @@ export default {
 				},
 				false,
 				['application/gpx+xml', 'application/vnd.google-earth.kmz', 'application/vnd.google-earth.kml+xml', 'application/json', 'application/geo+json'],
-				true
+				true,
 			)
 		},
 		importFavorites(path) {
@@ -2179,7 +2178,7 @@ export default {
 				[device.id],
 				false,
 				this.sliderEnabled ? this.sliderStart : null,
-				this.sliderEnabled ? this.sliderEnd : null
+				this.sliderEnabled ? this.sliderEnd : null,
 			).then((response) => {
 				showSuccess(t('maps', 'Devices exported in {path}', { path: response.data }))
 			}).catch((error) => {
@@ -2280,7 +2279,7 @@ export default {
 				},
 				false,
 				['application/gpx+xml', 'application/vnd.google-earth.kmz', 'application/vnd.google-earth.kml+xml'],
-				true
+				true,
 			)
 		},
 		importDevices(path) {
@@ -2360,7 +2359,7 @@ export default {
 				false,
 				'httpd/unix-directory',
 				true,
-				OC.dialogs.FILEPICKER_TYPE_CHOOSE
+				OC.dialogs.FILEPICKER_TYPE_CHOOSE,
 			)
 		},
 		onMyMapsClicked() {

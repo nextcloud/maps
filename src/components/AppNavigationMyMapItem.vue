@@ -1,13 +1,13 @@
 <template>
 	<NcAppNavigationItem
-		:title="myMap.name"
+		:name="myMap.name"
 		:class="{ 'subitem-disabled': !myMap.enabled }"
 		:allow-collapse="false"
 		:force-menu="false"
 		:editable="!!myMap.id"
 		:edit-label="t('maps', 'Rename')"
 		@click="$emit('click', myMap)"
-		@update:title="onRename">
+		@update:name="onRename">
 		<template slot="icon">
 			<div class="icon icon-location" />
 			<input v-show="false"
@@ -56,11 +56,11 @@
 </template>
 
 <script>
-import NcAppNavigationItem from '@nextcloud/vue/dist/Components/NcAppNavigationItem'
-import NcActionButton from '@nextcloud/vue/dist/Components/NcActionButton'
-import NcActionLink from '@nextcloud/vue/dist/Components/NcActionLink'
-import Folder from 'vue-material-design-icons/Folder'
-import { generateUrl } from "@nextcloud/router";
+import NcAppNavigationItem from '@nextcloud/vue/dist/Components/NcAppNavigationItem.js'
+import NcActionButton from '@nextcloud/vue/dist/Components/NcActionButton.js'
+import NcActionLink from '@nextcloud/vue/dist/Components/NcActionLink.js'
+import Folder from 'vue-material-design-icons/Folder.vue'
+import { generateUrl } from '@nextcloud/router'
 
 export default {
 	name: 'AppNavigationMyMapItem',
@@ -97,7 +97,7 @@ export default {
 		},
 		folderUrl() {
 			return generateUrl('apps/files?fileid=') + this.myMap.id
-		}
+		},
 	},
 
 	methods: {

@@ -21,7 +21,7 @@
 
 <template>
 	<Popup
-		:title="
+		:name="
 			addingFavorite ? t('maps', 'New Favorite') : t('maps', 'This Place')
 		">
 		<template v-if="addingFavorite">
@@ -67,16 +67,16 @@
 </template>
 
 <script>
-import { MAP_NAMESPACE } from '../../store/modules/map'
+import { MAP_NAMESPACE } from '../../store/modules/map.js'
 import { mapState } from 'vuex'
-import MapMode from '../../data/enum/MapMode'
-import { geocode } from '../../utils/mapUtils'
-import SimpleOSMAddress from './SimpleOSMAddress'
+import MapMode from '../../data/enum/MapMode.js'
+import { geocode } from '../../utils/mapUtils.js'
+import SimpleOSMAddress from './SimpleOSMAddress.vue'
 import VueTypes from 'vue-types'
-import Popup from './Popup'
-import PopupFormItem from './PopupFormItem'
+import Popup from './Popup.vue'
+import PopupFormItem from './PopupFormItem.vue'
 import Types from '../../data/types'
-import { getDefaultCategoryName } from '../../utils/favoritesUtils'
+import { getDefaultCategoryName } from '../../utils/favoritesUtils.js'
 
 export default {
 	name: 'ClickPopup',

@@ -35,12 +35,12 @@
 </template>
 
 <script>
-import NcContent from '@nextcloud/vue/dist/Components/NcContent'
-import NcAppContent from '@nextcloud/vue/dist/Components/NcAppContent'
-import MapContainer from '../components/MapContainer'
-import PublicFavoriteShareSideBar from '../components/PublicFavoriteShareSideBar'
+import NcContent from '@nextcloud/vue/dist/Components/NcContent.js'
+import NcAppContent from '@nextcloud/vue/dist/Components/NcAppContent.js'
+import MapContainer from '../components/MapContainer.vue'
+import PublicFavoriteShareSideBar from '../components/PublicFavoriteShareSideBar.vue'
 import { mapActions, mapGetters, mapState } from 'vuex'
-import { PUBLIC_FAVORITES_NAMESPACE } from '../store/modules/publicFavorites'
+import { PUBLIC_FAVORITES_NAMESPACE } from '../store/modules/publicFavorites.js'
 
 export default {
 	name: 'PublicFavoriteShare',

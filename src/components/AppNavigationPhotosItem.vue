@@ -1,7 +1,7 @@
 <template>
 	<NcAppNavigationItem
 		:icon="loading ? 'icon-loading-small' : 'icon-category-multimedia'"
-		:title="t('maps', 'My photos')"
+		:name="t('maps', 'My photos')"
 		:class="{ 'item-disabled': !enabled }"
 		:allow-collapse="false"
 		:force-menu="enabled"
@@ -48,11 +48,11 @@
 </template>
 
 <script>
-import NcAppNavigationItem from '@nextcloud/vue/dist/Components/NcAppNavigationItem'
-import NcActionButton from '@nextcloud/vue/dist/Components/NcActionButton'
-import NcCounterBubble from '@nextcloud/vue/dist/Components/NcCounterBubble'
+import NcAppNavigationItem from '@nextcloud/vue/dist/Components/NcAppNavigationItem.js'
+import NcActionButton from '@nextcloud/vue/dist/Components/NcActionButton.js'
+import NcCounterBubble from '@nextcloud/vue/dist/Components/NcCounterBubble.js'
 
-import optionsController from '../optionsController'
+import optionsController from '../optionsController.js'
 import { showInfo } from '@nextcloud/dialogs'
 
 export default {
@@ -83,7 +83,7 @@ export default {
 		},
 		readOnly: {
 			type: Boolean,
-			default: false
+			default: false,
 		},
 		draggable: {
 			type: Boolean,

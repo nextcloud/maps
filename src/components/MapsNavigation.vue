@@ -38,13 +38,13 @@
 <script>
 import ClickOutside from 'vue-click-outside'
 
-import NcAppNavigation from '@nextcloud/vue/dist/Components/NcAppNavigation'
-import NcAppNavigationSettings from '@nextcloud/vue/dist/Components/NcAppNavigationSettings'
-import NcActionCheckbox from '@nextcloud/vue/dist/Components/NcActionCheckbox'
-import NcActionText from '@nextcloud/vue/dist/Components/NcActionText'
-import NcActionLink from '@nextcloud/vue/dist/Components/NcActionLink'
+import NcAppNavigation from '@nextcloud/vue/dist/Components/NcAppNavigation.js'
+import NcAppNavigationSettings from '@nextcloud/vue/dist/Components/NcAppNavigationSettings.js'
+import NcActionCheckbox from '@nextcloud/vue/dist/Components/NcActionCheckbox.js'
+import NcActionText from '@nextcloud/vue/dist/Components/NcActionText.js'
+import NcActionLink from '@nextcloud/vue/dist/Components/NcActionLink.js'
 
-import optionsController from '../optionsController'
+import optionsController from '../optionsController.js'
 
 export default {
 	name: 'MapsNavigation',

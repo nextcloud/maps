@@ -69,14 +69,14 @@
 import { generateUrl } from '@nextcloud/router'
 import moment from '@nextcloud/moment'
 import { basename } from '@nextcloud/paths'
-import NcActionButton from '@nextcloud/vue/dist/Components/NcActionButton'
+import NcActionButton from '@nextcloud/vue/dist/Components/NcActionButton.js'
 
 import L from 'leaflet'
 import { LMarker, LTooltip, LPopup } from 'vue2-leaflet'
 import Vue2LeafletMarkerCluster from 'vue2-leaflet-markercluster'
 
-import optionsController from '../../optionsController'
-import { binSearch, getToken, isPublic } from '../../utils/common'
+import optionsController from '../../optionsController.js'
+import { binSearch, getToken, isPublic } from '../../utils/common.js'
 
 const PHOTO_MARKER_VIEW_SIZE = 40
 
@@ -186,25 +186,25 @@ export default {
 				this.$refs.markerCluster.mapObject.removeLayers(
 					this.photoMarkers.slice(
 						this.photosLastNullIndex + 1,
-						this.photosFirstShownIndex
-					)
+						this.photosFirstShownIndex,
+					),
 				)
 				this.$refs.markerCluster.mapObject.removeLayers(
 					this.photoMarkers.slice(
 						this.photosLastShownIndex + 1,
-					)
+					),
 				)
 			} else {
 				this.$refs.markerCluster.mapObject.addLayers(
 					this.photoMarkers.slice(
 						this.photosLastNullIndex + 1,
-						this.photosFirstShownIndex
-					)
+						this.photosFirstShownIndex,
+					),
 				)
 				this.$refs.markerCluster.mapObject.addLayers(
 					this.photoMarkers.slice(
 						this.photosLastShownIndex + 1,
-					)
+					),
 				)
 			}
 		},
@@ -213,15 +213,15 @@ export default {
 				this.$refs.markerCluster.mapObject.addLayers(
 					this.photoMarkers.slice(
 						newIndex,
-						oldIndex
-					)
+						oldIndex,
+					),
 				)
 			} else if (newIndex > oldIndex) {
 				this.$refs.markerCluster.mapObject.removeLayers(
 					this.photoMarkers.slice(
 						oldIndex,
-						newIndex
-					)
+						newIndex,
+					),
 				)
 			}
 		},
@@ -230,15 +230,15 @@ export default {
 				this.$refs.markerCluster.mapObject.removeLayers(
 					this.photoMarkers.slice(
 						newIndex + 1,
-						oldIndex + 1
-					)
+						oldIndex + 1,
+					),
 				)
 			} else if (newIndex > oldIndex) {
 				this.$refs.markerCluster.mapObject.addLayers(
 					this.photoMarkers.slice(
 						oldIndex + 1,
-						newIndex + 1
-					)
+						newIndex + 1,
+					),
 				)
 			}
 		},
@@ -347,7 +347,7 @@ export default {
 		},
 		getPhotoFormattedDate(photo) {
 			if (photo) {
-				const d = new Date(photo.dateTaken*1000)
+				const d = new Date(photo.dateTaken * 1000)
 				const mom = moment.unix(photo.dateTaken + d.getTimezoneOffset() * 60)
 				return mom.format('LL') + ' ' + mom.format('HH:mm:ss')
 			}
@@ -413,7 +413,7 @@ export default {
 						this.resetPhotosCoords(photos)
 					}
 				},
-				true
+				true,
 			)
 		},
 		resetPhotosCoords(photos) {
@@ -443,19 +443,19 @@ export default {
 					},
 				)
 				m.on(
-					'click', this.onPhotoClick
+					'click', this.onPhotoClick,
 				)
 				m.on(
-					'contextmenu', this.onPhotoRightClick
+					'contextmenu', this.onPhotoRightClick,
 				)
 				m.on(
-					'mouseover', this.onPhotoMouseOver
+					'mouseover', this.onPhotoMouseOver,
 				)
 				m.on(
-					'mouseout', this.onPhotoMouseOut
+					'mouseout', this.onPhotoMouseOut,
 				)
 				m.on(
-					'moveend', this.onPhotoMoved
+					'moveend', this.onPhotoMoved,
 				)
 				m.data = p
 				return m
@@ -465,13 +465,13 @@ export default {
 				this.$refs.markerCluster.mapObject.removeLayers(
 					this.photoMarkers.slice(
 						this.photosLastNullIndex + 1,
-						this.photosFirstShownIndex
-					)
+						this.photosFirstShownIndex,
+					),
 				)
 				this.$refs.markerCluster.mapObject.removeLayers(
 					this.photoMarkers.slice(
 						this.photosLastShownIndex + 1,
-					)
+					),
 				)
 			}
 		},

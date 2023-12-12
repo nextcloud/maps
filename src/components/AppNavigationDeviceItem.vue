@@ -1,6 +1,6 @@
 <template>
 	<NcAppNavigationItem
-		:title="device.user_agent"
+		:name="device.user_agent"
 		:class="{ 'subitem-disabled': !device.enabled }"
 		:allow-collapse="false"
 		:force-menu="false"
@@ -67,13 +67,13 @@
 </template>
 
 <script>
-import NcAppNavigationItem from '@nextcloud/vue/dist/Components/NcAppNavigationItem'
-import NcActionButton from '@nextcloud/vue/dist/Components/NcActionButton'
+import NcAppNavigationItem from '@nextcloud/vue/dist/Components/NcAppNavigationItem.js'
+import NcActionButton from '@nextcloud/vue/dist/Components/NcActionButton.js'
 import { generateUrl } from '@nextcloud/router'
-import { isComputer } from '../utils'
-import { isPublic } from '../utils/common'
+import { isComputer } from '../utils.js'
+import { isPublic } from '../utils/common.js'
 
-import optionsController from '../optionsController'
+import optionsController from '../optionsController.js'
 
 export default {
 	name: 'AppNavigationDeviceItem',

@@ -20,7 +20,7 @@
 -->
 
 <template>
-	<Popup :title="favorite.name || '(No name)'">
+	<Popup :name="favorite.name || '(No name)'">
 		<form
 			v-if="allowEdits"
 			class="favorite"
@@ -65,8 +65,8 @@
 
 <script>
 import VueTypes from 'vue-types'
-import Popup from './Popup'
-import PopupFormItem from './PopupFormItem'
+import Popup from './Popup.vue'
+import PopupFormItem from './PopupFormItem.vue'
 import Types from '../../data/types'
 
 export default {

@@ -20,7 +20,7 @@
  *
  */
 
-import MapMode from '../../data/enum/MapMode'
+import MapMode from '../../data/enum/MapMode.js'
 
 export const MAP_NAMESPACE = 'map'
 

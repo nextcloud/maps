@@ -2,7 +2,7 @@
 	<NcAppNavigationItem
 		:icon="'icon-phone'"
 		:class="{ 'item-disabled': !device.enabled }"
-		:title="device.name"
+		:name="device.name"
 		:open="false"
 		:force-menu="false"
 		@click="$emit('device-click')">
@@ -14,8 +14,8 @@
 
 <script>
 
-import NcAppNavigationItem from '@nextcloud/vue/dist/Components/NcAppNavigationItem';
-import NcCounterBubble from '@nextcloud/vue/dist/Components/NcCounterBubble';
+import NcAppNavigationItem from '@nextcloud/vue/dist/Components/NcAppNavigationItem.js'
+import NcCounterBubble from '@nextcloud/vue/dist/Components/NcCounterBubble.js'
 
 export default {
 	name: 'PhotoSideBarTabDeviceItem',
@@ -45,6 +45,5 @@ export default {
 ::v-deep .item-disabled {
 	opacity: 0.5;
 }
-
 
 </style>

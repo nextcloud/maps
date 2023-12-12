@@ -95,7 +95,7 @@
 <script>
 import { imagePath } from '@nextcloud/router'
 import moment from '@nextcloud/moment'
-import { formatAddress } from '../../utils'
+import { formatAddress } from '../../utils.js'
 
 import { LMarker, LPopup, LTooltip } from 'vue2-leaflet'
 import OpeningHours from 'opening_hours'
@@ -245,7 +245,7 @@ export default {
 						lng: this.poi.lon,
 					},
 					name: this.header,
-					formattedAddress: formatAddress(this.poi.address)
+					formattedAddress: formatAddress(this.poi.address),
 				})
 		},
 		onAddContact() {
@@ -257,7 +257,7 @@ export default {
 						lng: this.poi.lon,
 					},
 					name: this.header,
-					formattedAddress: formatAddress(this.poi.address)
+					formattedAddress: formatAddress(this.poi.address),
 				})
 		},
 	},

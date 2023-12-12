@@ -151,7 +151,7 @@
 					:key="poi.place_id"
 					:poi="poi"
 					@place-contact="onAddContactAddress"
-					@add-favorite="$emit('add-address-favorite', $event); leftClickSearching = false"/>
+					@add-favorite="$emit('add-address-favorite', $event); leftClickSearching = false" />
 			</LFeatureGroup>
 		</LMap>
 		<Slider v-show="sliderEnabled"
@@ -179,7 +179,7 @@ import ResourceType from 'maplibre-gl'
 import {
 	baseLayersByName,
 	overlayLayersByName,
-} from '../data/mapLayers'
+} from '../data/mapLayers.js'
 import { LControlScale, LControlZoom, LMap, LTileLayer, LControlLayers, LFeatureGroup } from 'vue2-leaflet'
 
 import 'leaflet-easybutton/src/easy-button'
@@ -193,20 +193,20 @@ import GeoJSON from 'geojson'
 import '@raruto/leaflet-elevation/dist/leaflet-elevation'
 import '@raruto/leaflet-elevation/dist/leaflet-elevation.css'
 
-import Slider from '../components/map/Slider'
-import SearchControl from '../components/map/SearchControl'
-import HistoryControl from '../components/map/HistoryControl'
-import RoutingControl from '../components/map/routing/RoutingControl'
-import FavoritesLayer from '../components/map/FavoritesLayer'
-import PhotosLayer from '../components/map/PhotosLayer'
-import TracksLayer from '../components/map/TracksLayer'
-import DevicesLayer from '../components/map/DevicesLayer'
-import ContactsLayer from '../components/map/ContactsLayer'
-import PlaceContactPopup from '../components/map/PlaceContactPopup'
-import PoiMarker from '../components/map/PoiMarker'
-import ClickSearchPopup from '../components/map/ClickSearchPopup'
-import optionsController from '../optionsController'
-import PhotoSuggestionsLayer from './map/PhotoSuggestionsLayer'
+import Slider from '../components/map/Slider.vue'
+import SearchControl from '../components/map/SearchControl.vue'
+import HistoryControl from '../components/map/HistoryControl.vue'
+import RoutingControl from '../components/map/routing/RoutingControl.vue'
+import FavoritesLayer from '../components/map/FavoritesLayer.vue'
+import PhotosLayer from '../components/map/PhotosLayer.vue'
+import TracksLayer from '../components/map/TracksLayer.vue'
+import DevicesLayer from '../components/map/DevicesLayer.vue'
+import ContactsLayer from '../components/map/ContactsLayer.vue'
+import PlaceContactPopup from '../components/map/PlaceContactPopup.vue'
+import PoiMarker from '../components/map/PoiMarker.vue'
+import ClickSearchPopup from '../components/map/ClickSearchPopup.vue'
+import optionsController from '../optionsController.js'
+import PhotoSuggestionsLayer from './map/PhotoSuggestionsLayer.vue'
 
 export default {
 	name: 'Map',
@@ -797,8 +797,8 @@ export default {
 				}
 			}
 
-			if ((gl !== null) &&
-				('maplibreStreetStyleURL' in this.optionValues && this.optionValues.maplibreStreetStyleURL !== '')) {
+			if ((gl !== null)
+				&& ('maplibreStreetStyleURL' in this.optionValues && this.optionValues.maplibreStreetStyleURL !== '')) {
 				let token = null
 				if ('maplibreStreetStyleAuth' in this.optionValues && this.optionValues.maplibreStreetStyleAuth !== '') {
 					token = this.optionValues.maplibreStreetStyleAuth

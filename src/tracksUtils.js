@@ -12,7 +12,7 @@ export function processGpx(gpx, overwriteZeroTimpstamp = true) {
 	} else {
 		return null
 	}
-	if ( !xmlDoc.documentElement || xmlDoc.documentElement.tagName !== 'gpx') {
+	if (!xmlDoc.documentElement || xmlDoc.documentElement.tagName !== 'gpx') {
 		return null
 	}
 	const gpxx = xmlDoc.documentElement

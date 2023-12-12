@@ -16,20 +16,20 @@
 					{{ contact.FN }}
 				</h3>
 				<p class="tooltip-contact-address-type">
-                    <template v-for="adrtype in contact.ADRTYPE">
-    				    <span v-if=" adrtype.toLowerCase() === 'home'"
-                                class="tooltip-contact-address-type">
-	    		    		{{ t('maps', 'Home') }}
-    		    		</span>
-    	    			<span v-else-if=" adrtype.toLowerCase() === 'work'"
-                                class="tooltip-contact-address-type">
-        					{{ t('maps', 'Work') }}
-                        </span>
-    	    			<span v-else
-                                class="tooltip-contact-address-type">
-        					{{ t('maps', adrtype.toLowerCase()) }}
-                        </span>
-                    </template>
+					<template v-for="adrtype in contact.ADRTYPE">
+						<span v-if=" adrtype.toLowerCase() === 'home'"
+							class="tooltip-contact-address-type">
+							{{ t('maps', 'Home') }}
+						</span>
+						<span v-else-if=" adrtype.toLowerCase() === 'work'"
+							class="tooltip-contact-address-type">
+							{{ t('maps', 'Work') }}
+						</span>
+						<span v-else
+							class="tooltip-contact-address-type">
+							{{ t('maps', adrtype.toLowerCase()) }}
+						</span>
+					</template>
 				</p>
 				<p v-for="l in formattedAddressLines"
 					:key="l"
@@ -59,22 +59,22 @@
 					<h3 class="tooltip-contact-name">
 						{{ contact.FN }}
 					</h3>
-				    <p class="tooltip-contact-address-type">
-                        <template v-for="adrtype in contact.ADRTYPE">
-    				        <span v-if=" adrtype.toLowerCase() === 'home'"
-                                    class="tooltip-contact-address-type">
-    	    		    		{{ t('maps', 'Home') }}
-        		    		</span>
-        	    			<span v-else-if=" adrtype.toLowerCase() === 'work'"
-                                    class="tooltip-contact-address-type">
-            					{{ t('maps', 'Work') }}
-                            </span>
-        	    			<span v-else
-                                    class="tooltip-contact-address-type">
-            					{{ t('maps', adrtype.toLowerCase()) }}
-                            </span>
-                        </template>
-    				</p>
+					<p class="tooltip-contact-address-type">
+						<template v-for="adrtype in contact.ADRTYPE">
+							<span v-if=" adrtype.toLowerCase() === 'home'"
+								class="tooltip-contact-address-type">
+								{{ t('maps', 'Home') }}
+							</span>
+							<span v-else-if=" adrtype.toLowerCase() === 'work'"
+								class="tooltip-contact-address-type">
+								{{ t('maps', 'Work') }}
+							</span>
+							<span v-else
+								class="tooltip-contact-address-type">
+								{{ t('maps', adrtype.toLowerCase()) }}
+							</span>
+						</template>
+					</p>
 					<p v-for="l in formattedAddressLines"
 						:key="l"
 						class="tooltip-contact-address">
@@ -108,14 +108,14 @@
 <script>
 import { generateUrl } from '@nextcloud/router'
 import { getCurrentUser } from '@nextcloud/auth'
-import NcActionButton from '@nextcloud/vue/dist/Components/NcActionButton'
+import NcActionButton from '@nextcloud/vue/dist/Components/NcActionButton.js'
 
 import L from 'leaflet'
 import { LMarker, LTooltip, LPopup } from 'vue2-leaflet'
 
-import optionsController from '../../optionsController'
-import { geoToLatLng } from '../../utils/mapUtils'
-import { getToken, isPublic } from '../../utils/common'
+import optionsController from '../../optionsController.js'
+import { geoToLatLng } from '../../utils/mapUtils.js'
+import { getToken, isPublic } from '../../utils/common.js'
 
 const CONTACT_MARKER_VIEW_SIZE = 40
 
@@ -168,7 +168,7 @@ export default {
 				{
 					iconSize: [CONTACT_MARKER_VIEW_SIZE, CONTACT_MARKER_VIEW_SIZE],
 					iconAnchor: [CONTACT_MARKER_VIEW_SIZE / 2, CONTACT_MARKER_VIEW_SIZE],
-				})
+				}),
 			)
 		},
 		contactAvatar() {

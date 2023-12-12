@@ -8,7 +8,7 @@
 </template>
 
 <script>
-import TrackTable from './TrackTable'
+import TrackTable from './TrackTable.vue'
 
 export default {
 	name: 'TrackMetadataTab',

@@ -1,7 +1,7 @@
 <template>
 	<NcAppNavigationItem
 		:icon="loading ? 'icon-loading-small' : 'icon-phone'"
-		:title="t('maps', 'My devices')"
+		:name="t('maps', 'My devices')"
 		:class="{ 'item-disabled': !enabled }"
 		:allow-collapse="true"
 		:open="open"
@@ -62,12 +62,12 @@
 </template>
 
 <script>
-import NcAppNavigationItem from '@nextcloud/vue/dist/Components/NcAppNavigationItem'
-import NcActionButton from '@nextcloud/vue/dist/Components/NcActionButton'
-import NcCounterBubble from '@nextcloud/vue/dist/Components/NcCounterBubble'
+import NcAppNavigationItem from '@nextcloud/vue/dist/Components/NcAppNavigationItem.js'
+import NcActionButton from '@nextcloud/vue/dist/Components/NcActionButton.js'
+import NcCounterBubble from '@nextcloud/vue/dist/Components/NcCounterBubble.js'
 
-import AppNavigationDeviceItem from './AppNavigationDeviceItem'
-import optionsController from '../optionsController'
+import AppNavigationDeviceItem from './AppNavigationDeviceItem.vue'
+import optionsController from '../optionsController.js'
 
 export default {
 	name: 'AppNavigationDevicesItem',
@@ -113,7 +113,7 @@ export default {
 		},
 		allDeletable() {
 			return this.devices.every((d) => d.isDeletable)
-		}
+		},
 	},
 
 	methods: {

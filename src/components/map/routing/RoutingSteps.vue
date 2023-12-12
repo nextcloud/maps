@@ -35,7 +35,7 @@
 </template>
 
 <script>
-import RoutingStep from './RoutingStep'
+import RoutingStep from './RoutingStep.vue'
 
 export default {
 	name: 'RoutingSteps',
@@ -94,7 +94,6 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-
 
 #routing-steps {
 	width: 100%;

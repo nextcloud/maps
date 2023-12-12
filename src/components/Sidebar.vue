@@ -9,8 +9,8 @@
 		@closing="handleClosing"
 		@closed="handleClosed"
 		@close="$emit('close')">
-		<template v-slot:header>
-			<span :class="['header-icon icon', icon]" v-if="icon"></span>
+		<template #header>
+			<span v-if="icon" :class="['header-icon icon', icon]" />
 		</template>
 		<FavoriteSidebarTab v-if="activeTab === 'favorite'"
 			:favorite="favorite"
@@ -83,24 +83,24 @@
 </template>
 
 <script>
-import NcAppSidebar from '@nextcloud/vue/dist/Components/NcAppSidebar'
-import NcActionButton from '@nextcloud/vue/dist/Components/NcActionButton'
-import NcEmptyContent from '@nextcloud/vue/dist/Components/NcEmptyContent'
+import NcAppSidebar from '@nextcloud/vue/dist/Components/NcAppSidebar.js'
+import NcActionButton from '@nextcloud/vue/dist/Components/NcActionButton.js'
+import NcEmptyContent from '@nextcloud/vue/dist/Components/NcEmptyContent.js'
 import { emit } from '@nextcloud/event-bus'
-import { generateUrl, generateFilePath } from '@nextcloud/router'
-import { showError } from "@nextcloud/dialogs";
+import { generateUrl } from '@nextcloud/router'
+import { showError } from '@nextcloud/dialogs'
 
-import FavoriteSidebarTab from '../components/FavoriteSidebarTab'
-import PhotoSuggestionsSidebarTab from './Sidebar/PhotoSuggestionsSidebarTab'
-import SidebarTab from './Sidebar/SidebarTab'
-import LegacyView from './Sidebar/LegacyView'
+import FavoriteSidebarTab from '../components/FavoriteSidebarTab.vue'
+import PhotoSuggestionsSidebarTab from './Sidebar/PhotoSuggestionsSidebarTab.vue'
+import SidebarTab from './Sidebar/SidebarTab.vue'
+import LegacyView from './Sidebar/LegacyView.vue'
 import { encodePath } from '@nextcloud/paths'
 import moment from '@nextcloud/moment'
 import { Type as ShareTypes } from '@nextcloud/sharing'
 import axios from '@nextcloud/axios'
-import FileInfo from '../services/FileInfo'
-import { isPublic } from '../utils/common'
-import TrackMetadataTab from './TrackMetadataTab'
+import FileInfo from '../services/FileInfo.js'
+import { isPublic } from '../utils/common.js'
+import TrackMetadataTab from './TrackMetadataTab.vue'
 
 export default {
 	name: 'Sidebar',
@@ -169,7 +169,7 @@ export default {
 			error: false,
 			isFullScreen: false,
 			typeOpened: '',
-			title: null,
+			name: null,
 			icon: null,
 		}
 	},
@@ -227,11 +227,11 @@ export default {
 		},
 
 		/**
-		 * Sidebar subtitle
+		 * Sidebar subname
 		 *
 		 * @return {string}
 		 */
-		subtitle() {
+		subname() {
 			return `${this.size}, ${moment(this.fileInfo.mtime).fromNow()}`
 		},
 
@@ -272,30 +272,30 @@ export default {
 					compact: !this.fileInfo.hasPreview || this.isFullScreen,
 					loading: this.loading,
 					starred: this.fileInfo.isFavourited,
-					subtitle: this.subtitle,
-					subtitleTooltip: this.fullTime,
-					title: this.title ?? this.fileInfo.name,
-					titleTooltip: this.fileInfo.name,
+					subname: this.subname,
+					subnameTooltip: this.fullTime,
+					name: this.name ?? this.fileInfo.name,
+					nameTooltip: this.fileInfo.name,
 				}
 			} else if (this.error) {
 				return {
 					key: 'error', // force key to re-render
-					subtitle: '',
-					title: '',
+					subname: '',
+					name: '',
 				}
 			} else if (this.loading) {
 				// no fileInfo yet, showing empty data
 				return {
 					loading: this.loading,
-					subtitle: '',
-					title: '',
+					subname: '',
+					name: '',
 				}
 			} else if (this.activeTab === 'favorite') {
 				this.icon = 'icon-favorite'
 				return {
-					title: t('maps', 'Favorite'),
+					name: t('maps', 'Favorite'),
 					compact: true,
-					subtitle: '',
+					subname: '',
 					active: this.activeTab,
 					class: {
 						'app-sidebar--has-preview': false,
@@ -305,9 +305,9 @@ export default {
 			} else if (this.activeTab === 'photo-suggestion') {
 				this.icon = 'icon-picture'
 				return {
-					title: t('maps', 'Photo suggestions'),
+					name: t('maps', 'Photo suggestions'),
 					compact: true,
-					subtitle: '',
+					subname: '',
 					active: this.activeTab,
 					class: {
 						'app-sidebar--has-preview': false,
@@ -316,9 +316,9 @@ export default {
 				}
 			} else if (this.activeTab === 'maps-track-metadata') {
 				return {
-					title: t('maps', 'Track metadata'),
+					name: t('maps', 'Track metadata'),
 					compact: true,
-					subtitle: '',
+					subname: '',
 					active: this.activeTab,
 					class: {
 						'app-sidebar--has-preview': false,
@@ -328,8 +328,8 @@ export default {
 			} else {
 				return {
 					loading: false,
-					subtitle: '',
-					title: '',
+					subname: '',
+					name: '',
 				}
 			}
 		},
@@ -497,16 +497,16 @@ export default {
 		 *
 		 * @param {string} path the file path to load
 		 * @param type
-		 * @param title
+		 * @param name
 		 * @return {Promise}
 		 * @throws {Error} loading failure
 		 */
-		async open(path = null, type = null, title = null) {
+		async open(path = null, type = null, name = null) {
 			// update current opened file
 			this.Sidebar.file = path
 			if (path) {
 				this.typeOpened = type
-				this.title = title
+				this.name = name
 			}
 
 			if (path && path.trim() !== '' && !isPublic()) {

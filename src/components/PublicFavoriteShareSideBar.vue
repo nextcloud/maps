@@ -29,7 +29,7 @@
 			<NcAppNavigationItem
 				v-for="favorite in favorites"
 				:key="favorite.id"
-				:title="favorite.name || t('maps', '(No name)')"
+				:name="favorite.name || t('maps', '(No name)')"
 				icon="icon-star-dark"
 				@click="selectFavorite(favorite.id)" />
 			<NcAppNavigationSpacer />
@@ -42,14 +42,14 @@
 </template>
 
 <script>
-import NcAppNavigation from '@nextcloud/vue/dist/Components/NcAppNavigation'
-import NcAppNavigationItem from '@nextcloud/vue/dist/Components/NcAppNavigationItem'
-import NcAppNavigationNew from '@nextcloud/vue/dist/Components/NcAppNavigationNew'
-import NcAppNavigationSpacer from '@nextcloud/vue/dist/Components/NcAppNavigationSpacer'
+import NcAppNavigation from '@nextcloud/vue/dist/Components/NcAppNavigation.js'
+import NcAppNavigationItem from '@nextcloud/vue/dist/Components/NcAppNavigationItem.js'
+import NcAppNavigationNew from '@nextcloud/vue/dist/Components/NcAppNavigationNew.js'
+import NcAppNavigationSpacer from '@nextcloud/vue/dist/Components/NcAppNavigationSpacer.js'
 import { mapMutations, mapState, mapActions } from 'vuex'
-import { PUBLIC_FAVORITES_NAMESPACE } from '../store/modules/publicFavorites'
-import MapMode from '../data/enum/MapMode'
-import { MAP_NAMESPACE } from '../store/modules/map'
+import { PUBLIC_FAVORITES_NAMESPACE } from '../store/modules/publicFavorites.js'
+import MapMode from '../data/enum/MapMode.js'
+import { MAP_NAMESPACE } from '../store/modules/map.js'
 
 export default {
 	name: 'PublicFavoriteShareSideBar',
@@ -77,7 +77,7 @@ export default {
 				'maps',
 				this.mapMode === MapMode.ADDING_FAVORITES
 					? 'Cancel adding favorites'
-					: 'Add favorites'
+					: 'Add favorites',
 			)
 		},
 	},

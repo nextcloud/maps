@@ -21,7 +21,7 @@
  *
  */
 
-import { hslToRgb, getLetterColor } from './colorUtils'
+import { hslToRgb, getLetterColor } from './colorUtils.js'
 
 export const getDefaultCategoryName = () => {
 	return t('maps', 'Personal')

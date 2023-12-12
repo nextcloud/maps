@@ -1,7 +1,7 @@
 <template>
 	<NcAppNavigationItem
 		:icon="loading ? 'icon-loading-small' : 'icon-maps-dark'"
-		:title="t('maps', 'My maps')"
+		:name="t('maps', 'My maps')"
 		:class="{ 'item-disabled': !enabled }"
 		:allow-collapse="true"
 		:open="open"
@@ -38,11 +38,11 @@
 </template>
 
 <script>
-import NcAppNavigationItem from '@nextcloud/vue/dist/Components/NcAppNavigationItem'
-import NcActionButton from '@nextcloud/vue/dist/Components/NcActionButton'
-import AppNavigationMyMapItem from './AppNavigationMyMapItem'
-import optionsController from '../optionsController'
-import NcCounterBubble from '@nextcloud/vue/dist/Components/NcCounterBubble'
+import NcAppNavigationItem from '@nextcloud/vue/dist/Components/NcAppNavigationItem.js'
+import NcActionButton from '@nextcloud/vue/dist/Components/NcActionButton.js'
+import AppNavigationMyMapItem from './AppNavigationMyMapItem.vue'
+import optionsController from '../optionsController.js'
+import NcCounterBubble from '@nextcloud/vue/dist/Components/NcCounterBubble.js'
 
 export default {
 	name: 'AppNavigationMyMapsItem',

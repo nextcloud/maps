@@ -20,7 +20,7 @@
  *
  */
 
-import CopyMapsLinkAction from './models/copyMapsLinkAction'
+import CopyMapsLinkAction from './models/copyMapsLinkAction.js'
 
 window.addEventListener('DOMContentLoaded', function() {
 	OCA.Sharing.ExternalShareActions.registerAction(new CopyMapsLinkAction())

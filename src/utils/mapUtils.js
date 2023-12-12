@@ -21,7 +21,7 @@
  *
  */
 
-import { request } from './common'
+import { request } from './common.js'
 
 export const isGeocodeable = str => {
 	const pattern = /^\s*-?\d+\.?\d*,\s*-?\d+\.?\d*\s*$/

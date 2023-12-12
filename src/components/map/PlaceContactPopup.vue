@@ -21,7 +21,7 @@
 				<label for="userMultiselect">
 					<span class="icon icon-user" />
 				</label>
-				<NcMultiselect
+				<NcSelect
 					id="userMultiselect"
 					ref="userMultiselect"
 					v-model="selectedContact"
@@ -31,8 +31,8 @@
 					:placeholder="t('maps', 'Choose a contact')"
 					:options="contactData"
 					:internal-search="true"
-					@search-change="asyncSearchContacts">
-					<template #option="{option}">
+					@search="asyncSearchContacts">
+					<template #option="option">
 						<Avatar
 							class="contact-avatar"
 							:is-no-user="true"
@@ -40,10 +40,10 @@
 							:user="option.FN" />
 						{{ option.FN }}
 					</template>
-				</NcMultiselect>
+				</NcSelect>
 			</div>
 			<div class="address-type"
-				:title="t('maps', 'Address type')">
+				:name="t('maps', 'Address type')">
 				<label for="addressTypeSelect">
 					<span class="icon icon-address" />
 				</label>
@@ -74,11 +74,11 @@ import { generateUrl } from '@nextcloud/router'
 import { getCurrentUser } from '@nextcloud/auth'
 
 import { LMarker, LPopup, LIcon } from 'vue2-leaflet'
-import NcMultiselect from '@nextcloud/vue/dist/Components/NcMultiselect'
-import NcAvatar from '@nextcloud/vue/dist/Components/NcAvatar'
+import NcSelect from '@nextcloud/vue/dist/Components/NcSelect.js'
+import NcAvatar from '@nextcloud/vue/dist/Components/NcAvatar.js'
 
-import { formatAddress } from '../../utils'
-import { searchContacts, geocode, searchAddress } from '../../network'
+import { formatAddress } from '../../utils.js'
+import { searchContacts, geocode, searchAddress } from '../../network.js'
 
 export default {
 	name: 'PlaceContactPopup',
@@ -86,7 +86,7 @@ export default {
 		LMarker,
 		LPopup,
 		LIcon,
-		NcMultiselect,
+		NcSelect,
 		NcAvatar,
 	},
 

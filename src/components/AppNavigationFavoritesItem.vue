@@ -1,7 +1,7 @@
 <template>
 	<NcAppNavigationItem
 		:icon="loading ? 'icon-loading-small' : 'icon-favorite'"
-		:title="t('maps', 'My favorites')"
+		:name="t('maps', 'My favorites')"
 		:class="{ 'item-disabled': !enabled }"
 		:allow-collapse="true"
 		:open="open"
@@ -52,7 +52,7 @@
 			<NcAppNavigationItem
 				v-for="(c, catid) in categories"
 				:key="catid"
-				:title="c.name"
+				:name="c.name"
 				:class="{ 'subitem-disabled': !c.enabled }"
 				:editable="enabled && c.enabled && c.isUpdateable"
 				:edit-placeholder="t('maps', 'Category name')"
@@ -60,7 +60,7 @@
 				:allow-collapse="false"
 				:force-menu="false"
 				@click="onCategoryClick(catid)"
-				@update:title="$emit('rename-category', { old: catid, new: $event })">
+				@update:name="$emit('rename-category', { old: catid, new: $event })">
 				<template #icon>
 					<div :class="{ favoriteMarker: true, navigationFavoriteMarkerDark: isDarkTheme, navigationFavoriteMarker: !isDarkTheme }"
 						:style="'background-color: #' + c.color" />
@@ -125,16 +125,16 @@
 </template>
 
 <script>
-import NcAppNavigationItem from '@nextcloud/vue/dist/Components/NcAppNavigationItem'
-import NcAppNavigationNew from '@nextcloud/vue/dist/Components/NcAppNavigationNew'
-import NcActionButton from '@nextcloud/vue/dist/Components/NcActionButton'
-import NcActionCheckbox from '@nextcloud/vue/dist/Components/NcActionCheckbox'
-import NcCounterBubble from '@nextcloud/vue/dist/Components/NcCounterBubble'
+import NcAppNavigationItem from '@nextcloud/vue/dist/Components/NcAppNavigationItem.js'
+import NcAppNavigationNew from '@nextcloud/vue/dist/Components/NcAppNavigationNew.js'
+import NcActionButton from '@nextcloud/vue/dist/Components/NcActionButton.js'
+import NcActionCheckbox from '@nextcloud/vue/dist/Components/NcActionCheckbox.js'
+import NcCounterBubble from '@nextcloud/vue/dist/Components/NcCounterBubble.js'
 import { showError, showSuccess } from '@nextcloud/dialogs'
 import { generateUrl } from '@nextcloud/router'
-import { isPublic } from '../utils/common'
+import { isPublic } from '../utils/common.js'
 
-import optionsController from '../optionsController'
+import optionsController from '../optionsController.js'
 
 export default {
 	name: 'AppNavigationFavoritesItem',

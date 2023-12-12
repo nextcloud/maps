@@ -4,7 +4,10 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
-## 1.2.0 - 2023.xx.yy Link devices to map
+## 1.3.0 - 2023.12.12 Nextcloud Hub 7
+- Compability changes to Nextcloud 28.
+
+## 1.2.0 - 2023.12.11 Link devices to map
 ### Added
 -  Command for registering maps mimetypes [#1098](https://github.com/nextcloud/maps/issues/1098) @ratte-rizzo
    [#1118](https://github.com/nextcloud/maps/pull/1118) @tacruc

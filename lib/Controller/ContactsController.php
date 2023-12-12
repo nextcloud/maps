@@ -78,7 +78,7 @@ class ContactsController extends Controller {
 		$this->cdBackend = $cdBackend;
 		$this->root = $root;
         $this->urlGenerator = $urlGenerator;
-        $this->geoDistanceMax = 5; 
+        $this->geoDistanceMax = 5;
 	}
     /**
      * Converts a geo string as a float array
@@ -99,7 +99,7 @@ class ContactsController extends Controller {
     private function isNewAddress($prevGeo, $geo) {
         if (empty($geo)) { // Address not converted to geo coords
             return -1;
-        } 
+        }
         $result = -1;
         $counter = 0;
         foreach ($prevGeo as $prev) {
@@ -300,7 +300,7 @@ class ContactsController extends Controller {
                                 if ($duplicatedIndex < 0 ) {
                                     array_push($prevGeo, $geof);
                                     array_push($prevRes, count($result)); // Add index of new item so that we can update the ADRTYPE in case of duplicate address
-                                    $result[] = $this->vCardToArray($file, $vcard, $geo, array($adrtype), $adr->getValue(), $file->getId());
+                                    $result[] = $this->vCardToArray($file, $vcard, $geo, $adrtype, $adr->getValue(), $file->getId());
                                 } else {
                                     // Concatenate AddressType to the corresponding record
                                     array_push($result[$prevRes[$duplicatedIndex]]['ADRTYPE'], $adrtype);

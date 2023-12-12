@@ -18,6 +18,7 @@ use \OCP\AppFramework\App;
 use OCP\AppFramework\Bootstrap\IBootContext;
 use OCP\AppFramework\Bootstrap\IBootstrap;
 use OCP\AppFramework\Http\EmptyFeaturePolicy;
+use OCP\EventDispatcher\IEventDispatcher;
 use \OCP\IServerContainer;
 use OCA\Maps\Hooks\FileHooks;
 use OCA\Maps\Service\PhotofilesService;
@@ -89,7 +90,7 @@ class Application extends App implements IBootstrap {
 	}
 
 	private function registerFeaturePolicy() {
-		$dispatcher = $this->getContainer()->getServer()->getEventDispatcher();
+		$dispatcher = $this->getContainer()->getServer()->get(IEventDispatcher::class);
 
 		$dispatcher->addListener(AddFeaturePolicyEvent::class, function (AddFeaturePolicyEvent $e) {
 			$fp = new EmptyFeaturePolicy();

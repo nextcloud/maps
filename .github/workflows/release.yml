@@ -35,6 +35,7 @@ jobs:
       - name: Get current tag
         id: tag
         run: |
+          git checkout release
           git fetch --tags --force
           tag=$(git tag -l --points-at HEAD)
           vtag=$(echo $tag | grep "^v[0-9]\+\.[0-9]\+\.[0-9]\+" || echo "")
@@ -56,7 +57,7 @@ jobs:
           sudo apt install make openssl -y
           echo "###### installing nextcloud"
           mkdir ~/html
-          git clone https://github.com/nextcloud/server.git --recursive --depth 1 -b v27.0.0 ~/html/nextcloud
+          git clone https://github.com/nextcloud/server.git --recursive --depth 1 -b v28.0.0 ~/html/nextcloud
           sed -i $'s|if (substr($fullPath, 0, strlen($root) + 1) === $root . \'/\')|if (is_string($root) and substr($fullPath, 0, strlen($root) + 1) === $root . \'/\')|g' ~/html/nextcloud/lib/autoloader.php
           cp -r $GITHUB_WORKSPACE ~/html/nextcloud/apps/${APP_ID}
           php ~/html/nextcloud/occ maintenance:install --database "sqlite" --admin-user "admin" --admin-pass "password"

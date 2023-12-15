@@ -50,6 +50,7 @@ OC.L10N.register(
     "Select all" : "すべて選択",
     "Quit" : "終了",
     "Load more" : "さらに読み込む",
+    "Photos default timezone:" : "写真のデフォルトタイムゾーン：",
     "Tracks" : "追跡",
     "Devices" : "端末",
     "Tags" : "タグ",

@@ -72,6 +72,7 @@
     "Clear photo cache" : "Limpar cache de fotos",
     "Hi" : "Oi",
     "Show track elevation" : "Mostrar elevação da rota",
+    "Download track" : "Baixar faixa",
     "My tracks" : "Minhas faixas",
     "Sort by name" : "Classificar por nome",
     "Sort by date" : "Classificar por data",
@@ -379,6 +380,11 @@
     "Set the API key to use Mapbox routing service." : "Defina a chave da API para usar o serviço de roteamento do Mapbox.",
     "Leave empty to disable." : "Deixe em branco para desabilitar",
     "Mapbox API key" : "Chave API do Mapbox",
+    "MapLibre Website" : "Site MapLibre",
+    "MapLibre settings" : "Configurações do MapLibre",
+    "Set the URL and Basic Authorization of style.json for OpenStreetMap Vector Tiles with MapLibre-GL-JS." : "Defina o URL e a autorização básica de style.json para blocos vetoriais OpenStreetMap com MapLibre-GL-JS.",
+    "MapLibre Street style URL" : "URL do estilo MapLibre Street",
+    "Basic Authorization if required. Format is \"user:password\"" : "Autorização básica, se necessário. O formato é \"usuário:senha\"",
     "Maps settings" : "Configurações de mapas"
 },"pluralForm" :"nplurals=3; plural=(n == 0 || n == 1) ? 0 : n != 0 && n % 1000000 == 0 ? 1 : 2;"
 }

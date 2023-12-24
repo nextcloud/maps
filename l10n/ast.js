@@ -1,6 +1,7 @@
 OC.L10N.register(
     "maps",
     {
+    "Export" : "Esportar",
     "Delete" : "Desaniciar",
     "Copied!" : "¡Copióse!",
     "Cancel" : "Encaboxar",

@@ -48,6 +48,7 @@ OC.L10N.register(
     "Phone" : "Telpon",
     "Not grouped" : "Tidak dikelompokkan",
     "Default" : "Bawaan",
-    "Failed to save settings" : "Gagal simpan setelan"
+    "Failed to save settings" : "Gagal simpan setelan",
+    "Restaurant" : "Restoran"
 },
 "nplurals=1; plural=0;");

@@ -24,6 +24,7 @@ OC.L10N.register(
     "Location" : "Emplaçament",
     "Close" : "Tampar",
     "Quit" : "Quitar",
+    "Devices" : "Periferics",
     "Tags" : "Etiquetas",
     "Favorite" : "Favorit",
     "Distance" : "Distància",

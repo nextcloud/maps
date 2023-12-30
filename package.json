@@ -49,7 +49,7 @@
     "@nextcloud/sharing": "^0.1.0",
     "@nextcloud/vue": "^8.3.0",
     "@raruto/leaflet-elevation": "^1.7.0",
-    "axios": "^1.6.2",
+    "axios": "^1.6.3",
     "geojson": "^0.5.0",
     "leaflet": "^1.9.4",
     "leaflet-contextmenu": "^1.4.0",

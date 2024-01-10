@@ -74,6 +74,7 @@ OC.L10N.register(
     "Clear photo cache" : "Vaciar caché de fotos",
     "Hi" : "Hola",
     "Show track elevation" : "Mostrar elevación de la ruta",
+    "Download track" : "Descargar ruta",
     "My tracks" : "Mis rutas",
     "Sort by name" : "Ordenar por nombre",
     "Sort by date" : "Ordenar por fecha",
@@ -383,7 +384,9 @@ OC.L10N.register(
     "Mapbox API key" : "Clave API de Mapbox",
     "MapLibre Website" : "Sitio web de MapLibre",
     "MapLibre settings" : "Ajustes de MapLibre",
+    "Set the URL and Basic Authorization of style.json for OpenStreetMap Vector Tiles with MapLibre-GL-JS." : "Establezca la URL y la Autorización Básica de style.json para las Vector Tiles de OpenStreetMap con MapLibre-GL-JS.",
     "MapLibre Street style URL" : "Estilo de URL para MapLibre Street ",
+    "Basic Authorization if required. Format is \"user:password\"" : "La autorización básica de ser requerida. El formato es \"usuario:contraseña\"",
     "Maps settings" : "Ajustes de Mapas"
 },
 "nplurals=3; plural=n == 1 ? 0 : n != 0 && n % 1000000 == 0 ? 1 : 2;");

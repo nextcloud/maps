@@ -8,6 +8,7 @@ OC.L10N.register(
     "Save" : "Guardar",
     "Category" : "Categoría",
     "Comment" : "Comentariu",
+    "Select all" : "Seleicionar too",
     "Load more" : "Cargar más",
     "Devices" : "Preseos",
     "Tags" : "Etiquetes",

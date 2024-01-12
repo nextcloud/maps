@@ -8,6 +8,7 @@ OC.L10N.register(
     "Delete" : "Dzēst",
     "Import" : "Importēt",
     "Rename" : "Pārsaukt",
+    "Delete share link" : "Dzēst koplietoto saiti",
     "Copied!" : "Nokopēts!",
     "Cancel" : "Atcelt",
     "Link copied" : "Saite nokopēta",

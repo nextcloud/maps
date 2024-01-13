@@ -25,6 +25,7 @@ OC.L10N.register(
     "Devices" : "Ierīces",
     "Tags" : "Birkas",
     "Favorite" : "Favorīts",
+    "Duration" : "Ilgums",
     "End" : "Beigas",
     "Name" : "Vārds",
     "Add" : "Pievienot",

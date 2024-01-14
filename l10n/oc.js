@@ -31,7 +31,7 @@ OC.L10N.register(
     "Duration" : "Durada",
     "Name" : "Nom",
     "Add" : "Ajustar",
-    "Add to favorites" : "Add to favorites",
+    "Add to favorites" : "Apondre als favorits",
     "Home" : "Domicili",
     "Work" : "Professional(a)",
     "Device" : "Periferic",

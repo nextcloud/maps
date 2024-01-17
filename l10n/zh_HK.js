@@ -267,7 +267,7 @@ OC.L10N.register(
     "Impossible to get current location" : "無法獲取目前位置",
     "Phone" : "電話",
     "Computer" : "桌上電腦",
-    "Unknown device type" : "未知的裝置類型",
+    "Unknown device type" : "裝置類型不詳",
     "Failed to send current position" : "發送目前位置失敗",
     "Photo {photoName} added to map {mapName}" : "照片 {photoName} 添加到地圖 {mapName}",
     "Failed to save photo {photoName} to map {mapName}" : "無法將照片 {photoName} 保存到地圖 {mapName}",

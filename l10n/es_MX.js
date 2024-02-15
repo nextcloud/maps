@@ -44,6 +44,7 @@ OC.L10N.register(
     "File" : "Archivo",
     "right" : "derecha",
     "left" : "izquierda",
+    "Take the {exitStr} exit in the roundabout" : "Tome la {exitStr} salida en la glorieta",
     "Start" : "Iniciar",
     "Destination" : "Destino",
     "min" : "min",

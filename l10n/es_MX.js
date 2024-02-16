@@ -49,6 +49,7 @@ OC.L10N.register(
     "Destination" : "Destino",
     "min" : "min",
     "Phone" : "Teléfono fijo",
+    "Photo files" : "Archivos de fotos",
     "Not grouped" : "No agrupado",
     "Default" : "Predeterminado"
 },

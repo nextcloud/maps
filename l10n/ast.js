@@ -1,11 +1,13 @@
 OC.L10N.register(
     "maps",
     {
+    "File not found" : "Nun s'atopó'l ficheru",
     "Export" : "Esportar",
     "Delete" : "Desaniciar",
     "Rename" : "Renomar",
     "Copied!" : "¡Copióse!",
     "Cancel" : "Encaboxar",
+    "Share" : "Compartir",
     "Save" : "Guardar",
     "Category" : "Categoría",
     "Comment" : "Comentariu",
@@ -15,6 +17,8 @@ OC.L10N.register(
     "Devices" : "Preseos",
     "Tags" : "Etiquetes",
     "Favorite" : "Meter en Favoritos",
+    "Unable to change the favourite state of the file" : "Nun ye posible camudar l'estáu favoritu del ficheru",
+    "Error while loading the file data" : "Hebo un error mentanto de cargaben los datos de los ficheros",
     "Distance" : "Distancia",
     "Duration" : "Duración",
     "This Place" : "Esti llugar",

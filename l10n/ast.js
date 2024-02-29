@@ -2,6 +2,8 @@ OC.L10N.register(
     "maps",
     {
     "File not found" : "Nun s'atopó'l ficheru",
+    "Personal" : "Personal",
+    "Zoom" : "Zoom",
     "Export" : "Esportar",
     "Delete" : "Desaniciar",
     "Rename" : "Renomar",

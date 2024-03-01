@@ -35,6 +35,7 @@ OC.L10N.register(
     "Yes" : "Sí",
     "Open" : "Abrir",
     "Search" : "Buscar",
+    "File" : "Ficheru",
     "Destination" : "Destín",
     "Metadata" : "Metadatos",
     "Cinema" : "Cine",

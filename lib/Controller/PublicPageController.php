@@ -98,6 +98,12 @@ class PublicPageController extends AuthPublicShareController {
 			return false;
 		}
 
+		//Disable mymaps on file-drop links
+		$isReadable = ($share->getPermissions() & (1 << 0));
+		if (!$isReadable) {
+			return false;
+		}
+
 		return $share->getNode()->isReadable() && $share->getNode()->isShareable();
 	}
 

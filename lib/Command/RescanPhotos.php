@@ -27,13 +27,11 @@ use OCA\Maps\Service\PhotofilesService;
 
 class RescanPhotos extends Command {
 
-    protected $userManager;
-
-    protected $output;
-
-    protected $encryptionManager;
-
-    private $photofilesService;
+    protected IUserManager $userManager;
+    protected OutputInterface $output;
+    protected IManager $encryptionManager;
+    protected PhotofilesService $photofilesService;
+    protected IConfig $config;
 
     public function __construct(IUserManager $userManager,
                                 IManager $encryptionManager,

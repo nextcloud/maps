@@ -59,6 +59,7 @@ OC.L10N.register(
     "Favorite name" : "즐겨찾기 이름",
     "Category" : "분류",
     "Comment" : "설명",
+    "Location" : "위치",
     "New category {n}" : "새 카테고리 {n}",
     "Place photos" : "사진 배치",
     "Place contact" : "연락처 표시",

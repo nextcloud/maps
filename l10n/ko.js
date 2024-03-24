@@ -169,7 +169,7 @@ OC.L10N.register(
     "left" : "왼쪽",
     "sharp left" : "정확히 왼쪽",
     "Turn around" : "회전하다",
-    " on {road}" : "{도로}에",
+    " on {road}" : "{road}에",
     "Waypoint reached" : "경유지에 도달하다",
     " onto {road}" : "{도로} 로",
     "Destination reached" : "목적지에 도달하다",

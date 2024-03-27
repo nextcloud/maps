@@ -78,11 +78,23 @@ class PhotofilesService {
 		$this->backgroundJobCache = $this->cacheFactory->createDistributed('maps:background-jobs');
     }
 
-    public function rescanPath($userId, $pathToScan, $inBackground=true) {
+    public function rescan($userId, $inBackground=true) {
+		$this->photosCache->clear($userId);
         $userFolder = $this->root->getUserFolder($userId);
-        if ($pathToScan !== null) {
-            $userFolder = $userFolder->get($pathToScan);
+        $photos = $this->gatherPhotoFiles($userFolder, true);
+        $this->photoMapper->deleteAll($userId);
+        foreach ($photos as $photo) {
+			if ($inBackground) {
+				$this->addPhoto($photo, $userId);
+			} else {
+				$this->addPhotoNow($photo, $userId);
+			}
+            yield $photo->getPath();
         }
+    }
+
+    public function rescanPath($userId, $pathToScan, $inBackground=true) {
+        $userFolder = $this->root->getUserFolder($userId)->get($pathToScan);
         $photos = $this->gatherPhotoFiles($userFolder, true);
         foreach ($photos as $photo) {
             if ($inBackground) {

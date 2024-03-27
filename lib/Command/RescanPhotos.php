@@ -57,6 +57,11 @@ class RescanPhotos extends Command {
                 InputArgument::OPTIONAL,
                 'Rescan photos GPS exif data for the given user'
             )
+            ->addArgument(
+                'path',
+                InputArgument::OPTIONAL,
+                'Scan photos GPS exif data for the given path under user\'s files without wiping the database'
+            )
 			->addOption(
 				'now',
 				null,
@@ -77,36 +82,37 @@ class RescanPhotos extends Command {
         }
         $this->output = $output;
         $userId = $input->getArgument('user_id');
+        $pathToScan = $input->getArgument('path');
 		$inBackground = !($input->getOption('now') ?? true);
 		if ($inBackground) {
 			echo "Extracting coordinates from photo is performed in a BackgroundJob \n";
 		}
         if ($userId === null) {
             $this->userManager->callForSeenUsers(function (IUser $user) use ($inBackground) {
-                $this->rescanUserPhotos($user->getUID(), $inBackground);
+                $this->scanUserPhotos($user->getUID(), $pathToScan, $inBackground);
             });
         } else {
             $user = $this->userManager->get($userId);
             if ($user !== null) {
-                $this->rescanUserPhotos($userId, $inBackground);
+                $this->scanUserPhotos($userId, $pathToScan, $inBackground);
             }
         }
         return 0;
     }
 
-	/**
+    /**
 	 * @param string $userId
+	 * @param string $pathToScan
 	 * @param bool $inBackground
 	 * @return void
 	 * @throws \OCP\PreConditionNotMetException
 	 */
-    private function rescanUserPhotos(string $userId, bool $inBackground=true) {
+    private function scanUserPhotos($userId, $pathToScan, bool $inBackground=true) {
         echo '======== User '.$userId.' ========'."\n";
         $c = 1;
-        foreach ($this->photofilesService->rescan($userId, $inBackground) as $path) {
+        foreach ($this->photofilesService->rescanPath($userId, $pathToScan, $inBackground) as $path) {
             echo '['.$c.'] Photo "'.$path.'" added'."\n";
             $c++;
         }
-        $this->config->setUserValue($userId, 'maps', 'installScanDone', 'yes');
     }
 }

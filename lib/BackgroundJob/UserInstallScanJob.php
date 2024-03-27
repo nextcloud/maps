@@ -23,7 +23,11 @@ use OCA\Maps\Service\TracksService;
 
 class UserInstallScanJob extends QueuedJob {
 
-    private $jobList;
+    private IJobList $jobList;
+    private IConfig $config;
+    private IUserManager $userManager;
+    private PhotofilesService $photofilesService;
+    private TracksService $tracksService;
 
     /**
      * UserInstallScanJob constructor.

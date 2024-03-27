@@ -89,15 +89,39 @@ class RescanPhotos extends Command {
 		}
         if ($userId === null) {
             $this->userManager->callForSeenUsers(function (IUser $user) use ($inBackground) {
-                $this->scanUserPhotos($user->getUID(), $pathToScan, $inBackground);
+                if ($pathToScan === null) {
+                    $this->rescanUserPhotos($user->getUID(), $inBackground);
+                } else {
+                    $this->scanUserPhotos($user->getUID(), $pathToScan, $inBackground);
+                }
             });
         } else {
             $user = $this->userManager->get($userId);
             if ($user !== null) {
-                $this->scanUserPhotos($userId, $pathToScan, $inBackground);
+                if ($pathToScan === null) {
+                    $this->rescanUserPhotos($userId, $inBackground);
+                } else {
+                    $this->scanUserPhotos($userId, $pathToScan, $inBackground);
+                }
             }
         }
         return 0;
+    }
+
+	/**
+	 * @param string $userId
+	 * @param bool $inBackground
+	 * @return void
+	 * @throws \OCP\PreConditionNotMetException
+	 */
+    private function rescanUserPhotos(string $userId, bool $inBackground=true) {
+        echo '======== User '.$userId.' ========'."\n";
+        $c = 1;
+        foreach ($this->photofilesService->rescan($userId, $inBackground) as $path) {
+            echo '['.$c.'] Photo "'.$path.'" added'."\n";
+            $c++;
+        }
+        $this->config->setUserValue($userId, 'maps', 'installScanDone', 'yes');
     }
 
     /**

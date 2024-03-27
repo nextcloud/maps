@@ -381,6 +381,7 @@ OC.L10N.register(
     "Mapbox API key" : "Clé d'API Mapbox",
     "MapLibre Website" : "Site web MapLibre",
     "MapLibre settings" : "Paramètres MapLibre",
+    "MapLibre Street style URL" : "URL du style MapLibre Street",
     "Maps settings" : "Paramètres de Maps"
 },
 "nplurals=3; plural=(n == 0 || n == 1) ? 0 : n != 0 && n % 1000000 == 0 ? 1 : 2;");

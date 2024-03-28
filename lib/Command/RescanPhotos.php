@@ -57,6 +57,11 @@ class RescanPhotos extends Command {
                 InputArgument::OPTIONAL,
                 'Rescan photos GPS exif data for the given user'
             )
+            ->addArgument(
+                'path',
+                InputArgument::OPTIONAL,
+                'Scan photos GPS exif data for the given path under user\'s files without wiping the database'
+            )
 			->addOption(
 				'now',
 				null,
@@ -77,18 +82,27 @@ class RescanPhotos extends Command {
         }
         $this->output = $output;
         $userId = $input->getArgument('user_id');
+        $pathToScan = $input->getArgument('path');
 		$inBackground = !($input->getOption('now') ?? true);
 		if ($inBackground) {
 			echo "Extracting coordinates from photo is performed in a BackgroundJob \n";
 		}
         if ($userId === null) {
             $this->userManager->callForSeenUsers(function (IUser $user) use ($inBackground) {
-                $this->rescanUserPhotos($user->getUID(), $inBackground);
+                if ($pathToScan === null) {
+                    $this->rescanUserPhotos($user->getUID(), $inBackground);
+                } else {
+                    $this->scanUserPhotos($user->getUID(), $pathToScan, $inBackground);
+                }
             });
         } else {
             $user = $this->userManager->get($userId);
             if ($user !== null) {
-                $this->rescanUserPhotos($userId, $inBackground);
+                if ($pathToScan === null) {
+                    $this->rescanUserPhotos($userId, $inBackground);
+                } else {
+                    $this->scanUserPhotos($userId, $pathToScan, $inBackground);
+                }
             }
         }
         return 0;
@@ -108,5 +122,21 @@ class RescanPhotos extends Command {
             $c++;
         }
         $this->config->setUserValue($userId, 'maps', 'installScanDone', 'yes');
+    }
+
+    /**
+	 * @param string $userId
+	 * @param string $pathToScan
+	 * @param bool $inBackground
+	 * @return void
+	 * @throws \OCP\PreConditionNotMetException
+	 */
+    private function scanUserPhotos($userId, $pathToScan, bool $inBackground=true) {
+        echo '======== User '.$userId.' ========'."\n";
+        $c = 1;
+        foreach ($this->photofilesService->rescanPath($userId, $pathToScan, $inBackground) as $path) {
+            echo '['.$c.'] Photo "'.$path.'" added'."\n";
+            $c++;
+        }
     }
 }

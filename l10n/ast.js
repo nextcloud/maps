@@ -44,6 +44,7 @@ OC.L10N.register(
     "Search" : "Buscar",
     "File" : "Ficheru",
     "Destination" : "Destín",
+    "Computer" : "Ordenador",
     "Failed to send current position" : "Nun se pue unviar la posición actual",
     "Failed to clear photos cache" : "Nun se puen llimpiar la caché de semeyes",
     "Failed to save locations" : "Nun se puen guardar les llocalizaciones",
@@ -61,6 +62,7 @@ OC.L10N.register(
     "Failed to load your maps" : "Nun se puen cargar los mapes",
     "Metadata" : "Metadatos",
     "Restaurant" : "Restorán",
+    "Library" : "Biblioteca",
     "Cinema" : "Cine",
     "Hospital" : "Hospital"
 },

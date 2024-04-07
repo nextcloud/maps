@@ -62,6 +62,7 @@ OC.L10N.register(
     "Failed to load your maps" : "Nun se puen cargar los mapes",
     "Metadata" : "Metadatos",
     "Restaurant" : "Restorán",
+    "Bar" : "Barra",
     "Library" : "Biblioteca",
     "Cinema" : "Cine",
     "Hospital" : "Hospital"

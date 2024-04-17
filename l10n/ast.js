@@ -44,6 +44,7 @@ OC.L10N.register(
     "Search" : "Buscar",
     "File" : "Ficheru",
     "Destination" : "Destín",
+    "Phone" : "Teléfonu",
     "Computer" : "Ordenador",
     "Failed to send current position" : "Nun se pue unviar la posición actual",
     "Failed to clear photos cache" : "Nun se puen llimpiar la caché de semeyes",

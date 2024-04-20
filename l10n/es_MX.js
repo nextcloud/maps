@@ -4,6 +4,7 @@ OC.L10N.register(
     "File not found" : "Archivo no encontrado",
     "Personal" : "Personal",
     "Maps" : "Mapas",
+    "Change color" : "Cambiar color",
     "Export" : "Exportar",
     "Delete" : "Borrar",
     "Import" : "Importar",

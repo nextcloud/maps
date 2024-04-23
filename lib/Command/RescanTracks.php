@@ -26,13 +26,11 @@ use OCA\Maps\Service\TracksService;
 
 class RescanTracks extends Command {
 
-    protected $userManager;
-
-    protected $output;
-
-    protected $encryptionManager;
-
-    private $tracksService;
+    protected IUserManager $userManager;
+    protected OutputInterface $output;
+    protected IManager $encryptionManager;
+    protected TracksService $tracksService;
+    protected IConfig $config;
 
     public function __construct(IUserManager $userManager,
                                 IManager $encryptionManager,

@@ -25,7 +25,7 @@ use OCA\Maps\Service\PhotofilesService;
 
 class RegisterMimetypes extends Command {
 
-    protected $mimetypeService;
+    protected MimetypeService $mimetypeService;
 
     public function __construct(MimetypeService $mimetypeService) {
         parent::__construct();

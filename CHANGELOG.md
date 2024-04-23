@@ -4,6 +4,9 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## 1.4.0 - 2024.04.28 Nextcloud Hub 8
+- Compability changes to Nextcloud 29.
+
 ## 1.3.0 - 2023.12.12 Nextcloud Hub 7
 - Compability changes to Nextcloud 28.
 

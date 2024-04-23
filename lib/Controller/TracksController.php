@@ -37,15 +37,7 @@ use OCP\ILogger;
 
 use OCA\Maps\Service\TracksService;
 
-/**
- * @param string $text
- * @return string
- */
-function remove_utf8_bom(string $text): string {
-    $bom = pack('H*','EFBBBF');
-    $text = preg_replace("/^$bom/", '', $text);
-    return $text;
-}
+use function OCA\Maps\Helper\remove_utf8_bom;
 
 class TracksController extends Controller {
 

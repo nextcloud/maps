@@ -71,7 +71,7 @@
     "Suggest photo locations" : "Proposer les positions des photos",
     "Clear photo cache" : "Vider le cache des photo",
     "Hi" : "Bonjour",
-    "Show track elevation" : "Afficher l'altitude de la trace",
+    "Show track elevation" : "Afficher l’altitude de la trace",
     "Download track" : "Télécharger la trace",
     "My tracks" : "Mes traces",
     "Sort by name" : "Trier par nom",
@@ -379,6 +379,7 @@
     "Mapbox API key" : "Clé d'API Mapbox",
     "MapLibre Website" : "Site web MapLibre",
     "MapLibre settings" : "Paramètres MapLibre",
+    "MapLibre Street style URL" : "URL du style MapLibre Street",
     "Maps settings" : "Paramètres de Maps"
 },"pluralForm" :"nplurals=3; plural=(n == 0 || n == 1) ? 0 : n != 0 && n % 1000000 == 0 ? 1 : 2;"
 }

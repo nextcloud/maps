@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Nextcloud 3.14159\n"
 "Report-Msgid-Bugs-To: translations\\@example.com\n"
-"POT-Creation-Date: 2024-04-23 01:09+0000\n"
+"POT-Creation-Date: 2024-04-24 01:09+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -128,24 +128,24 @@ msgstr ""
 msgid "Error sharing favorite"
 msgstr ""
 
-#: /app/lib/Controller/PublicTracksController.php:216
-#: /app/lib/Controller/PublicTracksController.php:253
-#: /app/lib/Controller/TracksController.php:137
-#: /app/lib/Controller/TracksController.php:174
+#: /app/lib/Controller/PublicTracksController.php:207
+#: /app/lib/Controller/PublicTracksController.php:244
+#: /app/lib/Controller/TracksController.php:129
+#: /app/lib/Controller/TracksController.php:166
 msgid "Bad file type"
 msgstr ""
 
-#: /app/lib/Controller/PublicTracksController.php:220
-#: /app/lib/Controller/PublicTracksController.php:257
-#: /app/lib/Controller/TracksController.php:141
-#: /app/lib/Controller/TracksController.php:178
+#: /app/lib/Controller/PublicTracksController.php:211
+#: /app/lib/Controller/PublicTracksController.php:248
+#: /app/lib/Controller/TracksController.php:133
+#: /app/lib/Controller/TracksController.php:170
 msgid "File not found"
 msgstr ""
 
-#: /app/lib/Controller/PublicTracksController.php:284
-#: /app/lib/Controller/PublicTracksController.php:309
-#: /app/lib/Controller/TracksController.php:197
-#: /app/lib/Controller/TracksController.php:213
+#: /app/lib/Controller/PublicTracksController.php:275
+#: /app/lib/Controller/PublicTracksController.php:300
+#: /app/lib/Controller/TracksController.php:189
+#: /app/lib/Controller/TracksController.php:205
 msgid "No such track"
 msgstr ""
 

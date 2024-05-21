@@ -35,6 +35,7 @@ OC.L10N.register(
     "Device" : "Ierīce",
     "Date" : "Datums",
     "Update" : "Atjaunināt",
+    "Display pictures" : "Rādīt attēlus",
     "Yes" : "Jā",
     "Open" : "Atvērt",
     "Search" : "Meklēt",

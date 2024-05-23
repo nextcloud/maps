@@ -1,0 +1,25 @@
+OC.L10N.register(
+    "maps",
+    {
+    "Personal" : "Pearsanta",
+    "Change color" : "Athraigh dath",
+    "Delete" : "Scrios",
+    "Rename" : "Athainmnigh",
+    "Copied!" : "Cóipeáladh!",
+    "Cancel" : "Cealaigh",
+    "Share" : "Comhroinn",
+    "Save" : "Sábháil",
+    "Comment" : "Trácht",
+    "Close" : "Dún",
+    "Name" : "Ainm",
+    "Add" : "Cuir",
+    "Add to favorites" : "Cuir le ceanáin",
+    "Home" : "Baile",
+    "Date" : "Dáta",
+    "Update" : "Nuashonrú",
+    "Yes" : "Tá",
+    "Open" : "Oscail",
+    "Search" : "Cuardach",
+    "Default" : "Réamhshocrú"
+},
+"nplurals=5; plural=(n==1 ? 0 : n==2 ? 1 : n<7 ? 2 : n<11 ? 3 : 4);");

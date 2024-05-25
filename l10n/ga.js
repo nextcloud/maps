@@ -12,6 +12,7 @@ OC.L10N.register(
     "Comment" : "Trácht",
     "Location" : "Suíomh",
     "Close" : "Dún",
+    "Tags" : "Clibeanna",
     "Name" : "Ainm",
     "Add" : "Cuir",
     "Add to favorites" : "Cuir le ceanáin",

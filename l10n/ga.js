@@ -23,6 +23,7 @@ OC.L10N.register(
     "Yes" : "Tá",
     "Open" : "Oscail",
     "Search" : "Cuardach",
+    "File" : "Comhad",
     "Default" : "Réamhshocrú"
 },
 "nplurals=5; plural=(n==1 ? 0 : n==2 ? 1 : n<7 ? 2 : n<11 ? 3 : 4);");

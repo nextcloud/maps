@@ -15,6 +15,8 @@ OC.L10N.register(
     "Comment" : "Trácht",
     "Location" : "Suíomh",
     "Close" : "Dún",
+    "Select all" : "Roghnú go léir",
+    "Quit" : "Scoir",
     "Tags" : "Clibeanna",
     "Favorite" : "is fearr leat",
     "Name" : "Ainm",

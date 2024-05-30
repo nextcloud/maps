@@ -12,6 +12,7 @@ OC.L10N.register(
     "Link copied" : "Cóipeáladh an nasc",
     "Share" : "Comhroinn",
     "Save" : "Sábháil",
+    "Category" : "Catagóir",
     "Comment" : "Trácht",
     "Location" : "Suíomh",
     "Close" : "Dún",
@@ -23,6 +24,7 @@ OC.L10N.register(
     "Add" : "Cuir",
     "Add to favorites" : "Cuir le ceanáin",
     "Home" : "Baile",
+    "Work" : "Obair",
     "Device" : "Gléas",
     "Date" : "Dáta",
     "Update" : "Nuashonrú",
@@ -30,6 +32,7 @@ OC.L10N.register(
     "Open" : "Oscail",
     "Search" : "Cuardach",
     "File" : "Comhad",
-    "Default" : "Réamhshocrú"
+    "Default" : "Réamhshocrú",
+    "Restaurant" : "Bialann"
 },
 "nplurals=5; plural=(n==1 ? 0 : n==2 ? 1 : n<7 ? 2 : n<11 ? 3 : 4);");

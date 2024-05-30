@@ -10,6 +10,7 @@
     "Link copied" : "Cóipeáladh an nasc",
     "Share" : "Comhroinn",
     "Save" : "Sábháil",
+    "Category" : "Catagóir",
     "Comment" : "Trácht",
     "Location" : "Suíomh",
     "Close" : "Dún",
@@ -21,6 +22,7 @@
     "Add" : "Cuir",
     "Add to favorites" : "Cuir le ceanáin",
     "Home" : "Baile",
+    "Work" : "Obair",
     "Device" : "Gléas",
     "Date" : "Dáta",
     "Update" : "Nuashonrú",
@@ -28,6 +30,7 @@
     "Open" : "Oscail",
     "Search" : "Cuardach",
     "File" : "Comhad",
-    "Default" : "Réamhshocrú"
+    "Default" : "Réamhshocrú",
+    "Restaurant" : "Bialann"
 },"pluralForm" :"nplurals=5; plural=(n==1 ? 0 : n==2 ? 1 : n<7 ? 2 : n<11 ? 3 : 4);"
 }

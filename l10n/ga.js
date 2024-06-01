@@ -35,6 +35,7 @@ OC.L10N.register(
     "Open" : "Oscail",
     "Search" : "Cuardach",
     "File" : "Comhad",
+    "Phone" : "Fón",
     "Default" : "Réamhshocrú",
     "Restaurant" : "Bialann"
 },

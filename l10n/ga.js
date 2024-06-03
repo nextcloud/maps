@@ -7,6 +7,7 @@ OC.L10N.register(
     "Export" : "Easpórtáil",
     "Delete" : "Scrios",
     "Rename" : "Athainmnigh",
+    "Delete share link" : "Scrios an nasc comhroinnte",
     "Copied!" : "Cóipeáladh!",
     "Cancel" : "Cealaigh",
     "Link copied" : "Cóipeáladh an nasc",
@@ -23,6 +24,7 @@ OC.L10N.register(
     "Favorite" : "is fearr leat",
     "Unable to change the favourite state of the file" : "Ní féidir staid an chomhaid is fearr leat a athrú",
     "Error while loading the file data" : "Earráid agus sonraí an chomhaid á lódáil",
+    "Duration" : "Fad",
     "Name" : "Ainm",
     "Add" : "Cuir",
     "Add to favorites" : "Cuir le ceanáin",
@@ -37,6 +39,7 @@ OC.L10N.register(
     "File" : "Comhad",
     "Phone" : "Fón",
     "Default" : "Réamhshocrú",
+    "Failed to save settings" : "Theip ar na socruithe a shábháil",
     "Restaurant" : "Bialann"
 },
 "nplurals=5; plural=(n==1 ? 0 : n==2 ? 1 : n<7 ? 2 : n<11 ? 3 : 4);");

@@ -308,6 +308,9 @@ OC.L10N.register(
     "Devices exported in {path}" : "Appareils exportés vers {path}",
     "Failed to export devices" : "Échec de l'exportation des appareils",
     "Failed to delete device" : "Impossible de supprimer l'appareil",
+    "Device {deviceName} linked to map {mapName}" : "L'appareil {deviceName} a été lié à la carte {mapName}",
+    "Failed to link Device to map {mapName}" : "Impossible de lier l'appareil à la carte {mapName}",
+    "Failed to share Device" : "Impossible de partager l'appareil",
     "Import devices from gpx (Nextcloud Maps) or kml/kmz (Google Timeline) file" : "Importer des appareils depuis un fichier GPX (Nextcloud Maps) ou kml/kmz (Google Timeline)",
     "{nb} devices imported from {path}" : "{nb} appareil·s importé·s depuis {path}",
     "Failed to import devices" : "Impossible d'importer les appareils",
@@ -382,6 +385,7 @@ OC.L10N.register(
     "MapLibre Website" : "Site web MapLibre",
     "MapLibre settings" : "Paramètres MapLibre",
     "MapLibre Street style URL" : "URL du style MapLibre Street",
+    "Basic Authorization if required. Format is \"user:password\"" : "Basic Authorization si nécessaire. Le format est \"user:password\"",
     "Maps settings" : "Paramètres de Maps"
 },
 "nplurals=3; plural=(n == 0 || n == 1) ? 0 : n != 0 && n % 1000000 == 0 ? 1 : 2;");

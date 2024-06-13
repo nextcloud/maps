@@ -11,6 +11,7 @@ OC.L10N.register(
     "Rename" : "Athainmnigh",
     "Delete share link" : "Scrios an nasc comhroinnte",
     "Copied!" : "Cóipeáladh!",
+    "Copy share link" : "Cóipeáil nasc comhroinnte",
     "Cancel" : "Cealaigh",
     "Link copied" : "Cóipeáladh an nasc",
     "Share" : "Comhroinn",

@@ -45,6 +45,8 @@ OC.L10N.register(
     "File" : "Comhad",
     "right" : "ceart",
     "left" : "chlé",
+    "Start" : "Tosaigh",
+    "min" : "nóim",
     "Phone" : "Fón",
     "Default" : "Réamhshocrú",
     "Failed to save settings" : "Theip ar na socruithe a shábháil",

@@ -93,6 +93,19 @@ class PhotofilesService {
         }
     }
 
+    public function rescanPath($userId, $pathToScan, $inBackground=true) {
+        $userFolder = $this->root->getUserFolder($userId)->get($pathToScan);
+        $photos = $this->gatherPhotoFiles($userFolder, true);
+        foreach ($photos as $photo) {
+            if ($inBackground) {
+                $this->addPhoto($photo, $userId);
+            } else {
+                $this->addPhotoNow($photo, $userId);
+            }
+            yield $photo->getPath();
+        }
+    }
+
     // add the file for its owner and users that have access
     // check if it's already in DB before adding
     public function addByFile(Node $file) {

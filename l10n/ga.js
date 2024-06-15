@@ -38,6 +38,7 @@ OC.L10N.register(
     "Work" : "Obair",
     "Device" : "Gléas",
     "Date" : "Dáta",
+    "No name" : "Gan ainm",
     "Update" : "Nuashonrú",
     "Yes" : "Tá",
     "Open" : "Oscail",

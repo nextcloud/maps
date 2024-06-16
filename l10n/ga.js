@@ -14,6 +14,7 @@ OC.L10N.register(
     "Copy share link" : "Cóipeáil nasc comhroinnte",
     "Cancel" : "Cealaigh",
     "Link copied" : "Cóipeáladh an nasc",
+    "Open folder" : "Oscail fillteán",
     "Share" : "Comhroinn",
     "Save" : "Sábháil",
     "Category" : "Catagóir",

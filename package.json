@@ -67,7 +67,7 @@
     "maplibre-gl": "^3.6.2",
     "nouislider": "^15.8.0",
     "opening_hours": "^3.8.0",
-    "ua-parser-js": "^1.0.37",
+    "ua-parser-js": "^1.0.38",
     "vue": "^2.7.16",
     "vue-click-outside": "^1.1.0",
     "vue-material-design-icons": "^5.3.0",

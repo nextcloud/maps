@@ -48,7 +48,7 @@ OC.L10N.register(
     "Enable favorite drag" : "Activar o arrastre de favoritos",
     "Import" : "Importar",
     "Category name" : "Nome da categoría",
-    "Rename" : "Renomear",
+    "Rename" : "Cambiar o nome",
     "Add a favorite" : "Engadir un favorito",
     "Zoom to bounds" : "Zoom ata os límites",
     "Delete share link" : "Eliminar a ligazón para compartir",

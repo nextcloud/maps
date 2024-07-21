@@ -9,6 +9,7 @@ OC.L10N.register(
     "Delete" : "Borrar",
     "Import" : "Importar",
     "Rename" : "Renombrar",
+    "Delete share link" : "Eliminar enlace compartido",
     "Copied!" : "¡Copiado!",
     "Cancel" : "Cancelar",
     "Link copied" : "Enlace copiado",

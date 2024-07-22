@@ -55,8 +55,8 @@ export const Layers = [
 		id: LayerIds.OSM,
 		name: 'Street map',
 		type: LayerTypes.Base,
-		url: 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
-		attribution: '&copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>',
+		url: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+		attribution: '&copy; <a href="https://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>',
 		options: {
 			id: 'Open Street Map',
 			noWrap: false,

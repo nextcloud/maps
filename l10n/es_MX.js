@@ -24,6 +24,7 @@ OC.L10N.register(
     "Close" : "Cerrar",
     "Select all" : "Seleccionar todo",
     "Quit" : "Salir",
+    "Load more" : "Cargar más",
     "Devices" : "Dispositivos",
     "Tags" : "Etiquetas",
     "Favorite" : "Marcar como favorito",

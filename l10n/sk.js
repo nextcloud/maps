@@ -57,7 +57,7 @@ OC.L10N.register(
     "Copy share link" : "Kopírovať odkaz na zdieľanie",
     "Leave share" : "Opustiť zdieľanie",
     "Cancel" : "Zrušiť",
-    "Link copied" : "Odkaz skopírovaný",
+    "Link copied" : "Odkaz bol skopírovaný",
     "Link {url} could not be copied to clipboard." : "Odkaz {url} nie je možné skopírovať do schránky.",
     "Link could not be copied to clipboard." : "Odkaz nie je možné skopírovať do schránky",
     "Open folder" : "Otvoriť priečinok",

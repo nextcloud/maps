@@ -49,6 +49,7 @@ OC.L10N.register(
     "Device" : "อุปกรณ์",
     "Date" : "วันที่",
     "Accuracy" : "ความแม่นยำ",
+    "No name" : "ไม่มีชื่อ",
     "Update" : "อัปเดต",
     "Yes" : "ใช่",
     "Open" : "เปิด",

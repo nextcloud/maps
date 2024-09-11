@@ -108,7 +108,6 @@ OC.L10N.register(
     "Display picture" : "Prikaži sliko",
     "Remove from selection" : "Odstrani iz izbora",
     "No suggestions found" : "Ni najdenih predlogov",
-    "To get suggestions upload tracks from the trips, when you took your photos." : "Za prikaz predlogov najprej pošljite sledi potovanj, ko so bile slike zajete.",
     "Quit" : "Končaj",
     "Load more" : "Naloži več",
     "Photos default timezone:" : "Privzeti časovni pas fotografij",

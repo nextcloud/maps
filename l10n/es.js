@@ -111,7 +111,6 @@ OC.L10N.register(
     "Display picture" : "Mostrar fotografía",
     "Remove from selection" : "Quitar de la selección",
     "No suggestions found" : "No se encontraron sugerencias",
-    "To get suggestions upload tracks from the trips, when you took your photos." : "Para obtener sugerencias, suba rutas de los viajes de cuanto tomó sus fotos.",
     "Quit" : "Salir",
     "Load more" : "Cargar más",
     "Photos default timezone:" : "Zona horaria por defecto para fotos:",

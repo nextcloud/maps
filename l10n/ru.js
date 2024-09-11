@@ -110,7 +110,6 @@ OC.L10N.register(
     "Display picture" : "Отображение изображения",
     "Remove from selection" : "Удалить из выбора",
     "No suggestions found" : "Предложений не найдено",
-    "To get suggestions upload tracks from the trips, when you took your photos." : "Чтобы получать предложения, загружайте треки из поездок, в которых вы делали фотографии.",
     "Quit" : "Выход",
     "Load more" : "Загрузить больше",
     "Photos default timezone:" : "Часовой пояс фотографий по умолчанию:",

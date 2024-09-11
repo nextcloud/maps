@@ -55,7 +55,6 @@ OC.L10N.register(
     "Close" : "Zarrar",
     "Select all" : "Seleicionar too",
     "No suggestions found" : "Nun s'atopó nenguna suxerencia",
-    "To get suggestions upload tracks from the trips, when you took your photos." : "Pa conosiguir suxerenciesk xubi pistes de los viaxes cuando faigas semeyes.",
     "Quit" : "Colar",
     "Load more" : "Cargar más",
     "Location sources:" : "Fonte del llocalización:",

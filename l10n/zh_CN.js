@@ -111,7 +111,6 @@ OC.L10N.register(
     "Display picture" : "显示照片",
     "Remove from selection" : "从选择中移除",
     "No suggestions found" : "找不到建议",
-    "To get suggestions upload tracks from the trips, when you took your photos." : "要获得建议，请在您拍摄照片时上传旅行轨迹。",
     "Quit" : "退出",
     "Load more" : "加载更多",
     "Photos default timezone:" : "照片默认时区：",

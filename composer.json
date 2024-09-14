@@ -8,6 +8,8 @@
         "bamarni/composer-bin-plugin": "*"
     },
 	"scripts": {
+		"cs:fix": "php-cs-fixer fix",
+		"cs:check": "php-cs-fixer fix --dry-run --diff",
 		"test:integration": "phpunit -c tests/phpunit.integration.xml --fail-on-warning",
 		"test:integration:dev": "phpunit -c tests/phpunit.integration.xml --no-coverage --order-by=defects --stop-on-defect --fail-on-warning --stop-on-error --stop-on-failure",
 		"test:unit": "phpunit -c tests/phpunit.unit.xml --fail-on-warning",
@@ -16,7 +18,10 @@
 	"autoload": {
 		"files": [
 			"lib/Helper/functions.php"
-		]
+		],
+		"psr-4": {
+			"OCA\\Maps\\": "./lib/"
+		}
 	},
     "config": {
         "allow-plugins": {

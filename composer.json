@@ -4,7 +4,8 @@
         "bogdaan/open-location-code": "dev-master"
     },
     "require-dev": {
-        "christophwurst/nextcloud_testing": "^0.12.4"
+        "christophwurst/nextcloud_testing": "^0.12.4",
+        "bamarni/composer-bin-plugin": "*"
     },
 	"scripts": {
 		"test:integration": "phpunit -c tests/phpunit.integration.xml --fail-on-warning",
@@ -16,5 +17,10 @@
 		"files": [
 			"lib/Helper/functions.php"
 		]
-	}
+	},
+    "config": {
+        "allow-plugins": {
+            "bamarni/composer-bin-plugin": true
+        }
+    }
 }

@@ -40,9 +40,9 @@
         <nextcloud min-version="28" max-version="29"/>
     </dependencies>
     <repair-steps>
-		<post-migrate>
+		<post-migration>
 			<step>OCA\Maps\Migration\RegisterMimeType</step>
-		</post-migrate>
+		</post-migration>
         <install>
             <step>OCA\Maps\Migration\InstallScan</step>
 			<step>OCA\Maps\Migration\RegisterMimeType</step>

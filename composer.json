@@ -13,7 +13,13 @@
 		"test:integration": "phpunit -c tests/phpunit.integration.xml --fail-on-warning",
 		"test:integration:dev": "phpunit -c tests/phpunit.integration.xml --no-coverage --order-by=defects --stop-on-defect --fail-on-warning --stop-on-error --stop-on-failure",
 		"test:unit": "phpunit -c tests/phpunit.unit.xml --fail-on-warning",
-		"test:unit:dev": "phpunit -c tests/phpunit.unit.xml --no-coverage --order-by=defects --stop-on-defect --fail-on-warning --stop-on-error --stop-on-failure"
+		"test:unit:dev": "phpunit -c tests/phpunit.unit.xml --no-coverage --order-by=defects --stop-on-defect --fail-on-warning --stop-on-error --stop-on-failure",
+		"post-install-cmd": [
+			"[ $COMPOSER_DEV_MODE -eq 0 ] || composer bin all install --ansi"
+		],
+		"post-update-cmd": [
+			"[ $COMPOSER_DEV_MODE -eq 0 ] || composer bin all update --ansi"
+		]
 	},
 	"autoload": {
 		"files": [
@@ -21,6 +27,12 @@
 		],
 		"psr-4": {
 			"OCA\\Maps\\": "./lib/"
+		}
+	},
+	"extra": {
+		"bamarni-bin": {
+			"bin-links": true,
+			"forward-command": true
 		}
 	},
     "config": {

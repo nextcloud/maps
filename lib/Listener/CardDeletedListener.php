@@ -23,11 +23,11 @@ declare(strict_types=1);
 
 namespace OCA\Maps\Listener;
 
-use OCP\ILogger;
 use OCA\DAV\Events\CardDeletedEvent;
 use OCA\Maps\Service\AddressService;
 use OCP\EventDispatcher\Event;
 use OCP\EventDispatcher\IEventListener;
+use OCP\ILogger;
 
 class CardDeletedListener implements IEventListener {
 
@@ -50,7 +50,7 @@ class CardDeletedListener implements IEventListener {
 			return;
 		}
 		$cData = $event->getCardData();
-		$cUri = $cData["uri"];
+		$cUri = $cData['uri'];
 		$this->addressService->deleteDBContactAddresses($cUri);
 	}
 }

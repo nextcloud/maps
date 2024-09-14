@@ -12,20 +12,17 @@
 
 namespace OCA\Maps\Controller;
 
+use OCA\Maps\Service\GeophotoService;
+use OCA\Maps\Service\PhotofilesService;
+use OCP\AppFramework\Http\DataResponse;
 use OCP\EventDispatcher\IEventDispatcher;
 use OCP\Files\IRootFolder;
 use OCP\Files\NotFoundException;
 use OCP\Files\NotPermittedException;
 use OCP\IConfig;
+
 use OCP\IInitialStateService;
 use OCP\IRequest;
-use OCP\AppFramework\Http\TemplateResponse;
-use OCP\AppFramework\Http\DataResponse;
-use OCP\AppFramework\Controller;
-use OCP\ILogger;
-
-use OCA\Maps\Service\GeophotoService;
-use OCA\Maps\Service\PhotofilesService;
 use OCP\ISession;
 use OCP\IURLGenerator;
 use OCP\IUserManager;
@@ -33,27 +30,27 @@ use OCP\Share\Exceptions\ShareNotFound;
 use OCP\Share\IManager as ShareManager;
 
 class PublicPhotosController extends PublicPageController {
-    protected GeophotoService $geophotoService;
+	protected GeophotoService $geophotoService;
 	protected PhotofilesService $photofilesService;
 	protected IRootFolder $root;
 
-    public function __construct($appName,
-                                IRequest $request,
-								IEventDispatcher $eventDispatcher,
-								IConfig $config,
-								IInitialStateService $initialStateService,
-								IURLGenerator $urlGenerator,
-								ShareManager $shareManager,
-								IUserManager $userManager,
-								ISession $session,
-                                GeophotoService $GeophotoService,
-                                PhotofilesService $photofilesService,
-								IRootFolder $root) {
+	public function __construct($appName,
+		IRequest $request,
+		IEventDispatcher $eventDispatcher,
+		IConfig $config,
+		IInitialStateService $initialStateService,
+		IURLGenerator $urlGenerator,
+		ShareManager $shareManager,
+		IUserManager $userManager,
+		ISession $session,
+		GeophotoService $GeophotoService,
+		PhotofilesService $photofilesService,
+		IRootFolder $root) {
 		parent::__construct($appName, $request, $eventDispatcher, $config, $initialStateService, $urlGenerator, $shareManager, $userManager, $session);
-        $this->geophotoService = $GeophotoService;
-        $this->photofilesService = $photofilesService;
+		$this->geophotoService = $GeophotoService;
+		$this->photofilesService = $photofilesService;
 		$this->root = $root;
-    }
+	}
 
 	/**
 	 * Validate the permissions of the share
@@ -115,17 +112,17 @@ class PublicPhotosController extends PublicPageController {
 	 * @throws \OCP\Files\NotPermittedException
 	 * @throws \OC\User\NoUserException
 	 */
-    public function getPhotos(): DataResponse {
+	public function getPhotos(): DataResponse {
 		$share = $this->getShare();
 		$permissions = $share->getPermissions();
 		$folder = $this->getShareNode();
-		$isReadable = (bool) ($permissions & (1 << 0));
+		$isReadable = (bool)($permissions & (1 << 0));
 		if ($isReadable) {
 			$owner = $share->getShareOwner();
 			$pre_path = $this->root->getUserFolder($owner)->getPath();
 			$result = $this->geophotoService->getAll($owner, $folder, true, false, false);
 			$photos = array_map(function ($photo) use ($folder, $permissions, $pre_path) {
-				$photo_object = (object) $photo;
+				$photo_object = (object)$photo;
 				$photo_object->isCreatable = ($permissions & (1 << 2)) && $photo['isCreatable'];
 				$photo_object->isUpdateable = ($permissions & (1 << 1)) && $photo['isUpdateable'];
 				$photo_object->isDeletable = ($permissions & (1 << 3)) && $photo['isDeletable'];
@@ -137,8 +134,8 @@ class PublicPhotosController extends PublicPageController {
 			throw new NotPermittedException();
 		}
 
-        return new DataResponse($photos);
-    }
+		return new DataResponse($photos);
+	}
 
 	/**
 	 * @PublicPage
@@ -148,17 +145,17 @@ class PublicPhotosController extends PublicPageController {
 	 * @throws \OCP\Files\InvalidPathException
 	 * @throws \OC\User\NoUserException
 	 */
-    public function getNonLocalizedPhotos(?string $timezone=null, int $limit=250, int $offset=0): DataResponse {
+	public function getNonLocalizedPhotos(?string $timezone = null, int $limit = 250, int $offset = 0): DataResponse {
 		$share = $this->getShare();
 		$permissions = $share->getPermissions();
 		$folder = $this->getShareNode();
-		$isReadable = (bool) ($permissions & (1 << 0));
+		$isReadable = (bool)($permissions & (1 << 0));
 		if ($isReadable) {
 			$owner = $share->getShareOwner();
 			$pre_path = $this->root->getUserFolder($owner)->getPath();
 			$result = $this->geophotoService->getNonLocalized($owner, $folder, true, false, false, $timezone, $limit, $offset);
 			$photos = array_map(function ($photo) use ($folder, $permissions, $pre_path) {
-				$photo_object = (object) $photo;
+				$photo_object = (object)$photo;
 				$photo_object->isCreatable = ($permissions & (1 << 2)) && $photo['isCreatable'];
 				$photo_object->isUpdateable = ($permissions & (1 << 1)) && $photo['isUpdateable'];
 				$photo_object->isDeletable = ($permissions & (1 << 3)) && $photo['isDeletable'];
@@ -171,7 +168,7 @@ class PublicPhotosController extends PublicPageController {
 		}
 
 		return new DataResponse($photos);
-    }
+	}
 
 	/**
 	 * @PublicPage
@@ -180,9 +177,9 @@ class PublicPhotosController extends PublicPageController {
 	public function clearCache(): DataResponse {
 		$result = $this->geophotoService->clearCache();
 		if ($result) {
-			return new DataResponse("Cache cleared");
+			return new DataResponse('Cache cleared');
 		} else {
-			return new DataResponse("Failed to clear Cache", 400);
+			return new DataResponse('Failed to clear Cache', 400);
 		}
 	}
 

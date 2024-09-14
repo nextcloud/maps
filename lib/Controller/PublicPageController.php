@@ -18,12 +18,12 @@ use OCA\Files_Sharing\Event\BeforeTemplateRenderedEvent;
 use OCA\Viewer\Event\LoadViewer;
 use OCP\AppFramework\AuthPublicShareController;
 use OCP\AppFramework\Http\Template\PublicTemplateResponse;
+use OCP\EventDispatcher\IEventDispatcher;
 use OCP\Files\NotFoundException;
 use OCP\IConfig;
+use OCP\IInitialStateService;
 use OCP\ILogger;
 use OCP\IRequest;
-use OCP\EventDispatcher\IEventDispatcher;
-use OCP\IInitialStateService;
 use OCP\ISession;
 use OCP\IURLGenerator;
 use OCP\IUserManager;
@@ -39,23 +39,23 @@ class PublicPageController extends AuthPublicShareController {
 	protected ShareManager $shareManager;
 	protected IUserManager $userManager;
 
-    public function __construct($AppName,
-                                IRequest $request,
-                                IEventDispatcher $eventDispatcher,
-                                IConfig $config,
-                                IInitialStateService $initialStateService,
-								IURLGenerator $urlGenerator,
-								ShareManager $shareManager,
-								IUserManager $userManager,
-								ISession $session
-								) {
-        parent::__construct($AppName, $request, $session, $urlGenerator);
-        $this->eventDispatcher = $eventDispatcher;
-        $this->config = $config;
-        $this->initialStateService = $initialStateService;
+	public function __construct($AppName,
+		IRequest $request,
+		IEventDispatcher $eventDispatcher,
+		IConfig $config,
+		IInitialStateService $initialStateService,
+		IURLGenerator $urlGenerator,
+		ShareManager $shareManager,
+		IUserManager $userManager,
+		ISession $session
+	) {
+		parent::__construct($AppName, $request, $session, $urlGenerator);
+		$this->eventDispatcher = $eventDispatcher;
+		$this->config = $config;
+		$this->initialStateService = $initialStateService;
 		$this->shareManager = $shareManager;
 		$this->userManager = $userManager;
-    }
+	}
 
 	public function isValidToken(): bool {
 		try {
@@ -123,25 +123,25 @@ class PublicPageController extends AuthPublicShareController {
 		return $share->getNode();
 	}
 
-    /**
-    * @PublicPage
-    * @NoCSRFRequired
-    */
-    public function showShare(): PublicTemplateResponse {
+	/**
+	 * @PublicPage
+	 * @NoCSRFRequired
+	 */
+	public function showShare(): PublicTemplateResponse {
 		$shareNode = $this->getShareNode();
 
-        $this->eventDispatcher->dispatch(LoadSidebar::class, new LoadSidebar());
-        $this->eventDispatcher->dispatch(LoadViewer::class, new LoadViewer());
+		$this->eventDispatcher->dispatch(LoadSidebar::class, new LoadSidebar());
+		$this->eventDispatcher->dispatch(LoadViewer::class, new LoadViewer());
 
-        $params = [];
+		$params = [];
 		$params['sharingToken'] = $this->getToken();
-        $this->initialStateService->provideInitialState($this->appName, 'photos', $this->config->getAppValue('photos', 'enabled', 'no') === 'yes');
-        $response = new PublicTemplateResponse('maps', 'public/main', $params);
+		$this->initialStateService->provideInitialState($this->appName, 'photos', $this->config->getAppValue('photos', 'enabled', 'no') === 'yes');
+		$response = new PublicTemplateResponse('maps', 'public/main', $params);
 
-        $this->addCsp($response);
+		$this->addCsp($response);
 
-        return $response;
-    }
+		return $response;
+	}
 
 	/**
 	 * @PublicPage
@@ -209,53 +209,53 @@ class PublicPageController extends AuthPublicShareController {
 	 * @param $response
 	 * @return void
 	 */
-    private function addCsp($response): void {
-        if (class_exists('OCP\AppFramework\Http\ContentSecurityPolicy')) {
-            $csp = new \OCP\AppFramework\Http\ContentSecurityPolicy();
-            // map tiles
-            $csp->addAllowedImageDomain('https://*.tile.openstreetmap.org');
-            $csp->addAllowedImageDomain('https://server.arcgisonline.com');
-            $csp->addAllowedImageDomain('https://*.cartocdn.com');
-            $csp->addAllowedImageDomain('https://*.opentopomap.org');
-            $csp->addAllowedImageDomain('https://*.cartocdn.com');
-            $csp->addAllowedImageDomain('https://*.ssl.fastly.net');
-            $csp->addAllowedImageDomain('https://*.openstreetmap.se');
+	private function addCsp($response): void {
+		if (class_exists('OCP\AppFramework\Http\ContentSecurityPolicy')) {
+			$csp = new \OCP\AppFramework\Http\ContentSecurityPolicy();
+			// map tiles
+			$csp->addAllowedImageDomain('https://*.tile.openstreetmap.org');
+			$csp->addAllowedImageDomain('https://server.arcgisonline.com');
+			$csp->addAllowedImageDomain('https://*.cartocdn.com');
+			$csp->addAllowedImageDomain('https://*.opentopomap.org');
+			$csp->addAllowedImageDomain('https://*.cartocdn.com');
+			$csp->addAllowedImageDomain('https://*.ssl.fastly.net');
+			$csp->addAllowedImageDomain('https://*.openstreetmap.se');
 
-            // default routing engine
-            $csp->addAllowedConnectDomain('https://*.project-osrm.org');
-            $csp->addAllowedConnectDomain('https://api.mapbox.com');
-            $csp->addAllowedConnectDomain('https://events.mapbox.com');
-            $csp->addAllowedConnectDomain('https://graphhopper.com');
+			// default routing engine
+			$csp->addAllowedConnectDomain('https://*.project-osrm.org');
+			$csp->addAllowedConnectDomain('https://api.mapbox.com');
+			$csp->addAllowedConnectDomain('https://events.mapbox.com');
+			$csp->addAllowedConnectDomain('https://graphhopper.com');
 
-            $csp->addAllowedChildSrcDomain('blob:');
-            $csp->addAllowedWorkerSrcDomain('blob:');
-            $csp->addAllowedScriptDomain('https://unpkg.com');
-            // allow connections to custom routing engines
-            $urlKeys = [
-                'osrmBikeURL',
-                'osrmCarURL',
-                'osrmFootURL',
-                'graphhopperURL'
-            ];
-            foreach ($urlKeys as $key) {
-                $url = $this->config->getAppValue('maps', $key);
-                if ($url !== '') {
-                    $scheme = parse_url($url, PHP_URL_SCHEME);
-                    $host = parse_url($url, PHP_URL_HOST);
-                    $port = parse_url($url, PHP_URL_PORT);
-                    $cleanUrl = $scheme . '://' . $host;
-                    if ($port && $port !== '') {
-                        $cleanUrl .= ':' . $port;
-                    }
-                    $csp->addAllowedConnectDomain($cleanUrl);
-                }
-            }
+			$csp->addAllowedChildSrcDomain('blob:');
+			$csp->addAllowedWorkerSrcDomain('blob:');
+			$csp->addAllowedScriptDomain('https://unpkg.com');
+			// allow connections to custom routing engines
+			$urlKeys = [
+				'osrmBikeURL',
+				'osrmCarURL',
+				'osrmFootURL',
+				'graphhopperURL'
+			];
+			foreach ($urlKeys as $key) {
+				$url = $this->config->getAppValue('maps', $key);
+				if ($url !== '') {
+					$scheme = parse_url($url, PHP_URL_SCHEME);
+					$host = parse_url($url, PHP_URL_HOST);
+					$port = parse_url($url, PHP_URL_PORT);
+					$cleanUrl = $scheme . '://' . $host;
+					if ($port && $port !== '') {
+						$cleanUrl .= ':' . $port;
+					}
+					$csp->addAllowedConnectDomain($cleanUrl);
+				}
+			}
 
-            // poi images
-            $csp->addAllowedImageDomain('https://nominatim.openstreetmap.org');
-            // search and geocoder
-            $csp->addAllowedConnectDomain('https://nominatim.openstreetmap.org');
-            $response->setContentSecurityPolicy($csp);
-        }
-    }
+			// poi images
+			$csp->addAllowedImageDomain('https://nominatim.openstreetmap.org');
+			// search and geocoder
+			$csp->addAllowedConnectDomain('https://nominatim.openstreetmap.org');
+			$response->setContentSecurityPolicy($csp);
+		}
+	}
 }

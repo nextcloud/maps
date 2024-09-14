@@ -23,19 +23,17 @@
 
 namespace OCA\Maps\Migration;
 
+use OCA\Maps\BackgroundJob\LaunchUsersInstallScanJob;
+use OCP\BackgroundJob\IJobList;
 use OCP\Encryption\IManager;
-use OCP\Files\NotFoundException;
+use OCP\IConfig;
+
+use OCP\IDBConnection;
 use OCP\IUser;
 use OCP\IUserManager;
-use \OCP\BackgroundJob\IJobList;
-
-use OCP\IConfig;
-use OCP\IDBConnection;
 use OCP\Migration\IOutput;
-use OCP\Migration\IRepairStep;
-use OCP\Share;
 
-use \OCA\Maps\BackgroundJob\LaunchUsersInstallScanJob;
+use OCP\Migration\IRepairStep;
 
 /**
  * Class InstallScan
@@ -47,16 +45,16 @@ class InstallScan implements IRepairStep {
 	/** @var IDBConnection */
 	private $connection;
 
-	/** @var  IConfig */
+	/** @var IConfig */
 	private $config;
 
 
 	public function __construct(IDBConnection $connection,
-								IConfig $config,
-								IUserManager $userManager,
-								IJobList $jobList,
-								IManager $encryptionManager
-								) {
+		IConfig $config,
+		IUserManager $userManager,
+		IJobList $jobList,
+		IManager $encryptionManager
+	) {
 		$this->connection = $connection;
 		$this->config = $config;
 		$this->jobList = $jobList;

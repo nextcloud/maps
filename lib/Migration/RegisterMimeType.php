@@ -6,24 +6,20 @@ use OCP\Files\IMimeTypeLoader;
 use OCP\Migration\IOutput;
 use OCP\Migration\IRepairStep;
 
-class RegisterMimeType implements IRepairStep
-{
-	const CUSTOM_MIMETYPEMAPPING = 'mimetypemapping.json';
+class RegisterMimeType implements IRepairStep {
+	public const CUSTOM_MIMETYPEMAPPING = 'mimetypemapping.json';
 
 	protected IMimeTypeLoader $mimeTypeLoader;
 
-	public function __construct(IMimeTypeLoader $mimeTypeLoader)
-	{
+	public function __construct(IMimeTypeLoader $mimeTypeLoader) {
 		$this->mimeTypeLoader = $mimeTypeLoader;
 	}
 
-	public function getName()
-	{
+	public function getName() {
 		return 'Register Maps MIME types"';
 	}
 
-	private function registerForExistingFiles()
-	{
+	private function registerForExistingFiles() {
 		$mimeTypeId = $this->mimeTypeLoader->getId('application/x-nextcloud-maps');
 		$this->mimeTypeLoader->updateFilecache('maps', $mimeTypeId);
 
@@ -40,15 +36,14 @@ class RegisterMimeType implements IRepairStep
 		$this->mimeTypeLoader->updateFilecache('notrack', $mimeTypeId);
 	}
 
-	private function registerForNewFiles()
-	{
+	private function registerForNewFiles() {
 		$mapping = [
 			'maps' => ['application/x-nextcloud-maps'],
 			'noindex' => ['application/x-nextcloud-noindex'],
 			'nomedia' => ['application/x-nextcloud-nomedia'],
 			'noimage' => ['application/x-nextcloud-noimage'],
 			'notrack' => ['application/x-nextcloud-maps-notrack'],
-			];
+		];
 		$mappingFile = \OC::$configDir . self::CUSTOM_MIMETYPEMAPPING;
 
 		if (file_exists($mappingFile)) {
@@ -61,8 +56,7 @@ class RegisterMimeType implements IRepairStep
 		file_put_contents($mappingFile, json_encode($mapping, JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT));
 	}
 
-	public function run(IOutput $output)
-	{
+	public function run(IOutput $output) {
 		$output->info('Registering the mimetype...');
 
 		// Register the mime type for existing files

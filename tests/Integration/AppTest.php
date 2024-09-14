@@ -13,7 +13,6 @@ namespace OCA\Maps\Tests\Integration\Controller;
 
 use OCP\AppFramework\App;
 
-
 /**
  * This test shows how to make a small Integration Test. Query your class
  * directly from the container, only pass in mocks if needed and run your tests
@@ -21,15 +20,15 @@ use OCP\AppFramework\App;
  */
 class AppTest extends \PHPUnit\Framework\TestCase {
 
-    private $container;
+	private $container;
 
-    protected function setUp(): void {
-        $app = new App('maps');
-        $this->container = $app->getContainer();
-    }
+	protected function setUp(): void {
+		$app = new App('maps');
+		$this->container = $app->getContainer();
+	}
 
-    public function testAppInstalled() {
-        $appManager = $this->container->query(\OCP\App\IAppManager::class);
-        $this->assertTrue($appManager->isInstalled('maps'));
-    }
+	public function testAppInstalled() {
+		$appManager = $this->container->query(\OCP\App\IAppManager::class);
+		$this->assertTrue($appManager->isInstalled('maps'));
+	}
 }

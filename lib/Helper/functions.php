@@ -30,7 +30,7 @@ namespace OCA\Maps\Helper;
  * @return string
  */
 function remove_utf8_bom(string $text): string {
-	$bom = pack('H*','EFBBBF');
+	$bom = pack('H*', 'EFBBBF');
 	$text = preg_replace("/^$bom/", '', $text);
 	return $text;
 }

@@ -10,19 +10,17 @@
  * @copyright Piotr Bator 2017
  */
 
- namespace OCA\Maps\DB;
+namespace OCA\Maps\DB;
 
-use OCP\AppFramework\Db\DoesNotExistException;
-use OCP\AppFramework\Db\MultipleObjectsReturnedException;
+use OCP\AppFramework\Db\QBMapper;
 use OCP\DB\QueryBuilder\IQueryBuilder;
 use OCP\IDBConnection;
-use OCP\AppFramework\Db\QBMapper;
 
 class GeophotoMapper extends QBMapper {
 
-    public function __construct(IDBConnection $db) {
-        parent::__construct($db, 'maps_photos');
-    }
+	public function __construct(IDBConnection $db) {
+		parent::__construct($db, 'maps_photos');
+	}
 
 	/**
 	 * @param $id
@@ -31,17 +29,17 @@ class GeophotoMapper extends QBMapper {
 	 * @throws \OCP\AppFramework\Db\MultipleObjectsReturnedException
 	 * @throws \OCP\DB\Exception
 	 */
-    public function find($id) {
+	public function find($id) {
 		$qb = $this->db->getQueryBuilder();
 
-		$qb->select("*")
+		$qb->select('*')
 			->from($this->getTableName())
 			->where(
 				$qb->expr()->eq('id', $qb->createNamedParameter($id, IQueryBuilder::PARAM_STR))
 			);
 
 		return $this->findEntity($qb);
-    }
+	}
 
 	/**
 	 * @param $fileId
@@ -51,10 +49,10 @@ class GeophotoMapper extends QBMapper {
 	 * @throws \OCP\AppFramework\Db\MultipleObjectsReturnedException
 	 * @throws \OCP\DB\Exception
 	 */
-    public function findByFileIdUserId($fileId, $userId) {
+	public function findByFileIdUserId($fileId, $userId) {
 		$qb = $this->db->getQueryBuilder();
 
-		$qb->select("*")
+		$qb->select('*')
 			->from($this->getTableName())
 			->where(
 				$qb->expr()->eq('user_id', $qb->createNamedParameter($userId, IQueryBuilder::PARAM_STR))
@@ -63,7 +61,7 @@ class GeophotoMapper extends QBMapper {
 			);
 
 		return $this->findEntity($qb);
-    }
+	}
 
 	/**
 	 * @param $fileId
@@ -75,7 +73,7 @@ class GeophotoMapper extends QBMapper {
 	public function findByFileId($fileId) {
 		$qb = $this->db->getQueryBuilder();
 
-		$qb->select("*")
+		$qb->select('*')
 			->from($this->getTableName())
 			->where(
 				$qb->expr()->eq('file_id', $qb->createNamedParameter($fileId, IQueryBuilder::PARAM_STR))
@@ -91,10 +89,10 @@ class GeophotoMapper extends QBMapper {
 	 * @return array|\OCP\AppFramework\Db\Entity[]
 	 * @throws \OCP\DB\Exception
 	 */
-    public function findAll($userId, $limit=null, $offset=null) {
+	public function findAll($userId, $limit = null, $offset = null) {
 		$qb = $this->db->getQueryBuilder();
 
-		$qb->select("*")
+		$qb->select('*')
 			->from($this->getTableName())
 			->where(
 				$qb->expr()->eq('user_id', $qb->createNamedParameter($userId, IQueryBuilder::PARAM_STR))
@@ -110,7 +108,7 @@ class GeophotoMapper extends QBMapper {
 			$qb->setMaxResults($limit);
 		}
 		return $this->findEntities($qb);
-    }
+	}
 
 	/**
 	 * @param $userId
@@ -119,10 +117,10 @@ class GeophotoMapper extends QBMapper {
 	 * @return array|\OCP\AppFramework\Db\Entity[]
 	 * @throws \OCP\DB\Exception
 	 */
-    public function findAllNonLocalized($userId, $limit=null, $offset=null) {
+	public function findAllNonLocalized($userId, $limit = null, $offset = null) {
 		$qb = $this->db->getQueryBuilder();
 
-		$qb->select("*")
+		$qb->select('*')
 			->from($this->getTableName())
 			->where(
 				$qb->expr()->eq('user_id', $qb->createNamedParameter($userId, IQueryBuilder::PARAM_STR))
@@ -139,14 +137,14 @@ class GeophotoMapper extends QBMapper {
 			$qb->setMaxResults($limit);
 		}
 		return array_reverse($this->findEntities($qb));
-    }
+	}
 
 	/**
 	 * @param $fileId
 	 * @return int
 	 * @throws \OCP\DB\Exception
 	 */
-    public function deleteByFileId($fileId) {
+	public function deleteByFileId($fileId) {
 		$qb = $this->db->getQueryBuilder();
 
 		$qb->delete($this->getTableName())
@@ -155,7 +153,7 @@ class GeophotoMapper extends QBMapper {
 			);
 
 		return $qb->executeStatement();
-    }
+	}
 
 	/**
 	 * @param $fileId
@@ -163,7 +161,7 @@ class GeophotoMapper extends QBMapper {
 	 * @return int
 	 * @throws \OCP\DB\Exception
 	 */
-    public function deleteByFileIdUserId($fileId, $userId) {
+	public function deleteByFileIdUserId($fileId, $userId) {
 		$qb = $this->db->getQueryBuilder();
 
 		$qb->delete($this->getTableName())
@@ -173,14 +171,14 @@ class GeophotoMapper extends QBMapper {
 				$qb->expr()->eq('file_id', $qb->createNamedParameter($fileId, IQueryBuilder::PARAM_STR))
 			);
 		return $qb->executeStatement();
-    }
+	}
 
 	/**
 	 * @param $userId
 	 * @return int
 	 * @throws \OCP\DB\Exception
 	 */
-    public function deleteAll($userId) {
+	public function deleteAll($userId) {
 		$qb = $this->db->getQueryBuilder();
 
 		$qb->delete($this->getTableName())
@@ -188,7 +186,7 @@ class GeophotoMapper extends QBMapper {
 				$qb->expr()->eq('user_id', $qb->createNamedParameter($userId, IQueryBuilder::PARAM_STR))
 			);
 		return $qb->executeStatement();
-    }
+	}
 
 	/**
 	 * @param $fileId
@@ -197,7 +195,7 @@ class GeophotoMapper extends QBMapper {
 	 * @return int
 	 * @throws \OCP\DB\Exception
 	 */
-    public function updateByFileId($fileId, $lat, $lng) {
+	public function updateByFileId($fileId, $lat, $lng) {
 		$qb = $this->db->getQueryBuilder();
 
 		$qb->update($this->getTableName())
@@ -205,7 +203,7 @@ class GeophotoMapper extends QBMapper {
 			->set('lng', $qb->createNamedParameter($lng))
 			->where($qb->expr()->eq('file_id', $qb->createNamedParameter($fileId)));
 
-        return $qb->executeStatement();
-    }
+		return $qb->executeStatement();
+	}
 
 }

@@ -6,24 +6,20 @@ use OCP\Files\IMimeTypeLoader;
 use OCP\Migration\IOutput;
 use OCP\Migration\IRepairStep;
 
-class UnregisterMimeType implements IRepairStep
-{
-	const CUSTOM_MIMETYPEMAPPING = 'mimetypemapping.json';
+class UnregisterMimeType implements IRepairStep {
+	public const CUSTOM_MIMETYPEMAPPING = 'mimetypemapping.json';
 
 	protected IMimeTypeLoader $mimeTypeLoader;
 
-	public function __construct(IMimeTypeLoader $mimeTypeLoader)
-	{
+	public function __construct(IMimeTypeLoader $mimeTypeLoader) {
 		$this->mimeTypeLoader = $mimeTypeLoader;
 	}
 
-	public function getName()
-	{
+	public function getName() {
 		return 'Register Maps MIME types"';
 	}
 
-	private function unregisterForExistingFiles()
-	{
+	private function unregisterForExistingFiles() {
 		$mimeTypeId = $this->mimeTypeLoader->getId('application/octet-stream');
 		$this->mimeTypeLoader->updateFilecache('maps', $mimeTypeId);
 		$this->mimeTypeLoader->updateFilecache('noindex', $mimeTypeId);
@@ -32,8 +28,7 @@ class UnregisterMimeType implements IRepairStep
 		$this->mimeTypeLoader->updateFilecache('notrack', $mimeTypeId);
 	}
 
-	private function unregisterForNewFiles()
-	{
+	private function unregisterForNewFiles() {
 		$mappingFile = \OC::$configDir . self::CUSTOM_MIMETYPEMAPPING;
 
 		if (file_exists($mappingFile)) {
@@ -51,8 +46,7 @@ class UnregisterMimeType implements IRepairStep
 		}
 	}
 
-	public function run(IOutput $output)
-	{
+	public function run(IOutput $output) {
 		$output->info('Unregistering the mimetype...');
 
 		// Register the mime type for existing files
@@ -64,4 +58,3 @@ class UnregisterMimeType implements IRepairStep
 		$output->info('The mimetype was successfully unregistered.');
 	}
 }
-

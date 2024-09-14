@@ -4,7 +4,7 @@ script($appId, $appId . '-adminSettings');
 style($appId, 'adminSettings');
 $osrmDemoChecked = '';
 if (!isset($_['osrmDEMO']) || $_['osrmDEMO'] === '1') {
-    $osrmDemoChecked = 'checked="checked"';
+	$osrmDemoChecked = 'checked="checked"';
 }
 ?>
 
@@ -16,13 +16,19 @@ if (!isset($_['osrmDEMO']) || $_['osrmDEMO'] === '1') {
     <p><?php p($l->t('Leave URL fields empty to disable OSRM routing provider.')); ?></p><br/>
     <div id="osrm">
         <label for="osrmCarURL"><?php p($l->t('OSRM server URL (car profile)')); ?></label><br/>
-        <input id="osrmCarURL" type="text" value="<?php if (isset($_['osrmCarURL'])) p($_['osrmCarURL']); ?>"/><br/>
+        <input id="osrmCarURL" type="text" value="<?php if (isset($_['osrmCarURL'])) {
+        	p($_['osrmCarURL']);
+        } ?>"/><br/>
 
         <label for="osrmBikeURL"><?php p($l->t('OSRM server URL (bicycle profile)')); ?></label><br/>
-        <input id="osrmBikeURL" type="text" value="<?php if (isset($_['osrmBikeURL'])) p($_['osrmBikeURL']); ?>"/><br/>
+        <input id="osrmBikeURL" type="text" value="<?php if (isset($_['osrmBikeURL'])) {
+        	p($_['osrmBikeURL']);
+        } ?>"/><br/>
 
         <label for="osrmFootURL"><?php p($l->t('OSRM server URL (foot profile)')); ?></label><br/>
-        <input id="osrmFootURL" type="text" value="<?php if (isset($_['osrmFootURL'])) p($_['osrmFootURL']); ?>"/><br/>
+        <input id="osrmFootURL" type="text" value="<?php if (isset($_['osrmFootURL'])) {
+        	p($_['osrmFootURL']);
+        } ?>"/><br/>
 
         <br/>
         <input id="osrmDEMO" type="checkbox" class="checkbox" <?php p($osrmDemoChecked); ?>/>
@@ -34,9 +40,13 @@ if (!isset($_['osrmDEMO']) || $_['osrmDEMO'] === '1') {
 
     <div id="graphhopper">
         <label for="graphhopperURL"><?php p($l->t('GraphHopper server URL (will use main graphhopper server if empty)')); ?></label><br/>
-        <input id="graphhopperURL" type="text" value="<?php if (isset($_['graphhopperURL'])) p($_['graphhopperURL']); ?>"/><br/>
+        <input id="graphhopperURL" type="text" value="<?php if (isset($_['graphhopperURL'])) {
+        	p($_['graphhopperURL']);
+        } ?>"/><br/>
         <label for="graphhopperAPIKEY"><?php p($l->t('GraphHopper API key (mandatory if main server used)')); ?></label><br/>
-        <input id="graphhopperAPIKEY" type="text" value="<?php if (isset($_['graphhopperAPIKEY'])) p($_['graphhopperAPIKEY']); ?>"/>
+        <input id="graphhopperAPIKEY" type="text" value="<?php if (isset($_['graphhopperAPIKEY'])) {
+        	p($_['graphhopperAPIKEY']);
+        } ?>"/>
     </div><br/>
 
     <h3><a href="https://www.mapbox.com/" title="<?php p($l->t('Mapbox Website')) ?>" target="_blank"><?php p($l->t('Mapbox settings')); ?></a></h3>
@@ -44,7 +54,9 @@ if (!isset($_['osrmDEMO']) || $_['osrmDEMO'] === '1') {
     <p><?php p($l->t('Leave empty to disable.')); ?></p><br/>
     <div id="mapbox">
         <label for="mapboxAPIKEY"><?php p($l->t('Mapbox API key')); ?></label><br/>
-        <input id="mapboxAPIKEY" type="text" value="<?php if (isset($_['mapboxAPIKEY'])) p($_['mapboxAPIKEY']); ?>"/>
+        <input id="mapboxAPIKEY" type="text" value="<?php if (isset($_['mapboxAPIKEY'])) {
+        	p($_['mapboxAPIKEY']);
+        } ?>"/>
     </div><br/>
 
 	<h3><a href="https://maplibre.org/" title="<?php p($l->t('MapLibre Website')) ?>" target="_blank"><?php p($l->t('MapLibre settings')); ?></a></h3>
@@ -52,8 +64,12 @@ if (!isset($_['osrmDEMO']) || $_['osrmDEMO'] === '1') {
 	<p><?php p($l->t('Leave empty to disable.')); ?></p><br/>
 	<div id="maplibre_street">
 		<label for="maplibreStreetStyleURL"><?php p($l->t('MapLibre Street style URL')); ?></label><br/>
-		<input id="maplibreStreetStyleURL" type="text" value="<?php if (isset($_['maplibreStreetStyleURL'])) p($_['maplibreStreetStyleURL']); ?>"/><br/>
+		<input id="maplibreStreetStyleURL" type="text" value="<?php if (isset($_['maplibreStreetStyleURL'])) {
+			p($_['maplibreStreetStyleURL']);
+		} ?>"/><br/>
 		<label for="maplibreStreetStyleAuth"><?php p($l->t('Basic Authorization if required. Format is "user:password"')); ?></label><br/>
-		<input id="maplibreStreetStyleAuth" type="text" value="<?php if (isset($_['maplibreStreetStyleAuth'])) p($_['maplibreStreetStyleAuth']); ?>"/>
+		<input id="maplibreStreetStyleAuth" type="text" value="<?php if (isset($_['maplibreStreetStyleAuth'])) {
+			p($_['maplibreStreetStyleAuth']);
+		} ?>"/>
 	</div><br/>
 </div>

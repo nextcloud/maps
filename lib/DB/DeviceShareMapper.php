@@ -36,36 +36,35 @@ use OCP\Files\NotFoundException;
 use OCP\IDBConnection;
 use OCP\Security\ISecureRandom;
 
-
 class DeviceShareMapper extends QBMapper {
-    /* @var ISecureRandom */
-    private $secureRandom;
+	/* @var ISecureRandom */
+	private $secureRandom;
 	private $root;
 
-    public function __construct(IDBConnection $db, ISecureRandom $secureRandom, IRootFolder $root) {
-        parent::__construct($db, 'maps_device_shares');
+	public function __construct(IDBConnection $db, ISecureRandom $secureRandom, IRootFolder $root) {
+		parent::__construct($db, 'maps_device_shares');
 
-        $this->secureRandom = $secureRandom;
+		$this->secureRandom = $secureRandom;
 		$this->root = $root;
-    }
+	}
 
-    /**
-     * @param string $token
-     * @return Entity|null
-     * @throws DoesNotExistException
-     * @throws MultipleObjectsReturnedException
-     */
-    public function findByToken($token) {
-        $qb = $this->db->getQueryBuilder();
+	/**
+	 * @param string $token
+	 * @return Entity|null
+	 * @throws DoesNotExistException
+	 * @throws MultipleObjectsReturnedException
+	 */
+	public function findByToken($token) {
+		$qb = $this->db->getQueryBuilder();
 
-        $qb->select("*")
-            ->from($this->getTableName())
-            ->where(
-                $qb->expr()->eq('token', $qb->createNamedParameter($token, IQueryBuilder::PARAM_STR))
-            );
+		$qb->select('*')
+			->from($this->getTableName())
+			->where(
+				$qb->expr()->eq('token', $qb->createNamedParameter($token, IQueryBuilder::PARAM_STR))
+			);
 
-        return $this->findEntity($qb);
-    }
+		return $this->findEntity($qb);
+	}
 
 	/**
 	 * @param string[] $token
@@ -75,7 +74,7 @@ class DeviceShareMapper extends QBMapper {
 	public function findByTokens($tokens) {
 		$qb = $this->db->getQueryBuilder();
 
-		$qb->select("*")
+		$qb->select('*')
 			->from($this->getTableName())
 			->where(
 				$qb->expr()->in('token', $qb->createNamedParameter($tokens, IQueryBuilder::PARAM_STR))
@@ -84,44 +83,44 @@ class DeviceShareMapper extends QBMapper {
 		return $this->findEntities($qb);
 	}
 
-    /**
-     * @param $deviceId
+	/**
+	 * @param $deviceId
 	 * @param $timestampFrom
 	 * @param $timestampTo
-     * @return Entity
-     */
-    public function create($deviceId, $timestampFrom, $timestampTo): Entity {
-        $token = $this->secureRandom->generate(
-            Constants::TOKEN_LENGTH,
-            ISecureRandom::CHAR_HUMAN_READABLE
-        );
+	 * @return Entity
+	 */
+	public function create($deviceId, $timestampFrom, $timestampTo): Entity {
+		$token = $this->secureRandom->generate(
+			Constants::TOKEN_LENGTH,
+			ISecureRandom::CHAR_HUMAN_READABLE
+		);
 
-        $newShare = new DeviceShare();
-        $newShare->setToken($token);
-        $newShare->setDeviceId($deviceId);
-        $newShare->setTimestampFrom($timestampFrom);
+		$newShare = new DeviceShare();
+		$newShare->setToken($token);
+		$newShare->setDeviceId($deviceId);
+		$newShare->setTimestampFrom($timestampFrom);
 		$newShare->setTimestampTo($timestampTo);
 
-        return $this->insert($newShare);
-    }
+		return $this->insert($newShare);
+	}
 
 
-    /**
-     * @param $deviceId
-     * @return Entity[]
-     * @throws DoesNotExistException
-     */
-    public function findByDeviceId($deviceId) {
-        $qb = $this->db->getQueryBuilder();
+	/**
+	 * @param $deviceId
+	 * @return Entity[]
+	 * @throws DoesNotExistException
+	 */
+	public function findByDeviceId($deviceId) {
+		$qb = $this->db->getQueryBuilder();
 
-        $qb->select('*')
-            ->from($this->getTableName())
-            ->where(
-                $qb->expr()->eq('device_id', $qb->createNamedParameter($deviceId, IQueryBuilder::PARAM_INT))
-            );
+		$qb->select('*')
+			->from($this->getTableName())
+			->where(
+				$qb->expr()->eq('device_id', $qb->createNamedParameter($deviceId, IQueryBuilder::PARAM_INT))
+			);
 
-        return $this->findEntities($qb);
-    }
+		return $this->findEntities($qb);
+	}
 
 	/**
 	 * @param $deviceIds
@@ -189,10 +188,10 @@ class DeviceShareMapper extends QBMapper {
 	 * @throws Exception
 	 * @throws MultipleObjectsReturnedException
 	 */
-    public function findById($id) {
+	public function findById($id) {
 		$qb = $this->db->getQueryBuilder();
 
-		$qb->select("*")
+		$qb->select('*')
 			->from($this->getTableName())
 			->where(
 				$qb->expr()->eq('id', $qb->createNamedParameter($id))
@@ -215,19 +214,19 @@ class DeviceShareMapper extends QBMapper {
 		return true;
 	}
 
-    /**
-     * @param $deviceId
-     * @return bool
-     */
-    public function removeAllByDeviceId($deviceId) {
-        try {
-            $entities = $this->findByDeviceId($deviceId);
+	/**
+	 * @param $deviceId
+	 * @return bool
+	 */
+	public function removeAllByDeviceId($deviceId) {
+		try {
+			$entities = $this->findByDeviceId($deviceId);
 			foreach ($entities as $entity) {
 				$this->delete($entity);
 			}
-        } catch (DoesNotExistException) {
-            return false;
-        }
-        return true;
-    }
+		} catch (DoesNotExistException) {
+			return false;
+		}
+		return true;
+	}
 }

@@ -10,9 +10,10 @@ $config = new Config();
 $config
 	->getFinder()
 	->ignoreVCSIgnored(true)
-	->notPath('build')
+	->notPath('tests/stubs')
 	->notPath('l10n')
 	->notPath('src')
 	->notPath('vendor')
+	->notPath('vendor-bin')
 	->in(__DIR__);
 return $config;

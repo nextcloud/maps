@@ -96,17 +96,14 @@ class ExifGeoData extends \stdClass implements \JsonSerializable {
 	protected $exif_data = null;
 
 	/**
-	 * @param string $path
-	 *
-	 * @return array|null
 	 * @throws PelInvalidArgumentException
 	 */
 	protected static function get_exif_data_array(string $path) : array {
 		if (function_exists('exif_read_data')) {
 			$data = @exif_read_data($path, null, true);
-			if ($data && isset($data['EXIF']) && isset($data['EXIF'][self::LATITUDE]) && isset($data['EXIF'][self::LONGITUDE])) {
+			if ($data && isset($data['EXIF']) && is_array($data['EXIF']) && isset($data['EXIF'][self::LATITUDE]) && isset($data['EXIF'][self::LONGITUDE])) {
 				return $data['EXIF'];
-			} elseif ($data && isset($data['GPS']) && isset($data['GPS'][self::LATITUDE]) && isset($data['GPS'][self::LONGITUDE])) {
+			} elseif ($data && isset($data['GPS']) && is_array($data['GPS']) && isset($data['GPS'][self::LATITUDE]) && isset($data['GPS'][self::LONGITUDE])) {
 				$d = $data['GPS'];
 				if (!isset($d[self::TIMESTAMP]) && isset($data['EXIF'][self::TIMESTAMP])) {
 					$d[self::TIMESTAMP] = $data['EXIF'][self::TIMESTAMP];

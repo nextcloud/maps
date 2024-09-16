@@ -47,20 +47,6 @@ class UtilsController extends Controller {
 	}
 
 	/**
-	 * Delete user options
-	 *
-	 * @NoAdminRequired
-	 * @return DataResponse
-	 */
-	public function deleteOptionsValues(): DataResponse {
-		$keys = $this->config->getUserKeys($this->userId, 'maps');
-		foreach ($keys as $key) {
-			$this->config->deleteUserValue($this->userId, 'maps', $key);
-		}
-		return new DataResponse(['done' => 1]);
-	}
-
-	/**
 	 * Save options values to the DB for current user
 	 *
 	 * @NoAdminRequired

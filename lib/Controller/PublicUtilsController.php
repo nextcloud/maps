@@ -102,20 +102,6 @@ class PublicUtilsController extends PublicPageController {
 	}
 
 	/**
-	 * Delete user options
-	 *
-	 * @PublicPage
-	 * @return DataResponse
-	 */
-	public function deleteOptionsValues(): DataResponse {
-		$keys = $this->config->getUserKeys(null, 'maps');
-		foreach ($keys as $key) {
-			$this->config->deleteUserValue(null, 'maps', $key);
-		}
-		return new DataResponse(['done' => 1]);
-	}
-
-	/**
 	 * Save options values to the DB for current user
 	 *
 	 * @PublicPage

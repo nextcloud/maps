@@ -13,29 +13,27 @@
 namespace OCA\Maps\Controller;
 
 use OC\Files\Node\Node;
+use OCA\DAV\CardDAV\CardDavBackend;
+use OCA\Maps\Service\AddressService;
+use OCP\AppFramework\Http\DataDisplayResponse;
+use OCP\AppFramework\Http\DataResponse;
+use OCP\Contacts\IManager;
+use OCP\DB\QueryBuilder\IQueryBuilder;
 use OCP\EventDispatcher\IEventDispatcher;
 use OCP\Files\IRootFolder;
 use OCP\Files\NotFoundException;
 use OCP\Files\NotPermittedException;
+use OCP\IAvatarManager;
 use OCP\IConfig;
+use OCP\IDBConnection;
 use OCP\IInitialStateService;
 use OCP\IRequest;
-use OCP\IAvatarManager;
-use OCP\AppFramework\Http\DataDisplayResponse;
-use OCP\AppFramework\Http\DataResponse;
-use OCP\IDBConnection;
-use OCP\AppFramework\Controller;
-use OCP\Contacts\IManager;
-use OCA\Maps\Service\AddressService;
-use \OCP\DB\QueryBuilder\IQueryBuilder;
-use \OCA\DAV\CardDAV\CardDavBackend;
 use OCP\ISession;
 use OCP\IURLGenerator;
 use OCP\IUserManager;
 use OCP\Share\Exceptions\ShareNotFound;
 use OCP\Share\IManager as ShareManager;
-use \Sabre\VObject\Property\Text;
-use \Sabre\VObject\Reader;
+use Sabre\VObject\Reader;
 
 class PublicContactsController extends PublicPageController {
 	protected IManager $contactsManager;
@@ -63,20 +61,20 @@ class PublicContactsController extends PublicPageController {
 	 * @param IRootFolder $root
 	 */
 	public function __construct($appName,
-								IRequest $request,
-								IEventDispatcher $eventDispatcher,
-								IConfig $config,
-								IInitialStateService $initialStateService,
-								IURLGenerator $urlGenerator,
-								ShareManager $shareManager,
-								IUserManager $userManager,
-								ISession $session,
-								IManager $contactsManager,
-								IDBConnection $dbconnection,
-								AddressService $addressService,
-								CardDavBackend $cdBackend,
-								IAvatarManager $avatarManager,
-								IRootFolder $root){
+		IRequest $request,
+		IEventDispatcher $eventDispatcher,
+		IConfig $config,
+		IInitialStateService $initialStateService,
+		IURLGenerator $urlGenerator,
+		ShareManager $shareManager,
+		IUserManager $userManager,
+		ISession $session,
+		IManager $contactsManager,
+		IDBConnection $dbconnection,
+		AddressService $addressService,
+		CardDavBackend $cdBackend,
+		IAvatarManager $avatarManager,
+		IRootFolder $root) {
 		parent::__construct($appName, $request, $eventDispatcher, $config, $initialStateService, $urlGenerator, $shareManager, $userManager, $session);
 		$this->avatarManager = $avatarManager;
 		$this->contactsManager = $contactsManager;
@@ -151,13 +149,13 @@ class PublicContactsController extends PublicPageController {
 		$share = $this->getShare();
 		$permissions = $share->getPermissions();
 		$folder = $this->getShareNode();
-		$isReadable = (bool) ($permissions & (1 << 0));
+		$isReadable = (bool)($permissions & (1 << 0));
 		if ($isReadable) {
 			//Fixme add contacts for my-maps
 			$result = [];
 			$files = $folder->search('.vcf');
 			foreach ($files as $file) {
-//				$cards = explode("END:VCARD\r\n", $file->getContent());
+				//				$cards = explode("END:VCARD\r\n", $file->getContent());
 				$cards = [$file->getContent()];
 				foreach ($cards as $card) {
 					$vcard = Reader::read($card."END:VCARD\r\n");
@@ -165,7 +163,7 @@ class PublicContactsController extends PublicPageController {
 						$geo = $vcard->GEO;
 						if (is_string($geo->getValue()) && strlen($geo->getValue()) > 1) {
 							$result[] = $this->vCardToArray($permissions, $file, $vcard, $geo->getValue());
-						} elseif (is_countable($geo) && count($geo)>0 && is_iterable($geo)) {
+						} elseif (is_countable($geo) && count($geo) > 0 && is_iterable($geo)) {
 							foreach ($geo as $g) {
 								if (strlen($g->getValue()) > 1) {
 									$result[] = $this->vCardToArray($permissions, $file, $vcard, $g->getValue());
@@ -206,7 +204,7 @@ class PublicContactsController extends PublicPageController {
 	 * @throws NotFoundException
 	 * @throws \OCP\Files\InvalidPathException
 	 */
-	private function vCardToArray(int $sharePermissions, Node $file, \Sabre\VObject\Document $vcard, string $geo, ?string $adrtype=null, ?string $adr=null, ?int $fileId = null): array {
+	private function vCardToArray(int $sharePermissions, Node $file, \Sabre\VObject\Document $vcard, string $geo, ?string $adrtype = null, ?string $adr = null, ?int $fileId = null): array {
 		$FNArray = $vcard->FN ? $vcard->FN->getJsonValue() : [];
 		$fn = array_shift($FNArray);
 		$NArray = $vcard->N ? $vcard->N->getJsonValue() : [];
@@ -253,12 +251,10 @@ class PublicContactsController extends PublicPageController {
 			$spl = explode($n, ';');
 			if (count($spl) >= 4) {
 				return $spl[3] . ' ' . $spl[1] . ' ' . $spl[0];
-			}
-			else {
+			} else {
 				return null;
 			}
-		}
-		else {
+		} else {
 			return null;
 		}
 	}

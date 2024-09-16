@@ -37,15 +37,15 @@ use OCP\AppFramework\Db\Entity;
  * @method string setTimestampTo(int $timestampTo)
  */
 class DeviceShare extends Entity {
-    public $token;
-    public $deviceId;
+	public $token;
+	public $deviceId;
 	public $timestampFrom;
 	public $timestampTo;
 
-    public function __construct() {
-        $this->addType('token', 'string');
-        $this->addType('deviceId', 'int');
+	public function __construct() {
+		$this->addType('token', 'string');
+		$this->addType('deviceId', 'int');
 		$this->addType('timestampFrom', 'int');
 		$this->addType('timestampTo', 'int');
-    }
+	}
 }

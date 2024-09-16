@@ -11,36 +11,34 @@
 
 namespace OCA\Maps\AppInfo;
 
-
+use OCA\DAV\Events\CardCreatedEvent;
+use OCA\DAV\Events\CardDeletedEvent;
+use OCA\DAV\Events\CardUpdatedEvent;
+use OCA\Files\Event\LoadAdditionalScriptsEvent;
 use OCA\Files\Event\LoadSidebar;
-use OCA\Maps\Listener\LoadSidebarListener;
-use \OCP\AppFramework\App;
-use OCP\AppFramework\Bootstrap\IBootContext;
-use OCP\AppFramework\Bootstrap\IBootstrap;
-use OCP\AppFramework\Http\EmptyFeaturePolicy;
-use OCP\EventDispatcher\IEventDispatcher;
-use \OCP\IServerContainer;
 use OCA\Maps\Hooks\FileHooks;
+use OCA\Maps\Listener\CardCreatedListener;
+use OCA\Maps\Listener\CardDeletedListener;
+use OCA\Maps\Listener\CardUpdatedListener;
+use OCA\Maps\Listener\LoadAdditionalScriptsListener;
+use OCA\Maps\Listener\LoadSidebarListener;
 use OCA\Maps\Service\PhotofilesService;
 use OCA\Maps\Service\TracksService;
+use OCP\AppFramework\App;
+use OCP\AppFramework\Bootstrap\IBootContext;
+use OCP\AppFramework\Bootstrap\IBootstrap;
 use OCP\AppFramework\Bootstrap\IRegistrationContext;
-use OCA\Files\Event\LoadAdditionalScriptsEvent;
-use OCA\DAV\Events\CardCreatedEvent;
-use OCA\DAV\Events\CardUpdatedEvent;
-use OCA\DAV\Events\CardDeletedEvent;
-use OCA\Maps\Listener\LoadAdditionalScriptsListener;
-use OCA\Maps\Listener\CardCreatedListener;
-use OCA\Maps\Listener\CardUpdatedListener;
-use OCA\Maps\Listener\CardDeletedListener;
+use OCP\AppFramework\Http\EmptyFeaturePolicy;
+use OCP\EventDispatcher\IEventDispatcher;
+use OCP\IServerContainer;
 use OCP\Security\FeaturePolicy\AddFeaturePolicyEvent;
-
 
 class Application extends App implements IBootstrap {
 	public const APP_ID = 'maps';
 
-    public function __construct (array $urlParams=array()) {
-        parent::__construct('maps', $urlParams);
-    }
+	public function __construct(array $urlParams = []) {
+		parent::__construct('maps', $urlParams);
+	}
 
 	public function register(IRegistrationContext $context): void {
 		// ... registration logic goes here ...
@@ -73,7 +71,7 @@ class Application extends App implements IBootstrap {
 
 	public function boot(IBootContext $context): void {
 		// ... boot logic goes here ...
-		$context->getAppContainer()->registerService('FileHooks', function($c) {
+		$context->getAppContainer()->registerService('FileHooks', function ($c) {
 			return new FileHooks(
 				$c->query(IServerContainer::class)->getRootFolder(),
 				\OC::$server->query(PhotofilesService::class),

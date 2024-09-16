@@ -12,39 +12,39 @@
 
 namespace OCA\Maps\BackgroundJob;
 
-use \OCA\Maps\Service\AddressService;
-use \OCP\BackgroundJob\QueuedJob;
-use \OCP\BackgroundJob\IJobList;
-use \OCP\AppFramework\Utility\ITimeFactory;
+use OCA\Maps\Service\AddressService;
+use OCP\AppFramework\Utility\ITimeFactory;
+use OCP\BackgroundJob\IJobList;
+use OCP\BackgroundJob\QueuedJob;
 
 class LookupMissingGeoJob extends QueuedJob {
 
-    /** @var AddressService */
-    private $addressService;
+	/** @var AddressService */
+	private $addressService;
 
-    /** @var AddressService */
-    private $jobList;
+	/** @var AddressService */
+	private $jobList;
 
-    /**
-     * LookupMissingGeoJob constructor.
-     *
-     * A QueuedJob to lookup missing geo information of addresses
-     *
-     * @param AddressService $service
-     * @param IJobList $jobList
-     */
-    public function __construct(ITimeFactory $timeFactory, AddressService $service, IJobList $jobList) {
-        parent::__construct($timeFactory);
-        $this->addressService = $service;
-        $this->jobList = $jobList;
-    }
+	/**
+	 * LookupMissingGeoJob constructor.
+	 *
+	 * A QueuedJob to lookup missing geo information of addresses
+	 *
+	 * @param AddressService $service
+	 * @param IJobList $jobList
+	 */
+	public function __construct(ITimeFactory $timeFactory, AddressService $service, IJobList $jobList) {
+		parent::__construct($timeFactory);
+		$this->addressService = $service;
+		$this->jobList = $jobList;
+	}
 
-    public function run($arguments) {
-        \OC::$server->getLogger()->debug('Maps address lookup cronjob executed');
-        // lookup at most 200 addresses
-        if (!$this->addressService->lookupMissingGeo(200)){
-            // if not all addresses where looked up successfully add a new job for next time
-            $this->jobList->add(LookupMissingGeoJob::class, []);
-        }
-    }
+	public function run($arguments) {
+		\OC::$server->getLogger()->debug('Maps address lookup cronjob executed');
+		// lookup at most 200 addresses
+		if (!$this->addressService->lookupMissingGeo(200)) {
+			// if not all addresses where looked up successfully add a new job for next time
+			$this->jobList->add(LookupMissingGeoJob::class, []);
+		}
+	}
 }

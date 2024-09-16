@@ -55,9 +55,6 @@ class PublicFavoritesApiController extends PublicShareController {
 		$this->favoritesService = $favoritesService;
 	}
 
-	/**
-	 * @return string
-	 */
 	public function getPasswordHash(): string {
 		return '';
 	}

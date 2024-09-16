@@ -12,7 +12,6 @@
 
 namespace OCA\Maps\Controller;
 
-use OC\Files\Node\Node;
 use OCA\DAV\CardDAV\CardDavBackend;
 use OCA\Maps\Service\AddressService;
 use OCP\AppFramework\Controller;
@@ -21,6 +20,7 @@ use OCP\AppFramework\Http\DataResponse;
 use OCP\Contacts\IManager;
 use OCP\DB\QueryBuilder\IQueryBuilder;
 use OCP\Files\IRootFolder;
+use OCP\Files\Node;
 use OCP\Files\NotFoundException;
 use OCP\IAvatarManager;
 use OCP\IDBConnection;
@@ -83,7 +83,7 @@ class ContactsController extends Controller {
 	/**
 	 * Converts a geo string as a float array
 	 * @param string formatted as "lat;lon"
-	 * @return float array containing [lat;lon]
+	 * @return float[] array containing [lat;lon]
 	 */
 	private function geoAsFloatArray($geo) {
 		$res = array_map(function ($value) {return floatval($value);}, explode(';', $geo));
@@ -116,7 +116,7 @@ class ContactsController extends Controller {
 	 * get distance between two geo points
 	 * @param GPS coordinates of first point
 	 * @param GPS coordinates of second point
-	 * @return Distance in meters between these two points
+	 * @return float Distance in meters between these two points
 	 */
 	private function getDistance($coordsA, $coordsB) {
 		if (empty($coordsA) || empty($coordsB)) {

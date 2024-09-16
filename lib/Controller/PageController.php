@@ -21,23 +21,16 @@ use OCP\IInitialStateService;
 use OCP\IRequest;
 
 class PageController extends Controller {
-	private $userId;
-	private $config;
 
-	/** @var IEventDispatcher */
-	private $eventDispatcher;
-
-	public function __construct($AppName,
+	public function __construct(
+		string $appName,
 		IRequest $request,
-		IEventDispatcher $eventDispatcher,
-		IConfig $config,
-		IInitialStateService $initialStateService,
-		$UserId) {
-		parent::__construct($AppName, $request);
-		$this->userId = $UserId;
-		$this->eventDispatcher = $eventDispatcher;
-		$this->config = $config;
-		$this->initialStateService = $initialStateService;
+		private IEventDispatcher $eventDispatcher,
+		private IConfig $config,
+		private IInitialStateService $initialStateService,
+		private string $userId,
+	) {
+		parent::__construct($appName, $request);
 	}
 
 	/**

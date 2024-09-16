@@ -17,10 +17,9 @@ use OCP\BackgroundJob\IJobList;
 use OCP\BackgroundJob\QueuedJob;
 use OCP\IUser;
 use OCP\IUserManager;
+use Psr\Log\LoggerInterface;
 
 class LaunchUsersInstallScanJob extends QueuedJob {
-
-	private $jobList;
 
 	/**
 	 * LaunchUsersInstallScanJob constructor.
@@ -29,14 +28,16 @@ class LaunchUsersInstallScanJob extends QueuedJob {
 	 *
 	 * @param IJobList $jobList
 	 */
-	public function __construct(ITimeFactory $timeFactory, IJobList $jobList, IUserManager $userManager) {
+	public function __construct(
+		ITimeFactory $timeFactory,
+		private IJobList $jobList,
+		private IUserManager $userManager,
+	) {
 		parent::__construct($timeFactory);
-		$this->jobList = $jobList;
-		$this->userManager = $userManager;
 	}
 
-	public function run($arguments) {
-		\OC::$server->getLogger()->debug('Launch users install scan jobs cronjob executed');
+	public function run($argument) {
+		\OCP\Server::get(LoggerInterface::class)->debug('Launch users install scan jobs cronjob executed');
 		$this->userManager->callForSeenUsers(function (IUser $user) {
 			$this->jobList->add(UserInstallScanJob::class, ['userId' => $user->getUID()]);
 		});

@@ -36,6 +36,7 @@ use OCP\IConfig;
 use OCP\ILogger;
 use OCP\IRequest;
 use OCP\ISession;
+use OCP\IUserManager;
 use OCP\Util;
 
 class PublicFavoritePageController extends PublicShareController {
@@ -85,7 +86,7 @@ class PublicFavoritePageController extends PublicShareController {
 
 		$response = new PublicTemplateResponse('maps', 'public/favorites_index', []);
 
-		$ownerName = OC::$server->getUserManager()->get($share->getOwner())->getDisplayName();
+		$ownerName = \OCP\Server::get(IUserManager::class)->get($share->getOwner())->getDisplayName();
 
 		$response->setHeaderTitle($share->getCategory());
 		$response->setHeaderDetails('shared by ' . $ownerName);
@@ -101,7 +102,6 @@ class PublicFavoritePageController extends PublicShareController {
 	 * To ensure access is blocked when the password to a share is changed we store
 	 * a hash of the password for this token.
 	 *
-	 * @return string
 	 * @since 14.0.0
 	 */
 	protected function getPasswordHash(): string {

@@ -34,6 +34,7 @@ use OCP\IURLGenerator;
 use OCP\IUserManager;
 use OCP\Share\Exceptions\ShareNotFound;
 use OCP\Share\IManager;
+use Psr\Log\LoggerInterface;
 
 class PublicFavoritesController extends PublicPageController {
 
@@ -48,27 +49,28 @@ class PublicFavoritesController extends PublicPageController {
 	/* @var FavoriteShareMapper */
 	private $favoriteShareMapper;
 
-	public function __construct($appName,
+	public function __construct(
+		string $appName,
 		IRequest $request,
+		ISession $session,
+		IURLGenerator $urlGenerator,
 		IServerContainer $serverContainer,
 		IConfig $config,
-		IURLGenerator $urlGenerator,
 		IInitialStateService $initialStateService,
 		IManager $shareManager,
 		IAppManager $appManager,
 		IUserManager $userManager,
 		IGroupManager $groupManager,
 		IL10N $l,
-		ILogger $logger,
+		private LoggerInterface $logger,
 		FavoritesService $favoritesService,
 		IDateTimeZone $dateTimeZone,
-		ISession $session,
 		FavoriteShareMapper $favoriteShareMapper,
-		IEventDispatcher $eventDispatcher) {
-		parent::__construct($appName, $request, $eventDispatcher, $config, $initialStateService, $urlGenerator, $shareManager, $userManager, $session);
+		IEventDispatcher $eventDispatcher,
+	) {
+		parent::__construct($appName, $request, $session, $urlGenerator, $eventDispatcher, $config, $initialStateService, $shareManager, $userManager);
 		$this->favoritesService = $favoritesService;
 		$this->dateTimeZone = $dateTimeZone;
-		$this->logger = $logger;
 		$this->appName = $appName;
 		$this->appVersion = $config->getAppValue('maps', 'installed_version');
 		$this->userManager = $userManager;
@@ -86,7 +88,6 @@ class PublicFavoritesController extends PublicPageController {
 	/**
 	 * Validate the permissions of the share
 	 *
-	 * @param Share\IShare $share
 	 * @return bool
 	 */
 	private function validateShare(\OCP\Share\IShare $share) {

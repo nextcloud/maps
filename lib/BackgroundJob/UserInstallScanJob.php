@@ -20,6 +20,7 @@ use OCP\BackgroundJob\QueuedJob;
 
 use OCP\IConfig;
 use OCP\IUserManager;
+use Psr\Log\LoggerInterface;
 
 class UserInstallScanJob extends QueuedJob {
 
@@ -49,9 +50,9 @@ class UserInstallScanJob extends QueuedJob {
 		$this->tracksService = $tracksService;
 	}
 
-	public function run($arguments) {
-		$userId = $arguments['userId'];
-		\OC::$server->getLogger()->debug('Launch user install scan job for '.$userId.' cronjob executed');
+	public function run($argument) {
+		$userId = $argument['userId'];
+		\OCP\Server::get(LoggerInterface::class)->debug('Launch user install scan job for '.$userId.' cronjob executed');
 		// scan photos and tracks for given user
 		$this->rescanUserPhotos($userId);
 		$this->rescanUserTracks($userId);

@@ -16,32 +16,36 @@
 namespace OCA\Maps\Service;
 
 use OC\Archive\ZIP;
-use OC\Security\SecureRandom;
+use OCP\Security\ISecureRandom;
 use OCP\DB\QueryBuilder\IQueryBuilder;
 use OCP\IDBConnection;
 use OCP\IL10N;
-use OCP\ILogger;
+use Psr\Log\LoggerInterface;
 
 class FavoritesService {
 
 	private $l10n;
-	private $logger;
 	private $qb;
 	private $dbconnection;
 	private $secureRandom;
 
 	private $currentFavorite;
 	private $currentFavoritesList;
+	private ?string $currentXmlTag;
 	private $insideWpt;
 	private $nbImported;
 	private $importUserId;
 	private $kmlInsidePlacemark;
 	private $kmlCurrentCategory;
+	private bool $linesFound = false;
 
-	public function __construct(ILogger $logger, IL10N $l10n, SecureRandom $secureRandom,
-		IDBConnection $dbconnection) {
+	public function __construct(
+		private LoggerInterface $logger,
+		IL10N $l10n,
+		ISecureRandom $secureRandom,
+		IDBConnection $dbconnection,
+	) {
 		$this->l10n = $l10n;
-		$this->logger = $logger;
 		$this->secureRandom = $secureRandom;
 		$this->dbconnection = $dbconnection;
 		$this->qb = $dbconnection->getQueryBuilder();

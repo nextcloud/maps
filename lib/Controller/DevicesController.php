@@ -11,19 +11,15 @@
 
 namespace OCA\Maps\Controller;
 
-use OCA\Files_External\NotFoundException;
 use OCA\Maps\DB\DeviceShareMapper;
 use OCA\Maps\Service\DevicesService;
-
 use OCP\App\IAppManager;
 use OCP\AppFramework\Controller;
 use OCP\AppFramework\Db\DoesNotExistException;
 use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\DataResponse;
-
 use OCP\Files\IRootFolder;
-
-
+use OCP\Files\NotFoundException;
 use OCP\Files\NotPermittedException;
 use OCP\IConfig;
 use OCP\IDateTimeZone;
@@ -229,11 +225,10 @@ class DevicesController extends Controller {
 
 	/**
 	 * @NoAdminRequired
-	 * @param null $deviceIdList
-	 * @param $begin
-	 * @param $end
+	 * @param ?array $deviceIdList
+	 * @param int $begin
+	 * @param int $end
 	 * @param bool $all=false
-	 * @return DataResponse
 	 * @throws \OCP\Files\NotFoundException
 	 * @throws \OCP\Files\NotPermittedException
 	 */

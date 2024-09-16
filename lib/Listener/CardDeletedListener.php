@@ -29,6 +29,7 @@ use OCP\EventDispatcher\Event;
 use OCP\EventDispatcher\IEventListener;
 use OCP\ILogger;
 
+/** @template-implements IEventListener<CardDeletedEvent> */
 class CardDeletedListener implements IEventListener {
 
 	/** @var AddressService */

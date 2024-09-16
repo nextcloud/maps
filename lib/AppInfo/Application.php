@@ -74,8 +74,8 @@ class Application extends App implements IBootstrap {
 		$context->getAppContainer()->registerService('FileHooks', function ($c) {
 			return new FileHooks(
 				$c->query(IServerContainer::class)->getRootFolder(),
-				\OC::$server->query(PhotofilesService::class),
-				\OC::$server->query(TracksService::class),
+				\OCP\Server::get(PhotofilesService::class),
+				\OCP\Server::get(TracksService::class),
 				$c->query(IServerContainer::class)->getLogger(),
 				$c->query('AppName'),
 				$c->query(IServerContainer::class)->getLockingProvider()

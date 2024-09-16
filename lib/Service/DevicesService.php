@@ -12,19 +12,17 @@
 
 namespace OCA\Maps\Service;
 
+use OC\Archive\ZIP;
 use OCP\DB\Exception;
 use OCP\DB\QueryBuilder\IQueryBuilder;
 use OCP\Files\NotFoundException;
 use OCP\IDBConnection;
 use OCP\IL10N;
-use OCP\ILogger;
+use Psr\Log\LoggerInterface;
 
 class DevicesService {
 
-	private $l10n;
-	private $logger;
 	private $qb;
-	private $dbconnection;
 	private $importUserId;
 	private $currentXmlTag;
 	private $importDevName;
@@ -35,10 +33,11 @@ class DevicesService {
 	private $pointIndex;
 	private $insideTrk;
 
-	public function __construct(ILogger $logger, IL10N $l10n, IDBConnection $dbconnection) {
-		$this->l10n = $l10n;
-		$this->logger = $logger;
-		$this->dbconnection = $dbconnection;
+	public function __construct(
+		private LoggerInterface $logger,
+		private IL10N $l10n,
+		private IDBConnection $dbconnection,
+	) {
 		$this->qb = $dbconnection->getQueryBuilder();
 	}
 
@@ -699,7 +698,6 @@ class DevicesService {
 					'Exception in '.$name.' parsing at line '.
 					  xml_get_current_line_number($xml_parser).' : '.
 					  xml_error_string(xml_get_error_code($xml_parser)),
-					['app' => $this->appName]
 				);
 				return 0;
 			}

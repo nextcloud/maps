@@ -14,22 +14,20 @@ namespace OCA\Maps\Service;
 
 use OC\Files\Search\SearchComparison;
 use OC\Files\Search\SearchQuery;
-use OC\OCS\Exception;
 use OC\User\NoUserException;
+use OCP\Files\Folder;
 use OCP\Files\IRootFolder;
 use OCP\Files\NotFoundException;
 use OCP\Files\NotPermittedException;
 use OCP\Files\Search\ISearchComparison;
-use OCP\ILogger;
+use Psr\Log\LoggerInterface;
 
 class MyMapsService {
 
-	private $logger;
-	private $root;
-
-	public function __construct(ILogger $logger, IRootFolder $root) {
-		$this->logger = $logger;
-		$this->root = $root;
+	public function __construct(
+		private LoggerInterface $logger,
+		private IRootFolder $root,
+	) {
 	}
 
 	public function addMyMap($newName, $userId, $counter = 0) {
@@ -39,7 +37,7 @@ class MyMapsService {
 		}
 		if ($userFolder->nodeExists('/Maps')) {
 			$mapsFolder = $userFolder->get('/Maps');
-			if ($mapsFolder->getType() !== \OCP\Files\FileInfo::TYPE_FOLDER) {
+			if (!($mapsFolder instanceof Folder)) {
 				$response = '/Maps is not a directory';
 				return $response;
 			} elseif (!$mapsFolder->isCreatable()) {
@@ -154,6 +152,9 @@ class MyMapsService {
 		$userFolder = $this->root->getUserFolder($userId);
 		$folders = $userFolder->getById($id);
 		$folder = array_shift($folders);
+		if (!($folder instanceof Folder)) {
+			return [];
+		}
 		try {
 			$file = $folder->get('.index.maps');
 		} catch (NotFoundException $e) {
@@ -180,7 +181,7 @@ class MyMapsService {
 				if ($folder->getParent()->getId() === $mapsFolder->getId()) {
 					try {
 						$folder->move($mapsFolder->getPath().'/'.$newName);
-					} catch (Exception $e) {
+					} catch (\Exception $e) {
 					}
 				}
 			}
@@ -193,19 +194,22 @@ class MyMapsService {
 
 		$folders = $userFolder->getById($id);
 		$folder = array_shift($folders);
+		if (!($folder instanceof Folder)) {
+			return 1;
+		}
 		if ($userFolder->nodeExists('/Maps')) {
 			$mapsFolder = $userFolder->get('/Maps');
 			if ($folder->getParent()->getId() === $mapsFolder->getId()) {
 				try {
 					$folder->delete();
-				} catch (Exception $e) {
+				} catch (\Exception $e) {
 					return 1;
 				}
 			} else {
 				try {
 					$file = $folder->get('.index.maps');
 					$file->delete();
-				} catch (Exception $e) {
+				} catch (\Exception $e) {
 					return 1;
 				}
 			}

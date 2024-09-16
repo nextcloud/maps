@@ -18,6 +18,7 @@ use OC\Files\Search\SearchQuery;
 use OC\User\NoUserException;
 use OCA\Maps\DB\GeophotoMapper;
 use OCP\DB\Exception;
+use OCP\Files\File;
 use OCP\Files\Folder;
 use OCP\Files\IRootFolder;
 use OCP\Files\NotFoundException;
@@ -85,7 +86,7 @@ class GeophotoService {
 
 	/**
 	 * @param string $userId
-	 * @param null $folder =null
+	 * @param ?Folder $folder =null
 	 * @param bool $respectNomediaAndNoimage =true
 	 * @param bool $hideImagesOnCustomMaps =true
 	 * @param bool $hideImagesInMapsFolder
@@ -169,7 +170,7 @@ class GeophotoService {
 
 	/**
 	 * @param string $userId
-	 * @param null $folder =null
+	 * @param ?Folder $folder =null
 	 * @param bool $respectNomediaAndNoimage
 	 * @param bool $hideImagesOnCustomMaps
 	 * @param bool $hideImagesInMapsFolder
@@ -339,7 +340,7 @@ class GeophotoService {
 				$res = $userFolder->getById($gpxfile['file_id']);
 				if (is_array($res) and count($res) > 0) {
 					$file = array_shift($res);
-					if ($file->getType() === \OCP\Files\FileInfo::TYPE_FILE) {
+					if ($file instanceof File) {
 						foreach ($this->getTracksFromGPX($file->getContent()) as $i => $track) {
 							$this->timeorderedPointSets['track:' . $gpxfile['id'] . ':' . $i] = $this->getTimeorderdPointsFromTrack($track);
 						}

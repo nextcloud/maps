@@ -20,9 +20,6 @@ use OCP\Files\NotPermittedException;
 use OCP\IConfig;
 use OCP\IGroupManager;
 use OCP\IInitialStateService;
-
-
-
 use OCP\IL10N;
 use OCP\ILogger;
 use OCP\IRequest;
@@ -31,7 +28,6 @@ use OCP\ISession;
 use OCP\IURLGenerator;
 use OCP\IUserManager;
 use OCP\Share;
-
 use OCP\Share\Exceptions\ShareNotFound;
 use OCP\Share\IManager as ShareManager;
 
@@ -48,7 +44,8 @@ class PublicTracksController extends PublicPageController {
 	protected $appName;
 	protected IRootFolder $root;
 
-	public function __construct($appName,
+	public function __construct(
+		string $appName,
 		IRequest $request,
 		IEventDispatcher $eventDispatcher,
 		IConfig $config,
@@ -58,15 +55,14 @@ class PublicTracksController extends PublicPageController {
 		IUserManager $userManager,
 		ISession $session,
 		IServerContainer $serverContainer,
-		IGroupManager $groupManager,
+		protected IGroupManager $groupManager,
 		IL10N $l,
 		ILogger $logger,
 		TracksService $tracksService,
 		IRootFolder $root) {
-		parent::__construct($appName, $request, $eventDispatcher, $config, $initialStateService, $urlGenerator, $shareManager, $userManager, $session);
+		parent::__construct($appName, $request, $session, $urlGenerator, $eventDispatcher, $config, $initialStateService, $shareManager, $userManager);
 		$this->tracksService = $tracksService;
 		$this->logger = $logger;
-		$this->groupManager = $groupManager;
 		$this->l = $l;
 		$this->root = $root;
 	}
@@ -74,7 +70,6 @@ class PublicTracksController extends PublicPageController {
 	/**
 	 * Validate the permissions of the share
 	 *
-	 * @param Share\IShare $share
 	 * @return bool
 	 */
 	private function validateShare(\OCP\Share\IShare $share) {

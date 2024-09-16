@@ -2,7 +2,6 @@
 
 namespace OCA\Maps\Settings;
 
-use bantu\IniGetWrapper\IniGetWrapper;
 use OCP\AppFramework\Http\TemplateResponse;
 use OCP\IConfig;
 use OCP\IL10N;
@@ -12,27 +11,10 @@ use OCP\Settings\ISettings;
 
 class AdminSettings implements ISettings {
 
-	/** @var IniGetWrapper */
-	private $iniWrapper;
-
-	/** @var IRequest */
-	private $request;
-	private $config;
-	private $dataDirPath;
-	private $urlGenerator;
-	private $l;
-
 	public function __construct(
-		IniGetWrapper $iniWrapper,
-		IL10N $l,
-		IRequest $request,
-		IConfig $config,
-		IURLGenerator $urlGenerator) {
-		$this->urlGenerator = $urlGenerator;
-		$this->iniWrapper = $iniWrapper;
-		$this->request = $request;
-		$this->l = $l;
-		$this->config = $config;
+		private IL10N $l,
+		private IConfig $config,
+	) {
 	}
 
 	/**

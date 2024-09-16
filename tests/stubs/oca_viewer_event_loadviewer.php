@@ -2,7 +2,9 @@
 
 declare(strict_types=1);
 /**
- * @copyright Copyright (c) 2020 Joas Schilling <coding@schilljs.com>
+ * @copyright Copyright (c) 2019, Roeland Jago Douma <roeland@famdouma.nl>
+ *
+ * @author Roeland Jago Douma <roeland@famdouma.nl>
  *
  * @license GNU AGPL version 3 or any later version
  *
@@ -20,27 +22,15 @@ declare(strict_types=1);
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
+namespace OCA\Viewer\Event;
 
-namespace OCA\Maps\Listener;
-
-use OCA\Files\Event\LoadAdditionalScriptsEvent;
 use OCP\EventDispatcher\Event;
-use OCP\EventDispatcher\IEventListener;
-use OCP\Util;
 
-/** @template-implements IEventListener<LoadAdditionalScriptsEvent> */
-class LoadAdditionalScriptsListener implements IEventListener {
-
-	public function __construct() {
-	}
-
-	public function handle(Event $event): void {
-		if (!($event instanceof LoadAdditionalScriptsEvent)) {
-			// Unrelated
-			return;
-		}
-
-		Util::addScript('maps', 'maps-filetypes');
-		Util::addStyle('maps', 'filetypes');
-	}
+/**
+ * This event is triggered whenever the viewer is loaded and extensions should be loaded.
+ *
+ * @since 17.0.0
+ * @psalm-immutable
+ */
+class LoadViewer extends Event {
 }

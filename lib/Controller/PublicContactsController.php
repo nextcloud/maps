@@ -12,7 +12,6 @@
 
 namespace OCA\Maps\Controller;
 
-use OC\Files\Node\Node;
 use OCA\DAV\CardDAV\CardDavBackend;
 use OCA\Maps\Service\AddressService;
 use OCP\AppFramework\Http\DataDisplayResponse;
@@ -21,6 +20,7 @@ use OCP\Contacts\IManager;
 use OCP\DB\QueryBuilder\IQueryBuilder;
 use OCP\EventDispatcher\IEventDispatcher;
 use OCP\Files\IRootFolder;
+use OCP\Files\Node;
 use OCP\Files\NotFoundException;
 use OCP\Files\NotPermittedException;
 use OCP\IAvatarManager;
@@ -33,6 +33,7 @@ use OCP\IURLGenerator;
 use OCP\IUserManager;
 use OCP\Share\Exceptions\ShareNotFound;
 use OCP\Share\IManager as ShareManager;
+use OCP\Share\IShare;
 use Sabre\VObject\Reader;
 
 class PublicContactsController extends PublicPageController {
@@ -43,39 +44,23 @@ class PublicContactsController extends PublicPageController {
 	protected IAvatarManager $avatarManager;
 	protected IRootFolder $root;
 
-	/**
-	 * @param $appName
-	 * @param IRequest $request
-	 * @param IEventDispatcher $eventDispatcher
-	 * @param IConfig $config
-	 * @param IInitialStateService $initialStateService
-	 * @param IURLGenerator $urlGenerator
-	 * @param ShareManager $shareManager
-	 * @param IUserManager $userManager
-	 * @param ISession $session
-	 * @param IDBConnection $dbconnection
-	 * @param IManager $contactsManager
-	 * @param AddressService $addressService
-	 * @param CardDavBackend $cdBackend
-	 * @param IAvatarManager $avatarManager
-	 * @param IRootFolder $root
-	 */
-	public function __construct($appName,
+	public function __construct(
+		string $appName,
 		IRequest $request,
+		ISession $session,
+		IURLGenerator $urlGenerator,
 		IEventDispatcher $eventDispatcher,
 		IConfig $config,
 		IInitialStateService $initialStateService,
-		IURLGenerator $urlGenerator,
 		ShareManager $shareManager,
 		IUserManager $userManager,
-		ISession $session,
 		IManager $contactsManager,
 		IDBConnection $dbconnection,
 		AddressService $addressService,
 		CardDavBackend $cdBackend,
 		IAvatarManager $avatarManager,
 		IRootFolder $root) {
-		parent::__construct($appName, $request, $eventDispatcher, $config, $initialStateService, $urlGenerator, $shareManager, $userManager, $session);
+		parent::__construct($appName, $request, $session, $urlGenerator, $eventDispatcher, $config, $initialStateService, $shareManager, $userManager);
 		$this->avatarManager = $avatarManager;
 		$this->contactsManager = $contactsManager;
 		$this->addressService = $addressService;
@@ -86,11 +71,8 @@ class PublicContactsController extends PublicPageController {
 
 	/**
 	 * Validate the permissions of the share
-	 *
-	 * @param Share\IShare $share
-	 * @return bool
 	 */
-	private function validateShare(\OCP\Share\IShare $share) {
+	private function validateShare(IShare $share): bool {
 		// If the owner is disabled no access to the link is granted
 		$owner = $this->userManager->get($share->getShareOwner());
 		if ($owner === null || !$owner->isEnabled()) {
@@ -107,7 +89,7 @@ class PublicContactsController extends PublicPageController {
 	}
 
 	/**
-	 * @return \OCP\Share\IShare
+	 * @return IShare
 	 * @throws NotFoundException
 	 */
 	private function getShare() {

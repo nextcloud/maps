@@ -36,6 +36,7 @@ use OCP\Files\NotFoundException;
 use OCP\IDBConnection;
 use OCP\Security\ISecureRandom;
 
+/** @template-extends QBMapper<DeviceShare> */
 class DeviceShareMapper extends QBMapper {
 	/* @var ISecureRandom */
 	private $secureRandom;
@@ -50,7 +51,7 @@ class DeviceShareMapper extends QBMapper {
 
 	/**
 	 * @param string $token
-	 * @return Entity|null
+	 * @return DeviceShare|null
 	 * @throws DoesNotExistException
 	 * @throws MultipleObjectsReturnedException
 	 */
@@ -68,7 +69,7 @@ class DeviceShareMapper extends QBMapper {
 
 	/**
 	 * @param string[] $token
-	 * @return Entity[]|null
+	 * @return DeviceShare[]|null
 	 * @throws DoesNotExistException
 	 */
 	public function findByTokens($tokens) {
@@ -87,7 +88,7 @@ class DeviceShareMapper extends QBMapper {
 	 * @param $deviceId
 	 * @param $timestampFrom
 	 * @param $timestampTo
-	 * @return Entity
+	 * @return DeviceShare
 	 */
 	public function create($deviceId, $timestampFrom, $timestampTo): Entity {
 		$token = $this->secureRandom->generate(
@@ -107,7 +108,7 @@ class DeviceShareMapper extends QBMapper {
 
 	/**
 	 * @param $deviceId
-	 * @return Entity[]
+	 * @return DeviceShare[]
 	 * @throws DoesNotExistException
 	 */
 	public function findByDeviceId($deviceId) {
@@ -124,7 +125,7 @@ class DeviceShareMapper extends QBMapper {
 
 	/**
 	 * @param $deviceIds
-	 * @return Entity[]
+	 * @return DeviceShare[]
 	 */
 	public function findByDeviceIds($deviceIds) {
 		$qb = $this->db->getQueryBuilder();
@@ -183,7 +184,7 @@ class DeviceShareMapper extends QBMapper {
 
 	/**
 	 * @param $id
-	 * @return Entity|null
+	 * @return DeviceShare|null
 	 * @throws DoesNotExistException
 	 * @throws Exception
 	 * @throws MultipleObjectsReturnedException
@@ -206,7 +207,7 @@ class DeviceShareMapper extends QBMapper {
 	 */
 	public function removeById($id) {
 		try {
-			$entity = $this->findByDeviceId($id);
+			$entity = $this->findById($id);
 			$this->delete($entity);
 		} catch (DoesNotExistException) {
 			return false;

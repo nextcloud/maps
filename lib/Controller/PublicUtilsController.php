@@ -17,13 +17,11 @@ use OCP\EventDispatcher\IEventDispatcher;
 use OCP\Files\GenericFileException;
 use OCP\Files\InvalidPathException;
 use OCP\Files\IRootFolder;
-
 use OCP\Files\NotFoundException;
 use OCP\Files\NotPermittedException;
 use OCP\IConfig;
 use OCP\IInitialStateService;
 use OCP\IRequest;
-
 use OCP\ISession;
 use OCP\IURLGenerator;
 use OCP\IUserManager;
@@ -35,25 +33,25 @@ class PublicUtilsController extends PublicPageController {
 
 	protected IRootFolder $root;
 
-	public function __construct(string $appName,
+	public function __construct(
+		string $appName,
 		IRequest $request,
-		IConfig $config,
+		ISession $session,
 		IURLGenerator $urlGenerator,
+		IConfig $config,
 		IInitialStateService $initialStateService,
 		IUserManager $userManager,
 		ShareManager $shareManager,
-		ISession $session,
 		IRootFolder $root,
 		IEventDispatcher $eventDispatcher
 	) {
-		parent::__construct($appName, $request, $eventDispatcher, $config, $initialStateService, $urlGenerator, $shareManager, $userManager, $session);
+		parent::__construct($appName, $request, $session, $urlGenerator, $eventDispatcher, $config, $initialStateService, $shareManager, $userManager);
 		$this->root = $root;
 	}
 
 	/**
 	 * Validate the permissions of the share
 	 *
-	 * @param Share\IShare $share
 	 * @return bool
 	 */
 	private function validateShare(\OCP\Share\IShare $share) {

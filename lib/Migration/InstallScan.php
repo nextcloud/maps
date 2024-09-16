@@ -27,7 +27,6 @@ use OCA\Maps\BackgroundJob\LaunchUsersInstallScanJob;
 use OCP\BackgroundJob\IJobList;
 use OCP\Encryption\IManager;
 use OCP\IConfig;
-use OCP\IDBConnection;
 use OCP\IUser;
 use OCP\IUserManager;
 use OCP\Migration\IOutput;

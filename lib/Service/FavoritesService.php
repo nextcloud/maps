@@ -16,10 +16,10 @@
 namespace OCA\Maps\Service;
 
 use OC\Archive\ZIP;
-use OCP\Security\ISecureRandom;
 use OCP\DB\QueryBuilder\IQueryBuilder;
 use OCP\IDBConnection;
 use OCP\IL10N;
+use OCP\Security\ISecureRandom;
 use Psr\Log\LoggerInterface;
 
 class FavoritesService {

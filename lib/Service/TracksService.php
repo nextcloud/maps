@@ -24,7 +24,6 @@ use OCP\Files\Search\ISearchBinaryOperator;
 use OCP\Files\Search\ISearchComparison;
 use OCP\IDBConnection;
 use OCP\IL10N;
-use OCP\ILogger;
 use OCP\Share\IManager;
 use Psr\Log\LoggerInterface;
 

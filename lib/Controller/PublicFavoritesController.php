@@ -26,7 +26,6 @@ use OCP\IDateTimeZone;
 use OCP\IGroupManager;
 use OCP\IInitialStateService;
 use OCP\IL10N;
-use OCP\ILogger;
 use OCP\IRequest;
 use OCP\IServerContainer;
 use OCP\ISession;

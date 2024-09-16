@@ -11,7 +11,6 @@
 
 namespace OCA\Maps\Controller;
 
-use OC\InitialStateService;
 use OC\Security\CSP\ContentSecurityPolicy;
 use OCA\Files\Event\LoadSidebar;
 use OCA\Files_Sharing\Event\BeforeTemplateRenderedEvent;

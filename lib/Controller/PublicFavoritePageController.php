@@ -23,7 +23,6 @@
 
 namespace OCA\Maps\Controller;
 
-use OC;
 use OCA\Maps\DB\FavoriteShareMapper;
 use OCP\AppFramework\Db\DoesNotExistException;
 use OCP\AppFramework\Db\MultipleObjectsReturnedException;

@@ -5,8 +5,6 @@ namespace OCA\Maps\Settings;
 use OCP\AppFramework\Http\TemplateResponse;
 use OCP\IConfig;
 use OCP\IL10N;
-use OCP\IRequest;
-use OCP\IURLGenerator;
 use OCP\Settings\ISettings;
 
 class AdminSettings implements ISettings {

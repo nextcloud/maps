@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Nextcloud 3.14159\n"
 "Report-Msgid-Bugs-To: translations\\@example.com\n"
-"POT-Creation-Date: 2024-09-16 01:10+0000\n"
+"POT-Creation-Date: 2024-09-17 01:15+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -18,83 +18,83 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=INTEGER; plural=EXPRESSION;\n"
 
-#: /app/lib/Controller/DevicesApiController.php:161
-#: /app/lib/Controller/DevicesApiController.php:182
-#: /app/lib/Controller/DevicesController.php:216
+#: /app/lib/Controller/DevicesApiController.php:153
+#: /app/lib/Controller/DevicesApiController.php:173
+#: /app/lib/Controller/DevicesController.php:207
 #: /app/lib/Controller/FavoritesApiController.php:119
 #: /app/lib/Controller/FavoritesApiController.php:146
 #: /app/lib/Controller/FavoritesController.php:162
-#: /app/lib/Controller/PublicFavoritesController.php:221
+#: /app/lib/Controller/PublicFavoritesController.php:217
 msgid "Invalid values"
 msgstr ""
 
-#: /app/lib/Controller/DevicesApiController.php:186
-#: /app/lib/Controller/DevicesApiController.php:204
-#: /app/lib/Controller/DevicesController.php:220
-#: /app/lib/Controller/DevicesController.php:237
-#: /app/lib/Controller/DevicesController.php:385
+#: /app/lib/Controller/DevicesApiController.php:176
+#: /app/lib/Controller/DevicesApiController.php:193
+#: /app/lib/Controller/DevicesController.php:210
+#: /app/lib/Controller/DevicesController.php:226
+#: /app/lib/Controller/DevicesController.php:370
 msgid "No such device"
 msgstr ""
 
-#: /app/lib/Controller/DevicesController.php:129
-#: /app/lib/Controller/DevicesController.php:428
-#: /app/lib/Controller/DevicesController.php:450
+#: /app/lib/Controller/DevicesController.php:122
+#: /app/lib/Controller/DevicesController.php:413
+#: /app/lib/Controller/DevicesController.php:435
 #: /app/lib/Controller/FavoritesController.php:408
 msgid "Map not Found"
 msgstr ""
 
-#: /app/lib/Controller/DevicesController.php:255
+#: /app/lib/Controller/DevicesController.php:244
 msgid "No device to export"
 msgstr ""
 
-#: /app/lib/Controller/DevicesController.php:266
+#: /app/lib/Controller/DevicesController.php:255
 #: /app/lib/Controller/FavoritesController.php:467
-#: /app/lib/Controller/RoutingController.php:112
+#: /app/lib/Controller/RoutingController.php:104
 msgid "/Maps is not a directory"
 msgstr ""
 
-#: /app/lib/Controller/DevicesController.php:269
-#: /app/lib/Controller/FavoritesController.php:471
-#: /app/lib/Controller/RoutingController.php:116
+#: /app/lib/Controller/DevicesController.php:257
+#: /app/lib/Controller/FavoritesController.php:470
+#: /app/lib/Controller/RoutingController.php:107
 msgid "/Maps directory is not writeable"
 msgstr ""
 
-#: /app/lib/Controller/DevicesController.php:273
-#: /app/lib/Controller/FavoritesController.php:476
-#: /app/lib/Controller/RoutingController.php:121
+#: /app/lib/Controller/DevicesController.php:260
+#: /app/lib/Controller/FavoritesController.php:474
+#: /app/lib/Controller/RoutingController.php:111
 msgid "Impossible to create /Maps directory"
 msgstr ""
 
-#: /app/lib/Controller/DevicesController.php:278
+#: /app/lib/Controller/DevicesController.php:265
 #: /app/lib/Controller/FavoritesController.php:455
-#: /app/lib/Controller/FavoritesController.php:482
+#: /app/lib/Controller/FavoritesController.php:480
 msgid "Nothing to export"
 msgstr ""
 
-#: /app/lib/Controller/DevicesController.php:323
-#: /app/lib/Controller/FavoritesController.php:528
+#: /app/lib/Controller/DevicesController.php:309
+#: /app/lib/Controller/FavoritesController.php:525
 msgid "Invalid file extension"
 msgstr ""
 
-#: /app/lib/Controller/DevicesController.php:328
-#: /app/lib/Controller/FavoritesController.php:533
+#: /app/lib/Controller/DevicesController.php:313
+#: /app/lib/Controller/FavoritesController.php:529
 msgid "Impossible to read the file"
 msgstr ""
 
-#: /app/lib/Controller/DevicesController.php:333
-#: /app/lib/Controller/FavoritesController.php:538
+#: /app/lib/Controller/DevicesController.php:317
+#: /app/lib/Controller/FavoritesController.php:533
 msgid "File does not exist"
 msgstr ""
 
-#: /app/lib/Controller/DevicesController.php:381
+#: /app/lib/Controller/DevicesController.php:367
 msgid "Error sharing device"
 msgstr ""
 
-#: /app/lib/Controller/DevicesController.php:423
+#: /app/lib/Controller/DevicesController.php:408
 msgid "Share not Found"
 msgstr ""
 
-#: /app/lib/Controller/DevicesController.php:438
+#: /app/lib/Controller/DevicesController.php:423
 #: /app/lib/Controller/FavoritesController.php:418
 msgid "Share was already on map"
 msgstr ""
@@ -106,7 +106,7 @@ msgstr ""
 
 #: /app/lib/Controller/FavoritesController.php:232
 #: /app/lib/Controller/FavoritesController.php:250
-#: /app/lib/Controller/PublicFavoritesController.php:287
+#: /app/lib/Controller/PublicFavoritesController.php:283
 msgid "invalid values"
 msgstr ""
 
@@ -114,8 +114,8 @@ msgstr ""
 #: /app/lib/Controller/FavoritesController.php:253
 #: /app/lib/Controller/FavoritesController.php:305
 #: /app/lib/Controller/FavoritesController.php:313
-#: /app/lib/Controller/PublicFavoritesController.php:290
-#: /app/lib/Controller/PublicFavoritesController.php:345
+#: /app/lib/Controller/PublicFavoritesController.php:286
+#: /app/lib/Controller/PublicFavoritesController.php:341
 msgid "no such favorite"
 msgstr ""
 
@@ -128,36 +128,36 @@ msgstr ""
 msgid "Error sharing favorite"
 msgstr ""
 
-#: /app/lib/Controller/PublicTracksController.php:207
-#: /app/lib/Controller/PublicTracksController.php:244
-#: /app/lib/Controller/TracksController.php:129
-#: /app/lib/Controller/TracksController.php:166
+#: /app/lib/Controller/PublicTracksController.php:195
+#: /app/lib/Controller/PublicTracksController.php:229
+#: /app/lib/Controller/TracksController.php:119
+#: /app/lib/Controller/TracksController.php:153
 msgid "Bad file type"
 msgstr ""
 
-#: /app/lib/Controller/PublicTracksController.php:211
-#: /app/lib/Controller/PublicTracksController.php:248
-#: /app/lib/Controller/TracksController.php:133
-#: /app/lib/Controller/TracksController.php:170
+#: /app/lib/Controller/PublicTracksController.php:198
+#: /app/lib/Controller/PublicTracksController.php:232
+#: /app/lib/Controller/TracksController.php:122
+#: /app/lib/Controller/TracksController.php:156
 msgid "File not found"
 msgstr ""
 
-#: /app/lib/Controller/PublicTracksController.php:275
-#: /app/lib/Controller/PublicTracksController.php:300
+#: /app/lib/Controller/PublicTracksController.php:258
+#: /app/lib/Controller/PublicTracksController.php:283
+#: /app/lib/Controller/TracksController.php:174
 #: /app/lib/Controller/TracksController.php:189
-#: /app/lib/Controller/TracksController.php:205
 msgid "No such track"
 msgstr ""
 
 #. TRANSLATORS src/components/AppNavigationFavoritesItem.vue:85
 #. TRANSLATORS src/views/App.vue:591
-#: /app/lib/Service/FavoritesService.php:397
-#: /app/lib/Service/FavoritesService.php:485
-#: /app/lib/Service/FavoritesService.php:486
-#: /app/lib/Service/FavoritesService.php:615
-#: /app/lib/Service/FavoritesService.php:735
-#: /app/lib/Service/FavoritesService.php:856
-#: /app/lib/Service/FavoritesService.php:921
+#: /app/lib/Service/FavoritesService.php:395
+#: /app/lib/Service/FavoritesService.php:483
+#: /app/lib/Service/FavoritesService.php:484
+#: /app/lib/Service/FavoritesService.php:612
+#: /app/lib/Service/FavoritesService.php:727
+#: /app/lib/Service/FavoritesService.php:843
+#: /app/lib/Service/FavoritesService.php:904
 #: /app/specialVueFakeDummyForL10nScript.js:58
 #: /app/specialVueFakeDummyForL10nScript.js:636
 #: /app/specialVueFakeDummyForL10nScript.js:694
@@ -2025,79 +2025,79 @@ msgstr ""
 msgid "OSRM server URL (car profile)"
 msgstr ""
 
-#: /app/templates/adminSettings.php:21
+#: /app/templates/adminSettings.php:23
 msgid "OSRM server URL (bicycle profile)"
 msgstr ""
 
-#: /app/templates/adminSettings.php:24
+#: /app/templates/adminSettings.php:28
 msgid "OSRM server URL (foot profile)"
 msgstr ""
 
-#: /app/templates/adminSettings.php:29
+#: /app/templates/adminSettings.php:35
 msgid "Show OSRM demo server"
 msgstr ""
 
-#: /app/templates/adminSettings.php:32
+#: /app/templates/adminSettings.php:38
 msgid "Graphhopper Website"
 msgstr ""
 
-#: /app/templates/adminSettings.php:32
+#: /app/templates/adminSettings.php:38
 msgid "GraphHopper settings"
 msgstr ""
 
-#: /app/templates/adminSettings.php:33
+#: /app/templates/adminSettings.php:39
 msgid ""
 "A GraphHopper server URL looks like this : https://my.graphhopper.server."
 "org:8989/route"
 msgstr ""
 
-#: /app/templates/adminSettings.php:36
+#: /app/templates/adminSettings.php:42
 msgid "GraphHopper server URL (will use main graphhopper server if empty)"
 msgstr ""
 
-#: /app/templates/adminSettings.php:38
+#: /app/templates/adminSettings.php:46
 msgid "GraphHopper API key (mandatory if main server used)"
 msgstr ""
 
-#: /app/templates/adminSettings.php:42
+#: /app/templates/adminSettings.php:52
 msgid "Mapbox Website"
 msgstr ""
 
-#: /app/templates/adminSettings.php:42
+#: /app/templates/adminSettings.php:52
 msgid "Mapbox settings"
 msgstr ""
 
-#: /app/templates/adminSettings.php:43
+#: /app/templates/adminSettings.php:53
 msgid "Set the API key to use Mapbox routing service."
 msgstr ""
 
-#: /app/templates/adminSettings.php:44 /app/templates/adminSettings.php:52
+#: /app/templates/adminSettings.php:54 /app/templates/adminSettings.php:64
 msgid "Leave empty to disable."
 msgstr ""
 
-#: /app/templates/adminSettings.php:46
+#: /app/templates/adminSettings.php:56
 msgid "Mapbox API key"
 msgstr ""
 
-#: /app/templates/adminSettings.php:50
+#: /app/templates/adminSettings.php:62
 msgid "MapLibre Website"
 msgstr ""
 
-#: /app/templates/adminSettings.php:50
+#: /app/templates/adminSettings.php:62
 msgid "MapLibre settings"
 msgstr ""
 
-#: /app/templates/adminSettings.php:51
+#: /app/templates/adminSettings.php:63
 msgid ""
 "Set the URL and Basic Authorization of style.json for OpenStreetMap Vector "
 "Tiles with MapLibre-GL-JS."
 msgstr ""
 
-#: /app/templates/adminSettings.php:54
+#: /app/templates/adminSettings.php:66
 msgid "MapLibre Street style URL"
 msgstr ""
 
-#: /app/templates/adminSettings.php:56
+#: /app/templates/adminSettings.php:70
 msgid "Basic Authorization if required. Format is \"user:password\""
 msgstr ""
 

@@ -12,21 +12,15 @@
 namespace OCA\Maps\Controller;
 
 use OCA\Maps\Service\TracksService;
-
 use OCP\App\IAppManager;
 use OCP\AppFramework\Controller;
-
-
-
 use OCP\AppFramework\Http\DataResponse;
 use OCP\IConfig;
 use OCP\IGroupManager;
 use OCP\IL10N;
-use OCP\ILogger;
 use OCP\IRequest;
 use OCP\IServerContainer;
 use OCP\IUserManager;
-
 use OCP\Share\IManager;
 
 use function OCA\Maps\Helper\remove_utf8_bom;
@@ -43,7 +37,6 @@ class TracksController extends Controller {
 	private $dbtype;
 	private $dbdblquotes;
 	private $l;
-	private $logger;
 	private $tracksService;
 	protected $appName;
 
@@ -56,12 +49,10 @@ class TracksController extends Controller {
 		IUserManager $userManager,
 		IGroupManager $groupManager,
 		IL10N $l,
-		ILogger $logger,
 		TracksService $tracksService,
 		$UserId) {
 		parent::__construct($AppName, $request);
 		$this->tracksService = $tracksService;
-		$this->logger = $logger;
 		$this->appName = $AppName;
 		$this->appVersion = $config->getAppValue('maps', 'installed_version');
 		$this->userId = $UserId;

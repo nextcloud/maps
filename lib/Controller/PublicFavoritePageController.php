@@ -32,7 +32,6 @@ use OCP\AppFramework\Http\DataResponse;
 use OCP\AppFramework\Http\Template\PublicTemplateResponse;
 use OCP\AppFramework\PublicShareController;
 use OCP\IConfig;
-use OCP\ILogger;
 use OCP\IRequest;
 use OCP\ISession;
 use OCP\IUserManager;
@@ -40,7 +39,6 @@ use OCP\Util;
 
 class PublicFavoritePageController extends PublicShareController {
 	private $config;
-	private $logger;
 
 	/* @var FavoriteShareMapper */
 	private $favoriteShareMapper;
@@ -50,12 +48,10 @@ class PublicFavoritePageController extends PublicShareController {
 		IRequest $request,
 		ISession $session,
 		IConfig $config,
-		ILogger $logger,
 		FavoriteShareMapper $favoriteShareMapper
 	) {
 		parent::__construct($appName, $request, $session);
 		$this->config = $config;
-		$this->logger = $logger;
 		$this->favoriteShareMapper = $favoriteShareMapper;
 	}
 

@@ -18,7 +18,6 @@ use OCA\Maps\Service\TracksService;
 use OCP\Files\FileInfo;
 use OCP\Files\IHomeStorage;
 use OCP\Files\IRootFolder;
-use OCP\ILogger;
 use OCP\Lock\ILockingProvider;
 use OCP\Share;
 use OCP\Util;
@@ -31,17 +30,14 @@ class FileHooks {
 	private $photofilesService;
 	private $tracksService;
 
-	private $logger;
-
 	private $root;
 
 	private ILockingProvider $lockingProvider;
 
 	public function __construct(IRootFolder $root, PhotofilesService $photofilesService, TracksService $tracksService,
-		ILogger $logger, $appName, ILockingProvider $lockingProvider) {
+		$appName, ILockingProvider $lockingProvider) {
 		$this->photofilesService = $photofilesService;
 		$this->tracksService = $tracksService;
-		$this->logger = $logger;
 		$this->root = $root;
 		$this->lockingProvider = $lockingProvider;
 	}

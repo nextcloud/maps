@@ -33,7 +33,6 @@ use OCP\IURLGenerator;
 use OCP\IUserManager;
 use OCP\Share\Exceptions\ShareNotFound;
 use OCP\Share\IManager;
-use Psr\Log\LoggerInterface;
 
 class PublicFavoritesController extends PublicPageController {
 
@@ -61,7 +60,6 @@ class PublicFavoritesController extends PublicPageController {
 		IUserManager $userManager,
 		IGroupManager $groupManager,
 		IL10N $l,
-		private LoggerInterface $logger,
 		FavoritesService $favoritesService,
 		IDateTimeZone $dateTimeZone,
 		FavoriteShareMapper $favoriteShareMapper,

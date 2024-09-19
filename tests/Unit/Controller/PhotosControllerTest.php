@@ -86,7 +86,7 @@ class PhotosControllerTest extends \PHPUnit\Framework\TestCase {
 		$this->GeoPhotosService = $c->query(GeoPhotoService::class);
 
 		$this->photoFileService = new PhotoFilesService(
-			$c->query(IServerContainer::class)->getLogger(),
+			$c->query(IServerContainer::class)->get(\Psr\Log\LoggerInterface::class),
 			$c->query(IServerContainer::class)->getMemCacheFactory(),
 			$this->rootFolder,
 			$c->query(IServerContainer::class)->getL10N($c->query('AppName')),
@@ -97,7 +97,6 @@ class PhotosControllerTest extends \PHPUnit\Framework\TestCase {
 
 		$this->photosController = new PhotosController(
 			$this->appName,
-			$c->query(IServerContainer::class)->getLogger(),
 			$this->request,
 			$this->GeoPhotosService,
 			$this->photoFileService,
@@ -107,7 +106,6 @@ class PhotosControllerTest extends \PHPUnit\Framework\TestCase {
 
 		$this->photosController2 = new PhotosController(
 			$this->appName,
-			$c->query(IServerContainer::class)->getLogger(),
 			$this->request,
 			$c->query(GeoPhotoService::class),
 			$this->photoFileService,

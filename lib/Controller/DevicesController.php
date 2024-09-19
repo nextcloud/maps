@@ -25,12 +25,9 @@ use OCP\IConfig;
 use OCP\IDateTimeZone;
 use OCP\IGroupManager;
 use OCP\IL10N;
-use OCP\ILogger;
 use OCP\IRequest;
 use OCP\IServerContainer;
-
 use OCP\IUserManager;
-
 use OCP\Share\IManager;
 
 //use function \OCA\Maps\Service\endswith;
@@ -48,7 +45,6 @@ class DevicesController extends Controller {
 	private $dbdblquotes;
 	private $defaultDeviceId;
 	private $l;
-	private $logger;
 	private $devicesService;
 	private $deviceShareMapper;
 	private $dateTimeZone;
@@ -64,7 +60,6 @@ class DevicesController extends Controller {
 		IUserManager $userManager,
 		IGroupManager $groupManager,
 		IL10N $l,
-		ILogger $logger,
 		DevicesService $devicesService,
 		DeviceShareMapper $deviceShareMapper,
 		IDateTimeZone $dateTimeZone,
@@ -74,7 +69,6 @@ class DevicesController extends Controller {
 		$this->devicesService = $devicesService;
 		$this->deviceShareMapper = $deviceShareMapper;
 		$this->dateTimeZone = $dateTimeZone;
-		$this->logger = $logger;
 		$this->appName = $AppName;
 		$this->appVersion = $config->getAppValue('maps', 'installed_version');
 		$this->userId = $UserId;

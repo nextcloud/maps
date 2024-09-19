@@ -88,7 +88,6 @@ class PublicFavoritePageControllerTest extends TestCase {
 			$requestMock,
 			$sessionMock,
 			$this->config,
-			$container->query(LoggerInterface::class),
 			$this->favoriteShareMapper
 		);
 	}

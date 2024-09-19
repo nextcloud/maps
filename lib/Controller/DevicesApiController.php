@@ -12,22 +12,16 @@
 namespace OCA\Maps\Controller;
 
 use OCA\Maps\Service\DevicesService;
-
 use OCP\App\IAppManager;
 use OCP\AppFramework\ApiController;
-
 use OCP\AppFramework\Http;
-
-
 use OCP\AppFramework\Http\DataResponse;
 use OCP\IConfig;
 use OCP\IGroupManager;
 use OCP\IL10N;
-use OCP\ILogger;
 use OCP\IRequest;
 use OCP\IServerContainer;
 use OCP\IUserManager;
-
 use OCP\Share\IManager;
 
 class DevicesApiController extends ApiController {
@@ -43,7 +37,6 @@ class DevicesApiController extends ApiController {
 	private $dbdblquotes;
 	private $defaultDeviceId;
 	private $l;
-	private $logger;
 	private $devicesService;
 	protected $appName;
 
@@ -56,7 +49,6 @@ class DevicesApiController extends ApiController {
 		IUserManager $userManager,
 		IGroupManager $groupManager,
 		IL10N $l,
-		ILogger $logger,
 		DevicesService $devicesService,
 		$UserId) {
 		parent::__construct($AppName, $request,
@@ -64,7 +56,6 @@ class DevicesApiController extends ApiController {
 			'Authorization, Content-Type, Accept',
 			1728000);
 		$this->devicesService = $devicesService;
-		$this->logger = $logger;
 		$this->appName = $AppName;
 		$this->appVersion = $config->getAppValue('maps', 'installed_version');
 		$this->userId = $UserId;

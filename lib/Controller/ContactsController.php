@@ -24,7 +24,6 @@ use OCP\Files\Node;
 use OCP\Files\NotFoundException;
 use OCP\IAvatarManager;
 use OCP\IDBConnection;
-use OCP\ILogger;
 use OCP\IRequest;
 use OCP\IURLGenerator;
 use Sabre\VObject\Property\Text;
@@ -32,7 +31,6 @@ use Sabre\VObject\Reader;
 
 class ContactsController extends Controller {
 	private $userId;
-	private $logger;
 	private $contactsManager;
 	private $addressService;
 	private $dbconnection;
@@ -45,7 +43,6 @@ class ContactsController extends Controller {
 
 	/**
 	 * @param $AppName
-	 * @param ILogger $logger
 	 * @param IRequest $request
 	 * @param IDBConnection $dbconnection
 	 * @param IManager $contactsManager
@@ -57,7 +54,6 @@ class ContactsController extends Controller {
 	 */
 	public function __construct(
 		$AppName,
-		ILogger $logger,
 		IRequest $request,
 		IDBConnection $dbconnection,
 		IManager $contactsManager,
@@ -68,7 +64,6 @@ class ContactsController extends Controller {
 		IRootFolder $root,
 		IURLGenerator $urlGenerator) {
 		parent::__construct($AppName, $request);
-		$this->logger = $logger;
 		$this->userId = $UserId;
 		$this->avatarManager = $avatarManager;
 		$this->contactsManager = $contactsManager;

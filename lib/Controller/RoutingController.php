@@ -13,17 +13,12 @@ namespace OCA\Maps\Controller;
 
 use OCA\Maps\Service\TracksService;
 use OCP\App\IAppManager;
-
 use OCP\AppFramework\Controller;
 use OCP\AppFramework\Http\DataResponse;
-
-
-
 use OCP\IConfig;
 use OCP\IDateTimeZone;
 use OCP\IGroupManager;
 use OCP\IL10N;
-use OCP\ILogger;
 use OCP\IRequest;
 use OCP\IServerContainer;
 use OCP\IUserManager;
@@ -42,7 +37,6 @@ class RoutingController extends Controller {
 	private $dbdblquotes;
 	private $defaultDeviceId;
 	private $l;
-	private $logger;
 	private $dateTimeZone;
 	private $tracksService;
 	protected $appName;
@@ -56,12 +50,10 @@ class RoutingController extends Controller {
 		IUserManager $userManager,
 		IGroupManager $groupManager,
 		IL10N $l,
-		ILogger $logger,
 		IDateTimeZone $dateTimeZone,
 		TracksService $tracksService,
 		$UserId) {
 		parent::__construct($AppName, $request);
-		$this->logger = $logger;
 		$this->dateTimeZone = $dateTimeZone;
 		$this->appName = $AppName;
 		$this->appVersion = $config->getAppValue('maps', 'installed_version');

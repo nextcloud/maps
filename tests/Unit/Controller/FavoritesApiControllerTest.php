@@ -87,7 +87,6 @@ class FavoritesApiControllerTest extends \PHPUnit\Framework\TestCase {
 			$c->getServer()->getUserManager(),
 			$c->getServer()->getGroupManager(),
 			$c->query(IServerContainer::class)->getL10N($c->query('AppName')),
-			$c->query(IServerContainer::class)->getLogger(),
 			$c->query(FavoritesService::class),
 			'test'
 		);
@@ -102,7 +101,6 @@ class FavoritesApiControllerTest extends \PHPUnit\Framework\TestCase {
 			$c->getServer()->getUserManager(),
 			$c->getServer()->getGroupManager(),
 			$c->query(IServerContainer::class)->getL10N($c->query('AppName')),
-			$c->query(IServerContainer::class)->getLogger(),
 			$c->query(FavoritesService::class),
 			'test2'
 		);

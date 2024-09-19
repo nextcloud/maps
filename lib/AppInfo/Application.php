@@ -76,7 +76,6 @@ class Application extends App implements IBootstrap {
 				$c->query(IServerContainer::class)->getRootFolder(),
 				\OCP\Server::get(PhotofilesService::class),
 				\OCP\Server::get(TracksService::class),
-				$c->query(IServerContainer::class)->getLogger(),
 				$c->query('AppName'),
 				$c->query(IServerContainer::class)->getLockingProvider()
 			);

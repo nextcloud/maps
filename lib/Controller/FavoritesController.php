@@ -27,7 +27,6 @@ use OCP\IConfig;
 use OCP\IDateTimeZone;
 use OCP\IGroupManager;
 use OCP\IL10N;
-use OCP\ILogger;
 use OCP\IRequest;
 use OCP\IServerContainer;
 use OCP\IUserManager;
@@ -44,7 +43,6 @@ class FavoritesController extends Controller {
 	private IGroupManager $groupManager;
 	private string $dbtype;
 	private IL10N $l;
-	private ILogger $logger;
 	private FavoritesService $favoritesService;
 	private IDateTimeZone $dateTimeZone;
 	private ?string $defaultFavoritsJSON;
@@ -62,7 +60,6 @@ class FavoritesController extends Controller {
 		IUserManager $userManager,
 		IGroupManager $groupManager,
 		IL10N $l,
-		ILogger $logger,
 		FavoritesService $favoritesService,
 		IDateTimeZone $dateTimeZone,
 		FavoriteShareMapper $favoriteShareMapper,
@@ -70,7 +67,6 @@ class FavoritesController extends Controller {
 		parent::__construct($AppName, $request);
 		$this->favoritesService = $favoritesService;
 		$this->dateTimeZone = $dateTimeZone;
-		$this->logger = $logger;
 		$this->appName = $AppName;
 		$this->appVersion = $config->getAppValue('maps', 'installed_version');
 		$this->userId = $UserId;

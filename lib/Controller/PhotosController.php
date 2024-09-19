@@ -22,26 +22,21 @@ use OCP\Files\InvalidPathException;
 use OCP\Files\IRootFolder;
 use OCP\Files\NotFoundException;
 use OCP\Files\NotPermittedException;
-
-use OCP\ILogger;
 use OCP\IRequest;
 
 class PhotosController extends Controller {
 	private $userId;
 	private $geophotoService;
 	private $photofilesService;
-	private $logger;
 	private $root;
 
 	public function __construct($AppName,
-		ILogger $logger,
 		IRequest $request,
 		GeophotoService $GeophotoService,
 		PhotofilesService $photofilesService,
 		IRootFolder $root,
 		$UserId) {
 		parent::__construct($AppName, $request);
-		$this->logger = $logger;
 		$this->userId = $UserId;
 		$this->geophotoService = $GeophotoService;
 		$this->photofilesService = $photofilesService;

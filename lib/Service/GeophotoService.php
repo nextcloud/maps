@@ -27,9 +27,6 @@ use OCP\Files\Search\ISearchBinaryOperator;
 use OCP\Files\Search\ISearchComparison;
 use OCP\ICacheFactory;
 use OCP\IL10N;
-use OCP\ILogger;
-
-
 use OCP\IPreview;
 
 class GeophotoService {
@@ -37,7 +34,6 @@ class GeophotoService {
 	private $l10n;
 	private $root;
 	private $photoMapper;
-	private $logger;
 	private $preview;
 	private $tracksService;
 	private $timeorderedPointSets;
@@ -48,7 +44,7 @@ class GeophotoService {
 	private \OCP\ICache $timeOrderedPointSetsCache;
 	private \OCP\ICache $backgroundJobCache;
 
-	public function __construct(ILogger $logger,
+	public function __construct(
 		IRootFolder $root,
 		IL10N $l10n,
 		GeophotoMapper $photoMapper,
@@ -60,7 +56,6 @@ class GeophotoService {
 		$this->root = $root;
 		$this->l10n = $l10n;
 		$this->photoMapper = $photoMapper;
-		$this->logger = $logger;
 		$this->preview = $preview;
 		$this->tracksService = $tracksService;
 		$this->timeorderedPointSets = null;

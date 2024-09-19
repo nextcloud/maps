@@ -21,7 +21,6 @@ use OCP\IConfig;
 use OCP\IGroupManager;
 use OCP\IInitialStateService;
 use OCP\IL10N;
-use OCP\ILogger;
 use OCP\IRequest;
 use OCP\IServerContainer;
 use OCP\ISession;
@@ -39,7 +38,6 @@ class PublicTracksController extends PublicPageController {
 	protected ShareManager $shareManager;
 	protected IUserManager $userManager;
 	protected IL10N $l;
-	protected ILogger $logger;
 	protected TracksService $tracksService;
 	protected $appName;
 	protected IRootFolder $root;
@@ -57,12 +55,10 @@ class PublicTracksController extends PublicPageController {
 		IServerContainer $serverContainer,
 		protected IGroupManager $groupManager,
 		IL10N $l,
-		ILogger $logger,
 		TracksService $tracksService,
 		IRootFolder $root) {
 		parent::__construct($appName, $request, $session, $urlGenerator, $eventDispatcher, $config, $initialStateService, $shareManager, $userManager);
 		$this->tracksService = $tracksService;
-		$this->logger = $logger;
 		$this->l = $l;
 		$this->root = $root;
 	}

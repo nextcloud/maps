@@ -25,11 +25,10 @@ use OCP\Files\FileInfo;
 use OCP\Files\Folder;
 use OCP\Files\IRootFolder;
 use OCP\Files\Node;
-
 use OCP\ICacheFactory;
 use OCP\IL10N;
-use OCP\ILogger;
 use OCP\Share\IManager;
+use Psr\Log\LoggerInterface;
 
 require_once __DIR__ . '/../../vendor/autoload.php';
 use lsolesen\pel\PelDataWindow;
@@ -49,13 +48,13 @@ class PhotofilesService {
 	private $root;
 	private $photoMapper;
 	private $shareManager;
-	private $logger;
 	private $jobList;
 	private ICacheFactory $cacheFactory;
 	private \OCP\ICache $photosCache;
 	private \OCP\ICache $backgroundJobCache;
 
-	public function __construct(ILogger $logger,
+	public function __construct(
+		private LoggerInterface $logger,
 		ICacheFactory $cacheFactory,
 		IRootFolder $root,
 		IL10N $l10n,
@@ -66,7 +65,6 @@ class PhotofilesService {
 		$this->l10n = $l10n;
 		$this->photoMapper = $photoMapper;
 		$this->shareManager = $shareManager;
-		$this->logger = $logger;
 		$this->jobList = $jobList;
 		$this->cacheFactory = $cacheFactory;
 		$this->photosCache = $this->cacheFactory->createDistributed('maps:photos');

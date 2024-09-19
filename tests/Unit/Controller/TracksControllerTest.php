@@ -81,7 +81,7 @@ class TracksControllerTest extends \PHPUnit\Framework\TestCase {
 		$this->rootFolder = $c->query(IServerContainer::class)->getRootFolder();
 
 		$this->tracksService = new TracksService(
-			$c->query(IServerContainer::class)->getLogger(),
+			$c->query(IServerContainer::class)->get(\Psr\Log\LoggerInterface::class),
 			$c->query(IServerContainer::class)->getL10N($c->query('AppName')),
 			$this->rootFolder,
 			$c->query(IServerContainer::class)->getShareManager(),
@@ -98,7 +98,6 @@ class TracksControllerTest extends \PHPUnit\Framework\TestCase {
 			$c->getServer()->getUserManager(),
 			$c->getServer()->getGroupManager(),
 			$c->query(IServerContainer::class)->getL10N($c->query('AppName')),
-			$c->query(IServerContainer::class)->getLogger(),
 			$c->query(TracksService::class),
 			'test',
 		);
@@ -113,7 +112,6 @@ class TracksControllerTest extends \PHPUnit\Framework\TestCase {
 			$c->getServer()->getUserManager(),
 			$c->getServer()->getGroupManager(),
 			$c->query(IServerContainer::class)->getL10N($c->query('AppName')),
-			$c->query(IServerContainer::class)->getLogger(),
 			$c->query(TracksService::class),
 			'test2',
 		);

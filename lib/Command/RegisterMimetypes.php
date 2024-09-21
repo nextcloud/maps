@@ -40,7 +40,6 @@ class RegisterMimetypes extends Command {
 	 * @return int
 	 */
 	protected function execute(InputInterface $input, OutputInterface $output): int {
-		$this->output = $output;
 		$output->writeln('Register mimetypes for existing files');
 		$this->mimetypeService->registerForExistingFiles();
 		$output->writeln('Register mimetypes for new files');

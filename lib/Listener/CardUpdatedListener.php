@@ -27,21 +27,17 @@ use OCA\DAV\Events\CardUpdatedEvent;
 use OCA\Maps\Service\AddressService;
 use OCP\EventDispatcher\Event;
 use OCP\EventDispatcher\IEventListener;
-use OCP\ILogger;
 
+/** @template-implements IEventListener<CardUpdatedEvent> */
 class CardUpdatedListener implements IEventListener {
 
 	/** @var AddressService */
 	private $addressService;
 
-	/** @var ILogger */
-	private $logger;
-
 	public function __construct(
 		AddressService $addressService,
-		ILogger $logger) {
+	) {
 		$this->addressService = $addressService;
-		$this->logger = $logger;
 	}
 
 	public function handle(Event $event): void {

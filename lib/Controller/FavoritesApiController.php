@@ -19,7 +19,6 @@ use OCP\AppFramework\Http\DataResponse;
 use OCP\IConfig;
 use OCP\IGroupManager;
 use OCP\IL10N;
-use OCP\ILogger;
 use OCP\IRequest;
 use OCP\IServerContainer;
 use OCP\IUserManager;
@@ -37,7 +36,6 @@ class FavoritesApiController extends ApiController {
 	private $dbdblquotes;
 	private $defaultDeviceId;
 	private $l;
-	private $logger;
 	private $favoritesService;
 	protected $appName;
 
@@ -50,7 +48,6 @@ class FavoritesApiController extends ApiController {
 		IUserManager $userManager,
 		IGroupManager $groupManager,
 		IL10N $l,
-		ILogger $logger,
 		FavoritesService $favoritesService,
 		$UserId) {
 		parent::__construct($AppName, $request,
@@ -58,7 +55,6 @@ class FavoritesApiController extends ApiController {
 			'Authorization, Content-Type, Accept',
 			1728000);
 		$this->favoritesService = $favoritesService;
-		$this->logger = $logger;
 		$this->appName = $AppName;
 		$this->appVersion = $config->getAppValue('maps', 'installed_version');
 		$this->userId = $UserId;

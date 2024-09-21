@@ -23,7 +23,6 @@
 
 namespace OCA\Maps\Controller;
 
-use OC;
 use OCA\Maps\DB\FavoriteShareMapper;
 use OCP\AppFramework\Db\DoesNotExistException;
 use OCP\AppFramework\Db\MultipleObjectsReturnedException;
@@ -33,14 +32,13 @@ use OCP\AppFramework\Http\DataResponse;
 use OCP\AppFramework\Http\Template\PublicTemplateResponse;
 use OCP\AppFramework\PublicShareController;
 use OCP\IConfig;
-use OCP\ILogger;
 use OCP\IRequest;
 use OCP\ISession;
+use OCP\IUserManager;
 use OCP\Util;
 
 class PublicFavoritePageController extends PublicShareController {
 	private $config;
-	private $logger;
 
 	/* @var FavoriteShareMapper */
 	private $favoriteShareMapper;
@@ -50,12 +48,10 @@ class PublicFavoritePageController extends PublicShareController {
 		IRequest $request,
 		ISession $session,
 		IConfig $config,
-		ILogger $logger,
 		FavoriteShareMapper $favoriteShareMapper
 	) {
 		parent::__construct($appName, $request, $session);
 		$this->config = $config;
-		$this->logger = $logger;
 		$this->favoriteShareMapper = $favoriteShareMapper;
 	}
 
@@ -85,7 +81,7 @@ class PublicFavoritePageController extends PublicShareController {
 
 		$response = new PublicTemplateResponse('maps', 'public/favorites_index', []);
 
-		$ownerName = OC::$server->getUserManager()->get($share->getOwner())->getDisplayName();
+		$ownerName = \OCP\Server::get(IUserManager::class)->get($share->getOwner())->getDisplayName();
 
 		$response->setHeaderTitle($share->getCategory());
 		$response->setHeaderDetails('shared by ' . $ownerName);
@@ -101,7 +97,6 @@ class PublicFavoritePageController extends PublicShareController {
 	 * To ensure access is blocked when the password to a share is changed we store
 	 * a hash of the password for this token.
 	 *
-	 * @return string
 	 * @since 14.0.0
 	 */
 	protected function getPasswordHash(): string {

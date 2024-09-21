@@ -12,7 +12,6 @@
 
 namespace OCA\Maps\Controller;
 
-use OC\Files\Node\Node;
 use OCA\DAV\CardDAV\CardDavBackend;
 use OCA\Maps\Service\AddressService;
 use OCP\AppFramework\Controller;
@@ -21,10 +20,10 @@ use OCP\AppFramework\Http\DataResponse;
 use OCP\Contacts\IManager;
 use OCP\DB\QueryBuilder\IQueryBuilder;
 use OCP\Files\IRootFolder;
+use OCP\Files\Node;
 use OCP\Files\NotFoundException;
 use OCP\IAvatarManager;
 use OCP\IDBConnection;
-use OCP\ILogger;
 use OCP\IRequest;
 use OCP\IURLGenerator;
 use Sabre\VObject\Property\Text;
@@ -32,7 +31,6 @@ use Sabre\VObject\Reader;
 
 class ContactsController extends Controller {
 	private $userId;
-	private $logger;
 	private $contactsManager;
 	private $addressService;
 	private $dbconnection;
@@ -45,7 +43,6 @@ class ContactsController extends Controller {
 
 	/**
 	 * @param $AppName
-	 * @param ILogger $logger
 	 * @param IRequest $request
 	 * @param IDBConnection $dbconnection
 	 * @param IManager $contactsManager
@@ -57,7 +54,6 @@ class ContactsController extends Controller {
 	 */
 	public function __construct(
 		$AppName,
-		ILogger $logger,
 		IRequest $request,
 		IDBConnection $dbconnection,
 		IManager $contactsManager,
@@ -68,7 +64,6 @@ class ContactsController extends Controller {
 		IRootFolder $root,
 		IURLGenerator $urlGenerator) {
 		parent::__construct($AppName, $request);
-		$this->logger = $logger;
 		$this->userId = $UserId;
 		$this->avatarManager = $avatarManager;
 		$this->contactsManager = $contactsManager;
@@ -83,7 +78,7 @@ class ContactsController extends Controller {
 	/**
 	 * Converts a geo string as a float array
 	 * @param string formatted as "lat;lon"
-	 * @return float array containing [lat;lon]
+	 * @return float[] array containing [lat;lon]
 	 */
 	private function geoAsFloatArray($geo) {
 		$res = array_map(function ($value) {return floatval($value);}, explode(';', $geo));
@@ -116,7 +111,7 @@ class ContactsController extends Controller {
 	 * get distance between two geo points
 	 * @param GPS coordinates of first point
 	 * @param GPS coordinates of second point
-	 * @return Distance in meters between these two points
+	 * @return float Distance in meters between these two points
 	 */
 	private function getDistance($coordsA, $coordsB) {
 		if (empty($coordsA) || empty($coordsB)) {

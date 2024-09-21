@@ -96,17 +96,14 @@ class ExifGeoData extends \stdClass implements \JsonSerializable {
 	protected $exif_data = null;
 
 	/**
-	 * @param string $path
-	 *
-	 * @return array|null
 	 * @throws PelInvalidArgumentException
 	 */
 	protected static function get_exif_data_array(string $path) : array {
 		if (function_exists('exif_read_data')) {
 			$data = @exif_read_data($path, null, true);
-			if ($data && isset($data['EXIF']) && isset($data['EXIF'][self::LATITUDE]) && isset($data['EXIF'][self::LONGITUDE])) {
+			if ($data && isset($data['EXIF']) && is_array($data['EXIF']) && isset($data['EXIF'][self::LATITUDE]) && isset($data['EXIF'][self::LONGITUDE])) {
 				return $data['EXIF'];
-			} elseif ($data && isset($data['GPS']) && isset($data['GPS'][self::LATITUDE]) && isset($data['GPS'][self::LONGITUDE])) {
+			} elseif ($data && isset($data['GPS']) && is_array($data['GPS']) && isset($data['GPS'][self::LATITUDE]) && isset($data['GPS'][self::LONGITUDE])) {
 				$d = $data['GPS'];
 				if (!isset($d[self::TIMESTAMP]) && isset($data['EXIF'][self::TIMESTAMP])) {
 					$d[self::TIMESTAMP] = $data['EXIF'][self::TIMESTAMP];
@@ -209,7 +206,7 @@ class ExifGeoData extends \stdClass implements \JsonSerializable {
 	}
 
 	/**
-	 * @param false $invalidate_zero_iland
+	 * @param bool $invalidate_zero_iland
 	 * @throws ExifDataInvalidException
 	 * @throws ExifDataNoLocationException
 	 */
@@ -246,10 +243,7 @@ class ExifGeoData extends \stdClass implements \JsonSerializable {
 		return $this->is_valid;
 	}
 
-	/**
-	 * @return bool
-	 */
-	private function parse() {
+	private function parse(): void {
 		if ($this->isValid() && ($this->latitude === null || $this->longitude === null)) {
 			$this->longitude = $this->geo2float($this->exif_data[self::LONGITUDE]);
 			if (isset($this->exif_data[self::LONGITUDE_REF]) && $this->exif_data[self::LONGITUDE_REF] === 'W') {
@@ -353,10 +347,8 @@ class ExifGeoData extends \stdClass implements \JsonSerializable {
 
 	/**
 	 * If someone wants to have it as a json object
-	 *
-	 * @return array
 	 */
-	public function jsonSerialize() {
+	public function jsonSerialize(): array {
 		return [
 			'lat' => $this->lat,
 			'lng' => $this->lng,

@@ -16,10 +16,9 @@ use OC\Files\Filesystem;
 use OCA\Maps\Service\PhotofilesService;
 use OCA\Maps\Service\TracksService;
 use OCP\Files\FileInfo;
+use OCP\Files\IHomeStorage;
 use OCP\Files\IRootFolder;
-use OCP\ILogger;
 use OCP\Lock\ILockingProvider;
-
 use OCP\Share;
 use OCP\Util;
 
@@ -31,17 +30,14 @@ class FileHooks {
 	private $photofilesService;
 	private $tracksService;
 
-	private $logger;
-
 	private $root;
 
 	private ILockingProvider $lockingProvider;
 
 	public function __construct(IRootFolder $root, PhotofilesService $photofilesService, TracksService $tracksService,
-		ILogger $logger, $appName, ILockingProvider $lockingProvider) {
+		$appName, ILockingProvider $lockingProvider) {
 		$this->photofilesService = $photofilesService;
 		$this->tracksService = $tracksService;
-		$this->logger = $logger;
 		$this->root = $root;
 		$this->lockingProvider = $lockingProvider;
 	}
@@ -179,12 +175,8 @@ class FileHooks {
 		return $this->root->get($fullPath);
 	}
 
-	/**
-	 * Ugly Hack, find API way to check if file is added by user.
-	 */
-	private function isUserNode(\OCP\Files\Node $node) {
-		//return strpos($node->getStorage()->getId(), "home::", 0) === 0;
-		return $node->getStorage()->instanceOfStorage('\OC\Files\Storage\Home');
+	private function isUserNode(\OCP\Files\Node $node): bool {
+		return $node->getStorage()->instanceOfStorage(IHomeStorage::class);
 	}
 
 }

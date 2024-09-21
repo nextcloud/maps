@@ -24,26 +24,23 @@ use OCP\Files\Search\ISearchBinaryOperator;
 use OCP\Files\Search\ISearchComparison;
 use OCP\IDBConnection;
 use OCP\IL10N;
-use OCP\ILogger;
 use OCP\Share\IManager;
+use Psr\Log\LoggerInterface;
 
 class TracksService {
 
 	public const TRACK_MIME_TYPES = ['application/gpx+xml'];
 
-	private $l10n;
-	private $logger;
 	private $qb;
-	private $root;
-	private $shareManager;
 
-	public function __construct(ILogger $logger, IL10N $l10n, IRootFolder $root,
-		IManager $shareManager, IDBConnection $dbconnection) {
-		$this->l10n = $l10n;
-		$this->logger = $logger;
+	public function __construct(
+		private LoggerInterface $logger,
+		private IL10N $l10n,
+		private IRootFolder $root,
+		private IManager $shareManager,
+		IDBConnection $dbconnection,
+	) {
 		$this->qb = $dbconnection->getQueryBuilder();
-		$this->root = $root;
-		$this->shareManager = $shareManager;
 	}
 
 	public function rescan($userId) {

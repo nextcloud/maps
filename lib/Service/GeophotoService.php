@@ -18,6 +18,7 @@ use OC\Files\Search\SearchQuery;
 use OC\User\NoUserException;
 use OCA\Maps\DB\GeophotoMapper;
 use OCP\DB\Exception;
+use OCP\Files\File;
 use OCP\Files\Folder;
 use OCP\Files\IRootFolder;
 use OCP\Files\NotFoundException;
@@ -26,9 +27,6 @@ use OCP\Files\Search\ISearchBinaryOperator;
 use OCP\Files\Search\ISearchComparison;
 use OCP\ICacheFactory;
 use OCP\IL10N;
-use OCP\ILogger;
-
-
 use OCP\IPreview;
 
 class GeophotoService {
@@ -36,7 +34,6 @@ class GeophotoService {
 	private $l10n;
 	private $root;
 	private $photoMapper;
-	private $logger;
 	private $preview;
 	private $tracksService;
 	private $timeorderedPointSets;
@@ -47,7 +44,7 @@ class GeophotoService {
 	private \OCP\ICache $timeOrderedPointSetsCache;
 	private \OCP\ICache $backgroundJobCache;
 
-	public function __construct(ILogger $logger,
+	public function __construct(
 		IRootFolder $root,
 		IL10N $l10n,
 		GeophotoMapper $photoMapper,
@@ -59,7 +56,6 @@ class GeophotoService {
 		$this->root = $root;
 		$this->l10n = $l10n;
 		$this->photoMapper = $photoMapper;
-		$this->logger = $logger;
 		$this->preview = $preview;
 		$this->tracksService = $tracksService;
 		$this->timeorderedPointSets = null;
@@ -85,7 +81,7 @@ class GeophotoService {
 
 	/**
 	 * @param string $userId
-	 * @param null $folder =null
+	 * @param ?Folder $folder =null
 	 * @param bool $respectNomediaAndNoimage =true
 	 * @param bool $hideImagesOnCustomMaps =true
 	 * @param bool $hideImagesInMapsFolder
@@ -169,7 +165,7 @@ class GeophotoService {
 
 	/**
 	 * @param string $userId
-	 * @param null $folder =null
+	 * @param ?Folder $folder =null
 	 * @param bool $respectNomediaAndNoimage
 	 * @param bool $hideImagesOnCustomMaps
 	 * @param bool $hideImagesInMapsFolder
@@ -339,7 +335,7 @@ class GeophotoService {
 				$res = $userFolder->getById($gpxfile['file_id']);
 				if (is_array($res) and count($res) > 0) {
 					$file = array_shift($res);
-					if ($file->getType() === \OCP\Files\FileInfo::TYPE_FILE) {
+					if ($file instanceof File) {
 						foreach ($this->getTracksFromGPX($file->getContent()) as $i => $track) {
 							$this->timeorderedPointSets['track:' . $gpxfile['id'] . ':' . $i] = $this->getTimeorderdPointsFromTrack($track);
 						}

@@ -27,21 +27,17 @@ use OCA\DAV\Events\CardDeletedEvent;
 use OCA\Maps\Service\AddressService;
 use OCP\EventDispatcher\Event;
 use OCP\EventDispatcher\IEventListener;
-use OCP\ILogger;
 
+/** @template-implements IEventListener<CardDeletedEvent> */
 class CardDeletedListener implements IEventListener {
 
 	/** @var AddressService */
 	private $addressService;
 
-	/** @var ILogger */
-	private $logger;
-
 	public function __construct(
 		AddressService $addressService,
-		ILogger $logger) {
+	) {
 		$this->addressService = $addressService;
-		$this->logger = $logger;
 	}
 
 	public function handle(Event $event): void {

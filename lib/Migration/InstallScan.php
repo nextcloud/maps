@@ -27,12 +27,9 @@ use OCA\Maps\BackgroundJob\LaunchUsersInstallScanJob;
 use OCP\BackgroundJob\IJobList;
 use OCP\Encryption\IManager;
 use OCP\IConfig;
-
-use OCP\IDBConnection;
 use OCP\IUser;
 use OCP\IUserManager;
 use OCP\Migration\IOutput;
-
 use OCP\Migration\IRepairStep;
 
 /**
@@ -42,20 +39,12 @@ use OCP\Migration\IRepairStep;
  */
 class InstallScan implements IRepairStep {
 
-	/** @var IDBConnection */
-	private $connection;
-
-	/** @var IConfig */
-	private $config;
-
-
-	public function __construct(IDBConnection $connection,
-		IConfig $config,
-		IUserManager $userManager,
-		IJobList $jobList,
-		IManager $encryptionManager
+	public function __construct(
+		private IConfig $config,
+		private IUserManager $userManager,
+		private IJobList $jobList,
+		private IManager $encryptionManager
 	) {
-		$this->connection = $connection;
 		$this->config = $config;
 		$this->jobList = $jobList;
 		$this->encryptionManager = $encryptionManager;
@@ -84,7 +73,6 @@ class InstallScan implements IRepairStep {
 			$output->warning('Encryption is enabled. Installation photos/tracks scan aborted.');
 			return 1;
 		}
-		$this->output = $output;
 
 		// set the install scan flag for existing users
 		// future users won't have any value and won't be bothered by "media scan" warning

@@ -33,6 +33,7 @@ use OCP\AppFramework\Http\TemplateResponse;
 use OCP\AppFramework\IAppContainer;
 use OCP\IServerContainer;
 use PHPUnit\Framework\TestCase;
+use Psr\Log\LoggerInterface;
 
 class PublicFavoritePageControllerTest extends TestCase {
 	/* @var PublicFavoritePageController */
@@ -54,7 +55,7 @@ class PublicFavoritePageControllerTest extends TestCase {
 
 	protected function setUp(): void {
 		// Begin transaction
-		$db = OC::$server->query(\OCP\IDBConnection::class);
+		$db = \OCP\Server::get(\OCP\IDBConnection::class);
 		$db->beginTransaction();
 
 		$this->app = new Application();
@@ -62,10 +63,10 @@ class PublicFavoritePageControllerTest extends TestCase {
 		$this->container = $this->app->getContainer();
 		$container = $this->container;
 
-		$appName = $container->query('AppName');
+		$appName = $container->query('appName');
 
 		$this->favoritesService = new FavoritesService(
-			$container->query(IServerContainer::class)->getLogger(),
+			$container->query(IServerContainer::class)->get(LoggerInterface::class),
 			$container->query(IServerContainer::class)->getL10N($appName),
 			$container->query(IServerContainer::class)->getSecureRandom(),
 			$container->query(\OCP\IDBConnection::class)
@@ -87,7 +88,6 @@ class PublicFavoritePageControllerTest extends TestCase {
 			$requestMock,
 			$sessionMock,
 			$this->config,
-			$container->query(\OCP\ILogger::class),
 			$this->favoriteShareMapper
 		);
 	}

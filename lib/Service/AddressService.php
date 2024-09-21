@@ -18,9 +18,9 @@ use OCP\DB\QueryBuilder\IQueryBuilder;
 use OCP\Files\IAppData;
 use OCP\ICacheFactory;
 use OCP\IDBConnection;
-use OCP\ILogger;
 use OCP\IMemcache;
 use OpenLocationCode\OpenLocationCode;
+use Psr\Log\LoggerInterface;
 use Sabre\VObject\Reader;
 
 /**
@@ -41,19 +41,22 @@ use Sabre\VObject\Reader;
 class AddressService {
 	private $qb;
 	private $dbconnection;
-	private $logger;
 	private $jobList;
 	private $appData;
 
 	/** @var IMemcache */
 	private $memcache;
 
-	public function __construct(ICacheFactory $cacheFactory, ILogger $logger, IJobList $jobList,
-		IAppData $appData, IDBConnection $dbconnection) {
+	public function __construct(
+		ICacheFactory $cacheFactory,
+		private LoggerInterface $logger,
+		IJobList $jobList,
+		IAppData $appData,
+		IDBConnection $dbconnection,
+	) {
 		$this->dbconnection = $dbconnection;
 		$this->qb = $dbconnection->getQueryBuilder();
 		$this->memcache = $cacheFactory->createLocal('maps');
-		$this->logger = $logger;
 		$this->jobList = $jobList;
 		$this->appData = $appData;
 	}

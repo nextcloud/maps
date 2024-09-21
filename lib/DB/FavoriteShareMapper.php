@@ -35,6 +35,7 @@ use OCP\Files\NotFoundException;
 use OCP\IDBConnection;
 use OCP\Security\ISecureRandom;
 
+/** @template-extends QBMapper<FavoriteShare> */
 class FavoriteShareMapper extends QBMapper {
 	/* @var ISecureRandom */
 	private $secureRandom;

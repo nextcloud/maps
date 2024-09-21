@@ -59,7 +59,7 @@ class PublicFavoritesApiControllerTest extends TestCase {
 		$this->config = $container->query(IServerContainer::class)->getConfig();
 
 		$this->favoritesService = new FavoritesService(
-			$container->query(IServerContainer::class)->getLogger(),
+			$container->query(IServerContainer::class)->get(\Psr\Log\LoggerInterface::class),
 			$container->query(IServerContainer::class)->getL10N($appName),
 			$container->query(IServerContainer::class)->getSecureRandom(),
 			$container->query(\OCP\IDBConnection::class)

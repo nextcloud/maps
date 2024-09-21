@@ -18,6 +18,7 @@ use OCA\DAV\Connector\Sabre\Principal;
 use OCA\Maps\AppInfo\Application;
 use OCA\Maps\Service\AddressService;
 use OCP\IServerContainer;
+use Psr\Log\LoggerInterface;
 
 class ContactsControllerTest extends \PHPUnit\Framework\TestCase {
 	private $appName;
@@ -97,7 +98,7 @@ class ContactsControllerTest extends \PHPUnit\Framework\TestCase {
 
 		$this->addressService = new AddressService(
 			$c->query(IServerContainer::class)->getMemCacheFactory(),
-			$c->query(IServerContainer::class)->getLogger(),
+			$c->query(IServerContainer::class)->get(LoggerInterface::class),
 			$c->query(IServerContainer::class)->getJobList(),
 			$this->appData,
 			$c->query(IServerContainer::class)->query(\OCP\IDBConnection::class)
@@ -122,7 +123,6 @@ class ContactsControllerTest extends \PHPUnit\Framework\TestCase {
 
 		$this->contactsController = new ContactsController(
 			$this->appName,
-			$c->query(IServerContainer::class)->getLogger(),
 			$this->request,
 			$c->query(IServerContainer::class)->query(\OCP\IDBConnection::class),
 			$this->contactsManager,
@@ -138,7 +138,6 @@ class ContactsControllerTest extends \PHPUnit\Framework\TestCase {
 
 		$this->contactsController2 = new ContactsController(
 			$this->appName,
-			$c->query(IServerContainer::class)->getLogger(),
 			$this->request,
 			$c->query(IServerContainer::class)->query(\OCP\IDBConnection::class),
 			$this->contactsManager,

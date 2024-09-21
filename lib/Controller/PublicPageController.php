@@ -11,7 +11,6 @@
 
 namespace OCA\Maps\Controller;
 
-use OC\InitialStateService;
 use OC\Security\CSP\ContentSecurityPolicy;
 use OCA\Files\Event\LoadSidebar;
 use OCA\Files_Sharing\Event\BeforeTemplateRenderedEvent;
@@ -22,34 +21,29 @@ use OCP\EventDispatcher\IEventDispatcher;
 use OCP\Files\NotFoundException;
 use OCP\IConfig;
 use OCP\IInitialStateService;
-use OCP\ILogger;
 use OCP\IRequest;
 use OCP\ISession;
 use OCP\IURLGenerator;
 use OCP\IUserManager;
 use OCP\Share\Exceptions\ShareNotFound;
 use OCP\Share\IManager as ShareManager;
+use OCP\Share\IShare;
 
 class PublicPageController extends AuthPublicShareController {
-	protected InitialStateService $initialStateService;
-	protected IConfig $config;
-	protected ILogger $logger;
-	protected \OCP\Activity\IManager $activityManager;
-	protected IEventDispatcher $eventDispatcher;
-	protected ShareManager $shareManager;
-	protected IUserManager $userManager;
+	protected IShare $share;
 
-	public function __construct($AppName,
+	public function __construct(
+		string $appName,
 		IRequest $request,
-		IEventDispatcher $eventDispatcher,
-		IConfig $config,
-		IInitialStateService $initialStateService,
+		ISession $session,
 		IURLGenerator $urlGenerator,
-		ShareManager $shareManager,
-		IUserManager $userManager,
-		ISession $session
+		protected IEventDispatcher $eventDispatcher,
+		protected IConfig $config,
+		protected IInitialStateService $initialStateService,
+		protected ShareManager $shareManager,
+		protected IUserManager $userManager,
 	) {
-		parent::__construct($AppName, $request, $session, $urlGenerator);
+		parent::__construct($appName, $request, $session, $urlGenerator);
 		$this->eventDispatcher = $eventDispatcher;
 		$this->config = $config;
 		$this->initialStateService = $initialStateService;
@@ -71,7 +65,7 @@ class PublicPageController extends AuthPublicShareController {
 		return $this->shareManager->checkPassword($this->share, $password);
 	}
 
-	protected function getPasswordHash(): string {
+	protected function getPasswordHash(): ?string {
 		return $this->share->getPassword();
 	}
 
@@ -82,7 +76,6 @@ class PublicPageController extends AuthPublicShareController {
 	/**
 	 * Validate the permissions of the share
 	 *
-	 * @param Share\IShare $share
 	 * @return bool
 	 */
 	private function validateShare(\OCP\Share\IShare $share) {

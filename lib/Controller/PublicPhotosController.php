@@ -30,32 +30,27 @@ use OCP\Share\Exceptions\ShareNotFound;
 use OCP\Share\IManager as ShareManager;
 
 class PublicPhotosController extends PublicPageController {
-	protected GeophotoService $geophotoService;
-	protected PhotofilesService $photofilesService;
-	protected IRootFolder $root;
 
-	public function __construct($appName,
+	public function __construct(
+		string $appName,
 		IRequest $request,
+		ISession $session,
+		IURLGenerator $urlGenerator,
 		IEventDispatcher $eventDispatcher,
 		IConfig $config,
 		IInitialStateService $initialStateService,
-		IURLGenerator $urlGenerator,
 		ShareManager $shareManager,
 		IUserManager $userManager,
-		ISession $session,
-		GeophotoService $GeophotoService,
-		PhotofilesService $photofilesService,
-		IRootFolder $root) {
-		parent::__construct($appName, $request, $eventDispatcher, $config, $initialStateService, $urlGenerator, $shareManager, $userManager, $session);
-		$this->geophotoService = $GeophotoService;
-		$this->photofilesService = $photofilesService;
-		$this->root = $root;
+		protected GeophotoService $geophotoService,
+		protected PhotofilesService $photofilesService,
+		protected IRootFolder $root,
+	) {
+		parent::__construct($appName, $request, $session, $urlGenerator, $eventDispatcher, $config, $initialStateService, $shareManager, $userManager);
 	}
 
 	/**
 	 * Validate the permissions of the share
 	 *
-	 * @param Share\IShare $share
 	 * @return bool
 	 */
 	private function validateShare(\OCP\Share\IShare $share) {

@@ -42,10 +42,12 @@ class AddPhotoJob extends QueuedJob {
 	 * @param ITimeFactory $timeFactory
 	 * @param PhotofilesService $photofilesService
 	 */
-	public function __construct(ITimeFactory $timeFactory,
+	public function __construct(
+		ITimeFactory $timeFactory,
 		IRootFolder $root,
 		PhotofilesService $photofilesService,
-		ICacheFactory $cacheFactory) {
+		ICacheFactory $cacheFactory,
+	) {
 		parent::__construct($timeFactory);
 		$this->photofilesService = $photofilesService;
 		$this->root = $root;
@@ -53,16 +55,16 @@ class AddPhotoJob extends QueuedJob {
 		$this->backgroundJobCache = $this->cacheFactory->createDistributed('maps:background-jobs');
 	}
 
-	public function run($arguments) {
-		$userFolder = $this->root->getUserFolder($arguments['userId']);
-		$files = $userFolder->getById($arguments['photoId']);
+	public function run($argument) {
+		$userFolder = $this->root->getUserFolder($argument['userId']);
+		$files = $userFolder->getById($argument['photoId']);
 		if (empty($files)) {
 			return;
 		}
 		$file = array_shift($files);
-		$this->photofilesService->addPhotoNow($file, $arguments['userId']);
+		$this->photofilesService->addPhotoNow($file, $argument['userId']);
 
-		$counter = $this->backgroundJobCache->get('recentlyAdded:'.$arguments['userId']) ?? 0;
-		$this->backgroundJobCache->set('recentlyAdded:'.$arguments['userId'], (int)$counter + 1, 60 * 60 * 3);
+		$counter = $this->backgroundJobCache->get('recentlyAdded:'.$argument['userId']) ?? 0;
+		$this->backgroundJobCache->set('recentlyAdded:'.$argument['userId'], (int)$counter + 1, 60 * 60 * 3);
 	}
 }

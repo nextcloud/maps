@@ -21,12 +21,12 @@ use OCP\AppFramework\Db\DoesNotExistException;
 use OCP\AppFramework\Db\MultipleObjectsReturnedException;
 use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\DataResponse;
+use OCP\Files\Folder;
 use OCP\Files\NotFoundException;
 use OCP\IConfig;
 use OCP\IDateTimeZone;
 use OCP\IGroupManager;
 use OCP\IL10N;
-use OCP\ILogger;
 use OCP\IRequest;
 use OCP\IServerContainer;
 use OCP\IUserManager;
@@ -43,7 +43,6 @@ class FavoritesController extends Controller {
 	private IGroupManager $groupManager;
 	private string $dbtype;
 	private IL10N $l;
-	private ILogger $logger;
 	private FavoritesService $favoritesService;
 	private IDateTimeZone $dateTimeZone;
 	private ?string $defaultFavoritsJSON;
@@ -61,7 +60,6 @@ class FavoritesController extends Controller {
 		IUserManager $userManager,
 		IGroupManager $groupManager,
 		IL10N $l,
-		ILogger $logger,
 		FavoritesService $favoritesService,
 		IDateTimeZone $dateTimeZone,
 		FavoriteShareMapper $favoriteShareMapper,
@@ -69,7 +67,6 @@ class FavoritesController extends Controller {
 		parent::__construct($AppName, $request);
 		$this->favoritesService = $favoritesService;
 		$this->dateTimeZone = $dateTimeZone;
-		$this->logger = $logger;
 		$this->appName = $AppName;
 		$this->appVersion = $config->getAppValue('maps', 'installed_version');
 		$this->userId = $UserId;
@@ -404,7 +401,7 @@ class FavoritesController extends Controller {
 		}
 		$folders = $this->userFolder->getById($targetMapId);
 		$folder = array_shift($folders);
-		if (is_null($folder)) {
+		if (!($folder instanceof Folder)) {
 			return new DataResponse($this->l->t('Map not Found'), 404);
 		}
 		try {
@@ -463,7 +460,7 @@ class FavoritesController extends Controller {
 		}
 		if ($userFolder->nodeExists('/Maps')) {
 			$mapsFolder = $userFolder->get('/Maps');
-			if ($mapsFolder->getType() !== \OCP\Files\FileInfo::TYPE_FOLDER) {
+			if (!($mapsFolder instanceof Folder)) {
 				$response = new DataResponse($this->l->t('/Maps is not a directory'), 400);
 				return $response;
 			} elseif (!$mapsFolder->isCreatable()) {

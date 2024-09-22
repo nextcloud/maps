@@ -28,7 +28,7 @@ OC.L10N.register(
     "Favorite" : "Favorīts",
     "Duration" : "Ilgums",
     "End" : "Beigas",
-    "Name" : "Vārds",
+    "Name" : "Nosaukums",
     "Add" : "Pievienot",
     "Add to favorites" : "Pievienot izlasei",
     "Home" : "Sākums",

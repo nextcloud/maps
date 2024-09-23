@@ -111,7 +111,6 @@ OC.L10N.register(
     "Display picture" : "Прикажи слику",
     "Remove from selection" : "Уклони из одабира",
     "No suggestions found" : "Није пронађен ниједан предлог",
-    "To get suggestions upload tracks from the trips, when you took your photos." : "Да бисте добили предлоге, отпремите путање из путовања, када сте направили слике.",
     "Quit" : "Напусти",
     "Load more" : "Учитај још",
     "Photos default timezone:" : "Подразумевана временска зона слика:",

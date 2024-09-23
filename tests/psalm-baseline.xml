@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<files psalm-version="5.26.1@d747f6500b38ac4f7dfc5edbcae6e4b637d7add0">
+  <file src="lib/Controller/PublicContactsController.php">
+    <UndefinedClass>
+      <code><![CDATA[\OC_User]]></code>
+    </UndefinedClass>
+  </file>
+  <file src="lib/Controller/PublicFavoritesController.php">
+    <UndefinedClass>
+      <code><![CDATA[\OC_User]]></code>
+    </UndefinedClass>
+  </file>
+  <file src="lib/Controller/PublicPageController.php">
+    <UndefinedClass>
+      <code><![CDATA[\OC_User]]></code>
+    </UndefinedClass>
+  </file>
+  <file src="lib/Controller/PublicPhotosController.php">
+    <UndefinedClass>
+      <code><![CDATA[\OC_User]]></code>
+    </UndefinedClass>
+  </file>
+  <file src="lib/Controller/PublicTracksController.php">
+    <UndefinedClass>
+      <code><![CDATA[\OC_User]]></code>
+    </UndefinedClass>
+  </file>
+  <file src="lib/Controller/PublicUtilsController.php">
+    <UndefinedClass>
+      <code><![CDATA[\OC_User]]></code>
+    </UndefinedClass>
+  </file>
+  <file src="lib/Hooks/FileHooks.php">
+    <UndefinedClass>
+      <code><![CDATA[\OC]]></code>
+    </UndefinedClass>
+  </file>
+  <file src="lib/Migration/RegisterMimeType.php">
+    <UndefinedClass>
+      <code><![CDATA[\OC]]></code>
+    </UndefinedClass>
+    <UndefinedInterfaceMethod>
+      <code><![CDATA[updateFilecache]]></code>
+      <code><![CDATA[updateFilecache]]></code>
+      <code><![CDATA[updateFilecache]]></code>
+      <code><![CDATA[updateFilecache]]></code>
+      <code><![CDATA[updateFilecache]]></code>
+    </UndefinedInterfaceMethod>
+  </file>
+  <file src="lib/Migration/UnregisterMimeType.php">
+    <UndefinedClass>
+      <code><![CDATA[\OC]]></code>
+    </UndefinedClass>
+    <UndefinedInterfaceMethod>
+      <code><![CDATA[updateFilecache]]></code>
+      <code><![CDATA[updateFilecache]]></code>
+      <code><![CDATA[updateFilecache]]></code>
+      <code><![CDATA[updateFilecache]]></code>
+      <code><![CDATA[updateFilecache]]></code>
+    </UndefinedInterfaceMethod>
+  </file>
+  <file src="lib/Service/DevicesService.php">
+    <UndefinedFunction>
+      <code><![CDATA['gpxDataElement']]></code>
+      <code><![CDATA['gpxEndElement']]></code>
+      <code><![CDATA['gpxStartElement']]></code>
+      <code><![CDATA['kmlDataElement']]></code>
+      <code><![CDATA['kmlEndElement']]></code>
+      <code><![CDATA['kmlStartElement']]></code>
+    </UndefinedFunction>
+  </file>
+  <file src="lib/Service/FavoritesService.php">
+    <UndefinedFunction>
+      <code><![CDATA['gpxDataElement']]></code>
+      <code><![CDATA['gpxEndElement']]></code>
+      <code><![CDATA['gpxStartElement']]></code>
+      <code><![CDATA['kmlDataElement']]></code>
+      <code><![CDATA['kmlEndElement']]></code>
+      <code><![CDATA['kmlStartElement']]></code>
+    </UndefinedFunction>
+  </file>
+  <file src="lib/Service/MimetypeService.php">
+    <UndefinedClass>
+      <code><![CDATA[\OC]]></code>
+    </UndefinedClass>
+    <UndefinedInterfaceMethod>
+      <code><![CDATA[updateFilecache]]></code>
+      <code><![CDATA[updateFilecache]]></code>
+      <code><![CDATA[updateFilecache]]></code>
+      <code><![CDATA[updateFilecache]]></code>
+      <code><![CDATA[updateFilecache]]></code>
+    </UndefinedInterfaceMethod>
+  </file>
+  <file src="lib/Service/TracksService.php">
+    <InvalidPropertyFetch>
+      <code><![CDATA[$lastPoint->ele]]></code>
+      <code><![CDATA[$lastPoint->ele]]></code>
+      <code><![CDATA[$lastPoint->time]]></code>
+      <code><![CDATA[$lastPoint->time]]></code>
+      <code><![CDATA[$point->ele]]></code>
+      <code><![CDATA[$point->ele]]></code>
+      <code><![CDATA[$point->time]]></code>
+      <code><![CDATA[$point->time]]></code>
+    </InvalidPropertyFetch>
+  </file>
+</files>

@@ -12,21 +12,18 @@
 
 namespace OCA\Maps\Controller;
 
+use OCP\AppFramework\Http\DataResponse;
 use OCP\EventDispatcher\IEventDispatcher;
 use OCP\Files\GenericFileException;
 use OCP\Files\InvalidPathException;
 use OCP\Files\IRootFolder;
 use OCP\Files\NotFoundException;
-
 use OCP\Files\NotPermittedException;
+use OCP\IConfig;
 use OCP\IInitialStateService;
-use OCP\ILogger;
+use OCP\IRequest;
 use OCP\ISession;
 use OCP\IURLGenerator;
-use OCP\IConfig;
-
-use OCP\IRequest;
-use OCP\AppFramework\Http\DataResponse;
 use OCP\IUserManager;
 use OCP\Lock\LockedException;
 use OCP\Share\Exceptions\ShareNotFound;
@@ -36,25 +33,25 @@ class PublicUtilsController extends PublicPageController {
 
 	protected IRootFolder $root;
 
-    public function __construct(string $appName,
-								IRequest $request,
-								IConfig $config,
-								IURLGenerator $urlGenerator,
-								IInitialStateService $initialStateService,
-								IUserManager $userManager,
-								ShareManager $shareManager,
-								ISession $session,
-								IRootFolder $root,
-								IEventDispatcher $eventDispatcher
-								) {
-        parent::__construct($appName, $request, $eventDispatcher, $config, $initialStateService, $urlGenerator, $shareManager, $userManager, $session);
+	public function __construct(
+		string $appName,
+		IRequest $request,
+		ISession $session,
+		IURLGenerator $urlGenerator,
+		IConfig $config,
+		IInitialStateService $initialStateService,
+		IUserManager $userManager,
+		ShareManager $shareManager,
+		IRootFolder $root,
+		IEventDispatcher $eventDispatcher
+	) {
+		parent::__construct($appName, $request, $session, $urlGenerator, $eventDispatcher, $config, $initialStateService, $shareManager, $userManager);
 		$this->root = $root;
-    }
+	}
 
 	/**
 	 * Validate the permissions of the share
 	 *
-	 * @param Share\IShare $share
 	 * @return bool
 	 */
 	private function validateShare(\OCP\Share\IShare $share) {
@@ -105,20 +102,6 @@ class PublicUtilsController extends PublicPageController {
 	}
 
 	/**
-	 * Delete user options
-	 *
-	 * @PublicPage
-	 * @return DataResponse
-	 */
-    public function deleteOptionsValues(): DataResponse {
-        $keys = $this->config->getUserKeys(Null, 'maps');
-        foreach ($keys as $key) {
-            $this->config->deleteUserValue(Null, 'maps', $key);
-        }
-        return new DataResponse(['done'=>1]);
-    }
-
-	/**
 	 * Save options values to the DB for current user
 	 *
 	 * @PublicPage
@@ -130,17 +113,17 @@ class PublicUtilsController extends PublicPageController {
 	 * @throws InvalidPathException
 	 * @throws NotPermittedException
 	 */
-    public function saveOptionValue($options, $myMapId=null): DataResponse  {
+	public function saveOptionValue($options, $myMapId = null): DataResponse {
 		$share = $this->getShare();
 		$permissions = $share->getPermissions();
 		$folder = $this->getShareNode();
 		$isCreatable = ($permissions & (1 << 2)) && $folder->isCreatable();
 
 		try {
-			$file=$folder->get(".index.maps");
+			$file = $folder->get('.index.maps');
 		} catch (NotFoundException $e) {
 			if ($isCreatable) {
-				$file=$folder->newFile(".index.maps", $content = "{}");
+				$file = $folder->newFile('.index.maps', $content = '{}');
 			} else {
 				throw new NotFoundException();
 			}
@@ -151,16 +134,16 @@ class PublicUtilsController extends PublicPageController {
 		}
 
 		try {
-			$ov = json_decode($file->getContent(),true, 512);
+			$ov = json_decode($file->getContent(), true, 512);
 			foreach ($options as $key => $value) {
 				$ov[$key] = $value;
 			}
 			$file->putContent(json_encode($ov, JSON_PRETTY_PRINT));
-		} catch (LockedException $e){
-			return new DataResponse("File is locked", 500);
+		} catch (LockedException $e) {
+			return new DataResponse('File is locked', 500);
 		}
-        return new DataResponse(['done'=>1]);
-    }
+		return new DataResponse(['done' => 1]);
+	}
 
 	/**
 	 * get options values from the config for current user
@@ -172,23 +155,23 @@ class PublicUtilsController extends PublicPageController {
 	 * @throws NotFoundException
 	 * @throws NotPermittedException
 	 */
-    public function getOptionsValues(): DataResponse {
-        $ov = array();
+	public function getOptionsValues(): DataResponse {
+		$ov = [];
 
 		$share = $this->getShare();
 		$permissions = $share->getPermissions();
 		$folder = $this->getShareNode();
 		$isCreatable = ($permissions & (1 << 2)) && $folder->isCreatable();
 		try {
-			$file=$folder->get(".index.maps");
+			$file = $folder->get('.index.maps');
 		} catch (NotFoundException $e) {
 			if ($isCreatable) {
-				$file=$folder->newFile(".index.maps", $content = "{}");
+				$file = $folder->newFile('.index.maps', $content = '{}');
 			} else {
 				throw new NotFoundException();
 			}
 		}
-		$ov = json_decode($file->getContent(),true, 512);
+		$ov = json_decode($file->getContent(), true, 512);
 
 		// Maps content can be read mostly from the folder
 		$ov['isReadable'] = ($permissions & (1 << 0)) && $folder->isReadable();
@@ -201,94 +184,94 @@ class PublicUtilsController extends PublicPageController {
 		$ov['isShareable'] = ($permissions & (1 << 4)) && $folder->isShareable();
 
 
-        // get routing-specific admin settings values
-        $settingsKeys = [
-            'osrmCarURL',
-            'osrmBikeURL',
-            'osrmFootURL',
-            'osrmDEMO',
-            'graphhopperAPIKEY',
-            'mapboxAPIKEY',
+		// get routing-specific admin settings values
+		$settingsKeys = [
+			'osrmCarURL',
+			'osrmBikeURL',
+			'osrmFootURL',
+			'osrmDEMO',
+			'graphhopperAPIKEY',
+			'mapboxAPIKEY',
 			'maplibreStreetStyleURL',
 			'maplibreStreetStyleAuth',
-            'graphhopperURL'
-        ];
-        foreach ($settingsKeys as $k) {
-            $v = $this->config->getAppValue('maps', $k);
-            $ov[$k] = $v;
-        }
-        return new DataResponse(['values'=>$ov]);
-    }
+			'graphhopperURL'
+		];
+		foreach ($settingsKeys as $k) {
+			$v = $this->config->getAppValue('maps', $k);
+			$ov[$k] = $v;
+		}
+		return new DataResponse(['values' => $ov]);
+	}
 
 
-    /**
-     * get content of mapbox traffic style
-     * @PublicPage
+	/**
+	 * get content of mapbox traffic style
+	 * @PublicPage
 	 *
-     * @return DataResponse
-     */
-    public function getTrafficStyle(): DataResponse {
-        $style = [
-            'version' => 8,
-            'name' => 'Mapbox Traffic tileset v1',
-            'sources' => [
-                'mapbox-traffic' => [
-                    'url' => 'mapbox://mapbox.mapbox-traffic-v1',
-                    'type' => 'vector'
-                ]
-            ],
-            'layers' => [
-                [
-                    'id' => 'traffic',
-                    'source' => 'mapbox-traffic',
-                    'source-layer' => 'traffic',
-                    'type' => 'line',
-                    'paint' => [
-                        'line-width' => 2.0,
-                        'line-color' => [
-                            'case',
-                            [
-                                '==',
-                                'low',
-                                [
-                                    'get',
-                                    'congestion'
-                                ]
-                            ],
-                            '#00ff00',
-                            [
-                                '==',
-                                'moderate',
-                                [
-                                    'get',
-                                    'congestion'
-                                ]
-                            ],
-                            '#ffad00',
-                            [
-                                '==',
-                                'heavy',
-                                [
-                                    'get',
-                                    'congestion'
-                                ]
-                            ],
-                            '#ff0000',
-                            [
-                                '==',
-                                'severe',
-                                [
-                                    'get',
-                                    'congestion'
-                                ]
-                            ],
-                            '#b43b71',
-                            '#000000'
-                        ]
-                    ]
-                ]
-            ]
-        ];
-        return new DataResponse($style);
-    }
+	 * @return DataResponse
+	 */
+	public function getTrafficStyle(): DataResponse {
+		$style = [
+			'version' => 8,
+			'name' => 'Mapbox Traffic tileset v1',
+			'sources' => [
+				'mapbox-traffic' => [
+					'url' => 'mapbox://mapbox.mapbox-traffic-v1',
+					'type' => 'vector'
+				]
+			],
+			'layers' => [
+				[
+					'id' => 'traffic',
+					'source' => 'mapbox-traffic',
+					'source-layer' => 'traffic',
+					'type' => 'line',
+					'paint' => [
+						'line-width' => 2.0,
+						'line-color' => [
+							'case',
+							[
+								'==',
+								'low',
+								[
+									'get',
+									'congestion'
+								]
+							],
+							'#00ff00',
+							[
+								'==',
+								'moderate',
+								[
+									'get',
+									'congestion'
+								]
+							],
+							'#ffad00',
+							[
+								'==',
+								'heavy',
+								[
+									'get',
+									'congestion'
+								]
+							],
+							'#ff0000',
+							[
+								'==',
+								'severe',
+								[
+									'get',
+									'congestion'
+								]
+							],
+							'#b43b71',
+							'#000000'
+						]
+					]
+				]
+			]
+		];
+		return new DataResponse($style);
+	}
 }

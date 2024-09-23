@@ -11,97 +11,80 @@
 
 namespace OCA\Maps\Controller;
 
-use OCA\Files_External\NotFoundException;
 use OCA\Maps\DB\DeviceShareMapper;
+use OCA\Maps\Service\DevicesService;
 use OCP\App\IAppManager;
-
-use OCP\AppFramework\Db\DoesNotExistException;
-use OCP\Files\IRootFolder;
-use OCP\Files\NotPermittedException;
-use OCP\IURLGenerator;
-use OCP\IConfig;
-use \OCP\IL10N;
-
-use OCP\AppFramework\Http;
-use OCP\AppFramework\Http\RedirectResponse;
-
-use OCP\AppFramework\Http\ContentSecurityPolicy;
-
-use OCP\IRequest;
-use OCP\AppFramework\Http\TemplateResponse;
-use OCP\AppFramework\Http\DataResponse;
 use OCP\AppFramework\Controller;
-use OCP\AppFramework\ApiController;
-use OCP\Constants;
-use OCP\Share;
+use OCP\AppFramework\Db\DoesNotExistException;
+use OCP\AppFramework\Http;
+use OCP\AppFramework\Http\DataResponse;
+use OCP\Files\IRootFolder;
+use OCP\Files\NotFoundException;
+use OCP\Files\NotPermittedException;
+use OCP\IConfig;
+use OCP\IDateTimeZone;
+use OCP\IGroupManager;
+use OCP\IL10N;
+use OCP\IRequest;
+use OCP\IServerContainer;
 use OCP\IUserManager;
 use OCP\Share\IManager;
-use OCP\IServerContainer;
-use OCP\IGroupManager;
-use OCP\ILogger;
-
-use OCP\IDateTimeZone;
-
-use OCA\Maps\Service\DevicesService;
 
 //use function \OCA\Maps\Service\endswith;
 
 class DevicesController extends Controller {
 
-    private $userId;
-    private $userfolder;
-    private $config;
-    private $appVersion;
-    private $shareManager;
-    private $userManager;
-    private $groupManager;
-    private $dbtype;
-    private $dbdblquotes;
-    private $defaultDeviceId;
-    private $l;
-    private $logger;
-    private $devicesService;
+	private $userId;
+	private $userfolder;
+	private $config;
+	private $appVersion;
+	private $shareManager;
+	private $userManager;
+	private $groupManager;
+	private $dbtype;
+	private $dbdblquotes;
+	private $defaultDeviceId;
+	private $l;
+	private $devicesService;
 	private $deviceShareMapper;
-    private $dateTimeZone;
+	private $dateTimeZone;
 	private $root;
-    protected $appName;
+	protected $appName;
 
-    public function __construct($AppName,
-                                IRequest $request,
-                                IServerContainer $serverContainer,
-                                IConfig $config,
-                                IManager $shareManager,
-                                IAppManager $appManager,
-                                IUserManager $userManager,
-                                IGroupManager $groupManager,
-                                IL10N $l,
-                                ILogger $logger,
-                                DevicesService $devicesService,
-								DeviceShareMapper $deviceShareMapper,
-                                IDateTimeZone $dateTimeZone,
-								IRootFolder $root,
-                                $UserId){
-        parent::__construct($AppName, $request);
-        $this->devicesService = $devicesService;
+	public function __construct($AppName,
+		IRequest $request,
+		IServerContainer $serverContainer,
+		IConfig $config,
+		IManager $shareManager,
+		IAppManager $appManager,
+		IUserManager $userManager,
+		IGroupManager $groupManager,
+		IL10N $l,
+		DevicesService $devicesService,
+		DeviceShareMapper $deviceShareMapper,
+		IDateTimeZone $dateTimeZone,
+		IRootFolder $root,
+		$UserId) {
+		parent::__construct($AppName, $request);
+		$this->devicesService = $devicesService;
 		$this->deviceShareMapper = $deviceShareMapper;
-        $this->dateTimeZone = $dateTimeZone;
-        $this->logger = $logger;
-        $this->appName = $AppName;
-        $this->appVersion = $config->getAppValue('maps', 'installed_version');
-        $this->userId = $UserId;
-        $this->userManager = $userManager;
-        $this->groupManager = $groupManager;
-        $this->l = $l;
+		$this->dateTimeZone = $dateTimeZone;
+		$this->appName = $AppName;
+		$this->appVersion = $config->getAppValue('maps', 'installed_version');
+		$this->userId = $UserId;
+		$this->userManager = $userManager;
+		$this->groupManager = $groupManager;
+		$this->l = $l;
 		$this->root = $root;
-        $this->dbtype = $config->getSystemValue('dbtype');
-        // IConfig object
-        $this->config = $config;
-        if ($UserId !== '' and $UserId !== null and $serverContainer !== null){
-            // path of user files folder relative to DATA folder
-            $this->userfolder = $serverContainer->getUserFolder($UserId);
-        }
-        $this->shareManager = $shareManager;
-    }
+		$this->dbtype = $config->getSystemValue('dbtype');
+		// IConfig object
+		$this->config = $config;
+		if ($UserId !== '' and $UserId !== null and $serverContainer !== null) {
+			// path of user files folder relative to DATA folder
+			$this->userfolder = $serverContainer->getUserFolder($UserId);
+		}
+		$this->shareManager = $shareManager;
+	}
 
 	/**
 	 * @NoAdminRequired
@@ -109,9 +92,9 @@ class DevicesController extends Controller {
 	 * @param ?int $myMapId
 	 * @return DataResponse
 	 */
-    public function getDevices($tokens=null, $myMapId=null): DataResponse {
+	public function getDevices($tokens = null, $myMapId = null): DataResponse {
 		if (is_null($tokens)) {
-			$tokens = array();
+			$tokens = [];
 		}
 		if (is_null($myMapId)) {
 			$devices = $this->devicesService->getDevicesFromDB($this->userId);
@@ -125,7 +108,7 @@ class DevicesController extends Controller {
 			$userFolder = $this->root->getUserFolder($this->userId);
 			$folders = $userFolder->getById($myMapId);
 			$folder = array_shift($folders);
-			if(is_null($folder)) {
+			if (is_null($folder)) {
 				return new DataResponse($this->l->t('Map not Found'), 404);
 			}
 			$shares = $this->devicesService->getSharedDevicesFromFolder($folder);
@@ -134,8 +117,8 @@ class DevicesController extends Controller {
 		}
 		$td = $this->devicesService->getDevicesByTokens($tokens);
 		$devices = $td + $devices;
-        return new DataResponse(array_values($devices));
-    }
+		return new DataResponse(array_values($devices));
+	}
 
 	/**
 	 * @NoAdminRequired
@@ -153,14 +136,14 @@ class DevicesController extends Controller {
 	 * @param int $pruneBefore
 	 * @return DataResponse
 	 */
-    public function getDevicePoints($id, ?int $pruneBefore=0, ?int $limit=10000, ?int $offset=0, ?array $tokens=null): DataResponse {
+	public function getDevicePoints($id, ?int $pruneBefore = 0, ?int $limit = 10000, ?int $offset = 0, ?array $tokens = null): DataResponse {
 		if (is_null($tokens)) {
 			$points = $this->devicesService->getDevicePointsFromDB($this->userId, $id, $pruneBefore, $limit, $offset);
 		} else {
 			$points = $this->devicesService->getDevicePointsByTokens($tokens, $pruneBefore, $limit, $offset);
 		}
-        return new DataResponse($points);
-    }
+		return new DataResponse($points);
+	}
 
 	/**
 	 * @NoAdminRequired
@@ -173,27 +156,26 @@ class DevicesController extends Controller {
 	 * @param null $accuracy
 	 * @return DataResponse
 	 */
-    public function addDevicePoint($lat, $lng, $timestamp=null, $user_agent=null, $altitude=null, $battery=null, $accuracy=null): DataResponse {
-        if (is_numeric($lat) and is_numeric($lng)) {
-            $ts = $timestamp;
-            if ($timestamp === null) {
-                $ts = (new \DateTime())->getTimestamp();
-            }
-            $ua = $user_agent;
-            if ($user_agent === null) {
-                $ua = $_SERVER['HTTP_USER_AGENT'];
-            }
-            $deviceId = $this->devicesService->getOrCreateDeviceFromDB($this->userId, $ua);
-            $pointId = $this->devicesService->addPointToDB($deviceId, $lat, $lng, $ts, $altitude, $battery, $accuracy);
-            return new DataResponse([
-                'deviceId'=>$deviceId,
-                'pointId'=>$pointId
-            ]);
-        }
-        else {
-            return new DataResponse('Invalid values', 400);
-        }
-    }
+	public function addDevicePoint($lat, $lng, $timestamp = null, $user_agent = null, $altitude = null, $battery = null, $accuracy = null): DataResponse {
+		if (is_numeric($lat) and is_numeric($lng)) {
+			$ts = $timestamp;
+			if ($timestamp === null) {
+				$ts = (new \DateTime())->getTimestamp();
+			}
+			$ua = $user_agent;
+			if ($user_agent === null) {
+				$ua = $_SERVER['HTTP_USER_AGENT'];
+			}
+			$deviceId = $this->devicesService->getOrCreateDeviceFromDB($this->userId, $ua);
+			$pointId = $this->devicesService->addPointToDB($deviceId, $lat, $lng, $ts, $altitude, $battery, $accuracy);
+			return new DataResponse([
+				'deviceId' => $deviceId,
+				'pointId' => $pointId
+			]);
+		} else {
+			return new DataResponse('Invalid values', 400);
+		}
+	}
 
 	/**
 	 * @NoAdminRequired
@@ -202,101 +184,95 @@ class DevicesController extends Controller {
 	 * @param $name
 	 * @return DataResponse
 	 */
-    public function editDevice($id, $color, $name): DataResponse {
-        $device = $this->devicesService->getDeviceFromDB($id, $this->userId);
-        if ($device !== null) {
-            if ((is_string($color) && strlen($color) > 0) ||
-                (is_string($name) && strlen($name) > 0)
-            ) {
-                $this->devicesService->editDeviceInDB($id, $color, $name);
-                $editedDevice = $this->devicesService->getDeviceFromDB($id, $this->userId);
-                return new DataResponse($editedDevice);
-            }
-            else {
-                return new DataResponse($this->l->t('Invalid values'), 400);
-            }
-        }
-        else {
-            return new DataResponse($this->l->t('No such device'), 400);
-        }
-    }
+	public function editDevice($id, $color, $name): DataResponse {
+		$device = $this->devicesService->getDeviceFromDB($id, $this->userId);
+		if ($device !== null) {
+			if ((is_string($color) && strlen($color) > 0) ||
+				(is_string($name) && strlen($name) > 0)
+			) {
+				$this->devicesService->editDeviceInDB($id, $color, $name);
+				$editedDevice = $this->devicesService->getDeviceFromDB($id, $this->userId);
+				return new DataResponse($editedDevice);
+			} else {
+				return new DataResponse($this->l->t('Invalid values'), 400);
+			}
+		} else {
+			return new DataResponse($this->l->t('No such device'), 400);
+		}
+	}
 
 	/**
 	 * @NoAdminRequired
 	 * @param $id
 	 * @return DataResponse
 	 */
-    public function deleteDevice($id): DataResponse {
-        $device = $this->devicesService->getDeviceFromDB($id, $this->userId);
-        if ($device !== null) {
-            $this->devicesService->deleteDeviceFromDB($id);
+	public function deleteDevice($id): DataResponse {
+		$device = $this->devicesService->getDeviceFromDB($id, $this->userId);
+		if ($device !== null) {
+			$this->devicesService->deleteDeviceFromDB($id);
 			$this->deviceShareMapper->removeAllByDeviceId($id);
-            return new DataResponse('DELETED');
-        }
-        else {
-            return new DataResponse($this->l->t('No such device'), 400);
-        }
-    }
+			return new DataResponse('DELETED');
+		} else {
+			return new DataResponse($this->l->t('No such device'), 400);
+		}
+	}
 
 	/**
 	 * @NoAdminRequired
-	 * @param null $deviceIdList
-	 * @param $begin
-	 * @param $end
+	 * @param ?array $deviceIdList
+	 * @param int $begin
+	 * @param int $end
 	 * @param bool $all=false
-	 * @return DataResponse
 	 * @throws \OCP\Files\NotFoundException
 	 * @throws \OCP\Files\NotPermittedException
 	 */
-    public function exportDevices($deviceIdList, $begin, $end, bool $all=false): DataResponse {
-        // sorry about ugly deviceIdList management:
-        // when an empty list is passed in http request, we get null here
-        if ($deviceIdList === null or (is_array($deviceIdList) and count($deviceIdList) === 0)) {
-            return new DataResponse($this->l->t('No device to export'), 400);
-        }
+	public function exportDevices($deviceIdList, $begin, $end, bool $all = false): DataResponse {
+		// sorry about ugly deviceIdList management:
+		// when an empty list is passed in http request, we get null here
+		if ($deviceIdList === null or (is_array($deviceIdList) and count($deviceIdList) === 0)) {
+			return new DataResponse($this->l->t('No device to export'), 400);
+		}
 
-        // create /Maps directory if necessary
-        $userFolder = $this->userfolder;
-        if (!$userFolder->nodeExists('/Maps')) {
-            $userFolder->newFolder('Maps');
-        }
-        if ($userFolder->nodeExists('/Maps')) {
-            $mapsFolder = $userFolder->get('/Maps');
-            if ($mapsFolder->getType() !== \OCP\Files\FileInfo::TYPE_FOLDER) {
-                return new DataResponse($this->l->t('/Maps is not a directory'), 400);
-            }
-            else if (!$mapsFolder->isCreatable()) {
-                return new DataResponse($this->l->t('/Maps directory is not writeable'), 400);
-            }
-        }
-        else {
-            return new DataResponse($this->l->t('Impossible to create /Maps directory'), 400);
-        }
+		// create /Maps directory if necessary
+		$userFolder = $this->userfolder;
+		if (!$userFolder->nodeExists('/Maps')) {
+			$userFolder->newFolder('Maps');
+		}
+		if ($userFolder->nodeExists('/Maps')) {
+			$mapsFolder = $userFolder->get('/Maps');
+			if ($mapsFolder->getType() !== \OCP\Files\FileInfo::TYPE_FOLDER) {
+				return new DataResponse($this->l->t('/Maps is not a directory'), 400);
+			} elseif (!$mapsFolder->isCreatable()) {
+				return new DataResponse($this->l->t('/Maps directory is not writeable'), 400);
+			}
+		} else {
+			return new DataResponse($this->l->t('Impossible to create /Maps directory'), 400);
+		}
 
-        $nbDevices = $this->devicesService->countPoints($this->userId, $deviceIdList, $begin, $end);
-        if ($nbDevices === 0) {
-            return new DataResponse($this->l->t('Nothing to export'), 400);
-        }
+		$nbDevices = $this->devicesService->countPoints($this->userId, $deviceIdList, $begin, $end);
+		if ($nbDevices === 0) {
+			return new DataResponse($this->l->t('Nothing to export'), 400);
+		}
 
-        // generate export file name
-        $prefix = $all ? '' : 'filtered-';
-        $tz = $this->dateTimeZone->getTimeZone();
-        $now = new \DateTime('now', $tz);
-        $dateStr = $now->format('Y-m-d H:i:s (P)');
-        $filename = $dateStr.' '.$prefix.'devices.gpx';
+		// generate export file name
+		$prefix = $all ? '' : 'filtered-';
+		$tz = $this->dateTimeZone->getTimeZone();
+		$now = new \DateTime('now', $tz);
+		$dateStr = $now->format('Y-m-d H:i:s (P)');
+		$filename = $dateStr.' '.$prefix.'devices.gpx';
 
-        if ($mapsFolder->nodeExists($filename)) {
-            $mapsFolder->get($filename)->delete();
-        }
-        $file = $mapsFolder->newFile($filename);
-        $handler = $file->fopen('w');
+		if ($mapsFolder->nodeExists($filename)) {
+			$mapsFolder->get($filename)->delete();
+		}
+		$file = $mapsFolder->newFile($filename);
+		$handler = $file->fopen('w');
 
-        $this->devicesService->exportDevices($this->userId, $handler, $deviceIdList, $begin, $end, $this->appVersion, $filename);
+		$this->devicesService->exportDevices($this->userId, $handler, $deviceIdList, $begin, $end, $this->appVersion, $filename);
 
-        fclose($handler);
-        $file->touch();
-        return new DataResponse('/Maps/'.$filename);
-    }
+		fclose($handler);
+		$file->touch();
+		return new DataResponse('/Maps/'.$filename);
+	}
 
 	/**
 	 * @NoAdminRequired
@@ -305,46 +281,45 @@ class DevicesController extends Controller {
 	 * @throws \OCP\Files\InvalidPathException
 	 * @throws \OCP\Files\NotFoundException
 	 */
-    public function importDevices($path): DataResponse {
-        $userFolder = $this->userfolder;
-        $cleanpath = str_replace(array('../', '..\\'), '',  $path);
+	public function importDevices($path): DataResponse {
+		$userFolder = $this->userfolder;
+		$cleanpath = str_replace(['../', '..\\'], '', $path);
 
-        if ($userFolder->nodeExists($cleanpath)){
-            $file = $userFolder->get($cleanpath);
-            if ($file->getType() === \OCP\Files\FileInfo::TYPE_FILE and
-                $file->isReadable()){
-                $lowerFileName = strtolower($file->getName());
-                if ($this->endsWith($lowerFileName, '.gpx') or $this->endsWith($lowerFileName, '.kml') or $this->endsWith($lowerFileName, '.kmz')) {
-                    $nbImported = $this->devicesService->importDevices($this->userId, $file);
-                    return new DataResponse($nbImported);
-                }
-                else {
-                    // invalid extension
-                    return new DataResponse($this->l->t('Invalid file extension'), 400);
-                }
-            }
-            else {
-                // directory or not readable
-                return new DataResponse($this->l->t('Impossible to read the file'), 400);
-            }
-        }
-        else {
-            // does not exist
-            return new DataResponse($this->l->t('File does not exist'), 400);
-        }
-    }
+		if ($userFolder->nodeExists($cleanpath)) {
+			$file = $userFolder->get($cleanpath);
+			if ($file->getType() === \OCP\Files\FileInfo::TYPE_FILE and
+				$file->isReadable()) {
+				$lowerFileName = strtolower($file->getName());
+				if ($this->endsWith($lowerFileName, '.gpx') or $this->endsWith($lowerFileName, '.kml') or $this->endsWith($lowerFileName, '.kmz')) {
+					$nbImported = $this->devicesService->importDevices($this->userId, $file);
+					return new DataResponse($nbImported);
+				} else {
+					// invalid extension
+					return new DataResponse($this->l->t('Invalid file extension'), 400);
+				}
+			} else {
+				// directory or not readable
+				return new DataResponse($this->l->t('Impossible to read the file'), 400);
+			}
+		} else {
+			// does not exist
+			return new DataResponse($this->l->t('File does not exist'), 400);
+		}
+	}
 
 	/**
 	 * @param $string
 	 * @param $test
 	 * @return bool
 	 */
-    private function endsWith($string, $test): bool {
-        $strlen = strlen($string);
-        $testlen = strlen($test);
-        if ($testlen > $strlen) return false;
-        return substr_compare($string, $test, $strlen - $testlen, $testlen) === 0;
-    }
+	private function endsWith($string, $test): bool {
+		$strlen = strlen($string);
+		$testlen = strlen($test);
+		if ($testlen > $strlen) {
+			return false;
+		}
+		return substr_compare($string, $test, $strlen - $testlen, $testlen) === 0;
+	}
 
 	/**
 	 * @NoAdminRequired
@@ -353,7 +328,7 @@ class DevicesController extends Controller {
 	 * @throws \OCP\Files\NotPermittedException
 	 * @throws \OC\User\NoUserException
 	 */
-	public function getSharedDevices(?int $myMapId=null): DataResponse {
+	public function getSharedDevices(?int $myMapId = null): DataResponse {
 		if (is_null($myMapId) || $myMapId === '') {
 			$sharedDevices = [];
 		} else {
@@ -378,10 +353,9 @@ class DevicesController extends Controller {
 			$share = $this->deviceShareMapper->create($id, $timestampFrom, $timestampTo);
 
 			if ($share === null) {
-				return new DataResponse($this->l->t("Error sharing device"), Http::STATUS_INTERNAL_SERVER_ERROR);
+				return new DataResponse($this->l->t('Error sharing device'), Http::STATUS_INTERNAL_SERVER_ERROR);
 			}
-		}
-		else {
+		} else {
 			return new DataResponse($this->l->t('No such device'), 400);
 		}
 
@@ -398,7 +372,7 @@ class DevicesController extends Controller {
 	public function removeDeviceShare(int $token): DataResponse {
 		try {
 			$share = $this->deviceShareMapper->findByToken($token);
-		} catch ( DoesNotExistException $e ) {
+		} catch (DoesNotExistException $e) {
 			throw new NotFoundException();
 		}
 		$device = $this->devicesService->getDeviceFromDB($share->getDeviceId(), $this->userId);
@@ -419,18 +393,18 @@ class DevicesController extends Controller {
 	public function addSharedDeviceToMap(string $token, $targetMapId): DataResponse {
 		try {
 			$share = $this->deviceShareMapper->findByToken($token);
-		} catch ( DoesNotExistException $e ) {
+		} catch (DoesNotExistException $e) {
 			return new DataResponse($this->l->t('Share not Found'), 404);
 		}
 		$folders = $this->userfolder->getById($targetMapId);
 		$folder = array_shift($folders);
-		if(is_null($folder)) {
+		if (is_null($folder)) {
 			return new DataResponse($this->l->t('Map not Found'), 404);
 		}
 		try {
-			$file=$folder->get(".device_shares.json");
+			$file = $folder->get('.device_shares.json');
 		} catch (\OCP\Files\NotFoundException $e) {
-			$file=$folder->newFile(".device_shares.json", $content = '[]');
+			$file = $folder->newFile('.device_shares.json', $content = '[]');
 		}
 		$data = json_decode($file->getContent(), true);
 		foreach ($data as $s) {
@@ -439,27 +413,27 @@ class DevicesController extends Controller {
 			}
 		}
 		$data[] = $share;
-		$file->putContent(json_encode($data,JSON_PRETTY_PRINT));
+		$file->putContent(json_encode($data, JSON_PRETTY_PRINT));
 		return new DataResponse('Done');
 	}
 
 	public function removeSharedDeviceFromMap(string $token, int $myMapId): DataResponse {
 		$folders = $this->userfolder->getById($myMapId);
 		$folder = array_shift($folders);
-		if(is_null($folder)) {
+		if (is_null($folder)) {
 			return new DataResponse($this->l->t('Map not Found'), 404);
 		}
 		try {
-			$file=$folder->get(".device_shares.json");
+			$file = $folder->get('.device_shares.json');
 		} catch (\OCP\Files\NotFoundException $e) {
-			$file=$folder->newFile(".device_shares.json", $content = '[]');
+			$file = $folder->newFile('.device_shares.json', $content = '[]');
 		}
 		$data = json_decode($file->getContent(), true);
 		$shares = [];
 		$deleted = null;
 		foreach ($data as $share) {
-			$t = $share["token"];
-			if($t === $token) {
+			$t = $share['token'];
+			if ($t === $token) {
 				$deleted = $share;
 			} else {
 				$shares[] = $share;

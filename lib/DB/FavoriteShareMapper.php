@@ -35,71 +35,71 @@ use OCP\Files\NotFoundException;
 use OCP\IDBConnection;
 use OCP\Security\ISecureRandom;
 
-
+/** @template-extends QBMapper<FavoriteShare> */
 class FavoriteShareMapper extends QBMapper {
-    /* @var ISecureRandom */
-    private $secureRandom;
+	/* @var ISecureRandom */
+	private $secureRandom;
 	private $root;
 
-    public function __construct(IDBConnection $db, ISecureRandom $secureRandom, IRootFolder $root) {
-        parent::__construct($db, 'maps_favorite_shares');
+	public function __construct(IDBConnection $db, ISecureRandom $secureRandom, IRootFolder $root) {
+		parent::__construct($db, 'maps_favorite_shares');
 
-        $this->secureRandom = $secureRandom;
+		$this->secureRandom = $secureRandom;
 		$this->root = $root;
-    }
+	}
 
-    /**
-     * @param $token
-     * @return Entity|null
-     * @throws DoesNotExistException
-     * @throws MultipleObjectsReturnedException
-     */
-    public function findByToken($token) {
-        $qb = $this->db->getQueryBuilder();
+	/**
+	 * @param $token
+	 * @return Entity|null
+	 * @throws DoesNotExistException
+	 * @throws MultipleObjectsReturnedException
+	 */
+	public function findByToken($token) {
+		$qb = $this->db->getQueryBuilder();
 
-        $qb->select("*")
-            ->from($this->getTableName())
-            ->where(
-                $qb->expr()->eq('token', $qb->createNamedParameter($token, IQueryBuilder::PARAM_STR))
-            );
+		$qb->select('*')
+			->from($this->getTableName())
+			->where(
+				$qb->expr()->eq('token', $qb->createNamedParameter($token, IQueryBuilder::PARAM_STR))
+			);
 
-        return $this->findEntity($qb);
-    }
+		return $this->findEntity($qb);
+	}
 
-    /**
-     * @param $owner
-     * @param $category
-     * @return Entity
-     */
-    public function create($owner, $category) {
-        $token = $this->secureRandom->generate(
-            Constants::TOKEN_LENGTH,
-            ISecureRandom::CHAR_HUMAN_READABLE
-        );
+	/**
+	 * @param $owner
+	 * @param $category
+	 * @return Entity
+	 */
+	public function create($owner, $category) {
+		$token = $this->secureRandom->generate(
+			Constants::TOKEN_LENGTH,
+			ISecureRandom::CHAR_HUMAN_READABLE
+		);
 
-        $newShare = new FavoriteShare();
-        $newShare->setToken($token);
-        $newShare->setCategory($category);
-        $newShare->setOwner($owner);
+		$newShare = new FavoriteShare();
+		$newShare->setToken($token);
+		$newShare->setCategory($category);
+		$newShare->setOwner($owner);
 
-        return $this->insert($newShare);
-    }
+		return $this->insert($newShare);
+	}
 
-    /**
-     * @param $owner
-     * @return array|Entity[]
-     */
-    public function findAllByOwner($owner) {
-        $qb = $this->db->getQueryBuilder();
+	/**
+	 * @param $owner
+	 * @return array|Entity[]
+	 */
+	public function findAllByOwner($owner) {
+		$qb = $this->db->getQueryBuilder();
 
-        $qb->select("*")
-            ->from($this->getTableName())
-            ->where(
-                $qb->expr()->eq('owner', $qb->createNamedParameter($owner, IQueryBuilder::PARAM_STR))
-            );
+		$qb->select('*')
+			->from($this->getTableName())
+			->where(
+				$qb->expr()->eq('owner', $qb->createNamedParameter($owner, IQueryBuilder::PARAM_STR))
+			);
 
-        return $this->findEntities($qb);
-    }
+		return $this->findEntities($qb);
+	}
 
 	/**
 	 * @param $userId
@@ -128,39 +128,39 @@ class FavoriteShareMapper extends QBMapper {
 	 * @return mixed
 	 * @throws NotFoundException
 	 */
-	public function findAllByFolder($folder, $isCreatable=true) {
+	public function findAllByFolder($folder, $isCreatable = true) {
 		try {
-			$file=$folder->get(".favorite_shares.json");
+			$file = $folder->get('.favorite_shares.json');
 		} catch (NotFoundException $e) {
 			if ($isCreatable) {
-				$file=$folder->newFile(".favorite_shares.json", $content = '[]');
+				$file = $folder->newFile('.favorite_shares.json', $content = '[]');
 			} else {
 				throw new NotFoundException();
 			}
 		}
-		return json_decode($file->getContent(),true);
+		return json_decode($file->getContent(), true);
 	}
 
-    /**
-     * @param $owner
-     * @param $category
-     * @return Entity
-     * @throws DoesNotExistException
-     * @throws MultipleObjectsReturnedException
-     */
-    public function findByOwnerAndCategory($owner, $category) {
-        $qb = $this->db->getQueryBuilder();
+	/**
+	 * @param $owner
+	 * @param $category
+	 * @return Entity
+	 * @throws DoesNotExistException
+	 * @throws MultipleObjectsReturnedException
+	 */
+	public function findByOwnerAndCategory($owner, $category) {
+		$qb = $this->db->getQueryBuilder();
 
-        $qb->select('*')
-            ->from($this->getTableName())
-            ->where(
-                $qb->expr()->eq('category', $qb->createNamedParameter($category, IQueryBuilder::PARAM_STR))
-            )->andWhere(
-                $qb->expr()->eq('owner', $qb->createNamedParameter($owner, IQueryBuilder::PARAM_STR))
-            );
+		$qb->select('*')
+			->from($this->getTableName())
+			->where(
+				$qb->expr()->eq('category', $qb->createNamedParameter($category, IQueryBuilder::PARAM_STR))
+			)->andWhere(
+				$qb->expr()->eq('owner', $qb->createNamedParameter($owner, IQueryBuilder::PARAM_STR))
+			);
 
-        return $this->findEntity($qb);
-    }
+		return $this->findEntity($qb);
+	}
 
 	/**
 	 * @param $userId
@@ -193,14 +193,14 @@ class FavoriteShareMapper extends QBMapper {
 			return $deleted;
 		}
 		try {
-			$file=$folder->get(".favorite_shares.json");
+			$file = $folder->get('.favorite_shares.json');
 		} catch (NotFoundException $e) {
-			$file=$folder->newFile(".favorite_shares.json", $content = '[]');
+			$file = $folder->newFile('.favorite_shares.json', $content = '[]');
 		}
-		$data = json_decode($file->getContent(),true);
+		$data = json_decode($file->getContent(), true);
 		foreach ($data as $share) {
-			$c = $share["category"];
-			if($c === $category) {
+			$c = $share['category'];
+			if ($c === $category) {
 				$deleted = $share;
 			} else {
 				$shares[] = $share;
@@ -210,39 +210,39 @@ class FavoriteShareMapper extends QBMapper {
 		return $deleted;
 	}
 
-    /**
-     * @param $owner
-     * @param $category
-     * @return Entity|null
-     */
-    public function findOrCreateByOwnerAndCategory($owner, $category) {
-        /* @var Entity */
-        $entity = null;
+	/**
+	 * @param $owner
+	 * @param $category
+	 * @return Entity|null
+	 */
+	public function findOrCreateByOwnerAndCategory($owner, $category) {
+		/* @var Entity */
+		$entity = null;
 
-        try {
-            $entity = $this->findByOwnerAndCategory($owner, $category);
-        } catch (DoesNotExistException $e) {
-            $entity = $this->create($owner, $category);
-        } catch (MultipleObjectsReturnedException $e) {
-        }
+		try {
+			$entity = $this->findByOwnerAndCategory($owner, $category);
+		} catch (DoesNotExistException $e) {
+			$entity = $this->create($owner, $category);
+		} catch (MultipleObjectsReturnedException $e) {
+		}
 
-        return $entity;
-    }
+		return $entity;
+	}
 
-    /**
-     * @param $owner
-     * @param $category
-     * @return bool
-     */
-    public function removeByOwnerAndCategory($owner, $category) {
-        try {
-            $entity = $this->findByOwnerAndCategory($owner, $category);
-        } catch (DoesNotExistException | MultipleObjectsReturnedException $e) {
-            return false;
-        }
+	/**
+	 * @param $owner
+	 * @param $category
+	 * @return bool
+	 */
+	public function removeByOwnerAndCategory($owner, $category) {
+		try {
+			$entity = $this->findByOwnerAndCategory($owner, $category);
+		} catch (DoesNotExistException|MultipleObjectsReturnedException $e) {
+			return false;
+		}
 
-        $this->delete($entity);
+		$this->delete($entity);
 
-        return true;
-    }
+		return true;
+	}
 }

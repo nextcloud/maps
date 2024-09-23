@@ -108,7 +108,6 @@ OC.L10N.register(
     "Display picture" : "Erakutsi irudia",
     "Remove from selection" : "Kendu hautapenetik",
     "No suggestions found" : "Ez da iradokizunik aurkitu",
-    "To get suggestions upload tracks from the trips, when you took your photos." : "Iradokizunak jasotzeko igo zure bidaien ibilbideak, argazkiak atera ahala.",
     "Quit" : "Irten",
     "Load more" : "Kargatu gehiago",
     "Photos default timezone:" : "Argazkientzako lehenetsitako ordu-zona:",

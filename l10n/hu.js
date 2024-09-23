@@ -111,7 +111,6 @@ OC.L10N.register(
     "Display picture" : "Megjelenítendő kép",
     "Remove from selection" : "Eltávolítás a kiválasztásból",
     "No suggestions found" : "Nem találhatók javaslatok",
-    "To get suggestions upload tracks from the trips, when you took your photos." : "Hogy javaslatokat kapjon, töltse fel nyomvonalakat a kirándulásokról, amikor fényképeket készített.",
     "Quit" : "Kilépés",
     "Load more" : "Továbbiak betöltése",
     "Photos default timezone:" : "Fényképek alapértelmezett időzónája:",

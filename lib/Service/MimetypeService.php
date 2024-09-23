@@ -6,17 +6,15 @@ use OCP\Files\IMimeTypeLoader;
 
 class MimetypeService {
 
-	const CUSTOM_MIMETYPEMAPPING = 'mimetypemapping.json';
+	public const CUSTOM_MIMETYPEMAPPING = 'mimetypemapping.json';
 
 	protected IMimeTypeLoader $mimeTypeLoader;
 
-	public function __construct(IMimeTypeLoader $mimeTypeLoader)
-	{
+	public function __construct(IMimeTypeLoader $mimeTypeLoader) {
 		$this->mimeTypeLoader = $mimeTypeLoader;
 	}
 
-	public function registerForExistingFiles()
-	{
+	public function registerForExistingFiles() {
 		$mimeTypeId = $this->mimeTypeLoader->getId('application/x-nextcloud-maps');
 		$this->mimeTypeLoader->updateFilecache('maps', $mimeTypeId);
 
@@ -33,8 +31,7 @@ class MimetypeService {
 		$this->mimeTypeLoader->updateFilecache('notrack', $mimeTypeId);
 	}
 
-	public function registerForNewFiles()
-	{
+	public function registerForNewFiles() {
 		$mapping = [
 			'maps' => ['application/x-nextcloud-maps'],
 			'noindex' => ['application/x-nextcloud-noindex'],

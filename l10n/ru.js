@@ -74,6 +74,7 @@ OC.L10N.register(
     "Clear photo cache" : "Очистить кэш фотографий",
     "Hi" : "Привет",
     "Show track elevation" : "Показать изменение высоты траектории",
+    "Download track" : "Скачать трек",
     "My tracks" : "Мои траектории",
     "Sort by name" : "Сортировать по имени",
     "Sort by date" : "Сортировать по дате",
@@ -110,7 +111,6 @@ OC.L10N.register(
     "Display picture" : "Отображение изображения",
     "Remove from selection" : "Удалить из выбора",
     "No suggestions found" : "Предложений не найдено",
-    "To get suggestions upload tracks from the trips, when you took your photos." : "Чтобы получать предложения, загружайте треки из поездок, в которых вы делали фотографии.",
     "Quit" : "Выход",
     "Load more" : "Загрузить больше",
     "Photos default timezone:" : "Часовой пояс фотографий по умолчанию:",
@@ -380,6 +380,7 @@ OC.L10N.register(
     "Set the API key to use Mapbox routing service." : "Для использования службы маршрутизации Mapbox введите ключ API.",
     "Leave empty to disable." : "Для отключения оставьте поле пустым.",
     "Mapbox API key" : "Ключ доступа к API Mapbox",
+    "MapLibre settings" : "Настройки MapLibre",
     "Maps settings" : "Настройки карт"
 },
 "nplurals=4; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<12 || n%100>14) ? 1 : n%10==0 || (n%10>=5 && n%10<=9) || (n%100>=11 && n%100<=14)? 2 : 3);");

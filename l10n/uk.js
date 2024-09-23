@@ -109,7 +109,6 @@ OC.L10N.register(
     "Select all" : "Вибрати все",
     "Remove from selection" : "Видалити з вибору",
     "No suggestions found" : "Відсутні пропозиції",
-    "To get suggestions upload tracks from the trips, when you took your photos." : "Щоб отримати пропозиції, завантажуйте треки з поїздок, під час яких ви робили фотографії.",
     "Quit" : "Вийти",
     "Load more" : "Більше",
     "Photos default timezone:" : "Часовий пояс фотографій за замовчуванням:",

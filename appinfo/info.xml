@@ -20,6 +20,9 @@
     <author mail="kontakt+github@arne.email">Arne Hamann</author>
     <author homepage="https://jancborchardt.net">Jan C. Borchardt</author>
     <namespace>Maps</namespace>
+    <types>
+        <filesystem/>
+    </types>
     <category>integration</category>
     <category>multimedia</category>
     <category>organization</category>
@@ -32,18 +35,18 @@
     <screenshot>https://raw.githubusercontent.com/nextcloud/maps/master/screenshots/screenshot2.png</screenshot>
     <screenshot>https://raw.githubusercontent.com/nextcloud/maps/master/screenshots/screenshot3.png</screenshot>
     <dependencies>
+        <php min-version="8.1" max-version="8.3"/>
         <lib>exif</lib>
         <nextcloud min-version="28" max-version="29"/>
-        <php min-version="8.1" max-version="8.3"/>
     </dependencies>
     <repair-steps>
+		<post-migration>
+			<step>OCA\Maps\Migration\RegisterMimeType</step>
+		</post-migration>
         <install>
             <step>OCA\Maps\Migration\InstallScan</step>
 			<step>OCA\Maps\Migration\RegisterMimeType</step>
         </install>
-		<post-migrate>
-			<step>OCA\Maps\Migration\RegisterMimeType</step>
-		</post-migrate>
 		<uninstall>
 			<step>OCA\Maps\Migration\UnregisterMimeType</step>
 		</uninstall>
@@ -63,7 +66,4 @@
             <icon>app.svg</icon>
         </navigation>
     </navigations>
-    <types>
-        <filesystem/>
-    </types>
 </info>

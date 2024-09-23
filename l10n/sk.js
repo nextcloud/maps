@@ -111,7 +111,6 @@ OC.L10N.register(
     "Display picture" : "Zobraziť obrázok",
     "Remove from selection" : "Odstrániť z výberu",
     "No suggestions found" : "Nenašli sa žiadne návrhy",
-    "To get suggestions upload tracks from the trips, when you took your photos." : "Získajte návrhy nahraním trás z výletov, kde ste fotografovali.",
     "Quit" : "Koniec",
     "Load more" : "Načítať viac",
     "Photos default timezone:" : "Predvolená časová zóna fotografií:",

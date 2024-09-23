@@ -111,7 +111,6 @@ OC.L10N.register(
     "Display picture" : "Vis bilde",
     "Remove from selection" : "Fjern fra utvalg",
     "No suggestions found" : "Ingen forslag funnet",
-    "To get suggestions upload tracks from the trips, when you took your photos." : "For å få forslag, last opp sporing fra turene, da du tok bildene dine.",
     "Quit" : "Avslutt",
     "Load more" : "Last mer",
     "Photos default timezone:" : "Standard tidssone bilder:",

@@ -108,7 +108,7 @@ class FavoritesService {
 			];
 		}
 		$req->closeCursor();
-		$qb = $qb->resetQueryParts();
+		$this->qb = $this->dbconnection->getQueryBuilder();
 		return $favorites;
 	}
 
@@ -160,7 +160,7 @@ class FavoritesService {
 			break;
 		}
 		$req->closeCursor();
-		$qb = $qb->resetQueryParts();
+		$this->qb = $this->dbconnection->getQueryBuilder();
 		return $favorite;
 	}
 
@@ -181,7 +181,7 @@ class FavoritesService {
 			]);
 		$req = $qb->execute();
 		$favoriteId = $qb->getLastInsertId();
-		$qb = $qb->resetQueryParts();
+		$this->qb = $this->dbconnection->getQueryBuilder();
 		return $favoriteId;
 	}
 
@@ -232,7 +232,7 @@ class FavoritesService {
 			$qb->expr()->eq('category', $qb->createNamedParameter($cat, IQueryBuilder::PARAM_STR))
 		);
 		$req = $qb->execute();
-		$qb = $qb->resetQueryParts();
+		$this->qb = $this->dbconnection->getQueryBuilder();
 	}
 
 	public function editFavoriteInDB($id, $name, $lat, $lng, $category, $comment, $extensions) {
@@ -262,7 +262,7 @@ class FavoritesService {
 			$qb->expr()->eq('id', $qb->createNamedParameter($id, IQueryBuilder::PARAM_INT))
 		);
 		$req = $qb->execute();
-		$qb = $qb->resetQueryParts();
+		$this->qb = $this->dbconnection->getQueryBuilder();
 	}
 
 	public function deleteFavoriteFromDB($id) {
@@ -272,7 +272,7 @@ class FavoritesService {
 				$qb->expr()->eq('id', $qb->createNamedParameter($id, IQueryBuilder::PARAM_INT))
 			);
 		$req = $qb->execute();
-		$qb = $qb->resetQueryParts();
+		$this->qb = $this->dbconnection->getQueryBuilder();
 	}
 
 	public function deleteFavoritesFromDB($ids, $userId) {
@@ -291,7 +291,7 @@ class FavoritesService {
 			return;
 		}
 		$req = $qb->execute();
-		$qb = $qb->resetQueryParts();
+		$this->qb = $this->dbconnection->getQueryBuilder();
 	}
 
 	public function countFavorites($userId, $categoryList, $begin, $end) {
@@ -334,7 +334,7 @@ class FavoritesService {
 			break;
 		}
 		$req->closeCursor();
-		$qb = $qb->resetQueryParts();
+		$this->qb = $this->dbconnection->getQueryBuilder();
 
 		return $nbFavorites;
 	}
@@ -628,7 +628,7 @@ class FavoritesService {
 				$gpxText .= '  </wpt>' . "\n";
 			}
 			$req->closeCursor();
-			$qb = $qb->resetQueryParts();
+			$this->qb = $this->dbconnection->getQueryBuilder();
 			// write the chunk !
 			fwrite($fileHandler, $gpxText);
 			$favIndex = $favIndex + $chunkSize;

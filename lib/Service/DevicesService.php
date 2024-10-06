@@ -73,7 +73,7 @@ class DevicesService {
 			];
 		}
 		$req->closeCursor();
-		$qb = $qb->resetQueryParts();
+		$this->qb = $this->dbconnection->getQueryBuilder();
 		return $devices;
 	}
 
@@ -111,7 +111,7 @@ class DevicesService {
 			}
 		}
 		$req->closeCursor();
-		$qb = $qb->resetQueryParts();
+		$this->qb = $this->dbconnection->getQueryBuilder();
 		return $devices;
 	}
 
@@ -163,7 +163,7 @@ class DevicesService {
 			];
 		}
 		$req->closeCursor();
-		$qb = $qb->resetQueryParts();
+		$this->qb = $this->dbconnection->getQueryBuilder();
 
 		return array_reverse($points);
 	}
@@ -179,18 +179,18 @@ class DevicesService {
 	public function getDevicePointsByTokens(array $tokens, ?int $pruneBefore = 0, ?int $limit = 10000, ?int $offset = 0) {
 		$qb = $this->qb;
 		// get coordinates
-		$or = $qb->expr()->orX();
+		$or = [];
 		foreach ($tokens as $token) {
-			$and = $qb->expr()->andX();
-			$and->add($qb->expr()->eq('s.token', $qb->createNamedParameter($token, IQueryBuilder::PARAM_STR)));
-			$and->add($qb->expr()->lte('p.timestamp', 's.timestamp_to'));
-			$and->add($qb->expr()->gte('p.timestamp', 's.timestamp_from'));
-			$or->add($and);
+			$or[] = $qb->expr()->andX(
+				$qb->expr()->eq('s.token', $qb->createNamedParameter($token, IQueryBuilder::PARAM_STR)),
+				$qb->expr()->lte('p.timestamp', 's.timestamp_to'),
+				$qb->expr()->gte('p.timestamp', 's.timestamp_from')
+			);
 		}
 		$qb->select('p.id', 'lat', 'lng', 'timestamp', 'altitude', 'accuracy', 'battery')
 			->from('maps_device_points', 'p')
 			->innerJoin('p', 'maps_device_shares', 's', $qb->expr()->eq('p.device_id', 's.device_id'))
-			->where($or);
+			->where($qb->expr()->orX(...$or));
 
 		if (intval($pruneBefore) > 0) {
 			$qb->andWhere(
@@ -219,7 +219,7 @@ class DevicesService {
 			];
 		}
 		$req->closeCursor();
-		$qb = $qb->resetQueryParts();
+		$this->qb = $this->dbconnection->getQueryBuilder();
 
 		return array_reverse($points);
 	}
@@ -250,7 +250,7 @@ class DevicesService {
 			$points[intval($row['timestamp'])] = [floatval($row['lat']), floatval($row['lng'])];
 		}
 		$req->closeCursor();
-		$qb = $qb->resetQueryParts();
+		$this->qb = $this->dbconnection->getQueryBuilder();
 		return $points;
 	}
 
@@ -272,7 +272,7 @@ class DevicesService {
 			break;
 		}
 		$req->closeCursor();
-		$qb = $qb->resetQueryParts();
+		$this->qb = $this->dbconnection->getQueryBuilder();
 
 		if ($deviceId === null) {
 			$qb->insert('maps_devices')
@@ -282,7 +282,7 @@ class DevicesService {
 				]);
 			$req = $qb->execute();
 			$deviceId = $qb->getLastInsertId();
-			$qb = $qb->resetQueryParts();
+			$this->qb = $this->dbconnection->getQueryBuilder();
 		}
 		return $deviceId;
 	}
@@ -301,7 +301,7 @@ class DevicesService {
 			]);
 		$req = $qb->execute();
 		$pointId = $qb->getLastInsertId();
-		$qb = $qb->resetQueryParts();
+		$this->qb = $this->dbconnection->getQueryBuilder();
 		return $pointId;
 	}
 
@@ -353,7 +353,7 @@ class DevicesService {
 			break;
 		}
 		$req->closeCursor();
-		$qb = $qb->resetQueryParts();
+		$this->qb = $this->dbconnection->getQueryBuilder();
 		return $device;
 	}
 
@@ -370,7 +370,7 @@ class DevicesService {
 			$qb->expr()->eq('id', $qb->createNamedParameter($id, IQueryBuilder::PARAM_INT))
 		);
 		$req = $qb->execute();
-		$qb = $qb->resetQueryParts();
+		$this->qb = $this->dbconnection->getQueryBuilder();
 	}
 
 	public function deleteDeviceFromDB($id) {
@@ -380,14 +380,14 @@ class DevicesService {
 				$qb->expr()->eq('id', $qb->createNamedParameter($id, IQueryBuilder::PARAM_INT))
 			);
 		$req = $qb->execute();
-		$qb = $qb->resetQueryParts();
+		$this->qb = $this->dbconnection->getQueryBuilder();
 
 		$qb->delete('maps_device_points')
 			->where(
 				$qb->expr()->eq('device_id', $qb->createNamedParameter($id, IQueryBuilder::PARAM_INT))
 			);
 		$req = $qb->execute();
-		$qb = $qb->resetQueryParts();
+		$this->qb = $this->dbconnection->getQueryBuilder();
 	}
 
 	public function countPoints($userId, $deviceIdList, $begin, $end) {
@@ -423,7 +423,7 @@ class DevicesService {
 			$count = intval($row['co']);
 			break;
 		}
-		$qb = $qb->resetQueryParts();
+		$this->qb = $this->dbconnection->getQueryBuilder();
 
 		return $count;
 	}
@@ -538,7 +538,7 @@ class DevicesService {
 				$gpxText .= '  </trkpt>' . "\n";
 			}
 			$req->closeCursor();
-			$qb = $qb->resetQueryParts();
+			$this->qb = $this->dbconnection->getQueryBuilder();
 
 			// write the chunk
 			fwrite($fd, $gpxText);

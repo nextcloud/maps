@@ -38,7 +38,7 @@ class TracksService {
 		private IL10N $l10n,
 		private IRootFolder $root,
 		private IManager $shareManager,
-		IDBConnection $dbconnection,
+		private IDBConnection $dbconnection,
 	) {
 		$this->qb = $dbconnection->getQueryBuilder();
 	}
@@ -276,7 +276,7 @@ class TracksService {
 			$tracks[] = $track;
 		}
 		$req->closeCursor();
-		$qb = $qb->resetQueryParts();
+		$this->qb = $this->dbconnection->getQueryBuilder();
 		return $tracks;
 	}
 
@@ -367,7 +367,7 @@ class TracksService {
 			break;
 		}
 		$req->closeCursor();
-		$qb = $qb->resetQueryParts();
+		$this->qb = $this->dbconnection->getQueryBuilder();
 		return $track;
 	}
 
@@ -418,7 +418,7 @@ class TracksService {
 			break;
 		}
 		$req->closeCursor();
-		$qb = $qb->resetQueryParts();
+		$this->qb = $this->dbconnection->getQueryBuilder();
 		return $track;
 	}
 
@@ -435,7 +435,7 @@ class TracksService {
 			]);
 		$req = $qb->execute();
 		$trackId = $qb->getLastInsertId();
-		$qb = $qb->resetQueryParts();
+		$this->qb = $this->dbconnection->getQueryBuilder();
 		return $trackId;
 	}
 
@@ -455,7 +455,7 @@ class TracksService {
 			$qb->expr()->eq('id', $qb->createNamedParameter($id, IQueryBuilder::PARAM_INT))
 		);
 		$req = $qb->execute();
-		$qb = $qb->resetQueryParts();
+		$this->qb = $this->dbconnection->getQueryBuilder();
 	}
 
 	public function deleteByFileId($fileId) {
@@ -465,7 +465,7 @@ class TracksService {
 				$qb->expr()->eq('file_id', $qb->createNamedParameter($fileId, IQueryBuilder::PARAM_INT))
 			);
 		$req = $qb->execute();
-		$qb = $qb->resetQueryParts();
+		$this->qb = $this->dbconnection->getQueryBuilder();
 	}
 
 	public function deleteByFileIdUserId($fileId, $userId) {
@@ -478,7 +478,7 @@ class TracksService {
 				$qb->expr()->eq('user_id', $qb->createNamedParameter($userId, IQueryBuilder::PARAM_STR))
 			);
 		$req = $qb->execute();
-		$qb = $qb->resetQueryParts();
+		$qb = $this->dbconnection->getQueryBuilder();
 	}
 
 	public function deleteTrackFromDB($id) {
@@ -488,7 +488,7 @@ class TracksService {
 				$qb->expr()->eq('id', $qb->createNamedParameter($id, IQueryBuilder::PARAM_INT))
 			);
 		$req = $qb->execute();
-		$qb = $qb->resetQueryParts();
+		$qb = $this->dbconnection->getQueryBuilder();
 	}
 
 	public function deleteAllTracksFromDB($userId) {
@@ -498,7 +498,7 @@ class TracksService {
 				$qb->expr()->eq('user_id', $qb->createNamedParameter($userId, IQueryBuilder::PARAM_STR))
 			);
 		$req = $qb->execute();
-		$qb = $qb->resetQueryParts();
+		$qb = $this->dbconnection->getQueryBuilder();
 	}
 
 	public function deleteTracksFromDB($ids, $userId) {
@@ -517,7 +517,7 @@ class TracksService {
 			return;
 		}
 		$req = $qb->execute();
-		$qb = $qb->resetQueryParts();
+		$qb = $this->dbconnection->getQueryBuilder();
 	}
 
 	public function generateTrackMetadata($file) {

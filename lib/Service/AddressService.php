@@ -110,7 +110,7 @@ class AddressService {
 			break;
 		}
 		$req->closeCursor();
-		$qb = $this->qb->resetQueryParts();
+		$qb = $this->dbconnection->getQueryBuilder();
 		// if it's still not in the DB, it means the lookup did not happen yet
 		// so we can schedule it for later
 		if (!$inDb) {
@@ -129,7 +129,7 @@ class AddressService {
 					->set('looked_up', $qb->createNamedParameter($lookedUp, IQueryBuilder::PARAM_BOOL))
 					->where($this->qb->expr()->eq('id', $this->qb->createNamedParameter($id, IQueryBuilder::PARAM_STR)));
 				$req = $this->qb->execute();
-				$qb = $this->qb->resetQueryParts();
+				$qb = $this->dbconnection->getQueryBuilder();
 			}
 		}
 
@@ -160,7 +160,7 @@ class AddressService {
 			$res[2] = true;
 		}
 		$req->closeCursor();
-		$qb = $this->qb->resetQueryParts();
+		$qb = $this->dbconnection->getQueryBuilder();
 
 		return $res;
 	}
@@ -257,7 +257,7 @@ class AddressService {
 			}
 		}
 		$req->closeCursor();
-		$qb = $this->qb->resetQueryParts();
+		$qb = $this->dbconnection->getQueryBuilder();
 
 		foreach ($adrIdToDelete as $id) {
 			$qb->delete('maps_address_geo')
@@ -265,7 +265,7 @@ class AddressService {
 					$qb->expr()->eq('id', $qb->createNamedParameter($id, IQueryBuilder::PARAM_INT))
 				);
 			$req = $qb->execute();
-			$qb = $qb->resetQueryParts();
+			$qb = $this->dbconnection->getQueryBuilder();
 		}
 	}
 
@@ -276,7 +276,7 @@ class AddressService {
 				$qb->expr()->eq('object_uri', $qb->createNamedParameter($uri, IQueryBuilder::PARAM_STR))
 			);
 		$req = $qb->execute();
-		$qb = $qb->resetQueryParts();
+		$qb = $this->dbconnection->getQueryBuilder();
 	}
 
 	// schedules the address for an external lookup
@@ -298,7 +298,7 @@ class AddressService {
 			]);
 		$req = $this->qb->execute();
 		$id = $this->qb->getLastInsertId();
-		$qb = $this->qb->resetQueryParts();
+		$qb = $this->dbconnection->getQueryBuilder();
 		if (!$geo[2]) {
 			$this->jobList->add(LookupMissingGeoJob::class, []);
 		}

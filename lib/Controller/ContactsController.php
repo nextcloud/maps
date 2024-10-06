@@ -679,7 +679,7 @@ class ContactsController extends Controller {
 		$req = $qb->execute();
 		$result = $req->fetchAll();
 		$req->closeCursor();
-		$qb = $qb->resetQueryParts();
+		$qb = $this->dbconnection->getQueryBuilder();
 		if ($result and count($result) > 0) {
 			$id = $result[0]['id'];
 			$qb->update('maps_address_geo')
@@ -702,7 +702,8 @@ class ContactsController extends Controller {
 				]);
 			$req = $qb->execute();
 			$id = $qb->getLastInsertId();
-		}$qb = $qb->resetQueryParts();
+		}
+		$qb = $this->dbconnection->getQueryBuilder();
 	}
 
 

@@ -140,7 +140,6 @@ class TracksControllerTest extends \PHPUnit\Framework\TestCase {
 				$qb->expr()->eq('user_id', $qb->createNamedParameter('test', IQueryBuilder::PARAM_STR))
 			);
 		$req = $qb->execute();
-		$qb = $qb->resetQueryParts();
 	}
 
 	public static function tearDownAfterClass(): void {
@@ -173,7 +172,6 @@ class TracksControllerTest extends \PHPUnit\Framework\TestCase {
 				$qb->expr()->eq('user_id', $qb->createNamedParameter('test', IQueryBuilder::PARAM_STR))
 			);
 		$req = $qb->execute();
-		$qb = $qb->resetQueryParts();
 	}
 
 	public function testAddGetTracks() {

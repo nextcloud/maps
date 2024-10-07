@@ -34,7 +34,6 @@ class ContactsController extends Controller {
 	private $contactsManager;
 	private $addressService;
 	private $dbconnection;
-	private $qb;
 	private $cdBackend;
 	private $avatarManager;
 	private $root;
@@ -69,7 +68,6 @@ class ContactsController extends Controller {
 		$this->contactsManager = $contactsManager;
 		$this->addressService = $addressService;
 		$this->dbconnection = $dbconnection;
-		$this->qb = $dbconnection->getQueryBuilder();
 		$this->cdBackend = $cdBackend;
 		$this->root = $root;
 		$this->urlGenerator = $urlGenerator;
@@ -669,7 +667,7 @@ class ContactsController extends Controller {
 	 * @throws \OCP\DB\Exception
 	 */
 	private function setAddressCoordinates(float $lat, float $lng, string $adr, string $uri): void {
-		$qb = $this->qb;
+		$qb = $this->dbconnection->getQueryBuilder();
 		$adr_norm = strtolower(preg_replace('/\s+/', '', $adr));
 
 		$qb->select('id')
@@ -703,7 +701,6 @@ class ContactsController extends Controller {
 			$req = $qb->execute();
 			$id = $qb->getLastInsertId();
 		}
-		$qb = $this->dbconnection->getQueryBuilder();
 	}
 
 

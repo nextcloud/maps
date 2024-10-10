@@ -6,7 +6,7 @@ use PHPUnit\Framework\TestCase;
 
 class ExifGeoDataTest extends TestCase {
 
-	public function imageWithDateAndLocationProvider(): array {
+	public static function imageWithDateAndLocationProvider(): array {
 		return [
 			['tests/test_files/Photos/WithDateAndLocation/imageWithDateAndLocation1.JPG', 1311984000 + 7200, 47.071717, 10.339557],
 			['tests/test_files/Photos/WithDateAndLocation/imageWithDateAndLocation2.JPG', 1312156800 + 7200, 46.862350, 10.916452],
@@ -54,7 +54,7 @@ class ExifGeoDataTest extends TestCase {
 		$this->assertEqualsWithDelta($lng, $exif_geo_data->lng, 0.000005);
 	}
 
-	public function imageWithZeroIslandProvider(): array {
+	public static function imageWithZeroIslandProvider(): array {
 		return [
 			['tests/test_files/Photos/ZeroIsland/imageZeroIsland1.JPG', 1653829180 + 7200],
 		];

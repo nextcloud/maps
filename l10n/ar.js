@@ -52,7 +52,7 @@ OC.L10N.register(
     "Add a favorite" : "إضافة مفضلة",
     "Zoom to bounds" : "تكبير للحدود",
     "Delete share link" : "حذف ارتباط المشاركة",
-    "Create share link" : "إنشاء رابط مُشارَكة",
+    "Create share link" : "إنشاء رابط مشاركة",
     "Copied!" : "تم نسخه !",
     "Copy share link" : "انسخ رابط المشاركة",
     "Leave share" : "مغادرة المشاركة",

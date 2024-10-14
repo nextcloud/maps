@@ -105,7 +105,7 @@ OC.L10N.register(
     "The True Size of Africa" : "الحجم الحقيقي لقارة أفريقيا",
     "Keep in mind that map projections always distort sizes of countries. The standard Mercator projection is particularly biased. Read more at:" : "ضع في اعتبارك أن إسقاطات الخريطة دائمًا ما تغيير أحجام البلدان. كما أن إسقاط مركاتور القياسي به إنحراف بشكل خاص. اقرا المزيد من:",
     "(No name)" : "(لا يوجد اسم)",
-    "No favorites to display" : "لا توجد مفضلات لعرضها",
+    "No favorites to display" : "لا توجد ملفات مفضلة للعرض",
     "Clear selection" : "إلغاء التحديد",
     "Select all" : "تحديد الكل",
     "Display picture" : "عرض الصُّورة",

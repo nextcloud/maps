@@ -73,7 +73,7 @@ OC.L10N.register(
     "Clear photo cache" : "Очистити кеш фотографій",
     "Hi" : "Привіт",
     "Show track elevation" : "Показати висоту треку",
-    "Download track" : "Завантажити трек",
+    "Download track" : "Звантажити трек",
     "My tracks" : "Мої шляхи",
     "Sort by name" : "Впорядкувати за ім’ям",
     "Sort by date" : "Впорядкувати за датою",

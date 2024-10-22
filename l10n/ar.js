@@ -143,7 +143,7 @@ OC.L10N.register(
     "This Place" : "هذا المكان",
     "Name" : "الاسم",
     "Add" : "إضافة",
-    "Add to favorites" : "أضفه إلى المفضلة",
+    "Add to favorites" : "إضافة إلى المفضلة",
     "This place" : "هذا المكان",
     "Add contact address" : "أضف عنوان الاتصال",
     "Home" : "الرئيسية",

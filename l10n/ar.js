@@ -78,7 +78,7 @@ OC.L10N.register(
     "My tracks" : "تسجيلاتي my tracks",
     "Sort by name" : "Order by name",
     "Sort by date" : "Order by date",
-    "Save" : "Save",
+    "Save" : "حفظ",
     "Favorite name" : "اسم المفضلة",
     "Category" : "التصنيف",
     "Comment" : "تعليق",

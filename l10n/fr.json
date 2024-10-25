@@ -381,6 +381,7 @@
     "Mapbox API key" : "Clé d'API Mapbox",
     "MapLibre Website" : "Site web MapLibre",
     "MapLibre settings" : "Paramètres MapLibre",
+    "Set the URL and Basic Authorization of style.json for OpenStreetMap Vector Tiles with MapLibre-GL-JS." : "Définissez l'URL et l'autorisation de base de style.json pour les Tiles vectorielles OpenStreetMap avec MapLibre-GL-JS.",
     "MapLibre Street style URL" : "URL du style MapLibre Street",
     "Basic Authorization if required. Format is \"user:password\"" : "Basic Authorization si nécessaire. Le format est \"user:password\"",
     "Maps settings" : "Paramètres de Maps"

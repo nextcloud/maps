@@ -25,7 +25,7 @@ OC.L10N.register(
     "Load more" : "Ielādēt vairāk",
     "Devices" : "Ierīces",
     "Tags" : "Birkas",
-    "Favorite" : "Favorīts",
+    "Favorite" : "Izlasē",
     "Duration" : "Ilgums",
     "End" : "Beigas",
     "Name" : "Nosaukums",

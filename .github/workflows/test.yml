@@ -13,7 +13,7 @@ jobs:
         strategy:
             matrix:
                 php-versions: [8.1, 8.2, 8.3]
-                nextcloud-versions: ['stable28', 'stable29']
+                nextcloud-versions: ['stable30']
         name: Nextcloud ${{ matrix.nextcloud-versions }} php${{ matrix.php-versions }} unit tests
         steps:
             - name: Set up php${{ matrix.php-versions }}

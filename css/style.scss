@@ -50,8 +50,8 @@
 	margin-left: 56px !important;
 	padding-top: 5px;
 	border: 2px solid var(--color-border-dark) !important;
-	border-bottom-left-radius: var(--border-radius-large) !important;
-	border-bottom-right-radius: var(--border-radius-large) !important;
+	border-bottom-left-radius: var(--border-radius-element) !important;
+	border-bottom-right-radius: var(--border-radius-element) !important;
 	border-top: 0 !important;
 	background-color: var(--color-main-background);
 }
@@ -90,7 +90,7 @@
 			}
 
 			td:nth-child(3) {
-				color: var(--color-text-light);
+				color: var(--color-main-text);
 			}
 
 			tr:nth-child(odd) {
@@ -132,7 +132,7 @@
 .leaflet-touch .leaflet-control-layers,
 .leaflet-touch .leaflet-bar {
     border: none;
-    border-radius: var(--border-radius);
+    border-radius: var(--border-radius-small);
 }
 
 /* Fix attribution overlapping map on mobile */
@@ -461,7 +461,7 @@ tr.selected td {
 .leaflet-marker-photo-suggestion,
 .leaflet-marker-photo,
 .leaflet-marker-photo-suggestion-selected {
-    border-radius: var(--border-radius);
+    border-radius: var(--border-radius-small);
 }
 
 .leaflet-marker-track.track-marker,
@@ -479,7 +479,7 @@ tr.selected td {
 .photo-tooltip {
     max-width: 325px;
     max-height: 325px;
-    border-radius: var(--border-radius);
+    border-radius: var(--border-radius-small);
 }
 
 .easy-button-button {
@@ -575,7 +575,7 @@ tr.selected td {
     text-align: center;
 }
 .tooltip-photo-name {
-    color: var(--color-text-light);
+    color: var(--color-main-text);
 }
 .tooltip-photo-date {
     font-weight: bold;

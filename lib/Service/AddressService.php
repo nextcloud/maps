@@ -39,7 +39,6 @@ use Sabre\VObject\Reader;
  * @package OCA\Maps\Service
  */
 class AddressService {
-	private $qb;
 	private $dbconnection;
 	private $jobList;
 	private $appData;
@@ -55,7 +54,6 @@ class AddressService {
 		IDBConnection $dbconnection,
 	) {
 		$this->dbconnection = $dbconnection;
-		$this->qb = $dbconnection->getQueryBuilder();
 		$this->memcache = $cacheFactory->createLocal('maps');
 		$this->jobList = $jobList;
 		$this->appData = $appData;
@@ -78,11 +76,12 @@ class AddressService {
 	 */
 	public function lookupAddress($adr, $uri): array {
 		$adr_norm = strtolower(preg_replace('/\s+/', '', $adr));
-		$this->qb->select('id', 'lat', 'lng', 'looked_up')
+		$qb = $this->dbconnection->getQueryBuilder();
+		$qb->select('id', 'lat', 'lng', 'looked_up')
 			->from('maps_address_geo')
-			->where($this->qb->expr()->eq('object_uri', $this->qb->createNamedParameter($uri, IQueryBuilder::PARAM_STR)))
-			->andWhere($this->qb->expr()->eq('adr_norm', $this->qb->createNamedParameter($adr_norm, IQueryBuilder::PARAM_STR)));
-		$req = $this->qb->execute();
+			->where($qb->expr()->eq('object_uri', $qb->createNamedParameter($uri, IQueryBuilder::PARAM_STR)))
+			->andWhere($qb->expr()->eq('adr_norm', $qb->createNamedParameter($adr_norm, IQueryBuilder::PARAM_STR)));
+		$req = $qb->execute();
 		$lat = null;
 		$lng = null;
 		$inDb = false;
@@ -110,7 +109,7 @@ class AddressService {
 			break;
 		}
 		$req->closeCursor();
-		$qb = $this->qb->resetQueryParts();
+		$qb = $this->dbconnection->getQueryBuilder();
 		// if it's still not in the DB, it means the lookup did not happen yet
 		// so we can schedule it for later
 		if (!$inDb) {
@@ -122,14 +121,13 @@ class AddressService {
 
 		} else {
 			if ($lookedUp) {
-				$this->qb->update('maps_address_geo')
+				$qb->update('maps_address_geo')
 					->set('lat', $qb->createNamedParameter($lat, IQueryBuilder::PARAM_STR))
 					->set('lng', $qb->createNamedParameter($lng, IQueryBuilder::PARAM_STR))
 					->set('object_uri', $qb->createNamedParameter($uri, IQueryBuilder::PARAM_STR))
 					->set('looked_up', $qb->createNamedParameter($lookedUp, IQueryBuilder::PARAM_BOOL))
-					->where($this->qb->expr()->eq('id', $this->qb->createNamedParameter($id, IQueryBuilder::PARAM_STR)));
-				$req = $this->qb->execute();
-				$qb = $this->qb->resetQueryParts();
+					->where($qb->expr()->eq('id', $qb->createNamedParameter($id, IQueryBuilder::PARAM_STR)));
+				$req = $qb->execute();
 			}
 		}
 
@@ -149,18 +147,18 @@ class AddressService {
 
 		$adr_norm = strtolower(preg_replace('/\s+/', '', $adr));
 
-		$this->qb->select('lat', 'lng')
+		$qb = $this->dbconnection->getQueryBuilder();
+		$qb->select('lat', 'lng')
 			->from('maps_address_geo')
-			->where($this->qb->expr()->eq('looked_up', $this->qb->createNamedParameter(true, IQueryBuilder::PARAM_BOOL)))
-			->andWhere($this->qb->expr()->eq('adr_norm', $this->qb->createNamedParameter($adr_norm, IQueryBuilder::PARAM_STR)));
-		$req = $this->qb->execute();
+			->where($qb->expr()->eq('looked_up', $qb->createNamedParameter(true, IQueryBuilder::PARAM_BOOL)))
+			->andWhere($qb->expr()->eq('adr_norm', $qb->createNamedParameter($adr_norm, IQueryBuilder::PARAM_STR)));
+		$req = $qb->execute();
 		while ($row = $req->fetch()) {
 			$res[0] = $row['lat'];
 			$res[1] = $row['lng'];
 			$res[2] = true;
 		}
 		$req->closeCursor();
-		$qb = $this->qb->resetQueryParts();
 
 		return $res;
 	}
@@ -236,7 +234,7 @@ class AddressService {
 	}
 
 	private function cleanUpDBContactAddresses($vCard, $uri) {
-		$qb = $this->qb;
+		$qb = $this->dbconnection->getQueryBuilder();
 		// get all vcard addresses
 		$vCardAddresses = [];
 		foreach ($vCard->children() as $property) {
@@ -247,36 +245,34 @@ class AddressService {
 		}
 		// check which addresses from DB is not in the vCard anymore
 		$adrIdToDelete = [];
-		$this->qb->select('id', 'adr')
+		$qb->select('id', 'adr')
 			->from('maps_address_geo')
-			->where($this->qb->expr()->eq('object_uri', $this->qb->createNamedParameter($uri, IQueryBuilder::PARAM_STR)));
-		$req = $this->qb->execute();
+			->where($qb->expr()->eq('object_uri', $qb->createNamedParameter($uri, IQueryBuilder::PARAM_STR)));
+		$req = $qb->execute();
 		while ($row = $req->fetch()) {
 			if (!in_array($row['adr'], $vCardAddresses)) {
 				array_push($adrIdToDelete, $row['id']);
 			}
 		}
 		$req->closeCursor();
-		$qb = $this->qb->resetQueryParts();
 
 		foreach ($adrIdToDelete as $id) {
+			$qb = $this->dbconnection->getQueryBuilder();
 			$qb->delete('maps_address_geo')
 				->where(
 					$qb->expr()->eq('id', $qb->createNamedParameter($id, IQueryBuilder::PARAM_INT))
 				);
 			$req = $qb->execute();
-			$qb = $qb->resetQueryParts();
 		}
 	}
 
 	public function deleteDBContactAddresses($uri) {
-		$qb = $this->qb;
+		$qb = $this->dbconnection->getQueryBuilder();
 		$qb->delete('maps_address_geo')
 			->where(
 				$qb->expr()->eq('object_uri', $qb->createNamedParameter($uri, IQueryBuilder::PARAM_STR))
 			);
 		$req = $qb->execute();
-		$qb = $qb->resetQueryParts();
 	}
 
 	// schedules the address for an external lookup
@@ -287,18 +283,18 @@ class AddressService {
 			$geo = $this->lookupAddressExternal($adr);
 		}
 		$adr_norm = strtolower(preg_replace('/\s+/', '', $adr));
-		$this->qb->insert('maps_address_geo')
+		$qb = $this->dbconnection->getQueryBuilder();
+		$qb->insert('maps_address_geo')
 			->values([
-				'adr' => $this->qb->createNamedParameter($adr, IQueryBuilder::PARAM_STR),
-				'adr_norm' => $this->qb->createNamedParameter($adr_norm, IQueryBuilder::PARAM_STR),
-				'object_uri' => $this->qb->createNamedParameter($uri, IQueryBuilder::PARAM_STR),
-				'lat' => $this->qb->createNamedParameter($geo[0], IQueryBuilder::PARAM_STR),
-				'lng' => $this->qb->createNamedParameter($geo[1], IQueryBuilder::PARAM_STR),
-				'looked_up' => $this->qb->createNamedParameter($geo[2], IQueryBuilder::PARAM_BOOL),
+				'adr' => $qb->createNamedParameter($adr, IQueryBuilder::PARAM_STR),
+				'adr_norm' => $qb->createNamedParameter($adr_norm, IQueryBuilder::PARAM_STR),
+				'object_uri' => $qb->createNamedParameter($uri, IQueryBuilder::PARAM_STR),
+				'lat' => $qb->createNamedParameter($geo[0], IQueryBuilder::PARAM_STR),
+				'lng' => $qb->createNamedParameter($geo[1], IQueryBuilder::PARAM_STR),
+				'looked_up' => $qb->createNamedParameter($geo[2], IQueryBuilder::PARAM_BOOL),
 			]);
-		$req = $this->qb->execute();
-		$id = $this->qb->getLastInsertId();
-		$qb = $this->qb->resetQueryParts();
+		$req = $qb->execute();
+		$id = $qb->getLastInsertId();
 		if (!$geo[2]) {
 			$this->jobList->add(LookupMissingGeoJob::class, []);
 		}
@@ -310,11 +306,12 @@ class AddressService {
 	public function lookupMissingGeo($max = 200):bool {
 		// stores if all addresses where looked up
 		$lookedUpAll = true;
-		$this->qb->select('adr', 'object_uri')
+		$qb = $this->dbconnection->getQueryBuilder();
+		$qb->select('adr', 'object_uri')
 			->from('maps_address_geo')
-			->where($this->qb->expr()->eq('looked_up', $this->qb->createNamedParameter(false, IQueryBuilder::PARAM_BOOL)))
+			->where($qb->expr()->eq('looked_up', $qb->createNamedParameter(false, IQueryBuilder::PARAM_BOOL)))
 			->setMaxResults($max);
-		$req = $this->qb->execute();
+		$req = $qb->execute();
 		$result = $req->fetchAll();
 		$req->closeCursor();
 		$i = 0;

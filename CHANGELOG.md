@@ -4,6 +4,10 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## 1.5.0 - 2024.11.xx Nextcloud Hub 9
+- Update OSM tile service URL [#1295](https://github.com/nextcloud/maps/pull/1295) @StyXman
+- Support Nextcloud 30, update CSP header [1336](https://github.com/nextcloud/maps/pull/1336) @Ma27
+
 ## 1.4.0 - 2024.04.28 Nextcloud Hub 8
 - Compability changes to Nextcloud 29.
 

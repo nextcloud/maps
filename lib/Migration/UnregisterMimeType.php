@@ -16,7 +16,7 @@ class UnregisterMimeType implements IRepairStep {
 	}
 
 	public function getName() {
-    return 'Unregister Maps MIME types';
+		return 'Unregister Maps MIME types';
 	}
 
 	private function unregisterForExistingFiles() {

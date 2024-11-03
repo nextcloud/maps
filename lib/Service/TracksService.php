@@ -38,9 +38,8 @@ class TracksService {
 		private IL10N $l10n,
 		private IRootFolder $root,
 		private IManager $shareManager,
-		IDBConnection $dbconnection,
+		private IDBConnection $dbconnection,
 	) {
-		$this->qb = $dbconnection->getQueryBuilder();
 	}
 
 	public function rescan($userId) {
@@ -254,7 +253,7 @@ class TracksService {
 		}
 		$userFolder = $this->root->getUserFolder($userId);
 		$tracks = [];
-		$qb = $this->qb;
+		$qb = $this->dbconnection->getQueryBuilder();
 		$qb->select('id', 'file_id', 'color', 'metadata', 'etag')
 			->from('maps_tracks', 't')
 			->where(
@@ -276,7 +275,6 @@ class TracksService {
 			$tracks[] = $track;
 		}
 		$req->closeCursor();
-		$qb = $qb->resetQueryParts();
 		return $tracks;
 	}
 
@@ -322,7 +320,7 @@ class TracksService {
 
 	public function getTrackFromDB($id, $userId = null) {
 		$track = null;
-		$qb = $this->qb;
+		$qb = $this->dbconnection->getQueryBuilder();
 		$qb->select('id', 'file_id', 'color', 'metadata', 'etag')
 			->from('maps_tracks', 't')
 			->where(
@@ -367,13 +365,12 @@ class TracksService {
 			break;
 		}
 		$req->closeCursor();
-		$qb = $qb->resetQueryParts();
 		return $track;
 	}
 
 	public function getTrackByFileIDFromDB($fileId, $userId = null) {
 		$track = null;
-		$qb = $this->qb;
+		$qb = $this->dbconnection->getQueryBuilder();
 		$qb->select('id', 'file_id', 'color', 'metadata', 'etag')
 			->from('maps_tracks', 't')
 			->where(
@@ -418,14 +415,13 @@ class TracksService {
 			break;
 		}
 		$req->closeCursor();
-		$qb = $qb->resetQueryParts();
 		return $track;
 	}
 
 	public function addTrackToDB($userId, $fileId, $file) {
 		$metadata = '';
 		$etag = $file->getEtag();
-		$qb = $this->qb;
+		$qb = $this->dbconnection->getQueryBuilder();
 		$qb->insert('maps_tracks')
 			->values([
 				'user_id' => $qb->createNamedParameter($userId, IQueryBuilder::PARAM_STR),
@@ -435,12 +431,11 @@ class TracksService {
 			]);
 		$req = $qb->execute();
 		$trackId = $qb->getLastInsertId();
-		$qb = $qb->resetQueryParts();
 		return $trackId;
 	}
 
 	public function editTrackInDB($id, $color, $metadata, $etag) {
-		$qb = $this->qb;
+		$qb = $this->dbconnection->getQueryBuilder();
 		$qb->update('maps_tracks');
 		if ($color !== null) {
 			$qb->set('color', $qb->createNamedParameter($color, IQueryBuilder::PARAM_STR));
@@ -455,21 +450,19 @@ class TracksService {
 			$qb->expr()->eq('id', $qb->createNamedParameter($id, IQueryBuilder::PARAM_INT))
 		);
 		$req = $qb->execute();
-		$qb = $qb->resetQueryParts();
 	}
 
 	public function deleteByFileId($fileId) {
-		$qb = $this->qb;
+		$qb = $this->dbconnection->getQueryBuilder();
 		$qb->delete('maps_tracks')
 			->where(
 				$qb->expr()->eq('file_id', $qb->createNamedParameter($fileId, IQueryBuilder::PARAM_INT))
 			);
 		$req = $qb->execute();
-		$qb = $qb->resetQueryParts();
 	}
 
 	public function deleteByFileIdUserId($fileId, $userId) {
-		$qb = $this->qb;
+		$qb = $this->dbconnection->getQueryBuilder();
 		$qb->delete('maps_tracks')
 			->where(
 				$qb->expr()->eq('file_id', $qb->createNamedParameter($fileId, IQueryBuilder::PARAM_INT))
@@ -478,31 +471,31 @@ class TracksService {
 				$qb->expr()->eq('user_id', $qb->createNamedParameter($userId, IQueryBuilder::PARAM_STR))
 			);
 		$req = $qb->execute();
-		$qb = $qb->resetQueryParts();
+		$qb = $this->dbconnection->getQueryBuilder();
 	}
 
 	public function deleteTrackFromDB($id) {
-		$qb = $this->qb;
+		$qb = $this->dbconnection->getQueryBuilder();
 		$qb->delete('maps_tracks')
 			->where(
 				$qb->expr()->eq('id', $qb->createNamedParameter($id, IQueryBuilder::PARAM_INT))
 			);
 		$req = $qb->execute();
-		$qb = $qb->resetQueryParts();
+		$qb = $this->dbconnection->getQueryBuilder();
 	}
 
 	public function deleteAllTracksFromDB($userId) {
-		$qb = $this->qb;
+		$qb = $this->dbconnection->getQueryBuilder();
 		$qb->delete('maps_tracks')
 			->where(
 				$qb->expr()->eq('user_id', $qb->createNamedParameter($userId, IQueryBuilder::PARAM_STR))
 			);
 		$req = $qb->execute();
-		$qb = $qb->resetQueryParts();
+		$qb = $this->dbconnection->getQueryBuilder();
 	}
 
 	public function deleteTracksFromDB($ids, $userId) {
-		$qb = $this->qb;
+		$qb = $this->dbconnection->getQueryBuilder();
 		$qb->delete('maps_tracks')
 			->where(
 				$qb->expr()->eq('user_id', $qb->createNamedParameter($userId, IQueryBuilder::PARAM_STR))
@@ -517,7 +510,7 @@ class TracksService {
 			return;
 		}
 		$req = $qb->execute();
-		$qb = $qb->resetQueryParts();
+		$qb = $this->dbconnection->getQueryBuilder();
 	}
 
 	public function generateTrackMetadata($file) {

@@ -8,7 +8,6 @@
  * @author Julien Veyssier <eneiluj@posteo.net>
  * @copyright Julien Veyssier 2019
  */
-define('PHPUNIT_RUN', 1);
 
 require_once __DIR__.'/../../../tests/bootstrap.php';
 require_once __DIR__.'/../../../lib/base.php';

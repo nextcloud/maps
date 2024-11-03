@@ -39,7 +39,6 @@ use Sabre\VObject\Reader;
 class PublicContactsController extends PublicPageController {
 	protected IManager $contactsManager;
 	protected AddressService $addressService;
-	protected IQueryBuilder $qb;
 	protected CardDavBackend $cdBackend;
 	protected IAvatarManager $avatarManager;
 	protected IRootFolder $root;
@@ -64,7 +63,6 @@ class PublicContactsController extends PublicPageController {
 		$this->avatarManager = $avatarManager;
 		$this->contactsManager = $contactsManager;
 		$this->addressService = $addressService;
-		$this->qb = $dbconnection->getQueryBuilder();
 		$this->cdBackend = $cdBackend;
 		$this->root = $root;
 	}

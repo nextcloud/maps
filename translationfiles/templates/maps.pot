@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Nextcloud 3.14159\n"
 "Report-Msgid-Bugs-To: translations\\@example.com\n"
-"POT-Creation-Date: 2024-11-03 01:18+0000\n"
+"POT-Creation-Date: 2024-11-04 01:17+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -151,13 +151,13 @@ msgstr ""
 
 #. TRANSLATORS src/components/AppNavigationFavoritesItem.vue:85
 #. TRANSLATORS src/views/App.vue:591
-#: /app/lib/Service/FavoritesService.php:399
-#: /app/lib/Service/FavoritesService.php:487
-#: /app/lib/Service/FavoritesService.php:488
-#: /app/lib/Service/FavoritesService.php:616
-#: /app/lib/Service/FavoritesService.php:731
-#: /app/lib/Service/FavoritesService.php:847
-#: /app/lib/Service/FavoritesService.php:908
+#: /app/lib/Service/FavoritesService.php:389
+#: /app/lib/Service/FavoritesService.php:477
+#: /app/lib/Service/FavoritesService.php:478
+#: /app/lib/Service/FavoritesService.php:606
+#: /app/lib/Service/FavoritesService.php:720
+#: /app/lib/Service/FavoritesService.php:836
+#: /app/lib/Service/FavoritesService.php:897
 #: /app/specialVueFakeDummyForL10nScript.js:58
 #: /app/specialVueFakeDummyForL10nScript.js:636
 #: /app/specialVueFakeDummyForL10nScript.js:694

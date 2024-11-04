@@ -25,7 +25,6 @@ use Psr\Log\LoggerInterface;
 class FavoritesService {
 
 	private $l10n;
-	private $qb;
 	private $dbconnection;
 	private $secureRandom;
 
@@ -48,7 +47,6 @@ class FavoritesService {
 		$this->l10n = $l10n;
 		$this->secureRandom = $secureRandom;
 		$this->dbconnection = $dbconnection;
-		$this->qb = $dbconnection->getQueryBuilder();
 	}
 
 	private function db_quote_escape_string($str) {
@@ -63,7 +61,7 @@ class FavoritesService {
 	 */
 	public function getFavoritesFromDB($userId, $pruneBefore = 0, $filterCategory = null, $isDeletable = true, $isUpdateable = true, $isShareable = true) {
 		$favorites = [];
-		$qb = $this->qb;
+		$qb = $this->dbconnection->getQueryBuilder();
 		$qb->select('id', 'name', 'date_created', 'date_modified', 'lat', 'lng', 'category', 'comment', 'extensions')
 			->from('maps_favorites', 'f')
 			->where(
@@ -108,13 +106,12 @@ class FavoritesService {
 			];
 		}
 		$req->closeCursor();
-		$qb = $qb->resetQueryParts();
 		return $favorites;
 	}
 
 	public function getFavoriteFromDB($id, $userId = null, $category = null, $isDeletable = true, $isUpdateable = true, $isShareable = true) {
 		$favorite = null;
-		$qb = $this->qb;
+		$qb = $this->dbconnection->getQueryBuilder();
 		$qb->select('id', 'name', 'date_modified', 'date_created', 'lat', 'lng', 'category', 'comment', 'extensions')
 			->from('maps_favorites', 'f')
 			->where(
@@ -160,13 +157,12 @@ class FavoritesService {
 			break;
 		}
 		$req->closeCursor();
-		$qb = $qb->resetQueryParts();
 		return $favorite;
 	}
 
 	public function addFavoriteToDB($userId, $name, $lat, $lng, $category, $comment, $extensions) {
 		$nowTimeStamp = (new \DateTime())->getTimestamp();
-		$qb = $this->qb;
+		$qb = $this->dbconnection->getQueryBuilder();
 		$qb->insert('maps_favorites')
 			->values([
 				'user_id' => $qb->createNamedParameter($userId, IQueryBuilder::PARAM_STR),
@@ -181,7 +177,6 @@ class FavoritesService {
 			]);
 		$req = $qb->execute();
 		$favoriteId = $qb->getLastInsertId();
-		$qb = $qb->resetQueryParts();
 		return $favoriteId;
 	}
 
@@ -222,7 +217,7 @@ class FavoritesService {
 	}
 
 	public function renameCategoryInDB($userId, $cat, $newName) {
-		$qb = $this->qb;
+		$qb = $this->dbconnection->getQueryBuilder();
 		$qb->update('maps_favorites');
 		$qb->set('category', $qb->createNamedParameter($newName, IQueryBuilder::PARAM_STR));
 		$qb->where(
@@ -232,12 +227,11 @@ class FavoritesService {
 			$qb->expr()->eq('category', $qb->createNamedParameter($cat, IQueryBuilder::PARAM_STR))
 		);
 		$req = $qb->execute();
-		$qb = $qb->resetQueryParts();
 	}
 
 	public function editFavoriteInDB($id, $name, $lat, $lng, $category, $comment, $extensions) {
 		$nowTimeStamp = (new \DateTime())->getTimestamp();
-		$qb = $this->qb;
+		$qb = $this->dbconnection->getQueryBuilder();
 		$qb->update('maps_favorites');
 		$qb->set('date_modified', $qb->createNamedParameter($nowTimeStamp, IQueryBuilder::PARAM_INT));
 		if ($name !== null) {
@@ -262,21 +256,19 @@ class FavoritesService {
 			$qb->expr()->eq('id', $qb->createNamedParameter($id, IQueryBuilder::PARAM_INT))
 		);
 		$req = $qb->execute();
-		$qb = $qb->resetQueryParts();
 	}
 
 	public function deleteFavoriteFromDB($id) {
-		$qb = $this->qb;
+		$qb = $this->dbconnection->getQueryBuilder();
 		$qb->delete('maps_favorites')
 			->where(
 				$qb->expr()->eq('id', $qb->createNamedParameter($id, IQueryBuilder::PARAM_INT))
 			);
 		$req = $qb->execute();
-		$qb = $qb->resetQueryParts();
 	}
 
 	public function deleteFavoritesFromDB($ids, $userId) {
-		$qb = $this->qb;
+		$qb = $this->dbconnection->getQueryBuilder();
 		$qb->delete('maps_favorites')
 			->where(
 				$qb->expr()->eq('user_id', $qb->createNamedParameter($userId, IQueryBuilder::PARAM_STR))
@@ -291,7 +283,6 @@ class FavoritesService {
 			return;
 		}
 		$req = $qb->execute();
-		$qb = $qb->resetQueryParts();
 	}
 
 	public function countFavorites($userId, $categoryList, $begin, $end) {
@@ -300,7 +291,7 @@ class FavoritesService {
 		) {
 			return 0;
 		}
-		$qb = $this->qb;
+		$qb = $this->dbconnection->getQueryBuilder();
 		$qb->select($qb->createFunction('COUNT(*) AS co'))
 			->from('maps_favorites', 'f')
 			->where(
@@ -334,7 +325,6 @@ class FavoritesService {
 			break;
 		}
 		$req->closeCursor();
-		$qb = $qb->resetQueryParts();
 
 		return $nbFavorites;
 	}
@@ -544,7 +534,7 @@ class FavoritesService {
 	}
 
 	public function exportFavorites($userId, $fileHandler, $categoryList, $begin, $end, $appVersion) {
-		$qb = $this->qb;
+		$qb = $this->dbconnection->getQueryBuilder();
 		$nbFavorites = $this->countFavorites($userId, $categoryList, $begin, $end);
 
 		$gpxHeader = '<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
@@ -628,7 +618,6 @@ class FavoritesService {
 				$gpxText .= '  </wpt>' . "\n";
 			}
 			$req->closeCursor();
-			$qb = $qb->resetQueryParts();
 			// write the chunk !
 			fwrite($fileHandler, $gpxText);
 			$favIndex = $favIndex + $chunkSize;

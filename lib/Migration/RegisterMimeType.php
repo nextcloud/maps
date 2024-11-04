@@ -16,7 +16,7 @@ class RegisterMimeType implements IRepairStep {
 	}
 
 	public function getName() {
-		return 'Register Maps MIME types"';
+		return 'Register Maps MIME types';
 	}
 
 	private function registerForExistingFiles() {

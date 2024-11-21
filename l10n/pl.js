@@ -124,7 +124,7 @@ OC.L10N.register(
     "Photo suggestions" : "Sugestie zdjęć",
     "Track metadata" : "Metadane ścieżki",
     "Unable to change the favourite state of the file" : "Nie można zmienić ulubionego stanu pliku",
-    "Error while loading the file data" : "Błąd podczas ładowania danych pliku",
+    "Error while loading the file data" : "Błąd podczas wczytywania danych pliku",
     "Distance" : "Dystans",
     "Duration" : "Czas trwania",
     "Moving time" : "Czas w ruchu",

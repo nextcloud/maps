@@ -13,84 +13,78 @@
 
 namespace OCA\Maps\Controller;
 
-use OCP\EventDispatcher\IEventDispatcher;
-use OCP\Files\Folder;
-use OCP\Files\NotFoundException;
 use OCA\Maps\DB\FavoriteShareMapper;
 use OCA\Maps\Service\FavoritesService;
 use OCP\App\IAppManager;
-use OCP\Files\NotPermittedException;
-use OCP\IInitialStateService;
-use OCP\ISession;
-use OCP\IURLGenerator;
-use OCP\Share\Exceptions\ShareNotFound;
-use OCP\Share\IManager;
-use OCP\IConfig;
-use OCP\IUserManager;
-use OCP\IGroupManager;
-use OCP\ILogger;
-use OCP\IServerContainer;
-use OCP\AppFramework\Controller;
-use OCP\AppFramework\Db\DoesNotExistException;
-use OCP\AppFramework\Db\MultipleObjectsReturnedException;
-use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\DataResponse;
+use OCP\EventDispatcher\IEventDispatcher;
+use OCP\Files\Folder;
+use OCP\Files\NotFoundException;
+use OCP\Files\NotPermittedException;
+use OCP\IConfig;
 use OCP\IDateTimeZone;
+use OCP\IGroupManager;
+use OCP\IInitialStateService;
 use OCP\IL10N;
 use OCP\IRequest;
+use OCP\IServerContainer;
+use OCP\ISession;
+use OCP\IURLGenerator;
+use OCP\IUserManager;
+use OCP\Share\Exceptions\ShareNotFound;
+use OCP\Share\IManager;
 
 class PublicFavoritesController extends PublicPageController {
 
-    private string $appVersion;
+	private string $appVersion;
 	private IL10N $l;
-    private FavoritesService $favoritesService;
-    private IDateTimeZone $dateTimeZone;
-    private ?string $defaultFavoritsJSON;
-    protected $appName;
+	private FavoritesService $favoritesService;
+	private IDateTimeZone $dateTimeZone;
+	private ?string $defaultFavoritsJSON;
+	protected $appName;
 	protected $groupManager;
 
-    /* @var FavoriteShareMapper */
-    private $favoriteShareMapper;
+	/* @var FavoriteShareMapper */
+	private $favoriteShareMapper;
 
-    public function __construct($appName,
-                                IRequest $request,
-                                IServerContainer $serverContainer,
-                                IConfig $config,
-								IURLGenerator $urlGenerator,
-								IInitialStateService $initialStateService,
-                                IManager $shareManager,
-                                IAppManager $appManager,
-                                IUserManager $userManager,
-                                IGroupManager $groupManager,
-                                IL10N $l,
-                                ILogger $logger,
-                                FavoritesService $favoritesService,
-                                IDateTimeZone $dateTimeZone,
-								ISession $session,
-                                FavoriteShareMapper $favoriteShareMapper,
-								IEventDispatcher $eventDispatcher) {
-        parent::__construct($appName, $request, $eventDispatcher, $config, $initialStateService, $urlGenerator, $shareManager, $userManager, $session);
-        $this->favoritesService = $favoritesService;
-        $this->dateTimeZone = $dateTimeZone;
-        $this->logger = $logger;
-        $this->appName = $appName;
-        $this->appVersion = $config->getAppValue('maps', 'installed_version');
-        $this->userManager = $userManager;
-        $this->groupManager = $groupManager;
-        $this->l = $l;
-        $this->config = $config;
-        $this->shareManager = $shareManager;
-        $this->favoriteShareMapper = $favoriteShareMapper;
-        $this->defaultFavoritsJSON = json_encode([
-            "type" => "FeatureCollection",
-            "features"=> []
-        ],JSON_PRETTY_PRINT);
-    }
+	public function __construct(
+		string $appName,
+		IRequest $request,
+		ISession $session,
+		IURLGenerator $urlGenerator,
+		IServerContainer $serverContainer,
+		IConfig $config,
+		IInitialStateService $initialStateService,
+		IManager $shareManager,
+		IAppManager $appManager,
+		IUserManager $userManager,
+		IGroupManager $groupManager,
+		IL10N $l,
+		FavoritesService $favoritesService,
+		IDateTimeZone $dateTimeZone,
+		FavoriteShareMapper $favoriteShareMapper,
+		IEventDispatcher $eventDispatcher,
+	) {
+		parent::__construct($appName, $request, $session, $urlGenerator, $eventDispatcher, $config, $initialStateService, $shareManager, $userManager);
+		$this->favoritesService = $favoritesService;
+		$this->dateTimeZone = $dateTimeZone;
+		$this->appName = $appName;
+		$this->appVersion = $config->getAppValue('maps', 'installed_version');
+		$this->userManager = $userManager;
+		$this->groupManager = $groupManager;
+		$this->l = $l;
+		$this->config = $config;
+		$this->shareManager = $shareManager;
+		$this->favoriteShareMapper = $favoriteShareMapper;
+		$this->defaultFavoritsJSON = json_encode([
+			'type' => 'FeatureCollection',
+			'features' => []
+		], JSON_PRETTY_PRINT);
+	}
 
 	/**
 	 * Validate the permissions of the share
 	 *
-	 * @param Share\IShare $share
 	 * @return bool
 	 */
 	private function validateShare(\OCP\Share\IShare $share) {
@@ -146,19 +140,19 @@ class PublicFavoritesController extends PublicPageController {
 	 * @return mixed
 	 * @throws NotPermittedException
 	 */
-    private function getJSONFavoritesFile(\OCP\Files\Folder $folder, $isCreatable): \OCP\Files\Node {
-        try {
-            $file = $folder->get('.favorites.json');
-        } catch (NotFoundException $e) {
+	private function getJSONFavoritesFile(\OCP\Files\Folder $folder, $isCreatable): \OCP\Files\Node {
+		try {
+			$file = $folder->get('.favorites.json');
+		} catch (NotFoundException $e) {
 			if ($isCreatable) {
 				$file = $folder->newFile('.favorites.json', $content = $this->defaultFavoritsJSON);
 			} else {
 				throw new NotPermittedException();
 			}
 
-        }
-        return $file;
-    }
+		}
+		return $file;
+	}
 
 	/**
 	 * @PublicPage
@@ -166,14 +160,14 @@ class PublicFavoritesController extends PublicPageController {
 	 * @throws NotFoundException
 	 * @throws NotPermittedException
 	 */
-    public function getFavorites(): DataResponse {
+	public function getFavorites(): DataResponse {
 		$share = $this->getShare();
 		$permissions = $share->getPermissions();
 		$folder = $this->getShareNode();
 		$isCreatable = ($permissions & (1 << 2)) && $folder->isCreatable();
 
 		$file = $this->getJSONFavoritesFile($folder, $isCreatable);
-		$isReadable = (bool) ($permissions & (1 << 0));
+		$isReadable = (bool)($permissions & (1 << 0));
 		if ($isReadable) {
 			$favorites = $this->favoritesService->getFavoritesFromJSON($file);
 			$favorites = array_map(function ($favorite) use ($permissions) {
@@ -185,8 +179,8 @@ class PublicFavoritesController extends PublicPageController {
 		} else {
 			throw new NotPermittedException();
 		}
-        return new DataResponse($favorites);
-    }
+		return new DataResponse($favorites);
+	}
 
 	/**
 	 * @PublicPage
@@ -201,8 +195,8 @@ class PublicFavoritesController extends PublicPageController {
 	 * @throws NotPermittedException
 	 * @throws \OCP\Files\InvalidPathException
 	 */
-    public function addFavorite(?string $name, float $lat, float $lng, ?string $category, ?string $comment, ?string $extensions): DataResponse {
-        if (is_numeric($lat) && is_numeric($lng)) {
+	public function addFavorite(?string $name, float $lat, float $lng, ?string $category, ?string $comment, ?string $extensions): DataResponse {
+		if (is_numeric($lat) && is_numeric($lng)) {
 			$share = $this->getShare();
 			$permissions = $share->getPermissions();
 			$folder = $this->getShareNode();
@@ -216,11 +210,11 @@ class PublicFavoritesController extends PublicPageController {
 			} else {
 				throw new NotPermittedException();
 			}
-            return new DataResponse($favorite);
-        } else {
-            return new DataResponse($this->l->t('Invalid values'), 400);
-        }
-    }
+			return new DataResponse($favorite);
+		} else {
+			return new DataResponse($this->l->t('Invalid values'), 400);
+		}
+	}
 
 	/**
 	 * @PublicPage
@@ -240,8 +234,8 @@ class PublicFavoritesController extends PublicPageController {
 		if ($isUpdateable) {
 			$favoriteIds = $this->favoritesService->addFavoritesToJSON($file, $favorites);
 			$favoritesAfter = [];
-			forEach ($this->favoritesService->getFavoritesFromJSON($file) as $favorite) {
-				if (in_array($favorite['id'],$favoriteIds)) {
+			foreach ($this->favoritesService->getFavoritesFromJSON($file) as $favorite) {
+				if (in_array($favorite['id'], $favoriteIds)) {
 					$favorite['isDeletable'] = ($permissions & (1 << 3)) && $favorite['isDeletable'];
 					$favoritesAfter[] = $favorite;
 				}
@@ -266,7 +260,7 @@ class PublicFavoritesController extends PublicPageController {
 	 * @throws NotPermittedException
 	 * @throws \OCP\Files\InvalidPathException
 	 */
-    public function editFavorite(int $id, ?string $name, float $lat, float $lng, ?string $category, ?string $comment, ?string $extensions): DataResponse {
+	public function editFavorite(int $id, ?string $name, float $lat, float $lng, ?string $category, ?string $comment, ?string $extensions): DataResponse {
 		$share = $this->getShare();
 		$permissions = $share->getPermissions();
 		$folder = $this->getShareNode();
@@ -289,10 +283,10 @@ class PublicFavoritesController extends PublicPageController {
 			} else {
 				return new DataResponse($this->l->t('no such favorite'), 400);
 			}
-        } else {
+		} else {
 			throw new NotPermittedException();
 		}
-    }
+	}
 
 	/**
 	 * @PublicPage
@@ -303,8 +297,8 @@ class PublicFavoritesController extends PublicPageController {
 	 * @throws NotPermittedException
 	 * @throws \OCP\Files\InvalidPathException
 	 */
-    public function renameCategories(array $categories, string $newName): DataResponse {
-        if (is_array($categories)) {
+	public function renameCategories(array $categories, string $newName): DataResponse {
+		if (is_array($categories)) {
 			$share = $this->getShare();
 			$permissions = $share->getPermissions();
 			$folder = $this->getShareNode();
@@ -312,16 +306,16 @@ class PublicFavoritesController extends PublicPageController {
 			$file = $this->getJSONFavoritesFile($folder, $isCreatable);
 			$isUpdateable = ($permissions & (1 << 1)) && $file->isUpdateable();
 			if ($isUpdateable) {
-            	foreach ($categories as $cat) {
-                    $this->favoritesService->renameCategoryInJSON($file, $cat, $newName);
-                }
-            } else {
+				foreach ($categories as $cat) {
+					$this->favoritesService->renameCategoryInJSON($file, $cat, $newName);
+				}
+			} else {
 				throw new NotPermittedException();
 			}
 			return new DataResponse('RENAMED');
-        }
+		}
 		throw new NotFoundException();
-    }
+	}
 
 	/**
 	 * @PublicPage
@@ -331,7 +325,7 @@ class PublicFavoritesController extends PublicPageController {
 	 * @throws NotPermittedException
 	 * @throws \OCP\Files\InvalidPathException
 	 */
-    public function deleteFavorite(int $id): DataResponse {
+	public function deleteFavorite(int $id): DataResponse {
 		$share = $this->getShare();
 		$permissions = $share->getPermissions();
 		$folder = $this->getShareNode();
@@ -347,7 +341,7 @@ class PublicFavoritesController extends PublicPageController {
 			throw new NotPermittedException();
 		}
 
-    }
+	}
 
 	/**
 	 * @PublicPage
@@ -357,20 +351,20 @@ class PublicFavoritesController extends PublicPageController {
 	 * @throws NotPermittedException
 	 * @throws \OCP\Files\InvalidPathException
 	 */
-    public function deleteFavorites(array $ids): DataResponse {
+	public function deleteFavorites(array $ids): DataResponse {
 		$share = $this->getShare();
 		$permissions = $share->getPermissions();
 		$folder = $this->getShareNode();
 		$isCreatable = ($permissions & (1 << 2)) && $folder->isCreatable();
 		$file = $this->getJSONFavoritesFile($folder, $isCreatable);
 		$isDeleteable = ($permissions & (1 << 3)) && $file->isUpdateable();
-		if ($isDeleteable){
-            $this->favoritesService->deleteFavoritesFromJSON($file, $ids);
-        } else {
+		if ($isDeleteable) {
+			$this->favoritesService->deleteFavoritesFromJSON($file, $ids);
+		} else {
 			throw new NotPermittedException();
 		}
-        return new DataResponse('DELETED');
-    }
+		return new DataResponse('DELETED');
+	}
 
 	/**
 	 * @PublicPage
@@ -378,7 +372,7 @@ class PublicFavoritesController extends PublicPageController {
 	 * @throws NotFoundException
 	 * @throws NotPermittedException
 	 */
-    public function getSharedCategories(): DataResponse {
+	public function getSharedCategories(): DataResponse {
 		$share = $this->getShare();
 		$permissions = $share->getPermissions();
 		$folder = $this->getShareNode();
@@ -389,6 +383,6 @@ class PublicFavoritesController extends PublicPageController {
 		} else {
 			throw new NotPermittedException();
 		}
-        return new DataResponse($categories);
-    }
+		return new DataResponse($categories);
+	}
 }

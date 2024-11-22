@@ -1,13 +1,16 @@
 OC.L10N.register(
     "maps",
     {
+    "File does not exist" : "El archivo no existe",
     "File not found" : "Archivo no encontrado",
     "Personal" : "Personal",
     "Maps" : "Mapas",
+    "Change color" : "Cambiar color",
     "Export" : "Exportar",
     "Delete" : "Borrar",
     "Import" : "Importar",
     "Rename" : "Renombrar",
+    "Delete share link" : "Eliminar enlace compartido",
     "Copied!" : "¡Copiado!",
     "Cancel" : "Cancelar",
     "Link copied" : "Enlace copiado",
@@ -21,6 +24,7 @@ OC.L10N.register(
     "Close" : "Cerrar",
     "Select all" : "Seleccionar todo",
     "Quit" : "Salir",
+    "Load more" : "Cargar más",
     "Devices" : "Dispositivos",
     "Tags" : "Etiquetas",
     "Favorite" : "Marcar como favorito",
@@ -51,6 +55,8 @@ OC.L10N.register(
     "Phone" : "Teléfono fijo",
     "Photo files" : "Archivos de fotos",
     "Not grouped" : "No agrupado",
-    "Default" : "Predeterminado"
+    "Default" : "Predeterminado",
+    "Failed to save settings" : "No se pudo guardar la configuración",
+    "Bar" : "Barra"
 },
 "nplurals=3; plural=n == 1 ? 0 : n != 0 && n % 1000000 == 0 ? 1 : 2;");

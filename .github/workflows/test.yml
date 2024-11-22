@@ -13,14 +13,13 @@ jobs:
         strategy:
             matrix:
                 php-versions: [8.1, 8.2, 8.3]
-                nextcloud-versions: ['stable28']
+                nextcloud-versions: ['stable30']
         name: Nextcloud ${{ matrix.nextcloud-versions }} php${{ matrix.php-versions }} unit tests
         steps:
             - name: Set up php${{ matrix.php-versions }}
               uses: shivammathur/setup-php@master
               with:
                   php-version: ${{ matrix.php-versions }}
-                  tools: composer:v1
                   extensions: ctype,curl,dom,gd,iconv,intl,json,mbstring,openssl,posix,sqlite,xml,zip,gmp
                   coverage: xdebug
             - name: Checkout Nextcloud

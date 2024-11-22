@@ -14,12 +14,15 @@
 - **📱 Devices:** Lost your phone? Check the map!
 - **〰 Tracks:** Load GPS tracks or past trips. Recording with [PhoneTrack](https://f-droid.org/en/packages/net.eneiluj.nextcloud.phonetrack/) or [OwnTracks](https://owntracks.org) is planned.
     ]]></description>
-    <version>1.3.1</version>
+    <version>1.5.0</version>
     <licence>agpl</licence>
     <author mail="eneiluj@posteo.net">Julien Veyssier</author>
     <author mail="kontakt+github@arne.email">Arne Hamann</author>
     <author homepage="https://jancborchardt.net">Jan C. Borchardt</author>
     <namespace>Maps</namespace>
+    <types>
+        <filesystem/>
+    </types>
     <category>integration</category>
     <category>multimedia</category>
     <category>organization</category>
@@ -32,18 +35,18 @@
     <screenshot>https://raw.githubusercontent.com/nextcloud/maps/master/screenshots/screenshot2.png</screenshot>
     <screenshot>https://raw.githubusercontent.com/nextcloud/maps/master/screenshots/screenshot3.png</screenshot>
     <dependencies>
-        <lib>exif</lib>
-        <nextcloud min-version="28" max-version="28"/>
         <php min-version="8.1" max-version="8.3"/>
+        <lib>exif</lib>
+        <nextcloud min-version="30" max-version="30"/>
     </dependencies>
     <repair-steps>
+		<post-migration>
+			<step>OCA\Maps\Migration\RegisterMimeType</step>
+		</post-migration>
         <install>
             <step>OCA\Maps\Migration\InstallScan</step>
 			<step>OCA\Maps\Migration\RegisterMimeType</step>
         </install>
-		<post-migrate>
-			<step>OCA\Maps\Migration\RegisterMimeType</step>
-		</post-migrate>
 		<uninstall>
 			<step>OCA\Maps\Migration\UnregisterMimeType</step>
 		</uninstall>
@@ -63,7 +66,4 @@
             <icon>app.svg</icon>
         </navigation>
     </navigations>
-    <types>
-        <filesystem/>
-    </types>
 </info>

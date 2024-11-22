@@ -71,7 +71,7 @@
     "Suggest photo locations" : "Proposer les positions des photos",
     "Clear photo cache" : "Vider le cache des photo",
     "Hi" : "Bonjour",
-    "Show track elevation" : "Afficher l'altitude de la trace",
+    "Show track elevation" : "Afficher l’altitude de la trace",
     "Download track" : "Télécharger la trace",
     "My tracks" : "Mes traces",
     "Sort by name" : "Trier par nom",
@@ -109,7 +109,6 @@
     "Display picture" : "Afficher l'image",
     "Remove from selection" : "Retirer de la sélection",
     "No suggestions found" : "Accune suggestions à trouvée",
-    "To get suggestions upload tracks from the trips, when you took your photos." : "Pour obtenir des suggestions, téléversez les traces des excursions pendant lesquelles vous avez pris vos photos.",
     "Quit" : "Quitter",
     "Load more" : "Charger davantage",
     "Photos default timezone:" : "Fuseau horaire par défaut des photos :",
@@ -306,6 +305,9 @@
     "Devices exported in {path}" : "Appareils exportés vers {path}",
     "Failed to export devices" : "Échec de l'exportation des appareils",
     "Failed to delete device" : "Impossible de supprimer l'appareil",
+    "Device {deviceName} linked to map {mapName}" : "L'appareil {deviceName} a été lié à la carte {mapName}",
+    "Failed to link Device to map {mapName}" : "Impossible de lier l'appareil à la carte {mapName}",
+    "Failed to share Device" : "Impossible de partager l'appareil",
     "Import devices from gpx (Nextcloud Maps) or kml/kmz (Google Timeline) file" : "Importer des appareils depuis un fichier GPX (Nextcloud Maps) ou kml/kmz (Google Timeline)",
     "{nb} devices imported from {path}" : "{nb} appareil·s importé·s depuis {path}",
     "Failed to import devices" : "Impossible d'importer les appareils",
@@ -379,7 +381,9 @@
     "Mapbox API key" : "Clé d'API Mapbox",
     "MapLibre Website" : "Site web MapLibre",
     "MapLibre settings" : "Paramètres MapLibre",
+    "Set the URL and Basic Authorization of style.json for OpenStreetMap Vector Tiles with MapLibre-GL-JS." : "Définissez l'URL et l'autorisation de base de style.json pour les Tiles vectorielles OpenStreetMap avec MapLibre-GL-JS.",
     "MapLibre Street style URL" : "URL du style MapLibre Street",
+    "Basic Authorization if required. Format is \"user:password\"" : "Basic Authorization si nécessaire. Le format est \"user:password\"",
     "Maps settings" : "Paramètres de Maps"
 },"pluralForm" :"nplurals=3; plural=(n == 0 || n == 1) ? 0 : n != 0 && n % 1000000 == 0 ? 1 : 2;"
 }

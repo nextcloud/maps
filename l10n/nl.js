@@ -101,7 +101,6 @@ OC.L10N.register(
     "Display picture" : "Foto weergeven",
     "Remove from selection" : "Deselecteer",
     "No suggestions found" : "Geen suggesties gevonden",
-    "To get suggestions upload tracks from the trips, when you took your photos." : "Upload tracks van de trips waarin je je foto's hebt genomen om suggesties te krijgen.",
     "Quit" : "Afsluiten",
     "Load more" : "Laad meer",
     "Tracks" : "Routes",

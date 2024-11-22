@@ -1,6 +1,7 @@
 OC.L10N.register(
     "maps",
     {
+    "File does not exist" : "Filen finns inte",
     "File not found" : "Filen hittades inte",
     "Personal" : "Personlig",
     "Maps" : "Kartor",
@@ -38,6 +39,7 @@ OC.L10N.register(
     "Place photos" : "Placera foton",
     "Place contact" : "Placera kontakt",
     "Share this location" : "Dela den här platsen",
+    "Shared location" : "Delad plats",
     "Route from here" : "Rutt härifrån",
     "Add route point" : "Lägg till ruttpunkt",
     "Route to here" : "Rutt hit",
@@ -54,6 +56,7 @@ OC.L10N.register(
     "Keep in mind that map projections always distort sizes of countries. The standard Mercator projection is particularly biased. Read more at:" : "Kom ihåg att kartprojektioner alltid förvränger verkligheten, tex länders storlek. Den vanliga Mercator-projektion är särskilt missvisande. Läs mer:",
     "No favorites to display" : "Inga favoriter att visa",
     "Select all" : "Välj alla",
+    "Display picture" : "Visa bild",
     "Quit" : "Avsluta",
     "Load more" : "Ladda mer",
     "Devices" : "Enheter",
@@ -92,6 +95,7 @@ OC.L10N.register(
     "Update" : "Uppdatera",
     "Delete favorites" : "Radera favoriter",
     "Select All" : "Välj Alla",
+    "Display pictures" : "Visa bilder",
     "Remove geo data" : "Ta bort geodata",
     "Yes" : "Ja",
     "New contact address" : "Ny kontaktadress",

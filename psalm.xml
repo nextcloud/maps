@@ -1,0 +1,39 @@
+<?xml version="1.0"?>
+<psalm errorLevel="5" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns="https://getpsalm.org/schema/config"
+	xsi:schemaLocation="https://getpsalm.org/schema/config https://getpsalm.org/schema/config"
+	findUnusedBaselineEntry="true"
+	findUnusedCode="false"
+	autoloader="vendor-bin/psalm/vendor/autoload.php"
+	errorBaseline="tests/psalm-baseline.xml">
+	<stubs>
+		<file name="tests/stubs/oc_archive_archive.php" preloadClasses="true"/>
+		<file name="tests/stubs/oc_archive_zip.php" preloadClasses="true"/>
+		<file name="tests/stubs/oc_files_search_searchbinaryoperator.php" preloadClasses="true"/>
+		<file name="tests/stubs/oc_files_search_searchcomparison.php" preloadClasses="true"/>
+		<file name="tests/stubs/oc_files_search_searchquery.php" preloadClasses="true"/>
+		<file name="tests/stubs/oc_hooks_emitter.php" preloadClasses="true"/>
+		<file name="tests/stubs/oc_security_csp_contentsecuritypolicy.php" preloadClasses="true"/>
+		<file name="tests/stubs/oc_share_constants.php" preloadClasses="true"/>
+		<file name="tests/stubs/oc_user_nouserexception.php" preloadClasses="true"/>
+		<file name="tests/stubs/oca_dav_carddav_carddavbackend.php" preloadClasses="true"/>
+		<file name="tests/stubs/oca_dav_events_cardcreatedevent.php" preloadClasses="true"/>
+		<file name="tests/stubs/oca_dav_events_carddeletedevent.php" preloadClasses="true"/>
+		<file name="tests/stubs/oca_dav_events_cardupdatedevent.php" preloadClasses="true"/>
+		<file name="tests/stubs/oca_files_event_loadadditionalscriptsevent.php" preloadClasses="true"/>
+		<file name="tests/stubs/oca_files_event_loadsidebar.php" preloadClasses="true"/>
+		<file name="tests/stubs/oca_files_sharing_event_beforetemplaterenderedevent.php" preloadClasses="true"/>
+		<file name="tests/stubs/oca_viewer_event_loadviewer.php" preloadClasses="true"/>
+	</stubs>
+	<projectFiles>
+		<directory name="lib" />
+		<ignoreFiles>
+			<directory name="vendor" />
+			<directory name="vendor-bin" />
+		</ignoreFiles>
+	</projectFiles>
+	<extraFiles>
+		<directory name="vendor" />
+		<directory name="vendor-bin/psalm/vendor" />
+	</extraFiles>
+</psalm>

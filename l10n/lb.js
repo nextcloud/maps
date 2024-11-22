@@ -9,6 +9,7 @@ OC.L10N.register(
     "Rename" : "Ëmbenennen",
     "Copied!" : "Kopéiert!",
     "Cancel" : "Ofbriechen",
+    "Link copied" : "Link kopéiert",
     "Share" : "Deelen",
     "Sort by name" : "Order by name",
     "Sort by date" : "Order by date",

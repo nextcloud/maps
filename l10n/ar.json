@@ -25,7 +25,7 @@
     "Maps" : "الخرائط",
     "🌍🌏🌎 The whole world fits inside your cloud!" : "🌍🌏🌎 العالم كله داخل سحابتك!",
     "**The whole world fits inside your cloud!**\n\n- **🗺 Beautiful map:** Using [OpenStreetMap](https://www.openstreetmap.org) and [Leaflet](https://leafletjs.com), you can choose between standard map, satellite, topographical, dark mode or even watercolor! 🎨\n- **⭐ Favorites:** Save your favorite places, privately! Sync with [GNOME Maps](https://github.com/nextcloud/maps/issues/30) and mobile apps is planned.\n- **🧭 Routing:** Possible using either [OSRM](http://project-osrm.org), [GraphHopper](https://www.graphhopper.com) or [Mapbox](https://www.mapbox.com).\n- **🖼 Photos on the map:** No more boring slideshows, just show directly where you were!\n- **🙋 Contacts on the map:** See where your friends live and plan your next visit.\n- **📱 Devices:** Lost your phone? Check the map!\n- **〰 Tracks:** Load GPS tracks or past trips. Recording with [PhoneTrack](https://f-droid.org/en/packages/net.eneiluj.nextcloud.phonetrack/) or [OwnTracks](https://owntracks.org) is planned." : "** العالم كله مشمول داخل سحابتك! ** \n\n- ** 🗺خريطة جميلة: ** باستخدام [ OpenStreetMap] (https://www.openstreetmap.org) و [برمجية مكتبة جافا سكريبت Leaflet] (https://leafletjs.com )، يمكنك الاختيار بين الخريطة القياسية أو القمر الصناعي أو الطبوغرافية أو الوضع المظلم أو حتى الألوان المائية! 🎨\n- ** المفضلات: ** احفظ أماكنك المفضلة، بشكل خاص! تم التخطيط للمزامنة مع [خرائط جنوم] (https://github.com/nextcloud/maps/issues/30) وتطبيقات الجوال.\n-** 🧭التوجيه: ** ممكن باستخدام أيٍّ من [OSRM] (http://project-osrm.org) أو [مكتبة التوجيه GraphHopper ] (https://www.graphhopper.com) أو [Mapbox] (https://www.mapbox.com).\n- ** 🖼 الصور على الخريطة: ** لا لعروض الشرائح المملة بعد الآن، فقط قم بعرض مكانك مباشرة! \n- ** 🙋 جهات الاتصال على الخريطة: ** شاهد أين يعيش أصدقاؤك وخطط لزيارتك القادمة.\n-** 📱 الأجهزة: ** هل فقدت هاتفك؟ تحقق من الخريطة \n- ** 〰 المسارات: ** تحميل مسارات الـ جي بي اس أو الرحلات السابقة. التسجيل باستخدام [PhoneTrack] (https://f-droid.org/en/packages/net.eneiluj.nextcloud.phonetrack/) أو [OwnTracks] (https://owntracks.org) أمر مخطط له.",
-    "My contacts" : "جهات اتّصالي",
+    "My contacts" : "جهات الاتصال الخاصة بي",
     "Toggle all" : "تبديل الكل",
     "Zoom" : "تكبير zoom",
     "Copy to map" : "نسخ للخريطة",
@@ -50,7 +50,7 @@
     "Add a favorite" : "إضافة مفضلة",
     "Zoom to bounds" : "تكبير للحدود",
     "Delete share link" : "حذف ارتباط المشاركة",
-    "Create share link" : "إنشاء رابط مُشارَكة",
+    "Create share link" : "إنشاء رابط مشاركة",
     "Copied!" : "تم نسخه !",
     "Copy share link" : "انسخ رابط المشاركة",
     "Leave share" : "مغادرة المشاركة",
@@ -76,7 +76,7 @@
     "My tracks" : "تسجيلاتي my tracks",
     "Sort by name" : "Order by name",
     "Sort by date" : "Order by date",
-    "Save" : "Save",
+    "Save" : "حفظ",
     "Favorite name" : "اسم المفضلة",
     "Category" : "التصنيف",
     "Comment" : "تعليق",
@@ -103,13 +103,12 @@
     "The True Size of Africa" : "الحجم الحقيقي لقارة أفريقيا",
     "Keep in mind that map projections always distort sizes of countries. The standard Mercator projection is particularly biased. Read more at:" : "ضع في اعتبارك أن إسقاطات الخريطة دائمًا ما تغيير أحجام البلدان. كما أن إسقاط مركاتور القياسي به إنحراف بشكل خاص. اقرا المزيد من:",
     "(No name)" : "(لا يوجد اسم)",
-    "No favorites to display" : "لا توجد مفضلات لعرضها",
+    "No favorites to display" : "لا توجد ملفات مفضلة للعرض",
     "Clear selection" : "إلغاء التحديد",
     "Select all" : "تحديد الكل",
     "Display picture" : "عرض الصُّورة",
     "Remove from selection" : "إزالة من الاختيارات",
     "No suggestions found" : "لم يتم العثور على اقتراحات",
-    "To get suggestions upload tracks from the trips, when you took your photos." : "للحصول على اقتراحات، قم بتحميل المسارات من الرحلات، عندما قمت بإلتقاط صورك.",
     "Quit" : "خروج",
     "Load more" : "حمّل أكثر",
     "Photos default timezone:" : "المنطقة الزمنية التلقائية للصِّوَر",
@@ -142,13 +141,13 @@
     "This Place" : "هذا المكان",
     "Name" : "الاسم",
     "Add" : "إضافة",
-    "Add to favorites" : "أضفه إلى المفضلة",
+    "Add to favorites" : "إضافة إلى المفضلة",
     "This place" : "هذا المكان",
     "Add contact address" : "أضف عنوان الاتصال",
     "Home" : "الرئيسية",
     "Work" : "العمل",
     "Delete this address" : "احذف هذا العنوان",
-    "Delete this location" : "إحذِف هذا الموقع",
+    "Delete this location" : "حذف هذا الموقع",
     "Open in Contacts" : "فتح في جهات الاتصال",
     "Device" : "الجهاز",
     "Date" : "التاريخ",
@@ -156,9 +155,9 @@
     "Battery" : "البطارية",
     "Accuracy" : "الدقة",
     "No name" : "لا يوجد اسم",
-    "Delete favorite" : "إحذِف مٌفضّلةً",
+    "Delete favorite" : "حذف مفضلة",
     "Update" : "تحديث",
-    "Delete favorites" : "إحذِف المُفضّلة",
+    "Delete favorites" : "حذف المفضلة",
     "Zoom on bounds" : "تكبير الحدود bounds",
     "Undo {action} (Ctrl+Z)" : "تراجع عن {action} (Ctrl + Z)",
     "Redo {action} (Ctrl+Shift+Z)" : "إعادة {action} (Ctrl + Shift + Z)",

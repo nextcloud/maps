@@ -89,20 +89,12 @@ class RescanPhotos extends Command {
 		}
         if ($userId === null) {
             $this->userManager->callForSeenUsers(function (IUser $user) use ($inBackground) {
-                if ($pathToScan === null) {
-                    $this->rescanUserPhotos($user->getUID(), $inBackground);
-                } else {
-                    $this->scanUserPhotos($user->getUID(), $pathToScan, $inBackground);
-                }
+                $this->rescanUserPhotos($user->getUID(), $inBackground, $pathToScan);
             });
         } else {
             $user = $this->userManager->get($userId);
             if ($user !== null) {
-                if ($pathToScan === null) {
-                    $this->rescanUserPhotos($userId, $inBackground);
-                } else {
-                    $this->scanUserPhotos($userId, $pathToScan, $inBackground);
-                }
+                $this->rescanUserPhotos($userId, $inBackground, $pathToScan);
             }
         }
         return 0;
@@ -111,32 +103,19 @@ class RescanPhotos extends Command {
 	/**
 	 * @param string $userId
 	 * @param bool $inBackground
+	 * @param string $pathToScan
 	 * @return void
 	 * @throws \OCP\PreConditionNotMetException
 	 */
-    private function rescanUserPhotos(string $userId, bool $inBackground=true) {
+    private function rescanUserPhotos(string $userId, bool $inBackground=true, string $pathToScan=null) {
         echo '======== User '.$userId.' ========'."\n";
         $c = 1;
-        foreach ($this->photofilesService->rescan($userId, $inBackground) as $path) {
+        foreach ($this->photofilesService->rescan($userId, $inBackground, $pathToScan) as $path) {
             echo '['.$c.'] Photo "'.$path.'" added'."\n";
             $c++;
         }
-        $this->config->setUserValue($userId, 'maps', 'installScanDone', 'yes');
-    }
-
-    /**
-	 * @param string $userId
-	 * @param string $pathToScan
-	 * @param bool $inBackground
-	 * @return void
-	 * @throws \OCP\PreConditionNotMetException
-	 */
-    private function scanUserPhotos($userId, $pathToScan, bool $inBackground=true) {
-        echo '======== User '.$userId.' ========'."\n";
-        $c = 1;
-        foreach ($this->photofilesService->rescanPath($userId, $pathToScan, $inBackground) as $path) {
-            echo '['.$c.'] Photo "'.$path.'" added'."\n";
-            $c++;
+        if ($pathToScan === null) {
+            $this->config->setUserValue($userId, 'maps', 'installScanDone', 'yes');
         }
     }
 }

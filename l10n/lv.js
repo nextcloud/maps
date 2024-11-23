@@ -18,7 +18,7 @@ OC.L10N.register(
     "Save" : "Saglabāt",
     "Category" : "Kategorija",
     "Comment" : "Piebilde",
-    "Location" : "Vieta",
+    "Location" : "Atrašanās vieta",
     "Close" : "Aizvērt",
     "Select all" : "Atzīmēt visu",
     "Quit" : "Iziet",

@@ -1,6 +1,7 @@
 OC.L10N.register(
     "maps",
     {
+    "File does not exist" : "ファイルが存在しません",
     "File not found" : "ファイルが見つかりません",
     "Personal" : "個人",
     "Maps" : "地図",

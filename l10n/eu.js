@@ -72,6 +72,7 @@ OC.L10N.register(
     "Clear photo cache" : "Garbitu argazkien cachea",
     "Hi" : "Kaixo",
     "Show track elevation" : "Erakutsi ibilbidearen altitudea",
+    "Download track" : "Deskargatu pista",
     "My tracks" : "Nire ibilbideak",
     "Sort by name" : "Ordenatu izenaren arabera",
     "Sort by date" : "Ordenatu dataren arabera",
@@ -375,6 +376,8 @@ OC.L10N.register(
     "Set the API key to use Mapbox routing service." : "Ezarri API key-a erabiltzeko Mapbox bideratze zerbitzua.",
     "Leave empty to disable." : "Laga hutsik desgaitzeko.",
     "Mapbox API key" : "Mapbox API gakoa",
+    "MapLibre Website" : "MapLibre webgunea",
+    "MapLibre settings" : "MapLibre ezarpenak",
     "Maps settings" : "Maps ezarpenak"
 },
 "nplurals=2; plural=(n != 1);");

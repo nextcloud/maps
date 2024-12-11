@@ -26,26 +26,27 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class RescanPhotos extends Command {
 
-	protected IUserManager $userManager;
-	protected OutputInterface $output;
-	protected IManager $encryptionManager;
-	protected PhotofilesService $photofilesService;
-	protected IConfig $config;
+  protected IUserManager $userManager;
+  protected OutputInterface $output;
+  protected IManager $encryptionManager;
+  protected PhotofilesService $photofilesService;
+  protected IConfig $config;
 
-	public function __construct(IUserManager $userManager,
-		IManager $encryptionManager,
-		PhotofilesService $photofilesService,
-		IConfig $config) {
-		parent::__construct();
-		$this->userManager = $userManager;
-		$this->encryptionManager = $encryptionManager;
-		$this->photofilesService = $photofilesService;
-		$this->config = $config;
-	}
+  public function __construct(
+    IUserManager $userManager,
+    IManager $encryptionManager,
+    PhotofilesService $photofilesService,
+    IConfig $config) {
+    parent::__construct();
+    $this->userManager = $userManager;
+    $this->encryptionManager = $encryptionManager;
+    $this->photofilesService = $photofilesService;
+    $this->config = $config;
+  }
 
-	/**
-	 * @return void
-	 */
+  /**
+   * @return void
+   */
   protected function configure() {
     $this->setName('maps:scan-photos')
       ->setDescription('Rescan photos GPS exif data')
@@ -57,21 +58,21 @@ class RescanPhotos extends Command {
       ->addArgument(
         'path',
         InputArgument::OPTIONAL,
-        'Scan photos GPS exif data for the given path under user\'s files without wiping the database'
+        'Scan photos GPS exif data for the given path under user\'s files without wiping the database.'
       )
-			->addOption(
-				'now',
-				null,
-				InputOption::VALUE_NONE,
-				'Dot the rescan now and not as background jobs. Doing it now might run out of memory.'
-			);
-	}
+      ->addOption(
+        'now',
+        null,
+        InputOption::VALUE_NONE,
+        'Dot the rescan now and not as background jobs. Doing it now might run out of memory.'
+      );
+  }
 
-	/**
-	 * @param InputInterface $input
-	 * @param OutputInterface $output
-	 * @return int
-	 */
+  /**
+   * @param InputInterface $input
+   * @param OutputInterface $output
+   * @return int
+   */
   protected function execute(InputInterface $input, OutputInterface $output): int {
     if ($this->encryptionManager->isEnabled()) {
       $output->writeln('Encryption is enabled. Aborted.');
@@ -80,10 +81,10 @@ class RescanPhotos extends Command {
     $this->output = $output;
     $userId = $input->getArgument('user_id');
     $pathToScan = $input->getArgument('path');
-		$inBackground = !($input->getOption('now') ?? true);
-		if ($inBackground) {
-			echo "Extracting coordinates from photo is performed in a BackgroundJob \n";
-		}
+    $inBackground = !($input->getOption('now') ?? true);
+    if ($inBackground) {
+      echo "Extracting coordinates from photo is performed in a BackgroundJob \n";
+    }
     if ($userId === null) {
       $this->userManager->callForSeenUsers(function (IUser $user, string $pathToScan) use ($inBackground) {
         $this->rescanUserPhotos($user->getUID(), $inBackground, $pathToScan);
@@ -97,18 +98,18 @@ class RescanPhotos extends Command {
     return 0;
   }
 
-	/**
-	 * @param string $userId
-	 * @param bool $inBackground
-	 * @param string $pathToScan
-	 * @return void
-	 * @throws \OCP\PreConditionNotMetException
-	 */
-  private function rescanUserPhotos(string $userId, bool $inBackground=true, string $pathToScan=null) {
-    echo '======== User '.$userId.' ========'."\n";
+  /**
+   * @param string $userId
+   * @param bool $inBackground
+   * @param string $pathToScan
+   * @return void
+   * @throws \OCP\PreConditionNotMetException
+   */
+  private function rescanUserPhotos(string $userId, bool $inBackground = true, string $pathToScan = null) {
+    echo '======== User ' . $userId . ' ========' . "\n";
     $c = 1;
     foreach ($this->photofilesService->rescan($userId, $inBackground, $pathToScan) as $path) {
-      echo '['.$c.'] Photo "'.$path.'" added'."\n";
+      echo '[' . $c . '] Photo "' . $path . '" added' . "\n";
       $c++;
     }
     if ($pathToScan === null) {

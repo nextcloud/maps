@@ -260,7 +260,7 @@ OC.L10N.register(
     "Failed to export route" : "導出路線失敗",
     "Failed to export track" : "導出足跡失敗",
     "Export current route" : "導出目前路線",
-    "Zoom on current route" : "放大當前路線",
+    "Zoom on current route" : "放大目前路線",
     "Via {i}" : "經由 {i}",
     "My location" : "我的位置",
     "Impossible to get current location" : "無法獲取目前位置",

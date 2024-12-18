@@ -6,6 +6,7 @@ OC.L10N.register(
     "Maps" : "Kort",
     "🌍🌏🌎 The whole world fits inside your cloud!" : "🌍🌏🌎 The whole world fits inside your cloud!",
     "Zoom" : "Zoom",
+    "Change color" : "Skift farve",
     "Export" : "Eksportér",
     "Delete" : "Slet",
     "Import" : "Importér",

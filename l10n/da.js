@@ -1,6 +1,7 @@
 OC.L10N.register(
     "maps",
     {
+    "File does not exist" : "Filen eksisterer ikke",
     "File not found" : "Fil ikke fundet",
     "Personal" : "Personlig",
     "Maps" : "Kort",

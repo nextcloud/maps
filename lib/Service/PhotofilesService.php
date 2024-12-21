@@ -31,6 +31,7 @@ use OCP\Share\IManager;
 use Psr\Log\LoggerInterface;
 
 require_once __DIR__ . '/../../vendor/autoload.php';
+
 use lsolesen\pel\PelDataWindow;
 use lsolesen\pel\PelEntryAscii;
 use lsolesen\pel\PelEntryRational;
@@ -71,11 +72,16 @@ class PhotofilesService {
 		$this->backgroundJobCache = $this->cacheFactory->createDistributed('maps:background-jobs');
 	}
 
-	public function rescan($userId, $inBackground = true) {
+	public function rescan($userId, $inBackground = true, $pathToScan = null) {
 		$this->photosCache->clear($userId);
 		$userFolder = $this->root->getUserFolder($userId);
-		$photos = $this->gatherPhotoFiles($userFolder, true);
-		$this->photoMapper->deleteAll($userId);
+		if ($pathToScan === null) {
+			$folder = $userFolder;
+			$this->photoMapper->deleteAll($userId);
+		} else {
+			$folder = $userFolder->get($pathToScan);
+		}
+		$photos = $this->gatherPhotoFiles($folder, true);
 		foreach ($photos as $photo) {
 			if ($inBackground) {
 				$this->addPhoto($photo, $userId);
@@ -404,7 +410,7 @@ class PhotofilesService {
 				}
 				try {
 					$notes = array_merge($notes, $this->gatherPhotoFiles($node, $recursive));
-				} catch (\OCP\Files\StorageNotAvailableException|\Exception $e) {
+				} catch (\OCP\Files\StorageNotAvailableException | \Exception $e) {
 					$msg = 'WARNING: Could not access ' . $node->getName();
 					echo($msg . "\n");
 					$this->logger->error($msg);
@@ -442,12 +448,12 @@ class PhotofilesService {
 			$exif_geo_data->validate(true);
 		} catch (ExifDataInvalidException $e) {
 			$exif_geo_data = null;
-			$this->logger->notice($e->getMessage(), ['code' => $e->getCode(),'path' => $path]);
+			$this->logger->notice($e->getMessage(), ['code' => $e->getCode(), 'path' => $path]);
 		} catch (ExifDataNoLocationException $e) {
-			$this->logger->notice($e->getMessage(), ['code' => $e->getCode(),'path' => $path]);
+			$this->logger->notice($e->getMessage(), ['code' => $e->getCode(), 'path' => $path]);
 		} catch (\Throwable $f) {
 			$exif_geo_data = null;
-			$this->logger->error($f->getMessage(), ['code' => $f->getCode(),'path' => $path]);
+			$this->logger->error($f->getMessage(), ['code' => $f->getCode(), 'path' => $path]);
 		}
 		return $exif_geo_data;
 	}
@@ -519,19 +525,25 @@ class PhotofilesService {
 			= $this->degreeDecimalToDegreeMinuteSecond(abs($longitudeDegreeDecimal));
 
 		$pelSubIfdGps->addEntry(new PelEntryAscii(
-			PelTag::GPS_LATITUDE_REF, $latitudeRef));
+			PelTag::GPS_LATITUDE_REF,
+			$latitudeRef
+		));
 		$pelSubIfdGps->addEntry(new PelEntryRational(
 			PelTag::GPS_LATITUDE,
 			[$latitudeDegreeMinuteSecond['degree'], 1],
 			[$latitudeDegreeMinuteSecond['minute'], 1],
-			[round($latitudeDegreeMinuteSecond['second'] * 1000), 1000]));
+			[round($latitudeDegreeMinuteSecond['second'] * 1000), 1000]
+		));
 		$pelSubIfdGps->addEntry(new PelEntryAscii(
-			PelTag::GPS_LONGITUDE_REF, $longitudeRef));
+			PelTag::GPS_LONGITUDE_REF,
+			$longitudeRef
+		));
 		$pelSubIfdGps->addEntry(new PelEntryRational(
 			PelTag::GPS_LONGITUDE,
 			[$longitudeDegreeMinuteSecond['degree'], 1],
 			[$longitudeDegreeMinuteSecond['minute'], 1],
-			[round($longitudeDegreeMinuteSecond['second'] * 1000), 1000]));
+			[round($longitudeDegreeMinuteSecond['second'] * 1000), 1000]
+		));
 	}
 
 	private function degreeDecimalToDegreeMinuteSecond($degreeDecimal) {
@@ -542,5 +554,4 @@ class PhotofilesService {
 		$second = $remainder * 60;
 		return ['degree' => $degree, 'minute' => $minute, 'second' => $second];
 	}
-
 }

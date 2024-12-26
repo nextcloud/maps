@@ -21,7 +21,7 @@ OC.L10N.register(
     "Unknown category" : "Categoría descoñecida",
     "Error sharing favorite" : "Produciuse un erro ao compartir o favorito",
     "Bad file type" : "Tipo de ficheiro incorrecto",
-    "File not found" : "Ficheiro non atopado",
+    "File not found" : "Non se atopou o ficheiro",
     "No such track" : "Non hai tal trazado",
     "Personal" : "Persoal",
     "Maps" : "Mapas",

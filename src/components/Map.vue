@@ -510,8 +510,8 @@ export default {
 						action.callback({
 							id: 'geo:' + e.latlng.lat + ',' + e.latlng.lng,
 							name: t('maps', 'Shared location'),
-							latitude: e.latlng.lat,
-							longitude: e.latlng.lng,
+							latitude: e.latlng.lat.toString(),
+							longitude: e.latlng.lng.toString(),
 						})
 					},
 				})

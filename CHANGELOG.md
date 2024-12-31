@@ -4,6 +4,10 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## 1.6.0 - 2024.12.31 Scan photos of specific directory
+- Scan photos of specific directory [#1231](https://github.com/nextcloud/maps/pull/1231) @tetebueno
+
+
 ## 1.5.0 - 2024.11.16 Nextcloud Hub 9
 - Update OSM tile service URL [#1295](https://github.com/nextcloud/maps/pull/1295) @StyXman
 - Support Nextcloud 30, update CSP header [1336](https://github.com/nextcloud/maps/pull/1336) @Ma27

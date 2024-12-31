@@ -170,6 +170,8 @@ import { getCurrentUser } from '@nextcloud/auth'
 import axios from '@nextcloud/axios'
 import { showError, showSuccess } from '@nextcloud/dialogs'
 
+import { LocateControl } from "leaflet.locatecontrol"
+import 'leaflet.locatecontrol/dist/L.Control.Locate.min.css'
 import L from 'leaflet'
 import 'mapbox-gl/dist/mapbox-gl'
 import 'mapbox-gl/dist/mapbox-gl.css'
@@ -186,8 +188,7 @@ import 'leaflet-easybutton/src/easy-button'
 import 'leaflet-easybutton/src/easy-button.css'
 import 'leaflet-contextmenu/dist/leaflet.contextmenu.min'
 import 'leaflet-contextmenu/dist/leaflet.contextmenu.min.css'
-import 'leaflet.locatecontrol/dist/L.Control.Locate.min'
-import 'leaflet.locatecontrol/dist/L.Control.Locate.min.css'
+
 import 'd3/dist/d3.min'
 import GeoJSON from 'geojson'
 import '@raruto/leaflet-elevation/dist/leaflet-elevation'
@@ -612,7 +613,7 @@ export default {
 		},
 		initLocControl(map) {
 			// location control
-			const locControl = L.control.locate({
+			const locControl = new LocateControl({
 				position: 'bottomright',
 				drawCircle: true,
 				drawMarker: true,

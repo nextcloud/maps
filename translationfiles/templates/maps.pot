@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Nextcloud 3.14159\n"
 "Report-Msgid-Bugs-To: translations\\@example.com\n"
-"POT-Creation-Date: 2024-12-31 01:20+0000\n"
+"POT-Creation-Date: 2025-01-01 01:19+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -363,7 +363,7 @@ msgid "Rename"
 msgstr ""
 
 #. TRANSLATORS src/components/AppNavigationFavoritesItem.vue:77
-#. TRANSLATORS src/components/Map.vue:458
+#. TRANSLATORS src/components/Map.vue:459
 #: /app/specialVueFakeDummyForL10nScript.js:54
 #: /app/specialVueFakeDummyForL10nScript.js:74
 #: /app/specialVueFakeDummyForL10nScript.js:142
@@ -565,13 +565,13 @@ msgstr ""
 msgid "New category {n}"
 msgstr ""
 
-#. TRANSLATORS src/components/Map.vue:463
+#. TRANSLATORS src/components/Map.vue:464
 #: /app/specialVueFakeDummyForL10nScript.js:144
 #: /app/specialVueFakeDummyForL10nScript.js:152
 msgid "Place photos"
 msgstr ""
 
-#. TRANSLATORS src/components/Map.vue:468
+#. TRANSLATORS src/components/Map.vue:469
 #. TRANSLATORS src/components/map/HistoryControl.vue:81
 #: /app/specialVueFakeDummyForL10nScript.js:146
 #: /app/specialVueFakeDummyForL10nScript.js:154
@@ -579,68 +579,68 @@ msgstr ""
 msgid "Place contact"
 msgstr ""
 
-#. TRANSLATORS src/components/Map.vue:473
+#. TRANSLATORS src/components/Map.vue:474
 #: /app/specialVueFakeDummyForL10nScript.js:148
 #: /app/specialVueFakeDummyForL10nScript.js:156
 msgid "Share this location"
 msgstr ""
 
-#. TRANSLATORS src/components/Map.vue:512
+#. TRANSLATORS src/components/Map.vue:513
 #: /app/specialVueFakeDummyForL10nScript.js:158
 msgid "Shared location"
 msgstr ""
 
-#. TRANSLATORS src/components/Map.vue:523
+#. TRANSLATORS src/components/Map.vue:524
 #: /app/specialVueFakeDummyForL10nScript.js:160
 msgid "Route from here"
 msgstr ""
 
-#. TRANSLATORS src/components/Map.vue:532
+#. TRANSLATORS src/components/Map.vue:533
 #: /app/specialVueFakeDummyForL10nScript.js:162
 msgid "Add route point"
 msgstr ""
 
-#. TRANSLATORS src/components/Map.vue:541
+#. TRANSLATORS src/components/Map.vue:542
 #: /app/specialVueFakeDummyForL10nScript.js:164
 msgid "Route to here"
 msgstr ""
 
-#. TRANSLATORS src/components/Map.vue:623
+#. TRANSLATORS src/components/Map.vue:624
 #: /app/specialVueFakeDummyForL10nScript.js:166
 msgid "Current location"
 msgstr ""
 
-#. TRANSLATORS src/components/Map.vue:677
+#. TRANSLATORS src/components/Map.vue:678
 #: /app/specialVueFakeDummyForL10nScript.js:168
 msgid "Improve this map"
 msgstr ""
 
-#. TRANSLATORS src/components/Map.vue:849
+#. TRANSLATORS src/components/Map.vue:850
 #: /app/specialVueFakeDummyForL10nScript.js:170
 msgid "Other maps"
 msgstr ""
 
-#. TRANSLATORS src/components/Map.vue:865
+#. TRANSLATORS src/components/Map.vue:866
 #: /app/specialVueFakeDummyForL10nScript.js:172
 msgid "Street map"
 msgstr ""
 
-#. TRANSLATORS src/components/Map.vue:880
+#. TRANSLATORS src/components/Map.vue:881
 #: /app/specialVueFakeDummyForL10nScript.js:174
 msgid "Satellite map"
 msgstr ""
 
-#. TRANSLATORS src/components/Map.vue:937
+#. TRANSLATORS src/components/Map.vue:938
 #: /app/specialVueFakeDummyForL10nScript.js:176
 msgid "Geo link ({geoLink}) copied to clipboard"
 msgstr ""
 
-#. TRANSLATORS src/components/Map.vue:940
+#. TRANSLATORS src/components/Map.vue:941
 #: /app/specialVueFakeDummyForL10nScript.js:178
 msgid "Geo link could not be copied to clipboard"
 msgstr ""
 
-#. TRANSLATORS src/components/Map.vue:1021
+#. TRANSLATORS src/components/Map.vue:1022
 #: /app/specialVueFakeDummyForL10nScript.js:180
 msgid "Close"
 msgstr ""

@@ -207,6 +207,7 @@ class PublicPageController extends AuthPublicShareController {
 			$csp = new \OCP\AppFramework\Http\ContentSecurityPolicy();
 			// map tiles
 			$csp->addAllowedImageDomain('https://*.tile.openstreetmap.org');
+			$csp->addAllowedImageDomain('https://tile.openstreetmap.org');
 			$csp->addAllowedImageDomain('https://server.arcgisonline.com');
 			$csp->addAllowedImageDomain('https://*.cartocdn.com');
 			$csp->addAllowedImageDomain('https://*.opentopomap.org');

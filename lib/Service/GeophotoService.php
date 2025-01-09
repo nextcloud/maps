@@ -28,6 +28,7 @@ use OCP\Files\Search\ISearchComparison;
 use OCP\ICacheFactory;
 use OCP\IL10N;
 use OCP\IPreview;
+use Psr\Log\LoggerInterface;
 
 class GeophotoService {
 
@@ -45,6 +46,7 @@ class GeophotoService {
 	private \OCP\ICache $backgroundJobCache;
 
 	public function __construct(
+		private LoggerInterface $logger,
 		IRootFolder $root,
 		IL10N $l10n,
 		GeophotoMapper $photoMapper,

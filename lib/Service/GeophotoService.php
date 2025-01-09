@@ -352,6 +352,7 @@ class GeophotoService {
 	 */
 	private function getTracksFromGPX($content): array {
 		$tracks = [];
+		libxml_use_internal_errors(false);
 		$gpx = simplexml_load_string($content);
 		foreach ($gpx->trk as $trk) {
 			$tracks[] = $trk;

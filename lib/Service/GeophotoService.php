@@ -74,11 +74,16 @@ class GeophotoService {
 	 * @return bool
 	 */
 	public function clearCache(string $userId = ''): bool {
-		$a = $this->photosCache->clear($userId);
-		$b = $this->timeOrderedPointSetsCache->clear($userId);
-		$c = $this->backgroundJobCache->clear('recentlyAdded:'.$userId);
-		$d = $this->backgroundJobCache->clear('recentlyUpdated:'.$userId);
-		return $a and $b and $c and $d;
+		try {
+			$this->photosCache->clear($userId);
+			$this->timeOrderedPointSetsCache->clear($userId);
+			$this->backgroundJobCache->clear('recentlyAdded:'.$userId);
+			$this->backgroundJobCache->clear('recentlyUpdated:'.$userId);
+			return true;
+
+		} catch (\Exception $e) {
+			return false;
+		}
 	}
 
 	/**

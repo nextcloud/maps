@@ -28,6 +28,7 @@ use OCP\Files\Search\ISearchComparison;
 use OCP\ICacheFactory;
 use OCP\IL10N;
 use OCP\IPreview;
+use Psr\Log\LoggerInterface;
 
 class GeophotoService {
 
@@ -45,6 +46,7 @@ class GeophotoService {
 	private \OCP\ICache $backgroundJobCache;
 
 	public function __construct(
+		private LoggerInterface $logger,
 		IRootFolder $root,
 		IL10N $l10n,
 		GeophotoMapper $photoMapper,
@@ -106,56 +108,53 @@ class GeophotoService {
 			$photoEntities = $this->photoMapper->findAll($userId);
 
 			$filesById = [];
-			$cache = $folder->getStorage()->getCache();
 			$previewEnableMimetypes = $this->getPreviewEnabledMimetypes();
 			foreach ($photoEntities as $photoEntity) {
-				$cacheEntry = $cache->get($photoEntity->getFileId());
-				if ($cacheEntry) {
-					// this path is relative to owner's storage
-					//$path = $cacheEntry->getPath();
-					//but we want it relative to current user's storage
-					$files = $folder->getById($photoEntity->getFileId());
-					if (empty($files)) {
-						continue;
+				// this path is relative to owner's storage
+				//$path = $cacheEntry->getPath();
+				//but we want it relative to current user's storage
+				$files = $folder->getById($photoEntity->getFileId());
+				if (empty($files)) {
+					continue;
+				}
+				$file = array_shift($files);
+	
+				if ($file === null) {
+					continue;
+				}
+				$path = $userFolder->getRelativePath($file->getPath());
+				$isIgnored = false;
+				foreach ($ignoredPaths as $ignoredPath) {
+					if (str_starts_with($path, $ignoredPath)) {
+						$isIgnored = true;
+						break;
 					}
-					$file = array_shift($files);
-					if ($file === null) {
-						continue;
-					}
-					$path = $userFolder->getRelativePath($file->getPath());
-					$isIgnored = false;
-					foreach ($ignoredPaths as $ignoredPath) {
-						if (str_starts_with($path, $ignoredPath)) {
-							$isIgnored = true;
-							break;
-						}
-					}
-					if (!$isIgnored) {
-						$isRoot = $file === $userFolder;
+				}
+				if (!$isIgnored) {
+					$isRoot = $file === $userFolder;
 
-						$file_object = new \stdClass();
-						$file_object->fileId = $photoEntity->getFileId();
-						$file_object->fileid = $file_object->fileId;
-						$file_object->lat = $photoEntity->getLat();
-						$file_object->lng = $photoEntity->getLng();
-						$file_object->dateTaken = $photoEntity->getDateTaken() ?? \time();
-						$file_object->basename = $isRoot ? '' : $file->getName();
-						$file_object->filename = $this->normalizePath($path);
-						$file_object->etag = $cacheEntry->getEtag();
-						//Not working for NC21 as Viewer requires String representation of permissions
-						//                $file_object->permissions = $file->getPermissions();
-						$file_object->type = $file->getType();
-						$file_object->mime = $file->getMimetype();
-						$file_object->lastmod = $file->getMTime();
-						$file_object->size = $file->getSize();
-						$file_object->path = $path;
-						$file_object->isReadable = $file->isReadable();
-						$file_object->isUpdateable = $file->isUpdateable();
-						$file_object->isShareable = $file->isShareable();
-						$file_object->isDeletable = $file->isDeletable();
-						$file_object->hasPreview = in_array($cacheEntry->getMimeType(), $previewEnableMimetypes);
-						$filesById[] = $file_object;
-					}
+					$file_object = new \stdClass();
+					$file_object->fileId = $photoEntity->getFileId();
+					$file_object->fileid = $file_object->fileId;
+					$file_object->lat = $photoEntity->getLat();
+					$file_object->lng = $photoEntity->getLng();
+					$file_object->dateTaken = $photoEntity->getDateTaken() ?? \time();
+					$file_object->basename = $isRoot ? '' : $file->getName();
+					$file_object->filename = $this->normalizePath($path);
+					$file_object->etag = $file->getEtag();
+					//Not working for NC21 as Viewer requires String representation of permissions
+					//                $file_object->permissions = $file->getPermissions();
+					$file_object->type = $file->getType();
+					$file_object->mime = $file->getMimetype();
+					$file_object->lastmod = $file->getMTime();
+					$file_object->size = $file->getSize();
+					$file_object->path = $path;
+					$file_object->isReadable = $file->isReadable();
+					$file_object->isUpdateable = $file->isUpdateable();
+					$file_object->isShareable = $file->isShareable();
+					$file_object->isDeletable = $file->isDeletable();
+					$file_object->hasPreview = in_array($file_object->mime, $previewEnableMimetypes);
+					$filesById[] = $file_object;
 				}
 			}
 			$this->photosCache->set($key, $filesById, 60 * 60 * 24);
@@ -199,65 +198,61 @@ class GeophotoService {
 			$tz = new \DateTimeZone(\date_default_timezone_get());
 		}
 		foreach ($photoEntities as $photoEntity) {
-			$cacheEntry = $cache->get($photoEntity->getFileId());
-			if ($cacheEntry) {
-				// this path is relative to owner's storage
-				//$path = $cacheEntry->getPath();
-				// but we want it relative to current user's storage
-				$files = $folder->getById($photoEntity->getFileId());
-				if (empty($files)) {
-					continue;
+			// this path is relative to owner's storage
+			//$path = $cacheEntry->getPath();
+			// but we want it relative to current user's storage
+			$files = $folder->getById($photoEntity->getFileId());
+			if (empty($files)) {
+				continue;
+			}
+			$file = array_shift($files);
+			if ($file === null) {
+				continue;
+			}
+			$path = $userFolder->getRelativePath($file->getPath());
+			$isIgnored = false;
+			foreach ($ignoredPaths as $ignoredPath) {
+				if (str_starts_with($path, $ignoredPath)) {
+					$isIgnored = true;
+					break;
 				}
-				$file = array_shift($files);
-				if ($file === null) {
-					continue;
-				}
-				$path = $userFolder->getRelativePath($file->getPath());
-				$isIgnored = false;
-				foreach ($ignoredPaths as $ignoredPath) {
-					if (str_starts_with($path, $ignoredPath)) {
-						$isIgnored = true;
-						break;
-					}
-				}
-				if (!$isIgnored) {
-					$isRoot = $file === $userFolder;
+			}
+			if (!$isIgnored) {
+				$isRoot = $file === $userFolder;
 
-					//Unfortunately Exif stores the local and not the UTC time. There is no way to get the timezone, therefore it has to be given by the user.
-					$date = $photoEntity->getDateTaken() ?? \time();
+				//Unfortunately Exif stores the local and not the UTC time. There is no way to get the timezone, therefore it has to be given by the user.
+				$date = $photoEntity->getDateTaken() ?? \time();
 
-					$dateWithTimezone = new \DateTime(gmdate('Y-m-d H:i:s', $date), $tz);
-					$locations = $this->getLocationGuesses($dateWithTimezone->getTimestamp());
-					foreach ($locations as $key => $location) {
-						$file_object = new \stdClass();
-						$file_object->fileId = $photoEntity->getFileId();
-						$file_object->fileid = $file_object->fileId;
-						$file_object->path = $this->normalizePath($path);
-						$file_object->hasPreview = in_array($cacheEntry->getMimeType(), $previewEnableMimetypes);
-						$file_object->lat = $location[0];
-						$file_object->lng = $location[1];
-						$file_object->dateTaken = $date;
-						$file_object->basename = $isRoot ? '' : $file->getName();
-						$file_object->filename = $this->normalizePath($path);
-						$file_object->etag = $cacheEntry->getEtag();
-						//Not working for NC21 as Viewer requires String representation of permissions
-						//                $file_object->permissions = $file->getPermissions();
-						$file_object->type = $file->getType();
-						$file_object->mime = $file->getMimetype();
-						$file_object->lastmod = $file->getMTime();
-						$file_object->size = $file->getSize();
-						$file_object->path = $path;
-						$file_object->isReadable = $file->isReadable();
-						$file_object->isUpdateable = $file->isUpdateable();
-						$file_object->isShareable = $file->isShareable();
-						$file_object->isDeletable = $file->isDeletable();
-						$file_object->hasPreview = in_array($cacheEntry->getMimeType(), $previewEnableMimetypes);
-						$file_object->trackOrDeviceId = $key;
-						if (!array_key_exists($key, $suggestionsBySource)) {
-							$suggestionsBySource[$key] = [];
-						}
-						$suggestionsBySource[$key][] = $file_object;
+				$dateWithTimezone = new \DateTime(gmdate('Y-m-d H:i:s', $date), $tz);
+				$locations = $this->getLocationGuesses($dateWithTimezone->getTimestamp());
+				foreach ($locations as $key => $location) {
+					$file_object = new \stdClass();
+					$file_object->fileId = $photoEntity->getFileId();
+					$file_object->fileid = $file_object->fileId;
+					$file_object->path = $this->normalizePath($path);
+					$file_object->mime = $file->getMimetype();
+					$file_object->hasPreview = in_array($file_object->mime, $previewEnableMimetypes);
+					$file_object->lat = $location[0];
+					$file_object->lng = $location[1];
+					$file_object->dateTaken = $date;
+					$file_object->basename = $isRoot ? '' : $file->getName();
+					$file_object->filename = $this->normalizePath($path);
+					$file_object->etag = $file->getEtag();
+					//Not working for NC21 as Viewer requires String representation of permissions
+					//                $file_object->permissions = $file->getPermissions();
+					$file_object->type = $file->getType();
+					$file_object->lastmod = $file->getMTime();
+					$file_object->size = $file->getSize();
+					$file_object->path = $path;
+					$file_object->isReadable = $file->isReadable();
+					$file_object->isUpdateable = $file->isUpdateable();
+					$file_object->isShareable = $file->isShareable();
+					$file_object->isDeletable = $file->isDeletable();
+					$file_object->trackOrDeviceId = $key;
+					if (!array_key_exists($key, $suggestionsBySource)) {
+						$suggestionsBySource[$key] = [];
 					}
+					$suggestionsBySource[$key][] = $file_object;
 				}
 			}
 		}
@@ -357,6 +352,7 @@ class GeophotoService {
 	 */
 	private function getTracksFromGPX($content): array {
 		$tracks = [];
+		libxml_use_internal_errors(false);
 		$gpx = simplexml_load_string($content);
 		foreach ($gpx->trk as $trk) {
 			$tracks[] = $trk;

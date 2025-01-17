@@ -4,13 +4,15 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
-## 1.6.0 - 2025.01.10 Georeferenced photos from external folders not shown on map
+## 1.6.0 - [unreleased]
 ### Added
 - Scan photos of specific directory [#1231](https://github.com/nextcloud/maps/pull/1231) @tetebueno
   
 ### Fixed
 - Georeferenced photos from external folders not shown on map
   [#1371](https://github.com/nextcloud/maps/issues/1371) @umgfoin
+- Fix wrong failure-msg. when clearing photo-cache
+  [#1375](https://github.com/nextcloud/maps/pull/1375) @umgfoin
 
 
 ## 1.5.0 - 2024.11.16 Nextcloud Hub 9

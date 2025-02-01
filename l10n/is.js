@@ -1,6 +1,7 @@
 OC.L10N.register(
     "maps",
     {
+    "File does not exist" : "Skráin er ekki til",
     "File not found" : "Skrá finnst ekki",
     "Personal" : "Persónulegt",
     "Maps" : "Landakort",

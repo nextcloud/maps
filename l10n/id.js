@@ -49,6 +49,7 @@ OC.L10N.register(
     "Not grouped" : "Tidak dikelompokkan",
     "Default" : "Bawaan",
     "Failed to save settings" : "Gagal simpan setelan",
-    "Restaurant" : "Restoran"
+    "Restaurant" : "Restoran",
+    "Bar" : "Batang"
 },
 "nplurals=1; plural=0;");

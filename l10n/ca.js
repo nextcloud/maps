@@ -1,6 +1,7 @@
 OC.L10N.register(
     "maps",
     {
+    "File does not exist" : "El fitxer no existeix\n",
     "File not found" : "No s'ha trobat el fitxer",
     "Personal" : "Personal",
     "Maps" : "Mapes",

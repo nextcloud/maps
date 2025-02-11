@@ -10,6 +10,7 @@ OC.L10N.register(
     "Change color" : "Skift farve",
     "Export" : "Eksportér",
     "Delete" : "Slet",
+    "Delete all" : "Slet alt",
     "Import" : "Importér",
     "Rename" : "Omdøb",
     "Delete share link" : "Slet delingslink",

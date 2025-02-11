@@ -22,7 +22,7 @@ OC.L10N.register(
     "Comment" : "Comentário",
     "Location" : "Localização:",
     "Close" : "Fechar",
-    "Select all" : "Seleccionar todos",
+    "Select all" : "Selecionar tudo",
     "Quit" : "Sair",
     "Load more" : "Carregar mais",
     "Tags" : "Etiquetas",

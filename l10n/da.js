@@ -26,6 +26,8 @@ OC.L10N.register(
     "Category" : "Katergori",
     "Comment" : "Kommentér",
     "Location" : "Placering",
+    "Share this location" : "Del denne placering",
+    "Shared location" : "Delt placering",
     "Close" : "Luk",
     "(No name)" : "(Uden navn)",
     "No favorites to display" : "Ingen favoritter at vise",

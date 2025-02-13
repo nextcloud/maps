@@ -51,6 +51,7 @@ OC.L10N.register(
     "Device" : "Enhed",
     "Date" : "Dato",
     "Update" : "Opdatér",
+    "Select All" : "Vælg alle",
     "Yes" : "Ja",
     "Open" : "Åbn",
     "Closed" : "Lukket",

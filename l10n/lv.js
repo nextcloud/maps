@@ -47,6 +47,7 @@ OC.L10N.register(
     "Destination" : "Destination",
     "min" : "min",
     "Phone" : "Tālrunis",
+    "What do you want to place?" : "Ko ir vēlēšanās ievietot?",
     "Not grouped" : "Negrupēts",
     "Default" : "Noklusējuma",
     "Failed to save settings" : "Neizdevās saglabāt iestatījumus",

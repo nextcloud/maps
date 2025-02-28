@@ -104,6 +104,7 @@ OC.L10N.register(
     "Open geo links" : "Oscail naisc geo",
     "Display time filter slider" : "Taispeáin sleamhnán scagaire ama",
     "The True Size of Africa" : "Méid Fíor na hAfraice",
+    "Cancel adding favorites" : "Cealaigh ceanáin a chur leis",
     "(No name)" : "(Gan ainm)",
     "No favorites to display" : "Níl aon cheanáin le taispeáint",
     "Clear selection" : "Roghnú soiléir",

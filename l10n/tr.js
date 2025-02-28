@@ -104,6 +104,7 @@ OC.L10N.register(
     "Open geo links" : "Coğrafi bağlantıları aç",
     "Display time filter slider" : "Zaman süzgeci kaydırıcısı görüntülensin",
     "The True Size of Africa" : "Afrika'nın gerçek boyutu",
+    "Cancel adding favorites" : "Sık kullanılan yer eklemekten vazgeç",
     "(No name)" : "(Adsız)",
     "No favorites to display" : "Görüntülenebilecek bir sık kullanılan yer yok",
     "Clear selection" : "Seçimi temizle",

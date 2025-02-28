@@ -104,6 +104,7 @@ OC.L10N.register(
     "Open geo links" : "Geolinks öffnen",
     "Display time filter slider" : "Schieberegler für Zeitfilter anzeigen",
     "The True Size of Africa" : "Die wahre Größe Afrikas",
+    "Cancel adding favorites" : "Hinzufügen von Favoriten abbrechen",
     "(No name)" : "(Kein Name)",
     "No favorites to display" : "Keine Favoriten zum Anzeigen",
     "Clear selection" : "Auswahl leeren",

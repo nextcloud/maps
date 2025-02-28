@@ -104,6 +104,7 @@ OC.L10N.register(
     "Open geo links" : "فتح الروابط الجغرافية",
     "Display time filter slider" : "عرض شريط تمرير عامل تصفية الوقت",
     "The True Size of Africa" : "الحجم الحقيقي لقارة أفريقيا",
+    "Cancel adding favorites" : "إلغاء الإضافة للمُفَضَّلَة",
     "(No name)" : "(لا يوجد اسم)",
     "No favorites to display" : "لا توجد ملفات مفضلة للعرض",
     "Clear selection" : "إلغاء التحديد",

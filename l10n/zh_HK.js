@@ -104,6 +104,7 @@ OC.L10N.register(
     "Open geo links" : "打開地理連結",
     "Display time filter slider" : "顯示時間篩選拖曳條",
     "The True Size of Africa" : "非洲真實大小（The True Size of Africa）",
+    "Cancel adding favorites" : "取消新增最愛",
     "(No name)" : "（未命名）",
     "No favorites to display" : "沒有我的收藏可顯示",
     "Clear selection" : "清空選擇",

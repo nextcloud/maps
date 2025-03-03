@@ -100,6 +100,7 @@ OC.L10N.register(
     "Accuracy" : "Ακρίβεια",
     "No name" : "Ανώνυμο",
     "Update" : "Ενημέρωση",
+    "Select All" : "Επιλογή Όλων",
     "Yes" : "Ναι",
     "Remove geo data" : "Αφαίρεση γεο-δεδομένων",
     "New contact address" : "Διεύθυνση νέας επαφής",

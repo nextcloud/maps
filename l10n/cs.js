@@ -104,6 +104,7 @@ OC.L10N.register(
     "Open geo links" : "Otevřít geoodkazy",
     "Display time filter slider" : "Zobrazit posuvník časového filtru",
     "The True Size of Africa" : "Skutečná velikost Afriky",
+    "Cancel adding favorites" : "Zrušit přidávání mezi oblíbené",
     "(No name)" : "(Bez názvu)",
     "No favorites to display" : "Žádné oblíbené položky k zobrazení",
     "Clear selection" : "Vyčistit  výběr",

@@ -104,6 +104,7 @@ OC.L10N.register(
     "Open geo links" : "Földrajzi hivatkozások megnyitása",
     "Display time filter slider" : "Időszűrő csúszka megjelenítése",
     "The True Size of Africa" : "Afrika valódi mérete",
+    "Cancel adding favorites" : "Kedvencek hozzáadásának megszakítása",
     "(No name)" : "(Nincs név)",
     "No favorites to display" : "Nincsenek megjeleníthető kedvencek",
     "Clear selection" : "Kiválasztás törlése",

@@ -104,6 +104,7 @@ OC.L10N.register(
     "Open geo links" : "Отвори гео линкове",
     "Display time filter slider" : "Прикажи клизач временски филтер",
     "The True Size of Africa" : "Права величина Африке",
+    "Cancel adding favorites" : "Откажи додавање омиљених",
     "(No name)" : "(Без имена)",
     "No favorites to display" : "Нема омиљених за приказ",
     "Clear selection" : "Уклони избор",

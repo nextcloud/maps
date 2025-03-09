@@ -104,6 +104,7 @@ OC.L10N.register(
     "Open geo links" : "打开地理链接",
     "Display time filter slider" : "显示时间过滤滑块",
     "The True Size of Africa" : "非洲的真正大小",
+    "Cancel adding favorites" : "取消添加收藏夹",
     "(No name)" : "（没有名称）",
     "No favorites to display" : "没有可显示的收藏夹",
     "Clear selection" : "清除选择",
@@ -306,6 +307,7 @@ OC.L10N.register(
     "Devices exported in {path}" : "设备已导出到{path}",
     "Failed to export devices" : "导出设备失败",
     "Failed to delete device" : "无法删除设备",
+    "Device {deviceName} linked to map {mapName}" : "设备 {deviceName} 已链接到地图 {mapName}",
     "Failed to link Device to map {mapName}" : "无法将设备链接到地图 {mapName}",
     "Failed to share Device" : "分享设备失败",
     "Import devices from gpx (Nextcloud Maps) or kml/kmz (Google Timeline) file" : "从gpx（Nextcloud地图）或kml/kmz（Google时间线）文件导入设备",
@@ -378,7 +380,11 @@ OC.L10N.register(
     "Set the API key to use Mapbox routing service." : "设置API密钥以使用Mapbox路由服务。",
     "Leave empty to disable." : "留空以禁用。",
     "Mapbox API key" : "Mapbox API密钥",
+    "MapLibre Website" : "MapLibre 网站",
+    "MapLibre settings" : "MapLibre 设置",
     "Set the URL and Basic Authorization of style.json for OpenStreetMap Vector Tiles with MapLibre-GL-JS." : "使用 MapLibre-GL-JS 设置 OpenStreetMap 矢量切片的 URL 和 style.json 的基本授权。",
+    "MapLibre Street style URL" : "MapLibre Street 样式 URL",
+    "Basic Authorization if required. Format is \"user:password\"" : "如需基本授权。格式为“用户:密码”",
     "Maps settings" : "地图设置"
 },
 "nplurals=1; plural=0;");

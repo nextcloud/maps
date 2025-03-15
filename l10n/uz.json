@@ -18,6 +18,7 @@
     "Name" : "Name",
     "Add" : "Add",
     "Home" : "Home",
+    "Date" : "Sana",
     "Update" : "Update",
     "Yes" : "Yes",
     "Open" : "Open",
@@ -25,6 +26,7 @@
     "Search" : "Search",
     "File" : "File",
     "right" : "right",
-    "left" : "left"
+    "left" : "left",
+    "Failed to save settings" : "Sozlamalarni saqlab bo'lmadi"
 },"pluralForm" :"nplurals=1; plural=0;"
 }

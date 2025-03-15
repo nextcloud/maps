@@ -20,6 +20,7 @@ OC.L10N.register(
     "Name" : "Name",
     "Add" : "Add",
     "Home" : "Home",
+    "Date" : "Sana",
     "Update" : "Update",
     "Yes" : "Yes",
     "Open" : "Open",
@@ -27,6 +28,7 @@ OC.L10N.register(
     "Search" : "Search",
     "File" : "File",
     "right" : "right",
-    "left" : "left"
+    "left" : "left",
+    "Failed to save settings" : "Sozlamalarni saqlab bo'lmadi"
 },
 "nplurals=1; plural=0;");

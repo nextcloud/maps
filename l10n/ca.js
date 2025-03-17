@@ -93,6 +93,7 @@ OC.L10N.register(
     "Accuracy" : "Precisió",
     "No name" : "Sense nom",
     "Update" : "Actualitza",
+    "Select All" : "Selecciona-ho tot",
     "Yes" : "Sí",
     "Remove geo data" : "Suprimeix dades GEO",
     "New contact address" : "Adreça de contacte nova",

@@ -8,6 +8,7 @@ OC.L10N.register(
     "Delete" : "Delete",
     "Cancel" : "Cancel",
     "Link copied" : "Havola nusxalandi",
+    "Import" : "Import",
     "Rename" : "Rename",
     "Delete share link" : "Ulashish havolasini o'chirish",
     "Copied!" : "Copied!",

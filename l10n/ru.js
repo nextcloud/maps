@@ -13,7 +13,7 @@ OC.L10N.register(
     "Impossible to read the file" : "Невозможно прочитать файл",
     "File does not exist" : "Файл не существует",
     "Error sharing device" : "Ошибка предоставления доступа к устройству",
-    "Share not Found" : "Ресурс не найден",
+    "Share not Found" : "Ресурс с общим доступом не найден",
     "Share was already on map" : "Ресурс уже был на карте",
     "No such favorite" : "Такого избранного нет",
     "invalid values" : "недопустимые значения",

@@ -53,6 +53,7 @@ OC.L10N.register(
     "Default" : "Vaikeväärtus",
     "Failed to delete favorite" : "Lemmiku kustutamine ebaõnnestus",
     "Metadata" : "Metaandmed",
+    "Restaurant" : "Restoran",
     "Cinema" : "Kino",
     "Dentist" : "Hambaarst"
 },

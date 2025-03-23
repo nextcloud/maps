@@ -114,7 +114,7 @@ OC.L10N.register(
     "No suggestions found" : "Nenhuma sugestão encontrada",
     "Quit" : "Sair",
     "Load more" : "Carregar mais",
-    "Photos default timezone:" : "Photos default timezone:",
+    "Photos default timezone:" : "Fuso horário padrão das fotos:",
     "Location sources:" : "Location sources:",
     "Tracks" : "Rotas",
     "Devices" : "Dispositivos",

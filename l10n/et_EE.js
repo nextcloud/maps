@@ -4,6 +4,7 @@ OC.L10N.register(
     "File not found" : "Faili ei leitud",
     "Personal" : "Isiklik",
     "Maps" : "Kaardid",
+    "Zoom" : "Suumi",
     "Export" : "Ekspordi",
     "Delete" : "Kustuta",
     "Delete all" : "Kustuta kõik",

@@ -4,7 +4,7 @@ OC.L10N.register(
     "File not found" : "Datne nav atrasta",
     "Personal" : "Personīgs",
     "Maps" : "Karte",
-    "Export" : "Eksportēt",
+    "Export" : "Izgūt",
     "Delete" : "Dzēst",
     "Cancel" : "Atcelt",
     "Link copied" : "Saite nokopēta",

@@ -1,6 +1,7 @@
 OC.L10N.register(
     "maps",
     {
+    "File does not exist" : "Faili pole olemas",
     "File not found" : "Faili ei leitud",
     "Personal" : "Isiklik",
     "Maps" : "Kaardid",

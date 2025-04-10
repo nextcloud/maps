@@ -4,7 +4,7 @@ OC.L10N.register(
     "File not found" : "N'eo ket bet kavet ar restr",
     "Personal" : "Personel",
     "Delete" : "Dilemel",
-    "Cancel" : "Arrest",
+    "Cancel" : "Nullañ",
     "Link copied" : "Liamm eilet",
     "Import" : "Emporzhiañ ",
     "Rename" : "Adenvel",

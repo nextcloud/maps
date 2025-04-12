@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Nextcloud - maps
  *
@@ -174,7 +175,7 @@ class PhotosControllerTest extends \PHPUnit\Framework\TestCase {
 		$file->touch();
 		// rename
 		$file = $userfolder->get('nc.jpgg');
-		$file->move($userfolder->getPath().'/nc.jpg');
+		$file->move($userfolder->getPath() . '/nc.jpg');
 		$file = $userfolder->get('nc.jpg');
 		$file->touch();
 		$this->photoFileService->addPhotoNow($file, 'test');
@@ -190,7 +191,7 @@ class PhotosControllerTest extends \PHPUnit\Framework\TestCase {
 		$file->touch();
 		// rename
 		$file = $userfolder->get('nut.jpgg');
-		$file->move($userfolder->getPath().'/nut.jpg');
+		$file->move($userfolder->getPath() . '/nut.jpg');
 		$file = $userfolder->get('nut.jpg');
 		$file->touch();
 
@@ -252,7 +253,7 @@ class PhotosControllerTest extends \PHPUnit\Framework\TestCase {
 		//$file->touch();
 
 		$file = $userfolder->get('testFile1_locationNut.gpxx');
-		$file->move($userfolder->getPath().'/testFile1_locationNut.gpx');
+		$file->move($userfolder->getPath() . '/testFile1_locationNut.gpx');
 		//echo 'I MOVE TO '.$userfolder->getPath().'/testFile1.gpx'."\n";
 		$file = $userfolder->get('testFile1_locationNut.gpx');
 		$file->touch();

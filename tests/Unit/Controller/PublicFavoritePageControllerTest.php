@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @copyright Copyright (c) 2019, Paul Schwörer <hello@paulschwoerer.de>
  *

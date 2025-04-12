@@ -555,7 +555,7 @@ class TracksService {
 			$gpx = new \SimpleXMLElement($gpx_content);
 		} catch (\Throwable $e) {
 			$this->logger->error(
-				'Exception in '.$name.' gpx parsing : '.$e->getMessage(),
+				'Exception in ' . $name . ' gpx parsing : ' . $e->getMessage(),
 				['app' => 'maps']
 			);
 			return null;
@@ -563,7 +563,7 @@ class TracksService {
 
 		if (count($gpx->trk) === 0 and count($gpx->rte) === 0 and count($gpx->wpt) === 0) {
 			$this->logger->error(
-				'Nothing to parse in '.$name.' gpx file',
+				'Nothing to parse in ' . $name . ' gpx file',
 				['app' => 'maps']
 			);
 			return null;

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Nextcloud - Maps
  *
@@ -259,7 +260,7 @@ class DevicesController extends Controller {
 		$tz = $this->dateTimeZone->getTimeZone();
 		$now = new \DateTime('now', $tz);
 		$dateStr = $now->format('Y-m-d H:i:s (P)');
-		$filename = $dateStr.' '.$prefix.'devices.gpx';
+		$filename = $dateStr . ' ' . $prefix . 'devices.gpx';
 
 		if ($mapsFolder->nodeExists($filename)) {
 			$mapsFolder->get($filename)->delete();
@@ -271,7 +272,7 @@ class DevicesController extends Controller {
 
 		fclose($handler);
 		$file->touch();
-		return new DataResponse('/Maps/'.$filename);
+		return new DataResponse('/Maps/' . $filename);
 	}
 
 	/**

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Nextcloud - Maps
  *
@@ -56,7 +57,8 @@ class PublicTracksController extends PublicPageController {
 		protected IGroupManager $groupManager,
 		IL10N $l,
 		TracksService $tracksService,
-		IRootFolder $root) {
+		IRootFolder $root,
+	) {
 		parent::__construct($appName, $request, $session, $urlGenerator, $eventDispatcher, $config, $initialStateService, $shareManager, $userManager);
 		$this->tracksService = $tracksService;
 		$this->l = $l;
@@ -136,7 +138,7 @@ class PublicTracksController extends PublicPageController {
 				$track['isCreatable'] = ($permissions & (1 << 2)) && $track['isCreatable'];
 				$track['isUpdateable'] = ($permissions & (1 << 1)) && $track['isUpdateable'];
 				$track['isDeletable'] = ($permissions & (1 << 3)) && $track['isDeletable'];
-				$track['path'] = $folder->getRelativePath($pre_path.$track['path']);
+				$track['path'] = $folder->getRelativePath($pre_path . $track['path']);
 				$track['filename'] = $track['path'];
 				$track['hideDownload'] = $hideDownload;
 				return $track;

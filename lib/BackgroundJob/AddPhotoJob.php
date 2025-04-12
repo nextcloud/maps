@@ -64,7 +64,7 @@ class AddPhotoJob extends QueuedJob {
 		$file = array_shift($files);
 		$this->photofilesService->addPhotoNow($file, $argument['userId']);
 
-		$counter = $this->backgroundJobCache->get('recentlyAdded:'.$argument['userId']) ?? 0;
-		$this->backgroundJobCache->set('recentlyAdded:'.$argument['userId'], (int)$counter + 1, 60 * 60 * 3);
+		$counter = $this->backgroundJobCache->get('recentlyAdded:' . $argument['userId']) ?? 0;
+		$this->backgroundJobCache->set('recentlyAdded:' . $argument['userId'], (int)$counter + 1, 60 * 60 * 3);
 	}
 }

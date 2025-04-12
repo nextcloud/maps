@@ -51,7 +51,7 @@ class RescanTracks extends Command {
 			);
 	}
 
-	protected function execute(InputInterface $input, OutputInterface $output) {
+	protected function execute(InputInterface $input, OutputInterface $output): int {
 		if ($this->encryptionManager->isEnabled()) {
 			$output->writeln('Encryption is enabled. Aborted.');
 			return 1;
@@ -72,10 +72,10 @@ class RescanTracks extends Command {
 	}
 
 	private function rescanUserTracks($userId) {
-		echo '======== User '.$userId.' ========'."\n";
+		echo '======== User ' . $userId . ' ========' . "\n";
 		$c = 1;
 		foreach ($this->tracksService->rescan($userId) as $path) {
-			echo '['.$c.'] Track "'.$path.'" added'."\n";
+			echo '[' . $c . '] Track "' . $path . '" added' . "\n";
 			$c++;
 		}
 		$this->config->setUserValue($userId, 'maps', 'installScanDone', 'yes');

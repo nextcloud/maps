@@ -395,7 +395,7 @@ class FavoritesService {
 				array_key_exists('Location', $value['properties']) &&
 				array_key_exists('Address', $value['properties']['Location'])
 			) {
-				$currentFavorite['comment'] = $currentFavorite['comment']."\n".$value['properties']['Location']['Address'];
+				$currentFavorite['comment'] = $currentFavorite['comment'] . "\n" . $value['properties']['Location']['Address'];
 			}
 
 			// Store this favorite
@@ -874,7 +874,7 @@ class FavoritesService {
 
 		if ($data == null or !isset($data['features'])) {
 			$this->logger->error(
-				'Exception parsing '.$file->getName().': no places found to import',
+				'Exception parsing ' . $file->getName() . ': no places found to import',
 				['app' => 'maps']
 			);
 		}

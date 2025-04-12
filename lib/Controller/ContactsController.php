@@ -260,7 +260,7 @@ class ContactsController extends Controller {
 				//				$cards = explode("END:VCARD\r\n", $file->getContent());
 				$cards = [$file->getContent()];
 				foreach ($cards as $card) {
-					$vcard = Reader::read($card."END:VCARD\r\n");
+					$vcard = Reader::read($card . "END:VCARD\r\n");
 					if (isset($vcard->GEO)) {
 						$geo = $vcard->GEO;
 						if (is_string($geo) && strlen($geo->getValue()) > 1) {
@@ -404,7 +404,7 @@ class ContactsController extends Controller {
 		foreach ($contacts as $c) {
 			$uid = trim($c['UID']);
 			// we don't give users, just contacts
-			if (strcmp($c['URI'], 'Database:'.$c['UID'].'.vcf') !== 0 and
+			if (strcmp($c['URI'], 'Database:' . $c['UID'] . '.vcf') !== 0 and
 				strcmp($uid, $userid) !== 0
 			) {
 				$addressBookUri = $addressBooks[$c['addressbook-key']]->getUri();
@@ -465,7 +465,7 @@ class ContactsController extends Controller {
 		?int $myMapId = null): DataResponse {
 		if (is_null($myMapId) || $myMapId === '') {
 			// do not edit 'user' contact even myself
-			if (strcmp($uri, 'Database:'.$uid.'.vcf') === 0 or
+			if (strcmp($uri, 'Database:' . $uid . '.vcf') === 0 or
 				strcmp($uid, $this->userId) === 0
 			) {
 				return new DataResponse('Can\'t edit users', 400);
@@ -475,12 +475,12 @@ class ContactsController extends Controller {
 					if ($lat !== null && $lng !== null) {
 						// we set the geo tag
 						if (!$attraction && !$house_number && !$road && !$postcode && !$city && !$state && !$country && !$address_string) {
-							$result = $this->contactsManager->createOrUpdate(['URI' => $uri, 'GEO' => $lat.';'.$lng], $bookid);
+							$result = $this->contactsManager->createOrUpdate(['URI' => $uri, 'GEO' => $lat . ';' . $lng], $bookid);
 						}
 						// we set the address
 						elseif (!$address_string) {
-							$street = trim($attraction.' '.$house_number.' '.$road);
-							$stringAddress = ';;'.$street.';'.$city.';'.$state.';'.$postcode.';'.$country;
+							$street = trim($attraction . ' ' . $house_number . ' ' . $road);
+							$stringAddress = ';;' . $street . ';' . $city . ';' . $state . ';' . $postcode . ';' . $country;
 							// set the coordinates in the DB
 							$lat = floatval($lat);
 							$lng = floatval($lng);
@@ -550,10 +550,10 @@ class ContactsController extends Controller {
 				$vcard = Reader::read($card['carddata']);
 				if ($lat !== null && $lng !== null) {
 					if (!$attraction && !$house_number && !$road && !$postcode && !$city && !$state && !$country && !$address_string) {
-						$vcard->add('GEO', $lat.';'.$lng);
+						$vcard->add('GEO', $lat . ';' . $lng);
 					} elseif (!$address_string) {
-						$street = trim($attraction.' '.$house_number.' '.$road);
-						$stringAddress = ';;'.$street.';'.$city.';'.$state.';'.$postcode.';'.$country;
+						$street = trim($attraction . ' ' . $house_number . ' ' . $road);
+						$stringAddress = ';;' . $street . ';' . $city . ';' . $state . ';' . $postcode . ';' . $country;
 						// set the coordinates in the DB
 						$lat = floatval($lat);
 						$lng = floatval($lng);
@@ -636,7 +636,7 @@ class ContactsController extends Controller {
 	 * @return bool
 	 */
 	private function addressBookIsReadOnly(string $bookid): bool {
-		$userBooks = $this->cdBackend->getAddressBooksForUser('principals/users/'.$this->userId);
+		$userBooks = $this->cdBackend->getAddressBooksForUser('principals/users/' . $this->userId);
 		foreach ($userBooks as $book) {
 			if ($book['id'] === (int)$bookid) {
 				return (isset($book['{http://owncloud.org/ns}read-only']) and $book['{http://owncloud.org/ns}read-only']);
@@ -650,7 +650,7 @@ class ContactsController extends Controller {
 	 */
 	private function getAddressBooksReadOnly(): array {
 		$booksReadOnly = [];
-		$userBooks = $this->cdBackend->getAddressBooksForUser('principals/users/'.$this->userId);
+		$userBooks = $this->cdBackend->getAddressBooksForUser('principals/users/' . $this->userId);
 		foreach ($userBooks as $book) {
 			$ro = (isset($book['{http://owncloud.org/ns}read-only']) and $book['{http://owncloud.org/ns}read-only']);
 			$booksReadOnly[$book['id']] = $ro;

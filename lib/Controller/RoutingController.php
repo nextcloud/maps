@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Nextcloud - Maps
  *
@@ -116,47 +117,47 @@ class RoutingController extends Controller {
 			}
 		}
 
-		$filename = $name.'.gpx';
+		$filename = $name . '.gpx';
 		if ($mapsFolder->nodeExists($filename)) {
 			$mapsFolder->get($filename)->delete();
 		}
-		if ($mapsFolder->nodeExists($filename.'.tmp')) {
-			$mapsFolder->get($filename.'.tmp')->delete();
+		if ($mapsFolder->nodeExists($filename . '.tmp')) {
+			$mapsFolder->get($filename . '.tmp')->delete();
 		}
-		$file = $mapsFolder->newFile($filename.'tmp');
+		$file = $mapsFolder->newFile($filename . 'tmp');
 		$fileHandler = $file->fopen('w');
 
 		$dt = new \DateTime();
 		$date = $dt->format('Y-m-d\TH:i:s\Z');
 
 		$gpxHeader = '<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
-<gpx version="1.1" creator="Nextcloud Maps '.$this->appVersion.'" xmlns="http://www.topografix.com/GPX/1/1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd">
+<gpx version="1.1" creator="Nextcloud Maps ' . $this->appVersion . '" xmlns="http://www.topografix.com/GPX/1/1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd">
   <metadata>
-    <name>'.$name.'</name>
-    <time>'.$date.'</time>
+    <name>' . $name . '</name>
+    <time>' . $date . '</time>
   </metadata>';
-		fwrite($fileHandler, $gpxHeader."\n");
+		fwrite($fileHandler, $gpxHeader . "\n");
 
 		if ($type === 'route') {
-			fwrite($fileHandler, '  <rte>'."\n");
-			fwrite($fileHandler, '    <name>'.$name.'</name>'."\n");
+			fwrite($fileHandler, '  <rte>' . "\n");
+			fwrite($fileHandler, '    <name>' . $name . '</name>' . "\n");
 			foreach ($coords as $ll) {
 				$line = '    <rtept lat="' . $ll['lat'] . '" lon="' . $ll['lng'] . '"></rtept>' . "\n";
 				fwrite($fileHandler, $line);
 			}
-			fwrite($fileHandler, '  </rte>'."\n");
+			fwrite($fileHandler, '  </rte>' . "\n");
 		} elseif ($type === 'track') {
-			fwrite($fileHandler, '  <trk>'."\n");
-			fwrite($fileHandler, '    <name>'.$name.'</name>'."\n");
-			fwrite($fileHandler, '    <trkseg>'."\n");
+			fwrite($fileHandler, '  <trk>' . "\n");
+			fwrite($fileHandler, '    <name>' . $name . '</name>' . "\n");
+			fwrite($fileHandler, '    <trkseg>' . "\n");
 			foreach ($coords as $ll) {
 				$line = '      <trkpt lat="' . $ll['lat'] . '" lon="' . $ll['lng'] . '"></trkpt>' . "\n";
 				fwrite($fileHandler, $line);
 			}
-			fwrite($fileHandler, '    </trkseg>'."\n");
-			fwrite($fileHandler, '  </trk>'."\n");
+			fwrite($fileHandler, '    </trkseg>' . "\n");
+			fwrite($fileHandler, '  </trk>' . "\n");
 		}
-		fwrite($fileHandler, '</gpx>'."\n");
+		fwrite($fileHandler, '</gpx>' . "\n");
 		fclose($fileHandler);
 		$file->touch();
 		$file->move(substr($file->getPath(), 0, -3));

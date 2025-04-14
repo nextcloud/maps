@@ -9,7 +9,7 @@ OC.L10N.register(
     "Import" : "Emporzhiañ ",
     "Rename" : "Adenvel",
     "Delete share link" : "Dilamet eo bet al liamm lodañ",
-    "Copied!" : "Eilet eo !",
+    "Copied!" : "Eilet!",
     "Open folder" : "Digor an teuliad",
     "Share" : "Rannan",
     "Comment" : "Displegadenn",

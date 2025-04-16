@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Nextcloud 3.14159\n"
 "Report-Msgid-Bugs-To: translations\\@example.com\n"
-"POT-Creation-Date: 2025-04-15 01:22+0000\n"
+"POT-Creation-Date: 2025-04-16 01:22+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -295,7 +295,7 @@ msgstr ""
 #. TRANSLATORS src/components/AppNavigationFavoritesItem.vue:113
 #. TRANSLATORS src/components/AppNavigationMyMapItem.vue:52
 #. TRANSLATORS src/components/FavoriteEditionForm.vue:65
-#. TRANSLATORS src/components/map/FavoritePopup.vue:33
+#. TRANSLATORS src/components/map/FavoritePopup.vue:54
 #: /app/specialVueFakeDummyForL10nScript.js:157
 #: /app/specialVueFakeDummyForL10nScript.js:408
 #: /app/specialVueFakeDummyForL10nScript.js:477
@@ -331,7 +331,7 @@ msgid "Delete all"
 msgstr ""
 
 #. TRANSLATORS src/components/Sidebar/PhotoSuggestionsSidebarTab.vue:91
-#. TRANSLATORS src/components/map/ClickPopup.vue:31
+#. TRANSLATORS src/components/map/ClickPopup.vue:52
 #: /app/specialVueFakeDummyForL10nScript.js:310
 #: /app/specialVueFakeDummyForL10nScript.js:2542
 #: /app/specialVueFakeDummyForL10nScript.js:3414
@@ -516,9 +516,9 @@ msgstr ""
 msgid "Favorite name"
 msgstr ""
 
-#. TRANSLATORS src/components/map/ClickPopup.vue:19
+#. TRANSLATORS src/components/map/ClickPopup.vue:40
 #. TRANSLATORS src/components/map/FavoriteMarker.vue:19
-#. TRANSLATORS src/components/map/FavoritePopup.vue:19
+#. TRANSLATORS src/components/map/FavoritePopup.vue:40
 #: /app/specialVueFakeDummyForL10nScript.js:826
 #: /app/specialVueFakeDummyForL10nScript.js:3408
 #: /app/specialVueFakeDummyForL10nScript.js:4207
@@ -526,9 +526,9 @@ msgstr ""
 msgid "Category"
 msgstr ""
 
-#. TRANSLATORS src/components/map/ClickPopup.vue:24
+#. TRANSLATORS src/components/map/ClickPopup.vue:45
 #. TRANSLATORS src/components/map/FavoriteMarker.vue:22
-#. TRANSLATORS src/components/map/FavoritePopup.vue:25
+#. TRANSLATORS src/components/map/FavoritePopup.vue:46
 #: /app/specialVueFakeDummyForL10nScript.js:827
 #: /app/specialVueFakeDummyForL10nScript.js:3410
 #: /app/specialVueFakeDummyForL10nScript.js:4209
@@ -648,12 +648,12 @@ msgstr ""
 msgid "Cancel adding favorites"
 msgstr ""
 
-#. TRANSLATORS src/components/PublicFavoriteShareSideBar.vue:11
+#. TRANSLATORS src/components/PublicFavoriteShareSideBar.vue:32
 #: /app/specialVueFakeDummyForL10nScript.js:2267
 msgid "(No name)"
 msgstr ""
 
-#. TRANSLATORS src/components/PublicFavoriteShareSideBar.vue:18
+#. TRANSLATORS src/components/PublicFavoriteShareSideBar.vue:39
 #: /app/specialVueFakeDummyForL10nScript.js:2269
 msgid "No favorites to display"
 msgstr ""
@@ -800,7 +800,7 @@ msgstr ""
 msgid "Moving average pace"
 msgstr ""
 
-#. TRANSLATORS src/components/map/ClickPopup.vue:4
+#. TRANSLATORS src/components/map/ClickPopup.vue:25
 #: /app/specialVueFakeDummyForL10nScript.js:3404
 msgid "New Favorite"
 msgstr ""
@@ -809,10 +809,10 @@ msgstr ""
 msgid "This Place"
 msgstr ""
 
-#. TRANSLATORS src/components/map/ClickPopup.vue:12
+#. TRANSLATORS src/components/map/ClickPopup.vue:33
 #. TRANSLATORS src/components/map/DeviceLayer.vue:36
 #. TRANSLATORS src/components/map/FavoriteMarker.vue:16
-#. TRANSLATORS src/components/map/FavoritePopup.vue:11
+#. TRANSLATORS src/components/map/FavoritePopup.vue:32
 #. TRANSLATORS src/components/map/TrackLayer.vue:50
 #: /app/specialVueFakeDummyForL10nScript.js:3406
 #: /app/specialVueFakeDummyForL10nScript.js:4002
@@ -822,12 +822,12 @@ msgstr ""
 msgid "Name"
 msgstr ""
 
-#. TRANSLATORS src/components/map/ClickPopup.vue:28
+#. TRANSLATORS src/components/map/ClickPopup.vue:49
 #: /app/specialVueFakeDummyForL10nScript.js:3412
 msgid "Add"
 msgstr ""
 
-#. TRANSLATORS src/components/map/ClickPopup.vue:41
+#. TRANSLATORS src/components/map/ClickPopup.vue:62
 #. TRANSLATORS src/components/map/ClickSearchPopup.vue:17
 #. TRANSLATORS src/components/map/PoiMarker.vue:17
 #: /app/specialVueFakeDummyForL10nScript.js:3416
@@ -920,7 +920,7 @@ msgstr ""
 msgid "Delete favorite"
 msgstr ""
 
-#. TRANSLATORS src/components/map/FavoritePopup.vue:30
+#. TRANSLATORS src/components/map/FavoritePopup.vue:51
 #: /app/specialVueFakeDummyForL10nScript.js:4294
 msgid "Update"
 msgstr ""

@@ -126,6 +126,7 @@
     "Delete contact address" : "연락처 주소 삭제",
     "Undo {action} (Ctrl+Z)" : "취소 {작업} (Ctrl+Z)",
     "Redo {action} (Ctrl+Shift+Z)" : "다시 실행 {작업} (Ctrl + Shift + Z)",
+    "Select All" : "모두 선택",
     "Display pictures" : "사진을 표시하다",
     "Are you sure you want to remove geo data of {nb} photos?" : "정말로 {nb} 사진들의 지리 정보를 제거하시겠습니까?",
     "Yes" : "예",

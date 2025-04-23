@@ -13,6 +13,7 @@ OC.L10N.register(
     "Delete share link" : "Ulashish havolasini o'chirish",
     "Copied!" : "Copied!",
     "Share" : "Ulashish",
+    "Comment" : "Izoh",
     "Location" : "Joylashuv",
     "Save" : "Save",
     "Close" : "Close",

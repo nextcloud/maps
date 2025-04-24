@@ -12,7 +12,7 @@ jobs:
         runs-on: ubuntu-latest
         strategy:
             matrix:
-                php-versions: [8.1, 8.2, 8.3, 8.4]
+                php-versions: [8.2, 8.3, 8.4]
                 nextcloud-versions: ['stable31']
         name: Nextcloud ${{ matrix.nextcloud-versions }} php${{ matrix.php-versions }} unit tests
         steps:
@@ -47,12 +47,6 @@ jobs:
               run: composer run test:unit
               env:
                   XDEBUG_MODE: coverage
-            - name: Run tests
-              if: ${{ always() && matrix.php-versions == 8.1 }}
-              working-directory: nextcloud/apps/maps
-              run: composer run test:unit
-              env:
-                  XDEBUG_MODE: off
             - name: Report coverage
               uses: codecov/codecov-action@v3.0.0
               if: ${{ always() && matrix.nextcloud-versions == 'master' && matrix.php-versions != 8.1}}

@@ -55,6 +55,7 @@ OC.L10N.register(
     "Update" : "Uuenda",
     "Yes" : "Jah",
     "Open" : "Ava",
+    "until {date}" : "kuni {date}",
     "Closed" : "Suletud",
     "Search" : "Otsi",
     "File" : "Fail",

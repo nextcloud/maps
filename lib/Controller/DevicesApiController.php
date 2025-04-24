@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Nextcloud - Maps
  *
@@ -85,7 +86,7 @@ class DevicesApiController extends ApiController {
 		$devices = $this->devicesService->getDevicesFromDB($this->userId);
 
 		$etag = md5(json_encode($devices));
-		if ($this->request->getHeader('If-None-Match') === '"'.$etag.'"') {
+		if ($this->request->getHeader('If-None-Match') === '"' . $etag . '"') {
 			return new DataResponse([], Http::STATUS_NOT_MODIFIED);
 		}
 		return (new DataResponse($devices))

@@ -137,7 +137,7 @@ class PublicContactsController extends PublicPageController {
 				//				$cards = explode("END:VCARD\r\n", $file->getContent());
 				$cards = [$file->getContent()];
 				foreach ($cards as $card) {
-					$vcard = Reader::read($card."END:VCARD\r\n");
+					$vcard = Reader::read($card . "END:VCARD\r\n");
 					if (isset($vcard->GEO)) {
 						$geo = $vcard->GEO;
 						if (is_string($geo->getValue()) && strlen($geo->getValue()) > 1) {

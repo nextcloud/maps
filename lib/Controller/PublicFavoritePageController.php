@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @copyright Copyright (c) 2019, Paul Schwörer <hello@paulschwoerer.de>
  *
@@ -48,7 +49,7 @@ class PublicFavoritePageController extends PublicShareController {
 		IRequest $request,
 		ISession $session,
 		IConfig $config,
-		FavoriteShareMapper $favoriteShareMapper
+		FavoriteShareMapper $favoriteShareMapper,
 	) {
 		parent::__construct($appName, $request, $session);
 		$this->config = $config;

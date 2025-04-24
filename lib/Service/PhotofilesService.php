@@ -61,7 +61,8 @@ class PhotofilesService {
 		IL10N $l10n,
 		GeophotoMapper $photoMapper,
 		IManager $shareManager,
-		IJobList $jobList) {
+		IJobList $jobList,
+	) {
 		$this->root = $root;
 		$this->l10n = $l10n;
 		$this->photoMapper = $photoMapper;
@@ -226,8 +227,8 @@ class PhotofilesService {
 			}
 			$updateJobsRunning = true;
 		}
-		$recentlyAdded = $this->backgroundJobCache->get('recentlyAdded:'.$userId) ?? 0;
-		$recentlyUpdated = $this->backgroundJobCache->get('$recentlyUpdated:'.$userId) ?? 0;
+		$recentlyAdded = $this->backgroundJobCache->get('recentlyAdded:' . $userId) ?? 0;
+		$recentlyUpdated = $this->backgroundJobCache->get('$recentlyUpdated:' . $userId) ?? 0;
 		return [
 			'addJobsRunning' => $addJobsRunning,
 			'addJobsRemainingForUser' => $add_counter,

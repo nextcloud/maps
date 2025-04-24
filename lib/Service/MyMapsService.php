@@ -49,7 +49,7 @@ class MyMapsService {
 			return $response;
 		}
 		if ($counter > 0) {
-			$folderName = $newName.' '.$counter;
+			$folderName = $newName . ' ' . $counter;
 		} else {
 			$folderName = $newName;
 		}
@@ -180,7 +180,7 @@ class MyMapsService {
 				$mapsFolder = $userFolder->get('/Maps');
 				if ($folder->getParent()->getId() === $mapsFolder->getId()) {
 					try {
-						$folder->move($mapsFolder->getPath().'/'.$newName);
+						$folder->move($mapsFolder->getPath() . '/' . $newName);
 					} catch (\Exception $e) {
 					}
 				}

@@ -29,6 +29,7 @@ use OCP\ICacheFactory;
 use OCP\IL10N;
 use OCP\IPreview;
 use Psr\Log\LoggerInterface;
+use RuntimeException;
 
 class GeophotoService {
 
@@ -54,7 +55,8 @@ class GeophotoService {
 		TracksService $tracksService,
 		DevicesService $devicesService,
 		ICacheFactory $cacheFactory,
-		$userId) {
+		$userId,
+	) {
 		$this->root = $root;
 		$this->l10n = $l10n;
 		$this->photoMapper = $photoMapper;
@@ -77,8 +79,8 @@ class GeophotoService {
 		try {
 			$this->photosCache->clear($userId);
 			$this->timeOrderedPointSetsCache->clear($userId);
-			$this->backgroundJobCache->clear('recentlyAdded:'.$userId);
-			$this->backgroundJobCache->clear('recentlyUpdated:'.$userId);
+			$this->backgroundJobCache->clear('recentlyAdded:' . $userId);
+			$this->backgroundJobCache->clear('recentlyUpdated:' . $userId);
 			return true;
 
 		} catch (\Exception $e) {
@@ -359,10 +361,24 @@ class GeophotoService {
 		$tracks = [];
 		libxml_use_internal_errors(false);
 		$gpx = simplexml_load_string($content);
+		if ($gpx === false) {
+			$this->handleXMLError();
+		}
 		foreach ($gpx->trk as $trk) {
 			$tracks[] = $trk;
 		}
 		return $tracks;
+	}
+
+	private function handleXMLError(): never {
+		$errors = libxml_get_errors();
+		$exceptionMessage = 'XML Error found:' . PHP_EOL;
+
+		foreach ($errors as $error) {
+			$exceptionMessage .= sprintf('Code %s in %s:%s:%s with Message %s' . PHP_EOL, $error->code, $error->file, $error->line, $error->column, $error->message);
+		}
+
+		throw new RuntimeException($exceptionMessage);
 	}
 
 	/*

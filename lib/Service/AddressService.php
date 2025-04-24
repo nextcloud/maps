@@ -62,7 +62,7 @@ class AddressService {
 	// converts the address to geo lat;lon
 	public function addressToGeo($adr, $uri): string {
 		$geo = $this->lookupAddress($adr, $uri);
-		return strval($geo[0]).';'.strval($geo[1]);
+		return strval($geo[0]) . ';' . strval($geo[1]);
 	}
 
 	/**
@@ -186,7 +186,7 @@ class AddressService {
 			$query_adr = implode(', ', $splitted_adr);
 
 			$result_json = @file_get_contents(
-				'https://nominatim.openstreetmap.org/search.php?q='.urlencode($query_adr).'&format=json',
+				'https://nominatim.openstreetmap.org/search.php?q=' . urlencode($query_adr) . '&format=json',
 				false,
 				$context
 			);

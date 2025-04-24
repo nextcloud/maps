@@ -298,14 +298,14 @@ class DevicesService {
 	public function addPointsToDB($deviceId, $points) {
 		$values = [];
 		foreach ($points as $p) {
-			$value = '('.
-				$this->db_quote_escape_string($deviceId).', '.
-				$this->db_quote_escape_string($p['lat']).', '.
-				$this->db_quote_escape_string($p['lng']).', '.
-				$this->db_quote_escape_string($p['date']).', '.
-				((isset($p['altitude']) and is_numeric($p['altitude'])) ? $this->db_quote_escape_string(floatval($p['altitude'])) : 'NULL').', '.
-				((isset($p['battery']) and is_numeric($p['battery'])) ? $this->db_quote_escape_string(floatval($p['battery'])) : 'NULL').', '.
-				((isset($p['accuracy']) and is_numeric($p['accuracy'])) ? $this->db_quote_escape_string(floatval($p['accuracy'])) : 'NULL').')';
+			$value = '(' .
+				$this->db_quote_escape_string($deviceId) . ', ' .
+				$this->db_quote_escape_string($p['lat']) . ', ' .
+				$this->db_quote_escape_string($p['lng']) . ', ' .
+				$this->db_quote_escape_string($p['date']) . ', ' .
+				((isset($p['altitude']) and is_numeric($p['altitude'])) ? $this->db_quote_escape_string(floatval($p['altitude'])) : 'NULL') . ', ' .
+				((isset($p['battery']) and is_numeric($p['battery'])) ? $this->db_quote_escape_string(floatval($p['battery'])) : 'NULL') . ', ' .
+				((isset($p['accuracy']) and is_numeric($p['accuracy'])) ? $this->db_quote_escape_string(floatval($p['accuracy'])) : 'NULL') . ')';
 			array_push($values, $value);
 		}
 		$valuesStr = implode(', ', $values);
@@ -313,7 +313,7 @@ class DevicesService {
             INSERT INTO *PREFIX*maps_device_points
             (device_id, lat, lng, timestamp,
              altitude, battery, accuracy)
-            VALUES '.$valuesStr.' ;';
+            VALUES ' . $valuesStr . ' ;';
 		$req = $this->dbconnection->prepare($sql);
 		$req->execute();
 		$req->closeCursor();
@@ -436,7 +436,7 @@ class DevicesService {
 			' xmlns:wptx1="http://www.garmin.com/xmlschemas/WaypointExtension/v1"' .
 			' xmlns:gpxtpx="http://www.garmin.com/xmlschemas/TrackPointExtension/v1"' .
 			' creator="Nextcloud Maps v' .
-			$appVersion. '" version="1.1"' .
+			$appVersion . '" version="1.1"' .
 			' xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"' .
 			' xsi:schemaLocation="http://www.topografix.com/GPX/1/1' .
 			' http://www.topografix.com/GPX/1/1/gpx.xsd' .
@@ -449,7 +449,7 @@ class DevicesService {
 		$gpxText .= '<metadata>' . "\n" . ' <time>' . $date . '</time>' . "\n";
 		$gpxText .= ' <name>' . $name . '</name>' . "\n";
 		if ($nbdev > 0) {
-			$gpxText .= ' <desc>' . $nbdev . ' device'.($nbdev > 1 ? 's' : '').'</desc>' . "\n";
+			$gpxText .= ' <desc>' . $nbdev . ' device' . ($nbdev > 1 ? 's' : '') . '</desc>' . "\n";
 		}
 		$gpxText .= '</metadata>' . "\n";
 		return $gpxText;
@@ -505,7 +505,7 @@ class DevicesService {
 				$bat = $row['battery'];
 
 				$gpxExtension = '';
-				$gpxText .= '  <trkpt lat="'.$lat.'" lon="'.$lng.'">' . "\n";
+				$gpxText .= '  <trkpt lat="' . $lat . '" lon="' . $lng . '">' . "\n";
 				$gpxText .= '   <time>' . $date . '</time>' . "\n";
 				if (is_numeric($alt)) {
 					$gpxText .= '   <ele>' . sprintf('%.2f', floatval($alt)) . '</ele>' . "\n";
@@ -517,7 +517,7 @@ class DevicesService {
 					$gpxExtension .= '     <batterylevel>' . sprintf('%.2f', floatval($bat)) . '</batterylevel>' . "\n";
 				}
 				if ($gpxExtension !== '') {
-					$gpxText .= '   <extensions>'. "\n" . $gpxExtension;
+					$gpxText .= '   <extensions>' . "\n" . $gpxExtension;
 					$gpxText .= '   </extensions>' . "\n";
 				}
 				$gpxText .= '  </trkpt>' . "\n";
@@ -564,8 +564,8 @@ class DevicesService {
 		while ($data = fread($fp, 4096000)) {
 			if (!xml_parse($xml_parser, $data, feof($fp))) {
 				$this->logger->error(
-					'Exception in '.$file->getName().' parsing at line '.
-					  xml_get_current_line_number($xml_parser).' : '.
+					'Exception in ' . $file->getName() . ' parsing at line ' .
+					  xml_get_current_line_number($xml_parser) . ' : ' .
 					  xml_error_string(xml_get_error_code($xml_parser)),
 					['app' => 'maps']
 				);
@@ -604,7 +604,7 @@ class DevicesService {
 			// log last track points
 			if (count($this->currentPointList) > 0) {
 				if ($this->importDevName === '') {
-					$this->importDevName = $this->importFileName.' '.$this->trackIndex;
+					$this->importDevName = $this->importFileName . ' ' . $this->trackIndex;
 				}
 				$devid = $this->getOrCreateDeviceFromDB($this->importUserId, $this->importDevName);
 				$this->addPointsToDB($devid, $this->currentPointList);
@@ -624,7 +624,7 @@ class DevicesService {
 			// if we have enough points, we log them and clean the points array
 			if (count($this->currentPointList) >= 500) {
 				if ($this->importDevName === '') {
-					$this->importDevName = 'device'.$this->trackIndex;
+					$this->importDevName = 'device' . $this->trackIndex;
 				}
 				$devid = $this->getOrCreateDeviceFromDB($this->importUserId, $this->importDevName);
 				$this->addPointsToDB($devid, $this->currentPointList);
@@ -639,13 +639,13 @@ class DevicesService {
 		$d = trim($data);
 		if (!empty($d)) {
 			if ($this->currentXmlTag === 'ELE') {
-				$this->currentPoint['altitude'] = (isset($this->currentPoint['altitude'])) ? $this->currentPoint['altitude'].$d : $d;
+				$this->currentPoint['altitude'] = (isset($this->currentPoint['altitude'])) ? $this->currentPoint['altitude'] . $d : $d;
 			} elseif ($this->currentXmlTag === 'BATTERYLEVEL') {
-				$this->currentPoint['battery'] = (isset($this->currentPoint['battery'])) ? $this->currentPoint['battery'].$d : $d;
+				$this->currentPoint['battery'] = (isset($this->currentPoint['battery'])) ? $this->currentPoint['battery'] . $d : $d;
 			} elseif ($this->currentXmlTag === 'ACCURACY') {
-				$this->currentPoint['accuracy'] = (isset($this->currentPoint['accuracy'])) ? $this->currentPoint['accuracy'].$d : $d;
+				$this->currentPoint['accuracy'] = (isset($this->currentPoint['accuracy'])) ? $this->currentPoint['accuracy'] . $d : $d;
 			} elseif ($this->insideTrk and $this->currentXmlTag === 'TIME') {
-				$this->currentPoint['date'] = (isset($this->currentPoint['date'])) ? $this->currentPoint['date'].$d : $d;
+				$this->currentPoint['date'] = (isset($this->currentPoint['date'])) ? $this->currentPoint['date'] . $d : $d;
 			} elseif ($this->insideTrk and $this->currentXmlTag === 'NAME') {
 				$this->importDevName = $this->importDevName . $d;
 			}
@@ -679,8 +679,8 @@ class DevicesService {
 		while ($data = fread($fp, 4096000)) {
 			if (!xml_parse($xml_parser, $data, feof($fp))) {
 				$this->logger->error(
-					'Exception in '.$name.' parsing at line '.
-					  xml_get_current_line_number($xml_parser).' : '.
+					'Exception in ' . $name . ' parsing at line ' .
+					  xml_get_current_line_number($xml_parser) . ' : ' .
 					  xml_error_string(xml_get_error_code($xml_parser)),
 				);
 				return 0;
@@ -697,7 +697,7 @@ class DevicesService {
 			if (isset($attrs['ID'])) {
 				$this->importDevName = $attrs['ID'];
 			} else {
-				$this->importDevName = $this->importFileName.' '.$this->trackIndex;
+				$this->importDevName = $this->importFileName . ' ' . $this->trackIndex;
 			}
 			$this->pointIndex = 1;
 			$this->currentPointList = [];
@@ -751,9 +751,9 @@ class DevicesService {
 		$d = trim($data);
 		if (!empty($d)) {
 			if ($this->currentXmlTag === 'WHEN') {
-				$this->currentPoint['date'] = (isset($this->currentPoint['date'])) ? $this->currentPoint['date'].$d : $d;
+				$this->currentPoint['date'] = (isset($this->currentPoint['date'])) ? $this->currentPoint['date'] . $d : $d;
 			} elseif ($this->currentXmlTag === 'GX:COORD') {
-				$this->currentPoint['coords'] = (isset($this->currentPoint['coords'])) ? $this->currentPoint['coords'].$d : $d;
+				$this->currentPoint['coords'] = (isset($this->currentPoint['coords'])) ? $this->currentPoint['coords'] . $d : $d;
 			}
 		}
 	}

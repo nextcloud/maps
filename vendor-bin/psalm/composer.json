@@ -1,9 +1,9 @@
 {
     "require-dev": {
-        "psalm/phar": "^5.26",
-        "nextcloud/ocp": "dev-master",
+        "psalm/phar": "^6.10",
+        "nextcloud/ocp": "^31",
         "doctrine/dbal": "^3.7.0",
-        "symfony/console": "^5.4.24",
+        "symfony/console": "^7.2",
         "sabre/dav": "4.6.0"
     }
 }

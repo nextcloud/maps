@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Nextcloud - maps
  *
@@ -186,7 +187,7 @@ class TracksControllerTest extends \PHPUnit\Framework\TestCase {
 		//$file->touch();
 
 		$file = $userfolder->get('testFile1.gpxx');
-		$file->move($userfolder->getPath().'/testFile1.gpx');
+		$file->move($userfolder->getPath() . '/testFile1.gpx');
 		//echo 'I MOVE TO '.$userfolder->getPath().'/testFile1.gpx'."\n";
 		$file = $userfolder->get('testFile1.gpx');
 		$file->touch();

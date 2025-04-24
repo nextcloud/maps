@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Nextcloud - maps
  *
@@ -148,7 +149,7 @@ class PublicPageController extends AuthPublicShareController {
 
 		$this->eventDispatcher->dispatchTyped(new BeforeTemplateRenderedEvent($this->share, BeforeTemplateRenderedEvent::SCOPE_PUBLIC_SHARE_AUTH));
 
-		$response = new PublicTemplateResponse('core', 'publicshareauth', $templateParameters, 'guest');
+		$response = new PublicTemplateResponse('core', 'publicshareauth', $templateParameters);
 		if ($this->share->getSendPasswordByTalk()) {
 			$csp = new ContentSecurityPolicy();
 			$csp->addAllowedConnectDomain('*');
@@ -167,7 +168,7 @@ class PublicPageController extends AuthPublicShareController {
 
 		$this->eventDispatcher->dispatchTyped(new BeforeTemplateRenderedEvent($this->share, BeforeTemplateRenderedEvent::SCOPE_PUBLIC_SHARE_AUTH));
 
-		$response = new PublicTemplateResponse('core', 'publicshareauth', $templateParameters, 'guest');
+		$response = new PublicTemplateResponse('core', 'publicshareauth', $templateParameters);
 		if ($this->share->getSendPasswordByTalk()) {
 			$csp = new ContentSecurityPolicy();
 			$csp->addAllowedConnectDomain('*');
@@ -186,7 +187,7 @@ class PublicPageController extends AuthPublicShareController {
 
 		$this->eventDispatcher->dispatchTyped(new BeforeTemplateRenderedEvent($this->share, BeforeTemplateRenderedEvent::SCOPE_PUBLIC_SHARE_AUTH));
 
-		$response = new PublicTemplateResponse('core', 'publicshareauth', $templateParameters, 'guest');
+		$response = new PublicTemplateResponse('core', 'publicshareauth', $templateParameters);
 		if ($this->share->getSendPasswordByTalk()) {
 			$csp = new ContentSecurityPolicy();
 			$csp->addAllowedConnectDomain('*');

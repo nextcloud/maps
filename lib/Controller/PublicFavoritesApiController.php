@@ -47,7 +47,7 @@ class PublicFavoritesApiController extends PublicShareController {
 		IRequest $request,
 		ISession $session,
 		FavoritesService $favoritesService,
-		FavoriteShareMapper $favoriteShareMapper
+		FavoriteShareMapper $favoriteShareMapper,
 	) {
 		parent::__construct($appName, $request, $session);
 

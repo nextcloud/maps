@@ -121,7 +121,7 @@ class PublicPhotosController extends PublicPageController {
 				$photo_object->isCreatable = ($permissions & (1 << 2)) && $photo['isCreatable'];
 				$photo_object->isUpdateable = ($permissions & (1 << 1)) && $photo['isUpdateable'];
 				$photo_object->isDeletable = ($permissions & (1 << 3)) && $photo['isDeletable'];
-				$photo_object->path = $folder->getRelativePath($pre_path.$photo_object->path);
+				$photo_object->path = $folder->getRelativePath($pre_path . $photo_object->path);
 				$photo_object->filename = $photo_object->path;
 				return $photo_object;
 			}, $result);
@@ -154,7 +154,7 @@ class PublicPhotosController extends PublicPageController {
 				$photo_object->isCreatable = ($permissions & (1 << 2)) && $photo['isCreatable'];
 				$photo_object->isUpdateable = ($permissions & (1 << 1)) && $photo['isUpdateable'];
 				$photo_object->isDeletable = ($permissions & (1 << 3)) && $photo['isDeletable'];
-				$photo_object->path = $folder->getRelativePath($pre_path.$photo['path']);
+				$photo_object->path = $folder->getRelativePath($pre_path . $photo['path']);
 				$photo_object->filename = $photo_object->path;
 				return $photo_object;
 			}, $result);

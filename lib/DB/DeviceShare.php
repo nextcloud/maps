@@ -25,6 +25,7 @@
 namespace OCA\Maps\DB;
 
 use OCP\AppFramework\Db\Entity;
+use OCP\DB\Types;
 
 /**
  * @method string getToken()
@@ -43,9 +44,9 @@ class DeviceShare extends Entity {
 	public $timestampTo;
 
 	public function __construct() {
-		$this->addType('token', 'string');
-		$this->addType('deviceId', 'int');
-		$this->addType('timestampFrom', 'int');
-		$this->addType('timestampTo', 'int');
+		$this->addType('token', Types::STRING);
+		$this->addType('deviceId', Types::INTEGER);
+		$this->addType('timestampFrom', Types::INTEGER);
+		$this->addType('timestampTo', Types::INTEGER);
 	}
 }

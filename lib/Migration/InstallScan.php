@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @copyright Copyright (c) 2019 Julien Veyssier <eneiluj@posteo.net>
  *
@@ -43,7 +44,7 @@ class InstallScan implements IRepairStep {
 		private IConfig $config,
 		private IUserManager $userManager,
 		private IJobList $jobList,
-		private IManager $encryptionManager
+		private IManager $encryptionManager,
 	) {
 		$this->config = $config;
 		$this->jobList = $jobList;

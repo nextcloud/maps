@@ -5,7 +5,8 @@
 	findUnusedBaselineEntry="true"
 	findUnusedCode="false"
 	autoloader="vendor-bin/psalm/vendor/autoload.php"
-	errorBaseline="tests/psalm-baseline.xml">
+	errorBaseline="tests/psalm-baseline.xml"
+	ensureOverrideAttribute="false">
 	<stubs>
 		<file name="tests/stubs/oc_archive_archive.php" preloadClasses="true"/>
 		<file name="tests/stubs/oc_archive_zip.php" preloadClasses="true"/>

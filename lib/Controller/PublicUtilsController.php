@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Nextcloud - maps
  *
@@ -43,7 +44,7 @@ class PublicUtilsController extends PublicPageController {
 		IUserManager $userManager,
 		ShareManager $shareManager,
 		IRootFolder $root,
-		IEventDispatcher $eventDispatcher
+		IEventDispatcher $eventDispatcher,
 	) {
 		parent::__construct($appName, $request, $session, $urlGenerator, $eventDispatcher, $config, $initialStateService, $shareManager, $userManager);
 		$this->root = $root;

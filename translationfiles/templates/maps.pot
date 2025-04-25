@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Nextcloud 3.14159\n"
 "Report-Msgid-Bugs-To: translations\\@example.com\n"
-"POT-Creation-Date: 2025-04-24 01:21+0000\n"
+"POT-Creation-Date: 2025-04-25 01:20+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -18,134 +18,134 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=INTEGER; plural=EXPRESSION;\n"
 
-#: /app/lib/Controller/DevicesApiController.php:144
-#: /app/lib/Controller/DevicesApiController.php:164
-#: /app/lib/Controller/DevicesController.php:197
-#: /app/lib/Controller/FavoritesApiController.php:115
-#: /app/lib/Controller/FavoritesApiController.php:142
-#: /app/lib/Controller/FavoritesController.php:159
-#: /app/lib/Controller/PublicFavoritesController.php:215
+#: /app/lib/Controller/DevicesApiController.php:145
+#: /app/lib/Controller/DevicesApiController.php:165
+#: /app/lib/Controller/DevicesController.php:198
+#: /app/lib/Controller/FavoritesApiController.php:116
+#: /app/lib/Controller/FavoritesApiController.php:143
+#: /app/lib/Controller/FavoritesController.php:160
+#: /app/lib/Controller/PublicFavoritesController.php:216
 msgid "Invalid values"
 msgstr ""
 
-#: /app/lib/Controller/DevicesApiController.php:167
-#: /app/lib/Controller/DevicesApiController.php:184
-#: /app/lib/Controller/DevicesController.php:200
-#: /app/lib/Controller/DevicesController.php:216
-#: /app/lib/Controller/DevicesController.php:359
+#: /app/lib/Controller/DevicesApiController.php:168
+#: /app/lib/Controller/DevicesApiController.php:185
+#: /app/lib/Controller/DevicesController.php:201
+#: /app/lib/Controller/DevicesController.php:217
+#: /app/lib/Controller/DevicesController.php:360
 msgid "No such device"
 msgstr ""
 
-#: /app/lib/Controller/DevicesController.php:112
-#: /app/lib/Controller/DevicesController.php:402
-#: /app/lib/Controller/DevicesController.php:424
-#: /app/lib/Controller/FavoritesController.php:405
+#: /app/lib/Controller/DevicesController.php:113
+#: /app/lib/Controller/DevicesController.php:403
+#: /app/lib/Controller/DevicesController.php:425
+#: /app/lib/Controller/FavoritesController.php:406
 msgid "Map not Found"
 msgstr ""
 
-#: /app/lib/Controller/DevicesController.php:233
+#: /app/lib/Controller/DevicesController.php:234
 msgid "No device to export"
 msgstr ""
 
-#: /app/lib/Controller/DevicesController.php:244
-#: /app/lib/Controller/FavoritesController.php:464
-#: /app/lib/Controller/RoutingController.php:96
+#: /app/lib/Controller/DevicesController.php:245
+#: /app/lib/Controller/FavoritesController.php:465
+#: /app/lib/Controller/RoutingController.php:97
 msgid "/Maps is not a directory"
 msgstr ""
 
-#: /app/lib/Controller/DevicesController.php:246
-#: /app/lib/Controller/FavoritesController.php:467
-#: /app/lib/Controller/RoutingController.php:99
+#: /app/lib/Controller/DevicesController.php:247
+#: /app/lib/Controller/FavoritesController.php:468
+#: /app/lib/Controller/RoutingController.php:100
 msgid "/Maps directory is not writeable"
 msgstr ""
 
-#: /app/lib/Controller/DevicesController.php:249
-#: /app/lib/Controller/FavoritesController.php:471
-#: /app/lib/Controller/RoutingController.php:103
+#: /app/lib/Controller/DevicesController.php:250
+#: /app/lib/Controller/FavoritesController.php:472
+#: /app/lib/Controller/RoutingController.php:104
 msgid "Impossible to create /Maps directory"
 msgstr ""
 
-#: /app/lib/Controller/DevicesController.php:254
-#: /app/lib/Controller/FavoritesController.php:452
-#: /app/lib/Controller/FavoritesController.php:477
+#: /app/lib/Controller/DevicesController.php:255
+#: /app/lib/Controller/FavoritesController.php:453
+#: /app/lib/Controller/FavoritesController.php:478
 msgid "Nothing to export"
 msgstr ""
 
-#: /app/lib/Controller/DevicesController.php:298
-#: /app/lib/Controller/FavoritesController.php:522
+#: /app/lib/Controller/DevicesController.php:299
+#: /app/lib/Controller/FavoritesController.php:523
 msgid "Invalid file extension"
 msgstr ""
 
-#: /app/lib/Controller/DevicesController.php:302
-#: /app/lib/Controller/FavoritesController.php:526
+#: /app/lib/Controller/DevicesController.php:303
+#: /app/lib/Controller/FavoritesController.php:527
 msgid "Impossible to read the file"
 msgstr ""
 
-#: /app/lib/Controller/DevicesController.php:306
-#: /app/lib/Controller/FavoritesController.php:530
+#: /app/lib/Controller/DevicesController.php:307
+#: /app/lib/Controller/FavoritesController.php:531
 msgid "File does not exist"
 msgstr ""
 
-#: /app/lib/Controller/DevicesController.php:356
+#: /app/lib/Controller/DevicesController.php:357
 msgid "Error sharing device"
 msgstr ""
 
-#: /app/lib/Controller/DevicesController.php:397
+#: /app/lib/Controller/DevicesController.php:398
 msgid "Share not Found"
 msgstr ""
 
-#: /app/lib/Controller/DevicesController.php:412
-#: /app/lib/Controller/FavoritesController.php:415
+#: /app/lib/Controller/DevicesController.php:413
+#: /app/lib/Controller/FavoritesController.php:416
 msgid "Share was already on map"
 msgstr ""
 
-#: /app/lib/Controller/FavoritesApiController.php:145
-#: /app/lib/Controller/FavoritesApiController.php:162
+#: /app/lib/Controller/FavoritesApiController.php:146
+#: /app/lib/Controller/FavoritesApiController.php:163
 msgid "No such favorite"
 msgstr ""
 
-#: /app/lib/Controller/FavoritesController.php:229
-#: /app/lib/Controller/FavoritesController.php:247
-#: /app/lib/Controller/PublicFavoritesController.php:281
+#: /app/lib/Controller/FavoritesController.php:230
+#: /app/lib/Controller/FavoritesController.php:248
+#: /app/lib/Controller/PublicFavoritesController.php:282
 msgid "invalid values"
 msgstr ""
 
-#: /app/lib/Controller/FavoritesController.php:232
-#: /app/lib/Controller/FavoritesController.php:250
-#: /app/lib/Controller/FavoritesController.php:302
-#: /app/lib/Controller/FavoritesController.php:310
-#: /app/lib/Controller/PublicFavoritesController.php:284
-#: /app/lib/Controller/PublicFavoritesController.php:339
+#: /app/lib/Controller/FavoritesController.php:233
+#: /app/lib/Controller/FavoritesController.php:251
+#: /app/lib/Controller/FavoritesController.php:303
+#: /app/lib/Controller/FavoritesController.php:311
+#: /app/lib/Controller/PublicFavoritesController.php:285
+#: /app/lib/Controller/PublicFavoritesController.php:340
 msgid "no such favorite"
 msgstr ""
 
-#: /app/lib/Controller/FavoritesController.php:356
-#: /app/lib/Controller/FavoritesController.php:375
+#: /app/lib/Controller/FavoritesController.php:357
+#: /app/lib/Controller/FavoritesController.php:376
 msgid "Unknown category"
 msgstr ""
 
-#: /app/lib/Controller/FavoritesController.php:362
+#: /app/lib/Controller/FavoritesController.php:363
 msgid "Error sharing favorite"
 msgstr ""
 
-#: /app/lib/Controller/PublicTracksController.php:186
-#: /app/lib/Controller/PublicTracksController.php:220
-#: /app/lib/Controller/TracksController.php:110
-#: /app/lib/Controller/TracksController.php:144
+#: /app/lib/Controller/PublicTracksController.php:188
+#: /app/lib/Controller/PublicTracksController.php:222
+#: /app/lib/Controller/TracksController.php:111
+#: /app/lib/Controller/TracksController.php:145
 msgid "Bad file type"
 msgstr ""
 
-#: /app/lib/Controller/PublicTracksController.php:189
-#: /app/lib/Controller/PublicTracksController.php:223
-#: /app/lib/Controller/TracksController.php:113
-#: /app/lib/Controller/TracksController.php:147
+#: /app/lib/Controller/PublicTracksController.php:191
+#: /app/lib/Controller/PublicTracksController.php:225
+#: /app/lib/Controller/TracksController.php:114
+#: /app/lib/Controller/TracksController.php:148
 msgid "File not found"
 msgstr ""
 
-#: /app/lib/Controller/PublicTracksController.php:249
-#: /app/lib/Controller/PublicTracksController.php:274
-#: /app/lib/Controller/TracksController.php:165
-#: /app/lib/Controller/TracksController.php:180
+#: /app/lib/Controller/PublicTracksController.php:251
+#: /app/lib/Controller/PublicTracksController.php:276
+#: /app/lib/Controller/TracksController.php:166
+#: /app/lib/Controller/TracksController.php:181
 msgid "No such track"
 msgstr ""
 

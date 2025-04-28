@@ -57,7 +57,7 @@ OC.L10N.register(
     "Load more" : "Įkelti daugiau",
     "Devices" : "Įrenginiai",
     "Favorite" : "Mėgstamas",
-    "Tags" : "Žymės",
+    "Tags" : "Žymos",
     "Distance" : "Atstumas",
     "Duration" : "Trukmė",
     "End" : "Pabaiga",

@@ -13,6 +13,7 @@ OC.L10N.register(
     "Delete share link" : "Ulashish havolasini o'chirish",
     "Copied!" : "Copied!",
     "Share" : "Ulashish",
+    "Category" : "Kategoriya",
     "Comment" : "Izoh",
     "Location" : "Joylashuv",
     "Save" : "Save",
@@ -25,6 +26,7 @@ OC.L10N.register(
     "Add" : "Add",
     "Add to favorites" : "Sevimlilarga qo'shing",
     "Home" : "Home",
+    "Work" : "Ish",
     "Date" : "Sana",
     "Update" : "Update",
     "Yes" : "Yes",
@@ -35,6 +37,7 @@ OC.L10N.register(
     "right" : "right",
     "left" : "left",
     "Failed to save settings" : "Sozlamalarni saqlab bo'lmadi",
+    "Restaurant" : "Restoran",
     "Bar" : "Bar"
 },
 "nplurals=1; plural=0;");

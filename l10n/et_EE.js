@@ -36,6 +36,8 @@ OC.L10N.register(
     "Location" : "Asukoht",
     "New category {n}" : "Uus kategooria {n}",
     "Save" : "Salvesta",
+    "Share this location" : "Jaga seda asukohta",
+    "Shared location" : "Jagatud asukoht",
     "Close" : "Sulge",
     "Select all" : "Vali kõik",
     "Quit" : "Lõpeta",

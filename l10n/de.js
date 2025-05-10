@@ -276,7 +276,7 @@ OC.L10N.register(
     "Photo folders" : "Foto-Ordner",
     "Choose pictures to place" : "Bilder zum Ort auswählen",
     "Choose directory of pictures to place" : "Bildverzeichnis zum Ort auswählen",
-    "\"{path}\" successfully moved" : "\"{path}\" erfolgreich verschoben",
+    "\"{path}\" successfully moved" : "\"{path}\" verschoben",
     "{nb} photos moved" : "{nb} Fotos verschoben",
     "Cleared photo cache" : "Foto-Cache gelöscht",
     "Failed to clear photos cache" : "Löschen des Foto-Caches fehlgeschlagen",

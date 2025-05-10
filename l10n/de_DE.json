@@ -274,7 +274,7 @@
     "Photo folders" : "Foto-Ordner",
     "Choose pictures to place" : "Wählen Sie Bilder zum Ort",
     "Choose directory of pictures to place" : "Wählen Sie ein Bildverzeichnis zum Ort",
-    "\"{path}\" successfully moved" : "\"{path}\" erfolgreich verschoben",
+    "\"{path}\" successfully moved" : "\"{path}\" verschoben",
     "{nb} photos moved" : "{nb} Fotos verschoben",
     "Cleared photo cache" : "Foto-Cache gelöscht",
     "Failed to clear photos cache" : "Fotos-Cache konnte nicht gelöscht werden",

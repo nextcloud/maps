@@ -20,5 +20,3 @@ require_once __DIR__ . '/../../../lib/base.php';
 require_once __DIR__ . '/../vendor/autoload.php';
 
 Server::get(IAppManager::class)->loadApp('maps');
-
-OC_Hook::clear();

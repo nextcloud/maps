@@ -86,7 +86,7 @@ class RescanPhotos extends Command {
 			echo "Extracting coordinates from photo is performed in a BackgroundJob \n";
 		}
 		if ($userId === null) {
-			$this->userManager->callForSeenUsers(function (IUser $user, string $pathToScan) use ($inBackground) {
+			$this->userManager->callForSeenUsers(function (IUser $user, ?string $pathToScan = null) use ($inBackground) {
 				$this->rescanUserPhotos($user->getUID(), $inBackground, $pathToScan);
 			});
 		} else {

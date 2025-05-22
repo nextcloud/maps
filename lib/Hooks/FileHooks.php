@@ -16,11 +16,11 @@ use OC\Files\Filesystem;
 use OCA\Maps\Service\PhotofilesService;
 use OCA\Maps\Service\TracksService;
 use OCP\Files\FileInfo;
-use OCP\Files\IHomeStorage;
 use OCP\Files\IRootFolder;
 use OCP\Lock\ILockingProvider;
 use OCP\Share;
 use OCP\Util;
+use function OCP\Log\logger;
 
 /**
  * Handles files events
@@ -44,7 +44,8 @@ class FileHooks {
 
 	public function register() {
 		$fileWriteCallback = function (\OCP\Files\Node $node) {
-			if ($this->isUserNode($node) && $node->getSize() > 0) {
+			//logger('maps')->debug("Hook postWrite");
+			if ($node->getType() === FileInfo::TYPE_FILE && $this->isUserNode($node) && $node->getSize()) {
 				$path = $node->getPath();
 				if (!$this->lockingProvider->isLocked($path, ILockingProvider::LOCK_SHARED)
 					and !$this->lockingProvider->isLocked($path, ILockingProvider::LOCK_EXCLUSIVE)
@@ -59,6 +60,7 @@ class FileHooks {
 		$this->root->listen('\OC\Files', 'postWrite', $fileWriteCallback);
 
 		$fileDeletionCallback = function (\OCP\Files\Node $node) {
+			//logger('maps')->debug("Hook preDelete");
 			if ($this->isUserNode($node)) {
 				if ($node->getType() === FileInfo::TYPE_FOLDER) {
 					$this->photofilesService->deleteByFolder($node);
@@ -111,6 +113,7 @@ class FileHooks {
 	}
 
 	public function postShare($params) {
+		//logger('maps')->debug("Hook postShare");
 		if ($params['itemType'] === 'file') {
 			//$targetFilePath = $params['itemTarget'];
 			//$sourceUserId = $params['uidOwner'];
@@ -135,6 +138,7 @@ class FileHooks {
 	}
 
 	public function postUnShare($params) {
+		//logger('maps')->debug("Hook postUnShare");
 		if ($params['shareType'] === Share::SHARE_TYPE_USER) {
 			if ($params['itemType'] === 'file') {
 				$targetUserId = $params['shareWith'];
@@ -146,6 +150,7 @@ class FileHooks {
 	}
 
 	public function preUnShare($params) {
+		//logger('maps')->debug("Hook preUnShare");
 		if ($params['shareType'] === Share::SHARE_TYPE_USER) {
 			if ($params['itemType'] === 'folder') {
 				$targetUserId = $params['shareWith'];
@@ -176,7 +181,12 @@ class FileHooks {
 	}
 
 	private function isUserNode(\OCP\Files\Node $node): bool {
-		return $node->getStorage()->instanceOfStorage(IHomeStorage::class);
+		//return $node->getStorage()->instanceOfStorage("\OCP\Files\IHomeStorage")
+		$owner = $node->getStorage()->getOwner('');
+		if (! $owner) {
+			return false;
+		}
+		return str_starts_with($node->getPath(), '/' . $owner . '/');
 	}
 
 }

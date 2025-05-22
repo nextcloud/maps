@@ -96,14 +96,16 @@ class PhotofilesService {
 	// add the file for its owner and users that have access
 	// check if it's already in DB before adding
 	public function addByFile(Node $file) {
-		$ownerId = $file->getOwner()->getUID();
 		if ($this->isPhoto($file)) {
+			$ownerId = $file->getOwner()->getUID();
 			$this->addPhoto($file, $ownerId);
 			// is the file accessible to other users ?
 			$accesses = $this->shareManager->getAccessList($file);
-			foreach ($accesses['users'] as $uid) {
-				if ($uid !== $ownerId) {
-					$this->addPhoto($file, $uid);
+			if (array_key_exists('users', $accesses)) {
+				foreach ($accesses['users'] as $uid) {
+					if ($uid !== $ownerId) {
+						$this->addPhoto($file, $uid);
+					}
 				}
 			}
 			return true;

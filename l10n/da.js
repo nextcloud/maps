@@ -13,7 +13,7 @@ OC.L10N.register(
     "Delete all" : "Slet alt",
     "Cancel" : "Annuller",
     "Link copied" : "Link kopieret",
-    "Import" : "Importer",
+    "Import" : "Importér",
     "Rename" : "Omdøb",
     "Delete share link" : "Slet delingslink",
     "Copied!" : "Kopieret!",

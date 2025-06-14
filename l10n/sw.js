@@ -1,0 +1,26 @@
+OC.L10N.register(
+    "maps",
+    {
+    "Personal" : "Binafsi",
+    "Export" : "Safirisha",
+    "Delete" : "Futa",
+    "Cancel" : "Cancel",
+    "Delete share link" : "Futa kiungo cha kushiriki",
+    "Share" : "Shirikisha",
+    "Location" : "Mahali/eneo",
+    "Save" : "Hifadhi",
+    "Close" : "Funga",
+    "Load more" : "Pakia zaidi",
+    "Tags" : "Maoni",
+    "Duration" : "Muda",
+    "Name" : "Jina",
+    "Add" : "Ongeza",
+    "Date" : "Tarehe",
+    "Update" : "Sasisha",
+    "Yes" : "Ndiyo",
+    "Open" : "Fungua",
+    "until {date}" : "mpaka {date}",
+    "Search" : "Tafuta",
+    "File" : "Faili"
+},
+"nplurals=2; plural=(n != 1);");

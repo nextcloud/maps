@@ -1,6 +1,7 @@
 OC.L10N.register(
     "maps",
     {
+    "File not found" : "Faili halipatikani",
     "Personal" : "Binafsi",
     "Export" : "Safirisha",
     "Delete" : "Futa",
@@ -11,10 +12,12 @@ OC.L10N.register(
     "Save" : "Hifadhi",
     "Close" : "Funga",
     "Load more" : "Pakia zaidi",
+    "Favorite" : "Kipendwa",
     "Tags" : "Maoni",
     "Duration" : "Muda",
     "Name" : "Jina",
     "Add" : "Ongeza",
+    "Home" : "Nyumbani",
     "Date" : "Tarehe",
     "Update" : "Sasisha",
     "Yes" : "Ndiyo",

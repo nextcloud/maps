@@ -12,6 +12,7 @@ OC.L10N.register(
     "Location" : "Mahali/eneo",
     "Save" : "Hifadhi",
     "Close" : "Funga",
+    "Select all" : "Chagua zote",
     "Load more" : "Pakia zaidi",
     "Favorite" : "Kipendwa",
     "Tags" : "Maoni",

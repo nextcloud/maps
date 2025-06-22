@@ -3,6 +3,7 @@ OC.L10N.register(
     {
     "File not found" : "Faili halipatikani",
     "Personal" : "Binafsi",
+    "Zoom" : "Kuza",
     "Export" : "Safirisha",
     "Delete" : "Futa",
     "Cancel" : "Cancel",

@@ -10,6 +10,7 @@ OC.L10N.register(
     "Rename" : "Ipe jina jipya",
     "Delete share link" : "Futa kiungo cha kushiriki",
     "Share" : "Shirikisha",
+    "Category" : "Kipengele",
     "Comment" : "Maoni",
     "Location" : "Mahali/eneo",
     "Save" : "Hifadhi",

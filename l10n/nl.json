@@ -303,11 +303,11 @@
     "GraphHopper settings" : "GraphHopper instellingen",
     "A GraphHopper server URL looks like this : https://my.graphhopper.server.org:8989/route" : "Een GraphHopper server URL ziet er als volgt uit : https://my.graphhopper.server.org:8989/route",
     "GraphHopper server URL (will use main graphhopper server if empty)" : "GraphHopper server URL (gebruikt hoofd graphhopper server wanneer leeg)",
-    "GraphHopper API key (mandatory if main server used)" : "GraphHopper API key (verplicht als de hoofdserver wordt gebruikt)",
+    "GraphHopper API key (mandatory if main server used)" : "GraphHopper API-sleutel (verplicht als de hoofdserver wordt gebruikt)",
     "Mapbox Website" : "Mapbox Website",
     "Mapbox settings" : "Mapbox instellingen",
     "Set the API key to use Mapbox routing service." : "Stel een API-sleutel in om de Mapbox routeringsservice te gebruiken.",
     "Leave empty to disable." : "Leeglaten om uit te schakelen",
-    "Mapbox API key" : "Mapbox API key"
+    "Mapbox API key" : "Mapbox API-sleutel"
 },"pluralForm" :"nplurals=2; plural=(n != 1);"
 }

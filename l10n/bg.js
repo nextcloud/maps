@@ -118,6 +118,8 @@ OC.L10N.register(
     "Favorite" : "Любими",
     "Photo suggestions" : "Препоръки за снимки",
     "Track metadata" : "Проследяване на метаданни",
+    "Unable to change the favourite state of the file" : "Не може да се промени състоянието за предпочитане на файла",
+    "Error while loading the file data" : "Грешка при зареждането на файловете.",
     "Tags" : "Етикети",
     "Distance" : "Разстояние",
     "Duration" : "Продължителност",

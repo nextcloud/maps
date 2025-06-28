@@ -123,6 +123,8 @@ OC.L10N.register(
     "Favorite" : "المفضلة",
     "Photo suggestions" : "اقتراحات الصور",
     "Track metadata" : "تتبع بيانات التعريف الوصفية",
+    "Unable to change the favourite state of the file" : "لم نستطع تغير الحالة المفضلة للملف",
+    "Error while loading the file data" : "خطأ اثناء تحميل بيانات الملف",
     "Tags" : "الوسوم",
     "Distance" : "المسافة",
     "Duration" : "المدة الزمنية",

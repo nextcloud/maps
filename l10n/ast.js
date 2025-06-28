@@ -60,6 +60,8 @@ OC.L10N.register(
     "Location sources:" : "Fonte del llocalización:",
     "Devices" : "Preseos",
     "Favorite" : "Meter en Favoritos",
+    "Unable to change the favourite state of the file" : "Nun ye posible camudar l'estáu favoritu del ficheru",
+    "Error while loading the file data" : "Hebo un error mentanto de cargaben los datos de los ficheros",
     "Tags" : "Etiquetes",
     "Distance" : "Distancia",
     "Duration" : "Duración",

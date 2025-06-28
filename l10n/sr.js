@@ -123,6 +123,8 @@ OC.L10N.register(
     "Favorite" : "Омиљени",
     "Photo suggestions" : "Фото предлози",
     "Track metadata" : "Метаподаци путање",
+    "Unable to change the favourite state of the file" : "Неуспела промена стања омиљености фајла",
+    "Error while loading the file data" : "Грешка при учитавању података фајла",
     "Tags" : "Ознаке",
     "Distance" : "Удаљеност",
     "Duration" : "Трајање",

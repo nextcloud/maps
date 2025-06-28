@@ -123,6 +123,8 @@ OC.L10N.register(
     "Favorite" : "Kedvenc",
     "Photo suggestions" : "Fényképjavaslatok",
     "Track metadata" : "Nyomvonal-metaadatok",
+    "Unable to change the favourite state of the file" : "Nem lehet megváltoztatni a fájl kedvenc állapotát",
+    "Error while loading the file data" : "Hiba történt a fájladatok betöltése közben",
     "Tags" : "Címkék",
     "Distance" : "Távolság",
     "Duration" : "Időtartam",

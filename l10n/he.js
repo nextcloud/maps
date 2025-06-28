@@ -55,6 +55,8 @@ OC.L10N.register(
     "Load more" : "לטעון עוד",
     "Devices" : "מכשירים",
     "Favorite" : "סימון כמועדף",
+    "Unable to change the favourite state of the file" : "לא ניתן לשנות את מצב ההעדפה של הקובץ",
+    "Error while loading the file data" : "שגיאה בטעינת נתוני הקובץ",
     "Tags" : "תגיות",
     "Distance" : "מרחק",
     "Duration" : "משך",

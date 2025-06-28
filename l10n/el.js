@@ -68,6 +68,8 @@ OC.L10N.register(
     "Devices" : "Συσκευές",
     "Favorite" : "Αγαπημένο",
     "Track metadata" : "Παρακολούθηση μεταδεδομένων",
+    "Unable to change the favourite state of the file" : "Αδυναμία αλλαγής αγαπημένης κατάστασης αρχείου",
+    "Error while loading the file data" : "Σφάλμα κατά την φόρτωση αρχείου δεδομένων",
     "Tags" : "Ετικέτες",
     "Distance" : "Απόσταση",
     "Duration" : "Διάρκεια",

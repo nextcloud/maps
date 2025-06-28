@@ -119,6 +119,8 @@ OC.L10N.register(
     "Favorite" : "مورد‌ ‌علاقه‌",
     "Photo suggestions" : "Photo suggestions",
     "Track metadata" : "Track metadata",
+    "Unable to change the favourite state of the file" : "امکان تغییر حالت دلخواه فایل وجود ندارد",
+    "Error while loading the file data" : "خطا هنگام بارگیری داده های فایل",
     "Tags" : "برچسب ها",
     "Distance" : "فاصله",
     "Duration" : "مدت زمان",

@@ -26,6 +26,8 @@ OC.L10N.register(
     "Load more" : "Încarcă mai mult",
     "Devices" : "Dispozitive",
     "Favorite" : "Favorite",
+    "Unable to change the favourite state of the file" : "Nu s-a putut schimba starea fișierelor favorite",
+    "Error while loading the file data" : "A apărut o eroare în timpul încărcării datele din fișier",
     "Tags" : "Etichete",
     "Duration" : "Durată",
     "Name" : "Nume",

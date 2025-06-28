@@ -122,6 +122,8 @@ OC.L10N.register(
     "Favorite" : "Favoritt",
     "Photo suggestions" : "Bildeforslag",
     "Track metadata" : "Spor metadata",
+    "Unable to change the favourite state of the file" : "Kan ikke endre favorittstatus til filen",
+    "Error while loading the file data" : "Feil ved lasting av fildata",
     "Tags" : "Merkelapper",
     "Distance" : "Distanse",
     "Duration" : "Varighet",

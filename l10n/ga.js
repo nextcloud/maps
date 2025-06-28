@@ -123,6 +123,8 @@ OC.L10N.register(
     "Favorite" : "is fearr leat",
     "Photo suggestions" : "Moltaí grianghraf",
     "Track metadata" : "Rianaigh meiteashonraí",
+    "Unable to change the favourite state of the file" : "Ní féidir staid an chomhaid is fearr leat a athrú",
+    "Error while loading the file data" : "Earráid agus sonraí an chomhaid á lódáil",
     "Tags" : "Clibeanna",
     "Distance" : "Fad",
     "Duration" : "Fad",

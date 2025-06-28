@@ -111,6 +111,8 @@ OC.L10N.register(
     "Tracks" : "Tracce",
     "Devices" : "Dispositivi",
     "Favorite" : "Preferito",
+    "Unable to change the favourite state of the file" : "Impossibile cambiare lo stato di preferito del file",
+    "Error while loading the file data" : "Errore durante il caricamento del file di dati",
     "Tags" : "Etichette",
     "Distance" : "Distanza",
     "Duration" : "Durata",

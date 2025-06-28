@@ -25,6 +25,8 @@ OC.L10N.register(
     "Quit" : "Thoát",
     "Load more" : "Tải thêm",
     "Favorite" : "Ưa thích",
+    "Unable to change the favourite state of the file" : "Không thể thay đổi trạng thái yêu thích của tệp",
+    "Error while loading the file data" : "Lỗi xảy ra trong khi tải dữ liệu tệp",
     "Tags" : "Nhãn",
     "Duration" : "Khoảng thời gian",
     "End" : "Kết thúc",

@@ -120,6 +120,8 @@ OC.L10N.register(
     "Favorite" : "Egin gogoko",
     "Photo suggestions" : "Argazki iradokizunak",
     "Track metadata" : "Ibilbidearen metadatuak",
+    "Unable to change the favourite state of the file" : "Ezin da fitxategiaren gogoko egoera aldatu",
+    "Error while loading the file data" : "Errorea fitxategiaren datuak kargatzerakoan",
     "Tags" : "Etiketak",
     "Distance" : "Distantzia",
     "Duration" : "Iraupena",

@@ -106,6 +106,8 @@ OC.L10N.register(
     "Tracks" : "Routes",
     "Devices" : "Apparaten",
     "Favorite" : "Favoriet",
+    "Unable to change the favourite state of the file" : "Niet mogelijk om favoriet status van het bestand te wijzigen",
+    "Error while loading the file data" : "Fout bij het lezen van de bestandsgegevens",
     "Tags" : "Tags",
     "Distance" : "Afstand",
     "Duration" : "Duur",

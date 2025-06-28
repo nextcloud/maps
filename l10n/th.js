@@ -38,6 +38,8 @@ OC.L10N.register(
     "Quit" : "ออก",
     "Devices" : "อุปกรณ์",
     "Favorite" : "รายการโปรด",
+    "Unable to change the favourite state of the file" : "ไม่สามารถเปลี่ยนสถานะรายการโปรดของไฟล์",
+    "Error while loading the file data" : "ข้อผิดพลาดขณะโหลดข้อมูลไฟล์",
     "Tags" : "แท็ก",
     "Name" : "ชื่อ",
     "Add" : "เพิ่ม",

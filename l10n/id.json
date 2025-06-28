@@ -21,6 +21,8 @@
     "Select all" : "Pilih semua",
     "Quit" : "Keluar",
     "Favorite" : "Favorit",
+    "Unable to change the favourite state of the file" : "Gagal mengubah status favorit berkas",
+    "Error while loading the file data" : "Galat pemuatan data berkas",
     "Tags" : "Tag",
     "End" : "Selesai",
     "Name" : "Nama",

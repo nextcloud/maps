@@ -121,6 +121,8 @@
     "Favorite" : "收藏",
     "Photo suggestions" : "照片建议",
     "Track metadata" : "轨迹元数据",
+    "Unable to change the favourite state of the file" : "无法修改文件的收藏状态",
+    "Error while loading the file data" : "加载文件数据时出错",
     "Tags" : "标签",
     "Distance" : "距离",
     "Duration" : "时长",

@@ -121,6 +121,8 @@
     "Favorite" : "Favorisieren",
     "Photo suggestions" : "Foto-Vorschläge",
     "Track metadata" : "Metadata verfolgen",
+    "Unable to change the favourite state of the file" : "Der Favorisiert-Status der Datei konnte nicht geändert werden",
+    "Error while loading the file data" : "Fehler beim Laden der Datei-Daten",
     "Tags" : "Schlagworte",
     "Distance" : "Entfernung",
     "Duration" : "Dauer",

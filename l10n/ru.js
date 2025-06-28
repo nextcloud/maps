@@ -123,6 +123,8 @@ OC.L10N.register(
     "Favorite" : "В избранное",
     "Photo suggestions" : "Предложения по фотографиям",
     "Track metadata" : "Отслеживать метаданные",
+    "Unable to change the favourite state of the file" : "Не удалось изменить состояние «избранный» этого файла.",
+    "Error while loading the file data" : "Не удалось загрузить данные файла",
     "Tags" : "Метки",
     "Distance" : "Расстояние",
     "Duration" : "Продолжительность",

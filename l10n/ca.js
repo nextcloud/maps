@@ -61,6 +61,8 @@ OC.L10N.register(
     "Tracks" : "Trajectes",
     "Devices" : "Dispositius",
     "Favorite" : "Preferit",
+    "Unable to change the favourite state of the file" : "No s'ha pogut canviar l'estat de preferit del fitxer",
+    "Error while loading the file data" : "S'ha produït un error en carregar la informació del fitxer",
     "Tags" : "Etiquetes",
     "Distance" : "Distància",
     "Duration" : "Durada",

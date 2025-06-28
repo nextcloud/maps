@@ -123,6 +123,8 @@ OC.L10N.register(
     "Favorite" : "Sık kullanılan yerlere ekle",
     "Photo suggestions" : "Fotoğraf önerileri",
     "Track metadata" : "Rota üst verileri",
+    "Unable to change the favourite state of the file" : "Dosyanın sık kullanılan durumu değiştirilemedi",
+    "Error while loading the file data" : "Dosya verileri yüklenirken sorun çıktı",
     "Tags" : "Etiketler",
     "Distance" : "Uzaklık",
     "Duration" : "Süre",

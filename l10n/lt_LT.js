@@ -57,6 +57,8 @@ OC.L10N.register(
     "Load more" : "Įkelti daugiau",
     "Devices" : "Įrenginiai",
     "Favorite" : "Mėgstamas",
+    "Unable to change the favourite state of the file" : "Nepavyksta pakeisti failo Lankomiausiųjų būsenos",
+    "Error while loading the file data" : "Klaida įkeliant failo duomenis",
     "Tags" : "Žymos",
     "Distance" : "Atstumas",
     "Duration" : "Trukmė",

@@ -27,6 +27,8 @@ OC.L10N.register(
     "Load more" : "Cargar más",
     "Devices" : "Dispositivos",
     "Favorite" : "Marcar como favorito",
+    "Unable to change the favourite state of the file" : "No se ha podido cambiar el estado de favorito del fichero",
+    "Error while loading the file data" : "Error al cargar los datos del archivo",
     "Tags" : "Etiquetas",
     "Distance" : "Distancia",
     "Duration" : "Duración",

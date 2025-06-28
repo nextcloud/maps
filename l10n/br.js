@@ -19,6 +19,8 @@ OC.L10N.register(
     "Select all" : "Dibab pep tra",
     "Quit" : "Kuitaat",
     "Favorite" : "Pennrollañ",
+    "Unable to change the favourite state of the file" : "Dibosupl eo cheñch stad pennroll ar restr",
+    "Error while loading the file data" : "Ur fazi zo bet en ur gargañ roadennoùar restr",
     "Tags" : "Klavioù",
     "Name" : "Anv",
     "Add" : "Ouzhpennañ",

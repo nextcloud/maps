@@ -53,6 +53,8 @@
     "Tracks" : "追跡",
     "Devices" : "端末",
     "Favorite" : "お気に入り",
+    "Unable to change the favourite state of the file" : "ファイルのお気に入りの状態を変更できません",
+    "Error while loading the file data" : "ファイルデータの読み込み中にエラーが発生しました",
     "Tags" : "タグ",
     "Distance" : "距離",
     "Duration" : "期間",

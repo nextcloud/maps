@@ -18,6 +18,7 @@ OC.L10N.register(
     "Select all" : "Chagua zote",
     "Load more" : "Pakia zaidi",
     "Favorite" : "Kipendwa",
+    "Error while loading the file data" : "Hitilafu wakati wa kupakia data za faili",
     "Tags" : "Maoni",
     "Duration" : "Muda",
     "Name" : "Jina",

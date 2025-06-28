@@ -62,6 +62,8 @@ OC.L10N.register(
     "Devices" : "Dispositivos",
     "Show localized photos" : "Mustra is fotografias localizadas",
     "Favorite" : "Preferidu",
+    "Unable to change the favourite state of the file" : "Non faghet a cambiare s'istadu de preferidu de s'archìviu",
+    "Error while loading the file data" : "Errore in su carrigamentu de is datos de s'archìviu",
     "Tags" : "Etichetas",
     "Distance" : "Distàntzia",
     "Duration" : "Durada",

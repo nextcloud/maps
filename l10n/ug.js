@@ -122,6 +122,8 @@ OC.L10N.register(
     "Favorite" : "يىغقۇچ",
     "Photo suggestions" : "رەسىم تەكلىپلىرى",
     "Track metadata" : "مېتا سانلىق مەلۇماتنى ئىز قوغلاڭ",
+    "Unable to change the favourite state of the file" : "ھۆججەتنىڭ ياقتۇرىدىغان ھالىتىنى ئۆزگەرتەلمىدى",
+    "Error while loading the file data" : "ھۆججەت سانلىق مەلۇماتلىرىنى يۈكلەۋاتقاندا خاتالىق",
     "Tags" : "بەلگەلەر",
     "Distance" : "ئارىلىق",
     "Duration" : "Duration",

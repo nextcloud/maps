@@ -122,6 +122,8 @@ OC.L10N.register(
     "Favorite" : "Favoris",
     "Photo suggestions" : "Suggestions de photos",
     "Track metadata" : "Métadonnées de la trace",
+    "Unable to change the favourite state of the file" : "Impossible de modifier l'état favori du fichier",
+    "Error while loading the file data" : "Erreur lors du chargement du fichier de données",
     "Tags" : "Étiquettes",
     "Distance" : "Distance",
     "Duration" : "Durée",

@@ -25,6 +25,8 @@ OC.L10N.register(
     "Quit" : "Forlasi",
     "Devices" : "Aparatoj",
     "Favorite" : "Pliŝatati",
+    "Unable to change the favourite state of the file" : "Ne eblas ŝanĝi la staton pri pliŝatataĵo de la dosiero",
+    "Error while loading the file data" : "Eraro dum ŝargo de la dosierdatumoj",
     "Tags" : "Etikedoj",
     "End" : "Fino",
     "Name" : "Nomo",

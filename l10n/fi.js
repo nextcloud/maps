@@ -99,6 +99,8 @@ OC.L10N.register(
     "Devices" : "Laitteet",
     "Favorite" : "Suosikki",
     "Photo suggestions" : "Kuvaehdotukset",
+    "Unable to change the favourite state of the file" : "Suosikki-tilan muuttaminen epäonnistui.",
+    "Error while loading the file data" : "Virhe tiedostoa ladatessa",
     "Tags" : "Tunnisteet",
     "Distance" : "Etäisyys",
     "Duration" : "Kesto",

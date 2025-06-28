@@ -123,6 +123,8 @@ OC.L10N.register(
     "Favorite" : "Obľúbené",
     "Photo suggestions" : "Návrhy fotiek",
     "Track metadata" : "Sledovať metadáta",
+    "Unable to change the favourite state of the file" : "Nie je možné zmeniť stav „obľúbené“ daného súboru",
+    "Error while loading the file data" : "Chyba pri načítaní údajov súboru",
     "Tags" : "Štítky",
     "Distance" : "Vzdialenosť",
     "Duration" : "Trvanie",

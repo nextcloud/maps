@@ -119,6 +119,8 @@ OC.L10N.register(
     "Favorite" : "Priljubljeno",
     "Photo suggestions" : "Predlogi fotografij",
     "Track metadata" : "Metapodatki sledi",
+    "Unable to change the favourite state of the file" : "Ni mogoče spremeniti stanja priljubljenosti datoteke",
+    "Error while loading the file data" : "Prišlo je do napake med nalaganjem podatkov računa",
     "Tags" : "Oznake",
     "Distance" : "Razdalja",
     "Duration" : "Trajanje",

@@ -58,6 +58,8 @@ OC.L10N.register(
     "Load more" : "Učitaj više",
     "Devices" : "Uređaji",
     "Favorite" : "Favorit",
+    "Unable to change the favourite state of the file" : "Nije moguće promijeniti status favorita datoteke",
+    "Error while loading the file data" : "Pogreška pri učitavanju podataka iz datoteke",
     "Tags" : "Oznake",
     "Distance" : "Udaljenost",
     "Duration" : "Trajanje",

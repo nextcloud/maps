@@ -36,6 +36,8 @@ OC.L10N.register(
     "Load more" : "Hent flere",
     "Devices" : "Enhed",
     "Favorite" : "Favorit",
+    "Unable to change the favourite state of the file" : "Kan ikke ændre favorittilstanden for filen",
+    "Error while loading the file data" : "Fejl under indlæsning af fildata",
     "Tags" : "Tags",
     "Duration" : "Varighed",
     "End" : "Stop",

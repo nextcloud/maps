@@ -123,6 +123,8 @@ OC.L10N.register(
     "Favorite" : "Lemmik",
     "Photo suggestions" : "Fotosoovitused",
     "Track metadata" : "Raja metateave",
+    "Unable to change the favourite state of the file" : "Faili olekut lemmikuna ei õnnestu muuta",
+    "Error while loading the file data" : "Viga faili andmete laadimisel",
     "Tags" : "Sildid",
     "Distance" : "Vahemaa",
     "Duration" : "Kestus",

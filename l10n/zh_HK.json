@@ -121,6 +121,8 @@
     "Favorite" : "我的最愛",
     "Photo suggestions" : "照片建議",
     "Track metadata" : "記錄元數據",
+    "Unable to change the favourite state of the file" : "無法更改檔案的最愛狀態",
+    "Error while loading the file data" : "載入檔案資料失敗",
     "Tags" : "標籤",
     "Distance" : "距離",
     "Duration" : "歷時",

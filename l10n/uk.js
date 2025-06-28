@@ -120,6 +120,8 @@ OC.L10N.register(
     "Favorite" : "Додати зірочку",
     "Photo suggestions" : "Пропозиції щодо фотографій",
     "Track metadata" : "Метадані про трек",
+    "Unable to change the favourite state of the file" : "Неможливо змінити стан \"із зірочкою\" для цього файла",
+    "Error while loading the file data" : "Помилка під час отримання даних щодо файлу",
     "Tags" : "Мітки",
     "Distance" : "Дистанція",
     "Duration" : "Тривалість",

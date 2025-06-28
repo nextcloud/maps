@@ -82,6 +82,8 @@
     "Load more" : "더 불러오기",
     "Devices" : "장치",
     "Favorite" : "즐겨찾기",
+    "Unable to change the favourite state of the file" : "파일의 즐겨찾기 상태를 변경할 수 없음",
+    "Error while loading the file data" : "파일 데이터를 불러오는 중 오류 발생",
     "Tags" : "태그",
     "Distance" : "거리",
     "Duration" : "길이",

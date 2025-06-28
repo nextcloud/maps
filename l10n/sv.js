@@ -61,6 +61,8 @@ OC.L10N.register(
     "Load more" : "Ladda mer",
     "Devices" : "Enheter",
     "Favorite" : "Favorit",
+    "Unable to change the favourite state of the file" : "Kan inte ändra filens favoritstatus",
+    "Error while loading the file data" : "Fel vid inläsning av fildata",
     "Tags" : "Taggar",
     "Distance" : "Distans",
     "Duration" : "Varaktighet",

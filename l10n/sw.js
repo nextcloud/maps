@@ -6,6 +6,7 @@ OC.L10N.register(
     "Zoom" : "Kuza",
     "Export" : "Safirisha",
     "Delete" : "Futa",
+    "Delete all" : "Futa zote",
     "Cancel" : "Cancel",
     "Rename" : "Ipe jina jipya",
     "Delete share link" : "Futa kiungo cha kushiriki",
@@ -25,12 +26,14 @@ OC.L10N.register(
     "Add" : "Ongeza",
     "Add to favorites" : "Ongeza kwenye pendwa",
     "Home" : "Nyumbani",
+    "Device" : "Kifaa",
     "Date" : "Tarehe",
     "Update" : "Sasisha",
     "Yes" : "Ndiyo",
     "Open" : "Fungua",
     "until {date}" : "mpaka {date}",
     "Search" : "Tafuta",
-    "File" : "Faili"
+    "File" : "Faili",
+    "Phone" : "Simu"
 },
 "nplurals=2; plural=(n != 1);");

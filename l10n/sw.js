@@ -15,6 +15,8 @@ OC.L10N.register(
     "Comment" : "Maoni",
     "Location" : "Mahali/eneo",
     "Save" : "Hifadhi",
+    "Share this location" : "Shirikisha eneo hili",
+    "Shared location" : "Eneo lililoshirikishwa",
     "Close" : "Funga",
     "Select all" : "Chagua zote",
     "Load more" : "Pakia zaidi",

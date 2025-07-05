@@ -1,6 +1,7 @@
 OC.L10N.register(
     "maps",
     {
+    "File does not exist" : "File tidak ada",
     "File not found" : "Berkas tidak ditemukan",
     "Personal" : "Personal",
     "Maps" : "Peta",

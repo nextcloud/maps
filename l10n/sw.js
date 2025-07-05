@@ -10,6 +10,7 @@ OC.L10N.register(
     "Cancel" : "Cancel",
     "Rename" : "Ipe jina jipya",
     "Delete share link" : "Futa kiungo cha kushiriki",
+    "Open folder" : "Fungua folda",
     "Share" : "Shirikisha",
     "Category" : "Kipengele",
     "Comment" : "Maoni",
@@ -20,6 +21,7 @@ OC.L10N.register(
     "Close" : "Funga",
     "Select all" : "Chagua zote",
     "Load more" : "Pakia zaidi",
+    "Devices" : "Vifaa",
     "Favorite" : "Kipendwa",
     "Error while loading the file data" : "Hitilafu wakati wa kupakia data za faili",
     "Tags" : "Maoni",
@@ -36,6 +38,7 @@ OC.L10N.register(
     "until {date}" : "mpaka {date}",
     "Search" : "Tafuta",
     "File" : "Faili",
-    "Phone" : "Simu"
+    "Phone" : "Simu",
+    "Failed to save settings" : "Failed to save settings"
 },
 "nplurals=2; plural=(n != 1);");

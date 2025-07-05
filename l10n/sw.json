@@ -8,6 +8,7 @@
     "Cancel" : "Cancel",
     "Rename" : "Ipe jina jipya",
     "Delete share link" : "Futa kiungo cha kushiriki",
+    "Open folder" : "Fungua folda",
     "Share" : "Shirikisha",
     "Category" : "Kipengele",
     "Comment" : "Maoni",
@@ -18,6 +19,7 @@
     "Close" : "Funga",
     "Select all" : "Chagua zote",
     "Load more" : "Pakia zaidi",
+    "Devices" : "Vifaa",
     "Favorite" : "Kipendwa",
     "Error while loading the file data" : "Hitilafu wakati wa kupakia data za faili",
     "Tags" : "Maoni",
@@ -34,6 +36,7 @@
     "until {date}" : "mpaka {date}",
     "Search" : "Tafuta",
     "File" : "Faili",
-    "Phone" : "Simu"
+    "Phone" : "Simu",
+    "Failed to save settings" : "Failed to save settings"
 },"pluralForm" :"nplurals=2; plural=(n != 1);"
 }

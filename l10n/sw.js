@@ -10,6 +10,7 @@ OC.L10N.register(
     "Cancel" : "Cancel",
     "Rename" : "Ipe jina jipya",
     "Delete share link" : "Futa kiungo cha kushiriki",
+    "Copied!" : "Copied!",
     "Open folder" : "Fungua folda",
     "Share" : "Shirikisha",
     "Category" : "Kipengele",

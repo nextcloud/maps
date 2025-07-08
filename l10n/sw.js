@@ -40,6 +40,7 @@ OC.L10N.register(
     "Search" : "Tafuta",
     "File" : "Faili",
     "Phone" : "Simu",
-    "Failed to save settings" : "Failed to save settings"
+    "Failed to save settings" : "Failed to save settings",
+    "Metadata" : "Metadata"
 },
 "nplurals=2; plural=(n != 1);");

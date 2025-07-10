@@ -416,12 +416,8 @@ class FavoritesController extends Controller {
 				return new DataResponse($this->l->t('Share was already on map'));
 			}
 		}
-		$shareData = [
-			'id' => count($data),
-			'token' => $share->getToken(),
-			'category' => $share->getCategory()
-		];
-		$data[] = $shareData;
+		$share->id = count($data);
+		$data[] = $share;
 		$file->putContent(json_encode($data, JSON_PRETTY_PRINT));
 		return new DataResponse('Done');
 	}

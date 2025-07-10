@@ -601,4 +601,67 @@ class FavoritesControllerTest extends \PHPUnit\Framework\TestCase {
 		$this->assertContains($newCategoryName, $shareNames);
 		$this->assertNotContains($categoryName, $shareNames);
 	}
+
+	public function testAddMultipleSharedCategoriesToMap() {
+		// Create a custom map folder for testing
+		$this->mapFolder = $this->createMapFolder();
+		$targetMapId = $this->mapFolder->getId();
+
+		// Create two different categories with favorites
+		$categoryName1 = 'testcat1_' . uniqid();
+		$categoryName2 = 'testcat2_' . uniqid();
+
+		// Add favorites to both categories
+		$id1 = $this->favoritesController
+			->addFavorite('Test Favorite 1', 10.1, 20.1, $categoryName1, 'Comment 1', null)
+			->getData()['id'];
+
+		$id2 = $this->favoritesController
+			->addFavorite('Test Favorite 2', 10.2, 20.2, $categoryName2, 'Comment 2', null)
+			->getData()['id'];
+
+		// Share both categories
+		$shareResponse1 = $this->favoritesController->shareCategory($categoryName1);
+		$shareResponse2 = $this->favoritesController->shareCategory($categoryName2);
+
+		$this->assertEquals(200, $shareResponse1->getStatus());
+		$this->assertEquals(200, $shareResponse2->getStatus());
+
+		// Try to add both shared categories to the same custom map
+		// This should work now that we fixed the bug
+		$addResponse1 = $this->favoritesController->addShareCategoryToMap($categoryName1, $targetMapId);
+		$this->assertEquals(200, $addResponse1->getStatus());
+		$this->assertEquals('Done', $addResponse1->getData());
+
+		// The second addition should NOT fail (this was the bug)
+		$addResponse2 = $this->favoritesController->addShareCategoryToMap($categoryName2, $targetMapId);
+		$this->assertEquals(200, $addResponse2->getStatus());
+		$this->assertEquals('Done', $addResponse2->getData());
+
+		// Verify that the .favorite_shares.json file contains both categories
+		$sharesFile = $this->mapFolder->get('.favorite_shares.json');
+		$sharesData = json_decode($sharesFile->getContent(), true);
+		$this->assertEquals(2, count($sharesData));
+
+		// Verify the tokens are different and correct categories are present
+		$categoryTokens = [];
+		foreach ($sharesData as $share) {
+			$categoryTokens[$share['category']] = $share['token'];
+		}
+
+		$this->assertArrayHasKey($categoryName1, $categoryTokens);
+		$this->assertArrayHasKey($categoryName2, $categoryTokens);
+		$this->assertNotEquals($categoryTokens[$categoryName1], $categoryTokens[$categoryName2]);
+
+		// Test adding the same category again should return "Share was already on map"
+		$addResponse3 = $this->favoritesController->addShareCategoryToMap($categoryName1, $targetMapId);
+		$this->assertEquals(200, $addResponse3->getStatus());
+		$this->assertEquals('Share was already on map', $addResponse3->getData());
+
+		// Clean up
+		$this->favoritesController->deleteFavorite($id1);
+		$this->favoritesController->deleteFavorite($id2);
+		$this->favoritesController->unShareCategory($categoryName1);
+		$this->favoritesController->unShareCategory($categoryName2);
+	}
 }

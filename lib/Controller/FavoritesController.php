@@ -412,7 +412,7 @@ class FavoritesController extends Controller {
 		}
 		$data = json_decode($file->getContent(), true);
 		foreach ($data as $s) {
-			if ($s->token = $share->token) {
+			if ($s['token'] === $share->getToken()) {
 				return new DataResponse($this->l->t('Share was already on map'));
 			}
 		}

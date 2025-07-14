@@ -190,7 +190,7 @@ class AddressService {
 			$query_adr = implode(', ', $splitted_adr);
 
 			$result_json = @file_get_contents(
-				'https://nominatim.openstreetmap.org/search.php?q=' . urlencode($query_adr) . '&format=json',
+				'https://nominatim.openstreetmap.org/search.php?q=' . urlencode($query_adr) . '&format=jsonv2',
 				false,
 				$context
 			);
@@ -202,12 +202,9 @@ class AddressService {
 					$lat = null;
 					$lon = null;
 					foreach ($result as $addr) {
-						if (key_exists('lat', $addr) and
-							key_exists('lon', $addr)
-						) {
+						if (key_exists('lat', $addr) and key_exists('lon', $addr)) {
 							if (is_null($lat) or
-								(key_exists('class', $addr) and
-									($addr['class'] == 'building' or $addr['class'] == 'place'))) {
+								 (key_exists('category', $addr) and in_array($addr['category'], ['place', 'building', 'amenity']))) {
 								$lat = $addr['lat'];
 								$lon = $addr['lon'];
 							}

@@ -413,7 +413,7 @@ class ContactsController extends Controller {
 					'URI' => $c['URI'],
 					'UID' => $c['UID'],
 					'BOOKID' => $c['addressbook-key'],
-					'READONLY' => $booksReadOnly[$c['addressbook-key']],
+					'READONLY' => $booksReadOnly[$c['addressbook-key']] ?? '',
 					'BOOKURI' => $addressBookUri,
 					'HAS_PHOTO' => (isset($c['PHOTO'])),
 					'HAS_PHOTO2' => (isset($c['PHOTO']) && $c['PHOTO'] !== ''),

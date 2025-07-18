@@ -63,7 +63,7 @@ jobs:
             - name: Set up Node
               uses: actions/setup-node@v3
               with:
-                  node-version: 12.x
+                  node-version: 20.x
             - name: npm ci
               run: npm ci
         env:

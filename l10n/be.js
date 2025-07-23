@@ -11,6 +11,7 @@ OC.L10N.register(
     "Sort by date" : "Сартаваць па даце",
     "Save" : "Захаваць",
     "Close" : "Закрыць",
+    "Favorite" : "Абранае",
     "Tags" : "Тэгі",
     "Name" : "Назва",
     "Add" : "Дадаць",

@@ -9,6 +9,7 @@ OC.L10N.register(
     "Delete all" : "Futa zote",
     "Cancel" : "Cancel",
     "Link copied" : "Kiungo kimenakiliwa",
+    "Import" : "Import",
     "Rename" : "Ipe jina jipya",
     "Delete share link" : "Futa kiungo cha kushiriki",
     "Copied!" : "Copied!",

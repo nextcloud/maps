@@ -1,8 +1,12 @@
 OC.L10N.register(
     "maps",
     {
+    "No such device" : "Няма такой прылады",
+    "Error sharing device" : "Памылка абагульвання прылады",
     "File not found" : "Файл не знойдзены",
     "Delete" : "Выдаліць",
+    "My devices" : "Мае прылады",
+    "Import devices" : "Імпарт прылад",
     "Cancel" : "Скасаваць",
     "Rename" : "Перайменаваць",
     "Copied!" : "Скапіявана!",
@@ -11,17 +15,20 @@ OC.L10N.register(
     "Sort by date" : "Сартаваць па даце",
     "Save" : "Захаваць",
     "Close" : "Закрыць",
+    "Devices" : "Прылады",
     "Favorite" : "Абранае",
     "Tags" : "Тэгі",
     "Name" : "Назва",
     "Add" : "Дадаць",
     "Add to favorites" : "У абранае",
     "Home" : "Дадому",
+    "Device" : "Прылада",
     "Date" : "Дата",
     "Yes" : "Так",
     "Open" : "Адкрыць",
     "Search" : "Пошук",
     "File" : "Файл",
-    "Destination" : "Прызначэнне"
+    "Destination" : "Прызначэнне",
+    "Unknown device type" : "Невядомы тып прылады"
 },
 "nplurals=4; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<12 || n%100>14) ? 1 : n%10==0 || (n%10>=5 && n%10<=9) || (n%100>=11 && n%100<=14)? 2 : 3);");

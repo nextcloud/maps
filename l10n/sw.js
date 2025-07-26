@@ -43,7 +43,9 @@ OC.L10N.register(
     "Search" : "Tafuta",
     "File" : "Faili",
     "Phone" : "Simu",
+    "Default" : "Chaguo msingi",
     "Failed to save settings" : "Failed to save settings",
-    "Metadata" : "Metadata"
+    "Metadata" : "Metadata",
+    "Bar" : "Bar"
 },
 "nplurals=2; plural=(n != 1);");

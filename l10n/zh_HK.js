@@ -325,6 +325,7 @@ OC.L10N.register(
     "pace: " : "節奏： ",
     "You are here: " : "您在此：",
     "mph" : "英里/小時",
+    "°F" : "°F",
     "Temp: " : "溫度：",
     "{nb} favorites imported from {path}" : "{nb} 收藏從 {path} 導入",
     "Failed to import favorites" : "導入收藏失敗",

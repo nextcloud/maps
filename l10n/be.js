@@ -8,6 +8,7 @@ OC.L10N.register(
     "My devices" : "Мае прылады",
     "Import devices" : "Імпарт прылад",
     "Cancel" : "Скасаваць",
+    "Link copied" : "Спасылка скапіявана",
     "Import" : "Імпарт",
     "Rename" : "Перайменаваць",
     "Copied!" : "Скапіявана!",

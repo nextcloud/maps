@@ -1,4 +1,5 @@
 { "translations": {
+    "File does not exist" : "File does not exist",
     "File not found" : "Faili halipatikani",
     "Personal" : "Binafsi",
     "Zoom" : "Kuza",
@@ -32,6 +33,7 @@
     "Add" : "Ongeza",
     "Add to favorites" : "Ongeza kwenye pendwa",
     "Home" : "Nyumbani",
+    "Work" : "Kazi",
     "Device" : "Kifaa",
     "Date" : "Tarehe",
     "Update" : "Sasisha",
@@ -44,6 +46,7 @@
     "Default" : "Chaguo msingi",
     "Failed to save settings" : "Failed to save settings",
     "Metadata" : "Metadata",
+    "Restaurant" : "Restaurant",
     "Bar" : "Bar"
 },"pluralForm" :"nplurals=2; plural=(n != 1);"
 }

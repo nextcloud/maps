@@ -1,6 +1,7 @@
 OC.L10N.register(
     "maps",
     {
+    "File does not exist" : "File does not exist",
     "File not found" : "Faili halipatikani",
     "Personal" : "Binafsi",
     "Zoom" : "Kuza",
@@ -34,6 +35,7 @@ OC.L10N.register(
     "Add" : "Ongeza",
     "Add to favorites" : "Ongeza kwenye pendwa",
     "Home" : "Nyumbani",
+    "Work" : "Kazi",
     "Device" : "Kifaa",
     "Date" : "Tarehe",
     "Update" : "Sasisha",
@@ -46,6 +48,7 @@ OC.L10N.register(
     "Default" : "Chaguo msingi",
     "Failed to save settings" : "Failed to save settings",
     "Metadata" : "Metadata",
+    "Restaurant" : "Restaurant",
     "Bar" : "Bar"
 },
 "nplurals=2; plural=(n != 1);");

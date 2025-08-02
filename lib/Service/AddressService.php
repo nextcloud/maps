@@ -190,7 +190,7 @@ class AddressService {
 			$query_adr = implode(', ', $splitted_adr);
 
 			$result_json = @file_get_contents(
-				'https://nominatim.openstreetmap.org/search.php?q=' . urlencode($query_adr) . '&format=jsonv2',
+				'https://nominatim.openstreetmap.org/search?q=' . urlencode($query_adr) . '&format=jsonv2',
 				false,
 				$context
 			);

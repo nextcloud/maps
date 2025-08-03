@@ -44,6 +44,8 @@ OC.L10N.register(
     "until {date}" : "mpaka {date}",
     "Search" : "Tafuta",
     "File" : "Faili",
+    "Start" : "Start",
+    "min" : "dakika",
     "Phone" : "Simu",
     "Default" : "Chaguo msingi",
     "Failed to save settings" : "Failed to save settings",

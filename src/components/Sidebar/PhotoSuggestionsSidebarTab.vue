@@ -297,10 +297,10 @@ export default {
 				const token = getToken()
 				if (token) {
 					// For public shares, pass the share token to the Viewer
-					OCA.Viewer.open({ 
-						path: photo.path, 
+					OCA.Viewer.open({
+						path: photo.path,
 						list: this.photoSuggestionsSelected,
-						shareToken: token
+						shareToken: token,
 					})
 				} else {
 					// For logged-in users, use the standard approach

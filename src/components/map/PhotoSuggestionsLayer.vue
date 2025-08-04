@@ -320,10 +320,10 @@ export default {
 			const token = getToken()
 			if (token) {
 				// For public shares, pass the share token to the Viewer
-				OCA.Viewer.open({ 
-					path: photoList[0].path, 
+				OCA.Viewer.open({
+					path: photoList[0].path,
 					list: photoList,
-					shareToken: token
+					shareToken: token,
 				})
 			} else {
 				// For logged-in users, use the standard approach
@@ -396,10 +396,10 @@ export default {
 				const token = getToken()
 				if (token) {
 					// For public shares, pass the share token to the Viewer
-					OCA.Viewer.open({ 
-						path: photo.path, 
+					OCA.Viewer.open({
+						path: photo.path,
 						list: [photo],
-						shareToken: token
+						shareToken: token,
 					})
 				} else {
 					// For logged-in users, use the standard approach

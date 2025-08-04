@@ -317,7 +317,18 @@ export default {
 				return a.dateTaken - b.dateTaken
 			})
 			this.$emit('open-sidebar', photoList[0].path)
-			OCA.Viewer.open({ path: photoList[0].path, list: photoList })
+			const token = getToken()
+			if (token) {
+				// For public shares, pass the share token to the Viewer
+				OCA.Viewer.open({ 
+					path: photoList[0].path, 
+					list: photoList,
+					shareToken: token
+				})
+			} else {
+				// For logged-in users, use the standard approach
+				OCA.Viewer.open({ path: photoList[0].path, list: photoList })
+			}
 			this.map.closePopup()
 		},
 		getClusterMarkerIcon(cluster) {
@@ -382,7 +393,18 @@ export default {
 		},
 		viewPhoto(photo) {
 			if (OCA.Viewer && OCA.Viewer.open) {
-				OCA.Viewer.open({ path: photo.path, list: [photo] })
+				const token = getToken()
+				if (token) {
+					// For public shares, pass the share token to the Viewer
+					OCA.Viewer.open({ 
+						path: photo.path, 
+						list: [photo],
+						shareToken: token
+					})
+				} else {
+					// For logged-in users, use the standard approach
+					OCA.Viewer.open({ path: photo.path, list: [photo] })
+				}
 				this.map.closePopup()
 			}
 		},

@@ -39,6 +39,7 @@ OC.L10N.register(
     "Device" : "Kifaa",
     "Date" : "Tarehe",
     "Update" : "Sasisha",
+    "Select All" : "Select All",
     "Yes" : "Ndiyo",
     "Open" : "Fungua",
     "until {date}" : "mpaka {date}",

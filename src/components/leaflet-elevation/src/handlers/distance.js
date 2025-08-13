@@ -1,12 +1,12 @@
 export function Distance() {
 
-	const _ = L.Control.Elevation.Utils;
+	const _ = L.Control.Elevation.Utils
 
-	let opts     = this.options;
-	let distance = {};
+	const opts = this.options
+	const distance = {}
 
-	opts.distanceFactor = opts.imperial ? this.__mileFactor : (opts.distanceFactor || 1); // 1 km = (1000 m)
-	distance.label      = opts.imperial ? "mi" : opts.xLabel;
+	opts.distanceFactor = opts.imperial ? this.__mileFactor : (opts.distanceFactor || 1) // 1 km = (1000 m)
+	distance.label = opts.imperial ? 'mi' : opts.xLabel
 
 	return {
 		name: 'distance',
@@ -18,29 +18,29 @@ export function Distance() {
 		// stats: { total: _.iSum },
 		onPointAdded: (distance, i) => this.track_info.distance = distance,
 		scale: opts.distance && {
-			axis    : "x",
-			position: "bottom",
-			scale   : "x", // this._chart._x,
-			labelY  : 25,
-			labelX  : () => this._width() + 6,
-			ticks   : () => _.clamp(this._chart._xTicks() / 2, [4, +Infinity]),
+			axis: 'x',
+			position: 'bottom',
+			scale: 'x', // this._chart._x,
+			labelY: 25,
+			labelX: () => this._width() + 6,
+			ticks: () => _.clamp(this._chart._xTicks() / 2, [4, +Infinity]),
 		},
 		grid: opts.distance && {
-			axis      : "x",
-			position  : "bottom",
-			scale     : "x" // this._chart._x,
+			axis: 'x',
+			position: 'bottom',
+			scale: 'x', // this._chart._x,
 		},
 		tooltip: opts.distance && {
 			name: 'x',
-			chart: (item) => L._("x: ") + _.round(item[opts.xAttr], opts.decimalsX) + " " + distance.label,
-			order: 20
+			chart: (item) => L._('x: ') + _.round(item[opts.xAttr], opts.decimalsX) + ' ' + distance.label,
+			order: 20,
 		},
 		summary: opts.distance && {
-			"totlen"  : {
-				label: "Total Length: ",
+			totlen: {
+				label: 'Total Length: ',
 				value: (track) => (track.distance || 0).toFixed(2) + '&nbsp;' + distance.label,
-				order: 10
-			}
-		}
-	};
+				order: 10,
+			},
+		},
+	}
 }

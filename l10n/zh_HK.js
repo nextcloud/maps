@@ -320,6 +320,8 @@ OC.L10N.register(
     "Settings were successfully saved" : "設定已儲存",
     "Failed to save settings" : "設定儲存失敗",
     "ft/s²" : "英尺/秒²",
+    "a: " : "增速：",
+    "cad: " : "終止：",
     "hr: " : "小時： ",
     "min/mi" : "分鐘/英里",
     "pace: " : "節奏： ",

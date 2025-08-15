@@ -250,16 +250,16 @@ export default {
 				const options = {}
 				if (type === 'graphhopperCar') {
 					options.urlParameters = {
-						// available ones : car, foot, bike, bike2, mtb, racingbike, motorcycle
-						vehicle: 'car',
+						// available ones : car, foot, bike, mtb, racingbike
+						profile: 'car',
 					}
 				} else if (type === 'graphhopperBike') {
 					options.urlParameters = {
-						vehicle: 'bike',
+						profile: 'bike',
 					}
 				} else if (type === 'graphhopperFoot') {
 					options.urlParameters = {
-						vehicle: 'foot',
+						profile: 'foot',
 					}
 				}
 				if (url) {

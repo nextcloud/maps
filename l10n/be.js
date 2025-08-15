@@ -27,6 +27,7 @@ OC.L10N.register(
     "Home" : "Дадому",
     "Device" : "Прылада",
     "Date" : "Дата",
+    "Update" : "Абнавіць",
     "Yes" : "Так",
     "Open" : "Адкрыць",
     "Search" : "Пошук",

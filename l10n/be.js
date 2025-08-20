@@ -15,6 +15,7 @@ OC.L10N.register(
     "Share" : "Абагуліць",
     "Sort by name" : "Сартаваць па назве",
     "Sort by date" : "Сартаваць па даце",
+    "Comment" : "Каментарый",
     "Save" : "Захаваць",
     "Close" : "Закрыць",
     "Devices" : "Прылады",

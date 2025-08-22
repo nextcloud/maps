@@ -35,6 +35,7 @@ OC.L10N.register(
     "Search" : "Пошук",
     "File" : "Файл",
     "Destination" : "Прызначэнне",
+    "Phone" : "Тэлефон",
     "Unknown device type" : "Невядомы тып прылады",
     "You are here: " : "Вы тут: ",
     "°F" : "°F"

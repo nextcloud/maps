@@ -1,7 +1,12 @@
 { "translations": {
     "No such device" : "Няма такой прылады",
+    "/Maps is not a directory" : "/Maps не з'яўляецца каталогам",
+    "/Maps directory is not writeable" : "Каталог /Maps недаступны для запісу",
+    "Impossible to create /Maps directory" : "Немагчыма стварыць каталог /Maps",
     "Error sharing device" : "Памылка абагульвання прылады",
     "File not found" : "Файл не знойдзены",
+    "Maps" : "Карты",
+    "Export" : "Экспарт",
     "Delete" : "Выдаліць",
     "My devices" : "Мае прылады",
     "Import devices" : "Імпарт прылад",
@@ -11,11 +16,13 @@
     "Rename" : "Перайменаваць",
     "Copied!" : "Скапіявана!",
     "Share" : "Абагуліць",
+    "My maps" : "Мае карты",
     "Sort by name" : "Сартаваць па назве",
     "Sort by date" : "Сартаваць па даце",
     "Comment" : "Каментарый",
     "Location" : "Месцазнаходжанне",
     "Save" : "Захаваць",
+    "Other maps" : "Іншыя карты",
     "Close" : "Закрыць",
     "Devices" : "Прылады",
     "Favorite" : "Абранае",
@@ -25,6 +32,7 @@
     "Add" : "Дадаць",
     "Add to favorites" : "У абранае",
     "Home" : "Дадому",
+    "Work" : "Праца",
     "Device" : "Прылада",
     "Date" : "Дата",
     "Update" : "Абнавіць",
@@ -36,6 +44,9 @@
     "Phone" : "Тэлефон",
     "Unknown device type" : "Невядомы тып прылады",
     "You are here: " : "Вы тут: ",
-    "°F" : "°F"
+    "°F" : "°F",
+    "Restaurant" : "Рэстаран",
+    "Public toilets" : "Грамадскія прыбіральні",
+    "Maps settings" : "Налады карт"
 },"pluralForm" :"nplurals=4; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<12 || n%100>14) ? 1 : n%10==0 || (n%10>=5 && n%10<=9) || (n%100>=11 && n%100<=14)? 2 : 3);"
 }

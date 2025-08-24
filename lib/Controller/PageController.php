@@ -131,6 +131,10 @@ class PageController extends Controller {
 						$cleanUrl .= ':' . $port;
 					}
 					$csp->addAllowedConnectDomain($cleanUrl);
+
+					if ($host === 'api.protomaps.com') {
+						$csp->addAllowedConnectDomain('https://protomaps.github.io');
+					}
 				}
 			}
 			//$csp->addAllowedConnectDomain('http://192.168.0.66:5000');

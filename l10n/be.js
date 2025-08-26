@@ -45,10 +45,13 @@ OC.L10N.register(
     "Search" : "Пошук",
     "File" : "Файл",
     "Destination" : "Прызначэнне",
+    "Nextcloud additional settings" : "Дадатковыя налады Nextcloud",
     "Phone" : "Тэлефон",
     "Unknown device type" : "Невядомы тып прылады",
+    "Failed to save settings" : "Не ўдалося захаваць налады",
     "You are here: " : "Вы тут: ",
     "°F" : "°F",
+    "Metadata" : "Метаданыя",
     "Restaurant" : "Рэстаран",
     "Public toilets" : "Грамадскія прыбіральні",
     "Maps settings" : "Налады карт"

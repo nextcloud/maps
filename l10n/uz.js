@@ -37,6 +37,7 @@ OC.L10N.register(
     "File" : "File",
     "right" : "right",
     "left" : "left",
+    "Default" : "Standart",
     "Failed to save settings" : "Sozlamalarni saqlab bo'lmadi",
     "Restaurant" : "Restoran",
     "Bar" : "Bar"

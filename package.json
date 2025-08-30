@@ -53,7 +53,7 @@
     "geojson": "^0.5.0",
     "leaflet": "^1.9.4",
     "leaflet-contextmenu": "^1.4.0",
-    "leaflet-control-geocoder": "^2.4.0",
+    "leaflet-control-geocoder": "^3.3.0",
     "leaflet-easybutton": "^2.4.0",
     "leaflet-mouse-position": "^1.0.4",
     "leaflet-routing-machine": "^3.2.12",

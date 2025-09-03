@@ -21,6 +21,7 @@ OC.L10N.register(
     "Add" : "Rnu",
     "Add to favorites" : "Rnu ismal",
     "Home" : "Asnubeg",
+    "Date" : "Azemz",
     "Yes" : "Oui",
     "Open" : "Ldi",
     "Search" : "Nadi",

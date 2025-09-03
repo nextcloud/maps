@@ -31,6 +31,7 @@ OC.L10N.register(
     "Other maps" : "Іншыя карты",
     "Close" : "Закрыць",
     "Select all" : "Выбраць усе",
+    "Quit" : "Выйсці",
     "Devices" : "Прылады",
     "Favorite" : "Абранае",
     "Error while loading the file data" : "Памылка пры загрузцы даных файла",

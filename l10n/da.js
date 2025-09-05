@@ -71,6 +71,7 @@ OC.L10N.register(
     "Metadata" : "Metadata",
     "Restaurant" : "Restaurant",
     "Bar" : "Bar",
+    "School" : "Skole",
     "Cinema" : "Biograf",
     "Hospital" : "Hospital",
     "Dentist" : "Tandlæge"

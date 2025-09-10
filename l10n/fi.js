@@ -233,6 +233,8 @@ OC.L10N.register(
     "Default" : "Oletus",
     "Settings were successfully saved" : "Asetukset tallennettiin onnistuneesti",
     "Failed to save settings" : "Asetusten tallentaminen epäonnistui",
+    "You are here: " : "Olet täällä: ",
+    "Temp: " : "Lämpötila: ",
     "{nb} favorites imported from {path}" : "{nb} suosikkia tuotu polusta {path}",
     "Failed to import favorites" : "Suosikkien tuominen epäonnistui",
     "View in Maps" : "Näytä karttasovelluksessa",

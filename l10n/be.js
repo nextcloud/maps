@@ -13,6 +13,7 @@ OC.L10N.register(
     "Delete" : "Выдаліць",
     "My devices" : "Мае прылады",
     "Import devices" : "Імпарт прылад",
+    "Delete all" : "Выдаліць усе",
     "Cancel" : "Скасаваць",
     "Link copied" : "Спасылка скапіявана",
     "Import" : "Імпарт",

@@ -50,7 +50,7 @@ OC.L10N.register(
     "Work" : "Arbejde",
     "Device" : "Enhed",
     "Date" : "Dato",
-    "Update" : "Opdater",
+    "Update" : "Opdatér",
     "Select All" : "Vælg alle",
     "Yes" : "Ja",
     "Open" : "Åbn",

@@ -14,6 +14,7 @@ OC.L10N.register(
     "Rename" : "Ipe jina jipya",
     "Delete share link" : "Futa kiungo cha kushiriki",
     "Copied!" : "Copied!",
+    "Copy share link" : "Copy share link",
     "Open folder" : "Fungua folda",
     "Share" : "Shirikisha",
     "Category" : "Kipengele",

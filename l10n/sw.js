@@ -39,6 +39,7 @@ OC.L10N.register(
     "Work" : "Kazi",
     "Device" : "Kifaa",
     "Date" : "Tarehe",
+    "No name" : "No name",
     "Update" : "Sasisha",
     "Select All" : "Select All",
     "Yes" : "Ndiyo",

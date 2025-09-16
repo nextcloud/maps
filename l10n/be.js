@@ -30,6 +30,8 @@ OC.L10N.register(
     "Comment" : "Каментарый",
     "Location" : "Месцазнаходжанне",
     "Save" : "Захаваць",
+    "Share this location" : "Абагуліць гэта месцазнаходжанне",
+    "Shared location" : "Абагуленае месцазнаходжанне",
     "Other maps" : "Іншыя карты",
     "Close" : "Закрыць",
     "Select all" : "Выбраць усе",

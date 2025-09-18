@@ -47,6 +47,8 @@ OC.L10N.register(
     "until {date}" : "mpaka {date}",
     "Search" : "Tafuta",
     "File" : "Faili",
+    "right" : "kulia",
+    "left" : "kushoto",
     "Start" : "Start",
     "min" : "dakika",
     "Phone" : "Simu",

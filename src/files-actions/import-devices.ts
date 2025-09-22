@@ -7,7 +7,7 @@ import { generateUrl } from '@nextcloud/router'
 import svgMapMarker from '@mdi/svg/svg/map-marker.svg?raw'
 
 export default new FileAction({
-	id: 'maps:import-as-favorite',
+	id: 'maps:import-device',
 
 	displayName() {
 		return t('maps', 'Import as devices in Maps')

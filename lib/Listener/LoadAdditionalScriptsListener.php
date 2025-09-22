@@ -40,7 +40,6 @@ class LoadAdditionalScriptsListener implements IEventListener {
 			return;
 		}
 
-		Util::addScript('maps', 'maps-filetypes');
-		Util::addStyle('maps', 'filetypes');
+		Util::addInitScript('maps', 'maps-init-files');
 	}
 }

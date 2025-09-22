@@ -10,14 +10,19 @@ webpackConfig.stats = {
 	modules: false,
 }
 
+webpackConfig.module.rules.push({
+	resourceQuery: /raw/,
+	type: 'asset/source',
+})
+
 webpackConfig.entry = {
 	adminSettings: { import: path.join(__dirname, 'src', 'adminSettings.js'), filename: 'maps-adminSettings.js' },
 	// script: { import: path.join(__dirname, 'src', 'script.js'), filename: 'maps-script.js' },
 	main: { import: path.join(__dirname, 'src', 'main.js'), filename: 'maps-main.js' },
+	'init-files': { import: path.join(__dirname, 'src', 'init-files.ts'), filename: 'maps-init-files.js' },
 	'track-metadata-tab': { import: path.join(__dirname, 'src', 'track-metadata-tab.js'), filename: 'maps-track-metadata-tab.js' },
 	'copy-map-link': { import: path.join(__dirname, 'src', 'copy-map-link.js'), filename: 'maps-copy-map-link.js' },
 	'report-error-map-action': { import: path.join(__dirname, 'src', 'report-error-map-action.js'), filename: 'maps-report-error-map-action.js' },
-	filetypes: { import: path.join(__dirname, 'src', 'filetypes.js'), filename: 'maps-filetypes.js' },
 	'public-favorite-share': { import: path.join(__dirname, 'src', 'publicFavoriteShare.js'), filename: 'maps-publicFavoriteShare.js' },
 }
 

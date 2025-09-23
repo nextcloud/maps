@@ -133,8 +133,8 @@ class FavoritesApiController extends ApiController {
 	public function editFavorite($id, $name, $lat, $lng, $category, $comment, $extensions): DataResponse {
 		$favorite = $this->favoritesService->getFavoriteFromDB($id, $this->userId);
 		if ($favorite !== null) {
-			if (($lat === null || is_numeric($lat)) &&
-				($lng === null || is_numeric($lng))
+			if (($lat === null || is_numeric($lat))
+				&& ($lng === null || is_numeric($lng))
 			) {
 				$this->favoritesService->editFavoriteInDB($id, $name, $lat, $lng, $category, $comment, $extensions);
 				$editedFavorite = $this->favoritesService->getFavoriteFromDB($id);

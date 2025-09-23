@@ -1,12 +1,12 @@
 {
-    "require": {
-        "lsolesen/pel": "^0.9.12",
-        "bogdaan/open-location-code": "dev-master"
-    },
-    "require-dev": {
-        "christophwurst/nextcloud_testing": "^0.12.4",
-        "bamarni/composer-bin-plugin": "*"
-    },
+	"require": {
+		"lsolesen/pel": "^0.9.12",
+		"bogdaan/open-location-code": "dev-master"
+	},
+	"require-dev": {
+		"christophwurst/nextcloud_testing": "^0.12.4",
+		"bamarni/composer-bin-plugin": "*"
+	},
 	"scripts": {
 		"cs:fix": "PHP_CS_FIXER_IGNORE_ENV=1 php-cs-fixer fix",
 		"cs:check": "PHP_CS_FIXER_IGNORE_ENV=1 php-cs-fixer fix --dry-run --diff",
@@ -40,9 +40,12 @@
 			"forward-command": true
 		}
 	},
-    "config": {
-        "allow-plugins": {
-            "bamarni/composer-bin-plugin": true
-        }
-    }
+	"config": {
+		"allow-plugins": {
+			"bamarni/composer-bin-plugin": true
+		},
+		"platform": {
+			"php": "8.1"
+		}
+	}
 }

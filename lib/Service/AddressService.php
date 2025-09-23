@@ -215,8 +215,8 @@ class AddressService {
 					$lon = null;
 					foreach ($result as $addr) {
 						if (key_exists('lat', $addr) and key_exists('lon', $addr)) {
-							if (is_null($lat) or
-								 (key_exists('category', $addr) and in_array($addr['category'], ['place', 'building', 'amenity']))) {
+							if (is_null($lat)
+								 or (key_exists('category', $addr) and in_array($addr['category'], ['place', 'building', 'amenity']))) {
 								$lat = $addr['lat'];
 								$lon = $addr['lon'];
 							}

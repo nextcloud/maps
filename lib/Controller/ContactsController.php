@@ -152,8 +152,8 @@ class ContactsController extends Controller {
 				$url = $this->directUrlToContact($uid, $addressBookUri);
 
 				// we don't give users, just contacts
-				if (strcmp($c['URI'], 'Database:' . $c['UID'] . '.vcf') !== 0 and
-					strcmp($uid, $userid) !== 0
+				if (strcmp($c['URI'], 'Database:' . $c['UID'] . '.vcf') !== 0
+					and strcmp($uid, $userid) !== 0
 				) {
 					// if the contact has a geo attibute use it
 					if (key_exists('GEO', $c)) {
@@ -405,8 +405,8 @@ class ContactsController extends Controller {
 		foreach ($contacts as $c) {
 			$uid = trim($c['UID']);
 			// we don't give users, just contacts
-			if (strcmp($c['URI'], 'Database:' . $c['UID'] . '.vcf') !== 0 and
-				strcmp($uid, $userid) !== 0
+			if (strcmp($c['URI'], 'Database:' . $c['UID'] . '.vcf') !== 0
+				and strcmp($uid, $userid) !== 0
 			) {
 				$addressBookUri = $addressBooks[$c['addressbook-key']]->getUri();
 				$result[] = [
@@ -466,8 +466,8 @@ class ContactsController extends Controller {
 		?int $myMapId = null): DataResponse {
 		if (is_null($myMapId) || $myMapId === '') {
 			// do not edit 'user' contact even myself
-			if (strcmp($uri, 'Database:' . $uid . '.vcf') === 0 or
-				strcmp($uid, $this->userId) === 0
+			if (strcmp($uri, 'Database:' . $uid . '.vcf') === 0
+				or strcmp($uid, $this->userId) === 0
 			) {
 				return new DataResponse('Can\'t edit users', 400);
 			} else {

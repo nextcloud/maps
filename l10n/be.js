@@ -7,6 +7,7 @@ OC.L10N.register(
     "Impossible to create /Maps directory" : "Немагчыма стварыць каталог /Maps",
     "Error sharing device" : "Памылка абагульвання прылады",
     "File not found" : "Файл не знойдзены",
+    "Personal" : "Асабістыя",
     "Maps" : "Карты",
     "Zoom" : "Маштаб",
     "Change color" : "Змяніць колер",

@@ -271,8 +271,8 @@ class PublicFavoritesController extends PublicPageController {
 		if ($isUpdateable) {
 			$favorite = $this->favoritesService->getFavoriteFromJSON($file, $id);
 			if ($favorite !== null) {
-				if (($lat === null || is_numeric($lat)) &&
-					($lng === null || is_numeric($lng))
+				if (($lat === null || is_numeric($lat))
+					&& ($lng === null || is_numeric($lng))
 				) {
 					$this->favoritesService->editFavoriteInJSON($file, $id, $name, $lat, $lng, $category, $comment, $extensions);
 					$editedFavorite = $this->favoritesService->getFavoriteFromJSON($file, $id);

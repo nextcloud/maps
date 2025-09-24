@@ -298,14 +298,14 @@ class DevicesService {
 	public function addPointsToDB($deviceId, $points) {
 		$values = [];
 		foreach ($points as $p) {
-			$value = '(' .
-				$this->db_quote_escape_string($deviceId) . ', ' .
-				$this->db_quote_escape_string($p['lat']) . ', ' .
-				$this->db_quote_escape_string($p['lng']) . ', ' .
-				$this->db_quote_escape_string($p['date']) . ', ' .
-				((isset($p['altitude']) and is_numeric($p['altitude'])) ? $this->db_quote_escape_string(floatval($p['altitude'])) : 'NULL') . ', ' .
-				((isset($p['battery']) and is_numeric($p['battery'])) ? $this->db_quote_escape_string(floatval($p['battery'])) : 'NULL') . ', ' .
-				((isset($p['accuracy']) and is_numeric($p['accuracy'])) ? $this->db_quote_escape_string(floatval($p['accuracy'])) : 'NULL') . ')';
+			$value = '('
+				. $this->db_quote_escape_string($deviceId) . ', '
+				. $this->db_quote_escape_string($p['lat']) . ', '
+				. $this->db_quote_escape_string($p['lng']) . ', '
+				. $this->db_quote_escape_string($p['date']) . ', '
+				. ((isset($p['altitude']) and is_numeric($p['altitude'])) ? $this->db_quote_escape_string(floatval($p['altitude'])) : 'NULL') . ', '
+				. ((isset($p['battery']) and is_numeric($p['battery'])) ? $this->db_quote_escape_string(floatval($p['battery'])) : 'NULL') . ', '
+				. ((isset($p['accuracy']) and is_numeric($p['accuracy'])) ? $this->db_quote_escape_string(floatval($p['accuracy'])) : 'NULL') . ')';
 			array_push($values, $value);
 		}
 		$valuesStr = implode(', ', $values);
@@ -431,21 +431,21 @@ class DevicesService {
 		$dt = new \DateTime();
 		$date = $dt->format('Y-m-d\TH:i:s\Z');
 		$gpxText = '<?xml version="1.0" encoding="UTF-8" standalone="no" ?>' . "\n";
-		$gpxText .= '<gpx xmlns="http://www.topografix.com/GPX/1/1"' .
-			' xmlns:gpxx="http://www.garmin.com/xmlschemas/GpxExtensions/v3"' .
-			' xmlns:wptx1="http://www.garmin.com/xmlschemas/WaypointExtension/v1"' .
-			' xmlns:gpxtpx="http://www.garmin.com/xmlschemas/TrackPointExtension/v1"' .
-			' creator="Nextcloud Maps v' .
-			$appVersion . '" version="1.1"' .
-			' xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"' .
-			' xsi:schemaLocation="http://www.topografix.com/GPX/1/1' .
-			' http://www.topografix.com/GPX/1/1/gpx.xsd' .
-			' http://www.garmin.com/xmlschemas/GpxExtensions/v3' .
-			' http://www8.garmin.com/xmlschemas/GpxExtensionsv3.xsd' .
-			' http://www.garmin.com/xmlschemas/WaypointExtension/v1' .
-			' http://www8.garmin.com/xmlschemas/WaypointExtensionv1.xsd' .
-			' http://www.garmin.com/xmlschemas/TrackPointExtension/v1' .
-			' http://www.garmin.com/xmlschemas/TrackPointExtensionv1.xsd">' . "\n";
+		$gpxText .= '<gpx xmlns="http://www.topografix.com/GPX/1/1"'
+			. ' xmlns:gpxx="http://www.garmin.com/xmlschemas/GpxExtensions/v3"'
+			. ' xmlns:wptx1="http://www.garmin.com/xmlschemas/WaypointExtension/v1"'
+			. ' xmlns:gpxtpx="http://www.garmin.com/xmlschemas/TrackPointExtension/v1"'
+			. ' creator="Nextcloud Maps v'
+			. $appVersion . '" version="1.1"'
+			. ' xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"'
+			. ' xsi:schemaLocation="http://www.topografix.com/GPX/1/1'
+			. ' http://www.topografix.com/GPX/1/1/gpx.xsd'
+			. ' http://www.garmin.com/xmlschemas/GpxExtensions/v3'
+			. ' http://www8.garmin.com/xmlschemas/GpxExtensionsv3.xsd'
+			. ' http://www.garmin.com/xmlschemas/WaypointExtension/v1'
+			. ' http://www8.garmin.com/xmlschemas/WaypointExtensionv1.xsd'
+			. ' http://www.garmin.com/xmlschemas/TrackPointExtension/v1'
+			. ' http://www.garmin.com/xmlschemas/TrackPointExtensionv1.xsd">' . "\n";
 		$gpxText .= '<metadata>' . "\n" . ' <time>' . $date . '</time>' . "\n";
 		$gpxText .= ' <name>' . $name . '</name>' . "\n";
 		if ($nbdev > 0) {
@@ -564,9 +564,9 @@ class DevicesService {
 		while ($data = fread($fp, 4096000)) {
 			if (!xml_parse($xml_parser, $data, feof($fp))) {
 				$this->logger->error(
-					'Exception in ' . $file->getName() . ' parsing at line ' .
-					  xml_get_current_line_number($xml_parser) . ' : ' .
-					  xml_error_string(xml_get_error_code($xml_parser)),
+					'Exception in ' . $file->getName() . ' parsing at line '
+					  . xml_get_current_line_number($xml_parser) . ' : '
+					  . xml_error_string(xml_get_error_code($xml_parser)),
 					['app' => 'maps']
 				);
 				return 0;
@@ -679,9 +679,9 @@ class DevicesService {
 		while ($data = fread($fp, 4096000)) {
 			if (!xml_parse($xml_parser, $data, feof($fp))) {
 				$this->logger->error(
-					'Exception in ' . $name . ' parsing at line ' .
-					  xml_get_current_line_number($xml_parser) . ' : ' .
-					  xml_error_string(xml_get_error_code($xml_parser)),
+					'Exception in ' . $name . ' parsing at line '
+					  . xml_get_current_line_number($xml_parser) . ' : '
+					  . xml_error_string(xml_get_error_code($xml_parser)),
 				);
 				return 0;
 			}

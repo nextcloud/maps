@@ -220,8 +220,8 @@ class FavoritesController extends Controller {
 		if (is_null($myMapId) || $myMapId === '') {
 			$favorite = $this->favoritesService->getFavoriteFromDB($id, $this->userId);
 			if ($favorite !== null) {
-				if (($lat === null || is_numeric($lat)) &&
-					($lng === null || is_numeric($lng))
+				if (($lat === null || is_numeric($lat))
+					&& ($lng === null || is_numeric($lng))
 				) {
 					$this->favoritesService->editFavoriteInDB($id, $name, $lat, $lng, $category, $comment, $extensions);
 					$editedFavorite = $this->favoritesService->getFavoriteFromDB($id);
@@ -238,8 +238,8 @@ class FavoritesController extends Controller {
 			$file = $this->getJSONFavoritesFile($folder);
 			$favorite = $this->favoritesService->getFavoriteFromJSON($file, $id, $this->userId);
 			if ($favorite !== null) {
-				if (($lat === null || is_numeric($lat)) &&
-					($lng === null || is_numeric($lng))
+				if (($lat === null || is_numeric($lat))
+					&& ($lng === null || is_numeric($lng))
 				) {
 					$this->favoritesService->editFavoriteInJSON($file, $id, $name, $lat, $lng, $category, $comment, $extensions);
 					$editedFavorite = $this->favoritesService->getFavoriteFromJSON($file, $id);
@@ -512,8 +512,8 @@ class FavoritesController extends Controller {
 
 		if ($userFolder->nodeExists($cleanpath)) {
 			$file = $userFolder->get($cleanpath);
-			if ($file->getType() === \OCP\Files\FileInfo::TYPE_FILE and
-				$file->isReadable()) {
+			if ($file->getType() === \OCP\Files\FileInfo::TYPE_FILE
+				and $file->isReadable()) {
 				$lowerFileName = strtolower($file->getName());
 				if ($this->endswith($lowerFileName, '.gpx') or $this->endswith($lowerFileName, '.kml') or $this->endswith($lowerFileName, '.kmz') or $this->endswith($lowerFileName, '.json') or $this->endswith($lowerFileName, '.geojson')) {
 					$result = $this->favoritesService->importFavorites($this->userId, $file);

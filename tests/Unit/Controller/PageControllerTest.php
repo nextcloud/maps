@@ -12,38 +12,39 @@
 
 namespace OCA\Maps\Controller;
 
-use OCA\Maps\AppInfo\Application;
 use OCP\AppFramework\Http\TemplateResponse;
+use OCP\AppFramework\Services\IInitialState;
 use OCP\EventDispatcher\IEventDispatcher;
-use OCP\IServerContainer;
+use OCP\IConfig;
+use OCP\IRequest;
+use OCP\IURLGenerator;
+use PHPUnit\Framework\MockObject\MockObject;
 
 class PageControllerTest extends \PHPUnit\Framework\TestCase {
-	private $controller;
-	private $userId = 'john';
-	private $config;
-	private $eventDispatcher;
-	private $app;
-	private $container;
+	private PageController $controller;
+	private string $userId = 'john';
+	private IConfig&MockObject $config;
+	private IInitialState&MockObject $initialState;
+	private IEventDispatcher&MockObject $eventDispatcher;
+	private IURLGenerator&MockObject $urlGenerator;
 
 	protected function setUp(): void {
-		$request = $this->getMockBuilder('OCP\IRequest')->getMock();
-		$initialStateService = $this->getMockBuilder('OCP\IInitialStateService')->getMock();
-		$this->app = new Application();
-		$this->container = $this->app->getContainer();
-		$c = $this->container;
-		$this->config = $c->query(IServerContainer::class)->getConfig();
-		$this->eventDispatcher = $c->query(IServerContainer::class)->query(IEventDispatcher::class);
-
-		$this->oldGHValue = $this->config->getAppValue('maps', 'graphhopperURL');
-		$this->config->setAppValue('maps', 'graphhopperURL', 'https://graphhopper.com:8080');
+		/** @var IRequest&MockObject */
+		$request = $this->createMock(IRequest::class);
+		$this->config = $this->createMock(IConfig::class);
+		$this->initialState = $this->createMock(IInitialState::class);
+		$this->eventDispatcher = $this->createMock(IEventDispatcher::class);
+		$this->urlGenerator = $this->createMock(IURLGenerator::class);
 
 		$this->controller = new PageController(
-			'maps', $request, $this->eventDispatcher, $this->config, $initialStateService, $this->userId
+			'maps',
+			$request,
+			$this->userId,
+			$this->eventDispatcher,
+			$this->config,
+			$this->initialState,
+			$this->urlGenerator,
 		);
-	}
-
-	protected function tearDown(): void {
-		$this->config->setAppValue('maps', 'graphhopperURL', $this->oldGHValue);
 	}
 
 	public function testIndex() {

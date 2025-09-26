@@ -148,6 +148,30 @@ class MyMapsService {
 		return $MyMaps;
 	}
 
+	/**
+	 * Try to lookup a my map by id
+	 *
+	 * @param int $id The map id to lookup
+	 * @param string $userId The current user id
+	 * @return null|array Either the MyMap or null if not found with that id for the given user
+	 */
+	public function getMyMap(int $id, string $userId) {
+		$userFolder = $this->root->getUserFolder($userId);
+		$node = $userFolder->getFirstNodeById($id);
+		if ($node instanceof Folder) {
+			try {
+				$node = $node->get('.index.maps');
+			} catch (NotFoundException) {
+				return null;
+			}
+		}
+
+		if ($node->getMimetype() === 'application/x-nextcloud-maps') {
+			return $this->node2MyMap($node, $userFolder);
+		}
+		return null;
+	}
+
 	public function updateMyMap($id, $values, $userId) {
 		$userFolder = $this->root->getUserFolder($userId);
 		$folders = $userFolder->getById($id);
@@ -158,7 +182,7 @@ class MyMapsService {
 		try {
 			$file = $folder->get('.index.maps');
 		} catch (NotFoundException $e) {
-			$file = $folder->newFile('.index.maps', $content = '{}');
+			$file = $folder->newFile('.index.maps', '{}');
 		}
 		$mapData = json_decode($file->getContent(), true);
 		$renamed = false;

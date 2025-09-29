@@ -324,6 +324,7 @@
     "°F" : "°F",
     "Temp: " : "Teplota:",
     "Import as devices in Maps" : "Importovat jako zařízení v Mapy",
+    "_One device imported_::_%n devices imported_" : ["Jedno zařízení naimporotováno","%n zařízení naimporotována","%n zařízení naimporotováno","%n zařízení naimporotována"],
     "Import as favorites in Maps" : "Importovat v mapách jako oblíbené",
     "Failed to import favorites" : "Nepodařilo se importovat oblíbené",
     "View in Maps" : "Zobrazit na mapě",

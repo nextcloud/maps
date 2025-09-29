@@ -111,7 +111,7 @@ OC.L10N.register(
     "Select all" : "Tout sélectionner",
     "Display picture" : "Afficher l'image",
     "Remove from selection" : "Retirer de la sélection",
-    "No suggestions found" : "Accune suggestions à trouvée",
+    "No suggestions found" : "Aucune suggestion trouvée",
     "Quit" : "Quitter",
     "Load more" : "Charger davantage",
     "Photos default timezone:" : "Fuseau horaire par défaut des photos :",

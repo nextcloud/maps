@@ -1,6 +1,9 @@
 OC.L10N.register(
     "maps",
     {
+    "/Maps is not a directory" : "/Maps er ikke en mappe",
+    "/Maps directory is not writeable" : "/Maps mappe er ikke skrivbaris not writeable",
+    "Impossible to create /Maps directory" : "Kan ikke oprette mappen /Maps",
     "File does not exist" : "Filen eksisterer ikke",
     "File not found" : "Fil ikke fundet",
     "Personal" : "Personlig",
@@ -20,6 +23,7 @@ OC.L10N.register(
     "Copy share link" : "Kopier delelink",
     "Open folder" : "Åben mappe",
     "Share" : "Del",
+    "My maps" : "Mine kort",
     "Sort by name" : "Sorter efter navn",
     "Sort by date" : "Sorter efter dato",
     "Category" : "Katergori",
@@ -28,6 +32,7 @@ OC.L10N.register(
     "Save" : "Gem",
     "Share this location" : "Del denne placering",
     "Shared location" : "Delt placering",
+    "Other maps" : "Andre kort",
     "Close" : "Luk",
     "(No name)" : "(Uden navn)",
     "No favorites to display" : "Ingen favoritter at vise",
@@ -68,12 +73,18 @@ OC.L10N.register(
     "Default" : "Standard",
     "Settings were successfully saved" : "Indstillingerne blev gemt",
     "Failed to save settings" : "Kunne ikke gemme indstillinger",
+    "Import as devices in Maps" : "Importer som apparater i Maps",
+    "Import as favorites in Maps" : "Importer som favorit i Maps",
+    "View in Maps" : "Vis i Maps",
+    "Failed to load your maps" : "Kunne ikke indlæse dine kort",
     "Metadata" : "Metadata",
     "Restaurant" : "Restaurant",
     "Bar" : "Bar",
     "School" : "Skole",
     "Cinema" : "Biograf",
     "Hospital" : "Hospital",
-    "Dentist" : "Tandlæge"
+    "Dentist" : "Tandlæge",
+    "Maps routing settings" : "Maps routing indstillinger",
+    "Maps settings" : "Maps indstillinger"
 },
 "nplurals=2; plural=(n != 1);");

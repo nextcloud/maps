@@ -12,25 +12,25 @@ jobs:
       APP_ID: maps
     runs-on: ubuntu-latest
     steps:
-      - name: Use Node 20
-        uses: actions/setup-node@v1
+      - name: Checkout code
+        uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
+
+      - name: Install Node
+        uses: actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444 # v5.0.0
         with:
-          node-version: 20
+          node-version-file: package.json
 
       - name: Set up npm
         run: npm i -g npm
 
       - name: Setup PHP
-        uses: shivammathur/setup-php@v2
+        uses: shivammathur/setup-php@bf6b4fbd49ca58e4608c9c89fba0b8d90bd2a39f # v2.35.5
         with:
           php-version: '8.2'
           extensions: mbstring, intl, sqlite3, gd
           ini-values: post_max_size=256M, max_execution_time=180
           coverage: xdebug
           tools: php-cs-fixer, phpunit
-
-      - name: Checkout code
-        uses: actions/checkout@v2
 
       - name: Get current tag
         id: tag

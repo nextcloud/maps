@@ -2,11 +2,12 @@
 <psalm errorLevel="5" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xmlns="https://getpsalm.org/schema/config"
 	xsi:schemaLocation="https://getpsalm.org/schema/config https://getpsalm.org/schema/config"
-	findUnusedBaselineEntry="true"
-	findUnusedCode="false"
 	autoloader="vendor-bin/psalm/vendor/autoload.php"
 	errorBaseline="tests/psalm-baseline.xml"
-	ensureOverrideAttribute="false">
+	ensureOverrideAttribute="false"
+	findUnusedBaselineEntry="true"
+	findUnusedCode="false"
+	phpVersion="8.1">
 	<stubs>
 		<file name="tests/stubs/oc_archive_archive.php" preloadClasses="true"/>
 		<file name="tests/stubs/oc_archive_zip.php" preloadClasses="true"/>

@@ -188,8 +188,8 @@ class DevicesController extends Controller {
 	public function editDevice($id, $color, $name): DataResponse {
 		$device = $this->devicesService->getDeviceFromDB($id, $this->userId);
 		if ($device !== null) {
-			if ((is_string($color) && strlen($color) > 0) ||
-				(is_string($name) && strlen($name) > 0)
+			if ((is_string($color) && strlen($color) > 0)
+				|| (is_string($name) && strlen($name) > 0)
 			) {
 				$this->devicesService->editDeviceInDB($id, $color, $name);
 				$editedDevice = $this->devicesService->getDeviceFromDB($id, $this->userId);
@@ -288,8 +288,8 @@ class DevicesController extends Controller {
 
 		if ($userFolder->nodeExists($cleanpath)) {
 			$file = $userFolder->get($cleanpath);
-			if ($file->getType() === \OCP\Files\FileInfo::TYPE_FILE and
-				$file->isReadable()) {
+			if ($file->getType() === \OCP\Files\FileInfo::TYPE_FILE
+				and $file->isReadable()) {
 				$lowerFileName = strtolower($file->getName());
 				if ($this->endsWith($lowerFileName, '.gpx') or $this->endsWith($lowerFileName, '.kml') or $this->endsWith($lowerFileName, '.kmz')) {
 					$nbImported = $this->devicesService->importDevices($this->userId, $file);

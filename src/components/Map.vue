@@ -170,7 +170,7 @@ import { getCurrentUser } from '@nextcloud/auth'
 import axios from '@nextcloud/axios'
 import { showError, showSuccess } from '@nextcloud/dialogs'
 
-import { LocateControl } from "leaflet.locatecontrol"
+import { LocateControl } from 'leaflet.locatecontrol'
 import 'leaflet.locatecontrol/dist/L.Control.Locate.min.css'
 import L from 'leaflet'
 import 'mapbox-gl/dist/mapbox-gl'
@@ -210,22 +210,22 @@ import PhotoSuggestionsLayer from './map/PhotoSuggestionsLayer.vue'
 
 // exclude dynamic imports from webpack-processing
 L.Control.Elevation.include({
-	import: function(src, condition) {
+	import(src, condition) {
 		if (Array.isArray(src)) {
-			return Promise.all(src.map(m => this.import(m)));
+			return Promise.all(src.map(m => this.import(m)))
 		}
-		switch(src) {
-			case this.__D3:          condition = typeof d3 !== 'object'; break;
-			case this.__TOGEOJSON:   condition = typeof toGeoJSON !== 'object'; break;
-			case this.__LGEOMUTIL:   condition = typeof L.GeometryUtil !== 'object'; break;
-			case this.__LALMOSTOVER: condition = typeof L.Handler.AlmostOver  !== 'function'; break;
-			case this.__LDISTANCEM:  condition = typeof L.DistanceMarkers  !== 'function'; break;
-			case this.__LEDGESCALE:  condition = typeof L.Control.EdgeScale !== 'function'; break;
-			case this.__LHOTLINE:    condition = typeof L.Hotline  !== 'function'; break;
+		switch (src) {
+		case this.__D3: condition = typeof d3 !== 'object'; break
+		case this.__TOGEOJSON: condition = typeof toGeoJSON !== 'object'; break
+		case this.__LGEOMUTIL: condition = typeof L.GeometryUtil !== 'object'; break
+		case this.__LALMOSTOVER: condition = typeof L.Handler.AlmostOver !== 'function'; break
+		case this.__LDISTANCEM: condition = typeof L.DistanceMarkers !== 'function'; break
+		case this.__LEDGESCALE: condition = typeof L.Control.EdgeScale !== 'function'; break
+		case this.__LHOTLINE: condition = typeof L.Hotline !== 'function'; break
 		}
-		let url = (new URL(src, (src.startsWith('../') || src.startsWith('./')) ? this.options.srcFolder : undefined)).toString();
-		return condition !== false ? import(/* webpackIgnore: true */ url) : Promise.resolve();
-	}
+		const url = (new URL(src, (src.startsWith('../') || src.startsWith('./')) ? this.options.srcFolder : undefined)).toString()
+		return condition !== false ? import(/* webpackIgnore: true */ url) : Promise.resolve()
+	},
 })
 
 export default {

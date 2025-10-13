@@ -62,6 +62,6 @@ class Version000013Date20190723185417 extends SimpleMigrationStep {
 	public function postSchemaChange(IOutput $output, Closure $schemaClosure, array $options) {
 		$query = $this->db->getQueryBuilder();
 		$query->delete('maps_address_geo');
-		$query->execute();
+		$query->executeStatement();
 	}
 }

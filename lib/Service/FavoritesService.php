@@ -77,7 +77,7 @@ class FavoritesService {
 				$qb->expr()->eq('category', $qb->createNamedParameter($filterCategory, IQueryBuilder::PARAM_STR))
 			);
 		}
-		$req = $qb->execute();
+		$req = $qb->executeQuery();
 
 		while ($row = $req->fetch()) {
 			$id = intval($row['id']);
@@ -127,7 +127,7 @@ class FavoritesService {
 				$qb->expr()->eq('category', $qb->createNamedParameter($category, IQueryBuilder::PARAM_STR))
 			);
 		}
-		$req = $qb->execute();
+		$req = $qb->executeQuery();
 
 		while ($row = $req->fetch()) {
 			$id = intval($row['id']);
@@ -175,7 +175,7 @@ class FavoritesService {
 				'comment' => $qb->createNamedParameter($comment, IQueryBuilder::PARAM_STR),
 				'extensions' => $qb->createNamedParameter($extensions, IQueryBuilder::PARAM_STR)
 			]);
-		$req = $qb->execute();
+		$qb->executeStatement();
 		$favoriteId = $qb->getLastInsertId();
 		return $favoriteId;
 	}
@@ -183,37 +183,50 @@ class FavoritesService {
 	public function addMultipleFavoritesToDB($userId, $favoriteList) {
 		$nowTimeStamp = (new \DateTime())->getTimestamp();
 
-		$values = [];
-		foreach ($favoriteList as $fav) {
-			if (
-				!isset($fav['lat']) or !is_numeric($fav['lat']) or
-				!isset($fav['lng']) or !is_numeric($fav['lng'])
-			) {
-				continue;
-			} else {
-				$lat = floatval($fav['lat']);
-				$lng = floatval($fav['lng']);
+		$qb = $this->dbconnection->getQueryBuilder();
+		$qb->insert('maps_favorites');
+
+		try {
+			$this->dbconnection->beginTransaction();
+			foreach ($favoriteList as $fav) {
+				if (
+					!isset($fav['lat']) or !is_numeric($fav['lat']) or
+					!isset($fav['lng']) or !is_numeric($fav['lng'])
+				) {
+					continue;
+				} else {
+					$lat = floatval($fav['lat']);
+					$lng = floatval($fav['lng']);
+				}
+				$values = [
+					'user_id' => $qb->createNamedParameter($userId, IQueryBuilder::PARAM_STR),
+					'date_modified' => $qb->createNamedParameter($nowTimeStamp, IQueryBuilder::PARAM_INT),
+					'lat' => $qb->createNamedParameter($lat, IQueryBuilder::PARAM_INT),
+					'lng' => $qb->createNamedParameter($lng, IQueryBuilder::PARAM_INT),
+				];
+				if (isset($fav['name']) and $fav['name'] !== '') {
+					$values['name'] = $qb->createNamedParameter($fav['name'], IQueryBuilder::PARAM_STR);
+				}
+				if (isset($fav['date_created']) && is_numeric($fav['date_created'])) {
+					$values['date_created'] = $qb->createNamedParameter($fav['date_created'], IQueryBuilder::PARAM_STR);
+				}
+				if (isset($fav['category']) && $fav['category'] !== '') {
+					$values['category'] = $qb->createNamedParameter($fav['category'], IQueryBuilder::PARAM_STR);
+				}
+				if (isset($fav['comment']) && $fav['comment'] !== '') {
+					$values['comment'] = $qb->createNamedParameter($fav['comment'], IQueryBuilder::PARAM_STR);
+				}
+				if (isset($fav['extensions']) && $fav['extensions'] !== '') {
+					$values['extensions'] = $qb->createNamedParameter($fav['extensions'], IQueryBuilder::PARAM_STR);
+				}
+
+				$qb->values($values);
+				$qb->executeStatement();
 			}
-			$value = '(' .
-				$this->db_quote_escape_string($userId) . ', ' .
-				((!isset($fav['name']) or !$fav['name']) ? 'NULL' : $this->db_quote_escape_string($fav['name'])) . ', ' .
-				((!isset($fav['date_created']) or !is_numeric($fav['date_created'])) ? $this->db_quote_escape_string($nowTimeStamp) : $this->db_quote_escape_string($fav['date_created'])) . ', ' .
-				$this->db_quote_escape_string($nowTimeStamp) . ', ' .
-				$this->db_quote_escape_string($lat) . ', ' .
-				$this->db_quote_escape_string($lng) . ', ' .
-				((!isset($fav['category']) or !$fav['category']) ? 'NULL' : $this->db_quote_escape_string($fav['category'])) . ', ' .
-				((!isset($fav['comment']) or !$fav['comment']) ? 'NULL' : $this->db_quote_escape_string($fav['comment'])) . ', ' .
-				((!isset($fav['extensions']) or !$fav['extensions']) ? 'NULL' : $this->db_quote_escape_string($fav['extensions'])) . ')';
-			array_push($values, $value);
+			$this->dbconnection->commit();
+		} catch (\Throwable) {
+			$this->dbconnection->rollback();
 		}
-		$valuesStr = implode(', ', $values);
-		$sql = '
-            INSERT INTO *PREFIX*maps_favorites
-            (user_id, name, date_created, date_modified, lat, lng, category, comment, extensions)
-            VALUES ' . $valuesStr . ' ;';
-		$req = $this->dbconnection->prepare($sql);
-		$req->execute();
-		$req->closeCursor();
 	}
 
 	public function renameCategoryInDB($userId, $cat, $newName) {
@@ -226,7 +239,7 @@ class FavoritesService {
 		$qb->andWhere(
 			$qb->expr()->eq('category', $qb->createNamedParameter($cat, IQueryBuilder::PARAM_STR))
 		);
-		$req = $qb->execute();
+		$qb->executeStatement();
 	}
 
 	public function editFavoriteInDB($id, $name, $lat, $lng, $category, $comment, $extensions) {
@@ -255,7 +268,7 @@ class FavoritesService {
 		$qb->where(
 			$qb->expr()->eq('id', $qb->createNamedParameter($id, IQueryBuilder::PARAM_INT))
 		);
-		$req = $qb->execute();
+		$qb->executeStatement();
 	}
 
 	public function deleteFavoriteFromDB($id) {
@@ -264,7 +277,7 @@ class FavoritesService {
 			->where(
 				$qb->expr()->eq('id', $qb->createNamedParameter($id, IQueryBuilder::PARAM_INT))
 			);
-		$req = $qb->execute();
+		$qb->executeStatement();
 	}
 
 	public function deleteFavoritesFromDB($ids, $userId) {
@@ -282,7 +295,7 @@ class FavoritesService {
 		} else {
 			return;
 		}
-		$req = $qb->execute();
+		$qb->executeStatement();
 	}
 
 	public function countFavorites($userId, $categoryList, $begin, $end) {
@@ -319,7 +332,7 @@ class FavoritesService {
 			$qb->andWhere($or);
 		}
 		$nbFavorites = 0;
-		$req = $qb->execute();
+		$req = $qb->executeQuery();
 		while ($row = $req->fetch()) {
 			$nbFavorites = intval($row['co']);
 			break;
@@ -579,7 +592,7 @@ class FavoritesService {
 			$qb->orderBy('date_created', 'ASC')
 				->setMaxResults($chunkSize)
 				->setFirstResult($favIndex);
-			$req = $qb->execute();
+			$req = $qb->executeQuery();
 
 			while ($row = $req->fetch()) {
 				$name = str_replace('&', '&amp;', $row['name']);

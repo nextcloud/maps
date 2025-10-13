@@ -106,12 +106,13 @@ class ContactsController extends Controller {
 	}
 
 	/**
-	 * get distance between two geo points
-	 * @param GPS coordinates of first point
-	 * @param GPS coordinates of second point
+	 * Get distance between two geo points.
+	 *
+	 * @param array $coordsA GPS coordinates of first point
+	 * @param array $coordsB GPS coordinates of second point
 	 * @return float Distance in meters between these two points
 	 */
-	private function getDistance($coordsA, $coordsB) {
+	private function getDistance(array $coordsA, array $coordsB) {
 		if (empty($coordsA) || empty($coordsB)) {
 			return 9E999;
 		}
@@ -674,7 +675,7 @@ class ContactsController extends Controller {
 			->from('maps_address_geo')
 			->where($qb->expr()->eq('adr_norm', $qb->createNamedParameter($adr_norm, IQueryBuilder::PARAM_STR)))
 			->andWhere($qb->expr()->eq('object_uri', $qb->createNamedParameter($uri, IQueryBuilder::PARAM_STR)));
-		$req = $qb->execute();
+		$req = $qb->executeQuery();
 		$result = $req->fetchAll();
 		$req->closeCursor();
 		$qb = $this->dbconnection->getQueryBuilder();
@@ -686,8 +687,7 @@ class ContactsController extends Controller {
 				->set('object_uri', $qb->createNamedParameter($uri, IQueryBuilder::PARAM_STR))
 				->set('looked_up', $qb->createNamedParameter(true, IQueryBuilder::PARAM_BOOL))
 				->where($qb->expr()->eq('id', $qb->createNamedParameter($id, IQueryBuilder::PARAM_STR)));
-			$req = $qb->execute();
-
+			$qb->executeStatement();
 		} else {
 			$qb->insert('maps_address_geo')
 				->values([
@@ -698,8 +698,7 @@ class ContactsController extends Controller {
 					'lng' => $qb->createNamedParameter($lng, IQueryBuilder::PARAM_STR),
 					'looked_up' => $qb->createNamedParameter(true, IQueryBuilder::PARAM_BOOL),
 				]);
-			$req = $qb->execute();
-			$id = $qb->getLastInsertId();
+			$qb->executeStatement();
 		}
 	}
 

@@ -81,7 +81,7 @@ class AddressService {
 			->from('maps_address_geo')
 			->where($qb->expr()->eq('object_uri', $qb->createNamedParameter($uri, IQueryBuilder::PARAM_STR)))
 			->andWhere($qb->expr()->eq('adr_norm', $qb->createNamedParameter($adr_norm, IQueryBuilder::PARAM_STR)));
-		$req = $qb->execute();
+		$req = $qb->executeQuery();
 		$lat = null;
 		$lng = null;
 		$inDb = false;
@@ -131,7 +131,7 @@ class AddressService {
 					->set('object_uri', $qb->createNamedParameter($uri, IQueryBuilder::PARAM_STR))
 					->set('looked_up', $qb->createNamedParameter($lookedUp, IQueryBuilder::PARAM_BOOL))
 					->where($qb->expr()->eq('id', $qb->createNamedParameter($id, IQueryBuilder::PARAM_STR)));
-				$req = $qb->execute();
+				$qb->executeStatement();
 			}
 		}
 
@@ -156,7 +156,7 @@ class AddressService {
 			->from('maps_address_geo')
 			->where($qb->expr()->eq('looked_up', $qb->createNamedParameter(true, IQueryBuilder::PARAM_BOOL)))
 			->andWhere($qb->expr()->eq('adr_norm', $qb->createNamedParameter($adr_norm, IQueryBuilder::PARAM_STR)));
-		$req = $qb->execute();
+		$req = $qb->executeQuery();
 		while ($row = $req->fetch()) {
 			$res[0] = $row['lat'];
 			$res[1] = $row['lng'];
@@ -249,7 +249,7 @@ class AddressService {
 		$qb->select('id', 'adr')
 			->from('maps_address_geo')
 			->where($qb->expr()->eq('object_uri', $qb->createNamedParameter($uri, IQueryBuilder::PARAM_STR)));
-		$req = $qb->execute();
+		$req = $qb->executeQuery();
 		while ($row = $req->fetch()) {
 			if (!in_array($row['adr'], $vCardAddresses)) {
 				array_push($adrIdToDelete, $row['id']);
@@ -263,7 +263,7 @@ class AddressService {
 				->where(
 					$qb->expr()->eq('id', $qb->createNamedParameter($id, IQueryBuilder::PARAM_INT))
 				);
-			$req = $qb->execute();
+			$qb->executeStatement();
 		}
 	}
 
@@ -273,7 +273,7 @@ class AddressService {
 			->where(
 				$qb->expr()->eq('object_uri', $qb->createNamedParameter($uri, IQueryBuilder::PARAM_STR))
 			);
-		$req = $qb->execute();
+		$qb->executeStatement();
 	}
 
 	// schedules the address for an external lookup
@@ -294,7 +294,7 @@ class AddressService {
 				'lng' => $qb->createNamedParameter($geo[1], IQueryBuilder::PARAM_STR),
 				'looked_up' => $qb->createNamedParameter($geo[2], IQueryBuilder::PARAM_BOOL),
 			]);
-		$req = $qb->execute();
+		$qb->executeStatement();
 		$id = $qb->getLastInsertId();
 		if (!$geo[2]) {
 			$this->jobList->add(LookupMissingGeoJob::class, []);
@@ -312,7 +312,7 @@ class AddressService {
 			->from('maps_address_geo')
 			->where($qb->expr()->eq('looked_up', $qb->createNamedParameter(false, IQueryBuilder::PARAM_BOOL)))
 			->setMaxResults($max);
-		$req = $qb->execute();
+		$req = $qb->executeQuery();
 		$result = $req->fetchAll();
 		$req->closeCursor();
 		$i = 0;

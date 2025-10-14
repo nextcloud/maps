@@ -328,6 +328,7 @@ OC.L10N.register(
     "Import as devices in Maps" : "Importovat jako zařízení v Mapy",
     "_One device imported_::_%n devices imported_" : ["Jedno zařízení naimporotováno","%n zařízení naimporotována","%n zařízení naimporotováno","%n zařízení naimporotována"],
     "Import as favorites in Maps" : "Importovat v mapách jako oblíbené",
+    "_One favorite imported_::_%n favorites imported_" : ["Jedno oblíbené naimportováno","%n oblíbené naimportovány","%n oblíbených naimportováno","%n oblíbené naimportovány"],
     "Failed to import favorites" : "Nepodařilo se importovat oblíbené",
     "View in Maps" : "Zobrazit na mapě",
     "Copy link to map" : "Zkopírovat odkaz na mapu",

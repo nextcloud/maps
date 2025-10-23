@@ -1,9 +1,6 @@
 import axios from '@nextcloud/axios'
 import { default as realAxios } from 'axios'
 import { generateUrl } from '@nextcloud/router'
-import {
-	showError,
-} from '@nextcloud/dialogs'
 
 export function saveOptionValues(optionValues, myMapId = null, token = null) {
 	const req = {
@@ -328,6 +325,13 @@ export async function getPhotoSuggestions(myMapId = null, token = null, timezone
 	return axios.get(url, conf)
 }
 
+/**
+ * @param {string[]} paths
+ * @param {number[]} lats
+ * @param {number[]} lngs
+ * @param {boolean} directory - Is the placed path a directory
+ * @param {number | null} myMapId - The myMapId
+ */
 export function placePhotos(paths, lats, lngs, directory = false, myMapId = null) {
 	const req = {
 		paths,

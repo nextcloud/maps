@@ -16,8 +16,10 @@ use OC\User\NoUserException;
 use OCA\Maps\Service\GeophotoService;
 use OCA\Maps\Service\PhotofilesService;
 use OCP\AppFramework\Controller;
+use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\DataResponse;
 use OCP\DB\Exception;
+use OCP\Files\Folder;
 use OCP\Files\InvalidPathException;
 use OCP\Files\IRootFolder;
 use OCP\Files\NotFoundException;
@@ -114,14 +116,18 @@ class PhotosController extends Controller {
 	public function placePhotos($paths, $lats, $lngs, bool $directory = false, $myMapId = null, bool $relative = false): DataResponse {
 		$userFolder = $this->root->getUserFolder($this->userId);
 		if (!is_null($myMapId) and $myMapId !== '') {
-			// forbid folder placement in my-maps
 			if ($directory === 'true') {
+				// forbid folder placement in my-maps
 				throw new NotPermittedException();
 			}
-			$folders = $userFolder->getById($myMapId);
-			$folder = array_shift($folders);
+
+			$folder = $userFolder->getFirstNodeById($myMapId);
+			if (!($folder instanceof Folder)) {
+				return new DataResponse(statusCode: Http::STATUS_BAD_REQUEST);
+			}
+
 			// photo's path is relative to this map's folder => get full path, don't copy
-			if ($relative === 'true') {
+			if ($relative) {
 				foreach ($paths as $key => $path) {
 					$photoFile = $folder->get($path);
 					$paths[$key] = $userFolder->getRelativePath($photoFile->getPath());

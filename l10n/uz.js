@@ -34,7 +34,7 @@ OC.L10N.register(
     "Open" : "Ochish",
     "until {date}" : " {date}gacha",
     "Search" : "Qidirish",
-    "File" : "File",
+    "File" : "Fayl",
     "right" : "right",
     "left" : "left",
     "Default" : "Standart",

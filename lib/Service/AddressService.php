@@ -179,10 +179,15 @@ class AddressService {
 			];
 			$context = stream_context_create($opts);
 
-			// we get rid of "post office box" field
+			// we get rid of "post office box" field (field 0) and "extended address" field (field 1)
+			// to improve geocoding accuracy for addresses with apartment numbers, suites, etc.
 			$splitted_adr = explode(';', $adr);
 			if (count($splitted_adr) > 2) {
-				array_shift($splitted_adr);
+				array_shift($splitted_adr); // Remove post office box (field 0)
+				// Check if extended address exists and is not empty, then remove it too
+				if (count($splitted_adr) > 1 && trim($splitted_adr[0]) !== '') {
+					array_shift($splitted_adr); // Remove extended address (field 1)
+				}
 			}
 
 			// remove blank lines (#706)

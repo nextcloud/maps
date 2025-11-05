@@ -108,7 +108,7 @@ class ContactsControllerTest extends \PHPUnit\Framework\TestCase {
 		//$this->userPrincipalBackend = new Principal(
 		//    $c->getServer()->getUserManager(),
 		//    $c->getServer()->getGroupManager(),
-		//    $c->getServer()->getShareManager(),
+		//    $c->getServer()->get(\OCP\Share\IManager::class),
 		//    \OC::$server->getUserSession(),
 		//    $c->query(IServerContainer::class)->getConfig(),
 		//    \OC::$server->getAppManager()
@@ -130,7 +130,7 @@ class ContactsControllerTest extends \PHPUnit\Framework\TestCase {
 			$this->addressService,
 			'test',
 			$this->cdBackend,
-			$c->query(IServerContainer::class)->getAvatarManager(),
+			$c->query(IServerContainer::class)->get(\OCP\IAvatarManager::class),
 			$this->root,
 			$urlGenerator);
 		//$this->contactsController = $this->getMockBuilder('OCA\Maps\Controller\ContactsController')
@@ -145,7 +145,7 @@ class ContactsControllerTest extends \PHPUnit\Framework\TestCase {
 			$this->addressService,
 			'test2',
 			$this->cdBackend,
-			$c->query(IServerContainer::class)->getAvatarManager(),
+			$c->query(IServerContainer::class)->get(\OCP\IAvatarManager::class),
 			$this->root,
 			$urlGenerator
 		);

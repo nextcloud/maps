@@ -92,7 +92,7 @@ class PhotosControllerTest extends \PHPUnit\Framework\TestCase {
 			$this->rootFolder,
 			$c->query(IServerContainer::class)->getL10N($c->query('AppName')),
 			$c->query(GeophotoMapper::class),
-			$c->query(IServerContainer::class)->getShareManager(),
+			$c->query(IServerContainer::class)->get(\OCP\Share\IManager::class),
 			$c->query(\OCP\BackgroundJob\IJobList::class)
 		);
 

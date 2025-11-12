@@ -85,7 +85,7 @@ class TracksControllerTest extends \PHPUnit\Framework\TestCase {
 			$c->query(IServerContainer::class)->get(\Psr\Log\LoggerInterface::class),
 			$c->query(IServerContainer::class)->getL10N($c->query('AppName')),
 			$this->rootFolder,
-			$c->query(IServerContainer::class)->getShareManager(),
+			$c->query(IServerContainer::class)->get(\OCP\Share\IManager::class),
 			$c->query(IServerContainer::class)->query(\OCP\IDBConnection::class)
 		);
 
@@ -94,7 +94,7 @@ class TracksControllerTest extends \PHPUnit\Framework\TestCase {
 			$this->request,
 			$c->query(IServerContainer::class),
 			$c->query(IServerContainer::class)->getConfig(),
-			$c->query(IServerContainer::class)->getShareManager(),
+			$c->query(IServerContainer::class)->get(\OCP\Share\IManager::class),
 			$c->getServer()->getAppManager(),
 			$c->getServer()->getUserManager(),
 			$c->getServer()->getGroupManager(),
@@ -108,7 +108,7 @@ class TracksControllerTest extends \PHPUnit\Framework\TestCase {
 			$this->request,
 			$c->query(IServerContainer::class),
 			$c->query(IServerContainer::class)->getConfig(),
-			$c->query(IServerContainer::class)->getShareManager(),
+			$c->query(IServerContainer::class)->get(\OCP\Share\IManager::class),
 			$c->getServer()->getAppManager(),
 			$c->getServer()->getUserManager(),
 			$c->getServer()->getGroupManager(),

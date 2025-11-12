@@ -18,7 +18,7 @@ use OCA\Maps\Service\TracksService;
 use OCP\Files\FileInfo;
 use OCP\Files\IRootFolder;
 use OCP\Lock\ILockingProvider;
-use OCP\Share;
+use OCP\Share\IShare;
 use OCP\Util;
 use function OCP\Log\logger;
 
@@ -139,7 +139,7 @@ class FileHooks {
 
 	public function postUnShare($params) {
 		//logger('maps')->debug("Hook postUnShare");
-		if ($params['shareType'] === Share::SHARE_TYPE_USER) {
+		if ($params['shareType'] === IShare::TYPE_USER) {
 			if ($params['itemType'] === 'file') {
 				$targetUserId = $params['shareWith'];
 				$fileId = $params['fileSource']; // or itemSource
@@ -151,7 +151,7 @@ class FileHooks {
 
 	public function preUnShare($params) {
 		//logger('maps')->debug("Hook preUnShare");
-		if ($params['shareType'] === Share::SHARE_TYPE_USER) {
+		if ($params['shareType'] === IShare::TYPE_USER) {
 			if ($params['itemType'] === 'folder') {
 				$targetUserId = $params['shareWith'];
 				$dirId = $params['fileSource']; // or itemSource

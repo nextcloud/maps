@@ -78,6 +78,7 @@ OC.L10N.register(
     "Favorite name" : "Любимо име",
     "Category" : "Категория",
     "Comment" : "Коментар",
+    "Location" : "Местоположение",
     "New category {n}" : "Нова категория {n}",
     "Save" : "Запиши",
     "Place photos" : "Поставете снимки",

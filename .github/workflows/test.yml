@@ -41,6 +41,9 @@ jobs:
             - name: Enable maps app
               working-directory: nextcloud
               run: php -f occ app:enable maps
+            - name: Enable files_external app
+              working-directory: nextcloud
+              run: php -f occ app:enable files_external
             - name: Run tests
               if: ${{ always() && matrix.php-versions != 8.1 }}
               working-directory: nextcloud/apps/maps

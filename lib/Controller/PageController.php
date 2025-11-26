@@ -13,23 +13,27 @@
 namespace OCA\Maps\Controller;
 
 use OCA\Files\Event\LoadSidebar;
+use OCA\Maps\Service\MyMapsService;
 use OCA\Viewer\Event\LoadViewer;
 use OCP\AppFramework\Controller;
+use OCP\AppFramework\Http\RedirectResponse;
 use OCP\AppFramework\Http\TemplateResponse;
+use OCP\AppFramework\Services\IInitialState;
 use OCP\EventDispatcher\IEventDispatcher;
 use OCP\IConfig;
-use OCP\IInitialStateService;
 use OCP\IRequest;
+use OCP\IURLGenerator;
 
 class PageController extends Controller {
 
 	public function __construct(
 		string $appName,
 		IRequest $request,
+		private string $userId,
 		private IEventDispatcher $eventDispatcher,
 		private IConfig $config,
-		private IInitialStateService $initialStateService,
-		private string $userId,
+		private IInitialState $initialState,
+		private IURLGenerator $urlGenerator,
 	) {
 		parent::__construct($appName, $request);
 	}
@@ -50,7 +54,7 @@ class PageController extends Controller {
 		$this->eventDispatcher->dispatch(LoadViewer::class, new LoadViewer());
 
 		$params = ['user' => $this->userId];
-		$this->initialStateService->provideInitialState($this->appName, 'photos', $this->config->getAppValue('photos', 'enabled', 'no') === 'yes');
+		$this->initialState->provideInitialState('photos', $this->config->getAppValue('photos', 'enabled', 'no') === 'yes');
 		$response = new TemplateResponse('maps', 'main', $params);
 
 		$this->addCsp($response);
@@ -62,12 +66,21 @@ class PageController extends Controller {
 	 * @NoAdminRequired
 	 * @NoCSRFRequired
 	 */
-	public function indexMyMap($myMapId): TemplateResponse {
+	public function indexMyMap(int $myMapId, MyMapsService $service): TemplateResponse|RedirectResponse {
+		$map = $service->getMyMap($myMapId, $this->userId);
+		if ($map !== null && $map['id'] !== $myMapId) {
+			// Instead of the id of the map containing folder the '.index.maps' file id was passed so redirect
+			// this happens if coming from the files app integration
+			return new RedirectResponse(
+				$this->urlGenerator->linkToRouteAbsolute('maps.page.indexMyMap', ['myMapId' => $map['id']]),
+			);
+		}
+
 		$this->eventDispatcher->dispatch(LoadSidebar::class, new LoadSidebar());
 		$this->eventDispatcher->dispatch(LoadViewer::class, new LoadViewer());
 
 		$params = ['user' => $this->userId];
-		$this->initialStateService->provideInitialState($this->appName, 'photos', $this->config->getAppValue('photos', 'enabled', 'no') === 'yes');
+		$this->initialState->provideInitialState('photos', $this->config->getAppValue('photos', 'enabled', 'no') === 'yes');
 		$response = new TemplateResponse('maps', 'main', $params);
 
 		$this->addCsp($response);

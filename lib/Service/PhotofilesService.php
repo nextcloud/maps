@@ -291,7 +291,11 @@ class PhotofilesService {
 				if ($this->isPhoto($file) && $file->isUpdateable()) {
 					$lat = (count($lats) > $i) ? $lats[$i] : $lats[0];
 					$lng = (count($lngs) > $i) ? $lngs[$i] : $lngs[0];
-					$photo = $this->photoMapper->findByFileIdUserId($file->getId(), $userId);
+					try {
+						$photo = $this->photoMapper->findByFileIdUserId($file->getId(), $userId);
+					} catch (DoesNotExistException) {
+						$photo = null;
+					}
 					$done[] = [
 						'path' => preg_replace('/^files/', '', $file->getInternalPath()),
 						'lat' => $lat,

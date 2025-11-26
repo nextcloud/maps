@@ -81,7 +81,7 @@ class AddressService {
 			->from('maps_address_geo')
 			->where($qb->expr()->eq('object_uri', $qb->createNamedParameter($uri, IQueryBuilder::PARAM_STR)))
 			->andWhere($qb->expr()->eq('adr_norm', $qb->createNamedParameter($adr_norm, IQueryBuilder::PARAM_STR)));
-		$req = $qb->execute();
+		$req = $qb->executeQuery();
 		$lat = null;
 		$lng = null;
 		$inDb = false;
@@ -131,7 +131,7 @@ class AddressService {
 					->set('object_uri', $qb->createNamedParameter($uri, IQueryBuilder::PARAM_STR))
 					->set('looked_up', $qb->createNamedParameter($lookedUp, IQueryBuilder::PARAM_BOOL))
 					->where($qb->expr()->eq('id', $qb->createNamedParameter($id, IQueryBuilder::PARAM_STR)));
-				$req = $qb->execute();
+				$qb->executeStatement();
 			}
 		}
 
@@ -156,7 +156,7 @@ class AddressService {
 			->from('maps_address_geo')
 			->where($qb->expr()->eq('looked_up', $qb->createNamedParameter(true, IQueryBuilder::PARAM_BOOL)))
 			->andWhere($qb->expr()->eq('adr_norm', $qb->createNamedParameter($adr_norm, IQueryBuilder::PARAM_STR)));
-		$req = $qb->execute();
+		$req = $qb->executeQuery();
 		while ($row = $req->fetch()) {
 			$res[0] = $row['lat'];
 			$res[1] = $row['lng'];
@@ -181,16 +181,28 @@ class AddressService {
 
 			// we get rid of "post office box" field
 			$splitted_adr = explode(';', $adr);
-			if (count($splitted_adr) > 2) {
-				array_shift($splitted_adr);
-			}
-
 			// remove blank lines (#706)
 			$splitted_adr = array_filter(array_map('trim', $splitted_adr));
-			$query_adr = implode(', ', $splitted_adr);
+			// ADR in VCard is mandated to 7 fields
+			if (sizeof($splitted_adr) == 7) {
+				$query_adr_parts = [];
+				// This matches the nominatim query with the fields of 'ADR' in VCard
+				$query_key_part = ['','','street', 'city','state', 'postalcode', 'country'];
+				foreach ($query_key_part as $index => $query_key) {
+					if ($query_key !== '' && $splitted_adr[$index] !== '') {
+						$query_adr_parts += $query_key . '=' . urlencode($splitted_adr[$index]);
+					}
+				}
+
+				$query_adr = implode(';', $query_adr_parts);
+			} else {
+				// Try to do our best with a naive query
+				$query_adr = 'q=' . urlencode(implode(', ', $splitted_adr));
+			}
+
 
 			$result_json = @file_get_contents(
-				'https://nominatim.openstreetmap.org/search.php?q=' . urlencode($query_adr) . '&format=jsonv2',
+				'https://nominatim.openstreetmap.org/search?format=jsonv2&' . $query_adr,
 				false,
 				$context
 			);
@@ -249,7 +261,7 @@ class AddressService {
 		$qb->select('id', 'adr')
 			->from('maps_address_geo')
 			->where($qb->expr()->eq('object_uri', $qb->createNamedParameter($uri, IQueryBuilder::PARAM_STR)));
-		$req = $qb->execute();
+		$req = $qb->executeQuery();
 		while ($row = $req->fetch()) {
 			if (!in_array($row['adr'], $vCardAddresses)) {
 				array_push($adrIdToDelete, $row['id']);
@@ -263,7 +275,7 @@ class AddressService {
 				->where(
 					$qb->expr()->eq('id', $qb->createNamedParameter($id, IQueryBuilder::PARAM_INT))
 				);
-			$req = $qb->execute();
+			$qb->executeStatement();
 		}
 	}
 
@@ -273,7 +285,7 @@ class AddressService {
 			->where(
 				$qb->expr()->eq('object_uri', $qb->createNamedParameter($uri, IQueryBuilder::PARAM_STR))
 			);
-		$req = $qb->execute();
+		$qb->executeStatement();
 	}
 
 	// schedules the address for an external lookup
@@ -294,7 +306,7 @@ class AddressService {
 				'lng' => $qb->createNamedParameter($geo[1], IQueryBuilder::PARAM_STR),
 				'looked_up' => $qb->createNamedParameter($geo[2], IQueryBuilder::PARAM_BOOL),
 			]);
-		$req = $qb->execute();
+		$qb->executeStatement();
 		$id = $qb->getLastInsertId();
 		if (!$geo[2]) {
 			$this->jobList->add(LookupMissingGeoJob::class, []);
@@ -312,7 +324,7 @@ class AddressService {
 			->from('maps_address_geo')
 			->where($qb->expr()->eq('looked_up', $qb->createNamedParameter(false, IQueryBuilder::PARAM_BOOL)))
 			->setMaxResults($max);
-		$req = $qb->execute();
+		$req = $qb->executeQuery();
 		$result = $req->fetchAll();
 		$req->closeCursor();
 		$i = 0;

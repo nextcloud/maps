@@ -56,7 +56,7 @@ class DevicesService {
 			->where(
 				$qb->expr()->eq('user_id', $qb->createNamedParameter($userId, IQueryBuilder::PARAM_STR))
 			);
-		$req = $qb->execute();
+		$req = $qb->executeQuery();
 
 		while ($row = $req->fetch()) {
 			$devices[intval($row['id'])] = [
@@ -88,7 +88,7 @@ class DevicesService {
 			->where(
 				$qb->expr()->in('s.token', $qb->createNamedParameter($tokens, IQueryBuilder::PARAM_STR_ARRAY))
 			);
-		$req = $qb->execute();
+		$req = $qb->executeQuery();
 
 		while ($row = $req->fetch()) {
 			if (array_key_exists(intval($row['id']), $devices)) {
@@ -144,7 +144,7 @@ class DevicesService {
 			$qb->setMaxResults($limit);
 		}
 		$qb->orderBy('timestamp', 'DESC');
-		$req = $qb->execute();
+		$req = $qb->executeQuery();
 
 		$points = [];
 		while ($row = $req->fetch()) {
@@ -199,7 +199,7 @@ class DevicesService {
 			$qb->setMaxResults($limit);
 		}
 		$qb->orderBy('timestamp', 'DESC');
-		$req = $qb->execute();
+		$req = $qb->executeQuery();
 
 		$points = [];
 		while ($row = $req->fetch()) {
@@ -237,7 +237,7 @@ class DevicesService {
 				$qb->expr()->eq('d.user_id', $qb->createNamedParameter($userId, IQueryBuilder::PARAM_STR))
 			);
 		$qb->orderBy('timestamp', 'ASC');
-		$req = $qb->execute();
+		$req = $qb->executeQuery();
 
 		$points = [];
 		while ($row = $req->fetch()) {
@@ -258,7 +258,7 @@ class DevicesService {
 			->andWhere(
 				$qb->expr()->eq('user_agent', $qb->createNamedParameter($userAgent, IQueryBuilder::PARAM_STR))
 			);
-		$req = $qb->execute();
+		$req = $qb->executeQuery();
 
 		while ($row = $req->fetch()) {
 			$deviceId = intval($row['id']);
@@ -272,7 +272,7 @@ class DevicesService {
 					'user_agent' => $qb->createNamedParameter($userAgent, IQueryBuilder::PARAM_STR),
 					'user_id' => $qb->createNamedParameter($userId, IQueryBuilder::PARAM_STR)
 				]);
-			$req = $qb->execute();
+			$qb->executeStatement();
 			$deviceId = $qb->getLastInsertId();
 		}
 		return $deviceId;
@@ -290,7 +290,7 @@ class DevicesService {
 				'battery' => $qb->createNamedParameter(is_numeric($battery) ? $battery : null, IQueryBuilder::PARAM_STR),
 				'accuracy' => $qb->createNamedParameter(is_numeric($accuracy) ? $accuracy : null, IQueryBuilder::PARAM_STR)
 			]);
-		$req = $qb->execute();
+		$qb->executeStatement();
 		$pointId = $qb->getLastInsertId();
 		return $pointId;
 	}
@@ -332,7 +332,7 @@ class DevicesService {
 				$qb->expr()->eq('user_id', $qb->createNamedParameter($userId, IQueryBuilder::PARAM_STR))
 			);
 		}
-		$req = $qb->execute();
+		$req = $qb->executeQuery();
 
 		while ($row = $req->fetch()) {
 			$device = [
@@ -358,7 +358,7 @@ class DevicesService {
 		$qb->where(
 			$qb->expr()->eq('id', $qb->createNamedParameter($id, IQueryBuilder::PARAM_INT))
 		);
-		$req = $qb->execute();
+		$qb->executeStatement();
 	}
 
 	public function deleteDeviceFromDB($id) {
@@ -367,13 +367,13 @@ class DevicesService {
 			->where(
 				$qb->expr()->eq('id', $qb->createNamedParameter($id, IQueryBuilder::PARAM_INT))
 			);
-		$req = $qb->execute();
+		$qb->executeStatement();
 
 		$qb->delete('maps_device_points')
 			->where(
 				$qb->expr()->eq('device_id', $qb->createNamedParameter($id, IQueryBuilder::PARAM_INT))
 			);
-		$req = $qb->execute();
+		$qb->executeStatement();
 	}
 
 	public function countPoints($userId, $deviceIdList, $begin, $end) {
@@ -403,7 +403,7 @@ class DevicesService {
 				$qb->expr()->lt('p.timestamp', $qb->createNamedParameter(intval($end), IQueryBuilder::PARAM_INT))
 			);
 		}
-		$req = $qb->execute();
+		$req = $qb->executeQuery();
 		$count = 0;
 		while ($row = $req->fetch()) {
 			$count = intval($row['co']);
@@ -487,7 +487,7 @@ class DevicesService {
 			$qb->setFirstResult($pointIndex);
 			$qb->setMaxResults($chunkSize);
 			$qb->orderBy('timestamp', 'ASC');
-			$req = $qb->execute();
+			$req = $qb->executeQuery();
 
 			while ($row = $req->fetch()) {
 				$id = intval($row['id']);

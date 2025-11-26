@@ -259,7 +259,7 @@ class TracksService {
 			->where(
 				$qb->expr()->eq('user_id', $qb->createNamedParameter($userId, IQueryBuilder::PARAM_STR))
 			);
-		$req = $qb->execute();
+		$req = $qb->executeQuery();
 
 		if (is_null($folder)) {
 			$folder = $userFolder;
@@ -331,7 +331,7 @@ class TracksService {
 				$qb->expr()->eq('user_id', $qb->createNamedParameter($userId, IQueryBuilder::PARAM_STR))
 			);
 		}
-		$req = $qb->execute();
+		$req = $qb->executeQuery();
 
 		while ($row = $req->fetch()) {
 			if ($userId !== '' and $userId !== null) {
@@ -368,7 +368,7 @@ class TracksService {
 		return $track;
 	}
 
-	public function getTrackByFileIDFromDB($fileId, $userId = null) {
+	public function getTrackByFileIDFromDB(int $fileId, ?string $userId = null) {
 		$track = null;
 		$qb = $this->dbconnection->getQueryBuilder();
 		$qb->select('id', 'file_id', 'color', 'metadata', 'etag')
@@ -381,7 +381,7 @@ class TracksService {
 				$qb->expr()->eq('user_id', $qb->createNamedParameter($userId, IQueryBuilder::PARAM_STR))
 			);
 		}
-		$req = $qb->execute();
+		$req = $qb->executeQuery();
 
 		while ($row = $req->fetch()) {
 			if ($userId !== '' and $userId !== null) {
@@ -429,12 +429,12 @@ class TracksService {
 				'metadata' => $qb->createNamedParameter($metadata, IQueryBuilder::PARAM_STR),
 				'etag' => $qb->createNamedParameter($etag, IQueryBuilder::PARAM_STR)
 			]);
-		$req = $qb->execute();
+		$qb->executeStatement();
 		$trackId = $qb->getLastInsertId();
 		return $trackId;
 	}
 
-	public function editTrackInDB($id, $color, $metadata, $etag) {
+	public function editTrackInDB($id, $color, $metadata, $etag): void {
 		$qb = $this->dbconnection->getQueryBuilder();
 		$qb->update('maps_tracks');
 		if ($color !== null) {
@@ -449,19 +449,19 @@ class TracksService {
 		$qb->where(
 			$qb->expr()->eq('id', $qb->createNamedParameter($id, IQueryBuilder::PARAM_INT))
 		);
-		$req = $qb->execute();
+		$qb->executeStatement();
 	}
 
-	public function deleteByFileId($fileId) {
+	public function deleteByFileId(int $fileId): void {
 		$qb = $this->dbconnection->getQueryBuilder();
 		$qb->delete('maps_tracks')
 			->where(
 				$qb->expr()->eq('file_id', $qb->createNamedParameter($fileId, IQueryBuilder::PARAM_INT))
 			);
-		$req = $qb->execute();
+		$qb->executeStatement();
 	}
 
-	public function deleteByFileIdUserId($fileId, $userId) {
+	public function deleteByFileIdUserId(int $fileId, string $userId): void {
 		$qb = $this->dbconnection->getQueryBuilder();
 		$qb->delete('maps_tracks')
 			->where(
@@ -470,47 +470,39 @@ class TracksService {
 			->andWhere(
 				$qb->expr()->eq('user_id', $qb->createNamedParameter($userId, IQueryBuilder::PARAM_STR))
 			);
-		$req = $qb->execute();
-		$qb = $this->dbconnection->getQueryBuilder();
+		$qb->executeStatement();
 	}
 
-	public function deleteTrackFromDB($id) {
+	public function deleteTrackFromDB(int $id): void {
 		$qb = $this->dbconnection->getQueryBuilder();
 		$qb->delete('maps_tracks')
 			->where(
 				$qb->expr()->eq('id', $qb->createNamedParameter($id, IQueryBuilder::PARAM_INT))
 			);
-		$req = $qb->execute();
-		$qb = $this->dbconnection->getQueryBuilder();
+		$qb->executeStatement();
 	}
 
-	public function deleteAllTracksFromDB($userId) {
+	public function deleteAllTracksFromDB(string $userId): void {
 		$qb = $this->dbconnection->getQueryBuilder();
 		$qb->delete('maps_tracks')
 			->where(
 				$qb->expr()->eq('user_id', $qb->createNamedParameter($userId, IQueryBuilder::PARAM_STR))
 			);
-		$req = $qb->execute();
-		$qb = $this->dbconnection->getQueryBuilder();
+		$qb->executeStatement();
 	}
 
-	public function deleteTracksFromDB($ids, $userId) {
-		$qb = $this->dbconnection->getQueryBuilder();
-		$qb->delete('maps_tracks')
-			->where(
-				$qb->expr()->eq('user_id', $qb->createNamedParameter($userId, IQueryBuilder::PARAM_STR))
-			);
-		if (count($ids) > 0) {
-			$or = $qb->expr()->orx();
-			foreach ($ids as $id) {
-				$or->add($qb->expr()->eq('id', $qb->createNamedParameter($id, IQueryBuilder::PARAM_INT)));
-			}
-			$qb->andWhere($or);
-		} else {
+	public function deleteTracksFromDB(array $ids, string $userId): void {
+		if (empty($ids)) {
 			return;
 		}
-		$req = $qb->execute();
+
 		$qb = $this->dbconnection->getQueryBuilder();
+		$qb->delete('maps_tracks')
+			->where(
+				$qb->expr()->eq('user_id', $qb->createNamedParameter($userId, IQueryBuilder::PARAM_STR))
+			)
+			->andWhere($qb->expr()->in('id', $qb->createNamedParameter($ids, IQueryBuilder::PARAM_INT_ARRAY)));
+		$qb->executeStatement();
 	}
 
 	public function generateTrackMetadata($file) {

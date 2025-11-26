@@ -233,6 +233,7 @@ import { geoToLatLng, getFormattedADR } from '../utils/mapUtils.js'
 import * as network from '../network.js'
 import { all as axiosAll, spread as axiosSpread } from 'axios'
 import { generateUrl } from '@nextcloud/router'
+import { placeFileOrFolder } from '../utils/photoPicker.ts'
 
 export default {
 	name: 'App',
@@ -946,50 +947,17 @@ export default {
 				console.error(error)
 			})
 		},
-		placePhotoFilesOrFolder(latlng) {
-			OC.dialogs.confirmDestructive(
-				'',
-				t('maps', 'What do you want to place?'),
-				{
-					type: OC.dialogs.YES_NO_BUTTONS,
-					confirm: t('maps', 'Photo files'),
-					confirmClasses: '',
-					cancel: t('maps', 'Photo folders'),
-				},
-				(result) => {
-					if (result) {
-						this.placePhotoFiles(latlng)
-					} else {
-						this.placePhotoFolder(latlng)
-					}
-				},
-				true,
-			)
-		},
-		placePhotoFiles(latlng) {
-			OC.dialogs.filepicker(
-				t('maps', 'Choose pictures to place'),
-				(targetPath) => {
-					this.placePhotos(targetPath, [latlng.lat], [latlng.lng])
-				},
-				true,
-				['image/jpeg', 'image/tiff'],
-				true,
-			)
-		},
-		placePhotoFolder(latlng) {
-			OC.dialogs.filepicker(
-				t('maps', 'Choose directory of pictures to place'),
-				(targetPath) => {
-					if (targetPath === '') {
-						targetPath = '/'
-					}
-					this.placePhotos([targetPath], [latlng.lat], [latlng.lng], true)
-				},
-				false,
-				'httpd/unix-directory',
-				true,
-			)
+		async placePhotoFilesOrFolder(latLong) {
+			try {
+				const response = await placeFileOrFolder(latLong, this.myMapId)
+				this.getPhotos()
+				this.saveAction({
+					type: 'photoMove',
+					content: response.data,
+				})
+			} catch (error) {
+				console.error(error)
+			}
 		},
 		placePhotos(paths, lats, lngs, directory = false, save = true, reload = true) {
 			network.placePhotos(paths, lats, lngs, directory, this.myMapId).then((response) => {

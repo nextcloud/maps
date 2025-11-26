@@ -54,6 +54,7 @@ OC.L10N.register(
     "Phone" : "Tālrunis",
     "A background job updated {current} from {total} changed photos. This might take a while." : "Fona darbs atjaunināja {current} no {total} izmainītajiem fotoattēliem. Tas var aizņemt kādu laiku.",
     "What do you want to place?" : "Ko ir vēlēšanās ievietot?",
+    "Photo files" : "Fotoattēlu datnes",
     "Not grouped" : "Negrupēts",
     "Failed to delete device" : "Neizdevās izdzēst ierīci",
     "Default" : "Noklusējuma",

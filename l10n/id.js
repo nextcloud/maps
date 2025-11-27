@@ -50,6 +50,7 @@ OC.L10N.register(
     "Not grouped" : "Tidak dikelompokkan",
     "Default" : "Bawaan",
     "Failed to save settings" : "Gagal simpan setelan",
+    "Select folder" : "Pilih folder",
     "Restaurant" : "Restoran",
     "Bar" : "Batang"
 },

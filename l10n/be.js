@@ -71,6 +71,7 @@ OC.L10N.register(
     "New Map" : "Новая карта",
     "Map deleted" : "Карта выдалена",
     "Metadata" : "Метаданыя",
+    "Select folder" : "Выберыце папку",
     "Restaurant" : "Рэстаран",
     "Fast food" : "Фастфуд",
     "Bar" : "Бар",

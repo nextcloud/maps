@@ -337,6 +337,7 @@ OC.L10N.register(
     "Failed to delete favorite" : "فشل حذف المفضلة",
     "Metadata" : "البيانات الوصفية ( ميتاداتا)",
     "Photo files" : "ملفات الصور",
+    "Select folder" : "إختر مجلداً",
     "Restaurant" : "مطعم",
     "Fast food" : "أكل خفيف",
     "Bar" : "عمود",

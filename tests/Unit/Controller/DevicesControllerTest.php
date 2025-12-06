@@ -85,14 +85,14 @@ class DevicesControllerTest extends \PHPUnit\Framework\TestCase {
 			$this->request,
 			$c->query(IServerContainer::class),
 			$c->query(IServerContainer::class)->getConfig(),
-			$c->getServer()->getShareManager(),
+			$c->getServer()->get(\OCP\Share\IManager::class),
 			$c->getServer()->getAppManager(),
 			$c->getServer()->getUserManager(),
 			$c->getServer()->getGroupManager(),
 			$c->query(IServerContainer::class)->getL10N($c->query('AppName')),
 			$c->query(DevicesService::class),
 			$c->query(DeviceShareMapper::class),
-			$c->query(IServerContainer::class)->getDateTimeZone(),
+			$c->query(IServerContainer::class)->get(\OCP\IDateTimeZone::class),
 			$c->query(IRootFolder::class),
 			'test'
 		);
@@ -102,14 +102,14 @@ class DevicesControllerTest extends \PHPUnit\Framework\TestCase {
 			$this->request,
 			$c->query(IServerContainer::class),
 			$c->query(IServerContainer::class)->getConfig(),
-			$c->getServer()->getShareManager(),
+			$c->getServer()->get(\OCP\Share\IManager::class),
 			$c->getServer()->getAppManager(),
 			$c->getServer()->getUserManager(),
 			$c->getServer()->getGroupManager(),
 			$c->query(IServerContainer::class)->getL10N($c->query('AppName')),
 			$c->query(DevicesService::class),
 			$c->query(DeviceShareMapper::class),
-			$c->query(IServerContainer::class)->getDateTimeZone(),
+			$c->query(IServerContainer::class)->get(\OCP\IDateTimeZone::class),
 			$c->query(IRootFolder::class),
 			'test2'
 		);

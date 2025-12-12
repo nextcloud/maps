@@ -53,6 +53,7 @@ OC.L10N.register(
     "Update" : "Абнавіць",
     "Yes" : "Так",
     "Open" : "Адкрыць",
+    "Closed" : "Закрыта",
     "Search" : "Пошук",
     "File" : "Файл",
     "Start" : "Запусціць",

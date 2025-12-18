@@ -193,6 +193,7 @@ OC.L10N.register(
     "Failed to delete favorite" : "No s'ha pogut suprimir el favorit",
     "Metadata" : "Metadades",
     "Photo files" : "Fitxers de foto",
+    "Select folder" : "Trieu una carpeta",
     "Restaurant" : "Restaurant",
     "Fast food" : "Fast-food",
     "Bar" : "Bar",

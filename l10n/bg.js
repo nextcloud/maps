@@ -328,6 +328,7 @@ OC.L10N.register(
     "Failed to delete favorite" : "Неуспешно изтриване на любимо",
     "Metadata" : "Метаданни",
     "Photo files" : "Файлове със снимки",
+    "Select folder" : "Избор на папка",
     "Restaurant" : "Ресторант",
     "Fast food" : "Бързо хранене",
     "Bar" : "Бар",

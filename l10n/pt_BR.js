@@ -362,7 +362,7 @@ OC.L10N.register(
     "Select folder" : "Selecionar pasta",
     "_Select %n folder_::_Select %n folders_" : ["Selecione %n pasta","Selecione %n de pastas","Selecione %n pastas"],
     "Choose photos to place" : "Escolha as fotos para colocar",
-    "Select photo" : "Selecione a foto",
+    "Select photo" : "Selecionar foto",
     "_Select %n photo_::_Select %n photos_" : ["Selecione %n foto","Selecione %n de fotos","Selecione %n fotos"],
     "Restaurant" : "Restaurante",
     "Fast food" : "Fast food",

@@ -37,7 +37,7 @@
     <dependencies>
         <php min-version="8.1" max-version="8.4"/>
         <lib>exif</lib>
-        <nextcloud min-version="30" max-version="31"/>
+        <nextcloud min-version="30" max-version="32"/>
     </dependencies>
     <repair-steps>
 		<post-migration>

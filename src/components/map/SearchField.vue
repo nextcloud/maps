@@ -131,12 +131,35 @@ export default {
 				input.value = this.mySelectedOption.value || this.mySelectedOption.label
 			}
 		})
+
+		// Add mobile-specific attributes to ensure virtual keyboard shows
+		input.setAttribute('inputmode', 'search')
+		input.setAttribute('enterkeyhint', 'search')
+		input.setAttribute('autocorrect', 'off')
+		input.setAttribute('autocapitalize', 'off')
+
+		// Add touch event handling for mobile devices
+		const container = this.$refs.select.$el
+		container.addEventListener('touchstart', () => {
+			// Small delay to ensure DOM is ready
+			setTimeout(() => {
+				input.focus()
+			}, 50)
+		}, { passive: true })
 	},
 
 	methods: {
 		focus() {
 			const input = this.$refs.select.$el.querySelector('input')
-			input.focus()
+			// For mobile devices, we need to focus immediately and trigger click
+			if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
+				// Mobile device: trigger both focus and click to ensure virtual keyboard shows
+				input.focus()
+				input.click()
+			} else {
+				// Desktop: just focus
+				input.focus()
+			}
 			// this does not work...
 			/*
 			if (this.mySelectedOption) {

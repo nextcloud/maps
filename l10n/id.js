@@ -37,6 +37,7 @@ OC.L10N.register(
     "Work" : "Kantor",
     "Device" : "Perangkat",
     "Date" : "Date",
+    "No name" : "Tanpa nama",
     "Update" : "Perbarui",
     "Yes" : "Ya",
     "Open" : "Buka",

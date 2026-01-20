@@ -55,6 +55,7 @@ OC.L10N.register(
     "Failed to save settings" : "Gagal simpan setelan",
     "Select folder" : "Pilih folder",
     "Restaurant" : "Restoran",
-    "Bar" : "Batang"
+    "Bar" : "Batang",
+    "School" : "Sekolah"
 },
 "nplurals=1; plural=0;");

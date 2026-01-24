@@ -43,6 +43,7 @@ OC.L10N.register(
     "Update" : "Perbarui",
     "Yes" : "Ya",
     "Open" : "Buka",
+    "Closed" : "Ditutup",
     "Search" : "Cari",
     "File" : "Berkas",
     "right" : "kanan",

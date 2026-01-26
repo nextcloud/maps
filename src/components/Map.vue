@@ -176,7 +176,9 @@ import L from 'leaflet'
 import 'mapbox-gl/dist/mapbox-gl'
 import 'mapbox-gl/dist/mapbox-gl.css'
 import 'mapbox-gl-leaflet/leaflet-mapbox-gl'
+import { Protocol } from "pmtiles";
 import '@maplibre/maplibre-gl-leaflet'
+import { addProtocol } from 'maplibre-gl'
 import ResourceType from 'maplibre-gl'
 import {
 	baseLayersByName,
@@ -818,10 +820,18 @@ export default {
 			}
 
 			if ((gl !== null)
-				&& ('maplibreStreetStyleURL' in this.optionValues && this.optionValues.maplibreStreetStyleURL !== '')) {
+				&& ('maplibreStreetStyleURL' in this.optionValues
+				&& this.optionValues.maplibreStreetStyleURL !== '')) {
 				let token = null
-				if ('maplibreStreetStyleAuth' in this.optionValues && this.optionValues.maplibreStreetStyleAuth !== '') {
+				if ('maplibreStreetStyleAuth' in this.optionValues
+					&& this.optionValues.maplibreStreetStyleAuth !== '') {
 					token = this.optionValues.maplibreStreetStyleAuth
+				}
+
+				if ('maplibreStreetStylePmtiles' in this.optionValues
+					&& this.optionValues.maplibreStreetStylePmtiles === "1") {
+					let protocol = new Protocol();
+					addProtocol("pmtiles", protocol.tile);
 				}
 
 				// wrapper to make tile layer component correctly pass arguments

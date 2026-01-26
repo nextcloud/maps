@@ -70,6 +70,8 @@ if (!isset($_['osrmDEMO']) || $_['osrmDEMO'] === '1') {
 		<label for="maplibreStreetStyleAuth"><?php p($l->t('Basic Authorization if required. Format is "user:password"')); ?></label><br/>
 		<input id="maplibreStreetStyleAuth" type="text" value="<?php if (isset($_['maplibreStreetStyleAuth'])) {
 			p($_['maplibreStreetStyleAuth']);
-		} ?>"/>
+		} ?>"/><br/>
+		<label for="maplibreStreetStylePmtiles"><?php p($l->t('support PMTiles protocol')); ?></label>
+		<input id="maplibreStreetStylePmtiles" type="checkbox" checked="<?php p($_['maplibreStreetStylePmtiles']) ?>"/>
 	</div><br/>
 </div>

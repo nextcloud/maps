@@ -195,6 +195,7 @@ class PublicUtilsController extends PublicPageController {
 			'mapboxAPIKEY',
 			'maplibreStreetStyleURL',
 			'maplibreStreetStyleAuth',
+			'maplibreStreetStylePmtiles',
 			'graphhopperURL'
 		];
 		foreach ($settingsKeys as $k) {

@@ -28,6 +28,7 @@ class AdminSettings implements ISettings {
 			'mapboxAPIKEY',
 			'maplibreStreetStyleURL',
 			'maplibreStreetStyleAuth',
+			'maplibreStreetStylePmtiles',
 			'graphhopperURL'
 		];
 		$parameters = [];

@@ -315,6 +315,7 @@ OC.L10N.register(
     "Choose directory of pictures to place" : "选择要放置的图片文件夹",
     "Settings were successfully saved" : "设置已成功保存",
     "Failed to save settings" : "保存设置失败",
+    "ft/s²" : "ft/s²",
     "Import as devices in Maps" : "在地图中导入为设备",
     "Import as favorites in Maps" : "在地图中导入为收藏",
     "Failed to import favorites" : "导入收藏失败",

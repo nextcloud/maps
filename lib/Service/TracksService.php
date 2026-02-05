@@ -16,6 +16,7 @@ use OC\Files\Search\SearchBinaryOperator;
 use OC\Files\Search\SearchComparison;
 use OC\Files\Search\SearchQuery;
 use OCP\DB\QueryBuilder\IQueryBuilder;
+use OCP\Files\File;
 use OCP\Files\FileInfo;
 use OCP\Files\Folder;
 use OCP\Files\IRootFolder;
@@ -81,27 +82,21 @@ class TracksService {
 
 	public function safeAddByFileIdUserId($fileId, $userId) {
 		$userFolder = $this->root->getUserFolder($userId);
-		$files = $userFolder->getById($fileId);
-		if (empty($files)) {
+		$file = $userFolder->getFirstNodeById($fileId);
+		if ($file === null || !$this->isTrack($file)) {
 			return;
 		}
-		$file = array_shift($files);
-		if ($file !== null and $this->isTrack($file)) {
-			$this->safeAddTrack($file, $userId);
-		}
+		$this->safeAddTrack($file, $userId);
 	}
 
 	public function safeAddByFolderIdUserId($folderId, $userId) {
-		$folders = $this->root->getById($folderId);
-		if (empty($folders)) {
+		$folder = $this->root->getUserFolder($folderId);
+		if ($folder === null) {
 			return;
 		}
-		$folder = array_shift($folders);
-		if ($folder !== null) {
-			$tracks = $this->gatherTrackFiles($folder, true);
-			foreach ($tracks as $track) {
-				$this->safeAddTrack($track, $userId);
-			}
+		$tracks = $this->gatherTrackFiles($folder, true);
+		foreach ($tracks as $track) {
+			$this->safeAddTrack($track, $userId);
 		}
 	}
 
@@ -133,19 +128,19 @@ class TracksService {
 
 	// delete track only if it's not accessible to user anymore
 	// it might have been shared multiple times by different users
-	public function safeDeleteByFileIdUserId($fileId, $userId) {
+	public function safeDeleteByFileIdUserId(int $fileId, string $userId): void {
 		$userFolder = $this->root->getUserFolder($userId);
-		$files = $userFolder->getById($fileId);
-		if (!is_array($files) or count($files) === 0) {
+		$file = $userFolder->getFirstNodeById($fileId);
+		if ($file === null) {
 			$this->deleteByFileIdUserId($fileId, $userId);
 		}
 	}
 
-	public function deleteByFile(Node $file) {
+	public function deleteByFile(Node $file): void {
 		$this->deleteByFileId($file->getId());
 	}
 
-	public function deleteByFolder(Node $folder) {
+	public function deleteByFolder(Node $folder): void {
 		$tracks = $this->gatherTrackFiles($folder, true);
 		foreach ($tracks as $track) {
 			$this->deleteByFileId($track->getId());
@@ -153,7 +148,7 @@ class TracksService {
 	}
 
 	// delete folder tracks only if it's not accessible to user anymore
-	public function safeDeleteByFolderIdUserId($folderId, $userId) {
+	public function safeDeleteByFolderIdUserId(int $folderId, string $userId): void {
 		$userFolder = $this->root->getUserFolder($userId);
 		$folders = $userFolder->getById($folderId);
 		if (is_array($folders) and count($folders) === 1) {
@@ -196,17 +191,16 @@ class TracksService {
 		return true;
 	}
 
-	private function dbRowToTrack($row, $folder, $userFolder, $defaultMap, $ignoredPaths) {
+	private function dbRowToTrack($row, Folder $folder, $userFolder, $defaultMap, $ignoredPaths) {
 		// avoid tracks that are not in "this map's" folder
-		$files = $folder->getById(intval($row['file_id']));
-		if (empty($files)) {
+		$file = $folder->getFirstNodeById(intval($row['file_id']));
+		if ($file === null) {
 			if ($defaultMap) {
 				$this->deleteTrackFromDB($row['id']);
 			}
 			return null;
 		}
-		$file = array_shift($files);
-		if ($file === null || $file->getType() !== \OCP\Files\FileInfo::TYPE_FILE) {
+		if (!$file instanceof File) {
 			if ($defaultMap) {
 				$this->deleteTrackFromDB($row['id']);
 			}
@@ -336,11 +330,7 @@ class TracksService {
 		while ($row = $req->fetch()) {
 			if ($userId !== '' and $userId !== null) {
 				$userFolder = $this->root->getUserFolder($userId);
-				$files = $userFolder->getById(intval($row['file_id']));
-				if (empty($files)) {
-					break;
-				}
-				$file = array_shift($files);
+				$file = $userFolder->getFirstNodeById(intval($row['file_id']));
 				if ($file === null) {
 					break;
 				}
@@ -386,11 +376,7 @@ class TracksService {
 		while ($row = $req->fetch()) {
 			if ($userId !== '' and $userId !== null) {
 				$userFolder = $this->root->getUserFolder($userId);
-				$files = $userFolder->getById(intval($row['file_id']));
-				if (empty($files)) {
-					break;
-				}
-				$file = array_shift($files);
+				$file = $userFolder->getFirstNodeById(intval($row['file_id']));
 				if ($file === null) {
 					break;
 				}

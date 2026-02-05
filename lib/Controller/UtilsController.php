@@ -13,13 +13,16 @@
 
 namespace OCA\Maps\Controller;
 
-use OCP\App\IAppManager;
 use OCP\AppFramework\Controller;
+use OCP\AppFramework\Http\Attribute\NoAdminRequired;
+use OCP\AppFramework\Http\Attribute\NoCSRFRequired;
 use OCP\AppFramework\Http\ContentSecurityPolicy;
 
 use OCP\AppFramework\Http\DataResponse;
 
 
+use OCP\Files\File;
+use OCP\Files\Folder;
 use OCP\Files\IRootFolder;
 
 use OCP\Files\NotFoundException;
@@ -28,33 +31,24 @@ use OCP\IRequest;
 use OCP\Lock\LockedException;
 
 class UtilsController extends Controller {
-
-
-	private $userId;
-	private $config;
-	private $root;
-
-	public function __construct($AppName,
+	public function __construct(
+		string $appName,
 		IRequest $request,
-		IConfig $config,
-		IAppManager $appManager,
-		IRootFolder $root,
-		$UserId) {
-		parent::__construct($AppName, $request);
-		$this->root = $root;
-		$this->userId = $UserId;
-		// IConfig object
-		$this->config = $config;
+		private IConfig $config,
+		private IRootFolder $root,
+		private string $userId,
+	) {
+		parent::__construct($appName, $request);
 	}
 
 	/**
 	 * Save options values to the DB for current user
 	 *
-	 * @NoAdminRequired
 	 * @param $options
 	 * @return DataResponse
 	 * @throws \OCP\PreConditionNotMetException
 	 */
+	#[NoAdminRequired]
 	public function saveOptionValue($options, $myMapId = null): DataResponse {
 		if (is_null($myMapId) || $myMapId === '') {
 			foreach ($options as $key => $value) {
@@ -62,9 +56,12 @@ class UtilsController extends Controller {
 			}
 		} else {
 			$userFolder = $this->root->getUserFolder($this->userId);
-			$folders = $userFolder->getById($myMapId);
-			$folder = array_shift($folders);
+			$folder = $userFolder->getFirstNodeById($myMapId);
+			if (!$folder instanceof Folder) {
+				throw new NotFoundException('Could find map with mapid: ' . $myMapId);
+			}
 			try {
+				/** @var File $file */
 				$file = $folder->get('.index.maps');
 			} catch (NotFoundException $e) {
 				$file = $folder->newFile('.index.maps', $content = '{}');
@@ -83,11 +80,9 @@ class UtilsController extends Controller {
 	}
 
 	/**
-	 * get options values from the config for current user
-	 *
-	 * @NoAdminRequired
-	 * @return DataResponse
+	 * Get options values from the config for current user
 	 */
+	#[NoAdminRequired]
 	public function getOptionsValues($myMapId = null): DataResponse {
 		$ov = [];
 
@@ -105,9 +100,12 @@ class UtilsController extends Controller {
 			$ov['isShareable'] = true;
 		} else {
 			$userFolder = $this->root->getUserFolder($this->userId);
-			$folders = $userFolder->getById($myMapId);
-			$folder = array_shift($folders);
+			$folder = $userFolder->getFirstNodeById($myMapId);
+			if (!$folder instanceof Folder) {
+				throw new NotFoundException('Could find map with mapid: ' . $myMapId);
+			}
 			try {
+				/** @var File $file */
 				$file = $folder->get('.index.maps');
 			} catch (NotFoundException $e) {
 				$file = $folder->newFile('.index.maps', $content = '{}');
@@ -176,12 +174,10 @@ class UtilsController extends Controller {
 	}
 
 	/**
-	 * get content of mapbox traffic style
-	 * @NoAdminRequired
-	 * @NoCSRFRequired
-	 *
-	 * @return DataResponse
+	 * Get content of mapbox traffic style
 	 */
+	#[NoAdminRequired]
+	#[NoCSRFRequired]
 	public function getTrafficStyle(): DataResponse {
 		$style = [
 			'version' => 8,

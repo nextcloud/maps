@@ -25,56 +25,30 @@ use OCP\Files\NotFoundException;
 use OCP\Files\NotPermittedException;
 use OCP\Files\Search\ISearchBinaryOperator;
 use OCP\Files\Search\ISearchComparison;
+use OCP\ICache;
 use OCP\ICacheFactory;
-use OCP\IL10N;
 use OCP\IPreview;
-use Psr\Log\LoggerInterface;
 use RuntimeException;
 
 class GeophotoService {
-
-	private $l10n;
-	private $root;
-	private $photoMapper;
-	private $preview;
-	private $tracksService;
-	private $timeorderedPointSets;
-	private $devicesService;
-	private $cacheFactory;
-	private $userId;
-	private \OCP\ICache $photosCache;
-	private \OCP\ICache $timeOrderedPointSetsCache;
-	private \OCP\ICache $backgroundJobCache;
+	private ICache $photosCache;
+	private ICache $timeOrderedPointSetsCache;
+	private ICache $backgroundJobCache;
+	private $timeorderedPointSets = null;
 
 	public function __construct(
-		private LoggerInterface $logger,
-		IRootFolder $root,
-		IL10N $l10n,
-		GeophotoMapper $photoMapper,
-		IPreview $preview,
-		TracksService $tracksService,
-		DevicesService $devicesService,
-		ICacheFactory $cacheFactory,
-		$userId,
+		private IRootFolder $root,
+		private GeophotoMapper $photoMapper,
+		private IPreview $preview,
+		private TracksService $tracksService,
+		private DevicesService $devicesService,
+		private ICacheFactory $cacheFactory,
 	) {
-		$this->root = $root;
-		$this->l10n = $l10n;
-		$this->photoMapper = $photoMapper;
-		$this->preview = $preview;
-		$this->tracksService = $tracksService;
-		$this->timeorderedPointSets = null;
-		$this->userId = $userId;
-		$this->devicesService = $devicesService;
-		$this->cacheFactory = $cacheFactory;
 		$this->photosCache = $this->cacheFactory->createDistributed('maps:photos');
 		$this->timeOrderedPointSetsCache = $this->cacheFactory->createDistributed('maps:time-ordered-point-sets');
 		$this->backgroundJobCache = $this->cacheFactory->createDistributed('maps:background-jobs');
 	}
 
-	/**
-	 * @param string $userId
-	 * @return bool
-	 */
 	public function clearCache(string $userId = ''): bool {
 		try {
 			$this->photosCache->clear($userId);
@@ -83,24 +57,18 @@ class GeophotoService {
 			$this->backgroundJobCache->clear('recentlyUpdated:' . $userId);
 			return true;
 
-		} catch (\Exception $e) {
+		} catch (\Exception) {
 			return false;
 		}
 	}
 
 	/**
-	 * @param string $userId
-	 * @param ?Folder $folder =null
-	 * @param bool $respectNomediaAndNoimage =true
-	 * @param bool $hideImagesOnCustomMaps =true
-	 * @param bool $hideImagesInMapsFolder
-	 * @return array
 	 * @throws Exception
 	 * @throws NoUserException
 	 * @throws NotFoundException
 	 * @throws NotPermittedException
 	 */
-	public function getAll(string $userId, $folder = null, bool $respectNomediaAndNoimage = true, bool $hideImagesOnCustomMaps = false, bool $hideImagesInMapsFolder = true): array {
+	public function getAll(string $userId, ?Folder $folder = null, bool $respectNomediaAndNoimage = true, bool $hideImagesOnCustomMaps = false, bool $hideImagesInMapsFolder = true): array {
 		$userFolder = $this->getFolderForUser($userId);
 		if (is_null($folder)) {
 			$folder = $userFolder;
@@ -120,12 +88,7 @@ class GeophotoService {
 				// this path is relative to owner's storage
 				//$path = $cacheEntry->getPath();
 				//but we want it relative to current user's storage
-				$files = $folder->getById($photoEntity->getFileId());
-				if (empty($files)) {
-					continue;
-				}
-				$file = array_shift($files);
-
+				$file = $folder->getFirstNodeById($photoEntity->getFileId());
 				if ($file === null) {
 					continue;
 				}
@@ -170,11 +133,6 @@ class GeophotoService {
 	}
 
 	/**
-	 * @param string $userId
-	 * @param ?Folder $folder =null
-	 * @param bool $respectNomediaAndNoimage
-	 * @param bool $hideImagesOnCustomMaps
-	 * @param bool $hideImagesInMapsFolder
 	 * @param string|null $timezone locale time zone used by images
 	 * @param int $limit
 	 * @param int $offset
@@ -184,7 +142,7 @@ class GeophotoService {
 	 * @throws NotFoundException
 	 * @throws NotPermittedException
 	 */
-	public function getNonLocalized(string $userId, $folder = null, bool $respectNomediaAndNoimage = true, bool $hideImagesOnCustomMaps = false, bool $hideImagesInMapsFolder = true, ?string $timezone = null, int $limit = 250, int $offset = 0): array {
+	public function getNonLocalized(string $userId, ?Folder $folder = null, bool $respectNomediaAndNoimage = true, bool $hideImagesOnCustomMaps = false, bool $hideImagesInMapsFolder = true, ?string $timezone = null, int $limit = 250, int $offset = 0): array {
 		$userFolder = $this->getFolderForUser($userId);
 		if (is_null($folder)) {
 			$folder = $userFolder;
@@ -208,11 +166,7 @@ class GeophotoService {
 			// this path is relative to owner's storage
 			//$path = $cacheEntry->getPath();
 			// but we want it relative to current user's storage
-			$files = $folder->getById($photoEntity->getFileId());
-			if (empty($files)) {
-				continue;
-			}
-			$file = array_shift($files);
+			$file = $folder->getFirstNodeById($photoEntity->getFileId());
 			if ($file === null) {
 				continue;
 			}
@@ -267,14 +221,11 @@ class GeophotoService {
 	}
 
 	/**
-	 * @param $userId
-	 * @param $folder
-	 * @return array
 	 * @throws \OCP\Files\NotFoundException
 	 * @throws \OCP\Files\NotPermittedException
 	 * @throws \OC\User\NoUserException
 	 */
-	private function getIgnoredPaths($userId, $folder = null, $hideImagesOnCustomMaps = true) {
+	private function getIgnoredPaths(string $userId, ?Folder $folder = null, bool $hideImagesOnCustomMaps = true): array {
 		$ignoredPaths = [];
 		$userFolder = $this->getFolderForUser($userId);
 		if (is_null($folder)) {
@@ -334,13 +285,10 @@ class GeophotoService {
 		if (is_null($this->timeorderedPointSets)) {
 			$userFolder = $this->getFolderForUser($userId);
 			foreach ($this->tracksService->getTracksFromDB($userId, $folder, $respectNomediaAndNoimage, $hideTracksOnCustomMaps, $hideTracksInMapsFolder) as $gpxfile) {
-				$res = $userFolder->getById($gpxfile['file_id']);
-				if (is_array($res) and count($res) > 0) {
-					$file = array_shift($res);
-					if ($file instanceof File) {
-						foreach ($this->getTracksFromGPX($file->getContent()) as $i => $track) {
-							$this->timeorderedPointSets['track:' . $gpxfile['id'] . ':' . $i] = $this->getTimeorderdPointsFromTrack($track);
-						}
+				$file = $userFolder->getFirstNodeById($gpxfile['file_id']);
+				if ($file instanceof File) {
+					foreach ($this->getTracksFromGPX($file->getContent()) as $i => $track) {
+						$this->timeorderedPointSets['track:' . $gpxfile['id'] . ':' . $i] = $this->getTimeorderdPointsFromTrack($track);
 					}
 				}
 			}
@@ -454,15 +402,11 @@ class GeophotoService {
 		return $enabledMimeTypes;
 	}
 
-	private function normalizePath($path) {
+	private function normalizePath(string $path): string {
 		return str_replace('files', '', $path);
 	}
 
-	/**
-	 * @param string $userId the user id
-	 * @return Folder
-	 */
-	private function getFolderForUser($userId) {
+	private function getFolderForUser(string $userId): Folder {
 		return $this->root->getUserFolder($userId);
 	}
 

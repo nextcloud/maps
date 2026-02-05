@@ -15,10 +15,14 @@ namespace OCA\Maps\Controller;
 use OCA\DAV\CardDAV\CardDavBackend;
 use OCA\Maps\Service\AddressService;
 use OCP\AppFramework\Controller;
+use OCP\AppFramework\Http\Attribute\NoAdminRequired;
+use OCP\AppFramework\Http\Attribute\NoCSRFRequired;
 use OCP\AppFramework\Http\DataDisplayResponse;
 use OCP\AppFramework\Http\DataResponse;
 use OCP\Contacts\IManager;
 use OCP\DB\QueryBuilder\IQueryBuilder;
+use OCP\Files\File;
+use OCP\Files\Folder;
 use OCP\Files\IRootFolder;
 use OCP\Files\Node;
 use OCP\Files\NotFoundException;
@@ -30,66 +34,38 @@ use Sabre\VObject\Property\Text;
 use Sabre\VObject\Reader;
 
 class ContactsController extends Controller {
-	private $userId;
-	private $contactsManager;
-	private $addressService;
-	private $dbconnection;
-	private $cdBackend;
-	private $avatarManager;
-	private $root;
-	private $urlGenerator;
-	private $geoDistanceMax; // Max distance in meters to consider that 2 addresses are the same location
+	private int $geoDistanceMax = 5; // Max distance in meters to consider that 2 addresses are the same location
 
-	/**
-	 * @param $AppName
-	 * @param IRequest $request
-	 * @param IDBConnection $dbconnection
-	 * @param IManager $contactsManager
-	 * @param AddressService $addressService
-	 * @param $UserId
-	 * @param CardDavBackend $cdBackend
-	 * @param IAvatarManager $avatarManager
-	 * @param IRootFolder $root
-	 */
 	public function __construct(
-		$AppName,
+		string $appName,
 		IRequest $request,
-		IDBConnection $dbconnection,
-		IManager $contactsManager,
-		AddressService $addressService,
-		$UserId,
-		CardDavBackend $cdBackend,
-		IAvatarManager $avatarManager,
-		IRootFolder $root,
-		IURLGenerator $urlGenerator) {
-		parent::__construct($AppName, $request);
-		$this->userId = $UserId;
-		$this->avatarManager = $avatarManager;
-		$this->contactsManager = $contactsManager;
-		$this->addressService = $addressService;
-		$this->dbconnection = $dbconnection;
-		$this->cdBackend = $cdBackend;
-		$this->root = $root;
-		$this->urlGenerator = $urlGenerator;
-		$this->geoDistanceMax = 5;
+		private IDBConnection $dbconnection,
+		private IManager $contactsManager,
+		private AddressService $addressService,
+		private string $userId,
+		private CardDavBackend $cdBackend,
+		private IAvatarManager $avatarManager,
+		private IRootFolder $root,
+		private IURLGenerator $urlGenerator,
+	) {
+		parent::__construct($appName, $request);
 	}
 	/**
 	 * Converts a geo string as a float array
-	 * @param string formatted as "lat;lon"
+	 * @param string $geo formatted as "lat;lon"
 	 * @return float[] array containing [lat;lon]
 	 */
-	private function geoAsFloatArray($geo) {
-		$res = array_map(function ($value) {return floatval($value);}, explode(';', $geo));
-		return $res;
+	private function geoAsFloatArray(string $geo): array {
+		return array_map(static fn ($value): float => floatval($value), explode(';', $geo));
 	}
 
 	/**
 	 * check if geographical address is duplicated
-	 * @param array containing contact's previous different addresses
-	 * @param contact's address to check
+	 * @param list<array> containing contact's previous different addresses
+	 * @param array $geo contact's address to check
 	 * @return integer : -1 if address is new, index of duplicated address in other cases
 	 */
-	private function isNewAddress($prevGeo, $geo) {
+	private function isNewAddress(array $prevGeo, array $geo): int {
 		if (empty($geo)) { // Address not converted to geo coords
 			return -1;
 		}
@@ -123,23 +99,20 @@ class ContactsController extends Controller {
 		$earthRadius = 6378137; // in m
 		$dlon = ($lonB - $lonA) / 2;
 		$dlat = ($latB - $latA) / 2;
-		$a = (sin($dlat) * sin($dlat)) + cos($latA) * cos($latB) * (sin($dlon) * sin($dlon
-		));
+		$a = (sin($dlat) * sin($dlat)) + cos($latA) * cos($latB) * (sin($dlon) * sin($dlon));
 		$d = 2 * atan2(sqrt($a), sqrt(1 - $a));
 		return $d * $earthRadius;
 	}
 
 	/**
-	 * get contacts with coordinates
+	 * Get contacts with coordinates
 	 *
-	 * @NoAdminRequired
-	 * @param null $myMapId
-	 * @return DataResponse
 	 * @throws \OCP\Files\NotPermittedException
 	 * @throws \OC\User\NoUserException
 	 */
-	public function getContacts($myMapId = null): DataResponse {
-		if (is_null($myMapId) || $myMapId === '') {
+	#[NoAdminRequired]
+	public function getContacts(?int $myMapId = null): DataResponse {
+		if (is_null($myMapId)) {
 			$contacts = $this->contactsManager->search('', ['GEO', 'ADR'], ['types' => false]);
 			$addressBooks = $this->contactsManager->getUserAddressBooks();
 			$result = [];
@@ -248,16 +221,15 @@ class ContactsController extends Controller {
 			//Fixme add contacts for my-maps
 			$result = [];
 			$userFolder = $this->root->getUserFolder($this->userId);
-			$folders = $userFolder->getById($myMapId);
-			if (empty($folders)) {
-				return new DataResponse($result);
-			}
-			$folder = array_shift($folders);
-			if ($folder === null) {
+			$folder = $userFolder->getFirstNodeById($myMapId);
+			if (!($folder instanceof Folder)) {
 				return new DataResponse($result);
 			}
 			$files = $folder->search('.vcf');
 			foreach ($files as $file) {
+				if (!($file instanceof File)) {
+					continue;
+				}
 				//				$cards = explode("END:VCARD\r\n", $file->getContent());
 				$cards = [$file->getContent()];
 				foreach ($cards as $card) {
@@ -311,12 +283,7 @@ class ContactsController extends Controller {
 		}
 	}
 
-	/**
-	 * @param $contactUid
-	 * @param $addressBookUri
-	 * @return string
-	 */
-	private function directUrlToContact($contactUid, $addressBookUri) {
+	private function directUrlToContact(string $contactUid, string $addressBookUri): string {
 		return $this->urlGenerator->getAbsoluteURL(
 			$this->urlGenerator->linkToRoute('contacts.contacts.direct', [
 				'contact' => $contactUid . '~' . $addressBookUri
@@ -325,7 +292,6 @@ class ContactsController extends Controller {
 	}
 
 	/**
-	 * @param Node $file
 	 * @param \Sabre\VObject\Document $vcard
 	 * @param string $geo
 	 * @param string|null $adrtype
@@ -390,12 +356,9 @@ class ContactsController extends Controller {
 	}
 
 	/**
-	 * get all contacts
-	 *
-	 * @NoAdminRequired
-	 * @param string $query
-	 * @return DataResponse
+	 * Get all contacts
 	 */
+	#[NoAdminRequired]
 	public function searchContacts(string $query = ''): DataResponse {
 		$contacts = $this->contactsManager->search($query, ['FN'], ['types' => false]);
 		$booksReadOnly = $this->getAddressBooksReadOnly();
@@ -425,30 +388,13 @@ class ContactsController extends Controller {
 	}
 
 	/**
-	 * @NoAdminRequired
-	 * @param string $bookid
-	 * @param string $uri
-	 * @param string $uid
-	 * @param float|null $lat
-	 * @param float|null $lng
-	 * @param string $attraction
-	 * @param string $house_number
-	 * @param string $road
-	 * @param string $postcode
-	 * @param string $city
-	 * @param string $state
-	 * @param string $country
-	 * @param string $type
-	 * @param string|null $address_string
-	 * @param int|null $fileId
-	 * @param int|null $myMapId
-	 * @return DataResponse
 	 * @throws \OCP\DB\Exception
 	 * @throws \OCP\Files\NotPermittedException
 	 * @throws \OC\User\NoUserException
 	 */
+	#[NoAdminRequired]
 	public function placeContact(
-		string $bookid,
+		int $bookid,
 		string $uri,
 		string $uid,
 		?float $lat,
@@ -476,7 +422,7 @@ class ContactsController extends Controller {
 					if ($lat !== null && $lng !== null) {
 						// we set the geo tag
 						if (!$attraction && !$house_number && !$road && !$postcode && !$city && !$state && !$country && !$address_string) {
-							$result = $this->contactsManager->createOrUpdate(['URI' => $uri, 'GEO' => $lat . ';' . $lng], $bookid);
+							$result = $this->contactsManager->createOrUpdate(['URI' => $uri, 'GEO' => $lat . ';' . $lng], (string)$bookid);
 						}
 						// we set the address
 						elseif (!$address_string) {
@@ -506,7 +452,7 @@ class ContactsController extends Controller {
 					} else {
 						// TODO find out how to remove a property
 						// following does not work properly
-						$result = $this->contactsManager->createOrUpdate(['URI' => $uri, 'GEO' => null], $bookid);
+						$result = $this->contactsManager->createOrUpdate(['URI' => $uri, 'GEO' => null], (string)$bookid);
 					}
 					return new DataResponse('EDITED');
 				} else {
@@ -515,17 +461,14 @@ class ContactsController extends Controller {
 			}
 		} else {
 			$userFolder = $this->root->getUserFolder($this->userId);
-			$folders = $userFolder->getById($myMapId);
-			if (empty($folders)) {
-				return new DataResponse('MAP NOT FOUND', 404);
-			}
-			$mapsFolder = array_shift($folders);
-			if (is_null($mapsFolder)) {
+			$mapsFolder = $userFolder->getFirstNodeById($myMapId);
+			if (!($mapsFolder instanceof Folder)) {
 				return new DataResponse('MAP NOT FOUND', 404);
 			}
 			if (is_null($fileId)) {
 				$card = $this->cdBackend->getContact($bookid, $uri);
 				try {
+					/** @var File $file */
 					$file = $mapsFolder->get($uri);
 				} catch (NotFoundException $e) {
 					if (!$mapsFolder->isCreatable()) {
@@ -534,12 +477,8 @@ class ContactsController extends Controller {
 					$file = $mapsFolder->newFile($uri);
 				}
 			} else {
-				$files = $mapsFolder->getById($fileId);
-				if (empty($files)) {
-					return new DataResponse('CONTACT NOT FOUND', 404);
-				}
-				$file = array_shift($files);
-				if (is_null($file)) {
+				$file = $mapsFolder->getFirstNodeById($fileId);
+				if (!($file instanceof File)) {
 					return new DataResponse('CONTACT NOT FOUND', 404);
 				}
 				$card = $file->getContent();
@@ -582,28 +521,20 @@ class ContactsController extends Controller {
 	}
 
 	/**
-	 * @NoAdminRequired
-	 * @param string $bookid
-	 * @param string $uri
-	 * @param int $myMapId
-	 * @param int|null $fileId
-	 * @return DataResponse|void
 	 * @throws \OCP\Files\NotPermittedException
 	 * @throws \OC\User\NoUserException
 	 */
-	public function addContactToMap(string $bookid, string $uri, int $myMapId, ?int $fileId = null): DataResponse {
+	#[NoAdminRequired]
+	public function addContactToMap(int $bookid, string $uri, int $myMapId, ?int $fileId = null): DataResponse {
 		$userFolder = $this->root->getUserFolder($this->userId);
-		$folders = $userFolder->getById($myMapId);
-		if (empty($folders)) {
-			return new DataResponse('MAP NOT FOUND', 404);
-		}
-		$mapsFolder = array_shift($folders);
-		if (is_null($mapsFolder)) {
+		$mapsFolder = $userFolder->getFirstNodeById($myMapId);
+		if (!($mapsFolder instanceof Folder)) {
 			return new DataResponse('MAP NOT FOUND', 404);
 		}
 		if (is_null($fileId)) {
 			$card = $this->cdBackend->getContact($bookid, $uri);
 			try {
+				/** @var File $file */
 				$file = $mapsFolder->get($uri);
 			} catch (NotFoundException $e) {
 				if (!$mapsFolder->isCreatable()) {
@@ -612,12 +543,8 @@ class ContactsController extends Controller {
 				$file = $mapsFolder->newFile($uri);
 			}
 		} else {
-			$files = $mapsFolder->getById($fileId);
-			if (empty($files)) {
-				return new DataResponse('CONTACT NOT FOUND', 404);
-			}
-			$file = array_shift($files);
-			if (is_null($file)) {
+			$file = $mapsFolder->getFirstNodeById($fileId);
+			if (!($file instanceof File)) {
 				return new DataResponse('CONTACT NOT FOUND', 404);
 			}
 			$card = $file->getContent();
@@ -630,16 +557,13 @@ class ContactsController extends Controller {
 			$file->putContent($vcard->serialize());
 			return new DataResponse('DONE');
 		}
+		return new DataResponse('CONTACT NOT FOUND', 404);
 	}
 
-	/**
-	 * @param string $bookid
-	 * @return bool
-	 */
-	private function addressBookIsReadOnly(string $bookid): bool {
+	private function addressBookIsReadOnly(int $bookid): bool {
 		$userBooks = $this->cdBackend->getAddressBooksForUser('principals/users/' . $this->userId);
 		foreach ($userBooks as $book) {
-			if ($book['id'] === (int)$bookid) {
+			if ($book['id'] === $bookid) {
 				return (isset($book['{http://owncloud.org/ns}read-only']) and $book['{http://owncloud.org/ns}read-only']);
 			}
 		}
@@ -647,7 +571,7 @@ class ContactsController extends Controller {
 	}
 
 	/**
-	 * @return array
+	 * @return array<string, bool>
 	 */
 	private function getAddressBooksReadOnly(): array {
 		$booksReadOnly = [];
@@ -660,11 +584,6 @@ class ContactsController extends Controller {
 	}
 
 	/**
-	 * @param float $lat
-	 * @param float $lng
-	 * @param string $adr
-	 * @param string $uri
-	 * @return void
 	 * @throws \OCP\DB\Exception
 	 */
 	private function setAddressCoordinates(float $lat, float $lng, string $adr, string $uri): void {
@@ -704,15 +623,13 @@ class ContactsController extends Controller {
 
 
 	/**
-	 * get contacts with coordinates
+	 * Get contacts with coordinates
 	 *
-	 * @NoAdminRequired
-	 * @NoCSRFRequired
-	 * @param string $name
-	 * @return DataDisplayResponse
 	 * @throws NotFoundException
 	 * @throws \OCP\Files\NotPermittedException
 	 */
+	#[NoAdminRequired]
+	#[NoCSRFRequired]
 	public function getContactLetterAvatar(string $name): DataDisplayResponse {
 		$av = $this->avatarManager->getGuestAvatar($name);
 		$avatarContent = $av->getFile(64)->getContent();
@@ -720,20 +637,10 @@ class ContactsController extends Controller {
 	}
 
 	/**
-	 * removes the address from the vcard
-	 * and delete corresponding entry in the DB
-	 *
-	 * @NoAdminRequired
-	 * @param string $bookid
-	 * @param string $uri
-	 * @param string $uid
-	 * @param string $adr
-	 * @param string $geo
-	 * @param ?int $fileId
-	 * @param ?int $myMapId
-	 * @return DataResponse
+	 * Removes the address from the vcard and delete corresponding entry in the DB.
 	 */
-	public function deleteContactAddress($bookid, $uri, $uid, $adr, $geo, $fileId = null, $myMapId = null): DataResponse {
+	#[NoAdminRequired]
+	public function deleteContactAddress(int $bookid, string $uri, string $uid, string $adr, string $geo, ?int $fileId = null, ?int $myMapId = null): DataResponse {
 
 		// vcard
 		$card = $this->cdBackend->getContact($bookid, $uri);

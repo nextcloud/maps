@@ -114,24 +114,16 @@ class PhotofilesService {
 		}
 	}
 
-	public function addByFileIdUserId($fileId, $userId) {
+	public function addByFileIdUserId(int $fileId, string $userId): void {
 		$userFolder = $this->root->getUserFolder($userId);
-		$files = $userFolder->getById($fileId);
-		if (empty($files)) {
-			return;
-		}
-		$file = array_shift($files);
+		$file = $userFolder->getFirstNodeById($fileId);
 		if ($file !== null and $this->isPhoto($file)) {
 			$this->addPhoto($file, $userId);
 		}
 	}
 
-	public function addByFolderIdUserId($folderId, $userId) {
-		$folders = $this->root->getById($folderId);
-		if (empty($folders)) {
-			return;
-		}
-		$folder = array_shift($folders);
+	public function addByFolderIdUserId(int $folderId, string $userId): void {
+		$folder = $this->root->getFirstNodeById($folderId);
 		if ($folder !== null) {
 			$photos = $this->gatherPhotoFiles($folder, true);
 			foreach ($photos as $photo) {
@@ -169,23 +161,23 @@ class PhotofilesService {
 		}
 	}
 
-	public function deleteByFile(Node $file) {
+	public function deleteByFile(Node $file): void {
 		$this->photoMapper->deleteByFileId($file->getId());
 	}
 
 	// delete photo only if it's not accessible to user anymore
 	// it might have been shared multiple times by different users
-	public function deleteByFileIdUserId($fileId, $userId) {
+	public function deleteByFileIdUserId(int $fileId, string $userId): void {
 		$userFolder = $this->root->getUserFolder($userId);
-		$files = $userFolder->getById($fileId);
-		if (!is_array($files) or count($files) === 0) {
+		$file = $userFolder->getFirstNodeById($fileId);
+		if ($file !== null) {
 			$this->photoMapper->deleteByFileIdUserId($fileId, $userId);
 			$this->photosCache->clear($userId);
 		}
 	}
 
 
-	public function deleteByFolder(Node $folder) {
+	public function deleteByFolder(Node $folder): void {
 		$photos = $this->gatherPhotoFiles($folder, true);
 		foreach ($photos as $photo) {
 			$this->photoMapper->deleteByFileId($photo->getId());
@@ -196,7 +188,7 @@ class PhotofilesService {
 	public function deleteByFolderIdUserId($folderId, $userId) {
 		$userFolder = $this->root->getUserFolder($userId);
 		$folders = $userFolder->getById($folderId);
-		if (is_array($folders) and count($folders) === 1) {
+		if (is_array($folders) && count($folders) === 1) {
 			$folder = array_shift($folders);
 			$photos = $this->gatherPhotoFiles($folder, true);
 			foreach ($photos as $photo) {
@@ -241,7 +233,7 @@ class PhotofilesService {
 		];
 	}
 
-	public function setPhotosFilesCoords($userId, $paths, $lats, $lngs, $directory) {
+	public function setPhotosFilesCoords(string $userId, $paths, $lats, $lngs, $directory) {
 		if ($directory) {
 			return $this->setDirectoriesCoords($userId, $paths, $lats, $lngs);
 		} else {
@@ -249,7 +241,7 @@ class PhotofilesService {
 		}
 	}
 
-	private function setDirectoriesCoords($userId, $paths, $lats, $lngs) {
+	private function setDirectoriesCoords(string $userId, $paths, $lats, $lngs): array {
 		$lat = $lats[0] ?? 0;
 		$lng = $lngs[0] ?? 0;
 		$userFolder = $this->root->getUserFolder($userId);
@@ -337,7 +329,7 @@ class PhotofilesService {
 	}
 
 	// avoid adding photo if it already exists in the DB
-	private function addPhoto($photo, $userId) {
+	private function addPhoto($photo, string $userId): void {
 		$this->jobList->add(AddPhotoJob::class, ['photoId' => $photo->getId(), 'userId' => $userId]);
 	}
 

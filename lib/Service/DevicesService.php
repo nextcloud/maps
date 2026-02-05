@@ -15,6 +15,8 @@ namespace OCA\Maps\Service;
 use OC\Archive\ZIP;
 use OCP\DB\Exception;
 use OCP\DB\QueryBuilder\IQueryBuilder;
+use OCP\Files\File;
+use OCP\Files\Folder;
 use OCP\Files\NotFoundException;
 use OCP\IDBConnection;
 use OCP\IL10N;
@@ -112,15 +114,10 @@ class DevicesService {
 	}
 
 	/**
-	 * @param $userId
-	 * @param $deviceId
-	 * @param int|null $pruneBefore
-	 * @param int|null $limit
-	 * @param int|null $offset
 	 * @return array
 	 * @throws \OCP\DB\Exception
 	 */
-	public function getDevicePointsFromDB($userId, $deviceId, ?int $pruneBefore = 0, ?int $limit = null, ?int $offset = null) {
+	public function getDevicePointsFromDB(string $userId, int $deviceId, ?int $pruneBefore = 0, ?int $limit = null, ?int $offset = null) {
 		$qb = $this->dbconnection->getQueryBuilder();
 		// get coordinates
 		$qb->selectDistinct(['p.id', 'lat', 'lng', 'timestamp', 'altitude', 'accuracy', 'battery'])
@@ -768,13 +765,12 @@ class DevicesService {
 	}
 
 	/**
-	 * @param $folder
-	 * @param bool $isCreatable
 	 * @return mixed
 	 * @throws NotFoundException
 	 */
-	public function getSharedDevicesFromFolder($folder, bool $isCreatable = true) {
+	public function getSharedDevicesFromFolder(Folder $folder, bool $isCreatable = true) {
 		try {
+			/** @var File $file */
 			$file = $folder->get('.device_shares.json');
 		} catch (NotFoundException $e) {
 			if ($isCreatable) {

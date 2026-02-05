@@ -15,6 +15,7 @@ namespace OCA\Maps\Service;
 use OC\Files\Search\SearchComparison;
 use OC\Files\Search\SearchQuery;
 use OC\User\NoUserException;
+use OCP\Files\File;
 use OCP\Files\Folder;
 use OCP\Files\IRootFolder;
 use OCP\Files\NotFoundException;
@@ -174,12 +175,12 @@ class MyMapsService {
 
 	public function updateMyMap($id, $values, $userId) {
 		$userFolder = $this->root->getUserFolder($userId);
-		$folders = $userFolder->getById($id);
-		$folder = array_shift($folders);
+		$folder = $userFolder->getFirstNodeById($id);
 		if (!($folder instanceof Folder)) {
 			return [];
 		}
 		try {
+			/** @var File $file */
 			$file = $folder->get('.index.maps');
 		} catch (NotFoundException $e) {
 			$file = $folder->newFile('.index.maps', '{}');
@@ -216,8 +217,7 @@ class MyMapsService {
 	public function deleteMyMap($id, $userId) {
 		$userFolder = $this->root->getUserFolder($userId);
 
-		$folders = $userFolder->getById($id);
-		$folder = array_shift($folders);
+		$folder = $userFolder->getFirstNodeById($id);
 		if (!($folder instanceof Folder)) {
 			return 1;
 		}

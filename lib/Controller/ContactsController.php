@@ -61,7 +61,7 @@ class ContactsController extends Controller {
 
 	/**
 	 * check if geographical address is duplicated
-	 * @param list<array> containing contact's previous different addresses
+	 * @param list<array> $prevGeo containing contact's previous different addresses
 	 * @param array $geo contact's address to check
 	 * @return integer : -1 if address is new, index of duplicated address in other cases
 	 */
@@ -97,10 +97,10 @@ class ContactsController extends Controller {
 		$latB = deg2rad($coordsB[0]);
 		$lonB = deg2rad($coordsB[1]);
 		$earthRadius = 6378137; // in m
-		$dlon = ($lonB - $lonA) / 2;
-		$dlat = ($latB - $latA) / 2;
+		$dlon = ($lonB - $lonA) / 2.0;
+		$dlat = ($latB - $latA) / 2.0;
 		$a = (sin($dlat) * sin($dlat)) + cos($latA) * cos($latB) * (sin($dlon) * sin($dlon));
-		$d = 2 * atan2(sqrt($a), sqrt(1 - $a));
+		$d = 2.0 * atan2(sqrt($a), sqrt(1.0 - $a));
 		return $d * $earthRadius;
 	}
 
@@ -184,7 +184,7 @@ class ContactsController extends Controller {
 								if (isset($adr->parameters()['TYPE'])) {
 									$adrtype = $adr->parameters()['TYPE']->getValue();
 								}
-								if (is_string($geo) && strlen($geo) > 1) {
+								if (strlen($geo) > 1) {
 									if ($duplicatedIndex < 0) {
 										array_push($prevGeo, $geof);
 										array_push($prevRes, count($result)); // Add index of new item so that we can update the ADRTYPE in case of duplicate address
@@ -262,7 +262,7 @@ class ContactsController extends Controller {
 							if (isset($adr->parameters()['TYPE'])) {
 								$adrtype = $adr->parameters()['TYPE']->getValue();
 							}
-							if (is_string($geo) && strlen($geo) > 1) {
+							if (strlen($geo) > 1) {
 								if ($duplicatedIndex < 0) {
 									array_push($prevGeo, $geof);
 									array_push($prevRes, count($result)); // Add index of new item so that we can update the ADRTYPE in case of duplicate address
@@ -410,7 +410,7 @@ class ContactsController extends Controller {
 		?string $address_string = null,
 		?int $fileId = null,
 		?int $myMapId = null): DataResponse {
-		if (is_null($myMapId) || $myMapId === '') {
+		if (is_null($myMapId)) {
 			// do not edit 'user' contact even myself
 			if (strcmp($uri, 'Database:' . $uid . '.vcf') === 0
 				or strcmp($uid, $this->userId) === 0
@@ -598,7 +598,7 @@ class ContactsController extends Controller {
 		$result = $req->fetchAll();
 		$req->closeCursor();
 		$qb = $this->dbconnection->getQueryBuilder();
-		if ($result and count($result) > 0) {
+		if (count($result) > 0) {
 			$id = $result[0]['id'];
 			$qb->update('maps_address_geo')
 				->set('lat', $qb->createNamedParameter($lat, IQueryBuilder::PARAM_STR))

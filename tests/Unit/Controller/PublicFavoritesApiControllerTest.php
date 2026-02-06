@@ -24,56 +24,49 @@
 
 namespace OCA\Maps\Controller;
 
-use OC;
 use OC\AppFramework\Http;
 use OCA\Maps\AppInfo\Application;
-use OCA\Maps\DB\FavoriteShare;
 use OCA\Maps\DB\FavoriteShareMapper;
 use OCA\Maps\Service\FavoritesService;
-use OCP\IServerContainer;
+use OCP\Files\IRootFolder;
+use OCP\IDBConnection;
+use OCP\IRequest;
+use OCP\ISession;
+use OCP\L10N\IFactory;
+use OCP\Security\ISecureRandom;
+use OCP\Server;
 use PHPUnit\Framework\TestCase;
+use Psr\Log\LoggerInterface;
 
 class PublicFavoritesApiControllerTest extends TestCase {
-	/* @var PublicFavoritesApiController */
-	private $publicFavoritesApiController;
-
-	private $config;
-
-	/* @var FavoritesService */
-	private $favoritesService;
-
-	/* @var FavoriteShareMapper */
-	private $favoriteShareMapper;
+	private PublicFavoritesApiController $publicFavoritesApiController;
+	private FavoritesService $favoritesService;
+	private FavoriteShareMapper $favoriteShareMapper;
 
 	protected function setUp(): void {
 		// Begin transaction
-		$db = OC::$server->query(\OCP\IDBConnection::class);
+		$db = Server::get(IDBConnection::class);
 		$db->beginTransaction();
 
 		$container = (new Application())->getContainer();
 
-		$appName = $container->query('AppName');
-
-		$requestMock = $this->getMockBuilder('OCP\IRequest')->getMock();
-		$sessionMock = $this->getMockBuilder('OCP\ISession')->getMock();
-
-		$this->config = $container->query(IServerContainer::class)->getConfig();
+		$requestMock = $this->createMock(IRequest::class);
+		$sessionMock = $this->createMock(ISession::class);
 
 		$this->favoritesService = new FavoritesService(
-			$container->query(IServerContainer::class)->get(\Psr\Log\LoggerInterface::class),
-			$container->query(IServerContainer::class)->getL10N($appName),
-			$container->query(IServerContainer::class)->getSecureRandom(),
-			$container->query(\OCP\IDBConnection::class)
+			$container->get(LoggerInterface::class),
+			$container->get(IFactory::class)->get('maps'),
+			$container->get(IDBConnection::class)
 		);
 
 		$this->favoriteShareMapper = new FavoriteShareMapper(
-			$container->query(\OCP\IDBConnection::class),
-			$container->query(IServerContainer::class)->getSecureRandom(),
-			$container->query(IserverContainer::class)->getRootFolder()
+			$container->get(IDBConnection::class),
+			$container->get(ISecureRandom::class),
+			$container->get(IRootFolder::class),
 		);
 
 		$this->publicFavoritesApiController = new PublicFavoritesApiController(
-			$appName,
+			'maps',
 			$requestMock,
 			$sessionMock,
 			$this->favoritesService,
@@ -83,18 +76,17 @@ class PublicFavoritesApiControllerTest extends TestCase {
 
 	protected function tearDown(): void {
 		// Rollback transaction
-		$db = OC::$server->query(\OCP\IDBConnection::class);
+		$db = Server::get(IDBConnection::class);
 		$db->rollBack();
 	}
 
-	public function testGetFavorites() {
+	public function testGetFavorites(): void {
 		$testUser = 'test099897';
 		$categoryName = 'test89774590';
 
 		$this->favoritesService
 			->addFavoriteToDB($testUser, 'Test1', 0, 0, $categoryName, '', null);
 
-		/* @var FavoriteShare */
 		$share = $this->favoriteShareMapper->create($testUser, $categoryName);
 
 		// Mock token sent by request

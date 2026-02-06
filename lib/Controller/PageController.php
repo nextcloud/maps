@@ -29,7 +29,7 @@ class PageController extends Controller {
 	public function __construct(
 		string $appName,
 		IRequest $request,
-		private string $userId,
+		private ?string $userId,
 		private IEventDispatcher $eventDispatcher,
 		private IConfig $config,
 		private IInitialState $initialState,

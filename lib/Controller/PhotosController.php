@@ -81,7 +81,7 @@ class PhotosController extends Controller {
 			$result = $this->geophotoService->getNonLocalized($this->userId, $userFolder, $respectNoMediaAndNoimage ?? true, $hideImagesOnCustomMaps ?? false, $hideImagesInMapsFolder ?? true, $timezone, $limit, $offset);
 		} else {
 			$folder = $userFolder->getFirstNodeById($myMapId);
-			if ($folder instanceof Folder) {
+			if (!$folder instanceof Folder) {
 				throw new NotFoundException('Could find map with mapid: ' . $myMapId);
 			}
 			$result = $this->geophotoService->getNonLocalized($this->userId, $folder, $respectNoMediaAndNoimage ?? true, $hideImagesOnCustomMaps ?? false, $hideImagesInMapsFolder ?? false, $timezone, $limit, $offset);

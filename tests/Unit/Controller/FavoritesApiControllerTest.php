@@ -28,7 +28,6 @@ class FavoritesApiControllerTest extends \PHPUnit\Framework\TestCase {
 
 	private $favoritesApiController;
 	private $favoritesApiController2;
-	private $utilsController;
 
 	public static function setUpBeforeClass(): void {
 		$app = new Application();
@@ -104,15 +103,6 @@ class FavoritesApiControllerTest extends \PHPUnit\Framework\TestCase {
 			$c->query(IServerContainer::class)->getL10N($c->query('AppName')),
 			$c->query(FavoritesService::class),
 			'test2'
-		);
-
-		$this->utilsController = new UtilsController(
-			$this->appName,
-			$this->request,
-			$c->query(IServerContainer::class)->getConfig(),
-			$c->getServer()->getAppManager(),
-			$this->root,
-			'test'
 		);
 	}
 

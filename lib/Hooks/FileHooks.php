@@ -16,9 +16,9 @@ use OC\Files\Filesystem;
 use OCA\Maps\Service\PhotofilesService;
 use OCA\Maps\Service\TracksService;
 use OCP\Files\File;
-use OCP\Files\FileInfo;
 use OCP\Files\Folder;
 use OCP\Files\IRootFolder;
+use OCP\Files\Node;
 use OCP\Lock\ILockingProvider;
 use OCP\Share\IShare;
 use OCP\Util;
@@ -40,7 +40,7 @@ class FileHooks {
 	public function register(): void {
 		$fileWriteCallback = function (\OCP\Files\Node $node) {
 			//logger('maps')->debug("Hook postWrite");
-			if ($node->getType() === FileInfo::TYPE_FILE && $this->isUserNode($node) && $node->getSize()) {
+			if ($node instanceof File && $this->isUserNode($node) && $node->getSize()) {
 				$path = $node->getPath();
 				if (!$this->lockingProvider->isLocked($path, ILockingProvider::LOCK_SHARED)
 					and !$this->lockingProvider->isLocked($path, ILockingProvider::LOCK_EXCLUSIVE)
@@ -57,7 +57,7 @@ class FileHooks {
 		$fileDeletionCallback = function (\OCP\Files\Node $node) {
 			//logger('maps')->debug("Hook preDelete");
 			if ($this->isUserNode($node)) {
-				if ($node->getType() === FileInfo::TYPE_FOLDER) {
+				if ($node instanceof Folder) {
 					$this->photofilesService->deleteByFolder($node);
 					$this->tracksService->deleteByFolder($node);
 				} else {
@@ -71,7 +71,7 @@ class FileHooks {
 		// this one is triggered when restoring a version of a file
 		// and NOT when it's created so we can use it for updating coordinates in DB
 		$this->root->listen('\OC\Files', 'postTouch', function (\OCP\Files\Node $node) {
-			if ($this->isUserNode($node) and $node->getType() === FileInfo::TYPE_FILE) {
+			if ($this->isUserNode($node) and $node instanceof File) {
 				$this->photofilesService->updateByFile($node);
 				// nothing to update on tracks, metadata will be regenerated when getting content if etag has changed
 			}
@@ -80,7 +80,7 @@ class FileHooks {
 		// move file: delete then add it again in DB to be sure it's there for all users with access to target file
 		$this->root->listen('\OC\Files', 'postRename', function (\OCP\Files\Node $source, \OCP\Files\Node $target) {
 			if ($this->isUserNode($target)) {
-				if ($target->getType() === FileInfo::TYPE_FILE) {
+				if ($target instanceof File) {
 					// if moved (parents are different) => update DB with access list
 					if ($source->getParent()->getId() !== $target->getParent()->getId()) {
 						// we renamed therefore target and source are identical
@@ -88,7 +88,7 @@ class FileHooks {
 						$this->photofilesService->addByFile($target);
 						// tracks: nothing to do here because we use fileID
 					}
-				} elseif ($target->getType() === FileInfo::TYPE_FOLDER) {
+				} elseif ($target instanceof Folder) {
 					if ($source->getParent()->getId() !== $target->getParent()->getId()) {
 						// we renamed therefore target and source have the same childs.
 						$this->photofilesService->deleteByFolder($target);
@@ -114,7 +114,7 @@ class FileHooks {
 			//$sourceUserId = $params['uidOwner'];
 			$fileId = $params['fileSource']; // or itemSource
 			$file = $this->root->getFirstNodeById($fileId);
-			if ($file instanceof File) {
+			if (!$file instanceof File) {
 				return;
 			}
 			$this->photofilesService->addByFile($file);
@@ -122,7 +122,7 @@ class FileHooks {
 		} elseif ($params['itemType'] === 'folder') {
 			$dirId = $params['fileSource']; // or itemSource
 			$folder = $this->root->getFirstNodeById($dirId);
-			if ($folder instanceof Folder) {
+			if (!$folder instanceof Folder) {
 				return;
 			}
 			$this->photofilesService->addByFolder($folder);
@@ -154,20 +154,20 @@ class FileHooks {
 		}
 	}
 
-	public function restore($params) {
+	public function restore($params): void {
 		$node = $this->getNodeForPath($params['filePath']);
 		if ($this->isUserNode($node)) {
-			if ($node->getType() === FileInfo::TYPE_FOLDER) {
+			if ($node instanceof Folder) {
 				$this->photofilesService->addByFolder($node);
 				$this->tracksService->safeAddByFolder($node);
-			} else {
+			} elseif ($node instanceof File) {
 				$this->photofilesService->addByFile($node);
 				$this->tracksService->safeAddByFile($node);
 			}
 		}
 	}
 
-	private function getNodeForPath($path) {
+	private function getNodeForPath($path): Node {
 		$user = \OC::$server->getUserSession()->getUser();
 		$fullPath = Filesystem::normalizePath('/' . $user->getUID() . '/files/' . $path);
 		return $this->root->get($fullPath);

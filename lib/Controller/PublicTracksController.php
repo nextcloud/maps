@@ -157,10 +157,6 @@ class PublicTracksController extends PublicPageController {
 			return new DataResponse($this->l->t('File not found'), 400);
 		}
 
-		if ($trackFile->getType() !== \OCP\Files\FileInfo::TYPE_FILE) {
-			return new DataResponse($this->l->t('Bad file type'), 400);
-		}
-
 		$trackContent = remove_utf8_bom($trackFile->getContent());
 		// compute metadata if necessary
 		// first time we get it OR the file changed
@@ -192,10 +188,6 @@ class PublicTracksController extends PublicPageController {
 		$trackFile = is_null($track) ? null : $shareNode->getFirstNodeById($track['file_id']);
 		if (!($trackFile instanceof File)) {
 			return new DataResponse($this->l->t('File not found'), 400);
-		}
-
-		if ($trackFile->getType() !== \OCP\Files\FileInfo::TYPE_FILE) {
-			return new DataResponse($this->l->t('Bad file type'), 400);
 		}
 
 		$trackContent = remove_utf8_bom($trackFile->getContent());

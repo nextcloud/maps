@@ -31,8 +31,10 @@ use OCP\AppFramework\Bootstrap\IBootstrap;
 use OCP\AppFramework\Bootstrap\IRegistrationContext;
 use OCP\AppFramework\Http\EmptyFeaturePolicy;
 use OCP\EventDispatcher\IEventDispatcher;
-use OCP\IServerContainer;
+use OCP\Files\IRootFolder;
+use OCP\Lock\ILockingProvider;
 use OCP\Security\FeaturePolicy\AddFeaturePolicyEvent;
+use OCP\Server;
 
 class Application extends App implements IBootstrap {
 	public const APP_ID = 'maps';
@@ -74,11 +76,10 @@ class Application extends App implements IBootstrap {
 		// ... boot logic goes here ...
 		$context->getAppContainer()->registerService('FileHooks', function ($c) {
 			return new FileHooks(
-				$c->query(IServerContainer::class)->getRootFolder(),
-				\OCP\Server::get(PhotofilesService::class),
-				\OCP\Server::get(TracksService::class),
-				$c->query('AppName'),
-				$c->query(IServerContainer::class)->getLockingProvider()
+				Server::get(IRootFolder::class),
+				Server::get(PhotofilesService::class),
+				Server::get(TracksService::class),
+				Server::get(ILockingProvider::class),
 			);
 		});
 
@@ -87,7 +88,7 @@ class Application extends App implements IBootstrap {
 		$this->registerFeaturePolicy();
 	}
 
-	private function registerFeaturePolicy() {
+	private function registerFeaturePolicy(): void {
 		$dispatcher = $this->getContainer()->getServer()->get(IEventDispatcher::class);
 
 		$dispatcher->addListener(AddFeaturePolicyEvent::class, function (AddFeaturePolicyEvent $e) {

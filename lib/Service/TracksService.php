@@ -17,14 +17,12 @@ use OC\Files\Search\SearchComparison;
 use OC\Files\Search\SearchQuery;
 use OCP\DB\QueryBuilder\IQueryBuilder;
 use OCP\Files\File;
-use OCP\Files\FileInfo;
 use OCP\Files\Folder;
 use OCP\Files\IRootFolder;
 use OCP\Files\Node;
 use OCP\Files\Search\ISearchBinaryOperator;
 use OCP\Files\Search\ISearchComparison;
 use OCP\IDBConnection;
-use OCP\IL10N;
 use OCP\Share\IManager;
 use Psr\Log\LoggerInterface;
 
@@ -36,7 +34,6 @@ class TracksService {
 
 	public function __construct(
 		private LoggerInterface $logger,
-		private IL10N $l10n,
 		private IRootFolder $root,
 		private IManager $shareManager,
 		private IDBConnection $dbconnection,
@@ -53,7 +50,7 @@ class TracksService {
 		}
 	}
 
-	public function addByFile(Node $file) {
+	public function addByFile(Node $file): void {
 		$userFolder = $this->root->getUserFolder($file->getOwner()->getUID());
 		if ($this->isTrack($file)) {
 			$this->addTrackToDB($file->getOwner()->getUID(), $file->getId(), $file);
@@ -62,25 +59,24 @@ class TracksService {
 
 	// add the file for its owner and users that have access
 	// check if it's already in DB before adding
-	public function safeAddByFile(Node $file) {
-		$ownerId = $file->getOwner()->getUID();
-		$userFolder = $this->root->getUserFolder($ownerId);
-		if ($this->isTrack($file)) {
-			$this->safeAddTrack($file, $ownerId);
-			// is the file accessible to other users ?
-			$accesses = $this->shareManager->getAccessList($file);
-			foreach ($accesses['users'] as $uid) {
-				if ($uid !== $ownerId) {
-					$this->safeAddTrack($file, $uid);
-				}
-			}
-			return true;
-		} else {
+	public function safeAddByFile(File $file): bool {
+		if (!$this->isTrack($file)) {
 			return false;
 		}
+
+		$ownerId = $file->getOwner()->getUID();
+		$this->safeAddTrack($file, $ownerId);
+		// is the file accessible to other users ?
+		$accesses = $this->shareManager->getAccessList($file);
+		foreach ($accesses['users'] as $uid) {
+			if ($uid !== $ownerId) {
+				$this->safeAddTrack($file, $uid);
+			}
+		}
+		return true;
 	}
 
-	public function safeAddByFileIdUserId($fileId, $userId) {
+	public function safeAddByFileIdUserId(int $fileId, string $userId): void {
 		$userFolder = $this->root->getUserFolder($userId);
 		$file = $userFolder->getFirstNodeById($fileId);
 		if ($file === null || !$this->isTrack($file)) {
@@ -89,8 +85,8 @@ class TracksService {
 		$this->safeAddTrack($file, $userId);
 	}
 
-	public function safeAddByFolderIdUserId($folderId, $userId) {
-		$folder = $this->root->getUserFolder($folderId);
+	public function safeAddByFolderIdUserId(int $folderId, string $userId): void {
+		$folder = $this->root->getUserFolder($userId);
 		if ($folder === null) {
 			return;
 		}
@@ -101,7 +97,7 @@ class TracksService {
 	}
 
 	// avoid adding track if it already exists in the DB
-	private function safeAddTrack($track, $userId) {
+	private function safeAddTrack($track, string $userId): void {
 		// filehooks are triggered several times (2 times for file creation)
 		// so we need to be sure it's not inserted several times
 		// by checking if it already exists in DB
@@ -112,14 +108,14 @@ class TracksService {
 	}
 
 	// add all tracks of a folder taking care of shared accesses
-	public function safeAddByFolder($folder) {
+	public function safeAddByFolder(Folder $folder): void {
 		$tracks = $this->gatherTrackFiles($folder, true);
 		foreach ($tracks as $track) {
 			$this->safeAddByFile($track);
 		}
 	}
 
-	public function addByFolder(Node $folder) {
+	public function addByFolder(Folder $folder): void {
 		$tracks = $this->gatherTrackFiles($folder, true);
 		foreach ($tracks as $track) {
 			$this->addTrackToDB($folder->getOwner()->getUID(), $track->getId(), $track);
@@ -140,7 +136,7 @@ class TracksService {
 		$this->deleteByFileId($file->getId());
 	}
 
-	public function deleteByFolder(Node $folder): void {
+	public function deleteByFolder(Folder $folder): void {
 		$tracks = $this->gatherTrackFiles($folder, true);
 		foreach ($tracks as $track) {
 			$this->deleteByFileId($track->getId());
@@ -160,11 +156,14 @@ class TracksService {
 		}
 	}
 
-	private function gatherTrackFiles($folder, $recursive) {
+	/**
+	 * @return list<File>
+	 */
+	private function gatherTrackFiles(Folder $folder, bool $recursive): array {
 		$notes = [];
 		$nodes = $folder->getDirectoryListing();
 		foreach ($nodes as $node) {
-			if ($node->getType() === FileInfo::TYPE_FOLDER and $recursive) {
+			if ($node instanceof Folder && $recursive) {
 				try {
 					$notes = array_merge($notes, $this->gatherTrackFiles($node, $recursive));
 				} catch (\OCP\Files\StorageNotAvailableException|\Exception $e) {
@@ -181,14 +180,11 @@ class TracksService {
 		return $notes;
 	}
 
-	private function isTrack($file) {
-		if ($file->getType() !== \OCP\Files\FileInfo::TYPE_FILE) {
+	private function isTrack(Node $file): bool {
+		if (!$file instanceof File) {
 			return false;
 		}
-		if (!in_array($file->getMimetype(), self::TRACK_MIME_TYPES)) {
-			return false;
-		}
-		return true;
+		return in_array($file->getMimetype(), self::TRACK_MIME_TYPES);
 	}
 
 	private function dbRowToTrack($row, Folder $folder, $userFolder, $defaultMap, $ignoredPaths) {
@@ -237,10 +233,7 @@ class TracksService {
 	}
 
 
-	/**
-	 * @param string $userId
-	 */
-	public function getTracksFromDB($userId, $folder = null, bool $respectNomediaAndNoimage = true, bool $hideTracksOnCustomMaps = false, bool $hideTracksInMapsFolder = true) {
+	public function getTracksFromDB(string $userId, $folder = null, bool $respectNomediaAndNoimage = true, bool $hideTracksOnCustomMaps = false, bool $hideTracksInMapsFolder = true) {
 		$ignoredPaths = $respectNomediaAndNoimage ? $this->getIgnoredPaths($userId, $folder, $hideTracksOnCustomMaps) : [];
 		if ($hideTracksInMapsFolder) {
 			$ignoredPaths[] = '/Maps';
@@ -312,7 +305,7 @@ class TracksService {
 		return $ignoredPaths;
 	}
 
-	public function getTrackFromDB($id, $userId = null) {
+	public function getTrackFromDB(int $id, ?string $userId = null) {
 		$track = null;
 		$qb = $this->dbconnection->getQueryBuilder();
 		$qb->select('id', 'file_id', 'color', 'metadata', 'etag')
@@ -420,7 +413,7 @@ class TracksService {
 		return $trackId;
 	}
 
-	public function editTrackInDB($id, $color, $metadata, $etag): void {
+	public function editTrackInDB(int $id, ?string $color, ?string $metadata, ?string $etag): void {
 		$qb = $this->dbconnection->getQueryBuilder();
 		$qb->update('maps_tracks');
 		if ($color !== null) {

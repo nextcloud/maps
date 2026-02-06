@@ -27,7 +27,6 @@ class DevicesApiControllerTest extends \PHPUnit\Framework\TestCase {
 
 	private $devicesApiController;
 	private $devicesApiController2;
-	private $utilsController;
 	private $root;
 
 	public static function setUpBeforeClass(): void {
@@ -104,15 +103,6 @@ class DevicesApiControllerTest extends \PHPUnit\Framework\TestCase {
 			$c->query(IServerContainer::class)->getL10N($c->query('AppName')),
 			$c->query(DevicesService::class),
 			'test2'
-		);
-
-		$this->utilsController = new UtilsController(
-			$this->appName,
-			$this->request,
-			$c->query(IServerContainer::class)->getConfig(),
-			$c->getServer()->getAppManager(),
-			$this->root,
-			'test'
 		);
 
 		// delete

@@ -16,110 +16,75 @@ use OCA\Maps\AppInfo\Application;
 use OCA\Maps\DB\DeviceShareMapper;
 use OCA\Maps\Service\DevicesService;
 use OCP\Files\IRootFolder;
+use OCP\IConfig;
+use OCP\IGroupManager;
+use OCP\IRequest;
 use OCP\IServerContainer;
+use OCP\IUserManager;
+use OCP\L10N\IFactory;
+use PHPUnit\Framework\MockObject\MockObject;
+use Psr\Container\ContainerInterface;
 
 class DevicesControllerTest extends \PHPUnit\Framework\TestCase {
-	private $appName;
-	private $request;
-	private $contacts;
+	private string $appName;
+	private IRequest&MockObject $request;
+	private ContainerInterface $container;
+	private Application $app;
 
-	private $container;
-	private $config;
-	private $app;
-
-	private $devicesController;
-	private $devicesController2;
-	private $utilsController;
-	private $root;
+	private DevicesController $devicesController;
 
 	public static function setUpBeforeClass(): void {
 		$app = new Application();
 		$c = $app->getContainer();
 
-		$user = $c->getServer()->getUserManager()->get('test');
-		$user2 = $c->getServer()->getUserManager()->get('test2');
-		$user3 = $c->getServer()->getUserManager()->get('test3');
-		$group = $c->getServer()->getGroupManager()->get('group1test');
-		$group2 = $c->getServer()->getGroupManager()->get('group2test');
+		$user = $c->get(IUserManager::class)->get('test');
+		$user2 = $c->get(IUserManager::class)->get('test2');
+		$user3 = $c->get(IUserManager::class)->get('test3');
+		$group = $c->get(IGroupManager::class)->get('group1test');
+		$group2 = $c->get(IGroupManager::class)->get('group2test');
 
 		// CREATE DUMMY USERS
 		if ($user === null) {
-			$u1 = $c->getServer()->getUserManager()->createUser('test', 'tatotitoTUTU');
+			$u1 = $c->get(IUserManager::class)->createUser('test', 'tatotitoTUTU');
 			$u1->setEMailAddress('toto@toto.net');
 		}
 		if ($user2 === null) {
-			$u2 = $c->getServer()->getUserManager()->createUser('test2', 'plopinoulala000');
+			$u2 = $c->get(IUserManager::class)->createUser('test2', 'plopinoulala000');
 		}
-		if ($user2 === null) {
-			$u3 = $c->getServer()->getUserManager()->createUser('test3', 'yeyeahPASSPASS');
+		if ($user3 === null) {
+			$u3 = $c->get(IUserManager::class)->createUser('test3', 'yeyeahPASSPASS');
 		}
 		if ($group === null) {
-			$c->getServer()->getGroupManager()->createGroup('group1test');
-			$u1 = $c->getServer()->getUserManager()->get('test');
-			$c->getServer()->getGroupManager()->get('group1test')->addUser($u1);
+			$c->get(IGroupManager::class)->createGroup('group1test');
+			$u1 = $c->get(IGroupManager::class)->get('test');
+			$c->get(IGroupManager::class)->get('group1test')->addUser($u1);
 		}
 		if ($group2 === null) {
-			$c->getServer()->getGroupManager()->createGroup('group2test');
-			$u2 = $c->getServer()->getUserManager()->get('test2');
-			$c->getServer()->getGroupManager()->get('group2test')->addUser($u2);
+			$c->get(IGroupManager::class)->createGroup('group2test');
+			$u2 = $c->get(IGroupManager::class)->get('test2');
+			$c->get(IGroupManager::class)->get('group2test')->addUser($u2);
 		}
 	}
 
 	protected function setUp(): void {
 		$this->appName = 'maps';
-		$this->request = $this->getMockBuilder('\OCP\IRequest')
-			->disableOriginalConstructor()
-			->getMock();
-		$this->contacts = $this->getMockBuilder('OCP\Contacts\IManager')
-			->disableOriginalConstructor()
-			->getMock();
+		$this->request = $this->createMock(\OCP\IRequest::class);
 
 		$this->app = new Application();
 		$this->container = $this->app->getContainer();
 		$c = $this->container;
-		$this->config = $c->query(IServerContainer::class)->getConfig();
-		$this->root = $c->query(IServerContainer::class)->getRootFolder();
+		$this->config = $c->get(IConfig::class);
+		$this->root = $c->get(IRootFolder::class);
 
 		$this->devicesController = new DevicesController(
 			$this->appName,
 			$this->request,
-			$c->query(IServerContainer::class),
-			$c->query(IServerContainer::class)->getConfig(),
-			$c->getServer()->get(\OCP\Share\IManager::class),
-			$c->getServer()->getAppManager(),
-			$c->getServer()->getUserManager(),
-			$c->getServer()->getGroupManager(),
-			$c->query(IServerContainer::class)->getL10N($c->query('AppName')),
-			$c->query(DevicesService::class),
-			$c->query(DeviceShareMapper::class),
-			$c->query(IServerContainer::class)->get(\OCP\IDateTimeZone::class),
-			$c->query(IRootFolder::class),
-			'test'
-		);
-
-		$this->devicesController2 = new DevicesController(
-			$this->appName,
-			$this->request,
-			$c->query(IServerContainer::class),
-			$c->query(IServerContainer::class)->getConfig(),
-			$c->getServer()->get(\OCP\Share\IManager::class),
-			$c->getServer()->getAppManager(),
-			$c->getServer()->getUserManager(),
-			$c->getServer()->getGroupManager(),
-			$c->query(IServerContainer::class)->getL10N($c->query('AppName')),
-			$c->query(DevicesService::class),
-			$c->query(DeviceShareMapper::class),
-			$c->query(IServerContainer::class)->get(\OCP\IDateTimeZone::class),
-			$c->query(IRootFolder::class),
-			'test2'
-		);
-
-		$this->utilsController = new UtilsController(
-			$this->appName,
-			$this->request,
-			$c->query(IServerContainer::class)->getConfig(),
-			$c->getServer()->getAppManager(),
-			$this->root,
+			$c->get(IConfig::class),
+			$c->get(IFactory::class)->get('maps'),
+			$c->get(DevicesService::class),
+			$c->get(DeviceShareMapper::class),
+			$c->get(\OCP\IDateTimeZone::class),
+			$c->get(IRootFolder::class),
 			'test'
 		);
 

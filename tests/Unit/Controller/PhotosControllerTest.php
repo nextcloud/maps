@@ -119,7 +119,6 @@ class PhotosControllerTest extends \PHPUnit\Framework\TestCase {
 			$this->appName,
 			$this->request,
 			$c->query(IServerContainer::class)->getConfig(),
-			$c->getServer()->getAppManager(),
 			$this->rootFolder,
 			'test'
 		);
@@ -231,7 +230,7 @@ class PhotosControllerTest extends \PHPUnit\Framework\TestCase {
 		//Test .maps respected
 		$this->GeoPhotosService->clearCache();
 		$file = $userfolder->newFile('.index.maps');
-		$resp = $this->photosController->getPhotos(null, null, true);
+		$resp = $this->photosController->getPhotos(null, true, true);
 		$status = $resp->getStatus();
 		$this->assertEquals(200, $status);
 		$data = $resp->getData();

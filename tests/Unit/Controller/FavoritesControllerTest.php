@@ -17,124 +17,110 @@ namespace OCA\Maps\Controller;
 use OCA\Maps\AppInfo\Application;
 use OCA\Maps\DB\FavoriteShareMapper;
 use OCA\Maps\Service\FavoritesService;
+use OCP\App\IAppManager;
 use OCP\AppFramework\Http;
+use OCP\Files\Folder;
+use OCP\Files\IRootFolder;
+use OCP\IConfig;
+use OCP\IGroupManager;
+use OCP\IRequest;
 use OCP\IServerContainer;
+use OCP\IUserManager;
+use OCP\L10N\IFactory;
+use PHPUnit\Framework\MockObject\MockObject;
+use Psr\Container\ContainerInterface;
 
 class FavoritesControllerTest extends \PHPUnit\Framework\TestCase {
-	private $appName;
-	private $request;
-	private $contacts;
-
-	private $container;
-	private $config;
-	private $app;
-
-	private $pageController;
-	private $pageController2;
-	private $utilsController;
-	private $root;
-
-	/* @var FavoritesController */
-	private $favoritesController;
-
-	/* @var FavoritesController */
-	private $favoritesController2;
+	private string $appName;
+	private IRequest&MockObject $request;
+	private ContainerInterface $container;
+	private Application $app;
+	private IRootFolder $root;
+	private FavoritesController $favoritesController;
+	private FavoritesController $favoritesController2;
 
 	public static function setUpBeforeClass(): void {
 		$app = new Application();
 		$c = $app->getContainer();
 
-		$user = $c->getServer()->getUserManager()->get('test');
-		$user2 = $c->getServer()->getUserManager()->get('test2');
-		$user3 = $c->getServer()->getUserManager()->get('test3');
-		$group = $c->getServer()->getGroupManager()->get('group1test');
-		$group2 = $c->getServer()->getGroupManager()->get('group2test');
+		$user = $c->get(IUserManager::class)->get('test');
+		$user2 = $c->get(IUserManager::class)->get('test2');
+		$user3 = $c->get(IUserManager::class)->get('test3');
+		$group = $c->get(IGroupManager::class)->get('group1test');
+		$group2 = $c->get(IGroupManager::class)->get('group2test');
 
 		// CREATE DUMMY USERS
 		if ($user === null) {
-			$u1 = $c->getServer()->getUserManager()->createUser('test', 'tatotitoTUTU');
+			$u1 = $c->get(IUserManager::class)->createUser('test', 'tatotitoTUTU');
 			$u1->setEMailAddress('toto@toto.net');
 		}
 		if ($user2 === null) {
-			$u2 = $c->getServer()->getUserManager()->createUser('test2', 'plopinoulala000');
+			$c->get(IUserManager::class)->createUser('test2', 'plopinoulala000');
 		}
-		if ($user2 === null) {
-			$u3 = $c->getServer()->getUserManager()->createUser('test3', 'yeyeahPASSPASS');
+		if ($user3 === null) {
+			$c->get(IUserManager::class)->createUser('test3', 'yeyeahPASSPASS');
 		}
 		if ($group === null) {
-			$c->getServer()->getGroupManager()->createGroup('group1test');
-			$u1 = $c->getServer()->getUserManager()->get('test');
-			$c->getServer()->getGroupManager()->get('group1test')->addUser($u1);
+			$c->get(IGroupManager::class)->createGroup('group1test');
+			$u1 = $c->get(IGroupManager::class)->get('test');
+			$c->get(IGroupManager::class)->get('group1test')->addUser($u1);
 		}
 		if ($group2 === null) {
-			$c->getServer()->getGroupManager()->createGroup('group2test');
-			$u2 = $c->getServer()->getUserManager()->get('test2');
-			$c->getServer()->getGroupManager()->get('group2test')->addUser($u2);
+			$c->get(IGroupManager::class)->createGroup('group2test');
+			$u2 = $c->get(IGroupManager::class)->get('test2');
+			$c->get(IGroupManager::class)->get('group2test')->addUser($u2);
 		}
 	}
 
 	protected function setUp(): void {
 		$this->appName = 'maps';
-		$this->request = $this->getMockBuilder('\OCP\IRequest')
-			->disableOriginalConstructor()
-			->getMock();
-		$this->contacts = $this->getMockBuilder('OCP\Contacts\IManager')
-			->disableOriginalConstructor()
-			->getMock();
+		$this->request = $this->createMock(IRequest::class);
 
 		$this->app = new Application();
 		$this->container = $this->app->getContainer();
 		$c = $this->container;
-		$this->config = $c->query(IServerContainer::class)->getConfig();
-		$this->root = $c->query(IServerContainer::class)->getRootFolder();
+		$this->config = $c->get(IConfig::class);
+		$this->root = $c->get(IRootFolder::class);
 
 		$this->favoritesController = new FavoritesController(
 			$this->appName,
 			$this->request,
-			$c->query(IServerContainer::class),
-			$c->query(IServerContainer::class)->getConfig(),
-			$c->getServer()->get(\OCP\Share\IManager::class),
-			$c->getServer()->getAppManager(),
-			$c->getServer()->getUserManager(),
-			$c->getServer()->getGroupManager(),
-			$c->query(IServerContainer::class)->getL10N($c->query('AppName')),
-			$c->query(FavoritesService::class),
-			$c->query(IServerContainer::class)->get(\OCP\IDateTimeZone::class),
-			$c->query(FavoriteShareMapper::class),
+			$c->get(IServerContainer::class),
+			$c->get(IConfig::class),
+			$c->get(\OCP\Share\IManager::class),
+			$c->get(IAppManager::class),
+			$c->get(IUserManager::class),
+			$c->get(IGroupManager::class),
+			$c->get(IFactory::class)->get($this->appName),
+			$c->get(FavoritesService::class),
+			$c->get(\OCP\IDateTimeZone::class),
+			$c->get(FavoriteShareMapper::class),
 			'test'
 		);
 
 		$this->favoritesController2 = new FavoritesController(
 			$this->appName,
 			$this->request,
-			$c->query(IServerContainer::class),
-			$c->query(IServerContainer::class)->getConfig(),
-			$c->getServer()->get(\OCP\Share\IManager::class),
-			$c->getServer()->getAppManager(),
-			$c->getServer()->getUserManager(),
-			$c->getServer()->getGroupManager(),
-			$c->query(IServerContainer::class)->getL10N($c->query('AppName')),
-			$c->query(FavoritesService::class),
-			$c->query(IServerContainer::class)->get(\OCP\IDateTimeZone::class),
-			$c->query(FavoriteShareMapper::class),
+			$c->get(IServerContainer::class),
+			$c->get(IConfig::class),
+			$c->get(\OCP\Share\IManager::class),
+			$c->get(IAppManager::class),
+			$c->get(IUserManager::class),
+			$c->get(IGroupManager::class),
+			$c->get(IFactory::class)->get($this->appName),
+			$c->get(FavoritesService::class),
+			$c->get(\OCP\IDateTimeZone::class),
+			$c->get(FavoriteShareMapper::class),
 			'test2'
 		);
 
-		$this->utilsController = new UtilsController(
-			$this->appName,
-			$this->request,
-			$c->query(IServerContainer::class)->getConfig(),
-			$c->getServer()->getAppManager(),
-			$this->root,
-			'test'
-		);
 		$this->mapFolder = $this->createMapFolder();
 	}
 
-	private function createMapFolder() {
+	private function createMapFolder(): Folder {
 		$userFolder = $this->root->getUserFolder('test');
 		if ($userFolder->nodeExists('Map')) {
-			return $userFolder->get('Map')->delete();
+			$userFolder->get('Map')->delete();
 		}
 		return $userFolder->newFolder('Map');
 	}
@@ -213,7 +199,8 @@ class FavoritesControllerTest extends \PHPUnit\Framework\TestCase {
 		$this->assertEquals(400, $status);
 	}
 
-	public function testAddFavoritesMyMap() {
+	public function testAddFavoritesMyMap(): void {
+		$this->mapFolder = $this->createMapFolder();
 		$myMapId = $this->mapFolder->getId();
 		// correct values
 		$resp = $this->favoritesController->addFavorite('one', 3.1, 4.2, '', null, null, $myMapId);
@@ -432,7 +419,7 @@ class FavoritesControllerTest extends \PHPUnit\Framework\TestCase {
 		$this->assertEquals(true, $seen);
 	}
 
-	public function testEditFavoritesMyMap() {
+	public function testEditFavoritesMyMap(): void {
 		$this->mapFolder = $this->createMapFolder();
 		$myMapId = $this->mapFolder->getId();
 		// valid edition

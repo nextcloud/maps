@@ -30,45 +30,31 @@ use OCA\Maps\Service\FavoritesService;
 use OCP\AppFramework\Db\DoesNotExistException;
 use OCP\AppFramework\Db\MultipleObjectsReturnedException;
 use OCP\AppFramework\Http;
+use OCP\AppFramework\Http\Attribute\PublicPage;
 use OCP\AppFramework\Http\DataResponse;
 use OCP\AppFramework\PublicShareController;
 use OCP\IRequest;
 use OCP\ISession;
 
 class PublicFavoritesApiController extends PublicShareController {
-	/* @var FavoritesService */
-	private $favoritesService;
-
-	/* @var FavoriteShareMapper */
-	private $favoriteShareMapper;
-
 	public function __construct(
 		$appName,
 		IRequest $request,
 		ISession $session,
-		FavoritesService $favoritesService,
-		FavoriteShareMapper $favoriteShareMapper,
+		private FavoritesService $favoritesService,
+		private FavoriteShareMapper $favoriteShareMapper,
 	) {
 		parent::__construct($appName, $request, $session);
-
-		$this->favoriteShareMapper = $favoriteShareMapper;
-		$this->favoritesService = $favoritesService;
 	}
 
 	public function getPasswordHash(): string {
 		return '';
 	}
 
-	/**
-	 * @return bool
-	 */
 	protected function isPasswordProtected(): bool {
 		return false;
 	}
 
-	/**
-	 * @return bool
-	 */
 	public function isValidToken(): bool {
 		try {
 			$this->favoriteShareMapper->findByToken($this->getToken());
@@ -79,10 +65,7 @@ class PublicFavoritesApiController extends PublicShareController {
 		return true;
 	}
 
-	/**
-	 * @return bool
-	 */
-	public function canEdit(): bool {
+	/* public function canEdit(): bool {
 		try {
 			$share = $this->favoriteShareMapper->findByToken($this->getToken());
 		} catch (DoesNotExistException|MultipleObjectsReturnedException $e) {
@@ -90,19 +73,15 @@ class PublicFavoritesApiController extends PublicShareController {
 		}
 
 		return $share->getAllowEdits();
-	}
+	} */
 
-	/**
-	 * @PublicPage
-	 *
-	 * @return DataResponse
-	 */
+	#[PublicPage]
 	public function getFavorites(): DataResponse {
 		try {
 			$share = $this->favoriteShareMapper->findByToken($this->getToken());
-		} catch (DoesNotExistException $e) {
+		} catch (DoesNotExistException) {
 			return new DataResponse([], Http::STATUS_NOT_FOUND);
-		} catch (MultipleObjectsReturnedException $e) {
+		} catch (MultipleObjectsReturnedException) {
 			return new DataResponse([], Http::STATUS_INTERNAL_SERVER_ERROR);
 		}
 

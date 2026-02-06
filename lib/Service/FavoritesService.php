@@ -17,16 +17,12 @@ namespace OCA\Maps\Service;
 
 use OC\Archive\ZIP;
 use OCP\DB\QueryBuilder\IQueryBuilder;
+use OCP\Files\File;
 use OCP\IDBConnection;
 use OCP\IL10N;
-use OCP\Security\ISecureRandom;
 use Psr\Log\LoggerInterface;
 
 class FavoritesService {
-
-	private $l10n;
-	private $dbconnection;
-	private $secureRandom;
 
 	private $currentFavorite;
 	private $currentFavoritesList;
@@ -40,26 +36,15 @@ class FavoritesService {
 
 	public function __construct(
 		private LoggerInterface $logger,
-		IL10N $l10n,
-		ISecureRandom $secureRandom,
-		IDBConnection $dbconnection,
+		private IL10N $l10n,
+		private IDBConnection $dbconnection,
 	) {
-		$this->l10n = $l10n;
-		$this->secureRandom = $secureRandom;
-		$this->dbconnection = $dbconnection;
-	}
-
-	private function db_quote_escape_string($str) {
-		return $this->dbconnection->quote($str);
 	}
 
 	/**
-	 * @param string $userId
-	 * @param int $pruneBefore
-	 * @param string|null $filterCategory
 	 * @return array with favorites
 	 */
-	public function getFavoritesFromDB($userId, $pruneBefore = 0, $filterCategory = null, $isDeletable = true, $isUpdateable = true, $isShareable = true) {
+	public function getFavoritesFromDB(string $userId, int $pruneBefore = 0, ?string $filterCategory = null, bool $isDeletable = true, bool $isUpdateable = true, bool $isShareable = true): array {
 		$favorites = [];
 		$qb = $this->dbconnection->getQueryBuilder();
 		$qb->select('id', 'name', 'date_created', 'date_modified', 'lat', 'lng', 'category', 'comment', 'extensions')
@@ -109,7 +94,7 @@ class FavoritesService {
 		return $favorites;
 	}
 
-	public function getFavoriteFromDB($id, $userId = null, $category = null, $isDeletable = true, $isUpdateable = true, $isShareable = true) {
+	public function getFavoriteFromDB(int $id, ?string $userId = null, ?string $category = null, bool $isDeletable = true, bool $isUpdateable = true, bool $isShareable = true): ?array {
 		$favorite = null;
 		$qb = $this->dbconnection->getQueryBuilder();
 		$qb->select('id', 'name', 'date_modified', 'date_created', 'lat', 'lng', 'category', 'comment', 'extensions')
@@ -160,8 +145,8 @@ class FavoritesService {
 		return $favorite;
 	}
 
-	public function addFavoriteToDB($userId, $name, $lat, $lng, $category, $comment, $extensions) {
-		$nowTimeStamp = (new \DateTime())->getTimestamp();
+	public function addFavoriteToDB(string $userId, ?string $name, ?float $lat, ?float $lng, ?string $category, ?string $comment, ?string $extensions): int {
+		$nowTimeStamp = (new \DateTimeImmutable())->getTimestamp();
 		$qb = $this->dbconnection->getQueryBuilder();
 		$qb->insert('maps_favorites')
 			->values([
@@ -176,12 +161,11 @@ class FavoritesService {
 				'extensions' => $qb->createNamedParameter($extensions, IQueryBuilder::PARAM_STR)
 			]);
 		$qb->executeStatement();
-		$favoriteId = $qb->getLastInsertId();
-		return $favoriteId;
+		return $qb->getLastInsertId();
 	}
 
-	public function addMultipleFavoritesToDB($userId, $favoriteList) {
-		$nowTimeStamp = (new \DateTime())->getTimestamp();
+	public function addMultipleFavoritesToDB(string $userId, array $favoriteList): void {
+		$nowTimeStamp = (new \DateTimeImmutable())->getTimestamp();
 
 		$qb = $this->dbconnection->getQueryBuilder();
 		$qb->insert('maps_favorites');
@@ -229,7 +213,7 @@ class FavoritesService {
 		}
 	}
 
-	public function renameCategoryInDB($userId, $cat, $newName) {
+	public function renameCategoryInDB(string $userId, $cat, $newName): void {
 		$qb = $this->dbconnection->getQueryBuilder();
 		$qb->update('maps_favorites');
 		$qb->set('category', $qb->createNamedParameter($newName, IQueryBuilder::PARAM_STR));
@@ -271,7 +255,7 @@ class FavoritesService {
 		$qb->executeStatement();
 	}
 
-	public function deleteFavoriteFromDB($id) {
+	public function deleteFavoriteFromDB(int $id): void {
 		$qb = $this->dbconnection->getQueryBuilder();
 		$qb->delete('maps_favorites')
 			->where(
@@ -343,11 +327,10 @@ class FavoritesService {
 	}
 
 	/**
-	 * @param $file
 	 * @return array
 	 * @throws \Exception
 	 */
-	public function getFavoritesFromJSON($file) {
+	public function getFavoritesFromJSON(File $file): array {
 		$favorites = [];
 
 		// Decode file content from JSON
@@ -419,7 +402,7 @@ class FavoritesService {
 		return $favorites;
 	}
 
-	public function getFavoriteFromJSON($file, $id) {
+	public function getFavoriteFromJSON(File $file, int $id) {
 		$favorites = $this->getFavoritesFromJSON($file);
 		if (array_key_exists($id, $favorites)) {
 			return $favorites[$id];

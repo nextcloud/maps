@@ -21,7 +21,7 @@ use OCA\Maps\Helper\ExifDataNoLocationException;
 use OCA\Maps\Helper\ExifGeoData;
 use OCP\AppFramework\Db\DoesNotExistException;
 use OCP\BackgroundJob\IJobList;
-use OCP\Files\FileInfo;
+use OCP\Files\File;
 use OCP\Files\Folder;
 use OCP\Files\IRootFolder;
 use OCP\Files\Node;
@@ -117,14 +117,14 @@ class PhotofilesService {
 	public function addByFileIdUserId(int $fileId, string $userId): void {
 		$userFolder = $this->root->getUserFolder($userId);
 		$file = $userFolder->getFirstNodeById($fileId);
-		if ($file !== null and $this->isPhoto($file)) {
+		if ($file instanceof File and $this->isPhoto($file)) {
 			$this->addPhoto($file, $userId);
 		}
 	}
 
 	public function addByFolderIdUserId(int $folderId, string $userId): void {
 		$folder = $this->root->getFirstNodeById($folderId);
-		if ($folder !== null) {
+		if ($folder instanceof Folder) {
 			$photos = $this->gatherPhotoFiles($folder, true);
 			foreach ($photos as $photo) {
 				$this->addPhoto($photo, $userId);
@@ -133,7 +133,7 @@ class PhotofilesService {
 	}
 
 	// add all photos of a folder taking care of shared accesses
-	public function addByFolder($folder) {
+	public function addByFolder(Folder $folder): void {
 		$photos = $this->gatherPhotoFiles($folder, true);
 		foreach ($photos as $photo) {
 			$this->addByFile($photo);
@@ -144,7 +144,7 @@ class PhotofilesService {
 		$this->jobList->add(UpdatePhotoByFileJob::class, ['fileId' => $file->getId(), 'userId' => $file->getOwner()->getUID()]);
 	}
 
-	public function updateByFileNow(Node $file) {
+	public function updateByFileNow(File $file): void {
 		if ($this->isPhoto($file)) {
 			$exif = $this->getExif($file);
 			if (!is_null($exif)) {
@@ -177,7 +177,7 @@ class PhotofilesService {
 	}
 
 
-	public function deleteByFolder(Node $folder): void {
+	public function deleteByFolder(Folder $folder): void {
 		$photos = $this->gatherPhotoFiles($folder, true);
 		foreach ($photos as $photo) {
 			$this->photoMapper->deleteByFileId($photo->getId());
@@ -199,10 +199,9 @@ class PhotofilesService {
 	}
 
 	/**
-	 * @param $userId
 	 * @return array
 	 */
-	public function getBackgroundJobStatus($userId): array {
+	public function getBackgroundJobStatus(string $userId): array {
 		$add_counter = 0;
 		$addJobsRunning = false;
 
@@ -250,7 +249,7 @@ class PhotofilesService {
 			$cleanDirPath = str_replace(['../', '..\\'], '', $dirPath);
 			if ($userFolder->nodeExists($cleanDirPath)) {
 				$dir = $userFolder->get($cleanDirPath);
-				if ($dir->getType() === FileInfo::TYPE_FOLDER) {
+				if ($dir instanceof Folder) {
 					$nodes = $dir->getDirectoryListing();
 					foreach ($nodes as $node) {
 						if ($this->isPhoto($node) && $node->isUpdateable()) {
@@ -280,7 +279,7 @@ class PhotofilesService {
 			$cleanpath = str_replace(['../', '..\\'], '', $path);
 			if ($userFolder->nodeExists($cleanpath)) {
 				$file = $userFolder->get($cleanpath);
-				if ($this->isPhoto($file) && $file->isUpdateable()) {
+				if ($file instanceof File && $this->isPhoto($file) && $file->isUpdateable()) {
 					$lat = (count($lats) > $i) ? $lats[$i] : $lats[0];
 					$lng = (count($lngs) > $i) ? $lngs[$i] : $lngs[0];
 					try {
@@ -367,7 +366,7 @@ class PhotofilesService {
 		$this->photosCache->clear($userId);
 	}
 
-	private function updatePhoto($file, $exif) {
+	private function updatePhoto(File $file, $exif): void {
 		$lat = is_numeric($exif->lat) && !is_nan($exif->lat) ? $exif->lat : null;
 		$lng = is_numeric($exif->lng) && !is_nan($exif->lng) ? $exif->lng : null;
 		$this->photoMapper->updateByFileId($file->getId(), $lat, $lng);
@@ -377,13 +376,17 @@ class PhotofilesService {
 		return str_replace('files', '', $node->getInternalPath());
 	}
 
-	public function getPhotosByFolder($userId, $path) {
+	public function getPhotosByFolder(string $userId, string $path): array {
 		$userFolder = $this->root->getUserFolder($userId);
 		$folder = $userFolder->get($path);
-		return $this->getPhotosListForFolder($folder);
+		if ($folder instanceof Folder) {
+			return $this->getPhotosListForFolder($folder);
+		} else {
+			return [];
+		}
 	}
 
-	private function getPhotosListForFolder($folder) {
+	private function getPhotosListForFolder(Folder $folder): array {
 		$FilesList = $this->gatherPhotoFiles($folder, false);
 		$notes = [];
 		foreach ($FilesList as $File) {
@@ -395,11 +398,11 @@ class PhotofilesService {
 		return $notes;
 	}
 
-	private function gatherPhotoFiles($folder, $recursive) {
+	private function gatherPhotoFiles(Folder $folder, bool $recursive): array {
 		$notes = [];
 		$nodes = $folder->getDirectoryListing();
 		foreach ($nodes as $node) {
-			if ($node->getType() === FileInfo::TYPE_FOLDER and $recursive) {
+			if ($node instanceof Folder && $recursive) {
 				// we don't explore external storages for which previews are disabled
 				if ($node->isMounted()) {
 					$options = $node->getMountPoint()->getOptions();
@@ -423,14 +426,14 @@ class PhotofilesService {
 		return $notes;
 	}
 
-	private function isPhoto($file) {
-		if ($file->getType() !== \OCP\Files\FileInfo::TYPE_FILE) {
+	/**
+	 * @psalm-assert $file instanceof File
+	 */
+	private function isPhoto(Node $file): bool {
+		if ($file instanceof File) {
 			return false;
 		}
-		if (!in_array($file->getMimetype(), self::PHOTO_MIME_TYPES)) {
-			return false;
-		}
-		return true;
+		return in_array($file->getMimetype(), self::PHOTO_MIME_TYPES);
 	}
 
 	/**
@@ -485,7 +488,7 @@ class PhotofilesService {
 		$file->putContent($pelJpeg->getBytes());
 	}
 
-	private function setExifCoords($file, $lat, $lng) {
+	private function setExifCoords(File $file, $lat, $lng): void {
 		$data = new PelDataWindow($file->getContent());
 		$pelJpeg = new PelJpeg($data);
 
@@ -545,7 +548,10 @@ class PhotofilesService {
 		));
 	}
 
-	private function degreeDecimalToDegreeMinuteSecond($degreeDecimal) {
+	/**
+	 * @return array{degree: float, minute: float, second: float}
+	 */
+	private function degreeDecimalToDegreeMinuteSecond($degreeDecimal): array {
 		$degree = floor($degreeDecimal);
 		$remainder = $degreeDecimal - $degree;
 		$minute = floor($remainder * 60);

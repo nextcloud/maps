@@ -189,6 +189,7 @@ OC.L10N.register(
     "Failed to delete favorite" : "Nije uspjelo brisanje favorita",
     "Metadata" : "Metapodaci",
     "Photo files" : "Datoteke fotografija",
+    "Select {photo}" : "Odaberite {photo}",
     "Select folder" : "Odaberi mapu",
     "Restaurant" : "Restoran",
     "Fast food" : "Restoran brze hrane",

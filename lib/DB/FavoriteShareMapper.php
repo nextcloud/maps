@@ -30,6 +30,8 @@ use OCP\AppFramework\Db\Entity;
 use OCP\AppFramework\Db\MultipleObjectsReturnedException;
 use OCP\AppFramework\Db\QBMapper;
 use OCP\DB\QueryBuilder\IQueryBuilder;
+use OCP\Files\File;
+use OCP\Files\Folder;
 use OCP\Files\IRootFolder;
 use OCP\Files\NotFoundException;
 use OCP\IDBConnection;
@@ -102,38 +104,30 @@ class FavoriteShareMapper extends QBMapper {
 	}
 
 	/**
-	 * @param $userId
-	 * @param $mapId
-	 * @return array|mixed
 	 * @throws \OCP\Files\NotPermittedException
 	 * @throws \OC\User\NoUserException
 	 */
-	public function findAllByMapId($userId, $mapId) {
+	public function findAllByMapId(string $userId, int $mapId): array {
 		$userFolder = $this->root->getUserFolder($userId);
-		$folders = $userFolder->getById($mapId);
+		$folder = $userFolder->getFirstNodeById($mapId);
 		$shares = [];
-		if (empty($folders)) {
-			return $shares;
-		}
-		$folder = array_shift($folders);
-		if ($folder === null) {
+		if (!$folder instanceof Folder) {
 			return $shares;
 		}
 		return $this->findAllByFolder($folder);
 	}
 
 	/**
-	 * @param $folder
-	 * @param $isCreatable
-	 * @return mixed
 	 * @throws NotFoundException
 	 */
-	public function findAllByFolder($folder, $isCreatable = true) {
+	public function findAllByFolder(Folder $folder, bool $isCreatable = true): array {
 		try {
+			/** @var File $file */
 			$file = $folder->get('.favorite_shares.json');
 		} catch (NotFoundException $e) {
 			if ($isCreatable) {
-				$file = $folder->newFile('.favorite_shares.json', $content = '[]');
+				$folder->newFile('.favorite_shares.json', '[]');
+				return [];
 			} else {
 				throw new NotFoundException();
 			}
@@ -142,13 +136,10 @@ class FavoriteShareMapper extends QBMapper {
 	}
 
 	/**
-	 * @param $owner
-	 * @param $category
-	 * @return Entity
 	 * @throws DoesNotExistException
 	 * @throws MultipleObjectsReturnedException
 	 */
-	public function findByOwnerAndCategory($owner, $category) {
+	public function findByOwnerAndCategory(string $owner, string $category): FavoriteShare {
 		$qb = $this->db->getQueryBuilder();
 
 		$qb->select('*')
@@ -163,14 +154,12 @@ class FavoriteShareMapper extends QBMapper {
 	}
 
 	/**
-	 * @param $userId
-	 * @param $mapId
 	 * @param $category
 	 * @return mixed|null
 	 * @throws \OCP\Files\NotPermittedException
 	 * @throws \OC\User\NoUserException
 	 */
-	public function findByMapIdAndCategory($userId, $mapId, $category) {
+	public function findByMapIdAndCategory(string $userId, int $mapId, $category) {
 		$shares = $this->findAllByMapId($userId, $mapId);
 		foreach ($shares as $share) {
 			if ($share->category === $category) {
@@ -180,16 +169,12 @@ class FavoriteShareMapper extends QBMapper {
 		return null;
 	}
 
-	public function removeByMapIdAndCategory($userId, $mapId, $category) {
+	public function removeByMapIdAndCategory(string $userId, int $mapId, $category) {
 		$userFolder = $this->root->getUserFolder($userId);
-		$folders = $userFolder->getById($mapId);
+		$folder = $userFolder->getFirstNodeById($mapId);
 		$shares = [];
 		$deleted = null;
-		if (empty($folders)) {
-			return $deleted;
-		}
-		$folder = array_shift($folders);
-		if ($folder === null) {
+		if (!$folder instanceof Folder) {
 			return $deleted;
 		}
 		try {
@@ -210,13 +195,8 @@ class FavoriteShareMapper extends QBMapper {
 		return $deleted;
 	}
 
-	/**
-	 * @param $owner
-	 * @param $category
-	 * @return Entity|null
-	 */
-	public function findOrCreateByOwnerAndCategory($owner, $category) {
-		/* @var Entity */
+	public function findOrCreateByOwnerAndCategory(string $owner, string $category): ?FavoriteShare {
+		/* @var ?FavoriteShare $entity */
 		$entity = null;
 
 		try {
@@ -229,12 +209,7 @@ class FavoriteShareMapper extends QBMapper {
 		return $entity;
 	}
 
-	/**
-	 * @param $owner
-	 * @param $category
-	 * @return bool
-	 */
-	public function removeByOwnerAndCategory($owner, $category) {
+	public function removeByOwnerAndCategory(string $owner, string $category): bool {
 		try {
 			$entity = $this->findByOwnerAndCategory($owner, $category);
 		} catch (DoesNotExistException|MultipleObjectsReturnedException $e) {

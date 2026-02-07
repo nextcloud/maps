@@ -15,7 +15,9 @@ namespace OCA\Maps\Hooks;
 use OC\Files\Filesystem;
 use OCA\Maps\Service\PhotofilesService;
 use OCA\Maps\Service\TracksService;
+use OCP\Files\File;
 use OCP\Files\FileInfo;
+use OCP\Files\Folder;
 use OCP\Files\IRootFolder;
 use OCP\Lock\ILockingProvider;
 use OCP\Share\IShare;
@@ -27,22 +29,15 @@ use function OCP\Log\logger;
  */
 class FileHooks {
 
-	private $photofilesService;
-	private $tracksService;
-
-	private $root;
-
-	private ILockingProvider $lockingProvider;
-
-	public function __construct(IRootFolder $root, PhotofilesService $photofilesService, TracksService $tracksService,
-		$appName, ILockingProvider $lockingProvider) {
-		$this->photofilesService = $photofilesService;
-		$this->tracksService = $tracksService;
-		$this->root = $root;
-		$this->lockingProvider = $lockingProvider;
+	public function __construct(
+		private IRootFolder $root,
+		private PhotofilesService $photofilesService,
+		private TracksService $tracksService,
+		private ILockingProvider $lockingProvider,
+	) {
 	}
 
-	public function register() {
+	public function register(): void {
 		$fileWriteCallback = function (\OCP\Files\Node $node) {
 			//logger('maps')->debug("Hook postWrite");
 			if ($node->getType() === FileInfo::TYPE_FILE && $this->isUserNode($node) && $node->getSize()) {
@@ -112,32 +107,30 @@ class FileHooks {
 		Util::connectHook(\OCP\Share::class, 'pre_unshare', $this, 'preUnShare');
 	}
 
-	public function postShare($params) {
+	public function postShare(array $params): void {
 		//logger('maps')->debug("Hook postShare");
 		if ($params['itemType'] === 'file') {
 			//$targetFilePath = $params['itemTarget'];
 			//$sourceUserId = $params['uidOwner'];
 			$fileId = $params['fileSource']; // or itemSource
-			$files = $this->root->getById($fileId);
-			if (empty($files)) {
+			$file = $this->root->getFirstNodeById($fileId);
+			if ($file instanceof File) {
 				return;
 			}
-			$file = array_shift($files);
-			$this->photofilesService->addByFile($file, );
+			$this->photofilesService->addByFile($file);
 			$this->tracksService->safeAddByFile($file);
 		} elseif ($params['itemType'] === 'folder') {
 			$dirId = $params['fileSource']; // or itemSource
-			$folders = $this->root->getById($dirId);
-			if (empty($folders)) {
+			$folder = $this->root->getFirstNodeById($dirId);
+			if ($folder instanceof Folder) {
 				return;
 			}
-			$folder = array_shift($folders);
 			$this->photofilesService->addByFolder($folder);
 			$this->tracksService->safeAddByFolder($folder);
 		}
 	}
 
-	public function postUnShare($params) {
+	public function postUnShare(array $params): void {
 		//logger('maps')->debug("Hook postUnShare");
 		if ($params['shareType'] === IShare::TYPE_USER) {
 			if ($params['itemType'] === 'file') {
@@ -149,7 +142,7 @@ class FileHooks {
 		}
 	}
 
-	public function preUnShare($params) {
+	public function preUnShare(array $params): void {
 		//logger('maps')->debug("Hook preUnShare");
 		if ($params['shareType'] === IShare::TYPE_USER) {
 			if ($params['itemType'] === 'folder') {

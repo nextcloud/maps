@@ -50,12 +50,10 @@ class DeviceShareMapper extends QBMapper {
 	}
 
 	/**
-	 * @param string $token
-	 * @return DeviceShare|null
 	 * @throws DoesNotExistException
 	 * @throws MultipleObjectsReturnedException
 	 */
-	public function findByToken($token) {
+	public function findByToken(string $token): DeviceShare {
 		$qb = $this->db->getQueryBuilder();
 
 		$qb->select('*')

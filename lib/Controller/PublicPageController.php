@@ -45,11 +45,6 @@ class PublicPageController extends AuthPublicShareController {
 		protected IUserManager $userManager,
 	) {
 		parent::__construct($appName, $request, $session, $urlGenerator);
-		$this->eventDispatcher = $eventDispatcher;
-		$this->config = $config;
-		$this->initialStateService = $initialStateService;
-		$this->shareManager = $shareManager;
-		$this->userManager = $userManager;
 	}
 
 	public function isValidToken(): bool {
@@ -76,10 +71,8 @@ class PublicPageController extends AuthPublicShareController {
 
 	/**
 	 * Validate the permissions of the share
-	 *
-	 * @return bool
 	 */
-	private function validateShare(\OCP\Share\IShare $share) {
+	private function validateShare(\OCP\Share\IShare $share): bool {
 		// If the owner is disabled no access to the link is granted
 		$owner = $this->userManager->get($share->getShareOwner());
 		if ($owner === null || !$owner->isEnabled()) {

@@ -33,6 +33,7 @@ OC.L10N.register(
     "Tags" : "Maoni",
     "Distance" : "Distance",
     "Duration" : "Muda",
+    "End" : "Maliza",
     "Name" : "Jina",
     "Add" : "Ongeza",
     "Add to favorites" : "Ongeza kwenye pendwa",

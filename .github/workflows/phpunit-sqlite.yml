@@ -185,3 +185,27 @@ jobs:
     steps:
       - name: Summary status
         run: if ${{ needs.changes.outputs.src != 'false' && needs.phpunit-sqlite.result != 'success' }}; then exit 1; fi
+
+  legacy:
+    permissions:
+      contents: none
+    runs-on: ubuntu-latest-low
+    needs: [summary]
+
+    if: always()
+    name: Nextcloud stable31 php8.3 unit tests
+    steps:
+      - name: Summary status
+        run: if ${{ needs.summary.result != 'success' }}; then exit 1; fi
+
+  legacy31:
+    permissions:
+      contents: none
+    runs-on: ubuntu-latest-low
+    needs: [summary]
+
+    if: always()
+    name: Nextcloud stable31 php8.4 unit tests
+    steps:
+      - name: Summary status
+        run: if ${{ needs.summary.result != 'success' }}; then exit 1; fi

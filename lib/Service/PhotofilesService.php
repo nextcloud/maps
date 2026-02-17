@@ -26,6 +26,7 @@ use OCP\Files\File;
 use OCP\Files\Folder;
 use OCP\Files\IRootFolder;
 use OCP\Files\Node;
+use OCP\Files\NotFoundException;
 use OCP\Files\StorageNotAvailableException;
 use OCP\ICache;
 use OCP\ICacheFactory;
@@ -248,7 +249,13 @@ class PhotofilesService {
 		];
 	}
 
-	public function setPhotosFilesCoords(string $userId, $paths, $lats, $lngs, $directory): array {
+	/**
+	 * @param list<string> $paths
+	 * @param list<float> $lats
+	 * @param list<float> $lngs
+	 * @return list<array{path: (array | string | null), lat: float, lng: float, oldLat: ?float, oldLng: ?float}>
+	 */
+	public function setPhotosFilesCoords(string $userId, $paths, $lats, $lngs, bool $directory): array {
 		if ($directory) {
 			return $this->setDirectoriesCoords($userId, $paths, $lats, $lngs);
 		}
@@ -256,6 +263,12 @@ class PhotofilesService {
 		return $this->setFilesCoords($userId, $paths, $lats, $lngs);
 	}
 
+	/**
+	 * @param list<string> $paths
+	 * @param list<float> $lats
+	 * @param list<float> $lngs
+	 * @return list<array{path: (array | string | null), lat: float, lng: float, oldLat: ?float, oldLng: ?float}>
+	 */
 	private function setDirectoriesCoords(string $userId, $paths, $lats, $lngs): array {
 		$lat = $lats[0] ?? 0;
 		$lng = $lngs[0] ?? 0;
@@ -263,24 +276,31 @@ class PhotofilesService {
 		$done = [];
 		foreach ($paths as $dirPath) {
 			$cleanDirPath = str_replace(['../', '..\\'], '', $dirPath);
-			if ($userFolder->nodeExists($cleanDirPath)) {
+			try {
 				$dir = $userFolder->get($cleanDirPath);
-				if ($dir instanceof Folder) {
-					$nodes = $dir->getDirectoryListing();
-					foreach ($nodes as $node) {
-						if ($this->isPhoto($node) && $node->isUpdateable()) {
-							$photo = $this->photoMapper->findByFileIdUserId($node->getId(), $userId);
-							$done[] = [
-								'path' => preg_replace('/^files/', '', (string)$node->getInternalPath()),
-								'lat' => $lat,
-								'lng' => $lng,
-								'oldLat' => $photo ? $photo->getLat() : null,
-								'oldLng' => $photo ? $photo->getLng() : null,
-							];
-							$this->setExifCoords($node, $lat, $lng);
-							$this->updateByFileNow($node);
-						}
+			} catch (NotFoundException) {
+				continue;
+			}
+			if (!$dir instanceof Folder) {
+				continue;
+			}
+			$nodes = $dir->getDirectoryListing();
+			foreach ($nodes as $node) {
+				if ($this->isPhoto($node) && $node->isUpdateable()) {
+					try {
+						$photo = $this->photoMapper->findByFileIdUserId($node->getId(), $userId);
+					} catch (DoesNotExistException) {
+						$photo = null;
 					}
+					$done[] = [
+						'path' => preg_replace('/^files/', '', (string)$node->getInternalPath()),
+						'lat' => $lat,
+						'lng' => $lng,
+						'oldLat' => $photo?->getLat(),
+						'oldLng' => $photo?->getLng(),
+					];
+					$this->setExifCoords($node, $lat, $lng);
+					$this->updateByFileNow($node);
 				}
 			}
 		}
@@ -289,35 +309,41 @@ class PhotofilesService {
 	}
 
 	/**
-	 * @return array{path: (array | string | null), lat: mixed, lng: mixed, oldLat: mixed, oldLng: mixed}[]
+	 * @param list<string> $paths
+	 * @param list<float> $lats
+	 * @param list<float> $lngs
+	 * @return list<array{path: (array | string | null), lat: float, lng: float, oldLat: ?float, oldLng: ?float}>
 	 */
-	private function setFilesCoords(string $userId, $paths, array $lats, array $lngs): array {
+	private function setFilesCoords(string $userId, array $paths, array $lats, array $lngs): array {
 		$userFolder = $this->root->getUserFolder($userId);
 		$done = [];
 
 		foreach ($paths as $i => $path) {
-			$cleanpath = str_replace(['../', '..\\'], '', $path);
-			if ($userFolder->nodeExists($cleanpath)) {
-				$file = $userFolder->get($cleanpath);
-				if ($file instanceof File && $this->isPhoto($file) && $file->isUpdateable()) {
-					$lat = (count($lats) > $i) ? $lats[$i] : $lats[0];
-					$lng = (count($lngs) > $i) ? $lngs[$i] : $lngs[0];
-					try {
-						$photo = $this->photoMapper->findByFileIdUserId($file->getId(), $userId);
-					} catch (DoesNotExistException) {
-						$photo = null;
-					}
+			$cleanPath = str_replace(['../', '..\\'], '', $path);
+			try {
+				$file = $userFolder->get($cleanPath);
+			} catch (NotFoundException) {
+				continue;
+			}
 
-					$done[] = [
-						'path' => preg_replace('/^files/', '', $file->getInternalPath()),
-						'lat' => $lat,
-						'lng' => $lng,
-						'oldLat' => $photo ? $photo->getLat() : null,
-						'oldLng' => $photo ? $photo->getLng() : null,
-					];
-					$this->setExifCoords($file, $lat, $lng);
-					$this->updateByFileNow($file);
+			if ($file instanceof File && $this->isPhoto($file) && $file->isUpdateable()) {
+				$lat = (count($lats) > $i) ? $lats[$i] : $lats[0];
+				$lng = (count($lngs) > $i) ? $lngs[$i] : $lngs[0];
+				try {
+					$photo = $this->photoMapper->findByFileIdUserId($file->getId(), $userId);
+				} catch (DoesNotExistException) {
+					$photo = null;
 				}
+
+				$done[] = [
+					'path' => preg_replace('/^files/', '', $file->getInternalPath()),
+					'lat' => $lat,
+					'lng' => $lng,
+					'oldLat' => $photo?->getLat(),
+					'oldLng' => $photo?->getLng(),
+				];
+				$this->setExifCoords($file, $lat, $lng);
+				$this->updateByFileNow($file);
 			}
 		}
 
@@ -325,7 +351,7 @@ class PhotofilesService {
 	}
 
 	/**
-	 * @return array{path: (array | string | null), lat: null, lng: null, oldLat: mixed, oldLng: mixed}[]
+	 * @return list<array{path: (array | string | null), lat: null, lng: null, oldLat: ?float, oldLng: ?float}>
 	 */
 	public function resetPhotosFilesCoords($userId, $paths): array {
 		$userFolder = $this->root->getUserFolder($userId);

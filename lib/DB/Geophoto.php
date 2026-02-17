@@ -15,6 +15,12 @@ namespace OCA\Maps\DB;
 
 use OCP\AppFramework\Db\Entity;
 
+/**
+ * @method int getFileId()
+ * @method float getLat()
+ * @method float getLng()
+ * @method string getUserId()
+ */
 class Geophoto extends Entity {
 
 	protected $fileId;

@@ -44,14 +44,11 @@ class GeophotoMapper extends QBMapper {
 	}
 
 	/**
-	 * @param $fileId
-	 * @param $userId
-	 * @return mixed|\OCP\AppFramework\Db\Entity
 	 * @throws \OCP\AppFramework\Db\DoesNotExistException
 	 * @throws \OCP\AppFramework\Db\MultipleObjectsReturnedException
 	 * @throws \OCP\DB\Exception
 	 */
-	public function findByFileIdUserId($fileId, $userId) {
+	public function findByFileIdUserId(int $fileId, string $userId): Geophoto {
 		$qb = $this->db->getQueryBuilder();
 
 		$qb->select('*')
@@ -66,13 +63,11 @@ class GeophotoMapper extends QBMapper {
 	}
 
 	/**
-	 * @param $fileId
-	 * @return mixed|\OCP\AppFramework\Db\Entity
 	 * @throws \OCP\AppFramework\Db\DoesNotExistException
 	 * @throws \OCP\AppFramework\Db\MultipleObjectsReturnedException
 	 * @throws \OCP\DB\Exception
 	 */
-	public function findByFileId($fileId) {
+	public function findByFileId(int $fileId): Geophoto {
 		$qb = $this->db->getQueryBuilder();
 
 		$qb->select('*')

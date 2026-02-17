@@ -581,7 +581,7 @@ class FavoritesService {
 		$file->putContent(json_encode($data, JSON_PRETTY_PRINT));
 	}
 
-	public function exportFavorites($userId, $fileHandler, $categoryList, $begin, $end, string $appVersion): void {
+	public function exportFavorites(?string $userId, $fileHandler, $categoryList, $begin, $end, string $appVersion): void {
 		$qb = $this->dbconnection->getQueryBuilder();
 		$nbFavorites = $this->countFavorites($userId, $categoryList, $begin, $end);
 
@@ -632,7 +632,7 @@ class FavoritesService {
 			$req = $qb->executeQuery();
 
 			while ($row = $req->fetch()) {
-				$name = str_replace('&', '&amp;', $row['name']);
+				$name = str_replace('&', '&amp;', $row['name'] ?? '');
 				$epoch = $row['date_created'];
 				$date = '';
 				if (is_numeric($epoch)) {

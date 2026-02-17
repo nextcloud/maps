@@ -949,7 +949,7 @@ class TracksService {
 	}
 
 	/**
-	 * @return mixed[]
+	 * @return object[]
 	 */
 	private function getDistanceFilteredPoints($points): array {
 		$DISTANCE_THRESHOLD = 10;
@@ -959,7 +959,7 @@ class TracksService {
 			$distFilteredPoints[] = $points[0];
 			$lastPoint = $points[0];
 			foreach ($points as $point) {
-				if (distance($lastPoint, $point) >= $DISTANCE_THRESHOLD) {
+				if (distance((array)$lastPoint, (array)$point) >= $DISTANCE_THRESHOLD) {
 					$distFilteredPoints[] = $point;
 					$lastPoint = $point;
 				}

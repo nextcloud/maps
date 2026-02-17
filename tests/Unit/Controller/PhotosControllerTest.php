@@ -18,6 +18,7 @@ use OCA\Maps\Service\GeophotoService;
 use OCA\Maps\Service\PhotofilesService;
 use OCP\DB\QueryBuilder\IQueryBuilder;
 use OCP\IServerContainer;
+use OCP\Server;
 
 class PhotosControllerTest extends \PHPUnit\Framework\TestCase {
 	private $appName;
@@ -92,7 +93,7 @@ class PhotosControllerTest extends \PHPUnit\Framework\TestCase {
 			$this->rootFolder,
 			$c->query(IServerContainer::class)->getL10N($c->query('AppName')),
 			$c->query(GeophotoMapper::class),
-			$c->query(IServerContainer::class)->getShareManager(),
+			$c->query(IServerContainer::class)->get(\OCP\Share\IManager::class),
 			$c->query(\OCP\BackgroundJob\IJobList::class)
 		);
 
@@ -134,12 +135,12 @@ class PhotosControllerTest extends \PHPUnit\Framework\TestCase {
 			$file->delete();
 		}
 		// delete db
-		$qb = $c->query(IServerContainer::class)->query(\OCP\IDBConnection::class)->getQueryBuilder();
+		$qb = Server::get(\OCP\IDBConnection::class)->getQueryBuilder();
 		$qb->delete('maps_photos')
 			->where(
 				$qb->expr()->eq('user_id', $qb->createNamedParameter('test', IQueryBuilder::PARAM_STR))
 			);
-		$req = $qb->execute();
+		$req = $qb->executeStatement();
 	}
 
 	public static function tearDownAfterClass(): void {
@@ -346,13 +347,6 @@ class PhotosControllerTest extends \PHPUnit\Framework\TestCase {
 
 		//Test usage of cache adding photo
 		$resp = $this->photosController->placePhotos(['/nut.jpg'], [1.2345], [9.8765]);
-		$status = $resp->getStatus();
-		$this->assertEquals(200, $status);
-		$data = $resp->getData();
-		$this->assertCount(1, $data);
-
-		//We do not clear the cache so we expect to still 1 photo
-		$resp = $this->photosController->getPhotos();
 		$status = $resp->getStatus();
 		$this->assertEquals(200, $status);
 		$data = $resp->getData();

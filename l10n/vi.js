@@ -52,6 +52,7 @@ OC.L10N.register(
     "Not grouped" : "Không  nhóm",
     "Default" : "Mặc định",
     "Failed to save settings" : "Lưu cấu hình thất bại",
+    "Metadata" : "Metadata",
     "Bar" : "Thanh",
     "Cinema" : "Rạp chiếu phim",
     "Hospital" : "Bệnh viện",

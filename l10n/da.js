@@ -78,6 +78,7 @@ OC.L10N.register(
     "View in Maps" : "Vis i Maps",
     "Failed to load your maps" : "Kunne ikke indlæse dine kort",
     "Metadata" : "Metadata",
+    "Select folder" : "Vælg mappe",
     "Restaurant" : "Restaurant",
     "Bar" : "Bar",
     "School" : "Skole",

@@ -16,6 +16,7 @@ use OCA\Maps\AppInfo\Application;
 use OCA\Maps\Service\TracksService;
 use OCP\DB\QueryBuilder\IQueryBuilder;
 use OCP\IServerContainer;
+use OCP\Server;
 
 class TracksControllerTest extends \PHPUnit\Framework\TestCase {
 	private $appName;
@@ -85,7 +86,7 @@ class TracksControllerTest extends \PHPUnit\Framework\TestCase {
 			$c->query(IServerContainer::class)->get(\Psr\Log\LoggerInterface::class),
 			$c->query(IServerContainer::class)->getL10N($c->query('AppName')),
 			$this->rootFolder,
-			$c->query(IServerContainer::class)->getShareManager(),
+			$c->query(IServerContainer::class)->get(\OCP\Share\IManager::class),
 			$c->query(IServerContainer::class)->query(\OCP\IDBConnection::class)
 		);
 
@@ -94,7 +95,7 @@ class TracksControllerTest extends \PHPUnit\Framework\TestCase {
 			$this->request,
 			$c->query(IServerContainer::class),
 			$c->query(IServerContainer::class)->getConfig(),
-			$c->query(IServerContainer::class)->getShareManager(),
+			$c->query(IServerContainer::class)->get(\OCP\Share\IManager::class),
 			$c->getServer()->getAppManager(),
 			$c->getServer()->getUserManager(),
 			$c->getServer()->getGroupManager(),
@@ -108,7 +109,7 @@ class TracksControllerTest extends \PHPUnit\Framework\TestCase {
 			$this->request,
 			$c->query(IServerContainer::class),
 			$c->query(IServerContainer::class)->getConfig(),
-			$c->query(IServerContainer::class)->getShareManager(),
+			$c->query(IServerContainer::class)->get(\OCP\Share\IManager::class),
 			$c->getServer()->getAppManager(),
 			$c->getServer()->getUserManager(),
 			$c->getServer()->getGroupManager(),
@@ -135,12 +136,12 @@ class TracksControllerTest extends \PHPUnit\Framework\TestCase {
 			$file->delete();
 		}
 		// delete db
-		$qb = $c->query(IServerContainer::class)->query(\OCP\IDBConnection::class)->getQueryBuilder();
+		$qb = Server::get(\OCP\IDBConnection::class)->getQueryBuilder();
 		$qb->delete('maps_tracks')
 			->where(
 				$qb->expr()->eq('user_id', $qb->createNamedParameter('test', IQueryBuilder::PARAM_STR))
 			);
-		$req = $qb->execute();
+		$req = $qb->executeStatement();
 	}
 
 	public static function tearDownAfterClass(): void {
@@ -167,12 +168,12 @@ class TracksControllerTest extends \PHPUnit\Framework\TestCase {
 			$file->delete();
 		}
 		// delete db
-		$qb = $c->query(IServerContainer::class)->query(\OCP\IDBConnection::class)->getQueryBuilder();
+		$qb = Server::get(\OCP\IDBConnection::class)->getQueryBuilder();
 		$qb->delete('maps_tracks')
 			->where(
 				$qb->expr()->eq('user_id', $qb->createNamedParameter('test', IQueryBuilder::PARAM_STR))
 			);
-		$req = $qb->execute();
+		$req = $qb->executeStatement();
 	}
 
 	public function testAddGetTracks() {

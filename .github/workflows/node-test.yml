@@ -3,18 +3,24 @@
 # https://github.com/nextcloud/.github
 # https://docs.github.com/en/actions/learn-github-actions/sharing-workflows-with-your-organization
 #
-# SPDX-FileCopyrightText: 2021-2024 Nextcloud GmbH and Nextcloud contributors
+# SPDX-FileCopyrightText: 2023-2024 Nextcloud GmbH and Nextcloud contributors
 # SPDX-License-Identifier: MIT
 
-name: Node
+name: Node tests
 
-on: pull_request
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+      - master
+      - stable*
 
 permissions:
   contents: read
 
 concurrency:
-  group: node-${{ github.head_ref || github.run_id }}
+  group: node-tests-${{ github.head_ref || github.run_id }}
   cancel-in-progress: true
 
 jobs:
@@ -26,7 +32,6 @@ jobs:
 
     outputs:
       src: ${{ steps.changes.outputs.src}}
-      deps: ${{ steps.changes.outputs.deps}}
 
     steps:
       - uses: dorny/paths-filter@de90cc6fb38fc0963ad72b210f1f284cd68cea36 # v3.0.2
@@ -34,11 +39,10 @@ jobs:
         continue-on-error: true
         with:
           filters: |
-            deps:
-              - 'package.json'
-              - 'package-lock.json'
             src:
               - '.github/workflows/**'
+              - '__tests__/**'
+              - '__mocks__/**'
               - 'src/**'
               - 'appinfo/info.xml'
               - 'package.json'
@@ -48,13 +52,12 @@ jobs:
               - '**.ts'
               - '**.vue'
 
-  build:
+  test:
     runs-on: ubuntu-latest
 
     needs: changes
     if: needs.changes.outputs.src != 'false'
 
-    name: NPM build
     steps:
       - name: Checkout
         uses: actions/checkout@0c366fd6a839edf440554fa01a7085ccba70ac98 # v6.0.2
@@ -76,43 +79,46 @@ jobs:
       - name: Set up npm ${{ steps.versions.outputs.npmVersion }}
         run: npm i -g 'npm@${{ steps.versions.outputs.npmVersion }}'
 
-      - name: Validate package-lock.json # See https://github.com/npm/cli/issues/4460
-        if: needs.changes.outputs.deps != 'false'
-        run: |
-          npm i -g npm-package-lock-add-resolved@1.1.4
-          npm-package-lock-add-resolved
-          git --no-pager diff --exit-code
-
       - name: Install dependencies & build
         env:
           CYPRESS_INSTALL_BINARY: 0
-          PUPPETEER_SKIP_DOWNLOAD: true
         run: |
           npm ci
           npm run build --if-present
 
-      - name: Check build changes
-        run: |
-          bash -c "[[ ! \"`git status --porcelain `\" ]] || (echo 'Please recompile and commit the assets, see the section \"Show changes on failure\" for details' && exit 1)"
+      - name: Test
+        run: npm run test --if-present
 
-      - name: Show changes on failure
-        if: failure()
-        run: |
-          git status
-          git --no-pager diff
-          exit 1 # make it red to grab attention
+      - name: Test and process coverage
+        run: npm run test:coverage --if-present
+
+      - name: Collect coverage
+        uses: codecov/codecov-action@671740ac38dd9b0130fbe1cec585b89eea48d3de # v5.5.2
+        with:
+          files: ./coverage/lcov.info
 
   summary:
     permissions:
       contents: none
     runs-on: ubuntu-latest-low
-    needs: [changes, build]
+    needs: [changes, test]
 
     if: always()
 
-    # This is the summary, we just avoid to rename it so that branch protection rules still match
-    name: node
+    name: test-summary
 
     steps:
       - name: Summary status
-        run: if ${{ needs.changes.outputs.src != 'false' && needs.build.result != 'success' }}; then exit 1; fi
+        run: if ${{ needs.changes.outputs.src != 'false' && needs.test.result != 'success' }}; then exit 1; fi
+
+  legacy:
+    permissions:
+      contents: none
+    runs-on: ubuntu-latest-low
+    needs: [summary]
+
+    if: always()
+    name: Front-end unit tests
+    steps:
+      - name: Summary status
+        run: if ${{ needs.summary.result != 'success' }}; then exit 1; fi

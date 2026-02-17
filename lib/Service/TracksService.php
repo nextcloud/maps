@@ -1033,8 +1033,8 @@ function distance($p1, $p2) {
 	//    sin phi sin phi' cos(theta-theta') + cos phi cos phi'
 	// distance = rho * arc length
 
-	$cos = (sin($phi1) * sin($phi2) * cos($theta1 - $theta2) +
-		   cos($phi1) * cos($phi2));
+	$cos = (sin($phi1) * sin($phi2) * cos($theta1 - $theta2)
+		   + cos($phi1) * cos($phi2));
 	// why some cosinus are > than 1 ?
 	if ($cos > 1.0) {
 		$cos = 1.0;

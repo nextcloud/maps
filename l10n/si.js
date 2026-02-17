@@ -38,6 +38,7 @@ OC.L10N.register(
     "left" : "වම",
     "Destination" : "ගමනාන්තය",
     "Phone" : "දුරකථනය",
-    "Computer" : "පරිගණකය"
+    "Computer" : "පරිගණකය",
+    "Select folder" : "බහාලුම තෝරන්න"
 },
 "nplurals=2; plural=(n != 1);");

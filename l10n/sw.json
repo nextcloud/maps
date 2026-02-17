@@ -31,6 +31,7 @@
     "Tags" : "Maoni",
     "Distance" : "Distance",
     "Duration" : "Muda",
+    "End" : "Maliza",
     "Name" : "Jina",
     "Add" : "Ongeza",
     "Add to favorites" : "Ongeza kwenye pendwa",
@@ -55,6 +56,7 @@
     "Default" : "Chaguo msingi",
     "Failed to save settings" : "Failed to save settings",
     "Metadata" : "Metadata",
+    "Select folder" : "Chagua folda",
     "Restaurant" : "Restaurant",
     "Bar" : "Bar"
 },"pluralForm" :"nplurals=2; plural=(n != 1);"

@@ -39,6 +39,7 @@ OC.L10N.register(
     "left" : "left",
     "Default" : "Standart",
     "Failed to save settings" : "Sozlamalarni saqlab bo'lmadi",
+    "Select folder" : "Jildni tanlang",
     "Restaurant" : "Restoran",
     "Bar" : "Bar"
 },

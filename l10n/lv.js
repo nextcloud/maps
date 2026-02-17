@@ -53,8 +53,6 @@ OC.L10N.register(
     "Nextcloud additional settings" : "Nextcloud papildu iestatījumi",
     "Phone" : "Tālrunis",
     "A background job updated {current} from {total} changed photos. This might take a while." : "Fona darbs atjaunināja {current} no {total} izmainītajiem fotoattēliem. Tas var aizņemt kādu laiku.",
-    "What do you want to place?" : "Ko ir vēlēšanās ievietot?",
-    "Photo files" : "Fotoattēlu datnes",
     "Not grouped" : "Negrupēts",
     "Failed to delete device" : "Neizdevās izdzēst ierīci",
     "Default" : "Noklusējuma",
@@ -63,6 +61,7 @@ OC.L10N.register(
     "Failed to rename map" : "Neizdevās pārdēvēt karti",
     "Failed to delete favorite" : "Neizdevās izdzēst izlases vienumu",
     "Metadata" : "Metadati",
+    "Photo files" : "Fotoattēlu datnes",
     "Cinema" : "Kino",
     "Hospital" : "Slimnīca",
     "Dentist" : "Zobārsts"

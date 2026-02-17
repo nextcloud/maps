@@ -33,6 +33,7 @@ OC.L10N.register(
     "Tags" : "Maoni",
     "Distance" : "Distance",
     "Duration" : "Muda",
+    "End" : "Maliza",
     "Name" : "Jina",
     "Add" : "Ongeza",
     "Add to favorites" : "Ongeza kwenye pendwa",
@@ -57,6 +58,7 @@ OC.L10N.register(
     "Default" : "Chaguo msingi",
     "Failed to save settings" : "Failed to save settings",
     "Metadata" : "Metadata",
+    "Select folder" : "Chagua folda",
     "Restaurant" : "Restaurant",
     "Bar" : "Bar"
 },

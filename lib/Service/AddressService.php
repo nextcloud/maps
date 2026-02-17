@@ -181,16 +181,28 @@ class AddressService {
 
 			// we get rid of "post office box" field
 			$splitted_adr = explode(';', $adr);
-			if (count($splitted_adr) > 2) {
-				array_shift($splitted_adr);
-			}
-
 			// remove blank lines (#706)
 			$splitted_adr = array_filter(array_map('trim', $splitted_adr));
-			$query_adr = implode(', ', $splitted_adr);
+			// ADR in VCard is mandated to 7 fields
+			if (sizeof($splitted_adr) == 7) {
+				$query_adr_parts = [];
+				// This matches the nominatim query with the fields of 'ADR' in VCard
+				$query_key_part = ['','','street', 'city','state', 'postalcode', 'country'];
+				foreach ($query_key_part as $index => $query_key) {
+					if ($query_key !== '' && $splitted_adr[$index] !== '') {
+						$query_adr_parts += $query_key . '=' . urlencode($splitted_adr[$index]);
+					}
+				}
+
+				$query_adr = implode(';', $query_adr_parts);
+			} else {
+				// Try to do our best with a naive query
+				$query_adr = 'q=' . urlencode(implode(', ', $splitted_adr));
+			}
+
 
 			$result_json = @file_get_contents(
-				'https://nominatim.openstreetmap.org/search.php?q=' . urlencode($query_adr) . '&format=jsonv2',
+				'https://nominatim.openstreetmap.org/search?format=jsonv2&' . $query_adr,
 				false,
 				$context
 			);
@@ -203,8 +215,8 @@ class AddressService {
 					$lon = null;
 					foreach ($result as $addr) {
 						if (key_exists('lat', $addr) and key_exists('lon', $addr)) {
-							if (is_null($lat) or
-								 (key_exists('category', $addr) and in_array($addr['category'], ['place', 'building', 'amenity']))) {
+							if (is_null($lat)
+								 or (key_exists('category', $addr) and in_array($addr['category'], ['place', 'building', 'amenity']))) {
 								$lat = $addr['lat'];
 								$lon = $addr['lon'];
 							}

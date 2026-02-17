@@ -23,18 +23,13 @@ use OCA\Maps\Listener\CardDeletedListener;
 use OCA\Maps\Listener\CardUpdatedListener;
 use OCA\Maps\Listener\LoadAdditionalScriptsListener;
 use OCA\Maps\Listener\LoadSidebarListener;
-use OCA\Maps\Service\PhotofilesService;
-use OCA\Maps\Service\TracksService;
 use OCP\AppFramework\App;
 use OCP\AppFramework\Bootstrap\IBootContext;
 use OCP\AppFramework\Bootstrap\IBootstrap;
 use OCP\AppFramework\Bootstrap\IRegistrationContext;
 use OCP\AppFramework\Http\EmptyFeaturePolicy;
 use OCP\EventDispatcher\IEventDispatcher;
-use OCP\Files\IRootFolder;
-use OCP\Lock\ILockingProvider;
 use OCP\Security\FeaturePolicy\AddFeaturePolicyEvent;
-use OCP\Server;
 
 class Application extends App implements IBootstrap {
 	public const APP_ID = 'maps';
@@ -73,23 +68,13 @@ class Application extends App implements IBootstrap {
 	}
 
 	public function boot(IBootContext $context): void {
-		// ... boot logic goes here ...
-		$context->getAppContainer()->registerService('FileHooks', function ($c) {
-			return new FileHooks(
-				Server::get(IRootFolder::class),
-				Server::get(PhotofilesService::class),
-				Server::get(TracksService::class),
-				Server::get(ILockingProvider::class),
-			);
-		});
-
-		$context->getAppContainer()->query('FileHooks')->register();
+		$context->getAppContainer()->get(FileHooks::class)->register();
 
 		$this->registerFeaturePolicy();
 	}
 
 	private function registerFeaturePolicy(): void {
-		$dispatcher = $this->getContainer()->getServer()->get(IEventDispatcher::class);
+		$dispatcher = $this->getContainer()->get(IEventDispatcher::class);
 
 		$dispatcher->addListener(AddFeaturePolicyEvent::class, function (AddFeaturePolicyEvent $e) {
 			$fp = new EmptyFeaturePolicy();

@@ -23,7 +23,7 @@ use OCP\Files\IRootFolder;
 use OCP\Files\Node;
 use OCP\Files\NotFoundException;
 use OCP\Files\NotPermittedException;
-use OCP\IConfig;
+use OCP\IAppConfig;
 use OCP\IGroupManager;
 use OCP\IInitialStateService;
 use OCP\IL10N;
@@ -43,7 +43,7 @@ class PublicTracksController extends PublicPageController {
 		string $appName,
 		IRequest $request,
 		IEventDispatcher $eventDispatcher,
-		IConfig $config,
+		IAppConfig $appConfig,
 		IInitialStateService $initialStateService,
 		IURLGenerator $urlGenerator,
 		ShareManager $shareManager,
@@ -54,13 +54,13 @@ class PublicTracksController extends PublicPageController {
 		protected TracksService $tracksService,
 		protected IRootFolder $root,
 	) {
-		parent::__construct($appName, $request, $session, $urlGenerator, $eventDispatcher, $config, $initialStateService, $shareManager, $userManager);
+		parent::__construct($appName, $request, $session, $urlGenerator, $eventDispatcher, $appConfig, $initialStateService, $shareManager, $userManager);
 	}
 
 	/**
 	 * Validate the permissions of the share
 	 */
-	private function validateShare(\OCP\Share\IShare $share): bool {
+	private function validateShare(IShare $share): bool {
 		// If the owner is disabled no access to the link is granted
 		$owner = $this->userManager->get($share->getShareOwner());
 		if ($owner === null || !$owner->isEnabled()) {

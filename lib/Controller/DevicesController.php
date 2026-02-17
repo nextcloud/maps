@@ -24,7 +24,7 @@ use OCP\Files\Folder;
 use OCP\Files\IRootFolder;
 use OCP\Files\NotFoundException;
 use OCP\Files\NotPermittedException;
-use OCP\IConfig;
+use OCP\IAppConfig;
 use OCP\IDateTimeZone;
 use OCP\IL10N;
 use OCP\IRequest;
@@ -36,7 +36,7 @@ class DevicesController extends Controller {
 	public function __construct(
 		string $appName,
 		IRequest $request,
-		IConfig $config,
+		IAppConfig $appConfig,
 		private IL10N $l,
 		private DevicesService $devicesService,
 		private DeviceShareMapper $deviceShareMapper,
@@ -45,7 +45,7 @@ class DevicesController extends Controller {
 		private ?string $userId,
 	) {
 		parent::__construct($appName, $request);
-		$this->appVersion = $config->getAppValue('maps', 'installed_version');
+		$this->appVersion = $appConfig->getValueString('maps', 'installed_version');
 		if ($userId !== '' && $userId !== null) {
 			// path of user files folder relative to DATA folder
 			$this->userFolder = $this->root->getUserFolder($userId);

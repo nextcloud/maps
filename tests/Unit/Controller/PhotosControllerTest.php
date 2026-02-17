@@ -16,9 +16,15 @@ use OCA\Maps\AppInfo\Application;
 use OCA\Maps\DB\GeophotoMapper;
 use OCA\Maps\Service\GeophotoService;
 use OCA\Maps\Service\PhotofilesService;
+use OCP\BackgroundJob\IJobList;
 use OCP\DB\QueryBuilder\IQueryBuilder;
+use OCP\Files\IRootFolder;
+use OCP\ICacheFactory;
+use OCP\IConfig;
 use OCP\IServerContainer;
+use OCP\L10N\IFactory;
 use OCP\Server;
+use Psr\Log\LoggerInterface;
 
 class PhotosControllerTest extends \PHPUnit\Framework\TestCase {
 	private $appName;
@@ -81,20 +87,20 @@ class PhotosControllerTest extends \PHPUnit\Framework\TestCase {
 		$this->app = new Application();
 		$this->container = $this->app->getContainer();
 		$c = $this->container;
-		$this->config = $c->query(IServerContainer::class)->getConfig();
+		$this->config = $c->get(IConfig::class);
 
-		$this->rootFolder = $c->query(IServerContainer::class)->getRootFolder();
+		$this->rootFolder = $c->get(IRootFolder::class);
 
-		$this->GeoPhotosService = $c->query(GeoPhotoService::class);
+		$this->GeoPhotosService = $c->get(GeoPhotoService::class);
 
 		$this->photoFileService = new PhotoFilesService(
-			$c->query(IServerContainer::class)->get(\Psr\Log\LoggerInterface::class),
-			$c->query(IServerContainer::class)->getMemCacheFactory(),
+			$c->get(LoggerInterface::class),
+			$c->get(ICacheFactory::class),
 			$this->rootFolder,
-			$c->query(IServerContainer::class)->getL10N($c->query('AppName')),
-			$c->query(GeophotoMapper::class),
-			$c->query(IServerContainer::class)->get(\OCP\Share\IManager::class),
-			$c->query(\OCP\BackgroundJob\IJobList::class)
+			$c->get(IFactory::class)->get($c->get('AppName')),
+			$c->get(GeophotoMapper::class),
+			$c->get(\OCP\Share\IManager::class),
+			$c->get(IJobList::class)
 		);
 
 		$this->photosController = new PhotosController(
@@ -109,7 +115,7 @@ class PhotosControllerTest extends \PHPUnit\Framework\TestCase {
 		$this->photosController2 = new PhotosController(
 			$this->appName,
 			$this->request,
-			$c->query(GeoPhotoService::class),
+			$c->get(GeoPhotoService::class),
 			$this->photoFileService,
 			$this->rootFolder,
 			'test2'
@@ -118,12 +124,12 @@ class PhotosControllerTest extends \PHPUnit\Framework\TestCase {
 		$this->utilsController = new UtilsController(
 			$this->appName,
 			$this->request,
-			$c->query(IServerContainer::class)->getConfig(),
+			$c->get(IServerContainer::class)->getConfig(),
 			$this->rootFolder,
 			'test'
 		);
 
-		$userfolder = $this->container->query(IServerContainer::class)->getUserFolder('test');
+		$userfolder = $this->container->get(IRootFolder::class)->getUserFolder('test');
 		// delete files
 		if ($userfolder->nodeExists('nc.jpg')) {
 			$file = $userfolder->get('nc.jpg');
@@ -162,7 +168,7 @@ class PhotosControllerTest extends \PHPUnit\Framework\TestCase {
 	public function testAddGetPhotos() {
 		$c = $this->app->getContainer();
 
-		$userfolder = $this->container->query(IServerContainer::class)->getUserFolder('test');
+		$userfolder = $this->container->get(IRootFolder::class)->getUserFolder('test');
 
 		$filename = 'tests/test_files/nc.jpg';
 		$handle = fopen($filename, 'rb');

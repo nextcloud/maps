@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /**
  * ownCloud - maps
  *
@@ -9,7 +11,6 @@
  * @author Sander Brand <brantje@gmail.com>, Vinzenz Rosenkranz <vinzenz.rosenkranz@gmail.com>
  * @copyright Sander Brand 2014, Vinzenz Rosenkranz 2016, 2017
  */
-
 namespace OCA\Maps\AppInfo;
 
 use OCA\DAV\Events\CardCreatedEvent;
@@ -76,9 +77,10 @@ class Application extends App implements IBootstrap {
 	private function registerFeaturePolicy(): void {
 		$dispatcher = $this->getContainer()->get(IEventDispatcher::class);
 
-		$dispatcher->addListener(AddFeaturePolicyEvent::class, function (AddFeaturePolicyEvent $e) {
+		$dispatcher->addListener(AddFeaturePolicyEvent::class, function (AddFeaturePolicyEvent $e): void {
 			$fp = new EmptyFeaturePolicy();
-			$fp->addAllowedGeoLocationDomain('\'self\'');
+			$fp->addAllowedGeoLocationDomain("'self'");
+
 			$e->addPolicy($fp);
 		});
 	}

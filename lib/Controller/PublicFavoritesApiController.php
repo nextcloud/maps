@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /**
  * @copyright Copyright (c) 2019, Paul Schwörer <hello@paulschwoerer.de>
  *
@@ -21,8 +23,6 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-
-
 namespace OCA\Maps\Controller;
 
 use OCA\Maps\DB\FavoriteShareMapper;
@@ -41,8 +41,8 @@ class PublicFavoritesApiController extends PublicShareController {
 		$appName,
 		IRequest $request,
 		ISession $session,
-		private FavoritesService $favoritesService,
-		private FavoriteShareMapper $favoriteShareMapper,
+		private readonly FavoritesService $favoritesService,
+		private readonly FavoriteShareMapper $favoriteShareMapper,
 	) {
 		parent::__construct($appName, $request, $session);
 	}
@@ -58,7 +58,7 @@ class PublicFavoritesApiController extends PublicShareController {
 	public function isValidToken(): bool {
 		try {
 			$this->favoriteShareMapper->findByToken($this->getToken());
-		} catch (DoesNotExistException|MultipleObjectsReturnedException $e) {
+		} catch (DoesNotExistException|MultipleObjectsReturnedException) {
 			return false;
 		}
 

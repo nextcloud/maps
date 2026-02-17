@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /**
  * Nextcloud - Maps
  *
@@ -11,7 +13,6 @@
  * @copyright Julien Veyssier 2019
  * @copyright Paul Schwörer 2019
  */
-
 namespace OCA\Maps\Controller;
 
 use OCA\Maps\Service\MyMapsService;
@@ -22,14 +23,14 @@ use OCP\IRequest;
 class MyMapsController extends Controller {
 
 
-	/* @var MyMapsService */
-	private $myMapsService;
-	private $userId;
 
-	public function __construct(string $AppName, IRequest $request, MyMapsService $myMapsService, $userId) {
+	public function __construct(
+		string $AppName,
+		IRequest $request,
+		private readonly MyMapsService $myMapsService,
+		private $userId,
+	) {
 		parent::__construct($AppName, $request);
-		$this->myMapsService = $myMapsService;
-		$this->userId = $userId;
 	}
 
 	/**
@@ -41,6 +42,7 @@ class MyMapsController extends Controller {
 		if (is_string($myMap)) {
 			new DataResponse($myMap, 400);
 		}
+
 		return new DataResponse($myMap);
 	}
 

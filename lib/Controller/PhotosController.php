@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /**
  * Nextcloud - maps
  *
@@ -9,7 +11,6 @@
  * @author Piotr Bator <prbator@gmail.com>
  * @copyright Piotr Bator 2017
  */
-
 namespace OCA\Maps\Controller;
 
 use OC\User\NoUserException;
@@ -32,10 +33,10 @@ class PhotosController extends Controller {
 	public function __construct(
 		string $appName,
 		IRequest $request,
-		private GeophotoService $geophotoService,
-		private PhotofilesService $photofilesService,
-		private IRootFolder $root,
-		private string $userId,
+		private readonly GeophotoService $geophotoService,
+		private readonly PhotofilesService $photofilesService,
+		private readonly IRootFolder $root,
+		private readonly string $userId,
 	) {
 		parent::__construct($appName, $request);
 	}
@@ -56,18 +57,11 @@ class PhotosController extends Controller {
 			$folder = $userFolder->getFirstNodeById($myMapId);
 			$result = $this->geophotoService->getAll($this->userId, $folder, $respectNoMediaAndNoimage, $hideImagesOnCustomMaps, $hideImagesInMapsFolder);
 		}
+
 		return new DataResponse($result);
 	}
 
 	/**
-	 * @param int|null $myMapId
-	 * @param string|null $timezone
-	 * @param int $limit
-	 * @param int $offset
-	 * @param null $respectNoMediaAndNoimage
-	 * @param null $hideImagesOnCustomMaps
-	 * @param null $hideImagesInMapsFolder
-	 * @return DataResponse
 	 * @throws Exception
 	 * @throws NoUserException
 	 * @throws NotFoundException
@@ -84,8 +78,10 @@ class PhotosController extends Controller {
 			if (!$folder instanceof Folder) {
 				throw new NotFoundException('Could find map with mapid: ' . $myMapId);
 			}
+
 			$result = $this->geophotoService->getNonLocalized($this->userId, $folder, $respectNoMediaAndNoimage ?? true, $hideImagesOnCustomMaps ?? false, $hideImagesInMapsFolder ?? false, $timezone, $limit, $offset);
 		}
+
 		return new DataResponse($result);
 	}
 
@@ -94,8 +90,6 @@ class PhotosController extends Controller {
 	 * @param $paths
 	 * @param $lats
 	 * @param $lngs
-	 * @param bool $relative
-	 * @return DataResponse
 	 * @throws NoUserException
 	 * @throws NotFoundException
 	 * @throws NotPermittedException
@@ -133,6 +127,7 @@ class PhotosController extends Controller {
 				}
 			}
 		}
+
 		$result = $this->photofilesService->setPhotosFilesCoords($this->userId, $paths, $lats, $lngs, $directory);
 		return new DataResponse($result);
 	}
@@ -144,9 +139,10 @@ class PhotosController extends Controller {
 	public function resetPhotosCoords($paths, ?int $myMapId = null): DataResponse {
 		$userFolder = $this->root->getUserFolder($this->userId);
 		$result = [];
-		if (sizeof($paths) > 0) {
+		if (count($paths) > 0) {
 			$result = $this->photofilesService->resetPhotosFilesCoords($this->userId, $paths);
 		}
+
 		if (!is_null($myMapId)) {
 			foreach ($paths as $key => $path) {
 				$folder = $userFolder->getFirstNodeById($myMapId);
@@ -157,6 +153,7 @@ class PhotosController extends Controller {
 				}
 			}
 		}
+
 		return new DataResponse($result);
 	}
 
@@ -165,9 +162,9 @@ class PhotosController extends Controller {
 		$result = $this->geophotoService->clearCache();
 		if ($result) {
 			return new DataResponse('Cache cleared');
-		} else {
-			return new DataResponse('Failed to clear Cache', 400);
 		}
+
+		return new DataResponse('Failed to clear Cache', 400);
 	}
 
 	#[NoAdminRequired]

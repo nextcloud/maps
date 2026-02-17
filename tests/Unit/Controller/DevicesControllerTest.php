@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /**
  * Nextcloud - maps
  *
@@ -9,27 +11,23 @@
  * @author Julien Veyssier <eneiluj@posteo.net>
  * @copyright Julien Veyssier 2019
  */
-
 namespace OCA\Maps\Controller;
 
 use OCA\Maps\AppInfo\Application;
 use OCA\Maps\DB\DeviceShareMapper;
 use OCA\Maps\Service\DevicesService;
 use OCP\Files\IRootFolder;
-use OCP\IConfig;
+use OCP\IAppConfig;
+use OCP\IDateTimeZone;
 use OCP\IGroupManager;
 use OCP\IRequest;
-use OCP\IServerContainer;
 use OCP\IUserManager;
 use OCP\L10N\IFactory;
-use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
 
-class DevicesControllerTest extends \PHPUnit\Framework\TestCase {
-	private string $appName;
-	private IRequest&MockObject $request;
+final class DevicesControllerTest extends TestCase {
 	private ContainerInterface $container;
-	private Application $app;
 
 	private DevicesController $devicesController;
 
@@ -48,17 +46,21 @@ class DevicesControllerTest extends \PHPUnit\Framework\TestCase {
 			$u1 = $c->get(IUserManager::class)->createUser('test', 'tatotitoTUTU');
 			$u1->setEMailAddress('toto@toto.net');
 		}
+
 		if ($user2 === null) {
 			$u2 = $c->get(IUserManager::class)->createUser('test2', 'plopinoulala000');
 		}
+
 		if ($user3 === null) {
 			$u3 = $c->get(IUserManager::class)->createUser('test3', 'yeyeahPASSPASS');
 		}
+
 		if ($group === null) {
 			$c->get(IGroupManager::class)->createGroup('group1test');
 			$u1 = $c->get(IGroupManager::class)->get('test');
 			$c->get(IGroupManager::class)->get('group1test')->addUser($u1);
 		}
+
 		if ($group2 === null) {
 			$c->get(IGroupManager::class)->createGroup('group2test');
 			$u2 = $c->get(IGroupManager::class)->get('test2');
@@ -67,23 +69,21 @@ class DevicesControllerTest extends \PHPUnit\Framework\TestCase {
 	}
 
 	protected function setUp(): void {
-		$this->appName = 'maps';
-		$this->request = $this->createMock(\OCP\IRequest::class);
+		$appName = 'maps';
+		$request = $this->createMock(IRequest::class);
 
-		$this->app = new Application();
-		$this->container = $this->app->getContainer();
+		$app = new Application();
+		$this->container = $app->getContainer();
 		$c = $this->container;
-		$this->config = $c->get(IConfig::class);
-		$this->root = $c->get(IRootFolder::class);
 
 		$this->devicesController = new DevicesController(
-			$this->appName,
-			$this->request,
-			$c->get(IConfig::class),
+			$appName,
+			$request,
+			$c->get(IAppConfig::class),
 			$c->get(IFactory::class)->get('maps'),
 			$c->get(DevicesService::class),
 			$c->get(DeviceShareMapper::class),
-			$c->get(\OCP\IDateTimeZone::class),
+			$c->get(IDateTimeZone::class),
 			$c->get(IRootFolder::class),
 			'test'
 		);
@@ -92,7 +92,7 @@ class DevicesControllerTest extends \PHPUnit\Framework\TestCase {
 		$resp = $this->devicesController->getDevices();
 		$data = $resp->getData();
 		foreach ($data as $device) {
-			$resp = $this->devicesController->deleteDevice($device['id']);
+			$this->devicesController->deleteDevice($device['id']);
 		}
 	}
 
@@ -113,7 +113,7 @@ class DevicesControllerTest extends \PHPUnit\Framework\TestCase {
 		// in case there was a failure and something was not deleted
 	}
 
-	public function testAddPoints() {
+	public function testAddPoints(): void {
 		$resp = $this->devicesController->getDevices();
 		$data = $resp->getData();
 		foreach ($data as $device) {
@@ -133,7 +133,6 @@ class DevicesControllerTest extends \PHPUnit\Framework\TestCase {
 		$this->assertEquals(200, $status);
 		$data = $resp->getData();
 		$deviceId = $data['deviceId'];
-		$pointId = $data['pointId'];
 
 		$_SERVER['HTTP_USER_AGENT'] = 'testBrowser';
 		$ts = (new \DateTime())->getTimestamp();
@@ -142,7 +141,6 @@ class DevicesControllerTest extends \PHPUnit\Framework\TestCase {
 		$this->assertEquals(200, $status);
 		$data = $resp->getData();
 		$deviceId2 = $data['deviceId'];
-		$pointId2 = $data['pointId'];
 		// test user agent is correct
 		$resp = $this->devicesController->getDevices();
 		$data = $resp->getData();
@@ -153,6 +151,7 @@ class DevicesControllerTest extends \PHPUnit\Framework\TestCase {
 				$d2Found = true;
 			}
 		}
+
 		$this->assertEquals(true, $d2Found);
 
 		// test point values
@@ -164,7 +163,7 @@ class DevicesControllerTest extends \PHPUnit\Framework\TestCase {
 		$this->assertEquals(true, $data[0]['timestamp'] >= $ts);
 
 		// test missing values
-		$resp = $this->devicesController->addDevicePoint(1.1, 2.2, 12346, 'testDevice', null, null, null);
+		$resp = $this->devicesController->addDevicePoint(1.1, 2.2, 12346, 'testDevice');
 		$status = $resp->getStatus();
 		$this->assertEquals(200, $status);
 
@@ -196,7 +195,7 @@ class DevicesControllerTest extends \PHPUnit\Framework\TestCase {
 		$this->assertEquals('Invalid values', $data);
 	}
 
-	public function testEditDevice() {
+	public function testEditDevice(): void {
 		$resp = $this->devicesController->getDevices();
 		$data = $resp->getData();
 		foreach ($data as $device) {
@@ -208,7 +207,6 @@ class DevicesControllerTest extends \PHPUnit\Framework\TestCase {
 		$this->assertEquals(200, $status);
 		$data = $resp->getData();
 		$deviceId = $data['deviceId'];
-		$pointId = $data['pointId'];
 
 		$resp = $this->devicesController->editDevice($deviceId, '#001122', 'editedDevice');
 		$status = $resp->getStatus();
@@ -226,14 +224,14 @@ class DevicesControllerTest extends \PHPUnit\Framework\TestCase {
 		$this->assertEquals(400, $status);
 	}
 
-	public function testImportExportDevices() {
+	public function testImportExportDevices(): void {
 		$resp = $this->devicesController->getDevices();
 		$data = $resp->getData();
 		foreach ($data as $device) {
 			$resp = $this->devicesController->deleteDevice($device['id']);
 		}
 
-		$userfolder = $this->container->query(IServerContainer::class)->getUserFolder('test');
+		$userfolder = $this->container->get(IRootFolder::class)->getUserFolder('test');
 		$content1 = file_get_contents('tests/test_files/devicesOk.gpx');
 		$userfolder->newFile('devicesOk.gpx')->putContent($content1);
 
@@ -265,6 +263,7 @@ class DevicesControllerTest extends \PHPUnit\Framework\TestCase {
 			$id = $device['id'];
 			$devices[$id] = $device;
 		}
+
 		// get number of points
 		foreach ($devices as $id => $device) {
 			$resp = $this->devicesController->getDevicePoints($id);
@@ -284,18 +283,19 @@ class DevicesControllerTest extends \PHPUnit\Framework\TestCase {
 
 		// parse xml and compare number of devices and points
 		$xmLData = $userfolder->get($exportPath)->getContent();
-		$xml = simplexml_load_string($xmLData);
+		$xml = simplexml_load_string((string)$xmLData);
 		$trks = $xml->trk;
 		// number of devices
-		$this->assertEquals(count($ids), count($trks));
+		$this->assertCount(count($ids), $trks);
 		$pointCountExport = [];
 		// count exported points per device
 		foreach ($trks as $trk) {
 			$name = (string)$trk->name[0];
 			$pointCountExport[$name] = count($trk->trkseg[0]->trkpt);
 		}
+
 		// check that it matches the data in the DB
-		foreach ($devices as $id => $device) {
+		foreach ($devices as $device) {
 			$this->assertEquals($device['nbPoints'], $pointCountExport[$device['user_agent']]);
 		}
 
@@ -330,8 +330,8 @@ class DevicesControllerTest extends \PHPUnit\Framework\TestCase {
 		$this->assertEquals('Nothing to export', $data);
 	}
 
-	public function testEditDevices() {
-		$this->assertEquals(true, 1 == 1);
+	public function testEditDevices(): void {
+		$this->assertEquals(true, 1 === 1);
 		//// valid edition
 		//$resp = $this->favoritesController->addFavorite('a', 3.1, 4.1, 'cat1', null, null);
 		//$favId = $resp->getData()['id'];

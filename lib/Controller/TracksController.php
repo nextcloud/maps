@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /**
  * Nextcloud - Maps
  *
@@ -9,7 +11,6 @@
  * @author Julien Veyssier <eneiluj@posteo.net>
  * @copyright Julien Veyssier 2019
  */
-
 namespace OCA\Maps\Controller;
 
 use OCA\Maps\Service\TracksService;
@@ -30,10 +31,10 @@ class TracksController extends Controller {
 	public function __construct(
 		string $appName,
 		IRequest $request,
-		private IL10N $l,
-		private TracksService $tracksService,
+		private readonly IL10N $l,
+		private readonly TracksService $tracksService,
 		IRootFolder $rootFolder,
-		private ?string $userId,
+		private readonly ?string $userId,
 	) {
 		parent::__construct($appName, $request);
 		if ($this->userId !== '' && $this->userId !== null) {
@@ -54,6 +55,7 @@ class TracksController extends Controller {
 			$folder = array_shift($folders);
 			$tracks = $this->tracksService->getTracksFromDB($this->userId, $folder, true, false, false);
 		}
+
 		return new DataResponse($tracks);
 	}
 
@@ -64,6 +66,7 @@ class TracksController extends Controller {
 		if (!$trackFile instanceof File) {
 			return new DataResponse($this->l->t('File not found'), 400);
 		}
+
 		$trackContent = remove_utf8_bom($trackFile->getContent());
 		// compute metadata if necessary
 		// first time we get it OR the file changed
@@ -73,6 +76,7 @@ class TracksController extends Controller {
 		} else {
 			$metadata = $track['metadata'];
 		}
+
 		return new DataResponse([
 			'metadata' => $metadata,
 			'content' => $trackContent
@@ -100,6 +104,7 @@ class TracksController extends Controller {
 		} else {
 			$metadata = $track['metadata'];
 		}
+
 		return new DataResponse([
 			'metadata' => $metadata,
 			'content' => $trackContent
@@ -112,9 +117,9 @@ class TracksController extends Controller {
 		if ($track !== null) {
 			$this->tracksService->editTrackInDB($id, $color, $metadata, $etag);
 			return new DataResponse('EDITED');
-		} else {
-			return new DataResponse($this->l->t('No such track'), 400);
 		}
+
+		return new DataResponse($this->l->t('No such track'), 400);
 	}
 
 	#[NoAdminRequired]
@@ -123,9 +128,9 @@ class TracksController extends Controller {
 		if ($track !== null) {
 			$this->tracksService->deleteTrackFromDB($id);
 			return new DataResponse('DELETED');
-		} else {
-			return new DataResponse($this->l->t('No such track'), 400);
 		}
+
+		return new DataResponse($this->l->t('No such track'), 400);
 	}
 
 }

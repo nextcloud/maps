@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /**
  * Nextcloud - Maps
  *
@@ -9,9 +11,9 @@
  * @author Julien Veyssier <eneiluj@posteo.net>
  * @copyright Julien Veyssier 2019
  */
-
 namespace OCA\Maps\Controller;
 
+use OC\User\NoUserException;
 use OCA\Maps\DB\DeviceShareMapper;
 use OCA\Maps\Service\DevicesService;
 use OCP\AppFramework\Controller;
@@ -31,18 +33,19 @@ use OCP\IRequest;
 
 class DevicesController extends Controller {
 	private ?Folder $userFolder = null;
-	private string $appVersion;
+
+	private readonly string $appVersion;
 
 	public function __construct(
 		string $appName,
 		IRequest $request,
 		IAppConfig $appConfig,
-		private IL10N $l,
-		private DevicesService $devicesService,
-		private DeviceShareMapper $deviceShareMapper,
-		private IDateTimeZone $dateTimeZone,
-		private IRootFolder $root,
-		private ?string $userId,
+		private readonly IL10N $l,
+		private readonly DevicesService $devicesService,
+		private readonly DeviceShareMapper $deviceShareMapper,
+		private readonly IDateTimeZone $dateTimeZone,
+		private readonly IRootFolder $root,
+		private readonly ?string $userId,
 	) {
 		parent::__construct($appName, $request);
 		$this->appVersion = $appConfig->getValueString('maps', 'installed_version');
@@ -60,6 +63,7 @@ class DevicesController extends Controller {
 		if (is_null($tokens)) {
 			$tokens = [];
 		}
+
 		if (is_null($myMapId)) {
 			$devices = $this->devicesService->getDevicesFromDB($this->userId);
 			$deviceIds = array_column($devices, 'id');
@@ -74,10 +78,12 @@ class DevicesController extends Controller {
 			if (!$folder instanceof Folder) {
 				return new DataResponse($this->l->t('Map not Found'), 404);
 			}
+
 			$shares = $this->devicesService->getSharedDevicesFromFolder($folder);
 			$st = array_column($shares, 'token');
 			$tokens = array_merge($tokens, $st);
 		}
+
 		$td = $this->devicesService->getDevicesByTokens($tokens);
 		$devices = $td + $devices;
 		return new DataResponse(array_values($devices));
@@ -99,55 +105,51 @@ class DevicesController extends Controller {
 		} else {
 			$points = $this->devicesService->getDevicePointsByTokens($tokens, $pruneBefore, $limit, $offset);
 		}
+
 		return new DataResponse($points);
 	}
 
 	/**
 	 * @param $lat
 	 * @param $lng
-	 * @param null $timestamp
-	 * @param null $user_agent
-	 * @param null $altitude
-	 * @param null $battery
-	 * @param null $accuracy
-	 * @return DataResponse
 	 */
 	#[NoAdminRequired]
-	public function addDevicePoint($lat, $lng, $timestamp = null, $user_agent = null, $altitude = null, $battery = null, $accuracy = null): DataResponse {
-		if (is_numeric($lat) and is_numeric($lng)) {
-			$ts = $timestamp;
+	public function addDevicePoint($lat, $lng, ?int $timestamp = null, ?string $user_agent = null, $altitude = null, $battery = null, $accuracy = null): DataResponse {
+		if (is_numeric($lat) && is_numeric($lng)) {
 			if ($timestamp === null) {
-				$ts = (new \DateTime())->getTimestamp();
+				$timestamp = (new \DateTime())->getTimestamp();
 			}
+
 			$ua = $user_agent;
 			if ($user_agent === null) {
 				$ua = $_SERVER['HTTP_USER_AGENT'];
 			}
+
 			$deviceId = $this->devicesService->getOrCreateDeviceFromDB($this->userId, $ua);
-			$pointId = $this->devicesService->addPointToDB($deviceId, $lat, $lng, $ts, $altitude, $battery, $accuracy);
+			$pointId = $this->devicesService->addPointToDB($deviceId, $lat, $lng, $timestamp, $altitude, $battery, $accuracy);
 			return new DataResponse([
 				'deviceId' => $deviceId,
 				'pointId' => $pointId
 			]);
-		} else {
-			return new DataResponse('Invalid values', 400);
 		}
+
+		return new DataResponse('Invalid values', 400);
 	}
 
 	#[NoAdminRequired]
 	public function editDevice(int $id, string $color, string $name): DataResponse {
 		$device = $this->devicesService->getDeviceFromDB($id, $this->userId);
 		if ($device !== null) {
-			if (strlen($color) > 0 || strlen($name) > 0) {
+			if ($color !== '' || $name !== '') {
 				$this->devicesService->editDeviceInDB($id, $color, $name);
 				$editedDevice = $this->devicesService->getDeviceFromDB($id, $this->userId);
 				return new DataResponse($editedDevice);
-			} else {
-				return new DataResponse($this->l->t('Invalid values'), 400);
 			}
-		} else {
-			return new DataResponse($this->l->t('No such device'), 400);
+
+			return new DataResponse($this->l->t('Invalid values'), 400);
 		}
+
+		return new DataResponse($this->l->t('No such device'), 400);
 	}
 
 	#[NoAdminRequired]
@@ -157,15 +159,15 @@ class DevicesController extends Controller {
 			$this->devicesService->deleteDeviceFromDB($id);
 			$this->deviceShareMapper->removeAllByDeviceId($id);
 			return new DataResponse('DELETED');
-		} else {
-			return new DataResponse($this->l->t('No such device'), 400);
 		}
+
+		return new DataResponse($this->l->t('No such device'), 400);
 	}
 
 	/**
 	 * @param ?array $deviceIdList
-	 * @param int $begin
-	 * @param int $end
+	 * @param ?int $begin
+	 * @param ?int $end
 	 * @param bool $all=false
 	 * @throws \OCP\Files\NotFoundException
 	 * @throws \OCP\Files\NotPermittedException
@@ -174,7 +176,7 @@ class DevicesController extends Controller {
 	public function exportDevices($deviceIdList, $begin, $end, bool $all = false): DataResponse {
 		// sorry about ugly deviceIdList management:
 		// when an empty list is passed in http request, we get null here
-		if ($deviceIdList === null or (is_array($deviceIdList) and count($deviceIdList) === 0)) {
+		if ($deviceIdList === null || is_array($deviceIdList) && $deviceIdList === []) {
 			return new DataResponse($this->l->t('No device to export'), 400);
 		}
 
@@ -183,11 +185,14 @@ class DevicesController extends Controller {
 		if (!$userFolder->nodeExists('/Maps')) {
 			$userFolder->newFolder('Maps');
 		}
+
 		if ($userFolder->nodeExists('/Maps')) {
 			$mapsFolder = $userFolder->get('/Maps');
 			if (!$mapsFolder instanceof Folder) {
 				return new DataResponse($this->l->t('/Maps is not a directory'), 400);
-			} elseif (!$mapsFolder->isCreatable()) {
+			}
+
+			if (!$mapsFolder->isCreatable()) {
 				return new DataResponse($this->l->t('/Maps directory is not writeable'), 400);
 			}
 		} else {
@@ -209,6 +214,7 @@ class DevicesController extends Controller {
 		if ($mapsFolder->nodeExists($filename)) {
 			$mapsFolder->get($filename)->delete();
 		}
+
 		$file = $mapsFolder->newFile($filename);
 		$handler = $file->fopen('w');
 
@@ -221,7 +227,6 @@ class DevicesController extends Controller {
 
 	/**
 	 * @param $path
-	 * @return DataResponse
 	 * @throws \OCP\Files\InvalidPathException
 	 * @throws \OCP\Files\NotFoundException
 	 */
@@ -237,23 +242,23 @@ class DevicesController extends Controller {
 				if (str_ends_with($lowerFileName, '.gpx') || str_ends_with($lowerFileName, '.kml') || str_ends_with($lowerFileName, '.kmz')) {
 					$nbImported = $this->devicesService->importDevices($this->userId, $file);
 					return new DataResponse($nbImported);
-				} else {
-					// invalid extension
-					return new DataResponse($this->l->t('Invalid file extension'), 400);
 				}
-			} else {
-				// directory or not readable
-				return new DataResponse($this->l->t('Impossible to read the file'), 400);
+
+				// invalid extension
+				return new DataResponse($this->l->t('Invalid file extension'), 400);
 			}
-		} else {
-			// does not exist
-			return new DataResponse($this->l->t('File does not exist'), 400);
+
+			// directory or not readable
+			return new DataResponse($this->l->t('Impossible to read the file'), 400);
 		}
+
+		// does not exist
+		return new DataResponse($this->l->t('File does not exist'), 400);
 	}
 
 	/**
 	 * @throws \OCP\Files\NotPermittedException
-	 * @throws \OC\User\NoUserException
+	 * @throws NoUserException
 	 */
 	#[NoAdminRequired]
 	public function getSharedDevices(?int $myMapId = null): DataResponse {
@@ -291,12 +296,13 @@ class DevicesController extends Controller {
 		} catch (DoesNotExistException) {
 			throw new NotFoundException();
 		}
+
 		$device = $this->devicesService->getDeviceFromDB($share->getDeviceId(), $this->userId);
 		if ($device !== null) {
 			return new DataResponse($this->deviceShareMapper->removeById($share->getId()));
-		} else {
-			throw new NotFoundException();
 		}
+
+		throw new NotFoundException();
 	}
 
 	/**
@@ -306,25 +312,29 @@ class DevicesController extends Controller {
 	public function addSharedDeviceToMap(string $token, int $targetMapId): DataResponse {
 		try {
 			$share = $this->deviceShareMapper->findByToken($token);
-		} catch (DoesNotExistException $e) {
+		} catch (DoesNotExistException) {
 			return new DataResponse($this->l->t('Share not Found'), 404);
 		}
+
 		$folder = $this->userFolder->getFirstNodeById($targetMapId);
 		if (!$folder instanceof Folder) {
 			return new DataResponse($this->l->t('Map not Found'), 404);
 		}
+
 		try {
 			/** @var File $file */
 			$file = $folder->get('.device_shares.json');
-		} catch (\OCP\Files\NotFoundException $e) {
+		} catch (NotFoundException) {
 			$file = $folder->newFile('.device_shares.json', '[]');
 		}
-		$data = json_decode($file->getContent(), true);
+
+		$data = json_decode((string)$file->getContent(), true);
 		foreach ($data as $s) {
 			if ($s->token == $share->getToken()) {
 				return new DataResponse($this->l->t('Share was already on map'));
 			}
 		}
+
 		$data[] = $share;
 		$file->putContent(json_encode($data, JSON_PRETTY_PRINT));
 		return new DataResponse('Done');
@@ -335,13 +345,15 @@ class DevicesController extends Controller {
 		if (!$folder instanceof Folder) {
 			return new DataResponse($this->l->t('Map not Found'), 404);
 		}
+
 		try {
 			/** @var File $file */
 			$file = $folder->get('.device_shares.json');
-		} catch (\OCP\Files\NotFoundException $e) {
+		} catch (NotFoundException) {
 			$file = $folder->newFile('.device_shares.json', '[]');
 		}
-		$data = json_decode($file->getContent(), true);
+
+		$data = json_decode((string)$file->getContent(), true);
 		$shares = [];
 		$deleted = null;
 		foreach ($data as $share) {
@@ -352,10 +364,12 @@ class DevicesController extends Controller {
 				$shares[] = $share;
 			}
 		}
+
 		$file->putContent(json_encode($shares, JSON_PRETTY_PRINT));
 		if (is_null($deleted)) {
 			return new DataResponse('Failed', 500);
 		}
+
 		return new DataResponse('Done');
 	}
 }

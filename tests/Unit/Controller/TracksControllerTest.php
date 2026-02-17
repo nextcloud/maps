@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /**
  * Nextcloud - maps
  *
@@ -9,7 +11,6 @@
  * @author Julien Veyssier <eneiluj@posteo.net>
  * @copyright Julien Veyssier 2019
  */
-
 namespace OCA\Maps\Controller;
 
 use OCA\Maps\AppInfo\Application;
@@ -23,59 +24,60 @@ use OCP\IRequest;
 use OCP\IUserManager;
 use OCP\Server;
 use OCP\Share\IManager as IShareManager;
-use PHPUnit\Framework\MockObject\MockObject;
-use Psr\Container\ContainerInterface;
+use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
 
-class TracksControllerTest extends \PHPUnit\Framework\TestCase {
-	private string $appName;
-	private IRequest&MockObject $request;
-	private ContainerInterface $container;
+final class TracksControllerTest extends TestCase {
+	private IRootFolder $rootFolder;
+
 	private Application $app;
 
 	private TracksController $tracksController;
+
 	private TracksService $tracksService;
 
 	public static function setUpBeforeClass(): void {
 		$app = new Application();
 		$c = $app->getContainer();
 
-		$user = $c->get(IUserManager::class)->get('test');
+		$user1 = $c->get(IUserManager::class)->get('test');
 		$user2 = $c->get(IUserManager::class)->get('test2');
 		$user3 = $c->get(IUserManager::class)->get('test3');
 		$group = $c->get(IGroupManager::class)->get('group1test');
 		$group2 = $c->get(IGroupManager::class)->get('group2test');
 
 		// CREATE DUMMY USERS
-		if ($user === null) {
-			$u1 = $c->get(IUserManager::class)->createUser('test', 'tatotitoTUTU');
-			$u1->setEMailAddress('toto@toto.net');
+		if ($user1 === null) {
+			$user1 = $c->get(IUserManager::class)->createUser('test', 'tatotitoTUTU');
+			$user1->setEMailAddress('toto@toto.net');
 		}
+
 		if ($user2 === null) {
-			$u2 = $c->get(IUserManager::class)->createUser('test2', 'plopinoulala000');
+			$user2 = $c->get(IUserManager::class)->createUser('test2', 'plopinoulala000');
 		}
-		if ($user2 === null) {
-			$u3 = $c->get(IUserManager::class)->createUser('test3', 'yeyeahPASSPASS');
+
+		if ($user3 === null) {
+			$user3 = $c->get(IUserManager::class)->createUser('test3', 'yeyeahPASSPASS');
 		}
+
 		if ($group === null) {
 			$c->get(IGroupManager::class)->createGroup('group1test');
-			$u1 = $c->get(IUserManager::class)->get('test');
-			$c->get(IGroupManager::class)->get('group1test')->addUser($u1);
+			$c->get(IGroupManager::class)->get('group1test')->addUser($user1);
 		}
+
 		if ($group2 === null) {
 			$c->get(IGroupManager::class)->createGroup('group2test');
-			$u2 = $c->get(IUserManager::class)->get('test2');
-			$c->get(IGroupManager::class)->get('group2test')->addUser($u2);
+			$c->get(IGroupManager::class)->get('group2test')->addUser($user2);
 		}
 	}
 
 	protected function setUp(): void {
-		$this->appName = 'maps';
-		$this->request = $this->createMock(IRequest::class);
+		$appName = 'maps';
+		$request = $this->createMock(IRequest::class);
 
 		$this->app = new Application();
-		$this->container = $this->app->getContainer();
-		$c = $this->container;
+		$container = $this->app->getContainer();
+		$c = $container;
 
 		$this->rootFolder = $c->get(IRootFolder::class);
 
@@ -87,8 +89,8 @@ class TracksControllerTest extends \PHPUnit\Framework\TestCase {
 		);
 
 		$this->tracksController = new TracksController(
-			$this->appName,
-			$this->request,
+			$appName,
+			$request,
 			$c->get(IL10N::class),
 			$c->get(TracksService::class),
 			$c->get(IRootFolder::class),
@@ -103,13 +105,14 @@ class TracksControllerTest extends \PHPUnit\Framework\TestCase {
 			$file = $userfolder->get('testFile1.gpx');
 			$file->delete();
 		}
+
 		// delete db
-		$qb = Server::get(\OCP\IDBConnection::class)->getQueryBuilder();
+		$qb = Server::get(IDBConnection::class)->getQueryBuilder();
 		$qb->delete('maps_tracks')
 			->where(
 				$qb->expr()->eq('user_id', $qb->createNamedParameter('test', IQueryBuilder::PARAM_STR))
 			);
-		$req = $qb->executeStatement();
+		$qb->executeStatement();
 	}
 
 	public static function tearDownAfterClass(): void {
@@ -127,7 +130,7 @@ class TracksControllerTest extends \PHPUnit\Framework\TestCase {
 
 	protected function tearDown(): void {
 		// in case there was a failure and something was not deleted
-		$c = $this->app->getContainer();
+		$this->app->getContainer();
 
 		$userfolder = $this->rootFolder->getUserFolder('test');
 		// delete files
@@ -135,16 +138,17 @@ class TracksControllerTest extends \PHPUnit\Framework\TestCase {
 			$file = $userfolder->get('testFile1.gpx');
 			$file->delete();
 		}
+
 		// delete db
-		$qb = Server::get(\OCP\IDBConnection::class)->getQueryBuilder();
+		$qb = Server::get(IDBConnection::class)->getQueryBuilder();
 		$qb->delete('maps_tracks')
 			->where(
 				$qb->expr()->eq('user_id', $qb->createNamedParameter('test', IQueryBuilder::PARAM_STR))
 			);
-		$req = $qb->executeStatement();
+		$qb->executeStatement();
 	}
 
-	public function testAddGetTracks() {
+	public function testAddGetTracks(): void {
 		$userfolder = $this->rootFolder->getUserFolder('test');
 
 		$filename = 'tests/test_files/testFile1.gpx';
@@ -164,13 +168,14 @@ class TracksControllerTest extends \PHPUnit\Framework\TestCase {
 		$this->assertEquals(200, $status);
 		$data = $resp->getData();
 		$foundTestFile = false;
-		foreach ($data as $k => $v) {
+		foreach ($data as $v) {
 			if ($v['file_path'] === '/testFile1.gpx') {
 				$foundTestFile = true;
 				break;
 			}
 		}
-		$this->assertTrue(count($data) > 0);
+
+		$this->assertGreaterThan(0, count($data));
 		$this->assertTrue($foundTestFile);
 
 		foreach ($this->tracksService->rescan('test') as $path) {
@@ -184,7 +189,7 @@ class TracksControllerTest extends \PHPUnit\Framework\TestCase {
 		$foundTestFile = false;
 		//var_dump($data);
 		$trackId = null;
-		foreach ($data as $k => $v) {
+		foreach ($data as $v) {
 			if ($v['file_path'] === '/testFile1.gpx') {
 				$foundTestFile = true;
 				$trackId = $v['id'];
@@ -192,6 +197,7 @@ class TracksControllerTest extends \PHPUnit\Framework\TestCase {
 				break;
 			}
 		}
+
 		$this->assertEquals(true, count($data) > 0);
 		$this->assertEquals(true, $foundTestFile);
 
@@ -202,7 +208,7 @@ class TracksControllerTest extends \PHPUnit\Framework\TestCase {
 		$data = $resp->getData();
 		$this->assertEquals(true, $content1 === $data['content']);
 		$meta = $data['metadata'];
-		$this->assertEquals(true, strlen($meta) > 0);
+		$this->assertEquals(true, (string)$meta !== '');
 
 		// to get stored metadata
 		$resp = $this->tracksController->getTrackFileContent($trackId);
@@ -232,13 +238,14 @@ class TracksControllerTest extends \PHPUnit\Framework\TestCase {
 		$this->assertEquals(200, $status);
 		$data = $resp->getData();
 		$foundTestFile = false;
-		foreach ($data as $k => $v) {
+		foreach ($data as $v) {
 			if ($v['file_path'] === '/testFile1.gpx') {
 				$foundTestFile = true;
 				$this->assertEquals(true, $v['color'] === '#002244');
 				break;
 			}
 		}
+
 		$this->assertEquals(true, count($data) > 0);
 		$this->assertEquals(true, $foundTestFile);
 

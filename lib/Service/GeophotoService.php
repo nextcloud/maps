@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /**
  * Nextcloud - maps
  *
@@ -9,7 +11,6 @@
  * @author Piotr Bator <prbator@gmail.com>
  * @copyright Piotr Bator 2017
  */
-
 namespace OCA\Maps\Service;
 
 use OC\Files\Search\SearchBinaryOperator;
@@ -31,18 +32,21 @@ use OCP\IPreview;
 use RuntimeException;
 
 class GeophotoService {
-	private ICache $photosCache;
-	private ICache $timeOrderedPointSetsCache;
-	private ICache $backgroundJobCache;
-	private $timeorderedPointSets = null;
+	private readonly ICache $photosCache;
+
+	private readonly ICache $timeOrderedPointSetsCache;
+
+	private readonly ICache $backgroundJobCache;
+
+	private $timeorderedPointSets;
 
 	public function __construct(
-		private IRootFolder $root,
-		private GeophotoMapper $photoMapper,
-		private IPreview $preview,
-		private TracksService $tracksService,
-		private DevicesService $devicesService,
-		private ICacheFactory $cacheFactory,
+		private readonly IRootFolder $root,
+		private readonly GeophotoMapper $photoMapper,
+		private readonly IPreview $preview,
+		private readonly TracksService $tracksService,
+		private readonly DevicesService $devicesService,
+		private readonly ICacheFactory $cacheFactory,
 	) {
 		$this->photosCache = $this->cacheFactory->createDistributed('maps:photos');
 		$this->timeOrderedPointSetsCache = $this->cacheFactory->createDistributed('maps:time-ordered-point-sets');
@@ -73,13 +77,15 @@ class GeophotoService {
 		if (is_null($folder)) {
 			$folder = $userFolder;
 		}
-		$key = $userId . ':' . $userFolder->getRelativePath($folder->getPath()) . ':' . (string)$respectNomediaAndNoimage . ':' . (string)$hideImagesOnCustomMaps . ':' . (string)$hideImagesInMapsFolder;
+
+		$key = $userId . ':' . $userFolder->getRelativePath($folder->getPath()) . ':' . $respectNomediaAndNoimage . ':' . $hideImagesOnCustomMaps . ':' . $hideImagesInMapsFolder;
 		$filesById = $this->photosCache->get($key);
 		if ($filesById === null) {
 			$ignoredPaths = $respectNomediaAndNoimage ? $this->getIgnoredPaths($userId, $folder, $hideImagesOnCustomMaps) : [];
 			if ($hideImagesInMapsFolder) {
 				$ignoredPaths[] = '/Maps';
 			}
+
 			$photoEntities = $this->photoMapper->findAll($userId);
 
 			$filesById = [];
@@ -92,14 +98,16 @@ class GeophotoService {
 				if ($file === null) {
 					continue;
 				}
+
 				$path = $userFolder->getRelativePath($file->getPath());
 				$isIgnored = false;
 				foreach ($ignoredPaths as $ignoredPath) {
-					if (str_starts_with($path, $ignoredPath)) {
+					if (str_starts_with($path, (string)$ignoredPath)) {
 						$isIgnored = true;
 						break;
 					}
 				}
+
 				if (!$isIgnored) {
 					$isRoot = $file === $userFolder;
 
@@ -127,15 +135,15 @@ class GeophotoService {
 					$filesById[] = $file_object;
 				}
 			}
+
 			$this->photosCache->set($key, $filesById, 60 * 60 * 24);
 		}
+
 		return $filesById;
 	}
 
 	/**
 	 * @param string|null $timezone locale time zone used by images
-	 * @param int $limit
-	 * @param int $offset
 	 * @return array with geodatas of all nonLocalizedPhotos
 	 * @throws Exception
 	 * @throws NoUserException
@@ -152,16 +160,14 @@ class GeophotoService {
 		if ($hideImagesInMapsFolder) {
 			$ignoredPaths[] = '/Maps';
 		}
+
 		$this->loadTimeorderedPointSets($userId, $folder, $respectNomediaAndNoimage, $hideImagesOnCustomMaps, $hideImagesInMapsFolder);
 		$photoEntities = $this->photoMapper->findAllNonLocalized($userId, $limit, $offset);
 		$suggestionsBySource = [];
-		$cache = $folder->getStorage()->getCache();
+		$folder->getStorage()->getCache();
 		$previewEnableMimetypes = $this->getPreviewEnabledMimetypes();
-		if (!is_null($timezone)) {
-			$tz = new \DateTimeZone($timezone);
-		} else {
-			$tz = new \DateTimeZone(\date_default_timezone_get());
-		}
+		$tz = is_null($timezone) ? new \DateTimeZone(\date_default_timezone_get()) : new \DateTimeZone($timezone);
+
 		foreach ($photoEntities as $photoEntity) {
 			// this path is relative to owner's storage
 			//$path = $cacheEntry->getPath();
@@ -170,14 +176,16 @@ class GeophotoService {
 			if ($file === null) {
 				continue;
 			}
+
 			$path = $userFolder->getRelativePath($file->getPath());
 			$isIgnored = false;
 			foreach ($ignoredPaths as $ignoredPath) {
-				if (str_starts_with($path, $ignoredPath)) {
+				if (str_starts_with($path, (string)$ignoredPath)) {
 					$isIgnored = true;
 					break;
 				}
 			}
+
 			if (!$isIgnored) {
 				$isRoot = $file === $userFolder;
 
@@ -213,17 +221,19 @@ class GeophotoService {
 					if (!array_key_exists($key, $suggestionsBySource)) {
 						$suggestionsBySource[$key] = [];
 					}
+
 					$suggestionsBySource[$key][] = $file_object;
 				}
 			}
 		}
+
 		return $suggestionsBySource;
 	}
 
 	/**
 	 * @throws \OCP\Files\NotFoundException
 	 * @throws \OCP\Files\NotPermittedException
-	 * @throws \OC\User\NoUserException
+	 * @throws NoUserException
 	 */
 	private function getIgnoredPaths(string $userId, ?Folder $folder = null, bool $hideImagesOnCustomMaps = true): array {
 		$ignoredPaths = [];
@@ -231,6 +241,7 @@ class GeophotoService {
 		if (is_null($folder)) {
 			$folder = $userFolder;
 		}
+
 		$ignoreFileMimetypes = [
 			'application/x-nextcloud-noindex',
 			'application/x-nextcloud-nomedia',
@@ -239,9 +250,8 @@ class GeophotoService {
 		if ($hideImagesOnCustomMaps) {
 			$ignoreFileMimetypes[] = 'application/x-nextcloud-maps';
 		}
-		$func = function (string $i): SearchComparison {
-			return new SearchComparison(ISearchComparison::COMPARE_EQUAL, 'mimetype', $i);
-		};
+
+		$func = (fn (string $i): SearchComparison => new SearchComparison(ISearchComparison::COMPARE_EQUAL, 'mimetype', $i));
 		$excludedNodes = $folder->search(new SearchQuery(
 			new SearchBinaryOperator(ISearchBinaryOperator::OPERATOR_OR, array_map(
 				$func,
@@ -254,6 +264,7 @@ class GeophotoService {
 		foreach ($excludedNodes as $node) {
 			$ignoredPaths[] = $userFolder->getRelativePath($node->getParent()->getPath());
 		}
+
 		return $ignoredPaths;
 	}
 
@@ -261,7 +272,6 @@ class GeophotoService {
 	 * returns a array of locations for a given date
 	 *
 	 * @param $dateTaken int
-	 * @return array
 	 */
 	private function getLocationGuesses(int $dateTaken): array {
 		$locations = [];
@@ -271,6 +281,7 @@ class GeophotoService {
 				$locations[$key] = $location;
 			}
 		}
+
 		return $locations;
 
 	}
@@ -280,7 +291,7 @@ class GeophotoService {
 	 * This function loads this Arrays from all Track files of the user.
 	 */
 	private function loadTimeorderedPointSets(string $userId, $folder = null, bool $respectNomediaAndNoimage = true, bool $hideTracksOnCustomMaps = false, bool $hideTracksInMapsFolder = true): void {
-		$key = $userId . ':' . (string)$respectNomediaAndNoimage . ':' . (string)$hideTracksOnCustomMaps . ':' . (string)$hideTracksInMapsFolder;
+		$key = $userId . ':' . $respectNomediaAndNoimage . ':' . $hideTracksOnCustomMaps . ':' . $hideTracksInMapsFolder;
 		$this->timeorderedPointSets = $this->timeOrderedPointSetsCache->get($key);
 		if (is_null($this->timeorderedPointSets)) {
 			$userFolder = $this->getFolderForUser($userId);
@@ -292,10 +303,12 @@ class GeophotoService {
 					}
 				}
 			}
+
 			foreach ($this->devicesService->getDevicesFromDB($userId) as $device) {
 				$device_points = $this->devicesService->getDeviceTimePointsFromDb($userId, $device['id']);
 				$this->timeorderedPointSets['device:' . $device['id']] = $device_points;
 			}
+
 			$this->timeOrderedPointSetsCache->set($key, $this->timeorderedPointSets);
 		}
 	}
@@ -305,16 +318,21 @@ class GeophotoService {
 	 * @param $content
 	 * @return array
 	 */
+	/**
+	 * @return \SimpleXMLElement[]
+	 */
 	private function getTracksFromGPX($content): array {
 		$tracks = [];
 		libxml_use_internal_errors(false);
-		$gpx = simplexml_load_string($content);
+		$gpx = simplexml_load_string((string)$content);
 		if ($gpx === false) {
 			$this->handleXMLError();
 		}
+
 		foreach ($gpx->trk as $trk) {
 			$tracks[] = $trk;
 		}
+
 		return $tracks;
 	}
 
@@ -338,25 +356,16 @@ class GeophotoService {
 		$points = [];
 		foreach ($track->trkseg as $seg) {
 			foreach ($seg->trkpt as $pt) {
-				$points[strtotime($pt->time)] = [(string)$pt['lat'],(string)$pt['lon']];
+				$points[strtotime((string)$pt->time)] = [(string)$pt['lat'],(string)$pt['lon']];
 			}
 		}
+
 		foreach ($track->trkpt as $pt) {
-			$points[strtotime($pt->time)] = [(string)$pt['lat'],(string)$pt['lon']];
+			$points[strtotime((string)$pt->time)] = [(string)$pt['lat'],(string)$pt['lon']];
 		}
 
-		$foo = ksort($points);
+		ksort($points);
 		return $points;
-	}
-
-	/**
-	 * @param int $timeUTC
-	 * @param float $lat
-	 * @param float $lng
-	 * @return void
-	 */
-	private function getLocalTime(int $timeUTC, float $lat, float $lng) {
-
 	}
 
 	/**
@@ -364,16 +373,15 @@ class GeophotoService {
 	 * @param $points array sorted by keys timestamp => [lat, lng]
 	 */
 	private function getLocationFromSequenceOfPoints(int $dateTaken, array $points): ?array {
-		$foo = end($points);
-		$end = key($points);
-		$foo = reset($points);
-		$start = key($points);
-		if ($start > $dateTaken or $end < $dateTaken) {
+		$end = array_key_last($points);
+		$start = array_key_first($points);
+		if ($start > $dateTaken || $end < $dateTaken) {
 			return null;
 		}
+
 		$smaller = null;
 		$bigger = null;
-		foreach ($points as $time => $locations) {
+		foreach (array_keys($points) as $time) {
 			if ($time < $dateTaken) {
 				$smaller = $time;
 			} else {
@@ -381,17 +389,21 @@ class GeophotoService {
 				break;
 			}
 		}
-		if (!is_null($smaller) and !is_null($bigger)) {
+
+		if (!is_null($smaller) && !is_null($bigger)) {
 			$d = $bigger - $smaller;
 			$t = ($dateTaken - $smaller) / $d;
 			$latd = $points[$bigger][0] - $points[$smaller][0];
 			$lngd = $points[$bigger][1] - $points[$smaller][1];
 			return [$points[$smaller][0] + $t * $latd, $points[$smaller][1] + $t * $lngd];
-		} else {
-			return null;
 		}
+
+		return null;
 	}
 
+	/**
+	 * @return 'image/jpeg'[]|'image/tiff'[]
+	 */
 	private function getPreviewEnabledMimetypes(): array {
 		$enabledMimeTypes = [];
 		foreach (PhotofilesService::PHOTO_MIME_TYPES as $mimeType) {
@@ -399,6 +411,7 @@ class GeophotoService {
 				$enabledMimeTypes[] = $mimeType;
 			}
 		}
+
 		return $enabledMimeTypes;
 	}
 

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /**
  * Nextcloud - maps
  *
@@ -9,7 +11,6 @@
  * @author Julien Veyssier
  * @copyright Julien Veyssier 2019
  */
-
 namespace OCA\Maps\BackgroundJob;
 
 use OCA\Maps\Service\PhotofilesService;
@@ -22,7 +23,7 @@ use OCP\ICache;
 use OCP\ICacheFactory;
 
 class UpdatePhotoByFileJob extends QueuedJob {
-	private ICache $backgroundJobCache;
+	private readonly ICache $backgroundJobCache;
 
 	/**
 	 * UserInstallScanJob constructor.
@@ -31,9 +32,9 @@ class UpdatePhotoByFileJob extends QueuedJob {
 	 */
 	public function __construct(
 		ITimeFactory $timeFactory,
-		private IRootFolder $root,
-		private PhotofilesService $photofilesService,
-		private ICacheFactory $cacheFactory,
+		private readonly IRootFolder $root,
+		private readonly PhotofilesService $photofilesService,
+		private readonly ICacheFactory $cacheFactory,
 	) {
 		parent::__construct($timeFactory);
 		$this->backgroundJobCache = $this->cacheFactory->createDistributed('maps:background-jobs');
@@ -45,6 +46,7 @@ class UpdatePhotoByFileJob extends QueuedJob {
 		if (!$file instanceof File) {
 			return;
 		}
+
 		$this->photofilesService->updateByFileNow($file);
 
 		$counter = $this->backgroundJobCache->get('recentlyUpdated:' . $argument['userId']) ?? 0;

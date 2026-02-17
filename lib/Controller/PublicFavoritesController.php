@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /**
  * Nextcloud - Maps
  *
@@ -11,7 +13,6 @@
  * @copyright Julien Veyssier 2019
  * @copyright Paul Schwörer 2019
  */
-
 namespace OCA\Maps\Controller;
 
 use OCA\Maps\DB\FavoriteShareMapper;
@@ -35,7 +36,7 @@ use OCP\Share\IManager;
 use OCP\Share\IShare;
 
 class PublicFavoritesController extends PublicPageController {
-	private ?string $defaultFavoritsJSON;
+	private readonly ?string $defaultFavoritsJSON;
 
 	public function __construct(
 		string $appName,
@@ -46,9 +47,9 @@ class PublicFavoritesController extends PublicPageController {
 		IInitialStateService $initialStateService,
 		IManager $shareManager,
 		IUserManager $userManager,
-		private IL10N $l,
-		private FavoritesService $favoritesService,
-		private FavoriteShareMapper $favoriteShareMapper,
+		private readonly IL10N $l,
+		private readonly FavoritesService $favoritesService,
+		private readonly FavoriteShareMapper $favoriteShareMapper,
 		IEventDispatcher $eventDispatcher,
 	) {
 		parent::__construct($appName, $request, $session, $urlGenerator, $eventDispatcher, $appConfig, $initialStateService, $shareManager, $userManager);
@@ -86,7 +87,7 @@ class PublicFavoritesController extends PublicPageController {
 		// Check whether share exists
 		try {
 			$share = $this->shareManager->getShareByToken($this->getToken());
-		} catch (ShareNotFound $e) {
+		} catch (ShareNotFound) {
 			// The share does not exists, we do not emit an ShareLinkAccessedEvent
 			throw new NotFoundException();
 		}
@@ -94,6 +95,7 @@ class PublicFavoritesController extends PublicPageController {
 		if (!$this->validateShare($share)) {
 			throw new NotFoundException();
 		}
+
 		return $share;
 	}
 
@@ -115,7 +117,7 @@ class PublicFavoritesController extends PublicPageController {
 	private function getJSONFavoritesFile(Folder $folder, bool $isCreatable): Node {
 		try {
 			$file = $folder->get('.favorites.json');
-		} catch (NotFoundException $e) {
+		} catch (NotFoundException) {
 			if ($isCreatable) {
 				$file = $folder->newFile('.favorites.json', $content = $this->defaultFavoritsJSON);
 			} else {
@@ -123,6 +125,7 @@ class PublicFavoritesController extends PublicPageController {
 			}
 
 		}
+
 		return $file;
 	}
 
@@ -141,7 +144,7 @@ class PublicFavoritesController extends PublicPageController {
 		$isReadable = (bool)($permissions & (1 << 0));
 		if ($isReadable) {
 			$favorites = $this->favoritesService->getFavoritesFromJSON($file);
-			$favorites = array_map(function ($favorite) use ($permissions) {
+			$favorites = array_map(function (array $favorite) use ($permissions): array {
 				$favorite['isCreatable'] = ($permissions & (1 << 2)) && $favorite['isCreatable'];
 				$favorite['isUpdateable'] = ($permissions & (1 << 1)) && $favorite['isUpdateable'];
 				$favorite['isDeletable'] = ($permissions & (1 << 3)) && $favorite['isDeletable'];
@@ -150,6 +153,7 @@ class PublicFavoritesController extends PublicPageController {
 		} else {
 			throw new NotPermittedException();
 		}
+
 		return new DataResponse($favorites);
 	}
 
@@ -160,7 +164,7 @@ class PublicFavoritesController extends PublicPageController {
 	 */
 	#[PublicPage]
 	public function addFavorite(?string $name, float $lat, float $lng, ?string $category, ?string $comment, ?string $extensions): DataResponse {
-		if (is_numeric($lat) && is_numeric($lng)) {
+		if (is_numeric($lng)) {
 			$share = $this->getShare();
 			$permissions = $share->getPermissions();
 			$folder = $this->getShareNode();
@@ -174,10 +178,11 @@ class PublicFavoritesController extends PublicPageController {
 			} else {
 				throw new NotPermittedException();
 			}
+
 			return new DataResponse($favorite);
-		} else {
-			return new DataResponse($this->l->t('Invalid values'), 400);
 		}
+
+		return new DataResponse($this->l->t('Invalid values'), 400);
 	}
 
 	/**
@@ -201,11 +206,12 @@ class PublicFavoritesController extends PublicPageController {
 					$favorite['isDeletable'] = ($permissions & (1 << 3)) && $favorite['isDeletable'];
 					$favoritesAfter[] = $favorite;
 				}
-			};
+			}
+			;
 			return new DataResponse($favoritesAfter);
-		} else {
-			throw new NotPermittedException();
 		}
+
+		throw new NotPermittedException();
 	}
 
 	/**
@@ -224,10 +230,12 @@ class PublicFavoritesController extends PublicPageController {
 		if (!$isUpdateable) {
 			throw new NotPermittedException();
 		}
+
 		$favorite = $this->favoritesService->getFavoriteFromJSON($file, $id);
 		if ($favorite === null) {
 			return new DataResponse($this->l->t('no such favorite'), 400);
 		}
+
 		$this->favoritesService->editFavoriteInJSON($file, $id, $name, $lat, $lng, $category, $comment, $extensions);
 		$editedFavorite = $this->favoritesService->getFavoriteFromJSON($file, $id);
 		$editedFavorite['isDeletable'] = ($permissions & (1 << 3)) && $editedFavorite['isDeletable'];
@@ -254,6 +262,7 @@ class PublicFavoritesController extends PublicPageController {
 		} else {
 			throw new NotPermittedException();
 		}
+
 		return new DataResponse('RENAMED');
 	}
 
@@ -274,15 +283,15 @@ class PublicFavoritesController extends PublicPageController {
 			if ($this->favoritesService->deleteFavoriteFromJSON($file, $id) > 0) {
 				return new DataResponse('DELETED');
 			}
+
 			return new DataResponse($this->l->t('no such favorite'), 400);
-		} else {
-			throw new NotPermittedException();
 		}
+
+		throw new NotPermittedException();
 
 	}
 
 	/**
-	 * @param array $ids
 	 * @throws NotFoundException
 	 * @throws NotPermittedException
 	 * @throws \OCP\Files\InvalidPathException
@@ -300,6 +309,7 @@ class PublicFavoritesController extends PublicPageController {
 		} else {
 			throw new NotPermittedException();
 		}
+
 		return new DataResponse('DELETED');
 	}
 
@@ -314,11 +324,12 @@ class PublicFavoritesController extends PublicPageController {
 		$folder = $this->getShareNode();
 		$isCreatable = ($permissions & (1 << 2)) && $folder->isCreatable();
 		$isReadable = ($permissions & (1 << 0));
-		if ($isReadable) {
+		if ($isReadable !== 0) {
 			$categories = $this->favoriteShareMapper->findAllByFolder($folder, $isCreatable);
 		} else {
 			throw new NotPermittedException();
 		}
+
 		return new DataResponse($categories);
 	}
 }

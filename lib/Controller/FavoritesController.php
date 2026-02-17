@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /**
  * Nextcloud - Maps
  *
@@ -11,9 +13,10 @@
  * @copyright Julien Veyssier 2019
  * @copyright Paul Schwörer 2019
  */
-
 namespace OCA\Maps\Controller;
 
+use OC\User\NoUserException;
+use OCA\Maps\DB\FavoriteShare;
 use OCA\Maps\DB\FavoriteShareMapper;
 use OCA\Maps\Service\FavoritesService;
 use OCP\AppFramework\Controller;
@@ -35,27 +38,30 @@ use OCP\IRequest;
 
 class FavoritesController extends Controller {
 	private ?Folder $userFolder = null;
-	private string $appVersion;
-	private string $defaultFavoritsJSON;
+
+	private readonly string $appVersion;
+
+	private readonly string $defaultFavoritsJSON;
 
 	public function __construct(
 		string $appName,
 		IRequest $request,
 		IAppConfig $appConfig,
 		IRootFolder $rootFolder,
-		private IL10N $l,
-		private FavoritesService $favoritesService,
-		private IDateTimeZone $dateTimeZone,
-		private FavoriteShareMapper $favoriteShareMapper,
-		private ?string $userId,
+		private readonly IL10N $l,
+		private readonly FavoritesService $favoritesService,
+		private readonly IDateTimeZone $dateTimeZone,
+		private readonly FavoriteShareMapper $favoriteShareMapper,
+		private readonly ?string $userId,
 	) {
 		parent::__construct($appName, $request);
 		$this->appVersion = $appConfig->getValueString('maps', 'installed_version');
 		// IConfig object
-		if ($userId !== '' and $userId !== null) {
+		if ($userId !== '' && $userId !== null) {
 			// path of user files folder relative to DATA folder
 			$this->userFolder = $rootFolder->getUserFolder($userId);
 		}
+
 		$this->defaultFavoritsJSON = json_encode([
 			'type' => 'FeatureCollection',
 			'features' => []
@@ -63,16 +69,15 @@ class FavoritesController extends Controller {
 	}
 
 	/**
-	 * @param Folder $folder
-	 * @return mixed
 	 * @throws \OCP\Files\NotPermittedException
 	 */
 	private function getJSONFavoritesFile(Folder $folder): Node {
 		try {
 			$file = $folder->get('.favorites.json');
-		} catch (NotFoundException $e) {
+		} catch (NotFoundException) {
 			$file = $folder->newFile('.favorites.json', $this->defaultFavoritsJSON);
 		}
+
 		return $file;
 	}
 
@@ -86,23 +91,19 @@ class FavoritesController extends Controller {
 		} else {
 			$folder = $this->userFolder->getFirstNodeById($myMapId);
 			if (!$folder instanceof Folder) {
-				throw new NotFoundException("Folder with id $myMapId does not exist");
+				throw new NotFoundException(sprintf('Folder with id %d does not exist', $myMapId));
 			}
+
 			$file = $this->getJSONFavoritesFile($folder);
 			$favorites = $this->favoritesService->getFavoritesFromJSON($file);
 		}
+
 		return new DataResponse($favorites);
 	}
 
 	/**
-	 * @param string|null $name
 	 * @param float $lat
 	 * @param float $lng
-	 * @param string|null $category
-	 * @param string|null $comment
-	 * @param string|null $extensions
-	 * @param int|null $myMapId
-	 * @return DataResponse
 	 * @throws NotFoundException
 	 * @throws \OCP\Files\InvalidPathException
 	 * @throws \OCP\Files\NotPermittedException
@@ -112,30 +113,30 @@ class FavoritesController extends Controller {
 		if (!is_numeric($lat) || !is_numeric($lng)) {
 			return new DataResponse($this->l->t('Invalid values'), 400);
 		}
+
 		if (is_null($myMapId)) {
 			$favoriteId = $this->favoritesService->addFavoriteToDB($this->userId, $name, $lat, $lng, $category, $comment, $extensions);
 			$favorite = $this->favoritesService->getFavoriteFromDB($favoriteId);
 			return new DataResponse($favorite);
-		} else {
-			$folders = $this->userFolder->getById($myMapId);
-			if (!empty($folders) && $this->userFolder->getId() === $myMapId) {
-				$folders[] = $this->userFolder;
-			}
-			$folder = array_shift($folders);
-			if (!($folder instanceof Folder)) {
-				return new DataResponse('Map not found', 404);
-			}
-			$file = $this->getJSONFavoritesFile($folder);
-			$favoriteId = $this->favoritesService->addFavoriteToJSON($file, $name, $lat, $lng, $category, $comment, $extensions);
-			$favorite = $this->favoritesService->getFavoriteFromJSON($file, $favoriteId);
-			return new DataResponse($favorite);
 		}
+
+		$folders = $this->userFolder->getById($myMapId);
+		if (!empty($folders) && $this->userFolder->getId() === $myMapId) {
+			$folders[] = $this->userFolder;
+		}
+
+		$folder = array_shift($folders);
+		if (!($folder instanceof Folder)) {
+			return new DataResponse('Map not found', 404);
+		}
+
+		$file = $this->getJSONFavoritesFile($folder);
+		$favoriteId = $this->favoritesService->addFavoriteToJSON($file, $name, $lat, $lng, $category, $comment, $extensions);
+		$favorite = $this->favoritesService->getFavoriteFromJSON($file, $favoriteId);
+		return new DataResponse($favorite);
 	}
 
 	/**
-	 * @param array $favorites
-	 * @param int|null $myMapId
-	 * @return DataResponse
 	 * @throws NotFoundException
 	 * @throws \OCP\Files\InvalidPathException
 	 * @throws \OCP\Files\NotPermittedException
@@ -145,33 +146,37 @@ class FavoritesController extends Controller {
 		if (is_null($myMapId)) {
 			$favoritesAfter = [];
 			foreach ($favorites as $favorite) {
-				if (is_numeric($favorite->lat) && is_numeric($favorite->lng)) {
+				if (is_float($favorite->lat) && is_float($favorite->lng)) {
 					$favoriteId = $this->favoritesService->addFavoriteToDB($this->userId, $favorite->name, $favorite->lat, $favorite->lng, $favorite->category, $favorite->comment, $favorite->extensions);
 					$favoritesAfter[] = $this->favoritesService->getFavoriteFromDB($favoriteId);
 				} else {
 					return new DataResponse('invalid values', 400);
 				}
 			}
-			return new DataResponse($favoritesAfter);
-		} else {
-			$folders = $this->userFolder->getById($myMapId);
-			if (!empty($folders) && $this->userFolder->getId() === $myMapId) {
-				$folders[] = $this->userFolder;
-			}
-			$folder = array_shift($folders);
-			if (!$folder instanceof Folder) {
-				return new DataResponse('Map not found', 404);
-			}
-			$file = $this->getJSONFavoritesFile($folder);
-			$favoriteIds = $this->favoritesService->addFavoritesToJSON($file, $favorites);
-			$favoritesAfter = [];
-			foreach ($this->favoritesService->getFavoritesFromJSON($file) as $favorite) {
-				if (in_array($favorite['id'], $favoriteIds)) {
-					$favoritesAfter[] = $favorite;
-				}
-			};
+
 			return new DataResponse($favoritesAfter);
 		}
+
+		$folders = $this->userFolder->getById($myMapId);
+		if (!empty($folders) && $this->userFolder->getId() === $myMapId) {
+			$folders[] = $this->userFolder;
+		}
+
+		$folder = array_shift($folders);
+		if (!$folder instanceof Folder) {
+			return new DataResponse('Map not found', 404);
+		}
+
+		$file = $this->getJSONFavoritesFile($folder);
+		$favoriteIds = $this->favoritesService->addFavoritesToJSON($file, $favorites);
+		$favoritesAfter = [];
+		foreach ($this->favoritesService->getFavoritesFromJSON($file) as $favorite) {
+			if (in_array($favorite['id'], $favoriteIds)) {
+				$favoritesAfter[] = $favorite;
+			}
+		}
+
+		return new DataResponse($favoritesAfter);
 	}
 
 	/**
@@ -186,6 +191,7 @@ class FavoritesController extends Controller {
 				$editedFavorite = $this->favoritesService->getFavoriteFromDB($id);
 				return new DataResponse($editedFavorite);
 			}
+
 			return new DataResponse($this->l->t('no such favorite'), 400);
 		}
 
@@ -193,11 +199,13 @@ class FavoritesController extends Controller {
 		if (!$folder instanceof Folder) {
 			return new DataResponse('Map not found', 404);
 		}
+
 		$file = $this->getJSONFavoritesFile($folder);
-		$favorite = $this->favoritesService->getFavoriteFromJSON($file, $id, $this->userId);
+		$favorite = $this->favoritesService->getFavoriteFromJSON($file, $id);
 		if ($favorite === null) {
 			return new DataResponse($this->l->t('no such favorite'), 400);
 		}
+
 		$this->favoritesService->editFavoriteInJSON($file, $id, $name, $lat, $lng, $category, $comment, $extensions);
 		$editedFavorite = $this->favoritesService->getFavoriteFromJSON($file, $id);
 		return new DataResponse($editedFavorite);
@@ -209,35 +217,32 @@ class FavoritesController extends Controller {
 	 */
 	#[NoAdminRequired]
 	public function renameCategories(array $categories, string $newName, ?int $myMapId = null): DataResponse {
-		if (is_array($categories)) {
-			foreach ($categories as $cat) {
-				if (is_null($myMapId)) {
-					$this->favoritesService->renameCategoryInDB($this->userId, $cat, $newName);
+		foreach ($categories as $cat) {
+			if (is_null($myMapId)) {
+				$this->favoritesService->renameCategoryInDB($this->userId, $cat, $newName);
 
-					// Rename share if one exists
-					try {
-						$share = $this->favoriteShareMapper->findByOwnerAndCategory($this->userId, $cat);
-						$share->setCategory($newName);
-						$this->favoriteShareMapper->update($share);
-					} catch (DoesNotExistException|MultipleObjectsReturnedException $e) {
-					}
-				} else {
-					$folder = $this->userFolder->getFirstNodeById($myMapId);
-					if (!$folder instanceof Folder) {
-						return new DataResponse('Map not found', 404);
-					}
-					$file = $this->getJSONFavoritesFile($folder);
-					$this->favoritesService->renameCategoryInJSON($file, $cat, $newName);
+				// Rename share if one exists
+				try {
+					$share = $this->favoriteShareMapper->findByOwnerAndCategory($this->userId, $cat);
+					$share->setCategory($newName);
+					$this->favoriteShareMapper->update($share);
+				} catch (DoesNotExistException|MultipleObjectsReturnedException) {
 				}
+			} else {
+				$folder = $this->userFolder->getFirstNodeById($myMapId);
+				if (!$folder instanceof Folder) {
+					return new DataResponse('Map not found', 404);
+				}
+
+				$file = $this->getJSONFavoritesFile($folder);
+				$this->favoritesService->renameCategoryInJSON($file, $cat, $newName);
 			}
 		}
+
 		return new DataResponse('RENAMED');
 	}
 
 	/**
-	 * @param int $id
-	 * @param int|null $myMapId
-	 * @return DataResponse
 	 * @throws \OCP\Files\NotPermittedException
 	 */
 	#[NoAdminRequired]
@@ -248,23 +253,24 @@ class FavoritesController extends Controller {
 				$this->favoritesService->deleteFavoriteFromDB($id);
 				return new DataResponse('DELETED');
 			}
+
 			return new DataResponse($this->l->t('no such favorite'), 400);
 		}
+
 		$folder = $this->userFolder->getFirstNodeById($myMapId);
 		if (!$folder instanceof Folder) {
 			return new DataResponse('Map not found', 404);
 		}
+
 		$file = $this->getJSONFavoritesFile($folder);
 		if ($this->favoritesService->deleteFavoriteFromJSON($file, $id) > 0) {
 			return new DataResponse('DELETED');
 		}
+
 		return new DataResponse($this->l->t('no such favorite'), 400);
 	}
 
 	/**
-	 * @param array $ids
-	 * @param int|null $myMapId
-	 * @return DataResponse
 	 * @throws \OCP\Files\NotPermittedException
 	 */
 	#[NoAdminRequired]
@@ -276,15 +282,17 @@ class FavoritesController extends Controller {
 			if (!$folder instanceof Folder) {
 				return new DataResponse('Map not found', 404);
 			}
+
 			$file = $this->getJSONFavoritesFile($folder);
 			$this->favoritesService->deleteFavoritesFromJSON($file, $ids);
 		}
+
 		return new DataResponse('DELETED');
 	}
 
 	/**
 	 * @throws \OCP\Files\NotPermittedException
-	 * @throws \OC\User\NoUserException
+	 * @throws NoUserException
 	 */
 	#[NoAdminRequired]
 	public function getSharedCategories(?int $myMapId = null): DataResponse {
@@ -305,7 +313,7 @@ class FavoritesController extends Controller {
 
 		$share = $this->favoriteShareMapper->findOrCreateByOwnerAndCategory($this->userId, $category);
 
-		if ($share === null) {
+		if (!$share instanceof FavoriteShare) {
 			return new DataResponse($this->l->t('Error sharing favorite'), Http::STATUS_INTERNAL_SERVER_ERROR);
 		}
 
@@ -326,38 +334,38 @@ class FavoritesController extends Controller {
 	}
 
 	/**
-	 * @param string $category
-	 * @param int $targetMapId
-	 * @param int|null $myMapId
-	 * @return DataResponse
 	 * @throws DoesNotExistException
 	 * @throws MultipleObjectsReturnedException
 	 * @throws \OCP\Files\NotPermittedException
-	 * @throws \OC\User\NoUserException
+	 * @throws NoUserException
 	 */
 	#[NoAdminRequired]
 	public function addShareCategoryToMap(string $category, int $targetMapId, ?int $myMapId = null): DataResponse {
-		if (is_null($myMapId) || $myMapId === '') {
+		if (is_null($myMapId) || $myMapId === 0) {
 			$share = $this->favoriteShareMapper->findByOwnerAndCategory($this->userId, $category);
 		} else {
 			$share = $this->favoriteShareMapper->findByMapIdAndCategory($this->userId, $myMapId, $category);
 		}
+
 		$folders = $this->userFolder->getById($targetMapId);
 		$folder = array_shift($folders);
 		if (!($folder instanceof Folder)) {
 			return new DataResponse($this->l->t('Map not Found'), 404);
 		}
+
 		try {
 			$file = $folder->get('.favorite_shares.json');
-		} catch (NotFoundException $e) {
+		} catch (NotFoundException) {
 			$file = $folder->newFile('.favorite_shares.json', $content = '[]');
 		}
-		$data = json_decode($file->getContent(), true);
+
+		$data = json_decode((string)$file->getContent(), true);
 		foreach ($data as $s) {
 			if ($s->token === $share->token) {
 				return new DataResponse($this->l->t('Share was already on map'));
 			}
 		}
+
 		$share->id = count($data);
 		$data[] = $share;
 		$file->putContent(json_encode($data, JSON_PRETTY_PRINT));
@@ -370,15 +378,11 @@ class FavoritesController extends Controller {
 		if (is_null($d)) {
 			return new DataResponse('Failed', 500);
 		}
+
 		return new DataResponse('Done');
 	}
 
 	/**
-	 * @param array|null $categoryList
-	 * @param int|null $begin
-	 * @param int|null $end
-	 * @param bool $all
-	 * @return DataResponse
 	 * @throws NotFoundException
 	 * @throws \OCP\Files\NotPermittedException
 	 */
@@ -386,9 +390,8 @@ class FavoritesController extends Controller {
 	public function exportFavorites(?array $categoryList = null, ?int $begin = null, ?int $end = null, bool $all = false): DataResponse {
 		// sorry about ugly categoryList management:
 		// when an empty list is passed in http request, we get null here
-		if ($categoryList === null or (is_array($categoryList) and count($categoryList) === 0)) {
-			$response = new DataResponse($this->l->t('Nothing to export'), 400);
-			return $response;
+		if ($categoryList === null || is_array($categoryList) && $categoryList === []) {
+			return new DataResponse($this->l->t('Nothing to export'), 400);
 		}
 
 		// create /Maps directory if necessary
@@ -396,24 +399,23 @@ class FavoritesController extends Controller {
 		if (!$userFolder->nodeExists('/Maps')) {
 			$userFolder->newFolder('Maps');
 		}
+
 		if ($userFolder->nodeExists('/Maps')) {
 			$mapsFolder = $userFolder->get('/Maps');
 			if (!($mapsFolder instanceof Folder)) {
-				$response = new DataResponse($this->l->t('/Maps is not a directory'), 400);
-				return $response;
-			} elseif (!$mapsFolder->isCreatable()) {
-				$response = new DataResponse($this->l->t('/Maps directory is not writeable'), 400);
-				return $response;
+				return new DataResponse($this->l->t('/Maps is not a directory'), 400);
+			}
+
+			if (!$mapsFolder->isCreatable()) {
+				return new DataResponse($this->l->t('/Maps directory is not writeable'), 400);
 			}
 		} else {
-			$response = new DataResponse($this->l->t('Impossible to create /Maps directory'), 400);
-			return $response;
+			return new DataResponse($this->l->t('Impossible to create /Maps directory'), 400);
 		}
 
 		$nbFavorites = $this->favoritesService->countFavorites($this->userId, $categoryList, $begin, $end);
 		if ($nbFavorites === 0) {
-			$response = new DataResponse($this->l->t('Nothing to export'), 400);
-			return $response;
+			return new DataResponse($this->l->t('Nothing to export'), 400);
 		}
 
 		// generate export file name
@@ -426,6 +428,7 @@ class FavoritesController extends Controller {
 		if ($mapsFolder->nodeExists($filename)) {
 			$mapsFolder->get($filename)->delete();
 		}
+
 		$file = $mapsFolder->newFile($filename);
 		$handler = $file->fopen('w');
 
@@ -463,9 +466,9 @@ class FavoritesController extends Controller {
 			|| str_ends_with($lowerFileName, '.geojson')) {
 			$result = $this->favoritesService->importFavorites($this->userId, $file);
 			return new DataResponse($result);
-		} else {
-			// invalid extension
-			return new DataResponse($this->l->t('Invalid file extension'), 400);
 		}
+
+		// invalid extension
+		return new DataResponse($this->l->t('Invalid file extension'), 400);
 	}
 }

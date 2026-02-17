@@ -15,24 +15,19 @@ use OCP\Migration\SimpleMigrationStep;
  */
 class Version100100Date20230731135102 extends SimpleMigrationStep {
 
-	protected $db;
-
-	public function __construct(IDBConnection $connection) {
-		$this->db = $connection;
+	public function __construct(
+		protected IDBConnection $db,
+	) {
 	}
 
 	/**
-	 * @param IOutput $output
 	 * @param Closure $schemaClosure The `\Closure` returns a `ISchemaWrapper`
-	 * @param array $options
 	 */
 	public function preSchemaChange(IOutput $output, Closure $schemaClosure, array $options) {
 	}
 
 	/**
-	 * @param IOutput $output
 	 * @param Closure $schemaClosure The `\Closure` returns a `ISchemaWrapper`
-	 * @param array $options
 	 * @return null|ISchemaWrapper
 	 */
 	public function changeSchema(IOutput $output, Closure $schemaClosure, array $options) {
@@ -42,6 +37,7 @@ class Version100100Date20230731135102 extends SimpleMigrationStep {
 		if ($schema->hasTable('maps_device_shares')) {
 			$schema->dropTable('maps_device_shares');
 		}
+
 		if (!$schema->hasTable('maps_device_shares')) {
 			$table = $schema->createTable('maps_device_shares');
 			$table->addColumn('id', 'bigint', [
@@ -73,9 +69,7 @@ class Version100100Date20230731135102 extends SimpleMigrationStep {
 	}
 
 	/**
-	 * @param IOutput $output
 	 * @param Closure $schemaClosure The `\Closure` returns a `ISchemaWrapper`
-	 * @param array $options
 	 */
 	public function postSchemaChange(IOutput $output, Closure $schemaClosure, array $options) {
 	}

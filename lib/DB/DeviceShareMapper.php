@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /**
  * @copyright Copyright (c) 2019, Paul Schwörer <hello@paulschwoerer.de>
  *
@@ -21,7 +23,6 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-
 namespace OCA\Maps\DB;
 
 use OC\Share\Constants;
@@ -31,7 +32,6 @@ use OCP\AppFramework\Db\MultipleObjectsReturnedException;
 use OCP\AppFramework\Db\QBMapper;
 use OCP\DB\Exception;
 use OCP\DB\QueryBuilder\IQueryBuilder;
-use OCP\Files\IRootFolder;
 use OCP\Files\NotFoundException;
 use OCP\IDBConnection;
 use OCP\Security\ISecureRandom;
@@ -40,13 +40,11 @@ use OCP\Security\ISecureRandom;
 class DeviceShareMapper extends QBMapper {
 	/* @var ISecureRandom */
 	private $secureRandom;
-	private $root;
 
-	public function __construct(IDBConnection $db, ISecureRandom $secureRandom, IRootFolder $root) {
+	public function __construct(IDBConnection $db, ISecureRandom $secureRandom) {
 		parent::__construct($db, 'maps_device_shares');
 
 		$this->secureRandom = $secureRandom;
-		$this->root = $root;
 	}
 
 	/**
@@ -210,6 +208,7 @@ class DeviceShareMapper extends QBMapper {
 		} catch (DoesNotExistException) {
 			return false;
 		}
+
 		return true;
 	}
 
@@ -226,6 +225,7 @@ class DeviceShareMapper extends QBMapper {
 		} catch (DoesNotExistException) {
 			return false;
 		}
+
 		return true;
 	}
 }

@@ -31,9 +31,6 @@ use OCP\Util;
 /** @template-implements IEventListener<LoadSidebar> */
 class LoadSidebarListener implements IEventListener {
 
-	public function __construct() {
-	}
-
 	public function handle(Event $event): void {
 		if (!($event instanceof LoadSidebar)) {
 			// Unrelated

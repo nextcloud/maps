@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /**
  * Nextcloud - maps
  *
@@ -9,7 +11,6 @@
  * @author Julien Veyssier <eneiluj@posteo.net>
  * @copyright Julien Veyssier 2019
  */
-
 namespace OCA\Maps\Controller;
 
 use OCA\Maps\AppInfo\Application;
@@ -20,112 +21,91 @@ use OCP\BackgroundJob\IJobList;
 use OCP\DB\QueryBuilder\IQueryBuilder;
 use OCP\Files\IRootFolder;
 use OCP\ICacheFactory;
-use OCP\IConfig;
-use OCP\IServerContainer;
+use OCP\IDBConnection;
+use OCP\IGroupManager;
+use OCP\IUserManager;
 use OCP\L10N\IFactory;
 use OCP\Server;
+use OCP\Share\IManager;
+use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
 
-class PhotosControllerTest extends \PHPUnit\Framework\TestCase {
-	private $appName;
-	private $request;
-	private $contacts;
+final class PhotosControllerTest extends TestCase {
 
 	private $container;
-	private $config;
-	private $app;
 
-	private $photosController;
-	private $photosController2;
-	private $utilsController;
 
-	private $photoFileService;
+	private PhotosController $photosController;
+
+	private PhotofilesService $photoFileService;
+
 	private $GeoPhotosService;
 
 	public static function setUpBeforeClass(): void {
 		$app = new Application();
 		$c = $app->getContainer();
 
-		$user = $c->getServer()->getUserManager()->get('test');
-		$user2 = $c->getServer()->getUserManager()->get('test2');
-		$user3 = $c->getServer()->getUserManager()->get('test3');
-		$group = $c->getServer()->getGroupManager()->get('group1test');
-		$group2 = $c->getServer()->getGroupManager()->get('group2test');
+		$user = $c->get(IUserManager::class)->get('test');
+		$user2 = $c->get(IUserManager::class)->get('test2');
+		$user3 = $c->get(IUserManager::class)->get('test3');
+		$group = $c->get(IGroupManager::class)->get('group1test');
+		$group2 = $c->get(IGroupManager::class)->get('group2test');
 
 		// CREATE DUMMY USERS
 		if ($user === null) {
-			$u1 = $c->getServer()->getUserManager()->createUser('test', 'tatotitoTUTU');
+			$u1 = $c->get(IUserManager::class)->createUser('test', 'tatotitoTUTU');
 			$u1->setEMailAddress('toto@toto.net');
 		}
+
 		if ($user2 === null) {
-			$u2 = $c->getServer()->getUserManager()->createUser('test2', 'plopinoulala000');
+			$c->get(IUserManager::class)->createUser('test2', 'plopinoulala000');
 		}
-		if ($user2 === null) {
-			$u3 = $c->getServer()->getUserManager()->createUser('test3', 'yeyeahPASSPASS');
+
+		if ($user3 === null) {
+			$c->get(IUserManager::class)->createUser('test3', 'yeyeahPASSPASS');
 		}
+
 		if ($group === null) {
-			$c->getServer()->getGroupManager()->createGroup('group1test');
-			$u1 = $c->getServer()->getUserManager()->get('test');
-			$c->getServer()->getGroupManager()->get('group1test')->addUser($u1);
+			$c->get(IGroupManager::class)->createGroup('group1test');
+			$u1 = $c->get(IUserManager::class)->get('test');
+			$c->get(IGroupManager::class)->get('group1test')->addUser($u1);
 		}
+
 		if ($group2 === null) {
-			$c->getServer()->getGroupManager()->createGroup('group2test');
-			$u2 = $c->getServer()->getUserManager()->get('test2');
-			$c->getServer()->getGroupManager()->get('group2test')->addUser($u2);
+			$c->get(IGroupManager::class)->createGroup('group2test');
+			$u2 = $c->get(IUserManager::class)->get('test2');
+			$c->get(IGroupManager::class)->get('group2test')->addUser($u2);
 		}
 	}
 
 	protected function setUp(): void {
-		$this->appName = 'maps';
-		$this->request = $this->getMockBuilder('\OCP\IRequest')
-			->disableOriginalConstructor()
-			->getMock();
-		$this->contacts = $this->getMockBuilder('OCP\Contacts\IManager')
-			->disableOriginalConstructor()
-			->getMock();
+		$appName = 'maps';
+		$request = $this->createMock('\OCP\IRequest');
 
-		$this->app = new Application();
-		$this->container = $this->app->getContainer();
+		$app = new Application();
+		$this->container = $app->getContainer();
 		$c = $this->container;
-		$this->config = $c->get(IConfig::class);
 
-		$this->rootFolder = $c->get(IRootFolder::class);
+		$rootFolder = $c->get(IRootFolder::class);
 
 		$this->GeoPhotosService = $c->get(GeoPhotoService::class);
 
 		$this->photoFileService = new PhotoFilesService(
 			$c->get(LoggerInterface::class),
 			$c->get(ICacheFactory::class),
-			$this->rootFolder,
+			$rootFolder,
 			$c->get(IFactory::class)->get($c->get('AppName')),
 			$c->get(GeophotoMapper::class),
-			$c->get(\OCP\Share\IManager::class),
+			$c->get(IManager::class),
 			$c->get(IJobList::class)
 		);
 
 		$this->photosController = new PhotosController(
-			$this->appName,
-			$this->request,
+			$appName,
+			$request,
 			$this->GeoPhotosService,
 			$this->photoFileService,
-			$this->rootFolder,
-			'test'
-		);
-
-		$this->photosController2 = new PhotosController(
-			$this->appName,
-			$this->request,
-			$c->get(GeoPhotoService::class),
-			$this->photoFileService,
-			$this->rootFolder,
-			'test2'
-		);
-
-		$this->utilsController = new UtilsController(
-			$this->appName,
-			$this->request,
-			$c->get(IServerContainer::class)->getConfig(),
-			$this->rootFolder,
+			$rootFolder,
 			'test'
 		);
 
@@ -135,39 +115,39 @@ class PhotosControllerTest extends \PHPUnit\Framework\TestCase {
 			$file = $userfolder->get('nc.jpg');
 			$file->delete();
 		}
+
 		if ($userfolder->nodeExists('nut.jpg')) {
 			$file = $userfolder->get('nut.jpg');
 			$file->delete();
 		}
+
 		// delete db
-		$qb = Server::get(\OCP\IDBConnection::class)->getQueryBuilder();
+		$qb = Server::get(IDBConnection::class)->getQueryBuilder();
 		$qb->delete('maps_photos')
 			->where(
 				$qb->expr()->eq('user_id', $qb->createNamedParameter('test', IQueryBuilder::PARAM_STR))
 			);
-		$req = $qb->executeStatement();
+		$qb->executeStatement();
 	}
 
 	public static function tearDownAfterClass(): void {
 		//$app = new Application();
 		//$c = $app->getContainer();
-		//$user = $c->getServer()->getUserManager()->get('test');
+		//$user = $c->get(IUserManager::class)->get('test');
 		//$user->delete();
-		//$user = $c->getServer()->getUserManager()->get('test2');
+		//$user = $c->get(IUserManager::class)->get('test2');
 		//$user->delete();
-		//$user = $c->getServer()->getUserManager()->get('test3');
+		//$user = $c->get(IUserManager::class)->get('test3');
 		//$user->delete();
-		//$c->getServer()->getGroupManager()->get('group1test')->delete();
-		//$c->getServer()->getGroupManager()->get('group2test')->delete();
+		//$c->get(IGroupManager::class)->get('group1test')->delete();
+		//$c->get(IGroupManager::class)->get('group2test')->delete();
 	}
 
 	protected function tearDown(): void {
 		// in case there was a failure and something was not deleted
 	}
 
-	public function testAddGetPhotos() {
-		$c = $this->app->getContainer();
-
+	public function testAddGetPhotos(): void {
 		$userfolder = $this->container->get(IRootFolder::class)->getUserFolder('test');
 
 		$filename = 'tests/test_files/nc.jpg';
@@ -184,6 +164,7 @@ class PhotosControllerTest extends \PHPUnit\Framework\TestCase {
 		$file->move($userfolder->getPath() . '/nc.jpg');
 		$file = $userfolder->get('nc.jpg');
 		$file->touch();
+
 		$this->photoFileService->addPhotoNow($file, 'test');
 
 		$filename = 'tests/test_files/nut.jpg';
@@ -240,7 +221,7 @@ class PhotosControllerTest extends \PHPUnit\Framework\TestCase {
 		$status = $resp->getStatus();
 		$this->assertEquals(200, $status);
 		$data = $resp->getData();
-		$this->assertEquals(0, count($data));
+		$this->assertCount(0, $data);
 		$file->delete();
 
 		// non localized without track
@@ -302,7 +283,7 @@ class PhotosControllerTest extends \PHPUnit\Framework\TestCase {
 		$status = $resp->getStatus();
 		$this->assertEquals(200, $status);
 		$data = $resp->getData();
-		$this->assertEquals(0, count($data));
+		$this->assertCount(0, $data);
 		$file->delete();
 
 		//Test myMap
@@ -312,7 +293,7 @@ class PhotosControllerTest extends \PHPUnit\Framework\TestCase {
 		$status = $resp->getStatus();
 		$this->assertEquals(200, $status);
 		$data = $resp->getData();
-		$this->assertEquals(0, count($data));
+		$this->assertCount(0, $data);
 		$file->delete();
 
 		// place photos

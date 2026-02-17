@@ -13,6 +13,7 @@
 
 namespace OCA\Maps\Controller;
 
+use OCP\AppFramework\Http\Attribute\PublicPage;
 use OCP\AppFramework\Http\DataResponse;
 use OCP\EventDispatcher\IEventDispatcher;
 use OCP\Files\GenericFileException;
@@ -20,7 +21,7 @@ use OCP\Files\InvalidPathException;
 use OCP\Files\IRootFolder;
 use OCP\Files\NotFoundException;
 use OCP\Files\NotPermittedException;
-use OCP\IConfig;
+use OCP\IAppConfig;
 use OCP\IInitialStateService;
 use OCP\IRequest;
 use OCP\ISession;
@@ -31,23 +32,19 @@ use OCP\Share\Exceptions\ShareNotFound;
 use OCP\Share\IManager as ShareManager;
 
 class PublicUtilsController extends PublicPageController {
-
-	protected IRootFolder $root;
-
 	public function __construct(
 		string $appName,
 		IRequest $request,
 		ISession $session,
 		IURLGenerator $urlGenerator,
-		IConfig $config,
+		IAppConfig $appConfig,
 		IInitialStateService $initialStateService,
 		IUserManager $userManager,
 		ShareManager $shareManager,
-		IRootFolder $root,
+		protected IRootFolder $root,
 		IEventDispatcher $eventDispatcher,
 	) {
-		parent::__construct($appName, $request, $session, $urlGenerator, $eventDispatcher, $config, $initialStateService, $shareManager, $userManager);
-		$this->root = $root;
+		parent::__construct($appName, $request, $session, $urlGenerator, $eventDispatcher, $appConfig, $initialStateService, $shareManager, $userManager);
 	}
 
 	/**
@@ -105,7 +102,6 @@ class PublicUtilsController extends PublicPageController {
 	/**
 	 * Save options values to the DB for current user
 	 *
-	 * @PublicPage
 	 * @param $options
 	 * @param null $myMapId
 	 * @return DataResponse
@@ -114,6 +110,7 @@ class PublicUtilsController extends PublicPageController {
 	 * @throws InvalidPathException
 	 * @throws NotPermittedException
 	 */
+	#[PublicPage]
 	public function saveOptionValue($options, $myMapId = null): DataResponse {
 		$share = $this->getShare();
 		$permissions = $share->getPermissions();
@@ -149,13 +146,12 @@ class PublicUtilsController extends PublicPageController {
 	/**
 	 * get options values from the config for current user
 	 *
-	 * @PublicPage
-	 * @return DataResponse
 	 * @throws InvalidPathException
 	 * @throws LockedException
 	 * @throws NotFoundException
 	 * @throws NotPermittedException
 	 */
+	#[PublicPage]
 	public function getOptionsValues(): DataResponse {
 		$ov = [];
 
@@ -198,7 +194,7 @@ class PublicUtilsController extends PublicPageController {
 			'graphhopperURL'
 		];
 		foreach ($settingsKeys as $k) {
-			$v = $this->config->getAppValue('maps', $k);
+			$v = $this->appConfig->getValueString('maps', $k);
 			$ov[$k] = $v;
 		}
 		return new DataResponse(['values' => $ov]);

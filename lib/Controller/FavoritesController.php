@@ -16,7 +16,6 @@ namespace OCA\Maps\Controller;
 
 use OCA\Maps\DB\FavoriteShareMapper;
 use OCA\Maps\Service\FavoritesService;
-use OCP\App\IAppManager;
 use OCP\AppFramework\Controller;
 use OCP\AppFramework\Db\DoesNotExistException;
 use OCP\AppFramework\Db\MultipleObjectsReturnedException;
@@ -25,66 +24,38 @@ use OCP\AppFramework\Http\Attribute\NoAdminRequired;
 use OCP\AppFramework\Http\DataResponse;
 use OCP\Files\File;
 use OCP\Files\Folder;
+use OCP\Files\IRootFolder;
+use OCP\Files\Node;
 use OCP\Files\NotFoundException;
+use OCP\IAppConfig;
 use OCP\IConfig;
 use OCP\IDateTimeZone;
-use OCP\IGroupManager;
 use OCP\IL10N;
 use OCP\IRequest;
-use OCP\IServerContainer;
-use OCP\IUserManager;
-use OCP\Share\IManager;
 
 class FavoritesController extends Controller {
-
-	private string $userId;
-	private \OCP\Files\Folder $userFolder;
-	private IConfig $config;
+	private ?Folder $userFolder = null;
 	private string $appVersion;
-	private IManager $shareManager;
-	private IUserManager $userManager;
-	private IGroupManager $groupManager;
-	private string $dbtype;
-	private IL10N $l;
-	private FavoritesService $favoritesService;
-	private IDateTimeZone $dateTimeZone;
-	private ?string $defaultFavoritsJSON;
-	protected $appName;
+	private string $defaultFavoritsJSON;
 
-	/* @var FavoriteShareMapper */
-	private $favoriteShareMapper;
-
-	public function __construct($AppName,
+	public function __construct(
+		string $appName,
 		IRequest $request,
-		IServerContainer $serverContainer,
-		IConfig $config,
-		IManager $shareManager,
-		IAppManager $appManager,
-		IUserManager $userManager,
-		IGroupManager $groupManager,
-		IL10N $l,
-		FavoritesService $favoritesService,
-		IDateTimeZone $dateTimeZone,
-		FavoriteShareMapper $favoriteShareMapper,
-		$UserId) {
-		parent::__construct($AppName, $request);
-		$this->favoritesService = $favoritesService;
-		$this->dateTimeZone = $dateTimeZone;
-		$this->appName = $AppName;
-		$this->appVersion = $config->getAppValue('maps', 'installed_version');
-		$this->userId = $UserId;
-		$this->userManager = $userManager;
-		$this->groupManager = $groupManager;
-		$this->l = $l;
-		$this->dbtype = $config->getSystemValue('dbtype');
+		IAppConfig $appConfig,
+		IRootFolder $rootFolder,
+		private IL10N $l,
+		private FavoritesService $favoritesService,
+		private IDateTimeZone $dateTimeZone,
+		private FavoriteShareMapper $favoriteShareMapper,
+		private ?string $userId,
+	) {
+		parent::__construct($appName, $request);
+		$this->appVersion = $appConfig->getValueString('maps', 'installed_version');
 		// IConfig object
-		$this->config = $config;
-		if ($UserId !== '' and $UserId !== null and $serverContainer !== null) {
+		if ($userId !== '' and $userId !== null) {
 			// path of user files folder relative to DATA folder
-			$this->userFolder = $serverContainer->getUserFolder($UserId);
+			$this->userFolder = $rootFolder->getUserFolder($userId);
 		}
-		$this->shareManager = $shareManager;
-		$this->favoriteShareMapper = $favoriteShareMapper;
 		$this->defaultFavoritsJSON = json_encode([
 			'type' => 'FeatureCollection',
 			'features' => []
@@ -92,15 +63,15 @@ class FavoritesController extends Controller {
 	}
 
 	/**
-	 * @param \OCP\Files\Folder $folder
+	 * @param Folder $folder
 	 * @return mixed
 	 * @throws \OCP\Files\NotPermittedException
 	 */
-	private function getJSONFavoritesFile(\OCP\Files\Folder $folder): \OCP\Files\Node {
+	private function getJSONFavoritesFile(Folder $folder): Node {
 		try {
 			$file = $folder->get('.favorites.json');
 		} catch (NotFoundException $e) {
-			$file = $folder->newFile('.favorites.json', $content = $this->defaultFavoritsJSON);
+			$file = $folder->newFile('.favorites.json', $this->defaultFavoritsJSON);
 		}
 		return $file;
 	}
@@ -110,7 +81,7 @@ class FavoritesController extends Controller {
 	 */
 	#[NoAdminRequired]
 	public function getFavorites(?int $myMapId = null): DataResponse {
-		if (is_null($myMapId) || $myMapId === '') {
+		if (is_null($myMapId)) {
 			$favorites = $this->favoritesService->getFavoritesFromDB($this->userId);
 		} else {
 			$folder = $this->userFolder->getFirstNodeById($myMapId);

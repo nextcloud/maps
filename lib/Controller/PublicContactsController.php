@@ -12,19 +12,15 @@
 
 namespace OCA\Maps\Controller;
 
-use OCA\DAV\CardDAV\CardDavBackend;
 use OCA\Maps\Service\AddressService;
 use OCP\AppFramework\Http\DataDisplayResponse;
 use OCP\AppFramework\Http\DataResponse;
-use OCP\Contacts\IManager;
 use OCP\EventDispatcher\IEventDispatcher;
-use OCP\Files\IRootFolder;
 use OCP\Files\Node;
 use OCP\Files\NotFoundException;
 use OCP\Files\NotPermittedException;
+use OCP\IAppConfig;
 use OCP\IAvatarManager;
-use OCP\IConfig;
-use OCP\IDBConnection;
 use OCP\IInitialStateService;
 use OCP\IRequest;
 use OCP\ISession;
@@ -36,34 +32,20 @@ use OCP\Share\IShare;
 use Sabre\VObject\Reader;
 
 class PublicContactsController extends PublicPageController {
-	protected IManager $contactsManager;
-	protected AddressService $addressService;
-	protected CardDavBackend $cdBackend;
-	protected IAvatarManager $avatarManager;
-	protected IRootFolder $root;
-
 	public function __construct(
 		string $appName,
 		IRequest $request,
 		ISession $session,
 		IURLGenerator $urlGenerator,
 		IEventDispatcher $eventDispatcher,
-		IConfig $config,
+		IAppConfig $appConfig,
 		IInitialStateService $initialStateService,
 		ShareManager $shareManager,
 		IUserManager $userManager,
-		IManager $contactsManager,
-		IDBConnection $dbconnection,
-		AddressService $addressService,
-		CardDavBackend $cdBackend,
-		IAvatarManager $avatarManager,
-		IRootFolder $root) {
-		parent::__construct($appName, $request, $session, $urlGenerator, $eventDispatcher, $config, $initialStateService, $shareManager, $userManager);
-		$this->avatarManager = $avatarManager;
-		$this->contactsManager = $contactsManager;
-		$this->addressService = $addressService;
-		$this->cdBackend = $cdBackend;
-		$this->root = $root;
+		private AddressService $addressService,
+		private IAvatarManager $avatarManager,
+	) {
+		parent::__construct($appName, $request, $session, $urlGenerator, $eventDispatcher, $appConfig, $initialStateService, $shareManager, $userManager);
 	}
 
 	/**

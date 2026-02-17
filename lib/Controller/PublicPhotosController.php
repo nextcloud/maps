@@ -19,7 +19,7 @@ use OCP\EventDispatcher\IEventDispatcher;
 use OCP\Files\IRootFolder;
 use OCP\Files\NotFoundException;
 use OCP\Files\NotPermittedException;
-use OCP\IConfig;
+use OCP\IAppConfig;
 
 use OCP\IInitialStateService;
 use OCP\IRequest;
@@ -37,7 +37,7 @@ class PublicPhotosController extends PublicPageController {
 		ISession $session,
 		IURLGenerator $urlGenerator,
 		IEventDispatcher $eventDispatcher,
-		IConfig $config,
+		IAppConfig $appConfig,
 		IInitialStateService $initialStateService,
 		ShareManager $shareManager,
 		IUserManager $userManager,
@@ -45,7 +45,7 @@ class PublicPhotosController extends PublicPageController {
 		protected PhotofilesService $photofilesService,
 		protected IRootFolder $root,
 	) {
-		parent::__construct($appName, $request, $session, $urlGenerator, $eventDispatcher, $config, $initialStateService, $shareManager, $userManager);
+		parent::__construct($appName, $request, $session, $urlGenerator, $eventDispatcher, $appConfig, $initialStateService, $shareManager, $userManager);
 	}
 
 	/**

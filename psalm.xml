@@ -29,11 +29,16 @@
 	</stubs>
 	<projectFiles>
 		<directory name="lib" />
+		<directory name="tests" />
 		<ignoreFiles>
 			<directory name="vendor" />
 			<directory name="vendor-bin" />
 		</ignoreFiles>
 	</projectFiles>
+	<issueHandlers>
+		<DeprecatedMethod errorLevel="error"/>
+		<DeprecatedClass errorLevel="error"/>
+	</issueHandlers>
 	<extraFiles>
 		<directory name="vendor" />
 		<directory name="vendor-bin/psalm/vendor" />

@@ -292,28 +292,16 @@ class DevicesService {
 		return $pointId;
 	}
 
-	public function addPointsToDB($deviceId, $points) {
-		$values = [];
-		foreach ($points as $p) {
-			$value = '('
-				. $this->db_quote_escape_string($deviceId) . ', '
-				. $this->db_quote_escape_string($p['lat']) . ', '
-				. $this->db_quote_escape_string($p['lng']) . ', '
-				. $this->db_quote_escape_string($p['date']) . ', '
-				. ((isset($p['altitude']) and is_numeric($p['altitude'])) ? $this->db_quote_escape_string(floatval($p['altitude'])) : 'NULL') . ', '
-				. ((isset($p['battery']) and is_numeric($p['battery'])) ? $this->db_quote_escape_string(floatval($p['battery'])) : 'NULL') . ', '
-				. ((isset($p['accuracy']) and is_numeric($p['accuracy'])) ? $this->db_quote_escape_string(floatval($p['accuracy'])) : 'NULL') . ')';
-			array_push($values, $value);
+	public function addPointsToDB(int $deviceId, array $points): void {
+		try {
+			$this->dbconnection->beginTransaction();
+			foreach ($points as $p) {
+				$this->addPointToDB($deviceId, $p['lat'], $p['lng'], $p['date'], $p['altitude'] ?? null, $p['battery'] ?? null, $p['accuracy'] ?? null);
+			}
+			$this->dbconnection->commit();
+		} catch (Exception $ex) {
+			$this->dbconnection->rollBack();
 		}
-		$valuesStr = implode(', ', $values);
-		$sql = '
-            INSERT INTO *PREFIX*maps_device_points
-            (device_id, lat, lng, timestamp,
-             altitude, battery, accuracy)
-            VALUES ' . $valuesStr . ' ;';
-		$req = $this->dbconnection->prepare($sql);
-		$req->execute();
-		$req->closeCursor();
 	}
 
 	public function getDeviceFromDB($id, $userId) {

@@ -23,7 +23,7 @@ use OCP\Files\Folder;
 use OCP\Files\Node;
 use OCP\Files\NotFoundException;
 use OCP\Files\NotPermittedException;
-use OCP\IConfig;
+use OCP\IAppConfig;
 use OCP\IInitialStateService;
 use OCP\IL10N;
 use OCP\IRequest;
@@ -42,7 +42,7 @@ class PublicFavoritesController extends PublicPageController {
 		IRequest $request,
 		ISession $session,
 		IURLGenerator $urlGenerator,
-		IConfig $config,
+		IAppConfig $appConfig,
 		IInitialStateService $initialStateService,
 		IManager $shareManager,
 		IUserManager $userManager,
@@ -51,7 +51,7 @@ class PublicFavoritesController extends PublicPageController {
 		private FavoriteShareMapper $favoriteShareMapper,
 		IEventDispatcher $eventDispatcher,
 	) {
-		parent::__construct($appName, $request, $session, $urlGenerator, $eventDispatcher, $config, $initialStateService, $shareManager, $userManager);
+		parent::__construct($appName, $request, $session, $urlGenerator, $eventDispatcher, $appConfig, $initialStateService, $shareManager, $userManager);
 		$this->userManager = $userManager;
 		$this->shareManager = $shareManager;
 		$this->defaultFavoritsJSON = json_encode([

@@ -44,23 +44,50 @@
 				{{ t('maps', 'Download track') }}
 			</NcActionLink>
 		</LPopup>
-		<LTooltip :options="tooltipOptions">
-			<div class="tooltip-track-wrapper"
-				:style="'border: 2px solid ' + color">
-				<b>{{ t('maps', 'Name') }}:</b>
-				<span>{{ track.file_name }}</span>
-				<br>
-				<b v-if="dateBegin">{{ t('maps', 'Begins at') }}:</b>
-				<span v-if="dateBegin">{{ dateBegin }}</span>
-			</div>
-		</LTooltip>
 		<LMarker v-if="firstPoint"
 			:icon="firstPointMarkerIcon"
-			:lat-lng="firstPoint" />
+			:lat-lng="firstPoint" >
+			<LTooltip :options="tooltipOptions">
+        		<div class="tooltip-track-wrapper"
+					:style="'border: 2px solid ' + color">					
+					<b>{{ t('maps', 'File') }}:</b>
+					<span>{{ track.file_name }}</span>
+					<br v-if="dateBegin">
+					<b v-if="dateBegin">{{ t('maps', 'Begins at') }}:</b>
+					<span v-if="dateBegin">{{ dateBegin }}</span>
+					<br v-if="firstPoint.name">
+					<b v-if="firstPoint.name">{{ t('maps', 'Name') }}:</b>
+					<span v-if="firstPoint.name">{{ firstPoint.name }}</span>
+					<br v-if="firstPoint.desc">
+					<b v-if="firstPoint.desc">{{ t('maps', 'Description') }}:</b>
+					<span v-if="firstPoint.desc">{{ firstPoint.desc }}</span>
+					<br v-if="firstPoint.ele">
+					<b v-if="firstPoint.ele">{{ t('maps', 'Altitude') }}:</b>
+					<span v-if="firstPoint.ele">{{ firstPoint.ele }} m</span>					
+				</div>
+    		</LTooltip>
+		</LMarker>
 		<LMarker v-for="(point, i) in wayPoints"
 			:key="'waypoint:'.concat(i)"
 			:icon="wayPointMarkerIcon"
-			:lat-lng="point" />
+			:lat-lng="point">
+			<LTooltip :options="tooltipOptions">
+        		<div class="tooltip-track-wrapper"
+					:style="'border: 2px solid ' + color">					
+					<b>{{ t('maps', 'File') }}:</b>
+					<span>{{ track.file_name }}</span>
+					<br v-if="point.name">
+					<b v-if="point.name">{{ t('maps', 'Name') }}:</b>
+					<span v-if="point.name">{{ point.name }}</span>
+					<br v-if="point.desc">
+					<b v-if="point.desc">{{ t('maps', 'Description') }}:</b>
+					<span v-if="point.desc">{{ point.desc }}</span>
+					<br v-if="point.ele">
+					<b v-if="point.ele">{{ t('maps', 'Altitude') }}:</b>
+					<span v-if="point.ele">{{ point.ele }} m</span>
+				</div>
+    		</LTooltip>
+		</LMarker>
 		<LFeatureGroup v-for="(line, i) in lines"
 			:key="'line'.concat(i)"
 			@mouseover="trackLineMouseover($event, line)">

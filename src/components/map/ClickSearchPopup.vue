@@ -116,8 +116,8 @@ export default {
 			const object = {
 				id: 'geo:' + this.latLng.lat + ',' + this.latLng.lng,
 				name: this.formattedAddress,
-				latitude: this.latLng.lat,
-				longitude: this.latLng.lng,
+				latitude: this.latLng.lat.toString(),
+				longitude: this.latLng.lng.toString(),
 			}
 			action.callback(object)
 		},

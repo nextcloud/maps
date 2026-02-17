@@ -87,16 +87,17 @@ class PhotosController extends Controller {
 
 
 	/**
-	 * @param $paths
-	 * @param $lats
-	 * @param $lngs
+	 * @param list<string> $paths
+	 * @param list<float> $lats
+	 * @param list<float> $lngs
+	 * @return DataResponse<Http::STATUS_*, list<array{path: (array | string | null), lat: float, lng: float, oldLat: ?float, oldLng: ?float}>|array<never, never>, array<string, mixed>>
 	 * @throws NoUserException
 	 * @throws NotFoundException
 	 * @throws NotPermittedException
 	 * @throws InvalidPathException
 	 */
 	#[NoAdminRequired]
-	public function placePhotos($paths, $lats, $lngs, bool $directory = false, ?int $myMapId = null, bool $relative = false): DataResponse {
+	public function placePhotos(array $paths, array $lats, array $lngs, bool $directory = false, ?int $myMapId = null, bool $relative = false): DataResponse {
 		$userFolder = $this->root->getUserFolder($this->userId);
 		if (!is_null($myMapId)) {
 			if ($directory) {
@@ -105,7 +106,7 @@ class PhotosController extends Controller {
 			}
 
 			$folder = $userFolder->getFirstNodeById($myMapId);
-			if (!($folder instanceof Folder)) {
+			if (!$folder instanceof Folder) {
 				return new DataResponse(statusCode: Http::STATUS_BAD_REQUEST);
 			}
 
@@ -113,7 +114,11 @@ class PhotosController extends Controller {
 			if ($relative) {
 				foreach ($paths as $key => $path) {
 					$photoFile = $folder->get($path);
-					$paths[$key] = $userFolder->getRelativePath($photoFile->getPath());
+					$path = $userFolder->getRelativePath($photoFile->getPath());
+					if ($path === null) {
+						return new DataResponse(statusCode: Http::STATUS_BAD_REQUEST);
+					}
+					$paths[$key] = $path;
 				}
 			} else {
 				// here the photo path is good, copy it in this map's folder if it's not already there
@@ -122,7 +127,11 @@ class PhotosController extends Controller {
 					// is the photo in this map's folder?
 					if ($folder->getFirstNodeById($photoFile->getId()) !== null) {
 						$copiedFile = $photoFile->copy($folder->getPath() . '/' . $photoFile->getName());
-						$paths[$key] = $userFolder->getRelativePath($copiedFile->getPath());
+						$path = $userFolder->getRelativePath($copiedFile->getPath());
+						if ($path === null) {
+							return new DataResponse(statusCode: Http::STATUS_BAD_REQUEST);
+						}
+						$paths[$key] = $path;
 					}
 				}
 			}

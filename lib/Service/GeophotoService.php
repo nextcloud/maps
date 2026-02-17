@@ -125,7 +125,7 @@ class GeophotoService {
 					continue;
 				}
 				$file = array_shift($files);
-	
+
 				if ($file === null) {
 					continue;
 				}

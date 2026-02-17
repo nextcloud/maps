@@ -268,8 +268,8 @@ class ExifGeoData extends \stdClass implements \JsonSerializable {
 	private function string2time(string $timestamp): ?int {
 		$result = null;
 		if (preg_match('#' . self::EXIF_TIME_REGEX . '#ui', $timestamp, $match)) {
-			$result =
-				strtotime("{$match['years']}-{$match['months']}-{$match['days']} {$match['hours']}:{$match['minutes']}:{$match['seconds']}")?:null;
+			$result
+				= strtotime("{$match['years']}-{$match['months']}-{$match['days']} {$match['hours']}:{$match['minutes']}:{$match['seconds']}")?:null;
 		}
 		return $result;
 	}

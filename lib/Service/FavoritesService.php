@@ -190,8 +190,8 @@ class FavoritesService {
 			$this->dbconnection->beginTransaction();
 			foreach ($favoriteList as $fav) {
 				if (
-					!isset($fav['lat']) or !is_numeric($fav['lat']) or
-					!isset($fav['lng']) or !is_numeric($fav['lng'])
+					!isset($fav['lat']) or !is_numeric($fav['lat'])
+					or !isset($fav['lng']) or !is_numeric($fav['lng'])
 				) {
 					continue;
 				} else {
@@ -299,8 +299,8 @@ class FavoritesService {
 	}
 
 	public function countFavorites($userId, $categoryList, $begin, $end) {
-		if ($categoryList === null or
-			(is_array($categoryList) and count($categoryList) === 0)
+		if ($categoryList === null
+			or (is_array($categoryList) and count($categoryList) === 0)
 		) {
 			return 0;
 		}
@@ -321,9 +321,9 @@ class FavoritesService {
 			);
 		}
 		// apply category restrictions if it's a non-empty array
-		if (!is_string($categoryList) and
-			is_array($categoryList) and
-			count($categoryList) > 0
+		if (!is_string($categoryList)
+			and is_array($categoryList)
+			and count($categoryList) > 0
 		) {
 			$or = $qb->expr()->orx();
 			foreach ($categoryList as $cat) {
@@ -405,8 +405,8 @@ class FavoritesService {
 				$currentFavorite['comment'] = '';
 			}
 			if (
-				array_key_exists('Location', $value['properties']) &&
-				array_key_exists('Address', $value['properties']['Location'])
+				array_key_exists('Location', $value['properties'])
+				&& array_key_exists('Address', $value['properties']['Location'])
 			) {
 				$currentFavorite['comment'] = $currentFavorite['comment'] . "\n" . $value['properties']['Location']['Address'];
 			}
@@ -579,9 +579,9 @@ class FavoritesService {
 				);
 			}
 			// apply category restrictions if it's a non-empty array
-			if (!is_string($categoryList) and
-				is_array($categoryList) and
-				count($categoryList) > 0
+			if (!is_string($categoryList)
+				and is_array($categoryList)
+				and count($categoryList) > 0
 			) {
 				$or = $qb->expr()->orx();
 				foreach ($categoryList as $cat) {
@@ -689,9 +689,9 @@ class FavoritesService {
 		while ($data = fread($fp, 4096000)) {
 			if (!xml_parse($xml_parser, $data, feof($fp))) {
 				$this->logger->error(
-					'Exception in ' . $name . ' parsing at line ' .
-					xml_get_current_line_number($xml_parser) . ' : ' .
-					xml_error_string(xml_get_error_code($xml_parser)),
+					'Exception in ' . $name . ' parsing at line '
+					. xml_get_current_line_number($xml_parser) . ' : '
+					. xml_error_string(xml_get_error_code($xml_parser)),
 					['app' => 'maps']
 				);
 				return 0;
@@ -794,9 +794,9 @@ class FavoritesService {
 		while ($data = fread($fp, 4096000)) {
 			if (!xml_parse($xml_parser, $data, feof($fp))) {
 				$this->logger->error(
-					'Exception in ' . $file->getName() . ' parsing at line ' .
-					xml_get_current_line_number($xml_parser) . ' : ' .
-					xml_error_string(xml_get_error_code($xml_parser)),
+					'Exception in ' . $file->getName() . ' parsing at line '
+					. xml_get_current_line_number($xml_parser) . ' : '
+					. xml_error_string(xml_get_error_code($xml_parser)),
 					['app' => 'maps']
 				);
 				return 0;

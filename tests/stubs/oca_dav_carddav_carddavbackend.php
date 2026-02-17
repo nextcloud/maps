@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /**
  * SPDX-FileCopyrightText: 2016-2024 Nextcloud GmbH and Nextcloud contributors
  * SPDX-FileCopyrightText: 2016 ownCloud, Inc.
@@ -7,6 +9,7 @@
  */
 namespace OCA\DAV\CardDAV;
 
+use Sabre\DAV\PropPatch;
 use OC\Search\Filter\DateTimeFilter;
 use OCA\DAV\Connector\Sabre\Principal;
 use OCA\DAV\DAV\Sharing\Backend;
@@ -35,11 +38,13 @@ use Sabre\VObject\Reader;
 
 class CardDavBackend implements BackendInterface, SyncSupport {
 	use TTransactional;
+
 	public const PERSONAL_ADDRESSBOOK_URI = 'contacts';
+
 	public const PERSONAL_ADDRESSBOOK_NAME = 'Contacts';
 
-	/** @var array properties to index */
-	public static array $indexProperties = [
+	/** @var string[] properties to index */
+    public static array $indexProperties = [
 		'BDAY', 'UID', 'N', 'FN', 'TITLE', 'ROLE', 'NOTE', 'NICKNAME',
 		'ORG', 'CATEGORIES', 'EMAIL', 'TEL', 'IMPP', 'ADR', 'URL', 'GEO',
 		'CLOUD', 'X-SOCIALPROFILE'];
@@ -93,9 +98,6 @@ class CardDavBackend implements BackendInterface, SyncSupport {
  {
  }
 
-	/**
-	 * @param int $addressBookId
-	 */
 	public function getAddressBookById(int $addressBookId): ?array
  {
  }
@@ -105,35 +107,33 @@ class CardDavBackend implements BackendInterface, SyncSupport {
  }
 
 	/**
-	 * Updates properties for an address book.
-	 *
-	 * The list of mutations is stored in a Sabre\DAV\PropPatch object.
-	 * To do the actual updates, you must tell this object which properties
-	 * you're going to process with the handle() method.
-	 *
-	 * Calling the handle method is like telling the PropPatch object "I
-	 * promise I can handle updating this property".
-	 *
-	 * Read the PropPatch documentation for more info and examples.
-	 *
-	 * @param string $addressBookId
-	 * @param \Sabre\DAV\PropPatch $propPatch
-	 * @return void
-	 */
-	public function updateAddressBook($addressBookId, \Sabre\DAV\PropPatch $propPatch)
+     * Updates properties for an address book.
+     *
+     * The list of mutations is stored in a Sabre\DAV\PropPatch object.
+     * To do the actual updates, you must tell this object which properties
+     * you're going to process with the handle() method.
+     *
+     * Calling the handle method is like telling the PropPatch object "I
+     * promise I can handle updating this property".
+     *
+     * Read the PropPatch documentation for more info and examples.
+     *
+     * @param string $addressBookId
+     * @return void
+     */
+    public function updateAddressBook($addressBookId, PropPatch $propPatch)
  {
  }
 
 	/**
-	 * Creates a new address book
-	 *
-	 * @param string $principalUri
-	 * @param string $url Just the 'basename' of the url.
-	 * @param array $properties
-	 * @return int
-	 * @throws BadRequest
-	 */
-	public function createAddressBook($principalUri, $url, array $properties)
+     * Creates a new address book
+     *
+     * @param string $principalUri
+     * @param string $url Just the 'basename' of the url.
+     * @return int
+     * @throws BadRequest
+     */
+    public function createAddressBook($principalUri, $url, array $properties)
  {
  }
 
@@ -187,48 +187,46 @@ class CardDavBackend implements BackendInterface, SyncSupport {
  }
 
 	/**
-	 * Returns a list of cards.
-	 *
-	 * This method should work identical to getCard, but instead return all the
-	 * cards in the list as an array.
-	 *
-	 * If the backend supports this, it may allow for some speed-ups.
-	 *
-	 * @param mixed $addressBookId
-	 * @param array $uris
-	 * @return array
-	 */
-	public function getMultipleCards($addressBookId, array $uris)
+     * Returns a list of cards.
+     *
+     * This method should work identical to getCard, but instead return all the
+     * cards in the list as an array.
+     *
+     * If the backend supports this, it may allow for some speed-ups.
+     *
+     * @param mixed $addressBookId
+     * @return array
+     */
+    public function getMultipleCards($addressBookId, array $uris)
  {
  }
 
 	/**
-	 * Creates a new card.
-	 *
-	 * The addressbook id will be passed as the first argument. This is the
-	 * same id as it is returned from the getAddressBooksForUser method.
-	 *
-	 * The cardUri is a base uri, and doesn't include the full path. The
-	 * cardData argument is the vcard body, and is passed as a string.
-	 *
-	 * It is possible to return an ETag from this method. This ETag is for the
-	 * newly created resource, and must be enclosed with double quotes (that
-	 * is, the string itself must contain the double quotes).
-	 *
-	 * You should only return the ETag if you store the carddata as-is. If a
-	 * subsequent GET request on the same card does not have the same body,
-	 * byte-by-byte and you did return an ETag here, clients tend to get
-	 * confused.
-	 *
-	 * If you don't return an ETag, you can just return null.
-	 *
-	 * @param mixed $addressBookId
-	 * @param string $cardUri
-	 * @param string $cardData
-	 * @param bool $checkAlreadyExists
-	 * @return string
-	 */
-	public function createCard($addressBookId, $cardUri, $cardData, bool $checkAlreadyExists = true)
+     * Creates a new card.
+     *
+     * The addressbook id will be passed as the first argument. This is the
+     * same id as it is returned from the getAddressBooksForUser method.
+     *
+     * The cardUri is a base uri, and doesn't include the full path. The
+     * cardData argument is the vcard body, and is passed as a string.
+     *
+     * It is possible to return an ETag from this method. This ETag is for the
+     * newly created resource, and must be enclosed with double quotes (that
+     * is, the string itself must contain the double quotes).
+     *
+     * You should only return the ETag if you store the carddata as-is. If a
+     * subsequent GET request on the same card does not have the same body,
+     * byte-by-byte and you did return an ETag here, clients tend to get
+     * confused.
+     *
+     * If you don't return an ETag, you can just return null.
+     *
+     * @param mixed $addressBookId
+     * @param string $cardUri
+     * @param string $cardData
+     * @return string
+     */
+    public function createCard($addressBookId, $cardUri, $cardData, bool $checkAlreadyExists = true)
  {
  }
 
@@ -340,14 +338,12 @@ class CardDavBackend implements BackendInterface, SyncSupport {
  }
 
 	/**
-	 * Adds a change record to the addressbookchanges table.
-	 *
-	 * @param mixed $addressBookId
-	 * @param string $objectUri
-	 * @param int $operation 1 = add, 2 = modify, 3 = delete
-	 * @return void
-	 */
-	protected function addChange(int $addressBookId, string $objectUri, int $operation): void
+     * Adds a change record to the addressbookchanges table.
+     *
+     * @param mixed $addressBookId
+     * @param int $operation 1 = add, 2 = modify, 3 = delete
+     */
+    protected function addChange(int $addressBookId, string $objectUri, int $operation): void
  {
  }
 
@@ -379,15 +375,9 @@ class CardDavBackend implements BackendInterface, SyncSupport {
  }
 
 	/**
-	 * Search contacts in all address-books accessible by a user
-	 *
-	 * @param string $principalUri
-	 * @param string $pattern
-	 * @param array $searchProperties
-	 * @param array $options
-	 * @return array
-	 */
-	public function searchPrincipalUri(string $principalUri, string $pattern, array $searchProperties, array $options = []): array
+     * Search contacts in all address-books accessible by a user
+     */
+    public function searchPrincipalUri(string $principalUri, string $pattern, array $searchProperties, array $options = []): array
  {
  }
 
@@ -475,13 +465,12 @@ class CardDavBackend implements BackendInterface, SyncSupport {
  }
 
 	/**
-	 * For shared address books the sharee is set in the ACL of the address book
-	 *
-	 * @param int $addressBookId
-	 * @param list<array{privilege: string, principal: string, protected: bool}> $acl
-	 * @return list<array{privilege: string, principal: string, protected: bool}>
-	 */
-	public function applyShareAcl(int $addressBookId, array $acl): array
+     * For shared address books the sharee is set in the ACL of the address book
+     *
+     * @param list<array{privilege: string, principal: string, protected: bool}> $acl
+     * @return list<array{privilege: string, principal: string, protected: bool}>
+     */
+    public function applyShareAcl(int $addressBookId, array $acl): array
  {
  }
 

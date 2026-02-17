@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /**
  * Nextcloud - maps
  *
@@ -9,7 +11,6 @@
  * @author Gergely Kovács 2021
  * @copyright Gergely Kovács 2021
  */
-
 namespace OCA\Maps\Helper;
 
 /**

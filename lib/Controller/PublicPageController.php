@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /**
  * Nextcloud - maps
  *
@@ -9,7 +11,6 @@
  * @authorVinzenz Rosenkranz <vinzenz.rosenkranz@gmail.com>
  * @copyright Vinzenz Rosenkranz 2017
  */
-
 namespace OCA\Maps\Controller;
 
 use OC\Security\CSP\ContentSecurityPolicy;
@@ -52,7 +53,7 @@ class PublicPageController extends AuthPublicShareController {
 	public function isValidToken(): bool {
 		try {
 			$this->share = $this->shareManager->getShareByToken($this->getToken());
-		} catch (ShareNotFound $e) {
+		} catch (ShareNotFound) {
 			return false;
 		}
 
@@ -99,7 +100,7 @@ class PublicPageController extends AuthPublicShareController {
 		// Check whether share exists
 		try {
 			$share = $this->shareManager->getShareByToken($this->getToken());
-		} catch (ShareNotFound $e) {
+		} catch (ShareNotFound) {
 			// The share does not exists, we do not emit an ShareLinkAccessedEvent
 			throw new NotFoundException();
 		}
@@ -116,7 +117,7 @@ class PublicPageController extends AuthPublicShareController {
 	 * @NoCSRFRequired
 	 */
 	public function showShare(): PublicTemplateResponse {
-		$shareNode = $this->getShareNode();
+		$this->getShareNode();
 
 		$this->eventDispatcher->dispatchTyped(new LoadSidebar());
 		$this->eventDispatcher->dispatchTyped(new LoadViewer());
@@ -231,6 +232,7 @@ class PublicPageController extends AuthPublicShareController {
 				if ($port && $port !== '') {
 					$cleanUrl .= ':' . $port;
 				}
+
 				$csp->addAllowedConnectDomain($cleanUrl);
 			}
 		}
@@ -239,6 +241,7 @@ class PublicPageController extends AuthPublicShareController {
 		$csp->addAllowedImageDomain('https://nominatim.openstreetmap.org');
 		// search and geocoder
 		$csp->addAllowedConnectDomain('https://nominatim.openstreetmap.org');
+
 		$response->setContentSecurityPolicy($csp);
 	}
 }

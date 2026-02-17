@@ -12,26 +12,11 @@ use OCP\Files\Search\ISearchComparison;
 /**
  * @psalm-import-type ParamValue from ISearchComparison
  */
-class SearchComparison implements ISearchComparison {
-	public function __construct(
-		private string $type,
-		private string $field,
-		/** @var ParamValue $value */
-		private \DateTime|int|string|bool|array $value,
-		private string $extra = ''
-	) {
-	}
-
-	/**
-	 * @return string
-	 */
+class SearchComparison implements ISearchComparison, \Stringable {
 	public function getType(): string
  {
  }
 
-	/**
-	 * @return string
-	 */
 	public function getField(): string
  {
  }
@@ -41,10 +26,9 @@ class SearchComparison implements ISearchComparison {
  }
 
 	/**
-	 * @return string
-	 * @since 28.0.0
-	 */
-	public function getExtra(): string
+     * @since 28.0.0
+     */
+    public function getExtra(): string
  {
  }
 
@@ -61,6 +45,7 @@ class SearchComparison implements ISearchComparison {
  }
 
 	public function __toString(): string
- {
- }
+    {
+        return '';
+    }
 }

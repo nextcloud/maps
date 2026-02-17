@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /**
  * Nextcloud - maps
  *
@@ -9,7 +11,6 @@
  * @authorVinzenz Rosenkranz <vinzenz.rosenkranz@gmail.com>
  * @copyright Vinzenz Rosenkranz 2017
  */
-
 namespace OCA\Maps\Controller;
 
 use OCA\Files\Event\LoadSidebar;
@@ -18,6 +19,7 @@ use OCA\Viewer\Event\LoadViewer;
 use OCP\AppFramework\Controller;
 use OCP\AppFramework\Http\Attribute\NoAdminRequired;
 use OCP\AppFramework\Http\Attribute\NoCSRFRequired;
+use OCP\AppFramework\Http\ContentSecurityPolicy;
 use OCP\AppFramework\Http\RedirectResponse;
 use OCP\AppFramework\Http\Response;
 use OCP\AppFramework\Http\TemplateResponse;
@@ -32,11 +34,11 @@ class PageController extends Controller {
 	public function __construct(
 		string $appName,
 		IRequest $request,
-		private ?string $userId,
-		private IEventDispatcher $eventDispatcher,
-		private IAppConfig $appConfig,
-		private IInitialState $initialState,
-		private IURLGenerator $urlGenerator,
+		private readonly ?string $userId,
+		private readonly IEventDispatcher $eventDispatcher,
+		private readonly IAppConfig $appConfig,
+		private readonly IInitialState $initialState,
+		private readonly IURLGenerator $urlGenerator,
 	) {
 		parent::__construct($appName, $request);
 	}
@@ -79,7 +81,7 @@ class PageController extends Controller {
 		$this->eventDispatcher->dispatchTyped(new LoadViewer());
 
 		$params = ['user' => $this->userId];
-		$this->initialState->provideInitialState('photos', $this->appConfig->getValueBool('photos', 'enabled', 'no') === 'yes');
+		$this->initialState->provideInitialState('photos', $this->appConfig->getValueBool('photos', 'enabled'));
 		$response = new TemplateResponse('maps', 'main', $params);
 
 		$this->addCsp($response);
@@ -94,7 +96,7 @@ class PageController extends Controller {
 	}
 
 	private function addCsp(Response $response): void {
-		$csp = new \OCP\AppFramework\Http\ContentSecurityPolicy();
+		$csp = new ContentSecurityPolicy();
 		// map tiles
 		$csp->addAllowedImageDomain('https://*.tile.openstreetmap.org');
 		$csp->addAllowedImageDomain('https://tile.openstreetmap.org');
@@ -133,15 +135,18 @@ class PageController extends Controller {
 				if ($port && $port !== '') {
 					$cleanUrl .= ':' . $port;
 				}
+
 				$csp->addAllowedConnectDomain($cleanUrl);
 			}
 		}
+
 		//$csp->addAllowedConnectDomain('http://192.168.0.66:5000');
 
 		// poi images
 		$csp->addAllowedImageDomain('https://nominatim.openstreetmap.org');
 		// search and geocoder
 		$csp->addAllowedConnectDomain('https://nominatim.openstreetmap.org');
+
 		$response->setContentSecurityPolicy($csp);
 	}
 }

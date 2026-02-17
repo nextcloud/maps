@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /**
  * Nextcloud - maps
  *
@@ -9,7 +11,6 @@
  * @author Piotr Bator <prbator@gmail.com>
  * @copyright Piotr Bator 2017
  */
-
 namespace OCA\Maps\DB;
 
 use OCP\AppFramework\Db\QBMapper;
@@ -105,9 +106,11 @@ class GeophotoMapper extends QBMapper {
 		if (!is_null($offset)) {
 			$qb->setFirstResult($offset);
 		}
+
 		if (!is_null($limit)) {
 			$qb->setMaxResults($limit);
 		}
+
 		return $this->findEntities($qb);
 	}
 
@@ -134,9 +137,11 @@ class GeophotoMapper extends QBMapper {
 		if (!is_null($offset)) {
 			$qb->setFirstResult($offset);
 		}
+
 		if (!is_null($limit)) {
 			$qb->setMaxResults($limit);
 		}
+
 		return array_reverse($this->findEntities($qb));
 	}
 

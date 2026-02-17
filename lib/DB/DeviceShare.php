@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /**
  * @copyright Copyright (c) 2019, Paul Schwörer <hello@paulschwoerer.de>
  *
@@ -21,7 +23,6 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-
 namespace OCA\Maps\DB;
 
 use OCP\AppFramework\Db\Entity;
@@ -29,18 +30,21 @@ use OCP\DB\Types;
 
 /**
  * @method string getToken()
- * @method string getDeviceId()
- * @method string getTimestampFrom()
- * @method string getTimestampTo()
- * @method string setToken(string $token)
- * @method string setDeviceId(int $deviceId)
- * @method string setTimestampFrom(int $timestampFrom)
- * @method string setTimestampTo(int $timestampTo)
+ * @method int getDeviceId()
+ * @method int getTimestampFrom()
+ * @method int getTimestampTo()
+ * @method void setToken(string $token)
+ * @method void setDeviceId(int $deviceId)
+ * @method void setTimestampFrom(int $timestampFrom)
+ * @method void setTimestampTo(int $timestampTo)
  */
 class DeviceShare extends Entity {
 	public $token;
+
 	public $deviceId;
+
 	public $timestampFrom;
+
 	public $timestampTo;
 
 	public function __construct() {

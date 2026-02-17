@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /**
  * Nextcloud - maps
  *
@@ -9,9 +11,9 @@
  * @author Julien Veyssier <eneiluj@posteo.net>
  * @copyright Julien Veyssier 2019
  */
-
 namespace OCA\Maps\Controller;
 
+use OC\User\NoUserException;
 use OCA\DAV\CardDAV\CardDavBackend;
 use OCA\Maps\Service\AddressService;
 use OCP\AppFramework\Controller;
@@ -30,6 +32,7 @@ use OCP\IAvatarManager;
 use OCP\IDBConnection;
 use OCP\IRequest;
 use OCP\IURLGenerator;
+use Sabre\VObject\Document;
 use Sabre\VObject\Property\Text;
 use Sabre\VObject\Reader;
 
@@ -39,36 +42,38 @@ class ContactsController extends Controller {
 	public function __construct(
 		string $appName,
 		IRequest $request,
-		private IDBConnection $dbconnection,
-		private IManager $contactsManager,
-		private AddressService $addressService,
-		private string $userId,
-		private CardDavBackend $cdBackend,
-		private IAvatarManager $avatarManager,
-		private IRootFolder $root,
-		private IURLGenerator $urlGenerator,
+		private readonly IDBConnection $dbconnection,
+		private readonly IManager $contactsManager,
+		private readonly AddressService $addressService,
+		private readonly string $userId,
+		private readonly CardDavBackend $cdBackend,
+		private readonly IAvatarManager $avatarManager,
+		private readonly IRootFolder $root,
+		private readonly IURLGenerator $urlGenerator,
 	) {
 		parent::__construct($appName, $request);
 	}
+
 	/**
 	 * Converts a geo string as a float array
 	 * @param string $geo formatted as "lat;lon"
 	 * @return float[] array containing [lat;lon]
 	 */
 	private function geoAsFloatArray(string $geo): array {
-		return array_map(static fn ($value): float => floatval($value), explode(';', $geo));
+		return array_map(floatval(...), explode(';', $geo));
 	}
 
 	/**
 	 * check if geographical address is duplicated
 	 * @param list<array> $prevGeo containing contact's previous different addresses
-	 * @param array $geo contact's address to check
+	 * @param float[] $geo contact's address to check
 	 * @return integer : -1 if address is new, index of duplicated address in other cases
 	 */
 	private function isNewAddress(array $prevGeo, array $geo): int {
-		if (empty($geo)) { // Address not converted to geo coords
+		if ($geo === []) { // Address not converted to geo coords
 			return -1;
 		}
+
 		$result = -1;
 		$counter = 0;
 		foreach ($prevGeo as $prev) {
@@ -76,22 +81,25 @@ class ContactsController extends Controller {
 				$result = $counter;
 				break;
 			}
-			$counter++;
+
+			++$counter;
 		}
+
 		return $result;
 	}
 
 	/**
 	 * Get distance between two geo points.
 	 *
-	 * @param array $coordsA GPS coordinates of first point
-	 * @param array $coordsB GPS coordinates of second point
+	 * @param array<int, mixed> $coordsA GPS coordinates of first point
+	 * @param array<int, mixed> $coordsB GPS coordinates of second point
 	 * @return float Distance in meters between these two points
 	 */
-	private function getDistance(array $coordsA, array $coordsB) {
-		if (empty($coordsA) || empty($coordsB)) {
+	private function getDistance(array $coordsA, array $coordsB): float {
+		if ($coordsA === [] || $coordsB === []) {
 			return 9E999;
 		}
+
 		$latA = deg2rad($coordsA[0]);
 		$lonA = deg2rad($coordsA[1]);
 		$latB = deg2rad($coordsB[0]);
@@ -108,7 +116,7 @@ class ContactsController extends Controller {
 	 * Get contacts with coordinates
 	 *
 	 * @throws \OCP\Files\NotPermittedException
-	 * @throws \OC\User\NoUserException
+	 * @throws NoUserException
 	 */
 	#[NoAdminRequired]
 	public function getContacts(?int $myMapId = null): DataResponse {
@@ -120,16 +128,14 @@ class ContactsController extends Controller {
 
 			foreach ($contacts as $c) {
 				$addressBookUri = $addressBooks[$c['addressbook-key']]->getUri();
-				$uid = trim($c['UID']);
+				$uid = trim((string)$c['UID']);
 
 				$url = $this->directUrlToContact($uid, $addressBookUri);
 
 				// we don't give users, just contacts
-				if (strcmp($c['URI'], 'Database:' . $c['UID'] . '.vcf') !== 0
-					and strcmp($uid, $userid) !== 0
-				) {
+				if (strcmp((string)$c['URI'], 'Database:' . $c['UID'] . '.vcf') !== 0 && strcmp($uid, $userid) !== 0) {
 					// if the contact has a geo attibute use it
-					if (key_exists('GEO', $c)) {
+					if (array_key_exists('GEO', $c)) {
 						$geo = $c['GEO'];
 						if (is_string($geo) && strlen($geo) > 1) {
 							$result[] = [
@@ -169,6 +175,7 @@ class ContactsController extends Controller {
 							}
 						}
 					}
+
 					// anyway try to get it from the address
 					$card = $this->cdBackend->getContact($c['addressbook-key'], $c['URI']);
 					if ($card) {
@@ -184,10 +191,11 @@ class ContactsController extends Controller {
 								if (isset($adr->parameters()['TYPE'])) {
 									$adrtype = $adr->parameters()['TYPE']->getValue();
 								}
+
 								if (strlen($geo) > 1) {
 									if ($duplicatedIndex < 0) {
-										array_push($prevGeo, $geof);
-										array_push($prevRes, count($result)); // Add index of new item so that we can update the ADRTYPE in case of duplicate address
+										$prevGeo[] = $geof;
+										$prevRes[] = count($result); // Add index of new item so that we can update the ADRTYPE in case of duplicate address
 										$result[] = [
 											'FN' => $c['FN'] ?? $this->N2FN($c['N']) ?? '???',
 											'URI' => $c['URI'],
@@ -205,7 +213,7 @@ class ContactsController extends Controller {
 										];
 									} else {
 										// Concatenate AddressType to the corresponding record
-										array_push($result[$prevRes[$duplicatedIndex]]['ADRTYPE'], $adrtype);
+										$result[$prevRes[$duplicatedIndex]]['ADRTYPE'][] = $adrtype;
 										$result[$prevRes[$duplicatedIndex]]['isUpdateable'] = false;
 										$result[$prevRes[$duplicatedIndex]]['isDeletable'] = false;
 										$result[$prevRes[$duplicatedIndex]]['isShareable'] = false;
@@ -216,71 +224,77 @@ class ContactsController extends Controller {
 					}
 				}
 			}
-			return new DataResponse($result);
-		} else {
-			//Fixme add contacts for my-maps
-			$result = [];
-			$userFolder = $this->root->getUserFolder($this->userId);
-			$folder = $userFolder->getFirstNodeById($myMapId);
-			if (!($folder instanceof Folder)) {
-				return new DataResponse($result);
-			}
-			$files = $folder->search('.vcf');
-			foreach ($files as $file) {
-				if (!($file instanceof File)) {
-					continue;
-				}
-				//				$cards = explode("END:VCARD\r\n", $file->getContent());
-				$cards = [$file->getContent()];
-				foreach ($cards as $card) {
-					$vcard = Reader::read($card . "END:VCARD\r\n");
-					if (isset($vcard->GEO)) {
-						$geo = $vcard->GEO;
-						if (is_string($geo) && strlen($geo->getValue()) > 1) {
-							$result[] = $this->vCardToArray($file, $vcard, $geo->getValue());
-						} elseif (is_countable($geo) && count($geo) > 0 && is_iterable($geo)) {
-							$prevGeo = '';
-							foreach ($geo as $g) {
-								if (strcmp($prevGeo, $g->getValue()) != 0) {
-									$prevGeo = $g->getValue();
-									if (strlen($g->getValue()) > 1) {
-										$result[] = $this->vCardToArray($file, $vcard, $g->getValue());
-									}
-								}
-							}
-						}
-					}
-					if (isset($vcard->ADR) && count($vcard->ADR) > 0) {
-						$prevGeo = [];
-						$prevRes = [];
-						foreach ($vcard->ADR as $adr) {
-							$geo = $this->addressService->addressToGeo($adr->getValue(), $file->getId());
-							$geof = $this->geoAsFloatArray($geo);
-							$duplicatedIndex = $this->isNewAddress($prevGeo, $geof);
-							//var_dump($adr->parameters()['TYPE']->getValue());
-							$adrtype = '';
-							if (isset($adr->parameters()['TYPE'])) {
-								$adrtype = $adr->parameters()['TYPE']->getValue();
-							}
-							if (strlen($geo) > 1) {
-								if ($duplicatedIndex < 0) {
-									array_push($prevGeo, $geof);
-									array_push($prevRes, count($result)); // Add index of new item so that we can update the ADRTYPE in case of duplicate address
-									$result[] = $this->vCardToArray($file, $vcard, $geo, $adrtype, $adr->getValue(), $file->getId());
-								} else {
-									// Concatenate AddressType to the corresponding record
-									array_push($result[$prevRes[$duplicatedIndex]]['ADRTYPE'], $adrtype);
-									$result[$prevRes[$duplicatedIndex]]['isUpdateable'] = false;
-									$result[$prevRes[$duplicatedIndex]]['isDeletable'] = false;
-									$result[$prevRes[$duplicatedIndex]]['isShareable'] = false;
-								}
-							}
-						}
-					}
-				}
-			}
+
 			return new DataResponse($result);
 		}
+
+		//Fixme add contacts for my-maps
+		$result = [];
+		$userFolder = $this->root->getUserFolder($this->userId);
+		$folder = $userFolder->getFirstNodeById($myMapId);
+		if (!($folder instanceof Folder)) {
+			return new DataResponse($result);
+		}
+
+		$files = $folder->search('.vcf');
+		foreach ($files as $file) {
+			if (!($file instanceof File)) {
+				continue;
+			}
+
+			//				$cards = explode("END:VCARD\r\n", $file->getContent());
+			$cards = [$file->getContent()];
+			foreach ($cards as $card) {
+				$vcard = Reader::read($card . "END:VCARD\r\n");
+				if (isset($vcard->GEO)) {
+					$geo = $vcard->GEO;
+					if (is_string($geo) && strlen($geo->getValue()) > 1) {
+						$result[] = $this->vCardToArray($file, $vcard, $geo->getValue());
+					} elseif (is_countable($geo) && count($geo) > 0 && is_iterable($geo)) {
+						$prevGeo = '';
+						foreach ($geo as $g) {
+							if (strcmp((string)$prevGeo, (string)$g->getValue()) !== 0) {
+								$prevGeo = $g->getValue();
+								if (strlen((string)$g->getValue()) > 1) {
+									$result[] = $this->vCardToArray($file, $vcard, $g->getValue());
+								}
+							}
+						}
+					}
+				}
+
+				if (isset($vcard->ADR) && count($vcard->ADR) > 0) {
+					$prevGeo = [];
+					$prevRes = [];
+					foreach ($vcard->ADR as $adr) {
+						$geo = $this->addressService->addressToGeo($adr->getValue(), $file->getId());
+						$geof = $this->geoAsFloatArray($geo);
+						$duplicatedIndex = $this->isNewAddress($prevGeo, $geof);
+						//var_dump($adr->parameters()['TYPE']->getValue());
+						$adrtype = '';
+						if (isset($adr->parameters()['TYPE'])) {
+							$adrtype = $adr->parameters()['TYPE']->getValue();
+						}
+
+						if (strlen($geo) > 1) {
+							if ($duplicatedIndex < 0) {
+								$prevGeo[] = $geof;
+								$prevRes[] = count($result); // Add index of new item so that we can update the ADRTYPE in case of duplicate address
+								$result[] = $this->vCardToArray($file, $vcard, $geo, $adrtype, $adr->getValue(), $file->getId());
+							} else {
+								// Concatenate AddressType to the corresponding record
+								$result[$prevRes[$duplicatedIndex]]['ADRTYPE'][] = $adrtype;
+								$result[$prevRes[$duplicatedIndex]]['isUpdateable'] = false;
+								$result[$prevRes[$duplicatedIndex]]['isDeletable'] = false;
+								$result[$prevRes[$duplicatedIndex]]['isShareable'] = false;
+							}
+						}
+					}
+				}
+			}
+		}
+
+		return new DataResponse($result);
 	}
 
 	private function directUrlToContact(string $contactUid, string $addressBookUri): string {
@@ -292,16 +306,11 @@ class ContactsController extends Controller {
 	}
 
 	/**
-	 * @param \Sabre\VObject\Document $vcard
-	 * @param string $geo
-	 * @param string|null $adrtype
-	 * @param string|null $adr
-	 * @param int|null $fileId
-	 * @return array
 	 * @throws NotFoundException
 	 * @throws \OCP\Files\InvalidPathException
+	 * @return array<string, mixed>
 	 */
-	private function vCardToArray(Node $file, \Sabre\VObject\Document $vcard, string $geo, ?string $adrtype = null, ?string $adr = null, ?int $fileId = null): array {
+	private function vCardToArray(Node $file, Document $vcard, string $geo, ?string $adrtype = null, ?string $adr = null, ?int $fileId = null): array {
 		$FNArray = $vcard->FN ? $vcard->FN->getJsonValue() : [];
 		$fn = array_shift($FNArray);
 		$NArray = $vcard->N ? $vcard->N->getJsonValue() : [];
@@ -314,15 +323,12 @@ class ContactsController extends Controller {
 			}
 
 		}
+
 		$UIDArray = $vcard->UID->getJsonValue();
 		$uid = array_shift($UIDArray);
 		$groups = $vcard->CATEGORIES;
-		if (!is_null($groups)) {
-			$groups = $groups->getValue();
-		} else {
-			$groups = '';
-		}
-		$result = [
+		$groups = is_null($groups) ? '' : $groups->getValue();
+		return [
 			'FN' => $fn ?? $n ?? '???',
 			'UID' => $uid,
 			'HAS_PHOTO' => (isset($vcard->PHOTO) && $vcard->PHOTO !== null),
@@ -335,24 +341,19 @@ class ContactsController extends Controller {
 			'isDeletable' => $file->isDeletable(),
 			'isUpdateable' => $file->isUpdateable(),
 		];
-		return $result;
 	}
 
-	/**
-	 * @param string $n
-	 * @return string|null
-	 */
 	private function N2FN(string $n): ?string {
-		if ($n) {
+		if ($n !== '' && $n !== '0') {
 			$spl = explode($n, ';');
 			if (count($spl) >= 4) {
 				return $spl[3] . ' ' . $spl[1] . ' ' . $spl[0];
-			} else {
-				return null;
 			}
-		} else {
+
 			return null;
 		}
+
+		return null;
 	}
 
 	/**
@@ -366,11 +367,9 @@ class ContactsController extends Controller {
 		$result = [];
 		$userid = trim($this->userId);
 		foreach ($contacts as $c) {
-			$uid = trim($c['UID']);
+			$uid = trim((string)$c['UID']);
 			// we don't give users, just contacts
-			if (strcmp($c['URI'], 'Database:' . $c['UID'] . '.vcf') !== 0
-				and strcmp($uid, $userid) !== 0
-			) {
+			if (strcmp((string)$c['URI'], 'Database:' . $c['UID'] . '.vcf') !== 0 && strcmp($uid, $userid) !== 0) {
 				$addressBookUri = $addressBooks[$c['addressbook-key']]->getUri();
 				$result[] = [
 					'FN' => $c['FN'] ?? $this->N2FN($c['N']) ?? '???',
@@ -384,145 +383,136 @@ class ContactsController extends Controller {
 				];
 			}
 		}
+
 		return new DataResponse($result);
 	}
 
 	/**
 	 * @throws \OCP\DB\Exception
 	 * @throws \OCP\Files\NotPermittedException
-	 * @throws \OC\User\NoUserException
+	 * @throws NoUserException
 	 */
 	#[NoAdminRequired]
-	public function placeContact(
-		int $bookid,
-		string $uri,
-		string $uid,
-		?float $lat,
-		?float $lng,
-		string $attraction = '',
-		string $house_number = '',
-		string $road = '',
-		string $postcode = '',
-		string $city = '',
-		string $state = '',
-		string $country = '',
-		string $type = '',
-		?string $address_string = null,
-		?int $fileId = null,
-		?int $myMapId = null): DataResponse {
+	public function placeContact(int $bookid, string $uri, string $uid, ?float $lat, ?float $lng, string $attraction = '', string $house_number = '', string $road = '', string $postcode = '', string $city = '', string $state = '', string $country = '', string $type = '', ?string $address_string = null, ?int $fileId = null, ?int $myMapId = null): DataResponse {
 		if (is_null($myMapId)) {
 			// do not edit 'user' contact even myself
-			if (strcmp($uri, 'Database:' . $uid . '.vcf') === 0
-				or strcmp($uid, $this->userId) === 0
-			) {
-				return new DataResponse('Can\'t edit users', 400);
-			} else {
-				// check addressbook permissions
-				if (!$this->addressBookIsReadOnly($bookid)) {
-					if ($lat !== null && $lng !== null) {
-						// we set the geo tag
-						if (!$attraction && !$house_number && !$road && !$postcode && !$city && !$state && !$country && !$address_string) {
-							$result = $this->contactsManager->createOrUpdate(['URI' => $uri, 'GEO' => $lat . ';' . $lng], (string)$bookid);
-						}
-						// we set the address
-						elseif (!$address_string) {
-							$street = trim($attraction . ' ' . $house_number . ' ' . $road);
-							$stringAddress = ';;' . $street . ';' . $city . ';' . $state . ';' . $postcode . ';' . $country;
-							// set the coordinates in the DB
-							$lat = floatval($lat);
-							$lng = floatval($lng);
-							$this->setAddressCoordinates($lat, $lng, $stringAddress, $uri);
-							// set the address in the vcard
-							$card = $this->cdBackend->getContact($bookid, $uri);
-							if ($card) {
-								$vcard = Reader::read($card['carddata']);
-								;
-								$vcard->add(new Text($vcard, 'ADR', ['', '', $street, $city, $state, $postcode, $country], ['TYPE' => $type]));
-								$result = $this->cdBackend->updateCard($bookid, $uri, $vcard->serialize());
-							}
-						} else {
-							$card = $this->cdBackend->getContact($bookid, $uri);
-							if ($card) {
-								$vcard = Reader::read($card['carddata']);
-								;
-								$vcard->add(new Text($vcard, 'ADR', explode(';', $address_string), ['TYPE' => $type]));
-								$result = $this->cdBackend->updateCard($bookid, $uri, $vcard->serialize());
-							}
-						}
-					} else {
-						// TODO find out how to remove a property
-						// following does not work properly
-						$result = $this->contactsManager->createOrUpdate(['URI' => $uri, 'GEO' => null], (string)$bookid);
-					}
-					return new DataResponse('EDITED');
-				} else {
-					return new DataResponse('READONLY', 400);
-				}
+			if (strcmp($uri, 'Database:' . $uid . '.vcf') === 0 || strcmp($uid, $this->userId) === 0) {
+				return new DataResponse("Can't edit users", 400);
 			}
-		} else {
-			$userFolder = $this->root->getUserFolder($this->userId);
-			$mapsFolder = $userFolder->getFirstNodeById($myMapId);
-			if (!($mapsFolder instanceof Folder)) {
-				return new DataResponse('MAP NOT FOUND', 404);
-			}
-			if (is_null($fileId)) {
-				$card = $this->cdBackend->getContact($bookid, $uri);
-				try {
-					/** @var File $file */
-					$file = $mapsFolder->get($uri);
-				} catch (NotFoundException $e) {
-					if (!$mapsFolder->isCreatable()) {
-						return new DataResponse('CONTACT NOT WRITABLE', 400);
-					}
-					$file = $mapsFolder->newFile($uri);
-				}
-			} else {
-				$file = $mapsFolder->getFirstNodeById($fileId);
-				if (!($file instanceof File)) {
-					return new DataResponse('CONTACT NOT FOUND', 404);
-				}
-				$card = $file->getContent();
-			}
-			if (!$file->isUpdateable()) {
-				return new DataResponse('CONTACT NOT WRITABLE', 400);
-			}
-			if ($card) {
-				$vcard = Reader::read($card['carddata']);
+
+			// do not edit 'user' contact even myself
+			if (!$this->addressBookIsReadOnly($bookid)) {
 				if ($lat !== null && $lng !== null) {
+					// we set the geo tag
 					if (!$attraction && !$house_number && !$road && !$postcode && !$city && !$state && !$country && !$address_string) {
-						$vcard->add('GEO', $lat . ';' . $lng);
-					} elseif (!$address_string) {
+						$result = $this->contactsManager->createOrUpdate(['URI' => $uri, 'GEO' => $lat . ';' . $lng], (string)$bookid);
+					}
+					// we set the address
+					elseif (!$address_string) {
 						$street = trim($attraction . ' ' . $house_number . ' ' . $road);
 						$stringAddress = ';;' . $street . ';' . $city . ';' . $state . ';' . $postcode . ';' . $country;
 						// set the coordinates in the DB
 						$lat = floatval($lat);
 						$lng = floatval($lng);
 						$this->setAddressCoordinates($lat, $lng, $stringAddress, $uri);
-						$vcard = Reader::read($card['carddata']);
-						$vcard->add('ADR', ['', '', $street, $city, $state, $postcode, $country], ['TYPE' => $type]);
+						// set the address in the vcard
+						$card = $this->cdBackend->getContact($bookid, $uri);
+						if ($card) {
+							$vcard = Reader::read($card['carddata']);
+							;
+							$vcard->add(new Text($vcard, 'ADR', ['', '', $street, $city, $state, $postcode, $country], ['TYPE' => $type]));
+							$result = $this->cdBackend->updateCard($bookid, $uri, $vcard->serialize());
+						}
 					} else {
-						$stringAddress = $address_string;
-						// set the coordinates in the DB
-						$lat = floatval($lat);
-						$lng = floatval($lng);
-						$this->setAddressCoordinates($lat, $lng, $stringAddress, $uri);
-						$vcard = Reader::read($card['carddata']);
-						$vcard->add('ADR', explode(';', $address_string), ['TYPE' => $type]);
+						$card = $this->cdBackend->getContact($bookid, $uri);
+						if ($card) {
+							$vcard = Reader::read($card['carddata']);
+							;
+							$vcard->add(new Text($vcard, 'ADR', explode(';', $address_string), ['TYPE' => $type]));
+							$result = $this->cdBackend->updateCard($bookid, $uri, $vcard->serialize());
+						}
 					}
 				} else {
-					$vcard->remove('GEO');
+					// TODO find out how to remove a property
+					// following does not work properly
+					$result = $this->contactsManager->createOrUpdate(['URI' => $uri, 'GEO' => null], (string)$bookid);
 				}
-				$file->putContent($vcard->serialize());
+
+				// check addressbook permissions
 				return new DataResponse('EDITED');
 			}
-			return new DataResponse('CONTACT NOT FOUND', 404);
+
+			return new DataResponse('READONLY', 400);
 		}
 
+		$userFolder = $this->root->getUserFolder($this->userId);
+		$mapsFolder = $userFolder->getFirstNodeById($myMapId);
+		if (!($mapsFolder instanceof Folder)) {
+			return new DataResponse('MAP NOT FOUND', 404);
+		}
+
+		if (is_null($fileId)) {
+			$card = $this->cdBackend->getContact($bookid, $uri);
+			try {
+				/** @var File $file */
+				$file = $mapsFolder->get($uri);
+			} catch (NotFoundException) {
+				if (!$mapsFolder->isCreatable()) {
+					return new DataResponse('CONTACT NOT WRITABLE', 400);
+				}
+
+				$file = $mapsFolder->newFile($uri);
+			}
+		} else {
+			$file = $mapsFolder->getFirstNodeById($fileId);
+			if (!($file instanceof File)) {
+				return new DataResponse('CONTACT NOT FOUND', 404);
+			}
+
+			$card = $file->getContent();
+		}
+
+		if (!$file->isUpdateable()) {
+			return new DataResponse('CONTACT NOT WRITABLE', 400);
+		}
+
+		if ($card) {
+			$vcard = Reader::read($card['carddata']);
+			if ($lat !== null && $lng !== null) {
+				if (!$attraction && !$house_number && !$road && !$postcode && !$city && !$state && !$country && !$address_string) {
+					$vcard->add('GEO', $lat . ';' . $lng);
+				} elseif (!$address_string) {
+					$street = trim($attraction . ' ' . $house_number . ' ' . $road);
+					$stringAddress = ';;' . $street . ';' . $city . ';' . $state . ';' . $postcode . ';' . $country;
+					// set the coordinates in the DB
+					$lat = floatval($lat);
+					$lng = floatval($lng);
+					$this->setAddressCoordinates($lat, $lng, $stringAddress, $uri);
+					$vcard = Reader::read($card['carddata']);
+					$vcard->add('ADR', ['', '', $street, $city, $state, $postcode, $country], ['TYPE' => $type]);
+				} else {
+					$stringAddress = $address_string;
+					// set the coordinates in the DB
+					$lat = floatval($lat);
+					$lng = floatval($lng);
+					$this->setAddressCoordinates($lat, $lng, $stringAddress, $uri);
+					$vcard = Reader::read($card['carddata']);
+					$vcard->add('ADR', explode(';', $address_string), ['TYPE' => $type]);
+				}
+			} else {
+				$vcard->remove('GEO');
+			}
+
+			$file->putContent($vcard->serialize());
+			return new DataResponse('EDITED');
+		}
+
+		return new DataResponse('CONTACT NOT FOUND', 404);
 	}
 
 	/**
 	 * @throws \OCP\Files\NotPermittedException
-	 * @throws \OC\User\NoUserException
+	 * @throws NoUserException
 	 */
 	#[NoAdminRequired]
 	public function addContactToMap(int $bookid, string $uri, int $myMapId, ?int $fileId = null): DataResponse {
@@ -531,15 +521,17 @@ class ContactsController extends Controller {
 		if (!($mapsFolder instanceof Folder)) {
 			return new DataResponse('MAP NOT FOUND', 404);
 		}
+
 		if (is_null($fileId)) {
 			$card = $this->cdBackend->getContact($bookid, $uri);
 			try {
 				/** @var File $file */
 				$file = $mapsFolder->get($uri);
-			} catch (NotFoundException $e) {
+			} catch (NotFoundException) {
 				if (!$mapsFolder->isCreatable()) {
 					return new DataResponse('CONTACT NOT WRITABLE', 400);
 				}
+
 				$file = $mapsFolder->newFile($uri);
 			}
 		} else {
@@ -547,16 +539,20 @@ class ContactsController extends Controller {
 			if (!($file instanceof File)) {
 				return new DataResponse('CONTACT NOT FOUND', 404);
 			}
+
 			$card = $file->getContent();
 		}
+
 		if (!$file->isUpdateable()) {
 			return new DataResponse('CONTACT NOT WRITABLE', 400);
 		}
+
 		if ($card) {
 			$vcard = Reader::read($card['carddata']);
 			$file->putContent($vcard->serialize());
 			return new DataResponse('DONE');
 		}
+
 		return new DataResponse('CONTACT NOT FOUND', 404);
 	}
 
@@ -564,9 +560,10 @@ class ContactsController extends Controller {
 		$userBooks = $this->cdBackend->getAddressBooksForUser('principals/users/' . $this->userId);
 		foreach ($userBooks as $book) {
 			if ($book['id'] === $bookid) {
-				return (isset($book['{http://owncloud.org/ns}read-only']) and $book['{http://owncloud.org/ns}read-only']);
+				return (isset($book['{http://owncloud.org/ns}read-only']) && $book['{http://owncloud.org/ns}read-only']);
 			}
 		}
+
 		return true;
 	}
 
@@ -577,9 +574,10 @@ class ContactsController extends Controller {
 		$booksReadOnly = [];
 		$userBooks = $this->cdBackend->getAddressBooksForUser('principals/users/' . $this->userId);
 		foreach ($userBooks as $book) {
-			$ro = (isset($book['{http://owncloud.org/ns}read-only']) and $book['{http://owncloud.org/ns}read-only']);
+			$ro = (isset($book['{http://owncloud.org/ns}read-only']) && $book['{http://owncloud.org/ns}read-only']);
 			$booksReadOnly[$book['id']] = $ro;
 		}
+
 		return $booksReadOnly;
 	}
 
@@ -588,7 +586,7 @@ class ContactsController extends Controller {
 	 */
 	private function setAddressCoordinates(float $lat, float $lng, string $adr, string $uri): void {
 		$qb = $this->dbconnection->getQueryBuilder();
-		$adr_norm = strtolower(preg_replace('/\s+/', '', $adr));
+		$adr_norm = strtolower((string)preg_replace('/\s+/', '', $adr));
 
 		$qb->select('id')
 			->from('maps_address_geo')
@@ -663,14 +661,15 @@ class ContactsController extends Controller {
 						}
 					}
 				}
+
 				$this->cdBackend->updateCard($bookid, $uri, $vcard->serialize());
 				// no need to cleanup db here, it will be done when catching vcard change hook
 				return new DataResponse('DELETED');
-			} else {
-				return new DataResponse('READONLY', 400);
 			}
-		} else {
-			return new DataResponse('FAILED', 400);
+
+			return new DataResponse('READONLY', 400);
 		}
+
+		return new DataResponse('FAILED', 400);
 	}
 }

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /**
  * SPDX-FileCopyrightText: 2016-2024 Nextcloud GmbH and Nextcloud contributors
  * SPDX-FileCopyrightText: 2016 ownCloud, Inc.
@@ -11,16 +13,14 @@ use Icewind\Streams\CallbackWrapper;
 use Psr\Log\LoggerInterface;
 
 class ZIP extends Archive {
-	public function __construct(string $source)
- {
- }
+	public function __construct()
+    {
+    }
 
 	/**
-	 * add an empty folder to the archive
-	 * @param string $path
-	 * @return bool
-	 */
-	public function addFolder(string $path): bool
+     * add an empty folder to the archive
+     */
+    public function addFolder(string $path): bool
  {
  }
 

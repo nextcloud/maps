@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /**
  * @copyright Copyright (c) 2024 Arne Hamann <git@arne.email>
  *
@@ -21,22 +23,19 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  *
  */
-
 namespace OCA\Maps\Helper;
 
 use RuntimeException;
 
 /**
  * function remove_utf8_bom
- *
- * @param string $text
- * @return string
  */
 function remove_utf8_bom(string $text): string {
 	$bom = pack('H*', 'EFBBBF');
-	$text = preg_replace("/^$bom/", '', $text);
+	$text = preg_replace(sprintf('/^%s/', $bom), '', $text);
 	if ($text === null) {
 		throw new RuntimeException(preg_last_error_msg());
 	}
+
 	return $text;
 }

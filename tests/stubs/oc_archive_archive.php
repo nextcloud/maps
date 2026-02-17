@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /**
  * SPDX-FileCopyrightText: 2016-2024 Nextcloud GmbH and Nextcloud contributors
  * SPDX-FileCopyrightText: 2016 ownCloud, Inc.
@@ -50,11 +52,9 @@ abstract class Archive {
  }
 
 	/**
-	 * get the files in a folder
-	 * @param string $path
-	 * @return array
-	 */
-	abstract public function getFolder(string $path): array
+     * get the files in a folder
+     */
+    abstract public function getFolder(string $path): array
  {
  }
 

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /**
  * @copyright Copyright (c) 2019, Paul Schwörer <hello@paulschwoerer.de>
  *
@@ -21,13 +23,12 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-
 namespace OCA\Maps\Controller;
 
-use OC\AppFramework\Http;
 use OCA\Maps\AppInfo\Application;
 use OCA\Maps\DB\FavoriteShareMapper;
 use OCA\Maps\Service\FavoritesService;
+use OCP\AppFramework\Http;
 use OCP\Files\IRootFolder;
 use OCP\IDBConnection;
 use OCP\IRequest;
@@ -38,9 +39,11 @@ use OCP\Server;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
 
-class PublicFavoritesApiControllerTest extends TestCase {
+final class PublicFavoritesApiControllerTest extends TestCase {
 	private PublicFavoritesApiController $publicFavoritesApiController;
+
 	private FavoritesService $favoritesService;
+
 	private FavoriteShareMapper $favoriteShareMapper;
 
 	protected function setUp(): void {
@@ -106,7 +109,7 @@ class PublicFavoritesApiControllerTest extends TestCase {
 		$this->assertEquals($categoryName, $data['share']->getCategory());
 		$this->assertEquals($share->getToken(), $data['share']->getToken());
 
-		$this->assertEquals(1, count($data['favorites']));
+		$this->assertCount(1, $data['favorites']);
 
 		$el = $data['favorites'][0];
 		$this->assertEquals('Test1', $el['name']);

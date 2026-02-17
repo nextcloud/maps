@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /**
  * Nextcloud - maps
  *
@@ -9,7 +11,6 @@
  * @author Piotr Bator <prbator@gmail.com>
  * @copyright Piotr Bator 2017
  */
-
 namespace OCA\Maps\Hooks;
 
 use OC\Files\Filesystem;
@@ -19,7 +20,10 @@ use OCP\Files\File;
 use OCP\Files\Folder;
 use OCP\Files\IRootFolder;
 use OCP\Files\Node;
+use OCP\IUserSession;
 use OCP\Lock\ILockingProvider;
+use OCP\Server;
+use OCP\Share;
 use OCP\Share\IShare;
 use OCP\Util;
 use function OCP\Log\logger;
@@ -30,20 +34,19 @@ use function OCP\Log\logger;
 class FileHooks {
 
 	public function __construct(
-		private IRootFolder $root,
-		private PhotofilesService $photofilesService,
-		private TracksService $tracksService,
-		private ILockingProvider $lockingProvider,
+		private readonly IRootFolder $root,
+		private readonly PhotofilesService $photofilesService,
+		private readonly TracksService $tracksService,
+		private readonly ILockingProvider $lockingProvider,
 	) {
 	}
 
 	public function register(): void {
-		$fileWriteCallback = function (\OCP\Files\Node $node) {
+		$fileWriteCallback = function (Node $node): void {
 			//logger('maps')->debug("Hook postWrite");
 			if ($node instanceof File && $this->isUserNode($node) && $node->getSize()) {
 				$path = $node->getPath();
-				if (!$this->lockingProvider->isLocked($path, ILockingProvider::LOCK_SHARED)
-					and !$this->lockingProvider->isLocked($path, ILockingProvider::LOCK_EXCLUSIVE)
+				if (!$this->lockingProvider->isLocked($path, ILockingProvider::LOCK_SHARED) && !$this->lockingProvider->isLocked($path, ILockingProvider::LOCK_EXCLUSIVE)
 				) {
 					$isPhoto = $this->photofilesService->addByFile($node);
 					if (!$isPhoto) {
@@ -54,7 +57,7 @@ class FileHooks {
 		};
 		$this->root->listen('\OC\Files', 'postWrite', $fileWriteCallback);
 
-		$fileDeletionCallback = function (\OCP\Files\Node $node) {
+		$fileDeletionCallback = function (Node $node): void {
 			//logger('maps')->debug("Hook preDelete");
 			if ($this->isUserNode($node)) {
 				if ($node instanceof Folder) {
@@ -70,15 +73,15 @@ class FileHooks {
 
 		// this one is triggered when restoring a version of a file
 		// and NOT when it's created so we can use it for updating coordinates in DB
-		$this->root->listen('\OC\Files', 'postTouch', function (\OCP\Files\Node $node) {
-			if ($this->isUserNode($node) and $node instanceof File) {
+		$this->root->listen('\OC\Files', 'postTouch', function (Node $node): void {
+			if ($this->isUserNode($node) && $node instanceof File) {
 				$this->photofilesService->updateByFile($node);
 				// nothing to update on tracks, metadata will be regenerated when getting content if etag has changed
 			}
 		});
 
 		// move file: delete then add it again in DB to be sure it's there for all users with access to target file
-		$this->root->listen('\OC\Files', 'postRename', function (\OCP\Files\Node $source, \OCP\Files\Node $target) {
+		$this->root->listen('\OC\Files', 'postRename', function (Node $source, Node $target): void {
 			if ($this->isUserNode($target)) {
 				if ($target instanceof File) {
 					// if moved (parents are different) => update DB with access list
@@ -102,11 +105,14 @@ class FileHooks {
 		Util::connectHook('\OCA\Files_Trashbin\Trashbin', 'post_restore', $this, 'restore');
 
 		// sharing hooks
-		Util::connectHook(\OCP\Share::class, 'post_shared', $this, 'postShare');
-		Util::connectHook(\OCP\Share::class, 'post_unshare', $this, 'postUnShare');
-		Util::connectHook(\OCP\Share::class, 'pre_unshare', $this, 'preUnShare');
+		Util::connectHook(Share::class, 'post_shared', $this, 'postShare');
+		Util::connectHook(Share::class, 'post_unshare', $this, 'postUnShare');
+		Util::connectHook(Share::class, 'pre_unshare', $this, 'preUnShare');
 	}
 
+	/**
+	 * @param array<string, mixed> $params
+	 */
 	public function postShare(array $params): void {
 		//logger('maps')->debug("Hook postShare");
 		if ($params['itemType'] === 'file') {
@@ -117,6 +123,7 @@ class FileHooks {
 			if (!$file instanceof File) {
 				return;
 			}
+
 			$this->photofilesService->addByFile($file);
 			$this->tracksService->safeAddByFile($file);
 		} elseif ($params['itemType'] === 'folder') {
@@ -125,36 +132,44 @@ class FileHooks {
 			if (!$folder instanceof Folder) {
 				return;
 			}
+
 			$this->photofilesService->addByFolder($folder);
 			$this->tracksService->safeAddByFolder($folder);
 		}
 	}
 
+	/**
+	 * @param array<string, mixed> $params
+	 */
 	public function postUnShare(array $params): void {
 		//logger('maps')->debug("Hook postUnShare");
-		if ($params['shareType'] === IShare::TYPE_USER) {
-			if ($params['itemType'] === 'file') {
-				$targetUserId = $params['shareWith'];
-				$fileId = $params['fileSource']; // or itemSource
-				$this->photofilesService->deleteByFileIdUserId($fileId, $targetUserId);
-				$this->tracksService->safeDeleteByFileIdUserId($fileId, $targetUserId);
-			}
+		if ($params['shareType'] === IShare::TYPE_USER && $params['itemType'] === 'file') {
+			$targetUserId = $params['shareWith'];
+			$fileId = $params['fileSource'];
+			// or itemSource
+			$this->photofilesService->deleteByFileIdUserId($fileId, $targetUserId);
+			$this->tracksService->safeDeleteByFileIdUserId($fileId, $targetUserId);
 		}
 	}
 
+	/**
+	 * @param array<string, mixed> $params
+	 */
 	public function preUnShare(array $params): void {
 		//logger('maps')->debug("Hook preUnShare");
-		if ($params['shareType'] === IShare::TYPE_USER) {
-			if ($params['itemType'] === 'folder') {
-				$targetUserId = $params['shareWith'];
-				$dirId = $params['fileSource']; // or itemSource
-				$this->photofilesService->deleteByFolderIdUserId($dirId, $targetUserId);
-				$this->tracksService->safeDeleteByFolderIdUserId($dirId, $targetUserId);
-			}
+		if ($params['shareType'] === IShare::TYPE_USER && $params['itemType'] === 'folder') {
+			$targetUserId = $params['shareWith'];
+			$dirId = $params['fileSource'];
+			// or itemSource
+			$this->photofilesService->deleteByFolderIdUserId($dirId, $targetUserId);
+			$this->tracksService->safeDeleteByFolderIdUserId($dirId, $targetUserId);
 		}
 	}
 
-	public function restore($params): void {
+	/**
+	 * @param array<string, mixed> $params
+	 */
+	public function restore(array $params): void {
 		$node = $this->getNodeForPath($params['filePath']);
 		if ($this->isUserNode($node)) {
 			if ($node instanceof Folder) {
@@ -167,18 +182,19 @@ class FileHooks {
 		}
 	}
 
-	private function getNodeForPath($path): Node {
-		$user = \OC::$server->getUserSession()->getUser();
+	private function getNodeForPath(string $path): Node {
+		$user = Server::get(IUserSession::class)->getUser();
 		$fullPath = Filesystem::normalizePath('/' . $user->getUID() . '/files/' . $path);
 		return $this->root->get($fullPath);
 	}
 
-	private function isUserNode(\OCP\Files\Node $node): bool {
+	private function isUserNode(Node $node): bool {
 		//return $node->getStorage()->instanceOfStorage("\OCP\Files\IHomeStorage")
 		$owner = $node->getStorage()->getOwner('');
 		if (! $owner) {
 			return false;
 		}
+
 		return str_starts_with($node->getPath(), '/' . $owner . '/');
 	}
 

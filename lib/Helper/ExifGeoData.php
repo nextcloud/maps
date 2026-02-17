@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /**
  * Nextcloud - maps
  *
@@ -9,7 +11,6 @@
  * @author Gergely Kovács 2021
  * @copyright Gergely Kovács 2021
  */
-
 namespace OCA\Maps\Helper;
 
 use lsolesen\pel\Pel;
@@ -21,13 +22,6 @@ use lsolesen\pel\PelJpeg;
 use lsolesen\pel\PelTag;
 use lsolesen\pel\PelTiff;
 
-//PHP 7 polyfill
-if (!function_exists('str_contains')) {
-	function str_contains(string $haystack, string $needle): bool {
-		return $needle === '' || strpos($haystack, $needle) !== false;
-	}
-}
-
 /**
  * Class ExifGeoData
  *
@@ -37,20 +31,17 @@ if (!function_exists('str_contains')) {
  */
 class ExifGeoData extends \stdClass implements \JsonSerializable {
 	/**
-	 * Mime type regex
-	 */
-	private const SUPPORTED_MIMETYPES = 'image\/(jpe?g|tiff)';
-
-	/**
 	 * Exif Latitude attribute names
 	 */
 	private const LATITUDE_REF = 'GPSLatitudeRef';
+
 	private const LATITUDE = 'GPSLatitude';
 
 	/**
 	 * Exif Longitude attribute names
 	 */
 	private const LONGITUDE_REF = 'GPSLongitudeRef';
+
 	private const LONGITUDE = 'GPSLongitude';
 
 	/**
@@ -68,32 +59,15 @@ class ExifGeoData extends \stdClass implements \JsonSerializable {
 	/**
 	 * Regex to extract date components from exif parameter
 	 */
-	private const EXIF_TIME_REGEX = '(?<years>[0-9]{4})\:(?<months>[0-9]{2})\:(?<days>[0-9]{2}) (?<hours>[0-9]{2})\:(?<minutes>[0-9]{2})\:(?<seconds>[0-9]{2})';
+	private const EXIF_TIME_REGEX = '(?<years>\d{4})\:(?<months>\d{2})\:(?<days>\d{2}) (?<hours>\d{2})\:(?<minutes>\d{2})\:(?<seconds>\d{2})';
 
-	/**
-	 * @var int|null
-	 */
-	private $timestamp = null;
+	private ?int $timestamp = null;
 
-	/**
-	 * @var float|null
-	 */
-	private $latitude = null;
+	private ?float $latitude = null;
 
-	/**
-	 * @var float|null
-	 */
-	private $longitude = null;
+	private ?float $longitude = null;
 
-	/**
-	 * @var bool|null
-	 */
-	private $is_valid = null;
-
-	/**
-	 * @var ?array
-	 */
-	protected $exif_data = null;
+	private ?bool $is_valid = null;
 
 	/**
 	 * @throws PelInvalidArgumentException
@@ -103,14 +77,18 @@ class ExifGeoData extends \stdClass implements \JsonSerializable {
 			$data = @exif_read_data($path, null, true);
 			if ($data && isset($data['EXIF']) && is_array($data['EXIF']) && isset($data['EXIF'][self::LATITUDE]) && isset($data['EXIF'][self::LONGITUDE])) {
 				return $data['EXIF'];
-			} elseif ($data && isset($data['GPS']) && is_array($data['GPS']) && isset($data['GPS'][self::LATITUDE]) && isset($data['GPS'][self::LONGITUDE])) {
+			}
+
+			if ($data && isset($data['GPS']) && is_array($data['GPS']) && isset($data['GPS'][self::LATITUDE]) && isset($data['GPS'][self::LONGITUDE])) {
 				$d = $data['GPS'];
 				if (!isset($d[self::TIMESTAMP]) && isset($data['EXIF'][self::TIMESTAMP])) {
 					$d[self::TIMESTAMP] = $data['EXIF'][self::TIMESTAMP];
 				}
+
 				return $d;
 			}
 		}
+
 		$data = new PelDataWindow(file_get_contents($path));
 		if (PelJpeg::isValid($data)) {
 			$pelJpeg = new PelJpeg($data);
@@ -126,22 +104,27 @@ class ExifGeoData extends \stdClass implements \JsonSerializable {
 		} else {
 			return [];
 		}
+
 		if (is_null($pelTiff)) {
 			return [];
 		}
+
 		$pelIfd0 = $pelTiff->getIfd();
 		if (is_null($pelIfd0)) {
 			return [];
 		}
+
 		$pelIfdExif = $pelIfd0->getSubIfd(PelIfd::EXIF);
 
 		if (is_null($pelIfdExif)) {
 			return [];
 		}
+
 		$pelDateTimeOriginal = $pelIfdExif->getEntry(PelTag::DATE_TIME_ORIGINAL);
 		if (is_null($pelDateTimeOriginal)) {
 			return [];
 		}
+
 		$exif = [
 			# self::TIMESTAMP => $pelDateTimeOriginal->getValue(PelEntryTime::EXIF_STRING) // for old pel 0.9.6 and above
 			self::TIMESTAMP => (int)$pelDateTimeOriginal->getValue() // for new pel >= 0.9.11
@@ -159,21 +142,21 @@ class ExifGeoData extends \stdClass implements \JsonSerializable {
 				$exif
 			);
 		}
+
 		Pel::clearExceptions();
 		return $exif;
 	}
 
 	/**
-	 * @param PelIfd $pelIfdGPS
 	 * @param $target
 	 * @param $source
 	 * @param $ref_target
 	 * @param $ref_source
-	 * @param array $exif
+	 * @param array<string, int> $exif
 	 */
-	protected static function readPelCoordinate(PelIfd $pelIfdGPS, $target, $source, $ref_target, $ref_source, array &$exif = []) : void {
+	protected static function readPelCoordinate(PelIfd $pelIfdGPS, $target, $source, string $ref_target, $ref_source, array &$exif = []) : void {
 		$coordinate = $pelIfdGPS->getEntry($source)->getValue();
-		if ((int)$coordinate[0][1] != 0 && (int)$coordinate[1][1] != 0 && (int)$coordinate[2][1] != 0) {
+		if ((int)$coordinate[0][1] !== 0 && (int)$coordinate[1][1] !== 0 && (int)$coordinate[2][1] !== 0) {
 			$exif[$ref_target] = $pelIfdGPS->getEntry($ref_source)->getValue();
 			$exif[$target] = [
 				0 => (int)$coordinate[0][0] / (int)$coordinate[0][1],
@@ -184,24 +167,24 @@ class ExifGeoData extends \stdClass implements \JsonSerializable {
 	}
 
 	/**
-	 * @param string $path
 	 * @return ExifGeoData
 	 */
 	public static function get(string $path) : ?ExifGeoData {
 		try {
 			$data = static::get_exif_data_array($path);
-		} catch (\Throwable $e) {
+		} catch (\Throwable) {
 			$data = [];
 		}
+
 		return new static($data);
 	}
 
 	/**
 	 * ExifGeoData constructor.
-	 * @param array $exif_data
 	 */
-	final private function __construct(array $exif_data) {
-		$this->exif_data = $exif_data;
+	final private function __construct(
+		protected array $exif_data,
+	) {
 		$this->parse();
 	}
 
@@ -210,10 +193,11 @@ class ExifGeoData extends \stdClass implements \JsonSerializable {
 	 * @throws ExifDataInvalidException
 	 * @throws ExifDataNoLocationException
 	 */
-	public function validate($invalidate_zero_iland = false) {
+	public function validate($invalidate_zero_iland = false): void {
 		if (!$this->exif_data) {
 			throw new ExifDataInvalidException('No exif_data found', 1);
 		}
+
 		if (!is_array($this->exif_data)) {
 			throw new ExifDataInvalidException('exif_data is not an array', 2);
 		}
@@ -221,6 +205,7 @@ class ExifGeoData extends \stdClass implements \JsonSerializable {
 		if (!isset($this->exif_data[self::LATITUDE]) || !isset($this->exif_data[self::LONGITUDE])) {
 			throw new ExifDataNoLocationException('Latitude and/or Longitude are missing from exif data', 1);
 		}
+
 		if ($invalidate_zero_iland && $this->isZeroIsland()) {
 			$this->latitude = null;
 			$this->longitude = null;
@@ -228,18 +213,16 @@ class ExifGeoData extends \stdClass implements \JsonSerializable {
 		}
 	}
 
-	/**
-	 * @return bool
-	 */
 	public function isValid(): bool {
 		if ($this->is_valid === null) {
 			try {
 				$this->validate();
 				$this->is_valid = true;
-			} catch (\Throwable  $e) {
+			} catch (\Throwable) {
 				$this->is_valid = false;
 			}
 		}
+
 		return $this->is_valid;
 	}
 
@@ -249,11 +232,13 @@ class ExifGeoData extends \stdClass implements \JsonSerializable {
 			if (isset($this->exif_data[self::LONGITUDE_REF]) && $this->exif_data[self::LONGITUDE_REF] === 'W') {
 				$this->longitude *= -1;
 			}
+
 			$this->latitude = $this->geo2float($this->exif_data[self::LATITUDE]);
 			if (isset($this->exif_data[self::LATITUDE_REF]) && $this->exif_data[self::LATITUDE_REF] === 'S') {
 				$this->latitude *= -1;
 			}
 		}
+
 		// optional
 		if (isset($this->exif_data[self::TIMESTAMP])) {
 			$t = $this->exif_data[self::TIMESTAMP];
@@ -262,27 +247,25 @@ class ExifGeoData extends \stdClass implements \JsonSerializable {
 	}
 
 	/**
-	 * @param string $timestamp
 	 * @return int
 	 */
 	private function string2time(string $timestamp): ?int {
-		$result = null;
 		if (preg_match('#' . self::EXIF_TIME_REGEX . '#ui', $timestamp, $match)) {
-			$result
-				= strtotime("{$match['years']}-{$match['months']}-{$match['days']} {$match['hours']}:{$match['minutes']}:{$match['seconds']}")?:null;
+			return strtotime(sprintf('%s-%s-%s %s:%s:%s', $match['years'], $match['months'], $match['days'], $match['hours'], $match['minutes'], $match['seconds']))?:null;
 		}
-		return $result;
+
+		return null;
 	}
 
 
 	/**
 	 * @param $geo
-	 * @return float|null
 	 */
-	private function geo2float($geo): ?float {
+	private function geo2float($geo): float {
 		if (!is_array($geo)) {
 			$geo = [$geo];
 		}
+
 		$result = .0;
 		$d = 1.0;
 		foreach ($geo as $component) {
@@ -293,28 +276,22 @@ class ExifGeoData extends \stdClass implements \JsonSerializable {
 		return $result;
 	}
 
-	/**
-	 * @param string $value
-	 * @return float|null
-	 */
 	private function string2float(string $value): ?float {
 		$result = null;
 		$value = trim($value, '/');
 		if (str_contains($value, '/')) {
-			$value = array_map('intval', explode('/', $value));
+			$value = array_map(intval(...), explode('/', $value));
 			if ($value[1] != 0) {
 				$result = $value[0] / $value[1];
 			}
 		} else {
 			$result = floatval($value);
 		}
+
 		return $result;
 
 	}
 
-	/**
-	 * @return bool
-	 */
 	public function isZeroIsland(): bool {
 		return $this->latitude() === .0 && $this->longitude() === .0;
 	}
@@ -333,20 +310,17 @@ class ExifGeoData extends \stdClass implements \JsonSerializable {
 		return $this->longitude === null ? null : round($this->longitude, $precision);
 	}
 
-	/**
-	 * @param string|null $format
-	 * @return string|int|null
-	 */
-	public function timestamp(?string $format = 'Y-m-d H:i:s') {
-		$result = $this->timestamp;
+	public function timestamp(?string $format = 'Y-m-d H:i:s'): int|string|null {
 		if ($this->timestamp !== null && $format) {
-			$result = date($format, $this->timestamp);
+			return date($format, $this->timestamp);
 		}
-		return $result;
+
+		return $this->timestamp;
 	}
 
 	/**
 	 * If someone wants to have it as a json object
+	 * @return array<string, float|int|null>
 	 */
 	public function jsonSerialize(): array {
 		return [
@@ -362,20 +336,15 @@ class ExifGeoData extends \stdClass implements \JsonSerializable {
 	 * @param $name
 	 * @return float|int|string|null
 	 */
-	public function __get($name) {
+	public function __get(string $name): mixed {
 		$value = null;
-		switch ($name) {
-			case 'lat':
-				$value = $this->latitude();
-				break;
-			case 'lng':
-				$value = $this->longitude();
-				break;
-			case 'dateTaken':
-				$value = $this->timestamp(null);
-				break;
-		}
-		return $value;
+
+		return match ($name) {
+			'lat' => $this->latitude(),
+			'lng' => $this->longitude(),
+			'dateTaken' => $this->timestamp(null),
+			default => $value,
+		};
 	}
 
 }

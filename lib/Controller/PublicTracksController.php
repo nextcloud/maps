@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /**
  * Nextcloud - Maps
  *
@@ -9,9 +11,9 @@
  * @author Julien Veyssier <eneiluj@posteo.net>
  * @copyright Julien Veyssier 2019
  */
-
 namespace OCA\Maps\Controller;
 
+use OC\User\NoUserException;
 use OCA\Maps\Service\TracksService;
 use OCP\AppFramework\Http\Attribute\NoAdminRequired;
 use OCP\AppFramework\Http\Attribute\PublicPage;
@@ -83,7 +85,7 @@ class PublicTracksController extends PublicPageController {
 		// Check whether share exists
 		try {
 			$share = $this->shareManager->getShareByToken($this->getToken());
-		} catch (ShareNotFound $e) {
+		} catch (ShareNotFound) {
 			// The share does not exists, we do not emit an ShareLinkAccessedEvent
 			throw new NotFoundException();
 		}
@@ -91,6 +93,7 @@ class PublicTracksController extends PublicPageController {
 		if (!$this->validateShare($share)) {
 			throw new NotFoundException();
 		}
+
 		return $share;
 	}
 
@@ -108,7 +111,7 @@ class PublicTracksController extends PublicPageController {
 	/**
 	 * @throws NotFoundException
 	 * @throws NotPermittedException
-	 * @throws \OC\User\NoUserException
+	 * @throws NoUserException
 	 */
 	#[PublicPage]
 	public function getTracks(): DataResponse {
@@ -124,7 +127,7 @@ class PublicTracksController extends PublicPageController {
 		$owner = $share->getShareOwner();
 		$pre_path = $this->root->getUserFolder($owner)->getPath();
 		$tracks = $this->tracksService->getTracksFromDB($owner, $folder, true, false, false);
-		$newTracks = array_map(function ($track) use ($folder, $permissions, $pre_path, $hideDownload): array {
+		$newTracks = array_map(function (array $track) use ($folder, $permissions, $pre_path, $hideDownload): array {
 			$track['isCreatable'] = ($permissions & (1 << 2)) && $track['isCreatable'];
 			$track['isUpdateable'] = ($permissions & (1 << 1)) && $track['isUpdateable'];
 			$track['isDeletable'] = ($permissions & (1 << 3)) && $track['isDeletable'];
@@ -150,6 +153,7 @@ class PublicTracksController extends PublicPageController {
 		if (!$isReadable || !($folder instanceof Folder)) {
 			throw new NotPermittedException();
 		}
+
 		$owner = $share->getShareOwner();
 		$track = $this->tracksService->getTrackByFileIDFromDB($id, $owner);
 		$trackFile = is_null($track) ? null : $folder->getFirstNodeById($track['file_id']);
@@ -166,6 +170,7 @@ class PublicTracksController extends PublicPageController {
 		} else {
 			$metadata = $track['metadata'];
 		}
+
 		return new DataResponse([
 			'metadata' => $metadata,
 			'content' => $trackContent
@@ -173,7 +178,6 @@ class PublicTracksController extends PublicPageController {
 	}
 
 	/**
-	 * @return DataResponse
 	 * @throws NotFoundException
 	 * @throws \OCP\Files\InvalidPathException
 	 */
@@ -199,6 +203,7 @@ class PublicTracksController extends PublicPageController {
 		} else {
 			$metadata = $track['metadata'];
 		}
+
 		return new DataResponse([
 			'metadata' => $metadata,
 			'content' => $trackContent
@@ -223,9 +228,9 @@ class PublicTracksController extends PublicPageController {
 		if ($track !== null) {
 			$this->tracksService->editTrackInDB($id, $color, $metadata, $etag);
 			return new DataResponse('EDITED');
-		} else {
-			return new DataResponse($this->l->t('No such track'), 400);
 		}
+
+		return new DataResponse($this->l->t('No such track'), 400);
 	}
 
 	#[NoAdminRequired]
@@ -240,11 +245,11 @@ class PublicTracksController extends PublicPageController {
 			if ($track !== null) {
 				$this->tracksService->deleteTrackFromDB($id);
 				return new DataResponse('DELETED');
-			} else {
-				return new DataResponse($this->l->t('No such track'), 400);
 			}
-		} else {
-			throw new NotPermittedException();
+
+			return new DataResponse($this->l->t('No such track'), 400);
 		}
+
+		throw new NotPermittedException();
 	}
 }

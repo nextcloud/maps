@@ -33,6 +33,8 @@
 		<ignoreFiles>
 			<directory name="vendor" />
 			<directory name="vendor-bin" />
+			<directory name="tests/stubs" />
+			<file name="tests/bootstrap.php" />
 		</ignoreFiles>
 	</projectFiles>
 	<issueHandlers>

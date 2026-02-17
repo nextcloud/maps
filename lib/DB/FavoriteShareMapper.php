@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /**
  * @copyright Copyright (c) 2019, Paul Schwörer <hello@paulschwoerer.de>
  *
@@ -21,10 +23,10 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-
 namespace OCA\Maps\DB;
 
 use OC\Share\Constants;
+use OC\User\NoUserException;
 use OCP\AppFramework\Db\DoesNotExistException;
 use OCP\AppFramework\Db\MultipleObjectsReturnedException;
 use OCP\AppFramework\Db\QBMapper;
@@ -40,8 +42,8 @@ use OCP\Security\ISecureRandom;
 class FavoriteShareMapper extends QBMapper {
 	public function __construct(
 		IDBConnection $db,
-		private ISecureRandom $secureRandom,
-		private IRootFolder $root,
+		private readonly ISecureRandom $secureRandom,
+		private readonly IRootFolder $root,
 	) {
 		parent::__construct($db, 'maps_favorite_shares');
 	}
@@ -93,7 +95,7 @@ class FavoriteShareMapper extends QBMapper {
 
 	/**
 	 * @throws \OCP\Files\NotPermittedException
-	 * @throws \OC\User\NoUserException
+	 * @throws NoUserException
 	 */
 	public function findAllByMapId(string $userId, int $mapId): array {
 		$userFolder = $this->root->getUserFolder($userId);
@@ -102,6 +104,7 @@ class FavoriteShareMapper extends QBMapper {
 		if (!$folder instanceof Folder) {
 			return $shares;
 		}
+
 		return $this->findAllByFolder($folder);
 	}
 
@@ -112,15 +115,16 @@ class FavoriteShareMapper extends QBMapper {
 		try {
 			/** @var File $file */
 			$file = $folder->get('.favorite_shares.json');
-		} catch (NotFoundException $e) {
+		} catch (NotFoundException) {
 			if ($isCreatable) {
 				$folder->newFile('.favorite_shares.json', '[]');
 				return [];
-			} else {
-				throw new NotFoundException();
 			}
+
+			throw new NotFoundException();
 		}
-		return json_decode($file->getContent(), true);
+
+		return json_decode((string)$file->getContent(), true);
 	}
 
 	/**
@@ -145,7 +149,7 @@ class FavoriteShareMapper extends QBMapper {
 	 * @param $category
 	 * @return mixed|null
 	 * @throws \OCP\Files\NotPermittedException
-	 * @throws \OC\User\NoUserException
+	 * @throws NoUserException
 	 */
 	public function findByMapIdAndCategory(string $userId, int $mapId, $category) {
 		$shares = $this->findAllByMapId($userId, $mapId);
@@ -154,6 +158,7 @@ class FavoriteShareMapper extends QBMapper {
 				return $share;
 			}
 		}
+
 		return null;
 	}
 
@@ -165,12 +170,14 @@ class FavoriteShareMapper extends QBMapper {
 		if (!$folder instanceof Folder) {
 			return $deleted;
 		}
+
 		try {
 			$file = $folder->get('.favorite_shares.json');
-		} catch (NotFoundException $e) {
+		} catch (NotFoundException) {
 			$file = $folder->newFile('.favorite_shares.json', $content = '[]');
 		}
-		$data = json_decode($file->getContent(), true);
+
+		$data = json_decode((string)$file->getContent(), true);
 		foreach ($data as $share) {
 			$c = $share['category'];
 			if ($c === $category) {
@@ -179,6 +186,7 @@ class FavoriteShareMapper extends QBMapper {
 				$shares[] = $share;
 			}
 		}
+
 		$file->putContent(json_encode($shares, JSON_PRETTY_PRINT));
 		return $deleted;
 	}
@@ -189,9 +197,9 @@ class FavoriteShareMapper extends QBMapper {
 
 		try {
 			$entity = $this->findByOwnerAndCategory($owner, $category);
-		} catch (DoesNotExistException $e) {
+		} catch (DoesNotExistException) {
 			$entity = $this->create($owner, $category);
-		} catch (MultipleObjectsReturnedException $e) {
+		} catch (MultipleObjectsReturnedException) {
 		}
 
 		return $entity;
@@ -200,7 +208,7 @@ class FavoriteShareMapper extends QBMapper {
 	public function removeByOwnerAndCategory(string $owner, string $category): bool {
 		try {
 			$entity = $this->findByOwnerAndCategory($owner, $category);
-		} catch (DoesNotExistException|MultipleObjectsReturnedException $e) {
+		} catch (DoesNotExistException|MultipleObjectsReturnedException) {
 			return false;
 		}
 

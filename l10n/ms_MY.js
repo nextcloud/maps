@@ -25,6 +25,7 @@ OC.L10N.register(
     "Yes" : "Yes",
     "Search" : "Search",
     "File" : "File",
+    "Description" : "Keterangan",
     "Destination" : "Destination",
     "Phone" : "Telefon"
 },

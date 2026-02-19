@@ -109,6 +109,7 @@ OC.L10N.register(
     "Search" : "Sök",
     "Search for {q}" : "Sök efter {q}",
     "File" : "Fil",
+    "Description" : "Beskrivning",
     "north" : "norr",
     "northeast" : "nordost",
     "east" : "öst",

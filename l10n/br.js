@@ -34,6 +34,7 @@ OC.L10N.register(
     "Open" : "Digeriñ",
     "Search" : "Klask",
     "File" : "Restr",
+    "Description" : "Deskrivadur",
     "Start" : "Kregiñ",
     "Destination" : "Pall",
     "m" : "m",

@@ -92,6 +92,7 @@ OC.L10N.register(
     "Search" : "Ieškoti",
     "Unknown Place" : "Nežinoma vieta",
     "File" : "Failas",
+    "Description" : "Aprašas",
     "right" : "dešinė",
     "left" : "kairė",
     "Start" : "Pradžia",

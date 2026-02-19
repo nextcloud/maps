@@ -196,6 +196,7 @@ OC.L10N.register(
     "Track/Route" : "Трек / Маршрут",
     "Display elevation" : "Показывать высоту",
     "Begins at" : "Начало",
+    "Description" : "Описание",
     "north" : "север",
     "northeast" : "северо-восток",
     "east" : "восток",

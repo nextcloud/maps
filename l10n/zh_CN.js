@@ -196,6 +196,7 @@ OC.L10N.register(
     "Track/Route" : "轨迹/路线",
     "Display elevation" : "显示海拔",
     "Begins at" : "开始于",
+    "Description" : "描述",
     "north" : "北",
     "northeast" : "东北",
     "east" : "东",

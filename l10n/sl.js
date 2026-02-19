@@ -192,6 +192,7 @@ OC.L10N.register(
     "Track/Route" : "Sled/Pot",
     "Display elevation" : "Prikaži spremembo višine",
     "Begins at" : "Začni pri",
+    "Description" : "Opis",
     "north" : "sever",
     "northeast" : "severovzhod",
     "east" : "vzhod",

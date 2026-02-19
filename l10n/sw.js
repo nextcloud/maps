@@ -49,6 +49,7 @@ OC.L10N.register(
     "until {date}" : "mpaka {date}",
     "Search" : "Tafuta",
     "File" : "Faili",
+    "Description" : "Maelezo",
     "right" : "kulia",
     "left" : "kushoto",
     "Start" : "Start",

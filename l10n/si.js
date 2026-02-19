@@ -34,6 +34,7 @@ OC.L10N.register(
     "Closed" : "වසා ඇත",
     "Search" : "සොයන්න",
     "File" : "ගොනුව",
+    "Description" : "විස්තරය",
     "right" : "දකුණ",
     "left" : "වම",
     "Destination" : "ගමනාන්තය",

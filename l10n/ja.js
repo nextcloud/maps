@@ -128,6 +128,7 @@ OC.L10N.register(
     "Unknown Place" : "不明な場所",
     "File" : "ファイル",
     "Begins at" : "開始時刻",
+    "Description" : "説明",
     "north" : "北",
     "northeast" : "北東",
     "east" : "東",

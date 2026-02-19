@@ -33,6 +33,7 @@ OC.L10N.register(
     "Open" : "Ar Agor",
     "Search" : "Chwilio",
     "File" : "File",
+    "Description" : "Disgrifiad",
     "Destination" : "Destination",
     "min" : "mun",
     "Phone" : "Ffôn",

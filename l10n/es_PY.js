@@ -37,6 +37,7 @@ OC.L10N.register(
     "Closed" : "Cerrado",
     "Search" : "Buscar",
     "File" : "Archivo",
+    "Description" : "Descripción",
     "right" : "derecha",
     "left" : "izquierda",
     "Start" : "Iniciar",

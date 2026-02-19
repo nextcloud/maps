@@ -36,6 +36,7 @@ OC.L10N.register(
     "Closed" : "დახურული",
     "Search" : "ძიება",
     "File" : "ფაილი",
+    "Description" : "აღწერილობა",
     "right" : "მარჯვენა",
     "left" : "მარცხენა",
     "Start" : "დაწყება",

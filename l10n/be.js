@@ -56,6 +56,7 @@ OC.L10N.register(
     "Closed" : "Закрыта",
     "Search" : "Пошук",
     "File" : "Файл",
+    "Description" : "Апісанне",
     "Start" : "Запусціць",
     "Via {viaNumber}" : "Праз {viaNumber}",
     "Destination" : "Прызначэнне",

@@ -38,6 +38,7 @@ OC.L10N.register(
     "Open" : "Abrir",
     "Search" : "Buscar",
     "File" : "Archivo",
+    "Description" : "Descripción",
     "right" : "derecha",
     "left" : "izquierda",
     "Start" : "Inicio",

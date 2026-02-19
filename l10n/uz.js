@@ -35,6 +35,7 @@ OC.L10N.register(
     "until {date}" : " {date}gacha",
     "Search" : "Qidirish",
     "File" : "Fayl",
+    "Description" : "Tavsif",
     "right" : "right",
     "left" : "left",
     "Default" : "Standart",

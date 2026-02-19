@@ -44,6 +44,7 @@ OC.L10N.register(
     "Open" : "Atvērt",
     "Search" : "Meklēt",
     "File" : "Datne",
+    "Description" : "Apraksts",
     "right" : "pa labi",
     "left" : "pa kreisi",
     "Take the {exitStr} exit in the roundabout" : "Apļveida krustojumā nogriezties {exitStr} izejā",

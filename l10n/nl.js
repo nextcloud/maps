@@ -172,6 +172,7 @@ OC.L10N.register(
     "Track/Route" : "Track/Route",
     "Display elevation" : "Toon hoogte",
     "Begins at" : "Begint om",
+    "Description" : "Omschrijving",
     "north" : "noord",
     "northeast" : "noord-oost",
     "east" : "oost",

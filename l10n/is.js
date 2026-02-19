@@ -97,6 +97,7 @@ OC.L10N.register(
     "Search" : "Search",
     "Unknown Place" : "Óþekktur staður",
     "File" : "Skrá",
+    "Description" : "Lýsing",
     "north" : "norður",
     "northeast" : "norðaustur",
     "east" : "austur",

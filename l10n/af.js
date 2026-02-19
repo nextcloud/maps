@@ -36,6 +36,7 @@ OC.L10N.register(
     "Open" : "Open",
     "Search" : "Soek",
     "File" : "Lêer",
+    "Description" : "Beskrywing",
     "right" : "regs",
     "left" : "links",
     "Start" : "Start",

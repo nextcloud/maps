@@ -196,6 +196,7 @@ OC.L10N.register(
     "Track/Route" : "Ίχνος/Διαδρομή",
     "Display elevation" : "Εμφάνιση υψομέτρου",
     "Begins at" : "Ξεκινάει στις",
+    "Description" : "Περιγραφή",
     "north" : "βόρεια",
     "northeast" : "βορειοανατολικά",
     "east" : "ανατολικά",

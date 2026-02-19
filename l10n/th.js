@@ -55,6 +55,7 @@ OC.L10N.register(
     "Open" : "เปิด",
     "Search" : "ค้นหา",
     "File" : "ไฟล์",
+    "Description" : "คำอธิบาย",
     "right" : "ขวา",
     "left" : "ซ้าย",
     "Start" : "เริ่ม",

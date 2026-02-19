@@ -41,6 +41,7 @@ OC.L10N.register(
     "Open" : "Dobrir",
     "Search" : "Recercar",
     "File" : "File",
+    "Description" : "Descripcion",
     "right" : "drecha",
     "left" : "esquèrra",
     "Destination" : "Destination",

@@ -43,6 +43,7 @@ OC.L10N.register(
     "Closed" : "închis",
     "Search" : "Caută",
     "File" : "Fișier",
+    "Description" : "Descriere",
     "right" : "dreapta",
     "left" : "stânga",
     "Start" : "Începe",

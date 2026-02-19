@@ -43,6 +43,7 @@ OC.L10N.register(
     "Closed" : "Đã đóng",
     "Search" : "Tìm kiếm",
     "File" : "Tập tin",
+    "Description" : "Mô tả",
     "right" : "phải",
     "left" : "trái",
     "Start" : "Bắt đầu",

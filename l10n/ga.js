@@ -196,6 +196,7 @@ OC.L10N.register(
     "Track/Route" : "Rian/Bealach",
     "Display elevation" : "Ingearchló taispeána",
     "Begins at" : "Tosaíonn ag",
+    "Description" : "Cur síos",
     "north" : "thuaidh",
     "northeast" : "oirthuaisceart",
     "east" : "thoir",

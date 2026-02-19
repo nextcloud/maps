@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /**
  * Nextcloud - maps
  *
@@ -9,17 +11,18 @@
  * @author Julien Veyssier <eneiluj@posteo.net>
  * @copyright Julien Veyssier 2019
  */
-
 namespace OCA\Maps\Tests\Integration\Controller;
 
+use OCP\App\IAppManager;
 use OCP\AppFramework\App;
+use PHPUnit\Framework\TestCase;
 
 /**
  * This test shows how to make a small Integration Test. Query your class
  * directly from the container, only pass in mocks if needed and run your tests
  * against the database
  */
-class AppTest extends \PHPUnit\Framework\TestCase {
+final class AppTest extends TestCase {
 
 	private $container;
 
@@ -28,8 +31,8 @@ class AppTest extends \PHPUnit\Framework\TestCase {
 		$this->container = $app->getContainer();
 	}
 
-	public function testAppInstalled() {
-		$appManager = $this->container->query(\OCP\App\IAppManager::class);
+	public function testAppInstalled(): void {
+		$appManager = $this->container->query(IAppManager::class);
 		$this->assertTrue($appManager->isInstalled('maps'));
 	}
 }

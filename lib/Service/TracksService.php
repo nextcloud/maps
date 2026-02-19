@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /**
  * Nextcloud - maps
  *
@@ -9,21 +11,21 @@
  * @author Julien Veyssier
  * @copyright Julien Veyssier 2019
  */
-
 namespace OCA\Maps\Service;
 
 use OC\Files\Search\SearchBinaryOperator;
 use OC\Files\Search\SearchComparison;
 use OC\Files\Search\SearchQuery;
+use OC\User\NoUserException;
 use OCP\DB\QueryBuilder\IQueryBuilder;
-use OCP\Files\FileInfo;
+use OCP\Files\File;
 use OCP\Files\Folder;
 use OCP\Files\IRootFolder;
 use OCP\Files\Node;
 use OCP\Files\Search\ISearchBinaryOperator;
 use OCP\Files\Search\ISearchComparison;
+use OCP\Files\StorageNotAvailableException;
 use OCP\IDBConnection;
-use OCP\IL10N;
 use OCP\Share\IManager;
 use Psr\Log\LoggerInterface;
 
@@ -31,18 +33,18 @@ class TracksService {
 
 	public const TRACK_MIME_TYPES = ['application/gpx+xml'];
 
-	private $qb;
-
 	public function __construct(
-		private LoggerInterface $logger,
-		private IL10N $l10n,
-		private IRootFolder $root,
-		private IManager $shareManager,
-		private IDBConnection $dbconnection,
+		private readonly LoggerInterface $logger,
+		private readonly IRootFolder $root,
+		private readonly IManager $shareManager,
+		private readonly IDBConnection $dbconnection,
 	) {
 	}
 
-	public function rescan($userId) {
+	/**
+	 * @psalm-return \Generator<int, string, mixed, void>
+	 */
+	public function rescan($userId): \Generator {
 		$userFolder = $this->root->getUserFolder($userId);
 		$tracks = $this->gatherTrackFiles($userFolder, true);
 		$this->deleteAllTracksFromDB($userId);
@@ -52,8 +54,8 @@ class TracksService {
 		}
 	}
 
-	public function addByFile(Node $file) {
-		$userFolder = $this->root->getUserFolder($file->getOwner()->getUID());
+	public function addByFile(Node $file): void {
+		$this->root->getUserFolder($file->getOwner()->getUID());
 		if ($this->isTrack($file)) {
 			$this->addTrackToDB($file->getOwner()->getUID(), $file->getId(), $file);
 		}
@@ -61,52 +63,48 @@ class TracksService {
 
 	// add the file for its owner and users that have access
 	// check if it's already in DB before adding
-	public function safeAddByFile(Node $file) {
-		$ownerId = $file->getOwner()->getUID();
-		$userFolder = $this->root->getUserFolder($ownerId);
-		if ($this->isTrack($file)) {
-			$this->safeAddTrack($file, $ownerId);
-			// is the file accessible to other users ?
-			$accesses = $this->shareManager->getAccessList($file);
-			foreach ($accesses['users'] as $uid) {
-				if ($uid !== $ownerId) {
-					$this->safeAddTrack($file, $uid);
-				}
-			}
-			return true;
-		} else {
+	public function safeAddByFile(File $file): bool {
+		if (!$this->isTrack($file)) {
 			return false;
 		}
-	}
 
-	public function safeAddByFileIdUserId($fileId, $userId) {
-		$userFolder = $this->root->getUserFolder($userId);
-		$files = $userFolder->getById($fileId);
-		if (empty($files)) {
-			return;
-		}
-		$file = array_shift($files);
-		if ($file !== null and $this->isTrack($file)) {
-			$this->safeAddTrack($file, $userId);
-		}
-	}
-
-	public function safeAddByFolderIdUserId($folderId, $userId) {
-		$folders = $this->root->getById($folderId);
-		if (empty($folders)) {
-			return;
-		}
-		$folder = array_shift($folders);
-		if ($folder !== null) {
-			$tracks = $this->gatherTrackFiles($folder, true);
-			foreach ($tracks as $track) {
-				$this->safeAddTrack($track, $userId);
+		$ownerId = $file->getOwner()->getUID();
+		$this->safeAddTrack($file, $ownerId);
+		// is the file accessible to other users ?
+		$accesses = $this->shareManager->getAccessList($file);
+		foreach ($accesses['users'] as $uid) {
+			if ($uid !== $ownerId) {
+				$this->safeAddTrack($file, $uid);
 			}
+		}
+
+		return true;
+	}
+
+	public function safeAddByFileIdUserId(int $fileId, string $userId): void {
+		$userFolder = $this->root->getUserFolder($userId);
+		$file = $userFolder->getFirstNodeById($fileId);
+		if ($file === null || !$this->isTrack($file)) {
+			return;
+		}
+
+		$this->safeAddTrack($file, $userId);
+	}
+
+	public function safeAddByFolderIdUserId(int $folderId, string $userId): void {
+		$folder = $this->root->getUserFolder($userId);
+		if ($folder === null) {
+			return;
+		}
+
+		$tracks = $this->gatherTrackFiles($folder, true);
+		foreach ($tracks as $track) {
+			$this->safeAddTrack($track, $userId);
 		}
 	}
 
 	// avoid adding track if it already exists in the DB
-	private function safeAddTrack($track, $userId) {
+	private function safeAddTrack($track, string $userId): void {
 		// filehooks are triggered several times (2 times for file creation)
 		// so we need to be sure it's not inserted several times
 		// by checking if it already exists in DB
@@ -117,14 +115,14 @@ class TracksService {
 	}
 
 	// add all tracks of a folder taking care of shared accesses
-	public function safeAddByFolder($folder) {
+	public function safeAddByFolder(Folder $folder): void {
 		$tracks = $this->gatherTrackFiles($folder, true);
 		foreach ($tracks as $track) {
 			$this->safeAddByFile($track);
 		}
 	}
 
-	public function addByFolder(Node $folder) {
+	public function addByFolder(Folder $folder): void {
 		$tracks = $this->gatherTrackFiles($folder, true);
 		foreach ($tracks as $track) {
 			$this->addTrackToDB($folder->getOwner()->getUID(), $track->getId(), $track);
@@ -133,19 +131,19 @@ class TracksService {
 
 	// delete track only if it's not accessible to user anymore
 	// it might have been shared multiple times by different users
-	public function safeDeleteByFileIdUserId($fileId, $userId) {
+	public function safeDeleteByFileIdUserId(int $fileId, string $userId): void {
 		$userFolder = $this->root->getUserFolder($userId);
-		$files = $userFolder->getById($fileId);
-		if (!is_array($files) or count($files) === 0) {
+		$file = $userFolder->getFirstNodeById($fileId);
+		if ($file === null) {
 			$this->deleteByFileIdUserId($fileId, $userId);
 		}
 	}
 
-	public function deleteByFile(Node $file) {
+	public function deleteByFile(Node $file): void {
 		$this->deleteByFileId($file->getId());
 	}
 
-	public function deleteByFolder(Node $folder) {
+	public function deleteByFolder(Folder $folder): void {
 		$tracks = $this->gatherTrackFiles($folder, true);
 		foreach ($tracks as $track) {
 			$this->deleteByFileId($track->getId());
@@ -153,10 +151,10 @@ class TracksService {
 	}
 
 	// delete folder tracks only if it's not accessible to user anymore
-	public function safeDeleteByFolderIdUserId($folderId, $userId) {
+	public function safeDeleteByFolderIdUserId(int $folderId, string $userId): void {
 		$userFolder = $this->root->getUserFolder($userId);
 		$folders = $userFolder->getById($folderId);
-		if (is_array($folders) and count($folders) === 1) {
+		if (is_array($folders) && count($folders) === 1) {
 			$folder = array_shift($folders);
 			$tracks = $this->gatherTrackFiles($folder, true);
 			foreach ($tracks as $track) {
@@ -165,62 +163,72 @@ class TracksService {
 		}
 	}
 
-	private function gatherTrackFiles($folder, $recursive) {
+	/**
+	 * @return list<File>
+	 */
+	private function gatherTrackFiles(Folder $folder, bool $recursive): array {
 		$notes = [];
 		$nodes = $folder->getDirectoryListing();
 		foreach ($nodes as $node) {
-			if ($node->getType() === FileInfo::TYPE_FOLDER and $recursive) {
+			if ($node instanceof Folder && $recursive) {
 				try {
 					$notes = array_merge($notes, $this->gatherTrackFiles($node, $recursive));
-				} catch (\OCP\Files\StorageNotAvailableException|\Exception $e) {
+				} catch (StorageNotAvailableException|\Exception) {
 					$msg = 'WARNING: Could not access ' . $node->getName();
 					echo($msg . "\n");
 					$this->logger->error($msg);
 				}
+
 				continue;
 			}
+
 			if ($this->isTrack($node)) {
 				$notes[] = $node;
 			}
 		}
+
 		return $notes;
 	}
 
-	private function isTrack($file) {
-		if ($file->getType() !== \OCP\Files\FileInfo::TYPE_FILE) {
+	private function isTrack(Node $file): bool {
+		if (!$file instanceof File) {
 			return false;
 		}
-		if (!in_array($file->getMimetype(), self::TRACK_MIME_TYPES)) {
-			return false;
-		}
-		return true;
+
+		return in_array($file->getMimetype(), self::TRACK_MIME_TYPES);
 	}
 
-	private function dbRowToTrack($row, $folder, $userFolder, $defaultMap, $ignoredPaths) {
+	/**
+	 * @param array<string, mixed> $row
+	 */
+	private function dbRowToTrack(array $row, Folder $folder, $userFolder, bool $defaultMap, array $ignoredPaths): ?array {
 		// avoid tracks that are not in "this map's" folder
-		$files = $folder->getById(intval($row['file_id']));
-		if (empty($files)) {
+		$file = $folder->getFirstNodeById(intval($row['file_id']));
+		if ($file === null) {
 			if ($defaultMap) {
 				$this->deleteTrackFromDB($row['id']);
 			}
+
 			return null;
 		}
-		$file = array_shift($files);
-		if ($file === null || $file->getType() !== \OCP\Files\FileInfo::TYPE_FILE) {
+
+		if (!$file instanceof File) {
 			if ($defaultMap) {
 				$this->deleteTrackFromDB($row['id']);
 			}
+
 			return null;
 		}
 
 		$path = $userFolder->getRelativePath($file->getPath());
 		$isIgnored = false;
 		foreach ($ignoredPaths as $ignoredPath) {
-			if (str_starts_with($path, $ignoredPath)) {
+			if (str_starts_with((string)$path, (string)$ignoredPath)) {
 				$isIgnored = true;
 				break;
 			}
 		}
+
 		if ($isIgnored) {
 			return null;
 		}
@@ -244,13 +252,14 @@ class TracksService {
 
 
 	/**
-	 * @param string $userId
+	 * @return mixed[]
 	 */
-	public function getTracksFromDB($userId, $folder = null, bool $respectNomediaAndNoimage = true, bool $hideTracksOnCustomMaps = false, bool $hideTracksInMapsFolder = true) {
+	public function getTracksFromDB(string $userId, $folder = null, bool $respectNomediaAndNoimage = true, bool $hideTracksOnCustomMaps = false, bool $hideTracksInMapsFolder = true): array {
 		$ignoredPaths = $respectNomediaAndNoimage ? $this->getIgnoredPaths($userId, $folder, $hideTracksOnCustomMaps) : [];
 		if ($hideTracksInMapsFolder) {
 			$ignoredPaths[] = '/Maps';
 		}
+
 		$userFolder = $this->root->getUserFolder($userId);
 		$tracks = [];
 		$qb = $this->dbconnection->getQueryBuilder();
@@ -264,6 +273,7 @@ class TracksService {
 		if (is_null($folder)) {
 			$folder = $userFolder;
 		}
+
 		$defaultMap = $folder->getId() === $userFolder->getId();
 
 		// my-maps context
@@ -272,8 +282,10 @@ class TracksService {
 			if (is_null($track)) {
 				continue;
 			}
+
 			$tracks[] = $track;
 		}
+
 		$req->closeCursor();
 		return $tracks;
 	}
@@ -281,17 +293,17 @@ class TracksService {
 	/**
 	 * @param $userId
 	 * @param $folder
-	 * @return array
 	 * @throws \OCP\Files\NotFoundException
 	 * @throws \OCP\Files\NotPermittedException
-	 * @throws \OC\User\NoUserException
+	 * @throws NoUserException
 	 */
-	private function getIgnoredPaths($userId, $folder = null, $hideImagesOnCustomMaps = true) {
+	private function getIgnoredPaths(string $userId, $folder = null, bool $hideImagesOnCustomMaps = true): array {
 		$ignoredPaths = [];
 		$userFolder = $this->root->getUserFolder($userId);
 		if (is_null($folder)) {
 			$folder = $userFolder;
 		}
+
 		$ignoreFileMimetypes = [
 			'application/x-nextcloud-noindex',
 			'application/x-nextcloud-nomedia',
@@ -300,9 +312,8 @@ class TracksService {
 		if ($hideImagesOnCustomMaps) {
 			$ignoreFileMimetypes[] = 'application/x-nextcloud-maps';
 		}
-		$func = function (string $i): SearchComparison {
-			return new SearchComparison(ISearchComparison::COMPARE_EQUAL, 'mimetype', $i);
-		};
+
+		$func = (fn (string $i): SearchComparison => new SearchComparison(ISearchComparison::COMPARE_EQUAL, 'mimetype', $i));
 		$excludedNodes = $folder->search(new SearchQuery(
 			new SearchBinaryOperator(ISearchBinaryOperator::OPERATOR_OR, array_map(
 				$func,
@@ -315,10 +326,11 @@ class TracksService {
 		foreach ($excludedNodes as $node) {
 			$ignoredPaths[] = $userFolder->getRelativePath($node->getParent()->getPath());
 		}
+
 		return $ignoredPaths;
 	}
 
-	public function getTrackFromDB($id, $userId = null) {
+	public function getTrackFromDB(int $id, ?string $userId = null): ?array {
 		$track = null;
 		$qb = $this->dbconnection->getQueryBuilder();
 		$qb->select('id', 'file_id', 'color', 'metadata', 'etag')
@@ -331,19 +343,17 @@ class TracksService {
 				$qb->expr()->eq('user_id', $qb->createNamedParameter($userId, IQueryBuilder::PARAM_STR))
 			);
 		}
+
 		$req = $qb->executeQuery();
 
 		while ($row = $req->fetch()) {
-			if ($userId !== '' and $userId !== null) {
+			if ($userId !== '' && $userId !== null) {
 				$userFolder = $this->root->getUserFolder($userId);
-				$files = $userFolder->getById(intval($row['file_id']));
-				if (empty($files)) {
-					break;
-				}
-				$file = array_shift($files);
+				$file = $userFolder->getFirstNodeById(intval($row['file_id']));
 				if ($file === null) {
 					break;
 				}
+
 				$track = $this->dbRowToTrack($row, $userFolder, $userFolder, true, []);
 			} else {
 				$track = [
@@ -362,13 +372,15 @@ class TracksService {
 					'file_path' => '',
 				];
 			}
+
 			break;
 		}
+
 		$req->closeCursor();
 		return $track;
 	}
 
-	public function getTrackByFileIDFromDB(int $fileId, ?string $userId = null) {
+	public function getTrackByFileIDFromDB(int $fileId, ?string $userId = null): ?array {
 		$track = null;
 		$qb = $this->dbconnection->getQueryBuilder();
 		$qb->select('id', 'file_id', 'color', 'metadata', 'etag')
@@ -381,19 +393,17 @@ class TracksService {
 				$qb->expr()->eq('user_id', $qb->createNamedParameter($userId, IQueryBuilder::PARAM_STR))
 			);
 		}
+
 		$req = $qb->executeQuery();
 
 		while ($row = $req->fetch()) {
-			if ($userId !== '' and $userId !== null) {
+			if ($userId !== '' && $userId !== null) {
 				$userFolder = $this->root->getUserFolder($userId);
-				$files = $userFolder->getById(intval($row['file_id']));
-				if (empty($files)) {
-					break;
-				}
-				$file = array_shift($files);
+				$file = $userFolder->getFirstNodeById(intval($row['file_id']));
 				if ($file === null) {
 					break;
 				}
+
 				$track = $this->dbRowToTrack($row, $userFolder, $userFolder, true, []);
 			} else {
 				$track = [
@@ -412,13 +422,15 @@ class TracksService {
 					'file_path' => '',
 				];
 			}
+
 			break;
 		}
+
 		$req->closeCursor();
 		return $track;
 	}
 
-	public function addTrackToDB($userId, $fileId, $file) {
+	public function addTrackToDB($userId, $fileId, $file): int {
 		$metadata = '';
 		$etag = $file->getEtag();
 		$qb = $this->dbconnection->getQueryBuilder();
@@ -430,22 +442,24 @@ class TracksService {
 				'etag' => $qb->createNamedParameter($etag, IQueryBuilder::PARAM_STR)
 			]);
 		$qb->executeStatement();
-		$trackId = $qb->getLastInsertId();
-		return $trackId;
+		return $qb->getLastInsertId();
 	}
 
-	public function editTrackInDB($id, $color, $metadata, $etag): void {
+	public function editTrackInDB(int $id, ?string $color, ?string $metadata, ?string $etag): void {
 		$qb = $this->dbconnection->getQueryBuilder();
 		$qb->update('maps_tracks');
 		if ($color !== null) {
 			$qb->set('color', $qb->createNamedParameter($color, IQueryBuilder::PARAM_STR));
 		}
+
 		if ($metadata !== null) {
 			$qb->set('metadata', $qb->createNamedParameter($metadata, IQueryBuilder::PARAM_STR));
 		}
+
 		if ($etag !== null) {
 			$qb->set('etag', $qb->createNamedParameter($etag, IQueryBuilder::PARAM_STR));
 		}
+
 		$qb->where(
 			$qb->expr()->eq('id', $qb->createNamedParameter($id, IQueryBuilder::PARAM_INT))
 		);
@@ -492,7 +506,7 @@ class TracksService {
 	}
 
 	public function deleteTracksFromDB(array $ids, string $userId): void {
-		if (empty($ids)) {
+		if ($ids === []) {
 			return;
 		}
 
@@ -505,8 +519,7 @@ class TracksService {
 		$qb->executeStatement();
 	}
 
-	public function generateTrackMetadata($file) {
-		$DISTANCE_BETWEEN_SHORT_POINTS = 300;
+	public function generateTrackMetadata($file): ?string {
 		$STOPPED_SPEED_THRESHOLD = 0.9;
 
 		$name = $file->getName();
@@ -518,8 +531,6 @@ class TracksService {
 		$total_duration = 0;
 		$date_begin = null;
 		$date_end = null;
-
-		$distAccCumulEle = 0;
 		$pos_elevation = 0;
 		$neg_elevation = 0;
 		$min_elevation = null;
@@ -529,7 +540,6 @@ class TracksService {
 		$moving_time = 0;
 		$moving_distance = 0;
 		$stopped_distance = 0;
-		$moving_max_speed = 0;
 		$moving_avg_speed = 0;
 		$stopped_time = 0;
 		$north = null;
@@ -545,15 +555,15 @@ class TracksService {
 
 		try {
 			$gpx = new \SimpleXMLElement($gpx_content);
-		} catch (\Throwable $e) {
+		} catch (\Throwable $throwable) {
 			$this->logger->error(
-				'Exception in ' . $name . ' gpx parsing : ' . $e->getMessage(),
+				'Exception in ' . $name . ' gpx parsing : ' . $throwable->getMessage(),
 				['app' => 'maps']
 			);
 			return null;
 		}
 
-		if (count($gpx->trk) === 0 and count($gpx->rte) === 0 and count($gpx->wpt) === 0) {
+		if (count($gpx->trk) === 0 && count($gpx->rte) === 0 && count($gpx->wpt) === 0) {
 			$this->logger->error(
 				'Nothing to parse in ' . $name . ' gpx file',
 				['app' => 'maps']
@@ -562,7 +572,7 @@ class TracksService {
 		}
 
 		// METADATA
-		if (!empty($gpx->metadata) and !empty($gpx->metadata->link)) {
+		if (!empty($gpx->metadata) && !empty($gpx->metadata->link)) {
 			$linkurl = $gpx->metadata->link['href'];
 			if (!empty($gpx->metadata->link->text)) {
 				$linktext = $gpx->metadata->link->text;
@@ -571,10 +581,11 @@ class TracksService {
 
 		// TRACKS
 		foreach ($gpx->trk as $track) {
-			$trackname = str_replace("\n", '', $track->name);
+			$trackname = str_replace("\n", '', (string)$track->name);
 			if (empty($trackname)) {
 				$trackname = '';
 			}
+
 			$trackname = str_replace('"', "'", $trackname);
 			$trackNameList[] = sprintf('"%s"', $trackname);
 			foreach ($track->trkseg as $segment) {
@@ -583,44 +594,36 @@ class TracksService {
 				$pointIndex = 0;
 				$pointsBySegment[] = $segment->trkpt;
 				foreach ($segment->trkpt as $point) {
-					if (empty($point['lat']) or empty($point['lon'])) {
+					if (empty($point['lat'])) {
 						continue;
 					}
-					if (empty($point->ele)) {
-						$pointele = null;
-					} else {
-						$pointele = floatval($point->ele);
+
+					if (empty($point['lon'])) {
+						continue;
 					}
-					if (empty($point->time)) {
-						$pointtime = null;
-					} else {
-						$pointtime = new \DateTime($point->time);
-					}
-					if ($lastPoint !== null and (!empty($lastPoint->ele))) {
-						$lastPointele = floatval($lastPoint->ele);
-					} else {
-						$lastPointele = null;
-					}
-					if ($lastPoint !== null and (!empty($lastPoint->time))) {
-						$lastTime = new \DateTime($lastPoint->time);
-					} else {
-						$lastTime = null;
-					}
-					if ($lastPoint !== null) {
-						$distToLast = distance($lastPoint, $point);
-					} else {
-						$distToLast = null;
-					}
+
+					$pointele = empty($point->ele) ? null : floatval($point->ele);
+
+					$pointtime = empty($point->time) ? null : new \DateTime((string)$point->time);
+
+					$lastPointele = ($lastPoint !== null && !empty($lastPoint->ele)) ? floatval($lastPoint->ele) : null;
+
+					$lastTime = ($lastPoint !== null && !empty($lastPoint->time)) ? new \DateTime((string)$lastPoint->time) : null;
+
+					$distToLast = $lastPoint !== null ? distance((array)$lastPoint, (array)$point) : null;
+
 					$pointlat = floatval($point['lat']);
 					$pointlon = floatval($point['lon']);
 					if ($pointIndex === 0) {
-						if ($lat === '0' and $lon === '0') {
+						if ($lat === '0' && $lon === '0') {
 							$lat = $pointlat;
 							$lon = $pointlon;
 						}
-						if ($pointtime !== null and ($date_begin === null or $pointtime < $date_begin)) {
+
+						if ($pointtime instanceof \DateTime && (!$date_begin instanceof \DateTime || $pointtime < $date_begin)) {
 							$date_begin = $pointtime;
 						}
+
 						$downBegin = $pointele;
 						if ($north === null) {
 							$north = $pointlat;
@@ -633,29 +636,35 @@ class TracksService {
 					if ($pointlat > $north) {
 						$north = $pointlat;
 					}
+
 					if ($pointlat < $south) {
 						$south = $pointlat;
 					}
+
 					if ($pointlon > $east) {
 						$east = $pointlon;
 					}
+
 					if ($pointlon < $west) {
 						$west = $pointlon;
 					}
-					if ($pointele !== null and ($min_elevation === null or $pointele < $min_elevation)) {
+
+					if ($pointele !== null && ($min_elevation === null || $pointele < $min_elevation)) {
 						$min_elevation = $pointele;
 					}
-					if ($pointele !== null and ($max_elevation === null or $pointele > $max_elevation)) {
+
+					if ($pointele !== null && ($max_elevation === null || $pointele > $max_elevation)) {
 						$max_elevation = $pointele;
 					}
-					if ($lastPoint !== null and $pointtime !== null and $lastTime !== null) {
+
+					if ($lastPoint !== null && $pointtime instanceof \DateTime && $lastTime instanceof \DateTime) {
 						$t = abs($lastTime->getTimestamp() - $pointtime->getTimestamp());
 
 						$speed = 0;
 						if ($t > 0) {
 							$speed = $distToLast / $t;
-							$speed = $speed / 1000;
-							$speed = $speed * 3600;
+							$speed /= 1000;
+							$speed *= 3600;
 						}
 
 						if ($speed <= $STOPPED_SPEED_THRESHOLD) {
@@ -666,6 +675,7 @@ class TracksService {
 							$moving_distance += $distToLast;
 						}
 					}
+
 					if ($lastPoint !== null) {
 						$total_distance += $distToLast;
 					}
@@ -674,7 +684,7 @@ class TracksService {
 					$pointIndex += 1;
 				}
 
-				if ($lastTime !== null and ($date_end === null or $lastTime > $date_end)) {
+				if ($lastTime instanceof \DateTime && ($date_end === null || $lastTime > $date_end)) {
 					$date_end = $lastTime;
 				}
 			}
@@ -687,6 +697,7 @@ class TracksService {
 			if (empty($routename)) {
 				$routename = '';
 			}
+
 			$routename = str_replace('"', "'", $routename);
 			$trackNameList[] = sprintf('"%s"', $routename);
 
@@ -695,44 +706,36 @@ class TracksService {
 			$pointIndex = 0;
 			$pointsBySegment[] = $route->rtept;
 			foreach ($route->rtept as $point) {
-				if (empty($point['lat']) or empty($point['lon'])) {
+				if (empty($point['lat'])) {
 					continue;
 				}
-				if (empty($point->ele)) {
-					$pointele = null;
-				} else {
-					$pointele = floatval($point->ele);
+
+				if (empty($point['lon'])) {
+					continue;
 				}
-				if (empty($point->time)) {
-					$pointtime = null;
-				} else {
-					$pointtime = new \DateTime($point->time);
-				}
-				if ($lastPoint !== null and (!empty($lastPoint->ele))) {
-					$lastPointele = floatval($lastPoint->ele);
-				} else {
-					$lastPointele = null;
-				}
-				if ($lastPoint !== null and (!empty($lastPoint->time))) {
-					$lastTime = new \DateTime($lastPoint->time);
-				} else {
-					$lastTime = null;
-				}
-				if ($lastPoint !== null) {
-					$distToLast = distance($lastPoint, $point);
-				} else {
-					$distToLast = null;
-				}
+
+				$pointele = empty($point->ele) ? null : floatval($point->ele);
+
+				$pointtime = empty($point->time) ? null : new \DateTime((string)$point->time);
+
+				$lastPointele = ($lastPoint !== null && !empty($lastPoint->ele)) ? floatval($lastPoint->ele) : null;
+
+				$lastTime = ($lastPoint !== null && !empty($lastPoint->time)) ? new \DateTime((string)$lastPoint->time) : null;
+
+				$distToLast = $lastPoint !== null ? distance((array)$lastPoint, (array)$point) : null;
+
 				$pointlat = floatval($point['lat']);
 				$pointlon = floatval($point['lon']);
 				if ($pointIndex === 0) {
-					if ($lat === '0' and $lon === '0') {
+					if ($lat === '0' && $lon === '0') {
 						$lat = $pointlat;
 						$lon = $pointlon;
 					}
-					if ($pointtime !== null and ($date_begin === null or $pointtime < $date_begin)) {
+
+					if ($pointtime instanceof \DateTime && (!$date_begin instanceof \DateTime || $pointtime < $date_begin)) {
 						$date_begin = $pointtime;
 					}
+
 					$downBegin = $pointele;
 					if ($north === null) {
 						$north = $pointlat;
@@ -745,29 +748,35 @@ class TracksService {
 				if ($pointlat > $north) {
 					$north = $pointlat;
 				}
+
 				if ($pointlat < $south) {
 					$south = $pointlat;
 				}
+
 				if ($pointlon > $east) {
 					$east = $pointlon;
 				}
+
 				if ($pointlon < $west) {
 					$west = $pointlon;
 				}
-				if ($pointele !== null and ($min_elevation === null or $pointele < $min_elevation)) {
+
+				if ($pointele !== null && ($min_elevation === null || $pointele < $min_elevation)) {
 					$min_elevation = $pointele;
 				}
-				if ($pointele !== null and ($max_elevation === null or $pointele > $max_elevation)) {
+
+				if ($pointele !== null && ($max_elevation === null || $pointele > $max_elevation)) {
 					$max_elevation = $pointele;
 				}
-				if ($lastPoint !== null and $pointtime !== null and $lastTime !== null) {
+
+				if ($lastPoint !== null && $pointtime instanceof \DateTime && $lastTime instanceof \DateTime) {
 					$t = abs($lastTime->getTimestamp() - $pointtime->getTimestamp());
 
 					$speed = 0;
 					if ($t > 0) {
 						$speed = $distToLast / $t;
-						$speed = $speed / 1000;
-						$speed = $speed * 3600;
+						$speed /= 1000;
+						$speed *= 3600;
 					}
 
 					if ($speed <= $STOPPED_SPEED_THRESHOLD) {
@@ -778,6 +787,7 @@ class TracksService {
 						$moving_distance += $distToLast;
 					}
 				}
+
 				if ($lastPoint !== null) {
 					$total_distance += $distToLast;
 				}
@@ -786,21 +796,21 @@ class TracksService {
 				$pointIndex += 1;
 			}
 
-			if ($lastTime !== null and ($date_end === null or $lastTime > $date_end)) {
+			if ($lastTime instanceof \DateTime && (!$date_end instanceof \DateTime || $lastTime > $date_end)) {
 				$date_end = $lastTime;
 			}
 		}
 
 		# TOTAL STATS : duration, avg speed, avg_moving_speed
-		if ($date_end !== null and $date_begin !== null) {
+		if ($date_end instanceof \DateTime && $date_begin instanceof \DateTime) {
 			$totsec = abs($date_end->getTimestamp() - $date_begin->getTimestamp());
 			$total_duration = $totsec;
 			if ($totsec === 0) {
 				$avg_speed = 0;
 			} else {
 				$avg_speed = $total_distance / $totsec;
-				$avg_speed = $avg_speed / 1000;
-				$avg_speed = $avg_speed * 3600;
+				$avg_speed /= 1000;
+				$avg_speed *= 3600;
 				$avg_speed = sprintf('%.2f', $avg_speed);
 			}
 		}
@@ -810,13 +820,13 @@ class TracksService {
 		$moving_pace = 0;
 		if ($moving_time > 0) {
 			$moving_avg_speed = $total_distance / $moving_time;
-			$moving_avg_speed = $moving_avg_speed / 1000;
-			$moving_avg_speed = $moving_avg_speed * 3600;
+			$moving_avg_speed /= 1000;
+			$moving_avg_speed *= 3600;
 			$moving_avg_speed = sprintf('%.2f', $moving_avg_speed);
 			// pace in minutes/km
 			$moving_pace = $moving_time / $total_distance;
-			$moving_pace = $moving_pace / 60;
-			$moving_pace = $moving_pace * 1000;
+			$moving_pace /= 60;
+			$moving_pace *= 1000;
 			$moving_pace = sprintf('%.2f', $moving_pace);
 		}
 
@@ -825,21 +835,24 @@ class TracksService {
 			$waypointlat = floatval($waypoint['lat']);
 			$waypointlon = floatval($waypoint['lon']);
 
-			if ($lat === '0' and $lon === '0') {
+			if ($lat === '0' && $lon === '0') {
 				$lat = $waypointlat;
 				$lon = $waypointlon;
 			}
 
-			if ($north === null or $waypointlat > $north) {
+			if ($north === null || $waypointlat > $north) {
 				$north = $waypointlat;
 			}
-			if ($south === null or $waypointlat < $south) {
+
+			if ($south === null || $waypointlat < $south) {
 				$south = $waypointlat;
 			}
-			if ($east === null or $waypointlon > $east) {
+
+			if ($east === null || $waypointlon > $east) {
 				$east = $waypointlon;
 			}
-			if ($west === null or $waypointlon < $west) {
+
+			if ($west === null || $waypointlon < $west) {
 				$west = $waypointlon;
 			}
 		}
@@ -848,12 +861,15 @@ class TracksService {
 		if ($north === null) {
 			$north = 0;
 		}
+
 		if ($south === null) {
 			$south = 0;
 		}
+
 		if ($east === null) {
 			$east = 0;
 		}
+
 		if ($west === null) {
 			$west = 0;
 		}
@@ -863,6 +879,7 @@ class TracksService {
 		foreach ($pointsBySegment as $points) {
 			$distFilteredPointsBySegment[] = $this->getDistanceFilteredPoints($points);
 		}
+
 		// and we get points with elevation and time for each segment
 		$pointsWithElevationBySegment = [];
 		$pointsWithTimeBySegment = [];
@@ -873,13 +890,16 @@ class TracksService {
 				if (!empty($point->ele)) {
 					$pointsWithElevationOneSegment[] = $point;
 				}
+
 				if (!empty($point->time)) {
 					$pointsWithTimeOneSegment[] = $point;
 				}
 			}
+
 			$pointsWithElevationBySegment[] = $pointsWithElevationOneSegment;
 			$pointsWithTimeBySegment[] = $pointsWithTimeOneSegment;
 		}
+
 		// process elevation gain/loss
 		$pos_elevation = 0;
 		$neg_elevation = 0;
@@ -888,6 +908,7 @@ class TracksService {
 			$pos_elevation += $gainLoss[0];
 			$neg_elevation += $gainLoss[1];
 		}
+
 		$pos_elevation = number_format($pos_elevation, 2, '.', '');
 		$neg_elevation = number_format($neg_elevation, 2, '.', '');
 		// process max speed from distance filtered points
@@ -899,18 +920,18 @@ class TracksService {
 			}
 		}
 
-		$result = sprintf('{"lat":%s, "lng":%s, "name": "%s", "distance": %.3f, "duration": %d, "begin": %d, "end": %d, "posel": %.2f, "negel": %.2f, "minel": %.2f, "maxel": %.2f, "maxspd": %.2f, "avgspd": %.2f, "movtime": %d, "stptime": %d, "movavgspd": %s, "n": %.8f, "s": %.8f, "e": %.8f, "w": %.8f, "trnl": %s, "lnkurl": "%s", "lnktxt": "%s", "movpace": %.2f}',
+		return sprintf('{"lat":%s, "lng":%s, "name": "%s", "distance": %.3f, "duration": %d, "begin": %d, "end": %d, "posel": %.2f, "negel": %.2f, "minel": %.2f, "maxel": %.2f, "maxspd": %.2f, "avgspd": %.2f, "movtime": %d, "stptime": %d, "movavgspd": %s, "n": %.8f, "s": %.8f, "e": %.8f, "w": %.8f, "trnl": %s, "lnkurl": "%s", "lnktxt": "%s", "movpace": %.2f}',
 			$lat,
 			$lon,
 			str_replace('"', "'", $name),
 			$total_distance,
 			$total_duration,
-			($date_begin !== null) ? $date_begin->getTimestamp() : -1,
-			($date_end !== null) ? $date_end->getTimestamp() : -1,
+			($date_begin instanceof \DateTime) ? $date_begin->getTimestamp() : -1,
+			($date_end instanceof \DateTime) ? $date_end->getTimestamp() : -1,
 			$pos_elevation,
 			$neg_elevation,
-			($min_elevation !== null) ? $min_elevation : -1000,
-			($max_elevation !== null) ? $max_elevation : -1000,
+			$min_elevation ?? -1000,
+			$max_elevation ?? -1000,
 			$maxSpeed,
 			$avg_speed,
 			$moving_time,
@@ -925,19 +946,21 @@ class TracksService {
 			str_replace('"', "'", $linktext),
 			$moving_pace
 		);
-		return $result;
 	}
 
-	private function getDistanceFilteredPoints($points) {
+	/**
+	 * @return object[]
+	 */
+	private function getDistanceFilteredPoints($points): array {
 		$DISTANCE_THRESHOLD = 10;
 
 		$distFilteredPoints = [];
 		if (count($points) > 0) {
-			array_push($distFilteredPoints, $points[0]);
+			$distFilteredPoints[] = $points[0];
 			$lastPoint = $points[0];
 			foreach ($points as $point) {
-				if (distance($lastPoint, $point) >= $DISTANCE_THRESHOLD) {
-					array_push($distFilteredPoints, $point);
+				if (distance((array)$lastPoint, (array)$point) >= $DISTANCE_THRESHOLD) {
+					$distFilteredPoints[] = $point;
 					$lastPoint = $point;
 				}
 			}
@@ -946,24 +969,28 @@ class TracksService {
 		return $distFilteredPoints;
 	}
 
-	private function getMaxSpeed($points) {
+	/**
+	 * @param object[] $points
+	 */
+	private function getMaxSpeed(array $points): float|int {
 		$maxSpeed = 0;
 
-		if (count($points) > 0) {
+		if ($points !== []) {
 			$lastPoint = $points[0];
-			$lastTime = new \DateTime($lastPoint->time);
+			$lastTime = new \DateTime((string)$lastPoint->time);
 			foreach ($points as $point) {
-				$time = new \DateTime($point->time);
+				$time = new \DateTime((string)$point->time);
 				$timeDelta = abs($lastTime->getTimestamp() - $time->getTimestamp());
 				if ($timeDelta > 0) {
-					$distance = distance($point, $lastPoint);
+					$distance = distance((array)$point, (array)$lastPoint);
 					$speed = $distance / $timeDelta;
-					$speed = $speed / 1000;
-					$speed = $speed * 3600;
+					$speed /= 1000;
+					$speed *= 3600;
 					if ($speed > $maxSpeed) {
 						$maxSpeed = $speed;
 					}
 				}
+
 				$lastTime = $time;
 				$lastPoint = $point;
 			}
@@ -974,14 +1001,16 @@ class TracksService {
 
 	/**
 	 * inspired by https://www.gpsvisualizer.com/tutorials/elevation_gain.html
+	 * @param object[] $points
+	 * @return array<int, float|int>
 	 */
-	private function getElevationGainLoss($points) {
+	private function getElevationGainLoss(array $points): array {
 		$ELEVATION_THRESHOLD = 6;
 		$gain = 0;
 		$loss = 0;
 
 		// then calculate elevation gain with elevation threshold
-		if (count($points) > 0) {
+		if ($points !== []) {
 			$validPoint = $points[0];
 			foreach ($points as $point) {
 				$deniv = floatval($point->ele) - floatval($validPoint->ele);
@@ -1002,20 +1031,24 @@ class TracksService {
 /*
  * return distance between these two gpx points in meters
  */
-function distance($p1, $p2) {
+/**
+ * @param array<string, mixed> $p1
+ * @param array<string, mixed> $p2
+ */
+function distance(array $p1, array $p2): int|float {
 
 	$lat1 = (float)$p1['lat'];
 	$long1 = (float)$p1['lon'];
 	$lat2 = (float)$p2['lat'];
 	$long2 = (float)$p2['lon'];
 
-	if ($lat1 === $lat2 and $long1 === $long2) {
+	if ($lat1 === $lat2 && $long1 === $long2) {
 		return 0;
 	}
 
 	// Convert latitude and longitude to
 	// spherical coordinates in radians.
-	$degrees_to_radians = pi() / 180.0;
+	$degrees_to_radians = M_PI / 180.0;
 
 	// phi = 90 - latitude
 	$phi1 = (90.0 - $lat1) * $degrees_to_radians;
@@ -1039,6 +1072,7 @@ function distance($p1, $p2) {
 	if ($cos > 1.0) {
 		$cos = 1.0;
 	}
+
 	$arc = acos($cos);
 
 	// Remember to multiply arc by the radius of the earth

@@ -31,13 +31,9 @@ use OCP\EventDispatcher\IEventListener;
 /** @template-implements IEventListener<CardDeletedEvent> */
 class CardDeletedListener implements IEventListener {
 
-	/** @var AddressService */
-	private $addressService;
-
 	public function __construct(
-		AddressService $addressService,
+		private readonly AddressService $addressService,
 	) {
-		$this->addressService = $addressService;
 	}
 
 	public function handle(Event $event): void {
@@ -45,6 +41,7 @@ class CardDeletedListener implements IEventListener {
 			// Unrelated
 			return;
 		}
+
 		$cData = $event->getCardData();
 		$cUri = $cData['uri'];
 		$this->addressService->deleteDBContactAddresses($cUri);

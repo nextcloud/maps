@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /**
  * @copyright Copyright (c) 2019, Paul Schwörer <hello@paulschwoerer.de>
  *
@@ -21,33 +23,35 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-
 namespace tests\Integration\Db;
 
 use ChristophWurst\Nextcloud\Testing\DatabaseTransaction;
 use ChristophWurst\Nextcloud\Testing\TestCase;
-use OC;
 use OCA\Maps\DB\FavoriteShare;
 use OCA\Maps\DB\FavoriteShareMapper;
 use OCP\AppFramework\Db\DoesNotExistException;
+use OCP\Files\IRootFolder;
+use OCP\IDBConnection;
+use OCP\Security\ISecureRandom;
+use OCP\Server;
 
-class FavoriteShareMapperTest extends TestCase {
+final class FavoriteShareMapperTest extends TestCase {
 	use DatabaseTransaction;
 
 	/* @var FavoriteShareMapper */
-	private $mapper;
+	private FavoriteShareMapper $mapper;
 
-	public function setUp(): void {
+	protected function setUp(): void {
 		parent::setUp();
 
 		$this->mapper = new FavoriteShareMapper(
-			OC::$server->query(\OCP\IDBConnection::class),
-			OC::$server->getSecureRandom(),
-			OC::$server->getRootFolder()
+			Server::get(IDBConnection::class),
+			Server::get(ISecureRandom::class),
+			Server::get(IRootFolder::class)
 		);
 	}
 
-	public function testCreateByOwnerAndTokenIsSuccessful() {
+	public function testCreateByOwnerAndTokenIsSuccessful(): void {
 		/* @var FavoriteShare */
 		$share = $this->mapper->create('testUser', 'testCategory');
 
@@ -56,7 +60,7 @@ class FavoriteShareMapperTest extends TestCase {
 		$this->assertEquals('testCategory', $share->getCategory());
 	}
 
-	public function testFindByTokenIsSuccessful() {
+	public function testFindByTokenIsSuccessful(): void {
 		/* @var FavoriteShare */
 		$shareExpected = $this->mapper->create('testUser', 'testCategory');
 
@@ -68,7 +72,7 @@ class FavoriteShareMapperTest extends TestCase {
 		$this->assertEquals($shareExpected->getCategory(), $shareActual->getCategory());
 	}
 
-	public function testFindByOwnerAndCategoryIsSuccessful() {
+	public function testFindByOwnerAndCategoryIsSuccessful(): void {
 		/* @var FavoriteShare */
 		$shareExpected = $this->mapper->create('testUser', 'testCategory');
 
@@ -80,7 +84,7 @@ class FavoriteShareMapperTest extends TestCase {
 		$this->assertEquals($shareExpected->getCategory(), $shareActual->getCategory());
 	}
 
-	public function testFindAllByOwnerIsSuccessfulAndDoesNotContainOtherShares() {
+	public function testFindAllByOwnerIsSuccessfulAndDoesNotContainOtherShares(): void {
 		/* @var FavoriteShare */
 		$share1 = $this->mapper->create('testUser', 'testCategory1');
 
@@ -92,25 +96,24 @@ class FavoriteShareMapperTest extends TestCase {
 		/* @var array */
 		$shares = $this->mapper->findAllByOwner('testUser');
 
-		$shareTokens = array_map(function ($share) {
-			return $share->getToken();
-		}, $shares);
+		$shareTokens = array_map(fn (FavoriteShare $share) => $share->getToken(), $shares);
 
-		$this->assertEquals(2, count($shareTokens));
+		$this->assertCount(2, $shareTokens);
 		$this->assertContains($share1->getToken(), $shareTokens);
 		$this->assertContains($share2->getToken(), $shareTokens);
 	}
 
-	public function testFindOrCreateByOwnerAndCategoryIsSuccessful() {
+	public function testFindOrCreateByOwnerAndCategoryIsSuccessful(): void {
 		/* @var FavoriteShare */
 		$share = $this->mapper->findOrCreateByOwnerAndCategory('testUser', 'testCategory');
+		$this->assertInstanceOf(FavoriteShare::class, $share);
 
 		$this->assertIsString($share->getToken());
 		$this->assertEquals('testUser', $share->getOwner());
 		$this->assertEquals('testCategory', $share->getCategory());
 	}
 
-	public function testRemoveByOwnerAndCategoryIsSuccessful() {
+	public function testRemoveByOwnerAndCategoryIsSuccessful(): void {
 		/* @var FavoriteShare */
 		$share = $this->mapper->create('testUser', 'testCategory');
 

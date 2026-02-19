@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /**
  * @copyright Copyright (c) 2019, Paul Schwörer <hello@paulschwoerer.de>
  *
@@ -21,7 +23,6 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-
 namespace OCA\Maps\DB;
 
 use OCP\AppFramework\Db\Entity;
@@ -38,8 +39,11 @@ use OCP\AppFramework\Db\Entity;
  */
 class FavoriteShare extends Entity {
 	public $owner;
+
 	public $token;
+
 	public $category;
+
 	public $allowEdits = false;
 
 	public function __construct() {

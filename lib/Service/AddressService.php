@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /**
  * Nextcloud - maps
  *
@@ -9,7 +11,6 @@
  * @author Arne Hamann
  * @copyright Arne Hamann 2019
  */
-
 namespace OCA\Maps\Service;
 
 use OCA\Maps\BackgroundJob\LookupMissingGeoJob;
@@ -40,15 +41,15 @@ use Sabre\VObject\Reader;
  */
 class AddressService {
 	private $dbconnection;
+
 	private $jobList;
-	private $appData;
 
 	/** @var IMemcache */
 	private $memcache;
 
 	public function __construct(
 		ICacheFactory $cacheFactory,
-		private LoggerInterface $logger,
+		private readonly LoggerInterface $logger,
 		IJobList $jobList,
 		IAppData $appData,
 		IDBConnection $dbconnection,
@@ -56,7 +57,6 @@ class AddressService {
 		$this->dbconnection = $dbconnection;
 		$this->memcache = $cacheFactory->createLocal('maps');
 		$this->jobList = $jobList;
-		$this->appData = $appData;
 	}
 
 	// converts the address to geo lat;lon
@@ -73,9 +73,16 @@ class AddressService {
 	 * @param $adr
 	 * @param $uri ressource identifier (contact URI for example)
 	 * @return array($lat,$lng,$lookedUp)
+	 * @return array<int, mixed>
+	 * @return array<int, mixed>
+	 * @return array<int, mixed>
+	 * @return array<int, mixed>
+	 * @return array<int, mixed>
+	 * @return array<int, mixed>
+	 * @return array<int, mixed>
 	 */
 	public function lookupAddress($adr, $uri): array {
-		$adr_norm = strtolower(preg_replace('/\s+/', '', $adr));
+		$adr_norm = strtolower((string)preg_replace('/\s+/', '', (string)$adr));
 		$qb = $this->dbconnection->getQueryBuilder();
 		$qb->select('id', 'lat', 'lng', 'looked_up')
 			->from('maps_address_geo')
@@ -101,38 +108,39 @@ class AddressService {
 				if (!$geo[2]) {
 					$geo = $this->lookupAddressExternal($adr);
 				}
+
 				$lat = $geo[0];
 				$lng = $geo[1];
 				$lookedUp = $geo[2];
 				$inDb = true;
 			}
+
 			break;
 		}
+
 		$req->closeCursor();
 		$qb = $this->dbconnection->getQueryBuilder();
 		// if it's still not in the DB, it means the lookup did not happen yet
 		// so we can schedule it for later
 		if (!$inDb) {
-			if (strlen($adr) > 255) {
+			if (strlen((string)$adr) > 255) {
 				$this->logger->notice('lookupAddress: Truncating $adr (entry too long) ' . $adr);
-				$adr = substr($adr, 0, 255);
+				$adr = substr((string)$adr, 0, 255);
 			}
+
 			$foo = $this->scheduleForLookup($adr, $uri);
 			$id = $foo[0];
 			$lat = $foo[1];
 			$lng = $foo[2];
 			$lookedUp = $foo[3];
-
-		} else {
-			if ($lookedUp) {
-				$qb->update('maps_address_geo')
-					->set('lat', $qb->createNamedParameter($lat, IQueryBuilder::PARAM_STR))
-					->set('lng', $qb->createNamedParameter($lng, IQueryBuilder::PARAM_STR))
-					->set('object_uri', $qb->createNamedParameter($uri, IQueryBuilder::PARAM_STR))
-					->set('looked_up', $qb->createNamedParameter($lookedUp, IQueryBuilder::PARAM_BOOL))
-					->where($qb->expr()->eq('id', $qb->createNamedParameter($id, IQueryBuilder::PARAM_STR)));
-				$qb->executeStatement();
-			}
+		} elseif ($lookedUp) {
+			$qb->update('maps_address_geo')
+				->set('lat', $qb->createNamedParameter($lat, IQueryBuilder::PARAM_STR))
+				->set('lng', $qb->createNamedParameter($lng, IQueryBuilder::PARAM_STR))
+				->set('object_uri', $qb->createNamedParameter($uri, IQueryBuilder::PARAM_STR))
+				->set('looked_up', $qb->createNamedParameter($lookedUp, IQueryBuilder::PARAM_BOOL))
+				->where($qb->expr()->eq('id', $qb->createNamedParameter($id, IQueryBuilder::PARAM_STR)));
+			$qb->executeStatement();
 		}
 
 		return [$lat, $lng, $lookedUp];
@@ -149,7 +157,7 @@ class AddressService {
 			return $res;
 		}
 
-		$adr_norm = strtolower(preg_replace('/\s+/', '', $adr));
+		$adr_norm = strtolower((string)preg_replace('/\s+/', '', (string)$adr));
 
 		$qb = $this->dbconnection->getQueryBuilder();
 		$qb->select('lat', 'lng')
@@ -162,6 +170,7 @@ class AddressService {
 			$res[1] = $row['lng'];
 			$res[2] = true;
 		}
+
 		$req->closeCursor();
 
 		return $res;
@@ -169,7 +178,7 @@ class AddressService {
 
 	// looks up the address on external provider returns lat, lon, lookupstate
 	// do lookup only if last one occured more than one second ago
-	private function lookupAddressExternal($adr): array {
+	private function lookupAddressExternal(string $adr): array {
 		if (time() - intval($this->memcache->get('lastAddressLookup')) >= 1) {
 			$opts = [
 				'http' => [
@@ -182,9 +191,9 @@ class AddressService {
 			// we get rid of "post office box" field
 			$splitted_adr = explode(';', $adr);
 			// remove blank lines (#706)
-			$splitted_adr = array_filter(array_map('trim', $splitted_adr));
+			$splitted_adr = array_filter(array_map(trim(...), $splitted_adr));
 			// ADR in VCard is mandated to 7 fields
-			if (sizeof($splitted_adr) == 7) {
+			if (count($splitted_adr) === 7) {
 				$query_adr_parts = [];
 				// This matches the nominatim query with the fields of 'ADR' in VCard
 				$query_key_part = ['','','street', 'city','state', 'postalcode', 'country'];
@@ -208,30 +217,36 @@ class AddressService {
 			);
 			if ($result_json !== false) {
 				$result = \json_decode($result_json, true);
-				if (!(key_exists('request_failed', $result) and $result['request_failed'])) {
+				if (!(array_key_exists('request_failed', $result) && $result['request_failed'])) {
 					$this->logger->debug('External looked up address: ' . $adr . ' with result' . print_r($result, true));
 					$this->memcache->set('lastAddressLookup', time());
 					$lat = null;
 					$lon = null;
 					foreach ($result as $addr) {
-						if (key_exists('lat', $addr) and key_exists('lon', $addr)) {
-							if (is_null($lat)
-								 or (key_exists('category', $addr) and in_array($addr['category'], ['place', 'building', 'amenity']))) {
-								$lat = $addr['lat'];
-								$lon = $addr['lon'];
-							}
+						if (!(array_key_exists('lat', $addr) && array_key_exists('lon', $addr))) {
+							continue;
 						}
+
+						if (!is_null($lat) && !(array_key_exists('category', $addr) && in_array($addr['category'], ['place', 'building', 'amenity']))) {
+							continue;
+						}
+
+						$lat = $addr['lat'];
+						$lon = $addr['lon'];
 					}
+
 					return [$lat, $lon, true];
 				}
 			}
+
 			$this->logger->debug('Externally looked failed');
 		}
+
 		return [null, null, false];
 	}
 
 	// launch lookup for all addresses of the vCard
-	public function scheduleVCardForLookup($cardData, $cardUri) {
+	public function scheduleVCardForLookup($cardData, $cardUri): void {
 		$vCard = Reader::read($cardData);
 
 		$this->cleanUpDBContactAddresses($vCard, $cardUri);
@@ -246,16 +261,17 @@ class AddressService {
 		}
 	}
 
-	private function cleanUpDBContactAddresses($vCard, $uri) {
+	private function cleanUpDBContactAddresses($vCard, $uri): void {
 		$qb = $this->dbconnection->getQueryBuilder();
 		// get all vcard addresses
 		$vCardAddresses = [];
 		foreach ($vCard->children() as $property) {
 			if ($property->name === 'ADR') {
 				$adr = $property->getValue();
-				array_push($vCardAddresses, $adr);
+				$vCardAddresses[] = $adr;
 			}
 		}
+
 		// check which addresses from DB is not in the vCard anymore
 		$adrIdToDelete = [];
 		$qb->select('id', 'adr')
@@ -264,9 +280,10 @@ class AddressService {
 		$req = $qb->executeQuery();
 		while ($row = $req->fetch()) {
 			if (!in_array($row['adr'], $vCardAddresses)) {
-				array_push($adrIdToDelete, $row['id']);
+				$adrIdToDelete[] = $row['id'];
 			}
 		}
+
 		$req->closeCursor();
 
 		foreach ($adrIdToDelete as $id) {
@@ -279,7 +296,7 @@ class AddressService {
 		}
 	}
 
-	public function deleteDBContactAddresses($uri) {
+	public function deleteDBContactAddresses($uri): void {
 		$qb = $this->dbconnection->getQueryBuilder();
 		$qb->delete('maps_address_geo')
 			->where(
@@ -289,13 +306,17 @@ class AddressService {
 	}
 
 	// schedules the address for an external lookup
+	/**
+	 * @return array<int, mixed>
+	 */
 	private function scheduleForLookup($adr, $uri): array {
 		$geo = $this->lookupAddressInternal($adr);
 		// if not found internally, ask external service
 		if (!$geo[2]) {
 			$geo = $this->lookupAddressExternal($adr);
 		}
-		$adr_norm = strtolower(preg_replace('/\s+/', '', $adr));
+
+		$adr_norm = strtolower((string)preg_replace('/\s+/', '', (string)$adr));
 		$qb = $this->dbconnection->getQueryBuilder();
 		$qb->insert('maps_address_geo')
 			->values([
@@ -311,6 +332,7 @@ class AddressService {
 		if (!$geo[2]) {
 			$this->jobList->add(LookupMissingGeoJob::class, []);
 		}
+
 		return [$id, $geo[0], $geo[1], $geo[2]];
 	}
 
@@ -329,24 +351,28 @@ class AddressService {
 		$req->closeCursor();
 		$i = 0;
 		foreach ($result as $row) {
-			$i++;
+			++$i;
 			$geo = $this->lookupAddress($row['adr'], $row['object_uri']);
 			// lookup failed
 			if (!$geo[2]) {
 				$lookedUpAll = false;
 			}
+
 			\sleep(1);
-			\usleep(\rand(100, 100000));
+			\usleep(random_int(100, 100000));
 		}
+
 		// not all addresses where loaded from database
 		if ($i === $max) {
 			$lookedUpAll = false;
 		}
+
 		if ($lookedUpAll) {
 			$this->logger->debug('Successfully looked up all addresses during cron job');
 		} else {
 			$this->logger->debug('Failed to look up all addresses during cron job');
 		}
+
 		return $lookedUpAll;
 	}
 }

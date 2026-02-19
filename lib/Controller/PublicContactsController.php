@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /**
  * Nextcloud - maps
  *
@@ -9,22 +11,17 @@
  * @author Julien Veyssier <eneiluj@posteo.net>
  * @copyright Julien Veyssier 2019
  */
-
 namespace OCA\Maps\Controller;
 
-use OCA\DAV\CardDAV\CardDavBackend;
 use OCA\Maps\Service\AddressService;
 use OCP\AppFramework\Http\DataDisplayResponse;
 use OCP\AppFramework\Http\DataResponse;
-use OCP\Contacts\IManager;
 use OCP\EventDispatcher\IEventDispatcher;
-use OCP\Files\IRootFolder;
 use OCP\Files\Node;
 use OCP\Files\NotFoundException;
 use OCP\Files\NotPermittedException;
+use OCP\IAppConfig;
 use OCP\IAvatarManager;
-use OCP\IConfig;
-use OCP\IDBConnection;
 use OCP\IInitialStateService;
 use OCP\IRequest;
 use OCP\ISession;
@@ -33,37 +30,24 @@ use OCP\IUserManager;
 use OCP\Share\Exceptions\ShareNotFound;
 use OCP\Share\IManager as ShareManager;
 use OCP\Share\IShare;
+use Sabre\VObject\Document;
 use Sabre\VObject\Reader;
 
 class PublicContactsController extends PublicPageController {
-	protected IManager $contactsManager;
-	protected AddressService $addressService;
-	protected CardDavBackend $cdBackend;
-	protected IAvatarManager $avatarManager;
-	protected IRootFolder $root;
-
 	public function __construct(
 		string $appName,
 		IRequest $request,
 		ISession $session,
 		IURLGenerator $urlGenerator,
 		IEventDispatcher $eventDispatcher,
-		IConfig $config,
+		IAppConfig $appConfig,
 		IInitialStateService $initialStateService,
 		ShareManager $shareManager,
 		IUserManager $userManager,
-		IManager $contactsManager,
-		IDBConnection $dbconnection,
-		AddressService $addressService,
-		CardDavBackend $cdBackend,
-		IAvatarManager $avatarManager,
-		IRootFolder $root) {
-		parent::__construct($appName, $request, $session, $urlGenerator, $eventDispatcher, $config, $initialStateService, $shareManager, $userManager);
-		$this->avatarManager = $avatarManager;
-		$this->contactsManager = $contactsManager;
-		$this->addressService = $addressService;
-		$this->cdBackend = $cdBackend;
-		$this->root = $root;
+		private readonly AddressService $addressService,
+		private readonly IAvatarManager $avatarManager,
+	) {
+		parent::__construct($appName, $request, $session, $urlGenerator, $eventDispatcher, $appConfig, $initialStateService, $shareManager, $userManager);
 	}
 
 	/**
@@ -93,7 +77,7 @@ class PublicContactsController extends PublicPageController {
 		// Check whether share exists
 		try {
 			$share = $this->shareManager->getShareByToken($this->getToken());
-		} catch (ShareNotFound $e) {
+		} catch (ShareNotFound) {
 			// The share does not exists, we do not emit an ShareLinkAccessedEvent
 			throw new NotFoundException();
 		}
@@ -101,6 +85,7 @@ class PublicContactsController extends PublicPageController {
 		if (!$this->validateShare($share)) {
 			throw new NotFoundException();
 		}
+
 		return $share;
 	}
 
@@ -119,7 +104,6 @@ class PublicContactsController extends PublicPageController {
 	/**
 	 * @PublicPage
 	 *
-	 * @return DataResponse
 	 * @throws NotFoundException
 	 * @throws NotPermittedException
 	 * @throws \OCP\Files\InvalidPathException
@@ -144,12 +128,13 @@ class PublicContactsController extends PublicPageController {
 							$result[] = $this->vCardToArray($permissions, $file, $vcard, $geo->getValue());
 						} elseif (is_countable($geo) && count($geo) > 0 && is_iterable($geo)) {
 							foreach ($geo as $g) {
-								if (strlen($g->getValue()) > 1) {
+								if (strlen((string)$g->getValue()) > 1) {
 									$result[] = $this->vCardToArray($permissions, $file, $vcard, $g->getValue());
 								}
 							}
 						}
 					}
+
 					if (isset($vcard->ADR) && count($vcard->ADR) > 0) {
 						foreach ($vcard->ADR as $adr) {
 							$geo = $this->addressService->addressToGeo($adr->getValue(), $file->getId());
@@ -158,32 +143,27 @@ class PublicContactsController extends PublicPageController {
 							if (isset($adr->parameters()['TYPE'])) {
 								$adrtype = $adr->parameters()['TYPE']->getValue();
 							}
-							if (is_string($geo) && strlen($geo) > 1) {
+
+							if (strlen($geo) > 1) {
 								$result[] = $this->vCardToArray($permissions, $file, $vcard, $geo, $adrtype, $adr->getValue(), $file->getId());
 							}
 						}
 					}
 				}
 			}
+
 			return new DataResponse($result);
-		} else {
-			throw new NotPermittedException();
 		}
+
+		throw new NotPermittedException();
 	}
 
 	/**
-	 * @param int $sharePermissions
-	 * @param Node $file
-	 * @param \Sabre\VObject\Document $vcard
-	 * @param string $geo
-	 * @param string|null $adrtype
-	 * @param string|null $adr
-	 * @param int|null $fileId
-	 * @return array
 	 * @throws NotFoundException
 	 * @throws \OCP\Files\InvalidPathException
+	 * @return array<string, mixed>
 	 */
-	private function vCardToArray(int $sharePermissions, Node $file, \Sabre\VObject\Document $vcard, string $geo, ?string $adrtype = null, ?string $adr = null, ?int $fileId = null): array {
+	private function vCardToArray(int $sharePermissions, Node $file, Document $vcard, string $geo, ?string $adrtype = null, ?string $adr = null, ?int $fileId = null): array {
 		$FNArray = $vcard->FN ? $vcard->FN->getJsonValue() : [];
 		$fn = array_shift($FNArray);
 		$NArray = $vcard->N ? $vcard->N->getJsonValue() : [];
@@ -196,15 +176,12 @@ class PublicContactsController extends PublicPageController {
 			}
 
 		}
+
 		$UIDArray = $vcard->UID->getJsonValue();
 		$uid = array_shift($UIDArray);
 		$groups = $vcard->CATEGORIES;
-		if (!is_null($groups)) {
-			$groups = $groups->getValue();
-		} else {
-			$groups = '';
-		}
-		$result = [
+		$groups = is_null($groups) ? '' : $groups->getValue();
+		return [
 			'FN' => $fn ?? $n ?? '???',
 			'UID' => $uid,
 			'HAS_PHOTO' => (isset($vcard->PHOTO) && $vcard->PHOTO !== null),
@@ -218,24 +195,19 @@ class PublicContactsController extends PublicPageController {
 			'isDeletable' => $file->isDeletable() && ($sharePermissions & (1 << 1)),
 			'isUpdateable' => $file->isUpdateable() && ($sharePermissions & (1 << 3)),
 		];
-		return $result;
 	}
 
-	/**
-	 * @param string $n
-	 * @return string|null
-	 */
 	private function N2FN(string $n): ?string {
-		if ($n) {
+		if ($n !== '' && $n !== '0') {
 			$spl = explode($n, ';');
 			if (count($spl) >= 4) {
 				return $spl[3] . ' ' . $spl[1] . ' ' . $spl[0];
-			} else {
-				return null;
 			}
-		} else {
+
 			return null;
 		}
+
+		return null;
 	}
 
 
@@ -243,8 +215,6 @@ class PublicContactsController extends PublicPageController {
 	 * @PublicPage
 	 * @NoCSRFRequired
 	 *
-	 * @param string $name
-	 * @return DataDisplayResponse
 	 * @throws NotFoundException
 	 * @throws NotPermittedException
 	 */

@@ -19,47 +19,30 @@ use OCP\EventDispatcher\Event;
 class CardCreatedEvent extends Event {
 
 	/**
-	 * CardCreatedEvent constructor.
-	 *
-	 * @param int $addressBookId
-	 * @param array $addressBookData
-	 * @param array $shares
-	 * @param array $cardData
-	 * @since 20.0.0
-	 */
-	public function __construct(int $addressBookId, array $addressBookData, array $shares, array $cardData)
+     * @since 20.0.0
+     */
+    public function getAddressBookId(): int
  {
  }
 
 	/**
-	 * @return int
-	 * @since 20.0.0
-	 */
-	public function getAddressBookId(): int
+     * @since 20.0.0
+     */
+    public function getAddressBookData(): array
  {
  }
 
 	/**
-	 * @return array
-	 * @since 20.0.0
-	 */
-	public function getAddressBookData(): array
+     * @since 20.0.0
+     */
+    public function getShares(): array
  {
  }
 
 	/**
-	 * @return array
-	 * @since 20.0.0
-	 */
-	public function getShares(): array
- {
- }
-
-	/**
-	 * @return array
-	 * @since 20.0.0
-	 */
-	public function getCardData(): array
+     * @since 20.0.0
+     */
+    public function getCardData(): array
  {
  }
 }

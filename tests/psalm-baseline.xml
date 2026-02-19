@@ -1,5 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<files psalm-version="6.10.1@f9fd6bc117e9ce1e854c2ed6777e7135aaa4966b">
+<files psalm-version="6.15.1@28dc127af1b5aecd52314f6f645bafc10d0e11f9">
+  <file src="lib/Controller/PageController.php">
+    <DeprecatedMethod>
+      <code><![CDATA[addAllowedChildSrcDomain]]></code>
+    </DeprecatedMethod>
+  </file>
   <file src="lib/Controller/PublicContactsController.php">
     <UndefinedClass>
       <code><![CDATA[\OC_User]]></code>
@@ -11,6 +16,10 @@
     </UndefinedClass>
   </file>
   <file src="lib/Controller/PublicPageController.php">
+    <DeprecatedMethod>
+      <code><![CDATA[addAllowedChildSrcDomain]]></code>
+      <code><![CDATA[provideInitialState]]></code>
+    </DeprecatedMethod>
     <UndefinedClass>
       <code><![CDATA[\OC_User]]></code>
     </UndefinedClass>
@@ -31,8 +40,23 @@
     </UndefinedClass>
   </file>
   <file src="lib/Hooks/FileHooks.php">
+    <DeprecatedClass>
+      <code><![CDATA[Share::class]]></code>
+      <code><![CDATA[Share::class]]></code>
+      <code><![CDATA[Share::class]]></code>
+    </DeprecatedClass>
+    <DeprecatedMethod>
+      <code><![CDATA[Util::connectHook('\OCA\Files_Trashbin\Trashbin', 'post_restore', $this, 'restore')]]></code>
+      <code><![CDATA[Util::connectHook(Share::class, 'post_shared', $this, 'postShare')]]></code>
+      <code><![CDATA[Util::connectHook(Share::class, 'post_unshare', $this, 'postUnShare')]]></code>
+      <code><![CDATA[Util::connectHook(Share::class, 'pre_unshare', $this, 'preUnShare')]]></code>
+      <code><![CDATA[listen]]></code>
+      <code><![CDATA[listen]]></code>
+      <code><![CDATA[listen]]></code>
+      <code><![CDATA[listen]]></code>
+    </DeprecatedMethod>
     <UndefinedClass>
-      <code><![CDATA[\OC]]></code>
+      <code><![CDATA[Filesystem]]></code>
     </UndefinedClass>
   </file>
   <file src="lib/Migration/RegisterMimeType.php">
@@ -45,29 +69,24 @@
       <code><![CDATA[\OC]]></code>
     </UndefinedClass>
   </file>
-  <file src="lib/Service/DevicesService.php">
-    <UndefinedFunction>
-      <code><![CDATA['gpxDataElement']]></code>
-      <code><![CDATA['gpxEndElement']]></code>
-      <code><![CDATA['gpxStartElement']]></code>
-      <code><![CDATA['kmlDataElement']]></code>
-      <code><![CDATA['kmlEndElement']]></code>
-      <code><![CDATA['kmlStartElement']]></code>
-    </UndefinedFunction>
-  </file>
-  <file src="lib/Service/FavoritesService.php">
-    <UndefinedFunction>
-      <code><![CDATA['gpxDataElement']]></code>
-      <code><![CDATA['gpxEndElement']]></code>
-      <code><![CDATA['gpxStartElement']]></code>
-      <code><![CDATA['kmlDataElement']]></code>
-      <code><![CDATA['kmlEndElement']]></code>
-      <code><![CDATA['kmlStartElement']]></code>
-    </UndefinedFunction>
-  </file>
   <file src="lib/Service/MimetypeService.php">
     <UndefinedClass>
       <code><![CDATA[\OC]]></code>
     </UndefinedClass>
+  </file>
+  <file src="tests/Unit/Controller/ContactsControllerTest.php">
+    <UndefinedClass>
+      <code><![CDATA[ContactsManager]]></code>
+    </UndefinedClass>
+  </file>
+  <file src="tests/Unit/Controller/DevicesControllerTest.php">
+    <InvalidPropertyFetch>
+      <code><![CDATA[$xml->trk]]></code>
+    </InvalidPropertyFetch>
+  </file>
+  <file src="tests/Unit/Controller/FavoritesControllerTest.php">
+    <InvalidPropertyFetch>
+      <code><![CDATA[$xml->wpt]]></code>
+    </InvalidPropertyFetch>
   </file>
 </files>

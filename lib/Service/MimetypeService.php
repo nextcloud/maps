@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace OCA\Maps\Service;
 
 use OCP\Files\IMimeTypeLoader;
@@ -14,7 +16,7 @@ class MimetypeService {
 		$this->mimeTypeLoader = $mimeTypeLoader;
 	}
 
-	public function registerForExistingFiles() {
+	public function registerForExistingFiles(): void {
 		$mimeTypeId = $this->mimeTypeLoader->getId('application/x-nextcloud-maps');
 		$this->mimeTypeLoader->updateFilecache('maps', $mimeTypeId);
 
@@ -31,7 +33,7 @@ class MimetypeService {
 		$this->mimeTypeLoader->updateFilecache('notrack', $mimeTypeId);
 	}
 
-	public function registerForNewFiles() {
+	public function registerForNewFiles(): void {
 		$mapping = [
 			'maps' => ['application/x-nextcloud-maps'],
 			'noindex' => ['application/x-nextcloud-noindex'],

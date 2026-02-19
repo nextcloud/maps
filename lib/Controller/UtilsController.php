@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /**
  * Nextcloud - maps
  *
@@ -10,84 +12,83 @@
  * @copyright Julien Veyssier 2019
  * @copyright Benstone Zhang <benstonezhang@gmail.com> 2023
  */
-
 namespace OCA\Maps\Controller;
 
-use OCP\App\IAppManager;
 use OCP\AppFramework\Controller;
+use OCP\AppFramework\Http\Attribute\NoAdminRequired;
+use OCP\AppFramework\Http\Attribute\NoCSRFRequired;
 use OCP\AppFramework\Http\ContentSecurityPolicy;
 
 use OCP\AppFramework\Http\DataResponse;
 
 
+use OCP\Files\File;
+use OCP\Files\Folder;
 use OCP\Files\IRootFolder;
 
 use OCP\Files\NotFoundException;
+use OCP\IAppConfig;
 use OCP\IConfig;
 use OCP\IRequest;
 use OCP\Lock\LockedException;
 
 class UtilsController extends Controller {
-
-
-	private $userId;
-	private $config;
-	private $root;
-
-	public function __construct($AppName,
+	public function __construct(
+		string $appName,
 		IRequest $request,
-		IConfig $config,
-		IAppManager $appManager,
-		IRootFolder $root,
-		$UserId) {
-		parent::__construct($AppName, $request);
-		$this->root = $root;
-		$this->userId = $UserId;
-		// IConfig object
-		$this->config = $config;
+		private readonly IAppConfig $appConfig,
+		private readonly IConfig $config,
+		private readonly IRootFolder $root,
+		private readonly string $userId,
+	) {
+		parent::__construct($appName, $request);
 	}
 
 	/**
 	 * Save options values to the DB for current user
 	 *
-	 * @NoAdminRequired
 	 * @param $options
-	 * @return DataResponse
 	 * @throws \OCP\PreConditionNotMetException
 	 */
-	public function saveOptionValue($options, $myMapId = null): DataResponse {
-		if (is_null($myMapId) || $myMapId === '') {
+	#[NoAdminRequired]
+	public function saveOptionValue($options, ?int $myMapId = null): DataResponse {
+		if (is_null($myMapId)) {
 			foreach ($options as $key => $value) {
 				$this->config->setUserValue($this->userId, 'maps', $key, $value);
 			}
 		} else {
 			$userFolder = $this->root->getUserFolder($this->userId);
-			$folders = $userFolder->getById($myMapId);
-			$folder = array_shift($folders);
+			$folder = $userFolder->getFirstNodeById($myMapId);
+			if (!$folder instanceof Folder) {
+				throw new NotFoundException('Could find map with mapid: ' . $myMapId);
+			}
+
 			try {
+				/** @var File $file */
 				$file = $folder->get('.index.maps');
-			} catch (NotFoundException $e) {
+			} catch (NotFoundException) {
 				$file = $folder->newFile('.index.maps', $content = '{}');
 			}
+
 			try {
-				$ov = json_decode($file->getContent(), true, 512);
+				$ov = json_decode((string)$file->getContent(), true, 512);
 				foreach ($options as $key => $value) {
 					$ov[$key] = $value;
 				}
+
 				$file->putContent(json_encode($ov, JSON_PRETTY_PRINT));
-			} catch (LockedException $e) {
+			} catch (LockedException) {
 				return new DataResponse('File is locked', 500);
 			}
 		}
+
 		return new DataResponse(['done' => 1]);
 	}
 
 	/**
-	 * get options values from the config for current user
-	 *
-	 * @NoAdminRequired
-	 * @return DataResponse
+	 * Get options values from the config for current user
 	 */
+	#[NoAdminRequired]
 	public function getOptionsValues($myMapId = null): DataResponse {
 		$ov = [];
 
@@ -98,6 +99,7 @@ class UtilsController extends Controller {
 				$value = $this->config->getUserValue($this->userId, 'maps', $key);
 				$ov[$key] = $value;
 			}
+
 			$ov['isCreatable'] = true;
 			$ov['isDeletable'] = false;
 			$ov['isReadable'] = true;
@@ -105,14 +107,19 @@ class UtilsController extends Controller {
 			$ov['isShareable'] = true;
 		} else {
 			$userFolder = $this->root->getUserFolder($this->userId);
-			$folders = $userFolder->getById($myMapId);
-			$folder = array_shift($folders);
+			$folder = $userFolder->getFirstNodeById($myMapId);
+			if (!$folder instanceof Folder) {
+				throw new NotFoundException('Could find map with mapid: ' . $myMapId);
+			}
+
 			try {
+				/** @var File $file */
 				$file = $folder->get('.index.maps');
-			} catch (NotFoundException $e) {
+			} catch (NotFoundException) {
 				$file = $folder->newFile('.index.maps', $content = '{}');
 			}
-			$ov = json_decode($file->getContent(), true, 512);
+
+			$ov = json_decode((string)$file->getContent(), true, 512);
 			$ov['isCreatable'] = $folder->isCreatable();
 			//We can delete the map by deleting the folder or the .index.maps file
 			$ov['isDeletable'] = $folder->isDeletable() || $file->isDeletable();
@@ -137,9 +144,10 @@ class UtilsController extends Controller {
 			'graphhopperURL'
 		];
 		foreach ($settingsKeys as $k) {
-			$v = $this->config->getAppValue('maps', $k);
+			$v = $this->appConfig->getValueString('maps', $k);
 			$ov[$k] = $v;
 		}
+
 		return new DataResponse(['values' => $ov]);
 	}
 
@@ -147,7 +155,6 @@ class UtilsController extends Controller {
 	 * set routing settings
 	 *
 	 * @param $values
-	 * @return DataResponse
 	 */
 	public function setRoutingSettings($values): DataResponse {
 		$acceptedKeys = [
@@ -163,9 +170,10 @@ class UtilsController extends Controller {
 		];
 		foreach ($values as $k => $v) {
 			if (in_array($k, $acceptedKeys)) {
-				$this->config->setAppValue('maps', $k, $v);
+				$this->appConfig->setValueString('maps', $k, $v);
 			}
 		}
+
 		$response = new DataResponse('DONE');
 		$csp = new ContentSecurityPolicy();
 		$csp->addAllowedImageDomain('*')
@@ -176,12 +184,10 @@ class UtilsController extends Controller {
 	}
 
 	/**
-	 * get content of mapbox traffic style
-	 * @NoAdminRequired
-	 * @NoCSRFRequired
-	 *
-	 * @return DataResponse
+	 * Get content of mapbox traffic style
 	 */
+	#[NoAdminRequired]
+	#[NoCSRFRequired]
 	public function getTrafficStyle(): DataResponse {
 		$style = [
 			'version' => 8,

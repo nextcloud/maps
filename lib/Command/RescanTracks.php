@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /**
  * Nextcloud - maps
  *
@@ -9,7 +11,6 @@
  * @author Julien Veyssier <eneiluj@posteo.net>
  * @copyright Julien Veyssier 2019
  */
-
 namespace OCA\Maps\Command;
 
 use OCA\Maps\Service\TracksService;
@@ -26,21 +27,26 @@ use Symfony\Component\Console\Output\OutputInterface;
 class RescanTracks extends Command {
 
 	protected IUserManager $userManager;
+
 	protected OutputInterface $output;
+
 	protected IManager $encryptionManager;
-	protected TracksService $tracksService;
+
+
 	protected IConfig $config;
 
-	public function __construct(IUserManager $userManager,
+	public function __construct(
+		IUserManager $userManager,
 		IManager $encryptionManager,
-		TracksService $tracksService,
-		IConfig $config) {
+		protected TracksService $tracksService,
+		IConfig $config,
+	) {
 		parent::__construct();
 		$this->userManager = $userManager;
 		$this->encryptionManager = $encryptionManager;
-		$this->tracksService = $tracksService;
 		$this->config = $config;
 	}
+
 	protected function configure() {
 		$this->setName('maps:scan-tracks')
 			->setDescription('Rescan track files')
@@ -56,10 +62,11 @@ class RescanTracks extends Command {
 			$output->writeln('Encryption is enabled. Aborted.');
 			return 1;
 		}
+
 		$this->output = $output;
 		$userId = $input->getArgument('user_id');
 		if ($userId === null) {
-			$this->userManager->callForSeenUsers(function (IUser $user) {
+			$this->userManager->callForSeenUsers(function (IUser $user): void {
 				$this->rescanUserTracks($user->getUID());
 			});
 		} else {
@@ -68,16 +75,18 @@ class RescanTracks extends Command {
 				$this->rescanUserTracks($userId);
 			}
 		}
+
 		return 0;
 	}
 
-	private function rescanUserTracks($userId) {
+	private function rescanUserTracks(string $userId): void {
 		echo '======== User ' . $userId . ' ========' . "\n";
 		$c = 1;
 		foreach ($this->tracksService->rescan($userId) as $path) {
 			echo '[' . $c . '] Track "' . $path . '" added' . "\n";
-			$c++;
+			++$c;
 		}
+
 		$this->config->setUserValue($userId, 'maps', 'installScanDone', 'yes');
 	}
 }

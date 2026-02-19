@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /**
  * Nextcloud - maps
  *
@@ -10,9 +12,9 @@
  * @copyright Julien Veyssier 2019
  * @copyright Benstone Zhang <benstonezhang@gmail.com> 2023
  */
-
 namespace OCA\Maps\Controller;
 
+use OCP\AppFramework\Http\Attribute\PublicPage;
 use OCP\AppFramework\Http\DataResponse;
 use OCP\EventDispatcher\IEventDispatcher;
 use OCP\Files\GenericFileException;
@@ -20,7 +22,7 @@ use OCP\Files\InvalidPathException;
 use OCP\Files\IRootFolder;
 use OCP\Files\NotFoundException;
 use OCP\Files\NotPermittedException;
-use OCP\IConfig;
+use OCP\IAppConfig;
 use OCP\IInitialStateService;
 use OCP\IRequest;
 use OCP\ISession;
@@ -29,25 +31,22 @@ use OCP\IUserManager;
 use OCP\Lock\LockedException;
 use OCP\Share\Exceptions\ShareNotFound;
 use OCP\Share\IManager as ShareManager;
+use OCP\Share\IShare;
 
 class PublicUtilsController extends PublicPageController {
-
-	protected IRootFolder $root;
-
 	public function __construct(
 		string $appName,
 		IRequest $request,
 		ISession $session,
 		IURLGenerator $urlGenerator,
-		IConfig $config,
+		IAppConfig $appConfig,
 		IInitialStateService $initialStateService,
 		IUserManager $userManager,
 		ShareManager $shareManager,
-		IRootFolder $root,
+		protected IRootFolder $root,
 		IEventDispatcher $eventDispatcher,
 	) {
-		parent::__construct($appName, $request, $session, $urlGenerator, $eventDispatcher, $config, $initialStateService, $shareManager, $userManager);
-		$this->root = $root;
+		parent::__construct($appName, $request, $session, $urlGenerator, $eventDispatcher, $appConfig, $initialStateService, $shareManager, $userManager);
 	}
 
 	/**
@@ -55,7 +54,7 @@ class PublicUtilsController extends PublicPageController {
 	 *
 	 * @return bool
 	 */
-	private function validateShare(\OCP\Share\IShare $share) {
+	private function validateShare(IShare $share) {
 		// If the owner is disabled no access to the link is granted
 		$owner = $this->userManager->get($share->getShareOwner());
 		if ($owner === null || !$owner->isEnabled()) {
@@ -79,7 +78,7 @@ class PublicUtilsController extends PublicPageController {
 		// Check whether share exists
 		try {
 			$share = $this->shareManager->getShareByToken($this->getToken());
-		} catch (ShareNotFound $e) {
+		} catch (ShareNotFound) {
 			// The share does not exists, we do not emit an ShareLinkAccessedEvent
 			throw new NotFoundException();
 		}
@@ -87,6 +86,7 @@ class PublicUtilsController extends PublicPageController {
 		if (!$this->validateShare($share)) {
 			throw new NotFoundException();
 		}
+
 		return $share;
 	}
 
@@ -105,15 +105,13 @@ class PublicUtilsController extends PublicPageController {
 	/**
 	 * Save options values to the DB for current user
 	 *
-	 * @PublicPage
 	 * @param $options
-	 * @param null $myMapId
-	 * @return DataResponse
 	 * @throws NotFoundException
 	 * @throws GenericFileException
 	 * @throws InvalidPathException
 	 * @throws NotPermittedException
 	 */
+	#[PublicPage]
 	public function saveOptionValue($options, $myMapId = null): DataResponse {
 		$share = $this->getShare();
 		$permissions = $share->getPermissions();
@@ -122,40 +120,42 @@ class PublicUtilsController extends PublicPageController {
 
 		try {
 			$file = $folder->get('.index.maps');
-		} catch (NotFoundException $e) {
+		} catch (NotFoundException) {
 			if ($isCreatable) {
 				$file = $folder->newFile('.index.maps', $content = '{}');
 			} else {
 				throw new NotFoundException();
 			}
 		}
+
 		$isUpdateable = ($permissions & (1 << 1)) && $file->isUpdateable();
 		if (!$isUpdateable) {
 			throw new NotPermittedException();
 		}
 
 		try {
-			$ov = json_decode($file->getContent(), true, 512);
+			$ov = json_decode((string)$file->getContent(), true, 512);
 			foreach ($options as $key => $value) {
 				$ov[$key] = $value;
 			}
+
 			$file->putContent(json_encode($ov, JSON_PRETTY_PRINT));
-		} catch (LockedException $e) {
+		} catch (LockedException) {
 			return new DataResponse('File is locked', 500);
 		}
+
 		return new DataResponse(['done' => 1]);
 	}
 
 	/**
 	 * get options values from the config for current user
 	 *
-	 * @PublicPage
-	 * @return DataResponse
 	 * @throws InvalidPathException
 	 * @throws LockedException
 	 * @throws NotFoundException
 	 * @throws NotPermittedException
 	 */
+	#[PublicPage]
 	public function getOptionsValues(): DataResponse {
 		$ov = [];
 
@@ -165,14 +165,15 @@ class PublicUtilsController extends PublicPageController {
 		$isCreatable = ($permissions & (1 << 2)) && $folder->isCreatable();
 		try {
 			$file = $folder->get('.index.maps');
-		} catch (NotFoundException $e) {
+		} catch (NotFoundException) {
 			if ($isCreatable) {
 				$file = $folder->newFile('.index.maps', $content = '{}');
 			} else {
 				throw new NotFoundException();
 			}
 		}
-		$ov = json_decode($file->getContent(), true, 512);
+
+		$ov = json_decode((string)$file->getContent(), true, 512);
 
 		// Maps content can be read mostly from the folder
 		$ov['isReadable'] = ($permissions & (1 << 0)) && $folder->isReadable();
@@ -198,9 +199,10 @@ class PublicUtilsController extends PublicPageController {
 			'graphhopperURL'
 		];
 		foreach ($settingsKeys as $k) {
-			$v = $this->config->getAppValue('maps', $k);
+			$v = $this->appConfig->getValueString('maps', $k);
 			$ov[$k] = $v;
 		}
+
 		return new DataResponse(['values' => $ov]);
 	}
 
@@ -208,8 +210,6 @@ class PublicUtilsController extends PublicPageController {
 	/**
 	 * get content of mapbox traffic style
 	 * @PublicPage
-	 *
-	 * @return DataResponse
 	 */
 	public function getTrafficStyle(): DataResponse {
 		$style = [

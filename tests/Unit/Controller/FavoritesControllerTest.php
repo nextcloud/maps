@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /**
  * Nextcloud - maps
  *
@@ -11,131 +13,112 @@
  * @copyright Julien Veyssier 2019
  * @copyright Paul Schwörer 2019
  */
-
 namespace OCA\Maps\Controller;
 
 use OCA\Maps\AppInfo\Application;
 use OCA\Maps\DB\FavoriteShareMapper;
 use OCA\Maps\Service\FavoritesService;
 use OCP\AppFramework\Http;
-use OCP\IServerContainer;
+use OCP\Files\Folder;
+use OCP\Files\IRootFolder;
+use OCP\IAppConfig;
+use OCP\IDateTimeZone;
+use OCP\IGroupManager;
+use OCP\IRequest;
+use OCP\IUserManager;
+use OCP\L10N\IFactory;
+use PHPUnit\Framework\TestCase;
+use Psr\Container\ContainerInterface;
 
-class FavoritesControllerTest extends \PHPUnit\Framework\TestCase {
-	private $appName;
-	private $request;
-	private $contacts;
+final class FavoritesControllerTest extends TestCase {
+	public Folder $mapFolder;
 
-	private $container;
-	private $config;
-	private $app;
+	private ContainerInterface $container;
 
-	private $pageController;
-	private $pageController2;
-	private $utilsController;
-	private $root;
+	private IRootFolder $root;
 
-	/* @var FavoritesController */
-	private $favoritesController;
+	private FavoritesController $favoritesController;
 
-	/* @var FavoritesController */
-	private $favoritesController2;
+	private FavoritesController $favoritesController2;
 
 	public static function setUpBeforeClass(): void {
 		$app = new Application();
 		$c = $app->getContainer();
 
-		$user = $c->getServer()->getUserManager()->get('test');
-		$user2 = $c->getServer()->getUserManager()->get('test2');
-		$user3 = $c->getServer()->getUserManager()->get('test3');
-		$group = $c->getServer()->getGroupManager()->get('group1test');
-		$group2 = $c->getServer()->getGroupManager()->get('group2test');
+		$user = $c->get(IUserManager::class)->get('test');
+		$user2 = $c->get(IUserManager::class)->get('test2');
+		$user3 = $c->get(IUserManager::class)->get('test3');
+		$group = $c->get(IGroupManager::class)->get('group1test');
+		$group2 = $c->get(IGroupManager::class)->get('group2test');
 
 		// CREATE DUMMY USERS
 		if ($user === null) {
-			$u1 = $c->getServer()->getUserManager()->createUser('test', 'tatotitoTUTU');
+			$u1 = $c->get(IUserManager::class)->createUser('test', 'tatotitoTUTU');
 			$u1->setEMailAddress('toto@toto.net');
 		}
+
 		if ($user2 === null) {
-			$u2 = $c->getServer()->getUserManager()->createUser('test2', 'plopinoulala000');
+			$c->get(IUserManager::class)->createUser('test2', 'plopinoulala000');
 		}
-		if ($user2 === null) {
-			$u3 = $c->getServer()->getUserManager()->createUser('test3', 'yeyeahPASSPASS');
+
+		if ($user3 === null) {
+			$c->get(IUserManager::class)->createUser('test3', 'yeyeahPASSPASS');
 		}
+
 		if ($group === null) {
-			$c->getServer()->getGroupManager()->createGroup('group1test');
-			$u1 = $c->getServer()->getUserManager()->get('test');
-			$c->getServer()->getGroupManager()->get('group1test')->addUser($u1);
+			$c->get(IGroupManager::class)->createGroup('group1test');
+			$c->get(IGroupManager::class)->get('group1test')->addUser($user1);
 		}
+
 		if ($group2 === null) {
-			$c->getServer()->getGroupManager()->createGroup('group2test');
-			$u2 = $c->getServer()->getUserManager()->get('test2');
-			$c->getServer()->getGroupManager()->get('group2test')->addUser($u2);
+			$c->get(IGroupManager::class)->createGroup('group2test');
+			$c->get(IGroupManager::class)->get('group2test')->addUser($user2);
 		}
 	}
 
 	protected function setUp(): void {
-		$this->appName = 'maps';
-		$this->request = $this->getMockBuilder('\OCP\IRequest')
-			->disableOriginalConstructor()
-			->getMock();
-		$this->contacts = $this->getMockBuilder('OCP\Contacts\IManager')
-			->disableOriginalConstructor()
-			->getMock();
+		$appName = 'maps';
+		$request = $this->createMock(IRequest::class);
 
-		$this->app = new Application();
-		$this->container = $this->app->getContainer();
+		$app = new Application();
+		$this->container = $app->getContainer();
 		$c = $this->container;
-		$this->config = $c->query(IServerContainer::class)->getConfig();
-		$this->root = $c->query(IServerContainer::class)->getRootFolder();
+
+		$this->root = $c->get(IRootFolder::class);
 
 		$this->favoritesController = new FavoritesController(
-			$this->appName,
-			$this->request,
-			$c->query(IServerContainer::class),
-			$c->query(IServerContainer::class)->getConfig(),
-			$c->getServer()->get(\OCP\Share\IManager::class),
-			$c->getServer()->getAppManager(),
-			$c->getServer()->getUserManager(),
-			$c->getServer()->getGroupManager(),
-			$c->query(IServerContainer::class)->getL10N($c->query('AppName')),
-			$c->query(FavoritesService::class),
-			$c->query(IServerContainer::class)->get(\OCP\IDateTimeZone::class),
-			$c->query(FavoriteShareMapper::class),
+			$appName,
+			$request,
+			$c->get(IAppConfig::class),
+			$this->root,
+			$c->get(IFactory::class)->get($appName),
+			$c->get(FavoritesService::class),
+			$c->get(IDateTimeZone::class),
+			$c->get(FavoriteShareMapper::class),
 			'test'
 		);
 
 		$this->favoritesController2 = new FavoritesController(
-			$this->appName,
-			$this->request,
-			$c->query(IServerContainer::class),
-			$c->query(IServerContainer::class)->getConfig(),
-			$c->getServer()->get(\OCP\Share\IManager::class),
-			$c->getServer()->getAppManager(),
-			$c->getServer()->getUserManager(),
-			$c->getServer()->getGroupManager(),
-			$c->query(IServerContainer::class)->getL10N($c->query('AppName')),
-			$c->query(FavoritesService::class),
-			$c->query(IServerContainer::class)->get(\OCP\IDateTimeZone::class),
-			$c->query(FavoriteShareMapper::class),
+			$appName,
+			$request,
+			$c->get(IAppConfig::class),
+			$this->root,
+			$c->get(IFactory::class)->get($appName),
+			$c->get(FavoritesService::class),
+			$c->get(IDateTimeZone::class),
+			$c->get(FavoriteShareMapper::class),
 			'test2'
 		);
 
-		$this->utilsController = new UtilsController(
-			$this->appName,
-			$this->request,
-			$c->query(IServerContainer::class)->getConfig(),
-			$c->getServer()->getAppManager(),
-			$this->root,
-			'test'
-		);
 		$this->mapFolder = $this->createMapFolder();
 	}
 
-	private function createMapFolder() {
+	private function createMapFolder(): Folder {
 		$userFolder = $this->root->getUserFolder('test');
 		if ($userFolder->nodeExists('Map')) {
-			return $userFolder->get('Map')->delete();
+			$userFolder->get('Map')->delete();
 		}
+
 		return $userFolder->newFolder('Map');
 	}
 
@@ -161,7 +144,7 @@ class FavoritesControllerTest extends \PHPUnit\Framework\TestCase {
 		}
 	}
 
-	public function testAddFavorites() {
+	public function testAddFavorites(): void {
 		// correct values
 		$resp = $this->favoritesController->addFavorite('one', 3.1, 4.2, '', null, null);
 		$status = $resp->getStatus();
@@ -192,7 +175,7 @@ class FavoritesControllerTest extends \PHPUnit\Framework\TestCase {
 		$status = $resp->getStatus();
 		$this->assertEquals(200, $status);
 		$data = $resp->getData();
-		$this->assertEquals(2, count($data));
+		$this->assertCount(2, $data);
 
 		// delete created favorites
 		$resp = $this->favoritesController->deleteFavorite($id1);
@@ -213,7 +196,8 @@ class FavoritesControllerTest extends \PHPUnit\Framework\TestCase {
 		$this->assertEquals(400, $status);
 	}
 
-	public function testAddFavoritesMyMap() {
+	public function testAddFavoritesMyMap(): void {
+		$this->mapFolder = $this->createMapFolder();
 		$myMapId = $this->mapFolder->getId();
 		// correct values
 		$resp = $this->favoritesController->addFavorite('one', 3.1, 4.2, '', null, null, $myMapId);
@@ -252,7 +236,7 @@ class FavoritesControllerTest extends \PHPUnit\Framework\TestCase {
 		$status = $resp->getStatus();
 		$this->assertEquals(200, $status);
 		$data = $resp->getData();
-		$this->assertEquals(3, count($data));
+		$this->assertCount(3, $data);
 
 		// delete created favorites0
 		$resp = $this->favoritesController->deleteFavorite($id3, $myMapId);
@@ -273,8 +257,8 @@ class FavoritesControllerTest extends \PHPUnit\Framework\TestCase {
 		$this->assertEquals(400, $status);
 	}
 
-	public function testImportExportFavorites() {
-		$userfolder = $this->container->query(IServerContainer::class)->getUserFolder('test');
+	public function testImportExportFavorites(): void {
+		$userfolder = $this->container->get(IRootFolder::class)->getUserFolder('test');
 		$content1 = file_get_contents('tests/test_files/favoritesOk.gpx');
 		$newFile = $userfolder->newFile('favoritesOk.gpx');
 		$newFile->putContent($content1);
@@ -290,12 +274,13 @@ class FavoritesControllerTest extends \PHPUnit\Framework\TestCase {
 		$status = $resp->getStatus();
 		$this->assertEquals(200, $status);
 		$data = $resp->getData();
-		$this->assertEquals(27, count($data));
+		$this->assertCount(27, $data);
 		$nbFavorites = count($data);
 		$categoryCount = [];
 		foreach ($data as $fav) {
 			$categoryCount[$fav['category']] = isset($categoryCount[$fav['category']]) ? ($categoryCount[$fav['category']] + 1) : 1;
 		}
+
 		$categories = array_keys($categoryCount);
 
 		// import errors
@@ -322,16 +307,17 @@ class FavoritesControllerTest extends \PHPUnit\Framework\TestCase {
 
 		// parse xml and compare number of favorite for each category
 		$xmLData = $userfolder->get($exportPath)->getContent();
-		$xml = simplexml_load_string($xmLData);
+		$xml = simplexml_load_string((string)$xmLData);
 		$wpts = $xml->wpt;
-		$this->assertEquals($nbFavorites, count($wpts));
+		$this->assertCount($nbFavorites, $wpts);
 		$categoryCountExport = [];
 		foreach ($wpts as $wpt) {
 			$cat = (string)$wpt->type[0];
 			$categoryCountExport[$cat] = isset($categoryCountExport[$cat]) ? ($categoryCountExport[$cat] + 1) : 1;
 		}
+
 		foreach ($categoryCount as $cat => $nb) {
-			$this->assertEquals($categoryCountExport[$cat], $nb);
+			$this->assertSame($categoryCountExport[$cat], $nb);
 		}
 
 		// export error
@@ -355,12 +341,14 @@ class FavoritesControllerTest extends \PHPUnit\Framework\TestCase {
 		$data = $resp->getData();
 		$favIds = [];
 		foreach ($data as $fav) {
-			array_push($favIds, $fav['id']);
+			$favIds[] = $fav['id'];
 		}
+
 		$resp = $this->favoritesController->deleteFavorites($favIds);
 
 		// and then try to export
 		$resp = $this->favoritesController->exportFavorites($categories, null, null, true);
+
 		$status = $resp->getStatus();
 		$this->assertEquals(400, $status);
 		$data = $resp->getData();
@@ -369,7 +357,7 @@ class FavoritesControllerTest extends \PHPUnit\Framework\TestCase {
 
 
 
-	public function testEditFavorites() {
+	public function testEditFavorites(): void {
 		// valid edition
 		$resp = $this->favoritesController->addFavorite('a', 3.1, 4.1, 'cat1', null, null);
 		$favId = $resp->getData()['id'];
@@ -387,13 +375,14 @@ class FavoritesControllerTest extends \PHPUnit\Framework\TestCase {
 			if ($fav['id'] === $favId) {
 				$seen = true;
 				$this->assertEquals('aa', $fav['name']);
-				$this->assertEquals(3.2, $fav['lat']);
-				$this->assertEquals(4.2, $fav['lng']);
+				$this->assertEqualsWithDelta(3.2, $fav['lat'], PHP_FLOAT_EPSILON);
+				$this->assertEqualsWithDelta(4.2, $fav['lng'], PHP_FLOAT_EPSILON);
 				$this->assertEquals('cat2', $fav['category']);
 				$this->assertEquals('comment', $fav['comment']);
 				$this->assertEquals('ext', $fav['extensions']);
 			}
 		}
+
 		$this->assertEquals(true, $seen);
 
 		// invalid edition
@@ -415,6 +404,7 @@ class FavoritesControllerTest extends \PHPUnit\Framework\TestCase {
 		$resp = $this->favoritesController->addFavorite('one', 3.1, 4.2, 'cat2', null, null);
 
 		$resp = $this->favoritesController->renameCategories(['cat1'], 'cat1RENAMED');
+
 		$status = $resp->getStatus();
 		$this->assertEquals(200, $status);
 		$data = $resp->getData();
@@ -429,10 +419,11 @@ class FavoritesControllerTest extends \PHPUnit\Framework\TestCase {
 				$this->assertEquals('cat1RENAMED', $fav['category']);
 			}
 		}
+
 		$this->assertEquals(true, $seen);
 	}
 
-	public function testEditFavoritesMyMap() {
+	public function testEditFavoritesMyMap(): void {
 		$this->mapFolder = $this->createMapFolder();
 		$myMapId = $this->mapFolder->getId();
 		// valid edition
@@ -452,12 +443,13 @@ class FavoritesControllerTest extends \PHPUnit\Framework\TestCase {
 			if ($fav['id'] === $favId) {
 				$seen = true;
 				$this->assertEquals('aa', $fav['name']);
-				$this->assertEquals(3.2, $fav['lat']);
-				$this->assertEquals(4.2, $fav['lng']);
+				$this->assertEqualsWithDelta(3.2, $fav['lat'], PHP_FLOAT_EPSILON);
+				$this->assertEqualsWithDelta(4.2, $fav['lng'], PHP_FLOAT_EPSILON);
 				$this->assertEquals('cat2', $fav['category']);
 				$this->assertEquals('comment', $fav['comment']);
 			}
 		}
+
 		$this->assertEquals(true, $seen);
 
 		// invalid edition
@@ -478,6 +470,7 @@ class FavoritesControllerTest extends \PHPUnit\Framework\TestCase {
 		$resp = $this->favoritesController->addFavorite('one', 3.1, 4.2, 'cat2', null, null, $myMapId);
 
 		$resp = $this->favoritesController->renameCategories(['cat1'], 'cat1RENAMED', $myMapId);
+
 		$status = $resp->getStatus();
 		$this->assertEquals(200, $status);
 		$data = $resp->getData();
@@ -492,10 +485,11 @@ class FavoritesControllerTest extends \PHPUnit\Framework\TestCase {
 				$this->assertEquals('cat1RENAMED', $fav['category']);
 			}
 		}
+
 		$this->assertEquals(true, $seen);
 	}
 
-	public function testShareUnShareCategory() {
+	public function testShareUnShareCategory(): void {
 		$categoryName = 'test3458565';
 
 		$id = $this->favoritesController
@@ -514,7 +508,7 @@ class FavoritesControllerTest extends \PHPUnit\Framework\TestCase {
 		$this->assertTrue($response2->getData()['did_exist']);
 	}
 
-	public function testShareUnShareCategoryNotAuthorized() {
+	public function testShareUnShareCategoryNotAuthorized(): void {
 		$categoryName = 'test3458565';
 
 		$id = $this->favoritesController2
@@ -530,7 +524,7 @@ class FavoritesControllerTest extends \PHPUnit\Framework\TestCase {
 		$this->assertEquals(Http::STATUS_BAD_REQUEST, $response2->getStatus());
 	}
 
-	public function testShareUnShareNonExistentCategory() {
+	public function testShareUnShareNonExistentCategory(): void {
 		$categoryName = 'non_existent';
 
 		$response1 = $this->favoritesController->shareCategory($categoryName);
@@ -542,17 +536,14 @@ class FavoritesControllerTest extends \PHPUnit\Framework\TestCase {
 		$this->assertEquals(Http::STATUS_BAD_REQUEST, $response2->getStatus());
 	}
 
-	public function testGetSharedCategories() {
+	public function testGetSharedCategories(): void {
 		$categoryNames = ['test345456', 'test2345465', 'test65765'];
 		$ids = [];
 
 		foreach ($categoryNames as $categoryName) {
-			array_push(
-				$ids,
-				$this->favoritesController
-					->addFavorite('Test', 0, 0, $categoryName, '', null)
-					->getData()['id']
-			);
+			$ids[] = $this->favoritesController
+				->addFavorite('Test', 0, 0, $categoryName, '', null)
+				->getData()['id'];
 			$this->favoritesController->shareCategory($categoryName);
 		}
 
@@ -560,9 +551,7 @@ class FavoritesControllerTest extends \PHPUnit\Framework\TestCase {
 
 		$this->assertIsArray($categories->getData());
 
-		$mappedCategories = array_map(function ($el) {
-			return $el->getCategory();
-		}, $categories->getData());
+		$mappedCategories = array_map(fn ($el) => $el->getCategory(), $categories->getData());
 
 		foreach ($categoryNames as $categoryName) {
 			$this->assertContains($categoryName, $mappedCategories);
@@ -577,7 +566,7 @@ class FavoritesControllerTest extends \PHPUnit\Framework\TestCase {
 		}
 	}
 
-	public function testFavoriteShareIsRenamedCorrectly() {
+	public function testFavoriteShareIsRenamedCorrectly(): void {
 		$categoryName = 'test03059035';
 		$newCategoryName = 'test097876';
 
@@ -591,9 +580,7 @@ class FavoritesControllerTest extends \PHPUnit\Framework\TestCase {
 
 		$shares = $this->favoritesController->getSharedCategories()->getData();
 
-		$shareNames = array_map(function ($el) {
-			return $el->getCategory();
-		}, $shares);
+		$shareNames = array_map(fn ($el) => $el->getCategory(), $shares);
 
 		$this->favoritesController->deleteFavorite($id);
 		$this->favoritesController->unShareCategory($newCategoryName);

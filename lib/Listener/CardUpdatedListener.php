@@ -31,13 +31,9 @@ use OCP\EventDispatcher\IEventListener;
 /** @template-implements IEventListener<CardUpdatedEvent> */
 class CardUpdatedListener implements IEventListener {
 
-	/** @var AddressService */
-	private $addressService;
-
 	public function __construct(
-		AddressService $addressService,
+		private readonly AddressService $addressService,
 	) {
-		$this->addressService = $addressService;
 	}
 
 	public function handle(Event $event): void {
@@ -45,6 +41,7 @@ class CardUpdatedListener implements IEventListener {
 			// Unrelated
 			return;
 		}
+
 		$cData = $event->getCardData();
 		$cUri = $cData['uri'];
 		$this->addressService->scheduleVCardForLookup($cData['carddata'], $cUri);

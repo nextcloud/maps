@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /**
  * @copyright Copyright (c) 2019, Paul Schwörer <hello@paulschwoerer.de>
  *
@@ -21,7 +23,6 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-
 namespace OCA\Maps\Controller;
 
 use OCA\Maps\DB\FavoriteShareMapper;
@@ -36,24 +37,21 @@ use OCP\IConfig;
 use OCP\IRequest;
 use OCP\ISession;
 use OCP\IUserManager;
+use OCP\Server;
 use OCP\Util;
 
 class PublicFavoritePageController extends PublicShareController {
 	private $config;
 
-	/* @var FavoriteShareMapper */
-	private $favoriteShareMapper;
-
 	public function __construct(
-		$appName,
+		string $appName,
 		IRequest $request,
 		ISession $session,
 		IConfig $config,
-		FavoriteShareMapper $favoriteShareMapper,
+		private readonly FavoriteShareMapper $favoriteShareMapper,
 	) {
 		parent::__construct($appName, $request, $session);
 		$this->config = $config;
-		$this->favoriteShareMapper = $favoriteShareMapper;
 	}
 
 	/**
@@ -71,9 +69,9 @@ class PublicFavoritePageController extends PublicShareController {
 
 		try {
 			$share = $this->favoriteShareMapper->findByToken($token);
-		} catch (DoesNotExistException $e) {
+		} catch (DoesNotExistException) {
 			return new DataResponse([], Http::STATUS_NOT_FOUND);
-		} catch (MultipleObjectsReturnedException $e) {
+		} catch (MultipleObjectsReturnedException) {
 			return new DataResponse([], Http::STATUS_INTERNAL_SERVER_ERROR);
 		}
 
@@ -82,7 +80,7 @@ class PublicFavoritePageController extends PublicShareController {
 
 		$response = new PublicTemplateResponse('maps', 'public/favorites_index', []);
 
-		$ownerName = \OCP\Server::get(IUserManager::class)->get($share->getOwner())->getDisplayName();
+		$ownerName = Server::get(IUserManager::class)->get($share->getOwner())->getDisplayName();
 
 		$response->setHeaderTitle($share->getCategory());
 		$response->setHeaderDetails('shared by ' . $ownerName);
@@ -109,13 +107,12 @@ class PublicFavoritePageController extends PublicShareController {
 	 *
 	 * This function is already called from the middleware directly after setting the token.
 	 *
-	 * @return bool
 	 * @since 14.0.0
 	 */
 	public function isValidToken(): bool {
 		try {
 			$this->favoriteShareMapper->findByToken($this->getToken());
-		} catch (DoesNotExistException|MultipleObjectsReturnedException $e) {
+		} catch (DoesNotExistException|MultipleObjectsReturnedException) {
 			return false;
 		}
 
@@ -125,7 +122,6 @@ class PublicFavoritePageController extends PublicShareController {
 	/**
 	 * Is a share with this token password protected
 	 *
-	 * @return bool
 	 * @since 14.0.0
 	 */
 	protected function isPasswordProtected(): bool {
@@ -134,7 +130,6 @@ class PublicFavoritePageController extends PublicShareController {
 
 	/**
 	 * @param $response
-	 * @return void
 	 */
 	private function addCsp($response): void {
 		if (class_exists('OCP\AppFramework\Http\ContentSecurityPolicy')) {
@@ -163,16 +158,18 @@ class PublicFavoritePageController extends PublicShareController {
 			foreach ($urlKeys as $key) {
 				$url = $this->config->getAppValue('maps', $key);
 				if ($url !== '') {
-					$scheme = parse_url($url, PHP_URL_SCHEME);
-					$host = parse_url($url, PHP_URL_HOST);
-					$port = parse_url($url, PHP_URL_PORT);
+					$scheme = parse_url((string)$url, PHP_URL_SCHEME);
+					$host = parse_url((string)$url, PHP_URL_HOST);
+					$port = parse_url((string)$url, PHP_URL_PORT);
 					$cleanUrl = $scheme . '://' . $host;
 					if ($port && $port !== '') {
 						$cleanUrl .= ':' . $port;
 					}
+
 					$csp->addAllowedConnectDomain($cleanUrl);
 				}
 			}
+
 			//$csp->addAllowedConnectDomain('http://192.168.0.66:5000');
 
 			// poi images

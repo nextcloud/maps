@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /**
  * Nextcloud - maps
  *
@@ -9,7 +11,6 @@
  * @author Julien Veyssier
  * @copyright Julien Veyssier 2019
  */
-
 namespace OCA\Maps\BackgroundJob;
 
 use OCP\AppFramework\Utility\ITimeFactory;
@@ -17,6 +18,7 @@ use OCP\BackgroundJob\IJobList;
 use OCP\BackgroundJob\QueuedJob;
 use OCP\IUser;
 use OCP\IUserManager;
+use OCP\Server;
 use Psr\Log\LoggerInterface;
 
 class LaunchUsersInstallScanJob extends QueuedJob {
@@ -25,20 +27,18 @@ class LaunchUsersInstallScanJob extends QueuedJob {
 	 * LaunchUsersInstallScanJob constructor.
 	 *
 	 * A QueuedJob to launch a scan job for each user
-	 *
-	 * @param IJobList $jobList
 	 */
 	public function __construct(
 		ITimeFactory $timeFactory,
-		private IJobList $jobList,
-		private IUserManager $userManager,
+		private readonly IJobList $jobList,
+		private readonly IUserManager $userManager,
 	) {
 		parent::__construct($timeFactory);
 	}
 
-	public function run($argument) {
-		\OCP\Server::get(LoggerInterface::class)->debug('Launch users install scan jobs cronjob executed');
-		$this->userManager->callForSeenUsers(function (IUser $user) {
+	public function run($argument): void {
+		Server::get(LoggerInterface::class)->debug('Launch users install scan jobs cronjob executed');
+		$this->userManager->callForSeenUsers(function (IUser $user): void {
 			$this->jobList->add(UserInstallScanJob::class, ['userId' => $user->getUID()]);
 		});
 	}

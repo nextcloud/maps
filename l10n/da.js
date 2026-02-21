@@ -63,6 +63,7 @@ OC.L10N.register(
     "Search" : "Søg",
     "Unknown Place" : "Ukendt sted",
     "File" : "Fil",
+    "Description" : "Beskrivelse",
     "right" : "højre",
     "left" : "venstre",
     "Start" : "Start",

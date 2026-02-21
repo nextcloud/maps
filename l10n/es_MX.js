@@ -46,6 +46,7 @@ OC.L10N.register(
     "Closed" : "Cerrado",
     "Search" : "Buscar",
     "File" : "Archivo",
+    "Description" : "Descripción",
     "right" : "derecha",
     "left" : "izquierda",
     "Take the {exitStr} exit in the roundabout" : "Tome la {exitStr} salida en la glorieta",

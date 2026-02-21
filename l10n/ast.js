@@ -91,6 +91,7 @@ OC.L10N.register(
     "Open" : "Abrir",
     "Search" : "Buscar",
     "File" : "Ficheru",
+    "Description" : "Descripción",
     "north" : "norte",
     "northeast" : "noreste",
     "east" : "este",

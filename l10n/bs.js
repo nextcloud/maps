@@ -28,6 +28,7 @@ OC.L10N.register(
     "Yes" : "Yes",
     "Search" : "Search",
     "File" : "File",
+    "Description" : "Opis",
     "Destination" : "Destination",
     "Phone" : "Telefon",
     "Not grouped" : "Nije grupirano",

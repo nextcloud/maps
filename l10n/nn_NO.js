@@ -33,6 +33,7 @@ OC.L10N.register(
     "Yes" : "Ja",
     "Search" : "Søk",
     "File" : "Fil",
+    "Description" : "Skildring",
     "Start" : "Start",
     "Destination" : "Destination",
     "Phone" : "Telefonnummer",

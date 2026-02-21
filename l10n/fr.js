@@ -196,6 +196,7 @@ OC.L10N.register(
     "Track/Route" : "Trace/Itinéraire",
     "Display elevation" : "Afficher l'alitude",
     "Begins at" : "Débute à",
+    "Description" : "Description",
     "north" : "nord",
     "northeast" : "nord-est",
     "east" : "est",

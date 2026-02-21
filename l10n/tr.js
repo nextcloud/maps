@@ -196,6 +196,7 @@ OC.L10N.register(
     "Track/Route" : "Yol/Rota",
     "Display elevation" : "Yükseklik görüntülensin",
     "Begins at" : "Başlangıç",
+    "Description" : "Açıklama",
     "north" : "kuzey",
     "northeast" : "kuzeydoğu",
     "east" : "doğu",

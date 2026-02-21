@@ -192,6 +192,7 @@ OC.L10N.register(
     "Track/Route" : "Проследяване/Маршрути",
     "Display elevation" : "Показване на надморската височина",
     "Begins at" : "Започва в",
+    "Description" : "Описание",
     "north" : "север",
     "northeast" : "североизток",
     "east" : "изток",

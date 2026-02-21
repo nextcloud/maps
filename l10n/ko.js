@@ -155,6 +155,7 @@ OC.L10N.register(
     "Track/Route" : "길/경로",
     "Display elevation" : "고도를 표시하다",
     "Begins at" : "에서 시작하다",
+    "Description" : "설명",
     "north" : "북쪽",
     "northeast" : "북동쪽",
     "east" : "동쪽",

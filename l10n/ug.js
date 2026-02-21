@@ -196,6 +196,7 @@ OC.L10N.register(
     "Track/Route" : "ئىز / يول",
     "Display elevation" : "ئېگىزلىكىنى كۆرسىتىش",
     "Begins at" : "باشلىنىدۇ",
+    "Description" : "چۈشەندۈرۈش",
     "north" : "شىمال",
     "northeast" : "شەرقىي شىمال",
     "east" : "شەرق",

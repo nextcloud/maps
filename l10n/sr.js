@@ -196,6 +196,7 @@ OC.L10N.register(
     "Track/Route" : "Путања/Рута",
     "Display elevation" : "Приказуј елевацију",
     "Begins at" : "Почиње на",
+    "Description" : "Опис",
     "north" : "север",
     "northeast" : "североисток",
     "east" : "исток",

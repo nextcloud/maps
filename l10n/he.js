@@ -98,6 +98,7 @@ OC.L10N.register(
     "Search" : "חיפוש",
     "Unknown Place" : "מיקום לא ידוע",
     "File" : "קובץ",
+    "Description" : "תיאור",
     "north" : "צפון",
     "northeast" : "צפון-מזרח",
     "east" : "מזרח",

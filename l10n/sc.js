@@ -110,6 +110,7 @@ OC.L10N.register(
     "Point at {coords}" : "Punta a {coords}",
     "Unknown Place" : "Logu disconnotu",
     "File" : "Archìviu",
+    "Description" : "Descritzione",
     "north" : "nord",
     "northeast" : "nordest",
     "east" : "est",

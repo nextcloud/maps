@@ -47,6 +47,7 @@ OC.L10N.register(
     "Closed" : "Ditutup",
     "Search" : "Cari",
     "File" : "Berkas",
+    "Description" : "Deskripsi",
     "right" : "kanan",
     "left" : "kiri",
     "Start" : "Mulai",

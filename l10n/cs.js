@@ -196,6 +196,7 @@ OC.L10N.register(
     "Track/Route" : "Stopa/Trasa",
     "Display elevation" : "Zobrazit převýšení",
     "Begins at" : "Začíná na",
+    "Description" : "Popis",
     "north" : "sever",
     "northeast" : "severovýchod",
     "east" : "východ",

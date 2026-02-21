@@ -38,6 +38,7 @@ OC.L10N.register(
     "Closed" : "I mbyllur",
     "Search" : "Kërko",
     "File" : "Skedar ",
+    "Description" : "Përshkrim",
     "right" : "djathtas",
     "left" : "majtas",
     "Start" : "Fillo",

@@ -33,6 +33,7 @@ OC.L10N.register(
     "Yes" : "Yes",
     "Search" : "Axtarış",
     "File" : "File",
+    "Description" : "Açıqlanma",
     "right" : "Sağ",
     "left" : "Sol",
     "Destination" : "Destination",

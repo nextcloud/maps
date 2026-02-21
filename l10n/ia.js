@@ -32,6 +32,7 @@ OC.L10N.register(
     "Yes" : "Si",
     "Search" : "Cercar",
     "File" : "File",
+    "Description" : "Description",
     "right" : "dextere",
     "left" : "sinistre",
     "Start" : "Initio",

@@ -106,6 +106,7 @@ OC.L10N.register(
     "Point at {coords}" : "Usmjeri na {coords}",
     "Unknown Place" : "Nepoznato mjesto",
     "File" : "Datoteka",
+    "Description" : "Opis",
     "north" : "sjever",
     "northeast" : "sjeveroistok",
     "east" : "istok",

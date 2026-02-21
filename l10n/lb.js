@@ -31,6 +31,7 @@ OC.L10N.register(
     "Yes" : "Yes",
     "Search" : "Search",
     "File" : "File",
+    "Description" : "Beschreiwung",
     "right" : "riets",
     "left" : "lénks",
     "Destination" : "Destination",

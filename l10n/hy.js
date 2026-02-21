@@ -26,6 +26,7 @@ OC.L10N.register(
     "Yes" : "Yes",
     "Search" : "Search",
     "File" : "File",
+    "Description" : "Նկարագրություն",
     "Destination" : "Destination",
     "min" : "րոպե",
     "Default" : "Լռելյայն"

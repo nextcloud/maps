@@ -193,6 +193,7 @@ OC.L10N.register(
     "Track/Route" : "Pista/Ibilbidea",
     "Display elevation" : "Erakutsi altitudea",
     "Begins at" : "Hasten da",
+    "Description" : "Deskripzioa",
     "north" : "iparra",
     "northeast" : "ipar-ekialdea",
     "east" : "ekialdea",

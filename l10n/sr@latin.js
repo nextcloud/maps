@@ -29,6 +29,7 @@ OC.L10N.register(
     "Yes" : "Da",
     "Search" : "Traži",
     "File" : "File",
+    "Description" : "Opis",
     "Destination" : "Destination",
     "Default" : "Podrazumevano"
 },

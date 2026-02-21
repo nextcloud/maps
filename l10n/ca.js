@@ -110,6 +110,7 @@ OC.L10N.register(
     "Point at {coords}" : "Punt a {coords}",
     "Unknown Place" : "Lloc desconegut",
     "File" : "Fitxer",
+    "Description" : "Descripció",
     "north" : "nord",
     "northeast" : "nord-est",
     "east" : "est",

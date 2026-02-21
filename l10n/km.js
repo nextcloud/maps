@@ -28,6 +28,7 @@ OC.L10N.register(
     "Yes" : "Yes",
     "Search" : "Search",
     "File" : "File",
+    "Description" : "ការ​អធិប្បាយ",
     "right" : "ខាង​ស្ដាំ",
     "left" : "ខាង​ឆ្វេង",
     "Destination" : "Destination",

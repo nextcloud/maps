@@ -196,6 +196,7 @@ OC.L10N.register(
     "Track/Route" : "Nyomvonal/útvonal",
     "Display elevation" : "Magasság megjelenítése",
     "Begins at" : "Kezdet:",
+    "Description" : "Leírás",
     "north" : "észak",
     "northeast" : "északkelet",
     "east" : "kelet",

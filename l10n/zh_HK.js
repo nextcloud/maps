@@ -196,6 +196,7 @@ OC.L10N.register(
     "Track/Route" : "足跡/路線",
     "Display elevation" : "顯示高度",
     "Begins at" : "始於",
+    "Description" : "描述",
     "north" : "北",
     "northeast" : "東北",
     "east" : "東",

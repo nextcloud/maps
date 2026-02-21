@@ -27,6 +27,7 @@ OC.L10N.register(
     "Open" : "Ldi",
     "Search" : "Nadi",
     "File" : "Afaylu",
+    "Description" : "Aglam",
     "Phone" : "Tiliɣri",
     "Default" : "Prédéfini(e)"
 },

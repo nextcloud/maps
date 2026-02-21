@@ -36,6 +36,7 @@ OC.L10N.register(
     "Open" : "Онгойлгох",
     "Search" : "Хайх",
     "File" : "File",
+    "Description" : "Тодорхойлолт",
     "right" : "баруун",
     "left" : "зүүн",
     "Start" : "эхлэх",

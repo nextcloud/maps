@@ -196,6 +196,7 @@ OC.L10N.register(
     "Track/Route" : "مسار / طريق",
     "Display elevation" : "أُعرُض الارتفاع",
     "Begins at" : "يبدأ في",
+    "Description" : "الوصف",
     "north" : "شمال",
     "northeast" : "شمال شرق",
     "east" : "شرق",

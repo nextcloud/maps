@@ -195,6 +195,7 @@ OC.L10N.register(
     "Track/Route" : "Spor/Rute",
     "Display elevation" : "Vis høyde",
     "Begins at" : "Begynner på",
+    "Description" : "Beskrivelse",
     "north" : "nord",
     "northeast" : "nordøst",
     "east" : "øst",

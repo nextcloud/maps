@@ -157,6 +157,7 @@ OC.L10N.register(
     "No suggestions" : "Ei ehdotuksia",
     "Unknown Place" : "Tuntematon paikka",
     "File" : "Tiedosto",
+    "Description" : "Kuvaus",
     "north" : "pohjoinen",
     "northeast" : "koillinen",
     "east" : "itä",

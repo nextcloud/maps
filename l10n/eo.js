@@ -42,6 +42,7 @@ OC.L10N.register(
     "Closed" : "Fermita",
     "Search" : "Serĉi",
     "File" : "Dosiero",
+    "Description" : "Priskribo",
     "right" : "dekstro",
     "left" : "maldekstro",
     "Start" : "Komenco",

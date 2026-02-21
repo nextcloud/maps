@@ -45,8 +45,11 @@ $(document).ready(function() {
 	        var value = $(this).val();
     	    setMapsRoutingSettings($(this).attr('id'), value);
     	});
-    $('body').on('change', '#osrmDEMO', function(e) {
-        var value = $(this).is(':checked') ? '1' : '0';
-        setMapsRoutingSettings($(this).attr('id'), value);
-    });
+    $('body').on('change',
+		'#osrmDEMO, ' +
+		'#maplibreStreetStylePmtiles',
+		function(e) {
+        	var value = $(this).is(':checked') ? '1' : '0';
+        	setMapsRoutingSettings($(this).attr('id'), value);
+    	});
 });

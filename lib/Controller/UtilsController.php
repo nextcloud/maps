@@ -134,6 +134,7 @@ class UtilsController extends Controller {
 			'mapboxAPIKEY',
 			'maplibreStreetStyleURL',
 			'maplibreStreetStyleAuth',
+			'maplibreStreetStylePmtiles',
 			'graphhopperURL'
 		];
 		foreach ($settingsKeys as $k) {
@@ -159,6 +160,7 @@ class UtilsController extends Controller {
 			'mapboxAPIKEY',
 			'maplibreStreetStyleURL',
 			'maplibreStreetStyleAuth',
+			'maplibreStreetStylePmtiles',
 			'graphhopperURL'
 		];
 		foreach ($values as $k => $v) {

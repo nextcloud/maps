@@ -411,6 +411,7 @@ OC.L10N.register(
     "Set the URL and Basic Authorization of style.json for OpenStreetMap Vector Tiles with MapLibre-GL-JS." : "OpenStreetMapi vektorpaanide kuvamiseks style.json-is MapLibre-GL-JS teegiga seadista võrguaadress ja lihtautentimine.",
     "MapLibre Street style URL" : "MapLibre Street stiili võrguaadress",
     "Basic Authorization if required. Format is \"user:password\"" : "Vajalik on lihtautentimine. Vorming on „kasutajanimi:salasõna“",
+    "support PMTiles protocol" : "PMTiles'i protokolli tugi",
     "Maps settings" : "Kaardi seadistused"
 },
 "nplurals=2; plural=(n != 1);");

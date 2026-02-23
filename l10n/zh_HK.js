@@ -411,6 +411,7 @@ OC.L10N.register(
     "Set the URL and Basic Authorization of style.json for OpenStreetMap Vector Tiles with MapLibre-GL-JS." : "使用 MapLibre-GL-JS 設定 OpenStreetMap 向量圖磚的 style.json URL 與基本授權",
     "MapLibre Street style URL" : "MapLibre Street 風格 URL",
     "Basic Authorization if required. Format is \"user:password\"" : "若需要基本授權。格式為「使用者:密碼」",
+    "support PMTiles protocol" : "支援 PMTiles 協定",
     "Maps settings" : "地圖設定"
 },
 "nplurals=1; plural=0;");

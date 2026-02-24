@@ -411,6 +411,7 @@ OC.L10N.register(
     "Set the URL and Basic Authorization of style.json for OpenStreetMap Vector Tiles with MapLibre-GL-JS." : "MapLibre-GL-JS ile OpenStreetMap vektör döşemelerinin style.json adresini ve temel kimlik doğrulamasını ayarlayın",
     "MapLibre Street style URL" : "MapLibre Street biçem adresi",
     "Basic Authorization if required. Format is \"user:password\"" : "Temel kimlik doğrulaması gereklidir. Biçim: \"KullaniciAdi:Parola\"",
+    "support PMTiles protocol" : "PMTiles iletişim kuralı desteği",
     "Maps settings" : "Haritalar ayarları"
 },
 "nplurals=2; plural=(n > 1);");

@@ -411,6 +411,7 @@ OC.L10N.register(
     "Set the URL and Basic Authorization of style.json for OpenStreetMap Vector Tiles with MapLibre-GL-JS." : "Defina o URL e a autorização básica de style.json para blocos vetoriais OpenStreetMap com MapLibre-GL-JS.",
     "MapLibre Street style URL" : "URL do estilo MapLibre Street",
     "Basic Authorization if required. Format is \"user:password\"" : "Autorização Básica, se necessário. O formato é \"usuário:senha\"",
+    "support PMTiles protocol" : "suporte ao protocolo PMTiles",
     "Maps settings" : "Configurações de mapas"
 },
 "nplurals=3; plural=(n == 0 || n == 1) ? 0 : n != 0 && n % 1000000 == 0 ? 1 : 2;");

@@ -3,6 +3,7 @@ OC.L10N.register(
     {
     "File not found" : "Ulac afaylu",
     "Personal" : "Udmawan",
+    "Export" : "Sifeḍ",
     "Delete" : "Kkes",
     "Cancel" : "Sefsex",
     "Link copied" : "Aseɣwen yettwanɣel",

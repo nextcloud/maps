@@ -294,7 +294,18 @@ export default {
 		},
 		onListItemClick(photo) {
 			if (OCA.Viewer && OCA.Viewer.open) {
-				OCA.Viewer.open({ path: photo.path, list: this.photoSuggestionsSelected })
+				const token = getToken()
+				if (token) {
+					// For public shares, pass the share token to the Viewer
+					OCA.Viewer.open({
+						path: photo.path,
+						list: this.photoSuggestionsSelected,
+						shareToken: token,
+					})
+				} else {
+					// For logged-in users, use the standard approach
+					OCA.Viewer.open({ path: photo.path, list: this.photoSuggestionsSelected })
+				}
 			}
 		},
 		subtracks(t) {

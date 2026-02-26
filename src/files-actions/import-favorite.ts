@@ -1,20 +1,17 @@
 import axios from '@nextcloud/axios'
 import { showError, showSuccess } from '@nextcloud/dialogs'
-import { FileAction, Permission } from '@nextcloud/files'
+import { type IFileAction, Permission } from '@nextcloud/files'
 import { n, t } from '@nextcloud/l10n'
 import { generateUrl } from '@nextcloud/router'
 
 import svgMapMarker from '@mdi/svg/svg/map-marker.svg?raw'
 
-export default new FileAction({
-	id: 'maps:import-as-favorite',
-
-	displayName() {
-		return t('maps', 'Import as favorites in Maps')
-	},
-
-	enabled(files) {
-		if (files.length !== 1) {
+const action: IFileAction = {
+    id: 'maps:import-as-favorite',
+    displayName: (content) => t('maps', 'Import as favorites in Maps'),
+    enabled: (content) => {
+        const files = content.contents
+        if (files.length !== 1) {
 			return false
 		}
 
@@ -28,10 +25,10 @@ export default new FileAction({
 			'application/vnd.google-earth.kmz',
 			'application/vnd.google-earth.kml+xml',
 		].includes(file.mime)
-	},
-
-	async exec(file) {
-		const path = file.path
+    },
+    exec: async (content) => {
+        const [file] = content.contents
+        const path = file.path
 		const url = generateUrl('/apps/maps/import/favorites')
 		try {
 			const { data } = await axios.post(url, { path })
@@ -42,9 +39,8 @@ export default new FileAction({
 			console.error('Failed to import favorites', { error })
 		}
 		return null
-	},
+    },
+    iconSvgInline: () => svgMapMarker
+}
 
-	iconSvgInline() {
-		return svgMapMarker
-	},
-})
+export default action

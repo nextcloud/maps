@@ -112,7 +112,10 @@ export default {
 
 	computed: {
 		downloadTrackUrl() {
-			return OCA.Files.App.fileList.filesClient.getBaseUrl() + this.track.file_path
+			// optional chaining to avoid undefined errors
+			return OCA?.Files?.App?.fileList?.filesClient?.getBaseUrl
+				? OCA.Files.App.fileList.filesClient.getBaseUrl() + this.track.file_path
+				: '#'
 		},
 		downloadTrackShareUrl() {
 			return generateUrl('s/' + getToken() + '/download' + '?path=/&files=' + this.track.file_name)

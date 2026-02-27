@@ -510,7 +510,7 @@ export default {
 		 * @return {Promise}
 		 * @throws {Error} loading failure
 		 */
-		async open(path = null, type = null, name = null) {
+		 async open(path = null, type = null, name = null) {
 			// update current opened file
 			this.Sidebar.file = path
 			if (path) {
@@ -518,22 +518,26 @@ export default {
 				this.name = name
 			}
 
+			// Only fetch fileInfo for non-public files
 			if (path && path.trim() !== '' && !isPublic()) {
-				// reset data, keep old fileInfo to not reload all tabs and just hide them
 				this.error = null
 				this.loading = true
 
 				try {
+					// Load file info
 					this.fileInfo = await FileInfo(this.davPath)
-					// adding this as fallback because other apps expect it
 					this.fileInfo.dir = this.file.split('/').slice(0, -1).join('/')
 
-					// DEPRECATED legacy views
-					// TODO: remove
-					this.views.forEach(view => {
-						view.setFileInfo(this.fileInfo)
-					})
+					// DEPRECATED legacy views — safely call setFileInfo if views exist
+					if (Array.isArray(this.views)) {
+						this.views.forEach(view => {
+							if (typeof view.setFileInfo === 'function') {
+								view.setFileInfo(this.fileInfo)
+							}
+						})
+					}
 
+					// Update tabs after DOM update
 					this.$nextTick(() => {
 						if (this.$refs.tabs) {
 							this.$refs.tabs.updateTabs()
@@ -542,12 +546,12 @@ export default {
 				} catch (error) {
 					this.error = t('files', 'Error while loading the file data')
 					console.error('Error while loading the file data', error)
-
 					throw new Error(error)
 				} finally {
 					this.loading = false
 				}
 			} else {
+				// Public file or empty path
 				this.fileInfo = null
 			}
 		},

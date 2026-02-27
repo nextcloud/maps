@@ -164,6 +164,7 @@
 </template>
 
 <script>
+// TODO: migrate maps and all layers to vanilla leaflet foe vue3 migration
 import { getLocale } from '@nextcloud/l10n'
 import { generateUrl } from '@nextcloud/router'
 import { getCurrentUser } from '@nextcloud/auth'

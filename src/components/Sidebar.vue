@@ -123,6 +123,10 @@ export default {
 			type: Boolean,
 			required: true,
 		},
+		activeTab: {
+			type: String,
+			default: null
+		},
 		favorite: {
 			validator: prop => typeof prop === 'object' || prop === null,
 			required: true,
@@ -215,15 +219,6 @@ export default {
 		davPath() {
 			const user = OC.getCurrentUser().uid
 			return OC.linkToRemote(`dav/files/${user}${encodePath(this.file)}`)
-		},
-
-		/**
-		 * Current active tab handler
-		 *
-		 * @return {string} the current active tab
-		 */
-		activeTab() {
-			return this.Sidebar.activeTab
 		},
 
 		/**
@@ -335,18 +330,25 @@ export default {
 		},
 
 		/**
-		 * Default action object for the current file
+		 * Default action for the current file
 		 *
-		 * @return {object}
+		 * @return {Function|null}
 		 */
 		defaultAction() {
-			return this.fileInfo
-				&& OCA.Files && OCA.Files.App && OCA.Files.App.fileList
-				&& OCA.Files.App.fileList.fileActions
-				&& OCA.Files.App.fileList.fileActions.getDefaultFileAction
-				&& OCA.Files.App.fileList
-					.fileActions.getDefaultFileAction(this.fileInfo.mimetype, this.fileInfo.type, OC.PERMISSION_READ)
+			if (!this.fileInfo) {
+				return null
+			}
 
+			const fileList = window.OCA?.Files?.App?.fileList
+
+			if (!fileList) {
+				return null
+			}
+
+			return () => {
+				// Open file via Files app navigation
+				fileList.openFile?.(this.fileInfo.name)
+			}
 		},
 
 		/**
@@ -437,49 +439,56 @@ export default {
 
 		/**
 		 * Toggle favourite state
-		 * TODO: better implementation
 		 *
-		 * @param {boolean} state favourited or not
+		 * @param {boolean} state
 		 */
 		async toggleStarred(state) {
 			try {
 				this.starLoading = true
+
 				await axios({
 					method: 'PROPPATCH',
 					url: this.davPath,
+					headers: {
+						'Content-Type': 'application/xml; charset=utf-8',
+					},
 					data: `<?xml version="1.0"?>
 						<d:propertyupdate xmlns:d="DAV:" xmlns:oc="http://owncloud.org/ns">
-						${state ? '<d:set>' : '<d:remove>'}
-							<d:prop>
-								<oc:favorite>1</oc:favorite>
-							</d:prop>
-						${state ? '</d:set>' : '</d:remove>'}
+							${state ? '<d:set>' : '<d:remove>'}
+								<d:prop>
+									<oc:favorite>${state ? '1' : ''}</oc:favorite>
+								</d:prop>
+							${state ? '</d:set>' : '</d:remove>'}
 						</d:propertyupdate>`,
 				})
 
-				// TODO: Obliterate as soon as possible and use events with new files app
-				// Terrible fallback for legacy files: toggle filelist as well
-				if (OCA.Files && OCA.Files.App && OCA.Files.App.fileList && OCA.Files.App.fileList.fileActions) {
-					OCA.Files.App.fileList.fileActions.triggerAction('Favorite', OCA.Files.App.fileList.getModelForFile(this.fileInfo.name), OCA.Files.App.fileList)
-				}
+				// ✅ Modern way: emit refresh event
+				window.OCA?.Files?.App?.fileList?.reload?.()
 
 			} catch (error) {
 				showError(t('files', 'Unable to change the favourite state of the file'))
 				console.error('Unable to change favourite state', error)
+			} finally {
+				this.starLoading = false
 			}
-			this.starLoading = false
 		},
 
 		onDefaultAction() {
-			if (this.defaultAction) {
-				// generate fake context
-				this.defaultAction.action(this.fileInfo.name, {
-					fileInfo: this.fileInfo,
-					dir: this.fileInfo.dir,
-					fileList: OCA.Files.App.fileList,
-					// Fixme if defaultAction is needed
-					$file: '',
-				})
+			if (!this.defaultAction) {
+				return
+			}
+
+			const fileList = window.OCA?.Files?.App?.fileList
+			if (!fileList || !this.fileInfo) {
+				return
+			}
+
+			if (this.fileInfo.type === 'dir') {
+				// Open folders
+				fileList.changeDirectory?.(this.fileInfo.path)
+			} else {
+				// Open files
+				fileList.openFile?.(this.fileInfo.name)
 			}
 		},
 

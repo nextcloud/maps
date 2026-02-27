@@ -1,6 +1,7 @@
 <template>
 	<NcSelect
 		ref="select"
+		inputLabel="label"
 		class="search-select"
 		label="label"
 		track-by="multiselectKey"

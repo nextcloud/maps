@@ -92,10 +92,7 @@ if (window.navigator.registerProtocolHandler) {
 	window.navigator.registerProtocolHandler('geo', generateUrl('/apps/maps/openGeoLink/') + '%s', 'Nextcloud Maps')
 }
 
-document.addEventListener('DOMContentLoaded', (event) => {
-	Object.assign(window.OCA.Files, {
-		App: { fileList: { filesClient: OC.Files.getClient() } },
-	}, window.OCA.Files)
+document.addEventListener('DOMContentLoaded', () => {
 	optionsController.restoreOptions(main)
 })
 

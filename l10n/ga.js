@@ -411,6 +411,7 @@ OC.L10N.register(
     "Set the URL and Basic Authorization of style.json for OpenStreetMap Vector Tiles with MapLibre-GL-JS." : "Socraigh URL agus Údarú Bunúsach style.json le haghaidh Tíleanna Veicteoireachta OpenStreetMap le MapLibre-GL-JS.",
     "MapLibre Street style URL" : "URL stíl sráide MapLibre",
     "Basic Authorization if required. Format is \"user:password\"" : "Údarú Bunúsach más gá. Is é an fhormáid \"úsáideoir:focal faire\"",
+    "support PMTiles protocol" : "tacaíocht a thabhairt do phrótacal PMTiles",
     "Maps settings" : "Socruithe léarscáileanna"
 },
 "nplurals=5; plural=(n==1 ? 0 : n==2 ? 1 : n<7 ? 2 : n<11 ? 3 : 4);");

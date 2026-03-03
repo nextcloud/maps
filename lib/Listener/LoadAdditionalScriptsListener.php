@@ -23,12 +23,12 @@ declare(strict_types=1);
 
 namespace OCA\Maps\Listener;
 
-use OCP\ILogger;
 use OCA\Files\Event\LoadAdditionalScriptsEvent;
 use OCP\EventDispatcher\Event;
 use OCP\EventDispatcher\IEventListener;
 use OCP\Util;
 
+/** @template-implements IEventListener<LoadAdditionalScriptsEvent> */
 class LoadAdditionalScriptsListener implements IEventListener {
 
 	public function __construct() {
@@ -40,7 +40,6 @@ class LoadAdditionalScriptsListener implements IEventListener {
 			return;
 		}
 
-		Util::addScript('maps', 'maps-filetypes');
-		Util::addStyle('maps', 'filetypes');
+		Util::addInitScript('maps', 'maps-init-files');
 	}
 }

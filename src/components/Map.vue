@@ -170,11 +170,15 @@ import { getCurrentUser } from '@nextcloud/auth'
 import axios from '@nextcloud/axios'
 import { showError, showSuccess } from '@nextcloud/dialogs'
 
+import { LocateControl } from "leaflet.locatecontrol"
+import 'leaflet.locatecontrol/dist/L.Control.Locate.min.css'
 import L from 'leaflet'
 import 'mapbox-gl/dist/mapbox-gl'
 import 'mapbox-gl/dist/mapbox-gl.css'
 import 'mapbox-gl-leaflet/leaflet-mapbox-gl'
+import { Protocol } from "pmtiles";
 import '@maplibre/maplibre-gl-leaflet'
+import { addProtocol } from 'maplibre-gl'
 import ResourceType from 'maplibre-gl'
 import {
 	baseLayersByName,
@@ -186,9 +190,7 @@ import 'leaflet-easybutton/src/easy-button'
 import 'leaflet-easybutton/src/easy-button.css'
 import 'leaflet-contextmenu/dist/leaflet.contextmenu.min'
 import 'leaflet-contextmenu/dist/leaflet.contextmenu.min.css'
-import 'leaflet.locatecontrol/dist/L.Control.Locate.min'
-import 'leaflet.locatecontrol/dist/L.Control.Locate.min.css'
-import 'd3/dist/d3.min'
+
 import GeoJSON from 'geojson'
 import '@raruto/leaflet-elevation/dist/leaflet-elevation'
 import '@raruto/leaflet-elevation/dist/leaflet-elevation.css'
@@ -207,6 +209,26 @@ import PoiMarker from '../components/map/PoiMarker.vue'
 import ClickSearchPopup from '../components/map/ClickSearchPopup.vue'
 import optionsController from '../optionsController.js'
 import PhotoSuggestionsLayer from './map/PhotoSuggestionsLayer.vue'
+
+// exclude dynamic imports from webpack-processing
+L.Control.Elevation.include({
+	import: function(src, condition) {
+		if (Array.isArray(src)) {
+			return Promise.all(src.map(m => this.import(m)));
+		}
+		switch(src) {
+			case this.__D3:          condition = typeof d3 !== 'object'; break;
+			case this.__TOGEOJSON:   condition = typeof toGeoJSON !== 'object'; break;
+			case this.__LGEOMUTIL:   condition = typeof L.GeometryUtil !== 'object'; break;
+			case this.__LALMOSTOVER: condition = typeof L.Handler.AlmostOver  !== 'function'; break;
+			case this.__LDISTANCEM:  condition = typeof L.DistanceMarkers  !== 'function'; break;
+			case this.__LEDGESCALE:  condition = typeof L.Control.EdgeScale !== 'function'; break;
+			case this.__LHOTLINE:    condition = typeof L.Hotline  !== 'function'; break;
+		}
+		let url = (new URL(src, (src.startsWith('../') || src.startsWith('./')) ? this.options.srcFolder : undefined)).toString();
+		return condition !== false ? import(/* webpackIgnore: true */ url) : Promise.resolve();
+	}
+})
 
 export default {
 	name: 'Map',
@@ -510,8 +532,8 @@ export default {
 						action.callback({
 							id: 'geo:' + e.latlng.lat + ',' + e.latlng.lng,
 							name: t('maps', 'Shared location'),
-							latitude: e.latlng.lat,
-							longitude: e.latlng.lng,
+							latitude: e.latlng.lat.toString(),
+							longitude: e.latlng.lng.toString(),
 						})
 					},
 				})
@@ -612,7 +634,7 @@ export default {
 		},
 		initLocControl(map) {
 			// location control
-			const locControl = L.control.locate({
+			const locControl = new LocateControl({
 				position: 'bottomright',
 				drawCircle: true,
 				drawMarker: true,
@@ -798,10 +820,18 @@ export default {
 			}
 
 			if ((gl !== null)
-				&& ('maplibreStreetStyleURL' in this.optionValues && this.optionValues.maplibreStreetStyleURL !== '')) {
+				&& ('maplibreStreetStyleURL' in this.optionValues
+				&& this.optionValues.maplibreStreetStyleURL !== '')) {
 				let token = null
-				if ('maplibreStreetStyleAuth' in this.optionValues && this.optionValues.maplibreStreetStyleAuth !== '') {
+				if ('maplibreStreetStyleAuth' in this.optionValues
+					&& this.optionValues.maplibreStreetStyleAuth !== '') {
 					token = this.optionValues.maplibreStreetStyleAuth
+				}
+
+				if ('maplibreStreetStylePmtiles' in this.optionValues
+					&& this.optionValues.maplibreStreetStylePmtiles === "1") {
+					let protocol = new Protocol();
+					addProtocol("pmtiles", protocol.tile);
 				}
 
 				// wrapper to make tile layer component correctly pass arguments
@@ -1012,6 +1042,7 @@ export default {
 				// time: true,
 				summary: 'line',
 				ruler: false,
+				srcFolder: window.location.origin.concat(window.location.pathname, 'src/components/leaflet-elevation//'),
 			})
 			el.addTo(this.map)
 			el.addData(geojson)

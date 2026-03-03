@@ -4,6 +4,45 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## 1.6.0 - 2025.07.24 Nextcloud Hub 10
+### Added
+- Support PHP 8.4 & NC31
+- Switch to (default) Nominatim request-format jsonv2.
+  [21ab2f0](https://github.com/nextcloud/maps/commit/21ab2f08c1d5140aa3f3c9a3823d036a16b5eff7) @umgfoin
+- Cleanup bootstrap.php to be forward-compatible [#1418](https://github.com/nextcloud/maps/pull/1418) @come-nc
+- Scan photos of specific directory [#1231](https://github.com/nextcloud/maps/pull/1231) @tetebueno
+
+### Fixed
+- Non-recoverable exception during lookup of long or malformed addressbook entries
+  [8df2e21](https://github.com/nextcloud/maps/commit/8df2e21eef28a9842f58566d9deb7313c56e8600) @umgfoin
+- Fix favorite category linking bug [6cb5a99](https://github.com/nextcloud/maps/commit/6cb5a998a550c24674a74c5eae380de0349e9f4a), 
+  [#1430](https://github.com/nextcloud/maps/pull/1430) @tacruc, @copilot
+- Broken filehooks for adding new geophotos and tracks to maps
+  [#1420](https://github.com/nextcloud/maps/pull/1420) @umgfoin
+- Incorrect closure declaration for manual geo-photos rescan-command
+  [#1419](https://github.com/nextcloud/maps/pull/1419) @umgfoin
+- Georeferenced photos from external folders not shown on map
+  [#1371](https://github.com/nextcloud/maps/issues/1371) @umgfoin
+- Wrong failure-msg. when clearing photo-cache
+  [#1375](https://github.com/nextcloud/maps/pull/1375) @umgfoin
+- Tiles not working on public pages because of missing CSP entries
+  [#1363](https://github.com/nextcloud/maps/pull/1363) @chefe
+
+### Updated
+- Update Dependencies and Nextcloud Requirements
+  [fecd43c](https://github.com/nextcloud/maps/commit/fecd43cf146394fd524c7f5f9a0cfbc13cc3d4a2), [f601d2d](https://github.com/nextcloud/maps/commit/f601d2d267dc0fa9930d8e37baa528752510bc4c) @um
+gfoin
+- ci: update node.yml workflow from template [#1423](https://github.com/nextcloud/maps/pull/1423)  @tacruc
+- Update Dependencies and Nextcloud Requirement [#1402](https://github.com/nextcloud/maps/pull/1402) @a4blue
+
+
+## 1.5.0 - 2024.11.16 Nextcloud Hub 9
+- Update OSM tile service URL [#1295](https://github.com/nextcloud/maps/pull/1295) @StyXman
+- Support Nextcloud 30, update CSP header [1336](https://github.com/nextcloud/maps/pull/1336) @Ma27
+
+## 1.4.0 - 2024.04.28 Nextcloud Hub 8
+- Compability changes to Nextcloud 29.
+
 ## 1.3.0 - 2023.12.12 Nextcloud Hub 7
 - Compability changes to Nextcloud 28.
 

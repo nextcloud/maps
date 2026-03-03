@@ -16,16 +16,16 @@ use OCP\AppFramework\Db\Entity;
 
 class Geophoto extends Entity {
 
-    protected $fileId;
-    protected $lat;
-    protected $lng;
-    protected $dateTaken;
-    protected $userId;
+	protected $fileId;
+	protected $lat;
+	protected $lng;
+	protected $dateTaken;
+	protected $userId;
 
-    public function __construct() {
-        $this->addType('fileId', 'integer');
-        $this->addType('lat', 'float');
-        $this->addType('lng', 'float');
-        $this->addType('dateTaken', 'integer');
-    }
+	public function __construct() {
+		$this->addType('fileId', 'integer');
+		$this->addType('lat', 'float');
+		$this->addType('lng', 'float');
+		$this->addType('dateTaken', 'integer');
+	}
 }

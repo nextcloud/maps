@@ -6,10 +6,9 @@ namespace OCA\Maps\Migration;
 
 use Closure;
 use OCP\DB\ISchemaWrapper;
-use OCP\Migration\SimpleMigrationStep;
-use OCP\Migration\IOutput;
 use OCP\IDBConnection;
-use Doctrine\DBAL\Types\Type;
+use OCP\Migration\IOutput;
+use OCP\Migration\SimpleMigrationStep;
 
 /**
  * Auto-generated migration step: Please modify to your needs!
@@ -63,6 +62,6 @@ class Version000013Date20190723185417 extends SimpleMigrationStep {
 	public function postSchemaChange(IOutput $output, Closure $schemaClosure, array $options) {
 		$query = $this->db->getQueryBuilder();
 		$query->delete('maps_address_geo');
-		$query->execute();
+		$query->executeStatement();
 	}
 }

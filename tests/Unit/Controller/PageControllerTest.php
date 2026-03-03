@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Nextcloud - maps
  *
@@ -11,53 +12,53 @@
 
 namespace OCA\Maps\Controller;
 
-use \OCA\Maps\AppInfo\Application;
-use \OCP\AppFramework\Http\TemplateResponse;
-use \OCP\EventDispatcher\IEventDispatcher;
-use \OCP\IServerContainer;
-
+use OCP\AppFramework\Http\TemplateResponse;
+use OCP\AppFramework\Services\IInitialState;
+use OCP\EventDispatcher\IEventDispatcher;
+use OCP\IConfig;
+use OCP\IRequest;
+use OCP\IURLGenerator;
+use PHPUnit\Framework\MockObject\MockObject;
 
 class PageControllerTest extends \PHPUnit\Framework\TestCase {
-    private $controller;
-    private $userId = 'john';
-    private $config;
-	private $eventDispatcher;
-    private $app;
-    private $container;
+	private PageController $controller;
+	private string $userId = 'john';
+	private IConfig&MockObject $config;
+	private IInitialState&MockObject $initialState;
+	private IEventDispatcher&MockObject $eventDispatcher;
+	private IURLGenerator&MockObject $urlGenerator;
 
-    protected function setUp(): void {
-        $request = $this->getMockBuilder('OCP\IRequest')->getMock();
-        $initialStateService = $this->getMockBuilder('OCP\IInitialStateService')->getMock();
-        $this->app = new Application();
-        $this->container = $this->app->getContainer();
-        $c = $this->container;
-        $this->config = $c->query(IServerContainer::class)->getConfig();
-		$this->eventDispatcher = $c->query(IServerContainer::class)->query(IEventDispatcher::class);
+	protected function setUp(): void {
+		/** @var IRequest&MockObject */
+		$request = $this->createMock(IRequest::class);
+		$this->config = $this->createMock(IConfig::class);
+		$this->initialState = $this->createMock(IInitialState::class);
+		$this->eventDispatcher = $this->createMock(IEventDispatcher::class);
+		$this->urlGenerator = $this->createMock(IURLGenerator::class);
 
-        $this->oldGHValue = $this->config->getAppValue('maps', 'graphhopperURL');
-        $this->config->setAppValue('maps', 'graphhopperURL', 'https://graphhopper.com:8080');
+		$this->controller = new PageController(
+			'maps',
+			$request,
+			$this->userId,
+			$this->eventDispatcher,
+			$this->config,
+			$this->initialState,
+			$this->urlGenerator,
+		);
+	}
 
-        $this->controller = new PageController(
-            'maps', $request, $this->eventDispatcher, $this->config, $initialStateService, $this->userId
-        );
-    }
+	public function testIndex() {
+		$result = $this->controller->index();
 
-    protected function tearDown(): void {
-        $this->config->setAppValue('maps', 'graphhopperURL', $this->oldGHValue);
-    }
+		$this->assertEquals('main', $result->getTemplateName());
+		$this->assertTrue($result instanceof TemplateResponse);
+	}
 
-    public function testIndex() {
-        $result = $this->controller->index();
+	public function testOpenGeoLink() {
+		$result = $this->controller->openGeoLink('geo:1.1,2.2');
 
-        $this->assertEquals('main', $result->getTemplateName());
-        $this->assertTrue($result instanceof TemplateResponse);
-    }
-
-    public function testOpenGeoLink() {
-        $result = $this->controller->openGeoLink('geo:1.1,2.2');
-
-        $this->assertEquals('main', $result->getTemplateName());
-        $this->assertTrue($result instanceof TemplateResponse);
-    }
+		$this->assertEquals('main', $result->getTemplateName());
+		$this->assertTrue($result instanceof TemplateResponse);
+	}
 
 }

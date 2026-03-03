@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Nextcloud - maps
  *
@@ -14,6 +15,5 @@ namespace OCA\Maps\Helper;
 /**
  * Class GeoPhotoException
  */
-class ExifDataInvalidException extends \Exception
-{
+class ExifDataInvalidException extends \Exception {
 }

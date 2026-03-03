@@ -24,7 +24,6 @@
 
 namespace tests\Integration\Db;
 
-
 use ChristophWurst\Nextcloud\Testing\DatabaseTransaction;
 use ChristophWurst\Nextcloud\Testing\TestCase;
 use OC;
@@ -33,93 +32,93 @@ use OCA\Maps\DB\FavoriteShareMapper;
 use OCP\AppFramework\Db\DoesNotExistException;
 
 class FavoriteShareMapperTest extends TestCase {
-  use DatabaseTransaction;
+	use DatabaseTransaction;
 
-  /* @var FavoriteShareMapper */
-  private $mapper;
+	/* @var FavoriteShareMapper */
+	private $mapper;
 
-  public function setUp(): void {
-    parent::setUp();
+	public function setUp(): void {
+		parent::setUp();
 
-    $this->mapper = new FavoriteShareMapper(
-      OC::$server->query(\OCP\IDBConnection::class),
-	  OC::$server->getSecureRandom(),
-	  OC::$server->getRootFolder()
-    );
-  }
+		$this->mapper = new FavoriteShareMapper(
+			OC::$server->query(\OCP\IDBConnection::class),
+			OC::$server->getSecureRandom(),
+			OC::$server->getRootFolder()
+		);
+	}
 
-  public function testCreateByOwnerAndTokenIsSuccessful() {
-    /* @var FavoriteShare */
-    $share = $this->mapper->create("testUser", "testCategory");
+	public function testCreateByOwnerAndTokenIsSuccessful() {
+		/* @var FavoriteShare */
+		$share = $this->mapper->create('testUser', 'testCategory');
 
-    $this->assertIsString($share->getToken());
-    $this->assertEquals("testUser", $share->getOwner());
-    $this->assertEquals("testCategory", $share->getCategory());
-  }
+		$this->assertIsString($share->getToken());
+		$this->assertEquals('testUser', $share->getOwner());
+		$this->assertEquals('testCategory', $share->getCategory());
+	}
 
-  public function testFindByTokenIsSuccessful() {
-    /* @var FavoriteShare */
-    $shareExpected = $this->mapper->create("testUser", "testCategory");
+	public function testFindByTokenIsSuccessful() {
+		/* @var FavoriteShare */
+		$shareExpected = $this->mapper->create('testUser', 'testCategory');
 
-    /* @var FavoriteShare */
-    $shareActual = $this->mapper->findByToken($shareExpected->getToken());
+		/* @var FavoriteShare */
+		$shareActual = $this->mapper->findByToken($shareExpected->getToken());
 
-    $this->assertEquals($shareExpected->getToken(), $shareActual->getToken());
-    $this->assertEquals($shareExpected->getOwner(), $shareActual->getOwner());
-    $this->assertEquals($shareExpected->getCategory(), $shareActual->getCategory());
-  }
+		$this->assertEquals($shareExpected->getToken(), $shareActual->getToken());
+		$this->assertEquals($shareExpected->getOwner(), $shareActual->getOwner());
+		$this->assertEquals($shareExpected->getCategory(), $shareActual->getCategory());
+	}
 
-  public function testFindByOwnerAndCategoryIsSuccessful() {
-    /* @var FavoriteShare */
-    $shareExpected = $this->mapper->create("testUser", "testCategory");
+	public function testFindByOwnerAndCategoryIsSuccessful() {
+		/* @var FavoriteShare */
+		$shareExpected = $this->mapper->create('testUser', 'testCategory');
 
-    /* @var FavoriteShare */
-    $shareActual = $this->mapper->findByOwnerAndCategory("testUser", "testCategory");
+		/* @var FavoriteShare */
+		$shareActual = $this->mapper->findByOwnerAndCategory('testUser', 'testCategory');
 
-    $this->assertEquals($shareExpected->getToken(), $shareActual->getToken());
-    $this->assertEquals($shareExpected->getOwner(), $shareActual->getOwner());
-    $this->assertEquals($shareExpected->getCategory(), $shareActual->getCategory());
-  }
+		$this->assertEquals($shareExpected->getToken(), $shareActual->getToken());
+		$this->assertEquals($shareExpected->getOwner(), $shareActual->getOwner());
+		$this->assertEquals($shareExpected->getCategory(), $shareActual->getCategory());
+	}
 
-  public function testFindAllByOwnerIsSuccessfulAndDoesNotContainOtherShares() {
-    /* @var FavoriteShare */
-    $share1 = $this->mapper->create("testUser", "testCategory1");
+	public function testFindAllByOwnerIsSuccessfulAndDoesNotContainOtherShares() {
+		/* @var FavoriteShare */
+		$share1 = $this->mapper->create('testUser', 'testCategory1');
 
-    /* @var FavoriteShare */
-    $share2 = $this->mapper->create("testUser", "testCategory2");
+		/* @var FavoriteShare */
+		$share2 = $this->mapper->create('testUser', 'testCategory2');
 
-    $this->mapper->create("testUser2", "testCategory");
+		$this->mapper->create('testUser2', 'testCategory');
 
-    /* @var array */
-    $shares = $this->mapper->findAllByOwner("testUser");
+		/* @var array */
+		$shares = $this->mapper->findAllByOwner('testUser');
 
-    $shareTokens = array_map(function ($share) {
-      return $share->getToken();
-    }, $shares);
+		$shareTokens = array_map(function ($share) {
+			return $share->getToken();
+		}, $shares);
 
-    $this->assertEquals(2, count($shareTokens));
-    $this->assertContains($share1->getToken(), $shareTokens);
-    $this->assertContains($share2->getToken(), $shareTokens);
-  }
+		$this->assertEquals(2, count($shareTokens));
+		$this->assertContains($share1->getToken(), $shareTokens);
+		$this->assertContains($share2->getToken(), $shareTokens);
+	}
 
-  public function testFindOrCreateByOwnerAndCategoryIsSuccessful() {
-    /* @var FavoriteShare */
-    $share = $this->mapper->findOrCreateByOwnerAndCategory("testUser", "testCategory");
+	public function testFindOrCreateByOwnerAndCategoryIsSuccessful() {
+		/* @var FavoriteShare */
+		$share = $this->mapper->findOrCreateByOwnerAndCategory('testUser', 'testCategory');
 
-    $this->assertIsString($share->getToken());
-    $this->assertEquals("testUser", $share->getOwner());
-    $this->assertEquals("testCategory", $share->getCategory());
-  }
+		$this->assertIsString($share->getToken());
+		$this->assertEquals('testUser', $share->getOwner());
+		$this->assertEquals('testCategory', $share->getCategory());
+	}
 
-  public function testRemoveByOwnerAndCategoryIsSuccessful() {
-    /* @var FavoriteShare */
-    $share = $this->mapper->create("testUser", "testCategory");
+	public function testRemoveByOwnerAndCategoryIsSuccessful() {
+		/* @var FavoriteShare */
+		$share = $this->mapper->create('testUser', 'testCategory');
 
-    $this->mapper->removeByOwnerAndCategory($share->getOwner(), $share->getCategory());
+		$this->mapper->removeByOwnerAndCategory($share->getOwner(), $share->getCategory());
 
-    $this->expectException(DoesNotExistException::class);
+		$this->expectException(DoesNotExistException::class);
 
-    $this->mapper->findByOwnerAndCategory($share->getOwner(), $share->getCategory());
-  }
+		$this->mapper->findByOwnerAndCategory($share->getOwner(), $share->getCategory());
+	}
 
 }

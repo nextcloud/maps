@@ -1,4 +1,7 @@
 <?php
+
+declare(strict_types=1);
+
 /**
  * Nextcloud - maps
  *
@@ -8,13 +11,11 @@
  * @author Julien Veyssier <eneiluj@posteo.net>
  * @copyright Julien Veyssier 2019
  */
-define('PHPUNIT_RUN', 1);
 
-require_once __DIR__.'/../../../tests/bootstrap.php';
-require_once __DIR__.'/../../../lib/base.php';
-require_once __DIR__.'/../vendor/autoload.php';
+use OCP\App\IAppManager;
+use OCP\Server;
 
-\OC::$loader->addValidRoot(OC::$SERVERROOT . '/tests');
-\OC_App::loadApp('maps');
+require_once __DIR__ . '/../../../tests/autoload.php';
 
-OC_Hook::clear();
+$appManager = Server::get(IAppManager::class);
+$appManager->loadApp('maps');

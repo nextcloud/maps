@@ -23,25 +23,21 @@ declare(strict_types=1);
 
 namespace OCA\Maps\Listener;
 
-use OCP\ILogger;
 use OCA\DAV\Events\CardUpdatedEvent;
 use OCA\Maps\Service\AddressService;
 use OCP\EventDispatcher\Event;
 use OCP\EventDispatcher\IEventListener;
 
+/** @template-implements IEventListener<CardUpdatedEvent> */
 class CardUpdatedListener implements IEventListener {
 
 	/** @var AddressService */
 	private $addressService;
 
-	/** @var ILogger */
-	private $logger;
-
 	public function __construct(
 		AddressService $addressService,
-		ILogger $logger) {
+	) {
 		$this->addressService = $addressService;
-		$this->logger = $logger;
 	}
 
 	public function handle(Event $event): void {
@@ -50,7 +46,7 @@ class CardUpdatedListener implements IEventListener {
 			return;
 		}
 		$cData = $event->getCardData();
-		$cUri = $cData["uri"];
-		$this->addressService->scheduleVCardForLookup($cData["carddata"], $cUri);
+		$cUri = $cData['uri'];
+		$this->addressService->scheduleVCardForLookup($cData['carddata'], $cUri);
 	}
 }

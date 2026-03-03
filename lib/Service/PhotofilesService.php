@@ -43,7 +43,7 @@ use lsolesen\pel\PelTiff;
 
 class PhotofilesService {
 
-  public const PHOTO_MIME_TYPES = ['image/jpeg', 'image/tiff', 'image/heic'];
+	public const PHOTO_MIME_TYPES = ['image/jpeg', 'image/tiff', 'image/heic'];
 
 	private $l10n;
 	private $root;

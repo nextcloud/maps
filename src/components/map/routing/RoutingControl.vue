@@ -1,5 +1,5 @@
 <template>
-	<LControl class="maps-routing-control leaflet-control" :class="{'mobile': isMobile, 'desktop':!isMobile}" position="topleft">
+	<div ref="controlContent" class="maps-routing-control leaflet-control" :class="{'mobile': isMobile, 'desktop':!isMobile}">
 		<div class="routing-header">
 			<span class="icon icon-routing" />
 			<span class="title">
@@ -27,11 +27,11 @@
 			@plan-ready-changed="onPlanReadyChanged"
 			@route-selected="onRouteSelected"
 			@track-added="$emit('track-added', $event)" />
-	</LControl>
+	</div>
 </template>
 
 <script>
-import { LControl } from 'vue2-leaflet'
+import L from 'leaflet'
 import { isMobile } from '@nextcloud/vue'
 
 import RoutingSteps from './RoutingSteps.vue'
@@ -50,24 +50,15 @@ export default {
 	components: {
 		RoutingSteps,
 		RoutingMachine,
-		LControl,
 	},
 
 	mixins: [isMobile],
 
 	props: {
-		map: {
-			type: Object,
-			required: true,
-		},
-		searchData: {
-			type: Array,
-			required: true,
-		},
-		visible: {
-			type: Boolean,
-			default: true,
-		},
+		map: { type: Object, required: true },
+		searchData: { type: Array, required: true },
+		visible: { type: Boolean, default: true },
+		position: { type: String, default: 'topleft' }
 	},
 
 	data() {
@@ -77,10 +68,29 @@ export default {
 		}
 	},
 
-	watch: {
+	created() {
+		this.control = null;
 	},
 
-	created() {
+	mounted() {
+		const el = this.$refs.controlContent;
+		if (!el) return;
+
+		const CustomControl = L.Control.extend({
+			onAdd: () => el
+		});
+
+		this.control = new CustomControl({ position: this.position });
+		this.control.addTo(this.map);
+
+		L.DomEvent.disableClickPropagation(el);
+		L.DomEvent.disableScrollPropagation(el);
+	},
+
+	beforeDestroy() {
+		if (this.control && this.map) {
+			this.map.removeControl(this.control);
+		}
 	},
 
 	methods: {

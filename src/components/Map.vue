@@ -22,13 +22,13 @@
 					@routing-clicked="showRouting = true"
 					@clear-pois="searchPois = []" />
 					
-					<HistoryControl
-						:map="map"
-						position="topright"
-						:last-actions="lastActions"
-						:last-canceled-actions="lastCanceledActions"
-						@cancel="$emit('cancel')"
-						@redo="$emit('redo')" />
+				<HistoryControl
+					:map="map"
+					position="topright"
+					:last-actions="lastActions"
+					:last-canceled-actions="lastCanceledActions"
+					@cancel="$emit('cancel')"
+					@redo="$emit('redo')" />
 					
 				<FavoritesLayer
 					v-if="favoritesEnabled"
@@ -235,8 +235,6 @@ export default {
 				maxBounds: L.latLngBounds([[-90, 720], [90, -720]]),
 				scaleControlShouldUseImperial: false,
 			},
-			allBaseLayers: {},
-			allOverlayLayers: {},
 			defaultStreetLayer: 'Open Street Map',
 			defaultSatelliteLayer: 'ESRI',
 			activeLayerId: this.activeLayerIdProp,
@@ -251,13 +249,15 @@ export default {
 		}
 	},
 	created() {
-		// Non-reactive Leaflet properties
+		// Non-reactive Leaflet properties to prevent Vue 3 Proxy breakdown
 		this.map = null
 		this.layersControl = null
 		this.elevationControl = null
 		this.layersButton = null
 		this.streetButton = null
 		this.satelliteButton = null
+		this.leafletBaseLayers = {}
+		this.leafletOverlays = {}
 	},
 	mounted() {
 		// 1. Initialize Pure Leaflet Map
@@ -267,7 +267,7 @@ export default {
 			minZoom: this.mapOptions.minZoom,
 			maxZoom: this.mapOptions.maxZoom,
 			maxBounds: this.mapOptions.maxBounds,
-			zoomControl: false, // added manually below
+			zoomControl: false,
 			closePopupOnClick: false,
 			contextmenu: true,
 			contextmenuWidth: 160,
@@ -296,6 +296,11 @@ export default {
 		// 5. Initialize custom layers & loc control
 		this.initLocControl(this.map);
 		this.initLayers(this.map);
+
+		// Force container to resize correctly (fixes grey screen on load)
+		this.$nextTick(() => {
+			this.map.invalidateSize();
+		});
 
 		// 6. Trigger reactivity for children
 		this.isMapReady = true;
@@ -328,7 +333,10 @@ export default {
 			}
 		},
 		activeLayerIdProp(newValue) {
-			this.activeLayerId = newValue
+			if (this.activeLayerId !== newValue) {
+				this.activeLayerId = newValue;
+				this.updateBaseLayer();
+			}
 		},
 		mapBoundsProp(newValue) {
 			this.mapOptions.bounds = L.latLngBounds(newValue)
@@ -341,16 +349,16 @@ export default {
 		},
 		getContextmenuItems() {
 			const cmi = [
-				{ text: t('maps', 'Add a favorite'), iconCls: 'icon-favorite', callback: this.contextAddFavorite },
-				{ text: t('maps', 'Place photos'), iconCls: 'icon-category-multimedia', callback: this.contextPlacePhotos },
-				{ text: t('maps', 'Place contact'), iconCls: 'icon-group', callback: this.placeContactClicked },
-				{ text: t('maps', 'Share this location'), iconCls: 'icon-address', callback: this.contextShareLocation },
+				{ text: window.t('maps', 'Add a favorite'), iconCls: 'icon-favorite', callback: this.contextAddFavorite },
+				{ text: window.t('maps', 'Place photos'), iconCls: 'icon-category-multimedia', callback: this.contextPlacePhotos },
+				{ text: window.t('maps', 'Place contact'), iconCls: 'icon-group', callback: this.placeContactClicked },
+				{ text: window.t('maps', 'Share this location'), iconCls: 'icon-address', callback: this.contextShareLocation },
 			]
 			if (window.OCA && window.OCA.Maps && window.OCA.Maps.mapActions) {
 				window.OCA.Maps.mapActions.forEach((action) => {
 					cmi.push({
 						text: action.label, iconCls: action.icon, callback: (e) => {
-							action.callback({ id: 'geo:' + e.latlng.lat + ',' + e.latlng.lng, name: t('maps', 'Shared location'), latitude: e.latlng.lat.toString(), longitude: e.latlng.lng.toString() })
+							action.callback({ id: 'geo:' + e.latlng.lat + ',' + e.latlng.lng, name: window.t('maps', 'Shared location'), latitude: e.latlng.lat.toString(), longitude: e.latlng.lng.toString() })
 						}
 					})
 				})
@@ -428,7 +436,7 @@ export default {
 				icon: 'icon icon-address',
 				iconLoading: 'icon icon-loading-small',
 				strings: {
-					title: t('maps', 'Current location'),
+					title: window.t('maps', 'Current location'),
 				},
 				flyTo: true,
 				returnToPrevBounds: true,
@@ -448,34 +456,49 @@ export default {
 			}
 		},
 		initLayers(map) {
-			this.allBaseLayers = baseLayersByName
-			this.allOverlayLayers = overlayLayersByName
+			const allBaseLayers = baseLayersByName;
+			const allOverlayLayers = overlayLayersByName;
+			this.leafletBaseLayers = {};
+			this.leafletOverlays = {};
 
-			const leafletBaseLayers = {};
-			const leafletOverlays = {};
+			const baseLayersForControl = {};
+			const overlaysForControl = {};
 
-			// Build tile layers and add the default one
-			Object.keys(this.allBaseLayers).forEach(key => {
-				const l = this.allBaseLayers[key];
+			// Build Base Layers
+			Object.keys(allBaseLayers).forEach(key => {
+				const l = allBaseLayers[key];
 				const layer = l.tileLayerClass
 					? l.tileLayerClass(l.url, l.options)
 					: L.tileLayer(l.url, l.options);
 				
-				leafletBaseLayers[l.name] = layer;
-
-				if (this.activeLayerId === key || (!this.activeLayerId && key === this.defaultStreetLayer)) {
-					layer.addTo(map);
-				}
+				this.leafletBaseLayers[key] = layer;
+				baseLayersForControl[l.name] = layer;
 			});
 
-			Object.keys(this.allOverlayLayers).forEach(key => {
-				const l = this.allOverlayLayers[key];
+			// Safe Fallback logic for activeLayerId
+			if (!this.activeLayerId || !this.leafletBaseLayers[this.activeLayerId]) {
+				if (this.leafletBaseLayers[this.defaultStreetLayer]) {
+					this.activeLayerId = this.defaultStreetLayer;
+				} else {
+					this.activeLayerId = Object.keys(this.leafletBaseLayers)[0]; // Force fallback to the very first available option
+				}
+			}
+
+			// Apply the safely determined layer to the map
+			if (this.activeLayerId && this.leafletBaseLayers[this.activeLayerId]) {
+				this.leafletBaseLayers[this.activeLayerId].addTo(map);
+			}
+
+			// Build Overlay Layers
+			Object.keys(allOverlayLayers).forEach(key => {
+				const l = allOverlayLayers[key];
 				const layer = l.tileLayerClass
 					? l.tileLayerClass(l.url, l.options)
 					: L.tileLayer(l.url, l.options);
 				
 				layer.setOpacity(l.opacity || 1);
-				leafletOverlays[l.name] = layer;
+				this.leafletOverlays[key] = layer;
+				overlaysForControl[l.name] = layer;
 
 				if (['Watercolor', 'ESRI'].includes(this.activeLayerId) && key === 'Roads Overlay') {
 					layer.addTo(map);
@@ -483,7 +506,7 @@ export default {
 			});
 
 			// Add the native layers control
-			this.layersControl = L.control.layers(leafletBaseLayers, leafletOverlays, {
+			this.layersControl = L.control.layers(baseLayersForControl, overlaysForControl, {
 				position: 'bottomright',
 				collapsed: false
 			}).addTo(map);
@@ -494,75 +517,106 @@ export default {
 				states: [{
 					stateName: 'no-importa',
 					icon: '<a class="icon icon-menu" style="height: 100%"> </a>',
-					title: t('maps', 'Other maps'),
+					title: window.t('maps', 'Other maps'),
 					onClick: () => this.showLayersControl(),
 				}],
-			})
-			this.layersButton.addTo(map)
+			}).addTo(map);
 
 			this.streetButton = L.easyButton({
 				position: 'bottomright',
 				states: [{
 					stateName: 'no-importa',
 					icon: '<a class="icon icon-osm" style="height: 100%"> </a>',
-					title: t('maps', 'Street map'),
-					onClick: (btn, map) => {
-						this.activeLayerId = this.defaultStreetLayer;
-						map.eachLayer((layer) => {
-							if(layer instanceof L.TileLayer) map.removeLayer(layer);
-						});
-						leafletBaseLayers['Street map'].addTo(map);
-						
-						btn.button.parentElement.classList.add('behind');
-						this.satelliteButton.button.parentElement.classList.remove('behind');
+					title: window.t('maps', 'Street map'),
+					onClick: () => {
+						this.changeBaseLayer(this.defaultStreetLayer);
 					},
 				}],
-			})
-			this.streetButton.addTo(map)
+			}).addTo(map);
 
 			this.satelliteButton = L.easyButton({
 				position: 'bottomright',
 				states: [{
 					stateName: 'no-importa',
 					icon: '<a class="icon icon-esri" style="height: 100%"> </a>',
-					title: t('maps', 'Satellite map'),
-					onClick: (btn, map) => {
-						this.activeLayerId = this.defaultSatelliteLayer;
-						map.eachLayer((layer) => {
-							if(layer instanceof L.TileLayer) map.removeLayer(layer);
-						});
-						leafletBaseLayers['Satellite map'].addTo(map);
-
-						btn.button.parentElement.classList.add('behind');
-						this.streetButton.button.parentElement.classList.remove('behind');
+					title: window.t('maps', 'Satellite map'),
+					onClick: () => {
+						this.changeBaseLayer(this.defaultSatelliteLayer);
 					},
 				}],
-			})
-			this.satelliteButton.addTo(map)
-			this.streetButton.button.parentElement.classList.add('behind')
+			}).addTo(map);
 
-			if (!this.activeLayerId) {
-				this.activeLayerId = this.defaultStreetLayer
-			}
-			
-			// Hide standard control container visually and swap for buttons
+			this.updateLayerButtons();
+
 			this.$nextTick(() => {
 				this.hideLayersControl();
 			});
 		},
-		onBaselayerchange(e) {
-			this.activeLayerId = e.name; // ID equivalent in leafet control is often name unless tracked explicitly
-			if (this.activeLayerId === this.defaultStreetLayer) {
-				this.streetButton.button.parentElement.classList.add('behind')
-				this.satelliteButton.button.parentElement.classList.remove('behind')
-			} else {
-				this.streetButton.button.parentElement.classList.remove('behind')
-				this.satelliteButton.button.parentElement.classList.add('behind')
+		updateBaseLayer() {
+			if (!this.map) return;
+			this.changeBaseLayer(this.activeLayerId);
+		},
+		changeBaseLayer(newLayerId) {
+			// Bulletproof fallback logic for layer swaps
+			if (!newLayerId || !this.leafletBaseLayers[newLayerId]) {
+				if (this.leafletBaseLayers[this.defaultStreetLayer]) {
+					newLayerId = this.defaultStreetLayer;
+				} else {
+					newLayerId = Object.keys(this.leafletBaseLayers)[0]; // Ultimate fallback
+				}
 			}
-			optionsController.saveOptionValues({ tileLayer: this.activeLayerId })
 
-			if (e.layer && e.layer.options && e.layer.options.maxZoom) {
-				e.layer._map.setMaxZoom(e.layer.options.maxZoom)
+			if (!newLayerId) return; // Prevent failure if no layers exist at all
+
+			Object.keys(this.leafletBaseLayers).forEach(key => {
+				const layer = this.leafletBaseLayers[key];
+				if (this.map.hasLayer(layer)) {
+					this.map.removeLayer(layer);
+				}
+			});
+
+			this.leafletBaseLayers[newLayerId].addTo(this.map);
+			this.activeLayerId = newLayerId;
+
+			if (['Watercolor', 'ESRI'].includes(this.activeLayerId)) {
+				if (this.leafletOverlays['Roads Overlay'] && !this.map.hasLayer(this.leafletOverlays['Roads Overlay'])) {
+					this.leafletOverlays['Roads Overlay'].addTo(this.map);
+				}
+			} else {
+				if (this.leafletOverlays['Roads Overlay'] && this.map.hasLayer(this.leafletOverlays['Roads Overlay'])) {
+					this.map.removeLayer(this.leafletOverlays['Roads Overlay']);
+				}
+			}
+
+			this.updateLayerButtons();
+			optionsController.saveOptionValues({ tileLayer: this.activeLayerId });
+		},
+		updateLayerButtons() {
+			if (!this.streetButton || !this.satelliteButton) return;
+			if (this.activeLayerId === this.defaultStreetLayer) {
+				this.streetButton.button.parentElement.classList.add('behind');
+				this.satelliteButton.button.parentElement.classList.remove('behind');
+			} else {
+				this.streetButton.button.parentElement.classList.remove('behind');
+				this.satelliteButton.button.parentElement.classList.add('behind');
+			}
+		},
+		onBaselayerchange(e) {
+			let newLayerId = null;
+			Object.keys(this.leafletBaseLayers).forEach(key => {
+				if (this.leafletBaseLayers[key] === e.layer) {
+					newLayerId = key;
+				}
+			});
+
+			if (newLayerId) {
+				this.activeLayerId = newLayerId;
+				this.updateLayerButtons();
+				optionsController.saveOptionValues({ tileLayer: this.activeLayerId });
+
+				if (e.layer && e.layer.options && e.layer.options.maxZoom) {
+					e.layer._map.setMaxZoom(e.layer.options.maxZoom);
+				}
 			}
 			this.hideLayersControl();
 		},
@@ -576,10 +630,10 @@ export default {
 			const geoLink = 'geo:' + e.latlng.lat.toFixed(6) + ',' + e.latlng.lng.toFixed(6)
 			try {
 				await navigator.clipboard.writeText(geoLink)
-				showSuccess(t('maps', 'Geo link ({geoLink}) copied to clipboard', { geoLink }))
+				showSuccess(window.t('maps', 'Geo link ({geoLink}) copied to clipboard', { geoLink }))
 			} catch (error) {
 				console.debug(error)
-				showError(t('maps', 'Geo link could not be copied to clipboard'))
+				showError(window.t('maps', 'Geo link could not be copied to clipboard'))
 			}
 		},
 		placeContactClicked(e) {
@@ -646,7 +700,7 @@ export default {
 			this.elevationControl = el
 			el.on('elechart_init', (e) => {
 				el._expand()
-				el._button.setAttribute('title', t('maps', 'Close'))
+				el._button.setAttribute('title', window.t('maps', 'Close'))
 			})
 		},
 		zoomOnDevice(device) {

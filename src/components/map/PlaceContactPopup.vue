@@ -1,79 +1,71 @@
 <template>
-	<LMarker :lat-lng="latLng"
-		@ready="onMarkerReady">
-		<LIcon
-			class-name="placement-marker-icon"
-			:icon-size="[40, 40]"
-			:icon-url="markerIconUrl" />
-		<LPopup :options="popupOptions"
-			@ready="onPopupReady">
-			<h3 id="place-popup-title">
-				{{ t('maps', 'New contact address') }}
-			</h3>
-			<span v-if="addressLoading"
-				class="icon icon-loading-small" />
-			<textarea v-else
-				id="placeContactPopupAddress"
-				v-model="formattedAddress"
-				@input="addressEdited = true" />
-			<br>
-			<div class="contact-select">
-				<label for="userMultiselect">
-					<span class="icon icon-user" />
-				</label>
-				<NcSelect
-					id="userMultiselect"
-					ref="userMultiselect"
-					v-model="selectedContact"
-					class="contact-input"
-					track-by="URI"
-					label="FN"
-					:placeholder="t('maps', 'Choose a contact')"
-					:options="contactData"
-					:internal-search="true"
-					@search="asyncSearchContacts">
-					<template #option="option">
-						<Avatar
-							class="contact-avatar"
-							:is-no-user="true"
-							:url="option.AVATAR_URL"
-							:user="option.FN" />
-						{{ option.FN }}
-					</template>
-				</NcSelect>
-			</div>
-			<div class="address-type"
-				:name="t('maps', 'Address type')">
-				<label for="addressTypeSelect">
-					<span class="icon icon-address" />
-				</label>
-				<select id="addressTypeSelect"
-					v-model="addressType"
-					:disabled="!selectedContact">
-					<option value="home">
-						🏠 {{ t('maps', 'Home') }}
-					</option>
-					<option value="work">
-						🏢 {{ t('maps', 'Work') }}
-					</option>
-				</select>
-			</div>
-			<button class="submit-place-contact"
-				:disabled="!selectedContact"
-				:class="{ loading: searchingEditedAddress }"
-				@click="onValidate">
-				<span class="icon-add" />
-				{{ t('maps', 'Add address to contact') }}
-			</button>
-		</LPopup>
-	</LMarker>
+	<div class="place-contact-popup-content">
+		<h3 id="place-popup-title">
+			{{ t('maps', 'New contact address') }}
+		</h3>
+		<span v-if="addressLoading"
+			class="icon icon-loading-small" />
+		<textarea v-else
+			id="placeContactPopupAddress"
+			v-model="formattedAddress"
+			@input="addressEdited = true" />
+		<br>
+		<div class="contact-select">
+			<label for="userMultiselect">
+				<span class="icon icon-user" />
+			</label>
+			<NcSelect
+				id="userMultiselect"
+				ref="userMultiselect"
+				v-model="selectedContact"
+				class="contact-input"
+				track-by="URI"
+				label="FN"
+				:placeholder="t('maps', 'Choose a contact')"
+				:options="contactData"
+				:internal-search="true"
+				@search="asyncSearchContacts">
+				<template #option="option">
+					<Avatar
+						class="contact-avatar"
+						:is-no-user="true"
+						:url="option.AVATAR_URL"
+						:user="option.FN" />
+					{{ option.FN }}
+				</template>
+			</NcSelect>
+		</div>
+		<div class="address-type"
+			:name="t('maps', 'Address type')">
+			<label for="addressTypeSelect">
+				<span class="icon icon-address" />
+			</label>
+			<select id="addressTypeSelect"
+				v-model="addressType"
+				:disabled="!selectedContact">
+				<option value="home">
+					🏠 {{ t('maps', 'Home') }}
+				</option>
+				<option value="work">
+					🏢 {{ t('maps', 'Work') }}
+				</option>
+			</select>
+		</div>
+		<button class="submit-place-contact"
+			:disabled="!selectedContact"
+			:class="{ loading: searchingEditedAddress }"
+			@click="onValidate">
+			<span class="icon-add" />
+			{{ t('maps', 'Add address to contact') }}
+		</button>
+	</div>
 </template>
 
 <script>
+import L from 'leaflet'
 import { generateUrl } from '@nextcloud/router'
 import { getCurrentUser } from '@nextcloud/auth'
 
-import { LMarker, LPopup, LIcon } from 'vue2-leaflet'
 import NcSelect from '@nextcloud/vue/dist/Components/NcSelect.js'
 import NcAvatar from '@nextcloud/vue/dist/Components/NcAvatar.js'
 
@@ -82,15 +74,17 @@ import { searchContacts, geocode, searchAddress } from '../../network.js'
 
 export default {
 	name: 'PlaceContactPopup',
+	
 	components: {
-		LMarker,
-		LPopup,
-		LIcon,
 		NcSelect,
-		NcAvatar,
+		Avatar: NcAvatar, // Mapped to match template usage
 	},
 
 	props: {
+		map: {
+			type: Object,
+			required: true,
+		},
 		latLng: {
 			type: Object,
 			required: true,
@@ -99,9 +93,6 @@ export default {
 
 	data() {
 		return {
-			popupOptions: {
-				closeButton: false,
-			},
 			contactData: [],
 			addressLoading: false,
 			addressEdited: false,
@@ -121,6 +112,13 @@ export default {
 					: generateUrl('/apps/maps/contacts-avatar?name=' + encodeURIComponent(this.selectedContact.FN))
 				: generateUrl('/svg/core/actions/user?color=000000')
 		},
+		markerIcon() {
+			return L.icon({
+				className: 'placement-marker-icon',
+				iconSize: [40, 40],
+				iconUrl: this.markerIconUrl,
+			})
+		}
 	},
 
 	watch: {
@@ -129,11 +127,44 @@ export default {
 			this.formattedAddress = ''
 			this.addressEdited = false
 			this.getAddress()
+			
+			// Update marker position natively
+			if (this.marker) {
+				this.marker.setLatLng(this.latLng)
+			}
 		},
+		markerIconUrl() {
+			// Update marker icon natively when the user selects a different contact
+			if (this.marker) {
+				this.marker.setIcon(this.markerIcon)
+			}
+		}
+	},
+
+	created() {
+		// Store leaflet object non-reactively
+		this.marker = null
 	},
 
 	beforeMount() {
 		this.getAddress()
+	},
+
+	mounted() {
+		// 1. Create native Leaflet marker
+		this.marker = L.marker(this.latLng, { icon: this.markerIcon }).addTo(this.map)
+		
+		// 2. Bind THIS component's HTML to the popup natively
+		this.marker.bindPopup(this.$el, { closeButton: false })
+		
+		this.marker.openPopup()
+	},
+
+	beforeDestroy() {
+		// 3. Clean up native marker on destroy
+		if (this.marker && this.map) {
+			this.map.removeLayer(this.marker)
+		}
 	},
 
 	methods: {
@@ -152,13 +183,6 @@ export default {
 			}).catch((error) => {
 				console.error(error)
 			})
-		},
-		onMarkerReady(m) {
-			m.openPopup()
-		},
-		onPopupReady(p) {
-			// i don't know why but it is placed too high when it's created
-			p.setLatLng(this.latLng)
 		},
 		getContactAvatar(contact) {
 			if (contact.HAS_PHOTO && contact.HAS_PHOTO2) {
@@ -188,6 +212,7 @@ export default {
 					address: this.address,
 					addressType: this.addressType,
 				})
+				if (this.map) this.map.closePopup()
 			} else {
 				this.searchingEditedAddress = true
 				searchAddress(this.formattedAddress, 1).then((response) => {
@@ -203,10 +228,12 @@ export default {
 						address,
 						addressType: this.addressType,
 					})
+					
+					if (this.map) this.map.closePopup()
 				}).catch((error) => {
 					console.error(error)
 				}).then(() => {
-					this.searchingEditedAddress = true
+					this.searchingEditedAddress = false
 				})
 			}
 		},
@@ -230,7 +257,7 @@ export default {
 }
 
 .contact-select {
-	.multiselect {
+	::v-deep .multiselect {
 		flex-grow: 1;
 	}
 }

@@ -1,5 +1,5 @@
 <template>
-	<LControl position="topleft" class="maps-search-control leaflet-control" :class="{'mobile':isMobile, 'desktop': !isMobile}">
+	<div ref="controlContent" class="maps-search-control leaflet-control" :class="{'mobile':isMobile, 'desktop': !isMobile}">
 		<div id="search">
 			<SearchField
 				class="search-field"
@@ -19,12 +19,12 @@
 				<span class="icon icon-close" />
 			</button>
 		</div>
-	</LControl>
+	</div>
 </template>
 
 <script>
+import L from 'leaflet'
 import { getLocale } from '@nextcloud/l10n'
-import { LControl } from 'vue2-leaflet'
 import { isMobile } from '@nextcloud/vue'
 
 import SearchField from './SearchField.vue'
@@ -33,29 +33,17 @@ export default {
 	name: 'SearchControl',
 
 	components: {
-		LControl,
 		SearchField,
 	},
 
 	mixins: [isMobile],
 
 	props: {
-		map: {
-			type: Object,
-			required: true,
-		},
-		searchData: {
-			type: Array,
-			required: true,
-		},
-		loading: {
-			type: Boolean,
-			default: false,
-		},
-		resultPoiNumber: {
-			type: Number,
-			default: 0,
-		},
+		map: { type: Object, required: true },
+		searchData: { type: Array, required: true },
+		loading: { type: Boolean, default: false },
+		resultPoiNumber: { type: Number, default: 0 },
+		position: { type: String, default: 'topleft' }
 	},
 
 	data() {
@@ -64,13 +52,29 @@ export default {
 		}
 	},
 
-	watch: {
-	},
-
 	created() {
+		this.control = null;
 	},
 
-	methods: {
+	mounted() {
+		const el = this.$refs.controlContent;
+		if (!el) return;
+
+		const CustomControl = L.Control.extend({
+			onAdd: () => el
+		});
+
+		this.control = new CustomControl({ position: this.position });
+		this.control.addTo(this.map);
+
+		L.DomEvent.disableClickPropagation(el);
+		L.DomEvent.disableScrollPropagation(el);
+	},
+
+	beforeDestroy() {
+		if (this.control && this.map) {
+			this.map.removeControl(this.control);
+		}
 	},
 }
 </script>

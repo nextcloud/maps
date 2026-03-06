@@ -1,6 +1,5 @@
 <template>
-	<LControl class="maps-history-control"
-		:position="position">
+	<div ref="controlContent" class="maps-history-control leaflet-control">
 		<div id="history">
 			<button
 				v-if="lastActions.length"
@@ -15,20 +14,20 @@
 				<span class="icon icon-redo" />
 			</button>
 		</div>
-	</LControl>
+	</div>
 </template>
 
 <script>
-import { LControl } from 'vue2-leaflet'
+import L from 'leaflet'
 
 export default {
 	name: 'HistoryControl',
 
-	components: {
-		LControl,
-	},
-
 	props: {
+		map: {
+			type: Object,
+			required: true,
+		},
 		lastActions: {
 			type: Array,
 			required: true,
@@ -43,11 +42,6 @@ export default {
 		},
 	},
 
-	data() {
-		return {
-		}
-	},
-
 	computed: {
 		lastActionLabel() {
 			const action = this.lastActions[this.lastActions.length - 1]
@@ -59,10 +53,31 @@ export default {
 		},
 	},
 
-	watch: {
+	created() {
+		this.control = null;
 	},
 
-	created() {
+	mounted() {
+		const el = this.$refs.controlContent;
+		if (!el) return;
+
+		// Create native Leaflet Control
+		const CustomControl = L.Control.extend({
+			onAdd: () => el
+		});
+
+		this.control = new CustomControl({ position: this.position });
+		this.control.addTo(this.map);
+
+		// Prevent clicks/scrolls from falling through to the map
+		L.DomEvent.disableClickPropagation(el);
+		L.DomEvent.disableScrollPropagation(el);
+	},
+
+	beforeDestroy() {
+		if (this.control && this.map) {
+			this.map.removeControl(this.control);
+		}
 	},
 
 	methods: {

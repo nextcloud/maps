@@ -1,82 +1,76 @@
 <template>
-	<div style="display: none;">
-		<slot v-if="ready" />
-	</div>
+	<div style="display: none;"></div>
 </template>
 
 <script>
+import L from 'leaflet'
 import 'leaflet.heat/dist/leaflet-heat.js'
-import { findRealParent, propsBinder } from 'vue2-leaflet'
-import { DomEvent } from 'leaflet'
-
-const props = {
-	initialPoints: {
-		type: Array,
-		required: false,
-		default() { return [] },
-	},
-	options: {
-		type: Object,
-		default() { return {} },
-	},
-}
 
 export default {
-	props,
+	name: 'LHeatMap',
+	props: {
+		map: {
+			type: Object,
+			required: true,
+		},
+		initialPoints: {
+			type: Array,
+			required: false,
+			default: () => [],
+		},
+		options: {
+			type: Object,
+			default: () => ({}),
+		},
+	},
 	data() {
 		return {
-			points: null,
 			ready: false,
 		}
 	},
 	watch: {
 		options: {
 			handler(newOptions) {
-				this.mapObject.setOptions(newOptions)
+				if (this.heatLayer) {
+					this.heatLayer.setOptions(newOptions)
+				}
 			},
 			deep: true,
 		},
-		points: {
+		initialPoints: {
 			handler(newPoints) {
-				this.mapObject.setLatLngs(newPoints)
+				if (this.heatLayer) {
+					this.heatLayer.setLatLngs(newPoints)
+				}
 			},
 			deep: true,
 		},
 	},
+	created() {
+		this.heatLayer = null; // Non-reactive leaflet object
+	},
 	mounted() {
-		this.points = this.initialPoints
-		this.mapObject = L.heatLayer(this.points, this.options)
-		DomEvent.on(this.mapObject, this.$listeners)
-		propsBinder(this, this.mapObject, props)
+		this.heatLayer = L.heatLayer(this.initialPoints, this.options)
+		this.heatLayer.addTo(this.map)
 		this.ready = true
-		this.parentContainer = findRealParent(this.$parent)
-		this.parentContainer.addLayer(this)
 		this.$nextTick(() => {
-			this.$emit('ready', this.mapObject)
+			this.$emit('ready', this.heatLayer)
 		})
 	},
 	beforeDestroy() {
-		this.parentContainer.removeLayer(this)
+		if (this.heatLayer && this.map) {
+			this.map.removeLayer(this.heatLayer)
+		}
 	},
 	methods: {
-		addLayer(layer, alreadyAdded) {
-			if (!alreadyAdded) {
-				this.mapObject.addLayer(layer.mapObject)
-			}
-		},
-		removeLayer(layer, alreadyRemoved) {
-			if (!alreadyRemoved) {
-				this.mapObject.removeLayer(layer.mapObject)
-			}
-		},
 		addLatLng(latlng) {
-			this.mapObject.addLatLng(latlng)
+			if (this.heatLayer) this.heatLayer.addLatLng(latlng)
 		},
 		setLatLngs(latlngs) {
-			this.mapObject.setLatLngs(latlngs)
+			if (this.heatLayer) this.heatLayer.setLatLngs(latlngs)
 		},
 		redraw() {
-			this.mapObject.redraw()
+			if (this.heatLayer) this.heatLayer.redraw()
 		},
 	},
 }

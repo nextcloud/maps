@@ -246,4 +246,63 @@ class UtilsController extends Controller {
 		];
 		return new DataResponse($style);
 	}
+
+	/**
+	 * Copy a file from one path to another inside a share
+	 *
+	 * @PublicPage
+	 * @param string $from Relative path from the share root
+	 * @param string $to Relative destination path inside the share
+	 * @NoAdminRequired
+	 * @NoCSRFRequired
+	 * @return DataResponse
+	 * @throws NotFoundException
+	 * @throws GenericFileException
+	 * @throws InvalidPathException
+	 * @throws NotPermittedException
+	 */
+	public function copyFile($from = null, $to = null): DataResponse {
+		if (!$from || !$to) {
+			return new DataResponse(['status' => 'error', 'message' => 'Missing from/to parameters'], 400);
+		}
+	
+		// Remove leading slashes
+		$from = ltrim($from, '/');
+		$to   = ltrim($to, '/');
+
+		$userFolder = $this->root->getUserFolder($this->userId);
+
+		$nodes = $userFolder->getDirectoryListing(); 
+		foreach ($nodes as $n) {
+			\OC::$server->getLogger()->info('Node: ' . $n->getName());
+		}
+		
+		if (!$userFolder->nodeExists($from)) {
+			return new DataResponse(['status' => 'error', 'message' => 'Source file does not exist: ' . $from], 404);
+		}
+	
+		try {
+			$sourceNode = $userFolder->get($from);
+	
+			$destinationParts = explode('/', $to);
+			$destFileName = array_pop($destinationParts);
+			$destFolder = $userFolder;
+	
+			foreach ($destinationParts as $part) {
+				if (!$destFolder->nodeExists($part)) {
+					$destFolder = $destFolder->newFolder($part);
+				} else {
+					$destFolder = $destFolder->get($part);
+				}
+			}
+	
+			// Copy the file to destination
+			$sourceNode->copy($destFolder->getPath() . '/' . $destFileName);
+	
+		} catch (\Exception $e) {
+			return new DataResponse(['status' => 'error', 'message' => $e->getMessage()], 500);
+		}
+	
+		return new DataResponse(['status' => 'success']);
+	}
 }

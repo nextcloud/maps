@@ -101,7 +101,7 @@ export default {
 		this.marker.openPopup()
 	},
 
-	beforeDestroy() {
+	beforeUnmount() {
 		// 3. Clean up the native Leaflet marker
 		if (this.marker && this.map) {
 			this.map.removeLayer(this.marker)

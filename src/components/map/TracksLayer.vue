@@ -43,7 +43,7 @@ export default {
 		this.renderTracks();
 	},
 
-	beforeDestroy() {
+	beforeUnmount() {
 		if (this.featureGroup && this.map) {
 			this.map.removeLayer(this.featureGroup);
 		}

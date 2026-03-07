@@ -5,7 +5,7 @@
 		:allow-collapse="false"
 		:force-menu="false"
 		@click="$emit('click', track)">
-		<template slot="icon">
+		<template #icon>
 			<div v-if="track.loading"
 				class="app-navigation-entry-icon icon-loading-small " />
 			<div v-else-if="track.color"
@@ -30,10 +30,10 @@
 				@change="updateTrackColor"
 				@click.stop="">
 		</template>
-		<template slot="counter">
+		<template #counter>
 			&nbsp;
 		</template>
-		<template slot="actions">
+		<template #actions>
 			<NcActionButton v-if="parentEnabled && track.enabled"
 				icon="icon-search"
 				:close-after-click="true"
@@ -79,9 +79,7 @@
 </template>
 
 <script>
-import NcAppNavigationItem from '@nextcloud/vue/dist/Components/NcAppNavigationItem.js'
-import NcActionButton from '@nextcloud/vue/dist/Components/NcActionButton.js'
-import NcActionLink from '@nextcloud/vue/dist/Components/NcActionLink.js'
+import { NcAppNavigationItem, NcActionButton, NcActionLink } from '@nextcloud/vue'
 import { isPublic, getToken } from '../utils/common'
 import { generateUrl } from '@nextcloud/router'
 

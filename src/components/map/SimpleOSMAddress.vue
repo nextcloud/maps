@@ -22,9 +22,9 @@
 <template>
 	<div class="osm-address">
 		<p class="osm-address-text">
-			<template v-for="line in addressLines">
-				<span :key="line" :title="line" class="osm-address-line">{{ line }}</span>
-				<br :key="line">
+			<template  :key="line" v-for="line in addressLines">
+				<span :title="line" class="osm-address-line">{{ line }}</span>
+				<br />
 			</template>
 		</p>
 		<div class="loading" :class="{ visible: loading }" />

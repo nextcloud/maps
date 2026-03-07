@@ -20,7 +20,7 @@
 -->
 
 <template>
-	<NcAppNavigation>
+	<NcAppNavigation aria-label="public-favorite-sidebar">
 		<ul v-if="favorites.length">
 			<NcAppNavigationNew
 				v-if="allowFavoriteEdits"
@@ -42,10 +42,7 @@
 </template>
 
 <script>
-import NcAppNavigation from '@nextcloud/vue/dist/Components/NcAppNavigation.js'
-import NcAppNavigationItem from '@nextcloud/vue/dist/Components/NcAppNavigationItem.js'
-import NcAppNavigationNew from '@nextcloud/vue/dist/Components/NcAppNavigationNew.js'
-import NcAppNavigationSpacer from '@nextcloud/vue/dist/Components/NcAppNavigationSpacer.js'
+import { NcAppNavigation, NcAppNavigationItem, NcAppNavigationNew, NcAppNavigationSpacer } from '@nextcloud/vue'
 import { mapMutations, mapState, mapActions } from 'vuex'
 import { PUBLIC_FAVORITES_NAMESPACE } from '../store/modules/publicFavorites.js'
 import MapMode from '../data/enum/MapMode.js'

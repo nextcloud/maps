@@ -80,7 +80,7 @@ export default {
 		this.renderDevices();
 	},
 
-	beforeDestroy() {
+	beforeUnmount() {
 		if (this.featureGroup && this.map) {
 			this.map.removeLayer(this.featureGroup);
 		}

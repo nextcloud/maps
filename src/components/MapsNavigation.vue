@@ -1,11 +1,11 @@
 <template>
-	<NcAppNavigation>
-		<template slot="list">
+	<NcAppNavigation aria-label="maps-app-navigation">
+		<template #list>
 			<h2 v-if="loading"
 				class="icon-loading-small loading-icon" />
 			<slot name="items" />
 		</template>
-		<template slot="footer">
+		<template #footer>
 			<NcAppNavigationSettings>
 				<NcActionCheckbox
 					:checked="optionValues.trackMe === 'true'"
@@ -36,15 +36,23 @@
 </template>
 
 <script>
-import ClickOutside from 'vue-click-outside'
-
-import NcAppNavigation from '@nextcloud/vue/dist/Components/NcAppNavigation.js'
-import NcAppNavigationSettings from '@nextcloud/vue/dist/Components/NcAppNavigationSettings.js'
-import NcActionCheckbox from '@nextcloud/vue/dist/Components/NcActionCheckbox.js'
-import NcActionText from '@nextcloud/vue/dist/Components/NcActionText.js'
-import NcActionLink from '@nextcloud/vue/dist/Components/NcActionLink.js'
+import { NcAppNavigation, NcAppNavigationSettings, NcActionCheckbox, NcActionText, NcActionLink } from '@nextcloud/vue'
 
 import optionsController from '../optionsController.js'
+
+const clickOutside = {
+	beforeMount(el, binding) {
+		el.clickOutsideEvent = (event) => {
+			if (!(el === event.target || el.contains(event.target))) {
+				binding.value(event);
+			}
+		};
+		document.body.addEventListener('click', el.clickOutsideEvent);
+	},
+	unmounted(el) {
+		document.body.removeEventListener('click', el.clickOutsideEvent);
+	},
+};
 
 export default {
 	name: 'MapsNavigation',
@@ -56,7 +64,7 @@ export default {
 		NcActionLink,
 	},
 	directives: {
-		ClickOutside,
+		clickOutside,
 	},
 	props: {
 		loading: {

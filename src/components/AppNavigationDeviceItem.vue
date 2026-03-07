@@ -5,7 +5,7 @@
 		:allow-collapse="false"
 		:force-menu="false"
 		@click="$emit('click', device)">
-		<template slot="icon">
+		<template v-slot:icon>
 			<div v-if="device.loading"
 				class="app-navigation-entry-icon icon-loading-small " />
 			<div v-else
@@ -20,10 +20,10 @@
 				@change="updateDeviceColor"
 				@click.stop="">
 		</template>
-		<template slot="counter">
+		<template #counter>
 			&nbsp;
 		</template>
-		<template slot="actions">
+		<template v-slot:actions>
 			<NcActionButton v-if="parentEnabled && device.enabled"
 				icon="icon-category-monitoring"
 				:close-after-click="true"
@@ -67,8 +67,7 @@
 </template>
 
 <script>
-import NcAppNavigationItem from '@nextcloud/vue/dist/Components/NcAppNavigationItem.js'
-import NcActionButton from '@nextcloud/vue/dist/Components/NcActionButton.js'
+import { NcAppNavigationItem, NcActionButton } from '@nextcloud/vue'
 import { generateUrl } from '@nextcloud/router'
 import { isComputer } from '../utils.js'
 import { isPublic } from '../utils/common.js'

@@ -8,11 +8,10 @@
 		:force-menu="false"
 		@click="onFavoritesClick"
 		@update:open="onUpdateOpen">
-		<NcCounterBubble v-show="enabled && nbFavorites"
-			slot="counter">
-			{{ nbFavorites > 99 ? '99+' : nbFavorites }}
-		</NcCounterBubble>
-		<template v-if="enabled" slot="actions">
+		<template #counter>
+			<NcCounterBubble v-show="enabled && nbFavorites" :count="nbFavorites" />
+		</template>
+		<template v-if="enabled" #actions>
 			<NcActionButton v-if="!readOnly"
 				:icon="draggable ? 'icon-hand' : 'icon-hand-slash'"
 				:close-after-click="false"
@@ -43,7 +42,7 @@
 				{{ t('maps', 'Import') }}
 			</NcActionButton>
 		</template>
-		<template slot="default">
+		<template #default>
 			<NcAppNavigationNew
 				v-if="enabled && !readOnly"
 				:text="addFavoriteText"
@@ -65,11 +64,10 @@
 					<div :class="{ favoriteMarker: true, navigationFavoriteMarkerDark: isDarkTheme, navigationFavoriteMarker: !isDarkTheme }"
 						:style="'background-color: #' + c.color" />
 				</template>
-				<NcCounterBubble v-show="enabled && nbFavorites && c.enabled"
-					slot="counter">
-					{{ c.counter > 99 ? '99+' : c.counter }}
-				</NcCounterBubble>
-				<template slot="actions">
+				<template #counter>
+					<NcCounterBubble v-show="enabled && nbFavorites && c.enabled" :count="c.counter" />
+				</template>
+				<template #actions>
 					<NcActionButton v-if="enabled && nbFavorites && c.enabled && c.isUpdateable"
 						icon="icon-add"
 						:close-after-click="true"
@@ -125,11 +123,7 @@
 </template>
 
 <script>
-import NcAppNavigationItem from '@nextcloud/vue/dist/Components/NcAppNavigationItem.js'
-import NcAppNavigationNew from '@nextcloud/vue/dist/Components/NcAppNavigationNew.js'
-import NcActionButton from '@nextcloud/vue/dist/Components/NcActionButton.js'
-import NcActionCheckbox from '@nextcloud/vue/dist/Components/NcActionCheckbox.js'
-import NcCounterBubble from '@nextcloud/vue/dist/Components/NcCounterBubble.js'
+import { NcAppNavigationItem, NcAppNavigationNew, NcActionButton, NcActionCheckbox, NcCounterBubble } from '@nextcloud/vue'
 import { showError, showSuccess } from '@nextcloud/dialogs'
 import { generateUrl } from '@nextcloud/router'
 import { isPublic } from '../utils/common.js'
@@ -237,9 +231,9 @@ export default {
 					console.debug(error)
 					showError(t('maps', 'Link {url} could not be copied to clipboard.', { url }))
 				}
-				this.$set(this.isLinkCopied, category.name, true)
+				this.isLinkCopied[category.name] = true
 				setTimeout(() => {
-					this.$delete(this.isLinkCopied, category.name)
+					delete this.isLinkCopied[category.name]
 				}, 5000)
 			} catch (error) {
 				console.debug(error)

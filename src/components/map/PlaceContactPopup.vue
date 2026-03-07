@@ -20,7 +20,7 @@
 				v-model="selectedContact"
 				class="contact-input"
 				track-by="URI"
-				label="FN"
+				inputLabel="FN"
 				:placeholder="t('maps', 'Choose a contact')"
 				:options="contactData"
 				:internal-search="true"
@@ -66,8 +66,7 @@ import L from 'leaflet'
 import { generateUrl } from '@nextcloud/router'
 import { getCurrentUser } from '@nextcloud/auth'
 
-import NcSelect from '@nextcloud/vue/dist/Components/NcSelect.js'
-import NcAvatar from '@nextcloud/vue/dist/Components/NcAvatar.js'
+import { NcSelect, NcAvatar } from '@nextcloud/vue'
 
 import { formatAddress } from '../../utils.js'
 import { searchContacts, geocode, searchAddress } from '../../network.js'
@@ -160,7 +159,7 @@ export default {
 		this.marker.openPopup()
 	},
 
-	beforeDestroy() {
+	beforeUnmount() {
 		// 3. Clean up native marker on destroy
 		if (this.marker && this.map) {
 			this.map.removeLayer(this.marker)

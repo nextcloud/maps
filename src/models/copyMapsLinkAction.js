@@ -20,7 +20,7 @@
  *
  */
 
-import NcActionButton from '@nextcloud/vue/dist/Components/NcActionButton.js'
+import { NcActionButton } from '@nextcloud/vue'
 import { generateUrl } from '@nextcloud/router'
 import { showError, showSuccess } from '@nextcloud/dialogs'
 

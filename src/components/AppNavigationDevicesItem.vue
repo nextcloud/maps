@@ -8,11 +8,10 @@
 		:force-menu="false"
 		@click="onClick"
 		@update:open="onUpdateOpen">
-		<NcCounterBubble v-show="enabled && devices.length"
-			slot="counter">
-			{{ devices.length > 99 ? '99+' : devices.length }}
-		</NcCounterBubble>
-		<template v-if="enabled" slot="actions">
+		<template #counter>
+			<NcCounterBubble v-show="enabled && devices.length" :count="devices.length" />
+		</template>
+		<template v-if="enabled" #actions>
 			<NcActionButton
 				icon="icon-download"
 				:close-after-click="true"
@@ -41,7 +40,7 @@
 				{{ t('maps', 'Delete all') }}
 			</NcActionButton>
 		</template>
-		<template slot="default">
+		<template #default>
 			<b v-show="false">dummy</b>
 			<AppNavigationDeviceItem
 				v-for="device in sortedDevices"
@@ -62,9 +61,7 @@
 </template>
 
 <script>
-import NcAppNavigationItem from '@nextcloud/vue/dist/Components/NcAppNavigationItem.js'
-import NcActionButton from '@nextcloud/vue/dist/Components/NcActionButton.js'
-import NcCounterBubble from '@nextcloud/vue/dist/Components/NcCounterBubble.js'
+import { NcAppNavigationItem, NcActionButton, NcCounterBubble } from '@nextcloud/vue'
 
 import AppNavigationDeviceItem from './AppNavigationDeviceItem.vue'
 import optionsController from '../optionsController.js'

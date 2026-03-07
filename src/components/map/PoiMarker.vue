@@ -48,7 +48,7 @@ export default {
 		// 3. Bind THIS Vue component's HTML element as the popup content!
 		this.marker.bindPopup(this.$el);
 	},
-	beforeDestroy() {
+	beforeUnmount() {
 		if (this.marker && this.map) {
 			this.map.removeLayer(this.marker);
 		}

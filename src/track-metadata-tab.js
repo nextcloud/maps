@@ -1,13 +1,8 @@
-// TODO : check implem
-import Vue from 'vue'
+import { createApp } from 'vue'
 import { translate as t, translatePlural as n } from '@nextcloud/l10n'
 import TrackMetadataTab from './views/TrackMetadataTab.vue'
 
-Vue.prototype.t = t
-Vue.prototype.n = n
-
-const View = Vue.extend(TrackMetadataTab)
-
+let appInstance = null
 let TabInstance = null
 
 function registerTab() {
@@ -23,27 +18,36 @@ function registerTab() {
 		icon: 'icon-info',
 
 		async mount(el, fileInfo, context) {
-			if (TabInstance) {
-				TabInstance.$destroy()
+			// Unmount the previous instance if it exists
+			if (appInstance) {
+				appInstance.unmount()
 			}
 
-			TabInstance = new View({
-				parent: context,
-			})
+			// Create a new Vue 3 app instance for the sidebar tab
+			appInstance = createApp(TrackMetadataTab)
+			
+			// Replace Vue.prototype with globalProperties
+			appInstance.config.globalProperties.t = t
+			appInstance.config.globalProperties.n = n
 
-			await TabInstance.update(fileInfo.id)
-			TabInstance.$mount(el)
+			// Mount it to the provided DOM element
+			TabInstance = appInstance.mount(el)
+
+			if (TabInstance && typeof TabInstance.update === 'function') {
+				await TabInstance.update(fileInfo.id)
+			}
 		},
 
 		update(fileInfo) {
-			if (TabInstance) {
+			if (TabInstance && typeof TabInstance.update === 'function') {
 				TabInstance.update(fileInfo.id)
 			}
 		},
 
 		destroy() {
-			if (TabInstance) {
-				TabInstance.$destroy()
+			if (appInstance) {
+				appInstance.unmount()
+				appInstance = null
 				TabInstance = null
 			}
 		},
@@ -53,7 +57,7 @@ function registerTab() {
 		},
 
 		scrollBottomReached() {
-			if (TabInstance?.onScrollBottomReached) {
+			if (TabInstance && typeof TabInstance.onScrollBottomReached === 'function') {
 				TabInstance.onScrollBottomReached()
 			}
 		},

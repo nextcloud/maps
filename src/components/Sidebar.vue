@@ -83,9 +83,7 @@
 </template>
 
 <script>
-import NcAppSidebar from '@nextcloud/vue/dist/Components/NcAppSidebar.js'
-import NcActionButton from '@nextcloud/vue/dist/Components/NcActionButton.js'
-import NcEmptyContent from '@nextcloud/vue/dist/Components/NcEmptyContent.js'
+import { NcAppSidebar, NcActionButton, NcEmptyContent } from '@nextcloud/vue'
 import { emit } from '@nextcloud/event-bus'
 import { generateUrl } from '@nextcloud/router'
 import { showError } from '@nextcloud/dialogs'

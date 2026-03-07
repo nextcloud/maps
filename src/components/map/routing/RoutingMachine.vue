@@ -8,7 +8,7 @@ import { generateUrl } from '@nextcloud/router'
 import { getCurrentUser } from '@nextcloud/auth'
 import moment from '@nextcloud/moment'
 import { showSuccess, showError } from '@nextcloud/dialogs'
-import { isMobile } from '@nextcloud/vue'
+import { useIsMobile } from '@nextcloud/vue'
 
 import L from 'leaflet'
 import 'leaflet-control-geocoder/dist/Control.Geocoder.js'
@@ -22,7 +22,10 @@ import optionsController from '../../../optionsController.js'
 export default {
 	name: 'RoutingMachine',
 
-	mixins: [isMobile],
+	setup() {
+		const isMobile = useIsMobile()
+		return { isMobile }
+	},
 
 	props: {
 		map: {

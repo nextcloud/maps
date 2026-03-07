@@ -209,10 +209,7 @@
 </template>
 
 <script>
-import NcContent from '@nextcloud/vue/dist/Components/NcContent.js'
-import NcAppContent from '@nextcloud/vue/dist/Components/NcAppContent.js'
-import NcActions from '@nextcloud/vue/dist/Components/NcActions.js'
-import NcActionButton from '@nextcloud/vue/dist/Components/NcActionButton.js'
+import { NcContent, NcAppContent, NcActions, NcActionButton } from '@nextcloud/vue'
 import { showError, showInfo, showSuccess } from '@nextcloud/dialogs'
 
 import moment from '@nextcloud/moment'
@@ -660,7 +657,7 @@ export default {
 		// subscribe('nextcloud:unified-search.reset', this.cleanSearch)
 		setTimeout(() => { emit('files:sidebar:closed') }, 1000)
 	},
-	beforeDestroy() {
+	beforeUnmount() {
 		// unsubscribe('nextcloud:unified-search.search', this.filter)
 		// unsubscribe('nextcloud:unified-search.reset', this.cleanSearch)
 	},
@@ -1106,7 +1103,7 @@ export default {
 								return t.id === parseInt(isplit[1])
 							})
 							if (track) {
-								this.$set(this.photoSuggestionsTracksAndDevices, i, {
+								this.photoSuggestionsTracksAndDevices[i] = {
 									key: i,
 									enabled: true,
 									visible: true,
@@ -1114,14 +1111,14 @@ export default {
 									name: track.file_name,
 									id: track.id,
 									suggestionCount: v.length,
-								})
+								}
 								photoSuggestions.push(...v)
 							} else {
-								this.$set(this.photoSuggestionsTracksAndDevices, i, {
+								this.photoSuggestionsTracksAndDevices[i] = {
 									key: i,
 									enabled: false,
 									visible: false,
-								})
+								}
 							}
 						} else if (isplit[0] === 'device') {
 							const device = this.devices.find((d) => {
@@ -1129,7 +1126,7 @@ export default {
 							})
 							if (device) {
 								photoSuggestions.push(...v)
-								this.$set(this.photoSuggestionsTracksAndDevices, i, {
+								this.photoSuggestionsTracksAndDevices[i] = {
 									key: i,
 									enabled: true,
 									visible: true,
@@ -1137,13 +1134,13 @@ export default {
 									name: device.user_agent,
 									id: device.id,
 									suggestionCount: v.length,
-								})
+								}
 							} else {
-								this.$set(this.photoSuggestionsTracksAndDevices, i, {
+								this.photoSuggestionsTracksAndDevices[i] = {
 									key: i,
 									enabled: false,
 									visible: false,
-								})
+								}
 							}
 						}
 					}
@@ -1201,7 +1198,7 @@ export default {
 				toSave.forEach((i) => {
 					this.photos.push(this.photoSuggestions[i])
 					this.photoSuggestionsTracksAndDevices[this.photoSuggestions[i].trackOrDeviceId].length -= 1
-					this.$set(this.photoSuggestions, i, null)
+					this.photoSuggestions[i] = null
 				})
 				this.photoSuggestionsSelectedIndices = this.photoSuggestionsSelectedIndices.filter((e) => {
 					return !toSave.includes(e)
@@ -1359,11 +1356,11 @@ export default {
 		buildContactGroups() {
 			this.contactGroups = {}
 			const notGroupedId = '0'
-			this.$set(this.contactGroups, notGroupedId, {
+			this.contactGroups[notGroupedId] = {
 				name: t('maps', 'Not grouped'),
 				counter: 0,
 				enabled: !this.disabledContactGroups.includes(notGroupedId),
-			})
+			}
 			this.contacts.forEach((c) => {
 				c.groupList = []
 				if (c.GROUPS) {
@@ -1375,11 +1372,11 @@ export default {
 								if (this.contactGroups[g]) {
 									this.contactGroups[g].counter++
 								} else {
-									this.$set(this.contactGroups, g, {
+									this.contactGroups[g] = {
 										name: g,
 										counter: 1,
 										enabled: !this.disabledContactGroups.includes(g),
-									})
+									}
 								}
 							})
 						} else {
@@ -1483,7 +1480,7 @@ export default {
 						f.category = t('maps', 'Personal')
 					}
 					f.selected = false
-					this.$set(this.favorites, f.id, f)
+					this.favorites[f.id] = f
 				})
 			}).catch((error) => {
 				console.error(error)
@@ -1499,7 +1496,7 @@ export default {
 							response.data.favorites.forEach((f) => {
 								f.id = s.token + f.id
 								f.selected = false
-								this.$set(this.favorites, f.id, f)
+								this.favorites[f.id] = f
 							})
 						}).catch((error) => {
 							console.error(error)
@@ -1545,7 +1542,7 @@ export default {
 		onFavoriteCategoryShareChange(catid, checked) {
 			if (checked) {
 				network.shareFavoriteCategory(catid, this.myMapId).then((response) => {
-					this.$set(this.favoriteCategoryTokens, catid, response.data.token)
+					this.favoriteCategoryTokens[catid] = response.data.token
 				}).catch((error) => {
 					console.error(error)
 				})
@@ -1756,7 +1753,7 @@ export default {
 						favorite: { ...fav },
 					})
 				}
-				this.$set(this.favorites, fav.id, fav)
+				this.favorites[fav.id] = fav
 				if (openSidebar) {
 					this.selectedFavorite = this.favorites[fav.id]
 					this.activeTab = 'favorite'

@@ -116,11 +116,10 @@
 				:force-menu="false"
 				@click="onTracksClick"
 				@update:open="onUpdateTracksOpen">
-				<NcCounterBubble v-show="tracks.length"
-					slot="counter">
-					{{ tracks.length > 99 ? '99+' : tracks.length }}
-				</NcCounterBubble>
-				<template slot="default">
+				<template #counter>
+					<NcCounterBubble v-show="tracks.length" :count="tracks.length" />
+				</template>
+				<template #default>
 					<b v-show="false">dummy</b>
 					<PhotoSideBarTabTrackItem
 						v-for="tr in tracks"
@@ -138,11 +137,10 @@
 				:force-menu="false"
 				@click="onDevicesClick"
 				@update:open="onUpdateDevicesOpen">
-				<NcCounterBubble v-show="devices.length"
-					slot="counter">
-					{{ devices.length > 99 ? '99+' : devices.length }}
-				</NcCounterBubble>
-				<template slot="default">
+				<template #counter>
+					<NcCounterBubble v-show="devices.length" :count="devices.length" />
+				</template>
+				<template #default>
 					<b v-show="false">dummy</b>
 					<PhotoSideBarTabDeviceItem
 						v-for="d in devices"
@@ -163,16 +161,9 @@
 
 import { generateUrl } from '@nextcloud/router'
 import moment from '@nextcloud/moment'
-import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
-import NcActions from '@nextcloud/vue/dist/Components/NcActions.js'
-import NcListItem from '@nextcloud/vue/dist/Components/NcListItem.js'
-import NcCounterBubble from '@nextcloud/vue/dist/Components/NcCounterBubble.js'
-import NcAppNavigationItem from '@nextcloud/vue/dist/Components/NcAppNavigationItem.js'
-import NcAppNavigationSettings from '@nextcloud/vue/dist/Components/NcAppNavigationSettings.js'
-import NcActionButton from '@nextcloud/vue/dist/Components/NcActionButton.js'
+import { NcButton, NcActions, NcListItem, NcCounterBubble, NcAppNavigationItem, NcAppNavigationSettings, NcActionButton, NcTimezonePicker } from '@nextcloud/vue'
 
 import { getToken } from '../../utils/common.js'
-import NcTimezonePicker from '@nextcloud/vue/dist/Components/NcTimezonePicker.js'
 import PhotoSideBarTabTrackItem from './PhotoSideBarTabTrackItem.vue'
 import PhotoSideBarTabDeviceItem from './PhotoSideBarTabDeviceItem.vue'
 

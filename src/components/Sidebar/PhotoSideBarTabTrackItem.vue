@@ -7,10 +7,10 @@
 		:open="open"
 		:force-menu="false"
 		@click="onTrackClick">
-		<NcCounterBubble slot="counter">
-			{{ track.suggestionCount > 99 ? '99+' : track.suggestionCount }}
-		</NcCounterBubble>
-		<template v-if="subTracks.length && subTracks.length > 1" slot="default">
+		<template #counter>
+			<NcCounterBubble :count="track.suggestionCount" />
+		</template>
+		<template v-if="subTracks.length && subTracks.length > 1" #default>
 			<b v-show="false">dummy</b>
 			<NcAppNavigationItem
 				v-for="st in subTracks"
@@ -19,9 +19,9 @@
 				:name="track.name.concat(' ', st.key.split(':')[2])"
 				:force-menu="false"
 				@click="$emit('subtrack-click', st)">
-				<NcCounterBubble slot="counter">
-					{{ st.suggestionCount > 99 ? '99+' : st.suggestionCount }}
-				</NcCounterBubble>
+				<template #counter>
+					<NcCounterBubble :count="st.suggestionCount" />
+				</template>
 			</NcAppNavigationItem>
 		</template>
 	</NcAppNavigationItem>
@@ -29,8 +29,7 @@
 
 <script>
 
-import NcAppNavigationItem from '@nextcloud/vue/dist/Components/NcAppNavigationItem.js'
-import NcCounterBubble from '@nextcloud/vue/dist/Components/NcCounterBubble.js'
+import { NcAppNavigationItem, NcCounterBubble } from '@nextcloud/vue'
 
 export default {
 	name: 'PhotoSideBarTabTrackItem',

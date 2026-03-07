@@ -25,6 +25,7 @@ return [
 		['name' => 'utils#saveOptionValue', 'url' => '/saveOptionValue', 'verb' => 'POST'],
 		['name' => 'utils#setRoutingSettings', 'url' => '/setRoutingSettings', 'verb' => 'POST'],
 		['name' => 'utils#getTrafficStyle', 'url' => '/style/traffic', 'verb' => 'GET'],
+		['name' => 'utils#copyFile', 'url' => '/copy-file', 'verb' => 'POST'],
 		['name' => 'PublicUtils#getOptionsValues', 'url' => '/s/{token}/getOptionsValues', 'verb' => 'GET'],
 		['name' => 'PublicUtils#saveOptionValue', 'url' => '/s/{token}/saveOptionValue', 'verb' => 'POST'],
 		['name' => 'PublicUtils#setRoutingSettings', 'url' => '/s/{token}/setRoutingSettings', 'verb' => 'POST'],

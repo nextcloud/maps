@@ -20,23 +20,14 @@
  *
  */
 
-import Vue from 'vue'
 import { Icon } from 'leaflet'
 
-Vue.prototype.t = window.t
-Vue.prototype.n = window.n
-Vue.prototype.OC = window.OC
-Vue.prototype.OCA = window.OCA
-
-/* if (process && process.env.NODE_ENV === 'development') {
-	Vue.config.devtools = true
-} */
-
-// this is needed to get default marker icons
+// this is needed to get default marker icons working correctly with webpack
 delete Icon.Default.prototype._getIconUrl
 
 Icon.Default.mergeOptions({
-	iconRetinaUrl: require('leaflet/dist/images/marker-icon-2x.png').default,
-	iconUrl: require('leaflet/dist/images/marker-icon.png').default,
-	shadowUrl: require('leaflet/dist/images/marker-shadow.png').default,
+    // We use fallback to support both webpack 4 and 5 asset modules
+    iconRetinaUrl: require('leaflet/dist/images/marker-icon-2x.png').default || require('leaflet/dist/images/marker-icon-2x.png'),
+    iconUrl: require('leaflet/dist/images/marker-icon.png').default || require('leaflet/dist/images/marker-icon.png'),
+    shadowUrl: require('leaflet/dist/images/marker-shadow.png').default || require('leaflet/dist/images/marker-shadow.png'),
 })

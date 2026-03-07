@@ -74,7 +74,7 @@ export default {
 		L.DomEvent.disableScrollPropagation(el);
 	},
 
-	beforeDestroy() {
+	beforeUnmount() {
 		if (this.control && this.map) {
 			this.map.removeControl(this.control);
 		}

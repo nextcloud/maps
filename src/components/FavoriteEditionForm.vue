@@ -55,17 +55,14 @@
 				:disabled="!favorite.isUpdateable"
 				native-type="submit"
 				type="primary"
-				@click="onOkClick">
-				<template>
-					{{ t('maps', 'Save') }}
-				</template>
-			</NcButton>
-			<NcButton :disabled="!favorite.isUpdateable"
-				@click="onDeleteClick">
-				<template>
-					{{ t('maps', 'Delete') }}
-				</template>
-			</NcButton>
+				@click="onOkClick"
+				:text="t('maps', 'Save')"
+			/>
+			<NcButton 
+				:disabled="!favorite.isUpdateable"
+				@click="onDeleteClick"
+				:text="t('maps', 'Delete')"
+			/>
 		</div>
 	</div>
 </template>

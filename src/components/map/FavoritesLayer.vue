@@ -68,7 +68,7 @@ export default {
 		this.renderMarkers();
 	},
 
-	beforeDestroy() {
+	beforeUnmount() {
 		if (this.clusterGroup && this.map) {
 			this.map.removeLayer(this.clusterGroup);
 		}

@@ -57,7 +57,7 @@ export default {
 			this.$emit('ready', this.heatLayer)
 		})
 	},
-	beforeDestroy() {
+	beforeUnmount() {
 		if (this.heatLayer && this.map) {
 			this.map.removeLayer(this.heatLayer)
 		}

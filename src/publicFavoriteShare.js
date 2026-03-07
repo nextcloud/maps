@@ -20,13 +20,24 @@
  *
  */
 
-import Vue from 'vue'
+import { createApp } from 'vue'
 import PublicFavoriteShare from './views/PublicFavoriteShare.vue'
-import './bootstrap.js'
+
+// Keep this to load the Leaflet icon paths
+import './bootstrap.js' 
 
 import store from './store/publicFavoriteShareStore.js'
 
-new Vue({
-	render: h => h(PublicFavoriteShare),
-	store,
-}).$mount('#content')
+const app = createApp(PublicFavoriteShare)
+
+// Inject the Vuex store
+app.use(store)
+
+// Make Nextcloud global variables accessible within your Vue components
+app.config.globalProperties.t = window.t
+app.config.globalProperties.n = window.n
+app.config.globalProperties.OC = window.OC
+app.config.globalProperties.OCA = window.OCA
+
+// Mount to the DOM
+app.mount('#content')

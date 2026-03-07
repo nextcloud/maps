@@ -91,7 +91,7 @@ export default {
 		this.marker.openTooltip()
 	},
 
-	beforeDestroy() {
+	beforeUnmount() {
 		if (this.marker && this.map) {
 			this.map.removeLayer(this.marker)
 		}

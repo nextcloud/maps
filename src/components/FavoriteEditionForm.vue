@@ -21,6 +21,7 @@
 				:clear-on-select="false"
 				:preserve-search="false"
 				:placeholder="categoryPH"
+				inputLabel="label"
 				:options="formattedCategories"
 				:user-select="false"
 				@input="onCategorySelected"
@@ -70,8 +71,7 @@
 </template>
 
 <script>
-import NcSelect from '@nextcloud/vue/dist/Components/NcSelect.js'
-import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
+import { NcSelect, NcButton } from '@nextcloud/vue'
 
 export default {
 	name: 'FavoriteEditionForm',

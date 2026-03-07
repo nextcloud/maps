@@ -25,7 +25,7 @@
 <script>
 import L from 'leaflet'
 import { getLocale } from '@nextcloud/l10n'
-import { isMobile } from '@nextcloud/vue'
+import { useIsMobile } from '@nextcloud/vue'
 
 import SearchField from './SearchField.vue'
 
@@ -36,7 +36,10 @@ export default {
 		SearchField,
 	},
 
-	mixins: [isMobile],
+	setup() {
+		const isMobile = useIsMobile()
+		return { isMobile }
+	},
 
 	props: {
 		map: { type: Object, required: true },
@@ -71,7 +74,7 @@ export default {
 		L.DomEvent.disableScrollPropagation(el);
 	},
 
-	beforeDestroy() {
+	beforeUnmount() {
 		if (this.control && this.map) {
 			this.map.removeControl(this.control);
 		}

@@ -119,10 +119,8 @@
 					:contact-is-creatable="isContactCreatable"
 					@place-contact="onAddContactAddress"
 					@add-favorite="$emit('add-address-favorite', $event); leftClickSearching = false" />
-
-				<template v-for="poi in searchPois">
+				<template :key="poi.place_id" v-for="poi in searchPois">
 					<PoiMarker
-						:key="poi.place_id"
 						:poi="poi"
 						:map="map"
 						@place-contact="onAddContactAddress"
@@ -307,7 +305,7 @@ export default {
 		// 6. Trigger reactivity for children
 		this.isMapReady = true;
 	},
-	beforeDestroy() {
+	beforeUnmount() {
 		if (this.map) {
 			this.map.remove();
 		}

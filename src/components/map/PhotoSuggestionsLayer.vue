@@ -70,7 +70,7 @@ export default {
 		this.updateSuggestionMarkers();
 	},
 
-	beforeDestroy() {
+	beforeUnmount() {
 		if (this.clusterGroup && this.map) {
 			this.map.removeLayer(this.clusterGroup);
 		}

@@ -154,7 +154,7 @@ export default {
 		this.renderMarkers();
 	},
 
-	beforeDestroy() {
+	beforeUnmount() {
 		if (this.map) {
 			this.map.remove();
 		}

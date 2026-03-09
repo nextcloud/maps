@@ -1,3 +1,24 @@
+<!--
+  - @copyright Copyright (c) 2019 Paul Schwörer <hello@paulschwoerer.de>
+  -
+  - @author Paul Schwörer <hello@paulschwoerer.de>
+  -
+  - @license GNU AGPL version 3 or any later version
+  -
+  - This program is free software: you can redistribute it and/or modify
+  - it under the terms of the GNU Affero General Public License as
+  - published by the Free Software Foundation, either version 3 of the
+  - License, or (at your option) any later version.
+  -
+  - This program is distributed in the hope that it will be useful,
+  - but WITHOUT ANY WARRANTY; without even the implied warranty of
+  - MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+  - GNU Affero General Public License for more details.
+  -
+  - You should have received a copy of the GNU Affero General Public License
+  - along with this program. If not, see <http://www.gnu.org/licenses/>.
+-->
+
 <template>
 	<div class="map-container">
 		<div ref="mapContainer" style="width: 100%; height: 100%;"></div>
@@ -115,7 +136,6 @@ export default {
 	},
 
 	mounted() {
-		// 1. Initialize Map
 		this.map = L.map(this.$refs.mapContainer, {
 			center: this.mapOptions.center,
 			zoom: this.mapOptions.zoom,
@@ -124,7 +144,6 @@ export default {
 			zoomControl: false,
 		});
 
-		// 2. Add Controls
 		L.control.zoom({ position: 'bottomright' }).addTo(this.map);
 		L.control.scale({
 			position: 'bottomleft',
@@ -132,13 +151,11 @@ export default {
 			metric: !this.mapOptions.scaleControlShouldUseImperial
 		}).addTo(this.map);
 
-		// 3. Add Tile Layer
 		L.tileLayer(this.activeLayer.url, {
 			attribution: this.activeLayer.attribution,
 			...this.activeLayer.options
 		}).addTo(this.map);
 
-		// 4. Setup Cluster Group
 		this.clusterGroup = L.markerClusterGroup({
 			showCoverageOnHover: false,
 			zoomToBoundsOnClick: true,
@@ -147,7 +164,6 @@ export default {
 		});
 		this.map.addLayer(this.clusterGroup);
 
-		// 5. Events
 		this.map.on('click', this.handleMapClick);
 		this.map.on('popupclose', this.handlePopupCloseEvent);
 
@@ -281,7 +297,6 @@ export default {
 @import '~leaflet.markercluster/dist/MarkerCluster.css';
 @import '~leaflet.markercluster/dist/MarkerCluster.Default.css';
 
-/* ... Keep all existing styles from MapContainer.vue exactly as they were ... */
 .leaflet-tooltip { white-space: normal !important; }
 .leaflet-container { background: var(--color-main-background); }
 .leaflet-marker-favorite, .leaflet-marker-favorite-cluster {

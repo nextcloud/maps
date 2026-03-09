@@ -259,7 +259,6 @@ export default {
 		this.leafletOverlays = {}
 	},
 	mounted() {
-		// 1. Initialize Pure Leaflet Map
 		this.map = L.map(this.$refs.mapContainer, {
 			center: this.mapOptions.center,
 			zoom: this.mapOptions.zoom,
@@ -273,12 +272,10 @@ export default {
 			contextmenuItems: this.getContextmenuItems(),
 		});
 
-		// 2. Set bounds if they exist
 		if (this.mapOptions.bounds) {
 			this.map.fitBounds(this.mapOptions.bounds);
 		}
 
-		// 3. Add standard controls natively
 		L.control.zoom({ position: 'bottomright' }).addTo(this.map);
 		L.control.scale({
 			position: 'bottomleft',
@@ -286,22 +283,18 @@ export default {
 			metric: !this.mapOptions.scaleControlShouldUseImperial
 		}).addTo(this.map);
 
-		// 4. Bind native Leaflet events back to Vue methods
 		this.map.on('moveend zoomend', () => this.onUpdateBounds(this.map.getBounds()));
 		this.map.on('baselayerchange', this.onBaselayerchange);
 		this.map.on('click', this.onMapClick);
 		this.map.on('contextmenu', this.onMapContextmenu);
 
-		// 5. Initialize custom layers & loc control
 		this.initLocControl(this.map);
 		this.initLayers(this.map);
 
-		// Force container to resize correctly (fixes grey screen on load)
 		this.$nextTick(() => {
 			this.map.invalidateSize();
 		});
 
-		// 6. Trigger reactivity for children
 		this.isMapReady = true;
 	},
 	beforeUnmount() {

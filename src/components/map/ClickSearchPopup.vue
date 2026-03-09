@@ -89,10 +89,8 @@ export default {
 	},
 
 	mounted() {
-		// 1. Create the marker natively
 		this.marker = L.marker(this.latLng, { icon: this.icon }).addTo(this.map)
 		
-		// 2. Bind THIS component's HTML to the popup natively
 		this.marker.bindPopup(this.$el, { 
 			closeButton: false, 
 			offset: L.point(-1, 42) 
@@ -102,7 +100,6 @@ export default {
 	},
 
 	beforeUnmount() {
-		// 3. Clean up the native Leaflet marker
 		if (this.marker && this.map) {
 			this.map.removeLayer(this.marker)
 		}

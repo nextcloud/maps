@@ -22,12 +22,11 @@
 
 import { Icon } from 'leaflet'
 
-// this is needed to get default marker icons working correctly with webpack
+// this is needed to get default marker icons
 delete Icon.Default.prototype._getIconUrl
 
 Icon.Default.mergeOptions({
-    // We use fallback to support both webpack 4 and 5 asset modules
-    iconRetinaUrl: require('leaflet/dist/images/marker-icon-2x.png').default || require('leaflet/dist/images/marker-icon-2x.png'),
-    iconUrl: require('leaflet/dist/images/marker-icon.png').default || require('leaflet/dist/images/marker-icon.png'),
-    shadowUrl: require('leaflet/dist/images/marker-shadow.png').default || require('leaflet/dist/images/marker-shadow.png'),
+    iconRetinaUrl: require('leaflet/dist/images/marker-icon-2x.png'),
+    iconUrl: require('leaflet/dist/images/marker-icon.png'),
+    shadowUrl: require('leaflet/dist/images/marker-shadow.png'),
 })

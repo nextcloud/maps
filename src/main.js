@@ -31,12 +31,11 @@ import { generateUrl } from '@nextcloud/router'
 import L from 'leaflet'
 import 'lrm-graphhopper'
 
-// Webpack 5 asset compatibility for Leaflet default icons
 delete L.Icon.Default.prototype._getIconUrl
 L.Icon.Default.mergeOptions({
-    iconRetinaUrl: require('leaflet/dist/images/marker-icon-2x.png').default || require('leaflet/dist/images/marker-icon-2x.png'),
-    iconUrl: require('leaflet/dist/images/marker-icon.png').default || require('leaflet/dist/images/marker-icon.png'),
-    shadowUrl: require('leaflet/dist/images/marker-shadow.png').default || require('leaflet/dist/images/marker-shadow.png'),
+    iconRetinaUrl: require('leaflet/dist/images/marker-icon-2x.png'),
+    iconUrl: require('leaflet/dist/images/marker-icon.png'),
+    shadowUrl: require('leaflet/dist/images/marker-shadow.png'),
 })
 
 // Maps actions registrations (other apps that want to receive a position)
@@ -85,7 +84,6 @@ if (window.navigator.registerProtocolHandler) {
 function main() {
     const app = createApp(App);
     
-    // Global properties
     app.config.globalProperties.t = window.t;
     app.config.globalProperties.n = window.n;
     app.config.globalProperties.OC = window.OC;

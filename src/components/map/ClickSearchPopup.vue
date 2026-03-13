@@ -62,7 +62,7 @@ export default {
 			formattedAddress: '',
 			mapActions: window.OCA && window.OCA.Maps ? window.OCA.Maps.mapActions : [],
 			icon: L.icon({
-				iconUrl: 'noIcon', // transparent/invisible icon if that was the original intent
+				iconUrl: 'noIcon',
 			}),
 		}
 	},
@@ -80,7 +80,7 @@ export default {
 	},
 
 	created() {
-		// Store leaflet objects non-reactively
+		// Store leaflet objects non-reactively for performance 
 		this.marker = null
 	},
 

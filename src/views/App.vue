@@ -680,7 +680,6 @@ export default {
 		closeSidebar() {
 			this.$refs.Sidebar.close()
 			emit('files:sidebar:closed')
-			console.log('close sidebar')
 			this.activeTab = null
 			this.showSidebar = false
 		},
@@ -1061,7 +1060,6 @@ export default {
 			if (this.photosEnabled && this.showPhotoSuggestions && this.photoSuggestions.length === 0) {
 				this.getPhotoSuggestions()
 			}
-			// window.OCA.Files.Sidebar.setActiveTab('photo-suggestion')
 			this.activeTab = 'photo-suggestion'
 			this.showPhotoSuggestions ? this.openSidebar() : this.closeSidebar()
 		},

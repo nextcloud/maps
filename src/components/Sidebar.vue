@@ -344,7 +344,6 @@ export default {
 			}
 
 			return () => {
-				// Open file via Files app navigation
 				fileList.openFile?.(this.fileInfo.name)
 			}
 		},
@@ -437,8 +436,9 @@ export default {
 
 		/**
 		 * Toggle favourite state
+		 * TODO: better implementation 
 		 *
-		 * @param {boolean} state
+		 * @param {boolean} state favourited or not
 		 */
 		async toggleStarred(state) {
 			try {
@@ -460,7 +460,6 @@ export default {
 						</d:propertyupdate>`,
 				})
 
-				// ✅ Modern way: emit refresh event
 				window.OCA?.Files?.App?.fileList?.reload?.()
 
 			} catch (error) {
@@ -482,10 +481,8 @@ export default {
 			}
 
 			if (this.fileInfo.type === 'dir') {
-				// Open folders
 				fileList.changeDirectory?.(this.fileInfo.path)
 			} else {
-				// Open files
 				fileList.openFile?.(this.fileInfo.name)
 			}
 		},
@@ -516,17 +513,18 @@ export default {
 				this.name = name
 			}
 
-			// Only fetch fileInfo for non-public files
 			if (path && path.trim() !== '' && !isPublic()) {
+				// reset data, keep old fileInfo to not reload all tabs and just hide them
 				this.error = null
 				this.loading = true
 
 				try {
-					// Load file info
 					this.fileInfo = await FileInfo(this.davPath)
+					// adding this as fallback because other apps expect it
 					this.fileInfo.dir = this.file.split('/').slice(0, -1).join('/')
 
-					// DEPRECATED legacy views — safely call setFileInfo if views exist
+					// DEPRECATED legacy views
+					// TODO: remove
 					if (Array.isArray(this.views)) {
 						this.views.forEach(view => {
 							if (typeof view.setFileInfo === 'function') {
@@ -535,7 +533,6 @@ export default {
 						})
 					}
 
-					// Update tabs after DOM update
 					this.$nextTick(() => {
 						if (this.$refs.tabs) {
 							this.$refs.tabs.updateTabs()
@@ -549,7 +546,6 @@ export default {
 					this.loading = false
 				}
 			} else {
-				// Public file or empty path
 				this.fileInfo = null
 			}
 		},

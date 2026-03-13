@@ -512,20 +512,9 @@ export function renameMyMap(id, newName) {
 	return axios.put(url, req)
 }
 
-export async function copyByPath(from, to) {
-	const url = generateUrl('/apps/maps/copy/file')
-	console.log('From et to : ',from, to)
-	try {
-        const response = await axios.post(
-            url,
-            { from, to }
-        )
-        console.log(response.data)
-    } catch (err) {
-        console.error(err.response?.data?.message || err)
-    }
-
-    return true
+export function copyByPath(from, to) {
+	const fileClient = OC.Files.getClient()
+	return fileClient.copy(from, to, false)
 }
 
 export function addSharedFavoriteCategoryToMap(sharedCategory, targetMapId, myMapId = null) {

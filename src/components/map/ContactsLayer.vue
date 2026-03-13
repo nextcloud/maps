@@ -76,7 +76,8 @@ export default {
 						console.error(error);
 					}
 				} else if (this.groups['0'] && this.groups['0'].enabled) {
-					return true; // Not grouped
+					// or not grouped and this is enabled
+					return true;
 				}
 				return false;
 			});
@@ -90,7 +91,6 @@ export default {
 				const latLng = geoToLatLng(contact.GEO);
 				const iconUrl = this.getContactAvatar(contact);
 				
-				// Fix: Renamed variable 't' to 'adrType' to avoid shadowing window.t()
 				const adrTypesHtml = (contact.ADRTYPE || []).map(adrType => 
 					`<span class="tooltip-contact-address-type">${adrType.toLowerCase() === 'home' ? window.t('maps', 'Home') : adrType.toLowerCase() === 'work' ? window.t('maps', 'Work') : window.t('maps', adrType.toLowerCase())}</span>`
 				).join(' ');

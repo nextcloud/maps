@@ -172,7 +172,7 @@ OC.L10N.register(
     "Select All" : "Alle auswählen",
     "Display pictures" : "Bilder anzeigen",
     "Spiderfy" : "Spinnenartig",
-    "Are you sure you want to remove geo data of {nb} photos?" : "Möchtest du wirklich die Geodaten von {nb} Fotos entfernen?",
+    "Are you sure you want to remove geo data of {nb} photos?" : "Sollen die Geodaten von {nb} Fotos entfernt werden?",
     "Yes" : "Ja",
     "Open in Sidebar" : "In der Seitenleiste öffnen",
     "Remove geo data" : "GEO-Daten entfernen",

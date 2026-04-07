@@ -353,8 +353,16 @@
     "Failed to update favorite" : "Kedvenc frissítése sikertelen",
     "Failed to delete favorite" : "A kedvenc törlése sikertelen",
     "Metadata" : "Metaadatok",
+    "What do you want to place" : "Mit akar elhelyezni",
+    "Photo folder" : "Fényképmappa",
     "Photo files" : "Fényképfájlok",
+    "Choose directory of photos to place" : "Válasszon fényképmappát az elhelyezéshez",
+    "Select {photo}" : "{photo} kiválasztása",
     "Select folder" : "Válasszon egy mappát",
+    "_Select %n folder_::_Select %n folders_" : ["%n mappa kiválasztása","%n mappa kiválasztása"],
+    "Choose photos to place" : "Válassza ki az elhelyezendő képeket",
+    "Select photo" : "Fénykép kiválasztása",
+    "_Select %n photo_::_Select %n photos_" : ["%n fénykép kiválasztása","%n fénykép kiválasztása"],
     "Restaurant" : "Étterem",
     "Fast food" : "Gyorsétterem",
     "Bar" : "Bár",
@@ -401,6 +409,7 @@
     "Set the URL and Basic Authorization of style.json for OpenStreetMap Vector Tiles with MapLibre-GL-JS." : "Állítsa be a style.json webcímét és hitelesítését a MapLibre-GL-JS OpenStreetMap vektorcsempéihez.",
     "MapLibre Street style URL" : "MapLibre Street stílus webcíme",
     "Basic Authorization if required. Format is \"user:password\"" : "HTTP Basic hitelesítés szükséges. A formátum: „felhasználó:jelszó”.",
+    "support PMTiles protocol" : "támogatja a PMTiles protokollt",
     "Maps settings" : "Térképbeállítások"
 },"pluralForm" :"nplurals=2; plural=(n != 1);"
 }

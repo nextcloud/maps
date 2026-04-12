@@ -4,7 +4,7 @@
 		"bogdaan/open-location-code": "dev-master"
 	},
 	"require-dev": {
-		"christophwurst/nextcloud_testing": "^0.12.4",
+		"christophwurst/nextcloud_testing": "^2.0.0",
 		"bamarni/composer-bin-plugin": "*"
 	},
 	"scripts": {

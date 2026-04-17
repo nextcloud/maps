@@ -42,6 +42,7 @@ OC.L10N.register(
     "Place photos" : "Padėti nuotraukas",
     "Place contact" : "Padėti adresatą",
     "Share this location" : "Bendrinti šią vietą",
+    "Shared location" : "Bendrinta vieta",
     "Route from here" : "Maršrutas iš čia",
     "Add route point" : "Pridėti maršruto tašką",
     "Route to here" : "Maršrutas į čia",

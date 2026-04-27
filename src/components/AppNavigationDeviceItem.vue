@@ -5,7 +5,7 @@
 		:allow-collapse="false"
 		:force-menu="false"
 		@click="$emit('click', device)">
-		<template slot="icon">
+		<template #icon>
 			<div v-if="device.loading"
 				class="app-navigation-entry-icon icon-loading-small " />
 			<div v-else
@@ -20,10 +20,10 @@
 				@change="updateDeviceColor"
 				@click.stop="">
 		</template>
-		<template slot="counter">
+		<template #counter>
 			&nbsp;
 		</template>
-		<template slot="actions">
+		<template #actions>
 			<NcActionButton v-if="parentEnabled && device.enabled"
 				icon="icon-category-monitoring"
 				:close-after-click="true"

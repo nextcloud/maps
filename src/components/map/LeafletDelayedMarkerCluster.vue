@@ -49,22 +49,22 @@ export default {
 			}
 		}
 
-		function addChildLayer(layer, alreadyAdded) {
-			if (!alreadyAdded) {
-				lastChange = Date.now()
-				delete removeLayerCache[layer._uid]
-				addLayerCache[layer._uid] = layer.mapObject
-				if (!caching) scheduleUpdate()
-			}
+		function addChildLayer({ leafletObject }) {
+			if (!leafletObject) return
+			const id = leafletObject._leaflet_id
+			lastChange = Date.now()
+			delete removeLayerCache[id]
+			addLayerCache[id] = leafletObject
+			if (!caching) scheduleUpdate()
 		}
 
-		function removeChildLayer(layer, alreadyRemoved) {
-			if (!alreadyRemoved) {
-				lastChange = Date.now()
-				delete addLayerCache[layer._uid]
-				removeLayerCache[layer._uid] = layer.mapObject
-				if (!caching) scheduleUpdate()
-			}
+		function removeChildLayer({ leafletObject }) {
+			if (!leafletObject) return
+			const id = leafletObject._leaflet_id
+			lastChange = Date.now()
+			delete addLayerCache[id]
+			removeLayerCache[id] = leafletObject
+			if (!caching) scheduleUpdate()
 		}
 
 		provide(AddLayerInjection, addChildLayer)
@@ -73,12 +73,12 @@ export default {
 		onMounted(() => {
 			mapObject = new MarkerClusterGroup(props.options)
 			ready.value = true
-			if (addLayer) addLayer({ mapObject })
+			if (addLayer) addLayer({ leafletObject: mapObject })
 			emit('ready', mapObject)
 		})
 
 		onBeforeUnmount(() => {
-			if (removeLayer && mapObject) removeLayer({ mapObject })
+			if (removeLayer && mapObject) removeLayer({ leafletObject: mapObject })
 		})
 
 		return { ready }

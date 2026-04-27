@@ -36,6 +36,8 @@ const trackMetadataTab = new OCA.Files.Sidebar.Tab({
 			tabApp = null
 		}
 		tabApp = createApp(TrackMetadataTab)
+		tabApp.config.globalProperties.t = window.t
+		tabApp.config.globalProperties.n = window.n
 		const instance = tabApp.mount(el)
 		await instance.update(fileInfo.id)
 	},

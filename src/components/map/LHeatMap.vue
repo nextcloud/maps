@@ -41,12 +41,12 @@ export default {
 
 		onMounted(() => {
 			mapObject = L.heatLayer(points, props.options)
-			if (addLayer) addLayer({ mapObject })
+			if (addLayer) addLayer({ leafletObject: mapObject })
 			emit('ready', mapObject)
 		})
 
 		onBeforeUnmount(() => {
-			if (removeLayer && mapObject) removeLayer({ mapObject })
+			if (removeLayer && mapObject) removeLayer({ leafletObject: mapObject })
 		})
 
 		return {

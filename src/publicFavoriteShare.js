@@ -28,4 +28,6 @@ import './bootstrap.js'
 const pinia = createPinia()
 const app = createApp(PublicFavoriteShare)
 app.use(pinia)
+app.config.globalProperties.t = window.t
+app.config.globalProperties.n = window.n
 app.mount('#content')

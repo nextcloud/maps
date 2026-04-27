@@ -8,7 +8,7 @@
 		:edit-label="t('maps', 'Rename')"
 		@click="$emit('click', myMap)"
 		@update:name="onRename">
-		<template slot="icon">
+		<template #icon>
 			<div class="icon icon-location" />
 			<input v-show="false"
 				ref="col"
@@ -18,10 +18,10 @@
 				@change="updateMyMapColor"
 				@click.stop="">
 		</template>
-		<template slot="counter">
+		<template #counter>
 			&nbsp;
 		</template>
-		<template slot="actions">
+		<template #actions>
 			<NcActionLink v-if="myMap.id"
 				target="_blank"
 				:href="folderUrl"

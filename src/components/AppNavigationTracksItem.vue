@@ -8,11 +8,10 @@
 		:force-menu="false"
 		@click="onTracksClick"
 		@update:open="onUpdateOpen">
-		<NcCounterBubble v-show="enabled && tracks.length"
-			slot="counter">
-			{{ tracks.length > 99 ? '99+' : tracks.length }}
-		</NcCounterBubble>
-		<template v-if="enabled" slot="actions">
+		<template #counter>
+			<NcCounterBubble v-show="enabled && tracks.length" :count="tracks.length" />
+		</template>
+		<template v-if="enabled" #actions>
 			<NcActionButton
 				icon="icon-tag"
 				:close-after-click="true"
@@ -26,7 +25,7 @@
 				{{ t('maps', 'Sort by date') }}
 			</NcActionButton>
 		</template>
-		<template slot="default">
+		<template #default>
 			<b v-show="false">dummy</b>
 			<AppNavigationTrackItem
 				v-for="track in sortedTracks"

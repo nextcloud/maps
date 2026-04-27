@@ -51,6 +51,7 @@ node_modules/
 jspm_packages/
 vendor/
 js/
+css/
 
 # Typescript v1 declaration files
 typings/

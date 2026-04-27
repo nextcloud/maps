@@ -5,7 +5,7 @@
 		:allow-collapse="false"
 		:force-menu="false"
 		@click="$emit('click', track)">
-		<template slot="icon">
+		<template #icon>
 			<div v-if="track.loading"
 				class="app-navigation-entry-icon icon-loading-small " />
 			<div v-else-if="track.color"
@@ -30,10 +30,10 @@
 				@change="updateTrackColor"
 				@click.stop="">
 		</template>
-		<template slot="counter">
+		<template #counter>
 			&nbsp;
 		</template>
-		<template slot="actions">
+		<template #actions>
 			<NcActionButton v-if="parentEnabled && track.enabled"
 				icon="icon-search"
 				:close-after-click="true"

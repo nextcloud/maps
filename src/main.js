@@ -99,5 +99,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
 function main() {
 	const app = createApp(App)
 	app.directive('tooltip', Tooltip)
+	app.config.globalProperties.t = window.t
+	app.config.globalProperties.n = window.n
 	app.mount('#content')
 }

@@ -6,9 +6,9 @@
 		:open="false"
 		:force-menu="false"
 		@click="$emit('device-click')">
-		<NcCounterBubble slot="counter">
-			{{ device.suggestionCount > 99 ? '99+' : device.suggestionCount }}
-		</NcCounterBubble>
+		<template #counter>
+			<NcCounterBubble :count="device.suggestionCount" />
+		</template>
 	</NcAppNavigationItem>
 </template>
 

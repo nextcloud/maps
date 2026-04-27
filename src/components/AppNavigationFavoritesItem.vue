@@ -8,11 +8,10 @@
 		:force-menu="false"
 		@click="onFavoritesClick"
 		@update:open="onUpdateOpen">
-		<NcCounterBubble v-show="enabled && nbFavorites"
-			slot="counter">
-			{{ nbFavorites > 99 ? '99+' : nbFavorites }}
-		</NcCounterBubble>
-		<template v-if="enabled" slot="actions">
+		<template #counter>
+			<NcCounterBubble v-show="enabled && nbFavorites" :count="nbFavorites" />
+		</template>
+		<template v-if="enabled" #actions>
 			<NcActionButton v-if="!readOnly"
 				:icon="draggable ? 'icon-hand' : 'icon-hand-slash'"
 				:close-after-click="false"
@@ -43,7 +42,7 @@
 				{{ t('maps', 'Import') }}
 			</NcActionButton>
 		</template>
-		<template slot="default">
+		<template #default>
 			<NcAppNavigationNew
 				v-if="enabled && !readOnly"
 				:text="addFavoriteText"
@@ -65,11 +64,10 @@
 					<div :class="{ favoriteMarker: true, navigationFavoriteMarkerDark: isDarkTheme, navigationFavoriteMarker: !isDarkTheme }"
 						:style="'background-color: #' + c.color" />
 				</template>
-				<NcCounterBubble v-show="enabled && nbFavorites && c.enabled"
-					slot="counter">
-					{{ c.counter > 99 ? '99+' : c.counter }}
-				</NcCounterBubble>
-				<template slot="actions">
+				<template #counter>
+					<NcCounterBubble v-show="enabled && nbFavorites && c.enabled" :count="c.counter" />
+				</template>
+				<template #actions>
 					<NcActionButton v-if="enabled && nbFavorites && c.enabled && c.isUpdateable"
 						icon="icon-add"
 						:close-after-click="true"

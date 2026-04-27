@@ -8,11 +8,10 @@
 		:force-menu="false"
 		@click="onContactsClick"
 		@update:open="onUpdateOpen">
-		<NcCounterBubble v-show="enabled && contacts.length"
-			slot="counter">
-			{{ contacts.length > 99 ? '99+' : contacts.length }}
-		</NcCounterBubble>
-		<template v-if="enabled" slot="actions">
+		<template #counter>
+			<NcCounterBubble v-show="enabled && contacts.length" :count="contacts.length" />
+		</template>
+		<template v-if="enabled" #actions>
 			<NcActionButton
 				icon="icon-checkmark"
 				@click="onToggleAllClick">
@@ -31,7 +30,7 @@
 				{{ t('maps', 'Copy to map') }}
 			</NcActionButton>
 		</template>
-		<template slot="default">
+		<template #default>
 			<b v-show="false">dummy</b>
 			<NcAppNavigationItem
 				v-for="(g, gid) in groups"
@@ -42,11 +41,10 @@
 				:allow-collapse="false"
 				:force-menu="false"
 				@click="onGroupClick(gid)">
-				<NcCounterBubble v-show="enabled && g.enabled"
-					slot="counter">
-					{{ g.counter > 99 ? '99+' : g.counter }}
-				</NcCounterBubble>
-				<template slot="actions">
+				<template #counter>
+					<NcCounterBubble v-show="enabled && g.enabled" :count="g.counter" />
+				</template>
+				<template #actions>
 					<NcActionButton v-if="enabled && g.enabled"
 						icon="icon-search"
 						:disabled="!g.enabled || g.counter === 0"

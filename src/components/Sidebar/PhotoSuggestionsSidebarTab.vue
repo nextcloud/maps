@@ -116,11 +116,10 @@
 				:force-menu="false"
 				@click="onTracksClick"
 				@update:open="onUpdateTracksOpen">
-				<NcCounterBubble v-show="tracks.length"
-					slot="counter">
-					{{ tracks.length > 99 ? '99+' : tracks.length }}
-				</NcCounterBubble>
-				<template slot="default">
+				<template #counter>
+					<NcCounterBubble v-show="tracks.length" :count="tracks.length" />
+				</template>
+				<template #default>
 					<b v-show="false">dummy</b>
 					<PhotoSideBarTabTrackItem
 						v-for="tr in tracks"
@@ -138,11 +137,10 @@
 				:force-menu="false"
 				@click="onDevicesClick"
 				@update:open="onUpdateDevicesOpen">
-				<NcCounterBubble v-show="devices.length"
-					slot="counter">
-					{{ devices.length > 99 ? '99+' : devices.length }}
-				</NcCounterBubble>
-				<template slot="default">
+				<template #counter>
+					<NcCounterBubble v-show="devices.length" :count="devices.length" />
+				</template>
+				<template #default>
 					<b v-show="false">dummy</b>
 					<PhotoSideBarTabDeviceItem
 						v-for="d in devices"

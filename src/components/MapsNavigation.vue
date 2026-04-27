@@ -1,11 +1,11 @@
 <template>
 	<NcAppNavigation>
-		<template slot="list">
+		<template #list>
 			<h2 v-if="loading"
 				class="icon-loading-small loading-icon" />
 			<slot name="items" />
 		</template>
-		<template slot="footer">
+		<template #footer>
 			<NcAppNavigationSettings>
 				<NcActionCheckbox
 					:checked="optionValues.trackMe === 'true'"

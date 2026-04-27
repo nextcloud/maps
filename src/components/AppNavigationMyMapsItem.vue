@@ -8,11 +8,10 @@
 		:force-menu="false"
 		@click="onClick"
 		@update:open="onUpdateOpen">
-		<NcCounterBubble v-show="enabled && myMaps.length"
-			slot="counter">
-			{{ myMaps.length > 99 ? '99+' : myMaps.length }}
-		</NcCounterBubble>
-		<template v-if="enabled" slot="actions">
+		<template #counter>
+			<NcCounterBubble v-show="enabled && myMaps.length" :count="myMaps.length" />
+		</template>
+		<template v-if="enabled" #actions>
 			<NcActionButton
 				icon="icon-add"
 				:close-after-click="true"
@@ -20,7 +19,7 @@
 				{{ t('maps', 'Add Map') }}
 			</NcActionButton>
 		</template>
-		<template slot="default">
+		<template #default>
 			<b v-show="false">dummy</b>
 			<AppNavigationMyMapItem
 				v-for="myMap in myMaps"

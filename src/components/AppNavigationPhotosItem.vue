@@ -6,18 +6,13 @@
 		:allow-collapse="false"
 		:force-menu="enabled"
 		@click="$emit('photos-clicked')">
-		<NcCounterBubble v-if="enabled && loading"
-			slot="counter">
-			{{
-				(loadedPhotos > 1000 ? Math.floor(loadedPhotos/1000).toString() + 'k' : loadedPhotos > 99 ? '99+' : loadedPhotos) + '/' +
-					(totalPhotos > 1000 ? Math.floor(totalPhotos/1000).toString() + 'k' : totalPhotos > 99 ? '99+' : totalPhotos)
-			}}
-		</NcCounterBubble>
-		<NcCounterBubble v-else-if="enabled"
-			slot="counter">
-			{{ totalPhotos > 1000 ? Math.floor(totalPhotos/1000).toString() + 'k' : totalPhotos > 99 ? '99+' : totalPhotos }}
-		</NcCounterBubble>
-		<template v-if="enabled" slot="actions">
+		<template #counter>
+			<span v-if="enabled && loading" class="counter-bubble__counter">
+				{{ (loadedPhotos > 1000 ? Math.floor(loadedPhotos/1000).toString() + 'k' : loadedPhotos > 99 ? '99+' : loadedPhotos) + '/' + (totalPhotos > 1000 ? Math.floor(totalPhotos/1000).toString() + 'k' : totalPhotos > 99 ? '99+' : totalPhotos) }}
+			</span>
+			<NcCounterBubble v-else-if="enabled" :count="totalPhotos" />
+		</template>
+		<template v-if="enabled" #actions>
 			<NcActionButton v-if="!readOnly"
 				:icon="draggable ? 'icon-hand' : 'icon-hand-slash'"
 				:close-after-click="false"

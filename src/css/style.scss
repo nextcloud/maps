@@ -352,28 +352,28 @@ tr.selected td {
 }
 .track-marker .thumbnail {
 	// height: 40px;
-	mask: url('../img/road.svg') no-repeat;
+	mask: url('../../img/road.svg') no-repeat;
 	mask-size: 16px auto;
 	mask-position: center;
-	-webkit-mask: url('../img/road.svg') no-repeat;
+	-webkit-mask: url('../../img/road.svg') no-repeat;
 	-webkit-mask-size: 16px auto;
 	-webkit-mask-position: center;
 }
 .device-marker .thumbnail.phone {
 	// height: 40px;
-	mask: url('../img/phone.svg') no-repeat;
+	mask: url('../../img/phone.svg') no-repeat;
 	mask-size: 23px auto;
 	mask-position: center;
-	-webkit-mask: url('../img/phone.svg') no-repeat;
+	-webkit-mask: url('../../img/phone.svg') no-repeat;
 	-webkit-mask-size: 23px auto;
 	-webkit-mask-position: center;
 }
 .device-marker .thumbnail.desktop {
     // height: 40px;
-	mask: url('../img/desktop.svg') no-repeat;
+	mask: url('../../img/desktop.svg') no-repeat;
 	mask-size: 23px auto;
 	mask-position: center;
-	-webkit-mask: url('../img/desktop.svg') no-repeat;
+	-webkit-mask: url('../../img/desktop.svg') no-repeat;
 	-webkit-mask-size: 23px auto;
 	-webkit-mask-position: center;
 }

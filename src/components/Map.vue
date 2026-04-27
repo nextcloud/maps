@@ -1117,9 +1117,9 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-@import '~leaflet/dist/leaflet.css';
-@import '~leaflet.markercluster/dist/MarkerCluster.css';
-@import '~leaflet.markercluster/dist/MarkerCluster.Default.css';
+@import 'leaflet/dist/leaflet.css';
+@import 'leaflet.markercluster/dist/MarkerCluster.css';
+@import 'leaflet.markercluster/dist/MarkerCluster.Default.css';
 
 #map-wrapper {
 	display: flex;
@@ -1183,12 +1183,12 @@ export default {
 }
 
 ::v-deep .icon-osm {
-	background-image: url('./../../css/images/osm.png');
+	background-image: url('../css/images/osm.png');
 	background-size: 35px;
 }
 
 ::v-deep .icon-esri {
-	background:  url('./../../css/images/esri.jpg');
+	background:  url('../css/images/esri.jpg');
 	background-size: 35px;
 	border: none !important;
 }

@@ -1,11 +1,11 @@
 {
 	"extends": "@vue/tsconfig",
+	"include": ["src/**.ts", "*.ts"],
 	"compilerOptions": {
 		"allowJs": true,
-		"allowImportingTsExtensions": true,
-		"rewriteRelativeImportExtensions": true,
-		"noEmit": false,
-		"outDir": "js",
+		"target": "ESNext",
+		"module": "ESNext",
+		"moduleResolution": "Bundler"
 	},
 	"vueCompilerOptions": {
 		"target": 2.7

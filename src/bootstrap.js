@@ -22,6 +22,9 @@
 
 import Vue from 'vue'
 import { Icon } from 'leaflet'
+import markerIcon2x from 'leaflet/dist/images/marker-icon-2x.png'
+import markerIcon from 'leaflet/dist/images/marker-icon.png'
+import markerShadow from 'leaflet/dist/images/marker-shadow.png'
 
 Vue.prototype.t = window.t
 Vue.prototype.n = window.n
@@ -36,7 +39,7 @@ Vue.prototype.OCA = window.OCA
 delete Icon.Default.prototype._getIconUrl
 
 Icon.Default.mergeOptions({
-	iconRetinaUrl: require('leaflet/dist/images/marker-icon-2x.png').default,
-	iconUrl: require('leaflet/dist/images/marker-icon.png').default,
-	shadowUrl: require('leaflet/dist/images/marker-shadow.png').default,
+	iconRetinaUrl: markerIcon2x,
+	iconUrl: markerIcon,
+	shadowUrl: markerShadow,
 })

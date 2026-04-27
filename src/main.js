@@ -96,9 +96,6 @@ if (window.navigator.registerProtocolHandler) {
 }
 
 document.addEventListener('DOMContentLoaded', (event) => {
-	Object.assign(window.OCA.Files, {
-		App: { fileList: { filesClient: OC.Files.getClient() } },
-	}, window.OCA.Files)
 	optionsController.restoreOptions(main)
 })
 

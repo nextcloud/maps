@@ -1,6 +1,7 @@
 import axios from '@nextcloud/axios'
 import { default as realAxios } from 'axios'
 import { generateUrl } from '@nextcloud/router'
+import { getClient, getRootPath } from '@nextcloud/files/dav'
 
 export function saveOptionValues(optionValues, myMapId = null, token = null) {
 	const req = {
@@ -513,8 +514,8 @@ export function renameMyMap(id, newName) {
 }
 
 export function copyByPath(from, to) {
-	const fileClient = OC.Files.getClient()
-	return fileClient.copy(from, to, false)
+	const client = getClient()
+	return client.copyFile(getRootPath() + from, getRootPath() + to)
 }
 
 export function addSharedFavoriteCategoryToMap(sharedCategory, targetMapId, myMapId = null) {

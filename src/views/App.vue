@@ -233,6 +233,7 @@ import { geoToLatLng, getFormattedADR } from '../utils/mapUtils.js'
 import * as network from '../network.js'
 import { all as axiosAll, spread as axiosSpread } from 'axios'
 import { generateUrl } from '@nextcloud/router'
+import { getClient, getRootPath } from '@nextcloud/files/dav'
 import { placeFileOrFolder } from '../utils/photoPicker.ts'
 
 export default {
@@ -2302,23 +2303,21 @@ export default {
 		},
 		chooseMyMap(callback) {
 			const that = this
-			const firstCallBack = (path) => {
+			const firstCallBack = async (path) => {
 				const p = (path === '' ? '/' : path)
 				const map = that.myMaps.find((m) => { return m.path === p })
 				if (map) {
 					callback(map)
 				} else {
 					showInfo(t('maps', 'Folder is not a map'))
-					const fileClient = OC.Files.getClient()
-					fileClient.getFileInfo(path).then((status, fileInfo) => {
-						const map = {
-							id: fileInfo.id,
-							path: fileInfo.name,
-							name: fileInfo.basename,
-							fileInfo,
-						}
-						callback(map)
-					})
+					const stat = await getClient().stat(getRootPath() + path)
+					const map = {
+						id: stat.props?.['oc:fileid'],
+						path,
+						name: stat.basename,
+						fileInfo: stat,
+					}
+					callback(map)
 				}
 			}
 			OC.dialogs.filepicker(

@@ -84,6 +84,7 @@ import NcActionButton from '@nextcloud/vue/dist/Components/NcActionButton.js'
 import NcActionLink from '@nextcloud/vue/dist/Components/NcActionLink.js'
 import { isPublic, getToken } from '../utils/common'
 import { generateUrl } from '@nextcloud/router'
+import { getRemoteURL, getRootPath } from '@nextcloud/files/dav'
 
 export default {
 	name: 'AppNavigationTrackItem',
@@ -112,7 +113,7 @@ export default {
 
 	computed: {
 		downloadTrackUrl() {
-			return OCA.Files.App.fileList.filesClient.getBaseUrl() + this.track.file_path
+			return getRemoteURL() + getRootPath() + this.track.file_path
 		},
 		downloadTrackShareUrl() {
 			return generateUrl('s/' + getToken() + '/download' + '?path=/&files=' + this.track.file_name)

@@ -33,7 +33,7 @@
 
 <script>
 import L from 'leaflet'
-import { LMarker, LPopup } from 'vue2-leaflet'
+import { LMarker, LPopup } from '@vue-leaflet/vue-leaflet'
 
 import { formatAddress } from '../../utils.js'
 import { geocode } from '../../network.js'

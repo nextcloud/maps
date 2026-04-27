@@ -19,4 +19,11 @@ export default createAppConfig({
 	emptyOutputDirectory: {
 		additionalDirectories: ['css'],
 	},
+	config: {
+		resolve: {
+			alias: {
+				'vue-demi': join(import.meta.dirname, 'node_modules/@vueuse/shared/node_modules/vue-demi/lib/v3/index.mjs'),
+			},
+		},
+	},
 })

@@ -36,13 +36,11 @@
 </template>
 
 <script>
-import ClickOutside from 'vue-click-outside'
-
-import NcAppNavigation from '@nextcloud/vue/dist/Components/NcAppNavigation.js'
-import NcAppNavigationSettings from '@nextcloud/vue/dist/Components/NcAppNavigationSettings.js'
-import NcActionCheckbox from '@nextcloud/vue/dist/Components/NcActionCheckbox.js'
-import NcActionText from '@nextcloud/vue/dist/Components/NcActionText.js'
-import NcActionLink from '@nextcloud/vue/dist/Components/NcActionLink.js'
+import NcAppNavigation from '@nextcloud/vue/components/NcAppNavigation'
+import NcAppNavigationSettings from '@nextcloud/vue/components/NcAppNavigationSettings'
+import NcActionCheckbox from '@nextcloud/vue/components/NcActionCheckbox'
+import NcActionText from '@nextcloud/vue/components/NcActionText'
+import NcActionLink from '@nextcloud/vue/components/NcActionLink'
 
 import optionsController from '../optionsController.js'
 
@@ -56,7 +54,19 @@ export default {
 		NcActionLink,
 	},
 	directives: {
-		ClickOutside,
+		clickOutside: {
+			beforeMount(el, binding) {
+				el._clickOutsideHandler = (event) => {
+					if (!el.contains(event.target)) {
+						binding.value(event)
+					}
+				}
+				document.addEventListener('click', el._clickOutsideHandler)
+			},
+			unmounted(el) {
+				document.removeEventListener('click', el._clickOutsideHandler)
+			},
+		},
 	},
 	props: {
 		loading: {

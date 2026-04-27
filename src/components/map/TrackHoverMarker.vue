@@ -28,7 +28,7 @@
 
 <script>
 import L from 'leaflet'
-import { LMarker, LTooltip, LFeatureGroup } from 'vue2-leaflet'
+import { LMarker, LTooltip, LFeatureGroup } from '@vue-leaflet/vue-leaflet'
 
 import moment from '@nextcloud/moment'
 

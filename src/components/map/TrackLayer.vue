@@ -107,10 +107,10 @@
 
 <script>
 import L from 'leaflet'
-import { LMarker, LTooltip, LPopup, LFeatureGroup, LPolyline } from 'vue2-leaflet'
+import { LMarker, LTooltip, LPopup, LFeatureGroup, LPolyline } from '@vue-leaflet/vue-leaflet'
 
-import NcActionButton from '@nextcloud/vue/dist/Components/NcActionButton.js'
-import NcActionLink from '@nextcloud/vue/dist/Components/NcActionLink.js'
+import NcActionButton from '@nextcloud/vue/components/NcActionButton'
+import NcActionLink from '@nextcloud/vue/components/NcActionLink'
 import moment from '@nextcloud/moment'
 import { generateUrl } from '@nextcloud/router'
 import { getRemoteURL, getRootPath } from '@nextcloud/files/dav'

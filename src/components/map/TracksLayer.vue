@@ -17,7 +17,7 @@
 </template>
 
 <script>
-import { LFeatureGroup } from 'vue2-leaflet'
+import { LFeatureGroup } from '@vue-leaflet/vue-leaflet'
 
 import TrackLayer from './TrackLayer.vue'
 import TrackHoverMarker from './TrackHoverMarker.vue'

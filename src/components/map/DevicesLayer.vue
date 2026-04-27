@@ -22,7 +22,7 @@
 </template>
 
 <script>
-import { LFeatureGroup } from 'vue2-leaflet'
+import { LFeatureGroup } from '@vue-leaflet/vue-leaflet'
 
 import DeviceLayer from './DeviceLayer.vue'
 import DeviceHoverMarker from './DeviceHoverMarker.vue'

@@ -67,8 +67,8 @@
 </template>
 
 <script>
-import { MAP_NAMESPACE } from '../../store/modules/map.js'
-import { mapState } from 'vuex'
+import { useMapStore } from '../../store/mapStore.pinia.js'
+import { computed } from 'vue'
 import MapMode from '../../data/enum/MapMode.js'
 import { geocode } from '../../utils/mapUtils.js'
 import SimpleOSMAddress from './SimpleOSMAddress.vue'
@@ -94,6 +94,11 @@ export default {
 		allowEdits: VueTypes.bool.isRequired.def(false),
 	},
 
+	setup() {
+		const mapStore = useMapStore()
+		return { mapMode: computed(() => mapStore.mode) }
+	},
+
 	data() {
 		return {
 			geocodeObject: null,
@@ -106,12 +111,6 @@ export default {
 			},
 			addingFavorite: false,
 		}
-	},
-
-	computed: {
-		...mapState({
-			mapMode: state => state[MAP_NAMESPACE].mode,
-		}),
 	},
 
 	watch: {

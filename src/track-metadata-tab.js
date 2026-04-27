@@ -19,48 +19,44 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  *
  */
-import Vue from 'vue'
-import { translate as t, translatePlural as n } from '@nextcloud/l10n'
+import { createApp } from 'vue'
+import { translate as t } from '@nextcloud/l10n'
 
 import TrackMetadataTab from './views/TrackMetadataTab.vue'
 
-Vue.prototype.t = t
-Vue.prototype.n = n
-
-// Init Tracks tab component
-const View = Vue.extend(TrackMetadataTab)
-
-// Init Maps Track tab component
-let TabInstance = null
+let tabApp = null
 const trackMetadataTab = new OCA.Files.Sidebar.Tab({
 	id: 'maps-track-metadata',
 	name: t('maps', 'Metadata'),
 	icon: 'icon-info',
 
 	async mount(el, fileInfo, context) {
-		if (TabInstance) {
-			TabInstance.$destroy()
+		if (tabApp) {
+			tabApp.unmount()
+			tabApp = null
 		}
-		TabInstance = new View({
-			// Better integration with vue parent component
-			parent: context,
-		})
-		// Only mount after we have all the info we need
-		await TabInstance.update(fileInfo.id)
-		TabInstance.$mount(el)
+		tabApp = createApp(TrackMetadataTab)
+		const instance = tabApp.mount(el)
+		await instance.update(fileInfo.id)
 	},
 	update(fileInfo) {
-		TabInstance.update(fileInfo.id)
+		if (tabApp) {
+			tabApp._instance?.proxy?.update(fileInfo.id)
+		}
 	},
 	destroy() {
-		TabInstance.$destroy()
-		TabInstance = null
+		if (tabApp) {
+			tabApp.unmount()
+			tabApp = null
+		}
 	},
 	enabled(fileInfo) {
 		return ['application/gpx+xml'].includes(fileInfo.mimetype)
 	},
 	scrollBottomReached() {
-		TabInstance.onScrollBottomReached()
+		if (tabApp) {
+			tabApp._instance?.proxy?.onScrollBottomReached()
+		}
 	},
 })
 

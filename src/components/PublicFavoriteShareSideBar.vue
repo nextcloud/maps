@@ -42,14 +42,14 @@
 </template>
 
 <script>
-import NcAppNavigation from '@nextcloud/vue/dist/Components/NcAppNavigation.js'
-import NcAppNavigationItem from '@nextcloud/vue/dist/Components/NcAppNavigationItem.js'
-import NcAppNavigationNew from '@nextcloud/vue/dist/Components/NcAppNavigationNew.js'
-import NcAppNavigationSpacer from '@nextcloud/vue/dist/Components/NcAppNavigationSpacer.js'
-import { mapMutations, mapState, mapActions } from 'vuex'
-import { PUBLIC_FAVORITES_NAMESPACE } from '../store/modules/publicFavorites.js'
+import NcAppNavigation from '@nextcloud/vue/components/NcAppNavigation'
+import NcAppNavigationItem from '@nextcloud/vue/components/NcAppNavigationItem'
+import NcAppNavigationNew from '@nextcloud/vue/components/NcAppNavigationNew'
+import NcAppNavigationSpacer from '@nextcloud/vue/components/NcAppNavigationSpacer'
+import { usePublicFavoritesStore } from '../store/publicFavoritesStore.pinia.js'
+import { useMapStore } from '../store/mapStore.pinia.js'
+import { computed } from 'vue'
 import MapMode from '../data/enum/MapMode.js'
-import { MAP_NAMESPACE } from '../store/modules/map.js'
 
 export default {
 	name: 'PublicFavoriteShareSideBar',
@@ -61,13 +61,19 @@ export default {
 		NcAppNavigationSpacer,
 	},
 
-	computed: {
-		...mapState({
-			favorites: state => state[PUBLIC_FAVORITES_NAMESPACE].favorites,
-			mapMode: state => state[MAP_NAMESPACE].mode,
-			shareInfo: state => state[PUBLIC_FAVORITES_NAMESPACE].shareInfo,
-		}),
+	setup() {
+		const favStore = usePublicFavoritesStore()
+		const mapStore = useMapStore()
+		return {
+			favorites: computed(() => favStore.favorites),
+			mapMode: computed(() => mapStore.mode),
+			shareInfo: computed(() => favStore.shareInfo),
+			selectFavorite: (id) => favStore.selectFavorite(id),
+			setMapMode: (mode) => mapStore.setMode(mode),
+		}
+	},
 
+	computed: {
 		allowFavoriteEdits() {
 			return this.shareInfo ? this.shareInfo.allowEdits : false
 		},
@@ -83,13 +89,6 @@ export default {
 	},
 
 	methods: {
-		...mapActions({
-			selectFavorite: `${PUBLIC_FAVORITES_NAMESPACE}/selectFavorite`,
-		}),
-		...mapMutations({
-			setMapMode: `${MAP_NAMESPACE}/setMode`,
-		}),
-
 		toggleMapMode() {
 			if (this.mapMode === MapMode.ADDING_FAVORITES) {
 				this.setMapMode(MapMode.DEFAULT)

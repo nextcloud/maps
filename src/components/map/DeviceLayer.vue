@@ -59,9 +59,9 @@
 
 <script>
 import L from 'leaflet'
-import { LMarker, LTooltip, LPopup, LFeatureGroup, LPolyline } from 'vue2-leaflet'
+import { LMarker, LTooltip, LPopup, LFeatureGroup, LPolyline } from '@vue-leaflet/vue-leaflet'
 
-import NcActionButton from '@nextcloud/vue/dist/Components/NcActionButton.js'
+import NcActionButton from '@nextcloud/vue/components/NcActionButton'
 
 import { isComputer } from '../../utils.js'
 import { binSearch, isPublic } from '../../utils/common.js'

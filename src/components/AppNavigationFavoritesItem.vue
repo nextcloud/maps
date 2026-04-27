@@ -125,11 +125,11 @@
 </template>
 
 <script>
-import NcAppNavigationItem from '@nextcloud/vue/dist/Components/NcAppNavigationItem.js'
-import NcAppNavigationNew from '@nextcloud/vue/dist/Components/NcAppNavigationNew.js'
-import NcActionButton from '@nextcloud/vue/dist/Components/NcActionButton.js'
-import NcActionCheckbox from '@nextcloud/vue/dist/Components/NcActionCheckbox.js'
-import NcCounterBubble from '@nextcloud/vue/dist/Components/NcCounterBubble.js'
+import NcAppNavigationItem from '@nextcloud/vue/components/NcAppNavigationItem'
+import NcAppNavigationNew from '@nextcloud/vue/components/NcAppNavigationNew'
+import NcActionButton from '@nextcloud/vue/components/NcActionButton'
+import NcActionCheckbox from '@nextcloud/vue/components/NcActionCheckbox'
+import NcCounterBubble from '@nextcloud/vue/components/NcCounterBubble'
 import { showError, showSuccess } from '@nextcloud/dialogs'
 import { generateUrl } from '@nextcloud/router'
 import { isPublic } from '../utils/common.js'
@@ -237,9 +237,9 @@ export default {
 					console.debug(error)
 					showError(t('maps', 'Link {url} could not be copied to clipboard.', { url }))
 				}
-				this.$set(this.isLinkCopied, category.name, true)
+				this.isLinkCopied[category.name] = true
 				setTimeout(() => {
-					this.$delete(this.isLinkCopied, category.name)
+					delete this.isLinkCopied[category.name]
 				}, 5000)
 			} catch (error) {
 				console.debug(error)

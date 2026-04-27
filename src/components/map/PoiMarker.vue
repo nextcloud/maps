@@ -97,7 +97,7 @@ import { imagePath } from '@nextcloud/router'
 import moment from '@nextcloud/moment'
 import { formatAddress } from '../../utils.js'
 
-import { LMarker, LPopup, LTooltip } from 'vue2-leaflet'
+import { LMarker, LPopup, LTooltip } from '@vue-leaflet/vue-leaflet'
 import OpeningHours from 'opening_hours'
 
 export default {

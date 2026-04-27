@@ -184,7 +184,7 @@ import {
 	baseLayersByName,
 	overlayLayersByName,
 } from '../data/mapLayers.js'
-import { LControlScale, LControlZoom, LMap, LTileLayer, LControlLayers, LFeatureGroup } from 'vue2-leaflet'
+import { LControlScale, LControlZoom, LMap, LTileLayer, LControlLayers, LFeatureGroup } from '@vue-leaflet/vue-leaflet'
 
 import 'leaflet-easybutton/src/easy-button'
 import 'leaflet-easybutton/src/easy-button.css'

@@ -1,5 +1,5 @@
 <template>
-	<Vue2LeafletMarkerCluster :options="clusterOptions"
+	<LeafletDelayedMarkerCluster :options="clusterOptions"
 		@clusterclick="onClusterClick"
 		@spiderfied="spiderfied = true">
 		<ContactLayer v-for="(c, i) in displayedContacts"
@@ -7,7 +7,7 @@
 			:contact="c"
 			@address-deleted="$emit('address-deleted', $event)"
 			@add-to-map-contact="$emit('add-to-map-contact', $event)" />
-	</Vue2LeafletMarkerCluster>
+	</LeafletDelayedMarkerCluster>
 </template>
 
 <script>
@@ -15,7 +15,7 @@ import { generateUrl } from '@nextcloud/router'
 import { getCurrentUser } from '@nextcloud/auth'
 
 import L from 'leaflet'
-import Vue2LeafletMarkerCluster from 'vue2-leaflet-markercluster'
+import LeafletDelayedMarkerCluster from './LeafletDelayedMarkerCluster.vue'
 
 import ContactLayer from './ContactLayer.vue'
 import optionsController from '../../optionsController.js'
@@ -27,7 +27,7 @@ const CONTACT_MARKER_VIEW_SIZE = 40
 export default {
 	name: 'ContactsLayer',
 	components: {
-		Vue2LeafletMarkerCluster,
+		LeafletDelayedMarkerCluster,
 		ContactLayer,
 	},
 

@@ -38,8 +38,8 @@
 </template>
 
 <script>
-import NcAppSidebarTab from '@nextcloud/vue/dist/Components/NcAppSidebarTab.js'
-import NcEmptyContent from '@nextcloud/vue/dist/Components/NcEmptyContent.js'
+import NcAppSidebarTab from '@nextcloud/vue/components/NcAppSidebarTab'
+import NcEmptyContent from '@nextcloud/vue/components/NcEmptyContent'
 
 export default {
 	name: 'SidebarTab',
@@ -122,7 +122,7 @@ export default {
 		this.loading = false
 	},
 
-	async beforeDestroy() {
+	async beforeUnmount() {
 		// unmount the tab
 		await this.onDestroy()
 	},

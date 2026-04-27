@@ -35,12 +35,12 @@
 </template>
 
 <script>
-import NcContent from '@nextcloud/vue/dist/Components/NcContent.js'
-import NcAppContent from '@nextcloud/vue/dist/Components/NcAppContent.js'
+import NcContent from '@nextcloud/vue/components/NcContent'
+import NcAppContent from '@nextcloud/vue/components/NcAppContent'
 import MapContainer from '../components/MapContainer.vue'
 import PublicFavoriteShareSideBar from '../components/PublicFavoriteShareSideBar.vue'
-import { mapActions, mapGetters, mapState } from 'vuex'
-import { PUBLIC_FAVORITES_NAMESPACE } from '../store/modules/publicFavorites.js'
+import { usePublicFavoritesStore } from '../store/publicFavoritesStore.pinia.js'
+import { computed } from 'vue'
 
 export default {
 	name: 'PublicFavoriteShare',
@@ -52,22 +52,16 @@ export default {
 		PublicFavoriteShareSideBar,
 	},
 
-	data() {
+	setup() {
+		const favStore = usePublicFavoritesStore()
 		return {
-			mode: 'default',
+			favoritesMappedByCategory: computed(() => favStore.mappedByCategory),
+			allowFavoriteEdits: computed(() => favStore.shareInfo ? favStore.shareInfo.allowEdits : false),
+			getFavorites: () => favStore.getFavorites(),
+			addFavorite: (data) => favStore.addFavorite(data),
+			updateFavorite: (data) => favStore.updateFavorite(data),
+			deleteFavorite: (data) => favStore.deleteFavorite(data),
 		}
-	},
-
-	computed: {
-		...mapGetters({
-			favoritesMappedByCategory: `${PUBLIC_FAVORITES_NAMESPACE}/mappedByCategory`,
-		}),
-		...mapState({
-			allowFavoriteEdits: state =>
-				state[PUBLIC_FAVORITES_NAMESPACE].shareInfo
-					? state[PUBLIC_FAVORITES_NAMESPACE].shareInfo.allowEdits
-					: false,
-		}),
 	},
 
 	mounted() {
@@ -76,12 +70,6 @@ export default {
 	},
 
 	methods: {
-		...mapActions({
-			getFavorites: `${PUBLIC_FAVORITES_NAMESPACE}/getFavorites`,
-			addFavorite: `${PUBLIC_FAVORITES_NAMESPACE}/addFavorite`,
-			updateFavorite: `${PUBLIC_FAVORITES_NAMESPACE}/updateFavorite`,
-			deleteFavorite: `${PUBLIC_FAVORITES_NAMESPACE}/deleteFavorite`,
-		}),
 		// Place the footer in the app-navigation so it is not below the map
 		moveFooter() {
 			const footer = document.getElementsByTagName('footer')[0]

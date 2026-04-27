@@ -108,10 +108,10 @@
 <script>
 import { generateUrl } from '@nextcloud/router'
 import { getCurrentUser } from '@nextcloud/auth'
-import NcActionButton from '@nextcloud/vue/dist/Components/NcActionButton.js'
+import NcActionButton from '@nextcloud/vue/components/NcActionButton'
 
 import L from 'leaflet'
-import { LMarker, LTooltip, LPopup } from 'vue2-leaflet'
+import { LMarker, LTooltip, LPopup } from '@vue-leaflet/vue-leaflet'
 
 import optionsController from '../../optionsController.js'
 import { geoToLatLng } from '../../utils/mapUtils.js'

@@ -31,8 +31,9 @@
 </template>
 
 <script>
-import { LControl } from 'vue2-leaflet'
-import { isMobile } from '@nextcloud/vue'
+import { LControl } from '@vue-leaflet/vue-leaflet'
+import { useIsMobile } from '@nextcloud/vue/composables/useIsMobile'
+import { computed } from 'vue'
 
 import RoutingSteps from './RoutingSteps.vue'
 import RoutingMachine from './RoutingMachine.vue'
@@ -53,7 +54,10 @@ export default {
 		LControl,
 	},
 
-	mixins: [isMobile],
+	setup() {
+		const isMobile = useIsMobile()
+		return { isMobile: computed(() => isMobile.value) }
+	},
 
 	props: {
 		map: {

@@ -6,78 +6,54 @@
 
 <script>
 import 'leaflet.heat/dist/leaflet-heat.js'
-import { findRealParent, propsBinder } from 'vue2-leaflet'
-import { DomEvent } from 'leaflet'
-
-const props = {
-	initialPoints: {
-		type: Array,
-		required: false,
-		default() { return [] },
-	},
-	options: {
-		type: Object,
-		default() { return {} },
-	},
-}
+import { inject, onMounted, onBeforeUnmount, watch } from 'vue'
+import { InjectionKeys } from '@vue-leaflet/vue-leaflet'
+const { AddLayerInjection, RemoveLayerInjection } = InjectionKeys
 
 export default {
-	props,
-	data() {
-		return {
-			points: null,
-			ready: false,
-		}
-	},
-	watch: {
+	props: {
+		initialPoints: {
+			type: Array,
+			required: false,
+			default() { return [] },
+		},
 		options: {
-			handler(newOptions) {
-				this.mapObject.setOptions(newOptions)
-			},
-			deep: true,
-		},
-		points: {
-			handler(newPoints) {
-				this.mapObject.setLatLngs(newPoints)
-			},
-			deep: true,
+			type: Object,
+			default() { return {} },
 		},
 	},
-	mounted() {
-		this.points = this.initialPoints
-		this.mapObject = L.heatLayer(this.points, this.options)
-		DomEvent.on(this.mapObject, this.$listeners)
-		propsBinder(this, this.mapObject, props)
-		this.ready = true
-		this.parentContainer = findRealParent(this.$parent)
-		this.parentContainer.addLayer(this)
-		this.$nextTick(() => {
-			this.$emit('ready', this.mapObject)
+	emits: ['ready'],
+	setup(props, { emit }) {
+		const addLayer = inject(AddLayerInjection)
+		const removeLayer = inject(RemoveLayerInjection)
+
+		let mapObject = null
+		let points = [...props.initialPoints]
+
+		watch(() => props.options, (newOptions) => {
+			if (mapObject) mapObject.setOptions(newOptions)
+		}, { deep: true })
+
+		watch(() => props.initialPoints, (newPoints) => {
+			points = newPoints
+			if (mapObject) mapObject.setLatLngs(newPoints)
+		}, { deep: true })
+
+		onMounted(() => {
+			mapObject = L.heatLayer(points, props.options)
+			if (addLayer) addLayer({ mapObject })
+			emit('ready', mapObject)
 		})
-	},
-	beforeDestroy() {
-		this.parentContainer.removeLayer(this)
-	},
-	methods: {
-		addLayer(layer, alreadyAdded) {
-			if (!alreadyAdded) {
-				this.mapObject.addLayer(layer.mapObject)
-			}
-		},
-		removeLayer(layer, alreadyRemoved) {
-			if (!alreadyRemoved) {
-				this.mapObject.removeLayer(layer.mapObject)
-			}
-		},
-		addLatLng(latlng) {
-			this.mapObject.addLatLng(latlng)
-		},
-		setLatLngs(latlngs) {
-			this.mapObject.setLatLngs(latlngs)
-		},
-		redraw() {
-			this.mapObject.redraw()
-		},
+
+		onBeforeUnmount(() => {
+			if (removeLayer && mapObject) removeLayer({ mapObject })
+		})
+
+		return {
+			addLatLng(latlng) { mapObject?.addLatLng(latlng) },
+			setLatLngs(latlngs) { mapObject?.setLatLngs(latlngs) },
+			redraw() { mapObject?.redraw() },
+		}
 	},
 }
 </script>

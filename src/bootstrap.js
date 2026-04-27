@@ -20,20 +20,10 @@
  *
  */
 
-import Vue from 'vue'
 import { Icon } from 'leaflet'
 import markerIcon2x from 'leaflet/dist/images/marker-icon-2x.png'
 import markerIcon from 'leaflet/dist/images/marker-icon.png'
 import markerShadow from 'leaflet/dist/images/marker-shadow.png'
-
-Vue.prototype.t = window.t
-Vue.prototype.n = window.n
-Vue.prototype.OC = window.OC
-Vue.prototype.OCA = window.OCA
-
-/* if (process && process.env.NODE_ENV === 'development') {
-	Vue.config.devtools = true
-} */
 
 // this is needed to get default marker icons
 delete Icon.Default.prototype._getIconUrl

@@ -1,5 +1,5 @@
 <template>
-	<Vue2LeafletMarkerCluster :options="clusterOptions"
+	<LeafletDelayedMarkerCluster :options="clusterOptions"
 		@clusterclick="onClusterClick"
 		@clustercontextmenu="onClusterRightClick"
 		@spiderfied="onSpiderfied">
@@ -29,15 +29,15 @@
 				</NcActionButton>
 			</LPopup>
 		</LMarker>
-	</Vue2LeafletMarkerCluster>
+	</LeafletDelayedMarkerCluster>
 </template>
 
 <script>
-import NcActionButton from '@nextcloud/vue/dist/Components/NcActionButton.js'
+import NcActionButton from '@nextcloud/vue/components/NcActionButton'
 
 import L from 'leaflet'
-import { LMarker, LPopup } from 'vue2-leaflet'
-import Vue2LeafletMarkerCluster from 'vue2-leaflet-markercluster'
+import { LMarker, LPopup } from '@vue-leaflet/vue-leaflet'
+import LeafletDelayedMarkerCluster from './LeafletDelayedMarkerCluster.vue'
 
 import FavoriteMarker from './FavoriteMarker.vue'
 import optionsController from '../../optionsController.js'
@@ -49,7 +49,7 @@ export default {
 	components: {
 		LMarker,
 		LPopup,
-		Vue2LeafletMarkerCluster,
+		LeafletDelayedMarkerCluster,
 		NcActionButton,
 		FavoriteMarker,
 	},

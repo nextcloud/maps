@@ -20,13 +20,12 @@
  *
  */
 
-import Vue from 'vue'
+import { createApp } from 'vue'
+import { createPinia } from 'pinia'
 import PublicFavoriteShare from './views/PublicFavoriteShare.vue'
 import './bootstrap.js'
 
-import store from './store/publicFavoriteShareStore.js'
-
-new Vue({
-	render: h => h(PublicFavoriteShare),
-	store,
-}).$mount('#content')
+const pinia = createPinia()
+const app = createApp(PublicFavoriteShare)
+app.use(pinia)
+app.mount('#content')

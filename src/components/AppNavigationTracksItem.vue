@@ -44,10 +44,10 @@
 </template>
 
 <script>
-import NcAppNavigationItem from '@nextcloud/vue/dist/Components/NcAppNavigationItem.js'
-import NcActionButton from '@nextcloud/vue/dist/Components/NcActionButton.js'
+import NcAppNavigationItem from '@nextcloud/vue/components/NcAppNavigationItem'
+import NcActionButton from '@nextcloud/vue/components/NcActionButton'
 import AppNavigationTrackItem from './AppNavigationTrackItem.vue'
-import NcCounterBubble from '@nextcloud/vue/dist/Components/NcCounterBubble.js'
+import NcCounterBubble from '@nextcloud/vue/components/NcCounterBubble'
 
 import optionsController from '../optionsController.js'
 

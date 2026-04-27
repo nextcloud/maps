@@ -20,18 +20,17 @@
  *
  */
 
-import Vue from 'vue'
+import { createApp } from 'vue'
 import App from './views/App.vue'
 import './bootstrap.js'
 import optionsController from './optionsController.js'
 import './css/style.scss'
 
-import Tooltip from '@nextcloud/vue/dist/Directives/Tooltip.js'
 import { emit } from '@nextcloud/event-bus'
+import { TooltipDirective as Tooltip } from 'floating-vue'
 
 import { generateUrl } from '@nextcloud/router'
 
-// Fixing Some leaflet webpack stuff See https://vue2-leaflet.netlify.app/faq/#my-map-and-or-markers-don-t-fully-render-what-gives
 import L from 'leaflet'
 import 'lrm-graphhopper'
 import markerIcon2x from 'leaflet/dist/images/marker-icon-2x.png'
@@ -47,8 +46,6 @@ L.Icon.Default.mergeOptions({
 })
 
 // Vue
-Vue.directive('tooltip', Tooltip)
-
 // eslint-disable-next-line
 'use strict'
 
@@ -100,9 +97,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
 })
 
 function main() {
-	// eslint-disable-next-line
-	new Vue({
-		el: '#content',
-		render: h => h(App),
-	})
+	const app = createApp(App)
+	app.directive('tooltip', Tooltip)
+	app.mount('#content')
 }

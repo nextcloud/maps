@@ -24,8 +24,9 @@
 
 <script>
 import { getLocale } from '@nextcloud/l10n'
-import { LControl } from 'vue2-leaflet'
-import { isMobile } from '@nextcloud/vue'
+import { LControl } from '@vue-leaflet/vue-leaflet'
+import { useIsMobile } from '@nextcloud/vue/composables/useIsMobile'
+import { computed } from 'vue'
 
 import SearchField from './SearchField.vue'
 
@@ -37,7 +38,10 @@ export default {
 		SearchField,
 	},
 
-	mixins: [isMobile],
+	setup() {
+		const isMobile = useIsMobile()
+		return { isMobile: computed(() => isMobile.value) }
+	},
 
 	props: {
 		map: {

@@ -1,5 +1,5 @@
 <template>
-	<Vue2LeafletMarkerCluster
+	<LeafletDelayedMarkerCluster
 		ref="markerCluster"
 		:options="clusterOptions"
 		@clusterclick="onClusterClick"
@@ -62,18 +62,18 @@
 				</NcActionButton>
 			</LPopup>
 		</LMarker>
-	</Vue2LeafletMarkerCluster>
+	</LeafletDelayedMarkerCluster>
 </template>
 
 <script>
 import { generateUrl } from '@nextcloud/router'
 import moment from '@nextcloud/moment'
 import { basename } from '@nextcloud/paths'
-import NcActionButton from '@nextcloud/vue/dist/Components/NcActionButton.js'
+import NcActionButton from '@nextcloud/vue/components/NcActionButton'
 
 import L from 'leaflet'
-import { LMarker, LTooltip, LPopup } from 'vue2-leaflet'
-import Vue2LeafletMarkerCluster from 'vue2-leaflet-markercluster'
+import { LMarker, LTooltip, LPopup } from '@vue-leaflet/vue-leaflet'
+import LeafletDelayedMarkerCluster from './LeafletDelayedMarkerCluster.vue'
 
 import optionsController from '../../optionsController.js'
 import { binSearch, getToken, isPublic } from '../../utils/common.js'
@@ -83,7 +83,7 @@ const PHOTO_MARKER_VIEW_SIZE = 40
 export default {
 	name: 'PhotosLayer',
 	components: {
-		Vue2LeafletMarkerCluster,
+		LeafletDelayedMarkerCluster,
 		LMarker,
 		LTooltip,
 		LPopup,

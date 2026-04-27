@@ -39,10 +39,10 @@
 </template>
 
 <script>
-import NcActionButton from '@nextcloud/vue/dist/Components/NcActionButton.js'
+import NcActionButton from '@nextcloud/vue/components/NcActionButton'
 
 import L from 'leaflet'
-import { LMarker, LTooltip, LPopup } from 'vue2-leaflet'
+import { LMarker, LTooltip, LPopup } from '@vue-leaflet/vue-leaflet'
 import { isPublic } from '../../utils/common'
 
 export default {

@@ -45,7 +45,7 @@
 				:options="activeLayer.options"
 				:opacity="activeLayer.type === 'overlay' ? activeLayer.opacity : 1" />
 
-			<LMarkerCluster
+			<LeafletDelayedMarkerCluster
 				v-for="categoryKey in Object.keys(favoriteCategories)"
 				:key="categoryKey"
 				:options="{
@@ -70,7 +70,7 @@
 							@update-favorite="emitUpdateFavoriteEvent" />
 					</LPopup>
 				</LMarker>
-			</LMarkerCluster>
+			</LeafletDelayedMarkerCluster>
 
 			<LFeatureGroup @ready="onFeatureGroupReady">
 				<LPopup :lat-lng="placePopup.latLng">
@@ -91,14 +91,14 @@
 import { DivIcon, latLngBounds } from 'leaflet'
 import VueTypes from 'vue-types'
 
-import { LControlScale, LControlZoom, LFeatureGroup, LMap, LMarker, LPopup, LTileLayer } from 'vue2-leaflet'
-import LMarkerCluster from 'vue2-leaflet-markercluster'
+import { LControlScale, LControlZoom, LFeatureGroup, LMap, LMarker, LPopup, LTileLayer } from '@vue-leaflet/vue-leaflet'
+import LeafletDelayedMarkerCluster from './map/LeafletDelayedMarkerCluster.vue'
 
-import { mapActions, mapState } from 'vuex'
+import { usePublicFavoritesStore } from '../store/publicFavoritesStore.pinia.js'
+import { computed } from 'vue'
 import ClickPopup from './map/ClickPopup.vue'
 import FavoritePopup from './map/FavoritePopup.vue'
 import { isPublicShare } from '../utils/common.js'
-import { PUBLIC_FAVORITES_NAMESPACE } from '../store/modules/publicFavorites.js'
 import { LayerIds, Layers } from '../data/mapLayers.js'
 import { getThemingColorFromCategoryKey } from '../utils/favoritesUtils.js'
 import { getShouldMapUseImperial } from '../utils/mapUtils.js'
@@ -114,7 +114,7 @@ export default {
 		LMap,
 		LFeatureGroup,
 		LMarker,
-		LMarkerCluster,
+		LeafletDelayedMarkerCluster,
 		LTileLayer,
 		LPopup,
 		FavoritePopup,
@@ -126,6 +126,17 @@ export default {
 		favoriteCategories: VueTypes.object.isRequired.def({}),
 		isPublicShare: VueTypes.bool.isRequired.def(false),
 		allowFavoriteEdits: VueTypes.bool.def(false),
+	},
+
+	setup() {
+		const publicFavoritesStore = usePublicFavoritesStore()
+		return {
+			selectedFavoriteId: computed(() => isPublicShare() ? publicFavoritesStore.selectedFavoriteId : null),
+			selectedFavorite: computed(() => isPublicShare()
+				? publicFavoritesStore.favorites.find(f => f.id === publicFavoritesStore.selectedFavoriteId)
+				: null),
+			selectFavorite: (id) => publicFavoritesStore.selectFavorite(id),
+		}
 	},
 
 	data() {
@@ -164,20 +175,6 @@ export default {
 	},
 
 	computed: {
-		...mapState({
-			selectedFavoriteId: state =>
-				isPublicShare()
-					? state[PUBLIC_FAVORITES_NAMESPACE].selectedFavoriteId
-					: null,
-			selectedFavorite: state =>
-				isPublicShare()
-					? state[PUBLIC_FAVORITES_NAMESPACE].favorites.find(
-						favorite =>
-							favorite.id
-							=== state[PUBLIC_FAVORITES_NAMESPACE].selectedFavoriteId,
-					)
-					: null,
-		}),
 		layers() {
 			return Layers
 		},
@@ -218,10 +215,6 @@ export default {
 	},
 
 	methods: {
-		...mapActions({
-			selectFavorite: `${PUBLIC_FAVORITES_NAMESPACE}/selectFavorite`,
-		}),
-
 		setMapView(latLng, zoom) {
 			this.$refs.map.mapObject.setView(latLng, zoom)
 		},

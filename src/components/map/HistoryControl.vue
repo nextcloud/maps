@@ -19,7 +19,7 @@
 </template>
 
 <script>
-import { LControl } from 'vue2-leaflet'
+import { LControl } from '@vue-leaflet/vue-leaflet'
 
 export default {
 	name: 'HistoryControl',

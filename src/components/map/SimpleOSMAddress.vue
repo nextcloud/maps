@@ -31,78 +31,74 @@
 	</div>
 </template>
 
-<script>
-import Types from '../../data/types'
+<script setup>
+import { computed } from 'vue'
+import { t } from '@nextcloud/l10n'
 
-export default {
-	name: 'SimpleOSMAddress',
-
-	props: {
-		geocodeObject: Types.OSMGeoCodeResult.def({}),
+const props = defineProps({
+	geocodeObject: {
+		type: Object,
+		default: null,
 	},
+})
 
-	computed: {
-		loading() {
-			return !this.geocodeObject
+const loading = computed(() => !props.geocodeObject)
+
+const addressLines = computed(() => {
+	if (!props.geocodeObject) {
+		return []
+	}
+
+	if (typeof props.geocodeObject.error !== 'undefined') {
+		return [t('maps', 'Unknown Place')]
+	}
+
+	const {
+		address: {
+			country,
+			postcode,
+			village,
+			pedestrian,
+			county,
+			state,
+			city,
+			house_number: houseNumber,
+			road,
 		},
+	} = props.geocodeObject
 
-		addressLines() {
-			if (!this.geocodeObject) {
-				return []
-			}
+	const lines = []
 
-			if (typeof this.geocodeObject.error !== 'undefined') {
-				return [t('maps', 'Unknown Place')]
-			}
+	if (road) {
+		lines.push(`${road} ${houseNumber || ''}`)
+	} else if (pedestrian) {
+		lines.push(`${pedestrian} ${houseNumber || ''}`)
+	}
 
-			const {
-				address: {
-					country,
-					postcode,
-					village,
-					pedestrian,
-					county,
-					state,
-					city,
-					house_number: houseNumber,
-					road,
-				},
-			} = this.geocodeObject
+	if (city) {
+		lines.push(`${postcode ? postcode + ' ' : ''}${city}`)
+	} else if (village) {
+		lines.push(`${postcode ? postcode + ' ' : ''}${village}`)
+	}
 
-			const lines = []
+	if (county) {
+		lines.push(`${county}`)
+	}
 
-			if (road) {
-				lines.push(`${road} ${houseNumber || ''}`)
-			} else if (pedestrian) {
-				lines.push(`${pedestrian} ${houseNumber || ''}`)
-			}
+	if (state) {
+		lines.push(`${state}`)
+	}
 
-			if (city) {
-				lines.push(`${postcode ? postcode + ' ' : ''}${city}`)
-			} else if (village) {
-				lines.push(`${postcode ? postcode + ' ' : ''}${village}`)
-			}
+	if (country) {
+		lines.push(country)
+	}
 
-			if (county) {
-				lines.push(`${county}`)
-			}
+	if (lines.length === 0) {
+		return [t('maps', 'Unknown Place')]
+	}
 
-			if (state) {
-				lines.push(`${state}`)
-			}
-
-			if (country) {
-				lines.push(country)
-			}
-
-			if (lines.length === 0) {
-				return [t('maps', 'Unknown Place')]
-			}
-
-			return lines
-		},
-	},
-}
+	return lines
+})
 </script>
 
 <style scoped lang="scss">

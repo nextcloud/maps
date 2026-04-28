@@ -12,78 +12,60 @@
   -
   - This program is distributed in the hope that it will be useful,
   - but WITHOUT ANY WARRANTY; without even the implied warranty of
-  - MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  - MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
   - GNU Affero General Public License for more details.
   -
   - You should have received a copy of the GNU Affero General Public License
   - along with this program. If not, see <http://www.gnu.org/licenses/>.
   -
   -->
-
-<template>
-	<TrackSidebarMetadataTab v-if="track"
-		:track="track" />
-</template>
-
 <script setup>
-import { ref } from 'vue'
+import { ref, watch } from 'vue'
 import TrackSidebarMetadataTab from '../components/TrackMetadataTab.vue'
 import * as network from '../network.js'
 import { processGpx } from '../tracksUtils.js'
 import { getToken } from '../utils/common.js'
 
-const error = ref('')
-const loading = ref(false)
+const props = defineProps({
+	node: {
+		type: Object,
+		default: null,
+	},
+	active: {
+		type: Boolean,
+		default: false,
+	},
+})
+
 const track = ref(null)
+const loading = ref(false)
 
-async function update(trackFileId) {
-	getTrack(trackFileId)
-}
-
-function getTrack(trackFileId) {
+async function loadTrack(fileId) {
+	if (!fileId) return
 	loading.value = true
-	const t = {}
-	network.getTrack(trackFileId, null, true, getToken()).then((response) => {
-		if (!t.metadata) {
-			try {
-				t.metadata = JSON.parse(response.data.metadata)
-			} catch (err) {
-				console.error('Failed to parse track metadata')
-			}
+	track.value = null
+	try {
+		const response = await network.getTrack(fileId, null, true, getToken())
+		const t = {}
+		try {
+			t.metadata = JSON.parse(response.data.metadata)
+		} catch (e) {
+			console.error('Failed to parse track metadata')
 		}
 		t.data = processGpx(response.data.content)
 		track.value = t
-	}).catch((err) => {
-		console.error(err)
-		error.value = err
-	}).then(() => {
-		t.loading = false
-	})
+	} catch (error) {
+		console.error('Error loading track metadata', error)
+	} finally {
+		loading.value = false
+	}
 }
 
-function onScrollBottomReached() {}
-
-function resetState() {
-	error.value = ''
-	loading.value = false
-	track.value = null
-}
-
-defineExpose({ update, onScrollBottomReached, resetState })
+watch(() => props.node?.fileid, (fileId) => {
+	loadTrack(fileId)
+}, { immediate: true })
 </script>
 
-<style lang="scss" scoped>
-.comments {
-	// Do not add emptycontent top margin
-	&__error{
-		margin-top: 0;
-	}
-
-	&__info {
-		height: 60px;
-		color: var(--color-text-maxcontrast);
-		text-align: center;
-		line-height: 60px;
-	}
-}
-</style>
+<template>
+	<TrackSidebarMetadataTab v-if="track" :track="track" />
+</template>

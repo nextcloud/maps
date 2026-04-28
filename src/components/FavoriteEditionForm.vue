@@ -1,252 +1,182 @@
 <template>
 	<div class="favorite-edition">
 		<div class="favorite-form">
-			<span class="icon icon-favorite" />
-			<input
+			<NcTextField
 				v-model="name"
-				type="text"
-				:placeholder="namePH"
+				:label="t('maps', 'Name')"
+				:placeholder="t('maps', 'Favorite name')"
 				:readonly="!favorite.isUpdateable">
-			<span class="icon icon-category-organization" />
+				<template #icon>
+					<StarIcon :size="20" />
+				</template>
+			</NcTextField>
+
 			<NcSelect v-if="favorite.isUpdateable"
-				ref="select"
 				v-model="selectedCategory"
-				class="category-select"
 				label="label"
-				track-by="multiselectKey"
-				:auto-limit="false"
-				:limit="8"
-				:options-limit="8"
-				:max-height="8 * 45"
-				:clear-on-select="false"
-				:preserve-search="false"
-				:placeholder="categoryPH"
+				:placeholder="t('maps', 'Category')"
 				:options="formattedCategories"
-				:user-select="false"
-				@input="onCategorySelected"
+				:limit="8"
 				@search="onSearchChange">
 				<template #singleLabel="{ option }">
-					<div class="single-label">
-						{{ option ? option.catid : '' }}
-					</div>
+					{{ option ? option.catid : '' }}
 				</template>
 			</NcSelect>
-			<input v-else
-				v-model="selectedCategory.catid"
-				type="text"
-				:placeholder="namePH"
-				:readonly="!favorite.isUpdateable">
-			<span class="icon icon-comment" />
-			<textarea v-model="comment"
-				:placeholder="commentPH"
-				:readonly="!favorite.isUpdateable"
-				rows="1"
-				style="resize: vertical;" />
-			<span class="icon icon-address" />
-			<input
+			<NcTextField v-else
+				:model-value="selectedCategory.catid"
+				:label="t('maps', 'Category')"
+				readonly>
+				<template #icon>
+					<LabelOutlineIcon :size="20" />
+				</template>
+			</NcTextField>
+
+			<NcTextArea
+				v-model="comment"
+				:label="t('maps', 'Comment')"
+				:placeholder="t('maps', 'Comment')"
+				resize="vertical"
+				:readonly="!favorite.isUpdateable" />
+
+			<NcTextField
 				v-model="location"
-				type="text"
-				:placeholder="locationPH"
+				:label="t('maps', 'Location')"
+				:placeholder="t('maps', 'Location')"
 				:readonly="!favorite.isUpdateable">
+				<template #icon>
+					<MapMarkerOutlineIcon :size="20" />
+				</template>
+			</NcTextField>
 		</div>
 		<div class="buttons">
 			<NcButton
 				:disabled="!favorite.isUpdateable"
-				native-type="submit"
-				type="primary"
+				variant="primary"
 				@click="onOkClick">
-				<template>
-					{{ t('maps', 'Save') }}
+				<template #icon>
+					<ContentSaveIcon :size="20" />
 				</template>
+				{{ t('maps', 'Save') }}
 			</NcButton>
 			<NcButton :disabled="!favorite.isUpdateable"
 				@click="onDeleteClick">
-				<template>
-					{{ t('maps', 'Delete') }}
+				<template #icon>
+					<TrashCanIcon :size="20" />
 				</template>
+				{{ t('maps', 'Delete') }}
 			</NcButton>
 		</div>
 	</div>
 </template>
 
-<script>
-import NcSelect from '@nextcloud/vue/components/NcSelect'
+<script setup>
+import { ref, computed, watch } from 'vue'
+import { t } from '@nextcloud/l10n'
 import NcButton from '@nextcloud/vue/components/NcButton'
+import NcSelect from '@nextcloud/vue/components/NcSelect'
+import NcTextArea from '@nextcloud/vue/components/NcTextArea'
+import NcTextField from '@nextcloud/vue/components/NcTextField'
+import LabelOutlineIcon from 'vue-material-design-icons/LabelOutline.vue'
+import MapMarkerOutlineIcon from 'vue-material-design-icons/MapMarkerOutline.vue'
+import StarIcon from 'vue-material-design-icons/Star.vue'
+import ContentSaveIcon from 'vue-material-design-icons/ContentSave.vue'
+import TrashCanIcon from 'vue-material-design-icons/TrashCan.vue'
 
-export default {
-	name: 'FavoriteEditionForm',
-
-	components: {
-		NcSelect,
-		NcButton,
+const props = defineProps({
+	favorite: {
+		type: Object,
+		required: true,
 	},
-
-	props: {
-		favorite: {
-			type: Object,
-			required: true,
-		},
-		categories: {
-			type: Object,
-			required: true,
-		},
+	categories: {
+		type: Object,
+		required: true,
 	},
+})
 
-	data() {
-		return {
-			name: this.favorite.name,
-			category: this.favorite.category,
-			comment: this.favorite.comment,
-			lat: this.favorite.lat,
-			lng: this.favorite.lng,
-			namePH: t('maps', 'Favorite name'),
-			categoryPH: t('maps', 'Category'),
-			commentPH: t('maps', 'Comment'),
-			locationPH: t('maps', 'Location'),
-			newCategoryOption: null,
-			selectedCategory: {
-				label: this.favorite.category,
-				catid: this.favorite.category,
-				multiselectKey: this.favorite.category,
-			},
+const emit = defineEmits(['edit', 'delete'])
+
+const name = ref(props.favorite.name ?? '')
+const category = ref(props.favorite.category)
+const comment = ref(props.favorite.comment)
+const lat = ref(props.favorite.lat)
+const lng = ref(props.favorite.lng)
+const newCategoryOption = ref(null)
+const selectedCategory = ref({
+	label: props.favorite.category,
+	catid: props.favorite.category,
+})
+
+const location = computed({
+	get: () => `${lat.value},${lng.value}`,
+	set: (value) => {
+		const [newLat, newLng] = value.split(',')
+		lat.value = newLat
+		lng.value = newLng
+	},
+})
+
+const formattedCategories = computed(() => {
+	const options = Object.values(props.categories).map((c) => ({
+		label: c.name,
+		catid: c.name,
+	}))
+	return newCategoryOption.value ? [newCategoryOption.value, ...options] : options
+})
+
+watch(() => props.favorite, () => {
+	name.value = props.favorite.name
+	category.value = props.favorite.category
+	selectedCategory.value = { label: props.favorite.category, catid: props.favorite.category }
+	comment.value = props.favorite.comment
+	lat.value = props.favorite.lat
+	lng.value = props.favorite.lng
+}, { deep: true })
+
+watch(selectedCategory, (option) => {
+	category.value = option ? option.catid : ''
+})
+
+function onSearchChange(query) {
+	if (query === '' || Object.keys(props.categories).includes(query)) {
+		newCategoryOption.value = null
+	} else {
+		newCategoryOption.value = {
+			label: t('maps', 'New category {n}', { n: query }),
+			catid: query,
 		}
-	},
+	}
+}
 
-	computed: {
-		formattedCategories() {
-			const categoryOptions = Object.values(this.categories).map((c) => {
-				return {
-					label: c.name,
-					catid: c.name,
-					multiselectKey: c.name,
-				}
-			})
-			return this.newCategoryOption
-				? [this.newCategoryOption, ...categoryOptions]
-				: categoryOptions
-		},
-		location: {
-			get() {
-				return `${this.lat},${this.lng}`
-			},
-			set(value) {
-				const [lat, lng] = value.split(',')
-				this.lat = lat
-				this.lng = lng
-			},
-		},
-	},
+function onOkClick() {
+	emit('edit', {
+		...props.favorite,
+		name: name.value,
+		category: category.value,
+		comment: comment.value,
+		lat: lat.value,
+		lng: lng.value,
+	})
+}
 
-	watch: {
-		favorite: {
-			handler() {
-				this.reset()
-			},
-			deep: true,
-		},
-	},
-
-	methods: {
-		reset() {
-			// reset form values to favorites values
-			this.name = this.favorite.name
-			this.category = this.favorite.category
-			this.selectedCategory = {
-				label: this.favorite.category,
-				catid: this.favorite.category,
-				multiselectKey: this.favorite.category,
-			}
-			this.comment = this.favorite.comment
-			this.lat = this.favorite.lat
-			this.lng = this.favorite.lng
-		},
-		onSearchChange(query) {
-			if (query === '' || Object.keys(this.categories).includes(query)) {
-				this.newCategoryOption = null
-			} else {
-				this.newCategoryOption = {
-					label: t('maps', 'New category {n}', { n: query }),
-					catid: query,
-					multiselectKey: query,
-				}
-			}
-		},
-		onCategorySelected(option) {
-			this.category = option ? option.catid : ''
-		},
-		onOkClick() {
-			const editedFav = {
-				...this.favorite,
-				name: this.name,
-				category: this.category,
-				comment: this.comment,
-				lat: this.lat,
-				lng: this.lng,
-			}
-			this.$emit('edit', editedFav)
-		},
-		onDeleteClick() {
-			this.$emit('delete', this.favorite.id)
-		},
-	},
+function onDeleteClick() {
+	emit('delete', props.favorite.id)
 }
 </script>
 
 <style lang="scss" scoped>
-.multiselect {
-	min-width: 0px;
-}
-
 .favorite-form {
-	display: grid;
-	grid-template: 1fr / 40px 1fr;
-
-	input {
-		height: auto !important;
-	}
-
-	input,
-	textarea {
-		width: 100%;
-		padding: 12px 10px;
-	}
-
-	span,
-	input,
-	textarea,
-	.multiselect {
-		margin-top: 10px;
-	}
-}
-
-::v-deep .multiselect__tags {
-	border: 2px solid var(--color-border-maxcontrast) !important;
-
-	.multiselect__single {
-		color: var(--color-main-text) !important;
-	}
-
-	&:hover {
-		border-color: var(--color-primary-element) !important;
-	}
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
 }
 
 .buttons {
-	margin-top: 20px;
+	display: flex;
+	gap: 8px;
+	margin-top: 16px;
 
 	button {
-		width: 100%;
-		margin: 0px 5px !important;
-	}
-}
-
-.favorite-edition {
-	.buttons {
-		display: flex;
-		button {
-			margin-left: auto;
-			margin-right: auto;
-		}
+		flex: 1;
 	}
 }
 </style>

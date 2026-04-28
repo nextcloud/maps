@@ -36,58 +36,53 @@
 	</NcAppNavigationItem>
 </template>
 
-<script>
+<script setup>
 import NcAppNavigationItem from '@nextcloud/vue/components/NcAppNavigationItem'
 import NcActionButton from '@nextcloud/vue/components/NcActionButton'
-import AppNavigationMyMapItem from './AppNavigationMyMapItem.vue'
-import optionsController from '../optionsController.js'
 import NcCounterBubble from '@nextcloud/vue/components/NcCounterBubble'
+import AppNavigationMyMapItem from './AppNavigationMyMapItem.vue'
+import { t } from '@nextcloud/l10n'
+import { ref } from 'vue'
+import optionsController from '../optionsController.js'
 
-export default {
-	name: 'AppNavigationMyMapsItem',
-
-	components: {
-		NcAppNavigationItem,
-		NcActionButton,
-		AppNavigationMyMapItem,
-		NcCounterBubble,
+const props = defineProps({
+	enabled: {
+		type: Boolean,
+		required: true,
 	},
-
-	props: {
-		enabled: {
-			type: Boolean,
-			required: true,
-		},
-		loading: {
-			type: Boolean,
-			default: false,
-		},
-		myMaps: {
-			type: Array,
-			required: true,
-		},
+	loading: {
+		type: Boolean,
+		default: false,
 	},
-
-	data() {
-		return {
-			open: optionsController.myMapListShow,
-			currentMap: optionsController.myMapId,
-		}
+	myMaps: {
+		type: Array,
+		required: true,
 	},
+})
 
-	methods: {
-		onClick() {
-			if (!this.enabled && !this.open) {
-				this.open = true
-				optionsController.saveOptionValues({ myMapListShow: 'true' })
-			}
-			this.$emit('my-maps-clicked')
-		},
-		onUpdateOpen(isOpen) {
-			this.open = isOpen
-			optionsController.saveOptionValues({ myMapListShow: isOpen ? 'true' : 'false' })
-		},
-	},
+const emit = defineEmits([
+	'my-maps-clicked',
+	'add',
+	'my-map-clicked',
+	'rename',
+	'delete',
+	'share',
+	'color',
+])
+
+const open = ref(optionsController.myMapListShow)
+
+function onClick() {
+	if (!props.enabled && !open.value) {
+		open.value = true
+		optionsController.saveOptionValues({ myMapListShow: 'true' })
+	}
+	emit('my-maps-clicked')
+}
+
+function onUpdateOpen(isOpen) {
+	open.value = isOpen
+	optionsController.saveOptionValues({ myMapListShow: isOpen ? 'true' : 'false' })
 }
 </script>
 

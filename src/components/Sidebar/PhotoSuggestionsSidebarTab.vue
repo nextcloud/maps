@@ -157,8 +157,9 @@
 	</div>
 </template>
 
-<script>
-
+<script setup>
+import { ref, computed } from 'vue'
+import { t } from '@nextcloud/l10n'
 import { generateUrl } from '@nextcloud/router'
 import moment from '@nextcloud/moment'
 import NcButton from '@nextcloud/vue/components/NcButton'
@@ -168,137 +169,124 @@ import NcCounterBubble from '@nextcloud/vue/components/NcCounterBubble'
 import NcAppNavigationItem from '@nextcloud/vue/components/NcAppNavigationItem'
 import NcAppNavigationSettings from '@nextcloud/vue/components/NcAppNavigationSettings'
 import NcActionButton from '@nextcloud/vue/components/NcActionButton'
-
-import { getToken } from '../../utils/common.js'
 import NcTimezonePicker from '@nextcloud/vue/components/NcTimezonePicker'
 import PhotoSideBarTabTrackItem from './PhotoSideBarTabTrackItem.vue'
 import PhotoSideBarTabDeviceItem from './PhotoSideBarTabDeviceItem.vue'
+import { getToken } from '../../utils/common.js'
 
-export default {
-	name: 'PhotoSuggestionsSidebarTab',
-
-	components: {
-		NcButton,
-		NcActions,
-		NcActionButton,
-		NcListItem,
-		NcTimezonePicker,
-		NcCounterBubble,
-		PhotoSideBarTabTrackItem,
-		PhotoSideBarTabDeviceItem,
-		NcAppNavigationItem,
-		NcAppNavigationSettings,
+const props = defineProps({
+	photoSuggestions: {
+		required: true,
+		type: Array,
 	},
-
-	props: {
-		photoSuggestions: {
-			required: true,
-			type: Array,
-		},
-		photoSuggestionsTracksAndDevices: {
-			required: true,
-			type: Object,
-		},
-		photoSuggestionsSelectedIndices: {
-			required: true,
-			type: Array,
-		},
-		photoSuggestionsHidePhotos: {
-			type: Boolean,
-			default: false,
-		},
-		photoSuggestionsTimezone: {
-			required: true,
-			type: String,
-		},
-		loading: {
-			required: true,
-			type: Boolean,
-		},
+	photoSuggestionsTracksAndDevices: {
+		required: true,
+		type: Object,
 	},
+	photoSuggestionsSelectedIndices: {
+		required: true,
+		type: Array,
+	},
+	photoSuggestionsHidePhotos: {
+		type: Boolean,
+		default: false,
+	},
+	photoSuggestionsTimezone: {
+		required: true,
+		type: String,
+	},
+	loading: {
+		required: true,
+		type: Boolean,
+	},
+})
 
-	data() {
-		return {
-			selectionLayout: 'list',
-			tracksOpen: false,
-			devicesOpen: false,
-			openTracks: {},
+const emit = defineEmits([
+	'load-more', 'change-timezone', 'select-all', 'clear-selection', 'cancel',
+	'toggle-hide-photos', 'save', 'zoom', 'toggle-track-or-device',
+	'tracks-clicked', 'devices-clicked',
+])
+
+const selectionLayout = ref('list')
+const tracksOpen = ref(false)
+const devicesOpen = ref(false)
+const openTracks = ref({})
+
+const photoSuggestionsSelected = computed(() =>
+	props.photoSuggestionsSelectedIndices.reduce((filtered, i) => {
+		const p = props.photoSuggestions[i]
+		if (p) {
+			p.photoSuggestionsIndex = i
+			filtered.push(p)
 		}
-	},
+		return filtered
+	}, []),
+)
 
-	computed: {
-		photoSuggestionsSelected() {
-			return this.photoSuggestionsSelectedIndices.reduce((filtered, i) => {
-				const p = this.photoSuggestions[i]
-				if (p) {
-					p.photoSuggestionsIndex = i
-					filtered.push(p)
-				}
-				return filtered
-			}, [])
-		},
-		readOnly() {
-			return !this.photoSuggestions.some((f) => (f.isUpdateable))
-		},
-		tracks() {
-			const f = Object.values(this.photoSuggestionsTracksAndDevices).reduce((filtered, v) => {
-				if (v.key.startsWith('track') && v.visible && !filtered[v.id]) {
-					if (!filtered[v.id]) {
-						v.open = !!this.openTracks[v.id]
-						filtered[v.id] = v
-					} else {
-						filtered[v.id].suggestionCount += v.suggestionCount
-					}
-				}
-				return filtered
-			}, {})
-			return Object.values(f)
-		},
-		devices() {
-			return Object.values(this.photoSuggestionsTracksAndDevices).filter((v) => { return v.key.startsWith('device') && v.visible })
-		},
-	},
+const readOnly = computed(() => !props.photoSuggestions.some((f) => f.isUpdateable))
 
-	methods: {
-		onTracksClick() {
-			this.tracksOpen = !this.tracksOpen
-			this.$emit('tracks-clicked')
-		},
-		onUpdateTracksOpen(isOpen) {
-			this.tracksOpen = isOpen
-		},
-		onSubTrackClick(t) {
-			this.$emit('toggle-track-or-device', t)
-		},
-		onDevicesClick() {
-			this.devicesOpen = !this.devicesOpen
-			this.$emit('devices-clicked')
-		},
-		onUpdateDevicesOpen(isOpen) {
-			this.devicesOpen = isOpen
-		},
-		previewUrl(photo) {
-			if (photo && photo.hasPreview) {
-				const token = getToken()
-				return token
-					? generateUrl('apps/files_sharing/publicpreview/') + token + '?file=' + encodeURIComponent(photo.path) + '&x=341&y=256&a=1'
-					: generateUrl('core') + '/preview?fileId=' + photo.fileId + '&x=341&y=256&a=1'
-			} else {
-				return generateUrl('/apps/theming/img/core/filetypes') + '/image.svg?v=2'
-			}
-		},
-		getPhotoFormattedDate(photo) {
-			return moment.unix(photo.dateTaken).format('L')
-		},
-		onListItemClick(photo) {
-			if (OCA.Viewer && OCA.Viewer.open) {
-				OCA.Viewer.open({ path: photo.path, list: this.photoSuggestionsSelected })
-			}
-		},
-		subtracks(t) {
-			return Object.values(this.photoSuggestionsTracksAndDevices).filter((v) => { return v.key.startsWith('track:'.concat(t.id)) && v.visible })
-		},
-	},
+const tracks = computed(() => {
+	const f = Object.values(props.photoSuggestionsTracksAndDevices).reduce((filtered, v) => {
+		if (v.key.startsWith('track') && v.visible && !filtered[v.id]) {
+			v.open = !!openTracks.value[v.id]
+			filtered[v.id] = v
+		} else if (v.key.startsWith('track') && v.visible && filtered[v.id]) {
+			filtered[v.id].suggestionCount += v.suggestionCount
+		}
+		return filtered
+	}, {})
+	return Object.values(f)
+})
+
+const devices = computed(() =>
+	Object.values(props.photoSuggestionsTracksAndDevices).filter((v) => v.key.startsWith('device') && v.visible),
+)
+
+function onTracksClick() {
+	tracksOpen.value = !tracksOpen.value
+	emit('tracks-clicked')
+}
+
+function onUpdateTracksOpen(isOpen) {
+	tracksOpen.value = isOpen
+}
+
+function onSubTrackClick(t) {
+	emit('toggle-track-or-device', t)
+}
+
+function onDevicesClick() {
+	devicesOpen.value = !devicesOpen.value
+	emit('devices-clicked')
+}
+
+function onUpdateDevicesOpen(isOpen) {
+	devicesOpen.value = isOpen
+}
+
+function previewUrl(photo) {
+	if (photo && photo.hasPreview) {
+		const token = getToken()
+		return token
+			? generateUrl('apps/files_sharing/publicpreview/') + token + '?file=' + encodeURIComponent(photo.path) + '&x=341&y=256&a=1'
+			: generateUrl('core') + '/preview?fileId=' + photo.fileId + '&x=341&y=256&a=1'
+	} else {
+		return generateUrl('/apps/theming/img/core/filetypes') + '/image.svg?v=2'
+	}
+}
+
+function getPhotoFormattedDate(photo) {
+	return moment.unix(photo.dateTaken).format('L')
+}
+
+function onListItemClick(photo) {
+	if (OCA.Viewer && OCA.Viewer.open) {
+		OCA.Viewer.open({ path: photo.path, list: photoSuggestionsSelected.value })
+	}
+}
+
+function subtracks(tr) {
+	return Object.values(props.photoSuggestionsTracksAndDevices).filter((v) => v.key.startsWith('track:'.concat(tr.id)) && v.visible)
 }
 </script>
 

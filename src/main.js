@@ -26,7 +26,6 @@ import './bootstrap.js'
 import optionsController from './optionsController.js'
 import './css/style.scss'
 
-import { emit } from '@nextcloud/event-bus'
 import { TooltipDirective as Tooltip } from 'floating-vue'
 
 import { generateUrl } from '@nextcloud/router'
@@ -51,28 +50,6 @@ window.OCA.Maps.registerMapsAction = ({ label, callback, icon }) => {
 	}
 
 	window.OCA.Maps.mapActions.push(mapAction)
-}
-
-// SIDEBAR
-if (!window.OCA.Files) {
-	window.OCA.Files = {}
-}
-// register unused client for the sidebar to have access to its parser methods
-if (!window.OCA.Files.Sidebar) {
-	Object.assign(window.OCA.Files, {
-		Sidebar: {
-			state: {
-				file: '',
-			},
-			open: (path) => {
-				emit('files:sidebar:opened')
-			},
-			close: () => {
-				emit('files:sidebar:closed')
-			},
-			setFullScreenMode: () => {}, // SIDEBARFULLSCREEN,
-		},
-	}, window.OCA.Files)
 }
 
 if (window.navigator.registerProtocolHandler) {

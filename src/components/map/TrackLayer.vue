@@ -58,189 +58,153 @@
 	</template>
 </template>
 
-<script>
-import {
-	MglMarker,
-	MglPopup,
-	MglGeoJsonSource,
-	MglLineLayer,
-} from '@indoorequal/vue-maplibre-gl'
-
+<script setup>
+import { ref, computed } from 'vue'
+import { t } from '@nextcloud/l10n'
+import { MglMarker, MglPopup, MglGeoJsonSource, MglLineLayer } from '@indoorequal/vue-maplibre-gl'
 import NcActionButton from '@nextcloud/vue/components/NcActionButton'
 import NcActionLink from '@nextcloud/vue/components/NcActionLink'
 import moment from '@nextcloud/moment'
 import { generateUrl } from '@nextcloud/router'
 import { getRemoteURL, getRootPath } from '@nextcloud/files/dav'
-
-import optionsController from '../../optionsController.js'
 import { binSearch, isPublic, getToken } from '../../utils/common.js'
 
-export default {
-	name: 'TrackLayer',
-	components: {
-		MglMarker,
-		MglPopup,
-		MglGeoJsonSource,
-		MglLineLayer,
-		NcActionButton,
-		NcActionLink,
+const props = defineProps({
+	track: {
+		type: Object,
+		required: true,
 	},
-
-	props: {
-		track: {
-			type: Object,
-			required: true,
-		},
-		start: {
-			type: Number,
-			required: false,
-			default: 0,
-		},
-		end: {
-			type: Number,
-			required: false,
-			default: moment().unix(),
-		},
+	start: {
+		type: Number,
+		default: 0,
 	},
-
-	data() {
-		return {
-			optionValues: optionsController.optionValues,
-			showPopup: false,
-		}
+	end: {
+		type: Number,
+		default: () => moment().unix(),
 	},
+})
 
-	computed: {
-		isPublicVal() {
-			return isPublic()
-		},
-		downloadTrackUrl() {
-			return getRemoteURL() + getRootPath() + this.track.file_path
-		},
-		downloadTrackShareUrl() {
-			return generateUrl('s/' + getToken() + '/download' + '?path=/&files=' + this.track.file_name)
-		},
-		dateBegin() {
-			return this.track.metadata?.begin
-				? moment.unix(this.track.metadata.begin).format('LLL')
-				: ''
-		},
-		lines() {
-			const trkSegments = []
-			if ((this.metadata?.begin && this.metadata?.begin > 0 && this.track.metadata.begin >= this.end) || (this.track.metadata?.end && this.track.metadata?.end > 0 && this.track.metadata?.end <= this.start)) {
-				return [...this.track.data.routes, trkSegments]
-			} else if ((!this.track.metadata?.begin || this.metadata?.begin < 0 || this.track.metadata?.begin >= this.start) && (!this.track.metadata?.end || !this.track.metadata?.end < 0 || this.track.metadata?.end <= this.end)) {
-				this.track.data.tracks.forEach((trk) => {
-					trk.segments.forEach((segment) => {
-						trkSegments.push({ ...segment, name: trk.name })
-					})
-				})
-			} else {
-				this.track.data.tracks.forEach((trk) => {
-					trk.segments.forEach((segment) => {
-						const lastNullIndex = binSearch(segment.points, (p) => !p.timestamp)
-						const firstShownIndex = binSearch(segment.points, (p) => (p.timestamp || -1) < this.start) + 1
-						const lastShownIndex = binSearch(segment.points, (p) => (p.timestamp || -1) < this.end)
-						const points = [
-							...segment.points.slice(0, lastNullIndex + 1),
-							...segment.points.slice(firstShownIndex, lastShownIndex + 1),
-						]
-						trkSegments.push({ ...segment, name: trk.name, points })
-					})
-				})
-			}
-			return [...this.track.data.routes, ...trkSegments]
-		},
-		color() {
-			return this.track.color || '#0082c9'
-		},
-		firstPoint() {
-			let firstPoint = null
-			if (this.track.data.tracks.length > 0
-				&& this.track.data.tracks[0].segments.length > 0
-				&& this.track.data.tracks[0].segments[0].points.length > 0) {
-				firstPoint = this.track.data.tracks[0].segments[0].points[0]
-			}
-			if (this.track.data.routes.length > 0
-				&& this.track.data.routes[0].points.length > 0
-				&& (firstPoint === null
-					|| (!firstPoint.timestamp && this.track.data.routes[0].points[0].timestamp)
-					|| (this.track.data.routes[0].points[0].timestamp && firstPoint.timestamp
-						&& this.track.data.routes[0].points[0].timestamp < firstPoint.timestamp))) {
-				firstPoint = this.track.data.routes[0].points[0]
-			}
-			if (this.track.data.waypoints.length > 0
-				&& (firstPoint === null
-					|| (!firstPoint.timestamp && this.track.data.waypoints[0].timestamp)
-					|| (this.track.data.waypoints[0].timestamp && firstPoint.timestamp
-						&& this.track.data.waypoints[0].timestamp < firstPoint.timestamp))) {
-				firstPoint = this.track.data.waypoints[0]
-			}
-			return firstPoint
-		},
-		wayPoints() {
-			let points = []
-			if (this.firstPoint === this.track.data.waypoints[0]) {
-				points = this.track.data.waypoints.slice(1)
-			} else {
-				points = this.track.data.waypoints
-			}
-			if (this.track.metadata?.begin >= this.end || (this.track.metadata?.end >= 0 && this.track.metadata?.end <= this.start)) {
-				return []
-			} else if (this.track.metadata?.begin >= this.start && this.track.metadata?.end <= this.end) {
-				return points
-			} else {
-				const lastNullIndex = binSearch(points, (p) => !p.timestamp)
-				const firstShownIndex = binSearch(points, (p) => (p.timestamp || -1) < this.start) + 1
-				const lastShownIndex = binSearch(points, (p) => (p.timestamp || -1) < this.end)
-				return [
-					...points.slice(0, lastNullIndex + 1),
-					...points.slice(firstShownIndex, lastShownIndex + 1),
+const emit = defineEmits(['click', 'change-color', 'display-elevation', 'add-to-map-track', 'point-hover'])
+
+const showPopup = ref(false)
+
+const isPublicVal = computed(() => isPublic())
+const downloadTrackUrl = computed(() => getRemoteURL() + getRootPath() + props.track.file_path)
+const downloadTrackShareUrl = computed(() => generateUrl('s/' + getToken() + '/download' + '?path=/&files=' + props.track.file_name))
+const color = computed(() => props.track.color || '#0082c9')
+
+const lines = computed(() => {
+	const trkSegments = []
+	const m = props.track.metadata
+	if ((m?.begin && m?.begin > 0 && m.begin >= props.end) || (m?.end && m?.end > 0 && m?.end <= props.start)) {
+		return [...props.track.data.routes, trkSegments]
+	} else if ((!m?.begin || m?.begin < 0 || m?.begin >= props.start) && (!m?.end || !m?.end < 0 || m?.end <= props.end)) {
+		props.track.data.tracks.forEach((trk) => {
+			trk.segments.forEach((segment) => {
+				trkSegments.push({ ...segment, name: trk.name })
+			})
+		})
+	} else {
+		props.track.data.tracks.forEach((trk) => {
+			trk.segments.forEach((segment) => {
+				const lastNullIndex = binSearch(segment.points, (p) => !p.timestamp)
+				const firstShownIndex = binSearch(segment.points, (p) => (p.timestamp || -1) < props.start) + 1
+				const lastShownIndex = binSearch(segment.points, (p) => (p.timestamp || -1) < props.end)
+				const points = [
+					...segment.points.slice(0, lastNullIndex + 1),
+					...segment.points.slice(firstShownIndex, lastShownIndex + 1),
 				]
-			}
-		},
-	},
+				trkSegments.push({ ...segment, name: trk.name, points })
+			})
+		})
+	}
+	return [...props.track.data.routes, ...trkSegments]
+})
 
-	methods: {
-		lineGeoJson(line) {
-			return {
-				type: 'Feature',
-				geometry: {
-					type: 'LineString',
-					coordinates: line.points.map(p => [p.lng, p.lat]),
-				},
-			}
+const firstPoint = computed(() => {
+	let fp = null
+	if (props.track.data.tracks.length > 0
+		&& props.track.data.tracks[0].segments.length > 0
+		&& props.track.data.tracks[0].segments[0].points.length > 0) {
+		fp = props.track.data.tracks[0].segments[0].points[0]
+	}
+	if (props.track.data.routes.length > 0
+		&& props.track.data.routes[0].points.length > 0
+		&& (fp === null
+			|| (!fp.timestamp && props.track.data.routes[0].points[0].timestamp)
+			|| (props.track.data.routes[0].points[0].timestamp && fp.timestamp
+				&& props.track.data.routes[0].points[0].timestamp < fp.timestamp))) {
+		fp = props.track.data.routes[0].points[0]
+	}
+	if (props.track.data.waypoints.length > 0
+		&& (fp === null
+			|| (!fp.timestamp && props.track.data.waypoints[0].timestamp)
+			|| (props.track.data.waypoints[0].timestamp && fp.timestamp
+				&& props.track.data.waypoints[0].timestamp < fp.timestamp))) {
+		fp = props.track.data.waypoints[0]
+	}
+	return fp
+})
+
+const wayPoints = computed(() => {
+	let points = firstPoint.value === props.track.data.waypoints[0]
+		? props.track.data.waypoints.slice(1)
+		: props.track.data.waypoints
+	const m = props.track.metadata
+	if (m?.begin >= props.end || (m?.end >= 0 && m?.end <= props.start)) {
+		return []
+	} else if (m?.begin >= props.start && m?.end <= props.end) {
+		return points
+	} else {
+		const lastNullIndex = binSearch(points, (p) => !p.timestamp)
+		const firstShownIndex = binSearch(points, (p) => (p.timestamp || -1) < props.start) + 1
+		const lastShownIndex = binSearch(points, (p) => (p.timestamp || -1) < props.end)
+		return [
+			...points.slice(0, lastNullIndex + 1),
+			...points.slice(firstShownIndex, lastShownIndex + 1),
+		]
+	}
+})
+
+function lineGeoJson(line) {
+	return {
+		type: 'Feature',
+		geometry: {
+			type: 'LineString',
+			coordinates: line.points.map(p => [p.lng, p.lat]),
 		},
-		onLineClick() {
-			this.$emit('click', this.track)
-		},
-		onLineRightClick() {
-			this.showPopup = !this.showPopup
-		},
-		trackLineMouseover(e, line) {
-			const lngLat = e.lngLat
-			let minDist = 40000000
-			let closestI = -1
-			for (let i = 0; i < line.points.length; i++) {
-				const dx = lngLat.lng - line.points[i].lng
-				const dy = lngLat.lat - line.points[i].lat
-				const dist = Math.sqrt(dx * dx + dy * dy)
-				if (dist < minDist) {
-					minDist = dist
-					closestI = i
-				}
-			}
-			if (closestI !== -1) {
-				const hoverPoint = {
-					...line.points[closestI],
-					color: this.color,
-					file_name: this.track.file_name,
-					track_name: line.name,
-				}
-				this.$emit('point-hover', hoverPoint)
-			}
-		},
-	},
+	}
+}
+
+function onLineClick() {
+	emit('click', props.track)
+}
+
+function onLineRightClick() {
+	showPopup.value = !showPopup.value
+}
+
+function trackLineMouseover(e, line) {
+	const lngLat = e.lngLat
+	let minDist = 40000000
+	let closestI = -1
+	for (let i = 0; i < line.points.length; i++) {
+		const dx = lngLat.lng - line.points[i].lng
+		const dy = lngLat.lat - line.points[i].lat
+		const dist = Math.sqrt(dx * dx + dy * dy)
+		if (dist < minDist) {
+			minDist = dist
+			closestI = i
+		}
+	}
+	if (closestI !== -1) {
+		emit('point-hover', {
+			...line.points[closestI],
+			color: color.value,
+			file_name: props.track.file_name,
+			track_name: line.name,
+		})
+	}
 }
 </script>
 

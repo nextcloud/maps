@@ -2,7 +2,7 @@
 	<div id="routing-steps">
 		<RoutingStep v-for="(s, i) in steps"
 			:key="i + s.name"
-			:ref="'step' + i"
+			:ref="(el) => { stepRefs[i] = el }"
 			:step="s"
 			:search-data="searchData"
 			:placeholder="getPlaceholder(i)"
@@ -34,62 +34,48 @@
 	</div>
 </template>
 
-<script>
+<script setup>
+import { ref } from 'vue'
+import { t } from '@nextcloud/l10n'
 import RoutingStep from './RoutingStep.vue'
 
-export default {
-	name: 'RoutingSteps',
-
-	components: {
-		RoutingStep,
+const props = defineProps({
+	steps: {
+		type: Array,
+		required: true,
 	},
-
-	props: {
-		steps: {
-			type: Array,
-			required: true,
-		},
-		searchData: {
-			type: Array,
-			required: true,
-		},
-		planReady: {
-			type: Boolean,
-			default: false,
-		},
+	searchData: {
+		type: Array,
+		required: true,
 	},
-
-	data() {
-		return {
-		}
+	planReady: {
+		type: Boolean,
+		default: false,
 	},
+})
 
-	watch: {
-	},
+const emit = defineEmits(['step-selected', 'delete-step', 'add-step', 'export-route', 'zoom-route', 'reverse-steps'])
 
-	created() {
-	},
+const stepRefs = ref([])
 
-	methods: {
-		onStepSelected(i, e) {
-			this.$emit('step-selected', i, e)
-			const nextStepIndex = i + 1
-			if (nextStepIndex < this.steps.length) {
-				this.$refs['step' + nextStepIndex][0].focus()
-			}
-		},
-		getPlaceholder(i) {
-			return i === 0
-				? t('maps', 'Start')
-				: i === this.steps.length - 1
-					? t('maps', 'Destination')
-					: t('maps', 'Via {i}', { i })
-		},
-		canDelete(step, i) {
-			// impossible to delete first or last steps if it's empty
-			return !((i === 0 || i === this.steps.length - 1) && !step.latLng)
-		},
-	},
+function onStepSelected(i, e) {
+	emit('step-selected', i, e)
+	const nextStepIndex = i + 1
+	if (nextStepIndex < props.steps.length) {
+		stepRefs.value[nextStepIndex]?.focus()
+	}
+}
+
+function getPlaceholder(i) {
+	return i === 0
+		? t('maps', 'Start')
+		: i === props.steps.length - 1
+			? t('maps', 'Destination')
+			: t('maps', 'Via {i}', { i })
+}
+
+function canDelete(step, i) {
+	return !((i === 0 || i === props.steps.length - 1) && !step.latLng)
 }
 </script>
 

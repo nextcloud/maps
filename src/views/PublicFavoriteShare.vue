@@ -34,49 +34,32 @@
 	</NcContent>
 </template>
 
-<script>
+<script setup>
+import { computed, onMounted } from 'vue'
 import NcContent from '@nextcloud/vue/components/NcContent'
 import NcAppContent from '@nextcloud/vue/components/NcAppContent'
 import MapContainer from '../components/MapContainer.vue'
 import PublicFavoriteShareSideBar from '../components/PublicFavoriteShareSideBar.vue'
 import { usePublicFavoritesStore } from '../store/publicFavoritesStore.pinia.js'
-import { computed } from 'vue'
 
-export default {
-	name: 'PublicFavoriteShare',
+const favStore = usePublicFavoritesStore()
 
-	components: {
-		NcAppContent,
-		NcContent,
-		MapContainer,
-		PublicFavoriteShareSideBar,
-	},
+const favoritesMappedByCategory = computed(() => favStore.mappedByCategory)
+const allowFavoriteEdits = computed(() => favStore.shareInfo ? favStore.shareInfo.allowEdits : false)
 
-	setup() {
-		const favStore = usePublicFavoritesStore()
-		return {
-			favoritesMappedByCategory: computed(() => favStore.mappedByCategory),
-			allowFavoriteEdits: computed(() => favStore.shareInfo ? favStore.shareInfo.allowEdits : false),
-			getFavorites: () => favStore.getFavorites(),
-			addFavorite: (data) => favStore.addFavorite(data),
-			updateFavorite: (data) => favStore.updateFavorite(data),
-			deleteFavorite: (data) => favStore.deleteFavorite(data),
-		}
-	},
+function addFavorite(data) { favStore.addFavorite(data) }
+function updateFavorite(data) { favStore.updateFavorite(data) }
+function deleteFavorite(data) { favStore.deleteFavorite(data) }
 
-	mounted() {
-		this.getFavorites()
-		this.moveFooter()
-	},
-
-	methods: {
-		// Place the footer in the app-navigation so it is not below the map
-		moveFooter() {
-			const footer = document.getElementsByTagName('footer')[0]
-			document.getElementById('app-navigation-vue').appendChild(footer)
-		},
-	},
+function moveFooter() {
+	const footer = document.getElementsByTagName('footer')[0]
+	document.getElementById('app-navigation-vue').appendChild(footer)
 }
+
+onMounted(() => {
+	favStore.getFavorites()
+	moveFooter()
+})
 </script>
 
 <style lang="scss">

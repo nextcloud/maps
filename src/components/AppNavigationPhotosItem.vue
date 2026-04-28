@@ -42,68 +42,54 @@
 	</NcAppNavigationItem>
 </template>
 
-<script>
+<script setup>
 import NcAppNavigationItem from '@nextcloud/vue/components/NcAppNavigationItem'
 import NcActionButton from '@nextcloud/vue/components/NcActionButton'
 import NcCounterBubble from '@nextcloud/vue/components/NcCounterBubble'
-
-import optionsController from '../optionsController.js'
+import { t } from '@nextcloud/l10n'
 import { showInfo } from '@nextcloud/dialogs'
 
-export default {
-	name: 'AppNavigationPhotosItem',
-
-	components: {
-		NcAppNavigationItem,
-		NcActionButton,
-		NcCounterBubble,
+defineProps({
+	enabled: {
+		type: Boolean,
+		required: true,
 	},
-
-	props: {
-		enabled: {
-			type: Boolean,
-			required: true,
-		},
-		loading: {
-			type: Boolean,
-			default: false,
-		},
-		loadedPhotos: {
-			type: Number,
-			required: true,
-		},
-		totalPhotos: {
-			type: Number,
-			required: true,
-		},
-		readOnly: {
-			type: Boolean,
-			default: false,
-		},
-		draggable: {
-			type: Boolean,
-			required: true,
-		},
-		showSuggestions: {
-			type: Boolean,
-			required: false,
-			default: false,
-		},
+	loading: {
+		type: Boolean,
+		default: false,
 	},
-
-	data() {
-		return {
-		}
+	loadedPhotos: {
+		type: Number,
+		required: true,
 	},
-
-	computed: {
+	totalPhotos: {
+		type: Number,
+		required: true,
 	},
-
-	methods: {
-		sayHi() {
-			showInfo(t('maps', 'Hi'))
-		},
+	readOnly: {
+		type: Boolean,
+		default: false,
 	},
+	draggable: {
+		type: Boolean,
+		required: true,
+	},
+	showSuggestions: {
+		type: Boolean,
+		required: false,
+		default: false,
+	},
+})
+
+defineEmits([
+	'photos-clicked',
+	'draggable-clicked',
+	'suggestions-clicked',
+	'clear-cache',
+])
+
+function sayHi() {
+	showInfo(t('maps', 'Hi'))
 }
 </script>
 

@@ -26,25 +26,28 @@
 			class="favorite"
 			@submit.prevent="handleFavoriteSubmit">
 			<PopupFormItem
-				v-model="favoriteCopy.name"
+				:value="favoriteCopy.name"
 				icon="icon-add"
 				type="text"
 				:placeholder="t('maps', 'Name')"
-				:allow-edits="allowEdits" />
+				:allow-edits="allowEdits"
+				@input="favoriteCopy.name = $event" />
 
 			<PopupFormItem
 				v-if="allowCategoryCustomization"
-				v-model="favoriteCopy.category"
+				:value="favoriteCopy.category"
 				icon="icon-category-organization"
 				type="text"
 				:placeholder="t('maps', 'Category')"
-				:allow-edits="allowEdits" />
+				:allow-edits="allowEdits"
+				@input="favoriteCopy.category = $event" />
 
 			<PopupFormItem
-				v-model="favoriteCopy.comment"
+				:value="favoriteCopy.comment"
 				icon="icon-comment"
 				:placeholder="t('maps', 'Comment')"
-				:allow-edits="allowEdits" />
+				:allow-edits="allowEdits"
+				@input="favoriteCopy.comment = $event" />
 
 			<div v-if="allowEdits" class="buttons">
 				<button class="primary">
@@ -63,76 +66,50 @@
 	</Popup>
 </template>
 
-<script>
-import VueTypes from 'vue-types'
+<script setup>
+import { reactive, watch } from 'vue'
+import { t } from '@nextcloud/l10n'
 import Popup from './Popup.vue'
 import PopupFormItem from './PopupFormItem.vue'
-import Types from '../../data/types'
 
-export default {
-	name: 'FavoritePopup',
-
-	components: {
-		Popup,
-		PopupFormItem,
+const props = defineProps({
+	favorite: {
+		type: Object,
+		required: true,
 	},
-
-	props: {
-		favorite: Types.Favorite.isRequired,
-		isVisible: VueTypes.bool.isRequired.def(false),
-		allowEdits: VueTypes.bool.isRequired.def(false),
-		allowCategoryCustomization: VueTypes.bool.def(true),
+	isVisible: {
+		type: Boolean,
+		default: false,
 	},
-
-	data() {
-		return {
-			favoriteCopy: {
-				name: '',
-				category: '',
-				comment: '',
-			},
-		}
+	allowEdits: {
+		type: Boolean,
+		default: false,
 	},
-
-	watch: {
-		favorite: {
-			deep: true,
-			handler() {
-				this.updateFavoriteCopy()
-			},
-		},
+	allowCategoryCustomization: {
+		type: Boolean,
+		default: true,
 	},
+})
 
-	mounted() {
-		this.updateFavoriteCopy()
-	},
+const emit = defineEmits(['delete-favorite', 'update-favorite'])
 
-	methods: {
-		updateFavoriteCopy() {
-			if (this.allowEdits) {
-				this.favoriteCopy.name = this.favorite.name
-				this.favoriteCopy.category = this.favorite.category
-				this.favoriteCopy.comment = this.favorite.comment
-			}
-		},
-		handleDeleteClick() {
-			const { id } = this.favorite
+const favoriteCopy = reactive({ name: '', category: '', comment: '' })
 
-			this.$emit('delete-favorite', { id })
-		},
-		handleFavoriteSubmit() {
-			const { id, lat, lng } = this.favorite
-			const { name, category, comment } = this.favoriteCopy
+watch(() => props.favorite, () => {
+	if (props.allowEdits) {
+		favoriteCopy.name = props.favorite.name
+		favoriteCopy.category = props.favorite.category
+		favoriteCopy.comment = props.favorite.comment
+	}
+}, { immediate: true, deep: true })
 
-			this.$emit('update-favorite', {
-				id,
-				name,
-				category,
-				comment,
-				lat,
-				lng,
-			})
-		},
-	},
+function handleDeleteClick() {
+	emit('delete-favorite', { id: props.favorite.id })
+}
+
+function handleFavoriteSubmit() {
+	const { id, lat, lng } = props.favorite
+	const { name, category, comment } = favoriteCopy
+	emit('update-favorite', { id, name, category, comment, lat, lng })
 }
 </script>

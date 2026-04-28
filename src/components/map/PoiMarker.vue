@@ -80,169 +80,116 @@
 	</MglMarker>
 </template>
 
-<script>
+<script setup>
+import { ref, computed } from 'vue'
+import { t } from '@nextcloud/l10n'
 import { imagePath } from '@nextcloud/router'
 import moment from '@nextcloud/moment'
-import { formatAddress } from '../../utils.js'
-
 import { MglMarker, MglPopup } from '@indoorequal/vue-maplibre-gl'
 import OpeningHours from 'opening_hours'
+import { formatAddress } from '../../utils.js'
 
-export default {
-	name: 'PoiMarker',
-
-	components: {
-		MglMarker,
-		MglPopup,
+const props = defineProps({
+	poi: {
+		type: Object,
+		required: true,
 	},
+})
 
-	props: {
-		poi: {
-			type: Object,
-			required: true,
-		},
-	},
+const emit = defineEmits(['add-favorite', 'place-contact'])
 
-	data() {
-		return {
-			recentImagePath: imagePath('maps', 'recent.svg'),
-			triangleSimagePath: imagePath('maps', 'triangle-s.svg'),
-			triangleEPath: imagePath('maps', 'triangle-e.svg'),
-			mailImagePath: imagePath('maps', 'mail.svg'),
-			linkImagePath: imagePath('maps', 'link.svg'),
-			ohOpen: false,
-		}
-	},
+const recentImagePath = imagePath('maps', 'recent.svg')
+const triangleSimagePath = imagePath('maps', 'triangle-s.svg')
+const triangleEPath = imagePath('maps', 'triangle-e.svg')
+const mailImagePath = imagePath('maps', 'mail.svg')
+const linkImagePath = imagePath('maps', 'link.svg')
+const ohOpen = ref(false)
 
-	computed: {
-		tooltipContent() {
-			return this.poi.namedetails?.name || this.poi.display_name
-		},
-		myOpeningHours() {
-			return this.poi.extratags?.opening_hours
-				? new OpeningHours(this.poi.extratags.opening_hours, this.poi)
-				: null
-		},
-		ohChangeDt() {
-			return this.myOpeningHours?.getNextChange()
-		},
-		formattedOhChangeDt() {
-			return moment(this.ohChangeDt).format('HH:mm')
-		},
-		ohDtDiff() {
-			const currentDt = new Date()
-			return (this.ohChangeDt.getTime() - currentDt) / 60000
-		},
-		ohIsCurrentlyOpen() {
-			return this.myOpeningHours.getState()
-		},
-		ohIntervals() {
-			const todayStart = new Date()
-			todayStart.setHours(0)
-			todayStart.setMinutes(0)
-			todayStart.setSeconds(0)
-			const sevDaysEnd = new Date(todayStart)
-			const sevDaysMs = 7 * 24 * 60 * 60 * 1000
-			sevDaysEnd.setTime(sevDaysEnd.getTime() + sevDaysMs)
-			const intervals = this.myOpeningHours.getOpenIntervals(todayStart, sevDaysEnd)
-			if (intervals.length === 8) {
-				intervals[7][1] = intervals[0][1]
-				intervals.splice(0, 1)
-			}
-			const resultIntervals = intervals.map((interval) => {
-				return {
-					startTime: moment(interval[0]).format('HH:mm'),
-					endTime: moment(interval[1]).format('HH:mm'),
-					day: moment(interval[1]).format('dddd'),
-					selected: false,
-				}
-			})
-			resultIntervals[0].selected = true
-			return resultIntervals
-		},
-		city() {
-			const poi = this.poi
-			return (poi.address.city || poi.address.town || poi.address.village)
-				? poi.address.city
-					? poi.address.city
-					: poi.address.town
-						? poi.address.town
-						: poi.address.village
-							? poi.address.village
-							: ''
-				: ''
-		},
-		road() {
-			let road = this.poi.address?.road || ''
-			if (road && this.poi.address?.house_number) {
-				road += ' ' + this.poi.address.house_number
-			}
-			return road
-		},
-		header() {
-			return this.poi.namedetails?.name || this.road || this.city
-		},
-		desc() {
-			const poi = this.poi
-			let desc = ''
-			let needSeparator = false
-			if (poi.namedetails?.name && this.road) {
-				desc = this.road
-				needSeparator = true
-			}
-			if (poi.address.postcode) {
-				if (needSeparator) {
-					desc += ', '
-					needSeparator = false
-				}
-				desc += poi.address.postcode
-			}
-			if (this.city) {
-				if (needSeparator) {
-					desc += ', '
-					needSeparator = false
-				} else if (desc.length > 0) {
-					desc += ' '
-				}
-				desc += this.city
-			}
-			if (poi.address?.state && poi.address?.country_code === 'us') {
-				if (desc.length > 0) {
-					desc += ' '
-				}
-				desc += '(' + poi.address.state + ')'
-			}
-			return desc
-		},
-	},
+const myOpeningHours = computed(() =>
+	props.poi.extratags?.opening_hours
+		? new OpeningHours(props.poi.extratags.opening_hours, props.poi)
+		: null,
+)
 
-	methods: {
-		onAddFavorite() {
-			this.$emit('add-favorite',
-				{
-					...this.poi,
-					latLng: {
-						lat: this.poi.lat,
-						lng: this.poi.lon,
-					},
-					name: this.header,
-					formattedAddress: formatAddress(this.poi.address),
-				})
-		},
-		onAddContact() {
-			this.$emit('place-contact',
-				{
-					...this.poi,
-					latLng: {
-						lat: this.poi.lat,
-						lng: this.poi.lon,
-					},
-					name: this.header,
-					formattedAddress: formatAddress(this.poi.address),
-				})
-		},
-	},
+const ohChangeDt = computed(() => myOpeningHours.value?.getNextChange())
+const formattedOhChangeDt = computed(() => moment(ohChangeDt.value).format('HH:mm'))
+const ohDtDiff = computed(() => (ohChangeDt.value.getTime() - new Date()) / 60000)
+const ohIsCurrentlyOpen = computed(() => myOpeningHours.value?.getState())
 
+const ohIntervals = computed(() => {
+	const todayStart = new Date()
+	todayStart.setHours(0, 0, 0)
+	const sevDaysEnd = new Date(todayStart.getTime() + 7 * 24 * 60 * 60 * 1000)
+	const intervals = myOpeningHours.value.getOpenIntervals(todayStart, sevDaysEnd)
+	if (intervals.length === 8) {
+		intervals[7][1] = intervals[0][1]
+		intervals.splice(0, 1)
+	}
+	const result = intervals.map((interval) => ({
+		startTime: moment(interval[0]).format('HH:mm'),
+		endTime: moment(interval[1]).format('HH:mm'),
+		day: moment(interval[1]).format('dddd'),
+		selected: false,
+	}))
+	result[0].selected = true
+	return result
+})
+
+const city = computed(() => {
+	const { address } = props.poi
+	return address.city || address.town || address.village || ''
+})
+
+const road = computed(() => {
+	let r = props.poi.address?.road || ''
+	if (r && props.poi.address?.house_number) {
+		r += ' ' + props.poi.address.house_number
+	}
+	return r
+})
+
+const header = computed(() => props.poi.namedetails?.name || road.value || city.value)
+
+const desc = computed(() => {
+	const poi = props.poi
+	let d = ''
+	let needSeparator = false
+	if (poi.namedetails?.name && road.value) {
+		d = road.value
+		needSeparator = true
+	}
+	if (poi.address.postcode) {
+		if (needSeparator) { d += ', '; needSeparator = false }
+		d += poi.address.postcode
+	}
+	if (city.value) {
+		if (needSeparator) { d += ', '; needSeparator = false }
+		else if (d.length > 0) d += ' '
+		d += city.value
+	}
+	if (poi.address?.state && poi.address?.country_code === 'us') {
+		if (d.length > 0) d += ' '
+		d += '(' + poi.address.state + ')'
+	}
+	return d
+})
+
+function onAddFavorite() {
+	emit('add-favorite', {
+		...props.poi,
+		latLng: { lat: props.poi.lat, lng: props.poi.lon },
+		name: header.value,
+		formattedAddress: formatAddress(props.poi.address),
+	})
+}
+
+function onAddContact() {
+	emit('place-contact', {
+		...props.poi,
+		latLng: { lat: props.poi.lat, lng: props.poi.lon },
+		name: header.value,
+		formattedAddress: formatAddress(props.poi.address),
+	})
 }
 </script>
 

@@ -45,7 +45,7 @@
 			<AppNavigationDeviceItem
 				v-for="device in sortedDevices"
 				:key="device.id"
-				:ref="'deviceItem' + device.id"
+				:ref="(el) => setDeviceItemRef(device.id, el)"
 				:device="device"
 				:parent-enabled="enabled && devices.length > 0"
 				@click="$emit('device-clicked', $event)"
@@ -60,81 +60,96 @@
 	</NcAppNavigationItem>
 </template>
 
-<script>
+<script setup>
 import NcAppNavigationItem from '@nextcloud/vue/components/NcAppNavigationItem'
 import NcActionButton from '@nextcloud/vue/components/NcActionButton'
 import NcCounterBubble from '@nextcloud/vue/components/NcCounterBubble'
-
 import AppNavigationDeviceItem from './AppNavigationDeviceItem.vue'
+import { t } from '@nextcloud/l10n'
+import { ref, computed } from 'vue'
 import optionsController from '../optionsController.js'
 
-export default {
-	name: 'AppNavigationDevicesItem',
-
-	components: {
-		NcAppNavigationItem,
-		NcActionButton,
-		NcCounterBubble,
-		AppNavigationDeviceItem,
+const props = defineProps({
+	enabled: {
+		type: Boolean,
+		required: true,
 	},
-
-	props: {
-		enabled: {
-			type: Boolean,
-			required: true,
-		},
-		loading: {
-			type: Boolean,
-			default: false,
-		},
-		devices: {
-			type: Array,
-			required: true,
-		},
+	loading: {
+		type: Boolean,
+		default: false,
 	},
-
-	data() {
-		return {
-			open: optionsController.deviceListShow,
-		}
+	devices: {
+		type: Array,
+		required: true,
 	},
+})
 
-	computed: {
-		sortedDevices() {
-			return this.devices.slice().sort((a, b) => {
-				const nameA = a.user_agent.toLowerCase()
-				const nameB = b.user_agent.toLowerCase()
-				return nameA.localeCompare(nameB)
-			})
-		},
-		isCreatable() {
-			return optionsController.myMapId === null || optionsController.myMapId === ''
-		},
-		allDeletable() {
-			return this.devices.every((d) => d.isDeletable)
-		},
-	},
+const emit = defineEmits([
+	'devices-clicked',
+	'refresh-positions',
+	'toggle-all',
+	'export-all',
+	'import',
+	'device-clicked',
+	'zoom',
+	'rename',
+	'export',
+	'delete',
+	'toggle-history',
+	'color',
+	'add-to-map-device',
+])
 
-	methods: {
-		onClick() {
-			if (!this.enabled && !this.open) {
-				this.open = true
-				optionsController.saveOptionValues({ deviceListShow: 'true' })
-			}
-			this.$emit('devices-clicked')
-		},
-		onUpdateOpen(isOpen) {
-			this.open = isOpen
-			optionsController.saveOptionValues({ deviceListShow: isOpen ? 'true' : 'false' })
-		},
-		changeDeviceColor(device) {
-			console.debug(this.$refs)
-			this.$refs['deviceItem' + device.id][0].onChangeColorClick()
-		},
-		onDelete(device) {
-		},
-	},
+const open = ref(optionsController.deviceListShow)
+
+const deviceItemRefs = {}
+
+function setDeviceItemRef(id, el) {
+	if (el) {
+		deviceItemRefs[id] = el
+	} else {
+		delete deviceItemRefs[id]
+	}
 }
+
+const sortedDevices = computed(() => {
+	return props.devices.slice().sort((a, b) => {
+		const nameA = a.user_agent.toLowerCase()
+		const nameB = b.user_agent.toLowerCase()
+		return nameA.localeCompare(nameB)
+	})
+})
+
+const isCreatable = computed(() => {
+	return optionsController.myMapId === null || optionsController.myMapId === ''
+})
+
+const allDeletable = computed(() => {
+	return props.devices.every((d) => d.isDeletable)
+})
+
+function onClick() {
+	if (!props.enabled && !open.value) {
+		open.value = true
+		optionsController.saveOptionValues({ deviceListShow: 'true' })
+	}
+	emit('devices-clicked')
+}
+
+function onUpdateOpen(isOpen) {
+	open.value = isOpen
+	optionsController.saveOptionValues({ deviceListShow: isOpen ? 'true' : 'false' })
+}
+
+function changeDeviceColor(device) {
+	console.debug(deviceItemRefs)
+	deviceItemRefs[device.id]?.onChangeColorClick()
+}
+
+function onDelete() {
+}
+
+defineExpose({ changeDeviceColor })
 </script>
 
 <style lang="scss" scoped>

@@ -1,5 +1,5 @@
 <template>
-	<MglMarker :coordinates="[contact.GEO.lng, contact.GEO.lat]">
+	<MglMarker :coordinates="coordinates">
 		<template #default>
 			<div class="contact-marker-icon">
 				<div class="thumbnail" :style="'background-image: url(\'' + contactAvatar + '\');'" />
@@ -63,87 +63,71 @@
 	</MglMarker>
 </template>
 
-<script>
+<script setup>
+import { ref, computed } from 'vue'
+import { t } from '@nextcloud/l10n'
 import { generateUrl } from '@nextcloud/router'
 import { getCurrentUser } from '@nextcloud/auth'
-import NcActionButton from '@nextcloud/vue/components/NcActionButton'
-
 import { MglMarker, MglPopup } from '@indoorequal/vue-maplibre-gl'
-
-import optionsController from '../../optionsController.js'
+import NcActionButton from '@nextcloud/vue/components/NcActionButton'
 import { getToken, isPublic } from '../../utils/common.js'
 
-export default {
-	name: 'ContactLayer',
-	components: {
-		MglMarker,
-		MglPopup,
-		NcActionButton,
+const props = defineProps({
+	contact: {
+		type: Object,
+		required: true,
 	},
+})
 
-	props: {
-		contact: {
-			type: Object,
-			required: true,
-		},
-	},
+const emit = defineEmits(['address-deleted', 'add-to-map-contact'])
 
-	data() {
-		return {
-			click: 'left',
-			showPopup: false,
-			optionValues: optionsController.optionValues,
-		}
-	},
+const click = ref('left')
+const showPopup = ref(false)
 
-	computed: {
-		isPublicVal() {
-			return isPublic()
-		},
-		contactAvatar() {
-			if (this.contact.HAS_PHOTO) {
-				return generateUrl(
-					'/remote.php/dav/addressbooks/users/' + getCurrentUser().uid
-					+ '/' + encodeURIComponent(this.contact.BOOKURI)
-					+ '/' + encodeURIComponent(this.contact.URI) + '?photo').replace(/index\.php\//, '')
-			} else {
-				return generateUrl('/apps/maps' + (isPublic() ? '/s/' + getToken() : '') + '/contacts-avatar?name=' + encodeURIComponent(this.contact.FN))
-			}
-		},
-		formattedAddressLines() {
-			const adrTab = this.contact.ADR.split(';').map((s) => { return s.trim() })
-			const formattedAddressLines = []
-			if (adrTab.length > 6) {
-				if (adrTab[2] !== '') {
-					formattedAddressLines.push(adrTab[2])
-				}
-				formattedAddressLines.push(adrTab[5] + ' ' + adrTab[3])
-				formattedAddressLines.push(adrTab[4] + ' ' + adrTab[6])
-			}
-			return formattedAddressLines.filter((s) => { return s.trim() !== '' })
-		},
-		contactUrl() {
-			return this.contact.URL || generateUrl('/apps/contacts/direct/contact/' + encodeURIComponent(this.contact.UID + '~contacts'))
-		},
-	},
+const coordinates = computed(() => props.contact.GEO.split(';').reverse())
+const isPublicVal = computed(() => isPublic())
 
-	methods: {
-		onMarkerClick() {
-			this.click = 'left'
-			this.showPopup = true
-		},
-		onMarkerContextmenu() {
-			this.click = 'right'
-			this.showPopup = true
-		},
-		onDeleteAddressClick() {
-			const c = this.contact
-			if (c.ADR && c.GEO) {
-				delete c.GEO
-			}
-			this.$emit('address-deleted', this.contact)
-		},
-	},
+const contactAvatar = computed(() => {
+	if (props.contact.HAS_PHOTO) {
+		return generateUrl(
+			'/remote.php/dav/addressbooks/users/' + getCurrentUser().uid
+			+ '/' + encodeURIComponent(props.contact.BOOKURI)
+			+ '/' + encodeURIComponent(props.contact.URI) + '?photo').replace(/index\.php\//, '')
+	}
+	return generateUrl('/apps/maps' + (isPublic() ? '/s/' + getToken() : '') + '/contacts-avatar?name=' + encodeURIComponent(props.contact.FN))
+})
+
+const formattedAddressLines = computed(() => {
+	const adrTab = props.contact.ADR.split(';').map((s) => s.trim())
+	const lines = []
+	if (adrTab.length > 6) {
+		if (adrTab[2] !== '') lines.push(adrTab[2])
+		lines.push(adrTab[5] + ' ' + adrTab[3])
+		lines.push(adrTab[4] + ' ' + adrTab[6])
+	}
+	return lines.filter((s) => s.trim() !== '')
+})
+
+const contactUrl = computed(() =>
+	props.contact.URL || generateUrl('/apps/contacts/direct/contact/' + encodeURIComponent(props.contact.UID + '~contacts')),
+)
+
+function onMarkerClick() {
+	click.value = 'left'
+	showPopup.value = true
+}
+
+function onMarkerContextmenu() {
+	click.value = 'right'
+	showPopup.value = true
+}
+
+function onDeleteAddressClick() {
+	const c = props.contact
+	if (c.ADR && c.GEO) {
+		delete c.GEO
+	}
+	emit('address-deleted', props.contact)
 }
 </script>
 

@@ -33,115 +33,85 @@
 	</template>
 </template>
 
-<script>
+<script setup>
+import { ref, computed } from 'vue'
+import { t } from '@nextcloud/l10n'
 import { generateUrl } from '@nextcloud/router'
-import moment from '@nextcloud/moment'
 import { basename } from '@nextcloud/paths'
 import NcActionButton from '@nextcloud/vue/components/NcActionButton'
-
 import { MglMarker, MglPopup } from '@indoorequal/vue-maplibre-gl'
-
-import optionsController from '../../optionsController.js'
 import { binSearch, getToken, isPublic } from '../../utils/common.js'
 
-export default {
-	name: 'PhotosLayer',
-	components: {
-		MglMarker,
-		MglPopup,
-		NcActionButton,
+const props = defineProps({
+	map: {
+		type: Object,
+		required: true,
 	},
+	photos: {
+		type: Array,
+		required: true,
+	},
+	dateFilterEnabled: {
+		type: Boolean,
+		required: true,
+	},
+	dateFilterStart: {
+		type: Number,
+		required: true,
+	},
+	dateFilterEnd: {
+		type: Number,
+		required: true,
+	},
+	draggable: {
+		type: Boolean,
+		required: true,
+	},
+})
 
-	props: {
-		map: {
-			type: Object,
-			required: true,
-		},
-		photos: {
-			type: Array,
-			required: true,
-		},
-		dateFilterEnabled: {
-			type: Boolean,
-			required: true,
-		},
-		dateFilterStart: {
-			type: Number,
-			required: true,
-		},
-		dateFilterEnd: {
-			type: Number,
-			required: true,
-		},
-		draggable: {
-			type: Boolean,
-			required: true,
-		},
-	},
+defineEmits(['photo-moved', 'open-sidebar', 'coords-reset', 'add-to-map-photo'])
 
-	data() {
-		return {
-			optionValues: optionsController.optionValues,
-			currentPhoto: null,
-			currentPopupPhoto: null,
-		}
-	},
+const currentPhoto = ref(null)
+const currentPopupPhoto = ref(null)
 
-	computed: {
-		isPublicVal() {
-			return isPublic()
-		},
-		displayedPhotos() {
-			if (!this.dateFilterEnabled) {
-				return this.photos
-			}
-			const lastNullIndex = binSearch(this.photos, (p) => !p.dateTaken)
-			const firstShownIndex = binSearch(this.photos, (p) => (p.dateTaken || 0) < this.dateFilterStart) + 1
-			const lastShownIndex = binSearch(this.photos, (p) => (p.dateTaken || 0) < this.dateFilterEnd)
-			return [
-				...this.photos.slice(0, lastNullIndex + 1),
-				...this.photos.slice(firstShownIndex, lastShownIndex + 1),
-			]
-		},
-	},
+const isPublicVal = computed(() => isPublic())
 
-	methods: {
-		basename(path) {
-			return basename(path)
-		},
-		getPreviewUrl(photo) {
-			if (photo && photo.hasPreview) {
-				const token = getToken()
-				return token
-					? generateUrl('apps/files_sharing/publicpreview/') + token + '?file=' + encodeURIComponent(photo.path) + '&x=341&y=256&a=1'
-					: generateUrl('core') + '/preview?fileId=' + photo.fileId + '&x=341&y=256&a=1'
-			} else {
-				return generateUrl('/apps/theming/img/core/filetypes') + '/image.svg?v=2'
-			}
-		},
-		getPhotoFormattedDate(photo) {
-			if (photo) {
-				const d = new Date(photo.dateTaken * 1000)
-				const mom = moment.unix(photo.dateTaken + d.getTimezoneOffset() * 60)
-				return mom.format('LL') + ' ' + mom.format('HH:mm:ss')
-			}
-			return ''
-		},
-		onPhotoClick(photo) {
-			this.viewPhoto(photo)
-		},
-		onPhotoRightClick(photo) {
-			this.currentPopupPhoto = photo
-		},
-		viewPhoto(photo) {
-			if (OCA.Viewer && OCA.Viewer.open) {
-				OCA.Viewer.open({ path: photo.path, list: [photo] })
-			}
-		},
-		isPublic() {
-			return isPublic()
-		},
-	},
+const displayedPhotos = computed(() => {
+	if (!props.dateFilterEnabled) {
+		return props.photos
+	}
+	const lastNullIndex = binSearch(props.photos, (p) => !p.dateTaken)
+	const firstShownIndex = binSearch(props.photos, (p) => (p.dateTaken || 0) < props.dateFilterStart) + 1
+	const lastShownIndex = binSearch(props.photos, (p) => (p.dateTaken || 0) < props.dateFilterEnd)
+	return [
+		...props.photos.slice(0, lastNullIndex + 1),
+		...props.photos.slice(firstShownIndex, lastShownIndex + 1),
+	]
+})
+
+function getPreviewUrl(photo) {
+	if (photo && photo.hasPreview) {
+		const token = getToken()
+		return token
+			? generateUrl('apps/files_sharing/publicpreview/') + token + '?file=' + encodeURIComponent(photo.path) + '&x=341&y=256&a=1'
+			: generateUrl('core') + '/preview?fileId=' + photo.fileId + '&x=341&y=256&a=1'
+	} else {
+		return generateUrl('/apps/theming/img/core/filetypes') + '/image.svg?v=2'
+	}
+}
+
+function onPhotoClick(photo) {
+	viewPhoto(photo)
+}
+
+function onPhotoRightClick(photo) {
+	currentPopupPhoto.value = photo
+}
+
+function viewPhoto(photo) {
+	if (OCA.Viewer && OCA.Viewer.open) {
+		OCA.Viewer.open({ path: photo.path, list: [photo] })
+	}
 }
 </script>
 

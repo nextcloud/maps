@@ -28,21 +28,24 @@
 			<form class="new-favorite-form" @submit.prevent="handleNewFavoriteSubmit">
 				<span>Dumb</span>
 				<PopupFormItem
-					v-model="newFavorite.name"
+					:value="newFavorite.name"
 					icon="icon-add"
-					:placeholder="t('maps', 'Name')" />
+					:placeholder="t('maps', 'Name')"
+					@input="newFavorite.name = $event" />
 
 				<PopupFormItem
 					v-if="allowCategoryCustomization"
-					v-model="newFavorite.category"
+					:value="newFavorite.category"
 					icon="icon-category-organization"
 					type="text"
-					:placeholder="t('maps', 'Category')" />
+					:placeholder="t('maps', 'Category')"
+					@input="newFavorite.category = $event" />
 
 				<PopupFormItem
-					v-model="newFavorite.comment"
+					:value="newFavorite.comment"
 					icon="icon-comment"
-					:placeholder="t('maps', 'Comment')" />
+					:placeholder="t('maps', 'Comment')"
+					@input="newFavorite.comment = $event" />
 
 				<div class="buttons">
 					<button class="primary">
@@ -66,107 +69,86 @@
 	</Popup>
 </template>
 
-<script>
+<script setup>
+import { ref, reactive, computed, watch } from 'vue'
+import { t } from '@nextcloud/l10n'
 import { useMapStore } from '../../store/mapStore.pinia.js'
-import { computed } from 'vue'
 import MapMode from '../../data/enum/MapMode.js'
 import { geocode } from '../../utils/mapUtils.js'
-import SimpleOSMAddress from './SimpleOSMAddress.vue'
-import VueTypes from 'vue-types'
+import { getDefaultCategoryName } from '../../utils/favoritesUtils.js'
 import Popup from './Popup.vue'
 import PopupFormItem from './PopupFormItem.vue'
-import Types from '../../data/types'
-import { getDefaultCategoryName } from '../../utils/favoritesUtils.js'
+import SimpleOSMAddress from './SimpleOSMAddress.vue'
 
-export default {
-	name: 'ClickPopup',
-
-	components: {
-		Popup,
-		PopupFormItem,
-		SimpleOSMAddress,
+const props = defineProps({
+	isVisible: {
+		type: Boolean,
+		default: false,
 	},
-
-	props: {
-		isVisible: VueTypes.bool.isRequired.def(false),
-		latLng: Types.LatLng.def({ lat: 0, lng: 0 }),
-		allowCategoryCustomization: VueTypes.bool.isRequired.def(false),
-		allowEdits: VueTypes.bool.isRequired.def(false),
+	latLng: {
+		type: Object,
+		default: () => ({ lat: 0, lng: 0 }),
 	},
-
-	setup() {
-		const mapStore = useMapStore()
-		return { mapMode: computed(() => mapStore.mode) }
+	allowCategoryCustomization: {
+		type: Boolean,
+		default: false,
 	},
-
-	data() {
-		return {
-			geocodeObject: null,
-			newFavorite: {
-				name: 'New Favorite',
-				category: this.allowCategoryCustomization
-					? getDefaultCategoryName()
-					: null,
-				comment: '',
-			},
-			addingFavorite: false,
-		}
+	allowEdits: {
+		type: Boolean,
+		default: false,
 	},
+})
 
-	watch: {
-		isVisible(val) {
-			if (val) {
-				this.reset()
-			}
-		},
-		latLng: {
-			deep: true,
-			handler() {
-				this.reset()
-				this.updateAddress()
-			},
-		},
-	},
+const emit = defineEmits(['add-favorite', 'close'])
 
-	methods: {
-		reset() {
-			this.geocodeObject = null
-			this.addingFavorite = this.mapMode === MapMode.ADDING_FAVORITES
-		},
+const mapStore = useMapStore()
+const mapMode = computed(() => mapStore.mode)
 
-		handleAddToFavorites() {
-			this.addingFavorite = true
-		},
+const geocodeObject = ref(null)
+const addingFavorite = ref(false)
+const newFavorite = reactive({
+	name: 'New Favorite',
+	category: props.allowCategoryCustomization ? getDefaultCategoryName() : null,
+	comment: '',
+})
 
-		handleCancelAddingFavorite() {
-			if (this.mapMode === MapMode.ADDING_FAVORITES) {
-				this.$emit('close')
-			} else {
-				this.addingFavorite = false
-			}
-		},
+function reset() {
+	geocodeObject.value = null
+	addingFavorite.value = mapMode.value === MapMode.ADDING_FAVORITES
+}
 
-		handleNewFavoriteSubmit() {
-			const { lat, lng } = this.latLng
-			const { name, category, comment } = this.newFavorite
+function updateAddress() {
+	const { lat, lng } = props.latLng
+	geocode(`${lat},${lng}`).then(res => {
+		geocodeObject.value = res
+	})
+}
 
-			this.$emit('add-favorite', {
-				lat,
-				lng,
-				name,
-				category,
-				comment,
-			})
-		},
+watch(() => props.isVisible, (val) => {
+	if (val) reset()
+})
 
-		updateAddress() {
-			const { lat, lng } = this.latLng
+watch(() => props.latLng, () => {
+	reset()
+	updateAddress()
+}, { deep: true })
 
-			geocode(`${lat},${lng}`).then(res => {
-				this.geocodeObject = res
-			})
-		},
-	},
+function handleAddToFavorites() {
+	addingFavorite.value = true
+}
+
+function handleCancelAddingFavorite() {
+	if (mapMode.value === MapMode.ADDING_FAVORITES) {
+		emit('close')
+	} else {
+		addingFavorite.value = false
+	}
+}
+
+function handleNewFavoriteSubmit() {
+	const { lat, lng } = props.latLng
+	const { name, category, comment } = newFavorite
+	emit('add-favorite', { lat, lng, name, category, comment })
 }
 </script>
 

@@ -1,60 +1,45 @@
 <template>
-	<template v-for="(c, i) in displayedContacts" :key="c.URI + i + c.ADR">
+	<template v-for="(contact, i) in displayedContacts" :key="contact.URI + i + contact.ADR">
 		<ContactLayer
-			:contact="c"
-			@address-deleted="$emit('address-deleted', $event)"
-			@add-to-map-contact="$emit('add-to-map-contact', $event)" />
+			:contact="contact"
+			@addressDeleted="$emit('addressDeleted', $event)"
+			@addToMapContact="$emit('addToMapContact', $event)" />
 	</template>
 </template>
 
-<script>
+<script setup>
+import { computed } from 'vue'
 import ContactLayer from './ContactLayer.vue'
-import optionsController from '../../optionsController.js'
 import { splitByNonEscapedComma } from '../../utils.js'
 
-export default {
-	name: 'ContactsLayer',
-	components: {
-		ContactLayer,
+const props = defineProps({
+	contacts: {
+		type: Array,
+		required: true,
 	},
-
-	props: {
-		contacts: {
-			type: Array,
-			required: true,
-		},
-		groups: {
-			type: Object,
-			required: true,
-		},
+	groups: {
+		type: Object,
+		required: true,
 	},
+})
 
-	data() {
-		return {
-			optionValues: optionsController.optionValues,
-		}
-	},
+defineEmits(['addressDeleted', 'addToMapContact'])
 
-	computed: {
-		displayedContacts() {
-			return this.contacts.filter((c) => {
-				if (c.GROUPS) {
-					try {
-						const cGroups = splitByNonEscapedComma(c.GROUPS)
-						for (let i = 0; i < cGroups.length; i++) {
-							if (this.groups[cGroups[i]].enabled) {
-								return true
-							}
-						}
-					} catch (error) {
-						console.error(error)
-					}
-				} else if (this.groups['0'].enabled) {
-					return true
+const displayedContacts = computed(() =>
+	props.contacts.filter((c) => {
+		if (c.GROUPS) {
+			try {
+				const cGroups = splitByNonEscapedComma(c.GROUPS)
+				for (let i = 0; i < cGroups.length; i++) {
+					if (props.groups[cGroups[i]].enabled) return true
 				}
-				return false
-			})
-		},
-	},
-}
+			} catch (error) {
+				console.error(error)
+			}
+		} else if (props.groups['0'].enabled) {
+			return true
+		}
+		return false
+	}),
+)
 </script>

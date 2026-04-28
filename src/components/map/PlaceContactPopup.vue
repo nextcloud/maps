@@ -67,137 +67,119 @@
 	</MglMarker>
 </template>
 
-<script>
+<script setup>
+import { ref, computed, watch } from 'vue'
+import { t } from '@nextcloud/l10n'
 import { generateUrl } from '@nextcloud/router'
 import { getCurrentUser } from '@nextcloud/auth'
-
 import { MglMarker, MglPopup } from '@indoorequal/vue-maplibre-gl'
 import NcSelect from '@nextcloud/vue/components/NcSelect'
 import NcAvatar from '@nextcloud/vue/components/NcAvatar'
-
 import { formatAddress } from '../../utils.js'
 import { searchContacts, geocode, searchAddress } from '../../network.js'
 
-export default {
-	name: 'PlaceContactPopup',
-	components: {
-		MglMarker,
-		MglPopup,
-		NcSelect,
-		NcAvatar,
+const props = defineProps({
+	latLng: {
+		type: Object,
+		required: true,
 	},
+})
 
-	props: {
-		latLng: {
-			type: Object,
-			required: true,
-		},
-	},
+const emit = defineEmits(['contact-placed'])
 
-	data() {
-		return {
-			contactData: [],
-			addressLoading: false,
-			addressEdited: false,
-			searchingEditedAddress: false,
-			addressType: 'home',
-			address: null,
-			formattedAddress: '',
-			selectedContact: null,
-		}
-	},
+const contactData = ref([])
+const addressLoading = ref(false)
+const addressEdited = ref(false)
+const searchingEditedAddress = ref(false)
+const addressType = ref('home')
+const address = ref(null)
+const formattedAddress = ref('')
+const selectedContact = ref(null)
 
-	computed: {
-		markerIconUrl() {
-			return this.selectedContact
-				? this.getContactAvatar(this.selectedContact)
-					? this.getContactAvatar(this.selectedContact)
-					: generateUrl('/apps/maps/contacts-avatar?name=' + encodeURIComponent(this.selectedContact.FN))
-				: generateUrl('/svg/core/actions/user?color=000000')
-		},
-	},
+const markerIconUrl = computed(() => {
+	if (selectedContact.value) {
+		const avatar = getContactAvatar(selectedContact.value)
+		return avatar
+			? avatar
+			: generateUrl('/apps/maps/contacts-avatar?name=' + encodeURIComponent(selectedContact.value.FN))
+	}
+	return generateUrl('/svg/core/actions/user?color=000000')
+})
 
-	watch: {
-		latLng() {
-			this.address = null
-			this.formattedAddress = ''
-			this.addressEdited = false
-			this.getAddress()
-		},
-	},
+function getContactAvatar(contact) {
+	if (contact.HAS_PHOTO && contact.HAS_PHOTO2) {
+		return generateUrl(
+			'/remote.php/dav/addressbooks/users/' + getCurrentUser().uid
+			+ '/' + encodeURIComponent(contact.BOOKURI)
+			+ '/' + encodeURIComponent(contact.URI) + '?photo').replace(/index\.php\//, '')
+	}
+	return undefined
+}
 
-	beforeMount() {
-		this.getAddress()
-	},
+function getAddress() {
+	addressLoading.value = true
+	geocode(props.latLng.lat, props.latLng.lng).then((response) => {
+		address.value = response.data.address
+		formattedAddress.value = formatAddress(address.value)
+	}).catch((error) => {
+		console.error(error)
+	}).then(() => {
+		addressLoading.value = false
+	})
+}
 
-	methods: {
-		asyncSearchContacts(query) {
-			if (query === '') {
-				this.contactData = []
-				return
-			}
-			searchContacts(query).then((response) => {
-				this.contactData = response.data.filter((c) => { return !c.READONLY }).map((c) => {
-					return {
-						...c,
-						AVATAR_URL: this.getContactAvatar(c),
-					}
-				})
-			}).catch((error) => {
-				console.error(error)
+watch(() => props.latLng, () => {
+	address.value = null
+	formattedAddress.value = ''
+	addressEdited.value = false
+	getAddress()
+})
+
+getAddress()
+
+function asyncSearchContacts(query) {
+	if (query === '') {
+		contactData.value = []
+		return
+	}
+	searchContacts(query).then((response) => {
+		contactData.value = response.data.filter((c) => !c.READONLY).map((c) => ({
+			...c,
+			AVATAR_URL: getContactAvatar(c),
+		}))
+	}).catch((error) => {
+		console.error(error)
+	})
+}
+
+function onValidate() {
+	if (!addressEdited.value) {
+		emit('contact-placed', {
+			contact: selectedContact.value,
+			latLng: props.latLng,
+			address: address.value,
+			addressType: addressType.value,
+		})
+	} else {
+		searchingEditedAddress.value = true
+		searchAddress(formattedAddress.value, 1).then((response) => {
+			const res = response.data
+			const addressFound = (res.length > 0 && res[0].address && res[0].lat && res[0].lon)
+			const addr = addressFound ? res[0].address : address.value
+			const lat = addressFound ? res[0].lat : props.latLng.lat
+			const lng = addressFound ? res[0].lon : props.latLng.lng
+			emit('contact-placed', {
+				contact: selectedContact.value,
+				latLng: { lat, lng },
+				address: addr,
+				addressType: addressType.value,
 			})
-		},
-		getContactAvatar(contact) {
-			if (contact.HAS_PHOTO && contact.HAS_PHOTO2) {
-				return generateUrl(
-					'/remote.php/dav/addressbooks/users/' + getCurrentUser().uid
-					+ '/' + encodeURIComponent(contact.BOOKURI)
-					+ '/' + encodeURIComponent(contact.URI) + '?photo').replace(/index\.php\//, '')
-			}
-			return undefined
-		},
-		getAddress() {
-			this.addressLoading = true
-			geocode(this.latLng.lat, this.latLng.lng).then((response) => {
-				this.address = response.data.address
-				this.formattedAddress = formatAddress(this.address)
-			}).catch((error) => {
-				console.error(error)
-			}).then(() => {
-				this.addressLoading = false
-			})
-		},
-		onValidate() {
-			if (!this.addressEdited) {
-				this.$emit('contact-placed', {
-					contact: this.selectedContact,
-					latLng: this.latLng,
-					address: this.address,
-					addressType: this.addressType,
-				})
-			} else {
-				this.searchingEditedAddress = true
-				searchAddress(this.formattedAddress, 1).then((response) => {
-					const res = response.data
-					const addressFound = (res.length > 0 && res[0].address && res[0].lat && res[0].lon)
-					const address = addressFound ? res[0].address : this.address
-					const lat = addressFound ? res[0].lat : this.latLng.lat
-					const lng = addressFound ? res[0].lon : this.latLng.lng
-
-					this.$emit('contact-placed', {
-						contact: this.selectedContact,
-						latLng: { lat, lng },
-						address,
-						addressType: this.addressType,
-					})
-				}).catch((error) => {
-					console.error(error)
-				}).then(() => {
-					this.searchingEditedAddress = false
-				})
-			}
-		},
-	},
+		}).catch((error) => {
+			console.error(error)
+		}).then(() => {
+			searchingEditedAddress.value = false
+		})
+	}
 }
 </script>
 

@@ -83,9 +83,8 @@
 	</div>
 </template>
 
-<script>
-import VueTypes from 'vue-types'
-
+<script setup>
+import { ref, computed, watch, nextTick } from 'vue'
 import {
 	MglMap,
 	MglRasterSource,
@@ -95,9 +94,7 @@ import {
 	MglNavigationControl,
 	MglScaleControl,
 } from '@indoorequal/vue-maplibre-gl'
-
 import { usePublicFavoritesStore } from '../store/publicFavoritesStore.pinia.js'
-import { computed } from 'vue'
 import ClickPopup from './map/ClickPopup.vue'
 import FavoritePopup from './map/FavoritePopup.vue'
 import { isPublicShare } from '../utils/common.js'
@@ -113,152 +110,113 @@ const minimalStyle = {
 	layers: [],
 }
 
-export default {
-	name: 'MapContainer',
-
-	components: {
-		MglMap,
-		MglRasterSource,
-		MglRasterLayer,
-		MglMarker,
-		MglPopup,
-		MglNavigationControl,
-		MglScaleControl,
-		ClickPopup,
-		FavoritePopup,
+const props = defineProps({
+	favoriteCategories: {
+		type: Object,
+		required: true,
+		default: () => ({}),
 	},
-
-	props: {
-		favoriteCategories: VueTypes.object.isRequired.def({}),
-		isPublicShare: VueTypes.bool.isRequired.def(false),
-		allowFavoriteEdits: VueTypes.bool.def(false),
+	isPublicShare: {
+		type: Boolean,
+		required: true,
+		default: false,
 	},
+	allowFavoriteEdits: {
+		type: Boolean,
+		default: false,
+	},
+})
 
-	setup() {
-		const publicFavoritesStore = usePublicFavoritesStore()
-		return {
-			selectedFavoriteId: computed(() => isPublicShare() ? publicFavoritesStore.selectedFavoriteId : null),
-			selectedFavorite: computed(() => isPublicShare()
-				? publicFavoritesStore.favorites.find(f => f.id === publicFavoritesStore.selectedFavoriteId)
-				: null),
-			selectFavorite: (id) => publicFavoritesStore.selectFavorite(id),
+const emit = defineEmits(['add-favorite', 'update-favorite', 'delete-favorite'])
+
+const publicFavoritesStore = usePublicFavoritesStore()
+const selectedFavoriteId = computed(() => isPublicShare() ? publicFavoritesStore.selectedFavoriteId : null)
+const selectedFavorite = computed(() => isPublicShare()
+	? publicFavoritesStore.favorites.find(f => f.id === publicFavoritesStore.selectedFavoriteId)
+	: null)
+const selectFavorite = (id) => publicFavoritesStore.selectFavorite(id)
+
+const activeLayerId = ref(LayerIds.OSM)
+const openMarkerPopupId = ref(null)
+const placePopup = ref({ visible: false, latLng: { lat: 0, lng: 0 } })
+const mapInstance = ref(null)
+const mapClickPopupLocked = ref(false)
+
+const scaleUnit = computed(() => getShouldMapUseImperial() ? 'imperial' : 'metric')
+const layers = computed(() => Layers)
+const activeLayer = computed(() => layers.value.find(layer => layer.id === activeLayerId.value))
+const allFavorites = computed(() =>
+	Object.entries(props.favoriteCategories).flatMap(([categoryKey, favs]) =>
+		favs.map(f => ({ ...f, categoryKey })),
+	),
+)
+const favoriteBounds = computed(() => {
+	if (allFavorites.value.length === 0) return null
+	const lats = allFavorites.value.map(f => f.lat)
+	const lngs = allFavorites.value.map(f => f.lng)
+	return [[Math.min(...lngs), Math.min(...lats)], [Math.max(...lngs), Math.max(...lats)]]
+})
+
+watch(selectedFavoriteId, (val) => {
+	if (val !== null) {
+		const fav = allFavorites.value.find(f => f.id === val)
+		if (fav) {
+			setMapView({ lat: fav.lat, lng: fav.lng }, CLUSTER_MAX_ZOOM_LEVEL)
+			openMarkerPopupId.value = val
+		} else {
+			console.warn('[MapContainer] Cannot find favorite id: ', val)
 		}
-	},
+	}
+})
 
-	data() {
-		return {
-			minimalStyle,
-			activeLayerId: LayerIds.OSM,
-			openMarkerPopupId: null,
-			placePopup: {
-				visible: false,
-				latLng: { lat: 0, lng: 0 },
-			},
-			mapInstance: null,
-			mapClickPopupLocked: false,
-		}
-	},
+function onMapLoad(map) {
+	mapInstance.value = map
+	if (favoriteBounds.value) {
+		map.fitBounds(favoriteBounds.value, { padding: 30 })
+	}
+}
 
-	computed: {
-		scaleUnit() {
-			return getShouldMapUseImperial() ? 'imperial' : 'metric'
-		},
-		layers() {
-			return Layers
-		},
-		activeLayer() {
-			return this.layers.find(layer => layer.id === this.activeLayerId)
-		},
-		allFavorites() {
-			return Object.entries(this.favoriteCategories).flatMap(([categoryKey, favs]) =>
-				favs.map(f => ({ ...f, categoryKey })),
-			)
-		},
-		favoriteBounds() {
-			if (this.allFavorites.length === 0) return null
-			const lats = this.allFavorites.map(f => f.lat)
-			const lngs = this.allFavorites.map(f => f.lng)
-			return [[Math.min(...lngs), Math.min(...lats)], [Math.max(...lngs), Math.max(...lats)]]
-		},
-	},
+function setMapView(latLng, zoom) {
+	if (mapInstance.value) {
+		mapInstance.value.flyTo({ center: [latLng.lng, latLng.lat], zoom })
+	}
+}
 
-	watch: {
-		selectedFavoriteId(val) {
-			if (val !== null) {
-				const fav = this.allFavorites.find(f => f.id === val)
-				if (fav) {
-					this.setMapView({ lat: fav.lat, lng: fav.lng }, CLUSTER_MAX_ZOOM_LEVEL)
-					this.openMarkerPopupId = val
-				} else {
-					console.warn('[MapContainer] Cannot find favorite id: ', val)
-				}
-			}
-		},
-	},
+function emitAddFavoriteEvent(data) { emit('add-favorite', data) }
+function emitUpdateFavoriteEvent(data) { emit('update-favorite', data) }
+function emitDeleteFavoriteEvent(data) { emit('delete-favorite', data) }
 
-	methods: {
-		onMapLoad(map) {
-			this.mapInstance = map
-			if (this.favoriteBounds) {
-				map.fitBounds(this.favoriteBounds, { padding: 30 })
-			}
-		},
+function storeCurrentlyOpenPopup(id) {
+	openMarkerPopupId.value = id
+}
 
-		setMapView(latLng, zoom) {
-			if (this.mapInstance) {
-				this.mapInstance.flyTo({ center: [latLng.lng, latLng.lat], zoom })
-			}
-		},
+function forgetCurrentlyOpenPopup() {
+	mapClickPopupLocked.value = true
+	openMarkerPopupId.value = null
+	nextTick(() => {
+		mapClickPopupLocked.value = false
+	})
+	selectFavorite(null)
+}
 
-		emitAddFavoriteEvent(data) {
-			this.$emit('add-favorite', data)
-		},
+function openPopup(lat, lng) {
+	placePopup.value.visible = true
+	placePopup.value.latLng = { lat, lng }
+}
 
-		emitUpdateFavoriteEvent(data) {
-			this.$emit('update-favorite', data)
-		},
+function closePopup() {
+	placePopup.value.visible = false
+	placePopup.value.latLng = { lat: 0, lng: 0 }
+}
 
-		emitDeleteFavoriteEvent(data) {
-			this.$emit('delete-favorite', data)
-		},
+function handleMapClick(e) {
+	if (!placePopup.value.visible && !mapClickPopupLocked.value) {
+		openPopup(e.lngLat.lat, e.lngLat.lng)
+	}
+}
 
-		storeCurrentlyOpenPopup(id) {
-			this.openMarkerPopupId = id
-		},
-
-		forgetCurrentlyOpenPopup() {
-			this.mapClickPopupLocked = true
-			this.openMarkerPopupId = null
-			this.$nextTick(() => {
-				this.mapClickPopupLocked = false
-			})
-			this.selectFavorite(null)
-		},
-
-		openPopup(lat, lng) {
-			this.placePopup.visible = true
-			this.placePopup.latLng = { lat, lng }
-		},
-
-		closePopup() {
-			this.resetPopupState()
-		},
-
-		resetPopupState() {
-			this.placePopup.visible = false
-			this.placePopup.latLng = { lat: 0, lng: 0 }
-		},
-
-		handleMapClick(e) {
-			if (!this.placePopup.visible && !this.mapClickPopupLocked) {
-				this.openPopup(e.lngLat.lat, e.lngLat.lng)
-			}
-		},
-
-		getMarkerBackgroundColor(categoryKey) {
-			return getThemingColorFromCategoryKey(categoryKey)
-		},
-	},
+function getMarkerBackgroundColor(categoryKey) {
+	return getThemingColorFromCategoryKey(categoryKey)
 }
 </script>
 

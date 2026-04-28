@@ -24,66 +24,47 @@
 	</div>
 </template>
 
-<script>
+<script setup>
+import { ref, computed, onMounted } from 'vue'
+import { t } from '@nextcloud/l10n'
 import { getLocale } from '@nextcloud/l10n'
 import { useControl } from '@indoorequal/vue-maplibre-gl'
 import { useIsMobile } from '@nextcloud/vue/composables/useIsMobile'
-import { computed, ref, onMounted } from 'vue'
-
 import SearchField from './SearchField.vue'
 
-export default {
-	name: 'SearchControl',
-
-	components: {
-		SearchField,
+const props = defineProps({
+	map: {
+		type: Object,
+		required: true,
 	},
-
-	setup() {
-		const isMobile = useIsMobile()
-		const el = ref(null)
-
-		onMounted(() => {
-			useControl(() => ({
-				onAdd() {
-					this._container = el.value?.children[0]
-					return this._container
-				},
-				onRemove() {},
-			}), { position: 'top-left' })
-		})
-
-		return { isMobile: computed(() => isMobile.value), el }
+	searchData: {
+		type: Array,
+		required: true,
 	},
+	loading: {
+		type: Boolean,
+		default: false,
+	},
+	resultPoiNumber: {
+		type: Number,
+		default: 0,
+	},
+})
 
-	props: {
-		map: {
-			type: Object,
-			required: true,
+defineEmits(['validate', 'routing-clicked', 'clear-pois'])
+
+const isMobile = useIsMobile()
+const el = ref(null)
+
+onMounted(() => {
+	useControl(() => ({
+		onAdd() {
+			this._container = el.value?.children[0]
+			return this._container
 		},
-		searchData: {
-			type: Array,
-			required: true,
-		},
-		loading: {
-			type: Boolean,
-			default: false,
-		},
-		resultPoiNumber: {
-			type: Number,
-			default: 0,
-		},
-	},
-
-	data() {
-		return {
-			locale: getLocale(),
-		}
-	},
-
-	methods: {
-	},
-}
+		onRemove() {},
+	}), { position: 'top-left' })
+})
 </script>
 
 <style lang="scss" scoped>

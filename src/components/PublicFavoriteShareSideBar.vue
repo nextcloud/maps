@@ -41,62 +41,35 @@
 	</NcAppNavigation>
 </template>
 
-<script>
+<script setup>
+import { computed } from 'vue'
+import { t } from '@nextcloud/l10n'
 import NcAppNavigation from '@nextcloud/vue/components/NcAppNavigation'
 import NcAppNavigationItem from '@nextcloud/vue/components/NcAppNavigationItem'
 import NcAppNavigationNew from '@nextcloud/vue/components/NcAppNavigationNew'
 import NcAppNavigationSpacer from '@nextcloud/vue/components/NcAppNavigationSpacer'
 import { usePublicFavoritesStore } from '../store/publicFavoritesStore.pinia.js'
 import { useMapStore } from '../store/mapStore.pinia.js'
-import { computed } from 'vue'
 import MapMode from '../data/enum/MapMode.js'
 
-export default {
-	name: 'PublicFavoriteShareSideBar',
+const favStore = usePublicFavoritesStore()
+const mapStore = useMapStore()
 
-	components: {
-		NcAppNavigation,
-		NcAppNavigationItem,
-		NcAppNavigationNew,
-		NcAppNavigationSpacer,
-	},
+const favorites = computed(() => favStore.favorites)
+const mapMode = computed(() => mapStore.mode)
+const shareInfo = computed(() => favStore.shareInfo)
 
-	setup() {
-		const favStore = usePublicFavoritesStore()
-		const mapStore = useMapStore()
-		return {
-			favorites: computed(() => favStore.favorites),
-			mapMode: computed(() => mapStore.mode),
-			shareInfo: computed(() => favStore.shareInfo),
-			selectFavorite: (id) => favStore.selectFavorite(id),
-			setMapMode: (mode) => mapStore.setMode(mode),
-		}
-	},
+const allowFavoriteEdits = computed(() => shareInfo.value ? shareInfo.value.allowEdits : false)
+const newFavoriteButtonLabel = computed(() =>
+	t('maps', mapMode.value === MapMode.ADDING_FAVORITES ? 'Cancel adding favorites' : 'Add favorites'),
+)
 
-	computed: {
-		allowFavoriteEdits() {
-			return this.shareInfo ? this.shareInfo.allowEdits : false
-		},
+function selectFavorite(id) {
+	favStore.selectFavorite(id)
+}
 
-		newFavoriteButtonLabel() {
-			return t(
-				'maps',
-				this.mapMode === MapMode.ADDING_FAVORITES
-					? 'Cancel adding favorites'
-					: 'Add favorites',
-			)
-		},
-	},
-
-	methods: {
-		toggleMapMode() {
-			if (this.mapMode === MapMode.ADDING_FAVORITES) {
-				this.setMapMode(MapMode.DEFAULT)
-			} else {
-				this.setMapMode(MapMode.ADDING_FAVORITES)
-			}
-		},
-	},
+function toggleMapMode() {
+	mapStore.setMode(mapMode.value === MapMode.ADDING_FAVORITES ? MapMode.DEFAULT : MapMode.ADDING_FAVORITES)
 }
 </script>
 

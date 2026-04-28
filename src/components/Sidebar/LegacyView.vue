@@ -21,37 +21,35 @@
   -->
 
 <template>
-	<div />
+	<div ref="el" />
 </template>
-<script>
-export default {
-	name: 'LegacyView',
-	props: {
-		component: {
-			type: Object,
-			required: true,
-		},
-		fileInfo: {
-			type: Object,
-			default: () => {},
-			required: true,
-		},
+<script setup>
+import { ref, watch, onMounted } from 'vue'
+
+const props = defineProps({
+	component: {
+		type: Object,
+		required: true,
 	},
-	watch: {
-		fileInfo(fileInfo) {
-			// update the backbone model FileInfo
-			this.setFileInfo(fileInfo)
-		},
+	fileInfo: {
+		type: Object,
+		default: () => {},
+		required: true,
 	},
-	mounted() {
-		// append the backbone element and set the FileInfo
-		this.component.$el.replaceAll(this.$el)
-		this.setFileInfo(this.fileInfo)
-	},
-	methods: {
-		setFileInfo(fileInfo) {
-			this.component.setFileInfo(new OCA.Files.FileInfoModel(fileInfo))
-		},
-	},
+})
+
+const el = ref(null)
+
+watch(() => props.fileInfo, (fileInfo) => {
+	setFileInfo(fileInfo)
+})
+
+onMounted(() => {
+	props.component.$el.replaceAll(el.value)
+	setFileInfo(props.fileInfo)
+})
+
+function setFileInfo(fileInfo) {
+	props.component.setFileInfo(new OCA.Files.FileInfoModel(fileInfo))
 }
 </script>

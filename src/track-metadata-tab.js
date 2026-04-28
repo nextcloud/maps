@@ -12,58 +12,35 @@
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU Affero General Public License for more details.
  *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  *
  */
-import { createApp } from 'vue'
+import { FileType, registerSidebarTab } from '@nextcloud/files'
 import { translate as t } from '@nextcloud/l10n'
+import { defineCustomElement } from 'vue'
 
-import TrackMetadataTab from './views/TrackMetadataTab.vue'
+import RoadIcon from '../img/road.svg?raw'
 
-let tabApp = null
-const trackMetadataTab = new OCA.Files.Sidebar.Tab({
+const tagName = 'maps-track-metadata-sidebar-tab'
+
+registerSidebarTab({
 	id: 'maps-track-metadata',
-	name: t('maps', 'Metadata'),
-	icon: 'icon-info',
-
-	async mount(el, fileInfo, context) {
-		if (tabApp) {
-			tabApp.unmount()
-			tabApp = null
-		}
-		tabApp = createApp(TrackMetadataTab)
-		tabApp.config.globalProperties.t = window.t
-		tabApp.config.globalProperties.n = window.n
-		const instance = tabApp.mount(el)
-		await instance.update(fileInfo.id)
+	tagName,
+	displayName: t('maps', 'Metadata'),
+	iconSvgInline: RoadIcon,
+	order: 10,
+	enabled({ node }) {
+		return node.type === FileType.File && node.mime === 'application/gpx+xml'
 	},
-	update(fileInfo) {
-		if (tabApp) {
-			tabApp._instance?.proxy?.update(fileInfo.id)
-		}
-	},
-	destroy() {
-		if (tabApp) {
-			tabApp.unmount()
-			tabApp = null
-		}
-	},
-	enabled(fileInfo) {
-		return ['application/gpx+xml'].includes(fileInfo.mimetype)
-	},
-	scrollBottomReached() {
-		if (tabApp) {
-			tabApp._instance?.proxy?.onScrollBottomReached()
-		}
+	async onInit() {
+		const { default: TrackMetadataSidebarTab } = await import('./views/TrackMetadataSidebarTab.vue')
+		window.customElements.define(tagName, defineCustomElement(TrackMetadataSidebarTab, {
+			shadowRoot: false,
+		}))
 	},
 })
 
-window.addEventListener('DOMContentLoaded', function() {
-	if (OCA.Files && OCA.Files.Sidebar) {
-		OCA.Files.Sidebar.registerTab(trackMetadataTab)
-	}
-})

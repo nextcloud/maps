@@ -17,75 +17,52 @@
 	</div>
 </template>
 
-<script>
+<script setup>
+import { computed, ref, onMounted } from 'vue'
 import { useControl } from '@indoorequal/vue-maplibre-gl'
-import { ref, onMounted } from 'vue'
+import { t } from '@nextcloud/l10n'
 
-export default {
-	name: 'HistoryControl',
-
-	props: {
-		lastActions: {
-			type: Array,
-			required: true,
-		},
-		lastCanceledActions: {
-			type: Array,
-			required: true,
-		},
-		position: {
-			type: String,
-			default: 'top-right',
-		},
+const props = defineProps({
+	lastActions: {
+		type: Array,
+		required: true,
 	},
-
-	setup(props) {
-		const el = ref(null)
-
-		onMounted(() => {
-			useControl(() => ({
-				onAdd() {
-					this._container = el.value?.children[0]
-					return this._container
-				},
-				onRemove() {},
-			}), { position: props.position })
-		})
-
-		return { el }
+	lastCanceledActions: {
+		type: Array,
+		required: true,
 	},
-
-	computed: {
-		lastActionLabel() {
-			const action = this.lastActions[this.lastActions.length - 1]
-			return this.getActionLabel(action)
-		},
-		lastCanceledActionLabel() {
-			const action = this.lastCanceledActions[this.lastCanceledActions.length - 1]
-			return this.getActionLabel(action)
-		},
+	position: {
+		type: String,
+		default: 'top-right',
 	},
+})
 
-	methods: {
-		getActionLabel(action) {
-			if (action.type === 'photoMove') {
-				return t('maps', 'Move photo')
-			} else if (action.type === 'favoriteAdd') {
-				return t('maps', 'Add favorite')
-			} else if (action.type === 'favoriteEdit') {
-				return t('maps', 'Edit favorite')
-			} else if (action.type === 'favoriteDelete') {
-				return t('maps', 'Delete favorite')
-			} else if (action.type === 'favoriteRenameCategory') {
-				return t('maps', 'Rename favorite category')
-			} else if (action.type === 'contactPlace') {
-				return t('maps', 'Place contact')
-			} else if (action.type === 'contactDelete') {
-				return t('maps', 'Delete contact address')
-			}
+defineEmits(['cancel', 'redo'])
+
+const el = ref(null)
+
+onMounted(() => {
+	useControl(() => ({
+		onAdd() {
+			this._container = el.value?.children[0]
+			return this._container
 		},
-	},
+		onRemove() {},
+	}), { position: props.position })
+})
+
+function getActionLabel(action) {
+	if (action.type === 'photoMove') return t('maps', 'Move photo')
+	if (action.type === 'favoriteAdd') return t('maps', 'Add favorite')
+	if (action.type === 'favoriteEdit') return t('maps', 'Edit favorite')
+	if (action.type === 'favoriteDelete') return t('maps', 'Delete favorite')
+	if (action.type === 'favoriteRenameCategory') return t('maps', 'Rename favorite category')
+	if (action.type === 'contactPlace') return t('maps', 'Place contact')
+	if (action.type === 'contactDelete') return t('maps', 'Delete contact address')
 }
+
+const lastActionLabel = computed(() => getActionLabel(props.lastActions[props.lastActions.length - 1]))
+const lastCanceledActionLabel = computed(() => getActionLabel(props.lastCanceledActions[props.lastCanceledActions.length - 1]))
 </script>
 
 <style lang="scss" scoped>

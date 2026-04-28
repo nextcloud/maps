@@ -1,10 +1,11 @@
-import { DefaultType, FileAction, Permission } from '@nextcloud/files'
+import type { IFileAction } from '@nextcloud/files'
+import { DefaultType, Permission } from '@nextcloud/files'
 import { t } from '@nextcloud/l10n'
 import { generateUrl } from '@nextcloud/router'
 
 import svgMapMarker from '@mdi/svg/svg/map-marker.svg?raw'
 
-export default new FileAction({
+const action: IFileAction = {
 	id: 'maps:view-map',
 	default: DefaultType.DEFAULT,
 
@@ -12,22 +13,22 @@ export default new FileAction({
 		return t('maps', 'View in Maps')
 	},
 
-	enabled(files) {
-		if (files.length !== 1) {
+	enabled({ nodes }) {
+		if (nodes.length !== 1) {
 			return false
 		}
 
-		const [file] = files
+		const [file] = nodes
 		if (!(file.permissions & Permission.READ)) {
 			return false
 		}
 		return [
 			'application/gpx+xml',
 			'application/x-nextcloud-maps',
-		].includes(file.mime)
+		].includes(file.mime ?? '')
 	},
 
-	async exec(file) {
+	async exec({ nodes: [file] }) {
 		if (file.mime === 'application/x-nextcloud-maps') {
 			const url = generateUrl('apps/maps/m/{mapId}', { mapId: file.fileid })
 			window.open(url, '_self')
@@ -42,4 +43,6 @@ export default new FileAction({
 	iconSvgInline() {
 		return svgMapMarker
 	},
-})
+}
+
+export default action

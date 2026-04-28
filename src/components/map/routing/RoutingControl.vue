@@ -32,105 +32,63 @@
 	</div>
 </template>
 
-<script>
+<script setup>
+import { ref, onMounted } from 'vue'
+import { t } from '@nextcloud/l10n'
 import { useControl } from '@indoorequal/vue-maplibre-gl'
 import { useIsMobile } from '@nextcloud/vue/composables/useIsMobile'
-import { computed, ref, onMounted } from 'vue'
-
 import RoutingSteps from './RoutingSteps.vue'
 import RoutingMachine from './RoutingMachine.vue'
 
-const emptyStep = () => {
-	return {
-		latLng: null,
-		name: '',
-	}
-}
+const emptyStep = () => ({ latLng: null, name: '' })
 
-export default {
-	name: 'RoutingControl',
-
-	components: {
-		RoutingSteps,
-		RoutingMachine,
+const props = defineProps({
+	map: {
+		type: Object,
+		required: true,
 	},
-
-	setup() {
-		const isMobile = useIsMobile()
-		const el = ref(null)
-
-		onMounted(() => {
-			useControl(() => ({
-				onAdd() {
-					this._container = el.value?.children[0]
-					return this._container
-				},
-				onRemove() {},
-			}), { position: 'top-left' })
-		})
-
-		return { isMobile: computed(() => isMobile.value), el }
+	searchData: {
+		type: Array,
+		required: true,
 	},
-
-	props: {
-		map: {
-			type: Object,
-			required: true,
-		},
-		searchData: {
-			type: Array,
-			required: true,
-		},
-		visible: {
-			type: Boolean,
-			default: true,
-		},
+	visible: {
+		type: Boolean,
+		default: true,
 	},
+})
 
-	data() {
-		return {
-			steps: [emptyStep(), emptyStep()],
-			planReady: false,
-		}
-	},
+defineEmits(['close', 'track-added'])
 
-	methods: {
-		setRouteFrom(step) {
-			this.$refs.machine.setRouteFrom(step)
+const isMobile = useIsMobile()
+const el = ref(null)
+const machine = ref(null)
+const steps = ref([emptyStep(), emptyStep()])
+const planReady = ref(false)
+
+onMounted(() => {
+	useControl(() => ({
+		onAdd() {
+			this._container = el.value?.children[0]
+			return this._container
 		},
-		setRouteTo(step) {
-			this.$refs.machine.setRouteTo(step)
-		},
-		setRoutePoint(i, step) {
-			this.$refs.machine.setRoutePoint(i, step)
-		},
-		addRoutePoint(step = emptyStep()) {
-			this.$refs.machine.addRoutePoint(step)
-		},
-		deleteRoutePoint(i) {
-			this.$refs.machine.deleteRoutePoint(i)
-		},
-		reverseWaypoints() {
-			this.$refs.machine.reverseWaypoints()
-		},
-		onExportRoute() {
-			this.$refs.machine.onExportRoute()
-		},
-		onZoomRoute() {
-			this.$refs.machine.onZoomRoute()
-		},
-		// ============ routing machine events ============
-		onPlanChanged(waypoints) {
-			this.steps = waypoints
-		},
-		onPlanReadyChanged(ready) {
-			this.planReady = ready
-		},
-		onRouteSelected() {
-			this.onZoomRoute()
-		},
-	},
-}
+		onRemove() {},
+	}), { position: 'top-left' })
+})
+
+function setRouteFrom(step) { machine.value.setRouteFrom(step) }
+function setRouteTo(step) { machine.value.setRouteTo(step) }
+function setRoutePoint(i, step) { machine.value.setRoutePoint(i, step) }
+function addRoutePoint(step = emptyStep()) { machine.value.addRoutePoint(step) }
+function deleteRoutePoint(i) { machine.value.deleteRoutePoint(i) }
+function reverseWaypoints() { machine.value.reverseWaypoints() }
+function onExportRoute() { machine.value.onExportRoute() }
+function onZoomRoute() { machine.value.onZoomRoute() }
+
+function onPlanChanged(waypoints) { steps.value = waypoints }
+function onPlanReadyChanged(ready) { planReady.value = ready }
+function onRouteSelected() { onZoomRoute() }
+
+defineExpose({ setRouteFrom, setRouteTo, setRoutePoint, addRoutePoint, deleteRoutePoint, reverseWaypoints, onExportRoute, onZoomRoute })
 </script>
 
 <style lang="scss" scoped>

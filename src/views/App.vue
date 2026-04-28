@@ -234,6 +234,7 @@ import { all as axiosAll, spread as axiosSpread } from 'axios'
 import { generateUrl } from '@nextcloud/router'
 import { getClient, getRootPath } from '@nextcloud/files/dav'
 import { placeFileOrFolder } from '../utils/photoPicker.ts'
+import { sidebarState, setActiveSidebarTab } from '../sidebarState.js'
 
 export default {
 	name: 'App',
@@ -630,10 +631,6 @@ export default {
 		if (optionsController.optionValues.trackMe === 'true') {
 			this.sendPositionLoop()
 		}
-		// Register sidebar to be callable from viewer, possibly nicer in main.js but I failed to but it there
-		window.OCA.Files.Sidebar.open = this.openSidebar
-		window.OCA.Files.Sidebar.close = this.closeSidebar
-		window.OCA.Files.Sidebar.setFullScreenMode = this.sidebarSetFullScreenMode
 
 		document.onkeyup = (e) => {
 			if (e.ctrlKey) {
@@ -658,7 +655,7 @@ export default {
 	},
 	methods: {
 		onActiveSidebarTabChanged(newActive) {
-			window.OCA.Files.Sidebar.setActiveTab(newActive)
+			setActiveSidebarTab(newActive)
 		},
 		onMainDetailClicked() {
 			this.showSidebar ? this.closeSidebar() : this.openSidebar()
@@ -669,41 +666,21 @@ export default {
 			// Make shure that the active photo suggestions tab stays there if photo suggestions are loaded
 			if (this.showPhotoSuggestions) {
 				this.openSidebar()
-				window.OCA.Files.Sidebar.setActiveTab('photo-suggestion')
+				setActiveSidebarTab('photo-suggestion')
 			}
 		},
 		closeSidebar() {
 			this.$refs.Sidebar.close()
 			emit('files:sidebar:closed')
-			window.OCA.Files.Sidebar.setActiveTab('')
+			setActiveSidebarTab('')
 			this.showSidebar = false
 		},
 		openSidebar(path = null, type = null, title = null) {
 			this.showSidebar = true
 			this.$refs.Sidebar.open(path, type, title)
 			if (!path && this.showPhotoSuggestions) {
-				window.OCA.Files.Sidebar.setActiveTab('photo-suggestion')
+				setActiveSidebarTab('photo-suggestion')
 			}
-			/*
-			const myMap = path ? this.myMaps.find((m) => m.path === path) : false
-			if (myMap) {
-				window.OCA.Files.state.activeTab = 'myMaps'
-				this.selectedMyMap = myMap
-				this.sidebarFileInfo = myMap.fileInfo
-				window.OCA.Files.Sidebar.state.file = path
-			} else {
-				const photo = this.photos.find((p) => p.path === path)
-				if (photo) {
-					window.OCA.Files.state.activeTab = 'photo'
-					this.selectedPhoto = photo
-					this.sidebarFileInfo = photo
-					window.OCA.Files.Sidebar.state.file = path
-				} else {
-					window.OCA.Files.Sidebar.state.file = true
-				}
-			}
-			emit('files:sidebar:opening')
-			 */
 		},
 		/**
 		 * Allow to set the Sidebar as fullscreen from OCA.Files.Sidebar
@@ -732,7 +709,7 @@ export default {
 				this.selectedTrack = null
 			}
 			if (!isPublic()) {
-				window.OCA.Files.Sidebar.state.file = ''
+				sidebarState.file = ''
 			}
 		},
 		onToggleTrackme(enabled) {
@@ -1055,7 +1032,7 @@ export default {
 			if (this.photosEnabled && this.showPhotoSuggestions && this.photoSuggestions.length === 0) {
 				this.getPhotoSuggestions()
 			}
-			window.OCA.Files.Sidebar.setActiveTab('photo-suggestion')
+			setActiveSidebarTab('photo-suggestion')
 			this.showPhotoSuggestions ? this.openSidebar() : this.closeSidebar()
 		},
 		onPhotoSuggestionSelected(index) {
@@ -1576,7 +1553,7 @@ export default {
 			// select
 			this.favorites[f.id].selected = true
 			this.openSidebar(null, 'favorite', f.name)
-			window.OCA.Files.Sidebar.setActiveTab('favorite')
+			setActiveSidebarTab('favorite')
 			this.selectedFavorite = f
 		},
 		onFavoriteEdit(f, save = true) {
@@ -1749,7 +1726,7 @@ export default {
 				this.favorites[fav.id] = fav
 				if (openSidebar) {
 					this.selectedFavorite = this.favorites[fav.id]
-					window.OCA.Files.Sidebar.setActiveTab('favorite')
+					setActiveSidebarTab('favorite')
 					this.openSidebar(null, 'favorite', fav.name)
 				}
 				if (this.sliderEnabled) {
@@ -1999,7 +1976,7 @@ export default {
 			// select
 			track.selected = true
 			this.openSidebar(track.path, 'track', track.name)
-			window.OCA.Files.Sidebar.setActiveTab('maps-track-metadata')
+			setActiveSidebarTab('maps-track-metadata')
 			this.selectedTrack = track
 		},
 		// devices
@@ -2385,7 +2362,7 @@ export default {
 			})
 		},
 		onShareMyMap(myMap) {
-			window.OCA.Files.Sidebar.setActiveTab('sharing')
+			setActiveSidebarTab('sharing')
 			this.openSidebar(myMap.path, 'maps', myMap.name)
 		},
 		loadMap(myMap) {

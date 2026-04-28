@@ -27,50 +27,34 @@
 	</NcAppNavigationItem>
 </template>
 
-<script>
-
+<script setup>
+import { ref } from 'vue'
 import NcAppNavigationItem from '@nextcloud/vue/components/NcAppNavigationItem'
 import NcCounterBubble from '@nextcloud/vue/components/NcCounterBubble'
 
-export default {
-	name: 'PhotoSideBarTabTrackItem',
-
-	components: {
-		NcAppNavigationItem,
-		NcCounterBubble,
+const props = defineProps({
+	track: {
+		required: true,
+		type: Object,
 	},
-
-	props: {
-		track: {
-			required: true,
-			type: Object,
-		},
-		subTracks: {
-			required: false,
-			type: Array,
-			default() { return [] },
-		},
+	subTracks: {
+		required: false,
+		type: Array,
+		default: () => [],
 	},
+})
 
-	data() {
-		return {
-			open: !!this.track.open,
-			enabled: this.subTracks.some((t) => { return t.enabled }),
-		}
-	},
+const emit = defineEmits(['subtrack-click'])
 
-	computed: {
-	},
+const open = ref(!!props.track.open)
+const enabled = ref(props.subTracks.some((t) => t.enabled))
 
-	methods: {
-		onTrackClick() {
-			this.open = !this.open
-			if (this.subTracks.length < 2) {
-				this.enabled = !this.enabled
-				this.$emit('subtrack-click', this.subTracks[0])
-			}
-		},
-	},
+function onTrackClick() {
+	open.value = !open.value
+	if (props.subTracks.length < 2) {
+		enabled.value = !enabled.value
+		emit('subtrack-click', props.subTracks[0])
+	}
 }
 </script>
 

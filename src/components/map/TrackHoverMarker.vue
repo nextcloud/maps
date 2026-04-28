@@ -26,45 +26,29 @@
 	</MglMarker>
 </template>
 
-<script>
+<script setup>
+import { computed } from 'vue'
 import { MglMarker, MglPopup } from '@indoorequal/vue-maplibre-gl'
 import moment from '@nextcloud/moment'
+import { t } from '@nextcloud/l10n'
 
-export default {
-	name: 'TrackHoverMarker',
-	components: {
-		MglMarker,
-		MglPopup,
+const props = defineProps({
+	point: {
+		type: Object,
+		required: true,
 	},
+})
 
-	props: {
-		point: {
-			type: Object,
-			required: true,
-		},
-	},
+const date = computed(() => {
+	if (props.point.timestamp) {
+		const mom = moment.unix(props.point.timestamp)
+		return mom.format('LL') + ' ' + mom.format('HH:mm:ss')
+	}
+	return null
+})
 
-	computed: {
-		date() {
-			if (this.point.timestamp) {
-				const mom = moment.unix(this.point.timestamp)
-				return mom.format('LL') + ' ' + mom.format('HH:mm:ss')
-			} else {
-				return null
-			}
-		},
-		altitude() {
-			return this.point.ele
-				? this.point.ele + ' m'
-				: null
-		},
-		trackName() {
-			return this.point.track_name
-				? this.point.track_name
-				: null
-		},
-	},
-}
+const altitude = computed(() => props.point.ele ? props.point.ele + ' m' : null)
+const trackName = computed(() => props.point.track_name || null)
 </script>
 
 <style lang="scss" scoped>

@@ -82,514 +82,288 @@
 	</NcAppSidebar>
 </template>
 
-<script>
+<script setup>
+import { ref, computed, nextTick } from 'vue'
+import { t } from '@nextcloud/l10n'
 import NcAppSidebar from '@nextcloud/vue/components/NcAppSidebar'
 import NcActionButton from '@nextcloud/vue/components/NcActionButton'
 import NcEmptyContent from '@nextcloud/vue/components/NcEmptyContent'
 import { emit } from '@nextcloud/event-bus'
 import { generateUrl } from '@nextcloud/router'
 import { showError } from '@nextcloud/dialogs'
+import { encodePath } from '@nextcloud/paths'
+import moment from '@nextcloud/moment'
+import { Type as ShareTypes } from '@nextcloud/sharing'
+import axios from '@nextcloud/axios'
 
 import FavoriteSidebarTab from '../components/FavoriteSidebarTab.vue'
 import PhotoSuggestionsSidebarTab from './Sidebar/PhotoSuggestionsSidebarTab.vue'
 import SidebarTab from './Sidebar/SidebarTab.vue'
 import LegacyView from './Sidebar/LegacyView.vue'
-import { encodePath } from '@nextcloud/paths'
-import moment from '@nextcloud/moment'
-import { Type as ShareTypes } from '@nextcloud/sharing'
-import axios from '@nextcloud/axios'
+import TrackMetadataTab from './TrackMetadataTab.vue'
 import FileInfo from '../services/FileInfo.js'
 import { isPublic } from '../utils/common.js'
-import TrackMetadataTab from './TrackMetadataTab.vue'
+import { sidebarState, setActiveSidebarTab } from '../sidebarState.js'
 
-export default {
-	name: 'Sidebar',
-
-	components: {
-		TrackMetadataTab,
-		// NcActionButton,
-		NcAppSidebar,
-		FavoriteSidebarTab,
-		PhotoSuggestionsSidebarTab,
-		SidebarTab,
-		LegacyView,
-		NcActionButton,
-		NcEmptyContent,
-
+const props = defineProps({
+	show: {
+		type: Boolean,
+		required: true,
 	},
-
-	props: {
-		show: {
-			type: Boolean,
-			required: true,
-		},
-		favorite: {
-			validator: prop => typeof prop === 'object' || prop === null,
-			required: true,
-		},
-		favoriteCategories: {
-			type: Object,
-			required: true,
-		},
-		photosLoading: {
-			required: true,
-			type: Boolean,
-		},
-		photoSuggestions: {
-			required: true,
-			type: Array,
-		},
-		photoSuggestionsTracksAndDevices: {
-			required: true,
-			type: Object,
-		},
-		photoSuggestionsSelectedIndices: {
-			required: true,
-			type: Array,
-		},
-		photoSuggestionsHidePhotos: {
-			type: Boolean,
-			default: false,
-		},
-		photoSuggestionsTimezone: {
-			required: true,
-			type: String,
-		},
-		track: {
-			required: false,
-			validator: prop => typeof prop === 'object' || prop === null,
-			default: null,
-		},
+	favorite: {
+		validator: prop => typeof prop === 'object' || prop === null,
+		required: true,
 	},
+	favoriteCategories: {
+		type: Object,
+		required: true,
+	},
+	photosLoading: {
+		required: true,
+		type: Boolean,
+	},
+	photoSuggestions: {
+		required: true,
+		type: Array,
+	},
+	photoSuggestionsTracksAndDevices: {
+		required: true,
+		type: Object,
+	},
+	photoSuggestionsSelectedIndices: {
+		required: true,
+		type: Array,
+	},
+	photoSuggestionsHidePhotos: {
+		type: Boolean,
+		default: false,
+	},
+	photoSuggestionsTimezone: {
+		required: true,
+		type: String,
+	},
+	track: {
+		required: false,
+		validator: prop => typeof prop === 'object' || prop === null,
+		default: null,
+	},
+})
 
-	data() {
+const emit2 = defineEmits(['close', 'edit-favorite', 'delete-favorite', 'load-more-photo-suggestions',
+	'change-photo-suggestions-timezone', 'select-all-photo-suggestions', 'clear-photo-suggestions-selection',
+	'cancel-photo-suggestions', 'toggle-photo-suggestions-hide-photo', 'save-photo-suggestions-selection',
+	'zoom-photo-suggestion', 'photo-suggestion-toggle-track-or-device', 'active-changed', 'opened'])
+
+const fileInfo = ref(null)
+const error = ref(false)
+const loading = ref(false)
+const isFullScreen = ref(false)
+const typeOpened = ref('')
+const name = ref(null)
+const icon = ref(null)
+const starLoading = ref(false)
+
+const tabs = ref([])
+const views = ref([])
+
+const file = computed(() => sidebarState.file)
+const activeTab = computed(() => sidebarState.activeTab)
+
+const davPath = computed(() => {
+	const user = OC.getCurrentUser().uid
+	return OC.linkToRemote(`dav/files/${user}${encodePath(file.value)}`)
+})
+
+const subname = computed(() => `${size.value}, ${moment(fileInfo.value.mtime).fromNow()}`)
+const fullTime = computed(() => moment(fileInfo.value.mtime).format('LLL'))
+const size = computed(() => OC.Util.humanFileSize(fileInfo.value.size))
+
+const defaultAction = computed(() =>
+	fileInfo.value
+		&& OCA.Files && OCA.Files.App && OCA.Files.App.fileList
+		&& OCA.Files.App.fileList.fileActions
+		&& OCA.Files.App.fileList.fileActions.getDefaultFileAction
+		&& OCA.Files.App.fileList.fileActions.getDefaultFileAction(fileInfo.value.mimetype, fileInfo.value.type, OC.PERMISSION_READ),
+)
+
+const defaultActionListener = computed(() => defaultAction.value ? 'figure-click' : null)
+const isSystemTagsEnabled = computed(() => OCA && 'SystemTags' in OCA)
+
+const appSidebar = computed(() => {
+	icon.value = null
+	if (fileInfo.value) {
 		return {
-			Sidebar: OCA.Files.Sidebar.state,
-			fileInfo: null,
-			error: false,
-			isFullScreen: false,
-			typeOpened: '',
-			name: null,
-			icon: null,
+			'data-mimetype': fileInfo.value.mimetype,
+			'star-loading': starLoading.value,
+			active: activeTab.value,
+			class: {
+				'app-sidebar--has-preview': fileInfo.value.hasPreview && !isFullScreen.value,
+				'app-sidebar--full': isFullScreen.value,
+			},
+			compact: !fileInfo.value.hasPreview || isFullScreen.value,
+			loading: loading.value,
+			starred: fileInfo.value.isFavourited,
+			subname: subname.value,
+			subnameTooltip: fullTime.value,
+			name: name.value ?? fileInfo.value.name,
+			nameTooltip: fileInfo.value.name,
 		}
-	},
+	} else if (error.value) {
+		return { key: 'error', subname: '', name: '' }
+	} else if (loading.value) {
+		return { loading: loading.value, subname: '', name: '' }
+	} else if (activeTab.value === 'favorite') {
+		icon.value = 'icon-favorite'
+		return {
+			name: t('maps', 'Favorite'),
+			compact: true,
+			subname: '',
+			active: activeTab.value,
+			class: { 'app-sidebar--has-preview': false, 'app-sidebar--full': isFullScreen.value },
+		}
+	} else if (activeTab.value === 'photo-suggestion') {
+		icon.value = 'icon-picture'
+		return {
+			name: t('maps', 'Photo suggestions'),
+			compact: true,
+			subname: '',
+			active: activeTab.value,
+			class: { 'app-sidebar--has-preview': false, 'app-sidebar--full': isFullScreen.value },
+		}
+	} else if (activeTab.value === 'maps-track-metadata') {
+		return {
+			name: t('maps', 'Track metadata'),
+			compact: true,
+			subname: '',
+			active: activeTab.value,
+			class: { 'app-sidebar--has-preview': false, 'app-sidebar--full': isFullScreen.value },
+		}
+	} else {
+		return { loading: false, subname: '', name: '' }
+	}
+})
 
-	computed: {
-		/**
-		 * Current filename
-		 * This is bound to the Sidebar service and
-		 * is used to load a new file
-		 *
-		 * @return {string}
-		 */
-		file() {
-			return this.Sidebar.file
-		},
-
-		/**
-		 * List of all the registered tabs
-		 *
-		 * @return {Array}
-		 */
-		tabs() {
-			if (!this.fileInfo && (this.activeTab === 'favorite' || this.activeTab === 'photo-suggestion')) {
-				return []
-			}
-			return this.Sidebar.tabs
-		},
-
-		/**
-		 * List of all the registered views
-		 *
-		 * @return {Array}
-		 */
-		views() {
-			return this.Sidebar.views
-		},
-
-		/**
-		 * Current user dav root path
-		 *
-		 * @return {string}
-		 */
-		davPath() {
-			const user = OC.getCurrentUser().uid
-			return OC.linkToRemote(`dav/files/${user}${encodePath(this.file)}`)
-		},
-
-		/**
-		 * Current active tab handler
-		 *
-		 * @return {string} the current active tab
-		 */
-		activeTab() {
-			return this.Sidebar.activeTab
-		},
-
-		/**
-		 * Sidebar subname
-		 *
-		 * @return {string}
-		 */
-		subname() {
-			return `${this.size}, ${moment(this.fileInfo.mtime).fromNow()}`
-		},
-
-		/**
-		 * File last modified full string
-		 *
-		 * @return {string}
-		 */
-		fullTime() {
-			return moment(this.fileInfo.mtime).format('LLL')
-		},
-
-		/**
-		 * File size formatted string
-		 *
-		 * @return {string}
-		 */
-		size() {
-			return OC.Util.humanFileSize(this.fileInfo.size)
-		},
-
-		/**
-		 * App sidebar v-binding object
-		 *
-		 * @return {object}
-		 */
-		appSidebar() {
-			this.icon = null // Reset header icon
-			if (this.fileInfo) {
-				return {
-					'data-mimetype': this.fileInfo.mimetype,
-					'star-loading': this.starLoading,
-					active: this.activeTab,
-					class: {
-						'app-sidebar--has-preview': this.fileInfo.hasPreview && !this.isFullScreen,
-						'app-sidebar--full': this.isFullScreen,
-					},
-					compact: !this.fileInfo.hasPreview || this.isFullScreen,
-					loading: this.loading,
-					starred: this.fileInfo.isFavourited,
-					subname: this.subname,
-					subnameTooltip: this.fullTime,
-					name: this.name ?? this.fileInfo.name,
-					nameTooltip: this.fileInfo.name,
-				}
-			} else if (this.error) {
-				return {
-					key: 'error', // force key to re-render
-					subname: '',
-					name: '',
-				}
-			} else if (this.loading) {
-				// no fileInfo yet, showing empty data
-				return {
-					loading: this.loading,
-					subname: '',
-					name: '',
-				}
-			} else if (this.activeTab === 'favorite') {
-				this.icon = 'icon-favorite'
-				return {
-					name: t('maps', 'Favorite'),
-					compact: true,
-					subname: '',
-					active: this.activeTab,
-					class: {
-						'app-sidebar--has-preview': false,
-						'app-sidebar--full': this.isFullScreen,
-					},
-				}
-			} else if (this.activeTab === 'photo-suggestion') {
-				this.icon = 'icon-picture'
-				return {
-					name: t('maps', 'Photo suggestions'),
-					compact: true,
-					subname: '',
-					active: this.activeTab,
-					class: {
-						'app-sidebar--has-preview': false,
-						'app-sidebar--full': this.isFullScreen,
-					},
-				}
-			} else if (this.activeTab === 'maps-track-metadata') {
-				return {
-					name: t('maps', 'Track metadata'),
-					compact: true,
-					subname: '',
-					active: this.activeTab,
-					class: {
-						'app-sidebar--has-preview': false,
-						'app-sidebar--full': this.isFullScreen,
-					},
-				}
-			} else {
-				return {
-					loading: false,
-					subname: '',
-					name: '',
-				}
-			}
-		},
-
-		/**
-		 * Default action object for the current file
-		 *
-		 * @return {object}
-		 */
-		defaultAction() {
-			return this.fileInfo
-				&& OCA.Files && OCA.Files.App && OCA.Files.App.fileList
-				&& OCA.Files.App.fileList.fileActions
-				&& OCA.Files.App.fileList.fileActions.getDefaultFileAction
-				&& OCA.Files.App.fileList
-					.fileActions.getDefaultFileAction(this.fileInfo.mimetype, this.fileInfo.type, OC.PERMISSION_READ)
-
-		},
-
-		/**
-		 * Dynamic header click listener to ensure
-		 * nothing is listening for a click if there
-		 * is no default action
-		 *
-		 * @return {string|null}
-		 */
-		defaultActionListener() {
-			return this.defaultAction ? 'figure-click' : null
-		},
-
-		isSystemTagsEnabled() {
-			return OCA && 'SystemTags' in OCA
-		},
-	},
-	watch: {
-	},
-	methods: {
-		isPublic() {
-			return isPublic()
-		},
-		/**
-		 * Can this tab be displayed ?
-		 *
-		 * @param {object} tab a registered tab
-		 * @return {boolean}
-		 */
-		canDisplay(tab) {
-			return tab.enabled(this.fileInfo)
-		},
-		resetData() {
-			this.error = null
-			this.fileInfo = null
-			this.$nextTick(() => {
-				if (this.$refs.tabs) {
-					this.$refs.tabs.updateTabs()
-				}
-			})
-		},
-
-		getPreviewIfAny(fileInfo) {
-			if (fileInfo.hasPreview && !this.isFullScreen) {
-				return OC.generateUrl(`/core/preview?fileId=${fileInfo.id}&x=${screen.width}&y=${screen.height}&a=true`)
-			}
-			return this.getIconUrl(fileInfo)
-		},
-
-		/**
-		 * Copied from https://github.com/nextcloud/server/blob/16e0887ec63591113ee3f476e0c5129e20180cde/apps/files/js/filelist.js#L1377
-		 * TODO: We also need this as a standalone library
-		 *
-		 * @param {object} fileInfo the fileinfo
-		 * @return {string} Url to the icon for mimeType
-		 */
-		getIconUrl(fileInfo) {
-			const mimeType = fileInfo.mimetype || 'application/octet-stream'
-			if (mimeType === 'httpd/unix-directory') {
-				// use default folder icon
-				if (fileInfo.mountType === 'shared' || fileInfo.mountType === 'shared-root') {
-					return OC.MimeType.getIconUrl('dir-shared')
-				} else if (fileInfo.mountType === 'external-root') {
-					return OC.MimeType.getIconUrl('dir-external')
-				} else if (fileInfo.mountType !== undefined && fileInfo.mountType !== '') {
-					return OC.MimeType.getIconUrl('dir-' + fileInfo.mountType)
-				} else if (fileInfo.shareTypes && (
-					fileInfo.shareTypes.indexOf(ShareTypes.SHARE_TYPE_LINK) > -1
-					|| fileInfo.shareTypes.indexOf(ShareTypes.SHARE_TYPE_EMAIL) > -1)
-				) {
-					return OC.MimeType.getIconUrl('dir-public')
-				} else if (fileInfo.shareTypes && fileInfo.shareTypes.length > 0) {
-					return OC.MimeType.getIconUrl('dir-shared')
-				}
-				return OC.MimeType.getIconUrl('dir')
-			}
-			return OC.MimeType.getIconUrl(mimeType)
-		},
-
-		/**
-		 * Set current active tab
-		 *
-		 * @param {string} id tab unique id
-		 */
-		setActiveTab(id) {
-			OCA.Files.Sidebar.setActiveTab(id)
-		},
-
-		/**
-		 * Toggle favourite state
-		 * TODO: better implementation
-		 *
-		 * @param {boolean} state favourited or not
-		 */
-		async toggleStarred(state) {
-			try {
-				this.starLoading = true
-				await axios({
-					method: 'PROPPATCH',
-					url: this.davPath,
-					data: `<?xml version="1.0"?>
-						<d:propertyupdate xmlns:d="DAV:" xmlns:oc="http://owncloud.org/ns">
-						${state ? '<d:set>' : '<d:remove>'}
-							<d:prop>
-								<oc:favorite>1</oc:favorite>
-							</d:prop>
-						${state ? '</d:set>' : '</d:remove>'}
-						</d:propertyupdate>`,
-				})
-
-				// TODO: Obliterate as soon as possible and use events with new files app
-				// Terrible fallback for legacy files: toggle filelist as well
-				if (OCA.Files && OCA.Files.App && OCA.Files.App.fileList && OCA.Files.App.fileList.fileActions) {
-					OCA.Files.App.fileList.fileActions.triggerAction('Favorite', OCA.Files.App.fileList.getModelForFile(this.fileInfo.name), OCA.Files.App.fileList)
-				}
-
-			} catch (error) {
-				showError(t('files', 'Unable to change the favourite state of the file'))
-				console.error('Unable to change favourite state', error)
-			}
-			this.starLoading = false
-		},
-
-		onDefaultAction() {
-			if (this.defaultAction) {
-				// generate fake context
-				this.defaultAction.action(this.fileInfo.name, {
-					fileInfo: this.fileInfo,
-					dir: this.fileInfo.dir,
-					fileList: OCA.Files.App.fileList,
-					// Fixme if defaultAction is needed
-					$file: '',
-				})
-			}
-		},
-
-		/**
-		 * Toggle the tags selector
-		 */
-		toggleTags() {
-			if (OCA.SystemTags && OCA.SystemTags.View) {
-				OCA.SystemTags.View.toggle()
-			}
-		},
-
-		/**
-		 * Open the sidebar for the given file
-		 *
-		 * @param {string} path the file path to load
-		 * @param type
-		 * @param name
-		 * @return {Promise}
-		 * @throws {Error} loading failure
-		 */
-		async open(path = null, type = null, name = null) {
-			// update current opened file
-			this.Sidebar.file = path
-			if (path) {
-				this.typeOpened = type
-				this.name = name
-			}
-
-			if (path && path.trim() !== '' && !isPublic()) {
-				// reset data, keep old fileInfo to not reload all tabs and just hide them
-				this.error = null
-				this.loading = true
-
-				try {
-					this.fileInfo = await FileInfo(this.davPath)
-					// adding this as fallback because other apps expect it
-					this.fileInfo.dir = this.file.split('/').slice(0, -1).join('/')
-
-					// DEPRECATED legacy views
-					// TODO: remove
-					this.views.forEach(view => {
-						view.setFileInfo(this.fileInfo)
-					})
-
-					this.$nextTick(() => {
-						if (this.$refs.tabs) {
-							this.$refs.tabs.updateTabs()
-						}
-					})
-				} catch (error) {
-					this.error = t('files', 'Error while loading the file data')
-					console.error('Error while loading the file data', error)
-
-					throw new Error(error)
-				} finally {
-					this.loading = false
-				}
-			} else {
-				this.fileInfo = null
-			}
-		},
-
-		/**
-		 * Close the sidebar
-		 */
-		close() {
-			this.Sidebar.file = ''
-			this.resetData()
-		},
-
-		/**
-		 * Allow to set the Sidebar as fullscreen from OCA.Files.Sidebar
-		 *
-		 * @param {boolean} isFullScreen - Wether or not to render the Sidebar in fullscreen.
-		 */
-		setFullScreenMode(isFullScreen) {
-			this.isFullScreen = isFullScreen
-		},
-
-		/**
-		 * Emit SideBar events.
-		 */
-		handleOpening() {
-			emit('files:sidebar:opening')
-		},
-		handleOpened() {
-			emit('files:sidebar:opened')
-			this.$emit('opened')
-		},
-		handleClosing() {
-			emit('files:sidebar:closing')
-		},
-		handleClosed() {
-			emit('files:sidebar:closed')
-		},
-		onActiveChanged(newActive) {
-			this.$emit('active-changed', newActive)
-		},
-		previewUrl() {
-			return this.photo.hasPreview
-				? generateUrl('core') + '/preview?fileId=' + this.photo.fileId + '&x=500&y=300&a=1'
-				: generateUrl('/apps/theming/img/core/filetypes') + '/image.svg?v=2'
-		},
-		hasPreview() {
-			return (this.activeTab === 'photo' && this.photo.hasPreview)
-					|| (this.activeTab === 'myMaps' && this.myMap.hasPreview)
-		},
-	},
+function resetData() {
+	error.value = null
+	fileInfo.value = null
 }
+
+function getPreviewIfAny(fi) {
+	if (fi.hasPreview && !isFullScreen.value) {
+		return OC.generateUrl(`/core/preview?fileId=${fi.id}&x=${screen.width}&y=${screen.height}&a=true`)
+	}
+	return getIconUrl(fi)
+}
+
+function getIconUrl(fi) {
+	const mimeType = fi.mimetype || 'application/octet-stream'
+	if (mimeType === 'httpd/unix-directory') {
+		if (fi.mountType === 'shared' || fi.mountType === 'shared-root') {
+			return OC.MimeType.getIconUrl('dir-shared')
+		} else if (fi.mountType === 'external-root') {
+			return OC.MimeType.getIconUrl('dir-external')
+		} else if (fi.mountType !== undefined && fi.mountType !== '') {
+			return OC.MimeType.getIconUrl('dir-' + fi.mountType)
+		} else if (fi.shareTypes && (
+			fi.shareTypes.indexOf(ShareTypes.SHARE_TYPE_LINK) > -1
+			|| fi.shareTypes.indexOf(ShareTypes.SHARE_TYPE_EMAIL) > -1)
+		) {
+			return OC.MimeType.getIconUrl('dir-public')
+		} else if (fi.shareTypes && fi.shareTypes.length > 0) {
+			return OC.MimeType.getIconUrl('dir-shared')
+		}
+		return OC.MimeType.getIconUrl('dir')
+	}
+	return OC.MimeType.getIconUrl(mimeType)
+}
+
+function setActiveTab(id) {
+	setActiveSidebarTab(id)
+}
+
+async function toggleStarred(state) {
+	try {
+		starLoading.value = true
+		await axios({
+			method: 'PROPPATCH',
+			url: davPath.value,
+			data: `<?xml version="1.0"?>
+				<d:propertyupdate xmlns:d="DAV:" xmlns:oc="http://owncloud.org/ns">
+				${state ? '<d:set>' : '<d:remove>'}
+					<d:prop>
+						<oc:favorite>1</oc:favorite>
+					</d:prop>
+				${state ? '</d:set>' : '</d:remove>'}
+				</d:propertyupdate>`,
+		})
+		if (OCA.Files && OCA.Files.App && OCA.Files.App.fileList && OCA.Files.App.fileList.fileActions) {
+			OCA.Files.App.fileList.fileActions.triggerAction('Favorite', OCA.Files.App.fileList.getModelForFile(fileInfo.value.name), OCA.Files.App.fileList)
+		}
+	} catch (err) {
+		showError(t('files', 'Unable to change the favourite state of the file'))
+		console.error('Unable to change favourite state', err)
+	}
+	starLoading.value = false
+}
+
+function onDefaultAction() {
+	if (defaultAction.value) {
+		defaultAction.value.action(fileInfo.value.name, {
+			fileInfo: fileInfo.value,
+			dir: fileInfo.value.dir,
+			fileList: OCA.Files.App.fileList,
+			$file: '',
+		})
+	}
+}
+
+function toggleTags() {
+	if (OCA.SystemTags && OCA.SystemTags.View) {
+		OCA.SystemTags.View.toggle()
+	}
+}
+
+async function open(path = null, type = null, openName = null) {
+	sidebarState.file = path
+	if (path) {
+		typeOpened.value = type
+		name.value = openName
+	}
+
+	if (path && path.trim() !== '' && !isPublic()) {
+		error.value = null
+		loading.value = true
+		try {
+			fileInfo.value = await FileInfo(davPath.value)
+			fileInfo.value.dir = file.value.split('/').slice(0, -1).join('/')
+		} catch (err) {
+			error.value = t('files', 'Error while loading the file data')
+			console.error('Error while loading the file data', err)
+			throw new Error(err)
+		} finally {
+			loading.value = false
+		}
+	} else {
+		fileInfo.value = null
+	}
+}
+
+function close() {
+	sidebarState.file = ''
+	resetData()
+}
+
+function setFullScreenMode(val) {
+	isFullScreen.value = val
+}
+
+function handleOpening() { emit('files:sidebar:opening') }
+function handleOpened() { emit('files:sidebar:opened'); emit2('opened') }
+function handleClosing() { emit('files:sidebar:closing') }
+function handleClosed() { emit('files:sidebar:closed') }
+function onActiveChanged(newActive) { emit2('active-changed', newActive) }
+
+defineExpose({ open, close, setActiveTab, setFullScreenMode })
 </script>
 
 <style lang="scss" scoped>

@@ -35,16 +35,13 @@
 	</div>
 </template>
 
-<script>
-import VueTypes from 'vue-types'
-
-export default {
-	name: 'Popup',
-
-	props: {
-		name: VueTypes.string.def(''),
+<script setup>
+defineProps({
+	name: {
+		type: String,
+		default: '',
 	},
-}
+})
 </script>
 
 <style scoped lang="scss">

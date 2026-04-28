@@ -64,79 +64,73 @@
 	</NcAppNavigationItem>
 </template>
 
-<script>
+<script setup>
 import NcAppNavigationItem from '@nextcloud/vue/components/NcAppNavigationItem'
 import NcActionButton from '@nextcloud/vue/components/NcActionButton'
 import NcCounterBubble from '@nextcloud/vue/components/NcCounterBubble'
+import { t } from '@nextcloud/l10n'
+import { ref } from 'vue'
 import optionsController from '../optionsController.js'
 import { isPublic } from '../utils/common.js'
 
-export default {
-	name: 'AppNavigationContactsItem',
-
-	components: {
-		NcAppNavigationItem,
-		NcActionButton,
-		NcCounterBubble,
+const props = defineProps({
+	enabled: {
+		type: Boolean,
+		required: true,
 	},
-
-	props: {
-		enabled: {
-			type: Boolean,
-			required: true,
-		},
-		loading: {
-			type: Boolean,
-			default: false,
-		},
-		contacts: {
-			type: Array,
-			required: true,
-		},
-		groups: {
-			type: Object,
-			required: true,
-		},
+	loading: {
+		type: Boolean,
+		default: false,
 	},
-
-	data() {
-		return {
-			open: optionsController.optionValues?.contactGroupListShow === 'true',
-		}
+	contacts: {
+		type: Array,
+		required: true,
 	},
-
-	computed: {
-
+	groups: {
+		type: Object,
+		required: true,
 	},
+})
 
-	methods: {
-		onContactsClick() {
-			if (!this.enabled && !this.open) {
-				this.open = true
-				optionsController.saveOptionValues({ contactGroupListShow: 'true' })
-			}
-			this.$emit('contacts-clicked')
-		},
-		onUpdateOpen(isOpen) {
-			this.open = isOpen
-			optionsController.saveOptionValues({ contactGroupListShow: isOpen ? 'true' : 'false' })
-		},
-		onToggleAllClick() {
-			this.$emit('toggle-all-groups')
-		},
-		onZoomAllClick() {
-			this.$emit('zoom-all-groups')
-		},
-		onZoomGroupClick(gid) {
-			this.$emit('zoom-group', gid)
-		},
-		onGroupClick(groupName) {
-			this.$emit('group-clicked', groupName)
-		},
-		isPublic() {
-			return isPublic()
-		},
-	},
+const emit = defineEmits([
+	'contacts-clicked',
+	'toggle-all-groups',
+	'zoom-all-groups',
+	'zoom-group',
+	'group-clicked',
+	'add-to-map-all-contacts',
+	'add-to-map-contact-group',
+])
+
+const open = ref(optionsController.optionValues?.contactGroupListShow === 'true')
+
+function onContactsClick() {
+	if (!props.enabled && !open.value) {
+		open.value = true
+		optionsController.saveOptionValues({ contactGroupListShow: 'true' })
+	}
+	emit('contacts-clicked')
+}
+
+function onUpdateOpen(isOpen) {
+	open.value = isOpen
+	optionsController.saveOptionValues({ contactGroupListShow: isOpen ? 'true' : 'false' })
+}
+
+function onToggleAllClick() {
+	emit('toggle-all-groups')
+}
+
+function onZoomAllClick() {
+	emit('zoom-all-groups')
+}
+
+function onZoomGroupClick(gid) {
+	emit('zoom-group', gid)
+}
+
+function onGroupClick(groupName) {
+	emit('group-clicked', groupName)
 }
 </script>
 

@@ -47,136 +47,101 @@
 	</template>
 </template>
 
-<script>
-import {
-	MglMarker,
-	MglPopup,
-	MglGeoJsonSource,
-	MglLineLayer,
-} from '@indoorequal/vue-maplibre-gl'
-
+<script setup>
+import { ref, computed } from 'vue'
+import { t } from '@nextcloud/l10n'
+import { MglMarker, MglPopup, MglGeoJsonSource, MglLineLayer } from '@indoorequal/vue-maplibre-gl'
 import NcActionButton from '@nextcloud/vue/components/NcActionButton'
-
 import { isComputer } from '../../utils.js'
 import { binSearch, isPublic } from '../../utils/common.js'
 import optionsController from '../../optionsController.js'
 import moment from '@nextcloud/moment'
 
-export default {
-	name: 'DeviceLayer',
-	components: {
-		MglMarker,
-		MglPopup,
-		MglGeoJsonSource,
-		MglLineLayer,
-		NcActionButton,
+const props = defineProps({
+	device: {
+		type: Object,
+		required: true,
 	},
-
-	props: {
-		device: {
-			type: Object,
-			required: true,
-		},
-		start: {
-			type: Number,
-			required: false,
-			default: 0,
-		},
-		end: {
-			type: Number,
-			required: false,
-			default: moment.unix(),
-		},
+	start: {
+		type: Number,
+		default: 0,
 	},
+	end: {
+		type: Number,
+		default: () => moment.unix(),
+	},
+})
 
-	data() {
-		return {
-			optionValues: optionsController.optionValues,
-			showPopup: false,
+const emit = defineEmits(['click', 'toggle-history', 'change-color', 'export', 'add-to-map-device', 'point-hover'])
+
+const showPopup = ref(false)
+
+const isPublicVal = computed(() => isPublic())
+const mapIsUpdatable = computed(() => optionsController.optionValues?.isUpdateable)
+const color = computed(() => props.device.color || '#0082c9')
+const thumbnailClass = computed(() => isComputer(props.device.user_agent) ? 'desktop' : 'phone')
+
+const filteredPoints = computed(() => {
+	const lastNullIndex = binSearch(props.device.points, (p) => !p.timestamp)
+	const firstShownIndex = binSearch(props.device.points, (p) => (p.timestamp || 0) < props.start) + 1
+	const lastShownIndex = binSearch(props.device.points, (p) => (p.timestamp || 0) < props.end)
+	return [
+		...props.device.points.slice(0, lastNullIndex + 1),
+		...props.device.points.slice(firstShownIndex, lastShownIndex + 1),
+	]
+})
+
+const lineGeoJson = computed(() => ({
+	type: 'Feature',
+	geometry: {
+		type: 'LineString',
+		coordinates: filteredPoints.value.map(p => [p.lng, p.lat]),
+	},
+}))
+
+const lastPoint = computed(() =>
+	filteredPoints.value.length > 0
+		? filteredPoints.value[filteredPoints.value.length - 1]
+		: null,
+)
+
+function onLineClick() {
+	emit('click', props.device)
+}
+
+function onLineRightClick() {
+	showPopup.value = !showPopup.value
+}
+
+function deviceLineMouseover(e) {
+	const lngLat = e.lngLat
+	const closestPoint = props.device.points.reduce((target, p) => {
+		if (!p.timestamp || (p.timestamp >= props.start && p.timestamp <= props.end)) {
+			const dx = lngLat.lng - p.lng
+			const dy = lngLat.lat - p.lat
+			const dist = Math.sqrt(dx * dx + dy * dy)
+			if (dist < target.minDist) {
+				target.minDist = dist
+				target.hoverPoint = p
+			}
 		}
-	},
+		return target
+	}, { minDist: 40000000, hoverPoint: null })
+	if (closestPoint.hoverPoint) {
+		emit('point-hover', {
+			...closestPoint.hoverPoint,
+			color: color.value,
+			user_agent: props.device.user_agent,
+		})
+	}
+}
 
-	computed: {
-		isPublicVal() {
-			return isPublic()
-		},
-		filteredPoints() {
-			const lastNullIndex = binSearch(this.device.points, (p) => !p.timestamp)
-			const firstShownIndex = binSearch(this.device.points, (p) => (p.timestamp || 0) < this.start) + 1
-			const lastShownIndex = binSearch(this.device.points, (p) => (p.timestamp || 0) < this.end)
-			return [
-				...this.device.points.slice(0, lastNullIndex + 1),
-				...this.device.points.slice(firstShownIndex, lastShownIndex + 1),
-			]
-		},
-		lineGeoJson() {
-			return {
-				type: 'Feature',
-				geometry: {
-					type: 'LineString',
-					coordinates: this.filteredPoints.map(p => [p.lng, p.lat]),
-				},
-			}
-		},
-		color() {
-			return this.device.color || '#0082c9'
-		},
-		thumbnailClass() {
-			return isComputer(this.device.user_agent)
-				? 'desktop'
-				: 'phone'
-		},
-		lastPoint() {
-			return this.filteredPoints.length > 0
-				? this.filteredPoints[this.filteredPoints.length - 1]
-				: null
-		},
-		mapIsUpdatable() {
-			return optionsController.optionValues?.isUpdateable
-		},
-	},
-
-	methods: {
-		onLineClick() {
-			this.$emit('click', this.device)
-		},
-		onLineRightClick() {
-			this.showPopup = !this.showPopup
-		},
-		deviceLineMouseover(e) {
-			const lngLat = e.lngLat
-			const closestPoint = this.device.points.reduce((target, p) => {
-				if (
-					(!p.timestamp || (p.timestamp >= this.start && p.timestamp <= this.end))
-				) {
-					const dx = lngLat.lng - p.lng
-					const dy = lngLat.lat - p.lat
-					const dist = Math.sqrt(dx * dx + dy * dy)
-					if (dist < target.minDist) {
-						target.minDist = dist
-						target.hoverPoint = p
-					}
-				}
-				return target
-			}, { minDist: 40000000, hoverPoint: null })
-			if (closestPoint.hoverPoint) {
-				const hoverPoint = {
-					...closestPoint.hoverPoint,
-					color: this.color,
-					user_agent: this.device.user_agent,
-				}
-				this.$emit('point-hover', hoverPoint)
-			}
-		},
-		deviceLastPointMouseover() {
-			const hoverPoint = {
-				...this.device.points[this.device.points.length - 1],
-				color: this.color,
-				user_agent: this.device.user_agent,
-			}
-			this.$emit('point-hover', hoverPoint)
-		},
-	},
+function deviceLastPointMouseover() {
+	emit('point-hover', {
+		...props.device.points[props.device.points.length - 1],
+		color: color.value,
+		user_agent: props.device.user_agent,
+	})
 }
 </script>
 

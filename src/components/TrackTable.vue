@@ -17,113 +17,38 @@
 	</div>
 </template>
 
-<script>
+<script setup>
+import { computed } from 'vue'
+import { t } from '@nextcloud/l10n'
 import moment from '@nextcloud/moment'
-
 import { metersToDistance, formatTimeSeconds, metersToElevation, kmphToSpeed, minPerKmToPace } from '../utils.js'
 
-export default {
-	name: 'TrackTable',
-
-	components: {
+const props = defineProps({
+	track: {
+		type: Object,
+		required: true,
 	},
+})
 
-	props: {
-		track: {
-			type: Object,
-			required: true,
-		},
-	},
-
-	data() {
-		return {
-		}
-	},
-
-	computed: {
-		tableLines() {
-			const meta = this.track.metadata
-			const lines = []
-			lines.push({
-				title: t('maps', 'Distance'),
-				value: meta.distance ? metersToDistance(meta.distance) : '???',
-				iconClass: 'distance',
-			})
-			lines.push({
-				title: t('maps', 'Duration'),
-				value: formatTimeSeconds(meta.duration || 0),
-				iconClass: 'clock',
-			})
-			lines.push({
-				title: t('maps', 'Moving time'),
-				value: formatTimeSeconds(meta.movtime || 0),
-				iconClass: 'clock',
-			})
-			lines.push({
-				title: t('maps', 'Pause time'),
-				value: formatTimeSeconds(meta.stptime || 0),
-				iconClass: 'clock',
-			})
-			lines.push({
-				title: t('maps', 'Begin'),
-				value: moment.unix(meta.begin).format('L HH:mm:ss (Z)'),
-				icon: 'icon-calendar-dark',
-			})
-			lines.push({
-				title: t('maps', 'End'),
-				value: moment.unix(meta.end).format('L HH:mm:ss (Z)'),
-				icon: 'icon-calendar-dark',
-			})
-			lines.push({
-				title: t('maps', 'Cumulative elevation gain'),
-				value: meta.posel ? metersToElevation(meta.posel) : 'NA',
-				iconClass: 'chart-line',
-			})
-			lines.push({
-				title: t('maps', 'Cumulative elevation loss'),
-				value: meta.negel ? metersToElevation(meta.negel) : 'NA',
-				iconClass: 'chart-line',
-			})
-			lines.push({
-				title: t('maps', 'Minimum elevation'),
-				value: meta.minel ? metersToElevation(meta.minel) : 'NA',
-				iconClass: 'chart-area',
-			})
-			lines.push({
-				title: t('maps', 'Maximum elevation'),
-				value: meta.maxel ? metersToElevation(meta.maxel) : 'NA',
-				iconClass: 'chart-area',
-			})
-			lines.push({
-				title: t('maps', 'Maximum speed'),
-				value: meta.maxspd ? kmphToSpeed(meta.maxspd) : 'NA',
-				iconClass: 'speed',
-			})
-			lines.push({
-				title: t('maps', 'Average speed'),
-				value: meta.avgspd ? kmphToSpeed(meta.avgspd) : 'NA',
-				iconClass: 'speed',
-			})
-			lines.push({
-				title: t('maps', 'Moving average speed'),
-				value: meta.movavgspd ? kmphToSpeed(meta.movavgspd) : 'NA',
-				iconClass: 'speed',
-			})
-			lines.push({
-				title: t('maps', 'Moving average pace'),
-				value: meta.movpace ? minPerKmToPace(meta.movpace) : 'NA',
-				iconClass: 'speed',
-			})
-			return lines
-		},
-	},
-
-	watch: {
-	},
-
-	methods: {
-	},
-}
+const tableLines = computed(() => {
+	const meta = props.track.metadata
+	const lines = []
+	lines.push({ title: t('maps', 'Distance'), value: meta.distance ? metersToDistance(meta.distance) : '???', iconClass: 'distance' })
+	lines.push({ title: t('maps', 'Duration'), value: formatTimeSeconds(meta.duration || 0), iconClass: 'clock' })
+	lines.push({ title: t('maps', 'Moving time'), value: formatTimeSeconds(meta.movtime || 0), iconClass: 'clock' })
+	lines.push({ title: t('maps', 'Pause time'), value: formatTimeSeconds(meta.stptime || 0), iconClass: 'clock' })
+	lines.push({ title: t('maps', 'Begin'), value: moment.unix(meta.begin).format('L HH:mm:ss (Z)'), icon: 'icon-calendar-dark' })
+	lines.push({ title: t('maps', 'End'), value: moment.unix(meta.end).format('L HH:mm:ss (Z)'), icon: 'icon-calendar-dark' })
+	lines.push({ title: t('maps', 'Cumulative elevation gain'), value: meta.posel ? metersToElevation(meta.posel) : 'NA', iconClass: 'chart-line' })
+	lines.push({ title: t('maps', 'Cumulative elevation loss'), value: meta.negel ? metersToElevation(meta.negel) : 'NA', iconClass: 'chart-line' })
+	lines.push({ title: t('maps', 'Minimum elevation'), value: meta.minel ? metersToElevation(meta.minel) : 'NA', iconClass: 'chart-area' })
+	lines.push({ title: t('maps', 'Maximum elevation'), value: meta.maxel ? metersToElevation(meta.maxel) : 'NA', iconClass: 'chart-area' })
+	lines.push({ title: t('maps', 'Maximum speed'), value: meta.maxspd ? kmphToSpeed(meta.maxspd) : 'NA', iconClass: 'speed' })
+	lines.push({ title: t('maps', 'Average speed'), value: meta.avgspd ? kmphToSpeed(meta.avgspd) : 'NA', iconClass: 'speed' })
+	lines.push({ title: t('maps', 'Moving average speed'), value: meta.movavgspd ? kmphToSpeed(meta.movavgspd) : 'NA', iconClass: 'speed' })
+	lines.push({ title: t('maps', 'Moving average pace'), value: meta.movpace ? minPerKmToPace(meta.movpace) : 'NA', iconClass: 'speed' })
+	return lines
+})
 </script>
 
 <style lang="scss" scoped>

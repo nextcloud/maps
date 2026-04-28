@@ -594,8 +594,8 @@ export default {
 	},
 
 	methods: {
-		onMapReady(map) {
-			this.map = map
+		onMapReady(e) {
+			this.map = e.map
 		},
 		fitBounds(bounds, options = {}) {
 			// bounds: [[lngMin, latMin], [lngMax, latMax]] (MapLibre format)
@@ -616,22 +616,22 @@ export default {
 				return
 			}
 			if (this.state === 'adding') {
-				this.$emit('add-click', { latlng: e.lngLat })
+				this.$emit('add-click', { latlng: e.event.lngLat })
 				return
 			}
 			const hadPopup = this.placingContact || this.leftClickSearching
 			this.placingContact = false
 			this.leftClickSearching = false
 			if (!hadPopup) {
-				this.leftClickSearch(e.lngLat.lat, e.lngLat.lng)
+				this.leftClickSearch(e.event.lngLat.lat, e.event.lngLat.lng)
 			}
 		},
 		onMapContextmenu(e) {
 			this.leftClickSearching = false
 			this.contextMenu.visible = true
-			this.contextMenu.x = e.point.x
-			this.contextMenu.y = e.point.y
-			this.contextMenu.lngLat = e.lngLat
+			this.contextMenu.x = e.event.point.x
+			this.contextMenu.y = e.event.point.y
+			this.contextMenu.lngLat = e.event.lngLat
 		},
 		invokeContextItem(item) {
 			this.contextMenu.visible = false

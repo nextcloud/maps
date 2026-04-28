@@ -31,79 +31,63 @@
 	</MglMarker>
 </template>
 
-<script>
+<script setup>
+import { ref, watch } from 'vue'
+import { t } from '@nextcloud/l10n'
 import { MglMarker, MglPopup } from '@indoorequal/vue-maplibre-gl'
-
 import { formatAddress } from '../../utils.js'
 import { geocode } from '../../network.js'
 
-export default {
-	name: 'ClickSearchPopup',
-	components: {
-		MglMarker,
-		MglPopup,
+const props = defineProps({
+	latLng: {
+		type: Object,
+		required: true,
 	},
+	favoriteIsCreatable: {
+		type: Boolean,
+		default: true,
+	},
+	contactIsCreatable: {
+		type: Boolean,
+		default: true,
+	},
+})
 
-	props: {
-		latLng: {
-			type: Object,
-			required: true,
-		},
-		favoriteIsCreatable: {
-			type: Boolean,
-			required: false,
-			default: true,
-		},
-		contactIsCreatable: {
-			type: Boolean,
-			required: false,
-			default: true,
-		},
-	},
+defineEmits(['add-favorite', 'place-contact'])
 
-	data() {
-		return {
-			addressLoading: false,
-			address: null,
-			formattedAddress: '',
-			mapActions: window.OCA.Maps.mapActions,
-		}
-	},
+const addressLoading = ref(false)
+const address = ref(null)
+const formattedAddress = ref('')
+const mapActions = window.OCA?.Maps?.mapActions ?? []
 
-	watch: {
-		latLng() {
-			this.address = null
-			this.formattedAddress = ''
-			this.getAddress()
-		},
-	},
+function getAddress() {
+	addressLoading.value = true
+	geocode(props.latLng.lat, props.latLng.lng).then((response) => {
+		address.value = response.data.address
+		formattedAddress.value = formatAddress(address.value)
+	}).catch((error) => {
+		console.error(error)
+	}).then(() => {
+		addressLoading.value = false
+	})
+}
 
-	beforeMount() {
-		this.getAddress()
-	},
+watch(() => props.latLng, () => {
+	address.value = null
+	formattedAddress.value = ''
+	getAddress()
+})
 
-	methods: {
-		getAddress() {
-			this.addressLoading = true
-			geocode(this.latLng.lat, this.latLng.lng).then((response) => {
-				this.address = response.data.address
-				this.formattedAddress = formatAddress(this.address)
-			}).catch((error) => {
-				console.error(error)
-			}).then(() => {
-				this.addressLoading = false
-			})
-		},
-		actionCallback(action) {
-			const object = {
-				id: 'geo:' + this.latLng.lat + ',' + this.latLng.lng,
-				name: this.formattedAddress,
-				latitude: this.latLng.lat.toString(),
-				longitude: this.latLng.lng.toString(),
-			}
-			action.callback(object)
-		},
-	},
+getAddress()
+
+function actionCallback(action) {
+	const object = {
+		id: 'geo:' + props.latLng.lat + ',' + props.latLng.lng,
+		name: formattedAddress.value,
+		latitude: props.latLng.lat.toString(),
+		longitude: props.latLng.lng.toString(),
+	}
+	action.callback(object)
 }
 </script>
 

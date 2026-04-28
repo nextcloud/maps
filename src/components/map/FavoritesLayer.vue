@@ -13,47 +13,33 @@
 	</template>
 </template>
 
-<script>
+<script setup>
+import { computed } from 'vue'
+
 import FavoriteMarker from './FavoriteMarker.vue'
-import optionsController from '../../optionsController.js'
 
-export default {
-	name: 'FavoritesLayer',
-	components: {
-		FavoriteMarker,
+const props = defineProps({
+	map: {
+		type: Object,
+		required: true,
 	},
+	favorites: {
+		type: Object,
+		required: true,
+	},
+	categories: {
+		type: Object,
+		required: true,
+	},
+	draggable: {
+		type: Boolean,
+		default: false,
+	},
+})
 
-	props: {
-		map: {
-			type: Object,
-			required: true,
-		},
-		favorites: {
-			type: Object,
-			required: true,
-		},
-		categories: {
-			type: Object,
-			required: true,
-		},
-		draggable: {
-			type: Boolean,
-			default: false,
-		},
-	},
+defineEmits(['click', 'add-to-map-favorite', 'edit', 'delete'])
 
-	data() {
-		return {
-			optionValues: optionsController.optionValues,
-		}
-	},
-
-	computed: {
-		displayedFavorites() {
-			return Object.values(this.favorites).filter((f) => {
-				return this.categories[f.category]?.enabled
-			})
-		},
-	},
-}
+const displayedFavorites = computed(() =>
+	Object.values(props.favorites).filter(f => props.categories[f.category]?.enabled),
+)
 </script>

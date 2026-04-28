@@ -12,32 +12,18 @@
 	</NcAppNavigationItem>
 </template>
 
-<script>
-
+<script setup>
 import NcAppNavigationItem from '@nextcloud/vue/components/NcAppNavigationItem'
 import NcCounterBubble from '@nextcloud/vue/components/NcCounterBubble'
 
-export default {
-	name: 'PhotoSideBarTabDeviceItem',
-
-	components: {
-		NcAppNavigationItem,
-		NcCounterBubble,
+defineProps({
+	device: {
+		required: true,
+		type: Object,
 	},
+})
 
-	props: {
-		device: {
-			required: true,
-			type: Object,
-		},
-	},
-
-	computed: {
-	},
-
-	methods: {
-	},
-}
+defineEmits(['device-click'])
 </script>
 
 <style scoped>

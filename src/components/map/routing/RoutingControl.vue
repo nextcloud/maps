@@ -1,39 +1,41 @@
 <template>
-	<LControl class="maps-routing-control leaflet-control" :class="{'mobile': isMobile, 'desktop':!isMobile}" position="topleft">
-		<div class="routing-header">
-			<span class="icon icon-routing" />
-			<span class="title">
-				{{ t('maps', 'Find directions') }}
-			</span>
-			<button @click="$emit('close')">
-				<span class="icon icon-close" />
-			</button>
+	<div ref="el" style="display:none">
+		<div class="maps-routing-control maplibregl-ctrl maplibregl-ctrl-group" :class="{'mobile': isMobile, 'desktop':!isMobile}">
+			<div class="routing-header">
+				<span class="icon icon-routing" />
+				<span class="title">
+					{{ t('maps', 'Find directions') }}
+				</span>
+				<button @click="$emit('close')">
+					<span class="icon icon-close" />
+				</button>
+			</div>
+			<RoutingSteps
+				:steps="steps"
+				:search-data="searchData"
+				:plan-ready="planReady"
+				@add-step="addRoutePoint"
+				@step-selected="setRoutePoint"
+				@delete-step="deleteRoutePoint"
+				@export-route="onExportRoute"
+				@zoom-route="onZoomRoute"
+				@reverse-steps="reverseWaypoints" />
+			<RoutingMachine
+				ref="machine"
+				:map="map"
+				:visible="visible"
+				@plan-changed="onPlanChanged"
+				@plan-ready-changed="onPlanReadyChanged"
+				@route-selected="onRouteSelected"
+				@track-added="$emit('track-added', $event)" />
 		</div>
-		<RoutingSteps
-			:steps="steps"
-			:search-data="searchData"
-			:plan-ready="planReady"
-			@add-step="addRoutePoint"
-			@step-selected="setRoutePoint"
-			@delete-step="deleteRoutePoint"
-			@export-route="onExportRoute"
-			@zoom-route="onZoomRoute"
-			@reverse-steps="reverseWaypoints" />
-		<RoutingMachine
-			ref="machine"
-			:map="map"
-			:visible="visible"
-			@plan-changed="onPlanChanged"
-			@plan-ready-changed="onPlanReadyChanged"
-			@route-selected="onRouteSelected"
-			@track-added="$emit('track-added', $event)" />
-	</LControl>
+	</div>
 </template>
 
 <script>
-import { LControl } from '@vue-leaflet/vue-leaflet'
+import { useControl } from '@indoorequal/vue-maplibre-gl'
 import { useIsMobile } from '@nextcloud/vue/composables/useIsMobile'
-import { computed } from 'vue'
+import { computed, ref, onMounted } from 'vue'
 
 import RoutingSteps from './RoutingSteps.vue'
 import RoutingMachine from './RoutingMachine.vue'
@@ -51,12 +53,23 @@ export default {
 	components: {
 		RoutingSteps,
 		RoutingMachine,
-		LControl,
 	},
 
 	setup() {
 		const isMobile = useIsMobile()
-		return { isMobile: computed(() => isMobile.value) }
+		const el = ref(null)
+
+		onMounted(() => {
+			useControl(() => ({
+				onAdd() {
+					this._container = el.value?.children[0]
+					return this._container
+				},
+				onRemove() {},
+			}), { position: 'top-left' })
+		})
+
+		return { isMobile: computed(() => isMobile.value), el }
 	},
 
 	props: {
@@ -79,12 +92,6 @@ export default {
 			steps: [emptyStep(), emptyStep()],
 			planReady: false,
 		}
-	},
-
-	watch: {
-	},
-
-	created() {
 	},
 
 	methods: {

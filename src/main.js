@@ -30,20 +30,7 @@ import { emit } from '@nextcloud/event-bus'
 import { TooltipDirective as Tooltip } from 'floating-vue'
 
 import { generateUrl } from '@nextcloud/router'
-
-import L from 'leaflet'
-import 'lrm-graphhopper'
-import markerIcon2x from 'leaflet/dist/images/marker-icon-2x.png'
-import markerIcon from 'leaflet/dist/images/marker-icon.png'
-import markerShadow from 'leaflet/dist/images/marker-shadow.png'
 import { isPublic } from './utils/common.js'
-delete L.Icon.Default.prototype._getIconUrl
-
-L.Icon.Default.mergeOptions({
-	iconRetinaUrl: markerIcon2x,
-	iconUrl: markerIcon,
-	shadowUrl: markerShadow,
-})
 
 // Vue
 // eslint-disable-next-line

@@ -1,32 +1,34 @@
 <template>
-	<LControl position="topleft" class="maps-search-control leaflet-control" :class="{'mobile':isMobile, 'desktop': !isMobile}">
-		<div id="search">
-			<SearchField
-				class="search-field"
-				:data="searchData"
-				:loading="loading"
-				@validate="$emit('validate', $event)" />
-			<button
-				v-tooltip="{ content: t('maps', 'Find directions') }"
-				class="bar-button"
-				@click="$emit('routing-clicked')">
-				<span class="icon icon-routing" />
-			</button>
-			<button v-if="resultPoiNumber > 0"
-				v-tooltip="{ content: t('maps', 'Clear POIs') }"
-				class="bar-button"
-				@click="$emit('clear-pois')">
-				<span class="icon icon-close" />
-			</button>
+	<div ref="el" style="display:none">
+		<div class="maps-search-control maplibregl-ctrl maplibregl-ctrl-group" :class="{'mobile':isMobile, 'desktop': !isMobile}">
+			<div id="search">
+				<SearchField
+					class="search-field"
+					:data="searchData"
+					:loading="loading"
+					@validate="$emit('validate', $event)" />
+				<button
+					v-tooltip="{ content: t('maps', 'Find directions') }"
+					class="bar-button"
+					@click="$emit('routing-clicked')">
+					<span class="icon icon-routing" />
+				</button>
+				<button v-if="resultPoiNumber > 0"
+					v-tooltip="{ content: t('maps', 'Clear POIs') }"
+					class="bar-button"
+					@click="$emit('clear-pois')">
+					<span class="icon icon-close" />
+				</button>
+			</div>
 		</div>
-	</LControl>
+	</div>
 </template>
 
 <script>
 import { getLocale } from '@nextcloud/l10n'
-import { LControl } from '@vue-leaflet/vue-leaflet'
+import { useControl } from '@indoorequal/vue-maplibre-gl'
 import { useIsMobile } from '@nextcloud/vue/composables/useIsMobile'
-import { computed } from 'vue'
+import { computed, ref, onMounted } from 'vue'
 
 import SearchField from './SearchField.vue'
 
@@ -34,13 +36,24 @@ export default {
 	name: 'SearchControl',
 
 	components: {
-		LControl,
 		SearchField,
 	},
 
 	setup() {
 		const isMobile = useIsMobile()
-		return { isMobile: computed(() => isMobile.value) }
+		const el = ref(null)
+
+		onMounted(() => {
+			useControl(() => ({
+				onAdd() {
+					this._container = el.value?.children[0]
+					return this._container
+				},
+				onRemove() {},
+			}), { position: 'top-left' })
+		})
+
+		return { isMobile: computed(() => isMobile.value), el }
 	},
 
 	props: {
@@ -66,12 +79,6 @@ export default {
 		return {
 			locale: getLocale(),
 		}
-	},
-
-	watch: {
-	},
-
-	created() {
 	},
 
 	methods: {
@@ -101,7 +108,6 @@ export default {
 			min-width: 34px;
 			width: 34px;
 			height: 34px;
-			// margin: 0;
 			padding: 0;
 		}
 		.multiselect {

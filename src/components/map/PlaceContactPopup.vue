@@ -1,79 +1,77 @@
 <template>
-	<LMarker :lat-lng="latLng"
-		@ready="onMarkerReady">
-		<LIcon
-			class-name="placement-marker-icon"
-			:icon-size="[40, 40]"
-			:icon-url="markerIconUrl" />
-		<LPopup :options="popupOptions"
-			@ready="onPopupReady">
-			<h3 id="place-popup-title">
-				{{ t('maps', 'New contact address') }}
-			</h3>
-			<span v-if="addressLoading"
-				class="icon icon-loading-small" />
-			<textarea v-else
-				id="placeContactPopupAddress"
-				v-model="formattedAddress"
-				@input="addressEdited = true" />
-			<br>
-			<div class="contact-select">
-				<label for="userMultiselect">
-					<span class="icon icon-user" />
-				</label>
-				<NcSelect
-					id="userMultiselect"
-					ref="userMultiselect"
-					v-model="selectedContact"
-					class="contact-input"
-					track-by="URI"
-					label="FN"
-					:placeholder="t('maps', 'Choose a contact')"
-					:options="contactData"
-					:internal-search="true"
-					@search="asyncSearchContacts">
-					<template #option="option">
-						<Avatar
-							class="contact-avatar"
-							:is-no-user="true"
-							:url="option.AVATAR_URL"
-							:user="option.FN" />
-						{{ option.FN }}
-					</template>
-				</NcSelect>
-			</div>
-			<div class="address-type"
-				:name="t('maps', 'Address type')">
-				<label for="addressTypeSelect">
-					<span class="icon icon-address" />
-				</label>
-				<select id="addressTypeSelect"
-					v-model="addressType"
-					:disabled="!selectedContact">
-					<option value="home">
-						🏠 {{ t('maps', 'Home') }}
-					</option>
-					<option value="work">
-						🏢 {{ t('maps', 'Work') }}
-					</option>
-				</select>
-			</div>
-			<button class="submit-place-contact"
-				:disabled="!selectedContact"
-				:class="{ loading: searchingEditedAddress }"
-				@click="onValidate">
-				<span class="icon-add" />
-				{{ t('maps', 'Add address to contact') }}
-			</button>
-		</LPopup>
-	</LMarker>
+	<MglMarker :coordinates="[latLng.lng, latLng.lat]">
+		<template #default>
+			<div class="placement-marker-icon"
+				:style="'background-image: url(' + markerIconUrl + '); width: 40px; height: 40px; border-radius: 50%; background-size: cover;'" />
+			<MglPopup :close-button="false" anchor="bottom" :showed="true">
+				<h3 id="place-popup-title">
+					{{ t('maps', 'New contact address') }}
+				</h3>
+				<span v-if="addressLoading"
+					class="icon icon-loading-small" />
+				<textarea v-else
+					id="placeContactPopupAddress"
+					v-model="formattedAddress"
+					@input="addressEdited = true" />
+				<br>
+				<div class="contact-select">
+					<label for="userMultiselect">
+						<span class="icon icon-user" />
+					</label>
+					<NcSelect
+						id="userMultiselect"
+						ref="userMultiselect"
+						v-model="selectedContact"
+						class="contact-input"
+						track-by="URI"
+						label="FN"
+						:placeholder="t('maps', 'Choose a contact')"
+						:options="contactData"
+						:internal-search="true"
+						@search="asyncSearchContacts">
+						<template #option="option">
+							<NcAvatar
+								class="contact-avatar"
+								:is-no-user="true"
+								:url="option.AVATAR_URL"
+								:user="option.FN" />
+							{{ option.FN }}
+						</template>
+					</NcSelect>
+				</div>
+				<div class="address-type"
+					:name="t('maps', 'Address type')">
+					<label for="addressTypeSelect">
+						<span class="icon icon-address" />
+					</label>
+					<select id="addressTypeSelect"
+						v-model="addressType"
+						:disabled="!selectedContact">
+						<option value="home">
+							&#127968; {{ t('maps', 'Home') }}
+						</option>
+						<option value="work">
+							&#127970; {{ t('maps', 'Work') }}
+						</option>
+					</select>
+				</div>
+				<button class="submit-place-contact"
+					:disabled="!selectedContact"
+					:class="{ loading: searchingEditedAddress }"
+					@click="onValidate">
+					<span class="icon-add" />
+					{{ t('maps', 'Add address to contact') }}
+				</button>
+			</MglPopup>
+		</template>
+	</MglMarker>
 </template>
 
 <script>
 import { generateUrl } from '@nextcloud/router'
 import { getCurrentUser } from '@nextcloud/auth'
 
-import { LMarker, LPopup, LIcon } from '@vue-leaflet/vue-leaflet'
+import { MglMarker, MglPopup } from '@indoorequal/vue-maplibre-gl'
 import NcSelect from '@nextcloud/vue/components/NcSelect'
 import NcAvatar from '@nextcloud/vue/components/NcAvatar'
 
@@ -83,9 +81,8 @@ import { searchContacts, geocode, searchAddress } from '../../network.js'
 export default {
 	name: 'PlaceContactPopup',
 	components: {
-		LMarker,
-		LPopup,
-		LIcon,
+		MglMarker,
+		MglPopup,
 		NcSelect,
 		NcAvatar,
 	},
@@ -99,9 +96,6 @@ export default {
 
 	data() {
 		return {
-			popupOptions: {
-				closeButton: false,
-			},
 			contactData: [],
 			addressLoading: false,
 			addressEdited: false,
@@ -153,13 +147,6 @@ export default {
 				console.error(error)
 			})
 		},
-		onMarkerReady(m) {
-			m.openPopup()
-		},
-		onPopupReady(p) {
-			// i don't know why but it is placed too high when it's created
-			p.setLatLng(this.latLng)
-		},
 		getContactAvatar(contact) {
 			if (contact.HAS_PHOTO && contact.HAS_PHOTO2) {
 				return generateUrl(
@@ -206,7 +193,7 @@ export default {
 				}).catch((error) => {
 					console.error(error)
 				}).then(() => {
-					this.searchingEditedAddress = true
+					this.searchingEditedAddress = false
 				})
 			}
 		},

@@ -1,57 +1,43 @@
 <template>
-	<LMarker
-		ref="marker"
-		:options="{ data: favorite }"
-		:icon="icon"
-		:lat-lng="[favorite.lat, favorite.lng]"
+	<MglMarker
+		:coordinates="[favorite.lng, favorite.lat]"
 		:draggable="draggable && favorite.isUpdateable"
-		@ready="onMarkerReady"
-		@contextmenu="onRightClick"
-		@click="$emit('click', favorite)"
-		@moveend="onMoved">
-		<LTooltip
-			:options="{ ...tooltipOptions, opacity: draggable && favorite.isUpdateable ? 0 : 1 }">
-			<div class="tooltip-favorite-wrapper"
-				:style="'border: 2px solid #' + color">
-				<b>{{ t('maps', 'Name') }}:</b>
-				<span>{{ favorite.name || t('maps', 'No name') }}</span>
-				<br>
-				<b>{{ t('maps', 'Category') }}:</b>
-				<span>{{ favorite.category }}</span>
-				<br v-if="favorite.comment">
-				<b v-if="favorite.comment">{{ t('maps', 'Comment') }}:</b>
-				<span v-if="favorite.comment">{{ favorite.comment }}</span>
-			</div>
-		</LTooltip>
-		<LPopup
-			class="popup-favorite-wrapper"
-			:options="popupOptions">
-			<NcActionButton v-if="favorite.isDeletable" icon="icon-delete" @click="$emit('delete', favorite.id)">
-				{{ t('maps', 'Delete favorite') }}
-			</NcActionButton>
-			<NcActionButton v-if="!isPublic()"
-				icon="icon-share"
-				@click="$emit('add-to-map-favorite', favorite)">
-				{{ t('maps', 'Copy to map') }}
-			</NcActionButton>
-		</LPopup>
-	</LMarker>
+		@update:coordinates="onMoved">
+		<template #default>
+			<div
+				class="favorite-marker-icon"
+				:style="markerStyle"
+				@click.stop="onLeftClick"
+				@contextmenu.stop="onRightClick" />
+			<MglPopup
+				v-if="showPopup"
+				:close-button="false"
+				anchor="bottom"
+				@close="showPopup = false">
+				<NcActionButton v-if="favorite.isDeletable" icon="icon-delete" @click="$emit('delete', favorite.id)">
+					{{ t('maps', 'Delete favorite') }}
+				</NcActionButton>
+				<NcActionButton v-if="!isPublicVal"
+					icon="icon-share"
+					@click="$emit('add-to-map-favorite', favorite)">
+					{{ t('maps', 'Copy to map') }}
+				</NcActionButton>
+			</MglPopup>
+		</template>
+	</MglMarker>
 </template>
 
 <script>
 import NcActionButton from '@nextcloud/vue/components/NcActionButton'
-
-import L from 'leaflet'
-import { LMarker, LTooltip, LPopup } from '@vue-leaflet/vue-leaflet'
+import { MglMarker, MglPopup } from '@indoorequal/vue-maplibre-gl'
 import { isPublic } from '../../utils/common'
 
 export default {
 	name: 'FavoriteMarker',
 
 	components: {
-		LMarker,
-		LTooltip,
-		LPopup,
+		MglMarker,
+		MglPopup,
 		NcActionButton,
 	},
 
@@ -66,7 +52,8 @@ export default {
 		},
 		icon: {
 			type: Object,
-			required: true,
+			required: false,
+			default: null,
 		},
 		color: {
 			type: String,
@@ -80,56 +67,40 @@ export default {
 
 	data() {
 		return {
-			tooltipOptions: {
-				className: 'leaflet-marker-favorite-tooltip',
-				direction: 'top',
-				offset: L.point(0, 0),
-			},
-			popupOptions: {
-				closeButton: false,
-				closeOnClick: false,
-				className: 'popovermenu open popupMarker favoritePopup',
-				offset: L.point(-5, 10),
-			},
+			showPopup: false,
 		}
 	},
 
 	computed: {
-	},
-
-	beforeMount() {
+		isPublicVal() {
+			return isPublic()
+		},
+		markerStyle() {
+			return `background-color: #${this.color}; width: 36px; height: 36px; border-radius: 50%; border: 2px solid rgba(0,0,0,0.3); cursor: pointer;`
+		},
 	},
 
 	methods: {
-		onMoved(e) {
+		onMoved(lngLat) {
 			const editedFav = {
 				...this.favorite,
-				lat: e.target.getLatLng().lat,
-				lng: e.target.getLatLng().lng,
+				lat: lngLat.lat,
+				lng: lngLat.lng,
 			}
 			this.$emit('edit', editedFav)
 		},
-		onMarkerReady(m) {
-			// avoid left click popup
-			L.DomEvent.on(m, 'click', (ev) => {
-				m.closePopup()
-			})
+		onLeftClick() {
+			this.$emit('click', this.favorite)
 		},
-		onRightClick(e) {
-			this.$refs.marker.mapObject.openPopup()
-		},
-		isPublic() {
-			return isPublic()
+		onRightClick() {
+			this.showPopup = true
 		},
 	},
 }
 </script>
 
 <style lang="scss" scoped>
-.tooltip-favorite-wrapper {
-	padding: 6px;
-	border-radius: 3px;
-	background-color: var(--color-main-background);
-	color: var(--color-main-text);
+.favorite-marker-icon {
+	box-shadow: 0px 0px 10px #888;
 }
 </style>

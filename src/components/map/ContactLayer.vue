@@ -1,108 +1,66 @@
 <template>
-	<LMarker
-		:options="{ data: contact }"
-		:icon="contactMarkerIcon"
-		:lat-lng="latLng"
-		@click="onMarkerClick"
-		@contextmenu="onMarkerContextmenu">
-		<LTooltip
-			class="tooltip-contact-wrapper"
-			:options="tooltipOptions">
-			<img class="tooltip-contact-avatar"
-				:src="contactAvatar"
-				alt="">
-			<div class="tooltip-contact-content">
-				<h3 class="tooltip-contact-name">
-					{{ contact.FN }}
-				</h3>
-				<p class="tooltip-contact-address-type">
-					<template v-for="adrtype in contact.ADRTYPE">
-						<span v-if=" adrtype.toLowerCase() === 'home'"
-							class="tooltip-contact-address-type">
-							{{ t('maps', 'Home') }}
-						</span>
-						<span v-else-if=" adrtype.toLowerCase() === 'work'"
-							class="tooltip-contact-address-type">
-							{{ t('maps', 'Work') }}
-						</span>
-						<span v-else
-							class="tooltip-contact-address-type">
-							{{ t('maps', adrtype.toLowerCase()) }}
-						</span>
-					</template>
-				</p>
-				<p v-for="l in formattedAddressLines"
-					:key="l"
-					class="tooltip-contact-address">
-					{{ l }}
-				</p>
+	<MglMarker :coordinates="[contact.GEO.lng, contact.GEO.lat]">
+		<template #default>
+			<div class="contact-marker-icon">
+				<div class="thumbnail" :style="'background-image: url(\'' + contactAvatar + '\');'" />
 			</div>
-		</LTooltip>
-		<LPopup
-			class="popup-contact-wrapper"
-			:options="popupOptions">
-			<div v-if="click === 'left'">
-				<div class="left-contact-popup">
-					<img class="tooltip-contact-avatar"
-						:src="contactAvatar"
-						alt="">
-					<button v-if="contact.isDeletable"
-						v-tooltip="{ content: contact.ADR?t('maps', 'Delete this address'):t('maps', 'Delete this location') }"
-						class="icon icon-delete"
-						@click="onDeleteAddressClick()" />
-					<button v-if="!isPublic()"
-						v-tooltip="{ content: t('maps', 'Copy to map') }"
-						class="icon icon-share"
-						@click="$emit('add-to-map-contact', contact)" />
+			<MglPopup
+				v-if="showPopup"
+				:close-button="false"
+				anchor="bottom"
+				@close="showPopup = false">
+				<div v-if="click === 'left'">
+					<div class="left-contact-popup">
+						<img class="tooltip-contact-avatar"
+							:src="contactAvatar"
+							alt="">
+						<button v-if="contact.isDeletable"
+							v-tooltip="{ content: contact.ADR?t('maps', 'Delete this address'):t('maps', 'Delete this location') }"
+							class="icon icon-delete"
+							@click="onDeleteAddressClick()" />
+						<button v-if="!isPublicVal"
+							v-tooltip="{ content: t('maps', 'Copy to map') }"
+							class="icon icon-share"
+							@click="$emit('add-to-map-contact', contact)" />
+					</div>
+					<div class="tooltip-contact-content">
+						<h3 class="tooltip-contact-name">
+							{{ contact.FN }}
+						</h3>
+						<p class="tooltip-contact-address-type">
+							<template v-for="adrtype in contact.ADRTYPE">
+								<span v-if="adrtype.toLowerCase() === 'home'" class="tooltip-contact-address-type">
+									{{ t('maps', 'Home') }}
+								</span>
+								<span v-else-if="adrtype.toLowerCase() === 'work'" class="tooltip-contact-address-type">
+									{{ t('maps', 'Work') }}
+								</span>
+								<span v-else class="tooltip-contact-address-type">
+									{{ t('maps', adrtype.toLowerCase()) }}
+								</span>
+							</template>
+						</p>
+						<p v-for="l in formattedAddressLines" :key="l" class="tooltip-contact-address">
+							{{ l }}
+						</p>
+						<a v-if="contact.UID && contact.URI" target="_blank" :href="contactUrl">
+							{{ t('maps', 'Open in Contacts') }}
+						</a>
+					</div>
 				</div>
-				<div class="tooltip-contact-content">
-					<h3 class="tooltip-contact-name">
-						{{ contact.FN }}
-					</h3>
-					<p class="tooltip-contact-address-type">
-						<template v-for="adrtype in contact.ADRTYPE">
-							<span v-if=" adrtype.toLowerCase() === 'home'"
-								class="tooltip-contact-address-type">
-								{{ t('maps', 'Home') }}
-							</span>
-							<span v-else-if=" adrtype.toLowerCase() === 'work'"
-								class="tooltip-contact-address-type">
-								{{ t('maps', 'Work') }}
-							</span>
-							<span v-else
-								class="tooltip-contact-address-type">
-								{{ t('maps', adrtype.toLowerCase()) }}
-							</span>
-						</template>
-					</p>
-					<p v-for="l in formattedAddressLines"
-						:key="l"
-						class="tooltip-contact-address">
-						{{ l }}
-					</p>
-					<a v-if="contact.UID && contact.URI"
-						target="_blank"
-						:href="contactUrl">
-						{{ t('maps', 'Open in Contacts') }}
-					</a>
+				<div v-if="click === 'right'" class="right-contact-popup">
+					<div>
+						<NcActionButton v-if="contact.isUpdateable" icon="icon-delete" @click="onDeleteAddressClick()">
+							{{ contact.ADR?t('maps', 'Delete this address'):t('maps', 'Delete this location') }}
+						</NcActionButton>
+						<NcActionButton v-if="!isPublicVal" icon="icon-share" @click="$emit('add-to-map-contact', contact)">
+							{{ t('maps', 'Copy to map') }}
+						</NcActionButton>
+					</div>
 				</div>
-			</div>
-			<div v-if="click === 'right'" class="right-contact-popup">
-				<div>
-					<NcActionButton v-if="contact.isUpdateable"
-						icon="icon-delete"
-						@click="onDeleteAddressClick()">
-						{{ contact.ADR?t('maps', 'Delete this address'):t('maps', 'Delete this location') }}
-					</NcActionButton>
-					<NcActionButton v-if="!isPublic()"
-						icon="icon-share"
-						@click="$emit('add-to-map-contact', contact)">
-						{{ t('maps', 'Copy to map') }}
-					</NcActionButton>
-				</div>
-			</div>
-		</LPopup>
-	</LMarker>
+			</MglPopup>
+		</template>
+	</MglMarker>
 </template>
 
 <script>
@@ -110,21 +68,16 @@ import { generateUrl } from '@nextcloud/router'
 import { getCurrentUser } from '@nextcloud/auth'
 import NcActionButton from '@nextcloud/vue/components/NcActionButton'
 
-import L from 'leaflet'
-import { LMarker, LTooltip, LPopup } from '@vue-leaflet/vue-leaflet'
+import { MglMarker, MglPopup } from '@indoorequal/vue-maplibre-gl'
 
 import optionsController from '../../optionsController.js'
-import { geoToLatLng } from '../../utils/mapUtils.js'
 import { getToken, isPublic } from '../../utils/common.js'
-
-const CONTACT_MARKER_VIEW_SIZE = 40
 
 export default {
 	name: 'ContactLayer',
 	components: {
-		LMarker,
-		LTooltip,
-		LPopup,
+		MglMarker,
+		MglPopup,
 		NcActionButton,
 	},
 
@@ -138,38 +91,14 @@ export default {
 	data() {
 		return {
 			click: 'left',
+			showPopup: false,
 			optionValues: optionsController.optionValues,
-			tooltipOptions: {
-				className: 'leaflet-marker-contact-tooltip',
-				direction: 'top',
-				offset: L.point(0, 0),
-			},
-			popupOptions: {
-				closeOnClick: false,
-				closeButton: false,
-				className: 'popovermenu open popupMarker contactPopup',
-				offset: L.point(-5, 10),
-			},
 		}
 	},
 
 	computed: {
-		latLng() {
-			return geoToLatLng(this.contact.GEO)
-		},
-		contactMarkerIcon() {
-			const iconUrl = this.contactAvatar
-			return L.divIcon(
-				L.extend({
-					className: 'leaflet-marker-contact contact-marker',
-					html: '<div class="thumbnail" style="background-image: url(\'' + iconUrl + '\');"></div>​',
-				},
-				this.contact,
-				{
-					iconSize: [CONTACT_MARKER_VIEW_SIZE, CONTACT_MARKER_VIEW_SIZE],
-					iconAnchor: [CONTACT_MARKER_VIEW_SIZE / 2, CONTACT_MARKER_VIEW_SIZE],
-				}),
-			)
+		isPublicVal() {
+			return isPublic()
 		},
 		contactAvatar() {
 			if (this.contact.HAS_PHOTO) {
@@ -185,7 +114,6 @@ export default {
 			const adrTab = this.contact.ADR.split(';').map((s) => { return s.trim() })
 			const formattedAddressLines = []
 			if (adrTab.length > 6) {
-				// check if street name is set
 				if (adrTab[2] !== '') {
 					formattedAddressLines.push(adrTab[2])
 				}
@@ -200,28 +128,16 @@ export default {
 	},
 
 	methods: {
-		isPublic() {
-			return isPublic()
-		},
-		onMarkerClick(e) {
+		onMarkerClick() {
 			this.click = 'left'
-			this.popupOptions.offset = L.point(-5, 10)
-			this.$nextTick(() => {
-				e.target.closeTooltip()
-			})
+			this.showPopup = true
 		},
-		onMarkerContextmenu(e) {
+		onMarkerContextmenu() {
 			this.click = 'right'
-			this.popupOptions.offset = L.point(-5, -25)
-			this.$nextTick(() => {
-				e.target.openPopup()
-				e.target.closeTooltip()
-				this.popupOptions.offset = L.point(-5, 10)
-			})
+			this.showPopup = true
 		},
 		onDeleteAddressClick() {
 			const c = this.contact
-			// We only want to delete the ADR not the GEO
 			if (c.ADR && c.GEO) {
 				delete c.GEO
 			}
@@ -232,6 +148,20 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.contact-marker-icon {
+	width: 40px;
+	height: 40px;
+	cursor: pointer;
+	.thumbnail {
+		width: 40px;
+		height: 40px;
+		border-radius: 50%;
+		background-size: cover;
+		background-position: center;
+		border: 2px solid var(--color-border);
+	}
+}
+
 .popup-contact-wrapper {
 	width: 100%;
 	.action {

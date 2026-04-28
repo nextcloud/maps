@@ -1,113 +1,70 @@
 <template>
-	<LFeatureGroup
-		ref="featgroup"
-		@ready="onFGReady"
-		@click="$emit('click', track)"
-		@contextmenu="onFGRightClick">
-		<LPopup :options="popupOptions"
-			class="popup-track-wrapper">
-			<NcActionButton v-if="track.isUpdateable"
-				icon="icon-colorpicker"
-				@click="$emit('change-color', track)">
-				{{ t('maps', 'Change color') }}
-			</NcActionButton>
-			<NcActionButton icon="icon-category-monitoring" @click="$emit('display-elevation', track)">
-				{{ t('maps', 'Display elevation') }}
-			</NcActionButton>
-			<NcActionButton v-if="!isPublic() && track.isShareable"
-				icon="icon-share"
-				@click="$emit('add-to-map-track', track)">
-				{{ t('maps', 'Copy to map') }}
-			</NcActionButton>
-			<NcActionLink v-if="!isPublic()"
-				:href="downloadTrackUrl"
-				target="_self"
-				icon="icon-download"
-				:close-after-click="true"
-				@click="closeafterclickworkaround">
-				<!--
-				looks like close-after-click not working in this popovermenu
-				therefore added workaround closeafterclickworkaround
-				-->
-				{{ t('maps', 'Download track') }}
-			</NcActionLink>
-			<NcActionLink v-if="isPublic() && !(track.hideDownload)"
-				target="_self"
-				:href="downloadTrackShareUrl"
-				icon="icon-download"
-				:close-after-click="true"
-				@click="closeafterclickworkaround">
-				<!--
-				looks like close-after-click not working in this popovermenu
-				therefore added workaround closeafterclickworkaround
-				-->
-				{{ t('maps', 'Download track') }}
-			</NcActionLink>
-		</LPopup>
-		<LMarker v-if="firstPoint"
-			:icon="firstPointMarkerIcon"
-			:lat-lng="firstPoint" >
-			<LTooltip :options="tooltipOptions">
-        		<div class="tooltip-track-wrapper"
-					:style="'border: 2px solid ' + color">					
-					<b>{{ t('maps', 'File') }}:</b>
-					<span>{{ track.file_name }}</span>
-					<br v-if="dateBegin">
-					<b v-if="dateBegin">{{ t('maps', 'Begins at') }}:</b>
-					<span v-if="dateBegin">{{ dateBegin }}</span>
-					<br v-if="firstPoint.name">
-					<b v-if="firstPoint.name">{{ t('maps', 'Name') }}:</b>
-					<span v-if="firstPoint.name">{{ firstPoint.name }}</span>
-					<br v-if="firstPoint.desc">
-					<b v-if="firstPoint.desc">{{ t('maps', 'Description') }}:</b>
-					<span v-if="firstPoint.desc">{{ firstPoint.desc }}</span>
-					<br v-if="firstPoint.ele">
-					<b v-if="firstPoint.ele">{{ t('maps', 'Altitude') }}:</b>
-					<span v-if="firstPoint.ele">{{ firstPoint.ele }} m</span>					
-				</div>
-    		</LTooltip>
-		</LMarker>
-		<LMarker v-for="(point, i) in wayPoints"
+	<template>
+		<MglGeoJsonSource v-for="(line, i) in lines"
+			:key="'outline-' + track.id + '-' + i"
+			:source-id="'track-outline-' + track.id + '-' + i"
+			:data="lineGeoJson(line)">
+			<MglLineLayer
+				:layer-id="'track-outline-layer-' + track.id + '-' + i"
+				:layout="{ 'line-join': 'round', 'line-cap': 'round' }"
+				:paint="{ 'line-color': '#000000', 'line-width': 6.4, 'line-opacity': 1 }"
+				@click.stop="onLineClick"
+				@contextmenu.stop="onLineRightClick"
+				@mousemove="(e) => trackLineMouseover(e, line)" />
+		</MglGeoJsonSource>
+		<MglGeoJsonSource v-for="(line, i) in lines"
+			:key="'line-' + track.id + '-' + i"
+			:source-id="'track-line-' + track.id + '-' + i"
+			:data="lineGeoJson(line)">
+			<MglLineLayer
+				:layer-id="'track-line-layer-' + track.id + '-' + i"
+				:layout="{ 'line-join': 'round', 'line-cap': 'round' }"
+				:paint="{ 'line-color': color, 'line-width': 4, 'line-opacity': 1 }" />
+		</MglGeoJsonSource>
+		<MglMarker v-if="firstPoint"
+			:coordinates="[firstPoint.lng, firstPoint.lat]">
+			<template #default>
+				<div class="track-start-marker"
+					:style="'background-color: ' + color + '; border-color: ' + color"
+					@click.stop="onLineClick"
+					@contextmenu.stop="onLineRightClick" />
+				<MglPopup v-if="showPopup" :close-button="false" anchor="bottom" @close="showPopup = false">
+					<NcActionButton v-if="track.isUpdateable" icon="icon-colorpicker" @click="$emit('change-color', track)">
+						{{ t('maps', 'Change color') }}
+					</NcActionButton>
+					<NcActionButton icon="icon-category-monitoring" @click="$emit('display-elevation', track)">
+						{{ t('maps', 'Display elevation') }}
+					</NcActionButton>
+					<NcActionButton v-if="!isPublicVal && track.isShareable" icon="icon-share" @click="$emit('add-to-map-track', track)">
+						{{ t('maps', 'Copy to map') }}
+					</NcActionButton>
+					<NcActionLink v-if="!isPublicVal" :href="downloadTrackUrl" target="_self" icon="icon-download" :close-after-click="true">
+						{{ t('maps', 'Download track') }}
+					</NcActionLink>
+					<NcActionLink v-if="isPublicVal && !(track.hideDownload)" target="_self" :href="downloadTrackShareUrl" icon="icon-download" :close-after-click="true">
+						{{ t('maps', 'Download track') }}
+					</NcActionLink>
+				</MglPopup>
+			</template>
+		</MglMarker>
+		<MglMarker v-for="(point, i) in wayPoints"
 			:key="'waypoint:'.concat(i)"
-			:icon="wayPointMarkerIcon"
-			:lat-lng="point">
-			<LTooltip :options="tooltipOptions">
-        		<div class="tooltip-track-wrapper"
-					:style="'border: 2px solid ' + color">					
-					<b>{{ t('maps', 'File') }}:</b>
-					<span>{{ track.file_name }}</span>
-					<br v-if="point.name">
-					<b v-if="point.name">{{ t('maps', 'Name') }}:</b>
-					<span v-if="point.name">{{ point.name }}</span>
-					<br v-if="point.desc">
-					<b v-if="point.desc">{{ t('maps', 'Description') }}:</b>
-					<span v-if="point.desc">{{ point.desc }}</span>
-					<br v-if="point.ele">
-					<b v-if="point.ele">{{ t('maps', 'Altitude') }}:</b>
-					<span v-if="point.ele">{{ point.ele }} m</span>
-				</div>
-    		</LTooltip>
-		</LMarker>
-		<LFeatureGroup v-for="(line, i) in lines"
-			:key="'line'.concat(i)"
-			@mouseover="trackLineMouseover($event, line)">
-			<LPolyline
-				color="black"
-				:opacity="1"
-				:weight="4 * 1.6"
-				:lat-lngs="line.points" />
-			<LPolyline
-				:color="color"
-				:opacity="1"
-				:weight="4"
-				:lat-lngs="line.points" />
-		</LFeatureGroup>
-	</LFeatureGroup>
+			:coordinates="[point.lng, point.lat]">
+			<template #default>
+				<div class="track-waypoint-marker"
+					:style="'background-color: ' + color + '; border-color: ' + color" />
+			</template>
+		</MglMarker>
+	</template>
 </template>
 
 <script>
-import L from 'leaflet'
-import { LMarker, LTooltip, LPopup, LFeatureGroup, LPolyline } from '@vue-leaflet/vue-leaflet'
+import {
+	MglMarker,
+	MglPopup,
+	MglGeoJsonSource,
+	MglLineLayer,
+} from '@indoorequal/vue-maplibre-gl'
 
 import NcActionButton from '@nextcloud/vue/components/NcActionButton'
 import NcActionLink from '@nextcloud/vue/components/NcActionLink'
@@ -118,17 +75,13 @@ import { getRemoteURL, getRootPath } from '@nextcloud/files/dav'
 import optionsController from '../../optionsController.js'
 import { binSearch, isPublic, getToken } from '../../utils/common.js'
 
-const TRACK_MARKER_VIEW_SIZE = 40
-const WAYPOINT_MARKER_VIEW_SIZE = 30
-
 export default {
 	name: 'TrackLayer',
 	components: {
-		LMarker,
-		LTooltip,
-		LPopup,
-		LFeatureGroup,
-		LPolyline,
+		MglMarker,
+		MglPopup,
+		MglGeoJsonSource,
+		MglLineLayer,
 		NcActionButton,
 		NcActionLink,
 	},
@@ -153,26 +106,14 @@ export default {
 	data() {
 		return {
 			optionValues: optionsController.optionValues,
-			lineOptions: {
-				weight: 4,
-				opacity: 1,
-			},
-			tooltipOptions: {
-				sticky: true,
-				className: 'leaflet-marker-track-tooltip',
-				direction: 'top',
-				offset: L.point(0, 0),
-			},
-			popupOptions: {
-				closeButton: false,
-				closeOnClick: false,
-				className: 'popovermenu open popupMarker trackPopup',
-				offset: L.point(-5, -20),
-			},
+			showPopup: false,
 		}
 	},
 
 	computed: {
+		isPublicVal() {
+			return isPublic()
+		},
 		downloadTrackUrl() {
 			return getRemoteURL() + getRootPath() + this.track.file_path
 		},
@@ -191,11 +132,7 @@ export default {
 			} else if ((!this.track.metadata?.begin || this.metadata?.begin < 0 || this.track.metadata?.begin >= this.start) && (!this.track.metadata?.end || !this.track.metadata?.end < 0 || this.track.metadata?.end <= this.end)) {
 				this.track.data.tracks.forEach((trk) => {
 					trk.segments.forEach((segment) => {
-						// add track name to each segment
-						trkSegments.push({
-							...segment,
-							name: trk.name,
-						})
+						trkSegments.push({ ...segment, name: trk.name })
 					})
 				})
 			} else {
@@ -208,12 +145,7 @@ export default {
 							...segment.points.slice(0, lastNullIndex + 1),
 							...segment.points.slice(firstShownIndex, lastShownIndex + 1),
 						]
-						// add track name to each segment
-						trkSegments.push({
-							...segment,
-							name: trk.name,
-							points,
-						})
+						trkSegments.push({ ...segment, name: trk.name, points })
 					})
 				})
 			}
@@ -221,29 +153,6 @@ export default {
 		},
 		color() {
 			return this.track.color || '#0082c9'
-		},
-		firstPointMarkerIcon() {
-			const selectedClass = this.track.selected
-				? 'selected'
-				: ''
-			return L.divIcon(L.extend({
-				html: '<div class="thumbnail-wrapper" style="--custom-color: ' + this.color + '; border-color: ' + this.color + ';">'
-					+ '<div class="thumbnail" style="background-color: ' + this.color + ';"></div></div>​',
-				className: 'leaflet-marker-track track-marker ' + selectedClass,
-			}, null, {
-				iconSize: [TRACK_MARKER_VIEW_SIZE, TRACK_MARKER_VIEW_SIZE],
-				iconAnchor: [TRACK_MARKER_VIEW_SIZE / 2, TRACK_MARKER_VIEW_SIZE],
-			}))
-		},
-		wayPointMarkerIcon() {
-			return L.divIcon(L.extend({
-				html: '<div class="thumbnail-wrapper" style="--custom-color: ' + this.color + '; border-color: ' + this.color + ';">'
-					+ '<div class="thumbnail" style="background-color: ' + this.color + ';"></div></div>​',
-				className: 'leaflet-marker-track track-waypoint ',
-			}, null, {
-				iconSize: [WAYPOINT_MARKER_VIEW_SIZE, WAYPOINT_MARKER_VIEW_SIZE],
-				iconAnchor: [WAYPOINT_MARKER_VIEW_SIZE / 2, WAYPOINT_MARKER_VIEW_SIZE],
-			}))
 		},
 		firstPoint() {
 			let firstPoint = null
@@ -292,34 +201,32 @@ export default {
 		},
 	},
 
-	created() {
-	},
-
 	methods: {
-		// looks like close-after-click not working for NcAcionLink
-		// added working closeafterclickworkaround
-		closeafterclickworkaround() {
-			this.$refs.featgroup.mapObject.closePopup()
+		lineGeoJson(line) {
+			return {
+				type: 'Feature',
+				geometry: {
+					type: 'LineString',
+					coordinates: line.points.map(p => [p.lng, p.lat]),
+				},
+			}
 		},
-		onFGReady(f) {
-			// avoid left click popup
-			L.DomEvent.on(f, 'click', (ev) => {
-				f.closePopup()
-			})
+		onLineClick() {
+			this.$emit('click', this.track)
 		},
-		onFGRightClick(e) {
-			this.$refs.featgroup.mapObject.openPopup()
+		onLineRightClick() {
+			this.showPopup = !this.showPopup
 		},
 		trackLineMouseover(e, line) {
-			console.debug(this.track)
-			const overLatLng = e.layer._map.layerPointToLatLng(e.layerPoint)
+			const lngLat = e.lngLat
 			let minDist = 40000000
-			let tmpDist
 			let closestI = -1
 			for (let i = 0; i < line.points.length; i++) {
-				tmpDist = e.layer._map.distance(overLatLng, line.points[i])
-				if (tmpDist < minDist) {
-					minDist = tmpDist
+				const dx = lngLat.lng - line.points[i].lng
+				const dy = lngLat.lat - line.points[i].lat
+				const dist = Math.sqrt(dx * dx + dy * dy)
+				if (dist < minDist) {
+					minDist = dist
 					closestI = i
 				}
 			}
@@ -333,20 +240,25 @@ export default {
 				this.$emit('point-hover', hoverPoint)
 			}
 		},
-		isPublic() {
-			return isPublic()
-		},
 	},
 }
 </script>
 
 <style lang="scss" scoped>
-// nothing
-.tooltip-track-wrapper {
-	padding: 6px;
-	border-radius: 3px;
-	background-color: var(--color-main-background);
-	color: var(--color-main-text);
+.track-start-marker {
+	width: 40px;
+	height: 40px;
+	border-radius: 50%;
+	border: 2px solid;
+	cursor: pointer;
+}
+
+.track-waypoint-marker {
+	width: 30px;
+	height: 30px;
+	border-radius: 50%;
+	border: 2px solid;
+	cursor: pointer;
 }
 
 ::v-deep .icon-colorpicker {

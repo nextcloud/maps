@@ -1,16 +1,19 @@
 <template>
-	<div style="display: none;">
-		<slot v-if="ready" />
-	</div>
+	<MglGeoJsonSource source-id="heatmap-source" :data="geoJsonData">
+		<MglHeatmapLayer layer-id="heatmap-layer" :paint="heatmapPaint" />
+	</MglGeoJsonSource>
 </template>
 
 <script>
-import 'leaflet.heat/dist/leaflet-heat.js'
-import { inject, onMounted, onBeforeUnmount, watch } from 'vue'
-import { InjectionKeys } from '@vue-leaflet/vue-leaflet'
-const { AddLayerInjection, RemoveLayerInjection } = InjectionKeys
+import { MglGeoJsonSource, MglHeatmapLayer } from '@indoorequal/vue-maplibre-gl'
 
 export default {
+	name: 'LHeatMap',
+	components: {
+		MglGeoJsonSource,
+		MglHeatmapLayer,
+	},
+
 	props: {
 		initialPoints: {
 			type: Array,
@@ -22,38 +25,31 @@ export default {
 			default() { return {} },
 		},
 	},
-	emits: ['ready'],
-	setup(props, { emit }) {
-		const addLayer = inject(AddLayerInjection)
-		const removeLayer = inject(RemoveLayerInjection)
 
-		let mapObject = null
-		let points = [...props.initialPoints]
-
-		watch(() => props.options, (newOptions) => {
-			if (mapObject) mapObject.setOptions(newOptions)
-		}, { deep: true })
-
-		watch(() => props.initialPoints, (newPoints) => {
-			points = newPoints
-			if (mapObject) mapObject.setLatLngs(newPoints)
-		}, { deep: true })
-
-		onMounted(() => {
-			mapObject = L.heatLayer(points, props.options)
-			if (addLayer) addLayer({ leafletObject: mapObject })
-			emit('ready', mapObject)
-		})
-
-		onBeforeUnmount(() => {
-			if (removeLayer && mapObject) removeLayer({ leafletObject: mapObject })
-		})
-
-		return {
-			addLatLng(latlng) { mapObject?.addLatLng(latlng) },
-			setLatLngs(latlngs) { mapObject?.setLatLngs(latlngs) },
-			redraw() { mapObject?.redraw() },
-		}
+	computed: {
+		geoJsonData() {
+			return {
+				type: 'FeatureCollection',
+				features: this.initialPoints.map((p) => {
+					const lat = Array.isArray(p) ? p[0] : p.lat
+					const lng = Array.isArray(p) ? p[1] : p.lng
+					const weight = Array.isArray(p) ? (p[2] || 1) : 1
+					return {
+						type: 'Feature',
+						geometry: { type: 'Point', coordinates: [lng, lat] },
+						properties: { weight },
+					}
+				}),
+			}
+		},
+		heatmapPaint() {
+			return {
+				'heatmap-weight': ['get', 'weight'],
+				'heatmap-intensity': this.options.minOpacity ?? 1,
+				'heatmap-radius': this.options.radius ?? 25,
+				'heatmap-opacity': 0.8,
+			}
+		},
 	},
 }
 </script>

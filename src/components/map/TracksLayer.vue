@@ -1,5 +1,5 @@
 <template>
-	<LFeatureGroup>
+	<template>
 		<TrackLayer v-for="track in displayedTracks"
 			:key="track.id + track.color"
 			:track="track"
@@ -13,12 +13,10 @@
 		<TrackHoverMarker
 			v-if="hoverPoint"
 			:point="hoverPoint" />
-	</LFeatureGroup>
+	</template>
 </template>
 
 <script>
-import { LFeatureGroup } from '@vue-leaflet/vue-leaflet'
-
 import TrackLayer from './TrackLayer.vue'
 import TrackHoverMarker from './TrackHoverMarker.vue'
 
@@ -28,7 +26,6 @@ import moment from '@nextcloud/moment'
 export default {
 	name: 'TracksLayer',
 	components: {
-		LFeatureGroup,
 		TrackLayer,
 		TrackHoverMarker,
 	},
@@ -85,7 +82,3 @@ export default {
 	},
 }
 </script>
-
-<style lang="scss" scoped>
-// nothing
-</style>

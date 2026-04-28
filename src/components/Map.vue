@@ -1,19 +1,55 @@
 <template>
-	<div id="map-wrapper">
-		<LMap
-			ref="map"
-			:center="mapOptions.center"
-			:bounds="mapOptions.bounds"
-			:max-bounds="mapOptions.maxBounds"
-			:min-zoom="mapOptions.minZoom"
-			:max-zoom="mapOptions.maxZoom"
-			:zoom="mapOptions.zoom"
-			:options="mapOptions.native"
-			@ready="onMapReady"
-			@update:bounds="onUpdateBounds"
-			@baselayerchange="onBaselayerchange"
-			@click="onMapClick"
-			@contextmenu="onMapContextmenu">
+	<div id="map-wrapper" :class="mapStateClass">
+		<MglMap
+			ref="mapRef"
+			:map-style="mapStyle"
+			:center="[0, 0]"
+			:zoom="2"
+			:min-zoom="2"
+			:max-zoom="22"
+			:bounds="initialBounds"
+			:fit-bounds-options="{ padding: 30 }"
+			width="100%"
+			height="100%"
+			@map:load="onMapReady"
+			@map:click="onMapClick"
+			@map:contextmenu="onMapContextmenu"
+			@map:moveend="onUpdateBounds">
+			<!-- Raster tile layers when active layer is raster (no vector style) -->
+			<template v-if="activeBaseLayers.length > 0 && !optionValues.maplibreStreetStyleURL">
+				<template v-for="layer in activeBaseLayers" :key="'base-' + layer.id">
+					<MglRasterSource
+						:source-id="layer.id"
+						:tiles="layer.tiles"
+						:tile-size="layer.tileSize"
+						:attribution="layer.attribution"
+						:maxzoom="layer.maxzoom">
+						<MglRasterLayer :layer-id="layer.id + '-layer'" />
+					</MglRasterSource>
+				</template>
+				<template v-for="layer in activeOverlayLayers" :key="'overlay-' + layer.id">
+					<MglRasterSource
+						:source-id="layer.id"
+						:tiles="layer.tiles"
+						:tile-size="layer.tileSize"
+						:attribution="layer.attribution"
+						:maxzoom="layer.maxzoom">
+						<MglRasterLayer
+							:layer-id="layer.id + '-layer'"
+							:paint="{ 'raster-opacity': layer.opacity || 1 }" />
+					</MglRasterSource>
+				</template>
+			</template>
+
+			<!-- Controls -->
+			<MglNavigationControl position="bottom-right" :show-compass="false" />
+			<MglScaleControl position="bottom-left" :unit="scaleUnit" />
+			<MglGeolocateControl
+				position="bottom-right"
+				:track-user-location="false"
+				:show-accuracy-circle="true" />
+
+			<!-- Custom controls -->
 			<RoutingControl v-if="map"
 				v-show="showRouting"
 				ref="routingControl"
@@ -32,41 +68,13 @@
 				@routing-clicked="showRouting = true"
 				@clear-pois="searchPois = []" />
 			<HistoryControl v-if="map"
-				position="topright"
+				position="top-right"
 				:last-actions="lastActions"
 				:last-canceled-actions="lastCanceledActions"
 				@cancel="$emit('cancel')"
 				@redo="$emit('redo')" />
-			<LControlZoom position="bottomright" />
-			<LControlScale
-				position="bottomleft"
-				:imperial="mapOptions.scaleControlShouldUseImperial"
-				:metric="!mapOptions.scaleControlShouldUseImperial" />
-			<LControlLayers
-				position="bottomright"
-				:collapsed="false" />
-			<LTileLayer
-				v-for="(l, lid) in allBaseLayers"
-				:key="lid"
-				:visible="activeLayerId === lid"
-				:url="l.url"
-				:attribution="l.attribution"
-				:name="l.name"
-				:layer-type="l.type"
-				:tile-layer-class="l.tileLayerClass"
-				:options="l.options"
-				:opacity="1" />
-			<LTileLayer
-				v-for="(l, lid) in allOverlayLayers"
-				:key="lid"
-				:visible="['Watercolor', 'ESRI'].includes(activeLayerId) && lid === 'Roads Overlay'"
-				:url="l.url"
-				:attribution="l.attribution"
-				:name="l.name"
-				:layer-type="l.type"
-				:tile-layer-class="l.tileLayerClass"
-				:options="l.options"
-				:opacity="l.opacity" />
+
+			<!-- Map layers -->
 			<FavoritesLayer
 				v-if="map && favoritesEnabled"
 				ref="favoritesLayer"
@@ -91,8 +99,8 @@
 				@add-to-map-photo="$emit('add-to-map-photo', $event)"
 				@coords-reset="$emit('coords-reset', $event)"
 				@photo-moved="onPhotoMoved"
-				@open-sidebar="$emit('open-sidebar',$event)"
-				@cluster-loading="$emit('photo-clusters-loading',$event)"
+				@open-sidebar="$emit('open-sidebar', $event)"
+				@cluster-loading="$emit('photo-clusters-loading', $event)"
 				@cluster-loaded="$emit('photo-clusters-loaded')" />
 			<PhotoSuggestionsLayer
 				v-if="map && photosEnabled && showPhotoSuggestions"
@@ -114,9 +122,6 @@
 				:groups="contactGroups"
 				@address-deleted="$emit('address-deleted', $event)"
 				@add-to-map-contact="$emit('add-to-map-contact', $event)" />
-			<PlaceContactPopup v-if="placingContact"
-				:lat-lng="placingContactLatLng"
-				@contact-placed="onContactPlaced" />
 			<TracksLayer
 				v-if="map && tracksEnabled"
 				ref="tracksLayer"
@@ -127,7 +132,7 @@
 				@add-to-map-track="$emit('add-to-map-track', $event)"
 				@click="$emit('click-track', $event)"
 				@change-color="$emit('change-track-color', $event)"
-				@display-elevation="displayElevation" />
+				@display-elevation="$emit('display-elevation', $event)" />
 			<DevicesLayer
 				v-if="map && devicesEnabled"
 				ref="devicesLayer"
@@ -140,20 +145,72 @@
 				@toggle-history="$emit('toggle-device-history', $event)"
 				@change-color="$emit('change-device-color', $event)"
 				@add-to-map-device="$emit('add-to-map-device', $event)" />
+
+			<!-- Popups and POI markers -->
 			<ClickSearchPopup v-if="leftClickSearching"
 				:lat-lng="leftClickSearchLatLng"
 				:favorite-is-creatable="isFavoriteCreatable"
 				:contact-is-creatable="isContactCreatable"
 				@place-contact="onAddContactAddress"
 				@add-favorite="$emit('add-address-favorite', $event); leftClickSearching = false" />
-			<LFeatureGroup>
-				<PoiMarker v-for="poi in searchPois"
-					:key="poi.place_id"
-					:poi="poi"
-					@place-contact="onAddContactAddress"
-					@add-favorite="$emit('add-address-favorite', $event); leftClickSearching = false" />
-			</LFeatureGroup>
-		</LMap>
+			<PlaceContactPopup v-if="placingContact"
+				:lat-lng="placingContactLatLng"
+				@contact-placed="onContactPlaced" />
+			<PoiMarker v-for="poi in searchPois"
+				:key="poi.place_id"
+				:poi="poi"
+				@place-contact="onAddContactAddress"
+				@add-favorite="$emit('add-address-favorite', $event); leftClickSearching = false" />
+		</MglMap>
+
+		<!-- Layer switcher buttons -->
+		<div class="map-layer-buttons maplibregl-ctrl maplibregl-ctrl-group">
+			<button
+				class="maplibregl-ctrl-icon"
+				:class="{ behind: activeLayerId === defaultStreetLayer }"
+				:title="t('maps', 'Street map')"
+				@click="setLayer(defaultStreetLayer)">
+				<span class="icon icon-osm" />
+			</button>
+			<button
+				class="maplibregl-ctrl-icon"
+				:class="{ behind: activeLayerId === defaultSatelliteLayer }"
+				:title="t('maps', 'Satellite map')"
+				@click="setLayer(defaultSatelliteLayer)">
+				<span class="icon icon-esri" />
+			</button>
+			<button
+				class="maplibregl-ctrl-icon"
+				:title="t('maps', 'Other maps')"
+				@click="showLayerPicker = !showLayerPicker">
+				<span class="icon icon-menu" />
+			</button>
+			<div v-if="showLayerPicker" class="layer-picker">
+				<div
+					v-for="layer in allBaseLayers"
+					:key="layer.id"
+					class="layer-picker-item"
+					:class="{ active: activeLayerId === layer.id }"
+					@click="setLayer(layer.id); showLayerPicker = false">
+					{{ layer.name }}
+				</div>
+			</div>
+		</div>
+
+		<!-- Context menu -->
+		<div v-if="contextMenu.visible"
+			class="maps-context-menu"
+			:style="{ left: contextMenu.x + 'px', top: contextMenu.y + 'px' }"
+			@click.stop>
+			<template v-for="item in contextMenuItems" :key="item === '-' ? 'sep-' + Math.random() : item.text">
+				<hr v-if="item === '-'" class="context-separator">
+				<div v-else class="context-menu-item" @click="invokeContextItem(item)">
+					<span :class="'icon ' + item.iconCls" />
+					{{ item.text }}
+				</div>
+			</template>
+		</div>
+
 		<Slider v-show="sliderEnabled"
 			:start="sliderStartTimestamp"
 			:end="sliderEndTimestamp"
@@ -164,36 +221,27 @@
 </template>
 
 <script>
-import { getLocale } from '@nextcloud/l10n'
-import { generateUrl } from '@nextcloud/router'
 import { getCurrentUser } from '@nextcloud/auth'
 import axios from '@nextcloud/axios'
 import { showError, showSuccess } from '@nextcloud/dialogs'
-
-import { LocateControl } from "leaflet.locatecontrol"
-import 'leaflet.locatecontrol/dist/L.Control.Locate.min.css'
-import L from 'leaflet'
-import 'mapbox-gl/dist/mapbox-gl'
-import 'mapbox-gl/dist/mapbox-gl.css'
-import 'mapbox-gl-leaflet/leaflet-mapbox-gl'
-import { Protocol } from "pmtiles";
-import '@maplibre/maplibre-gl-leaflet'
 import { addProtocol } from 'maplibre-gl'
-import ResourceType from 'maplibre-gl'
+import { Protocol } from 'pmtiles'
 import {
+	MglMap,
+	MglNavigationControl,
+	MglScaleControl,
+	MglGeolocateControl,
+	MglRasterSource,
+	MglRasterLayer,
+} from '@indoorequal/vue-maplibre-gl'
+
+import {
+	Layers,
+	LayerTypes,
+	LayerIds,
 	baseLayersByName,
 	overlayLayersByName,
 } from '../data/mapLayers.js'
-import { LControlScale, LControlZoom, LMap, LTileLayer, LControlLayers, LFeatureGroup } from '@vue-leaflet/vue-leaflet'
-
-import 'leaflet-easybutton/src/easy-button'
-import 'leaflet-easybutton/src/easy-button.css'
-import 'leaflet-contextmenu/dist/leaflet.contextmenu.min'
-import 'leaflet-contextmenu/dist/leaflet.contextmenu.min.css'
-
-import GeoJSON from 'geojson'
-import '@raruto/leaflet-elevation/dist/leaflet-elevation'
-import '@raruto/leaflet-elevation/dist/leaflet-elevation.css'
 
 import Slider from '../components/map/Slider.vue'
 import SearchControl from '../components/map/SearchControl.vue'
@@ -210,36 +258,16 @@ import ClickSearchPopup from '../components/map/ClickSearchPopup.vue'
 import optionsController from '../optionsController.js'
 import PhotoSuggestionsLayer from './map/PhotoSuggestionsLayer.vue'
 
-// exclude dynamic imports from webpack-processing
-L.Control.Elevation.include({
-	import: function(src, condition) {
-		if (Array.isArray(src)) {
-			return Promise.all(src.map(m => this.import(m)));
-		}
-		switch(src) {
-			case this.__D3:          condition = typeof d3 !== 'object'; break;
-			case this.__TOGEOJSON:   condition = typeof toGeoJSON !== 'object'; break;
-			case this.__LGEOMUTIL:   condition = typeof L.GeometryUtil !== 'object'; break;
-			case this.__LALMOSTOVER: condition = typeof L.Handler.AlmostOver  !== 'function'; break;
-			case this.__LDISTANCEM:  condition = typeof L.DistanceMarkers  !== 'function'; break;
-			case this.__LEDGESCALE:  condition = typeof L.Control.EdgeScale !== 'function'; break;
-			case this.__LHOTLINE:    condition = typeof L.Hotline  !== 'function'; break;
-		}
-		let url = (new URL(src, (src.startsWith('../') || src.startsWith('./')) ? this.options.srcFolder : undefined)).toString();
-		return condition !== false ? import(/* webpackIgnore: true */ url) : Promise.resolve();
-	}
-})
-
 export default {
 	name: 'Map',
 
 	components: {
-		LMap,
-		LControlScale,
-		LControlZoom,
-		LControlLayers,
-		LTileLayer,
-		LFeatureGroup,
+		MglMap,
+		MglNavigationControl,
+		MglScaleControl,
+		MglGeolocateControl,
+		MglRasterSource,
+		MglRasterLayer,
 		Slider,
 		HistoryControl,
 		SearchControl,
@@ -257,7 +285,7 @@ export default {
 
 	props: {
 		activeLayerIdProp: {
-	        type: String,
+			type: String,
 			required: true,
 		},
 		mapBoundsProp: {
@@ -384,47 +412,27 @@ export default {
 
 	data() {
 		return {
-			locale: getLocale(),
-			isDarkTheme: OCA.Accessibility?.theme === 'dark',
 			optionValues: optionsController.optionValues,
-			// map
 			map: null,
-			mapOptions: {
-				center: [0, 0],
-				zoom: 2,
-				minZoom: 2,
-				maxZoom: 19,
-				bounds: L.latLngBounds(this.mapBoundsProp),
-				maxBounds: L.latLngBounds([
-					[-90, 720],
-					[90, -720],
-				]),
-				native: {
-					zoomControl: false,
-					contextmenu: false,
-					contextmenuWidth: 160,
-					contextmenuItems: this.getContextmenuItems(),
-				},
-				scaleControlShouldUseImperial: false,
-				closePopupOnClick: false,
-			},
 			// layers
-			allBaseLayers: {},
-			allOverlayLayers: {},
-			defaultStreetLayer: 'Open Street Map',
-			defaultSatelliteLayer: 'ESRI',
-			activeLayerId: this.activeLayerIdProp,
-			layersButton: null,
-			streetButton: null,
-			satelliteButton: null,
-			showExtraLayers: false,
+			allBaseLayers: Object.values(baseLayersByName),
+			allOverlayLayers: Object.values(overlayLayersByName),
+			defaultStreetLayer: LayerIds.OpenFreeMap,
+			defaultSatelliteLayer: LayerIds.ESRI,
+			activeLayerId: this.activeLayerIdProp || LayerIds.OpenFreeMap,
+			showLayerPicker: false,
+			// context menu
+			contextMenu: {
+				visible: false,
+				x: 0,
+				y: 0,
+				lngLat: null,
+			},
 			// routing
 			showRouting: false,
 			// contacts
 			placingContact: false,
 			placingContactLatLng: null,
-			// tracks
-			elevationControl: null,
 			// poi
 			searchPois: [],
 			searching: false,
@@ -435,664 +443,265 @@ export default {
 	},
 
 	computed: {
+		mapStyle() {
+			// Admin-configured custom vector style takes highest priority
+			if (this.optionValues.maplibreStreetStyleURL) {
+				return this.optionValues.maplibreStreetStyleURL
+			}
+			// If the active layer is a vector layer, return its style URL
+			const activeLayer = this.allBaseLayers.find(l => l.id === this.activeLayerId)
+			if (activeLayer?.styleUrl) {
+				return activeLayer.styleUrl
+			}
+			// Fallback: empty style for raster-only layers
+			return {
+				version: 8,
+				sources: {},
+				layers: [],
+				glyphs: 'https://demotiles.maplibre.org/font/{fontstack}/{range}.pbf',
+			}
+		},
+		initialBounds() {
+			if (this.mapBoundsProp && this.mapBoundsProp.length === 2) {
+				// mapBoundsProp is [[north, east], [south, west]] from optionsController
+				const [[n, e], [s, w]] = this.mapBoundsProp
+				return [[w, s], [e, n]]
+			}
+			return undefined
+		},
+		scaleUnit() {
+			return optionsController.optionValues?.useImperialUnits ? 'imperial' : 'metric'
+		},
+		mapStateClass() {
+			return {
+				loading: this.state === 'loading',
+				adding: this.state === 'adding',
+			}
+		},
+		activeBaseLayers() {
+			// Only return raster layers (vector layers use mapStyle, not MglRasterSource)
+			return this.allBaseLayers.filter(l => l.id === this.activeLayerId && !l.styleUrl)
+		},
+		activeOverlayLayers() {
+			// Show roads overlay on top of satellite/watercolor layers
+			const satelliteIds = [LayerIds.ESRI, LayerIds.ESRITopo, LayerIds.Watercolor]
+			if (satelliteIds.includes(this.activeLayerId)) {
+				return this.allOverlayLayers
+			}
+			return []
+		},
 		isFavoriteCreatable() {
 			const favArray = Object.values(this.favorites)
-			return (favArray.some((f) => (f.isUpdateable)) || (favArray.length === 0 && this.optionValues.isCreatable))
+			return (favArray.some((f) => f.isUpdateable) || (favArray.length === 0 && this.optionValues.isCreatable))
 		},
 		isContactCreatable() {
 			return this.optionValues.isCreatable
 		},
-	},
-
-	watch: {
-		state() {
-			this.$refs.map.$el.classList.remove('loading')
-			this.$refs.map.$el.classList.remove('adding')
-			if (this.state === 'loading') {
-				this.$refs.map.$el.classList.add('loading')
-			} else if (this.state === 'adding') {
-				this.$refs.map.$el.classList.add('adding')
-			}
-		},
-
-		activeLayerIdProp(newValue) {
-		    this.activeLayerId = newValue
-		},
-
-		mapBoundsProp(newValue) {
-			this.mapOptions.bounds = L.latLngBounds(newValue)
-		},
-	},
-
-	methods: {
-		onMapReady(map) {
-			this.initLocControl(map)
-			this.initLayers(map)
-			this.map = map
-		},
-		fitBounds(latLng) {
-			this.map.fitBounds(latLng)
-		},
-		getContextmenuItems() {
-			const iconColor = OCA.Accessibility?.theme === 'dark' ? 'ffffff' : '000000'
+		contextMenuItems() {
 			const cmi = [
 				{
 					text: t('maps', 'Add a favorite'),
 					iconCls: 'icon-favorite',
-					callback: this.contextAddFavorite,
+					callback: (lngLat) => this.$emit('add-favorite', { lat: lngLat.lat, lng: lngLat.lng }),
 				},
 				{
 					text: t('maps', 'Place photos'),
 					iconCls: 'icon-category-multimedia',
-					callback: this.contextPlacePhotos,
+					callback: (lngLat) => this.$emit('place-photos', { lat: lngLat.lat, lng: lngLat.lng }),
 				},
 				{
 					text: t('maps', 'Place contact'),
 					iconCls: 'icon-group',
-					callback: this.placeContactClicked,
+					callback: (lngLat) => {
+						this.placingContactLatLng = { lat: lngLat.lat, lng: lngLat.lng }
+						this.placingContact = true
+					},
 				},
 				{
 					text: t('maps', 'Share this location'),
 					iconCls: 'icon-address',
-					callback: this.contextShareLocation,
+					callback: async (lngLat) => {
+						const geoLink = 'geo:' + lngLat.lat.toFixed(6) + ',' + lngLat.lng.toFixed(6)
+						try {
+							await navigator.clipboard.writeText(geoLink)
+							showSuccess(t('maps', 'Geo link ({geoLink}) copied to clipboard', { geoLink }))
+						} catch (error) {
+							console.debug(error)
+							showError(t('maps', 'Geo link could not be copied to clipboard'))
+						}
+					},
 				},
 			]
-			/* Making this interactive does currently not work
-			const favArray = Object.values(this.favorites)
-			if (favArray.some((f) => (f.isUpdateable))
-				|| (favArray.length === 0 && optionsController.optionValues?.isCreatable)) {
-				cmi.push({
-					text: t('maps', 'Add a favorite'),
-					icon: generateUrl('/svg/core/actions/starred?color=' + iconColor),
-					callback: this.contextAddFavorite,
-				})
-			}
-			if (optionsController.optionValues?.isCreatable) {
-				cmi.push({
-					text: t('maps', 'Place photos'),
-					icon: generateUrl('/svg/core/places/picture?color=' + iconColor),
-					callback: this.contextPlacePhotos,
-				},
-				{
-					text: t('maps', 'Place contact'),
-					icon: generateUrl('/svg/core/actions/user?color=' + iconColor),
-					callback: this.placeContactClicked,
-				})
-			}
-			cmi.push({
-				text: t('maps', 'Share this location'),
-				icon: generateUrl('/svg/core/actions/share?color=' + iconColor),
-				callback: this.contextShareLocation,
-			}) */
 			window.OCA.Maps.mapActions.forEach((action) => {
 				cmi.push({
 					text: action.label,
 					iconCls: action.icon,
-					callback: (e) => {
+					callback: (lngLat) => {
 						action.callback({
-							id: 'geo:' + e.latlng.lat + ',' + e.latlng.lng,
+							id: 'geo:' + lngLat.lat + ',' + lngLat.lng,
 							name: t('maps', 'Shared location'),
-							latitude: e.latlng.lat.toString(),
-							longitude: e.latlng.lng.toString(),
+							latitude: lngLat.lat.toString(),
+							longitude: lngLat.lng.toString(),
 						})
 					},
 				})
 			})
 			if (optionsController.nbRouters > 0 || getCurrentUser()?.isAdmin) {
-				const routingItems = [
+				cmi.push(
 					'-',
 					{
 						text: t('maps', 'Route from here'),
 						iconCls: 'icon-address',
-						callback: (e) => {
-							if (!this.showRouting) {
-								this.showRouting = true
-							}
-							this.$refs.routingControl.setRouteFrom(e.latlng)
-						},
-					}, {
-						text: t('maps', 'Add route point'),
-						iconCls: 'icon-add',
-						callback: (e) => {
-							if (!this.showRouting) {
-								this.showRouting = true
-							}
-							this.$refs.routingControl.addRoutePoint(e.latlng)
-						},
-					}, {
-						text: t('maps', 'Route to here'),
-						iconCls: 'icon-address',
-						callback: (e) => {
-							if (!this.showRouting) {
-								this.showRouting = true
-							}
-							this.$refs.routingControl.setRouteTo(e.latlng)
+						callback: (lngLat) => {
+							this.showRouting = true
+							this.$refs.routingControl.setRouteFrom(lngLat)
 						},
 					},
-				]
-				cmi.push(...routingItems)
+					{
+						text: t('maps', 'Add route point'),
+						iconCls: 'icon-add',
+						callback: (lngLat) => {
+							this.showRouting = true
+							this.$refs.routingControl.addRoutePoint(lngLat)
+						},
+					},
+					{
+						text: t('maps', 'Route to here'),
+						iconCls: 'icon-address',
+						callback: (lngLat) => {
+							this.showRouting = true
+							this.$refs.routingControl.setRouteTo(lngLat)
+						},
+					},
+				)
 			}
 			return cmi
 		},
-		onMapClick(e) {
-			if (this.state === 'adding') {
-				this.$emit('add-click', e)
-			} else {
-				this.onMapNormalLeftClick(e)
-			}
+	},
+
+	watch: {
+		activeLayerIdProp(newValue) {
+			this.activeLayerId = newValue
 		},
-		onMapNormalLeftClick(e) {
-			// layers management stuff
-			const layerSelector = document.querySelector('.leaflet-control-layers')
-			const layerSelectorWasVisible = layerSelector.style.display !== 'none'
-			layerSelector.style.display = 'none'
-			this.layersButton.button.parentElement.classList.remove('hidden')
-			this.streetButton.button.parentElement.classList.remove('hidden')
-			this.satelliteButton.button.parentElement.classList.remove('hidden')
+	},
 
-			// check if there was a popup or a spiderfied cluster
-			const thereWasAPopup = this.map.contextmenu._visible
-				|| this.placingContact
-				|| (this.map._popup !== undefined && this.map._popup !== null)
-				|| this.leftClickSearching
+	created() {
+		if ('maplibreStreetStylePmtiles' in this.optionValues
+			&& this.optionValues.maplibreStreetStylePmtiles === '1') {
+			const protocol = new Protocol()
+			addProtocol('pmtiles', protocol.tile)
+		}
+	},
 
-			const hadSpider = this.$refs.favoritesLayer?.spiderfied
-				|| this.$refs.contactsLayer?.spiderfied
-				|| this.$refs.photosLayer?.spiderfied
-			if (this.$refs.favoritesLayer) {
-				this.$refs.favoritesLayer.spiderfied = false
+	methods: {
+		onMapReady(map) {
+			this.map = map
+		},
+		fitBounds(bounds, options = {}) {
+			// bounds: [[lngMin, latMin], [lngMax, latMax]] (MapLibre format)
+			this.map.fitBounds(bounds, { padding: 30, ...options })
+		},
+		setLayer(layerId) {
+			this.activeLayerId = layerId
+			optionsController.saveOptionValues({ tileLayer: layerId })
+		},
+		onUpdateBounds() {
+			const b = this.map.getBounds()
+			const boundsStr = b.getNorth() + ';' + b.getSouth() + ';' + b.getEast() + ';' + b.getWest()
+			optionsController.saveOptionValues({ mapBounds: boundsStr })
+		},
+		onMapClick(e) {
+			if (this.contextMenu.visible) {
+				this.contextMenu.visible = false
+				return
 			}
-			if (this.$refs.contactsLayer) {
-				this.$refs.contactsLayer.spiderfied = false
+			if (this.state === 'adding') {
+				this.$emit('add-click', { latlng: e.lngLat })
+				return
 			}
-			if (this.$refs.photosLayer) {
-				this.$refs.photosLayer.spiderfied = false
-			}
-
-			this.map.closePopup()
-			this.map.contextmenu.hide()
+			const hadPopup = this.placingContact || this.leftClickSearching
 			this.placingContact = false
 			this.leftClickSearching = false
-			if (!thereWasAPopup && !hadSpider && !layerSelectorWasVisible) {
-				this.leftClickSearch(e.latlng.lat, e.latlng.lng)
+			if (!hadPopup) {
+				this.leftClickSearch(e.lngLat.lat, e.lngLat.lng)
 			}
 		},
 		onMapContextmenu(e) {
-			if (e.originalEvent.target.classList.contains('vue2leaflet-map') || e.originalEvent.target.classList.contains('mapboxgl-map')) {
-				this.map.contextmenu.showAt(L.latLng(e.latlng.lat, e.latlng.lng))
-				this.leftClickSearching = false
-			}
+			this.leftClickSearching = false
+			this.contextMenu.visible = true
+			this.contextMenu.x = e.point.x
+			this.contextMenu.y = e.point.y
+			this.contextMenu.lngLat = e.lngLat
+		},
+		invokeContextItem(item) {
+			this.contextMenu.visible = false
+			item.callback(this.contextMenu.lngLat)
 		},
 		leftClickSearch(lat, lng) {
-			this.leftClickSearchLatLng = L.latLng(lat, lng)
+			this.leftClickSearchLatLng = { lat, lng }
 			this.leftClickSearching = true
 		},
 		onAddContactAddress(obj) {
 			this.leftClickSearching = false
-			this.placingContactLatLng = L.latLng(obj.latLng.lat, obj.latLng.lng)
-			this.placingContact = true
-		},
-		initLocControl(map) {
-			// location control
-			const locControl = new LocateControl({
-				position: 'bottomright',
-				drawCircle: true,
-				drawMarker: true,
-				showPopup: false,
-				icon: 'icon icon-address',
-				iconLoading: 'icon icon-loading-small',
-				strings: {
-					title: t('maps', 'Current location'),
-				},
-				flyTo: true,
-				returnToPrevBounds: true,
-				setView: 'untilPan',
-				showCompass: true,
-				locateOptions: { enableHighAccuracy: true, maxZoom: 15 },
-				onLocationError: (e) => {
-					optionsController.saveOptionValues({ locControlEnabled: 'false' })
-					alert(e.message)
-				},
-			}).addTo(map)
-			document.querySelector('.leaflet-control-locate a').addEventListener('click', (e) => {
-				optionsController.saveOptionValues({ locControlEnabled: locControl._active ? 'true' : 'false' })
-			})
-			if (optionsController.locControlEnabled) {
-				locControl.start()
-			}
-		},
-		initLayers(map) {
-			// tile layers
-			this.allBaseLayers = baseLayersByName
-			this.allOverlayLayers = overlayLayersByName
-
-			// detect Webgl
-			const canvas = document.createElement('canvas')
-			// let experimental = false
-			let gl
-
-			try {
-				gl = canvas.getContext('webgl')
-			} catch (x) {
-				gl = null
-			}
-
-			if (gl == null) {
-				try {
-					gl = canvas.getContext('experimental-webgl')
-					// experimental = true
-				} catch (x) { gl = null }
-			}
-
-			if ('mapboxAPIKEY' in this.optionValues && this.optionValues.mapboxAPIKEY !== '' && gl !== null) {
-				// wrapper to make tile layer component correctly pass arguments
-				L.myMapboxGL = (url, options) => {
-					return new L.MapboxGL(options)
-				}
-
-				this.defaultStreetLayer = 'Mapbox vector streets'
-				this.defaultSatelliteLayer = 'Mapbox satellite'
-
-				// add mapbox-gl tile servers
-				const attrib = '<a href="https://www.mapbox.com/about/maps/">© Mapbox</a> '
-					+ '<a href="https://www.openstreetmap.org/copyright">© OpenStreetMap</a> '
-					+ '<a href="https://www.mapbox.com/map-feedback/">' + t('maps', 'Improve this map') + '</a>'
-				const attribSat = attrib + '<a href="https://www.digitalglobe.com/">© DigitalGlobe</a>'
-
-				this.allOverlayLayers = {
-					'Mapbox traffic overlay': {
-						name: 'Traffic',
-						type: 'overlay',
-						attribution: attrib,
-						tileLayerClass: L.myMapboxGL,
-						options: {
-							id: 'Mapbox Traffic overlay',
-							accessToken: this.optionValues.mapboxAPIKEY,
-							style: generateUrl('/apps/maps/style/traffic'),
-							minZoom: 1,
-							maxZoom: 22,
-							attribution: attrib,
-							pane: 'overlayPane',
-						},
-					},
-				}
-				this.allBaseLayers = {
-					'Mapbox vector streets': {
-						name: 'Street map',
-						type: 'base',
-						attribution: attrib,
-						tileLayerClass: L.myMapboxGL,
-						options: {
-							id: 'Mapbox vector streets',
-							accessToken: this.optionValues.mapboxAPIKEY,
-							style: 'mapbox://styles/mapbox/streets-v8',
-							minZoom: 1,
-							maxZoom: 22,
-							attribution: attrib,
-						},
-					},
-					'Mapbox satellite': {
-						name: 'Satellite map',
-						type: 'base',
-						attribution: attrib,
-						tileLayerClass: L.myMapboxGL,
-						options: {
-							id: 'Mapbox satellite',
-							accessToken: this.optionValues.mapboxAPIKEY,
-							style: 'mapbox://styles/mapbox/satellite-streets-v9',
-							minZoom: 1,
-							maxZoom: 22,
-							attribution: attribSat,
-						},
-					},
-					Topographic: {
-						name: 'Topographic',
-						type: 'base',
-						attribution: attrib,
-						tileLayerClass: L.myMapboxGL,
-						options: {
-							id: 'Topographic',
-							accessToken: this.optionValues.mapboxAPIKEY,
-							style: 'mapbox://styles/mapbox/outdoors-v11',
-							minZoom: 1,
-							maxZoom: 22,
-							attribution: attrib,
-						},
-					},
-					'Mapbox dark': {
-						name: 'Dark',
-						type: 'base',
-						attribution: attrib,
-						tileLayerClass: L.myMapboxGL,
-						options: {
-							id: 'Mapbox dark',
-							accessToken: this.optionValues.mapboxAPIKEY,
-							style: 'mapbox://styles/mapbox/dark-v8',
-							minZoom: 1,
-							maxZoom: 22,
-							attribution: attrib,
-						},
-					},
-					'Mapbox traffic': {
-						name: 'Traffic',
-						type: 'base',
-						attribution: attrib,
-						tileLayerClass: L.myMapboxGL,
-						options: {
-							id: 'Mapbox traffic',
-							accessToken: this.optionValues.mapboxAPIKEY,
-							style: 'mapbox://styles/mapbox/traffic-day-v2',
-							minZoom: 1,
-							maxZoom: 22,
-							attribution: attrib,
-						},
-					},
-					'Mapbox traffic night': {
-						name: 'Traffic night',
-						type: 'base',
-						attribution: attrib,
-						tileLayerClass: L.myMapboxGL,
-						options: {
-							id: 'Mapbox traffic night',
-							accessToken: this.optionValues.mapboxAPIKEY,
-							style: 'mapbox://styles/mapbox/traffic-night-v2',
-							minZoom: 1,
-							maxZoom: 22,
-							attribution: attrib,
-						},
-					},
-					'Mapbox 3d Preview (Beta)': {
-						name: 'Mapbox 3d Preview (Beta)',
-						type: 'base',
-						attribution: attrib,
-						tileLayerClass: L.myMapboxGL,
-						options: {
-							id: '3d',
-							accessToken: this.optionValues.mapboxAPIKEY,
-							minZoom: 1,
-							maxZoom: 22,
-							pitch: 60,
-							attribution: attrib,
-						},
-					},
-					Watercolor: baseLayersByName.Watercolor,
-				}
-			}
-
-			if ((gl !== null)
-				&& ('maplibreStreetStyleURL' in this.optionValues
-				&& this.optionValues.maplibreStreetStyleURL !== '')) {
-				let token = null
-				if ('maplibreStreetStyleAuth' in this.optionValues
-					&& this.optionValues.maplibreStreetStyleAuth !== '') {
-					token = this.optionValues.maplibreStreetStyleAuth
-				}
-
-				if ('maplibreStreetStylePmtiles' in this.optionValues
-					&& this.optionValues.maplibreStreetStylePmtiles === "1") {
-					let protocol = new Protocol();
-					addProtocol("pmtiles", protocol.tile);
-				}
-
-				// wrapper to make tile layer component correctly pass arguments
-				L.myMaplibreGL = (url, options) => {
-					if (token !== null) {
-						token = 'Basic ' + btoa(token)
-						const oldTransform = options.transformRequest
-						options.transformRequest = (url, resourceType) => {
-							const param = oldTransform?.() || {}
-							param.url = param.url || url
-							if (resourceType === ResourceType.Tile) {
-								param.type = 'arrayBuffer'
-							}
-							param.headers = param.headers || {}
-							param.headers.Authorization = token
-							return param
-						}
-					}
-					return new L.maplibreGL(options)
-				}
-
-				this.allBaseLayers = {}
-				Object.keys(baseLayersByName).forEach(id => {
-					if (id === 'Open Street Map') {
-						const layer = Object.assign({}, baseLayersByName[id])
-						delete layer.url
-						layer.tileLayerClass = L.myMaplibreGL
-						layer.options = Object.assign({}, layer.options)
-						layer.options.style = this.optionValues.maplibreStreetStyleURL
-						layer.options.minZoom = 0
-						layer.options.maxZoom = 22
-						this.allBaseLayers[id] = layer
-					} else {
-						this.allBaseLayers[id] = baseLayersByName[id]
-					}
-				})
-			}
-
-			// LAYER BUTTONS
-			this.layersButton = L.easyButton({
-				position: 'bottomright',
-				states: [{
-					stateName: 'no-importa',
-					icon: '<a class="icon icon-menu" style="height: 100%"> </a>',
-					title: t('maps', 'Other maps'),
-					onClick: (btn, map) => {
-						document.querySelector('.leaflet-control-layers').style.display = 'block'
-						btn.button.parentElement.classList.add('hidden')
-						this.streetButton.button.parentElement.classList.add('hidden')
-						this.satelliteButton.button.parentElement.classList.add('hidden')
-					},
-				}],
-			})
-			this.layersButton.addTo(map)
-
-			this.streetButton = L.easyButton({
-				position: 'bottomright',
-				states: [{
-					stateName: 'no-importa',
-					icon: '<a class="icon icon-osm" style="height: 100%"> </a>',
-					title: t('maps', 'Street map'),
-					onClick: (btn, map) => {
-						this.activeLayerId = this.defaultStreetLayer
-						btn.button.parentElement.classList.add('behind')
-						this.satelliteButton.button.parentElement.classList.remove('behind')
-					},
-				}],
-			})
-			this.streetButton.addTo(map)
-
-			this.satelliteButton = L.easyButton({
-				position: 'bottomright',
-				states: [{
-					stateName: 'no-importa',
-					icon: '<a class="icon icon-esri" style="height: 100%"> </a>',
-					title: t('maps', 'Satellite map'),
-					onClick: (btn, map) => {
-						this.activeLayerId = this.defaultSatelliteLayer
-						btn.button.parentElement.classList.add('behind')
-						this.streetButton.button.parentElement.classList.remove('behind')
-					},
-				}],
-			})
-			this.satelliteButton.addTo(map)
-
-			this.streetButton.button.parentElement.classList.add('behind')
-
-			// initial selected layer, restore or fallback to default street
-			/* if (this.optionValues.tileLayer in this.allBaseLayers) {
-				this.activeLayerId = this.optionValues.tileLayer
-			} else {
-
-			 */
-			if (!this.activeLayerId) {
-				this.activeLayerId = this.defaultStreetLayer
-			}
-
-			document.querySelector('.leaflet-control-layers').style.display = 'none'
-		},
-		onBaselayerchange(e) {
-			this.activeLayerId = e.layer.options.id
-			if (this.activeLayerId === this.defaultStreetLayer) {
-				this.streetButton.button.parentElement.classList.add('behind')
-				this.satelliteButton.button.parentElement.classList.remove('behind')
-			} else {
-				this.streetButton.button.parentElement.classList.remove('behind')
-				this.satelliteButton.button.parentElement.classList.add('behind')
-			}
-			optionsController.saveOptionValues({ tileLayer: this.activeLayerId })
-
-			// take care of max zoom issue
-			if (e.layer.options.maxZoom) {
-				e.layer._map.setMaxZoom(e.layer.options.maxZoom)
-			}
-			// buttons/control visibility
-			document.querySelector('.leaflet-control-layers').style.display = 'none'
-			this.layersButton.button.parentElement.classList.remove('hidden')
-			this.streetButton.button.parentElement.classList.remove('hidden')
-			this.satelliteButton.button.parentElement.classList.remove('hidden')
-		},
-		onUpdateBounds(b) {
-			const boundsStr = b.getNorth() + ';' + b.getSouth() + ';' + b.getEast() + ';' + b.getWest()
-			optionsController.saveOptionValues({ mapBounds: boundsStr })
-		},
-		// favorites
-		contextAddFavorite(e) {
-			this.$emit('add-favorite', e.latlng)
-		},
-		async contextShareLocation(e) {
-			const geoLink = 'geo:' + e.latlng.lat.toFixed(6) + ',' + e.latlng.lng.toFixed(6)
-			try {
-				await navigator.clipboard.writeText(geoLink)
-				showSuccess(t('maps', 'Geo link ({geoLink}) copied to clipboard', { geoLink }))
-			} catch (error) {
-				console.debug(error)
-				showError(t('maps', 'Geo link could not be copied to clipboard'))
-			}
-		},
-		// contacts
-		placeContactClicked(e) {
-			this.placingContactLatLng = L.latLng(e.latlng.lat, e.latlng.lng)
+			this.placingContactLatLng = { lat: obj.latLng.lat, lng: obj.latLng.lng }
 			this.placingContact = true
 		},
 		onContactPlaced(e) {
 			this.placingContact = false
 			this.$emit('contact-placed', e)
 		},
-		// photos
-		contextPlacePhotos(e) {
-			this.$emit('place-photos', e.latlng)
-		},
 		onPhotoMoved(photo, latLng) {
 			this.$emit('photo-moved', photo, latLng)
 		},
-		// photo suggestions
 		onPhotoSuggestionMoved(index, latLng) {
 			this.$emit('photo-suggestion-moved', index, latLng)
 		},
 		zoomOnPhotoSuggestion(photo) {
 			if (photo.lat && photo.lng) {
-				const md = {
-					s: photo.lat - 0.001,
-					w: photo.lng - 0.001,
-					n: photo.lat + 0.001,
-					e: photo.lng + 0.001,
-				}
-				this.map.fitBounds(L.latLngBounds([md.s, md.w], [md.n, md.e]), { padding: [30, 30] })
+				this.map.fitBounds(
+					[[photo.lng - 0.001, photo.lat - 0.001], [photo.lng + 0.001, photo.lat + 0.001]],
+					{ padding: 30 },
+				)
 			}
 		},
-		// tracks
 		zoomOnTrack(track) {
 			if (track.metadata) {
 				const md = track.metadata
-				this.map.fitBounds(L.latLngBounds([md.s, md.w], [md.n, md.e]), { padding: [30, 30] })
+				this.map.fitBounds([[md.w, md.s], [md.e, md.n]], { padding: 30 })
 			}
 		},
-		clearElevationControl() {
-			if (this.elevationControl !== null) {
-				this.elevationControl.clear()
-				// this.elevationControl.remove()
-				// this.elevationControl = null
-			}
-		},
-		displayElevation(track) {
-			this.map.closePopup()
-			this.clearElevationControl()
-			const data = []
-			track.data.routes.forEach((r) => {
-				data.push({ line: r.points.map((p) => { return [p.lng, p.lat, p.ele] }) })
-			})
-			track.data.tracks.forEach((t) => {
-				t.segments.forEach((s) => {
-					data.push({ line: s.points.map((p) => { return [p.lng, p.lat, p.ele] }) })
-				})
-			})
-			const geojson = GeoJSON.parse(data, { LineString: 'line' })
-			const el = this.elevationControl ?? L.control.elevation({
-				position: 'bottomleft',
-				detached: false,
-				height: 150,
-				width: 700,
-				collapsed: true,
-				autohide: false,
-				followMarker: false,
-				theme: 'steelblue-theme',
-				// slope: false,
-				// speed: true,
-				// time: true,
-				summary: 'line',
-				ruler: false,
-				srcFolder: window.location.origin.concat(window.location.pathname, 'src/components/leaflet-elevation//'),
-			})
-			el.addTo(this.map)
-			el.addData(geojson)
-			this.elevationControl = el
-			el.on('elechart_init', (e) => {
-				el._expand()
-				el._button.setAttribute('title', t('maps', 'Close'))
-			})
-		},
-		// devices
 		zoomOnDevice(device) {
-			if (device.points) {
+			if (device.points && device.points.length > 0) {
 				const lats = device.points.map(p => p.lat)
 				const lngs = device.points.map(p => p.lng)
-				const latMin = Math.min.apply(Math, lats)
-				const latMax = Math.max.apply(Math, lats)
-				const lngMin = Math.min.apply(Math, lngs)
-				const lngMax = Math.max.apply(Math, lngs)
-				this.map.fitBounds(L.latLngBounds([latMin, lngMin], [latMax, lngMax]), { padding: [30, 30] })
+				this.map.fitBounds(
+					[[Math.min(...lngs), Math.min(...lats)], [Math.max(...lngs), Math.max(...lats)]],
+					{ padding: 30 },
+				)
 			}
 		},
-		// search
 		onSearchValidate(element) {
 			if (['contact', 'favorite'].includes(element.type)) {
-				this.map.setView(element.latLng, 15)
+				this.map.flyTo({ center: [element.latLng.lng, element.latLng.lat], zoom: 15 })
 			} else if (element.type === 'device') {
 				if (!element.device.enabled) {
-					// zooming is done by parent component
 					this.$emit('search-enable-device', element.device)
 				} else {
 					this.zoomOnDevice(element.device)
 				}
 			} else if (element.type === 'track') {
 				if (!element.track.enabled) {
-					// zooming is done by parent component
 					this.$emit('search-enable-track', element.track)
 				} else {
 					this.zoomOnTrack(element.track)
 				}
 			} else if (element.type === 'poi') {
 				this.searching = true
-				const mapBounds = this.map.getBounds()
-				const latMin = mapBounds.getSouth()
-				const latMax = mapBounds.getNorth()
-				const lngMin = mapBounds.getWest()
-				const lngMax = mapBounds.getEast()
+				const b = this.map.getBounds()
 				const query = element.subtype + '=' + encodeURIComponent(element.value)
 				const apiUrl = 'https://nominatim.openstreetmap.org/search'
 					+ '?format=json&addressdetails=1&extratags=1&namedetails=1&limit=100&'
-					+ 'viewbox=' + parseFloat(lngMin) + ',' + parseFloat(latMin) + ',' + parseFloat(lngMax) + ',' + parseFloat(latMax) + '&'
+					+ 'viewbox=' + b.getWest() + ',' + b.getSouth() + ',' + b.getEast() + ',' + b.getNorth() + '&'
 					+ 'bounded=1&' + query
 				axios.get(apiUrl).then((response) => {
 					this.searchPois = response.data
@@ -1100,15 +709,15 @@ export default {
 				})
 			} else if (element.type === 'result') {
 				this.searchPois = [element.rawResult]
-				this.map.setView(element.latLng, 15)
+				this.map.flyTo({ center: [element.latLng.lng, element.latLng.lat], zoom: 15 })
 			} else if (element.type === 'coordinate') {
 				this.leftClickSearch(element.lat, element.lng)
-				this.map.setView(element.latLng, 15)
+				this.map.flyTo({ center: [element.lng, element.lat], zoom: 15 })
 			} else if (element.type === 'mylocation') {
 				navigator.geolocation.getCurrentPosition((position) => {
 					const lat = position.coords.latitude
 					const lng = position.coords.longitude
-					this.map.setView([lat, lng], 15)
+					this.map.flyTo({ center: [lng, lat], zoom: 15 })
 				})
 			}
 		},
@@ -1117,153 +726,147 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-@import 'leaflet/dist/leaflet.css';
-@import 'leaflet.markercluster/dist/MarkerCluster.css';
-@import 'leaflet.markercluster/dist/MarkerCluster.Default.css';
+@import 'maplibre-gl/dist/maplibre-gl.css';
 
 #map-wrapper {
 	display: flex;
-	height: 100%;
-	width: 100%;
-}
-
-.leaflet-container {
 	position: relative;
 	height: 100%;
 	width: 100%;
-}
 
-::v-deep .leaflet-control-locate {
-	&.active .icon {
-		-webkit-filter: drop-shadow(2px 3px 2px var(--color-main-text));
-		filter: drop-shadow(2px 3px 2px var(--color-main-text));
-	}
-	.icon {
-		display: inline-block;
-		width: 26px;
-		height: 26px;
-		margin-top: 1px;
-		background-size: 24px;
-	}
-}
-
-::v-deep .leaflet-container {
-	cursor: grab;
-	.mapboxgl-map {
-		cursor: grab;
-	}
-}
-
-::v-deep .leaflet-container.loading {
-	cursor: progress;
-	.mapboxgl-map {
+	&.loading :deep(.maplibregl-canvas) {
 		cursor: progress;
 	}
-}
 
-::v-deep .leaflet-container.adding {
-	cursor: crosshair;
-	.mapboxgl-map {
+	&.adding :deep(.maplibregl-canvas) {
 		cursor: crosshair;
 	}
 }
 
-::v-deep .leaflet-marker-icon {
+:deep(.maplibregl-map) {
+	height: 100%;
+	width: 100%;
+	cursor: grab;
+}
+
+:deep(.maplibregl-marker) {
 	cursor: pointer;
-	* {
+}
+
+:deep(.maplibregl-popup) {
+	max-width: 320px !important;
+}
+
+// Layer switcher buttons (positioned bottom-right above nav controls)
+.map-layer-buttons {
+	position: absolute;
+	bottom: 110px;
+	right: 10px;
+	z-index: 1;
+	display: flex;
+	flex-direction: column;
+
+	button {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		width: 29px;
+		height: 29px;
+		background: var(--color-main-background, #fff);
+		border: none;
 		cursor: pointer;
+		padding: 0;
+
+		&.behind {
+			display: none;
+		}
+
+		&:hover {
+			background-color: var(--color-background-hover);
+		}
+	}
+
+	.layer-picker {
+		position: absolute;
+		bottom: 100%;
+		right: 0;
+		min-width: 160px;
+		background: var(--color-main-background, #fff);
+		border: 1px solid var(--color-border);
+		border-radius: 4px;
+		box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+		z-index: 10;
+
+		.layer-picker-item {
+			padding: 8px 12px;
+			cursor: pointer;
+			color: var(--color-text-lighter);
+			white-space: nowrap;
+
+			&:hover,
+			&.active {
+				background-color: var(--color-background-hover);
+				color: var(--color-main-text);
+			}
+		}
 	}
 }
 
-::v-deep .leaflet-marker-draggable {
-	cursor: move;
-	* {
-		cursor: move;
+// Custom context menu
+.maps-context-menu {
+	position: absolute;
+	z-index: 1000;
+	min-width: 160px;
+	background: var(--color-main-background);
+	border: 1px solid var(--color-border);
+	border-radius: 4px;
+	box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+	padding: 4px 0;
+
+	.context-menu-item {
+		display: flex;
+		align-items: center;
+		gap: 8px;
+		padding: 6px 12px;
+		line-height: 30px;
+		color: var(--color-text-lighter);
+		cursor: pointer;
+		white-space: nowrap;
+
+		&:hover {
+			color: var(--color-main-text);
+			background-color: var(--color-background-hover);
+		}
+
+		.icon {
+			flex-shrink: 0;
+			width: 16px;
+			height: 16px;
+		}
+	}
+
+	.context-separator {
+		margin: 4px 0;
+		border-color: var(--color-border);
 	}
 }
 
-::v-deep .icon-osm {
+:deep(.icon-osm) {
 	background-image: url('../css/images/osm.png');
 	background-size: 35px;
+	width: 35px;
+	height: 35px;
 }
 
-::v-deep .icon-esri {
-	background:  url('../css/images/esri.jpg');
+:deep(.icon-esri) {
+	background: url('../css/images/esri.jpg');
 	background-size: 35px;
+	width: 35px;
+	height: 35px;
 	border: none !important;
 }
 
-::v-deep .easy-button-container.behind {
-	display: none;
-}
-
-::v-deep .easy-button-container.hidden {
-	display: none;
-}
-
-::v-deep .leaflet-contextmenu {
-	background-color: var(--color-main-background);
-}
-
-::v-deep .leaflet-contextmenu-item {
-	line-height: 30px !important;
-	color: var(--color-text-lighter) !important;
-	cursor: pointer !important;
-}
-
-::v-deep .leaflet-contextmenu-item:hover {
-	color: var(--color-main-text) !important;
-	background-color: var(--color-background-hover) !important;
-	border-color: var(--color-border) !important;
-}
-
-::v-deep .leaflet-contextmenu-icon {
-	margin: 7px 8px 0 0 !important;
-}
-
-::v-deep .leaflet-contextmenu-separator {
-	border-color: var(--color-border) !important;
-}
-
-::v-deep .leaflet-marker-photo,
-::v-deep .leaflet-marker-contact {
-	width: 40px !important;
-	height: 40px !important;
-}
-
-::v-deep .placement-marker-icon {
-	border-radius: 50%;
-	object-fit: cover;
-	border: 2px solid var(--color-border);
-}
-
-::v-deep .popup-contact-wrapper .action {
-	p {
-		height: 44px !important;
-		line-height: 28px;
-	}
-}
-
-::v-deep .popup-contact-wrapper .action,
-::v-deep .popup-track-wrapper .action,
-::v-deep .popup-device-wrapper .action,
-::v-deep .popup-favorite-wrapper .action,
-::v-deep .popup-photo-wrapper .action {
-	height: 44px;
-	.action-button {
-		height: 44px !important;
-		padding: 0 !important;
-	}
-}
-
-::v-deep .leaflet-marker-track-tooltip,
-::v-deep .leaflet-marker-device-tooltip,
-::v-deep .leaflet-marker-favorite-tooltip {
-	padding: 0 !important;
-	border: 0 !important;
-}
-
-::v-deep .icon-routing {
+:deep(.icon-routing) {
 	background-color: var(--color-main-text);
 	padding: 0 !important;
 	mask: url('../../img/routing.svg') no-repeat;
@@ -1274,7 +877,7 @@ export default {
 	-webkit-mask-position: center;
 }
 
-::v-deep .icon-road {
+:deep(.icon-road) {
 	background-color: var(--color-main-text);
 	mask: url('../../img/road.svg') no-repeat;
 	mask-size: 16px auto;
@@ -1284,7 +887,7 @@ export default {
 	-webkit-mask-position: center;
 }
 
-::v-deep .icon-road-thin {
+:deep(.icon-road-thin) {
 	background-color: var(--color-main-text);
 	mask: url('../../img/road-thin.svg') no-repeat;
 	mask-size: 16px auto;
@@ -1294,88 +897,41 @@ export default {
 	-webkit-mask-position: center;
 }
 
-::v-deep .leaflet-marker-favorite-cluster,
-::v-deep .leaflet-marker-favorite {
-	height: 36px !important;
-	width: 36px !important;
-	display: flex;
-	border-radius: 50%;
+:deep(.popup-contact-wrapper .action),
+:deep(.popup-track-wrapper .action),
+:deep(.popup-device-wrapper .action),
+:deep(.popup-favorite-wrapper .action),
+:deep(.popup-photo-wrapper .action) {
+	height: 44px;
+
+	.action-button {
+		height: 44px !important;
+		padding: 0 !important;
+	}
 }
 
-::v-deep .favoriteMarker,
-::v-deep .favoriteClusterMarker {
+:deep(.favoriteMarker),
+:deep(.favoriteClusterMarker) {
 	box-shadow: 0px 0px 10px #888;
 	border-radius: 50%;
 }
 
-::v-deep .favoriteMarker.selected {
+:deep(.favoriteMarker.selected) {
 	box-shadow: 0px 0px 10px #ff0000;
 }
 
-::v-deep .leaflet-marker-favorite-cluster .label {
-	position: absolute;
-	top: -3px;
-	right: -5px;
-	color: #fff;
-	background-color: #333;
-	border-radius: 9px;
-	height: 18px;
-	min-width: 18px;
-	line-height: 12px;
-	text-align: center;
-	padding: 3px;
-}
-
-::v-deep .favoriteClusterMarkerDark {
+:deep(.favoriteClusterMarkerDark) {
 	background: url('../../img/star-black.svg') no-repeat 50% 50%;
 }
 
-::v-deep .leaflet-left {
-	margin-left: 0px;
+:deep(.placement-marker-icon) {
+	border-radius: 50%;
+	object-fit: cover;
+	border: 2px solid var(--color-border);
 }
 
-::v-deep .leaflet-control {
-	margin-left: 0px;
-}
-
-::v-deep .leaflet-control-layers-expanded {
-	padding: 4px 0px !important;
-}
-
-::v-deep .leaflet-control-layers-base span:nth-child(1),
-::v-deep .leaflet-control-layers-overlays span:nth-child(1) {
-	display: block;
-	height: 38px;
-	padding: 4px 10px;
-	border-top: 1px solid transparent;
-	border-bottom: 1px solid transparent;
-	color: var(--color-text-lighter) !important;
-	cursor: pointer !important;
-}
-
-::v-deep .leaflet-control-layers-base span:hover,
-::v-deep .leaflet-control-layers-overlays span:hover {
-	color: var(--color-main-text) !important;
-	background-color: var(--color-background-hover) !important;
-	border-color: var(--color-border) !important;
-}
-
-::v-deep .leaflet-control-layers-base span:nth-child(2),
-::v-deep .leaflet-control-layers-overlays span:nth-child(2) {
-	display: inline-block;
-	vertical-align: top;
-	line-height: 30px;
-	margin: 0px 10px;
-	cursor: pointer !important;
-}
-
-::v-deep .leaflet-control-layers-selector {
-	display: inline-block;
-	height: 30px;
-	margin: 0px;
-}
-
-::v-deep .leaflet-control-layers-separator {
-	border-color: var(--color-border) !important;
+:deep(.popup-contact-wrapper .action p) {
+	height: 44px !important;
+	line-height: 28px;
 }
 </style>

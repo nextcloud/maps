@@ -1,65 +1,59 @@
 <template>
-	<LFeatureGroup
-		ref="featgroup"
-		@ready="onFGReady"
-		@click="$emit('click', device)"
-		@contextmenu="onFGRightClick">
-		<LPopup :options="popupOptions"
-			class="popup-device-wrapper">
-			<NcActionButton
-				icon="icon-category-monitoring"
-				@click="$emit('toggle-history', device)">
-				{{ device.historyEnabled ? t('maps', 'Hide history') : t('maps', 'Show history') }}
-			</NcActionButton>
-			<NcActionButton v-if="mapIsUpdatable"
-				icon="icon-colorpicker"
-				@click="$emit('change-color', device)">
-				<!--template #icon>
-					<div class="icon-colorpicker" />
-				</template-->
-				{{ t('maps', 'Change color') }}
-			</NcActionButton>
-			<NcActionButton
-				icon="icon-file"
-				@click="$emit('export', device)">
-				{{ t('maps', 'Export') }}
-			</NcActionButton>
-			<NcActionButton v-if="!isPublic()"
-				icon="icon-share"
-				@click="$emit('add-to-map-device', device)">
-				{{ t('maps', 'Link to map') }}
-			</NcActionButton>
-		</LPopup>
-		<LTooltip :options="tooltipOptions">
-			<div class="tooltip-device-wrapper"
-				:style="'border: 2px solid ' + color">
-				<b>{{ t('maps', 'Name') }}:</b>
-				<span>{{ device.user_agent }}</span>
-			</div>
-		</LTooltip>
-		<LMarker
-			:icon="markerIcon"
-			:lat-lng="lastPoint"
-			@mouseover="deviceLastPointMouseover" />
-		<LFeatureGroup
-			@mouseover="deviceLineMouseover">
-			<LPolyline v-if="device.historyEnabled && points.length <= 2500"
-				color="black"
-				:opacity="1"
-				:weight="4 * 1.6"
-				:lat-lngs="points" />
-			<LPolyline v-if="device.historyEnabled && points.length <= 2500"
-				:color="color"
-				:opacity="1"
-				:weight="4"
-				:lat-lngs="points" />
-		</LFeatureGroup>
-	</LFeatureGroup>
+	<template>
+		<MglGeoJsonSource v-if="device.historyEnabled && filteredPoints.length <= 2500"
+			:source-id="'device-outline-' + device.id"
+			:data="lineGeoJson">
+			<MglLineLayer
+				:layer-id="'device-outline-layer-' + device.id"
+				:layout="{ 'line-join': 'round', 'line-cap': 'round' }"
+				:paint="{ 'line-color': '#000000', 'line-width': 6.4, 'line-opacity': 1 }"
+				@click.stop="onLineClick"
+				@contextmenu.stop="onLineRightClick"
+				@mousemove="deviceLineMouseover" />
+		</MglGeoJsonSource>
+		<MglGeoJsonSource v-if="device.historyEnabled && filteredPoints.length <= 2500"
+			:source-id="'device-line-' + device.id"
+			:data="lineGeoJson">
+			<MglLineLayer
+				:layer-id="'device-line-layer-' + device.id"
+				:layout="{ 'line-join': 'round', 'line-cap': 'round' }"
+				:paint="{ 'line-color': color, 'line-width': 4, 'line-opacity': 1 }" />
+		</MglGeoJsonSource>
+		<MglMarker v-if="lastPoint"
+			:coordinates="[lastPoint.lng, lastPoint.lat]">
+			<template #default>
+				<div class="device-last-point-marker"
+					:class="thumbnailClass"
+					:style="'background-color: ' + color + '; border-color: ' + color"
+					@click.stop="onLineClick"
+					@contextmenu.stop="onLineRightClick"
+					@mouseover="deviceLastPointMouseover" />
+				<MglPopup v-if="showPopup" :close-button="false" anchor="bottom" @close="showPopup = false">
+					<NcActionButton icon="icon-category-monitoring" @click="$emit('toggle-history', device)">
+						{{ device.historyEnabled ? t('maps', 'Hide history') : t('maps', 'Show history') }}
+					</NcActionButton>
+					<NcActionButton v-if="mapIsUpdatable" icon="icon-colorpicker" @click="$emit('change-color', device)">
+						{{ t('maps', 'Change color') }}
+					</NcActionButton>
+					<NcActionButton icon="icon-file" @click="$emit('export', device)">
+						{{ t('maps', 'Export') }}
+					</NcActionButton>
+					<NcActionButton v-if="!isPublicVal" icon="icon-share" @click="$emit('add-to-map-device', device)">
+						{{ t('maps', 'Link to map') }}
+					</NcActionButton>
+				</MglPopup>
+			</template>
+		</MglMarker>
+	</template>
 </template>
 
 <script>
-import L from 'leaflet'
-import { LMarker, LTooltip, LPopup, LFeatureGroup, LPolyline } from '@vue-leaflet/vue-leaflet'
+import {
+	MglMarker,
+	MglPopup,
+	MglGeoJsonSource,
+	MglLineLayer,
+} from '@indoorequal/vue-maplibre-gl'
 
 import NcActionButton from '@nextcloud/vue/components/NcActionButton'
 
@@ -68,16 +62,13 @@ import { binSearch, isPublic } from '../../utils/common.js'
 import optionsController from '../../optionsController.js'
 import moment from '@nextcloud/moment'
 
-const DEVICE_MARKER_VIEW_SIZE = 40
-
 export default {
 	name: 'DeviceLayer',
 	components: {
-		LMarker,
-		LTooltip,
-		LPopup,
-		LFeatureGroup,
-		LPolyline,
+		MglMarker,
+		MglPopup,
+		MglGeoJsonSource,
+		MglLineLayer,
 		NcActionButton,
 	},
 
@@ -101,35 +92,31 @@ export default {
 	data() {
 		return {
 			optionValues: optionsController.optionValues,
-			lineOptions: {
-				weight: 4,
-				opacity: 1,
-			},
-			tooltipOptions: {
-				sticky: true,
-				className: 'leaflet-marker-device-tooltip',
-				direction: 'top',
-				offset: L.point(0, 0),
-			},
-			popupOptions: {
-				closeButton: false,
-				closeOnClick: false,
-				className: 'popovermenu open popupMarker devicePopup',
-				offset: L.point(-5, -20),
-			},
+			showPopup: false,
 		}
 	},
 
 	computed: {
-		points() {
+		isPublicVal() {
+			return isPublic()
+		},
+		filteredPoints() {
 			const lastNullIndex = binSearch(this.device.points, (p) => !p.timestamp)
 			const firstShownIndex = binSearch(this.device.points, (p) => (p.timestamp || 0) < this.start) + 1
 			const lastShownIndex = binSearch(this.device.points, (p) => (p.timestamp || 0) < this.end)
-			const filteredDevicePoints = [
+			return [
 				...this.device.points.slice(0, lastNullIndex + 1),
 				...this.device.points.slice(firstShownIndex, lastShownIndex + 1),
 			]
-			return filteredDevicePoints.map((p) => [p.lat, p.lng])
+		},
+		lineGeoJson() {
+			return {
+				type: 'Feature',
+				geometry: {
+					type: 'LineString',
+					coordinates: this.filteredPoints.map(p => [p.lng, p.lat]),
+				},
+			}
 		},
 		color() {
 			return this.device.color || '#0082c9'
@@ -139,19 +126,9 @@ export default {
 				? 'desktop'
 				: 'phone'
 		},
-		markerIcon() {
-			return L.divIcon(L.extend({
-				html: '<div class="thumbnail-wrapper" style="--custom-color: ' + this.color + '; border-color: ' + this.color + ';">'
-					+ '<div class="thumbnail ' + this.thumbnailClass + '" style="background-color: ' + this.color + ';"></div></div>​',
-				className: 'leaflet-marker-device device-marker',
-			}, null, {
-				iconSize: [DEVICE_MARKER_VIEW_SIZE, DEVICE_MARKER_VIEW_SIZE],
-				iconAnchor: [DEVICE_MARKER_VIEW_SIZE / 2, DEVICE_MARKER_VIEW_SIZE],
-			}))
-		},
 		lastPoint() {
-			return this.points.length > 0
-				? this.points[this.points.length - 1]
+			return this.filteredPoints.length > 0
+				? this.filteredPoints[this.filteredPoints.length - 1]
 				: null
 		},
 		mapIsUpdatable() {
@@ -159,28 +136,26 @@ export default {
 		},
 	},
 
-	created() {
-	},
-
 	methods: {
-		onFGReady(f) {
-			// avoid left click popup
-			L.DomEvent.on(f, 'click', (ev) => {
-				f.closePopup()
-			})
+		onLineClick() {
+			this.$emit('click', this.device)
 		},
-		onFGRightClick(e) {
-			this.$refs.featgroup.mapObject.openPopup()
+		onLineRightClick() {
+			this.showPopup = !this.showPopup
 		},
 		deviceLineMouseover(e) {
-			const overLatLng = e.layer._map.layerPointToLatLng(e.layerPoint)
+			const lngLat = e.lngLat
 			const closestPoint = this.device.points.reduce((target, p) => {
 				if (
 					(!p.timestamp || (p.timestamp >= this.start && p.timestamp <= this.end))
-						&& (e.layer._map.distance(overLatLng, [p.lat, p.lng]) < target.minDist)
 				) {
-					target.minDist = e.layer._map.distance(overLatLng, [p.lat, p.lng])
-					target.hoverPoint = p
+					const dx = lngLat.lng - p.lng
+					const dy = lngLat.lat - p.lat
+					const dist = Math.sqrt(dx * dx + dy * dy)
+					if (dist < target.minDist) {
+						target.minDist = dist
+						target.hoverPoint = p
+					}
 				}
 				return target
 			}, { minDist: 40000000, hoverPoint: null })
@@ -201,19 +176,17 @@ export default {
 			}
 			this.$emit('point-hover', hoverPoint)
 		},
-		isPublic() {
-			return isPublic()
-		},
 	},
 }
 </script>
 
 <style lang="scss" scoped>
-.tooltip-device-wrapper {
-	padding: 6px;
-	border-radius: 3px;
-	background-color: var(--color-main-background);
-	color: var(--color-main-text);
+.device-last-point-marker {
+	width: 40px;
+	height: 40px;
+	border-radius: 50%;
+	border: 2px solid;
+	cursor: pointer;
 }
 
 ::v-deep .icon-colorpicker {

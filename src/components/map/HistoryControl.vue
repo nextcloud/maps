@@ -1,7 +1,6 @@
 <template>
-	<LControl class="maps-history-control"
-		:position="position">
-		<div id="history">
+	<div ref="el" style="display:none">
+		<div id="history" class="maps-history-control maplibregl-ctrl maplibregl-ctrl-group">
 			<button
 				v-if="lastActions.length"
 				v-tooltip="{ content: t('maps', 'Undo {action} (Ctrl+Z)', { action: lastActionLabel }) }"
@@ -15,18 +14,15 @@
 				<span class="icon icon-redo" />
 			</button>
 		</div>
-	</LControl>
+	</div>
 </template>
 
 <script>
-import { LControl } from '@vue-leaflet/vue-leaflet'
+import { useControl } from '@indoorequal/vue-maplibre-gl'
+import { ref, onMounted } from 'vue'
 
 export default {
 	name: 'HistoryControl',
-
-	components: {
-		LControl,
-	},
 
 	props: {
 		lastActions: {
@@ -39,13 +35,24 @@ export default {
 		},
 		position: {
 			type: String,
-			default: 'topright',
+			default: 'top-right',
 		},
 	},
 
-	data() {
-		return {
-		}
+	setup(props) {
+		const el = ref(null)
+
+		onMounted(() => {
+			useControl(() => ({
+				onAdd() {
+					this._container = el.value?.children[0]
+					return this._container
+				},
+				onRemove() {},
+			}), { position: props.position })
+		})
+
+		return { el }
 	},
 
 	computed: {
@@ -57,12 +64,6 @@ export default {
 			const action = this.lastCanceledActions[this.lastCanceledActions.length - 1]
 			return this.getActionLabel(action)
 		},
-	},
-
-	watch: {
-	},
-
-	created() {
 	},
 
 	methods: {

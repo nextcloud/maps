@@ -1,5 +1,5 @@
 <template>
-	<LFeatureGroup>
+	<template>
 		<DeviceLayer v-for="device in displayedDevices"
 			:key="device.id + device.color"
 			:device="device"
@@ -15,15 +15,12 @@
 			v-if="hoverPoint"
 			:point="hoverPoint" />
 		<LHeatMap v-if="points.length >= 2500"
-			ref="devicesHeatMap"
 			:initial-points="points"
 			:options="optionsHeatMap" />
-	</LFeatureGroup>
+	</template>
 </template>
 
 <script>
-import { LFeatureGroup } from '@vue-leaflet/vue-leaflet'
-
 import DeviceLayer from './DeviceLayer.vue'
 import DeviceHoverMarker from './DeviceHoverMarker.vue'
 
@@ -35,7 +32,6 @@ import LHeatMap from './LHeatMap.vue'
 export default {
 	name: 'DevicesLayer',
 	components: {
-		LFeatureGroup,
 		LHeatMap,
 		DeviceLayer,
 		DeviceHoverMarker,
@@ -65,11 +61,8 @@ export default {
 	data() {
 		return {
 			optionsHeatMap: {
-				// minOpacity: null,
-				// maxZoom: null,
 				radius: 15,
 				blur: 10,
-				gradient: { 0.4: 'blue', 0.65: 'lime', 1: 'red' },
 			},
 			optionValues: optionsController.optionValues,
 			hoverPoint: null,
@@ -83,9 +76,6 @@ export default {
 		enabledDevices() {
 			return this.devices.map(d => d.enabled)
 		},
-		displayedDevicesHistories() {
-			return this.devices.map(d => d.enabled && d.historyEnabled)
-		},
 		points() {
 			return this.devices.reduce((points, device) => {
 				if (device.enabled && device.historyEnabled) {
@@ -97,8 +87,7 @@ export default {
 							...device.points.slice(0, lastNullIndex + 1),
 							...device.points.slice(firstShownIndex, lastShownIndex + 1),
 						]
-						const deviceLatLngs = filteredDevicePoints.map((p) => [p.lat, p.lng])
-						points = points.concat(deviceLatLngs)
+						points = points.concat(filteredDevicePoints)
 					}
 				}
 				return points
@@ -110,21 +99,6 @@ export default {
 		enabledDevices() {
 			this.hoverPoint = null
 		},
-		displayedDevicesHistories() {
-			if (this.$refs.devicesHeatMap) {
-				this.$refs.devicesHeatMap.setLatLngs(this.points)
-			}
-		},
-		start() {
-			if (this.$refs.devicesHeatMap) {
-				this.$refs.devicesHeatMap.setLatLngs(this.points)
-			}
-		},
-		end() {
-			if (this.$refs.devicesHeatMap) {
-				this.$refs.devicesHeatMap.setLatLngs(this.points)
-			}
-		},
 	},
 
 	methods: {
@@ -134,7 +108,3 @@ export default {
 	},
 }
 </script>
-
-<style lang="scss" scoped>
-// nothing
-</style>

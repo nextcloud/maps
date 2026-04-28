@@ -19,17 +19,3 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-
-import { Icon } from 'leaflet'
-import markerIcon2x from 'leaflet/dist/images/marker-icon-2x.png'
-import markerIcon from 'leaflet/dist/images/marker-icon.png'
-import markerShadow from 'leaflet/dist/images/marker-shadow.png'
-
-// this is needed to get default marker icons
-delete Icon.Default.prototype._getIconUrl
-
-Icon.Default.mergeOptions({
-	iconRetinaUrl: markerIcon2x,
-	iconUrl: markerIcon,
-	shadowUrl: markerShadow,
-})

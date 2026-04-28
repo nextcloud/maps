@@ -1,11 +1,11 @@
 <template>
-	<LFeatureGroup>
-		<LMarker
-			:icon="icon"
-			:lat-lng="[point.lat, point.lng]">
-			<LTooltip :options="tooltipOptions">
-				<div class="tooltip-device-wrapper"
-					:style="'border: 2px solid ' + point.color">
+	<MglMarker :coordinates="[point.lng, point.lat]">
+		<template #default>
+			<div class="device-over-marker-wrapper">
+				<div class="device-over-marker" :style="'background-color: ' + point.color" />
+			</div>
+			<MglPopup :close-button="false" anchor="bottom">
+				<div class="tooltip-device-wrapper" :style="'border: 2px solid ' + point.color">
 					<b>{{ t('maps', 'File') }}:</b>
 					<span>{{ point.file_name }}</span>
 					<div v-if="trackName">
@@ -21,23 +21,20 @@
 						<span>{{ altitude }}</span>
 					</div>
 				</div>
-			</LTooltip>
-		</LMarker>
-	</LFeatureGroup>
+			</MglPopup>
+		</template>
+	</MglMarker>
 </template>
 
 <script>
-import L from 'leaflet'
-import { LMarker, LTooltip, LFeatureGroup } from '@vue-leaflet/vue-leaflet'
-
+import { MglMarker, MglPopup } from '@indoorequal/vue-maplibre-gl'
 import moment from '@nextcloud/moment'
 
 export default {
 	name: 'TrackHoverMarker',
 	components: {
-		LFeatureGroup,
-		LMarker,
-		LTooltip,
+		MglMarker,
+		MglPopup,
 	},
 
 	props: {
@@ -47,27 +44,7 @@ export default {
 		},
 	},
 
-	data() {
-		return {
-			tooltipOptions: {
-				sticky: false,
-				className: 'leaflet-marker-device-tooltip',
-				direction: 'top',
-				offset: L.point(0, 0),
-			},
-		}
-	},
-
 	computed: {
-		icon() {
-			return L.divIcon(L.extend({
-				html: '<div class="device-over-marker" style="background-color: ' + this.point.color + ';"></div>',
-				className: 'device-over-marker-wrapper',
-			}, null, {
-				iconSize: [16, 16],
-				iconAnchor: [8, 8],
-			}))
-		},
 		date() {
 			if (this.point.timestamp) {
 				const mom = moment.unix(this.point.timestamp)
@@ -87,13 +64,19 @@ export default {
 				: null
 		},
 	},
-
-	methods: {
-	},
 }
 </script>
 
 <style lang="scss" scoped>
+.device-over-marker-wrapper {
+	width: 16px;
+	height: 16px;
+}
+.device-over-marker {
+	width: 16px;
+	height: 16px;
+	border-radius: 50%;
+}
 .tooltip-device-wrapper {
 	padding: 6px;
 	border-radius: 3px;

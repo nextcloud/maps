@@ -135,18 +135,20 @@ class PublicFavoritePageController extends PublicShareController {
 		if (class_exists('OCP\AppFramework\Http\ContentSecurityPolicy')) {
 			$csp = new ContentSecurityPolicy();
 			// map tiles
-			$csp->addAllowedImageDomain('https://*.tile.openstreetmap.org');
-			$csp->addAllowedImageDomain('https://tile.openstreetmap.org');
-			$csp->addAllowedImageDomain('https://server.arcgisonline.com');
-			$csp->addAllowedImageDomain('https://*.cartocdn.com');
-			$csp->addAllowedImageDomain('https://*.opentopomap.org');
-			$csp->addAllowedImageDomain('https://*.cartocdn.com');
-			$csp->addAllowedImageDomain('https://*.ssl.fastly.net');
-			$csp->addAllowedImageDomain('https://*.openstreetmap.se');
+			$csp->addAllowedConnectDomain('https://*.tile.openstreetmap.org');
+			$csp->addAllowedConnectDomain('https://tile.openstreetmap.org');
+			$csp->addAllowedConnectDomain('https://server.arcgisonline.com');
+			$csp->addAllowedConnectDomain('https://*.cartocdn.com');
+			$csp->addAllowedConnectDomain('https://*.opentopomap.org');
+			$csp->addAllowedConnectDomain('https://*.cartocdn.com');
+			$csp->addAllowedConnectDomain('https://*.ssl.fastly.net');
+			$csp->addAllowedConnectDomain('https://*.openstreetmap.se');
+			$csp->addAllowedConnectDomain('https://tiles.openfreemap.org');
 
 			// default routing engine
 			$csp->addAllowedConnectDomain('https://*.project-osrm.org');
 			$csp->addAllowedConnectDomain('https://api.mapbox.com');
+			$csp->addAllowedConnectDomain('https://events.mapbox.com');
 			$csp->addAllowedConnectDomain('https://graphhopper.com');
 			// allow connections to custom routing engines
 			$urlKeys = [

@@ -21,7 +21,7 @@
 			:coordinates="[wpt.lng, wpt.lat]"
 			:draggable="true"
 			@update:coordinates="(ll) => onWaypointMoved(i, ll)">
-			<template #default>
+			<template #marker>
 				<div :class="['route-waypoint', i === 0 ? 'route-begin-waypoint' : i === validWaypoints.length - 1 ? 'route-end-waypoint' : 'route-middle-waypoint']" />
 			</template>
 		</MglMarker>

@@ -1,8 +1,9 @@
 <template>
 	<MglMarker :coordinates="[latLng.lng, latLng.lat]">
-		<template #default>
+		<template #marker>
 			<div style="display:none" />
-			<MglPopup :close-button="false" anchor="bottom" :offset="[0, 0]" :showed="true">
+		</template>
+		<MglPopup :close-button="false" anchor="bottom" :offset="[0, 0]" :showed="true">
 				<h3 id="click-search-popup-title">
 					{{ t('maps', 'This place') }}
 				</h3>
@@ -27,7 +28,6 @@
 					<span>{{ action.label }}</span>
 				</button>
 			</MglPopup>
-		</template>
 	</MglMarker>
 </template>
 

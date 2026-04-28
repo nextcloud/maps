@@ -1,32 +1,32 @@
 <template>
 	<MglMarker :coordinates="[point.lng, point.lat]">
-		<template #default>
+		<template #marker>
 			<div class="device-over-marker-wrapper">
 				<div class="device-over-marker" :style="'background-color: ' + point.color" />
 			</div>
-			<MglPopup :close-button="false" anchor="bottom">
-				<div class="tooltip-device-wrapper" :style="'border: 2px solid ' + point.color">
-					<b>{{ t('maps', 'Device') }}:</b>
-					<span>{{ point.user_agent }}</span>
-					<div v-if="date">
-						<b>{{ t('maps', 'Date') }}:</b>
-						<span>{{ date }}</span>
-					</div>
-					<div v-if="altitude">
-						<b>{{ t('maps', 'Altitude') }}:</b>
-						<span>{{ altitude }}</span>
-					</div>
-					<div v-if="battery">
-						<b>{{ t('maps', 'Battery') }}:</b>
-						<span>{{ battery }}</span>
-					</div>
-					<div v-if="accuracy">
-						<b>{{ t('maps', 'Accuracy') }}:</b>
-						<span>{{ accuracy }}</span>
-					</div>
-				</div>
-			</MglPopup>
 		</template>
+		<MglPopup :close-button="false" anchor="bottom">
+			<div class="tooltip-device-wrapper" :style="'border: 2px solid ' + point.color">
+				<b>{{ t('maps', 'Device') }}:</b>
+				<span>{{ point.user_agent }}</span>
+				<div v-if="date">
+					<b>{{ t('maps', 'Date') }}:</b>
+					<span>{{ date }}</span>
+				</div>
+				<div v-if="altitude">
+					<b>{{ t('maps', 'Altitude') }}:</b>
+					<span>{{ altitude }}</span>
+				</div>
+				<div v-if="battery">
+					<b>{{ t('maps', 'Battery') }}:</b>
+					<span>{{ battery }}</span>
+				</div>
+				<div v-if="accuracy">
+					<b>{{ t('maps', 'Accuracy') }}:</b>
+					<span>{{ accuracy }}</span>
+				</div>
+			</div>
+		</MglPopup>
 	</MglMarker>
 </template>
 

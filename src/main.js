@@ -25,6 +25,7 @@ import App from './views/App.vue'
 import './bootstrap.js'
 import optionsController from './optionsController.js'
 import './css/style.scss'
+import 'maplibre-gl/dist/maplibre-gl.css'
 
 import { TooltipDirective as Tooltip } from 'floating-vue'
 

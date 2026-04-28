@@ -5,30 +5,30 @@
 			:coordinates="[photo.lng, photo.lat]"
 			:draggable="draggable && photo.isUpdateable"
 			@update:coordinates="(ll) => $emit('photo-moved', photo, ll)">
-			<template #default>
+			<template #marker>
 				<div class="leaflet-marker-photo photo-marker"
 					:style="'background-image: url(' + getPreviewUrl(photo) + ')'"
 					@click.stop="onPhotoClick(photo)"
 					@contextmenu.stop="onPhotoRightClick(photo)"
 					@mouseover="currentPhoto = photo"
 					@mouseleave="currentPhoto = null" />
-				<MglPopup v-if="currentPopupPhoto === photo" :close-button="false" anchor="bottom" @close="currentPopupPhoto = null">
-					<NcActionButton v-if="photo.path" icon="icon-toggle" @click="$emit('open-sidebar', photo.path)">
-						{{ t('maps', 'Open in Sidebar') }}
-					</NcActionButton>
-					<NcActionButton icon="icon-toggle" @click="viewPhoto(photo)">
-						{{ t('maps', 'Display picture') }}
-					</NcActionButton>
-					<NcActionButton v-if="photo.isUpdateable" icon="icon-history" @click="$emit('coords-reset', [photo.path])">
-						{{ t('maps', 'Remove geo data') }}
-					</NcActionButton>
-					<NcActionButton v-if="!isPublicVal"
-						icon="icon-share"
-						@click="$emit('add-to-map-photo', photo)">
-						{{ t('maps', 'Copy to map') }}
-					</NcActionButton>
-				</MglPopup>
 			</template>
+			<MglPopup v-if="currentPopupPhoto === photo" :close-button="false" anchor="bottom" @close="currentPopupPhoto = null">
+				<NcActionButton v-if="photo.path" icon="icon-toggle" @click="$emit('open-sidebar', photo.path)">
+					{{ t('maps', 'Open in Sidebar') }}
+				</NcActionButton>
+				<NcActionButton icon="icon-toggle" @click="viewPhoto(photo)">
+					{{ t('maps', 'Display picture') }}
+				</NcActionButton>
+				<NcActionButton v-if="photo.isUpdateable" icon="icon-history" @click="$emit('coords-reset', [photo.path])">
+					{{ t('maps', 'Remove geo data') }}
+				</NcActionButton>
+				<NcActionButton v-if="!isPublicVal"
+					icon="icon-share"
+					@click="$emit('add-to-map-photo', photo)">
+					{{ t('maps', 'Copy to map') }}
+				</NcActionButton>
+			</MglPopup>
 		</MglMarker>
 	</template>
 </template>

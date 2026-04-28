@@ -21,28 +21,28 @@
 		</MglGeoJsonSource>
 		<MglMarker v-if="lastPoint"
 			:coordinates="[lastPoint.lng, lastPoint.lat]">
-			<template #default>
+			<template #marker>
 				<div class="device-last-point-marker"
 					:class="thumbnailClass"
 					:style="'background-color: ' + color + '; border-color: ' + color"
 					@click.stop="onLineClick"
 					@contextmenu.stop="onLineRightClick"
 					@mouseover="deviceLastPointMouseover" />
-				<MglPopup v-if="showPopup" :close-button="false" anchor="bottom" @close="showPopup = false">
-					<NcActionButton icon="icon-category-monitoring" @click="$emit('toggle-history', device)">
-						{{ device.historyEnabled ? t('maps', 'Hide history') : t('maps', 'Show history') }}
-					</NcActionButton>
-					<NcActionButton v-if="mapIsUpdatable" icon="icon-colorpicker" @click="$emit('change-color', device)">
-						{{ t('maps', 'Change color') }}
-					</NcActionButton>
-					<NcActionButton icon="icon-file" @click="$emit('export', device)">
-						{{ t('maps', 'Export') }}
-					</NcActionButton>
-					<NcActionButton v-if="!isPublicVal" icon="icon-share" @click="$emit('add-to-map-device', device)">
-						{{ t('maps', 'Link to map') }}
-					</NcActionButton>
-				</MglPopup>
 			</template>
+			<MglPopup v-if="showPopup" :close-button="false" anchor="bottom" @close="showPopup = false">
+				<NcActionButton icon="icon-category-monitoring" @click="$emit('toggle-history', device)">
+					{{ device.historyEnabled ? t('maps', 'Hide history') : t('maps', 'Show history') }}
+				</NcActionButton>
+				<NcActionButton v-if="mapIsUpdatable" icon="icon-colorpicker" @click="$emit('change-color', device)">
+					{{ t('maps', 'Change color') }}
+				</NcActionButton>
+				<NcActionButton icon="icon-file" @click="$emit('export', device)">
+					{{ t('maps', 'Export') }}
+				</NcActionButton>
+				<NcActionButton v-if="!isPublicVal" icon="icon-share" @click="$emit('add-to-map-device', device)">
+					{{ t('maps', 'Link to map') }}
+				</NcActionButton>
+			</MglPopup>
 		</MglMarker>
 	</template>
 </template>

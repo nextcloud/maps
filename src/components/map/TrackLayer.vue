@@ -23,34 +23,34 @@
 		</MglGeoJsonSource>
 		<MglMarker v-if="firstPoint"
 			:coordinates="[firstPoint.lng, firstPoint.lat]">
-			<template #default>
+			<template #marker>
 				<div class="track-start-marker"
 					:style="'background-color: ' + color + '; border-color: ' + color"
 					@click.stop="onLineClick"
 					@contextmenu.stop="onLineRightClick" />
-				<MglPopup v-if="showPopup" :close-button="false" anchor="bottom" @close="showPopup = false">
-					<NcActionButton v-if="track.isUpdateable" icon="icon-colorpicker" @click="$emit('change-color', track)">
-						{{ t('maps', 'Change color') }}
-					</NcActionButton>
-					<NcActionButton icon="icon-category-monitoring" @click="$emit('display-elevation', track)">
-						{{ t('maps', 'Display elevation') }}
-					</NcActionButton>
-					<NcActionButton v-if="!isPublicVal && track.isShareable" icon="icon-share" @click="$emit('add-to-map-track', track)">
-						{{ t('maps', 'Copy to map') }}
-					</NcActionButton>
-					<NcActionLink v-if="!isPublicVal" :href="downloadTrackUrl" target="_self" icon="icon-download" :close-after-click="true">
-						{{ t('maps', 'Download track') }}
-					</NcActionLink>
-					<NcActionLink v-if="isPublicVal && !(track.hideDownload)" target="_self" :href="downloadTrackShareUrl" icon="icon-download" :close-after-click="true">
-						{{ t('maps', 'Download track') }}
-					</NcActionLink>
-				</MglPopup>
 			</template>
+			<MglPopup v-if="showPopup" :close-button="false" anchor="bottom" @close="showPopup = false">
+				<NcActionButton v-if="track.isUpdateable" icon="icon-colorpicker" @click="$emit('change-color', track)">
+					{{ t('maps', 'Change color') }}
+				</NcActionButton>
+				<NcActionButton icon="icon-category-monitoring" @click="$emit('display-elevation', track)">
+					{{ t('maps', 'Display elevation') }}
+				</NcActionButton>
+				<NcActionButton v-if="!isPublicVal && track.isShareable" icon="icon-share" @click="$emit('add-to-map-track', track)">
+					{{ t('maps', 'Copy to map') }}
+				</NcActionButton>
+				<NcActionLink v-if="!isPublicVal" :href="downloadTrackUrl" target="_self" icon="icon-download" :close-after-click="true">
+					{{ t('maps', 'Download track') }}
+				</NcActionLink>
+				<NcActionLink v-if="isPublicVal && !(track.hideDownload)" target="_self" :href="downloadTrackShareUrl" icon="icon-download" :close-after-click="true">
+					{{ t('maps', 'Download track') }}
+				</NcActionLink>
+			</MglPopup>
 		</MglMarker>
 		<MglMarker v-for="(point, i) in wayPoints"
 			:key="'waypoint:'.concat(i)"
 			:coordinates="[point.lng, point.lat]">
-			<template #default>
+			<template #marker>
 				<div class="track-waypoint-marker"
 					:style="'background-color: ' + color + '; border-color: ' + color" />
 			</template>

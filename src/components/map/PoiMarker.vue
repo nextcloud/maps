@@ -1,93 +1,94 @@
 <template>
 	<MglMarker :coordinates="[poi.lon, poi.lat]">
-		<template #default>
-			<div class="poi-marker-icon" />
-			<MglPopup :close-button="true" anchor="bottom">
-				<div v-if="poi.icon" class="inline-wrapper">
-					<img class="location-icon" :src="poi.icon">
-					<h2 class="location-header">
-						{{ header }}
-					</h2>
-				</div>
-				<span class="location-city">{{ desc }}</span>
-				<button class="search-add-favorite" @click="onAddFavorite">
-					<span class="icon-favorite" />
-					{{ t('maps', 'Add to favorites') }}
-				</button>
-				<button class="search-place-contact" @click="onAddContact">
-					<span class="icon-user" />
-					{{ t('maps', 'Add contact address') }}
-				</button>
-				<div v-if="myOpeningHours"
-					class="opening-hours-header inline-wrapper"
-					@click="ohOpen = !ohOpen">
-					<img class="popup-icon" :src="recentImagePath">
-
-					<span v-if="ohChangeDt && ohIsCurrentlyOpen" class="poi-open">
-						{{ t('maps', 'Open') }}
-						&nbsp;
-					</span>
-					<span v-if="ohChangeDt && ohIsCurrentlyOpen && ohDtDiff <= 60" class="poi-closes">
-						&nbsp;
-						{{ t('maps', 'closes in {nb} minutes', { nb: parseInt(ohDtDiff) }) }}
-					</span>
-					<span v-if="ohChangeDt && ohIsCurrentlyOpen && ohDtDiff > 60">
-						&nbsp;
-						{{ t('maps', 'until {date}', { date: formattedOhChangeDt }) }}
-					</span>
-
-					<span v-if="ohChangeDt && !ohIsCurrentlyOpen" class="poi-closed">
-						{{ t('maps', 'Closed') }}
-						&nbsp;
-					</span>
-					<span v-if="ohChangeDt && !ohIsCurrentlyOpen" class="poi-opens">
-						{{ t('maps', 'opens at {date}', { date: formattedOhChangeDt }) }}
-					</span>
-
-					<img v-if="ohOpen" id="opening-hours-table-toggle-collapse" :src="triangleSimagePath">
-					<img v-if="!ohOpen" id="opening-hours-table-toggle-expand" :src="triangleEPath">
-				</div>
-				<table v-if="myOpeningHours && ohOpen" class="opening-hours-table">
-					<tr v-for="(int, i) in ohIntervals" :key="i" :class="{ selected: int.selected }">
-						<td class="opening-hours-day">
-							{{ int.day }}
-						</td>
-						<td class="opening-hours-hours">
-							{{ int.startTime }} - {{ int.endTime }}
-						</td>
-					</tr>
-				</table>
-				<div v-if="poi.extratags && poi.extratags.website" class="inline-wrapper extra-wrapper">
-					<img class="popup-icon" :src="linkImagePath">
-					<a :href="poi.extratags.website" target="_blank">
-						{{ poi.extratags.website.replace(/^(?:\w+:|)\/\/(?:www\.|)(.*[^\/])\/*$/, '$1') }}
-					</a>
-				</div>
-				<div v-if="poi.extratags && poi.extratags.phone" class="inline-wrapper extra-wrapper">
-					<img class="popup-icon" :src="linkImagePath">
-					<a :href="'tel:' + poi.extratags.phone" target="_blank">
-						{{ poi.extratags.phone }}
-					</a>
-				</div>
-				<div v-if="poi.extratags && poi.extratags.email" class="inline-wrapper extra-wrapper">
-					<img class="popup-icon" :src="mailImagePath">
-					<a :href="'mailto:' + poi.extratags.email" target="_blank">
-						{{ poi.extratags.email }}
-					</a>
-				</div>
-			</MglPopup>
+		<template #marker>
+			<div class="poi-marker-icon"/>
 		</template>
+		<MglPopup :close-button="true" anchor="bottom">
+			<div v-if="poi.icon" class="inline-wrapper">
+				<img class="location-icon" :src="poi.icon" />
+				<h2 class="location-header">
+					{{ header }}
+				</h2>
+			</div>
+			<span class="location-city">{{ desc }}</span>
+			<button class="search-add-favorite" @click="onAddFavorite">
+				<span class="icon-favorite"/>
+				{{ t('maps', 'Add to favorites') }}
+			</button>
+			<button class="search-place-contact" @click="onAddContact">
+				<span class="icon-user"/>
+				{{ t('maps', 'Add contact address') }}
+			</button>
+			<div v-if="myOpeningHours"
+				 class="opening-hours-header inline-wrapper"
+				 @click="ohOpen = !ohOpen">
+				<img class="popup-icon" :src="recentImagePath" />
+				<span v-if="ohChangeDt && ohIsCurrentlyOpen" class="poi-open">
+					{{ t('maps', 'Open') }}
+				</span>
+				<span v-if="ohChangeDt && ohIsCurrentlyOpen && ohDtDiff <= 60" class="poi-closes">
+					{{ t('maps', 'closes in {nb} minutes', {nb: parseInt(ohDtDiff)}) }}
+				</span>
+				<span v-if="ohChangeDt && ohIsCurrentlyOpen && ohDtDiff > 60">
+					{{ t('maps', 'until {date}', {date: formattedOhChangeDt}) }}
+				</span>
+				<span v-if="ohChangeDt && !ohIsCurrentlyOpen" class="poi-closed">
+					{{ t('maps', 'Closed') }}
+				</span>
+				<span v-if="ohChangeDt && !ohIsCurrentlyOpen" class="poi-opens">
+					{{ t('maps', 'opens at {date}', {date: formattedOhChangeDt}) }}
+				</span>
+				<img v-if="ohOpen" id="opening-hours-table-toggle-collapse"
+					 :src="triangleSimagePath">
+				<img v-if="!ohOpen" id="opening-hours-table-toggle-expand"
+					 :src="triangleEPath">
+			</div>
+			<table v-if="myOpeningHours && ohOpen" class="opening-hours-table">
+				<tr v-for="(int, i) in ohIntervals" :key="i"
+					:class="{ selected: int.selected }">
+					<td class="opening-hours-day">
+						{{ int.day }}
+					</td>
+					<td class="opening-hours-hours">
+						{{ int.startTime }} - {{ int.endTime }}
+					</td>
+				</tr>
+			</table>
+			<div v-if="poi.extratags && poi.extratags.website"
+				 class="inline-wrapper extra-wrapper">
+				<img class="popup-icon" :src="linkImagePath">
+				<a :href="poi.extratags.website" target="_blank">
+					{{
+						poi.extratags.website.replace(/^(?:\w+:|)\/\/(?:www\.|)(.*[^\/])\/*$/, '$1')
+					}}
+				</a>
+			</div>
+			<div v-if="poi.extratags && poi.extratags.phone"
+				 class="inline-wrapper extra-wrapper">
+				<img class="popup-icon" :src="linkImagePath">
+				<a :href="'tel:' + poi.extratags.phone" target="_blank">
+					{{ poi.extratags.phone }}
+				</a>
+			</div>
+			<div v-if="poi.extratags && poi.extratags.email"
+				 class="inline-wrapper extra-wrapper">
+				<img class="popup-icon" :src="mailImagePath">
+				<a :href="'mailto:' + poi.extratags.email" target="_blank">
+					{{ poi.extratags.email }}
+				</a>
+			</div>
+		</MglPopup>
 	</MglMarker>
 </template>
 
 <script setup>
-import { ref, computed } from 'vue'
-import { t } from '@nextcloud/l10n'
-import { imagePath } from '@nextcloud/router'
+import {ref, computed} from 'vue'
+import {t} from '@nextcloud/l10n'
+import {imagePath} from '@nextcloud/router'
 import moment from '@nextcloud/moment'
-import { MglMarker, MglPopup } from '@indoorequal/vue-maplibre-gl'
+import {MglMarker, MglPopup} from '@indoorequal/vue-maplibre-gl'
 import OpeningHours from 'opening_hours'
-import { formatAddress } from '../../utils.js'
+import {formatAddress} from '../../utils.js'
 
 const props = defineProps({
 	poi: {
@@ -136,7 +137,7 @@ const ohIntervals = computed(() => {
 })
 
 const city = computed(() => {
-	const { address } = props.poi
+	const {address} = props.poi
 	return address.city || address.town || address.village || ''
 })
 
@@ -159,12 +160,17 @@ const desc = computed(() => {
 		needSeparator = true
 	}
 	if (poi.address.postcode) {
-		if (needSeparator) { d += ', '; needSeparator = false }
+		if (needSeparator) {
+			d += ', ';
+			needSeparator = false
+		}
 		d += poi.address.postcode
 	}
 	if (city.value) {
-		if (needSeparator) { d += ', '; needSeparator = false }
-		else if (d.length > 0) d += ' '
+		if (needSeparator) {
+			d += ', ';
+			needSeparator = false
+		} else if (d.length > 0) d += ' '
 		d += city.value
 	}
 	if (poi.address?.state && poi.address?.country_code === 'us') {
@@ -174,19 +180,19 @@ const desc = computed(() => {
 	return d
 })
 
-function onAddFavorite() {
+function onAddFavorite () {
 	emit('add-favorite', {
 		...props.poi,
-		latLng: { lat: props.poi.lat, lng: props.poi.lon },
+		latLng: {lat: props.poi.lat, lng: props.poi.lon},
 		name: header.value,
 		formattedAddress: formatAddress(props.poi.address),
 	})
 }
 
-function onAddContact() {
+function onAddContact () {
 	emit('place-contact', {
 		...props.poi,
-		latLng: { lat: props.poi.lat, lng: props.poi.lon },
+		latLng: {lat: props.poi.lat, lng: props.poi.lon},
 		name: header.value,
 		formattedAddress: formatAddress(props.poi.address),
 	})
@@ -205,13 +211,16 @@ function onAddContact() {
 
 .opening-hours-header {
 	height: 30px;
+
 	img {
 		height: 100%;
 		padding: 5px 0 5px 0;
 	}
+
 	* {
 		cursor: pointer;
 	}
+
 	span {
 		line-height: 30px;
 	}
@@ -219,6 +228,7 @@ function onAddContact() {
 
 .opening-hours-table {
 	width: 100%;
+
 	td {
 		padding: 0 5px 0 5px;
 	}

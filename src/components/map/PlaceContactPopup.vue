@@ -1,9 +1,10 @@
 <template>
 	<MglMarker :coordinates="[latLng.lng, latLng.lat]">
-		<template #default>
+		<template #marker>
 			<div class="placement-marker-icon"
 				:style="'background-image: url(' + markerIconUrl + '); width: 40px; height: 40px; border-radius: 50%; background-size: cover;'" />
-			<MglPopup :close-button="false" anchor="bottom" :showed="true">
+		</template>
+		<MglPopup :close-button="false" anchor="bottom" :showed="true">
 				<h3 id="place-popup-title">
 					{{ t('maps', 'New contact address') }}
 				</h3>
@@ -63,7 +64,6 @@
 					{{ t('maps', 'Add address to contact') }}
 				</button>
 			</MglPopup>
-		</template>
 	</MglMarker>
 </template>
 

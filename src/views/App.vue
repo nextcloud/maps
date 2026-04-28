@@ -173,7 +173,7 @@
 		</NcAppContent>
 		<Sidebar
 			v-if="true"
-			ref="Sidebar"
+			ref="sidebarRef"
 			:show="showSidebar"
 			:favorite="selectedFavorite"
 			:favorite-categories="favoriteCategories"

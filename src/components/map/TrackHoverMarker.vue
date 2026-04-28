@@ -1,28 +1,28 @@
 <template>
 	<MglMarker :coordinates="[point.lng, point.lat]">
-		<template #default>
+		<template #marker>
 			<div class="device-over-marker-wrapper">
 				<div class="device-over-marker" :style="'background-color: ' + point.color" />
 			</div>
-			<MglPopup :close-button="false" anchor="bottom">
-				<div class="tooltip-device-wrapper" :style="'border: 2px solid ' + point.color">
-					<b>{{ t('maps', 'File') }}:</b>
-					<span>{{ point.file_name }}</span>
-					<div v-if="trackName">
-						<b>{{ t('maps', 'Track/Route') }}:</b>
-						<span>{{ trackName }}</span>
-					</div>
-					<div v-if="date">
-						<b>{{ t('maps', 'Date') }}:</b>
-						<span>{{ date }}</span>
-					</div>
-					<div v-if="altitude">
-						<b>{{ t('maps', 'Altitude') }}:</b>
-						<span>{{ altitude }}</span>
-					</div>
-				</div>
-			</MglPopup>
 		</template>
+		<MglPopup :close-button="false" anchor="bottom">
+			<div class="tooltip-device-wrapper" :style="'border: 2px solid ' + point.color">
+				<b>{{ t('maps', 'File') }}:</b>
+				<span>{{ point.file_name }}</span>
+				<div v-if="trackName">
+					<b>{{ t('maps', 'Track/Route') }}:</b>
+					<span>{{ trackName }}</span>
+				</div>
+				<div v-if="date">
+					<b>{{ t('maps', 'Date') }}:</b>
+					<span>{{ date }}</span>
+				</div>
+				<div v-if="altitude">
+					<b>{{ t('maps', 'Altitude') }}:</b>
+					<span>{{ altitude }}</span>
+				</div>
+			</div>
+		</MglPopup>
 	</MglMarker>
 </template>
 

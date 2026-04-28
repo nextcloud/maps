@@ -1,14 +1,17 @@
 <template>
 	<MglMarker :coordinates="coordinates">
-		<template #default>
-			<div class="contact-marker-icon">
+		<template #marker>
+			<div class="contact-marker-icon"
+				@click="onMarkerClick"
+				@contextmenu="onMarkerContextmenu">
 				<div class="thumbnail" :style="'background-image: url(\'' + contactAvatar + '\');'" />
 			</div>
-			<MglPopup
-				v-if="showPopup"
-				:close-button="false"
-				anchor="bottom"
-				@close="showPopup = false">
+		</template>
+		<MglPopup
+			v-if="showPopup"
+			:close-button="false"
+			anchor="bottom"
+			@close="showPopup = false">
 				<div v-if="click === 'left'">
 					<div class="left-contact-popup">
 						<img class="tooltip-contact-avatar"
@@ -59,7 +62,6 @@
 					</div>
 				</div>
 			</MglPopup>
-		</template>
 	</MglMarker>
 </template>
 

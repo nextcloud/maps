@@ -220,10 +220,12 @@
 	</div>
 </template>
 
-<script>
+<script setup>
+import { ref, computed, watch, reactive } from 'vue'
 import { getCurrentUser } from '@nextcloud/auth'
 import axios from '@nextcloud/axios'
 import { showError, showSuccess } from '@nextcloud/dialogs'
+import { t } from '@nextcloud/l10n'
 import { addProtocol } from 'maplibre-gl'
 import { Protocol } from 'pmtiles'
 import {
@@ -258,471 +260,518 @@ import ClickSearchPopup from '../components/map/ClickSearchPopup.vue'
 import optionsController from '../optionsController.js'
 import PhotoSuggestionsLayer from './map/PhotoSuggestionsLayer.vue'
 
-export default {
-	name: 'Map',
-
-	components: {
-		MglMap,
-		MglNavigationControl,
-		MglScaleControl,
-		MglGeolocateControl,
-		MglRasterSource,
-		MglRasterLayer,
-		Slider,
-		HistoryControl,
-		SearchControl,
-		RoutingControl,
-		FavoritesLayer,
-		PhotosLayer,
-		PhotoSuggestionsLayer,
-		TracksLayer,
-		DevicesLayer,
-		ContactsLayer,
-		PlaceContactPopup,
-		ClickSearchPopup,
-		PoiMarker,
+const props = defineProps({
+	activeLayerIdProp: {
+		type: String,
+		required: true,
 	},
-
-	props: {
-		activeLayerIdProp: {
-			type: String,
-			required: true,
-		},
-		mapBoundsProp: {
-			type: Array,
-			required: true,
-		},
-		searchData: {
-			type: Array,
-			required: true,
-		},
-		routingSearchData: {
-			type: Array,
-			required: true,
-		},
-		favorites: {
-			type: Object,
-			required: true,
-		},
-		favoriteCategories: {
-			type: Object,
-			required: true,
-		},
-		favoritesEnabled: {
-			type: Boolean,
-			required: true,
-		},
-		favoritesDraggable: {
-			type: Boolean,
-			required: true,
-		},
-		photos: {
-			type: Array,
-			required: true,
-		},
-		photosEnabled: {
-			type: Boolean,
-			required: true,
-		},
-		photosDraggable: {
-			type: Boolean,
-			required: true,
-		},
-		showPhotoSuggestions: {
-			type: Boolean,
-			required: true,
-		},
-		photoSuggestions: {
-			type: Array,
-			required: true,
-		},
-		photoSuggestionsTracksAndDevices: {
-			type: Object,
-			required: true,
-		},
-		photoSuggestionsSelectedIndices: {
-			type: Array,
-			required: true,
-		},
-		photoSuggestionsHidePhotos: {
-			type: Boolean,
-			default: false,
-		},
-		contacts: {
-			type: Array,
-			required: true,
-		},
-		contactGroups: {
-			type: Object,
-			required: true,
-		},
-		contactsEnabled: {
-			type: Boolean,
-			required: true,
-		},
-		tracks: {
-			type: Array,
-			required: true,
-		},
-		tracksEnabled: {
-			type: Boolean,
-			required: true,
-		},
-		devices: {
-			type: Array,
-			required: true,
-		},
-		devicesEnabled: {
-			type: Boolean,
-			required: true,
-		},
-		sliderEnabled: {
-			type: Boolean,
-			required: true,
-		},
-		sliderStartTimestamp: {
-			type: Number,
-			required: true,
-		},
-		sliderEndTimestamp: {
-			type: Number,
-			required: true,
-		},
-		minDataTimestamp: {
-			type: Number,
-			required: true,
-		},
-		maxDataTimestamp: {
-			type: Number,
-			required: true,
-		},
-		state: {
-			type: String,
-			default: '',
-		},
-		lastActions: {
-			type: Array,
-			required: true,
-		},
-		lastCanceledActions: {
-			type: Array,
-			required: true,
-		},
+	mapBoundsProp: {
+		type: Array,
+		required: true,
 	},
-
-	data() {
-		return {
-			optionValues: optionsController.optionValues,
-			map: null,
-			// layers
-			allBaseLayers: Object.values(baseLayersByName),
-			allOverlayLayers: Object.values(overlayLayersByName),
-			defaultStreetLayer: LayerIds.OpenFreeMap,
-			defaultSatelliteLayer: LayerIds.ESRI,
-			activeLayerId: this.activeLayerIdProp || LayerIds.OpenFreeMap,
-			showLayerPicker: false,
-			// context menu
-			contextMenu: {
-				visible: false,
-				x: 0,
-				y: 0,
-				lngLat: null,
-			},
-			// routing
-			showRouting: false,
-			// contacts
-			placingContact: false,
-			placingContactLatLng: null,
-			// poi
-			searchPois: [],
-			searching: false,
-			// left click search
-			leftClickSearching: false,
-			leftClickSearchLatLng: null,
-		}
+	searchData: {
+		type: Array,
+		required: true,
 	},
-
-	computed: {
-		mapStyle() {
-			// Admin-configured custom vector style takes highest priority
-			if (this.optionValues.maplibreStreetStyleURL) {
-				return this.optionValues.maplibreStreetStyleURL
-			}
-			// If the active layer is a vector layer, return its style URL
-			const activeLayer = this.allBaseLayers.find(l => l.id === this.activeLayerId)
-			if (activeLayer?.styleUrl) {
-				return activeLayer.styleUrl
-			}
-			// Fallback: empty style for raster-only layers
-			return {
-				version: 8,
-				sources: {},
-				layers: [],
-				glyphs: 'https://demotiles.maplibre.org/font/{fontstack}/{range}.pbf',
-			}
-		},
-		initialBounds() {
-			if (this.mapBoundsProp && this.mapBoundsProp.length === 2) {
-				// mapBoundsProp is [[north, east], [south, west]] from optionsController
-				const [[n, e], [s, w]] = this.mapBoundsProp
-				return [[w, s], [e, n]]
-			}
-			return undefined
-		},
-		scaleUnit() {
-			return optionsController.optionValues?.useImperialUnits ? 'imperial' : 'metric'
-		},
-		mapStateClass() {
-			return {
-				loading: this.state === 'loading',
-				adding: this.state === 'adding',
-			}
-		},
-		activeBaseLayers() {
-			// Only return raster layers (vector layers use mapStyle, not MglRasterSource)
-			return this.allBaseLayers.filter(l => l.id === this.activeLayerId && !l.styleUrl)
-		},
-		activeOverlayLayers() {
-			// Show roads overlay on top of satellite/watercolor layers
-			const satelliteIds = [LayerIds.ESRI, LayerIds.ESRITopo, LayerIds.Watercolor]
-			if (satelliteIds.includes(this.activeLayerId)) {
-				return this.allOverlayLayers
-			}
-			return []
-		},
-		isFavoriteCreatable() {
-			const favArray = Object.values(this.favorites)
-			return (favArray.some((f) => f.isUpdateable) || (favArray.length === 0 && this.optionValues.isCreatable))
-		},
-		isContactCreatable() {
-			return this.optionValues.isCreatable
-		},
-		contextMenuItems() {
-			const cmi = [
-				{
-					text: t('maps', 'Add a favorite'),
-					iconCls: 'icon-favorite',
-					callback: (lngLat) => this.$emit('add-favorite', { lat: lngLat.lat, lng: lngLat.lng }),
-				},
-				{
-					text: t('maps', 'Place photos'),
-					iconCls: 'icon-category-multimedia',
-					callback: (lngLat) => this.$emit('place-photos', { lat: lngLat.lat, lng: lngLat.lng }),
-				},
-				{
-					text: t('maps', 'Place contact'),
-					iconCls: 'icon-group',
-					callback: (lngLat) => {
-						this.placingContactLatLng = { lat: lngLat.lat, lng: lngLat.lng }
-						this.placingContact = true
-					},
-				},
-				{
-					text: t('maps', 'Share this location'),
-					iconCls: 'icon-address',
-					callback: async (lngLat) => {
-						const geoLink = 'geo:' + lngLat.lat.toFixed(6) + ',' + lngLat.lng.toFixed(6)
-						try {
-							await navigator.clipboard.writeText(geoLink)
-							showSuccess(t('maps', 'Geo link ({geoLink}) copied to clipboard', { geoLink }))
-						} catch (error) {
-							console.debug(error)
-							showError(t('maps', 'Geo link could not be copied to clipboard'))
-						}
-					},
-				},
-			]
-			window.OCA.Maps.mapActions.forEach((action) => {
-				cmi.push({
-					text: action.label,
-					iconCls: action.icon,
-					callback: (lngLat) => {
-						action.callback({
-							id: 'geo:' + lngLat.lat + ',' + lngLat.lng,
-							name: t('maps', 'Shared location'),
-							latitude: lngLat.lat.toString(),
-							longitude: lngLat.lng.toString(),
-						})
-					},
-				})
-			})
-			if (optionsController.nbRouters > 0 || getCurrentUser()?.isAdmin) {
-				cmi.push(
-					'-',
-					{
-						text: t('maps', 'Route from here'),
-						iconCls: 'icon-address',
-						callback: (lngLat) => {
-							this.showRouting = true
-							this.$refs.routingControl.setRouteFrom(lngLat)
-						},
-					},
-					{
-						text: t('maps', 'Add route point'),
-						iconCls: 'icon-add',
-						callback: (lngLat) => {
-							this.showRouting = true
-							this.$refs.routingControl.addRoutePoint(lngLat)
-						},
-					},
-					{
-						text: t('maps', 'Route to here'),
-						iconCls: 'icon-address',
-						callback: (lngLat) => {
-							this.showRouting = true
-							this.$refs.routingControl.setRouteTo(lngLat)
-						},
-					},
-				)
-			}
-			return cmi
-		},
+	routingSearchData: {
+		type: Array,
+		required: true,
 	},
-
-	watch: {
-		activeLayerIdProp(newValue) {
-			this.activeLayerId = newValue
-		},
+	favorites: {
+		type: Object,
+		required: true,
 	},
-
-	created() {
-		if ('maplibreStreetStylePmtiles' in this.optionValues
-			&& this.optionValues.maplibreStreetStylePmtiles === '1') {
-			const protocol = new Protocol()
-			addProtocol('pmtiles', protocol.tile)
-		}
+	favoriteCategories: {
+		type: Object,
+		required: true,
 	},
-
-	methods: {
-		onMapReady(e) {
-			this.map = e.map
-		},
-		fitBounds(bounds, options = {}) {
-			// bounds: [[lngMin, latMin], [lngMax, latMax]] (MapLibre format)
-			this.map.fitBounds(bounds, { padding: 30, ...options })
-		},
-		setLayer(layerId) {
-			this.activeLayerId = layerId
-			optionsController.saveOptionValues({ tileLayer: layerId })
-		},
-		onUpdateBounds() {
-			const b = this.map.getBounds()
-			const boundsStr = b.getNorth() + ';' + b.getSouth() + ';' + b.getEast() + ';' + b.getWest()
-			optionsController.saveOptionValues({ mapBounds: boundsStr })
-		},
-		onMapClick(e) {
-			if (this.contextMenu.visible) {
-				this.contextMenu.visible = false
-				return
-			}
-			if (this.state === 'adding') {
-				this.$emit('add-click', { latlng: e.event.lngLat })
-				return
-			}
-			const hadPopup = this.placingContact || this.leftClickSearching
-			this.placingContact = false
-			this.leftClickSearching = false
-			if (!hadPopup) {
-				this.leftClickSearch(e.event.lngLat.lat, e.event.lngLat.lng)
-			}
-		},
-		onMapContextmenu(e) {
-			this.leftClickSearching = false
-			this.contextMenu.visible = true
-			this.contextMenu.x = e.event.point.x
-			this.contextMenu.y = e.event.point.y
-			this.contextMenu.lngLat = e.event.lngLat
-		},
-		invokeContextItem(item) {
-			this.contextMenu.visible = false
-			item.callback(this.contextMenu.lngLat)
-		},
-		leftClickSearch(lat, lng) {
-			this.leftClickSearchLatLng = { lat, lng }
-			this.leftClickSearching = true
-		},
-		onAddContactAddress(obj) {
-			this.leftClickSearching = false
-			this.placingContactLatLng = { lat: obj.latLng.lat, lng: obj.latLng.lng }
-			this.placingContact = true
-		},
-		onContactPlaced(e) {
-			this.placingContact = false
-			this.$emit('contact-placed', e)
-		},
-		onPhotoMoved(photo, latLng) {
-			this.$emit('photo-moved', photo, latLng)
-		},
-		onPhotoSuggestionMoved(index, latLng) {
-			this.$emit('photo-suggestion-moved', index, latLng)
-		},
-		zoomOnPhotoSuggestion(photo) {
-			if (photo.lat && photo.lng) {
-				this.map.fitBounds(
-					[[photo.lng - 0.001, photo.lat - 0.001], [photo.lng + 0.001, photo.lat + 0.001]],
-					{ padding: 30 },
-				)
-			}
-		},
-		zoomOnTrack(track) {
-			if (track.metadata) {
-				const md = track.metadata
-				this.map.fitBounds([[md.w, md.s], [md.e, md.n]], { padding: 30 })
-			}
-		},
-		zoomOnDevice(device) {
-			if (device.points && device.points.length > 0) {
-				const lats = device.points.map(p => p.lat)
-				const lngs = device.points.map(p => p.lng)
-				this.map.fitBounds(
-					[[Math.min(...lngs), Math.min(...lats)], [Math.max(...lngs), Math.max(...lats)]],
-					{ padding: 30 },
-				)
-			}
-		},
-		onSearchValidate(element) {
-			if (['contact', 'favorite'].includes(element.type)) {
-				this.map.flyTo({ center: [element.latLng.lng, element.latLng.lat], zoom: 15 })
-			} else if (element.type === 'device') {
-				if (!element.device.enabled) {
-					this.$emit('search-enable-device', element.device)
-				} else {
-					this.zoomOnDevice(element.device)
-				}
-			} else if (element.type === 'track') {
-				if (!element.track.enabled) {
-					this.$emit('search-enable-track', element.track)
-				} else {
-					this.zoomOnTrack(element.track)
-				}
-			} else if (element.type === 'poi') {
-				this.searching = true
-				const b = this.map.getBounds()
-				const query = element.subtype + '=' + encodeURIComponent(element.value)
-				const apiUrl = 'https://nominatim.openstreetmap.org/search'
-					+ '?format=json&addressdetails=1&extratags=1&namedetails=1&limit=100&'
-					+ 'viewbox=' + b.getWest() + ',' + b.getSouth() + ',' + b.getEast() + ',' + b.getNorth() + '&'
-					+ 'bounded=1&' + query
-				axios.get(apiUrl).then((response) => {
-					this.searchPois = response.data
-					this.searching = false
-				})
-			} else if (element.type === 'result') {
-				this.searchPois = [element.rawResult]
-				this.map.flyTo({ center: [element.latLng.lng, element.latLng.lat], zoom: 15 })
-			} else if (element.type === 'coordinate') {
-				this.leftClickSearch(element.lat, element.lng)
-				this.map.flyTo({ center: [element.lng, element.lat], zoom: 15 })
-			} else if (element.type === 'mylocation') {
-				navigator.geolocation.getCurrentPosition((position) => {
-					const lat = position.coords.latitude
-					const lng = position.coords.longitude
-					this.map.flyTo({ center: [lng, lat], zoom: 15 })
-				})
-			}
-		},
+	favoritesEnabled: {
+		type: Boolean,
+		required: true,
 	},
+	favoritesDraggable: {
+		type: Boolean,
+		required: true,
+	},
+	photos: {
+		type: Array,
+		required: true,
+	},
+	photosEnabled: {
+		type: Boolean,
+		required: true,
+	},
+	photosDraggable: {
+		type: Boolean,
+		required: true,
+	},
+	showPhotoSuggestions: {
+		type: Boolean,
+		required: true,
+	},
+	photoSuggestions: {
+		type: Array,
+		required: true,
+	},
+	photoSuggestionsTracksAndDevices: {
+		type: Object,
+		required: true,
+	},
+	photoSuggestionsSelectedIndices: {
+		type: Array,
+		required: true,
+	},
+	photoSuggestionsHidePhotos: {
+		type: Boolean,
+		default: false,
+	},
+	contacts: {
+		type: Array,
+		required: true,
+	},
+	contactGroups: {
+		type: Object,
+		required: true,
+	},
+	contactsEnabled: {
+		type: Boolean,
+		required: true,
+	},
+	tracks: {
+		type: Array,
+		required: true,
+	},
+	tracksEnabled: {
+		type: Boolean,
+		required: true,
+	},
+	devices: {
+		type: Array,
+		required: true,
+	},
+	devicesEnabled: {
+		type: Boolean,
+		required: true,
+	},
+	sliderEnabled: {
+		type: Boolean,
+		required: true,
+	},
+	sliderStartTimestamp: {
+		type: Number,
+		required: true,
+	},
+	sliderEndTimestamp: {
+		type: Number,
+		required: true,
+	},
+	minDataTimestamp: {
+		type: Number,
+		required: true,
+	},
+	maxDataTimestamp: {
+		type: Number,
+		required: true,
+	},
+	state: {
+		type: String,
+		default: '',
+	},
+	lastActions: {
+		type: Array,
+		required: true,
+	},
+	lastCanceledActions: {
+		type: Array,
+		required: true,
+	},
+})
+
+const emit = defineEmits([
+	'add-favorite',
+	'place-photos',
+	'contact-placed',
+	'photo-moved',
+	'photo-suggestion-moved',
+	'track-added',
+	'cancel',
+	'redo',
+	'click-favorite',
+	'add-to-map-favorite',
+	'edit-favorite',
+	'delete-favorite',
+	'delete-favorites',
+	'add-to-map-photo',
+	'coords-reset',
+	'open-sidebar',
+	'photo-clusters-loading',
+	'photo-clusters-loaded',
+	'photo-suggestion-selected',
+	'address-deleted',
+	'add-to-map-contact',
+	'add-to-map-track',
+	'click-track',
+	'change-track-color',
+	'display-elevation',
+	'click-device',
+	'export-device',
+	'toggle-device-history',
+	'change-device-color',
+	'add-to-map-device',
+	'add-click',
+	'search-enable-device',
+	'search-enable-track',
+	'add-address-favorite',
+	'slider-range-changed',
+])
+
+// Template refs
+const mapRef = ref(null)
+const routingControl = ref(null)
+const favoritesLayer = ref(null)
+const photosLayer = ref(null)
+const photoSuggestionsLayer = ref(null)
+const contactsLayer = ref(null)
+const tracksLayer = ref(null)
+const devicesLayer = ref(null)
+
+// State
+const optionValues = optionsController.optionValues
+const map = ref(null)
+
+// Layers (non-reactive constants)
+const allBaseLayers = Object.values(baseLayersByName)
+const allOverlayLayers = Object.values(overlayLayersByName)
+const defaultStreetLayer = LayerIds.OpenFreeMap
+const defaultSatelliteLayer = LayerIds.ESRI
+
+const activeLayerId = ref(props.activeLayerIdProp || LayerIds.OpenFreeMap)
+const showLayerPicker = ref(false)
+
+// Context menu
+const contextMenu = reactive({
+	visible: false,
+	x: 0,
+	y: 0,
+	lngLat: null,
+})
+
+// Routing
+const showRouting = ref(false)
+
+// Contacts
+const placingContact = ref(false)
+const placingContactLatLng = ref(null)
+
+// POI
+const searchPois = ref([])
+const searching = ref(false)
+
+// Left click search
+const leftClickSearching = ref(false)
+const leftClickSearchLatLng = ref(null)
+
+// created() logic
+if ('maplibreStreetStylePmtiles' in optionValues
+	&& optionValues.maplibreStreetStylePmtiles === '1') {
+	const protocol = new Protocol()
+	addProtocol('pmtiles', protocol.tile)
 }
+
+// Computed
+const mapStyle = computed(() => {
+	// Admin-configured custom vector style takes highest priority
+	if (optionValues.maplibreStreetStyleURL) {
+		return optionValues.maplibreStreetStyleURL
+	}
+	// If the active layer is a vector layer, return its style URL
+	const activeLayer = allBaseLayers.find(l => l.id === activeLayerId.value)
+	if (activeLayer?.styleUrl) {
+		return activeLayer.styleUrl
+	}
+	// Fallback: empty style for raster-only layers
+	return {
+		version: 8,
+		sources: {},
+		layers: [],
+		glyphs: 'https://demotiles.maplibre.org/font/{fontstack}/{range}.pbf',
+	}
+})
+
+const initialBounds = computed(() => {
+	if (props.mapBoundsProp && props.mapBoundsProp.length === 2) {
+		// mapBoundsProp is [[north, east], [south, west]] from optionsController
+		const [[n, e], [s, w]] = props.mapBoundsProp
+		return [[w, s], [e, n]]
+	}
+	return undefined
+})
+
+const scaleUnit = computed(() => {
+	return optionsController.optionValues?.useImperialUnits ? 'imperial' : 'metric'
+})
+
+const mapStateClass = computed(() => {
+	return {
+		loading: props.state === 'loading',
+		adding: props.state === 'adding',
+	}
+})
+
+const activeBaseLayers = computed(() => {
+	// Only return raster layers (vector layers use mapStyle, not MglRasterSource)
+	return allBaseLayers.filter(l => l.id === activeLayerId.value && !l.styleUrl)
+})
+
+const activeOverlayLayers = computed(() => {
+	// Show roads overlay on top of satellite/watercolor layers
+	const satelliteIds = [LayerIds.ESRI, LayerIds.ESRITopo, LayerIds.Watercolor]
+	if (satelliteIds.includes(activeLayerId.value)) {
+		return allOverlayLayers
+	}
+	return []
+})
+
+const isFavoriteCreatable = computed(() => {
+	const favArray = Object.values(props.favorites)
+	return (favArray.some((f) => f.isUpdateable) || (favArray.length === 0 && optionValues.isCreatable))
+})
+
+const isContactCreatable = computed(() => {
+	return optionValues.isCreatable
+})
+
+const contextMenuItems = computed(() => {
+	const cmi = [
+		{
+			text: t('maps', 'Add a favorite'),
+			iconCls: 'icon-favorite',
+			callback: (lngLat) => emit('add-favorite', { lat: lngLat.lat, lng: lngLat.lng }),
+		},
+		{
+			text: t('maps', 'Place photos'),
+			iconCls: 'icon-category-multimedia',
+			callback: (lngLat) => emit('place-photos', { lat: lngLat.lat, lng: lngLat.lng }),
+		},
+		{
+			text: t('maps', 'Place contact'),
+			iconCls: 'icon-group',
+			callback: (lngLat) => {
+				placingContactLatLng.value = { lat: lngLat.lat, lng: lngLat.lng }
+				placingContact.value = true
+			},
+		},
+		{
+			text: t('maps', 'Share this location'),
+			iconCls: 'icon-address',
+			callback: async (lngLat) => {
+				const geoLink = 'geo:' + lngLat.lat.toFixed(6) + ',' + lngLat.lng.toFixed(6)
+				try {
+					await navigator.clipboard.writeText(geoLink)
+					showSuccess(t('maps', 'Geo link ({geoLink}) copied to clipboard', { geoLink }))
+				} catch (error) {
+					console.debug(error)
+					showError(t('maps', 'Geo link could not be copied to clipboard'))
+				}
+			},
+		},
+	]
+	window.OCA.Maps.mapActions.forEach((action) => {
+		cmi.push({
+			text: action.label,
+			iconCls: action.icon,
+			callback: (lngLat) => {
+				action.callback({
+					id: 'geo:' + lngLat.lat + ',' + lngLat.lng,
+					name: t('maps', 'Shared location'),
+					latitude: lngLat.lat.toString(),
+					longitude: lngLat.lng.toString(),
+				})
+			},
+		})
+	})
+	if (optionsController.nbRouters > 0 || getCurrentUser()?.isAdmin) {
+		cmi.push(
+			'-',
+			{
+				text: t('maps', 'Route from here'),
+				iconCls: 'icon-address',
+				callback: (lngLat) => {
+					showRouting.value = true
+					routingControl.value.setRouteFrom(lngLat)
+				},
+			},
+			{
+				text: t('maps', 'Add route point'),
+				iconCls: 'icon-add',
+				callback: (lngLat) => {
+					showRouting.value = true
+					routingControl.value.addRoutePoint(lngLat)
+				},
+			},
+			{
+				text: t('maps', 'Route to here'),
+				iconCls: 'icon-address',
+				callback: (lngLat) => {
+					showRouting.value = true
+					routingControl.value.setRouteTo(lngLat)
+				},
+			},
+		)
+	}
+	return cmi
+})
+
+// Watchers
+watch(() => props.activeLayerIdProp, (newValue) => {
+	activeLayerId.value = newValue
+})
+
+// Methods
+function onMapReady(e) {
+	map.value = e.map
+}
+
+function fitBounds(bounds, options = {}) {
+	// bounds: [[lngMin, latMin], [lngMax, latMax]] (MapLibre format)
+	map.value.fitBounds(bounds, { padding: 30, ...options })
+}
+
+function setLayer(layerId) {
+	activeLayerId.value = layerId
+	optionsController.saveOptionValues({ tileLayer: layerId })
+}
+
+function onUpdateBounds() {
+	const b = map.value.getBounds()
+	const boundsStr = b.getNorth() + ';' + b.getSouth() + ';' + b.getEast() + ';' + b.getWest()
+	optionsController.saveOptionValues({ mapBounds: boundsStr })
+}
+
+function onMapClick(e) {
+	if (contextMenu.visible) {
+		contextMenu.visible = false
+		return
+	}
+	if (props.state === 'adding') {
+		emit('add-click', { latlng: e.event.lngLat })
+		return
+	}
+	const hadPopup = placingContact.value || leftClickSearching.value
+	placingContact.value = false
+	leftClickSearching.value = false
+	if (!hadPopup) {
+		leftClickSearch(e.event.lngLat.lat, e.event.lngLat.lng)
+	}
+}
+
+function onMapContextmenu(e) {
+	leftClickSearching.value = false
+	contextMenu.visible = true
+	contextMenu.x = e.event.point.x
+	contextMenu.y = e.event.point.y
+	contextMenu.lngLat = e.event.lngLat
+}
+
+function invokeContextItem(item) {
+	contextMenu.visible = false
+	item.callback(contextMenu.lngLat)
+}
+
+function leftClickSearch(lat, lng) {
+	leftClickSearchLatLng.value = { lat, lng }
+	leftClickSearching.value = true
+}
+
+function onAddContactAddress(obj) {
+	leftClickSearching.value = false
+	placingContactLatLng.value = { lat: obj.latLng.lat, lng: obj.latLng.lng }
+	placingContact.value = true
+}
+
+function onContactPlaced(e) {
+	placingContact.value = false
+	emit('contact-placed', e)
+}
+
+function onPhotoMoved(photo, latLng) {
+	emit('photo-moved', photo, latLng)
+}
+
+function onPhotoSuggestionMoved(index, latLng) {
+	emit('photo-suggestion-moved', index, latLng)
+}
+
+function zoomOnPhotoSuggestion(photo) {
+	if (photo.lat && photo.lng) {
+		map.value.fitBounds(
+			[[photo.lng - 0.001, photo.lat - 0.001], [photo.lng + 0.001, photo.lat + 0.001]],
+			{ padding: 30 },
+		)
+	}
+}
+
+function zoomOnTrack(track) {
+	if (track.metadata) {
+		const md = track.metadata
+		map.value.fitBounds([[md.w, md.s], [md.e, md.n]], { padding: 30 })
+	}
+}
+
+function zoomOnDevice(device) {
+	if (device.points && device.points.length > 0) {
+		const lats = device.points.map(p => p.lat)
+		const lngs = device.points.map(p => p.lng)
+		map.value.fitBounds(
+			[[Math.min(...lngs), Math.min(...lats)], [Math.max(...lngs), Math.max(...lats)]],
+			{ padding: 30 },
+		)
+	}
+}
+
+function onSearchValidate(element) {
+	if (['contact', 'favorite'].includes(element.type)) {
+		map.value.flyTo({ center: [element.latLng.lng, element.latLng.lat], zoom: 15 })
+	} else if (element.type === 'device') {
+		if (!element.device.enabled) {
+			emit('search-enable-device', element.device)
+		} else {
+			zoomOnDevice(element.device)
+		}
+	} else if (element.type === 'track') {
+		if (!element.track.enabled) {
+			emit('search-enable-track', element.track)
+		} else {
+			zoomOnTrack(element.track)
+		}
+	} else if (element.type === 'poi') {
+		searching.value = true
+		const b = map.value.getBounds()
+		const query = element.subtype + '=' + encodeURIComponent(element.value)
+		const apiUrl = 'https://nominatim.openstreetmap.org/search'
+			+ '?format=json&addressdetails=1&extratags=1&namedetails=1&limit=100&'
+			+ 'viewbox=' + b.getWest() + ',' + b.getSouth() + ',' + b.getEast() + ',' + b.getNorth() + '&'
+			+ 'bounded=1&' + query
+		axios.get(apiUrl).then((response) => {
+			searchPois.value = response.data
+			searching.value = false
+		})
+	} else if (element.type === 'result') {
+		searchPois.value = [element.rawResult]
+		map.value.flyTo({ center: [element.latLng.lng, element.latLng.lat], zoom: 15 })
+	} else if (element.type === 'coordinate') {
+		leftClickSearch(element.lat, element.lng)
+		map.value.flyTo({ center: [element.lng, element.lat], zoom: 15 })
+	} else if (element.type === 'mylocation') {
+		navigator.geolocation.getCurrentPosition((position) => {
+			const lat = position.coords.latitude
+			const lng = position.coords.longitude
+			map.value.flyTo({ center: [lng, lat], zoom: 15 })
+		})
+	}
+}
+
+defineExpose({ fitBounds, zoomOnPhotoSuggestion, zoomOnTrack, zoomOnDevice })
 </script>
 
 <style lang="scss" scoped>

@@ -3,32 +3,32 @@
 		:coordinates="[favorite.lng, favorite.lat]"
 		:draggable="draggable && favorite.isUpdateable"
 		@update:coordinates="onMoved">
-		<template #default>
+		<template #marker>
 			<div
 				class="favorite-marker-icon"
 				:style="markerStyle"
 				@click.stop="onLeftClick"
 				@contextmenu.stop="onRightClick" />
-			<MglPopup
-				v-if="showPopup"
-				:close-button="false"
-				anchor="bottom"
-				@close="showPopup = false">
-				<NcActionButton v-if="favorite.isDeletable" @click="emit('delete', favorite.id)">
-					<template #icon>
-						<TrashCanIcon :size="20" />
-					</template>
-					{{ t('maps', 'Delete favorite') }}
-				</NcActionButton>
-				<NcActionButton v-if="!isPublicVal"
-					@click="emit('add-to-map-favorite', favorite)">
-					<template #icon>
-						<ShareVariantIcon :size="20" />
-					</template>
-					{{ t('maps', 'Copy to map') }}
-				</NcActionButton>
-			</MglPopup>
 		</template>
+		<MglPopup
+			v-if="showPopup"
+			:close-button="false"
+			anchor="bottom"
+			@close="showPopup = false">
+			<NcActionButton v-if="favorite.isDeletable" @click="emit('delete', favorite.id)">
+				<template #icon>
+					<TrashCanIcon :size="20" />
+				</template>
+				{{ t('maps', 'Delete favorite') }}
+			</NcActionButton>
+			<NcActionButton v-if="!isPublicVal"
+				@click="emit('add-to-map-favorite', favorite)">
+				<template #icon>
+					<ShareVariantIcon :size="20" />
+				</template>
+				{{ t('maps', 'Copy to map') }}
+			</NcActionButton>
+		</MglPopup>
 	</MglMarker>
 </template>
 

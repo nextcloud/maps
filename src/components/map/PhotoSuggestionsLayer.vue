@@ -5,19 +5,19 @@
 			:coordinates="[photo.lng, photo.lat]"
 			:draggable="draggable"
 			@update:coordinates="(ll) => $emit('photo-suggestion-moved', photo.originalIndex, ll)">
-			<template #default>
+			<template #marker>
 				<div :class="['leaflet-marker-photo-suggestion', 'photo-suggestion-marker', photoSuggestionsSelectedIndices.includes(photo.originalIndex) ? 'photo-suggestion-marker-selected' : '']"
 					:style="'background-image: url(' + getPreviewUrl(photo) + ')'"
 					@click.stop="$emit('photo-suggestion-selected', photo.originalIndex)"
 					@contextmenu.stop="currentPopupSuggestion = photo"
 					@mouseover="currentSuggestion = photo"
 					@mouseleave="currentSuggestion = null" />
-				<MglPopup v-if="currentPopupSuggestion === photo" :close-button="false" anchor="bottom" @close="currentPopupSuggestion = null">
-					<NcActionButton icon="icon-toggle" @click="viewPhoto(photo)">
-						{{ t('maps', 'Display picture') }}
-					</NcActionButton>
-				</MglPopup>
 			</template>
+			<MglPopup v-if="currentPopupSuggestion === photo" :close-button="false" anchor="bottom" @close="currentPopupSuggestion = null">
+				<NcActionButton icon="icon-toggle" @click="viewPhoto(photo)">
+					{{ t('maps', 'Display picture') }}
+				</NcActionButton>
+			</MglPopup>
 		</MglMarker>
 	</template>
 </template>

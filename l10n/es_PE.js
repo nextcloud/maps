@@ -7,6 +7,7 @@ OC.L10N.register(
     "Export" : "Exportar",
     "Delete" : "Borrar",
     "Cancel" : "Cancelar",
+    "Link copied" : "Enlace copiado",
     "Import" : "Importar",
     "Rename" : "Renombrar",
     "Copied!" : "¡Copiado!",

@@ -8,11 +8,10 @@
 		:force-menu="false"
 		@click="onTracksClick"
 		@update:open="onUpdateOpen">
-		<NcCounterBubble v-show="enabled && tracks.length"
-			slot="counter">
-			{{ tracks.length > 99 ? '99+' : tracks.length }}
-		</NcCounterBubble>
-		<template v-if="enabled" slot="actions">
+		<template #counter>
+			<NcCounterBubble v-show="enabled && tracks.length" :count="tracks.length" />
+		</template>
+		<template v-if="enabled" #actions>
 			<NcActionButton
 				icon="icon-tag"
 				:close-after-click="true"
@@ -26,12 +25,12 @@
 				{{ t('maps', 'Sort by date') }}
 			</NcActionButton>
 		</template>
-		<template slot="default">
+		<template #default>
 			<b v-show="false">dummy</b>
 			<AppNavigationTrackItem
 				v-for="track in sortedTracks"
 				:key="track.id"
-				:ref="'trackItem' + track.id"
+				:ref="(el) => setTrackItemRef(track.id, el)"
 				:track="track"
 				:parent-enabled="enabled && tracks.length > 0"
 				@click="$emit('track-clicked', $event)"
@@ -43,116 +42,123 @@
 	</NcAppNavigationItem>
 </template>
 
-<script>
-import NcAppNavigationItem from '@nextcloud/vue/dist/Components/NcAppNavigationItem.js'
-import NcActionButton from '@nextcloud/vue/dist/Components/NcActionButton.js'
+<script setup>
+import NcAppNavigationItem from '@nextcloud/vue/components/NcAppNavigationItem'
+import NcActionButton from '@nextcloud/vue/components/NcActionButton'
+import NcCounterBubble from '@nextcloud/vue/components/NcCounterBubble'
 import AppNavigationTrackItem from './AppNavigationTrackItem.vue'
-import NcCounterBubble from '@nextcloud/vue/dist/Components/NcCounterBubble.js'
-
+import { t } from '@nextcloud/l10n'
+import { ref, computed } from 'vue'
 import optionsController from '../optionsController.js'
 
-export default {
-	name: 'AppNavigationTracksItem',
-
-	components: {
-		NcAppNavigationItem,
-		NcActionButton,
-		AppNavigationTrackItem,
-		NcCounterBubble,
+const props = defineProps({
+	enabled: {
+		type: Boolean,
+		required: true,
 	},
-
-	props: {
-		enabled: {
-			type: Boolean,
-			required: true,
-		},
-		loading: {
-			type: Boolean,
-			default: false,
-		},
-		tracks: {
-			type: Array,
-			required: true,
-		},
+	loading: {
+		type: Boolean,
+		default: false,
 	},
-
-	data() {
-		return {
-			open: optionsController.trackListShow,
-			sortOrder: optionsController.optionValues.tracksSortOrder,
-		}
+	tracks: {
+		type: Array,
+		required: true,
 	},
+})
 
-	computed: {
-		sortedTracks() {
-			if (this.sortOrder === 'name' || this.sortOrder === 'nameAsc') {
-				return this.tracks.slice().sort((a, b) => {
-					const nameA = a.file_name.toLowerCase()
-					const nameB = b.file_name.toLowerCase()
-					return nameA.localeCompare(nameB)
-				})
-			} else if (this.sortOrder === 'nameDesc') {
-				return this.tracks.slice().sort((a, b) => {
-					const nameA = a.file_name.toLowerCase()
-					const nameB = b.file_name.toLowerCase()
-					return -nameA.localeCompare(nameB)
-				})
-			} else if (this.sortOrder === 'date' || this.sortOrder === 'dateDesc') {
-				return this.tracks.slice().sort((a, b) => {
-					return a.mtime === b.mtime
-						? 0
-						: a.mtime > b.mtime
-							? 1
-							: -1
-				})
-			} else if (this.sortOrder === 'dateAsc') {
-				return this.tracks.slice().sort((a, b) => {
-					return a.mtime === b.mtime
-						? 0
-						: a.mtime < b.mtime
-							? 1
-							: -1
-				})
-			} else {
-				return this.tracks
-			}
-		},
-	},
+const emit = defineEmits([
+	'tracks-clicked',
+	'track-clicked',
+	'zoom',
+	'elevation',
+	'color',
+	'add-to-map-track',
+])
 
-	methods: {
-		onTracksClick() {
-			if (!this.enabled && !this.open) {
-				this.open = true
-				optionsController.saveOptionValues({ trackListShow: 'true' })
-			}
-			this.$emit('tracks-clicked')
-		},
-		onUpdateOpen(isOpen) {
-			this.open = isOpen
-			optionsController.saveOptionValues({ trackListShow: isOpen ? 'true' : 'false' })
-		},
-		changeTrackColor(track) {
-			console.debug(this.$refs)
-			this.$refs['trackItem' + track.id][0].onChangeColorClick()
-		},
-		onSortByName() {
-			if (this.sortOrder === 'name' || this.sortOrder === 'nameAsc') {
-				this.sortOrder = 'nameDesc'
-			} else {
-				this.sortOrder = 'nameAsc'
-			}
-			optionsController.saveOptionValues({ tracksSortOrder: this.sortOrder })
-		},
-		onSortByDate() {
-			if (this.sortOrder === 'date' || this.sortOrder === 'dateDesc') {
-				this.sortOrder = 'dateAsc'
-			} else {
-				this.sortOrder = 'dateDesc'
-			}
-			optionsController.saveOptionValues({ tracksSortOrder: this.sortOrder })
-		},
-	},
+const open = ref(optionsController.trackListShow)
+const sortOrder = ref(optionsController.optionValues.tracksSortOrder)
+
+const trackItemRefs = {}
+
+function setTrackItemRef(id, el) {
+	if (el) {
+		trackItemRefs[id] = el
+	} else {
+		delete trackItemRefs[id]
+	}
 }
+
+const sortedTracks = computed(() => {
+	if (sortOrder.value === 'name' || sortOrder.value === 'nameAsc') {
+		return props.tracks.slice().sort((a, b) => {
+			const nameA = a.file_name.toLowerCase()
+			const nameB = b.file_name.toLowerCase()
+			return nameA.localeCompare(nameB)
+		})
+	} else if (sortOrder.value === 'nameDesc') {
+		return props.tracks.slice().sort((a, b) => {
+			const nameA = a.file_name.toLowerCase()
+			const nameB = b.file_name.toLowerCase()
+			return -nameA.localeCompare(nameB)
+		})
+	} else if (sortOrder.value === 'date' || sortOrder.value === 'dateDesc') {
+		return props.tracks.slice().sort((a, b) => {
+			return a.mtime === b.mtime
+				? 0
+				: a.mtime > b.mtime
+					? 1
+					: -1
+		})
+	} else if (sortOrder.value === 'dateAsc') {
+		return props.tracks.slice().sort((a, b) => {
+			return a.mtime === b.mtime
+				? 0
+				: a.mtime < b.mtime
+					? 1
+					: -1
+		})
+	} else {
+		return props.tracks
+	}
+})
+
+function onTracksClick() {
+	if (!props.enabled && !open.value) {
+		open.value = true
+		optionsController.saveOptionValues({ trackListShow: 'true' })
+	}
+	emit('tracks-clicked')
+}
+
+function onUpdateOpen(isOpen) {
+	open.value = isOpen
+	optionsController.saveOptionValues({ trackListShow: isOpen ? 'true' : 'false' })
+}
+
+function changeTrackColor(track) {
+	console.debug(trackItemRefs)
+	trackItemRefs[track.id]?.onChangeColorClick()
+}
+
+function onSortByName() {
+	if (sortOrder.value === 'name' || sortOrder.value === 'nameAsc') {
+		sortOrder.value = 'nameDesc'
+	} else {
+		sortOrder.value = 'nameAsc'
+	}
+	optionsController.saveOptionValues({ tracksSortOrder: sortOrder.value })
+}
+
+function onSortByDate() {
+	if (sortOrder.value === 'date' || sortOrder.value === 'dateDesc') {
+		sortOrder.value = 'dateAsc'
+	} else {
+		sortOrder.value = 'dateDesc'
+	}
+	optionsController.saveOptionValues({ tracksSortOrder: sortOrder.value })
+}
+
+defineExpose({ changeTrackColor })
 </script>
 
 <style lang="scss" scoped>

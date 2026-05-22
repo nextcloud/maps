@@ -25,81 +25,51 @@
 		:track="track" />
 </template>
 
-<script>
-
+<script setup>
+import { ref } from 'vue'
 import TrackSidebarMetadataTab from '../components/TrackMetadataTab.vue'
 import * as network from '../network.js'
 import { processGpx } from '../tracksUtils.js'
 import { getToken } from '../utils/common.js'
 
-export default {
-	name: 'TrackMetadataTab',
+const error = ref('')
+const loading = ref(false)
+const track = ref(null)
 
-	components: {
-		// Avatar,
-		TrackSidebarMetadataTab,
-	},
-
-	data() {
-		return {
-			error: '',
-			loading: false,
-			track: null,
-		}
-	},
-
-	computed: {
-	},
-
-	methods: {
-		/**
-		 * Update current ressourceId and fetch new data
-		 *
-		 * @param {number} ressourceId the current ressourceId (fileId...)
-		 * @param trackid
-		 * @param trackFileId
-		 */
-		async update(trackFileId) {
-			this.getTrack(trackFileId)
-		},
-
-		getTrack(trackFileId) {
-			this.loading = true
-			const track = {}
-			network.getTrack(trackFileId, null, true, getToken()).then((response) => {
-				if (!track.metadata) {
-					try {
-						track.metadata = JSON.parse(response.data.metadata)
-					} catch (error) {
-						console.error('Failed to parse track metadata')
-					}
-				}
-				track.data = processGpx(response.data.content)
-				this.track = track
-			}).catch((error) => {
-				console.error(error)
-				this.error = error
-			}).then(() => {
-				track.loading = false
-			})
-		},
-
-		/**
-		 * Ran when the bottom of the tab is reached
-		 */
-		onScrollBottomReached() {
-		},
-
-		/**
-		 * Reset the current view to its default state
-		 */
-		resetState() {
-			this.error = ''
-			this.loading = false
-			this.track = null
-		},
-	},
+async function update(trackFileId) {
+	getTrack(trackFileId)
 }
+
+function getTrack(trackFileId) {
+	loading.value = true
+	const t = {}
+	network.getTrack(trackFileId, null, true, getToken()).then((response) => {
+		if (!t.metadata) {
+			try {
+				t.metadata = JSON.parse(response.data.metadata)
+			} catch (err) {
+				console.error('Failed to parse track metadata')
+			}
+		}
+		t.data = processGpx(response.data.content)
+		track.value = t
+	}).catch((err) => {
+		console.error(err)
+		error.value = err
+	}).then(() => {
+		t.loading = false
+	})
+}
+
+function onScrollBottomReached() {}
+
+function resetState() {
+	error.value = ''
+	loading.value = false
+	track.value = null
+}
+
+defineExpose({ update, onScrollBottomReached, resetState })
 </script>
 
 <style lang="scss" scoped>

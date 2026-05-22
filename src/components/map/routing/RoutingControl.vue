@@ -1,125 +1,94 @@
 <template>
-	<LControl class="maps-routing-control leaflet-control" :class="{'mobile': isMobile, 'desktop':!isMobile}" position="topleft">
-		<div class="routing-header">
-			<span class="icon icon-routing" />
-			<span class="title">
-				{{ t('maps', 'Find directions') }}
-			</span>
-			<button @click="$emit('close')">
-				<span class="icon icon-close" />
-			</button>
+	<div ref="el" style="display:none">
+		<div class="maps-routing-control maplibregl-ctrl maplibregl-ctrl-group" :class="{'mobile': isMobile, 'desktop':!isMobile}">
+			<div class="routing-header">
+				<span class="icon icon-routing" />
+				<span class="title">
+					{{ t('maps', 'Find directions') }}
+				</span>
+				<button @click="$emit('close')">
+					<span class="icon icon-close" />
+				</button>
+			</div>
+			<RoutingSteps
+				:steps="steps"
+				:search-data="searchData"
+				:plan-ready="planReady"
+				@add-step="addRoutePoint"
+				@step-selected="setRoutePoint"
+				@delete-step="deleteRoutePoint"
+				@export-route="onExportRoute"
+				@zoom-route="onZoomRoute"
+				@reverse-steps="reverseWaypoints" />
+			<RoutingMachine
+				ref="machine"
+				:map="map"
+				:visible="visible"
+				@plan-changed="onPlanChanged"
+				@plan-ready-changed="onPlanReadyChanged"
+				@route-selected="onRouteSelected"
+				@track-added="$emit('track-added', $event)" />
 		</div>
-		<RoutingSteps
-			:steps="steps"
-			:search-data="searchData"
-			:plan-ready="planReady"
-			@add-step="addRoutePoint"
-			@step-selected="setRoutePoint"
-			@delete-step="deleteRoutePoint"
-			@export-route="onExportRoute"
-			@zoom-route="onZoomRoute"
-			@reverse-steps="reverseWaypoints" />
-		<RoutingMachine
-			ref="machine"
-			:map="map"
-			:visible="visible"
-			@plan-changed="onPlanChanged"
-			@plan-ready-changed="onPlanReadyChanged"
-			@route-selected="onRouteSelected"
-			@track-added="$emit('track-added', $event)" />
-	</LControl>
+	</div>
 </template>
 
-<script>
-import { LControl } from 'vue2-leaflet'
-import { isMobile } from '@nextcloud/vue'
-
+<script setup>
+import { ref, onMounted } from 'vue'
+import { t } from '@nextcloud/l10n'
+import { useControl } from '@indoorequal/vue-maplibre-gl'
+import { useIsMobile } from '@nextcloud/vue/composables/useIsMobile'
 import RoutingSteps from './RoutingSteps.vue'
 import RoutingMachine from './RoutingMachine.vue'
 
-const emptyStep = () => {
-	return {
-		latLng: null,
-		name: '',
-	}
-}
+const emptyStep = () => ({ latLng: null, name: '' })
 
-export default {
-	name: 'RoutingControl',
-
-	components: {
-		RoutingSteps,
-		RoutingMachine,
-		LControl,
+const props = defineProps({
+	map: {
+		type: Object,
+		required: true,
 	},
-
-	mixins: [isMobile],
-
-	props: {
-		map: {
-			type: Object,
-			required: true,
-		},
-		searchData: {
-			type: Array,
-			required: true,
-		},
-		visible: {
-			type: Boolean,
-			default: true,
-		},
+	searchData: {
+		type: Array,
+		required: true,
 	},
-
-	data() {
-		return {
-			steps: [emptyStep(), emptyStep()],
-			planReady: false,
-		}
+	visible: {
+		type: Boolean,
+		default: true,
 	},
+})
 
-	watch: {
-	},
+defineEmits(['close', 'track-added'])
 
-	created() {
-	},
+const isMobile = useIsMobile()
+const el = ref(null)
+const machine = ref(null)
+const steps = ref([emptyStep(), emptyStep()])
+const planReady = ref(false)
 
-	methods: {
-		setRouteFrom(step) {
-			this.$refs.machine.setRouteFrom(step)
+onMounted(() => {
+	useControl(() => ({
+		onAdd() {
+			this._container = el.value?.children[0]
+			return this._container
 		},
-		setRouteTo(step) {
-			this.$refs.machine.setRouteTo(step)
-		},
-		setRoutePoint(i, step) {
-			this.$refs.machine.setRoutePoint(i, step)
-		},
-		addRoutePoint(step = emptyStep()) {
-			this.$refs.machine.addRoutePoint(step)
-		},
-		deleteRoutePoint(i) {
-			this.$refs.machine.deleteRoutePoint(i)
-		},
-		reverseWaypoints() {
-			this.$refs.machine.reverseWaypoints()
-		},
-		onExportRoute() {
-			this.$refs.machine.onExportRoute()
-		},
-		onZoomRoute() {
-			this.$refs.machine.onZoomRoute()
-		},
-		// ============ routing machine events ============
-		onPlanChanged(waypoints) {
-			this.steps = waypoints
-		},
-		onPlanReadyChanged(ready) {
-			this.planReady = ready
-		},
-		onRouteSelected() {
-			this.onZoomRoute()
-		},
-	},
-}
+		onRemove() {},
+	}), { position: 'top-left' })
+})
+
+function setRouteFrom(step) { machine.value.setRouteFrom(step) }
+function setRouteTo(step) { machine.value.setRouteTo(step) }
+function setRoutePoint(i, step) { machine.value.setRoutePoint(i, step) }
+function addRoutePoint(step = emptyStep()) { machine.value.addRoutePoint(step) }
+function deleteRoutePoint(i) { machine.value.deleteRoutePoint(i) }
+function reverseWaypoints() { machine.value.reverseWaypoints() }
+function onExportRoute() { machine.value.onExportRoute() }
+function onZoomRoute() { machine.value.onZoomRoute() }
+
+function onPlanChanged(waypoints) { steps.value = waypoints }
+function onPlanReadyChanged(ready) { planReady.value = ready }
+function onRouteSelected() { onZoomRoute() }
+
+defineExpose({ setRouteFrom, setRouteTo, setRoutePoint, addRoutePoint, deleteRoutePoint, reverseWaypoints, onExportRoute, onZoomRoute })
 </script>
 
 <style lang="scss" scoped>

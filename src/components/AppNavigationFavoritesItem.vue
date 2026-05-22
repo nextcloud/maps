@@ -8,11 +8,10 @@
 		:force-menu="false"
 		@click="onFavoritesClick"
 		@update:open="onUpdateOpen">
-		<NcCounterBubble v-show="enabled && nbFavorites"
-			slot="counter">
-			{{ nbFavorites > 99 ? '99+' : nbFavorites }}
-		</NcCounterBubble>
-		<template v-if="enabled" slot="actions">
+		<template #counter>
+			<NcCounterBubble v-show="enabled && nbFavorites" :count="nbFavorites" />
+		</template>
+		<template v-if="enabled" #actions>
 			<NcActionButton v-if="!readOnly"
 				:icon="draggable ? 'icon-hand' : 'icon-hand-slash'"
 				:close-after-click="false"
@@ -43,7 +42,7 @@
 				{{ t('maps', 'Import') }}
 			</NcActionButton>
 		</template>
-		<template slot="default">
+		<template #default>
 			<NcAppNavigationNew
 				v-if="enabled && !readOnly"
 				:text="addFavoriteText"
@@ -65,11 +64,10 @@
 					<div :class="{ favoriteMarker: true, navigationFavoriteMarkerDark: isDarkTheme, navigationFavoriteMarker: !isDarkTheme }"
 						:style="'background-color: #' + c.color" />
 				</template>
-				<NcCounterBubble v-show="enabled && nbFavorites && c.enabled"
-					slot="counter">
-					{{ c.counter > 99 ? '99+' : c.counter }}
-				</NcCounterBubble>
-				<template slot="actions">
+				<template #counter>
+					<NcCounterBubble v-show="enabled && nbFavorites && c.enabled" :count="c.counter" />
+				</template>
+				<template #actions>
 					<NcActionButton v-if="enabled && nbFavorites && c.enabled && c.isUpdateable"
 						icon="icon-add"
 						:close-after-click="true"
@@ -124,135 +122,141 @@
 	</NcAppNavigationItem>
 </template>
 
-<script>
-import NcAppNavigationItem from '@nextcloud/vue/dist/Components/NcAppNavigationItem.js'
-import NcAppNavigationNew from '@nextcloud/vue/dist/Components/NcAppNavigationNew.js'
-import NcActionButton from '@nextcloud/vue/dist/Components/NcActionButton.js'
-import NcActionCheckbox from '@nextcloud/vue/dist/Components/NcActionCheckbox.js'
-import NcCounterBubble from '@nextcloud/vue/dist/Components/NcCounterBubble.js'
+<script setup>
+import NcAppNavigationItem from '@nextcloud/vue/components/NcAppNavigationItem'
+import NcAppNavigationNew from '@nextcloud/vue/components/NcAppNavigationNew'
+import NcActionButton from '@nextcloud/vue/components/NcActionButton'
+import NcActionCheckbox from '@nextcloud/vue/components/NcActionCheckbox'
+import NcCounterBubble from '@nextcloud/vue/components/NcCounterBubble'
+import { t } from '@nextcloud/l10n'
+import { ref, computed } from 'vue'
 import { showError, showSuccess } from '@nextcloud/dialogs'
 import { generateUrl } from '@nextcloud/router'
 import { isPublic } from '../utils/common.js'
-
 import optionsController from '../optionsController.js'
 
-export default {
-	name: 'AppNavigationFavoritesItem',
-
-	components: {
-		NcAppNavigationItem,
-		NcAppNavigationNew,
-		NcActionButton,
-		NcActionCheckbox,
-		NcCounterBubble,
+const props = defineProps({
+	enabled: {
+		type: Boolean,
+		required: true,
 	},
-
-	props: {
-		enabled: {
-			type: Boolean,
-			required: true,
-		},
-		loading: {
-			type: Boolean,
-			default: false,
-		},
-		addingFavorite: {
-			type: Boolean,
-			default: false,
-		},
-		draggable: {
-			type: Boolean,
-			required: true,
-		},
-		favorites: {
-			type: Object,
-			required: true,
-		},
-		categories: {
-			type: Object,
-			required: true,
-		},
+	loading: {
+		type: Boolean,
+		default: false,
 	},
+	addingFavorite: {
+		type: Boolean,
+		default: false,
+	},
+	draggable: {
+		type: Boolean,
+		required: true,
+	},
+	favorites: {
+		type: Object,
+		required: true,
+	},
+	categories: {
+		type: Object,
+		required: true,
+	},
+})
 
-	data() {
-		return {
-			open: optionsController.optionValues?.favoriteCategoryListShow === 'true',
-			isLinkCopied: {},
-			isDarkTheme: OCA.Accessibility?.theme === 'dark',
+const emit = defineEmits([
+	'favorites-clicked',
+	'toggle-all-categories',
+	'zoom-all-categories',
+	'zoom-category',
+	'category-clicked',
+	'rename-category',
+	'category-share-change',
+	'export-category',
+	'add-to-map-category',
+	'delete-category',
+	'delete-shared-category-from-map',
+	'add-favorite',
+	'export',
+	'import',
+	'draggable-clicked',
+])
+
+const open = ref(optionsController.optionValues?.favoriteCategoryListShow === 'true')
+const isLinkCopied = ref({})
+const isDarkTheme = ref(OCA.Accessibility?.theme === 'dark')
+
+const nbFavorites = computed(() => {
+	return Object.keys(props.favorites).length
+})
+
+const addFavoriteText = computed(() => {
+	return props.addingFavorite
+		? t('maps', 'Cancel')
+		: t('maps', 'Add a favorite')
+})
+
+const addFavoriteIcon = computed(() => {
+	return props.addingFavorite
+		? 'icon-history'
+		: 'icon-add'
+})
+
+const readOnly = computed(() => {
+	const farray = Object.values(props.favorites)
+	return !farray.some((f) => (f.isUpdateable))
+		&& !(farray.length === 0 && optionsController.optionValues?.isCreatable)
+})
+
+function onFavoritesClick() {
+	if (!props.enabled && !open.value) {
+		open.value = true
+		optionsController.saveOptionValues({ favoriteCategoryListShow: 'true' })
+	}
+	emit('favorites-clicked')
+}
+
+function onUpdateOpen(isOpen) {
+	open.value = isOpen
+	optionsController.saveOptionValues({ favoriteCategoryListShow: isOpen ? 'true' : 'false' })
+}
+
+function onToggleAllClick() {
+	emit('toggle-all-categories')
+}
+
+function onZoomAllClick() {
+	emit('zoom-all-categories')
+}
+
+function onZoomCategoryClick(catid) {
+	emit('zoom-category', catid)
+}
+
+function onCategoryClick(catid) {
+	emit('category-clicked', catid)
+}
+
+async function onShareLinkCopy(category) {
+	try {
+		const url = window.location.origin + generateUrl('/apps/maps/s/favorites/' + category.token)
+		try {
+			await navigator.clipboard.writeText(url)
+			showSuccess(t('maps', 'Link copied'))
+		} catch (error) {
+			console.debug(error)
+			showError(t('maps', 'Link {url} could not be copied to clipboard.', { url }))
 		}
-	},
+		isLinkCopied.value[category.name] = true
+		setTimeout(() => {
+			delete isLinkCopied.value[category.name]
+		}, 5000)
+	} catch (error) {
+		console.debug(error)
+		showError(t('maps', 'Link could not be copied to clipboard.'))
+	}
+}
 
-	computed: {
-		nbFavorites() {
-			return Object.keys(this.favorites).length
-		},
-		addFavoriteText() {
-			return this.addingFavorite
-				? t('maps', 'Cancel')
-				: t('maps', 'Add a favorite')
-		},
-		addFavoriteIcon() {
-			return this.addingFavorite
-				? 'icon-history'
-				: 'icon-add'
-		},
-		readOnly() {
-			const farray = Object.values(this.favorites)
-			return !farray.some((f) => (f.isUpdateable))
-			&& !(farray.length === 0 && optionsController.optionValues?.isCreatable)
-		},
-	},
-
-	methods: {
-		onFavoritesClick() {
-			if (!this.enabled && !this.open) {
-				this.open = true
-				optionsController.saveOptionValues({ favoriteCategoryListShow: 'true' })
-			}
-			this.$emit('favorites-clicked')
-		},
-		onUpdateOpen(isOpen) {
-			this.open = isOpen
-			optionsController.saveOptionValues({ favoriteCategoryListShow: isOpen ? 'true' : 'false' })
-		},
-		onToggleAllClick() {
-			this.$emit('toggle-all-categories')
-		},
-		onZoomAllClick() {
-			this.$emit('zoom-all-categories')
-		},
-		onZoomCategoryClick(catid) {
-			this.$emit('zoom-category', catid)
-		},
-		onCategoryClick(catid) {
-			this.$emit('category-clicked', catid)
-		},
-		async onShareLinkCopy(category) {
-			try {
-				const url = window.location.origin + generateUrl('/apps/maps/s/favorites/' + category.token)
-				try {
-					await navigator.clipboard.writeText(url)
-					showSuccess(t('maps', 'Link copied'))
-				} catch (error) {
-					console.debug(error)
-					showError(t('maps', 'Link {url} could not be copied to clipboard.', { url }))
-				}
-				this.$set(this.isLinkCopied, category.name, true)
-				setTimeout(() => {
-					this.$delete(this.isLinkCopied, category.name)
-				}, 5000)
-			} catch (error) {
-				console.debug(error)
-				showError(t('maps', 'Link could not be copied to clipboard.'))
-			}
-		},
-		onAddFavoriteClick(category = null) {
-			this.$emit('add-favorite', category)
-		},
-		isPublic() {
-			return isPublic()
-		},
-	},
+function onAddFavoriteClick(category = null) {
+	emit('add-favorite', category)
 }
 </script>
 

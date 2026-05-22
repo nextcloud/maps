@@ -45,20 +45,30 @@
 	</div>
 </template>
 
-<script>
-import VueTypes from 'vue-types'
-
-export default {
-	name: 'PopupFormItem',
-
-	props: {
-		icon: VueTypes.string.isRequired.def(''),
-		value: VueTypes.any.isRequired.def(null),
-		placeholder: VueTypes.string.def(''),
-		type: VueTypes.oneOf(['textarea', 'text']).def('text'),
-		allowEdits: VueTypes.bool.def(true),
+<script setup>
+defineProps({
+	icon: {
+		type: String,
+		default: '',
 	},
-}
+	value: {
+		default: null,
+	},
+	placeholder: {
+		type: String,
+		default: '',
+	},
+	type: {
+		type: String,
+		default: 'text',
+	},
+	allowEdits: {
+		type: Boolean,
+		default: true,
+	},
+})
+
+defineEmits(['input'])
 </script>
 
 <style scoped lang="scss">

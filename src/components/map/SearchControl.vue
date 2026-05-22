@@ -1,78 +1,70 @@
 <template>
-	<LControl position="topleft" class="maps-search-control leaflet-control" :class="{'mobile':isMobile, 'desktop': !isMobile}">
-		<div id="search">
-			<SearchField
-				class="search-field"
-				:data="searchData"
-				:loading="loading"
-				@validate="$emit('validate', $event)" />
-			<button
-				v-tooltip="{ content: t('maps', 'Find directions') }"
-				class="bar-button"
-				@click="$emit('routing-clicked')">
-				<span class="icon icon-routing" />
-			</button>
-			<button v-if="resultPoiNumber > 0"
-				v-tooltip="{ content: t('maps', 'Clear POIs') }"
-				class="bar-button"
-				@click="$emit('clear-pois')">
-				<span class="icon icon-close" />
-			</button>
+	<div ref="el" style="display:none">
+		<div class="maps-search-control maplibregl-ctrl maplibregl-ctrl-group" :class="{'mobile':isMobile, 'desktop': !isMobile}">
+			<div id="search">
+				<SearchField
+					class="search-field"
+					:data="searchData"
+					:loading="loading"
+					@validate="$emit('validate', $event)" />
+				<button
+					v-tooltip="{ content: t('maps', 'Find directions') }"
+					class="bar-button"
+					@click="$emit('routing-clicked')">
+					<span class="icon icon-routing" />
+				</button>
+				<button v-if="resultPoiNumber > 0"
+					v-tooltip="{ content: t('maps', 'Clear POIs') }"
+					class="bar-button"
+					@click="$emit('clear-pois')">
+					<span class="icon icon-close" />
+				</button>
+			</div>
 		</div>
-	</LControl>
+	</div>
 </template>
 
-<script>
+<script setup>
+import { ref, computed, onMounted } from 'vue'
+import { t } from '@nextcloud/l10n'
 import { getLocale } from '@nextcloud/l10n'
-import { LControl } from 'vue2-leaflet'
-import { isMobile } from '@nextcloud/vue'
-
+import { useControl } from '@indoorequal/vue-maplibre-gl'
+import { useIsMobile } from '@nextcloud/vue/composables/useIsMobile'
 import SearchField from './SearchField.vue'
 
-export default {
-	name: 'SearchControl',
-
-	components: {
-		LControl,
-		SearchField,
+const props = defineProps({
+	map: {
+		type: Object,
+		required: true,
 	},
+	searchData: {
+		type: Array,
+		required: true,
+	},
+	loading: {
+		type: Boolean,
+		default: false,
+	},
+	resultPoiNumber: {
+		type: Number,
+		default: 0,
+	},
+})
 
-	mixins: [isMobile],
+defineEmits(['validate', 'routing-clicked', 'clear-pois'])
 
-	props: {
-		map: {
-			type: Object,
-			required: true,
+const isMobile = useIsMobile()
+const el = ref(null)
+
+onMounted(() => {
+	useControl(() => ({
+		onAdd() {
+			this._container = el.value?.children[0]
+			return this._container
 		},
-		searchData: {
-			type: Array,
-			required: true,
-		},
-		loading: {
-			type: Boolean,
-			default: false,
-		},
-		resultPoiNumber: {
-			type: Number,
-			default: 0,
-		},
-	},
-
-	data() {
-		return {
-			locale: getLocale(),
-		}
-	},
-
-	watch: {
-	},
-
-	created() {
-	},
-
-	methods: {
-	},
-}
+		onRemove() {},
+	}), { position: 'top-left' })
+})
 </script>
 
 <style lang="scss" scoped>
@@ -97,7 +89,6 @@ export default {
 			min-width: 34px;
 			width: 34px;
 			height: 34px;
-			// margin: 0;
 			padding: 0;
 		}
 		.multiselect {

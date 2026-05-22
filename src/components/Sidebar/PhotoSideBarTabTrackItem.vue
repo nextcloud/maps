@@ -7,10 +7,10 @@
 		:open="open"
 		:force-menu="false"
 		@click="onTrackClick">
-		<NcCounterBubble slot="counter">
-			{{ track.suggestionCount > 99 ? '99+' : track.suggestionCount }}
-		</NcCounterBubble>
-		<template v-if="subTracks.length && subTracks.length > 1" slot="default">
+		<template #counter>
+			<NcCounterBubble :count="track.suggestionCount" />
+		</template>
+		<template v-if="subTracks.length && subTracks.length > 1" #default>
 			<b v-show="false">dummy</b>
 			<NcAppNavigationItem
 				v-for="st in subTracks"
@@ -19,58 +19,42 @@
 				:name="track.name.concat(' ', st.key.split(':')[2])"
 				:force-menu="false"
 				@click="$emit('subtrack-click', st)">
-				<NcCounterBubble slot="counter">
-					{{ st.suggestionCount > 99 ? '99+' : st.suggestionCount }}
-				</NcCounterBubble>
+				<template #counter>
+					<NcCounterBubble :count="st.suggestionCount" />
+				</template>
 			</NcAppNavigationItem>
 		</template>
 	</NcAppNavigationItem>
 </template>
 
-<script>
+<script setup>
+import { ref } from 'vue'
+import NcAppNavigationItem from '@nextcloud/vue/components/NcAppNavigationItem'
+import NcCounterBubble from '@nextcloud/vue/components/NcCounterBubble'
 
-import NcAppNavigationItem from '@nextcloud/vue/dist/Components/NcAppNavigationItem.js'
-import NcCounterBubble from '@nextcloud/vue/dist/Components/NcCounterBubble.js'
-
-export default {
-	name: 'PhotoSideBarTabTrackItem',
-
-	components: {
-		NcAppNavigationItem,
-		NcCounterBubble,
+const props = defineProps({
+	track: {
+		required: true,
+		type: Object,
 	},
-
-	props: {
-		track: {
-			required: true,
-			type: Object,
-		},
-		subTracks: {
-			required: false,
-			type: Array,
-			default() { return [] },
-		},
+	subTracks: {
+		required: false,
+		type: Array,
+		default: () => [],
 	},
+})
 
-	data() {
-		return {
-			open: !!this.track.open,
-			enabled: this.subTracks.some((t) => { return t.enabled }),
-		}
-	},
+const emit = defineEmits(['subtrack-click'])
 
-	computed: {
-	},
+const open = ref(!!props.track.open)
+const enabled = ref(props.subTracks.some((t) => t.enabled))
 
-	methods: {
-		onTrackClick() {
-			this.open = !this.open
-			if (this.subTracks.length < 2) {
-				this.enabled = !this.enabled
-				this.$emit('subtrack-click', this.subTracks[0])
-			}
-		},
-	},
+function onTrackClick() {
+	open.value = !open.value
+	if (props.subTracks.length < 2) {
+		enabled.value = !enabled.value
+		emit('subtrack-click', props.subTracks[0])
+	}
 }
 </script>
 

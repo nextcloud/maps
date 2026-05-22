@@ -7,37 +7,15 @@
 	</div>
 </template>
 
-<script>
+<script setup>
 import TrackTable from './TrackTable.vue'
 
-export default {
-	name: 'TrackMetadataTab',
-
-	components: {
-		TrackTable,
+defineProps({
+	track: {
+		required: true,
+		validator: prop => typeof prop === 'object' || prop === null,
 	},
-
-	props: {
-		track: {
-			required: true,
-			validator: prop => typeof prop === 'object' || prop === null,
-		},
-	},
-
-	data() {
-		return {
-		}
-	},
-
-	computed: {
-	},
-
-	watch: {
-	},
-
-	methods: {
-	},
-}
+})
 </script>
 
 <style lang="scss" scoped>

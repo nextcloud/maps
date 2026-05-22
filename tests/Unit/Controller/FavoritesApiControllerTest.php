@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /**
  * Nextcloud - maps
  *
@@ -9,109 +11,66 @@
  * @author Julien Veyssier <eneiluj@posteo.net>
  * @copyright Julien Veyssier 2019
  */
-
 namespace OCA\Maps\Controller;
 
 use OCA\Maps\AppInfo\Application;
 use OCA\Maps\Service\FavoritesService;
-use OCP\IServerContainer;
+use OCP\IGroupManager;
+use OCP\IUserManager;
+use OCP\L10N\IFactory;
+use PHPUnit\Framework\TestCase;
 
-class FavoritesApiControllerTest extends \PHPUnit\Framework\TestCase {
-	private $appName;
-	private $request;
-	private $contacts;
+final class FavoritesApiControllerTest extends TestCase {
 
-	private $container;
-	private $config;
-	private $app;
-	private $root;
-
-	private $favoritesApiController;
-	private $favoritesApiController2;
-	private $utilsController;
+	private FavoritesApiController $favoritesApiController;
 
 	public static function setUpBeforeClass(): void {
 		$app = new Application();
 		$c = $app->getContainer();
 
-		$user = $c->getServer()->getUserManager()->get('test');
-		$user2 = $c->getServer()->getUserManager()->get('test2');
-		$user3 = $c->getServer()->getUserManager()->get('test3');
-		$group = $c->getServer()->getGroupManager()->get('group1test');
-		$group2 = $c->getServer()->getGroupManager()->get('group2test');
+		$user = $c->get(IUserManager::class)->get('test');
+		$user2 = $c->get(IUserManager::class)->get('test2');
+		$c->get(IUserManager::class)->get('test3');
+		$group = $c->get(IGroupManager::class)->get('group1test');
+		$group2 = $c->get(IGroupManager::class)->get('group2test');
 
 		// CREATE DUMMY USERS
 		if ($user === null) {
-			$u1 = $c->getServer()->getUserManager()->createUser('test', 'tatotitoTUTU');
+			$u1 = $c->get(IUserManager::class)->createUser('test', 'tatotitoTUTU');
 			$u1->setEMailAddress('toto@toto.net');
 		}
+
 		if ($user2 === null) {
-			$u2 = $c->getServer()->getUserManager()->createUser('test2', 'plopinoulala000');
+			$u2 = $c->get(IUserManager::class)->createUser('test2', 'plopinoulala000');
+			$u3 = $c->get(IUserManager::class)->createUser('test3', 'yeyeahPASSPASS');
 		}
-		if ($user2 === null) {
-			$u3 = $c->getServer()->getUserManager()->createUser('test3', 'yeyeahPASSPASS');
-		}
+
 		if ($group === null) {
-			$c->getServer()->getGroupManager()->createGroup('group1test');
-			$u1 = $c->getServer()->getUserManager()->get('test');
-			$c->getServer()->getGroupManager()->get('group1test')->addUser($u1);
+			$c->get(IGroupManager::class)->createGroup('group1test');
+			$u1 = $c->get(IUserManager::class)->get('test');
+			$c->get(IGroupManager::class)->get('group1test')->addUser($u1);
 		}
+
 		if ($group2 === null) {
-			$c->getServer()->getGroupManager()->createGroup('group2test');
-			$u2 = $c->getServer()->getUserManager()->get('test2');
-			$c->getServer()->getGroupManager()->get('group2test')->addUser($u2);
+			$c->get(IGroupManager::class)->createGroup('group2test');
+			$u2 = $c->get(IUserManager::class)->get('test2');
+			$c->get(IGroupManager::class)->get('group2test')->addUser($u2);
 		}
 	}
 
 	protected function setUp(): void {
-		$this->appName = 'maps';
-		$this->request = $this->getMockBuilder('\OCP\IRequest')
-			->disableOriginalConstructor()
-			->getMock();
-		$this->contacts = $this->getMockBuilder('OCP\Contacts\IManager')
-			->disableOriginalConstructor()
-			->getMock();
+		$appName = 'maps';
+		$request = $this->createMock('\OCP\IRequest');
 
-		$this->app = new Application();
-		$this->container = $this->app->getContainer();
-		$c = $this->container;
-		$this->config = $c->query(IServerContainer::class)->getConfig();
-		$this->root = $c->query(IServerContainer::class)->getRootFolder();
+		$app = new Application();
+		$container = $app->getContainer();
+		$c = $container;
 
 		$this->favoritesApiController = new FavoritesApiController(
-			$this->appName,
-			$this->request,
-			$c->query(IServerContainer::class),
-			$c->query(IServerContainer::class)->getConfig(),
-			$c->getServer()->get(\OCP\Share\IManager::class),
-			$c->getServer()->getAppManager(),
-			$c->getServer()->getUserManager(),
-			$c->getServer()->getGroupManager(),
-			$c->query(IServerContainer::class)->getL10N($c->query('AppName')),
-			$c->query(FavoritesService::class),
-			'test'
-		);
-
-		$this->favoritesApiController2 = new FavoritesApiController(
-			$this->appName,
-			$this->request,
-			$c->query(IServerContainer::class),
-			$c->query(IServerContainer::class)->getConfig(),
-			$c->getServer()->get(\OCP\Share\IManager::class),
-			$c->getServer()->getAppManager(),
-			$c->getServer()->getUserManager(),
-			$c->getServer()->getGroupManager(),
-			$c->query(IServerContainer::class)->getL10N($c->query('AppName')),
-			$c->query(FavoritesService::class),
-			'test2'
-		);
-
-		$this->utilsController = new UtilsController(
-			$this->appName,
-			$this->request,
-			$c->query(IServerContainer::class)->getConfig(),
-			$c->getServer()->getAppManager(),
-			$this->root,
+			$appName,
+			$request,
+			$c->get(IFactory::class)->get('maps'),
+			$c->get(FavoritesService::class),
 			'test'
 		);
 	}
@@ -119,14 +78,14 @@ class FavoritesApiControllerTest extends \PHPUnit\Framework\TestCase {
 	public static function tearDownAfterClass(): void {
 		//$app = new Application();
 		//$c = $app->getContainer();
-		//$user = $c->getServer()->getUserManager()->get('test');
+		//$user = $c->get(IUserManager::class)->get('test');
 		//$user->delete();
-		//$user = $c->getServer()->getUserManager()->get('test2');
+		//$user = $c->get(IUserManager::class)->get('test2');
 		//$user->delete();
-		//$user = $c->getServer()->getUserManager()->get('test3');
+		//$user = $c->get(IUserManager::class)->get('test3');
 		//$user->delete();
-		//$c->getServer()->getGroupManager()->get('group1test')->delete();
-		//$c->getServer()->getGroupManager()->get('group2test')->delete();
+		//$c->get(IGroupManager::class)->get('group1test')->delete();
+		//$c->get(IGroupManager::class)->get('group2test')->delete();
 	}
 
 	protected function tearDown(): void {
@@ -138,7 +97,7 @@ class FavoritesApiControllerTest extends \PHPUnit\Framework\TestCase {
 		}
 	}
 
-	public function testAddFavorites() {
+	public function testAddFavorites(): void {
 		// correct values
 		$resp = $this->favoritesApiController->addFavorite('1.0', 'one', 3.1, 4.2, '', null, null);
 		$status = $resp->getStatus();
@@ -168,7 +127,7 @@ class FavoritesApiControllerTest extends \PHPUnit\Framework\TestCase {
 		$status = $resp->getStatus();
 		$this->assertEquals(200, $status);
 		$data = $resp->getData();
-		$this->assertEquals(2, count($data));
+		$this->assertCount(2, $data);
 
 		//// get favorites using etag
 		//$etag = $resp->getEtag();
@@ -199,7 +158,7 @@ class FavoritesApiControllerTest extends \PHPUnit\Framework\TestCase {
 		$this->assertEquals(400, $status);
 	}
 
-	public function testEditFavorites() {
+	public function testEditFavorites(): void {
 		// valid edition
 		$resp = $this->favoritesApiController->addFavorite('1.0', 'a', 3.1, 4.1, 'cat1', null, null);
 		$favId = $resp->getData()['id'];
@@ -217,13 +176,14 @@ class FavoritesApiControllerTest extends \PHPUnit\Framework\TestCase {
 			if ($fav['id'] === $favId) {
 				$seen = true;
 				$this->assertEquals('aa', $fav['name']);
-				$this->assertEquals(3.2, $fav['lat']);
-				$this->assertEquals(4.2, $fav['lng']);
+				$this->assertEqualsWithDelta(3.2, $fav['lat'], PHP_FLOAT_EPSILON);
+				$this->assertEqualsWithDelta(4.2, $fav['lng'], PHP_FLOAT_EPSILON);
 				$this->assertEquals('cat2', $fav['category']);
 				$this->assertEquals('comment', $fav['comment']);
 				$this->assertEquals('ext', $fav['extensions']);
 			}
 		}
+
 		$this->assertEquals(true, $seen);
 
 		// invalid edition

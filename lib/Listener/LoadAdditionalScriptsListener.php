@@ -31,9 +31,6 @@ use OCP\Util;
 /** @template-implements IEventListener<LoadAdditionalScriptsEvent> */
 class LoadAdditionalScriptsListener implements IEventListener {
 
-	public function __construct() {
-	}
-
 	public function handle(Event $event): void {
 		if (!($event instanceof LoadAdditionalScriptsEvent)) {
 			// Unrelated

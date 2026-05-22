@@ -5,7 +5,7 @@
 		:allow-collapse="false"
 		:force-menu="false"
 		@click="$emit('click', device)">
-		<template slot="icon">
+		<template #icon>
 			<div v-if="device.loading"
 				class="app-navigation-entry-icon icon-loading-small " />
 			<div v-else
@@ -20,10 +20,10 @@
 				@change="updateDeviceColor"
 				@click.stop="">
 		</template>
-		<template slot="counter">
+		<template #counter>
 			&nbsp;
 		</template>
-		<template slot="actions">
+		<template #actions>
 			<NcActionButton v-if="parentEnabled && device.enabled"
 				icon="icon-category-monitoring"
 				:close-after-click="true"
@@ -66,63 +66,51 @@
 	</NcAppNavigationItem>
 </template>
 
-<script>
-import NcAppNavigationItem from '@nextcloud/vue/dist/Components/NcAppNavigationItem.js'
-import NcActionButton from '@nextcloud/vue/dist/Components/NcActionButton.js'
+<script setup>
+import NcAppNavigationItem from '@nextcloud/vue/components/NcAppNavigationItem'
+import NcActionButton from '@nextcloud/vue/components/NcActionButton'
 import { generateUrl } from '@nextcloud/router'
+import { t } from '@nextcloud/l10n'
+import { ref, computed } from 'vue'
 import { isComputer } from '../utils.js'
 import { isPublic } from '../utils/common.js'
-
 import optionsController from '../optionsController.js'
 
-export default {
-	name: 'AppNavigationDeviceItem',
-
-	components: {
-		NcAppNavigationItem,
-		NcActionButton,
+const props = defineProps({
+	device: {
+		type: Object,
+		required: true,
 	},
-
-	props: {
-		device: {
-			type: Object,
-			required: true,
-		},
-		parentEnabled: {
-			type: Boolean,
-			default: true,
-		},
+	parentEnabled: {
+		type: Boolean,
+		default: true,
 	},
+})
 
-	data() {
-		return {
-		}
-	},
+const emit = defineEmits(['click', 'toggle-history', 'zoom', 'export', 'add-to-map-device', 'delete', 'color'])
 
-	computed: {
-		iconUrl() {
-			const color = this.device.color || '#0082c9'
-			return isComputer(this.device.user_agent)
-				? generateUrl('/svg/core/clients/desktop?color=' + color.replace('#', ''))
-				: generateUrl('/svg/core/clients/phone?color=' + color.replace('#', ''))
-		},
-		mapIsUpdatable() {
-			return optionsController.optionValues?.isUpdateable
-		},
-	},
+const col = ref(null)
 
-	methods: {
-		onChangeColorClick() {
-			this.$refs.col.click()
-		},
-		updateDeviceColor(e) {
-			this.$emit('color', { device: this.device, color: e.target.value })
-		},
-		isPublic() {
-			return isPublic()
-		},
-	},
+const iconUrl = computed(() => {
+	const color = props.device.color || '#0082c9'
+	return isComputer(props.device.user_agent)
+		? generateUrl('/svg/core/clients/desktop?color=' + color.replace('#', ''))
+		: generateUrl('/svg/core/clients/phone?color=' + color.replace('#', ''))
+})
+
+const mapIsUpdatable = computed(() => {
+	return optionsController.optionValues?.isUpdateable
+})
+
+function onChangeColorClick() {
+	col.value.click()
 }
+
+function updateDeviceColor(e) {
+	emit('color', { device: props.device, color: e.target.value })
+}
+
+defineExpose({ onChangeColorClick })
 </script>
 
 <style lang="scss" scoped>

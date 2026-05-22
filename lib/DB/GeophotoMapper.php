@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /**
  * Nextcloud - maps
  *
@@ -9,7 +11,6 @@
  * @author Piotr Bator <prbator@gmail.com>
  * @copyright Piotr Bator 2017
  */
-
 namespace OCA\Maps\DB;
 
 use OCP\AppFramework\Db\QBMapper;
@@ -43,14 +44,11 @@ class GeophotoMapper extends QBMapper {
 	}
 
 	/**
-	 * @param $fileId
-	 * @param $userId
-	 * @return mixed|\OCP\AppFramework\Db\Entity
 	 * @throws \OCP\AppFramework\Db\DoesNotExistException
 	 * @throws \OCP\AppFramework\Db\MultipleObjectsReturnedException
 	 * @throws \OCP\DB\Exception
 	 */
-	public function findByFileIdUserId($fileId, $userId) {
+	public function findByFileIdUserId(int $fileId, string $userId): Geophoto {
 		$qb = $this->db->getQueryBuilder();
 
 		$qb->select('*')
@@ -65,13 +63,11 @@ class GeophotoMapper extends QBMapper {
 	}
 
 	/**
-	 * @param $fileId
-	 * @return mixed|\OCP\AppFramework\Db\Entity
 	 * @throws \OCP\AppFramework\Db\DoesNotExistException
 	 * @throws \OCP\AppFramework\Db\MultipleObjectsReturnedException
 	 * @throws \OCP\DB\Exception
 	 */
-	public function findByFileId($fileId) {
+	public function findByFileId(int $fileId): Geophoto {
 		$qb = $this->db->getQueryBuilder();
 
 		$qb->select('*')
@@ -105,9 +101,11 @@ class GeophotoMapper extends QBMapper {
 		if (!is_null($offset)) {
 			$qb->setFirstResult($offset);
 		}
+
 		if (!is_null($limit)) {
 			$qb->setMaxResults($limit);
 		}
+
 		return $this->findEntities($qb);
 	}
 
@@ -134,9 +132,11 @@ class GeophotoMapper extends QBMapper {
 		if (!is_null($offset)) {
 			$qb->setFirstResult($offset);
 		}
+
 		if (!is_null($limit)) {
 			$qb->setMaxResults($limit);
 		}
+
 		return array_reverse($this->findEntities($qb));
 	}
 

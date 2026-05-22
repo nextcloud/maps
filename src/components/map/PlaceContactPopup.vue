@@ -1,216 +1,185 @@
 <template>
-	<LMarker :lat-lng="latLng"
-		@ready="onMarkerReady">
-		<LIcon
-			class-name="placement-marker-icon"
-			:icon-size="[40, 40]"
-			:icon-url="markerIconUrl" />
-		<LPopup :options="popupOptions"
-			@ready="onPopupReady">
-			<h3 id="place-popup-title">
-				{{ t('maps', 'New contact address') }}
-			</h3>
-			<span v-if="addressLoading"
-				class="icon icon-loading-small" />
-			<textarea v-else
-				id="placeContactPopupAddress"
-				v-model="formattedAddress"
-				@input="addressEdited = true" />
-			<br>
-			<div class="contact-select">
-				<label for="userMultiselect">
-					<span class="icon icon-user" />
-				</label>
-				<NcSelect
-					id="userMultiselect"
-					ref="userMultiselect"
-					v-model="selectedContact"
-					class="contact-input"
-					track-by="URI"
-					label="FN"
-					:placeholder="t('maps', 'Choose a contact')"
-					:options="contactData"
-					:internal-search="true"
-					@search="asyncSearchContacts">
-					<template #option="option">
-						<Avatar
-							class="contact-avatar"
-							:is-no-user="true"
-							:url="option.AVATAR_URL"
-							:user="option.FN" />
-						{{ option.FN }}
-					</template>
-				</NcSelect>
-			</div>
-			<div class="address-type"
-				:name="t('maps', 'Address type')">
-				<label for="addressTypeSelect">
-					<span class="icon icon-address" />
-				</label>
-				<select id="addressTypeSelect"
-					v-model="addressType"
-					:disabled="!selectedContact">
-					<option value="home">
-						🏠 {{ t('maps', 'Home') }}
-					</option>
-					<option value="work">
-						🏢 {{ t('maps', 'Work') }}
-					</option>
-				</select>
-			</div>
-			<button class="submit-place-contact"
-				:disabled="!selectedContact"
-				:class="{ loading: searchingEditedAddress }"
-				@click="onValidate">
-				<span class="icon-add" />
-				{{ t('maps', 'Add address to contact') }}
-			</button>
-		</LPopup>
-	</LMarker>
+	<MglMarker :coordinates="[latLng.lng, latLng.lat]">
+		<template #marker>
+			<div class="placement-marker-icon"
+				:style="'background-image: url(' + markerIconUrl + '); width: 40px; height: 40px; border-radius: 50%; background-size: cover;'" />
+		</template>
+		<MglPopup :close-button="false" anchor="bottom" :showed="true">
+				<h3 id="place-popup-title">
+					{{ t('maps', 'New contact address') }}
+				</h3>
+				<span v-if="addressLoading"
+					class="icon icon-loading-small" />
+				<textarea v-else
+					id="placeContactPopupAddress"
+					v-model="formattedAddress"
+					@input="addressEdited = true" />
+				<br>
+				<div class="contact-select">
+					<label for="userMultiselect">
+						<span class="icon icon-user" />
+					</label>
+					<NcSelect
+						id="userMultiselect"
+						ref="userMultiselect"
+						v-model="selectedContact"
+						class="contact-input"
+						track-by="URI"
+						label="FN"
+						:placeholder="t('maps', 'Choose a contact')"
+						:options="contactData"
+						:internal-search="true"
+						@search="asyncSearchContacts">
+						<template #option="option">
+							<NcAvatar
+								class="contact-avatar"
+								:is-no-user="true"
+								:url="option.AVATAR_URL"
+								:user="option.FN" />
+							{{ option.FN }}
+						</template>
+					</NcSelect>
+				</div>
+				<div class="address-type"
+					:name="t('maps', 'Address type')">
+					<label for="addressTypeSelect">
+						<span class="icon icon-address" />
+					</label>
+					<select id="addressTypeSelect"
+						v-model="addressType"
+						:disabled="!selectedContact">
+						<option value="home">
+							&#127968; {{ t('maps', 'Home') }}
+						</option>
+						<option value="work">
+							&#127970; {{ t('maps', 'Work') }}
+						</option>
+					</select>
+				</div>
+				<button class="submit-place-contact"
+					:disabled="!selectedContact"
+					:class="{ loading: searchingEditedAddress }"
+					@click="onValidate">
+					<span class="icon-add" />
+					{{ t('maps', 'Add address to contact') }}
+				</button>
+			</MglPopup>
+	</MglMarker>
 </template>
 
-<script>
+<script setup>
+import { ref, computed, watch } from 'vue'
+import { t } from '@nextcloud/l10n'
 import { generateUrl } from '@nextcloud/router'
 import { getCurrentUser } from '@nextcloud/auth'
-
-import { LMarker, LPopup, LIcon } from 'vue2-leaflet'
-import NcSelect from '@nextcloud/vue/dist/Components/NcSelect.js'
-import NcAvatar from '@nextcloud/vue/dist/Components/NcAvatar.js'
-
+import { MglMarker, MglPopup } from '@indoorequal/vue-maplibre-gl'
+import NcSelect from '@nextcloud/vue/components/NcSelect'
+import NcAvatar from '@nextcloud/vue/components/NcAvatar'
 import { formatAddress } from '../../utils.js'
 import { searchContacts, geocode, searchAddress } from '../../network.js'
 
-export default {
-	name: 'PlaceContactPopup',
-	components: {
-		LMarker,
-		LPopup,
-		LIcon,
-		NcSelect,
-		NcAvatar,
+const props = defineProps({
+	latLng: {
+		type: Object,
+		required: true,
 	},
+})
 
-	props: {
-		latLng: {
-			type: Object,
-			required: true,
-		},
-	},
+const emit = defineEmits(['contact-placed'])
 
-	data() {
-		return {
-			popupOptions: {
-				closeButton: false,
-			},
-			contactData: [],
-			addressLoading: false,
-			addressEdited: false,
-			searchingEditedAddress: false,
-			addressType: 'home',
-			address: null,
-			formattedAddress: '',
-			selectedContact: null,
-		}
-	},
+const contactData = ref([])
+const addressLoading = ref(false)
+const addressEdited = ref(false)
+const searchingEditedAddress = ref(false)
+const addressType = ref('home')
+const address = ref(null)
+const formattedAddress = ref('')
+const selectedContact = ref(null)
 
-	computed: {
-		markerIconUrl() {
-			return this.selectedContact
-				? this.getContactAvatar(this.selectedContact)
-					? this.getContactAvatar(this.selectedContact)
-					: generateUrl('/apps/maps/contacts-avatar?name=' + encodeURIComponent(this.selectedContact.FN))
-				: generateUrl('/svg/core/actions/user?color=000000')
-		},
-	},
+const markerIconUrl = computed(() => {
+	if (selectedContact.value) {
+		const avatar = getContactAvatar(selectedContact.value)
+		return avatar
+			? avatar
+			: generateUrl('/apps/maps/contacts-avatar?name=' + encodeURIComponent(selectedContact.value.FN))
+	}
+	return generateUrl('/svg/core/actions/user?color=000000')
+})
 
-	watch: {
-		latLng() {
-			this.address = null
-			this.formattedAddress = ''
-			this.addressEdited = false
-			this.getAddress()
-		},
-	},
+function getContactAvatar(contact) {
+	if (contact.HAS_PHOTO && contact.HAS_PHOTO2) {
+		return generateUrl(
+			'/remote.php/dav/addressbooks/users/' + getCurrentUser().uid
+			+ '/' + encodeURIComponent(contact.BOOKURI)
+			+ '/' + encodeURIComponent(contact.URI) + '?photo').replace(/index\.php\//, '')
+	}
+	return undefined
+}
 
-	beforeMount() {
-		this.getAddress()
-	},
+function getAddress() {
+	addressLoading.value = true
+	geocode(props.latLng.lat, props.latLng.lng).then((response) => {
+		address.value = response.data.address
+		formattedAddress.value = formatAddress(address.value)
+	}).catch((error) => {
+		console.error(error)
+	}).then(() => {
+		addressLoading.value = false
+	})
+}
 
-	methods: {
-		asyncSearchContacts(query) {
-			if (query === '') {
-				this.contactData = []
-				return
-			}
-			searchContacts(query).then((response) => {
-				this.contactData = response.data.filter((c) => { return !c.READONLY }).map((c) => {
-					return {
-						...c,
-						AVATAR_URL: this.getContactAvatar(c),
-					}
-				})
-			}).catch((error) => {
-				console.error(error)
+watch(() => props.latLng, () => {
+	address.value = null
+	formattedAddress.value = ''
+	addressEdited.value = false
+	getAddress()
+})
+
+getAddress()
+
+function asyncSearchContacts(query) {
+	if (query === '') {
+		contactData.value = []
+		return
+	}
+	searchContacts(query).then((response) => {
+		contactData.value = response.data.filter((c) => !c.READONLY).map((c) => ({
+			...c,
+			AVATAR_URL: getContactAvatar(c),
+		}))
+	}).catch((error) => {
+		console.error(error)
+	})
+}
+
+function onValidate() {
+	if (!addressEdited.value) {
+		emit('contact-placed', {
+			contact: selectedContact.value,
+			latLng: props.latLng,
+			address: address.value,
+			addressType: addressType.value,
+		})
+	} else {
+		searchingEditedAddress.value = true
+		searchAddress(formattedAddress.value, 1).then((response) => {
+			const res = response.data
+			const addressFound = (res.length > 0 && res[0].address && res[0].lat && res[0].lon)
+			const addr = addressFound ? res[0].address : address.value
+			const lat = addressFound ? res[0].lat : props.latLng.lat
+			const lng = addressFound ? res[0].lon : props.latLng.lng
+			emit('contact-placed', {
+				contact: selectedContact.value,
+				latLng: { lat, lng },
+				address: addr,
+				addressType: addressType.value,
 			})
-		},
-		onMarkerReady(m) {
-			m.openPopup()
-		},
-		onPopupReady(p) {
-			// i don't know why but it is placed too high when it's created
-			p.setLatLng(this.latLng)
-		},
-		getContactAvatar(contact) {
-			if (contact.HAS_PHOTO && contact.HAS_PHOTO2) {
-				return generateUrl(
-					'/remote.php/dav/addressbooks/users/' + getCurrentUser().uid
-					+ '/' + encodeURIComponent(contact.BOOKURI)
-					+ '/' + encodeURIComponent(contact.URI) + '?photo').replace(/index\.php\//, '')
-			}
-			return undefined
-		},
-		getAddress() {
-			this.addressLoading = true
-			geocode(this.latLng.lat, this.latLng.lng).then((response) => {
-				this.address = response.data.address
-				this.formattedAddress = formatAddress(this.address)
-			}).catch((error) => {
-				console.error(error)
-			}).then(() => {
-				this.addressLoading = false
-			})
-		},
-		onValidate() {
-			if (!this.addressEdited) {
-				this.$emit('contact-placed', {
-					contact: this.selectedContact,
-					latLng: this.latLng,
-					address: this.address,
-					addressType: this.addressType,
-				})
-			} else {
-				this.searchingEditedAddress = true
-				searchAddress(this.formattedAddress, 1).then((response) => {
-					const res = response.data
-					const addressFound = (res.length > 0 && res[0].address && res[0].lat && res[0].lon)
-					const address = addressFound ? res[0].address : this.address
-					const lat = addressFound ? res[0].lat : this.latLng.lat
-					const lng = addressFound ? res[0].lon : this.latLng.lng
-
-					this.$emit('contact-placed', {
-						contact: this.selectedContact,
-						latLng: { lat, lng },
-						address,
-						addressType: this.addressType,
-					})
-				}).catch((error) => {
-					console.error(error)
-				}).then(() => {
-					this.searchingEditedAddress = true
-				})
-			}
-		},
-	},
+		}).catch((error) => {
+			console.error(error)
+		}).then(() => {
+			searchingEditedAddress.value = false
+		})
+	}
 }
 </script>
 

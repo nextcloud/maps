@@ -38,193 +38,156 @@
 	</NcSelect>
 </template>
 
-<script>
-import NcSelect from '@nextcloud/vue/dist/Components/NcSelect.js'
-
-import L from 'leaflet'
-
+<script setup>
+import { ref, computed, onMounted } from 'vue'
+import { t } from '@nextcloud/l10n'
+import NcSelect from '@nextcloud/vue/components/NcSelect'
 import * as network from '../../network.js'
 import { accented } from '../../utils.js'
 
-export default {
-	name: 'SearchField',
-
-	components: {
-		NcSelect,
+const props = defineProps({
+	data: {
+		type: Array,
+		required: true,
 	},
-
-	props: {
-		data: {
-			type: Array,
-			required: true,
-		},
-		placeholder: {
-			type: String,
-			default: t('maps', 'Search'),
-		},
-		selectedOption: {
-			type: Object,
-			default: null,
-		},
-		loading: {
-			type: Boolean,
-			default: false,
-		},
+	placeholder: {
+		type: String,
+		default: () => t('maps', 'Search'),
 	},
+	selectedOption: {
+		type: Object,
+		default: null,
+	},
+	loading: {
+		type: Boolean,
+		default: false,
+	},
+})
 
-	data() {
-		return {
-			mySelectedOption: this.selectedOption,
-			searching: false,
-			query: '',
-			currentOsmResults: null,
-			currentSearchQueryOption: null,
-			currentCoordinateOption: null,
+const emit = defineEmits(['validate'])
+
+const select = ref(null)
+const mySelectedOption = ref(props.selectedOption)
+const searching = ref(false)
+const query = ref('')
+const currentOsmResults = ref(null)
+const currentSearchQueryOption = ref(null)
+const currentCoordinateOption = ref(null)
+
+const allData = computed(() =>
+	currentOsmResults.value ? [...currentOsmResults.value, ...props.data] : props.data,
+)
+
+const options = computed(() => {
+	if (currentCoordinateOption.value && currentSearchQueryOption.value) {
+		return [currentCoordinateOption.value, currentSearchQueryOption.value, ...allData.value]
+	}
+	if (currentCoordinateOption.value) {
+		return [currentCoordinateOption.value, ...allData.value]
+	}
+	if (currentSearchQueryOption.value) {
+		return [currentSearchQueryOption.value, ...allData.value]
+	}
+	return allData.value
+})
+
+const formattedOptions = computed(() =>
+	options.value.map((o) => ({ ...o, multiselectKey: o.id + o.type })),
+)
+
+const filteredOptions = computed(() => {
+	const queryParts = query.value.split(/\s+/).map((part) => {
+		return part.replace(/\S/g, (char) => accented[char.toUpperCase()] || char)
+	})
+	const regex = new RegExp(queryParts.join('|'), 'i')
+	return formattedOptions.value.filter((option) => regex.test(option.label || option.value))
+})
+
+onMounted(() => {
+	const input = select.value.$el.querySelector('input')
+	input.addEventListener('focus', () => {
+		if (mySelectedOption.value) {
+			input.value = mySelectedOption.value.value || mySelectedOption.value.label
 		}
-	},
+	})
+})
 
-	computed: {
-		// apply custom filter based on query (because internal search is too restrictive)
-		filteredOptions() {
-			const queryParts = this.query.split(/\s+/).map((part) => {
-				return part.replace(/\S/g, (char) => { return accented[char.toUpperCase()] || char })
-			})
-			const regex = new RegExp(queryParts.join('|'), 'i')
-			return this.formattedOptions.filter((option) => {
-				return regex.test(option.label || option.value)
-			})
-		},
-		formattedOptions() {
-			return this.options.map((o) => {
-				return {
-					...o,
-					multiselectKey: o.id + o.type,
-				}
-			})
-		},
-		options() {
-			if (this.currentCoordinateOption && this.currentSearchQueryOption) {
-				return [this.currentCoordinateOption, this.currentSearchQueryOption, ...this.allData]
-			}
-			if (this.currentCoordinateOption) {
-				return [this.currentCoordinateOption, ...this.allData]
-			}
-			if (this.currentSearchQueryOption) {
-				return [this.currentSearchQueryOption, ...this.allData]
-			}
-			return this.allData
-		},
-		allData() {
-			return this.currentOsmResults
-				? [...this.currentOsmResults, ...this.data]
-				: this.data
-		},
-	},
-
-	watch: {
-	},
-
-	mounted() {
-		const input = this.$refs.select.$el.querySelector('input')
-		input.addEventListener('focus', e => {
-			if (this.mySelectedOption) {
-				input.value = this.mySelectedOption.value || this.mySelectedOption.label
-			}
-		})
-	},
-
-	methods: {
-		focus() {
-			const input = this.$refs.select.$el.querySelector('input')
-			input.focus()
-			// this does not work...
-			/*
-			if (this.mySelectedOption) {
-				input.value = this.mySelectedOption.value || this.mySelectedOption.label
-			}
-			*/
-		},
-		onOptionSelected(option, id) {
-			if (option?.type === 'query') {
-				this.searchOsm(option.value)
-			} else {
-				if (option) {
-					this.$emit('validate', option)
-					this.mySelectedOption = option
-				}
-			}
-		},
-		onUpdateValue(e) {
-		},
-		onChange(e) {
-		},
-		onSearchChange(query) {
-			this.query = query
-			this.updateCoordinateOption(query)
-			this.updateSearchOption(query)
-		},
-		updateCoordinateOption(searchQuery) {
-			const coordinateRegExp = /(geo:)?("?lat"?:)?"?(?<lat>-?\d{1,2}.\d+)"?,"?("?lon"?:)?"?(?<lng>-?\d{1,3}.\d+)"?(;.*)?/gmi
-			const regResult = coordinateRegExp.exec(searchQuery.replace(/\s*/g, ''))
-			if (regResult) {
-				const lat = parseFloat(regResult.groups.lat)
-				const lng = parseFloat(regResult.groups.lng)
-				this.currentCoordinateOption = {
-					type: 'coordinate',
-					latLng: L.latLng([
-						lat,
-						lng,
-					]),
-					lat,
-					lng,
-					id: 'coordinateSearch_' + searchQuery,
-					value: searchQuery,
-					label: t('maps', 'Point at {coords}', { coords: searchQuery }),
-				}
-			} else {
-				this.currentCoordinateOption = null
-			}
-		},
-		updateSearchOption(searchQuery) {
-			// add one
-			if (searchQuery !== null && searchQuery !== '') {
-				this.currentSearchQueryOption = {
-					type: 'query',
-					icon: 'icon-search',
-					id: 'osmSearch_' + searchQuery,
-					value: searchQuery,
-					label: t('maps', 'Search for {q}', { q: searchQuery }),
-				}
-			} else {
-				// remove search option when query is empty
-				this.currentSearchQueryOption = null
-			}
-		},
-		searchOsm(query) {
-			this.mySelectedOption = this.currentSearchQueryOption
-			this.currentSearchQueryOption = null
-			this.searching = true
-			network.searchAddress(query, 5).then((response) => {
-				this.currentOsmResults = response.data.map((r) => {
-					return {
-						type: 'result',
-						id: r.osm_id,
-						icon: 'icon-link',
-						value: r.display_name,
-						label: r.display_name,
-						latLng: L.latLng(r.lat, r.lon),
-						rawResult: r,
-					}
-				})
-				this.$refs.select.$el.querySelector('input').focus()
-			}).catch((error) => {
-				console.error(error)
-			}).then(() => {
-				this.searching = false
-			})
-		},
-	},
+function focus() {
+	select.value.$el.querySelector('input').focus()
 }
+
+function onOptionSelected(option) {
+	if (option?.type === 'query') {
+		searchOsm(option.value)
+	} else if (option) {
+		emit('validate', option)
+		mySelectedOption.value = option
+	}
+}
+
+function onSearchChange(q) {
+	query.value = q
+	updateCoordinateOption(q)
+	updateSearchOption(q)
+}
+
+function updateCoordinateOption(searchQuery) {
+	const coordinateRegExp = /(geo:)?("?lat"?:)?"?(?<lat>-?\d{1,2}.\d+)"?,"?("?lon"?:)?"?(?<lng>-?\d{1,3}.\d+)"?(;.*)?/gmi
+	const regResult = coordinateRegExp.exec(searchQuery.replace(/\s*/g, ''))
+	if (regResult) {
+		const lat = parseFloat(regResult.groups.lat)
+		const lng = parseFloat(regResult.groups.lng)
+		currentCoordinateOption.value = {
+			type: 'coordinate',
+			latLng: { lat, lng },
+			lat,
+			lng,
+			id: 'coordinateSearch_' + searchQuery,
+			value: searchQuery,
+			label: t('maps', 'Point at {coords}', { coords: searchQuery }),
+		}
+	} else {
+		currentCoordinateOption.value = null
+	}
+}
+
+function updateSearchOption(searchQuery) {
+	if (searchQuery !== null && searchQuery !== '') {
+		currentSearchQueryOption.value = {
+			type: 'query',
+			icon: 'icon-search',
+			id: 'osmSearch_' + searchQuery,
+			value: searchQuery,
+			label: t('maps', 'Search for {q}', { q: searchQuery }),
+		}
+	} else {
+		currentSearchQueryOption.value = null
+	}
+}
+
+function searchOsm(q) {
+	mySelectedOption.value = currentSearchQueryOption.value
+	currentSearchQueryOption.value = null
+	searching.value = true
+	network.searchAddress(q, 5).then((response) => {
+		currentOsmResults.value = response.data.map((r) => ({
+			type: 'result',
+			id: r.osm_id,
+			icon: 'icon-link',
+			value: r.display_name,
+			label: r.display_name,
+			latLng: { lat: parseFloat(r.lat), lng: parseFloat(r.lon) },
+			rawResult: r,
+		}))
+		select.value.$el.querySelector('input').focus()
+	}).catch((error) => {
+		console.error(error)
+	}).then(() => {
+		searching.value = false
+	})
+}
+
+defineExpose({ focus })
 </script>
 
 <style lang="scss" scoped>

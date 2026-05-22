@@ -8,7 +8,7 @@
 		:edit-label="t('maps', 'Rename')"
 		@click="$emit('click', myMap)"
 		@update:name="onRename">
-		<template slot="icon">
+		<template #icon>
 			<div class="icon icon-location" />
 			<input v-show="false"
 				ref="col"
@@ -18,10 +18,10 @@
 				@change="updateMyMapColor"
 				@click.stop="">
 		</template>
-		<template slot="counter">
+		<template #counter>
 			&nbsp;
 		</template>
-		<template slot="actions">
+		<template #actions>
 			<NcActionLink v-if="myMap.id"
 				target="_blank"
 				:href="folderUrl"
@@ -55,61 +55,51 @@
 	</NcAppNavigationItem>
 </template>
 
-<script>
-import NcAppNavigationItem from '@nextcloud/vue/dist/Components/NcAppNavigationItem.js'
-import NcActionButton from '@nextcloud/vue/dist/Components/NcActionButton.js'
-import NcActionLink from '@nextcloud/vue/dist/Components/NcActionLink.js'
+<script setup>
+import NcAppNavigationItem from '@nextcloud/vue/components/NcAppNavigationItem'
+import NcActionButton from '@nextcloud/vue/components/NcActionButton'
+import NcActionLink from '@nextcloud/vue/components/NcActionLink'
 import Folder from 'vue-material-design-icons/Folder.vue'
 import { generateUrl } from '@nextcloud/router'
+import { t } from '@nextcloud/l10n'
+import { ref, computed } from 'vue'
 
-export default {
-	name: 'AppNavigationMyMapItem',
-
-	components: {
-		NcAppNavigationItem,
-		NcActionButton,
-		NcActionLink,
-		Folder,
+const props = defineProps({
+	myMap: {
+		type: Object,
+		required: true,
 	},
-
-	props: {
-		myMap: {
-			type: Object,
-			required: true,
-		},
-		parentEnabled: {
-			type: Boolean,
-			default: true,
-		},
+	parentEnabled: {
+		type: Boolean,
+		default: true,
 	},
+})
 
-	data() {
-		return {
-		}
-	},
+const emit = defineEmits(['click', 'rename', 'delete', 'share', 'color'])
 
-	computed: {
-		isShareable() {
-			return this.parentEnabled && (this.myMap.isShareable ?? true)
-		},
-	    isDeletable() {
-	        return this.parentEnabled && (this.myMap.isDeletable ?? true)
-		},
-		folderUrl() {
-			return generateUrl('apps/files?fileid=') + this.myMap.id
-		},
-	},
+const col = ref(null)
 
-	methods: {
-		onChangeColorClick() {
-		},
-		updateMyMapColor(e) {
-			this.$emit('color', { myMap: this.myMap, color: e.target.value })
-		},
-		onRename(newName) {
-			this.$emit('rename', { id: this.myMap.id, newName })
-		},
-	},
+const isShareable = computed(() => {
+	return props.parentEnabled && (props.myMap.isShareable ?? true)
+})
+
+const isDeletable = computed(() => {
+	return props.parentEnabled && (props.myMap.isDeletable ?? true)
+})
+
+const folderUrl = computed(() => {
+	return generateUrl('apps/files?fileid=') + props.myMap.id
+})
+
+function onChangeColorClick() {
+}
+
+function updateMyMapColor(e) {
+	emit('color', { myMap: props.myMap, color: e.target.value })
+}
+
+function onRename(newName) {
+	emit('rename', { id: props.myMap.id, newName })
 }
 </script>
 

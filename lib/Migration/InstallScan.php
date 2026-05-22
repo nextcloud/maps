@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /**
  * @copyright Copyright (c) 2019 Julien Veyssier <eneiluj@posteo.net>
  *
@@ -21,17 +23,18 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-
 namespace OCA\Maps\Migration;
 
 use OCA\Maps\BackgroundJob\LaunchUsersInstallScanJob;
 use OCP\BackgroundJob\IJobList;
 use OCP\Encryption\IManager;
+use OCP\IAppConfig;
 use OCP\IConfig;
 use OCP\IUser;
 use OCP\IUserManager;
 use OCP\Migration\IOutput;
 use OCP\Migration\IRepairStep;
+use Override;
 
 /**
  * Class InstallScan
@@ -41,33 +44,22 @@ use OCP\Migration\IRepairStep;
 class InstallScan implements IRepairStep {
 
 	public function __construct(
-		private IConfig $config,
-		private IUserManager $userManager,
-		private IJobList $jobList,
-		private IManager $encryptionManager,
+		private readonly IAppConfig $appConfig,
+		private readonly IConfig $config,
+		private readonly IUserManager $userManager,
+		private readonly IJobList $jobList,
+		private readonly IManager $encryptionManager,
 	) {
-		$this->config = $config;
-		$this->jobList = $jobList;
-		$this->encryptionManager = $encryptionManager;
-		$this->userManager = $userManager;
 	}
 
-	/**
-	 * Returns the step's name
-	 *
-	 * @return string
-	 * @since 9.1.0
-	 */
-	public function getName() {
+	#[Override]
+	public function getName(): string {
 		return 'Scan photos and tracks in users storages';
 	}
 
-	/**
-	 * @param IOutput $output
-	 */
-	public function run(IOutput $output) {
+	public function run(IOutput $output): ?int {
 		if (!$this->shouldRun()) {
-			return;
+			return null;
 		}
 
 		if ($this->encryptionManager->isEnabled()) {
@@ -77,15 +69,16 @@ class InstallScan implements IRepairStep {
 
 		// set the install scan flag for existing users
 		// future users won't have any value and won't be bothered by "media scan" warning
-		$this->userManager->callForSeenUsers(function (IUser $user) {
+		$this->userManager->callForSeenUsers(function (IUser $user): void {
 			$this->config->setUserValue($user->getUID(), 'maps', 'installScanDone', 'no');
 		});
 		// create the job which will create a job by user
 		$this->jobList->add(LaunchUsersInstallScanJob::class, []);
+		return null;
 	}
 
-	protected function shouldRun() {
-		$appVersion = $this->config->getAppValue('maps', 'installed_version', '0.0.0');
+	protected function shouldRun(): bool {
+		$appVersion = $this->appConfig->getValueString('maps', 'installed_version', '0.0.0');
 		return version_compare($appVersion, '0.0.10', '<');
 	}
 

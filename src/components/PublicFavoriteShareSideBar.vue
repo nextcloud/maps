@@ -41,63 +41,35 @@
 	</NcAppNavigation>
 </template>
 
-<script>
-import NcAppNavigation from '@nextcloud/vue/dist/Components/NcAppNavigation.js'
-import NcAppNavigationItem from '@nextcloud/vue/dist/Components/NcAppNavigationItem.js'
-import NcAppNavigationNew from '@nextcloud/vue/dist/Components/NcAppNavigationNew.js'
-import NcAppNavigationSpacer from '@nextcloud/vue/dist/Components/NcAppNavigationSpacer.js'
-import { mapMutations, mapState, mapActions } from 'vuex'
-import { PUBLIC_FAVORITES_NAMESPACE } from '../store/modules/publicFavorites.js'
+<script setup>
+import { computed } from 'vue'
+import { t } from '@nextcloud/l10n'
+import NcAppNavigation from '@nextcloud/vue/components/NcAppNavigation'
+import NcAppNavigationItem from '@nextcloud/vue/components/NcAppNavigationItem'
+import NcAppNavigationNew from '@nextcloud/vue/components/NcAppNavigationNew'
+import NcAppNavigationSpacer from '@nextcloud/vue/components/NcAppNavigationSpacer'
+import { usePublicFavoritesStore } from '../store/publicFavoritesStore.pinia.js'
+import { useMapStore } from '../store/mapStore.pinia.js'
 import MapMode from '../data/enum/MapMode.js'
-import { MAP_NAMESPACE } from '../store/modules/map.js'
 
-export default {
-	name: 'PublicFavoriteShareSideBar',
+const favStore = usePublicFavoritesStore()
+const mapStore = useMapStore()
 
-	components: {
-		NcAppNavigation,
-		NcAppNavigationItem,
-		NcAppNavigationNew,
-		NcAppNavigationSpacer,
-	},
+const favorites = computed(() => favStore.favorites)
+const mapMode = computed(() => mapStore.mode)
+const shareInfo = computed(() => favStore.shareInfo)
 
-	computed: {
-		...mapState({
-			favorites: state => state[PUBLIC_FAVORITES_NAMESPACE].favorites,
-			mapMode: state => state[MAP_NAMESPACE].mode,
-			shareInfo: state => state[PUBLIC_FAVORITES_NAMESPACE].shareInfo,
-		}),
+const allowFavoriteEdits = computed(() => shareInfo.value ? shareInfo.value.allowEdits : false)
+const newFavoriteButtonLabel = computed(() =>
+	t('maps', mapMode.value === MapMode.ADDING_FAVORITES ? 'Cancel adding favorites' : 'Add favorites'),
+)
 
-		allowFavoriteEdits() {
-			return this.shareInfo ? this.shareInfo.allowEdits : false
-		},
+function selectFavorite(id) {
+	favStore.selectFavorite(id)
+}
 
-		newFavoriteButtonLabel() {
-			return t(
-				'maps',
-				this.mapMode === MapMode.ADDING_FAVORITES
-					? 'Cancel adding favorites'
-					: 'Add favorites',
-			)
-		},
-	},
-
-	methods: {
-		...mapActions({
-			selectFavorite: `${PUBLIC_FAVORITES_NAMESPACE}/selectFavorite`,
-		}),
-		...mapMutations({
-			setMapMode: `${MAP_NAMESPACE}/setMode`,
-		}),
-
-		toggleMapMode() {
-			if (this.mapMode === MapMode.ADDING_FAVORITES) {
-				this.setMapMode(MapMode.DEFAULT)
-			} else {
-				this.setMapMode(MapMode.ADDING_FAVORITES)
-			}
-		},
-	},
+function toggleMapMode() {
+	mapStore.setMode(mapMode.value === MapMode.ADDING_FAVORITES ? MapMode.DEFAULT : MapMode.ADDING_FAVORITES)
 }
 </script>
 

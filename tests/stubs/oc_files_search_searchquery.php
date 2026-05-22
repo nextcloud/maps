@@ -1,4 +1,7 @@
 <?php
+
+declare(strict_types=1);
+
 /**
  * SPDX-FileCopyrightText: 2017 Nextcloud GmbH and Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
@@ -11,20 +14,6 @@ use OCP\Files\Search\ISearchQuery;
 use OCP\IUser;
 
 class SearchQuery implements ISearchQuery {
-	/**
-	 * SearchQuery constructor.
-	 *
-	 * @param ISearchOperator $searchOperation
-	 * @param int $limit
-	 * @param int $offset
-	 * @param array $order
-	 * @param ?IUser $user
-	 * @param bool $limitToHome
-	 */
-	public function __construct(ISearchOperator $searchOperation, int $limit, int $offset, array $order, ?IUser $user = null, bool $limitToHome = false)
- {
- }
-
 	/**
 	 * @return ISearchOperator
 	 */

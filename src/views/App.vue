@@ -173,7 +173,7 @@
 		</NcAppContent>
 		<Sidebar
 			v-if="true"
-			ref="Sidebar"
+			ref="sidebarRef"
 			:show="showSidebar"
 			:favorite="selectedFavorite"
 			:favorite-categories="favoriteCategories"
@@ -204,10 +204,10 @@
 </template>
 
 <script>
-import NcContent from '@nextcloud/vue/dist/Components/NcContent.js'
-import NcAppContent from '@nextcloud/vue/dist/Components/NcAppContent.js'
-import NcActions from '@nextcloud/vue/dist/Components/NcActions.js'
-import NcActionButton from '@nextcloud/vue/dist/Components/NcActionButton.js'
+import NcContent from '@nextcloud/vue/components/NcContent'
+import NcAppContent from '@nextcloud/vue/components/NcAppContent'
+import NcActions from '@nextcloud/vue/components/NcActions'
+import NcActionButton from '@nextcloud/vue/components/NcActionButton'
 import { showError, showInfo, showSuccess } from '@nextcloud/dialogs'
 
 import moment from '@nextcloud/moment'
@@ -228,12 +228,13 @@ import { getLetterColor, hslToRgb, Timer, getDeviceInfoFromUserAgent2, isCompute
 import { binSearch, getToken, isPublic } from '../utils/common.js'
 import { poiSearchData } from '../utils/poiData.js'
 import { processGpx } from '../tracksUtils.js'
-import L from 'leaflet'
 import { geoToLatLng, getFormattedADR } from '../utils/mapUtils.js'
 import * as network from '../network.js'
 import { all as axiosAll, spread as axiosSpread } from 'axios'
 import { generateUrl } from '@nextcloud/router'
+import { getClient, getRootPath } from '@nextcloud/files/dav'
 import { placeFileOrFolder } from '../utils/photoPicker.ts'
+import { sidebarState, setActiveSidebarTab } from '../sidebarState.js'
 
 export default {
 	name: 'App',
@@ -517,7 +518,7 @@ export default {
 					return d.points
 				}).map((d) => {
 					const lastPoint = d.points[d.points.length - 1]
-					const ll = L.latLng([lastPoint.lat, lastPoint.lng])
+					const ll = { lat: lastPoint.lat, lng: lastPoint.lng }
 					return {
 						type: 'device',
 						icon: isComputer(d.user_agent) ? 'icon-desktop' : 'icon-phone',
@@ -546,7 +547,7 @@ export default {
 				? this.tracks.filter((t) => {
 					return t.metadata
 				}).map((t) => {
-					const ll = L.latLng([t.metadata.lat, t.metadata.lng])
+					const ll = { lat: t.metadata.lat, lng: t.metadata.lng }
 					return {
 						type: 'track',
 						icon: 'icon-road',
@@ -565,7 +566,7 @@ export default {
 						icon: 'icon-contacts-dark',
 						id: c.UID + c.GEO,
 						label: c.FN + ' - ' + getFormattedADR(c.ADR),
-						latLng: L.latLng(geoToLatLng(c.GEO)),
+						latLng: (() => { const ll = geoToLatLng(c.GEO); return { lat: parseFloat(ll[0]), lng: parseFloat(ll[1]) } })(),
 					}
 				})
 				: []
@@ -582,7 +583,7 @@ export default {
 						icon: 'icon-favorite',
 						id: favid,
 						label: f.name,
-						latLng: L.latLng(f.lat, f.lng),
+						latLng: { lat: f.lat, lng: f.lng },
 					}
 				})
 				: []
@@ -630,10 +631,6 @@ export default {
 		if (optionsController.optionValues.trackMe === 'true') {
 			this.sendPositionLoop()
 		}
-		// Register sidebar to be callable from viewer, possibly nicer in main.js but I failed to but it there
-		window.OCA.Files.Sidebar.open = this.openSidebar
-		window.OCA.Files.Sidebar.close = this.closeSidebar
-		window.OCA.Files.Sidebar.setFullScreenMode = this.sidebarSetFullScreenMode
 
 		document.onkeyup = (e) => {
 			if (e.ctrlKey) {
@@ -652,13 +649,13 @@ export default {
 		// subscribe('nextcloud:unified-search.reset', this.cleanSearch)
 		setTimeout(() => { emit('files:sidebar:closed') }, 1000)
 	},
-	beforeDestroy() {
+	beforeUnmount() {
 		// unsubscribe('nextcloud:unified-search.search', this.filter)
 		// unsubscribe('nextcloud:unified-search.reset', this.cleanSearch)
 	},
 	methods: {
 		onActiveSidebarTabChanged(newActive) {
-			window.OCA.Files.Sidebar.setActiveTab(newActive)
+			setActiveSidebarTab(newActive)
 		},
 		onMainDetailClicked() {
 			this.showSidebar ? this.closeSidebar() : this.openSidebar()
@@ -669,41 +666,21 @@ export default {
 			// Make shure that the active photo suggestions tab stays there if photo suggestions are loaded
 			if (this.showPhotoSuggestions) {
 				this.openSidebar()
-				window.OCA.Files.Sidebar.setActiveTab('photo-suggestion')
+				setActiveSidebarTab('photo-suggestion')
 			}
 		},
 		closeSidebar() {
 			this.$refs.Sidebar.close()
 			emit('files:sidebar:closed')
-			window.OCA.Files.Sidebar.setActiveTab('')
+			setActiveSidebarTab('')
 			this.showSidebar = false
 		},
 		openSidebar(path = null, type = null, title = null) {
 			this.showSidebar = true
 			this.$refs.Sidebar.open(path, type, title)
 			if (!path && this.showPhotoSuggestions) {
-				window.OCA.Files.Sidebar.setActiveTab('photo-suggestion')
+				setActiveSidebarTab('photo-suggestion')
 			}
-			/*
-			const myMap = path ? this.myMaps.find((m) => m.path === path) : false
-			if (myMap) {
-				window.OCA.Files.state.activeTab = 'myMaps'
-				this.selectedMyMap = myMap
-				this.sidebarFileInfo = myMap.fileInfo
-				window.OCA.Files.Sidebar.state.file = path
-			} else {
-				const photo = this.photos.find((p) => p.path === path)
-				if (photo) {
-					window.OCA.Files.state.activeTab = 'photo'
-					this.selectedPhoto = photo
-					this.sidebarFileInfo = photo
-					window.OCA.Files.Sidebar.state.file = path
-				} else {
-					window.OCA.Files.Sidebar.state.file = true
-				}
-			}
-			emit('files:sidebar:opening')
-			 */
 		},
 		/**
 		 * Allow to set the Sidebar as fullscreen from OCA.Files.Sidebar
@@ -732,7 +709,7 @@ export default {
 				this.selectedTrack = null
 			}
 			if (!isPublic()) {
-				window.OCA.Files.Sidebar.state.file = ''
+				sidebarState.file = ''
 			}
 		},
 		onToggleTrackme(enabled) {
@@ -1055,7 +1032,7 @@ export default {
 			if (this.photosEnabled && this.showPhotoSuggestions && this.photoSuggestions.length === 0) {
 				this.getPhotoSuggestions()
 			}
-			window.OCA.Files.Sidebar.setActiveTab('photo-suggestion')
+			setActiveSidebarTab('photo-suggestion')
 			this.showPhotoSuggestions ? this.openSidebar() : this.closeSidebar()
 		},
 		onPhotoSuggestionSelected(index) {
@@ -1096,7 +1073,7 @@ export default {
 								return t.id === parseInt(isplit[1])
 							})
 							if (track) {
-								this.$set(this.photoSuggestionsTracksAndDevices, i, {
+								this.photoSuggestionsTracksAndDevices[i] = {
 									key: i,
 									enabled: true,
 									visible: true,
@@ -1104,14 +1081,14 @@ export default {
 									name: track.file_name,
 									id: track.id,
 									suggestionCount: v.length,
-								})
+								}
 								photoSuggestions.push(...v)
 							} else {
-								this.$set(this.photoSuggestionsTracksAndDevices, i, {
+								this.photoSuggestionsTracksAndDevices[i] = {
 									key: i,
 									enabled: false,
 									visible: false,
-								})
+								}
 							}
 						} else if (isplit[0] === 'device') {
 							const device = this.devices.find((d) => {
@@ -1119,7 +1096,7 @@ export default {
 							})
 							if (device) {
 								photoSuggestions.push(...v)
-								this.$set(this.photoSuggestionsTracksAndDevices, i, {
+								this.photoSuggestionsTracksAndDevices[i] = {
 									key: i,
 									enabled: true,
 									visible: true,
@@ -1127,13 +1104,13 @@ export default {
 									name: device.user_agent,
 									id: device.id,
 									suggestionCount: v.length,
-								})
+								}
 							} else {
-								this.$set(this.photoSuggestionsTracksAndDevices, i, {
+								this.photoSuggestionsTracksAndDevices[i] = {
 									key: i,
 									enabled: false,
 									visible: false,
-								})
+								}
 							}
 						}
 					}
@@ -1191,7 +1168,7 @@ export default {
 				toSave.forEach((i) => {
 					this.photos.push(this.photoSuggestions[i])
 					this.photoSuggestionsTracksAndDevices[this.photoSuggestions[i].trackOrDeviceId].length -= 1
-					this.$set(this.photoSuggestions, i, null)
+					this.photoSuggestions[i] = null
 				})
 				this.photoSuggestionsSelectedIndices = this.photoSuggestionsSelectedIndices.filter((e) => {
 					return !toSave.includes(e)
@@ -1316,7 +1293,7 @@ export default {
 				const maxLat = Math.max(...lats)
 				const minLon = Math.min(...lons)
 				const maxLon = Math.max(...lons)
-				this.$refs.map.fitBounds(L.latLngBounds([minLat, minLon], [maxLat, maxLon]), { padding: [30, 30] })
+				this.$refs.map.fitBounds([[minLon, minLat], [maxLon, maxLat]])
 			}
 		},
 		getContacts() {
@@ -1349,11 +1326,11 @@ export default {
 		buildContactGroups() {
 			this.contactGroups = {}
 			const notGroupedId = '0'
-			this.$set(this.contactGroups, notGroupedId, {
+			this.contactGroups[notGroupedId] = {
 				name: t('maps', 'Not grouped'),
 				counter: 0,
 				enabled: !this.disabledContactGroups.includes(notGroupedId),
-			})
+			}
 			this.contacts.forEach((c) => {
 				c.groupList = []
 				if (c.GROUPS) {
@@ -1365,11 +1342,11 @@ export default {
 								if (this.contactGroups[g]) {
 									this.contactGroups[g].counter++
 								} else {
-									this.$set(this.contactGroups, g, {
+									this.contactGroups[g] = {
 										name: g,
 										counter: 1,
 										enabled: !this.disabledContactGroups.includes(g),
-									})
+									}
 								}
 							})
 						} else {
@@ -1467,13 +1444,13 @@ export default {
 			this.favoritesLoading = true
 			this.favorites = {}
 			this.favoriteCategoryTokens = {}
-			network.getFavorites(this.myMapId, getToken()).then((response) => {
-				response.data.forEach((f) => {
+			network.getFavorites(this.myMapId, getToken()).then(response => {
+				response.data.forEach(f => {
 					if (!f.category) {
 						f.category = t('maps', 'Personal')
 					}
 					f.selected = false
-					this.$set(this.favorites, f.id, f)
+					this.favorites[f.id] = f
 				})
 			}).catch((error) => {
 				console.error(error)
@@ -1489,7 +1466,7 @@ export default {
 							response.data.favorites.forEach((f) => {
 								f.id = s.token + f.id
 								f.selected = false
-								this.$set(this.favorites, f.id, f)
+								this.favorites[f.id] = f
 							})
 						}).catch((error) => {
 							console.error(error)
@@ -1535,13 +1512,13 @@ export default {
 		onFavoriteCategoryShareChange(catid, checked) {
 			if (checked) {
 				network.shareFavoriteCategory(catid, this.myMapId).then((response) => {
-					this.$set(this.favoriteCategoryTokens, catid, response.data.token)
+					this.favoriteCategoryTokens[catid] = response.data.token
 				}).catch((error) => {
 					console.error(error)
 				})
 			} else {
 				network.unshareFavoriteCategory(catid, this.myMapId).then((response) => {
-					this.$delete(this.favoriteCategoryTokens, catid)
+					delete this.favoriteCategoryTokens[catid]
 				}).catch((error) => {
 					console.error(error)
 				})
@@ -1568,7 +1545,7 @@ export default {
 				const maxLat = Math.max(...lats)
 				const minLon = Math.min(...lons)
 				const maxLon = Math.max(...lons)
-				this.$refs.map.fitBounds(L.latLngBounds([minLat, minLon], [maxLat, maxLon]), { padding: [30, 30] })
+				this.$refs.map.fitBounds([[minLon, minLat], [maxLon, maxLat]])
 			}
 		},
 		onFavoriteClick(f) {
@@ -1576,7 +1553,7 @@ export default {
 			// select
 			this.favorites[f.id].selected = true
 			this.openSidebar(null, 'favorite', f.name)
-			window.OCA.Files.Sidebar.setActiveTab('favorite')
+			setActiveSidebarTab('favorite')
 			this.selectedFavorite = f
 		},
 		onFavoriteEdit(f, save = true) {
@@ -1610,7 +1587,7 @@ export default {
 				this.selectedFavorite = null
 				this.closeSidebar()
 				showError(t('maps', 'Favorite was deleted'))
-				this.$delete(this.favorites, favid)
+				delete this.favorites[favid]
 			}).catch((error) => {
 				console.error(error)
 			})
@@ -1627,7 +1604,7 @@ export default {
 					})
 				}
 				favids.forEach((favid) => {
-					this.$delete(this.favorites, favid)
+					delete this.favorites[favid]
 				})
 			}).catch((error) => {
 				console.error(error)
@@ -1719,7 +1696,7 @@ export default {
 					return this.favorites[favid].category === catid
 				})
 				favIds.forEach((favid) => {
-					this.$delete(this.favorites, favid)
+					delete this.favorites[favid]
 				})
 				showSuccess(t('maps', 'Favorite category {favoriteName} unlinked from map', { favoriteName: catid ?? '' }))
 			}).catch((error) => {
@@ -1746,10 +1723,10 @@ export default {
 						favorite: { ...fav },
 					})
 				}
-				this.$set(this.favorites, fav.id, fav)
+				this.favorites[fav.id] = fav
 				if (openSidebar) {
 					this.selectedFavorite = this.favorites[fav.id]
-					window.OCA.Files.Sidebar.setActiveTab('favorite')
+					setActiveSidebarTab('favorite')
 					this.openSidebar(null, 'favorite', fav.name)
 				}
 				if (this.sliderEnabled) {
@@ -1799,7 +1776,7 @@ export default {
 		async cancelFavoriteDelete(action) {
 			for (let i = 0; i < action.favorites.length; i++) {
 				const f = action.favorites[i]
-				const newFavId = await this.addFavorite(L.latLng(f.lat, f.lng), f.name, f.category, f.comment, f.extensions, false)
+				const newFavId = await this.addFavorite({ lat: f.lat, lng: f.lng }, f.name, f.category, f.comment, f.extensions, false)
 				this.updateActionFavoriteId(f.id, newFavId)
 			}
 		},
@@ -1808,7 +1785,7 @@ export default {
 		},
 		async redoFavoriteAdd(action) {
 			const f = action.favorite
-			const newFavId = await this.addFavorite(L.latLng(f.lat, f.lng), f.name, f.category, f.comment, f.extensions, false)
+			const newFavId = await this.addFavorite({ lat: f.lat, lng: f.lng }, f.name, f.category, f.comment, f.extensions, false)
 			this.updateActionFavoriteId(action.favorite.id, newFavId)
 		},
 		redoFavoriteEdit(action) {
@@ -1999,7 +1976,7 @@ export default {
 			// select
 			track.selected = true
 			this.openSidebar(track.path, 'track', track.name)
-			window.OCA.Files.Sidebar.setActiveTab('maps-track-metadata')
+			setActiveSidebarTab('maps-track-metadata')
 			this.selectedTrack = track
 		},
 		// devices
@@ -2067,7 +2044,7 @@ export default {
 			device.loading = true
 			network.getDevice(device.id, this.myMapId, 100000, device.points?.length || 0, device.tokens).then((response) => {
 				// There are too many points making it responsiv crashes most browsers
-				// this.$set(device, 'points', response.data /* .sort((p1, p2) => (p1.timestamp || 0) - (p2.timestamp || 0)) */)
+				// device['points'] = response.data /* .sort((p1, p2) => (p1.timestamp || 0) - (p2.timestamp || 0 */)
 				if (device.points) {
 					device.points = response.data.concat(device.points)
 				} else {
@@ -2302,23 +2279,21 @@ export default {
 		},
 		chooseMyMap(callback) {
 			const that = this
-			const firstCallBack = (path) => {
+			const firstCallBack = async (path) => {
 				const p = (path === '' ? '/' : path)
 				const map = that.myMaps.find((m) => { return m.path === p })
 				if (map) {
 					callback(map)
 				} else {
 					showInfo(t('maps', 'Folder is not a map'))
-					const fileClient = OC.Files.getClient()
-					fileClient.getFileInfo(path).then((status, fileInfo) => {
-						const map = {
-							id: fileInfo.id,
-							path: fileInfo.name,
-							name: fileInfo.basename,
-							fileInfo,
-						}
-						callback(map)
-					})
+					const stat = await getClient().stat(getRootPath() + path)
+					const map = {
+						id: stat.props?.['oc:fileid'],
+						path,
+						name: stat.basename,
+						fileInfo: stat,
+					}
+					callback(map)
 				}
 			}
 			OC.dialogs.filepicker(
@@ -2387,7 +2362,7 @@ export default {
 			})
 		},
 		onShareMyMap(myMap) {
-			window.OCA.Files.Sidebar.setActiveTab('sharing')
+			setActiveSidebarTab('sharing')
 			this.openSidebar(myMap.path, 'maps', myMap.name)
 		},
 		loadMap(myMap) {

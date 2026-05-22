@@ -20,32 +20,19 @@
  *
  */
 
-import Vue from 'vue'
+import { createApp } from 'vue'
 import App from './views/App.vue'
 import './bootstrap.js'
 import optionsController from './optionsController.js'
-import '../css/style.scss'
+import './css/style.scss'
+import 'maplibre-gl/dist/maplibre-gl.css'
 
-import Tooltip from '@nextcloud/vue/dist/Directives/Tooltip.js'
-import { emit } from '@nextcloud/event-bus'
+import { TooltipDirective as Tooltip } from 'floating-vue'
 
 import { generateUrl } from '@nextcloud/router'
-
-// Fixing Some leaflet webpack stuff See https://vue2-leaflet.netlify.app/faq/#my-map-and-or-markers-don-t-fully-render-what-gives
-import L from 'leaflet'
-import 'lrm-graphhopper'
 import { isPublic } from './utils/common.js'
-delete L.Icon.Default.prototype._getIconUrl
-
-L.Icon.Default.mergeOptions({
-	iconRetinaUrl: require('leaflet/dist/images/marker-icon-2x.png'),
-	iconUrl: require('leaflet/dist/images/marker-icon.png'),
-	shadowUrl: require('leaflet/dist/images/marker-shadow.png'),
-})
 
 // Vue
-Vue.directive('tooltip', Tooltip)
-
 // eslint-disable-next-line
 'use strict'
 
@@ -66,43 +53,18 @@ window.OCA.Maps.registerMapsAction = ({ label, callback, icon }) => {
 	window.OCA.Maps.mapActions.push(mapAction)
 }
 
-// SIDEBAR
-if (!window.OCA.Files) {
-	window.OCA.Files = {}
-}
-// register unused client for the sidebar to have access to its parser methods
-if (!window.OCA.Files.Sidebar) {
-	Object.assign(window.OCA.Files, {
-		Sidebar: {
-			state: {
-				file: '',
-			},
-			open: (path) => {
-				emit('files:sidebar:opened')
-			},
-			close: () => {
-				emit('files:sidebar:closed')
-			},
-			setFullScreenMode: () => {}, // SIDEBARFULLSCREEN,
-		},
-	}, window.OCA.Files)
-}
-
 if (window.navigator.registerProtocolHandler) {
 	window.navigator.registerProtocolHandler('geo', generateUrl('/apps/maps/openGeoLink/') + '%s', 'Nextcloud Maps')
 }
 
 document.addEventListener('DOMContentLoaded', (event) => {
-	Object.assign(window.OCA.Files, {
-		App: { fileList: { filesClient: OC.Files.getClient() } },
-	}, window.OCA.Files)
 	optionsController.restoreOptions(main)
 })
 
 function main() {
-	// eslint-disable-next-line
-	new Vue({
-		el: '#content',
-		render: h => h(App),
-	})
+	const app = createApp(App)
+	app.directive('tooltip', Tooltip)
+	app.config.globalProperties.t = window.t
+	app.config.globalProperties.n = window.n
+	app.mount('#content')
 }

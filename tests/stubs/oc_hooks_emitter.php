@@ -1,4 +1,7 @@
 <?php
+
+declare(strict_types=1);
+
 /**
  * SPDX-FileCopyrightText: 2016-2024 Nextcloud GmbH and Nextcloud contributors
  * SPDX-FileCopyrightText: 2016 ownCloud, Inc.
@@ -16,13 +19,12 @@ namespace OC\Hooks;
  */
 interface Emitter {
 	/**
-	 * @param string $scope
-	 * @param string $method
-	 * @param callable $callback
-	 * @return void
-	 * @deprecated 18.0.0 use \OCP\EventDispatcher\IEventDispatcher::addListener
-	 */
-	public function listen($scope, $method, callable $callback)
+     * @param string $scope
+     * @param string $method
+     * @return void
+     * @deprecated 18.0.0 use \OCP\EventDispatcher\IEventDispatcher::addListener
+     */
+    public function listen($scope, $method, callable $callback)
  {
  }
 

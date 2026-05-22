@@ -14,83 +14,57 @@
 	</div>
 </template>
 
-<script>
+<script setup>
+import { computed, ref } from 'vue'
 import SearchField from '../SearchField.vue'
 
-export default {
-	name: 'RoutingStep',
-
-	components: {
-		SearchField,
+const props = defineProps({
+	step: {
+		type: Object,
+		required: true,
 	},
-
-	props: {
-		step: {
-			type: Object,
-			required: true,
-		},
-		searchData: {
-			type: Array,
-			required: true,
-		},
-		placeholder: {
-			type: String,
-			required: true,
-		},
-		canDelete: {
-			type: Boolean,
-			default: true,
-		},
+	searchData: {
+		type: Array,
+		required: true,
 	},
-
-	data() {
-		return {
-		}
+	placeholder: {
+		type: String,
+		required: true,
 	},
-
-	computed: {
-		selectedOption() {
-			return this.step && this.step.latLng
-				? {
-					type: 'initial',
-					id: this.step.name,
-					label: this.step.name,
-				}
-				: null
-		},
+	canDelete: {
+		type: Boolean,
+		default: true,
 	},
+})
 
-	watch: {
-	},
+const emit = defineEmits(['selected', 'delete'])
 
-	created() {
-	},
+const field = ref(null)
 
-	methods: {
-		focus() {
-			this.$refs.field.focus()
-		},
-		onValidate(option) {
-			if (option.type === 'mylocation') {
-				navigator.geolocation.getCurrentPosition((position) => {
-					const lat = position.coords.latitude
-					const lng = position.coords.longitude
-					const step = {
-						latLng: { lat, lng },
-						name: option.label,
-					}
-					this.$emit('selected', step)
-				})
-			} else {
-				const step = {
-					latLng: option.latLng,
-					name: option.label,
-				}
-				this.$emit('selected', step)
-			}
-		},
-	},
+const selectedOption = computed(() =>
+	props.step && props.step.latLng
+		? { type: 'initial', id: props.step.name, label: props.step.name }
+		: null,
+)
+
+function focus() {
+	field.value.focus()
 }
+
+function onValidate(option) {
+	if (option.type === 'mylocation') {
+		navigator.geolocation.getCurrentPosition((position) => {
+			emit('selected', {
+				latLng: { lat: position.coords.latitude, lng: position.coords.longitude },
+				name: option.label,
+			})
+		})
+	} else {
+		emit('selected', { latLng: option.latLng, name: option.label })
+	}
+}
+
+defineExpose({ focus })
 </script>
 
 <style lang="scss" scoped>

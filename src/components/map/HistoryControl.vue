@@ -1,7 +1,6 @@
 <template>
-	<LControl class="maps-history-control"
-		:position="position">
-		<div id="history">
+	<div ref="el" style="display:none">
+		<div id="history" class="maps-history-control maplibregl-ctrl maplibregl-ctrl-group">
 			<button
 				v-if="lastActions.length"
 				v-tooltip="{ content: t('maps', 'Undo {action} (Ctrl+Z)', { action: lastActionLabel }) }"
@@ -15,76 +14,55 @@
 				<span class="icon icon-redo" />
 			</button>
 		</div>
-	</LControl>
+	</div>
 </template>
 
-<script>
-import { LControl } from 'vue2-leaflet'
+<script setup>
+import { computed, ref, onMounted } from 'vue'
+import { useControl } from '@indoorequal/vue-maplibre-gl'
+import { t } from '@nextcloud/l10n'
 
-export default {
-	name: 'HistoryControl',
-
-	components: {
-		LControl,
+const props = defineProps({
+	lastActions: {
+		type: Array,
+		required: true,
 	},
+	lastCanceledActions: {
+		type: Array,
+		required: true,
+	},
+	position: {
+		type: String,
+		default: 'top-right',
+	},
+})
 
-	props: {
-		lastActions: {
-			type: Array,
-			required: true,
+defineEmits(['cancel', 'redo'])
+
+const el = ref(null)
+
+onMounted(() => {
+	useControl(() => ({
+		onAdd() {
+			this._container = el.value?.children[0]
+			return this._container
 		},
-		lastCanceledActions: {
-			type: Array,
-			required: true,
-		},
-		position: {
-			type: String,
-			default: 'topright',
-		},
-	},
+		onRemove() {},
+	}), { position: props.position })
+})
 
-	data() {
-		return {
-		}
-	},
-
-	computed: {
-		lastActionLabel() {
-			const action = this.lastActions[this.lastActions.length - 1]
-			return this.getActionLabel(action)
-		},
-		lastCanceledActionLabel() {
-			const action = this.lastCanceledActions[this.lastCanceledActions.length - 1]
-			return this.getActionLabel(action)
-		},
-	},
-
-	watch: {
-	},
-
-	created() {
-	},
-
-	methods: {
-		getActionLabel(action) {
-			if (action.type === 'photoMove') {
-				return t('maps', 'Move photo')
-			} else if (action.type === 'favoriteAdd') {
-				return t('maps', 'Add favorite')
-			} else if (action.type === 'favoriteEdit') {
-				return t('maps', 'Edit favorite')
-			} else if (action.type === 'favoriteDelete') {
-				return t('maps', 'Delete favorite')
-			} else if (action.type === 'favoriteRenameCategory') {
-				return t('maps', 'Rename favorite category')
-			} else if (action.type === 'contactPlace') {
-				return t('maps', 'Place contact')
-			} else if (action.type === 'contactDelete') {
-				return t('maps', 'Delete contact address')
-			}
-		},
-	},
+function getActionLabel(action) {
+	if (action.type === 'photoMove') return t('maps', 'Move photo')
+	if (action.type === 'favoriteAdd') return t('maps', 'Add favorite')
+	if (action.type === 'favoriteEdit') return t('maps', 'Edit favorite')
+	if (action.type === 'favoriteDelete') return t('maps', 'Delete favorite')
+	if (action.type === 'favoriteRenameCategory') return t('maps', 'Rename favorite category')
+	if (action.type === 'contactPlace') return t('maps', 'Place contact')
+	if (action.type === 'contactDelete') return t('maps', 'Delete contact address')
 }
+
+const lastActionLabel = computed(() => getActionLabel(props.lastActions[props.lastActions.length - 1]))
+const lastCanceledActionLabel = computed(() => getActionLabel(props.lastCanceledActions[props.lastCanceledActions.length - 1]))
 </script>
 
 <style lang="scss" scoped>

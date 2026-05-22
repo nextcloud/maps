@@ -20,51 +20,34 @@
  *
  */
 
-import axios from '@nextcloud/axios'
+import { getClient, getRemoteURL, getRootPath, resultToNode } from '@nextcloud/files/dav'
 
 /**
- * @param {any} url -
+ * @param {string} url - Full WebDAV URL of the file
  */
 export default async function(url) {
-	const response = await axios({
-		method: 'PROPFIND',
-		url,
-		data: `<?xml version="1.0"?>
-			<d:propfind  xmlns:d="DAV:"
-				xmlns:oc="http://owncloud.org/ns"
-				xmlns:nc="http://nextcloud.org/ns"
-				xmlns:ocs="http://open-collaboration-services.org/ns">
-			<d:prop>
-				<d:getlastmodified />
-				<d:getetag />
-				<d:getcontenttype />
-				<d:resourcetype />
-				<oc:fileid />
-				<oc:permissions />
-				<oc:size />
-				<d:getcontentlength />
-				<nc:has-preview />
-				<nc:mount-type />
-				<nc:is-encrypted />
-				<ocs:share-permissions />
-				<oc:tags />
-				<oc:favorite />
-				<oc:comments-unread />
-				<oc:owner-id />
-				<oc:owner-display-name />
-				<oc:share-types />
-			</d:prop>
-			</d:propfind>`,
-	})
+	const remoteURL = getRemoteURL()
+	// Strip the remoteURL prefix to get a path relative to the DAV root
+	const path = url.startsWith(remoteURL) ? url.slice(remoteURL.length) : getRootPath() + url
 
-	// TODO: create new parser or use cdav-lib when available
-	const file = OCA.Files.App.fileList.filesClient._client.parseMultiStatus(response.data)
-	// TODO: create new parser or use cdav-lib when available
-	const fileInfo = OCA.Files.App.fileList.filesClient._parseFileInfo(file[0])
+	const stat = await getClient().stat(path, { details: true })
+	const node = resultToNode(stat.data)
 
-	// TODO remove when no more legacy backbone is used
-	fileInfo.get = (key) => fileInfo[key]
-	fileInfo.isDirectory = () => fileInfo.mimetype === 'httpd/unix-directory'
+	// Compatibility shim for legacy consumers (Sidebar.vue) that expect the old OC fileInfo shape
+	const fileInfo = {
+		id: node.fileid,
+		name: node.path,
+		basename: node.basename,
+		mimetype: node.mime,
+		mtime: node.mtime,
+		size: node.size,
+		hasPreview: node.attributes['nc:has-preview'],
+		isFavourited: !!node.attributes['oc:favorite'],
+		mountType: node.attributes['nc:mount-type'],
+		shareTypes: node.attributes['oc:share-types'],
+		get(key) { return this[key] },
+		isDirectory() { return this.mimetype === 'httpd/unix-directory' },
+	}
 
 	return fileInfo
 }

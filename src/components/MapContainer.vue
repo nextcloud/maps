@@ -21,46 +21,38 @@
 
 <template>
 	<div class="map-container">
-		<LMap
-			ref="map"
-			:center="mapOptions.center"
-			:max-bounds="mapOptions.maxBounds"
-			:min-zoom="mapOptions.minZoom"
-			:max-zoom="mapOptions.maxZoom"
-			:zoom="mapOptions.zoom"
-			:options="mapOptions.native"
-			@ready="onMapReady">
-			<LControlZoom position="bottomright" />
-			<LControlScale
-				position="bottomleft"
-				:imperial="mapOptions.scaleControlShouldUseImperial"
-				:metric="!mapOptions.scaleControlShouldUseImperial" />
+		<MglMap
+			:center="[0, 0]"
+			:zoom="2"
+			:min-zoom="2"
+			:max-zoom="19"
+			:map-style="minimalStyle"
+			@map:load="onMapLoad"
+			@map:click="handleMapClick">
+			<MglRasterSource
+				source-id="base-tiles"
+				:tiles="activeLayer.tiles"
+				:tile-size="activeLayer.tileSize"
+				:max-zoom="activeLayer.maxzoom"
+				:attribution="activeLayer.attribution" />
+			<MglRasterLayer
+				layer-id="base-layer"
+				source="base-tiles" />
+			<MglNavigationControl position="bottom-right" />
+			<MglScaleControl position="bottom-left" :unit="scaleUnit" />
 
-			<LTileLayer
-				:key="activeLayer.id"
-				:url="activeLayer.url"
-				:attribution="activeLayer.attribution"
-				:name="activeLayer.name"
-				:layer-type="activeLayer.type"
-				:options="activeLayer.options"
-				:opacity="activeLayer.type === 'overlay' ? activeLayer.opacity : 1" />
-
-			<LMarkerCluster
-				v-for="categoryKey in Object.keys(favoriteCategories)"
-				:key="categoryKey"
-				:options="{
-					...clusterOptions,
-					iconCreateFunction: getClusterIconCreateFunction(categoryKey)
-				}">
-				<LMarker
-					v-for="favorite in favoriteCategories[categoryKey]"
-					:key="favorite.id"
-					:lat-lng="{lat:favorite.lat, lng: favorite.lng}"
-					:icon="createNewDivIcon(categoryKey)"
-					@popupopen="storeCurrentlyOpenPopup(favorite.id)"
-					@popupclose="forgetCurrentlyOpenPopup(favorite.id)"
-					@ready="marker => storeMarkerReference(favorite.id, marker, favoriteCategories[categoryKey].length)">
-					<LPopup>
+			<MglMarker
+				v-for="favorite in allFavorites"
+				:key="favorite.id"
+				:coordinates="[favorite.lng, favorite.lat]">
+				<template #default>
+					<div class="favorite-marker"
+						:style="'background-color: ' + getMarkerBackgroundColor(favorite.categoryKey)"
+						@click.stop="storeCurrentlyOpenPopup(favorite.id)" />
+					<MglPopup v-if="openMarkerPopupId === favorite.id"
+						:close-button="true"
+						anchor="bottom"
+						@close="forgetCurrentlyOpenPopup(favorite.id)">
 						<FavoritePopup
 							:favorite="favorite"
 							:is-visible="openMarkerPopupId === favorite.id"
@@ -68,392 +60,176 @@
 							:allow-edits="allowFavoriteEdits"
 							@delete-favorite="emitDeleteFavoriteEvent"
 							@update-favorite="emitUpdateFavoriteEvent" />
-					</LPopup>
-				</LMarker>
-			</LMarkerCluster>
+					</MglPopup>
+				</template>
+			</MglMarker>
 
-			<LFeatureGroup @ready="onFeatureGroupReady">
-				<LPopup :lat-lng="placePopup.latLng">
-					<ClickPopup
-						:is-visible="placePopup.visible"
-						:lat-lng="placePopup.latLng"
-						:allow-category-customization="!isPublicShare"
-						:allow-edits="allowFavoriteEdits"
-						@close="closePopup"
-						@add-favorite="emitAddFavoriteEvent" />
-				</LPopup>
-			</LFeatureGroup>
-		</LMap>
+			<MglMarker v-if="placePopup.visible"
+				:coordinates="[placePopup.latLng.lng, placePopup.latLng.lat]">
+				<template #default>
+					<div style="display:none" />
+					<MglPopup :close-button="true" anchor="bottom" :showed="true" @close="closePopup">
+						<ClickPopup
+							:is-visible="placePopup.visible"
+							:lat-lng="placePopup.latLng"
+							:allow-category-customization="!isPublicShare"
+							:allow-edits="allowFavoriteEdits"
+							@close="closePopup"
+							@add-favorite="emitAddFavoriteEvent" />
+					</MglPopup>
+				</template>
+			</MglMarker>
+		</MglMap>
 	</div>
 </template>
 
-<script>
-import { DivIcon, latLngBounds } from 'leaflet'
-import VueTypes from 'vue-types'
-
-import { LControlScale, LControlZoom, LFeatureGroup, LMap, LMarker, LPopup, LTileLayer } from 'vue2-leaflet'
-import LMarkerCluster from 'vue2-leaflet-markercluster'
-
-import { mapActions, mapState } from 'vuex'
+<script setup>
+import { ref, computed, watch, nextTick } from 'vue'
+import {
+	MglMap,
+	MglRasterSource,
+	MglRasterLayer,
+	MglMarker,
+	MglPopup,
+	MglNavigationControl,
+	MglScaleControl,
+} from '@indoorequal/vue-maplibre-gl'
+import { usePublicFavoritesStore } from '../store/publicFavoritesStore.pinia.js'
 import ClickPopup from './map/ClickPopup.vue'
 import FavoritePopup from './map/FavoritePopup.vue'
 import { isPublicShare } from '../utils/common.js'
-import { PUBLIC_FAVORITES_NAMESPACE } from '../store/modules/publicFavorites.js'
 import { LayerIds, Layers } from '../data/mapLayers.js'
 import { getThemingColorFromCategoryKey } from '../utils/favoritesUtils.js'
 import { getShouldMapUseImperial } from '../utils/mapUtils.js'
 
 const CLUSTER_MAX_ZOOM_LEVEL = 14
-const MARKER_TOUCH_TARGET_SIZE = 44
 
-export default {
-	name: 'MapContainer',
+const minimalStyle = {
+	version: 8,
+	sources: {},
+	layers: [],
+}
 
-	components: {
-		ClickPopup,
-		LMap,
-		LFeatureGroup,
-		LMarker,
-		LMarkerCluster,
-		LTileLayer,
-		LPopup,
-		FavoritePopup,
-		LControlZoom,
-		LControlScale,
+const props = defineProps({
+	favoriteCategories: {
+		type: Object,
+		required: true,
+		default: () => ({}),
 	},
-
-	props: {
-		favoriteCategories: VueTypes.object.isRequired.def({}),
-		isPublicShare: VueTypes.bool.isRequired.def(false),
-		allowFavoriteEdits: VueTypes.bool.def(false),
+	isPublicShare: {
+		type: Boolean,
+		required: true,
+		default: false,
 	},
+	allowFavoriteEdits: {
+		type: Boolean,
+		default: false,
+	},
+})
 
-	data() {
-		return {
-			activeLayerId: LayerIds.OSM,
-			openMarkerPopupId: null,
-			placePopup: {
-				visible: false,
-				latLng: { lat: 0, lng: 0 },
-			},
-			mapOptions: {
-				center: [0, 0],
-				zoom: 2,
-				minZoom: 2,
-				maxZoom: 19,
-				initialBounds: latLngBounds([
-					[40.70081290280357, -74.26963806152345],
-					[40.82991732677597, -74.08716201782228],
-				]),
-				maxBounds: latLngBounds([
-					[-90, 720],
-					[90, -720],
-				]),
-				native: {
-					zoomControl: false,
-				},
-				scaleControlShouldUseImperial: getShouldMapUseImperial(),
-			},
-			clusterOptions: {
-				showCoverageOnHover: false,
-				zoomToBoundsOnClick: true,
-				spiderfyOnMaxZoom: false,
-				disableClusteringAtZoom: CLUSTER_MAX_ZOOM_LEVEL,
-			},
+const emit = defineEmits(['add-favorite', 'update-favorite', 'delete-favorite'])
+
+const publicFavoritesStore = usePublicFavoritesStore()
+const selectedFavoriteId = computed(() => isPublicShare() ? publicFavoritesStore.selectedFavoriteId : null)
+const selectedFavorite = computed(() => isPublicShare()
+	? publicFavoritesStore.favorites.find(f => f.id === publicFavoritesStore.selectedFavoriteId)
+	: null)
+const selectFavorite = (id) => publicFavoritesStore.selectFavorite(id)
+
+const activeLayerId = ref(LayerIds.OSM)
+const openMarkerPopupId = ref(null)
+const placePopup = ref({ visible: false, latLng: { lat: 0, lng: 0 } })
+const mapInstance = ref(null)
+const mapClickPopupLocked = ref(false)
+
+const scaleUnit = computed(() => getShouldMapUseImperial() ? 'imperial' : 'metric')
+const layers = computed(() => Layers)
+const activeLayer = computed(() => layers.value.find(layer => layer.id === activeLayerId.value))
+const allFavorites = computed(() =>
+	Object.entries(props.favoriteCategories).flatMap(([categoryKey, favs]) =>
+		favs.map(f => ({ ...f, categoryKey })),
+	),
+)
+const favoriteBounds = computed(() => {
+	if (allFavorites.value.length === 0) return null
+	const lats = allFavorites.value.map(f => f.lat)
+	const lngs = allFavorites.value.map(f => f.lng)
+	return [[Math.min(...lngs), Math.min(...lats)], [Math.max(...lngs), Math.max(...lats)]]
+})
+
+watch(selectedFavoriteId, (val) => {
+	if (val !== null) {
+		const fav = allFavorites.value.find(f => f.id === val)
+		if (fav) {
+			setMapView({ lat: fav.lat, lng: fav.lng }, CLUSTER_MAX_ZOOM_LEVEL)
+			openMarkerPopupId.value = val
+		} else {
+			console.warn('[MapContainer] Cannot find favorite id: ', val)
 		}
-	},
+	}
+})
 
-	computed: {
-		...mapState({
-			selectedFavoriteId: state =>
-				isPublicShare()
-					? state[PUBLIC_FAVORITES_NAMESPACE].selectedFavoriteId
-					: null,
-			selectedFavorite: state =>
-				isPublicShare()
-					? state[PUBLIC_FAVORITES_NAMESPACE].favorites.find(
-						favorite =>
-							favorite.id
-							=== state[PUBLIC_FAVORITES_NAMESPACE].selectedFavoriteId,
-					)
-					: null,
-		}),
-		layers() {
-			return Layers
-		},
-		activeLayer() {
-			return this.layers.find(layer => layer.id === this.activeLayerId)
-		},
-	},
+function onMapLoad(map) {
+	mapInstance.value = map
+	if (favoriteBounds.value) {
+		map.fitBounds(favoriteBounds.value, { padding: 30 })
+	}
+}
 
-	watch: {
-		selectedFavoriteId(val) {
-			if (val !== null) {
-				const marker = this.markerMap[val]
+function setMapView(latLng, zoom) {
+	if (mapInstance.value) {
+		mapInstance.value.flyTo({ center: [latLng.lng, latLng.lat], zoom })
+	}
+}
 
-				if (marker) {
-					this.setMapView(marker.getLatLng(), CLUSTER_MAX_ZOOM_LEVEL)
-					marker.openPopup()
-				} else {
-					console.warn(
-						'[MapContainer] Cannot find marker for favorite id: ',
-						val,
-					)
-				}
-			}
-		},
-	},
+function emitAddFavoriteEvent(data) { emit('add-favorite', data) }
+function emitUpdateFavoriteEvent(data) { emit('update-favorite', data) }
+function emitDeleteFavoriteEvent(data) { emit('delete-favorite', data) }
 
-	created() {
-		this.featureGroup = null
-		this.mapClickPopupLocked = false
-		this.markerMap = []
-		this.markerCounter = 0
-		// dummy values to replace with min and max values taking from favorites
-		// see storeMarkerReference below
-		this.minLat = 90
-		this.maxLat = -90
-		this.minLng = 720
-		this.maxLng = -720
-	},
+function storeCurrentlyOpenPopup(id) {
+	openMarkerPopupId.value = id
+}
 
-	methods: {
-		...mapActions({
-			selectFavorite: `${PUBLIC_FAVORITES_NAMESPACE}/selectFavorite`,
-		}),
+function forgetCurrentlyOpenPopup() {
+	mapClickPopupLocked.value = true
+	openMarkerPopupId.value = null
+	nextTick(() => {
+		mapClickPopupLocked.value = false
+	})
+	selectFavorite(null)
+}
 
-		setMapView(latLng, zoom) {
-			this.$refs.map.mapObject.setView(latLng, zoom)
-		},
+function openPopup(lat, lng) {
+	placePopup.value.visible = true
+	placePopup.value.latLng = { lat, lng }
+}
 
-		storeMarkerReference(favoriteId, marker, favcount) {
-			this.markerCounter++
-			if (marker.getLatLng().lat < this.minLat) {
-				this.minLat = marker.getLatLng().lat
-			}
-			if (marker.getLatLng().lat > this.maxLat) {
-				this.maxLat = marker.getLatLng().lat
-			}
-			if (marker.getLatLng().lng < this.minLng) {
-				this.minLng = marker.getLatLng().lng
-			}
-			if (marker.getLatLng().lng > this.maxLng) {
-				this.maxLng = marker.getLatLng().lng
-			}
-			this.markerMap[favoriteId] = marker
-			// after getting latlng values from last favorite we can now fit map to max bounds taken from favorites:
-			if (this.markerCounter >= favcount) {
-				this.$refs.map.fitBounds([[this.minLat, this.minLng], [this.maxLat, this.maxLng]], { padding: [30, 30] })
-			}
-		},
+function closePopup() {
+	placePopup.value.visible = false
+	placePopup.value.latLng = { lat: 0, lng: 0 }
+}
 
-		emitAddFavoriteEvent(data) {
-			this.$emit('add-favorite', data)
-		},
+function handleMapClick(e) {
+	if (!placePopup.value.visible && !mapClickPopupLocked.value) {
+		openPopup(e.lngLat.lat, e.lngLat.lng)
+	}
+}
 
-		emitUpdateFavoriteEvent(data) {
-			this.$emit('update-favorite', data)
-		},
-
-		emitDeleteFavoriteEvent(data) {
-			this.$emit('delete-favorite', data)
-		},
-
-		storeCurrentlyOpenPopup(id) {
-			this.openMarkerPopupId = id
-		},
-
-		forgetCurrentlyOpenPopup() {
-			this.mapClickPopupLocked = true
-
-			this.openMarkerPopupId = null
-
-			this.$nextTick(() => {
-				this.mapClickPopupLocked = false
-			})
-
-			this.selectFavorite(null)
-		},
-
-		openPopup(lat, lng) {
-			this.placePopup.visible = true
-			this.placePopup.latLng = { lat, lng }
-			this.featureGroup.openPopup([lat, lng])
-		},
-
-		closePopup() {
-			this.resetPopupState()
-			this.featureGroup.closePopup()
-		},
-
-		resetPopupState() {
-			this.placePopup.visible = false
-			this.placePopup.latLng = { lat: 0, lng: 0 }
-		},
-
-		handleMapClick(e) {
-			if (!this.placePopup.visible && !this.mapClickPopupLocked) {
-				this.openPopup(e.latlng.lat, e.latlng.lng)
-			}
-		},
-
-		createNewDivIcon(categoryKey) {
-			return new DivIcon({
-				iconAnchor: [MARKER_TOUCH_TARGET_SIZE * 0.5, MARKER_TOUCH_TARGET_SIZE * 0.5],
-				iconSize: [MARKER_TOUCH_TARGET_SIZE, MARKER_TOUCH_TARGET_SIZE],
-				className: 'leaflet-marker-favorite',
-				html: `<div class="favorite-marker ${categoryKey}"`
-					+ ` style="background-color: ${this.getMarkerBackgroundColor(categoryKey)};"></div>`,
-			})
-		},
-
-		getMarkerBackgroundColor(categoryKey) {
-			return getThemingColorFromCategoryKey(categoryKey)
-		},
-
-		getClusterIconCreateFunction(categoryKey) {
-			return cluster => {
-				const label = cluster.getChildCount()
-
-				return new DivIcon({
-					iconAnchor: [MARKER_TOUCH_TARGET_SIZE * 0.5, MARKER_TOUCH_TARGET_SIZE * 0.5],
-					iconSize: [MARKER_TOUCH_TARGET_SIZE, MARKER_TOUCH_TARGET_SIZE],
-					className: 'leaflet-marker-favorite-cluster cluster-marker',
-					html: '<div '
-						+ `class="favorite-cluster-marker ${categoryKey}" `
-						+ `style="background-color: ${this.getMarkerBackgroundColor(categoryKey)};">`
-						+ `</div><span class="label">${label}</span>`,
-				})
-			}
-		},
-
-		handlePopupOpenEvent() {},
-
-		handlePopupCloseEvent() {
-			this.mapClickPopupLocked = true
-			this.resetPopupState()
-
-			this.$nextTick(() => {
-				this.mapClickPopupLocked = false
-			})
-		},
-
-		onMapReady(map) {
-			map.on('click', this.handleMapClick)
-		},
-
-		onFeatureGroupReady(featureGroup) {
-			featureGroup.on('popupopen', this.handlePopupOpenEvent)
-			featureGroup.on('popupclose', this.handlePopupCloseEvent)
-
-			this.featureGroup = featureGroup
-		},
-	},
+function getMarkerBackgroundColor(categoryKey) {
+	return getThemingColorFromCategoryKey(categoryKey)
 }
 </script>
 
 <style lang="scss">
-@import '~leaflet/dist/leaflet.css';
-@import '~leaflet.markercluster/dist/MarkerCluster.css';
-@import '~leaflet.markercluster/dist/MarkerCluster.Default.css';
-
-.leaflet-tooltip {
-	white-space: normal !important;
-}
-
-.leaflet-container {
+.maplibregl-map {
 	background: var(--color-main-background);
 }
 
-.leaflet-control-layers-base {
-	line-height: 30px;
-}
-
-.leaflet-control-layers-selector {
-	min-height: 0;
-}
-
-.leaflet-control-layers-toggle {
-	background-size: 75% !important;
-}
-
-.leaflet-control-layers:not(.leaflet-control-layers-expanded) {
-	width: 33px;
-	height: 37px;
-}
-
-.leaflet-control-layers:not(.leaflet-control-layers-expanded) > a {
-	width: 100%;
-	height: 100%;
-}
-
-.leaflet-marker-favorite, .leaflet-marker-favorite-cluster {
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	border-radius: 50%;
-
-	.favorite-marker,
-	.favorite-cluster-marker {
-		cursor: pointer;
-		background: var(--maps-icon-favorite-star) no-repeat 50% 50%;
-		border-radius: 50%;
-		box-shadow: 0 0 4px #888;
-	}
-
-	.favorite-marker {
-		height: 18px;
-		width: 18px;
-		background-size: 12px 12px;
-	}
-
-	.favorite-cluster-marker {
-		height: 26px;
-		width: 26px;
-		background-size: 16px 16px;
-	}
-}
-
-.leaflet-marker-favorite-cluster {
-	.label {
-		position: absolute;
-		top: 0;
-		right: 0;
-		color: #fff;
-		background-color: #333;
-		border-radius: 9px;
-		height: 18px;
-		min-width: 18px;
-		line-height: 12px;
-		text-align: center;
-		padding: 3px;
-	}
-}
-
-.leaflet-touch {
-	.leaflet-control-layers,
-	.leaflet-bar {
-		border: none;
-		border-radius: var(--border-radius);
-	}
-}
-
-.leaflet-control-attribution.leaflet-control {
+.maplibregl-ctrl-attrib {
 	white-space: nowrap;
 	overflow: hidden;
 	text-overflow: ellipsis;
 	max-width: 50vw;
-}
-
-.leaflet-popup {
-	.leaflet-popup-content-wrapper {
-		border-radius: 4px;
-	}
-
-	.leaflet-popup-close-button {
-		top: 9px;
-		right: 9px;
-	}
 }
 </style>
 
@@ -462,5 +238,15 @@ export default {
 	position: relative;
 	height: 100%;
 	width: 100%;
+}
+
+.favorite-marker {
+	width: 26px;
+	height: 26px;
+	border-radius: 50%;
+	box-shadow: 0 0 4px #888;
+	background: var(--maps-icon-favorite-star) no-repeat 50% 50%;
+	background-size: 16px 16px;
+	cursor: pointer;
 }
 </style>

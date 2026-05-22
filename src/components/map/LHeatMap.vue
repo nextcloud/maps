@@ -1,83 +1,42 @@
 <template>
-	<div style="display: none;">
-		<slot v-if="ready" />
-	</div>
+	<MglGeoJsonSource source-id="heatmap-source" :data="geoJsonData">
+		<MglHeatmapLayer layer-id="heatmap-layer" :paint="heatmapPaint" />
+	</MglGeoJsonSource>
 </template>
 
-<script>
-import 'leaflet.heat/dist/leaflet-heat.js'
-import { findRealParent, propsBinder } from 'vue2-leaflet'
-import { DomEvent } from 'leaflet'
+<script setup>
+import { computed } from 'vue'
+import { MglGeoJsonSource, MglHeatmapLayer } from '@indoorequal/vue-maplibre-gl'
 
-const props = {
+const props = defineProps({
 	initialPoints: {
 		type: Array,
-		required: false,
-		default() { return [] },
+		default: () => [],
 	},
 	options: {
 		type: Object,
-		default() { return {} },
+		default: () => ({}),
 	},
-}
+})
 
-export default {
-	props,
-	data() {
+const geoJsonData = computed(() => ({
+	type: 'FeatureCollection',
+	features: props.initialPoints.map((p) => {
+		const lat = Array.isArray(p) ? p[0] : p.lat
+		const lng = Array.isArray(p) ? p[1] : p.lng
+		const weight = Array.isArray(p) ? (p[2] || 1) : 1
 		return {
-			points: null,
-			ready: false,
+			type: 'Feature',
+			geometry: { type: 'Point', coordinates: [lng, lat] },
+			properties: { weight },
 		}
-	},
-	watch: {
-		options: {
-			handler(newOptions) {
-				this.mapObject.setOptions(newOptions)
-			},
-			deep: true,
-		},
-		points: {
-			handler(newPoints) {
-				this.mapObject.setLatLngs(newPoints)
-			},
-			deep: true,
-		},
-	},
-	mounted() {
-		this.points = this.initialPoints
-		this.mapObject = L.heatLayer(this.points, this.options)
-		DomEvent.on(this.mapObject, this.$listeners)
-		propsBinder(this, this.mapObject, props)
-		this.ready = true
-		this.parentContainer = findRealParent(this.$parent)
-		this.parentContainer.addLayer(this)
-		this.$nextTick(() => {
-			this.$emit('ready', this.mapObject)
-		})
-	},
-	beforeDestroy() {
-		this.parentContainer.removeLayer(this)
-	},
-	methods: {
-		addLayer(layer, alreadyAdded) {
-			if (!alreadyAdded) {
-				this.mapObject.addLayer(layer.mapObject)
-			}
-		},
-		removeLayer(layer, alreadyRemoved) {
-			if (!alreadyRemoved) {
-				this.mapObject.removeLayer(layer.mapObject)
-			}
-		},
-		addLatLng(latlng) {
-			this.mapObject.addLatLng(latlng)
-		},
-		setLatLngs(latlngs) {
-			this.mapObject.setLatLngs(latlngs)
-		},
-		redraw() {
-			this.mapObject.redraw()
-		},
-	},
-}
+	}),
+}))
+
+const heatmapPaint = computed(() => ({
+	'heatmap-weight': ['get', 'weight'],
+	'heatmap-intensity': props.options.minOpacity ?? 1,
+	'heatmap-radius': props.options.radius ?? 25,
+	'heatmap-opacity': 0.8,
+}))
 </script>

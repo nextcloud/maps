@@ -8,11 +8,10 @@
 		:force-menu="false"
 		@click="onClick"
 		@update:open="onUpdateOpen">
-		<NcCounterBubble v-show="enabled && myMaps.length"
-			slot="counter">
-			{{ myMaps.length > 99 ? '99+' : myMaps.length }}
-		</NcCounterBubble>
-		<template v-if="enabled" slot="actions">
+		<template #counter>
+			<NcCounterBubble v-show="enabled && myMaps.length" :count="myMaps.length" />
+		</template>
+		<template v-if="enabled" #actions>
 			<NcActionButton
 				icon="icon-add"
 				:close-after-click="true"
@@ -20,7 +19,7 @@
 				{{ t('maps', 'Add Map') }}
 			</NcActionButton>
 		</template>
-		<template slot="default">
+		<template #default>
 			<b v-show="false">dummy</b>
 			<AppNavigationMyMapItem
 				v-for="myMap in myMaps"
@@ -37,58 +36,53 @@
 	</NcAppNavigationItem>
 </template>
 
-<script>
-import NcAppNavigationItem from '@nextcloud/vue/dist/Components/NcAppNavigationItem.js'
-import NcActionButton from '@nextcloud/vue/dist/Components/NcActionButton.js'
+<script setup>
+import NcAppNavigationItem from '@nextcloud/vue/components/NcAppNavigationItem'
+import NcActionButton from '@nextcloud/vue/components/NcActionButton'
+import NcCounterBubble from '@nextcloud/vue/components/NcCounterBubble'
 import AppNavigationMyMapItem from './AppNavigationMyMapItem.vue'
+import { t } from '@nextcloud/l10n'
+import { ref } from 'vue'
 import optionsController from '../optionsController.js'
-import NcCounterBubble from '@nextcloud/vue/dist/Components/NcCounterBubble.js'
 
-export default {
-	name: 'AppNavigationMyMapsItem',
-
-	components: {
-		NcAppNavigationItem,
-		NcActionButton,
-		AppNavigationMyMapItem,
-		NcCounterBubble,
+const props = defineProps({
+	enabled: {
+		type: Boolean,
+		required: true,
 	},
-
-	props: {
-		enabled: {
-			type: Boolean,
-			required: true,
-		},
-		loading: {
-			type: Boolean,
-			default: false,
-		},
-		myMaps: {
-			type: Array,
-			required: true,
-		},
+	loading: {
+		type: Boolean,
+		default: false,
 	},
-
-	data() {
-		return {
-			open: optionsController.myMapListShow,
-			currentMap: optionsController.myMapId,
-		}
+	myMaps: {
+		type: Array,
+		required: true,
 	},
+})
 
-	methods: {
-		onClick() {
-			if (!this.enabled && !this.open) {
-				this.open = true
-				optionsController.saveOptionValues({ myMapListShow: 'true' })
-			}
-			this.$emit('my-maps-clicked')
-		},
-		onUpdateOpen(isOpen) {
-			this.open = isOpen
-			optionsController.saveOptionValues({ myMapListShow: isOpen ? 'true' : 'false' })
-		},
-	},
+const emit = defineEmits([
+	'my-maps-clicked',
+	'add',
+	'my-map-clicked',
+	'rename',
+	'delete',
+	'share',
+	'color',
+])
+
+const open = ref(optionsController.myMapListShow)
+
+function onClick() {
+	if (!props.enabled && !open.value) {
+		open.value = true
+		optionsController.saveOptionValues({ myMapListShow: 'true' })
+	}
+	emit('my-maps-clicked')
+}
+
+function onUpdateOpen(isOpen) {
+	open.value = isOpen
+	optionsController.saveOptionValues({ myMapListShow: isOpen ? 'true' : 'false' })
 }
 </script>
 

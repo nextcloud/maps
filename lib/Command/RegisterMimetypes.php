@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /**
  * Nextcloud - maps
  *
@@ -9,7 +11,6 @@
  * @author Piotr Bator <prbator@gmail.com>
  * @copyright Piotr Bator 2017
  */
-
 namespace OCA\Maps\Command;
 
 use OCA\Maps\Service\MimetypeService;
@@ -19,11 +20,10 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class RegisterMimetypes extends Command {
 
-	protected MimetypeService $mimetypeService;
-
-	public function __construct(MimetypeService $mimetypeService) {
+	public function __construct(
+		protected MimetypeService $mimetypeService,
+	) {
 		parent::__construct();
-		$this->mimetypeService = $mimetypeService;
 	}
 
 	/**
@@ -34,11 +34,6 @@ class RegisterMimetypes extends Command {
 			->setDescription('Registers the maps mimetypes for existing and new files.');
 	}
 
-	/**
-	 * @param InputInterface $input
-	 * @param OutputInterface $output
-	 * @return int
-	 */
 	protected function execute(InputInterface $input, OutputInterface $output): int {
 		$output->writeln('Register mimetypes for existing files');
 		$this->mimetypeService->registerForExistingFiles();

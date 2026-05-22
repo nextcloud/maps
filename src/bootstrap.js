@@ -19,24 +19,3 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-
-import Vue from 'vue'
-import { Icon } from 'leaflet'
-
-Vue.prototype.t = window.t
-Vue.prototype.n = window.n
-Vue.prototype.OC = window.OC
-Vue.prototype.OCA = window.OCA
-
-/* if (process && process.env.NODE_ENV === 'development') {
-	Vue.config.devtools = true
-} */
-
-// this is needed to get default marker icons
-delete Icon.Default.prototype._getIconUrl
-
-Icon.Default.mergeOptions({
-	iconRetinaUrl: require('leaflet/dist/images/marker-icon-2x.png').default,
-	iconUrl: require('leaflet/dist/images/marker-icon.png').default,
-	shadowUrl: require('leaflet/dist/images/marker-shadow.png').default,
-})

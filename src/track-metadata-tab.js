@@ -12,60 +12,35 @@
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU Affero General Public License for more details.
  *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  *
  */
-import Vue from 'vue'
-import { translate as t, translatePlural as n } from '@nextcloud/l10n'
+import { FileType, registerSidebarTab } from '@nextcloud/files'
+import { translate as t } from '@nextcloud/l10n'
+import { defineCustomElement } from 'vue'
 
-import TrackMetadataTab from './views/TrackMetadataTab.vue'
+import RoadIcon from '../img/road.svg?raw'
 
-Vue.prototype.t = t
-Vue.prototype.n = n
+const tagName = 'maps-track-metadata-sidebar-tab'
 
-// Init Tracks tab component
-const View = Vue.extend(TrackMetadataTab)
-
-// Init Maps Track tab component
-let TabInstance = null
-const trackMetadataTab = new OCA.Files.Sidebar.Tab({
+registerSidebarTab({
 	id: 'maps-track-metadata',
-	name: t('maps', 'Metadata'),
-	icon: 'icon-info',
-
-	async mount(el, fileInfo, context) {
-		if (TabInstance) {
-			TabInstance.$destroy()
-		}
-		TabInstance = new View({
-			// Better integration with vue parent component
-			parent: context,
-		})
-		// Only mount after we have all the info we need
-		await TabInstance.update(fileInfo.id)
-		TabInstance.$mount(el)
+	tagName,
+	displayName: t('maps', 'Metadata'),
+	iconSvgInline: RoadIcon,
+	order: 10,
+	enabled({ node }) {
+		return node.type === FileType.File && node.mime === 'application/gpx+xml'
 	},
-	update(fileInfo) {
-		TabInstance.update(fileInfo.id)
-	},
-	destroy() {
-		TabInstance.$destroy()
-		TabInstance = null
-	},
-	enabled(fileInfo) {
-		return ['application/gpx+xml'].includes(fileInfo.mimetype)
-	},
-	scrollBottomReached() {
-		TabInstance.onScrollBottomReached()
+	async onInit() {
+		const { default: TrackMetadataSidebarTab } = await import('./views/TrackMetadataSidebarTab.vue')
+		window.customElements.define(tagName, defineCustomElement(TrackMetadataSidebarTab, {
+			shadowRoot: false,
+		}))
 	},
 })
 
-window.addEventListener('DOMContentLoaded', function() {
-	if (OCA.Files && OCA.Files.Sidebar) {
-		OCA.Files.Sidebar.registerTab(trackMetadataTab)
-	}
-})

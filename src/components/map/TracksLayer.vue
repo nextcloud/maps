@@ -1,5 +1,5 @@
 <template>
-	<LFeatureGroup>
+	<template>
 		<TrackLayer v-for="track in displayedTracks"
 			:key="track.id + track.color"
 			:track="track"
@@ -13,79 +13,45 @@
 		<TrackHoverMarker
 			v-if="hoverPoint"
 			:point="hoverPoint" />
-	</LFeatureGroup>
+	</template>
 </template>
 
-<script>
-import { LFeatureGroup } from 'vue2-leaflet'
-
+<script setup>
+import { ref, computed, watch } from 'vue'
 import TrackLayer from './TrackLayer.vue'
 import TrackHoverMarker from './TrackHoverMarker.vue'
-
-import optionsController from '../../optionsController.js'
 import moment from '@nextcloud/moment'
 
-export default {
-	name: 'TracksLayer',
-	components: {
-		LFeatureGroup,
-		TrackLayer,
-		TrackHoverMarker,
+const props = defineProps({
+	tracks: {
+		type: Array,
+		required: true,
 	},
+	map: {
+		type: Object,
+		required: true,
+	},
+	start: {
+		type: Number,
+		default: 0,
+	},
+	end: {
+		type: Number,
+		default: () => moment().unix(),
+	},
+})
 
-	props: {
-		tracks: {
-			type: Array,
-			required: true,
-		},
-		map: {
-			type: Object,
-			required: true,
-		},
-		start: {
-			type: Number,
-			required: false,
-			default: 0,
-		},
-		end: {
-			type: Number,
-			required: false,
-			default: moment().unix(),
-		},
-	},
+defineEmits(['click', 'add-to-map-track', 'change-color', 'display-elevation'])
 
-	data() {
-		return {
-			optionValues: optionsController.optionValues,
-			hoverPoint: null,
-		}
-	},
+const hoverPoint = ref(null)
 
-	computed: {
-		displayedTracks() {
-			return this.tracks.filter((track) => {
-				return track.enabled
-			})
-		},
-	},
+const displayedTracks = computed(() => props.tracks.filter((track) => track.enabled))
 
-	watch: {
-		tracks: {
-			handler() {
-				this.hoverPoint = null
-			},
-			deep: true,
-		},
-	},
+watch(() => props.tracks, () => {
+	hoverPoint.value = null
+}, { deep: true })
 
-	methods: {
-		onPointHover(point) {
-			this.hoverPoint = point
-		},
-	},
+function onPointHover(point) {
+	hoverPoint.value = point
 }
 </script>
-
-<style lang="scss" scoped>
-// nothing
-</style>

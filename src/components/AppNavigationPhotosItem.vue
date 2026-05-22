@@ -6,18 +6,13 @@
 		:allow-collapse="false"
 		:force-menu="enabled"
 		@click="$emit('photos-clicked')">
-		<NcCounterBubble v-if="enabled && loading"
-			slot="counter">
-			{{
-				(loadedPhotos > 1000 ? Math.floor(loadedPhotos/1000).toString() + 'k' : loadedPhotos > 99 ? '99+' : loadedPhotos) + '/' +
-					(totalPhotos > 1000 ? Math.floor(totalPhotos/1000).toString() + 'k' : totalPhotos > 99 ? '99+' : totalPhotos)
-			}}
-		</NcCounterBubble>
-		<NcCounterBubble v-else-if="enabled"
-			slot="counter">
-			{{ totalPhotos > 1000 ? Math.floor(totalPhotos/1000).toString() + 'k' : totalPhotos > 99 ? '99+' : totalPhotos }}
-		</NcCounterBubble>
-		<template v-if="enabled" slot="actions">
+		<template #counter>
+			<span v-if="enabled && loading" class="counter-bubble__counter">
+				{{ (loadedPhotos > 1000 ? Math.floor(loadedPhotos/1000).toString() + 'k' : loadedPhotos > 99 ? '99+' : loadedPhotos) + '/' + (totalPhotos > 1000 ? Math.floor(totalPhotos/1000).toString() + 'k' : totalPhotos > 99 ? '99+' : totalPhotos) }}
+			</span>
+			<NcCounterBubble v-else-if="enabled" :count="totalPhotos" />
+		</template>
+		<template v-if="enabled" #actions>
 			<NcActionButton v-if="!readOnly"
 				:icon="draggable ? 'icon-hand' : 'icon-hand-slash'"
 				:close-after-click="false"
@@ -47,68 +42,54 @@
 	</NcAppNavigationItem>
 </template>
 
-<script>
-import NcAppNavigationItem from '@nextcloud/vue/dist/Components/NcAppNavigationItem.js'
-import NcActionButton from '@nextcloud/vue/dist/Components/NcActionButton.js'
-import NcCounterBubble from '@nextcloud/vue/dist/Components/NcCounterBubble.js'
-
-import optionsController from '../optionsController.js'
+<script setup>
+import NcAppNavigationItem from '@nextcloud/vue/components/NcAppNavigationItem'
+import NcActionButton from '@nextcloud/vue/components/NcActionButton'
+import NcCounterBubble from '@nextcloud/vue/components/NcCounterBubble'
+import { t } from '@nextcloud/l10n'
 import { showInfo } from '@nextcloud/dialogs'
 
-export default {
-	name: 'AppNavigationPhotosItem',
-
-	components: {
-		NcAppNavigationItem,
-		NcActionButton,
-		NcCounterBubble,
+defineProps({
+	enabled: {
+		type: Boolean,
+		required: true,
 	},
-
-	props: {
-		enabled: {
-			type: Boolean,
-			required: true,
-		},
-		loading: {
-			type: Boolean,
-			default: false,
-		},
-		loadedPhotos: {
-			type: Number,
-			required: true,
-		},
-		totalPhotos: {
-			type: Number,
-			required: true,
-		},
-		readOnly: {
-			type: Boolean,
-			default: false,
-		},
-		draggable: {
-			type: Boolean,
-			required: true,
-		},
-		showSuggestions: {
-			type: Boolean,
-			required: false,
-			default: false,
-		},
+	loading: {
+		type: Boolean,
+		default: false,
 	},
-
-	data() {
-		return {
-		}
+	loadedPhotos: {
+		type: Number,
+		required: true,
 	},
-
-	computed: {
+	totalPhotos: {
+		type: Number,
+		required: true,
 	},
-
-	methods: {
-		sayHi() {
-			showInfo(t('maps', 'Hi'))
-		},
+	readOnly: {
+		type: Boolean,
+		default: false,
 	},
+	draggable: {
+		type: Boolean,
+		required: true,
+	},
+	showSuggestions: {
+		type: Boolean,
+		required: false,
+		default: false,
+	},
+})
+
+defineEmits([
+	'photos-clicked',
+	'draggable-clicked',
+	'suggestions-clicked',
+	'clear-cache',
+])
+
+function sayHi() {
+	showInfo(t('maps', 'Hi'))
 }
 </script>
 

@@ -24,10 +24,12 @@ const attributionESRI = 'Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, 
 
 export const LayerTypes = {
 	Base: 'base',
+	Vector: 'vector',
 	Overlay: 'overlay',
 }
 
 export const LayerIds = {
+	OpenFreeMap: 'openfreemap',
 	OSM: 'osm',
 	RoadsOverlay: 'roads-overlay',
 	ESRI: 'esri',
@@ -38,81 +40,67 @@ export const LayerIds = {
 
 export const Layers = [
 	{
+		id: LayerIds.OpenFreeMap,
+		name: 'Street map (vector)',
+		type: LayerTypes.Vector,
+		styleUrl: 'https://tiles.openfreemap.org/styles/liberty',
+		attribution: '© <a href="https://openfreemap.org" target="_blank">OpenFreeMap</a> © <a href="https://www.openmaptiles.org/" target="_blank">OpenMapTiles</a> © <a href="https://openstreetmap.org">OpenStreetMap</a> contributors',
+	},
+	{
 		id: LayerIds.RoadsOverlay,
 		name: 'Roads Overlay',
 		type: LayerTypes.Overlay,
-		url: 'https://{s}.tile.openstreetmap.se/hydda/roads_and_labels/{z}/{x}/{y}.png',
+		tiles: ['https://a.tile.openstreetmap.se/hydda/roads_and_labels/{z}/{x}/{y}.png'],
+		tileSize: 256,
 		attribution: 'Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN...',
-		options: {
-			id: 'Roads Overlay',
-			noWrap: false,
-			detectRetina: false,
-			maxZoom: 18,
-		},
+		maxzoom: 18,
 		opacity: 0.7,
 	},
 	{
 		id: LayerIds.OSM,
 		name: 'Street map',
 		type: LayerTypes.Base,
-		url: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+		tiles: ['https://tile.openstreetmap.org/{z}/{x}/{y}.png'],
+		tileSize: 256,
 		attribution: '&copy; <a href="https://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>',
-		options: {
-			id: 'Open Street Map',
-			noWrap: false,
-			detectRetina: false,
-			maxZoom: 19,
-		},
+		maxzoom: 19,
 	},
 	{
 		id: LayerIds.ESRI,
 		name: 'Satellite map',
 		type: LayerTypes.Base,
-		url: 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
+		tiles: ['https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}'],
+		tileSize: 256,
 		attribution: attributionESRI,
-		options: {
-			id: 'ESRI',
-			noWrap: false,
-			detectRetina: false,
-			maxZoom: 19,
-		},
+		maxzoom: 19,
 	},
 	{
 		id: LayerIds.ESRITopo,
 		name: 'Topographic',
 		type: LayerTypes.Base,
-		url: 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/{z}/{y}/{x}',
+		tiles: ['https://server.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/{z}/{y}/{x}'],
+		tileSize: 256,
 		attribution: attributionESRI,
-		options: {
-			id: 'ESRI topo',
-			noWrap: false,
-			detectRetina: false,
-			maxZoom: 19,
-		},
+		maxzoom: 19,
 	},
 	{
 		id: LayerIds.Watercolor,
 		name: 'Watercolor',
 		type: LayerTypes.Base,
-		url: 'https://tiles.stadiamaps.com/tiles/stamen_watercolor/{z}/{x}/{y}.{ext}',
-		attribution: '<a href="https://leafletjs.com" title="A JS library for interactive maps">Leaflet</a> | © Map tiles by <a href="https://stamen.com">Stamen Design</a>, under <a href="https://creativecommons.org/licenses/by/3.0">CC BY 3.0</a>, Data by <a href="https://openstreetmap.org">OpenStreetMap</a>, under <a href="https://creativecommons.org/licenses/by-sa/3.0">CC BY SA</a>.',
-		options: {
-			id: 'Watercolor',
-			noWrap: false,
-			detectRetina: false,
-			maxZoom: 18,
-			ext: 'jpg',
-			subdomains: 'abcd',
-		},
+		tiles: ['https://tiles.stadiamaps.com/tiles/stamen_watercolor/{z}/{x}/{y}.jpg'],
+		tileSize: 256,
+		attribution: '© Map tiles by <a href="https://stamen.com">Stamen Design</a>, under <a href="https://creativecommons.org/licenses/by/3.0">CC BY 3.0</a>, Data by <a href="https://openstreetmap.org">OpenStreetMap</a>, under <a href="https://creativecommons.org/licenses/by-sa/3.0">CC BY SA</a>.',
+		maxzoom: 18,
 	},
 ]
 
 export const baseLayersByName = {}
 export const overlayLayersByName = {}
 Layers.forEach((l) => {
-	if (l.type === LayerTypes.Base) {
-		baseLayersByName[l.options.id] = l
+	if (l.type === LayerTypes.Overlay) {
+		overlayLayersByName[l.id] = l
 	} else {
-		overlayLayersByName[l.options.id] = l
+		// Vector and raster base layers go into baseLayersByName
+		baseLayersByName[l.id] = l
 	}
 })

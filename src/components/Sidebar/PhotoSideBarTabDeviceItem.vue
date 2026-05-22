@@ -6,38 +6,24 @@
 		:open="false"
 		:force-menu="false"
 		@click="$emit('device-click')">
-		<NcCounterBubble slot="counter">
-			{{ device.suggestionCount > 99 ? '99+' : device.suggestionCount }}
-		</NcCounterBubble>
+		<template #counter>
+			<NcCounterBubble :count="device.suggestionCount" />
+		</template>
 	</NcAppNavigationItem>
 </template>
 
-<script>
+<script setup>
+import NcAppNavigationItem from '@nextcloud/vue/components/NcAppNavigationItem'
+import NcCounterBubble from '@nextcloud/vue/components/NcCounterBubble'
 
-import NcAppNavigationItem from '@nextcloud/vue/dist/Components/NcAppNavigationItem.js'
-import NcCounterBubble from '@nextcloud/vue/dist/Components/NcCounterBubble.js'
-
-export default {
-	name: 'PhotoSideBarTabDeviceItem',
-
-	components: {
-		NcAppNavigationItem,
-		NcCounterBubble,
+defineProps({
+	device: {
+		required: true,
+		type: Object,
 	},
+})
 
-	props: {
-		device: {
-			required: true,
-			type: Object,
-		},
-	},
-
-	computed: {
-	},
-
-	methods: {
-	},
-}
+defineEmits(['device-click'])
 </script>
 
 <style scoped>

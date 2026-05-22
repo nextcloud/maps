@@ -1,135 +1,94 @@
 <template>
-	<LMarker
-		ref="marker"
-		:options="{ data: favorite }"
-		:icon="icon"
-		:lat-lng="[favorite.lat, favorite.lng]"
+	<MglMarker
+		:coordinates="[favorite.lng, favorite.lat]"
 		:draggable="draggable && favorite.isUpdateable"
-		@ready="onMarkerReady"
-		@contextmenu="onRightClick"
-		@click="$emit('click', favorite)"
-		@moveend="onMoved">
-		<LTooltip
-			:options="{ ...tooltipOptions, opacity: draggable && favorite.isUpdateable ? 0 : 1 }">
-			<div class="tooltip-favorite-wrapper"
-				:style="'border: 2px solid #' + color">
-				<b>{{ t('maps', 'Name') }}:</b>
-				<span>{{ favorite.name || t('maps', 'No name') }}</span>
-				<br>
-				<b>{{ t('maps', 'Category') }}:</b>
-				<span>{{ favorite.category }}</span>
-				<br v-if="favorite.comment">
-				<b v-if="favorite.comment">{{ t('maps', 'Comment') }}:</b>
-				<span v-if="favorite.comment">{{ favorite.comment }}</span>
-			</div>
-		</LTooltip>
-		<LPopup
-			class="popup-favorite-wrapper"
-			:options="popupOptions">
-			<NcActionButton v-if="favorite.isDeletable" icon="icon-delete" @click="$emit('delete', favorite.id)">
+		@update:coordinates="onMoved">
+		<template #marker>
+			<div
+				class="favorite-marker-icon"
+				:style="markerStyle"
+				@click.stop="onLeftClick"
+				@contextmenu.stop="onRightClick" />
+		</template>
+		<MglPopup
+			v-if="showPopup"
+			:close-button="false"
+			anchor="bottom"
+			@close="showPopup = false">
+			<NcActionButton v-if="favorite.isDeletable" @click="emit('delete', favorite.id)">
+				<template #icon>
+					<TrashCanIcon :size="20" />
+				</template>
 				{{ t('maps', 'Delete favorite') }}
 			</NcActionButton>
-			<NcActionButton v-if="!isPublic()"
-				icon="icon-share"
-				@click="$emit('add-to-map-favorite', favorite)">
+			<NcActionButton v-if="!isPublicVal"
+				@click="emit('add-to-map-favorite', favorite)">
+				<template #icon>
+					<ShareVariantIcon :size="20" />
+				</template>
 				{{ t('maps', 'Copy to map') }}
 			</NcActionButton>
-		</LPopup>
-	</LMarker>
+		</MglPopup>
+	</MglMarker>
 </template>
 
-<script>
-import NcActionButton from '@nextcloud/vue/dist/Components/NcActionButton.js'
-
-import L from 'leaflet'
-import { LMarker, LTooltip, LPopup } from 'vue2-leaflet'
+<script setup>
+import { ref, computed } from 'vue'
+import { t } from '@nextcloud/l10n'
+import NcActionButton from '@nextcloud/vue/components/NcActionButton'
+import { MglMarker, MglPopup } from '@indoorequal/vue-maplibre-gl'
 import { isPublic } from '../../utils/common'
+import ShareVariantIcon from 'vue-material-design-icons/ShareVariant.vue'
+import TrashCanIcon from 'vue-material-design-icons/TrashCan.vue'
 
-export default {
-	name: 'FavoriteMarker',
-
-	components: {
-		LMarker,
-		LTooltip,
-		LPopup,
-		NcActionButton,
+const props = defineProps({
+	favorite: {
+		type: Object,
+		required: true,
 	},
-
-	props: {
-		favorite: {
-			type: Object,
-			required: true,
-		},
-		categories: {
-			type: Object,
-			required: true,
-		},
-		icon: {
-			type: Object,
-			required: true,
-		},
-		color: {
-			type: String,
-			required: true,
-		},
-		draggable: {
-			type: Boolean,
-			default: false,
-		},
+	categories: {
+		type: Object,
+		required: true,
 	},
-
-	data() {
-		return {
-			tooltipOptions: {
-				className: 'leaflet-marker-favorite-tooltip',
-				direction: 'top',
-				offset: L.point(0, 0),
-			},
-			popupOptions: {
-				closeButton: false,
-				closeOnClick: false,
-				className: 'popovermenu open popupMarker favoritePopup',
-				offset: L.point(-5, 10),
-			},
-		}
+	icon: {
+		type: Object,
+		default: null,
 	},
-
-	computed: {
+	color: {
+		type: String,
+		required: true,
 	},
-
-	beforeMount() {
+	draggable: {
+		type: Boolean,
+		default: false,
 	},
+})
 
-	methods: {
-		onMoved(e) {
-			const editedFav = {
-				...this.favorite,
-				lat: e.target.getLatLng().lat,
-				lng: e.target.getLatLng().lng,
-			}
-			this.$emit('edit', editedFav)
-		},
-		onMarkerReady(m) {
-			// avoid left click popup
-			L.DomEvent.on(m, 'click', (ev) => {
-				m.closePopup()
-			})
-		},
-		onRightClick(e) {
-			this.$refs.marker.mapObject.openPopup()
-		},
-		isPublic() {
-			return isPublic()
-		},
-	},
+const emit = defineEmits(['click', 'edit', 'delete', 'add-to-map-favorite'])
+
+const showPopup = ref(false)
+
+const isPublicVal = computed(() => isPublic())
+
+const markerStyle = computed(() =>
+	`background-color: #${props.color}; width: 36px; height: 36px; border-radius: 50%; border: 2px solid rgba(0,0,0,0.3); cursor: pointer;`,
+)
+
+function onMoved(lngLat) {
+	emit('edit', { ...props.favorite, lat: lngLat.lat, lng: lngLat.lng })
+}
+
+function onLeftClick() {
+	emit('click', props.favorite)
+}
+
+function onRightClick() {
+	showPopup.value = true
 }
 </script>
 
 <style lang="scss" scoped>
-.tooltip-favorite-wrapper {
-	padding: 6px;
-	border-radius: 3px;
-	background-color: var(--color-main-background);
-	color: var(--color-main-text);
+.favorite-marker-icon {
+	box-shadow: 0px 0px 10px #888;
 }
 </style>

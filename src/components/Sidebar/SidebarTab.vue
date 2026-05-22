@@ -37,94 +37,67 @@
 	</NcAppSidebarTab>
 </template>
 
-<script>
-import NcAppSidebarTab from '@nextcloud/vue/dist/Components/NcAppSidebarTab.js'
-import NcEmptyContent from '@nextcloud/vue/dist/Components/NcEmptyContent.js'
+<script setup>
+import { ref, watch, onMounted, onBeforeUnmount } from 'vue'
+import NcAppSidebarTab from '@nextcloud/vue/components/NcAppSidebarTab'
+import NcEmptyContent from '@nextcloud/vue/components/NcEmptyContent'
 
-export default {
-	name: 'SidebarTab',
-
-	components: {
-		NcAppSidebarTab,
-		NcEmptyContent,
+const props = defineProps({
+	fileInfo: {
+		type: Object,
+		default: () => {},
+		required: true,
 	},
-
-	props: {
-		fileInfo: {
-			type: Object,
-			default: () => {},
-			required: true,
-		},
-		id: {
-			type: String,
-			required: true,
-		},
-		name: {
-			type: String,
-			required: true,
-		},
-		icon: {
-			type: String,
-			required: false,
-		},
-
-		/**
-		 * Lifecycle methods.
-		 * They are prefixed with `on` to avoid conflict with Vue
-		 * methods like this.destroy
-		 */
-		onMount: {
-			type: Function,
-			required: true,
-		},
-		onUpdate: {
-			type: Function,
-			required: true,
-		},
-		onDestroy: {
-			type: Function,
-			required: true,
-		},
-		onScrollBottomReached: {
-			type: Function,
-			default: () => {},
-		},
+	id: {
+		type: String,
+		required: true,
 	},
-
-	data() {
-		return {
-			loading: true,
-		}
+	name: {
+		type: String,
+		required: true,
 	},
-
-	computed: {
-		// TODO: implement a better way to force pass a prop from Sidebar
-		activeTab() {
-			return this.$parent.activeTab
-		},
+	icon: {
+		type: String,
+		required: false,
+		default: undefined,
 	},
-
-	watch: {
-		async fileInfo(newFile, oldFile) {
-			// Update fileInfo on change
-			if (newFile.id !== oldFile.id) {
-				this.loading = true
-				await this.onUpdate(this.fileInfo)
-				this.loading = false
-			}
-		},
+	onMount: {
+		type: Function,
+		required: true,
 	},
-
-	async mounted() {
-		this.loading = true
-		// Mount the tab:  mounting point,   fileInfo,      vue context
-		await this.onMount(this.$refs.mount, this.fileInfo, this.$refs.tab)
-		this.loading = false
+	onUpdate: {
+		type: Function,
+		required: true,
 	},
-
-	async beforeDestroy() {
-		// unmount the tab
-		await this.onDestroy()
+	onDestroy: {
+		type: Function,
+		required: true,
 	},
-}
+	onScrollBottomReached: {
+		type: Function,
+		default: () => {},
+	},
+})
+
+const tab = ref(null)
+const mount = ref(null)
+const loading = ref(true)
+
+watch(() => props.fileInfo, async (newFile, oldFile) => {
+	if (newFile.id !== oldFile.id) {
+		loading.value = true
+		await props.onUpdate(props.fileInfo)
+		loading.value = false
+	}
+})
+
+onMounted(async () => {
+	loading.value = true
+	await props.onMount(mount.value, props.fileInfo, tab.value)
+	loading.value = false
+})
+
+onBeforeUnmount(async () => {
+	await props.onDestroy()
+})
 </script>

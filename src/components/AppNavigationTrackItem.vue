@@ -5,7 +5,7 @@
 		:allow-collapse="false"
 		:force-menu="false"
 		@click="$emit('click', track)">
-		<template slot="icon">
+		<template #icon>
 			<div v-if="track.loading"
 				class="app-navigation-entry-icon icon-loading-small " />
 			<div v-else-if="track.color"
@@ -30,10 +30,10 @@
 				@change="updateTrackColor"
 				@click.stop="">
 		</template>
-		<template slot="counter">
+		<template #counter>
 			&nbsp;
 		</template>
-		<template slot="actions">
+		<template #actions>
 			<NcActionButton v-if="parentEnabled && track.enabled"
 				icon="icon-search"
 				:close-after-click="true"
@@ -78,59 +78,48 @@
 	</NcAppNavigationItem>
 </template>
 
-<script>
-import NcAppNavigationItem from '@nextcloud/vue/dist/Components/NcAppNavigationItem.js'
-import NcActionButton from '@nextcloud/vue/dist/Components/NcActionButton.js'
-import NcActionLink from '@nextcloud/vue/dist/Components/NcActionLink.js'
+<script setup>
+import NcAppNavigationItem from '@nextcloud/vue/components/NcAppNavigationItem'
+import NcActionButton from '@nextcloud/vue/components/NcActionButton'
+import NcActionLink from '@nextcloud/vue/components/NcActionLink'
+import { t } from '@nextcloud/l10n'
+import { ref, computed } from 'vue'
 import { isPublic, getToken } from '../utils/common'
 import { generateUrl } from '@nextcloud/router'
+import { getRemoteURL, getRootPath } from '@nextcloud/files/dav'
 
-export default {
-	name: 'AppNavigationTrackItem',
-
-	components: {
-		NcAppNavigationItem,
-		NcActionButton,
-		NcActionLink,
+const props = defineProps({
+	track: {
+		type: Object,
+		required: true,
 	},
-
-	props: {
-		track: {
-			type: Object,
-			required: true,
-		},
-		parentEnabled: {
-			type: Boolean,
-			default: true,
-		},
+	parentEnabled: {
+		type: Boolean,
+		default: true,
 	},
+})
 
-	data() {
-		return {
-		}
-	},
+const emit = defineEmits(['click', 'zoom', 'elevation', 'color', 'add-to-map-track'])
 
-	computed: {
-		downloadTrackUrl() {
-			return OCA.Files.App.fileList.filesClient.getBaseUrl() + this.track.file_path
-		},
-		downloadTrackShareUrl() {
-			return generateUrl('s/' + getToken() + '/download' + '?path=/&files=' + this.track.file_name)
-		},
-	},
+const col = ref(null)
 
-	methods: {
-		onChangeColorClick() {
-			this.$refs.col.click()
-		},
-		updateTrackColor(e) {
-			this.$emit('color', { track: this.track, color: e.target.value })
-		},
-		isPublic() {
-			return isPublic()
-		},
-	},
+const downloadTrackUrl = computed(() => {
+	return getRemoteURL() + getRootPath() + props.track.file_path
+})
+
+const downloadTrackShareUrl = computed(() => {
+	return generateUrl('s/' + getToken() + '/download' + '?path=/&files=' + props.track.file_name)
+})
+
+function onChangeColorClick() {
+	col.value.click()
 }
+
+function updateTrackColor(e) {
+	emit('color', { track: props.track, color: e.target.value })
+}
+
+defineExpose({ onChangeColorClick })
 </script>
 
 <style lang="scss" scoped>

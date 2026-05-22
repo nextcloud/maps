@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /**
  * Nextcloud - maps
  *
@@ -9,7 +11,6 @@
  * @author Piotr Bator <prbator@gmail.com>
  * @copyright Piotr Bator 2017
  */
-
 namespace OCA\Maps\Command;
 
 use OCA\Maps\Service\PhotofilesService;
@@ -27,20 +28,23 @@ use Symfony\Component\Console\Output\OutputInterface;
 class RescanPhotos extends Command {
 
 	protected IUserManager $userManager;
+
 	protected OutputInterface $output;
+
 	protected IManager $encryptionManager;
-	protected PhotofilesService $photofilesService;
+
+
 	protected IConfig $config;
 
 	public function __construct(
 		IUserManager $userManager,
 		IManager $encryptionManager,
-		PhotofilesService $photofilesService,
-		IConfig $config) {
+		protected PhotofilesService $photofilesService,
+		IConfig $config,
+	) {
 		parent::__construct();
 		$this->userManager = $userManager;
 		$this->encryptionManager = $encryptionManager;
-		$this->photofilesService = $photofilesService;
 		$this->config = $config;
 	}
 
@@ -58,7 +62,7 @@ class RescanPhotos extends Command {
 			->addArgument(
 				'path',
 				InputArgument::OPTIONAL,
-				'Scan photos GPS exif data for the given path under user\'s files without wiping the database.'
+				"Scan photos GPS exif data for the given path under user's files without wiping the database."
 			)
 			->addOption(
 				'now',
@@ -68,16 +72,12 @@ class RescanPhotos extends Command {
 			);
 	}
 
-	/**
-	 * @param InputInterface $input
-	 * @param OutputInterface $output
-	 * @return int
-	 */
 	protected function execute(InputInterface $input, OutputInterface $output): int {
 		if ($this->encryptionManager->isEnabled()) {
 			$output->writeln('Encryption is enabled. Aborted.');
 			return 1;
 		}
+
 		$this->output = $output;
 		$userId = $input->getArgument('user_id');
 		$pathToScan = $input->getArgument('path');
@@ -85,8 +85,9 @@ class RescanPhotos extends Command {
 		if ($inBackground) {
 			echo "Extracting coordinates from photo is performed in a BackgroundJob \n";
 		}
+
 		if ($userId === null) {
-			$this->userManager->callForSeenUsers(function (IUser $user, ?string $pathToScan = null) use ($inBackground) {
+			$this->userManager->callForSeenUsers(function (IUser $user, ?string $pathToScan = null) use ($inBackground): void {
 				$this->rescanUserPhotos($user->getUID(), $inBackground, $pathToScan);
 			});
 		} else {
@@ -95,23 +96,22 @@ class RescanPhotos extends Command {
 				$this->rescanUserPhotos($userId, $inBackground, $pathToScan);
 			}
 		}
+
 		return 0;
 	}
 
 	/**
-	 * @param string $userId
-	 * @param bool $inBackground
 	 * @param string $pathToScan
-	 * @return void
 	 * @throws \OCP\PreConditionNotMetException
 	 */
-	private function rescanUserPhotos(string $userId, bool $inBackground = true, ?string $pathToScan = null) {
+	private function rescanUserPhotos(string $userId, bool $inBackground = true, ?string $pathToScan = null): void {
 		echo '======== User ' . $userId . ' ========' . "\n";
 		$c = 1;
 		foreach ($this->photofilesService->rescan($userId, $inBackground, $pathToScan) as $path) {
 			echo '[' . $c . '] Photo "' . $path . '" added' . "\n";
-			$c++;
+			++$c;
 		}
+
 		if ($pathToScan === null) {
 			$this->config->setUserValue($userId, 'maps', 'installScanDone', 'yes');
 		}

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /**
  * ownCloud - maps
  *
@@ -9,7 +11,6 @@
  * @author Sander Brand <brantje@gmail.com>, Vinzenz Rosenkranz <vinzenz.rosenkranz@gmail.com>
  * @copyright Sander Brand 2014, Vinzenz Rosenkranz 2016, 2017
  */
-
 namespace OCA\Maps\AppInfo;
 
 use OCA\DAV\Events\CardCreatedEvent;
@@ -23,15 +24,12 @@ use OCA\Maps\Listener\CardDeletedListener;
 use OCA\Maps\Listener\CardUpdatedListener;
 use OCA\Maps\Listener\LoadAdditionalScriptsListener;
 use OCA\Maps\Listener\LoadSidebarListener;
-use OCA\Maps\Service\PhotofilesService;
-use OCA\Maps\Service\TracksService;
 use OCP\AppFramework\App;
 use OCP\AppFramework\Bootstrap\IBootContext;
 use OCP\AppFramework\Bootstrap\IBootstrap;
 use OCP\AppFramework\Bootstrap\IRegistrationContext;
 use OCP\AppFramework\Http\EmptyFeaturePolicy;
 use OCP\EventDispatcher\IEventDispatcher;
-use OCP\IServerContainer;
 use OCP\Security\FeaturePolicy\AddFeaturePolicyEvent;
 
 class Application extends App implements IBootstrap {
@@ -71,28 +69,18 @@ class Application extends App implements IBootstrap {
 	}
 
 	public function boot(IBootContext $context): void {
-		// ... boot logic goes here ...
-		$context->getAppContainer()->registerService('FileHooks', function ($c) {
-			return new FileHooks(
-				$c->query(IServerContainer::class)->getRootFolder(),
-				\OCP\Server::get(PhotofilesService::class),
-				\OCP\Server::get(TracksService::class),
-				$c->query('AppName'),
-				$c->query(IServerContainer::class)->getLockingProvider()
-			);
-		});
-
-		$context->getAppContainer()->query('FileHooks')->register();
+		$context->getAppContainer()->get(FileHooks::class)->register();
 
 		$this->registerFeaturePolicy();
 	}
 
-	private function registerFeaturePolicy() {
-		$dispatcher = $this->getContainer()->getServer()->get(IEventDispatcher::class);
+	private function registerFeaturePolicy(): void {
+		$dispatcher = $this->getContainer()->get(IEventDispatcher::class);
 
-		$dispatcher->addListener(AddFeaturePolicyEvent::class, function (AddFeaturePolicyEvent $e) {
+		$dispatcher->addListener(AddFeaturePolicyEvent::class, function (AddFeaturePolicyEvent $e): void {
 			$fp = new EmptyFeaturePolicy();
-			$fp->addAllowedGeoLocationDomain('\'self\'');
+			$fp->addAllowedGeoLocationDomain("'self'");
+
 			$e->addPolicy($fp);
 		});
 	}

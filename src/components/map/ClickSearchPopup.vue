@@ -1,127 +1,93 @@
 <template>
-	<LMarker :lat-lng="latLng"
-		:icon="icon"
-		@ready="onMarkerReady">
-		<LPopup :options="popupOptions"
-			@ready="onPopupReady">
-			<h3 id="click-search-popup-title">
-				{{ t('maps', 'This place') }}
-			</h3>
-			<span v-if="addressLoading"
-				class="icon icon-loading-small" />
-			<textarea v-else
-				id="clickSearchAddress"
-				v-model="formattedAddress" />
-			<button v-if="favoriteIsCreatable" class="search-add-favorite" @click="$emit('add-favorite', { latLng, address, formattedAddress })">
-				<span class="icon-favorite" />
-				{{ t('maps', 'Add to favorites') }}
-			</button>
-			<button v-if="contactIsCreatable" class="search-place-contact" @click="$emit('place-contact', { latLng, address })">
-				<span class="icon-user" />
-				{{ t('maps', 'Add contact address') }}
-			</button>
-			<button v-for="action in mapActions"
-				:key="action.label"
-				:icon="action.icon"
-				@click="actionCallback(action)">
-				<span :class="{ [action.icon]: true }" />
-				<span>{{ action.label }}</span>
-			</button>
-		</LPopup>
-	</LMarker>
+	<MglMarker :coordinates="[latLng.lng, latLng.lat]">
+		<template #marker>
+			<div style="display:none" />
+		</template>
+		<MglPopup :close-button="false" anchor="bottom" :offset="[0, 0]" :showed="true">
+				<h3 id="click-search-popup-title">
+					{{ t('maps', 'This place') }}
+				</h3>
+				<span v-if="addressLoading"
+					class="icon icon-loading-small" />
+				<textarea v-else
+					id="clickSearchAddress"
+					v-model="formattedAddress" />
+				<button v-if="favoriteIsCreatable" class="search-add-favorite" @click="$emit('add-favorite', { latLng, address, formattedAddress })">
+					<span class="icon-favorite" />
+					{{ t('maps', 'Add to favorites') }}
+				</button>
+				<button v-if="contactIsCreatable" class="search-place-contact" @click="$emit('place-contact', { latLng, address })">
+					<span class="icon-user" />
+					{{ t('maps', 'Add contact address') }}
+				</button>
+				<button v-for="action in mapActions"
+					:key="action.label"
+					:icon="action.icon"
+					@click="actionCallback(action)">
+					<span :class="{ [action.icon]: true }" />
+					<span>{{ action.label }}</span>
+				</button>
+			</MglPopup>
+	</MglMarker>
 </template>
 
-<script>
-import L from 'leaflet'
-import { LMarker, LPopup } from 'vue2-leaflet'
-
+<script setup>
+import { ref, watch } from 'vue'
+import { t } from '@nextcloud/l10n'
+import { MglMarker, MglPopup } from '@indoorequal/vue-maplibre-gl'
 import { formatAddress } from '../../utils.js'
 import { geocode } from '../../network.js'
 
-export default {
-	name: 'ClickSearchPopup',
-	components: {
-		LMarker,
-		LPopup,
+const props = defineProps({
+	latLng: {
+		type: Object,
+		required: true,
 	},
+	favoriteIsCreatable: {
+		type: Boolean,
+		default: true,
+	},
+	contactIsCreatable: {
+		type: Boolean,
+		default: true,
+	},
+})
 
-	props: {
-		latLng: {
-			type: Object,
-			required: true,
-		},
-		favoriteIsCreatable: {
-			type: Boolean,
-			required: false,
-			default: true,
-		},
-		contactIsCreatable: {
-			type: Boolean,
-			required: false,
-			default: true,
-		},
-	},
+defineEmits(['add-favorite', 'place-contact'])
 
-	data() {
-		return {
-			popupOptions: {
-				closeButton: false,
-				offset: L.point(-1, 42),
-			},
-			addressLoading: false,
-			address: null,
-			formattedAddress: '',
-			mapActions: window.OCA.Maps.mapActions,
-			icon: L.icon({
-				iconUrl: 'noIcon',
-			}),
-		}
-	},
+const addressLoading = ref(false)
+const address = ref(null)
+const formattedAddress = ref('')
+const mapActions = window.OCA?.Maps?.mapActions ?? []
 
-	computed: {
-	},
+function getAddress() {
+	addressLoading.value = true
+	geocode(props.latLng.lat, props.latLng.lng).then((response) => {
+		address.value = response.data.address
+		formattedAddress.value = formatAddress(address.value)
+	}).catch((error) => {
+		console.error(error)
+	}).then(() => {
+		addressLoading.value = false
+	})
+}
 
-	watch: {
-		latLng() {
-			this.address = null
-			this.formattedAddress = ''
-			this.getAddress()
-		},
-	},
+watch(() => props.latLng, () => {
+	address.value = null
+	formattedAddress.value = ''
+	getAddress()
+})
 
-	beforeMount() {
-		this.getAddress()
-	},
+getAddress()
 
-	methods: {
-		onMarkerReady(m) {
-			m.openPopup()
-		},
-		onPopupReady(p) {
-			// i don't know why but it is placed too high when it's created
-			p.setLatLng(this.latLng)
-		},
-		getAddress() {
-			this.addressLoading = true
-			geocode(this.latLng.lat, this.latLng.lng).then((response) => {
-				this.address = response.data.address
-				this.formattedAddress = formatAddress(this.address)
-			}).catch((error) => {
-				console.error(error)
-			}).then(() => {
-				this.addressLoading = false
-			})
-		},
-		actionCallback(action) {
-			const object = {
-				id: 'geo:' + this.latLng.lat + ',' + this.latLng.lng,
-				name: this.formattedAddress,
-				latitude: this.latLng.lat.toString(),
-				longitude: this.latLng.lng.toString(),
-			}
-			action.callback(object)
-		},
-	},
+function actionCallback(action) {
+	const object = {
+		id: 'geo:' + props.latLng.lat + ',' + props.latLng.lng,
+		name: formattedAddress.value,
+		latitude: props.latLng.lat.toString(),
+		longitude: props.latLng.lng.toString(),
+	}
+	action.callback(object)
 }
 </script>
 

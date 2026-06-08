@@ -1,51 +1,44 @@
 <template>
-	<LMarker :lat-lng="latLng"
-		:icon="icon"
-		@ready="onMarkerReady">
-		<LPopup :options="popupOptions"
-			@ready="onPopupReady">
-			<h3 id="click-search-popup-title">
-				{{ t('maps', 'This place') }}
-			</h3>
-			<span v-if="addressLoading"
-				class="icon icon-loading-small" />
-			<textarea v-else
-				id="clickSearchAddress"
-				v-model="formattedAddress" />
-			<button v-if="favoriteIsCreatable" class="search-add-favorite" @click="$emit('add-favorite', { latLng, address, formattedAddress })">
-				<span class="icon-favorite" />
-				{{ t('maps', 'Add to favorites') }}
-			</button>
-			<button v-if="contactIsCreatable" class="search-place-contact" @click="$emit('place-contact', { latLng, address })">
-				<span class="icon-user" />
-				{{ t('maps', 'Add contact address') }}
-			</button>
-			<button v-for="action in mapActions"
-				:key="action.label"
-				:icon="action.icon"
-				@click="actionCallback(action)">
-				<span :class="{ [action.icon]: true }" />
-				<span>{{ action.label }}</span>
-			</button>
-		</LPopup>
-	</LMarker>
+	<div class="click-search-popup-content">
+		<h3 id="click-search-popup-title">
+			{{ t('maps', 'This place') }}
+		</h3>
+		<span v-if="addressLoading"
+			class="icon icon-loading-small" />
+		<textarea v-else
+			id="clickSearchAddress"
+			v-model="formattedAddress" />
+		<button v-if="favoriteIsCreatable" class="search-add-favorite" @click="onAddFavorite">
+			<span class="icon-favorite" />
+			{{ t('maps', 'Add to favorites') }}
+		</button>
+		<button v-if="contactIsCreatable" class="search-place-contact" @click="onPlaceContact">
+			<span class="icon-user" />
+			{{ t('maps', 'Add contact address') }}
+		</button>
+		<button v-for="action in mapActions"
+			:key="action.label"
+			:icon="action.icon"
+			@click="actionCallback(action)">
+			<span :class="{ [action.icon]: true }" />
+			<span>{{ action.label }}</span>
+		</button>
+	</div>
 </template>
 
 <script>
 import L from 'leaflet'
-import { LMarker, LPopup } from 'vue2-leaflet'
-
 import { formatAddress } from '../../utils.js'
 import { geocode } from '../../network.js'
 
 export default {
 	name: 'ClickSearchPopup',
-	components: {
-		LMarker,
-		LPopup,
-	},
 
 	props: {
+		map: {
+			type: Object,
+			required: true,
+		},
 		latLng: {
 			type: Object,
 			required: true,
@@ -64,21 +57,14 @@ export default {
 
 	data() {
 		return {
-			popupOptions: {
-				closeButton: false,
-				offset: L.point(-1, 42),
-			},
 			addressLoading: false,
 			address: null,
 			formattedAddress: '',
-			mapActions: window.OCA.Maps.mapActions,
+			mapActions: window.OCA && window.OCA.Maps ? window.OCA.Maps.mapActions : [],
 			icon: L.icon({
 				iconUrl: 'noIcon',
 			}),
 		}
-	},
-
-	computed: {
 	},
 
 	watch: {
@@ -86,21 +72,40 @@ export default {
 			this.address = null
 			this.formattedAddress = ''
 			this.getAddress()
+			if (this.marker) {
+				this.marker.setLatLng(this.latLng)
+				this.marker.openPopup()
+			}
 		},
+	},
+
+	created() {
+		// Store leaflet objects non-reactively for performance 
+		this.marker = null
 	},
 
 	beforeMount() {
 		this.getAddress()
 	},
 
+	mounted() {
+		this.marker = L.marker(this.latLng, { icon: this.icon }).addTo(this.map)
+		
+		this.marker.bindPopup(this.$el, { 
+			closeButton: false, 
+			offset: L.point(-1, 42) 
+		})
+		
+		this.marker.openPopup()
+	},
+
+	beforeUnmount() {
+		if (this.marker && this.map) {
+			this.map.removeLayer(this.marker)
+		}
+	},
+
 	methods: {
-		onMarkerReady(m) {
-			m.openPopup()
-		},
-		onPopupReady(p) {
-			// i don't know why but it is placed too high when it's created
-			p.setLatLng(this.latLng)
-		},
 		getAddress() {
 			this.addressLoading = true
 			geocode(this.latLng.lat, this.latLng.lng).then((response) => {
@@ -120,7 +125,23 @@ export default {
 				longitude: this.latLng.lng.toString(),
 			}
 			action.callback(object)
+			if (this.map) this.map.closePopup()
 		},
+		onAddFavorite() {
+			this.$emit('add-favorite', { 
+				latLng: this.latLng, 
+				address: this.address, 
+				formattedAddress: this.formattedAddress 
+			})
+			if (this.map) this.map.closePopup()
+		},
+		onPlaceContact() {
+			this.$emit('place-contact', { 
+				latLng: this.latLng, 
+				address: this.address 
+			})
+			if (this.map) this.map.closePopup()
+		}
 	},
 }
 </script>

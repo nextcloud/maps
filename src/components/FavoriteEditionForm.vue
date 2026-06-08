@@ -21,6 +21,7 @@
 				:clear-on-select="false"
 				:preserve-search="false"
 				:placeholder="categoryPH"
+				inputLabel="label"
 				:options="formattedCategories"
 				:user-select="false"
 				@input="onCategorySelected"
@@ -54,24 +55,20 @@
 				:disabled="!favorite.isUpdateable"
 				native-type="submit"
 				type="primary"
-				@click="onOkClick">
-				<template>
-					{{ t('maps', 'Save') }}
-				</template>
-			</NcButton>
-			<NcButton :disabled="!favorite.isUpdateable"
-				@click="onDeleteClick">
-				<template>
-					{{ t('maps', 'Delete') }}
-				</template>
-			</NcButton>
+				@click="onOkClick"
+				:text="t('maps', 'Save')"
+			/>
+			<NcButton 
+				:disabled="!favorite.isUpdateable"
+				@click="onDeleteClick"
+				:text="t('maps', 'Delete')"
+			/>
 		</div>
 	</div>
 </template>
 
 <script>
-import NcSelect from '@nextcloud/vue/dist/Components/NcSelect.js'
-import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
+import { NcSelect, NcButton } from '@nextcloud/vue'
 
 export default {
 	name: 'FavoriteEditionForm',

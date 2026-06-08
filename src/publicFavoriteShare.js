@@ -20,13 +20,20 @@
  *
  */
 
-import Vue from 'vue'
+import { createApp } from 'vue'
 import PublicFavoriteShare from './views/PublicFavoriteShare.vue'
-import './bootstrap.js'
+
+import './bootstrap.js' 
 
 import store from './store/publicFavoriteShareStore.js'
 
-new Vue({
-	render: h => h(PublicFavoriteShare),
-	store,
-}).$mount('#content')
+const app = createApp(PublicFavoriteShare)
+
+app.use(store)
+
+app.config.globalProperties.t = window.t
+app.config.globalProperties.n = window.n
+app.config.globalProperties.OC = window.OC
+app.config.globalProperties.OCA = window.OCA
+
+app.mount('#content')

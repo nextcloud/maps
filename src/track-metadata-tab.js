@@ -19,53 +19,79 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  *
  */
-import Vue from 'vue'
-import { translate as t, translatePlural as n } from '@nextcloud/l10n'
 
+import { createApp } from 'vue'
+import { translate as t, translatePlural as n } from '@nextcloud/l10n'
 import TrackMetadataTab from './views/TrackMetadataTab.vue'
 
-Vue.prototype.t = t
-Vue.prototype.n = n
-
-// Init Tracks tab component
-const View = Vue.extend(TrackMetadataTab)
-
-// Init Maps Track tab component
+let appInstance = null
 let TabInstance = null
-const trackMetadataTab = new OCA.Files.Sidebar.Tab({
-	id: 'maps-track-metadata',
-	name: t('maps', 'Metadata'),
-	icon: 'icon-info',
 
-	async mount(el, fileInfo, context) {
-		if (TabInstance) {
-			TabInstance.$destroy()
-		}
-		TabInstance = new View({
-			// Better integration with vue parent component
-			parent: context,
-		})
-		// Only mount after we have all the info we need
-		await TabInstance.update(fileInfo.id)
-		TabInstance.$mount(el)
-	},
-	update(fileInfo) {
-		TabInstance.update(fileInfo.id)
-	},
-	destroy() {
-		TabInstance.$destroy()
-		TabInstance = null
-	},
-	enabled(fileInfo) {
-		return ['application/gpx+xml'].includes(fileInfo.mimetype)
-	},
-	scrollBottomReached() {
-		TabInstance.onScrollBottomReached()
-	},
-})
+function registerTab() {
+	const fileList = window.OCA?.Files?.App?.fileList
 
-window.addEventListener('DOMContentLoaded', function() {
-	if (OCA.Files && OCA.Files.Sidebar) {
-		OCA.Files.Sidebar.registerTab(trackMetadataTab)
+	if (!fileList?.registerSidebarTab) {
+		return false
 	}
+
+	fileList.registerSidebarTab({
+		id: 'maps-track-metadata',
+		name: t('maps', 'Metadata'),
+		icon: 'icon-info',
+
+		async mount(el, fileInfo, context) {
+			// Unmount the previous instance if it exists
+			if (appInstance) {
+				appInstance.unmount()
+			}
+
+			// Create a new Vue 3 app instance for the sidebar tab
+			appInstance = createApp(TrackMetadataTab)
+			
+			// Replace Vue.prototype with globalProperties
+			appInstance.config.globalProperties.t = t
+			appInstance.config.globalProperties.n = n
+
+			// Mount it to the provided DOM element
+			TabInstance = appInstance.mount(el)
+
+			if (TabInstance && typeof TabInstance.update === 'function') {
+				await TabInstance.update(fileInfo.id)
+			}
+		},
+
+		update(fileInfo) {
+			if (TabInstance && typeof TabInstance.update === 'function') {
+				TabInstance.update(fileInfo.id)
+			}
+		},
+
+		destroy() {
+			if (appInstance) {
+				appInstance.unmount()
+				appInstance = null
+				TabInstance = null
+			}
+		},
+
+		enabled(fileInfo) {
+			return fileInfo?.mimetype === 'application/gpx+xml'
+		},
+
+		scrollBottomReached() {
+			if (TabInstance && typeof TabInstance.onScrollBottomReached === 'function') {
+				TabInstance.onScrollBottomReached()
+			}
+		},
+	})
+
+	return true
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+	const interval = setInterval(() => {
+		if (registerTab()) {
+			clearInterval(interval)
+		}
+	}, 100)
 })

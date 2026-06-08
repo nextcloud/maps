@@ -20,14 +20,11 @@
  *
  */
 
-import * as Vuex from 'vuex'
-import Vue from 'vue'
+import { createStore } from 'vuex'
 import publicFavorites from './modules/publicFavorites.js'
 import map from './modules/map.js'
 
-Vuex.install(Vue)
-
-export default new Vuex.Store({
+export default createStore({
 	modules: {
 		publicFavorites,
 		map,

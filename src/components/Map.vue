@@ -1,159 +1,133 @@
 <template>
 	<div id="map-wrapper">
-		<LMap
-			ref="map"
-			:center="mapOptions.center"
-			:bounds="mapOptions.bounds"
-			:max-bounds="mapOptions.maxBounds"
-			:min-zoom="mapOptions.minZoom"
-			:max-zoom="mapOptions.maxZoom"
-			:zoom="mapOptions.zoom"
-			:options="mapOptions.native"
-			@ready="onMapReady"
-			@update:bounds="onUpdateBounds"
-			@baselayerchange="onBaselayerchange"
-			@click="onMapClick"
-			@contextmenu="onMapContextmenu">
-			<RoutingControl v-if="map"
-				v-show="showRouting"
-				ref="routingControl"
-				:visible="showRouting"
-				:map="map"
-				:search-data="routingSearchData"
-				@close="showRouting = false"
-				@track-added="$emit('track-added', $event)" />
-			<SearchControl v-if="map"
-				v-show="!showRouting"
-				:map="map"
-				:search-data="searchData"
-				:loading="searching"
-				:result-poi-number="searchPois.length"
-				@validate="onSearchValidate"
-				@routing-clicked="showRouting = true"
-				@clear-pois="searchPois = []" />
-			<HistoryControl v-if="map"
-				position="topright"
-				:last-actions="lastActions"
-				:last-canceled-actions="lastCanceledActions"
-				@cancel="$emit('cancel')"
-				@redo="$emit('redo')" />
-			<LControlZoom position="bottomright" />
-			<LControlScale
-				position="bottomleft"
-				:imperial="mapOptions.scaleControlShouldUseImperial"
-				:metric="!mapOptions.scaleControlShouldUseImperial" />
-			<LControlLayers
-				position="bottomright"
-				:collapsed="false" />
-			<LTileLayer
-				v-for="(l, lid) in allBaseLayers"
-				:key="lid"
-				:visible="activeLayerId === lid"
-				:url="l.url"
-				:attribution="l.attribution"
-				:name="l.name"
-				:layer-type="l.type"
-				:tile-layer-class="l.tileLayerClass"
-				:options="l.options"
-				:opacity="1" />
-			<LTileLayer
-				v-for="(l, lid) in allOverlayLayers"
-				:key="lid"
-				:visible="['Watercolor', 'ESRI'].includes(activeLayerId) && lid === 'Roads Overlay'"
-				:url="l.url"
-				:attribution="l.attribution"
-				:name="l.name"
-				:layer-type="l.type"
-				:tile-layer-class="l.tileLayerClass"
-				:options="l.options"
-				:opacity="l.opacity" />
-			<FavoritesLayer
-				v-if="map && favoritesEnabled"
-				ref="favoritesLayer"
-				:map="map"
-				:favorites="favorites"
-				:categories="favoriteCategories"
-				:draggable="favoritesDraggable"
-				@click="$emit('click-favorite', $event)"
-				@add-to-map-favorite="$emit('add-to-map-favorite', $event)"
-				@edit="$emit('edit-favorite', $event)"
-				@delete="$emit('delete-favorite', $event)"
-				@delete-multiple="$emit('delete-favorites', $event)" />
-			<PhotosLayer
-				v-if="map && photosEnabled && !photoSuggestionsHidePhotos"
-				ref="photosLayer"
-				:map="map"
-				:photos="photos"
-				:date-filter-enabled="sliderEnabled"
-				:date-filter-start="sliderStartTimestamp"
-				:date-filter-end="sliderEndTimestamp"
-				:draggable="photosDraggable"
-				@add-to-map-photo="$emit('add-to-map-photo', $event)"
-				@coords-reset="$emit('coords-reset', $event)"
-				@photo-moved="onPhotoMoved"
-				@open-sidebar="$emit('open-sidebar',$event)"
-				@cluster-loading="$emit('photo-clusters-loading',$event)"
-				@cluster-loaded="$emit('photo-clusters-loaded')" />
-			<PhotoSuggestionsLayer
-				v-if="map && photosEnabled && showPhotoSuggestions"
-				ref="photoSuggestionsLayer"
-				:map="map"
-				:photo-suggestions="photoSuggestions"
-				:photo-suggestions-tracks-and-devices="photoSuggestionsTracksAndDevices"
-				:photo-suggestions-selected-indices="photoSuggestionsSelectedIndices"
-				:date-filter-enabled="sliderEnabled"
-				:date-filter-start="sliderStartTimestamp"
-				:date-filter-end="sliderEndTimestamp"
-				:draggable="photosDraggable"
-				@photo-suggestion-moved="onPhotoSuggestionMoved"
-				@photo-suggestion-selected="$emit('photo-suggestion-selected', $event)" />
-			<ContactsLayer
-				v-if="map && contactsEnabled"
-				ref="contactsLayer"
-				:contacts="contacts"
-				:groups="contactGroups"
-				@address-deleted="$emit('address-deleted', $event)"
-				@add-to-map-contact="$emit('add-to-map-contact', $event)" />
-			<PlaceContactPopup v-if="placingContact"
-				:lat-lng="placingContactLatLng"
-				@contact-placed="onContactPlaced" />
-			<TracksLayer
-				v-if="map && tracksEnabled"
-				ref="tracksLayer"
-				:map="map"
-				:tracks="tracks"
-				:start="sliderStartTimestamp"
-				:end="sliderEndTimestamp"
-				@add-to-map-track="$emit('add-to-map-track', $event)"
-				@click="$emit('click-track', $event)"
-				@change-color="$emit('change-track-color', $event)"
-				@display-elevation="displayElevation" />
-			<DevicesLayer
-				v-if="map && devicesEnabled"
-				ref="devicesLayer"
-				:map="map"
-				:devices="devices"
-				:start="sliderStartTimestamp"
-				:end="sliderEndTimestamp"
-				@click="$emit('click-device', $event)"
-				@export="$emit('export-device', $event)"
-				@toggle-history="$emit('toggle-device-history', $event)"
-				@change-color="$emit('change-device-color', $event)"
-				@add-to-map-device="$emit('add-to-map-device', $event)" />
-			<ClickSearchPopup v-if="leftClickSearching"
-				:lat-lng="leftClickSearchLatLng"
-				:favorite-is-creatable="isFavoriteCreatable"
-				:contact-is-creatable="isContactCreatable"
-				@place-contact="onAddContactAddress"
-				@add-favorite="$emit('add-address-favorite', $event); leftClickSearching = false" />
-			<LFeatureGroup>
-				<PoiMarker v-for="poi in searchPois"
-					:key="poi.place_id"
-					:poi="poi"
+		<div ref="mapContainer" class="leaflet-map-container">
+
+			<template v-if="isMapReady">
+				<RoutingControl
+					v-show="showRouting"
+					ref="routingControl"
+					:visible="showRouting"
+					:map="map"
+					:search-data="routingSearchData"
+					@close="showRouting = false"
+					@track-added="$emit('track-added', $event)" />
+
+				<SearchControl
+					v-show="!showRouting"
+					:map="map"
+					:search-data="searchData"
+					:loading="searching"
+					:result-poi-number="searchPois.length"
+					@validate="onSearchValidate"
+					@routing-clicked="showRouting = true"
+					@clear-pois="searchPois = []" />
+
+				<HistoryControl
+					:map="map"
+					position="topright"
+					:last-actions="lastActions"
+					:last-canceled-actions="lastCanceledActions"
+					@cancel="$emit('cancel')"
+					@redo="$emit('redo')" />
+
+				<FavoritesLayer
+					v-if="favoritesEnabled"
+					ref="favoritesLayer"
+					:map="map"
+					:favorites="favorites"
+					:categories="favoriteCategories"
+					:draggable="favoritesDraggable"
+					@click="$emit('click-favorite', $event)"
+					@add-to-map-favorite="$emit('add-to-map-favorite', $event)"
+					@edit="$emit('edit-favorite', $event)"
+					@delete="$emit('delete-favorite', $event)"
+					@delete-multiple="$emit('delete-favorites', $event)" />
+
+				<PhotosLayer
+					v-if="photosEnabled && !photoSuggestionsHidePhotos"
+					ref="photosLayer"
+					:map="map"
+					:photos="photos"
+					:date-filter-enabled="sliderEnabled"
+					:date-filter-start="sliderStartTimestamp"
+					:date-filter-end="sliderEndTimestamp"
+					:draggable="photosDraggable"
+					@add-to-map-photo="$emit('add-to-map-photo', $event)"
+					@coords-reset="$emit('coords-reset', $event)"
+					@photo-moved="onPhotoMoved"
+					@open-sidebar="$emit('open-sidebar',$event)"
+					@cluster-loading="$emit('photo-clusters-loading',$event)"
+					@cluster-loaded="$emit('photo-clusters-loaded')" />
+
+				<PhotoSuggestionsLayer
+					v-if="photosEnabled && showPhotoSuggestions"
+					ref="photoSuggestionsLayer"
+					:map="map"
+					:photo-suggestions="photoSuggestions"
+					:photo-suggestions-tracks-and-devices="photoSuggestionsTracksAndDevices"
+					:photo-suggestions-selected-indices="photoSuggestionsSelectedIndices"
+					:date-filter-enabled="sliderEnabled"
+					:date-filter-start="sliderStartTimestamp"
+					:date-filter-end="sliderEndTimestamp"
+					:draggable="photosDraggable"
+					@photo-suggestion-moved="onPhotoSuggestionMoved"
+					@photo-suggestion-selected="$emit('photo-suggestion-selected', $event)" />
+
+				<ContactsLayer
+					v-if="contactsEnabled"
+					:map="map"
+					ref="contactsLayer"
+					:contacts="contacts"
+					:groups="contactGroups"
+					@address-deleted="$emit('address-deleted', $event)"
+					@add-to-map-contact="$emit('add-to-map-contact', $event)" />
+
+				<PlaceContactPopup v-if="placingContact"
+					:map="map"
+					:lat-lng="placingContactLatLng"
+					@contact-placed="onContactPlaced" />
+
+				<TracksLayer
+					v-if="tracksEnabled"
+					ref="tracksLayer"
+					:map="map"
+					:tracks="tracks"
+					:start="sliderStartTimestamp"
+					:end="sliderEndTimestamp"
+					@add-to-map-track="$emit('add-to-map-track', $event)"
+					@click="$emit('click-track', $event)"
+					@change-color="$emit('change-track-color', $event)"
+					@display-elevation="displayElevation" />
+
+				<DevicesLayer
+					v-if="devicesEnabled"
+					ref="devicesLayer"
+					:map="map"
+					:devices="devices"
+					:start="sliderStartTimestamp"
+					:end="sliderEndTimestamp"
+					@click="$emit('click-device', $event)"
+					@export="$emit('export-device', $event)"
+					@toggle-history="$emit('toggle-device-history', $event)"
+					@change-color="$emit('change-device-color', $event)"
+					@add-to-map-device="$emit('add-to-map-device', $event)" />
+
+				<ClickSearchPopup v-if="leftClickSearching"
+					:map="map"
+					:lat-lng="leftClickSearchLatLng"
+					:favorite-is-creatable="isFavoriteCreatable"
+					:contact-is-creatable="isContactCreatable"
 					@place-contact="onAddContactAddress"
 					@add-favorite="$emit('add-address-favorite', $event); leftClickSearching = false" />
-			</LFeatureGroup>
-		</LMap>
+				<template :key="poi.place_id" v-for="poi in searchPois">
+					<PoiMarker
+						:poi="poi"
+						:map="map"
+						@place-contact="onAddContactAddress"
+						@add-favorite="$emit('add-address-favorite', $event); leftClickSearching = false" />
+				</template>
+			</template>
+		</div>
 		<Slider v-show="sliderEnabled"
 			:start="sliderStartTimestamp"
 			:end="sliderEndTimestamp"
@@ -180,11 +154,7 @@ import { Protocol } from "pmtiles";
 import '@maplibre/maplibre-gl-leaflet'
 import { addProtocol } from 'maplibre-gl'
 import ResourceType from 'maplibre-gl'
-import {
-	baseLayersByName,
-	overlayLayersByName,
-} from '../data/mapLayers.js'
-import { LControlScale, LControlZoom, LMap, LTileLayer, LControlLayers, LFeatureGroup } from 'vue2-leaflet'
+import { baseLayersByName, overlayLayersByName } from '../data/mapLayers.js'
 
 import 'leaflet-easybutton/src/easy-button'
 import 'leaflet-easybutton/src/easy-button.css'
@@ -210,230 +180,129 @@ import ClickSearchPopup from '../components/map/ClickSearchPopup.vue'
 import optionsController from '../optionsController.js'
 import PhotoSuggestionsLayer from './map/PhotoSuggestionsLayer.vue'
 
-// exclude dynamic imports from webpack-processing
-L.Control.Elevation.include({
-	import: function(src, condition) {
-		if (Array.isArray(src)) {
-			return Promise.all(src.map(m => this.import(m)));
-		}
-		switch(src) {
-			case this.__D3:          condition = typeof d3 !== 'object'; break;
-			case this.__TOGEOJSON:   condition = typeof toGeoJSON !== 'object'; break;
-			case this.__LGEOMUTIL:   condition = typeof L.GeometryUtil !== 'object'; break;
-			case this.__LALMOSTOVER: condition = typeof L.Handler.AlmostOver  !== 'function'; break;
-			case this.__LDISTANCEM:  condition = typeof L.DistanceMarkers  !== 'function'; break;
-			case this.__LEDGESCALE:  condition = typeof L.Control.EdgeScale !== 'function'; break;
-			case this.__LHOTLINE:    condition = typeof L.Hotline  !== 'function'; break;
-		}
-		let url = (new URL(src, (src.startsWith('../') || src.startsWith('./')) ? this.options.srcFolder : undefined)).toString();
-		return condition !== false ? import(/* webpackIgnore: true */ url) : Promise.resolve();
-	}
-})
-
 export default {
 	name: 'Map',
-
 	components: {
-		LMap,
-		LControlScale,
-		LControlZoom,
-		LControlLayers,
-		LTileLayer,
-		LFeatureGroup,
-		Slider,
-		HistoryControl,
-		SearchControl,
-		RoutingControl,
-		FavoritesLayer,
-		PhotosLayer,
-		PhotoSuggestionsLayer,
-		TracksLayer,
-		DevicesLayer,
-		ContactsLayer,
-		PlaceContactPopup,
-		ClickSearchPopup,
-		PoiMarker,
+		Slider, HistoryControl, SearchControl, RoutingControl, FavoritesLayer,
+		PhotosLayer, PhotoSuggestionsLayer, TracksLayer, DevicesLayer, ContactsLayer,
+		PlaceContactPopup, ClickSearchPopup, PoiMarker,
 	},
-
 	props: {
-		activeLayerIdProp: {
-	        type: String,
-			required: true,
-		},
-		mapBoundsProp: {
-			type: Array,
-			required: true,
-		},
-		searchData: {
-			type: Array,
-			required: true,
-		},
-		routingSearchData: {
-			type: Array,
-			required: true,
-		},
-		favorites: {
-			type: Object,
-			required: true,
-		},
-		favoriteCategories: {
-			type: Object,
-			required: true,
-		},
-		favoritesEnabled: {
-			type: Boolean,
-			required: true,
-		},
-		favoritesDraggable: {
-			type: Boolean,
-			required: true,
-		},
-		photos: {
-			type: Array,
-			required: true,
-		},
-		photosEnabled: {
-			type: Boolean,
-			required: true,
-		},
-		photosDraggable: {
-			type: Boolean,
-			required: true,
-		},
-		showPhotoSuggestions: {
-			type: Boolean,
-			required: true,
-		},
-		photoSuggestions: {
-			type: Array,
-			required: true,
-		},
-		photoSuggestionsTracksAndDevices: {
-			type: Object,
-			required: true,
-		},
-		photoSuggestionsSelectedIndices: {
-			type: Array,
-			required: true,
-		},
-		photoSuggestionsHidePhotos: {
-			type: Boolean,
-			default: false,
-		},
-		contacts: {
-			type: Array,
-			required: true,
-		},
-		contactGroups: {
-			type: Object,
-			required: true,
-		},
-		contactsEnabled: {
-			type: Boolean,
-			required: true,
-		},
-		tracks: {
-			type: Array,
-			required: true,
-		},
-		tracksEnabled: {
-			type: Boolean,
-			required: true,
-		},
-		devices: {
-			type: Array,
-			required: true,
-		},
-		devicesEnabled: {
-			type: Boolean,
-			required: true,
-		},
-		sliderEnabled: {
-			type: Boolean,
-			required: true,
-		},
-		sliderStartTimestamp: {
-			type: Number,
-			required: true,
-		},
-		sliderEndTimestamp: {
-			type: Number,
-			required: true,
-		},
-		minDataTimestamp: {
-			type: Number,
-			required: true,
-		},
-		maxDataTimestamp: {
-			type: Number,
-			required: true,
-		},
-		state: {
-			type: String,
-			default: '',
-		},
-		lastActions: {
-			type: Array,
-			required: true,
-		},
-		lastCanceledActions: {
-			type: Array,
-			required: true,
-		},
+		activeLayerIdProp: { type: String, required: true },
+		mapBoundsProp: { type: Array, required: true },
+		searchData: { type: Array, required: true },
+		routingSearchData: { type: Array, required: true },
+		favorites: { type: Object, required: true },
+		favoriteCategories: { type: Object, required: true },
+		favoritesEnabled: { type: Boolean, required: true },
+		favoritesDraggable: { type: Boolean, required: true },
+		photos: { type: Array, required: true },
+		photosEnabled: { type: Boolean, required: true },
+		photosDraggable: { type: Boolean, required: true },
+		showPhotoSuggestions: { type: Boolean, required: true },
+		photoSuggestions: { type: Array, required: true },
+		photoSuggestionsTracksAndDevices: { type: Object, required: true },
+		photoSuggestionsSelectedIndices: { type: Array, required: true },
+		photoSuggestionsHidePhotos: { type: Boolean, default: false },
+		contacts: { type: Array, required: true },
+		contactGroups: { type: Object, required: true },
+		contactsEnabled: { type: Boolean, required: true },
+		tracks: { type: Array, required: true },
+		tracksEnabled: { type: Boolean, required: true },
+		devices: { type: Array, required: true },
+		devicesEnabled: { type: Boolean, required: true },
+		sliderEnabled: { type: Boolean, required: true },
+		sliderStartTimestamp: { type: Number, required: true },
+		sliderEndTimestamp: { type: Number, required: true },
+		minDataTimestamp: { type: Number, required: true },
+		maxDataTimestamp: { type: Number, required: true },
+		state: { type: String, default: '' },
+		lastActions: { type: Array, required: true },
+		lastCanceledActions: { type: Array, required: true },
 	},
-
 	data() {
 		return {
+			isMapReady: false,
 			locale: getLocale(),
 			isDarkTheme: OCA.Accessibility?.theme === 'dark',
 			optionValues: optionsController.optionValues,
-			// map
-			map: null,
 			mapOptions: {
 				center: [0, 0],
 				zoom: 2,
 				minZoom: 2,
 				maxZoom: 19,
 				bounds: L.latLngBounds(this.mapBoundsProp),
-				maxBounds: L.latLngBounds([
-					[-90, 720],
-					[90, -720],
-				]),
-				native: {
-					zoomControl: false,
-					contextmenu: false,
-					contextmenuWidth: 160,
-					contextmenuItems: this.getContextmenuItems(),
-				},
+				maxBounds: L.latLngBounds([[-90, 720], [90, -720]]),
 				scaleControlShouldUseImperial: false,
-				closePopupOnClick: false,
 			},
-			// layers
-			allBaseLayers: {},
-			allOverlayLayers: {},
 			defaultStreetLayer: 'Open Street Map',
 			defaultSatelliteLayer: 'ESRI',
 			activeLayerId: this.activeLayerIdProp,
-			layersButton: null,
-			streetButton: null,
-			satelliteButton: null,
 			showExtraLayers: false,
-			// routing
 			showRouting: false,
-			// contacts
 			placingContact: false,
 			placingContactLatLng: null,
-			// tracks
-			elevationControl: null,
-			// poi
 			searchPois: [],
 			searching: false,
-			// left click search
 			leftClickSearching: false,
 			leftClickSearchLatLng: null,
 		}
 	},
+	created() {
+		// Non-reactive Leaflet properties to prevent Vue 3 Proxy breakdown
+		this.map = null
+		this.layersControl = null
+		this.elevationControl = null
+		this.layersButton = null
+		this.streetButton = null
+		this.satelliteButton = null
+		this.leafletBaseLayers = {}
+		this.leafletOverlays = {}
+	},
+	mounted() {
+		this.map = L.map(this.$refs.mapContainer, {
+			center: this.mapOptions.center,
+			zoom: this.mapOptions.zoom,
+			minZoom: this.mapOptions.minZoom,
+			maxZoom: this.mapOptions.maxZoom,
+			maxBounds: this.mapOptions.maxBounds,
+			zoomControl: false,
+			closePopupOnClick: false,
+			contextmenu: true,
+			contextmenuWidth: 160,
+			contextmenuItems: this.getContextmenuItems(),
+		});
 
+		if (this.mapOptions.bounds) {
+			this.map.fitBounds(this.mapOptions.bounds);
+		}
+
+		L.control.zoom({ position: 'bottomright' }).addTo(this.map);
+		L.control.scale({
+			position: 'bottomleft',
+			imperial: this.mapOptions.scaleControlShouldUseImperial,
+			metric: !this.mapOptions.scaleControlShouldUseImperial
+		}).addTo(this.map);
+
+		this.map.on('moveend zoomend', () => this.onUpdateBounds(this.map.getBounds()));
+		this.map.on('baselayerchange', this.onBaselayerchange);
+		this.map.on('click', this.onMapClick);
+		this.map.on('contextmenu', this.onMapContextmenu);
+
+		this.initLocControl(this.map);
+		this.initLayers(this.map);
+
+		this.$nextTick(() => {
+			this.map.invalidateSize();
+		});
+
+		this.isMapReady = true;
+	},
+	beforeUnmount() {
+		if (this.map) {
+			this.map.remove();
+		}
+	},
 	computed: {
 		isFavoriteCreatable() {
 			const favArray = Object.values(this.favorites)
@@ -443,134 +312,49 @@ export default {
 			return this.optionValues.isCreatable
 		},
 	},
-
 	watch: {
 		state() {
-			this.$refs.map.$el.classList.remove('loading')
-			this.$refs.map.$el.classList.remove('adding')
+			if(!this.map) return;
+			const mapEl = this.$refs.mapContainer;
+			mapEl.classList.remove('loading');
+			mapEl.classList.remove('adding');
+
 			if (this.state === 'loading') {
-				this.$refs.map.$el.classList.add('loading')
+				mapEl.classList.add('loading');
 			} else if (this.state === 'adding') {
-				this.$refs.map.$el.classList.add('adding')
+				mapEl.classList.add('adding');
 			}
 		},
-
 		activeLayerIdProp(newValue) {
-		    this.activeLayerId = newValue
+			if (this.activeLayerId !== newValue) {
+				this.activeLayerId = newValue;
+				this.updateBaseLayer();
+			}
 		},
-
 		mapBoundsProp(newValue) {
 			this.mapOptions.bounds = L.latLngBounds(newValue)
+			if (this.map) this.map.fitBounds(this.mapOptions.bounds)
 		},
 	},
-
 	methods: {
-		onMapReady(map) {
-			this.initLocControl(map)
-			this.initLayers(map)
-			this.map = map
-		},
 		fitBounds(latLng) {
-			this.map.fitBounds(latLng)
+			if(this.map) this.map.fitBounds(latLng)
 		},
 		getContextmenuItems() {
-			const iconColor = OCA.Accessibility?.theme === 'dark' ? 'ffffff' : '000000'
 			const cmi = [
-				{
-					text: t('maps', 'Add a favorite'),
-					iconCls: 'icon-favorite',
-					callback: this.contextAddFavorite,
-				},
-				{
-					text: t('maps', 'Place photos'),
-					iconCls: 'icon-category-multimedia',
-					callback: this.contextPlacePhotos,
-				},
-				{
-					text: t('maps', 'Place contact'),
-					iconCls: 'icon-group',
-					callback: this.placeContactClicked,
-				},
-				{
-					text: t('maps', 'Share this location'),
-					iconCls: 'icon-address',
-					callback: this.contextShareLocation,
-				},
+				{ text: window.t('maps', 'Add a favorite'), iconCls: 'icon-favorite', callback: this.contextAddFavorite },
+				{ text: window.t('maps', 'Place photos'), iconCls: 'icon-category-multimedia', callback: this.contextPlacePhotos },
+				{ text: window.t('maps', 'Place contact'), iconCls: 'icon-group', callback: this.placeContactClicked },
+				{ text: window.t('maps', 'Share this location'), iconCls: 'icon-address', callback: this.contextShareLocation },
 			]
-			/* Making this interactive does currently not work
-			const favArray = Object.values(this.favorites)
-			if (favArray.some((f) => (f.isUpdateable))
-				|| (favArray.length === 0 && optionsController.optionValues?.isCreatable)) {
-				cmi.push({
-					text: t('maps', 'Add a favorite'),
-					icon: generateUrl('/svg/core/actions/starred?color=' + iconColor),
-					callback: this.contextAddFavorite,
+			if (window.OCA && window.OCA.Maps && window.OCA.Maps.mapActions) {
+				window.OCA.Maps.mapActions.forEach((action) => {
+					cmi.push({
+						text: action.label, iconCls: action.icon, callback: (e) => {
+							action.callback({ id: 'geo:' + e.latlng.lat + ',' + e.latlng.lng, name: window.t('maps', 'Shared location'), latitude: e.latlng.lat.toString(), longitude: e.latlng.lng.toString() })
+						}
+					})
 				})
-			}
-			if (optionsController.optionValues?.isCreatable) {
-				cmi.push({
-					text: t('maps', 'Place photos'),
-					icon: generateUrl('/svg/core/places/picture?color=' + iconColor),
-					callback: this.contextPlacePhotos,
-				},
-				{
-					text: t('maps', 'Place contact'),
-					icon: generateUrl('/svg/core/actions/user?color=' + iconColor),
-					callback: this.placeContactClicked,
-				})
-			}
-			cmi.push({
-				text: t('maps', 'Share this location'),
-				icon: generateUrl('/svg/core/actions/share?color=' + iconColor),
-				callback: this.contextShareLocation,
-			}) */
-			window.OCA.Maps.mapActions.forEach((action) => {
-				cmi.push({
-					text: action.label,
-					iconCls: action.icon,
-					callback: (e) => {
-						action.callback({
-							id: 'geo:' + e.latlng.lat + ',' + e.latlng.lng,
-							name: t('maps', 'Shared location'),
-							latitude: e.latlng.lat.toString(),
-							longitude: e.latlng.lng.toString(),
-						})
-					},
-				})
-			})
-			if (optionsController.nbRouters > 0 || getCurrentUser()?.isAdmin) {
-				const routingItems = [
-					'-',
-					{
-						text: t('maps', 'Route from here'),
-						iconCls: 'icon-address',
-						callback: (e) => {
-							if (!this.showRouting) {
-								this.showRouting = true
-							}
-							this.$refs.routingControl.setRouteFrom(e.latlng)
-						},
-					}, {
-						text: t('maps', 'Add route point'),
-						iconCls: 'icon-add',
-						callback: (e) => {
-							if (!this.showRouting) {
-								this.showRouting = true
-							}
-							this.$refs.routingControl.addRoutePoint(e.latlng)
-						},
-					}, {
-						text: t('maps', 'Route to here'),
-						iconCls: 'icon-address',
-						callback: (e) => {
-							if (!this.showRouting) {
-								this.showRouting = true
-							}
-							this.$refs.routingControl.setRouteTo(e.latlng)
-						},
-					},
-				]
-				cmi.push(...routingItems)
 			}
 			return cmi
 		},
@@ -582,15 +366,8 @@ export default {
 			}
 		},
 		onMapNormalLeftClick(e) {
-			// layers management stuff
-			const layerSelector = document.querySelector('.leaflet-control-layers')
-			const layerSelectorWasVisible = layerSelector.style.display !== 'none'
-			layerSelector.style.display = 'none'
-			this.layersButton.button.parentElement.classList.remove('hidden')
-			this.streetButton.button.parentElement.classList.remove('hidden')
-			this.satelliteButton.button.parentElement.classList.remove('hidden')
+			this.hideLayersControl();
 
-			// check if there was a popup or a spiderfied cluster
 			const thereWasAPopup = this.map.contextmenu._visible
 				|| this.placingContact
 				|| (this.map._popup !== undefined && this.map._popup !== null)
@@ -599,26 +376,37 @@ export default {
 			const hadSpider = this.$refs.favoritesLayer?.spiderfied
 				|| this.$refs.contactsLayer?.spiderfied
 				|| this.$refs.photosLayer?.spiderfied
-			if (this.$refs.favoritesLayer) {
-				this.$refs.favoritesLayer.spiderfied = false
-			}
-			if (this.$refs.contactsLayer) {
-				this.$refs.contactsLayer.spiderfied = false
-			}
-			if (this.$refs.photosLayer) {
-				this.$refs.photosLayer.spiderfied = false
-			}
+
+			if (this.$refs.favoritesLayer) this.$refs.favoritesLayer.spiderfied = false
+			if (this.$refs.contactsLayer) this.$refs.contactsLayer.spiderfied = false
+			if (this.$refs.photosLayer) this.$refs.photosLayer.spiderfied = false
 
 			this.map.closePopup()
 			this.map.contextmenu.hide()
 			this.placingContact = false
 			this.leftClickSearching = false
-			if (!thereWasAPopup && !hadSpider && !layerSelectorWasVisible) {
+			if (!thereWasAPopup && !hadSpider) {
 				this.leftClickSearch(e.latlng.lat, e.latlng.lng)
 			}
 		},
+		hideLayersControl() {
+			if (this.layersControl) {
+				this.layersControl.getContainer().style.display = 'none';
+			}
+			if (this.layersButton) this.layersButton.button.parentElement.classList.remove('hidden')
+			if (this.streetButton) this.streetButton.button.parentElement.classList.remove('hidden')
+			if (this.satelliteButton) this.satelliteButton.button.parentElement.classList.remove('hidden')
+		},
+		showLayersControl() {
+			if (this.layersControl) {
+				this.layersControl.getContainer().style.display = 'block';
+			}
+			if (this.layersButton) this.layersButton.button.parentElement.classList.add('hidden')
+			if (this.streetButton) this.streetButton.button.parentElement.classList.add('hidden')
+			if (this.satelliteButton) this.satelliteButton.button.parentElement.classList.add('hidden')
+		},
 		onMapContextmenu(e) {
-			if (e.originalEvent.target.classList.contains('vue2leaflet-map') || e.originalEvent.target.classList.contains('mapboxgl-map')) {
+			if (e.originalEvent.target.classList.contains('leaflet-container') || e.originalEvent.target.classList.contains('mapboxgl-map')) {
 				this.map.contextmenu.showAt(L.latLng(e.latlng.lat, e.latlng.lng))
 				this.leftClickSearching = false
 			}
@@ -633,7 +421,6 @@ export default {
 			this.placingContact = true
 		},
 		initLocControl(map) {
-			// location control
 			const locControl = new LocateControl({
 				position: 'bottomright',
 				drawCircle: true,
@@ -642,7 +429,7 @@ export default {
 				icon: 'icon icon-address',
 				iconLoading: 'icon icon-loading-small',
 				strings: {
-					title: t('maps', 'Current location'),
+					title: window.t('maps', 'Current location'),
 				},
 				flyTo: true,
 				returnToPrevBounds: true,
@@ -662,213 +449,60 @@ export default {
 			}
 		},
 		initLayers(map) {
-			// tile layers
-			this.allBaseLayers = baseLayersByName
-			this.allOverlayLayers = overlayLayersByName
+			const allBaseLayers = baseLayersByName;
+			const allOverlayLayers = overlayLayersByName;
+			this.leafletBaseLayers = {};
+			this.leafletOverlays = {};
 
-			// detect Webgl
-			const canvas = document.createElement('canvas')
-			// let experimental = false
-			let gl
+			const baseLayersForControl = {};
+			const overlaysForControl = {};
 
-			try {
-				gl = canvas.getContext('webgl')
-			} catch (x) {
-				gl = null
-			}
+			// Build Base Layers
+			Object.keys(allBaseLayers).forEach(key => {
+				const l = allBaseLayers[key];
+				const layer = l.tileLayerClass
+					? l.tileLayerClass(l.url, l.options)
+					: L.tileLayer(l.url, l.options);
 
-			if (gl == null) {
-				try {
-					gl = canvas.getContext('experimental-webgl')
-					// experimental = true
-				} catch (x) { gl = null }
-			}
+				this.leafletBaseLayers[key] = layer;
+				baseLayersForControl[l.name] = layer;
+			});
 
-			if ('mapboxAPIKEY' in this.optionValues && this.optionValues.mapboxAPIKEY !== '' && gl !== null) {
-				// wrapper to make tile layer component correctly pass arguments
-				L.myMapboxGL = (url, options) => {
-					return new L.MapboxGL(options)
-				}
-
-				this.defaultStreetLayer = 'Mapbox vector streets'
-				this.defaultSatelliteLayer = 'Mapbox satellite'
-
-				// add mapbox-gl tile servers
-				const attrib = '<a href="https://www.mapbox.com/about/maps/">© Mapbox</a> '
-					+ '<a href="https://www.openstreetmap.org/copyright">© OpenStreetMap</a> '
-					+ '<a href="https://www.mapbox.com/map-feedback/">' + t('maps', 'Improve this map') + '</a>'
-				const attribSat = attrib + '<a href="https://www.digitalglobe.com/">© DigitalGlobe</a>'
-
-				this.allOverlayLayers = {
-					'Mapbox traffic overlay': {
-						name: 'Traffic',
-						type: 'overlay',
-						attribution: attrib,
-						tileLayerClass: L.myMapboxGL,
-						options: {
-							id: 'Mapbox Traffic overlay',
-							accessToken: this.optionValues.mapboxAPIKEY,
-							style: generateUrl('/apps/maps/style/traffic'),
-							minZoom: 1,
-							maxZoom: 22,
-							attribution: attrib,
-							pane: 'overlayPane',
-						},
-					},
-				}
-				this.allBaseLayers = {
-					'Mapbox vector streets': {
-						name: 'Street map',
-						type: 'base',
-						attribution: attrib,
-						tileLayerClass: L.myMapboxGL,
-						options: {
-							id: 'Mapbox vector streets',
-							accessToken: this.optionValues.mapboxAPIKEY,
-							style: 'mapbox://styles/mapbox/streets-v8',
-							minZoom: 1,
-							maxZoom: 22,
-							attribution: attrib,
-						},
-					},
-					'Mapbox satellite': {
-						name: 'Satellite map',
-						type: 'base',
-						attribution: attrib,
-						tileLayerClass: L.myMapboxGL,
-						options: {
-							id: 'Mapbox satellite',
-							accessToken: this.optionValues.mapboxAPIKEY,
-							style: 'mapbox://styles/mapbox/satellite-streets-v9',
-							minZoom: 1,
-							maxZoom: 22,
-							attribution: attribSat,
-						},
-					},
-					Topographic: {
-						name: 'Topographic',
-						type: 'base',
-						attribution: attrib,
-						tileLayerClass: L.myMapboxGL,
-						options: {
-							id: 'Topographic',
-							accessToken: this.optionValues.mapboxAPIKEY,
-							style: 'mapbox://styles/mapbox/outdoors-v11',
-							minZoom: 1,
-							maxZoom: 22,
-							attribution: attrib,
-						},
-					},
-					'Mapbox dark': {
-						name: 'Dark',
-						type: 'base',
-						attribution: attrib,
-						tileLayerClass: L.myMapboxGL,
-						options: {
-							id: 'Mapbox dark',
-							accessToken: this.optionValues.mapboxAPIKEY,
-							style: 'mapbox://styles/mapbox/dark-v8',
-							minZoom: 1,
-							maxZoom: 22,
-							attribution: attrib,
-						},
-					},
-					'Mapbox traffic': {
-						name: 'Traffic',
-						type: 'base',
-						attribution: attrib,
-						tileLayerClass: L.myMapboxGL,
-						options: {
-							id: 'Mapbox traffic',
-							accessToken: this.optionValues.mapboxAPIKEY,
-							style: 'mapbox://styles/mapbox/traffic-day-v2',
-							minZoom: 1,
-							maxZoom: 22,
-							attribution: attrib,
-						},
-					},
-					'Mapbox traffic night': {
-						name: 'Traffic night',
-						type: 'base',
-						attribution: attrib,
-						tileLayerClass: L.myMapboxGL,
-						options: {
-							id: 'Mapbox traffic night',
-							accessToken: this.optionValues.mapboxAPIKEY,
-							style: 'mapbox://styles/mapbox/traffic-night-v2',
-							minZoom: 1,
-							maxZoom: 22,
-							attribution: attrib,
-						},
-					},
-					'Mapbox 3d Preview (Beta)': {
-						name: 'Mapbox 3d Preview (Beta)',
-						type: 'base',
-						attribution: attrib,
-						tileLayerClass: L.myMapboxGL,
-						options: {
-							id: '3d',
-							accessToken: this.optionValues.mapboxAPIKEY,
-							minZoom: 1,
-							maxZoom: 22,
-							pitch: 60,
-							attribution: attrib,
-						},
-					},
-					Watercolor: baseLayersByName.Watercolor,
+			// Safe Fallback logic for activeLayerId
+			if (!this.activeLayerId || !this.leafletBaseLayers[this.activeLayerId]) {
+				if (this.leafletBaseLayers[this.defaultStreetLayer]) {
+					this.activeLayerId = this.defaultStreetLayer;
+				} else {
+					this.activeLayerId = Object.keys(this.leafletBaseLayers)[0]; // Force fallback to the very first available option
 				}
 			}
 
-			if ((gl !== null)
-				&& ('maplibreStreetStyleURL' in this.optionValues
-				&& this.optionValues.maplibreStreetStyleURL !== '')) {
-				let token = null
-				if ('maplibreStreetStyleAuth' in this.optionValues
-					&& this.optionValues.maplibreStreetStyleAuth !== '') {
-					token = this.optionValues.maplibreStreetStyleAuth
-				}
-
-				if ('maplibreStreetStylePmtiles' in this.optionValues
-					&& this.optionValues.maplibreStreetStylePmtiles === "1") {
-					let protocol = new Protocol();
-					addProtocol("pmtiles", protocol.tile);
-				}
-
-				// wrapper to make tile layer component correctly pass arguments
-				L.myMaplibreGL = (url, options) => {
-					if (token !== null) {
-						token = 'Basic ' + btoa(token)
-						const oldTransform = options.transformRequest
-						options.transformRequest = (url, resourceType) => {
-							const param = oldTransform?.() || {}
-							param.url = param.url || url
-							if (resourceType === ResourceType.Tile) {
-								param.type = 'arrayBuffer'
-							}
-							param.headers = param.headers || {}
-							param.headers.Authorization = token
-							return param
-						}
-					}
-					return new L.maplibreGL(options)
-				}
-
-				this.allBaseLayers = {}
-				Object.keys(baseLayersByName).forEach(id => {
-					if (id === 'Open Street Map') {
-						const layer = Object.assign({}, baseLayersByName[id])
-						delete layer.url
-						layer.tileLayerClass = L.myMaplibreGL
-						layer.options = Object.assign({}, layer.options)
-						layer.options.style = this.optionValues.maplibreStreetStyleURL
-						layer.options.minZoom = 0
-						layer.options.maxZoom = 22
-						this.allBaseLayers[id] = layer
-					} else {
-						this.allBaseLayers[id] = baseLayersByName[id]
-					}
-				})
+			// Apply the safely determined layer to the map
+			if (this.activeLayerId && this.leafletBaseLayers[this.activeLayerId]) {
+				this.leafletBaseLayers[this.activeLayerId].addTo(map);
 			}
+
+			// Build Overlay Layers
+			Object.keys(allOverlayLayers).forEach(key => {
+				const l = allOverlayLayers[key];
+				const layer = l.tileLayerClass
+					? l.tileLayerClass(l.url, l.options)
+					: L.tileLayer(l.url, l.options);
+
+				layer.setOpacity(l.opacity || 1);
+				this.leafletOverlays[key] = layer;
+				overlaysForControl[l.name] = layer;
+
+				if (['Watercolor', 'ESRI'].includes(this.activeLayerId) && key === 'Roads Overlay') {
+					layer.addTo(map);
+				}
+			});
+
+			// Add the native layers control
+			this.layersControl = L.control.layers(baseLayersForControl, overlaysForControl, {
+				position: 'bottomright',
+				collapsed: false
+			}).addTo(map);
 
 			// LAYER BUTTONS
 			this.layersButton = L.easyButton({
@@ -876,101 +510,125 @@ export default {
 				states: [{
 					stateName: 'no-importa',
 					icon: '<a class="icon icon-menu" style="height: 100%"> </a>',
-					title: t('maps', 'Other maps'),
-					onClick: (btn, map) => {
-						document.querySelector('.leaflet-control-layers').style.display = 'block'
-						btn.button.parentElement.classList.add('hidden')
-						this.streetButton.button.parentElement.classList.add('hidden')
-						this.satelliteButton.button.parentElement.classList.add('hidden')
-					},
+					title: window.t('maps', 'Other maps'),
+					onClick: () => this.showLayersControl(),
 				}],
-			})
-			this.layersButton.addTo(map)
+			}).addTo(map);
 
 			this.streetButton = L.easyButton({
 				position: 'bottomright',
 				states: [{
 					stateName: 'no-importa',
 					icon: '<a class="icon icon-osm" style="height: 100%"> </a>',
-					title: t('maps', 'Street map'),
-					onClick: (btn, map) => {
-						this.activeLayerId = this.defaultStreetLayer
-						btn.button.parentElement.classList.add('behind')
-						this.satelliteButton.button.parentElement.classList.remove('behind')
+					title: window.t('maps', 'Street map'),
+					onClick: () => {
+						this.changeBaseLayer(this.defaultStreetLayer);
 					},
 				}],
-			})
-			this.streetButton.addTo(map)
+			}).addTo(map);
 
 			this.satelliteButton = L.easyButton({
 				position: 'bottomright',
 				states: [{
 					stateName: 'no-importa',
 					icon: '<a class="icon icon-esri" style="height: 100%"> </a>',
-					title: t('maps', 'Satellite map'),
-					onClick: (btn, map) => {
-						this.activeLayerId = this.defaultSatelliteLayer
-						btn.button.parentElement.classList.add('behind')
-						this.streetButton.button.parentElement.classList.remove('behind')
+					title: window.t('maps', 'Satellite map'),
+					onClick: () => {
+						this.changeBaseLayer(this.defaultSatelliteLayer);
 					},
 				}],
-			})
-			this.satelliteButton.addTo(map)
+			}).addTo(map);
 
-			this.streetButton.button.parentElement.classList.add('behind')
+			this.updateLayerButtons();
 
-			// initial selected layer, restore or fallback to default street
-			/* if (this.optionValues.tileLayer in this.allBaseLayers) {
-				this.activeLayerId = this.optionValues.tileLayer
-			} else {
-
-			 */
-			if (!this.activeLayerId) {
-				this.activeLayerId = this.defaultStreetLayer
+			this.$nextTick(() => {
+				this.hideLayersControl();
+			});
+		},
+		updateBaseLayer() {
+			if (!this.map) return;
+			this.changeBaseLayer(this.activeLayerId);
+		},
+		changeBaseLayer(newLayerId) {
+			// Bulletproof fallback logic for layer swaps
+			if (!newLayerId || !this.leafletBaseLayers[newLayerId]) {
+				if (this.leafletBaseLayers[this.defaultStreetLayer]) {
+					newLayerId = this.defaultStreetLayer;
+				} else {
+					newLayerId = Object.keys(this.leafletBaseLayers)[0]; // Ultimate fallback
+				}
 			}
 
-			document.querySelector('.leaflet-control-layers').style.display = 'none'
+			if (!newLayerId) return; // Prevent failure if no layers exist at all
+
+			Object.keys(this.leafletBaseLayers).forEach(key => {
+				const layer = this.leafletBaseLayers[key];
+				if (this.map.hasLayer(layer)) {
+					this.map.removeLayer(layer);
+				}
+			});
+
+			this.leafletBaseLayers[newLayerId].addTo(this.map);
+			this.activeLayerId = newLayerId;
+
+			if (['Watercolor', 'ESRI'].includes(this.activeLayerId)) {
+				if (this.leafletOverlays['Roads Overlay'] && !this.map.hasLayer(this.leafletOverlays['Roads Overlay'])) {
+					this.leafletOverlays['Roads Overlay'].addTo(this.map);
+				}
+			} else {
+				if (this.leafletOverlays['Roads Overlay'] && this.map.hasLayer(this.leafletOverlays['Roads Overlay'])) {
+					this.map.removeLayer(this.leafletOverlays['Roads Overlay']);
+				}
+			}
+
+			this.updateLayerButtons();
+			optionsController.saveOptionValues({ tileLayer: this.activeLayerId });
+		},
+		updateLayerButtons() {
+			if (!this.streetButton || !this.satelliteButton) return;
+			if (this.activeLayerId === this.defaultStreetLayer) {
+				this.streetButton.button.parentElement.classList.add('behind');
+				this.satelliteButton.button.parentElement.classList.remove('behind');
+			} else {
+				this.streetButton.button.parentElement.classList.remove('behind');
+				this.satelliteButton.button.parentElement.classList.add('behind');
+			}
 		},
 		onBaselayerchange(e) {
-			this.activeLayerId = e.layer.options.id
-			if (this.activeLayerId === this.defaultStreetLayer) {
-				this.streetButton.button.parentElement.classList.add('behind')
-				this.satelliteButton.button.parentElement.classList.remove('behind')
-			} else {
-				this.streetButton.button.parentElement.classList.remove('behind')
-				this.satelliteButton.button.parentElement.classList.add('behind')
-			}
-			optionsController.saveOptionValues({ tileLayer: this.activeLayerId })
+			let newLayerId = null;
+			Object.keys(this.leafletBaseLayers).forEach(key => {
+				if (this.leafletBaseLayers[key] === e.layer) {
+					newLayerId = key;
+				}
+			});
 
-			// take care of max zoom issue
-			if (e.layer.options.maxZoom) {
-				e.layer._map.setMaxZoom(e.layer.options.maxZoom)
+			if (newLayerId) {
+				this.activeLayerId = newLayerId;
+				this.updateLayerButtons();
+				optionsController.saveOptionValues({ tileLayer: this.activeLayerId });
+
+				if (e.layer && e.layer.options && e.layer.options.maxZoom) {
+					e.layer._map.setMaxZoom(e.layer.options.maxZoom);
+				}
 			}
-			// buttons/control visibility
-			document.querySelector('.leaflet-control-layers').style.display = 'none'
-			this.layersButton.button.parentElement.classList.remove('hidden')
-			this.streetButton.button.parentElement.classList.remove('hidden')
-			this.satelliteButton.button.parentElement.classList.remove('hidden')
+			this.hideLayersControl();
 		},
-		onUpdateBounds(b) {
-			const boundsStr = b.getNorth() + ';' + b.getSouth() + ';' + b.getEast() + ';' + b.getWest()
+		onUpdateBounds(bounds) {
+			const boundsStr = bounds.getNorth() + ';' + bounds.getSouth() + ';' + bounds.getEast() + ';' + bounds.getWest()
 			optionsController.saveOptionValues({ mapBounds: boundsStr })
 		},
-		// favorites
-		contextAddFavorite(e) {
-			this.$emit('add-favorite', e.latlng)
-		},
+		// context handlers
+		contextAddFavorite(e) { this.$emit('add-favorite', e.latlng) },
 		async contextShareLocation(e) {
 			const geoLink = 'geo:' + e.latlng.lat.toFixed(6) + ',' + e.latlng.lng.toFixed(6)
 			try {
 				await navigator.clipboard.writeText(geoLink)
-				showSuccess(t('maps', 'Geo link ({geoLink}) copied to clipboard', { geoLink }))
+				showSuccess(window.t('maps', 'Geo link ({geoLink}) copied to clipboard', { geoLink }))
 			} catch (error) {
 				console.debug(error)
-				showError(t('maps', 'Geo link could not be copied to clipboard'))
+				showError(window.t('maps', 'Geo link could not be copied to clipboard'))
 			}
 		},
-		// contacts
 		placeContactClicked(e) {
 			this.placingContactLatLng = L.latLng(e.latlng.lat, e.latlng.lng)
 			this.placingContact = true
@@ -979,17 +637,9 @@ export default {
 			this.placingContact = false
 			this.$emit('contact-placed', e)
 		},
-		// photos
-		contextPlacePhotos(e) {
-			this.$emit('place-photos', e.latlng)
-		},
-		onPhotoMoved(photo, latLng) {
-			this.$emit('photo-moved', photo, latLng)
-		},
-		// photo suggestions
-		onPhotoSuggestionMoved(index, latLng) {
-			this.$emit('photo-suggestion-moved', index, latLng)
-		},
+		contextPlacePhotos(e) { this.$emit('place-photos', e.latlng) },
+		onPhotoMoved(photo, latLng) { this.$emit('photo-moved', photo, latLng) },
+		onPhotoSuggestionMoved(index, latLng) { this.$emit('photo-suggestion-moved', index, latLng) },
 		zoomOnPhotoSuggestion(photo) {
 			if (photo.lat && photo.lng) {
 				const md = {
@@ -1001,7 +651,6 @@ export default {
 				this.map.fitBounds(L.latLngBounds([md.s, md.w], [md.n, md.e]), { padding: [30, 30] })
 			}
 		},
-		// tracks
 		zoomOnTrack(track) {
 			if (track.metadata) {
 				const md = track.metadata
@@ -1011,8 +660,6 @@ export default {
 		clearElevationControl() {
 			if (this.elevationControl !== null) {
 				this.elevationControl.clear()
-				// this.elevationControl.remove()
-				// this.elevationControl = null
 			}
 		},
 		displayElevation(track) {
@@ -1037,9 +684,6 @@ export default {
 				autohide: false,
 				followMarker: false,
 				theme: 'steelblue-theme',
-				// slope: false,
-				// speed: true,
-				// time: true,
 				summary: 'line',
 				ruler: false,
 				srcFolder: window.location.origin.concat(window.location.pathname, 'src/components/leaflet-elevation//'),
@@ -1049,10 +693,9 @@ export default {
 			this.elevationControl = el
 			el.on('elechart_init', (e) => {
 				el._expand()
-				el._button.setAttribute('title', t('maps', 'Close'))
+				el._button.setAttribute('title', window.t('maps', 'Close'))
 			})
 		},
-		// devices
 		zoomOnDevice(device) {
 			if (device.points) {
 				const lats = device.points.map(p => p.lat)
@@ -1064,20 +707,17 @@ export default {
 				this.map.fitBounds(L.latLngBounds([latMin, lngMin], [latMax, lngMax]), { padding: [30, 30] })
 			}
 		},
-		// search
 		onSearchValidate(element) {
 			if (['contact', 'favorite'].includes(element.type)) {
 				this.map.setView(element.latLng, 15)
 			} else if (element.type === 'device') {
 				if (!element.device.enabled) {
-					// zooming is done by parent component
 					this.$emit('search-enable-device', element.device)
 				} else {
 					this.zoomOnDevice(element.device)
 				}
 			} else if (element.type === 'track') {
 				if (!element.track.enabled) {
-					// zooming is done by parent component
 					this.$emit('search-enable-track', element.track)
 				} else {
 					this.zoomOnTrack(element.track)
@@ -1127,10 +767,11 @@ export default {
 	width: 100%;
 }
 
-.leaflet-container {
+.leaflet-map-container {
 	position: relative;
 	height: 100%;
 	width: 100%;
+	z-index: 1; /* Essential for placing Vue popups correctly over map */
 }
 
 ::v-deep .leaflet-control-locate {

@@ -8,68 +8,64 @@
 		:force-menu="false"
 		@click="onContactsClick"
 		@update:open="onUpdateOpen">
-		<NcCounterBubble v-show="enabled && contacts.length"
-			slot="counter">
-			{{ contacts.length > 99 ? '99+' : contacts.length }}
-		</NcCounterBubble>
-		<template v-if="enabled" slot="actions">
-			<NcActionButton
-				icon="icon-checkmark"
-				@click="onToggleAllClick">
-				{{ t('maps', 'Toggle all') }}
-			</NcActionButton>
-			<NcActionButton
-				icon="icon-search"
-				:close-after-click="true"
-				@click="onZoomAllClick">
-				{{ t('maps', 'Zoom') }}
-			</NcActionButton>
-			<NcActionButton v-if="!isPublic()"
-				icon="icon-share"
-				:close-after-click="true"
-				@click="$emit('add-to-map-all-contacts')">
-				{{ t('maps', 'Copy to map') }}
-			</NcActionButton>
-		</template>
-		<template slot="default">
-			<b v-show="false">dummy</b>
-			<NcAppNavigationItem
-				v-for="(g, gid) in groups"
-				:key="gid"
-				icon="icon-group"
-				:name="g.name"
-				:class="{ 'subitem-disabled': !g.enabled }"
-				:allow-collapse="false"
-				:force-menu="false"
-				@click="onGroupClick(gid)">
-				<NcCounterBubble v-show="enabled && g.enabled"
-					slot="counter">
-					{{ g.counter > 99 ? '99+' : g.counter }}
-				</NcCounterBubble>
-				<template slot="actions">
-					<NcActionButton v-if="enabled && g.enabled"
-						icon="icon-search"
-						:disabled="!g.enabled || g.counter === 0"
-						:close-after-click="true"
-						@click="onZoomGroupClick(gid)">
-						{{ t('maps', 'Zoom') }}
-					</NcActionButton>
-					<NcActionButton v-if="!isPublic()"
-						icon="icon-share"
-						:close-after-click="true"
-						@click="$emit('add-to-map-contact-group', gid)">
-						{{ t('maps', 'Copy to map') }}
-					</NcActionButton>
-				</template>
-			</NcAppNavigationItem>
-		</template>
+			<template #counter>
+				<NcCounterBubble v-show="enabled && contacts.length" :count="contacts.length" />
+			</template>
+			<template v-if="enabled" v-slot:actions>
+				<NcActionButton
+					icon="icon-checkmark"
+					@click="onToggleAllClick">
+					{{ t('maps', 'Toggle all') }}
+				</NcActionButton>
+				<NcActionButton
+					icon="icon-search"
+					:close-after-click="true"
+					@click="onZoomAllClick">
+					{{ t('maps', 'Zoom') }}
+				</NcActionButton>
+				<NcActionButton v-if="!isPublic()"
+					icon="icon-share"
+					:close-after-click="true"
+					@click="$emit('add-to-map-all-contacts')">
+					{{ t('maps', 'Copy to map') }}
+				</NcActionButton>
+			</template>
+			<template v-slot:default>
+				<b v-show="false">dummy</b>
+				<NcAppNavigationItem
+					v-for="(g, gid) in groups"
+					:key="gid"
+					icon="icon-group"
+					:name="g.name"
+					:class="{ 'subitem-disabled': !g.enabled }"
+					:allow-collapse="false"
+					:force-menu="false"
+					@click="onGroupClick(gid)">
+					<template #counter>
+						<NcCounterBubble v-show="enabled && g.enabled" :count="g.counter" />
+					</template>
+					<template v-slot:actions>
+						<NcActionButton v-if="enabled && g.enabled"
+							icon="icon-search"
+							:disabled="!g.enabled || g.counter === 0"
+							:close-after-click="true"
+							@click="onZoomGroupClick(gid)">
+							{{ t('maps', 'Zoom') }}
+						</NcActionButton>
+						<NcActionButton v-if="!isPublic()"
+							icon="icon-share"
+							:close-after-click="true"
+							@click="$emit('add-to-map-contact-group', gid)">
+							{{ t('maps', 'Copy to map') }}
+						</NcActionButton>
+					</template>
+				</NcAppNavigationItem>
+			</template>
 	</NcAppNavigationItem>
 </template>
 
 <script>
-import NcAppNavigationItem from '@nextcloud/vue/dist/Components/NcAppNavigationItem.js'
-import NcActionButton from '@nextcloud/vue/dist/Components/NcActionButton.js'
-import NcCounterBubble from '@nextcloud/vue/dist/Components/NcCounterBubble.js'
+import { NcAppNavigationItem, NcActionButton, NcCounterBubble} from '@nextcloud/vue'
 import optionsController from '../optionsController.js'
 import { isPublic } from '../utils/common.js'
 

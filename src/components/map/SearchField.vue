@@ -1,6 +1,7 @@
 <template>
 	<NcSelect
 		ref="select"
+		inputLabel="label"
 		class="search-select"
 		label="label"
 		track-by="multiselectKey"
@@ -39,7 +40,7 @@
 </template>
 
 <script>
-import NcSelect from '@nextcloud/vue/dist/Components/NcSelect.js'
+import { NcSelect } from '@nextcloud/vue'
 
 import L from 'leaflet'
 

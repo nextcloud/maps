@@ -1,123 +1,38 @@
 <template>
-	<LMarker
-		:lat-lng="[poi.lat, poi.lon]">
-		<LTooltip>
-			{{ tooltipContent }}
-		</LTooltip>
-		<LPopup>
-			<div v-if="poi.icon" class="inline-wrapper">
-				<img class="location-icon" :src="poi.icon">
-				<h2 class="location-header">
-					{{ header }}
-				</h2>
-			</div>
-			<span class="location-city">{{ desc }}</span>
-			<button class="search-add-favorite" @click="onAddFavorite">
-				<span class="icon-favorite" />
-				{{ t('maps', 'Add to favorites') }}
-			</button>
-			<button class="search-place-contact" @click="onAddContact">
-				<span class="icon-user" />
-				{{ t('maps', 'Add contact address') }}
-			</button>
-			<div v-if="myOpeningHours"
-				class="opening-hours-header inline-wrapper"
-				@click="ohOpen = !ohOpen">
-				<img class="popup-icon" :src="recentImagePath">
-
-				<span v-if="ohChangeDt && ohIsCurrentlyOpen"
-					class="poi-open">
-					{{ t('maps', 'Open') }}
-					&nbsp;
-				</span>
-				<span v-if="ohChangeDt && ohIsCurrentlyOpen && ohDtDiff <= 60"
-					class="poi-closes">
-					&nbsp;
-					{{ t('maps', 'closes in {nb} minutes', { nb: parseInt(ohDtDiff) }) }}
-				</span>
-				<span v-if="ohChangeDt && ohIsCurrentlyOpen && ohDtDiff > 60">
-					&nbsp;
-					{{ t('maps', 'until {date}', { date: formattedOhChangeDt }) }}
-				</span>
-
-				<span v-if="ohChangeDt && !ohIsCurrentlyOpen"
-					class="poi-closed">
-					{{ t('maps', 'Closed') }}
-					&nbsp;
-				</span>
-				<span v-if="ohChangeDt && !ohIsCurrentlyOpen"
-					class="poi-opens">
-					{{ t('maps', 'opens at {date}', { date: formattedOhChangeDt }) }}
-				</span>
-
-				<img v-if="ohOpen"
-					id="opening-hours-table-toggle-collapse"
-					:src="triangleSimagePath">
-				<img v-if="!ohOpen"
-					id="opening-hours-table-toggle-expand"
-					:src="triangleEPath">
-			</div>
-			<table v-if="myOpeningHours && ohOpen"
-				class="opening-hours-table">
-				<tr v-for="(int, i) in ohIntervals"
-					:key="i"
-					:class="{ selected: int.selected }">
-					<td class="opening-hours-day">
-						{{ int.day }}
-					</td>
-					<td class="opening-hours-hours">
-						{{ int.startTime }} - {{ int.endTime }}
-					</td>
-				</tr>
-			</table>
-			<div v-if="poi.extratags && poi.extratags.website" class="inline-wrapper extra-wrapper">
-				<img class="popup-icon" :src="linkImagePath">
-				<a :href="poi.extratags.website" target="_blank">
-					{{ poi.extratags.website.replace(/^(?:\w+:|)\/\/(?:www\.|)(.*[^\/])\/*$/, '$1') }}
-				</a>
-			</div>
-			<div v-if="poi.extratags && poi.extratags.phone" class="inline-wrapper extra-wrapper">
-				<img class="popup-icon" :src="linkImagePath">
-				<a :href="'tel:' + poi.extratags.phone" target="_blank">
-					{{ poi.extratags.phone }}
-				</a>
-			</div>
-			<div v-if="poi.extratags && poi.extratags.email" class="inline-wrapper extra-wrapper">
-				<img class="popup-icon" :src="mailImagePath">
-				<a :href="'mailto:' + poi.extratags.email" target="_blank">
-					{{ poi.extratags.email }}
-				</a>
-			</div>
-		</LPopup>
-	</LMarker>
+	<div class="poi-popup-content">
+		<div v-if="poi.icon" class="inline-wrapper">
+			<img class="location-icon" :src="poi.icon">
+			<h2 class="location-header">{{ header }}</h2>
+		</div>
+		<span class="location-city">{{ desc }}</span>
+		
+		<button class="search-add-favorite" @click="onAddFavorite">
+			<span class="icon-favorite" />
+			{{ t('maps', 'Add to favorites') }}
+		</button>
+		<button class="search-place-contact" @click="onAddContact">
+			<span class="icon-user" />
+			{{ t('maps', 'Add contact address') }}
+		</button>
+		
+		</div>
 </template>
 
 <script>
+import L from 'leaflet'
 import { imagePath } from '@nextcloud/router'
 import moment from '@nextcloud/moment'
-import { formatAddress } from '../../utils.js'
-
-import { LMarker, LPopup, LTooltip } from 'vue2-leaflet'
 import OpeningHours from 'opening_hours'
+import { formatAddress } from '../../utils.js'
 
 export default {
 	name: 'PoiMarker',
-
-	components: {
-		LMarker,
-		LPopup,
-		LTooltip,
-	},
-
 	props: {
-		poi: {
-			type: Object,
-			required: true,
-		},
+		poi: { type: Object, required: true },
+		map: { type: Object, required: true },
 	},
-
 	data() {
-		return {
+		return { 
 			recentImagePath: imagePath('maps', 'recent.svg'),
 			triangleSimagePath: imagePath('maps', 'triangle-s.svg'),
 			triangleEPath: imagePath('maps', 'triangle-e.svg'),
@@ -126,8 +41,7 @@ export default {
 			ohOpen: false,
 		}
 	},
-
-	computed: {
+	computed: { 
 		tooltipContent() {
 			return this.poi.namedetails?.name || this.poi.display_name
 		},
@@ -233,63 +147,24 @@ export default {
 			}
 			return desc
 		},
+	 },
+	created() {
+		this.marker = null; // Non-reactive
 	},
-
-	methods: {
-		onAddFavorite() {
-			this.$emit('add-favorite',
-				{
-					...this.poi,
-					latLng: {
-						lat: this.poi.lat,
-						lng: this.poi.lon,
-					},
-					name: this.header,
-					formattedAddress: formatAddress(this.poi.address),
-				})
-		},
-		onAddContact() {
-			this.$emit('place-contact',
-				{
-					...this.poi,
-					latLng: {
-						lat: this.poi.lat,
-						lng: this.poi.lon,
-					},
-					name: this.header,
-					formattedAddress: formatAddress(this.poi.address),
-				})
-		},
+	mounted() {
+		this.marker = L.marker([this.poi.lat, this.poi.lon]).addTo(this.map);
+		
+		this.marker.bindTooltip(this.tooltipContent);
+		
+		this.marker.bindPopup(this.$el);
 	},
+	beforeUnmount() {
+		if (this.marker && this.map) {
+			this.map.removeLayer(this.marker);
+		}
+	},
+	methods: { 
 
+	 }
 }
 </script>
-
-<style lang="scss" scoped>
-.opening-hours-header {
-	height: 30px;
-	img {
-		height: 100%;
-		padding: 5px 0 5px 0;
-	}
-	* {
-		cursor: pointer;
-	}
-	span {
-		line-height: 30px;
-	}
-}
-
-.opening-hours-table {
-	width: 100%;
-	td {
-		padding: 0 5px 0 5px;
-	}
-}
-
-.extra-wrapper {
-	a {
-		line-height: 20px;
-	}
-}
-</style>

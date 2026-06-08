@@ -4,14 +4,14 @@
 		<div v-else-if="photoSuggestions.length > 0">
 			<div class="oc-dialog-buttonrow">
 				<NcButton
-					@click="$emit('clear-selection')">
-					{{ t('maps', 'Clear selection') }}
-				</NcButton>
+					@click="$emit('clear-selection')"
+					:text="t('maps', 'Clear selection')"
+				/>
 				<NcButton
 					type="primary"
-					@click="$emit('select-all')">
-					{{ t('maps', 'Select all') }}
-				</NcButton>
+					@click="$emit('select-all')"
+					:text="t('maps', 'Select all')"
+				/>
 				<NcActions>
 					<NcActionButton
 						:icon="selectionLayout==='list'?'icon-toggle-pictures':'icon-toggle-filelist'"
@@ -91,16 +91,16 @@
 				{{ !photoSuggestions.includes(null) ? t('maps', 'Cancel') : t('maps', 'Quit') }}
 			</NcButton>
 			<NcButton
-				@click="$emit('load-more')">
-				{{ t('maps', 'Load more') }}
-			</NcButton>
+				@click="$emit('load-more')"
+				:text="t('maps', 'Load more')"
+			/>
 			<NcButton
 				v-show="photoSuggestions.length > 0"
 				type="primary"
 				:disabled="photoSuggestionsSelectedIndices.length===0 || readOnly"
-				@click="$emit('save')">
-				{{ t('maps', 'Save') }}
-			</NcButton>
+				@click="$emit('save')"
+				:text="t('maps', 'Save')"
+			/>
 		</div>
 		<NcAppNavigationSettings class="footer">
 			{{ t('maps', 'Photos default timezone:') }}
@@ -116,11 +116,10 @@
 				:force-menu="false"
 				@click="onTracksClick"
 				@update:open="onUpdateTracksOpen">
-				<NcCounterBubble v-show="tracks.length"
-					slot="counter">
-					{{ tracks.length > 99 ? '99+' : tracks.length }}
-				</NcCounterBubble>
-				<template slot="default">
+				<template #counter>
+					<NcCounterBubble v-show="tracks.length" :count="tracks.length" />
+				</template>
+				<template #default>
 					<b v-show="false">dummy</b>
 					<PhotoSideBarTabTrackItem
 						v-for="tr in tracks"
@@ -138,11 +137,10 @@
 				:force-menu="false"
 				@click="onDevicesClick"
 				@update:open="onUpdateDevicesOpen">
-				<NcCounterBubble v-show="devices.length"
-					slot="counter">
-					{{ devices.length > 99 ? '99+' : devices.length }}
-				</NcCounterBubble>
-				<template slot="default">
+				<template #counter>
+					<NcCounterBubble v-show="devices.length" :count="devices.length" />
+				</template>
+				<template #default>
 					<b v-show="false">dummy</b>
 					<PhotoSideBarTabDeviceItem
 						v-for="d in devices"
@@ -152,9 +150,9 @@
 				</template>
 			</NcAppNavigationItem>
 			<NcButton
-				@click="$emit('toggle-hide-photos')">
-				{{ photoSuggestionsHidePhotos ? t('maps', 'Show localized photos'): t('maps', 'Hide localized photos') }}
-			</NcButton>
+				@click="$emit('toggle-hide-photos')"
+				:text="photoSuggestionsHidePhotos ? t('maps', 'Show localized photos'): t('maps', 'Hide localized photos')"
+			/>
 		</NcAppNavigationSettings>
 	</div>
 </template>
@@ -163,16 +161,9 @@
 
 import { generateUrl } from '@nextcloud/router'
 import moment from '@nextcloud/moment'
-import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
-import NcActions from '@nextcloud/vue/dist/Components/NcActions.js'
-import NcListItem from '@nextcloud/vue/dist/Components/NcListItem.js'
-import NcCounterBubble from '@nextcloud/vue/dist/Components/NcCounterBubble.js'
-import NcAppNavigationItem from '@nextcloud/vue/dist/Components/NcAppNavigationItem.js'
-import NcAppNavigationSettings from '@nextcloud/vue/dist/Components/NcAppNavigationSettings.js'
-import NcActionButton from '@nextcloud/vue/dist/Components/NcActionButton.js'
+import { NcButton, NcActions, NcListItem, NcCounterBubble, NcAppNavigationItem, NcAppNavigationSettings, NcActionButton, NcTimezonePicker } from '@nextcloud/vue'
 
 import { getToken } from '../../utils/common.js'
-import NcTimezonePicker from '@nextcloud/vue/dist/Components/NcTimezonePicker.js'
 import PhotoSideBarTabTrackItem from './PhotoSideBarTabTrackItem.vue'
 import PhotoSideBarTabDeviceItem from './PhotoSideBarTabDeviceItem.vue'
 

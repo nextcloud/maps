@@ -30,7 +30,8 @@
 					@toggle-all-categories="onToggleAllFavoriteCategories"
 					@export="onExportFavorites"
 					@import="onImportFavorites"
-					@draggable-clicked="favoritesDraggable = !favoritesDraggable" />
+					@draggable-clicked="favoritesDraggable = !favoritesDraggable" 
+				/>
 				<AppNavigationContactsItem
 					:enabled="contactsEnabled"
 					:loading="contactsLoading"
@@ -56,7 +57,8 @@
 					@redo-clicked="redoPhotoMove"
 					@draggable-clicked="photosDraggable = !photosDraggable"
 					@suggestions-clicked="onPhotoSuggestionsClicked"
-					@clear-cache="onPhotosClearCache" />
+					@clear-cache="onPhotosClearCache" 
+				/>
 				<AppNavigationTracksItem
 					ref="tracksNavigation"
 					:enabled="tracksEnabled"
@@ -85,7 +87,8 @@
 					@toggle-all="onToggleAllDevices"
 					@color="onChangeDeviceColor"
 					@device-clicked="onNavDeviceClicked"
-					@devices-clicked="onDevicesClicked" />
+					@devices-clicked="onDevicesClicked" 
+				/>
 				<AppNavigationMyMapsItem
 					v-if="!token"
 					ref="myMapsNavigation"
@@ -98,7 +101,8 @@
 					@share="onShareMyMap"
 					@color="onChangeMyMapColor"
 					@my-map-clicked="onMyMapClicked"
-					@my-maps-clicked="onMyMapsClicked" />
+					@my-maps-clicked="onMyMapsClicked" 
+				/>
 			</template>
 		</MapsNavigation>
 		<NcAppContent>
@@ -175,6 +179,7 @@
 			v-if="true"
 			ref="Sidebar"
 			:show="showSidebar"
+			:active-tab="activeTab"
 			:favorite="selectedFavorite"
 			:favorite-categories="favoriteCategories"
 			:track="selectedTrack"
@@ -204,10 +209,7 @@
 </template>
 
 <script>
-import NcContent from '@nextcloud/vue/dist/Components/NcContent.js'
-import NcAppContent from '@nextcloud/vue/dist/Components/NcAppContent.js'
-import NcActions from '@nextcloud/vue/dist/Components/NcActions.js'
-import NcActionButton from '@nextcloud/vue/dist/Components/NcActionButton.js'
+import { NcContent, NcAppContent, NcActions, NcActionButton } from '@nextcloud/vue'
 import { showError, showInfo, showSuccess } from '@nextcloud/dialogs'
 
 import moment from '@nextcloud/moment'
@@ -234,6 +236,7 @@ import * as network from '../network.js'
 import { all as axiosAll, spread as axiosSpread } from 'axios'
 import { generateUrl } from '@nextcloud/router'
 import { placeFileOrFolder } from '../utils/photoPicker.ts'
+import { getClient } from '@nextcloud/files/dav'
 
 export default {
 	name: 'App',
@@ -256,6 +259,8 @@ export default {
 
 	data() {
 		return {
+			// navigation
+			activeTab: null,
 		    // Map Options
 		    activeLayerId: optionsController.tileLayer,
 			mapBounds: optionsController.bounds,
@@ -652,13 +657,13 @@ export default {
 		// subscribe('nextcloud:unified-search.reset', this.cleanSearch)
 		setTimeout(() => { emit('files:sidebar:closed') }, 1000)
 	},
-	beforeDestroy() {
+	beforeUnmount() {
 		// unsubscribe('nextcloud:unified-search.search', this.filter)
 		// unsubscribe('nextcloud:unified-search.reset', this.cleanSearch)
 	},
 	methods: {
 		onActiveSidebarTabChanged(newActive) {
-			window.OCA.Files.Sidebar.setActiveTab(newActive)
+			this.activeTab = newActive
 		},
 		onMainDetailClicked() {
 			this.showSidebar ? this.closeSidebar() : this.openSidebar()
@@ -669,20 +674,20 @@ export default {
 			// Make shure that the active photo suggestions tab stays there if photo suggestions are loaded
 			if (this.showPhotoSuggestions) {
 				this.openSidebar()
-				window.OCA.Files.Sidebar.setActiveTab('photo-suggestion')
+				this.activeTab = 'photo-suggestion'
 			}
 		},
 		closeSidebar() {
 			this.$refs.Sidebar.close()
 			emit('files:sidebar:closed')
-			window.OCA.Files.Sidebar.setActiveTab('')
+			this.activeTab = null
 			this.showSidebar = false
 		},
 		openSidebar(path = null, type = null, title = null) {
 			this.showSidebar = true
 			this.$refs.Sidebar.open(path, type, title)
 			if (!path && this.showPhotoSuggestions) {
-				window.OCA.Files.Sidebar.setActiveTab('photo-suggestion')
+				this.activeTab = 'photo-suggestion'
 			}
 			/*
 			const myMap = path ? this.myMaps.find((m) => m.path === path) : false
@@ -1055,7 +1060,7 @@ export default {
 			if (this.photosEnabled && this.showPhotoSuggestions && this.photoSuggestions.length === 0) {
 				this.getPhotoSuggestions()
 			}
-			window.OCA.Files.Sidebar.setActiveTab('photo-suggestion')
+			this.activeTab = 'photo-suggestion'
 			this.showPhotoSuggestions ? this.openSidebar() : this.closeSidebar()
 		},
 		onPhotoSuggestionSelected(index) {
@@ -1096,7 +1101,7 @@ export default {
 								return t.id === parseInt(isplit[1])
 							})
 							if (track) {
-								this.$set(this.photoSuggestionsTracksAndDevices, i, {
+								this.photoSuggestionsTracksAndDevices[i] = {
 									key: i,
 									enabled: true,
 									visible: true,
@@ -1104,14 +1109,14 @@ export default {
 									name: track.file_name,
 									id: track.id,
 									suggestionCount: v.length,
-								})
+								}
 								photoSuggestions.push(...v)
 							} else {
-								this.$set(this.photoSuggestionsTracksAndDevices, i, {
+								this.photoSuggestionsTracksAndDevices[i] = {
 									key: i,
 									enabled: false,
 									visible: false,
-								})
+								}
 							}
 						} else if (isplit[0] === 'device') {
 							const device = this.devices.find((d) => {
@@ -1119,7 +1124,7 @@ export default {
 							})
 							if (device) {
 								photoSuggestions.push(...v)
-								this.$set(this.photoSuggestionsTracksAndDevices, i, {
+								this.photoSuggestionsTracksAndDevices[i] = {
 									key: i,
 									enabled: true,
 									visible: true,
@@ -1127,13 +1132,13 @@ export default {
 									name: device.user_agent,
 									id: device.id,
 									suggestionCount: v.length,
-								})
+								}
 							} else {
-								this.$set(this.photoSuggestionsTracksAndDevices, i, {
+								this.photoSuggestionsTracksAndDevices[i] = {
 									key: i,
 									enabled: false,
 									visible: false,
-								})
+								}
 							}
 						}
 					}
@@ -1191,7 +1196,7 @@ export default {
 				toSave.forEach((i) => {
 					this.photos.push(this.photoSuggestions[i])
 					this.photoSuggestionsTracksAndDevices[this.photoSuggestions[i].trackOrDeviceId].length -= 1
-					this.$set(this.photoSuggestions, i, null)
+					this.photoSuggestions[i] = null
 				})
 				this.photoSuggestionsSelectedIndices = this.photoSuggestionsSelectedIndices.filter((e) => {
 					return !toSave.includes(e)
@@ -1349,11 +1354,11 @@ export default {
 		buildContactGroups() {
 			this.contactGroups = {}
 			const notGroupedId = '0'
-			this.$set(this.contactGroups, notGroupedId, {
+			this.contactGroups[notGroupedId] = {
 				name: t('maps', 'Not grouped'),
 				counter: 0,
 				enabled: !this.disabledContactGroups.includes(notGroupedId),
-			})
+			}
 			this.contacts.forEach((c) => {
 				c.groupList = []
 				if (c.GROUPS) {
@@ -1365,11 +1370,11 @@ export default {
 								if (this.contactGroups[g]) {
 									this.contactGroups[g].counter++
 								} else {
-									this.$set(this.contactGroups, g, {
+									this.contactGroups[g] = {
 										name: g,
 										counter: 1,
 										enabled: !this.disabledContactGroups.includes(g),
-									})
+									}
 								}
 							})
 						} else {
@@ -1473,7 +1478,7 @@ export default {
 						f.category = t('maps', 'Personal')
 					}
 					f.selected = false
-					this.$set(this.favorites, f.id, f)
+					this.favorites[f.id] = f
 				})
 			}).catch((error) => {
 				console.error(error)
@@ -1489,7 +1494,7 @@ export default {
 							response.data.favorites.forEach((f) => {
 								f.id = s.token + f.id
 								f.selected = false
-								this.$set(this.favorites, f.id, f)
+								this.favorites[f.id] = f
 							})
 						}).catch((error) => {
 							console.error(error)
@@ -1535,7 +1540,7 @@ export default {
 		onFavoriteCategoryShareChange(catid, checked) {
 			if (checked) {
 				network.shareFavoriteCategory(catid, this.myMapId).then((response) => {
-					this.$set(this.favoriteCategoryTokens, catid, response.data.token)
+					this.favoriteCategoryTokens[catid] = response.data.token
 				}).catch((error) => {
 					console.error(error)
 				})
@@ -1576,7 +1581,7 @@ export default {
 			// select
 			this.favorites[f.id].selected = true
 			this.openSidebar(null, 'favorite', f.name)
-			window.OCA.Files.Sidebar.setActiveTab('favorite')
+			this.activeTab = 'favorite'
 			this.selectedFavorite = f
 		},
 		onFavoriteEdit(f, save = true) {
@@ -1746,10 +1751,10 @@ export default {
 						favorite: { ...fav },
 					})
 				}
-				this.$set(this.favorites, fav.id, fav)
+				this.favorites[fav.id] = fav
 				if (openSidebar) {
 					this.selectedFavorite = this.favorites[fav.id]
-					window.OCA.Files.Sidebar.setActiveTab('favorite')
+					this.activeTab = 'favorite'
 					this.openSidebar(null, 'favorite', fav.name)
 				}
 				if (this.sliderEnabled) {
@@ -1999,7 +2004,7 @@ export default {
 			// select
 			track.selected = true
 			this.openSidebar(track.path, 'track', track.name)
-			window.OCA.Files.Sidebar.setActiveTab('maps-track-metadata')
+			this.activeTab = 'maps-track-metadata'
 			this.selectedTrack = track
 		},
 		// devices
@@ -2309,7 +2314,7 @@ export default {
 					callback(map)
 				} else {
 					showInfo(t('maps', 'Folder is not a map'))
-					const fileClient = OC.Files.getClient()
+					const fileClient = getClient()
 					fileClient.getFileInfo(path).then((status, fileInfo) => {
 						const map = {
 							id: fileInfo.id,
@@ -2387,7 +2392,7 @@ export default {
 			})
 		},
 		onShareMyMap(myMap) {
-			window.OCA.Files.Sidebar.setActiveTab('sharing')
+			this.activeTab = 'sharing'
 			this.openSidebar(myMap.path, 'maps', myMap.name)
 		},
 		loadMap(myMap) {

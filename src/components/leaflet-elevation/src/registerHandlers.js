@@ -1,3 +1,6 @@
+// SPDX-FileCopyrightText: 2026 Théo Lallement <lallement.theo@gmail.com>
+// SPDX-License-Identifier: AGPL-3.0-or-later
+
 import { Acceleration } from "./handlers/acceleration";
 import { Altitude } from "./handlers/altitude";
 import { Cadence } from "./handlers/cadence";

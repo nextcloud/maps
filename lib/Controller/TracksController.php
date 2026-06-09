@@ -13,82 +13,55 @@
 namespace OCA\Maps\Controller;
 
 use OCA\Maps\Service\TracksService;
-use OCP\App\IAppManager;
 use OCP\AppFramework\Controller;
+use OCP\AppFramework\Http\Attribute\NoAdminRequired;
 use OCP\AppFramework\Http\DataResponse;
-use OCP\IConfig;
-use OCP\IGroupManager;
+use OCP\Files\Folder;
+use OCP\Files\IRootFolder;
 use OCP\IL10N;
 use OCP\IRequest;
-use OCP\IServerContainer;
-use OCP\IUserManager;
-use OCP\Share\IManager;
 
 use function OCA\Maps\Helper\remove_utf8_bom;
 
 class TracksController extends Controller {
 
-	private $userId;
 	private $userfolder;
-	private $config;
-	private $appVersion;
-	private $shareManager;
-	private $userManager;
-	private $groupManager;
-	private $dbtype;
-	private $dbdblquotes;
-	private $l;
-	private $tracksService;
 	protected $appName;
 
-	public function __construct($AppName,
+	public function __construct(
+		string $appName,
 		IRequest $request,
-		IServerContainer $serverContainer,
-		IConfig $config,
-		IManager $shareManager,
-		IAppManager $appManager,
-		IUserManager $userManager,
-		IGroupManager $groupManager,
-		IL10N $l,
-		TracksService $tracksService,
-		$UserId) {
-		parent::__construct($AppName, $request);
-		$this->tracksService = $tracksService;
-		$this->appName = $AppName;
-		$this->appVersion = $config->getAppValue('maps', 'installed_version');
-		$this->userId = $UserId;
-		$this->userManager = $userManager;
-		$this->groupManager = $groupManager;
-		$this->l = $l;
-		$this->dbtype = $config->getSystemValue('dbtype');
-		$this->config = $config;
-		if ($UserId !== '' and $UserId !== null and $serverContainer !== null) {
-			$this->userfolder = $serverContainer->getUserFolder($UserId);
+		private IL10N $l,
+		private TracksService $tracksService,
+		IRootFolder $rootFolder,
+		private ?string $userId,
+	) {
+		parent::__construct($appName, $request);
+		if ($userId !== '' && $userId !== null) {
+			$this->userfolder = $rootFolder->getUserFolder($userId);
 		}
-		$this->shareManager = $shareManager;
 	}
 
 	/**
-	 * @NoAdminRequired
-	 * @return DataResponse
 	 * @throws \OCP\Files\InvalidPathException
 	 * @throws \OCP\Files\NotFoundException
 	 */
+	#[NoAdminRequired]
 	public function getTracks($myMapId = null): DataResponse {
 		if (is_null($myMapId) || $myMapId === '') {
 			$tracks = $this->tracksService->getTracksFromDB($this->userId, $this->userfolder, true, false, true);
 		} else {
 			$folders = $this->userfolder->getById($myMapId);
 			$folder = array_shift($folders);
-			$tracks = $this->tracksService->getTracksFromDB($this->userId, $folder, true, false, false);
+			if ($folder instanceof Folder) {
+				$tracks = $this->tracksService->getTracksFromDB($this->userId, $folder, true, false, false);
+			}
 		}
 		return new DataResponse($tracks);
 	}
 
-	/**
-	 * @NoAdminRequired
-	 */
-	public function getTrackContentByFileId($id) {
+	#[NoAdminRequired]
+	public function getTrackContentByFileId(int $id): DataResponse {
 		$track = $this->tracksService->getTrackByFileIDFromDB($id, $this->userId);
 		$res = is_null($track) ? null : $this->userfolder->getById($track['file_id']);
 		if (is_array($res) and count($res) > 0) {
@@ -116,13 +89,11 @@ class TracksController extends Controller {
 	}
 
 	/**
-	 * @NoAdminRequired
-	 * @param $id
-	 * @return DataResponse
 	 * @throws \OCP\Files\InvalidPathException
 	 * @throws \OCP\Files\NotFoundException
 	 */
-	public function getTrackFileContent($id): DataResponse {
+	#[NoAdminRequired]
+	public function getTrackFileContent(int $id): DataResponse {
 		$track = $this->tracksService->getTrackFromDB($id);
 		$res = is_null($track) ? null : $this->userfolder->getById($track['file_id']);
 		if (is_array($res) and count($res) > 0) {
@@ -149,15 +120,8 @@ class TracksController extends Controller {
 		}
 	}
 
-	/**
-	 * @NoAdminRequired
-	 * @param $id
-	 * @param $color
-	 * @param $metadata
-	 * @param $etag
-	 * @return DataResponse
-	 */
-	public function editTrack($id, $color, $metadata, $etag): DataResponse {
+	#[NoAdminRequired]
+	public function editTrack(int $id, ?string $color, ?string $metadata, ?string $etag): DataResponse {
 		$track = $this->tracksService->getTrackFromDB($id, $this->userId);
 		if ($track !== null) {
 			$this->tracksService->editTrackInDB($id, $color, $metadata, $etag);
@@ -167,12 +131,8 @@ class TracksController extends Controller {
 		}
 	}
 
-	/**
-	 * @NoAdminRequired
-	 * @param $id
-	 * @return DataResponse
-	 */
-	public function deleteTrack($id): DataResponse {
+	#[NoAdminRequired]
+	public function deleteTrack(int $id): DataResponse {
 		$track = $this->tracksService->getTrackFromDB($id, $this->userId);
 		if ($track !== null) {
 			$this->tracksService->deleteTrackFromDB($id);

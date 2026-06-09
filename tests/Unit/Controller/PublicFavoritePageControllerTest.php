@@ -30,28 +30,21 @@ use OCA\Maps\Service\FavoritesService;
 use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\DataResponse;
 use OCP\AppFramework\Http\TemplateResponse;
-use OCP\AppFramework\IAppContainer;
-use OCP\IServerContainer;
+use OCP\Files\IRootFolder;
+use OCP\IConfig;
+use OCP\L10N\IFactory;
+use OCP\Security\ISecureRandom;
 use PHPUnit\Framework\TestCase;
+use Psr\Container\ContainerInterface;
 use Psr\Log\LoggerInterface;
 
 class PublicFavoritePageControllerTest extends TestCase {
-	/* @var PublicFavoritePageController */
-	private \OCA\Maps\Controller\PublicFavoritePageController $publicPageController;
-
-	private $config;
-
-	/* @var Application */
-	private \OCA\Maps\AppInfo\Application $app;
-
-	/* @var IAppContainer */
-	private $container;
-
-	/* @var FavoritesService */
-	private \OCA\Maps\Service\FavoritesService $favoritesService;
-
-	/* @var FavoriteShareMapper */
-	private \OCA\Maps\DB\FavoriteShareMapper $favoriteShareMapper;
+	private PublicFavoritePageController $publicPageController;
+	private IConfig $config;
+	private Application $app;
+	private ContainerInterface $container;
+	private FavoritesService $favoritesService;
+	private FavoriteShareMapper $favoriteShareMapper;
 
 	protected function setUp(): void {
 		// Begin transaction
@@ -63,25 +56,25 @@ class PublicFavoritePageControllerTest extends TestCase {
 		$this->container = $this->app->getContainer();
 		$container = $this->container;
 
-		$appName = $container->query('appName');
+		$appName = $container->get('appName');
 
 		$this->favoritesService = new FavoritesService(
-			$container->query(IServerContainer::class)->get(LoggerInterface::class),
-			$container->query(IServerContainer::class)->getL10N($appName),
-			$container->query(IServerContainer::class)->getSecureRandom(),
-			$container->query(\OCP\IDBConnection::class)
+			$container->get(LoggerInterface::class),
+			$container->get(IFactory::class)->get($appName),
+			$container->get(ISecureRandom::class),
+			$container->get(\OCP\IDBConnection::class)
 		);
 
 		$this->favoriteShareMapper = new FavoriteShareMapper(
-			$container->query(\OCP\IDBConnection::class),
-			$container->query(IServerContainer::class)->getSecureRandom(),
-			$container->query(IServerContainer::class)->getRootFolder()
+			$container->get(\OCP\IDBConnection::class),
+			$container->get(ISecureRandom::class),
+			$container->get(IRootFolder::class)
 		);
 
 		$requestMock = $this->getMockBuilder('OCP\IRequest')->getMock();
 		$sessionMock = $this->getMockBuilder('OCP\ISession')->getMock();
 
-		$this->config = $container->query(IServerContainer::class)->getConfig();
+		$this->config = $container->get(IConfig::class);
 
 		$this->publicPageController = new PublicFavoritePageController(
 			$appName,

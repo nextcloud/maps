@@ -243,10 +243,7 @@ class TracksService {
 	}
 
 
-	/**
-	 * @param string $userId
-	 */
-	public function getTracksFromDB($userId, $folder = null, bool $respectNomediaAndNoimage = true, bool $hideTracksOnCustomMaps = false, bool $hideTracksInMapsFolder = true) {
+	public function getTracksFromDB(string $userId, ?Folder $folder = null, bool $respectNomediaAndNoimage = true, bool $hideTracksOnCustomMaps = false, bool $hideTracksInMapsFolder = true) {
 		$ignoredPaths = $respectNomediaAndNoimage ? $this->getIgnoredPaths($userId, $folder, $hideTracksOnCustomMaps) : [];
 		if ($hideTracksInMapsFolder) {
 			$ignoredPaths[] = '/Maps';
@@ -318,7 +315,7 @@ class TracksService {
 		return $ignoredPaths;
 	}
 
-	public function getTrackFromDB($id, $userId = null) {
+	public function getTrackFromDB(int $id, $userId = null) {
 		$track = null;
 		$qb = $this->dbconnection->getQueryBuilder();
 		$qb->select('id', 'file_id', 'color', 'metadata', 'etag')
@@ -434,7 +431,7 @@ class TracksService {
 		return $trackId;
 	}
 
-	public function editTrackInDB($id, $color, $metadata, $etag): void {
+	public function editTrackInDB(int $id, ?string $color, ?string $metadata, ?string $etag): void {
 		$qb = $this->dbconnection->getQueryBuilder();
 		$qb->update('maps_tracks');
 		if ($color !== null) {

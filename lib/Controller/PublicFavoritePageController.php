@@ -39,21 +39,14 @@ use OCP\IUserManager;
 use OCP\Util;
 
 class PublicFavoritePageController extends PublicShareController {
-	private $config;
-
-	/* @var FavoriteShareMapper */
-	private $favoriteShareMapper;
-
 	public function __construct(
-		$appName,
+		string $appName,
 		IRequest $request,
 		ISession $session,
-		IConfig $config,
-		FavoriteShareMapper $favoriteShareMapper,
+		private IConfig $config,
+		private FavoriteShareMapper $favoriteShareMapper,
 	) {
 		parent::__construct($appName, $request, $session);
-		$this->config = $config;
-		$this->favoriteShareMapper = $favoriteShareMapper;
 	}
 
 	/**

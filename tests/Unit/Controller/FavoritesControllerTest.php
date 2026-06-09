@@ -78,7 +78,7 @@ class FavoritesControllerTest extends \PHPUnit\Framework\TestCase {
 		$this->app = new Application();
 		$this->container = $this->app->getContainer();
 		$c = $this->container;
-		$this->root = $c->get(IServerContainer::class)->getRootFolder();
+		$this->root = $c->get(IRootFolder::class);
 
 		$this->favoritesController = new FavoritesController(
 			$this->appName,

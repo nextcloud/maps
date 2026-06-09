@@ -26,6 +26,7 @@
 		<file name="tests/stubs/oca_files_event_loadsidebar.php" preloadClasses="true"/>
 		<file name="tests/stubs/oca_files_sharing_event_beforetemplaterenderedevent.php" preloadClasses="true"/>
 		<file name="tests/stubs/oca_viewer_event_loadviewer.php" preloadClasses="true"/>
+		<file name="tests/stubs/oca_files_trashbin_events_noderestoredevent.php" preloadClasses="true"/>
 	</stubs>
 	<projectFiles>
 		<directory name="lib" />

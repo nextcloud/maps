@@ -36,11 +36,6 @@
       <code><![CDATA[\OC_User]]></code>
     </UndefinedClass>
   </file>
-  <file src="lib/Hooks/FileHooks.php">
-    <UndefinedClass>
-      <code><![CDATA[\OC]]></code>
-    </UndefinedClass>
-  </file>
   <file src="lib/Migration/RegisterMimeType.php">
     <UndefinedClass>
       <code><![CDATA[\OC]]></code>
@@ -80,8 +75,6 @@
     <UndefinedClass>
       <code><![CDATA[ContactsManager]]></code>
       <code><![CDATA[ContactsManager]]></code>
-      <code><![CDATA[Principal]]></code>
-      <code><![CDATA[Principal]]></code>
     </UndefinedClass>
   </file>
   <file src="tests/Unit/Controller/DevicesControllerTest.php">

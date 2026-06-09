@@ -14,21 +14,20 @@ namespace OCA\Maps\Controller;
 
 use OCA\Maps\AppInfo\Application;
 use OCA\Maps\Service\TracksService;
-use OCP\App\IAppManager;
 use OCP\DB\QueryBuilder\IQueryBuilder;
 use OCP\Files\IRootFolder;
-use OCP\IAppConfig;
 use OCP\IGroupManager;
 use OCP\IRequest;
-use OCP\IServerContainer;
 use OCP\IUserManager;
 use OCP\L10N\IFactory;
 use OCP\Server;
+use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
 
-class TracksControllerTest extends \PHPUnit\Framework\TestCase {
+class TracksControllerTest extends TestCase {
 	private string $appName;
-	private \PHPUnit\Framework\MockObject\MockObject&IRequest $request;
+	private MockObject&IRequest $request;
 	private ContainerInterface $container;
 	private Application $app;
 	private TracksController $tracksController;
@@ -88,14 +87,9 @@ class TracksControllerTest extends \PHPUnit\Framework\TestCase {
 		$this->tracksController = new TracksController(
 			$this->appName,
 			$this->request,
-			$c->get(IServerContainer::class),
-			$c->get(IAppConfig::class),
-			$c->get(IServerContainer::class)->get(\OCP\Share\IManager::class),
-			$c->get(IAppManager::class),
-			$c->get(IUserManager::class),
-			$c->get(IGroupManager::class),
 			$c->get(IFactory::class)->get('maps'),
 			$c->get(TracksService::class),
+			$this->rootFolder,
 			'test',
 		);
 
@@ -149,8 +143,6 @@ class TracksControllerTest extends \PHPUnit\Framework\TestCase {
 	}
 
 	public function testAddGetTracks(): void {
-		$this->app->getContainer();
-
 		$userfolder = $this->container->get(IRootFolder::class)->getUserFolder('test');
 
 		$filename = 'tests/test_files/testFile1.gpx';

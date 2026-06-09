@@ -14,11 +14,9 @@ namespace OCA\Maps\Controller;
 
 use OCA\Maps\AppInfo\Application;
 use OCA\Maps\Service\DevicesService;
-use OCP\App\IAppManager;
-use OCP\IAppConfig;
+use OCP\Files\IRootFolder;
 use OCP\IGroupManager;
 use OCP\IRequest;
-use OCP\IServerContainer;
 use OCP\IUserManager;
 use OCP\L10N\IFactory;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -72,15 +70,10 @@ class DevicesApiControllerTest extends \PHPUnit\Framework\TestCase {
 		$this->devicesApiController = new DevicesApiController(
 			$this->appName,
 			$this->request,
-			$c->get(IServerContainer::class),
-			$c->get(IAppConfig::class),
-			$c->get(\OCP\Share\IManager::class),
-			$c->get(IAppManager::class),
-			$c->get(IUserManager::class),
-			$c->get(IGroupManager::class),
 			$c->get(IFactory::class)->get('maps'),
 			$c->get(DevicesService::class),
-			'test'
+			'test',
+			$c->get(IRootFolder::class),
 		);
 
 		// delete

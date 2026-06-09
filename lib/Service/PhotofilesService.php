@@ -21,6 +21,7 @@ use OCA\Maps\Helper\ExifDataNoLocationException;
 use OCA\Maps\Helper\ExifGeoData;
 use OCP\AppFramework\Db\DoesNotExistException;
 use OCP\BackgroundJob\IJobList;
+use OCP\Files\File;
 use OCP\Files\FileInfo;
 use OCP\Files\Folder;
 use OCP\Files\IRootFolder;
@@ -148,7 +149,7 @@ class PhotofilesService {
 		}
 	}
 
-	public function updateByFile(Node $file) {
+	public function updateByFile(File $file) {
 		$this->jobList->add(UpdatePhotoByFileJob::class, ['fileId' => $file->getId(), 'userId' => $file->getOwner()->getUID()]);
 	}
 

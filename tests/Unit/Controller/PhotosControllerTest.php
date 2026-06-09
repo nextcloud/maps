@@ -18,9 +18,9 @@ use OCA\Maps\Service\GeophotoService;
 use OCA\Maps\Service\PhotofilesService;
 use OCP\DB\QueryBuilder\IQueryBuilder;
 use OCP\Files\IRootFolder;
+use OCP\ICacheFactory;
 use OCP\IGroupManager;
 use OCP\IRequest;
-use OCP\IServerContainer;
 use OCP\IUserManager;
 use OCP\L10N\IFactory;
 use OCP\Server;
@@ -80,12 +80,12 @@ class PhotosControllerTest extends \PHPUnit\Framework\TestCase {
 		$this->GeoPhotosService = $c->get(GeoPhotoService::class);
 
 		$this->photoFileService = new PhotoFilesService(
-			$c->get(IServerContainer::class)->get(\Psr\Log\LoggerInterface::class),
-			$c->get(IServerContainer::class)->getMemCacheFactory(),
+			$c->get(\Psr\Log\LoggerInterface::class),
+			$c->get(ICacheFactory::class),
 			$this->rootFolder,
 			$c->get(IFactory::class)->get('maps'),
 			$c->get(GeophotoMapper::class),
-			$c->get(IServerContainer::class)->get(\OCP\Share\IManager::class),
+			$c->get(\OCP\Share\IManager::class),
 			$c->get(\OCP\BackgroundJob\IJobList::class)
 		);
 
@@ -98,7 +98,7 @@ class PhotosControllerTest extends \PHPUnit\Framework\TestCase {
 			'test'
 		);
 
-		$userfolder = $this->container->get(IServerContainer::class)->getUserFolder('test');
+		$userfolder = $this->container->get(IRootFolder::class)->getUserFolder('test');
 		// delete files
 		if ($userfolder->nodeExists('nc.jpg')) {
 			$file = $userfolder->get('nc.jpg');

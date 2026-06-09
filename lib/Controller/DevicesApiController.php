@@ -13,73 +13,45 @@
 namespace OCA\Maps\Controller;
 
 use OCA\Maps\Service\DevicesService;
-use OCP\App\IAppManager;
 use OCP\AppFramework\ApiController;
 use OCP\AppFramework\Http;
+use OCP\AppFramework\Http\Attribute\NoAdminRequired;
+use OCP\AppFramework\Http\Attribute\NoCSRFRequired;
 use OCP\AppFramework\Http\DataResponse;
-use OCP\IConfig;
-use OCP\IGroupManager;
+use OCP\Files\Folder;
+use OCP\Files\IRootFolder;
 use OCP\IL10N;
 use OCP\IRequest;
-use OCP\IServerContainer;
-use OCP\IUserManager;
-use OCP\Share\IManager;
 
 class DevicesApiController extends ApiController {
 
-	private $userId;
-	private $userfolder;
-	private $config;
-	private $appVersion;
-	private $shareManager;
-	private $userManager;
-	private $groupManager;
-	private $dbtype;
-	private $dbdblquotes;
-	private $defaultDeviceId;
-	private $l;
-	private $devicesService;
-	protected $appName;
+	private Folder $userfolder;
 
-	public function __construct($AppName,
+	public function __construct(
+		string $appName,
 		IRequest $request,
-		IServerContainer $serverContainer,
-		IConfig $config,
-		IManager $shareManager,
-		IAppManager $appManager,
-		IUserManager $userManager,
-		IGroupManager $groupManager,
-		IL10N $l,
-		DevicesService $devicesService,
-		$UserId) {
-		parent::__construct($AppName, $request,
+		private IL10N $l,
+		private DevicesService $devicesService,
+		private ?string $userId,
+		IRootFolder $rootFolder,
+	) {
+		parent::__construct($appName, $request,
 			'PUT, POST, GET, DELETE, PATCH, OPTIONS',
 			'Authorization, Content-Type, Accept',
 			1728000);
-		$this->devicesService = $devicesService;
-		$this->appName = $AppName;
-		$this->appVersion = $config->getAppValue('maps', 'installed_version');
-		$this->userId = $UserId;
-		$this->userManager = $userManager;
-		$this->groupManager = $groupManager;
-		$this->l = $l;
-		$this->dbtype = $config->getSystemValue('dbtype');
-		// IConfig object
-		$this->config = $config;
-		if ($UserId !== '' and $UserId !== null and $serverContainer !== null) {
+		if ($userId !== '' && $userId !== null) {
 			// path of user files folder relative to DATA folder
-			$this->userfolder = $serverContainer->getUserFolder($UserId);
+			$this->userfolder = $rootFolder->getUserFolder($userId);
 		}
-		$this->shareManager = $shareManager;
 	}
 
 	/**
-	 * @NoAdminRequired
-	 * @NoCSRFRequired
 	 * @CORS
 	 * @param $apiversion
 	 * @return DataResponse
 	 */
+	#[NoAdminRequired]
+	#[NoCSRFRequired]
 	public function getDevices($apiversion): DataResponse {
 		$now = new \DateTime();
 
@@ -95,13 +67,13 @@ class DevicesApiController extends ApiController {
 	}
 
 	/**
-	 * @NoAdminRequired
-	 * @NoCSRFRequired
 	 * @CORS
 	 * @param $id
 	 * @param int $pruneBefore
 	 * @return DataResponse
 	 */
+	#[NoAdminRequired]
+	#[NoCSRFRequired]
 	public function getDevicePoints($id, int $pruneBefore = 0): DataResponse {
 		$points = $this->devicesService->getDevicePointsFromDB($this->userId, $id, $pruneBefore);
 		return new DataResponse($points);

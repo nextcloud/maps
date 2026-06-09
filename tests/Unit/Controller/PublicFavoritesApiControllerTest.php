@@ -29,7 +29,10 @@ use OCA\Maps\DB\FavoriteShare;
 use OCA\Maps\DB\FavoriteShareMapper;
 use OCA\Maps\Service\FavoritesService;
 use OCP\AppFramework\Http;
+use OCP\Files\IRootFolder;
 use OCP\IServerContainer;
+use OCP\L10N\IFactory;
+use OCP\Security\ISecureRandom;
 use PHPUnit\Framework\TestCase;
 
 class PublicFavoritesApiControllerTest extends TestCase {
@@ -44,22 +47,22 @@ class PublicFavoritesApiControllerTest extends TestCase {
 
 		$container = (new Application())->getContainer();
 
-		$appName = $container->query('AppName');
+		$appName = $container->get('AppName');
 
 		$requestMock = $this->getMockBuilder('OCP\IRequest')->getMock();
 		$sessionMock = $this->getMockBuilder('OCP\ISession')->getMock();
 
 		$this->favoritesService = new FavoritesService(
-			$container->query(IServerContainer::class)->get(\Psr\Log\LoggerInterface::class),
-			$container->query(IServerContainer::class)->getL10N($appName),
-			$container->query(IServerContainer::class)->getSecureRandom(),
-			$container->query(\OCP\IDBConnection::class)
+			$container->get(\Psr\Log\LoggerInterface::class),
+			$container->get(IFactory::class)->get($appName),
+			$container->get(ISecureRandom::class),
+			$container->get(\OCP\IDBConnection::class)
 		);
 
 		$this->favoriteShareMapper = new FavoriteShareMapper(
-			$container->query(\OCP\IDBConnection::class),
-			$container->query(IServerContainer::class)->getSecureRandom(),
-			$container->query(IserverContainer::class)->getRootFolder()
+			$container->get(\OCP\IDBConnection::class),
+			$container->get(ISecureRandom::class),
+			$container->get(IserverContainer::class)->get(IRootFolder::class)
 		);
 
 		$this->publicFavoritesApiController = new PublicFavoritesApiController(

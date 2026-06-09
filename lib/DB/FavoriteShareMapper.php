@@ -49,12 +49,10 @@ class FavoriteShareMapper extends QBMapper {
 	}
 
 	/**
-	 * @param $token
-	 * @return Entity|null
 	 * @throws DoesNotExistException
 	 * @throws MultipleObjectsReturnedException
 	 */
-	public function findByToken($token) {
+	public function findByToken(string $token): ?FavoriteShare {
 		$qb = $this->db->getQueryBuilder();
 
 		$qb->select('*')
@@ -66,12 +64,7 @@ class FavoriteShareMapper extends QBMapper {
 		return $this->findEntity($qb);
 	}
 
-	/**
-	 * @param $owner
-	 * @param $category
-	 * @return Entity
-	 */
-	public function create($owner, $category) {
+	public function create(string $owner, string $category): FavoriteShare {
 		$token = $this->secureRandom->generate(
 			Constants::TOKEN_LENGTH,
 			ISecureRandom::CHAR_HUMAN_READABLE
@@ -142,13 +135,10 @@ class FavoriteShareMapper extends QBMapper {
 	}
 
 	/**
-	 * @param $owner
-	 * @param $category
-	 * @return Entity
 	 * @throws DoesNotExistException
 	 * @throws MultipleObjectsReturnedException
 	 */
-	public function findByOwnerAndCategory($owner, $category) {
+	public function findByOwnerAndCategory(string $owner, string $category): ?FavoriteShare {
 		$qb = $this->db->getQueryBuilder();
 
 		$qb->select('*')

@@ -13,63 +13,24 @@
 namespace OCA\Maps\Controller;
 
 use OCA\Maps\Service\FavoritesService;
-use OCP\App\IAppManager;
 use OCP\AppFramework\ApiController;
 use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\DataResponse;
-use OCP\IConfig;
-use OCP\IGroupManager;
 use OCP\IL10N;
 use OCP\IRequest;
-use OCP\IServerContainer;
-use OCP\IUserManager;
-use OCP\Share\IManager;
 
 class FavoritesApiController extends ApiController {
-	private $userId;
-	private $userfolder;
-	private $config;
-	private $appVersion;
-	private $shareManager;
-	private $userManager;
-	private $groupManager;
-	private $dbtype;
-	private $dbdblquotes;
-	private $defaultDeviceId;
-	private $l;
-	private $favoritesService;
-	protected $appName;
-
-	public function __construct($AppName,
+	public function __construct(
+		string $appName,
 		IRequest $request,
-		IServerContainer $serverContainer,
-		IConfig $config,
-		IManager $shareManager,
-		IAppManager $appManager,
-		IUserManager $userManager,
-		IGroupManager $groupManager,
-		IL10N $l,
-		FavoritesService $favoritesService,
-		$UserId) {
-		parent::__construct($AppName, $request,
+		private IL10N $l,
+		private FavoritesService $favoritesService,
+		private ?string $userId,
+	) {
+		parent::__construct($appName, $request,
 			'PUT, POST, GET, DELETE, PATCH, OPTIONS',
 			'Authorization, Content-Type, Accept',
 			1728000);
-		$this->favoritesService = $favoritesService;
-		$this->appName = $AppName;
-		$this->appVersion = $config->getAppValue('maps', 'installed_version');
-		$this->userId = $UserId;
-		$this->userManager = $userManager;
-		$this->groupManager = $groupManager;
-		$this->l = $l;
-		$this->dbtype = $config->getSystemValue('dbtype');
-		// IConfig object
-		$this->config = $config;
-		if ($UserId !== '' and $UserId !== null and $serverContainer !== null) {
-			// path of user files folder relative to DATA folder
-			$this->userfolder = $serverContainer->getUserFolder($UserId);
-		}
-		$this->shareManager = $shareManager;
 	}
 
 	/**

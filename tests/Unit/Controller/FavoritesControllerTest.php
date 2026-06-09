@@ -17,11 +17,10 @@ namespace OCA\Maps\Controller;
 use OCA\Maps\AppInfo\Application;
 use OCA\Maps\DB\FavoriteShareMapper;
 use OCA\Maps\Service\FavoritesService;
-use OCP\App\IAppManager;
 use OCP\AppFramework\Http;
+use OCP\AppFramework\Services\IAppConfig;
 use OCP\Files\Folder;
 use OCP\Files\IRootFolder;
-use OCP\IAppConfig;
 use OCP\IGroupManager;
 use OCP\IRequest;
 use OCP\IServerContainer;
@@ -83,13 +82,9 @@ class FavoritesControllerTest extends \PHPUnit\Framework\TestCase {
 		$this->favoritesController = new FavoritesController(
 			$this->appName,
 			$this->request,
-			$c->get(IServerContainer::class),
 			$c->get(IAppConfig::class),
-			$c->get(\OCP\Share\IManager::class),
-			$c->get(IAppManager::class),
-			$c->get(IUserManager::class),
-			$c->get(IGroupManager::class),
 			$c->get(IFactory::class)->get('maps'),
+			$c->get(IRootFolder::class),
 			$c->get(FavoritesService::class),
 			$c->get(\OCP\IDateTimeZone::class),
 			$c->get(FavoriteShareMapper::class),
@@ -99,13 +94,9 @@ class FavoritesControllerTest extends \PHPUnit\Framework\TestCase {
 		$this->favoritesController2 = new FavoritesController(
 			$this->appName,
 			$this->request,
-			$c->get(IServerContainer::class),
 			$c->get(IAppConfig::class),
-			$c->get(\OCP\Share\IManager::class),
-			$c->get(IAppManager::class),
-			$c->get(IUserManager::class),
-			$c->get(IGroupManager::class),
 			$c->get(IFactory::class)->get('maps'),
+			$c->get(IRootFolder::class),
 			$c->get(FavoritesService::class),
 			$c->get(\OCP\IDateTimeZone::class),
 			$c->get(FavoriteShareMapper::class),

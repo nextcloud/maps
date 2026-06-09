@@ -15,6 +15,8 @@ namespace OCA\Maps\Service;
 use OC\Archive\ZIP;
 use OCP\DB\Exception;
 use OCP\DB\QueryBuilder\IQueryBuilder;
+use OCP\Files\File;
+use OCP\Files\Folder;
 use OCP\Files\NotFoundException;
 use OCP\IDBConnection;
 use Psr\Log\LoggerInterface;
@@ -22,6 +24,14 @@ use Psr\Log\LoggerInterface;
 class DevicesService {
 
 	private ?int $trackIndex = null;
+	private string $importUserId;
+	private $currentXmlTag;
+	private ?string $importDevName = null;
+	private $importFileName;
+	private $currentPoint;
+	private ?array $currentPointList = null;
+	private ?int $pointIndex = null;
+	private ?bool $insideTrk = null;
 
 	public function __construct(
 		private readonly LoggerInterface $logger,
@@ -227,7 +237,7 @@ class DevicesService {
 		return $points;
 	}
 
-	public function getOrCreateDeviceFromDB($userId, $userAgent) {
+	public function getOrCreateDeviceFromDB(string $userId, string $userAgent): int {
 		$deviceId = null;
 		$qb = $this->dbconnection->getQueryBuilder();
 		$qb->select('id')
@@ -258,7 +268,7 @@ class DevicesService {
 		return $deviceId;
 	}
 
-	public function addPointToDB($deviceId, $lat, $lng, $ts, $altitude, $battery, $accuracy) {
+	public function addPointToDB(string $deviceId, string $lat, string $lng, int $ts, $altitude, $battery, $accuracy) {
 		$qb = $this->dbconnection->getQueryBuilder();
 		$qb->insert('maps_device_points')
 			->values([
@@ -511,26 +521,32 @@ class DevicesService {
 		fwrite($fd, $gpxText);
 	}
 
-	public function importDevices($userId, $file) {
+	public function importDevices(string $userId, File $file): int {
 		$lowerFileName = strtolower((string)$file->getName());
-		if ($this->endswith($lowerFileName, '.gpx')) {
+		if (str_ends_with($lowerFileName, '.gpx')) {
 			return $this->importDevicesFromGpx($userId, $file);
-		} elseif ($this->endswith($lowerFileName, '.kml')) {
+		} elseif (str_ends_with($lowerFileName, '.kml')) {
 			$fp = $file->fopen('r');
 			$name = $file->getName();
 			return $this->importDevicesFromKml($userId, $fp, $name);
-		} elseif ($this->endswith($lowerFileName, '.kmz')) {
+		} elseif (str_ends_with($lowerFileName, '.kmz')) {
 			return $this->importDevicesFromKmz($userId, $file);
 		}
+		return 0;
 	}
 
-	public function importDevicesFromGpx($userId, $file): int {
+	public function importDevicesFromGpx(string $userId, File $file): int {
+
+		$this->currentPointList = [];
+		$this->importUserId = $userId;
+		$this->importFileName = $file->getName();
 		$this->trackIndex = 1;
+		$this->insideTrk = false;
 
 		$xml_parser = xml_parser_create();
 		xml_set_object($xml_parser, $this);
-		xml_set_element_handler($xml_parser, 'gpxStartElement', 'gpxEndElement');
-		xml_set_character_data_handler($xml_parser, 'gpxDataElement');
+		xml_set_element_handler($xml_parser, $this->gpxStartElement(...), $this->gpxEndElement(...));
+		xml_set_character_data_handler($xml_parser, $this->gpxDataElement(...));
 
 		$fp = $file->fopen('r');
 
@@ -552,7 +568,81 @@ class DevicesService {
 		return ($this->trackIndex - 1);
 	}
 
-	public function importDevicesFromKmz($userId, $file): int {
+	private function gpxStartElement($parser, $name, array $attrs): void {
+		//$points, array($lat, $lon, $ele, $timestamp, $acc, $bat, $sat, $ua, $speed, $bearing)
+		$this->currentXmlTag = $name;
+		if ($name === 'TRK') {
+			$this->importDevName = '';
+			$this->pointIndex = 1;
+			$this->currentPointList = [];
+			$this->insideTrk = true;
+		} elseif ($name === 'TRKPT') {
+			$this->currentPoint = [];
+			if (isset($attrs['LAT'])) {
+				$this->currentPoint['lat'] = floatval($attrs['LAT']);
+			}
+			if (isset($attrs['LON'])) {
+				$this->currentPoint['lng'] = floatval($attrs['LON']);
+			}
+		}
+		//var_dump($attrs);
+	}
+
+	private function gpxEndElement($parser, $name): void {
+		if ($name === 'TRK') {
+			$this->insideTrk = false;
+			// log last track points
+			if (count($this->currentPointList) > 0) {
+				if ($this->importDevName === '') {
+					$this->importDevName = $this->importFileName . ' ' . $this->trackIndex;
+				}
+				$devid = $this->getOrCreateDeviceFromDB($this->importUserId, $this->importDevName);
+				$this->addPointsToDB($devid, $this->currentPointList);
+			}
+			$this->trackIndex++;
+			unset($this->currentPointList);
+		} elseif ($name === 'TRKPT') {
+			// store track point
+
+			// convert date
+			if (isset($this->currentPoint['date'])) {
+				$time = new \DateTime($this->currentPoint['date']);
+				$timestamp = $time->getTimestamp();
+				$this->currentPoint['date'] = $timestamp;
+			}
+			array_push($this->currentPointList, $this->currentPoint);
+			// if we have enough points, we log them and clean the points array
+			if (count($this->currentPointList) >= 500) {
+				if ($this->importDevName === '') {
+					$this->importDevName = 'device' . $this->trackIndex;
+				}
+				$devid = $this->getOrCreateDeviceFromDB($this->importUserId, $this->importDevName);
+				$this->addPointsToDB($devid, $this->currentPointList);
+				unset($this->currentPointList);
+				$this->currentPointList = [];
+			}
+			$this->pointIndex++;
+		}
+	}
+
+	private function gpxDataElement($parser, $data): void {
+		$d = trim((string)$data);
+		if (!empty($d)) {
+			if ($this->currentXmlTag === 'ELE') {
+				$this->currentPoint['altitude'] = (isset($this->currentPoint['altitude'])) ? $this->currentPoint['altitude'] . $d : $d;
+			} elseif ($this->currentXmlTag === 'BATTERYLEVEL') {
+				$this->currentPoint['battery'] = (isset($this->currentPoint['battery'])) ? $this->currentPoint['battery'] . $d : $d;
+			} elseif ($this->currentXmlTag === 'ACCURACY') {
+				$this->currentPoint['accuracy'] = (isset($this->currentPoint['accuracy'])) ? $this->currentPoint['accuracy'] . $d : $d;
+			} elseif ($this->insideTrk and $this->currentXmlTag === 'TIME') {
+				$this->currentPoint['date'] = (isset($this->currentPoint['date'])) ? $this->currentPoint['date'] . $d : $d;
+			} elseif ($this->insideTrk and $this->currentXmlTag === 'NAME') {
+				$this->importDevName = $this->importDevName . $d;
+			}
+		}
+	}
+
+	public function importDevicesFromKmz(string $userId, $file): int {
 		$path = $file->getStorage()->getLocalFile($file->getInternalPath());
 		$name = $file->getName();
 		$zf = new ZIP($path);
@@ -567,8 +657,9 @@ class DevicesService {
 		return $nbImported;
 	}
 
-	public function importDevicesFromKml($userId, $fp, string $name): int {
-		$this->trackIndex = 1;
+	public function importDevicesFromKml(string $userId, $fp, string $name): int {
+		$this->importUserId = $userId;
+		$this->importFileName = $name;
 		$xml_parser = xml_parser_create();
 		xml_set_object($xml_parser, $this);
 		xml_set_element_handler($xml_parser, 'kmlStartElement', 'kmlEndElement');
@@ -589,20 +680,10 @@ class DevicesService {
 		return ($this->trackIndex - 1);
 	}
 
-	private function endswith($string, string $test) {
-		$strlen = strlen((string)$string);
-		$testlen = strlen($test);
-		if ($testlen > $strlen) {
-			return false;
-		}
-		return substr_compare((string)$string, $test, $strlen - $testlen, $testlen) === 0;
-	}
-
 	/**
-	 * @param $folder
 	 * @throws NotFoundException
 	 */
-	public function getSharedDevicesFromFolder($folder, bool $isCreatable = true): mixed {
+	public function getSharedDevicesFromFolder(Folder $folder, bool $isCreatable = true): mixed {
 		try {
 			$file = $folder->get('.device_shares.json');
 		} catch (NotFoundException) {
@@ -614,5 +695,4 @@ class DevicesService {
 		}
 		return json_decode((string)$file->getContent(), true);
 	}
-
 }

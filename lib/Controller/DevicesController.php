@@ -20,6 +20,7 @@ use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\Attribute\NoAdminRequired;
 use OCP\AppFramework\Http\DataResponse;
 use OCP\AppFramework\Services\IAppConfig;
+use OCP\Files\File;
 use OCP\Files\Folder;
 use OCP\Files\IRootFolder;
 use OCP\Files\NotFoundException;
@@ -213,9 +214,8 @@ class DevicesController extends Controller {
 
 		if ($userFolder->nodeExists($cleanpath)) {
 			$file = $userFolder->get($cleanpath);
-			if ($file->getType() === \OCP\Files\FileInfo::TYPE_FILE
-				and $file->isReadable()) {
-				$lowerFileName = strtolower((string)$file->getName());
+			if ($file instanceof File && $file->isReadable()) {
+				$lowerFileName = strtolower($file->getName());
 				if (str_ends_with($lowerFileName, '.gpx') || str_ends_with($lowerFileName, '.kml') || str_ends_with($lowerFileName, '.kmz')) {
 					$nbImported = $this->devicesService->importDevices($this->userId, $file);
 					return new DataResponse($nbImported);

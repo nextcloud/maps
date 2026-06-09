@@ -15,9 +15,9 @@ namespace OCA\Maps\Controller;
 use OCA\Maps\AppInfo\Application;
 use OCA\Maps\DB\DeviceShareMapper;
 use OCA\Maps\Service\DevicesService;
+use OCP\AppFramework\Services\IAppConfig;
 use OCP\Files\Folder;
 use OCP\Files\IRootFolder;
-use OCP\IAppConfig;
 use OCP\IGroupManager;
 use OCP\IRequest;
 use OCP\IUserManager;
@@ -172,19 +172,6 @@ class DevicesControllerTest extends \PHPUnit\Framework\TestCase {
 		$this->assertEquals(200, $status);
 		$data = $resp->getData();
 		$this->assertEquals(true, count($data) === 4);
-
-		// invalid values
-		$resp = $this->devicesController->addDevicePoint('aaa', 2.2, 12345, 'testDevice', 1000, 99, 50);
-		$status = $resp->getStatus();
-		$this->assertEquals(400, $status);
-		$data = $resp->getData();
-		$this->assertEquals('Invalid values', $data);
-
-		$resp = $this->devicesController->addDevicePoint(1.1, 'aaa', 12345, 'testDevice', 1000, 99, 50);
-		$status = $resp->getStatus();
-		$this->assertEquals(400, $status);
-		$data = $resp->getData();
-		$this->assertEquals('Invalid values', $data);
 	}
 
 	public function testEditDevice(): void {

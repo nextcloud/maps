@@ -223,14 +223,8 @@ class PhotosControllerTest extends \PHPUnit\Framework\TestCase {
 		// with track
 		$filename = 'tests/test_files/testFile1_locationNut.gpx';
 		$content1 = file_get_contents($filename);
-		$file = $userfolder->newFile('testFile1_locationNut.gpxx');
+		$file = $userfolder->newFile('testFile1_locationNut.gpx');
 		$file->putContent($content1);
-		//$file->touch();
-
-		$file = $userfolder->get('testFile1_locationNut.gpxx');
-		$file->move($userfolder->getPath() . '/testFile1_locationNut.gpx');
-		//echo 'I MOVE TO '.$userfolder->getPath().'/testFile1.gpx'."\n";
-		$file = $userfolder->get('testFile1_locationNut.gpx');
 		$file->touch();
 
 		$this->GeoPhotosService->clearCache();

@@ -61,7 +61,6 @@ class PublicFavoritePageControllerTest extends TestCase {
 		$this->favoritesService = new FavoritesService(
 			$container->get(LoggerInterface::class),
 			$container->get(IFactory::class)->get($appName),
-			$container->get(ISecureRandom::class),
 			$container->get(\OCP\IDBConnection::class)
 		);
 

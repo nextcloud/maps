@@ -48,19 +48,6 @@
   </file>
   <file src="lib/Service/DevicesService.php">
     <UndefinedFunction>
-      <code><![CDATA['gpxDataElement']]></code>
-      <code><![CDATA['gpxEndElement']]></code>
-      <code><![CDATA['gpxStartElement']]></code>
-      <code><![CDATA['kmlDataElement']]></code>
-      <code><![CDATA['kmlEndElement']]></code>
-      <code><![CDATA['kmlStartElement']]></code>
-    </UndefinedFunction>
-  </file>
-  <file src="lib/Service/FavoritesService.php">
-    <UndefinedFunction>
-      <code><![CDATA['gpxDataElement']]></code>
-      <code><![CDATA['gpxEndElement']]></code>
-      <code><![CDATA['gpxStartElement']]></code>
       <code><![CDATA['kmlDataElement']]></code>
       <code><![CDATA['kmlEndElement']]></code>
       <code><![CDATA['kmlStartElement']]></code>

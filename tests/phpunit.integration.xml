@@ -20,16 +20,6 @@
   ~ along with this program.  If not, see <http://www.gnu.org/licenses/>.
   -->
 <phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" bootstrap="bootstrap.php" verbose="true" timeoutForSmallTests="900" timeoutForMediumTests="900" timeoutForLargeTests="900" cacheResult="true" convertDeprecationsToExceptions="true" xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/9.3/phpunit.xsd">
-	<coverage>
-		<include>
-			<directory suffix=".php">../lib</directory>
-		</include>
-		<exclude>
-		</exclude>
-		<report>
-			<clover outputFile="./clover.integration.xml"/>
-		</report>
-	</coverage>
 	<testsuite name="Maps app tests">
 		<directory suffix="Test.php">Integration</directory>
 	</testsuite>

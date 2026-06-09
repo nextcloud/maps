@@ -74,4 +74,9 @@
       <code><![CDATA[$xml->wpt]]></code>
     </InvalidPropertyFetch>
   </file>
+  <file src="tests/Unit/Controller/PhotosControllerTest.php">
+    <UndefinedInterfaceMethod>
+      <code><![CDATA[$dataForTrack]]></code>
+    </UndefinedInterfaceMethod>
+  </file>
 </files>

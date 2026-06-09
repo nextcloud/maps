@@ -65,6 +65,7 @@ class PhotosController extends Controller {
 	 * @throws NoUserException
 	 * @throws NotFoundException
 	 * @throws NotPermittedException
+	 * @return DataResponse<Http::STATUS_OK, array, array<string, array>>
 	 */
 	#[NoAdminRequired]
 	#[NoCSRFRequired]

@@ -15,10 +15,10 @@
 		"psalm:update-baseline": "psalm --threads=1 --update-baseline",
 		"psalm:clear": "psalm --clear-cache && psalm.phar --clear-global-cache",
 		"psalm:fix": "psalm --alter --issues=InvalidReturnType,InvalidNullableReturnType,MissingParamType,InvalidFalsableReturnType,MissingOverrideAttribute",
-		"test:integration": "phpunit -c tests/phpunit.integration.xml --fail-on-warning",
-		"test:integration:dev": "phpunit -c tests/phpunit.integration.xml --no-coverage --order-by=defects --stop-on-defect --fail-on-warning --stop-on-error --stop-on-failure",
-		"test:unit": "phpunit -c tests/phpunit.unit.xml --fail-on-warning",
-		"test:unit:dev": "phpunit -c tests/phpunit.unit.xml --no-coverage --order-by=defects --stop-on-defect --fail-on-warning --stop-on-error --stop-on-failure",
+		"test:integration": "phpunit -c tests/phpunit.integration.xml",
+		"test:integration:dev": "phpunit -c tests/phpunit.integration.xml --no-coverage --order-by=defects --stop-on-defect --stop-on-error --stop-on-failure",
+		"test:unit": "phpunit -c tests/phpunit.unit.xml --display-all-issues",
+		"test:unit:dev": "phpunit -c tests/phpunit.unit.xml --no-coverage --order-by=defects --stop-on-defect --stop-on-error --stop-on-failure --display-all-issues",
 		"rector": "rector && composer cs:fix",
 		"post-install-cmd": [
 			"[ $COMPOSER_DEV_MODE -eq 0 ] || composer bin all install --ansi"

@@ -180,6 +180,7 @@ class PhotosControllerTest extends \PHPUnit\Framework\TestCase {
 		$this->assertEquals(200, $status);
 		$data = $resp->getData();
 		$this->assertCount(1, $data);
+		/** @psalm-suppress UndefinedInterfaceMethod */
 		$this->assertEquals('/nc.jpg', $data[0]->path);
 
 		//Test .nomedia respected

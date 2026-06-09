@@ -15,11 +15,11 @@ class RegisterMimeType implements IRepairStep {
 		$this->mimeTypeLoader = $mimeTypeLoader;
 	}
 
-	public function getName() {
+	public function getName(): string {
 		return 'Register Maps MIME types';
 	}
 
-	private function registerForExistingFiles() {
+	private function registerForExistingFiles(): void {
 		$mimeTypeId = $this->mimeTypeLoader->getId('application/x-nextcloud-maps');
 		$this->mimeTypeLoader->updateFilecache('maps', $mimeTypeId);
 
@@ -36,7 +36,7 @@ class RegisterMimeType implements IRepairStep {
 		$this->mimeTypeLoader->updateFilecache('notrack', $mimeTypeId);
 	}
 
-	private function registerForNewFiles() {
+	private function registerForNewFiles(): void {
 		$mapping = [
 			'maps' => ['application/x-nextcloud-maps'],
 			'noindex' => ['application/x-nextcloud-noindex'],
@@ -56,7 +56,7 @@ class RegisterMimeType implements IRepairStep {
 		file_put_contents($mappingFile, json_encode($mapping, JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT));
 	}
 
-	public function run(IOutput $output) {
+	public function run(IOutput $output): void {
 		$output->info('Registering the mimetype...');
 
 		// Register the mime type for existing files

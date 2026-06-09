@@ -14,18 +14,20 @@ namespace OCA\Maps\Controller;
 
 use OCA\DAV\CardDAV\CardDavBackend;
 use OCA\Maps\Service\AddressService;
+use OCP\AppFramework\Http\Attribute\NoCSRFRequired;
+use OCP\AppFramework\Http\Attribute\PublicPage;
 use OCP\AppFramework\Http\DataDisplayResponse;
 use OCP\AppFramework\Http\DataResponse;
+use OCP\AppFramework\Services\IInitialState;
 use OCP\Contacts\IManager;
 use OCP\EventDispatcher\IEventDispatcher;
+use OCP\Files\Folder;
 use OCP\Files\IRootFolder;
 use OCP\Files\Node;
 use OCP\Files\NotFoundException;
 use OCP\Files\NotPermittedException;
+use OCP\IAppConfig;
 use OCP\IAvatarManager;
-use OCP\IConfig;
-use OCP\IDBConnection;
-use OCP\IInitialStateService;
 use OCP\IRequest;
 use OCP\ISession;
 use OCP\IURLGenerator;
@@ -36,34 +38,23 @@ use OCP\Share\IShare;
 use Sabre\VObject\Reader;
 
 class PublicContactsController extends PublicPageController {
-	protected IManager $contactsManager;
-	protected AddressService $addressService;
-	protected CardDavBackend $cdBackend;
-	protected IAvatarManager $avatarManager;
-	protected IRootFolder $root;
-
 	public function __construct(
 		string $appName,
 		IRequest $request,
 		ISession $session,
 		IURLGenerator $urlGenerator,
 		IEventDispatcher $eventDispatcher,
-		IConfig $config,
-		IInitialStateService $initialStateService,
+		IAppConfig $appConfig,
+		IInitialState $initialState,
 		ShareManager $shareManager,
 		IUserManager $userManager,
-		IManager $contactsManager,
-		IDBConnection $dbconnection,
-		AddressService $addressService,
-		CardDavBackend $cdBackend,
-		IAvatarManager $avatarManager,
-		IRootFolder $root) {
-		parent::__construct($appName, $request, $session, $urlGenerator, $eventDispatcher, $config, $initialStateService, $shareManager, $userManager);
-		$this->avatarManager = $avatarManager;
-		$this->contactsManager = $contactsManager;
-		$this->addressService = $addressService;
-		$this->cdBackend = $cdBackend;
-		$this->root = $root;
+		protected IManager $contactsManager,
+		protected AddressService $addressService,
+		protected CardDavBackend $cdBackend,
+		protected IAvatarManager $avatarManager,
+		protected IRootFolder $root,
+	) {
+		parent::__construct($appName, $request, $session, $urlGenerator, $eventDispatcher, $appConfig, $initialState, $shareManager, $userManager);
 	}
 
 	/**
@@ -86,15 +77,14 @@ class PublicContactsController extends PublicPageController {
 	}
 
 	/**
-	 * @return IShare
 	 * @throws NotFoundException
 	 */
-	private function getShare() {
+	private function getShare(): IShare {
 		// Check whether share exists
 		try {
 			$share = $this->shareManager->getShareByToken($this->getToken());
-		} catch (ShareNotFound $e) {
-			// The share does not exists, we do not emit an ShareLinkAccessedEvent
+		} catch (ShareNotFound) {
+			// The share does not exist, we do not emit an ShareLinkAccessedEvent
 			throw new NotFoundException();
 		}
 
@@ -105,10 +95,9 @@ class PublicContactsController extends PublicPageController {
 	}
 
 	/**
-	 * @return \OCP\Files\File|\OCP\Files\Folder
 	 * @throws NotFoundException
 	 */
-	private function getShareNode() {
+	private function getShareNode(): Node {
 		\OC_User::setIncognitoMode(true);
 
 		$share = $this->getShare();
@@ -117,19 +106,17 @@ class PublicContactsController extends PublicPageController {
 	}
 
 	/**
-	 * @PublicPage
-	 *
-	 * @return DataResponse
 	 * @throws NotFoundException
 	 * @throws NotPermittedException
 	 * @throws \OCP\Files\InvalidPathException
 	 */
+	#[PublicPage]
 	public function getContacts(): DataResponse {
 		$share = $this->getShare();
 		$permissions = $share->getPermissions();
 		$folder = $this->getShareNode();
 		$isReadable = (bool)($permissions & (1 << 0));
-		if ($isReadable) {
+		if ($isReadable && $folder instanceof Folder) {
 			//Fixme add contacts for my-maps
 			$result = [];
 			$files = $folder->search('.vcf');
@@ -144,7 +131,7 @@ class PublicContactsController extends PublicPageController {
 							$result[] = $this->vCardToArray($permissions, $file, $vcard, $geo->getValue());
 						} elseif (is_countable($geo) && count($geo) > 0 && is_iterable($geo)) {
 							foreach ($geo as $g) {
-								if (strlen($g->getValue()) > 1) {
+								if (strlen((string)$g->getValue()) > 1) {
 									$result[] = $this->vCardToArray($permissions, $file, $vcard, $g->getValue());
 								}
 							}
@@ -158,7 +145,7 @@ class PublicContactsController extends PublicPageController {
 							if (isset($adr->parameters()['TYPE'])) {
 								$adrtype = $adr->parameters()['TYPE']->getValue();
 							}
-							if (is_string($geo) && strlen($geo) > 1) {
+							if (strlen($geo) > 1) {
 								$result[] = $this->vCardToArray($permissions, $file, $vcard, $geo, $adrtype, $adr->getValue(), $file->getId());
 							}
 						}
@@ -172,14 +159,6 @@ class PublicContactsController extends PublicPageController {
 	}
 
 	/**
-	 * @param int $sharePermissions
-	 * @param Node $file
-	 * @param \Sabre\VObject\Document $vcard
-	 * @param string $geo
-	 * @param string|null $adrtype
-	 * @param string|null $adr
-	 * @param int|null $fileId
-	 * @return array
 	 * @throws NotFoundException
 	 * @throws \OCP\Files\InvalidPathException
 	 */
@@ -204,7 +183,7 @@ class PublicContactsController extends PublicPageController {
 		} else {
 			$groups = '';
 		}
-		$result = [
+		return [
 			'FN' => $fn ?? $n ?? '???',
 			'UID' => $uid,
 			'HAS_PHOTO' => (isset($vcard->PHOTO) && $vcard->PHOTO !== null),
@@ -218,13 +197,8 @@ class PublicContactsController extends PublicPageController {
 			'isDeletable' => $file->isDeletable() && ($sharePermissions & (1 << 1)),
 			'isUpdateable' => $file->isUpdateable() && ($sharePermissions & (1 << 3)),
 		];
-		return $result;
 	}
 
-	/**
-	 * @param string $n
-	 * @return string|null
-	 */
 	private function N2FN(string $n): ?string {
 		if ($n) {
 			$spl = explode($n, ';');
@@ -240,14 +214,11 @@ class PublicContactsController extends PublicPageController {
 
 
 	/**
-	 * @PublicPage
-	 * @NoCSRFRequired
-	 *
-	 * @param string $name
-	 * @return DataDisplayResponse
 	 * @throws NotFoundException
 	 * @throws NotPermittedException
 	 */
+	#[PublicPage]
+	#[NoCSRFRequired]
 	public function getContactLetterAvatar(string $name): DataDisplayResponse {
 		$av = $this->avatarManager->getGuestAvatar($name);
 		$avatarContent = $av->getFile(64)->getContent();

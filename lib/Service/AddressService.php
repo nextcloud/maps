@@ -41,14 +41,13 @@ use Sabre\VObject\Reader;
 class AddressService {
 	private $dbconnection;
 	private $jobList;
-	private $appData;
 
 	/** @var IMemcache */
 	private $memcache;
 
 	public function __construct(
 		ICacheFactory $cacheFactory,
-		private LoggerInterface $logger,
+		private readonly LoggerInterface $logger,
 		IJobList $jobList,
 		IAppData $appData,
 		IDBConnection $dbconnection,
@@ -56,7 +55,6 @@ class AddressService {
 		$this->dbconnection = $dbconnection;
 		$this->memcache = $cacheFactory->createLocal('maps');
 		$this->jobList = $jobList;
-		$this->appData = $appData;
 	}
 
 	// converts the address to geo lat;lon
@@ -75,7 +73,7 @@ class AddressService {
 	 * @return array($lat,$lng,$lookedUp)
 	 */
 	public function lookupAddress($adr, $uri): array {
-		$adr_norm = strtolower(preg_replace('/\s+/', '', $adr));
+		$adr_norm = strtolower((string)preg_replace('/\s+/', '', (string)$adr));
 		$qb = $this->dbconnection->getQueryBuilder();
 		$qb->select('id', 'lat', 'lng', 'looked_up')
 			->from('maps_address_geo')
@@ -113,9 +111,9 @@ class AddressService {
 		// if it's still not in the DB, it means the lookup did not happen yet
 		// so we can schedule it for later
 		if (!$inDb) {
-			if (strlen($adr) > 255) {
+			if (strlen((string)$adr) > 255) {
 				$this->logger->notice('lookupAddress: Truncating $adr (entry too long) ' . $adr);
-				$adr = substr($adr, 0, 255);
+				$adr = substr((string)$adr, 0, 255);
 			}
 			$foo = $this->scheduleForLookup($adr, $uri);
 			$id = $foo[0];
@@ -149,7 +147,7 @@ class AddressService {
 			return $res;
 		}
 
-		$adr_norm = strtolower(preg_replace('/\s+/', '', $adr));
+		$adr_norm = strtolower((string)preg_replace('/\s+/', '', (string)$adr));
 
 		$qb = $this->dbconnection->getQueryBuilder();
 		$qb->select('lat', 'lng')
@@ -169,7 +167,7 @@ class AddressService {
 
 	// looks up the address on external provider returns lat, lon, lookupstate
 	// do lookup only if last one occured more than one second ago
-	private function lookupAddressExternal($adr): array {
+	private function lookupAddressExternal(string $adr): array {
 		if (time() - intval($this->memcache->get('lastAddressLookup')) >= 1) {
 			$opts = [
 				'http' => [
@@ -182,7 +180,7 @@ class AddressService {
 			// we get rid of "post office box" field
 			$splitted_adr = explode(';', $adr);
 			// remove blank lines (#706)
-			$splitted_adr = array_filter(array_map('trim', $splitted_adr));
+			$splitted_adr = array_filter(array_map(trim(...), $splitted_adr));
 			// ADR in VCard is mandated to 7 fields
 			if (sizeof($splitted_adr) == 7) {
 				$query_adr_parts = [];
@@ -231,7 +229,7 @@ class AddressService {
 	}
 
 	// launch lookup for all addresses of the vCard
-	public function scheduleVCardForLookup($cardData, $cardUri) {
+	public function scheduleVCardForLookup($cardData, $cardUri): void {
 		$vCard = Reader::read($cardData);
 
 		$this->cleanUpDBContactAddresses($vCard, $cardUri);
@@ -246,7 +244,7 @@ class AddressService {
 		}
 	}
 
-	private function cleanUpDBContactAddresses($vCard, $uri) {
+	private function cleanUpDBContactAddresses($vCard, $uri): void {
 		$qb = $this->dbconnection->getQueryBuilder();
 		// get all vcard addresses
 		$vCardAddresses = [];
@@ -279,7 +277,7 @@ class AddressService {
 		}
 	}
 
-	public function deleteDBContactAddresses($uri) {
+	public function deleteDBContactAddresses($uri): void {
 		$qb = $this->dbconnection->getQueryBuilder();
 		$qb->delete('maps_address_geo')
 			->where(
@@ -295,7 +293,7 @@ class AddressService {
 		if (!$geo[2]) {
 			$geo = $this->lookupAddressExternal($adr);
 		}
-		$adr_norm = strtolower(preg_replace('/\s+/', '', $adr));
+		$adr_norm = strtolower((string)preg_replace('/\s+/', '', (string)$adr));
 		$qb = $this->dbconnection->getQueryBuilder();
 		$qb->insert('maps_address_geo')
 			->values([
@@ -336,7 +334,7 @@ class AddressService {
 				$lookedUpAll = false;
 			}
 			\sleep(1);
-			\usleep(\rand(100, 100000));
+			\usleep(random_int(100, 100000));
 		}
 		// not all addresses where loaded from database
 		if ($i === $max) {

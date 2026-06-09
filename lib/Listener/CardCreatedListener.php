@@ -24,20 +24,15 @@ declare(strict_types=1);
 namespace OCA\Maps\Listener;
 
 use OCA\DAV\Events\CardCreatedEvent;
-use OCA\Maps\Service\AddressService;
 use OCP\EventDispatcher\Event;
 use OCP\EventDispatcher\IEventListener;
 
 /** @template-implements IEventListener<CardCreatedEvent> */
 class CardCreatedListener implements IEventListener {
 
-	/** @var AddressService */
-	private $addressService;
-
 	public function __construct(
-		AddressService $addressService,
+		private readonly \OCA\Maps\Service\AddressService $addressService,
 	) {
-		$this->addressService = $addressService;
 	}
 
 	public function handle(Event $event): void {

@@ -25,20 +25,18 @@ class LaunchUsersInstallScanJob extends QueuedJob {
 	 * LaunchUsersInstallScanJob constructor.
 	 *
 	 * A QueuedJob to launch a scan job for each user
-	 *
-	 * @param IJobList $jobList
 	 */
 	public function __construct(
 		ITimeFactory $timeFactory,
-		private IJobList $jobList,
-		private IUserManager $userManager,
+		private readonly IJobList $jobList,
+		private readonly IUserManager $userManager,
 	) {
 		parent::__construct($timeFactory);
 	}
 
-	public function run($argument) {
+	public function run($argument): void {
 		\OCP\Server::get(LoggerInterface::class)->debug('Launch users install scan jobs cronjob executed');
-		$this->userManager->callForSeenUsers(function (IUser $user) {
+		$this->userManager->callForSeenUsers(function (IUser $user): void {
 			$this->jobList->add(UserInstallScanJob::class, ['userId' => $user->getUID()]);
 		});
 	}

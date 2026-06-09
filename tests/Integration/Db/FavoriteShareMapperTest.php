@@ -26,29 +26,29 @@ namespace tests\Integration\Db;
 
 use ChristophWurst\Nextcloud\Testing\DatabaseTransaction;
 use ChristophWurst\Nextcloud\Testing\TestCase;
-use OC;
 use OCA\Maps\DB\FavoriteShare;
 use OCA\Maps\DB\FavoriteShareMapper;
 use OCP\AppFramework\Db\DoesNotExistException;
+use OCP\Files\IRootFolder;
+use OCP\Security\ISecureRandom;
+use OCP\Server;
 
 class FavoriteShareMapperTest extends TestCase {
 	use DatabaseTransaction;
 
-	/* @var FavoriteShareMapper */
-	private $mapper;
+	private FavoriteShareMapper $mapper;
 
 	public function setUp(): void {
 		parent::setUp();
 
 		$this->mapper = new FavoriteShareMapper(
-			OC::$server->query(\OCP\IDBConnection::class),
-			OC::$server->getSecureRandom(),
-			OC::$server->getRootFolder()
+			Server::get(\OCP\IDBConnection::class),
+			Server::get(ISecureRandom::class),
+			Server::get(IRootFolder::class),
 		);
 	}
 
 	public function testCreateByOwnerAndTokenIsSuccessful() {
-		/* @var FavoriteShare */
 		$share = $this->mapper->create('testUser', 'testCategory');
 
 		$this->assertIsString($share->getToken());
@@ -57,10 +57,7 @@ class FavoriteShareMapperTest extends TestCase {
 	}
 
 	public function testFindByTokenIsSuccessful() {
-		/* @var FavoriteShare */
 		$shareExpected = $this->mapper->create('testUser', 'testCategory');
-
-		/* @var FavoriteShare */
 		$shareActual = $this->mapper->findByToken($shareExpected->getToken());
 
 		$this->assertEquals($shareExpected->getToken(), $shareActual->getToken());
@@ -69,10 +66,7 @@ class FavoriteShareMapperTest extends TestCase {
 	}
 
 	public function testFindByOwnerAndCategoryIsSuccessful() {
-		/* @var FavoriteShare */
 		$shareExpected = $this->mapper->create('testUser', 'testCategory');
-
-		/* @var FavoriteShare */
 		$shareActual = $this->mapper->findByOwnerAndCategory('testUser', 'testCategory');
 
 		$this->assertEquals($shareExpected->getToken(), $shareActual->getToken());

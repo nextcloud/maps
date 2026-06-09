@@ -24,33 +24,26 @@ use Psr\Log\LoggerInterface;
 
 class UserInstallScanJob extends QueuedJob {
 
-	private IJobList $jobList;
-	private IConfig $config;
-	private IUserManager $userManager;
-	private PhotofilesService $photofilesService;
-	private TracksService $tracksService;
+	private readonly IConfig $config;
 
 	/**
 	 * UserInstallScanJob constructor.
 	 *
 	 * A QueuedJob to scan user storage for photos and tracks
-	 *
-	 * @param IJobList $jobList
 	 */
-	public function __construct(ITimeFactory $timeFactory, IJobList $jobList,
+	public function __construct(
+		ITimeFactory $timeFactory,
+		IJobList $jobList,
 		IUserManager $userManager,
 		IConfig $config,
-		PhotofilesService $photofilesService,
-		TracksService $tracksService) {
+		private readonly PhotofilesService $photofilesService,
+		private readonly TracksService $tracksService,
+	) {
 		parent::__construct($timeFactory);
 		$this->config = $config;
-		$this->jobList = $jobList;
-		$this->userManager = $userManager;
-		$this->photofilesService = $photofilesService;
-		$this->tracksService = $tracksService;
 	}
 
-	public function run($argument) {
+	public function run($argument): void {
 		$userId = $argument['userId'];
 		\OCP\Server::get(LoggerInterface::class)->debug('Launch user install scan job for ' . $userId . ' cronjob executed');
 		// scan photos and tracks for given user
@@ -59,7 +52,7 @@ class UserInstallScanJob extends QueuedJob {
 		$this->config->setUserValue($userId, 'maps', 'installScanDone', 'yes');
 	}
 
-	private function rescanUserPhotos($userId) {
+	private function rescanUserPhotos($userId): void {
 		//$this->output->info('======== User '.$userId.' ========'."\n");
 		$c = 1;
 		foreach ($this->photofilesService->rescan($userId) as $path) {
@@ -68,7 +61,7 @@ class UserInstallScanJob extends QueuedJob {
 		}
 	}
 
-	private function rescanUserTracks($userId) {
+	private function rescanUserTracks(string $userId): void {
 		//$this->output->info('======== User '.$userId.' ========'."\n");
 		$c = 1;
 		foreach ($this->tracksService->rescan($userId) as $path) {

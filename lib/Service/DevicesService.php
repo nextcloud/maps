@@ -15,27 +15,27 @@ namespace OCA\Maps\Service;
 use OC\Archive\ZIP;
 use OCP\DB\Exception;
 use OCP\DB\QueryBuilder\IQueryBuilder;
+use OCP\Files\File;
+use OCP\Files\Folder;
 use OCP\Files\NotFoundException;
 use OCP\IDBConnection;
-use OCP\IL10N;
 use Psr\Log\LoggerInterface;
 
 class DevicesService {
 
-	private $importUserId;
+	private ?int $trackIndex = null;
+	private string $importUserId;
 	private $currentXmlTag;
-	private $importDevName;
+	private ?string $importDevName = null;
 	private $importFileName;
 	private $currentPoint;
-	private $currentPointList;
-	private $trackIndex;
-	private $pointIndex;
-	private $insideTrk;
+	private ?array $currentPointList = null;
+	private ?int $pointIndex = null;
+	private ?bool $insideTrk = null;
 
 	public function __construct(
-		private LoggerInterface $logger,
-		private IL10N $l10n,
-		private IDBConnection $dbconnection,
+		private readonly LoggerInterface $logger,
+		private readonly IDBConnection $dbconnection,
 	) {
 	}
 
@@ -48,7 +48,7 @@ class DevicesService {
 	 * @param int $pruneBefore
 	 * @return array with devices
 	 */
-	public function getDevicesFromDB($userId) {
+	public function getDevicesFromDB($userId): array {
 		$devices = [];
 		$qb = $this->dbconnection->getQueryBuilder();
 		$qb->select('id', 'user_agent', 'color')
@@ -76,10 +76,9 @@ class DevicesService {
 
 	/**
 	 * @param string[] $tokens
-	 * @return array
 	 * @throws Exception
 	 */
-	public function getDevicesByTokens(array $tokens) {
+	public function getDevicesByTokens(array $tokens): array {
 		$devices = [];
 		$qb = $this->dbconnection->getquerybuilder();
 		$qb->select('d.id', 'd.user_agent', 'd.color', 's.token')
@@ -114,13 +113,9 @@ class DevicesService {
 	/**
 	 * @param $userId
 	 * @param $deviceId
-	 * @param int|null $pruneBefore
-	 * @param int|null $limit
-	 * @param int|null $offset
-	 * @return array
 	 * @throws \OCP\DB\Exception
 	 */
-	public function getDevicePointsFromDB($userId, $deviceId, ?int $pruneBefore = 0, ?int $limit = null, ?int $offset = null) {
+	public function getDevicePointsFromDB($userId, $deviceId, ?int $pruneBefore = 0, ?int $limit = null, ?int $offset = null): array {
 		$qb = $this->dbconnection->getQueryBuilder();
 		// get coordinates
 		$qb->selectDistinct(['p.id', 'lat', 'lng', 'timestamp', 'altitude', 'accuracy', 'battery'])
@@ -165,13 +160,9 @@ class DevicesService {
 
 	/**
 	 * @param string[] $token
-	 * @param int|null $pruneBefore
-	 * @param int|null $limit
-	 * @param int|null $offset
-	 * @return array
 	 * @throws Exception
 	 */
-	public function getDevicePointsByTokens(array $tokens, ?int $pruneBefore = 0, ?int $limit = 10000, ?int $offset = 0) {
+	public function getDevicePointsByTokens(array $tokens, ?int $pruneBefore = 0, ?int $limit = 10000, ?int $offset = 0): array {
 		$qb = $this->dbconnection->getQueryBuilder();
 		// get coordinates
 		$or = [];
@@ -221,10 +212,9 @@ class DevicesService {
 	/**
 	 * @param $userId
 	 * @param $deviceId
-	 * @return array
 	 * @throws Exception
 	 */
-	public function getDeviceTimePointsFromDb($userId, $deviceId) {
+	public function getDeviceTimePointsFromDb($userId, $deviceId): array {
 		$qb = $this->dbconnection->getQueryBuilder();
 		// get coordinates
 		$qb->select('lat', 'lng', 'timestamp')
@@ -247,7 +237,7 @@ class DevicesService {
 		return $points;
 	}
 
-	public function getOrCreateDeviceFromDB($userId, $userAgent) {
+	public function getOrCreateDeviceFromDB(string $userId, string $userAgent): int {
 		$deviceId = null;
 		$qb = $this->dbconnection->getQueryBuilder();
 		$qb->select('id')
@@ -278,7 +268,7 @@ class DevicesService {
 		return $deviceId;
 	}
 
-	public function addPointToDB($deviceId, $lat, $lng, $ts, $altitude, $battery, $accuracy) {
+	public function addPointToDB(string $deviceId, string $lat, string $lng, int $ts, $altitude, $battery, $accuracy) {
 		$qb = $this->dbconnection->getQueryBuilder();
 		$qb->insert('maps_device_points')
 			->values([
@@ -291,11 +281,10 @@ class DevicesService {
 				'accuracy' => $qb->createNamedParameter(is_numeric($accuracy) ? $accuracy : null, IQueryBuilder::PARAM_STR)
 			]);
 		$qb->executeStatement();
-		$pointId = $qb->getLastInsertId();
-		return $pointId;
+		return $qb->getLastInsertId();
 	}
 
-	public function addPointsToDB($deviceId, $points) {
+	public function addPointsToDB($deviceId, $points): void {
 		$values = [];
 		foreach ($points as $p) {
 			$value = '('
@@ -319,7 +308,7 @@ class DevicesService {
 		$req->closeCursor();
 	}
 
-	public function getDeviceFromDB($id, $userId) {
+	public function getDeviceFromDB($id, $userId): ?array {
 		$device = null;
 		$qb = $this->dbconnection->getQueryBuilder();
 		$qb->select('id', 'user_agent', 'color')
@@ -346,7 +335,7 @@ class DevicesService {
 		return $device;
 	}
 
-	public function editDeviceInDB($id, $color, $name) {
+	public function editDeviceInDB($id, $color, $name): void {
 		$qb = $this->dbconnection->getQueryBuilder();
 		$qb->update('maps_devices');
 		if (is_string($color) && strlen($color) > 0) {
@@ -361,7 +350,7 @@ class DevicesService {
 		$qb->executeStatement();
 	}
 
-	public function deleteDeviceFromDB($id) {
+	public function deleteDeviceFromDB($id): void {
 		$qb = $this->dbconnection->getQueryBuilder();
 		$qb->delete('maps_devices')
 			->where(
@@ -376,7 +365,7 @@ class DevicesService {
 		$qb->executeStatement();
 	}
 
-	public function countPoints($userId, $deviceIdList, $begin, $end) {
+	public function countPoints($userId, $deviceIdList, $begin, $end): int {
 		$qb = $this->dbconnection->getQueryBuilder();
 		$qb->select($qb->createFunction('COUNT(*) AS co'))
 			->from('maps_devices', 'd')
@@ -413,7 +402,7 @@ class DevicesService {
 		return $count;
 	}
 
-	public function exportDevices($userId, $handler, $deviceIdList, $begin, $end, $appVersion, $filename) {
+	public function exportDevices($userId, $handler, $deviceIdList, $begin, $end, string $appVersion, string $filename): void {
 		$gpxHeader = $this->generateGpxHeader($filename, $appVersion, count($deviceIdList));
 		fwrite($handler, $gpxHeader);
 
@@ -426,7 +415,7 @@ class DevicesService {
 		fwrite($handler, '</gpx>');
 	}
 
-	private function generateGpxHeader($name, $appVersion, $nbdev = 0) {
+	private function generateGpxHeader(string $name, string $appVersion, int $nbdev = 0): string {
 		date_default_timezone_set('UTC');
 		$dt = new \DateTime();
 		$date = $dt->format('Y-m-d\TH:i:s\Z');
@@ -451,11 +440,10 @@ class DevicesService {
 		if ($nbdev > 0) {
 			$gpxText .= ' <desc>' . $nbdev . ' device' . ($nbdev > 1 ? 's' : '') . '</desc>' . "\n";
 		}
-		$gpxText .= '</metadata>' . "\n";
-		return $gpxText;
+		return $gpxText . ('</metadata>' . "\n");
 	}
 
-	private function getAndWriteDevicePoints($devid, $begin, $end, $fd, $nbPoints, $userId) {
+	private function getAndWriteDevicePoints($devid, $begin, $end, $fd, int $nbPoints, $userId): void {
 		$device = $this->getDeviceFromDB($devid, $userId);
 		$devname = $device['user_agent'];
 		$qb = $this->dbconnection->getQueryBuilder();
@@ -533,20 +521,22 @@ class DevicesService {
 		fwrite($fd, $gpxText);
 	}
 
-	public function importDevices($userId, $file) {
-		$lowerFileName = strtolower($file->getName());
-		if ($this->endswith($lowerFileName, '.gpx')) {
+	public function importDevices(string $userId, File $file): int {
+		$lowerFileName = strtolower((string)$file->getName());
+		if (str_ends_with($lowerFileName, '.gpx')) {
 			return $this->importDevicesFromGpx($userId, $file);
-		} elseif ($this->endswith($lowerFileName, '.kml')) {
+		} elseif (str_ends_with($lowerFileName, '.kml')) {
 			$fp = $file->fopen('r');
 			$name = $file->getName();
 			return $this->importDevicesFromKml($userId, $fp, $name);
-		} elseif ($this->endswith($lowerFileName, '.kmz')) {
+		} elseif (str_ends_with($lowerFileName, '.kmz')) {
 			return $this->importDevicesFromKmz($userId, $file);
 		}
+		return 0;
 	}
 
-	public function importDevicesFromGpx($userId, $file) {
+	public function importDevicesFromGpx(string $userId, File $file): int {
+
 		$this->currentPointList = [];
 		$this->importUserId = $userId;
 		$this->importFileName = $file->getName();
@@ -555,8 +545,8 @@ class DevicesService {
 
 		$xml_parser = xml_parser_create();
 		xml_set_object($xml_parser, $this);
-		xml_set_element_handler($xml_parser, 'gpxStartElement', 'gpxEndElement');
-		xml_set_character_data_handler($xml_parser, 'gpxDataElement');
+		xml_set_element_handler($xml_parser, $this->gpxStartElement(...), $this->gpxEndElement(...));
+		xml_set_character_data_handler($xml_parser, $this->gpxDataElement(...));
 
 		$fp = $file->fopen('r');
 
@@ -578,7 +568,7 @@ class DevicesService {
 		return ($this->trackIndex - 1);
 	}
 
-	private function gpxStartElement($parser, $name, $attrs) {
+	private function gpxStartElement($parser, $name, array $attrs): void {
 		//$points, array($lat, $lon, $ele, $timestamp, $acc, $bat, $sat, $ua, $speed, $bearing)
 		$this->currentXmlTag = $name;
 		if ($name === 'TRK') {
@@ -598,7 +588,7 @@ class DevicesService {
 		//var_dump($attrs);
 	}
 
-	private function gpxEndElement($parser, $name) {
+	private function gpxEndElement($parser, $name): void {
 		if ($name === 'TRK') {
 			$this->insideTrk = false;
 			// log last track points
@@ -635,8 +625,8 @@ class DevicesService {
 		}
 	}
 
-	private function gpxDataElement($parser, $data) {
-		$d = trim($data);
+	private function gpxDataElement($parser, $data): void {
+		$d = trim((string)$data);
 		if (!empty($d)) {
 			if ($this->currentXmlTag === 'ELE') {
 				$this->currentPoint['altitude'] = (isset($this->currentPoint['altitude'])) ? $this->currentPoint['altitude'] . $d : $d;
@@ -652,7 +642,7 @@ class DevicesService {
 		}
 	}
 
-	public function importDevicesFromKmz($userId, $file) {
+	public function importDevicesFromKmz(string $userId, $file): int {
 		$path = $file->getStorage()->getLocalFile($file->getInternalPath());
 		$name = $file->getName();
 		$zf = new ZIP($path);
@@ -667,8 +657,7 @@ class DevicesService {
 		return $nbImported;
 	}
 
-	public function importDevicesFromKml($userId, $fp, $name) {
-		$this->trackIndex = 1;
+	public function importDevicesFromKml(string $userId, $fp, string $name): int {
 		$this->importUserId = $userId;
 		$this->importFileName = $name;
 		$xml_parser = xml_parser_create();
@@ -691,99 +680,19 @@ class DevicesService {
 		return ($this->trackIndex - 1);
 	}
 
-	private function kmlStartElement($parser, $name, $attrs) {
-		$this->currentXmlTag = $name;
-		if ($name === 'GX:TRACK') {
-			if (isset($attrs['ID'])) {
-				$this->importDevName = $attrs['ID'];
-			} else {
-				$this->importDevName = $this->importFileName . ' ' . $this->trackIndex;
-			}
-			$this->pointIndex = 1;
-			$this->currentPointList = [];
-		} elseif ($name === 'WHEN') {
-			$this->currentPoint = [];
-		}
-		//var_dump($attrs);
-	}
-
-	private function kmlEndElement($parser, $name) {
-		if ($name === 'GX:TRACK') {
-			// log last track points
-			if (count($this->currentPointList) > 0) {
-				$devid = $this->getOrCreateDeviceFromDB($this->importUserId, $this->importDevName);
-				$this->addPointsToDB($devid, $this->currentPointList);
-			}
-			$this->trackIndex++;
-			unset($this->currentPointList);
-		} elseif ($name === 'GX:COORD') {
-			// convert date
-			if (isset($this->currentPoint['date'])) {
-				$time = new \DateTime($this->currentPoint['date']);
-				$timestamp = $time->getTimestamp();
-				$this->currentPoint['date'] = $timestamp;
-			}
-			// get latlng
-			if (isset($this->currentPoint['coords'])) {
-				$spl = explode(' ', $this->currentPoint['coords']);
-				if (count($spl) > 1) {
-					$this->currentPoint['lat'] = floatval($spl[1]);
-					$this->currentPoint['lng'] = floatval($spl[0]);
-					if (count($spl) > 2) {
-						$this->currentPoint['altitude'] = floatval($spl[2]);
-					}
-				}
-			}
-			// store track point
-			array_push($this->currentPointList, $this->currentPoint);
-			// if we have enough points, we log them and clean the points array
-			if (count($this->currentPointList) >= 500) {
-				$devid = $this->getOrCreateDeviceFromDB($this->importUserId, $this->importDevName);
-				$this->addPointsToDB($devid, $this->currentPointList);
-				unset($this->currentPointList);
-				$this->currentPointList = [];
-			}
-			$this->pointIndex++;
-		}
-	}
-
-	private function kmlDataElement($parser, $data) {
-		$d = trim($data);
-		if (!empty($d)) {
-			if ($this->currentXmlTag === 'WHEN') {
-				$this->currentPoint['date'] = (isset($this->currentPoint['date'])) ? $this->currentPoint['date'] . $d : $d;
-			} elseif ($this->currentXmlTag === 'GX:COORD') {
-				$this->currentPoint['coords'] = (isset($this->currentPoint['coords'])) ? $this->currentPoint['coords'] . $d : $d;
-			}
-		}
-	}
-
-	private function endswith($string, $test) {
-		$strlen = strlen($string);
-		$testlen = strlen($test);
-		if ($testlen > $strlen) {
-			return false;
-		}
-		return substr_compare($string, $test, $strlen - $testlen, $testlen) === 0;
-	}
-
 	/**
-	 * @param $folder
-	 * @param bool $isCreatable
-	 * @return mixed
 	 * @throws NotFoundException
 	 */
-	public function getSharedDevicesFromFolder($folder, bool $isCreatable = true) {
+	public function getSharedDevicesFromFolder(Folder $folder, bool $isCreatable = true): mixed {
 		try {
 			$file = $folder->get('.device_shares.json');
-		} catch (NotFoundException $e) {
+		} catch (NotFoundException) {
 			if ($isCreatable) {
 				$file = $folder->newFile('.device_shares.json', $content = '[]');
 			} else {
 				throw new NotFoundException();
 			}
 		}
-		return json_decode($file->getContent(), true);
+		return json_decode((string)$file->getContent(), true);
 	}
-
 }

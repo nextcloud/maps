@@ -49,12 +49,10 @@ class FavoriteShareMapper extends QBMapper {
 	}
 
 	/**
-	 * @param $token
-	 * @return Entity|null
 	 * @throws DoesNotExistException
 	 * @throws MultipleObjectsReturnedException
 	 */
-	public function findByToken($token) {
+	public function findByToken(string $token): ?FavoriteShare {
 		$qb = $this->db->getQueryBuilder();
 
 		$qb->select('*')
@@ -66,12 +64,7 @@ class FavoriteShareMapper extends QBMapper {
 		return $this->findEntity($qb);
 	}
 
-	/**
-	 * @param $owner
-	 * @param $category
-	 * @return Entity
-	 */
-	public function create($owner, $category) {
+	public function create(string $owner, string $category): FavoriteShare {
 		$token = $this->secureRandom->generate(
 			Constants::TOKEN_LENGTH,
 			ISecureRandom::CHAR_HUMAN_READABLE
@@ -131,24 +124,21 @@ class FavoriteShareMapper extends QBMapper {
 	public function findAllByFolder($folder, $isCreatable = true) {
 		try {
 			$file = $folder->get('.favorite_shares.json');
-		} catch (NotFoundException $e) {
+		} catch (NotFoundException) {
 			if ($isCreatable) {
 				$file = $folder->newFile('.favorite_shares.json', $content = '[]');
 			} else {
 				throw new NotFoundException();
 			}
 		}
-		return json_decode($file->getContent(), true);
+		return json_decode((string)$file->getContent(), true);
 	}
 
 	/**
-	 * @param $owner
-	 * @param $category
-	 * @return Entity
 	 * @throws DoesNotExistException
 	 * @throws MultipleObjectsReturnedException
 	 */
-	public function findByOwnerAndCategory($owner, $category) {
+	public function findByOwnerAndCategory(string $owner, string $category): ?FavoriteShare {
 		$qb = $this->db->getQueryBuilder();
 
 		$qb->select('*')
@@ -194,10 +184,10 @@ class FavoriteShareMapper extends QBMapper {
 		}
 		try {
 			$file = $folder->get('.favorite_shares.json');
-		} catch (NotFoundException $e) {
+		} catch (NotFoundException) {
 			$file = $folder->newFile('.favorite_shares.json', $content = '[]');
 		}
-		$data = json_decode($file->getContent(), true);
+		$data = json_decode((string)$file->getContent(), true);
 		foreach ($data as $share) {
 			$c = $share['category'];
 			if ($c === $category) {
@@ -221,9 +211,9 @@ class FavoriteShareMapper extends QBMapper {
 
 		try {
 			$entity = $this->findByOwnerAndCategory($owner, $category);
-		} catch (DoesNotExistException $e) {
+		} catch (DoesNotExistException) {
 			$entity = $this->create($owner, $category);
-		} catch (MultipleObjectsReturnedException $e) {
+		} catch (MultipleObjectsReturnedException) {
 		}
 
 		return $entity;
@@ -237,7 +227,7 @@ class FavoriteShareMapper extends QBMapper {
 	public function removeByOwnerAndCategory($owner, $category) {
 		try {
 			$entity = $this->findByOwnerAndCategory($owner, $category);
-		} catch (DoesNotExistException|MultipleObjectsReturnedException $e) {
+		} catch (DoesNotExistException|MultipleObjectsReturnedException) {
 			return false;
 		}
 

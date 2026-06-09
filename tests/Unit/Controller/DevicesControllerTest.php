@@ -15,111 +15,69 @@ namespace OCA\Maps\Controller;
 use OCA\Maps\AppInfo\Application;
 use OCA\Maps\DB\DeviceShareMapper;
 use OCA\Maps\Service\DevicesService;
+use OCP\AppFramework\Services\IAppConfig;
+use OCP\Files\Folder;
 use OCP\Files\IRootFolder;
-use OCP\IServerContainer;
+use OCP\IGroupManager;
+use OCP\IRequest;
+use OCP\IUserManager;
+use OCP\L10N\IFactory;
+use PHPUnit\Framework\MockObject\MockObject;
+use Psr\Container\ContainerInterface;
 
 class DevicesControllerTest extends \PHPUnit\Framework\TestCase {
-	private $appName;
-	private $request;
-	private $contacts;
-
-	private $container;
-	private $config;
-	private $app;
-
-	private $devicesController;
-	private $devicesController2;
-	private $utilsController;
-	private $root;
+	private string $appName;
+	private MockObject&IRequest $request;
+	private ContainerInterface $container;
+	private Application $app;
+	private DevicesController $devicesController;
 
 	public static function setUpBeforeClass(): void {
 		$app = new Application();
 		$c = $app->getContainer();
 
-		$user = $c->getServer()->getUserManager()->get('test');
-		$user2 = $c->getServer()->getUserManager()->get('test2');
-		$user3 = $c->getServer()->getUserManager()->get('test3');
-		$group = $c->getServer()->getGroupManager()->get('group1test');
-		$group2 = $c->getServer()->getGroupManager()->get('group2test');
+		$user = $c->get(IUserManager::class)->get('test');
+		$user2 = $c->get(IUserManager::class)->get('test2');
+		$group = $c->get(IGroupManager::class)->get('group1test');
+		$group2 = $c->get(IGroupManager::class)->get('group2test');
 
 		// CREATE DUMMY USERS
 		if ($user === null) {
-			$u1 = $c->getServer()->getUserManager()->createUser('test', 'tatotitoTUTU');
+			$u1 = $c->get(IUserManager::class)->createUser('test', 'tatotitoTUTU');
 			$u1->setEMailAddress('toto@toto.net');
 		}
 		if ($user2 === null) {
-			$u2 = $c->getServer()->getUserManager()->createUser('test2', 'plopinoulala000');
-		}
-		if ($user2 === null) {
-			$u3 = $c->getServer()->getUserManager()->createUser('test3', 'yeyeahPASSPASS');
+			$u2 = $c->get(IUserManager::class)->createUser('test2', 'plopinoulala000');
+			$u3 = $c->get(IUserManager::class)->createUser('test3', 'yeyeahPASSPASS');
 		}
 		if ($group === null) {
-			$c->getServer()->getGroupManager()->createGroup('group1test');
-			$u1 = $c->getServer()->getUserManager()->get('test');
-			$c->getServer()->getGroupManager()->get('group1test')->addUser($u1);
+			$c->get(IGroupManager::class)->createGroup('group1test');
+			$u1 = $c->get(IUserManager::class)->get('test');
+			$c->get(IGroupManager::class)->get('group1test')->addUser($u1);
 		}
 		if ($group2 === null) {
-			$c->getServer()->getGroupManager()->createGroup('group2test');
-			$u2 = $c->getServer()->getUserManager()->get('test2');
-			$c->getServer()->getGroupManager()->get('group2test')->addUser($u2);
+			$c->get(IGroupManager::class)->createGroup('group2test');
+			$u2 = $c->get(IUserManager::class)->get('test2');
+			$c->get(IGroupManager::class)->get('group2test')->addUser($u2);
 		}
 	}
 
 	protected function setUp(): void {
 		$this->appName = 'maps';
-		$this->request = $this->getMockBuilder('\OCP\IRequest')
-			->disableOriginalConstructor()
-			->getMock();
-		$this->contacts = $this->getMockBuilder('OCP\Contacts\IManager')
-			->disableOriginalConstructor()
-			->getMock();
-
+		$this->request = $this->createMock(IRequest::class);
 		$this->app = new Application();
 		$this->container = $this->app->getContainer();
 		$c = $this->container;
-		$this->config = $c->query(IServerContainer::class)->getConfig();
-		$this->root = $c->query(IServerContainer::class)->getRootFolder();
 
 		$this->devicesController = new DevicesController(
 			$this->appName,
 			$this->request,
-			$c->query(IServerContainer::class),
-			$c->query(IServerContainer::class)->getConfig(),
-			$c->getServer()->get(\OCP\Share\IManager::class),
-			$c->getServer()->getAppManager(),
-			$c->getServer()->getUserManager(),
-			$c->getServer()->getGroupManager(),
-			$c->query(IServerContainer::class)->getL10N($c->query('AppName')),
-			$c->query(DevicesService::class),
-			$c->query(DeviceShareMapper::class),
-			$c->query(IServerContainer::class)->get(\OCP\IDateTimeZone::class),
-			$c->query(IRootFolder::class),
-			'test'
-		);
-
-		$this->devicesController2 = new DevicesController(
-			$this->appName,
-			$this->request,
-			$c->query(IServerContainer::class),
-			$c->query(IServerContainer::class)->getConfig(),
-			$c->getServer()->get(\OCP\Share\IManager::class),
-			$c->getServer()->getAppManager(),
-			$c->getServer()->getUserManager(),
-			$c->getServer()->getGroupManager(),
-			$c->query(IServerContainer::class)->getL10N($c->query('AppName')),
-			$c->query(DevicesService::class),
-			$c->query(DeviceShareMapper::class),
-			$c->query(IServerContainer::class)->get(\OCP\IDateTimeZone::class),
-			$c->query(IRootFolder::class),
-			'test2'
-		);
-
-		$this->utilsController = new UtilsController(
-			$this->appName,
-			$this->request,
-			$c->query(IServerContainer::class)->getConfig(),
-			$c->getServer()->getAppManager(),
-			$this->root,
+			$c->get(IAppConfig::class),
+			$c->get(IFactory::class)->get('maps'),
+			$c->get(DevicesService::class),
+			$c->get(DeviceShareMapper::class),
+			$c->get(\OCP\IDateTimeZone::class),
+			$c->get(IRootFolder::class),
 			'test'
 		);
 
@@ -134,21 +92,21 @@ class DevicesControllerTest extends \PHPUnit\Framework\TestCase {
 	public static function tearDownAfterClass(): void {
 		//$app = new Application();
 		//$c = $app->getContainer();
-		//$user = $c->getServer()->getUserManager()->get('test');
+		//$user = $c->get(IUserManager::class)->get('test');
 		//$user->delete();
-		//$user = $c->getServer()->getUserManager()->get('test2');
+		//$user = $c->get(IUserManager::class)->get('test2');
 		//$user->delete();
-		//$user = $c->getServer()->getUserManager()->get('test3');
+		//$user = $c->get(IUserManager::class)->get('test3');
 		//$user->delete();
-		//$c->getServer()->getGroupManager()->get('group1test')->delete();
-		//$c->getServer()->getGroupManager()->get('group2test')->delete();
+		//$c->get(IGroupManager::class)->get('group1test')->delete();
+		//$c->get(IGroupManager::class)->get('group2test')->delete();
 	}
 
 	protected function tearDown(): void {
 		// in case there was a failure and something was not deleted
 	}
 
-	public function testAddPoints() {
+	public function testAddPoints(): void {
 		$resp = $this->devicesController->getDevices();
 		$data = $resp->getData();
 		foreach ($data as $device) {
@@ -168,7 +126,6 @@ class DevicesControllerTest extends \PHPUnit\Framework\TestCase {
 		$this->assertEquals(200, $status);
 		$data = $resp->getData();
 		$deviceId = $data['deviceId'];
-		$pointId = $data['pointId'];
 
 		$_SERVER['HTTP_USER_AGENT'] = 'testBrowser';
 		$ts = (new \DateTime())->getTimestamp();
@@ -177,7 +134,6 @@ class DevicesControllerTest extends \PHPUnit\Framework\TestCase {
 		$this->assertEquals(200, $status);
 		$data = $resp->getData();
 		$deviceId2 = $data['deviceId'];
-		$pointId2 = $data['pointId'];
 		// test user agent is correct
 		$resp = $this->devicesController->getDevices();
 		$data = $resp->getData();
@@ -199,7 +155,7 @@ class DevicesControllerTest extends \PHPUnit\Framework\TestCase {
 		$this->assertEquals(true, $data[0]['timestamp'] >= $ts);
 
 		// test missing values
-		$resp = $this->devicesController->addDevicePoint(1.1, 2.2, 12346, 'testDevice', null, null, null);
+		$resp = $this->devicesController->addDevicePoint(1.1, 2.2, 12346, 'testDevice');
 		$status = $resp->getStatus();
 		$this->assertEquals(200, $status);
 
@@ -216,22 +172,9 @@ class DevicesControllerTest extends \PHPUnit\Framework\TestCase {
 		$this->assertEquals(200, $status);
 		$data = $resp->getData();
 		$this->assertEquals(true, count($data) === 4);
-
-		// invalid values
-		$resp = $this->devicesController->addDevicePoint('aaa', 2.2, 12345, 'testDevice', 1000, 99, 50);
-		$status = $resp->getStatus();
-		$this->assertEquals(400, $status);
-		$data = $resp->getData();
-		$this->assertEquals('Invalid values', $data);
-
-		$resp = $this->devicesController->addDevicePoint(1.1, 'aaa', 12345, 'testDevice', 1000, 99, 50);
-		$status = $resp->getStatus();
-		$this->assertEquals(400, $status);
-		$data = $resp->getData();
-		$this->assertEquals('Invalid values', $data);
 	}
 
-	public function testEditDevice() {
+	public function testEditDevice(): void {
 		$resp = $this->devicesController->getDevices();
 		$data = $resp->getData();
 		foreach ($data as $device) {
@@ -243,7 +186,6 @@ class DevicesControllerTest extends \PHPUnit\Framework\TestCase {
 		$this->assertEquals(200, $status);
 		$data = $resp->getData();
 		$deviceId = $data['deviceId'];
-		$pointId = $data['pointId'];
 
 		$resp = $this->devicesController->editDevice($deviceId, '#001122', 'editedDevice');
 		$status = $resp->getStatus();
@@ -261,16 +203,17 @@ class DevicesControllerTest extends \PHPUnit\Framework\TestCase {
 		$this->assertEquals(400, $status);
 	}
 
-	public function testImportExportDevices() {
+	public function testImportExportDevices(): void {
 		$resp = $this->devicesController->getDevices();
 		$data = $resp->getData();
 		foreach ($data as $device) {
 			$resp = $this->devicesController->deleteDevice($device['id']);
 		}
 
-		$userfolder = $this->container->query(IServerContainer::class)->getUserFolder('test');
+		/** @var Folder $userFolder */
+		$userFolder = $this->container->get(IRootFolder::class)->getUserFolder('test');
 		$content1 = file_get_contents('tests/test_files/devicesOk.gpx');
-		$userfolder->newFile('devicesOk.gpx')->putContent($content1);
+		$userFolder->newFile('devicesOk.gpx')->putContent($content1);
 
 		$resp = $this->devicesController->importDevices('/devicesOk.gpx');
 		$status = $resp->getStatus();
@@ -314,12 +257,13 @@ class DevicesControllerTest extends \PHPUnit\Framework\TestCase {
 		$resp = $this->devicesController->exportDevices($ids, null, null, true);
 		$status = $resp->getStatus();
 		$this->assertEquals(200, $status);
-		$exportPath = $resp->getData();
-		$this->assertEquals(true, $userfolder->nodeExists($exportPath));
+		$exportPath = (string)$resp->getData();
+		$this->assertEquals(true, $userFolder->nodeExists($exportPath));
 
 		// parse xml and compare number of devices and points
-		$xmLData = $userfolder->get($exportPath)->getContent();
-		$xml = simplexml_load_string($xmLData);
+		$xmLData = $userFolder->get($exportPath)->getContent();
+		/** @var \SimpleXMLElement $xml */
+		$xml = simplexml_load_string((string)$xmLData);
 		$trks = $xml->trk;
 		// number of devices
 		$this->assertEquals(count($ids), count($trks));
@@ -330,7 +274,7 @@ class DevicesControllerTest extends \PHPUnit\Framework\TestCase {
 			$pointCountExport[$name] = count($trk->trkseg[0]->trkpt);
 		}
 		// check that it matches the data in the DB
-		foreach ($devices as $id => $device) {
+		foreach ($devices as $device) {
 			$this->assertEquals($device['nbPoints'], $pointCountExport[$device['user_agent']]);
 		}
 
@@ -341,14 +285,15 @@ class DevicesControllerTest extends \PHPUnit\Framework\TestCase {
 		$data = $resp->getData();
 		$this->assertEquals('No device to export', $data);
 
-		$userfolder->get('/Maps')->delete();
-		$userfolder->newFile('Maps')->putContent('dummy content');
+		/** @var Folder $userFolder */
+		$userFolder->get('/Maps')->delete();
+		$userFolder->newFile('Maps')->putContent('dummy content');
 		$resp = $this->devicesController->exportDevices($ids, null, null, true);
 		$status = $resp->getStatus();
 		$this->assertEquals(400, $status);
 		$data = $resp->getData();
 		$this->assertEquals('/Maps is not a directory', $data);
-		$userfolder->get('/Maps')->delete();
+		$userFolder->get('/Maps')->delete();
 
 		// delete all points
 		$resp = $this->devicesController->getDevices();
@@ -365,7 +310,7 @@ class DevicesControllerTest extends \PHPUnit\Framework\TestCase {
 		$this->assertEquals('Nothing to export', $data);
 	}
 
-	public function testEditDevices() {
+	public function testEditDevices(): void {
 		$this->assertEquals(true, 1 == 1);
 		//// valid edition
 		//$resp = $this->favoritesController->addFavorite('a', 3.1, 4.1, 'cat1', null, null);

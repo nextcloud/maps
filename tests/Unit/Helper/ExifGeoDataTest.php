@@ -45,7 +45,7 @@ class ExifGeoDataTest extends TestCase {
 	/**
 	 * @dataProvider imageWithDateAndLocationProvider
 	 */
-	public function testImagesWithDateAndLocation(string $path, int $date, float $lat, float $lng) {
+	public function testImagesWithDateAndLocation(string $path, int $date, float $lat, float $lng): void {
 		$exif_geo_data = ExifGeoData::get($path);
 		$exif_geo_data->validate(true);
 		$this->assertEquals($date, $exif_geo_data->dateTaken);
@@ -62,7 +62,7 @@ class ExifGeoDataTest extends TestCase {
 	/**
 	 * @dataProvider imageWithZeroIslandProvider
 	 */
-	public function testImagesWithZeroIslandException(string $path, int $date) {
+	public function testImagesWithZeroIslandException(string $path, int $date): void {
 		$this->expectException(ExifDataNoLocationException::class);
 		$this->expectExceptionMessage('Zero island is not valid');
 		$exif_geo_data = ExifGeoData::get($path);
@@ -72,12 +72,12 @@ class ExifGeoDataTest extends TestCase {
 	/**
 	 * @dataProvider imageWithZeroIslandProvider
 	 */
-	public function testImagesWithZeroIslandGeoDataNull(string $path, int $date) {
+	public function testImagesWithZeroIslandGeoDataNull(string $path, int $date): void {
 		$exif_geo_data = ExifGeoData::get($path);
 		try {
 			$exif_geo_data->validate(true);
 			$this->assertEquals(true, false);
-		} catch (ExifDataNoLocationException $e) {
+		} catch (ExifDataNoLocationException) {
 			$this->assertEquals($date, $exif_geo_data->dateTaken);
 			//This is the same upto ~55cm
 			$this->assertEqualsWithDelta(null, $exif_geo_data->lat, 0.000005);
@@ -88,7 +88,7 @@ class ExifGeoDataTest extends TestCase {
 	/**
 	 * @dataProvider imageWithZeroIslandProvider
 	 */
-	public function testImagesWithZeroIsland(string $path, int $date) {
+	public function testImagesWithZeroIsland(string $path, int $date): void {
 		$exif_geo_data = ExifGeoData::get($path);
 		$exif_geo_data->validate(false);
 		$this->assertEquals($date, $exif_geo_data->dateTaken);

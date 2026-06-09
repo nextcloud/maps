@@ -20,17 +20,15 @@ use OCP\Files\IRootFolder;
 use OCP\Files\NotFoundException;
 use OCP\Files\NotPermittedException;
 use OCP\Files\Search\ISearchComparison;
-use Psr\Log\LoggerInterface;
 
 class MyMapsService {
 
 	public function __construct(
-		private LoggerInterface $logger,
-		private IRootFolder $root,
+		private readonly IRootFolder $root,
 	) {
 	}
 
-	public function addMyMap($newName, $userId, $counter = 0) {
+	public function addMyMap(string $newName, $userId, $counter = 0) {
 		$userFolder = $this->root->getUserFolder($userId);
 		if (!$userFolder->nodeExists('/Maps')) {
 			$userFolder->newFolder('Maps');
@@ -38,15 +36,12 @@ class MyMapsService {
 		if ($userFolder->nodeExists('/Maps')) {
 			$mapsFolder = $userFolder->get('/Maps');
 			if (!($mapsFolder instanceof Folder)) {
-				$response = '/Maps is not a directory';
-				return $response;
+				return '/Maps is not a directory';
 			} elseif (!$mapsFolder->isCreatable()) {
-				$response = '/Maps is not writeable';
-				return $response;
+				return '/Maps is not writeable';
 			}
 		} else {
-			$response = 'Impossible to create /Maps';
-			return $response;
+			return 'Impossible to create /Maps';
 		}
 		if ($counter > 0) {
 			$folderName = $newName . ' ' . $counter;
@@ -60,7 +55,7 @@ class MyMapsService {
 		$mapFolder = $mapsFolder->newFolder($folderName);
 		$mapFolder->newFile('.index.maps', '{}');
 		$isRoot = $mapFolder->getPath() === $userFolder->getPath();
-		$MyMap = [
+		return [
 			'id' => $mapFolder->getId(),
 			'name' => $folderName,
 			'color' => null,
@@ -84,11 +79,10 @@ class MyMapsService {
 				'sharePermissions' => $mapFolder->getPermissions(),
 			]
 		];
-		return $MyMap;
 	}
 
 	private function node2MyMap($node, $userFolder):array {
-		$mapData = json_decode($node->getContent(), true);
+		$mapData = json_decode((string)$node->getContent(), true);
 		if (isset($mapData['name'])) {
 			$name = $mapData['name'];
 		} else {
@@ -100,7 +94,7 @@ class MyMapsService {
 		}
 		$parentNode = $node->getParent();
 		$isRoot = $parentNode->getPath() === $userFolder->getPath();
-		$MyMap = [
+		return [
 			'id' => $parentNode->getId(),
 			'name' => $name,
 			'color' => $color,
@@ -124,16 +118,14 @@ class MyMapsService {
 				'sharePermissions' => $parentNode->getPermissions(),
 			]
 		];
-		return $MyMap;
 	}
 
 	/**
 	 * @param $userId
-	 * @return array
 	 * @throws NoUserException
 	 * @throws NotPermittedException
 	 */
-	public function getAllMyMaps($userId) {
+	public function getAllMyMaps($userId): array {
 		$userFolder = $this->root->getUserFolder($userId);
 		$MyMaps = [];
 		$MyMapsNodes = $userFolder->search(new SearchQuery(
@@ -155,7 +147,7 @@ class MyMapsService {
 	 * @param string $userId The current user id
 	 * @return null|array Either the MyMap or null if not found with that id for the given user
 	 */
-	public function getMyMap(int $id, string $userId) {
+	public function getMyMap(int $id, string $userId): ?array {
 		$userFolder = $this->root->getUserFolder($userId);
 		$node = $userFolder->getFirstNodeById($id);
 		if ($node instanceof Folder) {
@@ -181,10 +173,10 @@ class MyMapsService {
 		}
 		try {
 			$file = $folder->get('.index.maps');
-		} catch (NotFoundException $e) {
+		} catch (NotFoundException) {
 			$file = $folder->newFile('.index.maps', '{}');
 		}
-		$mapData = json_decode($file->getContent(), true);
+		$mapData = json_decode((string)$file->getContent(), true);
 		$renamed = false;
 		foreach ($values as $key => $value) {
 			if ($key === 'newName') {
@@ -205,7 +197,7 @@ class MyMapsService {
 				if ($folder->getParent()->getId() === $mapsFolder->getId()) {
 					try {
 						$folder->move($mapsFolder->getPath() . '/' . $newName);
-					} catch (\Exception $e) {
+					} catch (\Exception) {
 					}
 				}
 			}
@@ -213,7 +205,7 @@ class MyMapsService {
 		return $mapData;
 	}
 
-	public function deleteMyMap($id, $userId) {
+	public function deleteMyMap($id, $userId): int {
 		$userFolder = $this->root->getUserFolder($userId);
 
 		$folders = $userFolder->getById($id);
@@ -226,14 +218,14 @@ class MyMapsService {
 			if ($folder->getParent()->getId() === $mapsFolder->getId()) {
 				try {
 					$folder->delete();
-				} catch (\Exception $e) {
+				} catch (\Exception) {
 					return 1;
 				}
 			} else {
 				try {
 					$file = $folder->get('.index.maps');
 					$file->delete();
-				} catch (\Exception $e) {
+				} catch (\Exception) {
 					return 1;
 				}
 			}
@@ -241,7 +233,7 @@ class MyMapsService {
 		try {
 			$file = $folder->get('.index.maps');
 			$file->delete();
-		} catch (NotFoundException $e) {
+		} catch (NotFoundException) {
 			return 1;
 		}
 		return 0;

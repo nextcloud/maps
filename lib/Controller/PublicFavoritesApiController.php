@@ -36,56 +36,38 @@ use OCP\IRequest;
 use OCP\ISession;
 
 class PublicFavoritesApiController extends PublicShareController {
-	/* @var FavoritesService */
-	private $favoritesService;
-
-	/* @var FavoriteShareMapper */
-	private $favoriteShareMapper;
-
 	public function __construct(
-		$appName,
+		string $appName,
 		IRequest $request,
 		ISession $session,
-		FavoritesService $favoritesService,
-		FavoriteShareMapper $favoriteShareMapper,
+		private readonly \OCA\Maps\Service\FavoritesService $favoritesService,
+		private readonly \OCA\Maps\DB\FavoriteShareMapper $favoriteShareMapper,
 	) {
 		parent::__construct($appName, $request, $session);
-
-		$this->favoriteShareMapper = $favoriteShareMapper;
-		$this->favoritesService = $favoritesService;
 	}
 
 	public function getPasswordHash(): string {
 		return '';
 	}
 
-	/**
-	 * @return bool
-	 */
 	protected function isPasswordProtected(): bool {
 		return false;
 	}
 
-	/**
-	 * @return bool
-	 */
 	public function isValidToken(): bool {
 		try {
 			$this->favoriteShareMapper->findByToken($this->getToken());
-		} catch (DoesNotExistException|MultipleObjectsReturnedException $e) {
+		} catch (DoesNotExistException|MultipleObjectsReturnedException) {
 			return false;
 		}
 
 		return true;
 	}
 
-	/**
-	 * @return bool
-	 */
 	public function canEdit(): bool {
 		try {
 			$share = $this->favoriteShareMapper->findByToken($this->getToken());
-		} catch (DoesNotExistException|MultipleObjectsReturnedException $e) {
+		} catch (DoesNotExistException|MultipleObjectsReturnedException) {
 			return false;
 		}
 
@@ -94,15 +76,13 @@ class PublicFavoritesApiController extends PublicShareController {
 
 	/**
 	 * @PublicPage
-	 *
-	 * @return DataResponse
 	 */
 	public function getFavorites(): DataResponse {
 		try {
 			$share = $this->favoriteShareMapper->findByToken($this->getToken());
-		} catch (DoesNotExistException $e) {
+		} catch (DoesNotExistException) {
 			return new DataResponse([], Http::STATUS_NOT_FOUND);
-		} catch (MultipleObjectsReturnedException $e) {
+		} catch (MultipleObjectsReturnedException) {
 			return new DataResponse([], Http::STATUS_INTERNAL_SERVER_ERROR);
 		}
 

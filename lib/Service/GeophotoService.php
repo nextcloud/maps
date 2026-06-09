@@ -16,7 +16,6 @@ use OC\Files\Search\SearchBinaryOperator;
 use OC\Files\Search\SearchComparison;
 use OC\Files\Search\SearchQuery;
 use OC\User\NoUserException;
-use OCA\Maps\DB\GeophotoMapper;
 use OCP\DB\Exception;
 use OCP\Files\File;
 use OCP\Files\Folder;
@@ -28,53 +27,37 @@ use OCP\Files\Search\ISearchComparison;
 use OCP\ICacheFactory;
 use OCP\IL10N;
 use OCP\IPreview;
-use Psr\Log\LoggerInterface;
 use RuntimeException;
 
 class GeophotoService {
 
-	private $l10n;
 	private $root;
-	private $photoMapper;
 	private $preview;
-	private $tracksService;
 	private $timeorderedPointSets;
-	private $devicesService;
 	private $cacheFactory;
-	private $userId;
-	private \OCP\ICache $photosCache;
-	private \OCP\ICache $timeOrderedPointSetsCache;
-	private \OCP\ICache $backgroundJobCache;
+	private readonly \OCP\ICache $photosCache;
+	private readonly \OCP\ICache $timeOrderedPointSetsCache;
+	private readonly \OCP\ICache $backgroundJobCache;
 
 	public function __construct(
-		private LoggerInterface $logger,
 		IRootFolder $root,
 		IL10N $l10n,
-		GeophotoMapper $photoMapper,
+		private readonly \OCA\Maps\DB\GeophotoMapper $photoMapper,
 		IPreview $preview,
-		TracksService $tracksService,
-		DevicesService $devicesService,
+		private readonly \OCA\Maps\Service\TracksService $tracksService,
+		private readonly \OCA\Maps\Service\DevicesService $devicesService,
 		ICacheFactory $cacheFactory,
 		$userId,
 	) {
 		$this->root = $root;
-		$this->l10n = $l10n;
-		$this->photoMapper = $photoMapper;
 		$this->preview = $preview;
-		$this->tracksService = $tracksService;
 		$this->timeorderedPointSets = null;
-		$this->userId = $userId;
-		$this->devicesService = $devicesService;
 		$this->cacheFactory = $cacheFactory;
 		$this->photosCache = $this->cacheFactory->createDistributed('maps:photos');
 		$this->timeOrderedPointSetsCache = $this->cacheFactory->createDistributed('maps:time-ordered-point-sets');
 		$this->backgroundJobCache = $this->cacheFactory->createDistributed('maps:background-jobs');
 	}
 
-	/**
-	 * @param string $userId
-	 * @return bool
-	 */
 	public function clearCache(string $userId = ''): bool {
 		try {
 			$this->photosCache->clear($userId);
@@ -83,18 +66,15 @@ class GeophotoService {
 			$this->backgroundJobCache->clear('recentlyUpdated:' . $userId);
 			return true;
 
-		} catch (\Exception $e) {
+		} catch (\Exception) {
 			return false;
 		}
 	}
 
 	/**
-	 * @param string $userId
 	 * @param ?Folder $folder =null
 	 * @param bool $respectNomediaAndNoimage =true
 	 * @param bool $hideImagesOnCustomMaps =true
-	 * @param bool $hideImagesInMapsFolder
-	 * @return array
 	 * @throws Exception
 	 * @throws NoUserException
 	 * @throws NotFoundException
@@ -105,7 +85,7 @@ class GeophotoService {
 		if (is_null($folder)) {
 			$folder = $userFolder;
 		}
-		$key = $userId . ':' . $userFolder->getRelativePath($folder->getPath()) . ':' . (string)$respectNomediaAndNoimage . ':' . (string)$hideImagesOnCustomMaps . ':' . (string)$hideImagesInMapsFolder;
+		$key = $userId . ':' . $userFolder->getRelativePath($folder->getPath()) . ':' . $respectNomediaAndNoimage . ':' . $hideImagesOnCustomMaps . ':' . $hideImagesInMapsFolder;
 		$filesById = $this->photosCache->get($key);
 		if ($filesById === null) {
 			$ignoredPaths = $respectNomediaAndNoimage ? $this->getIgnoredPaths($userId, $folder, $hideImagesOnCustomMaps) : [];
@@ -132,7 +112,7 @@ class GeophotoService {
 				$path = $userFolder->getRelativePath($file->getPath());
 				$isIgnored = false;
 				foreach ($ignoredPaths as $ignoredPath) {
-					if (str_starts_with($path, $ignoredPath)) {
+					if (str_starts_with((string)$path, (string)$ignoredPath)) {
 						$isIgnored = true;
 						break;
 					}
@@ -170,14 +150,8 @@ class GeophotoService {
 	}
 
 	/**
-	 * @param string $userId
 	 * @param ?Folder $folder =null
-	 * @param bool $respectNomediaAndNoimage
-	 * @param bool $hideImagesOnCustomMaps
-	 * @param bool $hideImagesInMapsFolder
 	 * @param string|null $timezone locale time zone used by images
-	 * @param int $limit
-	 * @param int $offset
 	 * @return array with geodatas of all nonLocalizedPhotos
 	 * @throws Exception
 	 * @throws NoUserException
@@ -197,7 +171,7 @@ class GeophotoService {
 		$this->loadTimeorderedPointSets($userId, $folder, $respectNomediaAndNoimage, $hideImagesOnCustomMaps, $hideImagesInMapsFolder);
 		$photoEntities = $this->photoMapper->findAllNonLocalized($userId, $limit, $offset);
 		$suggestionsBySource = [];
-		$cache = $folder->getStorage()->getCache();
+		$folder->getStorage()->getCache();
 		$previewEnableMimetypes = $this->getPreviewEnabledMimetypes();
 		if (!is_null($timezone)) {
 			$tz = new \DateTimeZone($timezone);
@@ -219,7 +193,7 @@ class GeophotoService {
 			$path = $userFolder->getRelativePath($file->getPath());
 			$isIgnored = false;
 			foreach ($ignoredPaths as $ignoredPath) {
-				if (str_starts_with($path, $ignoredPath)) {
+				if (str_starts_with((string)$path, (string)$ignoredPath)) {
 					$isIgnored = true;
 					break;
 				}
@@ -269,12 +243,11 @@ class GeophotoService {
 	/**
 	 * @param $userId
 	 * @param $folder
-	 * @return array
 	 * @throws \OCP\Files\NotFoundException
 	 * @throws \OCP\Files\NotPermittedException
 	 * @throws \OC\User\NoUserException
 	 */
-	private function getIgnoredPaths($userId, $folder = null, $hideImagesOnCustomMaps = true) {
+	private function getIgnoredPaths(string $userId, $folder = null, bool $hideImagesOnCustomMaps = true): array {
 		$ignoredPaths = [];
 		$userFolder = $this->getFolderForUser($userId);
 		if (is_null($folder)) {
@@ -288,9 +261,7 @@ class GeophotoService {
 		if ($hideImagesOnCustomMaps) {
 			$ignoreFileMimetypes[] = 'application/x-nextcloud-maps';
 		}
-		$func = function (string $i): SearchComparison {
-			return new SearchComparison(ISearchComparison::COMPARE_EQUAL, 'mimetype', $i);
-		};
+		$func = (fn (string $i): SearchComparison => new SearchComparison(ISearchComparison::COMPARE_EQUAL, 'mimetype', $i));
 		$excludedNodes = $folder->search(new SearchQuery(
 			new SearchBinaryOperator(ISearchBinaryOperator::OPERATOR_OR, array_map(
 				$func,
@@ -310,7 +281,6 @@ class GeophotoService {
 	 * returns a array of locations for a given date
 	 *
 	 * @param $dateTaken int
-	 * @return array
 	 */
 	private function getLocationGuesses(int $dateTaken): array {
 		$locations = [];
@@ -328,8 +298,8 @@ class GeophotoService {
 	 * Timeordered Point sets is an Array of Arrays with time => location as key=>value pair, which are orderd by the key.
 	 * This function loads this Arrays from all Track files of the user.
 	 */
-	private function loadTimeorderedPointSets(string $userId, $folder = null, bool $respectNomediaAndNoimage = true, bool $hideTracksOnCustomMaps = false, bool $hideTracksInMapsFolder = true): void {
-		$key = $userId . ':' . (string)$respectNomediaAndNoimage . ':' . (string)$hideTracksOnCustomMaps . ':' . (string)$hideTracksInMapsFolder;
+	private function loadTimeorderedPointSets(string $userId, ?\OCP\Files\Folder $folder = null, bool $respectNomediaAndNoimage = true, bool $hideTracksOnCustomMaps = false, bool $hideTracksInMapsFolder = true): void {
+		$key = $userId . ':' . $respectNomediaAndNoimage . ':' . $hideTracksOnCustomMaps . ':' . $hideTracksInMapsFolder;
 		$this->timeorderedPointSets = $this->timeOrderedPointSetsCache->get($key);
 		if (is_null($this->timeorderedPointSets)) {
 			$userFolder = $this->getFolderForUser($userId);
@@ -360,7 +330,7 @@ class GeophotoService {
 	private function getTracksFromGPX($content): array {
 		$tracks = [];
 		libxml_use_internal_errors(false);
-		$gpx = simplexml_load_string($content);
+		$gpx = simplexml_load_string((string)$content);
 		if ($gpx === false) {
 			$this->handleXMLError();
 		}
@@ -390,25 +360,15 @@ class GeophotoService {
 		$points = [];
 		foreach ($track->trkseg as $seg) {
 			foreach ($seg->trkpt as $pt) {
-				$points[strtotime($pt->time)] = [(string)$pt['lat'],(string)$pt['lon']];
+				$points[strtotime((string)$pt->time)] = [(string)$pt['lat'],(string)$pt['lon']];
 			}
 		}
 		foreach ($track->trkpt as $pt) {
-			$points[strtotime($pt->time)] = [(string)$pt['lat'],(string)$pt['lon']];
+			$points[strtotime((string)$pt->time)] = [(string)$pt['lat'],(string)$pt['lon']];
 		}
 
-		$foo = ksort($points);
+		ksort($points);
 		return $points;
-	}
-
-	/**
-	 * @param int $timeUTC
-	 * @param float $lat
-	 * @param float $lng
-	 * @return void
-	 */
-	private function getLocalTime(int $timeUTC, float $lat, float $lng) {
-
 	}
 
 	/**
@@ -416,10 +376,8 @@ class GeophotoService {
 	 * @param $points array sorted by keys timestamp => [lat, lng]
 	 */
 	private function getLocationFromSequenceOfPoints(int $dateTaken, array $points): ?array {
-		$foo = end($points);
-		$end = key($points);
-		$foo = reset($points);
-		$start = key($points);
+		$end = array_key_last($points);
+		$start = array_key_first($points);
 		if ($start > $dateTaken or $end < $dateTaken) {
 			return null;
 		}
@@ -454,7 +412,7 @@ class GeophotoService {
 		return $enabledMimeTypes;
 	}
 
-	private function normalizePath($path) {
+	private function normalizePath($path): string|array {
 		return str_replace('files', '', $path);
 	}
 
@@ -462,7 +420,7 @@ class GeophotoService {
 	 * @param string $userId the user id
 	 * @return Folder
 	 */
-	private function getFolderForUser($userId) {
+	private function getFolderForUser(string $userId) {
 		return $this->root->getUserFolder($userId);
 	}
 

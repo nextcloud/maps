@@ -41,33 +41,26 @@ use OCP\Migration\IRepairStep;
 class InstallScan implements IRepairStep {
 
 	public function __construct(
-		private IConfig $config,
-		private IUserManager $userManager,
-		private IJobList $jobList,
-		private IManager $encryptionManager,
+		private readonly IConfig $config,
+		private readonly IUserManager $userManager,
+		private readonly IJobList $jobList,
+		private readonly IManager $encryptionManager,
+		private readonly \OCP\IAppConfig $appConfig,
 	) {
-		$this->config = $config;
-		$this->jobList = $jobList;
-		$this->encryptionManager = $encryptionManager;
-		$this->userManager = $userManager;
 	}
 
 	/**
 	 * Returns the step's name
 	 *
-	 * @return string
 	 * @since 9.1.0
 	 */
-	public function getName() {
+	public function getName(): string {
 		return 'Scan photos and tracks in users storages';
 	}
 
-	/**
-	 * @param IOutput $output
-	 */
-	public function run(IOutput $output) {
+	public function run(IOutput $output): int {
 		if (!$this->shouldRun()) {
-			return;
+			return 0;
 		}
 
 		if ($this->encryptionManager->isEnabled()) {
@@ -77,16 +70,16 @@ class InstallScan implements IRepairStep {
 
 		// set the install scan flag for existing users
 		// future users won't have any value and won't be bothered by "media scan" warning
-		$this->userManager->callForSeenUsers(function (IUser $user) {
+		$this->userManager->callForSeenUsers(function (IUser $user): void {
 			$this->config->setUserValue($user->getUID(), 'maps', 'installScanDone', 'no');
 		});
 		// create the job which will create a job by user
 		$this->jobList->add(LaunchUsersInstallScanJob::class, []);
+		return 0;
 	}
 
-	protected function shouldRun() {
-		$appVersion = $this->config->getAppValue('maps', 'installed_version', '0.0.0');
+	protected function shouldRun(): bool {
+		$appVersion = $this->appConfig->getValueString('maps', 'installed_version', '0.0.0');
 		return version_compare($appVersion, '0.0.10', '<');
 	}
-
 }

@@ -30,19 +30,19 @@ use OCP\Lock\LockedException;
 class UtilsController extends Controller {
 
 
-	private $userId;
 	private $config;
 	private $root;
 
-	public function __construct($AppName,
+	public function __construct(
+		$AppName,
 		IRequest $request,
 		IConfig $config,
 		IAppManager $appManager,
 		IRootFolder $root,
-		$UserId) {
+		private $userId,
+	) {
 		parent::__construct($AppName, $request);
 		$this->root = $root;
-		$this->userId = $UserId;
 		// IConfig object
 		$this->config = $config;
 	}
@@ -52,7 +52,6 @@ class UtilsController extends Controller {
 	 *
 	 * @NoAdminRequired
 	 * @param $options
-	 * @return DataResponse
 	 * @throws \OCP\PreConditionNotMetException
 	 */
 	public function saveOptionValue($options, $myMapId = null): DataResponse {
@@ -66,16 +65,16 @@ class UtilsController extends Controller {
 			$folder = array_shift($folders);
 			try {
 				$file = $folder->get('.index.maps');
-			} catch (NotFoundException $e) {
+			} catch (NotFoundException) {
 				$file = $folder->newFile('.index.maps', $content = '{}');
 			}
 			try {
-				$ov = json_decode($file->getContent(), true, 512);
+				$ov = json_decode((string)$file->getContent(), true, 512);
 				foreach ($options as $key => $value) {
 					$ov[$key] = $value;
 				}
 				$file->putContent(json_encode($ov, JSON_PRETTY_PRINT));
-			} catch (LockedException $e) {
+			} catch (LockedException) {
 				return new DataResponse('File is locked', 500);
 			}
 		}
@@ -86,7 +85,6 @@ class UtilsController extends Controller {
 	 * get options values from the config for current user
 	 *
 	 * @NoAdminRequired
-	 * @return DataResponse
 	 */
 	public function getOptionsValues($myMapId = null): DataResponse {
 		$ov = [];
@@ -109,10 +107,10 @@ class UtilsController extends Controller {
 			$folder = array_shift($folders);
 			try {
 				$file = $folder->get('.index.maps');
-			} catch (NotFoundException $e) {
+			} catch (NotFoundException) {
 				$file = $folder->newFile('.index.maps', $content = '{}');
 			}
-			$ov = json_decode($file->getContent(), true, 512);
+			$ov = json_decode((string)$file->getContent(), true, 512);
 			$ov['isCreatable'] = $folder->isCreatable();
 			//We can delete the map by deleting the folder or the .index.maps file
 			$ov['isDeletable'] = $folder->isDeletable() || $file->isDeletable();
@@ -148,7 +146,6 @@ class UtilsController extends Controller {
 	 * set routing settings
 	 *
 	 * @param $values
-	 * @return DataResponse
 	 */
 	public function setRoutingSettings($values): DataResponse {
 		$acceptedKeys = [
@@ -181,8 +178,6 @@ class UtilsController extends Controller {
 	 * get content of mapbox traffic style
 	 * @NoAdminRequired
 	 * @NoCSRFRequired
-	 *
-	 * @return DataResponse
 	 */
 	public function getTrafficStyle(): DataResponse {
 		$style = [

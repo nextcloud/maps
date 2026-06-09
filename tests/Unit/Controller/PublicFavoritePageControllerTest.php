@@ -24,35 +24,27 @@
 
 namespace OCA\Maps\Controller;
 
-use OC;
-use OC\AppFramework\Http;
 use OCA\Maps\AppInfo\Application;
 use OCA\Maps\DB\FavoriteShareMapper;
 use OCA\Maps\Service\FavoritesService;
+use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\DataResponse;
 use OCP\AppFramework\Http\TemplateResponse;
-use OCP\AppFramework\IAppContainer;
-use OCP\IServerContainer;
+use OCP\Files\IRootFolder;
+use OCP\IAppConfig;
+use OCP\L10N\IFactory;
+use OCP\Security\ISecureRandom;
 use PHPUnit\Framework\TestCase;
+use Psr\Container\ContainerInterface;
 use Psr\Log\LoggerInterface;
 
 class PublicFavoritePageControllerTest extends TestCase {
-	/* @var PublicFavoritePageController */
-	private $publicPageController;
-
-	private $config;
-
-	/* @var Application */
-	private $app;
-
-	/* @var IAppContainer */
-	private $container;
-
-	/* @var FavoritesService */
-	private $favoritesService;
-
-	/* @var FavoriteShareMapper */
-	private $favoriteShareMapper;
+	private PublicFavoritePageController $publicPageController;
+	private IAppConfig $appConfig;
+	private Application $app;
+	private ContainerInterface $container;
+	private FavoritesService $favoritesService;
+	private FavoriteShareMapper $favoriteShareMapper;
 
 	protected function setUp(): void {
 		// Begin transaction
@@ -64,42 +56,41 @@ class PublicFavoritePageControllerTest extends TestCase {
 		$this->container = $this->app->getContainer();
 		$container = $this->container;
 
-		$appName = $container->query('appName');
+		$appName = $container->get('appName');
 
 		$this->favoritesService = new FavoritesService(
-			$container->query(IServerContainer::class)->get(LoggerInterface::class),
-			$container->query(IServerContainer::class)->getL10N($appName),
-			$container->query(IServerContainer::class)->getSecureRandom(),
-			$container->query(\OCP\IDBConnection::class)
+			$container->get(LoggerInterface::class),
+			$container->get(IFactory::class)->get($appName),
+			$container->get(\OCP\IDBConnection::class)
 		);
 
 		$this->favoriteShareMapper = new FavoriteShareMapper(
-			$container->query(\OCP\IDBConnection::class),
-			$container->query(IServerContainer::class)->getSecureRandom(),
-			$container->query(IServerContainer::class)->getRootFolder()
+			$container->get(\OCP\IDBConnection::class),
+			$container->get(ISecureRandom::class),
+			$container->get(IRootFolder::class)
 		);
 
 		$requestMock = $this->getMockBuilder('OCP\IRequest')->getMock();
 		$sessionMock = $this->getMockBuilder('OCP\ISession')->getMock();
 
-		$this->config = $container->query(IServerContainer::class)->getConfig();
+		$this->appConfig = $container->get(IAppConfig::class);
 
 		$this->publicPageController = new PublicFavoritePageController(
 			$appName,
 			$requestMock,
 			$sessionMock,
-			$this->config,
-			$this->favoriteShareMapper
+			$this->favoriteShareMapper,
+			$this->appConfig,
 		);
 	}
 
 	protected function tearDown(): void {
 		// Rollback transaction
-		$db = OC::$server->query(\OCP\IDBConnection::class);
+		$db = \OCP\Server::get(\OCP\IDBConnection::class);
 		$db->rollBack();
 	}
 
-	public function testSharedFavoritesCategory() {
+	public function testSharedFavoritesCategory(): void {
 		$categoryName = 'test908780';
 		$testUserName = 'test';
 
@@ -114,7 +105,7 @@ class PublicFavoritePageControllerTest extends TestCase {
 		$this->assertEquals('public/favorites_index', $result->getTemplateName());
 	}
 
-	public function testAccessRestrictionsForSharedFavoritesCategory() {
+	public function testAccessRestrictionsForSharedFavoritesCategory(): void {
 		$result = $this->publicPageController->sharedFavoritesCategory('test8348985');
 
 		$this->assertTrue($result instanceof DataResponse);

@@ -17,84 +17,76 @@ use OCA\Maps\DB\GeophotoMapper;
 use OCA\Maps\Service\GeophotoService;
 use OCA\Maps\Service\PhotofilesService;
 use OCP\DB\QueryBuilder\IQueryBuilder;
-use OCP\IServerContainer;
+use OCP\Files\IRootFolder;
+use OCP\ICacheFactory;
+use OCP\IGroupManager;
+use OCP\IRequest;
+use OCP\IUserManager;
+use OCP\L10N\IFactory;
 use OCP\Server;
+use PHPUnit\Framework\MockObject\MockObject;
+use Psr\Container\ContainerInterface;
 
 class PhotosControllerTest extends \PHPUnit\Framework\TestCase {
-	private $appName;
-	private $request;
-	private $contacts;
-
-	private $container;
-	private $config;
-	private $app;
-
-	private $photosController;
-	private $photosController2;
-	private $utilsController;
-
-	private $photoFileService;
-	private $GeoPhotosService;
+	private string $appName;
+	private MockObject&IRequest $request;
+	private ContainerInterface $container;
+	private Application $app;
+	private PhotosController $photosController;
+	private PhotofilesService $photoFileService;
+	private GeophotoService $GeoPhotosService;
+	private IRootFolder $rootFolder;
 
 	public static function setUpBeforeClass(): void {
 		$app = new Application();
 		$c = $app->getContainer();
 
-		$user = $c->getServer()->getUserManager()->get('test');
-		$user2 = $c->getServer()->getUserManager()->get('test2');
-		$user3 = $c->getServer()->getUserManager()->get('test3');
-		$group = $c->getServer()->getGroupManager()->get('group1test');
-		$group2 = $c->getServer()->getGroupManager()->get('group2test');
+		$user = $c->get(IUserManager::class)->get('test');
+		$user2 = $c->get(IUserManager::class)->get('test2');
+		$group = $c->get(IGroupManager::class)->get('group1test');
+		$group2 = $c->get(IGroupManager::class)->get('group2test');
 
 		// CREATE DUMMY USERS
 		if ($user === null) {
-			$u1 = $c->getServer()->getUserManager()->createUser('test', 'tatotitoTUTU');
+			$u1 = $c->get(IUserManager::class)->createUser('test', 'tatotitoTUTU');
 			$u1->setEMailAddress('toto@toto.net');
 		}
 		if ($user2 === null) {
-			$u2 = $c->getServer()->getUserManager()->createUser('test2', 'plopinoulala000');
-		}
-		if ($user2 === null) {
-			$u3 = $c->getServer()->getUserManager()->createUser('test3', 'yeyeahPASSPASS');
+			$u2 = $c->get(IUserManager::class)->createUser('test2', 'plopinoulala000');
+			$u3 = $c->get(IUserManager::class)->createUser('test3', 'yeyeahPASSPASS');
 		}
 		if ($group === null) {
-			$c->getServer()->getGroupManager()->createGroup('group1test');
-			$u1 = $c->getServer()->getUserManager()->get('test');
-			$c->getServer()->getGroupManager()->get('group1test')->addUser($u1);
+			$c->get(IGroupManager::class)->createGroup('group1test');
+			$u1 = $c->get(IUserManager::class)->get('test');
+			$c->get(IGroupManager::class)->get('group1test')->addUser($u1);
 		}
 		if ($group2 === null) {
-			$c->getServer()->getGroupManager()->createGroup('group2test');
-			$u2 = $c->getServer()->getUserManager()->get('test2');
-			$c->getServer()->getGroupManager()->get('group2test')->addUser($u2);
+			$c->get(IGroupManager::class)->createGroup('group2test');
+			$u2 = $c->get(IUserManager::class)->get('test2');
+			$c->get(IGroupManager::class)->get('group2test')->addUser($u2);
 		}
 	}
 
 	protected function setUp(): void {
 		$this->appName = 'maps';
-		$this->request = $this->getMockBuilder('\OCP\IRequest')
-			->disableOriginalConstructor()
-			->getMock();
-		$this->contacts = $this->getMockBuilder('OCP\Contacts\IManager')
-			->disableOriginalConstructor()
-			->getMock();
+		$this->request = $this->createMock(IRequest::class);
 
 		$this->app = new Application();
 		$this->container = $this->app->getContainer();
 		$c = $this->container;
-		$this->config = $c->query(IServerContainer::class)->getConfig();
 
-		$this->rootFolder = $c->query(IServerContainer::class)->getRootFolder();
+		$this->rootFolder = $c->get(IRootFolder::class);
 
-		$this->GeoPhotosService = $c->query(GeoPhotoService::class);
+		$this->GeoPhotosService = $c->get(GeoPhotoService::class);
 
 		$this->photoFileService = new PhotoFilesService(
-			$c->query(IServerContainer::class)->get(\Psr\Log\LoggerInterface::class),
-			$c->query(IServerContainer::class)->getMemCacheFactory(),
+			$c->get(\Psr\Log\LoggerInterface::class),
+			$c->get(ICacheFactory::class),
 			$this->rootFolder,
-			$c->query(IServerContainer::class)->getL10N($c->query('AppName')),
-			$c->query(GeophotoMapper::class),
-			$c->query(IServerContainer::class)->get(\OCP\Share\IManager::class),
-			$c->query(\OCP\BackgroundJob\IJobList::class)
+			$c->get(IFactory::class)->get('maps'),
+			$c->get(GeophotoMapper::class),
+			$c->get(\OCP\Share\IManager::class),
+			$c->get(\OCP\BackgroundJob\IJobList::class)
 		);
 
 		$this->photosController = new PhotosController(
@@ -106,25 +98,7 @@ class PhotosControllerTest extends \PHPUnit\Framework\TestCase {
 			'test'
 		);
 
-		$this->photosController2 = new PhotosController(
-			$this->appName,
-			$this->request,
-			$c->query(GeoPhotoService::class),
-			$this->photoFileService,
-			$this->rootFolder,
-			'test2'
-		);
-
-		$this->utilsController = new UtilsController(
-			$this->appName,
-			$this->request,
-			$c->query(IServerContainer::class)->getConfig(),
-			$c->getServer()->getAppManager(),
-			$this->rootFolder,
-			'test'
-		);
-
-		$userfolder = $this->container->query(IServerContainer::class)->getUserFolder('test');
+		$userfolder = $this->container->get(IRootFolder::class)->getUserFolder('test');
 		// delete files
 		if ($userfolder->nodeExists('nc.jpg')) {
 			$file = $userfolder->get('nc.jpg');
@@ -140,30 +114,30 @@ class PhotosControllerTest extends \PHPUnit\Framework\TestCase {
 			->where(
 				$qb->expr()->eq('user_id', $qb->createNamedParameter('test', IQueryBuilder::PARAM_STR))
 			);
-		$req = $qb->executeStatement();
+		$qb->executeStatement();
 	}
 
 	public static function tearDownAfterClass(): void {
 		//$app = new Application();
 		//$c = $app->getContainer();
-		//$user = $c->getServer()->getUserManager()->get('test');
+		//$user = $c->get(IUserManager::class)->get('test');
 		//$user->delete();
-		//$user = $c->getServer()->getUserManager()->get('test2');
+		//$user = $c->get(IUserManager::class)->get('test2');
 		//$user->delete();
-		//$user = $c->getServer()->getUserManager()->get('test3');
+		//$user = $c->get(IUserManager::class)->get('test3');
 		//$user->delete();
-		//$c->getServer()->getGroupManager()->get('group1test')->delete();
-		//$c->getServer()->getGroupManager()->get('group2test')->delete();
+		//$c->get(IGroupManager::class)->get('group1test')->delete();
+		//$c->get(IGroupManager::class)->get('group2test')->delete();
 	}
 
 	protected function tearDown(): void {
 		// in case there was a failure and something was not deleted
 	}
 
-	public function testAddGetPhotos() {
-		$c = $this->app->getContainer();
+	public function testAddGetPhotos(): void {
+		$this->app->getContainer();
 
-		$userfolder = $this->container->query(IServerContainer::class)->getUserFolder('test');
+		$userfolder = $this->container->get(IRootFolder::class)->getUserFolder('test');
 
 		$filename = 'tests/test_files/nc.jpg';
 		$handle = fopen($filename, 'rb');
@@ -206,6 +180,7 @@ class PhotosControllerTest extends \PHPUnit\Framework\TestCase {
 		$this->assertEquals(200, $status);
 		$data = $resp->getData();
 		$this->assertCount(1, $data);
+		/** @psalm-suppress UndefinedInterfaceMethod */
 		$this->assertEquals('/nc.jpg', $data[0]->path);
 
 		//Test .nomedia respected
@@ -249,14 +224,8 @@ class PhotosControllerTest extends \PHPUnit\Framework\TestCase {
 		// with track
 		$filename = 'tests/test_files/testFile1_locationNut.gpx';
 		$content1 = file_get_contents($filename);
-		$file = $userfolder->newFile('testFile1_locationNut.gpxx');
+		$file = $userfolder->newFile('testFile1_locationNut.gpx');
 		$file->putContent($content1);
-		//$file->touch();
-
-		$file = $userfolder->get('testFile1_locationNut.gpxx');
-		$file->move($userfolder->getPath() . '/testFile1_locationNut.gpx');
-		//echo 'I MOVE TO '.$userfolder->getPath().'/testFile1.gpx'."\n";
-		$file = $userfolder->get('testFile1_locationNut.gpx');
 		$file->touch();
 
 		$this->GeoPhotosService->clearCache();

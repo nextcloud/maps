@@ -24,7 +24,7 @@ use lsolesen\pel\PelTiff;
 //PHP 7 polyfill
 if (!function_exists('str_contains')) {
 	function str_contains(string $haystack, string $needle): bool {
-		return $needle === '' || strpos($haystack, $needle) !== false;
+		return $needle === '' || str_contains($haystack, $needle);
 	}
 }
 
@@ -36,11 +36,6 @@ if (!function_exists('str_contains')) {
  * @property-read ?int $dateTaken
  */
 class ExifGeoData extends \stdClass implements \JsonSerializable {
-	/**
-	 * Mime type regex
-	 */
-	private const SUPPORTED_MIMETYPES = 'image\/(jpe?g|tiff)';
-
 	/**
 	 * Exif Latitude attribute names
 	 */
@@ -70,30 +65,13 @@ class ExifGeoData extends \stdClass implements \JsonSerializable {
 	 */
 	private const EXIF_TIME_REGEX = '(?<years>[0-9]{4})\:(?<months>[0-9]{2})\:(?<days>[0-9]{2}) (?<hours>[0-9]{2})\:(?<minutes>[0-9]{2})\:(?<seconds>[0-9]{2})';
 
-	/**
-	 * @var int|null
-	 */
-	private $timestamp = null;
+	private ?int $timestamp = null;
 
-	/**
-	 * @var float|null
-	 */
-	private $latitude = null;
+	private ?float $latitude = null;
 
-	/**
-	 * @var float|null
-	 */
-	private $longitude = null;
+	private ?float $longitude = null;
 
-	/**
-	 * @var bool|null
-	 */
-	private $is_valid = null;
-
-	/**
-	 * @var ?array
-	 */
-	protected $exif_data = null;
+	private ?bool $is_valid = null;
 
 	/**
 	 * @throws PelInvalidArgumentException
@@ -164,12 +142,10 @@ class ExifGeoData extends \stdClass implements \JsonSerializable {
 	}
 
 	/**
-	 * @param PelIfd $pelIfdGPS
 	 * @param $target
 	 * @param $source
 	 * @param $ref_target
 	 * @param $ref_source
-	 * @param array $exif
 	 */
 	protected static function readPelCoordinate(PelIfd $pelIfdGPS, $target, $source, $ref_target, $ref_source, array &$exif = []) : void {
 		$coordinate = $pelIfdGPS->getEntry($source)->getValue();
@@ -184,13 +160,12 @@ class ExifGeoData extends \stdClass implements \JsonSerializable {
 	}
 
 	/**
-	 * @param string $path
 	 * @return ExifGeoData
 	 */
 	public static function get(string $path) : ?ExifGeoData {
 		try {
 			$data = static::get_exif_data_array($path);
-		} catch (\Throwable $e) {
+		} catch (\Throwable) {
 			$data = [];
 		}
 		return new static($data);
@@ -198,10 +173,10 @@ class ExifGeoData extends \stdClass implements \JsonSerializable {
 
 	/**
 	 * ExifGeoData constructor.
-	 * @param array $exif_data
 	 */
-	final private function __construct(array $exif_data) {
-		$this->exif_data = $exif_data;
+	final private function __construct(
+		protected array $exif_data,
+	) {
 		$this->parse();
 	}
 
@@ -210,7 +185,7 @@ class ExifGeoData extends \stdClass implements \JsonSerializable {
 	 * @throws ExifDataInvalidException
 	 * @throws ExifDataNoLocationException
 	 */
-	public function validate($invalidate_zero_iland = false) {
+	public function validate($invalidate_zero_iland = false): void {
 		if (!$this->exif_data) {
 			throw new ExifDataInvalidException('No exif_data found', 1);
 		}
@@ -228,15 +203,12 @@ class ExifGeoData extends \stdClass implements \JsonSerializable {
 		}
 	}
 
-	/**
-	 * @return bool
-	 */
 	public function isValid(): bool {
 		if ($this->is_valid === null) {
 			try {
 				$this->validate();
 				$this->is_valid = true;
-			} catch (\Throwable  $e) {
+			} catch (\Throwable) {
 				$this->is_valid = false;
 			}
 		}
@@ -262,7 +234,6 @@ class ExifGeoData extends \stdClass implements \JsonSerializable {
 	}
 
 	/**
-	 * @param string $timestamp
 	 * @return int
 	 */
 	private function string2time(string $timestamp): ?int {
@@ -277,9 +248,8 @@ class ExifGeoData extends \stdClass implements \JsonSerializable {
 
 	/**
 	 * @param $geo
-	 * @return float|null
 	 */
-	private function geo2float($geo): ?float {
+	private function geo2float($geo): float {
 		if (!is_array($geo)) {
 			$geo = [$geo];
 		}
@@ -293,15 +263,11 @@ class ExifGeoData extends \stdClass implements \JsonSerializable {
 		return $result;
 	}
 
-	/**
-	 * @param string $value
-	 * @return float|null
-	 */
 	private function string2float(string $value): ?float {
 		$result = null;
 		$value = trim($value, '/');
 		if (str_contains($value, '/')) {
-			$value = array_map('intval', explode('/', $value));
+			$value = array_map(intval(...), explode('/', $value));
 			if ($value[1] != 0) {
 				$result = $value[0] / $value[1];
 			}
@@ -312,9 +278,6 @@ class ExifGeoData extends \stdClass implements \JsonSerializable {
 
 	}
 
-	/**
-	 * @return bool
-	 */
 	public function isZeroIsland(): bool {
 		return $this->latitude() === .0 && $this->longitude() === .0;
 	}
@@ -333,11 +296,7 @@ class ExifGeoData extends \stdClass implements \JsonSerializable {
 		return $this->longitude === null ? null : round($this->longitude, $precision);
 	}
 
-	/**
-	 * @param string|null $format
-	 * @return string|int|null
-	 */
-	public function timestamp(?string $format = 'Y-m-d H:i:s') {
+	public function timestamp(?string $format = 'Y-m-d H:i:s'): int|string|null {
 		$result = $this->timestamp;
 		if ($this->timestamp !== null && $format) {
 			$result = date($format, $this->timestamp);
@@ -362,20 +321,14 @@ class ExifGeoData extends \stdClass implements \JsonSerializable {
 	 * @param $name
 	 * @return float|int|string|null
 	 */
-	public function __get($name) {
+	public function __get(string $name): mixed {
 		$value = null;
-		switch ($name) {
-			case 'lat':
-				$value = $this->latitude();
-				break;
-			case 'lng':
-				$value = $this->longitude();
-				break;
-			case 'dateTaken':
-				$value = $this->timestamp(null);
-				break;
-		}
-		return $value;
+		return match ($name) {
+			'lat' => $this->latitude(),
+			'lng' => $this->longitude(),
+			'dateTaken' => $this->timestamp(null),
+			default => $value,
+		};
 	}
 
 }

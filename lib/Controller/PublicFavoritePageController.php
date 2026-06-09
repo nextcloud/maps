@@ -28,32 +28,26 @@ use OCA\Maps\DB\FavoriteShareMapper;
 use OCP\AppFramework\Db\DoesNotExistException;
 use OCP\AppFramework\Db\MultipleObjectsReturnedException;
 use OCP\AppFramework\Http;
-use OCP\AppFramework\Http\ContentSecurityPolicy;
 use OCP\AppFramework\Http\DataResponse;
 use OCP\AppFramework\Http\Template\PublicTemplateResponse;
 use OCP\AppFramework\PublicShareController;
-use OCP\IConfig;
 use OCP\IRequest;
 use OCP\ISession;
 use OCP\IUserManager;
 use OCP\Util;
 
 class PublicFavoritePageController extends PublicShareController {
-	private $config;
-
-	/* @var FavoriteShareMapper */
-	private $favoriteShareMapper;
+	use AddCspTrait;
 
 	public function __construct(
-		$appName,
+		string $appName,
 		IRequest $request,
 		ISession $session,
-		IConfig $config,
-		FavoriteShareMapper $favoriteShareMapper,
+		private readonly FavoriteShareMapper $favoriteShareMapper,
+		\OCP\IAppConfig $appConfig,
 	) {
+		$this->appConfig = $appConfig;
 		parent::__construct($appName, $request, $session);
-		$this->config = $config;
-		$this->favoriteShareMapper = $favoriteShareMapper;
 	}
 
 	/**
@@ -71,9 +65,9 @@ class PublicFavoritePageController extends PublicShareController {
 
 		try {
 			$share = $this->favoriteShareMapper->findByToken($token);
-		} catch (DoesNotExistException $e) {
+		} catch (DoesNotExistException) {
 			return new DataResponse([], Http::STATUS_NOT_FOUND);
-		} catch (MultipleObjectsReturnedException $e) {
+		} catch (MultipleObjectsReturnedException) {
 			return new DataResponse([], Http::STATUS_INTERNAL_SERVER_ERROR);
 		}
 
@@ -109,13 +103,12 @@ class PublicFavoritePageController extends PublicShareController {
 	 *
 	 * This function is already called from the middleware directly after setting the token.
 	 *
-	 * @return bool
 	 * @since 14.0.0
 	 */
 	public function isValidToken(): bool {
 		try {
 			$this->favoriteShareMapper->findByToken($this->getToken());
-		} catch (DoesNotExistException|MultipleObjectsReturnedException $e) {
+		} catch (DoesNotExistException|MultipleObjectsReturnedException) {
 			return false;
 		}
 
@@ -125,61 +118,9 @@ class PublicFavoritePageController extends PublicShareController {
 	/**
 	 * Is a share with this token password protected
 	 *
-	 * @return bool
 	 * @since 14.0.0
 	 */
 	protected function isPasswordProtected(): bool {
 		return false;
-	}
-
-	/**
-	 * @param $response
-	 * @return void
-	 */
-	private function addCsp($response): void {
-		if (class_exists('OCP\AppFramework\Http\ContentSecurityPolicy')) {
-			$csp = new ContentSecurityPolicy();
-			// map tiles
-			$csp->addAllowedImageDomain('https://*.tile.openstreetmap.org');
-			$csp->addAllowedImageDomain('https://tile.openstreetmap.org');
-			$csp->addAllowedImageDomain('https://server.arcgisonline.com');
-			$csp->addAllowedImageDomain('https://*.cartocdn.com');
-			$csp->addAllowedImageDomain('https://*.opentopomap.org');
-			$csp->addAllowedImageDomain('https://*.cartocdn.com');
-			$csp->addAllowedImageDomain('https://*.ssl.fastly.net');
-			$csp->addAllowedImageDomain('https://*.openstreetmap.se');
-
-			// default routing engine
-			$csp->addAllowedConnectDomain('https://*.project-osrm.org');
-			$csp->addAllowedConnectDomain('https://api.mapbox.com');
-			$csp->addAllowedConnectDomain('https://graphhopper.com');
-			// allow connections to custom routing engines
-			$urlKeys = [
-				'osrmBikeURL',
-				'osrmCarURL',
-				'osrmFootURL',
-				'graphhopperURL'
-			];
-			foreach ($urlKeys as $key) {
-				$url = $this->config->getAppValue('maps', $key);
-				if ($url !== '') {
-					$scheme = parse_url($url, PHP_URL_SCHEME);
-					$host = parse_url($url, PHP_URL_HOST);
-					$port = parse_url($url, PHP_URL_PORT);
-					$cleanUrl = $scheme . '://' . $host;
-					if ($port && $port !== '') {
-						$cleanUrl .= ':' . $port;
-					}
-					$csp->addAllowedConnectDomain($cleanUrl);
-				}
-			}
-			//$csp->addAllowedConnectDomain('http://192.168.0.66:5000');
-
-			// poi images
-			$csp->addAllowedImageDomain('https://nominatim.openstreetmap.org');
-			// search and geocoder
-			$csp->addAllowedConnectDomain('https://nominatim.openstreetmap.org');
-			$response->setContentSecurityPolicy($csp);
-		}
 	}
 }

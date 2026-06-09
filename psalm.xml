@@ -29,6 +29,7 @@
 	</stubs>
 	<projectFiles>
 		<directory name="lib" />
+		<directory name="tests/Unit" />
 		<ignoreFiles>
 			<directory name="vendor" />
 			<directory name="vendor-bin" />

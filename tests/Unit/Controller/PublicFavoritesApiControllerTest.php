@@ -24,30 +24,22 @@
 
 namespace OCA\Maps\Controller;
 
-use OC;
-use OC\AppFramework\Http;
 use OCA\Maps\AppInfo\Application;
 use OCA\Maps\DB\FavoriteShare;
 use OCA\Maps\DB\FavoriteShareMapper;
 use OCA\Maps\Service\FavoritesService;
+use OCP\AppFramework\Http;
 use OCP\IServerContainer;
 use PHPUnit\Framework\TestCase;
 
 class PublicFavoritesApiControllerTest extends TestCase {
-	/* @var PublicFavoritesApiController */
-	private $publicFavoritesApiController;
-
-	private $config;
-
-	/* @var FavoritesService */
-	private $favoritesService;
-
-	/* @var FavoriteShareMapper */
-	private $favoriteShareMapper;
+	private PublicFavoritesApiController $publicFavoritesApiController;
+	private FavoritesService $favoritesService;
+	private FavoriteShareMapper $favoriteShareMapper;
 
 	protected function setUp(): void {
 		// Begin transaction
-		$db = OC::$server->query(\OCP\IDBConnection::class);
+		$db = \OCP\Server::get(\OCP\IDBConnection::class);
 		$db->beginTransaction();
 
 		$container = (new Application())->getContainer();
@@ -56,8 +48,6 @@ class PublicFavoritesApiControllerTest extends TestCase {
 
 		$requestMock = $this->getMockBuilder('OCP\IRequest')->getMock();
 		$sessionMock = $this->getMockBuilder('OCP\ISession')->getMock();
-
-		$this->config = $container->query(IServerContainer::class)->getConfig();
 
 		$this->favoritesService = new FavoritesService(
 			$container->query(IServerContainer::class)->get(\Psr\Log\LoggerInterface::class),
@@ -83,11 +73,11 @@ class PublicFavoritesApiControllerTest extends TestCase {
 
 	protected function tearDown(): void {
 		// Rollback transaction
-		$db = OC::$server->query(\OCP\IDBConnection::class);
+		$db = \OCP\Server::get(\OCP\IDBConnection::class);
 		$db->rollBack();
 	}
 
-	public function testGetFavorites() {
+	public function testGetFavorites(): void {
 		$testUser = 'test099897';
 		$categoryName = 'test89774590';
 

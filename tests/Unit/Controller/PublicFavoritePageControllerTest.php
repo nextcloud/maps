@@ -24,11 +24,10 @@
 
 namespace OCA\Maps\Controller;
 
-use OC;
-use OC\AppFramework\Http;
 use OCA\Maps\AppInfo\Application;
 use OCA\Maps\DB\FavoriteShareMapper;
 use OCA\Maps\Service\FavoritesService;
+use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\DataResponse;
 use OCP\AppFramework\Http\TemplateResponse;
 use OCP\AppFramework\IAppContainer;
@@ -38,21 +37,21 @@ use Psr\Log\LoggerInterface;
 
 class PublicFavoritePageControllerTest extends TestCase {
 	/* @var PublicFavoritePageController */
-	private $publicPageController;
+	private \OCA\Maps\Controller\PublicFavoritePageController $publicPageController;
 
 	private $config;
 
 	/* @var Application */
-	private $app;
+	private \OCA\Maps\AppInfo\Application $app;
 
 	/* @var IAppContainer */
 	private $container;
 
 	/* @var FavoritesService */
-	private $favoritesService;
+	private \OCA\Maps\Service\FavoritesService $favoritesService;
 
 	/* @var FavoriteShareMapper */
-	private $favoriteShareMapper;
+	private \OCA\Maps\DB\FavoriteShareMapper $favoriteShareMapper;
 
 	protected function setUp(): void {
 		// Begin transaction
@@ -95,11 +94,11 @@ class PublicFavoritePageControllerTest extends TestCase {
 
 	protected function tearDown(): void {
 		// Rollback transaction
-		$db = OC::$server->query(\OCP\IDBConnection::class);
+		$db = \OCP\Server::get(\OCP\IDBConnection::class);
 		$db->rollBack();
 	}
 
-	public function testSharedFavoritesCategory() {
+	public function testSharedFavoritesCategory(): void {
 		$categoryName = 'test908780';
 		$testUserName = 'test';
 
@@ -114,7 +113,7 @@ class PublicFavoritePageControllerTest extends TestCase {
 		$this->assertEquals('public/favorites_index', $result->getTemplateName());
 	}
 
-	public function testAccessRestrictionsForSharedFavoritesCategory() {
+	public function testAccessRestrictionsForSharedFavoritesCategory(): void {
 		$result = $this->publicPageController->sharedFavoritesCategory('test8348985');
 
 		$this->assertTrue($result instanceof DataResponse);

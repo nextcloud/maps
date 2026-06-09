@@ -17,6 +17,8 @@ use OCA\Maps\Service\GeophotoService;
 use OCA\Maps\Service\PhotofilesService;
 use OCP\AppFramework\Controller;
 use OCP\AppFramework\Http;
+use OCP\AppFramework\Http\Attribute\NoAdminRequired;
+use OCP\AppFramework\Http\Attribute\NoCSRFRequired;
 use OCP\AppFramework\Http\DataResponse;
 use OCP\DB\Exception;
 use OCP\Files\Folder;
@@ -27,37 +29,25 @@ use OCP\Files\NotPermittedException;
 use OCP\IRequest;
 
 class PhotosController extends Controller {
-	private $userId;
-	private $geophotoService;
-	private $photofilesService;
-	private $root;
-
-	public function __construct($AppName,
+	public function __construct(
+		string $appName,
 		IRequest $request,
-		GeophotoService $GeophotoService,
-		PhotofilesService $photofilesService,
-		IRootFolder $root,
-		$UserId) {
-		parent::__construct($AppName, $request);
-		$this->userId = $UserId;
-		$this->geophotoService = $GeophotoService;
-		$this->photofilesService = $photofilesService;
-		$this->root = $root;
+		private GeophotoService $geophotoService,
+		private PhotofilesService $photofilesService,
+		private IRootFolder $root,
+		private ?string $userId,
+	) {
+		parent::__construct($appName, $request);
 	}
 
 	/**
-	 * @NoAdminRequired
-	 * @NoCSRFRequired
-	 * @param null $myMapId
-	 * @param null $respectNoMediaAndNoimage
-	 * @param null $hideImagesOnCustomMaps
-	 * @param null $hideImagesInMapsFolder
-	 * @return DataResponse
 	 * @throws Exception
 	 * @throws NoUserException
 	 * @throws NotFoundException
 	 * @throws NotPermittedException
 	 */
+	#[NoAdminRequired]
+	#[NoCSRFRequired]
 	public function getPhotos($myMapId = null, $respectNoMediaAndNoimage = null, $hideImagesOnCustomMaps = null, $hideImagesInMapsFolder = null): DataResponse {
 		$userFolder = $this->root->getUserFolder($this->userId);
 		if (is_null($myMapId) || $myMapId === '') {
@@ -71,21 +61,13 @@ class PhotosController extends Controller {
 	}
 
 	/**
-	 * @NoAdminRequired
-	 * @NoCSRFRequired
-	 * @param int|null $myMapId
-	 * @param string|null $timezone
-	 * @param int $limit
-	 * @param int $offset
-	 * @param null $respectNoMediaAndNoimage
-	 * @param null $hideImagesOnCustomMaps
-	 * @param null $hideImagesInMapsFolder
-	 * @return DataResponse
 	 * @throws Exception
 	 * @throws NoUserException
 	 * @throws NotFoundException
 	 * @throws NotPermittedException
 	 */
+	#[NoAdminRequired]
+	#[NoCSRFRequired]
 	public function getNonLocalizedPhotos(?int $myMapId = null, ?string $timezone = null, int $limit = 250, int $offset = 0, $respectNoMediaAndNoimage = null, $hideImagesOnCustomMaps = null, $hideImagesInMapsFolder = null): DataResponse {
 		$userFolder = $this->root->getUserFolder($this->userId);
 		if (is_null($myMapId) || $myMapId === '') {
@@ -100,12 +82,10 @@ class PhotosController extends Controller {
 
 
 	/**
-	 * @NoAdminRequired
 	 * @param $paths
 	 * @param $lats
 	 * @param $lngs
 	 * @param bool $directory
-	 * @param null $myMapId
 	 * @param bool $relative
 	 * @return DataResponse
 	 * @throws NoUserException
@@ -113,46 +93,51 @@ class PhotosController extends Controller {
 	 * @throws NotPermittedException
 	 * @throws InvalidPathException
 	 */
-	public function placePhotos($paths, $lats, $lngs, bool $directory = false, $myMapId = null, bool $relative = false): DataResponse {
+	#[NoAdminRequired]
+	public function placePhotos($paths, $lats, $lngs, bool $directory = false, ?int $myMapId = null, bool $relative = false): DataResponse {
 		$userFolder = $this->root->getUserFolder($this->userId);
-		if (!is_null($myMapId) and $myMapId !== '') {
-			if ($directory === 'true') {
-				// forbid folder placement in my-maps
-				throw new NotPermittedException();
-			}
+		if ($myMapId === null) {
+			$result = $this->photofilesService->setPhotosFilesCoords($this->userId, $paths, $lats, $lngs, $directory);
+			return new DataResponse($result);
+		}
 
-			$folder = $userFolder->getFirstNodeById($myMapId);
-			if (!($folder instanceof Folder)) {
-				return new DataResponse(statusCode: Http::STATUS_BAD_REQUEST);
-			}
+		if ($directory === 'true') {
+			// forbid folder placement in my-maps
+			throw new NotPermittedException();
+		}
 
-			// photo's path is relative to this map's folder => get full path, don't copy
-			if ($relative) {
-				foreach ($paths as $key => $path) {
-					$photoFile = $folder->get($path);
-					$paths[$key] = $userFolder->getRelativePath($photoFile->getPath());
-				}
-			} else {
-				// here the photo path is good, copy it in this map's folder if it's not already there
-				foreach ($paths as $key => $path) {
-					$photoFile = $userFolder->get($path);
-					// is the photo in this map's folder?
-					if (!$folder->getById($photoFile->getId())) {
-						$copiedFile = $photoFile->copy($folder->getPath() . '/' . $photoFile->getName());
-						$paths[$key] = $userFolder->getRelativePath($copiedFile->getPath());
-					}
+		$folder = $userFolder->getFirstNodeById($myMapId);
+		if (!($folder instanceof Folder)) {
+			return new DataResponse(statusCode: Http::STATUS_BAD_REQUEST);
+		}
+
+		// photo's path is relative to this map's folder => get full path, don't copy
+		if ($relative) {
+			foreach ($paths as $key => $path) {
+				$photoFile = $folder->get($path);
+				$paths[$key] = $userFolder->getRelativePath($photoFile->getPath());
+			}
+		} else {
+			// here the photo path is good, copy it in this map's folder if it's not already there
+			foreach ($paths as $key => $path) {
+				$photoFile = $userFolder->get($path);
+				// is the photo in this map's folder?
+				if (!$folder->getById($photoFile->getId())) {
+					$copiedFile = $photoFile->copy($folder->getPath() . '/' . $photoFile->getName());
+					$paths[$key] = $userFolder->getRelativePath($copiedFile->getPath());
 				}
 			}
 		}
+
 		$result = $this->photofilesService->setPhotosFilesCoords($this->userId, $paths, $lats, $lngs, $directory);
 		return new DataResponse($result);
 	}
 
 	/**
-	 * @NoAdminRequired
 	 * @param $paths
 	 * @return DataResponse
 	 */
+	#[NoAdminRequired]
 	public function resetPhotosCoords($paths, $myMapId = null): DataResponse {
 		$userFolder = $this->root->getUserFolder($this->userId);
 		$result = [];
@@ -164,7 +149,7 @@ class PhotosController extends Controller {
 				$folders = $userFolder->getById($myMapId);
 				$folder = array_shift($folders);
 				$photoFile = $userFolder->get($path);
-				if ($folder->isSubNode($photoFile)) {
+				if ($folder instanceof Folder && $folder->isSubNode($photoFile)) {
 					$photoFile->delete();
 					unset($paths[$key]);
 				}
@@ -173,10 +158,7 @@ class PhotosController extends Controller {
 		return new DataResponse($result);
 	}
 
-	/**
-	 * @NoAdminRequired
-	 * @return DataResponse
-	 */
+	#[NoAdminRequired]
 	public function clearCache(): DataResponse {
 		$result = $this->geophotoService->clearCache();
 		if ($result) {
@@ -186,12 +168,8 @@ class PhotosController extends Controller {
 		}
 	}
 
-	/**
-	 * @NoAdminRequired
-	 * @return DataResponse
-	 */
+	#[NoAdminRequired]
 	public function getBackgroundJobStatus(): DataResponse {
 		return new DataResponse($this->photofilesService->getBackgroundJobStatus($this->userId));
 	}
-
 }

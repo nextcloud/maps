@@ -26,20 +26,12 @@ use function OCP\Log\logger;
  * Handles files events
  */
 class FileHooks {
-
-	private $photofilesService;
-	private $tracksService;
-
-	private $root;
-
-	private ILockingProvider $lockingProvider;
-
-	public function __construct(IRootFolder $root, PhotofilesService $photofilesService, TracksService $tracksService,
-		$appName, ILockingProvider $lockingProvider) {
-		$this->photofilesService = $photofilesService;
-		$this->tracksService = $tracksService;
-		$this->root = $root;
-		$this->lockingProvider = $lockingProvider;
+	public function __construct(
+		private readonly IRootFolder $root,
+		private readonly PhotofilesService $photofilesService,
+		private readonly TracksService $tracksService,
+		private readonly ILockingProvider $lockingProvider,
+	) {
 	}
 
 	public function register() {

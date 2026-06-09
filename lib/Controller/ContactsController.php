@@ -79,7 +79,9 @@ class ContactsController extends Controller {
 	 * @return float[] array containing [lat;lon]
 	 */
 	private function geoAsFloatArray($geo) {
-		$res = array_map(function ($value) {return floatval($value);}, explode(';', $geo));
+		$res = array_map(function ($value) {
+			return floatval($value);
+		}, explode(';', $geo));
 		return $res;
 	}
 

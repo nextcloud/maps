@@ -14,13 +14,13 @@ namespace OCA\Maps\Controller;
 
 use OCA\Maps\Service\TracksService;
 use OCP\AppFramework\Http\DataResponse;
+use OCP\AppFramework\Services\IInitialState;
 use OCP\EventDispatcher\IEventDispatcher;
 use OCP\Files\IRootFolder;
 use OCP\Files\NotFoundException;
 use OCP\Files\NotPermittedException;
-use OCP\IConfig;
+use OCP\IAppConfig;
 use OCP\IGroupManager;
-use OCP\IInitialStateService;
 use OCP\IL10N;
 use OCP\IRequest;
 use OCP\IServerContainer;
@@ -35,7 +35,6 @@ use function OCA\Maps\Helper\remove_utf8_bom;
 
 class PublicTracksController extends PublicPageController {
 
-	protected IConfig $config;
 	protected ShareManager $shareManager;
 	protected IUserManager $userManager;
 	protected IL10N $l;
@@ -47,8 +46,8 @@ class PublicTracksController extends PublicPageController {
 		string $appName,
 		IRequest $request,
 		IEventDispatcher $eventDispatcher,
-		IConfig $config,
-		IInitialStateService $initialStateService,
+		IAppConfig $appConfig,
+		IInitialState $initialState,
 		IURLGenerator $urlGenerator,
 		ShareManager $shareManager,
 		IUserManager $userManager,
@@ -59,7 +58,7 @@ class PublicTracksController extends PublicPageController {
 		TracksService $tracksService,
 		IRootFolder $root,
 	) {
-		parent::__construct($appName, $request, $session, $urlGenerator, $eventDispatcher, $config, $initialStateService, $shareManager, $userManager);
+		parent::__construct($appName, $request, $session, $urlGenerator, $eventDispatcher, $appConfig, $initialState, $shareManager, $userManager);
 		$this->tracksService = $tracksService;
 		$this->l = $l;
 		$this->root = $root;

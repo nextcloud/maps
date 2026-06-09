@@ -34,11 +34,13 @@ class PageController extends Controller {
 		IRequest $request,
 		private string $userId,
 		private IEventDispatcher $eventDispatcher,
-		private IAppConfig $appConfig,
+		IAppConfig $appConfig,
 		private IInitialState $initialState,
 		private IURLGenerator $urlGenerator,
 	) {
 		parent::__construct($appName, $request);
+
+		$this->appConfig = $appConfig;
 	}
 
 	/**

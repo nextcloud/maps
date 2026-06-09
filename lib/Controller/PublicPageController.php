@@ -45,12 +45,13 @@ class PublicPageController extends AuthPublicShareController {
 		ISession $session,
 		IURLGenerator $urlGenerator,
 		protected IEventDispatcher $eventDispatcher,
-		protected IAppConfig $appConfig,
+		IAppConfig $appConfig,
 		protected IInitialState $initialState,
 		protected ShareManager $shareManager,
 		protected IUserManager $userManager,
 	) {
 		parent::__construct($appName, $request, $session, $urlGenerator);
+		$this->appConfig = $appConfig;
 	}
 
 	public function isValidToken(): bool {

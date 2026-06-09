@@ -38,8 +38,6 @@ OC.L10N.register(
     "Date" : "Date",
     "Update" : "Ĝisdatigi",
     "Yes" : "Yes",
-    "Open" : "Malfermi",
-    "Closed" : "Fermita",
     "Search" : "Serĉi",
     "File" : "Dosiero",
     "Description" : "Priskribo",

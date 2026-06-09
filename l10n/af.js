@@ -33,7 +33,6 @@ OC.L10N.register(
     "Accuracy" : "Akkuraatheid",
     "Update" : "Werk by",
     "Yes" : "Ja",
-    "Open" : "Open",
     "Search" : "Soek",
     "File" : "Lêer",
     "Description" : "Beskrywing",

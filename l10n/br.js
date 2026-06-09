@@ -31,7 +31,6 @@ OC.L10N.register(
     "Date" : "Deizat",
     "Update" : "Adnevesaat",
     "Yes" : "Ya",
-    "Open" : "Digeriñ",
     "Search" : "Klask",
     "File" : "Restr",
     "Description" : "Deskrivadur",

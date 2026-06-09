@@ -35,7 +35,6 @@ OC.L10N.register(
     "Date" : "Data",
     "Update" : "Përditëso",
     "Yes" : "Yes",
-    "Closed" : "I mbyllur",
     "Search" : "Kërko",
     "File" : "Skedar ",
     "Description" : "Përshkrim",

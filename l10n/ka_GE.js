@@ -33,7 +33,6 @@ OC.L10N.register(
     "Date" : "თარიღი",
     "Update" : "განახლება",
     "Yes" : "კი",
-    "Closed" : "დახურული",
     "Search" : "ძიება",
     "File" : "ფაილი",
     "Description" : "აღწერილობა",

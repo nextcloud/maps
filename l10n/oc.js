@@ -38,7 +38,6 @@ OC.L10N.register(
     "Date" : "Date",
     "Update" : "Metre a jorn",
     "Yes" : "Òc",
-    "Open" : "Dobrir",
     "Search" : "Recercar",
     "File" : "File",
     "Description" : "Descripcion",

@@ -39,8 +39,6 @@ OC.L10N.register(
     "Date" : "Date",
     "Update" : "Actualizare",
     "Yes" : "a",
-    "Open" : "Deschide",
-    "Closed" : "închis",
     "Search" : "Caută",
     "File" : "Fișier",
     "Description" : "Descriere",

@@ -39,8 +39,6 @@ OC.L10N.register(
     "Date" : "Date",
     "Update" : "Cập nhật",
     "Yes" : "Có",
-    "Open" : "Mở",
-    "Closed" : "Đã đóng",
     "Search" : "Tìm kiếm",
     "File" : "Tập tin",
     "Description" : "Mô tả",

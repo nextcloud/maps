@@ -25,7 +25,6 @@ OC.L10N.register(
     "Home" : "Asnubeg",
     "Date" : "Azemz",
     "Yes" : "Ih",
-    "Open" : "Ldi",
     "Search" : "Nadi",
     "File" : "Afaylu",
     "Description" : "Aglam",

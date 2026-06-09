@@ -30,7 +30,6 @@ OC.L10N.register(
     "Date" : "Date",
     "Update" : "Diweddaru",
     "Yes" : "Iawn",
-    "Open" : "Ar Agor",
     "Search" : "Chwilio",
     "File" : "File",
     "Description" : "Disgrifiad",

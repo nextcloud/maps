@@ -39,8 +39,6 @@ OC.L10N.register(
     "Date" : "Data",
     "Update" : "Atualizar",
     "Yes" : "Sim",
-    "Open" : "Abrir",
-    "Closed" : "Fechado",
     "Search" : "Pesquisa sobre",
     "File" : "Ficheiro",
     "Description" : "Descrição",

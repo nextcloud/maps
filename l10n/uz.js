@@ -31,8 +31,6 @@ OC.L10N.register(
     "Date" : "Sana",
     "Update" : "Update",
     "Yes" : "Yes",
-    "Open" : "Ochish",
-    "until {date}" : " {date}gacha",
     "Search" : "Qidirish",
     "File" : "Fayl",
     "Description" : "Tavsif",

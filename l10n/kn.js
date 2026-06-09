@@ -22,7 +22,6 @@ OC.L10N.register(
     "Home" : "﻿ಮುಖಪುಟ",
     "Date" : "Date",
     "Yes" : "Yes",
-    "Open" : "ತೆರೆಯಿರಿ",
     "Search" : "Search",
     "File" : "File",
     "right" : "ಬಲ",

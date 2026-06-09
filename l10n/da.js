@@ -58,8 +58,6 @@ OC.L10N.register(
     "Update" : "Opdatér",
     "Select All" : "Vælg alle",
     "Yes" : "Ja",
-    "Open" : "Åbn",
-    "Closed" : "Lukket",
     "Search" : "Søg",
     "Unknown Place" : "Ukendt sted",
     "File" : "Fil",

@@ -16,6 +16,7 @@ use OC\Files\Search\SearchBinaryOperator;
 use OC\Files\Search\SearchComparison;
 use OC\Files\Search\SearchQuery;
 use OCP\DB\QueryBuilder\IQueryBuilder;
+use OCP\Files\File;
 use OCP\Files\FileInfo;
 use OCP\Files\Folder;
 use OCP\Files\IRootFolder;
@@ -61,9 +62,8 @@ class TracksService {
 
 	// add the file for its owner and users that have access
 	// check if it's already in DB before adding
-	public function safeAddByFile(Node $file) {
+	public function safeAddByFile(File $file): bool {
 		$ownerId = $file->getOwner()->getUID();
-		$userFolder = $this->root->getUserFolder($ownerId);
 		if ($this->isTrack($file)) {
 			$this->safeAddTrack($file, $ownerId);
 			// is the file accessible to other users ?
@@ -106,7 +106,7 @@ class TracksService {
 	}
 
 	// avoid adding track if it already exists in the DB
-	private function safeAddTrack($track, $userId) {
+	private function safeAddTrack(File $track, string $userId): void {
 		// filehooks are triggered several times (2 times for file creation)
 		// so we need to be sure it's not inserted several times
 		// by checking if it already exists in DB
@@ -117,7 +117,7 @@ class TracksService {
 	}
 
 	// add all tracks of a folder taking care of shared accesses
-	public function safeAddByFolder($folder) {
+	public function safeAddByFolder(Folder $folder): void {
 		$tracks = $this->gatherTrackFiles($folder, true);
 		foreach ($tracks as $track) {
 			$this->safeAddByFile($track);
@@ -165,11 +165,11 @@ class TracksService {
 		}
 	}
 
-	private function gatherTrackFiles($folder, $recursive) {
+	private function gatherTrackFiles(Folder $folder, bool $recursive) {
 		$notes = [];
 		$nodes = $folder->getDirectoryListing();
 		foreach ($nodes as $node) {
-			if ($node->getType() === FileInfo::TYPE_FOLDER and $recursive) {
+			if ($node instanceof Folder and $recursive) {
 				try {
 					$notes = array_merge($notes, $this->gatherTrackFiles($node, $recursive));
 				} catch (\OCP\Files\StorageNotAvailableException|\Exception $e) {
@@ -186,14 +186,11 @@ class TracksService {
 		return $notes;
 	}
 
-	private function isTrack($file) {
-		if ($file->getType() !== \OCP\Files\FileInfo::TYPE_FILE) {
+	private function isTrack(Node $file): bool {
+		if (!$file instanceof File) {
 			return false;
 		}
-		if (!in_array($file->getMimetype(), self::TRACK_MIME_TYPES)) {
-			return false;
-		}
-		return true;
+		return in_array($file->getMimetype(), self::TRACK_MIME_TYPES);
 	}
 
 	private function dbRowToTrack($row, $folder, $userFolder, $defaultMap, $ignoredPaths) {
@@ -415,7 +412,7 @@ class TracksService {
 		return $track;
 	}
 
-	public function addTrackToDB($userId, $fileId, $file) {
+	public function addTrackToDB(string $userId, int $fileId, File $file): int {
 		$metadata = '';
 		$etag = $file->getEtag();
 		$qb = $this->dbconnection->getQueryBuilder();

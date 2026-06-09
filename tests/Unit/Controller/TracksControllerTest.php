@@ -147,14 +147,8 @@ class TracksControllerTest extends TestCase {
 
 		$filename = 'tests/test_files/testFile1.gpx';
 		$content1 = file_get_contents($filename);
-		$file = $userfolder->newFile('testFile1.gpxx');
+		$file = $userfolder->newFile('testFile1.gpx');
 		$file->putContent($content1);
-		//$file->touch();
-
-		$file = $userfolder->get('testFile1.gpxx');
-		$file->move($userfolder->getPath() . '/testFile1.gpx');
-		//echo 'I MOVE TO '.$userfolder->getPath().'/testFile1.gpx'."\n";
-		$file = $userfolder->get('testFile1.gpx');
 		$file->touch();
 
 		$resp = $this->tracksController->getTracks();

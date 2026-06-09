@@ -24,25 +24,14 @@ use OCP\IL10N;
 use OCP\IRequest;
 
 class DevicesApiController extends ApiController {
-
-	private Folder $userfolder;
-
 	public function __construct(
 		string $appName,
 		IRequest $request,
 		private IL10N $l,
 		private DevicesService $devicesService,
 		private ?string $userId,
-		IRootFolder $rootFolder,
 	) {
-		parent::__construct($appName, $request,
-			'PUT, POST, GET, DELETE, PATCH, OPTIONS',
-			'Authorization, Content-Type, Accept',
-			1728000);
-		if ($userId !== '' && $userId !== null) {
-			// path of user files folder relative to DATA folder
-			$this->userfolder = $rootFolder->getUserFolder($userId);
-		}
+		parent::__construct($appName, $request, 'PUT, POST, GET, DELETE, PATCH, OPTIONS');
 	}
 
 	/**

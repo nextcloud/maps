@@ -73,7 +73,6 @@ class DevicesApiControllerTest extends \PHPUnit\Framework\TestCase {
 			$c->get(IFactory::class)->get('maps'),
 			$c->get(DevicesService::class),
 			'test',
-			$c->get(IRootFolder::class),
 		);
 
 		// delete

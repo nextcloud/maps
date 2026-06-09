@@ -39,9 +39,9 @@ trait AddCspTrait {
 		foreach ($urlKeys as $key) {
 			$url = $this->appConfig->getValueString('maps', $key);
 			if ($url !== '') {
-				$scheme = parse_url($url, PHP_URL_SCHEME);
-				$host = parse_url($url, PHP_URL_HOST);
-				$port = parse_url($url, PHP_URL_PORT);
+				$scheme = parse_url((string)$url, PHP_URL_SCHEME);
+				$host = parse_url((string)$url, PHP_URL_HOST);
+				$port = parse_url((string)$url, PHP_URL_PORT);
 				$cleanUrl = $scheme . '://' . $host;
 				if ($port && $port !== '') {
 					$cleanUrl .= ':' . $port;

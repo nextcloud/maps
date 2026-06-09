@@ -17,14 +17,12 @@ use OC\Files\Search\SearchComparison;
 use OC\Files\Search\SearchQuery;
 use OCP\DB\QueryBuilder\IQueryBuilder;
 use OCP\Files\File;
-use OCP\Files\FileInfo;
 use OCP\Files\Folder;
 use OCP\Files\IRootFolder;
 use OCP\Files\Node;
 use OCP\Files\Search\ISearchBinaryOperator;
 use OCP\Files\Search\ISearchComparison;
 use OCP\IDBConnection;
-use OCP\IL10N;
 use OCP\Share\IManager;
 use Psr\Log\LoggerInterface;
 
@@ -32,18 +30,15 @@ class TracksService {
 
 	public const TRACK_MIME_TYPES = ['application/gpx+xml'];
 
-	private $qb;
-
 	public function __construct(
-		private LoggerInterface $logger,
-		private IL10N $l10n,
-		private IRootFolder $root,
-		private IManager $shareManager,
-		private IDBConnection $dbconnection,
+		private readonly LoggerInterface $logger,
+		private readonly IRootFolder $root,
+		private readonly IManager $shareManager,
+		private readonly IDBConnection $dbconnection,
 	) {
 	}
 
-	public function rescan($userId) {
+	public function rescan(string $userId) {
 		$userFolder = $this->root->getUserFolder($userId);
 		$tracks = $this->gatherTrackFiles($userFolder, true);
 		$this->deleteAllTracksFromDB($userId);
@@ -53,8 +48,8 @@ class TracksService {
 		}
 	}
 
-	public function addByFile(Node $file) {
-		$userFolder = $this->root->getUserFolder($file->getOwner()->getUID());
+	public function addByFile(Node $file): void {
+		$this->root->getUserFolder($file->getOwner()->getUID());
 		if ($this->isTrack($file)) {
 			$this->addTrackToDB($file->getOwner()->getUID(), $file->getId(), $file);
 		}
@@ -79,7 +74,7 @@ class TracksService {
 		}
 	}
 
-	public function safeAddByFileIdUserId($fileId, $userId) {
+	public function safeAddByFileIdUserId($fileId, string $userId): void {
 		$userFolder = $this->root->getUserFolder($userId);
 		$files = $userFolder->getById($fileId);
 		if (empty($files)) {
@@ -91,7 +86,7 @@ class TracksService {
 		}
 	}
 
-	public function safeAddByFolderIdUserId($folderId, $userId) {
+	public function safeAddByFolderIdUserId($folderId, string $userId): void {
 		$folders = $this->root->getById($folderId);
 		if (empty($folders)) {
 			return;
@@ -124,7 +119,7 @@ class TracksService {
 		}
 	}
 
-	public function addByFolder(Node $folder) {
+	public function addByFolder(Node $folder): void {
 		$tracks = $this->gatherTrackFiles($folder, true);
 		foreach ($tracks as $track) {
 			$this->addTrackToDB($folder->getOwner()->getUID(), $track->getId(), $track);
@@ -133,7 +128,7 @@ class TracksService {
 
 	// delete track only if it's not accessible to user anymore
 	// it might have been shared multiple times by different users
-	public function safeDeleteByFileIdUserId($fileId, $userId) {
+	public function safeDeleteByFileIdUserId(int $fileId, string $userId): void {
 		$userFolder = $this->root->getUserFolder($userId);
 		$files = $userFolder->getById($fileId);
 		if (!is_array($files) or count($files) === 0) {
@@ -141,11 +136,11 @@ class TracksService {
 		}
 	}
 
-	public function deleteByFile(Node $file) {
+	public function deleteByFile(Node $file): void {
 		$this->deleteByFileId($file->getId());
 	}
 
-	public function deleteByFolder(Node $folder) {
+	public function deleteByFolder(Node $folder): void {
 		$tracks = $this->gatherTrackFiles($folder, true);
 		foreach ($tracks as $track) {
 			$this->deleteByFileId($track->getId());
@@ -153,7 +148,7 @@ class TracksService {
 	}
 
 	// delete folder tracks only if it's not accessible to user anymore
-	public function safeDeleteByFolderIdUserId($folderId, $userId) {
+	public function safeDeleteByFolderIdUserId($folderId, string $userId): void {
 		$userFolder = $this->root->getUserFolder($userId);
 		$folders = $userFolder->getById($folderId);
 		if (is_array($folders) and count($folders) === 1) {
@@ -165,14 +160,17 @@ class TracksService {
 		}
 	}
 
-	private function gatherTrackFiles(Folder $folder, bool $recursive) {
+	/**
+	 * @return mixed[]
+	 */
+	private function gatherTrackFiles(Folder $folder, bool $recursive): array {
 		$notes = [];
 		$nodes = $folder->getDirectoryListing();
 		foreach ($nodes as $node) {
 			if ($node instanceof Folder and $recursive) {
 				try {
 					$notes = array_merge($notes, $this->gatherTrackFiles($node, $recursive));
-				} catch (\OCP\Files\StorageNotAvailableException|\Exception $e) {
+				} catch (\OCP\Files\StorageNotAvailableException|\Exception) {
 					$msg = 'WARNING: Could not access ' . $node->getName();
 					echo($msg . "\n");
 					$this->logger->error($msg);
@@ -193,7 +191,7 @@ class TracksService {
 		return in_array($file->getMimetype(), self::TRACK_MIME_TYPES);
 	}
 
-	private function dbRowToTrack($row, $folder, $userFolder, $defaultMap, $ignoredPaths) {
+	private function dbRowToTrack(array $row, $folder, $userFolder, bool $defaultMap, array $ignoredPaths): ?array {
 		// avoid tracks that are not in "this map's" folder
 		$files = $folder->getById(intval($row['file_id']));
 		if (empty($files)) {
@@ -213,7 +211,7 @@ class TracksService {
 		$path = $userFolder->getRelativePath($file->getPath());
 		$isIgnored = false;
 		foreach ($ignoredPaths as $ignoredPath) {
-			if (str_starts_with($path, $ignoredPath)) {
+			if (str_starts_with((string)$path, (string)$ignoredPath)) {
 				$isIgnored = true;
 				break;
 			}
@@ -240,7 +238,10 @@ class TracksService {
 	}
 
 
-	public function getTracksFromDB(string $userId, ?Folder $folder = null, bool $respectNomediaAndNoimage = true, bool $hideTracksOnCustomMaps = false, bool $hideTracksInMapsFolder = true) {
+	/**
+	 * @return mixed[]
+	 */
+	public function getTracksFromDB(string $userId, ?Folder $folder = null, bool $respectNomediaAndNoimage = true, bool $hideTracksOnCustomMaps = false, bool $hideTracksInMapsFolder = true): array {
 		$ignoredPaths = $respectNomediaAndNoimage ? $this->getIgnoredPaths($userId, $folder, $hideTracksOnCustomMaps) : [];
 		if ($hideTracksInMapsFolder) {
 			$ignoredPaths[] = '/Maps';
@@ -275,12 +276,11 @@ class TracksService {
 	/**
 	 * @param $userId
 	 * @param $folder
-	 * @return array
 	 * @throws \OCP\Files\NotFoundException
 	 * @throws \OCP\Files\NotPermittedException
 	 * @throws \OC\User\NoUserException
 	 */
-	private function getIgnoredPaths($userId, $folder = null, $hideImagesOnCustomMaps = true) {
+	private function getIgnoredPaths(string $userId, ?\OCP\Files\Folder $folder = null, bool $hideImagesOnCustomMaps = true): array {
 		$ignoredPaths = [];
 		$userFolder = $this->root->getUserFolder($userId);
 		if (is_null($folder)) {
@@ -294,9 +294,7 @@ class TracksService {
 		if ($hideImagesOnCustomMaps) {
 			$ignoreFileMimetypes[] = 'application/x-nextcloud-maps';
 		}
-		$func = function (string $i): SearchComparison {
-			return new SearchComparison(ISearchComparison::COMPARE_EQUAL, 'mimetype', $i);
-		};
+		$func = (fn (string $i): SearchComparison => new SearchComparison(ISearchComparison::COMPARE_EQUAL, 'mimetype', $i));
 		$excludedNodes = $folder->search(new SearchQuery(
 			new SearchBinaryOperator(ISearchBinaryOperator::OPERATOR_OR, array_map(
 				$func,
@@ -312,7 +310,7 @@ class TracksService {
 		return $ignoredPaths;
 	}
 
-	public function getTrackFromDB(int $id, $userId = null) {
+	public function getTrackFromDB(int $id, $userId = null): ?array {
 		$track = null;
 		$qb = $this->dbconnection->getQueryBuilder();
 		$qb->select('id', 'file_id', 'color', 'metadata', 'etag')
@@ -362,7 +360,7 @@ class TracksService {
 		return $track;
 	}
 
-	public function getTrackByFileIDFromDB(int $fileId, ?string $userId = null) {
+	public function getTrackByFileIDFromDB(int $fileId, ?string $userId = null): ?array {
 		$track = null;
 		$qb = $this->dbconnection->getQueryBuilder();
 		$qb->select('id', 'file_id', 'color', 'metadata', 'etag')
@@ -424,8 +422,7 @@ class TracksService {
 				'etag' => $qb->createNamedParameter($etag, IQueryBuilder::PARAM_STR)
 			]);
 		$qb->executeStatement();
-		$trackId = $qb->getLastInsertId();
-		return $trackId;
+		return $qb->getLastInsertId();
 	}
 
 	public function editTrackInDB(int $id, ?string $color, ?string $metadata, ?string $etag): void {
@@ -499,8 +496,7 @@ class TracksService {
 		$qb->executeStatement();
 	}
 
-	public function generateTrackMetadata($file) {
-		$DISTANCE_BETWEEN_SHORT_POINTS = 300;
+	public function generateTrackMetadata($file): ?string {
 		$STOPPED_SPEED_THRESHOLD = 0.9;
 
 		$name = $file->getName();
@@ -512,8 +508,6 @@ class TracksService {
 		$total_duration = 0;
 		$date_begin = null;
 		$date_end = null;
-
-		$distAccCumulEle = 0;
 		$pos_elevation = 0;
 		$neg_elevation = 0;
 		$min_elevation = null;
@@ -523,7 +517,6 @@ class TracksService {
 		$moving_time = 0;
 		$moving_distance = 0;
 		$stopped_distance = 0;
-		$moving_max_speed = 0;
 		$moving_avg_speed = 0;
 		$stopped_time = 0;
 		$north = null;
@@ -892,8 +885,7 @@ class TracksService {
 				$maxSpeed = $segmentMaxSpeed;
 			}
 		}
-
-		$result = sprintf('{"lat":%s, "lng":%s, "name": "%s", "distance": %.3f, "duration": %d, "begin": %d, "end": %d, "posel": %.2f, "negel": %.2f, "minel": %.2f, "maxel": %.2f, "maxspd": %.2f, "avgspd": %.2f, "movtime": %d, "stptime": %d, "movavgspd": %s, "n": %.8f, "s": %.8f, "e": %.8f, "w": %.8f, "trnl": %s, "lnkurl": "%s", "lnktxt": "%s", "movpace": %.2f}',
+		return sprintf('{"lat":%s, "lng":%s, "name": "%s", "distance": %.3f, "duration": %d, "begin": %d, "end": %d, "posel": %.2f, "negel": %.2f, "minel": %.2f, "maxel": %.2f, "maxspd": %.2f, "avgspd": %.2f, "movtime": %d, "stptime": %d, "movavgspd": %s, "n": %.8f, "s": %.8f, "e": %.8f, "w": %.8f, "trnl": %s, "lnkurl": "%s", "lnktxt": "%s", "movpace": %.2f}',
 			$lat,
 			$lon,
 			str_replace('"', "'", $name),
@@ -903,8 +895,8 @@ class TracksService {
 			($date_end !== null) ? $date_end->getTimestamp() : -1,
 			$pos_elevation,
 			$neg_elevation,
-			($min_elevation !== null) ? $min_elevation : -1000,
-			($max_elevation !== null) ? $max_elevation : -1000,
+			$min_elevation ?? -1000,
+			$max_elevation ?? -1000,
 			$maxSpeed,
 			$avg_speed,
 			$moving_time,
@@ -919,10 +911,12 @@ class TracksService {
 			str_replace('"', "'", $linktext),
 			$moving_pace
 		);
-		return $result;
 	}
 
-	private function getDistanceFilteredPoints($points) {
+	/**
+	 * @return mixed[]
+	 */
+	private function getDistanceFilteredPoints($points): array {
 		$DISTANCE_THRESHOLD = 10;
 
 		$distFilteredPoints = [];
@@ -940,7 +934,7 @@ class TracksService {
 		return $distFilteredPoints;
 	}
 
-	private function getMaxSpeed($points) {
+	private function getMaxSpeed(array $points): float|int {
 		$maxSpeed = 0;
 
 		if (count($points) > 0) {
@@ -969,7 +963,7 @@ class TracksService {
 	/**
 	 * inspired by https://www.gpsvisualizer.com/tutorials/elevation_gain.html
 	 */
-	private function getElevationGainLoss($points) {
+	private function getElevationGainLoss(array $points): array {
 		$ELEVATION_THRESHOLD = 6;
 		$gain = 0;
 		$loss = 0;
@@ -996,7 +990,7 @@ class TracksService {
 /*
  * return distance between these two gpx points in meters
  */
-function distance($p1, $p2) {
+function distance(\SimpleXMLElement $p1, \SimpleXMLElement $p2): int|float {
 
 	$lat1 = (float)$p1['lat'];
 	$long1 = (float)$p1['lon'];

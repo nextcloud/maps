@@ -11,7 +11,7 @@ use Rector\Php80\Rector\Class_\ClassPropertyAssignToConstructorPromotionRector;
 
 return RectorConfig::configure()
 	->withPaths([
-		#__DIR__ . '/lib',
+		__DIR__ . '/lib',
 		__DIR__ . '/tests/Unit',
 	])
 	->withSkip([

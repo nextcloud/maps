@@ -31,7 +31,6 @@ use OCP\AppFramework\Db\MultipleObjectsReturnedException;
 use OCP\AppFramework\Db\QBMapper;
 use OCP\DB\Exception;
 use OCP\DB\QueryBuilder\IQueryBuilder;
-use OCP\Files\IRootFolder;
 use OCP\Files\NotFoundException;
 use OCP\IDBConnection;
 use OCP\Security\ISecureRandom;
@@ -40,13 +39,11 @@ use OCP\Security\ISecureRandom;
 class DeviceShareMapper extends QBMapper {
 	/* @var ISecureRandom */
 	private $secureRandom;
-	private $root;
 
-	public function __construct(IDBConnection $db, ISecureRandom $secureRandom, IRootFolder $root) {
+	public function __construct(IDBConnection $db, ISecureRandom $secureRandom) {
 		parent::__construct($db, 'maps_device_shares');
 
 		$this->secureRandom = $secureRandom;
-		$this->root = $root;
 	}
 
 	/**

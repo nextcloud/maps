@@ -29,7 +29,7 @@ use OCP\AppFramework\Db\Entity;
 /**
  * @method string getToken()
  * @method string getCategory()
- * @method string getAllowEdits()
+ * @method bool getAllowEdits()
  * @method string getOwner()
  * @method string setToken(string $token)
  * @method string setCategory(string $category)

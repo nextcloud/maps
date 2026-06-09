@@ -14,7 +14,6 @@
 
 namespace OCA\Maps\Controller;
 
-use OCA\Maps\DB\FavoriteShareMapper;
 use OCA\Maps\Service\FavoritesService;
 use OCP\App\IAppManager;
 use OCP\AppFramework\Controller;
@@ -35,24 +34,15 @@ use OCP\Share\IManager;
 
 class FavoritesController extends Controller {
 
-	private string $userId;
 	private \OCP\Files\Folder $userFolder;
-	private IConfig $config;
-	private string $appVersion;
-	private IManager $shareManager;
-	private IUserManager $userManager;
-	private IGroupManager $groupManager;
-	private string $dbtype;
-	private IL10N $l;
-	private FavoritesService $favoritesService;
-	private IDateTimeZone $dateTimeZone;
-	private ?string $defaultFavoritsJSON;
+	private readonly string $appVersion;
+	private readonly IL10N $l;
+	private readonly IDateTimeZone $dateTimeZone;
+	private readonly ?string $defaultFavoritsJSON;
 	protected $appName;
 
-	/* @var FavoriteShareMapper */
-	private $favoriteShareMapper;
-
-	public function __construct($AppName,
+	public function __construct(
+		$AppName,
 		IRequest $request,
 		IServerContainer $serverContainer,
 		IConfig $config,
@@ -61,28 +51,20 @@ class FavoritesController extends Controller {
 		IUserManager $userManager,
 		IGroupManager $groupManager,
 		IL10N $l,
-		FavoritesService $favoritesService,
+		private readonly FavoritesService $favoritesService,
 		IDateTimeZone $dateTimeZone,
-		FavoriteShareMapper $favoriteShareMapper,
-		$UserId) {
+		private readonly \OCA\Maps\DB\FavoriteShareMapper $favoriteShareMapper,
+		private readonly string $userId,
+	) {
 		parent::__construct($AppName, $request);
-		$this->favoritesService = $favoritesService;
 		$this->dateTimeZone = $dateTimeZone;
 		$this->appName = $AppName;
 		$this->appVersion = $config->getAppValue('maps', 'installed_version');
-		$this->userId = $UserId;
-		$this->userManager = $userManager;
-		$this->groupManager = $groupManager;
 		$this->l = $l;
-		$this->dbtype = $config->getSystemValue('dbtype');
-		// IConfig object
-		$this->config = $config;
-		if ($UserId !== '' and $UserId !== null and $serverContainer !== null) {
+		if ($this->userId !== '' and $this->userId !== null and $serverContainer !== null) {
 			// path of user files folder relative to DATA folder
-			$this->userFolder = $serverContainer->getUserFolder($UserId);
+			$this->userFolder = $serverContainer->getUserFolder($this->userId);
 		}
-		$this->shareManager = $shareManager;
-		$this->favoriteShareMapper = $favoriteShareMapper;
 		$this->defaultFavoritsJSON = json_encode([
 			'type' => 'FeatureCollection',
 			'features' => []
@@ -90,14 +72,12 @@ class FavoritesController extends Controller {
 	}
 
 	/**
-	 * @param \OCP\Files\Folder $folder
-	 * @return mixed
 	 * @throws \OCP\Files\NotPermittedException
 	 */
 	private function getJSONFavoritesFile(\OCP\Files\Folder $folder): \OCP\Files\Node {
 		try {
 			$file = $folder->get('.favorites.json');
-		} catch (NotFoundException $e) {
+		} catch (NotFoundException) {
 			$file = $folder->newFile('.favorites.json', $content = $this->defaultFavoritsJSON);
 		}
 		return $file;
@@ -105,12 +85,10 @@ class FavoritesController extends Controller {
 
 	/**
 	 * @NoAdminRequired
-	 * @param ?int $myMapId
-	 * @return DataResponse
 	 * @throws \OCP\Files\NotPermittedException
 	 */
 	public function getFavorites(?int $myMapId = null): DataResponse {
-		if (is_null($myMapId) || $myMapId === '') {
+		if (is_null($myMapId) || $myMapId === 0) {
 			$favorites = $this->favoritesService->getFavoritesFromDB($this->userId);
 		} else {
 			$folders = $this->userFolder->getById($myMapId);
@@ -123,21 +101,13 @@ class FavoritesController extends Controller {
 
 	/**
 	 * @NoAdminRequired
-	 * @param string|null $name
-	 * @param float $lat
-	 * @param float $lng
-	 * @param string|null $category
-	 * @param string|null $comment
-	 * @param string|null $extensions
-	 * @param int|null $myMapId
-	 * @return DataResponse
 	 * @throws NotFoundException
 	 * @throws \OCP\Files\InvalidPathException
 	 * @throws \OCP\Files\NotPermittedException
 	 */
 	public function addFavorite(?string $name, float $lat, float $lng, ?string $category, ?string $comment, ?string $extensions, ?int $myMapId = null): DataResponse {
-		if (is_numeric($lat) && is_numeric($lng)) {
-			if (is_null($myMapId) || $myMapId === '') {
+		if (is_numeric($lng)) {
+			if (is_null($myMapId) || $myMapId === 0) {
 				$favoriteId = $this->favoritesService->addFavoriteToDB($this->userId, $name, $lat, $lng, $category, $comment, $extensions);
 				$favorite = $this->favoritesService->getFavoriteFromDB($favoriteId);
 				return new DataResponse($favorite);
@@ -163,15 +133,12 @@ class FavoritesController extends Controller {
 
 	/**
 	 * @NoAdminRequired
-	 * @param array $favorites
-	 * @param int|null $myMapId
-	 * @return DataResponse
 	 * @throws NotFoundException
 	 * @throws \OCP\Files\InvalidPathException
 	 * @throws \OCP\Files\NotPermittedException
 	 */
 	public function addFavorites(array $favorites, ?int $myMapId = null): DataResponse {
-		if (is_null($myMapId) || $myMapId === '') {
+		if (is_null($myMapId) || $myMapId === 0) {
 			$favoritesAfter = [];
 			foreach ($favorites as $favorite) {
 				if (is_numeric($favorite->lat) && is_numeric($favorite->lng)) {
@@ -205,23 +172,13 @@ class FavoritesController extends Controller {
 
 	/**
 	 * @NoAdminRequired
-	 * @param int $id
-	 * @param string|null $name
-	 * @param float $lat
-	 * @param float $lng
-	 * @param string|null $category
-	 * @param string|null $comment
-	 * @param string|null $extensions
-	 * @param int|null $myMapId
-	 * @return DataResponse
 	 * @throws \OCP\Files\NotPermittedException
 	 */
 	public function editFavorite(int $id, ?string $name, float $lat, float $lng, ?string $category, ?string $comment, ?string $extensions, ?int $myMapId = null): DataResponse {
-		if (is_null($myMapId) || $myMapId === '') {
+		if (is_null($myMapId) || $myMapId === 0) {
 			$favorite = $this->favoritesService->getFavoriteFromDB($id, $this->userId);
 			if ($favorite !== null) {
-				if (($lat === null || is_numeric($lat))
-					&& ($lng === null || is_numeric($lng))
+				if (is_numeric($lng)
 				) {
 					$this->favoritesService->editFavoriteInDB($id, $name, $lat, $lng, $category, $comment, $extensions);
 					$editedFavorite = $this->favoritesService->getFavoriteFromDB($id);
@@ -236,10 +193,9 @@ class FavoritesController extends Controller {
 			$folders = $this->userFolder->getById($myMapId);
 			$folder = array_shift($folders);
 			$file = $this->getJSONFavoritesFile($folder);
-			$favorite = $this->favoritesService->getFavoriteFromJSON($file, $id, $this->userId);
+			$favorite = $this->favoritesService->getFavoriteFromJSON($file, $id);
 			if ($favorite !== null) {
-				if (($lat === null || is_numeric($lat))
-					&& ($lng === null || is_numeric($lng))
+				if (is_numeric($lng)
 				) {
 					$this->favoritesService->editFavoriteInJSON($file, $id, $name, $lat, $lng, $category, $comment, $extensions);
 					$editedFavorite = $this->favoritesService->getFavoriteFromJSON($file, $id);
@@ -255,17 +211,13 @@ class FavoritesController extends Controller {
 
 	/**
 	 * @NoAdminRequired
-	 * @param array $categories
-	 * @param string $newName
-	 * @param int|null $myMapId
-	 * @return DataResponse
 	 * @throws \OCP\DB\Exception
 	 * @throws \OCP\Files\NotPermittedException
 	 */
 	public function renameCategories(array $categories, string $newName, ?int $myMapId = null): DataResponse {
 		if (is_array($categories)) {
 			foreach ($categories as $cat) {
-				if (is_null($myMapId) || $myMapId === '') {
+				if (is_null($myMapId) || $myMapId === 0) {
 					$this->favoritesService->renameCategoryInDB($this->userId, $cat, $newName);
 
 					// Rename share if one exists
@@ -273,7 +225,7 @@ class FavoritesController extends Controller {
 						$share = $this->favoriteShareMapper->findByOwnerAndCategory($this->userId, $cat);
 						$share->setCategory($newName);
 						$this->favoriteShareMapper->update($share);
-					} catch (DoesNotExistException|MultipleObjectsReturnedException $e) {
+					} catch (DoesNotExistException|MultipleObjectsReturnedException) {
 					}
 				} else {
 					$folders = $this->userFolder->getById($myMapId);
@@ -288,13 +240,10 @@ class FavoritesController extends Controller {
 
 	/**
 	 * @NoAdminRequired
-	 * @param int $id
-	 * @param int|null $myMapId
-	 * @return DataResponse
 	 * @throws \OCP\Files\NotPermittedException
 	 */
 	public function deleteFavorite(int $id, ?int $myMapId = null): DataResponse {
-		if (is_null($myMapId) || $myMapId === '') {
+		if (is_null($myMapId) || $myMapId === 0) {
 			$favorite = $this->favoritesService->getFavoriteFromDB($id, $this->userId);
 			if ($favorite !== null) {
 				$this->favoritesService->deleteFavoriteFromDB($id);
@@ -313,13 +262,10 @@ class FavoritesController extends Controller {
 
 	/**
 	 * @NoAdminRequired
-	 * @param array $ids
-	 * @param int|null $myMapId
-	 * @return DataResponse
 	 * @throws \OCP\Files\NotPermittedException
 	 */
 	public function deleteFavorites(array $ids, ?int $myMapId = null): DataResponse {
-		if (is_null($myMapId) || $myMapId === '') {
+		if (is_null($myMapId) || $myMapId === 0) {
 			$this->favoritesService->deleteFavoritesFromDB($ids, $this->userId);
 		} else {
 			$folders = $this->userFolder->getById($myMapId);
@@ -332,13 +278,11 @@ class FavoritesController extends Controller {
 
 	/**
 	 * @NoAdminRequired
-	 * @param int|null $myMapId
-	 * @return DataResponse
 	 * @throws \OCP\Files\NotPermittedException
 	 * @throws \OC\User\NoUserException
 	 */
 	public function getSharedCategories(?int $myMapId = null): DataResponse {
-		if (is_null($myMapId) || $myMapId === '') {
+		if (is_null($myMapId) || $myMapId === 0) {
 			$categories = $this->favoriteShareMapper->findAllByOwner($this->userId);
 		} else {
 			$categories = $this->favoriteShareMapper->findAllByMapId($this->userId, $myMapId);
@@ -349,8 +293,6 @@ class FavoritesController extends Controller {
 
 	/**
 	 * @NoAdminRequired
-	 * @param string $category
-	 * @return DataResponse
 	 */
 	public function shareCategory(string $category): DataResponse {
 		if ($this->favoritesService->countFavorites($this->userId, [$category], null, null) === 0) {
@@ -368,8 +310,6 @@ class FavoritesController extends Controller {
 
 	/**
 	 * @NoAdminRequired
-	 * @param string $category
-	 * @return DataResponse
 	 */
 	public function unShareCategory(string $category): DataResponse {
 		if ($this->favoritesService->countFavorites($this->userId, [$category], null, null) === 0) {
@@ -385,17 +325,13 @@ class FavoritesController extends Controller {
 
 	/**
 	 * @NoAdminRequired
-	 * @param string $category
-	 * @param int $targetMapId
-	 * @param int|null $myMapId
-	 * @return DataResponse
 	 * @throws DoesNotExistException
 	 * @throws MultipleObjectsReturnedException
 	 * @throws \OCP\Files\NotPermittedException
 	 * @throws \OC\User\NoUserException
 	 */
 	public function addShareCategoryToMap(string $category, int $targetMapId, ?int $myMapId = null): DataResponse {
-		if (is_null($myMapId) || $myMapId === '') {
+		if (is_null($myMapId) || $myMapId === 0) {
 			$share = $this->favoriteShareMapper->findByOwnerAndCategory($this->userId, $category);
 		} else {
 			$share = $this->favoriteShareMapper->findByMapIdAndCategory($this->userId, $myMapId, $category);
@@ -407,10 +343,10 @@ class FavoritesController extends Controller {
 		}
 		try {
 			$file = $folder->get('.favorite_shares.json');
-		} catch (NotFoundException $e) {
+		} catch (NotFoundException) {
 			$file = $folder->newFile('.favorite_shares.json', $content = '[]');
 		}
-		$data = json_decode($file->getContent(), true);
+		$data = json_decode((string)$file->getContent(), true);
 		foreach ($data as $s) {
 			if ($s->token === $share->token) {
 				return new DataResponse($this->l->t('Share was already on map'));
@@ -424,9 +360,6 @@ class FavoritesController extends Controller {
 
 	/**
 	 * @NoAdminRequired
-	 * @param string $category
-	 * @param int $myMapId
-	 * @return DataResponse
 	 */
 	public function removeShareCategoryFromMap(string $category, int $myMapId): DataResponse {
 		$d = $this->favoriteShareMapper->removeByMapIdAndCategory($this->userId, $myMapId, $category);
@@ -438,11 +371,6 @@ class FavoritesController extends Controller {
 
 	/**
 	 * @NoAdminRequired
-	 * @param array|null $categoryList
-	 * @param int|null $begin
-	 * @param int|null $end
-	 * @param bool $all
-	 * @return DataResponse
 	 * @throws NotFoundException
 	 * @throws \OCP\Files\NotPermittedException
 	 */
@@ -450,8 +378,7 @@ class FavoritesController extends Controller {
 		// sorry about ugly categoryList management:
 		// when an empty list is passed in http request, we get null here
 		if ($categoryList === null or (is_array($categoryList) and count($categoryList) === 0)) {
-			$response = new DataResponse($this->l->t('Nothing to export'), 400);
-			return $response;
+			return new DataResponse($this->l->t('Nothing to export'), 400);
 		}
 
 		// create /Maps directory if necessary
@@ -462,21 +389,17 @@ class FavoritesController extends Controller {
 		if ($userFolder->nodeExists('/Maps')) {
 			$mapsFolder = $userFolder->get('/Maps');
 			if (!($mapsFolder instanceof Folder)) {
-				$response = new DataResponse($this->l->t('/Maps is not a directory'), 400);
-				return $response;
+				return new DataResponse($this->l->t('/Maps is not a directory'), 400);
 			} elseif (!$mapsFolder->isCreatable()) {
-				$response = new DataResponse($this->l->t('/Maps directory is not writeable'), 400);
-				return $response;
+				return new DataResponse($this->l->t('/Maps directory is not writeable'), 400);
 			}
 		} else {
-			$response = new DataResponse($this->l->t('Impossible to create /Maps directory'), 400);
-			return $response;
+			return new DataResponse($this->l->t('Impossible to create /Maps directory'), 400);
 		}
 
 		$nbFavorites = $this->favoritesService->countFavorites($this->userId, $categoryList, $begin, $end);
 		if ($nbFavorites === 0) {
-			$response = new DataResponse($this->l->t('Nothing to export'), 400);
-			return $response;
+			return new DataResponse($this->l->t('Nothing to export'), 400);
 		}
 
 		// generate export file name
@@ -501,8 +424,6 @@ class FavoritesController extends Controller {
 
 	/**
 	 * @NoAdminRequired
-	 * @param string $path
-	 * @return DataResponse
 	 * @throws NotFoundException
 	 * @throws \OCP\Files\InvalidPathException
 	 */
@@ -514,7 +435,7 @@ class FavoritesController extends Controller {
 			$file = $userFolder->get($cleanpath);
 			if ($file->getType() === \OCP\Files\FileInfo::TYPE_FILE
 				and $file->isReadable()) {
-				$lowerFileName = strtolower($file->getName());
+				$lowerFileName = strtolower((string)$file->getName());
 				if ($this->endswith($lowerFileName, '.gpx') or $this->endswith($lowerFileName, '.kml') or $this->endswith($lowerFileName, '.kmz') or $this->endswith($lowerFileName, '.json') or $this->endswith($lowerFileName, '.geojson')) {
 					$result = $this->favoritesService->importFavorites($this->userId, $file);
 					return new DataResponse($result);
@@ -532,11 +453,6 @@ class FavoritesController extends Controller {
 		}
 	}
 
-	/**
-	 * @param string $string
-	 * @param string $test
-	 * @return bool
-	 */
 	private function endswith(string $string, string $test): bool {
 		$strlen = strlen($string);
 		$testlen = strlen($test);

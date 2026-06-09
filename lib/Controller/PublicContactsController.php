@@ -83,7 +83,7 @@ class PublicContactsController extends PublicPageController {
 		// Check whether share exists
 		try {
 			$share = $this->shareManager->getShareByToken($this->getToken());
-		} catch (ShareNotFound $e) {
+		} catch (ShareNotFound) {
 			// The share does not exist, we do not emit an ShareLinkAccessedEvent
 			throw new NotFoundException();
 		}
@@ -131,7 +131,7 @@ class PublicContactsController extends PublicPageController {
 							$result[] = $this->vCardToArray($permissions, $file, $vcard, $geo->getValue());
 						} elseif (is_countable($geo) && count($geo) > 0 && is_iterable($geo)) {
 							foreach ($geo as $g) {
-								if (strlen($g->getValue()) > 1) {
+								if (strlen((string)$g->getValue()) > 1) {
 									$result[] = $this->vCardToArray($permissions, $file, $vcard, $g->getValue());
 								}
 							}
@@ -145,7 +145,7 @@ class PublicContactsController extends PublicPageController {
 							if (isset($adr->parameters()['TYPE'])) {
 								$adrtype = $adr->parameters()['TYPE']->getValue();
 							}
-							if (is_string($geo) && strlen($geo) > 1) {
+							if (strlen($geo) > 1) {
 								$result[] = $this->vCardToArray($permissions, $file, $vcard, $geo, $adrtype, $adr->getValue(), $file->getId());
 							}
 						}
@@ -159,14 +159,6 @@ class PublicContactsController extends PublicPageController {
 	}
 
 	/**
-	 * @param int $sharePermissions
-	 * @param Node $file
-	 * @param \Sabre\VObject\Document $vcard
-	 * @param string $geo
-	 * @param string|null $adrtype
-	 * @param string|null $adr
-	 * @param int|null $fileId
-	 * @return array
 	 * @throws NotFoundException
 	 * @throws \OCP\Files\InvalidPathException
 	 */
@@ -191,7 +183,7 @@ class PublicContactsController extends PublicPageController {
 		} else {
 			$groups = '';
 		}
-		$result = [
+		return [
 			'FN' => $fn ?? $n ?? '???',
 			'UID' => $uid,
 			'HAS_PHOTO' => (isset($vcard->PHOTO) && $vcard->PHOTO !== null),
@@ -205,7 +197,6 @@ class PublicContactsController extends PublicPageController {
 			'isDeletable' => $file->isDeletable() && ($sharePermissions & (1 << 1)),
 			'isUpdateable' => $file->isUpdateable() && ($sharePermissions & (1 << 3)),
 		];
-		return $result;
 	}
 
 	private function N2FN(string $n): ?string {
@@ -223,8 +214,6 @@ class PublicContactsController extends PublicPageController {
 
 
 	/**
-	 * @param string $name
-	 * @return DataDisplayResponse
 	 * @throws NotFoundException
 	 * @throws NotPermittedException
 	 */

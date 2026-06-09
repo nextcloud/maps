@@ -78,7 +78,6 @@ class TracksControllerTest extends TestCase {
 
 		$this->tracksService = new TracksService(
 			$c->get(\Psr\Log\LoggerInterface::class),
-			$c->get(IFactory::class)->get('maps'),
 			$this->rootFolder,
 			$c->get(\OCP\Share\IManager::class),
 			$c->get(\OCP\IDBConnection::class)
@@ -125,8 +124,6 @@ class TracksControllerTest extends TestCase {
 
 	protected function tearDown(): void {
 		// in case there was a failure and something was not deleted
-		$this->app->getContainer();
-
 		$userfolder = $this->container->get(IRootFolder::class)->getUserFolder('test');
 		// delete files
 		if ($userfolder->nodeExists('testFile1.gpx')) {
@@ -241,5 +238,4 @@ class TracksControllerTest extends TestCase {
 		$data = $resp->getData();
 		$this->assertEquals('No such track', $data);
 	}
-
 }

@@ -23,9 +23,9 @@ class FavoritesApiController extends ApiController {
 	public function __construct(
 		string $appName,
 		IRequest $request,
-		private IL10N $l,
-		private FavoritesService $favoritesService,
-		private ?string $userId,
+		private readonly IL10N $l,
+		private readonly FavoritesService $favoritesService,
+		private readonly ?string $userId,
 	) {
 		parent::__construct($appName, $request,
 			'PUT, POST, GET, DELETE, PATCH, OPTIONS',
@@ -38,8 +38,6 @@ class FavoritesApiController extends ApiController {
 	 * @NoCSRFRequired
 	 * @CORS
 	 * @param $apiversion
-	 * @param int $pruneBefore
-	 * @return DataResponse
 	 */
 	public function getFavorites($apiversion, int $pruneBefore = 0): DataResponse {
 		$now = new \DateTime();
@@ -66,7 +64,6 @@ class FavoritesApiController extends ApiController {
 	 * @param $category
 	 * @param $comment
 	 * @param $extensions
-	 * @return DataResponse
 	 */
 	public function addFavorite($apiversion, $name, $lat, $lng, $category, $comment, $extensions): DataResponse {
 		if (is_numeric($lat) && is_numeric($lng)) {
@@ -89,7 +86,6 @@ class FavoritesApiController extends ApiController {
 	 * @param $category
 	 * @param $comment
 	 * @param $extensions
-	 * @return DataResponse
 	 */
 	public function editFavorite($id, $name, $lat, $lng, $category, $comment, $extensions): DataResponse {
 		$favorite = $this->favoritesService->getFavoriteFromDB($id, $this->userId);
@@ -113,7 +109,6 @@ class FavoritesApiController extends ApiController {
 	 * @NoCSRFRequired
 	 * @CORS
 	 * @param $id
-	 * @return DataResponse
 	 */
 	public function deleteFavorite($id): DataResponse {
 		$favorite = $this->favoritesService->getFavoriteFromDB($id, $this->userId);

@@ -27,13 +27,13 @@ class LookupMissingGeoJob extends QueuedJob {
 	 */
 	public function __construct(
 		ITimeFactory $timeFactory,
-		private AddressService $addressService,
-		private IJobList $jobList,
+		private readonly AddressService $addressService,
+		private readonly IJobList $jobList,
 	) {
 		parent::__construct($timeFactory);
 	}
 
-	public function run($argument) {
+	public function run($argument): void {
 		\OCP\Server::get(LoggerInterface::class)->debug('Maps address lookup cronjob executed');
 		// lookup at most 200 addresses
 		if (!$this->addressService->lookupMissingGeo(200)) {

@@ -78,7 +78,7 @@ class PublicPhotosController extends PublicPageController {
 		// Check whether share exists
 		try {
 			$share = $this->shareManager->getShareByToken($this->getToken());
-		} catch (ShareNotFound $e) {
+		} catch (ShareNotFound) {
 			// The share does not exist, we do not emit an ShareLinkAccessedEvent
 			throw new NotFoundException();
 		}
@@ -115,7 +115,7 @@ class PublicPhotosController extends PublicPageController {
 			$owner = $share->getShareOwner();
 			$pre_path = $this->root->getUserFolder($owner)->getPath();
 			$result = $this->geophotoService->getAll($owner, $folder, true, false, false);
-			$photos = array_map(function ($photo) use ($folder, $permissions, $pre_path) {
+			$photos = array_map(function (array $photo) use ($folder, $permissions, $pre_path): \stdClass {
 				$photo_object = (object)$photo;
 				$photo_object->isCreatable = ($permissions & (1 << 2)) && $photo['isCreatable'];
 				$photo_object->isUpdateable = ($permissions & (1 << 1)) && $photo['isUpdateable'];
@@ -147,7 +147,7 @@ class PublicPhotosController extends PublicPageController {
 			$owner = $share->getShareOwner();
 			$pre_path = $this->root->getUserFolder($owner)->getPath();
 			$result = $this->geophotoService->getNonLocalized($owner, $folder, true, false, false, $timezone, $limit, $offset);
-			$photos = array_map(function ($photo) use ($folder, $permissions, $pre_path) {
+			$photos = array_map(function (array $photo) use ($folder, $permissions, $pre_path): \stdClass {
 				$photo_object = (object)$photo;
 				$photo_object->isCreatable = ($permissions & (1 << 2)) && $photo['isCreatable'];
 				$photo_object->isUpdateable = ($permissions & (1 << 1)) && $photo['isUpdateable'];

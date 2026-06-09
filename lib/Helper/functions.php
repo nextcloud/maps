@@ -28,9 +28,6 @@ use RuntimeException;
 
 /**
  * function remove_utf8_bom
- *
- * @param string $text
- * @return string
  */
 function remove_utf8_bom(string $text): string {
 	$bom = pack('H*', 'EFBBBF');

@@ -26,7 +26,6 @@ use OCP\Files\Node;
 use OCP\Files\NotFoundException;
 use OCP\Files\NotPermittedException;
 use OCP\IAppConfig;
-use OCP\IGroupManager;
 use OCP\IL10N;
 use OCP\IRequest;
 use OCP\ISession;
@@ -38,11 +37,7 @@ use OCP\Share\IShare;
 
 class PublicFavoritesController extends PublicPageController {
 
-	private IL10N $l;
-	private FavoritesService $favoritesService;
-	private ?string $defaultFavoritsJSON;
-	protected $appName;
-	protected $groupManager;
+	private readonly ?string $defaultFavoritsJSON;
 
 	public function __construct(
 		string $appName,
@@ -53,18 +48,13 @@ class PublicFavoritesController extends PublicPageController {
 		IInitialState $initialState,
 		IManager $shareManager,
 		IUserManager $userManager,
-		IGroupManager $groupManager,
-		IL10N $l,
-		FavoritesService $favoritesService,
-		private FavoriteShareMapper $favoriteShareMapper,
+		protected \OCP\IGroupManager $groupManager,
+		private readonly IL10N $l,
+		private readonly FavoritesService $favoritesService,
+		private readonly FavoriteShareMapper $favoriteShareMapper,
 		IEventDispatcher $eventDispatcher,
 	) {
 		parent::__construct($appName, $request, $session, $urlGenerator, $eventDispatcher, $appConfig, $initialState, $shareManager, $userManager);
-		$this->favoritesService = $favoritesService;
-		$this->appName = $appName;
-		$this->userManager = $userManager;
-		$this->groupManager = $groupManager;
-		$this->l = $l;
 		$this->shareManager = $shareManager;
 		$this->defaultFavoritsJSON = json_encode([
 			'type' => 'FeatureCollection',
@@ -98,7 +88,7 @@ class PublicFavoritesController extends PublicPageController {
 		// Check whether share exists
 		try {
 			$share = $this->shareManager->getShareByToken($this->getToken());
-		} catch (ShareNotFound $e) {
+		} catch (ShareNotFound) {
 			// The share does not exist, we do not emit an ShareLinkAccessedEvent
 			throw new NotFoundException();
 		}
@@ -121,15 +111,13 @@ class PublicFavoritesController extends PublicPageController {
 	}
 
 	/**
-	 * @param Folder $folder
 	 * @param $isCreatable
-	 * @return mixed
 	 * @throws NotPermittedException
 	 */
-	private function getJSONFavoritesFile(Folder $folder, $isCreatable): Node {
+	private function getJSONFavoritesFile(Folder $folder, bool $isCreatable): Node {
 		try {
 			$file = $folder->get('.favorites.json');
-		} catch (NotFoundException $e) {
+		} catch (NotFoundException) {
 			if ($isCreatable) {
 				$file = $folder->newFile('.favorites.json', $content = $this->defaultFavoritsJSON);
 			} else {
@@ -141,7 +129,6 @@ class PublicFavoritesController extends PublicPageController {
 	}
 
 	/**
-	 * @return DataResponse
 	 * @throws NotFoundException
 	 * @throws NotPermittedException
 	 */
@@ -156,7 +143,7 @@ class PublicFavoritesController extends PublicPageController {
 		$isReadable = (bool)($permissions & (1 << 0));
 		if ($isReadable) {
 			$favorites = $this->favoritesService->getFavoritesFromJSON($file);
-			$favorites = array_map(function ($favorite) use ($permissions) {
+			$favorites = array_map(function (array $favorite) use ($permissions): array {
 				$favorite['isCreatable'] = ($permissions & (1 << 2)) && $favorite['isCreatable'];
 				$favorite['isUpdateable'] = ($permissions & (1 << 1)) && $favorite['isUpdateable'];
 				$favorite['isDeletable'] = ($permissions & (1 << 3)) && $favorite['isDeletable'];
@@ -169,20 +156,13 @@ class PublicFavoritesController extends PublicPageController {
 	}
 
 	/**
-	 * @param string|null $name
-	 * @param float $lat
-	 * @param float $lng
-	 * @param string|null $category
-	 * @param string|null $comment
-	 * @param string|null $extensions
-	 * @return DataResponse
 	 * @throws NotFoundException
 	 * @throws NotPermittedException
 	 * @throws \OCP\Files\InvalidPathException
 	 */
 	#[PublicPage]
 	public function addFavorite(?string $name, float $lat, float $lng, ?string $category, ?string $comment, ?string $extensions): DataResponse {
-		if (is_numeric($lat) && is_numeric($lng)) {
+		if (is_numeric($lng)) {
 			$share = $this->getShare();
 			$permissions = $share->getPermissions();
 			$folder = $this->getShareNode();
@@ -203,8 +183,6 @@ class PublicFavoritesController extends PublicPageController {
 	}
 
 	/**
-	 * @param array $favorites
-	 * @return DataResponse
 	 * @throws NotFoundException
 	 * @throws NotPermittedException
 	 * @throws \OCP\Files\InvalidPathException
@@ -233,14 +211,6 @@ class PublicFavoritesController extends PublicPageController {
 	}
 
 	/**
-	 * @param int $id
-	 * @param string|null $name
-	 * @param float $lat
-	 * @param float $lng
-	 * @param string|null $category
-	 * @param string|null $comment
-	 * @param string|null $extensions
-	 * @return DataResponse
 	 * @throws NotFoundException
 	 * @throws NotPermittedException
 	 * @throws \OCP\Files\InvalidPathException
@@ -256,8 +226,7 @@ class PublicFavoritesController extends PublicPageController {
 		if ($isUpdateable) {
 			$favorite = $this->favoritesService->getFavoriteFromJSON($file, $id);
 			if ($favorite !== null) {
-				if (($lat === null || is_numeric($lat))
-					&& ($lng === null || is_numeric($lng))
+				if (is_numeric($lng)
 				) {
 					$this->favoritesService->editFavoriteInJSON($file, $id, $name, $lat, $lng, $category, $comment, $extensions);
 					$editedFavorite = $this->favoritesService->getFavoriteFromJSON($file, $id);
@@ -275,9 +244,6 @@ class PublicFavoritesController extends PublicPageController {
 	}
 
 	/**
-	 * @param array $categories
-	 * @param string $newName
-	 * @return DataResponse
 	 * @throws NotFoundException
 	 * @throws NotPermittedException
 	 * @throws \OCP\Files\InvalidPathException
@@ -304,8 +270,6 @@ class PublicFavoritesController extends PublicPageController {
 	}
 
 	/**
-	 * @param int $id
-	 * @return DataResponse
 	 * @throws NotFoundException
 	 * @throws NotPermittedException
 	 * @throws \OCP\Files\InvalidPathException
@@ -330,8 +294,6 @@ class PublicFavoritesController extends PublicPageController {
 	}
 
 	/**
-	 * @param array $ids
-	 * @return DataResponse
 	 * @throws NotFoundException
 	 * @throws NotPermittedException
 	 * @throws \OCP\Files\InvalidPathException

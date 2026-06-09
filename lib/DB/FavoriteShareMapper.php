@@ -124,14 +124,14 @@ class FavoriteShareMapper extends QBMapper {
 	public function findAllByFolder($folder, $isCreatable = true) {
 		try {
 			$file = $folder->get('.favorite_shares.json');
-		} catch (NotFoundException $e) {
+		} catch (NotFoundException) {
 			if ($isCreatable) {
 				$file = $folder->newFile('.favorite_shares.json', $content = '[]');
 			} else {
 				throw new NotFoundException();
 			}
 		}
-		return json_decode($file->getContent(), true);
+		return json_decode((string)$file->getContent(), true);
 	}
 
 	/**
@@ -184,10 +184,10 @@ class FavoriteShareMapper extends QBMapper {
 		}
 		try {
 			$file = $folder->get('.favorite_shares.json');
-		} catch (NotFoundException $e) {
+		} catch (NotFoundException) {
 			$file = $folder->newFile('.favorite_shares.json', $content = '[]');
 		}
-		$data = json_decode($file->getContent(), true);
+		$data = json_decode((string)$file->getContent(), true);
 		foreach ($data as $share) {
 			$c = $share['category'];
 			if ($c === $category) {
@@ -211,9 +211,9 @@ class FavoriteShareMapper extends QBMapper {
 
 		try {
 			$entity = $this->findByOwnerAndCategory($owner, $category);
-		} catch (DoesNotExistException $e) {
+		} catch (DoesNotExistException) {
 			$entity = $this->create($owner, $category);
-		} catch (MultipleObjectsReturnedException $e) {
+		} catch (MultipleObjectsReturnedException) {
 		}
 
 		return $entity;
@@ -227,7 +227,7 @@ class FavoriteShareMapper extends QBMapper {
 	public function removeByOwnerAndCategory($owner, $category) {
 		try {
 			$entity = $this->findByOwnerAndCategory($owner, $category);
-		} catch (DoesNotExistException|MultipleObjectsReturnedException $e) {
+		} catch (DoesNotExistException|MultipleObjectsReturnedException) {
 			return false;
 		}
 

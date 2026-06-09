@@ -31,19 +31,19 @@ use OCP\IRequest;
 //use function \OCA\Maps\Service\endswith;
 
 class DevicesController extends Controller {
-	private string $appVersion;
+	private readonly string $appVersion;
 	private Folder $userFolder;
 
 	public function __construct(
 		string $appName,
 		IRequest $request,
 		IAppConfig $appConfig,
-		private IL10N $l,
-		private DevicesService $devicesService,
-		private DeviceShareMapper $deviceShareMapper,
-		private IDateTimeZone $dateTimeZone,
-		private IRootFolder $root,
-		private ?string $userId,
+		private readonly IL10N $l,
+		private readonly DevicesService $devicesService,
+		private readonly DeviceShareMapper $deviceShareMapper,
+		private readonly IDateTimeZone $dateTimeZone,
+		private readonly IRootFolder $root,
+		private readonly ?string $userId,
 	) {
 		parent::__construct($appName, $request);
 		$this->appVersion = $appConfig->getAppValueString('installed_version');
@@ -215,7 +215,7 @@ class DevicesController extends Controller {
 			$file = $userFolder->get($cleanpath);
 			if ($file->getType() === \OCP\Files\FileInfo::TYPE_FILE
 				and $file->isReadable()) {
-				$lowerFileName = strtolower($file->getName());
+				$lowerFileName = strtolower((string)$file->getName());
 				if (str_ends_with($lowerFileName, '.gpx') || str_ends_with($lowerFileName, '.kml') || str_ends_with($lowerFileName, '.kmz')) {
 					$nbImported = $this->devicesService->importDevices($this->userId, $file);
 					return new DataResponse($nbImported);
@@ -239,7 +239,7 @@ class DevicesController extends Controller {
 	 */
 	#[NoAdminRequired]
 	public function getSharedDevices(?int $myMapId = null): DataResponse {
-		if (is_null($myMapId) || $myMapId === '') {
+		if (is_null($myMapId) || $myMapId === 0) {
 			$sharedDevices = [];
 		} else {
 			$folders = $this->userFolder->getById($myMapId);
@@ -274,7 +274,7 @@ class DevicesController extends Controller {
 	public function removeDeviceShare(string $token): DataResponse {
 		try {
 			$share = $this->deviceShareMapper->findByToken($token);
-		} catch (DoesNotExistException $e) {
+		} catch (DoesNotExistException) {
 			throw new NotFoundException();
 		}
 		$device = $this->devicesService->getDeviceFromDB($share->getDeviceId(), $this->userId);
@@ -287,14 +287,13 @@ class DevicesController extends Controller {
 
 	/**
 	 * @param $targetMapId
-	 * @return DataResponse
 	 * @throws NotFoundException
 	 */
 	#[NoAdminRequired]
 	public function addSharedDeviceToMap(string $token, $targetMapId): DataResponse {
 		try {
 			$share = $this->deviceShareMapper->findByToken($token);
-		} catch (DoesNotExistException $e) {
+		} catch (DoesNotExistException) {
 			return new DataResponse($this->l->t('Share not Found'), 404);
 		}
 		$folders = $this->userFolder->getById($targetMapId);
@@ -304,10 +303,10 @@ class DevicesController extends Controller {
 		}
 		try {
 			$file = $folder->get('.device_shares.json');
-		} catch (\OCP\Files\NotFoundException $e) {
+		} catch (\OCP\Files\NotFoundException) {
 			$file = $folder->newFile('.device_shares.json', $content = '[]');
 		}
-		$data = json_decode($file->getContent(), true);
+		$data = json_decode((string)$file->getContent(), true);
 		foreach ($data as $s) {
 			if ($s->token == $share->getToken()) {
 				return new DataResponse($this->l->t('Share was already on map'));
@@ -326,10 +325,10 @@ class DevicesController extends Controller {
 		}
 		try {
 			$file = $folder->get('.device_shares.json');
-		} catch (\OCP\Files\NotFoundException $e) {
+		} catch (\OCP\Files\NotFoundException) {
 			$file = $folder->newFile('.device_shares.json', $content = '[]');
 		}
-		$data = json_decode($file->getContent(), true);
+		$data = json_decode((string)$file->getContent(), true);
 		$shares = [];
 		$deleted = null;
 		foreach ($data as $share) {

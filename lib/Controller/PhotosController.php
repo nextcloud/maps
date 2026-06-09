@@ -32,10 +32,10 @@ class PhotosController extends Controller {
 	public function __construct(
 		string $appName,
 		IRequest $request,
-		private GeophotoService $geophotoService,
-		private PhotofilesService $photofilesService,
-		private IRootFolder $root,
-		private ?string $userId,
+		private readonly GeophotoService $geophotoService,
+		private readonly PhotofilesService $photofilesService,
+		private readonly IRootFolder $root,
+		private readonly ?string $userId,
 	) {
 		parent::__construct($appName, $request);
 	}
@@ -70,7 +70,7 @@ class PhotosController extends Controller {
 	#[NoCSRFRequired]
 	public function getNonLocalizedPhotos(?int $myMapId = null, ?string $timezone = null, int $limit = 250, int $offset = 0, $respectNoMediaAndNoimage = null, $hideImagesOnCustomMaps = null, $hideImagesInMapsFolder = null): DataResponse {
 		$userFolder = $this->root->getUserFolder($this->userId);
-		if (is_null($myMapId) || $myMapId === '') {
+		if (is_null($myMapId) || $myMapId === 0) {
 			$result = $this->geophotoService->getNonLocalized($this->userId, $userFolder, $respectNoMediaAndNoimage ?? true, $hideImagesOnCustomMaps ?? false, $hideImagesInMapsFolder ?? true, $timezone, $limit, $offset);
 		} else {
 			$folders = $userFolder->getById($myMapId);
@@ -85,9 +85,6 @@ class PhotosController extends Controller {
 	 * @param $paths
 	 * @param $lats
 	 * @param $lngs
-	 * @param bool $directory
-	 * @param bool $relative
-	 * @return DataResponse
 	 * @throws NoUserException
 	 * @throws NotFoundException
 	 * @throws NotPermittedException
@@ -135,7 +132,6 @@ class PhotosController extends Controller {
 
 	/**
 	 * @param $paths
-	 * @return DataResponse
 	 */
 	#[NoAdminRequired]
 	public function resetPhotosCoords($paths, $myMapId = null): DataResponse {

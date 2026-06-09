@@ -29,18 +29,17 @@ class RescanPhotos extends Command {
 	protected IUserManager $userManager;
 	protected OutputInterface $output;
 	protected IManager $encryptionManager;
-	protected PhotofilesService $photofilesService;
 	protected IConfig $config;
 
 	public function __construct(
 		IUserManager $userManager,
 		IManager $encryptionManager,
-		PhotofilesService $photofilesService,
-		IConfig $config) {
+		protected PhotofilesService $photofilesService,
+		IConfig $config,
+	) {
 		parent::__construct();
 		$this->userManager = $userManager;
 		$this->encryptionManager = $encryptionManager;
-		$this->photofilesService = $photofilesService;
 		$this->config = $config;
 	}
 
@@ -68,11 +67,6 @@ class RescanPhotos extends Command {
 			);
 	}
 
-	/**
-	 * @param InputInterface $input
-	 * @param OutputInterface $output
-	 * @return int
-	 */
 	protected function execute(InputInterface $input, OutputInterface $output): int {
 		if ($this->encryptionManager->isEnabled()) {
 			$output->writeln('Encryption is enabled. Aborted.');
@@ -86,7 +80,7 @@ class RescanPhotos extends Command {
 			echo "Extracting coordinates from photo is performed in a BackgroundJob \n";
 		}
 		if ($userId === null) {
-			$this->userManager->callForSeenUsers(function (IUser $user, ?string $pathToScan = null) use ($inBackground) {
+			$this->userManager->callForSeenUsers(function (IUser $user, ?string $pathToScan = null) use ($inBackground): void {
 				$this->rescanUserPhotos($user->getUID(), $inBackground, $pathToScan);
 			});
 		} else {
@@ -99,13 +93,10 @@ class RescanPhotos extends Command {
 	}
 
 	/**
-	 * @param string $userId
-	 * @param bool $inBackground
 	 * @param string $pathToScan
-	 * @return void
 	 * @throws \OCP\PreConditionNotMetException
 	 */
-	private function rescanUserPhotos(string $userId, bool $inBackground = true, ?string $pathToScan = null) {
+	private function rescanUserPhotos(string $userId, bool $inBackground = true, ?string $pathToScan = null): void {
 		echo '======== User ' . $userId . ' ========' . "\n";
 		$c = 1;
 		foreach ($this->photofilesService->rescan($userId, $inBackground, $pathToScan) as $path) {

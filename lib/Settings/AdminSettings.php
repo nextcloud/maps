@@ -3,22 +3,16 @@
 namespace OCA\Maps\Settings;
 
 use OCP\AppFramework\Http\TemplateResponse;
-use OCP\IConfig;
-use OCP\IL10N;
 use OCP\Settings\ISettings;
 
 class AdminSettings implements ISettings {
 
 	public function __construct(
-		private IL10N $l,
-		private IConfig $config,
+		private readonly \OCP\IAppConfig $appConfig,
 	) {
 	}
 
-	/**
-	 * @return TemplateResponse
-	 */
-	public function getForm() {
+	public function getForm(): TemplateResponse {
 		$keys = [
 			'osrmCarURL',
 			'osrmBikeURL',
@@ -33,7 +27,7 @@ class AdminSettings implements ISettings {
 		];
 		$parameters = [];
 		foreach ($keys as $k) {
-			$v = $this->config->getAppValue('maps', $k);
+			$v = $this->appConfig->getValueString('maps', $k);
 			$parameters[$k] = $v;
 		}
 
@@ -43,7 +37,7 @@ class AdminSettings implements ISettings {
 	/**
 	 * @return string the section ID, e.g. 'sharing'
 	 */
-	public function getSection() {
+	public function getSection(): string {
 		return 'additional';
 	}
 
@@ -54,7 +48,7 @@ class AdminSettings implements ISettings {
 	 *
 	 * E.g.: 70
 	 */
-	public function getPriority() {
+	public function getPriority(): int {
 		return 5;
 	}
 

@@ -22,17 +22,11 @@ use OCP\ICacheFactory;
 
 class UpdatePhotoByFileJob extends QueuedJob {
 
-	/** @var PhotofilesService */
-	private PhotofilesService $photofilesService;
+	private readonly IRootFolder $root;
 
-	/** @var IRootFolder */
-	private IRootFolder $root;
+	private readonly ICacheFactory $cacheFactory;
 
-	/** @var ICacheFactory */
-	private ICacheFactory $cacheFactory;
-
-	/** @var ICache */
-	private ICache $backgroundJobCache;
+	private readonly ICache $backgroundJobCache;
 
 	/**
 	 * UserInstallScanJob constructor.
@@ -43,17 +37,16 @@ class UpdatePhotoByFileJob extends QueuedJob {
 	public function __construct(
 		ITimeFactory $timeFactory,
 		IRootFolder $root,
-		PhotofilesService $photofilesService,
+		private readonly PhotofilesService $photofilesService,
 		ICacheFactory $cacheFactory,
 	) {
 		parent::__construct($timeFactory);
-		$this->photofilesService = $photofilesService;
 		$this->root = $root;
 		$this->cacheFactory = $cacheFactory;
 		$this->backgroundJobCache = $this->cacheFactory->createDistributed('maps:background-jobs');
 	}
 
-	public function run($argument) {
+	public function run($argument): void {
 		$userFolder = $this->root->getUserFolder($argument['userId']);
 		$files = $userFolder->getById($argument['fileId']);
 		if (empty($files)) {

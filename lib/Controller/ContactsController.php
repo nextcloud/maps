@@ -13,7 +13,6 @@
 namespace OCA\Maps\Controller;
 
 use OCA\DAV\CardDAV\CardDavBackend;
-use OCA\Maps\Service\AddressService;
 use OCP\AppFramework\Controller;
 use OCP\AppFramework\Http\DataDisplayResponse;
 use OCP\AppFramework\Http\DataResponse;
@@ -30,43 +29,32 @@ use Sabre\VObject\Property\Text;
 use Sabre\VObject\Reader;
 
 class ContactsController extends Controller {
-	private $userId;
 	private $contactsManager;
-	private $addressService;
 	private $dbconnection;
 	private $cdBackend;
 	private $avatarManager;
 	private $root;
 	private $urlGenerator;
-	private $geoDistanceMax; // Max distance in meters to consider that 2 addresses are the same location
-
+	private readonly int $geoDistanceMax; // Max distance in meters to consider that 2 addresses are the same location
 	/**
 	 * @param $AppName
-	 * @param IRequest $request
-	 * @param IDBConnection $dbconnection
-	 * @param IManager $contactsManager
-	 * @param AddressService $addressService
 	 * @param $UserId
-	 * @param CardDavBackend $cdBackend
-	 * @param IAvatarManager $avatarManager
-	 * @param IRootFolder $root
 	 */
 	public function __construct(
 		$AppName,
 		IRequest $request,
 		IDBConnection $dbconnection,
 		IManager $contactsManager,
-		AddressService $addressService,
-		$UserId,
+		private readonly \OCA\Maps\Service\AddressService $addressService,
+		private $userId,
 		CardDavBackend $cdBackend,
 		IAvatarManager $avatarManager,
 		IRootFolder $root,
-		IURLGenerator $urlGenerator) {
+		IURLGenerator $urlGenerator,
+	) {
 		parent::__construct($AppName, $request);
-		$this->userId = $UserId;
 		$this->avatarManager = $avatarManager;
 		$this->contactsManager = $contactsManager;
-		$this->addressService = $addressService;
 		$this->dbconnection = $dbconnection;
 		$this->cdBackend = $cdBackend;
 		$this->root = $root;
@@ -78,11 +66,8 @@ class ContactsController extends Controller {
 	 * @param string formatted as "lat;lon"
 	 * @return float[] array containing [lat;lon]
 	 */
-	private function geoAsFloatArray($geo) {
-		$res = array_map(function ($value) {
-			return floatval($value);
-		}, explode(';', $geo));
-		return $res;
+	private function geoAsFloatArray(string $geo): array {
+		return array_map(floatval(...), explode(';', $geo));
 	}
 
 	/**
@@ -91,7 +76,7 @@ class ContactsController extends Controller {
 	 * @param contact's address to check
 	 * @return integer : -1 if address is new, index of duplicated address in other cases
 	 */
-	private function isNewAddress($prevGeo, $geo) {
+	private function isNewAddress(array $prevGeo, array $geo): int {
 		if (empty($geo)) { // Address not converted to geo coords
 			return -1;
 		}
@@ -114,7 +99,7 @@ class ContactsController extends Controller {
 	 * @param array $coordsB GPS coordinates of second point
 	 * @return float Distance in meters between these two points
 	 */
-	private function getDistance(array $coordsA, array $coordsB) {
+	private function getDistance(array $coordsA, array $coordsB): float {
 		if (empty($coordsA) || empty($coordsB)) {
 			return 9E999;
 		}
@@ -135,8 +120,6 @@ class ContactsController extends Controller {
 	 * get contacts with coordinates
 	 *
 	 * @NoAdminRequired
-	 * @param null $myMapId
-	 * @return DataResponse
 	 * @throws \OCP\Files\NotPermittedException
 	 * @throws \OC\User\NoUserException
 	 */
@@ -145,16 +128,16 @@ class ContactsController extends Controller {
 			$contacts = $this->contactsManager->search('', ['GEO', 'ADR'], ['types' => false]);
 			$addressBooks = $this->contactsManager->getUserAddressBooks();
 			$result = [];
-			$userid = trim($this->userId);
+			$userid = trim((string)$this->userId);
 
 			foreach ($contacts as $c) {
 				$addressBookUri = $addressBooks[$c['addressbook-key']]->getUri();
-				$uid = trim($c['UID']);
+				$uid = trim((string)$c['UID']);
 
 				$url = $this->directUrlToContact($uid, $addressBookUri);
 
 				// we don't give users, just contacts
-				if (strcmp($c['URI'], 'Database:' . $c['UID'] . '.vcf') !== 0
+				if (strcmp((string)$c['URI'], 'Database:' . $c['UID'] . '.vcf') !== 0
 					and strcmp($uid, $userid) !== 0
 				) {
 					// if the contact has a geo attibute use it
@@ -213,7 +196,7 @@ class ContactsController extends Controller {
 								if (isset($adr->parameters()['TYPE'])) {
 									$adrtype = $adr->parameters()['TYPE']->getValue();
 								}
-								if (is_string($geo) && strlen($geo) > 1) {
+								if (strlen($geo) > 1) {
 									if ($duplicatedIndex < 0) {
 										array_push($prevGeo, $geof);
 										array_push($prevRes, count($result)); // Add index of new item so that we can update the ADRTYPE in case of duplicate address
@@ -271,9 +254,9 @@ class ContactsController extends Controller {
 						} elseif (is_countable($geo) && count($geo) > 0 && is_iterable($geo)) {
 							$prevGeo = '';
 							foreach ($geo as $g) {
-								if (strcmp($prevGeo, $g->getValue()) != 0) {
+								if (strcmp((string)$prevGeo, (string)$g->getValue()) != 0) {
 									$prevGeo = $g->getValue();
-									if (strlen($g->getValue()) > 1) {
+									if (strlen((string)$g->getValue()) > 1) {
 										$result[] = $this->vCardToArray($file, $vcard, $g->getValue());
 									}
 								}
@@ -292,7 +275,7 @@ class ContactsController extends Controller {
 							if (isset($adr->parameters()['TYPE'])) {
 								$adrtype = $adr->parameters()['TYPE']->getValue();
 							}
-							if (is_string($geo) && strlen($geo) > 1) {
+							if (strlen($geo) > 1) {
 								if ($duplicatedIndex < 0) {
 									array_push($prevGeo, $geof);
 									array_push($prevRes, count($result)); // Add index of new item so that we can update the ADRTYPE in case of duplicate address
@@ -318,7 +301,7 @@ class ContactsController extends Controller {
 	 * @param $addressBookUri
 	 * @return string
 	 */
-	private function directUrlToContact($contactUid, $addressBookUri) {
+	private function directUrlToContact(string $contactUid, string $addressBookUri) {
 		return $this->urlGenerator->getAbsoluteURL(
 			$this->urlGenerator->linkToRoute('contacts.contacts.direct', [
 				'contact' => $contactUid . '~' . $addressBookUri
@@ -327,13 +310,6 @@ class ContactsController extends Controller {
 	}
 
 	/**
-	 * @param Node $file
-	 * @param \Sabre\VObject\Document $vcard
-	 * @param string $geo
-	 * @param string|null $adrtype
-	 * @param string|null $adr
-	 * @param int|null $fileId
-	 * @return array
 	 * @throws NotFoundException
 	 * @throws \OCP\Files\InvalidPathException
 	 */
@@ -358,7 +334,7 @@ class ContactsController extends Controller {
 		} else {
 			$groups = '';
 		}
-		$result = [
+		return [
 			'FN' => $fn ?? $n ?? '???',
 			'UID' => $uid,
 			'HAS_PHOTO' => (isset($vcard->PHOTO) && $vcard->PHOTO !== null),
@@ -371,13 +347,8 @@ class ContactsController extends Controller {
 			'isDeletable' => $file->isDeletable(),
 			'isUpdateable' => $file->isUpdateable(),
 		];
-		return $result;
 	}
 
-	/**
-	 * @param string $n
-	 * @return string|null
-	 */
 	private function N2FN(string $n): ?string {
 		if ($n) {
 			$spl = explode($n, ';');
@@ -395,19 +366,17 @@ class ContactsController extends Controller {
 	 * get all contacts
 	 *
 	 * @NoAdminRequired
-	 * @param string $query
-	 * @return DataResponse
 	 */
 	public function searchContacts(string $query = ''): DataResponse {
 		$contacts = $this->contactsManager->search($query, ['FN'], ['types' => false]);
 		$booksReadOnly = $this->getAddressBooksReadOnly();
 		$addressBooks = $this->contactsManager->getUserAddressBooks();
 		$result = [];
-		$userid = trim($this->userId);
+		$userid = trim((string)$this->userId);
 		foreach ($contacts as $c) {
-			$uid = trim($c['UID']);
+			$uid = trim((string)$c['UID']);
 			// we don't give users, just contacts
-			if (strcmp($c['URI'], 'Database:' . $c['UID'] . '.vcf') !== 0
+			if (strcmp((string)$c['URI'], 'Database:' . $c['UID'] . '.vcf') !== 0
 				and strcmp($uid, $userid) !== 0
 			) {
 				$addressBookUri = $addressBooks[$c['addressbook-key']]->getUri();
@@ -428,23 +397,6 @@ class ContactsController extends Controller {
 
 	/**
 	 * @NoAdminRequired
-	 * @param string $bookid
-	 * @param string $uri
-	 * @param string $uid
-	 * @param float|null $lat
-	 * @param float|null $lng
-	 * @param string $attraction
-	 * @param string $house_number
-	 * @param string $road
-	 * @param string $postcode
-	 * @param string $city
-	 * @param string $state
-	 * @param string $country
-	 * @param string $type
-	 * @param string|null $address_string
-	 * @param int|null $fileId
-	 * @param int|null $myMapId
-	 * @return DataResponse
 	 * @throws \OCP\DB\Exception
 	 * @throws \OCP\Files\NotPermittedException
 	 * @throws \OC\User\NoUserException
@@ -466,10 +418,10 @@ class ContactsController extends Controller {
 		?string $address_string = null,
 		?int $fileId = null,
 		?int $myMapId = null): DataResponse {
-		if (is_null($myMapId) || $myMapId === '') {
+		if (is_null($myMapId) || $myMapId === 0) {
 			// do not edit 'user' contact even myself
 			if (strcmp($uri, 'Database:' . $uid . '.vcf') === 0
-				or strcmp($uid, $this->userId) === 0
+				or strcmp($uid, (string)$this->userId) === 0
 			) {
 				return new DataResponse('Can\'t edit users', 400);
 			} else {
@@ -529,7 +481,7 @@ class ContactsController extends Controller {
 				$card = $this->cdBackend->getContact($bookid, $uri);
 				try {
 					$file = $mapsFolder->get($uri);
-				} catch (NotFoundException $e) {
+				} catch (NotFoundException) {
 					if (!$mapsFolder->isCreatable()) {
 						return new DataResponse('CONTACT NOT WRITABLE', 400);
 					}
@@ -585,10 +537,6 @@ class ContactsController extends Controller {
 
 	/**
 	 * @NoAdminRequired
-	 * @param string $bookid
-	 * @param string $uri
-	 * @param int $myMapId
-	 * @param int|null $fileId
 	 * @return DataResponse|void
 	 * @throws \OCP\Files\NotPermittedException
 	 * @throws \OC\User\NoUserException
@@ -607,7 +555,7 @@ class ContactsController extends Controller {
 			$card = $this->cdBackend->getContact($bookid, $uri);
 			try {
 				$file = $mapsFolder->get($uri);
-			} catch (NotFoundException $e) {
+			} catch (NotFoundException) {
 				if (!$mapsFolder->isCreatable()) {
 					return new DataResponse('CONTACT NOT WRITABLE', 400);
 				}
@@ -634,10 +582,6 @@ class ContactsController extends Controller {
 		}
 	}
 
-	/**
-	 * @param string $bookid
-	 * @return bool
-	 */
 	private function addressBookIsReadOnly(string $bookid): bool {
 		$userBooks = $this->cdBackend->getAddressBooksForUser('principals/users/' . $this->userId);
 		foreach ($userBooks as $book) {
@@ -648,9 +592,6 @@ class ContactsController extends Controller {
 		return true;
 	}
 
-	/**
-	 * @return array
-	 */
 	private function getAddressBooksReadOnly(): array {
 		$booksReadOnly = [];
 		$userBooks = $this->cdBackend->getAddressBooksForUser('principals/users/' . $this->userId);
@@ -662,16 +603,11 @@ class ContactsController extends Controller {
 	}
 
 	/**
-	 * @param float $lat
-	 * @param float $lng
-	 * @param string $adr
-	 * @param string $uri
-	 * @return void
 	 * @throws \OCP\DB\Exception
 	 */
 	private function setAddressCoordinates(float $lat, float $lng, string $adr, string $uri): void {
 		$qb = $this->dbconnection->getQueryBuilder();
-		$adr_norm = strtolower(preg_replace('/\s+/', '', $adr));
+		$adr_norm = strtolower((string)preg_replace('/\s+/', '', $adr));
 
 		$qb->select('id')
 			->from('maps_address_geo')
@@ -710,8 +646,6 @@ class ContactsController extends Controller {
 	 *
 	 * @NoAdminRequired
 	 * @NoCSRFRequired
-	 * @param string $name
-	 * @return DataDisplayResponse
 	 * @throws NotFoundException
 	 * @throws \OCP\Files\NotPermittedException
 	 */
@@ -733,7 +667,6 @@ class ContactsController extends Controller {
 	 * @param string $geo
 	 * @param ?int $fileId
 	 * @param ?int $myMapId
-	 * @return DataResponse
 	 */
 	public function deleteContactAddress($bookid, $uri, $uid, $adr, $geo, $fileId = null, $myMapId = null): DataResponse {
 

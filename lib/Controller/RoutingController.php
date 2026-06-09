@@ -12,7 +12,6 @@
 
 namespace OCA\Maps\Controller;
 
-use OCA\Maps\Service\TracksService;
 use OCP\App\IAppManager;
 use OCP\AppFramework\Controller;
 use OCP\AppFramework\Http\DataResponse;
@@ -27,22 +26,13 @@ use OCP\Share\IManager;
 
 class RoutingController extends Controller {
 
-	private $userId;
 	private $userfolder;
-	private $config;
 	private $appVersion;
-	private $shareManager;
-	private $userManager;
-	private $groupManager;
-	private $dbtype;
-	private $dbdblquotes;
-	private $defaultDeviceId;
 	private $l;
-	private $dateTimeZone;
-	private $tracksService;
 	protected $appName;
 
-	public function __construct($AppName,
+	public function __construct(
+		$AppName,
 		IRequest $request,
 		IServerContainer $serverContainer,
 		IConfig $config,
@@ -52,25 +42,17 @@ class RoutingController extends Controller {
 		IGroupManager $groupManager,
 		IL10N $l,
 		IDateTimeZone $dateTimeZone,
-		TracksService $tracksService,
-		$UserId) {
+		private readonly \OCA\Maps\Service\TracksService $tracksService,
+		private $userId,
+	) {
 		parent::__construct($AppName, $request);
-		$this->dateTimeZone = $dateTimeZone;
 		$this->appName = $AppName;
 		$this->appVersion = $config->getAppValue('maps', 'installed_version');
-		$this->userId = $UserId;
-		$this->userManager = $userManager;
-		$this->groupManager = $groupManager;
 		$this->l = $l;
-		$this->dbtype = $config->getSystemValue('dbtype');
-		// IConfig object
-		$this->config = $config;
-		if ($UserId !== '' and $UserId !== null and $serverContainer !== null) {
+		if ($this->userId !== '' and $this->userId !== null and $serverContainer !== null) {
 			// path of user files folder relative to DATA folder
-			$this->userfolder = $serverContainer->getUserFolder($UserId);
+			$this->userfolder = $serverContainer->getUserFolder($this->userId);
 		}
-		$this->shareManager = $shareManager;
-		$this->tracksService = $tracksService;
 	}
 
 	/**
@@ -80,7 +62,6 @@ class RoutingController extends Controller {
 	 * @param $name
 	 * @param $totDist
 	 * @param $totTime
-	 * @return DataResponse
 	 * @throws \OCP\Files\NotFoundException
 	 * @throws \OCP\Files\NotPermittedException
 	 */
@@ -94,26 +75,21 @@ class RoutingController extends Controller {
 			if ($userFolder->nodeExists('/Maps')) {
 				$mapsFolder = $userFolder->get('/Maps');
 				if ($mapsFolder->getType() !== \OCP\Files\FileInfo::TYPE_FOLDER) {
-					$response = new DataResponse($this->l->t('/Maps is not a directory'), 400);
-					return $response;
+					return new DataResponse($this->l->t('/Maps is not a directory'), 400);
 				} elseif (!$mapsFolder->isCreatable()) {
-					$response = new DataResponse($this->l->t('/Maps directory is not writeable'), 400);
-					return $response;
+					return new DataResponse($this->l->t('/Maps directory is not writeable'), 400);
 				}
 			} else {
-				$response = new DataResponse($this->l->t('Impossible to create /Maps directory'), 400);
-				return $response;
+				return new DataResponse($this->l->t('Impossible to create /Maps directory'), 400);
 			}
 		} else {
 			$folders = $userFolder->getById($myMapId);
 			if (!is_array($folders) or count($folders) === 0) {
-				$response = new DataResponse('myMaps Folder not found', 404);
-				return $response;
+				return new DataResponse('myMaps Folder not found', 404);
 			}
 			$mapsFolder = array_shift($folders);
 			if (is_null($mapsFolder)) {
-				$response = new DataResponse('myMaps Folder not found', 404);
-				return $response;
+				return new DataResponse('myMaps Folder not found', 404);
 			}
 		}
 
@@ -160,7 +136,7 @@ class RoutingController extends Controller {
 		fwrite($fileHandler, '</gpx>' . "\n");
 		fclose($fileHandler);
 		$file->touch();
-		$file->move(substr($file->getPath(), 0, -3));
+		$file->move(substr((string)$file->getPath(), 0, -3));
 		$track = $this->tracksService->getTrackByFileIDFromDB($file->getId(), $this->userId);
 		return new DataResponse($track);
 	}

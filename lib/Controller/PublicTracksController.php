@@ -38,7 +38,6 @@ class PublicTracksController extends PublicPageController {
 	protected ShareManager $shareManager;
 	protected IUserManager $userManager;
 	protected IL10N $l;
-	protected TracksService $tracksService;
 	protected $appName;
 	protected IRootFolder $root;
 
@@ -55,11 +54,10 @@ class PublicTracksController extends PublicPageController {
 		IServerContainer $serverContainer,
 		protected IGroupManager $groupManager,
 		IL10N $l,
-		TracksService $tracksService,
+		protected TracksService $tracksService,
 		IRootFolder $root,
 	) {
 		parent::__construct($appName, $request, $session, $urlGenerator, $eventDispatcher, $appConfig, $initialState, $shareManager, $userManager);
-		$this->tracksService = $tracksService;
 		$this->l = $l;
 		$this->root = $root;
 	}
@@ -93,7 +91,7 @@ class PublicTracksController extends PublicPageController {
 		// Check whether share exists
 		try {
 			$share = $this->shareManager->getShareByToken($this->getToken());
-		} catch (ShareNotFound $e) {
+		} catch (ShareNotFound) {
 			// The share does not exists, we do not emit an ShareLinkAccessedEvent
 			throw new NotFoundException();
 		}
@@ -118,7 +116,6 @@ class PublicTracksController extends PublicPageController {
 
 	/**
 	 * @PublicPage
-	 * @return DataResponse
 	 * @throws NotFoundException
 	 * @throws NotPermittedException
 	 * @throws \OC\User\NoUserException
@@ -133,7 +130,7 @@ class PublicTracksController extends PublicPageController {
 			$owner = $share->getShareOwner();
 			$pre_path = $this->root->getUserFolder($owner)->getPath();
 			$tracks = $this->tracksService->getTracksFromDB($owner, $folder, true, false, false);
-			$new_tracks = array_map(function ($track) use ($folder, $permissions, $pre_path, $hideDownload) {
+			$new_tracks = array_map(function (array $track) use ($folder, $permissions, $pre_path, $hideDownload): array {
 				$track['isCreatable'] = ($permissions & (1 << 2)) && $track['isCreatable'];
 				$track['isUpdateable'] = ($permissions & (1 << 1)) && $track['isUpdateable'];
 				$track['isDeletable'] = ($permissions & (1 << 3)) && $track['isDeletable'];
@@ -194,7 +191,6 @@ class PublicTracksController extends PublicPageController {
 	/**
 	 * @PublicPage
 	 * @param $id
-	 * @return DataResponse
 	 * @throws NotFoundException
 	 * @throws \OCP\Files\InvalidPathException
 	 */
@@ -231,14 +227,13 @@ class PublicTracksController extends PublicPageController {
 	 * @param $color
 	 * @param $metadata
 	 * @param $etag
-	 * @return DataResponse
 	 * @throws NotFoundException
 	 * @throws NotPermittedException
 	 */
 	public function editTrack($id, $color, $metadata, $etag): DataResponse {
 		$share = $this->getShare();
 		$permissions = $share->getPermissions();
-		$folder = $this->getShareNode();
+		$this->getShareNode();
 		$isUpdateable = (bool)($permissions & (1 << 1));
 		if ($isUpdateable) {
 			$owner = $share->getShareOwner();
@@ -257,12 +252,11 @@ class PublicTracksController extends PublicPageController {
 	/**
 	 * @NoAdminRequired
 	 * @param $id
-	 * @return DataResponse
 	 */
 	public function deleteTrack($id): DataResponse {
 		$share = $this->getShare();
 		$permissions = $share->getPermissions();
-		$folder = $this->getShareNode();
+		$this->getShareNode();
 		$isUpdateable = (bool)($permissions & (1 << 1));
 		//It's allowed to delete a track from the share, if the share is updateable
 		if ($isUpdateable) {

@@ -31,10 +31,10 @@ class TracksController extends Controller {
 	public function __construct(
 		string $appName,
 		IRequest $request,
-		private IL10N $l,
-		private TracksService $tracksService,
+		private readonly IL10N $l,
+		private readonly TracksService $tracksService,
 		IRootFolder $rootFolder,
-		private ?string $userId,
+		private readonly ?string $userId,
 	) {
 		parent::__construct($appName, $request);
 		if ($userId !== '' && $userId !== null) {

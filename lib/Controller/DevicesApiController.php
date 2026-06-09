@@ -18,8 +18,6 @@ use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\Attribute\NoAdminRequired;
 use OCP\AppFramework\Http\Attribute\NoCSRFRequired;
 use OCP\AppFramework\Http\DataResponse;
-use OCP\Files\Folder;
-use OCP\Files\IRootFolder;
 use OCP\IL10N;
 use OCP\IRequest;
 
@@ -27,9 +25,9 @@ class DevicesApiController extends ApiController {
 	public function __construct(
 		string $appName,
 		IRequest $request,
-		private IL10N $l,
-		private DevicesService $devicesService,
-		private ?string $userId,
+		private readonly IL10N $l,
+		private readonly DevicesService $devicesService,
+		private readonly ?string $userId,
 	) {
 		parent::__construct($appName, $request, 'PUT, POST, GET, DELETE, PATCH, OPTIONS');
 	}
@@ -37,7 +35,6 @@ class DevicesApiController extends ApiController {
 	/**
 	 * @CORS
 	 * @param $apiversion
-	 * @return DataResponse
 	 */
 	#[NoAdminRequired]
 	#[NoCSRFRequired]
@@ -58,8 +55,6 @@ class DevicesApiController extends ApiController {
 	/**
 	 * @CORS
 	 * @param $id
-	 * @param int $pruneBefore
-	 * @return DataResponse
 	 */
 	#[NoAdminRequired]
 	#[NoCSRFRequired]
@@ -80,7 +75,6 @@ class DevicesApiController extends ApiController {
 	 * @param $altitude
 	 * @param $battery
 	 * @param $accuracy
-	 * @return DataResponse
 	 */
 	public function addDevicePoint($apiversion, $lat, $lng, $timestamp = null, $user_agent = null, $altitude = null, $battery = null, $accuracy = null): DataResponse {
 		if (is_numeric($lat) and is_numeric($lng)) {
@@ -113,7 +107,6 @@ class DevicesApiController extends ApiController {
 	 * @CORS
 	 * @param $id
 	 * @param $color
-	 * @return DataResponse
 	 */
 	public function editDevice($id, $color): DataResponse {
 		$device = $this->devicesService->getDeviceFromDB($id, $this->userId);
@@ -135,7 +128,6 @@ class DevicesApiController extends ApiController {
 	 * @NoCSRFRequired
 	 * @CORS
 	 * @param $id
-	 * @return DataResponse
 	 */
 	public function deleteDevice($id): DataResponse {
 		$device = $this->devicesService->getDeviceFromDB($id, $this->userId);

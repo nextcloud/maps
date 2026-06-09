@@ -31,7 +31,7 @@ use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\DataResponse;
 use OCP\AppFramework\Http\TemplateResponse;
 use OCP\Files\IRootFolder;
-use OCP\IConfig;
+use OCP\IAppConfig;
 use OCP\L10N\IFactory;
 use OCP\Security\ISecureRandom;
 use PHPUnit\Framework\TestCase;
@@ -40,7 +40,7 @@ use Psr\Log\LoggerInterface;
 
 class PublicFavoritePageControllerTest extends TestCase {
 	private PublicFavoritePageController $publicPageController;
-	private IConfig $config;
+	private IAppConfig $appConfig;
 	private Application $app;
 	private ContainerInterface $container;
 	private FavoritesService $favoritesService;
@@ -74,14 +74,14 @@ class PublicFavoritePageControllerTest extends TestCase {
 		$requestMock = $this->getMockBuilder('OCP\IRequest')->getMock();
 		$sessionMock = $this->getMockBuilder('OCP\ISession')->getMock();
 
-		$this->config = $container->get(IConfig::class);
+		$this->appConfig = $container->get(IAppConfig::class);
 
 		$this->publicPageController = new PublicFavoritePageController(
 			$appName,
 			$requestMock,
 			$sessionMock,
-			$this->config,
-			$this->favoriteShareMapper
+			$this->favoriteShareMapper,
+			$this->appConfig,
 		);
 	}
 

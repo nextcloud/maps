@@ -75,7 +75,7 @@ class PublicUtilsController extends PublicPageController {
 		// Check whether share exists
 		try {
 			$share = $this->shareManager->getShareByToken($this->getToken());
-		} catch (ShareNotFound $e) {
+		} catch (ShareNotFound) {
 			// The share does not exist, we do not emit an ShareLinkAccessedEvent
 			throw new NotFoundException();
 		}
@@ -102,8 +102,6 @@ class PublicUtilsController extends PublicPageController {
 	 * Save options values to the DB for current user
 	 *
 	 * @param $options
-	 * @param null $myMapId
-	 * @return DataResponse
 	 * @throws NotFoundException
 	 * @throws GenericFileException
 	 * @throws InvalidPathException
@@ -118,7 +116,7 @@ class PublicUtilsController extends PublicPageController {
 
 		try {
 			$file = $folder->get('.index.maps');
-		} catch (NotFoundException $e) {
+		} catch (NotFoundException) {
 			if ($isCreatable) {
 				$file = $folder->newFile('.index.maps', $content = '{}');
 			} else {
@@ -131,12 +129,12 @@ class PublicUtilsController extends PublicPageController {
 		}
 
 		try {
-			$ov = json_decode($file->getContent(), true, 512);
+			$ov = json_decode((string)$file->getContent(), true, 512);
 			foreach ($options as $key => $value) {
 				$ov[$key] = $value;
 			}
 			$file->putContent(json_encode($ov, JSON_PRETTY_PRINT));
-		} catch (LockedException $e) {
+		} catch (LockedException) {
 			return new DataResponse('File is locked', 500);
 		}
 		return new DataResponse(['done' => 1]);
@@ -160,14 +158,14 @@ class PublicUtilsController extends PublicPageController {
 		$isCreatable = ($permissions & (1 << 2)) && $folder->isCreatable();
 		try {
 			$file = $folder->get('.index.maps');
-		} catch (NotFoundException $e) {
+		} catch (NotFoundException) {
 			if ($isCreatable) {
 				$file = $folder->newFile('.index.maps', $content = '{}');
 			} else {
 				throw new NotFoundException();
 			}
 		}
-		$ov = json_decode($file->getContent(), true, 512);
+		$ov = json_decode((string)$file->getContent(), true, 512);
 
 		// Maps content can be read mostly from the folder
 		$ov['isReadable'] = ($permissions & (1 << 0)) && $folder->isReadable();

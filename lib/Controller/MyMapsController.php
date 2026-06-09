@@ -14,7 +14,6 @@
 
 namespace OCA\Maps\Controller;
 
-use OCA\Maps\Service\MyMapsService;
 use OCP\AppFramework\Controller;
 use OCP\AppFramework\Http\DataResponse;
 use OCP\IRequest;
@@ -22,14 +21,13 @@ use OCP\IRequest;
 class MyMapsController extends Controller {
 
 
-	/* @var MyMapsService */
-	private $myMapsService;
-	private $userId;
-
-	public function __construct(string $AppName, IRequest $request, MyMapsService $myMapsService, $userId) {
+	public function __construct(
+		string $AppName,
+		IRequest $request,
+		private readonly \OCA\Maps\Service\MyMapsService $myMapsService,
+		private $userId,
+	) {
 		parent::__construct($AppName, $request);
-		$this->myMapsService = $myMapsService;
-		$this->userId = $userId;
 	}
 
 	/**

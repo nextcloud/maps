@@ -20,7 +20,6 @@ use OCP\IRequest;
 
 class MyMapsController extends Controller {
 
-
 	public function __construct(
 		string $AppName,
 		IRequest $request,

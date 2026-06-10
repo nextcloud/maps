@@ -59,7 +59,6 @@ class ExifGeoData extends \stdClass implements \JsonSerializable {
 	 */
 	private const COORDINATE_MODULO = 60;
 
-
 	/**
 	 * Regex to extract date components from exif parameter
 	 */
@@ -245,7 +244,6 @@ class ExifGeoData extends \stdClass implements \JsonSerializable {
 		return $result;
 	}
 
-
 	/**
 	 * @param $geo
 	 */
@@ -275,7 +273,6 @@ class ExifGeoData extends \stdClass implements \JsonSerializable {
 			$result = floatval($value);
 		}
 		return $result;
-
 	}
 
 	public function isZeroIsland(): bool {

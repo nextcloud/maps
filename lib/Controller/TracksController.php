@@ -20,7 +20,6 @@ use OCP\Files\Folder;
 use OCP\Files\IRootFolder;
 use OCP\IL10N;
 use OCP\IRequest;
-
 use function OCA\Maps\Helper\remove_utf8_bom;
 
 class TracksController extends Controller {

@@ -102,7 +102,6 @@ class DeviceShareMapper extends QBMapper {
 		return $this->insert($newShare);
 	}
 
-
 	/**
 	 * @param $deviceId
 	 * @return DeviceShare[]

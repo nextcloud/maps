@@ -13,7 +13,6 @@
 namespace OCA\Maps\Controller;
 
 use OCA\DAV\CardDAV\CardDavBackend;
-
 use OCA\DAV\CardDAV\ContactsManager;
 use OCA\Maps\AppInfo\Application;
 use OCA\Maps\Service\AddressService;
@@ -105,7 +104,6 @@ class ContactsControllerTest extends \PHPUnit\Framework\TestCase {
 		$this->cdBackend = $c->get(CardDavBackend::class);
 		$this->root = $c->get(IRootFolder::class);
 		$this->mapFolder = $this->createMapFolder();
-
 
 		$this->contactsController = new ContactsController(
 			$this->appName,

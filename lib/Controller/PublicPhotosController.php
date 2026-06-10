@@ -24,7 +24,6 @@ use OCP\Files\Node;
 use OCP\Files\NotFoundException;
 use OCP\Files\NotPermittedException;
 use OCP\IAppConfig;
-
 use OCP\IRequest;
 use OCP\ISession;
 use OCP\IURLGenerator;

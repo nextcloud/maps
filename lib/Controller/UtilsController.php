@@ -16,19 +16,14 @@ namespace OCA\Maps\Controller;
 use OCP\App\IAppManager;
 use OCP\AppFramework\Controller;
 use OCP\AppFramework\Http\ContentSecurityPolicy;
-
 use OCP\AppFramework\Http\DataResponse;
-
-
 use OCP\Files\IRootFolder;
-
 use OCP\Files\NotFoundException;
 use OCP\IConfig;
 use OCP\IRequest;
 use OCP\Lock\LockedException;
 
 class UtilsController extends Controller {
-
 
 	private $config;
 	private $root;

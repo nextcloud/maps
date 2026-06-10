@@ -22,7 +22,6 @@
  *
  */
 
-
 namespace OCA\Maps\Controller;
 
 use OCA\Maps\DB\FavoriteShareMapper;

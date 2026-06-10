@@ -65,7 +65,6 @@ class GeophotoService {
 			$this->backgroundJobCache->clear('recentlyAdded:' . $userId);
 			$this->backgroundJobCache->clear('recentlyUpdated:' . $userId);
 			return true;
-
 		} catch (\Exception) {
 			return false;
 		}
@@ -291,7 +290,6 @@ class GeophotoService {
 			}
 		}
 		return $locations;
-
 	}
 
 	/*

@@ -81,7 +81,6 @@ class PhotosController extends Controller {
 		return new DataResponse($result);
 	}
 
-
 	/**
 	 * @param $paths
 	 * @param $lats

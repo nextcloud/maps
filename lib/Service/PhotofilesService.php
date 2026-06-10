@@ -179,7 +179,6 @@ class PhotofilesService {
 		}
 	}
 
-
 	public function deleteByFolder(Node $folder): void {
 		$photos = $this->gatherPhotoFiles($folder, true);
 		foreach ($photos as $photo) {
@@ -359,7 +358,6 @@ class PhotofilesService {
 			$this->photosCache->clear($userId);
 		}
 	}
-
 
 	private function insertPhoto($photo, $userId, \OCA\Maps\Helper\ExifGeoData $exif): void {
 		$photoEntity = new Geophoto();

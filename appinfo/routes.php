@@ -19,7 +19,6 @@ return [
 		['name' => 'PublicPage#showAuthenticate', 'url' => '/s/{token}/authenticate/{redirect}', 'verb' => 'GET'],
 		['name' => 'PublicPage#authenticate', 'url' => '/s/{token}/authenticate/{redirect}', 'verb' => 'POST'],
 
-
 		// utils
 		['name' => 'utils#getOptionsValues', 'url' => '/getOptionsValues', 'verb' => 'GET'],
 		['name' => 'utils#saveOptionValue', 'url' => '/saveOptionValue', 'verb' => 'POST'],

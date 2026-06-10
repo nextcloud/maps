@@ -380,7 +380,6 @@ class FavoritesService {
 					$currentFavorite['extensions'][$key] = $v;
 				}
 
-
 			}
 			if (!array_key_exists('category', $currentFavorite)) {
 				$currentFavorite['category'] = $this->l10n->t('Personal');
@@ -667,7 +666,6 @@ class FavoritesService {
 		$this->kmlInsidePlacemark = false;
 		$this->kmlCurrentCategory = '';
 
-
 		$xml_parser = xml_parser_create();
 		xml_set_object($xml_parser, $this);
 		xml_set_element_handler($xml_parser, $this->kmlStartElement(...), $this->kmlEndElement(...));
@@ -867,7 +865,6 @@ class FavoritesService {
 		$this->currentFavoritesList = [];
 		$this->importUserId = $userId;
 
-
 		// Decode file content from JSON
 		$data = json_decode((string)$file->getContent(), true, 512);
 
@@ -904,7 +901,6 @@ class FavoritesService {
 			if (isset($value['properties']['Location']['Address'])) {
 				$this->currentFavorite['comment'] = $value['properties']['Location']['Address'];
 			}
-
 
 			// Store this favorite
 			array_push($this->currentFavoritesList, $this->currentFavorite);

@@ -640,7 +640,6 @@ class ContactsController extends Controller {
 		}
 	}
 
-
 	/**
 	 * get contacts with coordinates
 	 *

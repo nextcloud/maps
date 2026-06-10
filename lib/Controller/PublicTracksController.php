@@ -30,7 +30,6 @@ use OCP\IUserManager;
 use OCP\Share;
 use OCP\Share\Exceptions\ShareNotFound;
 use OCP\Share\IManager as ShareManager;
-
 use function OCA\Maps\Helper\remove_utf8_bom;
 
 class PublicTracksController extends PublicPageController {

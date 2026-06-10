@@ -17,7 +17,6 @@ use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\BackgroundJob\QueuedJob;
 use OCP\Files\IRootFolder;
 use OCP\ICache;
-
 use OCP\ICacheFactory;
 
 class UpdatePhotoByFileJob extends QueuedJob {

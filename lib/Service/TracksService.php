@@ -237,7 +237,6 @@ class TracksService {
 		];
 	}
 
-
 	/**
 	 * @return mixed[]
 	 */

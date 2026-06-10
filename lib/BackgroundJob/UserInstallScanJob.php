@@ -17,7 +17,6 @@ use OCA\Maps\Service\TracksService;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\BackgroundJob\IJobList;
 use OCP\BackgroundJob\QueuedJob;
-
 use OCP\IConfig;
 use OCP\IUserManager;
 use Psr\Log\LoggerInterface;

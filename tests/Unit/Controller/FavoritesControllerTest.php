@@ -341,8 +341,6 @@ class FavoritesControllerTest extends \PHPUnit\Framework\TestCase {
 		$this->assertEquals('Nothing to export', $data);
 	}
 
-
-
 	public function testEditFavorites(): void {
 		// valid edition
 		$resp = $this->favoritesController->addFavorite('a', 3.1, 4.1, 'cat1', null, null);

@@ -177,7 +177,6 @@ class PublicUtilsController extends PublicPageController {
 		// Share map by sharing the folder
 		$ov['isShareable'] = ($permissions & (1 << 4)) && $folder->isShareable();
 
-
 		// get routing-specific admin settings values
 		$settingsKeys = [
 			'osrmCarURL',
@@ -197,7 +196,6 @@ class PublicUtilsController extends PublicPageController {
 		}
 		return new DataResponse(['values' => $ov]);
 	}
-
 
 	/**
 	 * Get content of mapbox traffic style

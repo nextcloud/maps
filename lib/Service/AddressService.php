@@ -198,7 +198,6 @@ class AddressService {
 				$query_adr = 'q=' . urlencode(implode(', ', $splitted_adr));
 			}
 
-
 			$result_json = @file_get_contents(
 				'https://nominatim.openstreetmap.org/search?format=jsonv2&' . $query_adr,
 				false,

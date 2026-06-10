@@ -212,7 +212,6 @@ class PublicContactsController extends PublicPageController {
 		}
 	}
 
-
 	/**
 	 * @throws NotFoundException
 	 * @throws NotPermittedException

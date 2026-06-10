@@ -48,6 +48,7 @@ export const Layers = [
 			noWrap: false,
 			detectRetina: false,
 			maxZoom: 18,
+			referrerPolicy: 'origin',
 		},
 		opacity: 0.7,
 	},
@@ -62,6 +63,7 @@ export const Layers = [
 			noWrap: false,
 			detectRetina: false,
 			maxZoom: 19,
+			referrerPolicy: 'origin',
 		},
 	},
 	{
@@ -75,6 +77,7 @@ export const Layers = [
 			noWrap: false,
 			detectRetina: false,
 			maxZoom: 19,
+			referrerPolicy: 'origin',
 		},
 	},
 	{
@@ -88,6 +91,7 @@ export const Layers = [
 			noWrap: false,
 			detectRetina: false,
 			maxZoom: 19,
+			referrerPolicy: 'origin',
 		},
 	},
 	{
@@ -103,6 +107,7 @@ export const Layers = [
 			maxZoom: 18,
 			ext: 'jpg',
 			subdomains: 'abcd',
+			referrerPolicy: 'origin',
 		},
 	},
 ]

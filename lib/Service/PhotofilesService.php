@@ -42,28 +42,20 @@ use lsolesen\pel\PelTag;
 use lsolesen\pel\PelTiff;
 
 class PhotofilesService {
-
-	public const PHOTO_MIME_TYPES = ['image/jpeg', 'image/tiff'];
-	private $root;
-	private $shareManager;
-	private $jobList;
-	private readonly ICacheFactory $cacheFactory;
 	private readonly \OCP\ICache $photosCache;
 	private readonly \OCP\ICache $backgroundJobCache;
 
+	public const PHOTO_MIME_TYPES = ['image/jpeg', 'image/tiff', 'image/heic'];
+
 	public function __construct(
 		private readonly LoggerInterface $logger,
-		ICacheFactory $cacheFactory,
-		IRootFolder $root,
-		IL10N $l10n,
+		private readonly ICacheFactory $cacheFactory,
+		private readonly IRootFolder $root,
+		private readonly IL10N $l10n,
 		private readonly \OCA\Maps\DB\GeophotoMapper $photoMapper,
-		IManager $shareManager,
-		IJobList $jobList,
+		private readonly IManager $shareManager,
+		private readonly IJobList $jobList,
 	) {
-		$this->root = $root;
-		$this->shareManager = $shareManager;
-		$this->jobList = $jobList;
-		$this->cacheFactory = $cacheFactory;
 		$this->photosCache = $this->cacheFactory->createDistributed('maps:photos');
 		$this->backgroundJobCache = $this->cacheFactory->createDistributed('maps:background-jobs');
 	}

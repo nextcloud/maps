@@ -26,7 +26,7 @@ namespace OCA\Maps\Controller;
 
 use OCA\Maps\AppInfo\Application;
 use OCA\Maps\DB\FavoriteShare;
-use OCA\Maps\DB\FavoriteShareMapper;
+use OCA\Maps\DB\FavoriteShareRepository;
 use OCA\Maps\Service\FavoritesService;
 use OCP\AppFramework\Http;
 use OCP\Files\IRootFolder;
@@ -38,7 +38,7 @@ use PHPUnit\Framework\TestCase;
 class PublicFavoritesApiControllerTest extends TestCase {
 	private PublicFavoritesApiController $publicFavoritesApiController;
 	private FavoritesService $favoritesService;
-	private FavoriteShareMapper $favoriteShareMapper;
+	private FavoriteShareRepository $favoriteShareMapper;
 
 	protected function setUp(): void {
 		// Begin transaction
@@ -58,7 +58,7 @@ class PublicFavoritesApiControllerTest extends TestCase {
 			$container->get(\OCP\IDBConnection::class)
 		);
 
-		$this->favoriteShareMapper = new FavoriteShareMapper(
+		$this->favoriteShareMapper = new FavoriteShareRepository(
 			$container->get(\OCP\IDBConnection::class),
 			$container->get(ISecureRandom::class),
 			$container->get(IserverContainer::class)->get(IRootFolder::class)
@@ -90,21 +90,22 @@ class PublicFavoritesApiControllerTest extends TestCase {
 		$share = $this->favoriteShareMapper->create($testUser, $categoryName);
 
 		// Mock token sent by request
-		$this->publicFavoritesApiController->setToken($share->getToken());
+		$this->publicFavoritesApiController->setToken($share->token);
 
 		$response = $this->publicFavoritesApiController->getFavorites();
 
 		$this->assertEquals(Http::STATUS_OK, $response->getStatus());
 
+		/** @var array{share: FavoriteShare, favorites: list<array>} $data */
 		$data = $response->getData();
 
 		$this->assertIsArray($data);
 		$this->assertArrayHasKey('share', $data);
 		$this->assertArrayHasKey('favorites', $data);
 
-		$this->assertEquals($testUser, $data['share']->getOwner());
-		$this->assertEquals($categoryName, $data['share']->getCategory());
-		$this->assertEquals($share->getToken(), $data['share']->getToken());
+		$this->assertEquals($testUser, $data['share']->owner);
+		$this->assertEquals($categoryName, $data['share']->category);
+		$this->assertEquals($share->token, $data['share']->token);
 
 		$this->assertEquals(1, count($data['favorites']));
 

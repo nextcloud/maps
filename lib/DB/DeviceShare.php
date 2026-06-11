@@ -26,22 +26,24 @@ namespace OCA\Maps\DB;
 
 use OCA\Maps\AppFramework\Db\Attribute\Column;
 use OCA\Maps\AppFramework\Db\Attribute\Entity;
+use OCA\Maps\AppFramework\Db\Attribute\Id;
 use OCP\DB\Types;
 
 #[Entity(name: 'maps_device_shares')]
 class DeviceShare {
-	#[Column(name: 'id', type: Types::STRING)]
+	#[Id]
+	#[Column(name: 'id', type: Types::INTEGER)]
 	public int $id;
 
-	#[Column(name: 'token', type: Types::STRING)]
+	#[Column(name: 'token', type: Types::STRING, nullable: false, length: 64)]
 	public string $token;
 
-	#[Column(name: 'device_id', type: Types::INTEGER)]
+	#[Column(name: 'device_id', type: Types::INTEGER, nullable: false)]
 	public int $deviceId;
 
-	#[Column(name: 'timestamp_from', type: Types::INTEGER)]
+	#[Column(name: 'timestamp_from', type: Types::INTEGER, nullable: false)]
 	public int $timestampFrom;
 
-	#[Column(name: 'timestamp_to', type: Types::INTEGER)]
+	#[Column(name: 'timestamp_to', type: Types::INTEGER, nullable: false)]
 	public int $timestampTo;
 }

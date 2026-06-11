@@ -14,7 +14,7 @@
 
 namespace OCA\Maps\Controller;
 
-use OCA\Maps\DB\FavoriteShareMapper;
+use OCA\Maps\DB\FavoriteShareRepository;
 use OCA\Maps\Service\FavoritesService;
 use OCP\AppFramework\Http\Attribute\PublicPage;
 use OCP\AppFramework\Http\DataResponse;
@@ -51,7 +51,7 @@ class PublicFavoritesController extends PublicPageController {
 		protected \OCP\IGroupManager $groupManager,
 		private readonly IL10N $l,
 		private readonly FavoritesService $favoritesService,
-		private readonly FavoriteShareMapper $favoriteShareMapper,
+		private readonly FavoriteShareRepository $favoriteShareMapper,
 		IEventDispatcher $eventDispatcher,
 	) {
 		parent::__construct($appName, $request, $session, $urlGenerator, $eventDispatcher, $appConfig, $initialState, $shareManager, $userManager);

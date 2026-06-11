@@ -377,18 +377,15 @@ class Repository {
 	 *
 	 * @param array<string, int|float|string|list<int|float|string>> $criteria
 	 * @param array<string, 'asc'|'desc'>|null $orderBy
-	 * @return T|null
+	 * @return T
+	 * @throws DoesNotExistException
 	 */
-	public function findOneBy(array $criteria, array $orderBy = []): ?object {
+	public function findOneBy(array $criteria, array $orderBy = []): object {
 		$qb = $this->getSelectQueryBuilder($criteria, $orderBy);
 
 		$qb->setMaxResults(1);
 
-		try {
-			return $this->findEntity($qb);
-		} catch (DoesNotExistException) {
-			return null;
-		}
+		return $this->findEntity($qb);
 	}
 
 	/**

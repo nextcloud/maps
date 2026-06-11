@@ -15,7 +15,7 @@
 namespace OCA\Maps\Controller;
 
 use OCA\Maps\AppInfo\Application;
-use OCA\Maps\DB\FavoriteShareMapper;
+use OCA\Maps\DB\FavoriteShareRepository;
 use OCA\Maps\Service\FavoritesService;
 use OCP\AppFramework\Http;
 use OCP\AppFramework\Services\IAppConfig;
@@ -87,7 +87,7 @@ class FavoritesControllerTest extends \PHPUnit\Framework\TestCase {
 			$c->get(IRootFolder::class),
 			$c->get(FavoritesService::class),
 			$c->get(\OCP\IDateTimeZone::class),
-			$c->get(FavoriteShareMapper::class),
+			$c->get(FavoriteShareRepository::class),
 			'test'
 		);
 
@@ -99,7 +99,7 @@ class FavoritesControllerTest extends \PHPUnit\Framework\TestCase {
 			$c->get(IRootFolder::class),
 			$c->get(FavoritesService::class),
 			$c->get(\OCP\IDateTimeZone::class),
-			$c->get(FavoriteShareMapper::class),
+			$c->get(FavoriteShareRepository::class),
 			'test2'
 		);
 		$this->mapFolder = $this->createMapFolder();

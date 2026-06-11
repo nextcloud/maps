@@ -24,28 +24,23 @@
 
 namespace OCA\Maps\DB;
 
-use OCP\AppFramework\Db\Entity;
+use OCA\Maps\AppFramework\Db\Attribute\Column;
+use OCA\Maps\AppFramework\Db\Attribute\Entity;
+use OCA\Maps\AppFramework\Db\Attribute\Id;
+use OCP\DB\Types;
 
-/**
- * @method string getToken()
- * @method string getCategory()
- * @method bool getAllowEdits()
- * @method string getOwner()
- * @method string setToken(string $token)
- * @method string setCategory(string $category)
- * @method string setAllowEdits(bool $allowEdits)
- * @method string setOwner(string $owner)
- */
-class FavoriteShare extends Entity {
-	public $owner;
-	public $token;
-	public $category;
-	public $allowEdits = false;
+#[Entity(name: 'maps_favorite_shares')]
+class FavoriteShare {
+	#[Id]
+	#[Column(name: 'id', type: Types::INTEGER)]
+	public int $id;
 
-	public function __construct() {
-		$this->addType('owner', 'string');
-		$this->addType('token', 'string');
-		$this->addType('category', 'string');
-		$this->addType('allowEdits', 'boolean');
-	}
+	#[Column(name: 'owner', type: Types::STRING, nullable: false, length: 64)]
+	public string $owner;
+
+	#[Column(name: 'token', type: Types::STRING, nullable: false, length: 64)]
+	public string $token;
+
+	#[Column(name: 'category', type: Types::STRING, nullable: false, length: 64)]
+	public string $category;
 }

@@ -24,11 +24,12 @@
 
 namespace OCA\Maps\Controller;
 
-use OCA\Maps\DB\FavoriteShareMapper;
+use OCA\Maps\DB\FavoriteShare;
 use OCA\Maps\Service\FavoritesService;
 use OCP\AppFramework\Db\DoesNotExistException;
 use OCP\AppFramework\Db\MultipleObjectsReturnedException;
 use OCP\AppFramework\Http;
+use OCP\AppFramework\Http\Attribute\PublicPage;
 use OCP\AppFramework\Http\DataResponse;
 use OCP\AppFramework\PublicShareController;
 use OCP\IRequest;
@@ -40,7 +41,7 @@ class PublicFavoritesApiController extends PublicShareController {
 		IRequest $request,
 		ISession $session,
 		private readonly \OCA\Maps\Service\FavoritesService $favoritesService,
-		private readonly \OCA\Maps\DB\FavoriteShareMapper $favoriteShareMapper,
+		private readonly \OCA\Maps\DB\FavoriteShareRepository $favoriteShareMapper,
 	) {
 		parent::__construct($appName, $request, $session);
 	}
@@ -63,6 +64,7 @@ class PublicFavoritesApiController extends PublicShareController {
 		return true;
 	}
 
+	/**
 	public function canEdit(): bool {
 		try {
 			$share = $this->favoriteShareMapper->findByToken($this->getToken());
@@ -71,11 +73,12 @@ class PublicFavoritesApiController extends PublicShareController {
 		}
 
 		return $share->getAllowEdits();
-	}
+	}*/
 
 	/**
-	 * @PublicPage
+	 * @return DataResponse<HTTP::STATUS_OK, array{share: FavoriteShare, favorites: list<array>}, array{}>|DataResponse<HTTP::STATUS_NOT_FOUND|HTTP::STATUS_INTERNAL_SERVER_ERROR, array{}, array{}>
 	 */
+	#[PublicPage]
 	public function getFavorites(): DataResponse {
 		try {
 			$share = $this->favoriteShareMapper->findByToken($this->getToken());
@@ -85,7 +88,7 @@ class PublicFavoritesApiController extends PublicShareController {
 			return new DataResponse([], Http::STATUS_INTERNAL_SERVER_ERROR);
 		}
 
-		$favorites = $this->favoritesService->getFavoritesFromDB($share->getOwner(), 0, $share->getCategory(), false, false, true);
+		$favorites = $this->favoritesService->getFavoritesFromDB($share->owner, 0, $share->category, false, false, true);
 
 		return new DataResponse([
 			'share' => $share,

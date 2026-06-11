@@ -14,7 +14,7 @@
 
 namespace OCA\Maps\Controller;
 
-use OCA\Maps\DB\FavoriteShareMapper;
+use OCA\Maps\DB\FavoriteShareRepository;
 use OCA\Maps\Service\FavoritesService;
 use OCP\AppFramework\Controller;
 use OCP\AppFramework\Db\DoesNotExistException;
@@ -46,7 +46,7 @@ class FavoritesController extends Controller {
 		IRootFolder $rootFolder,
 		private readonly FavoritesService $favoritesService,
 		private readonly IDateTimeZone $dateTimeZone,
-		private readonly FavoriteShareMapper $favoriteShareMapper,
+		private readonly FavoriteShareRepository $favoriteShareMapper,
 		private readonly ?string $userId,
 	) {
 		parent::__construct($appName, $request);
@@ -214,7 +214,7 @@ class FavoritesController extends Controller {
 					// Rename share if one exists
 					try {
 						$share = $this->favoriteShareMapper->findByOwnerAndCategory($this->userId, $cat);
-						$share->setCategory($newName);
+						$share->category = $newName;
 						$this->favoriteShareMapper->update($share);
 					} catch (DoesNotExistException|MultipleObjectsReturnedException) {
 					}

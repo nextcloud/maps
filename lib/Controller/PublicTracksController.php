@@ -13,33 +13,30 @@
 namespace OCA\Maps\Controller;
 
 use OCA\Maps\Service\TracksService;
+use OCP\AppFramework\Http\Attribute\NoAdminRequired;
+use OCP\AppFramework\Http\Attribute\PublicPage;
 use OCP\AppFramework\Http\DataResponse;
 use OCP\AppFramework\Services\IInitialState;
 use OCP\EventDispatcher\IEventDispatcher;
+use OCP\Files\File;
+use OCP\Files\Folder;
 use OCP\Files\IRootFolder;
+use OCP\Files\Node;
 use OCP\Files\NotFoundException;
 use OCP\Files\NotPermittedException;
 use OCP\IAppConfig;
 use OCP\IGroupManager;
 use OCP\IL10N;
 use OCP\IRequest;
-use OCP\IServerContainer;
 use OCP\ISession;
 use OCP\IURLGenerator;
 use OCP\IUserManager;
-use OCP\Share;
 use OCP\Share\Exceptions\ShareNotFound;
 use OCP\Share\IManager as ShareManager;
+use OCP\Share\IShare;
 use function OCA\Maps\Helper\remove_utf8_bom;
 
 class PublicTracksController extends PublicPageController {
-
-	protected ShareManager $shareManager;
-	protected IUserManager $userManager;
-	protected IL10N $l;
-	protected $appName;
-	protected IRootFolder $root;
-
 	public function __construct(
 		string $appName,
 		IRequest $request,
@@ -50,23 +47,18 @@ class PublicTracksController extends PublicPageController {
 		ShareManager $shareManager,
 		IUserManager $userManager,
 		ISession $session,
-		IServerContainer $serverContainer,
 		protected IGroupManager $groupManager,
-		IL10N $l,
+		protected readonly IL10N $l,
 		protected TracksService $tracksService,
-		IRootFolder $root,
+		protected readonly IRootFolder $root,
 	) {
 		parent::__construct($appName, $request, $session, $urlGenerator, $eventDispatcher, $appConfig, $initialState, $shareManager, $userManager);
-		$this->l = $l;
-		$this->root = $root;
 	}
 
 	/**
 	 * Validate the permissions of the share
-	 *
-	 * @return bool
 	 */
-	private function validateShare(\OCP\Share\IShare $share) {
+	private function validateShare(IShare $share): bool {
 		// If the owner is disabled no access to the link is granted
 		$owner = $this->userManager->get($share->getShareOwner());
 		if ($owner === null || !$owner->isEnabled()) {
@@ -83,15 +75,14 @@ class PublicTracksController extends PublicPageController {
 	}
 
 	/**
-	 * @return \OCP\Share\IShare
 	 * @throws NotFoundException
 	 */
-	private function getShare() {
+	private function getShare(): IShare {
 		// Check whether share exists
 		try {
 			$share = $this->shareManager->getShareByToken($this->getToken());
 		} catch (ShareNotFound) {
-			// The share does not exists, we do not emit an ShareLinkAccessedEvent
+			// The share does not exist, we do not emit an ShareLinkAccessedEvent
 			throw new NotFoundException();
 		}
 
@@ -102,10 +93,9 @@ class PublicTracksController extends PublicPageController {
 	}
 
 	/**
-	 * @return \OCP\Files\File|\OCP\Files\Folder
 	 * @throws NotFoundException
 	 */
-	private function getShareNode() {
+	private function getShareNode(): Node {
 		\OC_User::setIncognitoMode(true);
 
 		$share = $this->getShare();
@@ -114,18 +104,18 @@ class PublicTracksController extends PublicPageController {
 	}
 
 	/**
-	 * @PublicPage
 	 * @throws NotFoundException
 	 * @throws NotPermittedException
 	 * @throws \OC\User\NoUserException
 	 */
+	#[PublicPage]
 	public function getTracks(): DataResponse {
 		$share = $this->getShare();
-		$hideDownload = (bool)$share->getHideDownload();
+		$hideDownload = $share->getHideDownload();
 		$permissions = $share->getPermissions();
 		$folder = $this->getShareNode();
 		$isReadable = (bool)($permissions & (1 << 0));
-		if ($isReadable) {
+		if ($isReadable && $folder instanceof Folder) {
 			$owner = $share->getShareOwner();
 			$pre_path = $this->root->getUserFolder($owner)->getPath();
 			$tracks = $this->tracksService->getTracksFromDB($owner, $folder, true, false, false);
@@ -145,131 +135,118 @@ class PublicTracksController extends PublicPageController {
 	}
 
 	/**
-	 * @PublicPage
-	 * @param $id
-	 * @return DataResponse
 	 * @throws NotFoundException
 	 * @throws NotPermittedException
 	 * @throws \OCP\Files\InvalidPathException
 	 */
-	public function getTrackContentByFileId($id) {
+	#[PublicPage]
+	public function getTrackContentByFileId(int $id): DataResponse {
 		$share = $this->getShare();
 		$permissions = $share->getPermissions();
 		$folder = $this->getShareNode();
+		if (!$folder instanceof Folder) {
+			return new DataResponse($this->l->t('Share folder not found'), 400);
+		}
+
 		$isReadable = (bool)($permissions & (1 << 0));
 		if (!$isReadable) {
 			throw new NotPermittedException();
 		}
 		$owner = $share->getShareOwner();
 		$track = $this->tracksService->getTrackByFileIDFromDB($id, $owner);
-		$res = is_null($track) ? null : $folder->getById($track['file_id']);
-		if (is_array($res) and count($res) > 0) {
-			$trackFile = array_shift($res);
-			if ($trackFile->getType() === \OCP\Files\FileInfo::TYPE_FILE) {
-				$trackContent = remove_utf8_bom($trackFile->getContent());
-				// compute metadata if necessary
-				// first time we get it OR the file changed
-				if (!$track['metadata'] || $track['etag'] !== $trackFile->getEtag()) {
-					$metadata = $this->tracksService->generateTrackMetadata($trackFile);
-					$this->tracksService->editTrackInDB($track['id'], null, $metadata, $trackFile->getEtag());
-				} else {
-					$metadata = $track['metadata'];
-				}
-				return new DataResponse([
-					'metadata' => $metadata,
-					'content' => $trackContent
-				]);
-			} else {
-				return new DataResponse($this->l->t('Bad file type'), 400);
-			}
-		} else {
+		$trackFile = $folder->getFirstNodeById($track['file_id']);
+		if (!$trackFile instanceof File) {
 			return new DataResponse($this->l->t('File not found'), 400);
 		}
+		$trackContent = remove_utf8_bom($trackFile->getContent());
+		// compute metadata if necessary
+		// first time we get it OR the file changed
+		if (!$track['metadata'] || $track['etag'] !== $trackFile->getEtag()) {
+			$metadata = $this->tracksService->generateTrackMetadata($trackFile);
+			$this->tracksService->editTrackInDB($track['id'], null, $metadata, $trackFile->getEtag());
+		} else {
+			$metadata = $track['metadata'];
+		}
+		return new DataResponse([
+			'metadata' => $metadata,
+			'content' => $trackContent
+		]);
 	}
 
 	/**
-	 * @PublicPage
-	 * @param $id
 	 * @throws NotFoundException
 	 * @throws \OCP\Files\InvalidPathException
 	 */
-	public function getTrackFileContent($id): DataResponse {
+	#[PublicPage]
+	public function getTrackFileContent(int $id): DataResponse {
 		$track = $this->tracksService->getTrackFromDB($id);
-		$res = is_null($track) ? null : $this->getShareNode()->getById($track['file_id']);
-		if (is_array($res) and count($res) > 0) {
-			$trackFile = array_shift($res);
-			if ($trackFile->getType() === \OCP\Files\FileInfo::TYPE_FILE) {
-				$trackContent = remove_utf8_bom($trackFile->getContent());
-				// compute metadata if necessary
-				// first time we get it OR the file changed
-				if (!$track['metadata'] || $track['etag'] !== $trackFile->getEtag()) {
-					$metadata = $this->tracksService->generateTrackMetadata($trackFile);
-					$this->tracksService->editTrackInDB($track['id'], null, $metadata, $trackFile->getEtag());
-				} else {
-					$metadata = $track['metadata'];
-				}
-				return new DataResponse([
-					'metadata' => $metadata,
-					'content' => $trackContent
-				]);
-			} else {
-				return new DataResponse($this->l->t('Bad file type'), 400);
-			}
-		} else {
+		if ($track === null) {
 			return new DataResponse($this->l->t('File not found'), 400);
 		}
+
+		$folder = $this->getShareNode();
+		if (!$folder instanceof Folder) {
+			return new DataResponse($this->l->t('File not found'), 400);
+		}
+
+		$trackFile = $folder->getFirstNodeById($track['file_id']);
+		if (!$trackFile instanceof File) {
+			return new DataResponse($this->l->t('Bad file type'), 400);
+		}
+
+		$trackContent = remove_utf8_bom($trackFile->getContent());
+		// compute metadata if necessary
+		// first time we get it OR the file changed
+		if (!$track['metadata'] || $track['etag'] !== $trackFile->getEtag()) {
+			$metadata = $this->tracksService->generateTrackMetadata($trackFile);
+			$this->tracksService->editTrackInDB($track['id'], null, $metadata, $trackFile->getEtag());
+		} else {
+			$metadata = $track['metadata'];
+		}
+		return new DataResponse([
+			'metadata' => $metadata,
+			'content' => $trackContent
+		]);
 	}
 
 	/**
-	 * @PublicPage
-	 * @param $id
-	 * @param $color
-	 * @param $metadata
-	 * @param $etag
 	 * @throws NotFoundException
 	 * @throws NotPermittedException
 	 */
-	public function editTrack($id, $color, $metadata, $etag): DataResponse {
+	#[PublicPage]
+	public function editTrack(int $id, ?string $color, ?string $metadata, ?string $etag): DataResponse {
 		$share = $this->getShare();
 		$permissions = $share->getPermissions();
 		$this->getShareNode();
 		$isUpdateable = (bool)($permissions & (1 << 1));
-		if ($isUpdateable) {
-			$owner = $share->getShareOwner();
-			$track = $this->tracksService->getTrackFromDB($id, $owner);
-			if ($track !== null) {
-				$this->tracksService->editTrackInDB($id, $color, $metadata, $etag);
-				return new DataResponse('EDITED');
-			} else {
-				return new DataResponse($this->l->t('No such track'), 400);
-			}
-		} else {
+		if (!$isUpdateable) {
 			throw new NotPermittedException();
 		}
+		$owner = $share->getShareOwner();
+		$track = $this->tracksService->getTrackFromDB($id, $owner);
+		if ($track !== null) {
+			$this->tracksService->editTrackInDB($id, $color, $metadata, $etag);
+			return new DataResponse('EDITED');
+		}
+		return new DataResponse($this->l->t('No such track'), 400);
 	}
 
-	/**
-	 * @NoAdminRequired
-	 * @param $id
-	 */
-	public function deleteTrack($id): DataResponse {
+	#[NoAdminRequired]
+	public function deleteTrack(int $id): DataResponse {
 		$share = $this->getShare();
 		$permissions = $share->getPermissions();
 		$this->getShareNode();
 		$isUpdateable = (bool)($permissions & (1 << 1));
-		//It's allowed to delete a track from the share, if the share is updateable
-		if ($isUpdateable) {
-			$owner = $share->getShareOwner();
-			$track = $this->tracksService->getTrackFromDB($id, $owner);
-			if ($track !== null) {
-				$this->tracksService->deleteTrackFromDB($id);
-				return new DataResponse('DELETED');
-			} else {
-				return new DataResponse($this->l->t('No such track'), 400);
-			}
-		} else {
+		//It's allowed to delete a track from the share, if the share is updatable
+		if (!$isUpdateable) {
 			throw new NotPermittedException();
 		}
+		$owner = $share->getShareOwner();
+		$track = $this->tracksService->getTrackFromDB($id, $owner);
+		if ($track !== null) {
+			$this->tracksService->deleteTrackFromDB($id);
+			return new DataResponse('DELETED');
+		}
+		return new DataResponse($this->l->t('No such track'), 400);
 	}
-
 }

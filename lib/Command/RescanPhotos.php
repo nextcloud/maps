@@ -24,28 +24,16 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
 class RescanPhotos extends Command {
-
-	protected IUserManager $userManager;
-	protected OutputInterface $output;
-	protected IManager $encryptionManager;
-	protected IConfig $config;
-
 	public function __construct(
-		IUserManager $userManager,
-		IManager $encryptionManager,
-		protected PhotofilesService $photofilesService,
-		IConfig $config,
+		private readonly IUserManager $userManager,
+		private readonly IManager $encryptionManager,
+		private readonly PhotofilesService $photofilesService,
+		private readonly IConfig $config,
 	) {
 		parent::__construct();
-		$this->userManager = $userManager;
-		$this->encryptionManager = $encryptionManager;
-		$this->config = $config;
 	}
 
-	/**
-	 * @return void
-	 */
-	protected function configure() {
+	protected function configure(): void {
 		$this->setName('maps:scan-photos')
 			->setDescription('Rescan photos GPS exif data')
 			->addArgument(
@@ -71,7 +59,6 @@ class RescanPhotos extends Command {
 			$output->writeln('Encryption is enabled. Aborted.');
 			return 1;
 		}
-		$this->output = $output;
 		$userId = $input->getArgument('user_id');
 		$pathToScan = $input->getArgument('path');
 		$inBackground = !($input->getOption('now') ?? true);

@@ -201,7 +201,7 @@ class TracksService {
 			return null;
 		}
 		$file = array_shift($files);
-		if ($file === null || $file->getType() !== \OCP\Files\FileInfo::TYPE_FILE) {
+		if (!$file instanceof File) {
 			if ($defaultMap) {
 				$this->deleteTrackFromDB($row['id']);
 			}

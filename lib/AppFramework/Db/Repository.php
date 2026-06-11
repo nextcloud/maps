@@ -28,7 +28,7 @@ use OCP\Snowflake\ISnowflakeGenerator;
  * @since 35.0.0
  */
 class Repository {
-	private string $tableName;
+	private readonly string $tableName;
 
 	/** @var array<string, string> */
 	private array $_mappingColumnToTypes = [];
@@ -40,12 +40,11 @@ class Repository {
 	private array $_mappingPropertyToColumn = [];
 
 	/** @var \ReflectionClass<T> */
-	private \ReflectionClass $reflection;
+	private readonly \ReflectionClass $reflection;
 
-	private string $idProperty;
+	private \ReflectionProperty $idProperty;
 
 	/**
-	 * @param IDBConnection $connection
 	 * @param class-string<T> $entityClass
 	 * @throws \ReflectionException
 	 */
@@ -76,8 +75,8 @@ class Repository {
 
 			/** @var list<\ReflectionAttribute<Id>> $ids */
 			$ids = $property->getAttributes(Id::class, \ReflectionAttribute::IS_INSTANCEOF);
-			if (!empty($ids)) {
-				$this->idProperty = $property->getName();
+			if ($ids !== []) {
+				$this->idProperty = $property;
 			}
 		}
 	}
@@ -85,7 +84,6 @@ class Repository {
 	/**
 	 * Runs a sql query and yields each resulting entity to obtain database entries in a memory-efficient way
 	 *
-	 * @param IQueryBuilder $query
 	 * @return Generator Generator of fetched entities
 	 * @psalm-return Generator<T> Generator of fetched entities
 	 * @throws Exception
@@ -104,7 +102,6 @@ class Repository {
 	/**
 	 * Runs a sql query and returns an array of entities
 	 *
-	 * @param IQueryBuilder $query
 	 * @psalm-return list<T> all fetched entities
 	 * @throws Exception
 	 */
@@ -133,9 +130,14 @@ class Repository {
 				$type = Types::STRING;
 			}
 
-			if ($column === $this->idProperty) {
-				$entity->$property = (string)$value;
-				continue;
+			if ($column === $this->idProperty->getName()) {
+				/** @var list<\ReflectionAttribute<Id>> $ids */
+				$ids = $this->idProperty->getAttributes(Id::class, \ReflectionAttribute::IS_INSTANCEOF);
+				$id = array_shift($ids);
+				if ($id->newInstance()->generatorClass !== null) {
+					$entity->$property = (string)$value;
+					continue;
+				}
 			}
 
 			switch ($type) {
@@ -166,7 +168,7 @@ class Repository {
 					break;
 				case Types::JSON:
 					if (!is_array($value)) {
-						$value = json_decode($value, true);
+						$value = json_decode((string)$value, true);
 					}
 					break;
 			}
@@ -203,13 +205,15 @@ class Repository {
 			if (count($ids) > 0 && $property->getValue($entity) === null) {
 				$primaryProperty = $property;
 				$generatorClass = $ids[0]->newInstance()->generatorClass;
-				$generator = Server::get($generatorClass);
-				/** @psalm-suppress UndefinedClass NC 33 and above */
-				if (class_exists(ISnowflakeGenerator::class) && $generator instanceof ISnowflakeGenerator) {
-					$isSnowflake = true;
-					/** @psalm-suppress UndefinedClass */
-					$values[$column->name] = $generator->nextId();
-					$property->setValue($entity, $insert->createNamedParameter($values[$column->name]));
+				if ($generatorClass) {
+					$generator = Server::get($generatorClass);
+					/** @psalm-suppress UndefinedClass NC 33 and above */
+					if (class_exists(ISnowflakeGenerator::class) && $generator instanceof ISnowflakeGenerator) {
+						$isSnowflake = true;
+						/** @psalm-suppress UndefinedClass */
+						$values[$column->name] = $generator->nextId();
+						$property->setValue($entity, $insert->createNamedParameter($values[$column->name]));
+					}
 				}
 			} else {
 				$type = $this->getParameterType($column->type, false);
@@ -249,7 +253,7 @@ class Repository {
 					throw new \LogicException('Trying to update an entity with no primary key set.');
 				}
 
-				$update->andWhere($update->expr()->eq($this->_mappingPropertyToColumn[$this->idProperty], $update->createNamedParameter($property->getValue($entity))));
+				$update->andWhere($update->expr()->eq($this->_mappingPropertyToColumn[$this->idProperty->getName()], $update->createNamedParameter($property->getValue($entity))));
 				// don't update the id
 				continue;
 			};
@@ -276,7 +280,7 @@ class Repository {
 			$column = $columns[0]->newInstance();
 
 			if (count($property->getAttributes(Id::class, \ReflectionAttribute::IS_INSTANCEOF)) !== 0) {
-				$delete->andWhere($delete->expr()->eq($column->name, $property->getValue($entity)));
+				$delete->andWhere($delete->expr()->eq($column->name, $delete->createNamedParameter($property->getValue($entity))));
 				$foundId = true;
 			};
 		}
@@ -327,7 +331,6 @@ class Repository {
 	 * @param array<string, int|float|string|list<int|float|string>> $criteria
 	 * @param array<string, 'asc'|'desc'>|null $orderBy
 	 * @return \Generator<T>
-	 * @since 33.0.0
 	 */
 	public function findBy(array $criteria, array $orderBy = [], ?int $limit = null, ?int $offset = null): \Generator {
 		$qb = $this->getSelectQueryBuilder($criteria, $orderBy);
@@ -419,12 +422,10 @@ class Repository {
 	 * Returns a db result and throws exceptions when there are more or less
 	 * results
 	 *
-	 * @param IQueryBuilder $query
 	 * @psalm-return T the entity
 	 * @throws Exception
 	 * @throws MultipleObjectsReturnedException if more than one item exist
 	 * @throws DoesNotExistException if the item does not exist
-	 * @since 33.0.0
 	 */
 	protected function findEntity(IQueryBuilder $query): object {
 		$result = $query->executeQuery();

@@ -27,7 +27,7 @@ use OCP\AppFramework\Attribute\Consumable;
  * @since 35.0.0
  */
 #[Attribute(Attribute::TARGET_CLASS)]
-#[Consumable(since: '33.0.0')]
+#[Consumable(since: '35.0.0')]
 final readonly class Entity {
 	public function __construct(
 		public string $name,

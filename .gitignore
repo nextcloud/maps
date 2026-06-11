@@ -80,3 +80,5 @@ typings/
 
 # VScode settings
 .vscode/settings.json
+
+tests/.phpunit.cache/test-results

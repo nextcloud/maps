@@ -32,8 +32,8 @@ use OCP\DB\Types;
 #[Entity(name: 'maps_favorite_shares')]
 class FavoriteShare {
 	#[Id]
-	#[Column(name: 'id', type: Types::INTEGER)]
-	public int $id;
+	#[Column(name: 'id', type: Types::BIGINT)]
+	public ?int $id = null;
 
 	#[Column(name: 'owner', type: Types::STRING, nullable: false, length: 64)]
 	public string $owner;

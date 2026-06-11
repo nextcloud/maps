@@ -65,15 +65,15 @@ class PublicFavoritesApiController extends PublicShareController {
 	}
 
 	/**
-	public function canEdit(): bool {
-		try {
-			$share = $this->favoriteShareMapper->findByToken($this->getToken());
-		} catch (DoesNotExistException|MultipleObjectsReturnedException) {
-			return false;
-		}
-
-		return $share->getAllowEdits();
-	}*/
+	 * public function canEdit(): bool {
+	 * try {
+	 * $share = $this->favoriteShareMapper->findByToken($this->getToken());
+	 * } catch (DoesNotExistException|MultipleObjectsReturnedException) {
+	 * return false;
+	 * }
+	 *
+	 * return $share->getAllowEdits();
+	 * }*/
 
 	/**
 	 * @return DataResponse<HTTP::STATUS_OK, array{share: FavoriteShare, favorites: list<array>}, array{}>|DataResponse<HTTP::STATUS_NOT_FOUND|HTTP::STATUS_INTERNAL_SERVER_ERROR, array{}, array{}>

@@ -60,7 +60,7 @@ class GeophotoRepository extends Repository {
 	 * @return list<Geophoto>
 	 * @throws \OCP\DB\Exception
 	 */
-	public function findAll(string $userId, int $limit = null, int $offset = null): array {
+	public function findAll(string $userId, ?int $limit = null, ?int $offset = null): array {
 		$qb = $this->db->getQueryBuilder();
 
 		$qb->select('*')
@@ -85,7 +85,7 @@ class GeophotoRepository extends Repository {
 	 * @return list<Geophoto>
 	 * @throws \OCP\DB\Exception
 	 */
-	public function findAllNonLocalized(string $userId, int $limit = null, int $offset = null): array {
+	public function findAllNonLocalized(string $userId, ?int $limit = null, ?int $offset = null): array {
 		$qb = $this->db->getQueryBuilder();
 
 		$qb->select('*')

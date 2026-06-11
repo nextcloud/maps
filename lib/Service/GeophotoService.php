@@ -38,12 +38,12 @@ class GeophotoService {
 	private readonly ICache $backgroundJobCache;
 
 	public function __construct(
-		private readonly IRootFolder                     $root,
+		private readonly IRootFolder $root,
 		private readonly GeophotoRepository $photoMapper,
-		private readonly IPreview                        $preview,
-		private readonly TracksService                   $tracksService,
-		private readonly DevicesService                  $devicesService,
-		private readonly ICacheFactory                   $cacheFactory,
+		private readonly IPreview $preview,
+		private readonly TracksService $tracksService,
+		private readonly DevicesService $devicesService,
+		private readonly ICacheFactory $cacheFactory,
 	) {
 		$this->timeorderedPointSets = null;
 		$this->photosCache = $this->cacheFactory->createDistributed('maps:photos');
@@ -194,9 +194,9 @@ class GeophotoService {
 				$isRoot = $file === $userFolder;
 
 				//Unfortunately Exif stores the local and not the UTC time. There is no way to get the timezone, therefore it has to be given by the user.
-				$date = $photoEntity->dateTaken ?? \time();
+				$date = $photoEntity->dateTaken ?? new \DateTime('now');
 
-				$dateWithTimezone = new \DateTime(gmdate('Y-m-d H:i:s', $date), $tz);
+				$dateWithTimezone = new \DateTime($date->format('Y-m-d H:i:s'), $tz);
 				$locations = $this->getLocationGuesses($dateWithTimezone->getTimestamp());
 				foreach ($locations as $key => $location) {
 					$file_object = new \stdClass();

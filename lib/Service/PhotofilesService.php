@@ -47,12 +47,12 @@ class PhotofilesService {
 	public const PHOTO_MIME_TYPES = ['image/jpeg', 'image/tiff', 'image/heic'];
 
 	public function __construct(
-		private readonly LoggerInterface    $logger,
-		private readonly ICacheFactory      $cacheFactory,
-		private readonly IRootFolder        $root,
+		private readonly LoggerInterface $logger,
+		private readonly ICacheFactory $cacheFactory,
+		private readonly IRootFolder $root,
 		private readonly GeophotoRepository $photoMapper,
-		private readonly IManager           $shareManager,
-		private readonly IJobList           $jobList,
+		private readonly IManager $shareManager,
+		private readonly IJobList $jobList,
 	) {
 		$this->photosCache = $this->cacheFactory->createDistributed('maps:photos');
 		$this->backgroundJobCache = $this->cacheFactory->createDistributed('maps:background-jobs');
@@ -134,7 +134,7 @@ class PhotofilesService {
 
 	// delete photo only if it's not accessible to user anymore
 	// it might have been shared multiple times by different users
-	public function deleteByFileIdUserId($fileId, $userId): void {
+	public function deleteByFileIdUserId(int $fileId, string $userId): void {
 		$userFolder = $this->root->getUserFolder($userId);
 		$files = $userFolder->getById($fileId);
 		if (!is_array($files) or count($files) === 0) {
@@ -328,7 +328,8 @@ class PhotofilesService {
 		$photoEntity->lng = is_numeric($exif->lng) && !is_nan($exif->lng) ? $exif->lng : null;
 		$photoEntity->userId = $userId;
 		// alternative should be file creation date
-		$photoEntity->dateTaken = $exif->dateTaken ?? $photo->getMTime();
+		$photoEntity->dateTaken = new \DateTime();
+		$photoEntity->dateTaken->setTimestamp($exif->dateTaken ?? $photo->getMTime());
 		$this->photoMapper->insert($photoEntity);
 
 		$this->photosCache->clear($userId);

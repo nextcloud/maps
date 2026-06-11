@@ -32,8 +32,8 @@ use OCP\DB\Types;
 #[Entity(name: 'maps_device_shares')]
 class DeviceShare {
 	#[Id]
-	#[Column(name: 'id', type: Types::INTEGER)]
-	public int $id;
+	#[Column(name: 'id', type: Types::BIGINT)]
+	public ?int $id = null;
 
 	#[Column(name: 'token', type: Types::STRING, nullable: false, length: 64)]
 	public string $token;

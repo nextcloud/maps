@@ -121,9 +121,6 @@ class FavoriteShareRepository extends Repository {
 	}
 
 	/**
-	 * @param $userId
-	 * @param $mapId
-	 * @param $category
 	 * @return mixed|null
 	 * @throws \OCP\Files\NotPermittedException
 	 * @throws \OC\User\NoUserException

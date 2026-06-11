@@ -28,7 +28,7 @@ use OCP\AppFramework\Attribute\Consumable;
  * @since 35.0.0
  */
 #[Attribute(Attribute::TARGET_PROPERTY)]
-#[Consumable(since: '33.0.0')]
+#[Consumable(since: '35.0.0')]
 final readonly class Column {
 	public function __construct(
 		public string $name,

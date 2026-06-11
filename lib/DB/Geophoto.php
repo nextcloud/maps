@@ -17,10 +17,13 @@ use OCA\Maps\AppFramework\Db\Attribute\Entity;
 use OCA\Maps\AppFramework\Db\Attribute\Id;
 use OCP\DB\Types;
 
-#[Entity(name: 'maps_photo')]
+#[Entity(name: 'maps_photos')]
 class Geophoto {
 	#[Id]
-	#[Column(name: 'id', type: Types::INTEGER, nullable: false)]
+	#[Column(name: 'id', type: Types::BIGINT, nullable: false)]
+	public ?int $id = null;
+
+	#[Column(name: 'file_id', type: Types::INTEGER, nullable: false)]
 	public int $fileId;
 
 	#[Column(name: 'lat', type: Types::FLOAT, nullable: true)]
@@ -30,7 +33,7 @@ class Geophoto {
 	public ?float $lng = null;
 
 	#[Column(name: 'date_taken', type: Types::DATETIME, nullable: true)]
-	public ?int $dateTaken = null;
+	public ?\DateTime $dateTaken = null;
 
 	#[Column(name: 'user_id', type: Types::STRING, nullable: false)]
 	public string $userId;

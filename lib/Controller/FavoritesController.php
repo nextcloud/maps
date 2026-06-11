@@ -14,6 +14,7 @@
 
 namespace OCA\Maps\Controller;
 
+use OCA\Maps\DB\FavoriteShare;
 use OCA\Maps\DB\FavoriteShareRepository;
 use OCA\Maps\Service\FavoritesService;
 use OCP\AppFramework\Controller;
@@ -169,8 +170,7 @@ class FavoritesController extends Controller {
 		if (is_null($myMapId) || $myMapId === 0) {
 			$favorite = $this->favoritesService->getFavoriteFromDB($id, $this->userId);
 			if ($favorite !== null) {
-				if (is_numeric($lng)
-				) {
+				if (is_numeric($lng)) {
 					$this->favoritesService->editFavoriteInDB($id, $name, $lat, $lng, $category, $comment, $extensions);
 					$editedFavorite = $this->favoritesService->getFavoriteFromDB($id);
 					return new DataResponse($editedFavorite);
@@ -279,9 +279,12 @@ class FavoritesController extends Controller {
 			$categories = $this->favoriteShareMapper->findAllByMapId($this->userId, $myMapId);
 		}
 
-		return new DataResponse($categories);
+		return new DataResponse(iterator_to_array($categories));
 	}
 
+	/**
+	 * @return DataResponse<HTTP::STATUS_BAD_REQUEST|Http::STATUS_INTERNAL_SERVER_ERROR, string, array{}>|DataResponse<HTTP::STATUS_OK, FavoriteShare, array{}>
+	 */
 	#[NoAdminRequired]
 	public function shareCategory(string $category): DataResponse {
 		if ($this->favoritesService->countFavorites($this->userId, [$category], null, null) === 0) {

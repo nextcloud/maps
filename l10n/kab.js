@@ -9,6 +9,7 @@ OC.L10N.register(
     "Link copied" : "Aseɣwen yettwanɣel",
     "Rename" : "Beddel isem",
     "Copied!" : "Yenɣel!",
+    "Open folder" : "Ldi akaram",
     "Share" : "Bḍu",
     "Category" : "Taggayt",
     "Comment" : "Commentaire",

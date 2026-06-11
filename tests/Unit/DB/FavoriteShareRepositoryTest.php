@@ -84,7 +84,7 @@ class FavoriteShareRepositoryTest extends TestCase {
 		$share3 = $this->createShare('dave', 'Cat1');
 
 		$shares = iterator_to_array($this->repository->findAllByOwner('charlie'));
-		$ids = array_map(fn (FavoriteShare $s) => $s->id, $shares);
+		$ids = array_map(fn (FavoriteShare $s): ?int => $s->id, $shares);
 
 		$this->assertContains($share1->id, $ids);
 		$this->assertContains($share2->id, $ids);
@@ -114,7 +114,7 @@ class FavoriteShareRepositoryTest extends TestCase {
 	}
 
 	public function testRemoveByOwnerAndCategory(): void {
-		$share = $this->createShare('grace', 'ToRemove');
+		$this->createShare('grace', 'ToRemove');
 
 		$result = $this->repository->removeByOwnerAndCategory('grace', 'ToRemove');
 		$this->assertTrue($result);

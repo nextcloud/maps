@@ -102,7 +102,7 @@ class GeophotoRepositoryTest extends TestCase {
 		$nonLocalized = $this->createGeophoto(4002, 'bob', null, null);
 
 		$results = $this->repository->findAll('bob');
-		$ids = array_map(fn (Geophoto $g) => $g->id, $results);
+		$ids = array_map(fn (Geophoto $g): ?int => $g->id, $results);
 
 		$this->assertContains($localized->id, $ids);
 		$this->assertNotContains($nonLocalized->id, $ids);
@@ -113,7 +113,7 @@ class GeophotoRepositoryTest extends TestCase {
 		$newer = $this->createGeophoto(5002, 'carol', 2.0, 2.0, '2022-01-01');
 
 		$results = $this->repository->findAll('carol');
-		$ids = array_map(fn (Geophoto $g) => $g->id, $results);
+		$ids = array_map(fn (Geophoto $g): ?int => $g->id, $results);
 
 		$this->assertContains($older->id, $ids);
 		$this->assertContains($newer->id, $ids);
@@ -139,7 +139,7 @@ class GeophotoRepositoryTest extends TestCase {
 		$nonLocalized = $this->createGeophoto(7002, 'erin', null, null);
 
 		$results = $this->repository->findAllNonLocalized('erin');
-		$ids = array_map(fn (Geophoto $g) => $g->id, $results);
+		$ids = array_map(fn (Geophoto $g): ?int => $g->id, $results);
 
 		$this->assertContains($nonLocalized->id, $ids);
 		$this->assertNotContains($localized->id, $ids);

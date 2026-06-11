@@ -88,7 +88,7 @@ class DeviceShareRepositoryTest extends TestCase {
 		$share3 = $this->createShare(20, 100, 200);
 
 		$shares = iterator_to_array($this->repository->findByDeviceIds([10]));
-		$ids = array_map(fn (DeviceShare $s) => $s->id, $shares);
+		$ids = array_map(fn (DeviceShare $s): ?int => $s->id, $shares);
 
 		$this->assertContains($share1->id, $ids);
 		$this->assertContains($share2->id, $ids);
@@ -101,7 +101,7 @@ class DeviceShareRepositoryTest extends TestCase {
 		$share3 = $this->createShare(13, 100, 200);
 
 		$shares = iterator_to_array($this->repository->findByDeviceIds([11, 12]));
-		$ids = array_map(fn (DeviceShare $s) => $s->id, $shares);
+		$ids = array_map(fn (DeviceShare $s): ?int => $s->id, $shares);
 
 		$this->assertContains($share1->id, $ids);
 		$this->assertContains($share2->id, $ids);

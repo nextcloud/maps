@@ -22,10 +22,11 @@ use OCP\ICacheFactory;
 use OCP\IGroupManager;
 use OCP\IRequest;
 use OCP\IUserManager;
-use OCP\L10N\IFactory;
 use OCP\Server;
+use OCP\Share\IManager;
 use PHPUnit\Framework\MockObject\MockObject;
 use Psr\Container\ContainerInterface;
+use Psr\Log\LoggerInterface;
 
 class PhotosControllerTest extends \PHPUnit\Framework\TestCase {
 	private string $appName;
@@ -80,12 +81,11 @@ class PhotosControllerTest extends \PHPUnit\Framework\TestCase {
 		$this->GeoPhotosService = $c->get(GeoPhotoService::class);
 
 		$this->photoFileService = new PhotoFilesService(
-			$c->get(\Psr\Log\LoggerInterface::class),
+			$c->get(LoggerInterface::class),
 			$c->get(ICacheFactory::class),
 			$this->rootFolder,
-			$c->get(IFactory::class)->get('maps'),
 			$c->get(GeophotoMapper::class),
-			$c->get(\OCP\Share\IManager::class),
+			$c->get(IManager::class),
 			$c->get(\OCP\BackgroundJob\IJobList::class)
 		);
 
@@ -135,8 +135,6 @@ class PhotosControllerTest extends \PHPUnit\Framework\TestCase {
 	}
 
 	public function testAddGetPhotos(): void {
-		$this->app->getContainer();
-
 		$userfolder = $this->container->get(IRootFolder::class)->getUserFolder('test');
 
 		$filename = 'tests/test_files/nc.jpg';

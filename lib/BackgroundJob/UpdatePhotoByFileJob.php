@@ -15,15 +15,12 @@ namespace OCA\Maps\BackgroundJob;
 use OCA\Maps\Service\PhotofilesService;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\BackgroundJob\QueuedJob;
+use OCP\Files\File;
 use OCP\Files\IRootFolder;
 use OCP\ICache;
 use OCP\ICacheFactory;
 
 class UpdatePhotoByFileJob extends QueuedJob {
-
-	private readonly IRootFolder $root;
-
-	private readonly ICacheFactory $cacheFactory;
 
 	private readonly ICache $backgroundJobCache;
 
@@ -31,27 +28,23 @@ class UpdatePhotoByFileJob extends QueuedJob {
 	 * UserInstallScanJob constructor.
 	 *
 	 * A QueuedJob to scan user storage for photos and tracks
-	 *
 	 */
 	public function __construct(
 		ITimeFactory $timeFactory,
-		IRootFolder $root,
+		private readonly IRootFolder $root,
 		private readonly PhotofilesService $photofilesService,
 		ICacheFactory $cacheFactory,
 	) {
 		parent::__construct($timeFactory);
-		$this->root = $root;
-		$this->cacheFactory = $cacheFactory;
-		$this->backgroundJobCache = $this->cacheFactory->createDistributed('maps:background-jobs');
+		$this->backgroundJobCache = $cacheFactory->createDistributed('maps:background-jobs');
 	}
 
 	public function run($argument): void {
 		$userFolder = $this->root->getUserFolder($argument['userId']);
-		$files = $userFolder->getById($argument['fileId']);
-		if (empty($files)) {
+		$file = $userFolder->getFirstNodeById($argument['fileId']);
+		if (!$file instanceof File) {
 			return;
 		}
-		$file = array_shift($files);
 		$this->photofilesService->updateByFileNow($file);
 
 		$counter = $this->backgroundJobCache->get('recentlyUpdated:' . $argument['userId']) ?? 0;

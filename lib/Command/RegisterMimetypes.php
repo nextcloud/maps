@@ -25,10 +25,7 @@ class RegisterMimetypes extends Command {
 		parent::__construct();
 	}
 
-	/**
-	 * @return void
-	 */
-	protected function configure() {
+	protected function configure(): void {
 		$this->setName('maps:register-mimetypes')
 			->setDescription('Registers the maps mimetypes for existing and new files.');
 	}

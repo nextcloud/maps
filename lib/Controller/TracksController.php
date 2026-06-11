@@ -16,6 +16,7 @@ use OCA\Maps\Service\TracksService;
 use OCP\AppFramework\Controller;
 use OCP\AppFramework\Http\Attribute\NoAdminRequired;
 use OCP\AppFramework\Http\DataResponse;
+use OCP\Files\File;
 use OCP\Files\Folder;
 use OCP\Files\IRootFolder;
 use OCP\IL10N;
@@ -65,23 +66,22 @@ class TracksController extends Controller {
 		$res = is_null($track) ? null : $this->userfolder->getById($track['file_id']);
 		if (is_array($res) and count($res) > 0) {
 			$trackFile = $res[0];
-			if ($trackFile->getType() === \OCP\Files\FileInfo::TYPE_FILE) {
-				$trackContent = remove_utf8_bom($trackFile->getContent());
-				// compute metadata if necessary
-				// first time we get it OR the file changed
-				if (!$track['metadata'] || $track['etag'] !== $trackFile->getEtag()) {
-					$metadata = $this->tracksService->generateTrackMetadata($trackFile);
-					$this->tracksService->editTrackInDB($track['id'], null, $metadata, $trackFile->getEtag());
-				} else {
-					$metadata = $track['metadata'];
-				}
-				return new DataResponse([
-					'metadata' => $metadata,
-					'content' => $trackContent
-				]);
-			} else {
+			if (!$trackFile instanceof File) {
 				return new DataResponse($this->l->t('Bad file type'), 400);
 			}
+			$trackContent = remove_utf8_bom($trackFile->getContent());
+			// compute metadata if necessary
+			// first time we get it OR the file changed
+			if (!$track['metadata'] || $track['etag'] !== $trackFile->getEtag()) {
+				$metadata = $this->tracksService->generateTrackMetadata($trackFile);
+				$this->tracksService->editTrackInDB($track['id'], null, $metadata, $trackFile->getEtag());
+			} else {
+				$metadata = $track['metadata'];
+			}
+			return new DataResponse([
+				'metadata' => $metadata,
+				'content' => $trackContent
+			]);
 		} else {
 			return new DataResponse($this->l->t('File not found'), 400);
 		}
@@ -97,23 +97,23 @@ class TracksController extends Controller {
 		$res = is_null($track) ? null : $this->userfolder->getById($track['file_id']);
 		if (is_array($res) and count($res) > 0) {
 			$trackFile = $res[0];
-			if ($trackFile->getType() === \OCP\Files\FileInfo::TYPE_FILE) {
-				$trackContent = remove_utf8_bom($trackFile->getContent());
-				// compute metadata if necessary
-				// first time we get it OR the file changed
-				if (!$track['metadata'] || $track['etag'] !== $trackFile->getEtag()) {
-					$metadata = $this->tracksService->generateTrackMetadata($trackFile);
-					$this->tracksService->editTrackInDB($track['id'], null, $metadata, $trackFile->getEtag());
-				} else {
-					$metadata = $track['metadata'];
-				}
-				return new DataResponse([
-					'metadata' => $metadata,
-					'content' => $trackContent
-				]);
-			} else {
+			if (!$trackFile instanceof File) {
 				return new DataResponse($this->l->t('Bad file type'), 400);
 			}
+
+			$trackContent = remove_utf8_bom($trackFile->getContent());
+			// compute metadata if necessary
+			// first time we get it OR the file changed
+			if (!$track['metadata'] || $track['etag'] !== $trackFile->getEtag()) {
+				$metadata = $this->tracksService->generateTrackMetadata($trackFile);
+				$this->tracksService->editTrackInDB($track['id'], null, $metadata, $trackFile->getEtag());
+			} else {
+				$metadata = $track['metadata'];
+			}
+			return new DataResponse([
+				'metadata' => $metadata,
+				'content' => $trackContent
+			]);
 		} else {
 			return new DataResponse($this->l->t('File not found'), 400);
 		}
@@ -140,5 +140,4 @@ class TracksController extends Controller {
 			return new DataResponse($this->l->t('No such track'), 400);
 		}
 	}
-
 }

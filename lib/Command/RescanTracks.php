@@ -24,23 +24,18 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class RescanTracks extends Command {
 
-	protected IUserManager $userManager;
 	protected OutputInterface $output;
-	protected IManager $encryptionManager;
-	protected IConfig $config;
 
 	public function __construct(
-		IUserManager $userManager,
-		IManager $encryptionManager,
+		private readonly IUserManager $userManager,
+		private readonly IManager $encryptionManager,
 		protected TracksService $tracksService,
-		IConfig $config,
+		private readonly IConfig $config,
 	) {
 		parent::__construct();
-		$this->userManager = $userManager;
-		$this->encryptionManager = $encryptionManager;
-		$this->config = $config;
 	}
-	protected function configure() {
+
+	protected function configure(): void {
 		$this->setName('maps:scan-tracks')
 			->setDescription('Rescan track files')
 			->addArgument(

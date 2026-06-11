@@ -15,16 +15,11 @@ namespace OCA\Maps\BackgroundJob;
 use OCA\Maps\Service\PhotofilesService;
 use OCA\Maps\Service\TracksService;
 use OCP\AppFramework\Utility\ITimeFactory;
-use OCP\BackgroundJob\IJobList;
 use OCP\BackgroundJob\QueuedJob;
 use OCP\IConfig;
-use OCP\IUserManager;
 use Psr\Log\LoggerInterface;
 
 class UserInstallScanJob extends QueuedJob {
-
-	private readonly IConfig $config;
-
 	/**
 	 * UserInstallScanJob constructor.
 	 *
@@ -32,26 +27,24 @@ class UserInstallScanJob extends QueuedJob {
 	 */
 	public function __construct(
 		ITimeFactory $timeFactory,
-		IJobList $jobList,
-		IUserManager $userManager,
-		IConfig $config,
+		private readonly IConfig $config,
 		private readonly PhotofilesService $photofilesService,
 		private readonly TracksService $tracksService,
+		private readonly LoggerInterface $logger,
 	) {
 		parent::__construct($timeFactory);
-		$this->config = $config;
 	}
 
 	public function run($argument): void {
 		$userId = $argument['userId'];
-		\OCP\Server::get(LoggerInterface::class)->debug('Launch user install scan job for ' . $userId . ' cronjob executed');
+		$this->logger->debug('Launch user install scan job for ' . $userId . ' cronjob executed');
 		// scan photos and tracks for given user
 		$this->rescanUserPhotos($userId);
 		$this->rescanUserTracks($userId);
 		$this->config->setUserValue($userId, 'maps', 'installScanDone', 'yes');
 	}
 
-	private function rescanUserPhotos($userId): void {
+	private function rescanUserPhotos(string $userId): void {
 		//$this->output->info('======== User '.$userId.' ========'."\n");
 		$c = 1;
 		foreach ($this->photofilesService->rescan($userId) as $path) {

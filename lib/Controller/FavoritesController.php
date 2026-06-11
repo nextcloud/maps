@@ -23,6 +23,7 @@ use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\Attribute\NoAdminRequired;
 use OCP\AppFramework\Http\DataResponse;
 use OCP\AppFramework\Services\IAppConfig;
+use OCP\Files\File;
 use OCP\Files\Folder;
 use OCP\Files\IRootFolder;
 use OCP\Files\NotFoundException;
@@ -415,27 +416,24 @@ class FavoritesController extends Controller {
 		$userFolder = $this->userFolder;
 		$cleanpath = str_replace(['../', '..\\'], '', $path);
 
-		if ($userFolder->nodeExists($cleanpath)) {
-			$file = $userFolder->get($cleanpath);
-			if ($file->getType() === \OCP\Files\FileInfo::TYPE_FILE
-				and $file->isReadable()) {
-				$lowerFileName = strtolower((string)$file->getName());
-				if (str_ends_with($lowerFileName, '.gpx') or str_ends_with($lowerFileName, '.kml')
-					|| str_ends_with($lowerFileName, '.kmz') or str_ends_with($lowerFileName, '.json')
-					|| str_ends_with($lowerFileName, '.geojson')) {
-					$result = $this->favoritesService->importFavorites($this->userId, $file);
-					return new DataResponse($result);
-				} else {
-					// invalid extension
-					return new DataResponse($this->l->t('Invalid file extension'), 400);
-				}
-			} else {
-				// directory or not readable
-				return new DataResponse($this->l->t('Impossible to read the file'), 400);
-			}
-		} else {
-			// does not exist
+		if (!$userFolder->nodeExists($cleanpath)) {
 			return new DataResponse($this->l->t('File does not exist'), 400);
 		}
+
+		$file = $userFolder->get($cleanpath);
+		if (!$file instanceof File || !$file->isReadable()) {
+			return new DataResponse($this->l->t('Impossible to read the file'), 400);
+		}
+
+		$lowerFileName = strtolower((string)$file->getName());
+		if (str_ends_with($lowerFileName, '.gpx') or str_ends_with($lowerFileName, '.kml')
+			|| str_ends_with($lowerFileName, '.kmz') or str_ends_with($lowerFileName, '.json')
+			|| str_ends_with($lowerFileName, '.geojson')) {
+			$result = $this->favoritesService->importFavorites($this->userId, $file);
+			return new DataResponse($result);
+		}
+
+		// invalid extension
+		return new DataResponse($this->l->t('Invalid file extension'), 400);
 	}
 }

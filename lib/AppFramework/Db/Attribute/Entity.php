@@ -30,6 +30,7 @@ use OCP\AppFramework\Attribute\Consumable;
 #[Consumable(since: '35.0.0')]
 final readonly class Entity {
 	public function __construct(
+		/** @param non-empty-string $name */
 		public string $name,
 	) {
 	}

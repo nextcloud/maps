@@ -18,8 +18,7 @@ use OCP\Snowflake\ISnowflakeGenerator;
  * Attribute for marking a column as a primary id.
  *
  * ```php
- * #[Entity]
- * #[Table(name: 'my_entity']
+ * #[Entity(name: 'my_entity']
  * final class MyEntity {
  *     #[Id(generatorClass: ISnowflakeGenerator::class)]
  *     #[Column(name: 'id', type: Types::BIGINT)]

@@ -20,6 +20,7 @@ OC.L10N.register(
     "no such favorite" : "pole sellist lemmikut",
     "Unknown category" : "Tundmatu kategooria",
     "Error sharing favorite" : "Viga lemmiku jagamisel",
+    "Share folder not found" : "Jagatud kausta ei leidu",
     "File not found" : "Faili ei leidu",
     "Bad file type" : "Vale failitüüp",
     "No such track" : "Sellist rada pole olemas",

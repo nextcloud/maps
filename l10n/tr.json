@@ -18,6 +18,7 @@
     "no such favorite" : "Böyle bir sık kullanılan yer yok",
     "Unknown category" : "Kategori bilinmiyor",
     "Error sharing favorite" : "Sık kullanılan yer paylaşılırken sorun çıktı",
+    "Share folder not found" : "Paylaşım klasörü bulunamadı",
     "File not found" : "Dosya bulunamadı",
     "Bad file type" : "Dosya türü hatalı",
     "No such track" : "Böyle bir rota yok",

@@ -27,7 +27,7 @@ namespace tests\Integration\Db;
 use ChristophWurst\Nextcloud\Testing\DatabaseTransaction;
 use ChristophWurst\Nextcloud\Testing\TestCase;
 use OCA\Maps\DB\FavoriteShare;
-use OCA\Maps\DB\FavoriteShareMapper;
+use OCA\Maps\DB\FavoriteShareRepository;
 use OCP\AppFramework\Db\DoesNotExistException;
 use OCP\Files\IRootFolder;
 use OCP\Security\ISecureRandom;
@@ -36,12 +36,12 @@ use OCP\Server;
 class FavoriteShareMapperTest extends TestCase {
 	use DatabaseTransaction;
 
-	private FavoriteShareMapper $mapper;
+	private FavoriteShareRepository $mapper;
 
 	public function setUp(): void {
 		parent::setUp();
 
-		$this->mapper = new FavoriteShareMapper(
+		$this->mapper = new FavoriteShareRepository(
 			Server::get(\OCP\IDBConnection::class),
 			Server::get(ISecureRandom::class),
 			Server::get(IRootFolder::class),

@@ -20,6 +20,7 @@ OC.L10N.register(
     "no such favorite" : "gan a leithéid is fearr leat",
     "Unknown category" : "Catagóir anaithnid",
     "Error sharing favorite" : "Earráid agus an ceann is fearr leat á roinnt",
+    "Share folder not found" : "Níor aimsíodh fillteán comhroinnte",
     "File not found" : "Comhad gan aimsiú",
     "Bad file type" : "Cineál comhaid dona",
     "No such track" : "Uimh rian den sórt sin",

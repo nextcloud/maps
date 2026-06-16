@@ -70,7 +70,7 @@
     "nouislider": "^15.8.1",
     "opening_hours": "^3.9.0",
     "pmtiles": "^4.3.2",
-    "ua-parser-js": "^2.0.5",
+    "ua-parser-js": "^2.0.10",
     "vue": "^3.4.21",
     "vue-loader": "^17.4.2",
     "vue-material-design-icons": "^5.3.1",

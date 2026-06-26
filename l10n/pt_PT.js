@@ -14,6 +14,7 @@ OC.L10N.register(
     "Delete share link" : "Apagar hiperligação de partilha",
     "Copied!" : "Copiado!",
     "Copy share link" : "Copie partilhe ligação",
+    "Open folder" : "Abrir pasta",
     "Share" : "Partilhar",
     "Sort by name" : "Order by name",
     "Sort by date" : "Order by date",
@@ -26,6 +27,7 @@ OC.L10N.register(
     "Quit" : "Sair",
     "Load more" : "Carregar mais",
     "Favorite" : "Favorito",
+    "Error while loading the file data" : "Erro ao carregar os dados do arquivo",
     "Tags" : "Etiquetas",
     "Distance" : "Distancia",
     "Duration" : "Duração",
@@ -52,6 +54,7 @@ OC.L10N.register(
     "Default" : "Predefinido",
     "Failed to save settings" : "Erro ao gravar as definições",
     "Metadata" : "Metadados",
-    "Bar" : "Barra"
+    "Bar" : "Barra",
+    "School" : "Escola"
 },
 "nplurals=3; plural=(n == 0 || n == 1) ? 0 : n != 0 && n % 1000000 == 0 ? 1 : 2;");

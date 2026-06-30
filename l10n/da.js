@@ -56,6 +56,7 @@ OC.L10N.register(
     "Device" : "Enhed",
     "Date" : "Dato",
     "Update" : "Opdatér",
+    "No name" : "Intet navn",
     "Select All" : "Vælg alle",
     "Yes" : "Ja",
     "Search" : "Søg",

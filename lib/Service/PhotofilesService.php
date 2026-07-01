@@ -15,7 +15,7 @@ namespace OCA\Maps\Service;
 use OCA\Maps\BackgroundJob\AddPhotoJob;
 use OCA\Maps\BackgroundJob\UpdatePhotoByFileJob;
 use OCA\Maps\DB\Geophoto;
-use OCA\Maps\DB\GeophotoMapper;
+use OCA\Maps\DB\GeophotoRepository;
 use OCA\Maps\Helper\ExifDataInvalidException;
 use OCA\Maps\Helper\ExifDataNoLocationException;
 use OCA\Maps\Helper\ExifGeoData;
@@ -50,7 +50,7 @@ class PhotofilesService {
 		private readonly LoggerInterface $logger,
 		private readonly ICacheFactory $cacheFactory,
 		private readonly IRootFolder $root,
-		private readonly GeophotoMapper $photoMapper,
+		private readonly GeophotoRepository $photoMapper,
 		private readonly IManager $shareManager,
 		private readonly IJobList $jobList,
 	) {
@@ -134,7 +134,7 @@ class PhotofilesService {
 
 	// delete photo only if it's not accessible to user anymore
 	// it might have been shared multiple times by different users
-	public function deleteByFileIdUserId($fileId, $userId): void {
+	public function deleteByFileIdUserId(int $fileId, string $userId): void {
 		$userFolder = $this->root->getUserFolder($userId);
 		$files = $userFolder->getById($fileId);
 		if (!is_array($files) or count($files) === 0) {
@@ -223,8 +223,8 @@ class PhotofilesService {
 								'path' => preg_replace('/^files/', '', (string)$node->getInternalPath()),
 								'lat' => $lat,
 								'lng' => $lng,
-								'oldLat' => $photo ? $photo->getLat() : null,
-								'oldLng' => $photo ? $photo->getLng() : null,
+								'oldLat' => $photo ? $photo->lat : null,
+								'oldLng' => $photo ? $photo->lng : null,
 							];
 							$this->setExifCoords($node, $lat, $lng);
 							$this->updateByFileNow($node);
@@ -259,8 +259,8 @@ class PhotofilesService {
 						'path' => preg_replace('/^files/', '', (string)$file->getInternalPath()),
 						'lat' => $lat,
 						'lng' => $lng,
-						'oldLat' => $photo ? $photo->getLat() : null,
-						'oldLng' => $photo ? $photo->getLng() : null,
+						'oldLat' => $photo ? $photo->lat : null,
+						'oldLng' => $photo ? $photo->lng : null,
 					];
 					$this->setExifCoords($file, $lat, $lng);
 					$this->updateByFileNow($file);
@@ -287,8 +287,8 @@ class PhotofilesService {
 						'path' => preg_replace('/^files/', '', (string)$file->getInternalPath()),
 						'lat' => null,
 						'lng' => null,
-						'oldLat' => $photo ? $photo->getLat() : null,
-						'oldLng' => $photo ? $photo->getLng() : null,
+						'oldLat' => $photo ? $photo->lat : null,
+						'oldLng' => $photo ? $photo->lng : null,
 					];
 					$this->resetExifCoords($file);
 					$this->photoMapper->updateByFileId($file->getId(), null, null);
@@ -323,16 +323,13 @@ class PhotofilesService {
 
 	private function insertPhoto(File $photo, string $userId, ExifGeoData $exif): void {
 		$photoEntity = new Geophoto();
-		$photoEntity->setFileId($photo->getId());
-		$photoEntity->setLat(
-			is_numeric($exif->lat) && !is_nan($exif->lat) ? $exif->lat : null
-		);
-		$photoEntity->setLng(
-			is_numeric($exif->lng) && !is_nan($exif->lng) ? $exif->lng : null
-		);
-		$photoEntity->setUserId($userId);
+		$photoEntity->fileId = $photo->getId();
+		$photoEntity->lat = is_numeric($exif->lat) && !is_nan($exif->lat) ? $exif->lat : null;
+		$photoEntity->lng = is_numeric($exif->lng) && !is_nan($exif->lng) ? $exif->lng : null;
+		$photoEntity->userId = $userId;
 		// alternative should be file creation date
-		$photoEntity->setDateTaken($exif->dateTaken ?? $photo->getMTime());
+		$photoEntity->dateTaken = new \DateTime();
+		$photoEntity->dateTaken->setTimestamp($exif->dateTaken ?? $photo->getMTime());
 		$this->photoMapper->insert($photoEntity);
 
 		$this->photosCache->clear($userId);

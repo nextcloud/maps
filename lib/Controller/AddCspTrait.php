@@ -47,6 +47,10 @@ trait AddCspTrait {
 					$cleanUrl .= ':' . $port;
 				}
 				$csp->addAllowedConnectDomain($cleanUrl);
+
+				if ($host === 'api.protomaps.com') {
+					$csp->addAllowedConnectDomain('https://protomaps.github.io');
+				}
 			}
 		}
 

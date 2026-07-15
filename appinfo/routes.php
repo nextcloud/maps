@@ -11,7 +11,12 @@
 return [
 	'routes' => [
 		['name' => 'page#index', 'url' => '/', 'verb' => 'GET'],
-		['name' => 'page#indexMyMap', 'url' => '/m/{myMapId}', 'verb' => 'GET'],
+		[
+			'name' => 'page#indexMyMap',
+			'url' => '/m/{myMapId}',
+			'verb' => 'GET',
+			'requirements' => ['myMapId' => '[0-9]+'],
+		],
 		['name' => 'page#do_echo', 'url' => '/echo', 'verb' => 'POST'],
 		['name' => 'page#openGeoLink', 'url' => '/openGeoLink/{url}', 'verb' => 'GET'],
 		['name' => 'public_favorite_page#sharedFavoritesCategory', 'url' => '/s/favorites/{token}', 'verb' => 'GET'],

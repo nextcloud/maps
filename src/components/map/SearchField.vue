@@ -1,11 +1,11 @@
 <template>
 	<NcSelect
 		ref="select"
-		inputLabel="label"
+		:aria-label-combobox="placeholder"
 		class="search-select"
 		label="label"
 		track-by="multiselectKey"
-		:value="mySelectedOption"
+		:model-value="mySelectedOption"
 		:auto-limit="false"
 		:limit="8"
 		:options-limit="8"
@@ -18,9 +18,7 @@
 		:options="filteredOptions"
 		:user-select="false"
 		:internal-search="false"
-		@input="onOptionSelected"
-		@update:value="onUpdateValue"
-		@change="onChange"
+		@update:model-value="onOptionSelected"
 		@search="onSearchChange">
 		<template #option="option">
 			<span :class="'option-icon ' + option.icon" />
@@ -28,12 +26,12 @@
 				{{ option.label }}
 			</span>
 		</template>
-		<template #singleLabel="option">
+		<template #selected-option="option">
 			<div class="single-label">
 				{{ option.value || option.label }}
 			</div>
 		</template>
-		<template #noOptions>
+		<template #no-options>
 			{{ t('maps', 'No suggestions') }}
 		</template>
 	</NcSelect>
@@ -145,19 +143,15 @@ export default {
 			}
 			*/
 		},
-		onOptionSelected(option, id) {
+		onOptionSelected(option) {
+			this.mySelectedOption = option
 			if (option?.type === 'query') {
 				this.searchOsm(option.value)
 			} else {
 				if (option) {
 					this.$emit('validate', option)
-					this.mySelectedOption = option
 				}
 			}
-		},
-		onUpdateValue(e) {
-		},
-		onChange(e) {
 		},
 		onSearchChange(query) {
 			this.query = query

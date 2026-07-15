@@ -9,20 +9,20 @@
 			<NcAppNavigationSettings>
 				<div class="maps-settings">
 					<NcCheckboxRadioSwitch
-						:checked="optionValues.trackMe === 'true'"
-						@update:checked="onTrackMeChange">
+						:model-value="optionValues.trackMe === 'true'"
+						@update:model-value="onTrackMeChange">
 						{{ window.t('maps', 'Track my position') }}
 					</NcCheckboxRadioSwitch>
 					
 					<NcCheckboxRadioSwitch
-						:checked="false"
-						@update:checked="onGeoLinkChange">
+						:model-value="false"
+						@update:model-value="onGeoLinkChange">
 						{{ window.t('maps', 'Open geo links') }}
 					</NcCheckboxRadioSwitch>
 					
 					<NcCheckboxRadioSwitch
-						:checked="optionValues.displaySlider === 'true'"
-						@update:checked="onDisplaySliderChange">
+						:model-value="optionValues.displaySlider === 'true'"
+						@update:model-value="onDisplaySliderChange">
 						{{ window.t('maps', 'Display time filter slider') }}
 					</NcCheckboxRadioSwitch>
 					

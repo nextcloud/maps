@@ -20,6 +20,7 @@ OC.L10N.register(
     "no such favorite" : "no such favourite",
     "Unknown category" : "Unknown category",
     "Error sharing favorite" : "Error sharing favourite",
+    "Share folder not found" : "Share folder not found",
     "File not found" : "File not found",
     "Bad file type" : "Bad file type",
     "No such track" : "No such track",

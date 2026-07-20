@@ -25,7 +25,7 @@
 namespace OCA\Maps\Controller;
 
 use OCA\Maps\AppInfo\Application;
-use OCA\Maps\DB\FavoriteShareMapper;
+use OCA\Maps\DB\FavoriteShareRepository;
 use OCA\Maps\Service\FavoritesService;
 use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\DataResponse;
@@ -44,7 +44,7 @@ class PublicFavoritePageControllerTest extends TestCase {
 	private Application $app;
 	private ContainerInterface $container;
 	private FavoritesService $favoritesService;
-	private FavoriteShareMapper $favoriteShareMapper;
+	private FavoriteShareRepository $favoriteShareMapper;
 
 	protected function setUp(): void {
 		// Begin transaction
@@ -64,7 +64,7 @@ class PublicFavoritePageControllerTest extends TestCase {
 			$container->get(\OCP\IDBConnection::class)
 		);
 
-		$this->favoriteShareMapper = new FavoriteShareMapper(
+		$this->favoriteShareMapper = new FavoriteShareRepository(
 			$container->get(\OCP\IDBConnection::class),
 			$container->get(ISecureRandom::class),
 			$container->get(IRootFolder::class)
@@ -98,7 +98,7 @@ class PublicFavoritePageControllerTest extends TestCase {
 			->addFavoriteToDB($testUserName, 'Test', 0, 0, $categoryName, '', null);
 		$share = $this->favoriteShareMapper->create($testUserName, $categoryName);
 
-		$result = $this->publicPageController->sharedFavoritesCategory($share->getToken());
+		$result = $this->publicPageController->sharedFavoritesCategory($share->token);
 
 		// Assertions
 		$this->assertTrue($result instanceof TemplateResponse);

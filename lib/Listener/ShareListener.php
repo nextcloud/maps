@@ -14,6 +14,7 @@ use OCA\Maps\Service\PhotofilesService;
 use OCA\Maps\Service\TracksService;
 use OCP\EventDispatcher\Event;
 use OCP\EventDispatcher\IEventListener;
+use OCP\Files\File;
 use OCP\Files\Folder;
 use OCP\Share\Events\BeforeShareDeletedEvent;
 use OCP\Share\Events\ShareCreatedEvent;
@@ -69,6 +70,7 @@ class ShareListener implements IEventListener {
 	private function handleShareCreated(ShareCreatedEvent $event): void {
 		$share = $event->getShare();
 		if ($share->getNodeType() === 'file') {
+			/** @var File $file */
 			$file = $share->getNode();
 			$this->photofilesService->addByFile($file);
 			$this->tracksService->safeAddByFile($file);

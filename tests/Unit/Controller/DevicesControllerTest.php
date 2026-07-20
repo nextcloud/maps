@@ -13,7 +13,7 @@
 namespace OCA\Maps\Controller;
 
 use OCA\Maps\AppInfo\Application;
-use OCA\Maps\DB\DeviceShareMapper;
+use OCA\Maps\DB\DeviceShareRepository;
 use OCA\Maps\Service\DevicesService;
 use OCP\AppFramework\Services\IAppConfig;
 use OCP\Files\Folder;
@@ -75,7 +75,7 @@ class DevicesControllerTest extends \PHPUnit\Framework\TestCase {
 			$c->get(IAppConfig::class),
 			$c->get(IFactory::class)->get('maps'),
 			$c->get(DevicesService::class),
-			$c->get(DeviceShareMapper::class),
+			$c->get(DeviceShareRepository::class),
 			$c->get(\OCP\IDateTimeZone::class),
 			$c->get(IRootFolder::class),
 			'test'

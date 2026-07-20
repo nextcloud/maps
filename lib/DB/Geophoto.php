@@ -12,20 +12,29 @@
 
 namespace OCA\Maps\DB;
 
-use OCP\AppFramework\Db\Entity;
+use OCA\Maps\AppFramework\Db\Attribute\Column;
+use OCA\Maps\AppFramework\Db\Attribute\Entity;
+use OCA\Maps\AppFramework\Db\Attribute\Id;
+use OCP\DB\Types;
 
-class Geophoto extends Entity {
+#[Entity(name: 'maps_photos')]
+class Geophoto {
+	#[Id]
+	#[Column(name: 'id', type: Types::BIGINT, nullable: false)]
+	public ?int $id = null;
 
-	protected $fileId;
-	protected $lat;
-	protected $lng;
-	protected $dateTaken;
-	protected $userId;
+	#[Column(name: 'file_id', type: Types::INTEGER, nullable: false)]
+	public int $fileId;
 
-	public function __construct() {
-		$this->addType('fileId', 'integer');
-		$this->addType('lat', 'float');
-		$this->addType('lng', 'float');
-		$this->addType('dateTaken', 'integer');
-	}
+	#[Column(name: 'lat', type: Types::FLOAT, nullable: true)]
+	public ?float $lat = null;
+
+	#[Column(name: 'lng', type: Types::FLOAT, nullable: true)]
+	public ?float $lng = null;
+
+	#[Column(name: 'date_taken', type: Types::DATETIME, nullable: true)]
+	public ?\DateTime $dateTaken = null;
+
+	#[Column(name: 'user_id', type: Types::STRING, nullable: false)]
+	public string $userId;
 }

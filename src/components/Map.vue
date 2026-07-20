@@ -85,7 +85,8 @@
 				<PlaceContactPopup v-if="placingContact"
 					:map="map"
 					:lat-lng="placingContactLatLng"
-					@contact-placed="onContactPlaced" />
+					@contact-placed="onContactPlaced"
+					@close="onContactPopupClosed" />
 
 				<TracksLayer
 					v-if="tracksEnabled"
@@ -370,7 +371,7 @@ export default {
 
 			const thereWasAPopup = this.map.contextmenu._visible
 				|| this.placingContact
-				|| (this.map._popup !== undefined && this.map._popup !== null)
+				|| this.map._popup?.isOpen()
 				|| this.leftClickSearching
 
 			const hadSpider = this.$refs.favoritesLayer?.spiderfied
@@ -415,9 +416,13 @@ export default {
 			this.leftClickSearchLatLng = L.latLng(lat, lng)
 			this.leftClickSearching = true
 		},
-		onAddContactAddress(obj) {
+		async onAddContactAddress(obj) {
+			const latLng = L.latLng(obj.latLng.lat, obj.latLng.lng)
 			this.leftClickSearching = false
-			this.placingContactLatLng = L.latLng(obj.latLng.lat, obj.latLng.lng)
+			this.placingContact = false
+			this.map.closePopup()
+			await this.$nextTick()
+			this.placingContactLatLng = latLng
 			this.placingContact = true
 		},
 		initLocControl(map) {
@@ -632,6 +637,9 @@ export default {
 		placeContactClicked(e) {
 			this.placingContactLatLng = L.latLng(e.latlng.lat, e.latlng.lng)
 			this.placingContact = true
+		},
+		onContactPopupClosed() {
+			this.placingContact = false
 		},
 		onContactPlaced(e) {
 			this.placingContact = false

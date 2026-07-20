@@ -53,8 +53,8 @@ export function searchContacts(query = '', myMapId = null) {
 	const req = {
 		params: {
 			myMapId,
+			query,
 		},
-		query,
 	}
 	const url = generateUrl('/apps/maps/contacts-search')
 	return axios.get(url, req)

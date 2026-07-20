@@ -4,20 +4,15 @@
 		:aria-label-combobox="placeholder"
 		class="search-select"
 		label="label"
-		track-by="multiselectKey"
+		:get-option-key="getOptionKey"
 		:model-value="mySelectedOption"
-		:auto-limit="false"
 		:limit="8"
-		:options-limit="8"
-		:max-height="8 * 45"
-		:close-on-select="false"
-		:clear-on-select="false"
-		:preserve-search="true"
+		keep-open
+		:clear-search-on-select="false"
 		:placeholder="placeholder"
 		:loading="searching || loading"
 		:options="filteredOptions"
-		:user-select="false"
-		:internal-search="false"
+		:filterable="false"
 		@update:model-value="onOptionSelected"
 		@search="onSearchChange">
 		<template #option="option">
@@ -89,16 +84,8 @@ export default {
 				return part.replace(/\S/g, (char) => { return accented[char.toUpperCase()] || char })
 			})
 			const regex = new RegExp(queryParts.join('|'), 'i')
-			return this.formattedOptions.filter((option) => {
+			return this.options.filter((option) => {
 				return regex.test(option.label || option.value)
-			})
-		},
-		formattedOptions() {
-			return this.options.map((o) => {
-				return {
-					...o,
-					multiselectKey: o.id + o.type,
-				}
 			})
 		},
 		options() {
@@ -133,6 +120,9 @@ export default {
 	},
 
 	methods: {
+		getOptionKey(option) {
+			return `${option.id}${option.type}`
+		},
 		focus() {
 			const input = this.$refs.select.$el.querySelector('input')
 			input.focus()
@@ -144,13 +134,15 @@ export default {
 			*/
 		},
 		onOptionSelected(option) {
-			this.mySelectedOption = option
 			if (option?.type === 'query') {
+				this.mySelectedOption = null
 				this.searchOsm(option.value)
-			} else {
-				if (option) {
-					this.$emit('validate', option)
-				}
+				return
+			}
+
+			this.mySelectedOption = option
+			if (option) {
+				this.$emit('validate', option)
 			}
 		},
 		onSearchChange(query) {
@@ -196,7 +188,6 @@ export default {
 			}
 		},
 		searchOsm(query) {
-			this.mySelectedOption = this.currentSearchQueryOption
 			this.currentSearchQueryOption = null
 			this.searching = true
 			network.searchAddress(query, 5).then((response) => {

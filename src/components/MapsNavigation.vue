@@ -14,11 +14,10 @@
 						{{ window.t('maps', 'Track my position') }}
 					</NcCheckboxRadioSwitch>
 					
-					<NcCheckboxRadioSwitch
-						:model-value="false"
-						@update:model-value="onGeoLinkChange">
-						{{ window.t('maps', 'Open geo links') }}
-					</NcCheckboxRadioSwitch>
+					<NcButton
+						wide
+						:text="window.t('maps', 'Register Maps to open geo links')"
+						@click="$emit('register-geo-link')" />
 					
 					<NcCheckboxRadioSwitch
 						:model-value="optionValues.displaySlider === 'true'"
@@ -44,7 +43,7 @@
 </template>
 
 <script>
-import { NcAppNavigation, NcAppNavigationSettings, NcCheckboxRadioSwitch } from '@nextcloud/vue'
+import { NcAppNavigation, NcAppNavigationSettings, NcButton, NcCheckboxRadioSwitch } from '@nextcloud/vue'
 import optionsController from '../optionsController.js'
 
 // Native Vue 3 Click-Outside directive
@@ -68,9 +67,10 @@ export default {
 	components: {
 		NcAppNavigation,
 		NcAppNavigationSettings,
+		NcButton,
 		NcCheckboxRadioSwitch,
 	},
-	
+
 	directives: {
 		clickOutside,
 	},
@@ -82,6 +82,12 @@ export default {
 		},
 	},
 	
+	emits: [
+		'toggle-trackme',
+		'register-geo-link',
+		'toggle-slider',
+	],
+
 	data() {
 		return {
 			optionValues: optionsController.optionValues,
@@ -101,9 +107,6 @@ export default {
 			this.optionValues.trackMe = checked ? 'true' : 'false'
 			optionsController.saveOptionValues({ trackMe: checked ? 'true' : 'false' })
 			this.$emit('toggle-trackme', checked)
-		},
-		onGeoLinkChange(checked) {
-			this.$emit('toggle-geo-link', checked)
 		},
 		onDisplaySliderChange(checked) {
 			this.optionValues.displaySlider = checked ? 'true' : 'false'

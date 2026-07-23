@@ -17,9 +17,7 @@
 		:options="filteredOptions"
 		:user-select="false"
 		:internal-search="false"
-		@input="onOptionSelected"
-		@update:value="onUpdateValue"
-		@change="onChange"
+		@update:model-value="onOptionSelected"
 		@search="onSearchChange">
 		<template #option="option">
 			<span :class="'option-icon ' + option.icon" />

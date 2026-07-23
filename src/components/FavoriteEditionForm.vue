@@ -21,10 +21,9 @@
 				:clear-on-select="false"
 				:preserve-search="false"
 				:placeholder="categoryPH"
-				inputLabel="label"
 				:options="formattedCategories"
 				:user-select="false"
-				@input="onCategorySelected"
+				@update:modelValue="onCategorySelected"
 				@search="onSearchChange">
 				<template #singleLabel="{ option }">
 					<div class="single-label">

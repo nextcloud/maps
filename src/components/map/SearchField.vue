@@ -9,7 +9,7 @@
 		:limit="8"
 		:options-limit="8"
 		:max-height="8 * 45"
-		:close-on-select="false"
+		:keep-open="true"
 		:clear-on-select="false"
 		:preserve-search="true"
 		:placeholder="placeholder"

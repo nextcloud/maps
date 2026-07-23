@@ -23,7 +23,7 @@
 				:placeholder="categoryPH"
 				:options="formattedCategories"
 				:user-select="false"
-				@input="onCategorySelected"
+				@update:modelValue="onCategorySelected"
 				@search="onSearchChange">
 				<template #singleLabel="{ option }">
 					<div class="single-label">

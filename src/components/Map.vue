@@ -370,7 +370,6 @@ export default {
 
 			const thereWasAPopup = this.map.contextmenu._visible
 				|| this.placingContact
-				|| (this.map._popup !== undefined && this.map._popup !== null)
 				|| this.leftClickSearching
 
 			const hadSpider = this.$refs.favoritesLayer?.spiderfied

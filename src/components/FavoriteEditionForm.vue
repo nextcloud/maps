@@ -21,7 +21,6 @@
 				:clear-on-select="false"
 				:preserve-search="false"
 				:placeholder="categoryPH"
-				inputLabel="label"
 				:options="formattedCategories"
 				:user-select="false"
 				@input="onCategorySelected"

@@ -1615,7 +1615,7 @@ export default {
 				this.selectedFavorite = null
 				this.closeSidebar()
 				showError(t('maps', 'Favorite was deleted'))
-				this.$delete(this.favorites, favid)
+				delete this.favorites[favid]
 			}).catch((error) => {
 				console.error(error)
 			})
@@ -1632,7 +1632,7 @@ export default {
 					})
 				}
 				favids.forEach((favid) => {
-					this.$delete(this.favorites, favid)
+					delete this.favorites[favid]
 				})
 			}).catch((error) => {
 				console.error(error)
@@ -1724,7 +1724,7 @@ export default {
 					return this.favorites[favid].category === catid
 				})
 				favIds.forEach((favid) => {
-					this.$delete(this.favorites, favid)
+					delete this.favorites[favid]
 				})
 				showSuccess(t('maps', 'Favorite category {favoriteName} unlinked from map', { favoriteName: catid ?? '' }))
 			}).catch((error) => {

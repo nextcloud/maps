@@ -1686,7 +1686,7 @@ export default {
 					|| obj.address.road
 					|| obj.address.city_district
 					: null
-			this.addFavorite(obj.latLng, name, null, obj.formattedAddress || null)
+			this.addFavorite(obj.latLng, name, null, obj.formattedAddress || null, null, true, true)
 		},
 		onAddFavoriteToMap(f) {
 			this.chooseMyMap((map) => {

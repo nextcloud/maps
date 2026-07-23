@@ -171,6 +171,7 @@ export default {
 				formattedAddress: formatAddress(this.poi.address),
 				address: this.poi.address,
 			})
+			if (this.map) this.map.closePopup()
 		},
 		onAddContact() {
 			this.$emit('place-contact', {

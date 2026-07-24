@@ -93,6 +93,8 @@ export default {
 		},
 	},
 
+	emits: ['click', 'toggle-history', 'zoom', 'export', 'add-to-map-device', 'delete', 'color'],
+
 	data() {
 		return {
 		}

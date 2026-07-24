@@ -26,7 +26,6 @@ import '../css/style.scss'
 
 import optionsController from './optionsController.js'
 import { emit } from '@nextcloud/event-bus'
-import { generateUrl } from '@nextcloud/router'
 
 import L from 'leaflet'
 import 'lrm-graphhopper'
@@ -75,10 +74,6 @@ if (!window.OCA.Files.Sidebar) {
             setFullScreenMode: () => {}, // SIDEBARFULLSCREEN,
         },
     }, window.OCA.Files)
-}
-
-if (window.navigator.registerProtocolHandler) {
-    window.navigator.registerProtocolHandler('geo', generateUrl('/apps/maps/openGeoLink/') + '%s', 'Nextcloud Maps')
 }
 
 function main() {

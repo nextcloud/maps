@@ -53,6 +53,20 @@ class PageControllerTest extends \PHPUnit\Framework\TestCase {
 		$this->assertTrue($result instanceof TemplateResponse);
 	}
 
+	public function testCanBeConstructedWithoutAuthenticatedUser(): void {
+		$controller = new PageController(
+			'maps',
+			$this->createMock(IRequest::class),
+			null,
+			$this->eventDispatcher,
+			$this->appConfig,
+			$this->initialState,
+			$this->urlGenerator,
+		);
+
+		$this->assertInstanceOf(PageController::class, $controller);
+	}
+
 	public function testOpenGeoLink(): void {
 		$result = $this->controller->openGeoLink('geo:1.1,2.2');
 

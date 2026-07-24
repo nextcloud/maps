@@ -150,6 +150,9 @@ class MyMapsService {
 	public function getMyMap(int $id, string $userId): ?array {
 		$userFolder = $this->root->getUserFolder($userId);
 		$node = $userFolder->getFirstNodeById($id);
+		if ($node === null) {
+			return null;
+		}
 		if ($node instanceof Folder) {
 			try {
 				$node = $node->get('.index.maps');

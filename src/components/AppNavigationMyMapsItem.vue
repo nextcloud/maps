@@ -66,6 +66,8 @@ export default {
 		},
 	},
 
+	emits: ['add', 'my-map-clicked', 'rename', 'delete', 'share', 'color', 'my-maps-clicked'],
+
 	data() {
 		return {
 			open: optionsController.myMapListShow,

@@ -32,7 +32,7 @@ class PageController extends Controller {
 	public function __construct(
 		string $appName,
 		IRequest $request,
-		private string $userId,
+		private ?string $userId,
 		private IEventDispatcher $eventDispatcher,
 		IAppConfig $appConfig,
 		private IInitialState $initialState,
@@ -68,7 +68,12 @@ class PageController extends Controller {
 	#[NoAdminRequired]
 	#[NoCSRFRequired]
 	public function indexMyMap(int $myMapId, MyMapsService $service): TemplateResponse|RedirectResponse {
-		$map = $service->getMyMap($myMapId, $this->userId);
+		$userId = $this->userId;
+		if ($userId === null) {
+			throw new \LogicException('User must be logged in');
+		}
+
+		$map = $service->getMyMap($myMapId, $userId);
 		if ($map !== null && $map['id'] !== $myMapId) {
 			// Instead of the id of the map containing folder the '.index.maps' file id was passed so redirect
 			// this happens if coming from the files app integration
@@ -80,7 +85,7 @@ class PageController extends Controller {
 		$this->eventDispatcher->dispatchTyped(new LoadSidebar());
 		$this->eventDispatcher->dispatchTyped(new LoadViewer());
 
-		$params = ['user' => $this->userId];
+		$params = ['user' => $userId];
 		$this->initialState->provideInitialState('photos', $this->appConfig->getValueBool('photos', 'enabled'));
 		$response = new TemplateResponse('maps', 'main', $params);
 

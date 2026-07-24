@@ -80,7 +80,7 @@
 
 <script>
 import { NcAppNavigationItem, NcActionButton, NcActionLink } from '@nextcloud/vue'
-import { isPublic, getToken } from '../utils/common'
+import { isPublic, getToken } from '../utils/common.js'
 import { generateUrl } from '@nextcloud/router'
 
 export default {
@@ -102,6 +102,8 @@ export default {
 			default: true,
 		},
 	},
+
+	emits: ['click', 'zoom', 'elevation', 'add-to-map-track', 'color'],
 
 	data() {
 		return {

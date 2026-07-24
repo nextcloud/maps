@@ -109,7 +109,7 @@ export default {
 				? this.getContactAvatar(this.selectedContact)
 					? this.getContactAvatar(this.selectedContact)
 					: generateUrl('/apps/maps/contacts-avatar?name=' + encodeURIComponent(this.selectedContact.FN))
-				: generateUrl('/svg/core/actions/user?color=000000')
+				: generateUrl('/apps/maps/contacts-avatar?name=')
 		},
 		markerIcon() {
 			return L.icon({

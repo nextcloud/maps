@@ -1,5 +1,5 @@
 <template>
-	<div class="place-contact-popup-content">
+	<div class="place-contact-popup-content" @click.stop>
 		<h3 id="place-popup-title">
 			{{ t('maps', 'New contact address') }}
 		</h3>

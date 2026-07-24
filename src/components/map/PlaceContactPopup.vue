@@ -1,5 +1,5 @@
 <template>
-	<div class="place-contact-popup-content">
+	<div class="place-contact-popup-content" @click.stop>
 		<h3 id="place-popup-title">
 			{{ t('maps', 'New contact address') }}
 		</h3>
@@ -20,7 +20,7 @@
 				v-model="selectedContact"
 				class="contact-input"
 				track-by="URI"
-				inputLabel="FN"
+				label="FN"
 				:placeholder="t('maps', 'Choose a contact')"
 				:options="contactData"
 				:internal-search="true"
@@ -109,7 +109,7 @@ export default {
 				? this.getContactAvatar(this.selectedContact)
 					? this.getContactAvatar(this.selectedContact)
 					: generateUrl('/apps/maps/contacts-avatar?name=' + encodeURIComponent(this.selectedContact.FN))
-				: generateUrl('/svg/core/actions/user?color=000000')
+				: generateUrl('/apps/maps/contacts-avatar?name=')
 		},
 		markerIcon() {
 			return L.icon({

@@ -1,5 +1,5 @@
 <template>
-	<div class="click-search-popup-content">
+	<div class="click-search-popup-content" @click.stop>
 		<h3 id="click-search-popup-title">
 			{{ t('maps', 'This place') }}
 		</h3>

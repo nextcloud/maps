@@ -54,7 +54,7 @@
 		<button class="submit-place-contact"
 			:disabled="!selectedContact"
 			:class="{ loading: searchingEditedAddress }"
-			@click="onValidate">
+			@click.stop="onValidate">
 			<span class="icon-add" />
 			{{ t('maps', 'Add address to contact') }}
 		</button>

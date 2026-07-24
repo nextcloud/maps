@@ -12,7 +12,7 @@
 			<span class="icon-favorite" />
 			{{ t('maps', 'Add to favorites') }}
 		</button>
-		<button v-if="contactIsCreatable" class="search-place-contact" @click="onPlaceContact">
+		<button v-if="contactIsCreatable" class="search-place-contact" @click.stop="onPlaceContact">
 			<span class="icon-user" />
 			{{ t('maps', 'Add contact address') }}
 		</button>

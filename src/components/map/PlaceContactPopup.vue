@@ -20,7 +20,7 @@
 				v-model="selectedContact"
 				class="contact-input"
 				track-by="URI"
-				inputLabel="FN"
+				label="FN"
 				:placeholder="t('maps', 'Choose a contact')"
 				:options="contactData"
 				:internal-search="true"

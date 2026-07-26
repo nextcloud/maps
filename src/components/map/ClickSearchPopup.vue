@@ -8,7 +8,7 @@
 		<textarea v-else
 			id="clickSearchAddress"
 			v-model="formattedAddress" />
-		<button v-if="favoriteIsCreatable" class="search-add-favorite" @click="onAddFavorite">
+		<button v-if="favoriteIsCreatable" class="search-add-favorite" @click.stop="onAddFavorite">
 			<span class="icon-favorite" />
 			{{ t('maps', 'Add to favorites') }}
 		</button>

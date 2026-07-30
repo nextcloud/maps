@@ -163,8 +163,21 @@ export default {
 			this.map.removeLayer(this.marker);
 		}
 	},
-	methods: { 
-
-	 }
+	methods: {
+		onAddFavorite() {
+			this.$emit('add-favorite', {
+				latLng: { lat: this.poi.lat, lng: this.poi.lon },
+				name: this.header,
+				formattedAddress: formatAddress(this.poi.address),
+				address: this.poi.address,
+			})
+			if (this.map) this.map.closePopup()
+		},
+		onAddContact() {
+			this.$emit('place-contact', {
+				latLng: { lat: this.poi.lat, lng: this.poi.lon },
+			})
+		},
+	}
 }
 </script>

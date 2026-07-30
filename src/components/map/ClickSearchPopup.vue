@@ -61,8 +61,10 @@ export default {
 			address: null,
 			formattedAddress: '',
 			mapActions: window.OCA && window.OCA.Maps ? window.OCA.Maps.mapActions : [],
-			icon: L.icon({
-				iconUrl: 'noIcon',
+			icon: L.divIcon({
+				className: '',
+				html: '',
+				iconSize: [0, 0],
 			}),
 		}
 	},

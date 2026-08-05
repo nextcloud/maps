@@ -179,7 +179,7 @@ OC.L10N.register(
     "Add address to contact" : "Kişiye adres ekle",
     "Find directions" : "Yol tarifi al",
     "Clear POIs" : "İlginç hedefleri temizle",
-    "Search" : "Arama",
+    "Search" : "Ara",
     "Point at {coords}" : "{coords} noktası",
     "Search for {q}" : "{q} ara",
     "No suggestions" : "Herhangi bir öneri yok",

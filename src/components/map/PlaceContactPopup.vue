@@ -20,7 +20,7 @@
 				v-model="selectedContact"
 				class="contact-input"
 				track-by="URI"
-				inputLabel="FN"
+				label="FN"
 				:placeholder="t('maps', 'Choose a contact')"
 				:options="contactData"
 				:internal-search="true"
@@ -54,7 +54,7 @@
 		<button class="submit-place-contact"
 			:disabled="!selectedContact"
 			:class="{ loading: searchingEditedAddress }"
-			@click="onValidate">
+			@click.stop="onValidate">
 			<span class="icon-add" />
 			{{ t('maps', 'Add address to contact') }}
 		</button>
@@ -109,7 +109,7 @@ export default {
 				? this.getContactAvatar(this.selectedContact)
 					? this.getContactAvatar(this.selectedContact)
 					: generateUrl('/apps/maps/contacts-avatar?name=' + encodeURIComponent(this.selectedContact.FN))
-				: generateUrl('/svg/core/actions/user?color=000000')
+				: generateUrl('/apps/maps/contacts-avatar?name=')
 		},
 		markerIcon() {
 			return L.icon({

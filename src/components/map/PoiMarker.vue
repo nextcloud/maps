@@ -6,11 +6,11 @@
 		</div>
 		<span class="location-city">{{ desc }}</span>
 		
-		<button class="search-add-favorite" @click="onAddFavorite">
+		<button class="search-add-favorite" @click.stop="onAddFavorite">
 			<span class="icon-favorite" />
 			{{ t('maps', 'Add to favorites') }}
 		</button>
-		<button class="search-place-contact" @click="onAddContact">
+		<button class="search-place-contact" @click.stop="onAddContact">
 			<span class="icon-user" />
 			{{ t('maps', 'Add contact address') }}
 		</button>
@@ -31,6 +31,7 @@ export default {
 		poi: { type: Object, required: true },
 		map: { type: Object, required: true },
 	},
+	emits: ['add-favorite', 'place-contact'],
 	data() {
 		return { 
 			recentImagePath: imagePath('maps', 'recent.svg'),
@@ -165,19 +166,29 @@ export default {
 	},
 	methods: {
 		onAddFavorite() {
+			if (this.map) this.map.closePopup()
 			this.$emit('add-favorite', {
-				latLng: { lat: this.poi.lat, lng: this.poi.lon },
+				...this.poi,
+				latLng: {
+					lat: this.poi.lat,
+					lng: this.poi.lon,
+				},
 				name: this.header,
 				formattedAddress: formatAddress(this.poi.address),
-				address: this.poi.address,
 			})
-			if (this.map) this.map.closePopup()
 		},
 		onAddContact() {
+			if (this.map) this.map.closePopup()
 			this.$emit('place-contact', {
-				latLng: { lat: this.poi.lat, lng: this.poi.lon },
+				...this.poi,
+				latLng: {
+					lat: this.poi.lat,
+					lng: this.poi.lon,
+				},
+				name: this.header,
+				formattedAddress: formatAddress(this.poi.address),
 			})
 		},
-	}
+	},
 }
 </script>

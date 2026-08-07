@@ -18,6 +18,7 @@ OC.L10N.register(
     "Location" : "Stad",
     "Save" : "Lagre",
     "Close" : "Lukk",
+    "Clear selection" : "Tøm utval",
     "Select all" : "Merk alt",
     "Quit" : "Avslutt",
     "Favorite" : "Favoritt",

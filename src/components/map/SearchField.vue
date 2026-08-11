@@ -1,7 +1,6 @@
 <template>
 	<NcSelect
 		ref="select"
-		inputLabel="label"
 		class="search-select"
 		label="label"
 		track-by="multiselectKey"
@@ -10,7 +9,7 @@
 		:limit="8"
 		:options-limit="8"
 		:max-height="8 * 45"
-		:close-on-select="false"
+		:keep-open="true"
 		:clear-on-select="false"
 		:preserve-search="true"
 		:placeholder="placeholder"
@@ -18,9 +17,7 @@
 		:options="filteredOptions"
 		:user-select="false"
 		:internal-search="false"
-		@input="onOptionSelected"
-		@update:value="onUpdateValue"
-		@change="onChange"
+		@update:model-value="onOptionSelected"
 		@search="onSearchChange">
 		<template #option="option">
 			<span :class="'option-icon ' + option.icon" />

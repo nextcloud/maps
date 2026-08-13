@@ -1,26 +1,19 @@
 <template>
 	<NcSelect
 		ref="select"
-		inputLabel="label"
+		:aria-label-combobox="placeholder"
 		class="search-select"
 		label="label"
-		track-by="multiselectKey"
-		:value="mySelectedOption"
-		:auto-limit="false"
+		:get-option-key="getOptionKey"
+		:model-value="mySelectedOption"
 		:limit="8"
-		:options-limit="8"
-		:max-height="8 * 45"
-		:close-on-select="false"
-		:clear-on-select="false"
-		:preserve-search="true"
+		keep-open
+		:clear-search-on-select="false"
 		:placeholder="placeholder"
 		:loading="searching || loading"
 		:options="filteredOptions"
-		:user-select="false"
-		:internal-search="false"
-		@input="onOptionSelected"
-		@update:value="onUpdateValue"
-		@change="onChange"
+		:filterable="false"
+		@update:model-value="onOptionSelected"
 		@search="onSearchChange">
 		<template #option="option">
 			<span :class="'option-icon ' + option.icon" />
@@ -28,12 +21,12 @@
 				{{ option.label }}
 			</span>
 		</template>
-		<template #singleLabel="option">
+		<template #selected-option="option">
 			<div class="single-label">
 				{{ option.value || option.label }}
 			</div>
 		</template>
-		<template #noOptions>
+		<template #no-options>
 			{{ t('maps', 'No suggestions') }}
 		</template>
 	</NcSelect>
@@ -91,16 +84,8 @@ export default {
 				return part.replace(/\S/g, (char) => { return accented[char.toUpperCase()] || char })
 			})
 			const regex = new RegExp(queryParts.join('|'), 'i')
-			return this.formattedOptions.filter((option) => {
+			return this.options.filter((option) => {
 				return regex.test(option.label || option.value)
-			})
-		},
-		formattedOptions() {
-			return this.options.map((o) => {
-				return {
-					...o,
-					multiselectKey: o.id + o.type,
-				}
 			})
 		},
 		options() {
@@ -135,6 +120,9 @@ export default {
 	},
 
 	methods: {
+		getOptionKey(option) {
+			return `${option.id}${option.type}`
+		},
 		focus() {
 			const input = this.$refs.select.$el.querySelector('input')
 			input.focus()
@@ -145,19 +133,17 @@ export default {
 			}
 			*/
 		},
-		onOptionSelected(option, id) {
+		onOptionSelected(option) {
 			if (option?.type === 'query') {
+				this.mySelectedOption = null
 				this.searchOsm(option.value)
-			} else {
-				if (option) {
-					this.$emit('validate', option)
-					this.mySelectedOption = option
-				}
+				return
 			}
-		},
-		onUpdateValue(e) {
-		},
-		onChange(e) {
+
+			this.mySelectedOption = option
+			if (option) {
+				this.$emit('validate', option)
+			}
 		},
 		onSearchChange(query) {
 			this.query = query
@@ -202,7 +188,6 @@ export default {
 			}
 		},
 		searchOsm(query) {
-			this.mySelectedOption = this.currentSearchQueryOption
 			this.currentSearchQueryOption = null
 			this.searching = true
 			network.searchAddress(query, 5).then((response) => {

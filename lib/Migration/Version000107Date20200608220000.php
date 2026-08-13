@@ -34,7 +34,7 @@ class Version000107Date20200608220000 extends SimpleMigrationStep {
 
 		if ($schema->hasTable('maps_tracks')) {
 			$table = $schema->getTable('maps_tracks');
-			$table->changeColumn('metadata', [
+			$table->modifyColumn('metadata', [
 				'notnull' => false,
 				'length' => 1000,
 			]);

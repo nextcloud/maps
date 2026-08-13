@@ -34,7 +34,7 @@ class Version000014Date20190817184844 extends SimpleMigrationStep {
 
 		if ($schema->hasTable('maps_favorites')) {
 			$table = $schema->getTable('maps_favorites');
-			$table->changeColumn('name', [
+			$table->modifyColumn('name', [
 				'notnull' => false,
 				'length' => 255,
 			]);

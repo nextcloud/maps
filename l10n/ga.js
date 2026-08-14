@@ -98,7 +98,6 @@ OC.L10N.register(
     "Close" : "Dún",
     "Keep in mind that map projections always distort sizes of countries. The standard Mercator projection is particularly biased. Read more at:" : "Coinnigh i gcuimhne go ndéanann teilgin léarscáile méideanna tíortha a shaobhadh i gcónaí. Tá réamh-mheastachán caighdeánach Mercator go háirithe claonta. Léigh tuilleadh ag:",
     "Track my position" : "Rianaigh mo sheasamh",
-    "Open geo links" : "Oscail naisc geo",
     "Display time filter slider" : "Taispeáin sleamhnán scagaire ama",
     "The True Size of Africa" : "Méid Fíor na hAfraice",
     "Cancel adding favorites" : "Cealaigh ceanáin a chur leis",

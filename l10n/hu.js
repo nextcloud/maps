@@ -97,7 +97,6 @@ OC.L10N.register(
     "Close" : "Bezárás",
     "Keep in mind that map projections always distort sizes of countries. The standard Mercator projection is particularly biased. Read more at:" : "Vegye figyelembe, hogy a térképvetületek mindig eltorzítják az országok méreteit. A szokásos Mercator-vetületre ez különösen jellemző. További olvasnivaló:",
     "Track my position" : "Saját pozíció követése",
-    "Open geo links" : "Földrajzi hivatkozások megnyitása",
     "Display time filter slider" : "Időszűrő csúszka megjelenítése",
     "The True Size of Africa" : "Afrika valódi mérete",
     "Cancel adding favorites" : "Kedvencek hozzáadásának megszakítása",

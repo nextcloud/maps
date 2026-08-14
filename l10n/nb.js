@@ -97,7 +97,6 @@ OC.L10N.register(
     "Close" : "Lukk",
     "Keep in mind that map projections always distort sizes of countries. The standard Mercator projection is particularly biased. Read more at:" : "Husk at kartprojeksjoner alltid forvrenger størrelsen på landene. Standard Mercator-projeksjon er spesielt partisk. Les mer på:",
     "Track my position" : "Spor min plassering",
-    "Open geo links" : "Åpne geo-lenker",
     "Display time filter slider" : "Vis tidsfilter-glidebryteren",
     "The True Size of Africa" : "Vis ekte størrelse av Afrika",
     "(No name)" : "(Ingen navn)",

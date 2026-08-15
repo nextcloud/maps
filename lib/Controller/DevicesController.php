@@ -12,7 +12,7 @@
 
 namespace OCA\Maps\Controller;
 
-use OCA\Maps\DB\DeviceShareMapper;
+use OCA\Maps\DB\DeviceShareRepository;
 use OCA\Maps\Service\DevicesService;
 use OCP\AppFramework\Controller;
 use OCP\AppFramework\Db\DoesNotExistException;
@@ -41,7 +41,7 @@ class DevicesController extends Controller {
 		IAppConfig $appConfig,
 		private readonly IL10N $l,
 		private readonly DevicesService $devicesService,
-		private readonly DeviceShareMapper $deviceShareMapper,
+		private readonly DeviceShareRepository $deviceShareMapper,
 		private readonly IDateTimeZone $dateTimeZone,
 		private readonly IRootFolder $root,
 		private readonly ?string $userId,
@@ -67,14 +67,13 @@ class DevicesController extends Controller {
 			$deviceIds = array_column($devices, 'id');
 			$shares = $this->deviceShareMapper->findByDeviceIds($deviceIds);
 			foreach ($shares as $s) {
-				$devices[$s->getDeviceId()]['shares'][] = $s;
+				$devices[$s->deviceId]['shares'][] = $s;
 			}
 		} else {
 			$devices = [];
 			$userFolder = $this->root->getUserFolder($this->userId);
-			$folders = $userFolder->getById($myMapId);
-			$folder = array_shift($folders);
-			if (is_null($folder)) {
+			$folder = $userFolder->getFirstNodeById($myMapId);
+			if (!$folder instanceof Folder) {
 				return new DataResponse($this->l->t('Map not Found'), 404);
 			}
 			$shares = $this->devicesService->getSharedDevicesFromFolder($folder);
@@ -242,8 +241,10 @@ class DevicesController extends Controller {
 		if (is_null($myMapId) || $myMapId === 0) {
 			$sharedDevices = [];
 		} else {
-			$folders = $this->userFolder->getById($myMapId);
-			$folder = array_shift($folders);
+			$folder = $this->userFolder->getFirstNodeById($myMapId);
+			if (!$folder instanceof Folder) {
+				return new DataResponse($this->l->t('Map not Found'), 404);
+			}
 			$sharedDevices = $this->devicesService->getSharedDevicesFromFolder($folder);
 		}
 
@@ -277,9 +278,9 @@ class DevicesController extends Controller {
 		} catch (DoesNotExistException) {
 			throw new NotFoundException();
 		}
-		$device = $this->devicesService->getDeviceFromDB($share->getDeviceId(), $this->userId);
+		$device = $this->devicesService->getDeviceFromDB($share->deviceId, $this->userId);
 		if ($device !== null) {
-			return new DataResponse($this->deviceShareMapper->removeById($share->getId()));
+			return new DataResponse($this->deviceShareMapper->removeById($share->id));
 		} else {
 			throw new NotFoundException();
 		}
@@ -296,8 +297,7 @@ class DevicesController extends Controller {
 		} catch (DoesNotExistException) {
 			return new DataResponse($this->l->t('Share not Found'), 404);
 		}
-		$folders = $this->userFolder->getById($targetMapId);
-		$folder = array_shift($folders);
+		$folder = $this->userFolder->getFirstNodeById($targetMapId);
 		if (!$folder instanceof Folder) {
 			return new DataResponse($this->l->t('Map not Found'), 404);
 		}
@@ -308,7 +308,7 @@ class DevicesController extends Controller {
 		}
 		$data = json_decode((string)$file->getContent(), true);
 		foreach ($data as $s) {
-			if ($s->token == $share->getToken()) {
+			if ($s->token == $share->token) {
 				return new DataResponse($this->l->t('Share was already on map'));
 			}
 		}
@@ -318,8 +318,7 @@ class DevicesController extends Controller {
 	}
 
 	public function removeSharedDeviceFromMap(string $token, int $myMapId): DataResponse {
-		$folders = $this->userFolder->getById($myMapId);
-		$folder = array_shift($folders);
+		$folder = $this->userFolder->getFirstNodeById($myMapId);
 		if (!$folder instanceof Folder) {
 			return new DataResponse($this->l->t('Map not Found'), 404);
 		}

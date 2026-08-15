@@ -14,7 +14,8 @@
 
 namespace OCA\Maps\Controller;
 
-use OCA\Maps\DB\FavoriteShareMapper;
+use OCA\Maps\DB\FavoriteShare;
+use OCA\Maps\DB\FavoriteShareRepository;
 use OCA\Maps\Service\FavoritesService;
 use OCP\AppFramework\Controller;
 use OCP\AppFramework\Db\DoesNotExistException;
@@ -46,7 +47,7 @@ class FavoritesController extends Controller {
 		IRootFolder $rootFolder,
 		private readonly FavoritesService $favoritesService,
 		private readonly IDateTimeZone $dateTimeZone,
-		private readonly FavoriteShareMapper $favoriteShareMapper,
+		private readonly FavoriteShareRepository $favoriteShareMapper,
 		private readonly ?string $userId,
 	) {
 		parent::__construct($appName, $request);
@@ -169,8 +170,7 @@ class FavoritesController extends Controller {
 		if (is_null($myMapId) || $myMapId === 0) {
 			$favorite = $this->favoritesService->getFavoriteFromDB($id, $this->userId);
 			if ($favorite !== null) {
-				if (is_numeric($lng)
-				) {
+				if (is_numeric($lng)) {
 					$this->favoritesService->editFavoriteInDB($id, $name, $lat, $lng, $category, $comment, $extensions);
 					$editedFavorite = $this->favoritesService->getFavoriteFromDB($id);
 					return new DataResponse($editedFavorite);
@@ -214,7 +214,7 @@ class FavoritesController extends Controller {
 					// Rename share if one exists
 					try {
 						$share = $this->favoriteShareMapper->findByOwnerAndCategory($this->userId, $cat);
-						$share->setCategory($newName);
+						$share->category = $newName;
 						$this->favoriteShareMapper->update($share);
 					} catch (DoesNotExistException|MultipleObjectsReturnedException) {
 					}
@@ -279,9 +279,12 @@ class FavoritesController extends Controller {
 			$categories = $this->favoriteShareMapper->findAllByMapId($this->userId, $myMapId);
 		}
 
-		return new DataResponse($categories);
+		return new DataResponse(iterator_to_array($categories));
 	}
 
+	/**
+	 * @return DataResponse<HTTP::STATUS_BAD_REQUEST|Http::STATUS_INTERNAL_SERVER_ERROR, string, array{}>|DataResponse<HTTP::STATUS_OK, FavoriteShare, array{}>
+	 */
 	#[NoAdminRequired]
 	public function shareCategory(string $category): DataResponse {
 		if ($this->favoritesService->countFavorites($this->userId, [$category], null, null) === 0) {

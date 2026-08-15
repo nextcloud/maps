@@ -13,7 +13,7 @@
 namespace OCA\Maps\Controller;
 
 use OCA\Maps\AppInfo\Application;
-use OCA\Maps\DB\GeophotoMapper;
+use OCA\Maps\DB\GeophotoRepository;
 use OCA\Maps\Service\GeophotoService;
 use OCA\Maps\Service\PhotofilesService;
 use OCP\DB\QueryBuilder\IQueryBuilder;
@@ -84,7 +84,7 @@ class PhotosControllerTest extends \PHPUnit\Framework\TestCase {
 			$c->get(LoggerInterface::class),
 			$c->get(ICacheFactory::class),
 			$this->rootFolder,
-			$c->get(GeophotoMapper::class),
+			$c->get(GeophotoRepository::class),
 			$c->get(IManager::class),
 			$c->get(\OCP\BackgroundJob\IJobList::class)
 		);

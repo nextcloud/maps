@@ -16,6 +16,7 @@ use OC\Files\Search\SearchBinaryOperator;
 use OC\Files\Search\SearchComparison;
 use OC\Files\Search\SearchQuery;
 use OC\User\NoUserException;
+use OCA\Maps\DB\GeophotoRepository;
 use OCP\DB\Exception;
 use OCP\Files\File;
 use OCP\Files\Folder;
@@ -24,35 +25,27 @@ use OCP\Files\NotFoundException;
 use OCP\Files\NotPermittedException;
 use OCP\Files\Search\ISearchBinaryOperator;
 use OCP\Files\Search\ISearchComparison;
+use OCP\ICache;
 use OCP\ICacheFactory;
-use OCP\IL10N;
 use OCP\IPreview;
 use RuntimeException;
 
 class GeophotoService {
 
-	private $root;
-	private $preview;
 	private $timeorderedPointSets;
-	private $cacheFactory;
-	private readonly \OCP\ICache $photosCache;
-	private readonly \OCP\ICache $timeOrderedPointSetsCache;
-	private readonly \OCP\ICache $backgroundJobCache;
+	private readonly ICache $photosCache;
+	private readonly ICache $timeOrderedPointSetsCache;
+	private readonly ICache $backgroundJobCache;
 
 	public function __construct(
-		IRootFolder $root,
-		IL10N $l10n,
-		private readonly \OCA\Maps\DB\GeophotoMapper $photoMapper,
-		IPreview $preview,
-		private readonly \OCA\Maps\Service\TracksService $tracksService,
-		private readonly \OCA\Maps\Service\DevicesService $devicesService,
-		ICacheFactory $cacheFactory,
-		$userId,
+		private readonly IRootFolder $root,
+		private readonly GeophotoRepository $photoMapper,
+		private readonly IPreview $preview,
+		private readonly TracksService $tracksService,
+		private readonly DevicesService $devicesService,
+		private readonly ICacheFactory $cacheFactory,
 	) {
-		$this->root = $root;
-		$this->preview = $preview;
 		$this->timeorderedPointSets = null;
-		$this->cacheFactory = $cacheFactory;
 		$this->photosCache = $this->cacheFactory->createDistributed('maps:photos');
 		$this->timeOrderedPointSetsCache = $this->cacheFactory->createDistributed('maps:time-ordered-point-sets');
 		$this->backgroundJobCache = $this->cacheFactory->createDistributed('maps:background-jobs');
@@ -99,7 +92,7 @@ class GeophotoService {
 				// this path is relative to owner's storage
 				//$path = $cacheEntry->getPath();
 				//but we want it relative to current user's storage
-				$files = $folder->getById($photoEntity->getFileId());
+				$files = $folder->getById($photoEntity->fileId);
 				if (empty($files)) {
 					continue;
 				}
@@ -120,11 +113,11 @@ class GeophotoService {
 					$isRoot = $file === $userFolder;
 
 					$file_object = new \stdClass();
-					$file_object->fileId = $photoEntity->getFileId();
+					$file_object->fileId = $photoEntity->fileId;
 					$file_object->fileid = $file_object->fileId;
-					$file_object->lat = $photoEntity->getLat();
-					$file_object->lng = $photoEntity->getLng();
-					$file_object->dateTaken = $photoEntity->getDateTaken() ?? \time();
+					$file_object->lat = $photoEntity->lat;
+					$file_object->lng = $photoEntity->lng;
+					$file_object->dateTaken = $photoEntity->dateTaken ?? \time();
 					$file_object->basename = $isRoot ? '' : $file->getName();
 					$file_object->filename = $this->normalizePath($path);
 					$file_object->etag = $file->getEtag();
@@ -181,7 +174,7 @@ class GeophotoService {
 			// this path is relative to owner's storage
 			//$path = $cacheEntry->getPath();
 			// but we want it relative to current user's storage
-			$files = $folder->getById($photoEntity->getFileId());
+			$files = $folder->getById($photoEntity->fileId);
 			if (empty($files)) {
 				continue;
 			}
@@ -201,13 +194,13 @@ class GeophotoService {
 				$isRoot = $file === $userFolder;
 
 				//Unfortunately Exif stores the local and not the UTC time. There is no way to get the timezone, therefore it has to be given by the user.
-				$date = $photoEntity->getDateTaken() ?? \time();
+				$date = $photoEntity->dateTaken ?? new \DateTime('now');
 
-				$dateWithTimezone = new \DateTime(gmdate('Y-m-d H:i:s', $date), $tz);
+				$dateWithTimezone = new \DateTime($date->format('Y-m-d H:i:s'), $tz);
 				$locations = $this->getLocationGuesses($dateWithTimezone->getTimestamp());
 				foreach ($locations as $key => $location) {
 					$file_object = new \stdClass();
-					$file_object->fileId = $photoEntity->getFileId();
+					$file_object->fileId = $photoEntity->fileId;
 					$file_object->fileid = $file_object->fileId;
 					$file_object->path = $this->normalizePath($path);
 					$file_object->mime = $file->getMimetype();
@@ -240,13 +233,11 @@ class GeophotoService {
 	}
 
 	/**
-	 * @param $userId
-	 * @param $folder
 	 * @throws \OCP\Files\NotFoundException
 	 * @throws \OCP\Files\NotPermittedException
 	 * @throws \OC\User\NoUserException
 	 */
-	private function getIgnoredPaths(string $userId, $folder = null, bool $hideImagesOnCustomMaps = true): array {
+	private function getIgnoredPaths(string $userId, ?Folder $folder = null, bool $hideImagesOnCustomMaps = true): array {
 		$ignoredPaths = [];
 		$userFolder = $this->getFolderForUser($userId);
 		if (is_null($folder)) {
@@ -277,9 +268,7 @@ class GeophotoService {
 	}
 
 	/**
-	 * returns a array of locations for a given date
-	 *
-	 * @param $dateTaken int
+	 * Returns an array of locations for a given date
 	 */
 	private function getLocationGuesses(int $dateTaken): array {
 		$locations = [];
@@ -414,12 +403,7 @@ class GeophotoService {
 		return str_replace('files', '', $path);
 	}
 
-	/**
-	 * @param string $userId the user id
-	 * @return Folder
-	 */
-	private function getFolderForUser(string $userId) {
+	private function getFolderForUser(string $userId): Folder {
 		return $this->root->getUserFolder($userId);
 	}
-
 }

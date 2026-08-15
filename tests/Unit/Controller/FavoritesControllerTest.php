@@ -15,7 +15,7 @@
 namespace OCA\Maps\Controller;
 
 use OCA\Maps\AppInfo\Application;
-use OCA\Maps\DB\FavoriteShareMapper;
+use OCA\Maps\DB\FavoriteShareRepository;
 use OCA\Maps\Service\FavoritesService;
 use OCP\AppFramework\Http;
 use OCP\AppFramework\Services\IAppConfig;
@@ -87,7 +87,7 @@ class FavoritesControllerTest extends \PHPUnit\Framework\TestCase {
 			$c->get(IRootFolder::class),
 			$c->get(FavoritesService::class),
 			$c->get(\OCP\IDateTimeZone::class),
-			$c->get(FavoriteShareMapper::class),
+			$c->get(FavoriteShareRepository::class),
 			'test'
 		);
 
@@ -99,7 +99,7 @@ class FavoritesControllerTest extends \PHPUnit\Framework\TestCase {
 			$c->get(IRootFolder::class),
 			$c->get(FavoritesService::class),
 			$c->get(\OCP\IDateTimeZone::class),
-			$c->get(FavoriteShareMapper::class),
+			$c->get(FavoriteShareRepository::class),
 			'test2'
 		);
 		$this->mapFolder = $this->createMapFolder();
@@ -482,7 +482,7 @@ class FavoritesControllerTest extends \PHPUnit\Framework\TestCase {
 		$this->assertEquals(Http::STATUS_OK, $response1->getStatus());
 		$this->assertEquals(Http::STATUS_OK, $response2->getStatus());
 
-		$this->assertIsString($response1->getData()->getToken());
+		$this->assertIsString($response1->getData()->token);
 		$this->assertTrue($response2->getData()['did_exist']);
 	}
 
@@ -532,7 +532,7 @@ class FavoritesControllerTest extends \PHPUnit\Framework\TestCase {
 
 		$this->assertIsArray($categories->getData());
 
-		$mappedCategories = array_map(fn ($el) => $el->getCategory(), $categories->getData());
+		$mappedCategories = array_map(fn ($el) => $el->category, $categories->getData());
 
 		foreach ($categoryNames as $categoryName) {
 			$this->assertContains($categoryName, $mappedCategories);
@@ -561,7 +561,7 @@ class FavoritesControllerTest extends \PHPUnit\Framework\TestCase {
 
 		$shares = $this->favoritesController->getSharedCategories()->getData();
 
-		$shareNames = array_map(fn ($el) => $el->getCategory(), $shares);
+		$shareNames = array_map(fn ($el) => $el->category, $shares);
 
 		$this->favoritesController->deleteFavorite($id);
 		$this->favoritesController->unShareCategory($newCategoryName);

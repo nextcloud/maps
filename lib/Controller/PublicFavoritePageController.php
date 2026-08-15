@@ -24,7 +24,7 @@
 
 namespace OCA\Maps\Controller;
 
-use OCA\Maps\DB\FavoriteShareMapper;
+use OCA\Maps\DB\FavoriteShareRepository;
 use OCP\AppFramework\Db\DoesNotExistException;
 use OCP\AppFramework\Db\MultipleObjectsReturnedException;
 use OCP\AppFramework\Http;
@@ -43,7 +43,7 @@ class PublicFavoritePageController extends PublicShareController {
 		string $appName,
 		IRequest $request,
 		ISession $session,
-		private readonly FavoriteShareMapper $favoriteShareMapper,
+		private readonly FavoriteShareRepository $favoriteShareMapper,
 		\OCP\IAppConfig $appConfig,
 	) {
 		$this->appConfig = $appConfig;
@@ -76,9 +76,9 @@ class PublicFavoritePageController extends PublicShareController {
 
 		$response = new PublicTemplateResponse('maps', 'public/favorites_index', []);
 
-		$ownerName = \OCP\Server::get(IUserManager::class)->get($share->getOwner())->getDisplayName();
+		$ownerName = \OCP\Server::get(IUserManager::class)->get($share->owner)->getDisplayName();
 
-		$response->setHeaderTitle($share->getCategory());
+		$response->setHeaderTitle($share->category);
 		$response->setHeaderDetails('shared by ' . $ownerName);
 
 		$this->addCsp($response);

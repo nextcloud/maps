@@ -24,29 +24,26 @@
 
 namespace OCA\Maps\DB;
 
-use OCP\AppFramework\Db\Entity;
+use OCA\Maps\AppFramework\Db\Attribute\Column;
+use OCA\Maps\AppFramework\Db\Attribute\Entity;
+use OCA\Maps\AppFramework\Db\Attribute\Id;
 use OCP\DB\Types;
 
-/**
- * @method string getToken()
- * @method string getDeviceId()
- * @method string getTimestampFrom()
- * @method string getTimestampTo()
- * @method string setToken(string $token)
- * @method string setDeviceId(int $deviceId)
- * @method string setTimestampFrom(int $timestampFrom)
- * @method string setTimestampTo(int $timestampTo)
- */
-class DeviceShare extends Entity {
-	public $token;
-	public $deviceId;
-	public $timestampFrom;
-	public $timestampTo;
+#[Entity(name: 'maps_device_shares')]
+class DeviceShare {
+	#[Id]
+	#[Column(name: 'id', type: Types::BIGINT)]
+	public ?int $id = null;
 
-	public function __construct() {
-		$this->addType('token', Types::STRING);
-		$this->addType('deviceId', Types::INTEGER);
-		$this->addType('timestampFrom', Types::INTEGER);
-		$this->addType('timestampTo', Types::INTEGER);
-	}
+	#[Column(name: 'token', type: Types::STRING, nullable: false, length: 64)]
+	public string $token;
+
+	#[Column(name: 'device_id', type: Types::INTEGER, nullable: false)]
+	public int $deviceId;
+
+	#[Column(name: 'timestamp_from', type: Types::INTEGER, nullable: false)]
+	public int $timestampFrom;
+
+	#[Column(name: 'timestamp_to', type: Types::INTEGER, nullable: false)]
+	public int $timestampTo;
 }

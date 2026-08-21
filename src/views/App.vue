@@ -4,6 +4,11 @@
 			type="hidden"
 			name="sharingToken"
 			:value="token">
+		<input ref="trackFileInput"
+			type="file"
+			accept=".gpx,application/gpx+xml"
+			style="display: none;"
+			@change="onTrackFileSelected">
 		<MapsNavigation
 			@toggle-trackme="onToggleTrackme"
 			@toggle-slider="onToggleSlider"
@@ -64,12 +69,14 @@
 					:enabled="tracksEnabled"
 					:loading="tracksLoading"
 					:tracks="tracks"
+					:can-add="!token"
 					@zoom="onTrackZoom"
 					@elevation="onTrackElevation"
 					@track-clicked="onNavTrackClicked"
 					@tracks-clicked="onTracksClicked"
 					@color="onChangeTrackColor"
-					@add-to-map-track="onAddTrackToMap" />
+					@add-to-map-track="onAddTrackToMap"
+					@add="onAddTrack" />
 				<AppNavigationDevicesItem
 					v-if="!token"
 					ref="devicesNavigation"
@@ -211,6 +218,7 @@
 <script>
 import { NcContent, NcAppContent, NcActions, NcActionButton } from '@nextcloud/vue'
 import { showError, showInfo, showSuccess } from '@nextcloud/dialogs'
+import { getUploader } from '@nextcloud/upload'
 
 import moment from '@nextcloud/moment'
 
@@ -1867,6 +1875,35 @@ export default {
 				this.getTracks()
 			}
 			optionsController.saveOptionValues({ tracksEnabled: this.tracksEnabled ? 'true' : 'false' })
+		},
+		onAddTrack() {
+			this.$refs.trackFileInput.click()
+		},
+		async onTrackFileSelected(event) {
+			const file = event.target.files[0]
+			// allow selecting the same file again later
+			event.target.value = ''
+			if (!file) {
+				return
+			}
+
+			const currentMap = this.myMapId ? this.myMaps.find((m) => m.id === this.myMapId) : null
+			const destinationFolder = currentMap ? currentMap.path : ''
+			const destination = destinationFolder.replace(/\/$/, '') + '/' + file.name
+
+			try {
+				await getUploader().upload(destination, file)
+			} catch (error) {
+				console.error(error)
+				showError(t('maps', 'Failed to upload track {name}', { name: file.name }))
+				return
+			}
+
+			if (!this.tracksEnabled) {
+				this.tracksEnabled = true
+				optionsController.saveOptionValues({ tracksEnabled: 'true' })
+			}
+			this.getTracks()
 		},
 		getTracks() {
 			this.tracks = []

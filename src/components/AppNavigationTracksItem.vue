@@ -12,6 +12,12 @@
 			<NcCounterBubble v-show="enabled && tracks.length" :count="tracks.length" />
 		</template>
 		<template v-if="enabled" #actions>
+			<NcActionButton v-if="canAdd"
+				icon="icon-add"
+				:close-after-click="true"
+				@click="$emit('add')">
+				{{ t('maps', 'Add track') }}
+			</NcActionButton>
 			<NcActionButton
 				icon="icon-tag"
 				:close-after-click="true"
@@ -70,6 +76,10 @@ export default {
 		tracks: {
 			type: Array,
 			required: true,
+		},
+		canAdd: {
+			type: Boolean,
+			default: true,
 		},
 	},
 

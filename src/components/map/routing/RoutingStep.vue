@@ -1,5 +1,5 @@
 <template>
-	<div class="routing-step" :class="`variant-${variant}`">
+	<div class="routing-step">
 		<SearchField
 			ref="field"
 			:data="searchData"
@@ -47,11 +47,6 @@ export default {
 		canDelete: {
 			type: Boolean,
 			default: true,
-		},
-		variant: {
-			type: String,
-			default: 'via',
-			validator: (v) => ['start', 'via', 'end'].includes(v),
 		},
 	},
 
@@ -108,23 +103,8 @@ export default {
 <style lang="scss" scoped>
 .routing-step {
 	display: flex;
-	align-items: center;
-	height: 44px;
-	padding: 0 4px 0 8px;
-	border-left: 4px solid var(--color-border-dark);
-	border-bottom: 1px solid var(--color-border);
-
-	&:last-child {
-		border-bottom: 0;
-	}
-
-	&.variant-start {
-		border-left-color: var(--color-success);
-	}
-
-	&.variant-end {
-		border-left-color: var(--color-error);
-	}
+	margin-bottom: 10px;
+	height: 34px;
 
 	.multiselect {
 		flex-grow: 1;

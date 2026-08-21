@@ -3,12 +3,14 @@
 namespace OCA\Maps\Settings;
 
 use OCP\AppFramework\Http\TemplateResponse;
+use OCP\AppFramework\Services\IInitialState;
 use OCP\Settings\ISettings;
 
 class AdminSettings implements ISettings {
 
 	public function __construct(
 		private readonly \OCP\IAppConfig $appConfig,
+		private readonly IInitialState $initialState,
 	) {
 	}
 
@@ -17,21 +19,23 @@ class AdminSettings implements ISettings {
 			'osrmCarURL',
 			'osrmBikeURL',
 			'osrmFootURL',
-			'osrmDEMO',
 			'graphhopperAPIKEY',
 			'mapboxAPIKEY',
 			'maplibreStreetStyleURL',
 			'maplibreStreetStyleAuth',
-			'maplibreStreetStylePmtiles',
-			'graphhopperURL'
+			'graphhopperURL',
 		];
 		$parameters = [];
 		foreach ($keys as $k) {
-			$v = $this->appConfig->getValueString('maps', $k);
-			$parameters[$k] = $v;
+			$parameters[$k] = $this->appConfig->getValueString('maps', $k);
 		}
+		// osrmDEMO defaults to enabled unless explicitly disabled
+		$parameters['osrmDEMO'] = $this->appConfig->getValueString('maps', 'osrmDEMO') !== '0';
+		$parameters['maplibreStreetStylePmtiles'] = $this->appConfig->getValueString('maps', 'maplibreStreetStylePmtiles') === '1';
 
-		return new TemplateResponse('maps', 'adminSettings', $parameters, '');
+		$this->initialState->provideInitialState('adminSettings', $parameters);
+
+		return new TemplateResponse('maps', 'adminSettings', [], '');
 	}
 
 	/**

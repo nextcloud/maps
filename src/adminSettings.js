@@ -1,55 +1,8 @@
-import { generateUrl } from "@nextcloud/router";
-import { showSuccess, showError } from "@nextcloud/dialogs";
+// SPDX-FileCopyrightText: 2026 Nextcloud GmbH and Nextcloud contributors
+// SPDX-License-Identifier: AGPL-3.0-or-later
 
-(function() {
-    if (!OCA.Maps) {
-        OCA.Maps = {};
-    }
-})();
+import { createApp } from 'vue'
+import AdminSettings from './views/AdminSettings.vue'
 
-function setMapsRoutingSettings(key, value) {
-    var values = {};
-    values[key] = value;
-    var url = generateUrl('/apps/maps/setRoutingSettings');
-    var req = {
-        values: values
-    }
-    $.ajax({
-        type: 'POST',
-        url: url,
-        data: req,
-        async: true
-    }).done(function (response) {
-		showSuccess(
-            t('maps', 'Settings were successfully saved')
-        );
-    }).fail(function() {
-        showError(
-            t('maps', 'Failed to save settings')
-        );
-    });
-}
-
-$(document).ready(function() {
-    $('body').on('change',
-        'input#osrmFootURL, ' +
-        'input#osrmCarURL, ' +
-        'input#osrmBikeURL, ' +
-        'input#graphhopperURL, ' +
-        'input#graphhopperAPIKEY, ' +
-        '#osrmDEMO, ' +
-        'input#mapboxAPIKEY, ' +
-        'input#maplibreStreetStyleURL, ' +
-		'input#maplibreStreetStyleAuth',
-		function(e) {
-	        var value = $(this).val();
-    	    setMapsRoutingSettings($(this).attr('id'), value);
-    	});
-    $('body').on('change',
-		'#osrmDEMO, ' +
-		'#maplibreStreetStylePmtiles',
-		function(e) {
-        	var value = $(this).is(':checked') ? '1' : '0';
-        	setMapsRoutingSettings($(this).attr('id'), value);
-    	});
-});
+const app = createApp(AdminSettings)
+app.mount('#maps-admin-settings')

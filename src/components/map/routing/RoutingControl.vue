@@ -129,6 +129,14 @@ const mapInstance = useMap()
 
 const emptyStep = (): Step => ({ latLng: null, name: '' })
 const steps = ref<Step[]>([emptyStep(), emptyStep()])
+const latestDirections = ref<DirectionsResponse | null>(null)
+
+const waypointCoords = computed<[number, number][]>(() => {
+	return steps.value.filter((s) => s.latLng).map((s) => [s.latLng!.lng, s.latLng!.lat])
+})
+
+const hasWaypoints = computed(() => waypointCoords.value.length >= 2)
+const routeReady = computed(() => !!latestDirections.value?.routes?.length)
 
 const routers = computed<RouterOption[]>(() => {
 	const optionValues = optionsController.optionValues as Record<string, string>
@@ -158,7 +166,6 @@ const routers = computed<RouterOption[]>(() => {
 
 const selectedRouterType = ref<string>('')
 const directions = ref<MapLibreGlDirections | null>(null)
-const latestDirections = ref<DirectionsResponse | null>(null)
 
 /**
  * @param routerType one of `routers`' `type` values
@@ -200,13 +207,6 @@ watch(routers, (newRouters) => {
 	const preferred = optionValues.selectedRouter && newRouters.find((r) => r.type === optionValues.selectedRouter)
 	setRouter((preferred ?? newRouters[0])?.type ?? '')
 }, { immediate: true })
-
-const waypointCoords = computed<[number, number][]>(() => {
-	return steps.value.filter((s) => s.latLng).map((s) => [s.latLng!.lng, s.latLng!.lat])
-})
-
-const hasWaypoints = computed(() => waypointCoords.value.length >= 2)
-const routeReady = computed(() => !!latestDirections.value?.routes?.length)
 
 function syncWaypoints() {
 	if (!directions.value) {

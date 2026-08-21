@@ -7,11 +7,12 @@
 <!--
 	Port in progress: the map engine moved from Leaflet to vue-maplibre-gl.
 	Ported so far: the base map (street/satellite/terrain), click-to-add,
-	favorites/contacts/photos/tracks/devices markers and clustering, and
-	routing. Everything below is intentionally not wired up yet and will
-	come back one feature at a time in follow-up steps:
+	favorites/contacts/photos/tracks/devices markers and clustering,
+	routing, and the search box. Everything below is intentionally not
+	wired up yet and will come back one feature at a time in follow-up
+	steps:
 	- right-click context menu, drag-to-edit
-	- search box / history control / slider
+	- history control / slider
 	- track elevation profile chart
 -->
 <template>
@@ -59,10 +60,24 @@
 				:date-filter-end="sliderEndTimestamp"
 				@open-sidebar="emit('open-sidebar', $event)" />
 
+			<SearchControl :visible="!showRouting"
+				:search-data="searchData"
+				:loading="searching"
+				:result-poi-number="searchPois.length"
+				@validate="onSearchValidate"
+				@clear-pois="searchPois = []" />
+
 			<RoutingControl :visible="showRouting"
 				:search-data="routingSearchData"
 				@close="showRouting = false"
 				@track-added="emit('track-added', $event)" />
+
+			<PoiMarkersLayer v-if="searchPois.length" :pois="searchPois" @add-favorite="emit('add-address-favorite', $event)" />
+
+			<ClickSearchMarker v-if="clickSearchLatLng"
+				:lat-lng="clickSearchLatLng"
+				@add-favorite="emit('add-address-favorite', $event)"
+				@close="clickSearchLatLng = null" />
 
 			<MglNavigationControl position="bottom-right" />
 			<MglScaleControl position="bottom-left" />
@@ -120,6 +135,10 @@ import Satellite from 'vue-material-design-icons/Satellite.vue'
 import TerrainIcon from 'vue-material-design-icons/Terrain.vue'
 import Directions from 'vue-material-design-icons/Directions.vue'
 import RoutingControl from './map/routing/RoutingControl.vue'
+import SearchControl from './map/SearchControl.vue'
+import PoiMarkersLayer from './map/PoiMarkersLayer.vue'
+import ClickSearchMarker from './map/ClickSearchMarker.vue'
+import { searchPois as searchPoisNetwork } from '../network.js'
 import type { Favorite, FavoriteCategory } from './map/FavoritesLayer.vue'
 import FavoritesLayer from './map/FavoritesLayer.vue'
 import type { Contact, ContactGroup } from './map/ContactsLayer.vue'
@@ -153,6 +172,7 @@ const props = withDefaults(defineProps<{
 	sliderStartTimestamp?: number
 	sliderEndTimestamp?: number
 	routingSearchData?: unknown[]
+	searchData?: unknown[]
 }>(), {
 	mapBoundsProp: () => [],
 	state: '',
@@ -172,6 +192,7 @@ const props = withDefaults(defineProps<{
 	sliderStartTimestamp: 0,
 	sliderEndTimestamp: 0,
 	routingSearchData: () => [],
+	searchData: () => [],
 })
 
 const emit = defineEmits<{
@@ -183,12 +204,31 @@ const emit = defineEmits<{
 	'click-track': [track: Track]
 	'click-device': [device: Device]
 	'track-added': [track: unknown]
+	'add-address-favorite': [favorite: { latLng: { lat: number, lng: number }, name: string, formattedAddress: string }]
+	'search-enable-track': [track: Track]
+	'search-enable-device': [device: Device]
 }>()
 
 const baseStyleId = ref<BaseStyleId>(BaseStyleIds.Street)
 const activeStyle = computed(() => BaseStyles[baseStyleId.value])
 const terrainEnabled = ref(false)
 const showRouting = ref(false)
+
+interface SearchResult {
+	type: string
+	latLng?: { lat: number, lng: number }
+	device?: Device
+	track?: Track
+	subtype?: string
+	value?: string
+	rawResult?: { lat: string, lon: string, [key: string]: unknown }
+	lat?: number
+	lng?: number
+}
+
+const searchPois = ref<Array<{ lat: string, lon: string, [key: string]: unknown }>>([])
+const searching = ref(false)
+const clickSearchLatLng = ref<{ lat: number, lng: number } | null>(null)
 
 const mapInstance = useMap()
 
@@ -281,6 +321,52 @@ function zoomOnPhotoSuggestion(photo: { lat?: number, lng?: number }) {
  * The track elevation profile chart isn't ported to vue-maplibre-gl yet.
  */
 function displayElevation() {
+}
+
+/**
+ * @param element the selected search result, from App.vue's searchData
+ */
+function onSearchValidate(element: SearchResult) {
+	if (element.type === 'contact' || element.type === 'favorite') {
+		if (element.latLng) {
+			mapInstance.map?.flyTo({ center: [element.latLng.lng, element.latLng.lat], zoom: 15 })
+		}
+	} else if (element.type === 'device' && element.device) {
+		if (!element.device.enabled) {
+			emit('search-enable-device', element.device)
+		} else {
+			zoomOnDevice(element.device)
+		}
+	} else if (element.type === 'track' && element.track) {
+		if (!element.track.enabled) {
+			emit('search-enable-track', element.track)
+		} else {
+			zoomOnTrack(element.track)
+		}
+	} else if (element.type === 'poi' && element.subtype && element.value) {
+		const bounds = mapInstance.map?.getBounds()
+		if (!bounds) {
+			return
+		}
+		searching.value = true
+		searchPoisNetwork(element.subtype, element.value, {
+			west: bounds.getWest(), south: bounds.getSouth(), east: bounds.getEast(), north: bounds.getNorth(),
+		}).then((response: { data: Array<{ lat: string, lon: string }> }) => {
+			searchPois.value = response.data
+		}).finally(() => {
+			searching.value = false
+		})
+	} else if (element.type === 'result' && element.rawResult) {
+		searchPois.value = [element.rawResult]
+		mapInstance.map?.flyTo({ center: [parseFloat(element.rawResult.lon), parseFloat(element.rawResult.lat)], zoom: 15 })
+	} else if (element.type === 'coordinate' && element.lat !== undefined && element.lng !== undefined) {
+		clickSearchLatLng.value = { lat: element.lat, lng: element.lng }
+		mapInstance.map?.flyTo({ center: [element.lng, element.lat], zoom: 15 })
+	} else if (element.type === 'mylocation') {
+		navigator.geolocation.getCurrentPosition((position) => {
+			mapInstance.map?.flyTo({ center: [position.coords.longitude, position.coords.latitude], zoom: 15 })
+		})
+	}
 }
 
 defineExpose({ fitBounds, zoomOnTrack, zoomOnDevice, zoomOnPhotoSuggestion, displayElevation })

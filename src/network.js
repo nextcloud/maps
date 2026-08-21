@@ -71,6 +71,14 @@ export function searchAddress(address, limit = 8) {
 	return realAxios.get(url)
 }
 
+export function searchPois(subtype, value, bounds, limit = 100) {
+	const query = subtype + '=' + encodeURIComponent(value)
+	const viewbox = [bounds.west, bounds.south, bounds.east, bounds.north].join(',')
+	const url = 'https://nominatim.openstreetmap.org/search?format=json&addressdetails=1&extratags=1&namedetails=1&limit=' + limit
+		+ '&viewbox=' + viewbox + '&bounded=1&' + query
+	return realAxios.get(url)
+}
+
 export function exportRoute(type, coords, name, totDist, totTime, myMapId = null) {
 	const req = {
 		type,

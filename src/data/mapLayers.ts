@@ -19,13 +19,75 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
+import type { RasterDEMSourceSpecification, StyleSpecification } from 'maplibre-gl'
 
-const attributionESRI = 'Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN...'
+export const OSM_ATTRIBUTION = '&copy; <a href="https://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>'
+export const ESRI_ATTRIBUTION = 'Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN...'
+
+export const BaseStyleIds = {
+	Street: 'street',
+	Satellite: 'satellite',
+} as const
+
+export type BaseStyleId = typeof BaseStyleIds[keyof typeof BaseStyleIds]
+
+/**
+ * The available base styles for the (ported) main map. Support for switching
+ * between many base layers (topographic, watercolor, a roads overlay, ...)
+ * was dropped as part of the port to vue-maplibre-gl; only a vector street
+ * map and satellite imagery remain.
+ *
+ * The street style is OpenFreeMap's "Liberty" style - a full vector style
+ * served for free, no API key required. See https://openfreemap.org/.
+ */
+export const BaseStyles: Record<BaseStyleId, StyleSpecification | string> = {
+	[BaseStyleIds.Street]: 'https://tiles.openfreemap.org/styles/liberty',
+	[BaseStyleIds.Satellite]: {
+		version: 8,
+		sources: {
+			satellite: {
+				type: 'raster',
+				tiles: ['https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}'],
+				tileSize: 256,
+				maxzoom: 19,
+				attribution: ESRI_ATTRIBUTION,
+			},
+		},
+		layers: [
+			{ id: 'satellite', type: 'raster', source: 'satellite' },
+		],
+	},
+}
+
+export const TERRAIN_SOURCE_ID = 'terrain-dem'
+
+/**
+ * Public-domain elevation tiles (Mapzen Terrarium, hosted by AWS Open Data)
+ * used to drive MapLibre's native 3D terrain rendering. No API key required.
+ */
+export const TERRAIN_SOURCE: RasterDEMSourceSpecification = {
+	type: 'raster-dem',
+	tiles: ['https://s3.amazonaws.com/elevation-tiles-prod/terrarium/{z}/{x}/{y}.png'],
+	tileSize: 256,
+	maxzoom: 15,
+	encoding: 'terrarium',
+	attribution: 'Elevation data &copy; <a href="https://github.com/tilezen/joerd/blob/master/docs/attribution.md">Mapzen, tilezen, and contributors</a>',
+}
+
+/*
+ * Everything below is the pre-port, Leaflet-flavoured layer catalogue.
+ * `Map.vue` no longer uses it, but `MapContainer.vue` (public favorite
+ * share page) hasn't been ported to vue-maplibre-gl yet and still renders
+ * its own Leaflet map with these layers, so they stay until that follow-up
+ * step lands.
+ */
 
 export const LayerTypes = {
 	Base: 'base',
 	Overlay: 'overlay',
-}
+} as const
+
+export type LayerType = typeof LayerTypes[keyof typeof LayerTypes]
 
 export const LayerIds = {
 	OSM: 'osm',
@@ -34,9 +96,30 @@ export const LayerIds = {
 	ESRITopo: 'esri-topo',
 	OpenTopo: 'open-topo',
 	Watercolor: 'watercolor',
+} as const
+
+export interface MapLayerOptions {
+	id: string
+	noWrap: boolean
+	detectRetina: boolean
+	maxZoom: number
+	referrerPolicy: string
+	ext?: string
+	subdomains?: string
 }
 
-export const Layers = [
+export interface MapLayer {
+	id: string
+	name: string
+	type: LayerType
+	/** XYZ tile URL template, using Leaflet's `{s}`/`{z}`/`{x}`/`{y}` placeholders. */
+	url: string
+	attribution: string
+	options: MapLayerOptions
+	opacity?: number
+}
+
+export const Layers: MapLayer[] = [
 	{
 		id: LayerIds.RoadsOverlay,
 		name: 'Roads Overlay',
@@ -57,7 +140,7 @@ export const Layers = [
 		name: 'Street map',
 		type: LayerTypes.Base,
 		url: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
-		attribution: '&copy; <a href="https://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>',
+		attribution: OSM_ATTRIBUTION,
 		options: {
 			id: 'Open Street Map',
 			noWrap: false,
@@ -71,7 +154,7 @@ export const Layers = [
 		name: 'Satellite map',
 		type: LayerTypes.Base,
 		url: 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
-		attribution: attributionESRI,
+		attribution: ESRI_ATTRIBUTION,
 		options: {
 			id: 'ESRI',
 			noWrap: false,
@@ -85,7 +168,7 @@ export const Layers = [
 		name: 'Topographic',
 		type: LayerTypes.Base,
 		url: 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/{z}/{y}/{x}',
-		attribution: attributionESRI,
+		attribution: ESRI_ATTRIBUTION,
 		options: {
 			id: 'ESRI topo',
 			noWrap: false,
@@ -112,8 +195,8 @@ export const Layers = [
 	},
 ]
 
-export const baseLayersByName = {}
-export const overlayLayersByName = {}
+export const baseLayersByName: Record<string, MapLayer> = {}
+export const overlayLayersByName: Record<string, MapLayer> = {}
 Layers.forEach((l) => {
 	if (l.type === LayerTypes.Base) {
 		baseLayersByName[l.options.id] = l

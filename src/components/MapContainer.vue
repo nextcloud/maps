@@ -56,7 +56,7 @@ import ClickPopup from './map/ClickPopup.vue'
 import FavoritePopup from './map/FavoritePopup.vue'
 import { isPublicShare } from '../utils/common.js'
 import { PUBLIC_FAVORITES_NAMESPACE } from '../store/modules/publicFavorites.js'
-import { LayerIds, Layers } from '../data/mapLayers.js'
+import { LayerIds, Layers } from '../data/mapLayers.ts'
 import { getThemingColorFromCategoryKey } from '../utils/favoritesUtils.js'
 import { getShouldMapUseImperial } from '../utils/mapUtils.js'
 

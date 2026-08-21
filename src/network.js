@@ -1,6 +1,23 @@
 import axios from '@nextcloud/axios'
-import { default as realAxios } from 'axios'
 import { generateUrl } from '@nextcloud/router'
+
+/**
+ * Nominatim requires a valid HTTP Referer (or a custom User-Agent, which
+ * browser JS can't set) to not treat requests as anonymous/abusive - see
+ * https://operations.osmfoundation.org/policies/nominatim/. Nextcloud's own
+ * Referrer-Policy can be stricter than that, so these requests set their own,
+ * same as the tile layers already do via their referrerPolicy option.
+ *
+ * @param {string} url the Nominatim URL to fetch
+ */
+function fetchNominatim(url) {
+	return fetch(url, { referrerPolicy: 'origin' }).then((response) => {
+		if (!response.ok) {
+			throw new Error('Nominatim request failed with status ' + response.status)
+		}
+		return response.json()
+	}).then((data) => ({ data }))
+}
 
 export function saveOptionValues(optionValues, myMapId = null, token = null) {
 	const req = {
@@ -62,13 +79,13 @@ export function searchContacts(query = '', myMapId = null) {
 
 export function geocode(lat, lng) {
 	const url = 'https://nominatim.openstreetmap.org/reverse?format=json&lat=' + lat + '&lon=' + lng + '&addressdetails=1'
-	return realAxios.get(url)
+	return fetchNominatim(url)
 }
 
 export function searchAddress(address, limit = 8) {
 	const query = encodeURIComponent(address)
 	const url = 'https://nominatim.openstreetmap.org/search?q=' + query + '&format=json&addressdetails=1&extratags=1&namedetails=1&limit=' + limit
-	return realAxios.get(url)
+	return fetchNominatim(url)
 }
 
 export function searchPois(subtype, value, bounds, limit = 100) {
@@ -76,7 +93,7 @@ export function searchPois(subtype, value, bounds, limit = 100) {
 	const viewbox = [bounds.west, bounds.south, bounds.east, bounds.north].join(',')
 	const url = 'https://nominatim.openstreetmap.org/search?format=json&addressdetails=1&extratags=1&namedetails=1&limit=' + limit
 		+ '&viewbox=' + viewbox + '&bounded=1&' + query
-	return realAxios.get(url)
+	return fetchNominatim(url)
 }
 
 export function exportRoute(type, coords, name, totDist, totTime, myMapId = null) {

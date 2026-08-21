@@ -257,6 +257,7 @@ OC.L10N.register(
     "Zoom on current route" : "Zoomer sur l’itinéraire actuel",
     "My location" : "Ma position",
     "Your browser does not support registering Maps to open geo links" : "Votre navigateur ne prend pas en charge l'inscription de Cartes pour ouvrir les liens géo",
+    "Registration requested. Confirm it in your browser." : "Inscription demandée. Confirmez-la dans votre navigateur.",
     "Failed to register Maps to open geo links" : "Échec de l'inscription de Cartes pour ouvrir les liens géo",
     "Impossible to get current location" : "Impossible d'obtenir la position courante",
     "Phone" : "Téléphone",

@@ -81,7 +81,7 @@ export default {
 		},
 	},
 
-	emits: ['click', 'color', 'rename', 'share', 'delete'],
+	emits: ['click', 'color', 'rename', 'share', 'delete',  'color'],
 
 	data() {
 		return {

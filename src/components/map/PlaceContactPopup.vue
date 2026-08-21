@@ -19,12 +19,13 @@
 				ref="userMultiselect"
 				v-model="selectedContact"
 				class="contact-input"
-				track-by="URI"
-				inputLabel="FN"
+				label="FN"
+				:get-option-key="getContactKey"
+				:aria-label-combobox="t('maps', 'Choose a contact')"
 				:placeholder="t('maps', 'Choose a contact')"
+				:loading="contactsLoading"
 				:options="contactData"
-				:internal-search="true"
-				@search="asyncSearchContacts">
+				@open="loadContacts">
 				<template #option="option">
 					<Avatar
 						class="contact-avatar"
@@ -54,7 +55,7 @@
 		<button class="submit-place-contact"
 			:disabled="!selectedContact"
 			:class="{ loading: searchingEditedAddress }"
-			@click="onValidate">
+			@click.stop="onValidate">
 			<span class="icon-add" />
 			{{ t('maps', 'Add address to contact') }}
 		</button>
@@ -62,6 +63,7 @@
 </template>
 
 <script>
+import accountIconUrl from '@mdi/svg/svg/account.svg'
 import L from 'leaflet'
 import { generateUrl } from '@nextcloud/router'
 import { getCurrentUser } from '@nextcloud/auth'
@@ -90,9 +92,13 @@ export default {
 		},
 	},
 
+	emits: ['contact-placed', 'close'],
+
 	data() {
 		return {
 			contactData: [],
+			contactsLoaded: false,
+			contactsLoading: false,
 			addressLoading: false,
 			addressEdited: false,
 			searchingEditedAddress: false,
@@ -109,7 +115,7 @@ export default {
 				? this.getContactAvatar(this.selectedContact)
 					? this.getContactAvatar(this.selectedContact)
 					: generateUrl('/apps/maps/contacts-avatar?name=' + encodeURIComponent(this.selectedContact.FN))
-				: generateUrl('/svg/core/actions/user?color=000000')
+				: accountIconUrl
 		},
 		markerIcon() {
 			return L.icon({
@@ -154,7 +160,8 @@ export default {
 		this.marker = L.marker(this.latLng, { icon: this.markerIcon }).addTo(this.map)
 		
 		// 2. Bind THIS component's HTML to the popup natively
-		this.marker.bindPopup(this.$el, { closeButton: false })
+		this.marker.bindPopup(this.$el, { closeButton: true })
+		this.marker.on('popupclose', this.onPopupClose)
 		
 		this.marker.openPopup()
 	},
@@ -162,26 +169,37 @@ export default {
 	beforeUnmount() {
 		// 3. Clean up native marker on destroy
 		if (this.marker && this.map) {
+			this.marker.off('popupclose', this.onPopupClose)
 			this.map.removeLayer(this.marker)
 		}
 	},
 
 	methods: {
-		asyncSearchContacts(query) {
-			if (query === '') {
-				this.contactData = []
+		getContactKey(contact) {
+			return contact.URI
+		},
+		async loadContacts() {
+			if (this.contactsLoaded || this.contactsLoading) {
 				return
 			}
-			searchContacts(query).then((response) => {
+			this.contactsLoading = true
+			try {
+				const response = await searchContacts()
 				this.contactData = response.data.filter((c) => { return !c.READONLY }).map((c) => {
 					return {
 						...c,
 						AVATAR_URL: this.getContactAvatar(c),
 					}
 				})
-			}).catch((error) => {
+				this.contactsLoaded = true
+			} catch (error) {
 				console.error(error)
-			})
+			} finally {
+				this.contactsLoading = false
+			}
+		},
+		onPopupClose() {
+			this.$emit('close')
 		},
 		getContactAvatar(contact) {
 			if (contact.HAS_PHOTO && contact.HAS_PHOTO2) {

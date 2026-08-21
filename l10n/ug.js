@@ -97,7 +97,6 @@ OC.L10N.register(
     "Close" : "ياپ",
     "Keep in mind that map projections always distort sizes of countries. The standard Mercator projection is particularly biased. Read more at:" : "ئېسىڭىزدە تۇتۇڭ ، خەرىتە مۆلچەرى ھەر قايسى دۆلەتلەرنىڭ چوڭ-كىچىكلىكىنى بۇرمىلايدۇ. ئۆلچەملىك مېركاتور مۆلچەرى بىر تەرەپلىمىلىك. تېخىمۇ كۆپ ئوقۇڭ:",
     "Track my position" : "مېنىڭ ئورنۇمنى ئىز قوغلاڭ",
-    "Open geo links" : "Geo ئۇلانمىسىنى ئېچىڭ",
     "Display time filter slider" : "ۋاقىت سۈزگۈچ سىيرىلغۇچنى كۆرسىتىش",
     "The True Size of Africa" : "ئافرىقىنىڭ ھەقىقىي چوڭلۇقى",
     "Cancel adding favorites" : "ياقتۇردىغانغا قېتىشنى ئەمەلدىن قالدۇر",

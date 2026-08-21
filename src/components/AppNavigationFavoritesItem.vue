@@ -81,9 +81,9 @@
 						{{ t('maps', 'Zoom to bounds') }}
 					</NcActionButton>
 					<NcActionCheckbox v-if="enabled && nbFavorites && c.enabled && c.name && c.name !== t('maps', 'Personal') && c.isShareable"
-						:checked="c.token && c.token !== ''"
+						:model-value="Boolean(c.token)"
 						:close-after-click="false"
-						@update:checked="$emit('category-share-change', catid, $event)">
+						@update:model-value="$emit('category-share-change', catid, $event)">
 						{{ c.token ? t('maps', 'Delete share link') : t('maps', 'Create share link') }}
 					</NcActionCheckbox>
 					<NcActionButton v-if="enabled && nbFavorites && c.enabled && c.token"

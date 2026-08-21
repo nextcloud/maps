@@ -1,6 +1,7 @@
 OC.L10N.register(
     "maps",
     {
+    "File not found" : "Datei net fonnt",
     "Personal" : "Perséinlech",
     "Maps" : "Kaarten",
     "Export" : "Exportéieren",

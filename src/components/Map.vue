@@ -45,7 +45,12 @@
 			<FavoritesLayer v-if="favoritesEnabled"
 				:favorites="favorites"
 				:categories="favoriteCategories"
-				@click="emit('click-favorite', $event)" />
+				:draggable="favoritesDraggable"
+				@click="emit('click-favorite', $event)"
+				@edit="emit('edit-favorite', $event)"
+				@delete="emit('delete-favorite', $event)"
+				@delete-favorites="emit('delete-favorites', $event)"
+				@add-to-map-favorite="emit('add-to-map-favorite', $event)" />
 
 			<ContactsLayer v-if="contactsEnabled"
 				:contacts="contacts"
@@ -159,6 +164,7 @@ const props = withDefaults(defineProps<{
 	favorites?: Record<string, Favorite>
 	favoriteCategories?: Record<string, FavoriteCategory>
 	favoritesEnabled?: boolean
+	favoritesDraggable?: boolean
 	contacts?: Contact[]
 	contactGroups?: Record<string, ContactGroup>
 	contactsEnabled?: boolean
@@ -179,6 +185,7 @@ const props = withDefaults(defineProps<{
 	favorites: () => ({}),
 	favoriteCategories: () => ({}),
 	favoritesEnabled: false,
+	favoritesDraggable: false,
 	contacts: () => [],
 	contactGroups: () => ({}),
 	contactsEnabled: false,
@@ -198,6 +205,10 @@ const props = withDefaults(defineProps<{
 const emit = defineEmits<{
 	'add-click': [position: { lat: number, lng: number }]
 	'click-favorite': [favorite: Favorite]
+	'edit-favorite': [favorite: Favorite]
+	'delete-favorite': [id: number]
+	'delete-favorites': [ids: number[]]
+	'add-to-map-favorite': [favorite: Favorite]
 	'address-deleted': [contact: Contact]
 	'add-to-map-contact': [contact: Contact]
 	'open-sidebar': [path: string]

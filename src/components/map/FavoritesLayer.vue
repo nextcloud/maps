@@ -6,10 +6,10 @@
 
 <!--
 	Ported from Leaflet to vue-maplibre-gl. Not ported yet, on purpose:
-	drag-to-edit, the right-click context menu (delete/copy-to-map,
-	delete-multiple/zoom-to-bounds), and spiderfying overlapping markers at
-	max zoom - these will come back once the rest of the interaction model
-	(shared with tracks/devices/contacts/photos) is redesigned for MapLibre.
+	spiderfying overlapping markers at max zoom - MapLibre's clustering
+	has no equivalent, and clusters are rare enough at max zoom that
+	zoom-to-bounds (still available from the cluster's right-click menu)
+	covers the same need.
 -->
 <template>
 	<MglGeoJsonSource :source-id="SOURCE_ID"
@@ -36,8 +36,9 @@
 import type { GeoJSONSource, MapGeoJSONFeature, MapMouseEvent } from 'maplibre-gl'
 import { Popup } from 'maplibre-gl'
 import { translate as t } from '@nextcloud/l10n'
-import { computed, onBeforeUnmount, watch } from 'vue'
+import { computed, onBeforeUnmount, ref, watch } from 'vue'
 import { MglGeoJsonSource, MglSymbolLayer, useMap } from 'vue-maplibre-gl'
+import { isPublic } from '../../utils/common.js'
 import { escapeHtml } from '../../utils/domUtils.ts'
 
 export interface Favorite {
@@ -57,13 +58,20 @@ export interface FavoriteCategory {
 	enabled: boolean
 }
 
-const props = defineProps<{
+const props = withDefaults(defineProps<{
 	favorites: Record<string, Favorite>
 	categories: Record<string, FavoriteCategory>
-}>()
+	draggable?: boolean
+}>(), {
+	draggable: false,
+})
 
 const emit = defineEmits<{
 	click: [favorite: Favorite]
+	edit: [favorite: Favorite]
+	delete: [id: number]
+	'delete-favorites': [ids: number[]]
+	'add-to-map-favorite': [favorite: Favorite]
 }>()
 
 const SOURCE_ID = 'favorites'
@@ -92,13 +100,17 @@ const displayedFavorites = computed<Favorite[]>(() => {
 	return Object.values(props.favorites).filter((f) => props.categories[f.category]?.enabled)
 })
 
+/** Live position while a marker is being dragged, so it follows the cursor without a parent round-trip. */
+const draggingOverride = ref<{ id: number, lat: number, lng: number } | null>(null)
+
 const geojson = computed(() => ({
 	type: 'FeatureCollection' as const,
 	features: displayedFavorites.value.map((f) => {
 		const color = props.categories[f.category]?.color || DEFAULT_COLOR
+		const dragged = draggingOverride.value?.id === f.id ? draggingOverride.value : null
 		return {
 			type: 'Feature' as const,
-			geometry: { type: 'Point' as const, coordinates: [f.lng, f.lat] },
+			geometry: { type: 'Point' as const, coordinates: [dragged?.lng ?? f.lng, dragged?.lat ?? f.lat] },
 			properties: {
 				id: f.id,
 				iconId: iconIdForColor(color, !!f.selected),
@@ -240,7 +252,13 @@ function onPointMouseEnter(event: MapMouseEvent & { features?: MapGeoJSONFeature
 	if (!map || !feature) {
 		return
 	}
-	map.getCanvas().style.cursor = 'pointer'
+	map.getCanvas().style.cursor = props.draggable ? 'grab' : 'pointer'
+
+	const favorite = props.favorites[feature.properties.id]
+	if (props.draggable && favorite?.isUpdateable) {
+		// dragging is the priority interaction here - don't obscure the marker with a tooltip
+		return
+	}
 
 	const { name, category, comment } = feature.properties
 	const html = document.createElement('div')
@@ -281,6 +299,135 @@ function onClusterMouseLeave(): void {
 	}
 }
 
+let draggedFavorite: Favorite | null = null
+
+/**
+ * @param event the underlying MapLibre mouse event
+ */
+function onPointMouseDown(event: MapMouseEvent & { features?: MapGeoJSONFeature[] }): void {
+	const map = mapInstance.map
+	const feature = event.features?.[0]
+	const favorite = feature && props.favorites[feature.properties.id]
+	if (!map || !props.draggable || !favorite?.isUpdateable) {
+		return
+	}
+	event.preventDefault()
+	hoverPopup?.remove()
+	draggedFavorite = favorite
+	map.dragPan.disable()
+	map.getCanvas().style.cursor = 'grabbing'
+	map.on('mousemove', onDragMove)
+	map.on('mouseup', onDragEnd)
+}
+
+/**
+ * @param event the underlying MapLibre mouse event
+ */
+function onDragMove(event: MapMouseEvent): void {
+	if (!draggedFavorite) {
+		return
+	}
+	draggingOverride.value = { id: draggedFavorite.id, lat: event.lngLat.lat, lng: event.lngLat.lng }
+}
+
+function onDragEnd(): void {
+	const map = mapInstance.map
+	map?.off('mousemove', onDragMove)
+	map?.off('mouseup', onDragEnd)
+	map?.dragPan.enable()
+	if (map) {
+		map.getCanvas().style.cursor = 'grab'
+	}
+	if (draggedFavorite && draggingOverride.value) {
+		emit('edit', { ...draggedFavorite, lat: draggingOverride.value.lat, lng: draggingOverride.value.lng })
+	}
+	draggedFavorite = null
+	draggingOverride.value = null
+}
+
+let actionPopup: Popup | null = null
+
+/**
+ * @param event the underlying MapLibre mouse event
+ */
+function onPointContextMenu(event: MapMouseEvent & { features?: MapGeoJSONFeature[] }): void {
+	const map = mapInstance.map
+	const feature = event.features?.[0]
+	const favorite = feature && props.favorites[feature.properties.id]
+	if (!map || !favorite) {
+		return
+	}
+	event.preventDefault()
+
+	const container = document.createElement('div')
+	container.className = 'popup-favorite-wrapper'
+	container.innerHTML = `
+		${favorite.isDeletable ? `<button class="action-btn" data-action="delete">${escapeHtml(t('maps', 'Delete favorite'))}</button>` : ''}
+		${!isPublic() ? `<button class="action-btn" data-action="copy">${escapeHtml(t('maps', 'Copy to map'))}</button>` : ''}
+	`
+	container.addEventListener('click', (domEvent) => {
+		const action = (domEvent.target as HTMLElement).getAttribute('data-action')
+		if (action === 'delete') {
+			emit('delete', favorite.id)
+		} else if (action === 'copy') {
+			emit('add-to-map-favorite', favorite)
+		}
+		actionPopup?.remove()
+	})
+
+	hoverPopup?.remove()
+	actionPopup?.remove()
+	actionPopup = new Popup({ closeButton: false, className: 'popovermenu open popupMarker favoritePopup' })
+		.setLngLat(event.lngLat)
+		.setDOMContent(container)
+		.addTo(map)
+}
+
+/**
+ * @param event the underlying MapLibre mouse event
+ */
+function onClusterContextMenu(event: MapMouseEvent & { features?: MapGeoJSONFeature[] }): void {
+	const map = mapInstance.map
+	const feature = event.features?.[0]
+	const source = map?.getSource(SOURCE_ID) as GeoJSONSource | undefined
+	if (!map || !feature || !source) {
+		return
+	}
+	event.preventDefault()
+	const clusterId = feature.properties.cluster_id
+
+	source.getClusterLeaves(clusterId, feature.properties.point_count, 0).then((leaves) => {
+		const favorites = leaves
+			.map((leaf) => props.favorites[(leaf.properties as { id: number }).id])
+			.filter((f): f is Favorite => !!f)
+		const readOnly = !favorites.some((f) => f.isUpdateable)
+
+		const container = document.createElement('div')
+		container.className = 'popup-favorite-wrapper'
+		container.innerHTML = `
+			${!readOnly ? `<button class="action-btn" data-action="delete">${escapeHtml(t('maps', 'Delete favorites'))}</button>` : ''}
+			<button class="action-btn" data-action="zoom">${escapeHtml(t('maps', 'Zoom on bounds'))}</button>
+		`
+		container.addEventListener('click', (domEvent) => {
+			const action = (domEvent.target as HTMLElement).getAttribute('data-action')
+			if (action === 'delete') {
+				emit('delete-favorites', favorites.map((f) => f.id))
+			} else if (action === 'zoom') {
+				source.getClusterExpansionZoom(clusterId).then((zoom) => {
+					map.easeTo({ center: (feature.geometry as { coordinates: [number, number] }).coordinates, zoom })
+				}).catch(() => {})
+			}
+			actionPopup?.remove()
+		})
+
+		actionPopup?.remove()
+		actionPopup = new Popup({ closeOnClick: false, className: 'popovermenu open popupMarker favoritePopup' })
+			.setLngLat(event.lngLat)
+			.setDOMContent(container)
+			.addTo(map)
+	}).catch(() => {})
+}
+
 let listenersBound = false
 
 watch(() => mapInstance.isLoaded, (loaded) => {
@@ -295,11 +442,15 @@ watch(() => mapInstance.isLoaded, (loaded) => {
 	map.on('mouseleave', POINT_LAYER_ID, onPointMouseLeave)
 	map.on('mouseenter', CLUSTER_LAYER_ID, onClusterMouseEnter)
 	map.on('mouseleave', CLUSTER_LAYER_ID, onClusterMouseLeave)
+	map.on('mousedown', POINT_LAYER_ID, onPointMouseDown)
+	map.on('contextmenu', POINT_LAYER_ID, onPointContextMenu)
+	map.on('contextmenu', CLUSTER_LAYER_ID, onClusterContextMenu)
 }, { immediate: true })
 
 onBeforeUnmount(() => {
 	const map = mapInstance.map
 	hoverPopup?.remove()
+	actionPopup?.remove()
 	if (!map || !listenersBound) {
 		return
 	}
@@ -309,6 +460,11 @@ onBeforeUnmount(() => {
 	map.off('mouseleave', POINT_LAYER_ID, onPointMouseLeave)
 	map.off('mouseenter', CLUSTER_LAYER_ID, onClusterMouseEnter)
 	map.off('mouseleave', CLUSTER_LAYER_ID, onClusterMouseLeave)
+	map.off('mousedown', POINT_LAYER_ID, onPointMouseDown)
+	map.off('contextmenu', POINT_LAYER_ID, onPointContextMenu)
+	map.off('contextmenu', CLUSTER_LAYER_ID, onClusterContextMenu)
+	map.off('mousemove', onDragMove)
+	map.off('mouseup', onDragEnd)
 })
 </script>
 
@@ -319,5 +475,19 @@ onBeforeUnmount(() => {
 	background-color: var(--color-main-background);
 	color: var(--color-main-text);
 	max-width: 300px;
+}
+
+.popup-favorite-wrapper .action-btn {
+	display: block;
+	width: 100%;
+	padding: 8px;
+	border: none;
+	background: transparent;
+	text-align: left;
+	cursor: pointer;
+
+	&:hover {
+		background: var(--color-background-hover);
+	}
 }
 </style>

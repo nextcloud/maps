@@ -3,7 +3,7 @@
 		ref="select"
 		:aria-label-combobox="placeholder"
 		class="search-select"
-		label="label"
+		:label="label"
 		:get-option-key="getOptionKey"
 		:model-value="mySelectedOption"
 		:limit="8"

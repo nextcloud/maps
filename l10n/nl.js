@@ -87,7 +87,6 @@ OC.L10N.register(
     "Close" : "Sluit",
     "Keep in mind that map projections always distort sizes of countries. The standard Mercator projection is particularly biased. Read more at:" : "Let erop dat de kaartweergaven altijd vervormde omvang van landen tonen. De standaard Mercator-projectie is enigszins gekleurd. Lees meer op:",
     "Track my position" : "Traceer mijn locatie",
-    "Open geo links" : "Geo links openen",
     "Display time filter slider" : "Weergavetijd filterschuifbalk",
     "The True Size of Africa" : "De werkelijke grootte van Afrika",
     "(No name)" : "(geen naam)",

@@ -34,7 +34,7 @@ class Version000102Date20190901152326 extends SimpleMigrationStep {
 
 		if ($schema->hasTable('maps_address_geo')) {
 			$table = $schema->getTable('maps_address_geo');
-			$table->changeColumn('object_uri', [
+			$table->modifyColumn('object_uri', [
 				'notnull' => true,
 				'default' => '--',
 				'length' => 255,

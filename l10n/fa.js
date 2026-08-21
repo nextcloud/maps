@@ -98,7 +98,6 @@ OC.L10N.register(
     "Close" : "بستن",
     "Keep in mind that map projections always distort sizes of countries. The standard Mercator projection is particularly biased. Read more at:" : "به خاطر داشته باشید که تصاویر نقشه همیشه اندازه کشورها را تحریف می‌کنند. طرح مرکاتور استاندارد به ویژه مغرضانه است. بیشتر بخوانید در:",
     "Track my position" : "ردیابی موقعیت من",
-    "Open geo links" : "باز کردن لینک‌های جغرافیایی",
     "Display time filter slider" : "نمایش نوار لغزنده فیلتر زمانی",
     "The True Size of Africa" : "اندازه واقعی آفریقا",
     "Cancel adding favorites" : "لغو افزودن موارد علاقه‌مندی",

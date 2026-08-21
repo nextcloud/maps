@@ -105,8 +105,8 @@
 		<NcAppNavigationSettings class="footer">
 			{{ t('maps', 'Photos default timezone:') }}
 			<NcTimezonePicker
-				:value="photoSuggestionsTimezone"
-				@input="$emit('change-timezone', $event)" />
+				:model-value="photoSuggestionsTimezone"
+				@update:model-value="$emit('change-timezone', $event)" />
 			{{ t('maps', 'Location sources:') }}
 			<NcAppNavigationItem
 				:icon="'icon-road'"

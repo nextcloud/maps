@@ -94,7 +94,6 @@ OC.L10N.register(
     "Close" : "Zapri",
     "Keep in mind that map projections always distort sizes of countries. The standard Mercator projection is particularly biased. Read more at:" : "Imejte v mislih, da projekcija zemljevida vedno popači velikost držav in prav pri standardni Mercatorjevi projekciji je to najbolj očitno. Več o tem na spletišču:",
     "Track my position" : "Sledi mojemu premikanju",
-    "Open geo links" : "Odpri povezave geo",
     "Display time filter slider" : "Pokaži drsnik časovnega filtra",
     "The True Size of Africa" : "Prava velikost Afrike",
     "(No name)" : "(brez imena)",

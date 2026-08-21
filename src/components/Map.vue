@@ -21,12 +21,13 @@
 
 <!--
 	Port in progress: the map engine moved from Leaflet to vue-maplibre-gl.
-	Only the base map (street/satellite/terrain) and click-to-add are ported
-	so far. Everything below is intentionally not wired up yet and will come
-	back one feature at a time in follow-up steps:
-	- favorites/photos/tracks/devices/contacts markers and clustering
+	Ported so far: the base map (street/satellite/terrain), click-to-add,
+	and favorites markers/clustering (no drag-to-edit or context menu yet).
+	Everything below is intentionally not wired up yet and will come back
+	one feature at a time in follow-up steps:
+	- photos/tracks/devices/contacts markers and clustering
 	- routing (will use @maplibre/maplibre-gl-directions)
-	- right-click context menu
+	- right-click context menu, drag-to-edit
 	- search box / history control / slider
 	- track elevation profile chart
 -->
@@ -44,6 +45,11 @@
 				:maxzoom="TERRAIN_SOURCE.maxzoom"
 				:encoding="TERRAIN_SOURCE.encoding"
 				:attribution="TERRAIN_SOURCE.attribution" />
+
+			<FavoritesLayer v-if="favoritesEnabled"
+				:favorites="favorites"
+				:categories="favoriteCategories"
+				@click="emit('click-favorite', $event)" />
 
 			<MglNavigationControl position="bottom-right" />
 			<MglScaleControl position="bottom-left" />
@@ -91,6 +97,8 @@ import {
 import Earth from 'vue-material-design-icons/Earth.vue'
 import Satellite from 'vue-material-design-icons/Satellite.vue'
 import TerrainIcon from 'vue-material-design-icons/Terrain.vue'
+import type { Favorite, FavoriteCategory } from './map/FavoritesLayer.vue'
+import FavoritesLayer from './map/FavoritesLayer.vue'
 import type { BaseStyleId } from '../data/mapLayers.ts'
 import { BaseStyleIds, BaseStyles, TERRAIN_SOURCE, TERRAIN_SOURCE_ID } from '../data/mapLayers.ts'
 
@@ -98,13 +106,20 @@ const props = withDefaults(defineProps<{
 	/** Initial bounds, stored Leaflet-style as [[north, east], [south, west]]. */
 	mapBoundsProp?: number[][]
 	state?: string
+	favorites?: Record<string, Favorite>
+	favoriteCategories?: Record<string, FavoriteCategory>
+	favoritesEnabled?: boolean
 }>(), {
 	mapBoundsProp: () => [],
 	state: '',
+	favorites: () => ({}),
+	favoriteCategories: () => ({}),
+	favoritesEnabled: false,
 })
 
 const emit = defineEmits<{
 	'add-click': [event: MapMouseEvent]
+	'click-favorite': [favorite: Favorite]
 }>()
 
 const baseStyleId = ref<BaseStyleId>(BaseStyleIds.Street)

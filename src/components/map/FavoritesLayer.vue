@@ -1,238 +1,346 @@
+<!--
+ - @copyright Copyright (c) 2019, Paul Schwörer <hello@paulschwoerer.de>
+ -
+ - @author Paul Schwörer <hello@paulschwoerer.de>
+ -
+ - @license GNU AGPL version 3 or any later version
+ -
+ - This program is free software: you can redistribute it and/or modify
+ - it under the terms of the GNU Affero General Public License as
+ - published by the Free Software Foundation, either version 3 of the
+ - License, or (at your option) any later version.
+ -
+ - This program is distributed in the hope that it will be useful,
+ - but WITHOUT ANY WARRANTY; without even the implied warranty of
+ - MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ - GNU Affero General Public License for more details.
+ -
+ - You should have received a copy of the GNU Affero General Public License
+ - along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ -->
+
+<!--
+	Ported from Leaflet to vue-maplibre-gl. Not ported yet, on purpose:
+	drag-to-edit, the right-click context menu (delete/copy-to-map,
+	delete-multiple/zoom-to-bounds), and spiderfying overlapping markers at
+	max zoom - these will come back once the rest of the interaction model
+	(shared with tracks/devices/contacts/photos) is redesigned for MapLibre.
+-->
 <template>
-	<div style="display: none;"></div>
+	<MglGeoJsonSource :source-id="SOURCE_ID"
+		:data="geojson"
+		:cluster="true"
+		:cluster-radius="CLUSTER_RADIUS">
+		<MglSymbolLayer :layer-id="CLUSTER_LAYER_ID"
+			:source="SOURCE_ID"
+			:filter="['has', 'point_count']"
+			:layout="{ 'icon-image': clusterIconId, 'icon-allow-overlap': true, 'icon-size': 1 }" />
+		<MglSymbolLayer :layer-id="CLUSTER_COUNT_LAYER_ID"
+			:source="SOURCE_ID"
+			:filter="['has', 'point_count']"
+			:layout="{ 'text-field': ['get', 'point_count_abbreviated'], 'text-size': 12, 'text-allow-overlap': true, 'text-ignore-placement': true }"
+			:paint="{ 'text-color': '#ffffff' }" />
+		<MglSymbolLayer :layer-id="POINT_LAYER_ID"
+			:source="SOURCE_ID"
+			:filter="['!', ['has', 'point_count']]"
+			:layout="{ 'icon-image': ['get', 'iconId'], 'icon-allow-overlap': true, 'icon-size': 1 }" />
+	</MglGeoJsonSource>
 </template>
 
-<script>
-import L from 'leaflet'
-import 'leaflet.markercluster'
-import optionsController from '../../optionsController.js'
-import { isPublic } from '../../utils/common.js'
+<script setup lang="ts">
+import type { GeoJSONSource, MapGeoJSONFeature, MapMouseEvent } from 'maplibre-gl'
+import { Popup } from 'maplibre-gl'
+import { translate as t } from '@nextcloud/l10n'
+import { computed, onBeforeUnmount, watch } from 'vue'
+import { MglGeoJsonSource, MglSymbolLayer, useMap } from 'vue-maplibre-gl'
 
-const CLUSTER_MARKER_VIEW_SIZE = 36
-
-export default {
-	name: 'FavoritesLayer',
-
-	props: {
-		map: { type: Object, required: true },
-		favorites: { type: Object, required: true },
-		categories: { type: Object, required: true },
-		draggable: { type: Boolean, default: false },
-	},
-
-	data() {
-		return {
-			spiderfied: false,
-		}
-	},
-
-	created() {
-		this.clusterGroup = null;
-		this.favoriteMarkers = [];
-	},
-
-	computed: {
-		readOnly() {
-			const farray = Object.values(this.favorites);
-			return !farray.some((f) => f.isUpdateable) && !(farray.length === 0 && optionsController.optionValues?.isCreatable);
-		},
-		displayedFavorites() {
-			const favIds = Object.keys(this.favorites).filter((fid) => {
-				const catid = this.favorites[fid].category;
-				return this.categories[catid]?.enabled;
-			});
-			return favIds.map(fid => this.favorites[fid]);
-		}
-	},
-
-	watch: {
-		displayedFavorites: { handler: 'renderMarkers', deep: true },
-		categories: { handler: 'renderMarkers', deep: true },
-		draggable: 'updateDraggableState'
-	},
-
-	mounted() {
-		this.clusterGroup = L.markerClusterGroup({
-			iconCreateFunction: this.getClusterMarkerIcon.bind(this),
-			spiderfyOnMaxZoom: false,
-			showCoverageOnHover: false,
-			zoomToBoundsOnClick: false,
-			maxClusterRadius: CLUSTER_MARKER_VIEW_SIZE + 10,
-		});
-
-		this.clusterGroup.on('clusterclick', this.onClusterClick.bind(this));
-		this.clusterGroup.on('clustercontextmenu', this.onClusterRightClick.bind(this));
-		this.clusterGroup.on('spiderfied', this.onSpiderfied.bind(this));
-
-		this.map.addLayer(this.clusterGroup);
-		this.renderMarkers();
-	},
-
-	beforeUnmount() {
-		if (this.clusterGroup && this.map) {
-			this.map.removeLayer(this.clusterGroup);
-		}
-	},
-
-	methods: {
-		isPublic() { return isPublic() },
-
-		renderMarkers() {
-			this.clusterGroup.clearLayers();
-			
-			this.favoriteMarkers = this.displayedFavorites.map((f) => {
-				const color = this.categories[f.category]?.color || '0082c9';
-				const icon = this.getFavoriteMarkerIcon(f, color);
-
-				const marker = L.marker([f.lat, f.lng], {
-					draggable: this.draggable && f.isUpdateable,
-					icon: icon
-				});
-				
-				marker.data = f;
-
-				// Tooltip
-				const tooltipHtml = `
-					<div class="tooltip-favorite-wrapper" style="border: 2px solid #${color}">
-						<b>${window.t('maps', 'Name')}:</b> <span>${f.name || window.t('maps', 'No name')}</span><br>
-						<b>${window.t('maps', 'Category')}:</b> <span>${f.category}</span>
-						${f.comment ? `<br><b>${window.t('maps', 'Comment')}:</b> <span>${f.comment}</span>` : ''}
-					</div>
-				`;
-				marker.bindTooltip(tooltipHtml, {
-					className: 'leaflet-marker-favorite-tooltip',
-					direction: 'top',
-					offset: L.point(0, 0),
-					opacity: (this.draggable && f.isUpdateable) ? 0 : 1
-				});
-
-				// Events
-				marker.on('click', () => this.$emit('click', f));
-				marker.on('contextmenu', (e) => this.onMarkerRightClick(e, f));
-				marker.on('moveend', (e) => {
-					const pos = e.target.getLatLng();
-					this.$emit('edit', { ...f, lat: pos.lat, lng: pos.lng });
-				});
-
-				return marker;
-			});
-
-			this.clusterGroup.addLayers(this.favoriteMarkers);
-		},
-
-		updateDraggableState() {
-			this.favoriteMarkers.forEach(m => {
-				if (m.dragging && m.data.isUpdateable) {
-					this.draggable ? m.dragging.enable() : m.dragging.disable();
-					m.setTooltipContent(m.getTooltip().getContent()); // Refresh tooltip opacity
-				}
-			});
-		},
-
-		onMarkerRightClick(e, f) {
-			const popupContent = L.DomUtil.create('div', 'popup-favorite-wrapper');
-			popupContent.innerHTML = `
-				${f.isDeletable ? `<button class="action-btn" data-action="delete">${window.t('maps', 'Delete favorite')}</button>` : ''}
-				${!this.isPublic() ? `<button class="action-btn" data-action="copy">${window.t('maps', 'Copy to map')}</button>` : ''}
-			`;
-
-			popupContent.addEventListener('click', (event) => {
-				const action = event.target.getAttribute('data-action');
-				if (action === 'delete') this.$emit('delete', f.id);
-				if (action === 'copy') this.$emit('add-to-map-favorite', f);
-				this.map.closePopup();
-			});
-
-			L.popup({ closeButton: false, className: 'popovermenu open popupMarker favoritePopup', offset: L.point(-5, 10) })
-				.setLatLng(e.latlng)
-				.setContent(popupContent)
-				.openOn(this.map);
-		},
-
-		onClusterClick(a) {
-			if (a.layer.getChildCount() > 10 && this.map.getZoom() !== this.map.getMaxZoom()) {
-				a.layer.zoomToBounds();
-			} else {
-				a.layer.spiderfy();
-			}
-		},
-
-		onClusterRightClick(a) {
-			const popupContent = L.DomUtil.create('div', 'popup-favorite-wrapper');
-			popupContent.innerHTML = `
-				${!this.readOnly ? `<button class="action-btn" data-action="delete">${window.t('maps', 'Delete favorites')}</button>` : ''}
-				<button class="action-btn" data-action="zoom">${window.t('maps', 'Zoom on bounds')}</button>
-			`;
-
-			popupContent.addEventListener('click', (event) => {
-				const action = event.target.getAttribute('data-action');
-				if (action === 'delete') {
-					const favIds = a.layer.getAllChildMarkers().map(m => m.data.id);
-					this.$emit('delete-multiple', favIds);
-				}
-				if (action === 'zoom') {
-					if (this.map.getZoom() !== this.map.getMaxZoom()) a.layer.zoomToBounds();
-				}
-				this.map.closePopup();
-			});
-
-			L.popup({ closeOnClick: false, className: 'popovermenu open popupMarker favoritePopup', offset: L.point(-5, 20) })
-				.setLatLng(a.latlng)
-				.setContent(popupContent)
-				.openOn(this.map);
-		},
-
-		onSpiderfied(e) {
-			if (this.draggable) {
-				e.markers.forEach((m) => {
-					if (m.data && m.data.isUpdateable) m.dragging.enable();
-				});
-			}
-			this.spiderfied = true;
-		},
-
-		getClusterMarkerIcon(cluster) {
-			const favorite = cluster.getAllChildMarkers()[0].data;
-			const color = this.categories[favorite.category]?.color || '0082c9';
-			const label = cluster.getChildCount();
-			
-			return new L.DivIcon({
-				className: 'leaflet-marker-favorite-cluster cluster-marker',
-				html: `<div class="favoriteClusterMarker icon-star-white" style="background-color: #${color};"></div>​<span class="label">${label}</span>`,
-				iconSize: [CLUSTER_MARKER_VIEW_SIZE, CLUSTER_MARKER_VIEW_SIZE],
-				iconAnchor: [CLUSTER_MARKER_VIEW_SIZE / 2, CLUSTER_MARKER_VIEW_SIZE],
-			});
-		},
-
-		getFavoriteMarkerIcon(favorite, color) {
-			const selectedClass = favorite.selected ? 'selected' : '';
-			return L.divIcon({
-				iconAnchor: [18, 18],
-				className: 'leaflet-marker-favorite',
-				html: `<div class="favoriteMarker icon-star-white ${selectedClass}" style="background-color: #${color};"></div>`,
-			});
-		},
-	},
+export interface Favorite {
+	id: number
+	lat: number
+	lng: number
+	category: string
+	name?: string
+	comment?: string
+	isUpdateable: boolean
+	isDeletable: boolean
+	selected?: boolean
 }
+
+export interface FavoriteCategory {
+	color?: string
+	enabled: boolean
+}
+
+const props = defineProps<{
+	favorites: Record<string, Favorite>
+	categories: Record<string, FavoriteCategory>
+}>()
+
+const emit = defineEmits<{
+	click: [favorite: Favorite]
+}>()
+
+const SOURCE_ID = 'favorites'
+const CLUSTER_LAYER_ID = 'favorites-clusters'
+const CLUSTER_COUNT_LAYER_ID = 'favorites-cluster-count'
+const POINT_LAYER_ID = 'favorites-points'
+// Matches the old cluster-marker view size (36px) + old cluster radius margin (10px)
+const CLUSTER_RADIUS = 46
+const DEFAULT_COLOR = '0082c9'
+const SELECTED_COLOR = 'ffcc00'
+
+const mapInstance = useMap()
+const loadedIcons = new Set<string>()
+
+/**
+ * @param color hex color (without '#')
+ * @param selected whether this is the "selected" variant
+ */
+function iconIdForColor(color: string, selected: boolean): string {
+	return `favorite-marker-${color}${selected ? '-selected' : ''}`
+}
+
+const clusterIconId = iconIdForColor(DEFAULT_COLOR, false)
+
+const displayedFavorites = computed<Favorite[]>(() => {
+	return Object.values(props.favorites).filter((f) => props.categories[f.category]?.enabled)
+})
+
+const geojson = computed(() => ({
+	type: 'FeatureCollection' as const,
+	features: displayedFavorites.value.map((f) => {
+		const color = props.categories[f.category]?.color || DEFAULT_COLOR
+		return {
+			type: 'Feature' as const,
+			geometry: { type: 'Point' as const, coordinates: [f.lng, f.lat] },
+			properties: {
+				id: f.id,
+				iconId: iconIdForColor(color, !!f.selected),
+				name: f.name || '',
+				category: f.category,
+				comment: f.comment || '',
+			},
+		}
+	}),
+}))
+
+/**
+ * Draw a colored circle with a white star on top - matching the old
+ * Leaflet div-icon look closely enough - and register it as a MapLibre GL
+ * sprite image. GL symbol layers can only use raster icon images, not the
+ * CSS classes the Leaflet version relied on.
+ *
+ * @param color hex color (without '#') for the circle background
+ * @param selected whether to draw the "selected" (highlighted) variant
+ */
+function ensureIcon(color: string, selected: boolean): void {
+	const id = iconIdForColor(color, selected)
+	const map = mapInstance.map
+	if (!map || loadedIcons.has(id) || map.hasImage(id)) {
+		return
+	}
+	const size = 32
+	const canvas = document.createElement('canvas')
+	canvas.width = size
+	canvas.height = size
+	const ctx = canvas.getContext('2d')
+	if (!ctx) {
+		return
+	}
+
+	ctx.beginPath()
+	ctx.arc(size / 2, size / 2, size / 2 - 2, 0, Math.PI * 2)
+	ctx.fillStyle = selected ? `#${SELECTED_COLOR}` : `#${color}`
+	ctx.fill()
+	ctx.lineWidth = 2
+	ctx.strokeStyle = '#ffffff'
+	ctx.stroke()
+
+	drawStar(ctx, size / 2, size / 2, size / 2 - 9, (size / 2 - 9) / 2.5)
+	ctx.fillStyle = '#ffffff'
+	ctx.fill()
+
+	map.addImage(id, ctx.getImageData(0, 0, size, size))
+	loadedIcons.add(id)
+}
+
+/**
+ * @param ctx canvas context to draw into
+ * @param cx star center x
+ * @param cy star center y
+ * @param outerRadius outer point radius
+ * @param innerRadius inner point radius
+ */
+function drawStar(ctx: CanvasRenderingContext2D, cx: number, cy: number, outerRadius: number, innerRadius: number): void {
+	const spikes = 5
+	let rotation = (Math.PI / 2) * 3
+	const step = Math.PI / spikes
+	ctx.beginPath()
+	ctx.moveTo(cx, cy - outerRadius)
+	for (let i = 0; i < spikes; i++) {
+		let x = cx + Math.cos(rotation) * outerRadius
+		let y = cy + Math.sin(rotation) * outerRadius
+		ctx.lineTo(x, y)
+		rotation += step
+
+		x = cx + Math.cos(rotation) * innerRadius
+		y = cy + Math.sin(rotation) * innerRadius
+		ctx.lineTo(x, y)
+		rotation += step
+	}
+	ctx.lineTo(cx, cy - outerRadius)
+	ctx.closePath()
+}
+
+const usedIconColors = computed<Array<{ color: string, selected: boolean }>>(() => {
+	const seen = new Map<string, { color: string, selected: boolean }>()
+	seen.set(DEFAULT_COLOR, { color: DEFAULT_COLOR, selected: false })
+	displayedFavorites.value.forEach((f) => {
+		const color = props.categories[f.category]?.color || DEFAULT_COLOR
+		const selected = !!f.selected
+		seen.set(iconIdForColor(color, selected), { color, selected })
+	})
+	return [...seen.values()]
+})
+
+watch([() => mapInstance.isLoaded, usedIconColors], () => {
+	if (!mapInstance.isLoaded) {
+		return
+	}
+	usedIconColors.value.forEach(({ color, selected }) => ensureIcon(color, selected))
+}, { immediate: true })
+
+let hoverPopup: Popup | null = null
+
+/**
+ * @param event the underlying MapLibre mouse event
+ */
+function onPointClick(event: MapMouseEvent & { features?: MapGeoJSONFeature[] }): void {
+	const feature = event.features?.[0]
+	if (!feature) {
+		return
+	}
+	const favorite = props.favorites[feature.properties.id]
+	if (favorite) {
+		emit('click', favorite)
+	}
+}
+
+/**
+ * @param event the underlying MapLibre mouse event
+ */
+function onClusterClick(event: MapMouseEvent & { features?: MapGeoJSONFeature[] }): void {
+	const feature = event.features?.[0]
+	const map = mapInstance.map
+	if (!feature || !map) {
+		return
+	}
+	const source = map.getSource(SOURCE_ID) as GeoJSONSource | undefined
+	const clusterId = feature.properties.cluster_id
+	source?.getClusterExpansionZoom(clusterId).then((zoom) => {
+		map.easeTo({
+			center: (feature.geometry as { coordinates: [number, number] }).coordinates,
+			zoom,
+		})
+	}).catch(() => {})
+}
+
+/**
+ * @param event the underlying MapLibre mouse event
+ */
+function onPointMouseEnter(event: MapMouseEvent & { features?: MapGeoJSONFeature[] }): void {
+	const map = mapInstance.map
+	const feature = event.features?.[0]
+	if (!map || !feature) {
+		return
+	}
+	map.getCanvas().style.cursor = 'pointer'
+
+	const { name, category, comment } = feature.properties
+	const html = document.createElement('div')
+	html.className = 'favorite-marker-tooltip'
+	html.innerHTML = `
+		<b>${t('maps', 'Name')}:</b> <span>${escapeHtml(name || t('maps', 'No name'))}</span><br>
+		<b>${t('maps', 'Category')}:</b> <span>${escapeHtml(category)}</span>
+		${comment ? `<br><b>${t('maps', 'Comment')}:</b> <span>${escapeHtml(comment)}</span>` : ''}
+	`
+
+	hoverPopup?.remove()
+	hoverPopup = new Popup({ closeButton: false, closeOnClick: false, offset: 18 })
+		.setLngLat((feature.geometry as { coordinates: [number, number] }).coordinates)
+		.setDOMContent(html)
+		.addTo(map)
+}
+
+function onPointMouseLeave(): void {
+	const map = mapInstance.map
+	if (map) {
+		map.getCanvas().style.cursor = ''
+	}
+	hoverPopup?.remove()
+	hoverPopup = null
+}
+
+/**
+ * @param unsafe raw text to embed as HTML
+ */
+function escapeHtml(unsafe: string): string {
+	const div = document.createElement('div')
+	div.textContent = unsafe
+	return div.innerHTML
+}
+
+function onClusterMouseEnter(): void {
+	const map = mapInstance.map
+	if (map) {
+		map.getCanvas().style.cursor = 'pointer'
+	}
+}
+
+function onClusterMouseLeave(): void {
+	const map = mapInstance.map
+	if (map) {
+		map.getCanvas().style.cursor = ''
+	}
+}
+
+let listenersBound = false
+
+watch(() => mapInstance.isLoaded, (loaded) => {
+	const map = mapInstance.map
+	if (!loaded || !map || listenersBound) {
+		return
+	}
+	listenersBound = true
+	map.on('click', POINT_LAYER_ID, onPointClick)
+	map.on('click', CLUSTER_LAYER_ID, onClusterClick)
+	map.on('mouseenter', POINT_LAYER_ID, onPointMouseEnter)
+	map.on('mouseleave', POINT_LAYER_ID, onPointMouseLeave)
+	map.on('mouseenter', CLUSTER_LAYER_ID, onClusterMouseEnter)
+	map.on('mouseleave', CLUSTER_LAYER_ID, onClusterMouseLeave)
+}, { immediate: true })
+
+onBeforeUnmount(() => {
+	const map = mapInstance.map
+	hoverPopup?.remove()
+	if (!map || !listenersBound) {
+		return
+	}
+	map.off('click', POINT_LAYER_ID, onPointClick)
+	map.off('click', CLUSTER_LAYER_ID, onClusterClick)
+	map.off('mouseenter', POINT_LAYER_ID, onPointMouseEnter)
+	map.off('mouseleave', POINT_LAYER_ID, onPointMouseLeave)
+	map.off('mouseenter', CLUSTER_LAYER_ID, onClusterMouseEnter)
+	map.off('mouseleave', CLUSTER_LAYER_ID, onClusterMouseLeave)
+})
 </script>
 
 <style lang="scss">
-.tooltip-favorite-wrapper {
+.favorite-marker-tooltip {
 	padding: 6px;
 	border-radius: 3px;
 	background-color: var(--color-main-background);
 	color: var(--color-main-text);
-}
-.popup-favorite-wrapper .action-btn {
-	display: block;
-	width: 100%;
-	padding: 8px;
-	border: none;
-	background: transparent;
-	text-align: left;
-	cursor: pointer;
-}
-.popup-favorite-wrapper .action-btn:hover {
-	background: var(--color-background-hover);
+	max-width: 300px;
 }
 </style>

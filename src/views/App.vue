@@ -824,7 +824,7 @@ export default {
 		},
 		onMapAddClick(e) {
 			if (this.mapState === 'adding' && this.addingFavorite) {
-				this.addFavorite({ lat: e.latlng.lat, lng: e.latlng.lng }, null, null, null, null, true, true)
+				this.addFavorite({ lat: e.lat, lng: e.lng }, null, null, null, null, true, true)
 				this.addingFavorite = false
 			}
 		},

@@ -10,37 +10,59 @@
 			@selected="onStepSelected(i, $event)"
 			@delete="$emit('delete-step', i)" />
 		<div class="steps-buttons">
-			<button id="add-step"
-				v-tooltip="{ content: t('maps', 'Add step') }"
+			<NcButton id="add-step"
+				variant="tertiary"
+				:aria-label="t('maps', 'Add step')"
 				@click="$emit('add-step')">
-				<span class="icon-add" />
-			</button>
-			<button v-if="planReady"
-				v-tooltip="{ content: t('maps', 'Export current route') }"
+				<template #icon>
+					<Plus :size="20" />
+				</template>
+			</NcButton>
+			<NcButton v-if="planReady"
+				variant="tertiary"
+				:aria-label="t('maps', 'Export current route')"
 				@click="$emit('export-route')">
-				<span class="icon-save" />
-			</button>
-			<button v-if="planReady"
-				v-tooltip="{ content: t('maps', 'Zoom on current route') }"
+				<template #icon>
+					<ContentSave :size="20" />
+				</template>
+			</NcButton>
+			<NcButton v-if="planReady"
+				variant="tertiary"
+				:aria-label="t('maps', 'Zoom on current route')"
 				@click="$emit('zoom-route')">
-				<span class="icon-search" />
-			</button>
-			<button id="reverse-steps"
-				v-tooltip="{ content: t('maps', 'Reverse steps order') }"
+				<template #icon>
+					<Magnify :size="20" />
+				</template>
+			</NcButton>
+			<NcButton id="reverse-steps"
+				variant="tertiary"
+				:aria-label="t('maps', 'Reverse steps order')"
 				@click="$emit('reverse-steps')">
-				<span class="icon-reverse" />
-			</button>
+				<template #icon>
+					<SwapVertical :size="20" />
+				</template>
+			</NcButton>
 		</div>
 	</div>
 </template>
 
 <script>
+import { NcButton } from '@nextcloud/vue'
+import Plus from 'vue-material-design-icons/Plus.vue'
+import ContentSave from 'vue-material-design-icons/ContentSave.vue'
+import Magnify from 'vue-material-design-icons/Magnify.vue'
+import SwapVertical from 'vue-material-design-icons/SwapVertical.vue'
 import RoutingStep from './RoutingStep.vue'
 
 export default {
 	name: 'RoutingSteps',
 
 	components: {
+		NcButton,
+		Plus,
+		ContentSave,
+		Magnify,
+		SwapVertical,
 		RoutingStep,
 	},
 
@@ -102,33 +124,7 @@ export default {
 	.steps-buttons {
 		display: flex;
 		flex-direction: row;
-		* {
-			width: 44px;
-			height: 44px;
-			margin: 0 auto 0 auto;
-			padding: 0;
-			&:hover span {
-				opacity: 1;
-			}
-		}
-		.icon-save {
-			background-color: var(--color-main-text);
-			mask: url('../../../../img/save.svg') no-repeat;
-			mask-size: 16px auto;
-			mask-position: center;
-			-webkit-mask: url('../../../../img/save.svg') no-repeat;
-			-webkit-mask-size: 16px auto;
-			-webkit-mask-position: center;
-		}
-		.icon-reverse {
-			background-color: var(--color-main-text);
-			mask: url('../../../../img/reverse.svg') no-repeat;
-			mask-size: 16px auto;
-			mask-position: center;
-			-webkit-mask: url('../../../../img/reverse.svg') no-repeat;
-			-webkit-mask-size: 16px auto;
-			-webkit-mask-position: center;
-		}
+		justify-content: center;
 	}
 }
 </style>

@@ -18,10 +18,13 @@
 	waypoint slot the way leaflet-routing-machine's plan did. It's used
 	here purely as a "given these coordinates, draw the route" renderer.
 
-	Not ported: the turn-by-turn instructions panel (this library only
-	draws the route, it doesn't decode it into textual steps) and the
-	per-position (begin/via/end) waypoint marker icons - the library's
-	default marker styling is used instead.
+	The turn-by-turn instructions list is rebuilt from the raw OSRM/
+	Mapbox response ourselves (../../../utils/routingInstructions.ts),
+	since maplibre-gl-directions only draws the route and doesn't decode
+	it into textual steps.
+
+	Not ported: the per-position (begin/via/end) waypoint marker icons -
+	the library's default marker styling is used instead.
 -->
 <template>
 	<MglCustomControl position="top-left">
@@ -29,9 +32,11 @@
 			<div class="routing-header">
 				<Directions :size="20" />
 				<span class="title">{{ t('maps', 'Find directions') }}</span>
-				<button type="button" @click="emit('close')">
-					<CloseIcon :size="20" />
-				</button>
+				<NcButton variant="tertiary" :aria-label="t('maps', 'Close')" @click="emit('close')">
+					<template #icon>
+						<CloseIcon :size="20" />
+					</template>
+				</NcButton>
 			</div>
 
 			<select v-if="routers.length > 1"
@@ -63,6 +68,14 @@
 			<p v-if="summary" class="routing-summary">
 				{{ summary }}
 			</p>
+
+			<ol v-if="instructions.length" class="routing-instructions">
+				<li v-for="(instr, i) in instructions" :key="i" @click="onInstructionClick(instr)">
+					<span class="instruction-icon">{{ instructionIcon(instr, i) }}</span>
+					<span class="instruction-text">{{ formatInstructionText(instr, i) }}</span>
+					<span v-if="instr.distance" class="instruction-distance">{{ metersToDistance(instr.distance) }}</span>
+				</li>
+			</ol>
 		</div>
 	</MglCustomControl>
 </template>
@@ -75,13 +88,16 @@ import { getDialogBuilder, showError, showSuccess } from '@nextcloud/dialogs'
 import { translate as t } from '@nextcloud/l10n'
 import moment from '@nextcloud/moment'
 import { generateUrl } from '@nextcloud/router'
-import { useIsMobile } from '@nextcloud/vue'
+import { NcButton, useIsMobile } from '@nextcloud/vue'
 import { computed, onBeforeUnmount, ref, watch } from 'vue'
 import { MglCustomControl, useMap } from 'vue-maplibre-gl'
 import Directions from 'vue-material-design-icons/Directions.vue'
 import CloseIcon from 'vue-material-design-icons/Close.vue'
+import { metersToDistance } from '../../../utils.js'
 import * as network from '../../../network.js'
 import optionsController from '../../../optionsController.js'
+import { buildInstructions, formatInstructionText, instructionIcon } from '../../../utils/routingInstructions.ts'
+import type { Instruction, RawRoute } from '../../../utils/routingInstructions.ts'
 import RoutingSteps from './RoutingSteps.vue'
 
 interface Step {
@@ -156,7 +172,7 @@ function buildDirections(routerType: string): MapLibreGlDirections | null {
 	const instance = new MapLibreGlDirections(map, {
 		api: router.api,
 		profile: router.profile,
-		requestOptions: { ...router.requestOptions, geometries: 'geojson', overview: 'full' },
+		requestOptions: { ...router.requestOptions, geometries: 'geojson', overview: 'full', steps: 'true' },
 	})
 	instance.interactive = false
 	instance.on('fetchroutesend', (event) => {
@@ -217,6 +233,20 @@ const summary = computed(() => {
 	const minutes = Math.round(duration / 60)
 	return t('maps', '{km} km, {minutes} min', { km, minutes })
 })
+
+const instructions = computed<Instruction[]>(() => {
+	const route = latestDirections.value?.routes?.[0] as RawRoute | undefined
+	return route?.legs ? buildInstructions(route) : []
+})
+
+/**
+ * @param instr the clicked instruction
+ */
+function onInstructionClick(instr: Instruction) {
+	if (instr.location) {
+		mapInstance.map?.flyTo({ center: instr.location, zoom: 16 })
+	}
+}
 
 /**
  * @param step the step to insert; defaults to an empty one
@@ -318,11 +348,13 @@ onBeforeUnmount(() => {
 	border: 2px solid var(--color-border-dark);
 	border-radius: var(--border-radius-large);
 }
+
 .mobile {
 	width: 100vw;
 	background: var(--color-main-background);
 	padding: 10px 8px 7px 8px;
 }
+
 .maps-routing-control {
 	.routing-header {
 		display: flex;
@@ -333,13 +365,6 @@ onBeforeUnmount(() => {
 			flex-grow: 1;
 			margin: 0 0 0 5px;
 			font-size: 20px;
-		}
-		> button {
-			padding: 0;
-			margin: 0;
-			width: 34px;
-			background-color: transparent;
-			border: 0;
 		}
 	}
 
@@ -356,5 +381,57 @@ onBeforeUnmount(() => {
 		margin: 5px 0 0 0;
 		font-weight: bold;
 	}
+
+	.routing-instructions {
+		max-height: 250px;
+		margin: 5px 0 0 0;
+		padding: 0;
+		overflow-y: auto;
+		list-style: none;
+
+		li {
+			display: flex;
+			align-items: baseline;
+			gap: 8px;
+			padding: 4px 2px;
+			cursor: pointer;
+			border-top: 1px solid var(--color-border);
+
+			&:hover {
+				background-color: var(--color-background-hover);
+			}
+		}
+
+		.instruction-icon {
+			flex: 0 0 1.2em;
+			text-align: center;
+		}
+
+		.instruction-text {
+			flex-grow: 1;
+		}
+
+		.instruction-distance {
+			flex: 0 0 auto;
+			color: var(--color-text-maxcontrast);
+			font-size: 12px;
+		}
+	}
+}
+</style>
+
+<style lang="scss">
+/*
+ * MapLibre's own .maplibregl-ctrl-group chrome (white background,
+ * border-radius, box-shadow) is meant for small icon toolbars, not a
+ * full panel with its own border/background - it can't be reached
+ * with a scoped :deep() selector since it's an ANCESTOR of this
+ * component's content, not a descendant. :has() targets it globally
+ * without also affecting other controls' groups.
+ */
+.maplibregl-ctrl-group:has(> .maps-routing-control) {
+	background: transparent;
+	border-radius: 0;
+	box-shadow: none;
 }
 </style>

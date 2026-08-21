@@ -6,21 +6,28 @@
 			:placeholder="placeholder"
 			:selected-option="selectedOption"
 			@validate="onValidate" />
-		<button v-if="canDelete"
-			class="deleteButton"
+		<NcButton v-if="canDelete"
+			variant="tertiary"
+			:aria-label="t('maps', 'Delete step')"
 			@click="$emit('delete')">
-			<span class="icon icon-close" />
-		</button>
+			<template #icon>
+				<Close :size="20" />
+			</template>
+		</NcButton>
 	</div>
 </template>
 
 <script>
+import { NcButton } from '@nextcloud/vue'
+import Close from 'vue-material-design-icons/Close.vue'
 import SearchField from '../SearchField.vue'
 
 export default {
 	name: 'RoutingStep',
 
 	components: {
+		NcButton,
+		Close,
 		SearchField,
 	},
 

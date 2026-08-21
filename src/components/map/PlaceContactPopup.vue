@@ -19,6 +19,7 @@
 				ref="userMultiselect"
 				v-model="selectedContact"
 				class="contact-input"
+				track-by="URI"
 				label="FN"
 				:get-option-key="getContactKey"
 				:aria-label-combobox="t('maps', 'Choose a contact')"

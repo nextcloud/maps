@@ -1,23 +1,8 @@
 <!--
- - @copyright Copyright (c) 2019, Paul Schwörer <hello@paulschwoerer.de>
- -
- - @author Paul Schwörer <hello@paulschwoerer.de>
- -
- - @license GNU AGPL version 3 or any later version
- -
- - This program is free software: you can redistribute it and/or modify
- - it under the terms of the GNU Affero General Public License as
- - published by the Free Software Foundation, either version 3 of the
- - License, or (at your option) any later version.
- -
- - This program is distributed in the hope that it will be useful,
- - but WITHOUT ANY WARRANTY; without even the implied warranty of
- - MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- - GNU Affero General Public License for more details.
- -
- - You should have received a copy of the GNU Affero General Public License
- - along with this program.  If not, see <http://www.gnu.org/licenses/>.
- -->
+ - SPDX-FileCopyrightText: 2019 Paul Schwörer <hello@paulschwoerer.de>
+ - SPDX-FileCopyrightText: 2026 Nextcloud GmbH and Nextcloud contributors
+ - SPDX-License-Identifier: AGPL-3.0-or-later
+-->
 
 <!--
 	Ported from Leaflet to vue-maplibre-gl. Not ported yet, on purpose:
@@ -53,6 +38,7 @@ import { Popup } from 'maplibre-gl'
 import { translate as t } from '@nextcloud/l10n'
 import { computed, onBeforeUnmount, watch } from 'vue'
 import { MglGeoJsonSource, MglSymbolLayer, useMap } from 'vue-maplibre-gl'
+import { escapeHtml } from '../../utils/domUtils.ts'
 
 export interface Favorite {
 	id: number
@@ -279,15 +265,6 @@ function onPointMouseLeave(): void {
 	}
 	hoverPopup?.remove()
 	hoverPopup = null
-}
-
-/**
- * @param unsafe raw text to embed as HTML
- */
-function escapeHtml(unsafe: string): string {
-	const div = document.createElement('div')
-	div.textContent = unsafe
-	return div.innerHTML
 }
 
 function onClusterMouseEnter(): void {

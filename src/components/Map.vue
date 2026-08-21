@@ -1,31 +1,16 @@
 <!--
- - @copyright Copyright (c) 2019, Paul Schwörer <hello@paulschwoerer.de>
- -
- - @author Paul Schwörer <hello@paulschwoerer.de>
- -
- - @license GNU AGPL version 3 or any later version
- -
- - This program is free software: you can redistribute it and/or modify
- - it under the terms of the GNU Affero General Public License as
- - published by the Free Software Foundation, either version 3 of the
- - License, or (at your option) any later version.
- -
- - This program is distributed in the hope that it will be useful,
- - but WITHOUT ANY WARRANTY; without even the implied warranty of
- - MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- - GNU Affero General Public License for more details.
- -
- - You should have received a copy of the GNU Affero General Public License
- - along with this program.  If not, see <http://www.gnu.org/licenses/>.
- -->
+ - SPDX-FileCopyrightText: 2019 Paul Schwörer <hello@paulschwoerer.de>
+ - SPDX-FileCopyrightText: 2026 Nextcloud GmbH and Nextcloud contributors
+ - SPDX-License-Identifier: AGPL-3.0-or-later
+-->
 
 <!--
 	Port in progress: the map engine moved from Leaflet to vue-maplibre-gl.
 	Ported so far: the base map (street/satellite/terrain), click-to-add,
-	and favorites markers/clustering (no drag-to-edit or context menu yet).
-	Everything below is intentionally not wired up yet and will come back
-	one feature at a time in follow-up steps:
-	- photos/tracks/devices/contacts markers and clustering
+	and favorites/contacts markers and clustering (no drag-to-edit or
+	context menu yet). Everything below is intentionally not wired up yet
+	and will come back one feature at a time in follow-up steps:
+	- photos/tracks/devices markers and clustering
 	- routing (will use @maplibre/maplibre-gl-directions)
 	- right-click context menu, drag-to-edit
 	- search box / history control / slider
@@ -50,6 +35,12 @@
 				:favorites="favorites"
 				:categories="favoriteCategories"
 				@click="emit('click-favorite', $event)" />
+
+			<ContactsLayer v-if="contactsEnabled"
+				:contacts="contacts"
+				:groups="contactGroups"
+				@address-deleted="emit('address-deleted', $event)"
+				@add-to-map-contact="emit('add-to-map-contact', $event)" />
 
 			<MglNavigationControl position="bottom-right" />
 			<MglScaleControl position="bottom-left" />
@@ -94,11 +85,15 @@ import {
 	MglScaleControl,
 	useMap,
 } from 'vue-maplibre-gl'
+import 'maplibre-gl/dist/maplibre-gl.css'
+import 'vue-maplibre-gl/dist/vue-maplibre-gl.css'
 import Earth from 'vue-material-design-icons/Earth.vue'
 import Satellite from 'vue-material-design-icons/Satellite.vue'
 import TerrainIcon from 'vue-material-design-icons/Terrain.vue'
 import type { Favorite, FavoriteCategory } from './map/FavoritesLayer.vue'
 import FavoritesLayer from './map/FavoritesLayer.vue'
+import type { Contact, ContactGroup } from './map/ContactsLayer.vue'
+import ContactsLayer from './map/ContactsLayer.vue'
 import type { BaseStyleId } from '../data/mapLayers.ts'
 import { BaseStyleIds, BaseStyles, TERRAIN_SOURCE, TERRAIN_SOURCE_ID } from '../data/mapLayers.ts'
 
@@ -109,17 +104,25 @@ const props = withDefaults(defineProps<{
 	favorites?: Record<string, Favorite>
 	favoriteCategories?: Record<string, FavoriteCategory>
 	favoritesEnabled?: boolean
+	contacts?: Contact[]
+	contactGroups?: Record<string, ContactGroup>
+	contactsEnabled?: boolean
 }>(), {
 	mapBoundsProp: () => [],
 	state: '',
 	favorites: () => ({}),
 	favoriteCategories: () => ({}),
 	favoritesEnabled: false,
+	contacts: () => [],
+	contactGroups: () => ({}),
+	contactsEnabled: false,
 })
 
 const emit = defineEmits<{
 	'add-click': [position: { lat: number, lng: number }]
 	'click-favorite': [favorite: Favorite]
+	'address-deleted': [contact: Contact]
+	'add-to-map-contact': [contact: Contact]
 }>()
 
 const baseStyleId = ref<BaseStyleId>(BaseStyleIds.Street)

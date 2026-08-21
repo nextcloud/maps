@@ -16,16 +16,17 @@
 	<MglGeoJsonSource :source-id="SOURCE_ID"
 		:data="geojson"
 		:cluster="true"
-		:cluster-radius="CLUSTER_RADIUS">
+		:cluster-radius="CLUSTER_RADIUS"
+		:cluster-properties="CLUSTER_PROPERTIES">
 		<MglSymbolLayer :layer-id="CLUSTER_LAYER_ID"
 			:source="SOURCE_ID"
 			:filter="['has', 'point_count']"
-			:layout="{ 'icon-image': CLUSTER_ICON_ID, 'icon-allow-overlap': true, 'icon-size': 1 }" />
+			:layout="{ 'icon-image': ['coalesce', ['get', 'iconId'], PLACEHOLDER_ICON_ID], 'icon-allow-overlap': true, 'icon-size': 1 }" />
 		<MglSymbolLayer :layer-id="CLUSTER_COUNT_LAYER_ID"
 			:source="SOURCE_ID"
 			:filter="['has', 'point_count']"
 			:layout="{ 'text-field': ['get', 'point_count_abbreviated'], 'text-size': 12, 'text-allow-overlap': true, 'text-ignore-placement': true }"
-			:paint="{ 'text-color': '#ffffff' }" />
+			:paint="{ 'text-color': '#ffffff', 'text-halo-color': '#000000', 'text-halo-width': 1 }" />
 		<MglSymbolLayer :layer-id="POINT_LAYER_ID"
 			:source="SOURCE_ID"
 			:filter="['!', ['has', 'point_count']]"
@@ -73,7 +74,9 @@ const POINT_LAYER_ID = 'photos-points'
 const MARKER_SIZE = 40
 const CLUSTER_RADIUS = 50
 const PLACEHOLDER_ICON_ID = 'photo-preview-placeholder'
-const CLUSTER_ICON_ID = 'photo-cluster-icon'
+// Picks one representative child's iconId for each cluster (not necessarily the first one -
+// supercluster aggregates bottom-up, so it's whichever leaf the reduction visits last).
+const CLUSTER_PROPERTIES = { iconId: [['get', 'iconId'], ['get', 'iconId']] }
 
 const mapInstance = useMap()
 const loadedIcons = reactive(new Set<string>())
@@ -162,18 +165,6 @@ function ensureFallbackIcons(): void {
 		})
 		if (image) {
 			map.addImage(PLACEHOLDER_ICON_ID, image)
-		}
-	}
-	if (!map.hasImage(CLUSTER_ICON_ID)) {
-		const image = drawIcon(MARKER_SIZE, (ctx) => {
-			ctx.fillStyle = '#0082c9'
-			ctx.fillRect(0, 0, MARKER_SIZE, MARKER_SIZE)
-			ctx.strokeStyle = '#ffffff'
-			ctx.lineWidth = 2
-			ctx.strokeRect(1, 1, MARKER_SIZE - 2, MARKER_SIZE - 2)
-		})
-		if (image) {
-			map.addImage(CLUSTER_ICON_ID, image)
 		}
 	}
 }

@@ -52,7 +52,7 @@
 			<RoutingSteps
 				:steps="steps"
 				:search-data="searchData"
-				:plan-ready="planReady"
+				:plan-ready="routeReady"
 				@add-step="addRoutePoint"
 				@step-selected="setRoutePoint"
 				@delete-step="deleteRoutePoint"
@@ -189,13 +189,14 @@ const waypointCoords = computed<[number, number][]>(() => {
 	return steps.value.filter((s) => s.latLng).map((s) => [s.latLng!.lng, s.latLng!.lat])
 })
 
-const planReady = computed(() => waypointCoords.value.length >= 2)
+const hasWaypoints = computed(() => waypointCoords.value.length >= 2)
+const routeReady = computed(() => !!latestDirections.value?.routes?.length)
 
 function syncWaypoints() {
 	if (!directions.value) {
 		return
 	}
-	if (planReady.value) {
+	if (hasWaypoints.value) {
 		directions.value.setWaypoints(waypointCoords.value)
 	} else {
 		directions.value.clear()
@@ -311,6 +312,7 @@ onBeforeUnmount(() => {
 <style lang="scss" scoped>
 .desktop {
 	width: 350px;
+	margin-left: 56px !important;
 	background-color: var(--color-main-background);
 	padding: 5px;
 	border: 2px solid var(--color-border-dark);

@@ -2043,7 +2043,7 @@ export default {
 			this.deselectAll()
 			// select
 			track.selected = true
-			this.openSidebar(track.path, 'track', track.name)
+			this.openSidebar(null, 'track', track.file_name)
 			this.activeTab = 'maps-track-metadata'
 			this.selectedTrack = track
 		},

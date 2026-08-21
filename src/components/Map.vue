@@ -148,6 +148,9 @@ import { showError, showSuccess } from '@nextcloud/dialogs'
 import { LocateControl } from "leaflet.locatecontrol"
 import 'leaflet.locatecontrol/dist/L.Control.Locate.min.css'
 import L from 'leaflet'
+import 'leaflet/dist/leaflet.css'
+import 'leaflet.markercluster/dist/MarkerCluster.css'
+import 'leaflet.markercluster/dist/MarkerCluster.Default.css'
 import 'mapbox-gl/dist/mapbox-gl'
 import 'mapbox-gl/dist/mapbox-gl.css'
 import 'mapbox-gl-leaflet/leaflet-mapbox-gl'
@@ -765,10 +768,6 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-@import 'leaflet/dist/leaflet.css';
-@import 'leaflet.markercluster/dist/MarkerCluster.css';
-@import 'leaflet.markercluster/dist/MarkerCluster.Default.css';
-
 #map-wrapper {
 	display: flex;
 	height: 100%;

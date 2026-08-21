@@ -2110,7 +2110,7 @@ export default {
 		},
 		getDevice(device, enable = false, save = true, zoom = false) {
 			device.loading = true
-			network.getDevice(device.id, this.myMapId, 100000, device.points?.length || 0, device.tokens).then((response) => {
+			network.getDevice(device.id, this.myMapId, 10000, device.points?.length || 0, device.tokens).then((response) => {
 				// There are too many points making it responsiv crashes most browsers
 				// this.$set(device, 'points', response.data /* .sort((p1, p2) => (p1.timestamp || 0) - (p2.timestamp || 0)) */)
 				if (device.points) {
@@ -2118,7 +2118,7 @@ export default {
 				} else {
 					device.points = response.data
 				}
-				if (response.data.length >= 100000) {
+				if (response.data.length >= 10000) {
 					this.getDevice(device, false, false, false)
 				}
 				if (enable) {

@@ -95,8 +95,11 @@ class DevicesController extends Controller {
 		return new DataResponse(array_values($devices));
 	}
 
+	/**
+	 * @params int<1, 10000> $limit
+	 */
 	#[NoAdminRequired]
-	public function getDevicePoints($id, ?int $pruneBefore = 0, ?int $limit = 10000, ?int $offset = 0, ?array $tokens = null): DataResponse {
+	public function getDevicePoints(int $id, ?int $pruneBefore = 0, ?int $limit = 10000, ?int $offset = 0, ?array $tokens = null): DataResponse {
 		if (is_null($tokens)) {
 			$points = $this->devicesService->getDevicePointsFromDB($this->userId, $id, $pruneBefore, $limit, $offset);
 		} else {

@@ -67,7 +67,7 @@ export const TERRAIN_SOURCE_ID = 'terrain-dem'
  */
 export const TERRAIN_SOURCE: RasterDEMSourceSpecification = {
 	type: 'raster-dem',
-	tiles: ['https://s3.amazonaws.com/elevation-tiles-prod/terrarium/{z}/{x}/{y}.png'],
+	tiles: ['https://elevation-tiles-prod.s3.amazonaws.com/terrarium/{z}/{x}/{y}.png'],
 	tileSize: 256,
 	maxzoom: 15,
 	encoding: 'terrarium',

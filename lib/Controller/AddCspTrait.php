@@ -33,7 +33,6 @@ trait AddCspTrait {
 		$csp->addAllowedConnectDomain('https://*.project-osrm.org');
 		$csp->addAllowedConnectDomain('https://api.mapbox.com');
 		$csp->addAllowedConnectDomain('https://events.mapbox.com');
-		$csp->addAllowedConnectDomain('https://graphhopper.com');
 
 		$csp->addAllowedWorkerSrcDomain('blob:');
 		$csp->addAllowedScriptDomain('https://unpkg.com');
@@ -42,7 +41,6 @@ trait AddCspTrait {
 			'osrmBikeURL',
 			'osrmCarURL',
 			'osrmFootURL',
-			'graphhopperURL'
 		];
 		foreach ($urlKeys as $key) {
 			$url = $this->appConfig->getValueString('maps', $key);

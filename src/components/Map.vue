@@ -7,11 +7,9 @@
 <!--
 	Port in progress: the map engine moved from Leaflet to vue-maplibre-gl.
 	Ported so far: the base map (street/satellite/terrain), click-to-add,
-	and favorites/contacts/photos/tracks/devices markers and clustering
-	(no drag-to-edit or context menu yet). Everything below is
-	intentionally not wired up yet and will come back one feature at a
-	time in follow-up steps:
-	- routing (will use @maplibre/maplibre-gl-directions)
+	favorites/contacts/photos/tracks/devices markers and clustering, and
+	routing. Everything below is intentionally not wired up yet and will
+	come back one feature at a time in follow-up steps:
 	- right-click context menu, drag-to-edit
 	- search box / history control / slider
 	- track elevation profile chart
@@ -61,6 +59,11 @@
 				:date-filter-end="sliderEndTimestamp"
 				@open-sidebar="emit('open-sidebar', $event)" />
 
+			<RoutingControl :visible="showRouting"
+				:search-data="routingSearchData"
+				@close="showRouting = false"
+				@track-added="emit('track-added', $event)" />
+
 			<MglNavigationControl position="bottom-right" />
 			<MglScaleControl position="bottom-left" />
 			<MglGeolocationControl position="bottom-right" />
@@ -84,6 +87,12 @@
 						:title="t('maps', 'Terrain')"
 						@click="toggleTerrain">
 						<TerrainIcon :size="18" />
+					</button>
+					<button type="button"
+						:class="{ active: showRouting }"
+						:title="t('maps', 'Find directions')"
+						@click="showRouting = !showRouting">
+						<Directions :size="18" />
 					</button>
 				</div>
 			</MglCustomControl>
@@ -109,6 +118,8 @@ import 'vue-maplibre-gl/dist/vue-maplibre-gl.css'
 import Earth from 'vue-material-design-icons/Earth.vue'
 import Satellite from 'vue-material-design-icons/Satellite.vue'
 import TerrainIcon from 'vue-material-design-icons/Terrain.vue'
+import Directions from 'vue-material-design-icons/Directions.vue'
+import RoutingControl from './map/routing/RoutingControl.vue'
 import type { Favorite, FavoriteCategory } from './map/FavoritesLayer.vue'
 import FavoritesLayer from './map/FavoritesLayer.vue'
 import type { Contact, ContactGroup } from './map/ContactsLayer.vue'
@@ -141,6 +152,7 @@ const props = withDefaults(defineProps<{
 	sliderEnabled?: boolean
 	sliderStartTimestamp?: number
 	sliderEndTimestamp?: number
+	routingSearchData?: unknown[]
 }>(), {
 	mapBoundsProp: () => [],
 	state: '',
@@ -159,6 +171,7 @@ const props = withDefaults(defineProps<{
 	sliderEnabled: false,
 	sliderStartTimestamp: 0,
 	sliderEndTimestamp: 0,
+	routingSearchData: () => [],
 })
 
 const emit = defineEmits<{
@@ -169,11 +182,13 @@ const emit = defineEmits<{
 	'open-sidebar': [path: string]
 	'click-track': [track: Track]
 	'click-device': [device: Device]
+	'track-added': [track: unknown]
 }>()
 
 const baseStyleId = ref<BaseStyleId>(BaseStyleIds.Street)
 const activeStyle = computed(() => BaseStyles[baseStyleId.value])
 const terrainEnabled = ref(false)
+const showRouting = ref(false)
 
 const mapInstance = useMap()
 

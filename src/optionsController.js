@@ -191,10 +191,6 @@ const optionsController = {
 		if ('mapboxAPIKEY' in optionsValues && optionsValues.mapboxAPIKEY !== '') {
 			this.nbRouters++
 		}
-		if (('graphhopperURL' in optionsValues && optionsValues.graphhopperURL !== '')
-			|| ('graphhopperAPIKEY' in optionsValues && optionsValues.graphhopperAPIKEY !== '')) {
-			this.nbRouters++
-		}
 
 		if ('locControlEnabled' in optionsValues && optionsValues.locControlEnabled === 'true') {
 			this.locControlEnabled = true

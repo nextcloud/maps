@@ -39,27 +39,6 @@
 
 			<NcFormGroup>
 				<template #label>
-					<a href="https://www.graphhopper.com/" target="_blank" rel="noreferrer noopener">
-						{{ t('maps', 'GraphHopper settings') }}
-					</a>
-				</template>
-				<template #description>
-					<p>{{ t('maps', 'A GraphHopper server URL looks like this : https://my.graphhopper.server.org:8989/route') }}</p>
-				</template>
-
-				<NcFormBox>
-					<NcTextField :model-value="settings.graphhopperURL"
-						:label="t('maps', 'GraphHopper server URL (will use main graphhopper server if empty)')"
-						@update:model-value="onTextFieldChange('graphhopperURL', $event)" />
-
-					<NcTextField :model-value="settings.graphhopperAPIKEY"
-						:label="t('maps', 'GraphHopper API key (mandatory if main server used)')"
-						@update:model-value="onTextFieldChange('graphhopperAPIKEY', $event)" />
-					</NcFormBox>
-			</NcFormGroup>
-
-			<NcFormGroup>
-				<template #label>
 					<a href="https://www.mapbox.com/" target="_blank" rel="noreferrer noopener">
 						{{ t('maps', 'Mapbox settings') }}
 					</a>

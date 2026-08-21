@@ -28,7 +28,6 @@ import optionsController from './optionsController.js'
 import { emit } from '@nextcloud/event-bus'
 
 import L from 'leaflet'
-import 'lrm-graphhopper'
 
 import iconRetinaUrl from 'leaflet/dist/images/marker-icon-2x.png'
 import iconUrl from 'leaflet/dist/images/marker-icon.png'

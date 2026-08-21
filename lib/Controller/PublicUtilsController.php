@@ -183,12 +183,10 @@ class PublicUtilsController extends PublicPageController {
 			'osrmBikeURL',
 			'osrmFootURL',
 			'osrmDEMO',
-			'graphhopperAPIKEY',
 			'mapboxAPIKEY',
 			'maplibreStreetStyleURL',
 			'maplibreStreetStyleAuth',
 			'maplibreStreetStylePmtiles',
-			'graphhopperURL'
 		];
 		foreach ($settingsKeys as $k) {
 			$v = $this->appConfig->getValueString('maps', $k);

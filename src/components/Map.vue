@@ -196,6 +196,67 @@ function toggleTerrain() {
 	terrainEnabled.value = !terrainEnabled.value
 	mapInstance.map?.setTerrain(terrainEnabled.value ? { source: TERRAIN_SOURCE_ID, exaggeration: 1.5 } : null)
 }
+
+interface LeafletLikeBounds {
+	getWest(): number
+	getSouth(): number
+	getEast(): number
+	getNorth(): number
+}
+
+/**
+ * @param bounds either a Leaflet-style LatLngBounds (still constructed that way by some
+ *   App.vue call sites) or a plain [[west, south], [east, north]] MapLibre bounds array
+ * @param options passed through to MapLibre's fitBounds
+ */
+function fitBounds(bounds: LeafletLikeBounds | LngLatBoundsLike, options?: object) {
+	const asLeafletBounds = bounds as Partial<LeafletLikeBounds>
+	const boundsArray = typeof asLeafletBounds.getWest === 'function'
+		? [[asLeafletBounds.getWest!(), asLeafletBounds.getSouth!()], [asLeafletBounds.getEast!(), asLeafletBounds.getNorth!()]] as LngLatBoundsLike
+		: bounds as LngLatBoundsLike
+	mapInstance.map?.fitBounds(boundsArray, options)
+}
+
+/**
+ * @param track the track to zoom to, using its precomputed metadata bounding box
+ */
+function zoomOnTrack(track: Track) {
+	const md = track.metadata as undefined | { s?: number, w?: number, n?: number, e?: number }
+	if (md?.s === undefined || md.w === undefined || md.n === undefined || md.e === undefined) {
+		return
+	}
+	mapInstance.map?.fitBounds([[md.w, md.s], [md.e, md.n]], { padding: 30 })
+}
+
+/**
+ * @param device the device to zoom to, fitting the bounds of all its recorded points
+ */
+function zoomOnDevice(device: { points?: { lat: number, lng: number }[] }) {
+	if (!device.points?.length) {
+		return
+	}
+	const lats = device.points.map((p) => p.lat)
+	const lngs = device.points.map((p) => p.lng)
+	mapInstance.map?.fitBounds([[Math.min(...lngs), Math.min(...lats)], [Math.max(...lngs), Math.max(...lats)]], { padding: 30 })
+}
+
+/**
+ * @param photo the photo suggestion to zoom to
+ */
+function zoomOnPhotoSuggestion(photo: { lat?: number, lng?: number }) {
+	if (!photo.lat || !photo.lng) {
+		return
+	}
+	mapInstance.map?.fitBounds([[photo.lng - 0.001, photo.lat - 0.001], [photo.lng + 0.001, photo.lat + 0.001]], { padding: 30 })
+}
+
+/**
+ * The track elevation profile chart isn't ported to vue-maplibre-gl yet.
+ */
+function displayElevation() {
+}
+
+defineExpose({ fitBounds, zoomOnTrack, zoomOnDevice, zoomOnPhotoSuggestion, displayElevation })
 </script>
 
 <style lang="scss" scoped>

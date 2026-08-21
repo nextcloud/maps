@@ -33,7 +33,7 @@
 			@save="$emit('save-photo-suggestions-selection',$event)"
 			@zoom="$emit('zoom-photo-suggestion', $event)"
 			@toggle-track-or-device="$emit('photo-suggestion-toggle-track-or-device', $event)" />
-		<TrackMetadataTab v-if="isPublic() && activeTab === 'maps-track-metadata' && !fileInfo"
+		<TrackMetadataTab v-if="activeTab === 'maps-track-metadata' && !fileInfo"
 			:track="track" />
 		<!-- TODO: create a standard to allow multiple elements here? -->
 		<template v-if="fileInfo" #description>

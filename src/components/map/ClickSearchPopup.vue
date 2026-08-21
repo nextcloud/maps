@@ -8,18 +8,18 @@
 		<textarea v-else
 			id="clickSearchAddress"
 			v-model="formattedAddress" />
-		<button v-if="favoriteIsCreatable" class="search-add-favorite" @click="onAddFavorite">
+		<button v-if="favoriteIsCreatable" class="search-add-favorite" @click.stop="onAddFavorite">
 			<span class="icon-favorite" />
 			{{ t('maps', 'Add to favorites') }}
 		</button>
-		<button v-if="contactIsCreatable" class="search-place-contact" @click="onPlaceContact">
+		<button v-if="contactIsCreatable" class="search-place-contact" @click.stop="onPlaceContact">
 			<span class="icon-user" />
 			{{ t('maps', 'Add contact address') }}
 		</button>
 		<button v-for="action in mapActions"
 			:key="action.label"
 			:icon="action.icon"
-			@click="actionCallback(action)">
+			@click.stop="actionCallback(action)">
 			<span :class="{ [action.icon]: true }" />
 			<span>{{ action.label }}</span>
 		</button>
@@ -61,8 +61,10 @@ export default {
 			address: null,
 			formattedAddress: '',
 			mapActions: window.OCA && window.OCA.Maps ? window.OCA.Maps.mapActions : [],
-			icon: L.icon({
-				iconUrl: 'noIcon',
+			icon: L.divIcon({
+				className: '',
+				html: '',
+				iconSize: [0, 0],
 			}),
 		}
 	},

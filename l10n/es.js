@@ -97,7 +97,6 @@ OC.L10N.register(
     "Close" : "Cerrar",
     "Keep in mind that map projections always distort sizes of countries. The standard Mercator projection is particularly biased. Read more at:" : "Ten en cuenta que las proyecciones de mapa siempre distorsionan los tamaños de los países. La proyección estándar de Mercator está particularmentente sesgada. Lee más en:",
     "Track my position" : "Localiza mi posición",
-    "Open geo links" : "Abrir enlaces geográficos",
     "Display time filter slider" : "Muestra el control deslizante del filtro de tiempo",
     "The True Size of Africa" : "El verdadero tamaño de África",
     "Cancel adding favorites" : "Cancelar la adición a favoritos",

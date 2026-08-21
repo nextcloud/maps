@@ -97,7 +97,6 @@ OC.L10N.register(
     "Close" : "Затвори",
     "Keep in mind that map projections always distort sizes of countries. The standard Mercator projection is particularly biased. Read more at:" : "Имајте на уму да пројекција карте увек изобличује величине држава. Стандардна Меркатор пројекција поготово криви државе. Прочитајте више на:",
     "Track my position" : "Прати моју позицију",
-    "Open geo links" : "Отвори гео линкове",
     "Display time filter slider" : "Прикажи клизач временски филтер",
     "The True Size of Africa" : "Права величина Африке",
     "Cancel adding favorites" : "Откажи додавање омиљених",

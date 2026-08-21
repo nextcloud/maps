@@ -10,7 +10,7 @@
 			<span class="icon icon-category-organization" />
 			<NcSelect v-if="favorite.isUpdateable"
 				ref="select"
-				v-model="selectedCategory"
+				:model-value="selectedCategory"
 				class="category-select"
 				label="label"
 				track-by="multiselectKey"
@@ -21,11 +21,12 @@
 				:clear-on-select="false"
 				:preserve-search="false"
 				:placeholder="categoryPH"
-				:options="formattedCategories"
+				:aria-label-combobox="categoryPH"
+        :options="formattedCategories"
 				:user-select="false"
 				@update:modelValue="onCategorySelected"
 				@search="onSearchChange">
-				<template #singleLabel="{ option }">
+				<template #selected-option="option">
 					<div class="single-label">
 						{{ option ? option.catid : '' }}
 					</div>
@@ -168,6 +169,7 @@ export default {
 			}
 		},
 		onCategorySelected(option) {
+			this.selectedCategory = option
 			this.category = option ? option.catid : ''
 		},
 		onOkClick() {

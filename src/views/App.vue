@@ -7,7 +7,7 @@
 		<MapsNavigation
 			@toggle-trackme="onToggleTrackme"
 			@toggle-slider="onToggleSlider"
-			@toggle-geo-link="onToggleGeoLink">
+			@register-geo-link="onRegisterGeoLink">
 			<template #items>
 				<AppNavigationFavoritesItem
 					:enabled="favoritesEnabled"
@@ -747,15 +747,18 @@ export default {
 				this.stopTrackLoop()
 			}
 		},
-		onToggleGeoLink(enabled) {
-			if (enabled) {
-				if (window.navigator.registerProtocolHandler) {
-					window.navigator.registerProtocolHandler('geo', generateUrl('/apps/maps/openGeoLink/') + '%s', 'Nextcloud Maps')
-				}
-			} else {
-				if (window.navigator.unregisterProtocolHandler) {
-					window.navigator.unregisterProtocolHandler('geo', generateUrl('/apps/maps/openGeoLink/') + '%s')
-				}
+		onRegisterGeoLink() {
+			if (!window.navigator.registerProtocolHandler) {
+				showError(t('maps', 'Your browser does not support registering Maps to open geo links'))
+				return
+			}
+
+			try {
+				window.navigator.registerProtocolHandler('geo', generateUrl('/apps/maps/openGeoLink/') + '%s')
+				showSuccess(t('maps', 'Registration requested. Confirm it in your browser.'))
+			} catch (error) {
+				console.error(error)
+				showError(t('maps', 'Failed to register Maps to open geo links'))
 			}
 		},
 		onToggleSlider(enabled) {
@@ -1686,7 +1689,7 @@ export default {
 					|| obj.address.road
 					|| obj.address.city_district
 					: null
-			this.addFavorite(obj.latLng, name, null, obj.formattedAddress || null)
+			this.addFavorite(obj.latLng, name, null, obj.formattedAddress || null, null, true, true)
 		},
 		onAddFavoriteToMap(f) {
 			this.chooseMyMap((map) => {

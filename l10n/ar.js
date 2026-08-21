@@ -97,7 +97,6 @@ OC.L10N.register(
     "Close" : "إغلاق",
     "Keep in mind that map projections always distort sizes of countries. The standard Mercator projection is particularly biased. Read more at:" : "ضع في اعتبارك أن إسقاطات الخريطة دائمًا ما تغيير أحجام البلدان. كما أن إسقاط مركاتور القياسي به إنحراف بشكل خاص. اقرا المزيد من:",
     "Track my position" : "تتبع موقعي",
-    "Open geo links" : "فتح الروابط الجغرافية",
     "Display time filter slider" : "عرض شريط تمرير عامل تصفية الوقت",
     "The True Size of Africa" : "الحجم الحقيقي لقارة أفريقيا",
     "Cancel adding favorites" : "إلغاء الإضافة للمُفَضَّلَة",

@@ -73,6 +73,7 @@ class PublicFavoritePageController extends PublicShareController {
 
 		Util::addStyle($this->appName, 'merged-public-favorite-share');
 		Util::addScript($this->appName, 'maps-publicFavoriteShare');
+		Util::addStyle($this->appName, 'maps-publicFavoriteShare');
 
 		$response = new PublicTemplateResponse('maps', 'public/favorites_index', []);
 

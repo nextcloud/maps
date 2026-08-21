@@ -4,8 +4,7 @@
 		"allowJs": true,
 		"allowImportingTsExtensions": true,
 		"rewriteRelativeImportExtensions": true,
-		"noEmit": false,
-		"outDir": "js",
+		"noEmit": true,
 	},
 	"vueCompilerOptions": {
 		"target": 2.7

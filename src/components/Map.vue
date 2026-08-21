@@ -7,10 +7,11 @@
 <!--
 	Port in progress: the map engine moved from Leaflet to vue-maplibre-gl.
 	Ported so far: the base map (street/satellite/terrain), click-to-add,
-	and favorites/contacts/photos markers and clustering (no drag-to-edit
-	or context menu yet). Everything below is intentionally not wired up
-	yet and will come back one feature at a time in follow-up steps:
-	- tracks/devices markers and clustering
+	and favorites/contacts/photos/tracks markers and clustering (no
+	drag-to-edit or context menu yet). Everything below is intentionally
+	not wired up yet and will come back one feature at a time in
+	follow-up steps:
+	- devices markers and clustering
 	- routing (will use @maplibre/maplibre-gl-directions)
 	- right-click context menu, drag-to-edit
 	- search box / history control / slider
@@ -30,6 +31,12 @@
 				:maxzoom="TERRAIN_SOURCE.maxzoom"
 				:encoding="TERRAIN_SOURCE.encoding"
 				:attribution="TERRAIN_SOURCE.attribution" />
+
+			<TracksLayer v-if="tracksEnabled"
+				:tracks="tracks"
+				:start="sliderStartTimestamp"
+				:end="sliderEndTimestamp"
+				@click="emit('click-track', $event)" />
 
 			<FavoritesLayer v-if="favoritesEnabled"
 				:favorites="favorites"
@@ -103,6 +110,8 @@ import type { Contact, ContactGroup } from './map/ContactsLayer.vue'
 import ContactsLayer from './map/ContactsLayer.vue'
 import type { Photo } from './map/PhotosLayer.vue'
 import PhotosLayer from './map/PhotosLayer.vue'
+import type { Track } from './map/TracksLayer.vue'
+import TracksLayer from './map/TracksLayer.vue'
 import type { BaseStyleId } from '../data/mapLayers.ts'
 import { BaseStyleIds, BaseStyles, TERRAIN_SOURCE, TERRAIN_SOURCE_ID } from '../data/mapLayers.ts'
 
@@ -118,6 +127,8 @@ const props = withDefaults(defineProps<{
 	contactsEnabled?: boolean
 	photos?: Photo[]
 	photosEnabled?: boolean
+	tracks?: Track[]
+	tracksEnabled?: boolean
 	sliderEnabled?: boolean
 	sliderStartTimestamp?: number
 	sliderEndTimestamp?: number
@@ -132,6 +143,8 @@ const props = withDefaults(defineProps<{
 	contactsEnabled: false,
 	photos: () => [],
 	photosEnabled: false,
+	tracks: () => [],
+	tracksEnabled: false,
 	sliderEnabled: false,
 	sliderStartTimestamp: 0,
 	sliderEndTimestamp: 0,
@@ -143,6 +156,7 @@ const emit = defineEmits<{
 	'address-deleted': [contact: Contact]
 	'add-to-map-contact': [contact: Contact]
 	'open-sidebar': [path: string]
+	'click-track': [track: Track]
 }>()
 
 const baseStyleId = ref<BaseStyleId>(BaseStyleIds.Street)

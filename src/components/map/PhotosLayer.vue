@@ -1,299 +1,415 @@
+<!--
+ - SPDX-FileCopyrightText: 2019 Paul Schwörer <hello@paulschwoerer.de>
+ - SPDX-FileCopyrightText: 2026 Nextcloud GmbH and Nextcloud contributors
+ - SPDX-License-Identifier: AGPL-3.0-or-later
+-->
+
+<!--
+	Ported from Leaflet to vue-maplibre-gl. Not ported yet, on purpose:
+	the right-click popup (open sidebar, remove geo data, copy to map,
+	spiderfy/zoom on a cluster), and drag-to-edit. The chunked cluster
+	loading progress events are gone too, but on purpose rather than
+	deferred: MapLibre's clustering is synchronous and fast even for many
+	thousands of points, so there's no "in progress" state left to report.
+-->
 <template>
-	<div style="display: none;"></div>
+	<MglGeoJsonSource :source-id="SOURCE_ID"
+		:data="geojson"
+		:cluster="true"
+		:cluster-radius="CLUSTER_RADIUS">
+		<MglSymbolLayer :layer-id="CLUSTER_LAYER_ID"
+			:source="SOURCE_ID"
+			:filter="['has', 'point_count']"
+			:layout="{ 'icon-image': CLUSTER_ICON_ID, 'icon-allow-overlap': true, 'icon-size': 1 }" />
+		<MglSymbolLayer :layer-id="CLUSTER_COUNT_LAYER_ID"
+			:source="SOURCE_ID"
+			:filter="['has', 'point_count']"
+			:layout="{ 'text-field': ['get', 'point_count_abbreviated'], 'text-size': 12, 'text-allow-overlap': true, 'text-ignore-placement': true }"
+			:paint="{ 'text-color': '#ffffff' }" />
+		<MglSymbolLayer :layer-id="POINT_LAYER_ID"
+			:source="SOURCE_ID"
+			:filter="['!', ['has', 'point_count']]"
+			:layout="{ 'icon-image': ['get', 'iconId'], 'icon-allow-overlap': true, 'icon-size': 1 }" />
+	</MglGeoJsonSource>
 </template>
 
-<script>
-import L from 'leaflet'
-import 'leaflet.markercluster'
-import { generateUrl } from '@nextcloud/router'
+<script setup lang="ts">
+import type { MapGeoJSONFeature, MapMouseEvent } from 'maplibre-gl'
+import { Popup } from 'maplibre-gl'
 import moment from '@nextcloud/moment'
 import { basename } from '@nextcloud/paths'
-import optionsController from '../../optionsController.js'
-import { binSearch, getToken, isPublic } from '../../utils/common.js'
+import { generateUrl } from '@nextcloud/router'
+import { computed, onBeforeUnmount, reactive, watch } from 'vue'
+import { MglGeoJsonSource, MglSymbolLayer, useMap } from 'vue-maplibre-gl'
+import { binSearch, getToken } from '../../utils/common.js'
+import { escapeHtml } from '../../utils/domUtils.ts'
 
-const PHOTO_MARKER_VIEW_SIZE = 40
+export interface Photo {
+	path: string
+	fileId: number
+	lat: number
+	lng: number
+	dateTaken?: number
+	hasPreview?: boolean
+	isUpdateable?: boolean
+}
 
-export default {
-	name: 'PhotosLayer',
-	props: {
-		map: { type: Object, required: true },
-		photos: { type: Array, required: true },
-		dateFilterEnabled: { type: Boolean, required: true },
-		dateFilterStart: { type: Number, required: true },
-		dateFilterEnd: { type: Number, required: true },
-		draggable: { type: Boolean, required: true },
-	},
-	data() {
+const props = defineProps<{
+	photos: Photo[]
+	dateFilterEnabled: boolean
+	dateFilterStart: number
+	dateFilterEnd: number
+}>()
+
+const emit = defineEmits<{
+	'open-sidebar': [path: string]
+}>()
+
+const SOURCE_ID = 'photos'
+const CLUSTER_LAYER_ID = 'photos-clusters'
+const CLUSTER_COUNT_LAYER_ID = 'photos-cluster-count'
+const POINT_LAYER_ID = 'photos-points'
+// Matches the old marker view size (40px) + old cluster radius margin (10px)
+const MARKER_SIZE = 40
+const CLUSTER_RADIUS = 50
+const PLACEHOLDER_ICON_ID = 'photo-preview-placeholder'
+const CLUSTER_ICON_ID = 'photo-cluster-icon'
+
+const mapInstance = useMap()
+const loadedIcons = reactive(new Set<string>())
+const loadingIcons = new Set<string>()
+
+/**
+ * @param photo the photo to build a preview URL for
+ */
+function getPreviewUrl(photo: Photo): string {
+	if (photo?.hasPreview) {
+		const token = getToken()
+		return token
+			? generateUrl('apps/files_sharing/publicpreview/') + token + '?file=' + encodeURIComponent(photo.path) + '&x=341&y=256&a=1'
+			: generateUrl('core') + '/preview?fileId=' + photo.fileId + '&x=341&y=256&a=1'
+	}
+	return generateUrl('/apps/theming/img/core/filetypes') + '/image.svg?v=2'
+}
+
+/**
+ * @param url the preview URL to derive a sprite id for
+ */
+function iconIdForUrl(url: string): string {
+	return 'photo-preview-' + btoa(url).replace(/[^a-zA-Z0-9]/g, '')
+}
+
+const filteredPhotos = computed<Photo[]>(() => {
+	if (!props.dateFilterEnabled) {
+		return props.photos
+	}
+	const lastNullIndex = binSearch(props.photos, (p: Photo) => !p.dateTaken)
+	const firstShownIndex = binSearch(props.photos, (p: Photo) => (p.dateTaken || 0) < props.dateFilterStart) + 1
+	const lastShownIndex = binSearch(props.photos, (p: Photo) => (p.dateTaken || 0) < props.dateFilterEnd)
+	return [
+		...props.photos.slice(0, lastNullIndex + 1),
+		...props.photos.slice(firstShownIndex, lastShownIndex + 1),
+	]
+})
+
+const geojson = computed(() => ({
+	type: 'FeatureCollection' as const,
+	features: filteredPhotos.value.map((photo, index) => {
+		const iconId = iconIdForUrl(getPreviewUrl(photo))
 		return {
-			spiderfied: false,
-			clustersLoading: false,
+			type: 'Feature' as const,
+			geometry: { type: 'Point' as const, coordinates: [photo.lng, photo.lat] },
+			properties: {
+				index,
+				iconId: loadedIcons.has(iconId) ? iconId : PLACEHOLDER_ICON_ID,
+			},
 		}
-	},
-	created() {
-		// Non-reactive storage for leaflet objects
-		this.clusterGroup = null;
-		this.photoMarkers = [];
-	},
-	watch: {
-		photos() {
-			this.renderMarkers();
-		},
-		draggable() {
-			this.updatePhotoMarkersDraggable();
-		},
-		dateFilterEnabled() {
-			this.renderMarkers();
-		},
-		dateFilterStart() {
-			this.renderMarkers();
-		},
-		dateFilterEnd() {
-			this.renderMarkers();
+	}),
+}))
+
+const usedPreviewUrls = computed<string[]>(() => {
+	return [...new Set(filteredPhotos.value.map((p) => getPreviewUrl(p)))]
+})
+
+/**
+ * @param size square size of the drawn icon
+ * @param draw callback receiving the 2D context to draw into
+ */
+function drawIcon(size: number, draw: (ctx: CanvasRenderingContext2D) => void): ImageData | null {
+	const canvas = document.createElement('canvas')
+	canvas.width = size
+	canvas.height = size
+	const ctx = canvas.getContext('2d')
+	if (!ctx) {
+		return null
+	}
+	draw(ctx)
+	return ctx.getImageData(0, 0, size, size)
+}
+
+function ensureFallbackIcons(): void {
+	const map = mapInstance.map
+	if (!map) {
+		return
+	}
+	if (!map.hasImage(PLACEHOLDER_ICON_ID)) {
+		const image = drawIcon(MARKER_SIZE, (ctx) => {
+			ctx.fillStyle = '#ffffff'
+			ctx.fillRect(0, 0, MARKER_SIZE, MARKER_SIZE)
+			ctx.strokeStyle = '#dddddd'
+			ctx.lineWidth = 2
+			ctx.strokeRect(1, 1, MARKER_SIZE - 2, MARKER_SIZE - 2)
+		})
+		if (image) {
+			map.addImage(PLACEHOLDER_ICON_ID, image)
 		}
-	},
-	mounted() {
-		this.clusterGroup = L.markerClusterGroup({
-			iconCreateFunction: this.getClusterMarkerIcon,
-			spiderfyOnMaxZoom: false,
-			singleMarkerMode: true,
-			showCoverageOnHover: false,
-			zoomToBoundsOnClick: false,
-			maxClusterRadius: PHOTO_MARKER_VIEW_SIZE + 10,
-			chunkedLoading: true,
-			chunkDelay: 50,
-			chunkInterval: 250,
-			chunkProgress: this.updateClusterLoadingProgress,
-		});
-
-		this.clusterGroup.on('clusterclick', this.onClusterClick.bind(this));
-		this.clusterGroup.on('clustercontextmenu', this.onClusterRightClick.bind(this));
-		this.clusterGroup.on('spiderfied', this.onSpiderfied.bind(this));
-
-		this.map.addLayer(this.clusterGroup);
-		this.renderMarkers();
-	},
-	beforeUnmount() {
-		if (this.clusterGroup && this.map) {
-			this.map.removeLayer(this.clusterGroup);
-		}
-	},
-	methods: {
-		basename(path) { return basename(path) },
-		isPublic() { return isPublic() },
-		
-		getFilteredPhotos() {
-			if (!this.dateFilterEnabled) return this.photos;
-			
-			const lastNullIndex = binSearch(this.photos, (p) => !p.dateTaken);
-			const firstShownIndex = binSearch(this.photos, (p) => (p.dateTaken || 0) < this.dateFilterStart) + 1;
-			const lastShownIndex = binSearch(this.photos, (p) => (p.dateTaken || 0) < this.dateFilterEnd);
-			
-			return [
-				...this.photos.slice(0, lastNullIndex + 1),
-				...this.photos.slice(firstShownIndex, lastShownIndex + 1),
-			];
-		},
-		
-		renderMarkers() {
-			this.clusterGroup.clearLayers();
-			const filteredPhotos = this.getFilteredPhotos();
-			
-			this.photoMarkers = filteredPhotos.map((photo) => {
-				const marker = L.marker([photo.lat, photo.lng], {
-					draggable: this.draggable,
-					icon: this.getPhotoMarkerIcon(photo)
-				});
-				
-				marker.data = photo;
-				
-				// Bind tooltips
-				marker.bindTooltip(`
-					<div class="tooltip-photo-wrapper">
-						<img class="photo-tooltip" src="${this.getPreviewUrl(photo)}" />
-						<p class="tooltip-photo-date">${this.getPhotoFormattedDate(photo)}</p>
-						<p class="tooltip-photo-name">${this.basename(photo.path)}</p>
-					</div>
-				`, { className: 'leaflet-marker-photo-tooltip', direction: 'right', offset: L.point(0, -30), opacity: this.draggable ? 0 : 1 });
-
-				// Event Listeners
-				marker.on('click', (e) => this.onPhotoClick(e, photo));
-				marker.on('contextmenu', (e) => this.onPhotoRightClick(e, photo));
-				marker.on('moveend', (e) => this.onPhotoMoved(e, photo));
-				
-				return marker;
-			});
-			
-			this.clusterGroup.addLayers(this.photoMarkers);
-		},
-		
-		updatePhotoMarkersDraggable() {
-			this.photoMarkers.forEach((m) => {
-				if (m.dragging) {
-					this.draggable ? m.dragging.enable() : m.dragging.disable();
-				}
-				m.setTooltipContent(m.getTooltip().getContent()); // refresh opacity logic if needed
-			});
-		},
-
-		// Actions
-		onPhotoClick(e, photo) {
-			this.viewPhoto(photo);
-		},
-		onPhotoRightClick(e, photo) {
-			const popupContent = L.DomUtil.create('div', 'popup-photo-wrapper');
-			popupContent.innerHTML = `
-				<button class="action-btn" data-action="sidebar">${t('maps', 'Open in Sidebar')}</button>
-				<button class="action-btn" data-action="display">${t('maps', 'Display picture')}</button>
-				${photo.isUpdateable ? `<button class="action-btn" data-action="reset">${t('maps', 'Remove geo data')}</button>` : ''}
-				${!this.isPublic() ? `<button class="action-btn" data-action="copy">${t('maps', 'Copy to map')}</button>` : ''}
-			`;
-
-			popupContent.addEventListener('click', (event) => {
-				const action = event.target.getAttribute('data-action');
-				if (action === 'sidebar') this.$emit('open-sidebar', photo.path);
-				if (action === 'display') this.viewPhoto(photo);
-				if (action === 'reset') { this.$emit('coords-reset', [photo.path]); this.map.closePopup(); }
-				if (action === 'copy') { this.$emit('add-to-map-photo', photo); this.map.closePopup(); }
-			});
-
-			L.popup({ closeOnClick: false, offset: L.point(-5, -20), className: 'popovermenu open popupMarker photoPopup' })
-				.setLatLng([photo.lat, photo.lng])
-				.setContent(popupContent)
-				.openOn(this.map);
-		},
-		onPhotoMoved(e, photo) {
-			this.$emit('photo-moved', photo, e.target.getLatLng());
-		},
-
-		onClusterClick(a) {
-			if (a.layer.getChildCount() > 10 && this.map.getZoom() !== this.map.getMaxZoom()) {
-				a.layer.zoomToBounds();
-			} else {
-				if (window.OCA && window.OCA.Viewer && window.OCA.Viewer.open) {
-					this.displayCluster(a.layer);
-				} else {
-					this.$emit('open-sidebar', a.layer.getAllChildMarkers()[0].data.path);
-					a.layer.spiderfy();
-				}
-			}
-		},
-		onClusterRightClick(a) {
-			const clusterSize = a.layer.getChildCount();
-			const popupContent = L.DomUtil.create('div', 'popup-photo-wrapper');
-			popupContent.innerHTML = `
-				<button class="action-btn" data-action="display">${t('maps', 'Display pictures')}</button>
-				<button class="action-btn" data-action="spiderfy">${t('maps', 'Spiderfy')}</button>
-				<button class="action-btn" data-action="zoom">${t('maps', 'Zoom on bounds')}</button>
-				${!this.readOnly ? `<button class="action-btn" data-action="reset">${t('maps', 'Remove geo data')}</button>` : ''}
-			`;
-
-			popupContent.addEventListener('click', (event) => {
-				const action = event.target.getAttribute('data-action');
-				if (action === 'display') this.displayCluster(a.layer);
-				if (action === 'spiderfy') { a.layer.spiderfy(); this.map.closePopup(); }
-				if (action === 'zoom') { if (this.map.getZoom() !== this.map.getMaxZoom()) a.layer.zoomToBounds(); this.map.closePopup(); }
-				if (action === 'reset') {
-					OC.dialogs.confirmDestructive('', t('maps', 'Are you sure you want to remove geo data of {nb} photos?', { nb: clusterSize }), {
-						type: OC.dialogs.YES_NO_BUTTONS, confirm: t('maps', 'Yes'), cancel: t('maps', 'Cancel')
-					}, (result) => {
-						if (result) {
-							const photos = a.layer.getAllChildMarkers().map(m => m.data);
-							this.$emit('coords-reset', photos.map(p => p.path));
-							this.map.closePopup();
-						}
-					}, true);
-				}
-			});
-
-			L.popup({ closeOnClick: false, offset: L.point(-5, 20), className: 'popovermenu open popupMarker photoPopup' })
-				.setLatLng(a.latlng)
-				.setContent(popupContent)
-				.openOn(this.map);
-		},
-		onSpiderfied(e) {
-			if (this.draggable) {
-				e.markers.forEach((m) => m.dragging.enable());
-			}
-			this.spiderfied = true;
-		},
-		displayCluster(cluster) {
-			const photoList = cluster.getAllChildMarkers().map(m => m.data);
-			photoList.sort((a, b) => a.dateTaken - b.dateTaken);
-			if (window.OCA && window.OCA.Viewer && window.OCA.Viewer.open) {
-				window.OCA.Viewer.open({ path: photoList[0].path, list: photoList });
-				this.map.closePopup();
-			}
-		},
-		
-		getClusterMarkerIcon(cluster) {
-			const count = cluster.getChildCount();
-			const photo = cluster.getAllChildMarkers()[0].data;
-			if (count === 1) return this.getPhotoMarkerIcon(photo);
-			
-			const iconUrl = this.getPreviewUrl(photo);
-			return new L.DivIcon(L.extend({
-				className: 'leaflet-marker-photo cluster-marker',
-				html: '<div class="thumbnail" style="background-image: url(' + iconUrl + ');"></div>​<span class="label">' + count + '</span>',
-			}, cluster, { iconSize: [PHOTO_MARKER_VIEW_SIZE, PHOTO_MARKER_VIEW_SIZE], iconAnchor: [PHOTO_MARKER_VIEW_SIZE / 2, PHOTO_MARKER_VIEW_SIZE] }));
-		},
-		getPhotoMarkerIcon(photo) {
-			const iconUrl = this.getPreviewUrl(photo);
-			return L.divIcon(L.extend({
-				className: 'leaflet-marker-photo photo-marker',
-				html: '<div class="thumbnail" style="background-image: url(' + iconUrl + ');"></div>​',
-			}, photo, { iconSize: [PHOTO_MARKER_VIEW_SIZE, PHOTO_MARKER_VIEW_SIZE], iconAnchor: [PHOTO_MARKER_VIEW_SIZE / 2, PHOTO_MARKER_VIEW_SIZE] }));
-		},
-		getPreviewUrl(photo) {
-			if (photo && photo.hasPreview) {
-				const token = getToken();
-				return token ? generateUrl('apps/files_sharing/publicpreview/') + token + '?file=' + encodeURIComponent(photo.path) + '&x=341&y=256&a=1'
-					: generateUrl('core') + '/preview?fileId=' + photo.fileId + '&x=341&y=256&a=1';
-			}
-			return generateUrl('/apps/theming/img/core/filetypes') + '/image.svg?v=2';
-		},
-		getPhotoFormattedDate(photo) {
-			if (photo) {
-				const d = new Date(photo.dateTaken * 1000);
-				const mom = moment.unix(photo.dateTaken + d.getTimezoneOffset() * 60);
-				return mom.format('LL') + ' ' + mom.format('HH:mm:ss');
-			}
-			return '';
-		},
-		viewPhoto(photo) {
-			if (window.OCA && window.OCA.Viewer && window.OCA.Viewer.open) {
-				window.OCA.Viewer.open({ path: photo.path, list: [photo] });
-				if(this.map) this.map.closePopup();
-			}
-		},
-		updateClusterLoadingProgress(processed, total, elapsed) {
-			if (elapsed > 100 && !this.clustersLoading) this.clustersLoading = true;
-			this.$emit('cluster-loading', processed, total);
-			if (processed === total) {
-				this.clustersLoading = false;
-				this.$emit('cluster-loaded');
-			}
+	}
+	if (!map.hasImage(CLUSTER_ICON_ID)) {
+		const image = drawIcon(MARKER_SIZE, (ctx) => {
+			ctx.fillStyle = '#0082c9'
+			ctx.fillRect(0, 0, MARKER_SIZE, MARKER_SIZE)
+			ctx.strokeStyle = '#ffffff'
+			ctx.lineWidth = 2
+			ctx.strokeRect(1, 1, MARKER_SIZE - 2, MARKER_SIZE - 2)
+		})
+		if (image) {
+			map.addImage(CLUSTER_ICON_ID, image)
 		}
 	}
 }
+
+/**
+ * @param url the preview image URL to fetch and draw to a square thumbnail
+ */
+function loadThumbnail(url: string): Promise<ImageData> {
+	return new Promise((resolve, reject) => {
+		const img = new Image()
+		img.crossOrigin = 'anonymous'
+		img.onload = () => {
+			const canvas = document.createElement('canvas')
+			canvas.width = MARKER_SIZE
+			canvas.height = MARKER_SIZE
+			const ctx = canvas.getContext('2d')
+			if (!ctx) {
+				reject(new Error('Could not get canvas context'))
+				return
+			}
+			ctx.drawImage(img, 0, 0, MARKER_SIZE, MARKER_SIZE)
+			resolve(ctx.getImageData(0, 0, MARKER_SIZE, MARKER_SIZE))
+		}
+		img.onerror = () => reject(new Error(`Failed to load preview ${url}`))
+		img.src = url
+	})
+}
+
+/**
+ * @param url the preview URL to load and register as a GL sprite image
+ */
+async function ensurePreviewIcon(url: string): Promise<void> {
+	const id = iconIdForUrl(url)
+	const map = mapInstance.map
+	if (!map || loadedIcons.has(id) || loadingIcons.has(id) || map.hasImage(id)) {
+		return
+	}
+	loadingIcons.add(id)
+	try {
+		const image = await loadThumbnail(url)
+		if (mapInstance.map && !mapInstance.map.hasImage(id)) {
+			mapInstance.map.addImage(id, image)
+		}
+		loadedIcons.add(id)
+	} catch (error) {
+		console.error(error)
+	} finally {
+		loadingIcons.delete(id)
+	}
+}
+
+watch(() => mapInstance.isLoaded, (loaded) => {
+	if (loaded) {
+		ensureFallbackIcons()
+	}
+}, { immediate: true })
+
+watch([() => mapInstance.isLoaded, usedPreviewUrls], () => {
+	if (!mapInstance.isLoaded) {
+		return
+	}
+	usedPreviewUrls.value.forEach((url) => ensurePreviewIcon(url))
+}, { immediate: true })
+
+/**
+ * @param photo the photo whose date should be formatted
+ */
+function getPhotoFormattedDate(photo: Photo): string {
+	if (!photo?.dateTaken) {
+		return ''
+	}
+	const d = new Date(photo.dateTaken * 1000)
+	const mom = moment.unix(photo.dateTaken + d.getTimezoneOffset() * 60)
+	return mom.format('LL') + ' ' + mom.format('HH:mm:ss')
+}
+
+/**
+ * @param photo the photo to open
+ */
+function viewPhoto(photo: Photo): void {
+	if (window.OCA?.Viewer?.open) {
+		window.OCA.Viewer.open({ path: photo.path, list: [photo] })
+	}
+}
+
+let hoverPopup: Popup | null = null
+
+/**
+ * @param event the underlying MapLibre mouse event
+ */
+function onPointMouseEnter(event: MapMouseEvent & { features?: MapGeoJSONFeature[] }): void {
+	const map = mapInstance.map
+	const feature = event.features?.[0]
+	if (!map || !feature) {
+		return
+	}
+	const photo = filteredPhotos.value[feature.properties.index]
+	if (!photo) {
+		return
+	}
+	map.getCanvas().style.cursor = 'pointer'
+
+	const html = document.createElement('div')
+	html.className = 'tooltip-photo-wrapper'
+	html.innerHTML = `
+		<img class="photo-tooltip" src="${getPreviewUrl(photo)}">
+		<p class="tooltip-photo-date">${escapeHtml(getPhotoFormattedDate(photo))}</p>
+		<p class="tooltip-photo-name">${escapeHtml(basename(photo.path))}</p>
+	`
+
+	hoverPopup?.remove()
+	hoverPopup = new Popup({ closeButton: false, closeOnClick: false, offset: 20 })
+		.setLngLat((feature.geometry as { coordinates: [number, number] }).coordinates)
+		.setDOMContent(html)
+		.addTo(map)
+}
+
+function onPointMouseLeave(): void {
+	const map = mapInstance.map
+	if (map) {
+		map.getCanvas().style.cursor = ''
+	}
+	hoverPopup?.remove()
+	hoverPopup = null
+}
+
+/**
+ * @param event the underlying MapLibre mouse event
+ */
+function onPointClick(event: MapMouseEvent & { features?: MapGeoJSONFeature[] }): void {
+	const feature = event.features?.[0]
+	if (!feature) {
+		return
+	}
+	const photo = filteredPhotos.value[feature.properties.index]
+	if (photo) {
+		viewPhoto(photo)
+	}
+}
+
+/**
+ * @param event the underlying MapLibre mouse event
+ */
+function onClusterClick(event: MapMouseEvent & { features?: MapGeoJSONFeature[] }): void {
+	const feature = event.features?.[0]
+	const map = mapInstance.map
+	if (!feature || !map) {
+		return
+	}
+	const source = map.getSource(SOURCE_ID)
+	const clusterId = feature.properties.cluster_id
+	const pointCount = feature.properties.point_count
+	const coordinates = (feature.geometry as { coordinates: [number, number] }).coordinates
+
+	if (pointCount > 10 && map.getZoom() !== map.getMaxZoom()) {
+		// @ts-expect-error getClusterExpansionZoom exists on GeoJSONSource but isn't in this narrowed type
+		source?.getClusterExpansionZoom(clusterId).then((zoom: number) => {
+			map.easeTo({ center: coordinates, zoom })
+		}).catch(() => {})
+		return
+	}
+
+	// @ts-expect-error getClusterLeaves exists on GeoJSONSource but isn't in this narrowed type
+	source?.getClusterLeaves(clusterId, pointCount, 0).then((leaves: MapGeoJSONFeature[]) => {
+		const photoList = leaves
+			.map((leaf) => filteredPhotos.value[leaf.properties?.index])
+			.filter((p): p is Photo => !!p)
+			.sort((a, b) => (a.dateTaken ?? 0) - (b.dateTaken ?? 0))
+		if (photoList.length === 0) {
+			return
+		}
+		if (window.OCA?.Viewer?.open) {
+			window.OCA.Viewer.open({ path: photoList[0].path, list: photoList })
+		} else {
+			emit('open-sidebar', photoList[0].path)
+		}
+	}).catch(() => {})
+}
+
+function onClusterMouseEnter(): void {
+	const map = mapInstance.map
+	if (map) {
+		map.getCanvas().style.cursor = 'pointer'
+	}
+}
+
+function onClusterMouseLeave(): void {
+	const map = mapInstance.map
+	if (map) {
+		map.getCanvas().style.cursor = ''
+	}
+}
+
+let listenersBound = false
+
+watch(() => mapInstance.isLoaded, (loaded) => {
+	const map = mapInstance.map
+	if (!loaded || !map || listenersBound) {
+		return
+	}
+	listenersBound = true
+	map.on('click', POINT_LAYER_ID, onPointClick)
+	map.on('click', CLUSTER_LAYER_ID, onClusterClick)
+	map.on('mouseenter', POINT_LAYER_ID, onPointMouseEnter)
+	map.on('mouseleave', POINT_LAYER_ID, onPointMouseLeave)
+	map.on('mouseenter', CLUSTER_LAYER_ID, onClusterMouseEnter)
+	map.on('mouseleave', CLUSTER_LAYER_ID, onClusterMouseLeave)
+}, { immediate: true })
+
+onBeforeUnmount(() => {
+	const map = mapInstance.map
+	hoverPopup?.remove()
+	if (!map || !listenersBound) {
+		return
+	}
+	map.off('click', POINT_LAYER_ID, onPointClick)
+	map.off('click', CLUSTER_LAYER_ID, onClusterClick)
+	map.off('mouseenter', POINT_LAYER_ID, onPointMouseEnter)
+	map.off('mouseleave', POINT_LAYER_ID, onPointMouseLeave)
+	map.off('mouseenter', CLUSTER_LAYER_ID, onClusterMouseEnter)
+	map.off('mouseleave', CLUSTER_LAYER_ID, onClusterMouseLeave)
+})
 </script>
 
 <style lang="scss">
-/* Note: Since we are rendering HTML templates via JS, we remove the "scoped" attribute so styles apply to the dynamic HTML */
 .tooltip-photo-wrapper {
 	display: flex;
 	flex-direction: column;
 	align-items: center;
+	padding: 6px;
+	background-color: var(--color-main-background);
+	color: var(--color-main-text);
+	border-radius: 3px;
 }
-.popup-photo-wrapper .action-btn {
-	display: block;
-	width: 100%;
-	padding: 8px;
-	border: none;
-	background: transparent;
-	text-align: left;
-	cursor: pointer;
-}
-.popup-photo-wrapper .action-btn:hover {
-	background: var(--color-background-hover);
+.photo-tooltip {
+	max-width: 200px;
+	max-height: 150px;
 }
 </style>

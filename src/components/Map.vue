@@ -7,10 +7,10 @@
 <!--
 	Port in progress: the map engine moved from Leaflet to vue-maplibre-gl.
 	Ported so far: the base map (street/satellite/terrain), click-to-add,
-	and favorites/contacts markers and clustering (no drag-to-edit or
-	context menu yet). Everything below is intentionally not wired up yet
-	and will come back one feature at a time in follow-up steps:
-	- photos/tracks/devices markers and clustering
+	and favorites/contacts/photos markers and clustering (no drag-to-edit
+	or context menu yet). Everything below is intentionally not wired up
+	yet and will come back one feature at a time in follow-up steps:
+	- tracks/devices markers and clustering
 	- routing (will use @maplibre/maplibre-gl-directions)
 	- right-click context menu, drag-to-edit
 	- search box / history control / slider
@@ -41,6 +41,13 @@
 				:groups="contactGroups"
 				@address-deleted="emit('address-deleted', $event)"
 				@add-to-map-contact="emit('add-to-map-contact', $event)" />
+
+			<PhotosLayer v-if="photosEnabled"
+				:photos="photos"
+				:date-filter-enabled="sliderEnabled"
+				:date-filter-start="sliderStartTimestamp"
+				:date-filter-end="sliderEndTimestamp"
+				@open-sidebar="emit('open-sidebar', $event)" />
 
 			<MglNavigationControl position="bottom-right" />
 			<MglScaleControl position="bottom-left" />
@@ -94,6 +101,8 @@ import type { Favorite, FavoriteCategory } from './map/FavoritesLayer.vue'
 import FavoritesLayer from './map/FavoritesLayer.vue'
 import type { Contact, ContactGroup } from './map/ContactsLayer.vue'
 import ContactsLayer from './map/ContactsLayer.vue'
+import type { Photo } from './map/PhotosLayer.vue'
+import PhotosLayer from './map/PhotosLayer.vue'
 import type { BaseStyleId } from '../data/mapLayers.ts'
 import { BaseStyleIds, BaseStyles, TERRAIN_SOURCE, TERRAIN_SOURCE_ID } from '../data/mapLayers.ts'
 
@@ -107,6 +116,11 @@ const props = withDefaults(defineProps<{
 	contacts?: Contact[]
 	contactGroups?: Record<string, ContactGroup>
 	contactsEnabled?: boolean
+	photos?: Photo[]
+	photosEnabled?: boolean
+	sliderEnabled?: boolean
+	sliderStartTimestamp?: number
+	sliderEndTimestamp?: number
 }>(), {
 	mapBoundsProp: () => [],
 	state: '',
@@ -116,6 +130,11 @@ const props = withDefaults(defineProps<{
 	contacts: () => [],
 	contactGroups: () => ({}),
 	contactsEnabled: false,
+	photos: () => [],
+	photosEnabled: false,
+	sliderEnabled: false,
+	sliderStartTimestamp: 0,
+	sliderEndTimestamp: 0,
 })
 
 const emit = defineEmits<{
@@ -123,6 +142,7 @@ const emit = defineEmits<{
 	'click-favorite': [favorite: Favorite]
 	'address-deleted': [contact: Contact]
 	'add-to-map-contact': [contact: Contact]
+	'open-sidebar': [path: string]
 }>()
 
 const baseStyleId = ref<BaseStyleId>(BaseStyleIds.Street)

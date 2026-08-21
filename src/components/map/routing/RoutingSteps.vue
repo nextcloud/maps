@@ -7,6 +7,7 @@
 			:search-data="searchData"
 			:placeholder="getPlaceholder(i)"
 			:can-delete="canDelete(s, i)"
+			:variant="getVariant(i)"
 			@selected="onStepSelected(i, $event)"
 			@delete="$emit('delete-step', i)" />
 		<div class="steps-buttons">
@@ -107,6 +108,9 @@ export default {
 					? t('maps', 'Destination')
 					: t('maps', 'Via {i}', { i })
 		},
+		getVariant(i) {
+			return i === 0 ? 'start' : i === this.steps.length - 1 ? 'end' : 'via'
+		},
 		canDelete(step, i) {
 			// impossible to delete first or last steps if it's empty
 			return !((i === 0 || i === this.steps.length - 1) && !step.latLng)
@@ -121,10 +125,15 @@ export default {
 	width: 100%;
 	display: flex;
 	flex-direction: column;
+	border: 1px solid var(--color-border);
+	border-radius: var(--border-radius-large);
+	overflow: hidden;
+
 	.steps-buttons {
 		display: flex;
 		flex-direction: row;
 		justify-content: center;
+		border-top: 1px solid var(--color-border);
 	}
 }
 </style>

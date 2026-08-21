@@ -39,6 +39,17 @@
 				</NcButton>
 			</div>
 
+			<RoutingSteps
+				:steps="steps"
+				:search-data="searchData"
+				:plan-ready="routeReady"
+				@add-step="addRoutePoint"
+				@step-selected="setRoutePoint"
+				@delete-step="deleteRoutePoint"
+				@export-route="onExportRoute"
+				@zoom-route="onZoomRoute"
+				@reverse-steps="reverseWaypoints" />
+
 			<select v-if="routers.length > 1"
 				:value="selectedRouterType"
 				class="router-select"
@@ -53,17 +64,6 @@
 					{{ t('maps', 'Add a routing service') }}
 				</a>
 			</p>
-
-			<RoutingSteps
-				:steps="steps"
-				:search-data="searchData"
-				:plan-ready="routeReady"
-				@add-step="addRoutePoint"
-				@step-selected="setRoutePoint"
-				@delete-step="deleteRoutePoint"
-				@export-route="onExportRoute"
-				@zoom-route="onZoomRoute"
-				@reverse-steps="reverseWaypoints" />
 
 			<p v-if="summary" class="routing-summary">
 				{{ summary }}
@@ -369,16 +369,28 @@ onBeforeUnmount(() => {
 	}
 
 	.router-select {
-		width: 100%;
-		margin-bottom: 5px;
+		margin-top: 8px;
+		padding: 6px 30px 6px 16px;
+		border: 0;
+		border-radius: var(--border-radius-pill);
+		background-color: var(--color-primary-element);
+		color: var(--color-primary-element-text);
+		font-weight: bold;
+		cursor: pointer;
+
+		option {
+			color: var(--color-main-text);
+			background-color: var(--color-main-background);
+			font-weight: normal;
+		}
 	}
 
 	.no-router {
-		margin-bottom: 5px;
+		margin: 8px 0 0 0;
 	}
 
 	.routing-summary {
-		margin: 5px 0 0 0;
+		margin: 8px 0 0 0;
 		font-weight: bold;
 	}
 

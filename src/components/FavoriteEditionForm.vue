@@ -217,7 +217,7 @@ export default {
 	}
 }
 
-::v-deep .multiselect__tags {
+:deep(.multiselect__tags) {
 	border: 2px solid var(--color-border-maxcontrast) !important;
 
 	.multiselect__single {

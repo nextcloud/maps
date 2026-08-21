@@ -140,7 +140,7 @@ export default {
 	opacity: 0.5;
 }
 
-::v-deep .no-color {
+:deep(.no-color) {
 	color: var(--color-primary-element);
 }
 </style>

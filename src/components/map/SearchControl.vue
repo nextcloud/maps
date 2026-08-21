@@ -130,7 +130,7 @@ export default {
 	}
 }
 
-::v-deep .icon-dot-circle {
+:deep(.icon-dot-circle) {
 	background-color: var(--color-main-text);
 	mask: url('../../../img/dot-circle.svg') no-repeat;
 	mask-size: 16px auto;

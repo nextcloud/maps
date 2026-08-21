@@ -2486,26 +2486,26 @@ export default {
 	height: 100%;
 }
 
-::v-deep .favoriteMarker {
+:deep(.favoriteMarker) {
 	height: 18px !important;
 	width: 18px !important;
 	background-size: 18px 18px;
 	margin: auto;
 }
 
-::v-deep .favoriteClusterMarker {
+:deep(.favoriteClusterMarker) {
 	height: 27px !important;
 	width: 27px !important;
 	background-size: 27px 27px;
 	margin: auto;
 }
 
-::v-deep .navigationFavoriteMarker {
+:deep(.navigationFavoriteMarker) {
 	background: url('../../img/star-white.svg') no-repeat 50% 50%;
 	border-radius: 50%;
 }
 
-::v-deep .navigationFavoriteMarkerDark {
+:deep(.navigationFavoriteMarkerDark) {
 	background: url('../../img/star-black.svg') no-repeat 50% 50%;
 	border-radius: 50%;
 }

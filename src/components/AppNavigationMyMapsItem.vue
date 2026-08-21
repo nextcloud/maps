@@ -96,11 +96,11 @@ export default {
 	opacity: 0.5;
 }
 
-::v-deep .no-color {
+:deep(.no-color) {
 	color: var(--color-primary-element);
 }
 
-::v-deep .icon-maps-dark {
+:deep(.icon-maps-dark) {
 	background-color: var(--color-main-text);
 	mask: url('../../img/maps-dark.svg') no-repeat;
 	mask-size: 16px auto;

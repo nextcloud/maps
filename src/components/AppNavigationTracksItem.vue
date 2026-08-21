@@ -167,7 +167,7 @@ export default {
 	opacity: 0.5;
 }
 
-::v-deep .icon-road {
+:deep(.icon-road) {
 	background-color: var(--color-main-text);
 	mask: url('../../img/road.svg') no-repeat;
 	mask-size: 16px auto;
@@ -177,7 +177,7 @@ export default {
 	-webkit-mask-position: center;
 }
 
-::v-deep .icon-road-thin {
+:deep(.icon-road-thin) {
 	background-color: var(--color-main-text);
 	mask: url('../../img/road-thin.svg') no-repeat;
 	mask-size: 16px auto;
@@ -187,11 +187,11 @@ export default {
 	-webkit-mask-position: center;
 }
 
-::v-deep .icon-in-picker {
+:deep(.icon-in-picker) {
 	margin-bottom: -3px;
 }
 
-::v-deep .no-color {
+:deep(.no-color) {
 	background-color: var(--color-primary-element);
 }
 </style>

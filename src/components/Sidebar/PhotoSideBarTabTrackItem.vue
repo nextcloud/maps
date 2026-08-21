@@ -75,11 +75,11 @@ export default {
 
 <style scoped>
 
-::v-deep .item-disabled {
+:deep(.item-disabled) {
 	opacity: 0.5;
 }
 
-::v-deep .icon-road {
+:deep(.icon-road) {
 	background-color: var(--color-main-text);
 	mask: url('../../../img/road.svg') no-repeat;
 	mask-size: 16px auto;

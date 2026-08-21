@@ -108,7 +108,7 @@ export default {
 	opacity: 0.5;
 }
 
-::v-deep .icon-hand {
+:deep(.icon-hand) {
 	opacity: 1;
 	background-color: var(--color-main-text);
 	padding: 0 !important;
@@ -122,7 +122,7 @@ export default {
 	min-height: 36px !important;
 }
 
-::v-deep .icon-hand-slash {
+:deep(.icon-hand-slash) {
 	opacity: 1;
 	background-color: var(--color-main-text);
 	padding: 0 !important;
@@ -136,7 +136,7 @@ export default {
 	min-height: 36px !important;
 }
 
-::v-deep .icon-picture {
+:deep(.icon-picture) {
 	opacity: 1;
 	//background-color: var(--color-main-text);
 	padding: 0 !important;
@@ -150,7 +150,7 @@ export default {
 	min-height: 36px !important;
 }
 
-::v-deep .icon-reload {
+:deep(.icon-reload) {
 	opacity: 0.6;
 	background-color: var(--color-main-text);
 	mask: url('../../img/reload.svg') no-repeat;

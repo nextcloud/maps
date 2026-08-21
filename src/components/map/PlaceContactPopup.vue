@@ -274,7 +274,7 @@ export default {
 }
 
 .contact-select {
-	::v-deep .multiselect {
+	:deep(.multiselect) {
 		flex-grow: 1;
 	}
 }

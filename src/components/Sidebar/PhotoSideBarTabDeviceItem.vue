@@ -41,7 +41,7 @@ export default {
 
 <style scoped>
 
-::v-deep .item-disabled {
+:deep(.item-disabled) {
 	opacity: 0.5;
 }
 

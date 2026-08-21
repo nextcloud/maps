@@ -600,7 +600,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-::v-deep .icon-tab-track {
+:deep(.icon-tab-track) {
 	background-color: var(--color-main-text);
 	padding: 0 !important;
 	mask: url('../../img/road.svg') no-repeat;
@@ -614,14 +614,14 @@ export default {
 }
 
 .app-sidebar {
-	&--has-preview::v-deep {
-		.app-sidebar-header__figure {
+	&--has-preview {
+		:deep(.app-sidebar-header__figure) {
 			background-size: cover;
 		}
 
 		&[data-mimetype="text/plain"],
 		&[data-mimetype="text/markdown"] {
-			.app-sidebar-header__figure {
+			:deep(.app-sidebar-header__figure) {
 				background-size: contain;
 			}
 		}
@@ -635,7 +635,7 @@ export default {
 	}
 
 	.svg-icon {
-		::v-deep svg {
+		:deep(svg) {
 			width: 20px;
 			height: 20px;
 			fill: currentColor;

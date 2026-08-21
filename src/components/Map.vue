@@ -781,7 +781,7 @@ export default {
 	z-index: 1; /* Essential for placing Vue popups correctly over map */
 }
 
-::v-deep .leaflet-control-locate {
+:deep(.leaflet-control-locate) {
 	&.active .icon {
 		-webkit-filter: drop-shadow(2px 3px 2px var(--color-main-text));
 		filter: drop-shadow(2px 3px 2px var(--color-main-text));
@@ -795,108 +795,108 @@ export default {
 	}
 }
 
-::v-deep .leaflet-container {
+:deep(.leaflet-container) {
 	cursor: grab;
 	.mapboxgl-map {
 		cursor: grab;
 	}
 }
 
-::v-deep .leaflet-container.loading {
+:deep(.leaflet-container.loading) {
 	cursor: progress;
 	.mapboxgl-map {
 		cursor: progress;
 	}
 }
 
-::v-deep .leaflet-container.adding {
+:deep(.leaflet-container.adding) {
 	cursor: crosshair;
 	.mapboxgl-map {
 		cursor: crosshair;
 	}
 }
 
-::v-deep .leaflet-marker-icon {
+:deep(.leaflet-marker-icon) {
 	cursor: pointer;
 	* {
 		cursor: pointer;
 	}
 }
 
-::v-deep .leaflet-marker-draggable {
+:deep(.leaflet-marker-draggable) {
 	cursor: move;
 	* {
 		cursor: move;
 	}
 }
 
-::v-deep .icon-osm {
+:deep(.icon-osm) {
 	background-image: url('./../../css/images/osm.png');
 	background-size: 35px;
 }
 
-::v-deep .icon-esri {
+:deep(.icon-esri) {
 	background:  url('./../../css/images/esri.jpg');
 	background-size: 35px;
 	border: none !important;
 }
 
-::v-deep .easy-button-container.behind {
+:deep(.easy-button-container.behind) {
 	display: none;
 }
 
-::v-deep .easy-button-container.hidden {
+:deep(.easy-button-container.hidden) {
 	display: none;
 }
 
-::v-deep .leaflet-contextmenu {
+:deep(.leaflet-contextmenu) {
 	background-color: var(--color-main-background);
 }
 
-::v-deep .leaflet-contextmenu-item {
+:deep(.leaflet-contextmenu-item) {
 	line-height: 30px !important;
 	color: var(--color-text-lighter) !important;
 	cursor: pointer !important;
 }
 
-::v-deep .leaflet-contextmenu-item:hover {
+:deep(.leaflet-contextmenu-item:hover) {
 	color: var(--color-main-text) !important;
 	background-color: var(--color-background-hover) !important;
 	border-color: var(--color-border) !important;
 }
 
-::v-deep .leaflet-contextmenu-icon {
+:deep(.leaflet-contextmenu-icon) {
 	margin: 7px 8px 0 0 !important;
 }
 
-::v-deep .leaflet-contextmenu-separator {
+:deep(.leaflet-contextmenu-separator) {
 	border-color: var(--color-border) !important;
 }
 
-::v-deep .leaflet-marker-photo,
-::v-deep .leaflet-marker-contact {
+:deep(.leaflet-marker-photo),
+:deep(.leaflet-marker-contact) {
 	width: 40px !important;
 	height: 40px !important;
 }
 
-::v-deep .placement-marker-icon {
+:deep(.placement-marker-icon) {
 	border-radius: 50%;
 	object-fit: cover;
 	border: 2px solid var(--color-border);
 }
 
-::v-deep .popup-contact-wrapper .action {
+:deep(.popup-contact-wrapper .action) {
 	p {
 		height: 44px !important;
 		line-height: 28px;
 	}
 }
 
-::v-deep .popup-contact-wrapper .action,
-::v-deep .popup-track-wrapper .action,
-::v-deep .popup-device-wrapper .action,
-::v-deep .popup-favorite-wrapper .action,
-::v-deep .popup-photo-wrapper .action {
+:deep(.popup-contact-wrapper .action),
+:deep(.popup-track-wrapper .action),
+:deep(.popup-device-wrapper .action),
+:deep(.popup-favorite-wrapper .action),
+:deep(.popup-photo-wrapper .action) {
 	height: 44px;
 	.action-button {
 		height: 44px !important;
@@ -904,14 +904,14 @@ export default {
 	}
 }
 
-::v-deep .leaflet-marker-track-tooltip,
-::v-deep .leaflet-marker-device-tooltip,
-::v-deep .leaflet-marker-favorite-tooltip {
+:deep(.leaflet-marker-track-tooltip),
+:deep(.leaflet-marker-device-tooltip),
+:deep(.leaflet-marker-favorite-tooltip) {
 	padding: 0 !important;
 	border: 0 !important;
 }
 
-::v-deep .icon-routing {
+:deep(.icon-routing) {
 	background-color: var(--color-main-text);
 	padding: 0 !important;
 	mask: url('../../img/routing.svg') no-repeat;
@@ -922,7 +922,7 @@ export default {
 	-webkit-mask-position: center;
 }
 
-::v-deep .icon-road {
+:deep(.icon-road) {
 	background-color: var(--color-main-text);
 	mask: url('../../img/road.svg') no-repeat;
 	mask-size: 16px auto;
@@ -932,7 +932,7 @@ export default {
 	-webkit-mask-position: center;
 }
 
-::v-deep .icon-road-thin {
+:deep(.icon-road-thin) {
 	background-color: var(--color-main-text);
 	mask: url('../../img/road-thin.svg') no-repeat;
 	mask-size: 16px auto;
@@ -942,25 +942,25 @@ export default {
 	-webkit-mask-position: center;
 }
 
-::v-deep .leaflet-marker-favorite-cluster,
-::v-deep .leaflet-marker-favorite {
+:deep(.leaflet-marker-favorite-cluster),
+:deep(.leaflet-marker-favorite) {
 	height: 36px !important;
 	width: 36px !important;
 	display: flex;
 	border-radius: 50%;
 }
 
-::v-deep .favoriteMarker,
-::v-deep .favoriteClusterMarker {
+:deep(.favoriteMarker),
+:deep(.favoriteClusterMarker) {
 	box-shadow: 0px 0px 10px #888;
 	border-radius: 50%;
 }
 
-::v-deep .favoriteMarker.selected {
+:deep(.favoriteMarker.selected) {
 	box-shadow: 0px 0px 10px #ff0000;
 }
 
-::v-deep .leaflet-marker-favorite-cluster .label {
+:deep(.leaflet-marker-favorite-cluster .label) {
 	position: absolute;
 	top: -3px;
 	right: -5px;
@@ -974,24 +974,24 @@ export default {
 	padding: 3px;
 }
 
-::v-deep .favoriteClusterMarkerDark {
+:deep(.favoriteClusterMarkerDark) {
 	background: url('../../img/star-black.svg') no-repeat 50% 50%;
 }
 
-::v-deep .leaflet-left {
+:deep(.leaflet-left) {
 	margin-left: 0px;
 }
 
-::v-deep .leaflet-control {
+:deep(.leaflet-control) {
 	margin-left: 0px;
 }
 
-::v-deep .leaflet-control-layers-expanded {
+:deep(.leaflet-control-layers-expanded) {
 	padding: 4px 0px !important;
 }
 
-::v-deep .leaflet-control-layers-base span:nth-child(1),
-::v-deep .leaflet-control-layers-overlays span:nth-child(1) {
+:deep(.leaflet-control-layers-base span:nth-child(1)),
+:deep(.leaflet-control-layers-overlays span:nth-child(1)) {
 	display: block;
 	height: 38px;
 	padding: 4px 10px;
@@ -1001,15 +1001,15 @@ export default {
 	cursor: pointer !important;
 }
 
-::v-deep .leaflet-control-layers-base span:hover,
-::v-deep .leaflet-control-layers-overlays span:hover {
+:deep(.leaflet-control-layers-base span:hover),
+:deep(.leaflet-control-layers-overlays span:hover) {
 	color: var(--color-main-text) !important;
 	background-color: var(--color-background-hover) !important;
 	border-color: var(--color-border) !important;
 }
 
-::v-deep .leaflet-control-layers-base span:nth-child(2),
-::v-deep .leaflet-control-layers-overlays span:nth-child(2) {
+:deep(.leaflet-control-layers-base span:nth-child(2)),
+:deep(.leaflet-control-layers-overlays span:nth-child(2)) {
 	display: inline-block;
 	vertical-align: top;
 	line-height: 30px;
@@ -1017,13 +1017,13 @@ export default {
 	cursor: pointer !important;
 }
 
-::v-deep .leaflet-control-layers-selector {
+:deep(.leaflet-control-layers-selector) {
 	display: inline-block;
 	height: 30px;
 	margin: 0px;
 }
 
-::v-deep .leaflet-control-layers-separator {
+:deep(.leaflet-control-layers-separator) {
 	border-color: var(--color-border) !important;
 }
 </style>

@@ -48,7 +48,7 @@ export default {
 </script>
 
 <style scoped lang="scss">
-::v-deep .popup {
+:deep(.popup) {
 	width: 180px;
 
 	.popup-title {
@@ -66,7 +66,7 @@ export default {
 		width: 100%;
 	}
 
-	&::v-deep .buttons {
+	.buttons {
 		display: flex;
 	}
 }

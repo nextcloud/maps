@@ -214,7 +214,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-::v-deep .multiselect__option {
+:deep(.multiselect__option) {
 	height: 44px !important;
 }
 

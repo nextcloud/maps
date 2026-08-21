@@ -1,201 +1,298 @@
+<!--
+ - SPDX-FileCopyrightText: 2019 Paul Schwörer <hello@paulschwoerer.de>
+ - SPDX-FileCopyrightText: 2026 Nextcloud GmbH and Nextcloud contributors
+ - SPDX-License-Identifier: AGPL-3.0-or-later
+-->
+
+<!--
+	Ported from Leaflet to vue-maplibre-gl. Not ported yet, on purpose:
+	the right-click popup (toggle history, change color, export, link to
+	map) and drag-to-edit. The point-hover event this used to emit while
+	hovering a marker or line is gone too, but on purpose rather than
+	deferred: nothing has ever listened for it since the Leaflet-to-
+	vue-maplibre-gl port started.
+
+	Dropped on purpose, not deferred: the >2500-points-per-device heatmap
+	fallback (LHeatMap.vue/leaflet.heat). That existed to keep Leaflet's
+	DOM-based rendering from choking on very long history trails; MapLibre
+	renders line geometry on the GPU and doesn't need the same escape hatch.
+-->
 <template>
-	<div style="display: none;">
-		<LHeatMap v-if="points.length >= 2500"
-			ref="devicesHeatMap"
-			:map="map"
-			:initial-points="points"
-			:options="optionsHeatMap" />
-	</div>
+	<MglGeoJsonSource :source-id="SOURCE_ID" :data="geojson">
+		<MglLineLayer :layer-id="LINE_CASING_LAYER_ID"
+			:source="SOURCE_ID"
+			:filter="['==', ['geometry-type'], 'LineString']"
+			:paint="{ 'line-color': '#000000', 'line-width': 6.4 }" />
+		<MglLineLayer :layer-id="LINE_LAYER_ID"
+			:source="SOURCE_ID"
+			:filter="['==', ['geometry-type'], 'LineString']"
+			:paint="{ 'line-color': ['get', 'color'], 'line-width': 4 }" />
+		<MglSymbolLayer :layer-id="POINT_LAYER_ID"
+			:source="SOURCE_ID"
+			:filter="['==', ['geometry-type'], 'Point']"
+			:layout="{ 'icon-image': ['get', 'iconId'], 'icon-allow-overlap': true, 'icon-size': 1 }" />
+	</MglGeoJsonSource>
 </template>
 
-<script>
-import L from 'leaflet'
+<script setup lang="ts">
+import type { MapGeoJSONFeature, MapMouseEvent } from 'maplibre-gl'
+import { Popup } from 'maplibre-gl'
+import { translate as t } from '@nextcloud/l10n'
+import { computed, onBeforeUnmount, reactive, watch } from 'vue'
+import { MglGeoJsonSource, MglLineLayer, MglSymbolLayer, useMap } from 'vue-maplibre-gl'
 import { isComputer } from '../../utils.js'
-import { binSearch, isPublic } from '../../utils/common.js'
-import moment from '@nextcloud/moment'
-import LHeatMap from './LHeatMap.vue'
-import optionsController from '../../optionsController.js'
+import { binSearch } from '../../utils/common.js'
+import { escapeHtml } from '../../utils/domUtils.ts'
 
-const DEVICE_MARKER_VIEW_SIZE = 40
-
-export default {
-	name: 'DevicesLayer',
-	components: {
-		LHeatMap,
-	},
-
-	props: {
-		devices: { type: Array, required: true },
-		map: { type: Object, required: true },
-		start: { type: Number, default: 0 },
-		end: { type: Number, default: () => moment.unix() },
-	},
-
-	data() {
-		return {
-			optionsHeatMap: {
-				radius: 15,
-				blur: 10,
-				gradient: { 0.4: 'blue', 0.65: 'lime', 1: 'red' },
-			},
-		}
-	},
-
-	created() {
-		this.featureGroup = L.featureGroup();
-		this.deviceLayersMap = new Map(); // Store reference to markers/lines
-	},
-
-	computed: {
-		displayedDevices() {
-			return this.devices.filter(d => d.enabled && d.points && d.points.length > 0);
-		},
-		points() {
-			return this.devices.reduce((pts, device) => {
-				if (device.enabled && device.historyEnabled) {
-					const lastNullIndex = binSearch(device.points, (p) => !p.timestamp);
-					const firstShownIndex = binSearch(device.points, (p) => (p.timestamp || 0) < this.start) + 1;
-					const lastShownIndex = binSearch(device.points, (p) => (p.timestamp || 0) < this.end);
-					if (lastNullIndex + 1 + lastShownIndex - firstShownIndex + 1 > 2500) {
-						const filteredDevicePoints = [
-							...device.points.slice(0, lastNullIndex + 1),
-							...device.points.slice(firstShownIndex, lastShownIndex + 1),
-						];
-						pts = pts.concat(filteredDevicePoints.map((p) => [p.lat, p.lng]));
-					}
-				}
-				return pts;
-			}, []);
-		},
-	},
-
-	watch: {
-		displayedDevices: { handler: 'renderDevices', deep: true },
-		start: 'renderDevices',
-		end: 'renderDevices',
-	},
-
-	mounted() {
-		this.featureGroup.addTo(this.map);
-		this.renderDevices();
-	},
-
-	beforeUnmount() {
-		if (this.featureGroup && this.map) {
-			this.map.removeLayer(this.featureGroup);
-		}
-	},
-
-	methods: {
-		isPublic() { return isPublic() },
-		
-		getDevicePoints(device) {
-			const lastNullIndex = binSearch(device.points, (p) => !p.timestamp);
-			const firstShownIndex = binSearch(device.points, (p) => (p.timestamp || 0) < this.start) + 1;
-			const lastShownIndex = binSearch(device.points, (p) => (p.timestamp || 0) < this.end);
-			const filtered = [
-				...device.points.slice(0, lastNullIndex + 1),
-				...device.points.slice(firstShownIndex, lastShownIndex + 1),
-			];
-			return filtered.map((p) => [p.lat, p.lng]);
-		},
-
-		renderDevices() {
-			this.featureGroup.clearLayers();
-			this.deviceLayersMap.clear();
-
-			this.displayedDevices.forEach(device => {
-				const points = this.getDevicePoints(device);
-				if (points.length === 0) return;
-
-				const lastPoint = points[points.length - 1];
-				const color = device.color || '#0082c9';
-				const thumbnailClass = isComputer(device.user_agent) ? 'desktop' : 'phone';
-
-				// Wrapper group for marker and line
-				const deviceGroup = L.featureGroup();
-
-				// Marker
-				const marker = L.marker(lastPoint, {
-					icon: L.divIcon({
-						html: `<div class="thumbnail-wrapper" style="--custom-color: ${color}; border-color: ${color};"><div class="thumbnail ${thumbnailClass}" style="background-color: ${color};"></div></div>​`,
-						className: 'leaflet-marker-device device-marker',
-						iconSize: [DEVICE_MARKER_VIEW_SIZE, DEVICE_MARKER_VIEW_SIZE],
-						iconAnchor: [DEVICE_MARKER_VIEW_SIZE / 2, DEVICE_MARKER_VIEW_SIZE],
-					})
-				});
-
-				marker.bindTooltip(`
-					<div class="tooltip-device-wrapper" style="border: 2px solid ${color}">
-						<b>${t('maps', 'Name')}:</b> <span>${device.user_agent}</span>
-					</div>
-				`, { sticky: true, className: 'leaflet-marker-device-tooltip', direction: 'top', offset: L.point(0, 0) });
-
-				marker.on('mouseover', () => this.$emit('point-hover', { ...device.points[device.points.length - 1], color, user_agent: device.user_agent }));
-				marker.on('click', () => this.$emit('click', device));
-				marker.on('contextmenu', (e) => this.showDevicePopup(e, device));
-
-				deviceGroup.addLayer(marker);
-
-				// History Polyline
-				if (device.historyEnabled && points.length <= 2500) {
-					const lineBg = L.polyline(points, { color: 'black', opacity: 1, weight: 4 * 1.6 });
-					const lineFg = L.polyline(points, { color: color, opacity: 1, weight: 4 });
-					
-					const lineGroup = L.featureGroup([lineBg, lineFg]);
-					lineGroup.on('mouseover', (e) => this.onDeviceLineMouseover(e, device, color));
-					lineGroup.on('contextmenu', (e) => this.showDevicePopup(e, device));
-
-					deviceGroup.addLayer(lineGroup);
-				}
-
-				this.featureGroup.addLayer(deviceGroup);
-				this.deviceLayersMap.set(device.id, deviceGroup);
-			});
-		},
-
-		showDevicePopup(e, device) {
-			const mapIsUpdatable = optionsController.optionValues?.isUpdateable;
-			const popupContent = L.DomUtil.create('div', 'popup-device-wrapper');
-			
-			popupContent.innerHTML = `
-				<button class="action-btn" data-action="history">${device.historyEnabled ? t('maps', 'Hide history') : t('maps', 'Show history')}</button>
-				${mapIsUpdatable ? `<button class="action-btn" data-action="color">${t('maps', 'Change color')}</button>` : ''}
-				<button class="action-btn" data-action="export">${t('maps', 'Export')}</button>
-				${!this.isPublic() ? `<button class="action-btn" data-action="link">${t('maps', 'Link to map')}</button>` : ''}
-			`;
-
-			popupContent.addEventListener('click', (event) => {
-				const action = event.target.getAttribute('data-action');
-				if (action === 'history') this.$emit('toggle-history', device);
-				if (action === 'color') this.$emit('change-color', device);
-				if (action === 'export') this.$emit('export', device);
-				if (action === 'link') this.$emit('add-to-map-device', device);
-				this.map.closePopup();
-			});
-
-			L.popup({ closeButton: false, className: 'popovermenu open popupMarker devicePopup', offset: L.point(-5, -20) })
-				.setLatLng(e.latlng)
-				.setContent(popupContent)
-				.openOn(this.map);
-		},
-
-		onDeviceLineMouseover(e, device, color) {
-			const overLatLng = e.layer._map.layerPointToLatLng(e.layerPoint);
-			const closestPoint = device.points.reduce((target, p) => {
-				if ((!p.timestamp || (p.timestamp >= this.start && p.timestamp <= this.end)) && (e.layer._map.distance(overLatLng, [p.lat, p.lng]) < target.minDist)) {
-					target.minDist = e.layer._map.distance(overLatLng, [p.lat, p.lng]);
-					target.hoverPoint = p;
-				}
-				return target;
-			}, { minDist: 40000000, hoverPoint: null });
-
-			if (closestPoint.hoverPoint) {
-				this.$emit('point-hover', { ...closestPoint.hoverPoint, color, user_agent: device.user_agent });
-			}
-		}
-	},
+export interface DevicePoint {
+	lat: number
+	lng: number
+	timestamp?: number
 }
+
+export interface Device {
+	id: number
+	user_agent: string
+	color?: string
+	enabled: boolean
+	historyEnabled: boolean
+	points: DevicePoint[]
+}
+
+const props = withDefaults(defineProps<{
+	devices: Device[]
+	start?: number
+	end?: number
+}>(), {
+	start: 0,
+	end: 0,
+})
+
+const emit = defineEmits<{
+	click: [device: Device]
+}>()
+
+const SOURCE_ID = 'devices'
+const LINE_CASING_LAYER_ID = 'devices-lines-casing'
+const LINE_LAYER_ID = 'devices-lines-fg'
+const POINT_LAYER_ID = 'devices-points'
+const MARKER_SIZE = 40
+const DEFAULT_COLOR = '0082c9'
+
+const mapInstance = useMap()
+const loadedIcons = reactive(new Set<string>())
+
+const displayedDevices = computed<Device[]>(() => {
+	return props.devices.filter((d) => d.enabled && d.points?.length > 0)
+})
+
+/**
+ * @param device the device to compute visible history points for
+ */
+function getDevicePoints(device: Device): DevicePoint[] {
+	const lastNullIndex = binSearch(device.points, (p: DevicePoint) => !p.timestamp)
+	const firstShownIndex = binSearch(device.points, (p: DevicePoint) => (p.timestamp || 0) < props.start) + 1
+	const lastShownIndex = binSearch(device.points, (p: DevicePoint) => (p.timestamp || 0) < props.end)
+	return [
+		...device.points.slice(0, lastNullIndex + 1),
+		...device.points.slice(firstShownIndex, lastShownIndex + 1),
+	]
+}
+
+/**
+ * @param color hex color (without '#')
+ * @param isComputerDevice whether to draw the desktop or phone glyph
+ */
+function iconIdForDevice(color: string, isComputerDevice: boolean): string {
+	return `device-marker-${color}-${isComputerDevice ? 'desktop' : 'phone'}`
+}
+
+const geojson = computed(() => {
+	const features: object[] = []
+	displayedDevices.value.forEach((device, deviceIndex) => {
+		const color = device.color || DEFAULT_COLOR
+		const points = getDevicePoints(device)
+		if (points.length === 0) {
+			return
+		}
+
+		if (device.historyEnabled && points.length >= 2) {
+			features.push({
+				type: 'Feature' as const,
+				geometry: { type: 'LineString' as const, coordinates: points.map((p) => [p.lng, p.lat]) },
+				properties: { deviceIndex, color },
+			})
+		}
+
+		const lastPoint = points[points.length - 1]
+		features.push({
+			type: 'Feature' as const,
+			geometry: { type: 'Point' as const, coordinates: [lastPoint.lng, lastPoint.lat] },
+			properties: {
+				deviceIndex,
+				iconId: iconIdForDevice(color, isComputer(device.user_agent)),
+				userAgent: device.user_agent,
+			},
+		})
+	})
+	return { type: 'FeatureCollection' as const, features }
+})
+
+const usedIcons = computed<Array<{ color: string, isComputerDevice: boolean }>>(() => {
+	const seen = new Map<string, { color: string, isComputerDevice: boolean }>()
+	displayedDevices.value.forEach((device) => {
+		const isComputerDevice = isComputer(device.user_agent)
+		const color = device.color || DEFAULT_COLOR
+		seen.set(iconIdForDevice(color, isComputerDevice), { color, isComputerDevice })
+	})
+	return [...seen.values()]
+})
+
+/**
+ * @param color hex color (without '#') for the circle background
+ * @param isComputerDevice whether to draw the desktop or phone glyph
+ */
+function ensureIcon(color: string, isComputerDevice: boolean): void {
+	const id = iconIdForDevice(color, isComputerDevice)
+	const map = mapInstance.map
+	if (!map || loadedIcons.has(id) || map.hasImage(id)) {
+		return
+	}
+	const size = MARKER_SIZE
+	const canvas = document.createElement('canvas')
+	canvas.width = size
+	canvas.height = size
+	const ctx = canvas.getContext('2d')
+	if (!ctx) {
+		return
+	}
+
+	ctx.beginPath()
+	ctx.arc(size / 2, size / 2, size / 2 - 2, 0, Math.PI * 2)
+	ctx.fillStyle = `#${color}`
+	ctx.fill()
+	ctx.lineWidth = 2
+	ctx.strokeStyle = '#ffffff'
+	ctx.stroke()
+
+	ctx.fillStyle = '#ffffff'
+	if (isComputerDevice) {
+		// simple monitor glyph
+		ctx.fillRect(size * 0.28, size * 0.32, size * 0.44, size * 0.28)
+		ctx.fillRect(size * 0.42, size * 0.62, size * 0.16, size * 0.08)
+	} else {
+		// simple phone glyph
+		const radius = size * 0.05
+		const x = size * 0.36
+		const y = size * 0.24
+		const w = size * 0.28
+		const h = size * 0.52
+		ctx.beginPath()
+		ctx.roundRect(x, y, w, h, radius)
+		ctx.fill()
+	}
+
+	map.addImage(id, ctx.getImageData(0, 0, size, size))
+	loadedIcons.add(id)
+}
+
+watch([() => mapInstance.isLoaded, usedIcons], () => {
+	if (!mapInstance.isLoaded) {
+		return
+	}
+	usedIcons.value.forEach(({ color, isComputerDevice }) => ensureIcon(color, isComputerDevice))
+}, { immediate: true })
+
+let hoverPopup: Popup | null = null
+
+/**
+ * @param event the underlying MapLibre mouse event
+ */
+function onPointMouseEnter(event: MapMouseEvent & { features?: MapGeoJSONFeature[] }): void {
+	const map = mapInstance.map
+	const feature = event.features?.[0]
+	if (!map || !feature) {
+		return
+	}
+	map.getCanvas().style.cursor = 'pointer'
+
+	const container = document.createElement('div')
+	container.className = 'tooltip-device-wrapper'
+	container.innerHTML = `<b>${t('maps', 'Name')}:</b> <span>${escapeHtml(feature.properties.userAgent)}</span>`
+
+	hoverPopup?.remove()
+	hoverPopup = new Popup({ closeButton: false, closeOnClick: false, offset: 12 })
+		.setLngLat((feature.geometry as { coordinates: [number, number] }).coordinates)
+		.setDOMContent(container)
+		.addTo(map)
+}
+
+function onPointMouseLeave(): void {
+	const map = mapInstance.map
+	if (map) {
+		map.getCanvas().style.cursor = ''
+	}
+	hoverPopup?.remove()
+	hoverPopup = null
+}
+
+/**
+ * @param event the underlying MapLibre mouse event
+ */
+function onFeatureClick(event: MapMouseEvent & { features?: MapGeoJSONFeature[] }): void {
+	const feature = event.features?.[0]
+	if (!feature) {
+		return
+	}
+	const device = displayedDevices.value[feature.properties.deviceIndex]
+	if (device) {
+		emit('click', device)
+	}
+}
+
+function onLineMouseEnter(): void {
+	const map = mapInstance.map
+	if (map) {
+		map.getCanvas().style.cursor = 'pointer'
+	}
+}
+
+function onLineMouseLeave(): void {
+	const map = mapInstance.map
+	if (map) {
+		map.getCanvas().style.cursor = ''
+	}
+}
+
+let listenersBound = false
+
+watch(() => mapInstance.isLoaded, (loaded) => {
+	const map = mapInstance.map
+	if (!loaded || !map || listenersBound) {
+		return
+	}
+	listenersBound = true
+	map.on('click', LINE_CASING_LAYER_ID, onFeatureClick)
+	map.on('click', POINT_LAYER_ID, onFeatureClick)
+	map.on('mouseenter', LINE_CASING_LAYER_ID, onLineMouseEnter)
+	map.on('mouseleave', LINE_CASING_LAYER_ID, onLineMouseLeave)
+	map.on('mouseenter', POINT_LAYER_ID, onPointMouseEnter)
+	map.on('mouseleave', POINT_LAYER_ID, onPointMouseLeave)
+}, { immediate: true })
+
+onBeforeUnmount(() => {
+	const map = mapInstance.map
+	hoverPopup?.remove()
+	if (!map || !listenersBound) {
+		return
+	}
+	map.off('click', LINE_CASING_LAYER_ID, onFeatureClick)
+	map.off('click', POINT_LAYER_ID, onFeatureClick)
+	map.off('mouseenter', LINE_CASING_LAYER_ID, onLineMouseEnter)
+	map.off('mouseleave', LINE_CASING_LAYER_ID, onLineMouseLeave)
+	map.off('mouseenter', POINT_LAYER_ID, onPointMouseEnter)
+	map.off('mouseleave', POINT_LAYER_ID, onPointMouseLeave)
+})
 </script>
 
 <style lang="scss">
@@ -204,17 +301,5 @@ export default {
 	border-radius: 3px;
 	background-color: var(--color-main-background);
 	color: var(--color-main-text);
-}
-.popup-device-wrapper .action-btn {
-	display: block;
-	width: 100%;
-	padding: 8px;
-	border: none;
-	background: transparent;
-	text-align: left;
-	cursor: pointer;
-}
-.popup-device-wrapper .action-btn:hover {
-	background: var(--color-background-hover);
 }
 </style>

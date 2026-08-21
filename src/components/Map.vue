@@ -7,11 +7,10 @@
 <!--
 	Port in progress: the map engine moved from Leaflet to vue-maplibre-gl.
 	Ported so far: the base map (street/satellite/terrain), click-to-add,
-	and favorites/contacts/photos/tracks markers and clustering (no
-	drag-to-edit or context menu yet). Everything below is intentionally
-	not wired up yet and will come back one feature at a time in
-	follow-up steps:
-	- devices markers and clustering
+	and favorites/contacts/photos/tracks/devices markers and clustering
+	(no drag-to-edit or context menu yet). Everything below is
+	intentionally not wired up yet and will come back one feature at a
+	time in follow-up steps:
 	- routing (will use @maplibre/maplibre-gl-directions)
 	- right-click context menu, drag-to-edit
 	- search box / history control / slider
@@ -37,6 +36,12 @@
 				:start="sliderStartTimestamp"
 				:end="sliderEndTimestamp"
 				@click="emit('click-track', $event)" />
+
+			<DevicesLayer v-if="devicesEnabled"
+				:devices="devices"
+				:start="sliderStartTimestamp"
+				:end="sliderEndTimestamp"
+				@click="emit('click-device', $event)" />
 
 			<FavoritesLayer v-if="favoritesEnabled"
 				:favorites="favorites"
@@ -112,6 +117,8 @@ import type { Photo } from './map/PhotosLayer.vue'
 import PhotosLayer from './map/PhotosLayer.vue'
 import type { Track } from './map/TracksLayer.vue'
 import TracksLayer from './map/TracksLayer.vue'
+import type { Device } from './map/DevicesLayer.vue'
+import DevicesLayer from './map/DevicesLayer.vue'
 import type { BaseStyleId } from '../data/mapLayers.ts'
 import { BaseStyleIds, BaseStyles, TERRAIN_SOURCE, TERRAIN_SOURCE_ID } from '../data/mapLayers.ts'
 
@@ -129,6 +136,8 @@ const props = withDefaults(defineProps<{
 	photosEnabled?: boolean
 	tracks?: Track[]
 	tracksEnabled?: boolean
+	devices?: Device[]
+	devicesEnabled?: boolean
 	sliderEnabled?: boolean
 	sliderStartTimestamp?: number
 	sliderEndTimestamp?: number
@@ -145,6 +154,8 @@ const props = withDefaults(defineProps<{
 	photosEnabled: false,
 	tracks: () => [],
 	tracksEnabled: false,
+	devices: () => [],
+	devicesEnabled: false,
 	sliderEnabled: false,
 	sliderStartTimestamp: 0,
 	sliderEndTimestamp: 0,
@@ -157,6 +168,7 @@ const emit = defineEmits<{
 	'add-to-map-contact': [contact: Contact]
 	'open-sidebar': [path: string]
 	'click-track': [track: Track]
+	'click-device': [device: Device]
 }>()
 
 const baseStyleId = ref<BaseStyleId>(BaseStyleIds.Street)
@@ -231,7 +243,7 @@ function zoomOnTrack(track: Track) {
 /**
  * @param device the device to zoom to, fitting the bounds of all its recorded points
  */
-function zoomOnDevice(device: { points?: { lat: number, lng: number }[] }) {
+function zoomOnDevice(device: Device) {
 	if (!device.points?.length) {
 		return
 	}

@@ -118,7 +118,7 @@ const props = withDefaults(defineProps<{
 })
 
 const emit = defineEmits<{
-	'add-click': [event: MapMouseEvent]
+	'add-click': [event: { latlng: { lat: number, lng: number } }]
 	'click-favorite': [favorite: Favorite]
 }>()
 
@@ -151,7 +151,9 @@ watch(() => mapInstance.isLoaded, (loaded) => {
  */
 function onMapClick(event: MapMouseEvent) {
 	if (props.state === 'adding') {
-		emit('add-click', event)
+		// App.vue still expects the old Leaflet event shape (e.latlng.lat/lng),
+		// MapLibre's event carries the position as e.lngLat.lat/lng instead.
+		emit('add-click', { latlng: { lat: event.lngLat.lat, lng: event.lngLat.lng } })
 	}
 }
 

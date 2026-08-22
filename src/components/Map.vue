@@ -71,9 +71,11 @@
 				:date-filter-enabled="sliderEnabled"
 				:date-filter-start="sliderStartTimestamp"
 				:date-filter-end="sliderEndTimestamp"
+				:draggable="photosDraggable"
 				@open-sidebar="emit('open-sidebar', $event)"
 				@coords-reset="emit('coords-reset', $event)"
-				@add-to-map-photo="emit('add-to-map-photo', $event)" />
+				@add-to-map-photo="emit('add-to-map-photo', $event)"
+				@photo-moved="(photo, latLng) => emit('photo-moved', photo, latLng)" />
 
 			<SearchControl :visible="!showRouting"
 				:search-data="searchData"
@@ -184,6 +186,7 @@ const props = withDefaults(defineProps<{
 	contactsEnabled?: boolean
 	photos?: Photo[]
 	photosEnabled?: boolean
+	photosDraggable?: boolean
 	tracks?: Track[]
 	tracksEnabled?: boolean
 	devices?: Device[]
@@ -205,6 +208,7 @@ const props = withDefaults(defineProps<{
 	contactsEnabled: false,
 	photos: () => [],
 	photosEnabled: false,
+	photosDraggable: false,
 	tracks: () => [],
 	tracksEnabled: false,
 	devices: () => [],
@@ -240,6 +244,7 @@ const emit = defineEmits<{
 	'add-to-map-device': [device: Device]
 	'coords-reset': [paths: string[]]
 	'add-to-map-photo': [photo: Photo]
+	'photo-moved': [photo: Photo, latLng: { lat: number, lng: number }]
 }>()
 
 const baseStyleId = ref<BaseStyleId>(BaseStyleIds.Street)

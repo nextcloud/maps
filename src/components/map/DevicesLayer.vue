@@ -5,11 +5,12 @@
 -->
 
 <!--
-	Ported from Leaflet to vue-maplibre-gl. Not ported yet, on purpose:
-	drag-to-edit. The point-hover event this used to emit while hovering
-	a marker or line is gone too, but on purpose rather than deferred:
-	nothing has ever listened for it since the Leaflet-to-
-	vue-maplibre-gl port started.
+	Ported from Leaflet to vue-maplibre-gl. The point-hover event this
+	used to emit while hovering a marker or line is gone, but on purpose
+	rather than deferred: nothing has ever listened for it since the
+	Leaflet-to-vue-maplibre-gl port started. Devices never had
+	drag-to-edit (it wouldn't make sense to manually move a live/
+	recorded GPS position), unlike favorites/photos.
 
 	Dropped on purpose, not deferred: the >2500-points-per-device heatmap
 	fallback (LHeatMap.vue/leaflet.heat). That existed to keep Leaflet's

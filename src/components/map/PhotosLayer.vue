@@ -6,12 +6,12 @@
 
 <!--
 	Ported from Leaflet to vue-maplibre-gl. Not ported yet, on purpose:
-	drag-to-edit, and spiderfying a cluster (no MapLibre equivalent -
-	the right-click menu's "Display pictures"/"Zoom on bounds" cover the
-	same need). The chunked cluster loading progress events are gone
-	too, but on purpose rather than deferred: MapLibre's clustering is
-	synchronous and fast even for many thousands of points, so there's
-	no "in progress" state left to report.
+	spiderfying a cluster (no MapLibre equivalent - the right-click
+	menu's "Display pictures"/"Zoom on bounds" cover the same need).
+	The chunked cluster loading progress events are gone too, but on
+	purpose rather than deferred: MapLibre's clustering is synchronous
+	and fast even for many thousands of points, so there's no "in
+	progress" state left to report.
 -->
 <template>
 	<MglGeoJsonSource :source-id="SOURCE_ID"
@@ -43,7 +43,7 @@ import { translate as t } from '@nextcloud/l10n'
 import moment from '@nextcloud/moment'
 import { basename } from '@nextcloud/paths'
 import { generateUrl } from '@nextcloud/router'
-import { computed, onBeforeUnmount, reactive, watch } from 'vue'
+import { computed, onBeforeUnmount, reactive, ref, watch } from 'vue'
 import { MglGeoJsonSource, MglSymbolLayer, useMap } from 'vue-maplibre-gl'
 import { binSearch, getToken, isPublic } from '../../utils/common.js'
 import { escapeHtml } from '../../utils/domUtils.ts'
@@ -58,17 +58,21 @@ export interface Photo {
 	isUpdateable?: boolean
 }
 
-const props = defineProps<{
+const props = withDefaults(defineProps<{
 	photos: Photo[]
 	dateFilterEnabled: boolean
 	dateFilterStart: number
 	dateFilterEnd: number
-}>()
+	draggable?: boolean
+}>(), {
+	draggable: false,
+})
 
 const emit = defineEmits<{
 	'open-sidebar': [path: string]
 	'coords-reset': [paths: string[]]
 	'add-to-map-photo': [photo: Photo]
+	'photo-moved': [photo: Photo, latLng: { lat: number, lng: number }]
 }>()
 
 const SOURCE_ID = 'photos'
@@ -120,13 +124,17 @@ const filteredPhotos = computed<Photo[]>(() => {
 	]
 })
 
+/** Live position while a marker is being dragged, so it follows the cursor without a parent round-trip. */
+const draggingOverride = ref<{ index: number, lat: number, lng: number } | null>(null)
+
 const geojson = computed(() => ({
 	type: 'FeatureCollection' as const,
 	features: filteredPhotos.value.map((photo, index) => {
 		const iconId = iconIdForUrl(getPreviewUrl(photo))
+		const dragged = draggingOverride.value?.index === index ? draggingOverride.value : null
 		return {
 			type: 'Feature' as const,
-			geometry: { type: 'Point' as const, coordinates: [photo.lng, photo.lat] },
+			geometry: { type: 'Point' as const, coordinates: [dragged?.lng ?? photo.lng, dragged?.lat ?? photo.lat] },
 			properties: {
 				index,
 				iconId: loadedIcons.has(iconId) ? iconId : PLACEHOLDER_ICON_ID,
@@ -270,7 +278,12 @@ function onPointMouseEnter(event: MapMouseEvent & { features?: MapGeoJSONFeature
 	if (!photo) {
 		return
 	}
-	map.getCanvas().style.cursor = 'pointer'
+	map.getCanvas().style.cursor = props.draggable ? 'grab' : 'pointer'
+
+	if (props.draggable && photo.isUpdateable) {
+		// dragging is the priority interaction here - don't obscure the marker with a tooltip
+		return
+	}
 
 	const html = document.createElement('div')
 	html.className = 'tooltip-photo-wrapper'
@@ -347,6 +360,56 @@ function onClusterClick(event: MapMouseEvent & { features?: MapGeoJSONFeature[] 
 			emit('open-sidebar', photoList[0].path)
 		}
 	}).catch(() => {})
+}
+
+let draggedPhoto: Photo | null = null
+let draggedIndex = -1
+
+/**
+ * @param event the underlying MapLibre mouse event
+ */
+function onPointMouseDown(event: MapMouseEvent & { features?: MapGeoJSONFeature[] }): void {
+	const map = mapInstance.map
+	const feature = event.features?.[0]
+	const index = feature?.properties.index
+	const photo = index !== undefined ? filteredPhotos.value[index] : undefined
+	if (!map || !props.draggable || !photo?.isUpdateable) {
+		return
+	}
+	event.preventDefault()
+	hoverPopup?.remove()
+	draggedPhoto = photo
+	draggedIndex = index
+	map.dragPan.disable()
+	map.getCanvas().style.cursor = 'grabbing'
+	map.on('mousemove', onDragMove)
+	map.on('mouseup', onDragEnd)
+}
+
+/**
+ * @param event the underlying MapLibre mouse event
+ */
+function onDragMove(event: MapMouseEvent): void {
+	if (!draggedPhoto) {
+		return
+	}
+	draggingOverride.value = { index: draggedIndex, lat: event.lngLat.lat, lng: event.lngLat.lng }
+}
+
+function onDragEnd(): void {
+	const map = mapInstance.map
+	map?.off('mousemove', onDragMove)
+	map?.off('mouseup', onDragEnd)
+	map?.dragPan.enable()
+	if (map) {
+		map.getCanvas().style.cursor = 'grab'
+	}
+	if (draggedPhoto && draggingOverride.value) {
+		emit('photo-moved', draggedPhoto, { lat: draggingOverride.value.lat, lng: draggingOverride.value.lng })
+	}
+	draggedPhoto = null
+	draggedIndex = -1
+	draggingOverride.value = null
 }
 
 let actionPopup: Popup | null = null
@@ -490,6 +553,7 @@ watch(() => mapInstance.isLoaded, (loaded) => {
 	map.on('click', CLUSTER_LAYER_ID, onClusterClick)
 	map.on('contextmenu', POINT_LAYER_ID, onPointContextMenu)
 	map.on('contextmenu', CLUSTER_LAYER_ID, onClusterContextMenu)
+	map.on('mousedown', POINT_LAYER_ID, onPointMouseDown)
 	map.on('mouseenter', POINT_LAYER_ID, onPointMouseEnter)
 	map.on('mouseleave', POINT_LAYER_ID, onPointMouseLeave)
 	map.on('mouseenter', CLUSTER_LAYER_ID, onClusterMouseEnter)
@@ -507,10 +571,13 @@ onBeforeUnmount(() => {
 	map.off('click', CLUSTER_LAYER_ID, onClusterClick)
 	map.off('contextmenu', POINT_LAYER_ID, onPointContextMenu)
 	map.off('contextmenu', CLUSTER_LAYER_ID, onClusterContextMenu)
+	map.off('mousedown', POINT_LAYER_ID, onPointMouseDown)
 	map.off('mouseenter', POINT_LAYER_ID, onPointMouseEnter)
 	map.off('mouseleave', POINT_LAYER_ID, onPointMouseLeave)
 	map.off('mouseenter', CLUSTER_LAYER_ID, onClusterMouseEnter)
 	map.off('mouseleave', CLUSTER_LAYER_ID, onClusterMouseLeave)
+	map.off('mousemove', onDragMove)
+	map.off('mouseup', onDragEnd)
 })
 </script>
 

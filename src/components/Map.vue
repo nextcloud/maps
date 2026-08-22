@@ -9,10 +9,12 @@
 	Ported so far: the base map (street/satellite/terrain), click-to-add,
 	favorites/contacts/photos/tracks/devices markers and clustering,
 	routing, the search box (including the base style's own poi icons),
-	every layer's right-click menu, and drag-to-edit for favorites and
-	photos (devices never had it - see its own header comment).
-	Everything below is intentionally not wired up yet:
-	- history control / slider
+	every layer's right-click menu, drag-to-edit for favorites and
+	photos (devices never had it - see its own header comment), the
+	history (undo/redo) control, and the date-range slider (Slider.vue
+	itself needed no changes at all - it was never Leaflet-dependent,
+	just an absolutely-positioned div using noUiSlider). Everything
+	below is intentionally not wired up yet:
 	- track elevation profile chart
 -->
 <template>
@@ -97,6 +99,11 @@
 				@add-favorite="emit('add-address-favorite', $event)"
 				@close="clickSearchLatLng = null" />
 
+			<HistoryControl :last-actions="lastActions"
+				:last-canceled-actions="lastCanceledActions"
+				@cancel="emit('cancel')"
+				@redo="emit('redo')" />
+
 			<MglNavigationControl position="bottom-right" />
 			<MglScaleControl position="bottom-left" />
 			<MglGeolocationControl position="bottom-right" />
@@ -130,6 +137,13 @@
 				</div>
 			</MglCustomControl>
 		</MglMap>
+
+		<Slider v-show="sliderEnabled"
+			:start="sliderStartTimestamp"
+			:end="sliderEndTimestamp"
+			:range-min="minDataTimestamp"
+			:range-max="maxDataTimestamp"
+			@range-change="emit('slider-range-changed', $event)" />
 	</div>
 </template>
 
@@ -157,6 +171,9 @@ import SearchControl from './map/SearchControl.vue'
 import PoiMarkersLayer from './map/PoiMarkersLayer.vue'
 import StylePoiLayer from './map/StylePoiLayer.vue'
 import ClickSearchMarker from './map/ClickSearchMarker.vue'
+import type { HistoryAction } from './map/HistoryControl.vue'
+import HistoryControl from './map/HistoryControl.vue'
+import Slider from './map/Slider.vue'
 import { showError } from '@nextcloud/dialogs'
 import { searchPois as searchPoisNetwork } from '../network.js'
 import type { Favorite, FavoriteCategory } from './map/FavoritesLayer.vue'
@@ -193,6 +210,10 @@ const props = withDefaults(defineProps<{
 	sliderEnabled?: boolean
 	sliderStartTimestamp?: number
 	sliderEndTimestamp?: number
+	minDataTimestamp?: number
+	maxDataTimestamp?: number
+	lastActions?: HistoryAction[]
+	lastCanceledActions?: HistoryAction[]
 	routingSearchData?: unknown[]
 	searchData?: unknown[]
 }>(), {
@@ -215,6 +236,10 @@ const props = withDefaults(defineProps<{
 	sliderEnabled: false,
 	sliderStartTimestamp: 0,
 	sliderEndTimestamp: 0,
+	minDataTimestamp: 0,
+	maxDataTimestamp: 0,
+	lastActions: () => [],
+	lastCanceledActions: () => [],
 	routingSearchData: () => [],
 	searchData: () => [],
 })
@@ -244,6 +269,9 @@ const emit = defineEmits<{
 	'coords-reset': [paths: string[]]
 	'add-to-map-photo': [photo: Photo]
 	'photo-moved': [photo: Photo, latLng: { lat: number, lng: number }]
+	cancel: []
+	redo: []
+	'slider-range-changed': [range: { start: number, end: number }]
 }>()
 
 const baseStyleId = ref<BaseStyleId>(BaseStyleIds.Street)

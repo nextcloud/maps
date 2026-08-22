@@ -143,6 +143,7 @@ import RoutingControl from './map/routing/RoutingControl.vue'
 import SearchControl from './map/SearchControl.vue'
 import PoiMarkersLayer from './map/PoiMarkersLayer.vue'
 import ClickSearchMarker from './map/ClickSearchMarker.vue'
+import { showError } from '@nextcloud/dialogs'
 import { searchPois as searchPoisNetwork } from '../network.js'
 import type { Favorite, FavoriteCategory } from './map/FavoritesLayer.vue'
 import FavoritesLayer from './map/FavoritesLayer.vue'
@@ -364,6 +365,12 @@ function onSearchValidate(element: SearchResult) {
 			west: bounds.getWest(), south: bounds.getSouth(), east: bounds.getEast(), north: bounds.getNorth(),
 		}).then((response: { data: Array<{ lat: string, lon: string }> }) => {
 			searchPois.value = response.data
+			if (!response.data.length) {
+				showError(t('maps', 'No results found in the current map view'))
+			}
+		}).catch((error: unknown) => {
+			console.error(error)
+			showError(t('maps', 'Failed to search for {value}', { value: element.value }))
 		}).finally(() => {
 			searching.value = false
 		})

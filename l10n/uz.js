@@ -36,8 +36,8 @@ OC.L10N.register(
     "Description" : "Tavsif",
     "right" : "right",
     "left" : "left",
-    "Default" : "Standart",
     "Failed to save settings" : "Sozlamalarni saqlab bo'lmadi",
+    "Default" : "Standart",
     "Select folder" : "Jildni tanlang",
     "Restaurant" : "Restoran",
     "Bar" : "Bar"

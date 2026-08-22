@@ -68,11 +68,12 @@ OC.L10N.register(
     "Start" : "Start",
     "Destination" : "Destination",
     "min" : "min.",
+    "Settings were successfully saved" : "Indstillingerne blev gemt",
+    "Failed to save settings" : "Kunne ikke gemme indstillinger",
+    "Maps routing settings" : "Maps routing indstillinger",
     "Phone" : "Telefon",
     "Not grouped" : "Ikke grupperet",
     "Default" : "Standard",
-    "Settings were successfully saved" : "Indstillingerne blev gemt",
-    "Failed to save settings" : "Kunne ikke gemme indstillinger",
     "Import as devices in Maps" : "Importér som enheder i Maps",
     "Import as favorites in Maps" : "Importér som favorit i Maps",
     "View in Maps" : "Vis i Maps",
@@ -85,7 +86,6 @@ OC.L10N.register(
     "Cinema" : "Biograf",
     "Hospital" : "Hospital",
     "Dentist" : "Tandlæge",
-    "Maps routing settings" : "Maps routing indstillinger",
     "Maps settings" : "Maps indstillinger"
 },
 "nplurals=2; plural=(n != 1);");

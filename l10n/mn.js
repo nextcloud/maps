@@ -49,10 +49,10 @@ OC.L10N.register(
     "Start" : "—ç—Ö–ª—ç—Ö",
     "Destination" : "Destination",
     "min" : "–º–∏–Ω",
+    "Failed to save settings" : "Тохиргоог хадгалж чадсангүй",
     "Phone" : "–£—Ç–∞—Å",
     "Not grouped" : "–ë–∞–≥—Ç –æ—Ä–æ–æ–≥“Ø–π",
     "Default" : "Өгөгдмөл",
-    "Failed to save settings" : "Тохиргоог хадгалж чадсангүй",
     "Metadata" : "Мета өгөгдөл",
     "Select {photo}" : "{photo} сонгох",
     "School" : "Сургууль"

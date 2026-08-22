@@ -46,10 +46,10 @@ OC.L10N.register(
     "Start" : "Komenco",
     "Destination" : "Destination",
     "min" : "min",
+    "Failed to save settings" : "Konservo de agordoj malsukcesis",
     "Phone" : "Telefono",
     "Not grouped" : "Ne grupigita",
     "Default" : "Defaŭlta",
-    "Failed to save settings" : "Konservo de agordoj malsukcesis",
     "Cinema" : "Kinejo"
 },
 "nplurals=2; plural=(n != 1);");

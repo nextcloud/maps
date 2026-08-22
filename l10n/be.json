@@ -58,13 +58,14 @@
     "Destination" : "Прызначэнне",
     "Nextcloud additional settings" : "Дадатковыя налады Nextcloud",
     "Via {i}" : "Праз {i}",
+    "Settings were successfully saved" : "Налады паспяхова захаваны",
+    "Failed to save settings" : "Не ўдалося захаваць налады",
+    "OSRM settings" : "Налады OSRM",
     "My location" : "Маё месцазнаходжанне",
     "Phone" : "Тэлефон",
     "Computer" : "Камп'ютар",
     "Unknown device type" : "Невядомы тып прылады",
     "Default" : "Прадвызначаныя",
-    "Settings were successfully saved" : "Налады паспяхова захаваны",
-    "Failed to save settings" : "Не ўдалося захаваць налады",
     "You are here: " : "Вы тут: ",
     "°F" : "°F",
     "Default Map" : "Прадвызначаная карта",
@@ -94,8 +95,6 @@
     "Doctors" : "Паліклініка",
     "Dentist" : "Стаматолаг",
     "Hotel" : "Гатэль",
-    "OSRM Website" : "Вэб-сайт OSRM",
-    "OSRM settings" : "Налады OSRM",
     "Maps settings" : "Налады карт"
 },"pluralForm" :"nplurals=4; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<12 || n%100>14) ? 1 : n%10==0 || (n%10>=5 && n%10<=9) || (n%100>=11 && n%100<=14)? 2 : 3);"
 }

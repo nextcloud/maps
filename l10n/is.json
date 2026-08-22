@@ -137,6 +137,13 @@
     "By Foot (GraphHopper)" : "Fótgangandi (GraphHopper)",
     "Routing error:" : "Villa í leiðavali:",
     "Add a routing service" : "Bæta við leiðsagnarþjónustu",
+    "Settings were successfully saved" : "Tókst að vista stillingar",
+    "Failed to save settings" : "Mistókst að vista stillingar",
+    "OSRM settings" : "Stillingar OSRM",
+    "GraphHopper settings" : "Stillingar GraphHopper",
+    "Mapbox settings" : "Stillingar Mapbox",
+    "Leave empty to disable." : "Skildu eftir autt til að gera óvirkt.",
+    "Mapbox API key" : "Mapbox API-forrritsviðmótslykill",
     "My location" : "Staðsetningin mín",
     "Impossible to get current location" : "Tekst ekki að ná núverandi staðsetningu",
     "Phone" : "Sími",
@@ -154,8 +161,6 @@
     "Failed to import devices" : "Mistókst að flytja inn tæki",
     "Default" : "Sjálfgefið",
     "Choose directory of pictures to place" : "Veldu möppu með myndum sem á að staðsetja",
-    "Settings were successfully saved" : "Tókst að vista stillingar",
-    "Failed to save settings" : "Mistókst að vista stillingar",
     "Import as devices in Maps" : "Flytja inn sem tæki í kortaforriti",
     "Import as favorites in Maps" : "Flytja inn sem eftirlæti í kortaforriti",
     "Failed to import favorites" : "Mistókst að flytja inn eftirlæti",
@@ -184,14 +189,6 @@
     "Hospital" : "Sjúkrahús",
     "Doctors" : "Læknar",
     "Dentist" : "Tannlæknir",
-    "Hotel" : "Hótel",
-    "OSRM Website" : "Vefsvæði OSRM",
-    "OSRM settings" : "Stillingar OSRM",
-    "Graphhopper Website" : "Vefsvæði GraphHopper",
-    "GraphHopper settings" : "Stillingar GraphHopper",
-    "Mapbox Website" : "Vefsvæði Mapbox",
-    "Mapbox settings" : "Stillingar Mapbox",
-    "Leave empty to disable." : "Skildu eftir autt til að gera óvirkt.",
-    "Mapbox API key" : "Mapbox API-forrritsviðmótslykill"
+    "Hotel" : "Hótel"
 },"pluralForm" :"nplurals=2; plural=(n % 10 != 1 || n % 100 == 11);"
 }

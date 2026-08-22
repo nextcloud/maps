@@ -60,9 +60,9 @@ OC.L10N.register(
     "Start" : "เริ่ม",
     "Destination" : "ปลายทาง",
     "min" : "นาที",
+    "Failed to save settings" : "ไม่สามารถบันทึกการตั้งค่าได้",
     "Phone" : "โทรศัพท์",
     "Not grouped" : "ไม่ถูกจัดกลุ่ม",
-    "Default" : "ค่าเริ่มต้น",
-    "Failed to save settings" : "ไม่สามารถบันทึกการตั้งค่าได้"
+    "Default" : "ค่าเริ่มต้น"
 },
 "nplurals=1; plural=0;");

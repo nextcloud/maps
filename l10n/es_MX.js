@@ -51,10 +51,10 @@ OC.L10N.register(
     "Start" : "Iniciar",
     "Destination" : "Destino",
     "min" : "min",
+    "Failed to save settings" : "No se pudo guardar la configuración",
     "Phone" : "Teléfono fijo",
     "Not grouped" : "No agrupado",
     "Default" : "Predeterminado",
-    "Failed to save settings" : "No se pudo guardar la configuración",
     "Photo files" : "Archivos de fotos",
     "Select folder" : "Seleccionar carpeta",
     "Bar" : "Barra"

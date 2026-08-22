@@ -5,11 +5,15 @@
 -->
 
 <!--
-	Ported from Leaflet (PoiMarker.vue) to vue-maplibre-gl. Renders
-	Nominatim search results as markers. Unlike the old PoiMarker.vue,
-	all results share one generic pin icon rather than Nominatim's
-	per-category icon images - avoids an extra per-poi image fetch and
-	CSP allowance for a purely cosmetic difference.
+	Ported from Leaflet (PoiMarker.vue) to vue-maplibre-gl, following the
+	same pattern as MapLibre's own "Display a popup on click" example:
+	each feature carries an icon name, and the symbol layer's icon-image
+	reads it per-feature. Nominatim's per-result icon images aren't
+	fetched though (unlike the old PoiMarker.vue) - the base style's own
+	sprite (OpenFreeMap Liberty) already ships icons for most amenity
+	categories under the same OSM tag names Nominatim returns as
+	`type`, so those are reused directly; a generic pin is drawn for
+	whatever category the style doesn't have an icon for.
 
 	Not ported: "Add contact address" - it depended on a "place an
 	existing contact by address" mode that isn't implemented yet in the
@@ -19,7 +23,8 @@
 	<MglGeoJsonSource :source-id="SOURCE_ID" :data="geojson">
 		<MglSymbolLayer :layer-id="POINT_LAYER_ID"
 			:source="SOURCE_ID"
-			:layout="{ 'icon-image': ICON_ID, 'icon-allow-overlap': true, 'icon-size': 1 }" />
+			:filter="['==', ['geometry-type'], 'Point']"
+			:layout="{ 'icon-image': ['get', 'icon'], 'icon-anchor': ['get', 'iconAnchor'], 'icon-allow-overlap': true, 'icon-size': 1 }" />
 	</MglGeoJsonSource>
 </template>
 
@@ -39,6 +44,8 @@ export interface Poi {
 	display_name: string
 	address: Record<string, string>
 	namedetails?: Record<string, string>
+	/** The OSM tag value, e.g. "restaurant" - matches a sprite icon name when the base style has one. */
+	type?: string
 }
 
 const props = defineProps<{
@@ -52,7 +59,8 @@ const emit = defineEmits<{
 const SOURCE_ID = 'search-pois'
 const POINT_LAYER_ID = 'search-pois-points'
 const ICON_ID = 'poi-marker'
-const MARKER_SIZE = 32
+const MARKER_WIDTH = 26
+const MARKER_HEIGHT = 34
 
 const mapInstance = useMap()
 
@@ -95,12 +103,22 @@ function description(poi: Poi): string {
 	return parts.join(', ')
 }
 
+/**
+ * @param poi the Nominatim result to pick an icon for
+ */
+function iconFor(poi: Poi): { icon: string, iconAnchor: 'center' | 'bottom' } {
+	if (poi.type && mapInstance.map?.hasImage(poi.type)) {
+		return { icon: poi.type, iconAnchor: 'center' }
+	}
+	return { icon: ICON_ID, iconAnchor: 'bottom' }
+}
+
 const geojson = computed(() => ({
 	type: 'FeatureCollection' as const,
 	features: props.pois.map((poi, poiIndex) => ({
 		type: 'Feature' as const,
 		geometry: { type: 'Point' as const, coordinates: [parseFloat(poi.lon), parseFloat(poi.lat)] },
-		properties: { poiIndex },
+		properties: { poiIndex, ...iconFor(poi) },
 	})),
 }))
 
@@ -111,17 +129,25 @@ function ensureIcon(): void {
 	if (!map || loadedIcons.has(ICON_ID) || map.hasImage(ICON_ID)) {
 		return
 	}
-	const size = MARKER_SIZE
+	const width = MARKER_WIDTH
+	const height = MARKER_HEIGHT
 	const canvas = document.createElement('canvas')
-	canvas.width = size
-	canvas.height = size
+	canvas.width = width
+	canvas.height = height
 	const ctx = canvas.getContext('2d')
 	if (!ctx) {
 		return
 	}
 
+	// Teardrop pin: a circular head narrowing to a point at the bottom,
+	// which sits at the marker's coordinate (icon-anchor: bottom).
+	const cx = width / 2
+	const cy = width / 2
+	const r = width / 2 - 2
 	ctx.beginPath()
-	ctx.arc(size / 2, size / 2, size / 2 - 2, 0, Math.PI * 2)
+	ctx.arc(cx, cy, r, Math.PI * 0.75, Math.PI * 0.25)
+	ctx.lineTo(cx, height - 2)
+	ctx.closePath()
 	ctx.fillStyle = '#e9762b'
 	ctx.fill()
 	ctx.lineWidth = 2
@@ -129,11 +155,11 @@ function ensureIcon(): void {
 	ctx.stroke()
 
 	ctx.beginPath()
-	ctx.arc(size / 2, size / 2, size * 0.12, 0, Math.PI * 2)
+	ctx.arc(cx, cy, r * 0.4, 0, Math.PI * 2)
 	ctx.fillStyle = '#ffffff'
 	ctx.fill()
 
-	map.addImage(ICON_ID, ctx.getImageData(0, 0, size, size))
+	map.addImage(ICON_ID, ctx.getImageData(0, 0, width, height))
 	loadedIcons.add(ICON_ID)
 }
 

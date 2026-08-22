@@ -79,6 +79,8 @@
 
 			<PoiMarkersLayer v-if="searchPois.length" :pois="searchPois" @add-favorite="emit('add-address-favorite', $event)" />
 
+			<StylePoiLayer @add-favorite="emit('add-address-favorite', $event)" />
+
 			<ClickSearchMarker v-if="clickSearchLatLng"
 				:lat-lng="clickSearchLatLng"
 				@add-favorite="emit('add-address-favorite', $event)"
@@ -142,6 +144,7 @@ import Directions from 'vue-material-design-icons/Directions.vue'
 import RoutingControl from './map/routing/RoutingControl.vue'
 import SearchControl from './map/SearchControl.vue'
 import PoiMarkersLayer from './map/PoiMarkersLayer.vue'
+import StylePoiLayer from './map/StylePoiLayer.vue'
 import ClickSearchMarker from './map/ClickSearchMarker.vue'
 import { showError } from '@nextcloud/dialogs'
 import { searchPois as searchPoisNetwork } from '../network.js'

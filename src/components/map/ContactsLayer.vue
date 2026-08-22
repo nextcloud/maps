@@ -21,8 +21,7 @@
 
 <!--
 	Ported from Leaflet to vue-maplibre-gl. Not ported yet, on purpose:
-	the right-click popup (identical actions to the click popup, so not a
-	loss of functionality) and spiderfying overlapping markers at max zoom.
+	spiderfying overlapping markers at max zoom.
 -->
 <template>
 	<MglGeoJsonSource :source-id="SOURCE_ID"
@@ -407,6 +406,14 @@ function onPointClick(event: MapMouseEvent & { features?: MapGeoJSONFeature[] })
 /**
  * @param event the underlying MapLibre mouse event
  */
+function onPointContextMenu(event: MapMouseEvent & { features?: MapGeoJSONFeature[] }): void {
+	event.preventDefault()
+	onPointClick(event)
+}
+
+/**
+ * @param event the underlying MapLibre mouse event
+ */
 function onClusterClick(event: MapMouseEvent & { features?: MapGeoJSONFeature[] }): void {
 	const feature = event.features?.[0]
 	const map = mapInstance.map
@@ -448,6 +455,7 @@ watch(() => mapInstance.isLoaded, (loaded) => {
 	listenersBound = true
 	map.on('click', POINT_LAYER_ID, onPointClick)
 	map.on('click', CLUSTER_LAYER_ID, onClusterClick)
+	map.on('contextmenu', POINT_LAYER_ID, onPointContextMenu)
 	map.on('mouseenter', POINT_LAYER_ID, onPointMouseEnter)
 	map.on('mouseleave', POINT_LAYER_ID, onPointMouseLeave)
 	map.on('mouseenter', CLUSTER_LAYER_ID, onClusterMouseEnter)
@@ -463,6 +471,7 @@ onBeforeUnmount(() => {
 	}
 	map.off('click', POINT_LAYER_ID, onPointClick)
 	map.off('click', CLUSTER_LAYER_ID, onClusterClick)
+	map.off('contextmenu', POINT_LAYER_ID, onPointContextMenu)
 	map.off('mouseenter', POINT_LAYER_ID, onPointMouseEnter)
 	map.off('mouseleave', POINT_LAYER_ID, onPointMouseLeave)
 	map.off('mouseenter', CLUSTER_LAYER_ID, onClusterMouseEnter)
@@ -479,15 +488,18 @@ onBeforeUnmount(() => {
 	color: var(--color-main-text);
 	border-radius: 3px;
 }
+
 .tooltip-contact-avatar {
 	width: 40px;
 	height: 40px;
 	border-radius: 50%;
 	object-fit: cover;
 }
+
 .popup-contact-wrapper {
 	display: flex;
 }
+
 .left-contact-popup {
 	display: flex;
 	flex-direction: column;

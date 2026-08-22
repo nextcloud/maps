@@ -5,11 +5,10 @@
 -->
 
 <!--
-	Ported from Leaflet to vue-maplibre-gl. Not ported yet, on purpose:
-	the right-click popup (change color, display elevation, copy to map,
-	download). The point-hover event this used to emit while hovering a
-	line is gone too, but on purpose rather than deferred: nothing has
-	ever listened for it since the Leaflet-to-vue-maplibre-gl port started.
+	Ported from Leaflet to vue-maplibre-gl. The point-hover event this
+	used to emit while hovering a line is gone, but on purpose rather
+	than deferred: nothing has ever listened for it since the
+	Leaflet-to-vue-maplibre-gl port started.
 -->
 <template>
 	<MglGeoJsonSource :source-id="SOURCE_ID" :data="geojson">
@@ -38,9 +37,10 @@ import type { MapGeoJSONFeature, MapMouseEvent } from 'maplibre-gl'
 import { Popup } from 'maplibre-gl'
 import moment from '@nextcloud/moment'
 import { translate as t } from '@nextcloud/l10n'
+import { generateUrl } from '@nextcloud/router'
 import { computed, onBeforeUnmount, watch } from 'vue'
 import { MglCircleLayer, MglGeoJsonSource, MglLineLayer, useMap } from 'vue-maplibre-gl'
-import { binSearch } from '../../utils/common.js'
+import { binSearch, getToken, isPublic } from '../../utils/common.js'
 import { escapeHtml } from '../../utils/domUtils.ts'
 
 export interface TrackPoint {
@@ -91,6 +91,9 @@ const props = withDefaults(defineProps<{
 
 const emit = defineEmits<{
 	click: [track: Track]
+	'change-color': [track: Track]
+	'display-elevation': [track: Track]
+	'add-to-map-track': [track: Track]
 }>()
 
 const SOURCE_ID = 'tracks'
@@ -294,6 +297,61 @@ function onFeatureClick(event: MapMouseEvent & { features?: MapGeoJSONFeature[] 
 	}
 }
 
+let actionPopup: Popup | null = null
+
+/**
+ * @param track the track to build a download URL for
+ */
+function downloadUrl(track: Track): string {
+	const filesClient = window.OCA?.Files?.App?.fileList?.filesClient
+	return filesClient?.getBaseUrl
+		? filesClient.getBaseUrl() + track.file_path
+		: generateUrl('s/' + getToken() + '/download' + '?path=/&files=' + track.file_name)
+}
+
+/**
+ * @param event the underlying MapLibre mouse event
+ */
+function onFeatureContextMenu(event: MapMouseEvent & { features?: MapGeoJSONFeature[] }): void {
+	const map = mapInstance.map
+	const feature = event.features?.[0]
+	const track = feature && displayedTracks.value[feature.properties.trackIndex]
+	if (!map || !feature || !track) {
+		return
+	}
+	event.preventDefault()
+
+	const container = document.createElement('div')
+	container.className = 'popup-track-wrapper'
+	container.innerHTML = `
+		${track.isUpdateable ? `<button class="action-btn" data-action="color">${escapeHtml(t('maps', 'Change color'))}</button>` : ''}
+		<button class="action-btn" data-action="elevation">${escapeHtml(t('maps', 'Display elevation'))}</button>
+		${!isPublic() && track.isShareable ? `<button class="action-btn" data-action="copy">${escapeHtml(t('maps', 'Copy to map'))}</button>` : ''}
+		${(!isPublic() || !track.hideDownload) ? `<a class="action-btn" href="${downloadUrl(track)}" target="_self">${escapeHtml(t('maps', 'Download track'))}</a>` : ''}
+	`
+	container.addEventListener('click', (domEvent) => {
+		const action = (domEvent.target as HTMLElement).getAttribute('data-action')
+		if (action === 'color') {
+			emit('change-color', track)
+		} else if (action === 'elevation') {
+			emit('display-elevation', track)
+		} else if (action === 'copy') {
+			emit('add-to-map-track', track)
+		} else {
+			// let the anchor handle the native download
+			return
+		}
+		actionPopup?.remove()
+	})
+
+	hoverPopup?.remove()
+	actionPopup?.remove()
+	actionPopup = new Popup({ closeButton: false, className: 'popovermenu open popupMarker trackPopup' })
+		.setLngLat(event.lngLat)
+		.setDOMContent(container)
+		.addTo(map)
+}
+
 function onLineMouseEnter(): void {
 	const map = mapInstance.map
 	if (map) {
@@ -318,6 +376,8 @@ watch(() => mapInstance.isLoaded, (loaded) => {
 	listenersBound = true
 	map.on('click', LINE_CASING_LAYER_ID, onFeatureClick)
 	map.on('click', POINTS_LAYER_ID, onFeatureClick)
+	map.on('contextmenu', LINE_CASING_LAYER_ID, onFeatureContextMenu)
+	map.on('contextmenu', POINTS_LAYER_ID, onFeatureContextMenu)
 	map.on('mouseenter', LINE_CASING_LAYER_ID, onLineMouseEnter)
 	map.on('mouseleave', LINE_CASING_LAYER_ID, onLineMouseLeave)
 	map.on('mouseenter', POINTS_LAYER_ID, onPointMouseEnter)
@@ -327,11 +387,14 @@ watch(() => mapInstance.isLoaded, (loaded) => {
 onBeforeUnmount(() => {
 	const map = mapInstance.map
 	hoverPopup?.remove()
+	actionPopup?.remove()
 	if (!map || !listenersBound) {
 		return
 	}
 	map.off('click', LINE_CASING_LAYER_ID, onFeatureClick)
 	map.off('click', POINTS_LAYER_ID, onFeatureClick)
+	map.off('contextmenu', LINE_CASING_LAYER_ID, onFeatureContextMenu)
+	map.off('contextmenu', POINTS_LAYER_ID, onFeatureContextMenu)
 	map.off('mouseenter', LINE_CASING_LAYER_ID, onLineMouseEnter)
 	map.off('mouseleave', LINE_CASING_LAYER_ID, onLineMouseLeave)
 	map.off('mouseenter', POINTS_LAYER_ID, onPointMouseEnter)
@@ -345,5 +408,21 @@ onBeforeUnmount(() => {
 	border-radius: 3px;
 	background-color: var(--color-main-background);
 	color: var(--color-main-text);
+}
+
+.popup-track-wrapper .action-btn {
+	display: block;
+	width: 100%;
+	padding: 8px;
+	border: none;
+	background: transparent;
+	text-align: left;
+	text-decoration: none;
+	color: var(--color-main-text);
+	cursor: pointer;
+
+	&:hover {
+		background: var(--color-background-hover);
+	}
 }
 </style>

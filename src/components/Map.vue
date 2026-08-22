@@ -35,13 +35,20 @@
 				:tracks="tracks"
 				:start="sliderStartTimestamp"
 				:end="sliderEndTimestamp"
-				@click="emit('click-track', $event)" />
+				@click="emit('click-track', $event)"
+				@change-color="emit('change-track-color', $event)"
+				@display-elevation="displayElevation($event)"
+				@add-to-map-track="emit('add-to-map-track', $event)" />
 
 			<DevicesLayer v-if="devicesEnabled"
 				:devices="devices"
 				:start="sliderStartTimestamp"
 				:end="sliderEndTimestamp"
-				@click="emit('click-device', $event)" />
+				@click="emit('click-device', $event)"
+				@toggle-history="emit('toggle-device-history', $event)"
+				@change-color="emit('change-device-color', $event)"
+				@export="emit('export-device', $event)"
+				@add-to-map-device="emit('add-to-map-device', $event)" />
 
 			<FavoritesLayer v-if="favoritesEnabled"
 				:favorites="favorites"
@@ -64,7 +71,9 @@
 				:date-filter-enabled="sliderEnabled"
 				:date-filter-start="sliderStartTimestamp"
 				:date-filter-end="sliderEndTimestamp"
-				@open-sidebar="emit('open-sidebar', $event)" />
+				@open-sidebar="emit('open-sidebar', $event)"
+				@coords-reset="emit('coords-reset', $event)"
+				@add-to-map-photo="emit('add-to-map-photo', $event)" />
 
 			<SearchControl :visible="!showRouting"
 				:search-data="searchData"
@@ -223,6 +232,14 @@ const emit = defineEmits<{
 	'add-address-favorite': [favorite: { latLng: { lat: number, lng: number }, name: string, formattedAddress: string }]
 	'search-enable-track': [track: Track]
 	'search-enable-device': [device: Device]
+	'change-track-color': [track: Track]
+	'add-to-map-track': [track: Track]
+	'toggle-device-history': [device: Device]
+	'change-device-color': [device: Device]
+	'export-device': [device: Device]
+	'add-to-map-device': [device: Device]
+	'coords-reset': [paths: string[]]
+	'add-to-map-photo': [photo: Photo]
 }>()
 
 const baseStyleId = ref<BaseStyleId>(BaseStyleIds.Street)
@@ -335,8 +352,10 @@ function zoomOnPhotoSuggestion(photo: { lat?: number, lng?: number }) {
 
 /**
  * The track elevation profile chart isn't ported to vue-maplibre-gl yet.
+ *
+ * @param _track the track whose elevation profile would be displayed
  */
-function displayElevation() {
+function displayElevation(_track?: Track) {
 }
 
 /**

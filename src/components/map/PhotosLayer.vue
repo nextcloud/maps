@@ -6,11 +6,12 @@
 
 <!--
 	Ported from Leaflet to vue-maplibre-gl. Not ported yet, on purpose:
-	the right-click popup (open sidebar, remove geo data, copy to map,
-	spiderfy/zoom on a cluster), and drag-to-edit. The chunked cluster
-	loading progress events are gone too, but on purpose rather than
-	deferred: MapLibre's clustering is synchronous and fast even for many
-	thousands of points, so there's no "in progress" state left to report.
+	drag-to-edit, and spiderfying a cluster (no MapLibre equivalent -
+	the right-click menu's "Display pictures"/"Zoom on bounds" cover the
+	same need). The chunked cluster loading progress events are gone
+	too, but on purpose rather than deferred: MapLibre's clustering is
+	synchronous and fast even for many thousands of points, so there's
+	no "in progress" state left to report.
 -->
 <template>
 	<MglGeoJsonSource :source-id="SOURCE_ID"
@@ -37,12 +38,14 @@
 <script setup lang="ts">
 import type { MapGeoJSONFeature, MapMouseEvent } from 'maplibre-gl'
 import { Popup } from 'maplibre-gl'
+import { getDialogBuilder } from '@nextcloud/dialogs'
+import { translate as t } from '@nextcloud/l10n'
 import moment from '@nextcloud/moment'
 import { basename } from '@nextcloud/paths'
 import { generateUrl } from '@nextcloud/router'
 import { computed, onBeforeUnmount, reactive, watch } from 'vue'
 import { MglGeoJsonSource, MglSymbolLayer, useMap } from 'vue-maplibre-gl'
-import { binSearch, getToken } from '../../utils/common.js'
+import { binSearch, getToken, isPublic } from '../../utils/common.js'
 import { escapeHtml } from '../../utils/domUtils.ts'
 
 export interface Photo {
@@ -64,6 +67,8 @@ const props = defineProps<{
 
 const emit = defineEmits<{
 	'open-sidebar': [path: string]
+	'coords-reset': [paths: string[]]
+	'add-to-map-photo': [photo: Photo]
 }>()
 
 const SOURCE_ID = 'photos'
@@ -344,6 +349,121 @@ function onClusterClick(event: MapMouseEvent & { features?: MapGeoJSONFeature[] 
 	}).catch(() => {})
 }
 
+let actionPopup: Popup | null = null
+
+/**
+ * @param event the underlying MapLibre mouse event
+ */
+function onPointContextMenu(event: MapMouseEvent & { features?: MapGeoJSONFeature[] }): void {
+	const map = mapInstance.map
+	const feature = event.features?.[0]
+	const photo = feature && filteredPhotos.value[feature.properties.index]
+	if (!map || !feature || !photo) {
+		return
+	}
+	event.preventDefault()
+
+	const container = document.createElement('div')
+	container.className = 'popup-photo-wrapper'
+	container.innerHTML = `
+		<button class="action-btn" data-action="sidebar">${escapeHtml(t('maps', 'Open in Sidebar'))}</button>
+		<button class="action-btn" data-action="display">${escapeHtml(t('maps', 'Display picture'))}</button>
+		${photo.isUpdateable ? `<button class="action-btn" data-action="reset">${escapeHtml(t('maps', 'Remove geo data'))}</button>` : ''}
+		${!isPublic() ? `<button class="action-btn" data-action="copy">${escapeHtml(t('maps', 'Copy to map'))}</button>` : ''}
+	`
+	container.addEventListener('click', (domEvent) => {
+		const action = (domEvent.target as HTMLElement).getAttribute('data-action')
+		if (action === 'sidebar') {
+			emit('open-sidebar', photo.path)
+		} else if (action === 'display') {
+			viewPhoto(photo)
+		} else if (action === 'reset') {
+			emit('coords-reset', [photo.path])
+		} else if (action === 'copy') {
+			emit('add-to-map-photo', photo)
+		}
+		actionPopup?.remove()
+	})
+
+	hoverPopup?.remove()
+	actionPopup?.remove()
+	actionPopup = new Popup({ closeButton: false, className: 'popovermenu open popupMarker photoPopup' })
+		.setLngLat((feature.geometry as { coordinates: [number, number] }).coordinates)
+		.setDOMContent(container)
+		.addTo(map)
+}
+
+/**
+ * @param event the underlying MapLibre mouse event
+ */
+function onClusterContextMenu(event: MapMouseEvent & { features?: MapGeoJSONFeature[] }): void {
+	const map = mapInstance.map
+	const feature = event.features?.[0]
+	const source = map?.getSource(SOURCE_ID)
+	if (!map || !feature || !source) {
+		return
+	}
+	event.preventDefault()
+	const clusterId = feature.properties.cluster_id
+	const pointCount = feature.properties.point_count
+	const coordinates = (feature.geometry as { coordinates: [number, number] }).coordinates
+
+	// @ts-expect-error getClusterLeaves exists on GeoJSONSource but isn't in this narrowed type
+	source.getClusterLeaves(clusterId, pointCount, 0).then((leaves: MapGeoJSONFeature[]) => {
+		const photoList = leaves
+			.map((leaf) => filteredPhotos.value[leaf.properties?.index])
+			.filter((p): p is Photo => !!p)
+			.sort((a, b) => (a.dateTaken ?? 0) - (b.dateTaken ?? 0))
+		if (photoList.length === 0) {
+			return
+		}
+		const canReset = photoList.some((p) => p.isUpdateable)
+
+		const container = document.createElement('div')
+		container.className = 'popup-photo-wrapper'
+		container.innerHTML = `
+			<button class="action-btn" data-action="display">${escapeHtml(t('maps', 'Display pictures'))}</button>
+			<button class="action-btn" data-action="zoom">${escapeHtml(t('maps', 'Zoom on bounds'))}</button>
+			${canReset ? `<button class="action-btn" data-action="reset">${escapeHtml(t('maps', 'Remove geo data'))}</button>` : ''}
+		`
+		container.addEventListener('click', (domEvent) => {
+			const action = (domEvent.target as HTMLElement).getAttribute('data-action')
+			if (action === 'display') {
+				if (window.OCA?.Viewer?.open) {
+					window.OCA.Viewer.open({ path: photoList[0].path, list: photoList })
+				} else {
+					emit('open-sidebar', photoList[0].path)
+				}
+				actionPopup?.remove()
+			} else if (action === 'zoom') {
+				// @ts-expect-error getClusterExpansionZoom exists on GeoJSONSource but isn't in this narrowed type
+				source.getClusterExpansionZoom(clusterId).then((zoom: number) => {
+					map.easeTo({ center: coordinates, zoom })
+				}).catch(() => {})
+				actionPopup?.remove()
+			} else if (action === 'reset') {
+				getDialogBuilder(t('maps', 'Remove geo data'))
+					.setText(t('maps', 'Are you sure you want to remove geo data of {nb} photos?', { nb: photoList.length }))
+					.addButton({ label: t('maps', 'Cancel'), callback: () => {} })
+					.addButton({
+						label: t('maps', 'Yes'),
+						variant: 'error',
+						callback: () => emit('coords-reset', photoList.map((p) => p.path)),
+					})
+					.build()
+					.show()
+				actionPopup?.remove()
+			}
+		})
+
+		actionPopup?.remove()
+		actionPopup = new Popup({ closeButton: false, className: 'popovermenu open popupMarker photoPopup' })
+			.setLngLat(coordinates)
+			.setDOMContent(container)
+			.addTo(map)
+	}).catch(() => {})
+}
+
 function onClusterMouseEnter(): void {
 	const map = mapInstance.map
 	if (map) {
@@ -368,6 +488,8 @@ watch(() => mapInstance.isLoaded, (loaded) => {
 	listenersBound = true
 	map.on('click', POINT_LAYER_ID, onPointClick)
 	map.on('click', CLUSTER_LAYER_ID, onClusterClick)
+	map.on('contextmenu', POINT_LAYER_ID, onPointContextMenu)
+	map.on('contextmenu', CLUSTER_LAYER_ID, onClusterContextMenu)
 	map.on('mouseenter', POINT_LAYER_ID, onPointMouseEnter)
 	map.on('mouseleave', POINT_LAYER_ID, onPointMouseLeave)
 	map.on('mouseenter', CLUSTER_LAYER_ID, onClusterMouseEnter)
@@ -377,11 +499,14 @@ watch(() => mapInstance.isLoaded, (loaded) => {
 onBeforeUnmount(() => {
 	const map = mapInstance.map
 	hoverPopup?.remove()
+	actionPopup?.remove()
 	if (!map || !listenersBound) {
 		return
 	}
 	map.off('click', POINT_LAYER_ID, onPointClick)
 	map.off('click', CLUSTER_LAYER_ID, onClusterClick)
+	map.off('contextmenu', POINT_LAYER_ID, onPointContextMenu)
+	map.off('contextmenu', CLUSTER_LAYER_ID, onClusterContextMenu)
 	map.off('mouseenter', POINT_LAYER_ID, onPointMouseEnter)
 	map.off('mouseleave', POINT_LAYER_ID, onPointMouseLeave)
 	map.off('mouseenter', CLUSTER_LAYER_ID, onClusterMouseEnter)
@@ -399,6 +524,21 @@ onBeforeUnmount(() => {
 	color: var(--color-main-text);
 	border-radius: 3px;
 }
+
+.popup-photo-wrapper .action-btn {
+	display: block;
+	width: 100%;
+	padding: 8px;
+	border: none;
+	background: transparent;
+	text-align: left;
+	cursor: pointer;
+
+	&:hover {
+		background: var(--color-background-hover);
+	}
+}
+
 .photo-tooltip {
 	max-width: 200px;
 	max-height: 150px;

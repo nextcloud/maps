@@ -6,10 +6,9 @@
 
 <!--
 	Ported from Leaflet to vue-maplibre-gl. Not ported yet, on purpose:
-	the right-click popup (toggle history, change color, export, link to
-	map) and drag-to-edit. The point-hover event this used to emit while
-	hovering a marker or line is gone too, but on purpose rather than
-	deferred: nothing has ever listened for it since the Leaflet-to-
+	drag-to-edit. The point-hover event this used to emit while hovering
+	a marker or line is gone too, but on purpose rather than deferred:
+	nothing has ever listened for it since the Leaflet-to-
 	vue-maplibre-gl port started.
 
 	Dropped on purpose, not deferred: the >2500-points-per-device heatmap
@@ -41,8 +40,9 @@ import { translate as t } from '@nextcloud/l10n'
 import { computed, onBeforeUnmount, reactive, watch } from 'vue'
 import { MglGeoJsonSource, MglLineLayer, MglSymbolLayer, useMap } from 'vue-maplibre-gl'
 import { isComputer } from '../../utils.js'
-import { binSearch } from '../../utils/common.js'
+import { binSearch, isPublic } from '../../utils/common.js'
 import { escapeHtml } from '../../utils/domUtils.ts'
+import optionsController from '../../optionsController.js'
 
 export interface DevicePoint {
 	lat: number
@@ -70,6 +70,10 @@ const props = withDefaults(defineProps<{
 
 const emit = defineEmits<{
 	click: [device: Device]
+	'toggle-history': [device: Device]
+	'change-color': [device: Device]
+	export: [device: Device]
+	'add-to-map-device': [device: Device]
 }>()
 
 const SOURCE_ID = 'devices'
@@ -250,6 +254,51 @@ function onFeatureClick(event: MapMouseEvent & { features?: MapGeoJSONFeature[] 
 	}
 }
 
+let actionPopup: Popup | null = null
+
+/**
+ * @param event the underlying MapLibre mouse event
+ */
+function onFeatureContextMenu(event: MapMouseEvent & { features?: MapGeoJSONFeature[] }): void {
+	const map = mapInstance.map
+	const feature = event.features?.[0]
+	const device = feature && displayedDevices.value[feature.properties.deviceIndex]
+	if (!map || !feature || !device) {
+		return
+	}
+	event.preventDefault()
+	const mapIsUpdatable = !!optionsController.optionValues?.isUpdateable
+
+	const container = document.createElement('div')
+	container.className = 'popup-device-wrapper'
+	container.innerHTML = `
+		<button class="action-btn" data-action="history">${escapeHtml(device.historyEnabled ? t('maps', 'Hide history') : t('maps', 'Show history'))}</button>
+		${mapIsUpdatable ? `<button class="action-btn" data-action="color">${escapeHtml(t('maps', 'Change color'))}</button>` : ''}
+		<button class="action-btn" data-action="export">${escapeHtml(t('maps', 'Export'))}</button>
+		${!isPublic() ? `<button class="action-btn" data-action="link">${escapeHtml(t('maps', 'Link to map'))}</button>` : ''}
+	`
+	container.addEventListener('click', (domEvent) => {
+		const action = (domEvent.target as HTMLElement).getAttribute('data-action')
+		if (action === 'history') {
+			emit('toggle-history', device)
+		} else if (action === 'color') {
+			emit('change-color', device)
+		} else if (action === 'export') {
+			emit('export', device)
+		} else if (action === 'link') {
+			emit('add-to-map-device', device)
+		}
+		actionPopup?.remove()
+	})
+
+	hoverPopup?.remove()
+	actionPopup?.remove()
+	actionPopup = new Popup({ closeButton: false, className: 'popovermenu open popupMarker devicePopup' })
+		.setLngLat(event.lngLat)
+		.setDOMContent(container)
+		.addTo(map)
+}
+
 function onLineMouseEnter(): void {
 	const map = mapInstance.map
 	if (map) {
@@ -274,6 +323,8 @@ watch(() => mapInstance.isLoaded, (loaded) => {
 	listenersBound = true
 	map.on('click', LINE_CASING_LAYER_ID, onFeatureClick)
 	map.on('click', POINT_LAYER_ID, onFeatureClick)
+	map.on('contextmenu', LINE_CASING_LAYER_ID, onFeatureContextMenu)
+	map.on('contextmenu', POINT_LAYER_ID, onFeatureContextMenu)
 	map.on('mouseenter', LINE_CASING_LAYER_ID, onLineMouseEnter)
 	map.on('mouseleave', LINE_CASING_LAYER_ID, onLineMouseLeave)
 	map.on('mouseenter', POINT_LAYER_ID, onPointMouseEnter)
@@ -283,11 +334,14 @@ watch(() => mapInstance.isLoaded, (loaded) => {
 onBeforeUnmount(() => {
 	const map = mapInstance.map
 	hoverPopup?.remove()
+	actionPopup?.remove()
 	if (!map || !listenersBound) {
 		return
 	}
 	map.off('click', LINE_CASING_LAYER_ID, onFeatureClick)
 	map.off('click', POINT_LAYER_ID, onFeatureClick)
+	map.off('contextmenu', LINE_CASING_LAYER_ID, onFeatureContextMenu)
+	map.off('contextmenu', POINT_LAYER_ID, onFeatureContextMenu)
 	map.off('mouseenter', LINE_CASING_LAYER_ID, onLineMouseEnter)
 	map.off('mouseleave', LINE_CASING_LAYER_ID, onLineMouseLeave)
 	map.off('mouseenter', POINT_LAYER_ID, onPointMouseEnter)
@@ -301,5 +355,19 @@ onBeforeUnmount(() => {
 	border-radius: 3px;
 	background-color: var(--color-main-background);
 	color: var(--color-main-text);
+}
+
+.popup-device-wrapper .action-btn {
+	display: block;
+	width: 100%;
+	padding: 8px;
+	border: none;
+	background: transparent;
+	text-align: left;
+	cursor: pointer;
+
+	&:hover {
+		background: var(--color-background-hover);
+	}
 }
 </style>

@@ -40,6 +40,7 @@ import { computed, onBeforeUnmount, ref, watch } from 'vue'
 import { MglGeoJsonSource, MglSymbolLayer, useMap } from 'vue-maplibre-gl'
 import { isPublic } from '../../utils/common.js'
 import { escapeHtml } from '../../utils/domUtils.ts'
+import { ensureFavoriteMarkerIcon, favoriteMarkerIconId } from '../../utils/favoriteMarkerIcon.ts'
 
 export interface Favorite {
 	id: number
@@ -81,20 +82,10 @@ const POINT_LAYER_ID = 'favorites-points'
 // Matches the old cluster-marker view size (36px) + old cluster radius margin (10px)
 const CLUSTER_RADIUS = 46
 const DEFAULT_COLOR = '0082c9'
-const SELECTED_COLOR = 'ffcc00'
 
 const mapInstance = useMap()
-const loadedIcons = new Set<string>()
 
-/**
- * @param color hex color (without '#')
- * @param selected whether this is the "selected" variant
- */
-function iconIdForColor(color: string, selected: boolean): string {
-	return `favorite-marker-${color}${selected ? '-selected' : ''}`
-}
-
-const clusterIconId = iconIdForColor(DEFAULT_COLOR, false)
+const clusterIconId = favoriteMarkerIconId(DEFAULT_COLOR, false)
 
 const displayedFavorites = computed<Favorite[]>(() => {
 	return Object.values(props.favorites).filter((f) => props.categories[f.category]?.enabled)
@@ -113,7 +104,7 @@ const geojson = computed(() => ({
 			geometry: { type: 'Point' as const, coordinates: [dragged?.lng ?? f.lng, dragged?.lat ?? f.lat] },
 			properties: {
 				id: f.id,
-				iconId: iconIdForColor(color, !!f.selected),
+				iconId: favoriteMarkerIconId(color, !!f.selected),
 				name: f.name || '',
 				category: f.category,
 				comment: f.comment || '',
@@ -122,90 +113,23 @@ const geojson = computed(() => ({
 	}),
 }))
 
-/**
- * Draw a colored circle with a white star on top - matching the old
- * Leaflet div-icon look closely enough - and register it as a MapLibre GL
- * sprite image. GL symbol layers can only use raster icon images, not the
- * CSS classes the Leaflet version relied on.
- *
- * @param color hex color (without '#') for the circle background
- * @param selected whether to draw the "selected" (highlighted) variant
- */
-function ensureIcon(color: string, selected: boolean): void {
-	const id = iconIdForColor(color, selected)
-	const map = mapInstance.map
-	if (!map || loadedIcons.has(id) || map.hasImage(id)) {
-		return
-	}
-	const size = 32
-	const canvas = document.createElement('canvas')
-	canvas.width = size
-	canvas.height = size
-	const ctx = canvas.getContext('2d')
-	if (!ctx) {
-		return
-	}
-
-	ctx.beginPath()
-	ctx.arc(size / 2, size / 2, size / 2 - 2, 0, Math.PI * 2)
-	ctx.fillStyle = selected ? `#${SELECTED_COLOR}` : `#${color}`
-	ctx.fill()
-	ctx.lineWidth = 2
-	ctx.strokeStyle = '#ffffff'
-	ctx.stroke()
-
-	drawStar(ctx, size / 2, size / 2, size / 2 - 9, (size / 2 - 9) / 2.5)
-	ctx.fillStyle = '#ffffff'
-	ctx.fill()
-
-	map.addImage(id, ctx.getImageData(0, 0, size, size))
-	loadedIcons.add(id)
-}
-
-/**
- * @param ctx canvas context to draw into
- * @param cx star center x
- * @param cy star center y
- * @param outerRadius outer point radius
- * @param innerRadius inner point radius
- */
-function drawStar(ctx: CanvasRenderingContext2D, cx: number, cy: number, outerRadius: number, innerRadius: number): void {
-	const spikes = 5
-	let rotation = (Math.PI / 2) * 3
-	const step = Math.PI / spikes
-	ctx.beginPath()
-	ctx.moveTo(cx, cy - outerRadius)
-	for (let i = 0; i < spikes; i++) {
-		let x = cx + Math.cos(rotation) * outerRadius
-		let y = cy + Math.sin(rotation) * outerRadius
-		ctx.lineTo(x, y)
-		rotation += step
-
-		x = cx + Math.cos(rotation) * innerRadius
-		y = cy + Math.sin(rotation) * innerRadius
-		ctx.lineTo(x, y)
-		rotation += step
-	}
-	ctx.lineTo(cx, cy - outerRadius)
-	ctx.closePath()
-}
-
 const usedIconColors = computed<Array<{ color: string, selected: boolean }>>(() => {
 	const seen = new Map<string, { color: string, selected: boolean }>()
 	seen.set(DEFAULT_COLOR, { color: DEFAULT_COLOR, selected: false })
 	displayedFavorites.value.forEach((f) => {
 		const color = props.categories[f.category]?.color || DEFAULT_COLOR
 		const selected = !!f.selected
-		seen.set(iconIdForColor(color, selected), { color, selected })
+		seen.set(favoriteMarkerIconId(color, selected), { color, selected })
 	})
 	return [...seen.values()]
 })
 
 watch([() => mapInstance.isLoaded, usedIconColors], () => {
-	if (!mapInstance.isLoaded) {
+	const map = mapInstance.map
+	if (!mapInstance.isLoaded || !map) {
 		return
 	}
-	usedIconColors.value.forEach(({ color, selected }) => ensureIcon(color, selected))
+	usedIconColors.value.forEach(({ color, selected }) => ensureFavoriteMarkerIcon(map, color, selected))
 }, { immediate: true })
 
 let hoverPopup: Popup | null = null

@@ -19,7 +19,7 @@
 	<MglGeoJsonSource :source-id="SOURCE_ID" :data="geojson">
 		<MglSymbolLayer :layer-id="POINT_LAYER_ID"
 			:source="SOURCE_ID"
-			:layout="{ 'icon-image': ICON_ID, 'icon-allow-overlap': true, 'icon-anchor': 'bottom', 'icon-size': 1 }" />
+			:layout="{ 'icon-image': ICON_ID, 'icon-allow-overlap': true, 'icon-size': 1 }" />
 	</MglGeoJsonSource>
 </template>
 
@@ -121,7 +121,7 @@ function ensureIcon(): void {
 	}
 
 	ctx.beginPath()
-	ctx.arc(size / 2, size * 0.4, size * 0.35, 0, Math.PI * 2)
+	ctx.arc(size / 2, size / 2, size / 2 - 2, 0, Math.PI * 2)
 	ctx.fillStyle = '#e9762b'
 	ctx.fill()
 	ctx.lineWidth = 2
@@ -129,7 +129,7 @@ function ensureIcon(): void {
 	ctx.stroke()
 
 	ctx.beginPath()
-	ctx.arc(size / 2, size * 0.4, size * 0.12, 0, Math.PI * 2)
+	ctx.arc(size / 2, size / 2, size * 0.12, 0, Math.PI * 2)
 	ctx.fillStyle = '#ffffff'
 	ctx.fill()
 

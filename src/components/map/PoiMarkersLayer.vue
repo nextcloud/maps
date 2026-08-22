@@ -24,7 +24,7 @@
 		<MglSymbolLayer :layer-id="POINT_LAYER_ID"
 			:source="SOURCE_ID"
 			:filter="['==', ['geometry-type'], 'Point']"
-			:layout="{ 'icon-image': ['get', 'icon'], 'icon-anchor': ['get', 'iconAnchor'], 'icon-allow-overlap': true, 'icon-size': 1 }" />
+			:layout="{ 'icon-image': ['get', 'icon'], 'icon-anchor': ['get', 'iconAnchor'], 'icon-allow-overlap': true, 'icon-size': 1.5 }" />
 	</MglGeoJsonSource>
 </template>
 
@@ -59,8 +59,8 @@ const emit = defineEmits<{
 const SOURCE_ID = 'search-pois'
 const POINT_LAYER_ID = 'search-pois-points'
 const ICON_ID = 'poi-marker'
-const MARKER_WIDTH = 26
-const MARKER_HEIGHT = 34
+const MARKER_WIDTH = 32
+const MARKER_HEIGHT = 42
 
 const mapInstance = useMap()
 

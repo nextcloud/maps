@@ -173,7 +173,7 @@ const directions = ref<MapLibreGlDirections | null>(null)
 function buildDirections(routerType: string): MapLibreGlDirections | null {
 	const map = mapInstance.map
 	const router = routers.value.find((r) => r.type === routerType)
-	if (!map || !router) {
+	if (!mapInstance.isLoaded || !map || !router) {
 		return null
 	}
 	const instance = new MapLibreGlDirections(map, {
@@ -199,8 +199,8 @@ function setRouter(routerType: string) {
 	syncWaypoints()
 }
 
-watch(routers, (newRouters) => {
-	if (newRouters.some((r) => r.type === selectedRouterType.value)) {
+watch([() => mapInstance.isLoaded, routers], ([loaded, newRouters]) => {
+	if (!loaded || newRouters.some((r) => r.type === selectedRouterType.value)) {
 		return
 	}
 	const optionValues = optionsController.optionValues as Record<string, string>

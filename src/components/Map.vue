@@ -8,10 +8,11 @@
 	Port in progress: the map engine moved from Leaflet to vue-maplibre-gl.
 	Ported so far: the base map (street/satellite/terrain), click-to-add,
 	favorites/contacts/photos/tracks/devices markers and clustering,
-	routing, and the search box. Everything below is intentionally not
-	wired up yet and will come back one feature at a time in follow-up
-	steps:
-	- right-click context menu, drag-to-edit
+	routing, and the search box (including the base style's own poi
+	icons). Favorites has its right-click menu and drag-to-edit back;
+	contacts/photos/tracks/devices don't yet - see their own header
+	comments for exactly what's still missing on each. Everything below
+	is intentionally not wired up yet:
 	- history control / slider
 	- track elevation profile chart
 -->

@@ -54,6 +54,7 @@
     "@nextcloud/upload": "^2.0.0-rc.0",
     "@nextcloud/vue": "^9.8.2",
     "axios": "^1.18.1",
+    "chart.js": "^4.5.1",
     "geojson": "^0.5.0",
     "leaflet": "^1.9.4",
     "leaflet-mouse-position": "^1.0.4",

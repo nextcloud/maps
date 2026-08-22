@@ -11,11 +11,11 @@
 	routing, the search box (including the base style's own poi icons),
 	every layer's right-click menu, drag-to-edit for favorites and
 	photos (devices never had it - see its own header comment), the
-	history (undo/redo) control, and the date-range slider (Slider.vue
+	history (undo/redo) control, the date-range slider (Slider.vue
 	itself needed no changes at all - it was never Leaflet-dependent,
-	just an absolutely-positioned div using noUiSlider). Everything
-	below is intentionally not wired up yet:
-	- track elevation profile chart
+	just an absolutely-positioned div using noUiSlider), and the track
+	elevation profile chart (ElevationChart.vue, chart.js instead of
+	@raruto/leaflet-elevation - see its own header comment).
 -->
 <template>
 	<div id="map-wrapper" :class="{ loading: state === 'loading', adding: state === 'adding' }">
@@ -144,6 +144,10 @@
 			:range-min="minDataTimestamp"
 			:range-max="maxDataTimestamp"
 			@range-change="emit('slider-range-changed', $event)" />
+
+		<ElevationChart v-if="elevationTrack"
+			:track="elevationTrack"
+			@close="elevationTrack = null" />
 	</div>
 </template>
 
@@ -174,6 +178,7 @@ import ClickSearchMarker from './map/ClickSearchMarker.vue'
 import type { HistoryAction } from './map/HistoryControl.vue'
 import HistoryControl from './map/HistoryControl.vue'
 import Slider from './map/Slider.vue'
+import ElevationChart from './map/ElevationChart.vue'
 import { showError } from '@nextcloud/dialogs'
 import { searchPois as searchPoisNetwork } from '../network.js'
 import type { Favorite, FavoriteCategory } from './map/FavoritesLayer.vue'
@@ -294,6 +299,7 @@ interface SearchResult {
 const searchPois = ref<Array<{ lat: string, lon: string, [key: string]: unknown }>>([])
 const searching = ref(false)
 const clickSearchLatLng = ref<{ lat: number, lng: number } | null>(null)
+const elevationTrack = ref<Track | null>(null)
 
 const mapInstance = useMap()
 
@@ -383,11 +389,10 @@ function zoomOnPhotoSuggestion(photo: { lat?: number, lng?: number }) {
 }
 
 /**
- * The track elevation profile chart isn't ported to vue-maplibre-gl yet.
- *
- * @param _track the track whose elevation profile would be displayed
+ * @param track the track whose elevation profile to display, or none to close the panel
  */
-function displayElevation(_track?: Track) {
+function displayElevation(track?: Track) {
+	elevationTrack.value = track ?? null
 }
 
 /**

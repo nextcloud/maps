@@ -7,10 +7,10 @@
 <!--
 	Port in progress: the map engine moved from Leaflet to vue-maplibre-gl.
 	Ported so far: the base map (street/satellite/terrain), click-to-add,
-	favorites/contacts/photos/tracks/devices markers and clustering,
-	routing, the search box (including the base style's own poi icons),
-	every layer's right-click menu, drag-to-edit for favorites and
-	photos (devices never had it - see its own header comment), the
+	favorites/contacts/photos/photo-suggestions/tracks/devices markers and
+	clustering, routing, the search box (including the base style's own
+	poi icons), every layer's right-click menu, drag-to-edit for favorites
+	and photos (devices never had it - see its own header comment), the
 	history (undo/redo) control, the date-range slider (Slider.vue
 	itself needed no changes at all - it was never Leaflet-dependent,
 	just an absolutely-positioned div using noUiSlider), and the track
@@ -67,7 +67,7 @@
 				@address-deleted="emit('address-deleted', $event)"
 				@add-to-map-contact="emit('add-to-map-contact', $event)" />
 
-			<PhotosLayer v-if="photosEnabled"
+			<PhotosLayer v-if="photosEnabled && !photoSuggestionsHidePhotos"
 				:photos="photos"
 				:date-filter-enabled="sliderEnabled"
 				:date-filter-start="sliderStartTimestamp"
@@ -77,6 +77,18 @@
 				@coords-reset="emit('coords-reset', $event)"
 				@add-to-map-photo="emit('add-to-map-photo', $event)"
 				@photo-moved="(photo, latLng) => emit('photo-moved', photo, latLng)" />
+
+			<PhotoSuggestionsLayer v-if="photosEnabled && showPhotoSuggestions"
+				:photo-suggestions="photoSuggestions"
+				:photo-suggestions-tracks-and-devices="photoSuggestionsTracksAndDevices"
+				:photo-suggestions-selected-indices="photoSuggestionsSelectedIndices"
+				:date-filter-enabled="sliderEnabled"
+				:date-filter-start="sliderStartTimestamp"
+				:date-filter-end="sliderEndTimestamp"
+				:draggable="photosDraggable"
+				@open-sidebar="emit('open-sidebar', $event)"
+				@photo-suggestion-selected="emit('photo-suggestion-selected', $event)"
+				@photo-suggestion-moved="(index, latLng) => emit('photo-suggestion-moved', index, latLng)" />
 
 			<SearchControl :visible="!showRouting"
 				:search-data="searchData"
@@ -187,6 +199,8 @@ import type { Contact, ContactGroup } from './map/ContactsLayer.vue'
 import ContactsLayer from './map/ContactsLayer.vue'
 import type { Photo } from './map/PhotosLayer.vue'
 import PhotosLayer from './map/PhotosLayer.vue'
+import type { PhotoSuggestion, TrackOrDevice } from './map/PhotoSuggestionsLayer.vue'
+import PhotoSuggestionsLayer from './map/PhotoSuggestionsLayer.vue'
 import type { Track } from './map/TracksLayer.vue'
 import TracksLayer from './map/TracksLayer.vue'
 import type { Device } from './map/DevicesLayer.vue'
@@ -208,6 +222,11 @@ const props = withDefaults(defineProps<{
 	photos?: Photo[]
 	photosEnabled?: boolean
 	photosDraggable?: boolean
+	showPhotoSuggestions?: boolean
+	photoSuggestions?: PhotoSuggestion[]
+	photoSuggestionsTracksAndDevices?: Record<string, TrackOrDevice>
+	photoSuggestionsSelectedIndices?: number[]
+	photoSuggestionsHidePhotos?: boolean
 	tracks?: Track[]
 	tracksEnabled?: boolean
 	devices?: Device[]
@@ -234,6 +253,11 @@ const props = withDefaults(defineProps<{
 	photos: () => [],
 	photosEnabled: false,
 	photosDraggable: false,
+	showPhotoSuggestions: false,
+	photoSuggestions: () => [],
+	photoSuggestionsTracksAndDevices: () => ({}),
+	photoSuggestionsSelectedIndices: () => [],
+	photoSuggestionsHidePhotos: false,
 	tracks: () => [],
 	tracksEnabled: false,
 	devices: () => [],
@@ -274,6 +298,8 @@ const emit = defineEmits<{
 	'coords-reset': [paths: string[]]
 	'add-to-map-photo': [photo: Photo]
 	'photo-moved': [photo: Photo, latLng: { lat: number, lng: number }]
+	'photo-suggestion-selected': [index: number]
+	'photo-suggestion-moved': [index: number, latLng: { lat: number, lng: number }]
 	cancel: []
 	redo: []
 	'slider-range-changed': [range: { start: number, end: number }]

@@ -22,7 +22,7 @@
 		<MglSymbolLayer :layer-id="CLUSTER_LAYER_ID"
 			:source="SOURCE_ID"
 			:filter="['has', 'point_count']"
-			:layout="{ 'icon-image': ['coalesce', ['get', 'iconId'], PLACEHOLDER_ICON_ID], 'icon-allow-overlap': true, 'icon-size': 1 }" />
+			:layout="{ 'icon-image': ['coalesce', ['get', 'iconId'], PHOTO_PREVIEW_PLACEHOLDER_ICON_ID], 'icon-allow-overlap': true, 'icon-size': 1 }" />
 		<MglSymbolLayer :layer-id="CLUSTER_COUNT_LAYER_ID"
 			:source="SOURCE_ID"
 			:filter="['has', 'point_count']"
@@ -40,13 +40,21 @@ import type { MapGeoJSONFeature, MapMouseEvent } from 'maplibre-gl'
 import { Popup } from 'maplibre-gl'
 import { getDialogBuilder } from '@nextcloud/dialogs'
 import { translate as t } from '@nextcloud/l10n'
-import moment from '@nextcloud/moment'
 import { basename } from '@nextcloud/paths'
-import { generateUrl } from '@nextcloud/router'
-import { computed, onBeforeUnmount, reactive, ref, watch } from 'vue'
+import { computed, onBeforeUnmount, ref, watch } from 'vue'
 import { MglGeoJsonSource, MglSymbolLayer, useMap } from 'vue-maplibre-gl'
-import { binSearch, getToken, isPublic } from '../../utils/common.js'
+import { binSearch, isPublic } from '../../utils/common.js'
 import { escapeHtml } from '../../utils/domUtils.ts'
+import {
+	ensurePhotoPreviewIcon,
+	ensurePhotoPreviewPlaceholderIcon,
+	getPhotoFormattedDate,
+	getPhotoPreviewUrl,
+	loadedPhotoPreviewIcons,
+	PHOTO_PREVIEW_MARKER_SIZE,
+	PHOTO_PREVIEW_PLACEHOLDER_ICON_ID,
+	photoPreviewIconId,
+} from '../../utils/photoMarker.ts'
 
 export interface Photo {
 	path: string
@@ -80,36 +88,12 @@ const CLUSTER_LAYER_ID = 'photos-clusters'
 const CLUSTER_COUNT_LAYER_ID = 'photos-cluster-count'
 const POINT_LAYER_ID = 'photos-points'
 // Matches the old marker view size (40px) + old cluster radius margin (10px)
-const MARKER_SIZE = 40
-const CLUSTER_RADIUS = 50
-const PLACEHOLDER_ICON_ID = 'photo-preview-placeholder'
+const CLUSTER_RADIUS = PHOTO_PREVIEW_MARKER_SIZE + 10
 // Picks one representative child's iconId for each cluster (not necessarily the first one -
 // supercluster aggregates bottom-up, so it's whichever leaf the reduction visits last).
 const CLUSTER_PROPERTIES = { iconId: [['get', 'iconId'], ['get', 'iconId']] }
 
 const mapInstance = useMap()
-const loadedIcons = reactive(new Set<string>())
-const loadingIcons = new Set<string>()
-
-/**
- * @param photo the photo to build a preview URL for
- */
-function getPreviewUrl(photo: Photo): string {
-	if (photo?.hasPreview) {
-		const token = getToken()
-		return token
-			? generateUrl('apps/files_sharing/publicpreview/') + token + '?file=' + encodeURIComponent(photo.path) + '&x=341&y=256&a=1'
-			: generateUrl('core') + '/preview?fileId=' + photo.fileId + '&x=341&y=256&a=1'
-	}
-	return generateUrl('/apps/theming/img/core/filetypes') + '/image.svg?v=2'
-}
-
-/**
- * @param url the preview URL to derive a sprite id for
- */
-function iconIdForUrl(url: string): string {
-	return 'photo-preview-' + btoa(url).replace(/[^a-zA-Z0-9]/g, '')
-}
 
 const filteredPhotos = computed<Photo[]>(() => {
 	if (!props.dateFilterEnabled) {
@@ -130,129 +114,36 @@ const draggingOverride = ref<{ index: number, lat: number, lng: number } | null>
 const geojson = computed(() => ({
 	type: 'FeatureCollection' as const,
 	features: filteredPhotos.value.map((photo, index) => {
-		const iconId = iconIdForUrl(getPreviewUrl(photo))
+		const iconId = photoPreviewIconId(getPhotoPreviewUrl(photo))
 		const dragged = draggingOverride.value?.index === index ? draggingOverride.value : null
 		return {
 			type: 'Feature' as const,
 			geometry: { type: 'Point' as const, coordinates: [dragged?.lng ?? photo.lng, dragged?.lat ?? photo.lat] },
 			properties: {
 				index,
-				iconId: loadedIcons.has(iconId) ? iconId : PLACEHOLDER_ICON_ID,
+				iconId: loadedPhotoPreviewIcons.has(iconId) ? iconId : PHOTO_PREVIEW_PLACEHOLDER_ICON_ID,
 			},
 		}
 	}),
 }))
 
 const usedPreviewUrls = computed<string[]>(() => {
-	return [...new Set(filteredPhotos.value.map((p) => getPreviewUrl(p)))]
+	return [...new Set(filteredPhotos.value.map((p) => getPhotoPreviewUrl(p)))]
 })
 
-/**
- * @param size square size of the drawn icon
- * @param draw callback receiving the 2D context to draw into
- */
-function drawIcon(size: number, draw: (ctx: CanvasRenderingContext2D) => void): ImageData | null {
-	const canvas = document.createElement('canvas')
-	canvas.width = size
-	canvas.height = size
-	const ctx = canvas.getContext('2d')
-	if (!ctx) {
-		return null
-	}
-	draw(ctx)
-	return ctx.getImageData(0, 0, size, size)
-}
-
-function ensureFallbackIcons(): void {
-	const map = mapInstance.map
-	if (!map) {
-		return
-	}
-	if (!map.hasImage(PLACEHOLDER_ICON_ID)) {
-		const image = drawIcon(MARKER_SIZE, (ctx) => {
-			ctx.fillStyle = '#ffffff'
-			ctx.fillRect(0, 0, MARKER_SIZE, MARKER_SIZE)
-			ctx.strokeStyle = '#dddddd'
-			ctx.lineWidth = 2
-			ctx.strokeRect(1, 1, MARKER_SIZE - 2, MARKER_SIZE - 2)
-		})
-		if (image) {
-			map.addImage(PLACEHOLDER_ICON_ID, image)
-		}
-	}
-}
-
-/**
- * @param url the preview image URL to fetch and draw to a square thumbnail
- */
-function loadThumbnail(url: string): Promise<ImageData> {
-	return new Promise((resolve, reject) => {
-		const img = new Image()
-		img.crossOrigin = 'anonymous'
-		img.onload = () => {
-			const canvas = document.createElement('canvas')
-			canvas.width = MARKER_SIZE
-			canvas.height = MARKER_SIZE
-			const ctx = canvas.getContext('2d')
-			if (!ctx) {
-				reject(new Error('Could not get canvas context'))
-				return
-			}
-			ctx.drawImage(img, 0, 0, MARKER_SIZE, MARKER_SIZE)
-			resolve(ctx.getImageData(0, 0, MARKER_SIZE, MARKER_SIZE))
-		}
-		img.onerror = () => reject(new Error(`Failed to load preview ${url}`))
-		img.src = url
-	})
-}
-
-/**
- * @param url the preview URL to load and register as a GL sprite image
- */
-async function ensurePreviewIcon(url: string): Promise<void> {
-	const id = iconIdForUrl(url)
-	const map = mapInstance.map
-	if (!map || loadedIcons.has(id) || loadingIcons.has(id) || map.hasImage(id)) {
-		return
-	}
-	loadingIcons.add(id)
-	try {
-		const image = await loadThumbnail(url)
-		if (mapInstance.map && !mapInstance.map.hasImage(id)) {
-			mapInstance.map.addImage(id, image)
-		}
-		loadedIcons.add(id)
-	} catch (error) {
-		console.error(error)
-	} finally {
-		loadingIcons.delete(id)
-	}
-}
-
 watch(() => mapInstance.isLoaded, (loaded) => {
-	if (loaded) {
-		ensureFallbackIcons()
+	if (loaded && mapInstance.map) {
+		ensurePhotoPreviewPlaceholderIcon(mapInstance.map)
 	}
 }, { immediate: true })
 
 watch([() => mapInstance.isLoaded, usedPreviewUrls], () => {
-	if (!mapInstance.isLoaded) {
+	const map = mapInstance.map
+	if (!mapInstance.isLoaded || !map) {
 		return
 	}
-	usedPreviewUrls.value.forEach((url) => ensurePreviewIcon(url))
+	usedPreviewUrls.value.forEach((url) => ensurePhotoPreviewIcon(map, url))
 }, { immediate: true })
-
-/**
- * @param photo the photo whose date should be formatted
- */
-function getPhotoFormattedDate(photo: Photo): string {
-	if (!photo?.dateTaken) {
-		return ''
-	}
-	const d = new Date(photo.dateTaken * 1000)
-	const mom = moment.unix(photo.dateTaken + d.getTimezoneOffset() * 60)
-	return mom.format('LL') + ' ' + mom.format('HH:mm:ss')
-}
 
 /**
  * @param photo the photo to open
@@ -288,7 +179,7 @@ function onPointMouseEnter(event: MapMouseEvent & { features?: MapGeoJSONFeature
 	const html = document.createElement('div')
 	html.className = 'tooltip-photo-wrapper'
 	html.innerHTML = `
-		<img class="photo-tooltip" src="${getPreviewUrl(photo)}">
+		<img class="photo-tooltip" src="${getPhotoPreviewUrl(photo)}">
 		<p class="tooltip-photo-date">${escapeHtml(getPhotoFormattedDate(photo))}</p>
 		<p class="tooltip-photo-name">${escapeHtml(basename(photo.path))}</p>
 	`

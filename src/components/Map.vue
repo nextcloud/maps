@@ -13,9 +13,13 @@
 	and photos (devices never had it - see its own header comment), the
 	history (undo/redo) control, the date-range slider (Slider.vue
 	itself needed no changes at all - it was never Leaflet-dependent,
-	just an absolutely-positioned div using noUiSlider), and the track
+	just an absolutely-positioned div using noUiSlider), the track
 	elevation profile chart (ElevationChart.vue, chart.js instead of
-	@raruto/leaflet-elevation - see its own header comment).
+	@raruto/leaflet-elevation - see its own header comment), placing a
+	contact address by clicking the map (PlaceContactMarker.vue), and
+	the empty-map right-click menu (add a favorite / place photos /
+	place contact / share this location / third-party
+	window.OCA.Maps.mapActions entries).
 -->
 <template>
 	<div id="map-wrapper" :class="{ loading: state === 'loading', adding: state === 'adding' }">
@@ -24,7 +28,8 @@
 			:zoom="2"
 			:min-zoom="2"
 			:max-zoom="19"
-			@map:click="onMapClick">
+			@map:click="onMapClick"
+			@map:contextmenu="onMapContextMenu">
 			<MglRasterDemSource :source-id="TERRAIN_SOURCE_ID"
 				:tiles="TERRAIN_SOURCE.tiles"
 				:tile-size="TERRAIN_SOURCE.tileSize"
@@ -111,6 +116,11 @@
 				@add-favorite="emit('add-address-favorite', $event)"
 				@close="clickSearchLatLng = null" />
 
+			<PlaceContactMarker v-if="placingContactLatLng"
+				:lat-lng="placingContactLatLng"
+				@contact-placed="onContactPlaced"
+				@close="placingContactLatLng = null" />
+
 			<HistoryControl :last-actions="lastActions"
 				:last-canceled-actions="lastCanceledActions"
 				@cancel="emit('cancel')"
@@ -165,6 +175,7 @@
 
 <script setup lang="ts">
 import type { LngLatBoundsLike, MapMouseEvent } from 'maplibre-gl'
+import { Popup } from 'maplibre-gl'
 import { translate as t } from '@nextcloud/l10n'
 import { computed, ref, watch } from 'vue'
 import {
@@ -187,12 +198,15 @@ import SearchControl from './map/SearchControl.vue'
 import PoiMarkersLayer from './map/PoiMarkersLayer.vue'
 import StylePoiLayer from './map/StylePoiLayer.vue'
 import ClickSearchMarker from './map/ClickSearchMarker.vue'
+import type { AddressBookContact } from './map/PlaceContactMarker.vue'
+import PlaceContactMarker from './map/PlaceContactMarker.vue'
 import type { HistoryAction } from './map/HistoryControl.vue'
 import HistoryControl from './map/HistoryControl.vue'
 import Slider from './map/Slider.vue'
 import ElevationChart from './map/ElevationChart.vue'
-import { showError } from '@nextcloud/dialogs'
+import { showError, showSuccess } from '@nextcloud/dialogs'
 import { searchPois as searchPoisNetwork } from '../network.js'
+import { escapeHtml } from '../utils/domUtils.ts'
 import type { Favorite, FavoriteCategory } from './map/FavoritesLayer.vue'
 import FavoritesLayer from './map/FavoritesLayer.vue'
 import type { Contact, ContactGroup } from './map/ContactsLayer.vue'
@@ -300,6 +314,9 @@ const emit = defineEmits<{
 	'photo-moved': [photo: Photo, latLng: { lat: number, lng: number }]
 	'photo-suggestion-selected': [index: number]
 	'photo-suggestion-moved': [index: number, latLng: { lat: number, lng: number }]
+	'add-favorite': [latLng: { lat: number, lng: number }]
+	'place-photos': [latLng: { lat: number, lng: number }]
+	'contact-placed': [data: { contact: AddressBookContact, latLng: { lat: number, lng: number }, address: Record<string, string>, addressType: string }]
 	cancel: []
 	redo: []
 	'slider-range-changed': [range: { start: number, end: number }]
@@ -325,6 +342,7 @@ interface SearchResult {
 const searchPois = ref<Array<{ lat: string, lon: string, [key: string]: unknown }>>([])
 const searching = ref(false)
 const clickSearchLatLng = ref<{ lat: number, lng: number } | null>(null)
+const placingContactLatLng = ref<{ lat: number, lng: number } | null>(null)
 const elevationTrack = ref<Track | null>(null)
 
 const mapInstance = useMap()
@@ -354,6 +372,92 @@ function onMapClick(wrapper: { event: MapMouseEvent }) {
 	if (props.state === 'adding') {
 		emit('add-click', wrapper.event.lngLat)
 	}
+}
+
+/**
+ * @param data the emitted contact-placement data, forwarded as-is
+ */
+function onContactPlaced(data: { contact: AddressBookContact, latLng: { lat: number, lng: number }, address: Record<string, string>, addressType: string }) {
+	emit('contact-placed', data)
+	placingContactLatLng.value = null
+}
+
+/**
+ * @param latLng the coordinates to build a geo: link for and copy to the clipboard
+ */
+async function shareLocation(latLng: { lat: number, lng: number }) {
+	const geoLink = 'geo:' + latLng.lat.toFixed(6) + ',' + latLng.lng.toFixed(6)
+	try {
+		await navigator.clipboard.writeText(geoLink)
+		showSuccess(t('maps', 'Geo link ({geoLink}) copied to clipboard', { geoLink }))
+	} catch (error) {
+		console.debug(error)
+		showError(t('maps', 'Geo link could not be copied to clipboard'))
+	}
+}
+
+// The source id of every layer that has its own right-click menu, so a right-click on one
+// of their markers/lines defers to that instead of showing the generic empty-map one below.
+// PoiMarkersLayer/StylePoiLayer aren't listed here - neither has a right-click menu of its
+// own, so right-clicking one of their markers falls through to the generic menu instead.
+const INTERACTIVE_SOURCE_IDS = ['favorites', 'contacts', 'photos', 'photo-suggestions', 'tracks', 'devices']
+
+let mapContextMenuPopup: Popup | null = null
+
+/**
+ * @param wrapper vue-maplibre-gl's map event envelope; the native MapMouseEvent is under `.event`
+ */
+function onMapContextMenu(wrapper: { event: MapMouseEvent }) {
+	const map = mapInstance.map
+	const event = wrapper.event
+	if (!map) {
+		return
+	}
+	const hasOwnMenu = map.queryRenderedFeatures(event.point).some((f) => INTERACTIVE_SOURCE_IDS.includes(f.source))
+	if (hasOwnMenu) {
+		return
+	}
+	event.preventDefault()
+
+	const latLng = { lat: event.lngLat.lat, lng: event.lngLat.lng }
+	const mapActions: Array<{ label: string, icon: string, callback: (obj: { id: string, name: string, latitude: string, longitude: string }) => void }> = window.OCA?.Maps?.mapActions ?? []
+
+	const container = document.createElement('div')
+	container.className = 'popup-map-wrapper'
+	container.innerHTML = `
+		<button class="action-btn" data-action="add-favorite">${escapeHtml(t('maps', 'Add a favorite'))}</button>
+		<button class="action-btn" data-action="place-photos">${escapeHtml(t('maps', 'Place photos'))}</button>
+		<button class="action-btn" data-action="place-contact">${escapeHtml(t('maps', 'Place contact'))}</button>
+		<button class="action-btn" data-action="share-location">${escapeHtml(t('maps', 'Share this location'))}</button>
+		${mapActions.map((action, index) => `<button class="action-btn" data-action="map-action-${index}">${escapeHtml(action.label)}</button>`).join('')}
+	`
+	container.addEventListener('click', (domEvent) => {
+		const action = (domEvent.target as HTMLElement).getAttribute('data-action')
+		if (action === 'add-favorite') {
+			emit('add-favorite', latLng)
+		} else if (action === 'place-photos') {
+			emit('place-photos', latLng)
+		} else if (action === 'place-contact') {
+			placingContactLatLng.value = latLng
+		} else if (action === 'share-location') {
+			shareLocation(latLng)
+		} else if (action?.startsWith('map-action-')) {
+			const mapAction = mapActions[parseInt(action.slice('map-action-'.length), 10)]
+			mapAction?.callback({
+				id: 'geo:' + latLng.lat + ',' + latLng.lng,
+				name: t('maps', 'Shared location'),
+				latitude: latLng.lat.toString(),
+				longitude: latLng.lng.toString(),
+			})
+		}
+		mapContextMenuPopup?.remove()
+	})
+
+	mapContextMenuPopup?.remove()
+	mapContextMenuPopup = new Popup({ closeButton: false, className: 'popovermenu open popupMarker mapContextMenuPopup' })
+		.setLngLat(event.lngLat)
+		.setDOMContent(container)
+		.addTo(map)
 }
 
 function toggleTerrain() {
@@ -507,6 +611,24 @@ defineExpose({ fitBounds, zoomOnTrack, zoomOnDevice, zoomOnPhotoSuggestion, disp
 		&:hover {
 			background-color: var(--color-background-hover);
 		}
+	}
+}
+</style>
+
+<!-- Unscoped: the context menu's content is a raw DOM node handed to a maplibregl.Popup,
+     not part of this component's own template, so scoped styles wouldn't reach it. -->
+<style lang="scss">
+.popup-map-wrapper .action-btn {
+	display: block;
+	width: 100%;
+	padding: 8px;
+	border: none;
+	background: transparent;
+	text-align: left;
+	cursor: pointer;
+
+	&:hover {
+		background: var(--color-background-hover);
 	}
 }
 </style>

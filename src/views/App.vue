@@ -238,7 +238,6 @@ import { getLetterColor, hslToRgb, Timer, getDeviceInfoFromUserAgent2, isCompute
 import { binSearch, getToken, isPublic } from '../utils/common.js'
 import { poiSearchData } from '../utils/poiData.js'
 import { processGpx } from '../tracksUtils.js'
-import L from 'leaflet'
 import { geoToLatLng, getFormattedADR } from '../utils/mapUtils.js'
 import * as network from '../network.js'
 import { all as axiosAll, spread as axiosSpread } from 'axios'
@@ -530,7 +529,7 @@ export default {
 					return d.points
 				}).map((d) => {
 					const lastPoint = d.points[d.points.length - 1]
-					const ll = L.latLng([lastPoint.lat, lastPoint.lng])
+					const ll = { lat: lastPoint.lat, lng: lastPoint.lng }
 					return {
 						type: 'device',
 						icon: isComputer(d.user_agent) ? 'icon-desktop' : 'icon-phone',
@@ -559,7 +558,7 @@ export default {
 				? this.tracks.filter((t) => {
 					return t.metadata
 				}).map((t) => {
-					const ll = L.latLng([t.metadata.lat, t.metadata.lng])
+					const ll = { lat: t.metadata.lat, lng: t.metadata.lng }
 					return {
 						type: 'track',
 						icon: 'icon-road',
@@ -578,7 +577,7 @@ export default {
 						icon: 'icon-contacts-dark',
 						id: c.UID + c.GEO,
 						label: c.FN + ' - ' + getFormattedADR(c.ADR),
-						latLng: L.latLng(geoToLatLng(c.GEO)),
+						latLng: { lat: parseFloat(geoToLatLng(c.GEO)[0]), lng: parseFloat(geoToLatLng(c.GEO)[1]) },
 					}
 				})
 				: []
@@ -595,7 +594,7 @@ export default {
 						icon: 'icon-favorite',
 						id: favid,
 						label: f.name,
-						latLng: L.latLng(f.lat, f.lng),
+						latLng: { lat: f.lat, lng: f.lng },
 					}
 				})
 				: []
@@ -1332,7 +1331,7 @@ export default {
 				const maxLat = Math.max(...lats)
 				const minLon = Math.min(...lons)
 				const maxLon = Math.max(...lons)
-				this.$refs.map.fitBounds(L.latLngBounds([minLat, minLon], [maxLat, maxLon]), { padding: [30, 30] })
+				this.$refs.map.fitBounds([[minLon, minLat], [maxLon, maxLat]], { padding: [30, 30] })
 			}
 		},
 		getContacts() {
@@ -1584,7 +1583,7 @@ export default {
 				const maxLat = Math.max(...lats)
 				const minLon = Math.min(...lons)
 				const maxLon = Math.max(...lons)
-				this.$refs.map.fitBounds(L.latLngBounds([minLat, minLon], [maxLat, maxLon]), { padding: [30, 30] })
+				this.$refs.map.fitBounds([[minLon, minLat], [maxLon, maxLat]], { padding: [30, 30] })
 			}
 		},
 		onFavoriteClick(f) {
@@ -1815,7 +1814,7 @@ export default {
 		async cancelFavoriteDelete(action) {
 			for (let i = 0; i < action.favorites.length; i++) {
 				const f = action.favorites[i]
-				const newFavId = await this.addFavorite(L.latLng(f.lat, f.lng), f.name, f.category, f.comment, f.extensions, false)
+				const newFavId = await this.addFavorite({ lat: f.lat, lng: f.lng }, f.name, f.category, f.comment, f.extensions, false)
 				this.updateActionFavoriteId(f.id, newFavId)
 			}
 		},
@@ -1824,7 +1823,7 @@ export default {
 		},
 		async redoFavoriteAdd(action) {
 			const f = action.favorite
-			const newFavId = await this.addFavorite(L.latLng(f.lat, f.lng), f.name, f.category, f.comment, f.extensions, false)
+			const newFavId = await this.addFavorite({ lat: f.lat, lng: f.lng }, f.name, f.category, f.comment, f.extensions, false)
 			this.updateActionFavoriteId(action.favorite.id, newFavId)
 		},
 		redoFavoriteEdit(action) {

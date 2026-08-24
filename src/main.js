@@ -27,19 +27,6 @@ import '../css/style.scss'
 import optionsController from './optionsController.js'
 import { emit } from '@nextcloud/event-bus'
 
-import L from 'leaflet'
-
-import iconRetinaUrl from 'leaflet/dist/images/marker-icon-2x.png'
-import iconUrl from 'leaflet/dist/images/marker-icon.png'
-import shadowUrl from 'leaflet/dist/images/marker-shadow.png'
-
-delete L.Icon.Default.prototype._getIconUrl
-L.Icon.Default.mergeOptions({
-    iconRetinaUrl,
-    iconUrl,
-    shadowUrl,
-})
-
 // Maps actions registrations (other apps that want to receive a position)
 if (!window.OCA.Maps) {
     window.OCA.Maps = {

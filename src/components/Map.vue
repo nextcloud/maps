@@ -361,24 +361,12 @@ function toggleTerrain() {
 	mapInstance.map?.setTerrain(terrainEnabled.value ? { source: TERRAIN_SOURCE_ID, exaggeration: 1.5 } : null)
 }
 
-interface LeafletLikeBounds {
-	getWest(): number
-	getSouth(): number
-	getEast(): number
-	getNorth(): number
-}
-
 /**
- * @param bounds either a Leaflet-style LatLngBounds (still constructed that way by some
- *   App.vue call sites) or a plain [[west, south], [east, north]] MapLibre bounds array
+ * @param bounds a [[west, south], [east, north]] MapLibre bounds array
  * @param options passed through to MapLibre's fitBounds
  */
-function fitBounds(bounds: LeafletLikeBounds | LngLatBoundsLike, options?: object) {
-	const asLeafletBounds = bounds as Partial<LeafletLikeBounds>
-	const boundsArray = typeof asLeafletBounds.getWest === 'function'
-		? [[asLeafletBounds.getWest!(), asLeafletBounds.getSouth!()], [asLeafletBounds.getEast!(), asLeafletBounds.getNorth!()]] as LngLatBoundsLike
-		: bounds as LngLatBoundsLike
-	mapInstance.map?.fitBounds(boundsArray, options)
+function fitBounds(bounds: LngLatBoundsLike, options?: object) {
+	mapInstance.map?.fitBounds(bounds, options)
 }
 
 /**

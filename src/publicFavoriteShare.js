@@ -23,8 +23,6 @@
 import { createApp } from 'vue'
 import PublicFavoriteShare from './views/PublicFavoriteShare.vue'
 
-import './bootstrap.js' 
-
 import store from './store/publicFavoriteShareStore.js'
 
 const app = createApp(PublicFavoriteShare)

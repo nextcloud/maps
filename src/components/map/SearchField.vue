@@ -35,8 +35,6 @@
 <script>
 import { NcSelect } from '@nextcloud/vue'
 
-import L from 'leaflet'
-
 import * as network from '../../network.js'
 import { accented } from '../../utils.js'
 
@@ -158,10 +156,7 @@ export default {
 				const lng = parseFloat(regResult.groups.lng)
 				this.currentCoordinateOption = {
 					type: 'coordinate',
-					latLng: L.latLng([
-						lat,
-						lng,
-					]),
+					latLng: { lat, lng },
 					lat,
 					lng,
 					id: 'coordinateSearch_' + searchQuery,
@@ -198,7 +193,7 @@ export default {
 						icon: 'icon-link',
 						value: r.display_name,
 						label: r.display_name,
-						latLng: L.latLng(r.lat, r.lon),
+						latLng: { lat: parseFloat(r.lat), lng: parseFloat(r.lon) },
 						rawResult: r,
 					}
 				})

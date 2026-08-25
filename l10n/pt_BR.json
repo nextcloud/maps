@@ -277,7 +277,7 @@
     "MapLibre settings" : "Configurações do MapLibre",
     "Set the URL and Basic Authorization of style.json for OpenStreetMap Vector Tiles with MapLibre-GL-JS." : "Defina o URL e a autorização básica de style.json para blocos vetoriais OpenStreetMap com MapLibre-GL-JS.",
     "MapLibre Street style URL" : "URL do estilo MapLibre Street",
-    "Basic Authorization if required. Format is &quot;user:password&quot;" : "Autorização Básica é obrigatória. O formato é &quot;usuário:senha&quot;",
+    "Basic Authorization if required. Format is &quot;user:password&quot;" : "Autorização Básica, se necessária. O formato é &quot;usuário:senha&quot;",
     "support PMTiles protocol" : "suportar o protocolo PMTiles",
     "My location" : "Minha localização",
     "Your browser does not support registering Maps to open geo links" : "Seu navegador não suporta o registro do Mapas para abrir links geográficos",

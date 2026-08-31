@@ -5,8 +5,8 @@
 -->
 
 <!--
-	Port in progress: the map engine moved from Leaflet to vue-maplibre-gl.
-	Ported so far: the base map (street/satellite/terrain), click-to-add,
+	The map engine moved from Leaflet to vue-maplibre-gl. Ported: the
+	base map (street/satellite/terrain), click-to-add,
 	favorites/contacts/photos/photo-suggestions/tracks/devices markers and
 	clustering, routing, the search box (including the base style's own
 	poi icons), every layer's right-click menu, drag-to-edit for favorites

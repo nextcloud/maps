@@ -135,13 +135,13 @@
 					<button type="button"
 						:class="{ active: baseStyleId === BaseStyleIds.Street }"
 						:title="t('maps', 'Street map')"
-						@click="baseStyleId = BaseStyleIds.Street">
+						@click="setBaseStyle(BaseStyleIds.Street)">
 						<Earth :size="18" />
 					</button>
 					<button type="button"
 						:class="{ active: baseStyleId === BaseStyleIds.Satellite }"
 						:title="t('maps', 'Satellite map')"
-						@click="baseStyleId = BaseStyleIds.Satellite">
+						@click="setBaseStyle(BaseStyleIds.Satellite)">
 						<Satellite :size="18" />
 					</button>
 					<button type="button"
@@ -221,10 +221,13 @@ import type { Device } from './map/DevicesLayer.vue'
 import DevicesLayer from './map/DevicesLayer.vue'
 import type { BaseStyleId } from '../data/mapLayers.ts'
 import { BaseStyleIds, BaseStyles, TERRAIN_SOURCE, TERRAIN_SOURCE_ID } from '../data/mapLayers.ts'
+import optionsController from '../optionsController.js'
 
 const props = withDefaults(defineProps<{
 	/** Initial bounds, stored Leaflet-style as [[north, east], [south, west]]. */
 	mapBoundsProp?: number[][]
+	/** The persisted base style choice - a BaseStyleId, or a pre-port Leaflet layer id for existing users. */
+	activeLayerIdProp?: string
 	state?: string
 	favorites?: Record<string, Favorite>
 	favoriteCategories?: Record<string, FavoriteCategory>
@@ -256,6 +259,7 @@ const props = withDefaults(defineProps<{
 	searchData?: unknown[]
 }>(), {
 	mapBoundsProp: () => [],
+	activeLayerIdProp: '',
 	state: '',
 	favorites: () => ({}),
 	favoriteCategories: () => ({}),
@@ -322,10 +326,38 @@ const emit = defineEmits<{
 	'slider-range-changed': [range: { start: number, end: number }]
 }>()
 
-const baseStyleId = ref<BaseStyleId>(BaseStyleIds.Street)
+// Maps a few of the old Leaflet layer ids (from tileLayer values persisted before this port)
+// to their closest surviving BaseStyleId, since only a street and a satellite style remain.
+const LEGACY_STYLE_ID_MAP: Record<string, BaseStyleId> = {
+	esri: BaseStyleIds.Satellite,
+}
+
+/**
+ * @param id the persisted tileLayer value - a BaseStyleId, a pre-port layer id, or empty
+ */
+function resolveBaseStyleId(id?: string): BaseStyleId {
+	if (id === BaseStyleIds.Street || id === BaseStyleIds.Satellite) {
+		return id
+	}
+	return LEGACY_STYLE_ID_MAP[id ?? ''] ?? BaseStyleIds.Street
+}
+
+const baseStyleId = ref<BaseStyleId>(resolveBaseStyleId(props.activeLayerIdProp))
 const activeStyle = computed(() => BaseStyles[baseStyleId.value])
 const terrainEnabled = ref(false)
 const showRouting = ref(false)
+
+watch(() => props.activeLayerIdProp, (id) => {
+	baseStyleId.value = resolveBaseStyleId(id)
+})
+
+/**
+ * @param id the base style to switch to
+ */
+function setBaseStyle(id: BaseStyleId) {
+	baseStyleId.value = id
+	optionsController.saveOptionValues({ tileLayer: id })
+}
 
 interface SearchResult {
 	type: string

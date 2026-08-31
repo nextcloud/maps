@@ -58,7 +58,6 @@
     "geojson": "^0.5.0",
     "maplibre-gl": "^5.16.0",
     "nouislider": "^15.8.1",
-    "opening_hours": "^3.9.0",
     "ua-parser-js": "^2.0.5",
     "vue": "^3.4.21",
     "vue-maplibre-gl": "^5.6.1",

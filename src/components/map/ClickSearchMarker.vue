@@ -5,10 +5,10 @@
 -->
 
 <!--
-	Ported from Leaflet (ClickSearchPopup.vue) to vue-maplibre-gl, for
-	the search box's "coordinate" result (typing raw lat,lng text).
-	Not wired up for plain map clicks - that used to also open this
-	same popup, but click-to-search-here isn't part of this port.
+	Ported from Leaflet (ClickSearchPopup.vue) to vue-maplibre-gl. Used
+	both for the search box's "coordinate" result (typing raw lat,lng
+	text) and for a plain click on empty map (Map.vue's onMapClick sets
+	the same clickSearchLatLng either way).
 
 	Not ported: "Add contact address" and the window.OCA.Maps.mapActions
 	extension point, for the same reason as PoiMarkersLayer.vue - they

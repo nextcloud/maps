@@ -16,10 +16,11 @@
 	just an absolutely-positioned div using noUiSlider), the track
 	elevation profile chart (ElevationChart.vue, chart.js instead of
 	@raruto/leaflet-elevation - see its own header comment), placing a
-	contact address by clicking the map (PlaceContactMarker.vue), and
-	the empty-map right-click menu (add a favorite / place photos /
-	place contact / share this location / third-party
-	window.OCA.Maps.mapActions entries).
+	contact address by clicking the map (PlaceContactMarker.vue), the
+	empty-map right-click menu (add a favorite / place photos / place
+	contact / share this location / third-party window.OCA.Maps.mapActions
+	entries), and click-anywhere-to-search (ClickSearchMarker.vue) - a
+	plain click that didn't land on a marker reverse-geocodes that spot.
 -->
 <template>
 	<div id="map-wrapper" :class="{ loading: state === 'loading', adding: state === 'adding' }">
@@ -174,7 +175,7 @@
 </template>
 
 <script setup lang="ts">
-import type { LngLatBoundsLike, MapMouseEvent } from 'maplibre-gl'
+import type { LngLatBoundsLike, MapMouseEvent, Point } from 'maplibre-gl'
 import { Popup } from 'maplibre-gl'
 import { translate as t } from '@nextcloud/l10n'
 import { computed, ref, watch } from 'vue'
@@ -207,6 +208,7 @@ import ElevationChart from './map/ElevationChart.vue'
 import { showError, showSuccess } from '@nextcloud/dialogs'
 import { searchPois as searchPoisNetwork } from '../network.js'
 import { escapeHtml } from '../utils/domUtils.ts'
+import { stylePoiFeatureAt } from '../utils/stylePoi.ts'
 import type { Favorite, FavoriteCategory } from './map/FavoritesLayer.vue'
 import FavoritesLayer from './map/FavoritesLayer.vue'
 import type { Contact, ContactGroup } from './map/ContactsLayer.vue'
@@ -397,13 +399,41 @@ watch(() => mapInstance.isLoaded, (loaded) => {
 	}
 })
 
+// The source id of every layer that owns its own click handling for markers/lines, so a
+// plain click or right-click there defers to that layer's own click/context-menu handler
+// instead of the generic ones below.
+const MARKER_SOURCE_IDS = ['favorites', 'contacts', 'photos', 'photo-suggestions', 'tracks', 'devices']
+// PoiMarkersLayer's search-result markers own their own click handler (a popup with "Add
+// to favorites") but have no right-click menu, so only left-click needs to check for them.
+const CLICK_ONLY_SOURCE_IDS = [...MARKER_SOURCE_IDS, 'search-pois']
+
+/**
+ * @param point pixel coordinates within the map viewport
+ */
+function hasMarkerAt(point: Point): boolean {
+	const map = mapInstance.map
+	if (!map) {
+		return false
+	}
+	if (map.queryRenderedFeatures(point).some((f) => CLICK_ONLY_SOURCE_IDS.includes(f.source))) {
+		return true
+	}
+	return !!stylePoiFeatureAt(map, point)
+}
+
 /**
  * @param wrapper vue-maplibre-gl's map event envelope; the native MapMouseEvent is under `.event`
  */
 function onMapClick(wrapper: { event: MapMouseEvent }) {
 	if (props.state === 'adding') {
 		emit('add-click', wrapper.event.lngLat)
+		return
 	}
+	if (hasMarkerAt(wrapper.event.point)) {
+		// handled by that marker's own click handler instead
+		return
+	}
+	clickSearchLatLng.value = { lat: wrapper.event.lngLat.lat, lng: wrapper.event.lngLat.lng }
 }
 
 /**
@@ -428,12 +458,6 @@ async function shareLocation(latLng: { lat: number, lng: number }) {
 	}
 }
 
-// The source id of every layer that has its own right-click menu, so a right-click on one
-// of their markers/lines defers to that instead of showing the generic empty-map one below.
-// PoiMarkersLayer/StylePoiLayer aren't listed here - neither has a right-click menu of its
-// own, so right-clicking one of their markers falls through to the generic menu instead.
-const INTERACTIVE_SOURCE_IDS = ['favorites', 'contacts', 'photos', 'photo-suggestions', 'tracks', 'devices']
-
 let mapContextMenuPopup: Popup | null = null
 
 /**
@@ -445,7 +469,9 @@ function onMapContextMenu(wrapper: { event: MapMouseEvent }) {
 	if (!map) {
 		return
 	}
-	const hasOwnMenu = map.queryRenderedFeatures(event.point).some((f) => INTERACTIVE_SOURCE_IDS.includes(f.source))
+	// PoiMarkersLayer/StylePoiLayer aren't checked here - neither has a right-click menu
+	// of its own, so right-clicking one of their markers falls through to the generic menu.
+	const hasOwnMenu = map.queryRenderedFeatures(event.point).some((f) => MARKER_SOURCE_IDS.includes(f.source))
 	if (hasOwnMenu) {
 		return
 	}

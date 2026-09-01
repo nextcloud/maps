@@ -22,6 +22,7 @@ OC.L10N.register(
     "Quit" : "Erausgoen",
     "Favorite" : "Favorit",
     "Tags" : "Tags",
+    "Duration" : "Dauer",
     "Name" : "Numm",
     "Add" : "Derbäimaachen",
     "Add to favorites" : "Add to favorites",
@@ -38,6 +39,7 @@ OC.L10N.register(
     "Destination" : "Destination",
     "min" : "Minutt",
     "Phone" : "Telefon",
-    "Default" : "Standard"
+    "Default" : "Standard",
+    "Restaurant" : "Restauranten"
 },
 "nplurals=2; plural=(n != 1);");

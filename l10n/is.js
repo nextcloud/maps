@@ -46,6 +46,7 @@ OC.L10N.register(
     "The True Size of Africa" : "Raunstærð Afríku",
     "(No name)" : "(ekkert nafn)",
     "No favorites to display" : "Engin eftirlæti til að birta",
+    "Clear selection" : "Hreinsa valið",
     "Select all" : "Select all",
     "Quit" : "Hætta",
     "Load more" : "Hlaða inn meira",

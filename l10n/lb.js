@@ -38,6 +38,7 @@ OC.L10N.register(
     "left" : "lénks",
     "Destination" : "Destination",
     "min" : "Minutt",
+    "Failed to save settings" : "Späichere vun den Astellunge feelgeschloen",
     "Phone" : "Telefon",
     "Default" : "Standard",
     "Restaurant" : "Restauranten"

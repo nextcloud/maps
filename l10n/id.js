@@ -44,6 +44,7 @@ OC.L10N.register(
     "Altitude" : "Ketinggian",
     "Update" : "Perbarui",
     "No name" : "Tanpa nama",
+    "Select All" : "Pilih Semua",
     "Yes" : "Ya",
     "Search" : "Cari",
     "File" : "Berkas",

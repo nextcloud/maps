@@ -5,6 +5,8 @@ OC.L10N.register(
     "File not found" : "Berkas tidak ditemukan",
     "Personal" : "Personal",
     "Maps" : "Peta",
+    "Zoom" : "Zoom",
+    "Change color" : "Ubah warna",
     "Export" : "Ekspor",
     "Delete" : "Hapus",
     "Cancel" : "Membatalkan",

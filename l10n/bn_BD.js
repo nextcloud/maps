@@ -17,6 +17,7 @@ OC.L10N.register(
     "Location" : "অবস্থান",
     "Save" : "সংরক্ষণ",
     "Close" : "বন্ধ",
+    "Clear selection" : "Clear selection",
     "Quit" : "বন্ধ",
     "Favorite" : "প্রিয়জন",
     "Tags" : "ট্যাগ",

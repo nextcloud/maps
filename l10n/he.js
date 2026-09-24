@@ -46,6 +46,7 @@ OC.L10N.register(
     "The True Size of Africa" : "הגודל האמתי של אפריקה",
     "(No name)" : "(אין שם)",
     "No favorites to display" : "אין מועדפים להצגה",
+    "Clear selection" : "נקה בחירה",
     "Select all" : "בחר הכל",
     "Quit" : "יציאה",
     "Load more" : "לטעון עוד",

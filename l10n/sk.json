@@ -214,7 +214,7 @@
     "Merge {modifier}" : "Zlúčiť {modifikátor}",
     "Turn {modifier} on the ramp" : "Na nájazda zatočte {modifier}",
     "Take the ramp on the {modifier}" : "Použite nájazd {modifier}",
-    "Turn {modifier} at the end of the road" : "Na konci cesty odbočte {modifikátor}",
+    "Turn {modifier} at the end of the road" : "Na konci cesty odbočte {modifier}",
     "onto {road}" : "na {road}",
     "Start" : "Začať",
     "Via {viaNumber}" : "Cez {viaNumber}",

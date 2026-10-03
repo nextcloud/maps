@@ -249,7 +249,7 @@ OC.L10N.register(
     "GPX track" : "Trasa GPX",
     "GPX route" : "Trasa GPX",
     "Route {date}" : "Trasa {date}",
-    "Track {date}" : "Túra {date}",
+    "Track {date}" : "Stopa {date}",
     "Route exported to {path}." : "Trasa exportovaná do {path}.",
     "Track exported to {path}." : "Stopa exportovaná do {path}.",
     "Failed to export route" : "Export trasy zlyhal",

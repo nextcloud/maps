@@ -2375,7 +2375,8 @@ export default {
 			)
 		},
 		onMyMapClicked(myMap) {
-			if (this.showSidebar || getSidebar().isOpen) {
+			// the default map has no folder to show
+			if (myMap.path && (this.showSidebar || getSidebar().isOpen)) {
 				this.openFileSidebar(myMap.path)
 			}
 		    if (!this.myMapsLoading) {
@@ -2387,13 +2388,16 @@ export default {
 		onAddMyMap(name) {
 		    this.myMapsLoading = true
 		    network.addMyMap(name).then((response) => {
-				this.myMaps.push({
+				const myMap = {
 					...response.data,
-					enabled: this.myMapId === response.data.id,
-				})
+					enabled: false,
+				}
+				this.myMaps.push(myMap)
+				this.myMapsLoading = false
+				this.onMyMapClicked(myMap)
 			}).catch((error) => {
 				console.error(error)
-			}).then(() => {
+				showError(t('maps', 'Failed to create the map'))
 				this.myMapsLoading = false
 			})
 		},
@@ -2402,12 +2406,12 @@ export default {
 		},
 		onRenameMyMap({ id, newName }) {
 			this.myMapsLoading = true
-			network.renameMyMap(id, newName).then((response) => {
-				const index = this.myMaps.findIndex((myMap) => myMap.id === id)
-				this.myMaps[index] = response.data
+			network.renameMyMap(id, newName).then(() => {
+				// the server returns the map's settings, not the map, and moves its folder, so reload the list
+				this.getMyMaps()
 			}).catch((error) => {
 				console.error(error)
-			}).then(() => {
+				showError(t('maps', 'Failed to rename the map'))
 				this.myMapsLoading = false
 			})
 		},
@@ -2416,9 +2420,14 @@ export default {
 			network.deleteMyMap(id).then((response) => {
 				const index = this.myMaps.findIndex((myMap) => myMap.id === id)
 				this.myMaps.splice(index, 1)
+				this.myMapsLoading = false
+				if (this.myMapId === id) {
+					// the open map is gone, fall back to the default one
+					this.onMyMapClicked(this.myMaps.find((myMap) => myMap.id === null) ?? { id: null })
+				}
 			}).catch((error) => {
 				console.error(error)
-			}).then(() => {
+				showError(t('maps', 'Failed to delete the map'))
 				this.myMapsLoading = false
 			})
 		},

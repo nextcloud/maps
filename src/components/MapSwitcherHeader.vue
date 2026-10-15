@@ -37,29 +37,20 @@
 						:size="44"
 						:disable-menu="true"
 						:hide-status="true" />
-					<form v-if="renaming"
-						class="map-switcher__rename"
-						@submit.prevent="submitRename">
-						<NcTextField ref="renameField"
-							v-model="newName"
-							:label="t('maps', 'Map name')"
-							:show-trailing-button="true"
-							trailing-button-icon="arrowEnd"
-							:trailing-button-label="t('maps', 'Rename')"
-							@trailing-button-click="submitRename"
-							@keydown.esc.stop.prevent="renaming = false" />
-					</form>
-					<span v-else class="map-switcher__info">
+					<span class="map-switcher__info">
 						<span class="map-switcher__name">{{ currentMap.name }}</span>
 						<span class="map-switcher__subname">{{ subname(currentMap) }}</span>
 					</span>
-					<NcActions v-if="currentMap.id && !renaming" :aria-label="t('maps', 'Map actions')">
-						<NcActionButton :close-after-click="true" @click="startRename">
+					<NcActions v-if="currentMap.id"
+						:aria-label="t('maps', 'Map actions')"
+						@open="newName = currentMap.name">
+						<NcActionInput v-model="newName"
+							:label="t('maps', 'Rename')"
+							@submit="submitRename">
 							<template #icon>
 								<IconPencil :size="20" />
 							</template>
-							{{ t('maps', 'Rename') }}
-						</NcActionButton>
+						</NcActionInput>
 						<NcActionLink :href="folderUrl(currentMap)" target="_blank">
 							<template #icon>
 								<IconFolder :size="20" />
@@ -124,6 +115,7 @@ import { translate as t } from '@nextcloud/l10n'
 import { generateUrl } from '@nextcloud/router'
 import {
 	NcActionButton,
+	NcActionInput,
 	NcActionLink,
 	NcActions,
 	NcAvatar,
@@ -131,9 +123,8 @@ import {
 	NcListItem,
 	NcLoadingIcon,
 	NcPopover,
-	NcTextField,
 } from '@nextcloud/vue'
-import { computed, nextTick, onBeforeUnmount, ref, watch } from 'vue'
+import { computed, onBeforeUnmount, ref, watch } from 'vue'
 import IconChevronDown from 'vue-material-design-icons/ChevronDown.vue'
 import IconFolder from 'vue-material-design-icons/Folder.vue'
 import IconPencil from 'vue-material-design-icons/Pencil.vue'
@@ -201,14 +192,11 @@ watch(open, (isOpen) => {
 		window.addEventListener('resize', onResize)
 	} else {
 		window.removeEventListener('resize', onResize)
-		renaming.value = false
 	}
 })
 
 onBeforeUnmount(() => window.removeEventListener('resize', onResize))
-const renaming = ref(false)
 const newName = ref('')
-const renameField = ref<InstanceType<typeof NcTextField> | null>(null)
 
 const defaultMap: MyMap = { id: null, name: t('maps', 'Default'), enabled: true }
 const currentMap = computed(() => props.myMaps.find((m) => m.enabled) ?? props.myMaps[0] ?? defaultMap)
@@ -228,19 +216,11 @@ function folderUrl(myMap: MyMap): string {
 	return generateUrl('/apps/files/?fileid={id}', { id: myMap.id })
 }
 
-async function startRename(): Promise<void> {
-	newName.value = currentMap.value.name
-	renaming.value = true
-	await nextTick()
-	renameField.value?.focus()
-}
-
 function submitRename(): void {
 	const name = newName.value.trim()
 	if (name && currentMap.value.id !== null && name !== currentMap.value.name) {
 		emit('rename', { id: currentMap.value.id, newName: name })
 	}
-	renaming.value = false
 }
 
 /**
@@ -338,11 +318,6 @@ function onDelete(): void {
 		display: flex;
 		align-items: center;
 		gap: calc(3 * var(--default-grid-baseline));
-		min-width: 0;
-	}
-
-	&__rename {
-		flex: 1 1 auto;
 		min-width: 0;
 	}
 

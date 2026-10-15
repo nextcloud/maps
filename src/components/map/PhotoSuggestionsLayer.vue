@@ -5,19 +5,8 @@
 -->
 
 <!--
-	Ported from Leaflet to vue-maplibre-gl, following the same clustered
-	GL symbol layer approach as PhotosLayer.vue (sharing its preview-icon
-	drawing via utils/photoMarker.ts). Not ported, on the same grounds as
-	PhotosLayer.vue: spiderfying a cluster (no MapLibre equivalent - the
-	right-click menu's "Display pictures"/"Zoom on bounds" cover the same
-	need) and the chunked cluster loading progress events (MapLibre's
-	clustering is synchronous and fast, so there's no "in progress" state
-	left to report).
-
-	Unlike PhotosLayer.vue, a marker's index is its position in the full,
-	unfiltered photoSuggestions array - the sidebar tab's selection list
-	and photoSuggestionsSelectedIndices are keyed against that same array,
-	not against whatever subset is currently shown on the map.
+	Marker indices refer to the full photoSuggestions array, like the
+	sidebar selection, not to the filtered subset shown on the map.
 -->
 <template>
 	<MglGeoJsonSource :source-id="SOURCE_ID"
@@ -98,7 +87,7 @@ const SOURCE_ID = 'photo-suggestions'
 const CLUSTER_LAYER_ID = 'photo-suggestions-clusters'
 const CLUSTER_COUNT_LAYER_ID = 'photo-suggestions-cluster-count'
 const POINT_LAYER_ID = 'photo-suggestions-points'
-// Matches the old marker view size (40px) + old cluster radius margin (10px)
+// Marker size plus a 10px margin
 const CLUSTER_RADIUS = PHOTO_PREVIEW_MARKER_SIZE + 10
 // Picks one representative child's iconId for each cluster (not necessarily the first one -
 // supercluster aggregates bottom-up, so it's whichever leaf the reduction visits last), and

@@ -3,20 +3,6 @@
  - SPDX-FileCopyrightText: 2026 Nextcloud GmbH and Nextcloud contributors
  - SPDX-License-Identifier: AGPL-3.0-or-later
 -->
-
-<!--
-	Ported from Leaflet to vue-maplibre-gl. The point-hover event this
-	used to emit while hovering a marker or line is gone, but on purpose
-	rather than deferred: nothing has ever listened for it since the
-	Leaflet-to-vue-maplibre-gl port started. Devices never had
-	drag-to-edit (it wouldn't make sense to manually move a live/
-	recorded GPS position), unlike favorites/photos.
-
-	Dropped on purpose, not deferred: the >2500-points-per-device heatmap
-	fallback (LHeatMap.vue/leaflet.heat). That existed to keep Leaflet's
-	DOM-based rendering from choking on very long history trails; MapLibre
-	renders line geometry on the GPU and doesn't need the same escape hatch.
--->
 <template>
 	<MglGeoJsonSource :source-id="SOURCE_ID" :data="geojson">
 		<MglLineLayer :layer-id="LINE_CASING_LAYER_ID"

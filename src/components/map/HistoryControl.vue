@@ -3,12 +3,6 @@
  - SPDX-FileCopyrightText: 2026 Nextcloud GmbH and Nextcloud contributors
  - SPDX-License-Identifier: AGPL-3.0-or-later
 -->
-
-<!--
-	Ported from Leaflet to vue-maplibre-gl: a plain MglCustomControl
-	instead of an L.Control, NcButton instead of plain CSS-mask icon
-	buttons.
--->
 <template>
 	<MglCustomControl position="top-right">
 		<div class="maps-history-control">

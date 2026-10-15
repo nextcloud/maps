@@ -5,26 +5,8 @@
 -->
 
 <!--
-	Ported from Leaflet (leaflet-routing-machine) to
-	@maplibre/maplibre-gl-directions. That library only speaks the
-	OSRM and Mapbox-Directions-API request/response formats, so
-	GraphHopper routing support was dropped rather than ported (the
-	admin setting was removed too).
-
-	MapLibreGlDirections' own click-to-add/drag-to-move waypoint
-	interactivity is intentionally left disabled: the step list below
-	already provides full waypoint CRUD, and mixing the two models
-	doesn't work since this library has no concept of an empty/unset
-	waypoint slot the way leaflet-routing-machine's plan did. It's used
-	here purely as a "given these coordinates, draw the route" renderer.
-
-	The turn-by-turn instructions list is rebuilt from the raw OSRM/
-	Mapbox response ourselves (../../../utils/routingInstructions.ts),
-	since maplibre-gl-directions only draws the route and doesn't decode
-	it into textual steps.
-
-	Not ported: the per-position (begin/via/end) waypoint marker icons -
-	the library's default marker styling is used instead.
+	Draws the route with @maplibre/maplibre-gl-directions (OSRM and Mapbox
+	formats only). Waypoints are edited in the step list, not on the map.
 -->
 <template>
 	<MglCustomControl position="top-left">
@@ -202,8 +184,7 @@ const routeReady = computed(() => !!latestDirections.value?.routes?.length)
 const routers = computed<RouterOption[]>(() => {
 	const optionValues = optionsController.optionValues as Record<string, string>
 	const result: RouterOption[] = []
-	// values saved before the settings were trimmed can still carry stray whitespace, and the
-	// profile is appended to the URL, so a trailing slash would end up doubled
+	// the profile is appended to the URL, so drop stray whitespace and trailing slashes
 	const cleanUrl = (url?: string) => url?.trim().replace(/\/+$/, '')
 	const osrmCarURL = cleanUrl(optionValues.osrmCarURL)
 	const osrmBikeURL = cleanUrl(optionValues.osrmBikeURL)

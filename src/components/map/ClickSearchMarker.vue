@@ -5,15 +5,7 @@
 -->
 
 <!--
-	Ported from Leaflet (ClickSearchPopup.vue) to vue-maplibre-gl. Used
-	both for the search box's "coordinate" result (typing raw lat,lng
-	text) and for a plain click on empty map (Map.vue's onMapClick sets
-	the same clickSearchLatLng either way).
-
-	Not ported: "Add contact address" and the window.OCA.Maps.mapActions
-	extension point, for the same reason as PoiMarkersLayer.vue - they
-	depended on a "place an existing contact/entity by address" mode
-	that isn't implemented yet.
+	Reverse-geocoded marker for a coordinate search or a click on the map.
 -->
 <template>
 	<div />

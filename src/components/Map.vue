@@ -4,24 +4,6 @@
  - SPDX-License-Identifier: AGPL-3.0-or-later
 -->
 
-<!--
-	The map engine moved from Leaflet to vue-maplibre-gl. Ported: the
-	base map (street/satellite/terrain), click-to-add,
-	favorites/contacts/photos/photo-suggestions/tracks/devices markers and
-	clustering, routing, the search box (including the base style's own
-	poi icons), every layer's right-click menu, drag-to-edit for favorites
-	and photos (devices never had it - see its own header comment), the
-	history (undo/redo) control, the date-range slider (Slider.vue
-	itself needed no changes at all - it was never Leaflet-dependent,
-	just an absolutely-positioned div using noUiSlider), the track
-	elevation profile chart (ElevationChart.vue, chart.js instead of
-	@raruto/leaflet-elevation - see its own header comment), placing a
-	contact address by clicking the map (PlaceContactMarker.vue), the
-	empty-map right-click menu (add a favorite / place photos / place
-	contact / share this location / third-party window.OCA.Maps.mapActions
-	entries), and click-anywhere-to-search (ClickSearchMarker.vue) - a
-	plain click that didn't land on a marker reverse-geocodes that spot.
--->
 <template>
 	<div id="map-wrapper" :class="{ loading: state === 'loading', adding: state === 'adding' }">
 		<MglMap :map-style="activeStyle"
@@ -226,9 +208,9 @@ import { BaseStyleIds, BaseStyles, TERRAIN_SOURCE, TERRAIN_SOURCE_ID } from '../
 import optionsController from '../optionsController.js'
 
 const props = withDefaults(defineProps<{
-	/** Initial bounds, stored Leaflet-style as [[north, east], [south, west]]. */
+	/** Initial bounds, stored as [[north, east], [south, west]]. */
 	mapBoundsProp?: number[][]
-	/** The persisted base style choice - a BaseStyleId, or a pre-port Leaflet layer id for existing users. */
+	/** The persisted base style choice - a BaseStyleId, or another stored tile layer id. */
 	activeLayerIdProp?: string
 	state?: string
 	favorites?: Record<string, Favorite>
@@ -328,14 +310,13 @@ const emit = defineEmits<{
 	'slider-range-changed': [range: { start: number, end: number }]
 }>()
 
-// Maps a few of the old Leaflet layer ids (from tileLayer values persisted before this port)
-// to their closest surviving BaseStyleId, since only a street and a satellite style remain.
+// Maps stored tileLayer values that are not a BaseStyleId to the closest BaseStyleId
 const LEGACY_STYLE_ID_MAP: Record<string, BaseStyleId> = {
 	esri: BaseStyleIds.Satellite,
 }
 
 /**
- * @param id the persisted tileLayer value - a BaseStyleId, a pre-port layer id, or empty
+ * @param id the persisted tileLayer value, empty if none is stored
  */
 function resolveBaseStyleId(id?: string): BaseStyleId {
 	if (id === BaseStyleIds.Street || id === BaseStyleIds.Satellite) {
@@ -389,7 +370,7 @@ const initialBounds = computed<LngLatBoundsLike | undefined>(() => {
 	if (![north, east, south, west].every((n) => Number.isFinite(n))) {
 		return undefined
 	}
-	// MapLibre wants [[west, south], [east, north]], Leaflet stored [[north, east], [south, west]].
+	// MapLibre wants [[west, south], [east, north]]
 	return [[west, south], [east, north]]
 })
 

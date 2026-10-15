@@ -4,12 +4,9 @@
  */
 
 /**
- * Turns an OSRM/Mapbox-Directions-API route response (both providers share
- * the same maneuver vocabulary) into a flat, localized list of turn-by-turn
- * instructions, without pulling in osrm-text-instructions or
- * leaflet-routing-machine. Ported from leaflet-routing-machine's
- * OSRMv1._convertRoute()/Formatter.formatInstruction(), which this app used
- * to rely on for the same purpose.
+ * Turns an OSRM/Mapbox Directions route response into localized turn-by-turn
+ * instructions. Ported from leaflet-routing-machine's OSRMv1._convertRoute()
+ * and Formatter.formatInstruction().
  */
 
 import { translate as t } from '@nextcloud/l10n'

@@ -3,14 +3,6 @@
  - SPDX-FileCopyrightText: 2026 Nextcloud GmbH and Nextcloud contributors
  - SPDX-License-Identifier: AGPL-3.0-or-later
 -->
-
-<!--
-	Ported from Leaflet to vue-maplibre-gl. Not ported yet, on purpose:
-	spiderfying overlapping markers at max zoom - MapLibre's clustering
-	has no equivalent, and clusters are rare enough at max zoom that
-	zoom-to-bounds (still available from the cluster's right-click menu)
-	covers the same need.
--->
 <template>
 	<MglGeoJsonSource :source-id="SOURCE_ID"
 		:data="geojson"
@@ -79,7 +71,7 @@ const SOURCE_ID = 'favorites'
 const CLUSTER_LAYER_ID = 'favorites-clusters'
 const CLUSTER_COUNT_LAYER_ID = 'favorites-cluster-count'
 const POINT_LAYER_ID = 'favorites-points'
-// Matches the old cluster-marker view size (36px) + old cluster radius margin (10px)
+// Marker size (36px) plus a 10px margin
 const CLUSTER_RADIUS = 46
 const DEFAULT_COLOR = '0082c9'
 

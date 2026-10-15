@@ -5,13 +5,8 @@
 -->
 
 <!--
-	Ported from Leaflet (PlaceContactPopup.vue) to vue-maplibre-gl. Unlike
-	the raw-HTML right-click menus the other layers use, this popup needs
-	real Vue reactivity (NcSelect, a live-updating marker icon), so rather
-	than mounting a second Vue app the way MapContainer.vue's popups do,
-	its whole template is teleported into a plain maplibregl.Popup's DOM
-	content - it's already part of this app's component tree (a normal
-	child of Map.vue), so it needs no store/globalProperties bridging.
+	The popup needs Vue reactivity, so its template is teleported into a
+	maplibregl.Popup.
 -->
 <template>
 	<Teleport v-if="container" :to="container">

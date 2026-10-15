@@ -44,11 +44,7 @@ function drawStar(ctx: CanvasRenderingContext2D, cx: number, cy: number, outerRa
 }
 
 /**
- * Draws a colored circle with a white star on top and registers it as a
- * MapLibre GL sprite image - matching the old Leaflet div-icon look closely
- * enough - so favorite markers look the same everywhere they're rendered as
- * GL symbol layers. GL symbol layers can only use raster icon images, not
- * the CSS classes the Leaflet version relied on.
+ * Registers a colored circle with a white star as a map image, for favorite symbol layers.
  *
  * @param map the map to register the icon on
  * @param color hex color, with or without a leading '#', for the circle background

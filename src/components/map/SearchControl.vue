@@ -5,11 +5,7 @@
 -->
 
 <!--
-	Ported from Leaflet to vue-maplibre-gl. Purely the search field UI;
-	Map.vue owns the resulting state (POI markers, the coordinate-click
-	marker) and decides what a selected result means, same split as
-	before. Occupies the same top-left slot as RoutingControl - only
-	one of the two is shown at a time.
+	Search field only; Map.vue handles the selected result.
 -->
 <template>
 	<MglCustomControl position="top-left">

@@ -15,12 +15,7 @@ export const BaseStyleIds = {
 export type BaseStyleId = typeof BaseStyleIds[keyof typeof BaseStyleIds]
 
 /**
- * The available base styles, used by the main map (which can switch between
- * them) and by MapContainer.vue (the public favorite share page, which
- * always uses the street style). Support for switching between many base
- * layers (topographic, watercolor, a roads overlay, ...) was dropped as
- * part of the port to vue-maplibre-gl; only a vector street map and
- * satellite imagery remain.
+ * The base styles the main map can switch between.
  *
  * The street style is OpenFreeMap's "Liberty" style - a full vector style
  * served for free, no API key required. See https://openfreemap.org/.

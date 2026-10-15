@@ -5,19 +5,8 @@
 -->
 
 <!--
-	Ported from Leaflet (PoiMarker.vue) to vue-maplibre-gl, following the
-	same pattern as MapLibre's own "Display a popup on click" example:
-	each feature carries an icon name, and the symbol layer's icon-image
-	reads it per-feature. Nominatim's per-result icon images aren't
-	fetched though (unlike the old PoiMarker.vue) - the base style's own
-	sprite (OpenFreeMap Liberty) already ships icons for most amenity
-	categories under the same OSM tag names Nominatim returns as
-	`type`, so those are reused directly; a generic pin is drawn for
-	whatever category the style doesn't have an icon for.
-
-	Not ported: "Add contact address" - it depended on a "place an
-	existing contact by address" mode that isn't implemented yet in the
-	new architecture. Only "Add to favorites" survived.
+	Search result markers, using the base style's sprite icon named after
+	the result's OSM type, or a generic pin.
 -->
 <template>
 	<MglGeoJsonSource :source-id="SOURCE_ID" :data="geojson">

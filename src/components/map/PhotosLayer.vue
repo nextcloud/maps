@@ -3,16 +3,6 @@
  - SPDX-FileCopyrightText: 2026 Nextcloud GmbH and Nextcloud contributors
  - SPDX-License-Identifier: AGPL-3.0-or-later
 -->
-
-<!--
-	Ported from Leaflet to vue-maplibre-gl. Not ported yet, on purpose:
-	spiderfying a cluster (no MapLibre equivalent - the right-click
-	menu's "Display pictures"/"Zoom on bounds" cover the same need).
-	The chunked cluster loading progress events are gone too, but on
-	purpose rather than deferred: MapLibre's clustering is synchronous
-	and fast even for many thousands of points, so there's no "in
-	progress" state left to report.
--->
 <template>
 	<MglGeoJsonSource :source-id="SOURCE_ID"
 		:data="geojson"
@@ -87,7 +77,7 @@ const SOURCE_ID = 'photos'
 const CLUSTER_LAYER_ID = 'photos-clusters'
 const CLUSTER_COUNT_LAYER_ID = 'photos-cluster-count'
 const POINT_LAYER_ID = 'photos-points'
-// Matches the old marker view size (40px) + old cluster radius margin (10px)
+// Marker size plus a 10px margin
 const CLUSTER_RADIUS = PHOTO_PREVIEW_MARKER_SIZE + 10
 // Picks one representative child's iconId for each cluster (not necessarily the first one -
 // supercluster aggregates bottom-up, so it's whichever leaf the reduction visits last).

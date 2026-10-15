@@ -21,10 +21,7 @@ trait AddCspTrait {
 		$csp->addAllowedImageDomain('https://*.ssl.fastly.net');
 		$csp->addAllowedImageDomain('https://*.openstreetmap.se');
 
-		// MapLibre GL always fetches its sources (style JSON, vector tiles,
-		// sprites, glyphs, raster tiles, terrain DEM tiles) via fetch()/XHR,
-		// even for raster sources - unlike Leaflet's <img> tags, these need
-		// connect-src, not img-src.
+		// MapLibre GL fetches all its sources, even raster tiles, so they need connect-src
 		$csp->addAllowedConnectDomain('https://tiles.openfreemap.org');
 		$csp->addAllowedConnectDomain('https://server.arcgisonline.com');
 		$csp->addAllowedConnectDomain('https://elevation-tiles-prod.s3.amazonaws.com');

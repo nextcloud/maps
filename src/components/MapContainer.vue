@@ -5,22 +5,9 @@
 -->
 
 <!--
-	Ported from Leaflet to vue-maplibre-gl. Favorites are rendered the same
-	way FavoritesLayer.vue renders them for the main map (a clustered GL
-	symbol layer, sharing its marker icon drawing via
-	utils/favoriteMarkerIcon.ts), but this component stays self-contained
-	rather than reusing FavoritesLayer.vue itself: this page's interactions
-	(click selects the favorite for the page's sidebar, no drag-to-edit,
-	no right-click menu)
-	are different enough from the main map's that reusing it would mean
-	fighting its own click/drag/context-menu behavior instead.
-
-	ClickPopup.vue is a full Vue form, not raw HTML like the other layers'
-	right-click menus, so there's no vue-maplibre-gl primitive to bind it
-	to a marker the way Leaflet's bindPopup() did. It's mounted into a
-	plain maplibregl.Popup's DOM content as its own small Vue app instance
-	instead, with the current Vuex store attached (it reads the map's
-	"adding favorites" mode from it).
+	Same clustered favorites layer as FavoritesLayer.vue, with this page's
+	own interactions: a click selects the favorite for the sidebar.
+	ClickPopup.vue is mounted into a maplibregl.Popup as its own Vue app.
 -->
 <template>
 	<div class="map-container">
@@ -101,10 +88,9 @@ const SOURCE_ID = 'public-favorites'
 const CLUSTER_LAYER_ID = 'public-favorites-clusters'
 const CLUSTER_COUNT_LAYER_ID = 'public-favorites-cluster-count'
 const POINT_LAYER_ID = 'public-favorites-points'
-// Matches the old cluster-marker view size (36px) + old cluster radius margin (10px)
+// Marker size (36px) plus a 10px margin
 const CLUSTER_RADIUS = 46
-// The old code disabled clustering entirely from this zoom level on, so a
-// favorite selected from the sidebar is always shown as its own marker.
+// Clustering stops here, so a selected favorite is always its own marker
 const CLUSTER_MAX_ZOOM_LEVEL = 14
 
 const store = useStore()
@@ -147,8 +133,7 @@ watch([() => mapInstance.isLoaded, usedColors], () => {
 }, { immediate: true })
 
 /**
- * Matches the old app's behavior of re-fitting the view to all favorites
- * whenever the favorite list changes, including on the initial load.
+ * Fits the view to all favorites, on load and whenever they change.
  */
 function fitBoundsToFavorites(): void {
 	const map = mapInstance.map

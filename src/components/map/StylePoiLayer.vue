@@ -4,15 +4,7 @@
 -->
 
 <!--
-	Makes the base style's own POI icons (restaurants, shops, etc. -
-	rendered by the style itself, not by anything in this app) clickable,
-	the same way search results are: a popup with a name and an "Add to
-	favorites" action. The lookup itself lives in utils/stylePoi.ts,
-	shared with Map.vue's click-anywhere-to-search handler (a click on
-	one of these icons opens this popup instead of a search one).
-
-	Not ported (doesn't apply): drag-to-edit, right-click menu - these
-	are the base style's own decorative markers, not app-owned data.
+	Makes the base style's POI icons clickable, like search results.
 -->
 <template>
 	<div />

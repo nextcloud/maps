@@ -4,12 +4,6 @@
  - SPDX-License-Identifier: AGPL-3.0-or-later
 -->
 
-<!--
-	Ported from Leaflet to vue-maplibre-gl. The point-hover event this
-	used to emit while hovering a line is gone, but on purpose rather
-	than deferred: nothing has ever listened for it since the
-	Leaflet-to-vue-maplibre-gl port started.
--->
 <template>
 	<MglGeoJsonSource :source-id="SOURCE_ID" :data="geojson">
 		<MglLineLayer :layer-id="LINE_CASING_LAYER_ID"

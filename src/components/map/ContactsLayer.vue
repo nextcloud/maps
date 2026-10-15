@@ -20,8 +20,7 @@
  -->
 
 <!--
-	Ported from Leaflet to vue-maplibre-gl. Instead of spiderfying contacts
-	that share a position, clicking them opens a list to pick one from.
+	Clicking contacts that share a position opens a list to pick one from.
 -->
 <template>
 	<MglGeoJsonSource :source-id="SOURCE_ID"
@@ -90,8 +89,8 @@ const SOURCE_ID = 'contacts'
 const CLUSTER_LAYER_ID = 'contacts-clusters'
 const CLUSTER_COUNT_LAYER_ID = 'contacts-cluster-count'
 const POINT_LAYER_ID = 'contacts-points'
-// Matches the old marker view size (40px) + old cluster radius margin (10px)
 const MARKER_SIZE = 40
+// Marker size plus a 10px margin
 const CLUSTER_RADIUS = 50
 const PLACEHOLDER_ICON_ID = 'contact-avatar-placeholder'
 const CLUSTER_ICON_ID = 'contact-cluster-icon'

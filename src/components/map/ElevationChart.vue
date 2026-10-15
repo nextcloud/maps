@@ -4,19 +4,7 @@
 -->
 
 <!--
-	Replaces @raruto/leaflet-elevation, which was tied to Leaflet's
-	control/layer APIs and dropped with the rest of Leaflet. Its two
-	map-integration features (a hover-synced marker on the track, and a
-	"ruler") were both already disabled in this app's old configuration
-	(followMarker: false, ruler: false), so the actual feature - a
-	distance/elevation line chart with its own hover tooltip - has no
-	loss porting to a plain chart.js canvas with no map interaction.
-
-	Distance is computed here via the haversine formula between
-	consecutive points; the old @raruto/leaflet-elevation formatted its
-	GeoJSON input the same way per-line, so a track's routes and each of
-	its segments are charted as one series with a gap (not a connecting
-	line) between them, in the same order as before.
+	Distance/elevation chart of a track, with a gap between its segments.
 -->
 <template>
 	<div class="maps-elevation-chart">

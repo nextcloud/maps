@@ -166,7 +166,7 @@
 					@photo-moved="onPhotoMoved"
 					@photo-suggestion-selected="onPhotoSuggestionSelected"
 					@photo-suggestion-moved="onPhotoSuggestionMoved"
-					@open-sidebar="openSidebar"
+					@open-sidebar="openFileSidebar"
 					@click-track="onTrackClick"
 					@add-to-map-track="onAddTrackToMap"
 					@search-enable-track="onSearchEnableTrack"
@@ -190,19 +190,15 @@
 			:favorite="selectedFavorite"
 			:favorite-categories="favoriteCategories"
 			:track="selectedTrack"
-			:photo="selectedPhoto"
 			:photos-loading="photosLoading"
 			:photo-suggestions="photoSuggestions"
 			:photo-suggestions-tracks-and-devices="photoSuggestionsTracksAndDevices"
 			:photo-suggestions-selected-indices="photoSuggestionsSelectedIndices"
 			:photo-suggestions-timezone="photoSuggestionsTimezone"
 			:photo-suggestions-hide-photos="photoSuggestionsHidePhotos"
-			:my-map="selectedMyMap"
 			@edit-favorite="onFavoriteEdit"
 			@delete-favorite="onFavoriteDelete"
-			@active-changed="onActiveSidebarTabChanged"
 			@close="onCloseSidebar"
-			@opened="onOpenedSidebar"
 			@load-more-photo-suggestions="getPhotoSuggestions"
 			@select-all-photo-suggestions="onSelectAllPhotoSuggestions"
 			@clear-photo-suggestions-selection="onClearPhotoSuggestionsSelection"
@@ -222,7 +218,8 @@ import { getUploader } from '@nextcloud/upload'
 
 import moment from '@nextcloud/moment'
 
-import { emit } from '@nextcloud/event-bus'
+import { subscribe, unsubscribe } from '@nextcloud/event-bus'
+import { getSidebar } from '@nextcloud/files'
 
 import Map from '../components/Map.vue'
 import MapsNavigation from '../components/MapsNavigation.vue'
@@ -243,6 +240,7 @@ import * as network from '../network.js'
 import { all as axiosAll, spread as axiosSpread } from 'axios'
 import { generateUrl } from '@nextcloud/router'
 import { placeFileOrFolder } from '../utils/photoPicker.ts'
+import { openFileInSidebar } from '../utils/filesSidebar.ts'
 import { getClient } from '@nextcloud/files/dav'
 
 export default {
@@ -298,7 +296,6 @@ export default {
 			photosDraggable: false,
 			photos: [],
 			loadedPhotos: 0,
-			selectedPhoto: null,
 			showPhotoSuggestions: false,
 			photoSuggestions: [],
 			photoSuggestionsTracksAndDevices: {},
@@ -329,7 +326,6 @@ export default {
 			myMaps: [],
 			myMapsEnabled: optionsController.myMapsEnabled && !isPublic(),
 			myMapId: optionsController.myMapId,
-			selectedMyMap: null,
 			// PublicPage
 			token: (window.location.pathname.includes('/apps/maps/s/')
 				? window.location.pathname.split('/apps/maps/s/')[1].split('/')[0]
@@ -642,10 +638,7 @@ export default {
 		if (optionsController.optionValues.trackMe === 'true') {
 			this.sendPositionLoop()
 		}
-		// Register sidebar to be callable from viewer, possibly nicer in main.js but I failed to but it there
-		window.OCA.Files.Sidebar.open = this.openSidebar
-		window.OCA.Files.Sidebar.close = this.closeSidebar
-		window.OCA.Files.Sidebar.setFullScreenMode = this.sidebarSetFullScreenMode
+		subscribe('files:sidebar:opened', this.closeSidebar)
 
 		document.onkeyup = (e) => {
 			if (e.ctrlKey) {
@@ -662,16 +655,13 @@ export default {
 	mounted() {
 		// subscribe('nextcloud:unified-search.search', this.filter)
 		// subscribe('nextcloud:unified-search.reset', this.cleanSearch)
-		setTimeout(() => { emit('files:sidebar:closed') }, 1000)
 	},
 	beforeUnmount() {
 		// unsubscribe('nextcloud:unified-search.search', this.filter)
 		// unsubscribe('nextcloud:unified-search.reset', this.cleanSearch)
+		unsubscribe('files:sidebar:opened', this.closeSidebar)
 	},
 	methods: {
-		onActiveSidebarTabChanged(newActive) {
-			this.activeTab = newActive
-		},
 		onMainDetailClicked() {
 			this.showSidebar ? this.closeSidebar() : this.openSidebar()
 		},
@@ -685,54 +675,28 @@ export default {
 			}
 		},
 		closeSidebar() {
-			this.$refs.Sidebar.close()
-			emit('files:sidebar:closed')
 			this.activeTab = null
 			this.showSidebar = false
 		},
-		openSidebar(path = null, type = null, title = null) {
+		openSidebar() {
+			getSidebar().close()
 			this.showSidebar = true
-			this.$refs.Sidebar.open(path, type, title)
-			if (!path && this.showPhotoSuggestions) {
+			if (this.showPhotoSuggestions) {
 				this.activeTab = 'photo-suggestion'
 			}
-			/*
-			const myMap = path ? this.myMaps.find((m) => m.path === path) : false
-			if (myMap) {
-				window.OCA.Files.state.activeTab = 'myMaps'
-				this.selectedMyMap = myMap
-				this.sidebarFileInfo = myMap.fileInfo
-				window.OCA.Files.Sidebar.state.file = path
-			} else {
-				const photo = this.photos.find((p) => p.path === path)
-				if (photo) {
-					window.OCA.Files.state.activeTab = 'photo'
-					this.selectedPhoto = photo
-					this.sidebarFileInfo = photo
-					window.OCA.Files.Sidebar.state.file = path
-				} else {
-					window.OCA.Files.Sidebar.state.file = true
-				}
-			}
-			emit('files:sidebar:opening')
-			 */
 		},
 		/**
-		 * Allow to set the Sidebar as fullscreen from OCA.Files.Sidebar
+		 * Show a file or folder of the user in the files sidebar, in place of the maps sidebar.
 		 *
-		 * @param {boolean} isFullScreen - Wether or not to render the Sidebar in fullscreen.
+		 * @param {string} path path relative to the user's files root
+		 * @param {string} [tab] id of the files sidebar tab to show
 		 */
-		sidebarSetFullScreenMode(isFullScreen) {
-			if (this.$refs.Sidebar) {
-				this.$refs.Sidebar.setFullScreenMode(isFullScreen)
-			}
-		},
-		onOpenedSidebar() {
-			// opened is emitted when the sidebar is mounted, but not actually shown
-			if (this.showSidebar) {
-				emit('files:sidebar:opened')
-				console.info('files:sidebar:opened')
-			}
+		openFileSidebar(path, tab) {
+			this.closeSidebar()
+			openFileInSidebar(path, tab).catch((error) => {
+				console.error(error)
+				showError(t('maps', 'Failed to load the file details'))
+			})
 		},
 		deselectAll() {
 			if (this.selectedFavorite) {
@@ -742,9 +706,6 @@ export default {
 			if (this.selectedTrack) {
 				this.selectedTrack.selected = false
 				this.selectedTrack = null
-			}
-			if (!isPublic()) {
-				window.OCA.Files.Sidebar.state.file = ''
 			}
 		},
 		onToggleTrackme(enabled) {
@@ -1590,7 +1551,7 @@ export default {
 			this.deselectAll()
 			// select
 			this.favorites[f.id].selected = true
-			this.openSidebar(null, 'favorite', f.name)
+			this.openSidebar()
 			this.activeTab = 'favorite'
 			this.selectedFavorite = f
 		},
@@ -1765,7 +1726,7 @@ export default {
 				if (openSidebar) {
 					this.selectedFavorite = this.favorites[fav.id]
 					this.activeTab = 'favorite'
-					this.openSidebar(null, 'favorite', fav.name)
+					this.openSidebar()
 				}
 				if (this.sliderEnabled) {
 					if (this.sliderStart > fav.date_created) {
@@ -2042,7 +2003,7 @@ export default {
 			this.deselectAll()
 			// select
 			track.selected = true
-			this.openSidebar(null, 'track', track.file_name)
+			this.openSidebar()
 			this.activeTab = 'maps-track-metadata'
 			this.selectedTrack = track
 		},
@@ -2383,8 +2344,8 @@ export default {
 			optionsController.saveOptionValues({ myMapsEnabled: this.myMapsEnabled ? 'true' : 'false' })
 		},
 		onMyMapClicked(myMap) {
-			if (this.showSidebar) {
-				this.openSidebar(myMap.path, 'maps', myMap.name)
+			if (this.showSidebar || getSidebar().isOpen) {
+				this.openFileSidebar(myMap.path)
 			}
 		    if (!this.myMapsLoading) {
 				this.myMapsLoading = true
@@ -2431,8 +2392,7 @@ export default {
 			})
 		},
 		onShareMyMap(myMap) {
-			this.activeTab = 'sharing'
-			this.openSidebar(myMap.path, 'maps', myMap.name)
+			this.openFileSidebar(myMap.path, 'sharing')
 		},
 		loadMap(myMap) {
 			if (this.photoSuggestions) {

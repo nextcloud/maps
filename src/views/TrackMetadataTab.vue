@@ -36,8 +36,17 @@ export default {
 	name: 'TrackMetadataTab',
 
 	components: {
-		// Avatar,
 		TrackSidebarMetadataTab,
+	},
+
+	props: {
+		/**
+		 * The GPX file node, set by the files sidebar
+		 */
+		node: {
+			type: Object,
+			default: null,
+		},
 	},
 
 	data() {
@@ -48,31 +57,30 @@ export default {
 		}
 	},
 
-	computed: {
+	watch: {
+		node: {
+			immediate: true,
+			handler(node) {
+				this.track = null
+				if (node?.fileid) {
+					this.getTrack(node.fileid)
+				}
+			},
+		},
 	},
 
 	methods: {
-		/**
-		 * Update current ressourceId and fetch new data
-		 *
-		 * @param {number} ressourceId the current ressourceId (fileId...)
-		 * @param trackid
-		 * @param trackFileId
-		 */
-		async update(trackFileId) {
-			this.getTrack(trackFileId)
-		},
-
 		getTrack(trackFileId) {
 			this.loading = true
 			const track = {}
 			network.getTrack(trackFileId, null, true, getToken()).then((response) => {
-				if (!track.metadata) {
-					try {
-						track.metadata = JSON.parse(response.data.metadata)
-					} catch (error) {
-						console.error('Failed to parse track metadata')
-					}
+				if (this.node?.fileid !== trackFileId) {
+					return
+				}
+				try {
+					track.metadata = JSON.parse(response.data.metadata)
+				} catch (error) {
+					console.error('Failed to parse track metadata')
 				}
 				track.data = processGpx(response.data.content)
 				this.track = track
@@ -80,23 +88,8 @@ export default {
 				console.error(error)
 				this.error = error
 			}).then(() => {
-				track.loading = false
+				this.loading = false
 			})
-		},
-
-		/**
-		 * Ran when the bottom of the tab is reached
-		 */
-		onScrollBottomReached() {
-		},
-
-		/**
-		 * Reset the current view to its default state
-		 */
-		resetState() {
-			this.error = ''
-			this.loading = false
-			this.track = null
 		},
 	},
 }

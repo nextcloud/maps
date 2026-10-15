@@ -20,13 +20,24 @@
 				:loading="loading"
 				@validate="emit('validate', $event)"
 				@clear="emit('clear')" />
+			<NcButton class="maps-search-control__directions"
+				variant="tertiary"
+				:title="t('maps', 'Find directions')"
+				:aria-label="t('maps', 'Find directions')"
+				@click="emit('routing-clicked')">
+				<template #icon>
+					<DirectionsIcon :size="20" />
+				</template>
+			</NcButton>
 		</div>
 	</MglCustomControl>
 </template>
 
 <script setup lang="ts">
-import { useIsMobile } from '@nextcloud/vue'
+import { translate as t } from '@nextcloud/l10n'
+import { NcButton, useIsMobile } from '@nextcloud/vue'
 import { MglCustomControl } from 'vue-maplibre-gl'
+import DirectionsIcon from 'vue-material-design-icons/Directions.vue'
 import SearchField from './SearchField.vue'
 
 withDefaults(defineProps<{
@@ -41,6 +52,7 @@ withDefaults(defineProps<{
 const emit = defineEmits<{
 	validate: [element: unknown]
 	clear: []
+	'routing-clicked': []
 }>()
 
 const isMobile = useIsMobile()
@@ -61,6 +73,16 @@ const isMobile = useIsMobile()
 		margin: 0;
 	}
 
+	&__directions {
+		flex-shrink: 0;
+		background-color: var(--color-main-background) !important;
+		box-shadow: 0 0 0 1px var(--color-border-maxcontrast);
+
+		&:hover {
+			background-color: var(--color-background-hover) !important;
+		}
+	}
+
 	&.desktop {
 		width: 350px;
 	}
@@ -78,5 +100,10 @@ const isMobile = useIsMobile()
 	background: transparent;
 	border-radius: 0;
 	box-shadow: none;
+}
+
+// The search field and the routing panel take turns in the top-left corner, the hidden one must not push the other down
+.maplibregl-map .maplibregl-ctrl.maplibregl-ctrl-group:has(> .maps-search-control[style*="display: none"]) {
+	margin: 0;
 }
 </style>

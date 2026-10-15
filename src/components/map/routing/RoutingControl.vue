@@ -28,54 +28,105 @@
 -->
 <template>
 	<MglCustomControl position="top-left">
-		<div v-show="visible" class="maps-routing-control" :class="{ mobile: isMobile, desktop: !isMobile }">
-			<div class="routing-header">
-				<Directions :size="20" />
-				<span class="title">{{ t('maps', 'Find directions') }}</span>
-				<NcButton variant="tertiary" :aria-label="t('maps', 'Close')" @click="emit('close')">
+		<div v-show="visible"
+			ref="panel"
+			class="maps-routing-control"
+			:class="{ mobile: isMobile, desktop: !isMobile }">
+			<div class="maps-routing-control__header">
+				<IconDirections :size="20" />
+				<h2 class="maps-routing-control__title">
+					{{ t('maps', 'Directions') }}
+				</h2>
+				<NcButton variant="tertiary"
+					:title="t('maps', 'Close')"
+					:aria-label="t('maps', 'Close')"
+					@click="emit('close')">
 					<template #icon>
-						<CloseIcon :size="20" />
+						<IconClose :size="20" />
 					</template>
 				</NcButton>
 			</div>
 
-			<select v-if="routers.length > 1"
-				:value="selectedRouterType"
-				class="router-select"
-				@change="setRouter($event.target.value)">
-				<option v-for="router in routers" :key="router.type" :value="router.type">
-					{{ router.name }}
-				</option>
-			</select>
-			<p v-else-if="routers.length === 0 && isAdmin" class="no-router">
+			<NcSelect v-if="routers.length > 1"
+				class="maps-routing-control__router"
+				:model-value="selectedRouter"
+				:options="routers"
+				:input-label="t('maps', 'Travel mode')"
+				:clearable="false"
+				:searchable="false"
+				label="name"
+				@update:model-value="setRouter($event.type)">
+				<template #option="option">
+					<span class="maps-routing-control__router-option">
+						<component :is="option.icon" :size="20" />
+						{{ option.name }}
+					</span>
+				</template>
+				<template #selected-option="option">
+					<span class="maps-routing-control__router-option">
+						<component :is="option.icon" :size="20" />
+						{{ option.name }}
+					</span>
+				</template>
+			</NcSelect>
+			<NcNoteCard v-else-if="routers.length === 0" type="warning">
 				{{ t('maps', 'Routing is currently disabled.') }}
-				<a :href="generateUrl('/settings/admin/additional#routing')" target="_blank">
+				<a v-if="isAdmin" :href="generateUrl('/settings/admin/additional#routing')" target="_blank">
 					{{ t('maps', 'Add a routing service') }}
 				</a>
-			</p>
+			</NcNoteCard>
 
-			<RoutingSteps
-				:steps="steps"
+			<RoutingSteps :steps="steps"
 				:search-data="searchData"
-				:plan-ready="routeReady"
 				@add-step="addRoutePoint"
 				@step-selected="setRoutePoint"
 				@delete-step="deleteRoutePoint"
-				@export-route="onExportRoute"
-				@zoom-route="onZoomRoute"
 				@reverse-steps="reverseWaypoints" />
 
-			<p v-if="summary" class="routing-summary">
-				{{ summary }}
-			</p>
+			<template v-if="routeReady">
+				<div class="maps-routing-control__summary">
+					<div class="maps-routing-control__summary-text">
+						<span class="maps-routing-control__duration">{{ summary.duration }}</span>
+						<span class="maps-routing-control__distance">{{ summary.distance }}</span>
+					</div>
+					<NcButton variant="tertiary"
+						:title="t('maps', 'Zoom to route')"
+						:aria-label="t('maps', 'Zoom to route')"
+						@click="onZoomRoute">
+						<template #icon>
+							<IconMagnifyPlus :size="20" />
+						</template>
+					</NcButton>
+					<NcActions :aria-label="t('maps', 'Export route')"
+						:title="t('maps', 'Export route')">
+						<template #icon>
+							<IconExport :size="20" />
+						</template>
+						<NcActionButton :close-after-click="true" @click="onExportRoute('track')">
+							<template #icon>
+								<IconMapMarkerPath :size="20" />
+							</template>
+							{{ t('maps', 'Export as GPX track') }}
+						</NcActionButton>
+						<NcActionButton :close-after-click="true" @click="onExportRoute('route')">
+							<template #icon>
+								<IconRoad :size="20" />
+							</template>
+							{{ t('maps', 'Export as GPX route') }}
+						</NcActionButton>
+					</NcActions>
+				</div>
 
-			<ol v-if="instructions.length" class="routing-instructions">
-				<li v-for="(instr, i) in instructions" :key="i" @click="onInstructionClick(instr)">
-					<span class="instruction-icon">{{ instructionIcon(instr, i) }}</span>
-					<span class="instruction-text">{{ formatInstructionText(instr, i) }}</span>
-					<span v-if="instr.distance" class="instruction-distance">{{ metersToDistance(instr.distance) }}</span>
-				</li>
-			</ol>
+				<ol v-if="instructions.length" class="maps-routing-control__instructions">
+					<li v-for="(instr, i) in instructions" :key="i">
+						<button type="button" @click="onInstructionClick(instr)">
+							<span class="maps-routing-control__instruction-icon" aria-hidden="true">{{ instructionIcon(instr, i) }}</span>
+							<span class="maps-routing-control__instruction-text">{{ formatInstructionText(instr, i) }}</span>
+							<span v-if="instr.distance" class="maps-routing-control__instruction-distance">{{ metersToDistance(instr.distance) }}</span>
+						</button>
+					</li>
+				</ol>
+			</template>
 		</div>
 	</MglCustomControl>
 </template>
@@ -84,15 +135,23 @@
 import type { Directions as DirectionsResponse, Route } from '@maplibre/maplibre-gl-directions'
 import MapLibreGlDirections from '@maplibre/maplibre-gl-directions'
 import { getCurrentUser } from '@nextcloud/auth'
-import { getDialogBuilder, showError, showSuccess } from '@nextcloud/dialogs'
+import { showError, showSuccess } from '@nextcloud/dialogs'
 import { translate as t } from '@nextcloud/l10n'
 import moment from '@nextcloud/moment'
 import { generateUrl } from '@nextcloud/router'
-import { NcButton, useIsMobile } from '@nextcloud/vue'
+import { NcActionButton, NcActions, NcButton, NcNoteCard, NcSelect, useIsMobile } from '@nextcloud/vue'
 import { computed, onBeforeUnmount, ref, watch } from 'vue'
+import type { Component } from 'vue'
 import { MglCustomControl, useMap } from 'vue-maplibre-gl'
-import Directions from 'vue-material-design-icons/Directions.vue'
-import CloseIcon from 'vue-material-design-icons/Close.vue'
+import IconBike from 'vue-material-design-icons/Bike.vue'
+import IconCar from 'vue-material-design-icons/Car.vue'
+import IconClose from 'vue-material-design-icons/Close.vue'
+import IconDirections from 'vue-material-design-icons/Directions.vue'
+import IconExport from 'vue-material-design-icons/Export.vue'
+import IconMagnifyPlus from 'vue-material-design-icons/MagnifyPlus.vue'
+import IconMapMarkerPath from 'vue-material-design-icons/MapMarkerPath.vue'
+import IconRoad from 'vue-material-design-icons/RoadVariant.vue'
+import IconWalk from 'vue-material-design-icons/Walk.vue'
 import { metersToDistance } from '../../../utils.js'
 import * as network from '../../../network.js'
 import optionsController from '../../../optionsController.js'
@@ -108,6 +167,7 @@ interface Step {
 interface RouterOption {
 	type: string
 	name: string
+	icon: Component
 	api: string
 	profile: string
 	requestOptions: Record<string, string>
@@ -124,6 +184,7 @@ const emit = defineEmits<{
 }>()
 
 const isMobile = useIsMobile()
+const panel = ref<HTMLElement | null>(null)
 const isAdmin = getCurrentUser()?.isAdmin ?? false
 const mapInstance = useMap()
 
@@ -149,28 +210,29 @@ const routers = computed<RouterOption[]>(() => {
 	const osrmFootURL = cleanUrl(optionValues.osrmFootURL)
 
 	if (osrmCarURL) {
-		result.push({ type: 'osrmCar', name: '🚗 ' + t('maps', 'By car (OSRM)'), api: osrmCarURL, profile: 'car', requestOptions: {} })
+		result.push({ type: 'osrmCar', name: t('maps', 'By car (OSRM)'), icon: IconCar, api: osrmCarURL, profile: 'car', requestOptions: {} })
 	}
 	if (osrmBikeURL) {
-		result.push({ type: 'osrmBike', name: '🚲 ' + t('maps', 'By bike (OSRM)'), api: osrmBikeURL, profile: 'bicycle', requestOptions: {} })
+		result.push({ type: 'osrmBike', name: t('maps', 'By bike (OSRM)'), icon: IconBike, api: osrmBikeURL, profile: 'bicycle', requestOptions: {} })
 	}
 	if (osrmFootURL) {
-		result.push({ type: 'osrmFoot', name: '🚶 ' + t('maps', 'By foot (OSRM)'), api: osrmFootURL, profile: 'foot', requestOptions: {} })
+		result.push({ type: 'osrmFoot', name: t('maps', 'By foot (OSRM)'), icon: IconWalk, api: osrmFootURL, profile: 'foot', requestOptions: {} })
 	}
 	if (optionValues.mapboxAPIKEY) {
 		const accessToken = optionValues.mapboxAPIKEY
-		result.push({ type: 'mapbox/cycling', name: '🚲 ' + t('maps', 'By bike (Mapbox)'), api: 'https://api.mapbox.com/directions/v5', profile: 'mapbox/cycling', requestOptions: { access_token: accessToken } })
-		result.push({ type: 'mapbox/walking', name: '🚶 ' + t('maps', 'By foot (Mapbox)'), api: 'https://api.mapbox.com/directions/v5', profile: 'mapbox/walking', requestOptions: { access_token: accessToken } })
-		result.push({ type: 'mapbox/driving-traffic', name: '🚗 ' + t('maps', 'By car with traffic (Mapbox)'), api: 'https://api.mapbox.com/directions/v5', profile: 'mapbox/driving-traffic', requestOptions: { access_token: accessToken } })
-		result.push({ type: 'mapbox/driving', name: '🚗 ' + t('maps', 'By car without traffic (Mapbox)'), api: 'https://api.mapbox.com/directions/v5', profile: 'mapbox/driving', requestOptions: { access_token: accessToken } })
+		result.push({ type: 'mapbox/cycling', name: t('maps', 'By bike (Mapbox)'), icon: IconBike, api: 'https://api.mapbox.com/directions/v5', profile: 'mapbox/cycling', requestOptions: { access_token: accessToken } })
+		result.push({ type: 'mapbox/walking', name: t('maps', 'By foot (Mapbox)'), icon: IconWalk, api: 'https://api.mapbox.com/directions/v5', profile: 'mapbox/walking', requestOptions: { access_token: accessToken } })
+		result.push({ type: 'mapbox/driving-traffic', name: t('maps', 'By car with traffic (Mapbox)'), icon: IconCar, api: 'https://api.mapbox.com/directions/v5', profile: 'mapbox/driving-traffic', requestOptions: { access_token: accessToken } })
+		result.push({ type: 'mapbox/driving', name: t('maps', 'By car without traffic (Mapbox)'), icon: IconCar, api: 'https://api.mapbox.com/directions/v5', profile: 'mapbox/driving', requestOptions: { access_token: accessToken } })
 	}
 	if (result.length === 0 && optionValues.osrmDEMO === '1') {
-		result.push({ type: 'osrmDEMO', name: '🚗 ' + t('maps', 'By car (OSRM demo)'), api: 'https://router.project-osrm.org/route/v1', profile: 'car', requestOptions: {} })
+		result.push({ type: 'osrmDEMO', name: t('maps', 'By car (OSRM demo)'), icon: IconCar, api: 'https://router.project-osrm.org/route/v1', profile: 'car', requestOptions: {} })
 	}
 	return result
 })
 
 const selectedRouterType = ref<string>('')
+const selectedRouter = computed(() => routers.value.find((r) => r.type === selectedRouterType.value) ?? null)
 const directions = ref<MapLibreGlDirections | null>(null)
 
 /**
@@ -189,7 +251,11 @@ function buildDirections(routerType: string): MapLibreGlDirections | null {
 	})
 	instance.interactive = false
 	instance.on('fetchroutesend', (event) => {
+		const hadRoute = !!latestDirections.value?.routes?.length
 		latestDirections.value = event.data.directions ?? null
+		if (!hadRoute) {
+			onZoomRoute()
+		}
 	})
 	return instance
 }
@@ -233,11 +299,17 @@ const summary = computed(() => {
 	const distance = route?.distance
 	const duration = route?.duration
 	if (typeof distance !== 'number' || typeof duration !== 'number') {
-		return ''
+		return { duration: '', distance: '' }
 	}
-	const km = (distance / 1000).toFixed(1)
-	const minutes = Math.round(duration / 60)
-	return t('maps', '{km} km, {minutes} min', { km, minutes })
+	const totalMinutes = Math.round(duration / 60)
+	const hours = Math.floor(totalMinutes / 60)
+	const minutes = totalMinutes % 60
+	return {
+		duration: hours > 0
+			? t('maps', '{hours} h {minutes} min', { hours, minutes })
+			: t('maps', '{minutes} min', { minutes }),
+		distance: metersToDistance(distance),
+	}
 })
 
 const instructions = computed<Instruction[]>(() => {
@@ -300,20 +372,28 @@ function onZoomRoute() {
 	if (!coords?.length) {
 		return
 	}
-	mapInstance.map?.fitBounds(boundsOf(coords), { padding: 30 })
-}
-
-function onExportRoute() {
-	const route = latestDirections.value?.routes?.[0] as Route | undefined
-	const coords = (route?.geometry as { coordinates?: [number, number][] } | undefined)?.coordinates
-	if (!coords?.length) {
+	const map = mapInstance.map
+	if (!map) {
 		return
 	}
-	getDialogBuilder(t('maps', 'Export as'))
-		.addButton({ label: t('maps', 'GPX route'), callback: () => exportRoute('route', coords, route) })
-		.addButton({ label: t('maps', 'GPX track'), callback: () => exportRoute('track', coords, route), variant: 'primary' })
-		.build()
-		.show()
+	// keep the route clear of the panel, which covers the top-left of the map
+	const padding = { top: 30, right: 30, bottom: 30, left: 30 }
+	if (panel.value && !isMobile.value) {
+		padding.left += panel.value.getBoundingClientRect().right - map.getContainer().getBoundingClientRect().left
+	}
+	map.fitBounds(boundsOf(coords), { padding })
+}
+
+/**
+ * @param type whether to export the route as a GPX track or a GPX route
+ */
+function onExportRoute(type: 'track' | 'route') {
+	const route = latestDirections.value?.routes?.[0] as Route | undefined
+	const coords = (route?.geometry as { coordinates?: [number, number][] } | undefined)?.coordinates
+	if (!route || !coords?.length) {
+		return
+	}
+	exportRoute(type, coords, route)
 }
 
 /**
@@ -346,98 +426,137 @@ onBeforeUnmount(() => {
 </script>
 
 <style lang="scss" scoped>
-.desktop {
-	width: 350px;
-	margin-left: 56px !important;
-	background-color: var(--color-main-background);
-	padding: 5px;
-	border: 2px solid var(--color-border-dark);
-	border-radius: var(--border-radius-large);
-}
-
-.mobile {
-	width: 100vw;
-	background: var(--color-main-background);
-	padding: 10px 8px 7px 8px;
-}
-
+// Same place as the search field: right of the navigation toggle
 .maps-routing-control {
-	.routing-header {
+	--maps-routing-offset: calc(2 * var(--default-grid-baseline));
+	display: flex;
+	flex-direction: column;
+	gap: calc(2 * var(--default-grid-baseline));
+	max-height: calc(100vh - 150px);
+	margin-inline-start: calc(var(--default-clickable-area) + var(--maps-routing-offset));
+	padding: calc(2 * var(--default-grid-baseline));
+	overflow-y: auto;
+	border-radius: var(--border-radius-container-large, var(--border-radius-large));
+	background-color: var(--color-main-background);
+	box-shadow: 0 2px 8px var(--color-box-shadow);
+
+	&.desktop {
+		width: 380px;
+	}
+
+	&.mobile {
+		width: calc(100vw - var(--default-clickable-area) - 3 * var(--maps-routing-offset));
+	}
+
+	&__header {
 		display: flex;
 		align-items: center;
-		margin-bottom: 5px;
-
-		.title {
-			flex-grow: 1;
-			margin: 0 0 0 5px;
-			font-size: 20px;
-		}
+		gap: var(--default-grid-baseline);
+		padding-inline-start: var(--default-grid-baseline);
 	}
 
-	.router-select {
-		width: 100%;
-		margin-bottom: 5px;
-	}
-
-	.no-router {
-		margin-bottom: 5px;
-	}
-
-	.routing-summary {
-		margin: 5px 0 0 0;
+	&__title {
+		flex-grow: 1;
+		margin: 0;
+		font-size: 1.2rem;
 		font-weight: bold;
 	}
 
-	.routing-instructions {
-		max-height: 250px;
-		margin: 5px 0 0 0;
-		padding: 0;
-		overflow-y: auto;
-		list-style: none;
+	// more specific than NcSelect's own .nc-select.v-select.select margin
+	&__router.nc-select {
+		width: 100%;
+		margin: 0;
+	}
 
-		li {
+	&__router-option {
+		display: flex;
+		align-items: center;
+		gap: calc(2 * var(--default-grid-baseline));
+	}
+
+	&__summary {
+		display: flex;
+		align-items: center;
+		gap: var(--default-grid-baseline);
+		padding-block-start: calc(2 * var(--default-grid-baseline));
+		border-top: 1px solid var(--color-border);
+	}
+
+	&__summary-text {
+		display: flex;
+		flex-grow: 1;
+		align-items: baseline;
+		gap: calc(2 * var(--default-grid-baseline));
+		padding-inline-start: var(--default-grid-baseline);
+	}
+
+	&__duration {
+		font-size: 1.2rem;
+		font-weight: bold;
+	}
+
+	&__distance {
+		color: var(--color-text-maxcontrast);
+	}
+
+	&__instructions {
+		max-height: 300px;
+		overflow-y: auto;
+
+		button {
 			display: flex;
 			align-items: baseline;
-			gap: 8px;
-			padding: 4px 2px;
+			gap: calc(2 * var(--default-grid-baseline));
+			width: 100%;
+			// the server's global button styles give buttons a fixed height, long instructions wrap
+			height: auto;
+			min-height: var(--default-clickable-area);
+			margin: 0;
+			padding: var(--default-grid-baseline) calc(2 * var(--default-grid-baseline));
+			border: none;
+			border-radius: var(--border-radius-element);
+			background: none;
+			font-weight: normal;
+			line-height: 1.4;
+			text-align: start;
+			white-space: normal;
 			cursor: pointer;
-			border-top: 1px solid var(--color-border);
 
-			&:hover {
+			&:hover,
+			&:focus-visible {
 				background-color: var(--color-background-hover);
 			}
 		}
+	}
 
-		.instruction-icon {
-			flex: 0 0 1.2em;
-			text-align: center;
-		}
+	&__instruction-icon {
+		flex: 0 0 1.2em;
+		text-align: center;
+	}
 
-		.instruction-text {
-			flex-grow: 1;
-		}
+	&__instruction-text {
+		flex-grow: 1;
+	}
 
-		.instruction-distance {
-			flex: 0 0 auto;
-			color: var(--color-text-maxcontrast);
-			font-size: 12px;
-		}
+	&__instruction-distance {
+		flex-shrink: 0;
+		color: var(--color-text-maxcontrast);
+		font-size: var(--font-size-small, 13px);
 	}
 }
 </style>
 
 <style lang="scss">
-/*
- * MapLibre's own .maplibregl-ctrl-group chrome (white background,
- * border-radius, box-shadow) is meant for small icon toolbars, not a
- * full panel with its own border/background - it can't be reached
- * with a scoped :deep() selector since it's an ANCESTOR of this
- * component's content, not a descendant. :has() targets it globally
- * without also affecting other controls' groups.
- */
-.maplibregl-ctrl-group:has(> .maps-routing-control) {
+// More specific than MapLibre's own .maplibregl-ctrl-group:not(:empty), which draws a frame around the control
+.maplibregl-map .maplibregl-ctrl.maplibregl-ctrl-group:has(> .maps-routing-control) {
+	margin: calc(2 * var(--default-grid-baseline)) 0 0 calc(2 * var(--default-grid-baseline));
 	background: transparent;
 	border-radius: 0;
 	box-shadow: none;
+}
+
+// The search field and the routing panel take turns in the top-left corner, the hidden one must not push the other down
+.maplibregl-map .maplibregl-ctrl.maplibregl-ctrl-group:has(> .maps-routing-control[style*="display: none"]) {
+	margin: 0;
 }
 </style>

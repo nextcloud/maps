@@ -211,14 +211,18 @@ export default {
 	white-space: nowrap;
 }
 
-.search-select {
-	.option-icon {
-		margin-right: 10px;
-	}
+// The dropdown is rendered in the body, outside .search-select
+.option-icon {
+	margin-right: 10px;
+}
 
-	.option-label {
-		overflow: hidden;
-		text-overflow: ellipsis;
-	}
+// one line per option, the full text is in the title tooltip
+.option-label {
+	display: inline-block;
+	max-width: calc(100% - 30px);
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+	vertical-align: middle;
 }
 </style>

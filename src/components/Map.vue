@@ -100,7 +100,8 @@
 				:search-data="searchData"
 				:loading="searching"
 				@validate="onSearchValidate"
-				@clear="onSearchClear" />
+				@clear="onSearchClear"
+				@routing-clicked="showRouting = true" />
 
 			<RoutingControl :visible="showRouting"
 				:search-data="routingSearchData"

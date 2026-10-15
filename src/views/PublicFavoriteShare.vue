@@ -31,6 +31,12 @@
 				@update-favorite="updateFavorite"
 				@delete-favorite="deleteFavorite" />
 		</NcAppContent>
+		<PublicFavoriteSidebar v-if="selectedFavorite"
+			:favorite="selectedFavorite"
+			:allow-edits="allowFavoriteEdits"
+			@close="selectFavorite(null)"
+			@edit="updateFavorite"
+			@delete="onDeleteFavorite" />
 	</NcContent>
 </template>
 
@@ -38,6 +44,7 @@
 import { NcContent, NcAppContent } from '@nextcloud/vue'
 import MapContainer from '../components/MapContainer.vue'
 import PublicFavoriteShareSideBar from '../components/PublicFavoriteShareSideBar.vue'
+import PublicFavoriteSidebar from '../components/PublicFavoriteSidebar.vue'
 import { mapActions, mapGetters, mapState } from 'vuex'
 import { PUBLIC_FAVORITES_NAMESPACE } from '../store/modules/publicFavorites.js'
 
@@ -49,6 +56,7 @@ export default {
 		NcContent,
 		MapContainer,
 		PublicFavoriteShareSideBar,
+		PublicFavoriteSidebar,
 	},
 
 	data() {
@@ -62,6 +70,8 @@ export default {
 			favoritesMappedByCategory: `${PUBLIC_FAVORITES_NAMESPACE}/mappedByCategory`,
 		}),
 		...mapState({
+			selectedFavorite: state => state[PUBLIC_FAVORITES_NAMESPACE].favorites
+				.find(favorite => favorite.id === state[PUBLIC_FAVORITES_NAMESPACE].selectedFavoriteId) ?? null,
 			allowFavoriteEdits: state =>
 				state[PUBLIC_FAVORITES_NAMESPACE].shareInfo
 					? state[PUBLIC_FAVORITES_NAMESPACE].shareInfo.allowEdits
@@ -80,7 +90,12 @@ export default {
 			addFavorite: `${PUBLIC_FAVORITES_NAMESPACE}/addFavorite`,
 			updateFavorite: `${PUBLIC_FAVORITES_NAMESPACE}/updateFavorite`,
 			deleteFavorite: `${PUBLIC_FAVORITES_NAMESPACE}/deleteFavorite`,
+			selectFavorite: `${PUBLIC_FAVORITES_NAMESPACE}/selectFavorite`,
 		}),
+		async onDeleteFavorite(id) {
+			await this.deleteFavorite({ id })
+			this.selectFavorite(null)
+		},
 		// Place the footer in the app-navigation so it is not below the map
 		moveFooter() {
 			const footer = document.getElementsByTagName('footer')[0]

@@ -10,16 +10,17 @@
 	symbol layer, sharing its marker icon drawing via
 	utils/favoriteMarkerIcon.ts), but this component stays self-contained
 	rather than reusing FavoritesLayer.vue itself: this page's interactions
-	(click opens a rich edit form, no drag-to-edit, no right-click menu)
+	(click selects the favorite for the page's sidebar, no drag-to-edit,
+	no right-click menu)
 	are different enough from the main map's that reusing it would mean
 	fighting its own click/drag/context-menu behavior instead.
 
-	ClickPopup.vue and FavoritePopup.vue are full Vue forms, not raw HTML
-	like the other layers' right-click menus, so there's no vue-maplibre-gl
-	primitive to bind them to a marker the way Leaflet's bindPopup() did.
-	They're mounted into a plain maplibregl.Popup's DOM content as their
-	own small Vue app instance instead, with the current Vuex store
-	attached (ClickPopup reads the map's "adding favorites" mode from it).
+	ClickPopup.vue is a full Vue form, not raw HTML like the other layers'
+	right-click menus, so there's no vue-maplibre-gl primitive to bind it
+	to a marker the way Leaflet's bindPopup() did. It's mounted into a
+	plain maplibregl.Popup's DOM content as its own small Vue app instance
+	instead, with the current Vuex store attached (it reads the map's
+	"adding favorites" mode from it).
 -->
 <template>
 	<div class="map-container">
@@ -65,7 +66,6 @@ import { MglGeoJsonSource, MglMap, MglNavigationControl, MglScaleControl, MglSym
 import 'maplibre-gl/dist/maplibre-gl.css'
 import 'vue-maplibre-gl/dist/vue-maplibre-gl.css'
 import ClickPopup from './map/ClickPopup.vue'
-import FavoritePopup from './map/FavoritePopup.vue'
 import { BaseStyleIds, BaseStyles } from '../data/mapLayers.ts'
 import { isPublicShare as isRunningAsPublicShare } from '../utils/common.js'
 import { PUBLIC_FAVORITES_NAMESPACE } from '../store/modules/publicFavorites.js'
@@ -177,14 +177,14 @@ function closePopup(): void {
 }
 
 /**
- * Mounts a popup form component (ClickPopup or FavoritePopup) into a plain
+ * Mounts a popup form component (ClickPopup) into a plain
  * maplibregl.Popup, as its own Vue app instance sharing the page's store.
  *
  * @param component the popup form component to mount
  * @param componentProps props (including "on"-prefixed event listeners) for the component
  * @param lngLat where to anchor the popup
  */
-function openPopup(component: typeof ClickPopup | typeof FavoritePopup, componentProps: Record<string, unknown>, lngLat: [number, number]): void {
+function openPopup(component: typeof ClickPopup, componentProps: Record<string, unknown>, lngLat: [number, number]): void {
 	closePopup()
 	const map = mapInstance.map
 	if (!map) {
@@ -211,26 +211,6 @@ function handlePopupClose(): void {
 	popupApp?.unmount()
 	popupApp = null
 	popup = null
-	store.dispatch(`${PUBLIC_FAVORITES_NAMESPACE}/selectFavorite`, null)
-}
-
-/**
- * @param favorite the favorite to show the edit/details popup for
- */
-function openFavoritePopup(favorite: Favorite): void {
-	openPopup(FavoritePopup, {
-		favorite,
-		isVisible: true,
-		allowCategoryCustomization: !props.isPublicShare,
-		allowEdits: props.allowFavoriteEdits,
-		onDeleteFavorite: (data: { id: number }) => {
-			emit('delete-favorite', data)
-			closePopup()
-		},
-		onUpdateFavorite: (data: { id: number, name: string, category: string, comment: string, lat: number, lng: number }) => {
-			emit('update-favorite', data)
-		},
-	}, [favorite.lng, favorite.lat])
 }
 
 /**
@@ -272,7 +252,8 @@ function onPointClick(event: MapMouseEvent & { features?: MapGeoJSONFeature[] })
 	const feature = event.features?.[0]
 	const favorite = feature && allFavorites.value.find((f) => f.id === feature.properties.id)
 	if (favorite) {
-		openFavoritePopup(favorite)
+		// shown in the favorite sidebar of the page
+		store.dispatch(`${PUBLIC_FAVORITES_NAMESPACE}/selectFavorite`, favorite.id)
 	}
 }
 
@@ -332,8 +313,7 @@ watch(selectedFavoriteId, (id) => {
 	if (!map || !favorite) {
 		return
 	}
-	map.easeTo({ center: [favorite.lng, favorite.lat], zoom: CLUSTER_MAX_ZOOM_LEVEL })
-	openFavoritePopup(favorite)
+	map.easeTo({ center: [favorite.lng, favorite.lat], zoom: Math.max(map.getZoom(), CLUSTER_MAX_ZOOM_LEVEL) })
 })
 
 onBeforeUnmount(() => {

@@ -5,7 +5,8 @@
 		<NcTextField v-model="name"
 			:label="t('maps', 'Name')" />
 
-		<NcSelect :model-value="selectedCategory"
+		<NcSelect v-if="!restricted"
+			:model-value="selectedCategory"
 			class="favorite-edition__category"
 			:input-label="t('maps', 'Category')"
 			:options="categoryOptions"
@@ -18,7 +19,7 @@
 			:label="t('maps', 'Comment')"
 			resize="vertical" />
 
-		<div class="favorite-edition__location">
+		<div v-if="!restricted" class="favorite-edition__location">
 			<NcTextField v-model="lat"
 				type="number"
 				step="any"
@@ -89,6 +90,8 @@ interface CategoryOption {
 const props = defineProps<{
 	favorite: Favorite
 	categories: Record<string, { name: string }>
+	/** Only the name and the comment can be changed, like in a shared favorite category */
+	restricted?: boolean
 }>()
 
 const emit = defineEmits<{

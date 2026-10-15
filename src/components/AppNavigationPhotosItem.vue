@@ -17,13 +17,6 @@
 				@click="$emit('draggable-clicked')">
 				{{ draggable ? t('maps', 'Disable photo drag') : t('maps', 'Enable photo drag') }}
 			</NcActionButton>
-			<!--FIXME Hack empty menu looks wired-->
-			<NcActionButton v-else
-				:icon="'icon-hand'"
-				:close-after-click="false"
-				@click="sayHi">
-				{{ t('maps', 'Say hi') }}
-			</NcActionButton>
 			<NcActionButton
 				:icon="showSuggestions ? 'icon-picture' : 'icon-picture'"
 				:close-after-click="true"
@@ -42,9 +35,6 @@
 
 <script>
 import { NcAppNavigationItem, NcActionButton, NcCounterBubble } from '@nextcloud/vue'
-
-import optionsController from '../optionsController.js'
-import { showInfo } from '@nextcloud/dialogs'
 
 export default {
 	name: 'AppNavigationPhotosItem',
@@ -90,15 +80,6 @@ export default {
 	data() {
 		return {
 		}
-	},
-
-	computed: {
-	},
-
-	methods: {
-		sayHi() {
-			showInfo(t('maps', 'Hi'))
-		},
 	},
 }
 </script>

@@ -22,7 +22,6 @@ const optionsController = {
 		? parseInt(window.location.pathname.split('/apps/maps/m/')[1].split('/')[0])
 		: null,
 	myMapListShow: true,
-	myMapsEnabled: true,
 	disabledFavoriteCategories: [],
 	disabledContactGroups: [],
 	enabledTracks: [],
@@ -171,11 +170,6 @@ const optionsController = {
 			this.myMapListShow = false
 		} else {
 			this.myMapListShow = true
-		}
-		if ('myMapsEnabled' in optionsValues && optionsValues.myMapsEnabled !== 'true') {
-			this.myMapsEnabled = false
-		} else {
-			this.myMapsEnabled = true
 		}
 
 		// routing

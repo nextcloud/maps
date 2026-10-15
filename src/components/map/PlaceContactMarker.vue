@@ -289,12 +289,6 @@ onBeforeUnmount(() => {
 		}
 	}
 
-	.contact-select {
-		:deep(.multiselect) {
-			flex-grow: 1;
-		}
-	}
-
 	.address-type select {
 		flex-grow: 1;
 		margin: 3px 0 0;

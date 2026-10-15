@@ -200,10 +200,6 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-:deep(.multiselect__option) {
-	height: 44px !important;
-}
-
 .single-label {
 	height: 18px;
 	overflow: hidden;

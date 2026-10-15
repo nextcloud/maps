@@ -7,8 +7,6 @@
 		:get-option-key="getOptionKey"
 		:model-value="mySelectedOption"
 		:limit="8"
-		keep-open
-		:clear-search-on-select="false"
 		:placeholder="placeholder"
 		:loading="searching || loading"
 		:options="filteredOptions"
@@ -44,6 +42,8 @@ export default {
 	components: {
 		NcSelect,
 	},
+
+	emits: ['validate', 'clear'],
 
 	props: {
 		data: {
@@ -105,18 +105,6 @@ export default {
 		},
 	},
 
-	watch: {
-	},
-
-	mounted() {
-		const input = this.$refs.select.$el.querySelector('input')
-		input.addEventListener('focus', e => {
-			if (this.mySelectedOption) {
-				input.value = this.mySelectedOption.value || this.mySelectedOption.label
-			}
-		})
-	},
-
 	methods: {
 		getOptionKey(option) {
 			return `${option.id}${option.type}`
@@ -141,6 +129,9 @@ export default {
 			this.mySelectedOption = option
 			if (option) {
 				this.$emit('validate', option)
+			} else {
+				this.currentOsmResults = null
+				this.$emit('clear')
 			}
 		},
 		onSearchChange(query) {

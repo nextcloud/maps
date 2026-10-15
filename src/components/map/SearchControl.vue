@@ -18,68 +18,63 @@
 				class="search-field"
 				:data="searchData"
 				:loading="loading"
-				@validate="emit('validate', $event)" />
-			<NcButton v-if="resultPoiNumber > 0"
-				variant="tertiary"
-				:aria-label="t('maps', 'Clear POIs')"
-				@click="emit('clear-pois')">
-				<template #icon>
-					<CloseIcon :size="20" />
-				</template>
-			</NcButton>
+				@validate="emit('validate', $event)"
+				@clear="emit('clear')" />
 		</div>
 	</MglCustomControl>
 </template>
 
 <script setup lang="ts">
-import { translate as t } from '@nextcloud/l10n'
-import { NcButton, useIsMobile } from '@nextcloud/vue'
+import { useIsMobile } from '@nextcloud/vue'
 import { MglCustomControl } from 'vue-maplibre-gl'
-import CloseIcon from 'vue-material-design-icons/Close.vue'
 import SearchField from './SearchField.vue'
 
 withDefaults(defineProps<{
 	visible?: boolean
 	searchData: unknown[]
 	loading?: boolean
-	resultPoiNumber?: number
 }>(), {
 	visible: true,
 	loading: false,
-	resultPoiNumber: 0,
 })
 
 const emit = defineEmits<{
 	validate: [element: unknown]
-	'clear-pois': []
+	clear: []
 }>()
 
 const isMobile = useIsMobile()
 </script>
 
 <style lang="scss" scoped>
-.desktop {
-	width: 350px;
-	margin-left: 56px !important;
-}
-
-.mobile {
-	width: 100vw;
-}
-
+// Leave room for the navigation toggle, which sits at the same offset in the top-left corner
 .maps-search-control {
+	--maps-search-offset: calc(2 * var(--default-grid-baseline));
 	display: flex;
 	align-items: center;
-	gap: 4px;
+	gap: var(--default-grid-baseline);
+	margin-inline-start: calc(var(--default-clickable-area) + var(--maps-search-offset));
 
-	.search-field {
+	// more specific than NcSelect's own .nc-select.v-select.select margin
+	.search-field.nc-select {
 		flex-grow: 1;
+		margin: 0;
+	}
+
+	&.desktop {
+		width: 350px;
+	}
+
+	&.mobile {
+		width: calc(100vw - var(--default-clickable-area) - 3 * var(--maps-search-offset));
 	}
 }
 </style>
 
 <style lang="scss">
-.maplibregl-ctrl-group:has(> .maps-search-control) {
+// More specific than MapLibre's own .maplibregl-ctrl-group:not(:empty), which draws a frame around the control
+.maplibregl-map .maplibregl-ctrl.maplibregl-ctrl-group:has(> .maps-search-control) {
+	margin: calc(2 * var(--default-grid-baseline)) 0 0 calc(2 * var(--default-grid-baseline));
 	background: transparent;
 	border-radius: 0;
 	box-shadow: none;

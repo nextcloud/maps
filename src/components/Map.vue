@@ -99,9 +99,8 @@
 			<SearchControl :visible="!showRouting"
 				:search-data="searchData"
 				:loading="searching"
-				:result-poi-number="searchPois.length"
 				@validate="onSearchValidate"
-				@clear-pois="searchPois = []" />
+				@clear="onSearchClear" />
 
 			<RoutingControl :visible="showRouting"
 				:search-data="routingSearchData"
@@ -569,6 +568,14 @@ function zoomOnPhotoSuggestion(photo: { lat?: number, lng?: number }) {
  */
 function displayElevation(track?: Track) {
 	elevationTrack.value = track ?? null
+}
+
+/**
+ * Remove what the last search put on the map.
+ */
+function onSearchClear() {
+	searchPois.value = []
+	clickSearchLatLng.value = null
 }
 
 /**

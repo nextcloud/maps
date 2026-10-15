@@ -105,6 +105,11 @@ export const isPublic = function() {
  * Get the current share link token
  */
 export const getToken = function() {
-	return document.getElementById('sharingToken')
-		&& document.getElementById('sharingToken').value
+	const input = document.getElementById('sharingToken')
+	if (input?.value) {
+		return input.value
+	}
+	// The hidden input is replaced when the app mounts, so data loaded during setup reads the URL
+	const match = window.location.pathname.match(/\/apps\/maps\/s\/(?!favorites\/)([^/]+)/)
+	return match ? match[1] : null
 }

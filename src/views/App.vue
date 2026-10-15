@@ -932,6 +932,10 @@ export default {
 			})
 		},
 		async showPhotoBackgroundJobInfo() {
+			// the scan status is the viewer's own, it says nothing about a shared map
+			if (getToken()) {
+				return
+			}
 			network.getBackgroundJobStatus().then((response) => {
 				const status = response.data
 				if (status.addJobsRemainingForUser > 0) {

@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 
 import { createApp } from 'vue'
+import '@nextcloud/dialogs/style.css'
 import AdminSettings from './views/AdminSettings.vue'
 
 const app = createApp(AdminSettings)

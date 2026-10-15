@@ -21,6 +21,7 @@
  */
 
 import { createApp } from 'vue'
+import '@nextcloud/dialogs/style.css'
 import App from './views/App.vue'
 import '../css/style.scss'
 

@@ -22,7 +22,7 @@
 <script setup lang="ts">
 import { Marker, Popup } from 'maplibre-gl'
 import { translate as t } from '@nextcloud/l10n'
-import { onBeforeUnmount, ref, watch } from 'vue'
+import { onBeforeUnmount, watch } from 'vue'
 import { useMap } from 'vue-maplibre-gl'
 import { formatAddress } from '../../utils.js'
 import { escapeHtml } from '../../utils/domUtils.ts'
@@ -38,32 +38,32 @@ const emit = defineEmits<{
 }>()
 
 const mapInstance = useMap()
-const loading = ref(true)
-const formattedAddress = ref('')
-let address: Record<string, string> | null = null
 
 let marker: Marker | null = null
 let popup: Popup | null = null
+// guards against a slow geocode answer for a previous position opening a popup
+let requestId = 0
 
 /**
- * @param container the popup's DOM content, rebuilt whenever the address changes
+ * @param formattedAddress the address of the clicked place
  */
-function renderPopup(container: HTMLElement): void {
-	container.innerHTML = loading.value
-		? '<span class="icon icon-loading-small"></span>'
-		: `
-			<h3 class="click-search-title">${escapeHtml(t('maps', 'This place'))}</h3>
-			<p class="click-search-address">${escapeHtml(formattedAddress.value)}</p>
-			<button class="click-search-add-favorite" data-action="add-favorite">${escapeHtml(t('maps', 'Add to favorites'))}</button>
-		`
+function buildPopupContent(formattedAddress: string): HTMLElement {
+	const container = document.createElement('div')
+	container.className = 'popup-click-search-wrapper'
+	container.innerHTML = `
+		<h3 class="click-search-title">${escapeHtml(t('maps', 'This place'))}</h3>
+		<p class="click-search-address">${escapeHtml(formattedAddress)}</p>
+		<button class="click-search-add-favorite" data-action="add-favorite">${escapeHtml(t('maps', 'Add to favorites'))}</button>
+	`
 	container.querySelector('[data-action="add-favorite"]')?.addEventListener('click', () => {
 		emit('add-favorite', {
 			latLng: props.latLng,
-			name: formattedAddress.value,
-			formattedAddress: formattedAddress.value,
+			name: formattedAddress,
+			formattedAddress,
 		})
 		emit('close')
 	})
+	return container
 }
 
 function teardown(): void {
@@ -73,37 +73,36 @@ function teardown(): void {
 	marker = null
 }
 
-watch(() => [mapInstance.map, props.latLng] as const, ([map, latLng]) => {
+watch(() => [mapInstance.map, props.latLng] as const, async ([map, latLng]) => {
 	teardown()
+	const currentRequest = ++requestId
 	if (!map || !latLng) {
 		return
 	}
 
-	loading.value = true
-	address = null
-	formattedAddress.value = ''
-
-	const container = document.createElement('div')
-	container.className = 'popup-click-search-wrapper'
-	renderPopup(container)
+	let formattedAddress = ''
+	try {
+		const response = await geocode(latLng.lat, latLng.lng)
+		formattedAddress = formatAddress(response.data.address).trim()
+	} catch (error) {
+		console.error(error)
+	}
+	if (currentRequest !== requestId) {
+		return
+	}
+	if (!formattedAddress) {
+		// e.g. open sea, where there is no address to show or save
+		emit('close')
+		return
+	}
 
 	popup = new Popup({ closeOnClick: false, className: 'popovermenu open popupMarker clickSearchPopup' })
-		.setDOMContent(container)
+		.setDOMContent(buildPopupContent(formattedAddress))
 	marker = new Marker({ opacity: 0 })
 		.setLngLat([latLng.lng, latLng.lat])
 		.setPopup(popup)
 		.addTo(map)
 	marker.togglePopup()
-
-	geocode(latLng.lat, latLng.lng).then((response) => {
-		address = response.data.address
-		formattedAddress.value = formatAddress(address)
-	}).catch((error) => {
-		console.error(error)
-	}).then(() => {
-		loading.value = false
-		renderPopup(container)
-	})
 }, { immediate: true })
 
 onBeforeUnmount(() => {

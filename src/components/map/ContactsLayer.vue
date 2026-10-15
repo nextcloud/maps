@@ -20,8 +20,8 @@
  -->
 
 <!--
-	Ported from Leaflet to vue-maplibre-gl. Not ported yet, on purpose:
-	spiderfying overlapping markers at max zoom.
+	Ported from Leaflet to vue-maplibre-gl. Instead of spiderfying contacts
+	that share a position, clicking them opens a list to pick one from.
 -->
 <template>
 	<MglGeoJsonSource :source-id="SOURCE_ID"
@@ -48,7 +48,7 @@
 import type { MapGeoJSONFeature, MapMouseEvent } from 'maplibre-gl'
 import { Popup } from 'maplibre-gl'
 import { getCurrentUser } from '@nextcloud/auth'
-import { translate as t } from '@nextcloud/l10n'
+import { translate as t, translatePlural as n } from '@nextcloud/l10n'
 import { generateUrl } from '@nextcloud/router'
 import { computed, onBeforeUnmount, reactive, watch } from 'vue'
 import { MglGeoJsonSource, MglSymbolLayer, useMap } from 'vue-maplibre-gl'
@@ -294,25 +294,103 @@ function buildAddressHtml(contact: Contact): { adrTypesHtml: string, addressHtml
 }
 
 let hoverPopup: Popup | null = null
+let hoveredContact: Contact | null = null
 let actionPopup: Popup | null = null
+// position of the contact(s) the open action popup is about
+let actionPopupGeo: string | null = null
+
+/**
+ * @param contact the contact whose map position to return
+ */
+function contactLngLat(contact: Contact): [number, number] {
+	const [lat, lng] = geoToLatLng(contact.GEO)
+	return [Number(lng), Number(lat)]
+}
+
+/**
+ * The contacts under the cursor that sit at exactly the same position as the topmost one,
+ * e.g. several people sharing an address, which would otherwise hide each other.
+ *
+ * @param event the underlying MapLibre mouse event
+ */
+function stackedContactsAt(event: MapMouseEvent & { features?: MapGeoJSONFeature[] }): Contact[] {
+	const contacts = [...new Set((event.features ?? [])
+		.map((feature) => displayedContacts.value[feature.properties.index])
+		.filter((contact): contact is Contact => !!contact))]
+	return contacts.filter((contact) => contact.GEO === contacts[0]?.GEO)
+}
+
+function closeHoverPopup(): void {
+	hoverPopup?.remove()
+	hoverPopup = null
+	hoveredContact = null
+}
+
+/**
+ * @param popup the popup to show as the current action popup, replacing any previous one
+ * @param contact the contact (or one of the stacked contacts) the popup is about
+ */
+function showActionPopup(popup: Popup, contact: Contact): void {
+	const map = mapInstance.map
+	if (!map) {
+		return
+	}
+	closeHoverPopup()
+	actionPopup?.remove()
+	actionPopup = popup
+	actionPopupGeo = contact.GEO
+	popup.on('close', () => {
+		if (actionPopup === popup) {
+			actionPopup = null
+			actionPopupGeo = null
+		}
+	})
+	popup.addTo(map)
+}
+
+function closeActionPopup(): void {
+	actionPopup?.remove()
+}
+
+/**
+ * @param container the popup content containing `data-action` buttons
+ * @param contact the contact the actions apply to
+ */
+function bindContactActions(container: HTMLElement, contact: Contact): void {
+	container.addEventListener('click', (domEvent) => {
+		const action = (domEvent.target as HTMLElement).closest('[data-action]')?.getAttribute('data-action')
+		if (action === 'delete') {
+			onDeleteAddressClick(contact)
+		} else if (action === 'copy') {
+			emit('add-to-map-contact', contact)
+			closeActionPopup()
+		}
+	})
+}
 
 /**
  * @param event the underlying MapLibre mouse event
  */
-function onPointMouseEnter(event: MapMouseEvent & { features?: MapGeoJSONFeature[] }): void {
+function onPointMouseMove(event: MapMouseEvent & { features?: MapGeoJSONFeature[] }): void {
 	const map = mapInstance.map
-	const feature = event.features?.[0]
-	if (!map || !feature) {
-		return
-	}
-	const contact = displayedContacts.value[feature.properties.index]
-	if (!contact) {
+	const stacked = stackedContactsAt(event)
+	const contact = stacked[0]
+	if (!map || !contact) {
 		return
 	}
 	map.getCanvas().style.cursor = 'pointer'
+	if (contact === hoveredContact) {
+		return
+	}
+	closeHoverPopup()
+	if (contact.GEO === actionPopupGeo) {
+		// the open action popup already covers this marker
+		return
+	}
 
 	const avatarUrl = getContactAvatar(contact)
 	const { adrTypesHtml, addressHtml } = buildAddressHtml(contact)
+	const othersCount = stacked.length - 1
 	const html = document.createElement('div')
 	html.className = 'tooltip-contact-wrapper'
 	html.innerHTML = `
@@ -321,12 +399,13 @@ function onPointMouseEnter(event: MapMouseEvent & { features?: MapGeoJSONFeature
 			<h3 class="tooltip-contact-name">${escapeHtml(contact.FN || '')}</h3>
 			<p class="tooltip-contact-address-type">${adrTypesHtml}</p>
 			${addressHtml}
+			${othersCount > 0 ? `<p class="tooltip-contact-others">${escapeHtml(n('maps', '+ %n other contact here', '+ %n other contacts here', othersCount))}</p>` : ''}
 		</div>
 	`
 
-	hoverPopup?.remove()
-	hoverPopup = new Popup({ closeButton: false, closeOnClick: false, offset: 20 })
-		.setLngLat((feature.geometry as { coordinates: [number, number] }).coordinates)
+	hoveredContact = contact
+	hoverPopup = new Popup({ closeButton: false, closeOnClick: false, offset: 20, maxWidth: 'none' })
+		.setLngLat(contactLngLat(contact))
 		.setDOMContent(html)
 		.addTo(map)
 }
@@ -336,8 +415,7 @@ function onPointMouseLeave(): void {
 	if (map) {
 		map.getCanvas().style.cursor = ''
 	}
-	hoverPopup?.remove()
-	hoverPopup = null
+	closeHoverPopup()
 }
 
 /**
@@ -348,24 +426,13 @@ function onDeleteAddressClick(contact: Contact): void {
 		delete (contact as { GEO?: string }).GEO
 	}
 	emit('address-deleted', contact)
-	actionPopup?.remove()
-	actionPopup = null
+	closeActionPopup()
 }
 
 /**
- * @param event the underlying MapLibre mouse event
+ * @param contact the contact to show the details popup for
  */
-function onPointClick(event: MapMouseEvent & { features?: MapGeoJSONFeature[] }): void {
-	const map = mapInstance.map
-	const feature = event.features?.[0]
-	if (!map || !feature) {
-		return
-	}
-	const contact = displayedContacts.value[feature.properties.index]
-	if (!contact) {
-		return
-	}
-
+function openContactPopup(contact: Contact): void {
 	const avatarUrl = getContactAvatar(contact)
 	const { adrTypesHtml, addressHtml } = buildAddressHtml(contact)
 	const contactUrl = contact.URL || generateUrl('/apps/contacts/direct/contact/' + encodeURIComponent(contact.UID + '~contacts'))
@@ -382,33 +449,79 @@ function onPointClick(event: MapMouseEvent & { features?: MapGeoJSONFeature[] })
 			<h3 class="tooltip-contact-name">${escapeHtml(contact.FN || '')}</h3>
 			<p class="tooltip-contact-address-type">${adrTypesHtml}</p>
 			${addressHtml}
-			${contact.UID && contact.URI ? `<a target="_blank" href="${contactUrl}">${escapeHtml(t('maps', 'Open in Contacts'))}</a>` : ''}
+			${contact.UID && contact.URI ? `<a target="_blank" rel="noopener noreferrer" href="${escapeHtml(contactUrl)}">${escapeHtml(t('maps', 'Open in Contacts'))}</a>` : ''}
 		</div>
 	`
-	popupContent.addEventListener('click', (domEvent) => {
-		const action = (domEvent.target as HTMLElement).getAttribute('data-action')
-		if (action === 'delete') {
-			onDeleteAddressClick(contact)
-		}
-		if (action === 'copy') {
-			emit('add-to-map-contact', contact)
-		}
+	bindContactActions(popupContent, contact)
+
+	showActionPopup(new Popup({ closeButton: false, className: 'popovermenu open popupMarker contactPopup', offset: 20, maxWidth: 'none' })
+		.setLngLat(contactLngLat(contact))
+		.setDOMContent(popupContent), contact)
+}
+
+/**
+ * @param contacts the contacts sharing one position, to pick from
+ */
+function openStackPopup(contacts: Contact[]): void {
+	const list = document.createElement('ul')
+	list.className = 'popup-contact-stack'
+	contacts.forEach((contact) => {
+		const item = document.createElement('li')
+		const button = document.createElement('button')
+		button.className = 'action-btn'
+		button.innerHTML = `
+			<img class="popup-contact-stack-avatar" src="${getContactAvatar(contact)}" alt="">
+			<span>${escapeHtml(contact.FN || '')}</span>
+		`
+		button.addEventListener('click', () => openContactPopup(contact))
+		item.appendChild(button)
+		list.appendChild(item)
 	})
 
-	hoverPopup?.remove()
-	actionPopup?.remove()
-	actionPopup = new Popup({ closeButton: false, className: 'popovermenu open popupMarker contactPopup', offset: 20 })
-		.setLngLat((feature.geometry as { coordinates: [number, number] }).coordinates)
-		.setDOMContent(popupContent)
-		.addTo(map)
+	showActionPopup(new Popup({ closeButton: false, className: 'popovermenu open popupMarker contactPopup', offset: 20, maxWidth: 'none' })
+		.setLngLat(contactLngLat(contacts[0]))
+		.setDOMContent(list), contacts[0])
+}
+
+/**
+ * @param event the underlying MapLibre mouse event
+ */
+function onPointClick(event: MapMouseEvent & { features?: MapGeoJSONFeature[] }): void {
+	const stacked = stackedContactsAt(event)
+	if (stacked.length > 1) {
+		openStackPopup(stacked)
+	} else if (stacked.length === 1) {
+		openContactPopup(stacked[0])
+	}
 }
 
 /**
  * @param event the underlying MapLibre mouse event
  */
 function onPointContextMenu(event: MapMouseEvent & { features?: MapGeoJSONFeature[] }): void {
+	const contact = stackedContactsAt(event)[0]
+	if (!contact) {
+		return
+	}
 	event.preventDefault()
-	onPointClick(event)
+
+	const canDelete = contact.isUpdateable
+	const canCopy = !isPublic()
+	if (!canDelete && !canCopy) {
+		return
+	}
+
+	const container = document.createElement('div')
+	container.className = 'right-contact-popup'
+	container.innerHTML = `
+		${canDelete ? `<button class="action-btn" data-action="delete">${escapeHtml(contact.ADR ? t('maps', 'Delete this address') : t('maps', 'Delete this location'))}</button>` : ''}
+		${canCopy ? `<button class="action-btn" data-action="copy">${escapeHtml(t('maps', 'Copy to map'))}</button>` : ''}
+	`
+	bindContactActions(container, contact)
+
+	showActionPopup(new Popup({ closeButton: false, className: 'popovermenu open popupMarker contactPopup', offset: 20 })
+		.setLngLat(contactLngLat(contact))
+		.setDOMContent(container), contact)
 }
 
 /**
@@ -456,7 +569,7 @@ watch(() => mapInstance.isLoaded, (loaded) => {
 	map.on('click', POINT_LAYER_ID, onPointClick)
 	map.on('click', CLUSTER_LAYER_ID, onClusterClick)
 	map.on('contextmenu', POINT_LAYER_ID, onPointContextMenu)
-	map.on('mouseenter', POINT_LAYER_ID, onPointMouseEnter)
+	map.on('mousemove', POINT_LAYER_ID, onPointMouseMove)
 	map.on('mouseleave', POINT_LAYER_ID, onPointMouseLeave)
 	map.on('mouseenter', CLUSTER_LAYER_ID, onClusterMouseEnter)
 	map.on('mouseleave', CLUSTER_LAYER_ID, onClusterMouseLeave)
@@ -472,7 +585,7 @@ onBeforeUnmount(() => {
 	map.off('click', POINT_LAYER_ID, onPointClick)
 	map.off('click', CLUSTER_LAYER_ID, onClusterClick)
 	map.off('contextmenu', POINT_LAYER_ID, onPointContextMenu)
-	map.off('mouseenter', POINT_LAYER_ID, onPointMouseEnter)
+	map.off('mousemove', POINT_LAYER_ID, onPointMouseMove)
 	map.off('mouseleave', POINT_LAYER_ID, onPointMouseLeave)
 	map.off('mouseenter', CLUSTER_LAYER_ID, onClusterMouseEnter)
 	map.off('mouseleave', CLUSTER_LAYER_ID, onClusterMouseLeave)
@@ -516,5 +629,48 @@ onBeforeUnmount(() => {
 			background-color: var(--color-background-hover);
 		}
 	}
+}
+
+.tooltip-contact-others {
+	margin: 0 !important;
+	color: var(--color-text-maxcontrast);
+}
+
+.right-contact-popup,
+.popup-contact-stack {
+	.action-btn {
+		display: flex;
+		align-items: center;
+		gap: 8px;
+		width: 100%;
+		padding: 8px;
+		border: none;
+		background: transparent;
+		text-align: left;
+		cursor: pointer;
+
+		&:hover {
+			background: var(--color-background-hover);
+		}
+	}
+}
+
+.popup-contact-stack {
+	max-height: 300px;
+	overflow-y: auto;
+
+	span {
+		overflow: hidden;
+		text-overflow: ellipsis;
+		white-space: nowrap;
+	}
+}
+
+.popup-contact-stack-avatar {
+	width: 32px;
+	height: 32px;
+	flex-shrink: 0;
+	border-radius: 50%;
+	object-fit: cover;
 }
 </style>

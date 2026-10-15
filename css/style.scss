@@ -48,19 +48,33 @@
     display: block;
     z-index: 100000;
 }
-.maplibregl-popup-content {
-    margin: 7px 7px !important;
+.maplibregl-map .maplibregl-popup-content {
     color: var(--color-main-text);
-    border-radius: 3px !important;
+    background-color: var(--color-main-background);
+    border-radius: 3px;
+    box-shadow: none;
 }
 .maplibregl-popup-content button {
     min-height: 10px !important;
     height: 27px !important;
     padding: 3px 8px 3px 8px !important;
 }
-.maplibregl-popup-content, .maplibregl-popup-tip {
-    background-color: var(--color-main-background) !important;
-    box-shadow: none;
+/* the tip is a CSS triangle drawn with its borders */
+.maplibregl-map .maplibregl-popup-anchor-top .maplibregl-popup-tip,
+.maplibregl-map .maplibregl-popup-anchor-top-left .maplibregl-popup-tip,
+.maplibregl-map .maplibregl-popup-anchor-top-right .maplibregl-popup-tip {
+    border-bottom-color: var(--color-main-background);
+}
+.maplibregl-map .maplibregl-popup-anchor-bottom .maplibregl-popup-tip,
+.maplibregl-map .maplibregl-popup-anchor-bottom-left .maplibregl-popup-tip,
+.maplibregl-map .maplibregl-popup-anchor-bottom-right .maplibregl-popup-tip {
+    border-top-color: var(--color-main-background);
+}
+.maplibregl-map .maplibregl-popup-anchor-left .maplibregl-popup-tip {
+    border-right-color: var(--color-main-background);
+}
+.maplibregl-map .maplibregl-popup-anchor-right .maplibregl-popup-tip {
+    border-left-color: var(--color-main-background);
 }
 .maplibregl-ctrl-group {
     background-color: var(--color-main-background);
@@ -91,9 +105,20 @@
 .popupMarker {
     width: 200px;
 }
-.popupMarker .maplibregl-popup-content {
+/* .popovermenu only contributes the drop shadow, which then outlines both the content and the tip */
+.maplibregl-map .popupMarker.open {
+    /* .popovermenu.open sets display: block, but MapLibre lays out the content and tip as flex items */
+    display: flex;
+    background-color: transparent;
+    padding: 0;
+    margin: 0;
+    inset-inline-end: auto;
+}
+.maplibregl-map .popupMarker .maplibregl-popup-content {
     /* waiting for a better solution */
     overflow: hidden;
+    box-shadow: none;
+    border-radius: var(--border-radius-large);
 }
 #navigation-routing:not(.icon-loading-small) > a::before {
     content: "\f4d7";

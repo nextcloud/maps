@@ -29,32 +29,36 @@
 				</NcAppNavigationItem>
 			</ul>
 			<NcAppSettingsDialog :open="settingsOpen"
+				:legacy="false"
 				:name="t('maps', 'Maps settings')"
+				:show-navigation="true"
 				@update:open="settingsOpen = $event">
 				<NcAppSettingsSection id="maps-settings-general" :name="t('maps', 'General')">
-					<NcCheckboxRadioSwitch type="switch"
-						:model-value="optionValues.trackMe === 'true'"
-						@update:model-value="onTrackMeChange">
-						{{ t('maps', 'Track my position') }}
-					</NcCheckboxRadioSwitch>
-					<NcCheckboxRadioSwitch type="switch"
-						:model-value="optionValues.displaySlider === 'true'"
-						@update:model-value="onDisplaySliderChange">
-						{{ t('maps', 'Display time filter slider') }}
-					</NcCheckboxRadioSwitch>
-					<NcButton class="maps-navigation__geo-link" @click="emit('register-geo-link')">
-						{{ t('maps', 'Register Maps to open geo links') }}
-					</NcButton>
+					<NcFormBox>
+						<NcFormBoxSwitch :model-value="optionValues.trackMe === 'true'"
+							:label="t('maps', 'Track my position')"
+							:description="t('maps', 'Regularly save the position of this device to your devices')"
+							@update:model-value="onTrackMeChange" />
+						<NcFormBoxSwitch :model-value="optionValues.displaySlider === 'true'"
+							:label="t('maps', 'Display time filter slider')"
+							:description="t('maps', 'Only show what was recorded in a chosen time range')"
+							@update:model-value="onDisplaySliderChange" />
+						<NcFormBoxButton :label="t('maps', 'Register Maps to open geo links')"
+							:description="t('maps', 'Open geo: links from other apps and websites in Maps')"
+							@click="emit('register-geo-link')">
+							<template #icon>
+								<IconOpenInApp :size="20" />
+							</template>
+						</NcFormBoxButton>
+					</NcFormBox>
 				</NcAppSettingsSection>
 				<NcAppSettingsSection id="maps-settings-projection" :name="t('maps', 'Map projection')">
-					<p class="maps-navigation__hint">
-						{{ t('maps', 'Keep in mind that map projections always distort sizes of countries. The standard Mercator projection is particularly biased. Read more at:') }}
-						<a href="http://kai.sub.blue/en/africa.html"
-							target="_blank"
-							rel="noreferrer noopener">
-							{{ t('maps', 'The True Size of Africa') }} ↗
-						</a>
-					</p>
+					<NcFormBox>
+						<NcFormBoxButton :label="t('maps', 'The True Size of Africa')"
+							:description="t('maps', 'Map projections always distort the sizes of countries, the standard Mercator projection particularly so.')"
+							href="http://kai.sub.blue/en/africa.html"
+							target="_blank" />
+					</NcFormBox>
 				</NcAppSettingsSection>
 			</NcAppSettingsDialog>
 		</template>
@@ -69,12 +73,14 @@ import {
 	NcAppNavigationItem,
 	NcAppSettingsDialog,
 	NcAppSettingsSection,
-	NcButton,
-	NcCheckboxRadioSwitch,
+	NcFormBox,
+	NcFormBoxButton,
+	NcFormBoxSwitch,
 	NcLoadingIcon,
 } from '@nextcloud/vue'
 import { reactive, ref } from 'vue'
 import IconCog from 'vue-material-design-icons/CogOutline.vue'
+import IconOpenInApp from 'vue-material-design-icons/OpenInApp.vue'
 import IconPlus from 'vue-material-design-icons/Plus.vue'
 import optionsController from '../optionsController.js'
 
@@ -125,14 +131,6 @@ function onDisplaySliderChange(checked: boolean): void {
 .maps-navigation__footer {
 	padding: var(--default-grid-baseline);
 	border-top: 1px solid var(--color-border);
-}
-
-.maps-navigation__geo-link {
-	margin-top: calc(2 * var(--default-grid-baseline));
-}
-
-.maps-navigation__hint {
-	color: var(--color-text-maxcontrast);
 }
 
 :deep(.app-navigation-toggle) {

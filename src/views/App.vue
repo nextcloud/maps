@@ -639,6 +639,7 @@ export default {
 			this.sendPositionLoop()
 		}
 		subscribe('files:sidebar:opened', this.closeSidebar)
+		subscribe('viewer:sidebar:open', this.onViewerSidebarOpen)
 
 		document.onkeyup = (e) => {
 			if (e.ctrlKey) {
@@ -655,11 +656,14 @@ export default {
 	mounted() {
 		// subscribe('nextcloud:unified-search.search', this.filter)
 		// subscribe('nextcloud:unified-search.reset', this.cleanSearch)
+		// mounting the app replaced the files sidebar the server rendered into #content
+		getSidebar().mount(this.$el)
 	},
 	beforeUnmount() {
 		// unsubscribe('nextcloud:unified-search.search', this.filter)
 		// unsubscribe('nextcloud:unified-search.reset', this.cleanSearch)
 		unsubscribe('files:sidebar:opened', this.closeSidebar)
+		unsubscribe('viewer:sidebar:open', this.onViewerSidebarOpen)
 	},
 	methods: {
 		onMainDetailClicked() {
@@ -684,6 +688,14 @@ export default {
 			if (this.showPhotoSuggestions) {
 				this.activeTab = 'photo-suggestion'
 			}
+		},
+		/**
+		 * The viewer only requests the sidebar, rendering it is up to the app hosting the viewer.
+		 *
+		 * @param {import('@nextcloud/files').INode} node the file shown in the viewer
+		 */
+		onViewerSidebarOpen(node) {
+			this.openFileSidebar(node.path)
 		},
 		/**
 		 * Show a file or folder of the user in the files sidebar, in place of the maps sidebar.

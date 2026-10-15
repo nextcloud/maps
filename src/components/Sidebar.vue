@@ -1,5 +1,5 @@
 <template>
-	<NcAppSidebar v-show="show"
+	<NcAppSidebar v-if="show"
 		:name="name"
 		subname=""
 		:compact="true"

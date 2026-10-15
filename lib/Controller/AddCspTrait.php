@@ -7,7 +7,7 @@ use OCP\AppFramework\Http\Response;
 use OCP\IAppConfig;
 
 trait AddCspTrait {
-	private IAppConfig $appConfig;
+	protected IAppConfig $appConfig;
 
 	private function addCsp(Response $response): void {
 		$csp = new ContentSecurityPolicy();

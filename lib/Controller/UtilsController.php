@@ -153,7 +153,7 @@ class UtilsController extends Controller {
 		];
 		foreach ($values as $k => $v) {
 			if (in_array($k, $acceptedKeys)) {
-				$this->config->setAppValue('maps', $k, $v);
+				$this->config->setAppValue('maps', $k, is_string($v) ? trim($v) : $v);
 			}
 		}
 		$response = new DataResponse('DONE');

@@ -43,7 +43,7 @@ trait AddCspTrait {
 			'osrmFootURL',
 		];
 		foreach ($urlKeys as $key) {
-			$url = $this->appConfig->getValueString('maps', $key);
+			$url = trim($this->appConfig->getValueString('maps', $key));
 			if ($url !== '') {
 				$scheme = parse_url((string)$url, PHP_URL_SCHEME);
 				$host = parse_url((string)$url, PHP_URL_HOST);

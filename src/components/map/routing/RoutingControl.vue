@@ -141,15 +141,21 @@ const routeReady = computed(() => !!latestDirections.value?.routes?.length)
 const routers = computed<RouterOption[]>(() => {
 	const optionValues = optionsController.optionValues as Record<string, string>
 	const result: RouterOption[] = []
+	// values saved before the settings were trimmed can still carry stray whitespace, and the
+	// profile is appended to the URL, so a trailing slash would end up doubled
+	const cleanUrl = (url?: string) => url?.trim().replace(/\/+$/, '')
+	const osrmCarURL = cleanUrl(optionValues.osrmCarURL)
+	const osrmBikeURL = cleanUrl(optionValues.osrmBikeURL)
+	const osrmFootURL = cleanUrl(optionValues.osrmFootURL)
 
-	if (optionValues.osrmCarURL) {
-		result.push({ type: 'osrmCar', name: '🚗 ' + t('maps', 'By car (OSRM)'), api: optionValues.osrmCarURL, profile: 'car', requestOptions: {} })
+	if (osrmCarURL) {
+		result.push({ type: 'osrmCar', name: '🚗 ' + t('maps', 'By car (OSRM)'), api: osrmCarURL, profile: 'car', requestOptions: {} })
 	}
-	if (optionValues.osrmBikeURL) {
-		result.push({ type: 'osrmBike', name: '🚲 ' + t('maps', 'By bike (OSRM)'), api: optionValues.osrmBikeURL, profile: 'bicycle', requestOptions: {} })
+	if (osrmBikeURL) {
+		result.push({ type: 'osrmBike', name: '🚲 ' + t('maps', 'By bike (OSRM)'), api: osrmBikeURL, profile: 'bicycle', requestOptions: {} })
 	}
-	if (optionValues.osrmFootURL) {
-		result.push({ type: 'osrmFoot', name: '🚶 ' + t('maps', 'By foot (OSRM)'), api: optionValues.osrmFootURL, profile: 'foot', requestOptions: {} })
+	if (osrmFootURL) {
+		result.push({ type: 'osrmFoot', name: '🚶 ' + t('maps', 'By foot (OSRM)'), api: osrmFootURL, profile: 'foot', requestOptions: {} })
 	}
 	if (optionValues.mapboxAPIKEY) {
 		const accessToken = optionValues.mapboxAPIKEY
@@ -204,7 +210,7 @@ watch([() => mapInstance.isLoaded, routers], ([loaded, newRouters]) => {
 		return
 	}
 	const optionValues = optionsController.optionValues as Record<string, string>
-	const preferred = optionValues.selectedRouter && newRouters.find((r) => r.type === optionValues.selectedRouter)
+	const preferred = newRouters.find((r) => r.type === optionValues.selectedRouter)
 	setRouter((preferred ?? newRouters[0])?.type ?? '')
 }, { immediate: true })
 

@@ -1,11 +1,16 @@
 <template>
 	<NcAppSidebar v-if="show"
 		:name="name"
-		subname=""
+		:subname="subname"
 		:compact="true"
 		@close="$emit('close')">
 		<template #header>
-			<span v-if="icon" :class="['header-icon icon', icon]" />
+			<span v-if="activeTab === 'favorite' && favorite"
+				class="favorite-header-icon"
+				:style="{ backgroundColor: favoriteColor }">
+				<IconStar :size="32" fill-color="#ffffff" />
+			</span>
+			<span v-else-if="icon" :class="['header-icon icon', icon]" />
 		</template>
 		<FavoriteSidebarTab v-if="activeTab === 'favorite'"
 			:favorite="favorite"
@@ -35,6 +40,7 @@
 
 <script>
 import { NcAppSidebar } from '@nextcloud/vue'
+import IconStar from 'vue-material-design-icons/Star.vue'
 
 import FavoriteSidebarTab from '../components/FavoriteSidebarTab.vue'
 import PhotoSuggestionsSidebarTab from './Sidebar/PhotoSuggestionsSidebarTab.vue'
@@ -49,6 +55,7 @@ export default {
 
 	components: {
 		NcAppSidebar,
+		IconStar,
 		FavoriteSidebarTab,
 		PhotoSuggestionsSidebarTab,
 		TrackMetadataTab,
@@ -121,7 +128,7 @@ export default {
 		name() {
 			switch (this.activeTab) {
 			case 'favorite':
-				return t('maps', 'Favorite')
+				return this.favorite?.name || t('maps', 'Favorite')
 			case 'photo-suggestion':
 				return t('maps', 'Photo suggestions')
 			case 'maps-track-metadata':
@@ -131,10 +138,17 @@ export default {
 			}
 		},
 
+		subname() {
+			return this.activeTab === 'favorite' ? (this.favorite?.category ?? '') : ''
+		},
+
+		favoriteColor() {
+			const color = this.favoriteCategories[this.favorite?.category]?.color ?? '0082c9'
+			return '#' + color.replace('#', '')
+		},
+
 		icon() {
 			switch (this.activeTab) {
-			case 'favorite':
-				return 'icon-favorite'
 			case 'photo-suggestion':
 				return 'icon-picture'
 			default:
@@ -146,6 +160,15 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.favorite-header-icon {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 100%;
+	height: 100%;
+	border-radius: 50%;
+}
+
 .header-icon {
 	display: block;
 	width: 70px;

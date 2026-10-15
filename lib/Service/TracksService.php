@@ -604,9 +604,6 @@ class TracksService {
 							$lat = $pointlat;
 							$lon = $pointlon;
 						}
-						if ($pointtime !== null and ($date_begin === null or $pointtime < $date_begin)) {
-							$date_begin = $pointtime;
-						}
 						$downBegin = $pointele;
 						if ($north === null) {
 							$north = $pointlat;
@@ -634,6 +631,12 @@ class TracksService {
 					if ($pointele !== null and ($max_elevation === null or $pointele > $max_elevation)) {
 						$max_elevation = $pointele;
 					}
+					if ($pointtime !== null and ($date_begin === null or $pointtime < $date_begin)) {
+						$date_begin = $pointtime;
+					}
+					if ($pointtime !== null and ($date_end === null or $pointtime > $date_end)) {
+						$date_end = $pointtime;
+					}
 					if ($lastPoint !== null and $pointtime !== null and $lastTime !== null) {
 						$t = abs($lastTime->getTimestamp() - $pointtime->getTimestamp());
 
@@ -658,10 +661,6 @@ class TracksService {
 
 					$lastPoint = $point;
 					$pointIndex += 1;
-				}
-
-				if ($lastTime !== null and ($date_end === null or $lastTime > $date_end)) {
-					$date_end = $lastTime;
 				}
 			}
 
@@ -716,9 +715,6 @@ class TracksService {
 						$lat = $pointlat;
 						$lon = $pointlon;
 					}
-					if ($pointtime !== null and ($date_begin === null or $pointtime < $date_begin)) {
-						$date_begin = $pointtime;
-					}
 					$downBegin = $pointele;
 					if ($north === null) {
 						$north = $pointlat;
@@ -746,6 +742,12 @@ class TracksService {
 				if ($pointele !== null and ($max_elevation === null or $pointele > $max_elevation)) {
 					$max_elevation = $pointele;
 				}
+				if ($pointtime !== null and ($date_begin === null or $pointtime < $date_begin)) {
+					$date_begin = $pointtime;
+				}
+				if ($pointtime !== null and ($date_end === null or $pointtime > $date_end)) {
+					$date_end = $pointtime;
+				}
 				if ($lastPoint !== null and $pointtime !== null and $lastTime !== null) {
 					$t = abs($lastTime->getTimestamp() - $pointtime->getTimestamp());
 
@@ -771,10 +773,6 @@ class TracksService {
 				$lastPoint = $point;
 				$pointIndex += 1;
 			}
-
-			if ($lastTime !== null and ($date_end === null or $lastTime > $date_end)) {
-				$date_end = $lastTime;
-			}
 		}
 
 		# TOTAL STATS : duration, avg speed, avg_moving_speed
@@ -795,12 +793,12 @@ class TracksService {
 		$moving_avg_speed = 0;
 		$moving_pace = 0;
 		if ($moving_time > 0) {
-			$moving_avg_speed = $total_distance / $moving_time;
+			$moving_avg_speed = $moving_distance / $moving_time;
 			$moving_avg_speed = $moving_avg_speed / 1000;
 			$moving_avg_speed = $moving_avg_speed * 3600;
 			$moving_avg_speed = sprintf('%.2f', $moving_avg_speed);
 			// pace in minutes/km
-			$moving_pace = $moving_time / $total_distance;
+			$moving_pace = $moving_time / $moving_distance;
 			$moving_pace = $moving_pace / 60;
 			$moving_pace = $moving_pace * 1000;
 			$moving_pace = sprintf('%.2f', $moving_pace);

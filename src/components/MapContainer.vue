@@ -199,11 +199,12 @@ function openPopup(component: typeof ClickPopup | typeof FavoritePopup, componen
 	app.mount(container)
 	popupApp = app
 
+	// on() returns a subscription, not the popup, so it cannot be chained
 	popup = new Popup({ closeOnClick: false, maxWidth: 'none' })
 		.setLngLat(lngLat)
 		.setDOMContent(container)
-		.on('close', handlePopupClose)
-		.addTo(map)
+	popup.on('close', handlePopupClose)
+	popup.addTo(map)
 }
 
 function handlePopupClose(): void {

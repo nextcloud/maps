@@ -246,9 +246,10 @@ watch(() => [mapInstance.map, props.latLng] as const, ([map, latLng]) => {
 	markerEl.className = 'place-contact-marker-icon'
 	markerEl.style.backgroundImage = `url(${markerIconUrl(selectedContact.value)})`
 
+	// on() returns a subscription, not the popup, so it cannot be chained
 	popup = new Popup({ closeButton: true, className: 'popovermenu open popupMarker placeContactPopup' })
 		.setDOMContent(el)
-		.on('close', () => emit('close'))
+	popup.on('close', () => emit('close'))
 	marker = new Marker({ element: markerEl })
 		.setLngLat([latLng.lng, latLng.lat])
 		.setPopup(popup)

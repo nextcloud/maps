@@ -13,6 +13,30 @@
 			@toggle-trackme="onToggleTrackme"
 			@toggle-slider="onToggleSlider"
 			@register-geo-link="onRegisterGeoLink">
+			<template v-if="!token" #header>
+				<MapSwitcherHeader :my-maps="myMaps"
+					:loading="myMapsLoading"
+					@switch="onMyMapClicked"
+					@add="onAddMyMap"
+					@rename="onRenameMyMap"
+					@delete="onDeleteMyMap"
+					@share="onShareMyMap" />
+			</template>
+			<template #add-actions>
+				<NcActionButton v-if="!favoritesReadOnly" :close-after-click="true" @click="onNavigationAddFavorite()">
+					<template #icon>
+						<IconClose v-if="addingFavorite" :size="20" />
+						<IconStar v-else :size="20" />
+					</template>
+					{{ addingFavorite ? t('maps', 'Cancel adding a favorite') : t('maps', 'Add a favorite') }}
+				</NcActionButton>
+				<NcActionButton v-if="!token" :close-after-click="true" @click="onAddTrack">
+					<template #icon>
+						<IconRoad :size="20" />
+					</template>
+					{{ t('maps', 'Add a track') }}
+				</NcActionButton>
+			</template>
 			<template #items>
 				<AppNavigationFavoritesItem
 					:enabled="favoritesEnabled"
@@ -95,20 +119,6 @@
 					@color="onChangeDeviceColor"
 					@device-clicked="onNavDeviceClicked"
 					@devices-clicked="onDevicesClicked" 
-				/>
-				<AppNavigationMyMapsItem
-					v-if="!token"
-					ref="myMapsNavigation"
-					:enabled="myMapsEnabled"
-					:loading="myMapsLoading"
-					:my-maps="myMaps"
-					@add="onAddMyMap"
-					@rename="onRenameMyMap"
-					@delete="onDeleteMyMap"
-					@share="onShareMyMap"
-					@color="onChangeMyMapColor"
-					@my-map-clicked="onMyMapClicked"
-					@my-maps-clicked="onMyMapsClicked" 
 				/>
 			</template>
 		</MapsNavigation>
@@ -229,7 +239,10 @@ import AppNavigationPhotosItem from '../components/AppNavigationPhotosItem.vue'
 import AppNavigationContactsItem from '../components/AppNavigationContactsItem.vue'
 import AppNavigationTracksItem from '../components/AppNavigationTracksItem.vue'
 import AppNavigationDevicesItem from '../components/AppNavigationDevicesItem.vue'
-import AppNavigationMyMapsItem from '../components/AppNavigationMyMapsItem.vue'
+import MapSwitcherHeader from '../components/MapSwitcherHeader.vue'
+import IconClose from 'vue-material-design-icons/Close.vue'
+import IconRoad from 'vue-material-design-icons/RoadVariant.vue'
+import IconStar from 'vue-material-design-icons/Star.vue'
 import optionsController from '../optionsController.js'
 import { getLetterColor, hslToRgb, Timer, getDeviceInfoFromUserAgent2, isComputer, isPhone, splitByNonEscapedComma } from '../utils.js'
 import { binSearch, getToken, isPublic } from '../utils/common.js'
@@ -259,7 +272,10 @@ export default {
 		AppNavigationContactsItem,
 		AppNavigationTracksItem,
 		AppNavigationDevicesItem,
-		AppNavigationMyMapsItem,
+		MapSwitcherHeader,
+		IconClose,
+		IconRoad,
+		IconStar,
 	},
 
 	data() {
@@ -324,7 +340,7 @@ export default {
 			// myMaps
 			myMapsLoading: false,
 			myMaps: [],
-			myMapsEnabled: optionsController.myMapsEnabled && !isPublic(),
+			myMapsEnabled: !isPublic(),
 			myMapId: optionsController.myMapId,
 			// PublicPage
 			token: (window.location.pathname.includes('/apps/maps/s/')
@@ -594,6 +610,11 @@ export default {
 					}
 				})
 				: []
+		},
+		favoritesReadOnly() {
+			const favorites = Object.values(this.favorites)
+			return !favorites.some((f) => f.isUpdateable)
+				&& !(favorites.length === 0 && optionsController.optionValues?.isCreatable)
 		},
 		favoriteCategories() {
 			const categories = {}
@@ -2346,14 +2367,6 @@ export default {
 				true,
 				OC.dialogs.FILEPICKER_TYPE_CHOOSE,
 			)
-		},
-		onMyMapsClicked() {
-			this.myMapsEnabled = !this.myMapsEnabled
-			// get tracks if we don't have them yet
-			if (this.myMapsEnabled && this.myMaps.length === 0) {
-				this.getMyMaps()
-			}
-			optionsController.saveOptionValues({ myMapsEnabled: this.myMapsEnabled ? 'true' : 'false' })
 		},
 		onMyMapClicked(myMap) {
 			if (this.showSidebar || getSidebar().isOpen) {

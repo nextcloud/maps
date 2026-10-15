@@ -1,7 +1,7 @@
 <template>
 	<NcAppNavigationItem
 		:icon="loading ? 'icon-loading-small' : 'icon-category-multimedia'"
-		:name="t('maps', 'My photos')"
+		:name="t('maps', 'Photos')"
 		:class="{ 'item-disabled': !enabled }"
 		:allow-collapse="false"
 		:force-menu="enabled"

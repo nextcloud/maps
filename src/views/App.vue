@@ -1178,7 +1178,7 @@ export default {
 			network.placePhotos(paths, lats, lngs).then((response) => {
 				toSave.forEach((i) => {
 					this.photos.push(this.photoSuggestions[i])
-					this.photoSuggestionsTracksAndDevices[this.photoSuggestions[i].trackOrDeviceId].length -= 1
+					this.photoSuggestionsTracksAndDevices[this.photoSuggestions[i].trackOrDeviceId].suggestionCount -= 1
 					this.photoSuggestions[i] = null
 				})
 				this.photoSuggestionsSelectedIndices = this.photoSuggestionsSelectedIndices.filter((e) => {

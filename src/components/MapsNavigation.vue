@@ -20,7 +20,7 @@
 			<slot name="items" />
 		</template>
 
-		<template #footer>
+		<template v-if="showSettings" #footer>
 			<ul class="maps-navigation__footer">
 				<NcAppNavigationItem :name="t('maps', 'Settings')" @click="settingsOpen = true">
 					<template #icon>
@@ -80,8 +80,11 @@ import optionsController from '../optionsController.js'
 
 withDefaults(defineProps<{
 	loading?: boolean
+	/** The settings are the viewer's own, so they are hidden on public map pages */
+	showSettings?: boolean
 }>(), {
 	loading: false,
+	showSettings: true,
 })
 
 const emit = defineEmits<{

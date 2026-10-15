@@ -288,3 +288,8 @@ span.tooltip-contact-address-type{
 .device-name, .category-name, .icon-picture, .track-name, .contact-group-name {
 	padding-left: 44px !important;
 }
+
+/* The public page footer is fixed over the bottom of the page, core leaves room for it in the app content only */
+#body-public #app-navigation-vue {
+    padding-block-end: var(--footer-height);
+}

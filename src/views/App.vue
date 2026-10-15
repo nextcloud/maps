@@ -10,6 +10,7 @@
 			style="display: none;"
 			@change="onTrackFileSelected">
 		<MapsNavigation
+			:show-settings="!token"
 			@toggle-trackme="onToggleTrackme"
 			@toggle-slider="onToggleSlider"
 			@register-geo-link="onRegisterGeoLink">
@@ -656,7 +657,8 @@ export default {
 		this.getTracks()
 		this.getDevices()
 		this.getMyMaps()
-		if (optionsController.optionValues.trackMe === 'true') {
+		// on a public map, these are the shared map's options, not the visitor's
+		if (!this.token && optionsController.optionValues.trackMe === 'true') {
 			this.sendPositionLoop()
 		}
 		subscribe('files:sidebar:opened', this.closeSidebar)
@@ -2453,7 +2455,7 @@ export default {
 			this.getTracks()
 			this.getDevices()
 			this.getMyMaps()
-			if (optionsController.optionValues.trackMe === 'true') {
+			if (!this.token && optionsController.optionValues.trackMe === 'true') {
 				this.sendPositionLoop()
 			}
 		},

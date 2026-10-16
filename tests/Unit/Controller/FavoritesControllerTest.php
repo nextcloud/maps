@@ -23,7 +23,6 @@ use OCP\Files\Folder;
 use OCP\Files\IRootFolder;
 use OCP\IGroupManager;
 use OCP\IRequest;
-use OCP\IServerContainer;
 use OCP\IUserManager;
 use OCP\L10N\IFactory;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -248,7 +247,7 @@ class FavoritesControllerTest extends \PHPUnit\Framework\TestCase {
 	}
 
 	public function testImportExportFavorites(): void {
-		$userfolder = $this->container->get(IServerContainer::class)->getUserFolder('test');
+		$userfolder = $this->container->get(IRootFolder::class)->getUserFolder('test');
 		$content1 = file_get_contents('tests/test_files/favoritesOk.gpx');
 		$newFile = $userfolder->newFile('favoritesOk.gpx');
 		$newFile->putContent($content1);

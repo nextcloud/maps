@@ -124,7 +124,10 @@ class PublicPageController extends AuthPublicShareController {
 		$this->getShareNode();
 
 		$this->eventDispatcher->dispatchTyped(new LoadSidebar());
-		$this->eventDispatcher->dispatchTyped(new LoadViewer());
+		// Nextcloud 36 loads the viewer on every page and no longer has this event
+		if (class_exists(LoadViewer::class)) {
+			$this->eventDispatcher->dispatchTyped(new LoadViewer());
+		}
 
 		$params = [];
 		$params['sharingToken'] = $this->getToken();

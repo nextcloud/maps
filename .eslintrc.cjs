@@ -8,6 +8,17 @@ module.exports = {
 	extends: [
 		'@nextcloud'
 	],
+	overrides: [
+		{
+			// Allow `<script setup lang="ts">` in Vue SFCs being ported to TypeScript
+			files: ['*.vue'],
+			parserOptions: {
+				parser: '@typescript-eslint/parser',
+				sourceType: 'module',
+				extraFileExtensions: ['.vue'],
+			},
+		},
+	],
 	rules: {
 		'no-restricted-properties': [
 			'error',

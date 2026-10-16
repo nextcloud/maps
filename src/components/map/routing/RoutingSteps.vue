@@ -1,134 +1,136 @@
 <template>
-	<div id="routing-steps">
-		<RoutingStep v-for="(s, i) in steps"
-			:key="i + s.name"
-			:ref="'step' + i"
-			:step="s"
-			:search-data="searchData"
-			:placeholder="getPlaceholder(i)"
-			:can-delete="canDelete(s, i)"
-			@selected="onStepSelected(i, $event)"
-			@delete="$emit('delete-step', i)" />
-		<div class="steps-buttons">
-			<button id="add-step"
-				v-tooltip="{ content: t('maps', 'Add step') }"
-				@click="$emit('add-step')">
-				<span class="icon-add" />
-			</button>
-			<button v-if="planReady"
-				v-tooltip="{ content: t('maps', 'Export current route') }"
-				@click="$emit('export-route')">
-				<span class="icon-save" />
-			</button>
-			<button v-if="planReady"
-				v-tooltip="{ content: t('maps', 'Zoom on current route') }"
-				@click="$emit('zoom-route')">
-				<span class="icon-search" />
-			</button>
-			<button id="reverse-steps"
-				v-tooltip="{ content: t('maps', 'Reverse steps order') }"
-				@click="$emit('reverse-steps')">
-				<span class="icon-reverse" />
-			</button>
+	<div class="routing-steps">
+		<div class="routing-steps__plan">
+			<ol class="routing-steps__list">
+				<RoutingStep v-for="(s, i) in steps"
+					:key="i + s.name"
+					:ref="(el) => setStepRef(i, el)"
+					:step="s"
+					:search-data="searchData"
+					:placeholder="placeholder(i)"
+					:position="position(i)"
+					:can-delete="canDelete(s, i)"
+					@selected="onStepSelected(i, $event)"
+					@cleared="emit('step-selected', i, { latLng: null, name: '' })"
+					@delete="emit('delete-step', i)" />
+			</ol>
+			<NcButton variant="tertiary"
+				class="routing-steps__reverse"
+				:title="t('maps', 'Reverse')"
+				:aria-label="t('maps', 'Reverse')"
+				@click="emit('reverse-steps')">
+				<template #icon>
+					<IconSwapVertical :size="20" />
+				</template>
+			</NcButton>
 		</div>
+		<NcButton variant="tertiary" @click="emit('add-step')">
+			<template #icon>
+				<IconPlus :size="20" />
+			</template>
+			{{ t('maps', 'Add stop') }}
+		</NcButton>
 	</div>
 </template>
 
-<script>
+<script setup lang="ts">
+import type { Step } from './RoutingStep.vue'
+
+import { translate as t } from '@nextcloud/l10n'
+import { NcButton } from '@nextcloud/vue'
+import IconPlus from 'vue-material-design-icons/Plus.vue'
+import IconSwapVertical from 'vue-material-design-icons/SwapVertical.vue'
 import RoutingStep from './RoutingStep.vue'
 
-export default {
-	name: 'RoutingSteps',
+const props = defineProps<{
+	steps: Step[]
+	searchData: unknown[]
+}>()
 
-	components: {
-		RoutingStep,
-	},
+const emit = defineEmits<{
+	'add-step': []
+	'step-selected': [index: number, step: Step]
+	'delete-step': [index: number]
+	'reverse-steps': []
+}>()
 
-	props: {
-		steps: {
-			type: Array,
-			required: true,
-		},
-		searchData: {
-			type: Array,
-			required: true,
-		},
-		planReady: {
-			type: Boolean,
-			default: false,
-		},
-	},
+const stepRefs: Array<{ focus: () => void } | null> = []
 
-	data() {
-		return {
-		}
-	},
+/**
+ * @param i index of the step
+ * @param el the rendered step component
+ */
+function setStepRef(i: number, el: unknown): void {
+	stepRefs[i] = el as { focus: () => void } | null
+}
 
-	watch: {
-	},
+/**
+ * @param i index of the step
+ */
+function position(i: number): 'start' | 'via' | 'destination' {
+	return i === 0 ? 'start' : i === props.steps.length - 1 ? 'destination' : 'via'
+}
 
-	created() {
-	},
+/**
+ * @param i index of the step
+ */
+function placeholder(i: number): string {
+	switch (position(i)) {
+	case 'start':
+		return t('maps', 'Start')
+	case 'destination':
+		return t('maps', 'Destination')
+	default:
+		return t('maps', 'Via {i}', { i })
+	}
+}
 
-	methods: {
-		onStepSelected(i, e) {
-			this.$emit('step-selected', i, e)
-			const nextStepIndex = i + 1
-			if (nextStepIndex < this.steps.length) {
-				this.$refs['step' + nextStepIndex][0].focus()
-			}
-		},
-		getPlaceholder(i) {
-			return i === 0
-				? t('maps', 'Start')
-				: i === this.steps.length - 1
-					? t('maps', 'Destination')
-					: t('maps', 'Via {i}', { i })
-		},
-		canDelete(step, i) {
-			// impossible to delete first or last steps if it's empty
-			return !((i === 0 || i === this.steps.length - 1) && !step.latLng)
-		},
-	},
+/**
+ * The first and last stop can only be removed once they are set, so a route always has two stops.
+ *
+ * @param step the step
+ * @param i index of the step
+ */
+function canDelete(step: Step, i: number): boolean {
+	return position(i) === 'via' || step.latLng !== null
+}
+
+/**
+ * Set a stop and move on to the next one.
+ *
+ * @param i index of the step
+ * @param step the chosen location
+ */
+function onStepSelected(i: number, step: Step): void {
+	emit('step-selected', i, step)
+	stepRefs[i + 1]?.focus()
 }
 </script>
 
 <style lang="scss" scoped>
-
-#routing-steps {
-	width: 100%;
+.routing-steps {
 	display: flex;
 	flex-direction: column;
-	.steps-buttons {
+	align-items: flex-start;
+	gap: var(--default-grid-baseline);
+
+	&__plan {
 		display: flex;
-		flex-direction: row;
-		* {
-			width: 44px;
-			height: 44px;
-			margin: 0 auto 0 auto;
-			padding: 0;
-			&:hover span {
-				opacity: 1;
-			}
-		}
-		.icon-save {
-			background-color: var(--color-main-text);
-			mask: url('../../../../img/save.svg') no-repeat;
-			mask-size: 16px auto;
-			mask-position: center;
-			-webkit-mask: url('../../../../img/save.svg') no-repeat;
-			-webkit-mask-size: 16px auto;
-			-webkit-mask-position: center;
-		}
-		.icon-reverse {
-			background-color: var(--color-main-text);
-			mask: url('../../../../img/reverse.svg') no-repeat;
-			mask-size: 16px auto;
-			mask-position: center;
-			-webkit-mask: url('../../../../img/reverse.svg') no-repeat;
-			-webkit-mask-size: 16px auto;
-			-webkit-mask-position: center;
-		}
+		align-items: center;
+		gap: var(--default-grid-baseline);
+		width: 100%;
+	}
+
+	&__list {
+		display: flex;
+		flex: 1 1 auto;
+		flex-direction: column;
+		gap: calc(2 * var(--default-grid-baseline));
+		min-width: 0;
+	}
+
+	&__reverse {
+		flex-shrink: 0;
 	}
 }
 </style>

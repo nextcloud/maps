@@ -20,78 +20,35 @@
  *
  */
 
-import { createApp } from 'vue'
+import { defineCustomElement } from 'vue'
+import { registerSidebarTab } from '@nextcloud/files'
 import { translate as t, translatePlural as n } from '@nextcloud/l10n'
+// eslint-disable-next-line import/no-unresolved -- resolved by Vite's ?raw loader
+import svgInformation from '@mdi/svg/svg/information-outline.svg?raw'
 import TrackMetadataTab from './views/TrackMetadataTab.vue'
 
-let appInstance = null
-let TabInstance = null
+const TAG_NAME = 'maps-track-metadata-sidebar-tab'
 
-function registerTab() {
-	const fileList = window.OCA?.Files?.App?.fileList
-
-	if (!fileList?.registerSidebarTab) {
-		return false
-	}
-
-	fileList.registerSidebarTab({
-		id: 'maps-track-metadata',
-		name: t('maps', 'Metadata'),
-		icon: 'icon-info',
-
-		async mount(el, fileInfo, context) {
-			// Unmount the previous instance if it exists
-			if (appInstance) {
-				appInstance.unmount()
-			}
-
-			// Create a new Vue 3 app instance for the sidebar tab
-			appInstance = createApp(TrackMetadataTab)
-			
-			// Replace Vue.prototype with globalProperties
-			appInstance.config.globalProperties.t = t
-			appInstance.config.globalProperties.n = n
-
-			// Mount it to the provided DOM element
-			TabInstance = appInstance.mount(el)
-
-			if (TabInstance && typeof TabInstance.update === 'function') {
-				await TabInstance.update(fileInfo.id)
-			}
-		},
-
-		update(fileInfo) {
-			if (TabInstance && typeof TabInstance.update === 'function') {
-				TabInstance.update(fileInfo.id)
-			}
-		},
-
-		destroy() {
-			if (appInstance) {
-				appInstance.unmount()
-				appInstance = null
-				TabInstance = null
-			}
-		},
-
-		enabled(fileInfo) {
-			return fileInfo?.mimetype === 'application/gpx+xml'
-		},
-
-		scrollBottomReached() {
-			if (TabInstance && typeof TabInstance.onScrollBottomReached === 'function') {
-				TabInstance.onScrollBottomReached()
-			}
-		},
-	})
-
-	return true
-}
-
-document.addEventListener('DOMContentLoaded', () => {
-	const interval = setInterval(() => {
-		if (registerTab()) {
-			clearInterval(interval)
+registerSidebarTab({
+	id: 'maps-track-metadata',
+	displayName: t('maps', 'Metadata'),
+	iconSvgInline: svgInformation,
+	order: 90,
+	tagName: TAG_NAME,
+	enabled({ node }) {
+		return node.mime === 'application/gpx+xml'
+	},
+	async onInit() {
+		if (customElements.get(TAG_NAME)) {
+			return
 		}
-	}, 100)
+		customElements.define(TAG_NAME, defineCustomElement(TrackMetadataTab, {
+			// render in the light DOM so the app's global styles apply
+			shadowRoot: false,
+			configureApp(app) {
+				app.config.globalProperties.t = t
+				app.config.globalProperties.n = n
+			},
+		}))
+	},
 })

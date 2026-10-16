@@ -7,7 +7,7 @@ use OCP\AppFramework\Http\Response;
 use OCP\IAppConfig;
 
 trait AddCspTrait {
-	private IAppConfig $appConfig;
+	protected IAppConfig $appConfig;
 
 	private function addCsp(Response $response): void {
 		$csp = new ContentSecurityPolicy();
@@ -21,11 +21,15 @@ trait AddCspTrait {
 		$csp->addAllowedImageDomain('https://*.ssl.fastly.net');
 		$csp->addAllowedImageDomain('https://*.openstreetmap.se');
 
+		// MapLibre GL fetches all its sources, even raster tiles, so they need connect-src
+		$csp->addAllowedConnectDomain('https://tiles.openfreemap.org');
+		$csp->addAllowedConnectDomain('https://server.arcgisonline.com');
+		$csp->addAllowedConnectDomain('https://elevation-tiles-prod.s3.amazonaws.com');
+
 		// default routing engine
 		$csp->addAllowedConnectDomain('https://*.project-osrm.org');
 		$csp->addAllowedConnectDomain('https://api.mapbox.com');
 		$csp->addAllowedConnectDomain('https://events.mapbox.com');
-		$csp->addAllowedConnectDomain('https://graphhopper.com');
 
 		$csp->addAllowedWorkerSrcDomain('blob:');
 		$csp->addAllowedScriptDomain('https://unpkg.com');
@@ -34,10 +38,9 @@ trait AddCspTrait {
 			'osrmBikeURL',
 			'osrmCarURL',
 			'osrmFootURL',
-			'graphhopperURL'
 		];
 		foreach ($urlKeys as $key) {
-			$url = $this->appConfig->getValueString('maps', $key);
+			$url = trim($this->appConfig->getValueString('maps', $key));
 			if ($url !== '') {
 				$scheme = parse_url((string)$url, PHP_URL_SCHEME);
 				$host = parse_url((string)$url, PHP_URL_HOST);

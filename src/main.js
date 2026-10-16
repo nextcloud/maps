@@ -21,25 +21,11 @@
  */
 
 import { createApp } from 'vue'
+import '@nextcloud/dialogs/style.css'
 import App from './views/App.vue'
 import '../css/style.scss'
 
 import optionsController from './optionsController.js'
-import { emit } from '@nextcloud/event-bus'
-
-import L from 'leaflet'
-import 'lrm-graphhopper'
-
-import iconRetinaUrl from 'leaflet/dist/images/marker-icon-2x.png'
-import iconUrl from 'leaflet/dist/images/marker-icon.png'
-import shadowUrl from 'leaflet/dist/images/marker-shadow.png'
-
-delete L.Icon.Default.prototype._getIconUrl
-L.Icon.Default.mergeOptions({
-    iconRetinaUrl,
-    iconUrl,
-    shadowUrl,
-})
 
 // Maps actions registrations (other apps that want to receive a position)
 if (!window.OCA.Maps) {
@@ -56,28 +42,6 @@ window.OCA.Maps.registerMapsAction = ({ label, callback, icon }) => {
     }
 
     window.OCA.Maps.mapActions.push(mapAction)
-}
-
-// SIDEBAR
-if (!window.OCA.Files) {
-    window.OCA.Files = {}
-}
-// register unused client for the sidebar to have access to its parser methods
-if (!window.OCA.Files.Sidebar) {
-    Object.assign(window.OCA.Files, {
-        Sidebar: {
-            state: {
-                file: '',
-            },
-            open: (path) => {
-                emit('files:sidebar:opened')
-            },
-            close: () => {
-                emit('files:sidebar:closed')
-            },
-            setFullScreenMode: () => {}, // SIDEBARFULLSCREEN,
-        },
-    }, window.OCA.Files)
 }
 
 function main() {

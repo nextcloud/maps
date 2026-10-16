@@ -21,9 +21,8 @@
  */
 
 import { createApp } from 'vue'
+import '@nextcloud/dialogs/style.css'
 import PublicFavoriteShare from './views/PublicFavoriteShare.vue'
-
-import './bootstrap.js' 
 
 import store from './store/publicFavoriteShareStore.js'
 

@@ -22,7 +22,6 @@ const optionsController = {
 		? parseInt(window.location.pathname.split('/apps/maps/m/')[1].split('/')[0])
 		: null,
 	myMapListShow: true,
-	myMapsEnabled: true,
 	disabledFavoriteCategories: [],
 	disabledContactGroups: [],
 	enabledTracks: [],
@@ -172,11 +171,6 @@ const optionsController = {
 		} else {
 			this.myMapListShow = true
 		}
-		if ('myMapsEnabled' in optionsValues && optionsValues.myMapsEnabled !== 'true') {
-			this.myMapsEnabled = false
-		} else {
-			this.myMapsEnabled = true
-		}
 
 		// routing
 		if ('osrmCarURL' in optionsValues && optionsValues.osrmCarURL !== '') {
@@ -189,10 +183,6 @@ const optionsController = {
 			this.nbRouters++
 		}
 		if ('mapboxAPIKEY' in optionsValues && optionsValues.mapboxAPIKEY !== '') {
-			this.nbRouters++
-		}
-		if (('graphhopperURL' in optionsValues && optionsValues.graphhopperURL !== '')
-			|| ('graphhopperAPIKEY' in optionsValues && optionsValues.graphhopperAPIKEY !== '')) {
 			this.nbRouters++
 		}
 

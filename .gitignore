@@ -83,3 +83,4 @@ typings/
 
 css
 img
+tests/.phpunit.cache/test-results

@@ -12,6 +12,8 @@
 
 namespace OCA\Maps\Controller;
 
+use OCA\Files\Event\LoadSidebar;
+use OCA\Viewer\Event\LoadViewer;
 use OCP\AppFramework\Http\TemplateResponse;
 use OCP\AppFramework\Services\IInitialState;
 use OCP\EventDispatcher\IEventDispatcher;
@@ -51,6 +53,19 @@ class PageControllerTest extends \PHPUnit\Framework\TestCase {
 
 		$this->assertEquals('main', $result->getTemplateName());
 		$this->assertTrue($result instanceof TemplateResponse);
+	}
+
+	public function testIndexLoadsTheSidebarAndTheViewerIfAvailable(): void {
+		$expected = class_exists(LoadViewer::class) ? [LoadSidebar::class, LoadViewer::class] : [LoadSidebar::class];
+		$dispatched = [];
+		$this->eventDispatcher->method('dispatchTyped')
+			->willReturnCallback(function (object $event) use (&$dispatched): void {
+				$dispatched[] = $event::class;
+			});
+
+		$this->controller->index();
+
+		$this->assertSame($expected, $dispatched);
 	}
 
 	public function testCanBeConstructedWithoutAuthenticatedUser(): void {

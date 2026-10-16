@@ -1,7 +1,7 @@
 <template>
 	<NcAppNavigationItem
 		:icon="loading ? 'icon-loading-small' : 'icon-favorite'"
-		:name="t('maps', 'My favorites')"
+		:name="t('maps', 'Favorites')"
 		:class="{ 'item-disabled': !enabled }"
 		:allow-collapse="true"
 		:open="open"
@@ -43,11 +43,6 @@
 			</NcActionButton>
 		</template>
 		<template #default>
-			<NcAppNavigationNew
-				v-if="enabled && !readOnly"
-				:text="addFavoriteText"
-				:button-class="addFavoriteIcon"
-				@click="onAddFavoriteClick" />
 			<NcAppNavigationItem
 				v-for="(c, catid) in categories"
 				:key="catid"
@@ -123,7 +118,7 @@
 </template>
 
 <script>
-import { NcAppNavigationItem, NcAppNavigationNew, NcActionButton, NcActionCheckbox, NcCounterBubble } from '@nextcloud/vue'
+import { NcAppNavigationItem, NcActionButton, NcActionCheckbox, NcCounterBubble } from '@nextcloud/vue'
 import { showError, showSuccess } from '@nextcloud/dialogs'
 import { generateUrl } from '@nextcloud/router'
 import { isPublic } from '../utils/common.js'
@@ -135,7 +130,6 @@ export default {
 
 	components: {
 		NcAppNavigationItem,
-		NcAppNavigationNew,
 		NcActionButton,
 		NcActionCheckbox,
 		NcCounterBubble,
@@ -179,16 +173,6 @@ export default {
 	computed: {
 		nbFavorites() {
 			return Object.keys(this.favorites).length
-		},
-		addFavoriteText() {
-			return this.addingFavorite
-				? t('maps', 'Cancel')
-				: t('maps', 'Add a favorite')
-		},
-		addFavoriteIcon() {
-			return this.addingFavorite
-				? 'icon-history'
-				: 'icon-add'
 		},
 		readOnly() {
 			const farray = Object.values(this.favorites)

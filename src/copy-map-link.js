@@ -20,8 +20,31 @@
  *
  */
 
-import CopyMapsLinkAction from './models/copyMapsLinkAction.js'
+import { showError, showSuccess } from '@nextcloud/dialogs'
+import '@nextcloud/dialogs/style.css'
+import { FileType } from '@nextcloud/files'
+import { translate as t } from '@nextcloud/l10n'
+import { generateUrl } from '@nextcloud/router'
+import { ShareType } from '@nextcloud/sharing'
+import { registerSidebarInlineAction } from '@nextcloud/sharing/ui'
+// eslint-disable-next-line import/no-unresolved -- resolved by Vite's ?raw loader
+import svgMap from '@mdi/svg/svg/map-outline.svg?raw'
 
-window.addEventListener('DOMContentLoaded', function() {
-	OCA.Sharing.ExternalShareActions.registerAction(new CopyMapsLinkAction())
+// Offers the public link of a shared map folder as a link to the maps app
+registerSidebarInlineAction({
+	id: 'maps-copy-map-link',
+	order: 0,
+	iconSvg: svgMap,
+	label: () => t('maps', 'Copy link to map'),
+	enabled: (share, node) => share.type === ShareType.Link && !!share.token && node.type === FileType.Folder,
+	async exec(share) {
+		const url = window.location.origin + generateUrl('/apps/maps/s/{token}', { token: share.token })
+		try {
+			await navigator.clipboard.writeText(url)
+			showSuccess(t('maps', 'Link copied'))
+		} catch (error) {
+			console.error(error)
+			showError(t('maps', 'Link {url} could not be copied to clipboard.', { url }))
+		}
+	},
 })

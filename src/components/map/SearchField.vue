@@ -7,8 +7,6 @@
 		:get-option-key="getOptionKey"
 		:model-value="mySelectedOption"
 		:limit="8"
-		keep-open
-		:clear-search-on-select="false"
 		:placeholder="placeholder"
 		:loading="searching || loading"
 		:options="filteredOptions"
@@ -35,8 +33,6 @@
 <script>
 import { NcSelect } from '@nextcloud/vue'
 
-import L from 'leaflet'
-
 import * as network from '../../network.js'
 import { accented } from '../../utils.js'
 
@@ -46,6 +42,8 @@ export default {
 	components: {
 		NcSelect,
 	},
+
+	emits: ['validate', 'clear'],
 
 	props: {
 		data: {
@@ -107,18 +105,6 @@ export default {
 		},
 	},
 
-	watch: {
-	},
-
-	mounted() {
-		const input = this.$refs.select.$el.querySelector('input')
-		input.addEventListener('focus', e => {
-			if (this.mySelectedOption) {
-				input.value = this.mySelectedOption.value || this.mySelectedOption.label
-			}
-		})
-	},
-
 	methods: {
 		getOptionKey(option) {
 			return `${option.id}${option.type}`
@@ -143,6 +129,9 @@ export default {
 			this.mySelectedOption = option
 			if (option) {
 				this.$emit('validate', option)
+			} else {
+				this.currentOsmResults = null
+				this.$emit('clear')
 			}
 		},
 		onSearchChange(query) {
@@ -158,10 +147,7 @@ export default {
 				const lng = parseFloat(regResult.groups.lng)
 				this.currentCoordinateOption = {
 					type: 'coordinate',
-					latLng: L.latLng([
-						lat,
-						lng,
-					]),
+					latLng: { lat, lng },
 					lat,
 					lng,
 					id: 'coordinateSearch_' + searchQuery,
@@ -198,7 +184,7 @@ export default {
 						icon: 'icon-link',
 						value: r.display_name,
 						label: r.display_name,
-						latLng: L.latLng(r.lat, r.lon),
+						latLng: { lat: parseFloat(r.lat), lng: parseFloat(r.lon) },
 						rawResult: r,
 					}
 				})
@@ -214,10 +200,6 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-:deep(.multiselect__option) {
-	height: 44px !important;
-}
-
 .single-label {
 	height: 18px;
 	overflow: hidden;
@@ -225,14 +207,18 @@ export default {
 	white-space: nowrap;
 }
 
-.search-select {
-	.option-icon {
-		margin-right: 10px;
-	}
+// The dropdown is rendered in the body, outside .search-select
+.option-icon {
+	margin-right: 10px;
+}
 
-	.option-label {
-		overflow: hidden;
-		text-overflow: ellipsis;
-	}
+// one line per option, the full text is in the title tooltip
+.option-label {
+	display: inline-block;
+	max-width: calc(100% - 30px);
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+	vertical-align: middle;
 }
 </style>

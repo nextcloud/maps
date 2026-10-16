@@ -1,159 +1,136 @@
 <template>
-	<NcAppNavigation aria-label="maps-app-navigation">
+	<NcAppNavigation :aria-label="t('maps', 'Maps navigation')">
 		<template #list>
-			<h2 v-if="loading"
-				class="icon-loading-small loading-icon" />
+			<slot name="header" />
+
+			<NcAppNavigationCaption :name="t('maps', 'Layers')"
+				:is-heading="true"
+				heading-id="maps-navigation-layers">
+				<template v-if="$slots['add-actions']" #actions>
+					<slot name="add-actions" />
+				</template>
+				<template #actionsTriggerIcon>
+					<IconPlus :size="20" />
+				</template>
+			</NcAppNavigationCaption>
+
+			<div v-if="loading" class="maps-navigation__loading">
+				<NcLoadingIcon :size="20" />
+			</div>
 			<slot name="items" />
 		</template>
-		<template #footer>
-			<NcAppNavigationSettings>
-				<div class="maps-settings">
-					<NcCheckboxRadioSwitch
-						:model-value="optionValues.trackMe === 'true'"
-						@update:model-value="onTrackMeChange">
-						{{ window.t('maps', 'Track my position') }}
-					</NcCheckboxRadioSwitch>
-					
-					<NcButton
-						wide
-						:text="window.t('maps', 'Register Maps to open geo links')"
-						@click="$emit('register-geo-link')" />
-					
-					<NcCheckboxRadioSwitch
-						:model-value="optionValues.displaySlider === 'true'"
-						@update:model-value="onDisplaySliderChange">
-						{{ window.t('maps', 'Display time filter slider') }}
-					</NcCheckboxRadioSwitch>
-					
-					<p class="maps-settings-text">
-						{{ trueSizeText }}
-					</p>
-					
-					<a href="http://kai.sub.blue/en/africa.html"
-						target="_blank"
-						rel="noreferrer noopener"
-						class="maps-settings-link">
-						<span class="icon-external"></span>
-						{{ window.t('maps', 'The True Size of Africa') }}
-					</a>
-				</div>
-			</NcAppNavigationSettings>
+
+		<template v-if="showSettings" #footer>
+			<ul class="maps-navigation__footer">
+				<NcAppNavigationItem :name="t('maps', 'Settings')" @click="settingsOpen = true">
+					<template #icon>
+						<IconCog :size="20" />
+					</template>
+				</NcAppNavigationItem>
+			</ul>
+			<NcAppSettingsDialog :open="settingsOpen"
+				:legacy="false"
+				:name="t('maps', 'Maps settings')"
+				:show-navigation="true"
+				@update:open="settingsOpen = $event">
+				<NcAppSettingsSection id="maps-settings-general" :name="t('maps', 'General')">
+					<NcFormBox>
+						<NcFormBoxSwitch :model-value="optionValues.trackMe === 'true'"
+							:label="t('maps', 'Track my position')"
+							:description="t('maps', 'Regularly save the position of this device to your devices')"
+							@update:model-value="onTrackMeChange" />
+						<NcFormBoxSwitch :model-value="optionValues.displaySlider === 'true'"
+							:label="t('maps', 'Display time filter slider')"
+							:description="t('maps', 'Only show what was recorded in a chosen time range')"
+							@update:model-value="onDisplaySliderChange" />
+						<NcFormBoxButton :label="t('maps', 'Register Maps to open geo links')"
+							:description="t('maps', 'Open geo: links from other apps and websites in Maps')"
+							@click="emit('register-geo-link')">
+							<template #icon>
+								<IconOpenInApp :size="20" />
+							</template>
+						</NcFormBoxButton>
+					</NcFormBox>
+				</NcAppSettingsSection>
+				<NcAppSettingsSection id="maps-settings-projection" :name="t('maps', 'Map projection')">
+					<NcFormBox>
+						<NcFormBoxButton :label="t('maps', 'The True Size of Africa')"
+							:description="t('maps', 'Map projections always distort the sizes of countries, the standard Mercator projection particularly so.')"
+							href="http://kai.sub.blue/en/africa.html"
+							target="_blank" />
+					</NcFormBox>
+				</NcAppSettingsSection>
+			</NcAppSettingsDialog>
 		</template>
 	</NcAppNavigation>
 </template>
 
-<script>
-import { NcAppNavigation, NcAppNavigationSettings, NcButton, NcCheckboxRadioSwitch } from '@nextcloud/vue'
+<script setup lang="ts">
+import { translate as t } from '@nextcloud/l10n'
+import {
+	NcAppNavigation,
+	NcAppNavigationCaption,
+	NcAppNavigationItem,
+	NcAppSettingsDialog,
+	NcAppSettingsSection,
+	NcFormBox,
+	NcFormBoxButton,
+	NcFormBoxSwitch,
+	NcLoadingIcon,
+} from '@nextcloud/vue'
+import { reactive, ref } from 'vue'
+import IconCog from 'vue-material-design-icons/CogOutline.vue'
+import IconOpenInApp from 'vue-material-design-icons/OpenInApp.vue'
+import IconPlus from 'vue-material-design-icons/Plus.vue'
 import optionsController from '../optionsController.js'
 
-// Native Vue 3 Click-Outside directive
-const clickOutside = {
-	beforeMount(el, binding) {
-		el.clickOutsideEvent = (event) => {
-			if (!(el === event.target || el.contains(event.target))) {
-				binding.value(event);
-			}
-		};
-		document.body.addEventListener('click', el.clickOutsideEvent);
-	},
-	unmounted(el) {
-		document.body.removeEventListener('click', el.clickOutsideEvent);
-	},
-};
+withDefaults(defineProps<{
+	loading?: boolean
+	/** The settings are the viewer's own, so they are hidden on public map pages */
+	showSettings?: boolean
+}>(), {
+	loading: false,
+	showSettings: true,
+})
 
-export default {
-	name: 'MapsNavigation',
-	
-	components: {
-		NcAppNavigation,
-		NcAppNavigationSettings,
-		NcButton,
-		NcCheckboxRadioSwitch,
-	},
+const emit = defineEmits<{
+	'toggle-trackme': [enabled: boolean]
+	'register-geo-link': []
+	'toggle-slider': [enabled: boolean]
+}>()
 
-	directives: {
-		clickOutside,
-	},
-	
-	props: {
-		loading: {
-			type: Boolean,
-			default: false,
-		},
-	},
-	
-	emits: [
-		'toggle-trackme',
-		'register-geo-link',
-		'toggle-slider',
-	],
+const optionValues = reactive(optionsController.optionValues)
+const settingsOpen = ref(false)
 
-	data() {
-		return {
-			optionValues: optionsController.optionValues,
-			// Make window available to template
-			window: window,
-		}
-	},
-	
-	computed: {
-		trueSizeText() {
-			return window.t('maps', 'Keep in mind that map projections always distort sizes of countries. The standard Mercator projection is particularly biased. Read more at:')
-		}
-	},
-	
-	methods: {
-		onTrackMeChange(checked) {
-			this.optionValues.trackMe = checked ? 'true' : 'false'
-			optionsController.saveOptionValues({ trackMe: checked ? 'true' : 'false' })
-			this.$emit('toggle-trackme', checked)
-		},
-		onDisplaySliderChange(checked) {
-			this.optionValues.displaySlider = checked ? 'true' : 'false'
-			optionsController.saveOptionValues({ displaySlider: checked ? 'true' : 'false' })
-			this.$emit('toggle-slider', checked)
-		},
-	},
+/**
+ * @param checked whether the position should be tracked
+ */
+function onTrackMeChange(checked: boolean): void {
+	optionValues.trackMe = checked ? 'true' : 'false'
+	optionsController.saveOptionValues({ trackMe: optionValues.trackMe })
+	emit('toggle-trackme', checked)
+}
+
+/**
+ * @param checked whether the time filter slider should be shown
+ */
+function onDisplaySliderChange(checked: boolean): void {
+	optionValues.displaySlider = checked ? 'true' : 'false'
+	optionsController.saveOptionValues({ displaySlider: optionValues.displaySlider })
+	emit('toggle-slider', checked)
 }
 </script>
 
 <style scoped lang="scss">
-.loading-icon {
-	margin-top: 16px;
-}
-
-.maps-settings {
-	padding: 12px;
+.maps-navigation__loading {
 	display: flex;
-	flex-direction: column;
-	gap: 12px;
+	justify-content: center;
+	padding: calc(2 * var(--default-grid-baseline));
 }
 
-.maps-settings-text {
-	color: var(--color-text-maxcontrast);
-	line-height: 1.4;
-	margin-top: 8px;
-}
-
-.maps-settings-link {
-	display: flex;
-	align-items: center;
-	gap: 8px;
-	color: var(--color-text-maxcontrast);
-	text-decoration: none;
-
-	&:hover, &:focus {
-		color: var(--color-primary-element);
-		text-decoration: underline;
-	}
-
-	.icon-external {
-		opacity: 0.7;
-	}
-}
-
-:deep(#app-settings-content) {
-	list-style: none;
+.maps-navigation__footer {
+	padding: var(--default-grid-baseline);
+	border-top: 1px solid var(--color-border);
 }
 
 :deep(.app-navigation-toggle) {

@@ -54,7 +54,10 @@ class PageController extends Controller {
 	#[NoCSRFRequired]
 	public function index(): TemplateResponse {
 		$this->eventDispatcher->dispatchTyped(new LoadSidebar());
-		$this->eventDispatcher->dispatchTyped(new LoadViewer());
+		// Nextcloud 36 loads the viewer on every page and no longer has this event
+		if (class_exists(LoadViewer::class)) {
+			$this->eventDispatcher->dispatchTyped(new LoadViewer());
+		}
 
 		$params = ['user' => $this->userId];
 		$this->initialState->provideInitialState('photos', $this->appConfig->getValueBool('photos', 'enabled'));
@@ -83,7 +86,10 @@ class PageController extends Controller {
 		}
 
 		$this->eventDispatcher->dispatchTyped(new LoadSidebar());
-		$this->eventDispatcher->dispatchTyped(new LoadViewer());
+		// Nextcloud 36 loads the viewer on every page and no longer has this event
+		if (class_exists(LoadViewer::class)) {
+			$this->eventDispatcher->dispatchTyped(new LoadViewer());
+		}
 
 		$params = ['user' => $userId];
 		$this->initialState->provideInitialState('photos', $this->appConfig->getValueBool('photos', 'enabled'));

@@ -10,9 +10,34 @@
 			style="display: none;"
 			@change="onTrackFileSelected">
 		<MapsNavigation
+			:show-settings="!token"
 			@toggle-trackme="onToggleTrackme"
 			@toggle-slider="onToggleSlider"
 			@register-geo-link="onRegisterGeoLink">
+			<template v-if="!token" #header>
+				<MapSwitcherHeader :my-maps="myMaps"
+					:loading="myMapsLoading"
+					@switch="onMyMapClicked"
+					@add="onAddMyMap"
+					@rename="onRenameMyMap"
+					@delete="onDeleteMyMap"
+					@share="onShareMyMap" />
+			</template>
+			<template #add-actions>
+				<NcActionButton v-if="!favoritesReadOnly" :close-after-click="true" @click="onNavigationAddFavorite()">
+					<template #icon>
+						<IconClose v-if="addingFavorite" :size="20" />
+						<IconStar v-else :size="20" />
+					</template>
+					{{ addingFavorite ? t('maps', 'Cancel adding a favorite') : t('maps', 'Add a favorite') }}
+				</NcActionButton>
+				<NcActionButton v-if="!token" :close-after-click="true" @click="onAddTrack">
+					<template #icon>
+						<IconRoad :size="20" />
+					</template>
+					{{ t('maps', 'Add a track') }}
+				</NcActionButton>
+			</template>
 			<template #items>
 				<AppNavigationFavoritesItem
 					:enabled="favoritesEnabled"
@@ -96,20 +121,6 @@
 					@device-clicked="onNavDeviceClicked"
 					@devices-clicked="onDevicesClicked" 
 				/>
-				<AppNavigationMyMapsItem
-					v-if="!token"
-					ref="myMapsNavigation"
-					:enabled="myMapsEnabled"
-					:loading="myMapsLoading"
-					:my-maps="myMaps"
-					@add="onAddMyMap"
-					@rename="onRenameMyMap"
-					@delete="onDeleteMyMap"
-					@share="onShareMyMap"
-					@color="onChangeMyMapColor"
-					@my-map-clicked="onMyMapClicked"
-					@my-maps-clicked="onMyMapsClicked" 
-				/>
 			</template>
 		</MapsNavigation>
 		<NcAppContent>
@@ -166,7 +177,7 @@
 					@photo-moved="onPhotoMoved"
 					@photo-suggestion-selected="onPhotoSuggestionSelected"
 					@photo-suggestion-moved="onPhotoSuggestionMoved"
-					@open-sidebar="openSidebar"
+					@open-sidebar="openFileSidebar"
 					@click-track="onTrackClick"
 					@add-to-map-track="onAddTrackToMap"
 					@search-enable-track="onSearchEnableTrack"
@@ -190,19 +201,15 @@
 			:favorite="selectedFavorite"
 			:favorite-categories="favoriteCategories"
 			:track="selectedTrack"
-			:photo="selectedPhoto"
 			:photos-loading="photosLoading"
 			:photo-suggestions="photoSuggestions"
 			:photo-suggestions-tracks-and-devices="photoSuggestionsTracksAndDevices"
 			:photo-suggestions-selected-indices="photoSuggestionsSelectedIndices"
 			:photo-suggestions-timezone="photoSuggestionsTimezone"
 			:photo-suggestions-hide-photos="photoSuggestionsHidePhotos"
-			:my-map="selectedMyMap"
 			@edit-favorite="onFavoriteEdit"
 			@delete-favorite="onFavoriteDelete"
-			@active-changed="onActiveSidebarTabChanged"
 			@close="onCloseSidebar"
-			@opened="onOpenedSidebar"
 			@load-more-photo-suggestions="getPhotoSuggestions"
 			@select-all-photo-suggestions="onSelectAllPhotoSuggestions"
 			@clear-photo-suggestions-selection="onClearPhotoSuggestionsSelection"
@@ -222,7 +229,8 @@ import { getUploader } from '@nextcloud/upload'
 
 import moment from '@nextcloud/moment'
 
-import { emit } from '@nextcloud/event-bus'
+import { subscribe, unsubscribe } from '@nextcloud/event-bus'
+import { getSidebar } from '@nextcloud/files'
 
 import Map from '../components/Map.vue'
 import MapsNavigation from '../components/MapsNavigation.vue'
@@ -232,18 +240,21 @@ import AppNavigationPhotosItem from '../components/AppNavigationPhotosItem.vue'
 import AppNavigationContactsItem from '../components/AppNavigationContactsItem.vue'
 import AppNavigationTracksItem from '../components/AppNavigationTracksItem.vue'
 import AppNavigationDevicesItem from '../components/AppNavigationDevicesItem.vue'
-import AppNavigationMyMapsItem from '../components/AppNavigationMyMapsItem.vue'
+import MapSwitcherHeader from '../components/MapSwitcherHeader.vue'
+import IconClose from 'vue-material-design-icons/Close.vue'
+import IconRoad from 'vue-material-design-icons/RoadVariant.vue'
+import IconStar from 'vue-material-design-icons/Star.vue'
 import optionsController from '../optionsController.js'
 import { getLetterColor, hslToRgb, Timer, getDeviceInfoFromUserAgent2, isComputer, isPhone, splitByNonEscapedComma } from '../utils.js'
 import { binSearch, getToken, isPublic } from '../utils/common.js'
 import { poiSearchData } from '../utils/poiData.js'
 import { processGpx } from '../tracksUtils.js'
-import L from 'leaflet'
 import { geoToLatLng, getFormattedADR } from '../utils/mapUtils.js'
 import * as network from '../network.js'
 import { all as axiosAll, spread as axiosSpread } from 'axios'
 import { generateUrl } from '@nextcloud/router'
 import { placeFileOrFolder } from '../utils/photoPicker.ts'
+import { openFileInSidebar } from '../utils/filesSidebar.ts'
 import { getClient } from '@nextcloud/files/dav'
 
 export default {
@@ -262,7 +273,10 @@ export default {
 		AppNavigationContactsItem,
 		AppNavigationTracksItem,
 		AppNavigationDevicesItem,
-		AppNavigationMyMapsItem,
+		MapSwitcherHeader,
+		IconClose,
+		IconRoad,
+		IconStar,
 	},
 
 	data() {
@@ -299,7 +313,6 @@ export default {
 			photosDraggable: false,
 			photos: [],
 			loadedPhotos: 0,
-			selectedPhoto: null,
 			showPhotoSuggestions: false,
 			photoSuggestions: [],
 			photoSuggestionsTracksAndDevices: {},
@@ -328,9 +341,8 @@ export default {
 			// myMaps
 			myMapsLoading: false,
 			myMaps: [],
-			myMapsEnabled: optionsController.myMapsEnabled && !isPublic(),
+			myMapsEnabled: !isPublic(),
 			myMapId: optionsController.myMapId,
-			selectedMyMap: null,
 			// PublicPage
 			token: (window.location.pathname.includes('/apps/maps/s/')
 				? window.location.pathname.split('/apps/maps/s/')[1].split('/')[0]
@@ -530,7 +542,7 @@ export default {
 					return d.points
 				}).map((d) => {
 					const lastPoint = d.points[d.points.length - 1]
-					const ll = L.latLng([lastPoint.lat, lastPoint.lng])
+					const ll = { lat: lastPoint.lat, lng: lastPoint.lng }
 					return {
 						type: 'device',
 						icon: isComputer(d.user_agent) ? 'icon-desktop' : 'icon-phone',
@@ -559,7 +571,7 @@ export default {
 				? this.tracks.filter((t) => {
 					return t.metadata
 				}).map((t) => {
-					const ll = L.latLng([t.metadata.lat, t.metadata.lng])
+					const ll = { lat: t.metadata.lat, lng: t.metadata.lng }
 					return {
 						type: 'track',
 						icon: 'icon-road',
@@ -578,7 +590,7 @@ export default {
 						icon: 'icon-contacts-dark',
 						id: c.UID + c.GEO,
 						label: c.FN + ' - ' + getFormattedADR(c.ADR),
-						latLng: L.latLng(geoToLatLng(c.GEO)),
+						latLng: { lat: parseFloat(geoToLatLng(c.GEO)[0]), lng: parseFloat(geoToLatLng(c.GEO)[1]) },
 					}
 				})
 				: []
@@ -595,10 +607,15 @@ export default {
 						icon: 'icon-favorite',
 						id: favid,
 						label: f.name,
-						latLng: L.latLng(f.lat, f.lng),
+						latLng: { lat: f.lat, lng: f.lng },
 					}
 				})
 				: []
+		},
+		favoritesReadOnly() {
+			const favorites = Object.values(this.favorites)
+			return !favorites.some((f) => f.isUpdateable)
+				&& !(favorites.length === 0 && optionsController.optionValues?.isCreatable)
 		},
 		favoriteCategories() {
 			const categories = {}
@@ -640,13 +657,12 @@ export default {
 		this.getTracks()
 		this.getDevices()
 		this.getMyMaps()
-		if (optionsController.optionValues.trackMe === 'true') {
+		// on a public map, these are the shared map's options, not the visitor's
+		if (!this.token && optionsController.optionValues.trackMe === 'true') {
 			this.sendPositionLoop()
 		}
-		// Register sidebar to be callable from viewer, possibly nicer in main.js but I failed to but it there
-		window.OCA.Files.Sidebar.open = this.openSidebar
-		window.OCA.Files.Sidebar.close = this.closeSidebar
-		window.OCA.Files.Sidebar.setFullScreenMode = this.sidebarSetFullScreenMode
+		subscribe('files:sidebar:opened', this.closeSidebar)
+		subscribe('viewer:sidebar:open', this.onViewerSidebarOpen)
 
 		document.onkeyup = (e) => {
 			if (e.ctrlKey) {
@@ -663,16 +679,16 @@ export default {
 	mounted() {
 		// subscribe('nextcloud:unified-search.search', this.filter)
 		// subscribe('nextcloud:unified-search.reset', this.cleanSearch)
-		setTimeout(() => { emit('files:sidebar:closed') }, 1000)
+		// mounting the app replaced the files sidebar the server rendered into #content
+		getSidebar().mount(this.$el)
 	},
 	beforeUnmount() {
 		// unsubscribe('nextcloud:unified-search.search', this.filter)
 		// unsubscribe('nextcloud:unified-search.reset', this.cleanSearch)
+		unsubscribe('files:sidebar:opened', this.closeSidebar)
+		unsubscribe('viewer:sidebar:open', this.onViewerSidebarOpen)
 	},
 	methods: {
-		onActiveSidebarTabChanged(newActive) {
-			this.activeTab = newActive
-		},
 		onMainDetailClicked() {
 			this.showSidebar ? this.closeSidebar() : this.openSidebar()
 		},
@@ -686,54 +702,36 @@ export default {
 			}
 		},
 		closeSidebar() {
-			this.$refs.Sidebar.close()
-			emit('files:sidebar:closed')
 			this.activeTab = null
 			this.showSidebar = false
 		},
-		openSidebar(path = null, type = null, title = null) {
+		openSidebar() {
+			getSidebar().close()
 			this.showSidebar = true
-			this.$refs.Sidebar.open(path, type, title)
-			if (!path && this.showPhotoSuggestions) {
+			if (this.showPhotoSuggestions) {
 				this.activeTab = 'photo-suggestion'
 			}
-			/*
-			const myMap = path ? this.myMaps.find((m) => m.path === path) : false
-			if (myMap) {
-				window.OCA.Files.state.activeTab = 'myMaps'
-				this.selectedMyMap = myMap
-				this.sidebarFileInfo = myMap.fileInfo
-				window.OCA.Files.Sidebar.state.file = path
-			} else {
-				const photo = this.photos.find((p) => p.path === path)
-				if (photo) {
-					window.OCA.Files.state.activeTab = 'photo'
-					this.selectedPhoto = photo
-					this.sidebarFileInfo = photo
-					window.OCA.Files.Sidebar.state.file = path
-				} else {
-					window.OCA.Files.Sidebar.state.file = true
-				}
-			}
-			emit('files:sidebar:opening')
-			 */
 		},
 		/**
-		 * Allow to set the Sidebar as fullscreen from OCA.Files.Sidebar
+		 * The viewer only requests the sidebar, rendering it is up to the app hosting the viewer.
 		 *
-		 * @param {boolean} isFullScreen - Wether or not to render the Sidebar in fullscreen.
+		 * @param {import('@nextcloud/files').INode} node the file shown in the viewer
 		 */
-		sidebarSetFullScreenMode(isFullScreen) {
-			if (this.$refs.Sidebar) {
-				this.$refs.Sidebar.setFullScreenMode(isFullScreen)
-			}
+		onViewerSidebarOpen(node) {
+			this.openFileSidebar(node.path)
 		},
-		onOpenedSidebar() {
-			// opened is emitted when the sidebar is mounted, but not actually shown
-			if (this.showSidebar) {
-				emit('files:sidebar:opened')
-				console.info('files:sidebar:opened')
-			}
+		/**
+		 * Show a file or folder of the user in the files sidebar, in place of the maps sidebar.
+		 *
+		 * @param {string} path path relative to the user's files root
+		 * @param {string} [tab] id of the files sidebar tab to show
+		 */
+		openFileSidebar(path, tab) {
+			this.closeSidebar()
+			openFileInSidebar(path, tab).catch((error) => {
+				console.error(error)
+				showError(t('maps', 'Failed to load the file details'))
+			})
 		},
 		deselectAll() {
 			if (this.selectedFavorite) {
@@ -743,9 +741,6 @@ export default {
 			if (this.selectedTrack) {
 				this.selectedTrack.selected = false
 				this.selectedTrack = null
-			}
-			if (!isPublic()) {
-				window.OCA.Files.Sidebar.state.file = ''
 			}
 		},
 		onToggleTrackme(enabled) {
@@ -824,7 +819,7 @@ export default {
 		},
 		onMapAddClick(e) {
 			if (this.mapState === 'adding' && this.addingFavorite) {
-				this.addFavorite({ lat: e.latlng.lat, lng: e.latlng.lng }, null, null, null, null, true, true)
+				this.addFavorite({ lat: e.lat, lng: e.lng }, null, null, null, null, true, true)
 				this.addingFavorite = false
 			}
 		},
@@ -939,6 +934,10 @@ export default {
 			})
 		},
 		async showPhotoBackgroundJobInfo() {
+			// the scan status is the viewer's own, it says nothing about a shared map
+			if (getToken()) {
+				return
+			}
 			network.getBackgroundJobStatus().then((response) => {
 				const status = response.data
 				if (status.addJobsRemainingForUser > 0) {
@@ -1206,7 +1205,7 @@ export default {
 			network.placePhotos(paths, lats, lngs).then((response) => {
 				toSave.forEach((i) => {
 					this.photos.push(this.photoSuggestions[i])
-					this.photoSuggestionsTracksAndDevices[this.photoSuggestions[i].trackOrDeviceId].length -= 1
+					this.photoSuggestionsTracksAndDevices[this.photoSuggestions[i].trackOrDeviceId].suggestionCount -= 1
 					this.photoSuggestions[i] = null
 				})
 				this.photoSuggestionsSelectedIndices = this.photoSuggestionsSelectedIndices.filter((e) => {
@@ -1332,7 +1331,7 @@ export default {
 				const maxLat = Math.max(...lats)
 				const minLon = Math.min(...lons)
 				const maxLon = Math.max(...lons)
-				this.$refs.map.fitBounds(L.latLngBounds([minLat, minLon], [maxLat, maxLon]), { padding: [30, 30] })
+				this.$refs.map.fitBounds([[minLon, minLat], [maxLon, maxLat]], { padding: [30, 30] })
 			}
 		},
 		getContacts() {
@@ -1584,14 +1583,14 @@ export default {
 				const maxLat = Math.max(...lats)
 				const minLon = Math.min(...lons)
 				const maxLon = Math.max(...lons)
-				this.$refs.map.fitBounds(L.latLngBounds([minLat, minLon], [maxLat, maxLon]), { padding: [30, 30] })
+				this.$refs.map.fitBounds([[minLon, minLat], [maxLon, maxLat]], { padding: [30, 30] })
 			}
 		},
 		onFavoriteClick(f) {
 			this.deselectAll()
 			// select
 			this.favorites[f.id].selected = true
-			this.openSidebar(null, 'favorite', f.name)
+			this.openSidebar()
 			this.activeTab = 'favorite'
 			this.selectedFavorite = f
 		},
@@ -1766,7 +1765,7 @@ export default {
 				if (openSidebar) {
 					this.selectedFavorite = this.favorites[fav.id]
 					this.activeTab = 'favorite'
-					this.openSidebar(null, 'favorite', fav.name)
+					this.openSidebar()
 				}
 				if (this.sliderEnabled) {
 					if (this.sliderStart > fav.date_created) {
@@ -1815,7 +1814,7 @@ export default {
 		async cancelFavoriteDelete(action) {
 			for (let i = 0; i < action.favorites.length; i++) {
 				const f = action.favorites[i]
-				const newFavId = await this.addFavorite(L.latLng(f.lat, f.lng), f.name, f.category, f.comment, f.extensions, false)
+				const newFavId = await this.addFavorite({ lat: f.lat, lng: f.lng }, f.name, f.category, f.comment, f.extensions, false)
 				this.updateActionFavoriteId(f.id, newFavId)
 			}
 		},
@@ -1824,7 +1823,7 @@ export default {
 		},
 		async redoFavoriteAdd(action) {
 			const f = action.favorite
-			const newFavId = await this.addFavorite(L.latLng(f.lat, f.lng), f.name, f.category, f.comment, f.extensions, false)
+			const newFavId = await this.addFavorite({ lat: f.lat, lng: f.lng }, f.name, f.category, f.comment, f.extensions, false)
 			this.updateActionFavoriteId(action.favorite.id, newFavId)
 		},
 		redoFavoriteEdit(action) {
@@ -2043,7 +2042,7 @@ export default {
 			this.deselectAll()
 			// select
 			track.selected = true
-			this.openSidebar(track.path, 'track', track.name)
+			this.openSidebar()
 			this.activeTab = 'maps-track-metadata'
 			this.selectedTrack = track
 		},
@@ -2110,7 +2109,7 @@ export default {
 		},
 		getDevice(device, enable = false, save = true, zoom = false) {
 			device.loading = true
-			network.getDevice(device.id, this.myMapId, 100000, device.points?.length || 0, device.tokens).then((response) => {
+			network.getDevice(device.id, this.myMapId, 10000, device.points?.length || 0, device.tokens).then((response) => {
 				// There are too many points making it responsiv crashes most browsers
 				// this.$set(device, 'points', response.data /* .sort((p1, p2) => (p1.timestamp || 0) - (p2.timestamp || 0)) */)
 				if (device.points) {
@@ -2118,7 +2117,7 @@ export default {
 				} else {
 					device.points = response.data
 				}
-				if (response.data.length >= 100000) {
+				if (response.data.length >= 10000) {
 					this.getDevice(device, false, false, false)
 				}
 				if (enable) {
@@ -2375,17 +2374,10 @@ export default {
 				OC.dialogs.FILEPICKER_TYPE_CHOOSE,
 			)
 		},
-		onMyMapsClicked() {
-			this.myMapsEnabled = !this.myMapsEnabled
-			// get tracks if we don't have them yet
-			if (this.myMapsEnabled && this.myMaps.length === 0) {
-				this.getMyMaps()
-			}
-			optionsController.saveOptionValues({ myMapsEnabled: this.myMapsEnabled ? 'true' : 'false' })
-		},
 		onMyMapClicked(myMap) {
-			if (this.showSidebar) {
-				this.openSidebar(myMap.path, 'maps', myMap.name)
+			// the default map has no folder to show
+			if (myMap.path && (this.showSidebar || getSidebar().isOpen)) {
+				this.openFileSidebar(myMap.path)
 			}
 		    if (!this.myMapsLoading) {
 				this.myMapsLoading = true
@@ -2396,13 +2388,16 @@ export default {
 		onAddMyMap(name) {
 		    this.myMapsLoading = true
 		    network.addMyMap(name).then((response) => {
-				this.myMaps.push({
+				const myMap = {
 					...response.data,
-					enabled: this.myMapId === response.data.id,
-				})
+					enabled: false,
+				}
+				this.myMaps.push(myMap)
+				this.myMapsLoading = false
+				this.onMyMapClicked(myMap)
 			}).catch((error) => {
 				console.error(error)
-			}).then(() => {
+				showError(t('maps', 'Failed to create the map'))
 				this.myMapsLoading = false
 			})
 		},
@@ -2411,12 +2406,12 @@ export default {
 		},
 		onRenameMyMap({ id, newName }) {
 			this.myMapsLoading = true
-			network.renameMyMap(id, newName).then((response) => {
-				const index = this.myMaps.findIndex((myMap) => myMap.id === id)
-				this.myMaps[index] = response.data
+			network.renameMyMap(id, newName).then(() => {
+				// the server returns the map's settings, not the map, and moves its folder, so reload the list
+				this.getMyMaps()
 			}).catch((error) => {
 				console.error(error)
-			}).then(() => {
+				showError(t('maps', 'Failed to rename the map'))
 				this.myMapsLoading = false
 			})
 		},
@@ -2425,15 +2420,19 @@ export default {
 			network.deleteMyMap(id).then((response) => {
 				const index = this.myMaps.findIndex((myMap) => myMap.id === id)
 				this.myMaps.splice(index, 1)
+				this.myMapsLoading = false
+				if (this.myMapId === id) {
+					// the open map is gone, fall back to the default one
+					this.onMyMapClicked(this.myMaps.find((myMap) => myMap.id === null) ?? { id: null })
+				}
 			}).catch((error) => {
 				console.error(error)
-			}).then(() => {
+				showError(t('maps', 'Failed to delete the map'))
 				this.myMapsLoading = false
 			})
 		},
 		onShareMyMap(myMap) {
-			this.activeTab = 'sharing'
-			this.openSidebar(myMap.path, 'maps', myMap.name)
+			this.openFileSidebar(myMap.path, 'sharing')
 		},
 		loadMap(myMap) {
 			if (this.photoSuggestions) {
@@ -2465,7 +2464,7 @@ export default {
 			this.getTracks()
 			this.getDevices()
 			this.getMyMaps()
-			if (optionsController.optionValues.trackMe === 'true') {
+			if (!this.token && optionsController.optionValues.trackMe === 'true') {
 				this.sendPositionLoop()
 			}
 		},

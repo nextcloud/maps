@@ -30,7 +30,6 @@ use OCA\Maps\DB\FavoriteShareMapper;
 use OCA\Maps\Service\FavoritesService;
 use OCP\AppFramework\Http;
 use OCP\Files\IRootFolder;
-use OCP\IServerContainer;
 use OCP\L10N\IFactory;
 use OCP\Security\ISecureRandom;
 use PHPUnit\Framework\TestCase;
@@ -61,7 +60,7 @@ class PublicFavoritesApiControllerTest extends TestCase {
 		$this->favoriteShareMapper = new FavoriteShareMapper(
 			$container->get(\OCP\IDBConnection::class),
 			$container->get(ISecureRandom::class),
-			$container->get(IserverContainer::class)->get(IRootFolder::class)
+			$container->get(IRootFolder::class)
 		);
 
 		$this->publicFavoritesApiController = new PublicFavoritesApiController(

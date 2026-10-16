@@ -123,12 +123,10 @@ class UtilsController extends Controller {
 			'osrmBikeURL',
 			'osrmFootURL',
 			'osrmDEMO',
-			'graphhopperAPIKEY',
 			'mapboxAPIKEY',
 			'maplibreStreetStyleURL',
 			'maplibreStreetStyleAuth',
 			'maplibreStreetStylePmtiles',
-			'graphhopperURL'
 		];
 		foreach ($settingsKeys as $k) {
 			$v = $this->config->getAppValue('maps', $k);
@@ -148,16 +146,14 @@ class UtilsController extends Controller {
 			'osrmBikeURL',
 			'osrmFootURL',
 			'osrmDEMO',
-			'graphhopperAPIKEY',
 			'mapboxAPIKEY',
 			'maplibreStreetStyleURL',
 			'maplibreStreetStyleAuth',
 			'maplibreStreetStylePmtiles',
-			'graphhopperURL'
 		];
 		foreach ($values as $k => $v) {
 			if (in_array($k, $acceptedKeys)) {
-				$this->config->setAppValue('maps', $k, $v);
+				$this->config->setAppValue('maps', $k, is_string($v) ? trim($v) : $v);
 			}
 		}
 		$response = new DataResponse('DONE');

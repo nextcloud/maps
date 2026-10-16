@@ -19,11 +19,9 @@ class AdminSettings implements ISettings {
 			'osrmCarURL',
 			'osrmBikeURL',
 			'osrmFootURL',
-			'graphhopperAPIKEY',
 			'mapboxAPIKEY',
 			'maplibreStreetStyleURL',
 			'maplibreStreetStyleAuth',
-			'graphhopperURL',
 		];
 		$parameters = [];
 		foreach ($keys as $k) {

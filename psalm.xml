@@ -11,9 +11,9 @@
 	<stubs>
 		<file name="tests/stubs/oc_archive_archive.php" preloadClasses="true"/>
 		<file name="tests/stubs/oc_archive_zip.php" preloadClasses="true"/>
-		<file name="tests/stubs/oc_files_search_searchbinaryoperator.php" preloadClasses="true"/>
-		<file name="tests/stubs/oc_files_search_searchcomparison.php" preloadClasses="true"/>
-		<file name="tests/stubs/oc_files_search_searchquery.php" preloadClasses="true"/>
+		<file name="tests/stubs/oc_files_search_searchbinaryoperator.php"/>
+		<file name="tests/stubs/oc_files_search_searchcomparison.php"/>
+		<file name="tests/stubs/oc_files_search_searchquery.php"/>
 		<file name="tests/stubs/oc_hooks_emitter.php" preloadClasses="true"/>
 		<file name="tests/stubs/oc_security_csp_contentsecuritypolicy.php" preloadClasses="true"/>
 		<file name="tests/stubs/oc_share_constants.php" preloadClasses="true"/>

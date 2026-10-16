@@ -7,7 +7,7 @@
 	ensureOverrideAttribute="false"
 	findUnusedBaselineEntry="true"
 	findUnusedCode="false"
-	phpVersion="8.1">
+	phpVersion="8.3">
 	<stubs>
 		<file name="tests/stubs/oc_archive_archive.php" preloadClasses="true"/>
 		<file name="tests/stubs/oc_archive_zip.php" preloadClasses="true"/>

@@ -11,12 +11,14 @@ namespace OCA\Maps\Service;
 
 use OCP\Files\Folder;
 use OCP\Files\IRootFolder;
+use OCP\Files\IUserFolder;
 use PHPUnit\Framework\TestCase;
 
 class MyMapsServiceTest extends TestCase {
 	public function testGetMyMapReturnsNullWhenNodeDoesNotExist(): void {
 		$root = $this->createMock(IRootFolder::class);
-		$userFolder = $this->createMock(Folder::class);
+		// getUserFolder() returns an IUserFolder since Nextcloud 36
+		$userFolder = $this->createMock(interface_exists(IUserFolder::class) ? IUserFolder::class : Folder::class);
 
 		$root->expects(self::once())
 			->method('getUserFolder')

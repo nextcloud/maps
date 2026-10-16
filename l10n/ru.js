@@ -183,7 +183,7 @@ OC.L10N.register(
     "Search" : "Поиск",
     "Point at {coords}" : "Координаты точки: {coords}",
     "Search for {q}" : "Поиск {q}",
-    "No suggestions" : "Предложений нет",
+    "No suggestions" : "Нет ни одного предложения",
     "Unknown Place" : "Неизвестное место",
     "File" : "Файл",
     "Track/Route" : "Трек/маршрут",

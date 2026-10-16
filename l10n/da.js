@@ -123,7 +123,7 @@ OC.L10N.register(
     "Track metadata" : "Metadata for spor",
     "Unable to change the favourite state of the file" : "Kan ikke ændre favorittilstanden for filen",
     "Error while loading the file data" : "Fejl under indlæsning af fildata",
-    "Tags" : "Tags",
+    "Tags" : "Mærker",
     "Distance" : "Afstand",
     "Duration" : "Varighed",
     "Moving time" : "Tid i bevægelse",

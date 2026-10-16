@@ -4,10 +4,13 @@
  */
 
 /**
- * @param unsafe raw text to embed as HTML
+ * @param unsafe raw text to embed as HTML, in element content or a quoted attribute value
  */
 export function escapeHtml(unsafe: string): string {
-	const div = document.createElement('div')
-	div.textContent = unsafe
-	return div.innerHTML
+	return String(unsafe ?? '')
+		.replace(/&/g, '&amp;')
+		.replace(/</g, '&lt;')
+		.replace(/>/g, '&gt;')
+		.replace(/"/g, '&quot;')
+		.replace(/'/g, '&#39;')
 }

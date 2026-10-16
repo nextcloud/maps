@@ -205,7 +205,7 @@ function onPointMouseEnter(event: MapMouseEvent & { features?: MapGeoJSONFeature
 	const html = document.createElement('div')
 	html.className = 'tooltip-photo-wrapper'
 	html.innerHTML = `
-		<img class="photo-tooltip" src="${getPhotoPreviewUrl(photo)}">
+		<img class="photo-tooltip" src="${escapeHtml(getPhotoPreviewUrl(photo))}">
 		<p class="tooltip-photo-date">${escapeHtml(getPhotoFormattedDate(photo))}</p>
 		<p class="tooltip-photo-name">${escapeHtml(basename(photo.path))}</p>
 	`

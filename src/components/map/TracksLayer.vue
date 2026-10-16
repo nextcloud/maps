@@ -321,7 +321,7 @@ function onFeatureContextMenu(event: MapMouseEvent & { features?: MapGeoJSONFeat
 		${track.isUpdateable ? `<button class="action-btn" data-action="color">${escapeHtml(t('maps', 'Change color'))}</button>` : ''}
 		<button class="action-btn" data-action="elevation">${escapeHtml(t('maps', 'Display elevation'))}</button>
 		${!isPublic() && track.isShareable ? `<button class="action-btn" data-action="copy">${escapeHtml(t('maps', 'Copy to map'))}</button>` : ''}
-		${(!isPublic() || !track.hideDownload) ? `<a class="action-btn" href="${downloadUrl(track)}" target="_self">${escapeHtml(t('maps', 'Download track'))}</a>` : ''}
+		${(!isPublic() || !track.hideDownload) ? `<a class="action-btn" href="${escapeHtml(downloadUrl(track))}" target="_self">${escapeHtml(t('maps', 'Download track'))}</a>` : ''}
 	`
 	container.addEventListener('click', (domEvent) => {
 		const action = (domEvent.target as HTMLElement).getAttribute('data-action')

@@ -393,7 +393,7 @@ function onPointMouseMove(event: MapMouseEvent & { features?: MapGeoJSONFeature[
 	const html = document.createElement('div')
 	html.className = 'tooltip-contact-wrapper'
 	html.innerHTML = `
-		<img class="tooltip-contact-avatar" src="${avatarUrl}">
+		<img class="tooltip-contact-avatar" src="${escapeHtml(avatarUrl)}">
 		<div class="tooltip-contact-content">
 			<h3 class="tooltip-contact-name">${escapeHtml(contact.FN || '')}</h3>
 			<p class="tooltip-contact-address-type">${adrTypesHtml}</p>
@@ -440,7 +440,7 @@ function openContactPopup(contact: Contact): void {
 	popupContent.className = 'popup-contact-wrapper'
 	popupContent.innerHTML = `
 		<div class="left-contact-popup">
-			<img class="tooltip-contact-avatar" src="${avatarUrl}">
+			<img class="tooltip-contact-avatar" src="${escapeHtml(avatarUrl)}">
 			${contact.isDeletable ? `<button class="icon icon-delete" data-action="delete" title="${contact.ADR ? escapeHtml(t('maps', 'Delete this address')) : escapeHtml(t('maps', 'Delete this location'))}"></button>` : ''}
 			${!isPublic() ? `<button class="icon icon-share" data-action="copy" title="${escapeHtml(t('maps', 'Copy to map'))}"></button>` : ''}
 		</div>
@@ -469,7 +469,7 @@ function openStackPopup(contacts: Contact[]): void {
 		const button = document.createElement('button')
 		button.className = 'action-btn'
 		button.innerHTML = `
-			<img class="popup-contact-stack-avatar" src="${getContactAvatar(contact)}" alt="">
+			<img class="popup-contact-stack-avatar" src="${escapeHtml(getContactAvatar(contact))}" alt="">
 			<span>${escapeHtml(contact.FN || '')}</span>
 		`
 		button.addEventListener('click', () => openContactPopup(contact))

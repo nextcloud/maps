@@ -143,7 +143,13 @@
 			</MglCustomControl>
 		</MglMap>
 
-		<Slider v-show="sliderEnabled"
+		<Slider v-show="sliderEnabled && timeFilterMode !== 'calendar'"
+			:start="sliderStartTimestamp"
+			:end="sliderEndTimestamp"
+			:range-min="minDataTimestamp"
+			:range-max="maxDataTimestamp"
+			@range-change="emit('slider-range-changed', $event)" />
+		<DateRangeFilter v-if="sliderEnabled && timeFilterMode === 'calendar'"
 			:start="sliderStartTimestamp"
 			:end="sliderEndTimestamp"
 			:range-min="minDataTimestamp"
@@ -186,6 +192,7 @@ import PlaceContactMarker from './map/PlaceContactMarker.vue'
 import type { HistoryAction } from './map/HistoryControl.vue'
 import HistoryControl from './map/HistoryControl.vue'
 import Slider from './map/Slider.vue'
+import DateRangeFilter from './map/DateRangeFilter.vue'
 import ElevationChart from './map/ElevationChart.vue'
 import { showError, showSuccess } from '@nextcloud/dialogs'
 import { searchPois as searchPoisNetwork } from '../network.js'
@@ -233,6 +240,8 @@ const props = withDefaults(defineProps<{
 	devices?: Device[]
 	devicesEnabled?: boolean
 	sliderEnabled?: boolean
+	/** 'slider' or 'calendar' */
+	timeFilterMode?: string
 	sliderStartTimestamp?: number
 	sliderEndTimestamp?: number
 	minDataTimestamp?: number
@@ -265,6 +274,7 @@ const props = withDefaults(defineProps<{
 	devices: () => [],
 	devicesEnabled: false,
 	sliderEnabled: false,
+	timeFilterMode: 'slider',
 	sliderStartTimestamp: 0,
 	sliderEndTimestamp: 0,
 	minDataTimestamp: 0,

@@ -5,7 +5,7 @@
 		}
 	},
 	"require-dev": {
-		"doctrine/dbal": "^3.10.0",
+		"doctrine/dbal": "^4.5.0",
 		"nextcloud/ocp": "dev-stable35",
 		"sabre/dav": "^4.7.0",
 		"symfony/console": "^6.4",

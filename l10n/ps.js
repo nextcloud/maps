@@ -1,0 +1,25 @@
+OC.L10N.register(
+    "maps",
+    {
+    "File not found" : "فایل نشته",
+    "Personal" : "شخصي",
+    "Delete" : "ړنګول",
+    "Favorites" : "په نښه شوي",
+    "Rename" : "نوم بدلول",
+    "Delete share link" : "د شريکېدو لېنک ړنګول",
+    "Copied!" : "کاپي شو!",
+    "Name" : "نوم",
+    "Comment" : "تبصره",
+    "Save" : "ساتل",
+    "Share" : "شریکول",
+    "Settings" : "سمونې",
+    "Favorite" : "په نښه شوی",
+    "Select all" : "ټول ټاکل",
+    "Cancel" : "پرېښول",
+    "Add to favorites" : "په نښه کول",
+    "Home" : "کور",
+    "Work" : "دفتر",
+    "Close" : "بندول",
+    "Yes" : "هو"
+},
+"nplurals=2; plural=(n != 1);");

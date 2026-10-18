@@ -1,0 +1,27 @@
+OC.L10N.register(
+    "maps",
+    {
+    "Personal" : "شخصی",
+    "Delete" : "حذف کریں",
+    "Favorites" : "Favorites",
+    "Rename" : "Rename",
+    "Sort by name" : "Order by name",
+    "Sort by date" : "Order by date",
+    "Name" : "اسم",
+    "Location" : "مقام",
+    "Save" : "حفظ",
+    "Share" : "تقسیم",
+    "Settings" : "سیٹینگز",
+    "Cancel" : "منسوخ کریں",
+    "Date" : "Date",
+    "Add" : "شامل کریں",
+    "Add to favorites" : "Add to favorites",
+    "Work" : "کام",
+    "Close" : "بند ",
+    "Yes" : "Yes",
+    "Search" : "Search",
+    "File" : "File",
+    "Description" : "تصریح",
+    "Destination" : "Destination"
+},
+"nplurals=2; plural=(n != 1);");

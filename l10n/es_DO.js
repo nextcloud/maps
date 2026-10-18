@@ -8,6 +8,7 @@ OC.L10N.register(
     "Export" : "Exportar",
     "Delete" : "Borrar",
     "Devices" : "Dispositivos",
+    "Favorites" : "Favoritos",
     "Import" : "Importar",
     "Rename" : "Renombrar",
     "Copied!" : "¡Copiado!",

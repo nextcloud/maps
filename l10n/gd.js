@@ -1,0 +1,27 @@
+OC.L10N.register(
+    "maps",
+    {
+    "File not found" : "Cha deach am faidhle a lorg",
+    "Delete" : "Sguab às",
+    "Link copied" : "Chaidh lethbhreac dhen cheangal a dhèanamh",
+    "Favorites" : "Annsachdan",
+    "Rename" : "Thoir ainm ùr air",
+    "Name" : "Ainm",
+    "Category" : "Roinn-seòrsa",
+    "Save" : "Sàbhail",
+    "Default" : "Bunaiteach",
+    "Share" : "Co-roinn",
+    "Settings" : "Roghainnean",
+    "General" : "Coitcheann",
+    "Favorite" : "Annsachd",
+    "Select all" : "Tagh na h-uile",
+    "Quit" : "Fàg an-seo",
+    "Cancel" : "Sguir dheth",
+    "Add to favorites" : "Cuir ris na h-annsachdan",
+    "Home" : "Dachaigh",
+    "Close" : "Dùin",
+    "Yes" : "Tha",
+    "Search" : "Lorg",
+    "File" : "Faidhle"
+},
+"nplurals=4; plural=(n==1 || n==11) ? 0 : (n==2 || n==12) ? 1 : (n > 2 && n < 20) ? 2 : 3;");

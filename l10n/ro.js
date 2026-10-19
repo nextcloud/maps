@@ -22,6 +22,8 @@ OC.L10N.register(
     "Category" : "Categorie",
     "Comment" : "Comentariu",
     "Location" : "Locație",
+    "Latitude" : "Latitudine",
+    "Longitude" : "Longitudine",
     "Save" : "Salvează",
     "Default" : "Implicit",
     "Open folder" : "Deschide dosarul",

@@ -1,6 +1,7 @@
 OC.L10N.register(
     "maps",
     {
+    "File does not exist" : "Fișierul nu există",
     "File not found" : "Fișierul nu a fost găsit",
     "Personal" : "Personal",
     "Maps" : "Hărți",
@@ -17,6 +18,7 @@ OC.L10N.register(
     "Rename" : "Redenumire",
     "Delete share link" : "Șterge linkul partajat",
     "Copied!" : "S-a copiat!",
+    "Copy share link" : "Copiază linkul de partajare",
     "Photos" : "Poze",
     "Sort by name" : "Sortează după nume",
     "Sort by date" : "Sortează după dată",
@@ -58,6 +60,7 @@ OC.L10N.register(
     "Failed to save settings" : "Setările nu au putut fi salvate",
     "Phone" : "Telefon",
     "Not grouped" : "Negrupate",
+    "Metadata" : "Metadate",
     "Select folder" : "Selectează dosarul",
     "Restaurant" : "Restaurant",
     "School" : "Școală",

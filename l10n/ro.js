@@ -63,6 +63,7 @@ OC.L10N.register(
     "Metadata" : "Metadate",
     "Select folder" : "Selectează dosarul",
     "Restaurant" : "Restaurant",
+    "Bar" : "Bară",
     "School" : "Școală",
     "Hospital" : "Spital",
     "right" : "dreapta",

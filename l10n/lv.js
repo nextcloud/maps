@@ -58,6 +58,7 @@ OC.L10N.register(
     "Failed to delete favorite" : "Neizdevās izdzēst izlases vienumu",
     "Metadata" : "Metadati",
     "Photo files" : "Fotoattēlu datnes",
+    "Bar" : "Josla",
     "Cinema" : "Kino",
     "Hospital" : "Slimnīca",
     "Dentist" : "Zobārsts",

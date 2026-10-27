@@ -45,6 +45,7 @@ OC.L10N.register(
     "Destination" : "Destination",
     "Phone" : "Telefon",
     "Not grouped" : "I pagrupuar",
+    "Bar" : "Shtyllë",
     "right" : "djathtas",
     "left" : "majtas"
 },

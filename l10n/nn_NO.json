@@ -39,6 +39,7 @@
     "Start" : "Start",
     "Destination" : "Destination",
     "Phone" : "Telefonnummer",
-    "Not grouped" : "Ikkje gruppert"
+    "Not grouped" : "Ikkje gruppert",
+    "Bar" : "Stolpe"
 },"pluralForm" :"nplurals=2; plural=(n != 1);"
 }

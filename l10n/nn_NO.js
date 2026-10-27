@@ -41,6 +41,7 @@ OC.L10N.register(
     "Start" : "Start",
     "Destination" : "Destination",
     "Phone" : "Telefonnummer",
-    "Not grouped" : "Ikkje gruppert"
+    "Not grouped" : "Ikkje gruppert",
+    "Bar" : "Stolpe"
 },
 "nplurals=2; plural=(n != 1);");

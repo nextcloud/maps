@@ -176,6 +176,7 @@ OC.L10N.register(
     "By car with traffic (Mapbox)" : "Autem s provozem (Mapbox)",
     "By car without traffic (Mapbox)" : "Autem bez provozu (Mapbox)",
     "By car (OSRM demo)" : "Autem (OSRM demo)",
+    "{minutes} min" : "{minutes} min",
     "Route {date}" : "Trasa {date}",
     "Track {date}" : "Stopa {date}",
     "Route exported to {path}." : "Trasa exportována do {path}.",

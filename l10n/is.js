@@ -70,6 +70,7 @@ OC.L10N.register(
     "Cumulative elevation loss" : "Uppsöfnuð lækkun",
     "Minimum elevation" : "Lágmarkshæð",
     "Maximum elevation" : "Hámarkshæð",
+    "Speed" : "Hraði",
     "Maximum speed" : "Hámarkshraði",
     "Moving average speed" : "Meðalhraði á ferð",
     "New Favorite" : "Nýtt eftirlæti",

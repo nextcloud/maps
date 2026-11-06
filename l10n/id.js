@@ -43,6 +43,7 @@ OC.L10N.register(
     "Duration" : "Durasi",
     "Time" : "Waktu",
     "Date" : "Date",
+    "Speed" : "Kecepatan",
     "Add" : "Masukkan",
     "Add to favorites" : "Tambah ke favorit",
     "Home" : "Beranda",

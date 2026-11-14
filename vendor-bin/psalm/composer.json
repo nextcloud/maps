@@ -9,6 +9,6 @@
 		"nextcloud/ocp": "dev-stable35",
 		"sabre/dav": "^4.7.0",
 		"symfony/console": "^6.4",
-		"vimeo/psalm": "^6.10"
+		"vimeo/psalm": "^7.3"
 	}
 }

@@ -53,7 +53,7 @@
     "@nextcloud/sharing": "^0.4.0",
     "@nextcloud/upload": "^2.0.0-rc.0",
     "@nextcloud/vue": "^9.13.1",
-    "axios": "^1.18.1",
+    "axios": "^1.20.0",
     "chart.js": "^4.5.1",
     "geojson": "^0.5.0",
     "maplibre-gl": "^5.16.0",

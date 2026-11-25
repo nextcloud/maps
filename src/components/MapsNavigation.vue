@@ -51,6 +51,15 @@
 							</template>
 						</NcFormBoxButton>
 					</NcFormBox>
+					<NcRadioGroup v-if="optionValues.displaySlider === 'true'"
+						class="maps-navigation__time-filter-mode"
+						:label="t('maps', 'Time filter')"
+						:description="t('maps', 'Filter with a slider, or pick the start and end dates in a calendar')"
+						:model-value="timeFilterMode"
+						@update:model-value="onTimeFilterModeChange">
+						<NcRadioGroupButton value="slider" :label="t('maps', 'Slider')" />
+						<NcRadioGroupButton value="calendar" :label="t('maps', 'Calendar')" />
+					</NcRadioGroup>
 				</NcAppSettingsSection>
 				<NcAppSettingsSection id="maps-settings-projection" :name="t('maps', 'Map projection')">
 					<NcFormBox>
@@ -77,8 +86,10 @@ import {
 	NcFormBoxButton,
 	NcFormBoxSwitch,
 	NcLoadingIcon,
+	NcRadioGroup,
+	NcRadioGroupButton,
 } from '@nextcloud/vue'
-import { reactive, ref } from 'vue'
+import { computed, reactive, ref } from 'vue'
 import IconCog from 'vue-material-design-icons/CogOutline.vue'
 import IconOpenInApp from 'vue-material-design-icons/OpenInApp.vue'
 import IconPlus from 'vue-material-design-icons/Plus.vue'
@@ -97,10 +108,12 @@ const emit = defineEmits<{
 	'toggle-trackme': [enabled: boolean]
 	'register-geo-link': []
 	'toggle-slider': [enabled: boolean]
+	'change-time-filter-mode': [mode: string]
 }>()
 
 const optionValues = reactive(optionsController.optionValues)
 const settingsOpen = ref(false)
+const timeFilterMode = computed(() => optionValues.timeFilterMode === 'calendar' ? 'calendar' : 'slider')
 
 /**
  * @param checked whether the position should be tracked
@@ -119,6 +132,15 @@ function onDisplaySliderChange(checked: boolean): void {
 	optionsController.saveOptionValues({ displaySlider: optionValues.displaySlider })
 	emit('toggle-slider', checked)
 }
+
+/**
+ * @param mode 'slider' or 'calendar'
+ */
+function onTimeFilterModeChange(mode: string): void {
+	optionValues.timeFilterMode = mode
+	optionsController.saveOptionValues({ timeFilterMode: mode })
+	emit('change-time-filter-mode', mode)
+}
 </script>
 
 <style scoped lang="scss">
@@ -126,6 +148,10 @@ function onDisplaySliderChange(checked: boolean): void {
 	display: flex;
 	justify-content: center;
 	padding: calc(2 * var(--default-grid-baseline));
+}
+
+.maps-navigation__time-filter-mode {
+	margin-top: calc(2 * var(--default-grid-baseline));
 }
 
 .maps-navigation__footer {

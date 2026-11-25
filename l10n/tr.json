@@ -321,7 +321,7 @@
     "_One favorite imported_::_%n favorites imported_" : ["%n sık kullanılan içe aktarıldı","%n sık kullanılan içe aktarıldı"],
     "Failed to import favorites" : "Sık kullanılan yerler içe aktarılamadı",
     "View in Maps" : "Haritalarda görüntüle",
-    "Media scan was not done yet. Wait a few minutes/hours and reload this page to see your photos/tracks." : "Ortam taraması henüz tamamlanmadı. Bir kaç dakika ya da saat sonra bu sayfayı yeniden yükleyerek fotoğraflarınızı ve rotalarınızı görebilirsiniz.",
+    "Media scan was not done yet. Wait a few minutes/hours and reload this page to see your photos/tracks." : "Ortam taraması henüz tamamlanmadı. Birkaç dakika ya da saat sonra bu sayfayı yeniden yükleyerek fotoğraflarınızı ve rotalarınızı görebilirsiniz.",
     "Report Error" : "Hata bildir",
     "Failed to get favorites" : "Sık kullanılan yerler alınamadı",
     "Failed to create favorite" : "Sık kullanılan yer oluşturulamadı",
